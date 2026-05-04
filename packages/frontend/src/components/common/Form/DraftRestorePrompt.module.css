@@ -1,0 +1,106 @@
+.draft-prompt {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  background: linear-gradient(135deg, var(--color-primary-50) 0%, var(--color-primary-100) 100%);
+  border: var(--border-width-1) solid var(--color-primary-200);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-6);
+  animation: slide-in var(--duration-normal) ease-out;
+}
+
+@keyframes slide-in {
+  from {
+    opacity: var(--opacity-0);
+    transform: translateY(calc(var(--space-2) * -1));
+  }
+
+  to {
+    opacity: var(--opacity-100);
+    transform: translateY(0);
+  }
+}
+
+.draft-icon {
+  font-size: var(--font-size-3xl);
+  flex-shrink: 0;
+}
+
+.draft-content {
+  flex: 1;
+}
+
+.draft-title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary-800);
+  margin: 0 0 var(--space-1) 0;
+}
+
+.draft-text {
+  font-size: var(--font-size-sm);
+  color: var(--color-primary-600);
+  margin: 0;
+}
+
+.draft-actions {
+  display: flex;
+  gap: var(--space-2-5);
+  flex-shrink: 0;
+}
+
+.discard-btn {
+  padding: var(--space-2) var(--space-3-5);
+  background: var(--color-background-card);
+  border: var(--border-width-1) solid var(--color-primary-200);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-primary-600);
+  cursor: pointer;
+  transition:
+    background-color var(--transition-normal),
+    border-color var(--transition-normal);
+}
+
+.discard-btn:hover {
+  background: var(--color-primary-50);
+  border-color: var(--color-primary-400);
+}
+
+.restore-btn {
+  padding: var(--space-2) var(--space-3-5);
+  background: var(--color-primary-500);
+  border: var(--border-width-1) solid var(--color-primary-500);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-inverse);
+  cursor: pointer;
+  transition:
+    background-color var(--transition-normal),
+    border-color var(--transition-normal);
+}
+
+.restore-btn:hover {
+  background: var(--color-primary-600);
+  border-color: var(--color-primary-600);
+}
+
+.restore-btn:focus {
+  outline: none;
+  box-shadow: var(--border-focus-primary);
+}
+
+@media (width <= 640px) {
+  .draft-prompt {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .draft-actions {
+    width: 100%;
+    justify-content: center;
+  }
+}

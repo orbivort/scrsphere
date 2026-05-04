@@ -1,0 +1,413 @@
+/* Team Switcher Component Styles */
+
+.team-switcher {
+  position: relative;
+  display: flex;
+  align-items: center;
+  font-family: var(--font-family-sans);
+}
+
+.team-switcher-compact {
+  min-width: auto;
+}
+
+/* Loading State */
+.team-switcher-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2) var(--space-3);
+  min-width: calc(var(--space-24) + var(--space-6));
+}
+
+.loading-spinner-small {
+  width: var(--space-4);
+  height: var(--space-4);
+  border: var(--border-width-2) solid var(--color-border-default);
+  border-top-color: var(--color-interactive-primary);
+  border-radius: var(--radius-full);
+  animation: spin var(--duration-normal) linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Single Team Display */
+.team-switcher-single {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-background-page);
+  border: var(--border-width-1) solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  cursor: default;
+}
+
+/* Trigger Button */
+.team-switcher-trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-background-page);
+  border: var(--border-width-1) solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast);
+  min-width: calc(var(--space-24) + var(--space-6));
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+}
+
+.team-switcher-trigger:hover {
+  background: var(--color-background-hover);
+  border-color: var(--color-border-hover);
+}
+
+.team-switcher-trigger:focus-visible {
+  outline: none;
+  border-color: var(--color-border-focus);
+  box-shadow: var(--focus-ring);
+}
+
+.team-switcher-compact .team-switcher-trigger {
+  min-width: auto;
+  padding: var(--space-1-5) var(--space-2-5);
+}
+
+/* Team Avatar */
+.team-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(var(--space-6) + var(--space-2));
+  height: calc(var(--space-6) + var(--space-2));
+  background: linear-gradient(135deg, var(--color-brand-start) 0%, var(--color-brand-end) 100%);
+  color: var(--color-text-inverse);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-xs);
+  border-radius: var(--radius-md);
+  flex-shrink: 0;
+}
+
+.team-avatar-small {
+  width: var(--space-6);
+  height: var(--space-6);
+  font-size: var(--font-size-xs);
+}
+
+.team-avatar-placeholder {
+  background: var(--color-gray-200);
+  color: var(--color-text-secondary);
+}
+
+/* Team Info */
+.team-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-0);
+  min-width: 0;
+}
+
+.team-name {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: calc(var(--space-32) + var(--space-6));
+}
+
+.team-role {
+  font-size: var(--font-size-xs);
+  padding: var(--space-0-5) var(--space-1-5);
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-weight-medium);
+  text-transform: capitalize;
+}
+
+/* Role Badge Colors */
+.team-role-scrum-master {
+  background-color: var(--color-primary-100);
+  color: var(--color-primary-800);
+}
+
+.team-role-product-owner {
+  background-color: var(--color-error-100);
+  color: var(--color-error-800);
+}
+
+.team-role-developer {
+  background-color: var(--color-success-100);
+  color: var(--color-success-800);
+}
+
+.team-role-default {
+  background-color: var(--color-gray-100);
+  color: var(--color-gray-700);
+}
+
+/* Team Count Badge */
+.team-count {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--space-5);
+  height: var(--space-5);
+  padding: 0 var(--space-1-5);
+  background: var(--color-gray-200);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--radius-full);
+}
+
+/* Chevron Icon */
+.chevron {
+  color: var(--color-text-secondary);
+  transition: transform var(--transition-normal);
+  flex-shrink: 0;
+}
+
+.chevron-open {
+  transform: rotate(180deg);
+}
+
+/* Backdrop */
+.team-switcher-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal-backdrop);
+  background: var(--modal-overlay-background);
+}
+
+/* Dropdown */
+.team-switcher-dropdown {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  left: 0;
+  min-width: calc(var(--space-32) + var(--space-24));
+  max-width: 400px;
+  background: var(--color-background-card);
+  border: var(--border-width-1) solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-modal);
+  overflow: hidden;
+  animation: dropdown-slide var(--transition-normal);
+}
+
+@keyframes dropdown-slide {
+  from {
+    opacity: var(--opacity-0);
+    transform: translateY(calc(-1 * var(--space-2)));
+  }
+
+  to {
+    opacity: var(--opacity-100);
+    transform: translateY(0);
+  }
+}
+
+/* Dropdown Header */
+.team-switcher-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: var(--border-width-1) solid var(--color-border-default);
+  background: var(--color-background-page);
+}
+
+.team-switcher-header h3 {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.team-count-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: calc(var(--space-5) + var(--space-1));
+  height: calc(var(--space-5) + var(--space-1));
+  padding: 0 var(--space-2);
+  background: var(--color-interactive-primary);
+  color: var(--color-text-inverse);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--radius-lg);
+}
+
+/* Team List */
+.team-switcher-list {
+  max-height: 320px;
+  overflow-y: auto;
+  padding: var(--space-1);
+}
+
+/* Team Option */
+.team-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  background: transparent;
+  border: var(--border-width-1) solid transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+  text-align: left;
+  font-family: inherit;
+}
+
+.team-option:hover {
+  background: var(--color-background-hover);
+}
+
+.team-option:focus-visible {
+  outline: none;
+  background: var(--color-background-hover);
+  box-shadow: var(--shadow-inset-primary);
+}
+
+.team-option-active {
+  background: var(--color-primary-50);
+}
+
+.team-option-active:hover {
+  background: var(--color-primary-100);
+}
+
+.team-option-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+  flex: 1;
+  min-width: 0;
+}
+
+.team-option-name {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.team-option-role {
+  font-size: var(--font-size-xs);
+  padding: var(--space-0-5) var(--space-2);
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-weight-medium);
+  text-transform: capitalize;
+}
+
+/* Role colors for dropdown options */
+.team-option-role-scrum-master {
+  background-color: var(--color-primary-100);
+  color: var(--color-primary-800);
+}
+
+.team-option-role-product-owner {
+  background-color: var(--color-error-100);
+  color: var(--color-error-800);
+}
+
+.team-option-role-developer {
+  background-color: var(--color-success-100);
+  color: var(--color-success-800);
+}
+
+.team-option-role-default {
+  background-color: var(--color-gray-100);
+  color: var(--color-gray-700);
+}
+
+.check-icon {
+  color: var(--color-interactive-primary);
+  flex-shrink: 0;
+}
+
+/* Scrollbar Styling */
+.team-switcher-list::-webkit-scrollbar {
+  width: var(--space-1-5);
+}
+
+.team-switcher-list::-webkit-scrollbar-track {
+  background: var(--color-gray-100);
+  border-radius: var(--radius-sm);
+}
+
+.team-switcher-list::-webkit-scrollbar-thumb {
+  background: var(--color-gray-400);
+  border-radius: var(--radius-sm);
+}
+
+.team-switcher-list::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gray-500);
+}
+
+/* Responsive */
+@media (width <= 768px) {
+  .team-switcher-dropdown {
+    position: fixed;
+    inset: auto 0 0;
+    min-width: 100%;
+    max-width: 100%;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    animation: slide-up var(--duration-slow) ease;
+  }
+
+  @keyframes slide-up {
+    from {
+      transform: translateY(100%);
+    }
+
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  .team-switcher-list {
+    max-height: 50vh;
+  }
+
+  .team-name {
+    max-width: var(--space-28);
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .loading-spinner-small {
+    animation: none;
+  }
+
+  .team-switcher-dropdown {
+    animation: none;
+  }
+
+  .chevron {
+    transition: none;
+  }
+
+  .team-switcher-trigger,
+  .team-option {
+    transition: none;
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "extends": ["stylelint-config-standard"],
+  "plugins": ["stylelint-no-unsupported-browser-features"],
+  "rules": {
+    "selector-class-pattern": [
+      "^([a-z][a-z0-9]*)(-[a-z0-9]+)*$",
+      {
+        "message": "Expected class selector to be kebab-case (e.g., 'my-class-name')"
+      }
+    ],
+    "declaration-property-value-allowed-list": {
+      "/^color$/": ["/^var\\(--/", "/^(inherit|currentColor|transparent)$/"],
+      "/^background(-color)?$/": [
+        "/^var\\(--/",
+        "/^(inherit|currentColor|transparent)$/",
+        "/^linear-gradient/",
+        "/^radial-gradient/"
+      ],
+      "/^border(-color)?$/": ["/^var\\(--/", "/^(inherit|currentColor|transparent)$/"],
+      "font-weight": ["/^var\\(--/", "/^(inherit|initial)$/"],
+      "line-height": ["/^var\\(--/", "/^normal$/"],
+      "z-index": ["/^var\\(--/", "/^(auto|inherit|initial)$/"],
+      "box-shadow": ["/^var\\(--/", "/^none$/"]
+    },
+    "color-named": "never",
+    "function-disallowed-list": ["rgba", "hsla"],
+    "declaration-property-value-disallowed-list": {
+      "transition": ["all"],
+      "/^transition-/": ["all"]
+    },
+    "media-feature-name-value-no-unknown": null
+  },
+  "overrides": [
+    {
+      "files": ["**/tokens.css"],
+      "rules": {
+        "declaration-property-value-allowed-list": null,
+        "color-named": null,
+        "function-disallowed-list": null,
+        "declaration-property-value-disallowed-list": null,
+        "color-function-notation": null,
+        "color-function-alias-notation": null,
+        "alpha-value-notation": null,
+        "value-keyword-case": null
+      }
+    }
+  ]
+}

@@ -1,0 +1,263 @@
+/**
+ * EmptyState Component Styles
+ *
+ * Consistent styling for all empty state scenarios
+ */
+
+/* ============================================================================
+   BASE CONTAINER
+   ============================================================================ */
+
+.empty-state-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+/* ============================================================================
+   CONTENT WRAPPER
+   ============================================================================ */
+
+.empty-state-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 400px;
+  padding: var(--space-12);
+  background: var(--color-background-card);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ============================================================================
+   ICON
+   ============================================================================ */
+
+.empty-state-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-16);
+  height: var(--space-16);
+  margin-bottom: var(--space-6);
+  color: var(--color-gray-400);
+}
+
+.empty-state-icon svg {
+  width: 64px;
+  height: 64px;
+}
+
+/* ============================================================================
+   TYPOGRAPHY
+   ============================================================================ */
+
+.empty-state-title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-2) 0;
+  line-height: var(--line-height-tight);
+}
+
+.empty-state-description {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-6) 0;
+  line-height: var(--line-height-relaxed);
+}
+
+/* ============================================================================
+   ACTIONS
+   ============================================================================ */
+
+.empty-state-actions {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* ============================================================================
+   BUTTONS
+   ============================================================================ */
+
+.empty-state-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2-5) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  border: var(--border-width-1) solid transparent;
+  text-decoration: none;
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.button-icon {
+  flex-shrink: 0;
+}
+
+.empty-state-button:focus {
+  outline: var(--border-width-2) solid var(--color-primary-200);
+  outline-offset: var(--space-0-5);
+}
+
+.empty-state-button:disabled {
+  opacity: var(--opacity-60);
+  cursor: not-allowed;
+}
+
+/* Primary button */
+.button-primary {
+  background-color: var(--button-primary-background);
+  color: var(--button-primary-color);
+}
+
+.button-primary:hover:not(:disabled) {
+  background-color: var(--button-primary-background-hover);
+}
+
+.button-primary:active:not(:disabled) {
+  background-color: var(--button-primary-background-active);
+}
+
+/* Secondary button */
+.button-secondary {
+  background-color: var(--button-secondary-background);
+  color: var(--button-secondary-color);
+  border-color: var(--color-gray-300);
+}
+
+.button-secondary:hover:not(:disabled) {
+  background-color: var(--button-secondary-background-hover);
+  border-color: var(--color-gray-400);
+}
+
+/* ============================================================================
+   VARIANTS
+   ============================================================================ */
+
+/* Default variant - for inline/content area empty states */
+.empty-state-container.default {
+  min-height: 400px;
+  padding: var(--space-6);
+}
+
+/* Compact variant - for smaller spaces like cards or side panels */
+.empty-state-container.compact {
+  min-height: 200px;
+  padding: var(--space-4);
+}
+
+.empty-state-container.compact .empty-state-icon {
+  width: var(--space-12);
+  height: var(--space-12);
+  margin-bottom: var(--space-3);
+}
+
+.empty-state-container.compact .empty-state-icon svg {
+  width: 48px;
+  height: 48px;
+}
+
+.empty-state-container.compact .empty-state-title {
+  font-size: var(--font-size-lg);
+}
+
+.empty-state-container.compact .empty-state-description {
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-3);
+}
+
+/* Full-page variant - for entire page empty states */
+.empty-state-container.full-page {
+  min-height: calc(100vh - var(--space-24));
+  padding: var(--space-6);
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================ */
+
+@media (width <= 640px) {
+  .empty-state-content {
+    padding: var(--space-8);
+    margin: var(--space-4);
+  }
+
+  .empty-state-icon {
+    width: var(--space-12);
+    height: var(--space-12);
+    margin-bottom: var(--space-4);
+  }
+
+  .empty-state-icon svg {
+    width: 48px;
+    height: 48px;
+  }
+
+  .empty-state-title {
+    font-size: var(--font-size-lg);
+  }
+
+  .empty-state-description {
+    font-size: var(--font-size-sm);
+  }
+
+  .empty-state-container.full-page {
+    min-height: calc(100vh - var(--space-16));
+  }
+}
+
+/* ============================================================================
+   ACCESSIBILITY
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .empty-state-button {
+    transition: none;
+  }
+}
+
+/* High contrast mode support - using more instead of high for better compatibility */
+@media (prefers-contrast: more) {
+  .empty-state-content {
+    border: var(--border-width-2) solid var(--color-border-default);
+  }
+
+  .button-secondary {
+    border-width: var(--border-width-2);
+  }
+}
+
+/* ============================================================================
+   THEME VARIANTS (for future use)
+   ============================================================================ */
+
+/* Warning theme - for states requiring attention */
+.empty-state-container.warning .empty-state-icon {
+  color: var(--color-warning-500);
+}
+
+/* Error theme - for error states */
+.empty-state-container.error .empty-state-icon {
+  color: var(--color-error-500);
+}
+
+/* Success theme - for positive empty states */
+.empty-state-container.success .empty-state-icon {
+  color: var(--color-success-500);
+}
+
+/* Info theme - for informational states */
+.empty-state-container.info .empty-state-icon {
+  color: var(--color-primary-500);
+}

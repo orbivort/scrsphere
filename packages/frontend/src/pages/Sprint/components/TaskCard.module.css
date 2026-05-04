@@ -1,0 +1,449 @@
+/* ============================================================================
+   TASK CARD COMPONENT - Modern Interactive Design
+   ============================================================================ */
+
+.task-card {
+  background: linear-gradient(
+    135deg,
+    var(--color-background-card) 0%,
+    var(--color-background-page) 100%
+  );
+  border-radius: var(--radius-xl);
+  border: var(--border-width-1) solid var(--color-border-default);
+  padding: var(--space-4);
+  cursor: grab;
+  transition: all var(--transition-normal);
+  position: relative;
+  box-shadow: var(--shadow-sm);
+}
+
+.task-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--border-width-4);
+  background: linear-gradient(
+    90deg,
+    var(--color-primary-400) 0%,
+    var(--color-primary-500) 50%,
+    var(--color-success-400) 100%
+  );
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+}
+
+.task-card:hover {
+  box-shadow: var(--shadow-xl);
+  transform: translateY(calc(var(--space-1) * -1));
+  border-color: var(--color-primary-300);
+}
+
+.task-card:hover::before {
+  opacity: 1;
+}
+
+.task-card:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.task-card.focused {
+  border-color: var(--color-primary-500);
+  box-shadow: var(--shadow-focus-primary-4);
+}
+
+.task-card.dragging {
+  opacity: var(--opacity-50);
+  transform: scale(0.98) rotate(2deg);
+  box-shadow: var(--shadow-2xl);
+}
+
+/* Grabbed state - keyboard drag mode */
+.task-card.grabbed {
+  border-color: var(--color-primary-500);
+  box-shadow: var(--shadow-focus-primary-4), var(--shadow-lg);
+  transform: scale(1.02);
+  cursor: grabbing;
+  z-index: var(--z-dropdown);
+}
+
+.task-card.grabbed::before {
+  opacity: 1;
+  background: linear-gradient(
+    90deg,
+    var(--color-primary-500) 0%,
+    var(--color-accent-purple-500) 50%,
+    var(--color-primary-500) 100%
+  );
+  animation: grab-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes grab-pulse {
+  0%,
+  100% {
+    opacity: 0.8;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.task-card.drop-target-highlight {
+  border-color: var(--color-success-500);
+  box-shadow: var(--shadow-success-button), var(--shadow-lg);
+}
+
+/* Drop target indicator */
+.task-card.drop-target {
+  border-color: var(--color-success-500);
+  box-shadow:
+    var(--shadow-focus-primary-4),
+    0 0 0 var(--border-width-4) var(--color-success-200);
+}
+
+.task-card.drop-target::after {
+  content: '';
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  width: var(--space-4);
+  height: var(--space-4);
+  background: var(--color-success-500);
+  border-radius: var(--radius-full);
+  animation: pulse-dot 1s ease-in-out infinite;
+}
+
+@keyframes pulse-gradient {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+}
+
+.task-card:active {
+  cursor: grabbing;
+}
+
+.task-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-3);
+}
+
+.task-id {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-family-mono);
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.task-assignee {
+  width: var(--space-8);
+  height: var(--space-8);
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--color-primary-500), var(--color-primary-600));
+  color: var(--color-text-inverse);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-primary-button);
+  border: var(--border-width-2) solid var(--color-background-card);
+}
+
+.task-title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-2) 0;
+  line-height: var(--line-height-normal);
+}
+
+.task-parent-pbi {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-3);
+  padding: var(--space-1-5) var(--space-3);
+  background: linear-gradient(135deg, var(--color-gray-50) 0%, var(--color-gray-100) 100%);
+  border-radius: var(--radius-md);
+  border: var(--border-width-1) solid var(--color-border-default);
+}
+
+.pbi-label {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-tertiary);
+}
+
+.pbi-title {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pbi-points {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary-600);
+  padding: var(--space-0-5) var(--space-2);
+  background: var(--color-primary-50);
+  border-radius: var(--radius-sm);
+}
+
+.task-description {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-3) 0;
+  line-height: var(--line-height-relaxed);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.task-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--space-3);
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.task-hours-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.task-hours {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-weight: var(--font-weight-medium);
+}
+
+.task-hours svg {
+  flex-shrink: 0;
+  color: var(--color-text-tertiary);
+}
+
+.hours-estimate {
+  color: var(--color-text-tertiary);
+}
+
+.task-assignee-field {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  justify-content: center;
+  min-width: 0;
+}
+
+.task-assignee-name {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-700);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+  font-weight: var(--font-weight-medium);
+}
+
+.task-assignee-name svg {
+  flex-shrink: 0;
+  color: var(--color-text-tertiary);
+}
+
+.task-unassigned {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  white-space: nowrap;
+  font-style: italic;
+}
+
+.task-unassigned svg {
+  flex-shrink: 0;
+}
+
+.task-status-badge {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.task-status-badge.todo {
+  background: linear-gradient(135deg, var(--color-gray-100) 0%, var(--color-gray-200) 100%);
+  color: var(--color-gray-700);
+}
+
+.task-status-badge.in-progress {
+  background: linear-gradient(135deg, var(--color-primary-100) 0%, var(--color-primary-200) 100%);
+  color: var(--color-primary-700);
+}
+
+.task-status-badge.done {
+  background: linear-gradient(135deg, var(--color-success-100) 0%, var(--color-success-200) 100%);
+  color: var(--color-success-800);
+}
+
+.task-card-actions {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.task-card:hover .task-card-actions {
+  opacity: 1;
+}
+
+.drag-handle {
+  color: var(--color-text-tertiary);
+  cursor: grab;
+  display: flex;
+  align-items: center;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+/* Grab indicator - visual feedback for keyboard drag mode */
+.grab-indicator {
+  position: absolute;
+  bottom: calc(var(--space-2) * -1);
+  left: 50%;
+  transform: translateX(-50%) translateY(100%);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-primary-600);
+  color: var(--color-text-inverse);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  box-shadow: var(--shadow-lg);
+  white-space: nowrap;
+  z-index: var(--z-dropdown);
+  animation: slide-up 0.2s ease-out;
+}
+
+.grab-indicator-text {
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.grab-icon {
+  font-size: var(--font-size-sm);
+  animation: bounce-icon 0.6s ease-in-out infinite;
+}
+
+.grab-text {
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(100%) translateY(var(--space-2));
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(100%);
+  }
+}
+
+@keyframes bounce-icon {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(calc(var(--space-0-5) * -1));
+  }
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================ */
+
+@media (width <= 640px) {
+  .task-card {
+    padding: var(--space-3);
+  }
+
+  .grab-indicator {
+    font-size: calc(var(--font-size-xs) - 1px);
+    padding: var(--space-1-5) var(--space-2);
+  }
+}
+
+/* ============================================================================
+   REDUCED MOTION
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .task-card:hover {
+    transform: none;
+  }
+
+  .task-card.grabbed {
+    transform: none;
+  }
+
+  .task-card.grabbed::before {
+    animation: none;
+  }
+
+  .task-card.drop-target::after {
+    animation: none;
+  }
+
+  .grab-indicator {
+    animation: none;
+  }
+
+  .grab-icon {
+    animation: none;
+  }
+}

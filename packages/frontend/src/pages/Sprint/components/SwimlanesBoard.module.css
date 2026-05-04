@@ -1,0 +1,263 @@
+/* ============================================================================
+   SWIMLANES BOARD COMPONENT - Modern Design
+   ============================================================================ */
+
+.swimlanes-container {
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(
+    135deg,
+    var(--color-background-card) 0%,
+    var(--color-background-page) 100%
+  );
+  border-radius: var(--radius-2xl);
+  border: var(--border-width-1) solid var(--color-border-default);
+  overflow: hidden;
+  box-shadow: var(--shadow-xl);
+}
+
+.swimlanes-header {
+  display: grid;
+  grid-template-columns: 200px repeat(3, 1fr);
+  background: linear-gradient(180deg, var(--color-background-page) 0%, var(--color-gray-50) 100%);
+  border-bottom: var(--border-width-2) solid var(--color-border-default);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+}
+
+.swimlane-label-header {
+  padding: var(--space-4);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-secondary);
+  border-right: var(--border-width-1) solid var(--color-border-default);
+  display: flex;
+  align-items: center;
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+  font-size: var(--font-size-xs);
+}
+
+.swimlane-column-header {
+  padding: var(--space-4);
+  font-weight: var(--font-weight-bold);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  border-right: var(--border-width-1) solid var(--color-border-default);
+  font-size: var(--font-size-sm);
+}
+
+.swimlane-column-header:last-child {
+  border-right: var(--border-width-0) solid transparent;
+}
+
+.todo {
+  color: var(--color-gray-600);
+}
+
+.in-progress {
+  color: var(--color-primary-600);
+}
+
+.done {
+  color: var(--color-success-600);
+}
+
+.column-total {
+  margin-left: auto;
+  background: linear-gradient(135deg, var(--color-gray-100) 0%, var(--color-gray-200) 100%);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+}
+
+.swimlanes-body {
+  max-height: calc(100vh - 500px);
+  overflow-y: auto;
+}
+
+.swimlane-row {
+  display: grid;
+  grid-template-columns: 200px repeat(3, 1fr);
+  border-bottom: var(--border-width-1) solid var(--color-border-default);
+  min-height: 100px;
+}
+
+.swimlane-row:last-child {
+  border-bottom: var(--border-width-0) solid transparent;
+}
+
+.swimlane-label {
+  padding: var(--space-4);
+  background: linear-gradient(135deg, var(--color-background-page) 0%, var(--color-gray-50) 100%);
+  border-right: var(--border-width-1) solid var(--color-border-default);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.swimlane-label-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0-5);
+}
+
+.swimlane-name {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.swimlane-subtitle {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.swimlane-stats {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.stat-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.stat-dot.todo {
+  background: var(--color-gray-400);
+}
+
+.stat-dot.in-progress {
+  background: var(--color-primary-500);
+}
+
+.stat-dot.done {
+  background: var(--color-success-500);
+}
+
+.stat-hours {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  margin-left: var(--space-1);
+}
+
+.swimlane-cell {
+  padding: var(--space-3);
+  border-right: var(--border-width-1) solid var(--color-border-default);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-height: 80px;
+  background: var(--color-background-card);
+  transition: all var(--transition-fast);
+}
+
+/* Virtual scrolling styles for swimlane cells */
+.virtualized-cell {
+  flex: 1;
+  min-height: 400px;
+}
+
+.virtualized-cell > div {
+  width: 100%;
+}
+
+.virtualized-cell [role='listitem'] {
+  margin-bottom: var(--space-2);
+}
+
+.virtualized-cell [role='listitem']:last-child {
+  margin-bottom: 0;
+}
+
+.swimlane-cell:last-child {
+  border-right: var(--border-width-0) solid transparent;
+}
+
+.drop-target {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-50) 0%,
+    var(--color-background-card) 100%
+  );
+  box-shadow: var(--shadow-inset-primary);
+}
+
+/* Keyboard drag drop target - highlighted when task is grabbed via keyboard */
+.keyboard-drop-target {
+  background: linear-gradient(
+    135deg,
+    var(--color-success-50) 0%,
+    var(--color-background-card) 100%
+  );
+  box-shadow: var(--shadow-focus-success), var(--shadow-lg);
+  animation: pulse-swimlane-drop-target 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-swimlane-drop-target {
+  0%,
+  100% {
+    box-shadow: var(--shadow-focus-success), var(--shadow-lg);
+  }
+
+  50% {
+    box-shadow: var(--shadow-focus-success), var(--shadow-xl);
+  }
+}
+
+.empty-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-gray-300);
+  font-size: var(--font-size-2xl);
+  min-height: 60px;
+  flex: 1;
+}
+
+.swimlanes-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-12) var(--space-6);
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+.swimlanes-empty svg {
+  margin-bottom: var(--space-4);
+  opacity: var(--opacity-50);
+  color: var(--color-text-tertiary);
+}
+
+.swimlanes-empty-title {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-2) 0;
+  font-weight: var(--font-weight-bold);
+}
+
+.swimlanes-empty-description {
+  font-size: var(--font-size-sm);
+  margin: 0;
+}

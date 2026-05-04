@@ -1,0 +1,146 @@
+{
+  "name": "scrsphere",
+  "version": "1.0.0",
+  "private": true,
+  "license": "Apache-2.0",
+  "description": "Scrsphere - Agile Scrum Lifecycle Management System",
+  "keywords": [
+    "agile",
+    "scrum",
+    "project-management",
+    "typescript",
+    "react",
+    "nodejs"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/scrsphere/scrsphere.git"
+  },
+  "type": "module",
+  "packageManager": "pnpm@10.33.0",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "check-pm": "node scripts/utility/check-package-manager.js",
+    "predev": "node scripts/utility/check-package-manager.js",
+    "dev": "concurrently \"pnpm --filter=@scrsphere/backend run dev\" \"pnpm --filter=@scrsphere/frontend run dev\"",
+    "dev:test": "concurrently \"pnpm --filter=@scrsphere/backend run dev:test\" \"pnpm --filter=@scrsphere/frontend run dev:test\"",
+    "dev:backend": "pnpm --filter=@scrsphere/backend run dev",
+    "dev:frontend": "pnpm --filter=@scrsphere/frontend run dev",
+    "dev:watch": "concurrently \"pnpm --filter=@scrsphere/backend run dev:watch\" \"pnpm --filter=@scrsphere/frontend run dev:watch\"",
+    "dev:watch:backend": "pnpm --filter=@scrsphere/backend run dev:watch",
+    "dev:watch:frontend": "pnpm --filter=@scrsphere/frontend run dev:watch",
+    "dev:watch:all": "concurrently \"pnpm --filter=@scrsphere/backend run dev:watch\" \"pnpm --filter=@scrsphere/frontend run dev:watch\"",
+    "prebuild": "node scripts/utility/check-package-manager.js",
+    "build": "pnpm run -r build",
+    "build:watch": "pnpm run -r build --watch",
+    "build:force": "pnpm run -r build --force",
+    "clean": "rimraf packages/shared/dist packages/backend/dist packages/frontend/dist",
+    "preclean:all": "node scripts/utility/check-package-manager.js",
+    "clean:all": "rimraf --verbose packages/shared/dist packages/backend/dist packages/frontend/dist packages/shared/tsconfig.tsbuildinfo packages/backend/tsconfig.tsbuildinfo packages/frontend/tsconfig.tsbuildinfo packages/shared/node_modules packages/backend/node_modules packages/frontend/node_modules node_modules || exit 0",
+    "pretest": "node scripts/utility/check-package-manager.js",
+    "test": "pnpm run -r test",
+    "test:watch": "pnpm run -r test:watch",
+    "test:coverage": "pnpm run -r test:coverage",
+    "test:unit": "pnpm --filter=@scrsphere/backend run test:unit && pnpm --filter=@scrsphere/frontend run test",
+    "test:integration": "pnpm --filter=@scrsphere/backend run test:integration",
+    "test:e2e": "pnpm --filter=@scrsphere/backend run test:e2e && pnpm --filter=@scrsphere/frontend run test:e2e",
+    "test:e2e:backend": "pnpm --filter=@scrsphere/backend run test:e2e",
+    "test:e2e:frontend": "pnpm --filter=@scrsphere/frontend run test:e2e",
+    "test:all": "pnpm --filter=@scrsphere/backend run test:all && pnpm --filter=@scrsphere/frontend run test",
+    "prelint": "node scripts/utility/check-package-manager.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "lint:css": "stylelint \"packages/frontend/src/**/*.css\"",
+    "lint:css:fix": "stylelint \"packages/frontend/src/**/*.css\" --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:css": "prettier --write \"packages/frontend/src/**/*.css\"",
+    "format:css:check": "prettier --check \"packages/frontend/src/**/*.css\"",
+    "pretypecheck": "node scripts/utility/check-package-manager.js",
+    "typecheck": "pnpm run -r typecheck",
+    "prepare": "husky",
+    "predb:generate": "node scripts/utility/check-package-manager.js",
+    "db:generate": "pnpm --filter=@scrsphere/backend run db:generate",
+    "predb:push": "node scripts/utility/check-package-manager.js",
+    "db:push": "pnpm --filter=@scrsphere/backend run db:push",
+    "predb:migrate": "node scripts/utility/check-package-manager.js",
+    "db:migrate": "pnpm --filter=@scrsphere/backend run db:migrate",
+    "db:migrate:test": "pnpm --filter=@scrsphere/backend run db:migrate:test",
+    "db:migrate:prod": "pnpm --filter=@scrsphere/backend run db:migrate:prod",
+    "predb:studio": "node scripts/utility/check-package-manager.js",
+    "db:studio": "pnpm --filter=@scrsphere/backend run db:studio",
+    "db:reset": "pnpm --filter=@scrsphere/backend run db:reset",
+    "db:validate": "pnpm --filter=@scrsphere/backend run db:validate",
+    "audit": "pnpm audit --registry https://registry.npmjs.org/",
+    "outdated": "pnpm outdated",
+    "loadtest": "dotenv -e k6/.env.k6 -- node k6/scripts/validate-and-run.js k6/scripts/scenarios/normal-load.js",
+    "loadtest:normal": "dotenv -e k6/.env.k6 -- node k6/scripts/validate-and-run.js k6/scripts/scenarios/normal-load.js",
+    "loadtest:peak": "dotenv -e k6/.env.k6 -- node k6/scripts/validate-and-run.js k6/scripts/scenarios/sprint-planning-peak.js",
+    "loadtest:stress": "dotenv -e k6/.env.k6 -- node k6/scripts/validate-and-run.js k6/scripts/scenarios/stress-breaking-point.js",
+    "loadtest:endurance": "dotenv -e k6/.env.k6 -- node k6/scripts/validate-and-run.js k6/scripts/scenarios/workday-endurance.js",
+    "loadtest:multi-team": "dotenv -e k6/.env.k6 -- node k6/scripts/validate-and-run.js k6/scripts/scenarios/multi-team-normal.js",
+    "loadtest:daily-scrum": "dotenv -e k6/.env.k6 -- node k6/scripts/validate-and-run.js k6/scripts/scenarios/daily-scrum-rush.js",
+    "loadtest:auth": "dotenv -e k6/.env.k6 -- node k6/scripts/validate-and-run.js k6/scripts/scenarios/auth-flood.js",
+    "loadtest:db": "dotenv -e k6/.env.k6 -- node k6/scripts/validate-and-run.js k6/scripts/scenarios/database-stress.js",
+    "loadtest:generate-data": "cd packages/backend && pnpm run loadtest:data"
+  },
+  "devDependencies": {
+    "@eslint/js": "catalog:",
+    "@typescript-eslint/eslint-plugin": "^8.59.1",
+    "@typescript-eslint/parser": "^8.59.1",
+    "concurrently": "^9.2.1",
+    "dotenv-cli": "^8.0.0",
+    "eslint": "catalog:",
+    "eslint-config-prettier": "catalog:",
+    "eslint-plugin-import-x": "^4.16.2",
+    "eslint-plugin-prettier": "catalog:",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "catalog:",
+    "eslint-plugin-react-refresh": "catalog:",
+    "globals": "catalog:",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
+    "postcss": "^8.5.13",
+    "postcss-values-parser": "^7.0.0",
+    "prettier": "catalog:",
+    "rimraf": "^6.1.3",
+    "stylelint": "catalog:",
+    "stylelint-config-standard": "catalog:",
+    "stylelint-no-unsupported-browser-features": "^8.1.1",
+    "typescript": "catalog:",
+    "typescript-eslint": "^8.59.1"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix --max-warnings=1000",
+      "prettier --write"
+    ],
+    "*.{js,jsx,json,md}": [
+      "prettier --write"
+    ],
+    "*.css": [
+      "stylelint --fix --allow-empty-input",
+      "prettier --write"
+    ]
+  },
+  "engines": {
+    "node": "^24.15.0",
+    "pnpm": "^10.33.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "esbuild": "^0.25.0",
+      "glob": "^11.0.0",
+      "follow-redirects": "^1.16.0",
+      "@hono/node-server": "^1.19.14"
+    },
+    "peerDependencyRules": {
+      "allowedVersions": {
+        "eslint": "^10.0.0"
+      }
+    }
+  }
+}

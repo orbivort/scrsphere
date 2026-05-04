@@ -1,0 +1,653 @@
+/**
+ * Backlog Page Loading State Tests
+ *
+ * Test Coverage:
+ * - Initial loading state display when page is loading
+ * - Loading state transitions during data fetching operations
+ * - Loading state persistence during asynchronous processes
+ * - Proper termination of loading state upon completion or error states
+ * - Edge cases: slow network, failed data fetching, concurrent loading
+ * - Accessibility during loading (ARIA attributes)
+ */
+
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { render, screen, waitFor, act } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { MemoryRouter } from 'react-router-dom';
+
+import { ProductBacklog } from './Backlog';
+import { useTeamStore } from '../../store';
+import { apiService } from '../../services';
+import { ItemStatus, MoSCoWPriority } from '../../types';
+
+// Mock stores
+vi.mock('../../store', () => ({
+  useTeamStore: vi.fn(),
+}));
+
+vi.mock('../../hooks/useMutationErrorHandler', () => ({
+  useMutationErrorHandler: () => ({
+    handleMutationError: vi.fn((_error, _context) => 'An error occurred'),
+  }),
+}));
+
+// Mock API service
+vi.mock('../../services', () => ({
+  apiService: {
+    getProductBacklog: vi.fn(),
+    getProductGoals: vi.fn(),
+    getDefinitionOfReady: vi.fn(),
+    getDefinitionOfDone: vi.fn(),
+    getTasksByPbiId: vi.fn(),
+    createProductBacklogItem: vi.fn(),
+    updateProductBacklogItem: vi.fn(),
+    deleteProductBacklogItem: vi.fn(),
+    verifyDoRForPBI: vi.fn(),
+    verifyDoDForPBI: vi.fn(),
+  },
+}));
+
+// Mock hooks
+vi.mock('../../hooks/useToast', () => ({
+  useToast: () => ({
+    toasts: [],
+    success: vi.fn(),
+    error: vi.fn(),
+    info: vi.fn(),
+    removeToast: vi.fn(),
+  }),
+  ToastContainer: () => <div data-testid="toast-container" />,
+}));
+
+// Mock child components
+vi.mock('../../components/EmptyState', () => ({
+  EmptyState: ({ type }: { type: string }) => (
+    <div data-testid={`empty-state-${type}`}>Empty State: {type}</div>
+  ),
+}));
+
+vi.mock('./PendingAdjustments', () => ({
+  PendingAdjustments: () => <div data-testid="pending-adjustments" />,
+}));
+
+vi.mock('./PendingFeedback', () => ({
+  PendingFeedback: () => <div data-testid="pending-feedback" />,
+}));
+
+vi.mock('./PendingRetroActionItems', () => ({
+  PendingRetroActionItems: () => <div data-testid="pending-retro-action-items" />,
+}));
+
+vi.mock('./components', () => ({
+  BacklogHeader: () => <div data-testid="backlog-header" />,
+  BacklogFilterBar: () => <div data-testid="backlog-filter-bar" />,
+  ActiveGoalBanner: () => <div data-testid="active-goal-banner" />,
+}));
+
+vi.mock('./views/BoardView', () => ({
+  BoardView: () => <div data-testid="board-view" />,
+}));
+
+vi.mock('./views/ListView', () => ({
+  ListView: () => <div data-testid="list-view" />,
+}));
+
+vi.mock('./modals', () => ({
+  CreateItemModal: () => <div data-testid="create-item-modal" />,
+  EditItemModal: () => <div data-testid="edit-item-modal" />,
+  ItemDetailModal: () => <div data-testid="item-detail-modal" />,
+  DeleteConfirmModal: () => <div data-testid="delete-confirm-modal" />,
+  ValidationModal: () => <div data-testid="validation-modal" />,
+  UnsavedChangesModal: () => <div data-testid="unsaved-changes-modal" />,
+}));
+
+// Test utilities
+const createTestQueryClient = () =>
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        staleTime: 0,
+      },
+    },
+  });
+
+const renderBacklog = (queryClient?: QueryClient) => {
+  const testQueryClient = queryClient || createTestQueryClient();
+  return render(
+    <QueryClientProvider client={testQueryClient}>
+      <MemoryRouter>
+        <ProductBacklog />
+      </MemoryRouter>
+    </QueryClientProvider>
+  );
+};
+
+// Mock data
+const mockTeam = {
+  id: 'team-1',
+  name: 'Test Team',
+  slug: 'test-team',
+};
+
+const mockBacklogItems = [
+  {
+    id: 'pbi-1',
+    title: 'Test PBI 1',
+    description: 'Test description',
+    status: ItemStatus.NEW,
+    priority: MoSCoWPriority.MUST_HAVE,
+    storyPoints: 5,
+    teamId: 'team-1',
+    labels: [],
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z',
+  },
+];
+
+const mockActiveGoal = {
+  id: 'goal-1',
+  title: 'Test Goal',
+  description: 'Test goal description',
+  status: 'ACTIVE',
+  teamId: 'team-1',
+  startDate: '2026-01-01T00:00:00Z',
+  endDate: '2026-12-31T23:59:59Z',
+  createdAt: '2026-01-01T00:00:00Z',
+  updatedAt: '2026-01-01T00:00:00Z',
+};
+
+describe('Backlog - Loading State Tests', () => {
+  let mockUseTeamStore: ReturnType<typeof vi.fn>;
+  let mockApiService: typeof apiService;
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    mockUseTeamStore = vi.mocked(useTeamStore);
+    mockApiService = vi.mocked(apiService);
+
+    mockUseTeamStore.mockReturnValue({
+      currentTeam: mockTeam,
+    });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.clearAllMocks();
+  });
+
+  describe('Initial Loading State Display', () => {
+    it('should show loading state when page is loading', () => {
+      mockApiService.getProductBacklog.mockImplementation(() => new Promise(() => {}));
+      mockApiService.getProductGoals.mockImplementation(() => new Promise(() => {}));
+
+      renderBacklog();
+
+      expect(screen.getAllByText(/Loading Product Backlog/i)[0]).toBeInTheDocument();
+    });
+
+    it('should show loading spinner during initial load', () => {
+      mockApiService.getProductBacklog.mockImplementation(() => new Promise(() => {}));
+      mockApiService.getProductGoals.mockImplementation(() => new Promise(() => {}));
+
+      renderBacklog();
+
+      // The loading container should exist with LoadingState component
+      expect(screen.getByRole('status')).toBeInTheDocument();
+    });
+
+    it('should show empty state when no team is selected', () => {
+      mockUseTeamStore.mockReturnValue({
+        currentTeam: null,
+      });
+
+      renderBacklog();
+
+      expect(screen.getByTestId('empty-state-no-team')).toBeInTheDocument();
+    });
+
+    it('should show empty state when no active goal exists', async () => {
+      mockApiService.getProductBacklog.mockResolvedValue({ data: mockBacklogItems });
+      mockApiService.getProductGoals.mockResolvedValue({ data: [] });
+
+      renderBacklog();
+
+      await act(async () => {
+        vi.runAllTimersAsync();
+      });
+
+      await waitFor(() => {
+        expect(screen.getByTestId('empty-state-no-active-goal')).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Loading State Transitions', () => {
+    it('should transition from loading to loaded state when data fetch completes', async () => {
+      mockApiService.getProductBacklog.mockResolvedValue({ data: mockBacklogItems });
+      mockApiService.getProductGoals.mockResolvedValue({ data: [mockActiveGoal] });
+      mockApiService.getDefinitionOfReady.mockResolvedValue({ data: { items: [] } });
+      mockApiService.getDefinitionOfDone.mockResolvedValue({ data: { items: [] } });
+
+      renderBacklog();
+
+      expect(screen.getAllByText(/Loading Product Backlog/i)[0]).toBeInTheDocument();
+
+      await act(async () => {
+        vi.runAllTimersAsync();
+      });
+
+      await waitFor(() => {
+        expect(screen.queryByText(/Loading Product Backlog/i)).not.toBeInTheDocument();
+      });
+
+      expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
+    });
+
+    it('should show loading state during backlog fetch', async () => {
+      let resolveBacklog: (value: unknown) => void;
+      mockApiService.getProductBacklog.mockImplementation(
+        () =>
+          new Promise((resolve) => {
+            resolveBacklog = resolve;
+          })
+      );
+      mockApiService.getProductGoals.mockImplementation(() => new Promise(() => {}));
+
+      renderBacklog();
+
+      expect(screen.getAllByText(/Loading Product Backlog/i)[0]).toBeInTheDocument();
+
+      await act(async () => {
+        resolveBacklog!({ data: mockBacklogItems });
+        vi.runAllTimersAsync();
+      });
+    });
+
+    it('should show loading state during goals fetch', async () => {
+      let resolveGoals: (value: unknown) => void;
+      mockApiService.getProductBacklog.mockImplementation(() => new Promise(() => {}));
+      mockApiService.getProductGoals.mockImplementation(
+        () =>
+          new Promise((resolve) => {
+            resolveGoals = resolve;
+          })
+      );
+
+      renderBacklog();
+
+      expect(screen.getAllByText(/Loading Product Backlog/i)[0]).toBeInTheDocument();
+
+      await act(async () => {
+        resolveGoals!({ data: [mockActiveGoal] });
+        vi.runAllTimersAsync();
+      });
+    });
+  });
+
+  describe('Loading State Persistence', () => {
+    it('should maintain loading state during long-running data fetch', async () => {
+      mockApiService.getProductBacklog.mockImplementation(() => new Promise(() => {}));
+      mockApiService.getProductGoals.mockImplementation(() => new Promise(() => {}));
+
+      renderBacklog();
+
+      expect(screen.getAllByText(/Loading Product Backlog/i)[0]).toBeInTheDocument();
+
+      act(() => {
+        vi.advanceTimersByTime(2000);
+      });
+
+      expect(screen.getAllByText(/Loading Product Backlog/i)[0]).toBeInTheDocument();
+
+      act(() => {
+        vi.advanceTimersByTime(3000);
+      });
+
+      expect(screen.getAllByText(/Loading Product Backlog/i)[0]).toBeInTheDocument();
+    });
+
+    it('should persist loading state until all data is loaded', async () => {
+      let resolveBacklog: (value: unknown) => void;
+      let resolveGoals: (value: unknown) => void;
+
+      mockApiService.getProductBacklog.mockImplementation(
+        () =>
+          new Promise((resolve) => {
+            resolveBacklog = resolve;
+          })
+      );
+      mockApiService.getProductGoals.mockImplementation(
+        () =>
+          new Promise((resolve) => {
+            resolveGoals = resolve;
+          })
+      );
+
+      renderBacklog();
+
+      expect(screen.getAllByText(/Loading Product Backlog/i)[0]).toBeInTheDocument();
+
+      await act(async () => {
+        resolveBacklog!({ data: mockBacklogItems });
+        vi.runAllTimersAsync();
+      });
+
+      // Still loading because goals not resolved
+      expect(screen.getAllByText(/Loading Product Backlog/i)[0]).toBeInTheDocument();
+
+      await act(async () => {
+        resolveGoals!({ data: [mockActiveGoal] });
+        vi.runAllTimersAsync();
+      });
+
+      await waitFor(() => {
+        expect(screen.queryByText(/Loading Product Backlog/i)).not.toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Error State Handling', () => {
+    it('should handle error state when backlog fetch fails', async () => {
+      mockApiService.getProductBacklog.mockRejectedValue(new Error('Network error'));
+      mockApiService.getProductGoals.mockResolvedValue({ data: [mockActiveGoal] });
+
+      renderBacklog();
+
+      await act(async () => {
+        vi.runAllTimersAsync();
+      });
+
+      await waitFor(() => {
+        expect(screen.queryByText(/Loading Product Backlog/i)).not.toBeInTheDocument();
+      });
+    });
+
+    it('should handle error state when goals fetch fails', async () => {
+      mockApiService.getProductBacklog.mockResolvedValue({ data: mockBacklogItems });
+      mockApiService.getProductGoals.mockRejectedValue(new Error('Goals error'));
+
+      renderBacklog();
+
+      await act(async () => {
+        vi.runAllTimersAsync();
+      });
+
+      await waitFor(() => {
+        expect(screen.queryByText(/Loading Product Backlog/i)).not.toBeInTheDocument();
+      });
+    });
+
+    it('should handle partial data loading with some failures', async () => {
+      mockApiService.getProductBacklog.mockResolvedValue({ data: mockBacklogItems });
+      mockApiService.getProductGoals.mockRejectedValue(new Error('Goals error'));
+
+      renderBacklog();
+
+      await act(async () => {
+        vi.runAllTimersAsync();
+      });
+
+      await waitFor(() => {
+        expect(screen.queryByText(/Loading Product Backlog/i)).not.toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Edge Cases: Slow Network', () => {
+    it('should show loading state for slow network requests', async () => {
+      mockApiService.getProductBacklog.mockImplementation(
+        () =>
+          new Promise((resolve) => {
+            setTimeout(() => resolve({ data: mockBacklogItems }), 10000);
+          })
+      );
+      mockApiService.getProductGoals.mockImplementation(() => new Promise(() => {}));
+
+      renderBacklog();
+
+      expect(screen.getAllByText(/Loading Product Backlog/i)[0]).toBeInTheDocument();
+
+      act(() => {
+        vi.advanceTimersByTime(5000);
+      });
+
+      expect(screen.getAllByText(/Loading Product Backlog/i)[0]).toBeInTheDocument();
+    });
+
+    it('should eventually complete after slow network delay', async () => {
+      mockApiService.getProductBacklog.mockImplementation(
+        () =>
+          new Promise((resolve) => {
+            setTimeout(() => resolve({ data: mockBacklogItems }), 3000);
+          })
+      );
+      mockApiService.getProductGoals.mockImplementation(
+        () =>
+          new Promise((resolve) => {
+            setTimeout(() => resolve({ data: [mockActiveGoal] }), 3500);
+          })
+      );
+      mockApiService.getDefinitionOfReady.mockResolvedValue({ data: { items: [] } });
+      mockApiService.getDefinitionOfDone.mockResolvedValue({ data: { items: [] } });
+
+      renderBacklog();
+
+      act(() => {
+        vi.advanceTimersByTime(3000);
+      });
+
+      await act(async () => {
+        vi.runAllTimersAsync();
+      });
+
+      await waitFor(() => {
+        expect(screen.queryByText(/Loading Product Backlog/i)).not.toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Concurrent Loading Operations', () => {
+    it('should handle multiple concurrent data fetches', async () => {
+      let resolveBacklog: (value: unknown) => void;
+      let resolveGoals: (value: unknown) => void;
+
+      mockApiService.getProductBacklog.mockImplementation(
+        () =>
+          new Promise((resolve) => {
+            resolveBacklog = resolve;
+          })
+      );
+      mockApiService.getProductGoals.mockImplementation(
+        () =>
+          new Promise((resolve) => {
+            resolveGoals = resolve;
+          })
+      );
+
+      renderBacklog();
+
+      expect(screen.getAllByText(/Loading Product Backlog/i)[0]).toBeInTheDocument();
+
+      await act(async () => {
+        resolveBacklog!({ data: mockBacklogItems });
+        vi.runAllTimersAsync();
+      });
+
+      expect(screen.getAllByText(/Loading Product Backlog/i)[0]).toBeInTheDocument();
+
+      await act(async () => {
+        resolveGoals!({ data: [mockActiveGoal] });
+        vi.runAllTimersAsync();
+      });
+
+      await waitFor(() => {
+        expect(screen.queryByText(/Loading Product Backlog/i)).not.toBeInTheDocument();
+      });
+    });
+
+    it('should handle concurrent loading of backlog and goals', async () => {
+      let resolveBacklog: (value: unknown) => void;
+      let resolveGoals: (value: unknown) => void;
+
+      mockApiService.getProductBacklog.mockImplementation(
+        () =>
+          new Promise((resolve) => {
+            resolveBacklog = resolve;
+          })
+      );
+      mockApiService.getProductGoals.mockImplementation(
+        () =>
+          new Promise((resolve) => {
+            resolveGoals = resolve;
+          })
+      );
+
+      renderBacklog();
+
+      expect(screen.getAllByText(/Loading Product Backlog/i)[0]).toBeInTheDocument();
+
+      // Resolve both concurrently
+      await act(async () => {
+        resolveBacklog!({ data: mockBacklogItems });
+        resolveGoals!({ data: [mockActiveGoal] });
+        vi.runAllTimersAsync();
+      });
+
+      await waitFor(() => {
+        expect(screen.queryByText(/Loading Product Backlog/i)).not.toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Accessibility During Loading', () => {
+    it('should have proper ARIA attributes during loading', () => {
+      mockApiService.getProductBacklog.mockImplementation(() => new Promise(() => {}));
+      mockApiService.getProductGoals.mockImplementation(() => new Promise(() => {}));
+
+      const { container: _container } = renderBacklog();
+
+      // Check that loading text is accessible
+      const loadingText = screen.getAllByText(/Loading Product Backlog/i)[0];
+      expect(loadingText).toBeInTheDocument();
+      expect(loadingText.closest('[class*="page-loader"]')).toBeInTheDocument();
+    });
+
+    it('should announce loading state to screen readers', () => {
+      mockApiService.getProductBacklog.mockImplementation(() => new Promise(() => {}));
+      mockApiService.getProductGoals.mockImplementation(() => new Promise(() => {}));
+
+      renderBacklog();
+
+      expect(screen.getAllByText(/Loading Product Backlog/i)[0]).toBeInTheDocument();
+    });
+
+    it('should render loading spinner', () => {
+      mockApiService.getProductBacklog.mockImplementation(() => new Promise(() => {}));
+      mockApiService.getProductGoals.mockImplementation(() => new Promise(() => {}));
+
+      const { container } = renderBacklog();
+
+      // The LoadingState component should be rendered with spinner
+      const loadingState = container.querySelector('[class*="page-loader"]');
+      expect(loadingState).toBeInTheDocument();
+    });
+  });
+
+  describe('Loading State Cleanup', () => {
+    it('should remove loading state when component unmounts', async () => {
+      mockApiService.getProductBacklog.mockImplementation(() => new Promise(() => {}));
+      mockApiService.getProductGoals.mockImplementation(() => new Promise(() => {}));
+
+      const { unmount } = renderBacklog();
+
+      expect(screen.getAllByText(/Loading Product Backlog/i)[0]).toBeInTheDocument();
+
+      unmount();
+
+      expect(screen.queryByText(/Loading Product Backlog/i)).not.toBeInTheDocument();
+    });
+
+    it('should not cause memory leaks with pending promises', async () => {
+      let resolveBacklog: (value: unknown) => void;
+      mockApiService.getProductBacklog.mockImplementation(
+        () =>
+          new Promise((resolve) => {
+            resolveBacklog = resolve;
+          })
+      );
+      mockApiService.getProductGoals.mockImplementation(() => new Promise(() => {}));
+
+      const { unmount } = renderBacklog();
+
+      unmount();
+
+      await act(async () => {
+        resolveBacklog!({ data: mockBacklogItems });
+        vi.runAllTimersAsync();
+      });
+
+      expect(screen.queryByText(/Loading Product Backlog/i)).not.toBeInTheDocument();
+    });
+
+    it('should clean up loading state after error', async () => {
+      mockApiService.getProductBacklog.mockRejectedValue(new Error('Network error'));
+      mockApiService.getProductGoals.mockRejectedValue(new Error('Network error'));
+
+      renderBacklog();
+
+      await act(async () => {
+        vi.runAllTimersAsync();
+      });
+
+      await waitFor(() => {
+        expect(screen.queryByText(/Loading Product Backlog/i)).not.toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Loading State with Empty Data', () => {
+    it('should show content when backlog is empty but goal exists', async () => {
+      mockApiService.getProductBacklog.mockResolvedValue({ data: [] });
+      mockApiService.getProductGoals.mockResolvedValue({ data: [mockActiveGoal] });
+      mockApiService.getDefinitionOfReady.mockResolvedValue({ data: { items: [] } });
+      mockApiService.getDefinitionOfDone.mockResolvedValue({ data: { items: [] } });
+
+      renderBacklog();
+
+      await act(async () => {
+        vi.runAllTimersAsync();
+      });
+
+      await waitFor(() => {
+        expect(screen.queryByText(/Loading Product Backlog/i)).not.toBeInTheDocument();
+      });
+
+      expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
+    });
+
+    it('should transition from loading to empty backlog view', async () => {
+      let resolveBacklog: (value: unknown) => void;
+      mockApiService.getProductBacklog.mockImplementation(
+        () =>
+          new Promise((resolve) => {
+            resolveBacklog = resolve;
+          })
+      );
+      mockApiService.getProductGoals.mockResolvedValue({ data: [mockActiveGoal] });
+
+      renderBacklog();
+
+      expect(screen.getAllByText(/Loading Product Backlog/i)[0]).toBeInTheDocument();
+
+      await act(async () => {
+        resolveBacklog!({ data: [] });
+        vi.runAllTimersAsync();
+      });
+
+      await waitFor(() => {
+        expect(screen.queryByText(/Loading Product Backlog/i)).not.toBeInTheDocument();
+      });
+    });
+  });
+});

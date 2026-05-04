@@ -1,0 +1,28 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "target": "ES2023",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "incremental": true,
+    "paths": {
+      "@/*": ["./src/*"],
+      "@routes/*": ["./src/routes/*"],
+      "@controllers/*": ["./src/controllers/*"],
+      "@services/*": ["./src/services/*"],
+      "@middleware/*": ["./src/middleware/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@types/*": ["./src/types/*"],
+      "@prisma": ["./prisma"],
+      "@scrsphere/shared": ["../shared/dist"],
+      "@e2e-helpers": ["./src/__tests__/e2e/helpers"]
+    },
+    "types": ["node"]
+  },
+  "references": [{ "path": "../shared" }],
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "coverage", "vitest.config.ts"]
+}

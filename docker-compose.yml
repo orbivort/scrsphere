@@ -1,0 +1,300 @@
+version: '3.8'
+
+services:
+  # Caddy Reverse Proxy with automatic HTTPS
+  # Handles TLS termination and SSL certificate management
+  caddy:
+    image: caddy:2-alpine
+    container_name: scrsphere-caddy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - frontend
+      - backend
+    restart: unless-stopped
+    networks:
+      - scrsphere-network
+    healthcheck:
+      test: ["CMD", "caddy", "validate", "--config", "/etc/caddy/Caddyfile"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 128M
+        reservations:
+          cpus: '0.1'
+          memory: 32M
+
+  backend:
+    build:
+      context: .
+      dockerfile: packages/backend/Dockerfile
+      target: production
+    container_name: scrsphere-backend
+    expose:
+      - "5000"
+    env_file:
+      - ./packages/backend/.env.production
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - scrsphere-network
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:5000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+
+  frontend:
+    build:
+      context: .
+      dockerfile: packages/frontend/Dockerfile
+      target: production
+    container_name: scrsphere-frontend
+    expose:
+      - "80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - scrsphere-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 128M
+        reservations:
+          cpus: '0.1'
+          memory: 32M
+
+  postgres:
+    image: postgres:18-alpine
+    container_name: scrsphere-postgres
+    env_file:
+      - ./packages/backend/.env.production
+    environment:
+      - POSTGRES_USER=${DB_USER:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME:-scrsphere}
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --locale=en_US.UTF-8
+    volumes:
+      - scrsphere_postgres_data:/var/lib/postgresql/data
+      - ./logs/postgres:/var/log/postgresql
+    restart: unless-stopped
+    networks:
+      - scrsphere-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d scrsphere"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    # PostgreSQL with logging enabled
+    command:
+      - "postgres"
+      - "-c"
+      - "logging_collector=on"
+      - "-c"
+      - "log_directory=/var/log/postgresql"
+      - "-c"
+      - "log_filename=postgresql-%Y-%m-%d_%H%M%S.log"
+      - "-c"
+      - "log_statement=mod"
+      - "-c"
+      - "log_connections=on"
+      - "-c"
+      - "log_disconnections=on"
+      - "-c"
+      - "log_checkpoints=on"
+      - "-c"
+      - "log_lock_waits=on"
+      - "-c"
+      - "log_min_duration_statement=1000"
+      - "-c"
+      - "log_line_prefix=%t [%p]: [%l-1] user=%u,db=%d,app=%a,client=%h "
+    # Uncomment to expose database port for external access
+    # ports:
+    #   - "5432:5432"
+
+  # PgBouncer - Connection Pooling for Production
+  pgbouncer:
+    image: pgbouncer/pgbouncer:1.22.1
+    container_name: scrsphere-pgbouncer
+    environment:
+      DATABASES_HOST: postgres
+      DATABASES_PORT: 5432
+      DATABASES_DATABASE: ${DB_NAME:-scrsphere}
+      DATABASES_USER: ${DB_USER:-postgres}
+      DATABASES_PASSWORD: ${DB_PASSWORD}
+      POOL_MODE: transaction
+      MAX_CLIENT_CONN: 100
+      DEFAULT_POOL_SIZE: 20
+      MIN_POOL_SIZE: 5
+      RESERVE_POOL_SIZE: 5
+      MAX_DB_CONNECTIONS: 50
+      MAX_USER_CONNECTIONS: 50
+      SERVER_IDLE_TIMEOUT: 600
+      SERVER_LIFETIME: 3600
+      CLIENT_IDLE_TIMEOUT: 0
+      CLIENT_LOGIN_TIMEOUT: 60
+      AUTODB_IDLE_TIMEOUT: 3600
+      QUERY_TIMEOUT: 0
+      QUERY_WAIT_TIMEOUT: 120
+      CLIENT_TLS_SSLMODE: require
+      CLIENT_TLS_KEYFILE: /etc/pgbouncer/tls/server.key
+      CLIENT_TLS_CERTFILE: /etc/pgbouncer/tls/server.crt
+    volumes:
+      - ./certs/pgbouncer:/etc/pgbouncer/tls:ro
+    ports:
+      - "6432:6432"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - scrsphere-network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-h", "localhost", "-p", "6432"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 128M
+        reservations:
+          cpus: '0.1'
+          memory: 32M
+
+  # Automated SQL backup service
+  # Creates SQL dumps of the database daily at 2 AM
+  backup:
+    image: postgres:18-alpine
+    container_name: scrsphere-backup
+    volumes:
+      - ./backups:/backups
+      - ./scripts/maintenance/database:/scripts:ro
+    environment:
+      - POSTGRES_USER=${DB_USER:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME:-scrsphere}
+      - PGHOST=postgres
+    command: >
+      sh -c "
+        apk add --no-cache bash &&
+        echo '0 2 * * * cd /scripts && ./db-backup.sh /backups >> /backups/backup.log 2>&1' | crontab - &&
+        crond -f -l 2
+      "
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - scrsphere-network
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Automated volume backup service
+  # Creates file-level backups of the PostgreSQL data volume weekly on Sundays at 3 AM
+  volume-backup:
+    image: docker:cli
+    container_name: scrsphere-volume-backup
+    volumes:
+      - scrsphere_postgres_data:/data:ro
+      - ./backups/volumes:/backups
+      - ./scripts/maintenance/database:/scripts:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    command: >
+      sh -c "
+        apk add --no-cache bash &&
+        echo '0 3 * * 0 cd /scripts && ./db-volume-backup.sh /backups >> /backups/volume-backup.log 2>&1' | crontab - &&
+        crond -f -l 2
+      "
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - scrsphere-network
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  scrsphere_postgres_data:
+    driver: local
+  caddy_data:
+    driver: local
+  caddy_config:
+    driver: local
+
+networks:
+  scrsphere-network:
+    driver: bridge

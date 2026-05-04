@@ -1,0 +1,64 @@
+/* LoadingSpinner Styles */
+
+.spinner-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner {
+  animation: rotate 1.5s linear infinite;
+}
+
+.spinner-track {
+  stroke: var(--color-gray-200);
+}
+
+.spinner-arc {
+  animation: dash 1.5s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dashoffset: calc(2 * 3.1416 * var(--radius, 20) * 0.75);
+    transform: rotate(0deg);
+  }
+
+  50% {
+    stroke-dashoffset: calc(2 * 3.1416 * var(--radius, 20) * 0.25);
+    transform: rotate(180deg);
+  }
+
+  100% {
+    stroke-dashoffset: calc(2 * 3.1416 * var(--radius, 20) * 0.75);
+    transform: rotate(360deg);
+  }
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+    opacity: var(--opacity-50);
+  }
+
+  .spinner-arc {
+    animation: none;
+  }
+
+  /* Provide a static indicator for reduced motion users */
+  .spinner-container::after {
+    content: '...';
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary-600);
+    margin-left: var(--space-1);
+  }
+}

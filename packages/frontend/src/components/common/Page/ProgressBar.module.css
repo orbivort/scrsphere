@@ -1,0 +1,90 @@
+/* ProgressBar Styles */
+
+.progress-container {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.progress-container:focus {
+  outline: var(--focus-ring-width) solid var(--color-primary-500);
+  outline-offset: var(--focus-ring-offset);
+  border-radius: var(--radius-sm);
+}
+
+/* Size variants */
+.small {
+  --track-height: 4px;
+  --text-size: var(--font-size-xs);
+}
+
+.medium {
+  --track-height: 8px;
+  --text-size: var(--font-size-sm);
+}
+
+.large {
+  --track-height: 12px;
+  --text-size: var(--font-size-base);
+}
+
+.progress-track {
+  flex: 1;
+  height: var(--track-height, 8px);
+  background-color: var(--color-gray-200);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width var(--transition-slow);
+  animation: progress-pulse 2s ease-in-out infinite;
+}
+
+/* Color variants */
+.primary {
+  background: linear-gradient(90deg, var(--color-primary-600) 0%, var(--color-primary-500) 100%);
+}
+
+.success {
+  background: linear-gradient(90deg, var(--color-success-500) 0%, var(--color-success-400) 100%);
+}
+
+.warning {
+  background: linear-gradient(90deg, var(--color-warning-500) 0%, var(--color-warning-400) 100%);
+}
+
+.danger {
+  background: linear-gradient(90deg, var(--color-error-500) 0%, var(--color-error-400) 100%);
+}
+
+.progress-text {
+  font-size: var(--text-size, var(--font-size-sm));
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-700);
+  min-width: 40px;
+  text-align: right;
+}
+
+/* Animation for progress fill */
+@keyframes progress-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .progress-fill {
+    transition: none;
+    animation: none;
+  }
+}

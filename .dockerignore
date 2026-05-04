@@ -1,0 +1,201 @@
+# =============================================================================
+# Docker Ignore File for Scrsphere
+# =============================================================================
+# This file is derived from .gitignore with Docker-specific additions.
+# Key principle: If it's not needed for the build, exclude it!
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Version Control (Docker-specific: always exclude)
+# -----------------------------------------------------------------------------
+.git/
+.gitignore
+.gitattributes
+.github/
+
+# -----------------------------------------------------------------------------
+# Dependencies (must be installed fresh in container)
+# -----------------------------------------------------------------------------
+node_modules/
+**/node_modules/
+.pnp
+.pnp.js
+.pnpm-debug.log*
+.pnpm-store/
+
+# -----------------------------------------------------------------------------
+# Build Outputs (will be generated during build)
+# -----------------------------------------------------------------------------
+dist/
+build/
+out/
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+.vite/
+*.vite
+.rollup.cache/
+
+# -----------------------------------------------------------------------------
+# Environment Files (security critical - never include)
+# -----------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+packages/*/.env
+packages/*/.env.*
+!packages/*/.env.example
+
+# -----------------------------------------------------------------------------
+# IDE & Editor Files (not needed in builds)
+# -----------------------------------------------------------------------------
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+*.code-workspace
+*.swp
+*.swo
+*~
+.cursor/
+.cursorrules
+.codewhisperer/
+.tabnine/
+.codeium/
+.trae/
+.windsurf/
+.codebuddy/
+AGENTS.md
+CLAUDE.md
+CODEBUDDY.md
+
+# -----------------------------------------------------------------------------
+# OS Generated Files
+# -----------------------------------------------------------------------------
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# -----------------------------------------------------------------------------
+# Logs
+# -----------------------------------------------------------------------------
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# -----------------------------------------------------------------------------
+# Cache Directories (not needed for builds)
+# -----------------------------------------------------------------------------
+.cache/
+.parcel-cache/
+.eslintcache
+.stylelintcache
+.prettiercache
+.npm/
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.yarn-integrity
+.pnp.*
+.turbo
+
+# -----------------------------------------------------------------------------
+# Testing & Coverage (not needed for production builds)
+# -----------------------------------------------------------------------------
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
+playwright/.cache/
+benchmark-results/
+__tests__/
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+cypress/videos/
+cypress/screenshots/
+cypress/downloads/
+
+# Loadtest results
+k6/results/
+
+# -----------------------------------------------------------------------------
+# Database Files (use containerized databases)
+# -----------------------------------------------------------------------------
+*.sqlite
+*.sqlite3
+*.db
+
+# -----------------------------------------------------------------------------
+# Prisma Generated (will be generated during build)
+# -----------------------------------------------------------------------------
+**/prisma/generated/
+**/generated/prisma/
+
+# -----------------------------------------------------------------------------
+# Secrets & Certificates (security critical - never include)
+# -----------------------------------------------------------------------------
+*.pem
+*.key
+*.crt
+*.cer
+*.der
+*.p12
+*.pfx
+
+# -----------------------------------------------------------------------------
+# Documentation (not needed in images)
+# -----------------------------------------------------------------------------
+docs/
+*.md
+!README.md
+LICENSE
+
+# -----------------------------------------------------------------------------
+# Docker Files (prevent recursive builds)
+# -----------------------------------------------------------------------------
+Dockerfile*
+docker-compose*.yml
+.docker/
+.dockerignore
+
+# -----------------------------------------------------------------------------
+# CI/CD (not needed in images)
+# -----------------------------------------------------------------------------
+.azure-pipelines/
+.bitbucket-pipelines/
+.circleci/
+.travis.yml
+Jenkinsfile
+
+# -----------------------------------------------------------------------------
+# Misc Build Artifacts
+# -----------------------------------------------------------------------------
+tmp/
+temp/
+*.tmp
+*.temp
+backup/
+backups/
+*.bak
+*.backup
+.netlify
+.vercel
+storybook-static/
+
+# -----------------------------------------------------------------------------
+# Deployment Scripts (only needed at build time, not runtime)
+# Note: These ARE needed during build, so commented out
+# -----------------------------------------------------------------------------
+# scripts/deployment/

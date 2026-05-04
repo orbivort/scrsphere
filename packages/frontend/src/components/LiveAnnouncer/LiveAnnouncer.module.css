@@ -1,0 +1,88 @@
+/**
+ * LiveAnnouncer styles
+ *
+ * Provides visually hidden styles for live regions that are accessible
+ * to screen readers but not visible on screen.
+ */
+
+/**
+ * Visually hidden class for live regions
+ *
+ * This class hides content visually while keeping it accessible to screen readers.
+ * Uses the standard visually hidden pattern with clip-path for modern browsers.
+ */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: transparent;
+}
+
+/**
+ * Alternative visually hidden class name
+ * (alias for consistency with common naming conventions)
+ */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: transparent;
+}
+
+/**
+ * Live region container
+ * Ensures the container itself is also visually hidden
+ */
+.live-region {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: transparent;
+}
+
+/**
+ * Polite live region
+ * Announcements wait for user to be idle
+ */
+.polite-region {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: transparent;
+}
+
+/**
+ * Assertive live region
+ * Announcements interrupt immediately
+ */
+.assertive-region {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: transparent;
+}

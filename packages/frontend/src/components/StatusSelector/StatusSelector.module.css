@@ -1,0 +1,592 @@
+/* ============================================
+   Status Selector - Modern Premium Design
+   Glassmorphism with Vibrant Interactions
+   ============================================ */
+
+/* Main container with perspective for 3D effects */
+.status-selector {
+  position: relative;
+  display: inline-block;
+  perspective: 1000px;
+}
+
+/* Trigger Button - Premium Card Design */
+.status-selector-trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  min-width: 160px;
+  background: linear-gradient(
+    135deg,
+    var(--status-bg, var(--color-gray-100)) 0%,
+    var(--color-background-card) 100%
+  );
+  border: var(--border-width-2) solid var(--status-border, var(--color-gray-300));
+  border-radius: var(--radius-lg);
+  color: var(--status-color, var(--color-gray-700));
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition:
+    transform var(--duration-slow) var(--ease-bounce),
+    box-shadow var(--duration-slow) var(--ease-bounce),
+    border-color var(--duration-slow) var(--ease-bounce);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Shimmer effect overlay */
+.status-selector-trigger::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, var(--color-background-card), transparent);
+  opacity: var(--opacity-40);
+  transition: left var(--duration-slow) var(--ease-out);
+}
+
+.status-selector-trigger:hover::before {
+  left: 100%;
+}
+
+/* Disabled State */
+.status-selector-trigger:disabled {
+  cursor: not-allowed;
+  opacity: var(--opacity-60);
+  filter: grayscale(40%);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Focus State - Accessible ring */
+.status-selector-trigger:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* Hover State - Elevated with glow */
+.status-selector-trigger:hover:not(:disabled) {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--status-border, var(--color-gray-300));
+}
+
+/* Active/Pressed State */
+.status-selector-trigger:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+
+/* Status Change Animation */
+.status-selector-trigger.animating {
+  animation: status-bounce var(--duration-slower) var(--ease-bounce);
+}
+
+@keyframes status-bounce {
+  0% {
+    transform: scale(1);
+  }
+
+  30% {
+    transform: scale(1.08) translateY(-3px);
+  }
+
+  50% {
+    transform: scale(0.96);
+  }
+
+  70% {
+    transform: scale(1.02);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Icon Wrapper with animated ring */
+.status-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  background: var(--status-bg, var(--color-gray-100));
+  border: var(--border-width-1) solid var(--status-border, var(--color-gray-300));
+  border-radius: var(--radius-md);
+  color: var(--status-color, var(--color-gray-500));
+  transition:
+    transform var(--duration-slow) var(--ease-out),
+    background-color var(--duration-slow) var(--ease-out),
+    border-color var(--duration-slow) var(--ease-out);
+}
+
+.status-selector-trigger:hover .status-icon-wrapper {
+  transform: rotate(5deg) scale(1.1);
+  background: var(--status-border, var(--color-gray-300));
+}
+
+/* Status Label */
+.status-label {
+  flex: 1;
+  text-align: left;
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+/* Loading Spinner */
+.status-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Locked Icon */
+.status-locked {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--color-gray-400);
+}
+
+/* Dropdown Arrow with rotation animation */
+.status-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform var(--duration-slow) var(--ease-bounce);
+}
+
+.status-selector-trigger[aria-expanded='true'] .status-arrow {
+  transform: rotate(180deg);
+}
+
+/* ============================================
+   Dropdown Menu - Glassmorphism Design
+   ============================================ */
+
+.status-dropdown {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  min-width: 260px;
+  background: var(--color-background-card);
+  border: var(--border-width-1) solid var(--color-border-default);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  backdrop-filter: blur(20px);
+  z-index: var(--z-dropdown);
+  overflow: hidden;
+}
+
+/* Dropdown Position Variants */
+
+/* Left-aligned (default) */
+.dropdown-position-left {
+  left: 0;
+  transform-origin: top left;
+  animation: dropdown-appear var(--duration-slow) var(--ease-bounce);
+}
+
+/* Right-aligned */
+.dropdown-position-right {
+  right: 0;
+  left: auto;
+  transform-origin: top right;
+  animation: dropdown-appear-right var(--duration-slow) var(--ease-bounce);
+}
+
+/* Centered */
+.dropdown-position-center {
+  left: 50%;
+  transform: translateX(-50%);
+  transform-origin: top center;
+  animation: dropdown-appear-center var(--duration-slow) var(--ease-bounce);
+}
+
+@keyframes dropdown-appear {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes dropdown-appear-center {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-8px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+@keyframes dropdown-appear-right {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Dropdown Header */
+.dropdown-header {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: var(--border-width-1) solid var(--color-border-default);
+  background: linear-gradient(180deg, var(--color-gray-50) 0%, transparent 100%);
+}
+
+.dropdown-title {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-widest);
+  margin: 0;
+}
+
+/* Status Options Container */
+.status-options {
+  padding: var(--space-2);
+  max-height: 320px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-default) transparent;
+}
+
+.status-options::-webkit-scrollbar {
+  width: 4px;
+}
+
+.status-options::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.status-options::-webkit-scrollbar-thumb {
+  background: var(--color-border-default);
+  border-radius: var(--radius-full);
+}
+
+/* Individual Status Option */
+.status-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3) var(--space-3);
+  margin-bottom: var(--space-1);
+  border: var(--border-width-2) solid transparent;
+  border-radius: var(--radius-lg);
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  transition:
+    transform var(--duration-normal) var(--ease-bounce),
+    border-color var(--duration-normal) var(--ease-bounce),
+    background-color var(--duration-normal) var(--ease-bounce);
+  position: relative;
+  overflow: hidden;
+}
+
+.status-option:last-child {
+  margin-bottom: 0;
+}
+
+/* Option hover effect with background slide */
+.status-option::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    var(--option-bg, var(--color-gray-100)) 0%,
+    var(--color-background-card) 100%
+  );
+  opacity: 0;
+  transition: opacity var(--duration-normal) var(--ease-out);
+  border-radius: calc(var(--radius-lg) - 2px);
+}
+
+.status-option:hover::before {
+  opacity: 0.5;
+}
+
+.status-option:hover {
+  border-color: var(--option-border, var(--color-gray-300));
+  transform: translateX(4px);
+}
+
+/* Selected State */
+.status-option.selected {
+  background: linear-gradient(
+    135deg,
+    var(--option-bg, var(--color-gray-100)) 0%,
+    var(--color-background-card) 100%
+  );
+  border-color: var(--option-border, var(--color-gray-300));
+  box-shadow: var(--shadow-sm);
+}
+
+.status-option.selected::before {
+  opacity: 1;
+}
+
+/* Option Icon Wrapper */
+.option-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  background: var(--option-bg, var(--color-gray-100));
+  border: var(--border-width-1) solid var(--option-border, var(--color-gray-300));
+  border-radius: var(--radius-md);
+  color: var(--option-color, var(--color-gray-500));
+  transition:
+    transform var(--duration-normal) var(--ease-out),
+    background-color var(--duration-normal) var(--ease-out),
+    border-color var(--duration-normal) var(--ease-out);
+  position: relative;
+}
+
+.status-option:hover .option-icon-wrapper {
+  transform: scale(1.1) rotate(-3deg);
+  background: var(--option-border, var(--color-gray-300));
+}
+
+.status-option.selected .option-icon-wrapper {
+  box-shadow: var(--shadow-sm);
+  background: var(--option-border, var(--color-gray-300));
+}
+
+/* Option Content */
+.option-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 2px;
+  position: relative;
+}
+
+.option-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--option-color, var(--color-gray-700));
+  transition: color var(--duration-normal) var(--ease-out);
+}
+
+.option-desc {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  font-weight: var(--font-weight-medium);
+  transition: color var(--duration-normal) var(--ease-out);
+}
+
+.status-option:hover .option-desc {
+  color: var(--color-text-secondary);
+}
+
+/* Checkmark for selected option */
+.option-check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  background: var(--option-color, var(--color-gray-500));
+  border-radius: var(--radius-full);
+  color: var(--color-text-inverse);
+  animation: check-appear var(--duration-slow) var(--ease-bounce);
+  position: relative;
+}
+
+/* Disabled/Unavailable option state */
+.status-option-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.status-option-disabled:hover {
+  transform: none;
+  border-color: transparent;
+}
+
+.status-option-disabled:hover::before {
+  opacity: 0;
+}
+
+/* Locked icon for unavailable options */
+.option-locked {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  color: var(--color-gray-400);
+}
+
+@keyframes check-appear {
+  from {
+    transform: scale(0) rotate(-45deg);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1) rotate(0);
+    opacity: 1;
+  }
+}
+
+/* Dropdown Footer */
+.dropdown-footer {
+  padding: var(--space-3) var(--space-4);
+  border-top: var(--border-width-1) solid var(--color-border-default);
+  background: linear-gradient(0deg, var(--color-gray-50) 0%, transparent 100%);
+}
+
+.dropdown-hint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  text-align: center;
+  margin: 0;
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+
+@media (width <= 640px) {
+  .status-selector-trigger {
+    min-width: 140px;
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .status-dropdown {
+    min-width: 240px;
+  }
+
+  /* On mobile, always center the dropdown */
+  .dropdown-position-left,
+  .dropdown-position-right,
+  .dropdown-position-center {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    transform-origin: top center;
+  }
+
+  @keyframes dropdown-appear {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-8px) scale(0.96);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0) scale(1);
+    }
+  }
+
+  @keyframes dropdown-appear-center {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-8px) scale(0.96);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0) scale(1);
+    }
+  }
+
+  @keyframes dropdown-appear-right {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-8px) scale(0.96);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0) scale(1);
+    }
+  }
+
+  .status-option:hover {
+    transform: translateX(2px);
+  }
+}
+
+/* ============================================
+   Reduced Motion
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .status-selector-trigger,
+  .status-icon-wrapper,
+  .status-arrow,
+  .status-option,
+  .option-icon-wrapper,
+  .status-dropdown,
+  .dropdown-position-left,
+  .dropdown-position-right,
+  .dropdown-position-center {
+    transition: none;
+    animation: none;
+  }
+
+  .status-selector-trigger::before {
+    display: none;
+  }
+}
+
+/* ============================================
+   High Contrast Mode
+   ============================================ */
+
+@media (prefers-contrast: high) {
+  .status-selector-trigger {
+    border-width: var(--border-width-4);
+  }
+
+  .status-option {
+    border-width: var(--border-width-4);
+  }
+
+  .status-option.selected {
+    border-width: var(--border-width-4);
+  }
+}

@@ -1,0 +1,256 @@
+/**
+ * MoscowCard Component Styles
+ *
+ * Styles for the draggable card component used in the MoSCoW board view.
+ */
+
+/* ============================================================================
+   MOSCOW CARD
+   ============================================================================ */
+
+.moscow-card {
+  background: var(--color-background-card);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-sm);
+  cursor: grab;
+  transition:
+    box-shadow var(--transition-normal),
+    transform var(--transition-normal),
+    border-color var(--transition-normal),
+    outline var(--transition-normal);
+  border: var(--border-width-1) solid var(--color-border-default);
+  border-left: var(--border-width-4) solid var(--card-color, var(--color-gray-300));
+  position: relative;
+}
+
+.moscow-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.moscow-card:active {
+  cursor: grabbing;
+}
+
+.moscow-card:focus {
+  outline: var(--border-width-2) solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+.moscow-card:focus-visible {
+  outline: var(--border-width-2) solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+.moscow-card.dragging {
+  opacity: 0.5;
+  transform: rotate(3deg) scale(1.02);
+  box-shadow: var(--shadow-lg);
+}
+
+.moscow-card.drop-target {
+  border: var(--border-width-2) dashed var(--color-primary-500);
+  background: var(--color-primary-50);
+}
+
+/* ============================================================================
+   KEYBOARD GRABBED STATE
+   ============================================================================ */
+
+.moscow-card.grabbed {
+  outline: var(--border-width-3) solid var(--color-primary-600);
+  outline-offset: 2px;
+  box-shadow: var(--shadow-lg);
+  transform: scale(1.02);
+  border-color: var(--color-primary-500);
+}
+
+.moscow-card.grabbed:focus {
+  outline: var(--border-width-3) solid var(--color-primary-600);
+  outline-offset: 2px;
+}
+
+.moscow-card.moving-to-target {
+  animation: pulse-border 1s ease-in-out infinite;
+}
+
+@keyframes pulse-border {
+  0%,
+  100% {
+    box-shadow: var(--shadow-lg);
+  }
+
+  50% {
+    box-shadow: var(--shadow-xl);
+  }
+}
+
+/* ============================================================================
+   GRAB INDICATOR
+   ============================================================================ */
+
+.grab-indicator {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  margin-bottom: var(--space-2);
+  background: var(--color-primary-50);
+  border-radius: var(--radius-sm);
+  border: var(--border-width-1) solid var(--color-primary-200);
+  color: var(--color-primary-700);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+.grab-indicator svg {
+  flex-shrink: 0;
+  color: var(--color-primary-600);
+}
+
+.grab-indicator-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ============================================================================
+   CARD HEADER
+   ============================================================================ */
+
+.moscow-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-2);
+}
+
+.moscow-card-id {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  font-weight: var(--font-weight-medium);
+  font-family: var(--font-family-mono);
+}
+
+.moscow-card-status {
+  padding: var(--space-0-5) var(--space-2);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.moscow-card-status.status-new {
+  background: var(--color-gray-100);
+  color: var(--color-gray-600);
+}
+
+.moscow-card-status.status-refined {
+  background: var(--color-warning-100);
+  color: var(--color-warning-800);
+}
+
+.moscow-card-status.status-ready {
+  background: var(--color-success-100);
+  color: var(--color-success-800);
+}
+
+.moscow-card-status.status-in-progress {
+  background: var(--color-primary-100);
+  color: var(--color-primary-800);
+}
+
+.moscow-card-status.status-done {
+  background: var(--color-success-100);
+  color: var(--color-success-800);
+}
+
+/* ============================================================================
+   CARD TITLE
+   ============================================================================ */
+
+.moscow-card-title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-normal);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0 0 var(--space-2) 0;
+}
+
+/* ============================================================================
+   CARD META
+   ============================================================================ */
+
+.moscow-card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.moscow-card-estimate {
+  background: linear-gradient(135deg, var(--color-primary-50) 0%, var(--color-primary-100) 100%);
+  color: var(--color-primary-700);
+  padding: var(--space-0-5) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.moscow-card-estimate svg {
+  width: var(--space-3);
+  height: var(--space-3);
+}
+
+/* ============================================================================
+   VALUE/EFFORT INDICATORS
+   ============================================================================ */
+
+.moscow-card-ve {
+  display: flex;
+  gap: var(--space-1);
+  margin-left: auto;
+}
+
+.ve-mini {
+  font-size: var(--font-size-2xs);
+  color: var(--color-text-secondary);
+  background: var(--color-gray-100);
+  padding: var(--space-0-5) var(--space-1);
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* ============================================================================
+   CARD LABELS
+   ============================================================================ */
+
+.moscow-card-labels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+}
+
+.moscow-label-tag {
+  background: var(--color-gray-100);
+  color: var(--color-gray-600);
+  padding: var(--space-0-5) var(--space-2);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-medium);
+}
+
+.moscow-label-tag.more {
+  background: var(--color-gray-200);
+  color: var(--color-text-secondary);
+}

@@ -1,0 +1,71 @@
+# Scrsphere Caddy Configuration
+# Production-ready reverse proxy with automatic HTTPS
+
+# Replace YOUR_DOMAIN with your actual domain (e.g., scrsphere.example.com)
+# For local development without a domain, use: http://localhost
+
+{$DOMAIN:localhost} {
+    # Automatic HTTPS (comment out for local development without a domain)
+    # tls {$EMAIL:}
+
+    # Logging
+    log {
+        output stdout
+        format console
+    }
+
+    # Frontend - Serve the React application
+    root * /usr/share/caddy
+    encode gzip
+
+    # API routes - proxy to backend
+    handle /api/* {
+        reverse_proxy backend:5000 {
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+            header_up Host {host}
+        }
+    }
+
+    # Health check endpoint
+    handle /health {
+        reverse_proxy backend:5000
+    }
+
+    # Static files and SPA routing
+    handle {
+        reverse_proxy frontend:80
+    }
+
+    # Security headers
+    header {
+        # Enable HTTP Strict Transport Security (HSTS)
+        Strict-Transport-Security "max-age=31536000; include-subdomains; preload"
+        # Prevent clickjacking
+        X-Frame-Options "SAMEORIGIN"
+        # Prevent MIME-type sniffing
+        X-Content-Type-Options "nosniff"
+        # XSS protection
+        X-XSS-Protection "1; mode=block"
+        # Referrer policy
+        Referrer-Policy "strict-origin-when-cross-origin"
+        # Content Security Policy
+        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:; frame-ancestors 'self';"
+        # Remove server information
+        -Server
+    }
+}
+
+# Health check endpoint (accessible without authentication)
+:80 {
+    handle /health {
+        reverse_proxy backend:5000
+    }
+
+    # Redirect all other HTTP traffic to HTTPS
+    # Comment out this block for local development without HTTPS
+    handle {
+        redir https://{host}{uri} permanent
+    }
+}

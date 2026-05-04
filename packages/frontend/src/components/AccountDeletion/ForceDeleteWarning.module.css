@@ -1,0 +1,99 @@
+.force-delete-warning {
+  padding: var(--space-4);
+  background: var(--color-error-50);
+  border: var(--border-width-2) solid var(--color-error-300);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-5);
+}
+
+.force-delete-warning-title {
+  margin: 0 0 var(--space-2) 0;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-error-800);
+}
+
+.force-delete-warning-text {
+  margin: 0 0 var(--space-3) 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-error-900);
+  line-height: var(--line-height-normal);
+}
+
+.force-delete-impact {
+  margin-bottom: var(--space-3);
+}
+
+.force-delete-impact-title {
+  margin: 0 0 var(--space-2) 0;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-error-800);
+}
+
+.force-delete-impact-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.force-delete-impact-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-error-900);
+}
+
+.force-delete-impact-item::before {
+  content: '\2022';
+  color: var(--color-error-600);
+  font-weight: var(--font-weight-bold);
+}
+
+.force-delete-teams {
+  padding: var(--space-3);
+  background: var(--color-error-100);
+  border-radius: var(--radius-md);
+  border-left: var(--border-width-3) solid var(--color-error-600);
+}
+
+.force-delete-teams-title {
+  margin: 0 0 var(--space-2) 0;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-error-800);
+}
+
+.force-delete-teams-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-2) 0;
+}
+
+.force-delete-teams-item {
+  padding: var(--space-0-5) 0;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-error-900);
+}
+
+.force-delete-teams-item::before {
+  content: '\2022';
+  margin-right: var(--space-2);
+  color: var(--color-error-600);
+}
+
+.force-delete-teams-consequences {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-error-800);
+  line-height: var(--line-height-normal);
+}
+
+@media (prefers-contrast: more) {
+  .force-delete-warning {
+    border-width: var(--border-width-3);
+  }
+}

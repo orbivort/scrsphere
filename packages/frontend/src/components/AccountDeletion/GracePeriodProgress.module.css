@@ -1,0 +1,65 @@
+.grace-period-progress {
+  padding: var(--space-4);
+  background: var(--color-warning-50);
+  border: var(--border-width-1) solid var(--color-warning-300);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-5);
+}
+
+.grace-period-title {
+  margin: 0 0 var(--space-3) 0;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-warning-800);
+}
+
+.grace-period-dates {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.grace-period-date-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.grace-period-date-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.grace-period-date-value {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.grace-period-bar-container {
+  width: 100%;
+  height: var(--space-2);
+  background: var(--color-warning-200);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.grace-period-bar {
+  height: 100%;
+  background: var(--color-warning-600);
+  border-radius: var(--radius-full);
+  transition: width var(--transition-normal);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grace-period-bar {
+    transition: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .grace-period-progress {
+    border-width: var(--border-width-2);
+  }
+}

@@ -1,0 +1,532 @@
+/* SendMessageModal Styles - Modern Redesign */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--modal-overlay-background);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  z-index: var(--z-modal);
+  animation: modal-fade-in var(--transition-normal) var(--ease-out);
+}
+
+@keyframes modal-fade-in {
+  from {
+    opacity: var(--opacity-0);
+  }
+
+  to {
+    opacity: var(--opacity-100);
+  }
+}
+
+.modal {
+  background: linear-gradient(
+    180deg,
+    var(--color-background-card) 0%,
+    var(--color-background-page) 100%
+  );
+  border-radius: var(--radius-2xl);
+  max-width: 560px;
+  width: 100%;
+  max-height: 90vh;
+  overflow: hidden;
+  box-shadow: var(--shadow-2xl);
+  animation: modal-scale-in var(--transition-slow) cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes modal-scale-in {
+  from {
+    transform: scale(0.95) translateY(var(--space-4));
+    opacity: var(--opacity-0);
+  }
+
+  to {
+    transform: scale(1) translateY(0);
+    opacity: var(--opacity-100);
+  }
+}
+
+/* ========================================
+   MODAL HEADER
+   ======================================== */
+
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: var(--space-6);
+  background: linear-gradient(135deg, var(--color-gray-50) 0%, var(--color-background-card) 100%);
+  border-bottom: var(--border-width-1) solid var(--color-border-default);
+}
+
+.header-content {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+.icon-wrapper {
+  width: var(--space-12);
+  height: var(--space-12);
+  min-width: var(--space-12);
+  background: linear-gradient(135deg, var(--color-primary-500) 0%, var(--color-primary-600) 100%);
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-inverse);
+  box-shadow: var(--shadow-primary-button);
+}
+
+.header-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.modal-title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-1) 0;
+  line-height: var(--line-height-tight);
+}
+
+.modal-subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: 0;
+  line-height: var(--line-height-normal);
+}
+
+.close-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-8);
+  height: var(--space-8);
+  background-color: transparent;
+  border: var(--border-width-1) solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast) var(--ease-out),
+    color var(--transition-fast) var(--ease-out),
+    border-color var(--transition-fast) var(--ease-out);
+}
+
+.close-button:hover {
+  background-color: var(--color-background-hover);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-hover);
+}
+
+.close-button:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.close-button:disabled {
+  opacity: var(--opacity-50);
+  cursor: not-allowed;
+}
+
+/* ========================================
+   MODAL BODY
+   ======================================== */
+
+.modal-body {
+  padding: var(--space-6);
+  overflow-y: auto;
+  max-height: 60vh;
+}
+
+/* ========================================
+   SUCCESS/ERROR MESSAGES
+   ======================================== */
+
+.success-message {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: linear-gradient(135deg, var(--color-success-50) 0%, var(--color-success-100) 100%);
+  border: var(--border-width-1) solid var(--color-success-200);
+  border-radius: var(--radius-lg);
+  color: var(--color-success-700);
+  margin-bottom: var(--space-5);
+  animation: message-slide-in var(--transition-slow) var(--ease-out);
+}
+
+@keyframes message-slide-in {
+  from {
+    opacity: var(--opacity-0);
+    transform: translateY(calc(var(--space-2) * -1));
+  }
+
+  to {
+    opacity: var(--opacity-100);
+    transform: translateY(0);
+  }
+}
+
+.success-icon {
+  flex-shrink: 0;
+  color: var(--color-success-500);
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: linear-gradient(135deg, var(--color-error-50) 0%, var(--color-error-100) 100%);
+  border: var(--border-width-1) solid var(--color-error-200);
+  border-radius: var(--radius-lg);
+  color: var(--color-error-700);
+  margin-bottom: var(--space-5);
+  animation: error-shake 0.5s var(--ease-out);
+}
+
+@keyframes error-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  20%,
+  60% {
+    transform: translateX(calc(var(--space-1) * -1));
+  }
+
+  40%,
+  80% {
+    transform: translateX(var(--space-1));
+  }
+}
+
+.error-icon {
+  flex-shrink: 0;
+  color: var(--color-error-500);
+}
+
+/* ========================================
+   FORM STYLES
+   ======================================== */
+
+.form-group {
+  margin-bottom: var(--space-5);
+}
+
+.form-group:last-child {
+  margin-bottom: 0;
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.required-indicator {
+  color: var(--color-error-500);
+  font-weight: var(--font-weight-bold);
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: var(--border-width-1) solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-base);
+  font-family: var(--font-family-sans);
+  background-color: var(--color-background-card);
+  color: var(--color-text-primary);
+  transition:
+    border-color var(--transition-fast) var(--ease-out),
+    box-shadow var(--transition-fast) var(--ease-out);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: var(--space-32);
+  line-height: var(--line-height-relaxed);
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--color-primary-500);
+  box-shadow: var(--shadow-focus-primary-4);
+}
+
+.form-input:disabled,
+.form-textarea:disabled {
+  background-color: var(--color-gray-100);
+  cursor: not-allowed;
+  opacity: var(--opacity-70);
+}
+
+.form-input.input-error,
+.form-textarea.input-error {
+  border-color: var(--color-error-500);
+  background-color: var(--color-error-50);
+}
+
+.form-input.input-error:focus,
+.form-textarea.input-error:focus {
+  border-color: var(--color-error-600);
+  box-shadow: var(--shadow-focus-error-3);
+}
+
+/* ========================================
+   CHARACTER COUNTER
+   ======================================== */
+
+.character-counter {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--space-1);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+}
+
+.character-counter.warning {
+  color: var(--color-warning-500);
+}
+
+.character-counter.error {
+  color: var(--color-error-500);
+}
+
+/* ========================================
+   MODAL FOOTER
+   ======================================== */
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  padding: var(--space-5) var(--space-6);
+  background: linear-gradient(180deg, transparent 0%, var(--color-background-page) 100%);
+  border-top: var(--border-width-1) solid var(--color-border-default);
+}
+
+/* ========================================
+   BUTTON STYLES
+   ======================================== */
+
+.button-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  background: linear-gradient(135deg, var(--color-primary-600) 0%, var(--color-primary-700) 100%);
+  color: var(--color-text-inverse);
+  border: var(--border-width-1) solid transparent;
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  box-shadow: var(--shadow-primary-button);
+  transition:
+    background var(--transition-fast) var(--ease-out),
+    transform var(--transition-fast) var(--ease-out),
+    box-shadow var(--transition-fast) var(--ease-out);
+}
+
+.button-primary:disabled {
+  opacity: var(--opacity-50);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.button-primary:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.button-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--color-primary-700) 0%, var(--color-primary-800) 100%);
+  transform: translateY(calc(var(--space-0-5) * -1));
+  box-shadow: var(--shadow-primary-button-hover);
+}
+
+.button-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  background-color: var(--color-background-card);
+  color: var(--color-text-secondary);
+  border: var(--border-width-1) solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast) var(--ease-out),
+    border-color var(--transition-fast) var(--ease-out),
+    color var(--transition-fast) var(--ease-out);
+}
+
+.button-secondary:disabled {
+  opacity: var(--opacity-50);
+  cursor: not-allowed;
+}
+
+.button-secondary:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.button-secondary:hover:not(:disabled) {
+  background-color: var(--color-background-hover);
+  border-color: var(--color-border-hover);
+  color: var(--color-text-primary);
+}
+
+/* ========================================
+   LOADING SPINNER
+   ======================================== */
+
+.loading-spinner {
+  width: var(--space-4);
+  height: var(--space-4);
+  border: var(--border-width-2) solid var(--color-text-inverse);
+  border-top-color: transparent;
+  border-radius: var(--radius-full);
+  animation: button-spinner 0.8s linear infinite;
+}
+
+@keyframes button-spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+@media (width <= 640px) {
+  .modal-overlay {
+    padding: var(--space-2);
+    align-items: flex-end;
+  }
+
+  .modal {
+    max-height: 85vh;
+    border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+    animation: modal-slide-up-mobile var(--transition-slow) var(--ease-out);
+  }
+
+  @keyframes modal-slide-up-mobile {
+    from {
+      transform: translateY(100%);
+      opacity: var(--opacity-0);
+    }
+
+    to {
+      transform: translateY(0);
+      opacity: var(--opacity-100);
+    }
+  }
+
+  .modal-header {
+    padding: var(--space-5);
+  }
+
+  .modal-body {
+    padding: var(--space-5);
+    max-height: 50vh;
+  }
+
+  .modal-footer {
+    flex-direction: column;
+    padding: var(--space-4) var(--space-5);
+  }
+
+  .modal-footer button {
+    width: 100%;
+  }
+
+  .header-content {
+    gap: var(--space-3);
+  }
+
+  .icon-wrapper {
+    width: var(--space-10);
+    height: var(--space-10);
+    min-width: var(--space-10);
+  }
+}
+
+/* ========================================
+   REDUCED MOTION
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ========================================
+   DARK MODE SUPPORT
+   ======================================== */
+
+@media (prefers-color-scheme: dark) {
+  .modal {
+    background: linear-gradient(180deg, var(--color-gray-800) 0%, var(--color-gray-900) 100%);
+  }
+
+  .modal-header {
+    background: linear-gradient(135deg, var(--color-gray-900) 0%, var(--color-gray-800) 100%);
+  }
+
+  .icon-wrapper {
+    background: linear-gradient(135deg, var(--color-primary-400) 0%, var(--color-primary-500) 100%);
+  }
+
+  .form-input,
+  .form-textarea {
+    background-color: var(--color-gray-800);
+    border-color: var(--color-gray-700);
+  }
+
+  .form-input:disabled,
+  .form-textarea:disabled {
+    background-color: var(--color-gray-900);
+  }
+
+  .button-secondary {
+    background-color: var(--color-gray-800);
+    border-color: var(--color-gray-700);
+  }
+
+  .button-secondary:hover:not(:disabled) {
+    background-color: var(--color-gray-700);
+    border-color: var(--color-gray-600);
+  }
+}

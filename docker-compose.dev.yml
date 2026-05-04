@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: packages/backend/Dockerfile.dev
+    container_name: scrsphere-backend-dev
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./packages/backend/.env
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./packages/backend/src:/app/packages/backend/src
+      - ./packages/backend/prisma:/app/packages/backend/prisma
+      - ./packages/shared/src:/app/packages/shared/src
+    depends_on:
+      - postgres
+    networks:
+      - scrsphere-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: packages/frontend/Dockerfile.dev
+    container_name: scrsphere-frontend-dev
+    ports:
+      - "5173:5173"
+    env_file:
+      - ./packages/frontend/.env
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./packages/frontend/src:/app/packages/frontend/src
+      - ./packages/frontend/public:/app/packages/frontend/public
+      - ./packages/shared/src:/app/packages/shared/src
+    depends_on:
+      - backend
+    networks:
+      - scrsphere-network
+
+  postgres:
+    image: postgres:18-alpine
+    container_name: scrsphere-postgres-dev
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=scrsphere_dev
+    volumes:
+      - scrsphere_postgres_dev_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - scrsphere-network
+
+volumes:
+  scrsphere_postgres_dev_data:
+
+networks:
+  scrsphere-network:
+    driver: bridge

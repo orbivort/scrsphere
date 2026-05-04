@@ -1,0 +1,243 @@
+/**
+ * Query Key Factory
+ *
+ * Centralized query key management for React Query.
+ * Follows the factory pattern for type-safe, maintainable query keys.
+ *
+ * @see https://tkdodo.eu/blog/effective-react-query-keys
+ */
+
+export const queryKeys = {
+  // Sprint-related queries
+  sprint: {
+    all: ['sprints'] as const,
+    lists: () => [...queryKeys.sprint.all, 'list'] as const,
+    list: (filters: { teamId?: string; status?: string } = {}) =>
+      [...queryKeys.sprint.lists(), filters] as const,
+    details: () => [...queryKeys.sprint.all, 'detail'] as const,
+    detail: (id: string) => [...queryKeys.sprint.details(), id] as const,
+    active: (teamId: string) => [...queryKeys.sprint.all, 'active', teamId] as const,
+    activeSprint: (teamId: string) => [...queryKeys.sprint.all, 'activeSprint', teamId] as const,
+    stats: (sprintId: string) => [...queryKeys.sprint.detail(sprintId), 'stats'] as const,
+  },
+
+  // Standalone query keys used in specific contexts
+  activeSprint: {
+    all: ['activeSprint'] as const,
+  },
+
+  // Sprint Tasks queries
+  sprintTasks: {
+    all: ['sprintTasks'] as const,
+    bySprint: (sprintId: string) => [...queryKeys.sprintTasks.all, sprintId] as const,
+  },
+
+  // Sprint Backlog Changes queries
+  sprintBacklogChanges: {
+    all: ['sprintBacklogChanges'] as const,
+    bySprint: (sprintId: string) => [...queryKeys.sprintBacklogChanges.all, sprintId] as const,
+  },
+
+  // Available PBIs queries
+  availablePBIs: {
+    all: ['availablePBIs'] as const,
+    bySprint: (sprintId: string) => [...queryKeys.availablePBIs.all, sprintId] as const,
+  },
+
+  // Task-related queries
+  task: {
+    all: ['tasks'] as const,
+    lists: () => [...queryKeys.task.all, 'list'] as const,
+    list: (filters: { sprintId?: string; assigneeId?: string; status?: string } = {}) =>
+      [...queryKeys.task.lists(), filters] as const,
+    details: () => [...queryKeys.task.all, 'detail'] as const,
+    detail: (id: string) => [...queryKeys.task.details(), id] as const,
+    bySprint: (sprintId: string) => [...queryKeys.task.lists(), { sprintId }] as const,
+    history: (taskId: string) => [...queryKeys.task.detail(taskId), 'history'] as const,
+  },
+
+  // Burndown chart queries
+  burndown: {
+    all: ['burndown'] as const,
+    bySprint: (sprintId: string) => [...queryKeys.burndown.all, sprintId] as const,
+  },
+
+  // Team-related queries
+  team: {
+    all: ['teams'] as const,
+    lists: () => [...queryKeys.team.all, 'list'] as const,
+    list: (filters: { search?: string; page?: number } = {}) =>
+      [...queryKeys.team.lists(), filters] as const,
+    details: () => [...queryKeys.team.all, 'detail'] as const,
+    detail: (id: string) => [...queryKeys.team.details(), id] as const,
+    members: (teamId: string) => [...queryKeys.team.detail(teamId), 'members'] as const,
+    // Standalone keys matching actual query usage
+    byId: (id: string | undefined) => ['team', id] as const,
+  },
+
+  // Definition of Done queries
+  definitionOfDone: {
+    all: ['definition-of-done'] as const,
+    byTeam: (teamId: string) => [...queryKeys.definitionOfDone.all, teamId] as const,
+  },
+
+  // DoD Compliance queries
+  dodCompliance: {
+    all: ['dod-compliance'] as const,
+    bySprint: (sprintId: string) => [...queryKeys.dodCompliance.all, sprintId] as const,
+  },
+
+  // Impediment queries
+  impediment: {
+    all: ['impediments'] as const,
+    lists: () => [...queryKeys.impediment.all, 'list'] as const,
+    list: (filters: { teamId?: string; status?: string } = {}) =>
+      [...queryKeys.impediment.lists(), filters] as const,
+    byTeam: (teamId: string) => [...queryKeys.impediment.lists(), { teamId }] as const,
+  },
+
+  // Product Backlog Item queries
+  pbi: {
+    all: ['pbi'] as const,
+    lists: () => [...queryKeys.pbi.all, 'list'] as const,
+    list: (filters: { teamId?: string; status?: string } = {}) =>
+      [...queryKeys.pbi.lists(), filters] as const,
+    byTeam: (teamId: string) => [...queryKeys.pbi.lists(), { teamId }] as const,
+  },
+
+  // Product Backlog queries (alias for pbi)
+  productBacklog: {
+    all: ['productBacklog'] as const,
+    lists: () => [...queryKeys.productBacklog.all, 'list'] as const,
+    list: (filters: { teamId?: string; status?: string; limit?: number } = {}) =>
+      [...queryKeys.productBacklog.lists(), filters] as const,
+  },
+
+  // Daily Update queries
+  dailyUpdate: {
+    all: ['daily-updates'] as const,
+    lists: () => [...queryKeys.dailyUpdate.all, 'list'] as const,
+    list: (filters: { teamId?: string; sprintId?: string } = {}) =>
+      [...queryKeys.dailyUpdate.lists(), filters] as const,
+    bySprint: (sprintId: string) => [...queryKeys.dailyUpdate.lists(), { sprintId }] as const,
+    byTeam: (teamId: string) => [...queryKeys.dailyUpdate.lists(), { teamId }] as const,
+  },
+
+  // Product Goal queries
+  productGoal: {
+    all: ['product-goals'] as const,
+    lists: () => [...queryKeys.productGoal.all, 'list'] as const,
+    list: (filters: { teamId?: string; status?: string } = {}) =>
+      [...queryKeys.productGoal.lists(), filters] as const,
+    details: () => [...queryKeys.productGoal.all, 'detail'] as const,
+    detail: (id: string) => [...queryKeys.productGoal.details(), id] as const,
+    active: (teamId: string) => [...queryKeys.productGoal.all, 'active', teamId] as const,
+  },
+
+  // Velocity queries
+  velocity: {
+    all: ['velocity'] as const,
+    byTeam: (teamId: string) => [...queryKeys.velocity.all, teamId] as const,
+    bySprint: (sprintId: string) => [...queryKeys.velocity.all, 'sprint', sprintId] as const,
+  },
+
+  // Metrics queries
+  metrics: {
+    all: ['metrics'] as const,
+    sprint: (sprintId: string) => [...queryKeys.metrics.all, 'sprint', sprintId] as const,
+    team: (teamId: string) => [...queryKeys.metrics.all, 'team', teamId] as const,
+  },
+
+  // Generated Sprint queries
+  generatedSprint: {
+    all: ['generated-sprints'] as const,
+    lists: () => [...queryKeys.generatedSprint.all, 'list'] as const,
+    list: (filters: { teamId?: string } = {}) =>
+      [...queryKeys.generatedSprint.lists(), filters] as const,
+    details: () => [...queryKeys.generatedSprint.all, 'detail'] as const,
+    detail: (id: string) => [...queryKeys.generatedSprint.details(), id] as const,
+    byTeam: (teamId: string | undefined) =>
+      [...queryKeys.generatedSprint.lists(), { teamId }] as const,
+  },
+
+  // Team Status queries
+  teamStatus: {
+    all: ['teamStatus'] as const,
+    byTeam: (teamId: string) => [...queryKeys.teamStatus.all, teamId] as const,
+    bySprint: (sprintId: string) => [...queryKeys.teamStatus.all, 'sprint', sprintId] as const,
+  },
+
+  // My Teams queries
+  myTeams: {
+    all: ['my-teams'] as const,
+  },
+
+  // Retrospective queries
+  retrospective: {
+    all: ['retrospective'] as const,
+    allList: ['retrospectives'] as const, // plural form used in list queries
+    lists: () => [...queryKeys.retrospective.all, 'list'] as const,
+    list: (teamId: string) => [...queryKeys.retrospective.lists(), teamId] as const,
+    allByTeam: (teamId: string | undefined) => ['retrospectives', teamId] as const,
+    bySprint: (sprintId: string | undefined) => ['retrospective', sprintId] as const,
+    details: () => [...queryKeys.retrospective.all, 'detail'] as const,
+    detail: (sprintId: string) => [...queryKeys.retrospective.details(), sprintId] as const,
+  },
+
+  // Sprint Configuration queries
+  sprintConfiguration: {
+    all: ['sprintConfiguration'] as const,
+    byTeam: (teamId: string | undefined) => [...queryKeys.sprintConfiguration.all, teamId] as const,
+  },
+
+  // Sprint Review queries
+  sprintReview: {
+    all: ['sprint-reviews'] as const,
+    byTeamAndSprint: (teamId: string | undefined, sprintId: string | undefined) =>
+      [...queryKeys.sprintReview.all, teamId, sprintId] as const,
+  },
+
+  // Increment queries
+  increment: {
+    all: ['increments'] as const,
+    detail: (id: string) => ['increment', id] as const,
+  },
+
+  // Message queries
+  message: {
+    all: ['messages'] as const,
+  },
+
+  // Definition of Ready queries
+  definitionOfReady: {
+    all: ['definitionOfReady'] as const,
+    byTeam: (teamId: string) => [...queryKeys.definitionOfReady.all, teamId] as const,
+  },
+
+  // Pending items queries
+  pendingAdjustments: {
+    all: ['pending-adjustments'] as const,
+  },
+
+  pendingFeedback: {
+    all: ['pending-feedback'] as const,
+  },
+
+  pendingRetroActionItems: {
+    all: ['pending-retro-action-items'] as const,
+  },
+
+  // Notification queries
+  notification: {
+    all: ['notifications'] as const,
+  },
+
+  // Status change history queries
+  statusChangeHistory: {
+    byEntity: (entityType: string, entityId: string) =>
+      ['statusChangeHistory', entityType, entityId] as const,
+  },
+} as const;
+
+// Type helper for query keys
+export type QueryKeys = typeof queryKeys;

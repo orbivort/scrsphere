@@ -1,0 +1,153 @@
+/* Page Header Styles */
+
+.header {
+  background: var(--color-background-card);
+  border-bottom: var(--border-width-1) solid var(--color-border-default);
+  padding: var(--space-6);
+  margin: calc(-1 * var(--space-6)) calc(-1 * var(--space-6)) var(--space-6)
+    calc(-1 * var(--space-6));
+}
+
+.content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-4);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.title-section {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex: 1;
+}
+
+.back-button {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: transparent;
+  border: var(--border-width-1) solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast),
+    border-color var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.back-button:hover {
+  background: var(--color-background-hover);
+  color: var(--color-text-primary);
+  border-color: var(--color-gray-300);
+}
+
+.back-button:active {
+  background: var(--color-gray-200);
+}
+
+.back-button:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-primary-500);
+  outline-offset: var(--focus-ring-offset);
+  box-shadow: var(--shadow-focus-primary-4);
+}
+
+.back-label {
+  display: inline;
+}
+
+.text-content {
+  flex: 1;
+}
+
+.title {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0;
+  line-height: var(--line-height-tight);
+}
+
+.subtitle {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  margin: var(--space-2) 0 0 0;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+/* Responsive Design */
+@media (width <= 768px) {
+  .header {
+    padding: var(--space-4);
+    margin: calc(-1 * var(--space-4)) calc(-1 * var(--space-4)) var(--space-4)
+      calc(-1 * var(--space-4));
+  }
+
+  .content {
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .title-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .back-button {
+    align-self: flex-start;
+  }
+
+  .title {
+    font-size: var(--font-size-2xl);
+  }
+
+  .subtitle {
+    font-size: var(--font-size-sm);
+  }
+
+  .actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+@media (width <= 480px) {
+  .header {
+    padding: var(--space-3);
+    margin: calc(-1 * var(--space-3)) calc(-1 * var(--space-3)) var(--space-3)
+      calc(-1 * var(--space-3));
+  }
+
+  .title {
+    font-size: var(--font-size-xl);
+  }
+
+  .back-label {
+    display: none;
+  }
+
+  .back-button {
+    padding: var(--space-2);
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .back-button {
+    transition: none;
+  }
+}

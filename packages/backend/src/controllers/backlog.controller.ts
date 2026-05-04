@@ -1,0 +1,102 @@
+// Product Backlog Controller
+import { type Request, type Response } from 'express';
+import { productBacklogService } from '../services/backlog.service';
+import { asyncHandler, createSuccessResponse, BadRequestError } from '../utils/errors';
+import { getParamValue } from '../utils/validation';
+import type { ItemStatus } from '../generated/prisma/client';
+
+/**
+ * Get product backlog for a team
+ */
+export const getProductBacklog = asyncHandler(async (req: Request, res: Response) => {
+  const { teamId } = req.query;
+  const { status, labels, page, limit } = req.query;
+
+  if (!teamId || typeof teamId !== 'string') {
+    throw new BadRequestError('teamId is required');
+  }
+
+  const result = await productBacklogService.getProductBacklog(teamId, {
+    status: status as ItemStatus | undefined,
+    labels: labels as string | undefined,
+    page: page ? parseInt(page as string, 10) : undefined,
+    limit: limit ? parseInt(limit as string, 10) : undefined,
+  });
+
+  res.json(result);
+});
+
+/**
+ * Get PBI by ID
+ */
+export const getPBIById = asyncHandler(async (req: Request, res: Response) => {
+  const id = getParamValue(req.params.id);
+  if (!id) {
+    throw new BadRequestError('PBI ID is required');
+  }
+  const pbi = await productBacklogService.getPBIById(id);
+  res.json(createSuccessResponse(pbi));
+});
+
+/**
+ * Create a new PBI
+ */
+export const createPBI = asyncHandler(async (req: Request, res: Response) => {
+  if (!req.userId) {
+    throw new BadRequestError('User not authenticated');
+  }
+  const pbi = await productBacklogService.createPBI(req.userId, req.body);
+  res.status(201).json(createSuccessResponse(pbi));
+});
+
+/**
+ * Update a PBI
+ */
+export const updatePBI = asyncHandler(async (req: Request, res: Response) => {
+  const id = getParamValue(req.params.id);
+  if (!id) {
+    throw new BadRequestError('PBI ID is required');
+  }
+  if (!req.userId) {
+    throw new BadRequestError('User not authenticated');
+  }
+  const pbi = await productBacklogService.updatePBI(id, req.userId, req.body);
+  res.json(createSuccessResponse(pbi));
+});
+
+/**
+ * Update PBI priority
+ */
+export const updatePriority = asyncHandler(async (req: Request, res: Response) => {
+  const id = getParamValue(req.params.id);
+  if (!id) {
+    throw new BadRequestError('PBI ID is required');
+  }
+  const { priority } = req.body;
+  const pbi = await productBacklogService.updatePriority(id, priority);
+  res.json(createSuccessResponse(pbi));
+});
+
+/**
+ * Delete a PBI
+ */
+export const deletePBI = asyncHandler(async (req: Request, res: Response) => {
+  const id = getParamValue(req.params.id);
+  if (!id) {
+    throw new BadRequestError('PBI ID is required');
+  }
+  if (!req.userId) {
+    throw new BadRequestError('User not authenticated');
+  }
+  await productBacklogService.deletePBI(id, req.userId);
+  res.json(createSuccessResponse({ message: 'Item deleted successfully' }));
+});
+
+/**
+ * Reorder PBIs
+ */
+export const reorderPBIs = asyncHandler(async (req: Request, res: Response) => {
+  const { pbiIds } = req.body;
+  await productBacklogService.reorderPBIs(pbiIds);
+  res.json(createSuccessResponse({ message: 'Items reordered successfully' }));
+});

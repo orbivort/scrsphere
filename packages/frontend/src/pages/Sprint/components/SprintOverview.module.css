@@ -1,0 +1,379 @@
+/* ============================================================================
+   SPRINT OVERVIEW - Compact Dashboard Card
+   Distinctive design with dashed accent line and space-efficient layout
+   ============================================================================ */
+
+.sprint-overview {
+  margin: 0 var(--space-6) var(--space-4);
+  background: linear-gradient(
+    90deg,
+    var(--color-primary-50) 0%,
+    var(--color-background-card) 15%,
+    var(--color-background-card) 85%,
+    var(--color-primary-50) 100%
+  );
+  border: var(--border-width-1) solid var(--color-border-default);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+/* Left accent bar instead of top line - matches backlog goal pattern */
+.sprint-overview::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--color-primary-500);
+}
+
+.sprint-overview:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-border-hover);
+}
+
+/* Main Content Area - Goal + Progress - Compact */
+.overview-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4) var(--space-5);
+  gap: var(--space-5);
+}
+
+/* Goal Section - Highlighted */
+.goal-section {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  position: relative;
+}
+
+/* Highlight background for goal section */
+.goal-section::before {
+  content: '';
+  position: absolute;
+  inset: -4px -8px -4px -4px;
+  background: linear-gradient(135deg, var(--color-primary-50) 0%, transparent 60%);
+  border-radius: var(--radius-lg);
+  opacity: 0.6;
+}
+
+.goal-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  background: linear-gradient(135deg, var(--color-primary-100) 0%, var(--color-primary-50) 100%);
+  border-radius: var(--radius-lg);
+  border: var(--border-width-1) solid var(--color-primary-200);
+  color: var(--color-primary-600);
+  flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
+}
+
+.goal-content {
+  flex: 1;
+  min-width: 0;
+  padding-left: var(--space-3);
+  border-left: var(--border-width-2) solid var(--color-primary-300);
+}
+
+.goal-label {
+  font-size: 11px;
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+  color: var(--color-primary-600);
+  margin-bottom: var(--space-1);
+  display: block;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Visual cue dot for label */
+.goal-label::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: var(--color-primary-500);
+  border-radius: var(--radius-full);
+  animation: pulse-highlight 2s ease-in-out infinite;
+}
+
+@keyframes pulse-highlight {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.6;
+    transform: scale(0.8);
+  }
+}
+
+.goal-text {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-snug);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+}
+
+/* Progress Section - Compact */
+.progress-section {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding-left: var(--space-4);
+  border-left: var(--border-width-1) solid var(--color-border-default);
+}
+
+.progress-ring {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-ring svg {
+  transform: rotate(-90deg);
+}
+
+.progress-ring-bg {
+  color: var(--color-gray-200);
+}
+
+.progress-ring-fill {
+  color: var(--color-primary-500);
+  transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.progress-percentage {
+  position: absolute;
+  font-size: 11px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.progress-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Stats Row - Compact Horizontal */
+.stats-row {
+  display: flex;
+  padding: var(--space-3) var(--space-5);
+  gap: var(--space-1);
+  background: linear-gradient(
+    180deg,
+    var(--color-background-page) 0%,
+    var(--color-background-card) 100%
+  );
+  border-top: var(--border-width-1) solid var(--color-border-default);
+}
+
+.stat-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-lg);
+  transition: all 0.15s ease;
+  min-width: 0;
+}
+
+.stat-item:hover {
+  background: var(--color-background-hover);
+}
+
+.stat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, var(--color-primary-100) 0%, var(--color-primary-50) 100%);
+  border-radius: var(--radius-md);
+  color: var(--color-primary-600);
+  flex-shrink: 0;
+}
+
+.stat-icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+.stat-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.stat-label {
+  font-size: 10px;
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+  color: var(--color-text-tertiary);
+  display: block;
+  margin-bottom: 2px;
+}
+
+.stat-value {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.stat-breakdown {
+  font-size: 10px;
+  color: var(--color-text-tertiary);
+  margin-left: auto;
+  padding-left: var(--space-2);
+  white-space: nowrap;
+}
+
+.stat-bar {
+  width: 40px;
+  height: 3px;
+  background: var(--color-gray-200);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.stat-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary-500) 0%, var(--color-success-500) 100%);
+  border-radius: var(--radius-full);
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================ */
+
+@media (width <= 1024px) {
+  .sprint-overview {
+    margin: 0 var(--space-5) var(--space-4);
+  }
+
+  .overview-main {
+    padding: var(--space-4);
+    gap: var(--space-4);
+  }
+
+  .stats-row {
+    padding: var(--space-3) var(--space-4);
+  }
+}
+
+@media (width <= 768px) {
+  .sprint-overview {
+    margin: 0 var(--space-4) var(--space-3);
+  }
+
+  .overview-main {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: var(--space-4);
+    gap: var(--space-3);
+  }
+
+  .progress-section {
+    width: 100%;
+    padding-left: 0;
+    padding-top: var(--space-3);
+    border-left: none;
+    border-top: var(--border-width-1) solid var(--color-border-default);
+    justify-content: flex-start;
+  }
+
+  .stats-row {
+    flex-wrap: wrap;
+    padding: var(--space-3) var(--space-4);
+    gap: var(--space-2);
+  }
+
+  .stat-item {
+    flex: 1 1 calc(50% - var(--space-2));
+    min-width: 140px;
+  }
+}
+
+@media (width <= 480px) {
+  .sprint-overview {
+    margin: 0 var(--space-3) var(--space-3);
+    border-radius: var(--radius-lg);
+  }
+
+  .overview-main {
+    padding: var(--space-3);
+  }
+
+  .goal-header {
+    width: 32px;
+    height: 32px;
+  }
+
+  .goal-text {
+    font-size: var(--font-size-sm);
+  }
+
+  .stats-row {
+    flex-direction: column;
+    padding: var(--space-2) var(--space-3);
+    gap: var(--space-1);
+  }
+
+  .stat-item {
+    flex: 1 1 100%;
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .stat-breakdown,
+  .stat-bar {
+    display: none;
+  }
+}
+
+/* ============================================================================
+   REDUCED MOTION
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .sprint-overview,
+  .stat-item,
+  .progress-ring-fill,
+  .stat-bar-fill {
+    transition: none;
+  }
+
+  .sprint-overview:hover,
+  .stat-item:hover {
+    transform: none;
+  }
+}

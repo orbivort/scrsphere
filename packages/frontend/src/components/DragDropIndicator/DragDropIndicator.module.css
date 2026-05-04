@@ -1,0 +1,210 @@
+/**
+ * DragDropIndicator Component Styles
+ *
+ * Visual feedback for drag and drop operations with:
+ * - WCAG compliant color contrast (4.5:1 for text, 3:1 for UI)
+ * - CSS custom properties for theming
+ * - GPU-accelerated animations (transform, opacity)
+ * - Light and dark theme support
+ */
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: var(--opacity-90);
+  }
+
+  50% {
+    opacity: var(--opacity-70);
+  }
+}
+
+/* ========================================
+   BASE INDICATOR STYLES
+   ======================================== */
+
+.grabbed-indicator,
+.drop-target-indicator {
+  position: relative;
+  border-radius: var(--radius-md, 8px);
+  transition:
+    opacity var(--duration-150, 150ms) ease-out,
+    border-color var(--duration-150, 150ms) ease-out,
+    background-color var(--duration-150, 150ms) ease-out,
+    box-shadow var(--duration-150, 150ms) ease-out;
+}
+
+/* ========================================
+   VISIBILITY STATES
+   ======================================== */
+
+.visible {
+  animation: fade-in var(--duration-150, 150ms) ease-out forwards;
+}
+
+.hidden {
+  animation: fade-out var(--duration-150, 150ms) ease-out forwards;
+  pointer-events: none;
+}
+
+/* ========================================
+   GRABBED STATE
+   Dashed border, light background, grab cursor
+   ======================================== */
+
+.grabbed-indicator {
+  border: var(--border-width-2) dashed var(--color-primary-500);
+  background-color: var(--color-primary-50);
+  cursor: grab;
+  opacity: var(--opacity-90);
+}
+
+.grabbed-indicator.visible {
+  box-shadow: var(--shadow-focus-primary-4);
+}
+
+.grabbed-indicator.hidden {
+  border-color: transparent;
+  background-color: transparent;
+  box-shadow: none;
+}
+
+/* ========================================
+   DROP TARGET STATE
+   Dashed border with success color, clear distinction
+   ======================================== */
+
+.drop-target-indicator {
+  border: var(--border-width-2) dashed var(--color-success-500);
+  background-color: var(--color-success-50);
+}
+
+.drop-target-indicator.visible {
+  box-shadow: var(--shadow-focus-success-4);
+}
+
+.drop-target-indicator.hidden {
+  border-color: transparent;
+  background-color: transparent;
+  box-shadow: none;
+}
+
+/* ========================================
+   MOVING STATE
+   Ghost element following cursor, semi-transparent
+   ======================================== */
+
+.moving-indicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: var(--z-dropdown);
+  opacity: var(--opacity-80);
+  pointer-events: none;
+  transform-origin: top left;
+  animation: fade-in var(--duration-100, 100ms) ease-out;
+}
+
+.moving-indicator > * {
+  box-shadow: var(--shadow-primary-lg);
+  border-radius: var(--radius-md, 8px);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* ========================================
+   DARK THEME SUPPORT
+   ======================================== */
+
+@media (prefers-color-scheme: dark) {
+  .grabbed-indicator {
+    border-color: var(--color-primary-400);
+    background-color: var(--color-primary-900);
+  }
+
+  .grabbed-indicator.visible {
+    box-shadow: var(--shadow-focus-primary-4);
+  }
+
+  .drop-target-indicator {
+    border-color: var(--color-success-400);
+    background-color: var(--color-success-900);
+  }
+
+  .drop-target-indicator.visible {
+    box-shadow: var(--shadow-focus-success-4);
+  }
+
+  .moving-indicator > * {
+    box-shadow: var(--shadow-primary-lg);
+  }
+}
+
+/* ========================================
+   REDUCED MOTION
+   Respect user preferences for reduced motion
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .grabbed-indicator,
+  .drop-target-indicator {
+    transition: none;
+  }
+
+  .visible,
+  .hidden {
+    animation: none;
+  }
+
+  .moving-indicator {
+    animation: none;
+  }
+
+  .moving-indicator > * {
+    animation: none;
+  }
+}
+
+/* ========================================
+   HIGH CONTRAST MODE
+   Enhanced visibility for accessibility
+   Note: Uses outline for visibility, background-color
+   uses existing CSS variables for stylelint compliance
+   ======================================== */
+
+@media (forced-colors: active) {
+  .grabbed-indicator {
+    border: var(--border-width-4) dashed var(--color-primary-500);
+  }
+
+  .drop-target-indicator {
+    border: var(--border-width-4) dashed var(--color-success-500);
+  }
+
+  .moving-indicator {
+    outline: var(--border-width-2) solid var(--color-primary-500);
+  }
+}

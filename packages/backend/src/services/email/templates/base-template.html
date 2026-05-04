@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>{{subject}}</title>
+  <!--[if mso]>
+  <noscript>
+    <xml>
+      <o:OfficeDocumentSettings>
+        <o:PixelsPerInch>96</o:PixelsPerInch>
+      </o:OfficeDocumentSettings>
+    </xml>
+  </noscript>
+  <![endif]-->
+  <style>
+    /* Reset styles */
+    body,
+    table,
+    td,
+    p,
+    a,
+    li,
+    blockquote {
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+    }
+
+    table,
+    td {
+      mso-table-lspace: 0pt;
+      mso-table-rspace: 0pt;
+    }
+
+    img {
+      -ms-interpolation-mode: bicubic;
+      border: 0;
+      height: auto;
+      line-height: 100%;
+      outline: none;
+      text-decoration: none;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    /* Email container styles */
+    .email-wrapper {
+      width: 100%;
+      background-color: #f9fafb;
+    }
+
+    .email-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    /* Header styles */
+    .email-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 32px 40px;
+      text-align: center;
+    }
+
+    .email-header h1 {
+      margin: 0;
+      color: #ffffff;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+    }
+
+    .email-header .brand-name {
+      font-size: 18px;
+      font-weight: 600;
+      opacity: 0.9;
+    }
+
+    /* Content styles */
+    .email-content {
+      padding: 40px;
+    }
+
+    .email-content h2 {
+      margin: 0 0 16px 0;
+      color: #111827;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .email-content p {
+      margin: 0 0 16px 0;
+      color: #374151;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .email-content a {
+      color: #2563eb;
+      text-decoration: underline;
+    }
+
+    .email-content a:hover {
+      color: #1d4ed8;
+    }
+
+    /* Button styles */
+    .button {
+      display: inline-block;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #ffffff !important;
+      text-decoration: none !important;
+      border-radius: 6px;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      text-align: center;
+      mso-padding-alt: 0;
+    }
+
+    .button:hover {
+      opacity: 0.9;
+    }
+
+    /* Secondary button */
+    .button-secondary {
+      display: inline-block;
+      padding: 12px 24px;
+      background-color: #f3f4f6;
+      color: #374151 !important;
+      text-decoration: none !important;
+      border-radius: 6px;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .button-secondary:hover {
+      background-color: #e5e7eb;
+    }
+
+    /* Info box */
+    .info-box {
+      background-color: #eff6ff;
+      border-left: 4px solid #3b82f6;
+      padding: 16px 20px;
+      margin: 20px 0;
+      border-radius: 0 6px 6px 0;
+    }
+
+    .info-box p {
+      margin: 0;
+      color: #1e40af;
+      font-size: 14px;
+    }
+
+    /* Warning box */
+    .warning-box {
+      background-color: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      padding: 16px 20px;
+      margin: 20px 0;
+      border-radius: 0 6px 6px 0;
+    }
+
+    .warning-box p {
+      margin: 0;
+      color: #92400e;
+      font-size: 14px;
+    }
+
+    /* Error box */
+    .error-box {
+      background-color: #fef2f2;
+      border-left: 4px solid #ef4444;
+      padding: 16px 20px;
+      margin: 20px 0;
+      border-radius: 0 6px 6px 0;
+    }
+
+    .error-box p {
+      margin: 0;
+      color: #991b1b;
+      font-size: 14px;
+    }
+
+    /* Code block */
+    .code-block {
+      background-color: #f3f4f6;
+      padding: 16px 20px;
+      margin: 20px 0;
+      border-radius: 6px;
+      font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
+      font-size: 14px;
+      color: #374151;
+      word-break: break-all;
+      text-align: center;
+      letter-spacing: 0.05em;
+    }
+
+    /* Divider */
+    .divider {
+      border: none;
+      border-top: 1px solid #e5e7eb;
+      margin: 24px 0;
+    }
+
+    /* Footer styles */
+    .email-footer {
+      background-color: #f9fafb;
+      padding: 24px 40px;
+      text-align: center;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .email-footer p {
+      margin: 0 0 8px 0;
+      color: #6b7280;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      font-size: 14px;
+    }
+
+    .email-footer a {
+      color: #6b7280;
+      text-decoration: underline;
+    }
+
+    .email-footer a:hover {
+      color: #374151;
+    }
+
+    .footer-links {
+      margin: 12px 0;
+    }
+
+    .footer-links a {
+      display: inline-block;
+      margin: 0 12px;
+      color: #374151;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .footer-links a:hover {
+      text-decoration: underline;
+    }
+
+    /* Responsive styles */
+    @media only screen and (max-width: 600px) {
+      .email-container {
+        width: 100% !important;
+        border-radius: 0 !important;
+      }
+
+      .email-header {
+        padding: 24px 20px !important;
+      }
+
+      .email-content {
+        padding: 24px 20px !important;
+      }
+
+      .email-footer {
+        padding: 20px !important;
+      }
+
+      .button {
+        display: block !important;
+        width: 100% !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" class="email-wrapper">
+    <tr>
+      <td align="center" style="padding: 24px 16px;">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" class="email-container">
+          <!-- Header -->
+          <tr>
+            <td class="email-header">
+              <h1>
+                <span class="brand-name">{{appName}}</span>
+              </h1>
+            </td>
+          </tr>
+
+          <!-- Content -->
+          <tr>
+            <td class="email-content">
+              <!-- Greeting -->
+              {{#if recipientName}}
+              <p style="margin-bottom: 24px;">Hello <strong>{{recipientName}}</strong>,</p>
+              {{else}}
+              <p style="margin-bottom: 24px;">Hello,</p>
+              {{/if}}
+
+              <!-- Main content area - this is where template-specific content goes -->
+              <!-- EMAIL_CONTENT_PLACEHOLDER -->
+
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td class="email-footer">
+              <p>Thank you for using <strong>{{appName}}</strong>.</p>
+              {{#if supportEmail}}
+              <p>Need help? Contact us at <a href="mailto:{{supportEmail}}">{{supportEmail}}</a></p>
+              {{/if}}
+              <div class="footer-links">
+                <a href="{{appUrl}}">Visit {{appName}}</a>
+              </div>
+              <p style="margin-top: 16px; font-size: 12px; color: #9ca3af;">
+                &copy; {{currentYear}} {{appName}}. All rights reserved.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

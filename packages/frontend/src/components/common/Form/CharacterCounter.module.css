@@ -1,0 +1,39 @@
+.counter {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  transition: color var(--transition-normal);
+}
+
+.neutral {
+  color: var(--color-text-tertiary);
+}
+
+.valid {
+  color: var(--color-success-500);
+}
+
+.warning {
+  color: var(--color-warning-500);
+}
+
+.error {
+  color: var(--color-error-500);
+}
+
+.min-indicator {
+  color: var(--color-warning-500);
+  font-weight: var(--font-weight-semibold);
+}
+
+.count {
+  font-weight: var(--font-weight-semibold);
+}
+
+.separator {
+  margin: 0 var(--space-0-5);
+  opacity: var(--opacity-60);
+}
+
+.max {
+  opacity: var(--opacity-80);
+}

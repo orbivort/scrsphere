@@ -1,0 +1,339 @@
+// Product Backlog Service
+import prisma from '../utils/prisma';
+import { NotFoundError, BadRequestError, ForbiddenError } from '../utils/errors';
+import { generateUUIDv7 } from '../utils/uuid';
+import { workflowService } from './workflow.service';
+import { logger } from '../utils/logger';
+import type {
+  ProductBacklogItem,
+  ItemStatus,
+  MoSCoWPriority,
+  Prisma,
+} from '../generated/prisma/client';
+
+// PBI with relations
+export type PBIWithRelations = ProductBacklogItem & {
+  goal?: { id: string; title: string } | null;
+  creator?: { id: string; firstName: string; lastName: string } | null;
+};
+
+// Create PBI data
+export interface CreatePBIData {
+  teamId: string;
+  goalId?: string;
+  title: string;
+  description?: string;
+  storyPoints?: number;
+  priority?: MoSCoWPriority;
+  businessValue?: number;
+  labels?: string[];
+  acceptanceCriteria?: string;
+  status?: ItemStatus;
+}
+
+// Update PBI data
+export interface UpdatePBIData {
+  title?: string;
+  description?: string;
+  storyPoints?: number;
+  status?: ItemStatus;
+  labels?: string[];
+  acceptanceCriteria?: string;
+  goalId?: string;
+  priority?: MoSCoWPriority;
+  businessValue?: number;
+}
+
+// Pagination params
+export interface PaginationParams {
+  page?: number;
+  limit?: number;
+}
+
+// Paginated response
+export interface PaginatedResponse<T> {
+  success: boolean;
+  data: T[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+class ProductBacklogService {
+  /**
+   * Get product backlog for a team
+   */
+  async getProductBacklog(
+    teamId: string,
+    params?: {
+      status?: ItemStatus;
+      labels?: string;
+      page?: number;
+      limit?: number;
+    }
+  ): Promise<PaginatedResponse<ProductBacklogItem>> {
+    const page = params?.page || 1;
+    const limit = params?.limit || 20;
+    const skip = (page - 1) * limit;
+
+    const where: Prisma.ProductBacklogItemWhereInput = {
+      teamId,
+    };
+
+    if (params?.status) {
+      where.status = params.status;
+    }
+
+    if (params?.labels) {
+      const labels = params.labels.split(',');
+      where.labels = { hasSome: labels };
+    }
+
+    const [items, total] = await Promise.all([
+      prisma.productBacklogItem.findMany({
+        where,
+        include: {
+          goal: {
+            select: { id: true, title: true },
+          },
+          creator: {
+            select: { id: true, firstName: true, lastName: true },
+          },
+        },
+        orderBy: [{ priority: 'asc' }, { createdAt: 'desc' }],
+        skip,
+        take: limit,
+      }),
+      prisma.productBacklogItem.count({ where }),
+    ]);
+
+    return {
+      success: true,
+      data: items,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+
+  /**
+   * Get PBI by ID
+   */
+  async getPBIById(pbiId: string): Promise<PBIWithRelations> {
+    const pbi = await prisma.productBacklogItem.findUnique({
+      where: { id: pbiId },
+      include: {
+        goal: {
+          select: { id: true, title: true },
+        },
+        creator: {
+          select: { id: true, firstName: true, lastName: true },
+        },
+      },
+    });
+
+    if (!pbi) {
+      throw new NotFoundError('Product Backlog Item');
+    }
+
+    return pbi;
+  }
+
+  /**
+   * Create a new PBI
+   */
+  async createPBI(userId: string, data: CreatePBIData): Promise<ProductBacklogItem> {
+    const pbiId = generateUUIDv7();
+    const initialStatus = data.status || 'NEW';
+
+    const pbi = await prisma.productBacklogItem.create({
+      data: {
+        id: pbiId,
+        teamId: data.teamId,
+        goalId: data.goalId,
+        title: data.title,
+        description: data.description,
+        storyPoints: data.storyPoints,
+        labels: data.labels || [],
+        acceptanceCriteria: data.acceptanceCriteria,
+        createdBy: userId,
+        priority: data.priority || 'COULD_HAVE',
+        businessValue: data.businessValue,
+        status: initialStatus,
+      },
+    });
+
+    // Record initial status in workflow history
+    try {
+      const teamMember = await prisma.teamMember.findFirst({
+        where: { teamId: data.teamId, userId },
+      });
+
+      await workflowService.executeStatusChange({
+        entityType: 'BacklogItem',
+        entityId: pbiId,
+        fromStatus: null,
+        toStatus: initialStatus,
+        userId,
+        userRoles: teamMember ? [teamMember.role] : [],
+        changeReason: 'Initial backlog item creation',
+        metadata: {
+          teamId: data.teamId,
+          title: data.title,
+        },
+      });
+    } catch (error) {
+      logger.error('Failed to record initial status change history for backlog item', { error });
+    }
+
+    return pbi;
+  }
+
+  /**
+   * Update a PBI
+   */
+  async updatePBI(pbiId: string, userId: string, data: UpdatePBIData): Promise<ProductBacklogItem> {
+    // Check if PBI exists
+    const existing = await prisma.productBacklogItem.findUnique({
+      where: { id: pbiId },
+    });
+
+    if (!existing) {
+      throw new NotFoundError('Product Backlog Item');
+    }
+
+    // Prevent modifications to items with 'DONE' status
+    if (existing.status === 'DONE') {
+      throw new BadRequestError(
+        'Cannot modify backlog items that have been marked as Done. Items in Done status are locked and cannot be edited.'
+      );
+    }
+
+    const teamMember = await prisma.teamMember.findFirst({
+      where: {
+        teamId: existing.teamId,
+        userId,
+      },
+    });
+
+    if (!teamMember) {
+      throw new ForbiddenError('You are not a member of this team');
+    }
+
+    const userRoles = [teamMember.role];
+
+    if (data.status && data.status !== existing.status) {
+      const validationResult = await workflowService.validateTransition(
+        'BacklogItem',
+        existing.status,
+        data.status,
+        userId,
+        userRoles
+      );
+
+      if (!validationResult.isValid) {
+        throw new BadRequestError(validationResult.reason || 'Invalid status transition');
+      }
+
+      if (!validationResult.allowed) {
+        throw new ForbiddenError(validationResult.reason || 'Status transition not allowed');
+      }
+    }
+
+    const pbi = await prisma.productBacklogItem.update({
+      where: { id: pbiId },
+      data: {
+        ...data,
+        updatedAt: new Date(),
+      },
+    });
+
+    if (data.status && data.status !== existing.status) {
+      try {
+        await workflowService.executeStatusChange({
+          entityType: 'BacklogItem',
+          entityId: pbiId,
+          fromStatus: existing.status,
+          toStatus: data.status,
+          userId,
+          userRoles,
+          changeReason: 'Backlog item status updated',
+          metadata: {
+            previousStatus: existing.status,
+            newStatus: data.status,
+          },
+        });
+      } catch (error) {
+        logger.error('Failed to record status change history', { error });
+      }
+    }
+
+    return pbi;
+  }
+
+  /**
+   * Update PBI priority (MoSCoW)
+   */
+  async updatePriority(pbiId: string, priority: MoSCoWPriority): Promise<ProductBacklogItem> {
+    const pbi = await prisma.productBacklogItem.update({
+      where: { id: pbiId },
+      data: { priority },
+    });
+
+    return pbi;
+  }
+
+  /**
+   * Delete a PBI
+   */
+  async deletePBI(pbiId: string, _userId: string): Promise<void> {
+    const pbi = await prisma.productBacklogItem.findUnique({
+      where: { id: pbiId },
+    });
+
+    if (!pbi) {
+      throw new NotFoundError('Product Backlog Item');
+    }
+
+    // Prevent deletion of items with 'IN_PROGRESS' or 'DONE' status
+    if (pbi.status === 'IN_PROGRESS') {
+      throw new BadRequestError(
+        'Cannot delete backlog items that are currently in progress. Please move the item to a different status before deleting.'
+      );
+    }
+
+    if (pbi.status === 'DONE') {
+      throw new BadRequestError(
+        'Cannot delete backlog items that have been marked as Done. Completed items cannot be removed from the backlog.'
+      );
+    }
+
+    // Check if PBI is in an active sprint
+    if (pbi.sprintId) {
+      throw new BadRequestError('Cannot delete PBI that is in a sprint');
+    }
+
+    await prisma.productBacklogItem.delete({
+      where: { id: pbiId },
+    });
+  }
+
+  /**
+   * Reorder PBIs - Note: With MoSCoW priority, reordering is done within each priority category
+   * This function is kept for API compatibility but does not change MoSCoW priorities
+   */
+  async reorderPBIs(_pbiIds: string[]): Promise<void> {
+    // With MoSCoW priority system, items are grouped by priority category
+    // Reordering within categories would require a separate sort order field
+    // For now, this is a no-op as the priority is now categorical
+  }
+}
+
+export const productBacklogService = new ProductBacklogService();
+export default productBacklogService;

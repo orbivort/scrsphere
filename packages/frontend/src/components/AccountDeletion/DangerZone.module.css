@@ -1,0 +1,467 @@
+/* DangerZone.module.css - Minimal Non-Interfering Design */
+
+/* Aligned with goal of minimal workflow interference */
+
+/* ========================================
+   DANGER ZONE CONTAINER
+   ======================================== */
+
+.danger-zone {
+  position: relative;
+  margin-top: var(--space-2);
+}
+
+/* ========================================
+   DANGER ZONE HEADER - ULTRA MINIMAL
+   ======================================== */
+
+.danger-zone-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: var(--space-2);
+  background: transparent;
+  border: var(--border-width-0) solid transparent;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.danger-zone-header:hover {
+  background-color: var(--color-gray-100);
+}
+
+.danger-zone-header:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus-ring);
+}
+
+/* Collapsed State - Ultra Minimal Indicator */
+.danger-zone-collapsed-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  color: var(--color-text-tertiary);
+  opacity: var(--opacity-50);
+  transition:
+    opacity var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.danger-zone-header:hover .danger-zone-collapsed-indicator {
+  opacity: var(--opacity-80);
+  color: var(--color-text-secondary);
+}
+
+/* Expanded State - Full Warning Display */
+.danger-zone-expanded .danger-zone-header {
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-5);
+  background: linear-gradient(135deg, var(--color-error-50) 0%, var(--color-background-card) 100%);
+  border: var(--border-width-1) solid var(--color-error-200);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  border-bottom: var(--border-width-1) solid var(--color-error-200);
+}
+
+.danger-zone-expanded .danger-zone-header:hover {
+  background: linear-gradient(
+    135deg,
+    var(--color-error-100) 0%,
+    var(--color-background-hover) 100%
+  );
+  border-color: var(--color-error-300);
+}
+
+/* Header Content - Only visible when expanded */
+.danger-zone-header-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.danger-zone-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, var(--color-error-100) 0%, var(--color-error-200) 100%);
+  border-radius: var(--radius-lg);
+  color: var(--color-error-600);
+  animation: danger-icon-pulse 2s var(--ease-in-out) infinite;
+}
+
+@keyframes danger-icon-pulse {
+  0%,
+  100% {
+    box-shadow: var(--shadow-error-light);
+  }
+
+  50% {
+    box-shadow: none;
+  }
+}
+
+.danger-zone-icon-wrapper svg {
+  width: var(--space-5);
+  height: var(--space-5);
+}
+
+.danger-zone-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0-5);
+}
+
+.danger-zone-title {
+  margin: 0;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-error-700);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.danger-zone-subtitle {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+/* Toggle Button - Only visible when expanded */
+.danger-zone-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-8);
+  height: var(--space-8);
+  background: transparent;
+  border: var(--border-width-1) solid var(--color-error-300);
+  border-radius: var(--radius-md);
+  color: var(--color-error-600);
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.danger-zone-toggle:hover {
+  background: var(--color-error-100);
+  border-color: var(--color-error-400);
+}
+
+.danger-zone-toggle:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus-error-3);
+}
+
+/* Item Icon SVG - defined before expanded state to avoid specificity issues */
+.danger-zone-item-icon svg {
+  width: var(--space-4-5);
+  height: var(--space-4-5);
+}
+
+/* Item Action SVG - defined before expanded state to avoid specificity issues */
+.danger-zone-item-action svg {
+  width: var(--space-4);
+  height: var(--space-4);
+}
+
+.danger-zone-toggle svg {
+  width: var(--space-4);
+  height: var(--space-4);
+  transition: transform var(--transition-normal);
+}
+
+.danger-zone-expanded .danger-zone-toggle svg {
+  transform: rotate(180deg);
+}
+
+/* ========================================
+   DANGER ZONE CONTENT
+   ======================================== */
+
+.danger-zone-content {
+  max-height: 0;
+  overflow: hidden;
+  transition:
+    max-height var(--transition-slow),
+    opacity var(--transition-normal);
+  opacity: var(--opacity-0);
+  background: var(--color-error-50);
+  border: var(--border-width-1) solid var(--color-error-200);
+  border-top: none;
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+}
+
+.danger-zone-expanded .danger-zone-content {
+  max-height: 300px;
+  opacity: var(--opacity-100);
+}
+
+/* ========================================
+   DANGER ZONE ITEMS
+   ======================================== */
+
+.danger-zone-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  width: 100%;
+  padding: var(--space-4) var(--space-5);
+  background: transparent;
+  border: var(--border-width-1) solid transparent;
+  border-bottom: var(--border-width-1) solid var(--color-error-200);
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast);
+  text-align: left;
+  font-family: inherit;
+}
+
+.danger-zone-item:last-child {
+  border-bottom: none;
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+}
+
+.danger-zone-item:hover {
+  background-color: var(--color-error-100);
+}
+
+.danger-zone-item:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus-error-3);
+}
+
+/* Item Content */
+.danger-zone-item-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex: 1;
+}
+
+.danger-zone-item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--color-error-100);
+  border-radius: var(--radius-md);
+  color: var(--color-error-600);
+  flex-shrink: 0;
+}
+
+.danger-zone-item-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0-5);
+}
+
+.danger-zone-item-title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-error-700);
+  margin: 0;
+}
+
+.danger-zone-item-description {
+  font-size: var(--font-size-xs);
+  color: var(--color-error-800);
+  opacity: var(--opacity-80);
+  margin: 0;
+}
+
+/* Item Action */
+.danger-zone-item-action {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: linear-gradient(135deg, var(--color-error-600) 0%, var(--color-error-700) 100%);
+  color: var(--color-text-inverse);
+  border: var(--border-width-0) solid transparent;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.danger-zone-item-action:hover {
+  background: linear-gradient(135deg, var(--color-error-700) 0%, var(--color-error-800) 100%);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-error-light);
+}
+
+.danger-zone-item-action:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus-error-3);
+}
+
+/* Collapsed indicator SVG sizing - defined after other svg selectors for specificity */
+.danger-zone-collapsed-indicator svg:first-child {
+  width: 6px;
+  height: 6px;
+  color: var(--color-error-400);
+}
+
+.danger-zone-collapsed-indicator svg:last-child {
+  width: var(--space-4);
+  height: var(--space-4);
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+@media (width <= 1200px) {
+  .danger-zone-expanded .danger-zone-header {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .danger-zone-title {
+    font-size: var(--font-size-base);
+  }
+}
+
+@media (width <= 768px) {
+  .danger-zone {
+    margin-top: var(--space-2);
+  }
+
+  .danger-zone-expanded .danger-zone-header {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .danger-zone-icon-wrapper {
+    width: 32px;
+    height: 32px;
+  }
+
+  .danger-zone-title {
+    font-size: var(--font-size-base);
+  }
+
+  .danger-zone-subtitle {
+    font-size: var(--font-size-xs);
+  }
+
+  .danger-zone-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .danger-zone-item-action {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (width <= 640px) {
+  .danger-zone-expanded .danger-zone-header {
+    padding: var(--space-3);
+  }
+
+  .danger-zone-header-content {
+    gap: var(--space-2);
+  }
+
+  .danger-zone-icon-wrapper {
+    width: 28px;
+    height: 28px;
+  }
+
+  .danger-zone-icon-wrapper svg {
+    width: var(--space-4);
+    height: var(--space-4);
+  }
+
+  .danger-zone-title {
+    font-size: var(--font-size-sm);
+  }
+
+  .danger-zone-subtitle {
+    display: none;
+  }
+
+  .danger-zone-toggle {
+    width: var(--space-7);
+    height: var(--space-7);
+  }
+
+  .danger-zone-item-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .danger-zone-item-title {
+    font-size: var(--font-size-sm);
+  }
+
+  .danger-zone-item-description {
+    font-size: var(--font-size-xs);
+  }
+}
+
+/* ========================================
+   ACCESSIBILITY - REDUCED MOTION
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .danger-zone-content,
+  .danger-zone-toggle svg,
+  .danger-zone-header,
+  .danger-zone-item,
+  .danger-zone-item-action,
+  .danger-zone-icon-wrapper,
+  .danger-zone-collapsed-indicator {
+    transition: none;
+    animation: none;
+  }
+
+  .danger-zone-item-action:hover {
+    transform: none;
+  }
+}
+
+/* ========================================
+   HIGH CONTRAST MODE
+   ======================================== */
+
+@media (prefers-contrast: more) {
+  .danger-zone-expanded .danger-zone-header {
+    border-width: var(--border-width-2);
+  }
+
+  .danger-zone-content {
+    border-width: var(--border-width-2);
+    border-top: none;
+  }
+
+  .danger-zone-item {
+    border-bottom-width: var(--border-width-2);
+  }
+
+  .danger-zone-item:focus-visible {
+    box-shadow: var(--shadow-focus-error-3);
+  }
+
+  .danger-zone-item-action {
+    border: var(--border-width-2) solid var(--color-text-inverse);
+  }
+}

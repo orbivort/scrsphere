@@ -1,0 +1,26 @@
+# Development Dockerfile for Backend
+FROM node:24-alpine
+WORKDIR /app
+
+# Install development dependencies
+RUN apk add --no-cache git
+
+# Copy package files
+COPY package*.json ./
+COPY packages/shared/package*.json ./packages/shared/
+COPY packages/backend/package*.json ./packages/backend/
+
+# Install dependencies
+RUN npm install
+
+# Copy source
+COPY packages/shared ./packages/shared
+COPY packages/backend ./packages/backend
+
+# Set development environment
+ENV NODE_ENV=development
+
+EXPOSE 5000
+
+# Start development server with hot reload
+CMD ["npm", "run", "dev:backend"]

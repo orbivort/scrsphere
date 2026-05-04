@@ -1,0 +1,15 @@
+export { BasePage } from './BasePage';
+export { LoginPage } from './LoginPage';
+export { DashboardPage } from './DashboardPage';
+export { TeamPage } from './TeamPage';
+export { BacklogPage } from './BacklogPage';
+export { SprintBoardPage } from './SprintBoardPage';
+export { SprintPlanningPage } from './SprintPlanningPage';
+export { TeamManagementPage } from './TeamManagementPage';
+export { ImpedimentsPage } from './ImpedimentsPage';
+export { DailyScrumPage } from './DailyScrumPage';
+export { SprintReviewPage } from './SprintReviewPage';
+export { ProductGoalsPage } from './ProductGoalsPage';
+export { IncrementsPage } from './IncrementsPage';
+export { RetrospectivesPage } from './RetrospectivesPage';
+export { ReportsPage } from './ReportsPage';

@@ -1,0 +1,132 @@
+.empty-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 150px;
+  text-align: center;
+  padding: var(--space-6);
+}
+
+.empty-list p {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-4) 0;
+  line-height: var(--line-height-normal);
+}
+
+.task-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.task-item {
+  display: flex;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(
+    135deg,
+    var(--color-background-page) 0%,
+    var(--color-background-hover) 100%
+  );
+  border: var(--border-width-1) solid var(--color-border-default);
+  gap: var(--space-3);
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast),
+    border-color var(--transition-fast),
+    background var(--transition-fast);
+}
+
+.task-item:last-child {
+  margin-bottom: 0;
+}
+
+.task-item.clickable {
+  cursor: pointer;
+}
+
+.task-item.clickable:hover {
+  transform: translateY(calc(var(--space-0-5) * -1));
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-primary-200);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-50) 0%,
+    var(--color-background-hover) 100%
+  );
+}
+
+.task-item.clickable:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus-primary-4);
+  border-color: var(--color-primary-500);
+}
+
+.task-item.clickable:active {
+  transform: scale(0.98);
+}
+
+.task-status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.task-item.status-todo .task-status-dot {
+  background: linear-gradient(135deg, var(--color-text-tertiary) 0%, var(--color-gray-500) 100%);
+}
+
+.task-item.status-in-progress .task-status-dot {
+  background: linear-gradient(135deg, var(--color-warning-400) 0%, var(--color-warning-500) 100%);
+}
+
+.task-item.status-done .task-status-dot {
+  background: linear-gradient(135deg, var(--color-success-400) 0%, var(--color-success-500) 100%);
+}
+
+.task-title {
+  flex: 1;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: var(--font-weight-medium);
+}
+
+.task-status-badge {
+  padding: var(--space-1) var(--space-2-5);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  white-space: nowrap;
+  flex-shrink: 0;
+  letter-spacing: var(--letter-spacing-tight);
+  border: var(--border-width-1) solid transparent;
+}
+
+.task-status-badge.todo {
+  background: linear-gradient(135deg, var(--color-gray-100) 0%, var(--color-gray-200) 100%);
+  color: var(--color-text-secondary);
+  border-color: var(--color-gray-300);
+}
+
+.task-status-badge.in-progress {
+  background: linear-gradient(135deg, var(--color-warning-50) 0%, var(--color-warning-100) 100%);
+  color: var(--color-warning-700);
+  border-color: var(--color-warning-200);
+}
+
+.task-status-badge.done {
+  background: linear-gradient(135deg, var(--color-success-50) 0%, var(--color-success-100) 100%);
+  color: var(--color-success-700);
+  border-color: var(--color-success-200);
+}

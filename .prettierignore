@@ -1,0 +1,298 @@
+# =============================================================================
+# Prettier Ignore File for Scrsphere - Agile Scrum Lifecycle Management System
+# =============================================================================
+# This file defines patterns for files and directories that Prettier should
+# ignore during formatting. It follows Prettier best practices and maintains
+# consistency with the project's .gitignore conventions.
+# Reference: https://prettier.io/docs/en/ignore.html
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Dependencies
+# -----------------------------------------------------------------------------
+node_modules/
+.pnp
+.pnp.js
+.pnpm-debug.log*
+
+# -----------------------------------------------------------------------------
+# Build Outputs & Generated Files
+# -----------------------------------------------------------------------------
+# TypeScript
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+
+# Build directories
+dist/
+build/
+out/
+
+# Vite
+.vite/
+*.vite
+
+# Rollup
+.rollup.cache/
+
+# -----------------------------------------------------------------------------
+# Coverage & Test Reports
+# -----------------------------------------------------------------------------
+coverage/
+.nyc_output/
+
+# -----------------------------------------------------------------------------
+# Environment Files
+# -----------------------------------------------------------------------------
+# Environment files by environment
+.env
+.env.*
+!.env.example
+
+# Monorepo workspace environment files
+packages/*/.env
+packages/*/.env.*
+!packages/*/.env.example
+
+# -----------------------------------------------------------------------------
+# IDE & Editor Files
+# -----------------------------------------------------------------------------
+# JetBrains
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# AI Coding IDEs
+# Cursor
+.cursor/
+.cursorrules
+
+# GitHub Copilot
+*.copilot
+
+# Amazon CodeWhisperer
+.codewhisperer/
+
+# Tabnine
+.tabnine/
+
+# Codeium
+.codeium/
+
+# Trae
+.trae/
+
+# Windsurf
+.windsurf/
+
+# Codebuddy
+.codebuddy/
+
+AGENTS.md
+CLAUDE.md
+CODEBUDDY.md
+
+# -----------------------------------------------------------------------------
+# OS Generated Files
+# -----------------------------------------------------------------------------
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.nfs*
+
+# -----------------------------------------------------------------------------
+# Logs
+# -----------------------------------------------------------------------------
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# -----------------------------------------------------------------------------
+# Cache Directories
+# -----------------------------------------------------------------------------
+.cache/
+.parcel-cache/
+.eslintcache
+.stylelintcache
+.prettiercache
+
+# -----------------------------------------------------------------------------
+# Package Manager Specific
+# -----------------------------------------------------------------------------
+# npm
+.npm/
+.node_repl_history
+
+# yarn
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.yarn-integrity
+.pnp.*
+
+# pnpm
+.pnpm-store/
+
+# -----------------------------------------------------------------------------
+# Database & ORM
+# -----------------------------------------------------------------------------
+# Prisma
+**/prisma/generated/
+**/prisma/migrations/migration_lock.toml
+
+**/generated/prisma/
+
+# Database files
+*.sqlite
+*.sqlite3
+*.db
+
+# -----------------------------------------------------------------------------
+# Testing
+# -----------------------------------------------------------------------------
+# Jest/Vitest snapshots
+*.snap
+
+# Playwright
+playwright-report/
+test-results/
+playwright/.cache/
+
+# Cypress
+cypress/videos/
+cypress/screenshots/
+cypress/downloads/
+
+# Loadtest results
+k6/results/
+
+# -----------------------------------------------------------------------------
+# Temporary Files
+# -----------------------------------------------------------------------------
+tmp/
+temp/
+*.tmp
+*.temp
+
+# -----------------------------------------------------------------------------
+# Backup Files
+# -----------------------------------------------------------------------------
+backup/
+backups/
+*.bak
+*.backup
+
+# -----------------------------------------------------------------------------
+# Version Control
+# -----------------------------------------------------------------------------
+.svn/
+.hg/
+
+# -----------------------------------------------------------------------------
+# Secrets & Certificates
+# -----------------------------------------------------------------------------
+*.pem
+*.key
+*.crt
+*.cer
+*.der
+*.p12
+*.pfx
+
+# -----------------------------------------------------------------------------
+# Storybook
+# -----------------------------------------------------------------------------
+storybook-static/
+
+# -----------------------------------------------------------------------------
+# Misc
+# -----------------------------------------------------------------------------
+# Local Netlify folder
+.netlify
+
+# Vercel
+.vercel
+
+# Turborepo
+.turbo
+
+# -----------------------------------------------------------------------------
+# Prettier Specific Ignores
+# -----------------------------------------------------------------------------
+# Minified files
+*.min.js
+*.min.css
+*.min.html
+*.min.json
+
+# Lock files (usually auto-generated and should not be formatted)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Generated translation files
+*.pot
+*.mo
+
+# Third-party/vendor files
+vendor/
+
+# -----------------------------------------------------------------------------
+# Project Specific
+# -----------------------------------------------------------------------------
+# Add any project-specific ignores below

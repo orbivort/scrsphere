@@ -1,0 +1,447 @@
+/* EditProfileModal.module.css - Modern Design System */
+
+/* Modal Overlay with backdrop blur for background disabling */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background-color: var(--modal-overlay-background);
+  backdrop-filter: blur(var(--space-2));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--modal-z-index);
+  padding: var(--space-5);
+  animation: overlay-fade-in var(--transition-normal);
+}
+
+@keyframes overlay-fade-in {
+  from {
+    opacity: var(--opacity-0);
+    backdrop-filter: blur(0);
+  }
+
+  to {
+    opacity: var(--opacity-100);
+    backdrop-filter: blur(var(--space-2));
+  }
+}
+
+/* Modal Container */
+.modal {
+  background: var(--modal-background);
+  border-radius: var(--modal-border-radius);
+  box-shadow: var(--modal-shadow);
+  max-width: 480px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slide-in var(--transition-normal);
+  border: var(--border-width-1) solid var(--color-border-default);
+}
+
+@keyframes slide-in {
+  from {
+    transform: scale(0.95);
+    opacity: var(--opacity-0);
+  }
+
+  to {
+    transform: scale(1);
+    opacity: var(--opacity-100);
+  }
+}
+
+/* Modal Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-5) var(--space-6);
+  border-bottom: var(--border-width-1) solid var(--color-border-default);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-50) 0%,
+    var(--color-background-card) 100%
+  );
+  position: sticky;
+  top: 0;
+  z-index: var(--z-base);
+}
+
+.header h2 {
+  margin: 0;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.header-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary-600);
+}
+
+.close-button {
+  background: transparent;
+  border: var(--border-width-1) solid transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-8);
+  height: var(--space-8);
+}
+
+.close-button:hover {
+  background-color: var(--color-background-hover);
+  color: var(--color-text-primary);
+  transform: rotate(90deg);
+}
+
+.close-button:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus-primary-4);
+}
+
+/* Modal Body */
+.form {
+  padding: var(--modal-padding);
+}
+
+/* Form Group */
+.form-group {
+  margin-bottom: var(--space-5);
+}
+
+.form-group:last-of-type {
+  margin-bottom: 0;
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-bottom: var(--space-2);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+}
+
+.required {
+  color: var(--color-error-500);
+}
+
+.optional-badge {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-tertiary);
+  background: var(--color-background-hover);
+  padding: var(--space-0-5) var(--space-2);
+  border-radius: var(--radius-full);
+  margin-left: var(--space-1);
+}
+
+/* Input Wrapper */
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.form-input {
+  width: 100%;
+  padding: var(--input-padding-md);
+  font-size: var(--font-size-sm);
+  border: var(--input-border-width) solid var(--input-border-color);
+  border-radius: var(--input-border-radius);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+  box-sizing: border-box;
+  background: var(--input-background);
+  color: var(--input-text-color);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--input-border-color-focus);
+  box-shadow: var(--shadow-focus-primary-4);
+}
+
+.form-input:disabled {
+  background-color: var(--input-background-disabled);
+  color: var(--input-text-color-disabled);
+  cursor: not-allowed;
+}
+
+.input-error {
+  border-color: var(--input-border-color-error);
+}
+
+.input-error:focus {
+  border-color: var(--input-border-color-error);
+  box-shadow: var(--shadow-focus-error-3);
+}
+
+/* Character Counter */
+.char-counter {
+  position: absolute;
+  right: var(--space-3);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  font-weight: var(--font-weight-medium);
+}
+
+.char-counter-warning {
+  color: var(--color-warning-600);
+}
+
+.char-counter-error {
+  color: var(--color-error-600);
+}
+
+/* Error Message */
+.form-error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  margin-top: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-error);
+  animation: slide-in var(--transition-fast);
+}
+
+.form-error::before {
+  content: '';
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23dc2626' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='15' y1='9' x2='9' y2='15'/%3E%3Cline x1='9' y1='9' x2='15' y2='15'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  flex-shrink: 0;
+}
+
+/* Helper Text */
+.helper-text {
+  display: block;
+  margin-top: var(--space-2);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  font-style: italic;
+}
+
+/* Form Error Banner */
+.form-error-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--toast-error-background);
+  border: var(--border-width-1) solid var(--toast-error-border-color);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-5);
+  animation: slide-in var(--transition-fast);
+}
+
+.form-error-banner-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-error-600);
+  flex-shrink: 0;
+}
+
+.form-error-banner-text {
+  color: var(--toast-error-text-color);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+}
+
+/* Modal Footer */
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: var(--border-width-1) solid var(--color-border-default);
+}
+
+/* Buttons */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2-5) var(--space-5);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+  border: var(--border-width-1) solid transparent;
+  min-height: 40px;
+}
+
+.button:disabled {
+  opacity: var(--opacity-50);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.button:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus-primary-4);
+}
+
+.button-secondary {
+  background: var(--button-secondary-background);
+  border-color: var(--color-border-default);
+  color: var(--button-secondary-color);
+}
+
+.button-secondary:hover:not(:disabled) {
+  background: var(--button-secondary-background-hover);
+  border-color: var(--color-border-hover);
+}
+
+.button-primary {
+  background: linear-gradient(135deg, var(--color-primary-600) 0%, var(--color-primary-700) 100%);
+  border-color: transparent;
+  color: var(--button-primary-color);
+  box-shadow: var(--shadow-primary-button);
+}
+
+.button-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--color-primary-700) 0%, var(--color-primary-800) 100%);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-primary-button-hover);
+}
+
+.button-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.button-loading {
+  position: relative;
+  color: transparent;
+  pointer-events: none;
+}
+
+.button-loading::after {
+  content: '';
+  position: absolute;
+  width: var(--space-4);
+  height: var(--space-4);
+  top: 50%;
+  left: 50%;
+  margin-left: calc(var(--space-4) / -2);
+  margin-top: calc(var(--space-4) / -2);
+  border: var(--border-width-2) solid transparent;
+  border-top-color: var(--color-text-inverse);
+  border-radius: var(--radius-full);
+  animation: spin var(--transition-slow) linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Screen reader only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: calc(var(--space-1) * -1);
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: var(--border-width-0) solid transparent;
+}
+
+/* Responsive Design */
+@media (width <= 640px) {
+  .overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .modal {
+    max-width: 100%;
+    margin: 0;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    max-height: 85vh;
+  }
+
+  .header {
+    padding: var(--space-4) var(--space-5);
+  }
+
+  .form {
+    padding: var(--space-5);
+  }
+
+  .footer {
+    flex-direction: column-reverse;
+    gap: var(--space-2);
+  }
+
+  .button {
+    width: 100%;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .modal,
+  .overlay,
+  .button,
+  .form-error,
+  .form-error-banner {
+    animation: none;
+    transition: none;
+  }
+
+  .button:hover:not(:disabled) {
+    transform: none;
+  }
+
+  .close-button:hover {
+    transform: none;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: more) {
+  .modal {
+    border-width: var(--border-width-2);
+  }
+
+  .button-primary,
+  .button-secondary {
+    border-width: var(--border-width-2);
+  }
+
+  .form-input {
+    border-width: var(--border-width-2);
+  }
+}

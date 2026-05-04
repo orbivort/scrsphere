@@ -1,0 +1,17 @@
+================================================================================
+                              {{appName}}
+================================================================================
+
+{{#if recipientName}}Hello {{recipientName}},{{else}}Hello,{{/if}}
+
+<!-- EMAIL_CONTENT_PLACEHOLDER -->
+
+--------------------------------------------------------------------------------
+
+Thank you for using {{appName}}.
+
+{{#if supportEmail}}Need help? Contact us at {{supportEmail}}{{/if}}
+
+Visit us at: {{appUrl}}
+
+Copyright (c) {{currentYear}} {{appName}}. All rights reserved.

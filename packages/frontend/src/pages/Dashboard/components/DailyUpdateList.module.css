@@ -1,0 +1,99 @@
+.empty-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 150px;
+  text-align: center;
+  padding: var(--space-6);
+}
+
+.empty-list p {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-4) 0;
+  line-height: var(--line-height-normal);
+}
+
+.update-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.update-item {
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(
+    135deg,
+    var(--color-background-page) 0%,
+    var(--color-background-hover) 100%
+  );
+  border: var(--border-width-1) solid var(--color-border-default);
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.update-item:hover {
+  transform: translateY(calc(var(--space-0-5) * -1));
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-primary-200);
+}
+
+.update-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-2);
+  padding-bottom: var(--space-2);
+  border-bottom: var(--border-width-1) solid var(--color-border-default);
+}
+
+.update-author {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.update-date {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
+.update-section {
+  margin-bottom: var(--space-2);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  display: flex;
+  gap: var(--space-2);
+}
+
+.update-section:last-child {
+  margin-bottom: 0;
+}
+
+.update-section.impediment {
+  background: linear-gradient(135deg, var(--color-warning-50) 0%, var(--color-warning-100) 100%);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  margin-top: var(--space-2);
+  border: var(--border-width-1) solid var(--color-warning-200);
+}
+
+.update-label {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.update-content {
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-normal);
+}

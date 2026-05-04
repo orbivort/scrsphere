@@ -1,0 +1,830 @@
+/* ============================================================================
+   COMPLETE SPRINT MODAL - Modern Professional Business Design
+   Enhanced visual hierarchy with executive dashboard aesthetics
+   ============================================================================ */
+
+.complete-sprint-modal {
+  max-width: 600px;
+}
+
+.complete-sprint-modal .modal-body {
+  padding: var(--space-6);
+}
+
+/* ============================================================================
+   ERROR MESSAGE - Professional Alert Design
+   ============================================================================ */
+
+.error-message {
+  background: linear-gradient(135deg, var(--color-error-50) 0%, var(--color-error-100) 100%);
+  border: var(--border-width-2) solid var(--color-error-300);
+  color: var(--color-error-800);
+  padding: var(--space-5);
+  border-radius: var(--radius-xl);
+  margin-bottom: var(--space-6);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  box-shadow: var(--shadow-error-light);
+  position: relative;
+  overflow: hidden;
+}
+
+.error-message::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--border-width-4);
+  background: linear-gradient(
+    90deg,
+    var(--color-error-400) 0%,
+    var(--color-error-500) 50%,
+    var(--color-error-600) 100%
+  );
+}
+
+.detailed-error {
+  display: flex;
+  gap: var(--space-4);
+  align-items: flex-start;
+}
+
+.error-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-10);
+  height: var(--space-10);
+  background: linear-gradient(135deg, var(--color-error-100) 0%, var(--color-error-200) 100%);
+  border-radius: var(--radius-lg);
+}
+
+.error-icon svg {
+  width: 20px;
+  height: 20px;
+  color: var(--color-error-600);
+}
+
+.error-content {
+  flex: 1;
+}
+
+.error-title {
+  font-weight: var(--font-weight-bold);
+  margin: 0 0 var(--space-2) 0;
+  font-size: var(--font-size-base);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.error-details {
+  margin: 0;
+  opacity: var(--opacity-90);
+  line-height: var(--line-height-relaxed);
+}
+
+/* ============================================================================
+   SPRINT SUMMARY - Executive Dashboard Card
+   ============================================================================ */
+
+.sprint-summary {
+  background: linear-gradient(135deg, var(--color-background-card) 0%, var(--color-gray-50) 100%);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-6);
+  margin-bottom: var(--space-6);
+  border: var(--border-width-1) solid var(--color-border-default);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.sprint-summary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--border-width-4);
+  background: linear-gradient(
+    90deg,
+    var(--color-primary-500) 0%,
+    var(--color-accent-purple-500) 50%,
+    var(--color-success-500) 100%
+  );
+}
+
+.sprint-summary-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-5) 0;
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-5);
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  background: var(--color-background-page);
+  border-radius: var(--radius-lg);
+  border: var(--border-width-1) solid var(--color-border-default);
+  transition: all var(--transition-fast);
+}
+
+.summary-item:hover {
+  border-color: var(--color-primary-300);
+  box-shadow: var(--shadow-sm);
+}
+
+.summary-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+  font-weight: var(--font-weight-semibold);
+}
+
+.summary-value {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.summary-value-success {
+  color: var(--color-success-600);
+}
+
+/* ============================================================================
+   INCOMPLETE TASKS WARNING - Professional Alert Banner
+   ============================================================================ */
+
+.incomplete-tasks-warning {
+  background: linear-gradient(135deg, var(--color-warning-50) 0%, var(--color-warning-100) 100%);
+  border: var(--border-width-2) solid var(--color-warning-300);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-6);
+  margin-bottom: var(--space-6);
+  box-shadow: var(--shadow-warning-panel);
+  position: relative;
+  overflow: hidden;
+}
+
+.incomplete-tasks-warning::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--border-width-4);
+  background: linear-gradient(
+    90deg,
+    var(--color-warning-400) 0%,
+    var(--color-warning-500) 50%,
+    var(--color-warning-600) 100%
+  );
+}
+
+/* ============================================================================
+   OUTSTANDING IMPEDIMENTS WARNING - Critical Alert Design
+   ============================================================================ */
+
+.outstanding-impediments-warning {
+  background: linear-gradient(135deg, var(--color-error-50) 0%, var(--color-error-100) 100%);
+  border: var(--border-width-2) solid var(--color-error-300);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-6);
+  margin-bottom: var(--space-6);
+  box-shadow: var(--shadow-error-light);
+  position: relative;
+  overflow: hidden;
+}
+
+.outstanding-impediments-warning::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--border-width-4);
+  background: linear-gradient(
+    90deg,
+    var(--color-error-400) 0%,
+    var(--color-error-500) 50%,
+    var(--color-error-600) 100%
+  );
+}
+
+.warning-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.warning-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-10);
+  height: var(--space-10);
+  background: linear-gradient(135deg, var(--color-warning-100) 0%, var(--color-warning-200) 100%);
+  border-radius: var(--radius-lg);
+}
+
+.warning-icon svg {
+  width: 24px;
+  height: 24px;
+  color: var(--color-warning-600);
+}
+
+.warning-details {
+  font-size: var(--font-size-sm);
+  color: var(--color-warning-900);
+  margin: 0 0 var(--space-5) 0;
+  line-height: var(--line-height-relaxed);
+  font-weight: var(--font-weight-medium);
+}
+
+.incomplete-warning-header strong {
+  color: var(--color-warning-700);
+  font-size: var(--font-size-base);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.impediments-warning-header strong {
+  color: var(--color-error-800);
+  font-size: var(--font-size-lg);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.impediments-warning-details {
+  color: var(--color-error-900);
+  font-size: var(--font-size-sm);
+  margin: 0 0 var(--space-5) 0;
+  line-height: var(--line-height-relaxed);
+  font-weight: var(--font-weight-medium);
+}
+
+/* ============================================================================
+   LISTS - Professional Card Layout
+   ============================================================================ */
+
+.outstanding-impediments-list,
+.incomplete-tasks-list {
+  background: var(--color-background-card);
+  border: var(--border-width-1) solid var(--color-border-default);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5);
+  margin-bottom: var(--space-5);
+  max-height: 320px;
+  overflow-y: auto;
+  box-shadow: var(--shadow-sm);
+}
+
+.outstanding-impediments-list-title,
+.incomplete-tasks-list-title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-4) 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+}
+
+.outstanding-impediments-items,
+.incomplete-tasks-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.outstanding-impediment-item,
+.incomplete-task-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: linear-gradient(
+    135deg,
+    var(--color-background-page) 0%,
+    var(--color-background-hover) 100%
+  );
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-fast);
+  position: relative;
+}
+
+.outstanding-impediment-item {
+  border-left: var(--border-width-4) solid var(--color-error-500);
+}
+
+.outstanding-impediment-item:hover {
+  background: linear-gradient(135deg, var(--color-error-50) 0%, var(--color-error-100) 100%);
+  border-left-color: var(--color-error-600);
+  transform: translateX(var(--space-1));
+  box-shadow: var(--shadow-sm);
+}
+
+.incomplete-task-item {
+  border-left: var(--border-width-4) solid var(--color-warning-500);
+}
+
+.incomplete-task-item:hover {
+  background: linear-gradient(135deg, var(--color-warning-50) 0%, var(--color-warning-100) 100%);
+  border-left-color: var(--color-warning-600);
+  transform: translateX(var(--space-1));
+  box-shadow: var(--shadow-sm);
+}
+
+/* ============================================================================
+   STATUS BADGES - Modern Badge Design
+   ============================================================================ */
+
+.impediment-status-badge {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  padding: var(--space-1-5) var(--space-3);
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--color-error-100) 0%, var(--color-error-200) 100%);
+  color: var(--color-error-800);
+  white-space: nowrap;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  box-shadow: var(--shadow-xs);
+  border: var(--border-width-1) solid var(--color-error-300);
+}
+
+.task-status-badge {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  padding: var(--space-1-5) var(--space-3);
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--color-warning-100) 0%, var(--color-warning-200) 100%);
+  color: var(--color-warning-800);
+  white-space: nowrap;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  box-shadow: var(--shadow-xs);
+  border: var(--border-width-1) solid var(--color-warning-300);
+}
+
+.impediment-details,
+.task-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  flex: 1;
+  min-width: 0;
+}
+
+.impediment-title,
+.task-title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.impediment-sprint,
+.task-pbi {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  font-style: italic;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.more-impediments {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-style: italic;
+  text-align: center;
+  padding: var(--space-2);
+}
+
+/* ============================================================================
+   ACTION BUTTONS - Professional Action Design
+   ============================================================================ */
+
+.outstanding-impediments-actions,
+.incomplete-tasks-actions {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--space-5);
+}
+
+.button-view-impediments {
+  background: linear-gradient(135deg, var(--color-error-500) 0%, var(--color-error-600) 100%);
+  color: var(--color-text-inverse);
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  box-shadow: var(--shadow-error-medium);
+  border: var(--border-width-2) solid transparent;
+  font-family: inherit;
+  position: relative;
+  overflow: hidden;
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.button-view-impediments::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(255 255 255 / 15%) 0%, transparent 100%);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.button-view-impediments:hover::before {
+  opacity: 1;
+}
+
+.button-view-impediments:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus-error-3);
+}
+
+.button-view-impediments:hover:not(:disabled) {
+  transform: translateY(calc(var(--space-0-5) * -1));
+  box-shadow: var(--shadow-error-medium);
+  background: linear-gradient(135deg, var(--color-error-600) 0%, var(--color-error-700) 100%);
+}
+
+.button-view-impediments:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.button-manage-backlog {
+  background: linear-gradient(135deg, var(--color-primary-500) 0%, var(--color-primary-600) 100%);
+  color: var(--color-text-inverse);
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  box-shadow: var(--shadow-primary-button);
+  border: var(--border-width-2) solid transparent;
+  font-family: inherit;
+  position: relative;
+  overflow: hidden;
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.button-manage-backlog::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(255 255 255 / 15%) 0%, transparent 100%);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.button-manage-backlog:hover::before {
+  opacity: 1;
+}
+
+.button-manage-backlog:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus-primary-4);
+}
+
+.button-manage-backlog:hover:not(:disabled) {
+  transform: translateY(calc(var(--space-0-5) * -1));
+  box-shadow: var(--shadow-primary-button-hover);
+  background: linear-gradient(135deg, var(--color-primary-600) 0%, var(--color-primary-700) 100%);
+}
+
+.button-manage-backlog:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: var(--shadow-primary-button-sm);
+}
+
+/* ============================================================================
+   READY TO COMPLETE - Success State
+   ============================================================================ */
+
+.confirmation-text {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: 0;
+  padding-top: var(--space-5);
+  border-top: var(--border-width-1) solid var(--color-border-default);
+  line-height: var(--line-height-relaxed);
+  font-weight: var(--font-weight-medium);
+}
+
+.ready-to-complete {
+  padding-top: var(--space-5);
+  border-top: var(--border-width-1) solid var(--color-border-default);
+}
+
+.ready-to-complete .confirmation-text {
+  padding-top: 0;
+  border-top: var(--border-width-0) solid transparent;
+  margin-bottom: var(--space-5);
+}
+
+.pbi-summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5);
+  background: linear-gradient(135deg, var(--color-success-50) 0%, var(--color-success-100) 100%);
+  border-radius: var(--radius-xl);
+  border: var(--border-width-2) solid var(--color-success-300);
+  position: relative;
+  overflow: hidden;
+}
+
+.pbi-summary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--border-width-4);
+  background: linear-gradient(
+    90deg,
+    var(--color-success-400) 0%,
+    var(--color-success-500) 50%,
+    var(--color-success-600) 100%
+  );
+}
+
+.pbi-count {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-success-700);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+/* ============================================================================
+   MODAL FOOTER - Professional Action Bar
+   ============================================================================ */
+
+.complete-sprint-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  padding: var(--space-5) var(--space-6);
+  border-top: var(--border-width-1) solid var(--color-border-default);
+  background: linear-gradient(180deg, transparent 0%, var(--color-background-page) 100%);
+  border-radius: 0 0 var(--radius-2xl) var(--radius-2xl);
+}
+
+/* ============================================================================
+   BUTTONS - Professional Design System
+   ============================================================================ */
+
+.button {
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: var(--border-width-2) solid transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+  font-family: inherit;
+  min-height: var(--space-11);
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(255 255 255 / 15%) 0%, transparent 100%);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.button:hover::before {
+  opacity: 1;
+}
+
+.button:disabled {
+  opacity: var(--opacity-50);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.button:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus-primary-4);
+}
+
+.button-secondary {
+  background: var(--color-background-card);
+  color: var(--color-text-secondary);
+  border-color: var(--color-border-default);
+  box-shadow: var(--shadow-sm);
+}
+
+.button-secondary:hover:not(:disabled) {
+  background: var(--color-background-hover);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-hover);
+  transform: translateY(calc(var(--space-0-5) * -1));
+  box-shadow: var(--shadow-md);
+}
+
+.button-secondary:active:not(:disabled) {
+  transform: translateY(0);
+  background: var(--color-background-page);
+}
+
+.button-complete-sprint-confirm {
+  background: linear-gradient(135deg, var(--color-success-500) 0%, var(--color-success-600) 100%);
+  color: var(--color-text-inverse);
+  font-weight: var(--font-weight-bold);
+  padding: var(--space-3-5) var(--space-8);
+  font-size: var(--font-size-base);
+  box-shadow: var(--shadow-success-button);
+  min-width: 180px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  white-space: nowrap;
+  position: relative;
+  border: var(--border-width-2) solid transparent;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-family: inherit;
+  min-height: var(--space-11);
+}
+
+.button-complete-sprint-confirm svg {
+  flex-shrink: 0;
+}
+
+.button-icon-active {
+  transition: transform var(--transition-fast);
+}
+
+.button-complete-sprint-confirm:hover:not(:disabled) .button-icon-active {
+  transform: scale(1.15);
+}
+
+.button-icon-disabled {
+  opacity: var(--opacity-70);
+}
+
+.button-complete-sprint-confirm:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus-success-4);
+}
+
+.button-complete-sprint-confirm:disabled {
+  background: linear-gradient(135deg, var(--color-gray-300) 0%, var(--color-gray-400) 100%);
+  cursor: not-allowed;
+  opacity: var(--opacity-60);
+  box-shadow: none;
+}
+
+.button-complete-sprint-confirm:disabled svg {
+  opacity: var(--opacity-70);
+}
+
+.button-complete-sprint-confirm:disabled:hover {
+  background: linear-gradient(135deg, var(--color-gray-300) 0%, var(--color-gray-400) 100%);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.button-complete-sprint-confirm:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--color-success-600) 0%, var(--color-success-700) 100%);
+  transform: translateY(calc(var(--space-0-5) * -1));
+  box-shadow: var(--shadow-success-button-hover);
+}
+
+.button-complete-sprint-confirm:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================ */
+
+@media (width <= 768px) {
+  .complete-sprint-modal-footer {
+    flex-direction: column-reverse;
+    gap: var(--space-3);
+    padding: var(--space-5);
+  }
+
+  .button {
+    width: 100%;
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+
+  .summary-item {
+    padding: var(--space-3);
+  }
+
+  .summary-value {
+    font-size: var(--font-size-lg);
+  }
+}
+
+@media (width <= 480px) {
+  .complete-sprint-modal .modal-body {
+    padding: var(--space-4);
+  }
+
+  .complete-sprint-modal-footer {
+    padding: var(--space-4);
+  }
+
+  .sprint-summary {
+    padding: var(--space-4);
+  }
+
+  .incomplete-tasks-warning,
+  .outstanding-impediments-warning {
+    padding: var(--space-4);
+  }
+
+  .outstanding-impediments-list,
+  .incomplete-tasks-list {
+    padding: var(--space-3);
+    max-height: 240px;
+  }
+
+  .outstanding-impediment-item,
+  .incomplete-task-item {
+    padding: var(--space-3);
+    gap: var(--space-2);
+  }
+}
+
+/* ============================================================================
+   REDUCED MOTION
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .button:hover:not(:disabled),
+  .outstanding-impediment-item:hover,
+  .incomplete-task-item:hover,
+  .summary-item:hover {
+    transform: none;
+  }
+}

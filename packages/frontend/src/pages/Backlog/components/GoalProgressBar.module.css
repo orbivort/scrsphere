@@ -1,0 +1,29 @@
+.goal-progress-ring {
+  position: relative;
+  width: 52px;
+  height: 52px;
+}
+
+.progress-ring-bg {
+  color: var(--color-gray-200);
+}
+
+.progress-ring-fill {
+  color: var(--color-success-500);
+}
+
+.progress-text {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
+.goal-progress-ring .progress-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-success-600);
+}
