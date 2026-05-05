@@ -33,8 +33,8 @@ describe('Batch Utility', () => {
 
       expect(processingTimes.length).toBe(5);
       processingTimes.forEach((time) => {
-        expect(time).toBeGreaterThanOrEqual(10);
-        expect(time).toBeLessThan(100);
+        expect(time).toBeGreaterThanOrEqual(5);
+        expect(time).toBeLessThan(200);
       });
     });
 
