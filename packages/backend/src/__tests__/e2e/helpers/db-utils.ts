@@ -362,6 +362,13 @@ export const cleanupUsers = async (emails: string[]): Promise<void> => {
         await prisma.teamMember.deleteMany({ where: { userId: user.id } });
         await prisma.dailyUpdate.deleteMany({ where: { userId: user.id } });
         await prisma.retroItemVote.deleteMany({ where: { userId: user.id } });
+        await prisma.statusChangeHistory.deleteMany({ where: { changedBy: user.id } });
+        await prisma.impediment.deleteMany({ where: { reportedById: user.id } });
+        await prisma.doDChecklistVerification.deleteMany({ where: { verifiedBy: user.id } });
+        await prisma.doRChecklistVerification.deleteMany({ where: { verifiedBy: user.id } });
+        await prisma.sprintRetrospective.deleteMany({ where: { facilitatorId: user.id } });
+        await prisma.retroActionItem.deleteMany({ where: { ownerId: user.id } });
+        await prisma.workflow.deleteMany({ where: { createdBy: user.id } });
         await prisma.user.delete({ where: { id: user.id } });
       }
     }
