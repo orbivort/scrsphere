@@ -1,0 +1,12 @@
+name: 'Setup Prisma Client'
+description: 'Generate Prisma client for TypeScript type checking and builds'
+author: 'Scrsphere Team'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Generate Prisma Client
+      shell: bash
+      run: pnpm --filter=@scrsphere/backend run db:generate
+      env:
+        DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
