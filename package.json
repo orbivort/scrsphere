@@ -60,7 +60,7 @@
     "format:css": "prettier --write \"packages/frontend/src/**/*.css\"",
     "format:css:check": "prettier --check \"packages/frontend/src/**/*.css\"",
     "pretypecheck": "node scripts/utility/check-package-manager.js",
-    "typecheck": "pnpm run -r typecheck",
+    "typecheck": "tsc -b",
     "prepare": "husky",
     "predb:generate": "node scripts/utility/check-package-manager.js",
     "db:generate": "pnpm --filter=@scrsphere/backend run db:generate",
