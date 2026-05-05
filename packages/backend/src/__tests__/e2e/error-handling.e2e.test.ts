@@ -396,9 +396,10 @@ describe('E2E: Error Handling', () => {
 
   describe('Request Size Limits', () => {
     it('should reject oversized request body', async () => {
-      const largeString = 'a'.repeat(1024 * 1024);
+      const largeString = 'a'.repeat(11 * 1024 * 1024);
 
       const { csrfCookie, csrfToken } = await getCsrfToken();
+
       const response = await request(app)
         .post('/api/v1/auth/register')
         .set('Cookie', csrfCookie)
@@ -408,11 +409,13 @@ describe('E2E: Error Handling', () => {
           password: DEFAULT_PASSWORD,
           firstName: largeString,
           lastName: 'User',
-        });
+        })
+        .timeout(5000);
 
-      if (response.status === HTTP_STATUS.BAD_REQUEST || response.status === 413) {
-        expect(response.body.success).toBe(false);
-      }
+      expect([HTTP_STATUS.BAD_REQUEST, 413, HTTP_STATUS.INTERNAL_SERVER_ERROR]).toContain(
+        response.status
+      );
+      expect(response.body.success).toBe(false);
     });
   });
 
