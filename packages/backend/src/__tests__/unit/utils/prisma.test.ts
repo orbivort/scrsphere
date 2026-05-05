@@ -199,12 +199,17 @@ describe('prisma module', () => {
   });
 
   describe('health check interval', () => {
+    let originalNodeEnv: string | undefined;
+
     beforeEach(() => {
       vi.useFakeTimers();
+      originalNodeEnv = process.env.NODE_ENV;
+      process.env.NODE_ENV = 'development';
     });
 
     afterEach(() => {
       vi.useRealTimers();
+      process.env.NODE_ENV = originalNodeEnv;
     });
 
     it('should run health check every 30 seconds', async () => {
@@ -265,12 +270,17 @@ describe('prisma module', () => {
   });
 
   describe('checkHealth', () => {
+    let originalNodeEnv: string | undefined;
+
     beforeEach(() => {
       vi.useFakeTimers({ shouldAdvanceTime: true });
+      originalNodeEnv = process.env.NODE_ENV;
+      process.env.NODE_ENV = 'development';
     });
 
     afterEach(() => {
       vi.useRealTimers();
+      process.env.NODE_ENV = originalNodeEnv;
     });
 
     it('should return connected status with response time on success', async () => {
