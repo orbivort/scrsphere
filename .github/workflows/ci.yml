@@ -19,7 +19,7 @@ on:
       - 'LICENSE'
 
 env:
-  NODE_VERSION: '24.x'
+  NODE_VERSION: '24.15.0'
   PNPM_VERSION: '10.33.0'
 
 concurrency:
