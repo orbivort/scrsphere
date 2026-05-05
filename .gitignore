@@ -192,8 +192,11 @@ lerna-debug.log*
 # -----------------------------------------------------------------------------
 # Database & ORM
 # -----------------------------------------------------------------------------
-# Prisma
+# Prisma generated client
+**/src/generated/prisma/
 **/prisma/generated/
+
+# Prisma migration lock (optional - some teams commit this)
 **/prisma/migrations/migration_lock.toml
 
 # Database files
