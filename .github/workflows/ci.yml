@@ -163,6 +163,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build shared package
+        run: pnpm --filter=@scrsphere/shared run build
+
       - name: Run frontend tests
         run: pnpm --filter=@scrsphere/frontend run test -- --coverage
 
@@ -419,6 +422,9 @@ jobs:
         with:
           name: build-artifacts
           path: packages
+
+      - name: Build shared package
+        run: pnpm --filter=@scrsphere/shared run build
 
       - name: Run performance benchmarks
         run: pnpm --filter=@scrsphere/backend run test -- --run --benchmark
