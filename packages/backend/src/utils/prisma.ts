@@ -31,18 +31,22 @@ prisma.$on('query', (e: { duration: number; query: string; params: string }) => 
   }
 });
 
-const healthCheckInterval = setInterval(() => {
-  void (async () => {
-    try {
-      await prisma.$queryRaw`SELECT 1`;
-      logger.debug('Database connection healthy');
-    } catch (error) {
-      logger.error('Database connection unhealthy', { error });
-    }
-  })();
-}, 30000);
+let healthCheckInterval: ReturnType<typeof setInterval> | undefined;
 
-healthCheckInterval.unref();
+if (process.env.NODE_ENV !== 'test') {
+  healthCheckInterval = setInterval(() => {
+    void (async () => {
+      try {
+        await prisma.$queryRaw`SELECT 1`;
+        logger.debug('Database connection healthy');
+      } catch (error) {
+        logger.error('Database connection unhealthy', { error });
+      }
+    })();
+  }, 30000);
+
+  healthCheckInterval.unref();
+}
 
 interface DatabaseHealthStatus {
   status: 'connected' | 'disconnected' | 'timeout';
@@ -79,7 +83,9 @@ export const checkHealth = async (timeoutMs: number = 5000): Promise<DatabaseHea
 
 export const disconnectPrisma = async (): Promise<void> => {
   try {
-    clearInterval(healthCheckInterval);
+    if (healthCheckInterval) {
+      clearInterval(healthCheckInterval);
+    }
     await prisma.$disconnect();
     logger.info('Disconnected from database');
   } catch (error) {

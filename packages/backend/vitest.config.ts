@@ -11,7 +11,10 @@ export default defineConfig({
     include: ['src/__tests__/**/*.test.ts'],
     exclude: ['node_modules', 'dist', 'coverage', 'prisma', 'src/__tests__/', 'src/generated/'],
     setupFiles: ['./vitest-setup.ts'],
-    globalSetup: ['./src/__tests__/setup/globalSetup.ts'],
+    globalSetup: [
+      './src/__tests__/setup/globalSetup.ts',
+      './src/__tests__/setup/globalTeardown.ts',
+    ],
     deps: {
       interopDefault: true,
     },
