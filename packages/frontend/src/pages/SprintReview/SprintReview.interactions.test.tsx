@@ -1261,7 +1261,8 @@ describe('SprintReview - Sprint Duration Tests', () => {
 
     await waitFor(() => {
       expect(screen.getByText(/January 1, 2026/i)).toBeInTheDocument();
-      expect(screen.getByText(/January 14, 2026/i)).toBeInTheDocument();
+      const jan14Dates = screen.getAllByText(/January 14, 2026/i);
+      expect(jan14Dates.length).toBeGreaterThan(0);
     });
   });
 

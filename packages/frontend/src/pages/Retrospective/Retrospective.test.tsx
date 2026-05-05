@@ -346,7 +346,8 @@ describe('Retrospective Component', () => {
       });
 
       // The retro date appears in the header - use getAllByText since dates appear multiple times
-      const retroDates = screen.getAllByText(/February 15, 2026/);
+      // Note: Date may be Feb 14 or 15 depending on timezone (mock data is 2026-02-14T18:00:00Z)
+      const retroDates = screen.getAllByText(/February 1[45], 2026/);
       expect(retroDates.length).toBeGreaterThan(0);
     });
 
