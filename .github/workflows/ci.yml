@@ -313,21 +313,6 @@ jobs:
     needs: [build, detect-changes]
     if: needs.detect-changes.outputs.frontend == 'true' || needs.detect-changes.outputs.backend == 'true'
     
-    services:
-      postgres:
-        image: postgres:18
-        env:
-          POSTGRES_USER: test
-          POSTGRES_PASSWORD: test
-          POSTGRES_DB: test_db
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -359,9 +344,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Generate Prisma Client
-        run: pnpm run db:generate
-
       - name: Install Playwright browsers
         run: pnpm --filter=@scrsphere/frontend exec playwright install --with-deps chromium
 
@@ -375,10 +357,6 @@ jobs:
         run: pnpm run test:e2e
         env:
           NODE_ENV: test
-          DATABASE_URL: postgresql://test:test@localhost:5432/test_db
-          JWT_SECRET: test-jwt-secret-key-for-testing-only
-          JWT_EXPIRES_IN: 15m
-          JWT_REFRESH_EXPIRES_IN: 7d
 
       - name: Upload E2E test results
         uses: actions/upload-artifact@v4
@@ -539,21 +517,6 @@ jobs:
     needs: [build, detect-changes]
     if: needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.shared == 'true'
     
-    services:
-      postgres:
-        image: postgres:18
-        env:
-          POSTGRES_USER: test
-          POSTGRES_PASSWORD: test
-          POSTGRES_DB: test_db
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -585,9 +548,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Generate Prisma Client
-        run: pnpm run db:generate
-
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
@@ -598,8 +558,6 @@ jobs:
         run: pnpm run test --filter=@scrsphere/backend -- --run --benchmark
         env:
           NODE_ENV: test
-          DATABASE_URL: postgresql://test:test@localhost:5432/test_db
-          JWT_SECRET: test-jwt-secret-key-for-testing-only
         continue-on-error: true
 
       - name: Generate performance report
