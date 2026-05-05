@@ -17,6 +17,7 @@ on:
       - '.vscode/**'
       - '**.drawio'
       - 'LICENSE'
+  workflow_dispatch:
 
 env:
   NODE_VERSION: '24.14.1'
