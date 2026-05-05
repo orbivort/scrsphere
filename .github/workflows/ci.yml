@@ -236,9 +236,9 @@ jobs:
           retention-days: 7
 
   test-backend-integration:
-    name: Backend Integration Tests
+    name: Backend Integration & E2E Tests
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     needs: [lint-and-typecheck, detect-changes]
     if: needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.shared == 'true'
     
@@ -302,13 +302,16 @@ jobs:
         run: pnpm --filter=@scrsphere/backend exec prisma migrate deploy
 
       - name: Run integration tests
-        run: pnpm --filter=@scrsphere/backend run test:integration -- --coverage
+        run: pnpm --filter=@scrsphere/backend run test:integration
 
-      - name: Upload integration coverage
+      - name: Run E2E tests
+        run: pnpm --filter=@scrsphere/backend run test:e2e -- --coverage
+
+      - name: Upload test coverage
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: backend-integration-coverage
+          name: backend-integration-e2e-coverage
           path: packages/backend/coverage
           retention-days: 7
 
