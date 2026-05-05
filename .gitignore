@@ -196,8 +196,6 @@ lerna-debug.log*
 **/prisma/generated/
 **/prisma/migrations/migration_lock.toml
 
-**/generated/prisma/
-
 # Database files
 *.sqlite
 *.sqlite3

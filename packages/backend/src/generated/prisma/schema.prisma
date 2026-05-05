@@ -1,0 +1,1092 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                   String                     @id @db.Uuid
+  email                String                     @unique
+  password             String
+  firstName            String
+  lastName             String
+  avatarUrl            String?
+  createdAt            DateTime                   @default(now()) @db.Timestamptz(3)
+  createdBy            String?                    @db.Uuid
+  updatedAt            DateTime                   @updatedAt @db.Timestamptz(3)
+  updatedBy            String?                    @db.Uuid
+  marketingOptIn       Boolean                    @default(false) @map("marketing_opt_in")
+  marketingOptInAt     DateTime?                  @map("marketing_opt_in_at") @db.Timestamptz(3)
+  termsAcceptedAt      DateTime?                  @map("terms_accepted_at") @db.Timestamptz(3)
+  backlogAdjustments   BacklogAdjustment[]
+  consentRecords       ConsentRecord[]
+  dailyUpdates         DailyUpdate[]
+  dodVerifications     DoDChecklistVerification[]
+  dorVerifications     DoRChecklistVerification[]
+  emailLogs            EmailLog[]
+  ownedImpediments     Impediment[]               @relation("ImpedimentOwner")
+  reportedImpediments  Impediment[]               @relation("ImpedimentReporter")
+  increments           Increment[]                @relation("IncrementCreator")
+  notifications        Notification[]
+  createdPBIs          ProductBacklogItem[]       @relation("PBICreator")
+  createdGoals         ProductGoal[]              @relation("GoalCreator")
+  passwordResetTokens  PasswordResetToken[]
+  refreshTokens        RefreshToken[]
+  actionItems          RetroActionItem[]          @relation("ActionItemOwner")
+  retroItemVotes       RetroItemVote[]            @relation("RetroItemVoter")
+  retrospectiveItems   RetrospectiveItem[]        @relation("RetroItemAuthor")
+  scheduledDeletions   ScheduledDeletion[]
+  sprintBacklogChanges SprintBacklogChange[]      @relation("SprintBacklogChangeCreator")
+  retrospectives       SprintRetrospective[]      @relation("RetroFacilitator")
+  sprintReviews        SprintReview[]             @relation("ReviewCreator")
+  stakeholderFeedbacks StakeholderFeedback[]
+  statusChanges        StatusChangeHistory[]      @relation("StatusChanger")
+  assignedTasks        Task[]                     @relation("TaskAssignee")
+  teamMemberships      TeamMember[]
+  createdTeams         Team[]                     @relation("TeamCreator")
+  createdWorkflows     Workflow[]                 @relation("WorkflowCreator")
+
+  @@map("users")
+}
+
+model Team {
+  id                  String                @id @db.Uuid
+  name                String                @unique
+  description         String?
+  createdAt           DateTime              @default(now()) @db.Timestamptz(3)
+  createdBy           String?               @db.Uuid
+  updatedAt           DateTime              @updatedAt @db.Timestamptz(3)
+  updatedBy           String?               @db.Uuid
+  definitionOfDone    DefinitionOfDone?
+  definitionOfReady   DefinitionOfReady?
+  generatedSprints    GeneratedSprint[]
+  impediments         Impediment[]
+  increments          Increment[]
+  productBacklog      ProductBacklogItem[]
+  productGoals        ProductGoal[]
+  sprintConfiguration SprintConfiguration?
+  retrospectives      SprintRetrospective[]
+  sprintReviews       SprintReview[]
+  sprints             Sprint[]
+  members             TeamMember[]
+  creator             User?                 @relation("TeamCreator", fields: [createdBy], references: [id], onDelete: SetNull)
+
+  @@index([createdBy])
+  @@map("teams")
+}
+
+model TeamMember {
+  id        String   @id @db.Uuid
+  teamId    String   @db.Uuid
+  userId    String   @db.Uuid
+  role      UserRole
+  joinedAt  DateTime @default(now()) @db.Timestamptz(3)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  createdBy String?  @db.Uuid
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+  updatedBy String?  @db.Uuid
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, userId])
+  @@index([userId])
+  @@map("team_members")
+}
+
+model ProductGoal {
+  id                 String               @id @db.Uuid
+  teamId             String               @db.Uuid
+  title              String
+  description        String?
+  status             ProductGoalStatus
+  targetDate         DateTime?            @db.Timestamptz(3)
+  successMetrics     String?
+  strategicAlignment String?
+  createdAt          DateTime             @default(now()) @db.Timestamptz(3)
+  createdBy          String?              @db.Uuid
+  updatedAt          DateTime             @updatedAt @db.Timestamptz(3)
+  updatedBy          String?              @db.Uuid
+  backlogItems       ProductBacklogItem[]
+  creator            User?                @relation("GoalCreator", fields: [createdBy], references: [id], onDelete: SetNull)
+  team               Team                 @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  sprints            Sprint[]
+
+  @@index([teamId])
+  @@index([status])
+  @@index([targetDate])
+  @@index([teamId, status])
+  @@map("product_goals")
+}
+
+model ProductBacklogItem {
+  id                 String                @id @db.Uuid
+  teamId             String                @db.Uuid
+  goalId             String?               @db.Uuid
+  title              String
+  description        String?
+  priority           MoSCoWPriority        @default(COULD_HAVE)
+  businessValue      Int?
+  storyPoints        Int?
+  status             ItemStatus            @default(NEW)
+  labels             String[]              @default([])
+  acceptanceCriteria String?
+  createdAt          DateTime              @default(now()) @db.Timestamptz(3)
+  createdBy          String?               @db.Uuid
+  updatedAt          DateTime              @updatedAt @db.Timestamptz(3)
+  updatedBy          String?               @db.Uuid
+  sprintId           String?               @db.Uuid
+  incrementPBIs      IncrementPBI[]
+  creator            User?                 @relation("PBICreator", fields: [createdBy], references: [id], onDelete: SetNull)
+  goal               ProductGoal?          @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  team               Team                  @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  backlogChanges     SprintBacklogChange[]
+  sprintBacklogItems SprintBacklogItem[]
+  tasks              Task[]
+
+  @@index([teamId])
+  @@index([status])
+  @@index([goalId])
+  @@index([sprintId])
+  @@index([priority])
+  @@index([teamId, status])
+  @@index([teamId, status, priority])
+  @@map("product_backlog_items")
+}
+
+model Sprint {
+  id                 String                @id @db.Uuid
+  teamId             String                @db.Uuid
+  goalId             String?               @db.Uuid
+  name               String
+  startDate          DateTime              @db.Timestamptz(3)
+  endDate            DateTime              @db.Timestamptz(3)
+  sprintGoal         String?
+  status             SprintStatus          @default(PLANNED)
+  cancellationReason String?
+  createdAt          DateTime              @default(now()) @db.Timestamptz(3)
+  createdBy          String?               @db.Uuid
+  updatedAt          DateTime              @updatedAt @db.Timestamptz(3)
+  updatedBy          String?               @db.Uuid
+  burndownData       BurndownData[]
+  dailyUpdates       DailyUpdate[]
+  generatedSprint    GeneratedSprint?
+  impediments        Impediment[]
+  increments         Increment[]
+  backlogChanges     SprintBacklogChange[]
+  sprintBacklogItems SprintBacklogItem[]
+  retrospective      SprintRetrospective?
+  sprintReview       SprintReview?
+  goal               ProductGoal?          @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  team               Team                  @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  tasks              Task[]
+
+  @@index([teamId])
+  @@index([status])
+  @@index([goalId])
+  @@index([startDate])
+  @@index([endDate])
+  @@index([teamId, status])
+  @@index([teamId, startDate])
+  @@index([teamId, status, startDate])
+  @@map("sprints")
+}
+
+model SprintBacklogItem {
+  id        String                @id @db.Uuid
+  sprintId  String                @db.Uuid
+  pbiId     String                @db.Uuid
+  createdAt DateTime              @default(now()) @db.Timestamptz(3)
+  createdBy String?               @db.Uuid
+  updatedAt DateTime              @updatedAt @db.Timestamptz(3)
+  updatedBy String?               @db.Uuid
+  changes   SprintBacklogChange[]
+  pbi       ProductBacklogItem    @relation(fields: [pbiId], references: [id], onDelete: Cascade)
+  sprint    Sprint                @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+
+  @@unique([sprintId, pbiId])
+  @@map("sprint_backlog_items")
+}
+
+model SprintBacklogChange {
+  id                  String             @id @db.Uuid
+  sprintId            String             @db.Uuid
+  pbiId               String             @db.Uuid
+  sprintBacklogItemId String?            @db.Uuid
+  changeType          String
+  reason              String?
+  previousStatus      String?
+  newStatus           String?
+  taskAction          String?
+  taskCount           Int                @default(0)
+  createdBy           String?            @db.Uuid
+  createdAt           DateTime           @default(now()) @db.Timestamptz(3)
+  creator             User?              @relation("SprintBacklogChangeCreator", fields: [createdBy], references: [id])
+  pbi                 ProductBacklogItem @relation(fields: [pbiId], references: [id], onDelete: Cascade)
+  sprintBacklogItem   SprintBacklogItem? @relation(fields: [sprintBacklogItemId], references: [id])
+  sprint              Sprint             @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+
+  @@index([sprintId])
+  @@index([pbiId])
+  @@index([createdBy])
+  @@index([createdAt])
+  @@map("sprint_backlog_changes")
+}
+
+model Task {
+  id             String             @id @db.Uuid
+  sprintId       String             @db.Uuid
+  pbiId          String             @db.Uuid
+  title          String
+  description    String?
+  assigneeId     String?            @db.Uuid
+  status         TaskStatus         @default(TODO)
+  estimatedHours Float?
+  remainingHours Float?
+  createdAt      DateTime           @default(now()) @db.Timestamptz(3)
+  createdBy      String?            @db.Uuid
+  updatedAt      DateTime           @updatedAt @db.Timestamptz(3)
+  updatedBy      String?            @db.Uuid
+  assignee       User?              @relation("TaskAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
+  pbi            ProductBacklogItem @relation(fields: [pbiId], references: [id], onDelete: Cascade)
+  sprint         Sprint             @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+
+  @@index([sprintId])
+  @@index([pbiId])
+  @@index([assigneeId])
+  @@index([status])
+  @@index([sprintId, status])
+  @@map("tasks")
+}
+
+model DailyUpdate {
+  id               String      @id @db.Uuid
+  sprintId         String      @db.Uuid
+  userId           String      @db.Uuid
+  updateDate       DateTime    @db.Date
+  yesterdayWork    String?
+  todayWork        String?
+  impediment       String?
+  createdAt        DateTime    @default(now()) @db.Timestamptz(3)
+  createdBy        String?     @db.Uuid
+  updatedAt        DateTime    @updatedAt @db.Timestamptz(3)
+  updatedBy        String?     @db.Uuid
+  sprint           Sprint      @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  impedimentRecord Impediment?
+
+  @@unique([sprintId, userId, updateDate])
+  @@index([sprintId, updateDate])
+  @@index([updateDate])
+  @@map("daily_updates")
+}
+
+model BurndownData {
+  id              String   @id @db.Uuid
+  sprintId        String   @db.Uuid
+  date            DateTime @db.Date
+  idealRemaining  Float
+  actualRemaining Float?
+  createdAt       DateTime @default(now()) @db.Timestamptz(3)
+  createdBy       String?  @db.Uuid
+  updatedAt       DateTime @updatedAt @db.Timestamptz(3)
+  updatedBy       String?  @db.Uuid
+  sprint          Sprint   @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+
+  @@unique([sprintId, date])
+  @@map("burndown_data")
+}
+
+model Impediment {
+  id            String           @id @db.Uuid
+  teamId        String           @db.Uuid
+  sprintId      String?          @db.Uuid
+  title         String
+  description   String
+  reportedById  String           @db.Uuid
+  ownerId       String?          @db.Uuid
+  status        ImpedimentStatus @default(OPEN)
+  resolution    String?
+  resolvedAt    DateTime?        @db.Timestamptz(3)
+  dailyUpdateId String?          @unique @db.Uuid
+  createdAt     DateTime         @default(now()) @db.Timestamptz(3)
+  createdBy     String?          @db.Uuid
+  updatedAt     DateTime         @updatedAt @db.Timestamptz(3)
+  updatedBy     String?          @db.Uuid
+  dailyUpdate   DailyUpdate?     @relation(fields: [dailyUpdateId], references: [id], onDelete: SetNull)
+  owner         User?            @relation("ImpedimentOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+  reportedBy    User             @relation("ImpedimentReporter", fields: [reportedById], references: [id], onDelete: Restrict)
+  sprint        Sprint?          @relation(fields: [sprintId], references: [id], onDelete: SetNull)
+  team          Team             @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@index([teamId])
+  @@index([status])
+  @@index([sprintId])
+  @@index([reportedById])
+  @@index([ownerId])
+  @@index([teamId, status])
+  @@map("impediments")
+}
+
+model DefinitionOfDone {
+  id        String    @id @db.Uuid
+  teamId    String    @unique @db.Uuid
+  version   Int       @default(1)
+  createdAt DateTime  @default(now()) @db.Timestamptz(3)
+  createdBy String?   @db.Uuid
+  updatedAt DateTime  @updatedAt @db.Timestamptz(3)
+  updatedBy String?   @db.Uuid
+  team      Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  items     DoDItem[]
+
+  @@map("definition_of_done")
+}
+
+model DoDItem {
+  id               String                     @id @db.Uuid
+  dodId            String                     @db.Uuid
+  description      String
+  category         String?
+  isActive         Boolean                    @default(true)
+  order            Int                        @default(0)
+  createdAt        DateTime                   @default(now()) @db.Timestamptz(3)
+  createdBy        String?                    @db.Uuid
+  updatedAt        DateTime                   @updatedAt @db.Timestamptz(3)
+  updatedBy        String?                    @db.Uuid
+  verifications    DoDChecklistVerification[]
+  definitionOfDone DefinitionOfDone           @relation(fields: [dodId], references: [id], onDelete: Cascade)
+
+  @@unique([dodId, order])
+  @@index([dodId])
+  @@map("dod_items")
+}
+
+model DoDChecklistVerification {
+  id         String   @id @db.Uuid
+  pbiId      String   @db.Uuid
+  dodItemId  String   @db.Uuid
+  isVerified Boolean  @default(false)
+  verifiedBy String   @db.Uuid
+  verifiedAt DateTime @default(now()) @db.Timestamptz(3)
+  notes      String?
+  createdAt  DateTime @default(now()) @db.Timestamptz(3)
+  createdBy  String?  @db.Uuid
+  updatedAt  DateTime @updatedAt @db.Timestamptz(3)
+  updatedBy  String?  @db.Uuid
+  dodItem    DoDItem  @relation(fields: [dodItemId], references: [id], onDelete: Cascade)
+  verifier   User     @relation(fields: [verifiedBy], references: [id], onDelete: Restrict)
+
+  @@unique([pbiId, dodItemId])
+  @@index([pbiId])
+  @@index([dodItemId])
+  @@index([verifiedBy])
+  @@map("dod_checklist_verifications")
+}
+
+model DefinitionOfReady {
+  id        String    @id @db.Uuid
+  teamId    String    @unique @db.Uuid
+  version   Int       @default(1)
+  createdAt DateTime  @default(now()) @db.Timestamptz(3)
+  createdBy String?   @db.Uuid
+  updatedAt DateTime  @updatedAt @db.Timestamptz(3)
+  updatedBy String?   @db.Uuid
+  team      Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  items     DoRItem[]
+
+  @@map("definition_of_ready")
+}
+
+model DoRItem {
+  id                String                     @id @db.Uuid
+  dorId             String                     @db.Uuid
+  description       String
+  category          String?
+  isActive          Boolean                    @default(true)
+  order             Int                        @default(0)
+  createdAt         DateTime                   @default(now()) @db.Timestamptz(3)
+  createdBy         String?                    @db.Uuid
+  updatedAt         DateTime                   @updatedAt @db.Timestamptz(3)
+  updatedBy         String?                    @db.Uuid
+  verifications     DoRChecklistVerification[]
+  definitionOfReady DefinitionOfReady          @relation(fields: [dorId], references: [id], onDelete: Cascade)
+
+  @@unique([dorId, order])
+  @@index([dorId])
+  @@map("dor_items")
+}
+
+model DoRChecklistVerification {
+  id         String   @id @db.Uuid
+  pbiId      String   @db.Uuid
+  dorItemId  String   @db.Uuid
+  isVerified Boolean  @default(false)
+  verifiedBy String   @db.Uuid
+  verifiedAt DateTime @default(now()) @db.Timestamptz(3)
+  notes      String?
+  createdAt  DateTime @default(now()) @db.Timestamptz(3)
+  createdBy  String?  @db.Uuid
+  updatedAt  DateTime @updatedAt @db.Timestamptz(3)
+  updatedBy  String?  @db.Uuid
+  dorItem    DoRItem  @relation(fields: [dorItemId], references: [id], onDelete: Cascade)
+  verifier   User     @relation(fields: [verifiedBy], references: [id], onDelete: Restrict)
+
+  @@unique([pbiId, dorItemId])
+  @@index([pbiId])
+  @@index([dorItemId])
+  @@index([verifiedBy])
+  @@map("dor_checklist_verifications")
+}
+
+model Increment {
+  id               String          @id @db.Uuid
+  sprintId         String          @db.Uuid
+  teamId           String          @db.Uuid
+  name             String
+  description      String?
+  totalStoryPoints Int             @default(0)
+  status           IncrementStatus @default(DRAFT)
+  deliveredAt      DateTime?       @db.Timestamptz(3)
+  deliveryMethod   DeliveryMethod?
+  notes            String?
+  createdAt        DateTime        @default(now()) @db.Timestamptz(3)
+  createdBy        String?         @db.Uuid
+  updatedAt        DateTime        @updatedAt @db.Timestamptz(3)
+  updatedBy        String?         @db.Uuid
+  pbis             IncrementPBI[]
+  creator          User?           @relation("IncrementCreator", fields: [createdBy], references: [id], onDelete: SetNull)
+  sprint           Sprint          @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+  team             Team            @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  sprintReview     SprintReview?
+
+  @@index([sprintId])
+  @@index([teamId])
+  @@index([status])
+  @@index([deliveredAt])
+  @@index([sprintId, status])
+  @@map("increments")
+}
+
+model IncrementPBI {
+  id          String             @id @db.Uuid
+  incrementId String             @db.Uuid
+  pbiId       String             @db.Uuid
+  addedAt     DateTime           @default(now()) @db.Timestamptz(3)
+  createdAt   DateTime           @default(now()) @db.Timestamptz(3)
+  createdBy   String?            @db.Uuid
+  updatedAt   DateTime           @updatedAt @db.Timestamptz(3)
+  updatedBy   String?            @db.Uuid
+  increment   Increment          @relation(fields: [incrementId], references: [id], onDelete: Cascade)
+  pbi         ProductBacklogItem @relation(fields: [pbiId], references: [id], onDelete: Cascade)
+
+  @@unique([incrementId, pbiId])
+  @@index([incrementId])
+  @@index([pbiId])
+  @@map("increment_pbis")
+}
+
+model SprintReview {
+  id                 String                @id @db.Uuid
+  sprintId           String                @unique @db.Uuid
+  teamId             String                @db.Uuid
+  incrementId        String                @unique @db.Uuid
+  reviewDate         DateTime              @db.Timestamptz(3)
+  summary            String?
+  status             String                @default("in_progress")
+  createdAt          DateTime              @default(now()) @db.Timestamptz(3)
+  createdBy          String?               @db.Uuid
+  updatedAt          DateTime              @updatedAt @db.Timestamptz(3)
+  updatedBy          String?               @db.Uuid
+  backlogAdjustments BacklogAdjustment[]
+  attendees          ReviewAttendee[]
+  creator            User?                 @relation("ReviewCreator", fields: [createdBy], references: [id], onDelete: SetNull)
+  increment          Increment             @relation(fields: [incrementId], references: [id], onDelete: Cascade)
+  sprint             Sprint                @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+  team               Team                  @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  feedback           StakeholderFeedback[]
+
+  @@index([teamId])
+  @@index([reviewDate])
+  @@map("sprint_reviews")
+}
+
+model ReviewAttendee {
+  id        String       @id @db.Uuid
+  reviewId  String       @db.Uuid
+  name      String
+  email     String?
+  role      String
+  attended  Boolean      @default(true)
+  createdAt DateTime     @default(now()) @db.Timestamptz(3)
+  createdBy String?      @db.Uuid
+  updatedAt DateTime     @updatedAt @db.Timestamptz(3)
+  updatedBy String?      @db.Uuid
+  review    SprintReview @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  @@index([reviewId])
+  @@map("review_attendees")
+}
+
+model StakeholderFeedback {
+  id             String           @id @db.Uuid
+  reviewId       String           @db.Uuid
+  authorName     String
+  content        String
+  category       FeedbackCategory @default(POSITIVE)
+  relatedPbiId   String?          @db.Uuid
+  actionRequired Boolean          @default(false)
+  actionTaken    Boolean          @default(false)
+  ownerId        String?          @db.Uuid
+  createdAt      DateTime         @default(now()) @db.Timestamptz(3)
+  createdBy      String?          @db.Uuid
+  updatedAt      DateTime         @updatedAt @db.Timestamptz(3)
+  updatedBy      String?          @db.Uuid
+  owner          User?            @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+  review         SprintReview     @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  @@index([reviewId])
+  @@index([ownerId])
+  @@map("stakeholder_feedback")
+}
+
+model BacklogAdjustment {
+  id          String       @id @db.Uuid
+  reviewId    String       @db.Uuid
+  pbiId       String?      @db.Uuid
+  action      String
+  description String
+  reason      String
+  implemented Boolean      @default(false)
+  ownerId     String?      @db.Uuid
+  createdAt   DateTime     @default(now()) @db.Timestamptz(3)
+  createdBy   String?      @db.Uuid
+  updatedAt   DateTime     @updatedAt @db.Timestamptz(3)
+  updatedBy   String?      @db.Uuid
+  owner       User?        @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+  review      SprintReview @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  @@index([reviewId])
+  @@index([pbiId])
+  @@index([ownerId])
+  @@map("backlog_adjustments")
+}
+
+model SprintRetrospective {
+  id                String              @id @db.Uuid
+  sprintId          String              @unique @db.Uuid
+  teamId            String              @db.Uuid
+  retroDate         DateTime            @db.Timestamptz(3)
+  facilitatorId     String              @db.Uuid
+  isAnonymous       Boolean             @default(false)
+  status            RetrospectiveStatus @default(DRAFT)
+  summary           String?
+  dodEvolutionNotes String?
+  createdAt         DateTime            @default(now()) @db.Timestamptz(3)
+  createdBy         String?             @db.Uuid
+  updatedAt         DateTime            @updatedAt @db.Timestamptz(3)
+  updatedBy         String?             @db.Uuid
+  actionItems       RetroActionItem[]
+  attendees         RetroAttendee[]
+  items             RetrospectiveItem[]
+  facilitator       User                @relation("RetroFacilitator", fields: [facilitatorId], references: [id], onDelete: Restrict)
+  sprint            Sprint              @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+  team              Team                @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@index([teamId])
+  @@index([facilitatorId])
+  @@index([status])
+  @@map("sprint_retrospectives")
+}
+
+model RetroAttendee {
+  id              String              @id @db.Uuid
+  retrospectiveId String              @db.Uuid
+  name            String
+  email           String?
+  role            String
+  attended        Boolean             @default(true)
+  createdAt       DateTime            @default(now()) @db.Timestamptz(3)
+  createdBy       String?             @db.Uuid
+  updatedAt       DateTime            @updatedAt @db.Timestamptz(3)
+  updatedBy       String?             @db.Uuid
+  retrospective   SprintRetrospective @relation(fields: [retrospectiveId], references: [id], onDelete: Cascade)
+
+  @@index([retrospectiveId])
+  @@map("retro_attendees")
+}
+
+model RetrospectiveItem {
+  id              String                @id @db.Uuid
+  retrospectiveId String                @db.Uuid
+  category        RetrospectiveCategory
+  content         String
+  authorId        String?               @db.Uuid
+  authorName      String?
+  votes           Int                   @default(0)
+  order           Int                   @default(0)
+  createdAt       DateTime              @default(now()) @db.Timestamptz(3)
+  createdBy       String?               @db.Uuid
+  updatedAt       DateTime              @updatedAt @db.Timestamptz(3)
+  updatedBy       String?               @db.Uuid
+  votesBy         RetroItemVote[]       @relation("RetroItemVotes")
+  author          User?                 @relation("RetroItemAuthor", fields: [authorId], references: [id], onDelete: SetNull)
+  retrospective   SprintRetrospective   @relation(fields: [retrospectiveId], references: [id], onDelete: Cascade)
+
+  @@index([retrospectiveId])
+  @@index([authorId])
+  @@index([retrospectiveId, category])
+  @@map("retrospective_items")
+}
+
+model RetroItemVote {
+  id                  String            @id @db.Uuid
+  retrospectiveItemId String            @db.Uuid
+  userId              String            @db.Uuid
+  createdAt           DateTime          @default(now()) @db.Timestamptz(3)
+  createdBy           String?           @db.Uuid
+  updatedAt           DateTime          @updatedAt @db.Timestamptz(3)
+  updatedBy           String?           @db.Uuid
+  retrospectiveItem   RetrospectiveItem @relation("RetroItemVotes", fields: [retrospectiveItemId], references: [id], onDelete: Cascade)
+  user                User              @relation("RetroItemVoter", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([retrospectiveItemId, userId])
+  @@index([retrospectiveItemId])
+  @@index([userId])
+  @@map("retro_item_votes")
+}
+
+model RetroActionItem {
+  id                   String              @id @db.Uuid
+  retrospectiveId      String              @db.Uuid
+  title                String
+  description          String?
+  ownerId              String              @db.Uuid
+  dueDate              DateTime?           @db.Timestamptz(3)
+  status               ActionItemStatus    @default(PENDING)
+  addedToSprintBacklog Boolean             @default(false)
+  relatedSprintId      String?             @db.Uuid
+  createdAt            DateTime            @default(now()) @db.Timestamptz(3)
+  createdBy            String?             @db.Uuid
+  updatedAt            DateTime            @updatedAt @db.Timestamptz(3)
+  updatedBy            String?             @db.Uuid
+  completedAt          DateTime?           @db.Timestamptz(3)
+  owner                User                @relation("ActionItemOwner", fields: [ownerId], references: [id], onDelete: Restrict)
+  retrospective        SprintRetrospective @relation(fields: [retrospectiveId], references: [id], onDelete: Cascade)
+
+  @@index([retrospectiveId])
+  @@index([ownerId])
+  @@index([relatedSprintId])
+  @@index([status])
+  @@index([dueDate])
+  @@index([completedAt])
+  @@index([retrospectiveId, status])
+  @@map("retro_action_items")
+}
+
+model SprintConfiguration {
+  id             String         @id @db.Uuid
+  teamId         String         @unique @db.Uuid
+  duration       SprintDuration @default(TWO_WEEKS)
+  year           Int
+  sprintStartDay Int            @default(1)
+  generatedAt    DateTime       @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime       @updatedAt @db.Timestamptz(3)
+  updatedBy      String?        @db.Uuid
+  createdAt      DateTime       @default(now()) @db.Timestamptz(3)
+  createdBy      String?        @db.Uuid
+  team           Team           @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@map("sprint_configurations")
+}
+
+model GeneratedSprint {
+  id           String       @id @db.Uuid
+  teamId       String       @db.Uuid
+  sprintId     String?      @unique @db.Uuid
+  name         String
+  sprintNumber Int
+  year         Int
+  startDate    DateTime     @db.Timestamptz(3)
+  endDate      DateTime     @db.Timestamptz(3)
+  status       SprintStatus @default(PLANNED)
+  sprintGoal   String?
+  createdAt    DateTime     @default(now()) @db.Timestamptz(3)
+  createdBy    String?      @db.Uuid
+  updatedAt    DateTime     @updatedAt @db.Timestamptz(3)
+  updatedBy    String?      @db.Uuid
+  sprint       Sprint?      @relation(fields: [sprintId], references: [id], onDelete: SetNull)
+  team         Team         @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, year, sprintNumber])
+  @@index([teamId])
+  @@map("generated_sprints")
+}
+
+model Workflow {
+  id            String                @id @db.Uuid
+  entityType    String                @unique
+  name          String
+  description   String?
+  isActive      Boolean               @default(true)
+  defaultStatus String
+  createdBy     String                @db.Uuid
+  createdAt     DateTime              @default(now()) @db.Timestamptz(3)
+  updatedAt     DateTime              @updatedAt @db.Timestamptz(3)
+  statusChanges StatusChangeHistory[]
+  states        WorkflowState[]
+  transitions   WorkflowTransition[]
+  creator       User                  @relation("WorkflowCreator", fields: [createdBy], references: [id], onDelete: Restrict)
+
+  @@map("workflows")
+}
+
+model WorkflowState {
+  id                String                @id @db.Uuid
+  workflowId        String                @db.Uuid
+  name              String
+  displayName       String
+  description       String?
+  color             String?
+  icon              String?
+  isFinal           Boolean               @default(false)
+  orderIndex        Int
+  createdAt         DateTime              @default(now()) @db.Timestamptz(3)
+  fromStatusChanges StatusChangeHistory[] @relation("FromState")
+  toStatusChanges   StatusChangeHistory[] @relation("ToState")
+  workflow          Workflow              @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  fromTransitions   WorkflowTransition[]  @relation("FromState")
+  toTransitions     WorkflowTransition[]  @relation("ToState")
+
+  @@unique([workflowId, name])
+  @@unique([workflowId, orderIndex])
+  @@index([workflowId])
+  @@map("workflow_states")
+}
+
+model WorkflowTransition {
+  id               String                @id @db.Uuid
+  workflowId       String                @db.Uuid
+  fromStateId      String                @db.Uuid
+  toStateId        String                @db.Uuid
+  condition        String?
+  requiresApproval Boolean               @default(false)
+  allowedRoles     String[]
+  allowedUserIds   String[]
+  isActive         Boolean               @default(true)
+  createdAt        DateTime              @default(now()) @db.Timestamptz(3)
+  statusChanges    StatusChangeHistory[]
+  fromState        WorkflowState         @relation("FromState", fields: [fromStateId], references: [id], onDelete: Cascade)
+  toState          WorkflowState         @relation("ToState", fields: [toStateId], references: [id], onDelete: Cascade)
+  workflow         Workflow              @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+
+  @@unique([workflowId, fromStateId, toStateId])
+  @@index([workflowId])
+  @@index([fromStateId])
+  @@index([toStateId])
+  @@map("workflow_transitions")
+}
+
+model StatusChangeHistory {
+  id           String              @id @db.Uuid
+  entityType   String
+  entityId     String
+  workflowId   String              @db.Uuid
+  fromStateId  String?             @db.Uuid
+  toStateId    String              @db.Uuid
+  changedBy    String              @db.Uuid
+  changeReason String?
+  changeNotes  String?
+  transitionId String?             @db.Uuid
+  metadata     Json?
+  createdAt    DateTime            @default(now()) @db.Timestamptz(3)
+  changer      User                @relation("StatusChanger", fields: [changedBy], references: [id], onDelete: Restrict)
+  fromState    WorkflowState?      @relation("FromState", fields: [fromStateId], references: [id], onDelete: SetNull)
+  toState      WorkflowState       @relation("ToState", fields: [toStateId], references: [id])
+  transition   WorkflowTransition? @relation(fields: [transitionId], references: [id], onDelete: SetNull)
+  workflow     Workflow            @relation(fields: [workflowId], references: [id])
+
+  @@index([workflowId])
+  @@index([fromStateId])
+  @@index([toStateId])
+  @@index([changedBy])
+  @@index([transitionId])
+  @@index([entityType])
+  @@index([entityId])
+  @@index([createdAt])
+  @@index([entityType, entityId])
+  @@map("status_change_history")
+}
+
+model Notification {
+  id        String           @id @db.Uuid
+  userId    String           @db.Uuid
+  type      NotificationType
+  title     String
+  message   String?
+  data      Json?
+  isRead    Boolean          @default(false)
+  readAt    DateTime?        @db.Timestamptz(3)
+  createdAt DateTime         @default(now()) @db.Timestamptz(3)
+  createdBy String?          @db.Uuid
+  updatedAt DateTime         @updatedAt @db.Timestamptz(3)
+  updatedBy String?          @db.Uuid
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, isRead])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+model SystemParameter {
+  id          String   @id @db.Uuid
+  key         String   @unique
+  value       String
+  description String?
+  updatedAt   DateTime @updatedAt @db.Timestamptz(3)
+  updatedBy   String?  @db.Uuid
+  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+  createdBy   String?  @db.Uuid
+
+  @@map("system_parameters")
+}
+
+model RefreshToken {
+  id             String    @id @db.Uuid
+  token          String    @unique
+  tokenHash      String?
+  userId         String    @db.Uuid
+  expiresAt      DateTime  @db.Timestamptz(3)
+  createdAt      DateTime  @default(now()) @db.Timestamptz(3)
+  createdBy      String?   @db.Uuid
+  updatedAt      DateTime  @updatedAt @db.Timestamptz(3)
+  updatedBy      String?   @db.Uuid
+  revokedAt      DateTime? @db.Timestamptz(3)
+  lastActivityAt DateTime  @default(now()) @db.Timestamptz(3)
+  userAgent      String?
+  ipAddress      String?
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([lastActivityAt])
+  @@index([expiresAt])
+  @@map("refresh_tokens")
+}
+
+model ScheduledDeletion {
+  id                  String                  @id @default(uuid()) @db.Uuid
+  userId              String                  @map("user_id") @db.Uuid
+  requestedAt         DateTime                @default(now()) @map("requested_at") @db.Timestamptz(3)
+  scheduledDeletionAt DateTime                @map("scheduled_deletion_at") @db.Timestamptz(3)
+  gracePeriodDays     Int                     @default(14) @map("grace_period_days")
+  status              ScheduledDeletionStatus @default(PENDING)
+  cancelledAt         DateTime?               @map("cancelled_at") @db.Timestamptz(3)
+  executedAt          DateTime?               @map("executed_at") @db.Timestamptz(3)
+  blockedTeamIds      String[]                @map("blocked_team_ids")
+  confirmationPhrase  String                  @map("confirmation_phrase")
+  forceConfirmed      Boolean                 @default(false) @map("force_confirmed")
+  createdAt           DateTime                @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt           DateTime                @updatedAt @map("updated_at") @db.Timestamptz(3)
+  user                User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@map("scheduled_deletions")
+}
+
+model ConsentRecord {
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String?  @map("user_id") @db.Uuid
+  consentType String   @map("consent_type")
+  action      String
+  version     String
+  ipAddress   String?  @map("ip_address")
+  userAgent   String?  @map("user_agent")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  user        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([consentType])
+  @@map("consent_records")
+}
+
+model EmailLog {
+  id           String      @id @db.Uuid
+  userId       String?     @db.Uuid
+  email        String
+  type         EmailType
+  subject      String
+  status       EmailStatus
+  provider     String
+  messageId    String?
+  errorMessage String?
+  metadata     Json        @default("{}")
+  testMode     Boolean     @default(false)
+  sentAt       DateTime?   @db.Timestamptz(3)
+  deliveredAt  DateTime?   @db.Timestamptz(3)
+  openedAt     DateTime?   @db.Timestamptz(3)
+  clickedAt    DateTime?   @db.Timestamptz(3)
+  createdAt    DateTime    @default(now()) @db.Timestamptz(3)
+  createdBy    String?     @db.Uuid
+  updatedAt    DateTime    @updatedAt @db.Timestamptz(3)
+  updatedBy    String?     @db.Uuid
+  user         User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([email])
+  @@index([type])
+  @@index([status])
+  @@index([createdAt])
+  @@index([createdBy])
+  @@map("email_logs")
+}
+
+model PasswordResetToken {
+  id        String    @id @db.Uuid
+  userId    String    @db.Uuid
+  tokenHash String    @unique
+  expiresAt DateTime  @db.Timestamptz(3)
+  usedAt    DateTime? @db.Timestamptz(3)
+  createdAt DateTime  @default(now()) @db.Timestamptz(3)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([tokenHash])
+  @@index([expiresAt])
+  @@map("password_reset_tokens")
+}
+
+enum UserRole {
+  ADMINISTRATOR
+  PRODUCT_OWNER
+  SCRUM_MASTER
+  DEVELOPER
+}
+
+enum ItemStatus {
+  NEW
+  REFINED
+  READY
+  IN_PROGRESS
+  DONE
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
+enum SprintStatus {
+  PLANNED
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum ImpedimentStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum ProductGoalStatus {
+  NEW
+  ACTIVE
+  COMPLETED
+  ABANDONED
+}
+
+enum MoSCoWPriority {
+  MUST_HAVE
+  SHOULD_HAVE
+  COULD_HAVE
+  WONT_HAVE
+}
+
+enum RetrospectiveCategory {
+  WENT_WELL
+  DIDNT_GO_WELL
+  IMPROVEMENT
+}
+
+enum IncrementStatus {
+  DRAFT
+  VERIFIED
+  DELIVERED
+  ARCHIVED
+}
+
+enum DeliveryMethod {
+  SPRINT_REVIEW
+  EARLY_RELEASE
+}
+
+enum FeedbackCategory {
+  POSITIVE
+  NEGATIVE
+  SUGGESTION
+  QUESTION
+}
+
+enum ActionItemStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum RetrospectiveStatus {
+  DRAFT
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum SprintDuration {
+  TWO_WEEKS
+  FOUR_WEEKS
+}
+
+enum ScheduledDeletionStatus {
+  PENDING
+  CANCELLED
+  EXECUTED
+  EXPIRED
+}
+
+enum NotificationType {
+  TEAM_INVITATION
+  TEAM_REMOVAL
+  TASK_ASSIGNMENT
+  IMPEDIMENT_ASSIGNMENT
+  DAILY_UPDATE_REMINDER
+  TEAM_CREATED
+  TEAM_UPDATED
+  TEAM_DELETED
+  DIRECT_MESSAGE
+  ACCOUNT_DELETION_SCHEDULED
+  ACCOUNT_DELETION_CANCELLED
+}
+
+enum EmailType {
+  PASSWORD_RESET
+  EMAIL_VERIFICATION
+  WELCOME
+  PASSWORD_CHANGE
+  ACCOUNT_DELETION
+  TEAM_INVITATION
+  NOTIFICATION
+}
+
+enum EmailStatus {
+  PENDING
+  SENT
+  DELIVERED
+  FAILED
+  BOUNCED
+  OPENED
+  CLICKED
+}
