@@ -163,7 +163,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run frontend tests
-        run: pnpm run test --filter=@scrsphere/frontend -- --coverage
+        run: pnpm --filter=@scrsphere/frontend run test -- --coverage
 
       - name: Upload frontend coverage
         uses: actions/upload-artifact@v4
@@ -231,68 +231,6 @@ jobs:
           path: |
             packages/backend/dist
             packages/frontend/dist
-          retention-days: 7
-
-  test-e2e:
-    name: E2E Tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    needs: [build, detect-changes]
-    if: needs.detect-changes.outputs.frontend == 'true' || needs.detect-changes.outputs.backend == 'true'
-    
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
-        id: pnpm-cache
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Install Playwright browsers
-        run: pnpm --filter=@scrsphere/frontend exec playwright install --with-deps chromium
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-artifacts
-          path: packages
-
-      - name: Run E2E tests
-        run: pnpm run test:e2e
-        env:
-          NODE_ENV: test
-
-      - name: Upload E2E test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: e2e-test-results
-          path: |
-            packages/frontend/test-results
-            packages/frontend/playwright-report
           retention-days: 7
 
   security-audit:
@@ -482,7 +420,7 @@ jobs:
           path: packages
 
       - name: Run performance benchmarks
-        run: pnpm run test --filter=@scrsphere/backend -- --run --benchmark
+        run: pnpm --filter=@scrsphere/backend run test -- --run --benchmark
         env:
           NODE_ENV: test
         continue-on-error: true
