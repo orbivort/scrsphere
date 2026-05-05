@@ -183,6 +183,8 @@ jobs:
     timeout-minutes: 15
     needs: [lint-and-typecheck, detect-changes]
     if: needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.shared == 'true'
+    env:
+      DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
     
     steps:
       - name: Checkout repository
@@ -238,6 +240,8 @@ jobs:
     timeout-minutes: 20
     needs: [test-frontend, test-backend, detect-changes]
     if: always() && (needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.frontend == 'true' || needs.detect-changes.outputs.shared == 'true')
+    env:
+      DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
     
     steps:
       - name: Checkout repository
@@ -279,6 +283,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: pnpm --filter=@scrsphere/backend run db:generate
 
       - name: Build all packages
         run: pnpm run build
