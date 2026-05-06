@@ -132,7 +132,8 @@ jobs:
 
           echo "changelog_exists=false" >> "$GITHUB_OUTPUT"
 
-          COMMITS=$(git log ${COMMIT_RANGE} --format='%s' --no-merges)
+          export COMMITS=$(git log ${COMMIT_RANGE} --format='%s' --no-merges)
+          export VERSION_NO_V="${{ needs.validate.outputs.version_no_v }}"
 
           node << 'SCRIPT'
           const fs = require('fs');
