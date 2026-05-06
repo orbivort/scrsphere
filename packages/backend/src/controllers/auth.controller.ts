@@ -27,9 +27,26 @@ interface SessionInfo {
   ipAddress?: string;
 }
 
+const sanitizeHeaderForLog = (value?: string): string | undefined => {
+  if (!value) {
+    return undefined;
+  }
+
+  return value.replace(/[\r\n]+/g, ' ').trim();
+};
+
+const headerValueToString = (value: string | string[] | undefined): string | undefined => {
+  if (Array.isArray(value)) {
+    return value.join(', ');
+  }
+  return value;
+};
+
 const extractSessionInfo = (req: Request): SessionInfo => ({
-  userAgent: req.headers['user-agent'],
-  ipAddress: req.ip || req.headers['x-forwarded-for']?.toString().split(',')[0],
+  userAgent: sanitizeHeaderForLog(headerValueToString(req.headers['user-agent'])),
+  ipAddress: sanitizeHeaderForLog(
+    req.ip || headerValueToString(req.headers['x-forwarded-for'])?.split(',')[0]?.trim()
+  ),
 });
 
 export const register = asyncHandler(async (req: Request, res: Response) => {

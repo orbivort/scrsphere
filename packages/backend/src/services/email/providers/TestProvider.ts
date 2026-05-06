@@ -228,6 +228,14 @@ export class TestProvider implements IEmailProvider {
   }
 
   /**
+   * Sanitize a value before writing it to logs to prevent log injection.
+   * Replaces CR/LF characters with escaped literals so log structure is preserved.
+   */
+  private sanitizeForLog(value: unknown): string {
+    return String(value).replace(/\r/g, '\\r').replace(/\n/g, '\\n');
+  }
+
+  /**
    * Log email details to console with clear formatting
    */
   private logEmailToConsole(email: CapturedEmail): void {
@@ -237,41 +245,44 @@ export class TestProvider implements IEmailProvider {
     console.log(`\n${separator}`);
     console.log('TEST EMAIL CAPTURED');
     console.log(separator);
-    console.log(`ID:          ${email.id}`);
-    console.log(`Message-ID:  ${email.messageId}`);
-    console.log(`Timestamp:   ${email.timestamp}`);
+    console.log(`ID:          ${this.sanitizeForLog(email.id)}`);
+    console.log(`Message-ID:  ${this.sanitizeForLog(email.messageId)}`);
+    console.log(`Timestamp:   ${this.sanitizeForLog(email.timestamp)}`);
     console.log(sectionSeparator);
-    console.log(`From:        ${email.from}`);
-    console.log(`To:          ${email.to.join(', ')}`);
+    console.log(`From:        ${this.sanitizeForLog(email.from)}`);
+    console.log(`To:          ${email.to.map((addr) => this.sanitizeForLog(addr)).join(', ')}`);
     if (email.cc && email.cc.length > 0) {
-      console.log(`CC:          ${email.cc.join(', ')}`);
+      console.log(`CC:          ${email.cc.map((addr) => this.sanitizeForLog(addr)).join(', ')}`);
     }
     if (email.bcc && email.bcc.length > 0) {
-      console.log(`BCC:         ${email.bcc.join(', ')}`);
+      console.log(`BCC:         ${email.bcc.map((addr) => this.sanitizeForLog(addr)).join(', ')}`);
     }
     if (email.replyTo) {
-      console.log(`Reply-To:    ${email.replyTo}`);
+      console.log(`Reply-To:    ${this.sanitizeForLog(email.replyTo)}`);
     }
     console.log(sectionSeparator);
-    console.log(`Subject:     ${email.subject}`);
+    console.log(`Subject:     ${this.sanitizeForLog(email.subject)}`);
     console.log(sectionSeparator);
 
     if (email.text) {
       console.log('Plain Text Body:');
-      console.log(email.text);
+      console.log(this.sanitizeForLog(email.text));
       console.log(sectionSeparator);
     }
 
     if (email.html) {
       console.log('HTML Body:');
-      console.log(email.html.substring(0, 500) + (email.html.length > 500 ? '...' : ''));
+      const htmlPreview = email.html.substring(0, 500) + (email.html.length > 500 ? '...' : '');
+      console.log(this.sanitizeForLog(htmlPreview));
       console.log(sectionSeparator);
     }
 
     if (email.attachments.length > 0) {
       console.log('Attachments:');
       email.attachments.forEach((att) => {
-        console.log(`  - ${att.filename} (${att.contentType ?? 'unknown'}, ${att.size} bytes)`);
+        console.log(
+          `  - ${this.sanitizeForLog(att.filename)} (${this.sanitizeForLog(att.contentType ?? 'unknown')}, ${att.size} bytes)`
+        );
       });
       console.log(sectionSeparator);
     }
@@ -279,19 +290,19 @@ export class TestProvider implements IEmailProvider {
     if (email.headers && Object.keys(email.headers).length > 0) {
       console.log('Headers:');
       Object.entries(email.headers).forEach(([key, value]) => {
-        console.log(`  ${key}: ${value}`);
+        console.log(`  ${this.sanitizeForLog(key)}: ${this.sanitizeForLog(value)}`);
       });
       console.log(sectionSeparator);
     }
 
     if (email.tags && email.tags.length > 0) {
-      console.log(`Tags: ${email.tags.join(', ')}`);
+      console.log(`Tags: ${email.tags.map((tag) => this.sanitizeForLog(tag)).join(', ')}`);
     }
 
     if (email.metadata && Object.keys(email.metadata).length > 0) {
       console.log('Metadata:');
       Object.entries(email.metadata).forEach(([key, value]) => {
-        console.log(`  ${key}: ${value}`);
+        console.log(`  ${this.sanitizeForLog(key)}: ${this.sanitizeForLog(value)}`);
       });
     }
 
