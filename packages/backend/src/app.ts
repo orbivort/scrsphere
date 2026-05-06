@@ -63,6 +63,10 @@ app.use(contextMiddleware);
 // API version detection and validation
 app.use(versionMiddleware);
 
+// CSRF protection for cookie-authenticated requests
+app.use(csrfProtectionMiddleware);
+app.use(ensureCsrfToken);
+
 // Rate limiting (disabled in test environment)
 if (process.env.NODE_ENV !== 'test') {
   const limiter = rateLimit({
