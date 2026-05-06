@@ -1,6 +1,6 @@
 {
   "name": "@scrsphere/frontend",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "license": "Apache-2.0",
   "description": "Frontend UI for Scrsphere - Agile Scrum Lifecycle Management System",
