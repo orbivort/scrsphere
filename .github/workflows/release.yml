@@ -413,11 +413,11 @@ jobs:
             postgres:
               image: postgres:18-alpine
               environment:
-                POSTGRES_USER: test
-                POSTGRES_PASSWORD: test
+                POSTGRES_USER: scrsphere_smoke_test
+                POSTGRES_PASSWORD: Sm0keT3st_Str0ng_P@ssw0rd_2024!
                 POSTGRES_DB: scrsphere_test
               healthcheck:
-                test: ["CMD-SHELL", "pg_isready -U test -d scrsphere_test"]
+                test: ["CMD-SHELL", "pg_isready -U scrsphere_smoke_test -d scrsphere_test"]
                 interval: 5s
                 timeout: 3s
                 retries: 10
@@ -426,7 +426,7 @@ jobs:
             backend:
               image: ${BACKEND_IMAGE}
               environment:
-                DATABASE_URL: postgresql://test:test@postgres:5432/scrsphere_test
+                DATABASE_URL: postgresql://scrsphere_smoke_test:Sm0keT3st_Str0ng_P@ssw0rd_2024!@postgres:5432/scrsphere_test
                 JWT_SECRET: test-jwt-secret-for-smoke-test-minimum-64-characters-long-for-validation
                 NODE_ENV: production
                 CORS_ORIGIN: http://localhost
@@ -461,7 +461,7 @@ jobs:
           ELAPSED=0
           MAX_WAIT=60
           while [ $ELAPSED -lt $MAX_WAIT ]; do
-            if docker compose -f /tmp/smoke-test.yml exec -T postgres pg_isready -U test -d scrsphere_test > /dev/null 2>&1; then
+            if docker compose -f /tmp/smoke-test.yml exec -T postgres pg_isready -U scrsphere_smoke_test -d scrsphere_test > /dev/null 2>&1; then
               echo "PostgreSQL is ready"
               break
             fi
