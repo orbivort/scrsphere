@@ -9,13 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
--**Enhancements**: Code quality improvements
-
-- Potential fix for code scanning alert no. 5: Log injection
-- Potential fix for code scanning alert no. 3: Missing rate limiting
-- Potential fix for code scanning alert no. 2: Missing rate limiting
-- Potential fix for code scanning alert no. 1: Missing CSRF middleware
-- tests: improve global teardown with conditional prisma disconnect
+- **Enhancements**: Code quality improvements
+  - Potential fix for code scanning alert no. 5: Log injection
+  - Potential fix for code scanning alert no. 3: Missing rate limiting
+  - Potential fix for code scanning alert no. 2: Missing rate limiting
+  - Potential fix for code scanning alert no. 1: Missing CSRF middleware
+  - tests: improve global teardown with conditional prisma disconnect
 
 ### Fixed
 
