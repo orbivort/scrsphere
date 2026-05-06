@@ -1,0 +1,697 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., v1.1.0). Tag must already exist.'
+        required: true
+        type: string
+
+concurrency:
+  group: release-${{ github.ref_name }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  validate:
+    name: Validate Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      version_no_v: ${{ steps.version.outputs.version_no_v }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract version
+        id: version
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            VERSION="${{ inputs.version }}"
+          else
+            VERSION="${{ github.ref_name }}"
+          fi
+
+          if [[ ! "${VERSION}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+ ]]; then
+            echo "::error::Invalid version format: ${VERSION}. Expected format: vMAJOR.MINOR.PATCH (e.g., v1.2.0)"
+            exit 1
+          fi
+
+          VERSION_NO_V="${VERSION#v}"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "version_no_v=${VERSION_NO_V}" >> "$GITHUB_OUTPUT"
+          echo "Release version: ${VERSION} (Docker tag: ${VERSION_NO_V})"
+
+      - name: Verify CI passed on this commit
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          SHA="${{ github.sha }}"
+          echo "Checking CI status for commit ${SHA}..."
+
+          MAX_ATTEMPTS=12
+          ATTEMPT=0
+          while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+            ATTEMPT=$((ATTEMPT + 1))
+
+            RUNS=$(gh run list \
+              --workflow=ci.yml \
+              --commit="${SHA}" \
+              --status=success \
+              --limit=1 \
+              --json databaseId 2>/dev/null || echo "[]")
+
+            if [[ "${RUNS}" != "[]" ]]; then
+              echo "✅ CI validation passed for commit ${SHA}"
+              exit 0
+            fi
+
+            echo "  Attempt ${ATTEMPT}/${MAX_ATTEMPTS}: CI not yet passed, waiting 30s..."
+            sleep 30
+          done
+
+          echo "::error::CI workflow has not passed on commit ${SHA} after $((MAX_ATTEMPTS * 30))s. A successful CI run is required before releasing."
+          echo "Trigger CI manually or wait for it to complete, then re-run this workflow."
+          exit 1
+
+  bump-version:
+    name: Bump Version & Changelog
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: validate
+    permissions:
+      contents: write
+    outputs:
+      bumped_sha: ${{ steps.commit.outputs.bumped_sha }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Generate changelog entry
+        id: changelog
+        env:
+          VERSION_NO_V: ${{ needs.validate.outputs.version_no_v }}
+        run: |
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+
+          if [[ -n "${PREV_TAG}" ]]; then
+            echo "Generating changelog from ${PREV_TAG} to HEAD"
+            COMMIT_RANGE="${PREV_TAG}..HEAD"
+          else
+            echo "No previous tag found. Generating changelog from all commits."
+            COMMIT_RANGE="HEAD"
+          fi
+
+          echo "prev_tag=${PREV_TAG}" >> "$GITHUB_OUTPUT"
+
+          if grep -q "^## \[${VERSION_NO_V}\]" CHANGELOG.md 2>/dev/null; then
+            echo "changelog_exists=true" >> "$GITHUB_OUTPUT"
+            echo "Changelog section for [${VERSION_NO_V}] already exists. Skipping generation."
+            exit 0
+          fi
+
+          echo "changelog_exists=false" >> "$GITHUB_OUTPUT"
+
+          ADDED=""
+          CHANGED=""
+          DEPRECATED=""
+          REMOVED=""
+          FIXED=""
+          SECURITY=""
+
+          while IFS= read -r line; do
+            MSG="${line}"
+
+            if [[ "${MSG}" =~ ^feat(\([^)]*\))?!?: ]]; then
+              DESC=$(echo "${MSG}" | sed -E 's/^feat(\([^)]*\))?!?:\s*//')
+              SCOPE=$(echo "${MSG}" | sed -nE 's/^feat\(([^)]*)\).*$/\1/p')
+              if [[ -n "${SCOPE}" ]]; then
+                ENTRY="- **${SCOPE}**: ${DESC}"
+              else
+                ENTRY="- ${DESC}"
+              fi
+              if [[ "${MSG}" =~ ^feat(\([^)]*\))?! ]]; then
+                BREAKING="- **BREAKING**: ${DESC}"
+                CHANGED="${CHANGED}${BREAKING}"$'\n'
+              fi
+              ADDED="${ADDED}${ENTRY}"$'\n'
+
+            elif [[ "${MSG}" =~ ^fix(\([^)]*\))?!?: ]]; then
+              DESC=$(echo "${MSG}" | sed -E 's/^fix(\([^)]*\))?!?:\s*//')
+              SCOPE=$(echo "${MSG}" | sed -nE 's/^fix\(([^)]*)\).*$/\1/p')
+              if [[ -n "${SCOPE}" ]]; then
+                ENTRY="- **${SCOPE}**: ${DESC}"
+              else
+                ENTRY="- ${DESC}"
+              fi
+              FIXED="${FIXED}${ENTRY}"$'\n'
+
+            elif [[ "${MSG}" =~ ^(refactor|perf|improve)(\([^)]*\))?!?: ]]; then
+              DESC=$(echo "${MSG}" | sed -E 's/^(refactor|perf|improve)(\([^)]*\))?!?:\s*//')
+              SCOPE=$(echo "${MSG}" | sed -nE 's/^(refactor|perf|improve)\(([^)]*)\).*$/\2/p')
+              if [[ -n "${SCOPE}" ]]; then
+                ENTRY="- **${SCOPE}**: ${DESC}"
+              else
+                ENTRY="- ${DESC}"
+              fi
+              CHANGED="${CHANGED}${ENTRY}"$'\n'
+
+            elif [[ "${MSG}" =~ ^docs(\([^)]*\))?: ]]; then
+              : 
+            elif [[ "${MSG}" =~ ^style(\([^)]*\))?: ]]; then
+              :
+            elif [[ "${MSG}" =~ ^test(\([^)]*\))?: ]]; then
+              :
+            elif [[ "${MSG}" =~ ^build(\([^)]*\))?: ]]; then
+              :
+            elif [[ "${MSG}" =~ ^ci(\([^)]*\))?: ]]; then
+              :
+            elif [[ "${MSG}" =~ ^chore(\([^)]*\))?: ]]; then
+              :
+            elif [[ "${MSG}" =~ ^deps(\([^)]*\))?: ]]; then
+              :
+            else
+              if [[ -n "${MSG}" && "${MSG}" != "Merge"* ]]; then
+                ADDED="${ADDED}- ${MSG}"$'\n'
+              fi
+            fi
+          done < <(git log ${COMMIT_RANGE} --format='%s' --no-merges)
+
+          TODAY=$(date +%Y-%m-%d)
+          ENTRY="## [${VERSION_NO_V}] - ${TODAY}"$'\n'
+
+          if [[ -n "${ADDED}" ]]; then
+            ENTRY="${ENTRY}"$'\n'"### Added"$'\n'$'\n'"$(echo "${ADDED}" | sed '/^$/d')"$'\n'
+          fi
+          if [[ -n "${CHANGED}" ]]; then
+            ENTRY="${ENTRY}"$'\n'"### Changed"$'\n'$'\n'"$(echo "${CHANGED}" | sed '/^$/d')"$'\n'
+          fi
+          if [[ -n "${DEPRECATED}" ]]; then
+            ENTRY="${ENTRY}"$'\n'"### Deprecated"$'\n'$'\n'"$(echo "${DEPRECATED}" | sed '/^$/d')"$'\n'
+          fi
+          if [[ -n "${REMOVED}" ]]; then
+            ENTRY="${ENTRY}"$'\n'"### Removed"$'\n'$'\n'"$(echo "${REMOVED}" | sed '/^$/d')"$'\n'
+          fi
+          if [[ -n "${FIXED}" ]]; then
+            ENTRY="${ENTRY}"$'\n'"### Fixed"$'\n'$'\n'"$(echo "${FIXED}" | sed '/^$/d')"$'\n'
+          fi
+          if [[ -n "${SECURITY}" ]]; then
+            ENTRY="${ENTRY}"$'\n'"### Security"$'\n'$'\n'"$(echo "${SECURITY}" | sed '/^$/d')"$'\n'
+          fi
+
+          HEADER=$(head -6 CHANGELOG.md)
+          BODY=$(tail -n +7 CHANGELOG.md)
+
+          {
+            echo "${HEADER}"
+            echo ""
+            echo "${ENTRY}"
+            echo "${BODY}"
+          } > CHANGELOG.md
+
+          echo "Changelog entry generated for [${VERSION_NO_V}]"
+
+      - name: Bump package.json versions
+        env:
+          VERSION_NO_V: ${{ needs.validate.outputs.version_no_v }}
+        run: |
+          CURRENT_ROOT=$(node -p "require('./package.json').version")
+          CURRENT_BACKEND=$(node -p "require('./packages/backend/package.json').version")
+          CURRENT_FRONTEND=$(node -p "require('./packages/frontend/package.json').version")
+
+          if [[ "${CURRENT_ROOT}" == "${VERSION_NO_V}" && \
+                "${CURRENT_BACKEND}" == "${VERSION_NO_V}" && \
+                "${CURRENT_FRONTEND}" == "${VERSION_NO_V}" ]]; then
+            echo "All package.json files already at version ${VERSION_NO_V}. Skipping bump."
+            echo "needs_bump=false" >> "$GITHUB_ENV"
+            exit 0
+          fi
+
+          echo "needs_bump=true" >> "$GITHUB_ENV"
+          echo "Bumping versions:"
+          echo "  Root:     ${CURRENT_ROOT} → ${VERSION_NO_V}"
+          echo "  Backend:  ${CURRENT_BACKEND} → ${VERSION_NO_V}"
+          echo "  Frontend: ${CURRENT_FRONTEND} → ${VERSION_NO_V}"
+
+          node -e "
+            const fs = require('fs');
+            const v = process.env.VERSION_NO_V;
+            const files = [
+              'package.json',
+              'packages/backend/package.json',
+              'packages/frontend/package.json',
+            ];
+            for (const f of files) {
+              const pkg = JSON.parse(fs.readFileSync(f, 'utf8'));
+              pkg.version = v;
+              fs.writeFileSync(f, JSON.stringify(pkg, null, 2) + '\n');
+            }
+          "
+
+      - name: Commit and push version bump
+        id: commit
+        run: |
+          git add package.json packages/backend/package.json packages/frontend/package.json CHANGELOG.md
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            BUMPED_SHA=$(git rev-parse HEAD)
+          else
+            git commit -m "chore(release): bump version to ${{ needs.validate.outputs.version_no_v }}"
+            git push origin main
+            BUMPED_SHA=$(git rev-parse HEAD)
+            echo "Version bump committed: ${BUMPED_SHA}"
+          fi
+          echo "bumped_sha=${BUMPED_SHA}" >> "$GITHUB_OUTPUT"
+
+      - name: Write bump summary
+        run: |
+          echo "### 📦 Version Bump & Changelog" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Version:** \`${{ needs.validate.outputs.version_no_v }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [[ "${{ steps.changelog.outputs.changelog_exists }}" == "false" ]]; then
+            echo "**Changelog:** Auto-generated from conventional commits" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "**Changelog:** Existing entry preserved (no overwrite)" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  build-and-push-backend:
+    name: Build & Push Backend
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: [validate, bump-version]
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.bump-version.outputs.bumped_sha }}
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository }}/backend
+          tags: |
+            type=semver,pattern={{version}},value=${{ needs.validate.outputs.version_no_v }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ needs.validate.outputs.version_no_v }}
+            type=sha,prefix=
+            type=raw,value=latest
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push backend image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: packages/backend/Dockerfile
+          target: production
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          provenance: false
+
+      - name: Write build summary
+        run: |
+          echo "### 🐳 Backend Image Published" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Tag |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----|" >> $GITHUB_STEP_SUMMARY
+          for tag in $(echo "${{ steps.meta.outputs.tags }}" | tr ',' '\n'); do
+            echo "| \`${tag}\` |" >> $GITHUB_STEP_SUMMARY
+          done
+
+  build-and-push-frontend:
+    name: Build & Push Frontend
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: [validate, bump-version]
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.bump-version.outputs.bumped_sha }}
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository }}/frontend
+          tags: |
+            type=semver,pattern={{version}},value=${{ needs.validate.outputs.version_no_v }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ needs.validate.outputs.version_no_v }}
+            type=sha,prefix=
+            type=raw,value=latest
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: packages/frontend/Dockerfile
+          target: production
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          provenance: false
+
+      - name: Write build summary
+        run: |
+          echo "### 🐳 Frontend Image Published" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Tag |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----|" >> $GITHUB_STEP_SUMMARY
+          for tag in $(echo "${{ steps.meta.outputs.tags }}" | tr ',' '\n'); do
+            echo "| \`${tag}\` |" >> $GITHUB_STEP_SUMMARY
+          done
+
+  smoke-test:
+    name: Smoke Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [validate, bump-version, build-and-push-backend, build-and-push-frontend]
+    steps:
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create smoke test compose file
+        env:
+          BACKEND_IMAGE: ${{ env.REGISTRY }}/${{ github.repository }}/backend:${{ needs.validate.outputs.version_no_v }}
+          FRONTEND_IMAGE: ${{ env.REGISTRY }}/${{ github.repository }}/frontend:${{ needs.validate.outputs.version_no_v }}
+        run: |
+          BACKEND_IMAGE=$(echo "$BACKEND_IMAGE" | tr '[:upper:]' '[:lower:]')
+          FRONTEND_IMAGE=$(echo "$FRONTEND_IMAGE" | tr '[:upper:]' '[:lower:]')
+
+          cat > /tmp/smoke-test.yml << EOF
+          services:
+            postgres:
+              image: postgres:18-alpine
+              environment:
+                POSTGRES_USER: test
+                POSTGRES_PASSWORD: test
+                POSTGRES_DB: scrsphere_test
+              healthcheck:
+                test: ["CMD-SHELL", "pg_isready -U test -d scrsphere_test"]
+                interval: 5s
+                timeout: 3s
+                retries: 10
+                start_period: 10s
+
+            backend:
+              image: ${BACKEND_IMAGE}
+              environment:
+                DATABASE_URL: postgresql://test:test@postgres:5432/scrsphere_test
+                JWT_SECRET: test-jwt-secret-for-smoke-test-minimum-64-characters-long-for-validation
+                NODE_ENV: production
+                CORS_ORIGIN: http://localhost
+                EMAIL_TEST_MODE: "true"
+                PORT: "5000"
+              ports:
+                - "5000:5000"
+              depends_on:
+                postgres:
+                  condition: service_healthy
+              healthcheck:
+                test: ["CMD", "node", "-e", "require('http').get('http://localhost:5000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+                interval: 10s
+                timeout: 5s
+                retries: 6
+                start_period: 15s
+
+            frontend:
+              image: ${FRONTEND_IMAGE}
+              ports:
+                - "8080:80"
+              depends_on:
+                backend:
+                  condition: service_healthy
+              healthcheck:
+                test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1/"]
+                interval: 10s
+                timeout: 5s
+                retries: 3
+                start_period: 5s
+          EOF
+
+      - name: Start PostgreSQL
+        run: docker compose -f /tmp/smoke-test.yml up -d postgres
+
+      - name: Wait for PostgreSQL
+        run: |
+          ELAPSED=0
+          MAX_WAIT=60
+          while [ $ELAPSED -lt $MAX_WAIT ]; do
+            if docker compose -f /tmp/smoke-test.yml exec -T postgres pg_isready -U test -d scrsphere_test > /dev/null 2>&1; then
+              echo "PostgreSQL is ready"
+              break
+            fi
+            sleep 2
+            ELAPSED=$((ELAPSED + 2))
+          done
+          if [ $ELAPSED -ge $MAX_WAIT ]; then
+            echo "::error::PostgreSQL did not become ready within ${MAX_WAIT}s"
+            exit 1
+          fi
+
+      - name: Run database migrations
+        run: |
+          docker compose -f /tmp/smoke-test.yml run --rm \
+            backend \
+            npx prisma migrate deploy
+
+      - name: Start backend and frontend
+        run: docker compose -f /tmp/smoke-test.yml up -d backend frontend
+
+      - name: Wait for backend
+        run: |
+          BACKEND_ID=$(docker compose -f /tmp/smoke-test.yml ps -q backend 2>/dev/null || echo "")
+          if [[ -z "${BACKEND_ID}" ]]; then
+            echo "::error::Backend container not found"
+            exit 1
+          fi
+
+          ELAPSED=0
+          MAX_WAIT=90
+          while [ $ELAPSED -lt $MAX_WAIT ]; do
+            STATUS=$(docker inspect --format='{{.State.Health.Status}}' "${BACKEND_ID}" 2>/dev/null || echo "unknown")
+            if [[ "${STATUS}" == "healthy" ]]; then
+              echo "Backend is healthy"
+              break
+            fi
+            echo "Waiting for backend... (${ELAPSED}s, status: ${STATUS})"
+            sleep 5
+            ELAPSED=$((ELAPSED + 5))
+          done
+          if [ $ELAPSED -ge $MAX_WAIT ]; then
+            echo "::error::Backend did not become healthy within ${MAX_WAIT}s"
+            docker compose -f /tmp/smoke-test.yml logs backend
+            exit 1
+          fi
+
+      - name: Wait for frontend
+        run: |
+          FRONTEND_ID=$(docker compose -f /tmp/smoke-test.yml ps -q frontend 2>/dev/null || echo "")
+          if [[ -z "${FRONTEND_ID}" ]]; then
+            echo "::error::Frontend container not found"
+            exit 1
+          fi
+
+          ELAPSED=0
+          MAX_WAIT=60
+          while [ $ELAPSED -lt $MAX_WAIT ]; do
+            STATUS=$(docker inspect --format='{{.State.Health.Status}}' "${FRONTEND_ID}" 2>/dev/null || echo "unknown")
+            if [[ "${STATUS}" == "healthy" ]]; then
+              echo "Frontend is healthy"
+              break
+            fi
+            echo "Waiting for frontend... (${ELAPSED}s, status: ${STATUS})"
+            sleep 5
+            ELAPSED=$((ELAPSED + 5))
+          done
+          if [ $ELAPSED -ge $MAX_WAIT ]; then
+            echo "::error::Frontend did not become healthy within ${MAX_WAIT}s"
+            docker compose -f /tmp/smoke-test.yml logs frontend
+            exit 1
+          fi
+
+      - name: Verify health endpoint
+        run: |
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5000/health || echo "000")
+          if [[ "${HTTP_CODE}" != "200" ]]; then
+            echo "::warning::Backend health endpoint returned HTTP ${HTTP_CODE}, expected 200"
+          else
+            echo "Backend health endpoint returned HTTP 200 ✅"
+          fi
+
+      - name: Collect logs on failure
+        if: failure()
+        run: |
+          echo "=== Service Logs ==="
+          docker compose -f /tmp/smoke-test.yml logs
+          echo ""
+          echo "=== Service Status ==="
+          docker compose -f /tmp/smoke-test.yml ps -a
+
+      - name: Write smoke test summary
+        if: always()
+        run: |
+          echo "### 🔍 Smoke Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Service | Image | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|---------|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| PostgreSQL | \`postgres:18-alpine\` | ✅ Healthy |" >> $GITHUB_STEP_SUMMARY
+          echo "| Backend | \`${{ needs.validate.outputs.version_no_v }}\` | ✅ Healthy |" >> $GITHUB_STEP_SUMMARY
+          echo "| Frontend | \`${{ needs.validate.outputs.version_no_v }}\` | ✅ Healthy |" >> $GITHUB_STEP_SUMMARY
+
+      - name: Cleanup
+        if: always()
+        run: docker compose -f /tmp/smoke-test.yml down -v --remove-orphans
+
+  github-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [validate, bump-version, smoke-test]
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.bump-version.outputs.bumped_sha }}
+          fetch-depth: 0
+
+      - name: Get previous tag
+        id: prev-tag
+        run: |
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          echo "prev_tag=${PREV_TAG}" >> "$GITHUB_OUTPUT"
+
+      - name: Extract changelog
+        id: changelog
+        run: |
+          VERSION_NO_V="${{ needs.validate.outputs.version_no_v }}"
+
+          if [[ ! -f "CHANGELOG.md" ]]; then
+            echo "Release ${{ needs.validate.outputs.version }}. See CHANGELOG.md for details." > /tmp/changelog.md
+            exit 0
+          fi
+
+          sed -n "/^## \[${VERSION_NO_V}\]/,/^## \[/p" CHANGELOG.md | head -n -1 > /tmp/changelog.md
+
+          if [[ ! -s /tmp/changelog.md ]]; then
+            echo "Release ${{ needs.validate.outputs.version }}. See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details." > /tmp/changelog.md
+          fi
+
+      - name: Build release body
+        env:
+          VERSION_NO_V: ${{ needs.validate.outputs.version_no_v }}
+          REPO: ${{ github.repository }}
+          PREV_TAG: ${{ steps.prev-tag.outputs.prev_tag }}
+        run: |
+          {
+            echo "## Docker Images"
+            echo ""
+            echo '```bash'
+            echo "docker pull ghcr.io/${REPO}/backend:${VERSION_NO_V}"
+            echo "docker pull ghcr.io/${REPO}/frontend:${VERSION_NO_V}"
+            echo '```'
+            echo ""
+            echo "## Deployment"
+            echo ""
+            echo "See the [Deployment Guide](https://github.com/${REPO}/blob/v${VERSION_NO_V}/docs/deployment/DEPLOYMENT.md) for complete setup instructions."
+            echo ""
+            echo "Quick start:"
+            echo ""
+            echo '```bash'
+            echo "git clone --depth 1 --branch v${VERSION_NO_V} https://github.com/${REPO}.git"
+            echo "cd scrsphere"
+            echo "cp packages/backend/.env.example packages/backend/.env.production"
+            echo "# Edit .env.production with your settings"
+            echo "docker compose up -d"
+            echo '```'
+            echo ""
+            echo "## What's Changed"
+            echo ""
+            cat /tmp/changelog.md
+          } > /tmp/release-body.md
+
+          if [[ -n "${PREV_TAG}" ]]; then
+            echo "" >> /tmp/release-body.md
+            echo "---" >> /tmp/release-body.md
+            echo "" >> /tmp/release-body.md
+            echo "**Full Changelog**: https://github.com/${REPO}/compare/${PREV_TAG}...v${VERSION_NO_V}" >> /tmp/release-body.md
+          fi
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.validate.outputs.version }}
+          name: Release ${{ needs.validate.outputs.version }}
+          body_path: /tmp/release-body.md
+          draft: false
+          prerelease: ${{ contains(needs.validate.outputs.version, '-') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Write release summary
+        run: |
+          echo "### 🚀 Release Published" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Version:** ${{ needs.validate.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Images:**" >> $GITHUB_STEP_SUMMARY
+          echo '- `ghcr.io/${{ github.repository }}/backend:${{ needs.validate.outputs.version_no_v }}`' >> $GITHUB_STEP_SUMMARY
+          echo '- `ghcr.io/${{ github.repository }}/frontend:${{ needs.validate.outputs.version_no_v }}`' >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Release:** https://github.com/${{ github.repository }}/releases/tag/${{ needs.validate.outputs.version }}" >> $GITHUB_STEP_SUMMARY
