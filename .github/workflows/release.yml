@@ -427,11 +427,17 @@ jobs:
               image: ${BACKEND_IMAGE}
               environment:
                 DATABASE_URL: postgresql://scrsphere_smoke_test:Sm0keT3st_Str0ng_P@ssw0rd_2024!@postgres:5432/scrsphere_test
-                JWT_SECRET: test-jwt-secret-for-smoke-test-minimum-64-characters-long-for-validation
+                JWT_SECRET: smoke-test-jwt-secret-for-production-validation-minimum-64-characters-long!
                 NODE_ENV: production
                 CORS_ORIGIN: https://scrsphere.example.com
-                EMAIL_TEST_MODE: "true"
                 PORT: "5000"
+                EMAIL_PROVIDER: smtp
+                SMTP_HOST: smtp.example.com
+                SMTP_PORT: "587"
+                SMTP_USER: smoke-test@example.com
+                SMTP_PASS: Sm0keT3st_SMTP_P@ssw0rd_2024!
+                EMAIL_FROM_ADDRESS: noreply@scrsphere.example.com
+                FRONTEND_URL: https://scrsphere.example.com
               ports:
                 - "5000:5000"
               healthcheck:
