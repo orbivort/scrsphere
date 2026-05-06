@@ -64,6 +64,10 @@ app.use(contextMiddleware);
 app.use(versionMiddleware);
 
 // Rate limiting (disabled in test environment)
+// Security: Applied to API routes to prevent brute force attacks, DoS attacks,
+// and resource exhaustion from API abuse.
+// Excludes /health endpoint to ensure monitoring systems can always check service health
+// without being rate-limited, preventing false-positive health check failures.
 if (process.env.NODE_ENV !== 'test') {
   const limiter = rateLimit({
     windowMs: config.rateLimit.windowMs,
@@ -78,13 +82,18 @@ if (process.env.NODE_ENV !== 'test') {
     standardHeaders: true,
     legacyHeaders: false,
   });
-  app.use(limiter);
+  // Apply only to API routes, not health checks or other non-API endpoints
+  app.use('/api/', limiter);
 }
 
+// Security: CSRF middleware applied after rate limiting for performance optimization.
+// Rate limiting rejects abusive requests early before expensive HMAC operations
+// used in CSRF token validation, reducing computational overhead.
 // Ensure CSRF token cookie is set for all requests
 app.use(ensureCsrfToken);
 
-// Enforce CSRF protection for state-changing requests
+// Enforce CSRF protection for state-changing requests (POST, PUT, DELETE, PATCH)
+// This must come after cookie parser and before routes
 app.use(csrfProtectionMiddleware);
 
 // Request logging
