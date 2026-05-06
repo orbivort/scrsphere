@@ -66,6 +66,9 @@ app.use(versionMiddleware);
 // Ensure CSRF token cookie is set for all requests
 app.use(ensureCsrfToken);
 
+// Enforce CSRF protection for state-changing requests
+app.use(csrfProtectionMiddleware);
+
 // CSRF protection for state-changing operations (POST, PUT, DELETE, PATCH)
 // This must come after cookie parser and before routes
 app.use(csrfProtectionMiddleware);
