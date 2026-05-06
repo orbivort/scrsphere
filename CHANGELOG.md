@@ -9,16 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Potential fix for pull request finding 'CodeQL / Log injection'
+-**Enhancements**: Code quality improvements
+
 - Potential fix for code scanning alert no. 5: Log injection
-- Potential fix for pull request finding 'CodeQL / Missing rate limiting'
+- Potential fix for code scanning alert no. 3: Missing rate limiting
+- Potential fix for code scanning alert no. 2: Missing rate limiting
 - Potential fix for code scanning alert no. 1: Missing CSRF middleware
 - tests: improve global teardown with conditional prisma disconnect
 
 ### Fixed
 
-- **release**: export COMMITS and VERSION_NO_V variables for changelog generation.
-- **ci**: simplify changelog generation with node script
+- **release**: various release workflow fixes and optimizations
+- **CI**: various CI workflow fixes and optimizations
 - **security**: improve rate limiting and csrf protection
 
 ## [1.0.0] - 2026-05-04
