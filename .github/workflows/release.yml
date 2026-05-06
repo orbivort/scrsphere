@@ -214,10 +214,12 @@ jobs:
           CURRENT_ROOT=$(node -p "require('./package.json').version")
           CURRENT_BACKEND=$(node -p "require('./packages/backend/package.json').version")
           CURRENT_FRONTEND=$(node -p "require('./packages/frontend/package.json').version")
+          CURRENT_SHARED=$(node -p "require('./packages/shared/package.json').version")
 
           if [[ "${CURRENT_ROOT}" == "${VERSION_NO_V}" && \
                 "${CURRENT_BACKEND}" == "${VERSION_NO_V}" && \
-                "${CURRENT_FRONTEND}" == "${VERSION_NO_V}" ]]; then
+                "${CURRENT_FRONTEND}" == "${VERSION_NO_V}" && \
+                "${CURRENT_SHARED}" == "${VERSION_NO_V}" ]]; then
             echo "All package.json files already at version ${VERSION_NO_V}. Skipping bump."
             echo "needs_bump=false" >> "$GITHUB_ENV"
             exit 0
@@ -228,6 +230,7 @@ jobs:
           echo "  Root:     ${CURRENT_ROOT} → ${VERSION_NO_V}"
           echo "  Backend:  ${CURRENT_BACKEND} → ${VERSION_NO_V}"
           echo "  Frontend: ${CURRENT_FRONTEND} → ${VERSION_NO_V}"
+          echo "  Shared:   ${CURRENT_SHARED} → ${VERSION_NO_V}"
 
           node -e "
             const fs = require('fs');
@@ -236,6 +239,7 @@ jobs:
               'package.json',
               'packages/backend/package.json',
               'packages/frontend/package.json',
+              'packages/shared/package.json',
             ];
             for (const f of files) {
               const pkg = JSON.parse(fs.readFileSync(f, 'utf8'));
@@ -247,7 +251,7 @@ jobs:
       - name: Commit and push version bump
         id: commit
         run: |
-          git add package.json packages/backend/package.json packages/frontend/package.json CHANGELOG.md
+          git add package.json packages/backend/package.json packages/frontend/package.json packages/shared/package.json CHANGELOG.md
           if git diff --cached --quiet; then
             echo "No changes to commit"
             BUMPED_SHA=$(git rev-parse HEAD)
