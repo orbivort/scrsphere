@@ -132,104 +132,79 @@ jobs:
 
           echo "changelog_exists=false" >> "$GITHUB_OUTPUT"
 
-          ADDED=""
-          CHANGED=""
-          DEPRECATED=""
-          REMOVED=""
-          FIXED=""
-          SECURITY=""
+          COMMITS=$(git log ${COMMIT_RANGE} --format='%s' --no-merges)
 
-          while IFS= read -r line; do
-            MSG="${line}"
+          node << 'SCRIPT'
+          const fs = require('fs');
+          const commits = process.env.COMMITS.split('\n').filter(Boolean);
+          const version = process.env.VERSION_NO_V;
+          const today = new Date().toISOString().split('T')[0];
 
-            if [[ "${MSG}" =~ ^feat(\([^)]*\))?!?: ]]; then
-              DESC=$(echo "${MSG}" | sed -E 's/^feat(\([^)]*\))?!?:\s*//')
-              SCOPE=$(echo "${MSG}" | sed -nE 's/^feat\(([^)]*)\).*$/\1/p')
-              if [[ -n "${SCOPE}" ]]; then
-                ENTRY="- **${SCOPE}**: ${DESC}"
-              else
-                ENTRY="- ${DESC}"
-              fi
-              if [[ "${MSG}" =~ ^feat(\([^)]*\))?! ]]; then
-                BREAKING="- **BREAKING**: ${DESC}"
-                CHANGED="${CHANGED}${BREAKING}"$'\n'
-              fi
-              ADDED="${ADDED}${ENTRY}"$'\n'
+          const sections = {
+            added: [],
+            changed: [],
+            deprecated: [],
+            removed: [],
+            fixed: [],
+            security: []
+          };
 
-            elif [[ "${MSG}" =~ ^fix(\([^)]*\))?!?: ]]; then
-              DESC=$(echo "${MSG}" | sed -E 's/^fix(\([^)]*\))?!?:\s*//')
-              SCOPE=$(echo "${MSG}" | sed -nE 's/^fix\(([^)]*)\).*$/\1/p')
-              if [[ -n "${SCOPE}" ]]; then
-                ENTRY="- **${SCOPE}**: ${DESC}"
-              else
-                ENTRY="- ${DESC}"
-              fi
-              FIXED="${FIXED}${ENTRY}"$'\n'
+          const typeMap = {
+            feat: 'added',
+            fix: 'fixed',
+            refactor: 'changed',
+            perf: 'changed',
+            improve: 'changed',
+            docs: null,
+            style: null,
+            test: null,
+            build: null,
+            ci: null,
+            chore: null,
+            deps: null
+          };
 
-            elif [[ "${MSG}" =~ ^(refactor|perf|improve)(\([^)]*\))?!?: ]]; then
-              DESC=$(echo "${MSG}" | sed -E 's/^(refactor|perf|improve)(\([^)]*\))?!?:\s*//')
-              SCOPE=$(echo "${MSG}" | sed -nE 's/^(refactor|perf|improve)\(([^)]*)\).*$/\2/p')
-              if [[ -n "${SCOPE}" ]]; then
-                ENTRY="- **${SCOPE}**: ${DESC}"
-              else
-                ENTRY="- ${DESC}"
-              fi
-              CHANGED="${CHANGED}${ENTRY}"$'\n'
+          for (const commit of commits) {
+            const match = commit.match(/^(feat|fix|refactor|perf|improve|docs|style|test|build|ci|chore|deps)(\(([^)]+)\))?(!)?:\s*(.+)$/);
+            if (match) {
+              const [, type, , scope, breaking, desc] = match;
+              const section = typeMap[type];
+              if (section === null) continue;
+              let entry = scope ? `- **${scope}**: ${desc}` : `- ${desc}`;
+              if (breaking) {
+                sections.changed.push(`- **BREAKING**: ${desc}`);
+              }
+              sections[section].push(entry);
+            } else if (commit && !commit.startsWith('Merge')) {
+              sections.added.push(`- ${commit}`);
+            }
+          }
 
-            elif [[ "${MSG}" =~ ^docs(\([^)]*\))?: ]]; then
-              : 
-            elif [[ "${MSG}" =~ ^style(\([^)]*\))?: ]]; then
-              :
-            elif [[ "${MSG}" =~ ^test(\([^)]*\))?: ]]; then
-              :
-            elif [[ "${MSG}" =~ ^build(\([^)]*\))?: ]]; then
-              :
-            elif [[ "${MSG}" =~ ^ci(\([^)]*\))?: ]]; then
-              :
-            elif [[ "${MSG}" =~ ^chore(\([^)]*\))?: ]]; then
-              :
-            elif [[ "${MSG}" =~ ^deps(\([^)]*\))?: ]]; then
-              :
-            else
-              if [[ -n "${MSG}" && "${MSG}" != "Merge"* ]]; then
-                ADDED="${ADDED}- ${MSG}"$'\n'
-              fi
-            fi
-          done < <(git log ${COMMIT_RANGE} --format='%s' --no-merges)
+          let entry = `## [${version}] - ${today}\n`;
 
-          TODAY=$(date +%Y-%m-%d)
-          ENTRY="## [${VERSION_NO_V}] - ${TODAY}"$'\n'
+          const sectionNames = {
+            added: 'Added',
+            changed: 'Changed',
+            deprecated: 'Deprecated',
+            removed: 'Removed',
+            fixed: 'Fixed',
+            security: 'Security'
+          };
 
-          if [[ -n "${ADDED}" ]]; then
-            ENTRY="${ENTRY}"$'\n'"### Added"$'\n'$'\n'"$(echo "${ADDED}" | sed '/^$/d')"$'\n'
-          fi
-          if [[ -n "${CHANGED}" ]]; then
-            ENTRY="${ENTRY}"$'\n'"### Changed"$'\n'$'\n'"$(echo "${CHANGED}" | sed '/^$/d')"$'\n'
-          fi
-          if [[ -n "${DEPRECATED}" ]]; then
-            ENTRY="${ENTRY}"$'\n'"### Deprecated"$'\n'$'\n'"$(echo "${DEPRECATED}" | sed '/^$/d')"$'\n'
-          fi
-          if [[ -n "${REMOVED}" ]]; then
-            ENTRY="${ENTRY}"$'\n'"### Removed"$'\n'$'\n'"$(echo "${REMOVED}" | sed '/^$/d')"$'\n'
-          fi
-          if [[ -n "${FIXED}" ]]; then
-            ENTRY="${ENTRY}"$'\n'"### Fixed"$'\n'$'\n'"$(echo "${FIXED}" | sed '/^$/d')"$'\n'
-          fi
-          if [[ -n "${SECURITY}" ]]; then
-            ENTRY="${ENTRY}"$'\n'"### Security"$'\n'$'\n'"$(echo "${SECURITY}" | sed '/^$/d')"$'\n'
-          fi
+          for (const [key, name] of Object.entries(sectionNames)) {
+            if (sections[key].length > 0) {
+              entry += `\n### ${name}\n\n${sections[key].join('\n')}\n`;
+            }
+          }
 
-          HEADER=$(head -6 CHANGELOG.md)
-          BODY=$(tail -n +7 CHANGELOG.md)
+          const changelog = fs.readFileSync('CHANGELOG.md', 'utf8');
+          const lines = changelog.split('\n');
+          const header = lines.slice(0, 6).join('\n');
+          const body = lines.slice(6).join('\n');
 
-          {
-            echo "${HEADER}"
-            echo ""
-            echo "${ENTRY}"
-            echo "${BODY}"
-          } > CHANGELOG.md
-
-          echo "Changelog entry generated for [${VERSION_NO_V}]"
+          fs.writeFileSync('CHANGELOG.md', header + '\n\n' + entry + body);
+          console.log('Changelog entry generated for [' + version + ']');
+          SCRIPT
 
       - name: Bump package.json versions
         env:
