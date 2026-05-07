@@ -1,0 +1,68 @@
+name: "Custom CodeQL Configuration"
+
+# Path patterns to exclude from analysis
+# This helps focus on production code and reduces false positives
+paths-ignore:
+  # Test files
+  - '**/*.test.ts'
+  - '**/*.test.tsx'
+  - '**/*.test.js'
+  - '**/*.test.jsx'
+  - '**/__tests__/**'
+  - '**/test/**'
+  - '**/tests/**'
+  
+  # E2E tests
+  - '**/e2e/**'
+  - '**/*.e2e.ts'
+  - '**/*.e2e.tsx'
+  - '**/*.spec.ts'
+  - '**/*.spec.tsx'
+  
+  # Test utilities and setup
+  - '**/setupTests.ts'
+  - '**/test-utils.tsx'
+  - '**/test-utils.ts'
+  - '**/*.mock.ts'
+  
+  # Performance testing scripts (k6)
+  - 'k6/**'
+  
+  # Generated code
+  - '**/generated/**'
+  - '**/*.generated.ts'
+  - '**/prisma/index-browser.js'
+  
+  # Configuration files
+  - '**/vite.config.ts'
+  - '**/vitest.config.ts'
+  - '**/playwright.config.ts'
+  - '**/eslint.config.js'
+  - '**/*.config.js'
+  - '**/*.config.ts'
+  
+  # Build scripts and utilities
+  - 'scripts/**'
+  
+  # Documentation
+  - 'docs/**'
+  - '**/*.md'
+  
+  # Type definitions (often contain unused imports for documentation)
+  - '**/*.d.ts'
+
+# Query suites to run
+# Using security-and-quality for comprehensive analysis
+queries:
+  - uses: security-and-quality
+
+# Disable specific queries that are known to produce false positives
+# These can be re-enabled if needed for specific security reviews
+query-filters:
+  - exclude:
+      id: js/useless-assignment-to-local
+      reason: "Often flags legitimate patterns in React hooks and test setup"
+  
+  - exclude:
+      id: js/superfluous-trailing-arguments
+      reason: "False positives with certain constructor patterns (e.g., StorageEvent)"
