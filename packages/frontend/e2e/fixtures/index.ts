@@ -161,6 +161,9 @@ function getRegisteredUsers(page: Page): Map<string, MockUser> {
 
 export async function clearMockAuthState(page: Page): Promise<void> {
   pageUserMap.delete(page);
+
+  await page.goto('/login', { waitUntil: 'domcontentloaded', timeout: 15000 });
+
   await page.evaluate(() => {
     localStorage.clear();
     sessionStorage.clear();
@@ -177,7 +180,7 @@ export async function clearMockAuthState(page: Page): Promise<void> {
     },
   ]);
   await page.reload({ waitUntil: 'domcontentloaded' });
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(300);
 }
 
 async function mockAuthApi(page: Page) {
