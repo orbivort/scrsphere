@@ -2,15 +2,7 @@ import { test, expect } from '../fixtures';
 import { generateInvalidCredentials } from '../fixtures/dataFactory';
 
 test.describe('Authentication Flow', () => {
-  test.describe.configure({ mode: 'serial' });
-
-  let testUserCredentials: { email: string; password: string };
-
-  test('TC-AUTH-001: User Registration (Primary - Creates Test User)', async ({
-    loginPage,
-    page,
-    mockApi,
-  }) => {
+  test('TC-AUTH-001: User Registration', async ({ loginPage, page, mockApi }) => {
     const timestamp = Date.now();
     const random = Math.floor(Math.random() * 10000);
     const testUser = {
@@ -19,8 +11,6 @@ test.describe('Authentication Flow', () => {
       firstName: 'Test',
       lastName: 'User',
     };
-
-    testUserCredentials = { email: testUser.email, password: testUser.password };
 
     await test.step('Navigate to login page', async () => {
       await loginPage.goto();
@@ -61,20 +51,14 @@ test.describe('Authentication Flow', () => {
     });
   });
 
-  test('TC-AUTH-002: User Login with Valid Credentials (Uses Registered User)', async ({
+  test('TC-AUTH-002: User Login with Valid Credentials', async ({
     loginPage,
     page,
     mockApi,
+    registeredUser,
   }) => {
-    await test.step('Clear auth state and navigate to login page', async () => {
-      const context = page.context();
-      await context.clearCookies();
+    await test.step('Navigate to login page', async () => {
       await loginPage.goto();
-      await page.evaluate(() => {
-        localStorage.clear();
-        sessionStorage.clear();
-      });
-      await page.reload();
       await expect(page).toHaveURL(/\/login/);
     });
 
@@ -83,8 +67,7 @@ test.describe('Authentication Flow', () => {
     });
 
     await test.step('Fill login form with registered credentials', async () => {
-      expect(testUserCredentials).toBeDefined();
-      await loginPage.fillLoginForm(testUserCredentials!.email, testUserCredentials!.password);
+      await loginPage.fillLoginForm(registeredUser.email, registeredUser.password);
     });
 
     await test.step('Submit login form', async () => {
@@ -130,23 +113,17 @@ test.describe('Authentication Flow', () => {
     });
   });
 
-  test('TC-AUTH-004: Session Persistence (Uses Registered User)', async ({
+  test('TC-AUTH-004: Session Persistence', async ({
     loginPage,
     dashboardPage,
     page,
     mockApi,
+    registeredUser,
   }) => {
-    await test.step('Clear auth state and login with registered user', async () => {
-      const context = page.context();
-      await context.clearCookies();
+    await test.step('Login with registered user', async () => {
       await loginPage.goto();
-      await page.evaluate(() => {
-        localStorage.clear();
-        sessionStorage.clear();
-      });
-      await page.reload();
       await loginPage.switchToLoginMode();
-      await loginPage.fillLoginForm(testUserCredentials!.email, testUserCredentials!.password);
+      await loginPage.fillLoginForm(registeredUser.email, registeredUser.password);
       await loginPage.submitForm();
       await expect(page).toHaveURL(/\/(team|dashboard)/, { timeout: 30000 });
     });

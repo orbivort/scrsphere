@@ -147,6 +147,16 @@ const pageUserMap = new WeakMap<
   }
 >();
 
+export async function clearMockAuthState(page: Page): Promise<void> {
+  pageUserMap.delete(page);
+  await page.evaluate(() => {
+    localStorage.clear();
+    sessionStorage.clear();
+  });
+  const context = page.context();
+  await context.clearCookies();
+}
+
 async function mockAuthApi(page: Page) {
   await page.route('**/api/v1/auth/csrf-token', async (route: Route) => {
     await route.fulfill({
@@ -631,6 +641,7 @@ export const test = base.extend<AuthFixtures & TestUserFixtures & MockApiFixture
       acceptTerms: true,
     });
     await page.waitForURL(/\/team/, { timeout: 30000 });
+    await clearMockAuthState(page);
     await use(user);
   },
 });
