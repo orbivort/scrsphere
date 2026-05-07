@@ -51,12 +51,36 @@ test.describe('Authentication Flow', () => {
     });
   });
 
-  test('TC-AUTH-002: User Login with Valid Credentials', async ({
-    loginPage,
-    page,
-    mockApi,
-    registeredUser,
-  }) => {
+  test('TC-AUTH-002: User Login with Valid Credentials', async ({ loginPage, page, mockApi }) => {
+    const timestamp = Date.now();
+    const random = Math.floor(Math.random() * 10000);
+    const testUser = {
+      email: `loginuser_${timestamp}_${random}@example.com`,
+      password: 'TestPass123!@#',
+      firstName: 'Login',
+      lastName: 'Test',
+    };
+
+    await test.step('Register a new user', async () => {
+      await loginPage.goto();
+      await loginPage.register({
+        firstName: testUser.firstName,
+        lastName: testUser.lastName,
+        email: testUser.email,
+        password: testUser.password,
+        acceptTerms: true,
+      });
+      await expect(page).toHaveURL(/\/team/, { timeout: 30000 });
+    });
+
+    await test.step('Clear browser storage to simulate logout', async () => {
+      await page.evaluate(() => {
+        localStorage.clear();
+        sessionStorage.clear();
+      });
+      await page.context().clearCookies();
+    });
+
     await test.step('Navigate to login page', async () => {
       await loginPage.goto();
       await expect(page).toHaveURL(/\/login/);
@@ -67,7 +91,7 @@ test.describe('Authentication Flow', () => {
     });
 
     await test.step('Fill login form with registered credentials', async () => {
-      await loginPage.fillLoginForm(registeredUser.email, registeredUser.password);
+      await loginPage.fillLoginForm(testUser.email, testUser.password);
     });
 
     await test.step('Submit login form', async () => {
@@ -113,17 +137,40 @@ test.describe('Authentication Flow', () => {
     });
   });
 
-  test('TC-AUTH-004: Session Persistence', async ({
-    loginPage,
-    dashboardPage,
-    page,
-    mockApi,
-    registeredUser,
-  }) => {
+  test('TC-AUTH-004: Session Persistence', async ({ loginPage, page, mockApi }) => {
+    const timestamp = Date.now();
+    const random = Math.floor(Math.random() * 10000);
+    const testUser = {
+      email: `sessionuser_${timestamp}_${random}@example.com`,
+      password: 'TestPass123!@#',
+      firstName: 'Session',
+      lastName: 'Test',
+    };
+
+    await test.step('Register a new user', async () => {
+      await loginPage.goto();
+      await loginPage.register({
+        firstName: testUser.firstName,
+        lastName: testUser.lastName,
+        email: testUser.email,
+        password: testUser.password,
+        acceptTerms: true,
+      });
+      await expect(page).toHaveURL(/\/team/, { timeout: 30000 });
+    });
+
+    await test.step('Clear browser storage to simulate logout', async () => {
+      await page.evaluate(() => {
+        localStorage.clear();
+        sessionStorage.clear();
+      });
+      await page.context().clearCookies();
+    });
+
     await test.step('Login with registered user', async () => {
       await loginPage.goto();
       await loginPage.switchToLoginMode();
-      await loginPage.fillLoginForm(registeredUser.email, registeredUser.password);
+      await loginPage.fillLoginForm(testUser.email, testUser.password);
       await loginPage.submitForm();
       await expect(page).toHaveURL(/\/(team|dashboard)/, { timeout: 30000 });
     });
