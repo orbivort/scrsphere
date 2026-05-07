@@ -58,23 +58,30 @@ export default defineConfig({
   testDir: './e2e',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
-  timeout: 60000,
+  retries: process.env.CI ? 1 : 0,
+  workers: process.env.CI ? 2 : undefined,
+  timeout: 45000,
   expect: {
     timeout: 10000,
   },
-  reporter: [
-    ['html', { outputFolder: 'playwright-report' }],
-    ['json', { outputFile: 'test-results/results.json' }],
-  ],
+  reporter: process.env.CI
+    ? [
+        ['list'],
+        ['github'],
+        ['html', { outputFolder: 'playwright-report' }],
+        ['json', { outputFile: 'test-results/results.json' }],
+      ]
+    : [
+        ['html', { outputFolder: 'playwright-report' }],
+        ['json', { outputFile: 'test-results/results.json' }],
+      ],
   use: {
     baseURL: process.env.E2E_BASE_URL || 'http://localhost:5173',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
     actionTimeout: 15000,
-    navigationTimeout: 30000,
+    navigationTimeout: 15000,
   },
   projects: getProjects(),
   webServer: {

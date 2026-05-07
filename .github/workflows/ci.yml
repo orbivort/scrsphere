@@ -183,7 +183,7 @@ jobs:
   test-frontend-e2e:
     name: Frontend E2E Tests
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 35
     needs: [lint-and-typecheck, detect-changes]
     if: needs.detect-changes.outputs.frontend == 'true' || needs.detect-changes.outputs.shared == 'true'
     
