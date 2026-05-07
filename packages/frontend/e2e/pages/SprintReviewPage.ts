@@ -1,4 +1,4 @@
-import { expect, type Page, type Locator } from '@playwright/test';
+import { type Page, type Locator } from '@playwright/test';
 import { BasePage } from './BasePage';
 
 export class SprintReviewPage extends BasePage {
