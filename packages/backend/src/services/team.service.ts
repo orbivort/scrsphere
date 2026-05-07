@@ -14,6 +14,9 @@ import { logger } from '../utils/logger';
 
 const notificationService = new NotificationService();
 
+const ALLOWED_SORT_FIELDS = ['createdAt', 'updatedAt', 'name', 'description'] as const;
+type SortField = (typeof ALLOWED_SORT_FIELDS)[number];
+
 // Team with members
 export type TeamWithMembers = Team & {
   members: (Omit<TeamMember, 'createdAt' | 'createdBy' | 'updatedAt' | 'updatedBy'> & {
@@ -74,7 +77,9 @@ class TeamService {
     const limit = params?.limit ?? 10;
     const skip = (page - 1) * limit;
     const search = params?.search;
-    const sortBy = params?.sortBy ?? 'createdAt';
+    const sortBy: SortField = ALLOWED_SORT_FIELDS.includes(params?.sortBy as SortField)
+      ? (params?.sortBy as SortField)
+      : 'createdAt';
     const sortOrder = params?.sortOrder ?? 'desc';
 
     const where = {

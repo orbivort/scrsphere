@@ -1,6 +1,3 @@
-import path from 'path';
-import fs from 'fs';
-
 const ALLOWED_PACKAGE_MANAGERS = ['pnpm'];
 const PACKAGE_MANAGER_NAME = 'pnpm';
 

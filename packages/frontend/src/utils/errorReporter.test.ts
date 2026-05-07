@@ -86,7 +86,7 @@ describe('ErrorReporter', () => {
     it('should create reporter when DSN is provided', () => {
       mockEnv({ VITE_SENTRY_DSN: 'https://test@sentry.io/123', PROD: true });
 
-      const reporter = new SentryErrorReporter('https://test@sentry.io/123');
+      const reporter = new SentryErrorReporter();
 
       expect(reporter).toBeDefined();
     });
@@ -94,7 +94,7 @@ describe('ErrorReporter', () => {
     it('should capture exceptions', () => {
       mockEnv({ VITE_SENTRY_DSN: 'https://test@sentry.io/123', PROD: true });
 
-      const reporter = new SentryErrorReporter('https://test@sentry.io/123');
+      const reporter = new SentryErrorReporter();
       const error = new Error('Test error');
       reporter.captureException(error);
 
@@ -104,7 +104,7 @@ describe('ErrorReporter', () => {
     it('should capture messages', () => {
       mockEnv({ VITE_SENTRY_DSN: 'https://test@sentry.io/123', PROD: true });
 
-      const reporter = new SentryErrorReporter('https://test@sentry.io/123');
+      const reporter = new SentryErrorReporter();
       reporter.captureMessage('Test message', 'error');
 
       expect(consoleSpies.log).toHaveBeenCalled();
@@ -113,7 +113,7 @@ describe('ErrorReporter', () => {
     it('should store user context', () => {
       mockEnv({ VITE_SENTRY_DSN: 'https://test@sentry.io/123', PROD: true });
 
-      const reporter = new SentryErrorReporter('https://test@sentry.io/123');
+      const reporter = new SentryErrorReporter();
       reporter.setUser({ id: 'user-123' });
 
       expect(reporter).toBeDefined();
@@ -429,7 +429,7 @@ describe('ErrorReporter', () => {
     it('should handle captureMessage with different levels', () => {
       mockEnv({ VITE_SENTRY_DSN: 'https://test@sentry.io/123', PROD: true });
 
-      const reporter = new SentryErrorReporter('https://test@sentry.io/123');
+      const reporter = new SentryErrorReporter();
       reporter.captureMessage('Info message', 'info');
       reporter.captureMessage('Warning message', 'warning');
 
@@ -439,7 +439,7 @@ describe('ErrorReporter', () => {
     it('should handle setContext', () => {
       mockEnv({ VITE_SENTRY_DSN: 'https://test@sentry.io/123', PROD: true });
 
-      const reporter = new SentryErrorReporter('https://test@sentry.io/123');
+      const reporter = new SentryErrorReporter();
       reporter.setContext('custom', { key: 'value' });
 
       expect(reporter).toBeDefined();
@@ -448,7 +448,7 @@ describe('ErrorReporter', () => {
     it('should handle clearContext', () => {
       mockEnv({ VITE_SENTRY_DSN: 'https://test@sentry.io/123', PROD: true });
 
-      const reporter = new SentryErrorReporter('https://test@sentry.io/123');
+      const reporter = new SentryErrorReporter();
       reporter.setContext('custom', { key: 'value' });
       reporter.clearContext('custom');
 
@@ -458,7 +458,7 @@ describe('ErrorReporter', () => {
     it('should handle captureException with context', () => {
       mockEnv({ VITE_SENTRY_DSN: 'https://test@sentry.io/123', PROD: true });
 
-      const reporter = new SentryErrorReporter('https://test@sentry.io/123');
+      const reporter = new SentryErrorReporter();
       reporter.captureException(new Error('Test'), { userId: 'user-1', action: 'test' });
 
       expect(consoleSpies.error).toHaveBeenCalled();

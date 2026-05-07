@@ -31,7 +31,7 @@ export const handleMoscowKeyDown = (
   onPriorityChange: (priority: MoSCoWPriority) => void
 ): void => {
   const priorities = Object.values(MoSCoWPriority);
-  let newIndex = currentIndex;
+  let newIndex: number;
 
   switch (e.key) {
     case 'ArrowRight':
