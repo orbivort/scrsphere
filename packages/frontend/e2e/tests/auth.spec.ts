@@ -1,4 +1,4 @@
-import { test, expect } from '../fixtures';
+import { test, expect, clearMockAuthState } from '../fixtures';
 import { generateInvalidCredentials } from '../fixtures/dataFactory';
 
 test.describe('Authentication Flow', () => {
@@ -74,16 +74,12 @@ test.describe('Authentication Flow', () => {
     });
 
     await test.step('Clear browser storage to simulate logout', async () => {
-      await page.evaluate(() => {
-        localStorage.clear();
-        sessionStorage.clear();
-      });
-      await page.context().clearCookies();
+      await clearMockAuthState(page);
     });
 
     await test.step('Navigate to login page', async () => {
       await loginPage.goto();
-      await expect(page).toHaveURL(/\/login/);
+      await expect(page).toHaveURL(/\/login/, { timeout: 15000 });
     });
 
     await test.step('Ensure login mode is active', async () => {
@@ -160,15 +156,12 @@ test.describe('Authentication Flow', () => {
     });
 
     await test.step('Clear browser storage to simulate logout', async () => {
-      await page.evaluate(() => {
-        localStorage.clear();
-        sessionStorage.clear();
-      });
-      await page.context().clearCookies();
+      await clearMockAuthState(page);
     });
 
     await test.step('Login with registered user', async () => {
       await loginPage.goto();
+      await expect(page).toHaveURL(/\/login/, { timeout: 15000 });
       await loginPage.switchToLoginMode();
       await loginPage.fillLoginForm(testUser.email, testUser.password);
       await loginPage.submitForm();

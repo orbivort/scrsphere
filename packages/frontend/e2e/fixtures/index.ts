@@ -136,16 +136,28 @@ const mockActiveGoal = {
   status: 'active',
 };
 
-const pageUserMap = new WeakMap<
-  Page,
-  {
-    id: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-    createdAt: string;
+type MockUser = {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  createdAt: string;
+};
+
+const pageUserMap = new WeakMap<Page, MockUser>();
+
+const pageRegisteredUsers = new WeakMap<Page, Map<string, MockUser>>();
+
+const MOCK_CSRF_TOKEN = 'mock-csrf-token-12345';
+
+function getRegisteredUsers(page: Page): Map<string, MockUser> {
+  let users = pageRegisteredUsers.get(page);
+  if (!users) {
+    users = new Map();
+    pageRegisteredUsers.set(page, users);
   }
->();
+  return users;
+}
 
 export async function clearMockAuthState(page: Page): Promise<void> {
   pageUserMap.delete(page);
@@ -158,25 +170,36 @@ export async function clearMockAuthState(page: Page): Promise<void> {
   await context.addCookies([
     {
       name: 'csrfToken',
-      value: 'mock-csrf-token-12345',
+      value: MOCK_CSRF_TOKEN,
       domain: 'localhost',
       path: '/',
       sameSite: 'Strict',
     },
   ]);
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.waitForTimeout(500);
 }
 
 async function mockAuthApi(page: Page) {
   await page.route('**/api/v1/auth/csrf-token', async (route: Route) => {
+    const context = page.context();
+    await context.addCookies([
+      {
+        name: 'csrfToken',
+        value: MOCK_CSRF_TOKEN,
+        domain: 'localhost',
+        path: '/',
+        sameSite: 'Strict',
+      },
+    ]);
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify({
         success: true,
-        data: { csrfToken: 'mock-csrf-token-12345' },
+        data: { csrfToken: MOCK_CSRF_TOKEN },
       }),
       headers: {
-        'Set-Cookie': 'csrfToken=mock-csrf-token-12345; Path=/; SameSite=Strict',
         'Access-Control-Allow-Origin': 'http://localhost:5173',
         'Access-Control-Allow-Credentials': 'true',
       },
@@ -221,6 +244,7 @@ async function mockAuthApi(page: Page) {
       createdAt: new Date().toISOString(),
     };
     pageUserMap.set(page, user);
+    getRegisteredUsers(page).set(user.email, user);
 
     await route.fulfill({
       status: 200,
@@ -262,7 +286,8 @@ async function mockAuthApi(page: Page) {
       return;
     }
 
-    const user = {
+    const registeredUser = getRegisteredUsers(page).get(email);
+    const user = registeredUser || {
       id: 'test-user-id',
       email: email,
       firstName: 'Test',
@@ -570,7 +595,7 @@ export const test = base.extend<AuthFixtures & TestUserFixtures & MockApiFixture
     await context.addCookies([
       {
         name: 'csrfToken',
-        value: 'mock-csrf-token-12345',
+        value: MOCK_CSRF_TOKEN,
         domain: 'localhost',
         path: '/',
         sameSite: 'Strict',
