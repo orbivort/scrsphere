@@ -155,6 +155,15 @@ export async function clearMockAuthState(page: Page): Promise<void> {
   });
   const context = page.context();
   await context.clearCookies();
+  await context.addCookies([
+    {
+      name: 'csrfToken',
+      value: 'mock-csrf-token-12345',
+      domain: 'localhost',
+      path: '/',
+      sameSite: 'Strict',
+    },
+  ]);
 }
 
 async function mockAuthApi(page: Page) {
@@ -167,7 +176,9 @@ async function mockAuthApi(page: Page) {
         data: { csrfToken: 'mock-csrf-token-12345' },
       }),
       headers: {
-        'Set-Cookie': 'csrfToken=mock-csrf-token-12345; Path=/; HttpOnly; SameSite=Strict',
+        'Set-Cookie': 'csrfToken=mock-csrf-token-12345; Path=/; SameSite=Strict',
+        'Access-Control-Allow-Origin': 'http://localhost:5173',
+        'Access-Control-Allow-Credentials': 'true',
       },
     });
   });
@@ -200,13 +211,13 @@ async function mockAuthApi(page: Page) {
 
   await page.route('**/api/v1/auth/register', async (route: Route) => {
     const request = route.request();
-    const body = request.postDataJSON();
+    const body = request.postDataJSON() || {};
 
     const user = {
       id: 'test-user-id',
-      email: body.email,
-      firstName: body.firstName,
-      lastName: body.lastName,
+      email: body.email || '',
+      firstName: body.firstName || 'Test',
+      lastName: body.lastName || 'User',
       createdAt: new Date().toISOString(),
     };
     pageUserMap.set(page, user);
@@ -231,9 +242,12 @@ async function mockAuthApi(page: Page) {
 
   await page.route('**/api/v1/auth/login', async (route: Route) => {
     const request = route.request();
-    const body = request.postDataJSON();
+    const body = request.postDataJSON() || {};
 
-    if (body.email.includes('invalid') || body.password.includes('wrong')) {
+    const email = body.email || '';
+    const password = body.password || '';
+
+    if (email.includes('invalid') || password.includes('wrong')) {
       await route.fulfill({
         status: 401,
         contentType: 'application/json',
@@ -250,7 +264,7 @@ async function mockAuthApi(page: Page) {
 
     const user = {
       id: 'test-user-id',
-      email: body.email,
+      email: email,
       firstName: 'Test',
       lastName: 'User',
       createdAt: new Date().toISOString(),
@@ -552,6 +566,16 @@ async function mockAuthApi(page: Page) {
 export const test = base.extend<AuthFixtures & TestUserFixtures & MockApiFixtures>({
   mockApi: async ({ page }, use) => {
     await mockAuthApi(page);
+    const context = page.context();
+    await context.addCookies([
+      {
+        name: 'csrfToken',
+        value: 'mock-csrf-token-12345',
+        domain: 'localhost',
+        path: '/',
+        sameSite: 'Strict',
+      },
+    ]);
     await use();
   },
 
