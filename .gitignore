@@ -45,11 +45,13 @@ coverage/
 .env
 .env.*
 !.env.example
+!.env.production.example
 
 # Monorepo workspace environment files
 packages/*/.env
 packages/*/.env.*
 !packages/*/.env.example
+!packages/*/.env.production.example
 
 # K6 environment files
 !k6/.env.k6.example
