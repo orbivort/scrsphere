@@ -148,6 +148,20 @@ const pageUserMap = new WeakMap<
 >();
 
 async function mockAuthApi(page: Page) {
+  await page.route('**/api/v1/auth/csrf-token', async (route: Route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        success: true,
+        data: { csrfToken: 'mock-csrf-token-12345' },
+      }),
+      headers: {
+        'Set-Cookie': 'csrfToken=mock-csrf-token-12345; Path=/; HttpOnly; SameSite=Strict',
+      },
+    });
+  });
+
   await page.route('**/api/v1/auth/me', async (route: Route) => {
     const user = pageUserMap.get(page);
     if (user) {
@@ -261,12 +275,24 @@ async function mockAuthApi(page: Page) {
   });
 
   await page.route('**/api/v1/teams/my-teams', async (route: Route) => {
+    const now = new Date().toISOString();
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify({
         success: true,
-        data: [{ id: 'team-1', name: 'Test Team', slug: 'test-team' }],
+        data: [
+          {
+            id: 'team-1',
+            name: 'Test Team',
+            slug: 'test-team',
+            description: 'A test team for E2E testing',
+            createdBy: 'test-user-id',
+            createdAt: now,
+            updatedAt: now,
+            userRole: 'ADMIN',
+          },
+        ],
       }),
     });
   });

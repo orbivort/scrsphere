@@ -66,15 +66,15 @@ test.describe('Authentication Flow', () => {
     page,
     mockApi,
   }) => {
-    await test.step('Logout if already logged in', async () => {
-      const currentUrl = page.url();
-      if (!currentUrl.includes('/login')) {
-        await page.goto('/login', { waitUntil: 'domcontentloaded' });
-      }
-    });
-
-    await test.step('Navigate to login page', async () => {
+    await test.step('Clear auth state and navigate to login page', async () => {
+      const context = page.context();
+      await context.clearCookies();
       await loginPage.goto();
+      await page.evaluate(() => {
+        localStorage.clear();
+        sessionStorage.clear();
+      });
+      await page.reload();
       await expect(page).toHaveURL(/\/login/);
     });
 
@@ -136,8 +136,15 @@ test.describe('Authentication Flow', () => {
     page,
     mockApi,
   }) => {
-    await test.step('Login with registered user', async () => {
+    await test.step('Clear auth state and login with registered user', async () => {
+      const context = page.context();
+      await context.clearCookies();
       await loginPage.goto();
+      await page.evaluate(() => {
+        localStorage.clear();
+        sessionStorage.clear();
+      });
+      await page.reload();
       await loginPage.switchToLoginMode();
       await loginPage.fillLoginForm(testUserCredentials!.email, testUserCredentials!.password);
       await loginPage.submitForm();
