@@ -14,7 +14,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/scrsphere/scrsphere.git",
+    "url": "https://github.com/orbivort/scrsphere.git",
     "directory": "packages/frontend"
   },
   "type": "module",
