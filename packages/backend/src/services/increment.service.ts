@@ -10,7 +10,7 @@ interface CreateIncrementData {
   description?: string;
   sprintId: string;
   teamId: string;
-  includedPBIs: string[];
+  includedPBIs?: string[];
   totalStoryPoints: number;
   status?: string;
   createdBy?: string;

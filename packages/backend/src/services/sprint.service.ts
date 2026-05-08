@@ -70,10 +70,10 @@ export interface UpdateTaskData {
 
 // Start sprint data
 export interface StartSprintData {
-  backlogItems: Array<{
+  backlogItems?: Array<{
     pbiId: string;
   }>;
-  tasks: Array<{
+  tasks?: Array<{
     pbiId: string;
     title: string;
     description?: string;
