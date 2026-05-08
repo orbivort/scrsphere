@@ -586,7 +586,7 @@ class RetrospectiveService {
       teamId: retro.teamId,
       retroDate: retro.retroDate,
       facilitatorId: retro.facilitatorId,
-      status: retro.status || 'DRAFT',
+      status: retro.status as SprintRetrospective['status'],
       isAnonymous: retro.isAnonymous,
       summary: retro.summary ?? undefined,
       dodEvolutionNotes: retro.dodEvolutionNotes ?? undefined,

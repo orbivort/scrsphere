@@ -15,7 +15,8 @@ export const requireTeamContext = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const teamId = (req.headers['x-team-id'] as string) ?? req.body.teamId ?? req.params.teamId;
+    const teamId =
+      (req.headers['x-team-id'] as string | undefined) ?? req.body.teamId ?? req.params.teamId;
 
     if (!teamId) {
       throw new BadRequestError('Team context is required');
@@ -64,7 +65,8 @@ export const optionalTeamContext = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const teamId = (req.headers['x-team-id'] as string) ?? req.body.teamId ?? req.params.teamId;
+    const teamId =
+      (req.headers['x-team-id'] as string | undefined) ?? req.body.teamId ?? req.params.teamId;
 
     if (teamId && req.userId) {
       const teamMember = await prisma.teamMember.findUnique({

@@ -1490,7 +1490,7 @@ class SprintBacklogManagerService {
             }>;
           };
         };
-        if (txWithSprintBacklogChange.sprintBacklogChange) {
+        if ('sprintBacklogChange' in txWithSprintBacklogChange) {
           try {
             changeRecord = await txWithSprintBacklogChange.sprintBacklogChange.create({
               data: {
@@ -1678,7 +1678,7 @@ class SprintBacklogManagerService {
             }>;
           };
         };
-        if (txWithSprintBacklogChange.sprintBacklogChange) {
+        if ('sprintBacklogChange' in txWithSprintBacklogChange) {
           try {
             changeRecord = await txWithSprintBacklogChange.sprintBacklogChange.create({
               data: {
@@ -1770,7 +1770,7 @@ class SprintBacklogManagerService {
         >;
       };
     };
-    if (!prismaWithSprintBacklogChange.sprintBacklogChange) {
+    if (!('sprintBacklogChange' in prismaWithSprintBacklogChange)) {
       logger.warn('SprintBacklogChange table not found. Please run: npx prisma migrate dev');
       return [];
     }
@@ -1790,7 +1790,7 @@ class SprintBacklogManagerService {
         id: record.id,
         sprintId: record.sprintId,
         pbiId: record.pbiId,
-        pbiTitle: record.pbi ? record.pbi.title : 'Unknown',
+        pbiTitle: record.pbi.title || 'Unknown',
         changeType: record.changeType as 'ADDED' | 'REMOVED',
         reason: record.reason ?? undefined,
         changedBy: record.createdBy ?? 'system',

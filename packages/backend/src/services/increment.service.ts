@@ -154,7 +154,7 @@ export const incrementService = {
     }
 
     const incrementId = generateUUIDv7();
-    const statusValue = (data.status as IncrementStatus) || 'DRAFT';
+    const statusValue = data.status ? (data.status as IncrementStatus) : 'DRAFT';
 
     await prisma.increment.create({
       data: {

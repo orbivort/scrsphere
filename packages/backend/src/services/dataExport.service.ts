@@ -345,13 +345,13 @@ class DataExportService {
   /**
    * Validate export data completeness
    */
-  private validateExport(data: GDPRDataExport): ValidationResult {
+  private validateExport(data: Partial<GDPRDataExport>): ValidationResult {
     const errors: string[] = [];
     const missingCategories: string[] = [];
 
-    if (!data.exportMetadata.version) errors.push('Missing export version');
-    if (!data.exportMetadata.exportedAt) errors.push('Missing export timestamp');
-    if (!data.exportMetadata.userId) errors.push('Missing user ID');
+    if (!data.exportMetadata?.version) errors.push('Missing export version');
+    if (!data.exportMetadata?.exportedAt) errors.push('Missing export timestamp');
+    if (!data.exportMetadata?.userId) errors.push('Missing user ID');
 
     if (!data.userProfile) {
       missingCategories.push('userProfile');
@@ -366,7 +366,7 @@ class DataExportService {
     }
 
     return {
-      isValid: errors.length === 0,
+      isValid: errors.length === 0 && !!data.exportMetadata,
       missingCategories,
       errors,
     };
