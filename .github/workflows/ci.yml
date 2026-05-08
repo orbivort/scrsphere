@@ -242,12 +242,7 @@ jobs:
             ${{ runner.os }}-playwright-
 
       - name: Install Playwright browsers
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: pnpm --filter=@scrsphere/frontend exec playwright install --with-deps
-
-      - name: Install Playwright browser dependencies
-        if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: pnpm --filter=@scrsphere/frontend exec playwright install-deps
+        run: pnpm --filter=@scrsphere/frontend exec playwright install --with-deps chromium firefox webkit
 
       - name: Run frontend E2E tests (Shard ${{ matrix.shard }})
         run: pnpm --filter=@scrsphere/frontend exec playwright test --shard=${{ matrix.shard }}
