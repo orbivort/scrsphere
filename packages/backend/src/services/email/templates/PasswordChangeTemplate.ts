@@ -210,8 +210,8 @@ export class PasswordChangeTemplate extends BaseEmailTemplate<PasswordChangeTemp
    */
   private getTextTemplate(data: PasswordChangeTemplateData): string {
     const deviceInfo =
-      data.ipAddress || data.userAgent
-        ? `\nIP Address: ${data.ipAddress || 'N/A'}\nDevice: ${data.userAgent || 'N/A'}`
+      (data.ipAddress ?? data.userAgent)
+        ? `\nIP Address: ${data.ipAddress ?? 'N/A'}\nDevice: ${data.userAgent ?? 'N/A'}`
         : '';
 
     const supportSection = data.supportEmail

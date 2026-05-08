@@ -163,9 +163,9 @@ class DailyUpdateService {
         sprintId: data.sprintId,
         userId,
         updateDate: today,
-        yesterdayWork: data.yesterdayWork || null,
-        todayWork: data.todayWork || null,
-        impediment: data.impediment || null,
+        yesterdayWork: data.yesterdayWork ?? null,
+        todayWork: data.todayWork ?? null,
+        impediment: data.impediment ?? null,
         createdBy: userId,
         updatedBy: userId,
       },
@@ -292,11 +292,11 @@ class DailyUpdateService {
 
     const submittedUserIds = new Set(updates.map((u) => u.userId));
 
-    const pendingMembers = (sprint.team.members ?? [])
+    const pendingMembers = sprint.team.members
       .filter((m) => !submittedUserIds.has(m.userId))
       .map((m) => ({
         userId: m.userId,
-        userName: `${m.user.firstName || ''} ${m.user.lastName || ''}`.trim(),
+        userName: `${m.user.firstName} ${m.user.lastName}`.trim(),
       }));
 
     return {

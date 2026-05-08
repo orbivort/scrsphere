@@ -546,7 +546,7 @@ class RetrospectiveService {
     }
   ): SprintRetrospective {
     const participants =
-      retro.sprint?.team?.members?.map((member) => ({
+      retro.sprint?.team?.members.map((member) => ({
         id: member.userId,
         firstName: member.user?.firstName,
         lastName: member.user?.lastName,
@@ -586,7 +586,7 @@ class RetrospectiveService {
       teamId: retro.teamId,
       retroDate: retro.retroDate,
       facilitatorId: retro.facilitatorId,
-      status: retro.status ?? 'DRAFT',
+      status: retro.status || 'DRAFT',
       isAnonymous: retro.isAnonymous,
       summary: retro.summary ?? undefined,
       dodEvolutionNotes: retro.dodEvolutionNotes ?? undefined,

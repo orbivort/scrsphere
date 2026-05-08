@@ -138,10 +138,10 @@ export const validateTransition = async (req: Request, res: Response): Promise<v
     logger.error('Error validating transition', { error });
 
     const err = error as Error & { statusCode?: number; code?: string };
-    const statusCode = err.statusCode || 500;
+    const statusCode = err.statusCode ?? 500;
     res.status(statusCode).json({
       success: false,
-      error: err.message || 'Failed to validate transition',
+      error: err.message,
       code: err.code,
     });
   }
@@ -202,10 +202,10 @@ export const executeStatusChange = async (req: Request, res: Response): Promise<
     logger.error('Error executing status change', { error });
 
     const err = error as Error & { statusCode?: number; code?: string };
-    const statusCode = err.statusCode || 500;
+    const statusCode = err.statusCode ?? 500;
     res.status(statusCode).json({
       success: false,
-      error: err.message || 'Failed to execute status change',
+      error: err.message,
       code: err.code,
     });
   }
@@ -225,8 +225,8 @@ export const getStatusChangeHistory = async (req: Request, res: Response): Promi
       });
       return;
     }
-    const limit = parseInt(req.query.limit as string) ?? 50;
-    const offset = parseInt(req.query.offset as string) ?? 0;
+    const limit = parseInt(req.query.limit as string) || 50;
+    const offset = parseInt(req.query.offset as string) || 0;
 
     const history = await workflowService.getStatusChangeHistory(
       entityType,
@@ -304,7 +304,7 @@ export const createWorkflow = async (req: Request, res: Response): Promise<void>
     const workflow = await workflowService.createWorkflow(
       entityType,
       name,
-      description || null,
+      description ?? null,
       defaultStatus,
       createdBy
     );
@@ -317,10 +317,10 @@ export const createWorkflow = async (req: Request, res: Response): Promise<void>
     logger.error('Error creating workflow', { error });
 
     const err = error as Error & { statusCode?: number; code?: string };
-    const statusCode = err.statusCode || 500;
+    const statusCode = err.statusCode ?? 500;
     res.status(statusCode).json({
       success: false,
-      error: err.message || 'Failed to create workflow',
+      error: err.message,
       code: err.code,
     });
   }
@@ -338,9 +338,9 @@ export const addWorkflowState = async (req: Request, res: Response): Promise<voi
       workflowId,
       name,
       displayName,
-      description || null,
-      color || null,
-      icon || null,
+      description ?? null,
+      color ?? null,
+      icon ?? null,
       isFinal,
       orderIndex
     );
@@ -353,10 +353,10 @@ export const addWorkflowState = async (req: Request, res: Response): Promise<voi
     logger.error('Error adding workflow state', { error });
 
     const err = error as Error & { statusCode?: number; code?: string };
-    const statusCode = err.statusCode || 500;
+    const statusCode = err.statusCode ?? 500;
     res.status(statusCode).json({
       success: false,
-      error: err.message || 'Failed to add workflow state',
+      error: err.message,
       code: err.code,
     });
   }
@@ -381,8 +381,8 @@ export const addWorkflowTransition = async (req: Request, res: Response): Promis
       fromStateName,
       toStateName,
       requiresApproval,
-      allowedRoles || [],
-      allowedUserIds || []
+      allowedRoles ?? [],
+      allowedUserIds ?? []
     );
 
     res.status(201).json({
@@ -393,10 +393,10 @@ export const addWorkflowTransition = async (req: Request, res: Response): Promis
     logger.error('Error adding workflow transition', { error });
 
     const err = error as Error & { statusCode?: number; code?: string };
-    const statusCode = err.statusCode || 500;
+    const statusCode = err.statusCode ?? 500;
     res.status(statusCode).json({
       success: false,
-      error: err.message || 'Failed to add workflow transition',
+      error: err.message,
       code: err.code,
     });
   }

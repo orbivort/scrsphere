@@ -5,7 +5,7 @@ import { isValidUUID, isUUIDv7 } from './src/utils/uuid';
 process.env.NODE_ENV = 'test';
 
 declare module 'vitest' {
-  interface Assertion<_T = any> {
+  interface Assertion<_T = unknown> {
     toBeValidUUID(): void;
     toBeUUIDv7(): void;
   }

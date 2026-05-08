@@ -52,8 +52,8 @@ export const getConsentHistory = asyncHandler(async (req: Request, res: Response
   }
   const query = req.query as unknown as GetConsentHistoryQuery;
 
-  const limit = Math.min(parseInt(query.limit || '10', 10), 50);
-  const offset = parseInt(query.offset || '0', 10);
+  const limit = Math.min(parseInt(query.limit ?? '10', 10), 50);
+  const offset = parseInt(query.offset ?? '0', 10);
 
   const history = await consentService.getConsentHistory(userId, limit, offset);
 
@@ -112,7 +112,7 @@ export const withdrawConsent = asyncHandler(async (req: Request, res: Response) 
   if (!userId) {
     throw new UnauthorizedError('User not authenticated');
   }
-  const ipAddress = req.ip || req.socket.remoteAddress;
+  const ipAddress = req.ip ?? req.socket.remoteAddress;
   const userAgent = req.headers['user-agent'];
 
   logger.info('Withdrawing cookie consent', { userId });

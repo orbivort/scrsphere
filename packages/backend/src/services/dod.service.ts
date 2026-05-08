@@ -122,7 +122,7 @@ class DefinitionOfDoneService {
           create: defaultItems.map((item, index) => ({
             id: generateUUIDv7(),
             description: item.description,
-            category: item.category || 'quality',
+            category: item.category ?? 'quality',
             isActive: item.isActive,
             order: index,
             createdBy: userId,
@@ -167,7 +167,7 @@ class DefinitionOfDoneService {
           create: items.map((item, index) => ({
             id: generateUUIDv7(),
             description: item.description,
-            category: item.category || 'quality',
+            category: item.category ?? 'quality',
             isActive: item.isActive,
             order: index,
             createdBy: userId,
@@ -309,16 +309,14 @@ class DefinitionOfDoneService {
         },
       });
 
-      const dodItems = dod?.items || [];
+      const dodItems = dod?.items ?? [];
       const totalDoDItems = dodItems.length;
 
       // Create lookup map for efficient DoD item access
       const dodItemMap = new Map(dodItems.map((item) => [item.id, item]));
 
       // Get all PBIs in the sprint
-      const pbis = sprint.sprintBacklogItems
-        .map((item) => item.pbi)
-        .filter((pbi): pbi is NonNullable<typeof pbi> => !!pbi);
+      const pbis = sprint.sprintBacklogItems.map((item) => item.pbi);
 
       const pbiDetails = await Promise.all(
         pbis.map(async (pbi) => {
@@ -341,8 +339,8 @@ class DefinitionOfDoneService {
               updatedBy: v.updatedBy,
               dodItem: {
                 id: v.dodItemId,
-                description: dodItem?.description || '',
-                category: dodItem?.category || 'quality',
+                description: dodItem?.description ?? '',
+                category: dodItem?.category ?? 'quality',
               },
             };
           });

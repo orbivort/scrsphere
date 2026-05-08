@@ -133,7 +133,7 @@ export const incrementService = {
       notes: v.notes,
       dodItemDescription: v.dodItem.description,
       dodItemCategory: v.dodItem.category,
-      verifierName: v.verifier ? `${v.verifier.firstName} ${v.verifier.lastName}` : null,
+      verifierName: `${v.verifier.firstName} ${v.verifier.lastName}`,
     }));
 
     return {
@@ -154,7 +154,7 @@ export const incrementService = {
     }
 
     const incrementId = generateUUIDv7();
-    const statusValue = (data.status as IncrementStatus) ?? 'DRAFT';
+    const statusValue = (data.status as IncrementStatus) || 'DRAFT';
 
     await prisma.increment.create({
       data: {
@@ -312,9 +312,7 @@ export const incrementService = {
       (i) => i.deliveryMethod === 'SPRINT_REVIEW'
     ).length;
 
-    const deliveredWithDates = increments.filter(
-      (i) => i.status === 'DELIVERED' && i.deliveredAt && i.createdAt
-    );
+    const deliveredWithDates = increments.filter((i) => i.status === 'DELIVERED' && i.deliveredAt);
 
     let averageDeliveryTime = 0;
     if (deliveredWithDates.length > 0) {

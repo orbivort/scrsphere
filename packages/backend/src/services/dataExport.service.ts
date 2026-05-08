@@ -112,12 +112,12 @@ class DataExportService {
       status: job.status as ExportStatus,
       filePath: job.status === 'completed' ? `/exports/${jobId}` : null,
       fileSize: fileData ? fileData.content.length : null,
-      startedAt: job.startedAt || job.createdAt,
+      startedAt: job.startedAt ?? job.createdAt,
       completedAt: job.completedAt,
       expiresAt: fileData ? fileData.expiresAt : null,
       errorMessage: job.error,
       createdAt: job.createdAt,
-      updatedAt: job.completedAt || job.createdAt,
+      updatedAt: job.completedAt ?? job.createdAt,
     };
   }
 
@@ -453,12 +453,12 @@ class DataExportService {
           status: job.status as ExportStatus,
           filePath: null,
           fileSize: null,
-          startedAt: job.startedAt || job.createdAt,
+          startedAt: job.startedAt ?? job.createdAt,
           completedAt: job.completedAt,
           expiresAt: null,
           errorMessage: job.error,
           createdAt: job.createdAt,
-          updatedAt: job.startedAt || job.createdAt,
+          updatedAt: job.startedAt ?? job.createdAt,
         });
       }
     }

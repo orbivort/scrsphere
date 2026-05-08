@@ -11,7 +11,7 @@ import { setRequestContext, type RequestContext } from '../utils/requestContext'
  */
 export const contextMiddleware = (req: Request, _res: Response, next: NextFunction): void => {
   const context: RequestContext = {
-    requestId: req.id || '',
+    requestId: req.id ?? '',
   };
 
   setRequestContext(context, () => {

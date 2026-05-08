@@ -636,7 +636,7 @@ export const updateRetroAttendee = async (req: Request, res: Response) => {
 
     const attendee = await retrospectiveService.updateAttendee(attendeeId, {
       name: name?.trim(),
-      email: email?.trim() || undefined,
+      email: email?.trim() ?? undefined,
       role,
       attended,
     });

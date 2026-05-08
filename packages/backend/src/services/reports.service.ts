@@ -1,5 +1,4 @@
 import prisma from '../utils/prisma';
-import { NotFoundError } from '../utils/errors';
 
 export interface VelocityData {
   sprints: string[];
@@ -170,13 +169,13 @@ class ReportsService {
     completed: number;
   } {
     const planned = sprint.sprintBacklogItems.reduce(
-      (sum, item) => sum + (item.pbi.storyPoints || 0),
+      (sum, item) => sum + (item.pbi.storyPoints ?? 0),
       0
     );
 
     const completed = sprint.sprintBacklogItems
       .filter((item) => item.pbi.status === 'DONE')
-      .reduce((sum, item) => sum + (item.pbi.storyPoints || 0), 0);
+      .reduce((sum, item) => sum + (item.pbi.storyPoints ?? 0), 0);
 
     return { planned, completed };
   }
@@ -203,7 +202,7 @@ class ReportsService {
       const { planned: plannedPoints, completed: completedPoints } =
         this.calculateSprintPoints(sprint);
       const uniqueAssignees = new Set(
-        (sprint.tasks || []).map((t) => t.assigneeId).filter(Boolean)
+        (sprint.tasks ?? []).map((t) => t.assigneeId).filter(Boolean)
       );
 
       return {
@@ -215,7 +214,7 @@ class ReportsService {
         plannedPoints,
         completedPoints,
         teamMembers: uniqueAssignees.size,
-        impediments: (sprint.impediments || []).length,
+        impediments: (sprint.impediments ?? []).length,
       };
     });
   }
@@ -230,7 +229,7 @@ class ReportsService {
     const velocities = completedSprints.map((sprint) => {
       return sprint.sprintBacklogItems
         .filter((item) => item.pbi.status === 'DONE')
-        .reduce((sum, item) => sum + (item.pbi.storyPoints || 0), 0);
+        .reduce((sum, item) => sum + (item.pbi.storyPoints ?? 0), 0);
     });
 
     const averageVelocity =
@@ -268,17 +267,14 @@ class ReportsService {
     let teamSatisfactionRating = 4.0;
     let satisfactionTrend = 0;
 
-    if (retrospectives.length > 0 && retrospectives[0]) {
+    if (retrospectives.length > 0) {
       const recentRetro = retrospectives[0];
-      const totalVotes = (recentRetro.items || []).reduce((sum, item) => sum + item.votes, 0);
+      const totalVotes = recentRetro?.items.reduce((sum, item) => sum + item.votes, 0) ?? 0;
       teamSatisfactionRating = Math.min(5, 3 + totalVotes / 10);
 
       if (retrospectives.length > 1) {
         const olderRetro = retrospectives[retrospectives.length - 1];
-        if (!olderRetro) {
-          throw new NotFoundError('Older retrospective not found');
-        }
-        const olderVotes = (olderRetro.items ?? []).reduce((sum, item) => sum + item.votes, 0);
+        const olderVotes = olderRetro?.items.reduce((sum, item) => sum + item.votes, 0) ?? 0;
         const olderRating = Math.min(5, 3 + olderVotes / 10);
         satisfactionTrend = teamSatisfactionRating - olderRating;
       }
@@ -546,8 +542,8 @@ class ReportsService {
     }
 
     if (velocityData.completed.length >= 2) {
-      const lastCompleted = velocityData.completed[velocityData.completed.length - 1] || 0;
-      const previousCompleted = velocityData.completed[velocityData.completed.length - 2] || 0;
+      const lastCompleted = velocityData.completed[velocityData.completed.length - 1] ?? 0;
+      const previousCompleted = velocityData.completed[velocityData.completed.length - 2] ?? 0;
 
       if (lastCompleted > previousCompleted && previousCompleted > 0) {
         const improvement = ((lastCompleted - previousCompleted) / previousCompleted) * 100;

@@ -34,7 +34,7 @@ export const consentService = {
   async recordConsent(input: RecordConsentInput): Promise<ConsentRecord> {
     const record = await prisma.consentRecord.create({
       data: {
-        userId: input.userId || null,
+        userId: input.userId ?? null,
         consentType: input.consentType,
         action: input.action,
         version: input.version,
@@ -45,7 +45,7 @@ export const consentService = {
 
     logger.info('Consent recorded', {
       recordId: record.id,
-      userId: input.userId || 'anonymous',
+      userId: input.userId ?? 'anonymous',
       consentType: input.consentType,
       action: input.action,
     });
@@ -115,8 +115,8 @@ export const consentService = {
     const byConsentType: Record<string, number> = {};
 
     for (const record of records) {
-      byAction[record.action] = (byAction[record.action] || 0) + 1;
-      byConsentType[record.consentType] = (byConsentType[record.consentType] || 0) + 1;
+      byAction[record.action] = (byAction[record.action] ?? 0) + 1;
+      byConsentType[record.consentType] = (byConsentType[record.consentType] ?? 0) + 1;
     }
 
     return {
