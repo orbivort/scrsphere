@@ -546,7 +546,7 @@ class RetrospectiveService {
     }
   ): SprintRetrospective {
     const participants =
-      retro.sprint?.team?.members.map((member) => ({
+      retro.sprint?.team?.members?.map((member) => ({
         id: member.userId,
         firstName: member.user?.firstName,
         lastName: member.user?.lastName,
@@ -554,31 +554,42 @@ class RetrospectiveService {
         role: member.role,
       })) ?? [];
 
-    const items = retro.items.map((item) => ({
-      ...item,
-      votedBy: item.votesBy?.map((vote) => vote.userId) ?? [],
-      votes: item.votesBy?.length ?? 0,
-    }));
+    const items =
+      retro.items?.map((item) => ({
+        id: item.id,
+        retrospectiveId: item.retrospectiveId,
+        category: item.category,
+        content: item.content,
+        authorId: item.authorId,
+        authorName: item.authorName,
+        createdBy: item.createdBy,
+        createdAt: item.createdAt,
+        updatedAt: item.updatedAt,
+        order: item.order,
+        votes: item.votesBy?.length ?? 0,
+      })) ?? [];
 
-    const actionItems = retro.actionItems.map((action) => ({
-      ...action,
-      owner: action.owner
-        ? {
-            id: action.owner.id,
-            firstName: action.owner.firstName,
-            lastName: action.owner.lastName,
-            email: action.owner.email,
-          }
-        : undefined,
-    }));
+    const actionItems =
+      retro.actionItems?.map((action) => ({
+        ...action,
+        owner: action.owner
+          ? {
+              id: action.owner.id,
+              firstName: action.owner.firstName,
+              lastName: action.owner.lastName,
+              email: action.owner.email,
+            }
+          : undefined,
+      })) ?? [];
 
-    const attendees = retro.attendees.map((attendee) => ({
-      id: attendee.id,
-      name: attendee.name,
-      email: attendee.email ?? undefined,
-      role: attendee.role,
-      attended: attendee.attended,
-    }));
+    const attendees =
+      retro.attendees?.map((attendee) => ({
+        id: attendee.id,
+        name: attendee.name,
+        email: attendee.email ?? undefined,
+        role: attendee.role,
+        attended: attendee.attended,
+      })) ?? [];
 
     return {
       id: retro.id,

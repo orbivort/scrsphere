@@ -2,12 +2,7 @@
 import { type Request, type Response } from 'express';
 import { sprintService, sprintBacklogManagerService } from '../services/sprint.service';
 import { definitionOfDoneService } from '../services/dod.service';
-import {
-  asyncHandler,
-  createSuccessResponse,
-  BadRequestError,
-  UnauthorizedError,
-} from '../utils/errors';
+import { asyncHandler, createSuccessResponse, BadRequestError } from '../utils/errors';
 import { getParamValue } from '../utils/validation';
 
 /**
@@ -229,7 +224,7 @@ export const addPBIToSprint = asyncHandler(async (req: Request, res: Response) =
   }
   const userId = req.user?.id;
   if (!userId) {
-    throw new UnauthorizedError('Unauthorized');
+    throw new BadRequestError('User not authenticated');
   }
   const result = await sprintBacklogManagerService.addPBIToActiveSprint(sprintId, userId, req.body);
   res.status(201).json(createSuccessResponse(result));
@@ -246,7 +241,7 @@ export const removePBIFromSprint = asyncHandler(async (req: Request, res: Respon
   }
   const userId = req.user?.id;
   if (!userId) {
-    throw new UnauthorizedError('Unauthorized');
+    throw new BadRequestError('User not authenticated');
   }
   const result = await sprintBacklogManagerService.removePBIFromActiveSprint(
     sprintId,

@@ -7,17 +7,7 @@ import { logger } from '../utils/logger';
 export const getRetrospectives = async (req: Request, res: Response) => {
   try {
     const teamId = getParamValue(req.params.teamId);
-    if (!teamId) {
-      res.status(400).json({
-        success: false,
-        error: {
-          code: 'VALIDATION_ERROR',
-          message: 'Team ID is required',
-        },
-      });
-      return;
-    }
-    const retrospectives = await retrospectiveService.getRetrospectivesByTeam(teamId);
+    const retrospectives = await retrospectiveService.getRetrospectivesByTeam(teamId!);
     res.json({
       success: true,
       data: retrospectives,
@@ -636,7 +626,7 @@ export const updateRetroAttendee = async (req: Request, res: Response) => {
 
     const attendee = await retrospectiveService.updateAttendee(attendeeId, {
       name: name?.trim(),
-      email: email?.trim() ?? undefined,
+      email: email?.trim() || undefined,
       role,
       attended,
     });
