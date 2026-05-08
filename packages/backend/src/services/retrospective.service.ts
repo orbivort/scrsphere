@@ -527,18 +527,18 @@ class RetrospectiveService {
 
   private formatRetrospective(
     retro: PrismaSprintRetrospective & {
-      items: (PrismaRetrospectiveItem & {
+      items?: (PrismaRetrospectiveItem & {
         votesBy?: (RetroItemVote & {
           user: Pick<User, 'id' | 'firstName' | 'lastName' | 'email'> | null;
         })[];
       })[];
-      actionItems: (PrismaRetroActionItem & {
+      actionItems?: (PrismaRetroActionItem & {
         owner?: Pick<User, 'id' | 'firstName' | 'lastName' | 'email'> | null;
       })[];
-      attendees: RetroAttendee[];
+      attendees?: RetroAttendee[];
       sprint?: {
         team?: {
-          members: (TeamMember & {
+          members?: (TeamMember & {
             user: Pick<User, 'id' | 'firstName' | 'lastName' | 'email'> | null;
           })[];
         } | null;

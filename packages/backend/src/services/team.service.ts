@@ -396,7 +396,7 @@ class TeamService {
       throw new NotFoundError('Team');
     }
 
-    if ((team.productGoals ?? []).length > 0) {
+    if (team.productGoals.length > 0) {
       throw new ConflictError(
         'Cannot delete team with existing product goals. Please delete all product goals associated with this team first.'
       );
