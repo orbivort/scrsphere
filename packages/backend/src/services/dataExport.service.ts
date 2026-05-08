@@ -112,12 +112,12 @@ class DataExportService {
       status: job.status as ExportStatus,
       filePath: job.status === 'completed' ? `/exports/${jobId}` : null,
       fileSize: fileData ? fileData.content.length : null,
-      startedAt: job.startedAt || job.createdAt,
+      startedAt: job.startedAt ?? job.createdAt,
       completedAt: job.completedAt,
       expiresAt: fileData ? fileData.expiresAt : null,
       errorMessage: job.error,
       createdAt: job.createdAt,
-      updatedAt: job.completedAt || job.createdAt,
+      updatedAt: job.completedAt ?? job.createdAt,
     };
   }
 
@@ -291,10 +291,15 @@ class DataExportService {
   ): Promise<GDPRDataExport> {
     const now = new Date();
 
+    const user = data.user;
+    if (!user) {
+      throw new NotFoundError('User data not found');
+    }
+
     const metadata: ExportMetadata = {
       version: EXPORT_SCHEMA_VERSION,
       exportedAt: now.toISOString(),
-      userId: data.user!.id,
+      userId: user.id,
       format: DATA_CONTROLLER_INFO.format,
       dataController: DATA_CONTROLLER_INFO.name,
       contactEmail: DATA_CONTROLLER_INFO.contactEmail,
@@ -302,13 +307,13 @@ class DataExportService {
     };
 
     const userProfile: UserProfileExport = {
-      id: data.user!.id,
-      email: data.user!.email,
-      firstName: data.user!.firstName,
-      lastName: data.user!.lastName,
-      avatarUrl: data.user!.avatarUrl,
-      createdAt: data.user!.createdAt.toISOString(),
-      updatedAt: data.user!.updatedAt.toISOString(),
+      id: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      avatarUrl: user.avatarUrl,
+      createdAt: user.createdAt.toISOString(),
+      updatedAt: user.updatedAt.toISOString(),
     };
 
     const teamMemberships: TeamMembershipExport[] = data.teamMemberships.map((tm) => ({
@@ -324,7 +329,7 @@ class DataExportService {
       createdAt: s.createdAt.toISOString(),
       lastActivityAt: s.lastActivityAt.toISOString(),
       expiresAt: s.expiresAt.toISOString(),
-      revokedAt: s.revokedAt?.toISOString() || null,
+      revokedAt: s.revokedAt?.toISOString() ?? null,
       userAgent: s.userAgent,
       ipAddress: s.ipAddress,
     }));
@@ -340,17 +345,13 @@ class DataExportService {
   /**
    * Validate export data completeness
    */
-  private validateExport(data: GDPRDataExport): ValidationResult {
+  private validateExport(data: Partial<GDPRDataExport>): ValidationResult {
     const errors: string[] = [];
     const missingCategories: string[] = [];
 
-    if (!data.exportMetadata) {
-      errors.push('Missing export metadata');
-    } else {
-      if (!data.exportMetadata.version) errors.push('Missing export version');
-      if (!data.exportMetadata.exportedAt) errors.push('Missing export timestamp');
-      if (!data.exportMetadata.userId) errors.push('Missing user ID');
-    }
+    if (!data.exportMetadata?.version) errors.push('Missing export version');
+    if (!data.exportMetadata?.exportedAt) errors.push('Missing export timestamp');
+    if (!data.exportMetadata?.userId) errors.push('Missing user ID');
 
     if (!data.userProfile) {
       missingCategories.push('userProfile');
@@ -365,7 +366,7 @@ class DataExportService {
     }
 
     return {
-      isValid: errors.length === 0,
+      isValid: errors.length === 0 && !!data.exportMetadata,
       missingCategories,
       errors,
     };
@@ -452,12 +453,12 @@ class DataExportService {
           status: job.status as ExportStatus,
           filePath: null,
           fileSize: null,
-          startedAt: job.startedAt || job.createdAt,
+          startedAt: job.startedAt ?? job.createdAt,
           completedAt: job.completedAt,
           expiresAt: null,
           errorMessage: job.error,
           createdAt: job.createdAt,
-          updatedAt: job.startedAt || job.createdAt,
+          updatedAt: job.startedAt ?? job.createdAt,
         });
       }
     }

@@ -2,7 +2,12 @@
 
 import { type Request, type Response } from 'express';
 import { dataExportService } from '../services/dataExport.service';
-import { asyncHandler, createSuccessResponse, BadRequestError } from '../utils/errors';
+import {
+  asyncHandler,
+  createSuccessResponse,
+  BadRequestError,
+  UnauthorizedError,
+} from '../utils/errors';
 import { logger } from '../utils/logger';
 import { getParamValue } from '../utils/validation';
 import type { InitiateExportInput } from '../validations/dataExport.validation';
@@ -11,7 +16,10 @@ import type { InitiateExportInput } from '../validations/dataExport.validation';
  * Initiate a new data export for the authenticated user
  */
 export const initiateExport = asyncHandler(async (req: Request, res: Response) => {
-  const userId = req.userId!;
+  const userId = req.userId;
+  if (!userId) {
+    throw new UnauthorizedError('User not authenticated');
+  }
   const data = req.body as InitiateExportInput;
 
   logger.info('Initiating data export', { userId });
@@ -36,7 +44,10 @@ export const initiateExport = asyncHandler(async (req: Request, res: Response) =
  * Get the status of a data export job
  */
 export const getExportStatus = asyncHandler(async (req: Request, res: Response) => {
-  const userId = req.userId!;
+  const userId = req.userId;
+  if (!userId) {
+    throw new UnauthorizedError('User not authenticated');
+  }
   const jobId = getParamValue(req.params.jobId);
 
   if (!jobId) {
@@ -71,8 +82,8 @@ export const getExportStatus = asyncHandler(async (req: Request, res: Response) 
       status: job.status,
       progress,
       fileSize: job.fileSize,
-      completedAt: job.completedAt?.toISOString() || null,
-      expiresAt: job.expiresAt?.toISOString() || null,
+      completedAt: job.completedAt?.toISOString() ?? null,
+      expiresAt: job.expiresAt?.toISOString() ?? null,
       errorMessage: job.errorMessage,
     })
   );
@@ -82,7 +93,10 @@ export const getExportStatus = asyncHandler(async (req: Request, res: Response) 
  * Download a completed data export file
  */
 export const downloadExport = asyncHandler(async (req: Request, res: Response) => {
-  const userId = req.userId!;
+  const userId = req.userId;
+  if (!userId) {
+    throw new UnauthorizedError('User not authenticated');
+  }
   const jobId = getParamValue(req.params.jobId);
 
   if (!jobId) {
@@ -107,7 +121,10 @@ export const downloadExport = asyncHandler(async (req: Request, res: Response) =
  * Cancel and delete an export job
  */
 export const cancelExport = asyncHandler(async (req: Request, res: Response) => {
-  const userId = req.userId!;
+  const userId = req.userId;
+  if (!userId) {
+    throw new UnauthorizedError('User not authenticated');
+  }
   const jobId = getParamValue(req.params.jobId);
 
   if (!jobId) {
@@ -130,7 +147,10 @@ export const cancelExport = asyncHandler(async (req: Request, res: Response) => 
  * Get all active export jobs for the user
  */
 export const getActiveExports = asyncHandler(async (req: Request, res: Response) => {
-  const userId = req.userId!;
+  const userId = req.userId;
+  if (!userId) {
+    throw new UnauthorizedError('User not authenticated');
+  }
 
   const activeExports = await dataExportService.getActiveExports(userId);
 

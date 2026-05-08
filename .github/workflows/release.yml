@@ -647,7 +647,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ needs.validate.outputs.version }}
-          name: Release ${{ needs.validate.outputs.version }}
+          name: Scrsphere ${{ needs.validate.outputs.version }}
           body_path: /tmp/release-body.md
           draft: false
           prerelease: ${{ contains(needs.validate.outputs.version, '-') }}

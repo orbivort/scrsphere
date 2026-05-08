@@ -9,7 +9,11 @@ const notificationService = new NotificationService();
 export class NotificationController {
   async getNotifications(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = req.user!.id;
+      const userId = req.user?.id;
+      if (!userId) {
+        res.status(401).json({ success: false, error: { message: 'Unauthorized' } });
+        return;
+      }
       const { page, limit, type, isRead } = req.query;
 
       const filters = {
@@ -32,7 +36,11 @@ export class NotificationController {
 
   async getUnreadCount(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = req.user!.id;
+      const userId = req.user?.id;
+      if (!userId) {
+        res.status(401).json({ success: false, error: { message: 'Unauthorized' } });
+        return;
+      }
       const count = await notificationService.getUnreadCount(userId);
 
       res.json({
@@ -49,7 +57,11 @@ export class NotificationController {
 
   async markAsRead(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userId = req.user!.id;
+      const userId = req.user?.id;
+      if (!userId) {
+        res.status(401).json({ success: false, error: { message: 'Unauthorized' } });
+        return;
+      }
       const id = getParamValue(req.params.id);
 
       if (!id) {
@@ -73,8 +85,12 @@ export class NotificationController {
 
   async markAllAsRead(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = req.user!.id;
-      const { notificationIds } = req.body || {};
+      const userId = req.user?.id;
+      if (!userId) {
+        res.status(401).json({ success: false, error: { message: 'Unauthorized' } });
+        return;
+      }
+      const { notificationIds } = req.body ?? {};
 
       const updatedCount = await notificationService.markAllAsRead(userId, notificationIds);
 
@@ -89,7 +105,11 @@ export class NotificationController {
 
   async deleteNotification(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userId = req.user!.id;
+      const userId = req.user?.id;
+      if (!userId) {
+        res.status(401).json({ success: false, error: { message: 'Unauthorized' } });
+        return;
+      }
       const id = getParamValue(req.params.id);
 
       const notification = await prisma.notification.findFirst({

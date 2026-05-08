@@ -9,6 +9,7 @@ import {
   type TeamMember,
   type User,
   type UserRole,
+  type Prisma,
 } from '../generated/prisma/client';
 import { logger } from '../utils/logger';
 
@@ -280,7 +281,7 @@ class TeamService {
             data: {
               teamId: team.id,
               teamName: team.name,
-            } as any,
+            } as Prisma.InputJsonValue,
             createdBy: userId,
           },
         });
@@ -355,7 +356,7 @@ class TeamService {
           data: {
             teamId: team.id,
             teamName: team.name,
-          } as any,
+          } as Prisma.InputJsonValue,
           createdBy: userId,
         }));
 
@@ -395,7 +396,7 @@ class TeamService {
       throw new NotFoundError('Team');
     }
 
-    if (team.productGoals && team.productGoals.length > 0) {
+    if (team.productGoals.length > 0) {
       throw new ConflictError(
         'Cannot delete team with existing product goals. Please delete all product goals associated with this team first.'
       );
@@ -416,7 +417,7 @@ class TeamService {
           data: {
             teamId: team.id,
             teamName: team.name,
-          } as any,
+          } as Prisma.InputJsonValue,
           createdBy: userId,
         }));
 
@@ -663,12 +664,15 @@ class TeamService {
     });
 
     return teams
-      .filter((team) => team.members && team.members.length > 0)
+      .filter((team) => team.members.length > 0)
       .map((team) => {
         const userMember = team.members.find((m) => m.userId === userId);
+        if (!userMember) {
+          throw new NotFoundError('User is not a member of the team');
+        }
         return {
           ...team,
-          userRole: userMember!.role,
+          userRole: userMember.role,
           memberCount: team.members.length,
         };
       });

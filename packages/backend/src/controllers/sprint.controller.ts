@@ -87,9 +87,9 @@ export const rollbackSprintStart = asyncHandler(async (req: Request, res: Respon
   const { previousPbiStatuses, createdSprintBacklogItemIds, createdTaskIds } = req.body;
 
   const rollbackData = {
-    previousPbiStatuses: new Map<string, string>(Object.entries(previousPbiStatuses || {})),
-    createdSprintBacklogItemIds: createdSprintBacklogItemIds || [],
-    createdTaskIds: createdTaskIds || [],
+    previousPbiStatuses: new Map<string, string>(Object.entries(previousPbiStatuses ?? {})),
+    createdSprintBacklogItemIds: createdSprintBacklogItemIds ?? [],
+    createdTaskIds: createdTaskIds ?? [],
   };
 
   await sprintService.rollbackSprintStart(id, rollbackData);

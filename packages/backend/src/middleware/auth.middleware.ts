@@ -22,7 +22,7 @@ export const authenticate = async (
     let token: string | undefined;
 
     // Priority 1: Check httpOnly cookie (preferred for security)
-    token = req.cookies?.[COOKIE_NAMES.ACCESS_TOKEN];
+    token = req.cookies[COOKIE_NAMES.ACCESS_TOKEN];
 
     // Priority 2: Fallback to Authorization header for API clients
     if (!token) {
@@ -53,7 +53,7 @@ export const authenticate = async (
     // Update session activity to prevent idle timeout
     // This ensures that as long as the user is making authenticated requests,
     // their session remains active
-    const refreshToken = req.cookies?.[COOKIE_NAMES.REFRESH_TOKEN];
+    const refreshToken = req.cookies[COOKIE_NAMES.REFRESH_TOKEN];
     if (refreshToken) {
       authService.updateActivity(refreshToken).catch((error) => {
         // Log error with more context for debugging
@@ -92,7 +92,7 @@ export const optionalAuth = async (
     let token: string | undefined;
 
     // Check cookie first
-    token = req.cookies?.[COOKIE_NAMES.ACCESS_TOKEN];
+    token = req.cookies[COOKIE_NAMES.ACCESS_TOKEN];
 
     // Fallback to header
     if (!token) {
@@ -130,7 +130,7 @@ export const requireRoles = (...roles: string[]) => {
       }
 
       // Get user's role in the team (if teamId is in params)
-      const teamId = req.params.teamId || req.body.teamId;
+      const teamId = req.params.teamId ?? req.body.teamId;
 
       if (teamId) {
         const teamMember = await req.prisma?.teamMember.findUnique({

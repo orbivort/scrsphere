@@ -74,7 +74,7 @@ export function csrfProtectionMiddleware(req: Request, _res: Response, next: Nex
     return next();
   }
 
-  const csrfCookie = req.cookies?.[CSRF_COOKIE_NAME];
+  const csrfCookie = req.cookies[CSRF_COOKIE_NAME];
 
   if (!csrfCookie) {
     logger.warn('CSRF token missing in cookie', {
@@ -129,7 +129,7 @@ export function csrfProtectionMiddleware(req: Request, _res: Response, next: Nex
 }
 
 export function ensureCsrfToken(req: Request, res: Response, next: NextFunction): void {
-  const csrfCookie = req.cookies?.[CSRF_COOKIE_NAME];
+  const csrfCookie = req.cookies[CSRF_COOKIE_NAME];
 
   if (!csrfCookie) {
     const { signedToken } = generateCsrfToken();

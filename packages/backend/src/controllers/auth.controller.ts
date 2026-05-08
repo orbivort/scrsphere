@@ -1,7 +1,12 @@
 // Auth Controller
 import { type Request, type Response } from 'express';
 import { authService } from '../services/auth.service';
-import { asyncHandler, createSuccessResponse, BadRequestError } from '../utils/errors';
+import {
+  asyncHandler,
+  createSuccessResponse,
+  BadRequestError,
+  UnauthorizedError,
+} from '../utils/errors';
 import { getParamValue } from '../utils/validation';
 import {
   getAccessTokenCookieOptions,
@@ -45,7 +50,7 @@ const headerValueToString = (value: string | string[] | undefined): string | und
 const extractSessionInfo = (req: Request): SessionInfo => ({
   userAgent: sanitizeHeaderForLog(headerValueToString(req.headers['user-agent'])),
   ipAddress: sanitizeHeaderForLog(
-    req.ip || headerValueToString(req.headers['x-forwarded-for'])?.split(',')[0]?.trim()
+    req.ip ?? headerValueToString(req.headers['x-forwarded-for'])?.split(',')[0]?.trim()
   ),
 });
 
@@ -122,7 +127,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const logout = asyncHandler(async (req: Request, res: Response) => {
-  const refreshToken = req.cookies?.[COOKIE_NAMES.REFRESH_TOKEN];
+  const refreshToken = req.cookies[COOKIE_NAMES.REFRESH_TOKEN];
   const sessionInfo = extractSessionInfo(req);
 
   if (refreshToken) {
@@ -146,7 +151,11 @@ export const logout = asyncHandler(async (req: Request, res: Response) => {
 export const logoutAllSessions = asyncHandler(async (req: Request, res: Response) => {
   const sessionInfo = extractSessionInfo(req);
 
-  await authService.logoutAllSessions(req.userId!);
+  const userId = req.userId;
+  if (!userId) {
+    throw new UnauthorizedError('User not authenticated');
+  }
+  await authService.logoutAllSessions(userId);
 
   // Audit log: logout all sessions
   auditAuthEvent('LOGOUT_ALL', 'SUCCESS', {
@@ -167,7 +176,7 @@ export const logoutAllSessions = asyncHandler(async (req: Request, res: Response
 });
 
 export const refreshToken = asyncHandler(async (req: Request, res: Response) => {
-  const refreshToken = req.cookies?.[COOKIE_NAMES.REFRESH_TOKEN];
+  const refreshToken = req.cookies[COOKIE_NAMES.REFRESH_TOKEN];
 
   if (!refreshToken) {
     throw new BadRequestError('Refresh token not found');
@@ -196,7 +205,7 @@ export const refreshToken = asyncHandler(async (req: Request, res: Response) => 
 });
 
 export const updateActivity = asyncHandler(async (req: Request, res: Response) => {
-  const refreshToken = req.cookies?.[COOKIE_NAMES.REFRESH_TOKEN];
+  const refreshToken = req.cookies[COOKIE_NAMES.REFRESH_TOKEN];
 
   if (refreshToken) {
     await authService.updateActivity(refreshToken);
@@ -206,12 +215,19 @@ export const updateActivity = asyncHandler(async (req: Request, res: Response) =
 });
 
 export const getCurrentUser = asyncHandler(async (req: Request, res: Response) => {
-  const user = await authService.getCurrentUser(req.userId!);
+  const userId = req.userId;
+  if (!userId) {
+    throw new UnauthorizedError('User not authenticated');
+  }
+  const user = await authService.getCurrentUser(userId);
   res.json(createSuccessResponse(user));
 });
 
 export const getActiveSessions = asyncHandler(async (req: Request, res: Response) => {
-  const sessions = await authService.getActiveSessions(req.userId!);
+  if (!req.userId) {
+    throw new UnauthorizedError('User not authenticated');
+  }
+  const sessions = await authService.getActiveSessions(req.userId);
   const sanitizedSessions = sessions.map((session) => ({
     id: session.id,
     createdAt: session.createdAt,
@@ -229,13 +245,21 @@ export const revokeSession = asyncHandler(async (req: Request, res: Response) =>
   if (!tokenId) {
     throw new BadRequestError('Token ID is required');
   }
-  await authService.revokeSession(tokenId, req.userId!);
+  const userId = req.userId;
+  if (!userId) {
+    throw new UnauthorizedError('User not authenticated');
+  }
+  await authService.revokeSession(tokenId, userId);
 
   res.json(createSuccessResponse({ message: 'Session revoked successfully' }));
 });
 
 export const checkDeletionEligibility = asyncHandler(async (req: Request, res: Response) => {
-  const result = await authService.checkDeletionEligibility(req.userId!);
+  const userId = req.userId;
+  if (!userId) {
+    throw new UnauthorizedError('User not authenticated');
+  }
+  const result = await authService.checkDeletionEligibility(userId);
   res.json(createSuccessResponse(result));
 });
 
@@ -243,7 +267,11 @@ export const deleteAccount = asyncHandler(async (req: Request, res: Response) =>
   const { confirmation } = req.body as DeleteAccountInput;
   const sessionInfo = extractSessionInfo(req);
 
-  await authService.deleteAccount(req.userId!, confirmation);
+  const userId = req.userId;
+  if (!userId) {
+    throw new UnauthorizedError('User not authenticated');
+  }
+  await authService.deleteAccount(userId, confirmation);
 
   // Audit log: account deletion
   auditAuthEvent('ACCOUNT_DELETE', 'SUCCESS', {
@@ -266,7 +294,11 @@ export const deleteAccount = asyncHandler(async (req: Request, res: Response) =>
 export const scheduleDeletion = asyncHandler(async (req: Request, res: Response) => {
   const { confirmation } = req.body as ScheduleDeletionInput;
 
-  const result = await authService.scheduleDeletion(req.userId!, confirmation);
+  const userId = req.userId;
+  if (!userId) {
+    throw new UnauthorizedError('User not authenticated');
+  }
+  const result = await authService.scheduleDeletion(userId, confirmation);
 
   res.status(201).json(
     createSuccessResponse({
@@ -281,7 +313,11 @@ export const scheduleDeletion = asyncHandler(async (req: Request, res: Response)
 });
 
 export const cancelScheduledDeletion = asyncHandler(async (req: Request, res: Response) => {
-  await authService.cancelScheduledDeletion(req.userId!);
+  const userId = req.userId;
+  if (!userId) {
+    throw new UnauthorizedError('User not authenticated');
+  }
+  await authService.cancelScheduledDeletion(userId);
 
   res.json(createSuccessResponse({ message: 'Scheduled deletion cancelled successfully' }));
 });
@@ -289,7 +325,11 @@ export const cancelScheduledDeletion = asyncHandler(async (req: Request, res: Re
 export const forceDeleteAccount = asyncHandler(async (req: Request, res: Response) => {
   const { confirmation } = req.body as ForceDeleteInput;
 
-  await authService.forceDeleteAccount(req.userId!, confirmation);
+  const userId = req.userId;
+  if (!userId) {
+    throw new UnauthorizedError('User not authenticated');
+  }
+  await authService.forceDeleteAccount(userId, confirmation);
 
   res.clearCookie(COOKIE_NAMES.ACCESS_TOKEN, getClearCookieOptions());
   res.clearCookie(COOKIE_NAMES.REFRESH_TOKEN, getClearCookieOptions());
@@ -298,14 +338,22 @@ export const forceDeleteAccount = asyncHandler(async (req: Request, res: Respons
 });
 
 export const getDeletionStatus = asyncHandler(async (req: Request, res: Response) => {
-  const result = await authService.getDeletionStatus(req.userId!);
+  const userId = req.userId;
+  if (!userId) {
+    throw new UnauthorizedError('User not authenticated');
+  }
+  const result = await authService.getDeletionStatus(userId);
 
   res.json(createSuccessResponse(result));
 });
 
 export const updateProfile = asyncHandler(async (req: Request, res: Response) => {
   const data = req.body as UpdateProfileInput;
-  const user = await authService.updateProfile(req.userId!, data);
+  const userId = req.userId;
+  if (!userId) {
+    throw new UnauthorizedError('User not authenticated');
+  }
+  const user = await authService.updateProfile(userId, data);
   res.json(createSuccessResponse(user));
 });
 
@@ -313,12 +361,11 @@ export const changePassword = asyncHandler(async (req: Request, res: Response) =
   const data = req.body as ChangePasswordInput;
   const sessionInfo = extractSessionInfo(req);
 
-  await authService.changePassword(
-    req.userId!,
-    data.currentPassword,
-    data.newPassword,
-    sessionInfo
-  );
+  const userId = req.userId;
+  if (!userId) {
+    throw new UnauthorizedError('User not authenticated');
+  }
+  await authService.changePassword(userId, data.currentPassword, data.newPassword, sessionInfo);
 
   // Audit log: password change
   auditAuthEvent('PASSWORD_CHANGE', 'SUCCESS', {

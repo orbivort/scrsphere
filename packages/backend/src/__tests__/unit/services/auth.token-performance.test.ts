@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import crypto from 'node:crypto';
+import type * as Bcrypt from 'bcrypt';
 
 vi.mock('../../../utils/prisma', () => ({
   default: {
@@ -15,7 +16,7 @@ vi.mock('../../../utils/prisma', () => ({
 }));
 
 vi.mock('bcrypt', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('bcrypt')>();
+  const actual = await importOriginal<typeof Bcrypt>();
   return {
     default: {
       hash: vi.fn((password: string, rounds: number) =>

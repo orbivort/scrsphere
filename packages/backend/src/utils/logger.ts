@@ -28,15 +28,15 @@ const contextFormat = winston.format((info) => {
 });
 
 // Get log directory from config or use default
-const logDir = config.logging.directory || 'logs';
+const logDir = config.logging.directory;
 
 // Create rotating transport for error logs
 const errorRotateTransport = new DailyRotateFile({
   filename: `${logDir}/error-%DATE%.log`,
   datePattern: 'YYYY-MM-DD',
   zippedArchive: true,
-  maxSize: config.logging.maxSize || '20m',
-  maxFiles: config.logging.maxFiles || '14d',
+  maxSize: config.logging.maxSize,
+  maxFiles: config.logging.maxFiles,
   level: 'error',
 });
 
@@ -45,8 +45,8 @@ const combinedRotateTransport = new DailyRotateFile({
   filename: `${logDir}/combined-%DATE%.log`,
   datePattern: 'YYYY-MM-DD',
   zippedArchive: true,
-  maxSize: config.logging.maxSize || '20m',
-  maxFiles: config.logging.maxFiles || '14d',
+  maxSize: config.logging.maxSize,
+  maxFiles: config.logging.maxFiles,
 });
 
 // Create rotating transport for audit logs
@@ -54,8 +54,8 @@ const auditRotateTransport = new DailyRotateFile({
   filename: `${logDir}/audit-%DATE%.log`,
   datePattern: 'YYYY-MM-DD',
   zippedArchive: true,
-  maxSize: config.logging.maxSize || '20m',
-  maxFiles: config.logging.maxFiles || '30d',
+  maxSize: config.logging.maxSize,
+  maxFiles: config.logging.maxFiles,
 });
 
 // Create logger instance

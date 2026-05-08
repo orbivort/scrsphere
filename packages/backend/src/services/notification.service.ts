@@ -1,4 +1,4 @@
-import { type NotificationType, type Notification } from '../generated/prisma/client';
+import { type NotificationType, type Notification, type Prisma } from '../generated/prisma/client';
 import prisma from '../utils/prisma';
 import { generateUUIDv7 } from '../utils/uuid';
 import config from '../config';
@@ -9,7 +9,7 @@ export interface CreateNotificationInput {
   type: NotificationType;
   title: string;
   message?: string;
-  data?: Record<string, any>;
+  data?: Prisma.InputJsonValue;
   createdBy?: string;
 }
 
@@ -29,8 +29,8 @@ export class NotificationService {
         type: input.type,
         title: input.title,
         message: input.message,
-        data: input.data || {},
-        createdBy: input.createdBy || input.userId,
+        data: input.data ?? {},
+        createdBy: input.createdBy ?? input.userId,
       },
     });
   }
@@ -48,12 +48,12 @@ export class NotificationService {
     };
     unreadCount: number;
   }> {
-    const page = filters.page || 1;
+    const page = filters.page ?? 1;
     const maxPageSize = config.notification.maxPageSize;
-    const limit = Math.min(filters.limit || 50, maxPageSize);
+    const limit = Math.min(filters.limit ?? 50, maxPageSize);
     const skip = (page - 1) * limit;
 
-    const where: any = { userId };
+    const where: Prisma.NotificationWhereInput = { userId };
     if (filters.type) where.type = filters.type;
     if (filters.isRead !== undefined) where.isRead = filters.isRead;
 
@@ -107,7 +107,7 @@ export class NotificationService {
   }
 
   async markAllAsRead(userId: string, notificationIds?: string[]): Promise<number> {
-    const where: any = { userId, isRead: false };
+    const where: Prisma.NotificationWhereInput = { userId, isRead: false };
     if (notificationIds && notificationIds.length > 0) {
       where.id = { in: notificationIds };
     }

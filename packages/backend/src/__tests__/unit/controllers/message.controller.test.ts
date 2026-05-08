@@ -6,6 +6,7 @@ import {
   createMockNext,
   generateTestUUID,
 } from '../../setup/testSetup';
+import type { MessageController as MessageControllerType } from '../../../controllers/message.controller';
 
 // Mock prisma
 vi.mock('../../../utils/prisma', () => ({
@@ -31,7 +32,7 @@ describe('MessageController', () => {
   let mockNext: ReturnType<typeof createMockNext>;
 
   // Import the controller after mocks are set up
-  let MessageController: typeof import('../../../controllers/message.controller').MessageController;
+  let MessageController: typeof MessageControllerType;
   let messageController: InstanceType<typeof MessageController>;
 
   beforeEach(async () => {

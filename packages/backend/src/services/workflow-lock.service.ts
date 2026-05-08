@@ -92,7 +92,7 @@ export class WorkflowLockService {
           SELECT pg_try_advisory_lock(${lockKey}) AS pg_try_advisory_lock
         `;
 
-        const acquired = result[0]?.pg_try_advisory_lock === true;
+        const acquired = result[0].pg_try_advisory_lock === true;
 
         if (acquired) {
           logger.info('Workflow lock acquired successfully', {
@@ -160,7 +160,7 @@ export class WorkflowLockService {
         SELECT pg_advisory_unlock(${lockKey}) AS pg_advisory_unlock
       `;
 
-      const released = result[0]?.pg_advisory_unlock === true;
+      const released = result[0].pg_advisory_unlock === true;
 
       if (released) {
         logger.info('Workflow lock released successfully', { lockKey });
@@ -298,7 +298,7 @@ export class WorkflowLockService {
         SELECT pg_try_advisory_lock(${lockKey}) AS pg_try_advisory_lock
       `;
 
-      const acquired = result[0]?.pg_try_advisory_lock === true;
+      const acquired = result[0].pg_try_advisory_lock === true;
 
       // If we acquired it, release it immediately
       if (acquired) {

@@ -89,7 +89,7 @@ class DefinitionOfReadyService {
           create: defaultItems.map((item, index) => ({
             id: generateUUIDv7(),
             description: item.description,
-            category: item.category || 'documentation',
+            category: item.category ?? 'documentation',
             isActive: item.isActive,
             order: index,
             createdBy: userId,
@@ -134,7 +134,7 @@ class DefinitionOfReadyService {
           create: items.map((item, index) => ({
             id: generateUUIDv7(),
             description: item.description,
-            category: item.category || 'documentation',
+            category: item.category ?? 'documentation',
             isActive: item.isActive,
             order: index,
             createdBy: userId,

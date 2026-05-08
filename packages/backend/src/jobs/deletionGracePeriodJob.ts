@@ -158,7 +158,11 @@ async function sendReminderNotifications(
       continue;
     }
 
-    const members = membersResult.result!;
+    const members = membersResult.result;
+    if (!members) {
+      consecutiveFailures++;
+      continue;
+    }
 
     for (const member of members) {
       if (consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {

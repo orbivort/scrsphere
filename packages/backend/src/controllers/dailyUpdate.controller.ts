@@ -1,7 +1,7 @@
 import { type Request, type Response } from 'express';
 import { dailyUpdateService } from '../services/dailyUpdate.service';
 import { asyncHandler, createSuccessResponse, BadRequestError } from '../utils/errors';
-import { NotificationType } from '../generated/prisma/client';
+import { NotificationType, type Prisma } from '../generated/prisma/client';
 import prisma from '../utils/prisma';
 import { generateUUIDv7 } from '../utils/uuid';
 import { getParamValue } from '../utils/validation';
@@ -217,7 +217,7 @@ export const sendReminder = asyncHandler(async (req: Request, res: Response) => 
             sprintId,
             sprintName: sprint.name,
             teamId: sprint.teamId,
-          } as any,
+          } as Prisma.InputJsonValue,
           createdBy: userId,
         },
       });

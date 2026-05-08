@@ -10,7 +10,7 @@ interface CreateIncrementData {
   description?: string;
   sprintId: string;
   teamId: string;
-  includedPBIs: string[];
+  includedPBIs?: string[];
   totalStoryPoints: number;
   status?: string;
   createdBy?: string;
@@ -131,9 +131,9 @@ export const incrementService = {
       verifiedBy: v.verifiedBy,
       verifiedAt: v.verifiedAt.toISOString(),
       notes: v.notes,
-      dodItemDescription: v.dodItem?.description,
-      dodItemCategory: v.dodItem?.category,
-      verifierName: v.verifier ? `${v.verifier.firstName} ${v.verifier.lastName}` : null,
+      dodItemDescription: v.dodItem.description,
+      dodItemCategory: v.dodItem.category,
+      verifierName: `${v.verifier.firstName} ${v.verifier.lastName}`,
     }));
 
     return {
@@ -154,7 +154,7 @@ export const incrementService = {
     }
 
     const incrementId = generateUUIDv7();
-    const statusValue = (data.status as IncrementStatus) || 'DRAFT';
+    const statusValue = data.status ? (data.status as IncrementStatus) : 'DRAFT';
 
     await prisma.increment.create({
       data: {
@@ -165,7 +165,7 @@ export const incrementService = {
         teamId: data.teamId,
         totalStoryPoints: data.totalStoryPoints,
         status: statusValue,
-        createdBy: data.createdBy || userId,
+        createdBy: data.createdBy ?? userId,
       },
     });
 
@@ -312,15 +312,13 @@ export const incrementService = {
       (i) => i.deliveryMethod === 'SPRINT_REVIEW'
     ).length;
 
-    const deliveredWithDates = increments.filter(
-      (i) => i.status === 'DELIVERED' && i.deliveredAt && i.createdAt
-    );
+    const deliveredWithDates = increments.filter((i) => i.status === 'DELIVERED' && i.deliveredAt);
 
     let averageDeliveryTime = 0;
     if (deliveredWithDates.length > 0) {
       const totalDays = deliveredWithDates.reduce((sum, i) => {
         const created = new Date(i.createdAt).getTime();
-        const delivered = new Date(i.deliveredAt!).getTime();
+        const delivered = i.deliveredAt ? new Date(i.deliveredAt).getTime() : created;
         return sum + (delivered - created) / (1000 * 60 * 60 * 24);
       }, 0);
       averageDeliveryTime = Math.round(totalDays / deliveredWithDates.length);

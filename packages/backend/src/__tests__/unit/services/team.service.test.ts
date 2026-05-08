@@ -281,6 +281,7 @@ describe('TeamService', () => {
 
       vi.mocked(prisma.team.findUnique).mockResolvedValue({
         ...mockTeam,
+        productGoals: [],
         members: [
           {
             id: 'member-id',

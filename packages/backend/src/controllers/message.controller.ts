@@ -7,7 +7,14 @@ const notificationService = new NotificationService();
 export class MessageController {
   async sendDirectMessage(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const senderId = req.user!.id;
+      const senderId = req.user?.id;
+      if (!senderId) {
+        res.status(401).json({
+          success: false,
+          error: { message: 'Unauthorized' },
+        });
+        return;
+      }
       const { recipientId, message } = req.body;
 
       if (!recipientId || !message) {

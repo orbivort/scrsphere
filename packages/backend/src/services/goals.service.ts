@@ -109,7 +109,7 @@ class ProductGoalService {
     const userRoles = [teamMember.role];
 
     // Validate status transition using workflow service
-    const targetStatus = status || 'NEW';
+    const targetStatus = status ?? 'NEW';
     const validationResult = await workflowService.validateTransition(
       'ProductGoal',
       null, // No from status for new goals
@@ -119,11 +119,11 @@ class ProductGoalService {
     );
 
     if (!validationResult.isValid) {
-      throw new BadRequestError(validationResult.reason || 'Invalid status');
+      throw new BadRequestError(validationResult.reason ?? 'Invalid status');
     }
 
     if (!validationResult.allowed) {
-      throw new ForbiddenError(validationResult.reason || 'Status not allowed');
+      throw new ForbiddenError(validationResult.reason ?? 'Status not allowed');
     }
 
     const goalId = generateUUIDv7();
@@ -212,11 +212,11 @@ class ProductGoalService {
       );
 
       if (!validationResult.isValid) {
-        throw new BadRequestError(validationResult.reason || 'Invalid status transition');
+        throw new BadRequestError(validationResult.reason ?? 'Invalid status transition');
       }
 
       if (!validationResult.allowed) {
-        throw new ForbiddenError(validationResult.reason || 'Status transition not allowed');
+        throw new ForbiddenError(validationResult.reason ?? 'Status transition not allowed');
       }
     }
 
