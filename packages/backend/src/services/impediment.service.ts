@@ -179,7 +179,12 @@ class ImpedimentService {
   }
 
   async updateImpediment(id: string, _teamId: string, updates: UpdateImpedimentInput) {
-    const updateData: any = { ...updates };
+    const updateData: {
+      status?: ImpedimentStatus;
+      resolution?: string;
+      ownerId?: string;
+      resolvedAt?: Date | null;
+    } = { ...updates };
 
     if (updates.status === ImpedimentStatus.RESOLVED && !updates.resolution) {
       throw new Error('Resolution is required when marking impediment as resolved');

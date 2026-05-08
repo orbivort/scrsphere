@@ -41,7 +41,7 @@ export const replayDeferredLogs = (): void => {
 };
 
 const loadEnvironmentConfig = (): void => {
-  const nodeEnv = process.env.NODE_ENV || 'development';
+  const nodeEnv = process.env.NODE_ENV ?? 'development';
   const envDir = path.resolve(__dirname, '../../');
 
   const envFiles: string[] = [];
@@ -94,43 +94,43 @@ const generateSecret = (): string => {
 
 export const config = {
   // Server
-  nodeEnv: process.env.NODE_ENV || 'development',
-  port: parseInt(process.env.PORT || '5000', 10),
-  apiPrefix: process.env.API_PREFIX || '/api',
+  nodeEnv: process.env.NODE_ENV ?? 'development',
+  port: parseInt(process.env.PORT ?? '5000', 10),
+  apiPrefix: process.env.API_PREFIX ?? '/api',
 
   // Database
-  databaseUrl: process.env.DATABASE_URL || '',
+  databaseUrl: process.env.DATABASE_URL ?? '',
 
   // JWT
   jwt: {
-    secret: process.env.JWT_SECRET || generateSecret(),
-    expiresIn: process.env.JWT_EXPIRES_IN || '15m',
-    refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
+    secret: process.env.JWT_SECRET ?? generateSecret(),
+    expiresIn: process.env.JWT_EXPIRES_IN ?? '15m',
+    refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN ?? '7d',
   },
 
   // Session Management
   session: {
-    idleTimeoutMs: parseInt(process.env.SESSION_IDLE_TIMEOUT_MS || '1800000', 10),
-    absoluteTimeoutMs: parseInt(process.env.SESSION_ABSOLUTE_TIMEOUT_MS || '86400000', 10),
-    warningThresholdMs: parseInt(process.env.SESSION_WARNING_THRESHOLD_MS || '120000', 10),
-    cleanupIntervalMs: parseInt(process.env.SESSION_CLEANUP_INTERVAL_MS || '3600000', 10),
-    maxConcurrentSessions: parseInt(process.env.MAX_CONCURRENT_SESSIONS || '5', 10),
+    idleTimeoutMs: parseInt(process.env.SESSION_IDLE_TIMEOUT_MS ?? '1800000', 10),
+    absoluteTimeoutMs: parseInt(process.env.SESSION_ABSOLUTE_TIMEOUT_MS ?? '86400000', 10),
+    warningThresholdMs: parseInt(process.env.SESSION_WARNING_THRESHOLD_MS ?? '120000', 10),
+    cleanupIntervalMs: parseInt(process.env.SESSION_CLEANUP_INTERVAL_MS ?? '3600000', 10),
+    maxConcurrentSessions: parseInt(process.env.MAX_CONCURRENT_SESSIONS ?? '5', 10),
   },
 
   // Bcrypt
   bcrypt: {
-    saltRounds: parseInt(process.env.BCRYPT_SALT_ROUNDS || '12', 10),
+    saltRounds: parseInt(process.env.BCRYPT_SALT_ROUNDS ?? '12', 10),
   },
 
   // Token Hashing
   tokenHash: {
-    algorithm: process.env.TOKEN_HASH_ALGORITHM || 'sha256',
+    algorithm: process.env.TOKEN_HASH_ALGORITHM ?? 'sha256',
   },
 
   // Rate Limiting
   rateLimit: {
-    windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000', 10), // 15 minutes
-    max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100', 10),
+    windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS ?? '900000', 10), // 15 minutes
+    max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS ?? '100', 10),
   },
 
   // CORS
@@ -142,27 +142,27 @@ export const config = {
 
   // Logging
   logging: {
-    level: process.env.LOG_LEVEL || (process.env.NODE_ENV === 'production' ? 'info' : 'debug'),
-    directory: process.env.LOG_DIR || 'logs',
-    maxFiles: process.env.LOG_MAX_FILES || '14d',
-    maxSize: process.env.LOG_MAX_SIZE || '20m',
-    format: process.env.LOG_FORMAT || 'json',
+    level: process.env.LOG_LEVEL ?? (process.env.NODE_ENV === 'production' ? 'info' : 'debug'),
+    directory: process.env.LOG_DIR ?? 'logs',
+    maxFiles: process.env.LOG_MAX_FILES ?? '14d',
+    maxSize: process.env.LOG_MAX_SIZE ?? '20m',
+    format: process.env.LOG_FORMAT ?? 'json',
   },
 
   // Notification System Configuration
   notification: {
     pollingIntervalMs: Math.max(
       1000, // Minimum 1 second
-      parseInt(process.env.NOTIFICATION_POLLING_INTERVAL_SECONDS || '5', 10) * 1000
+      parseInt(process.env.NOTIFICATION_POLLING_INTERVAL_SECONDS ?? '5', 10) * 1000
     ),
     retentionDays: Math.max(
       0, // 0 means no cleanup (not recommended)
-      parseInt(process.env.NOTIFICATION_RETENTION_DAYS || '30', 10)
+      parseInt(process.env.NOTIFICATION_RETENTION_DAYS ?? '30', 10)
     ),
-    cleanupCron: process.env.NOTIFICATION_CLEANUP_CRON || '0 2 * * *',
+    cleanupCron: process.env.NOTIFICATION_CLEANUP_CRON ?? '0 2 * * *',
     maxPageSize: Math.min(
       100, // Maximum 100 per page
-      Math.max(10, parseInt(process.env.NOTIFICATION_MAX_PAGE_SIZE || '50', 10))
+      Math.max(10, parseInt(process.env.NOTIFICATION_MAX_PAGE_SIZE ?? '50', 10))
     ),
   },
 
@@ -171,91 +171,91 @@ export const config = {
     enabled:
       process.env.EVENT_LOOP_MONITORING_ENABLED !== undefined
         ? process.env.EVENT_LOOP_MONITORING_ENABLED === 'true'
-        : (process.env.NODE_ENV || 'development') === 'production',
-    resolution: parseInt(process.env.EVENT_LOOP_RESOLUTION || '10', 10),
-    warnThreshold: parseInt(process.env.EVENT_LOOP_WARN_THRESHOLD || '100', 10),
-    criticalThreshold: parseInt(process.env.EVENT_LOOP_CRITICAL_THRESHOLD || '500', 10),
+        : (process.env.NODE_ENV ?? 'development') === 'production',
+    resolution: parseInt(process.env.EVENT_LOOP_RESOLUTION ?? '10', 10),
+    warnThreshold: parseInt(process.env.EVENT_LOOP_WARN_THRESHOLD ?? '100', 10),
+    criticalThreshold: parseInt(process.env.EVENT_LOOP_CRITICAL_THRESHOLD ?? '500', 10),
   },
 
   // Health Check
   healthCheck: {
-    databaseTimeout: parseInt(process.env.HEALTH_CHECK_DATABASE_TIMEOUT || '5000', 10),
+    databaseTimeout: parseInt(process.env.HEALTH_CHECK_DATABASE_TIMEOUT ?? '5000', 10),
   },
 
   // Account Deletion
   deletion: {
     scheduleConfirmationPhrase: 'SCHEDULE DELETION',
-    gracePeriodDays: parseInt(process.env.ACCOUNT_DELETION_GRACE_PERIOD_DAYS || '14', 10),
+    gracePeriodDays: parseInt(process.env.ACCOUNT_DELETION_GRACE_PERIOD_DAYS ?? '14', 10),
   },
 
   // Database Transaction Configuration
   database: {
     transaction: {
       startSprint: {
-        maxWait: parseInt(process.env.DB_TRANSACTION_START_SPRINT_MAX_WAIT || '5000', 10),
-        timeout: parseInt(process.env.DB_TRANSACTION_START_SPRINT_TIMEOUT || '15000', 10),
-        retries: parseInt(process.env.DB_TRANSACTION_START_SPRINT_RETRIES || '2', 10),
+        maxWait: parseInt(process.env.DB_TRANSACTION_START_SPRINT_MAX_WAIT ?? '5000', 10),
+        timeout: parseInt(process.env.DB_TRANSACTION_START_SPRINT_TIMEOUT ?? '15000', 10),
+        retries: parseInt(process.env.DB_TRANSACTION_START_SPRINT_RETRIES ?? '2', 10),
       },
       default: {
-        maxWait: parseInt(process.env.DB_TRANSACTION_MAX_WAIT || '5000', 10),
-        timeout: parseInt(process.env.DB_TRANSACTION_TIMEOUT || '10000', 10),
-        retries: parseInt(process.env.DB_TRANSACTION_RETRIES || '2', 10),
+        maxWait: parseInt(process.env.DB_TRANSACTION_MAX_WAIT ?? '5000', 10),
+        timeout: parseInt(process.env.DB_TRANSACTION_TIMEOUT ?? '10000', 10),
+        retries: parseInt(process.env.DB_TRANSACTION_RETRIES ?? '2', 10),
       },
     },
     circuitBreaker: {
-      failureThreshold: parseInt(process.env.DB_CIRCUIT_BREAKER_FAILURE_THRESHOLD || '5', 10),
-      resetTimeoutMs: parseInt(process.env.DB_CIRCUIT_BREAKER_RESET_TIMEOUT_MS || '60000', 10),
+      failureThreshold: parseInt(process.env.DB_CIRCUIT_BREAKER_FAILURE_THRESHOLD ?? '5', 10),
+      resetTimeoutMs: parseInt(process.env.DB_CIRCUIT_BREAKER_RESET_TIMEOUT_MS ?? '60000', 10),
     },
   },
 
   // Email Configuration
   email: {
-    provider: (process.env.EMAIL_PROVIDER || 'smtp') as 'smtp' | 'sendgrid' | 'ses',
-    frontendUrl: process.env.FRONTEND_URL || 'http://localhost:5173',
+    provider: (process.env.EMAIL_PROVIDER ?? 'smtp') as 'smtp' | 'sendgrid' | 'ses',
+    frontendUrl: process.env.FRONTEND_URL ?? 'http://localhost:5173',
 
     // Test mode configuration
     testMode: {
       enabled: process.env.EMAIL_TEST_MODE === 'true',
-      outputDirectory: process.env.EMAIL_TEST_OUTPUT_DIR || 'logs/emails',
+      outputDirectory: process.env.EMAIL_TEST_OUTPUT_DIR ?? 'logs/emails',
       logToConsole: process.env.EMAIL_TEST_LOG_CONSOLE !== 'false',
       saveToFile: process.env.EMAIL_TEST_SAVE_FILE !== 'false',
     },
 
     // SMTP configuration
     smtp: {
-      host: process.env.SMTP_HOST || 'localhost',
-      port: parseInt(process.env.SMTP_PORT || '587', 10),
+      host: process.env.SMTP_HOST ?? 'localhost',
+      port: parseInt(process.env.SMTP_PORT ?? '587', 10),
       secure: process.env.SMTP_SECURE === 'true',
       auth: {
-        user: process.env.SMTP_USER || '',
-        pass: process.env.SMTP_PASS || '',
+        user: process.env.SMTP_USER ?? '',
+        pass: process.env.SMTP_PASS ?? '',
       },
       pool: process.env.SMTP_POOL !== 'false',
-      maxConnections: parseInt(process.env.SMTP_MAX_CONNECTIONS || '5', 10),
+      maxConnections: parseInt(process.env.SMTP_MAX_CONNECTIONS ?? '5', 10),
       rateLimit: {
         enabled: process.env.SMTP_RATE_LIMIT_ENABLED === 'true',
-        maxMessages: parseInt(process.env.SMTP_RATE_LIMIT_MAX_MESSAGES || '100', 10),
-        windowMs: parseInt(process.env.SMTP_RATE_LIMIT_WINDOW_MS || '60000', 10),
+        maxMessages: parseInt(process.env.SMTP_RATE_LIMIT_MAX_MESSAGES ?? '100', 10),
+        windowMs: parseInt(process.env.SMTP_RATE_LIMIT_WINDOW_MS ?? '60000', 10),
       },
     },
 
     // SendGrid configuration
     sendgrid: {
-      apiKey: process.env.SENDGRID_API_KEY || '',
+      apiKey: process.env.SENDGRID_API_KEY ?? '',
     },
 
     // SES configuration
     ses: {
-      region: process.env.SES_REGION || 'us-east-1',
-      accessKeyId: process.env.SES_ACCESS_KEY_ID || '',
-      secretAccessKey: process.env.SES_SECRET_ACCESS_KEY || '',
+      region: process.env.SES_REGION ?? 'us-east-1',
+      accessKeyId: process.env.SES_ACCESS_KEY_ID ?? '',
+      secretAccessKey: process.env.SES_SECRET_ACCESS_KEY ?? '',
     },
 
     // Default email settings
     defaults: {
-      fromName: process.env.EMAIL_FROM_NAME || 'Scrsphere',
-      fromAddress: process.env.EMAIL_FROM_ADDRESS || 'noreply@scrsphere.local',
-      replyTo: process.env.EMAIL_REPLY_TO || '',
+      fromName: process.env.EMAIL_FROM_NAME ?? 'Scrsphere',
+      fromAddress: process.env.EMAIL_FROM_ADDRESS ?? 'noreply@scrsphere.local',
+      replyTo: process.env.EMAIL_REPLY_TO ?? '',
     },
 
     // Feature flags
@@ -268,22 +268,22 @@ export const config = {
 
     // Retry configuration
     retry: {
-      maxAttempts: parseInt(process.env.EMAIL_RETRY_MAX_ATTEMPTS || '3', 10),
-      backoffMs: parseInt(process.env.EMAIL_RETRY_BACKOFF_MS || '1000', 10),
-      maxBackoffMs: parseInt(process.env.EMAIL_RETRY_MAX_BACKOFF_MS || '30000', 10),
+      maxAttempts: parseInt(process.env.EMAIL_RETRY_MAX_ATTEMPTS ?? '3', 10),
+      backoffMs: parseInt(process.env.EMAIL_RETRY_BACKOFF_MS ?? '1000', 10),
+      maxBackoffMs: parseInt(process.env.EMAIL_RETRY_MAX_BACKOFF_MS ?? '30000', 10),
     },
 
     // Retention configuration (GDPR compliance)
     retention: {
-      successfulDays: parseInt(process.env.EMAIL_RETENTION_SUCCESSFUL_DAYS || '30', 10),
-      failedDays: parseInt(process.env.EMAIL_RETENTION_FAILED_DAYS || '90', 10),
-      bouncedDays: parseInt(process.env.EMAIL_RETENTION_BOUNCED_DAYS || '365', 10),
+      successfulDays: parseInt(process.env.EMAIL_RETENTION_SUCCESSFUL_DAYS ?? '30', 10),
+      failedDays: parseInt(process.env.EMAIL_RETENTION_FAILED_DAYS ?? '90', 10),
+      bouncedDays: parseInt(process.env.EMAIL_RETENTION_BOUNCED_DAYS ?? '365', 10),
     },
 
     // Circuit breaker configuration
     circuitBreaker: {
-      failureThreshold: parseInt(process.env.EMAIL_CIRCUIT_BREAKER_FAILURE_THRESHOLD || '5', 10),
-      resetTimeoutMs: parseInt(process.env.EMAIL_CIRCUIT_BREAKER_RESET_TIMEOUT_MS || '60000', 10),
+      failureThreshold: parseInt(process.env.EMAIL_CIRCUIT_BREAKER_FAILURE_THRESHOLD ?? '5', 10),
+      resetTimeoutMs: parseInt(process.env.EMAIL_CIRCUIT_BREAKER_RESET_TIMEOUT_MS ?? '60000', 10),
     },
   },
 } as const;

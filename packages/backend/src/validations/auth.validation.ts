@@ -24,16 +24,16 @@ const getPasswordValidationError = (password: string): string | null => {
   if (password.length < passwordRequirements.minLength) {
     errors.push(`at least ${passwordRequirements.minLength} characters`);
   }
-  if (passwordRequirements.requireUppercase && !passwordRegex.uppercase.test(password)) {
+  if (!passwordRegex.uppercase.test(password)) {
     errors.push('an uppercase letter');
   }
-  if (passwordRequirements.requireLowercase && !passwordRegex.lowercase.test(password)) {
+  if (!passwordRegex.lowercase.test(password)) {
     errors.push('a lowercase letter');
   }
-  if (passwordRequirements.requireNumber && !passwordRegex.number.test(password)) {
+  if (!passwordRegex.number.test(password)) {
     errors.push('a number');
   }
-  if (passwordRequirements.requireSpecialChar && !passwordRegex.specialChar.test(password)) {
+  if (!passwordRegex.specialChar.test(password)) {
     errors.push('a special character (!@#$%^&* etc.)');
   }
 
@@ -57,7 +57,7 @@ export const registerSchema = z.object({
     )
     .max(100, 'Password must be less than 100 characters')
     .refine((val) => getPasswordValidationError(val) === null, {
-      error: (ctx) => getPasswordValidationError(ctx.input as string) || 'Invalid password',
+      error: (ctx) => getPasswordValidationError(ctx.input as string) ?? 'Invalid password',
     }),
   firstName: sanitizedString('First name', 50),
   lastName: sanitizedString('Last name', 50),
@@ -109,7 +109,7 @@ export const changePasswordSchema = z.object({
     )
     .max(128, 'Password must be less than 128 characters')
     .refine((val) => getPasswordValidationError(val) === null, {
-      error: (ctx) => getPasswordValidationError(ctx.input as string) || 'Invalid password',
+      error: (ctx) => getPasswordValidationError(ctx.input as string) ?? 'Invalid password',
     }),
 });
 
@@ -132,7 +132,7 @@ export const resetPasswordSchema = z
       )
       .max(128, 'Password must be less than 128 characters')
       .refine((val) => getPasswordValidationError(val) === null, {
-        error: (ctx) => getPasswordValidationError(ctx.input as string) || 'Invalid password',
+        error: (ctx) => getPasswordValidationError(ctx.input as string) ?? 'Invalid password',
       }),
     confirmPassword: z.string().min(1, 'Password confirmation is required'),
   })

@@ -1,7 +1,12 @@
 import prisma from '../utils/prisma';
 import { NotFoundError, BadRequestError, ConflictError } from '../utils/errors';
 import { generateUUIDv7 } from '../utils/uuid';
-import { ImpedimentStatus, type DailyUpdate } from '../generated/prisma/client';
+import {
+  ImpedimentStatus,
+  type DailyUpdate,
+  type Impediment,
+  type User,
+} from '../generated/prisma/client';
 
 export interface CreateDailyUpdateData {
   sprintId: string;
@@ -287,11 +292,11 @@ class DailyUpdateService {
 
     const submittedUserIds = new Set(updates.map((u) => u.userId));
 
-    const pendingMembers = (sprint.team?.members || [])
+    const pendingMembers = (sprint.team.members ?? [])
       .filter((m) => !submittedUserIds.has(m.userId))
       .map((m) => ({
         userId: m.userId,
-        userName: `${m.user?.firstName || ''} ${m.user?.lastName || ''}`.trim(),
+        userName: `${m.user.firstName || ''} ${m.user.lastName || ''}`.trim(),
       }));
 
     return {
@@ -310,7 +315,15 @@ class DailyUpdateService {
       teamId: string;
       sprintId?: string;
     }
-  ): Promise<{ dailyUpdate: DailyUpdateWithUser; impediment: any }> {
+  ): Promise<{
+    dailyUpdate: DailyUpdateWithUser;
+    impediment: Impediment & {
+      reportedBy: Pick<User, 'id' | 'firstName' | 'lastName' | 'email'>;
+      owner?: Pick<User, 'id' | 'firstName' | 'lastName' | 'email'> | null;
+      sprint?: { id: string; name: string } | null;
+      dailyUpdate?: DailyUpdateWithUser | null;
+    };
+  }> {
     const dailyUpdate = await prisma.dailyUpdate.findUnique({
       where: { id: dailyUpdateId },
       include: {
@@ -343,7 +356,7 @@ class DailyUpdateService {
         data: {
           id: crypto.randomUUID(),
           teamId: data.teamId,
-          sprintId: data.sprintId || dailyUpdate.sprintId,
+          sprintId: data.sprintId ?? dailyUpdate.sprintId,
           title: data.title,
           description: data.description,
           reportedById: dailyUpdate.userId,
@@ -424,7 +437,11 @@ class DailyUpdateService {
         },
       });
 
-      return { impediment, dailyUpdate: updatedDailyUpdate! };
+      if (!updatedDailyUpdate) {
+        throw new NotFoundError('Daily update');
+      }
+
+      return { impediment, dailyUpdate: updatedDailyUpdate };
     });
 
     return result;

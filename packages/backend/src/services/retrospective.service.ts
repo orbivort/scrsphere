@@ -1,6 +1,17 @@
 import { v4 as uuidv4 } from 'uuid';
 import prisma from '../utils/prisma';
-import { NotFoundError } from '../utils/errors';
+import { NotFoundError, BadRequestError } from '../utils/errors';
+import {
+  type RetrospectiveCategory,
+  type RetrospectiveItem as PrismaRetrospectiveItem,
+  type RetroActionItem as PrismaRetroActionItem,
+  type SprintRetrospective as PrismaSprintRetrospective,
+  type RetroAttendee,
+  type TeamMember,
+  type User,
+  type RetroItemVote,
+  type ActionItemStatus,
+} from '../generated/prisma/client';
 
 export interface RetrospectiveItem {
   id: string;
@@ -71,6 +82,7 @@ class RetrospectiveService {
           },
         },
         actionItems: true,
+        attendees: true,
       },
       orderBy: { retroDate: 'desc' },
     });
@@ -205,13 +217,21 @@ class RetrospectiveService {
   }
 
   async createRetrospective(data: Partial<SprintRetrospective>): Promise<SprintRetrospective> {
+    const sprintId = data.sprintId;
+    const teamId = data.teamId;
+    const facilitatorId = data.facilitatorId;
+
+    if (!sprintId || !teamId || !facilitatorId) {
+      throw new BadRequestError('Sprint ID, Team ID, and Facilitator ID are required');
+    }
+
     // Check if a retrospective already exists for this sprint
     const existingRetrospective = await prisma.sprintRetrospective.findUnique({
-      where: { sprintId: data.sprintId! },
+      where: { sprintId },
     });
 
     if (existingRetrospective) {
-      throw new Error(`A retrospective already exists for sprint ${data.sprintId}`);
+      throw new Error(`A retrospective already exists for sprint ${sprintId}`);
     }
 
     // Convert string date to Date object if needed
@@ -220,15 +240,16 @@ class RetrospectiveService {
     const retrospective = await prisma.sprintRetrospective.create({
       data: {
         id: uuidv4(),
-        sprintId: data.sprintId!,
-        teamId: data.teamId!,
+        sprintId,
+        teamId,
         retroDate,
-        facilitatorId: data.facilitatorId!,
-        isAnonymous: data.isAnonymous || false,
+        facilitatorId,
+        isAnonymous: data.isAnonymous ?? false,
       },
       include: {
         items: true,
         actionItems: true,
+        attendees: true,
       },
     });
 
@@ -247,6 +268,11 @@ class RetrospectiveService {
       throw new NotFoundError('Retrospective not found');
     }
 
+    const content = item.content;
+    if (!content) {
+      throw new BadRequestError('Item content is required');
+    }
+
     const maxOrder = await prisma.retrospectiveItem.findFirst({
       where: { retrospectiveId },
       orderBy: { order: 'desc' },
@@ -256,8 +282,8 @@ class RetrospectiveService {
       data: {
         id: uuidv4(),
         retrospectiveId,
-        category: item.category as any,
-        content: item.content!,
+        category: item.category as RetrospectiveCategory,
+        content,
         authorId: item.authorId,
         authorName: item.authorName,
         votes: 0,
@@ -370,7 +396,7 @@ class RetrospectiveService {
       throw new NotFoundError('Item not found');
     }
 
-    const updateData: any = {};
+    const updateData: { content?: string } = {};
     if (updates.content !== undefined) {
       updateData.content = updates.content;
     }
@@ -409,13 +435,21 @@ class RetrospectiveService {
       throw new NotFoundError('Retrospective not found');
     }
 
+    if (!actionItem.title) {
+      throw new BadRequestError('Action item title is required');
+    }
+
+    if (!actionItem.ownerId) {
+      throw new BadRequestError('Action item owner is required');
+    }
+
     const newActionItem = await prisma.retroActionItem.create({
       data: {
         id: uuidv4(),
         retrospectiveId,
-        title: actionItem.title!,
+        title: actionItem.title,
         description: actionItem.description ?? undefined,
-        ownerId: actionItem.ownerId!,
+        ownerId: actionItem.ownerId,
         dueDate: actionItem.dueDate ? new Date(actionItem.dueDate) : null,
         status: actionItem.status ?? 'PENDING',
         addedToSprintBacklog: false,
@@ -438,15 +472,23 @@ class RetrospectiveService {
       throw new NotFoundError('Action item not found');
     }
 
-    const updateData: any = {};
+    const updateData: {
+      title?: string;
+      description?: string | null;
+      status?: ActionItemStatus;
+      dueDate?: Date | null;
+      addedToSprintBacklog?: boolean;
+      relatedSprintId?: string | null;
+      completedAt?: Date | null;
+    } = {};
     if (updates.title !== undefined) {
       updateData.title = updates.title;
     }
     if (updates.description !== undefined) {
-      updateData.description = updates.description || undefined;
+      updateData.description = updates.description ?? undefined;
     }
     if (updates.status !== undefined) {
-      updateData.status = updates.status;
+      updateData.status = updates.status as ActionItemStatus;
     }
     if (updates.dueDate !== undefined) {
       updateData.dueDate = updates.dueDate ? new Date(updates.dueDate) : null;
@@ -483,9 +525,28 @@ class RetrospectiveService {
     });
   }
 
-  private formatRetrospective(retro: any): SprintRetrospective {
+  private formatRetrospective(
+    retro: PrismaSprintRetrospective & {
+      items: (PrismaRetrospectiveItem & {
+        votesBy?: (RetroItemVote & {
+          user: Pick<User, 'id' | 'firstName' | 'lastName' | 'email'> | null;
+        })[];
+      })[];
+      actionItems: (PrismaRetroActionItem & {
+        owner?: Pick<User, 'id' | 'firstName' | 'lastName' | 'email'> | null;
+      })[];
+      attendees: RetroAttendee[];
+      sprint?: {
+        team?: {
+          members: (TeamMember & {
+            user: Pick<User, 'id' | 'firstName' | 'lastName' | 'email'> | null;
+          })[];
+        } | null;
+      } | null;
+    }
+  ): SprintRetrospective {
     const participants =
-      retro.sprint?.team?.members?.map((member: any) => ({
+      retro.sprint?.team?.members?.map((member) => ({
         id: member.userId,
         firstName: member.user?.firstName,
         lastName: member.user?.lastName,
@@ -493,13 +554,13 @@ class RetrospectiveService {
         role: member.role,
       })) ?? [];
 
-    const items = (retro.items ?? []).map((item: any) => ({
+    const items = retro.items.map((item) => ({
       ...item,
-      votedBy: item.votesBy?.map((vote: any) => vote.userId) ?? [],
+      votedBy: item.votesBy?.map((vote) => vote.userId) ?? [],
       votes: item.votesBy?.length ?? 0,
     }));
 
-    const actionItems = (retro.actionItems ?? []).map((action: any) => ({
+    const actionItems = retro.actionItems.map((action) => ({
       ...action,
       owner: action.owner
         ? {
@@ -511,10 +572,10 @@ class RetrospectiveService {
         : undefined,
     }));
 
-    const attendees = (retro.attendees ?? []).map((attendee: any) => ({
+    const attendees = retro.attendees.map((attendee) => ({
       id: attendee.id,
       name: attendee.name,
-      email: attendee.email,
+      email: attendee.email ?? undefined,
       role: attendee.role,
       attended: attendee.attended,
     }));
@@ -554,7 +615,11 @@ class RetrospectiveService {
       throw new NotFoundError('Retrospective not found');
     }
 
-    const updateData: any = {};
+    const updateData: {
+      summary?: string;
+      dodEvolutionNotes?: string;
+      status?: 'DRAFT' | 'IN_PROGRESS' | 'COMPLETED';
+    } = {};
 
     if (data.summary !== undefined) {
       updateData.summary = data.summary;
@@ -571,6 +636,11 @@ class RetrospectiveService {
     const updated = await prisma.sprintRetrospective.update({
       where: { id },
       data: updateData,
+      include: {
+        items: true,
+        actionItems: true,
+        attendees: true,
+      },
     });
 
     return this.formatRetrospective(updated);
@@ -606,15 +676,17 @@ class RetrospectiveService {
       orderBy: { retroDate: 'desc' },
     });
 
-    const pendingActionItems: RetroActionItem[] = [];
+    const pendingActionItems: Array<
+      RetroActionItem & { sprint?: { id: string; name: string } | null }
+    > = [];
 
     for (const retro of retrospectives) {
       for (const actionItem of retro.actionItems) {
         pendingActionItems.push({
           ...actionItem,
           retrospectiveId: retro.id,
-          sprint: retro.sprint as any,
-        } as any);
+          sprint: retro.sprint,
+        });
       }
     }
 
@@ -624,7 +696,7 @@ class RetrospectiveService {
   async addAttendee(
     retrospectiveId: string,
     data: { name: string; email?: string; role: string; attended: boolean }
-  ): Promise<any> {
+  ): Promise<RetroAttendee> {
     const retrospective = await prisma.sprintRetrospective.findUnique({
       where: { id: retrospectiveId },
     });
@@ -640,7 +712,7 @@ class RetrospectiveService {
         name: data.name,
         email: data.email,
         role: data.role,
-        attended: data.attended ?? true,
+        attended: data.attended,
       },
     });
 
@@ -655,7 +727,7 @@ class RetrospectiveService {
       role?: string;
       attended?: boolean;
     }
-  ): Promise<any> {
+  ): Promise<RetroAttendee> {
     const attendee = await prisma.retroAttendee.findUnique({
       where: { id: attendeeId },
     });
@@ -664,7 +736,12 @@ class RetrospectiveService {
       throw new NotFoundError('Attendee not found');
     }
 
-    const updateData: any = {};
+    const updateData: {
+      name?: string;
+      email?: string | null;
+      role?: string;
+      attended?: boolean;
+    } = {};
     if (updates.name !== undefined) {
       updateData.name = updates.name;
     }

@@ -2,7 +2,12 @@
 
 import { type Request, type Response } from 'express';
 import { consentService } from '../services/consent.service';
-import { asyncHandler, createSuccessResponse, BadRequestError } from '../utils/errors';
+import {
+  asyncHandler,
+  createSuccessResponse,
+  BadRequestError,
+  UnauthorizedError,
+} from '../utils/errors';
 import { logger } from '../utils/logger';
 import { getParamValue } from '../utils/validation';
 import type { RecordConsentInput, GetConsentHistoryQuery } from '../validations/consent.validation';
@@ -10,11 +15,11 @@ import type { RecordConsentInput, GetConsentHistoryQuery } from '../validations/
 export const recordConsent = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.userId;
   const data = req.body as RecordConsentInput;
-  const ipAddress = req.ip || req.socket.remoteAddress;
+  const ipAddress = req.ip ?? req.socket.remoteAddress;
   const userAgent = req.headers['user-agent'];
 
   logger.info('Recording cookie consent', {
-    userId: userId || 'anonymous',
+    userId: userId ?? 'anonymous',
     consentType: data.consentType,
     action: data.action,
   });
@@ -41,7 +46,10 @@ export const recordConsent = asyncHandler(async (req: Request, res: Response) =>
 });
 
 export const getConsentHistory = asyncHandler(async (req: Request, res: Response) => {
-  const userId = req.userId!;
+  const userId = req.userId;
+  if (!userId) {
+    throw new UnauthorizedError('User not authenticated');
+  }
   const query = req.query as unknown as GetConsentHistoryQuery;
 
   const limit = Math.min(parseInt(query.limit || '10', 10), 50);
@@ -69,7 +77,10 @@ export const getConsentHistory = asyncHandler(async (req: Request, res: Response
 });
 
 export const getLatestConsent = asyncHandler(async (req: Request, res: Response) => {
-  const userId = req.userId!;
+  const userId = req.userId;
+  if (!userId) {
+    throw new UnauthorizedError('User not authenticated');
+  }
 
   const consent = await consentService.getLatestConsent(userId);
 
@@ -97,7 +108,10 @@ export const getLatestConsent = asyncHandler(async (req: Request, res: Response)
 });
 
 export const withdrawConsent = asyncHandler(async (req: Request, res: Response) => {
-  const userId = req.userId!;
+  const userId = req.userId;
+  if (!userId) {
+    throw new UnauthorizedError('User not authenticated');
+  }
   const ipAddress = req.ip || req.socket.remoteAddress;
   const userAgent = req.headers['user-agent'];
 

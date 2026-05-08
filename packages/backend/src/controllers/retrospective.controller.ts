@@ -7,7 +7,17 @@ import { logger } from '../utils/logger';
 export const getRetrospectives = async (req: Request, res: Response) => {
   try {
     const teamId = getParamValue(req.params.teamId);
-    const retrospectives = await retrospectiveService.getRetrospectivesByTeam(teamId!);
+    if (!teamId) {
+      res.status(400).json({
+        success: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'Team ID is required',
+        },
+      });
+      return;
+    }
+    const retrospectives = await retrospectiveService.getRetrospectivesByTeam(teamId);
     res.json({
       success: true,
       data: retrospectives,
@@ -36,7 +46,17 @@ export const getRetrospectives = async (req: Request, res: Response) => {
 export const getRetrospectiveById = async (req: Request, res: Response) => {
   try {
     const id = getParamValue(req.params.id);
-    const retrospective = await retrospectiveService.getRetrospectiveById(id!);
+    if (!id) {
+      res.status(400).json({
+        success: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'Retrospective ID is required',
+        },
+      });
+      return;
+    }
+    const retrospective = await retrospectiveService.getRetrospectiveById(id);
     res.json({
       success: true,
       data: retrospective,
@@ -65,7 +85,17 @@ export const getRetrospectiveById = async (req: Request, res: Response) => {
 export const getRetrospectiveBySprintId = async (req: Request, res: Response) => {
   try {
     const sprintId = getParamValue(req.params.sprintId);
-    const retrospective = await retrospectiveService.getRetrospectiveBySprintId(sprintId!);
+    if (!sprintId) {
+      res.status(400).json({
+        success: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'Sprint ID is required',
+        },
+      });
+      return;
+    }
+    const retrospective = await retrospectiveService.getRetrospectiveBySprintId(sprintId);
 
     res.json({
       success: true,
@@ -123,7 +153,17 @@ export const createRetrospective = async (req: Request, res: Response) => {
 export const addItem = async (req: Request, res: Response) => {
   try {
     const retroId = getParamValue(req.params.retroId);
-    const item = await retrospectiveService.addItem(retroId!, req.body);
+    if (!retroId) {
+      res.status(400).json({
+        success: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'Retrospective ID is required',
+        },
+      });
+      return;
+    }
+    const item = await retrospectiveService.addItem(retroId, req.body);
     res.status(201).json({
       success: true,
       data: item,
@@ -164,7 +204,17 @@ export const voteItem = async (req: Request, res: Response) => {
       });
       return;
     }
-    const item = await retrospectiveService.voteItem(retroId!, itemId!, userId);
+    if (!retroId || !itemId) {
+      res.status(400).json({
+        success: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'Retrospective ID and Item ID are required',
+        },
+      });
+      return;
+    }
+    const item = await retrospectiveService.voteItem(retroId, itemId, userId);
     res.json({
       success: true,
       data: item,
@@ -205,7 +255,17 @@ export const unvoteItem = async (req: Request, res: Response) => {
       });
       return;
     }
-    const item = await retrospectiveService.unvoteItem(retroId!, itemId!, userId);
+    if (!retroId || !itemId) {
+      res.status(400).json({
+        success: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'Retrospective ID and Item ID are required',
+        },
+      });
+      return;
+    }
+    const item = await retrospectiveService.unvoteItem(retroId, itemId, userId);
     res.json({
       success: true,
       data: item,
@@ -235,7 +295,17 @@ export const updateItem = async (req: Request, res: Response) => {
   try {
     const retroId = getParamValue(req.params.retroId);
     const itemId = getParamValue(req.params.itemId);
-    const item = await retrospectiveService.updateItem(retroId!, itemId!, req.body);
+    if (!retroId || !itemId) {
+      res.status(400).json({
+        success: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'Retrospective ID and Item ID are required',
+        },
+      });
+      return;
+    }
+    const item = await retrospectiveService.updateItem(retroId, itemId, req.body);
     res.json({
       success: true,
       data: item,
@@ -265,7 +335,17 @@ export const deleteItem = async (req: Request, res: Response) => {
   try {
     const retroId = getParamValue(req.params.retroId);
     const itemId = getParamValue(req.params.itemId);
-    await retrospectiveService.deleteItem(retroId!, itemId!);
+    if (!retroId || !itemId) {
+      res.status(400).json({
+        success: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'Retrospective ID and Item ID are required',
+        },
+      });
+      return;
+    }
+    await retrospectiveService.deleteItem(retroId, itemId);
     res.json({
       success: true,
       data: null,
@@ -294,7 +374,17 @@ export const deleteItem = async (req: Request, res: Response) => {
 export const addActionItem = async (req: Request, res: Response) => {
   try {
     const retroId = getParamValue(req.params.retroId);
-    const actionItem = await retrospectiveService.addActionItem(retroId!, req.body);
+    if (!retroId) {
+      res.status(400).json({
+        success: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'Retrospective ID is required',
+        },
+      });
+      return;
+    }
+    const actionItem = await retrospectiveService.addActionItem(retroId, req.body);
     res.status(201).json({
       success: true,
       data: actionItem,
@@ -324,11 +414,17 @@ export const updateActionItem = async (req: Request, res: Response) => {
   try {
     const retroId = getParamValue(req.params.retroId);
     const actionItemId = getParamValue(req.params.actionItemId);
-    const actionItem = await retrospectiveService.updateActionItem(
-      retroId!,
-      actionItemId!,
-      req.body
-    );
+    if (!retroId || !actionItemId) {
+      res.status(400).json({
+        success: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'Retrospective ID and Action Item ID are required',
+        },
+      });
+      return;
+    }
+    const actionItem = await retrospectiveService.updateActionItem(retroId, actionItemId, req.body);
     res.json({
       success: true,
       data: actionItem,
@@ -358,7 +454,17 @@ export const deleteActionItem = async (req: Request, res: Response) => {
   try {
     const retroId = getParamValue(req.params.retroId);
     const actionItemId = getParamValue(req.params.actionItemId);
-    await retrospectiveService.deleteActionItem(retroId!, actionItemId!);
+    if (!retroId || !actionItemId) {
+      res.status(400).json({
+        success: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'Retrospective ID and Action Item ID are required',
+        },
+      });
+      return;
+    }
+    await retrospectiveService.deleteActionItem(retroId, actionItemId);
     res.json({
       success: true,
       data: null,
@@ -387,7 +493,17 @@ export const deleteActionItem = async (req: Request, res: Response) => {
 export const updateRetrospective = async (req: Request, res: Response) => {
   try {
     const id = getParamValue(req.params.id);
-    const updated = await retrospectiveService.updateRetrospective(id!, req.body);
+    if (!id) {
+      res.status(400).json({
+        success: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'Retrospective ID is required',
+        },
+      });
+      return;
+    }
+    const updated = await retrospectiveService.updateRetrospective(id, req.body);
     res.json({
       success: true,
       data: updated,
@@ -459,9 +575,20 @@ export const addRetroAttendee = async (req: Request, res: Response) => {
     const retroId = getParamValue(req.params.retroId);
     const { name, email, role, attended } = req.body;
 
-    const attendee = await retrospectiveService.addAttendee(retroId!, {
+    if (!retroId) {
+      res.status(400).json({
+        success: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'Retrospective ID is required',
+        },
+      });
+      return;
+    }
+
+    const attendee = await retrospectiveService.addAttendee(retroId, {
       name: name.trim(),
-      email: email?.trim() || undefined,
+      email: email?.trim() ?? undefined,
       role,
       attended: attended ?? true,
     });
@@ -496,7 +623,18 @@ export const updateRetroAttendee = async (req: Request, res: Response) => {
     const attendeeId = getParamValue(req.params.attendeeId);
     const { name, email, role, attended } = req.body;
 
-    const attendee = await retrospectiveService.updateAttendee(attendeeId!, {
+    if (!attendeeId) {
+      res.status(400).json({
+        success: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'Attendee ID is required',
+        },
+      });
+      return;
+    }
+
+    const attendee = await retrospectiveService.updateAttendee(attendeeId, {
       name: name?.trim(),
       email: email?.trim() || undefined,
       role,
@@ -531,7 +669,17 @@ export const updateRetroAttendee = async (req: Request, res: Response) => {
 export const deleteRetroAttendee = async (req: Request, res: Response) => {
   try {
     const attendeeId = getParamValue(req.params.attendeeId);
-    await retrospectiveService.deleteAttendee(attendeeId!);
+    if (!attendeeId) {
+      res.status(400).json({
+        success: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'Attendee ID is required',
+        },
+      });
+      return;
+    }
+    await retrospectiveService.deleteAttendee(attendeeId);
     res.json({
       success: true,
       data: { message: 'Participant removed successfully' },

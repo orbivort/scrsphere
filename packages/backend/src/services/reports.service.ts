@@ -1,4 +1,5 @@
 import prisma from '../utils/prisma';
+import { NotFoundError } from '../utils/errors';
 
 export interface VelocityData {
   sprints: string[];
@@ -274,11 +275,12 @@ class ReportsService {
 
       if (retrospectives.length > 1) {
         const olderRetro = retrospectives[retrospectives.length - 1];
-        if (olderRetro) {
-          const olderVotes = (olderRetro.items || []).reduce((sum, item) => sum + item.votes, 0);
-          const olderRating = Math.min(5, 3 + olderVotes / 10);
-          satisfactionTrend = teamSatisfactionRating - olderRating;
+        if (!olderRetro) {
+          throw new NotFoundError('Older retrospective not found');
         }
+        const olderVotes = (olderRetro.items ?? []).reduce((sum, item) => sum + item.votes, 0);
+        const olderRating = Math.min(5, 3 + olderVotes / 10);
+        satisfactionTrend = teamSatisfactionRating - olderRating;
       }
     }
 

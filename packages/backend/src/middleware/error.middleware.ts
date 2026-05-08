@@ -36,15 +36,10 @@ const SENSITIVE_FIELDS = [
  */
 const generateErrorFingerprint = (error: Error, req: Request): string => {
   // Get the first line of the error message
-  const firstLineOfMessage = error.message.split('\n')[0] || '';
+  const firstLineOfMessage = error.message.split('\n')[0] ?? '';
 
   // Create fingerprint components
-  const fingerprintData = [
-    error.name || 'UnknownError',
-    firstLineOfMessage,
-    req.path || 'unknown',
-    req.method || 'unknown',
-  ].join(':');
+  const fingerprintData = [error.name, firstLineOfMessage, req.path, req.method].join(':');
 
   // Generate SHA-256 hash
   return crypto.createHash('sha256').update(fingerprintData).digest('hex').substring(0, 16);

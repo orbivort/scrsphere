@@ -57,7 +57,7 @@ export interface StatusChangeHistory {
   changeReason: string | null;
   changeNotes: string | null;
   transitionId: string | null;
-  metadata: any;
+  metadata: Prisma.InputJsonValue;
   createdAt: Date;
 }
 
@@ -82,7 +82,7 @@ export interface StatusChangeRequest {
   userRoles: string[];
   changeReason?: string;
   changeNotes?: string;
-  metadata?: any;
+  metadata?: Prisma.InputJsonValue;
 }
 
 // Default workflow state configuration
@@ -365,7 +365,7 @@ class WorkflowService {
    */
   private findCanonicalEntityType(normalizedType: string): string | null {
     const configKeys = Object.keys(WorkflowService.DEFAULT_WORKFLOW_CONFIGS);
-    return configKeys.find((key) => key.toLowerCase() === normalizedType) || null;
+    return configKeys.find((key) => key.toLowerCase() === normalizedType) ?? null;
   }
 
   /**
@@ -1144,10 +1144,10 @@ class WorkflowService {
       try {
         const workflow = await this.fetchExistingWorkflow(entityType);
         results[entityType] = { exists: workflow !== null };
-      } catch (error: any) {
+      } catch (error: unknown) {
         results[entityType] = {
           exists: false,
-          error: error.message,
+          error: error instanceof Error ? error.message : 'Unknown error',
         };
       }
     }

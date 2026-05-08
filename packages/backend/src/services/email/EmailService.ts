@@ -276,7 +276,7 @@ export class EmailService {
   ): Promise<void> {
     try {
       // Determine email type from metadata or default to NOTIFICATION
-      const emailType = (input.metadata?.type as string) || 'NOTIFICATION';
+      const emailType = (input.metadata?.type as string) ?? 'NOTIFICATION';
 
       // Map result to status
       const status = result.success ? 'SENT' : 'FAILED';

@@ -10,10 +10,10 @@ const DEFAULT_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
 
 export const notificationRateLimit = rateLimit({
   windowMs: parseInt(
-    process.env.NOTIFICATION_RATE_LIMIT_WINDOW_MS || String(DEFAULT_RATE_LIMIT_WINDOW_MS),
+    process.env.NOTIFICATION_RATE_LIMIT_WINDOW_MS ?? String(DEFAULT_RATE_LIMIT_WINDOW_MS),
     10
   ),
-  max: parseInt(process.env.NOTIFICATION_RATE_LIMIT_MAX || '200', 10),
+  max: parseInt(process.env.NOTIFICATION_RATE_LIMIT_MAX ?? '200', 10),
   message: {
     success: false,
     error: {
@@ -39,11 +39,11 @@ export const apiRateLimit = rateLimit({
 
 export const authRateLimit = rateLimit({
   windowMs: parseInt(
-    process.env.AUTH_RATE_LIMIT_WINDOW_MS || String(DEFAULT_RATE_LIMIT_WINDOW_MS),
+    process.env.AUTH_RATE_LIMIT_WINDOW_MS ?? String(DEFAULT_RATE_LIMIT_WINDOW_MS),
     10
   ),
   // Use environment variable if set, otherwise use higher limit for test environment
-  max: parseInt(process.env.AUTH_RATE_LIMIT_MAX || (isTestEnvironment ? '1000000' : '5'), 10),
+  max: parseInt(process.env.AUTH_RATE_LIMIT_MAX ?? (isTestEnvironment ? '1000000' : '5'), 10),
   message: {
     success: false,
     error: {
@@ -58,11 +58,11 @@ export const authRateLimit = rateLimit({
 
 export const loginRateLimit = rateLimit({
   windowMs: parseInt(
-    process.env.LOGIN_RATE_LIMIT_WINDOW_MS || String(DEFAULT_RATE_LIMIT_WINDOW_MS),
+    process.env.LOGIN_RATE_LIMIT_WINDOW_MS ?? String(DEFAULT_RATE_LIMIT_WINDOW_MS),
     10
   ),
   // Use environment variable if set, otherwise use higher limit for test environment
-  max: parseInt(process.env.LOGIN_RATE_LIMIT_MAX || (isTestEnvironment ? '1000000' : '10'), 10),
+  max: parseInt(process.env.LOGIN_RATE_LIMIT_MAX ?? (isTestEnvironment ? '1000000' : '10'), 10),
   message: {
     success: false,
     error: {
@@ -73,20 +73,20 @@ export const loginRateLimit = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: (req: Request) => {
-    const email = req.body?.email?.toLowerCase() || '';
-    const ip = req.ip || req.connection.remoteAddress || 'unknown';
+    const email = req.body?.email?.toLowerCase() ?? '';
+    const ip = req.ip ?? req.connection.remoteAddress ?? 'unknown';
     return `${ipKeyGenerator(ip)}:${email}`;
   },
 });
 
 export const forgotPasswordRateLimit = rateLimit({
   windowMs: parseInt(
-    process.env.FORGOT_PASSWORD_RATE_LIMIT_WINDOW_MS || String(DEFAULT_RATE_LIMIT_WINDOW_MS),
+    process.env.FORGOT_PASSWORD_RATE_LIMIT_WINDOW_MS ?? String(DEFAULT_RATE_LIMIT_WINDOW_MS),
     10
   ),
   // Use environment variable if set, otherwise use higher limit for test environment
   max: parseInt(
-    process.env.FORGOT_PASSWORD_RATE_LIMIT_MAX || (isTestEnvironment ? '1000000' : '3'),
+    process.env.FORGOT_PASSWORD_RATE_LIMIT_MAX ?? (isTestEnvironment ? '1000000' : '3'),
     10
   ),
   message: {
@@ -99,19 +99,19 @@ export const forgotPasswordRateLimit = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: (req: Request) => {
-    const email = req.body?.email?.toLowerCase() || 'unknown';
+    const email = req.body?.email?.toLowerCase() ?? 'unknown';
     return `forgot-password:${email}`;
   },
 });
 
 export const resetPasswordRateLimit = rateLimit({
   windowMs: parseInt(
-    process.env.RESET_PASSWORD_RATE_LIMIT_WINDOW_MS || String(DEFAULT_RATE_LIMIT_WINDOW_MS),
+    process.env.RESET_PASSWORD_RATE_LIMIT_WINDOW_MS ?? String(DEFAULT_RATE_LIMIT_WINDOW_MS),
     10
   ),
   // Use environment variable if set, otherwise use higher limit for test environment
   max: parseInt(
-    process.env.RESET_PASSWORD_RATE_LIMIT_MAX || (isTestEnvironment ? '1000000' : '5'),
+    process.env.RESET_PASSWORD_RATE_LIMIT_MAX ?? (isTestEnvironment ? '1000000' : '5'),
     10
   ),
   message: {

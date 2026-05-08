@@ -105,7 +105,7 @@ export const validateTransition = async (req: Request, res: Response): Promise<v
     const userId = req.user?.id;
 
     let userRoles: string[] = [];
-    const teamId = getParamValue(req.params.teamId) || req.body.teamId;
+    const teamId = getParamValue(req.params.teamId) ?? req.body.teamId;
 
     if (teamId && req.prisma && req.user?.id) {
       const teamMember = await req.prisma.teamMember.findUnique({
@@ -134,14 +134,15 @@ export const validateTransition = async (req: Request, res: Response): Promise<v
       success: true,
       data: result,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error validating transition', { error });
 
-    const statusCode = error.statusCode || 500;
+    const err = error as Error & { statusCode?: number; code?: string };
+    const statusCode = err.statusCode || 500;
     res.status(statusCode).json({
       success: false,
-      error: error.message || 'Failed to validate transition',
-      code: error.code,
+      error: err.message || 'Failed to validate transition',
+      code: err.code,
     });
   }
 };
@@ -164,7 +165,7 @@ export const executeStatusChange = async (req: Request, res: Response): Promise<
     }
 
     let userRoles: string[] = [];
-    const teamId = getParamValue(req.params.teamId) || req.body.teamId;
+    const teamId = getParamValue(req.params.teamId) ?? req.body.teamId;
 
     if (teamId && req.prisma && req.user?.id) {
       const teamMember = await req.prisma.teamMember.findUnique({
@@ -197,14 +198,15 @@ export const executeStatusChange = async (req: Request, res: Response): Promise<
       success: true,
       data: history,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error executing status change', { error });
 
-    const statusCode = error.statusCode || 500;
+    const err = error as Error & { statusCode?: number; code?: string };
+    const statusCode = err.statusCode || 500;
     res.status(statusCode).json({
       success: false,
-      error: error.message || 'Failed to execute status change',
-      code: error.code,
+      error: err.message || 'Failed to execute status change',
+      code: err.code,
     });
   }
 };
@@ -223,8 +225,8 @@ export const getStatusChangeHistory = async (req: Request, res: Response): Promi
       });
       return;
     }
-    const limit = parseInt(req.query.limit as string) || 50;
-    const offset = parseInt(req.query.offset as string) || 0;
+    const limit = parseInt(req.query.limit as string) ?? 50;
+    const offset = parseInt(req.query.offset as string) ?? 0;
 
     const history = await workflowService.getStatusChangeHistory(
       entityType,
@@ -311,14 +313,15 @@ export const createWorkflow = async (req: Request, res: Response): Promise<void>
       success: true,
       data: workflow,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error creating workflow', { error });
 
-    const statusCode = error.statusCode || 500;
+    const err = error as Error & { statusCode?: number; code?: string };
+    const statusCode = err.statusCode || 500;
     res.status(statusCode).json({
       success: false,
-      error: error.message || 'Failed to create workflow',
-      code: error.code,
+      error: err.message || 'Failed to create workflow',
+      code: err.code,
     });
   }
 };
@@ -346,14 +349,15 @@ export const addWorkflowState = async (req: Request, res: Response): Promise<voi
       success: true,
       data: state,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error adding workflow state', { error });
 
-    const statusCode = error.statusCode || 500;
+    const err = error as Error & { statusCode?: number; code?: string };
+    const statusCode = err.statusCode || 500;
     res.status(statusCode).json({
       success: false,
-      error: error.message || 'Failed to add workflow state',
-      code: error.code,
+      error: err.message || 'Failed to add workflow state',
+      code: err.code,
     });
   }
 };
@@ -385,14 +389,15 @@ export const addWorkflowTransition = async (req: Request, res: Response): Promis
       success: true,
       data: transition,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error adding workflow transition', { error });
 
-    const statusCode = error.statusCode || 500;
+    const err = error as Error & { statusCode?: number; code?: string };
+    const statusCode = err.statusCode || 500;
     res.status(statusCode).json({
       success: false,
-      error: error.message || 'Failed to add workflow transition',
-      code: error.code,
+      error: err.message || 'Failed to add workflow transition',
+      code: err.code,
     });
   }
 };

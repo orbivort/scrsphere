@@ -644,7 +644,7 @@ export const sprintReviewService = {
         name: data.name,
         email: data.email,
         role: data.role,
-        attended: data.attended ?? true,
+        attended: data.attended,
         createdBy: userId,
       },
     });

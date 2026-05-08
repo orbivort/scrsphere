@@ -1,7 +1,7 @@
 // Team Controller
 import { type Request, type Response } from 'express';
 import { teamService } from '../services/team.service';
-import { asyncHandler, createSuccessResponse } from '../utils/errors';
+import { asyncHandler, createSuccessResponse, UnauthorizedError } from '../utils/errors';
 import { getParamValue } from '../utils/validation';
 
 /**
@@ -9,7 +9,11 @@ import { getParamValue } from '../utils/validation';
  */
 export const getUserTeams = asyncHandler(async (req: Request, res: Response) => {
   const { page, limit, search, sortBy, sortOrder } = req.query;
-  const result = await teamService.getUserTeams(req.userId!, {
+  const userId = req.userId;
+  if (!userId) {
+    throw new UnauthorizedError('User not authenticated');
+  }
+  const result = await teamService.getUserTeams(userId, {
     page: page ? parseInt(page as string) : undefined,
     limit: limit ? parseInt(limit as string) : undefined,
     search: search as string,
@@ -27,7 +31,11 @@ export const getTeamById = asyncHandler(async (req: Request, res: Response) => {
   if (!teamId) {
     throw new Error('Team ID is required');
   }
-  const team = await teamService.getTeamById(teamId, req.userId!);
+  const userId = req.userId;
+  if (!userId) {
+    throw new UnauthorizedError('User not authenticated');
+  }
+  const team = await teamService.getTeamById(teamId, userId);
   res.json(createSuccessResponse(team));
 });
 
@@ -35,7 +43,11 @@ export const getTeamById = asyncHandler(async (req: Request, res: Response) => {
  * Create a new team
  */
 export const createTeam = asyncHandler(async (req: Request, res: Response) => {
-  const team = await teamService.createTeam(req.userId!, req.body);
+  const userId = req.userId;
+  if (!userId) {
+    throw new UnauthorizedError('User not authenticated');
+  }
+  const team = await teamService.createTeam(userId, req.body);
   res.status(201).json(createSuccessResponse(team));
 });
 
@@ -47,7 +59,11 @@ export const updateTeam = asyncHandler(async (req: Request, res: Response) => {
   if (!teamId) {
     throw new Error('Team ID is required');
   }
-  const team = await teamService.updateTeam(teamId, req.userId!, req.body);
+  const userId = req.userId;
+  if (!userId) {
+    throw new UnauthorizedError('User not authenticated');
+  }
+  const team = await teamService.updateTeam(teamId, userId, req.body);
   res.json(createSuccessResponse(team));
 });
 
@@ -59,7 +75,11 @@ export const deleteTeam = asyncHandler(async (req: Request, res: Response) => {
   if (!teamId) {
     throw new Error('Team ID is required');
   }
-  await teamService.deleteTeam(teamId, req.userId!);
+  const userId = req.userId;
+  if (!userId) {
+    throw new UnauthorizedError('User not authenticated');
+  }
+  await teamService.deleteTeam(teamId, userId);
   res.json(createSuccessResponse({ message: 'Team deleted successfully' }));
 });
 
@@ -71,7 +91,11 @@ export const addMember = asyncHandler(async (req: Request, res: Response) => {
   if (!teamId) {
     throw new Error('Team ID is required');
   }
-  const member = await teamService.addMember(teamId, req.userId!, req.body);
+  const userId = req.userId;
+  if (!userId) {
+    throw new UnauthorizedError('User not authenticated');
+  }
+  const member = await teamService.addMember(teamId, userId, req.body);
   res.status(201).json(createSuccessResponse(member));
 });
 
@@ -84,7 +108,11 @@ export const removeMember = asyncHandler(async (req: Request, res: Response) => 
   if (!teamId || !memberId) {
     throw new Error('Team ID and Member ID are required');
   }
-  await teamService.removeMember(teamId, req.userId!, memberId);
+  const userId = req.userId;
+  if (!userId) {
+    throw new UnauthorizedError('User not authenticated');
+  }
+  await teamService.removeMember(teamId, userId, memberId);
   res.json(createSuccessResponse({ message: 'Member removed successfully' }));
 });
 
@@ -98,7 +126,11 @@ export const updateMemberRole = asyncHandler(async (req: Request, res: Response)
     throw new Error('Team ID and Member ID are required');
   }
   const { role } = req.body;
-  const member = await teamService.updateMemberRole(teamId, req.userId!, memberId, role);
+  const userId = req.userId;
+  if (!userId) {
+    throw new UnauthorizedError('User not authenticated');
+  }
+  const member = await teamService.updateMemberRole(teamId, userId, memberId, role);
   res.json(createSuccessResponse(member));
 });
 
@@ -106,7 +138,11 @@ export const updateMemberRole = asyncHandler(async (req: Request, res: Response)
  * Get current user's teams with roles
  */
 export const getMyTeams = asyncHandler(async (req: Request, res: Response) => {
-  const teams = await teamService.getUserTeamsWithRoles(req.userId!);
+  const userId = req.userId;
+  if (!userId) {
+    throw new UnauthorizedError('User not authenticated');
+  }
+  const teams = await teamService.getUserTeamsWithRoles(userId);
   res.json(createSuccessResponse(teams));
 });
 
@@ -118,7 +154,11 @@ export const getMyRoleInTeam = asyncHandler(async (req: Request, res: Response) 
   if (!teamId) {
     throw new Error('Team ID is required');
   }
-  const role = await teamService.getUserRoleInTeam(req.userId!, teamId);
+  const userId = req.userId;
+  if (!userId) {
+    throw new UnauthorizedError('User not authenticated');
+  }
+  const role = await teamService.getUserRoleInTeam(userId, teamId);
 
   if (!role) {
     res.status(404).json({
@@ -145,7 +185,16 @@ export const selectTeam = asyncHandler(async (req: Request, res: Response) => {
     return;
   }
 
-  const isValid = await teamService.validateTeamMembership(req.userId!, teamId);
+  const userId = req.userId;
+  if (!userId) {
+    res.status(401).json({
+      success: false,
+      error: { message: 'User not authenticated' },
+    });
+    return;
+  }
+
+  const isValid = await teamService.validateTeamMembership(userId, teamId);
 
   if (!isValid) {
     res.status(403).json({
@@ -155,7 +204,7 @@ export const selectTeam = asyncHandler(async (req: Request, res: Response) => {
     return;
   }
 
-  const teams = await teamService.getUserTeamsWithRoles(req.userId!);
+  const teams = await teamService.getUserTeamsWithRoles(userId);
   const team = teams.find((t) => t.id === teamId);
 
   if (!team) {

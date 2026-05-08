@@ -115,7 +115,7 @@ class AuthService {
     });
 
     // Create GDPR consent audit records
-    const consentVersion = now.toISOString().split('T')[0] || 'unknown';
+    const consentVersion = now.toISOString().split('T')[0] ?? 'unknown';
     await prisma.consentRecord.createMany({
       data: [
         {
@@ -267,8 +267,12 @@ class AuthService {
       }
     }
 
+    if (!storedToken) {
+      throw new SessionExpiredError();
+    }
+
     const user = await prisma.user.findUnique({
-      where: { id: storedToken!.userId },
+      where: { id: storedToken.userId },
       select: {
         id: true,
         email: true,
@@ -283,7 +287,7 @@ class AuthService {
     }
 
     await prisma.refreshToken.update({
-      where: { id: storedToken!.id },
+      where: { id: storedToken.id },
       data: { revokedAt: new Date() },
     });
 

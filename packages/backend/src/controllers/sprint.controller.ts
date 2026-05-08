@@ -87,9 +87,9 @@ export const rollbackSprintStart = asyncHandler(async (req: Request, res: Respon
   const { previousPbiStatuses, createdSprintBacklogItemIds, createdTaskIds } = req.body;
 
   const rollbackData = {
-    previousPbiStatuses: new Map<string, string>(Object.entries(previousPbiStatuses || {})),
-    createdSprintBacklogItemIds: createdSprintBacklogItemIds || [],
-    createdTaskIds: createdTaskIds || [],
+    previousPbiStatuses: new Map<string, string>(Object.entries(previousPbiStatuses ?? {})),
+    createdSprintBacklogItemIds: createdSprintBacklogItemIds ?? [],
+    createdTaskIds: createdTaskIds ?? [],
   };
 
   await sprintService.rollbackSprintStart(id, rollbackData);
@@ -222,10 +222,7 @@ export const addPBIToSprint = asyncHandler(async (req: Request, res: Response) =
   if (!sprintId) {
     throw new BadRequestError('Sprint ID is required');
   }
-  const userId = req.user?.id;
-  if (!userId) {
-    throw new BadRequestError('User not authenticated');
-  }
+  const userId = req.user!.id;
   const result = await sprintBacklogManagerService.addPBIToActiveSprint(sprintId, userId, req.body);
   res.status(201).json(createSuccessResponse(result));
 });
@@ -239,10 +236,7 @@ export const removePBIFromSprint = asyncHandler(async (req: Request, res: Respon
   if (!pbiId) {
     throw new BadRequestError('PBI ID is required');
   }
-  const userId = req.user?.id;
-  if (!userId) {
-    throw new BadRequestError('User not authenticated');
-  }
+  const userId = req.user!.id;
   const result = await sprintBacklogManagerService.removePBIFromActiveSprint(
     sprintId,
     pbiId,

@@ -75,8 +75,8 @@ class ProductBacklogService {
       limit?: number;
     }
   ): Promise<PaginatedResponse<ProductBacklogItem>> {
-    const page = params?.page || 1;
-    const limit = params?.limit || 20;
+    const page = params?.page ?? 1;
+    const limit = params?.limit ?? 20;
     const skip = (page - 1) * limit;
 
     const where: Prisma.ProductBacklogItemWhereInput = {
@@ -150,7 +150,7 @@ class ProductBacklogService {
    */
   async createPBI(userId: string, data: CreatePBIData): Promise<ProductBacklogItem> {
     const pbiId = generateUUIDv7();
-    const initialStatus = data.status || 'NEW';
+    const initialStatus = data.status ?? 'NEW';
 
     const pbi = await prisma.productBacklogItem.create({
       data: {
@@ -160,10 +160,10 @@ class ProductBacklogService {
         title: data.title,
         description: data.description,
         storyPoints: data.storyPoints,
-        labels: data.labels || [],
+        labels: data.labels ?? [],
         acceptanceCriteria: data.acceptanceCriteria,
         createdBy: userId,
-        priority: data.priority || 'COULD_HAVE',
+        priority: data.priority ?? 'COULD_HAVE',
         businessValue: data.businessValue,
         status: initialStatus,
       },
@@ -238,11 +238,11 @@ class ProductBacklogService {
       );
 
       if (!validationResult.isValid) {
-        throw new BadRequestError(validationResult.reason || 'Invalid status transition');
+        throw new BadRequestError(validationResult.reason ?? 'Invalid status transition');
       }
 
       if (!validationResult.allowed) {
-        throw new ForbiddenError(validationResult.reason || 'Status transition not allowed');
+        throw new ForbiddenError(validationResult.reason ?? 'Status transition not allowed');
       }
     }
 

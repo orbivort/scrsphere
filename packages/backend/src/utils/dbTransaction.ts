@@ -40,7 +40,7 @@ class DatabaseCircuitBreaker {
 
     if (this.state.isOpen) {
       const error = new Error(
-        `Database circuit breaker is OPEN - ${operationName || 'Database operation'} temporarily unavailable`
+        `Database circuit breaker is OPEN - ${operationName ?? 'Database operation'} temporarily unavailable`
       );
       logger.error('Circuit breaker open - rejecting database operation', {
         operation: operationName,
@@ -181,7 +181,7 @@ export async function withTransaction<T>(
         attempt,
         maxAttempts: retries + 1,
         error: error instanceof Error ? error.message : String(error),
-        errorCode: (error as { code?: string })?.code,
+        errorCode: (error as { code?: string }).code,
         isRetryable: isRetryableError(error),
         duration,
       });

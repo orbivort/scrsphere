@@ -17,6 +17,8 @@ import {
   type Prisma,
   type ProductBacklogItem,
   type User,
+  type ItemStatus,
+  type SprintBacklogItem,
 } from '../generated/prisma/client';
 import { logger } from '../utils/logger';
 import { processBatch } from '../utils/batch';
@@ -373,10 +375,10 @@ class SprintService {
     }
 
     const totalEstimatedHours = data?.tasks
-      ? data.tasks.reduce((sum, task) => sum + (task.estimatedHours || 0), 0)
+      ? data.tasks.reduce((sum, task) => sum + (task.estimatedHours ?? 0), 0)
       : 0;
 
-    const pbiIds = data?.backlogItems?.map((item) => item.pbiId) ?? [];
+    const pbiIds = data?.backlogItems.map((item) => item.pbiId) ?? [];
 
     if (pbiIds.length > 0) {
       const existingPbis = await prisma.productBacklogItem.findMany({
@@ -394,16 +396,18 @@ class SprintService {
       operationName: 'startSprint',
     };
 
+    const currentSprintId = sprint.id;
+
     const updatedSprint = await withTransaction(async (tx) => {
       const updated = await tx.sprint.update({
-        where: { id: sprint!.id },
+        where: { id: currentSprintId },
         data: { status: 'ACTIVE' },
       });
 
       if (data?.backlogItems && data.backlogItems.length > 0) {
         const sprintBacklogData = data.backlogItems.map((item) => ({
           id: generateUUIDv7(),
-          sprintId: sprint!.id,
+          sprintId: currentSprintId,
           pbiId: item.pbiId,
           createdBy: userId,
         }));
@@ -466,7 +470,7 @@ class SprintService {
       if (data?.tasks && data.tasks.length > 0) {
         const assigneeIds = data.tasks
           .map((task) => task.assigneeId)
-          .filter((id): id is string => id !== undefined && id !== null);
+          .filter((id): id is string => id !== undefined);
 
         if (assigneeIds.length > 0) {
           const validUsers = await tx.user.findMany({
@@ -484,11 +488,11 @@ class SprintService {
 
         const tasksData = data.tasks.map((task) => ({
           id: generateUUIDv7(),
-          sprintId: sprint!.id,
+          sprintId: currentSprintId,
           pbiId: task.pbiId,
           title: task.title,
           description: task.description,
-          assigneeId: task.assigneeId || null,
+          assigneeId: task.assigneeId ?? null,
           estimatedHours: task.estimatedHours,
           remainingHours: task.remainingHours ?? task.estimatedHours,
           status: 'TODO' as TaskStatus,
@@ -526,7 +530,7 @@ class SprintService {
                   changeReason: 'Task created during sprint start',
                   metadata: {
                     source: 'sprint_start',
-                    sprintId: sprint!.id,
+                    sprintId: currentSprintId,
                     pbiId: task.pbiId,
                     title: task.title,
                   },
@@ -537,7 +541,12 @@ class SprintService {
         }
       }
 
-      await this.reinitializeBurndownDataInTransaction(tx, sprint!.id, totalEstimatedHours, userId);
+      await this.reinitializeBurndownDataInTransaction(
+        tx,
+        currentSprintId,
+        totalEstimatedHours,
+        userId
+      );
 
       return updated;
     }, transactionOptions);
@@ -579,7 +588,7 @@ class SprintService {
         for (const [pbiId, previousStatus] of rollbackData.previousPbiStatuses) {
           await tx.productBacklogItem.update({
             where: { id: pbiId },
-            data: { status: previousStatus as any },
+            data: { status: previousStatus as ItemStatus },
           });
         }
 
@@ -647,7 +656,7 @@ class SprintService {
     }
 
     const sprintId = generateUUIDv7();
-    const creatorId = userId || generatedSprint.createdBy || 'system';
+    const creatorId = userId ?? generatedSprint.createdBy ?? 'system';
 
     const sprint = await prisma.sprint.create({
       data: {
@@ -782,7 +791,7 @@ class SprintService {
                     workflowId: workflow.id,
                     fromStateId: inProgressState.id,
                     toStateId: doneState.id,
-                    changedBy: userId || 'system',
+                    changedBy: userId ?? 'system',
                     changeReason: 'Sprint completed - All tasks done',
                     metadata: { source: 'sprint_completion' },
                   },
@@ -953,7 +962,7 @@ class SprintService {
     // Create notification if assignee is set and not the creator
     if (data.assigneeId && data.assigneeId !== userId) {
       const assigner = await prisma.user.findUnique({ where: { id: userId } });
-      if (assigner && task.sprint) {
+      if (assigner) {
         try {
           await prisma.notification.create({
             data: {
@@ -966,7 +975,7 @@ class SprintService {
                 taskId: task.id,
                 sprintId: task.sprintId,
                 pbiId: task.pbiId,
-              } as any,
+              } as Prisma.InputJsonValue,
               createdBy: userId,
             },
           });
@@ -1086,7 +1095,7 @@ class SprintService {
     // Create notification if assignee changed
     if (data.assigneeId && data.assigneeId !== task.assigneeId && userId) {
       const assigner = await prisma.user.findUnique({ where: { id: userId } });
-      if (assigner && task.sprint && data.assigneeId !== userId) {
+      if (assigner && data.assigneeId !== userId) {
         try {
           await prisma.notification.create({
             data: {
@@ -1099,7 +1108,7 @@ class SprintService {
                 taskId: task.id,
                 sprintId: task.sprintId,
                 pbiId: task.pbiId,
-              } as any,
+              } as Prisma.InputJsonValue,
               createdBy: userId,
             },
           });
@@ -1354,7 +1363,10 @@ class SprintBacklogManagerService {
     sprintId: string,
     userId: string,
     data: AddPBIToSprintData
-  ): Promise<{ sprintBacklogItem: any; change: SprintBacklogChange }> {
+  ): Promise<{
+    sprintBacklogItem: SprintBacklogItem & { pbi: ProductBacklogItem };
+    change: SprintBacklogChange;
+  }> {
     const sprint = await prisma.sprint.findUnique({
       where: { id: sprintId },
       include: {
@@ -1437,17 +1449,50 @@ class SprintBacklogManagerService {
                 fromStateId: readyState.id,
                 toStateId: inProgressState.id,
                 changedBy: userId,
-                changeReason: data.reason || 'PBI added to active sprint',
+                changeReason: data.reason ?? 'PBI added to active sprint',
                 metadata: { source: 'sprint_backlog_addition' },
               },
             });
           }
         }
 
-        let changeRecord = null;
-        if ((tx as any).sprintBacklogChange) {
+        let changeRecord: {
+          id: string;
+          pbi?: { title: string } | null;
+          creator?: { firstName: string; lastName: string } | null;
+          createdAt: Date;
+        } | null = null;
+        // Check if sprintBacklogChange model exists (requires migration)
+        const txWithSprintBacklogChange = tx as Prisma.TransactionClient & {
+          sprintBacklogChange?: {
+            create: (args: {
+              data: {
+                id: string;
+                sprintId: string;
+                pbiId: string;
+                sprintBacklogItemId: string;
+                changeType: string;
+                reason?: string;
+                previousStatus: string;
+                newStatus: string;
+                taskCount: number;
+                createdBy: string;
+              };
+              include: {
+                pbi: { select: { title: true } };
+                creator: { select: { firstName: true; lastName: true } };
+              };
+            }) => Promise<{
+              id: string;
+              pbi?: { title: string } | null;
+              creator?: { firstName: string; lastName: string } | null;
+              createdAt: Date;
+            }>;
+          };
+        };
+        if (txWithSprintBacklogChange.sprintBacklogChange) {
           try {
-            changeRecord = await (tx as any).sprintBacklogChange.create({
+            changeRecord = await txWithSprintBacklogChange.sprintBacklogChange.create({
               data: {
                 id: generateUUIDv7(),
                 sprintId,
@@ -1558,7 +1603,7 @@ class SprintBacklogManagerService {
         const newStatus = data.taskAction === 'return_to_backlog' ? 'READY' : pbi.status;
         await tx.productBacklogItem.update({
           where: { id: pbiId },
-          data: { status: newStatus as any },
+          data: { status: newStatus as ItemStatus },
         });
 
         if (newStatus !== pbi.status) {
@@ -1587,7 +1632,7 @@ class SprintBacklogManagerService {
                   fromStateId: fromState.id,
                   toStateId: toState.id,
                   changedBy: userId,
-                  changeReason: data.reason || 'PBI removed from sprint',
+                  changeReason: data.reason ?? 'PBI removed from sprint',
                   metadata: {
                     source: 'sprint_backlog_removal',
                     taskAction: data.taskAction,
@@ -1598,10 +1643,44 @@ class SprintBacklogManagerService {
           }
         }
 
-        let changeRecord = null;
-        if ((tx as any).sprintBacklogChange) {
+        let changeRecord: {
+          id: string;
+          pbi?: { title: string } | null;
+          creator?: { firstName: string; lastName: string } | null;
+          createdAt: Date;
+        } | null = null;
+        // Check if sprintBacklogChange model exists (requires migration)
+        const txWithSprintBacklogChange = tx as Prisma.TransactionClient & {
+          sprintBacklogChange?: {
+            create: (args: {
+              data: {
+                id: string;
+                sprintId: string;
+                pbiId: string;
+                sprintBacklogItemId: string | null;
+                changeType: string;
+                reason?: string;
+                previousStatus: string;
+                newStatus: string;
+                taskAction?: string;
+                taskCount: number;
+                createdBy: string;
+              };
+              include: {
+                pbi: { select: { title: true } };
+                creator: { select: { firstName: true; lastName: true } };
+              };
+            }) => Promise<{
+              id: string;
+              pbi?: { title: string } | null;
+              creator?: { firstName: string; lastName: string } | null;
+              createdAt: Date;
+            }>;
+          };
+        };
+        if (txWithSprintBacklogChange.sprintBacklogChange) {
           try {
-            changeRecord = await (tx as any).sprintBacklogChange.create({
+            changeRecord = await txWithSprintBacklogChange.sprintBacklogChange.create({
               data: {
                 id: generateUUIDv7(),
                 sprintId,
@@ -1666,13 +1745,38 @@ class SprintBacklogManagerService {
     }
 
     // Check if sprintBacklogChange model exists (requires migration)
-    if (!(prisma as any).sprintBacklogChange) {
+    const prismaWithSprintBacklogChange = prisma as typeof prisma & {
+      sprintBacklogChange?: {
+        findMany: (args: {
+          where: { sprintId: string };
+          include: {
+            pbi: { select: { title: true } };
+            creator: { select: { firstName: true; lastName: true } };
+          };
+          orderBy: { createdAt: 'desc' };
+          take: number;
+        }) => Promise<
+          Array<{
+            id: string;
+            sprintId: string;
+            pbiId: string;
+            changeType: string;
+            reason?: string | null;
+            createdBy?: string | null;
+            createdAt: Date;
+            pbi?: { title: string } | null;
+            creator?: { firstName: string; lastName: string } | null;
+          }>
+        >;
+      };
+    };
+    if (!prismaWithSprintBacklogChange.sprintBacklogChange) {
       logger.warn('SprintBacklogChange table not found. Please run: npx prisma migrate dev');
       return [];
     }
 
     try {
-      const changeRecords = await (prisma as any).sprintBacklogChange.findMany({
+      const changeRecords = await prismaWithSprintBacklogChange.sprintBacklogChange.findMany({
         where: { sprintId },
         include: {
           pbi: { select: { title: true } },
@@ -1682,11 +1786,11 @@ class SprintBacklogManagerService {
         take: limit,
       });
 
-      const changes: SprintBacklogChange[] = changeRecords.map((record: any) => ({
+      const changes: SprintBacklogChange[] = changeRecords.map((record) => ({
         id: record.id,
         sprintId: record.sprintId,
         pbiId: record.pbiId,
-        pbiTitle: record.pbi?.title ?? 'Unknown',
+        pbiTitle: record.pbi ? record.pbi.title : 'Unknown',
         changeType: record.changeType as 'ADDED' | 'REMOVED',
         reason: record.reason ?? undefined,
         changedBy: record.createdBy ?? 'system',
@@ -1697,9 +1801,9 @@ class SprintBacklogManagerService {
       }));
 
       return changes;
-    } catch (error: any) {
+    } catch (error: unknown) {
       logger.error('Error fetching sprint backlog changes', {
-        error: error.message,
+        error: error instanceof Error ? error.message : 'Unknown error',
       });
       return [];
     }
@@ -1718,7 +1822,7 @@ class SprintBacklogManagerService {
       },
     });
 
-    const excludePbiIds = activeSprint?.sprintBacklogItems.map((item) => item.pbiId) || [];
+    const excludePbiIds = activeSprint?.sprintBacklogItems.map((item) => item.pbiId) ?? [];
 
     const pbis = await prisma.productBacklogItem.findMany({
       where: {
