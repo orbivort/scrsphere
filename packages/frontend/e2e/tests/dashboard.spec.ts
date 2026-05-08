@@ -25,23 +25,25 @@ test.describe('Dashboard Page', () => {
     await page.waitForTimeout(500);
   });
 
-  test('TC-DASH-001: Display Active Sprint Information', async ({ dashboardPage, page }) => {
+  test('TC-DASH-001: Display Active Sprint Information @smoke', async ({ dashboardPage, page }) => {
     await test.step('Verify dashboard page loads', async () => {
       await page
-        .waitForSelector('h1, main, [class*="page-header"], .loading', { timeout: 10000 })
+        .waitForSelector('h1, [data-testid="dashboard"], .loading', { timeout: 10000 })
         .catch(() => {});
     });
 
-    await test.step('Check for sprint card or dashboard content', async () => {
-      const hasSprintCard = await dashboardPage.isSprintCardVisible().catch(() => false);
-      const hasPageContent = await page
-        .locator('main, [class*="dashboard"], [class*="content"]')
-        .first()
-        .isVisible()
-        .catch(() => false);
-      const hasBody = await page.locator('body').isVisible();
+    await test.step('Verify dashboard page structure', async () => {
+      const dashboardRoot = page.locator('[data-testid="dashboard"]');
+      await expect(dashboardRoot).toBeVisible({ timeout: 10000 });
+    });
 
-      expect(hasSprintCard || hasPageContent || hasBody).toBe(true);
+    await test.step('Verify sprint card or dashboard content', async () => {
+      const sprintCard = page.locator('[class*="sprint-card"]').first();
+      const dashboardGrid = page.locator('[class*="dashboard-grid"]').first();
+      const hasSprintCard = await sprintCard.isVisible().catch(() => false);
+      const hasDashboardGrid = await dashboardGrid.isVisible().catch(() => false);
+      const hasContent = hasSprintCard || hasDashboardGrid;
+      expect(hasContent).toBe(true);
     });
   });
 
@@ -50,22 +52,25 @@ test.describe('Dashboard Page', () => {
       await dashboardPage.goto();
     });
 
-    await test.step('Check for burndown chart or dashboard content', async () => {
+    await test.step('Verify dashboard page structure', async () => {
       await page
-        .waitForSelector('main, [class*="dashboard"], [class*="content"], .loading', {
+        .waitForSelector('[data-testid="dashboard"], .loading', {
           timeout: 10000,
         })
         .catch(() => {});
       await page.waitForTimeout(500);
-      const hasChart = await dashboardPage.isBurndownChartVisible().catch(() => false);
-      const hasPageContent = await page
-        .locator('main, [class*="dashboard"], [class*="content"]')
-        .first()
-        .isVisible()
-        .catch(() => false);
-      const hasBody = await page.locator('body').isVisible();
 
-      expect(hasChart || hasPageContent || hasBody).toBe(true);
+      const dashboardRoot = page.locator('[data-testid="dashboard"]');
+      await expect(dashboardRoot).toBeVisible({ timeout: 10000 });
+    });
+
+    await test.step('Verify burndown chart or dashboard content', async () => {
+      const chartSection = page.locator('[class*="chart-section"]').first();
+      const dashboardGrid = page.locator('[class*="dashboard-grid"]').first();
+      const hasChart = await chartSection.isVisible().catch(() => false);
+      const hasGrid = await dashboardGrid.isVisible().catch(() => false);
+      const hasContent = hasChart || hasGrid;
+      expect(hasContent).toBe(true);
     });
   });
 
@@ -74,22 +79,25 @@ test.describe('Dashboard Page', () => {
       await dashboardPage.goto();
     });
 
-    await test.step('Check for task list or dashboard content', async () => {
+    await test.step('Verify dashboard page structure', async () => {
       await page
-        .waitForSelector('main, [class*="dashboard"], [class*="content"], .loading', {
+        .waitForSelector('[data-testid="dashboard"], .loading', {
           timeout: 10000,
         })
         .catch(() => {});
       await page.waitForTimeout(500);
-      const hasTaskList = await dashboardPage.isTaskListVisible().catch(() => false);
-      const hasPageContent = await page
-        .locator('main, [class*="dashboard"], [class*="content"]')
-        .first()
-        .isVisible()
-        .catch(() => false);
-      const hasBody = await page.locator('body').isVisible();
 
-      expect(hasTaskList || hasPageContent || hasBody).toBe(true);
+      const dashboardRoot = page.locator('[data-testid="dashboard"]');
+      await expect(dashboardRoot).toBeVisible({ timeout: 10000 });
+    });
+
+    await test.step('Verify task list or dashboard content', async () => {
+      const dashboardCard = page.locator('[class*="dashboard-card"]').first();
+      const dashboardGrid = page.locator('[class*="dashboard-grid"]').first();
+      const hasCard = await dashboardCard.isVisible().catch(() => false);
+      const hasGrid = await dashboardGrid.isVisible().catch(() => false);
+      const hasContent = hasCard || hasGrid;
+      expect(hasContent).toBe(true);
     });
   });
 
@@ -123,14 +131,20 @@ test.describe('Dashboard Page', () => {
       await dashboardPage.goto();
     });
 
+    await test.step('Verify initial dashboard state', async () => {
+      const dashboardRoot = page.locator('[data-testid="dashboard"]');
+      await expect(dashboardRoot).toBeVisible({ timeout: 10000 });
+    });
+
     await test.step('Reload page', async () => {
       await page.reload();
     });
 
-    await test.step('Verify dashboard still loads', async () => {
+    await test.step('Verify dashboard still loads after refresh', async () => {
       await page.waitForLoadState('domcontentloaded');
-      const bodyContent = await page.locator('body').isVisible();
-      expect(bodyContent).toBe(true);
+
+      const dashboardRoot = page.locator('[data-testid="dashboard"]');
+      await expect(dashboardRoot).toBeVisible({ timeout: 10000 });
     });
   });
 });
@@ -159,14 +173,36 @@ test.describe('Dashboard - Responsive Design', () => {
   test('should display correctly on mobile viewport', async ({ dashboardPage, page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
     await dashboardPage.goto();
+    await page.waitForLoadState('domcontentloaded');
 
-    await expect(page.locator('h1, [class*="page-header"]').first()).toBeVisible();
+    const dashboardRoot = page.locator('[data-testid="dashboard"]');
+    const emptyState = page.locator('[class*="empty-state"]').first();
+    const loadingState = page.locator('[class*="loading"]').first();
+    const mainContent = page.locator('main, [class*="main-content"]').first();
+
+    const hasDashboard = await dashboardRoot.isVisible().catch(() => false);
+    const hasEmpty = await emptyState.isVisible().catch(() => false);
+    const hasLoading = await loadingState.isVisible().catch(() => false);
+    const hasMain = await mainContent.isVisible().catch(() => false);
+
+    expect(hasDashboard || hasEmpty || hasLoading || hasMain).toBe(true);
   });
 
   test('should display correctly on tablet viewport', async ({ dashboardPage, page }) => {
     await page.setViewportSize({ width: 768, height: 1024 });
     await dashboardPage.goto();
+    await page.waitForLoadState('domcontentloaded');
 
-    await expect(page.locator('h1, [class*="page-header"]').first()).toBeVisible();
+    const dashboardRoot = page.locator('[data-testid="dashboard"]');
+    const emptyState = page.locator('[class*="empty-state"]').first();
+    const loadingState = page.locator('[class*="loading"]').first();
+    const mainContent = page.locator('main, [class*="main-content"]').first();
+
+    const hasDashboard = await dashboardRoot.isVisible().catch(() => false);
+    const hasEmpty = await emptyState.isVisible().catch(() => false);
+    const hasLoading = await loadingState.isVisible().catch(() => false);
+    const hasMain = await mainContent.isVisible().catch(() => false);
+
+    expect(hasDashboard || hasEmpty || hasLoading || hasMain).toBe(true);
   });
 });

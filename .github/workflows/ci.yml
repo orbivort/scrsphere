@@ -183,9 +183,91 @@ jobs:
   test-frontend-e2e:
     name: Frontend E2E Tests
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 45
     needs: [lint-and-typecheck, detect-changes]
-    if: needs.detect-changes.outputs.frontend == 'true' || needs.detect-changes.outputs.shared == 'true'
+    if: (needs.detect-changes.outputs.frontend == 'true' || needs.detect-changes.outputs.shared == 'true') && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1/2, 2/2]
+    
+    env:
+      CI: true
+      E2E_BROWSERS: desktop
+      VITE_USE_MOCK_API: false
+      VITE_API_URL: http://localhost:5001/api/v1
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+        id: pnpm-cache
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build shared package
+        run: pnpm --filter=@scrsphere/shared run build
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('packages/frontend/package.json', 'pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: pnpm --filter=@scrsphere/frontend exec playwright install --with-deps
+
+      - name: Install Playwright browser dependencies
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: pnpm --filter=@scrsphere/frontend exec playwright install-deps
+
+      - name: Run frontend E2E tests (Shard ${{ matrix.shard }})
+        run: pnpm --filter=@scrsphere/frontend exec playwright test --shard=${{ matrix.shard }}
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: frontend-e2e-report-${{ matrix.shard }}
+          path: |
+            packages/frontend/playwright-report
+            packages/frontend/test-results
+          retention-days: 7
+
+  test-frontend-e2e-smoke:
+    name: Frontend E2E Smoke Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [lint-and-typecheck, detect-changes]
+    if: (needs.detect-changes.outputs.frontend == 'true' || needs.detect-changes.outputs.shared == 'true') && github.event_name == 'pull_request'
     
     env:
       CI: true
@@ -244,15 +326,14 @@ jobs:
         if: steps.playwright-cache.outputs.cache-hit == 'true'
         run: pnpm --filter=@scrsphere/frontend exec playwright install-deps chromium
 
-      - name: Run frontend E2E tests
-        run: pnpm --filter=@scrsphere/frontend run test:e2e:chromium
-        continue-on-error: true
+      - name: Run frontend E2E smoke tests
+        run: pnpm --filter=@scrsphere/frontend exec playwright test --grep=@smoke
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: frontend-e2e-report
+          name: frontend-e2e-smoke-report
           path: |
             packages/frontend/playwright-report
             packages/frontend/test-results
@@ -471,8 +552,8 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    needs: [test-frontend, test-backend, test-backend-integration, test-backend-e2e, detect-changes]
-    if: always() && (needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.frontend == 'true' || needs.detect-changes.outputs.shared == 'true')
+    needs: [test-frontend, test-frontend-e2e, test-frontend-e2e-smoke, test-backend, test-backend-integration, test-backend-e2e, detect-changes]
+    if: always() && (needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.frontend == 'true' || needs.detect-changes.outputs.shared == 'true') && (needs.test-frontend.result == 'success' || needs.test-frontend.result == 'skipped') && (needs.test-frontend-e2e.result == 'success' || needs.test-frontend-e2e.result == 'skipped') && (needs.test-frontend-e2e-smoke.result == 'success' || needs.test-frontend-e2e-smoke.result == 'skipped')
     
     steps:
       - name: Checkout repository

@@ -2,7 +2,7 @@ import { test, expect, clearMockAuthState } from '../fixtures';
 import { generateInvalidCredentials } from '../fixtures/dataFactory';
 
 test.describe('Authentication Flow', () => {
-  test('TC-AUTH-001: User Registration', async ({ loginPage, page, mockApi }) => {
+  test('TC-AUTH-001: User Registration @smoke', async ({ loginPage, page, mockApi }) => {
     const timestamp = Date.now();
     const random = Math.floor(Math.random() * 10000);
     const testUser = {
@@ -51,7 +51,11 @@ test.describe('Authentication Flow', () => {
     });
   });
 
-  test('TC-AUTH-002: User Login with Valid Credentials', async ({ loginPage, page, mockApi }) => {
+  test('TC-AUTH-002: User Login with Valid Credentials @smoke', async ({
+    loginPage,
+    page,
+    mockApi,
+  }) => {
     const timestamp = Date.now();
     const random = Math.floor(Math.random() * 10000);
     const testUser = {

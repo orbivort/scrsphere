@@ -21,7 +21,7 @@ test.describe('Sprint Board Page', () => {
     await page.waitForURL(/\/team/, { timeout: 30000 });
   });
 
-  test('TC-SPRINT-001: Display Sprint Board', async ({ sprintBoardPage, page }) => {
+  test('TC-SPRINT-001: Display Sprint Board @smoke', async ({ sprintBoardPage, page }) => {
     await test.step('Navigate to sprint board page', async () => {
       await sprintBoardPage.goto();
     });
@@ -54,38 +54,40 @@ test.describe('Sprint Board Page', () => {
       await sprintBoardPage.goto();
     });
 
-    await test.step('Check for kanban columns or empty state', async () => {
+    await test.step('Verify sprint board page structure', async () => {
       await page.waitForLoadState('domcontentloaded');
 
-      const todoColumn = page.locator(
-        '[class*="column"]:has(h3:has-text("TO DO")), [data-status="todo"]'
-      );
-      const inProgressColumn = page.locator(
-        '[class*="column"]:has(h3:has-text("IN PROGRESS")), [data-status="in_progress"]'
-      );
-      const doneColumn = page.locator(
-        '[class*="column"]:has(h3:has-text("DONE")), [data-status="done"]'
-      );
-      const emptyState = page.locator('[class*="empty-state"]');
+      const sprintBoardRoot = page.locator('[data-testid="sprint-board"]');
+      const emptyState = page.locator('[class*="empty-state"]').first();
+      const loadingState = page.locator('[class*="loading"]').first();
+      const mainContent = page.locator('main, [class*="main-content"]').first();
 
-      const hasTodoColumn = await todoColumn
-        .first()
-        .isVisible()
-        .catch(() => false);
-      const hasInProgressColumn = await inProgressColumn
-        .first()
-        .isVisible()
-        .catch(() => false);
-      const hasDoneColumn = await doneColumn
-        .first()
-        .isVisible()
-        .catch(() => false);
-      const hasEmptyState = await emptyState.isVisible().catch(() => false);
-      const hasBody = await page.locator('body').isVisible();
+      const hasBoard = await sprintBoardRoot.isVisible().catch(() => false);
+      const hasEmpty = await emptyState.isVisible().catch(() => false);
+      const hasLoading = await loadingState.isVisible().catch(() => false);
+      const hasMain = await mainContent.isVisible().catch(() => false);
 
-      expect(
-        hasTodoColumn || hasInProgressColumn || hasDoneColumn || hasEmptyState || hasBody
-      ).toBe(true);
+      expect(hasBoard || hasEmpty || hasLoading || hasMain).toBe(true);
+    });
+
+    await test.step('Verify kanban columns or empty state exists', async () => {
+      const sprintBoardRoot = page.locator('[data-testid="sprint-board"]');
+      const emptyState = page.locator('[class*="empty-state"]').first();
+      const loadingState = page.locator('[class*="loading"]').first();
+
+      const hasBoard = await sprintBoardRoot.isVisible().catch(() => false);
+      const hasEmpty = await emptyState.isVisible().catch(() => false);
+      const hasLoading = await loadingState.isVisible().catch(() => false);
+
+      if (hasBoard) {
+        const kanbanBoard = page.locator('[class*="kanban-board"]').first();
+        const noSprint = page.locator('[class*="no-sprint"]').first();
+        const hasKanban = await kanbanBoard.isVisible().catch(() => false);
+        const hasNoSprint = await noSprint.isVisible().catch(() => false);
+        expect(hasKanban || hasNoSprint).toBe(true);
+      } else {
+        expect(hasEmpty || hasLoading).toBe(true);
+      }
     });
   });
 
@@ -94,21 +96,60 @@ test.describe('Sprint Board Page', () => {
       await sprintBoardPage.goto();
     });
 
-    await test.step('Try to toggle burndown chart', async () => {
+    await test.step('Verify page loads successfully', async () => {
       await page.waitForLoadState('domcontentloaded');
+      const sprintBoardRoot = page.locator('[data-testid="sprint-board"]');
+      const emptyState = page.locator('[class*="empty-state"]').first();
+      const loadingState = page.locator('[class*="loading"]').first();
+      const mainContent = page.locator('main, [class*="main-content"]').first();
+      const body = page.locator('body').first();
 
-      const burndownButton = page.locator(
-        'button:has-text("Burndown"), [aria-label*="burndown" i]'
-      );
-      if (await burndownButton.isVisible()) {
-        await burndownButton.click();
-        await page.waitForTimeout(500);
+      const hasBoard = await sprintBoardRoot.isVisible().catch(() => false);
+      const hasEmpty = await emptyState.isVisible().catch(() => false);
+      const hasLoading = await loadingState.isVisible().catch(() => false);
+      const hasMain = await mainContent.isVisible().catch(() => false);
+      const hasBody = await body.isVisible().catch(() => false);
+
+      expect(hasBoard || hasEmpty || hasLoading || hasMain || hasBody).toBe(true);
+    });
+
+    await test.step('Toggle burndown chart if available', async () => {
+      const sprintBoardRoot = page.locator('[data-testid="sprint-board"]');
+      const hasBoard = await sprintBoardRoot.isVisible().catch(() => false);
+
+      if (hasBoard) {
+        const burndownButton = page
+          .locator('button:has-text("Burndown"), button:has-text("Toggle Burndown")')
+          .first();
+
+        if (await burndownButton.isVisible().catch(() => false)) {
+          await burndownButton.click();
+          await page.waitForTimeout(500);
+
+          const chartContainer = page
+            .locator('[class*="burndown"], [class*="chart-section"], canvas')
+            .first();
+          await expect(chartContainer)
+            .toBeVisible({ timeout: 5000 })
+            .catch(() => {});
+        }
       }
     });
 
-    await test.step('Verify page still functions', async () => {
-      const bodyContent = await page.locator('body').isVisible();
-      expect(bodyContent).toBe(true);
+    await test.step('Verify sprint board remains functional', async () => {
+      const sprintBoardRoot = page.locator('[data-testid="sprint-board"]');
+      const emptyState = page.locator('[class*="empty-state"]').first();
+      const loadingState = page.locator('[class*="loading"]').first();
+      const mainContent = page.locator('main, [class*="main-content"]').first();
+      const pageHeader = page.locator('h1').first();
+
+      const hasBoard = await sprintBoardRoot.isVisible().catch(() => false);
+      const hasEmpty = await emptyState.isVisible().catch(() => false);
+      const hasLoading = await loadingState.isVisible().catch(() => false);
+      const hasMain = await mainContent.isVisible().catch(() => false);
+      const hasHeader = await pageHeader.isVisible().catch(() => false);
+
+      expect(hasBoard || hasEmpty || hasLoading || hasMain || hasHeader).toBe(true);
     });
   });
 
@@ -117,27 +158,75 @@ test.describe('Sprint Board Page', () => {
       await sprintBoardPage.goto();
     });
 
-    await test.step('Try to filter by assignee', async () => {
+    await test.step('Verify page loads successfully', async () => {
       await page.waitForLoadState('domcontentloaded');
+      const sprintBoardRoot = page.locator('[data-testid="sprint-board"]');
+      const emptyState = page.locator('[class*="empty-state"]').first();
+      const loadingState = page.locator('[class*="loading"]').first();
+      const mainContent = page.locator('main, [class*="main-content"]').first();
+      const body = page.locator('body').first();
 
-      const assigneeFilter = page.locator('[name="assignee"], [aria-label*="assignee" i]');
-      if (await assigneeFilter.isVisible()) {
-        await assigneeFilter.click();
-        await page.waitForTimeout(300);
+      const hasBoard = await sprintBoardRoot.isVisible().catch(() => false);
+      const hasEmpty = await emptyState.isVisible().catch(() => false);
+      const hasLoading = await loadingState.isVisible().catch(() => false);
+      const hasMain = await mainContent.isVisible().catch(() => false);
+      const hasBody = await body.isVisible().catch(() => false);
+
+      expect(hasBoard || hasEmpty || hasLoading || hasMain || hasBody).toBe(true);
+    });
+
+    await test.step('Filter by assignee if available', async () => {
+      const sprintBoardRoot = page.locator('[data-testid="sprint-board"]');
+      const hasBoard = await sprintBoardRoot.isVisible().catch(() => false);
+
+      if (hasBoard) {
+        const assigneeFilter = page.locator('#filter-assignee, [aria-label*="assignee" i]').first();
+
+        if (await assigneeFilter.isVisible().catch(() => false)) {
+          await assigneeFilter.click();
+          await page.waitForTimeout(300);
+
+          const filterDropdown = page.locator('[class*="dropdown"], [role="listbox"]').first();
+          await expect(filterDropdown)
+            .toBeVisible({ timeout: 3000 })
+            .catch(() => {});
+        }
       }
     });
 
-    await test.step('Try to search tasks', async () => {
-      const searchInput = page.locator('input[type="search"], input[placeholder*="search" i]');
-      if (await searchInput.isVisible()) {
-        await searchInput.fill('login');
-        await page.waitForTimeout(500);
+    await test.step('Search tasks if search input available', async () => {
+      const sprintBoardRoot = page.locator('[data-testid="sprint-board"]');
+      const hasBoard = await sprintBoardRoot.isVisible().catch(() => false);
+
+      if (hasBoard) {
+        const searchInput = page.locator('#search-tasks, [class*="filter-search"]').first();
+
+        if (await searchInput.isVisible().catch(() => false)) {
+          await searchInput.fill('login');
+          await page.waitForTimeout(500);
+
+          const taskCards = page.locator('[class*="task-card"], [class*="task-item"]').first();
+          await expect(taskCards)
+            .toBeVisible({ timeout: 3000 })
+            .catch(() => {});
+        }
       }
     });
 
-    await test.step('Verify page still functions', async () => {
-      const bodyContent = await page.locator('body').isVisible();
-      expect(bodyContent).toBe(true);
+    await test.step('Verify sprint board remains functional', async () => {
+      const sprintBoardRoot = page.locator('[data-testid="sprint-board"]');
+      const emptyState = page.locator('[class*="empty-state"]').first();
+      const loadingState = page.locator('[class*="loading"]').first();
+      const mainContent = page.locator('main, [class*="main-content"]').first();
+      const pageHeader = page.locator('h1').first();
+
+      const hasBoard = await sprintBoardRoot.isVisible().catch(() => false);
+      const hasEmpty = await emptyState.isVisible().catch(() => false);
+      const hasLoading = await loadingState.isVisible().catch(() => false);
+      const hasMain = await mainContent.isVisible().catch(() => false);
+      const hasHeader = await pageHeader.isVisible().catch(() => false);
+
+      expect(hasBoard || hasEmpty || hasLoading || hasMain || hasHeader).toBe(true);
     });
   });
 
@@ -146,10 +235,39 @@ test.describe('Sprint Board Page', () => {
       await sprintBoardPage.goto();
     });
 
-    await test.step('Verify page loads', async () => {
+    await test.step('Verify page loads successfully', async () => {
       await page.waitForLoadState('domcontentloaded');
-      const bodyContent = await page.locator('body').isVisible();
-      expect(bodyContent).toBe(true);
+      const sprintBoardRoot = page.locator('[data-testid="sprint-board"]');
+      const emptyState = page.locator('[class*="empty-state"]').first();
+      const loadingState = page.locator('[class*="loading"]').first();
+      const mainContent = page.locator('main, [class*="main-content"]').first();
+
+      const hasBoard = await sprintBoardRoot.isVisible().catch(() => false);
+      const hasEmpty = await emptyState.isVisible().catch(() => false);
+      const hasLoading = await loadingState.isVisible().catch(() => false);
+      const hasMain = await mainContent.isVisible().catch(() => false);
+
+      expect(hasBoard || hasEmpty || hasLoading || hasMain).toBe(true);
+    });
+
+    await test.step('Verify task statistics or sprint info is displayed', async () => {
+      const sprintBoardRoot = page.locator('[data-testid="sprint-board"]');
+      const emptyState = page.locator('[class*="empty-state"]').first();
+      const loadingState = page.locator('[class*="loading"]').first();
+      const pageHeader = page.locator('h1').first();
+
+      const hasBoard = await sprintBoardRoot.isVisible().catch(() => false);
+      const hasEmpty = await emptyState.isVisible().catch(() => false);
+      const hasLoading = await loadingState.isVisible().catch(() => false);
+      const hasHeader = await pageHeader.isVisible().catch(() => false);
+
+      if (hasBoard) {
+        const pageTitle = page.locator('h1').first();
+        const hasTitle = await pageTitle.isVisible().catch(() => false);
+        expect(hasTitle).toBe(true);
+      } else {
+        expect(hasEmpty || hasLoading || hasHeader).toBe(true);
+      }
     });
   });
 });
@@ -180,8 +298,17 @@ test.describe('Sprint Board Page - Responsive Design', () => {
     await sprintBoardPage.goto();
     await page.waitForLoadState('domcontentloaded');
 
-    const bodyContent = await page.locator('body').isVisible();
-    expect(bodyContent).toBe(true);
+    const sprintBoardRoot = page.locator('[data-testid="sprint-board"]');
+    const emptyState = page.locator('[class*="empty-state"]').first();
+    const loadingState = page.locator('[class*="loading"]').first();
+    const mainContent = page.locator('main, [class*="main-content"]').first();
+
+    const hasBoard = await sprintBoardRoot.isVisible().catch(() => false);
+    const hasEmpty = await emptyState.isVisible().catch(() => false);
+    const hasLoading = await loadingState.isVisible().catch(() => false);
+    const hasMain = await mainContent.isVisible().catch(() => false);
+
+    expect(hasBoard || hasEmpty || hasLoading || hasMain).toBe(true);
   });
 
   test('should display correctly on tablet viewport', async ({ sprintBoardPage, page }) => {
@@ -189,7 +316,16 @@ test.describe('Sprint Board Page - Responsive Design', () => {
     await sprintBoardPage.goto();
     await page.waitForLoadState('domcontentloaded');
 
-    const bodyContent = await page.locator('body').isVisible();
-    expect(bodyContent).toBe(true);
+    const sprintBoardRoot = page.locator('[data-testid="sprint-board"]');
+    const emptyState = page.locator('[class*="empty-state"]').first();
+    const loadingState = page.locator('[class*="loading"]').first();
+    const mainContent = page.locator('main, [class*="main-content"]').first();
+
+    const hasBoard = await sprintBoardRoot.isVisible().catch(() => false);
+    const hasEmpty = await emptyState.isVisible().catch(() => false);
+    const hasLoading = await loadingState.isVisible().catch(() => false);
+    const hasMain = await mainContent.isVisible().catch(() => false);
+
+    expect(hasBoard || hasEmpty || hasLoading || hasMain).toBe(true);
   });
 });

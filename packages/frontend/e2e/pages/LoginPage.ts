@@ -35,59 +35,71 @@ export class LoginPage extends BasePage {
   }
 
   async switchToRegisterMode(): Promise<void> {
-    // Wait for any animations to complete and cookie banner to appear
-    await this.page.waitForTimeout(800);
+    await this.page.waitForTimeout(1000);
     await this.dismissCookieBanner();
 
-    // Check if already in register mode
     const isRegisterMode = await this.firstNameInput.isVisible().catch(() => false);
     if (isRegisterMode) {
       return;
     }
 
-    // Try clicking the toggle button with retry logic
-    let retries = 3;
+    let retries = 5;
     while (retries > 0) {
       try {
-        // Use force click to bypass any overlay issues
+        await this.toggleModeButton.waitFor({ state: 'visible', timeout: 3000 });
         await this.toggleModeButton.click({ force: true });
         await this.firstNameInput.waitFor({ state: 'visible', timeout: 5000 });
-        return; // Success
+        return;
       } catch {
         retries--;
         if (retries === 0) {
-          throw new Error('Failed to switch to register mode after 3 attempts');
+          try {
+            const altToggle = this.page
+              .locator('button:has-text("Sign up"), button:has-text("Create")')
+              .first();
+            await altToggle.click({ force: true });
+            await this.firstNameInput.waitFor({ state: 'visible', timeout: 5000 });
+            return;
+          } catch {
+            throw new Error('Failed to switch to register mode after multiple attempts');
+          }
         }
-        await this.page.waitForTimeout(500);
+        await this.page.waitForTimeout(800);
       }
     }
   }
 
   async switchToLoginMode(): Promise<void> {
-    // Wait for any animations to complete and cookie banner to appear
-    await this.page.waitForTimeout(800);
+    await this.page.waitForTimeout(1000);
     await this.dismissCookieBanner();
 
-    // Check if already in login mode
     const isLoginMode = !(await this.firstNameInput.isVisible().catch(() => false));
     if (isLoginMode) {
       return;
     }
 
-    // Try clicking the toggle button with retry logic
-    let retries = 3;
+    let retries = 5;
     while (retries > 0) {
       try {
-        // Use force click to bypass any overlay issues
+        await this.toggleModeButton.waitFor({ state: 'visible', timeout: 3000 });
         await this.toggleModeButton.click({ force: true });
         await expect(this.firstNameInput).not.toBeVisible({ timeout: 5000 });
-        return; // Success
+        return;
       } catch {
         retries--;
         if (retries === 0) {
-          throw new Error('Failed to switch to login mode after 3 attempts');
+          try {
+            const altToggle = this.page
+              .locator('button:has-text("Sign in"), button:has-text("Log in")')
+              .first();
+            await altToggle.click({ force: true });
+            await expect(this.firstNameInput).not.toBeVisible({ timeout: 5000 });
+            return;
+          } catch {
+            throw new Error('Failed to switch to login mode after multiple attempts');
+          }
         }
-        await this.page.waitForTimeout(500);
+        await this.page.waitForTimeout(800);
       }
     }
   }
