@@ -78,7 +78,18 @@ class RetrospectiveService {
       include: {
         items: {
           include: {
-            votesBy: true,
+            votesBy: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true,
+                    email: true,
+                  },
+                },
+              },
+            },
           },
         },
         actionItems: true,
