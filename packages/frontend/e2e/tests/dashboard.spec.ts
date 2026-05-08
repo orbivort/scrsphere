@@ -20,7 +20,12 @@ test.describe('Dashboard Page', () => {
     });
     await page.waitForURL(/\/team/, { timeout: 30000 });
     await page.waitForTimeout(500);
-    await page.goto('/dashboard', { waitUntil: 'domcontentloaded' });
+    try {
+      await page.goto('/dashboard', { waitUntil: 'domcontentloaded', timeout: 30000 });
+    } catch {
+      // Retry with load wait strategy if domcontentloaded times out
+      await page.goto('/dashboard', { waitUntil: 'load', timeout: 30000 });
+    }
     await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(500);
   });
@@ -118,10 +123,20 @@ test.describe('Dashboard Page', () => {
           await sprintLink.click({ force: true });
           await expect(page).toHaveURL(/\/sprint/, { timeout: 10000 });
         } catch {
-          await page.goto('/sprint', { waitUntil: 'domcontentloaded' });
+          try {
+            await page.goto('/sprint', { waitUntil: 'domcontentloaded', timeout: 30000 });
+          } catch {
+            // Retry with load wait strategy if domcontentloaded times out
+            await page.goto('/sprint', { waitUntil: 'load', timeout: 30000 });
+          }
         }
       } else {
-        await page.goto('/sprint', { waitUntil: 'domcontentloaded' });
+        try {
+          await page.goto('/sprint', { waitUntil: 'domcontentloaded', timeout: 30000 });
+        } catch {
+          // Retry with load wait strategy if domcontentloaded times out
+          await page.goto('/sprint', { waitUntil: 'load', timeout: 30000 });
+        }
       }
     });
   });

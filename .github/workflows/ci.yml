@@ -251,7 +251,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: frontend-e2e-report-${{ matrix.shard }}
+          name: frontend-e2e-report-${{ strategy.job-index }}
           path: |
             packages/frontend/playwright-report
             packages/frontend/test-results

@@ -46,7 +46,12 @@ test.describe('Authentication Flow', () => {
     });
 
     await test.step('Verify user can access protected routes', async () => {
-      await page.goto('/dashboard', { waitUntil: 'domcontentloaded' });
+      try {
+        await page.goto('/dashboard', { waitUntil: 'domcontentloaded', timeout: 30000 });
+      } catch {
+        // Retry with load wait strategy if domcontentloaded times out
+        await page.goto('/dashboard', { waitUntil: 'load', timeout: 30000 });
+      }
       await expect(page).toHaveURL(/\/dashboard/);
     });
   });
@@ -103,7 +108,12 @@ test.describe('Authentication Flow', () => {
     });
 
     await test.step('Verify user is authenticated', async () => {
-      await page.goto('/dashboard', { waitUntil: 'domcontentloaded' });
+      try {
+        await page.goto('/dashboard', { waitUntil: 'domcontentloaded', timeout: 30000 });
+      } catch {
+        // Retry with load wait strategy if domcontentloaded times out
+        await page.goto('/dashboard', { waitUntil: 'load', timeout: 30000 });
+      }
       await expect(page).toHaveURL(/\/dashboard/);
     });
   });
@@ -173,7 +183,12 @@ test.describe('Authentication Flow', () => {
     });
 
     await test.step('Navigate to dashboard', async () => {
-      await page.goto('/dashboard', { waitUntil: 'domcontentloaded' });
+      try {
+        await page.goto('/dashboard', { waitUntil: 'domcontentloaded', timeout: 30000 });
+      } catch {
+        // Retry with load wait strategy if domcontentloaded times out
+        await page.goto('/dashboard', { waitUntil: 'load', timeout: 30000 });
+      }
     });
 
     await test.step('Reload the page', async () => {
@@ -209,7 +224,12 @@ test.describe('Authentication Flow', () => {
     });
 
     await test.step('Navigate to dashboard and verify logged in', async () => {
-      await page.goto('/dashboard', { waitUntil: 'domcontentloaded' });
+      try {
+        await page.goto('/dashboard', { waitUntil: 'domcontentloaded', timeout: 30000 });
+      } catch {
+        // Retry with load wait strategy if domcontentloaded times out
+        await page.goto('/dashboard', { waitUntil: 'load', timeout: 30000 });
+      }
       await expect(page).toHaveURL(/\/dashboard/);
     });
 
@@ -228,7 +248,12 @@ test.describe('Authentication Flow', () => {
     });
 
     await test.step('Verify cannot access protected routes', async () => {
-      await page.goto('/dashboard', { waitUntil: 'domcontentloaded' });
+      try {
+        await page.goto('/dashboard', { waitUntil: 'domcontentloaded', timeout: 30000 });
+      } catch {
+        // Retry with load wait strategy if domcontentloaded times out
+        await page.goto('/dashboard', { waitUntil: 'load', timeout: 30000 });
+      }
       await expect(page).toHaveURL(/\/login/);
     });
   });

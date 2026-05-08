@@ -14,7 +14,12 @@ export abstract class BasePage {
   }
 
   async navigate(path: string): Promise<void> {
-    await this.page.goto(path, { waitUntil: 'domcontentloaded' });
+    try {
+      await this.page.goto(path, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    } catch {
+      // Retry with load wait strategy if domcontentloaded times out
+      await this.page.goto(path, { waitUntil: 'load', timeout: 30000 });
+    }
     await this.dismissCookieBanner();
   }
 
@@ -72,7 +77,12 @@ export abstract class BasePage {
   }
 
   async reload(): Promise<void> {
-    await this.page.reload({ waitUntil: 'domcontentloaded' });
+    try {
+      await this.page.reload({ waitUntil: 'domcontentloaded', timeout: 30000 });
+    } catch {
+      // Retry with load wait strategy if domcontentloaded times out
+      await this.page.reload({ waitUntil: 'load', timeout: 30000 });
+    }
   }
 
   async pressKey(key: string): Promise<void> {

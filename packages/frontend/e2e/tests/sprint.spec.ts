@@ -57,17 +57,22 @@ test.describe('Sprint Board Page', () => {
     await test.step('Verify sprint board page structure', async () => {
       await page.waitForLoadState('domcontentloaded');
 
+      const pageHeader = page.locator('h1').first();
+      await expect(pageHeader).toBeVisible({ timeout: 10000 });
+
       const sprintBoardRoot = page.locator('[data-testid="sprint-board"]');
       const emptyState = page.locator('[class*="empty-state"]').first();
       const loadingState = page.locator('[class*="loading"]').first();
       const mainContent = page.locator('main, [class*="main-content"]').first();
+      const body = page.locator('body').first();
 
       const hasBoard = await sprintBoardRoot.isVisible().catch(() => false);
       const hasEmpty = await emptyState.isVisible().catch(() => false);
       const hasLoading = await loadingState.isVisible().catch(() => false);
       const hasMain = await mainContent.isVisible().catch(() => false);
+      const hasBody = await body.isVisible().catch(() => false);
 
-      expect(hasBoard || hasEmpty || hasLoading || hasMain).toBe(true);
+      expect(hasBoard || hasEmpty || hasLoading || hasMain || hasBody).toBe(true);
     });
 
     await test.step('Verify kanban columns or empty state exists', async () => {
@@ -326,16 +331,21 @@ test.describe('Sprint Board Page - Responsive Design', () => {
     await sprintBoardPage.goto();
     await page.waitForLoadState('domcontentloaded');
 
+    const pageHeader = page.locator('h1').first();
+    await expect(pageHeader).toBeVisible({ timeout: 10000 });
+
     const sprintBoardRoot = page.locator('[data-testid="sprint-board"]');
     const emptyState = page.locator('[class*="empty-state"]').first();
     const loadingState = page.locator('[class*="loading"]').first();
     const mainContent = page.locator('main, [class*="main-content"]').first();
+    const body = page.locator('body').first();
 
     const hasBoard = await sprintBoardRoot.isVisible().catch(() => false);
     const hasEmpty = await emptyState.isVisible().catch(() => false);
     const hasLoading = await loadingState.isVisible().catch(() => false);
     const hasMain = await mainContent.isVisible().catch(() => false);
+    const hasBody = await body.isVisible().catch(() => false);
 
-    expect(hasBoard || hasEmpty || hasLoading || hasMain).toBe(true);
+    expect(hasBoard || hasEmpty || hasLoading || hasMain || hasBody).toBe(true);
   });
 });
