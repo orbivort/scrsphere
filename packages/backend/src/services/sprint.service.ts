@@ -378,7 +378,7 @@ class SprintService {
       ? data.tasks.reduce((sum, task) => sum + (task.estimatedHours ?? 0), 0)
       : 0;
 
-    const pbiIds = data?.backlogItems.map((item) => item.pbiId) ?? [];
+    const pbiIds = data?.backlogItems?.map((item) => item.pbiId) ?? [];
 
     if (pbiIds.length > 0) {
       const existingPbis = await prisma.productBacklogItem.findMany({

@@ -169,7 +169,7 @@ export const incrementService = {
       },
     });
 
-    if (data.includedPBIs.length > 0) {
+    if (data.includedPBIs?.length > 0) {
       await prisma.incrementPBI.createMany({
         data: data.includedPBIs.map((pbiId) => ({
           id: generateUUIDv7(),
