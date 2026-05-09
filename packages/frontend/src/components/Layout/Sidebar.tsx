@@ -28,6 +28,7 @@ import {
   LockIcon,
   LogOutIcon,
   ScrSphereIcon,
+  UsersIcon,
 } from '../common/Icons';
 import { NAV_ITEMS, SETTINGS_GROUPS, getFilteredSettingsGroups } from '../../config/navigation';
 import { getRoleLabel, getRoleBadgeClass } from '../../utils/roleUtils';
@@ -272,7 +273,9 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             <div className={styles.breadcrumb}>
               {currentTeam ? (
                 <div className={styles['team-info-breadcrumb']}>
-                  <span className={styles['team-icon']}>馃懃</span>
+                  <span className={styles['team-icon']}>
+                    <UsersIcon size={20} />
+                  </span>
                   <div className={styles['team-details-breadcrumb']}>
                     <span className={styles['team-name-breadcrumb']}>{currentTeam.name}</span>
                     <span

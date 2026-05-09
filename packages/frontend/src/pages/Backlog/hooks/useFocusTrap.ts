@@ -52,8 +52,14 @@ export const useFocusTrap = (
       const focusableElements = getFocusableElements();
       if (focusableElements.length > 0) {
         // Focus the close button if it exists, otherwise first element
-        const closeButton = modalRef.current.querySelector('[data-modal-close]') as HTMLElement;
-        closeButton.focus();
+        const closeButton = modalRef.current.querySelector(
+          '[data-modal-close]'
+        ) as HTMLElement | null;
+        if (closeButton) {
+          closeButton.focus();
+        } else {
+          focusableElements[0]?.focus();
+        }
       }
 
       /**

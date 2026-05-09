@@ -442,7 +442,7 @@ export interface RetrospectiveItem {
   authorId?: string; // Optional if anonymous
   authorName?: string;
   votes: number;
-  votedBy: string[]; // User IDs
+  votedBy?: string[]; // User IDs
   order: number;
   createdAt: string;
 }

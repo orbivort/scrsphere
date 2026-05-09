@@ -96,6 +96,23 @@ export const CreateActionItemModal: React.FC<CreateActionItemModalProps> = ({
   const previousActiveElement = useRef<HTMLElement | null>(null);
   const titleInputRef = useRef<HTMLInputElement>(null);
 
+  // Refs to track current form data for stable callback references
+  const formDataRef = useRef(formData);
+  const initialFormDataRef = useRef(initialFormData);
+  const isPendingRef = useRef(isPending);
+
+  useEffect(() => {
+    formDataRef.current = formData;
+  }, [formData]);
+
+  useEffect(() => {
+    initialFormDataRef.current = initialFormData;
+  }, [initialFormData]);
+
+  useEffect(() => {
+    isPendingRef.current = isPending;
+  }, [isPending]);
+
   // Store initial form data when modal opens
   useEffect(() => {
     if (isOpen) {
@@ -119,18 +136,19 @@ export const CreateActionItemModal: React.FC<CreateActionItemModalProps> = ({
         previousActiveElement.current.focus();
       }
     };
-  }, [isOpen, formData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
 
   // Handle close request - check for unsaved changes
   const handleCloseRequest = useCallback(() => {
-    if (isPending) return; // Don't allow closing while submitting
+    if (isPendingRef.current) return; // Don't allow closing while submitting
 
-    if (hasUnsavedChanges(formData, initialFormData)) {
+    if (hasUnsavedChanges(formDataRef.current, initialFormDataRef.current)) {
       setShowUnsavedChangesModal(true);
     } else {
       onClose();
     }
-  }, [formData, initialFormData, isPending, onClose]);
+  }, [onClose]);
 
   // Handle keyboard events (Escape key and focus trap)
   useEffect(() => {

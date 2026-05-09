@@ -68,6 +68,7 @@ export const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
             onClick={onClose}
             aria-label="Close modal"
             type="button"
+            data-modal-close
           >
             <XIcon size={18} />
           </button>

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -54,6 +54,11 @@ export const Impediments: React.FC = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showUnsavedChangesModal, setShowUnsavedChangesModal] = useState(false);
   const [pendingCloseAction, setPendingCloseAction] = useState<(() => void) | null>(null);
+
+  const formDataRef = useRef(formData);
+  useEffect(() => {
+    formDataRef.current = formData;
+  }, [formData]);
 
   const { toasts, success, error: toastError, removeToast } = useToast();
 
@@ -393,10 +398,11 @@ export const Impediments: React.FC = () => {
   };
 
   const hasUnsavedChanges = useCallback(() => {
+    const current = formDataRef.current;
     return (
-      formData.title.trim() !== '' || formData.description.trim() !== '' || formData.ownerId !== ''
+      current.title.trim() !== '' || current.description.trim() !== '' || current.ownerId !== ''
     );
-  }, [formData]);
+  }, []);
 
   const handleCloseCreateModal = useCallback(
     (onClose?: () => void) => {

@@ -1,6 +1,6 @@
 import { type Request, type Response } from 'express';
 import { retrospectiveService } from '../services/retrospective.service';
-import { NotFoundError } from '../utils/errors';
+import { NotFoundError, ConflictError } from '../utils/errors';
 import { getParamValue } from '../utils/validation';
 import { logger } from '../utils/logger';
 
@@ -223,6 +223,17 @@ export const voteItem = async (req: Request, res: Response) => {
       });
       return;
     }
+    if (error instanceof ConflictError) {
+      res.status(409).json({
+        success: false,
+        error: {
+          code: 'CONFLICT',
+          message: error.message,
+        },
+      });
+      return;
+    }
+    logger.error('Failed to vote for item', undefined, { error });
     res.status(500).json({
       success: false,
       error: {
@@ -274,6 +285,7 @@ export const unvoteItem = async (req: Request, res: Response) => {
       });
       return;
     }
+    logger.error('Failed to remove vote for item', undefined, { error });
     res.status(500).json({
       success: false,
       error: {
@@ -601,6 +613,7 @@ export const addRetroAttendee = async (req: Request, res: Response) => {
       });
       return;
     }
+    logger.error('Failed to add participant', undefined, { error });
     res.status(500).json({
       success: false,
       error: {

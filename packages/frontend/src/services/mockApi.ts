@@ -1967,6 +1967,7 @@ class MockApiService {
     }
 
     // Add user to votedBy if not already voted
+    item.votedBy ??= [];
     if (!item.votedBy.includes(currentUser.id)) {
       item.votedBy.push(currentUser.id);
       item.votes += 1;
@@ -1998,6 +1999,7 @@ class MockApiService {
     }
 
     // Remove user from votedBy if they have voted
+    item.votedBy ??= [];
     const voteIndex = item.votedBy.indexOf(currentUser.id);
     if (voteIndex !== -1) {
       item.votedBy.splice(voteIndex, 1);

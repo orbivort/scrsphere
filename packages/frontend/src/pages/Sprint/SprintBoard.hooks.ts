@@ -422,8 +422,14 @@ export const useFocusTrap = (isActive: boolean, modalRef: RefObject<HTMLElement 
 
       const focusableElements = getFocusableElements();
       if (focusableElements.length > 0) {
-        const closeButton = modalRef.current.querySelector('[data-modal-close]') as HTMLElement;
-        closeButton.focus();
+        const closeButton = modalRef.current.querySelector(
+          '[data-modal-close]'
+        ) as HTMLElement | null;
+        if (closeButton) {
+          closeButton.focus();
+        } else {
+          focusableElements[0]?.focus();
+        }
       }
       const handleKeyDown = (e: KeyboardEvent) => {
         if (e.key !== 'Tab') return;

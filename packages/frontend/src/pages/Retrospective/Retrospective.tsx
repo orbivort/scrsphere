@@ -317,7 +317,7 @@ export const SprintRetrospective: React.FC = () => {
                   return {
                     ...item,
                     votes: item.votes + 1,
-                    votedBy: [...item.votedBy, user.id],
+                    votedBy: [...(item.votedBy ?? []), user.id],
                   };
                 }
                 return item;
@@ -367,7 +367,7 @@ export const SprintRetrospective: React.FC = () => {
                   return {
                     ...item,
                     votes: Math.max(0, item.votes - 1),
-                    votedBy: item.votedBy.filter((id: string) => id !== user.id),
+                    votedBy: (item.votedBy ?? []).filter((id: string) => id !== user.id),
                   };
                 }
                 return item;
@@ -685,7 +685,7 @@ export const SprintRetrospective: React.FC = () => {
       if (!item) return;
 
       // Check if current user has voted (user ID is in votedBy array)
-      const hasVoted = user?.id && item.votedBy.includes(user.id);
+      const hasVoted = user?.id && item.votedBy?.includes(user.id);
 
       if (hasVoted) {
         // User has voted, so unvote
@@ -1471,7 +1471,7 @@ export const SprintRetrospective: React.FC = () => {
                                 <span className={styles['item-author']}>— {item.authorName}</span>
                                 <div className={styles['item-actions']}>
                                   {(() => {
-                                    const hasVoted = user?.id && item.votedBy.includes(user.id);
+                                    const hasVoted = user?.id && item.votedBy?.includes(user.id);
                                     return (
                                       <button
                                         className={`${styles['vote-button']} ${hasVoted ? styles['vote-button-active'] : ''}`}

@@ -396,7 +396,8 @@ const AttendeeForm: React.FC<AttendeeFormProps> = ({
       updateMutation.reset();
       firstInputRef.current?.focus();
     }
-  }, [isOpen, attendee, defaultRole, addMutation, updateMutation]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, attendee, defaultRole]);
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {

@@ -77,7 +77,7 @@ export const ValidationModal: React.FC<ValidationModalProps> = ({
               </p>
             </div>
           </div>
-          <button className={styles['modal-close']} onClick={onCancel}>
+          <button className={styles['modal-close']} onClick={onCancel} data-modal-close>
             <XIcon width="16" height="16" />
           </button>
         </div>
