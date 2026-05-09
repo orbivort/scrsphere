@@ -56,10 +56,13 @@ export const MemberCard: React.FC<MemberCardProps> = ({
     : 'Unknown User';
   const email = user?.email ?? '';
   const role = member.role;
+  /* eslint-disable @typescript-eslint/no-unnecessary-condition -- runtime data may differ from User type */
   const initials = user
-    ? ((`${user.firstName[0]}${user.lastName[0]}`.toUpperCase() || user.email[0]?.toUpperCase()) ??
+    ? ((`${user.firstName?.[0] ?? ''}${user.lastName?.[0] ?? ''}`.toUpperCase() ||
+        user.email[0]?.toUpperCase()) ??
       '?')
     : '?';
+  /* eslint-enable @typescript-eslint/no-unnecessary-condition */
 
   const memberSince = member.joinedAt
     ? new Date(member.joinedAt).toLocaleDateString('en-US', {

@@ -38,6 +38,8 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   // Clamp value between min and max
   const clampedValue = Math.min(Math.max(value, min), max);
   const percentage = Math.round(((clampedValue - min) / (max - min)) * 100);
+  // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- empty string should fall back to computed label
+  const computedAriaLabel = label || `Progress: ${percentage}%`;
 
   return (
     <div
@@ -46,7 +48,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
       aria-valuenow={clampedValue}
       aria-valuemin={min}
       aria-valuemax={max}
-      aria-label={label ?? `Progress: ${percentage}%`}
+      aria-label={computedAriaLabel}
       tabIndex={0}
     >
       <div className={styles['progress-track']}>

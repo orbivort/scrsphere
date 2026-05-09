@@ -64,8 +64,16 @@ export const TeamManagement: React.FC = () => {
   const updateTeamMutation = useUpdateTeam();
   const deleteTeamMutation = useDeleteTeam();
 
-  const teams = useMemo(() => (teamsData?.data as TeamsResponse).teams, [teamsData]);
-  const pagination = (teamsData?.data as TeamsResponse).pagination;
+  const teams = useMemo(
+    () => (teamsData?.data as TeamsResponse | undefined)?.teams ?? [],
+    [teamsData]
+  );
+  const pagination = (teamsData?.data as TeamsResponse | undefined)?.pagination ?? {
+    totalPages: 0,
+    page: 1,
+    pageSize: 20,
+    totalItems: 0,
+  };
 
   // Edit/Delete permissions are based on role and team membership
   const canUpdateTeam = EDIT_DELETE_ROLES.includes(currentUserRole ?? '');

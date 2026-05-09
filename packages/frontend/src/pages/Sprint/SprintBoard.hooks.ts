@@ -295,10 +295,12 @@ export const useSprintBoardData = (
     const totalHours = sprintStats.totalEstimatedHours || 1;
     const idealDailyBurn = totalHours / totalDays;
 
-    const backendDates = (burndownData as { data?: { dates?: string[] } }).data?.dates ?? [];
-    const backendIdeal = (burndownData as { data?: { ideal?: number[] } }).data?.ideal ?? [];
+    const backendDates =
+      (burndownData as { data?: { dates?: string[] } } | undefined)?.data?.dates ?? [];
+    const backendIdeal =
+      (burndownData as { data?: { ideal?: number[] } } | undefined)?.data?.ideal ?? [];
     const backendActual =
-      (burndownData as { data?: { actual?: (number | null)[] } }).data?.actual ?? [];
+      (burndownData as { data?: { actual?: (number | null)[] } } | undefined)?.data?.actual ?? [];
 
     const data: BurndownDataPoint[] = [];
 

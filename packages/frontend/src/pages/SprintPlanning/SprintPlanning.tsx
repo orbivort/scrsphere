@@ -1315,7 +1315,8 @@ export const SprintPlanning: React.FC = () => {
                       </button>
                     </div>
                     <div className={styles['goal-text']}>
-                      {selectedSprint.sprintGoal ?? 'No goal defined - click Edit to add one'}
+                      {/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- empty string should show No goal defined */}
+                      {selectedSprint.sprintGoal || 'No goal defined - click Edit to add one'}
                     </div>
                   </div>
                 )}

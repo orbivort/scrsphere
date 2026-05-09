@@ -89,7 +89,8 @@ export const DataPreview: React.FC<DataPreviewProps> = ({ items }) => {
                   </span>
                 </td>
                 <td className={styles['title-cell']} title={item.title}>
-                  {item.title ?? <span className={styles['missing-title']}>Missing title</span>}
+                  {/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- empty string should show Missing title */}
+                  {item.title || <span className={styles['missing-title']}>Missing title</span>}
                 </td>
                 <td className={styles['priority-cell']}>
                   {item.priority && Object.values(MoSCoWPriority).includes(item.priority) ? (

@@ -710,7 +710,7 @@ export const ProductGoalsPage: React.FC = () => {
       targetDate: formData.targetDate ? new Date(formData.targetDate).toISOString() : undefined,
       successMetrics: formData.successMetrics.trim(),
       // Status is intentionally NOT included here - use Status Change Button for status changes
-      strategicAlignment: formData.strategicAlignment ?? undefined,
+      ...(formData.strategicAlignment ? { strategicAlignment: formData.strategicAlignment } : {}),
     };
 
     if (showEditModal && selectedGoal) {

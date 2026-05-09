@@ -291,7 +291,8 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
   }, [removePBIMutation]);
 
   const getPriorityStyle = (priority: MoSCoWPriority) => {
-    return priorityLabels[priority];
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- runtime priority may not match config keys
+    return priorityLabels[priority] ?? { label: '', color: 'transparent' };
   };
 
   const getTaskStatusClass = (status: string) => {

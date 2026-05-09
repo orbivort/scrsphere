@@ -342,8 +342,10 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
               >
                 <div className={styles['user-avatar-small']}>
-                  {user?.firstName.charAt(0)}
-                  {user?.lastName.charAt(0)}
+                  {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- runtime data may differ from types */}
+                  {user?.firstName?.charAt(0) ?? ''}
+                  {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- runtime data may differ from types */}
+                  {user?.lastName?.charAt(0) ?? ''}
                 </div>
                 <span className={styles['user-menu-name']}>
                   {user?.firstName} {user?.lastName}

@@ -9,7 +9,7 @@
 
 import { memo } from 'react';
 
-import type { MoSCoWPriority } from '../../../types';
+import { MoSCoWPriority } from '../../../types';
 import { MOSCOW_CONFIG } from '../config/moscow.config';
 
 import styles from './MoscowBadge.module.css';
@@ -43,7 +43,8 @@ export interface MoscowBadgeProps {
  * ```
  */
 export const MoscowBadge = memo<MoscowBadgeProps>(({ priority, compact = false }) => {
-  const config = MOSCOW_CONFIG[priority];
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- runtime priority may be undefined despite type
+  const config = MOSCOW_CONFIG[priority] ?? MOSCOW_CONFIG[MoSCoWPriority.COULD_HAVE];
 
   return (
     <span
