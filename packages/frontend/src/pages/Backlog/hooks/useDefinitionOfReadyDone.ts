@@ -63,7 +63,7 @@ export const useDefinitionOfReadyDone = (
             .map((item) => ({
               id: item.id,
               label: item.description,
-              description: item.category || 'Required criterion',
+              description: item.category ?? 'Required criterion',
             }));
           setDorItems(items);
         }
@@ -75,7 +75,7 @@ export const useDefinitionOfReadyDone = (
         setIsLoadingDoR(false);
       }
     };
-    fetchDoR();
+    void fetchDoR();
   }, [teamId]);
 
   // Fetch Definition of Done
@@ -93,7 +93,7 @@ export const useDefinitionOfReadyDone = (
             .map((item) => ({
               id: item.id,
               label: item.description,
-              description: item.category || 'Required criterion',
+              description: item.category ?? 'Required criterion',
             }));
           setDodItems(items);
         }
@@ -105,7 +105,7 @@ export const useDefinitionOfReadyDone = (
         setIsLoadingDoD(false);
       }
     };
-    fetchDoD();
+    void fetchDoD();
   }, [teamId]);
 
   return {

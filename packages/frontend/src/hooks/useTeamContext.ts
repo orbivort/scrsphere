@@ -19,7 +19,7 @@ export const useRequireTeam = (options: UseTeamContextOptions = {}) => {
   useEffect(() => {
     if (requireTeam && !currentTeam) {
       if (userTeams.length === 0) {
-        navigate(redirectTo);
+        void navigate(redirectTo);
       } else if (userTeams.length === 1) {
         // Auto-select single team
         // This is handled by TeamProvider

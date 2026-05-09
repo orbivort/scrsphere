@@ -49,7 +49,19 @@ vi.mock('../../hooks/useModalFocus', () => ({
 }));
 
 vi.mock('../../components/common/Form/UnsavedChangesModal', () => ({
-  UnsavedChangesModal: ({ isOpen, onConfirm, onCancel, title, message }: any) =>
+  UnsavedChangesModal: ({
+    isOpen,
+    onConfirm,
+    onCancel,
+    title,
+    message,
+  }: {
+    isOpen: boolean;
+    onConfirm: () => void;
+    onCancel: () => void;
+    title: string;
+    message: string;
+  }) =>
     isOpen ? (
       <div role="dialog" data-testid="unsaved-changes-modal">
         <h2>{title}</h2>

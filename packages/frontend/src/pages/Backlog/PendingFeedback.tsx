@@ -18,6 +18,12 @@ import {
 
 import styles from './PendingFeedback.module.css';
 
+interface StakeholderFeedbackWithSprint extends StakeholderFeedback {
+  sprint?: {
+    name: string;
+  };
+}
+
 interface PendingFeedbackProps {
   onCreateWorkItem?: (feedback: StakeholderFeedback) => void;
 }
@@ -33,24 +39,24 @@ export const PendingFeedback: React.FC<PendingFeedbackProps> = ({ onCreateWorkIt
 
   const { data: feedbackData, isLoading } = useQuery({
     queryKey: ['pending-feedback', teamId],
-    queryFn: () => apiService.getPendingFeedback(teamId || ''),
+    queryFn: () => apiService.getPendingFeedback(teamId ?? ''),
     enabled: !!teamId,
   });
 
   const addressMutation = useMutation({
     mutationFn: (feedbackId: string) => apiService.markFeedbackAddressed(feedbackId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.pendingFeedback.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.sprintReview.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.pendingFeedback.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.sprintReview.all });
     },
   });
 
-  const feedback: StakeholderFeedback[] = feedbackData?.data || [];
+  const feedback = (feedbackData?.data ?? []) as StakeholderFeedbackWithSprint[];
 
   const filteredFeedback =
     filter === 'all'
       ? feedback
-      : feedback.filter((f: StakeholderFeedback) => f.category === filter);
+      : feedback.filter((f: StakeholderFeedbackWithSprint) => f.category === filter);
 
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString('en-US', {
@@ -67,25 +73,28 @@ export const PendingFeedback: React.FC<PendingFeedbackProps> = ({ onCreateWorkIt
       positive: {
         label: 'Positive',
         icon: <ThumbsUpIcon size={12} />,
-        className: styles['category-positive']!,
+        className: styles['category-positive'] ?? '',
       },
       negative: {
         label: 'Negative',
         icon: <ThumbsDownIcon size={12} />,
-        className: styles['category-negative']!,
+        className: styles['category-negative'] ?? '',
       },
       suggestion: {
         label: 'Suggestion',
         icon: <LightbulbIcon size={12} />,
-        className: styles['category-suggestion']!,
+        className: styles['category-suggestion'] ?? '',
       },
       question: {
         label: 'Question',
         icon: <HelpCircleIcon size={12} />,
-        className: styles['category-question']!,
+        className: styles['category-question'] ?? '',
       },
     };
-    return configs[category] ?? configs['suggestion']!;
+    return (
+      configs[category] ??
+      (configs['suggestion'] as { label: string; icon: React.ReactNode; className: string })
+    );
   };
 
   const handleCreateItem = (feedback: StakeholderFeedback) => {
@@ -148,7 +157,7 @@ export const PendingFeedback: React.FC<PendingFeedbackProps> = ({ onCreateWorkIt
             <LoadingState variant="skeleton-list" itemCount={5} label="Loading feedback" />
           ) : (
             <div className={styles['feedback-list']}>
-              {filteredFeedback.map((item: StakeholderFeedback) => {
+              {filteredFeedback.map((item: StakeholderFeedbackWithSprint) => {
                 const config = getCategoryConfig(item.category);
                 return (
                   <div key={item.id} className={styles['feedback-card']}>
@@ -165,10 +174,10 @@ export const PendingFeedback: React.FC<PendingFeedbackProps> = ({ onCreateWorkIt
                       <strong>From:</strong> {item.authorName}
                     </div>
 
-                    {(item as any).sprint && (
+                    {item.sprint && (
                       <div className={styles['sprint-info']}>
                         <span className={styles['sprint-label']}>From Sprint:</span>
-                        <span className={styles['sprint-name']}>{(item as any).sprint.name}</span>
+                        <span className={styles['sprint-name']}>{item.sprint.name}</span>
                       </div>
                     )}
 

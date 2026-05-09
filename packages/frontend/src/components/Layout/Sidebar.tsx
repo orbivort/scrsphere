@@ -168,7 +168,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     } else if (pending === 'changePassword') {
       setChangePasswordFormDirty(false);
     }
-  }, [unsavedChanges]);
+  }, [unsavedChanges, setEditProfileFormDirty, setChangePasswordFormDirty]);
 
   // Filtered settings groups based on user role
   const filteredSettingsGroups = getFilteredSettingsGroups(SETTINGS_GROUPS, userRole);
@@ -272,7 +272,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             <div className={styles.breadcrumb}>
               {currentTeam ? (
                 <div className={styles['team-info-breadcrumb']}>
-                  <span className={styles['team-icon']}>👥</span>
+                  <span className={styles['team-icon']}>馃懃</span>
                   <div className={styles['team-details-breadcrumb']}>
                     <span className={styles['team-name-breadcrumb']}>{currentTeam.name}</span>
                     <span
@@ -342,8 +342,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
               >
                 <div className={styles['user-avatar-small']}>
-                  {user?.firstName?.charAt(0)}
-                  {user?.lastName?.charAt(0)}
+                  {user?.firstName.charAt(0)}
+                  {user?.lastName.charAt(0)}
                 </div>
                 <span className={styles['user-menu-name']}>
                   {user?.firstName} {user?.lastName}
@@ -356,8 +356,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <div className={styles['user-dropdown']}>
                   <div className={styles['user-dropdown-header']}>
                     <div className={styles['user-avatar-large']}>
-                      {user?.firstName?.charAt(0)}
-                      {user?.lastName?.charAt(0)}
+                      {user?.firstName.charAt(0)}
+                      {user?.lastName.charAt(0)}
                     </div>
                     <div className={styles['user-dropdown-info']}>
                       <div className={styles['user-dropdown-name']}>
@@ -415,9 +415,9 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       <DeleteAccountModal
         isOpen={accountDeletion.deleteModalOpen}
         onClose={() => accountDeletion.setDeleteModalOpen(false)}
-        userEmail={user?.email || ''}
-        userName={`${user?.firstName || ''} ${user?.lastName || ''}`.trim()}
-        teams={accountDeletion.deletionEligibility?.teams || []}
+        userEmail={user?.email ?? ''}
+        userName={`${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim()}
+        teams={accountDeletion.deletionEligibility?.teams ?? []}
         isBlocked={!accountDeletion.deletionEligibility?.canDelete}
         pendingDeletion={accountDeletion.deletionEligibility?.pendingDeletion ?? null}
         onDelete={accountDeletion.handleDeleteAccount}

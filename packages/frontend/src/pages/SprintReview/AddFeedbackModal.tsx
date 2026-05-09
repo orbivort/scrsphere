@@ -55,9 +55,9 @@ export const AddFeedbackModal: React.FC<AddFeedbackModalProps> = ({
     return (
       feedbackForm.authorName.trim() !== '' ||
       feedbackForm.content.trim() !== '' ||
-      (feedbackForm.relatedPbiId && feedbackForm.relatedPbiId.trim() !== '') ||
+      !!(feedbackForm.relatedPbiId && feedbackForm.relatedPbiId.trim() !== '') ||
       feedbackForm.actionRequired ||
-      (feedbackForm.ownerId && feedbackForm.ownerId.trim() !== '') ||
+      !!(feedbackForm.ownerId && feedbackForm.ownerId.trim() !== '') ||
       feedbackForm.category !== 'positive'
     );
   }, [feedbackForm]);
@@ -226,7 +226,7 @@ export const AddFeedbackModal: React.FC<AddFeedbackModalProps> = ({
                 onChange={(e) =>
                   setFeedbackForm({
                     ...feedbackForm,
-                    relatedPbiId: e.target.value ?? undefined,
+                    relatedPbiId: e.target.value,
                   })
                 }
               >
@@ -292,7 +292,7 @@ export const AddFeedbackModal: React.FC<AddFeedbackModalProps> = ({
                   onChange={(e) =>
                     setFeedbackForm({
                       ...feedbackForm,
-                      ownerId: e.target.value ?? undefined,
+                      ownerId: e.target.value,
                     })
                   }
                   className={formErrors.ownerId ? styles.error : ''}

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { TeamList } from './components/TeamList';
@@ -33,8 +33,8 @@ const canModifyTeam = (team: Team, userRole: string | null | undefined): boolean
 
 export const TeamManagement: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const search = searchParams.get('q') || '';
-  const page = parseInt(searchParams.get('page') || '1', 10);
+  const search = searchParams.get('q') ?? '';
+  const page = parseInt(searchParams.get('page') ?? '1', 10);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [createTeamDefaultName, setCreateTeamDefaultName] = useState('');
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
@@ -64,15 +64,12 @@ export const TeamManagement: React.FC = () => {
   const updateTeamMutation = useUpdateTeam();
   const deleteTeamMutation = useDeleteTeam();
 
-  const teams = (teamsData?.data as TeamsResponse)?.teams || [];
-  const pagination = (teamsData?.data as TeamsResponse)?.pagination;
-
-  // All users can create teams
-  const canCreateTeam = true;
+  const teams = useMemo(() => (teamsData?.data as TeamsResponse).teams, [teamsData]);
+  const pagination = (teamsData?.data as TeamsResponse).pagination;
 
   // Edit/Delete permissions are based on role and team membership
-  const canUpdateTeam = EDIT_DELETE_ROLES.includes(currentUserRole || '');
-  const canDeleteTeam = EDIT_DELETE_ROLES.includes(currentUserRole || '');
+  const canUpdateTeam = EDIT_DELETE_ROLES.includes(currentUserRole ?? '');
+  const canDeleteTeam = EDIT_DELETE_ROLES.includes(currentUserRole ?? '');
 
   // Check if user can modify a specific team
   const canEditTeam = useCallback(
@@ -123,7 +120,7 @@ export const TeamManagement: React.FC = () => {
   const handleUpdateTeam = useCallback(
     (id: string, data: UpdateTeamInput) => {
       // Find the team being updated
-      const teamToUpdate = teams.find((t) => t.id === id);
+      const teamToUpdate = teams.find((t: Team) => t.id === id);
 
       // Check permissions
       if (!teamToUpdate || !canModifyTeam(teamToUpdate, currentUserRole)) {
@@ -171,7 +168,7 @@ export const TeamManagement: React.FC = () => {
   const handleDeleteTeam = useCallback(
     (id: string) => {
       // Find the team being deleted
-      const teamToDelete = teams.find((t) => t.id === id);
+      const teamToDelete = teams.find((t: Team) => t.id === id);
 
       // Check permissions
       if (!teamToDelete || !canModifyTeam(teamToDelete, currentUserRole)) {
@@ -211,16 +208,13 @@ export const TeamManagement: React.FC = () => {
           // Extract the actual error message from the backend response
           // Backend returns: { success: false, error: { code: string, message: string } }
           const backendMessage = err.response?.data?.error?.message;
-          const errorMessage = backendMessage || err.message || 'Failed to delete team';
+          const errorMessage = backendMessage ?? err.message;
 
           // Check if the error is due to existing product goals
           if (backendMessage?.includes('Cannot delete team with existing product goals')) {
             setHasProductGoals(true);
             setDeleteError(backendMessage);
-          } else if (
-            err.message &&
-            err.message.includes('Cannot delete team with existing product goals')
-          ) {
+          } else if (err.message.includes('Cannot delete team with existing product goals')) {
             setHasProductGoals(true);
             setDeleteError(errorMessage);
           } else {
@@ -258,7 +252,7 @@ export const TeamManagement: React.FC = () => {
       }
       setPermissionError(null);
       setSelectedTeam(team);
-      setHasProductGoals(team.hasProductGoals || false);
+      setHasProductGoals(team.hasProductGoals ?? false);
       setDeleteError(null);
       setIsDeleteModalOpen(true);
     },
@@ -266,7 +260,7 @@ export const TeamManagement: React.FC = () => {
   );
 
   const handleRetry = useCallback(() => {
-    refetch();
+    void refetch();
   }, [refetch]);
 
   // Track debouncing state for visual feedback
@@ -295,7 +289,7 @@ export const TeamManagement: React.FC = () => {
   }, [setSearchParams]);
 
   const handleOpenCreateModal = useCallback((searchValue?: string) => {
-    setCreateTeamDefaultName(searchValue || '');
+    setCreateTeamDefaultName(searchValue ?? '');
     setIsCreateModalOpen(true);
   }, []);
 
@@ -342,19 +336,17 @@ export const TeamManagement: React.FC = () => {
             </p>
           </div>
           <div className={styles['header-right']}>
-            {canCreateTeam && (
-              <button
-                className={styles['create-button']}
-                onClick={() => handleOpenCreateModal()}
-                disabled={isAnyMutationPending}
-                type="button"
-              >
-                <span className={styles['create-button-icon']}>
-                  <PlusIcon size={16} />
-                </span>
-                Create Team
-              </button>
-            )}
+            <button
+              className={styles['create-button']}
+              onClick={() => handleOpenCreateModal()}
+              disabled={isAnyMutationPending}
+              type="button"
+            >
+              <span className={styles['create-button-icon']}>
+                <PlusIcon size={16} />
+              </span>
+              Create Team
+            </button>
           </div>
         </header>
 
@@ -383,7 +375,7 @@ export const TeamManagement: React.FC = () => {
             search={search}
           />
 
-          {pagination && pagination.totalPages > 1 && (
+          {pagination.totalPages > 1 && (
             <nav className={styles.pagination} aria-label="Pagination" role="navigation">
               <button
                 className={styles['pagination-button']}

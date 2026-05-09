@@ -19,16 +19,19 @@ const FIELD_LABELS: Record<string, string> = {
 };
 
 const formatFieldName = (field: string): string => {
-  return FIELD_LABELS[field] || field.charAt(0).toUpperCase() + field.slice(1);
+  return FIELD_LABELS[field] ?? field.charAt(0).toUpperCase() + field.slice(1);
 };
 
 export const formatValidationErrors = (details: ValidationErrorDetail[]): string => {
-  if (!details || details.length === 0) {
+  if (details.length === 0) {
     return 'Validation failed. Please check your input.';
   }
 
   if (details.length === 1) {
-    const detail = details[0]!;
+    const detail = details[0];
+    if (!detail) {
+      return 'Validation failed. Please check your input.';
+    }
     const fieldLabel = formatFieldName(detail.field);
     return `${fieldLabel}: ${detail.message}`;
   }

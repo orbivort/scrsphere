@@ -35,7 +35,7 @@ export const useUnreadCount = () => {
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, []);
 
-  const pollingInterval = config?.pollingIntervalMs || DEFAULT_POLLING_INTERVAL;
+  const pollingInterval = config?.pollingIntervalMs ?? DEFAULT_POLLING_INTERVAL;
 
   return useQuery({
     queryKey: ['notifications', 'unread-count'],
@@ -54,7 +54,7 @@ export const useMarkAsRead = () => {
   return useMutation({
     mutationFn: (notificationId: string) => notificationApi.markAsRead(notificationId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.notification.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.notification.all });
     },
   });
 };
@@ -65,7 +65,7 @@ export const useMarkAllAsRead = () => {
   return useMutation({
     mutationFn: (notificationIds?: string[]) => notificationApi.markAllAsRead(notificationIds),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.notification.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.notification.all });
     },
   });
 };
@@ -76,7 +76,7 @@ export const useDeleteNotification = () => {
   return useMutation({
     mutationFn: (notificationId: string) => notificationApi.deleteNotification(notificationId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.notification.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.notification.all });
     },
   });
 };

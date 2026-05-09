@@ -284,7 +284,7 @@ export const mockTeams: Team[] = [
         userId: UUIDS.users.scrumMaster,
         role: 'scrum_master' as UserRole,
         joinedAt: '2024-01-01T00:00:00Z',
-        user: mockUsers[1]!,
+        user: mockUsers[1] as User,
       },
       {
         id: '018ff5b8-0e26-7e8c-9d2f-4a6b8c3d5e8b',
@@ -292,7 +292,7 @@ export const mockTeams: Team[] = [
         userId: UUIDS.users.developer1,
         role: 'product_owner' as UserRole,
         joinedAt: '2024-01-01T00:00:00Z',
-        user: mockUsers[2]!,
+        user: mockUsers[2] as User,
       },
       {
         id: '018ff5b8-0e27-7e8c-9d2f-4a6b8c3d5e8c',
@@ -300,7 +300,7 @@ export const mockTeams: Team[] = [
         userId: UUIDS.users.admin,
         role: 'developer' as UserRole,
         joinedAt: '2024-01-02T00:00:00Z',
-        user: mockUsers[0]!,
+        user: mockUsers[0] as User,
       },
       {
         id: '018ff5b8-0e28-7e8c-9d2f-4a6b8c3d5e8d',
@@ -308,7 +308,7 @@ export const mockTeams: Team[] = [
         userId: UUIDS.users.developer2,
         role: 'developer' as UserRole,
         joinedAt: '2024-01-02T00:00:00Z',
-        user: mockUsers[3]!,
+        user: mockUsers[3] as User,
       },
       {
         id: '018ff5b8-0e29-7e8c-9d2f-4a6b8c3d5e8e',
@@ -316,7 +316,7 @@ export const mockTeams: Team[] = [
         userId: UUIDS.users.guest,
         role: 'developer' as UserRole,
         joinedAt: '2024-01-03T00:00:00Z',
-        user: mockUsers[4]!,
+        user: mockUsers[4] as User,
       },
     ],
   },
@@ -334,7 +334,7 @@ export const mockTeams: Team[] = [
         userId: UUIDS.users.developer3,
         role: 'scrum_master' as UserRole,
         joinedAt: '2024-01-15T00:00:00Z',
-        user: mockUsers[5]!,
+        user: mockUsers[5] as User,
       },
       {
         id: '018ff5b8-0e2b-7e8c-9d2f-4a6b8c3d5e90',
@@ -342,7 +342,7 @@ export const mockTeams: Team[] = [
         userId: UUIDS.users.productOwner2,
         role: 'product_owner' as UserRole,
         joinedAt: '2024-01-15T00:00:00Z',
-        user: mockUsers[6]!,
+        user: mockUsers[6] as User,
       },
       {
         id: '018ff5b8-0e2c-7e8c-9d2f-4a6b8c3d5e91',
@@ -350,7 +350,7 @@ export const mockTeams: Team[] = [
         userId: '018ff5b8-0e23-7e8c-9d2f-4a6b8c3d5e88',
         role: 'developer' as UserRole,
         joinedAt: '2024-01-16T00:00:00Z',
-        user: mockUsers[7]!,
+        user: mockUsers[7] as User,
       },
       {
         id: '018ff5b8-0e2d-7e8c-9d2f-4a6b8c3d5e92',
@@ -358,7 +358,7 @@ export const mockTeams: Team[] = [
         userId: '018ff5b8-0e24-7e8c-9d2f-4a6b8c3d5e89',
         role: 'developer' as UserRole,
         joinedAt: '2024-01-20T00:00:00Z',
-        user: mockUsers[8]!,
+        user: mockUsers[8] as User,
       },
     ],
   },
@@ -376,7 +376,7 @@ export const mockTeams: Team[] = [
         userId: 'user-10',
         role: 'scrum_master' as UserRole,
         joinedAt: '2024-02-01T00:00:00Z',
-        user: mockUsers[9]!,
+        user: mockUsers[9] as User,
       },
       {
         id: 'member-11',
@@ -384,7 +384,7 @@ export const mockTeams: Team[] = [
         userId: 'user-11',
         role: 'product_owner' as UserRole,
         joinedAt: '2024-02-01T00:00:00Z',
-        user: mockUsers[10]!,
+        user: mockUsers[10] as User,
       },
       {
         id: 'member-12',
@@ -392,7 +392,7 @@ export const mockTeams: Team[] = [
         userId: 'user-12',
         role: 'developer' as UserRole,
         joinedAt: '2024-02-01T00:00:00Z',
-        user: mockUsers[11]!,
+        user: mockUsers[11] as User,
       },
     ],
   },
@@ -634,7 +634,7 @@ export const mockSprints: Sprint[] = [
     status: 'completed' as SprintStatus,
     createdAt: '2024-01-14T00:00:00Z',
     updatedAt: '2024-01-28T00:00:00Z',
-    items: [mockProductBacklogItems[9]!],
+    items: [mockProductBacklogItems[9] as ProductBacklogItem],
     tasks: [],
   },
   {
@@ -647,7 +647,10 @@ export const mockSprints: Sprint[] = [
     status: 'completed' as SprintStatus,
     createdAt: '2024-01-28T00:00:00Z',
     updatedAt: '2024-02-11T00:00:00Z',
-    items: [mockProductBacklogItems[8]!, mockProductBacklogItems[10]!],
+    items: [
+      mockProductBacklogItems[8] as ProductBacklogItem,
+      mockProductBacklogItems[10] as ProductBacklogItem,
+    ],
     tasks: [],
   },
   // Planned Sprint (ready to be started)
@@ -662,7 +665,10 @@ export const mockSprints: Sprint[] = [
     status: 'planned' as SprintStatus,
     createdAt: '2024-02-11T00:00:00Z',
     updatedAt: '2024-02-12T00:00:00Z',
-    items: [mockProductBacklogItems[6]!, mockProductBacklogItems[7]!],
+    items: [
+      mockProductBacklogItems[6] as ProductBacklogItem,
+      mockProductBacklogItems[7] as ProductBacklogItem,
+    ],
     tasks: [],
   },
 ];
@@ -772,8 +778,10 @@ export const mockTasks: Task[] = [
   },
 ];
 
-// Update sprint with tasks
-mockSprints[2]!.tasks = mockTasks;
+const sprintToUpdate = mockSprints[2];
+if (sprintToUpdate) {
+  sprintToUpdate.tasks = mockTasks;
+}
 
 // ==================== Impediments ====================
 export const mockImpediments: Impediment[] = [
@@ -833,9 +841,9 @@ yesterday.setDate(yesterday.getDate() - 1);
 const twoDaysAgo = new Date(today);
 twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
 
-const formatDate = (d: Date): string => d.toISOString().split('T')[0]!;
+const formatDate = (d: Date): string => d.toISOString().split('T')[0] ?? '';
 const formatTime = (h: number, m: number): string =>
-  `${today.toISOString().split('T')[0]!}T${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:00Z`;
+  `${today.toISOString().split('T')[0] ?? ''}T${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:00Z`;
 
 export const mockDailyUpdates: DailyUpdate[] = [
   // ============ TODAY'S UPDATES ============
@@ -1125,10 +1133,22 @@ export const mockVelocityData: VelocityData[] = [
 ];
 
 // Helper function to get current user
-export const getCurrentUser = (): User => mockUsers[0]!;
+export const getCurrentUser = (): User => {
+  const user = mockUsers[0];
+  if (!user) {
+    throw new Error('Mock user not found');
+  }
+  return user;
+};
 
 // Helper function to get current team
-export const getCurrentTeam = (): Team => mockTeams[0]!;
+export const getCurrentTeam = (): Team => {
+  const team = mockTeams[0];
+  if (!team) {
+    throw new Error('Mock team not found');
+  }
+  return team;
+};
 
 // Helper function to get active sprint
 export const getActiveSprint = (): Sprint | undefined =>

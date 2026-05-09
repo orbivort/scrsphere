@@ -222,7 +222,11 @@ describe('CreateSprintReviewModal - Additional Edge Case Tests', () => {
 
     it('should display error with string error', () => {
       render(
-        <CreateSprintReviewModal {...defaultProps} isError={true} error={'String error' as any} />
+        <CreateSprintReviewModal
+          {...defaultProps}
+          isError={true}
+          error={'String error' as unknown as Error}
+        />
       );
 
       expect(

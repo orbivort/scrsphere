@@ -83,7 +83,7 @@ function normalizeHeader(header: string): string {
 
 function mapHeader(header: string): string | null {
   const normalized = normalizeHeader(header);
-  return HEADER_MAPPINGS[normalized] || null;
+  return HEADER_MAPPINGS[normalized] ?? null;
 }
 
 function parseCSVLine(line: string): string[] {
@@ -355,7 +355,7 @@ export function getInvalidItems(items: BulkUploadItem[]): BulkUploadItem[] {
 }
 
 export function getAllErrors(items: BulkUploadItem[]): ValidationError[] {
-  return items.flatMap((item) => item._errors || []);
+  return items.flatMap((item) => item._errors ?? []);
 }
 
 export function generateCSVTemplate(): string {

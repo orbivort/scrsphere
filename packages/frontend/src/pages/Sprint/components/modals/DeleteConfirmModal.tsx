@@ -25,7 +25,7 @@ export const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
   isDeleting,
   modalRef,
 }) => {
-  const statusClass = task.status?.toLowerCase() || 'todo';
+  const statusClass = task.status.toLowerCase() || 'todo';
 
   return (
     <div
@@ -88,7 +88,7 @@ export const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
                 <span className={styles['impact-text']}>
                   Status:{' '}
                   <strong className={`${styles['status-badge']} ${styles[statusClass]}`}>
-                    {task.status || 'TODO'}
+                    {task.status}
                   </strong>
                   {task.remainingHours !== undefined && task.remainingHours > 0 && (
                     <>

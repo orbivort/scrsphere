@@ -167,20 +167,20 @@ export const TeamManagement: React.FC = () => {
   const isUserAlreadyMember = (email: string): boolean => {
     if (!team?.members) return false;
     const normalizedEmail = email.trim().toLowerCase();
-    return team.members.some((member) => member.user?.email?.toLowerCase() === normalizedEmail);
+    return team.members.some((member) => member.user?.email.toLowerCase() === normalizedEmail);
   };
 
   const canInviteMembers = (): boolean => {
     if (!user || !teamId) return false;
-    const userTeam = userTeamsWithRoles?.find((t: Team & { userRole: string }) => t.id === teamId);
-    const userRole = userTeam?.userRole?.toLowerCase();
+    const userTeam = userTeamsWithRoles.find((t: Team & { userRole: string }) => t.id === teamId);
+    const userRole = userTeam?.userRole.toLowerCase();
     return userRole === 'product_owner' || userRole === 'scrum_master';
   };
 
   const canRemoveMembers = (): boolean => {
     if (!user || !teamId) return false;
-    const userTeam = userTeamsWithRoles?.find((t: Team & { userRole: string }) => t.id === teamId);
-    const userRole = userTeam?.userRole?.toLowerCase();
+    const userTeam = userTeamsWithRoles.find((t: Team & { userRole: string }) => t.id === teamId);
+    const userRole = userTeam?.userRole.toLowerCase();
     return userRole === 'product_owner' || userRole === 'scrum_master';
   };
 
@@ -193,8 +193,8 @@ export const TeamManagement: React.FC = () => {
 
   useEffect(() => {
     if (user) {
-      queryClient.invalidateQueries({ queryKey: queryKeys.myTeams.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.team.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.myTeams.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.team.all });
     }
   }, [user, queryClient]);
 
@@ -256,14 +256,14 @@ export const TeamManagement: React.FC = () => {
       return apiService.addTeamMember(teamId, email, role);
     },
     onSuccess: (response) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.team.byId(teamId) });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.team.byId(teamId) });
       setIsInvitingMember(false);
       setNewMemberEmail('');
       setNewMemberRole('developer');
       setInviteError(null);
       const memberName = response.data?.user?.firstName
         ? `${response.data.user.firstName} ${response.data.user.lastName || ''}`.trim()
-        : response.data?.user?.email || 'User';
+        : (response.data?.user?.email ?? 'User');
       setInviteSuccess(
         `${memberName} has been successfully added to the team as ${newMemberRole.replace('_', ' ')}`
       );
@@ -299,7 +299,7 @@ export const TeamManagement: React.FC = () => {
       return apiService.removeTeamMember(teamId, memberId);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.team.byId(teamId) });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.team.byId(teamId) });
       setMemberToDelete(null);
       setDeleteError(null);
       setDeleteSuccess('Team member has been successfully removed.');
@@ -408,7 +408,7 @@ export const TeamManagement: React.FC = () => {
 
     const emailValidation = validateEmail(newMemberEmail);
     if (!emailValidation.valid) {
-      setInviteError(emailValidation.error || 'Invalid email address');
+      setInviteError(emailValidation.error ?? 'Invalid email address');
       return;
     }
 
@@ -441,7 +441,7 @@ export const TeamManagement: React.FC = () => {
     } else if (teamData && !teamData.success) {
       errorState = {
         type: 'unknown',
-        message: teamData.error?.message || 'Failed to load team data',
+        message: teamData.error?.message ?? 'Failed to load team data',
       };
     }
 
@@ -467,13 +467,13 @@ export const TeamManagement: React.FC = () => {
         const name = member.user
           ? `${member.user.firstName || ''} ${member.user.lastName || ''}`.trim().toLowerCase()
           : '';
-        const email = member.user?.email?.toLowerCase() || '';
+        const email = member.user?.email.toLowerCase() ?? '';
         return name.includes(query) || email.includes(query);
       });
     }
 
     if (roleFilter !== 'all') {
-      members = members.filter((member) => member.role?.toLowerCase() === roleFilter.toLowerCase());
+      members = members.filter((member) => member.role.toLowerCase() === roleFilter.toLowerCase());
     }
 
     members.sort((a, b) => {
@@ -488,8 +488,8 @@ export const TeamManagement: React.FC = () => {
           return nameA.localeCompare(nameB);
         }
         case 'role': {
-          const roleA = a.role || '';
-          const roleB = b.role || '';
+          const roleA = a.role;
+          const roleB = b.role;
           return roleA.localeCompare(roleB);
         }
         case 'joined': {
@@ -505,7 +505,7 @@ export const TeamManagement: React.FC = () => {
     return members;
   }, [team?.members, searchQuery, roleFilter, sortBy]);
 
-  const memberCount = team?.members?.length || 0;
+  const memberCount = team?.members?.length ?? 0;
   const filteredCount = filteredAndSortedMembers.length;
 
   const { data: teamMetricsData } = useQuery<ApiResponse<TeamMetrics>, Error>({
@@ -535,10 +535,10 @@ export const TeamManagement: React.FC = () => {
   const teamMetrics = teamMetricsData?.success ? teamMetricsData.data : null;
   const sprintHistory = sprintHistoryData?.success ? sprintHistoryData.data : [];
 
-  const completedSprintsCount = (sprintHistory || []).filter(
+  const completedSprintsCount = (sprintHistory ?? []).filter(
     (s) => s.status === 'COMPLETED'
   ).length;
-  const totalStoryPointsCompleted = (sprintHistory || [])
+  const totalStoryPointsCompleted = (sprintHistory ?? [])
     .filter((s) => s.status === 'COMPLETED')
     .reduce((sum, s) => sum + s.completedPoints, 0);
   const avgVelocity = teamMetrics?.averageVelocity ?? 0;
@@ -559,7 +559,7 @@ export const TeamManagement: React.FC = () => {
                 <SparklesIcon size={80} />
               </div>
               <h1 className={styles['welcome-title']}>
-                Welcome to ScrSphere, {user?.firstName || 'there'}!
+                Welcome to ScrSphere, {user?.firstName ?? 'there'}!
               </h1>
               <p className={styles['welcome-subtitle']}>
                 Your agile journey starts here. Choose your path below to get started with your team
@@ -764,7 +764,7 @@ export const TeamManagement: React.FC = () => {
           <div className={styles['team-info-header']}>
             <h2 id="team-name">{team.name}</h2>
             <span className={styles['team-size']}>
-              {team.members?.length || 0} member{team.members?.length !== 1 ? 's' : ''}
+              {team.members?.length ?? 0} member{team.members?.length !== 1 ? 's' : ''}
             </span>
           </div>
           {team.description && <p className={styles['team-description']}>{team.description}</p>}

@@ -7,9 +7,9 @@
  * @module pages/Backlog/components/MoscowBadge
  */
 
-import React, { memo } from 'react';
+import { memo } from 'react';
 
-import { MoSCoWPriority } from '../../../types';
+import type { MoSCoWPriority } from '../../../types';
 import { MOSCOW_CONFIG } from '../config/moscow.config';
 
 import styles from './MoscowBadge.module.css';
@@ -43,7 +43,7 @@ export interface MoscowBadgeProps {
  * ```
  */
 export const MoscowBadge = memo<MoscowBadgeProps>(({ priority, compact = false }) => {
-  const config = MOSCOW_CONFIG[priority || MoSCoWPriority.COULD_HAVE];
+  const config = MOSCOW_CONFIG[priority];
 
   return (
     <span

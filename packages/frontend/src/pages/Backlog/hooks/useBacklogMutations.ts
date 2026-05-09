@@ -111,8 +111,8 @@ export const useBacklogMutations = (props: UseBacklogMutationsProps): UseBacklog
   const createItemMutation = useMutation({
     mutationFn: (item: Partial<ProductBacklogItem>) => apiService.createProductBacklogItem(item),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.productBacklog.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.productGoal.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.productBacklog.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.productGoal.all });
       onSuccessToast('Backlog item created successfully');
       onCreateSuccess?.();
       resetForm();
@@ -135,8 +135,8 @@ export const useBacklogMutations = (props: UseBacklogMutationsProps): UseBacklog
     mutationFn: ({ id, updates }: { id: string; updates: Partial<ProductBacklogItem> }) =>
       apiService.updateProductBacklogItem(id, updates),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.productBacklog.all });
-      queryClient.invalidateQueries({
+      void queryClient.invalidateQueries({ queryKey: queryKeys.productBacklog.all });
+      void queryClient.invalidateQueries({
         queryKey: ['statusChangeHistory', 'BacklogItem', variables.id],
       });
       if (variables.updates.status) {
@@ -163,9 +163,9 @@ export const useBacklogMutations = (props: UseBacklogMutationsProps): UseBacklog
     mutationFn: ({ id, updates }: { id: string; updates: Partial<ProductBacklogItem> }) =>
       apiService.updateProductBacklogItem(id, updates),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.productBacklog.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.productGoal.all });
-      queryClient.invalidateQueries({
+      void queryClient.invalidateQueries({ queryKey: queryKeys.productBacklog.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.productGoal.all });
+      void queryClient.invalidateQueries({
         queryKey: ['statusChangeHistory', 'BacklogItem', variables.id],
       });
       onSuccessToast('Backlog item updated successfully');
@@ -192,8 +192,8 @@ export const useBacklogMutations = (props: UseBacklogMutationsProps): UseBacklog
   const deleteItemMutation = useMutation({
     mutationFn: (id: string) => apiService.deleteProductBacklogItem(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.productBacklog.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.productGoal.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.productBacklog.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.productGoal.all });
       onSuccessToast('Backlog item deleted successfully');
       onDeleteSuccess?.();
       setSelectedItem(null);

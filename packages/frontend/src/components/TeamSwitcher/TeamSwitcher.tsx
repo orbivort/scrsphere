@@ -18,7 +18,7 @@ const getRoleBadgeClass = (role: string, prefix: string = 'team-role'): string =
     developer: `${prefix}-developer`,
     administrator: `${prefix}-administrator`,
   };
-  return classMap[normalizedRole] || `${prefix}-default`;
+  return classMap[normalizedRole] ?? `${prefix}-default`;
 };
 
 interface TeamSwitcherProps {
@@ -54,7 +54,7 @@ export const TeamSwitcher: React.FC<TeamSwitcherProps> = ({ compact = false }) =
     if (teamsData?.success && teamsData.data) {
       return teamsData.data;
     }
-    return userTeamsWithRoles || [];
+    return userTeamsWithRoles;
   }, [teamsData, userTeamsWithRoles]);
 
   useEffect(() => {
@@ -70,7 +70,7 @@ export const TeamSwitcher: React.FC<TeamSwitcherProps> = ({ compact = false }) =
     setCurrentTeam(team);
     setUserRoleInCurrentTeam(team.userRole);
     setIsOpen(false);
-    queryClient.invalidateQueries({ queryKey: queryKeys.team.byId(team.id) });
+    void queryClient.invalidateQueries({ queryKey: queryKeys.team.byId(team.id) });
   };
 
   const getTeamInitials = (name: string): string => {
@@ -94,7 +94,7 @@ export const TeamSwitcher: React.FC<TeamSwitcherProps> = ({ compact = false }) =
     for (let i = 0; i < teamId.length; i++) {
       hash = teamId.charCodeAt(i) + ((hash << 5) - hash);
     }
-    return gradients[Math.abs(hash) % gradients.length]!;
+    return gradients[Math.abs(hash) % gradients.length] ?? '';
   };
 
   if (isLoading) {
@@ -109,7 +109,7 @@ export const TeamSwitcher: React.FC<TeamSwitcherProps> = ({ compact = false }) =
     );
   }
 
-  if (!teams || teams.length === 0) {
+  if (teams.length === 0) {
     return (
       <div
         className={`${styles['team-switcher']} ${compact ? styles['team-switcher-compact'] : ''}`}
@@ -161,7 +161,7 @@ export const TeamSwitcher: React.FC<TeamSwitcherProps> = ({ compact = false }) =
     );
   }
 
-  const currentTeamData = teams.find((t) => t.id === currentTeam?.id) || teams[0];
+  const currentTeamData = teams.find((t) => t.id === currentTeam?.id) ?? teams[0];
   if (!currentTeamData) return null;
   const currentRoleClass = getRoleBadgeClass(currentTeamData.userRole);
 

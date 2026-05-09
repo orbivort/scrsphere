@@ -4,8 +4,8 @@ import axios, { type AxiosError, type AxiosInstance, type InternalAxiosRequestCo
 import type { ApiResponse } from '../../types';
 import { logger } from '../../utils/logger';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api/v1';
-const API_TIMEOUT = parseInt(import.meta.env.VITE_API_TIMEOUT || '30000', 10);
+const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:5001/api/v1';
+const API_TIMEOUT = parseInt(import.meta.env.VITE_API_TIMEOUT ?? '30000', 10);
 
 const CSRF_COOKIE_NAME = 'csrfToken';
 const CSRF_HEADER_NAME = 'x-csrf-token';
@@ -70,9 +70,7 @@ export class CoreApiService {
       const method = config.method?.toUpperCase();
       if (method && ['POST', 'PUT', 'DELETE', 'PATCH'].includes(method)) {
         let csrfToken = getCsrfTokenFromCookie();
-        if (!csrfToken) {
-          csrfToken = await fetchCsrfToken();
-        }
+        csrfToken ??= await fetchCsrfToken();
         if (csrfToken) {
           config.headers[CSRF_HEADER_NAME] = csrfToken;
         }
@@ -101,7 +99,7 @@ export class CoreApiService {
           _retry?: boolean;
           _csrfRetry?: boolean;
         };
-        const requestUrl = originalRequest?.url || '';
+        const requestUrl = originalRequest.url ?? '';
 
         const isAuthEndpoint =
           requestUrl.includes('/auth/login') ||
@@ -114,12 +112,12 @@ export class CoreApiService {
         if (
           error.response?.status === 403 &&
           !originalRequest._csrfRetry &&
-          error.response?.data?.error?.message?.includes('CSRF')
+          error.response.data.error?.message.includes('CSRF')
         ) {
           originalRequest._csrfRetry = true;
 
           const newCsrfToken = await fetchCsrfToken();
-          if (newCsrfToken && originalRequest) {
+          if (newCsrfToken) {
             originalRequest.headers[CSRF_HEADER_NAME] = newCsrfToken;
             return this.api(originalRequest);
           }

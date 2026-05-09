@@ -92,7 +92,7 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
                 <button
                   className={styles['copy-id-btn']}
                   onClick={() => {
-                    navigator.clipboard.writeText(selectedItem.id);
+                    void navigator.clipboard.writeText(selectedItem.id);
                   }}
                   title="Copy full ID"
                   aria-label="Copy item ID to clipboard"

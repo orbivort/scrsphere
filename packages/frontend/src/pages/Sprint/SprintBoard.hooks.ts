@@ -115,53 +115,53 @@ export const useSprintBoardData = (
 
   // Fetch active sprint
   const { data: sprintData, isLoading: sprintLoading } = useQuery({
-    queryKey: queryKeys.sprint.activeSprint(teamId!),
-    queryFn: () => apiService.getActiveSprint(teamId!),
+    queryKey: queryKeys.sprint.activeSprint(teamId ?? ''),
+    queryFn: () => apiService.getActiveSprint(teamId ?? ''),
     enabled: !!teamId,
   });
 
   const sprint = sprintData?.data ?? null;
-  const sprintTasks = sprint?.tasks || [];
+  const sprintTasks = sprint?.tasks ?? [];
 
   // Fetch sprint tasks
   const { data: tasksData, isLoading: tasksLoading } = useQuery({
     queryKey: sprint?.id ? queryKeys.sprintTasks.bySprint(sprint.id) : queryKeys.sprintTasks.all,
-    queryFn: () => apiService.getSprintTasks(sprint?.id || ''),
+    queryFn: () => apiService.getSprintTasks(sprint?.id ?? ''),
     enabled: !!sprint?.id && !!teamId,
   });
 
   // Fetch team data
   const { data: teamData } = useQuery({
     queryKey: ['team', teamId],
-    queryFn: () => apiService.getTeam(teamId!),
+    queryFn: () => apiService.getTeam(teamId ?? ''),
     enabled: !!teamId,
   });
 
   // Fetch burndown data (conditional)
   const { data: burndownData } = useQuery({
     queryKey: sprint?.id ? queryKeys.burndown.bySprint(sprint.id) : queryKeys.burndown.all,
-    queryFn: () => apiService.getBurndownData(sprint?.id || ''),
+    queryFn: () => apiService.getBurndownData(sprint?.id ?? ''),
     enabled: !!sprint?.id && showBurndown && !!teamId,
   });
 
   // Fetch DoD items
   const { data: dodData } = useQuery({
     queryKey: ['definition-of-done', teamId],
-    queryFn: () => apiService.getDefinitionOfDone(teamId!),
+    queryFn: () => apiService.getDefinitionOfDone(teamId ?? ''),
     enabled: !!teamId,
   });
 
   // Fetch impediments
   const { data: impedimentsData } = useQuery({
     queryKey: ['impediments', teamId],
-    queryFn: () => apiService.getImpediments(teamId!),
+    queryFn: () => apiService.getImpediments(teamId ?? ''),
     enabled: !!teamId,
   });
 
   // Fetch DoD compliance (conditional)
   const { data: dodComplianceData } = useQuery({
     queryKey: ['dod-compliance', sprint?.id],
-    queryFn: () => apiService.getDoDComplianceReport(sprint?.id || ''),
+    queryFn: () => apiService.getDoDComplianceReport(sprint?.id ?? ''),
     enabled: !!sprint?.id && showDodVerification,
   });
 
@@ -169,18 +169,18 @@ export const useSprintBoardData = (
   // Extract Raw Data
   // ============================================
 
-  const tasks = tasksData?.data || sprintTasks;
-  const teamMembers: (TeamMember & { user?: User })[] = teamData?.data?.members || [];
-  const sprintItems: ProductBacklogItem[] = sprint?.items || [];
+  const tasks = tasksData?.data ?? sprintTasks;
+  const teamMembers: (TeamMember & { user?: User })[] = teamData?.data?.members ?? [];
+  const sprintItems: ProductBacklogItem[] = useMemo(() => sprint?.items ?? [], [sprint]);
   const dodItems: DoDItem[] =
     (dodData as { data?: { items?: DoDItem[] } } | undefined)?.data?.items
       ?.filter((item: DoDItem) => item.isActive)
-      .sort((a: DoDItem, b: DoDItem) => a.order - b.order) || [];
-  const impediments: Impediment[] = impedimentsData?.data || [];
+      .sort((a: DoDItem, b: DoDItem) => a.order - b.order) ?? [];
+  const impediments: Impediment[] = impedimentsData?.data ?? [];
   const dodVerifications: DoDChecklistVerification[] =
-    dodComplianceData?.data?.pbiDetails?.flatMap(
+    dodComplianceData?.data?.pbiDetails.flatMap(
       (detail: { verifications: DoDChecklistVerification[] }) => detail.verifications
-    ) || [];
+    ) ?? [];
 
   // ============================================
   // Derived Computations
@@ -230,12 +230,9 @@ export const useSprintBoardData = (
     const inProgressTasks = tasks.filter((t) => t.status === TaskStatusEnum.IN_PROGRESS).length;
     const doneTasks = tasks.filter((t) => t.status === TaskStatusEnum.DONE).length;
 
-    const totalEstimatedHours = tasks.reduce((sum, t) => sum + (t.estimatedHours || 0), 0);
+    const totalEstimatedHours = tasks.reduce((sum, t) => sum + (t.estimatedHours ?? 0), 0);
     const totalRemainingHours = tasks.reduce((sum, t) => {
-      const remaining =
-        t.remainingHours !== null && t.remainingHours !== undefined
-          ? t.remainingHours
-          : t.estimatedHours || 0;
+      const remaining = t.remainingHours ?? t.estimatedHours ?? 0;
       return sum + remaining;
     }, 0);
     const hoursCompleted = totalEstimatedHours - totalRemainingHours;
@@ -246,13 +243,13 @@ export const useSprintBoardData = (
       return pbiTasks.length > 0 && pbiTasks.every((t) => t.status === TaskStatusEnum.DONE);
     }).length;
 
-    const totalStoryPoints = sprintItems.reduce((sum, item) => sum + (item.storyPoints || 0), 0);
+    const totalStoryPoints = sprintItems.reduce((sum, item) => sum + (item.storyPoints ?? 0), 0);
     const completedStoryPoints = sprintItems
       .filter((item) => {
         const itemTasks = tasks.filter((t) => t.pbiId === item.id);
         return itemTasks.length > 0 && itemTasks.every((t) => t.status === TaskStatusEnum.DONE);
       })
-      .reduce((sum, item) => sum + (item.storyPoints || 0), 0);
+      .reduce((sum, item) => sum + (item.storyPoints ?? 0), 0);
 
     return {
       totalTasks,
@@ -282,7 +279,7 @@ export const useSprintBoardData = (
 
   // Sprint duration
   const sprintDuration = useMemo(() => {
-    if (!sprint?.startDate || !sprint?.endDate) return 14;
+    if (!sprint?.startDate || !sprint.endDate) return 14;
     const start = new Date(sprint.startDate);
     const end = new Date(sprint.endDate);
     return Math.ceil((end.getTime() - start.getTime()) / TIME.DAY);
@@ -290,7 +287,7 @@ export const useSprintBoardData = (
 
   // Burndown chart data
   const burndownChartData = useMemo((): BurndownDataPoint[] => {
-    if (!sprint?.startDate || !sprint?.endDate) return [];
+    if (!sprint?.startDate || !sprint.endDate) return [];
 
     const startDate = new Date(sprint.startDate);
     const endDate = new Date(sprint.endDate);
@@ -298,10 +295,10 @@ export const useSprintBoardData = (
     const totalHours = sprintStats.totalEstimatedHours || 1;
     const idealDailyBurn = totalHours / totalDays;
 
-    const backendDates = (burndownData as { data?: { dates?: string[] } })?.data?.dates || [];
-    const backendIdeal = (burndownData as { data?: { ideal?: number[] } })?.data?.ideal || [];
+    const backendDates = (burndownData as { data?: { dates?: string[] } }).data?.dates ?? [];
+    const backendIdeal = (burndownData as { data?: { ideal?: number[] } }).data?.ideal ?? [];
     const backendActual =
-      (burndownData as { data?: { actual?: (number | null)[] } })?.data?.actual || [];
+      (burndownData as { data?: { actual?: (number | null)[] } }).data?.actual ?? [];
 
     const data: BurndownDataPoint[] = [];
 
@@ -314,14 +311,14 @@ export const useSprintBoardData = (
 
       data.push({
         day,
-        date: dateStr!,
+        date: dateStr,
         ideal:
           backendIndex >= 0 && backendIdeal[backendIndex] !== undefined
-            ? backendIdeal[backendIndex]!
+            ? backendIdeal[backendIndex]
             : Math.max(0, totalHours - idealDailyBurn * day),
         actual:
           backendIndex >= 0 && backendActual[backendIndex] !== undefined
-            ? backendActual[backendIndex]!
+            ? backendActual[backendIndex]
             : null,
       });
     }
@@ -353,13 +350,17 @@ export const useSprintBoardData = (
     filteredTasks.forEach((task) => {
       let key: string;
       if (swimlaneGroup === 'assignee') {
-        key = task.assigneeId || 'unassigned';
+        key = task.assigneeId ?? 'unassigned';
       } else {
         key = task.pbiId;
       }
 
-      if (!groups[key]) groups[key] = [];
-      groups[key]!.push(task);
+      let group = groups[key];
+      if (!group) {
+        group = [];
+        groups[key] = group;
+      }
+      group.push(task);
     });
 
     return groups;
@@ -420,13 +421,8 @@ export const useFocusTrap = (isActive: boolean, modalRef: RefObject<HTMLElement 
       const focusableElements = getFocusableElements();
       if (focusableElements.length > 0) {
         const closeButton = modalRef.current.querySelector('[data-modal-close]') as HTMLElement;
-        if (closeButton) {
-          closeButton.focus();
-        } else {
-          focusableElements[0]?.focus();
-        }
+        closeButton.focus();
       }
-
       const handleKeyDown = (e: KeyboardEvent) => {
         if (e.key !== 'Tab') return;
 
@@ -783,13 +779,13 @@ export const useKeyboardNavigation = (
                 checkRequiredFields: true,
               });
 
-              if (!result.valid) {
-                showToast('error', result.error!);
-                announceWipError(result.error!);
+              if (!result.valid || !result.updates) {
+                showToast('error', result.error ?? 'Invalid transition');
+                announceWipError(result.error ?? 'Invalid transition');
                 return;
               }
 
-              onMoveTask(task.id, result.updates!);
+              onMoveTask(task.id, result.updates);
               announceDropped(
                 { ...task, status: keyboardDropTargetStatus },
                 keyboardDropTargetStatus
@@ -863,12 +859,12 @@ export const useKeyboardNavigation = (
                 checkRequiredFields: true,
               });
 
-              if (result.valid) {
-                onMoveTask(task.id, result.updates!);
+              if (result.valid && result.updates) {
+                onMoveTask(task.id, result.updates);
                 announceDropped(task, targetStatus);
               } else {
-                showToast('error', result.error!);
-                announceWipError(result.error!);
+                showToast('error', result.error ?? 'Invalid transition');
+                announceWipError(result.error ?? 'Invalid transition');
               }
             }
           } else {
@@ -882,19 +878,19 @@ export const useKeyboardNavigation = (
                 checkRequiredFields: true,
               });
 
-              if (result.valid) {
-                onMoveTask(task.id, result.updates!);
+              if (result.valid && result.updates) {
+                onMoveTask(task.id, result.updates);
               } else {
-                showToast('error', result.error!);
+                showToast('error', result.error ?? 'Invalid transition');
               }
             } else if (task.status === TaskStatusEnum.IN_PROGRESS) {
               const result = validateAndPrepareTransition(task, TaskStatusEnum.DONE);
 
-              if (result.valid) {
-                onMoveTask(task.id, result.updates!);
+              if (result.valid && result.updates) {
+                onMoveTask(task.id, result.updates);
                 showToast('success', 'Task moved to Done (Remaining hours set to 0)');
               } else {
-                showToast('error', result.error!);
+                showToast('error', result.error ?? 'Invalid transition');
               }
             }
           }
@@ -912,12 +908,12 @@ export const useKeyboardNavigation = (
                 checkRequiredFields: true,
               });
 
-              if (result.valid) {
-                onMoveTask(task.id, result.updates!);
+              if (result.valid && result.updates) {
+                onMoveTask(task.id, result.updates);
                 announceDropped(task, targetStatus);
               } else {
-                showToast('error', result.error!);
-                announceWipError(result.error!);
+                showToast('error', result.error ?? 'Invalid transition');
+                announceWipError(result.error ?? 'Invalid transition');
               }
             }
           } else {
@@ -926,18 +922,18 @@ export const useKeyboardNavigation = (
             if (task.status === TaskStatusEnum.DONE) {
               const result = validateAndPrepareTransition(task, TaskStatusEnum.IN_PROGRESS);
 
-              if (result.valid) {
-                onMoveTask(task.id, result.updates!);
+              if (result.valid && result.updates) {
+                onMoveTask(task.id, result.updates);
               } else {
-                showToast('error', result.error!);
+                showToast('error', result.error ?? 'Invalid transition');
               }
             } else if (task.status === TaskStatusEnum.IN_PROGRESS) {
               const result = validateAndPrepareTransition(task, TaskStatusEnum.TODO);
 
-              if (result.valid) {
-                onMoveTask(task.id, result.updates!);
+              if (result.valid && result.updates) {
+                onMoveTask(task.id, result.updates);
               } else {
-                showToast('error', result.error!);
+                showToast('error', result.error ?? 'Invalid transition');
               }
             }
           }
@@ -1033,20 +1029,20 @@ export const useTaskMutations = (options: UseTaskMutationsOptions): UseTaskMutat
   const { handleMutationError } = useMutationErrorHandler();
 
   const createTaskMutation = useMutation({
-    mutationFn: (taskData: Partial<Task>) => apiService.createTask(sprintId || '', taskData),
+    mutationFn: (taskData: Partial<Task>) => apiService.createTask(sprintId ?? '', taskData),
     onSuccess: () => {
       // Invalidate specific sprint tasks query to trigger refetch
       if (sprintId) {
-        queryClient.invalidateQueries({ queryKey: queryKeys.sprintTasks.bySprint(sprintId) });
-        queryClient.invalidateQueries({ queryKey: queryKeys.burndown.bySprint(sprintId) });
+        void queryClient.invalidateQueries({ queryKey: queryKeys.sprintTasks.bySprint(sprintId) });
+        void queryClient.invalidateQueries({ queryKey: queryKeys.burndown.bySprint(sprintId) });
       }
       if (teamId) {
-        queryClient.invalidateQueries({ queryKey: queryKeys.sprint.activeSprint(teamId) });
+        void queryClient.invalidateQueries({ queryKey: queryKeys.sprint.activeSprint(teamId) });
       }
       // Also invalidate the general lists to ensure consistency
-      queryClient.invalidateQueries({ queryKey: queryKeys.sprintTasks.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.burndown.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.sprintTasks.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.burndown.all });
       onCloseModal();
       showToast('success', 'Task created successfully');
     },
@@ -1060,20 +1056,20 @@ export const useTaskMutations = (options: UseTaskMutationsOptions): UseTaskMutat
 
   const updateTaskMutation = useMutation({
     mutationFn: ({ taskId, updates }: { taskId: string; updates: Partial<Task> }) =>
-      apiService.updateTask(sprintId || '', taskId, updates),
+      apiService.updateTask(sprintId ?? '', taskId, updates),
     onSuccess: () => {
       // Invalidate specific sprint tasks query to trigger refetch
       if (sprintId) {
-        queryClient.invalidateQueries({ queryKey: queryKeys.sprintTasks.bySprint(sprintId) });
-        queryClient.invalidateQueries({ queryKey: queryKeys.burndown.bySprint(sprintId) });
+        void queryClient.invalidateQueries({ queryKey: queryKeys.sprintTasks.bySprint(sprintId) });
+        void queryClient.invalidateQueries({ queryKey: queryKeys.burndown.bySprint(sprintId) });
       }
       if (teamId) {
-        queryClient.invalidateQueries({ queryKey: queryKeys.sprint.activeSprint(teamId) });
+        void queryClient.invalidateQueries({ queryKey: queryKeys.sprint.activeSprint(teamId) });
       }
       // Also invalidate the general lists to ensure consistency
-      queryClient.invalidateQueries({ queryKey: queryKeys.sprintTasks.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.burndown.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.sprintTasks.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.burndown.all });
       onCloseModal();
       showToast('success', 'Task updated successfully');
     },
@@ -1086,20 +1082,20 @@ export const useTaskMutations = (options: UseTaskMutationsOptions): UseTaskMutat
   });
 
   const deleteTaskMutation = useMutation({
-    mutationFn: (taskId: string) => apiService.deleteTask(sprintId || '', taskId),
+    mutationFn: (taskId: string) => apiService.deleteTask(sprintId ?? '', taskId),
     onSuccess: () => {
       // Invalidate specific sprint tasks query to trigger refetch
       if (sprintId) {
-        queryClient.invalidateQueries({ queryKey: queryKeys.sprintTasks.bySprint(sprintId) });
-        queryClient.invalidateQueries({ queryKey: queryKeys.burndown.bySprint(sprintId) });
+        void queryClient.invalidateQueries({ queryKey: queryKeys.sprintTasks.bySprint(sprintId) });
+        void queryClient.invalidateQueries({ queryKey: queryKeys.burndown.bySprint(sprintId) });
       }
       if (teamId) {
-        queryClient.invalidateQueries({ queryKey: queryKeys.sprint.activeSprint(teamId) });
+        void queryClient.invalidateQueries({ queryKey: queryKeys.sprint.activeSprint(teamId) });
       }
       // Also invalidate the general lists to ensure consistency
-      queryClient.invalidateQueries({ queryKey: queryKeys.sprintTasks.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.burndown.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.sprintTasks.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.burndown.all });
       onCloseModal();
       showToast('success', 'Task deleted successfully');
     },
@@ -1118,13 +1114,15 @@ export const useTaskMutations = (options: UseTaskMutationsOptions): UseTaskMutat
       return apiService.completeSprint(sprintId);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.productBacklog.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.sprintTasks.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.productBacklog.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.sprintTasks.all });
       onCloseCompleteSprintModal();
       showToast('success', 'Sprint completed successfully! Redirecting to create Increment...');
       setTimeout(() => {
-        onNavigateToIncrement(sprintId!);
+        if (sprintId) {
+          onNavigateToIncrement(sprintId);
+        }
       }, 1500);
     },
     onError: (error: unknown) => {
@@ -1222,15 +1220,15 @@ export const useDragAndDrop = (options: UseDragAndDropOptions): UseDragAndDropRe
           checkRequiredFields: true,
         });
 
-        if (!result.valid) {
-          showToast('error', result.error!);
-          onSetWorkflowError(result.error!);
+        if (!result.valid || !result.updates) {
+          showToast('error', result.error ?? 'Invalid transition');
+          onSetWorkflowError(result.error ?? 'Invalid transition');
           setTimeout(() => onSetWorkflowError(null), 5000);
           return;
         }
 
         onSetWorkflowError(null);
-        onMoveTask(taskId, result.updates!);
+        onMoveTask(taskId, result.updates);
       }
     },
     [
@@ -1353,7 +1351,7 @@ export const useTaskFormValidation = (
       [TaskStatusEnum.IN_PROGRESS]: [TaskStatusEnum.DONE, TaskStatusEnum.TODO],
       [TaskStatusEnum.DONE]: [],
     };
-    return validTransitions[currentStatus] || [];
+    return validTransitions[currentStatus];
   }, []);
 
   // ============================================
@@ -1369,7 +1367,7 @@ export const useTaskFormValidation = (
       // Step 1: Validate status transition
       const validationResult = validateTaskStatusTransition(task.status, newStatus);
       if (!validationResult.valid) {
-        return { valid: false, error: validationResult.message || 'Invalid status transition' };
+        return { valid: false, error: validationResult.message ?? 'Invalid status transition' };
       }
 
       // Step 2: Check WIP limits for IN_PROGRESS
@@ -1448,11 +1446,7 @@ export const useTaskFormValidation = (
     }
 
     // Remaining hours validation (required for both create and edit)
-    if (
-      formData.remainingHours === undefined ||
-      formData.remainingHours === null ||
-      formData.remainingHours <= 0
-    ) {
+    if (formData.remainingHours <= 0) {
       errors.remainingHours = 'Remaining hours must be greater than 0';
     }
 

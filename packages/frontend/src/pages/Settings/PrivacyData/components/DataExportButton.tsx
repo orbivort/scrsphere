@@ -43,7 +43,7 @@ export const DataExportButton: React.FC<DataExportButtonProps> = ({
 
   const handleClose = useCallback(() => {
     if (state.currentJobId && (state.status === 'pending' || state.status === 'processing')) {
-      cancelExport(state.currentJobId);
+      void cancelExport(state.currentJobId);
     }
     reset();
   }, [cancelExport, reset, state.currentJobId, state.status]);

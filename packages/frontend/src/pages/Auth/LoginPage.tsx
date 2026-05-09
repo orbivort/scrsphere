@@ -65,7 +65,7 @@ export const LoginPage: React.FC = () => {
     if (isAuthenticated) {
       const currentPath = window.location.pathname;
       if (currentPath === '/login' || currentPath === '/register') {
-        navigate('/dashboard');
+        void navigate('/dashboard');
       }
     }
   }, [isAuthenticated, navigate]);
@@ -86,14 +86,12 @@ export const LoginPage: React.FC = () => {
 
           setUser(user);
 
-          if (sessionInfo) {
-            initializeSession({
-              expiresAt: new Date(sessionInfo.expiresAt),
-              idleTimeoutMs: sessionInfo.idleTimeoutMs,
-              absoluteTimeoutMs: sessionInfo.absoluteTimeoutMs,
-              warningThresholdMs: sessionInfo.warningThresholdMs,
-            });
-          }
+          initializeSession({
+            expiresAt: new Date(sessionInfo.expiresAt),
+            idleTimeoutMs: sessionInfo.idleTimeoutMs,
+            absoluteTimeoutMs: sessionInfo.absoluteTimeoutMs,
+            warningThresholdMs: sessionInfo.warningThresholdMs,
+          });
 
           try {
             const teamsResponse = await apiService.getMyTeams();
@@ -106,13 +104,13 @@ export const LoginPage: React.FC = () => {
                 setCurrentTeam(teamData);
                 setUserRoleInCurrentTeam(userRole);
               }
-              navigate('/dashboard');
+              void navigate('/dashboard');
             } else {
-              navigate('/team');
+              void navigate('/team');
             }
           } catch (error) {
             logger.warn('Failed to fetch teams', undefined, { error });
-            navigate('/team');
+            void navigate('/team');
           }
         } else {
           const backendMessage = response.error?.message;
@@ -134,13 +132,13 @@ export const LoginPage: React.FC = () => {
         if (import.meta.env.DEV) {
           logger.debug('Login error', undefined, {
             error: err,
-            response: axiosError?.response,
-            data: axiosError?.response?.data,
+            response: axiosError.response,
+            data: axiosError.response?.data,
           });
         }
 
-        let backendMessage = axiosError?.response?.data?.error?.message;
-        const errorDetails = axiosError?.response?.data?.error;
+        let backendMessage = axiosError.response?.data?.error?.message;
+        const errorDetails = axiosError.response?.data?.error;
 
         if (!backendMessage && err instanceof Error) {
           backendMessage = err.message;
@@ -196,18 +194,16 @@ export const LoginPage: React.FC = () => {
 
           setUser(user);
 
-          if (sessionInfo) {
-            initializeSession({
-              expiresAt: new Date(sessionInfo.expiresAt),
-              idleTimeoutMs: sessionInfo.idleTimeoutMs,
-              absoluteTimeoutMs: sessionInfo.absoluteTimeoutMs,
-              warningThresholdMs: sessionInfo.warningThresholdMs,
-            });
-          }
+          initializeSession({
+            expiresAt: new Date(sessionInfo.expiresAt),
+            idleTimeoutMs: sessionInfo.idleTimeoutMs,
+            absoluteTimeoutMs: sessionInfo.absoluteTimeoutMs,
+            warningThresholdMs: sessionInfo.warningThresholdMs,
+          });
 
           setCurrentTeam(null);
 
-          navigate('/team');
+          void navigate('/team');
         } else {
           const backendMessage = response.error?.message;
           const userFriendlyMessage = getUserFriendlyErrorMessage(backendMessage, 'register');
@@ -228,13 +224,13 @@ export const LoginPage: React.FC = () => {
         if (import.meta.env.DEV) {
           logger.debug('Register error', undefined, {
             error: err,
-            response: axiosError?.response,
-            data: axiosError?.response?.data,
+            response: axiosError.response,
+            data: axiosError.response?.data,
           });
         }
 
-        let backendMessage = axiosError?.response?.data?.error?.message;
-        const errorDetails = axiosError?.response?.data?.error;
+        let backendMessage = axiosError.response?.data?.error?.message;
+        const errorDetails = axiosError.response?.data?.error;
 
         if (!backendMessage && err instanceof Error) {
           backendMessage = err.message;

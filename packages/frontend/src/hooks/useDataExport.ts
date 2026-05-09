@@ -41,66 +41,6 @@ export function useDataExport(): UseDataExportReturn {
   }, []);
 
   /**
-   * Start polling for export status
-   */
-  const startPolling = useCallback((jobId: string) => {
-    attemptsRef.current = 0;
-
-    setState((prev) => ({ ...prev, isPolling: true }));
-
-    pollingRef.current = setInterval(async () => {
-      attemptsRef.current++;
-
-      // Stop polling after max attempts
-      if (attemptsRef.current > MAX_POLLING_ATTEMPTS) {
-        stopPolling();
-        setState((prev) => ({
-          ...prev,
-          isPolling: false,
-          error: 'Export is taking longer than expected. Please check back later.',
-        }));
-        return;
-      }
-
-      try {
-        const status = await dataExportService.getExportStatus(jobId);
-
-        setState((prev) => ({
-          ...prev,
-          status: status.status,
-          progress: status.progress,
-          expiresAt: status.expiresAt,
-        }));
-
-        // Stop polling if completed or failed
-        if (status.status === 'completed' || status.status === 'failed') {
-          stopPolling();
-
-          if (status.status === 'failed') {
-            setState((prev) => ({
-              ...prev,
-              isPolling: false,
-              error: status.errorMessage || 'Export failed. Please try again.',
-            }));
-          } else {
-            setState((prev) => ({
-              ...prev,
-              isPolling: false,
-            }));
-          }
-        }
-      } catch (error) {
-        stopPolling();
-        setState((prev) => ({
-          ...prev,
-          isPolling: false,
-          error: error instanceof Error ? error.message : 'Failed to check export status',
-        }));
-      }
-    }, POLLING_INTERVAL);
-  }, []);
-
-  /**
    * Stop polling for export status
    */
   const stopPolling = useCallback(() => {
@@ -109,6 +49,69 @@ export function useDataExport(): UseDataExportReturn {
       pollingRef.current = null;
     }
   }, []);
+
+  /**
+   * Start polling for export status
+   */
+  const startPolling = useCallback(
+    (jobId: string) => {
+      attemptsRef.current = 0;
+
+      setState((prev) => ({ ...prev, isPolling: true }));
+
+      pollingRef.current = setInterval(async () => {
+        attemptsRef.current++;
+
+        // Stop polling after max attempts
+        if (attemptsRef.current > MAX_POLLING_ATTEMPTS) {
+          stopPolling();
+          setState((prev) => ({
+            ...prev,
+            isPolling: false,
+            error: 'Export is taking longer than expected. Please check back later.',
+          }));
+          return;
+        }
+
+        try {
+          const status = await dataExportService.getExportStatus(jobId);
+
+          setState((prev) => ({
+            ...prev,
+            status: status.status,
+            progress: status.progress,
+            expiresAt: status.expiresAt,
+          }));
+
+          // Stop polling if completed or failed
+          if (status.status === 'completed' || status.status === 'failed') {
+            stopPolling();
+
+            if (status.status === 'failed') {
+              setState((prev) => ({
+                ...prev,
+                isPolling: false,
+                error: status.errorMessage ?? 'Export failed. Please try again.',
+              }));
+            } else {
+              setState((prev) => ({
+                ...prev,
+                isPolling: false,
+              }));
+            }
+          }
+        } catch (error) {
+          stopPolling();
+          setState((prev) => ({
+            ...prev,
+            isPolling: false,
+            error: error instanceof Error ? error.message : 'Failed to check export status',
+          }));
+        }
+      }, POLLING_INTERVAL);
+    },
+    [stopPolling]
+  );
 
   /**
    * Initiate a new data export

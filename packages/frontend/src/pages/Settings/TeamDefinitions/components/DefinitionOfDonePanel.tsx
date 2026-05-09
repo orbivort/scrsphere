@@ -22,23 +22,30 @@ export function DefinitionOfDonePanel(): React.ReactElement {
   const { currentTeam } = useTeamStore();
   const { toasts, success, error: showError, removeToast } = useToast();
 
+  const teamId = currentTeam?.id;
+
   const {
     data: response,
     isLoading,
     error,
     refetch,
   } = useQuery<ApiResponse<DefinitionOfDone>>({
-    queryKey: queryKeys.definitionOfDone.byTeam(currentTeam?.id || ''),
-    queryFn: () => definitionService.getDefinitionOfDone(currentTeam!.id),
-    enabled: !!currentTeam?.id,
+    queryKey: queryKeys.definitionOfDone.byTeam(teamId ?? ''),
+    queryFn: () => {
+      if (!teamId) throw new Error('Team ID is required');
+      return definitionService.getDefinitionOfDone(teamId);
+    },
+    enabled: !!teamId,
   });
 
   const updateMutation = useMutation({
-    mutationFn: (items: DoDItem[]) =>
-      definitionService.updateDefinitionOfDone(currentTeam!.id, items),
+    mutationFn: (items: DoDItem[]) => {
+      if (!teamId) throw new Error('Team ID is required');
+      return definitionService.updateDefinitionOfDone(teamId, items);
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.definitionOfDone.byTeam(currentTeam!.id),
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.definitionOfDone.byTeam(teamId ?? ''),
       });
       setIsEditMode(false);
       success('Definition of Done updated successfully');
@@ -99,7 +106,7 @@ export function DefinitionOfDonePanel(): React.ReactElement {
     );
   }
 
-  const definition: DefinitionOfDone = response?.data || {
+  const definition: DefinitionOfDone = response?.data ?? {
     id: 'default',
     teamId: currentTeam.id,
     items: DEFAULT_DOD_ITEMS,
@@ -183,7 +190,7 @@ export function DefinitionOfDonePanel(): React.ReactElement {
         <div className={styles.list}>
           {activeItems.map((item, index) => {
             const category = DOD_CATEGORIES.find((c) => c.value === item.category);
-            const categoryStyle = getCategoryColor(item.category || '', DOD_CATEGORIES);
+            const categoryStyle = getCategoryColor(item.category ?? '', DOD_CATEGORIES);
 
             return (
               <div key={item.id} className={styles.item}>
@@ -191,9 +198,9 @@ export function DefinitionOfDonePanel(): React.ReactElement {
                 <div
                   className={styles['item-category']}
                   style={categoryStyle}
-                  title={category?.label || 'Uncategorized'}
+                  title={category?.label ?? 'Uncategorized'}
                 >
-                  {category?.icon || '📌'}
+                  {category?.icon ?? '📌'}
                 </div>
                 <div className={styles['item-text']}>{item.description}</div>
               </div>

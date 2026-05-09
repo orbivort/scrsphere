@@ -142,7 +142,7 @@ export class ErrorBoundary extends Component<Props, State> {
             </div>
             <h1 className={styles['error-title']}>Something went wrong</h1>
             <p className={styles['error-message']}>
-              {this.getErrorMessage(error || new Error('Unknown error'))}
+              {this.getErrorMessage(error ?? new Error('Unknown error'))}
             </p>
 
             {import.meta.env.DEV && error && (
@@ -241,7 +241,7 @@ export class APIErrorBoundary extends Component<APIErrorBoundaryProps, State> {
     const { children } = this.props;
 
     if (hasError) {
-      const errorMessage = this.getErrorMessage(error || new Error('Unknown error'));
+      const errorMessage = this.getErrorMessage(error ?? new Error('Unknown error'));
 
       return (
         <div className={styles['api-error-boundary']}>

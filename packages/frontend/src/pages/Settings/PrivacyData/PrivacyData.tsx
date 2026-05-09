@@ -43,7 +43,7 @@ export const PrivacyData: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    fetchSessions();
+    void fetchSessions();
   }, [fetchSessions]);
 
   const handleRevokeSession = async (sessionId: string) => {
@@ -102,7 +102,7 @@ export const PrivacyData: React.FC = () => {
     return userAgent.substring(0, 50) + (userAgent.length > 50 ? '...' : '');
   };
 
-  const currentSessionId = sessions.length > 0 ? sessions[0]!.id : null;
+  const currentSessionId = sessions.length > 0 ? (sessions[0] as { id: string }).id : null;
   const otherSessions = sessions.slice(1);
 
   return (

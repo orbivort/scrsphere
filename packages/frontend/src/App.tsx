@@ -55,7 +55,7 @@ const LazyRoute: React.FC<{
 );
 
 // Create a query client with enhanced error handling
-export const queryClient = new QueryClient({
+const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 5 * 60 * 1000, // 5 minutes
@@ -153,7 +153,7 @@ const AuthInitializer: React.FC<{ children: React.ReactNode }> = ({ children }) 
             }
           }
         } catch {
-          logout();
+          void logout();
         }
       }
 
@@ -185,7 +185,7 @@ const SessionWarningWrapper: React.FC<{ children: React.ReactNode }> = ({ childr
   }, [extendSession]);
 
   const handleLogout = useCallback(() => {
-    logout();
+    void logout();
   }, [logout]);
 
   return (

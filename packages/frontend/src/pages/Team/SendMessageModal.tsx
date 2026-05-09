@@ -57,7 +57,7 @@ export const SendMessageModal: React.FC<SendMessageModalProps> = ({
       setSuccess(true);
       setMessage('');
       setError(null);
-      queryClient.invalidateQueries({ queryKey: queryKeys.message.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.message.all });
       setTimeout(() => {
         onClose();
         setSuccess(false);

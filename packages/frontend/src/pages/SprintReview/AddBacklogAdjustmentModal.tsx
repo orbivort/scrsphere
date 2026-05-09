@@ -246,7 +246,7 @@ export const AddBacklogAdjustmentModal: React.FC<AddBacklogAdjustmentModalProps>
                 onChange={(e) =>
                   setAdjustmentForm({
                     ...adjustmentForm,
-                    pbiId: e.target.value ?? undefined,
+                    pbiId: e.target.value,
                   })
                 }
               >

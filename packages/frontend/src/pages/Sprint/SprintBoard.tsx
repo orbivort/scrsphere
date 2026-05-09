@@ -158,7 +158,7 @@ export const SprintBoard: React.FC = () => {
 
   const handleNavigateToIncrement = useCallback(
     (sprintId: string) => {
-      navigate(`/increment/create?sprintId=${sprintId}&fromSprintComplete=true`);
+      void navigate(`/increment/create?sprintId=${sprintId}&fromSprintComplete=true`);
     },
     [navigate]
   );
@@ -284,10 +284,7 @@ export const SprintBoard: React.FC = () => {
         assigneeId: formData.assigneeId || undefined,
         status: formData.status,
         estimatedHours: formData.estimatedHours || undefined,
-        remainingHours:
-          formData.remainingHours !== undefined && formData.remainingHours !== null
-            ? formData.remainingHours
-            : undefined,
+        remainingHours: formData.remainingHours,
         sprintId: sprint?.id,
       };
 
@@ -314,7 +311,7 @@ export const SprintBoard: React.FC = () => {
       id: task.id,
       title: task.title,
       status: task.status,
-      pbiTitle: task.pbi?.title || 'Unknown PBI',
+      pbiTitle: task.pbi?.title ?? 'Unknown PBI',
       assigneeId: task.assigneeId,
     }));
 
@@ -340,7 +337,7 @@ export const SprintBoard: React.FC = () => {
           if (!pbiVerifications.has(v.pbiId)) {
             pbiVerifications.set(v.pbiId, []);
           }
-          pbiVerifications.get(v.pbiId)!.push({ dodItemId: v.dodItemId, isVerified: v.isVerified });
+          pbiVerifications.get(v.pbiId)?.push({ dodItemId: v.dodItemId, isVerified: v.isVerified });
         }
 
         const savePromises: Promise<unknown>[] = [];
@@ -377,8 +374,11 @@ export const SprintBoard: React.FC = () => {
       });
 
       if (!result.valid) {
-        modalDispatch({ type: 'SET_WORKFLOW_ERROR', payload: result.error! });
-        toastError(result.error!);
+        modalDispatch({
+          type: 'SET_WORKFLOW_ERROR',
+          payload: result.error ?? 'Transition validation failed',
+        });
+        toastError(result.error ?? 'Transition validation failed');
         return;
       }
 
@@ -390,11 +390,7 @@ export const SprintBoard: React.FC = () => {
         if (!formData.estimatedHours || formData.estimatedHours <= 0) {
           formErrors.push('Estimated hours must be greater than 0');
         }
-        if (
-          formData.remainingHours === undefined ||
-          formData.remainingHours === null ||
-          formData.remainingHours <= 0
-        ) {
+        if (formData.remainingHours <= 0) {
           formErrors.push('Remaining hours must be greater than 0');
         }
 
@@ -409,20 +405,17 @@ export const SprintBoard: React.FC = () => {
       modalDispatch({ type: 'SET_WORKFLOW_ERROR', payload: null });
 
       mutations.updateTaskMutation.mutate(
-        { taskId: selectedTask.id, updates: result.updates! },
+        { taskId: selectedTask.id, updates: result.updates ?? {} },
         {
           onSuccess: () => {
-            if (selectedTask) {
-              modalDispatch({
-                type: 'OPEN_DETAIL_MODAL',
-                payload: {
-                  ...selectedTask,
-                  status: newStatus,
-                  remainingHours:
-                    newStatus === TaskStatusEnum.DONE ? 0 : selectedTask.remainingHours,
-                },
-              });
-            }
+            modalDispatch({
+              type: 'OPEN_DETAIL_MODAL',
+              payload: {
+                ...selectedTask,
+                status: newStatus,
+                remainingHours: newStatus === TaskStatusEnum.DONE ? 0 : selectedTask.remainingHours,
+              },
+            });
             formDispatch({
               type: 'SET_FORM_DATA',
               payload: {
@@ -440,7 +433,7 @@ export const SprintBoard: React.FC = () => {
               message?: string;
             };
             const errorMessage =
-              err.response?.data?.error?.message || err.message || 'Failed to update task status';
+              err.response?.data?.error?.message ?? err.message ?? 'Failed to update task status';
             modalDispatch({ type: 'SET_WORKFLOW_ERROR', payload: errorMessage });
           },
         }
@@ -485,11 +478,11 @@ export const SprintBoard: React.FC = () => {
       });
 
       if (!result.valid) {
-        toastError(result.error!);
+        toastError(result.error ?? 'Transition validation failed');
         return;
       }
 
-      mutations.updateTaskMutation.mutate({ taskId, updates: result.updates! });
+      mutations.updateTaskMutation.mutate({ taskId, updates: result.updates ?? {} });
     },
     [
       tasks,
@@ -533,23 +526,20 @@ export const SprintBoard: React.FC = () => {
         showBurndown={showBurndown}
       />
 
-      {sprint && (
-        <SprintOverview
-          sprintGoal={sprint.sprintGoal}
-          totalTasks={sprintStats.totalTasks}
-          todoTasks={sprintStats.todoTasks}
-          inProgressTasks={sprintStats.inProgressTasks}
-          doneTasks={sprintStats.doneTasks}
-          totalEstimatedHours={sprintStats.totalEstimatedHours}
-          totalRemainingHours={sprintStats.totalRemainingHours}
-          progressPercentage={sprintStats.progressPercentage}
-          totalPbis={sprintStats.totalPbis}
-          completedPbis={sprintStats.completedPbis}
-          totalStoryPoints={sprintStats.totalStoryPoints}
-          completedStoryPoints={sprintStats.completedStoryPoints}
-        />
-      )}
-
+      <SprintOverview
+        sprintGoal={sprint.sprintGoal}
+        totalTasks={sprintStats.totalTasks}
+        todoTasks={sprintStats.todoTasks}
+        inProgressTasks={sprintStats.inProgressTasks}
+        doneTasks={sprintStats.doneTasks}
+        totalEstimatedHours={sprintStats.totalEstimatedHours}
+        totalRemainingHours={sprintStats.totalRemainingHours}
+        progressPercentage={sprintStats.progressPercentage}
+        totalPbis={sprintStats.totalPbis}
+        completedPbis={sprintStats.completedPbis}
+        totalStoryPoints={sprintStats.totalStoryPoints}
+        completedStoryPoints={sprintStats.completedStoryPoints}
+      />
       {showBurndown && (
         <BurndownChart
           sprintName={sprint.name}
@@ -718,7 +708,7 @@ export const SprintBoard: React.FC = () => {
           onClose={closeEditModal}
           onBackToDetails={() => {
             modalDispatch({ type: 'CLOSE_EDIT_MODAL' });
-            modalDispatch({ type: 'OPEN_DETAIL_MODAL', payload: selectedTask! });
+            modalDispatch({ type: 'OPEN_DETAIL_MODAL', payload: selectedTask });
           }}
           onSubmit={handleSubmit}
           onFormDataChange={handleFormDataChange}
@@ -754,7 +744,7 @@ export const SprintBoard: React.FC = () => {
 
       {showCompleteSprintModal && (
         <CompleteSprintModal
-          sprintName={sprint?.name || ''}
+          sprintName={sprint.name}
           daysRemaining={daysRemaining}
           sprintStats={{
             totalTasks: sprintStats.totalTasks,
@@ -777,7 +767,7 @@ export const SprintBoard: React.FC = () => {
           }}
           onViewImpediments={() => {
             modalDispatch({ type: 'CLOSE_COMPLETE_SPRINT_MODAL' });
-            navigate('/impediments');
+            void navigate('/impediments');
           }}
           isCompleting={mutations.completeSprintMutation.isPending}
           modalRef={completeSprintModalRef}
@@ -795,7 +785,7 @@ export const SprintBoard: React.FC = () => {
         existingVerifications={dodVerifications}
       />
 
-      {showBacklogManager && sprint && (
+      {showBacklogManager && (
         <SprintBacklogManager
           sprintId={sprint.id}
           sprintName={sprint.name}

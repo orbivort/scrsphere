@@ -81,7 +81,7 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
         const result = parseCSV(content);
 
         if (result.errors.length > 0) {
-          setParseError(result.errors[0]!.message);
+          setParseError(result.errors[0]?.message ?? 'Unknown parse error');
           return;
         }
 
@@ -139,13 +139,15 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
     };
 
     for (let i = 0; i < validItems.length; i++) {
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (cancelRef.current) {
         result.failed = validItems.length - i;
         break;
       }
 
-      const item = validItems[i]!;
-      const itemTitle = item.title || 'Untitled';
+      const item = validItems[i];
+      if (!item) continue;
+      const itemTitle = item.title ?? 'Untitled';
       setUploadProgress({
         current: i + 1,
         total: validItems.length,
@@ -157,12 +159,12 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
           teamId,
           goalId,
           title: itemTitle.trim(),
-          description: item.description?.trim() || undefined,
+          description: item.description?.trim() ?? undefined,
           storyPoints: item.storyPoints,
           businessValue: item.businessValue,
-          priority: item.priority || ('COULD_HAVE' as MoSCoWPriority),
-          labels: item.labels || [],
-          acceptanceCriteria: item.acceptanceCriteria?.trim() || undefined,
+          priority: item.priority ?? ('COULD_HAVE' as MoSCoWPriority),
+          labels: item.labels ?? [],
+          acceptanceCriteria: item.acceptanceCriteria?.trim() ?? undefined,
           status: ItemStatus.NEW,
         };
 
@@ -175,7 +177,7 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
           result.errors.push({
             row: item._rowNumber,
             field: 'general',
-            message: response.error?.message || 'Failed to create item',
+            message: response.error?.message ?? 'Failed to create item',
           });
         }
 
@@ -197,8 +199,8 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
     setIsCancelling(false);
 
     if (result.successful > 0) {
-      queryClient.invalidateQueries({ queryKey: queryKeys.productBacklog.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.productGoal.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.productBacklog.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.productGoal.all });
       onUploadComplete?.();
     }
   }, [parsedItems, teamId, goalId, queryClient, onUploadComplete]);
@@ -257,7 +259,7 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
                 onFileSelect={handleFileSelect}
                 selectedFile={selectedFile}
                 onFileRemove={handleFileRemove}
-                error={parseError || undefined}
+                error={parseError ?? undefined}
               />
             )}
 

@@ -57,7 +57,7 @@ export const IncrementDetail: React.FC = () => {
     error: incrementError,
   } = useQuery({
     queryKey: ['increment', id],
-    queryFn: () => apiService.getIncrement(id || ''),
+    queryFn: () => apiService.getIncrement(id ?? ''),
     enabled: !!id,
   });
 
@@ -65,21 +65,21 @@ export const IncrementDetail: React.FC = () => {
 
   const { data: eligiblePBIsData } = useQuery({
     queryKey: ['eligible-pbis', increment?.sprintId],
-    queryFn: () => apiService.getEligiblePBIsForIncrement(increment?.sprintId || ''),
+    queryFn: () => apiService.getEligiblePBIsForIncrement(increment?.sprintId ?? ''),
     enabled: !!increment?.sprintId,
   });
 
   const deliverMutation = useMutation({
-    mutationFn: () => apiService.deliverIncrement(id || '', deliveryMethod, deliveryNotes),
+    mutationFn: () => apiService.deliverIncrement(id ?? '', deliveryMethod, deliveryNotes),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.increment.detail(id || '') });
-      queryClient.invalidateQueries({ queryKey: queryKeys.increment.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.increment.detail(id ?? '') });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.increment.all });
       setShowDeliverModal(false);
       success('Increment delivered successfully!');
 
       if (fromSprintComplete && sprintId) {
         setTimeout(() => {
-          navigate(`/sprint-review/${sprintId}`);
+          void navigate(`/sprint-review/${sprintId}`);
         }, 1500);
       }
     },
@@ -95,7 +95,7 @@ export const IncrementDetail: React.FC = () => {
       [IncrementStatus.DELIVERED]: { bg: '#D1FAE5', text: '#065F46' },
       [IncrementStatus.ARCHIVED]: { bg: '#F9FAFB', text: '#9CA3AF' },
     };
-    return colors[status] || colors[IncrementStatus.DRAFT];
+    return colors[status];
   };
 
   const formatDate = (dateStr: string) => {
@@ -113,9 +113,9 @@ export const IncrementDetail: React.FC = () => {
 
   const handleBack = () => {
     if (fromSprintComplete && sprintId) {
-      navigate(`/sprint-review/${sprintId}`);
+      void navigate(`/sprint-review/${sprintId}`);
     } else {
-      navigate('/increments');
+      void navigate('/increments');
     }
   };
 
@@ -136,13 +136,11 @@ export const IncrementDetail: React.FC = () => {
     const byPbi: Record<string, { total: number; verified: number; pbiTitle: string }> = {};
 
     verifications.forEach((v) => {
-      const category = v.dodItemCategory || 'general';
-      if (!byCategory[category]) {
-        byCategory[category] = { total: 0, verified: 0 };
-      }
-      byCategory[category]!.total++;
+      const category = v.dodItemCategory ?? 'general';
+      byCategory[category] ??= { total: 0, verified: 0 };
+      byCategory[category].total++;
       if (v.isVerified) {
-        byCategory[category]!.verified++;
+        byCategory[category].verified++;
       }
 
       const pbiId = v.pbiId;
@@ -150,9 +148,9 @@ export const IncrementDetail: React.FC = () => {
         const pbi = includedPBIs.find((p) => p.id === pbiId);
         byPbi[pbiId] = { total: 0, verified: 0, pbiTitle: pbi?.title ?? 'Unknown PBI' };
       }
-      byPbi[pbiId]!.total++;
+      byPbi[pbiId].total++;
       if (v.isVerified) {
-        byPbi[pbiId]!.verified++;
+        byPbi[pbiId].verified++;
       }
     });
 
@@ -268,11 +266,11 @@ export const IncrementDetail: React.FC = () => {
             <div className={styles['info-grid']}>
               <div className={styles['info-item']}>
                 <span className={styles.label}>Description</span>
-                <span className={styles.value}>{increment.description || 'No description'}</span>
+                <span className={styles.value}>{increment.description ?? 'No description'}</span>
               </div>
               <div className={styles['info-item']}>
                 <span className={styles.label}>Sprint</span>
-                <span className={styles.value}>{increment.sprint?.name || increment.sprintId}</span>
+                <span className={styles.value}>{increment.sprint?.name ?? increment.sprintId}</span>
               </div>
               <div className={styles['info-item']}>
                 <span className={styles.label}>Created</span>
@@ -284,7 +282,7 @@ export const IncrementDetail: React.FC = () => {
               </div>
               <div className={styles['info-item']}>
                 <span className={styles.label}>PBIs Included</span>
-                <span className={styles.value}>{increment.includedPBIs?.length || 0}</span>
+                <span className={styles.value}>{increment.includedPBIs.length || 0}</span>
               </div>
               {increment.deliveredAt && (
                 <div className={styles['info-item']}>
@@ -316,9 +314,9 @@ export const IncrementDetail: React.FC = () => {
                   <div key={pbi.id} className={styles['pbi-item']}>
                     <div className={styles['pbi-header']}>
                       <span className={styles['pbi-title']}>{pbi.title}</span>
-                      <span className={styles['pbi-points']}>{pbi.storyPoints || 0} pts</span>
+                      <span className={styles['pbi-points']}>{pbi.storyPoints ?? 0} pts</span>
                     </div>
-                    {pbi.labels && pbi.labels.length > 0 && (
+                    {pbi.labels.length > 0 && (
                       <div className={styles['pbi-labels']}>
                         {pbi.labels.map((label) => (
                           <span key={label} className={styles['label-tag']}>

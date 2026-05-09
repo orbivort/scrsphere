@@ -83,7 +83,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, on
       await markAsRead.mutateAsync(notification.id);
     }
     onClose();
-    navigate(getNotificationRoute(notification));
+    void navigate(getNotificationRoute(notification));
   };
 
   const handleMarkAllRead = async () => {
@@ -127,7 +127,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, on
               tabIndex={0}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
-                  handleNotificationClick(notification);
+                  void handleNotificationClick(notification);
                 }
               }}
             >
@@ -154,7 +154,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, on
         <button
           onClick={() => {
             onClose();
-            navigate('/notifications');
+            void navigate('/notifications');
           }}
           className={styles['view-all']}
         >

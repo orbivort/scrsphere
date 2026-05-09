@@ -45,7 +45,7 @@ export const useBeforeUnload = (enabled: boolean, message?: string): void => {
 
       // For legacy browser support
       // Modern browsers ignore this message and show a generic one
-      event.returnValue = message || '';
+      event.returnValue = message ?? '';
     },
     [enabled, message]
   );

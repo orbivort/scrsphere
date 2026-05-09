@@ -119,7 +119,18 @@ export const CreateActionItemModal: React.FC<CreateActionItemModalProps> = ({
         previousActiveElement.current.focus();
       }
     };
-  }, [isOpen]);
+  }, [isOpen, formData]);
+
+  // Handle close request - check for unsaved changes
+  const handleCloseRequest = useCallback(() => {
+    if (isPending) return; // Don't allow closing while submitting
+
+    if (hasUnsavedChanges(formData, initialFormData)) {
+      setShowUnsavedChangesModal(true);
+    } else {
+      onClose();
+    }
+  }, [formData, initialFormData, isPending, onClose]);
 
   // Handle keyboard events (Escape key and focus trap)
   useEffect(() => {
@@ -157,18 +168,7 @@ export const CreateActionItemModal: React.FC<CreateActionItemModalProps> = ({
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, showUnsavedChangesModal, formData, initialFormData]);
-
-  // Handle close request - check for unsaved changes
-  const handleCloseRequest = useCallback(() => {
-    if (isPending) return; // Don't allow closing while submitting
-
-    if (hasUnsavedChanges(formData, initialFormData)) {
-      setShowUnsavedChangesModal(true);
-    } else {
-      onClose();
-    }
-  }, [formData, initialFormData, isPending, onClose]);
+  }, [isOpen, showUnsavedChangesModal, handleCloseRequest]);
 
   // Handle discard changes
   const handleDiscardChanges = useCallback(() => {

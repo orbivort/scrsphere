@@ -141,7 +141,7 @@ export class ScreenReaderAnnouncer {
     this.isProcessing = false;
 
     // Remove element from DOM
-    if (this.announcementElement && this.announcementElement.parentNode) {
+    if (this.announcementElement?.parentNode) {
       this.announcementElement.parentNode.removeChild(this.announcementElement);
     }
     this.announcementElement = null;
@@ -162,7 +162,12 @@ export class ScreenReaderAnnouncer {
     // Ensure live region exists
     const liveRegion = this.createLiveRegion();
 
-    const { message, priority } = this.announcementQueue.shift()!;
+    const announcement = this.announcementQueue.shift();
+    if (!announcement) {
+      this.isProcessing = false;
+      return;
+    }
+    const { message, priority } = announcement;
 
     // Update aria-live attribute based on priority
     liveRegion.setAttribute('aria-live', priority);
@@ -248,9 +253,7 @@ export function createAnnouncer(config?: AnnouncerConfig): ScreenReaderAnnouncer
  * @returns The default ScreenReaderAnnouncer instance
  */
 export function getDefaultAnnouncer(config?: AnnouncerConfig): ScreenReaderAnnouncer {
-  if (!defaultAnnouncer) {
-    defaultAnnouncer = createAnnouncer(config);
-  }
+  defaultAnnouncer ??= createAnnouncer(config);
   return defaultAnnouncer;
 }
 

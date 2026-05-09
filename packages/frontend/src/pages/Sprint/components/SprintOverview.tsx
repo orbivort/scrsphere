@@ -47,8 +47,8 @@ export const SprintOverview: React.FC<SprintOverviewProps> = ({
           </div>
           <div className={styles['goal-content']}>
             <span className={styles['goal-label']}>Sprint Goal</span>
-            <p className={styles['goal-text']} title={sprintGoal || 'No sprint goal set'}>
-              {sprintGoal || 'No sprint goal set'}
+            <p className={styles['goal-text']} title={sprintGoal ?? 'No sprint goal set'}>
+              {sprintGoal ?? 'No sprint goal set'}
             </p>
           </div>
         </div>

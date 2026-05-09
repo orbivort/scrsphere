@@ -46,7 +46,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
       aria-valuenow={clampedValue}
       aria-valuemin={min}
       aria-valuemax={max}
-      aria-label={label || `Progress: ${percentage}%`}
+      aria-label={label ?? `Progress: ${percentage}%`}
       tabIndex={0}
     >
       <div className={styles['progress-track']}>

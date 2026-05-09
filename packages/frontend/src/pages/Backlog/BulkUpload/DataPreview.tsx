@@ -89,27 +89,23 @@ export const DataPreview: React.FC<DataPreviewProps> = ({ items }) => {
                   </span>
                 </td>
                 <td className={styles['title-cell']} title={item.title}>
-                  {item.title || <span className={styles['missing-title']}>Missing title</span>}
+                  {item.title ?? <span className={styles['missing-title']}>Missing title</span>}
                 </td>
                 <td className={styles['priority-cell']}>
                   {item.priority && Object.values(MoSCoWPriority).includes(item.priority) ? (
                     <span
                       className={`${styles['priority-badge']} ${
-                        PRIORITY_LABELS[item.priority as MoSCoWPriority]?.className || ''
+                        PRIORITY_LABELS[item.priority as MoSCoWPriority].className || ''
                       }`}
                     >
-                      {PRIORITY_LABELS[item.priority as MoSCoWPriority]?.label || item.priority}
+                      {PRIORITY_LABELS[item.priority as MoSCoWPriority].label || item.priority}
                     </span>
                   ) : (
                     <span className={styles['text-tertiary']}>-</span>
                   )}
                 </td>
-                <td className={styles['points-cell']}>
-                  {item.storyPoints !== undefined ? item.storyPoints : '-'}
-                </td>
-                <td className={styles['points-cell']}>
-                  {item.businessValue !== undefined ? item.businessValue : '-'}
-                </td>
+                <td className={styles['points-cell']}>{item.storyPoints ?? '-'}</td>
+                <td className={styles['points-cell']}>{item.businessValue ?? '-'}</td>
                 <td className={styles['labels-cell']}>
                   {item.labels && item.labels.length > 0 ? (
                     <div className={styles['labels-container']}>

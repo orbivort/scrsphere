@@ -43,7 +43,7 @@ class SprintService {
       }>;
     }
   ): Promise<ApiResponse<Sprint>> {
-    const { data: response } = await this.api.post(`/sprints/${id}/start`, data || {});
+    const { data: response } = await this.api.post(`/sprints/${id}/start`, data ?? {});
     return response;
   }
 

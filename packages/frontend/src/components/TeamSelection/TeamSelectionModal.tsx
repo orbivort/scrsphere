@@ -24,7 +24,7 @@ export const TeamSelectionModal: React.FC<TeamSelectionModalProps> = ({ isOpen, 
     try {
       await switchTeam(teamId);
       onClose();
-      navigate('/dashboard');
+      void navigate('/dashboard');
     } catch (error) {
       logger.error('Failed to switch team', undefined, { teamId, error });
     } finally {

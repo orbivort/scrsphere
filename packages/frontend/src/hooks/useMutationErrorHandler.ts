@@ -45,7 +45,7 @@ function isPermissionTransitionError(error: unknown): boolean {
   }
 
   const axiosError = error as AxiosError<ApiResponse<never>>;
-  const errorMessage = axiosError.response?.data?.error?.message;
+  const errorMessage = axiosError.response?.data.error?.message;
 
   return (
     (axiosError.response?.status === 403 || axiosError.response?.status === 400) &&
@@ -136,7 +136,7 @@ export const useMutationErrorHandler = (): UseMutationErrorHandlerResult => {
           .response;
         const errorMessage = response?.data?.error?.message;
         if (setWorkflowError) {
-          setWorkflowError(errorMessage || 'You do not have permission to perform this action');
+          setWorkflowError(errorMessage ?? 'You do not have permission to perform this action');
         }
       }
 

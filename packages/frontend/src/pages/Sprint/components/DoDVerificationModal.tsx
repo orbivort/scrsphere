@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 
 import type { DoDItem, ProductBacklogItem, Task, DoDChecklistVerification } from '../../../types';
 import { apiService } from '../../../services';
@@ -34,7 +34,7 @@ const getCategoryIcon = (category?: string) => {
     deployment: '🚀',
     review: '👀',
   };
-  return icons[category || 'quality'] || '✓';
+  return icons[category ?? 'quality'] ?? '✓';
 };
 
 const getCategoryColor = (category?: string) => {
@@ -45,7 +45,7 @@ const getCategoryColor = (category?: string) => {
     deployment: { bg: '#FCE7F3', border: '#EC4899', text: '#9D174D' },
     review: { bg: '#E0E7FF', border: '#6366F1', text: '#3730A3' },
   };
-  return colors[category || 'quality'] || colors.quality;
+  return colors[category ?? 'quality'] ?? colors.quality;
 };
 
 export const DoDVerificationModal: React.FC<DoDVerificationModalProps> = ({
@@ -141,13 +141,13 @@ export const DoDVerificationModal: React.FC<DoDVerificationModalProps> = ({
 
         setPbiVerifications(newVerifications);
         setExistingVerifiedItems(newExistingVerifiedItems);
-        setExpandedPbi(pbisWithAllTasksDone[0]?.id || null);
+        setExpandedPbi(pbisWithAllTasksDone[0]?.id ?? null);
       };
 
       if (existingVerifications.length > 0) {
         initVerifications(existingVerifications);
       } else {
-        fetchVerificationsForPbis(pbiIds).then((verifications) => {
+        void fetchVerificationsForPbis(pbiIds).then((verifications) => {
           initVerifications(verifications);
         });
       }
@@ -174,7 +174,7 @@ export const DoDVerificationModal: React.FC<DoDVerificationModalProps> = ({
 
     setPbiVerifications((prev) => {
       const newMap = new Map(prev);
-      const pbiMap = new Map(newMap.get(pbiId) || new Map());
+      const pbiMap = new Map(newMap.get(pbiId) ?? new Map());
       pbiMap.set(dodItemId, !pbiMap.get(dodItemId));
       newMap.set(pbiId, pbiMap);
       return newMap;
@@ -192,7 +192,7 @@ export const DoDVerificationModal: React.FC<DoDVerificationModalProps> = ({
 
     setPbiVerifications((prev) => {
       const newMap = new Map(prev);
-      const newPbiMap = new Map(newMap.get(pbiId) || new Map());
+      const newPbiMap = new Map(newMap.get(pbiId) ?? new Map());
 
       nonReadOnlyItems.forEach((item) => {
         newPbiMap.set(item.id, !allNonReadOnlyVerified);
@@ -203,22 +203,30 @@ export const DoDVerificationModal: React.FC<DoDVerificationModalProps> = ({
     });
   };
 
-  const getPbiVerificationStatus = (pbiId: string) => {
-    const pbiMap = pbiVerifications.get(pbiId);
-    if (!pbiMap)
-      return { verified: 0, total: activeDodItems.length, percentage: 0, readOnlyCount: 0 };
-    const verified = Array.from(pbiMap.values()).filter((v) => v).length;
-    const total = pbiMap.size;
-    const readOnlyCount = activeDodItems.filter((item) => isItemReadOnly(pbiId, item.id)).length;
-    return { verified, total, percentage: total > 0 ? (verified / total) * 100 : 0, readOnlyCount };
-  };
+  const getPbiVerificationStatus = useCallback(
+    (pbiId: string) => {
+      const pbiMap = pbiVerifications.get(pbiId);
+      if (!pbiMap)
+        return { verified: 0, total: activeDodItems.length, percentage: 0, readOnlyCount: 0 };
+      const verified = Array.from(pbiMap.values()).filter((v) => v).length;
+      const total = pbiMap.size;
+      const readOnlyCount = activeDodItems.filter((item) => isItemReadOnly(pbiId, item.id)).length;
+      return {
+        verified,
+        total,
+        percentage: total > 0 ? (verified / total) * 100 : 0,
+        readOnlyCount,
+      };
+    },
+    [pbiVerifications, activeDodItems, isItemReadOnly]
+  );
 
   const allPbisFullyVerified = useMemo(() => {
     return pbisWithAllTasksDone.every((pbi) => {
       const status = getPbiVerificationStatus(pbi.id);
       return status.percentage === 100;
     });
-  }, [pbisWithAllTasksDone, pbiVerifications, existingVerifiedItems]);
+  }, [pbisWithAllTasksDone, getPbiVerificationStatus]);
 
   const totalVerified = useMemo(() => {
     let verified = 0;
@@ -232,7 +240,7 @@ export const DoDVerificationModal: React.FC<DoDVerificationModalProps> = ({
       });
     });
     return { verified, total, percentage: total > 0 ? (verified / total) * 100 : 0, readOnlyCount };
-  }, [pbiVerifications, existingVerifiedItems, isItemReadOnly]);
+  }, [pbiVerifications, isItemReadOnly]);
 
   const collectVerificationData = (): DoDVerificationData[] => {
     const verifications: DoDVerificationData[] = [];
@@ -248,7 +256,7 @@ export const DoDVerificationModal: React.FC<DoDVerificationModalProps> = ({
 
   const handleConfirm = () => {
     const verifications = collectVerificationData();
-    onConfirm(verifications);
+    void onConfirm(verifications);
   };
 
   if (!isOpen) return null;
@@ -397,16 +405,21 @@ export const DoDVerificationModal: React.FC<DoDVerificationModalProps> = ({
 
                         <div className={styles['dod-items-list']}>
                           {activeDodItems.map((item) => {
-                            const isVerified = pbiVerifications.get(pbi.id)?.get(item.id) || false;
+                            const isVerified = pbiVerifications.get(pbi.id)?.get(item.id) ?? false;
                             const isReadOnly = isItemReadOnly(pbi.id, item.id);
                             const color = getCategoryColor(item.category);
 
+                            const safeColor = color ?? {
+                              bg: '#D1FAE5',
+                              border: '#10B981',
+                              text: '#065F46',
+                            };
                             return (
                               <div
                                 key={item.id}
                                 className={`${styles['dod-item']} ${isVerified ? styles['dod-item-verified'] : ''} ${isReadOnly ? styles['dod-item-readonly'] : ''}`}
                                 onClick={() => handleToggleVerification(pbi.id, item.id)}
-                                style={{ borderLeftColor: color!.border }}
+                                style={{ borderLeftColor: safeColor.border }}
                                 role={isReadOnly ? 'status' : 'button'}
                                 aria-disabled={isReadOnly}
                                 title={
@@ -416,15 +429,15 @@ export const DoDVerificationModal: React.FC<DoDVerificationModalProps> = ({
                                 <div
                                   className={styles['dod-checkbox']}
                                   style={{
-                                    backgroundColor: isVerified ? color!.bg : 'white',
-                                    borderColor: isVerified ? color!.border : '#D1D5DB',
+                                    backgroundColor: isVerified ? safeColor.bg : 'white',
+                                    borderColor: isVerified ? safeColor.border : '#D1D5DB',
                                   }}
                                 >
-                                  {isVerified && <span style={{ color: color!.text }}>✓</span>}
+                                  {isVerified && <span style={{ color: safeColor.text }}>✓</span>}
                                 </div>
                                 <span
                                   className={styles['dod-category']}
-                                  style={{ backgroundColor: color!.bg }}
+                                  style={{ backgroundColor: safeColor.bg }}
                                 >
                                   {getCategoryIcon(item.category)}
                                 </span>

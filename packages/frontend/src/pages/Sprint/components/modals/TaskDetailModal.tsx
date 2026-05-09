@@ -193,7 +193,7 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
               {/* Parent PBI Row */}
               <div className={styles['detail-row-full']}>
                 <span className={styles['detail-label']}>Parent PBI</span>
-                <span className={styles['detail-value']}>{task.pbi?.title || 'Unknown'}</span>
+                <span className={styles['detail-value']}>{task.pbi?.title ?? 'Unknown'}</span>
               </div>
             </div>
           </div>
@@ -211,9 +211,7 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
               <div className={styles['detail-row-half']}>
                 <span className={styles['detail-label']}>Remaining Hours</span>
                 <span className={styles['detail-value-highlight']}>
-                  {task.remainingHours !== null && task.remainingHours !== undefined
-                    ? `${task.remainingHours}h`
-                    : 'Not set'}
+                  {task.remainingHours !== undefined ? `${task.remainingHours}h` : 'Not set'}
                 </span>
               </div>
             </div>

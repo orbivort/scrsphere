@@ -108,7 +108,7 @@ export const StatusChangeHistoryTimeline: React.FC<StatusChangeHistoryTimelinePr
     refetchOnWindowFocus: true,
   });
 
-  const history: StatusChangeHistoryItem[] = historyData?.data || [];
+  const history: StatusChangeHistoryItem[] = historyData?.data ?? [];
 
   /**
    * Formats a date string to relative time
@@ -139,7 +139,7 @@ export const StatusChangeHistoryTimeline: React.FC<StatusChangeHistoryTimelinePr
       IN_PROGRESS: 'var(--color-primary-500)',
       DONE: 'var(--color-success-600)',
     };
-    return colors[statusName] || 'var(--color-gray-500)';
+    return colors[statusName] ?? 'var(--color-gray-500)';
   };
 
   /**
@@ -153,7 +153,7 @@ export const StatusChangeHistoryTimeline: React.FC<StatusChangeHistoryTimelinePr
       IN_PROGRESS: 'var(--color-primary-100)',
       DONE: 'var(--color-success-100)',
     };
-    return colors[statusName] || 'var(--color-gray-100)';
+    return colors[statusName] ?? 'var(--color-gray-100)';
   };
 
   return (
@@ -202,8 +202,8 @@ export const StatusChangeHistoryTimeline: React.FC<StatusChangeHistoryTimelinePr
           {!isLoading && !error && history.length > 0 && (
             <div className={styles['timeline']}>
               {history.map((item, index) => {
-                const fromStateName = item.fromState?.displayName || item.fromState?.name || 'New';
-                const toStateName = item.toState?.displayName || item.toState?.name || 'Unknown';
+                const fromStateName = item.fromState?.displayName ?? item.fromState?.name ?? 'New';
+                const toStateName = item.toState?.displayName ?? item.toState?.name ?? 'Unknown';
                 const changerName = item.changer
                   ? `${item.changer.firstName} ${item.changer.lastName}`
                   : 'Unknown User';

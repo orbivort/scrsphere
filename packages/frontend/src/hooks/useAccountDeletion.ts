@@ -11,7 +11,7 @@ function getFriendlyErrorMessage(error: unknown, defaultMessage: string): string
   if (!error) return defaultMessage;
 
   const axiosError = error as AxiosError<ApiResponse<never>>;
-  if (axiosError.response?.data?.error?.message) {
+  if (axiosError.response?.data.error?.message) {
     return axiosError.response.data.error.message;
   }
 
@@ -98,13 +98,13 @@ export function useAccountDeletion(
         if (response.success) {
           setDeleteModalOpen(false);
           onUserMenuClose?.();
-          logout();
-          navigate('/login', {
+          void logout();
+          void navigate('/login', {
             replace: true,
             state: { message: 'Your account has been successfully deleted.' },
           });
         } else {
-          setDeleteError(response.error?.message || 'Failed to delete account. Please try again.');
+          setDeleteError(response.error?.message ?? 'Failed to delete account. Please try again.');
         }
       } catch (error) {
         setDeleteError(
@@ -129,7 +129,7 @@ export function useAccountDeletion(
           void fetchDeletionEligibility(true);
         } else {
           setDeleteError(
-            response.error?.message || 'Failed to schedule deletion. Please try again.'
+            response.error?.message ?? 'Failed to schedule deletion. Please try again.'
           );
         }
       } catch (error) {
@@ -153,7 +153,7 @@ export function useAccountDeletion(
         setDeletionEligibility(null);
         void fetchDeletionEligibility(true);
       } else {
-        setDeleteError(response.error?.message || 'Failed to cancel deletion. Please try again.');
+        setDeleteError(response.error?.message ?? 'Failed to cancel deletion. Please try again.');
       }
     } catch (error) {
       setDeleteError(
@@ -174,13 +174,13 @@ export function useAccountDeletion(
         if (response.success) {
           setDeleteModalOpen(false);
           onUserMenuClose?.();
-          logout();
-          navigate('/login', {
+          void logout();
+          void navigate('/login', {
             replace: true,
             state: { message: 'Your account has been successfully deleted.' },
           });
         } else {
-          setDeleteError(response.error?.message || 'Failed to delete account. Please try again.');
+          setDeleteError(response.error?.message ?? 'Failed to delete account. Please try again.');
         }
       } catch (error) {
         setDeleteError(

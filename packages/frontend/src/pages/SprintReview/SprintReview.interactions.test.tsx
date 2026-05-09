@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
+import type * as ReactRouter from 'react-router-dom';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -13,9 +14,9 @@ import * as useMutationErrorHandlerModule from '../../hooks/useMutationErrorHand
 const mockNavigate = vi.fn();
 
 vi.mock('react-router-dom', async (importOriginal) => {
-  const actual = await importOriginal();
+  const actual = await importOriginal<typeof ReactRouter>();
   return {
-    ...(actual as any),
+    ...actual,
     useNavigate: () => mockNavigate,
   };
 });
@@ -194,7 +195,7 @@ function renderComponent(sprintId = 'sprint-1') {
     currentTeam: mockTeam,
     setCurrentTeam: vi.fn(),
     loadTeam: vi.fn(),
-  } as any);
+  } as unknown as ReturnType<typeof teamStoreModule.useTeamStore>);
 
   return render(
     <QueryClientProvider client={queryClient}>
@@ -1111,7 +1112,7 @@ describe('SprintReview - Increment Section Tests', () => {
 
   it('should display empty state when no increment available', async () => {
     setupBasicMocks({
-      increment: { status: 'planned' } as any,
+      increment: { status: 'planned' } as unknown as { status: IncrementStatus },
     });
 
     vi.spyOn(apiServiceModule.apiService, 'getIncrements').mockResolvedValue({
@@ -1305,7 +1306,7 @@ describe('SprintReview - Active Sprint Selector Tests', () => {
       currentTeam: mockTeam,
       setCurrentTeam: vi.fn(),
       loadTeam: vi.fn(),
-    } as any);
+    } as unknown as ReturnType<typeof teamStoreModule.useTeamStore>);
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -1340,7 +1341,7 @@ describe('SprintReview - Active Sprint Selector Tests', () => {
       currentTeam: mockTeam,
       setCurrentTeam: vi.fn(),
       loadTeam: vi.fn(),
-    } as any);
+    } as unknown as ReturnType<typeof teamStoreModule.useTeamStore>);
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -1375,7 +1376,7 @@ describe('SprintReview - Active Sprint Selector Tests', () => {
       currentTeam: mockTeam,
       setCurrentTeam: vi.fn(),
       loadTeam: vi.fn(),
-    } as any);
+    } as unknown as ReturnType<typeof teamStoreModule.useTeamStore>);
 
     render(
       <QueryClientProvider client={queryClient}>
@@ -1411,7 +1412,7 @@ describe('SprintReview - Active Sprint Selector Tests', () => {
       currentTeam: mockTeam,
       setCurrentTeam: vi.fn(),
       loadTeam: vi.fn(),
-    } as any);
+    } as unknown as ReturnType<typeof teamStoreModule.useTeamStore>);
 
     render(
       <QueryClientProvider client={queryClient}>

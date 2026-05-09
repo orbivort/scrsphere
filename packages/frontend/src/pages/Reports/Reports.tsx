@@ -47,25 +47,25 @@ export const Reports: React.FC = () => {
     error: velocityError,
   } = useQuery({
     queryKey: ['velocity', teamId],
-    queryFn: () => apiService.getVelocityData(teamId!),
+    queryFn: () => apiService.getVelocityData(teamId ?? ''),
     enabled: !!teamId,
   });
 
   const { data: metricsData, isLoading: isMetricsLoading } = useQuery({
     queryKey: ['metrics', teamId],
-    queryFn: () => apiService.getTeamMetrics(teamId!),
+    queryFn: () => apiService.getTeamMetrics(teamId ?? ''),
     enabled: !!teamId,
   });
 
   const { data: sprintHistoryData, isLoading: isHistoryLoading } = useQuery({
     queryKey: ['sprint-history', teamId],
-    queryFn: () => apiService.getSprintHistory(teamId!),
+    queryFn: () => apiService.getSprintHistory(teamId ?? ''),
     enabled: !!teamId,
   });
 
   const { data: insightsData, isLoading: isInsightsLoading } = useQuery({
     queryKey: ['insights', teamId],
-    queryFn: () => apiService.getInsights(teamId!),
+    queryFn: () => apiService.getInsights(teamId ?? ''),
     enabled: !!teamId,
   });
 
@@ -146,8 +146,8 @@ export const Reports: React.FC = () => {
   }
 
   const metrics = metricsData?.data;
-  const sprintHistory = sprintHistoryData?.data || [];
-  const insights = insightsData?.data || [];
+  const sprintHistory = sprintHistoryData?.data ?? [];
+  const insights = insightsData?.data ?? [];
 
   return (
     <div className={styles.reports} data-testid="reports">
@@ -203,16 +203,16 @@ export const Reports: React.FC = () => {
                   <h3>Average Velocity</h3>
                 </div>
                 <div className={styles['metric-value']}>
-                  {metrics?.averageVelocity?.toFixed(1) || '—'}
+                  {metrics?.averageVelocity.toFixed(1) ?? '—'}
                 </div>
                 <div className={styles['metric-label']}>Story Points per Sprint</div>
                 <div
-                  className={`${styles['metric-trend']} ${getTrendClass(metrics?.velocityTrend || 0)}`}
+                  className={`${styles['metric-trend']} ${getTrendClass(metrics?.velocityTrend ?? 0)}`}
                 >
                   <span className={styles['trend-icon']}>
-                    {getTrendIcon(metrics?.velocityTrend || 0)}
+                    {getTrendIcon(metrics?.velocityTrend ?? 0)}
                   </span>
-                  <span>{formatTrend(metrics?.velocityTrend || 0)}</span> from last sprint
+                  <span>{formatTrend(metrics?.velocityTrend ?? 0)}</span> from last sprint
                 </div>
               </div>
 
@@ -225,15 +225,15 @@ export const Reports: React.FC = () => {
                   </span>
                   <h3>Sprint Success Rate</h3>
                 </div>
-                <div className={styles['metric-value']}>{metrics?.successRate || 0}%</div>
+                <div className={styles['metric-value']}>{metrics?.successRate ?? 0}%</div>
                 <div className={styles['metric-label']}>Sprint Goals Met</div>
                 <div
-                  className={`${styles['metric-trend']} ${getTrendClass(metrics?.successRateTrend || 0)}`}
+                  className={`${styles['metric-trend']} ${getTrendClass(metrics?.successRateTrend ?? 0)}`}
                 >
                   <span className={styles['trend-icon']}>
-                    {getTrendIcon(metrics?.successRateTrend || 0)}
+                    {getTrendIcon(metrics?.successRateTrend ?? 0)}
                   </span>
-                  <span>{formatTrend(metrics?.successRateTrend || 0)}</span> from last month
+                  <span>{formatTrend(metrics?.successRateTrend ?? 0)}</span> from last month
                 </div>
               </div>
 
@@ -247,15 +247,15 @@ export const Reports: React.FC = () => {
                   <h3>Impediments</h3>
                 </div>
                 <div className={styles['metric-value']}>
-                  {metrics?.impediments?.resolved || 0} / {metrics?.impediments?.total || 0}
+                  {metrics?.impediments.resolved ?? 0} / {metrics?.impediments.total ?? 0}
                 </div>
                 <div className={styles['metric-label']}>Resolved</div>
                 <div className={`${styles['metric-trend']} ${styles.neutral}`}>
                   <span>
-                    {(metrics?.impediments?.total || 0) - (metrics?.impediments?.resolved || 0)}
+                    {(metrics?.impediments.total ?? 0) - (metrics?.impediments.resolved ?? 0)}
                   </span>{' '}
                   open impediment
-                  {(metrics?.impediments?.total || 0) - (metrics?.impediments?.resolved || 0) !== 1
+                  {(metrics?.impediments.total ?? 0) - (metrics?.impediments.resolved ?? 0) !== 1
                     ? 's'
                     : ''}
                 </div>
@@ -271,19 +271,19 @@ export const Reports: React.FC = () => {
                   <h3>Team Satisfaction</h3>
                 </div>
                 <div className={styles['metric-value']}>
-                  {metrics?.teamSatisfaction?.rating?.toFixed(1) || '—'} / 5
+                  {metrics?.teamSatisfaction.rating.toFixed(1) ?? '—'} / 5
                 </div>
                 <div className={styles['metric-label']}>Average Rating</div>
                 <div
-                  className={`${styles['metric-trend']} ${getTrendClass(metrics?.teamSatisfaction?.trend || 0)}`}
+                  className={`${styles['metric-trend']} ${getTrendClass(metrics?.teamSatisfaction.trend ?? 0)}`}
                 >
                   <span className={styles['trend-icon']}>
-                    {getTrendIcon(metrics?.teamSatisfaction?.trend || 0)}
+                    {getTrendIcon(metrics?.teamSatisfaction.trend ?? 0)}
                   </span>
                   <span>
-                    {metrics?.teamSatisfaction?.trend && metrics.teamSatisfaction.trend > 0
+                    {metrics?.teamSatisfaction.trend && metrics.teamSatisfaction.trend > 0
                       ? `↑ ${metrics.teamSatisfaction.trend.toFixed(1)}`
-                      : metrics?.teamSatisfaction?.trend && metrics.teamSatisfaction.trend < 0
+                      : metrics?.teamSatisfaction.trend && metrics.teamSatisfaction.trend < 0
                         ? `↓ ${Math.abs(metrics.teamSatisfaction.trend).toFixed(1)}`
                         : '—'}
                   </span>{' '}

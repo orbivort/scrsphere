@@ -47,7 +47,7 @@ const mapTeamRoleToAttendeeRole = (role?: string): string => {
     developer: 'developer',
     team_member: 'developer',
   };
-  return roleMap[role?.toLowerCase() || ''] || 'stakeholder';
+  return roleMap[role?.toLowerCase() ?? ''] ?? 'stakeholder';
 };
 
 export const SprintRetrospective: React.FC = () => {
@@ -163,12 +163,20 @@ export const SprintRetrospective: React.FC = () => {
           message = 'Invalid request. Please check your input and try again.';
         }
 
-        const axiosError = error as any;
+        interface ApiErrorResponse {
+          response?: {
+            data?: {
+              error?: {
+                details?: Array<{ field: string; message: string }>;
+                message?: string;
+              };
+            };
+          };
+        }
+
+        const axiosError = error as ApiErrorResponse;
         if (axiosError.response?.data?.error?.details) {
-          const details = axiosError.response.data.error.details as Array<{
-            field: string;
-            message: string;
-          }>;
+          const details = axiosError.response.data.error.details;
           const firstError = details[0];
           if (firstError) {
             message = `${firstError.field ? `${firstError.field}: ` : ''}${firstError.message}`;
@@ -195,7 +203,7 @@ export const SprintRetrospective: React.FC = () => {
 
   const { data: teamData, isLoading: isLoadingTeam } = useQuery({
     queryKey: ['team', teamId],
-    queryFn: () => apiService.getTeam(teamId!),
+    queryFn: () => apiService.getTeam(teamId ?? ''),
     enabled: !!teamId,
     retry: 1,
     refetchOnWindowFocus: false,
@@ -222,7 +230,7 @@ export const SprintRetrospective: React.FC = () => {
 
   const { data: sprintData } = useQuery({
     queryKey: ['sprint', sprintId],
-    queryFn: () => apiService.getSprint(sprintId || ''),
+    queryFn: () => apiService.getSprint(sprintId ?? ''),
     enabled: !!sprintId,
   });
 
@@ -269,13 +277,13 @@ export const SprintRetrospective: React.FC = () => {
 
   const addItemMutation = useMutation({
     mutationFn: (item: Partial<RetrospectiveItem>) =>
-      apiService.addRetrospectiveItem(retrospective?.id || '', item),
+      apiService.addRetrospectiveItem(retrospective?.id ?? '', item),
     onMutate: () => {
       setUiState((prev) => ({ ...prev, showAddItem: false }));
       setFormState((prev) => ({ ...prev, newItemContent: '' }));
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.bySprint(sprintId) });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.bySprint(sprintId) });
       handleSuccess('Item added successfully');
     },
     onError: (error) => {
@@ -286,7 +294,7 @@ export const SprintRetrospective: React.FC = () => {
 
   const voteMutation = useMutation({
     mutationFn: (itemId: string) =>
-      apiService.voteRetrospectiveItem(retrospective?.id || '', itemId),
+      apiService.voteRetrospectiveItem(retrospective?.id ?? '', itemId),
     onMutate: async (itemId: string) => {
       // Cancel any outgoing refetches to avoid overwriting optimistic update
       await queryClient.cancelQueries({ queryKey: queryKeys.retrospective.bySprint(sprintId) });
@@ -309,7 +317,7 @@ export const SprintRetrospective: React.FC = () => {
                   return {
                     ...item,
                     votes: item.votes + 1,
-                    votedBy: [...(item.votedBy || []), user.id],
+                    votedBy: [...item.votedBy, user.id],
                   };
                 }
                 return item;
@@ -330,13 +338,13 @@ export const SprintRetrospective: React.FC = () => {
     },
     onSettled: () => {
       // Always refetch after error or success to ensure consistency
-      queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.bySprint(sprintId) });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.bySprint(sprintId) });
     },
   });
 
   const unvoteMutation = useMutation({
     mutationFn: (itemId: string) =>
-      apiService.unvoteRetrospectiveItem(retrospective?.id || '', itemId),
+      apiService.unvoteRetrospectiveItem(retrospective?.id ?? '', itemId),
     onMutate: async (itemId: string) => {
       // Cancel any outgoing refetches to avoid overwriting optimistic update
       await queryClient.cancelQueries({ queryKey: queryKeys.retrospective.bySprint(sprintId) });
@@ -359,7 +367,7 @@ export const SprintRetrospective: React.FC = () => {
                   return {
                     ...item,
                     votes: Math.max(0, item.votes - 1),
-                    votedBy: (item.votedBy || []).filter((id: string) => id !== user.id),
+                    votedBy: item.votedBy.filter((id: string) => id !== user.id),
                   };
                 }
                 return item;
@@ -380,15 +388,15 @@ export const SprintRetrospective: React.FC = () => {
     },
     onSettled: () => {
       // Always refetch after error or success to ensure consistency
-      queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.bySprint(sprintId) });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.bySprint(sprintId) });
     },
   });
 
   const deleteItemMutation = useMutation({
     mutationFn: (itemId: string) =>
-      apiService.deleteRetrospectiveItem(retrospective?.id || '', itemId),
+      apiService.deleteRetrospectiveItem(retrospective?.id ?? '', itemId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.bySprint(sprintId) });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.bySprint(sprintId) });
       handleSuccess('Item deleted successfully');
     },
     onError: (error) => handleError(error, 'Failed to delete item'),
@@ -396,9 +404,9 @@ export const SprintRetrospective: React.FC = () => {
 
   const updateItemMutation = useMutation({
     mutationFn: ({ itemId, content }: { itemId: string; content: string }) =>
-      apiService.updateRetrospectiveItem(retrospective?.id || '', itemId, { content }),
+      apiService.updateRetrospectiveItem(retrospective?.id ?? '', itemId, { content }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.bySprint(sprintId) });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.bySprint(sprintId) });
       setEditState((prev) => ({ ...prev, editingItemId: null, editContent: '' }));
       handleSuccess('Item updated successfully');
     },
@@ -409,7 +417,7 @@ export const SprintRetrospective: React.FC = () => {
 
   const addActionMutation = useMutation({
     mutationFn: (actionItem: Partial<RetroActionItem>) =>
-      apiService.addActionItem(retrospective?.id || '', actionItem),
+      apiService.addActionItem(retrospective?.id ?? '', actionItem),
     onMutate: () => {
       setUiState((prev) => ({ ...prev, showActionForm: false }));
       setFormState((prev) => ({
@@ -420,7 +428,7 @@ export const SprintRetrospective: React.FC = () => {
       setActionFormTouched({ title: false, ownerId: false, dueDate: false });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.bySprint(sprintId) });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.bySprint(sprintId) });
       handleSuccess('Action item created successfully');
     },
     onError: (error) => {
@@ -431,9 +439,9 @@ export const SprintRetrospective: React.FC = () => {
 
   const deleteActionMutation = useMutation({
     mutationFn: (actionItemId: string) =>
-      apiService.deleteActionItem(retrospective?.id || '', actionItemId),
+      apiService.deleteActionItem(retrospective?.id ?? '', actionItemId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.bySprint(sprintId) });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.bySprint(sprintId) });
       handleSuccess('Action item deleted successfully');
     },
     onError: (error) => handleError(error, 'Failed to delete action item'),
@@ -441,9 +449,9 @@ export const SprintRetrospective: React.FC = () => {
 
   const updateSummaryMutation = useMutation({
     mutationFn: (data: { summary?: string; dodEvolutionNotes?: string }) =>
-      apiService.updateRetrospective(retrospective?.id || '', data),
+      apiService.updateRetrospective(retrospective?.id ?? '', data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.bySprint(sprintId) });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.bySprint(sprintId) });
       handleSuccess('Summary updated successfully');
       setUiState((prev) => ({ ...prev, showSummaryForm: false }));
       setEditState((prev) => ({ ...prev, isEditingSummary: false }));
@@ -456,10 +464,10 @@ export const SprintRetrospective: React.FC = () => {
 
   const updateStatusMutation = useMutation({
     mutationFn: (status: RetrospectiveStatus) =>
-      apiService.updateRetrospective(retrospective?.id || '', { status }),
+      apiService.updateRetrospective(retrospective?.id ?? '', { status }),
     onSuccess: (_, status) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.bySprint(sprintId) });
-      queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.allByTeam(teamId) });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.bySprint(sprintId) });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.allByTeam(teamId) });
       if (status === RetrospectiveStatus.COMPLETED) {
         setUiState((prev) => ({ ...prev, showSuccessModal: true }));
       } else {
@@ -473,9 +481,9 @@ export const SprintRetrospective: React.FC = () => {
 
   const addAttendeeMutation = useMutation({
     mutationFn: (data: { name: string; email?: string; role: string; attended: boolean }) =>
-      apiService.addRetroAttendee(retrospective?.id || '', data),
+      apiService.addRetroAttendee(retrospective?.id ?? '', data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.bySprint(sprintId) });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.bySprint(sprintId) });
     },
     onError: (error) => handleError(error, 'Failed to add participant'),
   });
@@ -484,7 +492,7 @@ export const SprintRetrospective: React.FC = () => {
     mutationFn: ({ attendeeId, attended }: { attendeeId: string; attended: boolean }) =>
       apiService.updateRetroAttendee(attendeeId, { attended }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.bySprint(sprintId) });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.bySprint(sprintId) });
     },
     onError: (error) => handleError(error, 'Failed to update participant'),
   });
@@ -590,7 +598,7 @@ export const SprintRetrospective: React.FC = () => {
 
   const calculateStoryPoints = (items: ProductBacklogItem[] | undefined) => {
     if (!items) return 0;
-    return items.reduce((sum, item) => sum + (item.storyPoints || 0), 0);
+    return items.reduce((sum, item) => sum + (item.storyPoints ?? 0), 0);
   };
 
   const calculateCompletion = (items: ProductBacklogItem[] | undefined) => {
@@ -673,11 +681,11 @@ export const SprintRetrospective: React.FC = () => {
       if (voteMutation.isPending || unvoteMutation.isPending) return;
 
       // Find the item to check if user has voted
-      const item = retrospective.items?.find((i: RetrospectiveItem) => i.id === itemId);
+      const item = retrospective.items.find((i: RetrospectiveItem) => i.id === itemId);
       if (!item) return;
 
       // Check if current user has voted (user ID is in votedBy array)
-      const hasVoted = user?.id && item.votedBy?.includes(user.id);
+      const hasVoted = user?.id && item.votedBy.includes(user.id);
 
       if (hasVoted) {
         // User has voted, so unvote
@@ -771,7 +779,7 @@ export const SprintRetrospective: React.FC = () => {
       return;
     }
     setEditState((prev) => ({ ...prev, isEditingSummary: true }));
-    setFormState((prev) => ({ ...prev, summaryContent: retrospective?.summary || '' }));
+    setFormState((prev) => ({ ...prev, summaryContent: retrospective.summary ?? '' }));
     setUiState((prev) => ({ ...prev, showSummaryForm: true }));
   }, [retrospective?.id, showNotification, retrospective?.summary]);
 
@@ -886,12 +894,12 @@ export const SprintRetrospective: React.FC = () => {
 
     const errors: string[] = [];
 
-    const summary = retrospective?.summary;
+    const summary = retrospective.summary;
     if (!summary || summary.trim().length === 0) {
       errors.push('Retrospective Summary must be filled in before completing.');
     }
 
-    const attendees = retrospective?.attendees || [];
+    const attendees = retrospective.attendees;
     if (attendees.length === 0) {
       errors.push('At least one participant must be added before completing the retrospective.');
     }
@@ -908,7 +916,7 @@ export const SprintRetrospective: React.FC = () => {
 
     const unmarkedTeamMembers = teamMembers.filter((member) => {
       const memberName = `${member.user?.firstName} ${member.user?.lastName}`.toLowerCase();
-      const memberEmail = member.user?.email?.toLowerCase();
+      const memberEmail = member.user?.email.toLowerCase();
       return (
         !markedMemberNames.has(memberName) && (!memberEmail || !markedMemberEmails.has(memberEmail))
       );
@@ -959,7 +967,7 @@ export const SprintRetrospective: React.FC = () => {
   }
 
   if (!sprintId) {
-    navigate('/retrospectives');
+    void navigate('/retrospectives');
     return null;
   }
 
@@ -983,7 +991,7 @@ export const SprintRetrospective: React.FC = () => {
             onClick={() => refetch()}
             disabled={isLoading}
           >
-            {isLoading ? 'Loading...' : 'Retry'}
+            Retry
           </button>
         </div>
       </div>
@@ -1249,15 +1257,15 @@ export const SprintRetrospective: React.FC = () => {
               ← Back to Retrospectives
             </button>
             <h1 className={styles['page-title']}>🔍 Sprint Retrospective</h1>
-            <p className={styles['retro-date']}>{formatDate(retrospective?.retroDate)}</p>
+            <p className={styles['retro-date']}>{formatDate(retrospective.retroDate)}</p>
           </div>
           <div className={styles['header-actions']}>
             <span
               className={styles['participant-count']}
-              aria-label={`${retrospective?.attendees?.filter((a: RetroAttendee) => a.attended).length || 0} of ${retrospective?.attendees?.length || 0} attendees attended`}
+              aria-label={`${retrospective.attendees.filter((a: RetroAttendee) => a.attended).length || 0} of ${retrospective.attendees.length || 0} attendees attended`}
             >
-              👥 {retrospective?.attendees?.filter((a: RetroAttendee) => a.attended).length || 0} /{' '}
-              {retrospective?.attendees?.length || 0} Attendees
+              👥 {retrospective.attendees.filter((a: RetroAttendee) => a.attended).length || 0} /{' '}
+              {retrospective.attendees.length || 0} Attendees
             </span>
           </div>
         </div>
@@ -1303,7 +1311,7 @@ export const SprintRetrospective: React.FC = () => {
                 <div className={styles['info-card-content']}>
                   <span className={styles['info-card-label']}>Product Backlog</span>
                   <span className={styles['info-card-value']}>
-                    {sprint.items?.length || 0} items
+                    {sprint.items?.length ?? 0} items
                   </span>
                   <span className={styles['info-card-sub']}>
                     {calculateStoryPoints(sprint.items)} story points
@@ -1336,7 +1344,7 @@ export const SprintRetrospective: React.FC = () => {
                 <div className={styles['info-card-content']}>
                   <span className={styles['info-card-label']}>Tasks</span>
                   <span className={styles['info-card-value']}>
-                    {sprint.tasks?.length || 0} tasks
+                    {sprint.tasks?.length ?? 0} tasks
                   </span>
                   <span className={styles['info-card-sub']}>
                     {calculateTaskCompletion(sprint.tasks)} completed
@@ -1392,10 +1400,9 @@ export const SprintRetrospective: React.FC = () => {
           >
             {Object.values(RetrospectiveCategory).map((category) => {
               const config = getCategoryConfig(category);
-              const items =
-                retrospective?.items?.filter(
-                  (item: RetrospectiveItem) => item.category === category
-                ) || [];
+              const items = retrospective.items.filter(
+                (item: RetrospectiveItem) => item.category === category
+              );
 
               return (
                 <div
@@ -1464,7 +1471,7 @@ export const SprintRetrospective: React.FC = () => {
                                 <span className={styles['item-author']}>— {item.authorName}</span>
                                 <div className={styles['item-actions']}>
                                   {(() => {
-                                    const hasVoted = user?.id && item.votedBy?.includes(user.id);
+                                    const hasVoted = user?.id && item.votedBy.includes(user.id);
                                     return (
                                       <button
                                         className={`${styles['vote-button']} ${hasVoted ? styles['vote-button-active'] : ''}`}
@@ -1572,12 +1579,12 @@ export const SprintRetrospective: React.FC = () => {
             </div>
 
             <div className={styles['action-items-list']}>
-              {retrospective?.actionItems?.length === 0 ? (
+              {retrospective.actionItems.length === 0 ? (
                 <div className={styles['empty-state']}>
                   <p>No action items yet. Convert improvement items into actionable tasks.</p>
                 </div>
               ) : (
-                retrospective?.actionItems?.map((actionItem: RetroActionItem) => {
+                retrospective.actionItems.map((actionItem: RetroActionItem) => {
                   const statusColor = getStatusColor(actionItem.status);
                   return (
                     <div key={actionItem.id} className={styles['action-item-card']}>
@@ -1663,14 +1670,14 @@ export const SprintRetrospective: React.FC = () => {
           </div>
 
           <AttendeesSection
-            entityId={retrospective?.id || ''}
+            entityId={retrospective.id}
             sprintId={sprintId || ''}
-            attendees={retrospective?.attendees || []}
+            attendees={retrospective.attendees}
             teamMembers={teamMembers}
-            isCompleted={retrospective?.status === RetrospectiveStatus.COMPLETED}
+            isCompleted={retrospective.status === RetrospectiveStatus.COMPLETED}
             apiConfig={{
               addAttendee: (data: AttendeeFormData) =>
-                apiService.addRetroAttendee(retrospective?.id || '', {
+                apiService.addRetroAttendee(retrospective.id, {
                   name: data.name,
                   email: data.email,
                   role: data.role,
@@ -1692,7 +1699,7 @@ export const SprintRetrospective: React.FC = () => {
             }}
             onAddTeamMember={(member, attended) => {
               addAttendeeMutation.mutate({
-                name: `${member.user?.firstName || ''} ${member.user?.lastName || ''}`.trim(),
+                name: `${member.user?.firstName ?? ''} ${member.user?.lastName ?? ''}`.trim(),
                 email: member.user?.email,
                 role: mapTeamRoleToAttendeeRole(member.role),
                 attended,
@@ -1725,31 +1732,29 @@ export const SprintRetrospective: React.FC = () => {
                 </span>
                 Retrospective Summary
               </h3>
-              {!editState.isEditingSummary &&
-                !uiState.showSummaryForm &&
-                retrospective?.summary && (
-                  <button
-                    className={`${styles['icon-button']} ${styles.edit}`}
-                    onClick={handleEditSummary}
-                    disabled={isCompleted}
-                    aria-label="Edit summary"
-                    title="Edit"
+              {!editState.isEditingSummary && !uiState.showSummaryForm && retrospective.summary && (
+                <button
+                  className={`${styles['icon-button']} ${styles.edit}`}
+                  onClick={handleEditSummary}
+                  disabled={isCompleted}
+                  aria-label="Edit summary"
+                  title="Edit"
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                   >
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                    </svg>
-                  </button>
-                )}
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                  </svg>
+                </button>
+              )}
             </div>
 
             {uiState.showSummaryForm || editState.isEditingSummary ? (
@@ -1920,7 +1925,7 @@ export const SprintRetrospective: React.FC = () => {
               </div>
             ) : (
               <>
-                {retrospective?.summary ? (
+                {retrospective.summary ? (
                   <div className={styles['summary-content']}>
                     <p className={styles['summary-content-text']}>{retrospective.summary}</p>
                   </div>
@@ -1962,7 +1967,7 @@ export const SprintRetrospective: React.FC = () => {
             )}
           </div>
 
-          {retrospective?.status !== RetrospectiveStatus.COMPLETED && (
+          {retrospective.status !== RetrospectiveStatus.COMPLETED && (
             <div className={styles['complete-retro-section']}>
               <button
                 className={`${styles.button} ${styles['button-primary']} ${styles['complete-button']}`}

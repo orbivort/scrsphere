@@ -1,3 +1,5 @@
+/* eslint-disable react-refresh/only-export-components -- Context, provider, hooks, and utilities are co-located */
+
 import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
 
 import { MoSCoWPriority, ItemStatus, type ProductBacklogItem } from '../../../types';
@@ -278,6 +280,7 @@ export const BacklogProvider: React.FC<BacklogProviderProps> = ({ children }) =>
     // Get the corresponding business value from the mapping
     const businessValue = MOSCOW_TO_BUSINESS_VALUE[priority];
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (businessValue === undefined) {
       logger.error('No business value mapping found for priority', undefined, { priority });
       setFormErrors((prev) => ({

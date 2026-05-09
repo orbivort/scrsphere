@@ -544,7 +544,9 @@ describe('EditSprintGoalModal', () => {
     });
 
     it('should handle initialGoal as undefined', () => {
-      render(<EditSprintGoalModal {...defaultProps} initialGoal={undefined as any} />);
+      render(
+        <EditSprintGoalModal {...defaultProps} initialGoal={undefined as unknown as string} />
+      );
 
       const textarea = getTextarea();
       expect(textarea).toHaveValue('');

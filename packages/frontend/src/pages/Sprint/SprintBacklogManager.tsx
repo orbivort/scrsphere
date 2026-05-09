@@ -36,7 +36,7 @@ const generateDraftTaskData = (
   estimatedHours: number;
   remainingHours: number;
 }> => {
-  const config = STORY_POINTS_TO_TASKS[storyPoints] || { taskCount: 1, estimatedHours: 8 };
+  const config = STORY_POINTS_TO_TASKS[storyPoints] ?? { taskCount: 1, estimatedHours: 8 };
   const tasks: Array<{
     pbiId: string;
     title: string;
@@ -106,7 +106,10 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
 
   const { data: sprintData, isLoading: sprintLoading } = useQuery({
     queryKey: ['activeSprint', teamId],
-    queryFn: () => apiService.getActiveSprint(teamId!),
+    queryFn: () => {
+      if (!teamId) throw new Error('Team ID is required');
+      return apiService.getActiveSprint(teamId);
+    },
     enabled: !!teamId,
   });
 
@@ -118,7 +121,10 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
 
   const { data: availablePBIsData, isLoading: availableLoading } = useQuery({
     queryKey: ['availablePBIs', teamId],
-    queryFn: () => apiService.getAvailablePBIsForSprint(teamId!),
+    queryFn: () => {
+      if (!teamId) throw new Error('Team ID is required');
+      return apiService.getAvailablePBIsForSprint(teamId);
+    },
     enabled: !!teamId && showAddModal,
   });
 
@@ -128,10 +134,16 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
     enabled: !!sprintId,
   });
 
-  const sprintItems: ProductBacklogItem[] = sprintData?.data?.items || [];
-  const tasks: Task[] = tasksData?.data || [];
-  const availablePBIs: ProductBacklogItem[] = availablePBIsData?.data || [];
-  const recentChanges = changesData?.data || [];
+  const sprintItems: ProductBacklogItem[] = useMemo(
+    () => sprintData?.data?.items ?? [],
+    [sprintData]
+  );
+  const tasks: Task[] = useMemo(() => tasksData?.data ?? [], [tasksData]);
+  const availablePBIs: ProductBacklogItem[] = useMemo(
+    () => availablePBIsData?.data ?? [],
+    [availablePBIsData]
+  );
+  const recentChanges = changesData?.data ?? [];
 
   const sprintBacklogItems: SprintBacklogItem[] = useMemo(() => {
     return sprintItems.map((item) => ({
@@ -142,12 +154,12 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
 
   const sprintStats = useMemo(() => {
     const totalItems = sprintBacklogItems.length;
-    const totalPoints = sprintBacklogItems.reduce((sum, item) => sum + (item.storyPoints || 0), 0);
+    const totalPoints = sprintBacklogItems.reduce((sum, item) => sum + (item.storyPoints ?? 0), 0);
     const totalTasks = tasks.length;
     const completedTasks = tasks.filter((t) => t.status === 'DONE').length;
-    const totalEstimatedHours = tasks.reduce((sum, t) => sum + (t.estimatedHours || 0), 0);
+    const totalEstimatedHours = tasks.reduce((sum, t) => sum + (t.estimatedHours ?? 0), 0);
     const totalRemainingHours = tasks.reduce(
-      (sum, t) => sum + (t.remainingHours || t.estimatedHours || 0),
+      (sum, t) => sum + (t.remainingHours ?? t.estimatedHours ?? 0),
       0
     );
 
@@ -181,7 +193,7 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
       const pbi = availablePBIs.find((item) => item.id === pbiId);
 
       if (pbi) {
-        const draftTasks = generateDraftTaskData(pbiId, pbi.title, pbi.storyPoints || 0);
+        const draftTasks = generateDraftTaskData(pbiId, pbi.title, pbi.storyPoints ?? 0);
 
         try {
           const createTaskPromises = draftTasks.map((taskData) =>
@@ -208,18 +220,18 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
         success('PBI added to sprint successfully');
       }
 
-      queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.sprintTasks.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.sprintBacklogChanges.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.availablePBIs.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.burndown.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.sprintTasks.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.sprintBacklogChanges.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.availablePBIs.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.burndown.all });
       setShowAddModal(false);
       setAddReason('');
     },
     onError: (error: unknown) => {
       const message =
-        (error as { response?: { data?: { error?: { message?: string } } } })?.response?.data?.error
-          ?.message || 'Failed to add PBI to sprint';
+        (error as { response?: { data?: { error?: { message?: string } } } }).response?.data?.error
+          ?.message ?? 'Failed to add PBI to sprint';
       showError(message);
     },
   });
@@ -235,11 +247,11 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
       );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.sprintTasks.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.sprintBacklogChanges.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.availablePBIs.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.burndown.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.sprintTasks.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.sprintBacklogChanges.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.availablePBIs.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.burndown.all });
       setShowRemoveModal(false);
       setSelectedItemForRemoval(null);
       setRemoveReason('');
@@ -248,8 +260,8 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
     },
     onError: (error: unknown) => {
       const message =
-        (error as { response?: { data?: { error?: { message?: string } } } })?.response?.data?.error
-          ?.message || 'Failed to return PBI to backlog';
+        (error as { response?: { data?: { error?: { message?: string } } } }).response?.data?.error
+          ?.message ?? 'Failed to return PBI to backlog';
       showError(message);
     },
   });
@@ -267,7 +279,7 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
       setSelectedItemForRemoval({
         pbiId,
         pbiTitle,
-        taskCount: item?.tasks.length || 0,
+        taskCount: item?.tasks.length ?? 0,
       });
       setShowRemoveModal(true);
     },
@@ -279,7 +291,7 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
   }, [removePBIMutation]);
 
   const getPriorityStyle = (priority: MoSCoWPriority) => {
-    return priorityLabels[priority] || { label: priority, color: '#6b7280' };
+    return priorityLabels[priority];
   };
 
   const getTaskStatusClass = (status: string) => {
@@ -401,7 +413,7 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
                         <h4 className={styles['sbm-item-title']}>{item.title}</h4>
                         <div className={styles['sbm-item-meta']}>
                           <span className={styles['sbm-item-points']}>
-                            {item.storyPoints || 0} pts
+                            {item.storyPoints ?? 0} pts
                           </span>
                           <span className={styles['sbm-item-tasks']}>
                             {item.tasks.length} tasks
@@ -459,7 +471,7 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
                         <span className={styles['sbm-change-title']}>{change.pbiTitle}</span>
                         <span className={styles['sbm-change-meta']}>
                           by {change.changedByName} •{' '}
-                          {formatTimeAgo(change.createdAt || change.changedAt)}
+                          {formatTimeAgo(change.createdAt ?? change.changedAt)}
                         </span>
                         {change.reason && (
                           <span className={styles['sbm-change-reason']}>"{change.reason}"</span>
@@ -518,7 +530,7 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
                           </span>
                           <span className={styles['sbm-item-title']}>{pbi.title}</span>
                           <span className={styles['sbm-item-points']}>
-                            {pbi.storyPoints || 0} pts
+                            {pbi.storyPoints ?? 0} pts
                           </span>
                         </div>
                         <button

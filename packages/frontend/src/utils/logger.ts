@@ -78,7 +78,7 @@ const LOG_LEVEL_PRIORITY: Record<LogLevel, number> = {
 const getMinLogLevel = (): LogLevel => {
   // Check for explicit log level from environment variable
   const envLogLevel = import.meta.env.VITE_LOG_LEVEL as LogLevel | undefined;
-  if (envLogLevel && LOG_LEVEL_PRIORITY[envLogLevel] !== undefined) {
+  if (envLogLevel && envLogLevel in LOG_LEVEL_PRIORITY) {
     return envLogLevel;
   }
   // In development, allow all logs including debug
@@ -102,7 +102,7 @@ const getSessionId = (): string => {
 
 // Get current page from window location
 const getCurrentPage = (): string => {
-  if (typeof window !== 'undefined' && window.location) {
+  if (typeof window !== 'undefined') {
     return window.location.pathname;
   }
   return '';

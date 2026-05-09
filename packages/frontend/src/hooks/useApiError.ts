@@ -55,7 +55,7 @@ export const useApiError = (): UseApiErrorResult => {
       const response = axiosError.response;
 
       // API returned an error response
-      if (response?.data?.error) {
+      if (response?.data.error) {
         return {
           code: response.data.error.code,
           message: response.data.error.message,
@@ -118,7 +118,7 @@ export const useApiError = (): UseApiErrorResult => {
 
       // Handle authentication errors
       if (apiError.status === 401 || apiError.code === 'UNAUTHORIZED') {
-        logout();
+        void logout();
         return 'Your session has expired. Please log in again.';
       }
 
@@ -128,7 +128,7 @@ export const useApiError = (): UseApiErrorResult => {
       }
 
       // Return custom message or error message
-      return customMessage || apiError.message;
+      return customMessage ?? apiError.message;
     },
     [extractError, logout]
   );
@@ -171,7 +171,7 @@ export const useApiError = (): UseApiErrorResult => {
       return (
         axiosError.response?.status === 400 ||
         axiosError.response?.status === 422 ||
-        !!axiosError.response?.data?.error?.details
+        !!axiosError.response?.data.error?.details
       );
     }
     return false;
@@ -208,7 +208,7 @@ function isPermissionTransitionError(error: unknown): boolean {
   }
 
   const axiosError = error as AxiosError<ApiResponse<never>>;
-  const errorMessage = axiosError.response?.data?.error?.message;
+  const errorMessage = axiosError.response?.data.error?.message;
 
   return (
     (axiosError.response?.status === 403 || axiosError.response?.status === 400) &&
@@ -234,7 +234,7 @@ function getHttpErrorMessage(status: number): string {
     504: 'Gateway timeout. Please try again later.',
   };
 
-  return messages[status] || `An error occurred (status: ${status})`;
+  return messages[status] ?? `An error occurred (status: ${status})`;
 }
 
 export default useApiError;

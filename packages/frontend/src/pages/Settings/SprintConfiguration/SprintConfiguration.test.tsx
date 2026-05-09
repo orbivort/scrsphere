@@ -108,12 +108,12 @@ describe('SprintConfiguration Component', () => {
     });
 
     // Mock API calls
-    (apiService.getSprintConfiguration as any).mockResolvedValue({ data: mockSprintConfig });
-    (apiService.getGeneratedSprints as any).mockResolvedValue({ data: mockSprints });
-    (apiService.createSprintConfiguration as any).mockResolvedValue({ data: mockSprintConfig });
-    (apiService.updateSprintConfiguration as any).mockResolvedValue({ data: mockSprintConfig });
-    (apiService.generateSprintsForYear as any).mockResolvedValue({ data: mockSprints });
-    (apiService.deleteGeneratedSprint as any).mockResolvedValue({ data: null });
+    vi.mocked(apiService.getSprintConfiguration).mockResolvedValue({ data: mockSprintConfig });
+    vi.mocked(apiService.getGeneratedSprints).mockResolvedValue({ data: mockSprints });
+    vi.mocked(apiService.createSprintConfiguration).mockResolvedValue({ data: mockSprintConfig });
+    vi.mocked(apiService.updateSprintConfiguration).mockResolvedValue({ data: mockSprintConfig });
+    vi.mocked(apiService.generateSprintsForYear).mockResolvedValue({ data: mockSprints });
+    vi.mocked(apiService.deleteGeneratedSprint).mockResolvedValue({ data: null });
   });
 
   afterEach(() => {
@@ -276,10 +276,10 @@ describe('SprintConfiguration Component', () => {
     });
 
     it.skip('should initialize duration from existing config', async () => {
-      (apiService.getSprintConfiguration as any).mockResolvedValue({
+      vi.mocked(apiService.getSprintConfiguration).mockResolvedValue({
         data: { ...mockSprintConfig, duration: 'FOUR_WEEKS' },
       });
-      (apiService.getGeneratedSprints as any).mockResolvedValue({ data: [] });
+      vi.mocked(apiService.getGeneratedSprints).mockResolvedValue({ data: [] });
 
       renderWithProviders(<SprintConfiguration />);
 
@@ -493,7 +493,7 @@ describe('SprintConfiguration Component', () => {
   describe('Error Handling', () => {
     it('should handle save configuration error', async () => {
       const user = userEvent.setup();
-      (apiService.updateSprintConfiguration as any).mockRejectedValue(new Error('Save failed'));
+      vi.mocked(apiService.updateSprintConfiguration).mockRejectedValue(new Error('Save failed'));
 
       renderWithProviders(<SprintConfiguration />);
 
@@ -514,7 +514,7 @@ describe('SprintConfiguration Component', () => {
 
     it('should handle generate sprints error', async () => {
       const user = userEvent.setup();
-      (apiService.generateSprintsForYear as any).mockRejectedValue(new Error('Generate failed'));
+      vi.mocked(apiService.generateSprintsForYear).mockRejectedValue(new Error('Generate failed'));
 
       renderWithProviders(<SprintConfiguration />);
 
@@ -542,7 +542,7 @@ describe('SprintConfiguration Component', () => {
 
     it.skip('should handle delete sprint error', async () => {
       const user = userEvent.setup();
-      (apiService.deleteGeneratedSprint as any).mockRejectedValue(new Error('Delete failed'));
+      vi.mocked(apiService.deleteGeneratedSprint).mockRejectedValue(new Error('Delete failed'));
 
       renderWithProviders(<SprintConfiguration />);
 
@@ -576,9 +576,9 @@ describe('SprintConfiguration Component', () => {
 
   describe('Edge Cases', () => {
     it('should handle undefined teamId gracefully', async () => {
-      (useTeamStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+      vi.mocked(useTeamStore).mockReturnValue({
         currentTeam: { name: 'No ID Team' },
-      });
+      } as unknown as ReturnType<typeof useTeamStore>);
 
       renderWithProviders(<SprintConfiguration />);
 
@@ -588,8 +588,8 @@ describe('SprintConfiguration Component', () => {
 
     it.skip('should handle switching between 2-week and 4-week durations', async () => {
       const user = userEvent.setup();
-      (apiService.getGeneratedSprints as any).mockResolvedValue({ data: [] });
-      (apiService.getSprintConfiguration as any).mockResolvedValue({ data: undefined });
+      vi.mocked(apiService.getGeneratedSprints).mockResolvedValue({ data: [] });
+      vi.mocked(apiService.getSprintConfiguration).mockResolvedValue({ data: undefined });
       renderWithProviders(<SprintConfiguration />);
 
       await waitFor(

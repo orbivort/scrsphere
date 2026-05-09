@@ -113,7 +113,7 @@ export const ValidationModal: React.FC<ValidationModalProps> = ({
                 <div className={styles['check-checkbox']}>
                   <input
                     type="checkbox"
-                    checked={validationChecks[check.id] || false}
+                    checked={validationChecks[check.id] ?? false}
                     onChange={(e) => onCheckChange(check.id, e.target.checked)}
                   />
                   <span className={styles['check-custom']}>

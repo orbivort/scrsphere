@@ -169,7 +169,7 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({
                 .filter((point) => point.actual !== null)
                 .map((point) => {
                   const x = point.day * 30 + 10;
-                  const y = 190 - (point.actual! / totalHours) * 180;
+                  const y = 190 - ((point.actual as number) / totalHours) * 180;
                   return `${x},${y}`;
                 });
 
@@ -177,7 +177,7 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({
                 return (
                   <>
                     <polygon
-                      points={`10,190 ${actualPoints.join(' ')} ${actualPoints.length > 0 ? actualPoints[actualPoints.length - 1]!.split(',')[0] : 10},190`}
+                      points={`10,190 ${actualPoints.join(' ')} ${actualPoints.length > 0 ? (actualPoints[actualPoints.length - 1] ?? '').split(',')[0] : 10},190`}
                       fill="url(#areaGradient)"
                     />
                     <polyline
@@ -193,7 +193,7 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({
                       .filter((point) => point.actual !== null)
                       .map((point, i) => {
                         const x = point.day * 30 + 10;
-                        const y = 190 - (point.actual! / totalHours) * 180;
+                        const y = 190 - ((point.actual as number) / totalHours) * 180;
                         return (
                           <circle
                             key={i}

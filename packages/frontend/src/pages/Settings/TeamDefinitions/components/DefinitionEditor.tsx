@@ -41,7 +41,7 @@ export function DefinitionEditor<
 }: DefinitionEditorProps<T>): React.ReactElement {
   const [items, setItems] = useState<T[]>([]);
   const [newItemText, setNewItemText] = useState('');
-  const [newItemCategory, setNewItemCategory] = useState<string>(categories[0]?.value || '');
+  const [newItemCategory, setNewItemCategory] = useState<string>(categories[0]?.value ?? '');
   const [hasChanges, setHasChanges] = useState(false);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
 
@@ -96,8 +96,9 @@ export function DefinitionEditor<
     if (index === 0) return;
     const newItems = [...items];
     const temp = newItems[index - 1];
-    if (temp) {
-      newItems[index - 1] = newItems[index]!;
+    const current = newItems[index];
+    if (temp && current) {
+      newItems[index - 1] = current;
       newItems[index] = temp;
     }
     setItems(newItems.map((item, i) => ({ ...item, order: i })));
@@ -108,8 +109,9 @@ export function DefinitionEditor<
     if (index === items.length - 1) return;
     const newItems = [...items];
     const temp = newItems[index + 1];
-    if (temp) {
-      newItems[index + 1] = newItems[index]!;
+    const current = newItems[index];
+    if (temp && current) {
+      newItems[index + 1] = current;
       newItems[index] = temp;
     }
     setItems(newItems.map((item, i) => ({ ...item, order: i })));
@@ -224,10 +226,10 @@ export function DefinitionEditor<
               </div>
 
               <select
-                value={item.category || categories[0]?.value || ''}
+                value={item.category ?? categories[0]?.value ?? ''}
                 onChange={(e) => handleCategoryChange(item.id, e.target.value)}
                 className={styles['item-category']}
-                style={getCategoryColor(item.category || categories[0]?.value || '', categories)}
+                style={getCategoryColor(item.category ?? categories[0]?.value ?? '', categories)}
               >
                 {categories.map((cat) => (
                   <option key={cat.value} value={cat.value}>

@@ -71,7 +71,7 @@ export const ResetPasswordPage: React.FC = () => {
 
         if (response.success && response.data?.valid) {
           setIsTokenValid(true);
-          setTokenEmail(response.data.email || null);
+          setTokenEmail(response.data.email ?? null);
         } else {
           setError('This password reset link is invalid or has expired. Please request a new one.');
         }
@@ -115,7 +115,7 @@ export const ResetPasswordPage: React.FC = () => {
           setSuccess(true);
           logger.info('Password reset successful');
         } else {
-          setError(response.error?.message || 'Failed to reset password. Please try again.');
+          setError(response.error?.message ?? 'Failed to reset password. Please try again.');
         }
       } catch (err) {
         logger.error('Password reset failed', undefined, { error: err });

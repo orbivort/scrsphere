@@ -231,24 +231,22 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
   }
 
   // Skeleton-chart variant
-  if (variant === 'skeleton-chart') {
-    const containerClasses = [styles['loading-state'], styles['variant-skeleton-chart'], className]
-      .filter(Boolean)
-      .join(' ');
+  const containerClasses = [styles['loading-state'], styles['variant-skeleton-chart'], className]
+    .filter(Boolean)
+    .join(' ');
 
-    return (
-      <div
-        className={containerClasses}
-        role="status"
-        aria-live="polite"
-        aria-busy="true"
-        aria-label={label}
-        data-variant={variant}
-      >
-        <SkeletonChart label={label} />
-      </div>
-    );
-  }
+  return (
+    <div
+      className={containerClasses}
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
+      aria-label={label}
+      data-variant={variant}
+    >
+      <SkeletonChart label={label} />
+    </div>
+  );
 
   // Fallback for unknown variants (should never happen with TypeScript)
   return null;

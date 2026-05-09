@@ -122,25 +122,25 @@ export const SprintReviewList: React.FC = () => {
 
   const { data: sprintsData, isLoading: isLoadingSprints } = useQuery({
     queryKey: ['sprints', teamId],
-    queryFn: () => apiService.getSprints(teamId!),
+    queryFn: () => apiService.getSprints(teamId ?? ''),
     enabled: !!teamId,
   });
 
   const { data: reviewsData } = useQuery({
     queryKey: ['sprint-reviews', teamId],
-    queryFn: () => apiService.getSprintReviews(teamId!),
+    queryFn: () => apiService.getSprintReviews(teamId ?? ''),
     enabled: !!teamId,
   });
 
   const { data: incrementsData } = useQuery({
     queryKey: ['increments', teamId],
-    queryFn: () => apiService.getIncrements(teamId!),
+    queryFn: () => apiService.getIncrements(teamId ?? ''),
     enabled: !!teamId,
   });
 
-  const sprints = useMemo(() => sprintsData?.data || [], [sprintsData]);
-  const reviews = useMemo(() => reviewsData?.data || [], [reviewsData]);
-  const increments = useMemo(() => incrementsData?.data || [], [incrementsData]);
+  const sprints = useMemo(() => sprintsData?.data ?? [], [sprintsData]);
+  const reviews = useMemo(() => reviewsData?.data ?? [], [reviewsData]);
+  const increments = useMemo(() => incrementsData?.data ?? [], [incrementsData]);
 
   const completedSprints = useMemo((): SprintWithReview[] => {
     return sprints
@@ -166,13 +166,13 @@ export const SprintReviewList: React.FC = () => {
 
   const handleViewReview = useCallback(
     (sprintId: string) => {
-      navigate(`/sprint-review/${sprintId}`);
+      void navigate(`/sprint-review/${sprintId}`);
     },
     [navigate]
   );
 
   const handleCreateIncrement = useCallback(() => {
-    navigate('/increments');
+    void navigate('/increments');
   }, [navigate]);
 
   if (!teamId) {

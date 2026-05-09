@@ -59,6 +59,17 @@ export const TeamCapacityModal: React.FC<TeamCapacityModalProps> = ({
     };
   }, [isOpen, teamAvailability]);
 
+  const handleCancel = useCallback(() => {
+    // Check for changes directly to avoid dependency on hasChanges
+    const currentHasChanges =
+      JSON.stringify(localAvailability) !== JSON.stringify(originalAvailability);
+    if (currentHasChanges) {
+      setShowUnsavedChangesModal(true);
+    } else {
+      onClose();
+    }
+  }, [localAvailability, originalAvailability, onClose]);
+
   // Handle keyboard events
   useEffect(() => {
     if (!isOpen) return;
@@ -95,7 +106,7 @@ export const TeamCapacityModal: React.FC<TeamCapacityModalProps> = ({
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen]);
+  }, [isOpen, handleCancel]);
 
   const handleUpdateHours = useCallback((index: number, hours: number) => {
     setLocalAvailability((prev) => {
@@ -139,17 +150,6 @@ export const TeamCapacityModal: React.FC<TeamCapacityModalProps> = ({
 
   const totalCapacity = localAvailability.reduce((sum, m) => sum + m.availableHours, 0);
   const hasChanges = JSON.stringify(localAvailability) !== JSON.stringify(originalAvailability);
-
-  const handleCancel = useCallback(() => {
-    // Check for changes directly to avoid dependency on hasChanges
-    const currentHasChanges =
-      JSON.stringify(localAvailability) !== JSON.stringify(originalAvailability);
-    if (currentHasChanges) {
-      setShowUnsavedChangesModal(true);
-    } else {
-      onClose();
-    }
-  }, [localAvailability, originalAvailability, onClose]);
 
   const handleSave = useCallback(() => {
     onSave(localAvailability);
