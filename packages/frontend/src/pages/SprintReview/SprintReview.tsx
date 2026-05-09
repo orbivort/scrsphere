@@ -872,8 +872,8 @@ export const SprintReview: React.FC = () => {
         </div>
         <div className={styles['header-actions']}>
           <span className={styles['attendee-count']}>
-            {review.attendees.filter((a) => a.attended).length || 0} /{' '}
-            {review.attendees.length || 0} Attendees
+            {review.attendees.filter((a) => a.attended).length} / {review.attendees.length}{' '}
+            Attendees
           </span>
         </div>
       </div>
@@ -1128,7 +1128,8 @@ export const SprintReview: React.FC = () => {
             </div>
 
             <div className={styles['feedback-list']}>
-              {review.feedback.length === 0 ? (
+              {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- review data may be partial despite type */}
+              {(review.feedback ?? []).length === 0 ? (
                 <div className={styles['empty-feedback']}>
                   <p>
                     No feedback collected yet. Click "Add Feedback" to add stakeholder feedback.
@@ -1216,7 +1217,8 @@ export const SprintReview: React.FC = () => {
             </div>
 
             <div className={styles['adjustments-list']}>
-              {review.backlogAdjustments.length === 0 ? (
+              {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- review data may be partial despite type */}
+              {(review.backlogAdjustments ?? []).length === 0 ? (
                 <div className={styles['empty-adjustments']}>
                   <p>No backlog adjustments made during this review.</p>
                 </div>
