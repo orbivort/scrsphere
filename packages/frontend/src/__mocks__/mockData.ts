@@ -564,7 +564,7 @@ export function createMockQueryResult<TData>(overrides?: {
   const data = overrides?.data;
   const isLoading = overrides?.isLoading ?? (data === undefined && !overrides?.isError);
   const isError =
-    overrides?.isError ?? (overrides?.error !== undefined && overrides?.error !== null);
+    overrides?.isError ?? (overrides?.error !== undefined && overrides.error !== null);
   const status =
     overrides?.status ?? (isError ? 'error' : data !== undefined ? 'success' : 'pending');
 

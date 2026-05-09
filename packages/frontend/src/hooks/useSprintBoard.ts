@@ -60,13 +60,13 @@ export function useSprintBoard({ teamId }: UseSprintBoardOptions): UseSprintBoar
     isError,
     error,
   } = useQuery({
-    queryKey: queryKeys.sprint.active(teamId || ''),
-    queryFn: () => apiService.getActiveSprint(teamId!),
+    queryKey: queryKeys.sprint.active(teamId ?? ''),
+    queryFn: () => apiService.getActiveSprint(teamId ?? ''),
     enabled: !!teamId,
   });
 
-  const sprint = sprintData?.data || null;
-  const sprintItems = sprint?.items || [];
+  const sprint = sprintData?.data ?? null;
+  const sprintItems = useMemo(() => sprint?.items ?? [], [sprint]);
 
   // Calculate sprint duration
   const sprintDuration = useMemo(() => {
@@ -87,7 +87,7 @@ export function useSprintBoard({ teamId }: UseSprintBoardOptions): UseSprintBoar
 
   // Calculate sprint statistics
   const sprintStats = useMemo((): SprintStats => {
-    const tasks = sprint?.tasks || [];
+    const tasks = sprint?.tasks ?? [];
 
     const totalTasks = tasks.length;
     const todoTasks = tasks.filter((t: Task) => t.status === 'TODO').length;
@@ -97,14 +97,14 @@ export function useSprintBoard({ teamId }: UseSprintBoardOptions): UseSprintBoar
     const totalPbis = sprintItems.length;
     const completedPbis = sprintItems.filter((item) => item.status === 'DONE').length;
 
-    const totalStoryPoints = sprintItems.reduce((sum, item) => sum + (item.storyPoints || 0), 0);
+    const totalStoryPoints = sprintItems.reduce((sum, item) => sum + (item.storyPoints ?? 0), 0);
     const completedStoryPoints = sprintItems
       .filter((item) => item.status === 'DONE')
-      .reduce((sum, item) => sum + (item.storyPoints || 0), 0);
+      .reduce((sum, item) => sum + (item.storyPoints ?? 0), 0);
 
-    const totalEstimatedHours = tasks.reduce((sum, task) => sum + (task.estimatedHours || 0), 0);
+    const totalEstimatedHours = tasks.reduce((sum, task) => sum + (task.estimatedHours ?? 0), 0);
     const totalRemainingHours = tasks.reduce(
-      (sum, task) => sum + (task.remainingHours || task.estimatedHours || 0),
+      (sum, task) => sum + (task.remainingHours ?? task.estimatedHours ?? 0),
       0
     );
 
@@ -139,8 +139,8 @@ export function useSprintBoard({ teamId }: UseSprintBoardOptions): UseSprintBoar
     },
     onSuccess: () => {
       // Invalidate related queries
-      queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.task.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.task.all });
     },
   });
 

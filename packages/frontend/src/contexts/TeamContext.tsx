@@ -1,3 +1,5 @@
+/* eslint-disable react-refresh/only-export-components -- Context, provider, and hooks are co-located */
+
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -63,7 +65,7 @@ export const TeamProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
 
   // Derive error from either React Query or local state
-  const error = localError || (teamsError?.message ?? null);
+  const error = localError ?? teamsError?.message ?? null;
 
   // Only show loading when authenticated and actually loading
   const isLoading = isAuthenticated && teamsLoading;
@@ -120,11 +122,11 @@ export const TeamInitializer: React.FC<{ children: React.ReactNode }> = ({ child
 
     if ((!isLoading || loadingTimeout) && !initialized) {
       if (userTeams.length === 0) {
-        navigate('/team');
+        void navigate('/team');
       } else if (userTeams.length === 1 && !currentTeam) {
         const firstTeam = userTeams[0];
         if (firstTeam) {
-          switchTeam(firstTeam.id);
+          void switchTeam(firstTeam.id);
         }
       } else if (userTeams.length > 1 && !currentTeam) {
         setShowTeamSelection(true);
@@ -145,14 +147,14 @@ export const TeamInitializer: React.FC<{ children: React.ReactNode }> = ({ child
   // Handle case when user deletes their last team after initialization
   useEffect(() => {
     if (isAuthenticated && initialized && !isLoading && userTeams.length === 0) {
-      navigate('/team');
+      void navigate('/team');
     }
   }, [isAuthenticated, initialized, isLoading, userTeams.length, navigate]);
 
   const handleTeamSelect = async (teamId: string) => {
     await switchTeam(teamId);
     setShowTeamSelection(false);
-    navigate('/dashboard');
+    void navigate('/dashboard');
   };
 
   if (isLoading && !loadingTimeout) {

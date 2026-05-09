@@ -93,7 +93,7 @@ export const isTransitionAllowed = (
   currentStatus: ItemStatus,
   targetStatus: ItemStatus
 ): boolean => {
-  return VALID_TRANSITIONS[currentStatus]?.includes(targetStatus) ?? false;
+  return VALID_TRANSITIONS[currentStatus].includes(targetStatus);
 };
 
 /**
@@ -109,7 +109,7 @@ export const isTransitionAllowed = (
  * ```
  */
 export const getAllowedTransitions = (currentStatus: ItemStatus): ItemStatus[] => {
-  return VALID_TRANSITIONS[currentStatus] ?? [];
+  return VALID_TRANSITIONS[currentStatus];
 };
 
 /**

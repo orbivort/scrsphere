@@ -52,7 +52,7 @@ export const useSessionStore = create<SessionState>()((set) => ({
       },
       onTimeout: () => {
         set({ showWarningModal: false });
-        useAuthStore.getState().logout();
+        void useAuthStore.getState().logout();
       },
       onActivityUpdate: () => {
         set({ showWarningModal: false });
@@ -219,7 +219,7 @@ export const useAuthStore = create<AuthState>()(
             window.location.href = '/login';
           } else {
             set({
-              deletionError: response.error?.message || 'Failed to delete account',
+              deletionError: response.error?.message ?? 'Failed to delete account',
               isDeletingAccount: false,
             });
           }
@@ -245,13 +245,13 @@ export const useAuthStore = create<AuthState>()(
               isUpdatingProfile: false,
             });
             if (queryClient) {
-              queryClient.invalidateQueries({ queryKey: ['team'] });
-              queryClient.invalidateQueries({ queryKey: ['myTeams'] });
+              void queryClient.invalidateQueries({ queryKey: ['team'] });
+              void queryClient.invalidateQueries({ queryKey: ['myTeams'] });
             }
             return true;
           } else {
             set({
-              profileUpdateError: response.error?.message || 'Failed to update profile',
+              profileUpdateError: response.error?.message ?? 'Failed to update profile',
               isUpdatingProfile: false,
             });
             return false;
@@ -276,7 +276,7 @@ export const useAuthStore = create<AuthState>()(
             return true;
           } else {
             set({
-              passwordChangeError: response.error?.message || 'Failed to change password',
+              passwordChangeError: response.error?.message ?? 'Failed to change password',
               isChangingPassword: false,
             });
             return false;

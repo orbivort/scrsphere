@@ -132,7 +132,7 @@ export const EmptyState = memo<EmptyStateProps>(
             label: config.action.label,
             variant: config.action.variant,
             onClick: () => {
-              const actionPath = config.action!.path;
+              const actionPath = config.action?.path ?? '';
               void navigate(actionPath);
             },
           }

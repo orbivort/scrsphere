@@ -14,7 +14,7 @@ export const useSprintsData = (year: number) => {
 
   const { data, isLoading, error } = useQuery({
     queryKey: queryKeys.generatedSprint.byTeam(teamId),
-    queryFn: () => apiService.getGeneratedSprints(teamId!, year),
+    queryFn: () => apiService.getGeneratedSprints(teamId ?? '', year),
     enabled: !!teamId,
   });
 
@@ -36,7 +36,7 @@ export const useSprintsData = (year: number) => {
 
         if (category === 'current') {
           current.push(sprintWithCategory);
-        } else if (category === 'future') {
+        } else {
           future.push(sprintWithCategory);
         }
       });
@@ -49,7 +49,7 @@ export const useSprintsData = (year: number) => {
   }, [data]);
 
   return {
-    sprints: data?.data || [],
+    sprints: data?.data ?? [],
     categorizedSprints,
     isLoading,
     error,

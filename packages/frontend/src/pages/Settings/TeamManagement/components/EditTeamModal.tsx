@@ -50,9 +50,9 @@ export const EditTeamModal: React.FC<EditTeamModalProps> = ({
   useEffect(() => {
     if (team) {
       setName(team.name);
-      setDescription(team.description || '');
+      setDescription(team.description ?? '');
       setOriginalName(team.name);
-      setOriginalDescription(team.description || '');
+      setOriginalDescription(team.description ?? '');
       setIsDirty(false);
       setErrors({});
     }

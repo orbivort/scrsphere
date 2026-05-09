@@ -1,4 +1,14 @@
-import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
+/* eslint-disable react-refresh/only-export-components -- Context, provider, hooks, and utilities are co-located */
+
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useMemo,
+  useRef,
+  useEffect,
+} from 'react';
 
 import { MoSCoWPriority, ItemStatus, type ProductBacklogItem } from '../../../types';
 import type { ItemFormData, FormErrors } from '../types/backlog.types';
@@ -213,6 +223,18 @@ export const BacklogProvider: React.FC<BacklogProviderProps> = ({ children }) =>
   const [labelTags, setLabelTags] = useState<string[]>([]);
   const [labelInputValue, setLabelInputValue] = useState('');
 
+  // Refs to track current form data for stable callback references
+  const formDataRef = useRef(formData);
+  const initialFormDataRef = useRef(initialFormData);
+
+  useEffect(() => {
+    formDataRef.current = formData;
+  }, [formData]);
+
+  useEffect(() => {
+    initialFormDataRef.current = initialFormData;
+  }, [initialFormData]);
+
   // ============================================================================
   // HELPER FUNCTIONS
   // ============================================================================
@@ -222,19 +244,21 @@ export const BacklogProvider: React.FC<BacklogProviderProps> = ({ children }) =>
    * Compares current form data with initial form data
    */
   const hasUnsavedChanges = useCallback((): boolean => {
-    if (!initialFormData) return false;
+    const current = formDataRef.current;
+    const initial = initialFormDataRef.current;
+    if (!initial) return false;
 
     return (
-      formData.title !== initialFormData.title ||
-      formData.description !== initialFormData.description ||
-      formData.estimate !== initialFormData.estimate ||
-      formData.moscowPriority !== initialFormData.moscowPriority ||
-      formData.businessValue !== initialFormData.businessValue ||
-      formData.labels !== initialFormData.labels ||
-      formData.acceptanceCriteria !== initialFormData.acceptanceCriteria ||
-      formData.status !== initialFormData.status
+      current.title !== initial.title ||
+      current.description !== initial.description ||
+      current.estimate !== initial.estimate ||
+      current.moscowPriority !== initial.moscowPriority ||
+      current.businessValue !== initial.businessValue ||
+      current.labels !== initial.labels ||
+      current.acceptanceCriteria !== initial.acceptanceCriteria ||
+      current.status !== initial.status
     );
-  }, [formData, initialFormData]);
+  }, []);
 
   /**
    * Reset form to default state
@@ -278,6 +302,7 @@ export const BacklogProvider: React.FC<BacklogProviderProps> = ({ children }) =>
     // Get the corresponding business value from the mapping
     const businessValue = MOSCOW_TO_BUSINESS_VALUE[priority];
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (businessValue === undefined) {
       logger.error('No business value mapping found for priority', undefined, { priority });
       setFormErrors((prev) => ({

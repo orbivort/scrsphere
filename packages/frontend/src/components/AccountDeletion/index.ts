@@ -1,3 +1,5 @@
+import type { TeamMembership, PendingDeletion } from '../../types/auth.types';
+
 export { DangerZone } from './DangerZone';
 export { default as DangerZoneDefault } from './DangerZone';
 
@@ -39,7 +41,7 @@ export interface ConfirmationInputProps {
 }
 
 export interface TeamImpactWarningProps {
-  teams: import('../../types/auth.types').TeamMembership[];
+  teams: TeamMembership[];
   isBlocked: boolean;
 }
 
@@ -48,23 +50,23 @@ export interface DeleteAccountModalProps {
   onClose: () => void;
   userEmail: string;
   userName: string;
-  teams: import('../../types/auth.types').TeamMembership[];
+  teams: TeamMembership[];
   isBlocked: boolean;
   onDelete: (confirmation: string) => Promise<void>;
   isDeleting: boolean;
   error: string | null;
-  pendingDeletion?: import('../../types/auth.types').PendingDeletion | null;
+  pendingDeletion?: PendingDeletion | null;
   onScheduleDeletion?: () => Promise<void>;
   onCancelDeletion?: () => Promise<void>;
   onForceDelete?: () => Promise<void>;
 }
 
 export interface GracePeriodProgressProps {
-  pendingDeletion: import('../../types/auth.types').PendingDeletion;
+  pendingDeletion: PendingDeletion;
 }
 
 export type DeletionRightsNoticeProps = Record<string, never>;
 
 export interface ForceDeleteWarningProps {
-  blockedTeams: import('../../types/auth.types').TeamMembership[];
+  blockedTeams: TeamMembership[];
 }

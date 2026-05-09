@@ -165,7 +165,7 @@ export const TaskCreateModal: React.FC<TaskCreateModalProps> = ({
                   <option value="">Select a backlog item...</option>
                   {sprintItems.map((item) => (
                     <option key={item.id} value={item.id}>
-                      {item.title} ({item.storyPoints || 0} pts)
+                      {item.title} ({item.storyPoints ?? 0} pts)
                     </option>
                   ))}
                 </select>

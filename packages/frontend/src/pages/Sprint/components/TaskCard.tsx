@@ -122,7 +122,7 @@ export const TaskCard = React.memo<TaskCardProps>(
             ? 'in_progress'
             : (newStatus.toLowerCase() as keyof typeof wipLimits);
         const limit = wipLimits[statusKey];
-        const currentCount = tasksByStatus[statusKey]?.length ?? 0;
+        const currentCount = tasksByStatus[statusKey].length;
 
         // Don't count the current task if it's moving within the same column
         const adjustedCount = task.status === newStatus ? currentCount : currentCount + 1;
@@ -143,8 +143,9 @@ export const TaskCard = React.memo<TaskCardProps>(
     const getNextStatus = useCallback((): TaskStatus | null => {
       const available = getAvailableTransitions(task.status);
       const nextIndex = currentStatusIndex + 1;
-      if (nextIndex < STATUS_ORDER.length && available.includes(STATUS_ORDER[nextIndex]!)) {
-        return STATUS_ORDER[nextIndex]!;
+      const nextStatus = STATUS_ORDER[nextIndex];
+      if (nextIndex < STATUS_ORDER.length && nextStatus && available.includes(nextStatus)) {
+        return nextStatus;
       }
       return null;
     }, [task.status, currentStatusIndex, getAvailableTransitions]);
@@ -152,8 +153,9 @@ export const TaskCard = React.memo<TaskCardProps>(
     const getPreviousStatus = useCallback((): TaskStatus | null => {
       const available = getAvailableTransitions(task.status);
       const prevIndex = currentStatusIndex - 1;
-      if (prevIndex >= 0 && available.includes(STATUS_ORDER[prevIndex]!)) {
-        return STATUS_ORDER[prevIndex]!;
+      const prevStatus = STATUS_ORDER[prevIndex];
+      if (prevIndex >= 0 && prevStatus && available.includes(prevStatus)) {
+        return prevStatus;
       }
       return null;
     }, [task.status, currentStatusIndex, getAvailableTransitions]);
@@ -173,7 +175,7 @@ export const TaskCard = React.memo<TaskCardProps>(
           status === TaskStatusEnum.IN_PROGRESS
             ? 'in_progress'
             : (status.toLowerCase() as keyof typeof tasksByStatus);
-        const count = tasksByStatus?.[statusKey]?.length ?? 0;
+        const count = tasksByStatus?.[statusKey].length ?? 0;
         const limit = wipLimits?.[statusKey];
         const limitText = limit && limit !== Infinity ? ` WIP limit: ${limit}.` : '';
         const message = `Target status: ${statusLabel}. ${count} tasks currently in this column.${limitText}`;
@@ -224,13 +226,14 @@ export const TaskCard = React.memo<TaskCardProps>(
         const newIndex = direction === 'right' ? currentIndex + 1 : currentIndex - 1;
 
         if (newIndex >= 0 && newIndex < STATUS_ORDER.length) {
-          const newStatus = STATUS_ORDER[newIndex]!;
+          const newStatus = STATUS_ORDER[newIndex];
+          if (!newStatus) return;
           const available = getAvailableTransitions(task.status);
 
           if (available.includes(newStatus)) {
             const validation = validateWIPLimit(newStatus);
             if (!validation.valid) {
-              announceWIPError(validation.message!);
+              announceWIPError(validation.message ?? 'WIP limit validation failed');
               return;
             }
             setTargetStatus(newStatus);
@@ -266,7 +269,7 @@ export const TaskCard = React.memo<TaskCardProps>(
 
       const validation = validateWIPLimit(targetStatus);
       if (!validation.valid) {
-        announceWIPError(validation.message!);
+        announceWIPError(validation.message ?? 'WIP limit validation failed');
         return;
       }
 
@@ -334,7 +337,7 @@ export const TaskCard = React.memo<TaskCardProps>(
               if (nextStatus) {
                 const validation = validateWIPLimit(nextStatus);
                 if (!validation.valid) {
-                  announceWIPError(validation.message!);
+                  announceWIPError(validation.message ?? 'WIP limit validation failed');
                   return;
                 }
                 onMoveStatus(task.id, nextStatus);
@@ -348,7 +351,7 @@ export const TaskCard = React.memo<TaskCardProps>(
               if (prevStatus) {
                 const validation = validateWIPLimit(prevStatus);
                 if (!validation.valid) {
-                  announceWIPError(validation.message!);
+                  announceWIPError(validation.message ?? 'WIP limit validation failed');
                   return;
                 }
                 onMoveStatus(task.id, prevStatus);

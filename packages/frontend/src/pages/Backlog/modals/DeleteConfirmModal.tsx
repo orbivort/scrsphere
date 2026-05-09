@@ -35,7 +35,7 @@ export const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
   if (!isOpen || !selectedItem) return null;
 
   // Get status class for styling
-  const statusClass = selectedItem.status?.toLowerCase() || 'todo';
+  const statusClass = selectedItem.status.toLowerCase() || 'todo';
 
   return (
     <div className={styles['modal-overlay']}>
@@ -68,6 +68,7 @@ export const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
             onClick={onClose}
             aria-label="Close modal"
             type="button"
+            data-modal-close
           >
             <XIcon size={18} />
           </button>
@@ -124,7 +125,7 @@ export const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
                 <span className={styles['impact-text']}>
                   Status:{' '}
                   <strong className={`${styles['status-badge']} ${styles[statusClass]}`}>
-                    {selectedItem.status || 'TODO'}
+                    {selectedItem.status}
                   </strong>
                   {selectedItem.storyPoints !== undefined && (
                     <>

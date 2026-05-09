@@ -56,13 +56,13 @@ export const TeamMemberSelect: React.FC<TeamMemberSelectProps> = ({
         <option value="">Unassigned</option>
         {teamMembers.map((member) => {
           const displayName =
-            member.user?.firstName && member.user?.lastName
+            member.user?.firstName && member.user.lastName
               ? `${member.user.firstName} ${member.user.lastName}`
-              : member.user?.email || 'Unknown User';
+              : (member.user?.email ?? 'Unknown User');
           return (
             <option key={member.id} value={member.userId}>
               {displayName}
-              {member.role && ` (${getRoleLabel(member.role)})`}
+              {` (${getRoleLabel(member.role)})`}
             </option>
           );
         })}

@@ -139,9 +139,9 @@ export function useTaskMutations(options: UseTaskMutationsOptions = {}): UseTask
     },
     onSuccess: (response) => {
       // Invalidate related queries
-      queryClient.invalidateQueries({ queryKey: queryKeys.task.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.burndown.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.task.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.burndown.all });
 
       onSuccess?.('create', response.data);
     },
@@ -165,9 +165,9 @@ export function useTaskMutations(options: UseTaskMutationsOptions = {}): UseTask
     },
     onSuccess: (response) => {
       // Invalidate related queries
-      queryClient.invalidateQueries({ queryKey: queryKeys.task.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.burndown.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.task.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.burndown.all });
 
       onSuccess?.('update', response.data);
     },
@@ -190,9 +190,9 @@ export function useTaskMutations(options: UseTaskMutationsOptions = {}): UseTask
     },
     onSuccess: () => {
       // Invalidate related queries
-      queryClient.invalidateQueries({ queryKey: queryKeys.task.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.burndown.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.task.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.burndown.all });
 
       onSuccess?.('delete');
     },
@@ -218,9 +218,9 @@ export function useTaskMutations(options: UseTaskMutationsOptions = {}): UseTask
     },
     onSuccess: () => {
       // Invalidate related queries
-      queryClient.invalidateQueries({ queryKey: queryKeys.task.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.burndown.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.task.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.burndown.all });
     },
   });
 

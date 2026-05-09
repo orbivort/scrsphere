@@ -29,8 +29,11 @@ export function DefinitionOfReadyPanel(): React.JSX.Element {
     error,
     refetch,
   } = useQuery<ApiResponse<DefinitionOfReady>>({
-    queryKey: queryKeys.definitionOfReady.byTeam(teamId || ''),
-    queryFn: () => apiService.getDefinitionOfReady(teamId!),
+    queryKey: queryKeys.definitionOfReady.byTeam(teamId ?? ''),
+    queryFn: () => {
+      if (!teamId) throw new Error('Team ID is required');
+      return apiService.getDefinitionOfReady(teamId);
+    },
     enabled: !!teamId,
   });
 
@@ -39,10 +42,14 @@ export function DefinitionOfReadyPanel(): React.JSX.Element {
     definition?.items && definition.items.length > 0 ? definition.items : DEFAULT_DOR_ITEMS;
 
   const updateMutation = useMutation({
-    mutationFn: (updatedItems: DoRItem[]) =>
-      apiService.updateDefinitionOfReady(teamId!, updatedItems),
+    mutationFn: (updatedItems: DoRItem[]) => {
+      if (!teamId) throw new Error('Team ID is required');
+      return apiService.updateDefinitionOfReady(teamId, updatedItems);
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.definitionOfReady.byTeam(teamId!) });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.definitionOfReady.byTeam(teamId ?? ''),
+      });
       setIsEditing(false);
       success('Definition of Ready updated successfully');
     },
@@ -105,8 +112,8 @@ export function DefinitionOfReadyPanel(): React.JSX.Element {
       <DefinitionEditor
         definition={{
           items,
-          version: definition?.version || 1,
-          updatedAt: definition?.updatedAt || new Date().toISOString(),
+          version: definition?.version ?? 1,
+          updatedAt: definition?.updatedAt ?? new Date().toISOString(),
         }}
         definitionType="DoR"
         categories={DOR_CATEGORIES}
@@ -129,7 +136,7 @@ export function DefinitionOfReadyPanel(): React.JSX.Element {
     });
   };
 
-  const isEmpty = items.length === 0 || (response?.data?.items?.length ?? 0) === 0;
+  const isEmpty = items.length === 0 || (response?.data?.items.length ?? 0) === 0;
 
   if (isEmpty) {
     return (
@@ -163,7 +170,7 @@ export function DefinitionOfReadyPanel(): React.JSX.Element {
           <div className={styles['header-left']}>
             <h3 className={styles['header-title']}>Definition of Ready</h3>
             <div className={styles['header-meta']}>
-              <span className={styles['version-badge']}>v{definition?.version || 1}</span>
+              <span className={styles['version-badge']}>v{definition?.version ?? 1}</span>
               {definition?.updatedAt && (
                 <span className={styles['updated-date']}>
                   Last updated: {formatDate(definition.updatedAt)}
@@ -190,7 +197,7 @@ export function DefinitionOfReadyPanel(): React.JSX.Element {
                 <span className={styles['item-order']}>{index + 1}</span>
                 <span
                   className={styles['item-category']}
-                  style={getCategoryColor(item.category || '', DOR_CATEGORIES)}
+                  style={getCategoryColor(item.category ?? '', DOR_CATEGORIES)}
                 >
                   {category?.icon} {category?.label}
                 </span>

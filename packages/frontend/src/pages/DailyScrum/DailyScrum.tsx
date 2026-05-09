@@ -212,11 +212,11 @@ export const DailyScrum: React.FC = () => {
   });
 
   const teamId = currentTeam?.id;
-  const teamMembers = currentTeam?.members || [];
+  const teamMembers = currentTeam?.members ?? [];
 
   const { data: sprintData, isLoading: isSprintLoading } = useQuery({
     queryKey: ['activeSprint', teamId],
-    queryFn: () => apiService.getActiveSprint(teamId || ''),
+    queryFn: () => apiService.getActiveSprint(teamId ?? ''),
     enabled: !!teamId,
   });
 
@@ -224,7 +224,7 @@ export const DailyScrum: React.FC = () => {
 
   const { data: updatesData, isLoading: isUpdatesLoading } = useQuery({
     queryKey: ['dailyUpdates', sprint?.id, selectedDate],
-    queryFn: () => apiService.getDailyUpdates(sprint?.id || '', selectedDate),
+    queryFn: () => apiService.getDailyUpdates(sprint?.id ?? '', selectedDate),
     enabled: !!sprint?.id,
   });
 
@@ -232,7 +232,7 @@ export const DailyScrum: React.FC = () => {
 
   const { data: teamStatusData } = useQuery({
     queryKey: ['teamStatus', sprint?.id, selectedDate],
-    queryFn: () => apiService.getTeamMembersWithUpdates(sprint?.id || '', selectedDate),
+    queryFn: () => apiService.getTeamMembersWithUpdates(sprint?.id ?? '', selectedDate),
     enabled: !!sprint?.id,
   });
 
@@ -261,7 +261,7 @@ export const DailyScrum: React.FC = () => {
     const axiosError = error as Error & {
       response?: { status: number; data?: { error?: { message: string } } };
     };
-    if (axiosError.response?.status === 400 && axiosError.response?.data?.error?.message) {
+    if (axiosError.response?.status === 400 && axiosError.response.data?.error?.message) {
       return axiosError.response.data.error.message;
     }
     if (axiosError.response?.status === 401) {
@@ -281,13 +281,13 @@ export const DailyScrum: React.FC = () => {
 
   const submitMutation = useMutation({
     mutationFn: (update: Partial<DailyUpdate>) =>
-      apiService.createDailyUpdate(sprint?.id || '', update),
+      apiService.createDailyUpdate(sprint?.id ?? '', update),
     onSuccess: () => {
       // Invalidate the specific daily updates query for the current sprint and date
-      queryClient.invalidateQueries({ queryKey: ['dailyUpdates', sprint?.id, selectedDate] });
+      void queryClient.invalidateQueries({ queryKey: ['dailyUpdates', sprint?.id, selectedDate] });
       // Also invalidate team status queries
-      queryClient.invalidateQueries({ queryKey: ['teamStatus', sprint?.id, selectedDate] });
-      queryClient.invalidateQueries({ queryKey: queryKeys.teamStatus.all });
+      void queryClient.invalidateQueries({ queryKey: ['teamStatus', sprint?.id, selectedDate] });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.teamStatus.all });
       setShowUpdateForm(false);
       setFormData({ yesterdayWork: '', todayWork: '', impediment: '' });
       setFormErrors({});
@@ -327,8 +327,8 @@ export const DailyScrum: React.FC = () => {
       data: Parameters<typeof apiService.promoteToImpediment>[1];
     }) => apiService.promoteToImpediment(dailyUpdateId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.dailyUpdate.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.impediment.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.dailyUpdate.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.impediment.all });
       setShowPromoteModal(false);
       setSelectedUpdateForPromote(null);
       setPromoteFormData({ title: '', description: '', ownerId: '', priority: 'Medium' });
@@ -380,7 +380,7 @@ export const DailyScrum: React.FC = () => {
   });
 
   const sendReminderMutation = useMutation({
-    mutationFn: () => apiService.sendDailyUpdateReminder(sprint?.id || ''),
+    mutationFn: () => apiService.sendDailyUpdateReminder(sprint?.id ?? ''),
     onSuccess: (
       result: ApiResponse<{
         sentCount: number;
@@ -392,7 +392,7 @@ export const DailyScrum: React.FC = () => {
       if (result.data?.sentCount && result.data.sentCount > 0) {
         showSuccessToast(result.data.message, 3000);
       } else {
-        showInfoToast(result.data?.message || 'No pending updates', 3000);
+        showInfoToast(result.data?.message ?? 'No pending updates', 3000);
       }
     },
     onError: (error: Error) => {
@@ -474,8 +474,8 @@ export const DailyScrum: React.FC = () => {
       }
       setSelectedUpdateForPromote(update);
       setPromoteFormData({
-        title: update.impediment?.slice(0, 100) || '',
-        description: update.impediment || '',
+        title: update.impediment?.slice(0, 100) ?? '',
+        description: update.impediment ?? '',
         ownerId: '',
         priority: 'Medium',
       });
@@ -514,14 +514,14 @@ export const DailyScrum: React.FC = () => {
 
   const getTodayDate = () => formatLocalDate(new Date());
   const isToday = selectedDate === getTodayDate();
-  const updates = useMemo(() => updatesData?.data || [], [updatesData?.data]);
+  const updates = useMemo(() => updatesData?.data ?? [], [updatesData?.data]);
   const pendingMembers = useMemo(
-    () => teamStatusData?.data?.pending || [],
+    () => teamStatusData?.data?.pending ?? [],
     [teamStatusData?.data?.pending]
   );
 
   const userHasSubmittedToday = useMemo(() => {
-    if (!currentUser || !updates || !isToday) return false;
+    if (!currentUser || !isToday) return false;
     return updates.some((update) => update.userId === currentUser.id);
   }, [updates, currentUser, isToday]);
 
@@ -535,7 +535,7 @@ export const DailyScrum: React.FC = () => {
 
   useEffect(() => {
     if (hasAutoExpandedRef.current) return;
-    if (!isToday || !currentUser || !updates) return;
+    if (!isToday || !currentUser) return;
 
     if (!userHasSubmittedToday && !showUpdateForm) {
       hasAutoExpandedRef.current = true;
@@ -552,7 +552,7 @@ export const DailyScrum: React.FC = () => {
   }, [selectedDate, updates, currentUser, isToday, showUpdateForm, userHasSubmittedToday]);
 
   const stats = useMemo(() => {
-    const totalMembers = currentTeam?.members?.length || 5;
+    const totalMembers = currentTeam?.members?.length ?? 5;
     const submitted = updates.length;
     const impediments = updates.filter((u) => u.impediment && u.impediment !== 'None').length;
     const participation = totalMembers > 0 ? Math.round((submitted / totalMembers) * 100) : 0;
@@ -566,7 +566,7 @@ export const DailyScrum: React.FC = () => {
 
   const handleNavigateToImpediment = useCallback(
     (impedimentId: string) => {
-      navigate(`/impediments?id=${impedimentId}`);
+      void navigate(`/impediments?id=${impedimentId}`);
     },
     [navigate]
   );
@@ -1428,15 +1428,16 @@ const UpdateCard: React.FC<UpdateCardProps> = React.memo(
         CLOSED: 'Closed',
       };
 
-      const style = statusColors[status ?? 'OPEN'] ?? statusColors['OPEN']!;
+      const style =
+        statusColors[status ?? 'OPEN'] ?? (statusColors['OPEN'] as { bg: string; color: string });
 
       return (
         <span
           className={styles['impediment-status-badge']}
           style={{ backgroundColor: style.bg, color: style.color }}
-          title={`Impediment status: ${statusLabels[status || 'OPEN']}`}
+          title={`Impediment status: ${statusLabels[status ?? 'OPEN']}`}
         >
-          {statusLabels[status || 'OPEN']}
+          {statusLabels[status ?? 'OPEN']}
         </span>
       );
     };
@@ -1461,8 +1462,8 @@ const UpdateCard: React.FC<UpdateCardProps> = React.memo(
         >
           <div className={styles['compact-header']}>
             <div className={styles['user-avatar']}>
-              {update.user?.firstName?.charAt(0)}
-              {update.user?.lastName?.charAt(0)}
+              {update.user?.firstName.charAt(0)}
+              {update.user?.lastName.charAt(0)}
             </div>
             <div className={styles['user-info']}>
               <span className={styles['user-name']}>
@@ -1502,7 +1503,7 @@ const UpdateCard: React.FC<UpdateCardProps> = React.memo(
                         variant="link"
                         onClick={(e) => {
                           e.stopPropagation();
-                          onNavigateToImpediment(update.impedimentRecord!.id);
+                          onNavigateToImpediment(update.impedimentRecord?.id ?? '');
                         }}
                       >
                         View Impediment
@@ -1535,8 +1536,8 @@ const UpdateCard: React.FC<UpdateCardProps> = React.memo(
         <div className={styles['update-header']}>
           <div className={styles['user-info']}>
             <div className={styles['user-avatar']}>
-              {update.user?.firstName?.charAt(0)}
-              {update.user?.lastName?.charAt(0)}
+              {update.user?.firstName.charAt(0)}
+              {update.user?.lastName.charAt(0)}
             </div>
             <div>
               <div className={styles['user-name']}>
@@ -1595,7 +1596,7 @@ const UpdateCard: React.FC<UpdateCardProps> = React.memo(
                 {hasTrackedImpediment ? (
                   <Button
                     variant="link"
-                    onClick={() => onNavigateToImpediment(update.impedimentRecord!.id)}
+                    onClick={() => onNavigateToImpediment(update.impedimentRecord?.id ?? '')}
                   >
                     View Impediment Details
                   </Button>

@@ -19,6 +19,12 @@ import {
 
 import styles from './PendingAdjustments.module.css';
 
+interface BacklogAdjustmentWithSprint extends BacklogAdjustment {
+  sprint?: {
+    name: string;
+  };
+}
+
 interface PendingAdjustmentsProps {
   onImplementAdd?: (adjustment: BacklogAdjustment) => void;
 }
@@ -34,23 +40,23 @@ export const PendingAdjustments: React.FC<PendingAdjustmentsProps> = ({ onImplem
 
   const { data: adjustmentsData, isLoading } = useQuery({
     queryKey: ['pending-adjustments', teamId],
-    queryFn: () => apiService.getPendingAdjustments(teamId || ''),
+    queryFn: () => apiService.getPendingAdjustments(teamId ?? ''),
     enabled: !!teamId,
   });
 
   const implementMutation = useMutation({
     mutationFn: (adjustmentId: string) => apiService.markAdjustmentImplemented(adjustmentId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.pendingAdjustments.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.pendingAdjustments.all });
     },
   });
 
-  const adjustments: BacklogAdjustment[] = adjustmentsData?.data || [];
+  const adjustments = (adjustmentsData?.data ?? []) as BacklogAdjustmentWithSprint[];
 
   const filteredAdjustments =
     filter === 'all'
       ? adjustments
-      : adjustments.filter((a: BacklogAdjustment) => a.action === filter);
+      : adjustments.filter((a: BacklogAdjustmentWithSprint) => a.action === filter);
 
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString('en-US', {
@@ -62,29 +68,32 @@ export const PendingAdjustments: React.FC<PendingAdjustmentsProps> = ({ onImplem
 
   const getActionConfig = (action: string) => {
     const configs: Record<string, { label: string; icon: React.ReactNode; className: string }> = {
-      add: { label: 'Add', icon: <AddIcon size={12} />, className: styles['action-add']! },
+      add: { label: 'Add', icon: <AddIcon size={12} />, className: styles['action-add'] ?? '' },
       modify: {
         label: 'Modify',
         icon: <ModifyIcon size={12} />,
-        className: styles['action-modify']!,
+        className: styles['action-modify'] ?? '',
       },
       remove: {
         label: 'Remove',
         icon: <RemoveIcon size={12} />,
-        className: styles['action-remove']!,
+        className: styles['action-remove'] ?? '',
       },
       reorder: {
         label: 'Reorder',
         icon: <ReorderIcon size={12} />,
-        className: styles['action-reorder']!,
+        className: styles['action-reorder'] ?? '',
       },
       split: {
         label: 'Split',
         icon: <ScissorsIcon size={12} />,
-        className: styles['action-split']!,
+        className: styles['action-split'] ?? '',
       },
     };
-    return configs[action] ?? configs.add!;
+    return (
+      configs[action] ??
+      (configs.add as { label: string; icon: React.ReactNode; className: string })
+    );
   };
 
   const handleImplement = (adjustment: BacklogAdjustment) => {
@@ -149,7 +158,7 @@ export const PendingAdjustments: React.FC<PendingAdjustmentsProps> = ({ onImplem
             <LoadingState variant="skeleton-list" itemCount={5} label="Loading adjustments" />
           ) : (
             <div className={styles['adjustments-list']}>
-              {filteredAdjustments.map((adjustment: BacklogAdjustment) => {
+              {filteredAdjustments.map((adjustment: BacklogAdjustmentWithSprint) => {
                 const config = getActionConfig(adjustment.action);
                 return (
                   <div key={adjustment.id} className={styles['adjustment-card']}>
@@ -166,12 +175,10 @@ export const PendingAdjustments: React.FC<PendingAdjustmentsProps> = ({ onImplem
                       <strong>Reason:</strong> {adjustment.reason}
                     </div>
 
-                    {(adjustment as any).sprint && (
+                    {adjustment.sprint && (
                       <div className={styles['sprint-info']}>
                         <span className={styles['sprint-label']}>From Sprint:</span>
-                        <span className={styles['sprint-name']}>
-                          {(adjustment as any).sprint.name}
-                        </span>
+                        <span className={styles['sprint-name']}>{adjustment.sprint.name}</span>
                       </div>
                     )}
 

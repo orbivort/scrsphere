@@ -34,11 +34,14 @@ export const IncrementList: React.FC = () => {
 
   const { data: incrementsData, isLoading: isLoadingIncrements } = useQuery({
     queryKey: ['increments', currentTeam?.id],
-    queryFn: () => apiService.getIncrements(currentTeam!.id),
+    queryFn: () => {
+      if (!currentTeam?.id) throw new Error('Team ID is required');
+      return apiService.getIncrements(currentTeam.id);
+    },
     enabled: !!currentTeam?.id,
   });
 
-  const increments = incrementsData?.data || [];
+  const increments = incrementsData?.data ?? [];
 
   const filteredIncrements = increments.filter((increment) => {
     const matchesFilter =
@@ -268,12 +271,12 @@ export const IncrementList: React.FC = () => {
             <div
               key={increment.id}
               className={styles['increment-card']}
-              onClick={() => navigate(`/increment/${increment.id}`)}
+              onClick={() => void navigate(`/increment/${increment.id}`)}
               role="button"
               tabIndex={0}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
-                  navigate(`/increment/${increment.id}`);
+                  void navigate(`/increment/${increment.id}`);
                 }
               }}
             >
@@ -284,7 +287,7 @@ export const IncrementList: React.FC = () => {
                     <SprintIcon size={14} />
                   </span>
                   <span className={styles['sprint-badge-name']}>
-                    {increment.sprint?.name || `SPRINT ${increment.sprintId}`}
+                    {increment.sprint?.name ?? `SPRINT ${increment.sprintId}`}
                   </span>
                 </span>
               </div>
@@ -299,14 +302,12 @@ export const IncrementList: React.FC = () => {
                 </span>
               </div>
               <p className={styles['increment-description']}>
-                {increment.description || 'No description provided.'}
+                {increment.description ?? 'No description provided.'}
               </p>
               <div className={styles['card-stats']}>
                 <div className={styles.stat}>
                   <span className={styles['stat-label']}>PBIs</span>
-                  <span className={styles['stat-value']}>
-                    {increment.includedPBIs?.length || 0}
-                  </span>
+                  <span className={styles['stat-value']}>{increment.includedPBIs.length || 0}</span>
                 </div>
                 <div className={styles.stat}>
                   <span className={styles['stat-label']}>Points</span>

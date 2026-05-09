@@ -51,7 +51,7 @@ interface ToastContainerProps {
 }
 
 export const ToastContainer: React.FC<ToastContainerProps> = ({ toasts, onClose }) => {
-  if (!toasts || toasts.length === 0) return null;
+  if (toasts.length === 0) return null;
 
   return (
     <div className={styles['toast-container']} role="region" aria-label="Notifications">

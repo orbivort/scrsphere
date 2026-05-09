@@ -127,7 +127,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen]);
+  }, [isOpen, handleClose]);
 
   // Handle discard changes
   const handleDiscardChanges = useCallback(() => {

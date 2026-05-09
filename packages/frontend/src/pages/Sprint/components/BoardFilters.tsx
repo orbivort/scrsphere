@@ -67,7 +67,7 @@ export const BoardFilters: React.FC<BoardFiltersProps> = ({
           <option value="all">All Items</option>
           {sprintItems.map((item) => (
             <option key={item.id} value={item.id}>
-              {item.title} ({item.storyPoints || 0} pts)
+              {item.title} ({item.storyPoints ?? 0} pts)
             </option>
           ))}
         </select>

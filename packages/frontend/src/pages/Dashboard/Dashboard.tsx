@@ -119,19 +119,18 @@ export const Dashboard: React.FC = () => {
     refetch: refetchSprint,
   } = useQuery({
     queryKey: ['activeSprint', teamId],
-    queryFn: () => apiService.getActiveSprint(teamId!),
+    queryFn: () => {
+      if (!teamId) throw new Error('Team ID is required');
+      return apiService.getActiveSprint(teamId);
+    },
     enabled: !!teamId && isAuthenticated,
     staleTime: STALE_TIME_SHORT,
     retry: 2,
   });
 
-  const {
-    data: burndownData,
-    isLoading: burndownLoading,
-    error: burndownError,
-  } = useQuery({
+  const { data: burndownData, error: burndownError } = useQuery({
     queryKey: ['burndown', sprintData?.data?.id],
-    queryFn: () => apiService.getBurndownData(sprintData?.data?.id || ''),
+    queryFn: () => apiService.getBurndownData(sprintData?.data?.id ?? ''),
     enabled: !!sprintData?.data?.id && isAuthenticated,
     staleTime: STALE_TIME_LONG,
     retry: 1,
@@ -144,7 +143,7 @@ export const Dashboard: React.FC = () => {
     refetch: refetchDailyUpdates,
   } = useQuery({
     queryKey: ['dailyUpdates', sprintData?.data?.id, today],
-    queryFn: () => apiService.getDailyUpdates(sprintData?.data?.id || '', today),
+    queryFn: () => apiService.getDailyUpdates(sprintData?.data?.id ?? '', today),
     enabled: !!sprintData?.data?.id && isAuthenticated,
     staleTime: STALE_TIME_SHORT,
     retry: 1,
@@ -157,7 +156,10 @@ export const Dashboard: React.FC = () => {
     refetch: refetchImpediments,
   } = useQuery({
     queryKey: ['impediments', teamId],
-    queryFn: () => apiService.getImpediments(teamId!),
+    queryFn: () => {
+      if (!teamId) throw new Error('Team ID is required');
+      return apiService.getImpediments(teamId);
+    },
     enabled: !!teamId && isAuthenticated,
     staleTime: STALE_TIME_SHORT,
     retry: 1,
@@ -166,7 +168,7 @@ export const Dashboard: React.FC = () => {
   // Authentication redirect useEffect - must be after all hooks
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate('/login', { replace: true });
+      void navigate('/login', { replace: true });
     }
   }, [isAuthenticated, navigate]);
 
@@ -184,7 +186,7 @@ export const Dashboard: React.FC = () => {
     }
 
     const sprint = sprintData.data;
-    const tasks = sprint.tasks || [];
+    const tasks = sprint.tasks ?? [];
     const completedTasks = tasks.filter((t: Task) => t.status === 'DONE').length;
     const totalTasks = tasks.length;
     const progress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
@@ -206,7 +208,7 @@ export const Dashboard: React.FC = () => {
     if (!burndownData?.data) return null;
 
     const { ideal, actual } = burndownData.data;
-    if (!ideal?.length || !actual?.length) return null;
+    if (!ideal.length || !actual.length) return null;
 
     const lastIdeal = ideal[ideal.length - 1] ?? 0;
     const lastActual = actual[actual.length - 1] ?? 0;
@@ -254,8 +256,8 @@ export const Dashboard: React.FC = () => {
     return sprintData.data.tasks
       .filter((t: Task) => t.assigneeId === currentUserId)
       .sort((a: Task, b: Task) => {
-        const priorityA = statusPriority[a.status] || 5;
-        const priorityB = statusPriority[b.status] || 5;
+        const priorityA = statusPriority[a.status] ?? 5;
+        const priorityB = statusPriority[b.status] ?? 5;
         return priorityA - priorityB;
       })
       .slice(0, MAX_DISPLAY_ITEMS);
@@ -287,7 +289,7 @@ export const Dashboard: React.FC = () => {
   // Task 3.1: Handle task click - navigate to sprint board with task highlighted
   const handleTaskClick = useCallback(
     (taskId: string) => {
-      navigate(`/sprint?task=${taskId}`);
+      void navigate(`/sprint?task=${taskId}`);
     },
     [navigate]
   );
@@ -295,7 +297,7 @@ export const Dashboard: React.FC = () => {
   // Task 3.2: Handle impediment click - navigate to impediments page
   const handleImpedimentClick = useCallback(
     (impedimentId: string) => {
-      navigate(`/impediments?id=${impedimentId}`);
+      void navigate(`/impediments?id=${impedimentId}`);
     },
     [navigate]
   );
@@ -321,7 +323,7 @@ export const Dashboard: React.FC = () => {
     } finally {
       setIsRefreshing(false);
     }
-  }, [refetchSprint]);
+  }, [refetchSprint, showSuccessToast]);
 
   // Early return for unauthenticated users - must be after all hooks
   if (!isAuthenticated || !currentUserId) {
@@ -405,7 +407,7 @@ export const Dashboard: React.FC = () => {
               onClick={handleRefresh}
               className={`${styles['refresh-button']} ${isRefreshing ? styles.refreshing : ''}`}
               aria-label={isRefreshing ? 'Refreshing dashboard data...' : 'Refresh dashboard data'}
-              disabled={sprintLoading || isRefreshing}
+              disabled={isRefreshing}
             >
               <RefreshIcon
                 size={16}
@@ -514,7 +516,7 @@ export const Dashboard: React.FC = () => {
                 </h2>
               </div>
               <div className={styles['sprint-goal-body']}>
-                <p>{sprint.sprintGoal || 'No Sprint Goal defined yet.'}</p>
+                <p>{sprint.sprintGoal ?? 'No Sprint Goal defined yet.'}</p>
               </div>
             </article>
           </section>
@@ -531,20 +533,14 @@ export const Dashboard: React.FC = () => {
               Sprint Burndown Chart
             </h2>
             <div className={styles['chart-container']}>
-              {burndownLoading ? (
-                <LoadingState variant="skeleton-chart" label="Loading burndown chart" />
-              ) : (
-                <Suspense
-                  fallback={
-                    <LoadingState variant="skeleton-chart" label="Loading burndown chart" />
-                  }
-                >
-                  <BurndownChart data={burndownData?.data as BurndownData | undefined} />
-                </Suspense>
-              )}
+              <Suspense
+                fallback={<LoadingState variant="skeleton-chart" label="Loading burndown chart" />}
+              >
+                <BurndownChart data={burndownData.data as BurndownData | undefined} />
+              </Suspense>
             </div>
             {/* Task 3.4: Burndown insight indicator */}
-            {!burndownLoading && burndownInsight && (
+            {burndownInsight && (
               <BurndownInsight
                 status={burndownInsight.status}
                 percentage={burndownInsight.percentage}

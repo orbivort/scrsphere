@@ -275,7 +275,7 @@ export const SwimlanesBoard = React.memo<SwimlanesBoardProps>(
         if (member?.user) {
           return {
             label: `${member.user.firstName} ${member.user.lastName}`,
-            subtitle: member.role || 'Team Member',
+            subtitle: member.role,
           };
         }
         return { label: 'Unknown User' };
@@ -284,7 +284,7 @@ export const SwimlanesBoard = React.memo<SwimlanesBoardProps>(
         if (item) {
           return {
             label: item.title,
-            subtitle: `${item.storyPoints || 0} story points`,
+            subtitle: `${item.storyPoints ?? 0} story points`,
           };
         }
         return { label: 'Unknown Item' };
@@ -295,9 +295,9 @@ export const SwimlanesBoard = React.memo<SwimlanesBoardProps>(
       const todo = tasks.filter((t) => t.status === TaskStatusEnum.TODO).length;
       const inProgress = tasks.filter((t) => t.status === TaskStatusEnum.IN_PROGRESS).length;
       const done = tasks.filter((t) => t.status === TaskStatusEnum.DONE).length;
-      const totalHours = tasks.reduce((sum, t) => sum + (t.estimatedHours || 0), 0);
+      const totalHours = tasks.reduce((sum, t) => sum + (t.estimatedHours ?? 0), 0);
       const remainingHours = tasks.reduce(
-        (sum, t) => sum + (t.remainingHours || t.estimatedHours || 0),
+        (sum, t) => sum + (t.remainingHours ?? t.estimatedHours ?? 0),
         0
       );
 
@@ -316,8 +316,8 @@ export const SwimlanesBoard = React.memo<SwimlanesBoardProps>(
       } else {
         const itemA = sprintItems.find((i) => i.id === a);
         const itemB = sprintItems.find((i) => i.id === b);
-        const titleA = itemA?.title || 'ZZZ';
-        const titleB = itemB?.title || 'ZZZ';
+        const titleA = itemA?.title ?? 'ZZZ';
+        const titleB = itemB?.title ?? 'ZZZ';
         return titleA.localeCompare(titleB);
       }
     });

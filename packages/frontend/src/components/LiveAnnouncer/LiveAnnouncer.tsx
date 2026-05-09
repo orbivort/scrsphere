@@ -5,6 +5,8 @@
  * wrapping the ScreenReaderAnnouncer utility for use throughout the application.
  */
 
+/* eslint-disable react-refresh/only-export-components -- Context, provider, and hooks are co-located */
+
 import React, { createContext, useContext, useEffect, useRef, useCallback, useMemo } from 'react';
 
 import {

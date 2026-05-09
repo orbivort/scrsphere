@@ -8,7 +8,7 @@ import {
 } from '../../types';
 
 export function normalizeSprintStatus(status: string | undefined): string {
-  return (status || 'PLANNED').toLowerCase();
+  return (status ?? 'PLANNED').toLowerCase();
 }
 
 export function mapDurationToBackend(duration: SprintDuration): string {
@@ -68,7 +68,7 @@ export function mapSprintConfigFromBackend(
     const durationValue = (response.data as { duration?: string }).duration;
     const mappedData = {
       ...response.data,
-      duration: mapDurationToFrontend(durationValue || 'TWO_WEEKS'),
+      duration: mapDurationToFrontend(durationValue ?? 'TWO_WEEKS'),
     };
     return { ...response, data: mappedData };
   }

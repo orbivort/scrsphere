@@ -29,7 +29,7 @@ export const ForgotPasswordPage: React.FC = () => {
           setSuccess(true);
           logger.info('Password reset email sent', undefined, { email });
         } else {
-          setError(response.error?.message || 'Failed to send reset email. Please try again.');
+          setError(response.error?.message ?? 'Failed to send reset email. Please try again.');
         }
       } catch (err) {
         logger.error('Forgot password request failed', undefined, { error: err });

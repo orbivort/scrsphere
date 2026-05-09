@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -55,10 +55,15 @@ export const Impediments: React.FC = () => {
   const [showUnsavedChangesModal, setShowUnsavedChangesModal] = useState(false);
   const [pendingCloseAction, setPendingCloseAction] = useState<(() => void) | null>(null);
 
+  const formDataRef = useRef(formData);
+  useEffect(() => {
+    formDataRef.current = formData;
+  }, [formData]);
+
   const { toasts, success, error: toastError, removeToast } = useToast();
 
   const teamId = currentTeam?.id;
-  const teamMembers = currentTeam?.members || [];
+  const teamMembers = currentTeam?.members ?? [];
 
   const {
     data: activeSprintData,
@@ -67,7 +72,7 @@ export const Impediments: React.FC = () => {
     refetch: refetchActiveSprint,
   } = useQuery({
     queryKey: ['activeSprint', teamId],
-    queryFn: () => apiService.getActiveSprint(teamId || ''),
+    queryFn: () => apiService.getActiveSprint(teamId ?? ''),
     enabled: !!teamId,
     staleTime: QUERY_STALE_TIME,
     gcTime: QUERY_CACHE_TIME,
@@ -84,7 +89,7 @@ export const Impediments: React.FC = () => {
     refetch: refetchImpediments,
   } = useQuery({
     queryKey: ['impediments', teamId, activeSprint?.id],
-    queryFn: () => apiService.getImpediments(teamId || ''),
+    queryFn: () => apiService.getImpediments(teamId ?? ''),
     enabled: !!teamId,
     staleTime: QUERY_STALE_TIME,
     gcTime: QUERY_CACHE_TIME,
@@ -93,17 +98,17 @@ export const Impediments: React.FC = () => {
   });
 
   const isLoading = isLoadingSprint || isLoadingImpediments;
-  const hasError = sprintError || impedimentsError;
+  const hasError = sprintError ?? impedimentsError;
 
   const impedimentIdFromUrl = searchParams.get('id');
   const impedimentFromUrl = useMemo(() => {
     if (impedimentIdFromUrl && impedimentsData?.data) {
-      return impedimentsData.data.find((imp) => imp.id === impedimentIdFromUrl) || null;
+      return impedimentsData.data.find((imp) => imp.id === impedimentIdFromUrl) ?? null;
     }
     return null;
   }, [impedimentIdFromUrl, impedimentsData]);
 
-  const effectiveSelectedImpediment = selectedImpediment || impedimentFromUrl;
+  const effectiveSelectedImpediment = selectedImpediment ?? impedimentFromUrl;
 
   const createModalFocus = useModalFocus({
     isOpen: showCreateModal,
@@ -127,15 +132,15 @@ export const Impediments: React.FC = () => {
     mutationFn: ({ id, updates }: { id: string; updates: Partial<Impediment> }) =>
       apiService.updateImpediment(id, updates),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.impediment.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.dailyUpdate.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.impediment.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.dailyUpdate.all });
       success('Impediment updated successfully');
     },
     onError: (
       error: Error & { response?: { status: number; data?: { error?: { message: string } } } }
     ) => {
       logger.error('Failed to update impediment', undefined, { error });
-      if (error.response?.status === 400 && error.response?.data?.error?.message) {
+      if (error.response?.status === 400 && error.response.data?.error?.message) {
         const errorMessage = error.response.data.error.message;
         if (errorMessage.includes('teamId')) {
           toastError('Team ID is required. Please select a team first.');
@@ -151,7 +156,7 @@ export const Impediments: React.FC = () => {
   const createMutation = useMutation({
     mutationFn: (data: Partial<Impediment>) => apiService.createImpediment(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.impediment.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.impediment.all });
       setShowCreateModal(false);
       setFormData({ title: '', description: '', ownerId: '' });
       setFormErrors({});
@@ -161,7 +166,7 @@ export const Impediments: React.FC = () => {
       error: Error & { response?: { status: number; data?: { error?: { message: string } } } }
     ) => {
       logger.error('Failed to create impediment', undefined, { error });
-      if (error.response?.status === 400 && error.response?.data?.error?.message) {
+      if (error.response?.status === 400 && error.response.data?.error?.message) {
         const errorMessage = error.response.data.error.message;
         if (errorMessage.includes('teamId')) {
           setFormErrors({ teamId: errorMessage });
@@ -175,10 +180,10 @@ export const Impediments: React.FC = () => {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => apiService.deleteImpediment(id, teamId || ''),
+    mutationFn: (id: string) => apiService.deleteImpediment(id, teamId ?? ''),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.impediment.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.dailyUpdate.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.impediment.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.dailyUpdate.all });
       setSelectedImpediment(null);
       setSearchParams({});
       success('Impediment deleted successfully');
@@ -187,7 +192,7 @@ export const Impediments: React.FC = () => {
       error: Error & { response?: { status: number; data?: { error?: { message: string } } } }
     ) => {
       logger.error('Failed to delete impediment', undefined, { error });
-      if (error.response?.status === 400 && error.response?.data?.error?.message) {
+      if (error.response?.status === 400 && error.response.data?.error?.message) {
         const errorMessage = error.response.data.error.message;
         if (errorMessage.includes('teamId')) {
           toastError('Team ID is required. Please select a team first.');
@@ -234,8 +239,8 @@ export const Impediments: React.FC = () => {
   }, [impedimentsData?.data, activeSprint?.id]);
 
   const handleRetry = useCallback(() => {
-    refetchActiveSprint();
-    refetchImpediments();
+    void refetchActiveSprint();
+    void refetchImpediments();
   }, [refetchActiveSprint, refetchImpediments]);
 
   const getStatusClass = (status: ImpedimentStatus): string => {
@@ -292,20 +297,23 @@ export const Impediments: React.FC = () => {
   };
 
   const handleStatusSelect = (newStatus: ImpedimentStatus) => {
-    const oldStatus = effectiveSelectedImpediment?.status;
+    const current = effectiveSelectedImpediment;
+    if (!current) return;
+
+    const oldStatus = current.status;
 
     const updatedImpediment = {
-      ...effectiveSelectedImpediment!,
+      ...current,
       status: newStatus,
     };
 
     setSelectedImpediment(updatedImpediment);
-    setSearchParams({ id: effectiveSelectedImpediment!.id });
+    setSearchParams({ id: current.id });
 
-    if (newStatus === 'RESOLVED' && !effectiveSelectedImpediment?.resolution) {
+    if (newStatus === 'RESOLVED' && !current.resolution) {
       setShowResolutionInput(true);
     } else if (newStatus !== oldStatus) {
-      handleStatusChange(effectiveSelectedImpediment!.id, newStatus);
+      handleStatusChange(current.id, newStatus);
     }
   };
 
@@ -322,7 +330,7 @@ export const Impediments: React.FC = () => {
   };
 
   const handleNavigateToDailyUpdate = (dailyUpdateId: string) => {
-    navigate(`/daily-scrum?highlight=${dailyUpdateId}`);
+    void navigate(`/daily-scrum?highlight=${dailyUpdateId}`);
   };
 
   const validateForm = (): boolean => {
@@ -390,17 +398,18 @@ export const Impediments: React.FC = () => {
   };
 
   const hasUnsavedChanges = useCallback(() => {
+    const current = formDataRef.current;
     return (
-      formData.title.trim() !== '' || formData.description.trim() !== '' || formData.ownerId !== ''
+      current.title.trim() !== '' || current.description.trim() !== '' || current.ownerId !== ''
     );
-  }, [formData]);
+  }, []);
 
   const handleCloseCreateModal = useCallback(
     (onClose?: () => void) => {
       if (hasUnsavedChanges()) {
         setPendingCloseAction(
           () =>
-            onClose ||
+            onClose ??
             (() => {
               setShowCreateModal(false);
               setFormData({ title: '', description: '', ownerId: '' });
@@ -489,7 +498,7 @@ export const Impediments: React.FC = () => {
             Impediments
           </h1>
           <p className={styles['page-subtitle']}>
-            {activeSprint?.name} • Track and resolve blockers affecting the team
+            {activeSprint.name} • Track and resolve blockers affecting the team
           </p>
         </div>
         <div className={styles['header-actions']}>
@@ -548,7 +557,7 @@ export const Impediments: React.FC = () => {
 
       {/* Impediments List */}
       <div id="impediments-list" className={styles['impediments-list']}>
-        {filteredImpediments && filteredImpediments.length > 0 ? (
+        {filteredImpediments.length > 0 ? (
           filteredImpediments.map((impediment) => (
             <div
               key={impediment.id}
@@ -605,9 +614,9 @@ export const Impediments: React.FC = () => {
                 <div className={styles['footer-item']}>
                   <span className={styles['footer-label']}>Reported by</span>
                   <span className={styles['footer-value']}>
-                    {impediment.reportedBy?.firstName && impediment.reportedBy?.lastName
+                    {impediment.reportedBy?.firstName && impediment.reportedBy.lastName
                       ? `${impediment.reportedBy.firstName} ${impediment.reportedBy.lastName}`
-                      : impediment.reportedBy?.email || 'Unknown'}
+                      : (impediment.reportedBy?.email ?? 'Unknown')}
                   </span>
                 </div>
                 {impediment.owner && (
@@ -641,13 +650,13 @@ export const Impediments: React.FC = () => {
               )}
               <h3>
                 {filterStatus === 'all'
-                  ? `No Impediments for ${activeSprint?.name || 'Active Sprint'}`
+                  ? `No Impediments for ${activeSprint.name || 'Active Sprint'}`
                   : `No ${getStatusLabel(filterStatus as ImpedimentStatus)} Impediments`}
               </h3>
               <p>
                 {filterStatus === 'all'
-                  ? `Great! No impediments reported for the current active sprint "${activeSprint?.name || 'Unknown'}".`
-                  : `There are no ${getStatusLabel(filterStatus as ImpedimentStatus).toLowerCase()} impediments in "${activeSprint?.name || 'Unknown'}". Try selecting a different status filter.`}
+                  ? `Great! No impediments reported for the current active sprint "${activeSprint.name || 'Unknown'}.`
+                  : `There are no ${getStatusLabel(filterStatus as ImpedimentStatus).toLowerCase()} impediments in "${activeSprint.name || 'Unknown'}. Try selecting a different status filter.`}
               </p>
               {filterStatus !== 'all' && (
                 <button
@@ -719,11 +728,7 @@ export const Impediments: React.FC = () => {
                     aria-invalid={!!formErrors.sprintId}
                     aria-describedby={formErrors.sprintId ? 'sprint-error' : undefined}
                   >
-                    {activeSprint ? (
-                      <span className={styles['team-name']}>{activeSprint.name} (Active)</span>
-                    ) : (
-                      <span className={styles['team-placeholder']}>No active sprint</span>
-                    )}
+                    <span className={styles['team-name']}>{activeSprint.name} (Active)</span>
                   </div>
                   {formErrors.sprintId && (
                     <span id="sprint-error" className={styles['form-error-message']} role="alert">
@@ -876,7 +881,9 @@ export const Impediments: React.FC = () => {
                       <button
                         className={styles['view-source-btn']}
                         onClick={() =>
-                          handleNavigateToDailyUpdate(effectiveSelectedImpediment.dailyUpdateId!)
+                          handleNavigateToDailyUpdate(
+                            effectiveSelectedImpediment.dailyUpdateId ?? ''
+                          )
                         }
                       >
                         View Daily Update
@@ -1009,9 +1016,9 @@ export const Impediments: React.FC = () => {
                 </label>
                 <p className={styles['detail-value']}>
                   {effectiveSelectedImpediment.reportedBy?.firstName &&
-                  effectiveSelectedImpediment.reportedBy?.lastName
+                  effectiveSelectedImpediment.reportedBy.lastName
                     ? `${effectiveSelectedImpediment.reportedBy.firstName} ${effectiveSelectedImpediment.reportedBy.lastName}`
-                    : effectiveSelectedImpediment.reportedBy?.email || 'Unknown'}
+                    : (effectiveSelectedImpediment.reportedBy?.email ?? 'Unknown')}
                 </p>
               </div>
               {effectiveSelectedImpediment.owner && (
@@ -1141,9 +1148,9 @@ export const Impediments: React.FC = () => {
                     <span className={styles['impact-text']}>
                       Status:{' '}
                       <strong
-                        className={`${styles['status-badge-inline']} ${styles[`status-badge-${effectiveSelectedImpediment.status?.toLowerCase().replace('_', '-')}`] || styles['status-badge-open']}`}
+                        className={`${styles['status-badge-inline']} ${styles[`status-badge-${effectiveSelectedImpediment.status.toLowerCase().replace('_', '-')}`] ?? styles['status-badge-open']}`}
                       >
-                        {effectiveSelectedImpediment.status?.replace('_', ' ') || 'OPEN'}
+                        {effectiveSelectedImpediment.status.replace('_', ' ') || 'OPEN'}
                       </strong>
                     </span>
                   </div>

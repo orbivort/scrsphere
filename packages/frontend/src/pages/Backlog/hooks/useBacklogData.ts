@@ -7,7 +7,7 @@ import { type ProductBacklogItem, type ProductGoal, type ApiResponse } from '../
 import { type FilterState } from '../types/backlog.types';
 
 // Environment variable for backlog item limit (default: 200)
-const BACKLOG_ITEM_LIMIT = parseInt(import.meta.env.VITE_BACKLOG_ITEM_LIMIT || '200', 10);
+const BACKLOG_ITEM_LIMIT = parseInt(import.meta.env.VITE_BACKLOG_ITEM_LIMIT ?? '200', 10);
 
 /**
  * Return type for useBacklogData hook
@@ -49,7 +49,7 @@ export const useBacklogData = (
   // Fetch product backlog items
   const { data: backlogData, isLoading } = useQuery({
     queryKey: queryKeys.productBacklog.list({ teamId, limit: BACKLOG_ITEM_LIMIT }),
-    queryFn: () => apiService.getProductBacklog(teamId || '', { limit: BACKLOG_ITEM_LIMIT }),
+    queryFn: () => apiService.getProductBacklog(teamId ?? '', { limit: BACKLOG_ITEM_LIMIT }),
     enabled: !!teamId,
     staleTime: 0, // Always fetch fresh data when component mounts
     refetchOnMount: 'always', // Refetch when component mounts
@@ -58,7 +58,7 @@ export const useBacklogData = (
   // Fetch product goals
   const { data: goalsData, isLoading: isLoadingGoals } = useQuery({
     queryKey: queryKeys.productGoal.list({ teamId }),
-    queryFn: () => apiService.getProductGoals(teamId || ''),
+    queryFn: () => apiService.getProductGoals(teamId ?? ''),
     enabled: !!teamId,
     staleTime: 0, // Always fetch fresh data to ensure correct active goal
     refetchOnMount: 'always', // Refetch when component mounts
@@ -66,14 +66,14 @@ export const useBacklogData = (
 
   // Compute active goal from goals data
   const activeGoal = useMemo(() => {
-    const goals = goalsData?.data || [];
+    const goals = goalsData?.data ?? [];
     const activeGoals = goals.filter((g) => g.status.toUpperCase() === 'ACTIVE');
     return activeGoals.length > 0 ? (activeGoals[0] ?? null) : null;
   }, [goalsData?.data]);
 
   // Compute filtered items based on active goal and filters
   const filteredItems = useMemo(() => {
-    let items = backlogData?.data || [];
+    let items = backlogData?.data ?? [];
 
     // Filter by active goal
     if (activeGoal?.id) {
@@ -91,7 +91,7 @@ export const useBacklogData = (
       items = items.filter(
         (item) =>
           item.title.toLowerCase().includes(searchLower) ||
-          item.description?.toLowerCase().includes(searchLower) ||
+          (item.description?.toLowerCase().includes(searchLower) ?? false) ||
           item.labels.some((l) => l.toLowerCase().includes(searchLower))
       );
     }

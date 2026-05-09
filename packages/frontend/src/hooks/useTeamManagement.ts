@@ -50,8 +50,8 @@ export const useCreateTeam = () => {
   return useMutation({
     mutationFn: (data: CreateTeamInput) => apiService.createTeam(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.team.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.myTeams.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.team.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.myTeams.all });
     },
     onError: (error: unknown) => {
       handleMutationError(error, {
@@ -69,8 +69,8 @@ export const useUpdateTeam = () => {
     mutationFn: ({ id, data }: { id: string; data: UpdateTeamInput }) =>
       apiService.updateTeam(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.team.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.myTeams.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.team.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.myTeams.all });
     },
     onError: (error: unknown) => {
       handleMutationError(error, {
@@ -87,8 +87,8 @@ export const useDeleteTeam = () => {
   return useMutation({
     mutationFn: (id: string) => apiService.deleteTeam(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.team.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.myTeams.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.team.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.myTeams.all });
     },
     onError: (error: unknown) => {
       handleMutationError(error, {

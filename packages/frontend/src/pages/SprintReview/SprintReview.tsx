@@ -56,7 +56,7 @@ const mapTeamRoleToAttendeeRole = (role?: string): string => {
     developer: 'developer',
     team_member: 'developer',
   };
-  return roleMap[role?.toLowerCase() || ''] || 'stakeholder';
+  return roleMap[role?.toLowerCase() ?? ''] ?? 'stakeholder';
 };
 
 type SectionType = 'overview' | 'increment' | 'feedback' | 'adjustments';
@@ -124,7 +124,7 @@ const getCategoryIcon = (category: string): string => {
     suggestion: '💡',
     question: '❓',
   };
-  return icons[category] || '💬';
+  return icons[category] ?? '💬';
 };
 
 const formatDate = (dateStr: string): string => {
@@ -177,13 +177,19 @@ export const SprintReview: React.FC = () => {
 
   const { data: activeSprintData, isLoading: isLoadingActiveSprint } = useQuery({
     queryKey: ['active-sprint', teamId],
-    queryFn: () => apiService.getActiveSprint(teamId!),
+    queryFn: () => {
+      if (!teamId) throw new Error('Team ID is required');
+      return apiService.getActiveSprint(teamId);
+    },
     enabled: !!teamId && !sprintId,
   });
 
   const { data: allSprintsData } = useQuery({
     queryKey: ['sprints', teamId],
-    queryFn: () => apiService.getSprints(teamId!),
+    queryFn: () => {
+      if (!teamId) throw new Error('Team ID is required');
+      return apiService.getSprints(teamId);
+    },
     enabled: !!teamId,
   });
 
@@ -202,7 +208,7 @@ export const SprintReview: React.FC = () => {
 
   const { data: sprintData, isLoading: isLoadingSprint } = useQuery({
     queryKey: ['sprint', sprintId],
-    queryFn: () => apiService.getSprint(sprintId || ''),
+    queryFn: () => apiService.getSprint(sprintId ?? ''),
     enabled: !!sprintId,
   });
 
@@ -213,25 +219,31 @@ export const SprintReview: React.FC = () => {
     error: reviewsError,
   } = useQuery({
     queryKey: ['sprint-reviews', teamId, sprintId],
-    queryFn: () => apiService.getSprintReviews(teamId!, sprintId!),
+    queryFn: () => {
+      if (!teamId || !sprintId) throw new Error('Team ID and Sprint ID are required');
+      return apiService.getSprintReviews(teamId, sprintId);
+    },
     enabled: !!teamId && !!sprintId,
   });
 
   const { data: incrementsData } = useQuery({
     queryKey: ['increments', teamId, sprintId],
-    queryFn: () => apiService.getIncrements(teamId!, sprintId!),
+    queryFn: () => {
+      if (!teamId || !sprintId) throw new Error('Team ID and Sprint ID are required');
+      return apiService.getIncrements(teamId, sprintId);
+    },
     enabled: !!teamId && !!sprintId,
   });
 
   const { data: sprintBacklogItems } = useQuery({
     queryKey: ['sprint-backlog-pbis', sprintId],
-    queryFn: () => apiService.getSprintBacklogPBIs(sprintId || ''),
+    queryFn: () => apiService.getSprintBacklogPBIs(sprintId ?? ''),
     enabled: !!sprintId,
   });
 
   const sprint = sprintData?.data;
   const review = useMemo(() => {
-    const reviews = reviewsData?.data || [];
+    const reviews = reviewsData?.data ?? [];
     return reviews.find((r) => r.sprintId === sprintId);
   }, [reviewsData, sprintId]);
 
@@ -242,7 +254,7 @@ export const SprintReview: React.FC = () => {
   }, [review?.status]);
 
   const increment = useMemo(() => {
-    const increments = incrementsData?.data || [];
+    const increments = incrementsData?.data ?? [];
     return increments.find(
       (inc) => inc.status === IncrementStatus.DELIVERED || inc.status === IncrementStatus.VERIFIED
     );
@@ -278,14 +290,14 @@ export const SprintReview: React.FC = () => {
   }, [currentTeam]);
 
   const sprintStats = useMemo(() => {
-    const pbis = sprintBacklogItems?.data || [];
+    const pbis = sprintBacklogItems?.data ?? [];
     const committedStoryPoints = pbis.reduce(
-      (sum: number, pbi: ProductBacklogItem) => sum + (pbi.storyPoints || 0),
+      (sum: number, pbi: ProductBacklogItem) => sum + (pbi.storyPoints ?? 0),
       0
     );
     const completedStoryPoints = pbis
       .filter((pbi: ProductBacklogItem) => pbi.status === 'DONE')
-      .reduce((sum: number, pbi: ProductBacklogItem) => sum + (pbi.storyPoints || 0), 0);
+      .reduce((sum: number, pbi: ProductBacklogItem) => sum + (pbi.storyPoints ?? 0), 0);
     const completionRate =
       committedStoryPoints > 0
         ? Math.round((completedStoryPoints / committedStoryPoints) * 100)
@@ -313,7 +325,7 @@ export const SprintReview: React.FC = () => {
         incrementId: increment?.id,
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.sprintReview.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.sprintReview.all });
       setShowCreateReviewModal(false);
       setCreateReviewData({ reviewDate: new Date().toISOString().split('T')[0], summary: '' });
     },
@@ -327,9 +339,9 @@ export const SprintReview: React.FC = () => {
 
   const addFeedbackMutation = useMutation({
     mutationFn: (feedback: Partial<StakeholderFeedback>) =>
-      apiService.addStakeholderFeedback(review?.id || '', feedback),
+      apiService.addStakeholderFeedback(review?.id ?? '', feedback),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.sprintReview.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.sprintReview.all });
       setShowFeedbackForm(false);
       setFeedbackForm(initialFeedbackForm);
     },
@@ -343,7 +355,7 @@ export const SprintReview: React.FC = () => {
 
   const updateReviewMutation = useMutation({
     mutationFn: (updates: Partial<SprintReviewType>) => {
-      return apiService.updateSprintReview(review?.id || '', updates);
+      return apiService.updateSprintReview(review?.id ?? '', updates);
     },
     onMutate: async (updates) => {
       await queryClient.cancelQueries({
@@ -376,10 +388,10 @@ export const SprintReview: React.FC = () => {
       if (data.data?.status === 'completed') {
         setIsReviewCompleted(true);
       }
-      queryClient.invalidateQueries({
+      void queryClient.invalidateQueries({
         queryKey: queryKeys.sprintReview.byTeamAndSprint(teamId, sprintId),
       });
-      if (variables?.status === 'completed') {
+      if (variables.status === 'completed') {
         setShowSuccessModal(true);
       }
     },
@@ -395,9 +407,9 @@ export const SprintReview: React.FC = () => {
 
   const addMutation = useMutation({
     mutationFn: (data: { name: string; email?: string; role: string; attended: boolean }) =>
-      apiService.addAttendee(review?.id || '', data),
+      apiService.addAttendee(review?.id ?? '', data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.sprintReview.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.sprintReview.all });
     },
   });
 
@@ -405,7 +417,7 @@ export const SprintReview: React.FC = () => {
     mutationFn: ({ attendeeId, attended }: { attendeeId: string; attended: boolean }) =>
       apiService.updateAttendee(attendeeId, { attended }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.sprintReview.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.sprintReview.all });
     },
   });
 
@@ -458,7 +470,7 @@ export const SprintReview: React.FC = () => {
       ...feedbackForm,
       reviewId: review?.id,
     });
-  }, [validateFeedbackForm, feedbackForm, review?.id]);
+  }, [validateFeedbackForm, feedbackForm, review?.id, addFeedbackMutation]);
 
   const handleAddAdjustment = useCallback(() => {
     if (!validateAdjustmentForm()) return;
@@ -476,7 +488,7 @@ export const SprintReview: React.FC = () => {
     }
 
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-    const existingAdjustments = (review?.backlogAdjustments || []).map((adj) => {
+    const existingAdjustments = (review?.backlogAdjustments ?? []).map((adj) => {
       const sanitized: Partial<BacklogAdjustment> = {
         action: adj.action,
         description: adj.description,
@@ -499,7 +511,7 @@ export const SprintReview: React.FC = () => {
         },
       }
     );
-  }, [validateAdjustmentForm, adjustmentForm, review?.backlogAdjustments]);
+  }, [validateAdjustmentForm, adjustmentForm, review?.backlogAdjustments, updateReviewMutation]);
 
   const handleCreateReview = useCallback(() => {
     setFormErrors({});
@@ -523,11 +535,11 @@ export const SprintReview: React.FC = () => {
 
     createReviewMutation.mutate({
       sprintId,
-      teamId: teamId || '',
+      teamId: teamId ?? '',
       reviewDate: createReviewData.reviewDate,
       summary: createReviewData.summary,
     });
-  }, [sprintId, createReviewData, increment, teamId]);
+  }, [sprintId, createReviewData, increment, teamId, createReviewMutation]);
 
   const handleCompleteReview = useCallback(() => {
     if (!review?.id) {
@@ -537,7 +549,7 @@ export const SprintReview: React.FC = () => {
 
     const errors: string[] = [];
 
-    const attendeesList = review.attendees || [];
+    const attendeesList = review.attendees;
     if (attendeesList.length === 0) {
       errors.push('Please add at least one attendee before completing the sprint review.');
     }
@@ -558,7 +570,7 @@ export const SprintReview: React.FC = () => {
 
     const unmarkedTeamMembers = teamMembers.filter((member) => {
       const memberName = `${member.user?.firstName} ${member.user?.lastName}`.toLowerCase();
-      const memberEmail = member.user?.email?.toLowerCase();
+      const memberEmail = member.user?.email.toLowerCase();
       return (
         !markedMemberNames.has(memberName) && (!memberEmail || !markedMemberEmails.has(memberEmail))
       );
@@ -592,7 +604,7 @@ export const SprintReview: React.FC = () => {
       return;
     }
     const updateData = {
-      summary: review?.summary || 'Sprint Review completed.',
+      summary: review?.summary ?? 'Sprint Review completed.',
       status: 'completed',
     };
     updateReviewMutation.mutate(updateData);
@@ -697,7 +709,7 @@ export const SprintReview: React.FC = () => {
                   <button
                     className={`${styles.button} ${styles['button-primary']}`}
                     onClick={() => {
-                      if (activeSprintData?.data) {
+                      if (activeSprintData.data) {
                         setSprintId(activeSprintData.data.id);
                         setSearchParams({ sprintId: activeSprintData.data.id });
                       }
@@ -780,7 +792,7 @@ export const SprintReview: React.FC = () => {
             <h1 className={styles['page-title']}>
               <FileTextIcon /> Sprint Review
             </h1>
-            <p className={styles['review-date']}>{sprint?.name || `Sprint ${sprintId}`}</p>
+            <p className={styles['review-date']}>{sprint?.name ?? `Sprint ${sprintId}`}</p>
           </div>
         </div>
 
@@ -860,8 +872,8 @@ export const SprintReview: React.FC = () => {
         </div>
         <div className={styles['header-actions']}>
           <span className={styles['attendee-count']}>
-            {review.attendees?.filter((a) => a.attended).length || 0} /{' '}
-            {review.attendees?.length || 0} Attendees
+            {review.attendees.filter((a) => a.attended).length} / {review.attendees.length}{' '}
+            Attendees
           </span>
         </div>
       </div>
@@ -894,12 +906,12 @@ export const SprintReview: React.FC = () => {
           >
             <div className={styles['sprint-header-compact']}>
               <div className={styles['sprint-title-row']}>
-                <h2 className={styles['sprint-name']}>{sprint?.name || 'Unknown Sprint'}</h2>
+                <h2 className={styles['sprint-name']}>{sprint?.name ?? 'Unknown Sprint'}</h2>
                 <span
-                  className={`${styles['sprint-status-badge']} ${styles[`status-${sprint?.status || 'unknown'}`] || ''}`}
+                  className={`${styles['sprint-status-badge']} ${styles[`status-${sprint?.status ?? 'unknown'}`] ?? ''}`}
                 >
                   {sprint?.status === 'completed' ? <CheckIcon /> : <CircleIcon fill />}{' '}
-                  {sprint?.status?.toUpperCase() || 'UNKNOWN'}
+                  {sprint?.status.toUpperCase() ?? 'UNKNOWN'}
                 </span>
               </div>
               <div className={styles['sprint-meta-row']}>
@@ -926,7 +938,7 @@ export const SprintReview: React.FC = () => {
                   <TargetIcon /> Sprint Goal
                 </h3>
                 <p className={styles['sprint-goal-text']}>
-                  {sprint?.sprintGoal || 'No sprint goal defined.'}
+                  {sprint?.sprintGoal ?? 'No sprint goal defined.'}
                 </p>
               </div>
 
@@ -954,19 +966,19 @@ export const SprintReview: React.FC = () => {
                 <h3>
                   <FileTextIcon /> Review Summary
                 </h3>
-                <p>{review.summary || 'No summary provided yet.'}</p>
+                <p>{review.summary ?? 'No summary provided yet.'}</p>
               </div>
             </div>
 
             <AttendeesSection
-              entityId={review?.id || ''}
+              entityId={review.id || ''}
               sprintId={sprintId || ''}
-              attendees={review.attendees || []}
+              attendees={review.attendees}
               teamMembers={teamMembers}
               isCompleted={isReviewCompleted}
               apiConfig={{
                 addAttendee: (data: AttendeeFormData) =>
-                  apiService.addAttendee(review?.id || '', {
+                  apiService.addAttendee(review.id || '', {
                     name: data.name,
                     email: data.email,
                     role: data.role,
@@ -988,7 +1000,7 @@ export const SprintReview: React.FC = () => {
               }}
               onAddTeamMember={(member, attended) => {
                 addMutation.mutate({
-                  name: `${member.user?.firstName || ''} ${member.user?.lastName || ''}`.trim(),
+                  name: `${member.user?.firstName ?? ''} ${member.user?.lastName ?? ''}`.trim(),
                   email: member.user?.email,
                   role: mapTeamRoleToAttendeeRole(member.role),
                   attended,
@@ -1016,7 +1028,7 @@ export const SprintReview: React.FC = () => {
                   <span className={styles['increment-name']}>{increment.name}</span>
                 </div>
                 <p className={styles['increment-description']}>
-                  {increment.description || 'No description'}
+                  {increment.description ?? 'No description'}
                 </p>
 
                 <div className={styles['included-items']}>
@@ -1028,7 +1040,7 @@ export const SprintReview: React.FC = () => {
                       increment.pbis?.map((pbi, index) => (
                         <div key={pbi.id || `pbi-${index}`} className={styles['pbi-card']}>
                           <span className={styles['pbi-title']}>{pbi.title}</span>
-                          <span className={styles['pbi-points']}>{pbi.storyPoints || 0} pts</span>
+                          <span className={styles['pbi-points']}>{pbi.storyPoints ?? 0} pts</span>
                           <span className={`${styles['pbi-status']} ${styles.done}`}>
                             <CheckIcon /> Done
                           </span>
@@ -1116,14 +1128,15 @@ export const SprintReview: React.FC = () => {
             </div>
 
             <div className={styles['feedback-list']}>
-              {review.feedback?.length === 0 ? (
+              {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- review data may be partial despite type */}
+              {(review.feedback ?? []).length === 0 ? (
                 <div className={styles['empty-feedback']}>
                   <p>
                     No feedback collected yet. Click "Add Feedback" to add stakeholder feedback.
                   </p>
                 </div>
               ) : (
-                review.feedback?.map((feedback, index) => {
+                review.feedback.map((feedback, index) => {
                   const categoryColor = getCategoryColor(feedback.category);
                   return (
                     <div
@@ -1204,12 +1217,13 @@ export const SprintReview: React.FC = () => {
             </div>
 
             <div className={styles['adjustments-list']}>
-              {review.backlogAdjustments?.length === 0 ? (
+              {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- review data may be partial despite type */}
+              {(review.backlogAdjustments ?? []).length === 0 ? (
                 <div className={styles['empty-adjustments']}>
                   <p>No backlog adjustments made during this review.</p>
                 </div>
               ) : (
-                review.backlogAdjustments?.map((adjustment, index) => (
+                review.backlogAdjustments.map((adjustment, index) => (
                   <div
                     key={adjustment.id || `adj-${index}`}
                     className={`${styles['adjustment-card']} ${styles[adjustment.action]} ${adjustment.implemented ? styles.implemented : ''}`}
@@ -1286,7 +1300,7 @@ export const SprintReview: React.FC = () => {
           setFormErrors({});
         }}
         onSubmit={handleAddFeedback}
-        teamMembers={currentTeam?.members}
+        teamMembers={currentTeam.members}
         sprintBacklogItems={sprintBacklogItems}
         formErrors={formErrors}
         setFormErrors={setFormErrors}
@@ -1302,7 +1316,7 @@ export const SprintReview: React.FC = () => {
           setFormErrors({});
         }}
         onSubmit={handleAddAdjustment}
-        teamMembers={currentTeam?.members}
+        teamMembers={currentTeam.members}
         sprintBacklogItems={sprintBacklogItems}
         formErrors={formErrors}
         setFormErrors={setFormErrors}
@@ -1313,14 +1327,14 @@ export const SprintReview: React.FC = () => {
 
       <div className={styles['review-actions']}>
         <button
-          className={`${styles.button} ${styles['button-primary']} ${updateReviewMutation.isPending || review?.status === 'completed' || isReviewCompleted ? styles['button-disabled'] : ''}`}
+          className={`${styles.button} ${styles['button-primary']} ${updateReviewMutation.isPending || review.status === 'completed' || isReviewCompleted ? styles['button-disabled'] : ''}`}
           onClick={handleCompleteReview}
           disabled={
-            updateReviewMutation.isPending || review?.status === 'completed' || isReviewCompleted
+            updateReviewMutation.isPending || review.status === 'completed' || isReviewCompleted
           }
           type="button"
         >
-          {review?.status === 'completed' || isReviewCompleted ? (
+          {review.status === 'completed' || isReviewCompleted ? (
             <>
               <CheckIcon size={16} /> Sprint Review Completed
             </>

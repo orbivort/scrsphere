@@ -37,6 +37,9 @@ export const SprintOverview: React.FC<SprintOverviewProps> = ({
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (progressPercentage / 100) * circumference;
 
+  // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- empty string should show No sprint goal set
+  const goalText = sprintGoal || 'No sprint goal set';
+
   return (
     <section className={styles['sprint-overview']} aria-label="Sprint Overview">
       <div className={styles['overview-main']}>
@@ -47,8 +50,8 @@ export const SprintOverview: React.FC<SprintOverviewProps> = ({
           </div>
           <div className={styles['goal-content']}>
             <span className={styles['goal-label']}>Sprint Goal</span>
-            <p className={styles['goal-text']} title={sprintGoal || 'No sprint goal set'}>
-              {sprintGoal || 'No sprint goal set'}
+            <p className={styles['goal-text']} title={goalText}>
+              {goalText}
             </p>
           </div>
         </div>

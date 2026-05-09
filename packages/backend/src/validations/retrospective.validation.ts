@@ -1,6 +1,8 @@
 import { z } from 'zod';
 
-const emailValidator = z.string().email('Please enter a valid email address').optional();
+const emailValidator = z
+  .union([z.string().email('Please enter a valid email address'), z.literal(''), z.undefined()])
+  .optional();
 
 const dateValidator = z
   .string()

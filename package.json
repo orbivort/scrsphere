@@ -135,7 +135,9 @@
       "esbuild": "^0.25.0",
       "glob": "^11.0.0",
       "follow-redirects": "^1.16.0",
-      "@hono/node-server": "^1.19.14"
+      "@hono/node-server": "^1.19.14",
+      "fast-uri": "^3.1.2",
+      "hono": "^4.12.18"
     },
     "peerDependencyRules": {
       "allowedVersions": {

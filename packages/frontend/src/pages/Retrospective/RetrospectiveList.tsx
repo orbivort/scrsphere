@@ -44,18 +44,18 @@ export const RetrospectiveList: React.FC = () => {
 
   const { data: sprintsData, isLoading: isLoadingSprints } = useQuery({
     queryKey: ['sprints', teamId],
-    queryFn: () => apiService.getSprints(teamId || ''),
+    queryFn: () => apiService.getSprints(teamId ?? ''),
     enabled: !!teamId,
   });
 
   const { data: retrospectivesData } = useQuery({
     queryKey: ['retrospectives', teamId],
-    queryFn: () => apiService.getRetrospectives(teamId || ''),
+    queryFn: () => apiService.getRetrospectives(teamId ?? ''),
     enabled: !!teamId,
   });
 
-  const sprints = useMemo(() => sprintsData?.data || [], [sprintsData]);
-  const retrospectives = useMemo(() => retrospectivesData?.data || [], [retrospectivesData]);
+  const sprints = useMemo(() => sprintsData?.data ?? [], [sprintsData]);
+  const retrospectives = useMemo(() => retrospectivesData?.data ?? [], [retrospectivesData]);
 
   const normalizeStatus = (status: string): SprintStatus => {
     return status.toLowerCase() as SprintStatus;
@@ -115,7 +115,7 @@ export const RetrospectiveList: React.FC = () => {
 
   const getRetroStatusConfig = (sprint: SprintWithRetro) => {
     if (sprint.retrospective) {
-      const retroStatus = sprint.retrospective.status || RetrospectiveStatus.DRAFT;
+      const retroStatus = sprint.retrospective.status;
 
       if (retroStatus === RetrospectiveStatus.COMPLETED) {
         return {
@@ -173,8 +173,8 @@ export const RetrospectiveList: React.FC = () => {
       });
     },
     onSuccess: (_, sprintId) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.allByTeam(teamId) });
-      navigate(`/retrospective/${sprintId}`);
+      void queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.allByTeam(teamId) });
+      void navigate(`/retrospective/${sprintId}`);
     },
     onError: (error) => {
       logger.error('Failed to create retrospective', undefined, { error });
@@ -184,7 +184,7 @@ export const RetrospectiveList: React.FC = () => {
 
   const handleViewRetro = (sprintId: string, hasRetro: boolean) => {
     if (hasRetro) {
-      navigate(`/retrospective/${sprintId}`);
+      void navigate(`/retrospective/${sprintId}`);
     } else {
       setCreatingSprintId(sprintId);
       createRetroMutation.mutate(sprintId);
@@ -287,11 +287,11 @@ export const RetrospectiveList: React.FC = () => {
                           </span>
                           <span className={styles['retro-meta-item']}>
                             <MessageSquareIcon className={styles['retro-meta-icon']} />
-                            {sprint.retrospective.items?.length || 0} items
+                            {sprint.retrospective.items.length || 0} items
                           </span>
                           <span className={styles['retro-meta-item']}>
                             <CheckSquareIcon className={styles['retro-meta-icon']} />
-                            {sprint.retrospective.actionItems?.length || 0} actions
+                            {sprint.retrospective.actionItems.length || 0} actions
                           </span>
                         </div>
                       </div>

@@ -22,14 +22,14 @@ const ROLE_NAMES: Record<string, string> = {
 
 const getRoleBadgeClass = (role: string): string => {
   const normalizedRole = role.toLowerCase();
-  const className = ROLE_BADGE_CLASSES[normalizedRole] || 'role-default';
-  return styles[className] || '';
+  const className = ROLE_BADGE_CLASSES[normalizedRole] ?? 'role-default';
+  return styles[className] ?? '';
 };
 
 const formatRoleName = (role: string): string => {
   const normalizedRole = role.toLowerCase();
   return (
-    ROLE_NAMES[normalizedRole] || role.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())
+    ROLE_NAMES[normalizedRole] ?? role.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())
   );
 };
 
@@ -54,13 +54,15 @@ export const MemberCard: React.FC<MemberCardProps> = ({
   const displayName = user
     ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'Unknown User'
     : 'Unknown User';
-  const email = user?.email || 'No email';
-  const role = member.role || 'developer';
+  const email = user?.email ?? '';
+  const role = member.role;
+  /* eslint-disable @typescript-eslint/no-unnecessary-condition -- runtime data may differ from User type */
   const initials = user
-    ? `${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`.toUpperCase() ||
-      user.email?.[0]?.toUpperCase() ||
-      '?'
+    ? ((`${user.firstName?.[0] ?? ''}${user.lastName?.[0] ?? ''}`.toUpperCase() ||
+        user.email[0]?.toUpperCase()) ??
+      '?')
     : '?';
+  /* eslint-enable @typescript-eslint/no-unnecessary-condition */
 
   const memberSince = member.joinedAt
     ? new Date(member.joinedAt).toLocaleDateString('en-US', {

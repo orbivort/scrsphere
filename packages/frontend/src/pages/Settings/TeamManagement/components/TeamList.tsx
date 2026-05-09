@@ -256,12 +256,12 @@ export const TeamList: React.FC<TeamListProps> = ({
           tabIndex={0}
           data-team-index={index}
           onKeyDown={(e) => handleCardKeyDown(e, team, index)}
-          aria-label={`${team.name}, ${team.memberCount || 0} members. Use arrow keys to navigate between cards, Enter or Space to access actions.`}
+          aria-label={`${team.name}, ${team.memberCount ?? 0} members. Use arrow keys to navigate between cards, Enter or Space to access actions.`}
         >
           <div className={styles['team-card-header']}>
             <h3 className={styles['team-card-name']}>{team.name}</h3>
             <span className={styles['team-card-members']}>
-              {team.memberCount || 0} member{getPluralSuffix(Number(team.memberCount) || 0)}
+              {team.memberCount ?? 0} member{getPluralSuffix(team.memberCount ?? 0)}
             </span>
           </div>
 

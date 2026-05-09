@@ -117,7 +117,7 @@ export const useSprintPlanningState = () => {
       ...prev,
       planning: {
         ...prev.planning,
-        toasts: [...(prev.planning.toasts || []), { id, type, message, duration }],
+        toasts: [...prev.planning.toasts, { id, type, message, duration }],
       },
     }));
 
@@ -127,7 +127,7 @@ export const useSprintPlanningState = () => {
           ...prev,
           planning: {
             ...prev.planning,
-            toasts: (prev.planning.toasts || []).filter((t: ToastMessage) => t.id !== id),
+            toasts: prev.planning.toasts.filter((t: ToastMessage) => t.id !== id),
           },
         }));
       }, duration);
@@ -139,7 +139,7 @@ export const useSprintPlanningState = () => {
       ...prev,
       planning: {
         ...prev.planning,
-        toasts: (prev.planning.toasts || []).filter((t: ToastMessage) => t.id !== id),
+        toasts: prev.planning.toasts.filter((t: ToastMessage) => t.id !== id),
       },
     }));
   }, []);
@@ -148,7 +148,7 @@ export const useSprintPlanningState = () => {
     setState((prev) => ({
       ...prev,
       sprint: { ...prev.sprint, selectedId: sprintId },
-      planning: { ...prev.planning, startTime: prev.planning.startTime || new Date() },
+      planning: { ...prev.planning, startTime: prev.planning.startTime ?? new Date() },
     }));
   }, []);
 

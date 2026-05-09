@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import { act } from 'react';
+import type * as Services from '../../services';
 
 import { Layout } from './Sidebar';
 import * as storeModule from '../../store';
@@ -177,7 +178,7 @@ const mockGetMyTeams = vi.fn();
 const mockGetCurrentUser = vi.fn();
 
 vi.mock('../../services', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../services')>();
+  const actual = await importOriginal<typeof Services>();
   return {
     ...actual,
     apiService: {

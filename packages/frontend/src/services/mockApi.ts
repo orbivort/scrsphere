@@ -259,7 +259,7 @@ class MockApiService {
     await delay(500);
     const newTeam: Team = {
       id: `team-${Date.now()}`,
-      name: teamData.name || 'New Team',
+      name: teamData.name ?? 'New Team',
       description: teamData.description,
       createdBy: getCurrentUser().id,
       createdAt: new Date().toISOString(),
@@ -320,8 +320,8 @@ class MockApiService {
     }
 
     // Apply pagination
-    const page = params?.page || 1;
-    const limit = params?.limit || 20;
+    const page = params?.page ?? 1;
+    const limit = params?.limit ?? 20;
     const startIndex = (page - 1) * limit;
     const endIndex = startIndex + limit;
     const paginatedItems = items.slice(startIndex, endIndex);
@@ -345,14 +345,14 @@ class MockApiService {
 
     const newItem: ProductBacklogItem = {
       id: `pbi-${Date.now()}`,
-      teamId: item.teamId || getCurrentTeam().id,
-      title: item.title || 'New Item',
+      teamId: item.teamId ?? getCurrentTeam().id,
+      title: item.title ?? 'New Item',
       description: item.description,
-      priority: item.priority || MoSCoWPriority.COULD_HAVE,
+      priority: item.priority ?? MoSCoWPriority.COULD_HAVE,
       storyPoints: item.storyPoints,
       businessValue: item.businessValue,
-      status: item.status || ItemStatus.NEW,
-      labels: item.labels || [],
+      status: item.status ?? ItemStatus.NEW,
+      labels: item.labels ?? [],
       acceptanceCriteria: item.acceptanceCriteria,
       goalId: item.goalId,
       createdBy: getCurrentUser().id,
@@ -383,7 +383,7 @@ class MockApiService {
     }
 
     const updatedItem = {
-      ...mockProductBacklogItems[itemIndex]!,
+      ...(mockProductBacklogItems[itemIndex] as ProductBacklogItem),
       ...updates,
       updatedAt: new Date().toISOString(),
     };
@@ -445,10 +445,10 @@ class MockApiService {
 
     const newSprint: Sprint = {
       id: `sprint-${Date.now()}`,
-      teamId: sprint.teamId || getCurrentTeam().id,
-      name: sprint.name || 'New Sprint',
-      startDate: sprint.startDate || new Date().toISOString(),
-      endDate: sprint.endDate || new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
+      teamId: sprint.teamId ?? getCurrentTeam().id,
+      name: sprint.name ?? 'New Sprint',
+      startDate: sprint.startDate ?? new Date().toISOString(),
+      endDate: sprint.endDate ?? new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
       sprintGoal: sprint.sprintGoal,
       status: SprintStatus.PLANNED,
       createdAt: new Date().toISOString(),
@@ -508,7 +508,7 @@ class MockApiService {
       const generatedSprintIndex = this.generatedSprintsStore.findIndex((s) => s.id === id);
 
       if (generatedSprintIndex !== -1) {
-        const generatedSprint = this.generatedSprintsStore[generatedSprintIndex]!;
+        const generatedSprint = this.generatedSprintsStore[generatedSprintIndex] as GeneratedSprint;
         const newSprintId = generateUUID();
         const newSprint: Sprint = {
           id: newSprintId,
@@ -533,7 +533,7 @@ class MockApiService {
             const pbiIndex = mockProductBacklogItems.findIndex((p) => p.id === item.pbiId);
             if (pbiIndex !== -1) {
               mockProductBacklogItems[pbiIndex] = {
-                ...mockProductBacklogItems[pbiIndex]!,
+                ...(mockProductBacklogItems[pbiIndex] as ProductBacklogItem),
                 status: ItemStatus.IN_PROGRESS,
               };
             }
@@ -571,19 +571,19 @@ class MockApiService {
     }
 
     mockSprints[sprintIndex] = {
-      ...mockSprints[sprintIndex]!,
+      ...(mockSprints[sprintIndex] as Sprint),
       status: SprintStatus.ACTIVE,
       updatedAt: new Date().toISOString(),
     };
 
-    const activeSprintId = mockSprints[sprintIndex]!.id;
+    const activeSprintId = (mockSprints[sprintIndex] as Sprint).id;
 
     if (data?.backlogItems) {
       data.backlogItems.forEach((item) => {
         const pbiIndex = mockProductBacklogItems.findIndex((p) => p.id === item.pbiId);
         if (pbiIndex !== -1) {
           mockProductBacklogItems[pbiIndex] = {
-            ...mockProductBacklogItems[pbiIndex]!,
+            ...(mockProductBacklogItems[pbiIndex] as ProductBacklogItem),
             status: ItemStatus.IN_PROGRESS,
           };
         }
@@ -608,7 +608,7 @@ class MockApiService {
       });
     }
 
-    return { success: true, data: mockSprints[sprintIndex]! };
+    return { success: true, data: mockSprints[sprintIndex] as Sprint };
   }
 
   async updateSprint(id: string, updates: Partial<Sprint>): Promise<ApiResponse<Sprint>> {
@@ -627,12 +627,12 @@ class MockApiService {
     }
 
     mockSprints[sprintIndex] = {
-      ...mockSprints[sprintIndex]!,
+      ...(mockSprints[sprintIndex] as Sprint),
       ...updates,
       updatedAt: new Date().toISOString(),
     };
 
-    return { success: true, data: mockSprints[sprintIndex]! };
+    return { success: true, data: mockSprints[sprintIndex] as Sprint };
   }
 
   async getBurndownData(
@@ -663,8 +663,8 @@ class MockApiService {
     const newTask: Task = {
       id: `task-${Date.now()}`,
       sprintId,
-      pbiId: task.pbiId || '',
-      title: task.title || 'New Task',
+      pbiId: task.pbiId ?? '',
+      title: task.title ?? 'New Task',
       description: task.description,
       assigneeId: task.assigneeId,
       status: TaskStatus.TODO,
@@ -696,7 +696,7 @@ class MockApiService {
     }
 
     const updatedTask = {
-      ...mockTasks[taskIndex]!,
+      ...(mockTasks[taskIndex] as Task),
       ...updates,
       updatedAt: new Date().toISOString(),
     };
@@ -716,7 +716,7 @@ class MockApiService {
       activeSprint.status = SprintStatus.COMPLETED;
       activeSprint.updatedAt = new Date().toISOString();
     }
-    return { success: true, data: activeSprint || mockSprints[0]! };
+    return { success: true, data: activeSprint ?? (mockSprints[0] as Sprint) };
   }
 
   async getStatusChangeHistory(
@@ -734,7 +734,7 @@ class MockApiService {
     _rollbackData?: { reason: string }
   ): Promise<ApiResponse<Sprint>> {
     await delay(400);
-    return { success: true, data: mockSprints[0]! };
+    return { success: true, data: mockSprints[0] as Sprint };
   }
 
   async getSprintBacklogPBIs(_sprintId: string): Promise<ApiResponse<ProductBacklogItem[]>> {
@@ -773,15 +773,15 @@ class MockApiService {
     await delay(400);
 
     const currentUser = getCurrentUser();
-    const today = new Date().toISOString().split('T')[0]!;
+    const today = new Date().toISOString().split('T')[0] ?? '';
 
     const newUpdate: DailyUpdate = {
       id: `update-${Date.now()}`,
       sprintId,
       userId: currentUser.id,
       updateDate: today,
-      yesterdayWork: update.yesterdayWork || '',
-      todayWork: update.todayWork || '',
+      yesterdayWork: update.yesterdayWork ?? '',
+      todayWork: update.todayWork ?? '',
       impediment: update.impediment,
       createdAt: new Date().toISOString(),
       user: currentUser,
@@ -809,11 +809,11 @@ class MockApiService {
     const todayUpdates = allUpdates.filter((u) => u.sprintId === sprintId && u.updateDate === date);
 
     const submittedUserIds = new Set(todayUpdates.map((u) => u.userId));
-    const pendingMembers = (team.members || [])
+    const pendingMembers = (team.members ?? [])
       .filter((m) => !submittedUserIds.has(m.userId))
       .map((m) => ({
         userId: m.userId,
-        userName: `${m.user?.firstName || ''} ${m.user?.lastName || ''}`.trim(),
+        userName: `${m.user?.firstName ?? ''} ${m.user?.lastName ?? ''}`.trim(),
       }));
 
     return {
@@ -843,7 +843,7 @@ class MockApiService {
     );
 
     const submittedUserIds = new Set(todayUpdates.map((u) => u.userId));
-    const pendingMembers = (team.members || []).filter((m) => !submittedUserIds.has(m.userId));
+    const pendingMembers = (team.members ?? []).filter((m) => !submittedUserIds.has(m.userId));
 
     return {
       success: true,
@@ -871,10 +871,10 @@ class MockApiService {
     const currentUser = getCurrentUser();
     const newImpediment: Impediment = {
       id: `imp-${Date.now()}`,
-      teamId: impediment.teamId || getCurrentTeam().id,
+      teamId: impediment.teamId ?? getCurrentTeam().id,
       sprintId: impediment.sprintId,
-      title: impediment.title || 'New Impediment',
-      description: impediment.description || '',
+      title: impediment.title ?? 'New Impediment',
+      description: impediment.description ?? '',
       reportedById: currentUser.id,
       ownerId: impediment.ownerId,
       status: ImpedimentStatus.OPEN,
@@ -904,7 +904,7 @@ class MockApiService {
     }
 
     const updatedImpediment = {
-      ...mockImpediments[impedimentIndex]!,
+      ...(mockImpediments[impedimentIndex] as Impediment),
       ...updates,
       updatedAt: new Date().toISOString(),
     };
@@ -981,14 +981,14 @@ class MockApiService {
       {
         id: 'insight-1',
         type: 'positive',
-        icon: '✅',
+        icon: 'positive',
         title: 'Consistent Delivery',
         description: 'Team has maintained 100% sprint goal completion in the last 2 sprints',
       },
       {
         id: 'insight-2',
         type: 'warning',
-        icon: '⚠️',
+        icon: 'warning',
         title: 'Impediment Trend',
         description:
           '2 impediments reported in current sprint. Consider addressing CSS conflicts proactively.',
@@ -996,7 +996,7 @@ class MockApiService {
       {
         id: 'insight-3',
         type: 'positive',
-        icon: '📈',
+        icon: 'positive',
         title: 'Velocity Improvement',
         description: 'Average velocity increased by 12% compared to previous month',
       },
@@ -1034,10 +1034,10 @@ class MockApiService {
 
     const newGoal: ProductGoal = {
       id: `goal-${Date.now()}`,
-      teamId: goal.teamId || getCurrentTeam().id,
-      title: goal.title || 'New Goal',
+      teamId: goal.teamId ?? getCurrentTeam().id,
+      title: goal.title ?? 'New Goal',
       description: goal.description,
-      status: (goal.status || 'active').toUpperCase() as ProductGoal['status'],
+      status: (goal.status ?? 'active').toUpperCase() as ProductGoal['status'],
       targetDate: goal.targetDate,
       successMetrics: goal.successMetrics,
       createdAt: new Date().toISOString(),
@@ -1065,11 +1065,11 @@ class MockApiService {
     }
 
     const updatedGoal = {
-      ...mockProductGoals[goalIndex]!,
+      ...(mockProductGoals[goalIndex] as ProductGoal),
       ...updates,
       status: updates.status
         ? (updates.status.toUpperCase() as ProductGoal['status'])
-        : mockProductGoals[goalIndex]!.status,
+        : (mockProductGoals[goalIndex] as ProductGoal).status,
       updatedAt: new Date().toISOString(),
     };
 
@@ -1123,10 +1123,10 @@ class MockApiService {
 
     const newConfig: SprintConfiguration = {
       id: `config-${Date.now()}`,
-      teamId: config.teamId || 'team-1',
-      duration: config.duration || ('2weeks' as SprintDuration),
-      year: config.year || new Date().getFullYear(),
-      sprintStartDay: config.sprintStartDay || 1,
+      teamId: config.teamId ?? 'team-1',
+      duration: config.duration ?? ('2weeks' as SprintDuration),
+      year: config.year ?? new Date().getFullYear(),
+      sprintStartDay: config.sprintStartDay ?? 1,
       generatedAt: new Date().toISOString(),
       updatedBy: 'current-user',
       updatedAt: new Date().toISOString(),
@@ -1154,10 +1154,10 @@ class MockApiService {
     // If config doesn't exist, create a new one
     const newConfig: SprintConfiguration = {
       id,
-      teamId: updates.teamId || 'team-1',
-      duration: updates.duration || ('2weeks' as SprintDuration),
-      year: updates.year || new Date().getFullYear(),
-      sprintStartDay: updates.sprintStartDay || 1,
+      teamId: updates.teamId ?? 'team-1',
+      duration: updates.duration ?? ('2weeks' as SprintDuration),
+      year: updates.year ?? new Date().getFullYear(),
+      sprintStartDay: updates.sprintStartDay ?? 1,
       generatedAt: new Date().toISOString(),
       updatedBy: 'current-user',
       updatedAt: new Date().toISOString(),
@@ -1282,11 +1282,11 @@ class MockApiService {
     }
 
     this.generatedSprintsStore[sprintIndex] = {
-      ...this.generatedSprintsStore[sprintIndex]!,
+      ...(this.generatedSprintsStore[sprintIndex] as GeneratedSprint),
       ...updates,
     };
 
-    return { success: true, data: this.generatedSprintsStore[sprintIndex]! };
+    return { success: true, data: this.generatedSprintsStore[sprintIndex] as GeneratedSprint };
   }
 
   // ==================== System Parameters ====================
@@ -1324,12 +1324,12 @@ class MockApiService {
     }
 
     this.systemParametersStore[paramIndex] = {
-      ...this.systemParametersStore[paramIndex]!,
+      ...(this.systemParametersStore[paramIndex] as SystemParameter),
       value,
       updatedAt: new Date().toISOString(),
     };
 
-    return { success: true, data: this.systemParametersStore[paramIndex]! };
+    return { success: true, data: this.systemParametersStore[paramIndex] as SystemParameter };
   }
 
   // ==================== Definition of Done ====================
@@ -1365,10 +1365,10 @@ class MockApiService {
     const existingDoD = mockDefinitionOfDone[teamId];
     const updatedDoD: DefinitionOfDone = {
       ...existingDoD,
-      id: existingDoD?.id || `dod-${teamId}`,
+      id: existingDoD?.id ?? `dod-${teamId}`,
       teamId,
       items,
-      version: (existingDoD?.version || 0) + 1,
+      version: (existingDoD?.version ?? 0) + 1,
       updatedBy: getCurrentUser().id,
       updatedAt: new Date().toISOString(),
     };
@@ -1509,10 +1509,10 @@ class MockApiService {
     const existingDoR = this.mockDefinitionOfReady[teamId];
     const updatedDoR: DefinitionOfReady = {
       ...existingDoR,
-      id: existingDoR?.id || `dor-${teamId}`,
+      id: existingDoR?.id ?? `dor-${teamId}`,
       teamId,
       items,
-      version: (existingDoR?.version || 0) + 1,
+      version: (existingDoR?.version ?? 0) + 1,
       updatedBy: getCurrentUser().id,
       updatedAt: new Date().toISOString(),
     };
@@ -1586,16 +1586,16 @@ class MockApiService {
     await delay(400);
     const newIncrement: Increment = {
       id: `increment-${Date.now()}`,
-      sprintId: increment.sprintId || '',
-      teamId: increment.teamId || 'team-1',
-      name: increment.name || 'New Increment',
+      sprintId: increment.sprintId ?? '',
+      teamId: increment.teamId ?? 'team-1',
+      name: increment.name ?? 'New Increment',
       description: increment.description,
-      includedPBIs: increment.includedPBIs || [],
-      dodVerifications: increment.dodVerifications || [],
-      totalStoryPoints: increment.totalStoryPoints || 0,
+      includedPBIs: increment.includedPBIs ?? [],
+      dodVerifications: increment.dodVerifications ?? [],
+      totalStoryPoints: increment.totalStoryPoints ?? 0,
       status: IncrementStatus.DRAFT,
       createdAt: new Date().toISOString(),
-      createdBy: increment.createdBy || 'current-user',
+      createdBy: increment.createdBy ?? 'current-user',
     };
     this.incrementsStore.push(newIncrement);
     return { success: true, data: newIncrement };
@@ -1607,8 +1607,8 @@ class MockApiService {
     if (index === -1) {
       return { success: false, error: { code: 'NOT_FOUND', message: 'Increment not found' } };
     }
-    this.incrementsStore[index] = { ...this.incrementsStore[index]!, ...updates };
-    return { success: true, data: this.incrementsStore[index]! };
+    this.incrementsStore[index] = { ...(this.incrementsStore[index] as Increment), ...updates };
+    return { success: true, data: this.incrementsStore[index] as Increment };
   }
 
   async deliverIncrement(
@@ -1622,13 +1622,13 @@ class MockApiService {
       return { success: false, error: { code: 'NOT_FOUND', message: 'Increment not found' } };
     }
     this.incrementsStore[index] = {
-      ...this.incrementsStore[index]!,
+      ...(this.incrementsStore[index] as Increment),
       status: IncrementStatus.DELIVERED,
       deliveredAt: new Date().toISOString(),
       deliveryMethod: deliveryMethod as DeliveryMethod,
       notes,
     };
-    return { success: true, data: this.incrementsStore[index]! };
+    return { success: true, data: this.incrementsStore[index] as Increment };
   }
 
   async getIncrementMetrics(_teamId: string): Promise<ApiResponse<IncrementMetrics>> {
@@ -1696,13 +1696,13 @@ class MockApiService {
     await delay(400);
     const newReview: SprintReview = {
       id: `review-${Date.now()}`,
-      sprintId: review.sprintId || '',
-      teamId: review.teamId || 'team-1',
-      incrementId: review.incrementId || '',
-      reviewDate: review.reviewDate || new Date().toISOString(),
-      attendees: review.attendees || [],
-      feedback: review.feedback || [],
-      backlogAdjustments: review.backlogAdjustments || [],
+      sprintId: review.sprintId ?? '',
+      teamId: review.teamId ?? 'team-1',
+      incrementId: review.incrementId ?? '',
+      reviewDate: review.reviewDate ?? new Date().toISOString(),
+      attendees: review.attendees ?? [],
+      feedback: review.feedback ?? [],
+      backlogAdjustments: review.backlogAdjustments ?? [],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -1720,11 +1720,11 @@ class MockApiService {
       return { success: false, error: { code: 'NOT_FOUND', message: 'Review not found' } };
     }
     this.sprintReviewsStore[index] = {
-      ...this.sprintReviewsStore[index]!,
+      ...(this.sprintReviewsStore[index] as SprintReview),
       ...updates,
       updatedAt: new Date().toISOString(),
     };
-    return { success: true, data: this.sprintReviewsStore[index]! };
+    return { success: true, data: this.sprintReviewsStore[index] as SprintReview };
   }
 
   async addAttendee(
@@ -1734,10 +1734,10 @@ class MockApiService {
     await delay(300);
     const newAttendee: ReviewAttendee = {
       id: `attendee-${Date.now()}`,
-      name: attendee.name || 'New Attendee',
+      name: attendee.name ?? 'New Attendee',
       email: attendee.email,
-      role: attendee.role || 'stakeholder',
-      attended: attendee.attended || false,
+      role: attendee.role ?? 'stakeholder',
+      attended: attendee.attended ?? false,
     };
     return { success: true, data: newAttendee };
   }
@@ -1753,7 +1753,7 @@ class MockApiService {
         id: _attendeeId,
         name: 'Updated',
         role: 'stakeholder',
-        attended: updates.attended || false,
+        attended: updates.attended ?? false,
       },
     };
   }
@@ -1771,10 +1771,10 @@ class MockApiService {
     const newFeedback: StakeholderFeedback = {
       id: `feedback-${Date.now()}`,
       reviewId,
-      authorName: feedback.authorName || 'Anonymous',
-      content: feedback.content || '',
-      category: feedback.category || 'positive',
-      actionRequired: feedback.actionRequired || false,
+      authorName: feedback.authorName ?? 'Anonymous',
+      content: feedback.content ?? '',
+      category: feedback.category ?? 'positive',
+      actionRequired: feedback.actionRequired ?? false,
       actionTaken: false,
       createdAt: new Date().toISOString(),
     };
@@ -1887,16 +1887,16 @@ class MockApiService {
     await delay(400);
     const newRetro: SprintRetrospective = {
       id: `retro-${Date.now()}`,
-      sprintId: retro.sprintId || '',
-      teamId: retro.teamId || 'team-1',
-      retroDate: retro.retroDate || new Date().toISOString(),
-      facilitatorId: retro.facilitatorId || 'current-user',
+      sprintId: retro.sprintId ?? '',
+      teamId: retro.teamId ?? 'team-1',
+      retroDate: retro.retroDate ?? new Date().toISOString(),
+      facilitatorId: retro.facilitatorId ?? 'current-user',
       status: RetrospectiveStatus.DRAFT,
-      participants: retro.participants || [],
-      attendees: retro.attendees || [],
-      items: retro.items || [],
-      actionItems: retro.actionItems || [],
-      isAnonymous: retro.isAnonymous || false,
+      participants: retro.participants ?? [],
+      attendees: retro.attendees ?? [],
+      items: retro.items ?? [],
+      actionItems: retro.actionItems ?? [],
+      isAnonymous: retro.isAnonymous ?? false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -1914,11 +1914,11 @@ class MockApiService {
       return { success: false, error: { code: 'NOT_FOUND', message: 'Retrospective not found' } };
     }
     this.retrospectivesStore[index] = {
-      ...this.retrospectivesStore[index]!,
+      ...(this.retrospectivesStore[index] as SprintRetrospective),
       ...updates,
       updatedAt: new Date().toISOString(),
     };
-    return { success: true, data: this.retrospectivesStore[index]! };
+    return { success: true, data: this.retrospectivesStore[index] as SprintRetrospective };
   }
 
   async addRetrospectiveItem(
@@ -1929,8 +1929,8 @@ class MockApiService {
     const newItem: RetrospectiveItem = {
       id: `item-${Date.now()}`,
       retrospectiveId: retroId,
-      category: item.category || RetrospectiveCategory.IMPROVEMENT,
-      content: item.content || '',
+      category: item.category ?? RetrospectiveCategory.IMPROVEMENT,
+      content: item.content ?? '',
       authorName: item.authorName,
       votes: 0,
       votedBy: [],
@@ -1939,7 +1939,7 @@ class MockApiService {
     };
     const retroIndex = this.retrospectivesStore.findIndex((r) => r.id === retroId);
     if (retroIndex !== -1) {
-      this.retrospectivesStore[retroIndex]!.items.push(newItem);
+      (this.retrospectivesStore[retroIndex] as SprintRetrospective).items.push(newItem);
     }
     return { success: true, data: newItem };
   }
@@ -1953,19 +1953,21 @@ class MockApiService {
     if (retroIndex === -1) {
       return { success: false, error: { code: 'NOT_FOUND', message: 'Retrospective not found' } };
     }
-    const itemIndex = this.retrospectivesStore[retroIndex]!.items.findIndex((i) => i.id === itemId);
+    const itemIndex = (this.retrospectivesStore[retroIndex] as SprintRetrospective).items.findIndex(
+      (i) => i.id === itemId
+    );
     if (itemIndex === -1) {
       return { success: false, error: { code: 'NOT_FOUND', message: 'Item not found' } };
     }
     const currentUser = getCurrentUser();
-    const item = this.retrospectivesStore[retroIndex]!.items[itemIndex]!;
-
-    // Initialize votedBy if not exists
-    if (!item.votedBy) {
-      item.votedBy = [];
+    const existingItems = (this.retrospectivesStore[retroIndex] as SprintRetrospective).items;
+    const item = existingItems[itemIndex];
+    if (!item) {
+      return { success: false, error: { code: 'NOT_FOUND', message: 'Item not found' } };
     }
 
     // Add user to votedBy if not already voted
+    item.votedBy ??= [];
     if (!item.votedBy.includes(currentUser.id)) {
       item.votedBy.push(currentUser.id);
       item.votes += 1;
@@ -1983,19 +1985,21 @@ class MockApiService {
     if (retroIndex === -1) {
       return { success: false, error: { code: 'NOT_FOUND', message: 'Retrospective not found' } };
     }
-    const itemIndex = this.retrospectivesStore[retroIndex]!.items.findIndex((i) => i.id === itemId);
+    const itemIndex = (this.retrospectivesStore[retroIndex] as SprintRetrospective).items.findIndex(
+      (i) => i.id === itemId
+    );
     if (itemIndex === -1) {
       return { success: false, error: { code: 'NOT_FOUND', message: 'Item not found' } };
     }
     const currentUser = getCurrentUser();
-    const item = this.retrospectivesStore[retroIndex]!.items[itemIndex]!;
-
-    // Initialize votedBy if not exists
-    if (!item.votedBy) {
-      item.votedBy = [];
+    const existingItems = (this.retrospectivesStore[retroIndex] as SprintRetrospective).items;
+    const item = existingItems[itemIndex];
+    if (!item) {
+      return { success: false, error: { code: 'NOT_FOUND', message: 'Item not found' } };
     }
 
     // Remove user from votedBy if they have voted
+    item.votedBy ??= [];
     const voteIndex = item.votedBy.indexOf(currentUser.id);
     if (voteIndex !== -1) {
       item.votedBy.splice(voteIndex, 1);
@@ -2017,15 +2021,22 @@ class MockApiService {
     if (retroIndex === -1) {
       return { success: false, error: { code: 'NOT_FOUND', message: 'Retrospective not found' } };
     }
-    const itemIndex = this.retrospectivesStore[retroIndex]!.items.findIndex((i) => i.id === itemId);
+    const itemIndex = (this.retrospectivesStore[retroIndex] as SprintRetrospective).items.findIndex(
+      (i) => i.id === itemId
+    );
     if (itemIndex === -1) {
       return { success: false, error: { code: 'NOT_FOUND', message: 'Item not found' } };
     }
-    this.retrospectivesStore[retroIndex]!.items[itemIndex] = {
-      ...this.retrospectivesStore[retroIndex]!.items[itemIndex]!,
+    const existingItems = (this.retrospectivesStore[retroIndex] as SprintRetrospective).items;
+    const existingItem = existingItems[itemIndex];
+    if (!existingItem) {
+      return { success: false, error: { code: 'NOT_FOUND', message: 'Item not found' } };
+    }
+    existingItems[itemIndex] = {
+      ...existingItem,
       ...updates,
     };
-    return { success: true, data: this.retrospectivesStore[retroIndex]!.items[itemIndex]! };
+    return { success: true, data: existingItems[itemIndex] };
   }
 
   async deleteRetrospectiveItem(retroId: string, itemId: string): Promise<ApiResponse<void>> {
@@ -2034,11 +2045,13 @@ class MockApiService {
     if (retroIndex === -1) {
       return { success: false, error: { code: 'NOT_FOUND', message: 'Retrospective not found' } };
     }
-    const itemIndex = this.retrospectivesStore[retroIndex]!.items.findIndex((i) => i.id === itemId);
+    const itemIndex = (this.retrospectivesStore[retroIndex] as SprintRetrospective).items.findIndex(
+      (i) => i.id === itemId
+    );
     if (itemIndex === -1) {
       return { success: false, error: { code: 'NOT_FOUND', message: 'Item not found' } };
     }
-    this.retrospectivesStore[retroIndex]!.items.splice(itemIndex, 1);
+    (this.retrospectivesStore[retroIndex] as SprintRetrospective).items.splice(itemIndex, 1);
     return { success: true, data: undefined };
   }
 
@@ -2050,9 +2063,9 @@ class MockApiService {
     const newActionItem: RetroActionItem = {
       id: `action-${Date.now()}`,
       retrospectiveId: retroId,
-      title: actionItem.title || '',
+      title: actionItem.title ?? '',
       description: actionItem.description,
-      ownerId: actionItem.ownerId || 'current-user',
+      ownerId: actionItem.ownerId ?? 'current-user',
       dueDate: actionItem.dueDate,
       status: 'PENDING',
       addedToSprintBacklog: false,
@@ -2060,7 +2073,7 @@ class MockApiService {
     };
     const retroIndex = this.retrospectivesStore.findIndex((r) => r.id === retroId);
     if (retroIndex !== -1) {
-      this.retrospectivesStore[retroIndex]!.actionItems.push(newActionItem);
+      (this.retrospectivesStore[retroIndex] as SprintRetrospective).actionItems.push(newActionItem);
     }
     return { success: true, data: newActionItem };
   }
@@ -2075,17 +2088,23 @@ class MockApiService {
     if (retroIndex === -1) {
       return { success: false, error: { code: 'NOT_FOUND', message: 'Retrospective not found' } };
     }
-    const actionIndex = this.retrospectivesStore[retroIndex]!.actionItems.findIndex(
-      (a) => a.id === actionItemId
-    );
+    const actionIndex = (
+      this.retrospectivesStore[retroIndex] as SprintRetrospective
+    ).actionItems.findIndex((a) => a.id === actionItemId);
     if (actionIndex === -1) {
       return { success: false, error: { code: 'NOT_FOUND', message: 'Action item not found' } };
     }
-    this.retrospectivesStore[retroIndex]!.actionItems[actionIndex] = {
-      ...this.retrospectivesStore[retroIndex]!.actionItems[actionIndex]!,
+    const existingActionItems = (this.retrospectivesStore[retroIndex] as SprintRetrospective)
+      .actionItems;
+    const existingActionItem = existingActionItems[actionIndex];
+    if (!existingActionItem) {
+      return { success: false, error: { code: 'NOT_FOUND', message: 'Action item not found' } };
+    }
+    existingActionItems[actionIndex] = {
+      ...existingActionItem,
       ...updates,
     };
-    return { success: true, data: this.retrospectivesStore[retroIndex]!.actionItems[actionIndex]! };
+    return { success: true, data: existingActionItems[actionIndex] };
   }
 
   async deleteActionItem(retroId: string, actionItemId: string): Promise<ApiResponse<void>> {
@@ -2094,9 +2113,8 @@ class MockApiService {
     if (retroIndex === -1) {
       return { success: false, error: { code: 'NOT_FOUND', message: 'Retrospective not found' } };
     }
-    this.retrospectivesStore[retroIndex]!.actionItems = this.retrospectivesStore[
-      retroIndex
-    ]!.actionItems.filter((a) => a.id !== actionItemId);
+    const retro = this.retrospectivesStore[retroIndex] as SprintRetrospective;
+    retro.actionItems = retro.actionItems.filter((a) => a.id !== actionItemId);
     return { success: true, data: undefined };
   }
 
@@ -2198,9 +2216,9 @@ class MockApiService {
       success: true,
       data: {
         id: _attendeeId,
-        name: attendeeData.name || 'Updated',
-        role: attendeeData.role || 'stakeholder',
-        attended: attendeeData.attended || false,
+        name: attendeeData.name ?? 'Updated',
+        role: attendeeData.role ?? 'stakeholder',
+        attended: attendeeData.attended ?? false,
       },
     };
   }
@@ -2363,7 +2381,7 @@ class MockApiService {
       teamId: impedimentData.teamId,
       sprintId: impedimentData.sprintId,
       title: impedimentData.title,
-      description: impedimentData.description || '',
+      description: impedimentData.description ?? '',
       reportedById: currentUser.id,
       ownerId: impedimentData.ownerId,
       status: ImpedimentStatus.OPEN,
@@ -2373,9 +2391,9 @@ class MockApiService {
     };
     const dailyUpdate: DailyUpdate = {
       id: _dailyUpdateId,
-      sprintId: impedimentData.sprintId || '',
+      sprintId: impedimentData.sprintId ?? '',
       userId: currentUser.id,
-      updateDate: new Date().toISOString().split('T')[0]!,
+      updateDate: new Date().toISOString().split('T')[0] ?? '',
       createdAt: new Date().toISOString(),
       user: currentUser,
     };

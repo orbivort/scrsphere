@@ -16,7 +16,6 @@ import {
   type StatusChangeHistoryItem,
 } from '../../types';
 // Form components are now imported and used within ProductGoalModal
-
 import type { StatusConfig } from '../../components/StatusSelector';
 import { useToast } from '../../hooks/useToast';
 import { ToastContainer } from '../../components/common/ToastContainer';
@@ -171,7 +170,7 @@ export const ProductGoalsPage: React.FC = () => {
     clearDraft,
     lastSavedAt,
   } = useFormDraft<FormData>({
-    key: `product-goal-${teamId || 'no-team'}`,
+    key: `product-goal-${teamId ?? 'no-team'}`,
     initialData: INITIAL_FORM_DATA,
     debounceMs: 1500,
   });
@@ -179,14 +178,14 @@ export const ProductGoalsPage: React.FC = () => {
   // Fetch product goals
   const { data: goalsData, isLoading } = useQuery({
     queryKey: queryKeys.productGoal.list({ teamId }),
-    queryFn: () => apiService.getProductGoals(teamId || ''),
+    queryFn: () => apiService.getProductGoals(teamId ?? ''),
     enabled: !!teamId,
   });
 
   // Fetch backlog items for progress calculation
   const { data: backlogData } = useQuery({
     queryKey: ['productBacklog', teamId],
-    queryFn: () => apiService.getProductBacklog(teamId || ''),
+    queryFn: () => apiService.getProductBacklog(teamId ?? ''),
     enabled: !!teamId,
   });
 
@@ -212,7 +211,7 @@ export const ProductGoalsPage: React.FC = () => {
   const createMutation = useMutation({
     mutationFn: (goal: Partial<ProductGoal>) => apiService.createProductGoal(goal),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.productGoal.lists() });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.productGoal.lists() });
 
       // Show success toast
       success('Product goal created successfully!');
@@ -251,7 +250,7 @@ export const ProductGoalsPage: React.FC = () => {
     mutationFn: ({ id, updates }: { id: string; updates: Partial<ProductGoal> }) =>
       apiService.updateProductGoal(id, updates),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.productGoal.lists() });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.productGoal.lists() });
 
       // Show success toast
       success('Product goal updated successfully!');
@@ -289,7 +288,7 @@ export const ProductGoalsPage: React.FC = () => {
   const deleteMutation = useMutation({
     mutationFn: (id: string) => apiService.deleteProductGoal(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.productGoal.lists() });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.productGoal.lists() });
 
       // Show success toast
       success('Product goal deleted successfully!');
@@ -312,7 +311,7 @@ export const ProductGoalsPage: React.FC = () => {
     mutationFn: ({ id, status }: { id: string; status: ProductGoal['status'] }) =>
       apiService.updateProductGoal(id, { status }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.productGoal.lists() });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.productGoal.lists() });
       setShowStatusChangeModal(false);
       setStatusChangeError(null);
       setStatusChangeValidationMessage(null);
@@ -361,11 +360,11 @@ export const ProductGoalsPage: React.FC = () => {
     setSelectedGoal(goal);
     const editFormData: FormData = {
       title: goal.title,
-      description: goal.description || '',
+      description: goal.description ?? '',
       targetDate: goal.targetDate ? (goal.targetDate.split('T')[0] ?? '') : '',
-      successMetrics: goal.successMetrics || '',
+      successMetrics: goal.successMetrics ?? '',
       status: goal.status.toLowerCase() as ProductGoal['status'],
-      strategicAlignment: goal.strategicAlignment || '',
+      strategicAlignment: goal.strategicAlignment ?? '',
     };
     setFormData(editFormData);
     // Store original data to detect unsaved changes
@@ -625,7 +624,7 @@ export const ProductGoalsPage: React.FC = () => {
   };
 
   const hasActiveGoal = (excludeGoalId?: string): boolean => {
-    const goals = goalsData?.data || [];
+    const goals = goalsData?.data ?? [];
     return goals.some(
       (goal: ProductGoal) =>
         goal.status.toLowerCase() === 'active' && (!excludeGoalId || goal.id !== excludeGoalId)
@@ -644,13 +643,13 @@ export const ProductGoalsPage: React.FC = () => {
 
   const hasAssociatedBacklogItems = (goalId: string): boolean => {
     const goalItems =
-      backlogData?.data?.filter((item: ProductBacklogItem) => item.goalId === goalId) || [];
+      backlogData?.data.filter((item: ProductBacklogItem) => item.goalId === goalId) ?? [];
     return goalItems.length > 0;
   };
 
   const getAssociatedBacklogItemCount = (goalId: string): number => {
     const goalItems =
-      backlogData?.data?.filter((item: ProductBacklogItem) => item.goalId === goalId) || [];
+      backlogData?.data.filter((item: ProductBacklogItem) => item.goalId === goalId) ?? [];
     return goalItems.length;
   };
 
@@ -658,7 +657,7 @@ export const ProductGoalsPage: React.FC = () => {
     goalId: string
   ): { canComplete: boolean; incompleteItems: ProductBacklogItem[] } => {
     const goalItems =
-      backlogData?.data?.filter((item: ProductBacklogItem) => item.goalId === goalId) || [];
+      backlogData?.data.filter((item: ProductBacklogItem) => item.goalId === goalId) ?? [];
     const incompleteItems = goalItems.filter(
       (item: ProductBacklogItem) => item.status !== ItemStatus.DONE
     );
@@ -711,7 +710,7 @@ export const ProductGoalsPage: React.FC = () => {
       targetDate: formData.targetDate ? new Date(formData.targetDate).toISOString() : undefined,
       successMetrics: formData.successMetrics.trim(),
       // Status is intentionally NOT included here - use Status Change Button for status changes
-      strategicAlignment: formData.strategicAlignment || undefined,
+      ...(formData.strategicAlignment ? { strategicAlignment: formData.strategicAlignment } : {}),
     };
 
     if (showEditModal && selectedGoal) {
@@ -756,11 +755,11 @@ export const ProductGoalsPage: React.FC = () => {
       }
 
       goalProgress.itemCount++;
-      goalProgress.totalPoints += item.storyPoints || 0;
+      goalProgress.totalPoints += item.storyPoints ?? 0;
 
       if (item.status === ItemStatus.DONE) {
         goalProgress.completedCount++;
-        goalProgress.completedPoints += item.storyPoints || 0;
+        goalProgress.completedPoints += item.storyPoints ?? 0;
       }
     });
 
@@ -779,7 +778,7 @@ export const ProductGoalsPage: React.FC = () => {
   // Calculate progress for each goal
   const calculateProgress = (goalId: string) => {
     return (
-      goalProgressMap[goalId] || {
+      goalProgressMap[goalId] ?? {
         progress: 0,
         totalPoints: 0,
         completedPoints: 0,
@@ -796,7 +795,7 @@ export const ProductGoalsPage: React.FC = () => {
     return Math.ceil((target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
   };
 
-  const goals = goalsData?.data || [];
+  const goals = useMemo(() => goalsData?.data ?? [], [goalsData]);
 
   const filteredGoals = useMemo(() => {
     let filtered = [...goals];
@@ -806,8 +805,8 @@ export const ProductGoalsPage: React.FC = () => {
       const query = searchQuery.toLowerCase().trim();
       filtered = filtered.filter(
         (goal) =>
-          goal.title.toLowerCase().includes(query) ||
-          goal.description?.toLowerCase().includes(query) ||
+          (goal.title.toLowerCase().includes(query) ||
+            goal.description?.toLowerCase().includes(query)) ??
           goal.successMetrics?.toLowerCase().includes(query)
       );
     }
@@ -832,8 +831,8 @@ export const ProductGoalsPage: React.FC = () => {
     };
 
     return filtered.sort((a, b) => {
-      const priorityA = statusPriority[a.status] || 5;
-      const priorityB = statusPriority[b.status] || 5;
+      const priorityA = statusPriority[a.status] ?? 5;
+      const priorityB = statusPriority[b.status] ?? 5;
       return priorityA - priorityB;
     });
   }, [goals, searchQuery, statusFilter]);
@@ -1105,7 +1104,7 @@ export const ProductGoalsPage: React.FC = () => {
 
                   <h3 className={styles['goal-title']}>{goal.title}</h3>
                   <p className={styles['goal-description']}>
-                    {goal.description || 'No description'}
+                    {goal.description ?? 'No description'}
                   </p>
 
                   <div className={styles['goal-progress-section']}>
@@ -1374,7 +1373,7 @@ export const ProductGoalsPage: React.FC = () => {
                           <h3 className={styles['warning-title']}>Action Warning</h3>
                           <p className={styles['warning-subtitle']}>
                             Goal:{' '}
-                            <strong>&ldquo;{goalToDelete?.title || 'Unknown Goal'}&rdquo;</strong>
+                            <strong>&ldquo;{goalToDelete?.title ?? 'Unknown Goal'}&rdquo;</strong>
                           </p>
                         </div>
                       </div>
@@ -1453,7 +1452,7 @@ export const ProductGoalsPage: React.FC = () => {
             statusHistory={statusHistory}
             isLoading={statusChangeMutation.isPending}
             isHistoryLoading={isHistoryLoading}
-            error={statusChangeError || historyError}
+            error={statusChangeError ?? historyError}
             validationMessage={statusChangeValidationMessage}
             isViewOnly={!canEditGoal(selectedGoal)}
           />

@@ -67,9 +67,9 @@ interface BurndownChartProps {
 
 export const BurndownChart: React.FC<BurndownChartProps> = ({ data }) => {
   const chartData = useMemo(() => {
-    const dates = data?.dates || [];
-    const ideal = data?.ideal || [];
-    const actual = data?.actual || [];
+    const dates = data?.dates ?? [];
+    const ideal = data?.ideal ?? [];
+    const actual = data?.actual ?? [];
 
     if (!dates.length || !ideal.length || !actual.length) {
       if (data) {
@@ -152,7 +152,7 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({ data }) => {
     if (!data) return '';
 
     const { dates, ideal, actual } = data;
-    if (!dates?.length || !ideal?.length || !actual?.length) {
+    if (!dates.length || !ideal.length || !actual.length) {
       return 'No burndown data available.';
     }
 

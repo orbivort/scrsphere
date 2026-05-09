@@ -192,12 +192,12 @@ const BacklogContent: React.FC = () => {
     setWorkflowError(null);
     const editFormData: ItemFormData = {
       title: selectedItem.title,
-      description: selectedItem.description || '',
+      description: selectedItem.description ?? '',
       estimate: selectedItem.storyPoints,
-      moscowPriority: selectedItem.priority || MoSCoWPriority.COULD_HAVE,
+      moscowPriority: selectedItem.priority,
       businessValue: selectedItem.businessValue,
       labels: selectedItem.labels.join(', '),
-      acceptanceCriteria: selectedItem.acceptanceCriteria || '',
+      acceptanceCriteria: selectedItem.acceptanceCriteria ?? '',
       status: selectedItem.status,
     };
     setFormData(editFormData);
@@ -268,7 +268,7 @@ const BacklogContent: React.FC = () => {
 
     const validationResult = validateStatusTransition(selectedItem.status, newStatus);
     if (!validationResult.valid) {
-      setWorkflowError(validationResult.message || 'Invalid status transition');
+      setWorkflowError(validationResult.message ?? 'Invalid status transition');
       return;
     }
 
@@ -284,7 +284,7 @@ const BacklogContent: React.FC = () => {
 
       try {
         const response = await apiService.getTasksByPbiId(selectedItem.id);
-        const tasks = response.data || [];
+        const tasks = response.data ?? [];
 
         const incompleteTasks = tasks.filter((task: Task) => task.status !== TaskStatus.DONE);
 
@@ -348,11 +348,11 @@ const BacklogContent: React.FC = () => {
           const err = error as {
             response?: { status?: number; data?: { error?: { message?: string } } };
           };
-          if (err.response?.status === 400 && err.response?.data?.error?.message) {
+          if (err.response?.status === 400 && err.response.data?.error?.message) {
             setWorkflowError(err.response.data.error.message);
           } else if (err.response?.status === 403) {
             setWorkflowError(
-              err.response?.data?.error?.message ||
+              err.response.data?.error?.message ??
                 'You do not have permission to perform this status transition'
             );
           }
@@ -372,7 +372,7 @@ const BacklogContent: React.FC = () => {
       try {
         const verifications = dodItems.map((item) => ({
           dodItemId: item.id,
-          isVerified: validationChecks[item.id] || false,
+          isVerified: validationChecks[item.id] ?? false,
         }));
 
         await apiService.verifyDoDForPBI(selectedItem.id, verifications);
@@ -387,7 +387,7 @@ const BacklogContent: React.FC = () => {
       try {
         const verifications = dorItems.map((item) => ({
           dorItemId: item.id,
-          isVerified: validationChecks[item.id] || false,
+          isVerified: validationChecks[item.id] ?? false,
         }));
 
         await apiService.verifyDoRForPBI(selectedItem.id, verifications);
@@ -470,7 +470,7 @@ const BacklogContent: React.FC = () => {
           onCreateWorkItem={(actionItem: RetroActionItem) => {
             setFormData({
               title: actionItem.title,
-              description: actionItem.description || `Action item from retrospective`,
+              description: actionItem.description ?? `Action item from retrospective`,
               estimate: undefined,
               moscowPriority: MoSCoWPriority.COULD_HAVE,
               businessValue: undefined,
@@ -482,15 +482,13 @@ const BacklogContent: React.FC = () => {
           }}
         />
 
-        {activeGoal && (
-          <ActiveGoalBanner
-            goal={activeGoal}
-            backlogItems={backlogData?.data || []}
-            itemsByMoscow={itemsByMoscow}
-            doneCount={doneCount}
-            totalCount={filteredItems.length}
-          />
-        )}
+        <ActiveGoalBanner
+          goal={activeGoal}
+          backlogItems={backlogData?.data ?? []}
+          itemsByMoscow={itemsByMoscow}
+          doneCount={doneCount}
+          totalCount={filteredItems.length}
+        />
 
         <BacklogFilterBar filters={filters} onFiltersChange={setFilters} />
 
@@ -562,11 +560,11 @@ const BacklogContent: React.FC = () => {
           isOpen={showBulkUploadModal}
           onClose={() => setShowBulkUploadModal(false)}
           teamId={teamId || ''}
-          goalId={activeGoal?.id || ''}
-          existingItems={backlogData?.data || []}
+          goalId={activeGoal.id || ''}
+          existingItems={backlogData?.data ?? []}
           onUploadComplete={() => {
-            queryClient.invalidateQueries({ queryKey: queryKeys.productBacklog.all });
-            queryClient.invalidateQueries({ queryKey: queryKeys.productGoal.all });
+            void queryClient.invalidateQueries({ queryKey: queryKeys.productBacklog.all });
+            void queryClient.invalidateQueries({ queryKey: queryKeys.productGoal.all });
           }}
         />
       </div>

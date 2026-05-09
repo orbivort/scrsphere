@@ -164,7 +164,7 @@ describe('SprintBacklogManager', () => {
 
   describe('Empty States', () => {
     it('should show empty state when no items in backlog', async () => {
-      (apiService.getActiveSprint as any).mockResolvedValue({
+      vi.mocked(apiService.getActiveSprint).mockResolvedValue({
         data: { items: [] },
       });
 

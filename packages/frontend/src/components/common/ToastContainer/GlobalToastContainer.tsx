@@ -50,7 +50,7 @@ export const GlobalToastContainer: React.FC = () => {
   const toasts = useToastStore((state) => state.toasts);
   const removeToast = useToastStore((state) => state.removeToast);
 
-  if (!toasts || toasts.length === 0) return null;
+  if (toasts.length === 0) return null;
 
   return (
     <div className={styles['toast-container']} role="region" aria-label="Notifications">

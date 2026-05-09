@@ -138,7 +138,7 @@ export const StatusHistorySection: React.FC<StatusHistorySectionProps> = ({
     failureCount,
   } = useQuery({
     queryKey: ['statusChangeHistory', entityType, entityId],
-    queryFn: () => apiService.getStatusChangeHistory(entityType || '', entityId || '', 20, 0),
+    queryFn: () => apiService.getStatusChangeHistory(entityType ?? '', entityId ?? '', 20, 0),
     enabled: isExpanded && !externalHistory,
     staleTime: 0,
     refetchOnWindowFocus: true,
@@ -152,9 +152,9 @@ export const StatusHistorySection: React.FC<StatusHistorySectionProps> = ({
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 
-  const isLoading = externalIsLoading !== undefined ? externalIsLoading : queryIsLoading;
-  const error = externalError !== undefined ? externalError : queryError;
-  const history: StatusChangeHistoryItem[] = externalHistory || historyData?.data || [];
+  const isLoading = externalIsLoading ?? queryIsLoading;
+  const error = externalError ?? queryError;
+  const history: StatusChangeHistoryItem[] = externalHistory ?? historyData?.data ?? [];
 
   /**
    * Formats a date string to relative time
@@ -181,8 +181,8 @@ export const StatusHistorySection: React.FC<StatusHistorySectionProps> = ({
     // Check custom color map first
     if (statusColorMap) {
       const customColor =
-        statusColorMap[statusName] ||
-        statusColorMap[statusName.toUpperCase()] ||
+        statusColorMap[statusName] ??
+        statusColorMap[statusName.toUpperCase()] ??
         statusColorMap[statusName.toLowerCase()];
       if (customColor) return customColor.color;
     }
@@ -195,7 +195,7 @@ export const StatusHistorySection: React.FC<StatusHistorySectionProps> = ({
       DONE: 'var(--color-success-600)',
       TODO: 'var(--color-gray-500)',
     };
-    return colors[statusName] || 'var(--color-gray-500)';
+    return colors[statusName] ?? 'var(--color-gray-500)';
   };
 
   /**
@@ -205,8 +205,8 @@ export const StatusHistorySection: React.FC<StatusHistorySectionProps> = ({
     // Check custom color map first
     if (statusColorMap) {
       const customColor =
-        statusColorMap[statusName] ||
-        statusColorMap[statusName.toUpperCase()] ||
+        statusColorMap[statusName] ??
+        statusColorMap[statusName.toUpperCase()] ??
         statusColorMap[statusName.toLowerCase()];
       if (customColor) return customColor.bgColor;
     }
@@ -219,7 +219,7 @@ export const StatusHistorySection: React.FC<StatusHistorySectionProps> = ({
       DONE: 'var(--color-success-100)',
       TODO: 'var(--color-gray-100)',
     };
-    return colors[statusName] || 'var(--color-gray-100)';
+    return colors[statusName] ?? 'var(--color-gray-100)';
   };
 
   return (
@@ -312,8 +312,8 @@ export const StatusHistorySection: React.FC<StatusHistorySectionProps> = ({
           {!isLoading && !error && history.length > 0 && (
             <div className={styles['timeline']}>
               {history.map((item, index) => {
-                const fromStateName = item.fromState?.displayName || item.fromState?.name || 'New';
-                const toStateName = item.toState?.displayName || item.toState?.name || 'Unknown';
+                const fromStateName = item.fromState?.displayName ?? item.fromState?.name ?? 'New';
+                const toStateName = item.toState?.displayName ?? item.toState?.name ?? 'Unknown';
                 const changerName = item.changer
                   ? `${item.changer.firstName} ${item.changer.lastName}`
                   : 'Unknown User';

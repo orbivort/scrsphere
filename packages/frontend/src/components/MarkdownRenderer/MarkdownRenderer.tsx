@@ -17,7 +17,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
   customComponents = {},
 }) => {
   return (
-    <div className={`${styles.container} ${className || ''}`}>
+    <div className={`${styles.container} ${className ?? ''}`}>
       <Markdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeSanitize]}

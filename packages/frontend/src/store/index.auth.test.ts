@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { act } from '@testing-library/react';
+import { type QueryClient } from '@tanstack/react-query';
 
 import { useAuthStore, useSessionStore, setQueryClient } from './index';
 import type { User } from '../types';
@@ -70,7 +71,7 @@ describe('useAuthStore - Async Actions', () => {
   describe('logout', () => {
     it('should logout successfully', async () => {
       const mockQueryClient = { clear: vi.fn() };
-      setQueryClient(mockQueryClient as any);
+      setQueryClient(mockQueryClient as unknown as QueryClient);
 
       vi.mocked(apiService.logout).mockResolvedValue({ success: true });
 
@@ -94,7 +95,7 @@ describe('useAuthStore - Async Actions', () => {
 
     it('should handle logout error gracefully', async () => {
       const mockQueryClient = { clear: vi.fn() };
-      setQueryClient(mockQueryClient as any);
+      setQueryClient(mockQueryClient as unknown as QueryClient);
 
       vi.mocked(apiService.logout).mockRejectedValue(new Error('Network error'));
 
@@ -241,7 +242,7 @@ describe('useAuthStore - Async Actions', () => {
   describe('updateProfile', () => {
     it('should update profile successfully', async () => {
       const mockQueryClient = { invalidateQueries: vi.fn(), clear: vi.fn() };
-      setQueryClient(mockQueryClient as any);
+      setQueryClient(mockQueryClient as unknown as QueryClient);
 
       const updatedUser = createMockUser('1', 'test@example.com');
       updatedUser.firstName = 'Jane';

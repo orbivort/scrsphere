@@ -14,7 +14,7 @@ export const useModal = ({ isOpen, onClose }: UseModalProps) => {
       const focusableElements = document.querySelectorAll(
         'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
       );
-      const firstFocusable = focusableElements[0] as HTMLElement;
+      const firstFocusable = focusableElements[0] as HTMLElement | undefined;
       firstFocusable?.focus();
     } else {
       previousActiveElement.current?.focus();

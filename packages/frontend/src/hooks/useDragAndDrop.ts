@@ -146,10 +146,8 @@ export function useDragAndDrop({
 
     // Create custom drag image if needed
     const taskElement = e.currentTarget as HTMLElement;
-    if (taskElement) {
-      const rect = taskElement.getBoundingClientRect();
-      e.dataTransfer.setDragImage(taskElement, rect.width / 2, 20);
-    }
+    const rect = taskElement.getBoundingClientRect();
+    e.dataTransfer.setDragImage(taskElement, rect.width / 2, 20);
   }, []);
 
   /**
@@ -201,7 +199,7 @@ export function useDragAndDrop({
       const validation = validateTransition(task, status);
 
       if (!validation.valid) {
-        onValidationError?.(validation.error || 'Invalid transition');
+        onValidationError?.(validation.error ?? 'Invalid transition');
         setDraggedTaskId(null);
         setDropTargetColumn(null);
         setIsDragging(false);
@@ -249,7 +247,7 @@ export function useDragAndDrop({
           if (validation.valid) {
             onStatusChange(task.id, targetStatus, validation.updates);
           } else {
-            onValidationError?.(validation.error || 'Cannot move task');
+            onValidationError?.(validation.error ?? 'Cannot move task');
           }
         }
       }

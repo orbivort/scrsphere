@@ -173,10 +173,8 @@ export const IconGallery: React.FC = () => {
     const groups: Record<string, IconData[]> = {};
 
     for (const icon of filteredIcons) {
-      if (!groups[icon.category]) {
-        groups[icon.category] = [];
-      }
-      groups[icon.category]!.push(icon);
+      groups[icon.category] ??= [];
+      groups[icon.category]?.push(icon);
     }
 
     // Sort categories

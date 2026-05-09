@@ -52,7 +52,7 @@ export const FileDropZone: React.FC<FileDropZoneProps> = ({
       setIsDragActive(false);
 
       const files = e.dataTransfer.files;
-      if (files && files.length > 0) {
+      if (files.length > 0) {
         const file = files[0];
         if (file && isValidFileType(file)) {
           onFileSelect(file);

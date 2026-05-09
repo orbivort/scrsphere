@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
+﻿import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { ConfirmDialog } from '../ConfirmDialog/ConfirmDialog';
@@ -180,14 +180,14 @@ const UnmarkedSection: React.FC<UnmarkedSectionProps> = ({
       </div>
       <div className={styles['unmarked-list']}>
         {members.map((member) => {
-          const name = `${member.user?.firstName || ''} ${member.user?.lastName || ''}`.trim();
+          const name = `${member.user?.firstName ?? ''} ${member.user?.lastName ?? ''}`.trim();
           return (
             <div key={member.id} className={styles['unmarked-item']}>
               <div className={styles['member-info']}>
                 <span className={styles['member-avatar']}>{getInitials(name)}</span>
                 <div className={styles['member-details']}>
                   <span className={styles['member-name']}>{name || 'Unknown'}</span>
-                  <span className={styles['member-role']}>{member.role || 'Team Member'}</span>
+                  <span className={styles['member-role']}>{member.role ?? 'Team Member'}</span>
                 </div>
               </div>
               <div className={styles['quick-actions']}>
@@ -350,9 +350,9 @@ const AttendeeForm: React.FC<AttendeeFormProps> = ({
   const isEditing = !!attendee;
 
   const [formData, setFormData] = useState<AttendeeFormData>({
-    name: attendee?.name || '',
-    email: attendee?.email || '',
-    role: attendee?.role || defaultRole,
+    name: attendee?.name ?? '',
+    email: attendee?.email ?? '',
+    role: attendee?.role ?? defaultRole,
     attended: attendee?.attended ?? true,
   });
 
@@ -362,12 +362,33 @@ const AttendeeForm: React.FC<AttendeeFormProps> = ({
     role?: string;
   }>({});
 
+  const addMutation = useMutation({
+    mutationFn: apiConfig.addAttendee,
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey });
+      onSuccess();
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: (data: AttendeeFormData) => {
+      if (!attendee) {
+        return Promise.reject(new Error('No attendee selected for update'));
+      }
+      return apiConfig.updateAttendee(attendee.id, data);
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey });
+      onSuccess();
+    },
+  });
+
   useEffect(() => {
     if (isOpen) {
       setFormData({
-        name: attendee?.name || '',
-        email: attendee?.email || '',
-        role: attendee?.role || defaultRole,
+        name: attendee?.name ?? '',
+        email: attendee?.email ?? '',
+        role: attendee?.role ?? defaultRole,
         attended: attendee?.attended ?? true,
       });
       setFormErrors({});
@@ -375,6 +396,7 @@ const AttendeeForm: React.FC<AttendeeFormProps> = ({
       updateMutation.reset();
       firstInputRef.current?.focus();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, attendee, defaultRole]);
 
   useEffect(() => {
@@ -387,22 +409,6 @@ const AttendeeForm: React.FC<AttendeeFormProps> = ({
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
   }, [isOpen, onClose]);
-
-  const addMutation = useMutation({
-    mutationFn: apiConfig.addAttendee,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey });
-      onSuccess();
-    },
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: (data: AttendeeFormData) => apiConfig.updateAttendee(attendee!.id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey });
-      onSuccess();
-    },
-  });
 
   const validateForm = useCallback((): boolean => {
     const errors: { name?: string; email?: string; role?: string } = {};
@@ -435,7 +441,7 @@ const AttendeeForm: React.FC<AttendeeFormProps> = ({
 
     const submissionData: AttendeeFormData = {
       ...formData,
-      email: formData.email?.trim() || undefined,
+      email: formData.email?.trim() ?? undefined,
     };
 
     if (isEditing) {
@@ -446,7 +452,7 @@ const AttendeeForm: React.FC<AttendeeFormProps> = ({
   };
 
   const isLoading = addMutation.isPending || updateMutation.isPending;
-  const error = addMutation.error || updateMutation.error;
+  const error = addMutation.error ?? updateMutation.error;
 
   if (!isOpen) return null;
 
@@ -627,7 +633,7 @@ export const AttendeesSection: React.FC<AttendeesSectionProps> = ({
   const deleteAttendeeMutation = useMutation({
     mutationFn: (attendeeId: string) => apiConfig.deleteAttendee(attendeeId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey });
+      void queryClient.invalidateQueries({ queryKey });
       setDeleteConfirmAttendee(null);
     },
   });
@@ -646,7 +652,7 @@ export const AttendeesSection: React.FC<AttendeesSectionProps> = ({
 
     attendees.forEach((attendee) => {
       const isTeamMember =
-        (attendee.email && teamMemberEmails.has(attendee.email.toLowerCase())) ||
+        (attendee.email && teamMemberEmails.has(attendee.email.toLowerCase())) ??
         teamMemberNames.has(attendee.name.toLowerCase());
 
       if (isTeamMember) {
@@ -705,12 +711,12 @@ export const AttendeesSection: React.FC<AttendeesSectionProps> = ({
 
       return teamMembers.some((t) => {
         const teamMemberEmail = t.user?.email?.toLowerCase();
-        const teamMemberName = `${t.user?.firstName || ''} ${t.user?.lastName || ''}`
+        const teamMemberName = `${t.user?.firstName ?? ''} ${t.user?.lastName ?? ''}`
           .toLowerCase()
           .trim();
 
         return (
-          (attendeeEmail && teamMemberEmail && attendeeEmail === teamMemberEmail) ||
+          (attendeeEmail && teamMemberEmail && attendeeEmail === teamMemberEmail) ??
           attendeeName === teamMemberName
         );
       });
@@ -759,7 +765,7 @@ export const AttendeesSection: React.FC<AttendeesSectionProps> = ({
   }, []);
 
   return (
-    <section className={`${styles['attendees-section']} ${className || ''}`}>
+    <section className={`${styles['attendees-section']} ${className ?? ''}`}>
       {/* Section Header */}
       <div className={styles['section-header']}>
         <div className={styles['header-left']}>

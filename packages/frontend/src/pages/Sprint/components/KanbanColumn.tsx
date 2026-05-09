@@ -57,11 +57,11 @@ const VIRTUALIZATION_THRESHOLD = 50;
 const getColumnHeaderClass = (status: TaskStatus): string => {
   switch (status) {
     case TaskStatusEnum.TODO:
-      return styles.todo || '';
+      return styles.todo ?? '';
     case TaskStatusEnum.IN_PROGRESS:
-      return styles['in-progress'] || '';
+      return styles['in-progress'] ?? '';
     case TaskStatusEnum.DONE:
-      return styles.done || '';
+      return styles.done ?? '';
     default:
       return '';
   }

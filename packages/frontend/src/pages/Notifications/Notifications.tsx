@@ -59,7 +59,7 @@ const getNotificationRoute = (notification: Notification): string => {
     TEAM_DELETED: '/settings/team-management',
     DIRECT_MESSAGE: '/team',
   };
-  return routes[notification.type] || '/';
+  return routes[notification.type] ?? '/';
 };
 
 type FilterType = 'all' | 'unread' | NotificationType;
@@ -135,9 +135,13 @@ export const Notifications: React.FC = () => {
 
   const handleNotificationClick = async (notification: Notification) => {
     if (!notification.isRead) {
-      await markAsRead.mutateAsync(notification.id);
+      try {
+        await markAsRead.mutateAsync(notification.id);
+      } catch {
+        // Error is already handled by the mutation
+      }
     }
-    navigate(getNotificationRoute(notification));
+    void navigate(getNotificationRoute(notification));
   };
 
   const handleMarkAllRead = async () => {
@@ -150,7 +154,7 @@ export const Notifications: React.FC = () => {
   };
 
   const handleRetry = () => {
-    refetch();
+    void refetch();
   };
 
   return (
@@ -260,7 +264,7 @@ export const Notifications: React.FC = () => {
               onNotificationClick={handleNotificationClick}
             />
 
-            {data.pagination && data.pagination.totalPages > 1 && (
+            {data.pagination.totalPages > 1 && (
               <nav className={styles.pagination} aria-label="Pagination" role="navigation">
                 <button
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
@@ -324,7 +328,7 @@ const NotificationGroup: React.FC<NotificationGroupProps> = ({
                 onNotificationClick(notification);
               }
             }}
-            aria-label={`${notification.title}. ${notification.message || ''}. ${formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}`}
+            aria-label={`${notification.title}. ${notification.message ?? ''}. ${formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}`}
           >
             <div
               className={styles['notification-icon']}

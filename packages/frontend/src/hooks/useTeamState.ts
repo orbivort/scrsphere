@@ -107,10 +107,10 @@ export const useTeamState = (): UseTeamStateReturn => {
       setUserRoleInCurrentTeam(userRole);
 
       // Invalidate related queries
-      queryClient.invalidateQueries({ queryKey: queryKeys.team.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.myTeams.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.task.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.team.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.myTeams.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.task.all });
     },
     onError: (error) => {
       logger.error('Failed to switch team', undefined, { error });

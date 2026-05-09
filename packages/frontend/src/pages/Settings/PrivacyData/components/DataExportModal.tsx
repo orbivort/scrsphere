@@ -47,7 +47,7 @@ export const DataExportModal: React.FC<DataExportModalProps> = ({
 
     // Cleanup function
     return () => {
-      if (container && container.parentNode && container.childNodes.length === 0) {
+      if (container.parentNode && container.childNodes.length === 0) {
         document.body.removeChild(container);
       }
     };

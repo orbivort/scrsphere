@@ -77,7 +77,7 @@ export const ValidationModal: React.FC<ValidationModalProps> = ({
               </p>
             </div>
           </div>
-          <button className={styles['modal-close']} onClick={onCancel}>
+          <button className={styles['modal-close']} onClick={onCancel} data-modal-close>
             <XIcon width="16" height="16" />
           </button>
         </div>
@@ -113,7 +113,7 @@ export const ValidationModal: React.FC<ValidationModalProps> = ({
                 <div className={styles['check-checkbox']}>
                   <input
                     type="checkbox"
-                    checked={validationChecks[check.id] || false}
+                    checked={validationChecks[check.id] ?? false}
                     onChange={(e) => onCheckChange(check.id, e.target.checked)}
                   />
                   <span className={styles['check-custom']}>

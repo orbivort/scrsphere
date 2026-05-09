@@ -1504,7 +1504,7 @@ describe('Retrospective Component', () => {
             {
               id: 'attendee-5',
               userId: 'user-5',
-              attended: null as any,
+              attended: null as unknown as boolean,
               name: 'Unmarked User',
               email: 'unmarked@example.com',
               role: 'DEVELOPER',

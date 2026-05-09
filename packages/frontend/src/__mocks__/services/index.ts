@@ -1,7 +1,6 @@
 import { vi, type Mock } from 'vitest';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AnyFn = (...args: any[]) => any;
+type AnyFn = (...args: unknown[]) => unknown;
 
 export const apiService: Record<string, Mock<AnyFn>> = {
   getActiveSprint: vi.fn(),
@@ -124,14 +123,14 @@ export const notificationApi: Record<string, Mock<AnyFn>> = {
   deleteAllNotifications: vi.fn(),
 };
 
-export type ApiResponse<T = any> = {
+export type ApiResponse<T = unknown> = {
   success: boolean;
   data?: T;
   error?: string;
   message?: string;
 };
 
-export type PaginatedResponse<T = any> = {
+export type PaginatedResponse<T = unknown> = {
   success: boolean;
   data: T[];
   total: number;

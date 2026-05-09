@@ -54,18 +54,18 @@ export const SprintConfiguration: React.FC = () => {
 
   const { data: configData, isLoading: configLoading } = useQuery({
     queryKey: queryKeys.sprintConfiguration.byTeam(teamId),
-    queryFn: () => apiService.getSprintConfiguration(teamId!),
+    queryFn: () => apiService.getSprintConfiguration(teamId ?? ''),
     enabled: !!teamId,
   });
 
   const { data: sprintsData, isLoading: sprintsLoading } = useQuery({
     queryKey: queryKeys.generatedSprint.byTeam(teamId),
-    queryFn: () => apiService.getGeneratedSprints(teamId!, selectedYear),
+    queryFn: () => apiService.getGeneratedSprints(teamId ?? '', selectedYear),
     enabled: !!teamId,
   });
 
   const existingConfig = configData?.data;
-  const generatedSprints = sprintsData?.data || [];
+  const generatedSprints = sprintsData?.data ?? [];
 
   useEffect(() => {
     if (existingConfig) {
@@ -85,9 +85,11 @@ export const SprintConfiguration: React.FC = () => {
       return apiService.createSprintConfiguration(config);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.sprintConfiguration.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.sprintConfiguration.byTeam(teamId) });
-      queryClient.invalidateQueries({ queryKey: queryKeys.generatedSprint.byTeam(teamId) });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.sprintConfiguration.all });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.sprintConfiguration.byTeam(teamId),
+      });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.generatedSprint.byTeam(teamId) });
       setNotification({ type: 'success', message: 'Configuration saved successfully!' });
       setTimeout(() => setNotification(null), TOAST_SUCCESS_DURATION);
     },
@@ -101,11 +103,12 @@ export const SprintConfiguration: React.FC = () => {
   });
 
   const generateSprintsMutation = useMutation({
-    mutationFn: () => apiService.generateSprintsForYear(teamId!, selectedDuration, selectedYear),
+    mutationFn: () =>
+      apiService.generateSprintsForYear(teamId ?? '', selectedDuration, selectedYear),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.generatedSprint.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.generatedSprint.byTeam(teamId) });
-      queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.generatedSprint.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.generatedSprint.byTeam(teamId) });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
       setShowPreview(false);
       setNotification({ type: 'success', message: 'Sprints generated successfully!' });
       setTimeout(() => setNotification(null), TOAST_SUCCESS_DURATION);
@@ -122,9 +125,9 @@ export const SprintConfiguration: React.FC = () => {
   const deleteSprintMutation = useMutation({
     mutationFn: (sprintId: string) => apiService.deleteGeneratedSprint(sprintId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.generatedSprint.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.generatedSprint.byTeam(teamId) });
-      queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.generatedSprint.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.generatedSprint.byTeam(teamId) });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
       setShowDeleteConfirm(null);
       setNotification({ type: 'success', message: 'Sprint deleted successfully!' });
       setTimeout(() => setNotification(null), TOAST_SUCCESS_DURATION);
@@ -511,11 +514,11 @@ export const SprintConfiguration: React.FC = () => {
                   </p>
                   <p className={styles['delete-sprint-dates']}>
                     {formatDate(
-                      generatedSprints.find((s) => s.id === showDeleteConfirm)?.startDate || ''
+                      generatedSprints.find((s) => s.id === showDeleteConfirm)?.startDate ?? ''
                     )}{' '}
                     -{' '}
                     {formatDate(
-                      generatedSprints.find((s) => s.id === showDeleteConfirm)?.endDate || ''
+                      generatedSprints.find((s) => s.id === showDeleteConfirm)?.endDate ?? ''
                     )}
                   </p>
                 </div>

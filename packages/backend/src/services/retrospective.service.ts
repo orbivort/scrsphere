@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import prisma from '../utils/prisma';
-import { NotFoundError, BadRequestError } from '../utils/errors';
+import { NotFoundError, BadRequestError, ConflictError } from '../utils/errors';
 import {
   type RetrospectiveCategory,
   type RetrospectiveItem as PrismaRetrospectiveItem,
@@ -328,7 +328,7 @@ class RetrospectiveService {
     });
 
     if (existingVote) {
-      throw new Error('User has already voted for this item');
+      throw new ConflictError('User has already voted for this item');
     }
 
     await prisma.retroItemVote.create({
@@ -578,6 +578,7 @@ class RetrospectiveService {
         updatedAt: item.updatedAt,
         order: item.order,
         votes: item.votesBy?.length ?? 0,
+        votedBy: item.votesBy?.map((vote) => vote.userId) ?? [],
       })) ?? [];
 
     const actionItems =

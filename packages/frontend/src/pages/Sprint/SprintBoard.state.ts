@@ -95,12 +95,12 @@ export function formReducer(state: FormState, action: FormAction): FormState {
         ...state,
         formData: {
           title: task.title,
-          description: task.description || '',
+          description: task.description ?? '',
           pbiId: task.pbiId || '',
-          assigneeId: task.assigneeId || '',
+          assigneeId: task.assigneeId ?? '',
           status: task.status,
-          estimatedHours: task.estimatedHours || 0,
-          remainingHours: task.remainingHours || 0,
+          estimatedHours: task.estimatedHours ?? 0,
+          remainingHours: task.remainingHours ?? 0,
         },
         formErrors: {},
       };
@@ -110,7 +110,7 @@ export function formReducer(state: FormState, action: FormAction): FormState {
         ...state,
         formData: {
           ...initialFormData,
-          status: action.payload || TaskStatusEnum.TODO,
+          status: action.payload ?? TaskStatusEnum.TODO,
         },
         formErrors: {},
       };

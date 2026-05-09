@@ -500,8 +500,10 @@
 }
 
 .team-icon {
-  font-size: var(--font-size-xl);
-  line-height: var(--line-height-none);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
 }
 
 .team-details-breadcrumb {

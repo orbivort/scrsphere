@@ -354,10 +354,10 @@ export const MoscowCard = memo<MoscowCardProps>(
           )}
           <div className={styles['moscow-card-ve']}>
             <span className={styles['ve-mini']} title="Business Value">
-              V{item.businessValue || 0}
+              V{item.businessValue ?? 0}
             </span>
             <span className={styles['ve-mini']} title="Effort (Story Points)">
-              E{item.storyPoints || 0}
+              E{item.storyPoints ?? 0}
             </span>
           </div>
         </div>

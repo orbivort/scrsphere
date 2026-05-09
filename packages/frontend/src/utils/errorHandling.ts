@@ -10,7 +10,7 @@ export function getFriendlyErrorMessage(error: unknown, defaultMessage: string):
   if (!error) return defaultMessage;
 
   const axiosError = error as AxiosError<ApiResponse<never>>;
-  if (axiosError.response?.data?.error?.message) {
+  if (axiosError.response?.data.error?.message) {
     return axiosError.response.data.error.message;
   }
 

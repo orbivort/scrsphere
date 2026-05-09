@@ -46,8 +46,8 @@ export interface GoalProgressBarProps {
 export const GoalProgressBar: React.FC<GoalProgressBarProps> = ({ goal, backlogItems }) => {
   const goalItems = backlogItems.filter((item) => item.goalId === goal.id);
   const completedItems = goalItems.filter((item) => item.status === ItemStatus.DONE);
-  const totalPoints = goalItems.reduce((sum, item) => sum + (item.storyPoints || 0), 0);
-  const completedPoints = completedItems.reduce((sum, item) => sum + (item.storyPoints || 0), 0);
+  const totalPoints = goalItems.reduce((sum, item) => sum + (item.storyPoints ?? 0), 0);
+  const completedPoints = completedItems.reduce((sum, item) => sum + (item.storyPoints ?? 0), 0);
   const progress = totalPoints > 0 ? Math.round((completedPoints / totalPoints) * 100) : 0;
 
   return (

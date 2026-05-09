@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios, { type AxiosError } from 'axios';
@@ -53,8 +53,8 @@ export const IncrementCreate: React.FC = () => {
   const { user } = useAuthStore();
 
   const fromSprintComplete = searchParams.get('fromSprintComplete') === 'true';
-  const urlSprintId = searchParams.get('sprintId') || '';
-  const teamId = currentTeam?.id || '';
+  const urlSprintId = searchParams.get('sprintId') ?? '';
+  const teamId = currentTeam?.id ?? '';
 
   // Form state
   const [name, setName] = useState('');
@@ -85,9 +85,9 @@ export const IncrementCreate: React.FC = () => {
   });
 
   const availableSprints = useMemo(() => {
-    const allSprints = sprintsData?.data || [];
+    const allSprints = sprintsData?.data ?? [];
     return allSprints.filter((s) => {
-      const status = s.status?.toLowerCase();
+      const status = s.status.toLowerCase();
       return status === SprintStatus.ACTIVE || status === SprintStatus.COMPLETED;
     });
   }, [sprintsData]);
@@ -103,7 +103,7 @@ export const IncrementCreate: React.FC = () => {
     enabled: !!selectedSprintId,
   });
 
-  const eligiblePBIs = eligiblePBIsData?.data || [];
+  const eligiblePBIs = useMemo(() => eligiblePBIsData?.data ?? [], [eligiblePBIsData]);
 
   // Query: Get existing increments to track PBIs already in increments
   const { data: existingIncrementsData } = useQuery({
@@ -114,10 +114,10 @@ export const IncrementCreate: React.FC = () => {
 
   // Memo: Track PBIs already in other increments
   const pbiIdsInIncrements = useMemo(() => {
-    const increments = existingIncrementsData?.data || [];
+    const increments = existingIncrementsData?.data ?? [];
     const pbiSet = new Set<string>();
     increments.forEach((increment) => {
-      increment.includedPBIs?.forEach((pbiId) => pbiSet.add(pbiId));
+      increment.includedPBIs.forEach((pbiId) => pbiSet.add(pbiId));
     });
     return pbiSet;
   }, [existingIncrementsData]);
@@ -154,7 +154,7 @@ export const IncrementCreate: React.FC = () => {
         createdBy: user?.id,
       }),
     onSuccess: async (response) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.increment.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.increment.all });
 
       if (fromSprintComplete && response.data?.id) {
         setWorkflowStep('delivering');
@@ -166,27 +166,27 @@ export const IncrementCreate: React.FC = () => {
           success('Increment delivered! Redirecting to Sprint Review...');
 
           setTimeout(() => {
-            navigate(`/sprint-review/${selectedSprintId}`);
+            void navigate(`/sprint-review/${selectedSprintId}`);
           }, 1500);
         } catch (_error) {
           setWorkflowStep(null);
           showError(
             'Failed to deliver increment. You can deliver it manually from the increment details page.'
           );
-          if (response.data?.id) {
-            navigate(
+          if (response.data.id) {
+            void navigate(
               `/increment/${response.data.id}?fromSprintComplete=true&sprintId=${selectedSprintId}`
             );
           } else {
-            navigate('/increments');
+            void navigate('/increments');
           }
         }
       } else {
         success('Increment created successfully!');
         if (response.data) {
-          navigate(`/increment/${response.data.id}`);
+          void navigate(`/increment/${response.data.id}`);
         } else {
-          navigate('/increments');
+          void navigate('/increments');
         }
       }
     },
@@ -197,7 +197,7 @@ export const IncrementCreate: React.FC = () => {
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError<ApiResponse<never>>;
 
-        if (axiosError.response?.data?.error) {
+        if (axiosError.response?.data.error) {
           const apiError = axiosError.response.data.error;
 
           // Handle validation errors (422) with field details
@@ -240,14 +240,14 @@ export const IncrementCreate: React.FC = () => {
         'Delivered via sprint completion workflow'
       ),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.increment.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.increment.all });
     },
     onError: (error: Error | AxiosError<ApiResponse<never>>) => {
       let errorMessage = 'Failed to deliver increment. Please try again.';
 
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError<ApiResponse<never>>;
-        errorMessage = axiosError.response?.data?.error?.message || errorMessage;
+        errorMessage = axiosError.response?.data.error?.message ?? errorMessage;
       } else if (error instanceof Error) {
         errorMessage = error.message;
       }
@@ -341,7 +341,7 @@ export const IncrementCreate: React.FC = () => {
   // Memo: Calculate summary statistics
   const summary = useMemo(() => {
     const selectedPBIItems = eligiblePBIs.filter((pbi) => selectedPBIs.includes(pbi.id));
-    const totalStoryPoints = selectedPBIItems.reduce((sum, pbi) => sum + (pbi.storyPoints || 0), 0);
+    const totalStoryPoints = selectedPBIItems.reduce((sum, pbi) => sum + (pbi.storyPoints ?? 0), 0);
 
     return {
       count: selectedPBIs.length,
@@ -354,9 +354,9 @@ export const IncrementCreate: React.FC = () => {
    */
   const handleBack = () => {
     if (fromSprintComplete && selectedSprintId) {
-      navigate(`/sprint-review/${selectedSprintId}`);
+      void navigate(`/sprint-review/${selectedSprintId}`);
     } else {
-      navigate('/increments');
+      void navigate('/increments');
     }
   };
 
@@ -616,7 +616,7 @@ export const IncrementCreate: React.FC = () => {
                             <div className={styles['pbi-selection-header']}>
                               <span className={styles['pbi-title']}>{pbi.title}</span>
                               <span className={styles['pbi-points']}>
-                                {pbi.storyPoints || 0} pts
+                                {pbi.storyPoints ?? 0} pts
                               </span>
                             </div>
                             {isAlreadyInIncrement && (
@@ -698,14 +698,15 @@ export const IncrementCreate: React.FC = () => {
                   <div className={styles['form-error']}>
                     <AlertCircleIcon size={16} />
                     <div className={styles['error-content']}>
-                      {(createMutation.error as AxiosError<ApiResponse<never>>)?.response?.data
-                        ?.error?.details ? (
+                      {(createMutation.error as AxiosError<ApiResponse<never>>).response?.data.error
+                        ?.details ? (
                         <>
                           <strong>Validation failed. Please correct the following errors:</strong>
                           <ul className={styles['error-list']}>
                             {(
-                              createMutation.error as AxiosError<ApiResponse<never>>
-                            ).response!.data.error!.details!.map((detail, index) => (
+                              (createMutation.error as AxiosError<ApiResponse<never>>).response
+                                ?.data.error?.details ?? []
+                            ).map((detail, index) => (
                               <li key={index}>
                                 <strong>{detail.field}:</strong> {detail.message}
                               </li>
@@ -714,8 +715,8 @@ export const IncrementCreate: React.FC = () => {
                         </>
                       ) : (
                         <span>
-                          {(createMutation.error as AxiosError<ApiResponse<never>>)?.response?.data
-                            ?.error?.message ||
+                          {(createMutation.error as AxiosError<ApiResponse<never>>).response?.data
+                            .error?.message ??
                             (createMutation.error instanceof Error
                               ? createMutation.error.message
                               : 'Failed to create increment. Please try again.')}

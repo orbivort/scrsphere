@@ -18,6 +18,12 @@ import {
 
 import styles from './PendingRetroActionItems.module.css';
 
+interface RetroActionItemWithSprint extends RetroActionItem {
+  sprint?: {
+    name: string;
+  };
+}
+
 interface PendingRetroActionItemsProps {
   onCreateWorkItem?: (actionItem: RetroActionItem) => void;
 }
@@ -33,7 +39,7 @@ export const PendingRetroActionItems: React.FC<PendingRetroActionItemsProps> = (
 
   const { data: actionItemsData, isLoading } = useQuery({
     queryKey: ['pending-retro-action-items', teamId],
-    queryFn: () => apiService.getPendingRetroActionItems(teamId || ''),
+    queryFn: () => apiService.getPendingRetroActionItems(teamId ?? ''),
     enabled: !!teamId,
   });
 
@@ -41,12 +47,12 @@ export const PendingRetroActionItems: React.FC<PendingRetroActionItemsProps> = (
     mutationFn: ({ retroId, actionItemId }: { retroId: string; actionItemId: string }) =>
       apiService.updateActionItem(retroId, actionItemId, { addedToSprintBacklog: true }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.pendingRetroActionItems.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.allList });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.pendingRetroActionItems.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.allList });
     },
   });
 
-  const actionItems = actionItemsData?.data || [];
+  const actionItems = (actionItemsData?.data ?? []) as RetroActionItemWithSprint[];
 
   const filteredActionItems =
     filter === 'all' ? actionItems : actionItems.filter((item) => item.status === filter);
@@ -66,25 +72,28 @@ export const PendingRetroActionItems: React.FC<PendingRetroActionItemsProps> = (
       PENDING: {
         label: 'Pending',
         icon: <ClockIcon size={12} />,
-        className: styles['status-pending']!,
+        className: styles['status-pending'] ?? '',
       },
       IN_PROGRESS: {
         label: 'In Progress',
         icon: <RefreshIcon size={12} />,
-        className: styles['status-in-progress']!,
+        className: styles['status-in-progress'] ?? '',
       },
       COMPLETED: {
         label: 'Completed',
         icon: <CheckCircleIcon size={12} />,
-        className: styles['status-completed']!,
+        className: styles['status-completed'] ?? '',
       },
       CANCELLED: {
         label: 'Cancelled',
         icon: <XCircleIcon size={12} />,
-        className: styles['status-cancelled']!,
+        className: styles['status-cancelled'] ?? '',
       },
     };
-    return configs[status] ?? configs['PENDING']!;
+    return (
+      configs[status] ??
+      (configs['PENDING'] as { label: string; icon: React.ReactNode; className: string })
+    );
   };
 
   const handleCreateItem = (actionItem: RetroActionItem) => {
@@ -178,10 +187,10 @@ export const PendingRetroActionItems: React.FC<PendingRetroActionItemsProps> = (
                       )}
                     </div>
 
-                    {(item as any).sprint && (
+                    {item.sprint && (
                       <div className={styles['sprint-info']}>
                         <span className={styles['sprint-label']}>From Sprint:</span>
-                        <span className={styles['sprint-name']}>{(item as any).sprint.name}</span>
+                        <span className={styles['sprint-name']}>{item.sprint.name}</span>
                       </div>
                     )}
 

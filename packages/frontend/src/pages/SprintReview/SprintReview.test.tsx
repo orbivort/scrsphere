@@ -68,10 +68,15 @@ const mockReview = {
   id: 'review-1',
   sprintId: 'sprint-1',
   teamId: 'team-1',
+  incrementId: 'inc-1',
   reviewDate: '2026-01-14T00:00:00Z',
+  attendees: [],
+  feedback: [],
+  backlogAdjustments: [],
   status: 'completed',
   summary: 'Review summary',
   createdAt: '2026-01-14T00:00:00Z',
+  updatedAt: '2026-01-14T00:00:00Z',
 };
 
 const mockIncrement = {

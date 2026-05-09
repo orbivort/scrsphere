@@ -59,18 +59,18 @@ const CHART_OPTIONS: ChartOptions<'bar'> = {
 export const VelocityChart: React.FC<VelocityChartProps> = ({ data }) => {
   const chartData = useMemo(
     () => ({
-      labels: data?.sprints || [],
+      labels: data?.sprints ?? [],
       datasets: [
         {
           label: 'Planned',
-          data: data?.planned || [],
+          data: data?.planned ?? [],
           backgroundColor: 'rgba(156, 163, 175, 0.8)',
           borderColor: '#9CA3AF',
           borderWidth: 1,
         },
         {
           label: 'Completed',
-          data: data?.completed || [],
+          data: data?.completed ?? [],
           backgroundColor: 'rgba(26, 102, 255, 0.8)',
           borderColor: '#1A66FF',
           borderWidth: 1,

@@ -92,6 +92,7 @@ export const validateFormData = (
   }
 
   // MoSCoW Priority Validation - Always required
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (!formData.moscowPriority) {
     errors.moscowPriority =
       'MoSCoW Priority is required. Please select one of the four priority levels.';
@@ -99,7 +100,7 @@ export const validateFormData = (
 
   // Enhanced Estimate Validation - Required for Edit mode
   if (isEditMode) {
-    if (formData.estimate === undefined || formData.estimate === null) {
+    if (formData.estimate === undefined) {
       errors.estimate =
         'Estimate is required. Please select a story point value from the dropdown.';
     } else if (formData.estimate < 1) {
@@ -109,7 +110,7 @@ export const validateFormData = (
     }
   } else {
     // Create mode - optional but validated if provided
-    if (formData.estimate !== undefined && formData.estimate !== null) {
+    if (formData.estimate !== undefined) {
       if (formData.estimate < 1) {
         errors.estimate =
           'Estimate must be at least 1 story point. Please select a value from the dropdown or leave empty if not ready to estimate.';
@@ -121,7 +122,7 @@ export const validateFormData = (
 
   // Enhanced Business Value Validation - Required for Edit mode
   if (isEditMode) {
-    if (formData.businessValue === undefined || formData.businessValue === null) {
+    if (formData.businessValue === undefined) {
       errors.businessValue =
         'Business Value is required. Please select a value that reflects the importance of this item.';
     } else if (formData.businessValue < 1) {
@@ -132,7 +133,7 @@ export const validateFormData = (
     }
   } else {
     // Create mode - optional but validated if provided
-    if (formData.businessValue !== undefined && formData.businessValue !== null) {
+    if (formData.businessValue !== undefined) {
       if (formData.businessValue < 1) {
         errors.businessValue =
           'Business Value must be at least 1 point. Please select a value that reflects the relative importance of this item.';
@@ -144,7 +145,7 @@ export const validateFormData = (
 
   // Labels Validation - Required for Edit mode
   if (isEditMode) {
-    if (!formData.labels?.trim()) {
+    if (!formData.labels.trim()) {
       errors.labels = 'At least one label is required. Please add a label to categorize this item.';
     } else {
       const labelErrors = validateLabels(formData.labels);
@@ -154,7 +155,7 @@ export const validateFormData = (
     }
   } else {
     // Create mode - validate format if provided
-    if (formData.labels && formData.labels.trim()) {
+    if (formData.labels.trim()) {
       const labelErrors = validateLabels(formData.labels);
       if (labelErrors.length > 0) {
         errors.labels = labelErrors.join(' ');
@@ -169,6 +170,7 @@ export const validateFormData = (
   }
 
   // Status Validation - Required for Edit mode
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (isEditMode && !formData.status) {
     errors.status = 'Status is required.';
   }
@@ -264,6 +266,7 @@ export const validateItemForStatusChange = (
     missingFields.push('Description');
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (!item.priority) {
     missingFields.push('MoSCoW Priority');
   }
@@ -276,7 +279,7 @@ export const validateItemForStatusChange = (
     missingFields.push('Estimate (Story Points)');
   }
 
-  if (!item.labels || item.labels.length === 0) {
+  if (item.labels.length === 0) {
     missingFields.push('Labels (at least one)');
   }
 

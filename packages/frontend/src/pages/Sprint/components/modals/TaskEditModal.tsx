@@ -50,10 +50,10 @@ export const TaskEditModal: React.FC<TaskEditModalProps> = ({
   const hasUnsavedChanges = useCallback((): boolean => {
     return hasUnsavedChangesForEdit(formData, {
       title: task.title || '',
-      description: task.description || '',
-      assigneeId: task.assigneeId || '',
-      estimatedHours: task.estimatedHours || 0,
-      remainingHours: task.remainingHours || 0,
+      description: task.description ?? '',
+      assigneeId: task.assigneeId ?? '',
+      estimatedHours: task.estimatedHours ?? 0,
+      remainingHours: task.remainingHours ?? 0,
     });
   }, [task, formData]);
 
@@ -192,7 +192,7 @@ export const TaskEditModal: React.FC<TaskEditModalProps> = ({
                   <option value="">Select a backlog item...</option>
                   {sprintItems.map((item) => (
                     <option key={item.id} value={item.id}>
-                      {item.title} ({item.storyPoints || 0} pts)
+                      {item.title} ({item.storyPoints ?? 0} pts)
                     </option>
                   ))}
                 </select>

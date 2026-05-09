@@ -12,10 +12,10 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 import { TaskCard, type TaskCardProps } from './TaskCard';
 import { AnnouncerProvider } from '../../../components/LiveAnnouncer';
-import { TaskStatus } from '../../../types';
+import { TaskStatus, type Task } from '../../../types';
 
 // Mock task data
-const createMockTask = (overrides?: Partial<any>): any => ({
+const createMockTask = (overrides?: Partial<Task>): Task => ({
   id: 'task-123',
   sprintId: 'sprint-1',
   pbiId: 'pbi-1',

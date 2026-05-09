@@ -4,8 +4,9 @@ import 'vi-axe/extend-expect';
 // Extend Vitest expect with vi-axe matchers
 
 // Mock import.meta.env for Vite - must be done before any imports
-if (typeof (globalThis as any).import === 'undefined') {
-  (globalThis as any).import = { meta: { env: {} } };
+const globalImport = globalThis as { import?: { meta: { env: Record<string, string> } } };
+if (typeof globalImport.import === 'undefined') {
+  globalImport.import = { meta: { env: {} } };
 }
 
 Object.defineProperty(globalThis, 'import.meta', {
@@ -46,7 +47,7 @@ class MockResizeObserver {
   disconnect() {}
 }
 
-globalThis.ResizeObserver = MockResizeObserver as any;
+globalThis.ResizeObserver = MockResizeObserver as unknown as typeof ResizeObserver;
 
 class MockIntersectionObserver {
   observe() {}
@@ -54,7 +55,8 @@ class MockIntersectionObserver {
   disconnect() {}
 }
 
-globalThis.IntersectionObserver = MockIntersectionObserver as any;
+globalThis.IntersectionObserver =
+  MockIntersectionObserver as unknown as typeof IntersectionObserver;
 
 // Mock window.confirm
 Object.defineProperty(window, 'confirm', {
