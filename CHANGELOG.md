@@ -5,6 +5,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-05-10
+
+### Added
+
+- **env**: add production environment templates and update CI config
+
+### Changed
+
+- **e2e**: improve auth test reliability and mock state management
+- **e2e**: remove unused expect imports from page objects
+- improve type safety and clean up unused imports
+
+### Fixed
+
+- **frontend**: resolve CodeQL warnings for useless conditionals and unreachable code
+- **frontend**: resolve issues for fixing lint warnings
+- **frontend**: resolve undefined/null values in various components
+- **frontend**: resolve lint warnings and failing tests in SprintReview
+- **frontend**: resolve 1232 ESLint warnings and 50 TypeScript errors
+- **backend**: include user relation in votesBy query to resolve type error
+- **backend**: resolve type safety issues with optional properties
+- **backend**: make includedPBIs and backlogItems optional in type definitions
+- **backend**: add optional chaining to fix integration test failures
+- **backend**: resolve all remaining ESLint warnings for clean build
+- **backend**: resolve test failures from lint fixes and maintain backward compatibility
+- **backend**: resolve all ESLint warnings for type safety
+- **backend**: resolve additional ESLint warnings for type safety
+- **backend**: resolve ESLint warnings for type safety and code quality
+
 ## [1.1.0] - 2026-05-06
 
 ### Added
