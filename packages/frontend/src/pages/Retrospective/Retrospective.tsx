@@ -1671,7 +1671,8 @@ export const SprintRetrospective: React.FC = () => {
 
           <AttendeesSection
             entityId={retrospective.id}
-            sprintId={sprintId || ''}
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- sprintId is guaranteed to be defined after the guard at line 969
+            sprintId={sprintId!}
             attendees={retrospective.attendees}
             teamMembers={teamMembers}
             isCompleted={retrospective.status === RetrospectiveStatus.COMPLETED}
