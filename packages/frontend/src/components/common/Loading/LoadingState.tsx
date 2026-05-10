@@ -247,9 +247,6 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
       <SkeletonChart label={label} />
     </div>
   );
-
-  // Fallback for unknown variants (should never happen with TypeScript)
-  return null;
 };
 
 export default LoadingState;

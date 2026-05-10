@@ -972,7 +972,8 @@ export const SprintReview: React.FC = () => {
 
             <AttendeesSection
               entityId={review.id || ''}
-              sprintId={sprintId || ''}
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- sprintId is guaranteed to be defined after the guard at line 653
+              sprintId={sprintId!}
               attendees={review.attendees}
               teamMembers={teamMembers}
               isCompleted={isReviewCompleted}
