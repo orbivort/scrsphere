@@ -2915,6 +2915,88 @@ class MockApiService {
     const consent = this.consentStore.find((c) => c.id === consentId) ?? null;
     return mockSuccess(consent);
   }
+
+  // ==================== Generic HTTP Methods ====================
+  // These methods route requests to specific mock implementations
+
+  async get<T>(url: string, _config?: { params?: Record<string, unknown> }): Promise<{ data: T }> {
+    await mockDelay(200);
+
+    // Route notification requests
+    if (url === '/config/notifications') {
+      const result = await this.getNotificationConfig();
+      return { data: { success: result.success, data: result.data } as T };
+    }
+
+    if (url.startsWith('/notifications?')) {
+      const result = await this.getNotifications();
+      return { data: { success: result.success, data: result.data } as T };
+    }
+
+    if (url === '/notifications/unread-count') {
+      const result = await this.getUnreadCount();
+      return { data: { success: result.success, data: result.data } as T };
+    }
+
+    // Default: return empty success response
+    return { data: { success: true } as T };
+  }
+
+  async post<T>(_url: string, data?: unknown): Promise<{ data: T }> {
+    await mockDelay(200);
+
+    // Route notification requests
+    if (typeof data === 'object' && data !== null && 'recipientId' in data) {
+      const result = await this.sendDirectMessage(data as { recipientId: string; message: string });
+      return {
+        data: {
+          success: result.success,
+          data: { notification: this.notificationsStore[this.notificationsStore.length - 1] },
+        } as T,
+      };
+    }
+
+    // Default: return empty success response
+    return { data: { success: true } as T };
+  }
+
+  async patch<T>(_url: string, _data?: unknown): Promise<{ data: T }> {
+    await mockDelay(200);
+
+    // Route notification requests
+    if (_url.includes('/read') && !_url.includes('mark-all')) {
+      const id = _url.split('/')[2];
+      if (id) {
+        const result = await this.markAsRead(id);
+        return { data: { success: result.success, data: { notification: result.data } } as T };
+      }
+    }
+
+    if (_url.includes('mark-all-read')) {
+      const result = await this.markAllAsRead();
+      return {
+        data: { success: result.success, data: { updatedCount: result.data?.count ?? 0 } } as T,
+      };
+    }
+
+    // Default: return empty success response
+    return { data: { success: true } as T };
+  }
+
+  async delete<T = never>(_url: string): Promise<{ data: T }> {
+    await mockDelay(200);
+
+    // Route notification requests
+    if (_url.startsWith('/notifications/')) {
+      const id = _url.split('/')[2];
+      if (id) {
+        await this.deleteNotification(id);
+      }
+    }
+
+    // Default: return empty success response
+    return { data: { success: true } as T };
+  }
 }
 
 export const mockApiService = new MockApiService();
