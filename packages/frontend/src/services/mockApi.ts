@@ -55,8 +55,13 @@ import {
   type SessionInfo,
   type SprintBacklogItem,
   type BacklogChange,
+  type Notification as AppNotification,
+  type ConsentRecord,
+  type WorkflowState,
+  type WorkflowTransition,
 } from '../types';
 
+import { mockSuccess, mockError, mockDelay } from './mockResponseUtils';
 import {
   mockUsers,
   mockTeams,
@@ -85,6 +90,8 @@ const getMockSessionInfo = (): SessionInfo => ({
 });
 
 class MockApiService {
+  private consentStore: ConsentRecord[] = [];
+
   async login(
     credentials: LoginCredentials
   ): Promise<ApiResponse<{ user: User; tokens: AuthTokens; sessionInfo: SessionInfo }>> {
@@ -2425,6 +2432,488 @@ class MockApiService {
   async deleteTeam(_id: string): Promise<ApiResponse<null>> {
     await delay(300);
     return { success: true };
+  }
+
+  // ==================== Notification Config ====================
+
+  async getNotificationConfig(): Promise<
+    ApiResponse<{
+      emailEnabled: boolean;
+      pushEnabled: boolean;
+      slackEnabled: boolean;
+      digestFrequency: string;
+    }>
+  > {
+    await mockDelay(200);
+    return mockSuccess({
+      emailEnabled: true,
+      pushEnabled: false,
+      slackEnabled: true,
+      digestFrequency: 'daily',
+    });
+  }
+
+  // ==================== Notifications ====================
+
+  private notificationsStore: AppNotification[] = [
+    {
+      id: 'notif-1',
+      userId: 'user-1',
+      type: 'task_assigned',
+      title: 'New Task Assigned',
+      message: 'You have been assigned to "Implement login feature"',
+      data: { taskId: 'task-1', pbiId: 'pbi-1' },
+      isRead: false,
+      createdAt: new Date().toISOString(),
+    },
+    {
+      id: 'notif-2',
+      userId: 'user-1',
+      type: 'mention',
+      title: 'You were mentioned',
+      message: 'John mentioned you in a comment',
+      data: { commentId: 'comment-1' },
+      isRead: true,
+      createdAt: new Date(Date.now() - 86400000).toISOString(),
+    },
+    {
+      id: 'notif-3',
+      userId: 'user-1',
+      type: 'sprint_update',
+      title: 'Sprint Started',
+      message: 'Sprint-2603 has started',
+      data: { sprintId: 'sprint-1' },
+      isRead: false,
+      createdAt: new Date(Date.now() - 3600000).toISOString(),
+    },
+  ];
+
+  async getNotifications(): Promise<ApiResponse<AppNotification[]>> {
+    await mockDelay(300);
+    return mockSuccess([...this.notificationsStore]);
+  }
+
+  async getUnreadCount(): Promise<ApiResponse<{ count: number }>> {
+    await mockDelay(100);
+    const count = this.notificationsStore.filter((n) => !n.isRead).length;
+    return mockSuccess({ count });
+  }
+
+  async markAsRead(id: string): Promise<ApiResponse<AppNotification>> {
+    await mockDelay(200);
+    const notif = this.notificationsStore.find((n) => n.id === id);
+    if (!notif) {
+      return mockError('NOT_FOUND', 'Notification not found');
+    }
+    notif.isRead = true;
+    return mockSuccess({ ...notif });
+  }
+
+  async markAllAsRead(): Promise<ApiResponse<{ count: number }>> {
+    await mockDelay(200);
+    let count = 0;
+    this.notificationsStore.forEach((n) => {
+      if (!n.isRead) {
+        n.isRead = true;
+        count++;
+      }
+    });
+    return mockSuccess({ count });
+  }
+
+  async deleteNotification(id: string): Promise<ApiResponse<never>> {
+    await mockDelay(200);
+    const index = this.notificationsStore.findIndex((n) => n.id === id);
+    if (index === -1) {
+      return mockError('NOT_FOUND', 'Notification not found');
+    }
+    this.notificationsStore.splice(index, 1);
+    return mockSuccess(undefined as never);
+  }
+
+  async sendDirectMessage(data: {
+    recipientId: string;
+    message: string;
+  }): Promise<ApiResponse<{ success: boolean }>> {
+    await mockDelay(300);
+    const newNotification: AppNotification = {
+      id: `notif-${Date.now()}`,
+      userId: data.recipientId,
+      type: 'direct_message',
+      title: 'New Message',
+      message: data.message,
+      isRead: false,
+      createdAt: new Date().toISOString(),
+    };
+    this.notificationsStore.push(newNotification);
+    return mockSuccess({ success: true });
+  }
+
+  // ==================== Workflow ====================
+
+  private workflowStatesStore: Record<string, WorkflowState[]> = {
+    ProductBacklogItem: [
+      {
+        id: 'state-1',
+        workflowId: 'workflow-pbi',
+        name: 'NEW',
+        displayName: 'New',
+        orderIndex: 0,
+        isFinal: false,
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: 'state-2',
+        workflowId: 'workflow-pbi',
+        name: 'REFINED',
+        displayName: 'Refined',
+        orderIndex: 1,
+        isFinal: false,
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: 'state-3',
+        workflowId: 'workflow-pbi',
+        name: 'READY',
+        displayName: 'Ready',
+        orderIndex: 2,
+        isFinal: false,
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: 'state-4',
+        workflowId: 'workflow-pbi',
+        name: 'IN_PROGRESS',
+        displayName: 'In Progress',
+        orderIndex: 3,
+        isFinal: false,
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: 'state-5',
+        workflowId: 'workflow-pbi',
+        name: 'DONE',
+        displayName: 'Done',
+        orderIndex: 4,
+        isFinal: true,
+        createdAt: new Date().toISOString(),
+      },
+    ],
+    Task: [
+      {
+        id: 'state-10',
+        workflowId: 'workflow-task',
+        name: 'TODO',
+        displayName: 'To Do',
+        orderIndex: 0,
+        isFinal: false,
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: 'state-11',
+        workflowId: 'workflow-task',
+        name: 'IN_PROGRESS',
+        displayName: 'In Progress',
+        orderIndex: 1,
+        isFinal: false,
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: 'state-12',
+        workflowId: 'workflow-task',
+        name: 'DONE',
+        displayName: 'Done',
+        orderIndex: 2,
+        isFinal: true,
+        createdAt: new Date().toISOString(),
+      },
+    ],
+    Impediment: [
+      {
+        id: 'state-20',
+        workflowId: 'workflow-impediment',
+        name: 'OPEN',
+        displayName: 'Open',
+        orderIndex: 0,
+        isFinal: false,
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: 'state-21',
+        workflowId: 'workflow-impediment',
+        name: 'IN_PROGRESS',
+        displayName: 'In Progress',
+        orderIndex: 1,
+        isFinal: false,
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: 'state-22',
+        workflowId: 'workflow-impediment',
+        name: 'RESOLVED',
+        displayName: 'Resolved',
+        orderIndex: 2,
+        isFinal: true,
+        createdAt: new Date().toISOString(),
+      },
+    ],
+  };
+
+  private workflowTransitionsStore: Record<string, WorkflowTransition[]> = {
+    ProductBacklogItem: [
+      { id: 'trans-1', entityType: 'ProductBacklogItem', fromState: 'NEW', toState: 'REFINED' },
+      { id: 'trans-2', entityType: 'ProductBacklogItem', fromState: 'REFINED', toState: 'READY' },
+      {
+        id: 'trans-3',
+        entityType: 'ProductBacklogItem',
+        fromState: 'READY',
+        toState: 'IN_PROGRESS',
+      },
+      {
+        id: 'trans-4',
+        entityType: 'ProductBacklogItem',
+        fromState: 'IN_PROGRESS',
+        toState: 'DONE',
+      },
+    ],
+    Task: [
+      { id: 'trans-10', entityType: 'Task', fromState: 'TODO', toState: 'IN_PROGRESS' },
+      { id: 'trans-11', entityType: 'Task', fromState: 'IN_PROGRESS', toState: 'DONE' },
+    ],
+    Impediment: [
+      { id: 'trans-20', entityType: 'Impediment', fromState: 'OPEN', toState: 'IN_PROGRESS' },
+      { id: 'trans-21', entityType: 'Impediment', fromState: 'IN_PROGRESS', toState: 'RESOLVED' },
+    ],
+  };
+
+  private statusChangeHistoryStore: Array<{
+    id: string;
+    entityType: string;
+    entityId: string;
+    fromStatus: string;
+    toStatus: string;
+    changedBy: string;
+    changedAt: string;
+  }> = [
+    {
+      id: 'history-1',
+      entityType: 'ProductBacklogItem',
+      entityId: 'pbi-001',
+      fromStatus: 'NEW',
+      toStatus: 'REFINED',
+      changedBy: 'user-1',
+      changedAt: new Date(Date.now() - 86400000).toISOString(),
+    },
+  ];
+
+  async getWorkflowStates(entityType: string): Promise<ApiResponse<WorkflowState[]>> {
+    await mockDelay(200);
+    const states = this.workflowStatesStore[entityType] ?? [];
+    return mockSuccess(states);
+  }
+
+  async getAllowedTransitions(
+    entityType: string,
+    fromStatus: string
+  ): Promise<ApiResponse<string[]>> {
+    await mockDelay(200);
+    const transitions = this.workflowTransitionsStore[entityType] ?? [];
+    const allowed = transitions.filter((t) => t.fromState === fromStatus).map((t) => t.toState);
+    return mockSuccess(allowed);
+  }
+
+  async getWorkflowTransitions(entityType: string): Promise<ApiResponse<WorkflowTransition[]>> {
+    await mockDelay(200);
+    const transitions = this.workflowTransitionsStore[entityType] ?? [];
+    return mockSuccess(transitions);
+  }
+
+  async getWorkflowByEntityType(
+    entityType: string
+  ): Promise<ApiResponse<{ states: WorkflowState[]; transitions: WorkflowTransition[] }>> {
+    await mockDelay(200);
+    return mockSuccess({
+      states: this.workflowStatesStore[entityType] ?? [],
+      transitions: this.workflowTransitionsStore[entityType] ?? [],
+    });
+  }
+
+  async validateTransition(
+    entityType: string,
+    _entityId: string,
+    fromStatus: string,
+    toStatus: string
+  ): Promise<ApiResponse<{ valid: boolean; message?: string }>> {
+    await mockDelay(200);
+    const transitions = this.workflowTransitionsStore[entityType] ?? [];
+    const isValid = transitions.some((t) => t.fromState === fromStatus && t.toState === toStatus);
+    if (isValid) {
+      return mockSuccess({ valid: true });
+    }
+    return mockSuccess({
+      valid: false,
+      message: `Transition from ${fromStatus} to ${toStatus} is not allowed for ${entityType}`,
+    });
+  }
+
+  async getWorkflowStatusChangeHistory(
+    entityType: string,
+    entityId: string
+  ): Promise<
+    ApiResponse<
+      Array<{
+        id: string;
+        entityType: string;
+        entityId: string;
+        fromStatus: string;
+        toStatus: string;
+        changedBy: string;
+        changedAt: string;
+      }>
+    >
+  > {
+    await mockDelay(200);
+    const history = this.statusChangeHistoryStore.filter(
+      (h) => h.entityType === entityType && h.entityId === entityId
+    );
+    return mockSuccess(history);
+  }
+
+  // ==================== Data Export ====================
+
+  private exportStore: Map<
+    string,
+    {
+      status: 'pending' | 'processing' | 'completed' | 'failed';
+      progress: number;
+      downloadUrl?: string;
+      createdAt: string;
+      error?: string;
+    }
+  > = new Map();
+
+  async initiateExport(): Promise<ApiResponse<{ exportId: string; estimatedTime: number }>> {
+    await mockDelay(500);
+    const exportId = `export-${Date.now()}`;
+    this.exportStore.set(exportId, {
+      status: 'processing',
+      progress: 0,
+      createdAt: new Date().toISOString(),
+    });
+
+    // Simulate async processing - complete after 5 seconds
+    setTimeout(() => {
+      const exp = this.exportStore.get(exportId);
+      if (exp?.status === 'processing') {
+        exp.status = 'completed';
+        exp.progress = 100;
+        exp.downloadUrl = `/mock-exports/${exportId}.zip`;
+      }
+    }, 5000);
+
+    return mockSuccess({ exportId, estimatedTime: 30 });
+  }
+
+  async getExportStatus(exportId: string): Promise<
+    ApiResponse<{
+      status: string;
+      progress: number;
+      downloadUrl?: string;
+      error?: string;
+    }>
+  > {
+    await mockDelay(200);
+    const exp = this.exportStore.get(exportId);
+    if (!exp) {
+      return mockError('NOT_FOUND', 'Export not found');
+    }
+    return mockSuccess({
+      status: exp.status,
+      progress: exp.progress,
+      downloadUrl: exp.downloadUrl,
+      error: exp.error,
+    });
+  }
+
+  async downloadExport(exportId: string): Promise<ApiResponse<{ url: string }>> {
+    await mockDelay(300);
+    const exp = this.exportStore.get(exportId);
+    if (!exp) {
+      return mockError('NOT_FOUND', 'Export not found');
+    }
+    if (exp.status !== 'completed') {
+      return mockError('INVALID_STATE', 'Export is not ready for download');
+    }
+    return mockSuccess({ url: exp.downloadUrl ?? `/mock-exports/${exportId}.zip` });
+  }
+
+  async cancelExport(exportId: string): Promise<ApiResponse<{ message: string }>> {
+    await mockDelay(200);
+    const exp = this.exportStore.get(exportId);
+    if (!exp) {
+      return mockError('NOT_FOUND', 'Export not found');
+    }
+    if (exp.status === 'completed') {
+      return mockError('INVALID_STATE', 'Cannot cancel a completed export');
+    }
+    this.exportStore.delete(exportId);
+    return mockSuccess({ message: 'Export cancelled successfully' });
+  }
+
+  async getActiveExports(): Promise<ApiResponse<string[]>> {
+    await mockDelay(200);
+    const active = Array.from(this.exportStore.entries())
+      .filter(([_, v]) => v.status === 'processing')
+      .map(([k]) => k);
+    return mockSuccess(active);
+  }
+
+  // ==================== Consent Management ====================
+
+  async recordConsent(data: {
+    consentType: string;
+    granted: boolean;
+  }): Promise<ApiResponse<ConsentRecord>> {
+    await mockDelay(300);
+    const record: ConsentRecord = {
+      id: `consent-${Date.now()}`,
+      userId: 'user-1', // Mock current user
+      consentType: data.consentType as ConsentRecord['consentType'],
+      granted: data.granted,
+      grantedAt: data.granted ? new Date().toISOString() : undefined,
+      createdAt: new Date().toISOString(),
+    };
+    this.consentStore.push(record);
+    return mockSuccess(record);
+  }
+
+  async getConsentHistory(): Promise<ApiResponse<ConsentRecord[]>> {
+    await mockDelay(300);
+    return mockSuccess([...this.consentStore]);
+  }
+
+  async getLatestConsent(): Promise<ApiResponse<ConsentRecord | null>> {
+    await mockDelay(200);
+    const latest =
+      this.consentStore.length > 0 ? this.consentStore[this.consentStore.length - 1] : null;
+    return mockSuccess(latest ?? null);
+  }
+
+  async withdrawConsent(): Promise<ApiResponse<{ message: string }>> {
+    await mockDelay(300);
+    this.consentStore.forEach((c) => {
+      if (c.granted) {
+        c.granted = false;
+        c.withdrawnAt = new Date().toISOString();
+      }
+    });
+    return mockSuccess({ message: 'Consent withdrawn successfully' });
+  }
+
+  async getAnonymousConsent(consentId: string): Promise<ApiResponse<ConsentRecord | null>> {
+    await mockDelay(200);
+    const consent = this.consentStore.find((c) => c.id === consentId) ?? null;
+    return mockSuccess(consent);
   }
 }
 
