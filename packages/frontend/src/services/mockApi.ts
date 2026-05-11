@@ -2469,34 +2469,80 @@ class MockApiService {
     {
       id: 'notif-2',
       userId: 'user-1',
-      type: 'mention',
-      title: 'You were mentioned',
-      message: 'John mentioned you in a comment',
-      data: { commentId: 'comment-1' },
+      type: 'system',
+      title: 'Team Invitation',
+      message: 'You have been invited to join "Alpha Team"',
+      data: { teamId: 'team-1', teamName: 'Alpha Team' },
       isRead: true,
       createdAt: new Date(Date.now() - 86400000).toISOString(),
     },
     {
       id: 'notif-3',
       userId: 'user-1',
+      type: 'impediment',
+      title: 'Impediment Assigned',
+      message: 'You have been assigned to resolve impediment "Database connection issue"',
+      data: { impedimentId: 'impediment-1' },
+      isRead: false,
+      createdAt: new Date(Date.now() - 3600000).toISOString(),
+    },
+    {
+      id: 'notif-4',
+      userId: 'user-1',
+      type: 'system',
+      title: 'Daily Update Reminder',
+      message: 'Remember to submit your daily update for Sprint-2603',
+      data: { sprintId: 'sprint-1' },
+      isRead: false,
+      createdAt: new Date(Date.now() - 7200000).toISOString(),
+    },
+    {
+      id: 'notif-5',
+      userId: 'user-1',
+      type: 'direct_message',
+      title: 'Direct Message from John Doe',
+      message: 'Hey, can you review my pull request when you get a chance?',
+      data: { senderId: 'user-2', senderName: 'John Doe' },
+      isRead: true,
+      createdAt: new Date(Date.now() - 172800000).toISOString(),
+    },
+    {
+      id: 'notif-6',
+      userId: 'user-1',
       type: 'sprint_update',
       title: 'Sprint Started',
       message: 'Sprint-2603 has started',
       data: { sprintId: 'sprint-1' },
       isRead: false,
-      createdAt: new Date(Date.now() - 3600000).toISOString(),
+      createdAt: new Date(Date.now() - 259200000).toISOString(),
     },
   ];
 
-  async getNotifications(): Promise<ApiResponse<AppNotification[]>> {
+  async getNotifications(): Promise<
+    ApiResponse<{
+      notifications: AppNotification[];
+      pagination: { page: number; limit: number; total: number; totalPages: number };
+      unreadCount: number;
+    }>
+  > {
     await mockDelay(300);
-    return mockSuccess([...this.notificationsStore]);
+    const unreadCount = this.notificationsStore.filter((n) => !n.isRead).length;
+    return mockSuccess({
+      notifications: [...this.notificationsStore],
+      pagination: {
+        page: 1,
+        limit: 10,
+        total: this.notificationsStore.length,
+        totalPages: 1,
+      },
+      unreadCount,
+    });
   }
 
-  async getUnreadCount(): Promise<ApiResponse<{ count: number }>> {
+  async getUnreadCount(): Promise<ApiResponse<{ count: number; lastCheckedAt: string }>> {
     await mockDelay(100);
     const count = this.notificationsStore.filter((n) => !n.isRead).length;
-    return mockSuccess({ count });
+    return mockSuccess({ count, lastCheckedAt: new Date().toISOString() });
   }
 
   async markAsRead(id: string): Promise<ApiResponse<AppNotification>> {
