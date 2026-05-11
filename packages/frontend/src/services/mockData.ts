@@ -400,37 +400,162 @@ export const mockTeams: Team[] = [
 
 // ==================== Product Goals ====================
 export const mockProductGoals: ProductGoal[] = [
+  // ==================== ACTIVE GOALS (1) ====================
   {
-    id: 'goal-1',
-    teamId: 'team-1',
-    title: 'MVP Release',
-    description: 'Deliver the minimum viable product with core Scrum tracking features',
+    id: 'goal-active-1',
+    teamId: UUIDS.teams.alpha,
+    title: 'Q2 Platform Enhancement',
+    description:
+      'Enhance the core platform with improved performance, new analytics dashboard, and enhanced user experience. This goal focuses on delivering measurable improvements to user productivity and system reliability.',
     status: 'ACTIVE',
-    targetDate: '2024-06-30T00:00:00Z',
-    successMetrics: '100% of MVP features implemented, 80% test coverage',
-    createdAt: '2024-01-01T00:00:00Z',
-    updatedAt: '2024-01-01T00:00:00Z',
+    targetDate: '2026-06-30T00:00:00Z',
+    successMetrics:
+      '50% improvement in page load times, 1000+ daily active users, 95% uptime, NPS score > 8.0',
+    strategicAlignment: 'growth',
+    createdAt: '2026-01-15T00:00:00Z',
+    updatedAt: '2026-04-01T00:00:00Z',
+  },
+
+  // ==================== NEW GOALS (3) ====================
+  {
+    id: 'goal-new-1',
+    teamId: UUIDS.teams.alpha,
+    title: 'Mobile Application Launch',
+    description:
+      'Develop and launch native mobile applications for iOS and Android platforms. Enable users to access key features on-the-go with offline capabilities and push notifications.',
+    status: 'NEW',
+    targetDate: '2026-09-30T00:00:00Z',
+    successMetrics:
+      'iOS and Android apps published to app stores, 500+ mobile downloads in first month, 4.5+ app store rating',
+    strategicAlignment: 'growth',
+    createdAt: '2026-04-10T00:00:00Z',
+    updatedAt: '2026-04-10T00:00:00Z',
   },
   {
-    id: 'goal-2',
-    teamId: 'team-1',
-    title: 'User Adoption',
-    description: 'Achieve significant user adoption and gather feedback',
+    id: 'goal-new-2',
+    teamId: UUIDS.teams.alpha,
+    title: 'Enterprise Integration Suite',
+    description:
+      'Build enterprise-grade integrations with popular tools like Jira, Slack, Microsoft Teams, and GitHub. Enable seamless workflow automation and data synchronization.',
+    status: 'NEW',
+    targetDate: '2026-12-15T00:00:00Z',
+    successMetrics:
+      '5+ enterprise integrations launched, 200+ active integration connections, 90% customer satisfaction',
+    strategicAlignment: 'tech',
+    createdAt: '2026-03-20T00:00:00Z',
+    updatedAt: '2026-03-20T00:00:00Z',
+  },
+  {
+    id: 'goal-new-3',
+    teamId: UUIDS.teams.beta,
+    title: 'AI-Powered Insights Engine',
+    description:
+      'Implement machine learning algorithms to provide predictive analytics, sprint velocity forecasting, and intelligent task recommendations. Help teams make data-driven decisions.',
+    status: 'NEW',
+    targetDate: '2026-11-30T00:00:00Z',
+    successMetrics:
+      'AI model accuracy > 85%, 50% of teams using AI insights weekly, 20% improvement in sprint predictability',
+    strategicAlignment: 'tech',
+    createdAt: '2026-04-05T00:00:00Z',
+    updatedAt: '2026-04-05T00:00:00Z',
+  },
+
+  // ==================== COMPLETED GOALS (4) ====================
+  {
+    id: 'goal-completed-1',
+    teamId: UUIDS.teams.alpha,
+    title: 'MVP Release',
+    description:
+      'Deliver the minimum viable product with core Scrum tracking features including sprint management, backlog prioritization, and team collaboration tools.',
     status: 'COMPLETED',
-    targetDate: '2024-09-30T00:00:00Z',
-    successMetrics: '1000 active users, 90% satisfaction rate',
-    createdAt: '2024-01-15T00:00:00Z',
-    updatedAt: '2024-01-15T00:00:00Z',
+    targetDate: '2025-12-31T00:00:00Z',
+    successMetrics:
+      'All MVP features delivered on time, 100% test coverage achieved, 50 beta users onboarded successfully',
+    strategicAlignment: 'growth',
+    createdAt: '2025-06-01T00:00:00Z',
+    updatedAt: '2025-12-28T00:00:00Z',
+  },
+  {
+    id: 'goal-completed-2',
+    teamId: UUIDS.teams.alpha,
+    title: 'User Authentication & Security',
+    description:
+      'Implement secure authentication system with OAuth 2.0, SSO integration, and comprehensive security audit. Ensure enterprise-grade security compliance.',
+    status: 'COMPLETED',
+    targetDate: '2025-10-31T00:00:00Z',
+    successMetrics:
+      'OAuth 2.0 implemented, SSO with Google and Microsoft, passed security audit with zero critical issues',
+    strategicAlignment: 'tech',
+    createdAt: '2025-08-15T00:00:00Z',
+    updatedAt: '2025-10-25T00:00:00Z',
+  },
+  {
+    id: 'goal-completed-3',
+    teamId: UUIDS.teams.beta,
+    title: 'Real-time Collaboration',
+    description:
+      'Enable real-time collaboration features including live updates, presence indicators, and instant notifications. Improve team communication and reduce context switching.',
+    status: 'COMPLETED',
+    targetDate: '2026-02-28T00:00:00Z',
+    successMetrics:
+      'WebSocket infrastructure deployed, <100ms latency for updates, 95% positive user feedback',
+    strategicAlignment: 'ux',
+    createdAt: '2025-11-01T00:00:00Z',
+    updatedAt: '2026-02-20T00:00:00Z',
+  },
+  {
+    id: 'goal-completed-4',
+    teamId: UUIDS.teams.alpha,
+    title: 'Documentation & Knowledge Base',
+    description:
+      'Create comprehensive documentation, API references, video tutorials, and interactive guides. Enable users to self-serve and reduce support ticket volume.',
+    status: 'COMPLETED',
+    targetDate: '2026-03-15T00:00:00Z',
+    successMetrics:
+      '100+ help articles published, API documentation complete, 40% reduction in support tickets',
+    strategicAlignment: 'ux',
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-03-10T00:00:00Z',
+  },
+
+  // ==================== ABANDONED GOALS (2) ====================
+  {
+    id: 'goal-abandoned-1',
+    teamId: UUIDS.teams.alpha,
+    title: 'Legacy System Migration',
+    description:
+      'Migrate existing users from the legacy v1 platform to the new architecture. This goal was discontinued due to the decision to focus on new customer acquisition.',
+    status: 'ABANDONED',
+    targetDate: '2025-09-30T00:00:00Z',
+    successMetrics:
+      'Planned: 100% legacy users migrated, zero data loss, <4 hours downtime per migration batch',
+    strategicAlignment: 'tech',
+    createdAt: '2025-07-01T00:00:00Z',
+    updatedAt: '2025-08-15T00:00:00Z',
+  },
+  {
+    id: 'goal-abandoned-2',
+    teamId: UUIDS.teams.beta,
+    title: 'Blockchain Audit Trail',
+    description:
+      'Implement blockchain-based immutable audit trail for enterprise compliance requirements. Discontinued due to changing regulatory landscape and customer priorities.',
+    status: 'ABANDONED',
+    targetDate: '2026-06-30T00:00:00Z',
+    successMetrics:
+      'Planned: Immutable audit logs, regulatory compliance certification, integration with 3 major audit firms',
+    strategicAlignment: 'tech',
+    createdAt: '2025-12-01T00:00:00Z',
+    updatedAt: '2026-02-28T00:00:00Z',
   },
 ];
 
 // ==================== Product Backlog Items ====================
 export const mockProductBacklogItems: ProductBacklogItem[] = [
-  // New Items
+  // New Items - For Active Goal (Q2 Platform Enhancement)
   {
     id: '019c6739-e4b1-75b7-9e35-0ad52076afc0',
     teamId: UUIDS.teams.alpha,
-    goalId: '019c671c-10f8-70e9-8f31-9242bcb5e684',
+    goalId: 'goal-active-1',
     title: 'Implement real-time notifications',
     description:
       'Add WebSocket-based real-time notifications for task updates, mentions, and sprint events',
@@ -447,7 +572,7 @@ export const mockProductBacklogItems: ProductBacklogItem[] = [
   {
     id: '019c6739-e4b1-75b7-9e35-0ad52076afc1',
     teamId: UUIDS.teams.alpha,
-    goalId: '019c671c-10f8-70e9-8f31-9242bcb5e684',
+    goalId: 'goal-active-1',
     title: 'Add burndown chart analytics',
     description: 'Enhance burndown charts with predictive analytics and trend analysis',
     priority: MoSCoWPriority.SHOULD_HAVE,
@@ -461,11 +586,11 @@ export const mockProductBacklogItems: ProductBacklogItem[] = [
     updatedAt: '2024-02-02T00:00:00Z',
   },
 
-  // Refined Items
+  // Refined Items - For Active Goal
   {
     id: 'pbi-003',
-    teamId: 'team-1',
-    goalId: 'goal-1',
+    teamId: UUIDS.teams.alpha,
+    goalId: 'goal-active-1',
     title: 'User authentication system',
     description:
       'Implement secure authentication with JWT tokens, password reset, and OAuth integration',
@@ -475,14 +600,14 @@ export const mockProductBacklogItems: ProductBacklogItem[] = [
     labels: ['backend', 'security', 'authentication'],
     acceptanceCriteria:
       '- Email/password login\n- OAuth (Google, GitHub)\n- Password reset flow\n- Session management',
-    createdBy: 'user-3',
+    createdBy: UUIDS.users.developer1,
     createdAt: '2024-01-15T00:00:00Z',
     updatedAt: '2024-01-20T00:00:00Z',
   },
   {
     id: 'pbi-004',
-    teamId: 'team-1',
-    goalId: 'goal-1',
+    teamId: UUIDS.teams.alpha,
+    goalId: 'goal-active-1',
     title: 'Sprint planning workflow',
     description: 'Create intuitive sprint planning interface with drag-and-drop backlog items',
     priority: MoSCoWPriority.COULD_HAVE,
@@ -491,16 +616,16 @@ export const mockProductBacklogItems: ProductBacklogItem[] = [
     labels: ['frontend', 'ux'],
     acceptanceCriteria:
       '- Drag items from backlog to sprint\n- Capacity planning\n- Velocity prediction\n- Sprint goal definition',
-    createdBy: 'user-2',
+    createdBy: UUIDS.users.scrumMaster,
     createdAt: '2024-01-16T00:00:00Z',
     updatedAt: '2024-01-22T00:00:00Z',
   },
 
-  // Ready Items
+  // Ready Items - For Active Goal
   {
     id: 'pbi-005',
-    teamId: 'team-1',
-    goalId: 'goal-1',
+    teamId: UUIDS.teams.alpha,
+    goalId: 'goal-active-1',
     title: 'Product backlog management',
     description: 'Full-featured product backlog with priorities, estimates, and filtering',
     priority: MoSCoWPriority.MUST_HAVE,
@@ -509,15 +634,15 @@ export const mockProductBacklogItems: ProductBacklogItem[] = [
     labels: ['frontend', 'feature'],
     acceptanceCriteria:
       '- Create/edit/delete items\n- Prioritize with drag-and-drop\n- Filter by status, labels\n- Search functionality',
-    createdBy: 'user-3',
+    createdBy: UUIDS.users.developer1,
     createdAt: '2024-01-10T00:00:00Z',
     updatedAt: '2024-01-25T00:00:00Z',
     creator: mockUsers[2],
   },
   {
     id: 'pbi-006',
-    teamId: 'team-1',
-    goalId: 'goal-1',
+    teamId: UUIDS.teams.alpha,
+    goalId: 'goal-active-1',
     title: 'Team management dashboard',
     description: 'Comprehensive team management with roles, permissions, and activity tracking',
     priority: MoSCoWPriority.WONT_HAVE,
@@ -526,16 +651,16 @@ export const mockProductBacklogItems: ProductBacklogItem[] = [
     labels: ['frontend', 'admin'],
     acceptanceCriteria:
       '- Team member list\n- Role assignment\n- Activity timeline\n- Team metrics',
-    createdBy: 'user-2',
+    createdBy: UUIDS.users.scrumMaster,
     createdAt: '2024-01-12T00:00:00Z',
     updatedAt: '2024-01-26T00:00:00Z',
   },
 
-  // In Progress Items (in current sprint)
+  // In Progress Items (in current sprint) - For Active Goal
   {
     id: 'pbi-007',
-    teamId: 'team-1',
-    goalId: 'goal-1',
+    teamId: UUIDS.teams.alpha,
+    goalId: 'goal-active-1',
     title: 'Daily Scrum interface',
     description: 'Interface for team members to submit and view daily Scrum updates',
     priority: MoSCoWPriority.SHOULD_HAVE,
@@ -544,15 +669,15 @@ export const mockProductBacklogItems: ProductBacklogItem[] = [
     labels: ['frontend', 'feature'],
     acceptanceCriteria:
       '- Submit yesterday/today/impediments\n- View team updates\n- Historical updates\n- Notification reminders',
-    createdBy: 'user-3',
+    createdBy: UUIDS.users.developer1,
     createdAt: '2024-01-18T00:00:00Z',
     updatedAt: '2024-02-05T00:00:00Z',
     creator: mockUsers[2],
   },
   {
     id: 'pbi-008',
-    teamId: 'team-1',
-    goalId: 'goal-1',
+    teamId: UUIDS.teams.alpha,
+    goalId: 'goal-active-1',
     title: 'Impediment tracking',
     description: 'Track and manage impediments with ownership, status, and resolution',
     priority: MoSCoWPriority.COULD_HAVE,
@@ -561,17 +686,17 @@ export const mockProductBacklogItems: ProductBacklogItem[] = [
     labels: ['frontend', 'feature', 'scrum-master'],
     acceptanceCriteria:
       '- Create impediments\n- Assign owner\n- Track status\n- Resolution workflow\n- Dashboard alerts',
-    createdBy: 'user-2',
+    createdBy: UUIDS.users.scrumMaster,
     createdAt: '2024-01-20T00:00:00Z',
     updatedAt: '2024-02-05T00:00:00Z',
     creator: mockUsers[1],
   },
 
-  // Done Items
+  // Done Items - For Completed Goal (MVP Release)
   {
     id: 'pbi-009',
-    teamId: 'team-1',
-    goalId: 'goal-1',
+    teamId: UUIDS.teams.alpha,
+    goalId: 'goal-completed-1',
     title: 'Sprint board with Kanban view',
     description: 'Interactive Kanban board for active sprint task management',
     priority: MoSCoWPriority.MUST_HAVE,
@@ -580,15 +705,15 @@ export const mockProductBacklogItems: ProductBacklogItem[] = [
     labels: ['frontend', 'feature'],
     acceptanceCriteria:
       '- Three columns: To Do, In Progress, Done\n- Drag-and-drop tasks\n- Task details modal\n- Quick actions',
-    createdBy: 'user-3',
+    createdBy: UUIDS.users.developer1,
     createdAt: '2024-01-05T00:00:00Z',
     updatedAt: '2024-02-03T00:00:00Z',
     creator: mockUsers[2],
   },
   {
     id: 'pbi-010',
-    teamId: 'team-1',
-    goalId: 'goal-1',
+    teamId: UUIDS.teams.alpha,
+    goalId: 'goal-completed-1',
     title: 'Dashboard with sprint overview',
     description: 'Main dashboard showing sprint progress, burndown chart, and key metrics',
     priority: MoSCoWPriority.MUST_HAVE,
@@ -597,15 +722,15 @@ export const mockProductBacklogItems: ProductBacklogItem[] = [
     labels: ['frontend', 'feature'],
     acceptanceCriteria:
       '- Sprint summary cards\n- Burndown chart\n- My tasks widget\n- Quick actions\n- Team updates',
-    createdBy: 'user-3',
+    createdBy: UUIDS.users.developer1,
     createdAt: '2024-01-03T00:00:00Z',
     updatedAt: '2024-02-01T00:00:00Z',
     creator: mockUsers[2],
   },
   {
     id: 'pbi-011',
-    teamId: 'team-1',
-    goalId: 'goal-1',
+    teamId: UUIDS.teams.alpha,
+    goalId: 'goal-completed-1',
     title: 'Responsive design',
     description: 'Ensure all pages are fully responsive and work on mobile devices',
     priority: MoSCoWPriority.WONT_HAVE,
@@ -614,7 +739,7 @@ export const mockProductBacklogItems: ProductBacklogItem[] = [
     labels: ['frontend', 'ux', 'mobile'],
     acceptanceCriteria:
       '- Mobile-first approach\n- Tablet optimization\n- Touch-friendly interactions\n- Consistent across devices',
-    createdBy: 'user-2',
+    createdBy: UUIDS.users.scrumMaster,
     createdAt: '2024-01-08T00:00:00Z',
     updatedAt: '2024-02-04T00:00:00Z',
     creator: mockUsers[1],
@@ -626,7 +751,7 @@ export const mockSprints: Sprint[] = [
   // Completed Sprints
   {
     id: 'sprint-1',
-    teamId: 'team-1',
+    teamId: UUIDS.teams.alpha,
     name: 'Sprint-2601 (2026/01/05-2026/01/16)',
     startDate: '2026-01-05T00:00:00Z',
     endDate: '2026-01-18T00:00:00Z',
@@ -639,7 +764,7 @@ export const mockSprints: Sprint[] = [
   },
   {
     id: 'sprint-2',
-    teamId: 'team-1',
+    teamId: UUIDS.teams.alpha,
     name: 'Sprint-2602 (2026/01/19-2026/01/30)',
     startDate: '2026-01-19T00:00:00Z',
     endDate: '2026-02-01T00:00:00Z',
@@ -656,7 +781,7 @@ export const mockSprints: Sprint[] = [
   // Planned Sprint (ready to be started)
   {
     id: 'sprint-3',
-    teamId: 'team-1',
+    teamId: UUIDS.teams.alpha,
     name: 'Sprint-2603 (2026/02/02-2026/02/13)',
     startDate: '2026-02-02T00:00:00Z',
     endDate: '2026-02-15T00:00:00Z',
@@ -682,7 +807,7 @@ export const mockTasks: Task[] = [
     pbiId: 'pbi-007',
     title: 'Design daily Scrum form UI',
     description: 'Create wireframes and implement form layout for daily updates',
-    assigneeId: 'user-1',
+    assigneeId: UUIDS.users.admin,
     status: 'DONE' as TaskStatus,
     estimatedHours: 4,
     remainingHours: 0,
@@ -696,7 +821,7 @@ export const mockTasks: Task[] = [
     pbiId: 'pbi-007',
     title: 'Implement form validation',
     description: 'Add client-side validation for daily Scrum form',
-    assigneeId: 'user-4',
+    assigneeId: UUIDS.users.developer2,
     status: 'DONE' as TaskStatus,
     estimatedHours: 3,
     remainingHours: 0,
@@ -710,7 +835,7 @@ export const mockTasks: Task[] = [
     pbiId: 'pbi-007',
     title: 'Create team updates view',
     description: 'Build component to display all team member updates for a day',
-    assigneeId: 'user-1',
+    assigneeId: UUIDS.users.admin,
     status: 'IN_PROGRESS' as TaskStatus,
     estimatedHours: 6,
     remainingHours: 3,
@@ -724,7 +849,7 @@ export const mockTasks: Task[] = [
     pbiId: 'pbi-007',
     title: 'Add historical updates feature',
     description: 'Implement ability to view past daily Scrum updates',
-    assigneeId: 'user-5',
+    assigneeId: UUIDS.users.guest,
     status: 'TODO' as TaskStatus,
     estimatedHours: 5,
     remainingHours: 5,
@@ -740,7 +865,7 @@ export const mockTasks: Task[] = [
     pbiId: 'pbi-008',
     title: 'Design impediment card component',
     description: 'Create reusable impediment card with status indicator',
-    assigneeId: 'user-4',
+    assigneeId: UUIDS.users.developer2,
     status: 'IN_PROGRESS' as TaskStatus,
     estimatedHours: 3,
     remainingHours: 1,
@@ -754,7 +879,7 @@ export const mockTasks: Task[] = [
     pbiId: 'pbi-008',
     title: 'Implement impediment CRUD operations',
     description: 'Build create, read, update, delete functionality for impediments',
-    assigneeId: 'user-1',
+    assigneeId: UUIDS.users.admin,
     status: 'TODO' as TaskStatus,
     estimatedHours: 6,
     remainingHours: 6,
@@ -768,7 +893,7 @@ export const mockTasks: Task[] = [
     pbiId: 'pbi-008',
     title: 'Add impediment status workflow',
     description: 'Implement status transitions and resolution workflow',
-    assigneeId: 'user-5',
+    assigneeId: UUIDS.users.guest,
     status: 'TODO' as TaskStatus,
     estimatedHours: 4,
     remainingHours: 4,
@@ -787,13 +912,13 @@ if (sprintToUpdate) {
 export const mockImpediments: Impediment[] = [
   {
     id: 'imp-001',
-    teamId: 'team-1',
+    teamId: UUIDS.teams.alpha,
     sprintId: 'sprint-3',
     title: 'API documentation incomplete',
     description:
       'Backend API documentation is missing several endpoints, making integration difficult',
-    reportedById: 'user-1',
-    ownerId: 'user-2',
+    reportedById: UUIDS.users.admin,
+    ownerId: UUIDS.users.scrumMaster,
     status: 'IN_PROGRESS' as ImpedimentStatus,
     resolution: 'Working with backend team to complete documentation',
     createdAt: '2024-02-13T00:00:00Z',
@@ -803,11 +928,11 @@ export const mockImpediments: Impediment[] = [
   },
   {
     id: 'imp-002',
-    teamId: 'team-1',
+    teamId: UUIDS.teams.alpha,
     sprintId: 'sprint-3',
     title: 'Styling conflicts with CSS modules',
     description: 'Some CSS modules are conflicting with global styles, causing layout issues',
-    reportedById: 'user-4',
+    reportedById: UUIDS.users.developer2,
     status: 'OPEN' as ImpedimentStatus,
     createdAt: '2024-02-14T00:00:00Z',
     updatedAt: '2024-02-14T00:00:00Z',
@@ -815,12 +940,12 @@ export const mockImpediments: Impediment[] = [
   },
   {
     id: 'imp-003',
-    teamId: 'team-1',
+    teamId: UUIDS.teams.alpha,
     sprintId: 'sprint-2',
     title: 'Test environment down',
     description: 'CI/CD test environment was unavailable for 2 days',
-    reportedById: 'user-5',
-    ownerId: 'user-2',
+    reportedById: UUIDS.users.guest,
+    ownerId: UUIDS.users.scrumMaster,
     status: 'RESOLVED' as ImpedimentStatus,
     resolution: 'DevOps team fixed the issue, environment is now stable',
     createdAt: '2024-02-05T00:00:00Z',
@@ -850,7 +975,7 @@ export const mockDailyUpdates: DailyUpdate[] = [
   {
     id: 'update-today-1',
     sprintId: 'sprint-3',
-    userId: 'user-1',
+    userId: UUIDS.users.admin,
     updateDate: formatDate(today),
     yesterdayWork:
       'Completed the task card UI improvements with drag-and-drop functionality. Fixed several styling issues in the Kanban board. Reviewed and merged 3 PRs.',
@@ -863,7 +988,7 @@ export const mockDailyUpdates: DailyUpdate[] = [
   {
     id: 'update-today-2',
     sprintId: 'sprint-3',
-    userId: 'user-4',
+    userId: UUIDS.users.developer2,
     updateDate: formatDate(today),
     yesterdayWork:
       'Finished implementing the filter component for the backlog. Added support for multi-select filters. Wrote unit tests for filter logic.',
@@ -877,7 +1002,7 @@ export const mockDailyUpdates: DailyUpdate[] = [
   {
     id: 'update-today-3',
     sprintId: 'sprint-3',
-    userId: 'user-5',
+    userId: UUIDS.users.guest,
     updateDate: formatDate(today),
     yesterdayWork:
       'Set up the mock API service layer for testing. Created comprehensive test data for sprint planning. Fixed 2 bugs in the task status update flow.',
@@ -890,7 +1015,7 @@ export const mockDailyUpdates: DailyUpdate[] = [
   {
     id: 'update-today-4',
     sprintId: 'sprint-3',
-    userId: 'user-3',
+    userId: UUIDS.users.developer1,
     updateDate: formatDate(today),
     yesterdayWork:
       'Completed sprint goal definition for Sprint 4. Refined 5 new backlog items with the team. Updated product roadmap documentation.',
@@ -905,7 +1030,7 @@ export const mockDailyUpdates: DailyUpdate[] = [
   {
     id: 'update-yest-1',
     sprintId: 'sprint-3',
-    userId: 'user-1',
+    userId: UUIDS.users.admin,
     updateDate: formatDate(yesterday),
     yesterdayWork:
       'Implemented the basic Kanban board layout. Created task card components. Set up the drag-and-drop infrastructure.',
@@ -918,7 +1043,7 @@ export const mockDailyUpdates: DailyUpdate[] = [
   {
     id: 'update-yest-2',
     sprintId: 'sprint-3',
-    userId: 'user-4',
+    userId: UUIDS.users.developer2,
     updateDate: formatDate(yesterday),
     yesterdayWork:
       'Built the backlog filter bar component. Added status and label filter options. Integrated with the product backlog page.',
@@ -931,7 +1056,7 @@ export const mockDailyUpdates: DailyUpdate[] = [
   {
     id: 'update-yest-3',
     sprintId: 'sprint-3',
-    userId: 'user-5',
+    userId: UUIDS.users.guest,
     updateDate: formatDate(yesterday),
     yesterdayWork:
       'Created mock data generators for the demo. Set up testing infrastructure. Fixed issues with date formatting.',
@@ -944,7 +1069,7 @@ export const mockDailyUpdates: DailyUpdate[] = [
   {
     id: 'update-yest-4',
     sprintId: 'sprint-3',
-    userId: 'user-2',
+    userId: UUIDS.users.scrumMaster,
     updateDate: formatDate(yesterday),
     yesterdayWork:
       'Facilitated sprint planning meeting. Removed blockers for 2 team members. Updated sprint backlog priorities.',
@@ -957,7 +1082,7 @@ export const mockDailyUpdates: DailyUpdate[] = [
   {
     id: 'update-yest-5',
     sprintId: 'sprint-3',
-    userId: 'user-3',
+    userId: UUIDS.users.developer1,
     updateDate: formatDate(yesterday),
     yesterdayWork:
       'Refined backlog items with development team. Created acceptance criteria for 3 user stories. Updated sprint goal.',
@@ -972,7 +1097,7 @@ export const mockDailyUpdates: DailyUpdate[] = [
   {
     id: 'update-2days-1',
     sprintId: 'sprint-3',
-    userId: 'user-1',
+    userId: UUIDS.users.admin,
     updateDate: formatDate(twoDaysAgo),
     yesterdayWork:
       'Set up the sprint planning page structure. Created basic layout components. Started Kanban board wireframe.',
@@ -985,7 +1110,7 @@ export const mockDailyUpdates: DailyUpdate[] = [
   {
     id: 'update-2days-2',
     sprintId: 'sprint-3',
-    userId: 'user-4',
+    userId: UUIDS.users.developer2,
     updateDate: formatDate(twoDaysAgo),
     yesterdayWork:
       'Implemented product backlog item cards. Added priority badge and status indicators. Set up filtering infrastructure.',
@@ -998,7 +1123,7 @@ export const mockDailyUpdates: DailyUpdate[] = [
   {
     id: 'update-2days-3',
     sprintId: 'sprint-3',
-    userId: 'user-5',
+    userId: UUIDS.users.guest,
     updateDate: formatDate(twoDaysAgo),
     yesterdayWork:
       'Configured testing framework with Jest and React Testing Library. Wrote initial test cases for core components.',
@@ -1011,7 +1136,7 @@ export const mockDailyUpdates: DailyUpdate[] = [
   {
     id: 'update-2days-4',
     sprintId: 'sprint-3',
-    userId: 'user-2',
+    userId: UUIDS.users.scrumMaster,
     updateDate: formatDate(twoDaysAgo),
     yesterdayWork:
       'Kicked off Sprint 3 planning session. Defined sprint goal with team. Assigned sprint backlog items.',
@@ -1024,7 +1149,7 @@ export const mockDailyUpdates: DailyUpdate[] = [
   {
     id: 'update-2days-5',
     sprintId: 'sprint-3',
-    userId: 'user-3',
+    userId: UUIDS.users.developer1,
     updateDate: formatDate(twoDaysAgo),
     yesterdayWork:
       'Presented sprint goals to stakeholders. Gathered feedback on MVP features. Prioritized backlog items.',
@@ -1039,7 +1164,7 @@ export const mockDailyUpdates: DailyUpdate[] = [
   {
     id: 'update-001',
     sprintId: 'sprint-3',
-    userId: 'user-1',
+    userId: UUIDS.users.admin,
     updateDate: '2024-02-12',
     yesterdayWork: 'Completed daily Scrum form UI design. Started implementing team updates view.',
     todayWork: 'Continue working on team updates view component. Start integrating with mock data.',
@@ -1050,7 +1175,7 @@ export const mockDailyUpdates: DailyUpdate[] = [
   {
     id: 'update-002',
     sprintId: 'sprint-3',
-    userId: 'user-4',
+    userId: UUIDS.users.developer2,
     updateDate: '2024-02-12',
     yesterdayWork:
       'Implemented form validation with error messages. Started impediment card design.',
@@ -1062,7 +1187,7 @@ export const mockDailyUpdates: DailyUpdate[] = [
   {
     id: 'update-003',
     sprintId: 'sprint-3',
-    userId: 'user-5',
+    userId: UUIDS.users.guest,
     updateDate: '2024-02-12',
     yesterdayWork:
       'Set up test environment for daily Scrum feature. Wrote unit tests for form component.',
@@ -1074,7 +1199,7 @@ export const mockDailyUpdates: DailyUpdate[] = [
   {
     id: 'update-004',
     sprintId: 'sprint-3',
-    userId: 'user-1',
+    userId: UUIDS.users.admin,
     updateDate: '2024-02-13',
     yesterdayWork: 'Finished team updates view component. Started integrating with API service.',
     todayWork: 'Complete API integration. Start working on impediment CRUD operations.',
@@ -1085,7 +1210,7 @@ export const mockDailyUpdates: DailyUpdate[] = [
   {
     id: 'update-005',
     sprintId: 'sprint-3',
-    userId: 'user-4',
+    userId: UUIDS.users.developer2,
     updateDate: '2024-02-13',
     yesterdayWork: 'Completed impediment card design. Started implementing card interactions.',
     todayWork: 'Finish card interactions. Fix CSS styling conflicts.',
