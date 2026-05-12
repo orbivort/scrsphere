@@ -249,7 +249,10 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
         {/* Sidebar footer with app version */}
         <div className={styles['sidebar-footer']}>
-          <span className={styles['version-badge']}>v{__APP_VERSION__}</span>
+          <span className={styles['version-badge']}>
+            v{__APP_VERSION__}
+            {import.meta.env.VITE_USE_MOCK_API !== 'false' ? ' (DEMO)' : ''}
+          </span>
         </div>
       </aside>
 
