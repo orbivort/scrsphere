@@ -73,7 +73,7 @@ export const LoginPage: React.FC = () => {
   // Auto-populate credentials in mock mode (demo/development only)
   useEffect(() => {
     if (import.meta.env.VITE_USE_MOCK_API !== 'false') {
-      setEmail('admin@example.com');
+      setEmail('demo@example.com');
       setPassword('demo123456');
     }
   }, []);

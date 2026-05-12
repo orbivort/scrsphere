@@ -42,7 +42,7 @@ export const UUIDS = {
 export const mockUsers: User[] = [
   {
     id: UUIDS.users.admin,
-    email: 'admin@example.com',
+    email: 'demo@example.com',
     firstName: 'John',
     lastName: 'Administrator',
     avatarUrl: generateAvatarUrl('John'),
