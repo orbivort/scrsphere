@@ -1408,22 +1408,21 @@ export const mockDailyUpdates: DailyUpdate[] = [
 
 // ==================== Burndown Data ====================
 export const mockBurndownData: BurndownData[] = [
-  // Sprint 3 burndown (Day 0-14)
-  { date: '2024-02-12', ideal: 34, actual: 34 },
-  { date: '2024-02-13', ideal: 31.57, actual: 32 },
-  { date: '2024-02-14', ideal: 29.14, actual: 29 },
-  { date: '2024-02-15', ideal: 26.71, actual: 27 },
-  { date: '2024-02-16', ideal: 24.28, actual: 0 },
-  { date: '2024-02-17', ideal: 21.85, actual: 0 },
-  { date: '2024-02-18', ideal: 19.42, actual: 0 },
-  { date: '2024-02-19', ideal: 16.99, actual: 0 },
-  { date: '2024-02-20', ideal: 14.56, actual: 0 },
-  { date: '2024-02-21', ideal: 12.13, actual: 0 },
-  { date: '2024-02-22', ideal: 9.7, actual: 0 },
-  { date: '2024-02-23', ideal: 7.27, actual: 0 },
-  { date: '2024-02-24', ideal: 4.84, actual: 0 },
-  { date: '2024-02-25', ideal: 2.41, actual: 0 },
-  { date: '2024-02-26', ideal: 0, actual: 0 },
+  // Sprint 3 burndown (2026/02/02 - 2026/02/15) - 13 day sprint, 64 total hours
+  { date: '2026-02-02', ideal: 64, actual: 64 },
+  { date: '2026-02-03', ideal: 59.1, actual: 60 },
+  { date: '2026-02-04', ideal: 54.2, actual: 52 },
+  { date: '2026-02-05', ideal: 49.2, actual: 48 },
+  { date: '2026-02-06', ideal: 44.3, actual: 45 },
+  { date: '2026-02-07', ideal: 39.4, actual: 38 },
+  { date: '2026-02-08', ideal: 34.5, actual: 40 },
+  { date: '2026-02-09', ideal: 29.5, actual: 38 },
+  { date: '2026-02-10', ideal: 24.6, actual: 38 },
+  { date: '2026-02-11', ideal: 19.7, actual: 0 },
+  { date: '2026-02-12', ideal: 14.8, actual: 0 },
+  { date: '2026-02-13', ideal: 9.8, actual: 0 },
+  { date: '2026-02-14', ideal: 4.9, actual: 0 },
+  { date: '2026-02-15', ideal: 0, actual: 0 },
 ];
 
 // ==================== Velocity Data ====================
