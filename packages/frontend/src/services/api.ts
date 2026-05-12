@@ -239,6 +239,10 @@ class ApiService {
     return coreApiService.axiosInstance.post(url, data);
   }
 
+  async put<T>(url: string, data?: unknown): Promise<{ data: T }> {
+    return coreApiService.axiosInstance.put(url, data);
+  }
+
   async patch<T>(url: string, data?: unknown): Promise<{ data: T }> {
     return coreApiService.axiosInstance.patch(url, data);
   }

@@ -3990,6 +3990,36 @@ class MockApiService {
   async get<T>(url: string, _config?: { params?: Record<string, unknown> }): Promise<{ data: T }> {
     await mockDelay(200);
 
+    // Route definition of done requests
+    if (url.includes('/definition-of-done') && !url.includes('/history')) {
+      const parts = url.split('/');
+      const teamId = parts[2] ?? '';
+      const result = await this.getDefinitionOfDone(teamId);
+      return { data: { success: result.success, data: result.data } as T };
+    }
+
+    if (url.includes('/definition-of-done/history')) {
+      const parts = url.split('/');
+      const teamId = parts[2] ?? '';
+      const result = await this.getDoDHistory(teamId);
+      return { data: { success: result.success, data: result.data } as T };
+    }
+
+    // Route definition of ready requests
+    if (url.includes('/definition-of-ready') && !url.includes('/history')) {
+      const parts = url.split('/');
+      const teamId = parts[2] ?? '';
+      const result = await this.getDefinitionOfReady(teamId);
+      return { data: { success: result.success, data: result.data } as T };
+    }
+
+    if (url.includes('/definition-of-ready/history')) {
+      const parts = url.split('/');
+      const teamId = parts[2] ?? '';
+      const result = await this.getDoRHistory(teamId);
+      return { data: { success: result.success, data: result.data } as T };
+    }
+
     // Route notification requests
     if (url === '/config/notifications') {
       const result = await this.getNotificationConfig();
@@ -4015,6 +4045,33 @@ class MockApiService {
     if (url.startsWith('/user/export-data/status/')) {
       const jobId = url.split('/').pop() ?? '';
       const result = await this.getExportStatus(jobId);
+      return { data: { success: result.success, data: result.data } as T };
+    }
+
+    // Default: return empty success response
+    return { data: { success: true } as T };
+  }
+
+  async put<T>(_url: string, data?: unknown): Promise<{ data: T }> {
+    await mockDelay(200);
+
+    // Route definition of done update
+    if (_url.includes('/definition-of-done')) {
+      const parts = _url.split('/');
+      const teamId = parts[2] ?? '';
+      const typedData = data as { items?: DoDItem[] } | undefined;
+      const items = typedData?.items ?? [];
+      const result = await this.updateDefinitionOfDone(teamId, items);
+      return { data: { success: result.success, data: result.data } as T };
+    }
+
+    // Route definition of ready update
+    if (_url.includes('/definition-of-ready')) {
+      const parts = _url.split('/');
+      const teamId = parts[2] ?? '';
+      const typedData = data as { items?: DoRItem[] } | undefined;
+      const items = typedData?.items ?? [];
+      const result = await this.updateDefinitionOfReady(teamId, items);
       return { data: { success: result.success, data: result.data } as T };
     }
 
