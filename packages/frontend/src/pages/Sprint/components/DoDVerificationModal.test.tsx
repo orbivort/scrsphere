@@ -10,10 +10,11 @@ import {
   createMockBacklogItem,
   createMockTask,
 } from '../../../__mocks__/mockData';
-import { apiService } from '../../../services';
+import { definitionService } from '../../../services';
+import { type DoDChecklistVerification } from '../../../types';
 
 vi.mock('../../../services', () => ({
-  apiService: {
+  definitionService: {
     getDoDVerificationsForPBI: vi.fn(),
   },
 }));
@@ -70,7 +71,8 @@ describe('DoDVerificationModal', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     queryClient = createQueryClient();
-    (apiService.getDoDVerificationsForPBI as ReturnType<typeof vi.fn>).mockResolvedValue({
+    (definitionService.getDoDVerificationsForPBI as ReturnType<typeof vi.fn>).mockResolvedValue({
+      success: true,
       data: [],
     });
   });
@@ -417,7 +419,7 @@ describe('DoDVerificationModal', () => {
     });
 
     it('should handle verification fetch error', async () => {
-      (apiService.getDoDVerificationsForPBI as ReturnType<typeof vi.fn>).mockRejectedValue(
+      (definitionService.getDoDVerificationsForPBI as ReturnType<typeof vi.fn>).mockRejectedValue(
         new Error('Failed to fetch')
       );
 
@@ -429,5 +431,3 @@ describe('DoDVerificationModal', () => {
     });
   });
 });
-
-import { type DoDChecklistVerification } from '../../../types';
