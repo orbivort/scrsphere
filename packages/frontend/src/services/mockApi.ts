@@ -3015,21 +3015,30 @@ class MockApiService {
 
   async getMyTeams(): Promise<ApiResponse<(Team & { userRole: string })[]>> {
     await delay(300);
-    const teamsWithRoles = mockTeams.map((team) => ({
-      ...team,
-      userRole: 'developer' as string,
-    }));
+    const currentUser = getCurrentUser();
+    const teamsWithRoles = mockTeams.map((team) => {
+      const member = team.members?.find((m) => m.userId === currentUser.id);
+      const userRole = member?.role ?? 'developer';
+      return {
+        ...team,
+        userRole,
+      };
+    });
     return {
       success: true,
       data: teamsWithRoles,
     };
   }
 
-  async getMyRoleInTeam(_teamId: string): Promise<ApiResponse<{ role: string }>> {
+  async getMyRoleInTeam(teamId: string): Promise<ApiResponse<{ role: string }>> {
     await delay(200);
+    const currentUser = getCurrentUser();
+    const team = mockTeams.find((t) => t.id === teamId);
+    const member = team?.members?.find((m) => m.userId === currentUser.id);
+    const role = member?.role ?? 'developer';
     return {
       success: true,
-      data: { role: 'developer' },
+      data: { role },
     };
   }
 
@@ -3045,11 +3054,14 @@ class MockApiService {
         },
       };
     }
+    const currentUser = getCurrentUser();
+    const member = team.members?.find((m) => m.userId === currentUser.id);
+    const userRole = member?.role ?? 'developer';
     return {
       success: true,
       data: {
         ...team,
-        userRole: 'developer',
+        userRole,
       },
     };
   }
