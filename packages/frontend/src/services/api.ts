@@ -36,7 +36,6 @@ import { impedimentsService } from './domain/impediments.service';
 import { reportsService } from './domain/reports.service';
 import { productGoalsService } from './domain/productGoals.service';
 import { sprintConfigService } from './domain/sprintConfig.service';
-import { definitionService } from './domain/definition.service';
 import { incrementService } from './domain/increment.service';
 import { sprintReviewService } from './domain/sprintReview.service';
 import { retrospectiveService } from './domain/retrospective.service';
@@ -159,21 +158,6 @@ class ApiService {
   // System Parameters endpoints
   getSystemParameters = systemParamsService.getSystemParameters.bind(systemParamsService);
   updateSystemParameter = systemParamsService.updateSystemParameter.bind(systemParamsService);
-
-  // Definition of Done endpoints
-  getDefinitionOfDone = definitionService.getDefinitionOfDone.bind(definitionService);
-  updateDefinitionOfDone = definitionService.updateDefinitionOfDone.bind(definitionService);
-  getDoDHistory = definitionService.getDoDHistory.bind(definitionService);
-  verifyDoDForPBI = definitionService.verifyDoDForPBI.bind(definitionService);
-  getDoDVerificationsForPBI = definitionService.getDoDVerificationsForPBI.bind(definitionService);
-  getDoDComplianceReport = definitionService.getDoDComplianceReport.bind(definitionService);
-
-  // Definition of Ready endpoints
-  getDefinitionOfReady = definitionService.getDefinitionOfReady.bind(definitionService);
-  updateDefinitionOfReady = definitionService.updateDefinitionOfReady.bind(definitionService);
-  getDoRHistory = definitionService.getDoRHistory.bind(definitionService);
-  verifyDoRForPBI = definitionService.verifyDoRForPBI.bind(definitionService);
-  getDoRVerificationsForPBI = definitionService.getDoRVerificationsForPBI.bind(definitionService);
 
   // Increment endpoints
   getIncrements = incrementService.getIncrements.bind(incrementService);

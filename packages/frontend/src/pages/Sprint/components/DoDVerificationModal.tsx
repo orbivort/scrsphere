@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 
 import type { DoDItem, ProductBacklogItem, Task, DoDChecklistVerification } from '../../../types';
-import { apiService } from '../../../services';
+import { definitionService } from '../../../services';
 import { logger } from '../../../utils/logger';
 import { LoadingState } from '../../../components/common/Loading';
 
@@ -86,9 +86,9 @@ export const DoDVerificationModal: React.FC<DoDVerificationModalProps> = ({
 
     try {
       const fetchPromises = pbiIds.map((pbiId) =>
-        apiService
+        definitionService
           .getDoDVerificationsForPBI(pbiId)
-          .catch(() => ({ data: [] as DoDChecklistVerification[] }))
+          .catch(() => ({ success: false, data: [] as DoDChecklistVerification[] }))
       );
 
       const results = await Promise.all(fetchPromises);

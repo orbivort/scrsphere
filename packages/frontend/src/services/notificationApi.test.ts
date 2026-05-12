@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { notificationApi } from './notificationApi';
-import { apiService } from './api';
+import { apiService } from './index';
 
-vi.mock('./api', () => ({
+vi.mock('./index', () => ({
   apiService: {
     get: vi.fn(),
     post: vi.fn(),

@@ -7,7 +7,7 @@ import {
 } from '@tanstack/react-query';
 import { TIME } from '@scrsphere/shared';
 
-import { apiService } from '../../services';
+import { apiService, definitionService } from '../../services';
 import { useAnnounce } from '../../components/LiveAnnouncer';
 import { useMutationErrorHandler } from '../../hooks/useMutationErrorHandler';
 import { queryKeys } from '../../hooks/queryKeys';
@@ -147,7 +147,7 @@ export const useSprintBoardData = (
   // Fetch DoD items
   const { data: dodData } = useQuery({
     queryKey: ['definition-of-done', teamId],
-    queryFn: () => apiService.getDefinitionOfDone(teamId ?? ''),
+    queryFn: () => definitionService.getDefinitionOfDone(teamId ?? ''),
     enabled: !!teamId,
   });
 
@@ -161,7 +161,7 @@ export const useSprintBoardData = (
   // Fetch DoD compliance (conditional)
   const { data: dodComplianceData } = useQuery({
     queryKey: ['dod-compliance', sprint?.id],
-    queryFn: () => apiService.getDoDComplianceReport(sprint?.id ?? ''),
+    queryFn: () => definitionService.getDoDComplianceReport(sprint?.id ?? ''),
     enabled: !!sprint?.id && showDodVerification,
   });
 

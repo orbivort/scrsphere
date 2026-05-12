@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import { apiService } from '../../../services';
+import { definitionService } from '../../../services';
 import { logger } from '../../../utils/logger';
 
 /**
@@ -55,7 +55,7 @@ export const useDefinitionOfReadyDone = (
 
       setIsLoadingDoR(true);
       try {
-        const response = await apiService.getDefinitionOfReady(teamId);
+        const response = await definitionService.getDefinitionOfReady(teamId);
         if (response.success && response.data) {
           const items = response.data.items
             .filter((item) => item.isActive)
@@ -85,7 +85,7 @@ export const useDefinitionOfReadyDone = (
 
       setIsLoadingDoD(true);
       try {
-        const response = await apiService.getDefinitionOfDone(teamId);
+        const response = await definitionService.getDefinitionOfDone(teamId);
         if (response.success && response.data) {
           const items = response.data.items
             .filter((item) => item.isActive)
