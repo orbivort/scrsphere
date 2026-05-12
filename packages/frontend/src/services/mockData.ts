@@ -44,10 +44,10 @@ export const mockUsers: User[] = [
     id: UUIDS.users.admin,
     email: 'demo@example.com',
     firstName: 'John',
-    lastName: 'Administrator',
+    lastName: 'Doe',
     avatarUrl: generateAvatarUrl('John'),
-    createdAt: '2024-01-01T00:00:00Z',
-    updatedAt: '2024-01-01T00:00:00Z',
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z',
   },
   {
     id: UUIDS.users.scrumMaster,
@@ -55,8 +55,8 @@ export const mockUsers: User[] = [
     firstName: 'Sarah',
     lastName: 'Smith',
     avatarUrl: generateAvatarUrl('sarah'),
-    createdAt: '2024-01-05T00:00:00Z',
-    updatedAt: '2024-01-05T00:00:00Z',
+    createdAt: '2026-01-05T00:00:00Z',
+    updatedAt: '2026-01-05T00:00:00Z',
   },
   {
     id: UUIDS.users.developer1,
@@ -64,8 +64,8 @@ export const mockUsers: User[] = [
     firstName: 'Mike',
     lastName: 'Wilson',
     avatarUrl: generateAvatarUrl('mike'),
-    createdAt: '2024-01-05T00:00:00Z',
-    updatedAt: '2024-01-05T00:00:00Z',
+    createdAt: '2026-01-05T00:00:00Z',
+    updatedAt: '2026-01-05T00:00:00Z',
   },
   {
     id: UUIDS.users.developer2,
@@ -73,8 +73,8 @@ export const mockUsers: User[] = [
     firstName: 'Emma',
     lastName: 'Davis',
     avatarUrl: generateAvatarUrl('emma'),
-    createdAt: '2024-01-10T00:00:00Z',
-    updatedAt: '2024-01-10T00:00:00Z',
+    createdAt: '2026-01-10T00:00:00Z',
+    updatedAt: '2026-01-10T00:00:00Z',
   },
   {
     id: UUIDS.users.guest,
@@ -82,8 +82,8 @@ export const mockUsers: User[] = [
     firstName: 'Alex',
     lastName: 'Brown',
     avatarUrl: generateAvatarUrl('alex'),
-    createdAt: '2024-01-10T00:00:00Z',
-    updatedAt: '2024-01-10T00:00:00Z',
+    createdAt: '2026-01-10T00:00:00Z',
+    updatedAt: '2026-01-10T00:00:00Z',
   },
   {
     id: UUIDS.users.developer3,
@@ -91,8 +91,8 @@ export const mockUsers: User[] = [
     firstName: 'Lisa',
     lastName: 'Miller',
     avatarUrl: generateAvatarUrl('lisa'),
-    createdAt: '2024-01-12T00:00:00Z',
-    updatedAt: '2024-01-12T00:00:00Z',
+    createdAt: '2026-01-12T00:00:00Z',
+    updatedAt: '2026-01-12T00:00:00Z',
   },
   {
     id: UUIDS.users.productOwner2,
@@ -100,8 +100,8 @@ export const mockUsers: User[] = [
     firstName: 'David',
     lastName: 'Taylor',
     avatarUrl: generateAvatarUrl('david'),
-    createdAt: '2024-01-12T00:00:00Z',
-    updatedAt: '2024-01-12T00:00:00Z',
+    createdAt: '2026-01-12T00:00:00Z',
+    updatedAt: '2026-01-12T00:00:00Z',
   },
   {
     id: '018ff5b8-0e23-7e8c-9d2f-4a6b8c3d5e88',
@@ -109,8 +109,8 @@ export const mockUsers: User[] = [
     firstName: 'Sophia',
     lastName: 'Anderson',
     avatarUrl: generateAvatarUrl('sophia'),
-    createdAt: '2024-01-18T00:00:00Z',
-    updatedAt: '2024-01-18T00:00:00Z',
+    createdAt: '2026-01-18T00:00:00Z',
+    updatedAt: '2026-01-18T00:00:00Z',
   },
   {
     id: '018ff5b8-0e24-7e8c-9d2f-4a6b8c3d5e89',
@@ -118,8 +118,8 @@ export const mockUsers: User[] = [
     firstName: 'Robert',
     lastName: 'Clark',
     avatarUrl: generateAvatarUrl('robert'),
-    createdAt: '2024-01-20T00:00:00Z',
-    updatedAt: '2024-01-20T00:00:00Z',
+    createdAt: '2026-01-20T00:00:00Z',
+    updatedAt: '2026-01-20T00:00:00Z',
   },
   {
     id: 'user-11',
@@ -127,8 +127,8 @@ export const mockUsers: User[] = [
     firstName: 'Olivia',
     lastName: 'White',
     avatarUrl: generateAvatarUrl('olivia'),
-    createdAt: '2024-01-20T00:00:00Z',
-    updatedAt: '2024-01-20T00:00:00Z',
+    createdAt: '2026-01-20T00:00:00Z',
+    updatedAt: '2026-01-20T00:00:00Z',
   },
   {
     id: 'user-12',
@@ -136,8 +136,8 @@ export const mockUsers: User[] = [
     firstName: 'James',
     lastName: 'Harris',
     avatarUrl: generateAvatarUrl('james'),
-    createdAt: '2024-01-20T00:00:00Z',
-    updatedAt: '2024-01-20T00:00:00Z',
+    createdAt: '2026-01-20T00:00:00Z',
+    updatedAt: '2026-01-20T00:00:00Z',
   },
 ];
 
@@ -220,7 +220,7 @@ export const mockDefinitionOfDone: Record<string, DefinitionOfDone> = {
     ],
     version: 2,
     updatedBy: 'user-2',
-    updatedAt: '2024-02-10T14:30:00Z',
+    updatedAt: '2026-02-10T14:30:00Z',
   },
   'team-2': {
     id: 'dod-2',
@@ -264,7 +264,7 @@ export const mockDefinitionOfDone: Record<string, DefinitionOfDone> = {
     ],
     version: 1,
     updatedBy: 'user-6',
-    updatedAt: '2024-02-01T09:15:00Z',
+    updatedAt: '2026-02-01T09:15:00Z',
   },
 };
 
@@ -275,15 +275,15 @@ export const mockTeams: Team[] = [
     name: 'Alpha Team',
     description: 'Main development team for the Agile Scrum Tracker project',
     createdBy: UUIDS.users.scrumMaster,
-    createdAt: '2024-01-01T00:00:00Z',
-    updatedAt: '2024-01-01T00:00:00Z',
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z',
     members: [
       {
         id: '018ff5b8-0e25-7e8c-9d2f-4a6b8c3d5e8a',
         teamId: UUIDS.teams.alpha,
         userId: UUIDS.users.scrumMaster,
         role: 'scrum_master' as UserRole,
-        joinedAt: '2024-01-01T00:00:00Z',
+        joinedAt: '2026-01-01T00:00:00Z',
         user: mockUsers[1] as User,
       },
       {
@@ -291,7 +291,7 @@ export const mockTeams: Team[] = [
         teamId: UUIDS.teams.alpha,
         userId: UUIDS.users.developer1,
         role: 'product_owner' as UserRole,
-        joinedAt: '2024-01-01T00:00:00Z',
+        joinedAt: '2026-01-01T00:00:00Z',
         user: mockUsers[2] as User,
       },
       {
@@ -299,7 +299,7 @@ export const mockTeams: Team[] = [
         teamId: UUIDS.teams.alpha,
         userId: UUIDS.users.admin,
         role: 'developer' as UserRole,
-        joinedAt: '2024-01-02T00:00:00Z',
+        joinedAt: '2026-01-02T00:00:00Z',
         user: mockUsers[0] as User,
       },
       {
@@ -307,7 +307,7 @@ export const mockTeams: Team[] = [
         teamId: UUIDS.teams.alpha,
         userId: UUIDS.users.developer2,
         role: 'developer' as UserRole,
-        joinedAt: '2024-01-02T00:00:00Z',
+        joinedAt: '2026-01-02T00:00:00Z',
         user: mockUsers[3] as User,
       },
       {
@@ -315,7 +315,7 @@ export const mockTeams: Team[] = [
         teamId: UUIDS.teams.alpha,
         userId: UUIDS.users.guest,
         role: 'developer' as UserRole,
-        joinedAt: '2024-01-03T00:00:00Z',
+        joinedAt: '2026-01-03T00:00:00Z',
         user: mockUsers[4] as User,
       },
     ],
@@ -325,15 +325,15 @@ export const mockTeams: Team[] = [
     name: 'Beta Team',
     description: 'Mobile development team working on iOS and Android apps',
     createdBy: UUIDS.users.developer3,
-    createdAt: '2024-01-15T00:00:00Z',
-    updatedAt: '2024-02-01T00:00:00Z',
+    createdAt: '2026-01-15T00:00:00Z',
+    updatedAt: '2026-02-01T00:00:00Z',
     members: [
       {
         id: '018ff5b8-0e2a-7e8c-9d2f-4a6b8c3d5e8f',
         teamId: UUIDS.teams.beta,
         userId: UUIDS.users.developer3,
         role: 'scrum_master' as UserRole,
-        joinedAt: '2024-01-15T00:00:00Z',
+        joinedAt: '2026-01-15T00:00:00Z',
         user: mockUsers[5] as User,
       },
       {
@@ -341,7 +341,7 @@ export const mockTeams: Team[] = [
         teamId: UUIDS.teams.beta,
         userId: UUIDS.users.productOwner2,
         role: 'product_owner' as UserRole,
-        joinedAt: '2024-01-15T00:00:00Z',
+        joinedAt: '2026-01-15T00:00:00Z',
         user: mockUsers[6] as User,
       },
       {
@@ -349,7 +349,7 @@ export const mockTeams: Team[] = [
         teamId: UUIDS.teams.beta,
         userId: '018ff5b8-0e23-7e8c-9d2f-4a6b8c3d5e88',
         role: 'developer' as UserRole,
-        joinedAt: '2024-01-16T00:00:00Z',
+        joinedAt: '2026-01-16T00:00:00Z',
         user: mockUsers[7] as User,
       },
       {
@@ -357,7 +357,7 @@ export const mockTeams: Team[] = [
         teamId: UUIDS.teams.beta,
         userId: '018ff5b8-0e24-7e8c-9d2f-4a6b8c3d5e89',
         role: 'developer' as UserRole,
-        joinedAt: '2024-01-20T00:00:00Z',
+        joinedAt: '2026-01-20T00:00:00Z',
         user: mockUsers[8] as User,
       },
     ],
@@ -367,15 +367,15 @@ export const mockTeams: Team[] = [
     name: 'Gamma Team',
     description: 'Quality assurance and testing team',
     createdBy: 'user-10',
-    createdAt: '2024-02-01T00:00:00Z',
-    updatedAt: '2024-02-01T00:00:00Z',
+    createdAt: '2026-02-01T00:00:00Z',
+    updatedAt: '2026-02-01T00:00:00Z',
     members: [
       {
         id: 'member-10',
         teamId: 'team-3',
         userId: 'user-10',
         role: 'scrum_master' as UserRole,
-        joinedAt: '2024-02-01T00:00:00Z',
+        joinedAt: '2026-02-01T00:00:00Z',
         user: mockUsers[9] as User,
       },
       {
@@ -383,7 +383,7 @@ export const mockTeams: Team[] = [
         teamId: 'team-3',
         userId: 'user-11',
         role: 'product_owner' as UserRole,
-        joinedAt: '2024-02-01T00:00:00Z',
+        joinedAt: '2026-02-01T00:00:00Z',
         user: mockUsers[10] as User,
       },
       {
@@ -391,7 +391,7 @@ export const mockTeams: Team[] = [
         teamId: 'team-3',
         userId: 'user-12',
         role: 'developer' as UserRole,
-        joinedAt: '2024-02-01T00:00:00Z',
+        joinedAt: '2026-02-01T00:00:00Z',
         user: mockUsers[11] as User,
       },
     ],
@@ -468,12 +468,12 @@ export const mockProductGoals: ProductGoal[] = [
     description:
       'Deliver the minimum viable product with core Scrum tracking features including sprint management, backlog prioritization, and team collaboration tools.',
     status: 'COMPLETED',
-    targetDate: '2025-12-31T00:00:00Z',
+    targetDate: '2026-12-31T00:00:00Z',
     successMetrics:
       'All MVP features delivered on time, 100% test coverage achieved, 50 beta users onboarded successfully',
     strategicAlignment: 'growth',
-    createdAt: '2025-06-01T00:00:00Z',
-    updatedAt: '2025-12-28T00:00:00Z',
+    createdAt: '2026-06-01T00:00:00Z',
+    updatedAt: '2026-12-28T00:00:00Z',
   },
   {
     id: 'goal-completed-2',
@@ -482,12 +482,12 @@ export const mockProductGoals: ProductGoal[] = [
     description:
       'Implement secure authentication system with OAuth 2.0, SSO integration, and comprehensive security audit. Ensure enterprise-grade security compliance.',
     status: 'COMPLETED',
-    targetDate: '2025-10-31T00:00:00Z',
+    targetDate: '2026-10-31T00:00:00Z',
     successMetrics:
       'OAuth 2.0 implemented, SSO with Google and Microsoft, passed security audit with zero critical issues',
     strategicAlignment: 'tech',
-    createdAt: '2025-08-15T00:00:00Z',
-    updatedAt: '2025-10-25T00:00:00Z',
+    createdAt: '2026-08-15T00:00:00Z',
+    updatedAt: '2026-10-25T00:00:00Z',
   },
   {
     id: 'goal-completed-3',
@@ -500,7 +500,7 @@ export const mockProductGoals: ProductGoal[] = [
     successMetrics:
       'WebSocket infrastructure deployed, <100ms latency for updates, 95% positive user feedback',
     strategicAlignment: 'ux',
-    createdAt: '2025-11-01T00:00:00Z',
+    createdAt: '2026-11-01T00:00:00Z',
     updatedAt: '2026-02-20T00:00:00Z',
   },
   {
@@ -526,12 +526,12 @@ export const mockProductGoals: ProductGoal[] = [
     description:
       'Migrate existing users from the legacy v1 platform to the new architecture. This goal was discontinued due to the decision to focus on new customer acquisition.',
     status: 'ABANDONED',
-    targetDate: '2025-09-30T00:00:00Z',
+    targetDate: '2026-09-30T00:00:00Z',
     successMetrics:
       'Planned: 100% legacy users migrated, zero data loss, <4 hours downtime per migration batch',
     strategicAlignment: 'tech',
-    createdAt: '2025-07-01T00:00:00Z',
-    updatedAt: '2025-08-15T00:00:00Z',
+    createdAt: '2026-07-01T00:00:00Z',
+    updatedAt: '2026-08-15T00:00:00Z',
   },
   {
     id: 'goal-abandoned-2',
@@ -544,7 +544,7 @@ export const mockProductGoals: ProductGoal[] = [
     successMetrics:
       'Planned: Immutable audit logs, regulatory compliance certification, integration with 3 major audit firms',
     strategicAlignment: 'tech',
-    createdAt: '2025-12-01T00:00:00Z',
+    createdAt: '2026-12-01T00:00:00Z',
     updatedAt: '2026-02-28T00:00:00Z',
   },
 ];
@@ -566,8 +566,8 @@ export const mockProductBacklogItems: ProductBacklogItem[] = [
     acceptanceCriteria:
       'Users receive instant notifications for:\n- Task assignments\n- @mentions\n- Sprint start/end\n- Impediment updates',
     createdBy: UUIDS.users.developer1,
-    createdAt: '2024-02-01T00:00:00Z',
-    updatedAt: '2024-02-01T00:00:00Z',
+    createdAt: '2026-02-01T00:00:00Z',
+    updatedAt: '2026-02-01T00:00:00Z',
   },
   {
     id: '019c6739-e4b1-75b7-9e35-0ad52076afc1',
@@ -582,8 +582,8 @@ export const mockProductBacklogItems: ProductBacklogItem[] = [
     acceptanceCriteria:
       'Charts show:\n- Ideal vs actual burndown\n- Predicted completion\n- Historical trends',
     createdBy: UUIDS.users.scrumMaster,
-    createdAt: '2024-02-02T00:00:00Z',
-    updatedAt: '2024-02-02T00:00:00Z',
+    createdAt: '2026-02-02T00:00:00Z',
+    updatedAt: '2026-02-02T00:00:00Z',
   },
 
   // Refined Items - For Active Goal
@@ -601,8 +601,8 @@ export const mockProductBacklogItems: ProductBacklogItem[] = [
     acceptanceCriteria:
       '- Email/password login\n- OAuth (Google, GitHub)\n- Password reset flow\n- Session management',
     createdBy: UUIDS.users.developer1,
-    createdAt: '2024-01-15T00:00:00Z',
-    updatedAt: '2024-01-20T00:00:00Z',
+    createdAt: '2026-01-15T00:00:00Z',
+    updatedAt: '2026-01-20T00:00:00Z',
   },
   {
     id: 'pbi-004',
@@ -617,8 +617,8 @@ export const mockProductBacklogItems: ProductBacklogItem[] = [
     acceptanceCriteria:
       '- Drag items from backlog to sprint\n- Capacity planning\n- Velocity prediction\n- Sprint goal definition',
     createdBy: UUIDS.users.scrumMaster,
-    createdAt: '2024-01-16T00:00:00Z',
-    updatedAt: '2024-01-22T00:00:00Z',
+    createdAt: '2026-01-16T00:00:00Z',
+    updatedAt: '2026-01-22T00:00:00Z',
   },
 
   // Ready Items - For Active Goal
@@ -635,8 +635,8 @@ export const mockProductBacklogItems: ProductBacklogItem[] = [
     acceptanceCriteria:
       '- Create/edit/delete items\n- Prioritize with drag-and-drop\n- Filter by status, labels\n- Search functionality',
     createdBy: UUIDS.users.developer1,
-    createdAt: '2024-01-10T00:00:00Z',
-    updatedAt: '2024-01-25T00:00:00Z',
+    createdAt: '2026-01-10T00:00:00Z',
+    updatedAt: '2026-01-25T00:00:00Z',
     creator: mockUsers[2],
   },
   {
@@ -652,8 +652,8 @@ export const mockProductBacklogItems: ProductBacklogItem[] = [
     acceptanceCriteria:
       '- Team member list\n- Role assignment\n- Activity timeline\n- Team metrics',
     createdBy: UUIDS.users.scrumMaster,
-    createdAt: '2024-01-12T00:00:00Z',
-    updatedAt: '2024-01-26T00:00:00Z',
+    createdAt: '2026-01-12T00:00:00Z',
+    updatedAt: '2026-01-26T00:00:00Z',
   },
 
   // In Progress Items (in current sprint) - For Active Goal
@@ -670,8 +670,8 @@ export const mockProductBacklogItems: ProductBacklogItem[] = [
     acceptanceCriteria:
       '- Submit yesterday/today/impediments\n- View team updates\n- Historical updates\n- Notification reminders',
     createdBy: UUIDS.users.developer1,
-    createdAt: '2024-01-18T00:00:00Z',
-    updatedAt: '2024-02-05T00:00:00Z',
+    createdAt: '2026-01-18T00:00:00Z',
+    updatedAt: '2026-02-05T00:00:00Z',
     creator: mockUsers[2],
   },
   {
@@ -687,8 +687,8 @@ export const mockProductBacklogItems: ProductBacklogItem[] = [
     acceptanceCriteria:
       '- Create impediments\n- Assign owner\n- Track status\n- Resolution workflow\n- Dashboard alerts',
     createdBy: UUIDS.users.scrumMaster,
-    createdAt: '2024-01-20T00:00:00Z',
-    updatedAt: '2024-02-05T00:00:00Z',
+    createdAt: '2026-01-20T00:00:00Z',
+    updatedAt: '2026-02-05T00:00:00Z',
     creator: mockUsers[1],
   },
 
@@ -706,8 +706,8 @@ export const mockProductBacklogItems: ProductBacklogItem[] = [
     acceptanceCriteria:
       '- Three columns: To Do, In Progress, Done\n- Drag-and-drop tasks\n- Task details modal\n- Quick actions',
     createdBy: UUIDS.users.developer1,
-    createdAt: '2024-01-05T00:00:00Z',
-    updatedAt: '2024-02-03T00:00:00Z',
+    createdAt: '2026-01-05T00:00:00Z',
+    updatedAt: '2026-02-03T00:00:00Z',
     creator: mockUsers[2],
   },
   {
@@ -723,8 +723,8 @@ export const mockProductBacklogItems: ProductBacklogItem[] = [
     acceptanceCriteria:
       '- Sprint summary cards\n- Burndown chart\n- My tasks widget\n- Quick actions\n- Team updates',
     createdBy: UUIDS.users.developer1,
-    createdAt: '2024-01-03T00:00:00Z',
-    updatedAt: '2024-02-01T00:00:00Z',
+    createdAt: '2026-01-03T00:00:00Z',
+    updatedAt: '2026-02-01T00:00:00Z',
     creator: mockUsers[2],
   },
   {
@@ -740,8 +740,8 @@ export const mockProductBacklogItems: ProductBacklogItem[] = [
     acceptanceCriteria:
       '- Mobile-first approach\n- Tablet optimization\n- Touch-friendly interactions\n- Consistent across devices',
     createdBy: UUIDS.users.scrumMaster,
-    createdAt: '2024-01-08T00:00:00Z',
-    updatedAt: '2024-02-04T00:00:00Z',
+    createdAt: '2026-01-08T00:00:00Z',
+    updatedAt: '2026-02-04T00:00:00Z',
     creator: mockUsers[1],
   },
 ];
@@ -757,8 +757,8 @@ export const mockSprints: Sprint[] = [
     endDate: '2026-01-18T00:00:00Z',
     sprintGoal: 'Set up project infrastructure and core UI components',
     status: 'completed' as SprintStatus,
-    createdAt: '2024-01-14T00:00:00Z',
-    updatedAt: '2024-01-28T00:00:00Z',
+    createdAt: '2026-01-14T00:00:00Z',
+    updatedAt: '2026-01-28T00:00:00Z',
     items: [mockProductBacklogItems[9] as ProductBacklogItem],
     tasks: [],
   },
@@ -770,8 +770,8 @@ export const mockSprints: Sprint[] = [
     endDate: '2026-02-01T00:00:00Z',
     sprintGoal: 'Deliver sprint board and dashboard functionality',
     status: 'completed' as SprintStatus,
-    createdAt: '2024-01-28T00:00:00Z',
-    updatedAt: '2024-02-11T00:00:00Z',
+    createdAt: '2026-01-28T00:00:00Z',
+    updatedAt: '2026-02-11T00:00:00Z',
     items: [
       mockProductBacklogItems[8] as ProductBacklogItem,
       mockProductBacklogItems[10] as ProductBacklogItem,
@@ -788,8 +788,8 @@ export const mockSprints: Sprint[] = [
     sprintGoal:
       'Complete daily Scrum and impediment tracking features to improve team collaboration',
     status: 'active' as SprintStatus,
-    createdAt: '2024-02-11T00:00:00Z',
-    updatedAt: '2024-02-12T00:00:00Z',
+    createdAt: '2026-02-11T00:00:00Z',
+    updatedAt: '2026-02-12T00:00:00Z',
     items: [
       mockProductBacklogItems[6] as ProductBacklogItem,
       mockProductBacklogItems[7] as ProductBacklogItem,
@@ -1107,8 +1107,8 @@ export const mockImpediments: Impediment[] = [
     ownerId: UUIDS.users.scrumMaster,
     status: 'IN_PROGRESS' as ImpedimentStatus,
     resolution: 'Working with backend team to complete documentation',
-    createdAt: '2024-02-13T00:00:00Z',
-    updatedAt: '2024-02-14T00:00:00Z',
+    createdAt: '2026-02-13T00:00:00Z',
+    updatedAt: '2026-02-14T00:00:00Z',
     reportedBy: mockUsers[0],
     owner: mockUsers[1],
   },
@@ -1120,8 +1120,8 @@ export const mockImpediments: Impediment[] = [
     description: 'Some CSS modules are conflicting with global styles, causing layout issues',
     reportedById: UUIDS.users.developer2,
     status: 'OPEN' as ImpedimentStatus,
-    createdAt: '2024-02-14T00:00:00Z',
-    updatedAt: '2024-02-14T00:00:00Z',
+    createdAt: '2026-02-14T00:00:00Z',
+    updatedAt: '2026-02-14T00:00:00Z',
     reportedBy: mockUsers[3],
   },
   {
@@ -1134,9 +1134,9 @@ export const mockImpediments: Impediment[] = [
     ownerId: UUIDS.users.scrumMaster,
     status: 'RESOLVED' as ImpedimentStatus,
     resolution: 'DevOps team fixed the issue, environment is now stable',
-    createdAt: '2024-02-05T00:00:00Z',
-    updatedAt: '2024-02-07T00:00:00Z',
-    resolvedAt: '2024-02-07T00:00:00Z',
+    createdAt: '2026-02-05T00:00:00Z',
+    updatedAt: '2026-02-07T00:00:00Z',
+    resolvedAt: '2026-02-07T00:00:00Z',
     reportedBy: mockUsers[4],
     owner: mockUsers[1],
   },
@@ -1351,57 +1351,57 @@ export const mockDailyUpdates: DailyUpdate[] = [
     id: 'update-001',
     sprintId: 'sprint-3',
     userId: UUIDS.users.admin,
-    updateDate: '2024-02-12',
+    updateDate: '2026-02-12',
     yesterdayWork: 'Completed daily Scrum form UI design. Started implementing team updates view.',
     todayWork: 'Continue working on team updates view component. Start integrating with mock data.',
     impediment: 'Waiting for design review from Sarah.',
-    createdAt: '2024-02-12T09:00:00Z',
+    createdAt: '2026-02-12T09:00:00Z',
     user: mockUsers[0],
   },
   {
     id: 'update-002',
     sprintId: 'sprint-3',
     userId: UUIDS.users.developer2,
-    updateDate: '2024-02-12',
+    updateDate: '2026-02-12',
     yesterdayWork:
       'Implemented form validation with error messages. Started impediment card design.',
     todayWork: 'Finish impediment card component. Test form validation edge cases.',
     impediment: 'None',
-    createdAt: '2024-02-12T09:15:00Z',
+    createdAt: '2026-02-12T09:15:00Z',
     user: mockUsers[3],
   },
   {
     id: 'update-003',
     sprintId: 'sprint-3',
     userId: UUIDS.users.guest,
-    updateDate: '2024-02-12',
+    updateDate: '2026-02-12',
     yesterdayWork:
       'Set up test environment for daily Scrum feature. Wrote unit tests for form component.',
     todayWork: 'Start working on historical updates feature. Create mock data for testing.',
     impediment: 'None',
-    createdAt: '2024-02-12T09:30:00Z',
+    createdAt: '2026-02-12T09:30:00Z',
     user: mockUsers[4],
   },
   {
     id: 'update-004',
     sprintId: 'sprint-3',
     userId: UUIDS.users.admin,
-    updateDate: '2024-02-13',
+    updateDate: '2026-02-13',
     yesterdayWork: 'Finished team updates view component. Started integrating with API service.',
     todayWork: 'Complete API integration. Start working on impediment CRUD operations.',
     impediment: 'API documentation incomplete - need to clarify some endpoints.',
-    createdAt: '2024-02-13T09:00:00Z',
+    createdAt: '2026-02-13T09:00:00Z',
     user: mockUsers[0],
   },
   {
     id: 'update-005',
     sprintId: 'sprint-3',
     userId: UUIDS.users.developer2,
-    updateDate: '2024-02-13',
+    updateDate: '2026-02-13',
     yesterdayWork: 'Completed impediment card design. Started implementing card interactions.',
     todayWork: 'Finish card interactions. Fix CSS styling conflicts.',
     impediment: 'CSS module conflicts causing layout issues.',
-    createdAt: '2024-02-13T09:15:00Z',
+    createdAt: '2026-02-13T09:15:00Z',
     user: mockUsers[3],
   },
 ];
