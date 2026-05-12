@@ -3529,88 +3529,155 @@ class MockApiService {
   private exportStore: Map<
     string,
     {
-      status: 'pending' | 'processing' | 'completed' | 'failed';
+      status: 'pending' | 'processing' | 'completed' | 'failed' | 'expired';
       progress: number;
       downloadUrl?: string;
       createdAt: string;
+      completedAt?: string;
+      expiresAt?: string;
       error?: string;
+      fileSize?: number;
     }
   > = new Map();
 
-  async initiateExport(): Promise<ApiResponse<{ exportId: string; estimatedTime: number }>> {
+  async initiateExport(_options?: {
+    includeSessions?: boolean;
+    includeNotifications?: boolean;
+    dataCategories?: string[];
+  }): Promise<
+    ApiResponse<{
+      jobId: string;
+      status: 'pending' | 'processing' | 'completed' | 'failed' | 'expired';
+      estimatedCompletionTime: string;
+      message: string;
+    }>
+  > {
     await mockDelay(500);
-    const exportId = `export-${Date.now()}`;
-    this.exportStore.set(exportId, {
+    const jobId = `export-${Date.now()}`;
+    const now = new Date();
+    const estimatedCompletion = new Date(now.getTime() + 30 * 1000);
+
+    this.exportStore.set(jobId, {
       status: 'processing',
       progress: 0,
-      createdAt: new Date().toISOString(),
+      createdAt: now.toISOString(),
     });
 
-    // Simulate async processing - complete after 5 seconds
     setTimeout(() => {
-      const exp = this.exportStore.get(exportId);
+      const exp = this.exportStore.get(jobId);
       if (exp?.status === 'processing') {
         exp.status = 'completed';
         exp.progress = 100;
-        exp.downloadUrl = `/mock-exports/${exportId}.zip`;
+        exp.downloadUrl = `/mock-exports/${jobId}.zip`;
+        exp.completedAt = new Date().toISOString();
+        exp.expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+        exp.fileSize = 1024 * 256;
       }
     }, 5000);
 
-    return mockSuccess({ exportId, estimatedTime: 30 });
+    return mockSuccess({
+      jobId,
+      status: 'processing',
+      estimatedCompletionTime: estimatedCompletion.toISOString(),
+      message: 'Data export initiated successfully',
+    });
   }
 
-  async getExportStatus(exportId: string): Promise<
+  async getExportStatus(jobId: string): Promise<
     ApiResponse<{
+      jobId: string;
       status: string;
       progress: number;
-      downloadUrl?: string;
-      error?: string;
+      fileSize: number | null;
+      completedAt: string | null;
+      expiresAt: string | null;
+      errorMessage: string | null;
     }>
   > {
     await mockDelay(200);
-    const exp = this.exportStore.get(exportId);
+    const exp = this.exportStore.get(jobId);
     if (!exp) {
       return mockError('NOT_FOUND', 'Export not found');
     }
     return mockSuccess({
+      jobId,
       status: exp.status,
       progress: exp.progress,
-      downloadUrl: exp.downloadUrl,
-      error: exp.error,
+      fileSize: exp.fileSize ?? null,
+      completedAt: exp.completedAt ?? null,
+      expiresAt: exp.expiresAt ?? null,
+      errorMessage: exp.error ?? null,
     });
   }
 
-  async downloadExport(exportId: string): Promise<ApiResponse<{ url: string }>> {
+  async downloadExport(jobId: string): Promise<Blob> {
     await mockDelay(300);
-    const exp = this.exportStore.get(exportId);
+    const exp = this.exportStore.get(jobId);
     if (!exp) {
-      return mockError('NOT_FOUND', 'Export not found');
+      throw new Error('Export not found');
     }
     if (exp.status !== 'completed') {
-      return mockError('INVALID_STATE', 'Export is not ready for download');
+      throw new Error('Export is not ready for download');
     }
-    return mockSuccess({ url: exp.downloadUrl ?? `/mock-exports/${exportId}.zip` });
+    const mockData = {
+      exportMetadata: {
+        version: '1.0',
+        exportedAt: new Date().toISOString(),
+        userId: UUIDS.users.admin,
+        format: 'JSON',
+        dataController: 'Scrsphere',
+        contactEmail: 'privacy@scrsphere.com',
+        exportId: jobId,
+      },
+      dataCategories: ['profile', 'teams', 'tasks', 'notifications'],
+      recordCounts: {
+        profile: 1,
+        teams: 2,
+        tasks: 50,
+        notifications: 25,
+      },
+    };
+    return new Blob([JSON.stringify(mockData, null, 2)], {
+      type: 'application/json',
+    });
   }
 
-  async cancelExport(exportId: string): Promise<ApiResponse<{ message: string }>> {
+  async cancelExport(jobId: string): Promise<void> {
     await mockDelay(200);
-    const exp = this.exportStore.get(exportId);
+    const exp = this.exportStore.get(jobId);
     if (!exp) {
-      return mockError('NOT_FOUND', 'Export not found');
+      throw new Error('Export not found');
     }
     if (exp.status === 'completed') {
-      return mockError('INVALID_STATE', 'Cannot cancel a completed export');
+      throw new Error('Cannot cancel a completed export');
     }
-    this.exportStore.delete(exportId);
-    return mockSuccess({ message: 'Export cancelled successfully' });
+    this.exportStore.delete(jobId);
   }
 
-  async getActiveExports(): Promise<ApiResponse<string[]>> {
+  async getActiveExports(): Promise<
+    ApiResponse<{
+      exports: Array<{
+        jobId: string;
+        status: string;
+        startedAt: string;
+        createdAt: string;
+      }>;
+      count: number;
+    }>
+  > {
     await mockDelay(200);
     const active = Array.from(this.exportStore.entries())
       .filter(([_, v]) => v.status === 'processing')
-      .map(([k]) => k);
-    return mockSuccess(active);
+      .map(([k, v]) => ({
+        jobId: k,
+        status: v.status,
+        startedAt: v.createdAt,
+        createdAt: v.createdAt,
+      }));
+    return mockSuccess({
+      exports: active,
+      count: active.length,
+    });
   }
 
   // ==================== Consent Management ====================
@@ -3683,12 +3750,39 @@ class MockApiService {
       return { data: { success: result.success, data: result.data } as T };
     }
 
+    // Route data export requests
+    if (url === '/user/export-data/active') {
+      const result = await this.getActiveExports();
+      return { data: { success: result.success, data: result.data } as T };
+    }
+
+    if (url.startsWith('/user/export-data/status/')) {
+      const jobId = url.split('/').pop() ?? '';
+      const result = await this.getExportStatus(jobId);
+      return { data: { success: result.success, data: result.data } as T };
+    }
+
     // Default: return empty success response
     return { data: { success: true } as T };
   }
 
   async post<T>(_url: string, data?: unknown): Promise<{ data: T }> {
     await mockDelay(200);
+
+    // Route data export requests
+    if (_url === '/user/export-data') {
+      const options = data as
+        | {
+            options?: {
+              includeSessions?: boolean;
+              includeNotifications?: boolean;
+              dataCategories?: string[];
+            };
+          }
+        | undefined;
+      const result = await this.initiateExport(options?.options);
+      return { data: { success: result.success, data: result.data } as T };
+    }
 
     // Route notification requests
     if (typeof data === 'object' && data !== null && 'recipientId' in data) {
@@ -3730,6 +3824,18 @@ class MockApiService {
 
   async delete<T = never>(_url: string): Promise<{ data: T }> {
     await mockDelay(200);
+
+    // Route data export cancel requests
+    if (
+      _url.startsWith('/user/export-data/') &&
+      !_url.includes('/status/') &&
+      !_url.includes('/download/') &&
+      !_url.includes('/active')
+    ) {
+      const jobId = _url.split('/').pop() ?? '';
+      await this.cancelExport(jobId);
+      return { data: { success: true } as T };
+    }
 
     // Route notification requests
     if (_url.startsWith('/notifications/')) {
