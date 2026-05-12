@@ -75,6 +75,7 @@ export class LoginPage extends BasePage {
 
     const isLoginMode = !(await this.firstNameInput.isVisible().catch(() => false));
     if (isLoginMode) {
+      await this.emailInput.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
       return;
     }
 
@@ -84,6 +85,7 @@ export class LoginPage extends BasePage {
         await this.toggleModeButton.waitFor({ state: 'visible', timeout: 3000 });
         await this.toggleModeButton.click({ force: true });
         await expect(this.firstNameInput).not.toBeVisible({ timeout: 5000 });
+        await this.emailInput.waitFor({ state: 'visible', timeout: 5000 });
         return;
       } catch {
         retries--;
@@ -94,6 +96,7 @@ export class LoginPage extends BasePage {
               .first();
             await altToggle.click({ force: true });
             await expect(this.firstNameInput).not.toBeVisible({ timeout: 5000 });
+            await this.emailInput.waitFor({ state: 'visible', timeout: 5000 });
             return;
           } catch {
             throw new Error('Failed to switch to login mode after multiple attempts');
@@ -106,6 +109,7 @@ export class LoginPage extends BasePage {
 
   async fillLoginForm(email: string, password: string): Promise<void> {
     await this.dismissCookieBanner();
+    await this.emailInput.waitFor({ state: 'visible', timeout: 10000 });
     await this.emailInput.fill(email);
     await this.passwordInput.fill(password);
   }
