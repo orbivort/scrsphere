@@ -645,12 +645,12 @@ class MockApiService {
 
   async getBurndownData(
     _sprintId: string
-  ): Promise<ApiResponse<{ dates: string[]; ideal: number[]; actual: number[] }>> {
+  ): Promise<ApiResponse<{ dates: string[]; ideal: number[]; actual: (number | null)[] }>> {
     await delay(300);
 
     const dates = mockBurndownData.map((d) => d.date);
     const ideal = mockBurndownData.map((d) => d.ideal);
-    const actual = mockBurndownData.map((d) => d.actual || 0);
+    const actual = mockBurndownData.map((d) => (d.actual === -1 ? null : d.actual));
 
     return {
       success: true,

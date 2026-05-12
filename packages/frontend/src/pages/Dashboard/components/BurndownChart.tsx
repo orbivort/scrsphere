@@ -58,7 +58,7 @@ const CHART_OPTIONS: ChartOptions<'line'> = {
 interface BurndownData {
   dates: string[];
   ideal: number[];
-  actual: number[];
+  actual: (number | null)[];
 }
 
 interface BurndownChartProps {
@@ -157,17 +157,24 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({ data }) => {
     }
 
     const totalDays = dates.length;
-    const currentDay = dates[dates.length - 1];
-    const idealRemaining = ideal[ideal.length - 1];
-    const actualRemaining = actual[actual.length - 1];
     const startPoints = ideal[0];
+
+    const lastActualIndex = actual.reduce((lastIdx: number, val, idx) => {
+      return val !== null ? idx : lastIdx;
+    }, -1);
+
+    const currentDay = lastActualIndex >= 0 ? dates[lastActualIndex] : dates[dates.length - 1];
+    const idealRemaining = lastActualIndex >= 0 ? ideal[lastActualIndex] : ideal[ideal.length - 1];
+    const actualRemaining = lastActualIndex >= 0 ? actual[lastActualIndex] : null;
+
+    const actualText = actualRemaining !== null ? `${actualRemaining} points` : 'no data';
 
     return (
       `Sprint burndown chart: ${totalDays} days tracked. ` +
       `Current day: ${currentDay}. ` +
       `Starting story points: ${startPoints}. ` +
       `Ideal remaining: ${idealRemaining} points. ` +
-      `Actual remaining: ${actualRemaining} points.`
+      `Actual remaining: ${actualText}.`
     );
   }, [data]);
 

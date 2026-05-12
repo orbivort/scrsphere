@@ -1409,6 +1409,7 @@ export const mockDailyUpdates: DailyUpdate[] = [
 // ==================== Burndown Data ====================
 export const mockBurndownData: BurndownData[] = [
   // Sprint 3 burndown (2026/02/02 - 2026/02/15) - 13 day sprint, 64 total hours
+  // Actual data available for days 0-9 (Feb 2-10), future days use -1 (no data)
   { date: '2026-02-02', ideal: 64, actual: 64 },
   { date: '2026-02-03', ideal: 59.1, actual: 60 },
   { date: '2026-02-04', ideal: 54.2, actual: 52 },
@@ -1418,11 +1419,11 @@ export const mockBurndownData: BurndownData[] = [
   { date: '2026-02-08', ideal: 34.5, actual: 40 },
   { date: '2026-02-09', ideal: 29.5, actual: 38 },
   { date: '2026-02-10', ideal: 24.6, actual: 38 },
-  { date: '2026-02-11', ideal: 19.7, actual: 0 },
-  { date: '2026-02-12', ideal: 14.8, actual: 0 },
-  { date: '2026-02-13', ideal: 9.8, actual: 0 },
-  { date: '2026-02-14', ideal: 4.9, actual: 0 },
-  { date: '2026-02-15', ideal: 0, actual: 0 },
+  { date: '2026-02-11', ideal: 19.7, actual: -1 },
+  { date: '2026-02-12', ideal: 14.8, actual: -1 },
+  { date: '2026-02-13', ideal: 9.8, actual: -1 },
+  { date: '2026-02-14', ideal: 4.9, actual: -1 },
+  { date: '2026-02-15', ideal: 0, actual: -1 },
 ];
 
 // ==================== Velocity Data ====================
