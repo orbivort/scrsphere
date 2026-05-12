@@ -70,6 +70,14 @@ export const LoginPage: React.FC = () => {
     }
   }, [isAuthenticated, navigate]);
 
+  // Auto-populate credentials in mock mode (demo/development only)
+  useEffect(() => {
+    if (import.meta.env.VITE_USE_MOCK_API !== 'false') {
+      setEmail('demo@example.com');
+      setPassword('demo123456');
+    }
+  }, []);
+
   const handleLogin = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();

@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { LoadingState } from '../../../../components/common/Loading';
 import { ToastContainer } from '../../../../components/common/ToastContainer';
-import { apiService } from '../../../../services';
+import { definitionService } from '../../../../services';
 import { useTeamStore } from '../../../../store';
 import { useToast } from '../../../../hooks/useToast';
 import { queryKeys } from '../../../../hooks/queryKeys';
@@ -32,7 +32,7 @@ export function DefinitionOfReadyPanel(): React.JSX.Element {
     queryKey: queryKeys.definitionOfReady.byTeam(teamId ?? ''),
     queryFn: () => {
       if (!teamId) throw new Error('Team ID is required');
-      return apiService.getDefinitionOfReady(teamId);
+      return definitionService.getDefinitionOfReady(teamId);
     },
     enabled: !!teamId,
   });
@@ -44,7 +44,7 @@ export function DefinitionOfReadyPanel(): React.JSX.Element {
   const updateMutation = useMutation({
     mutationFn: (updatedItems: DoRItem[]) => {
       if (!teamId) throw new Error('Team ID is required');
-      return apiService.updateDefinitionOfReady(teamId, updatedItems);
+      return definitionService.updateDefinitionOfReady(teamId, updatedItems);
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({

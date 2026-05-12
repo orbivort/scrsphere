@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { vi } from 'vitest';
 
-import { apiService } from '../../../../services';
+import { definitionService } from '../../../../services';
 import { DefinitionOfReadyPanel } from './DefinitionOfReadyPanel';
 
 vi.mock('../../../../store', () => {
@@ -16,7 +16,7 @@ vi.mock('../../../../store', () => {
 });
 
 vi.mock('../../../../services', () => ({
-  apiService: {
+  definitionService: {
     getDefinitionOfReady: vi.fn(),
     updateDefinitionOfReady: vi.fn(),
   },
@@ -57,20 +57,22 @@ describe('DefinitionOfReadyPanel', () => {
   });
 
   it('should render loading state initially', () => {
-    (apiService.getDefinitionOfReady as vi.Mock).mockImplementation(() => new Promise(() => {}));
+    (definitionService.getDefinitionOfReady as vi.Mock).mockImplementation(
+      () => new Promise(() => {})
+    );
     renderWithProviders(<DefinitionOfReadyPanel />);
     expect(screen.getByText(/Loading Definition of Ready.../)).toBeInTheDocument();
   });
 
   it('should render error state when API fails', async () => {
-    (apiService.getDefinitionOfReady as vi.Mock).mockRejectedValue(new Error('Failed'));
+    (definitionService.getDefinitionOfReady as vi.Mock).mockRejectedValue(new Error('Failed'));
     renderWithProviders(<DefinitionOfReadyPanel />);
     expect(await screen.findByText('Failed to load Definition of Ready')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Retry' })).toBeInTheDocument();
   });
 
   it('should render empty state when no items', async () => {
-    (apiService.getDefinitionOfReady as vi.Mock).mockResolvedValue({
+    (definitionService.getDefinitionOfReady as vi.Mock).mockResolvedValue({
       success: true,
       data: null,
     });
@@ -82,7 +84,7 @@ describe('DefinitionOfReadyPanel', () => {
   });
 
   it('should render definition items when available', async () => {
-    (apiService.getDefinitionOfReady as vi.Mock).mockResolvedValue({
+    (definitionService.getDefinitionOfReady as vi.Mock).mockResolvedValue({
       success: true,
       data: {
         id: 'dor-1',
@@ -114,7 +116,7 @@ describe('DefinitionOfReadyPanel', () => {
   });
 
   it('should switch to edit mode when edit button clicked', async () => {
-    (apiService.getDefinitionOfReady as vi.Mock).mockResolvedValue({
+    (definitionService.getDefinitionOfReady as vi.Mock).mockResolvedValue({
       success: true,
       data: {
         id: 'dor-1',

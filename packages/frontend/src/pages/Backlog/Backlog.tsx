@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
-import { apiService } from '../../services';
+import { apiService, definitionService } from '../../services';
 import { useTeamStore } from '../../store';
 import { logger } from '../../utils/logger';
 import { queryKeys } from '../../hooks/queryKeys';
@@ -375,7 +375,7 @@ const BacklogContent: React.FC = () => {
           isVerified: validationChecks[item.id] ?? false,
         }));
 
-        await apiService.verifyDoDForPBI(selectedItem.id, verifications);
+        await definitionService.verifyDoDForPBI(selectedItem.id, verifications);
       } catch (error) {
         logger.error('Failed to save DoD verifications', undefined, { error });
         setWorkflowError('Failed to save DoD verifications. Please try again.');
@@ -390,7 +390,7 @@ const BacklogContent: React.FC = () => {
           isVerified: validationChecks[item.id] ?? false,
         }));
 
-        await apiService.verifyDoRForPBI(selectedItem.id, verifications);
+        await definitionService.verifyDoRForPBI(selectedItem.id, verifications);
       } catch (error) {
         logger.error('Failed to save DoR verifications', undefined, { error });
         setWorkflowError('Failed to save DoR verifications. Please try again.');

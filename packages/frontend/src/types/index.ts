@@ -474,10 +474,10 @@ export interface RetroAttendee {
 export interface Notification {
   id: string;
   userId: string;
-  type: string;
+  type: 'task_assigned' | 'mention' | 'sprint_update' | 'impediment' | 'direct_message' | 'system';
   title: string;
-  message?: string;
-  data?: Record<string, unknown>;
+  message: string;
+  data?: Record<string, string>;
   isRead: boolean;
   createdAt: string;
 }
@@ -692,6 +692,37 @@ export interface WorkflowState {
   isFinal: boolean;
   orderIndex: number;
   createdAt: string;
+}
+
+export interface WorkflowTransition {
+  id: string;
+  entityType: string;
+  fromState: string;
+  toState: string;
+  requiredRoles?: string[];
+}
+
+export interface ConsentRecord {
+  id: string;
+  userId: string;
+  consentType: 'essential' | 'analytics' | 'marketing';
+  granted: boolean;
+  grantedAt?: string;
+  withdrawnAt?: string;
+  ipAddress?: string;
+  userAgent?: string;
+  createdAt: string;
+}
+
+export interface ExportJob {
+  id: string;
+  userId: string;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  progress: number;
+  downloadUrl?: string;
+  createdAt: string;
+  completedAt?: string;
+  error?: string;
 }
 
 export interface StatusChangeHistoryItem {

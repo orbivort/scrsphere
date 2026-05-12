@@ -2,10 +2,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor, act } from '@testing-library/react';
 
 import { useDefinitionOfReadyDone } from './useDefinitionOfReadyDone';
-import { apiService } from '../../../services';
+import { definitionService } from '../../../services';
 
 vi.mock('../../../services', () => ({
-  apiService: {
+  definitionService: {
     getDefinitionOfReady: vi.fn(),
     getDefinitionOfDone: vi.fn(),
   },
@@ -25,13 +25,25 @@ describe('useDefinitionOfReadyDone', () => {
 
   describe('Initial State', () => {
     it('should return empty arrays initially', async () => {
-      vi.mocked(apiService.getDefinitionOfReady).mockResolvedValue({
+      vi.mocked(definitionService.getDefinitionOfReady).mockResolvedValue({
         success: true,
-        data: { items: [] },
+        data: {
+          id: 'dor-1',
+          teamId: 'team-1',
+          items: [],
+          version: 1,
+          updatedAt: '2024-01-01T00:00:00Z',
+        },
       });
-      vi.mocked(apiService.getDefinitionOfDone).mockResolvedValue({
+      vi.mocked(definitionService.getDefinitionOfDone).mockResolvedValue({
         success: true,
-        data: { items: [] },
+        data: {
+          id: 'dod-1',
+          teamId: 'team-1',
+          items: [],
+          version: 1,
+          updatedAt: '2024-01-01T00:00:00Z',
+        },
       });
 
       const { result } = renderHook(() => useDefinitionOfReadyDone('team-1'));
@@ -41,13 +53,25 @@ describe('useDefinitionOfReadyDone', () => {
     });
 
     it('should return loading states as false after data loads', async () => {
-      vi.mocked(apiService.getDefinitionOfReady).mockResolvedValue({
+      vi.mocked(definitionService.getDefinitionOfReady).mockResolvedValue({
         success: true,
-        data: { items: [] },
+        data: {
+          id: 'dor-1',
+          teamId: 'team-1',
+          items: [],
+          version: 1,
+          updatedAt: '2024-01-01T00:00:00Z',
+        },
       });
-      vi.mocked(apiService.getDefinitionOfDone).mockResolvedValue({
+      vi.mocked(definitionService.getDefinitionOfDone).mockResolvedValue({
         success: true,
-        data: { items: [] },
+        data: {
+          id: 'dod-1',
+          teamId: 'team-1',
+          items: [],
+          version: 1,
+          updatedAt: '2024-01-01T00:00:00Z',
+        },
       });
 
       const { result } = renderHook(() => useDefinitionOfReadyDone('team-1'));
@@ -64,6 +88,8 @@ describe('useDefinitionOfReadyDone', () => {
       const mockDoRResponse = {
         success: true,
         data: {
+          id: 'dor-1',
+          teamId: 'team-1',
           items: [
             {
               id: 'dor-1',
@@ -80,13 +106,21 @@ describe('useDefinitionOfReadyDone', () => {
               order: 2,
             },
           ],
+          version: 1,
+          updatedAt: '2024-01-01T00:00:00Z',
         },
       };
 
-      vi.mocked(apiService.getDefinitionOfReady).mockResolvedValue(mockDoRResponse);
-      vi.mocked(apiService.getDefinitionOfDone).mockResolvedValue({
+      vi.mocked(definitionService.getDefinitionOfReady).mockResolvedValue(mockDoRResponse);
+      vi.mocked(definitionService.getDefinitionOfDone).mockResolvedValue({
         success: true,
-        data: { items: [] },
+        data: {
+          id: 'dod-1',
+          teamId: 'team-1',
+          items: [],
+          version: 1,
+          updatedAt: '2024-01-01T00:00:00Z',
+        },
       });
 
       const { result } = renderHook(() => useDefinitionOfReadyDone('team-1'));
@@ -111,6 +145,8 @@ describe('useDefinitionOfReadyDone', () => {
       const mockDoDResponse = {
         success: true,
         data: {
+          id: 'dod-1',
+          teamId: 'team-1',
           items: [
             {
               id: 'dod-1',
@@ -127,14 +163,22 @@ describe('useDefinitionOfReadyDone', () => {
               order: 2,
             },
           ],
+          version: 1,
+          updatedAt: '2024-01-01T00:00:00Z',
         },
       };
 
-      vi.mocked(apiService.getDefinitionOfReady).mockResolvedValue({
+      vi.mocked(definitionService.getDefinitionOfReady).mockResolvedValue({
         success: true,
-        data: { items: [] },
+        data: {
+          id: 'dor-1',
+          teamId: 'team-1',
+          items: [],
+          version: 1,
+          updatedAt: '2024-01-01T00:00:00Z',
+        },
       });
-      vi.mocked(apiService.getDefinitionOfDone).mockResolvedValue(mockDoDResponse);
+      vi.mocked(definitionService.getDefinitionOfDone).mockResolvedValue(mockDoDResponse);
 
       const { result } = renderHook(() => useDefinitionOfReadyDone('team-1'));
 
@@ -161,14 +205,16 @@ describe('useDefinitionOfReadyDone', () => {
         await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
-      expect(apiService.getDefinitionOfReady).not.toHaveBeenCalled();
-      expect(apiService.getDefinitionOfDone).not.toHaveBeenCalled();
+      expect(definitionService.getDefinitionOfReady).not.toHaveBeenCalled();
+      expect(definitionService.getDefinitionOfDone).not.toHaveBeenCalled();
     });
 
     it('should filter inactive items', async () => {
       const mockDoRResponse = {
         success: true,
         data: {
+          id: 'dor-1',
+          teamId: 'team-1',
           items: [
             {
               id: 'dor-1',
@@ -185,13 +231,21 @@ describe('useDefinitionOfReadyDone', () => {
               order: 2,
             },
           ],
+          version: 1,
+          updatedAt: '2024-01-01T00:00:00Z',
         },
       };
 
-      vi.mocked(apiService.getDefinitionOfReady).mockResolvedValue(mockDoRResponse);
-      vi.mocked(apiService.getDefinitionOfDone).mockResolvedValue({
+      vi.mocked(definitionService.getDefinitionOfReady).mockResolvedValue(mockDoRResponse);
+      vi.mocked(definitionService.getDefinitionOfDone).mockResolvedValue({
         success: true,
-        data: { items: [] },
+        data: {
+          id: 'dod-1',
+          teamId: 'team-1',
+          items: [],
+          version: 1,
+          updatedAt: '2024-01-01T00:00:00Z',
+        },
       });
 
       const { result } = renderHook(() => useDefinitionOfReadyDone('team-1'));
@@ -207,6 +261,8 @@ describe('useDefinitionOfReadyDone', () => {
       const mockDoRResponse = {
         success: true,
         data: {
+          id: 'dor-1',
+          teamId: 'team-1',
           items: [
             {
               id: 'dor-3',
@@ -230,13 +286,21 @@ describe('useDefinitionOfReadyDone', () => {
               order: 2,
             },
           ],
+          version: 1,
+          updatedAt: '2024-01-01T00:00:00Z',
         },
       };
 
-      vi.mocked(apiService.getDefinitionOfReady).mockResolvedValue(mockDoRResponse);
-      vi.mocked(apiService.getDefinitionOfDone).mockResolvedValue({
+      vi.mocked(definitionService.getDefinitionOfReady).mockResolvedValue(mockDoRResponse);
+      vi.mocked(definitionService.getDefinitionOfDone).mockResolvedValue({
         success: true,
-        data: { items: [] },
+        data: {
+          id: 'dod-1',
+          teamId: 'team-1',
+          items: [],
+          version: 1,
+          updatedAt: '2024-01-01T00:00:00Z',
+        },
       });
 
       const { result } = renderHook(() => useDefinitionOfReadyDone('team-1'));
@@ -254,6 +318,8 @@ describe('useDefinitionOfReadyDone', () => {
       const mockDoRResponse = {
         success: true,
         data: {
+          id: 'dor-1',
+          teamId: 'team-1',
           items: [
             {
               id: 'dor-1',
@@ -263,13 +329,21 @@ describe('useDefinitionOfReadyDone', () => {
               order: 1,
             },
           ],
+          version: 1,
+          updatedAt: '2024-01-01T00:00:00Z',
         },
       };
 
-      vi.mocked(apiService.getDefinitionOfReady).mockResolvedValue(mockDoRResponse);
-      vi.mocked(apiService.getDefinitionOfDone).mockResolvedValue({
+      vi.mocked(definitionService.getDefinitionOfReady).mockResolvedValue(mockDoRResponse);
+      vi.mocked(definitionService.getDefinitionOfDone).mockResolvedValue({
         success: true,
-        data: { items: [] },
+        data: {
+          id: 'dod-1',
+          teamId: 'team-1',
+          items: [],
+          version: 1,
+          updatedAt: '2024-01-01T00:00:00Z',
+        },
       });
 
       const { result } = renderHook(() => useDefinitionOfReadyDone('team-1'));
@@ -285,15 +359,21 @@ describe('useDefinitionOfReadyDone', () => {
   describe('Loading States', () => {
     it('should set isLoadingDoR to true while fetching', async () => {
       let resolveDoR: (value: unknown) => void;
-      vi.mocked(apiService.getDefinitionOfReady).mockImplementation(
+      vi.mocked(definitionService.getDefinitionOfReady).mockImplementation(
         () =>
           new Promise((resolve) => {
             resolveDoR = resolve;
           })
       );
-      vi.mocked(apiService.getDefinitionOfDone).mockResolvedValue({
+      vi.mocked(definitionService.getDefinitionOfDone).mockResolvedValue({
         success: true,
-        data: { items: [] },
+        data: {
+          id: 'dod-1',
+          teamId: 'team-1',
+          items: [],
+          version: 1,
+          updatedAt: '2024-01-01T00:00:00Z',
+        },
       });
 
       const { result } = renderHook(() => useDefinitionOfReadyDone('team-1'));
@@ -302,7 +382,16 @@ describe('useDefinitionOfReadyDone', () => {
         expect(result.current.isLoadingDoR).toBe(true);
       });
 
-      resolveDoR!({ success: true, data: { items: [] } });
+      resolveDoR!({
+        success: true,
+        data: {
+          id: 'dor-1',
+          teamId: 'team-1',
+          items: [],
+          version: 1,
+          updatedAt: '2024-01-01T00:00:00Z',
+        },
+      });
 
       await waitFor(() => {
         expect(result.current.isLoadingDoR).toBe(false);
@@ -311,11 +400,17 @@ describe('useDefinitionOfReadyDone', () => {
 
     it('should set isLoadingDoD to true while fetching', async () => {
       let resolveDoD: (value: unknown) => void;
-      vi.mocked(apiService.getDefinitionOfReady).mockResolvedValue({
+      vi.mocked(definitionService.getDefinitionOfReady).mockResolvedValue({
         success: true,
-        data: { items: [] },
+        data: {
+          id: 'dor-1',
+          teamId: 'team-1',
+          items: [],
+          version: 1,
+          updatedAt: '2024-01-01T00:00:00Z',
+        },
       });
-      vi.mocked(apiService.getDefinitionOfDone).mockImplementation(
+      vi.mocked(definitionService.getDefinitionOfDone).mockImplementation(
         () =>
           new Promise((resolve) => {
             resolveDoD = resolve;
@@ -328,7 +423,16 @@ describe('useDefinitionOfReadyDone', () => {
         expect(result.current.isLoadingDoD).toBe(true);
       });
 
-      resolveDoD!({ success: true, data: { items: [] } });
+      resolveDoD!({
+        success: true,
+        data: {
+          id: 'dod-1',
+          teamId: 'team-1',
+          items: [],
+          version: 1,
+          updatedAt: '2024-01-01T00:00:00Z',
+        },
+      });
 
       await waitFor(() => {
         expect(result.current.isLoadingDoD).toBe(false);
@@ -338,10 +442,18 @@ describe('useDefinitionOfReadyDone', () => {
 
   describe('Error Handling', () => {
     it('should handle DoR API error gracefully', async () => {
-      vi.mocked(apiService.getDefinitionOfReady).mockRejectedValue(new Error('Network error'));
-      vi.mocked(apiService.getDefinitionOfDone).mockResolvedValue({
+      vi.mocked(definitionService.getDefinitionOfReady).mockRejectedValue(
+        new Error('Network error')
+      );
+      vi.mocked(definitionService.getDefinitionOfDone).mockResolvedValue({
         success: true,
-        data: { items: [] },
+        data: {
+          id: 'dod-1',
+          teamId: 'team-1',
+          items: [],
+          version: 1,
+          updatedAt: '2024-01-01T00:00:00Z',
+        },
       });
 
       const { result } = renderHook(() => useDefinitionOfReadyDone('team-1'));
@@ -354,11 +466,19 @@ describe('useDefinitionOfReadyDone', () => {
     });
 
     it('should handle DoD API error gracefully', async () => {
-      vi.mocked(apiService.getDefinitionOfReady).mockResolvedValue({
+      vi.mocked(definitionService.getDefinitionOfReady).mockResolvedValue({
         success: true,
-        data: { items: [] },
+        data: {
+          id: 'dor-1',
+          teamId: 'team-1',
+          items: [],
+          version: 1,
+          updatedAt: '2024-01-01T00:00:00Z',
+        },
       });
-      vi.mocked(apiService.getDefinitionOfDone).mockRejectedValue(new Error('Network error'));
+      vi.mocked(definitionService.getDefinitionOfDone).mockRejectedValue(
+        new Error('Network error')
+      );
 
       const { result } = renderHook(() => useDefinitionOfReadyDone('team-1'));
 
@@ -370,11 +490,11 @@ describe('useDefinitionOfReadyDone', () => {
     });
 
     it('should handle unsuccessful response', async () => {
-      vi.mocked(apiService.getDefinitionOfReady).mockResolvedValue({
+      vi.mocked(definitionService.getDefinitionOfReady).mockResolvedValue({
         success: false,
         data: null,
       });
-      vi.mocked(apiService.getDefinitionOfDone).mockResolvedValue({
+      vi.mocked(definitionService.getDefinitionOfDone).mockResolvedValue({
         success: false,
         data: null,
       });
@@ -390,13 +510,25 @@ describe('useDefinitionOfReadyDone', () => {
     });
 
     it('should handle missing data in response', async () => {
-      vi.mocked(apiService.getDefinitionOfReady).mockResolvedValue({
+      vi.mocked(definitionService.getDefinitionOfReady).mockResolvedValue({
         success: true,
-        data: undefined as unknown as { items: never[] },
+        data: undefined as unknown as {
+          id: string;
+          teamId: string;
+          items: never[];
+          version: number;
+          updatedAt: string;
+        },
       });
-      vi.mocked(apiService.getDefinitionOfDone).mockResolvedValue({
+      vi.mocked(definitionService.getDefinitionOfDone).mockResolvedValue({
         success: true,
-        data: undefined as unknown as { items: never[] },
+        data: undefined as unknown as {
+          id: string;
+          teamId: string;
+          items: never[];
+          version: number;
+          updatedAt: string;
+        },
       });
 
       const { result } = renderHook(() => useDefinitionOfReadyDone('team-1'));
@@ -412,13 +544,25 @@ describe('useDefinitionOfReadyDone', () => {
 
   describe('Team ID Changes', () => {
     it('should refetch when teamId changes', async () => {
-      vi.mocked(apiService.getDefinitionOfReady).mockResolvedValue({
+      vi.mocked(definitionService.getDefinitionOfReady).mockResolvedValue({
         success: true,
-        data: { items: [] },
+        data: {
+          id: 'dor-1',
+          teamId: 'team-1',
+          items: [],
+          version: 1,
+          updatedAt: '2024-01-01T00:00:00Z',
+        },
       });
-      vi.mocked(apiService.getDefinitionOfDone).mockResolvedValue({
+      vi.mocked(definitionService.getDefinitionOfDone).mockResolvedValue({
         success: true,
-        data: { items: [] },
+        data: {
+          id: 'dod-1',
+          teamId: 'team-1',
+          items: [],
+          version: 1,
+          updatedAt: '2024-01-01T00:00:00Z',
+        },
       });
 
       const { result, rerender } = renderHook(({ teamId }) => useDefinitionOfReadyDone(teamId), {
@@ -429,23 +573,35 @@ describe('useDefinitionOfReadyDone', () => {
         expect(result.current.isLoadingDoR).toBe(false);
       });
 
-      expect(apiService.getDefinitionOfReady).toHaveBeenCalledWith('team-1');
+      expect(definitionService.getDefinitionOfReady).toHaveBeenCalledWith('team-1');
 
       rerender({ teamId: 'team-2' });
 
       await waitFor(() => {
-        expect(apiService.getDefinitionOfReady).toHaveBeenCalledWith('team-2');
+        expect(definitionService.getDefinitionOfReady).toHaveBeenCalledWith('team-2');
       });
     });
 
     it('should not fetch when teamId changes to undefined', async () => {
-      vi.mocked(apiService.getDefinitionOfReady).mockResolvedValue({
+      vi.mocked(definitionService.getDefinitionOfReady).mockResolvedValue({
         success: true,
-        data: { items: [] },
+        data: {
+          id: 'dor-1',
+          teamId: 'team-1',
+          items: [],
+          version: 1,
+          updatedAt: '2024-01-01T00:00:00Z',
+        },
       });
-      vi.mocked(apiService.getDefinitionOfDone).mockResolvedValue({
+      vi.mocked(definitionService.getDefinitionOfDone).mockResolvedValue({
         success: true,
-        data: { items: [] },
+        data: {
+          id: 'dod-1',
+          teamId: 'team-1',
+          items: [],
+          version: 1,
+          updatedAt: '2024-01-01T00:00:00Z',
+        },
       });
 
       const { rerender } = renderHook(({ teamId }) => useDefinitionOfReadyDone(teamId), {
@@ -453,7 +609,7 @@ describe('useDefinitionOfReadyDone', () => {
       });
 
       await waitFor(() => {
-        expect(apiService.getDefinitionOfReady).toHaveBeenCalledWith('team-1');
+        expect(definitionService.getDefinitionOfReady).toHaveBeenCalledWith('team-1');
       });
 
       vi.clearAllMocks();
@@ -464,8 +620,8 @@ describe('useDefinitionOfReadyDone', () => {
         await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
-      expect(apiService.getDefinitionOfReady).not.toHaveBeenCalled();
-      expect(apiService.getDefinitionOfDone).not.toHaveBeenCalled();
+      expect(definitionService.getDefinitionOfReady).not.toHaveBeenCalled();
+      expect(definitionService.getDefinitionOfDone).not.toHaveBeenCalled();
     });
   });
 });

@@ -55,8 +55,13 @@ import {
   type SessionInfo,
   type SprintBacklogItem,
   type BacklogChange,
+  type Notification as AppNotification,
+  type ConsentRecord,
+  type WorkflowState,
+  type WorkflowTransition,
 } from '../types';
 
+import { mockSuccess, mockError, mockDelay } from './mockResponseUtils';
 import {
   mockUsers,
   mockTeams,
@@ -71,6 +76,7 @@ import {
   mockDefinitionOfDone,
   getCurrentUser,
   getCurrentTeam,
+  UUIDS,
 } from './mockData';
 
 const generateUUID = () => crypto.randomUUID();
@@ -85,6 +91,8 @@ const getMockSessionInfo = (): SessionInfo => ({
 });
 
 class MockApiService {
+  private consentStore: ConsentRecord[] = [];
+
   async login(
     credentials: LoginCredentials
   ): Promise<ApiResponse<{ user: User; tokens: AuthTokens; sessionInfo: SessionInfo }>> {
@@ -637,12 +645,12 @@ class MockApiService {
 
   async getBurndownData(
     _sprintId: string
-  ): Promise<ApiResponse<{ dates: string[]; ideal: number[]; actual: number[] }>> {
+  ): Promise<ApiResponse<{ dates: string[]; ideal: number[]; actual: (number | null)[] }>> {
     await delay(300);
 
     const dates = mockBurndownData.map((d) => d.date);
     const ideal = mockBurndownData.map((d) => d.ideal);
-    const actual = mockBurndownData.map((d) => d.actual || 0);
+    const actual = mockBurndownData.map((d) => (d.actual === -1 ? null : d.actual));
 
     return {
       success: true,
@@ -1470,6 +1478,71 @@ class MockApiService {
       version: 1,
       updatedAt: new Date().toISOString(),
     },
+    [UUIDS.teams.alpha]: {
+      id: 'dor-alpha',
+      teamId: UUIDS.teams.alpha,
+      items: [
+        {
+          id: 'dor-alpha-1',
+          description: 'User story has a clear title and detailed description',
+          category: 'Documentation',
+          isActive: true,
+          order: 1,
+        },
+        {
+          id: 'dor-alpha-2',
+          description: 'Acceptance criteria are defined and testable',
+          category: 'Documentation',
+          isActive: true,
+          order: 2,
+        },
+        {
+          id: 'dor-alpha-3',
+          description: 'Story points estimated by the team',
+          category: 'Estimation',
+          isActive: true,
+          order: 3,
+        },
+        {
+          id: 'dor-alpha-4',
+          description: 'Business value and priority assigned by Product Owner',
+          category: 'Estimation',
+          isActive: true,
+          order: 4,
+        },
+        {
+          id: 'dor-alpha-5',
+          description: 'Dependencies identified and documented',
+          category: 'Dependencies',
+          isActive: true,
+          order: 5,
+        },
+        {
+          id: 'dor-alpha-6',
+          description: 'No external blockers preventing sprint inclusion',
+          category: 'Dependencies',
+          isActive: true,
+          order: 6,
+        },
+        {
+          id: 'dor-alpha-7',
+          description: 'Technical approach discussed and agreed upon',
+          category: 'Technical',
+          isActive: true,
+          order: 7,
+        },
+        {
+          id: 'dor-alpha-8',
+          description: 'UI/UX designs reviewed (if applicable)',
+          category: 'Design',
+          isActive: true,
+          order: 8,
+        },
+      ],
+      version: 1,
+      updatedBy: UUIDS.users.admin,
+      updatedAt: '2026-02-05T10:00:00Z',
+    },
   };
 
   async getDefinitionOfReady(teamId: string): Promise<ApiResponse<DefinitionOfReady>> {
@@ -1547,20 +1620,189 @@ class MockApiService {
   // ==================== Increments ====================
 
   private incrementsStore: Increment[] = [
+    // ==================== DELIVERED Increments ====================
     {
       id: 'increment-1',
-      sprintId: 'sprint-5',
-      teamId: 'team-1',
-      name: 'Sprint 5 - Increment 1',
-      description: 'Authentication and user management features',
-      includedPBIs: ['pbi-1', 'pbi-2'],
+      sprintId: 'sprint-1',
+      teamId: UUIDS.teams.alpha,
+      name: 'Sprint 1 - Core Infrastructure',
+      description:
+        'Initial project setup with core infrastructure including build configuration, CI/CD pipeline, and basic component library. Foundation for the Scrum management platform.',
+      includedPBIs: ['pbi-009', 'pbi-010', 'pbi-011'],
+      dodVerifications: [
+        {
+          id: 'dod-v1-1',
+          pbiId: 'pbi-009',
+          dodItemId: 'dod-1',
+          isVerified: true,
+          verifiedBy: UUIDS.users.scrumMaster,
+          verifiedAt: '2026-01-18T14:00:00Z',
+          dodItemDescription: 'Code reviewed and approved',
+          dodItemCategory: 'quality',
+        },
+        {
+          id: 'dod-v1-2',
+          pbiId: 'pbi-009',
+          dodItemId: 'dod-2',
+          isVerified: true,
+          verifiedBy: UUIDS.users.developer1,
+          verifiedAt: '2026-01-18T14:30:00Z',
+          dodItemDescription: 'Unit tests passing (80% coverage)',
+          dodItemCategory: 'testing',
+        },
+        {
+          id: 'dod-v1-3',
+          pbiId: 'pbi-010',
+          dodItemId: 'dod-3',
+          isVerified: true,
+          verifiedBy: UUIDS.users.developer2,
+          verifiedAt: '2026-01-18T15:00:00Z',
+          dodItemDescription: 'Integration tests passing',
+          dodItemCategory: 'testing',
+        },
+        {
+          id: 'dod-v1-4',
+          pbiId: 'pbi-011',
+          dodItemId: 'dod-4',
+          isVerified: true,
+          verifiedBy: UUIDS.users.admin,
+          verifiedAt: '2026-01-18T15:30:00Z',
+          dodItemDescription: 'Documentation updated',
+          dodItemCategory: 'documentation',
+        },
+      ],
+      totalStoryPoints: 31,
+      status: IncrementStatus.DELIVERED,
+      createdAt: '2026-01-05T09:00:00Z',
+      deliveredAt: '2026-01-18T17:00:00Z',
+      deliveryMethod: DeliveryMethod.SPRINT_REVIEW,
+      createdBy: UUIDS.users.scrumMaster,
+      notes:
+        'Successfully delivered on time with all DoD criteria met. Stakeholders impressed with the foundation.',
+    },
+    {
+      id: 'increment-2',
+      sprintId: 'sprint-2',
+      teamId: UUIDS.teams.alpha,
+      name: 'Sprint 2 - Dashboard & Sprint Board',
+      description:
+        'Interactive Kanban board for sprint task management with drag-and-drop functionality, real-time updates, and comprehensive dashboard showing sprint progress and key metrics.',
+      includedPBIs: ['pbi-005', 'pbi-006'],
+      dodVerifications: [
+        {
+          id: 'dod-v2-1',
+          pbiId: 'pbi-005',
+          dodItemId: 'dod-1',
+          isVerified: true,
+          verifiedBy: UUIDS.users.scrumMaster,
+          verifiedAt: '2026-02-01T14:00:00Z',
+          dodItemDescription: 'Code reviewed and approved',
+          dodItemCategory: 'quality',
+        },
+        {
+          id: 'dod-v2-2',
+          pbiId: 'pbi-005',
+          dodItemId: 'dod-2',
+          isVerified: true,
+          verifiedBy: UUIDS.users.developer2,
+          verifiedAt: '2026-02-01T14:30:00Z',
+          dodItemDescription: 'Unit tests passing (80% coverage)',
+          dodItemCategory: 'testing',
+        },
+        {
+          id: 'dod-v2-3',
+          pbiId: 'pbi-006',
+          dodItemId: 'dod-5',
+          isVerified: true,
+          verifiedBy: UUIDS.users.admin,
+          verifiedAt: '2026-02-01T15:00:00Z',
+          dodItemDescription: 'Accessibility audit passed',
+          dodItemCategory: 'quality',
+        },
+        {
+          id: 'dod-v2-4',
+          pbiId: 'pbi-006',
+          dodItemId: 'dod-6',
+          isVerified: true,
+          verifiedBy: UUIDS.users.developer1,
+          verifiedAt: '2026-02-01T15:30:00Z',
+          dodItemDescription: 'Performance benchmarks met',
+          dodItemCategory: 'performance',
+        },
+      ],
+      totalStoryPoints: 21,
+      status: IncrementStatus.DELIVERED,
+      createdAt: '2026-01-19T09:00:00Z',
+      deliveredAt: '2026-02-01T16:00:00Z',
+      deliveryMethod: DeliveryMethod.SPRINT_REVIEW,
+      createdBy: UUIDS.users.admin,
+      notes:
+        'Kanban board highly praised by team. Dashboard widgets provide excellent visibility into sprint health.',
+    },
+    // ==================== DRAFT Increments ====================
+    {
+      id: 'increment-3',
+      sprintId: 'sprint-3',
+      teamId: UUIDS.teams.alpha,
+      name: 'Sprint 3 - Daily Scrum & Impediments',
+      description:
+        'Daily Scrum interface for team updates with historical tracking, and comprehensive impediment management system with status workflow and resolution tracking.',
+      includedPBIs: ['pbi-007', 'pbi-008'],
       dodVerifications: [],
       totalStoryPoints: 13,
+      status: IncrementStatus.DRAFT,
+      createdAt: '2026-02-02T09:00:00Z',
+      createdBy: UUIDS.users.scrumMaster,
+    },
+    // ==================== Early Release Increment ====================
+    {
+      id: 'increment-early-1',
+      sprintId: 'sprint-2',
+      teamId: UUIDS.teams.alpha,
+      name: 'Hotfix - Authentication Security',
+      description:
+        'Critical security patch for authentication system addressing session management vulnerability. Released early to production.',
+      includedPBIs: [],
+      dodVerifications: [
+        {
+          id: 'dod-ve-1',
+          pbiId: 'pbi-003',
+          dodItemId: 'dod-7',
+          isVerified: true,
+          verifiedBy: UUIDS.users.admin,
+          verifiedAt: '2026-01-26T08:00:00Z',
+          dodItemDescription: 'Security audit passed',
+          dodItemCategory: 'security',
+        },
+        {
+          id: 'dod-ve-2',
+          pbiId: 'pbi-003',
+          dodItemId: 'dod-8',
+          isVerified: true,
+          verifiedBy: UUIDS.users.admin,
+          verifiedAt: '2026-01-26T08:30:00Z',
+          dodItemDescription: 'Penetration testing completed',
+          dodItemCategory: 'security',
+        },
+        {
+          id: 'dod-ve-3',
+          pbiId: 'pbi-003',
+          dodItemId: 'dod-3',
+          isVerified: true,
+          verifiedBy: UUIDS.users.developer1,
+          verifiedAt: '2026-01-26T09:00:00Z',
+          dodItemDescription: 'Regression tests passing',
+          dodItemCategory: 'testing',
+        },
+      ],
+      totalStoryPoints: 5,
       status: IncrementStatus.DELIVERED,
-      createdAt: '2026-02-10T10:00:00Z',
-      deliveredAt: '2026-02-13T15:00:00Z',
-      deliveryMethod: DeliveryMethod.SPRINT_REVIEW,
-      createdBy: 'user-2',
+      createdAt: '2026-01-25T14:00:00Z',
+      deliveredAt: '2026-01-26T10:00:00Z',
+      deliveryMethod: DeliveryMethod.EARLY_RELEASE,
+      createdBy: UUIDS.users.admin,
+      notes:
+        'Critical security fix deployed to production within 20 hours of discovery. No user impact.',
     },
   ];
 
@@ -1655,22 +1897,266 @@ class MockApiService {
   // ==================== Sprint Reviews ====================
 
   private sprintReviewsStore: SprintReview[] = [
+    // ==================== Completed Sprint Reviews ====================
     {
       id: 'review-1',
-      sprintId: 'sprint-5',
-      teamId: 'team-1',
+      sprintId: 'sprint-1',
+      teamId: UUIDS.teams.alpha,
       incrementId: 'increment-1',
-      reviewDate: '2026-02-13T15:00:00Z',
+      reviewDate: '2026-01-18T15:00:00Z',
       attendees: [
-        { id: 'attendee-1', name: 'Product Owner', role: 'product_owner', attended: true },
-        { id: 'attendee-2', name: 'Scrum Master', role: 'scrum_master', attended: true },
-        { id: 'attendee-3', name: 'Developer 1', role: 'developer', attended: true },
+        {
+          id: 'attendee-1',
+          name: 'John Administrator',
+          email: 'john.admin@company.com',
+          role: 'stakeholder',
+          attended: true,
+        },
+        {
+          id: 'attendee-2',
+          name: 'Sarah Smith',
+          email: 'sarah.smith@company.com',
+          role: 'scrum_master',
+          attended: true,
+        },
+        {
+          id: 'attendee-3',
+          name: 'Mike Wilson',
+          email: 'mike.wilson@company.com',
+          role: 'product_owner',
+          attended: true,
+        },
+        {
+          id: 'attendee-4',
+          name: 'Emma Davis',
+          email: 'emma.davis@company.com',
+          role: 'developer',
+          attended: true,
+        },
+        {
+          id: 'attendee-5',
+          name: 'Alex Brown',
+          email: 'alex.brown@company.com',
+          role: 'developer',
+          attended: true,
+        },
+        {
+          id: 'attendee-6',
+          name: 'Jennifer Lee',
+          email: 'jennifer.lee@company.com',
+          role: 'stakeholder',
+          attended: false,
+        },
+      ],
+      feedback: [
+        {
+          id: 'feedback-1',
+          reviewId: 'review-1',
+          authorName: 'Jennifer Lee',
+          content:
+            'Great foundation! The dashboard layout is intuitive and clean. Looking forward to seeing the Kanban board in action.',
+          category: 'positive',
+          actionRequired: false,
+          actionTaken: false,
+          createdAt: '2026-01-18T15:30:00Z',
+        },
+        {
+          id: 'feedback-2',
+          reviewId: 'review-1',
+          authorName: 'John Administrator',
+          content:
+            'Impressed with the CI/CD pipeline setup. Deployment process is smooth and well-documented.',
+          category: 'positive',
+          actionRequired: false,
+          actionTaken: false,
+          createdAt: '2026-01-18T15:45:00Z',
+        },
+        {
+          id: 'feedback-3',
+          reviewId: 'review-1',
+          authorName: 'Mike Wilson',
+          content:
+            'Consider adding more detailed analytics in future increments. The current metrics are a good start.',
+          category: 'suggestion',
+          actionRequired: true,
+          actionTaken: true,
+          createdAt: '2026-01-18T16:00:00Z',
+        },
+      ],
+      backlogAdjustments: [
+        {
+          id: 'adjustment-1',
+          reviewId: 'review-1',
+          pbiId: 'pbi-003',
+          action: 'modify',
+          description: 'Increased priority for authentication system based on stakeholder feedback',
+          reason: 'Security requirements elevated by stakeholders',
+          implemented: true,
+          createdAt: '2026-01-18T16:15:00Z',
+        },
+      ],
+      summary:
+        'Sprint 1 review completed successfully. Core infrastructure delivered on time with all DoD criteria met. Stakeholders impressed with the foundation and eager to see the Kanban board in Sprint 2.',
+      createdAt: '2026-01-18T15:00:00Z',
+      updatedAt: '2026-01-18T16:30:00Z',
+    },
+    {
+      id: 'review-2',
+      sprintId: 'sprint-2',
+      teamId: UUIDS.teams.alpha,
+      incrementId: 'increment-2',
+      reviewDate: '2026-02-01T15:00:00Z',
+      attendees: [
+        {
+          id: 'attendee-7',
+          name: 'John Administrator',
+          email: 'john.admin@company.com',
+          role: 'stakeholder',
+          attended: true,
+        },
+        {
+          id: 'attendee-8',
+          name: 'Sarah Smith',
+          email: 'sarah.smith@company.com',
+          role: 'scrum_master',
+          attended: true,
+        },
+        {
+          id: 'attendee-9',
+          name: 'Mike Wilson',
+          email: 'mike.wilson@company.com',
+          role: 'product_owner',
+          attended: true,
+        },
+        {
+          id: 'attendee-10',
+          name: 'Emma Davis',
+          email: 'emma.davis@company.com',
+          role: 'developer',
+          attended: true,
+        },
+        {
+          id: 'attendee-11',
+          name: 'Alex Brown',
+          email: 'alex.brown@company.com',
+          role: 'developer',
+          attended: true,
+        },
+        {
+          id: 'attendee-12',
+          name: 'David Chen',
+          email: 'david.chen@company.com',
+          role: 'stakeholder',
+          attended: true,
+        },
+        {
+          id: 'attendee-13',
+          name: 'Lisa Wang',
+          email: 'lisa.wang@company.com',
+          role: 'stakeholder',
+          attended: false,
+        },
+      ],
+      feedback: [
+        {
+          id: 'feedback-4',
+          reviewId: 'review-2',
+          authorName: 'David Chen',
+          content:
+            'The Kanban board is exactly what we needed! Drag-and-drop functionality is smooth and intuitive.',
+          category: 'positive',
+          actionRequired: false,
+          actionTaken: false,
+          createdAt: '2026-02-01T15:30:00Z',
+        },
+        {
+          id: 'feedback-5',
+          reviewId: 'review-2',
+          authorName: 'Lisa Wang',
+          content:
+            'Dashboard widgets provide excellent visibility. Would love to see burndown chart integration.',
+          category: 'positive',
+          actionRequired: false,
+          actionTaken: false,
+          createdAt: '2026-02-01T15:45:00Z',
+        },
+        {
+          id: 'feedback-6',
+          reviewId: 'review-2',
+          authorName: 'Mike Wilson',
+          content: 'Team velocity tracking is very helpful for sprint planning. Great progress!',
+          category: 'positive',
+          actionRequired: false,
+          actionTaken: false,
+          createdAt: '2026-02-01T16:00:00Z',
+        },
+        {
+          id: 'feedback-7',
+          reviewId: 'review-2',
+          authorName: 'John Administrator',
+          content:
+            'Mobile responsiveness could be improved. Some UI elements are hard to use on smaller screens.',
+          category: 'suggestion',
+          actionRequired: true,
+          actionTaken: false,
+          createdAt: '2026-02-01T16:15:00Z',
+        },
+      ],
+      backlogAdjustments: [
+        {
+          id: 'adjustment-2',
+          reviewId: 'review-2',
+          pbiId: 'pbi-007',
+          action: 'modify',
+          description:
+            'Added notification reminders feature to Daily Scrum PBI based on stakeholder request',
+          reason: 'Stakeholder requested push notifications for daily updates',
+          implemented: true,
+          createdAt: '2026-02-01T16:30:00Z',
+        },
+        {
+          id: 'adjustment-3',
+          reviewId: 'review-2',
+          action: 'add',
+          description: 'Created new PBI for mobile responsiveness improvements',
+          reason: 'Mobile UI issues identified during review',
+          implemented: false,
+          createdAt: '2026-02-01T16:45:00Z',
+        },
+      ],
+      summary:
+        'Sprint 2 review completed with excellent stakeholder engagement. Kanban board and dashboard well-received. Mobile responsiveness identified as area for improvement. Two backlog adjustments made based on feedback.',
+      createdAt: '2026-02-01T15:00:00Z',
+      updatedAt: '2026-02-01T17:00:00Z',
+    },
+    // ==================== Draft Sprint Review ====================
+    {
+      id: 'review-3',
+      sprintId: 'sprint-3',
+      teamId: UUIDS.teams.alpha,
+      incrementId: 'increment-3',
+      reviewDate: '2026-02-15T15:00:00Z',
+      attendees: [
+        {
+          id: 'attendee-14',
+          name: 'Sarah Smith',
+          email: 'sarah.smith@company.com',
+          role: 'scrum_master',
+          attended: false,
+        },
+        {
+          id: 'attendee-15',
+          name: 'Mike Wilson',
+          email: 'mike.wilson@company.com',
+          role: 'product_owner',
+          attended: false,
+        },
       ],
       feedback: [],
       backlogAdjustments: [],
-      summary: 'Sprint 5 review completed successfully',
-      createdAt: '2026-02-13T15:00:00Z',
-      updatedAt: '2026-02-13T16:00:00Z',
+      summary: '',
+      createdAt: '2026-02-14T09:00:00Z',
+      updatedAt: '2026-02-14T09:00:00Z',
     },
   ];
 
@@ -1784,86 +2270,550 @@ class MockApiService {
   // ==================== Sprint Retrospectives ====================
 
   private retrospectivesStore: SprintRetrospective[] = [
+    // ==================== COMPLETED Retrospectives ====================
     {
       id: 'retro-1',
-      sprintId: 'sprint-5',
-      teamId: 'team-1',
-      retroDate: '2026-02-14T18:00:00Z',
-      facilitatorId: 'user-2',
-      status: RetrospectiveStatus.DRAFT,
+      sprintId: 'sprint-1',
+      teamId: UUIDS.teams.alpha,
+      retroDate: '2026-01-18T18:00:00Z',
+      facilitatorId: UUIDS.users.scrumMaster,
+      status: RetrospectiveStatus.COMPLETED,
       participants: [
-        { id: 'user-1', firstName: 'John', lastName: 'Admin', role: 'developer' },
-        { id: 'user-2', firstName: 'Sarah', lastName: 'Smith', role: 'scrum_master' },
-        { id: 'user-3', firstName: 'Mike', lastName: 'Wilson', role: 'product_owner' },
-        { id: 'user-4', firstName: 'Emma', lastName: 'Davis', role: 'developer' },
-        { id: 'user-5', firstName: 'Alex', lastName: 'Brown', role: 'developer' },
+        { id: UUIDS.users.admin, firstName: 'John', lastName: 'Administrator', role: 'developer' },
+        {
+          id: UUIDS.users.scrumMaster,
+          firstName: 'Sarah',
+          lastName: 'Smith',
+          role: 'scrum_master',
+        },
+        {
+          id: UUIDS.users.developer1,
+          firstName: 'Mike',
+          lastName: 'Wilson',
+          role: 'product_owner',
+        },
+        { id: UUIDS.users.developer2, firstName: 'Emma', lastName: 'Davis', role: 'developer' },
+        { id: UUIDS.users.guest, firstName: 'Alex', lastName: 'Brown', role: 'developer' },
       ],
-      attendees: [],
+      attendees: [
+        {
+          id: 'attendee-1-1',
+          userId: UUIDS.users.admin,
+          name: 'John Administrator',
+          email: 'demo@example.com',
+          role: 'developer',
+          attended: true,
+        },
+        {
+          id: 'attendee-1-2',
+          userId: UUIDS.users.scrumMaster,
+          name: 'Sarah Smith',
+          email: 'sarah.smith@example.com',
+          role: 'scrum_master',
+          attended: true,
+        },
+        {
+          id: 'attendee-1-3',
+          userId: UUIDS.users.developer1,
+          name: 'Mike Wilson',
+          email: 'mike.wilson@example.com',
+          role: 'product_owner',
+          attended: true,
+        },
+        {
+          id: 'attendee-1-4',
+          userId: UUIDS.users.developer2,
+          name: 'Emma Davis',
+          email: 'emma.davis@example.com',
+          role: 'developer',
+          attended: true,
+        },
+        {
+          id: 'attendee-1-5',
+          userId: UUIDS.users.guest,
+          name: 'Alex Brown',
+          email: 'alex.brown@example.com',
+          role: 'developer',
+          attended: false,
+        },
+      ],
       items: [
         {
-          id: 'item-1',
+          id: 'item-1-1',
           retrospectiveId: 'retro-1',
           category: RetrospectiveCategory.WENT_WELL,
-          content: 'Good collaboration on authentication feature',
-          authorName: 'Developer 1',
-          votes: 3,
-          votedBy: [
-            '018ff5b8-0e1a-7e8c-9d2f-4a6b8c3d5e7f',
-            '018ff5b8-0e1b-7e8c-9d2f-4a6b8c3d5e80',
-            '018ff5b8-0e1c-7e8c-9d2f-4a6b8c3d5e81',
-          ],
-          order: 0,
-          createdAt: '2026-02-14T18:05:00Z',
-        },
-        {
-          id: 'item-2',
-          retrospectiveId: 'retro-1',
-          category: RetrospectiveCategory.DIDNT_GO_WELL,
-          content: 'Sprint Planning took too long',
-          authorName: 'Scrum Master',
-          votes: 4,
-          votedBy: [
-            '018ff5b8-0e1a-7e8c-9d2f-4a6b8c3d5e7f',
-            '018ff5b8-0e1b-7e8c-9d2f-4a6b8c3d5e80',
-            '018ff5b8-0e1c-7e8c-9d2f-4a6b8c3d5e81',
-            '018ff5b8-0e1d-7e8c-9d2f-4a6b8c3d5e82',
-          ],
-          order: 0,
-          createdAt: '2026-02-14T18:10:00Z',
-        },
-        {
-          id: 'item-3',
-          retrospectiveId: 'retro-1',
-          category: RetrospectiveCategory.IMPROVEMENT,
-          content: 'Introduce time-boxing for ceremonies',
-          authorName: 'Product Owner',
+          content:
+            'Excellent team collaboration during infrastructure setup. Everyone contributed effectively.',
+          authorName: 'Sarah Smith',
           votes: 5,
           votedBy: [
-            '018ff5b8-0e1a-7e8c-9d2f-4a6b8c3d5e7f',
-            '018ff5b8-0e1b-7e8c-9d2f-4a6b8c3d5e80',
-            '018ff5b8-0e1c-7e8c-9d2f-4a6b8c3d5e81',
-            '018ff5b8-0e1d-7e8c-9d2f-4a6b8c3d5e82',
-            '018ff5b8-0e1e-7e8c-9d2f-4a6b8c3d5e83',
+            UUIDS.users.admin,
+            UUIDS.users.scrumMaster,
+            UUIDS.users.developer1,
+            UUIDS.users.developer2,
+            UUIDS.users.guest,
           ],
           order: 0,
-          createdAt: '2026-02-14T18:15:00Z',
+          createdAt: '2026-01-18T18:05:00Z',
+        },
+        {
+          id: 'item-1-2',
+          retrospectiveId: 'retro-1',
+          category: RetrospectiveCategory.WENT_WELL,
+          content: 'CI/CD pipeline setup was smooth. Automated deployments saved significant time.',
+          authorName: 'Mike Wilson',
+          votes: 4,
+          votedBy: [
+            UUIDS.users.admin,
+            UUIDS.users.developer1,
+            UUIDS.users.developer2,
+            UUIDS.users.guest,
+          ],
+          order: 1,
+          createdAt: '2026-01-18T18:10:00Z',
+        },
+        {
+          id: 'item-1-3',
+          retrospectiveId: 'retro-1',
+          category: RetrospectiveCategory.DIDNT_GO_WELL,
+          content: 'Initial requirements were unclear, causing some rework.',
+          authorName: 'Emma Davis',
+          votes: 3,
+          votedBy: [UUIDS.users.scrumMaster, UUIDS.users.developer1, UUIDS.users.developer2],
+          order: 0,
+          createdAt: '2026-01-18T18:15:00Z',
+        },
+        {
+          id: 'item-1-4',
+          retrospectiveId: 'retro-1',
+          category: RetrospectiveCategory.IMPROVEMENT,
+          content: 'Start each sprint with a brief requirements clarification session.',
+          authorName: 'Sarah Smith',
+          votes: 5,
+          votedBy: [
+            UUIDS.users.admin,
+            UUIDS.users.scrumMaster,
+            UUIDS.users.developer1,
+            UUIDS.users.developer2,
+            UUIDS.users.guest,
+          ],
+          order: 0,
+          createdAt: '2026-01-18T18:20:00Z',
         },
       ],
       actionItems: [
         {
-          id: 'action-1',
+          id: 'action-1-1',
           retrospectiveId: 'retro-1',
-          title: 'Create time-boxing guidelines',
-          description: 'Define time limits for each ceremony',
-          ownerId: 'user-2',
-          status: 'IN_PROGRESS',
-          addedToSprintBacklog: false,
-          createdAt: '2026-02-14T18:45:00Z',
+          title: 'Create requirements clarification checklist',
+          description: 'Develop a standard checklist for requirements review at sprint start',
+          ownerId: UUIDS.users.scrumMaster,
+          status: 'COMPLETED',
+          addedToSprintBacklog: true,
+          createdAt: '2026-01-18T18:45:00Z',
         },
       ],
+      summary:
+        'Sprint 1 retrospective highlighted strong team collaboration and successful CI/CD implementation. The main improvement area identified was requirements clarity at sprint start. Action item: Create a requirements clarification checklist for future sprints. 4 of 5 team members attended.',
+      isAnonymous: false,
+      createdAt: '2026-01-18T18:00:00Z',
+      updatedAt: '2026-01-18T19:00:00Z',
+    },
+    {
+      id: 'retro-2',
+      sprintId: 'sprint-2',
+      teamId: UUIDS.teams.alpha,
+      retroDate: '2026-02-01T18:00:00Z',
+      facilitatorId: UUIDS.users.scrumMaster,
+      status: RetrospectiveStatus.COMPLETED,
+      participants: [
+        { id: UUIDS.users.admin, firstName: 'John', lastName: 'Administrator', role: 'developer' },
+        {
+          id: UUIDS.users.scrumMaster,
+          firstName: 'Sarah',
+          lastName: 'Smith',
+          role: 'scrum_master',
+        },
+        {
+          id: UUIDS.users.developer1,
+          firstName: 'Mike',
+          lastName: 'Wilson',
+          role: 'product_owner',
+        },
+        { id: UUIDS.users.developer2, firstName: 'Emma', lastName: 'Davis', role: 'developer' },
+        { id: UUIDS.users.guest, firstName: 'Alex', lastName: 'Brown', role: 'developer' },
+      ],
+      attendees: [
+        {
+          id: 'attendee-2-1',
+          userId: UUIDS.users.admin,
+          name: 'John Administrator',
+          email: 'demo@example.com',
+          role: 'developer',
+          attended: true,
+        },
+        {
+          id: 'attendee-2-2',
+          userId: UUIDS.users.scrumMaster,
+          name: 'Sarah Smith',
+          email: 'sarah.smith@example.com',
+          role: 'scrum_master',
+          attended: true,
+        },
+        {
+          id: 'attendee-2-3',
+          userId: UUIDS.users.developer1,
+          name: 'Mike Wilson',
+          email: 'mike.wilson@example.com',
+          role: 'product_owner',
+          attended: true,
+        },
+        {
+          id: 'attendee-2-4',
+          userId: UUIDS.users.developer2,
+          name: 'Emma Davis',
+          email: 'emma.davis@example.com',
+          role: 'developer',
+          attended: true,
+        },
+        {
+          id: 'attendee-2-5',
+          userId: UUIDS.users.guest,
+          name: 'Alex Brown',
+          email: 'alex.brown@example.com',
+          role: 'developer',
+          attended: true,
+        },
+        {
+          id: 'attendee-2-6',
+          name: 'David Chen',
+          email: 'david.chen@stakeholder.com',
+          role: 'stakeholder',
+          attended: true,
+        },
+      ],
+      items: [
+        {
+          id: 'item-2-1',
+          retrospectiveId: 'retro-2',
+          category: RetrospectiveCategory.WENT_WELL,
+          content:
+            'Kanban board implementation exceeded expectations. Drag-and-drop works flawlessly.',
+          authorName: 'Emma Davis',
+          votes: 5,
+          votedBy: [
+            UUIDS.users.admin,
+            UUIDS.users.scrumMaster,
+            UUIDS.users.developer1,
+            UUIDS.users.developer2,
+            UUIDS.users.guest,
+          ],
+          order: 0,
+          createdAt: '2026-02-01T18:05:00Z',
+        },
+        {
+          id: 'item-2-2',
+          retrospectiveId: 'retro-2',
+          category: RetrospectiveCategory.WENT_WELL,
+          content: 'Dashboard widgets provide great visibility. Team loves the sprint overview.',
+          authorName: 'Mike Wilson',
+          votes: 4,
+          votedBy: [
+            UUIDS.users.admin,
+            UUIDS.users.scrumMaster,
+            UUIDS.users.developer1,
+            UUIDS.users.developer2,
+          ],
+          order: 1,
+          createdAt: '2026-02-01T18:10:00Z',
+        },
+        {
+          id: 'item-2-3',
+          retrospectiveId: 'retro-2',
+          category: RetrospectiveCategory.DIDNT_GO_WELL,
+          content: 'Sprint planning took too long (3+ hours). Need better preparation.',
+          authorName: 'Sarah Smith',
+          votes: 5,
+          votedBy: [
+            UUIDS.users.admin,
+            UUIDS.users.scrumMaster,
+            UUIDS.users.developer1,
+            UUIDS.users.developer2,
+            UUIDS.users.guest,
+          ],
+          order: 0,
+          createdAt: '2026-02-01T18:15:00Z',
+        },
+        {
+          id: 'item-2-4',
+          retrospectiveId: 'retro-2',
+          category: RetrospectiveCategory.DIDNT_GO_WELL,
+          content: 'Mobile testing was rushed. Found issues late in the sprint.',
+          authorName: 'Alex Brown',
+          votes: 3,
+          votedBy: [UUIDS.users.admin, UUIDS.users.developer1, UUIDS.users.developer2],
+          order: 1,
+          createdAt: '2026-02-01T18:20:00Z',
+        },
+        {
+          id: 'item-2-5',
+          retrospectiveId: 'retro-2',
+          category: RetrospectiveCategory.IMPROVEMENT,
+          content:
+            'Introduce time-boxing for sprint planning (max 2 hours with pre-read materials).',
+          authorName: 'Sarah Smith',
+          votes: 5,
+          votedBy: [
+            UUIDS.users.admin,
+            UUIDS.users.scrumMaster,
+            UUIDS.users.developer1,
+            UUIDS.users.developer2,
+            UUIDS.users.guest,
+          ],
+          order: 0,
+          createdAt: '2026-02-01T18:25:00Z',
+        },
+        {
+          id: 'item-2-6',
+          retrospectiveId: 'retro-2',
+          category: RetrospectiveCategory.IMPROVEMENT,
+          content: 'Add mobile testing to DoD checklist and test early in each sprint.',
+          authorName: 'Emma Davis',
+          votes: 4,
+          votedBy: [
+            UUIDS.users.admin,
+            UUIDS.users.scrumMaster,
+            UUIDS.users.developer1,
+            UUIDS.users.developer2,
+          ],
+          order: 1,
+          createdAt: '2026-02-01T18:30:00Z',
+        },
+      ],
+      actionItems: [
+        {
+          id: 'action-2-1',
+          retrospectiveId: 'retro-2',
+          title: 'Create time-boxing guidelines for ceremonies',
+          description: 'Define time limits for each ceremony with pre-read requirements',
+          ownerId: UUIDS.users.scrumMaster,
+          status: 'IN_PROGRESS',
+          addedToSprintBacklog: true,
+          createdAt: '2026-02-01T18:45:00Z',
+        },
+        {
+          id: 'action-2-2',
+          retrospectiveId: 'retro-2',
+          title: 'Update DoD with mobile testing requirement',
+          description: 'Add mobile responsiveness testing to Definition of Done checklist',
+          ownerId: UUIDS.users.developer2,
+          status: 'PENDING',
+          addedToSprintBacklog: false,
+          createdAt: '2026-02-01T18:50:00Z',
+        },
+      ],
+      summary:
+        'Sprint 2 was highly productive with successful Kanban and dashboard implementations. Key issues: sprint planning duration and mobile testing timing. Action items include time-boxing guidelines and updating DoD for mobile testing. All 6 attendees participated including stakeholder David Chen.',
+      isAnonymous: false,
+      createdAt: '2026-02-01T18:00:00Z',
+      updatedAt: '2026-02-01T19:15:00Z',
+    },
+    // ==================== IN_PROGRESS Retrospective ====================
+    {
+      id: 'retro-3',
+      sprintId: 'sprint-3',
+      teamId: UUIDS.teams.alpha,
+      retroDate: '2026-02-14T18:00:00Z',
+      facilitatorId: UUIDS.users.scrumMaster,
+      status: RetrospectiveStatus.IN_PROGRESS,
+      participants: [
+        { id: UUIDS.users.admin, firstName: 'John', lastName: 'Administrator', role: 'developer' },
+        {
+          id: UUIDS.users.scrumMaster,
+          firstName: 'Sarah',
+          lastName: 'Smith',
+          role: 'scrum_master',
+        },
+        {
+          id: UUIDS.users.developer1,
+          firstName: 'Mike',
+          lastName: 'Wilson',
+          role: 'product_owner',
+        },
+        { id: UUIDS.users.developer2, firstName: 'Emma', lastName: 'Davis', role: 'developer' },
+        { id: UUIDS.users.guest, firstName: 'Alex', lastName: 'Brown', role: 'developer' },
+      ],
+      attendees: [
+        {
+          id: 'attendee-3-1',
+          userId: UUIDS.users.admin,
+          name: 'John Administrator',
+          email: 'demo@example.com',
+          role: 'developer',
+          attended: true,
+        },
+        {
+          id: 'attendee-3-2',
+          userId: UUIDS.users.scrumMaster,
+          name: 'Sarah Smith',
+          email: 'sarah.smith@example.com',
+          role: 'scrum_master',
+          attended: true,
+        },
+        {
+          id: 'attendee-3-3',
+          userId: UUIDS.users.developer1,
+          name: 'Mike Wilson',
+          email: 'mike.wilson@example.com',
+          role: 'product_owner',
+          attended: true,
+        },
+        {
+          id: 'attendee-3-4',
+          userId: UUIDS.users.developer2,
+          name: 'Emma Davis',
+          email: 'emma.davis@example.com',
+          role: 'developer',
+          attended: false,
+        },
+        {
+          id: 'attendee-3-5',
+          userId: UUIDS.users.guest,
+          name: 'Alex Brown',
+          email: 'alex.brown@example.com',
+          role: 'developer',
+          attended: true,
+        },
+      ],
+      items: [
+        {
+          id: 'item-3-1',
+          retrospectiveId: 'retro-3',
+          category: RetrospectiveCategory.WENT_WELL,
+          content:
+            'Daily Scrum feature implementation going smoothly. Form validation works great.',
+          authorName: 'John Administrator',
+          votes: 3,
+          votedBy: [UUIDS.users.scrumMaster, UUIDS.users.developer1, UUIDS.users.developer2],
+          order: 0,
+          createdAt: '2026-02-14T18:05:00Z',
+        },
+        {
+          id: 'item-3-2',
+          retrospectiveId: 'retro-3',
+          category: RetrospectiveCategory.WENT_WELL,
+          content: 'Impediment tracking design received positive feedback from stakeholders.',
+          authorName: 'Emma Davis',
+          votes: 2,
+          votedBy: [UUIDS.users.admin, UUIDS.users.scrumMaster],
+          order: 1,
+          createdAt: '2026-02-14T18:10:00Z',
+        },
+        {
+          id: 'item-3-3',
+          retrospectiveId: 'retro-3',
+          category: RetrospectiveCategory.DIDNT_GO_WELL,
+          content: 'API documentation incomplete, causing integration delays.',
+          authorName: 'Mike Wilson',
+          votes: 4,
+          votedBy: [
+            UUIDS.users.admin,
+            UUIDS.users.developer1,
+            UUIDS.users.developer2,
+            UUIDS.users.guest,
+          ],
+          order: 0,
+          createdAt: '2026-02-14T18:15:00Z',
+        },
+        {
+          id: 'item-3-4',
+          retrospectiveId: 'retro-3',
+          category: RetrospectiveCategory.IMPROVEMENT,
+          content: 'Establish API documentation standards and review process.',
+          authorName: 'Sarah Smith',
+          votes: 4,
+          votedBy: [
+            UUIDS.users.admin,
+            UUIDS.users.scrumMaster,
+            UUIDS.users.developer1,
+            UUIDS.users.developer2,
+          ],
+          order: 0,
+          createdAt: '2026-02-14T18:20:00Z',
+        },
+      ],
+      actionItems: [],
+      summary:
+        'Sprint 3 retrospective in progress. Daily Scrum and impediment tracking features are progressing well. Main concern: API documentation needs improvement. 4 of 5 team members attended. Summary to be finalized upon completion.',
       isAnonymous: false,
       createdAt: '2026-02-14T18:00:00Z',
-      updatedAt: '2026-02-14T18:45:00Z',
+      updatedAt: '2026-02-14T18:30:00Z',
+    },
+    // ==================== DRAFT Retrospective ====================
+    {
+      id: 'retro-4',
+      sprintId: 'sprint-3',
+      teamId: UUIDS.teams.beta,
+      retroDate: '2026-02-15T18:00:00Z',
+      facilitatorId: UUIDS.users.scrumMaster,
+      status: RetrospectiveStatus.DRAFT,
+      participants: [
+        {
+          id: UUIDS.users.scrumMaster,
+          firstName: 'Sarah',
+          lastName: 'Smith',
+          role: 'scrum_master',
+        },
+      ],
+      attendees: [
+        {
+          id: 'attendee-4-1',
+          userId: UUIDS.users.scrumMaster,
+          name: 'Sarah Smith',
+          email: 'sarah.smith@example.com',
+          role: 'scrum_master',
+          attended: false,
+        },
+      ],
+      items: [
+        {
+          id: 'item-4-1',
+          retrospectiveId: 'retro-4',
+          category: RetrospectiveCategory.WENT_WELL,
+          content: 'Initial sprint setup completed on time.',
+          authorName: 'Sarah Smith',
+          votes: 1,
+          votedBy: [UUIDS.users.scrumMaster],
+          order: 0,
+          createdAt: '2026-02-15T18:05:00Z',
+        },
+        {
+          id: 'item-4-2',
+          retrospectiveId: 'retro-4',
+          category: RetrospectiveCategory.DIDNT_GO_WELL,
+          content: 'Story point estimation took longer than expected.',
+          authorName: 'Sarah Smith',
+          votes: 0,
+          votedBy: [],
+          order: 0,
+          createdAt: '2026-02-15T18:10:00Z',
+        },
+        {
+          id: 'item-4-3',
+          retrospectiveId: 'retro-4',
+          category: RetrospectiveCategory.IMPROVEMENT,
+          content: 'Consider using planning poker for more accurate estimations.',
+          authorName: 'Sarah Smith',
+          votes: 1,
+          votedBy: [UUIDS.users.scrumMaster],
+          order: 0,
+          createdAt: '2026-02-15T18:15:00Z',
+        },
+      ],
+      actionItems: [],
+      isAnonymous: true,
+      createdAt: '2026-02-14T09:00:00Z',
+      updatedAt: '2026-02-14T09:00:00Z',
     },
   ];
 
@@ -2130,21 +3080,30 @@ class MockApiService {
 
   async getMyTeams(): Promise<ApiResponse<(Team & { userRole: string })[]>> {
     await delay(300);
-    const teamsWithRoles = mockTeams.map((team) => ({
-      ...team,
-      userRole: 'developer' as string,
-    }));
+    const currentUser = getCurrentUser();
+    const teamsWithRoles = mockTeams.map((team) => {
+      const member = team.members?.find((m) => m.userId === currentUser.id);
+      const userRole = member?.role ?? 'developer';
+      return {
+        ...team,
+        userRole,
+      };
+    });
     return {
       success: true,
       data: teamsWithRoles,
     };
   }
 
-  async getMyRoleInTeam(_teamId: string): Promise<ApiResponse<{ role: string }>> {
+  async getMyRoleInTeam(teamId: string): Promise<ApiResponse<{ role: string }>> {
     await delay(200);
+    const currentUser = getCurrentUser();
+    const team = mockTeams.find((t) => t.id === teamId);
+    const member = team?.members?.find((m) => m.userId === currentUser.id);
+    const role = member?.role ?? 'developer';
     return {
       success: true,
-      data: { role: 'developer' },
+      data: { role },
     };
   }
 
@@ -2160,11 +3119,14 @@ class MockApiService {
         },
       };
     }
+    const currentUser = getCurrentUser();
+    const member = team.members?.find((m) => m.userId === currentUser.id);
+    const userRole = member?.role ?? 'developer';
     return {
       success: true,
       data: {
         ...team,
-        userRole: 'developer',
+        userRole,
       },
     };
   }
@@ -2425,6 +3387,779 @@ class MockApiService {
   async deleteTeam(_id: string): Promise<ApiResponse<null>> {
     await delay(300);
     return { success: true };
+  }
+
+  // ==================== Notification Config ====================
+
+  async getNotificationConfig(): Promise<
+    ApiResponse<{
+      emailEnabled: boolean;
+      pushEnabled: boolean;
+      slackEnabled: boolean;
+      digestFrequency: string;
+    }>
+  > {
+    await mockDelay(200);
+    return mockSuccess({
+      emailEnabled: true,
+      pushEnabled: false,
+      slackEnabled: true,
+      digestFrequency: 'daily',
+    });
+  }
+
+  // ==================== Notifications ====================
+
+  private notificationsStore: AppNotification[] = [
+    {
+      id: 'notif-1',
+      userId: 'user-1',
+      type: 'task_assigned',
+      title: 'New Task Assigned',
+      message: 'You have been assigned to "Implement login feature"',
+      data: { taskId: 'task-1', pbiId: 'pbi-1' },
+      isRead: false,
+      createdAt: new Date().toISOString(),
+    },
+    {
+      id: 'notif-2',
+      userId: 'user-1',
+      type: 'system',
+      title: 'Team Invitation',
+      message: 'You have been invited to join "Alpha Team"',
+      data: { teamId: 'team-1', teamName: 'Alpha Team' },
+      isRead: true,
+      createdAt: new Date(Date.now() - 86400000).toISOString(),
+    },
+    {
+      id: 'notif-3',
+      userId: 'user-1',
+      type: 'impediment',
+      title: 'Impediment Assigned',
+      message: 'You have been assigned to resolve impediment "Database connection issue"',
+      data: { impedimentId: 'impediment-1' },
+      isRead: false,
+      createdAt: new Date(Date.now() - 3600000).toISOString(),
+    },
+    {
+      id: 'notif-4',
+      userId: 'user-1',
+      type: 'system',
+      title: 'Daily Update Reminder',
+      message: 'Remember to submit your daily update for Sprint-2603',
+      data: { sprintId: 'sprint-1' },
+      isRead: false,
+      createdAt: new Date(Date.now() - 7200000).toISOString(),
+    },
+    {
+      id: 'notif-5',
+      userId: 'user-1',
+      type: 'direct_message',
+      title: 'Direct Message from John Doe',
+      message: 'Hey, can you review my pull request when you get a chance?',
+      data: { senderId: 'user-2', senderName: 'John Doe' },
+      isRead: true,
+      createdAt: new Date(Date.now() - 172800000).toISOString(),
+    },
+    {
+      id: 'notif-6',
+      userId: 'user-1',
+      type: 'sprint_update',
+      title: 'Sprint Started',
+      message: 'Sprint-2603 has started',
+      data: { sprintId: 'sprint-1' },
+      isRead: false,
+      createdAt: new Date(Date.now() - 259200000).toISOString(),
+    },
+  ];
+
+  async getNotifications(): Promise<
+    ApiResponse<{
+      notifications: AppNotification[];
+      pagination: { page: number; limit: number; total: number; totalPages: number };
+      unreadCount: number;
+    }>
+  > {
+    await mockDelay(300);
+    const unreadCount = this.notificationsStore.filter((n) => !n.isRead).length;
+    return mockSuccess({
+      notifications: [...this.notificationsStore],
+      pagination: {
+        page: 1,
+        limit: 10,
+        total: this.notificationsStore.length,
+        totalPages: 1,
+      },
+      unreadCount,
+    });
+  }
+
+  async getUnreadCount(): Promise<ApiResponse<{ count: number; lastCheckedAt: string }>> {
+    await mockDelay(100);
+    const count = this.notificationsStore.filter((n) => !n.isRead).length;
+    return mockSuccess({ count, lastCheckedAt: new Date().toISOString() });
+  }
+
+  async markAsRead(id: string): Promise<ApiResponse<AppNotification>> {
+    await mockDelay(200);
+    const notif = this.notificationsStore.find((n) => n.id === id);
+    if (!notif) {
+      return mockError('NOT_FOUND', 'Notification not found');
+    }
+    notif.isRead = true;
+    return mockSuccess({ ...notif });
+  }
+
+  async markAllAsRead(): Promise<ApiResponse<{ count: number }>> {
+    await mockDelay(200);
+    let count = 0;
+    this.notificationsStore.forEach((n) => {
+      if (!n.isRead) {
+        n.isRead = true;
+        count++;
+      }
+    });
+    return mockSuccess({ count });
+  }
+
+  async deleteNotification(id: string): Promise<ApiResponse<never>> {
+    await mockDelay(200);
+    const index = this.notificationsStore.findIndex((n) => n.id === id);
+    if (index === -1) {
+      return mockError('NOT_FOUND', 'Notification not found');
+    }
+    this.notificationsStore.splice(index, 1);
+    return mockSuccess(undefined as never);
+  }
+
+  async sendDirectMessage(data: {
+    recipientId: string;
+    message: string;
+  }): Promise<ApiResponse<{ success: boolean }>> {
+    await mockDelay(300);
+    const newNotification: AppNotification = {
+      id: `notif-${Date.now()}`,
+      userId: data.recipientId,
+      type: 'direct_message',
+      title: 'New Message',
+      message: data.message,
+      isRead: false,
+      createdAt: new Date().toISOString(),
+    };
+    this.notificationsStore.push(newNotification);
+    return mockSuccess({ success: true });
+  }
+
+  // ==================== Workflow ====================
+
+  private workflowStatesStore: Record<string, WorkflowState[]> = {
+    ProductBacklogItem: [
+      {
+        id: 'state-1',
+        workflowId: 'workflow-pbi',
+        name: 'NEW',
+        displayName: 'New',
+        orderIndex: 0,
+        isFinal: false,
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: 'state-2',
+        workflowId: 'workflow-pbi',
+        name: 'REFINED',
+        displayName: 'Refined',
+        orderIndex: 1,
+        isFinal: false,
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: 'state-3',
+        workflowId: 'workflow-pbi',
+        name: 'READY',
+        displayName: 'Ready',
+        orderIndex: 2,
+        isFinal: false,
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: 'state-4',
+        workflowId: 'workflow-pbi',
+        name: 'IN_PROGRESS',
+        displayName: 'In Progress',
+        orderIndex: 3,
+        isFinal: false,
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: 'state-5',
+        workflowId: 'workflow-pbi',
+        name: 'DONE',
+        displayName: 'Done',
+        orderIndex: 4,
+        isFinal: true,
+        createdAt: new Date().toISOString(),
+      },
+    ],
+    Task: [
+      {
+        id: 'state-10',
+        workflowId: 'workflow-task',
+        name: 'TODO',
+        displayName: 'To Do',
+        orderIndex: 0,
+        isFinal: false,
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: 'state-11',
+        workflowId: 'workflow-task',
+        name: 'IN_PROGRESS',
+        displayName: 'In Progress',
+        orderIndex: 1,
+        isFinal: false,
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: 'state-12',
+        workflowId: 'workflow-task',
+        name: 'DONE',
+        displayName: 'Done',
+        orderIndex: 2,
+        isFinal: true,
+        createdAt: new Date().toISOString(),
+      },
+    ],
+    Impediment: [
+      {
+        id: 'state-20',
+        workflowId: 'workflow-impediment',
+        name: 'OPEN',
+        displayName: 'Open',
+        orderIndex: 0,
+        isFinal: false,
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: 'state-21',
+        workflowId: 'workflow-impediment',
+        name: 'IN_PROGRESS',
+        displayName: 'In Progress',
+        orderIndex: 1,
+        isFinal: false,
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: 'state-22',
+        workflowId: 'workflow-impediment',
+        name: 'RESOLVED',
+        displayName: 'Resolved',
+        orderIndex: 2,
+        isFinal: true,
+        createdAt: new Date().toISOString(),
+      },
+    ],
+  };
+
+  private workflowTransitionsStore: Record<string, WorkflowTransition[]> = {
+    ProductBacklogItem: [
+      { id: 'trans-1', entityType: 'ProductBacklogItem', fromState: 'NEW', toState: 'REFINED' },
+      { id: 'trans-2', entityType: 'ProductBacklogItem', fromState: 'REFINED', toState: 'READY' },
+      {
+        id: 'trans-3',
+        entityType: 'ProductBacklogItem',
+        fromState: 'READY',
+        toState: 'IN_PROGRESS',
+      },
+      {
+        id: 'trans-4',
+        entityType: 'ProductBacklogItem',
+        fromState: 'IN_PROGRESS',
+        toState: 'DONE',
+      },
+    ],
+    Task: [
+      { id: 'trans-10', entityType: 'Task', fromState: 'TODO', toState: 'IN_PROGRESS' },
+      { id: 'trans-11', entityType: 'Task', fromState: 'IN_PROGRESS', toState: 'DONE' },
+    ],
+    Impediment: [
+      { id: 'trans-20', entityType: 'Impediment', fromState: 'OPEN', toState: 'IN_PROGRESS' },
+      { id: 'trans-21', entityType: 'Impediment', fromState: 'IN_PROGRESS', toState: 'RESOLVED' },
+    ],
+  };
+
+  private statusChangeHistoryStore: Array<{
+    id: string;
+    entityType: string;
+    entityId: string;
+    fromStatus: string;
+    toStatus: string;
+    changedBy: string;
+    changedAt: string;
+  }> = [
+    {
+      id: 'history-1',
+      entityType: 'ProductBacklogItem',
+      entityId: 'pbi-001',
+      fromStatus: 'NEW',
+      toStatus: 'REFINED',
+      changedBy: 'user-1',
+      changedAt: new Date(Date.now() - 86400000).toISOString(),
+    },
+  ];
+
+  async getWorkflowStates(entityType: string): Promise<ApiResponse<WorkflowState[]>> {
+    await mockDelay(200);
+    const states = this.workflowStatesStore[entityType] ?? [];
+    return mockSuccess(states);
+  }
+
+  async getAllowedTransitions(
+    entityType: string,
+    fromStatus: string
+  ): Promise<ApiResponse<string[]>> {
+    await mockDelay(200);
+    const transitions = this.workflowTransitionsStore[entityType] ?? [];
+    const allowed = transitions.filter((t) => t.fromState === fromStatus).map((t) => t.toState);
+    return mockSuccess(allowed);
+  }
+
+  async getWorkflowTransitions(entityType: string): Promise<ApiResponse<WorkflowTransition[]>> {
+    await mockDelay(200);
+    const transitions = this.workflowTransitionsStore[entityType] ?? [];
+    return mockSuccess(transitions);
+  }
+
+  async getWorkflowByEntityType(
+    entityType: string
+  ): Promise<ApiResponse<{ states: WorkflowState[]; transitions: WorkflowTransition[] }>> {
+    await mockDelay(200);
+    return mockSuccess({
+      states: this.workflowStatesStore[entityType] ?? [],
+      transitions: this.workflowTransitionsStore[entityType] ?? [],
+    });
+  }
+
+  async validateTransition(
+    entityType: string,
+    _entityId: string,
+    fromStatus: string,
+    toStatus: string
+  ): Promise<ApiResponse<{ valid: boolean; message?: string }>> {
+    await mockDelay(200);
+    const transitions = this.workflowTransitionsStore[entityType] ?? [];
+    const isValid = transitions.some((t) => t.fromState === fromStatus && t.toState === toStatus);
+    if (isValid) {
+      return mockSuccess({ valid: true });
+    }
+    return mockSuccess({
+      valid: false,
+      message: `Transition from ${fromStatus} to ${toStatus} is not allowed for ${entityType}`,
+    });
+  }
+
+  async getWorkflowStatusChangeHistory(
+    entityType: string,
+    entityId: string
+  ): Promise<
+    ApiResponse<
+      Array<{
+        id: string;
+        entityType: string;
+        entityId: string;
+        fromStatus: string;
+        toStatus: string;
+        changedBy: string;
+        changedAt: string;
+      }>
+    >
+  > {
+    await mockDelay(200);
+    const history = this.statusChangeHistoryStore.filter(
+      (h) => h.entityType === entityType && h.entityId === entityId
+    );
+    return mockSuccess(history);
+  }
+
+  // ==================== Data Export ====================
+
+  private exportStore: Map<
+    string,
+    {
+      status: 'pending' | 'processing' | 'completed' | 'failed' | 'expired';
+      progress: number;
+      downloadUrl?: string;
+      createdAt: string;
+      completedAt?: string;
+      expiresAt?: string;
+      error?: string;
+      fileSize?: number;
+    }
+  > = new Map();
+
+  async initiateExport(_options?: {
+    includeSessions?: boolean;
+    includeNotifications?: boolean;
+    dataCategories?: string[];
+  }): Promise<
+    ApiResponse<{
+      jobId: string;
+      status: 'pending' | 'processing' | 'completed' | 'failed' | 'expired';
+      estimatedCompletionTime: string;
+      message: string;
+    }>
+  > {
+    await mockDelay(500);
+    const jobId = `export-${Date.now()}`;
+    const now = new Date();
+    const estimatedCompletion = new Date(now.getTime() + 30 * 1000);
+
+    this.exportStore.set(jobId, {
+      status: 'processing',
+      progress: 0,
+      createdAt: now.toISOString(),
+    });
+
+    setTimeout(() => {
+      const exp = this.exportStore.get(jobId);
+      if (exp?.status === 'processing') {
+        exp.status = 'completed';
+        exp.progress = 100;
+        exp.downloadUrl = `/mock-exports/${jobId}.zip`;
+        exp.completedAt = new Date().toISOString();
+        exp.expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+        exp.fileSize = 1024 * 256;
+      }
+    }, 5000);
+
+    return mockSuccess({
+      jobId,
+      status: 'processing',
+      estimatedCompletionTime: estimatedCompletion.toISOString(),
+      message: 'Data export initiated successfully',
+    });
+  }
+
+  async getExportStatus(jobId: string): Promise<
+    ApiResponse<{
+      jobId: string;
+      status: string;
+      progress: number;
+      fileSize: number | null;
+      completedAt: string | null;
+      expiresAt: string | null;
+      errorMessage: string | null;
+    }>
+  > {
+    await mockDelay(200);
+    const exp = this.exportStore.get(jobId);
+    if (!exp) {
+      return mockError('NOT_FOUND', 'Export not found');
+    }
+    return mockSuccess({
+      jobId,
+      status: exp.status,
+      progress: exp.progress,
+      fileSize: exp.fileSize ?? null,
+      completedAt: exp.completedAt ?? null,
+      expiresAt: exp.expiresAt ?? null,
+      errorMessage: exp.error ?? null,
+    });
+  }
+
+  async downloadExport(jobId: string): Promise<Blob> {
+    await mockDelay(300);
+    const exp = this.exportStore.get(jobId);
+    if (!exp) {
+      throw new Error('Export not found');
+    }
+    if (exp.status !== 'completed') {
+      throw new Error('Export is not ready for download');
+    }
+    const mockData = {
+      exportMetadata: {
+        version: '1.0',
+        exportedAt: new Date().toISOString(),
+        userId: UUIDS.users.admin,
+        format: 'JSON',
+        dataController: 'Scrsphere',
+        contactEmail: 'privacy@scrsphere.com',
+        exportId: jobId,
+      },
+      dataCategories: ['profile', 'teams', 'tasks', 'notifications'],
+      recordCounts: {
+        profile: 1,
+        teams: 2,
+        tasks: 50,
+        notifications: 25,
+      },
+    };
+    return new Blob([JSON.stringify(mockData, null, 2)], {
+      type: 'application/json',
+    });
+  }
+
+  async cancelExport(jobId: string): Promise<void> {
+    await mockDelay(200);
+    const exp = this.exportStore.get(jobId);
+    if (!exp) {
+      throw new Error('Export not found');
+    }
+    if (exp.status === 'completed') {
+      throw new Error('Cannot cancel a completed export');
+    }
+    this.exportStore.delete(jobId);
+  }
+
+  async getActiveExports(): Promise<
+    ApiResponse<{
+      exports: Array<{
+        jobId: string;
+        status: string;
+        startedAt: string;
+        createdAt: string;
+      }>;
+      count: number;
+    }>
+  > {
+    await mockDelay(200);
+    const active = Array.from(this.exportStore.entries())
+      .filter(([_, v]) => v.status === 'processing')
+      .map(([k, v]) => ({
+        jobId: k,
+        status: v.status,
+        startedAt: v.createdAt,
+        createdAt: v.createdAt,
+      }));
+    return mockSuccess({
+      exports: active,
+      count: active.length,
+    });
+  }
+
+  // ==================== Consent Management ====================
+
+  async recordConsent(data: {
+    consentType: string;
+    granted: boolean;
+  }): Promise<ApiResponse<ConsentRecord>> {
+    await mockDelay(300);
+    const record: ConsentRecord = {
+      id: `consent-${Date.now()}`,
+      userId: 'user-1', // Mock current user
+      consentType: data.consentType as ConsentRecord['consentType'],
+      granted: data.granted,
+      grantedAt: data.granted ? new Date().toISOString() : undefined,
+      createdAt: new Date().toISOString(),
+    };
+    this.consentStore.push(record);
+    return mockSuccess(record);
+  }
+
+  async getConsentHistory(): Promise<ApiResponse<ConsentRecord[]>> {
+    await mockDelay(300);
+    return mockSuccess([...this.consentStore]);
+  }
+
+  async getLatestConsent(): Promise<ApiResponse<ConsentRecord | null>> {
+    await mockDelay(200);
+    const latest =
+      this.consentStore.length > 0 ? this.consentStore[this.consentStore.length - 1] : null;
+    return mockSuccess(latest ?? null);
+  }
+
+  async withdrawConsent(): Promise<ApiResponse<{ message: string }>> {
+    await mockDelay(300);
+    this.consentStore.forEach((c) => {
+      if (c.granted) {
+        c.granted = false;
+        c.withdrawnAt = new Date().toISOString();
+      }
+    });
+    return mockSuccess({ message: 'Consent withdrawn successfully' });
+  }
+
+  async getAnonymousConsent(consentId: string): Promise<ApiResponse<ConsentRecord | null>> {
+    await mockDelay(200);
+    const consent = this.consentStore.find((c) => c.id === consentId) ?? null;
+    return mockSuccess(consent);
+  }
+
+  // ==================== Generic HTTP Methods ====================
+  // These methods route requests to specific mock implementations
+
+  async get<T>(url: string, _config?: { params?: Record<string, unknown> }): Promise<{ data: T }> {
+    await mockDelay(200);
+
+    // Route definition of done requests
+    if (url.includes('/definition-of-done') && !url.includes('/history')) {
+      const parts = url.split('/');
+      const teamId = parts[2] ?? '';
+      const result = await this.getDefinitionOfDone(teamId);
+      return { data: { success: result.success, data: result.data } as T };
+    }
+
+    if (url.includes('/definition-of-done/history')) {
+      const parts = url.split('/');
+      const teamId = parts[2] ?? '';
+      const result = await this.getDoDHistory(teamId);
+      return { data: { success: result.success, data: result.data } as T };
+    }
+
+    // Route definition of ready requests
+    if (url.includes('/definition-of-ready') && !url.includes('/history')) {
+      const parts = url.split('/');
+      const teamId = parts[2] ?? '';
+      const result = await this.getDefinitionOfReady(teamId);
+      return { data: { success: result.success, data: result.data } as T };
+    }
+
+    if (url.includes('/definition-of-ready/history')) {
+      const parts = url.split('/');
+      const teamId = parts[2] ?? '';
+      const result = await this.getDoRHistory(teamId);
+      return { data: { success: result.success, data: result.data } as T };
+    }
+
+    // Route notification requests
+    if (url === '/config/notifications') {
+      const result = await this.getNotificationConfig();
+      return { data: { success: result.success, data: result.data } as T };
+    }
+
+    if (url.startsWith('/notifications?')) {
+      const result = await this.getNotifications();
+      return { data: { success: result.success, data: result.data } as T };
+    }
+
+    if (url === '/notifications/unread-count') {
+      const result = await this.getUnreadCount();
+      return { data: { success: result.success, data: result.data } as T };
+    }
+
+    // Route data export requests
+    if (url === '/user/export-data/active') {
+      const result = await this.getActiveExports();
+      return { data: { success: result.success, data: result.data } as T };
+    }
+
+    if (url.startsWith('/user/export-data/status/')) {
+      const jobId = url.split('/').pop() ?? '';
+      const result = await this.getExportStatus(jobId);
+      return { data: { success: result.success, data: result.data } as T };
+    }
+
+    // Default: return empty success response
+    return { data: { success: true } as T };
+  }
+
+  async put<T>(_url: string, data?: unknown): Promise<{ data: T }> {
+    await mockDelay(200);
+
+    // Route definition of done update
+    if (_url.includes('/definition-of-done')) {
+      const parts = _url.split('/');
+      const teamId = parts[2] ?? '';
+      const typedData = data as { items?: DoDItem[] } | undefined;
+      const items = typedData?.items ?? [];
+      const result = await this.updateDefinitionOfDone(teamId, items);
+      return { data: { success: result.success, data: result.data } as T };
+    }
+
+    // Route definition of ready update
+    if (_url.includes('/definition-of-ready')) {
+      const parts = _url.split('/');
+      const teamId = parts[2] ?? '';
+      const typedData = data as { items?: DoRItem[] } | undefined;
+      const items = typedData?.items ?? [];
+      const result = await this.updateDefinitionOfReady(teamId, items);
+      return { data: { success: result.success, data: result.data } as T };
+    }
+
+    // Default: return empty success response
+    return { data: { success: true } as T };
+  }
+
+  async post<T>(_url: string, data?: unknown): Promise<{ data: T }> {
+    await mockDelay(200);
+
+    // Route data export requests
+    if (_url === '/user/export-data') {
+      const options = data as
+        | {
+            options?: {
+              includeSessions?: boolean;
+              includeNotifications?: boolean;
+              dataCategories?: string[];
+            };
+          }
+        | undefined;
+      const result = await this.initiateExport(options?.options);
+      return { data: { success: result.success, data: result.data } as T };
+    }
+
+    // Route notification requests
+    if (typeof data === 'object' && data !== null && 'recipientId' in data) {
+      const result = await this.sendDirectMessage(data as { recipientId: string; message: string });
+      return {
+        data: {
+          success: result.success,
+          data: { notification: this.notificationsStore[this.notificationsStore.length - 1] },
+        } as T,
+      };
+    }
+
+    // Default: return empty success response
+    return { data: { success: true } as T };
+  }
+
+  async patch<T>(_url: string, _data?: unknown): Promise<{ data: T }> {
+    await mockDelay(200);
+
+    // Route notification requests
+    if (_url.includes('/read') && !_url.includes('mark-all')) {
+      const id = _url.split('/')[2];
+      if (id) {
+        const result = await this.markAsRead(id);
+        return { data: { success: result.success, data: { notification: result.data } } as T };
+      }
+    }
+
+    if (_url.includes('mark-all-read')) {
+      const result = await this.markAllAsRead();
+      return {
+        data: { success: result.success, data: { updatedCount: result.data?.count ?? 0 } } as T,
+      };
+    }
+
+    // Default: return empty success response
+    return { data: { success: true } as T };
+  }
+
+  async delete<T = never>(_url: string): Promise<{ data: T }> {
+    await mockDelay(200);
+
+    // Route data export cancel requests
+    if (
+      _url.startsWith('/user/export-data/') &&
+      !_url.includes('/status/') &&
+      !_url.includes('/download/') &&
+      !_url.includes('/active')
+    ) {
+      const jobId = _url.split('/').pop() ?? '';
+      await this.cancelExport(jobId);
+      return { data: { success: true } as T };
+    }
+
+    // Route notification requests
+    if (_url.startsWith('/notifications/')) {
+      const id = _url.split('/')[2];
+      if (id) {
+        await this.deleteNotification(id);
+      }
+    }
+
+    // Default: return empty success response
+    return { data: { success: true } as T };
   }
 }
 

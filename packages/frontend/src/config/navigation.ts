@@ -93,11 +93,15 @@ export function getFilteredSettingsGroups(
   groups: SettingsGroup[],
   userRole: string | null
 ): SettingsGroup[] {
+  const normalizedUserRole = userRole?.toUpperCase() ?? null;
   return groups
     .map((group) => ({
       ...group,
       items: group.items.filter(
-        (item) => !item.roles || (userRole && item.roles.includes(userRole))
+        (item) =>
+          !item.roles ||
+          (normalizedUserRole &&
+            item.roles.some((role) => role.toUpperCase() === normalizedUserRole))
       ),
     }))
     .filter((group) => group.items.length > 0);

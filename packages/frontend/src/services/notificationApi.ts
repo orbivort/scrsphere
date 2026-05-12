@@ -5,7 +5,7 @@ import type {
   UnreadCountResponse,
 } from '../types/notification.types';
 
-import { apiService } from './api';
+import { apiService } from './index';
 
 export interface NotificationConfig {
   pollingIntervalMs: number;

@@ -1,7 +1,7 @@
 import React, { useState, useReducer, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { apiService } from '../../services';
+import { definitionService } from '../../services';
 import { useTeamStore } from '../../store';
 import { logger } from '../../utils/logger';
 import { useDebounce, useToast } from '../../hooks';
@@ -342,7 +342,7 @@ export const SprintBoard: React.FC = () => {
 
         const savePromises: Promise<unknown>[] = [];
         pbiVerifications.forEach((items, pbiId) => {
-          savePromises.push(apiService.verifyDoDForPBI(pbiId, items));
+          savePromises.push(definitionService.verifyDoDForPBI(pbiId, items));
         });
 
         await Promise.all(savePromises);

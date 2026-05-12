@@ -1,4 +1,3 @@
-// Definition Service
 import type {
   DefinitionOfDone,
   DoDItem,
@@ -9,80 +8,100 @@ import type {
   DoRChecklistVerification,
   ApiResponse,
 } from '../../types';
-import { coreApiService } from '../core/api.core';
+import { apiService } from '../index';
 
 class DefinitionService {
-  private get api() {
-    return coreApiService.axiosInstance;
-  }
-
-  // Definition of Done
   async getDefinitionOfDone(teamId: string): Promise<ApiResponse<DefinitionOfDone>> {
-    const { data } = await this.api.get(`/teams/${teamId}/definition-of-done`);
-    return data;
+    const response = await apiService.get<ApiResponse<DefinitionOfDone>>(
+      `/teams/${teamId}/definition-of-done`
+    );
+    return response.data;
   }
 
   async updateDefinitionOfDone(
     teamId: string,
     items: DoDItem[]
   ): Promise<ApiResponse<DefinitionOfDone>> {
-    const { data } = await this.api.put(`/teams/${teamId}/definition-of-done`, { items });
-    return data;
+    const response = await apiService.put<ApiResponse<DefinitionOfDone>>(
+      `/teams/${teamId}/definition-of-done`,
+      { items }
+    );
+    return response.data;
   }
 
   async getDoDHistory(teamId: string): Promise<ApiResponse<DefinitionOfDone[]>> {
-    const { data } = await this.api.get(`/teams/${teamId}/definition-of-done/history`);
-    return data;
+    const response = await apiService.get<ApiResponse<DefinitionOfDone[]>>(
+      `/teams/${teamId}/definition-of-done/history`
+    );
+    return response.data;
   }
 
   async verifyDoDForPBI(
     pbiId: string,
     verifications: { dodItemId: string; isVerified: boolean; notes?: string }[]
   ): Promise<ApiResponse<DoDChecklistVerification[]>> {
-    const { data } = await this.api.post(`/product-backlog/${pbiId}/verify-dod`, { verifications });
-    return data;
+    const response = await apiService.post<ApiResponse<DoDChecklistVerification[]>>(
+      `/product-backlog/${pbiId}/verify-dod`,
+      { verifications }
+    );
+    return response.data;
   }
 
   async getDoDVerificationsForPBI(pbiId: string): Promise<ApiResponse<DoDChecklistVerification[]>> {
-    const { data } = await this.api.get(`/product-backlog/${pbiId}/dod-verifications`);
-    return data;
+    const response = await apiService.get<ApiResponse<DoDChecklistVerification[]>>(
+      `/product-backlog/${pbiId}/dod-verifications`
+    );
+    return response.data;
   }
 
   async getDoDComplianceReport(sprintId: string): Promise<ApiResponse<DoDComplianceReport>> {
-    const { data } = await this.api.get(`/sprints/${sprintId}/dod-compliance`);
-    return data;
+    const response = await apiService.get<ApiResponse<DoDComplianceReport>>(
+      `/sprints/${sprintId}/dod-compliance`
+    );
+    return response.data;
   }
 
-  // Definition of Ready
   async getDefinitionOfReady(teamId: string): Promise<ApiResponse<DefinitionOfReady>> {
-    const { data } = await this.api.get(`/teams/${teamId}/definition-of-ready`);
-    return data;
+    const response = await apiService.get<ApiResponse<DefinitionOfReady>>(
+      `/teams/${teamId}/definition-of-ready`
+    );
+    return response.data;
   }
 
   async updateDefinitionOfReady(
     teamId: string,
     items: DoRItem[]
   ): Promise<ApiResponse<DefinitionOfReady>> {
-    const { data } = await this.api.put(`/teams/${teamId}/definition-of-ready`, { items });
-    return data;
+    const response = await apiService.put<ApiResponse<DefinitionOfReady>>(
+      `/teams/${teamId}/definition-of-ready`,
+      { items }
+    );
+    return response.data;
   }
 
   async getDoRHistory(teamId: string): Promise<ApiResponse<DefinitionOfReady[]>> {
-    const { data } = await this.api.get(`/teams/${teamId}/definition-of-ready/history`);
-    return data;
+    const response = await apiService.get<ApiResponse<DefinitionOfReady[]>>(
+      `/teams/${teamId}/definition-of-ready/history`
+    );
+    return response.data;
   }
 
   async verifyDoRForPBI(
     pbiId: string,
     verifications: { dorItemId: string; isVerified: boolean; notes?: string }[]
   ): Promise<ApiResponse<DoRChecklistVerification[]>> {
-    const { data } = await this.api.post(`/product-backlog/${pbiId}/verify-dor`, { verifications });
-    return data;
+    const response = await apiService.post<ApiResponse<DoRChecklistVerification[]>>(
+      `/product-backlog/${pbiId}/verify-dor`,
+      { verifications }
+    );
+    return response.data;
   }
 
   async getDoRVerificationsForPBI(pbiId: string): Promise<ApiResponse<DoRChecklistVerification[]>> {
-    const { data } = await this.api.get(`/product-backlog/${pbiId}/dor-verifications`);
-    return data;
+    const response = await apiService.get<ApiResponse<DoRChecklistVerification[]>>(
+      `/product-backlog/${pbiId}/dor-verifications`
+    );
+    return response.data;
   }
 }
 
