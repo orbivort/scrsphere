@@ -23,20 +23,20 @@ const configIdSchema = z.object({
 
 const createConfigSchema = z.object({
   teamId: z.string().uuid('Invalid team ID'),
-  duration: z.enum(['TWO_WEEKS', 'FOUR_WEEKS']),
+  duration: z.enum(['ONE_WEEK', 'TWO_WEEKS', 'THREE_WEEKS', 'FOUR_WEEKS']),
   year: z.number().int().min(2020).max(2100),
   sprintStartDay: z.number().int().min(0).max(6).optional(),
 });
 
 const updateConfigSchema = z.object({
-  duration: z.enum(['TWO_WEEKS', 'FOUR_WEEKS']).optional(),
+  duration: z.enum(['ONE_WEEK', 'TWO_WEEKS', 'THREE_WEEKS', 'FOUR_WEEKS']).optional(),
   year: z.number().int().min(2020).max(2100).optional(),
   sprintStartDay: z.number().int().min(0).max(6).optional(),
 });
 
 const generateSprintsSchema = z.object({
   teamId: z.string().uuid('Invalid team ID'),
-  duration: z.enum(['TWO_WEEKS', 'FOUR_WEEKS']),
+  duration: z.enum(['ONE_WEEK', 'TWO_WEEKS', 'THREE_WEEKS', 'FOUR_WEEKS']),
   year: z.number().int().min(2020).max(2100),
 });
 

@@ -1046,7 +1046,9 @@ enum RetrospectiveStatus {
 }
 
 enum SprintDuration {
+  ONE_WEEK
   TWO_WEEKS
+  THREE_WEEKS
   FOUR_WEEKS
 }
 

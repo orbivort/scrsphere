@@ -599,7 +599,9 @@ export interface ActiveSession {
 
 // Sprint Configuration Types
 export enum SprintDuration {
+  ONE_WEEK = '1week',
   TWO_WEEKS = '2weeks',
+  THREE_WEEKS = '3weeks',
   FOUR_WEEKS = '4weeks',
 }
 
