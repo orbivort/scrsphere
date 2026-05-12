@@ -1,24 +1,20 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { dataExportService } from './dataExport.service';
-import { coreApiService } from '../core/api.core';
+import { apiService } from '../index';
 
-vi.mock('../core/api.core', () => ({
-  coreApiService: {
-    axiosInstance: {
-      get: vi.fn(),
-      post: vi.fn(),
-      put: vi.fn(),
-      delete: vi.fn(),
-    },
+vi.mock('../index', () => ({
+  apiService: {
+    post: vi.fn(),
+    get: vi.fn(),
+    delete: vi.fn(),
+    downloadExport: vi.fn(),
+    cancelExport: vi.fn(),
   },
 }));
 
 describe('DataExportService', () => {
-  const mockApi = coreApiService.axiosInstance;
-
   beforeEach(() => {
     vi.clearAllMocks();
-    // Mock window.URL methods
     global.URL.createObjectURL = vi.fn(() => 'blob:mock-url');
     global.URL.revokeObjectURL = vi.fn();
   });
@@ -39,11 +35,11 @@ describe('DataExportService', () => {
           },
         },
       };
-      vi.mocked(mockApi.post).mockResolvedValue(mockResponse);
+      vi.mocked(apiService.post).mockResolvedValue(mockResponse);
 
       const result = await dataExportService.initiateExport();
 
-      expect(mockApi.post).toHaveBeenCalledWith('/user/export-data', { options: undefined });
+      expect(apiService.post).toHaveBeenCalledWith('/user/export-data', { options: undefined });
       expect(result.jobId).toBe('export-123');
       expect(result.status).toBe('pending');
     });
@@ -64,16 +60,16 @@ describe('DataExportService', () => {
           },
         },
       };
-      vi.mocked(mockApi.post).mockResolvedValue(mockResponse);
+      vi.mocked(apiService.post).mockResolvedValue(mockResponse);
 
       const result = await dataExportService.initiateExport(options);
 
-      expect(mockApi.post).toHaveBeenCalledWith('/user/export-data', { options });
+      expect(apiService.post).toHaveBeenCalledWith('/user/export-data', { options });
       expect(result.jobId).toBe('export-456');
     });
 
     it('should handle initiation errors', async () => {
-      vi.mocked(mockApi.post).mockRejectedValue(new Error('Export limit reached'));
+      vi.mocked(apiService.post).mockRejectedValue(new Error('Export limit reached'));
 
       await expect(dataExportService.initiateExport()).rejects.toThrow('Export limit reached');
     });
@@ -94,11 +90,11 @@ describe('DataExportService', () => {
           },
         },
       };
-      vi.mocked(mockApi.get).mockResolvedValue(mockResponse);
+      vi.mocked(apiService.get).mockResolvedValue(mockResponse);
 
       const result = await dataExportService.getExportStatus('export-123');
 
-      expect(mockApi.get).toHaveBeenCalledWith('/user/export-data/status/export-123');
+      expect(apiService.get).toHaveBeenCalledWith('/user/export-data/status/export-123');
       expect(result.jobId).toBe('export-123');
       expect(result.status).toBe('processing');
       expect(result.progress).toBe(50);
@@ -118,7 +114,7 @@ describe('DataExportService', () => {
           },
         },
       };
-      vi.mocked(mockApi.get).mockResolvedValue(mockResponse);
+      vi.mocked(apiService.get).mockResolvedValue(mockResponse);
 
       const result = await dataExportService.getExportStatus('export-123');
 
@@ -141,7 +137,7 @@ describe('DataExportService', () => {
           },
         },
       };
-      vi.mocked(mockApi.get).mockResolvedValue(mockResponse);
+      vi.mocked(apiService.get).mockResolvedValue(mockResponse);
 
       const result = await dataExportService.getExportStatus('export-123');
 
@@ -153,21 +149,16 @@ describe('DataExportService', () => {
   describe('downloadExport', () => {
     it('should download export file as blob', async () => {
       const mockBlob = new Blob(['export data'], { type: 'application/json' });
-      const mockResponse = {
-        data: mockBlob,
-      };
-      vi.mocked(mockApi.get).mockResolvedValue(mockResponse);
+      vi.mocked(apiService.downloadExport).mockResolvedValue(mockBlob);
 
       const result = await dataExportService.downloadExport('export-123');
 
-      expect(mockApi.get).toHaveBeenCalledWith('/user/export-data/download/export-123', {
-        responseType: 'blob',
-      });
+      expect(apiService.downloadExport).toHaveBeenCalledWith('export-123');
       expect(result).toBe(mockBlob);
     });
 
     it('should handle download errors', async () => {
-      vi.mocked(mockApi.get).mockRejectedValue(new Error('File not found'));
+      vi.mocked(apiService.downloadExport).mockRejectedValue(new Error('File not found'));
 
       await expect(dataExportService.downloadExport('invalid-id')).rejects.toThrow(
         'File not found'
@@ -177,15 +168,15 @@ describe('DataExportService', () => {
 
   describe('cancelExport', () => {
     it('should cancel an active export', async () => {
-      vi.mocked(mockApi.delete).mockResolvedValue({ data: {} });
+      vi.mocked(apiService.cancelExport).mockResolvedValue(undefined);
 
       await dataExportService.cancelExport('export-123');
 
-      expect(mockApi.delete).toHaveBeenCalledWith('/user/export-data/export-123');
+      expect(apiService.cancelExport).toHaveBeenCalledWith('export-123');
     });
 
     it('should handle cancel errors', async () => {
-      vi.mocked(mockApi.delete).mockRejectedValue(new Error('Export already completed'));
+      vi.mocked(apiService.cancelExport).mockRejectedValue(new Error('Export already completed'));
 
       await expect(dataExportService.cancelExport('export-123')).rejects.toThrow(
         'Export already completed'
@@ -216,11 +207,11 @@ describe('DataExportService', () => {
           },
         },
       };
-      vi.mocked(mockApi.get).mockResolvedValue(mockResponse);
+      vi.mocked(apiService.get).mockResolvedValue(mockResponse);
 
       const result = await dataExportService.getActiveExports();
 
-      expect(mockApi.get).toHaveBeenCalledWith('/user/export-data/active');
+      expect(apiService.get).toHaveBeenCalledWith('/user/export-data/active');
       expect(result.exports).toHaveLength(2);
       expect(result.count).toBe(2);
     });
@@ -234,7 +225,7 @@ describe('DataExportService', () => {
           },
         },
       };
-      vi.mocked(mockApi.get).mockResolvedValue(mockResponse);
+      vi.mocked(apiService.get).mockResolvedValue(mockResponse);
 
       const result = await dataExportService.getActiveExports();
 
@@ -248,7 +239,6 @@ describe('DataExportService', () => {
       const mockBlob = new Blob(['test data'], { type: 'application/json' });
       const filename = 'my-data-export.json';
 
-      // Mock document methods
       const mockLink = {
         href: '',
         download: '',

@@ -10,6 +10,7 @@ vi.mock('./api', () => ({
     patch: vi.fn(),
     delete: vi.fn(),
   },
+  setAuthCallbacks: vi.fn(),
 }));
 
 describe('notificationApi', () => {
