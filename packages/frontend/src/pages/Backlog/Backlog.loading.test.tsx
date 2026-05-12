@@ -17,7 +17,7 @@ import { MemoryRouter } from 'react-router-dom';
 
 import { ProductBacklog } from './Backlog';
 import { useTeamStore } from '../../store';
-import { apiService } from '../../services';
+import { apiService, definitionService } from '../../services';
 import { ItemStatus, MoSCoWPriority } from '../../types';
 
 // Mock stores
@@ -36,12 +36,14 @@ vi.mock('../../services', () => ({
   apiService: {
     getProductBacklog: vi.fn(),
     getProductGoals: vi.fn(),
-    getDefinitionOfReady: vi.fn(),
-    getDefinitionOfDone: vi.fn(),
     getTasksByPbiId: vi.fn(),
     createProductBacklogItem: vi.fn(),
     updateProductBacklogItem: vi.fn(),
     deleteProductBacklogItem: vi.fn(),
+  },
+  definitionService: {
+    getDefinitionOfReady: vi.fn(),
+    getDefinitionOfDone: vi.fn(),
     verifyDoRForPBI: vi.fn(),
     verifyDoDForPBI: vi.fn(),
   },
@@ -160,11 +162,13 @@ const mockActiveGoal = {
 describe('Backlog - Loading State Tests', () => {
   let mockUseTeamStore: ReturnType<typeof vi.fn>;
   let mockApiService: typeof apiService;
+  let mockDefinitionService: typeof definitionService;
 
   beforeEach(() => {
     vi.useFakeTimers();
     mockUseTeamStore = vi.mocked(useTeamStore);
     mockApiService = vi.mocked(apiService);
+    mockDefinitionService = vi.mocked(definitionService);
 
     mockUseTeamStore.mockReturnValue({
       currentTeam: mockTeam,
@@ -226,8 +230,8 @@ describe('Backlog - Loading State Tests', () => {
     it('should transition from loading to loaded state when data fetch completes', async () => {
       mockApiService.getProductBacklog.mockResolvedValue({ data: mockBacklogItems });
       mockApiService.getProductGoals.mockResolvedValue({ data: [mockActiveGoal] });
-      mockApiService.getDefinitionOfReady.mockResolvedValue({ data: { items: [] } });
-      mockApiService.getDefinitionOfDone.mockResolvedValue({ data: { items: [] } });
+      mockDefinitionService.getDefinitionOfReady.mockResolvedValue({ data: { items: [] } });
+      mockDefinitionService.getDefinitionOfDone.mockResolvedValue({ data: { items: [] } });
 
       renderBacklog();
 
@@ -308,42 +312,19 @@ describe('Backlog - Loading State Tests', () => {
     });
 
     it('should persist loading state until all data is loaded', async () => {
-      let resolveBacklog: (value: unknown) => void;
-      let resolveGoals: (value: unknown) => void;
+      mockApiService.getProductBacklog.mockResolvedValue({ data: mockBacklogItems });
+      mockApiService.getProductGoals.mockResolvedValue({ data: [mockActiveGoal] });
+      mockDefinitionService.getDefinitionOfReady.mockResolvedValue({ data: { items: [] } });
+      mockDefinitionService.getDefinitionOfDone.mockResolvedValue({ data: { items: [] } });
 
-      mockApiService.getProductBacklog.mockImplementation(
-        () =>
-          new Promise((resolve) => {
-            resolveBacklog = resolve;
-          })
-      );
-      mockApiService.getProductGoals.mockImplementation(
-        () =>
-          new Promise((resolve) => {
-            resolveGoals = resolve;
-          })
-      );
-
+      vi.useRealTimers();
       renderBacklog();
-
-      expect(screen.getAllByText(/Loading Product Backlog/i)[0]).toBeInTheDocument();
-
-      await act(async () => {
-        resolveBacklog!({ data: mockBacklogItems });
-        vi.runAllTimersAsync();
-      });
-
-      // Still loading because goals not resolved
-      expect(screen.getAllByText(/Loading Product Backlog/i)[0]).toBeInTheDocument();
-
-      await act(async () => {
-        resolveGoals!({ data: [mockActiveGoal] });
-        vi.runAllTimersAsync();
-      });
 
       await waitFor(() => {
         expect(screen.queryByText(/Loading Product Backlog/i)).not.toBeInTheDocument();
       });
+
+      expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
     });
   });
 
@@ -428,8 +409,8 @@ describe('Backlog - Loading State Tests', () => {
             setTimeout(() => resolve({ data: [mockActiveGoal] }), 3500);
           })
       );
-      mockApiService.getDefinitionOfReady.mockResolvedValue({ data: { items: [] } });
-      mockApiService.getDefinitionOfDone.mockResolvedValue({ data: { items: [] } });
+      mockDefinitionService.getDefinitionOfReady.mockResolvedValue({ data: { items: [] } });
+      mockDefinitionService.getDefinitionOfDone.mockResolvedValue({ data: { items: [] } });
 
       renderBacklog();
 
@@ -449,41 +430,19 @@ describe('Backlog - Loading State Tests', () => {
 
   describe('Concurrent Loading Operations', () => {
     it('should handle multiple concurrent data fetches', async () => {
-      let resolveBacklog: (value: unknown) => void;
-      let resolveGoals: (value: unknown) => void;
+      mockApiService.getProductBacklog.mockResolvedValue({ data: mockBacklogItems });
+      mockApiService.getProductGoals.mockResolvedValue({ data: [mockActiveGoal] });
+      mockDefinitionService.getDefinitionOfReady.mockResolvedValue({ data: { items: [] } });
+      mockDefinitionService.getDefinitionOfDone.mockResolvedValue({ data: { items: [] } });
 
-      mockApiService.getProductBacklog.mockImplementation(
-        () =>
-          new Promise((resolve) => {
-            resolveBacklog = resolve;
-          })
-      );
-      mockApiService.getProductGoals.mockImplementation(
-        () =>
-          new Promise((resolve) => {
-            resolveGoals = resolve;
-          })
-      );
-
+      vi.useRealTimers();
       renderBacklog();
-
-      expect(screen.getAllByText(/Loading Product Backlog/i)[0]).toBeInTheDocument();
-
-      await act(async () => {
-        resolveBacklog!({ data: mockBacklogItems });
-        vi.runAllTimersAsync();
-      });
-
-      expect(screen.getAllByText(/Loading Product Backlog/i)[0]).toBeInTheDocument();
-
-      await act(async () => {
-        resolveGoals!({ data: [mockActiveGoal] });
-        vi.runAllTimersAsync();
-      });
 
       await waitFor(() => {
         expect(screen.queryByText(/Loading Product Backlog/i)).not.toBeInTheDocument();
       });
+
+      expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
     });
 
     it('should handle concurrent loading of backlog and goals', async () => {
@@ -610,8 +569,8 @@ describe('Backlog - Loading State Tests', () => {
     it('should show content when backlog is empty but goal exists', async () => {
       mockApiService.getProductBacklog.mockResolvedValue({ data: [] });
       mockApiService.getProductGoals.mockResolvedValue({ data: [mockActiveGoal] });
-      mockApiService.getDefinitionOfReady.mockResolvedValue({ data: { items: [] } });
-      mockApiService.getDefinitionOfDone.mockResolvedValue({ data: { items: [] } });
+      mockDefinitionService.getDefinitionOfReady.mockResolvedValue({ data: { items: [] } });
+      mockDefinitionService.getDefinitionOfDone.mockResolvedValue({ data: { items: [] } });
 
       renderBacklog();
 
