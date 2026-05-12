@@ -77,7 +77,7 @@ describe('SprintConfiguration Component', () => {
   const mockSprintConfig = {
     id: 'config-1',
     teamId: mockTeamId,
-    duration: 'TWO_WEEKS',
+    duration: '2weeks',
     year: currentYear,
     sprintStartDay: 1,
   };
@@ -176,12 +176,16 @@ describe('SprintConfiguration Component', () => {
 
       await waitFor(
         () => {
-          expect(screen.getByText('2 Weeks')).toBeInTheDocument();
+          expect(screen.getByText('1 Week')).toBeInTheDocument();
         },
         { timeout: 3000 }
       );
 
+      expect(screen.getByText('Rapid 1-week sprint cycle')).toBeInTheDocument();
+      expect(screen.getByText('2 Weeks')).toBeInTheDocument();
       expect(screen.getByText('Standard 2-week sprint cycle')).toBeInTheDocument();
+      expect(screen.getByText('3 Weeks')).toBeInTheDocument();
+      expect(screen.getByText('Balanced 3-week sprint cycle')).toBeInTheDocument();
       expect(screen.getByText('4 Weeks')).toBeInTheDocument();
       expect(screen.getByText('Extended 4-week sprint cycle')).toBeInTheDocument();
     });
@@ -256,6 +260,40 @@ describe('SprintConfiguration Component', () => {
       expect(fourWeeksButton).toHaveClass('duration-button-active');
     });
 
+    it('should select 1-week duration when clicking 1 Week button', async () => {
+      const user = userEvent.setup();
+      renderWithProviders(<SprintConfiguration />);
+
+      await waitFor(
+        () => {
+          expect(screen.getByText('1 Week')).toBeInTheDocument();
+        },
+        { timeout: 3000 }
+      );
+
+      const oneWeekButton = screen.getByText('1 Week').closest('button');
+      await user.click(oneWeekButton!);
+
+      expect(oneWeekButton).toHaveClass('duration-button-active');
+    });
+
+    it('should select 3-week duration when clicking 3 Weeks button', async () => {
+      const user = userEvent.setup();
+      renderWithProviders(<SprintConfiguration />);
+
+      await waitFor(
+        () => {
+          expect(screen.getByText('3 Weeks')).toBeInTheDocument();
+        },
+        { timeout: 3000 }
+      );
+
+      const threeWeeksButton = screen.getByText('3 Weeks').closest('button');
+      await user.click(threeWeeksButton!);
+
+      expect(threeWeeksButton).toHaveClass('duration-button-active');
+    });
+
     it('should update selected year when changing year selector', async () => {
       const user = userEvent.setup();
       renderWithProviders(<SprintConfiguration />);
@@ -277,7 +315,7 @@ describe('SprintConfiguration Component', () => {
 
     it.skip('should initialize duration from existing config', async () => {
       vi.mocked(apiService.getSprintConfiguration).mockResolvedValue({
-        data: { ...mockSprintConfig, duration: 'FOUR_WEEKS' },
+        data: { ...mockSprintConfig, duration: '4weeks' },
       });
       vi.mocked(apiService.getGeneratedSprints).mockResolvedValue({ data: [] });
 

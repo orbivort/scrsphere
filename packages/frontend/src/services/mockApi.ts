@@ -1184,9 +1184,16 @@ class MockApiService {
 
     const sprints: GeneratedSprint[] = [];
     const shortYear = year.toString().slice(-2);
-    const weekDuration = duration === '2weeks' ? 14 : 28; // days
 
-    // Find first Monday of the year
+    const durationConfig = {
+      '1week': { days: 7, label: '1w', offset: 1 },
+      '2weeks': { days: 14, label: '2w', offset: 2 },
+      '3weeks': { days: 21, label: '3w', offset: 2 },
+      '4weeks': { days: 28, label: '4w', offset: 3 },
+    };
+    const config = durationConfig[duration];
+    const weekDuration = config.days;
+
     const currentDate = new Date(year, 0, 1);
     const dayOfWeek = currentDate.getDay();
     if (dayOfWeek !== 1) {
@@ -1199,14 +1206,14 @@ class MockApiService {
     while (currentDate.getFullYear() <= year) {
       const startDate = new Date(currentDate);
       const endDate = new Date(currentDate);
-      endDate.setDate(endDate.getDate() + weekDuration - 1);
+      endDate.setDate(endDate.getDate() + weekDuration - config.offset);
 
-      if (endDate.getFullYear() > year) break;
+      if (startDate.getFullYear() > year) break;
 
       const formattedSprintNum = sprintNumber.toString().padStart(2, '0');
       const formatDateSimple = (d: Date) => `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`;
       const dateRange = `${formatDateSimple(startDate)}-${formatDateSimple(endDate)}`;
-      const name = `Sprint-${shortYear}${formattedSprintNum} (${dateRange})`;
+      const name = `Sprint-${config.label}-${shortYear}${formattedSprintNum} (${dateRange})`;
 
       sprints.push({
         id: `sprint-${year}-${sprintNumber}`,

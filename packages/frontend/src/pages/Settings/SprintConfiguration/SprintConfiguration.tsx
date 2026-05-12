@@ -34,6 +34,51 @@ import {
 
 import styles from './SprintConfiguration.module.css';
 
+const DURATION_CONFIG: Record<
+  SprintDuration,
+  {
+    label: string;
+    description: string;
+    icon: 'CalendarIcon' | 'CalendarRangeIcon';
+    days: number;
+    shortLabel: string;
+    offset: number;
+  }
+> = {
+  [SprintDurationEnum.ONE_WEEK]: {
+    label: '1 Week',
+    description: 'Rapid 1-week sprint cycle',
+    icon: 'CalendarIcon',
+    days: 7,
+    shortLabel: '1w',
+    offset: 1,
+  },
+  [SprintDurationEnum.TWO_WEEKS]: {
+    label: '2 Weeks',
+    description: 'Standard 2-week sprint cycle',
+    icon: 'CalendarIcon',
+    days: 14,
+    shortLabel: '2w',
+    offset: 2,
+  },
+  [SprintDurationEnum.THREE_WEEKS]: {
+    label: '3 Weeks',
+    description: 'Balanced 3-week sprint cycle',
+    icon: 'CalendarRangeIcon',
+    days: 21,
+    shortLabel: '3w',
+    offset: 2,
+  },
+  [SprintDurationEnum.FOUR_WEEKS]: {
+    label: '4 Weeks',
+    description: 'Extended 4-week sprint cycle',
+    icon: 'CalendarRangeIcon',
+    days: 28,
+    shortLabel: '4w',
+    offset: 3,
+  },
+};
+
 export const SprintConfiguration: React.FC = () => {
   const { currentTeam } = useTeamStore();
   const queryClient = useQueryClient();
@@ -272,34 +317,35 @@ export const SprintConfiguration: React.FC = () => {
           <div className={styles['config-row']}>
             <label className={styles['config-label']}>Sprint Duration</label>
             <div className={styles['duration-options']}>
-              <button
-                className={`${styles['duration-button']} ${selectedDuration === SprintDurationEnum.TWO_WEEKS ? styles['duration-button-active'] : ''}`}
-                onClick={() => setSelectedDuration(SprintDurationEnum.TWO_WEEKS)}
-                type="button"
-                aria-pressed={selectedDuration === SprintDurationEnum.TWO_WEEKS}
-              >
-                <span className={styles['duration-button-icon']}>
-                  <CalendarIcon />
-                </span>
-                <span className={styles['duration-button-text']}>2 Weeks</span>
-                <span className={styles['duration-button-description']}>
-                  Standard 2-week sprint cycle
-                </span>
-              </button>
-              <button
-                className={`${styles['duration-button']} ${selectedDuration === SprintDurationEnum.FOUR_WEEKS ? styles['duration-button-active'] : ''}`}
-                onClick={() => setSelectedDuration(SprintDurationEnum.FOUR_WEEKS)}
-                type="button"
-                aria-pressed={selectedDuration === SprintDurationEnum.FOUR_WEEKS}
-              >
-                <span className={styles['duration-button-icon']}>
-                  <CalendarRangeIcon />
-                </span>
-                <span className={styles['duration-button-text']}>4 Weeks</span>
-                <span className={styles['duration-button-description']}>
-                  Extended 4-week sprint cycle
-                </span>
-              </button>
+              {(
+                [
+                  SprintDurationEnum.ONE_WEEK,
+                  SprintDurationEnum.TWO_WEEKS,
+                  SprintDurationEnum.THREE_WEEKS,
+                  SprintDurationEnum.FOUR_WEEKS,
+                ] as const
+              ).map((duration) => {
+                const config = DURATION_CONFIG[duration];
+                const IconComponent =
+                  config.icon === 'CalendarIcon' ? CalendarIcon : CalendarRangeIcon;
+                return (
+                  <button
+                    key={duration}
+                    className={`${styles['duration-button']} ${selectedDuration === duration ? styles['duration-button-active'] : ''}`}
+                    onClick={() => setSelectedDuration(duration)}
+                    type="button"
+                    aria-pressed={selectedDuration === duration}
+                  >
+                    <span className={styles['duration-button-icon']}>
+                      <IconComponent />
+                    </span>
+                    <span className={styles['duration-button-text']}>{config.label}</span>
+                    <span className={styles['duration-button-description']}>
+                      {config.description}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -415,7 +461,7 @@ export const SprintConfiguration: React.FC = () => {
               <div className={styles['preview-info']}>
                 <p className={styles['preview-info-row']}>
                   <span className={styles['preview-info-label']}>Duration:</span>{' '}
-                  {selectedDuration === SprintDurationEnum.TWO_WEEKS ? '2 Weeks' : '4 Weeks'}
+                  {DURATION_CONFIG[selectedDuration].label}
                 </p>
                 <p className={styles['preview-info-row']}>
                   <span className={styles['preview-info-label']}>Year:</span> {selectedYear}
@@ -556,8 +602,9 @@ function generateSprintPreview(
 ): Array<{ name: string; dateRange: string }> {
   const sprints: Array<{ name: string; dateRange: string }> = [];
   const shortYear = year.toString().slice(-2);
-  const weekDuration = duration === SprintDurationEnum.TWO_WEEKS ? 14 : 28;
-  const durationStr = duration === SprintDurationEnum.TWO_WEEKS ? '2w' : '4w';
+  const durationConfig = DURATION_CONFIG[duration];
+  const weekDuration = durationConfig.days;
+  const durationStr = durationConfig.shortLabel;
 
   const currentDate = new Date(year, 0, 1);
 
@@ -572,7 +619,7 @@ function generateSprintPreview(
   while (currentDate.getFullYear() <= year) {
     const startDate = new Date(currentDate);
     const endDate = new Date(currentDate);
-    endDate.setDate(endDate.getDate() + weekDuration - 3);
+    endDate.setDate(endDate.getDate() + weekDuration - durationConfig.offset);
 
     if (startDate.getFullYear() > year) break;
 

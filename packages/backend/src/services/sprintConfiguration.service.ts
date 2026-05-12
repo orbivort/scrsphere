@@ -8,6 +8,13 @@ import type {
   SprintStatus,
 } from '../generated/prisma/client';
 
+const DURATION_MAP: Record<SprintDuration, { days: number; label: string; offset: number }> = {
+  ONE_WEEK: { days: 7, label: '1w', offset: 1 },
+  TWO_WEEKS: { days: 14, label: '2w', offset: 2 },
+  THREE_WEEKS: { days: 21, label: '3w', offset: 2 },
+  FOUR_WEEKS: { days: 28, label: '4w', offset: 3 },
+};
+
 export interface CreateSprintConfigData {
   teamId: string;
   duration: SprintDuration;
@@ -107,8 +114,9 @@ class SprintConfigurationService {
 
     const sprints: GeneratedSprint[] = [];
     const shortYear = year.toString().slice(-2);
-    const weekDuration = duration === 'TWO_WEEKS' ? 14 : 28;
-    const durationStr = duration === 'TWO_WEEKS' ? '2w' : '4w';
+    const durationConfig = DURATION_MAP[duration];
+    const weekDuration = durationConfig.days;
+    const durationStr = durationConfig.label;
 
     const currentDate = new Date(year, 0, 1);
     const dayOfWeek = currentDate.getDay();
@@ -122,7 +130,7 @@ class SprintConfigurationService {
     while (currentDate.getFullYear() <= year) {
       const startDate = new Date(currentDate);
       const endDate = new Date(currentDate);
-      endDate.setDate(endDate.getDate() + weekDuration - 3);
+      endDate.setDate(endDate.getDate() + weekDuration - durationConfig.offset);
 
       if (startDate.getFullYear() > year) break;
 
