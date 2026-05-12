@@ -266,6 +266,71 @@ export const mockDefinitionOfDone: Record<string, DefinitionOfDone> = {
     updatedBy: 'user-6',
     updatedAt: '2026-02-01T09:15:00Z',
   },
+  [UUIDS.teams.alpha]: {
+    id: 'dod-alpha',
+    teamId: UUIDS.teams.alpha,
+    items: [
+      {
+        id: 'dod-alpha-1',
+        description: 'Code is peer-reviewed and approved by at least one team member',
+        category: 'review',
+        isActive: true,
+        order: 0,
+      },
+      {
+        id: 'dod-alpha-2',
+        description: 'Unit tests written with minimum 80% code coverage',
+        category: 'testing',
+        isActive: true,
+        order: 1,
+      },
+      {
+        id: 'dod-alpha-3',
+        description: 'All automated tests passing (unit, integration, e2e)',
+        category: 'testing',
+        isActive: true,
+        order: 2,
+      },
+      {
+        id: 'dod-alpha-4',
+        description: 'Code is properly documented with JSDoc comments',
+        category: 'documentation',
+        isActive: true,
+        order: 3,
+      },
+      {
+        id: 'dod-alpha-5',
+        description: 'No critical or high-severity bugs in the backlog',
+        category: 'quality',
+        isActive: true,
+        order: 4,
+      },
+      {
+        id: 'dod-alpha-6',
+        description: 'Performance requirements met (response time < 200ms)',
+        category: 'quality',
+        isActive: true,
+        order: 5,
+      },
+      {
+        id: 'dod-alpha-7',
+        description: 'Security review completed for authentication/authorization changes',
+        category: 'review',
+        isActive: true,
+        order: 6,
+      },
+      {
+        id: 'dod-alpha-8',
+        description: 'User acceptance testing passed by Product Owner',
+        category: 'testing',
+        isActive: true,
+        order: 7,
+      },
+    ],
+    version: 1,
+    updatedBy: UUIDS.users.admin,
+    updatedAt: '2026-02-05T10:00:00Z',
+  },
 };
 
 // ==================== Teams ====================

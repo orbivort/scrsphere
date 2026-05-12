@@ -1478,6 +1478,71 @@ class MockApiService {
       version: 1,
       updatedAt: new Date().toISOString(),
     },
+    [UUIDS.teams.alpha]: {
+      id: 'dor-alpha',
+      teamId: UUIDS.teams.alpha,
+      items: [
+        {
+          id: 'dor-alpha-1',
+          description: 'User story has a clear title and detailed description',
+          category: 'Documentation',
+          isActive: true,
+          order: 1,
+        },
+        {
+          id: 'dor-alpha-2',
+          description: 'Acceptance criteria are defined and testable',
+          category: 'Documentation',
+          isActive: true,
+          order: 2,
+        },
+        {
+          id: 'dor-alpha-3',
+          description: 'Story points estimated by the team',
+          category: 'Estimation',
+          isActive: true,
+          order: 3,
+        },
+        {
+          id: 'dor-alpha-4',
+          description: 'Business value and priority assigned by Product Owner',
+          category: 'Estimation',
+          isActive: true,
+          order: 4,
+        },
+        {
+          id: 'dor-alpha-5',
+          description: 'Dependencies identified and documented',
+          category: 'Dependencies',
+          isActive: true,
+          order: 5,
+        },
+        {
+          id: 'dor-alpha-6',
+          description: 'No external blockers preventing sprint inclusion',
+          category: 'Dependencies',
+          isActive: true,
+          order: 6,
+        },
+        {
+          id: 'dor-alpha-7',
+          description: 'Technical approach discussed and agreed upon',
+          category: 'Technical',
+          isActive: true,
+          order: 7,
+        },
+        {
+          id: 'dor-alpha-8',
+          description: 'UI/UX designs reviewed (if applicable)',
+          category: 'Design',
+          isActive: true,
+          order: 8,
+        },
+      ],
+      version: 1,
+      updatedBy: UUIDS.users.admin,
+      updatedAt: '2026-02-05T10:00:00Z',
+    },
   };
 
   async getDefinitionOfReady(teamId: string): Promise<ApiResponse<DefinitionOfReady>> {
