@@ -5,6 +5,41 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-05-15
+
+### Added
+
+- **sprint**: add 1-week and 3-week sprint duration options
+- **frontend**: add Definition of Ready and Definition of Done mock data for Alpha Team
+- **frontend**: swap user roles - demo@example.com to Scrum Master, sarah.smith to Developer
+- **frontend**: improve burndown chart mock data with null handling for future dates
+- **frontend**: update burndown chart mock data to match sprint-3 dates
+- **frontend**: add feedback items to DRAFT retrospective mock data
+- **frontend**: add attendees and summary to retrospective mock data
+- **frontend**: auto-populate login credentials when mock API enabled
+- **frontend**: add (DEMO) suffix to version badge when mock API enabled
+- add comprehensive mock data for Increments, Sprint Reviews, and Retrospectives
+- add comprehensive mock data for Active Sprint with all task statuses
+- add comprehensive mock data for Product Goals with all statuses
+- implement mock data flow enhancements for frontend
+
+### Changed
+
+- **frontend**: change mock user email to demo@example.com
+
+### Fixed
+
+- **e2e**: wait for email input to be visible before filling
+- **tests**: update Backlog.loading.test.tsx to use definitionService mocks
+- **frontend**: resolve circular dependency and update components to use definitionService directly
+- **frontend**: route definition service through mock API facade
+- **frontend**: make role comparison case-insensitive in navigation settings filter
+- **frontend**: update tests to work with mock API facade pattern
+- **frontend**: return correct user role from mock API based on team membership
+- **frontend**: route data export through mock-aware API service
+- add mock notification data with correct response structure for NotificationsResponse
+- route notification API calls through mock service when VITE_USE_MOCK_API=true
+
 ## [1.2.0] - 2026-05-10
 
 ### Added
