@@ -144,6 +144,35 @@ describe('TeamService', () => {
       expect(result.pagination.total).toBe(0);
       expect(result.pagination.totalPages).toBe(0);
     });
+
+    it('should default sortBy to createdAt when invalid sortBy is provided', async () => {
+      const userId = 'test-user-id';
+      const mockTeam = fixtures.teams.validTeam();
+      const mockMember = {
+        id: 'member-id',
+        teamId: mockTeam.id,
+        userId,
+        role: 'DEVELOPER',
+        joinedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: null,
+        updatedBy: null,
+      };
+
+      vi.mocked(prisma.team.findMany).mockResolvedValue([
+        { ...mockTeam, members: [{ ...mockMember, user: fixtures.users.validUser() }] },
+      ] as any);
+      vi.mocked(prisma.team.count).mockResolvedValue(1 as any);
+
+      await teamService.getUserTeams(userId, { sortBy: 'invalidField' });
+
+      expect(prisma.team.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          orderBy: { createdAt: 'desc' },
+        })
+      );
+    });
   });
 
   describe('getTeamById', () => {
@@ -272,6 +301,34 @@ describe('TeamService', () => {
 
       expect(prisma.notification.create).toHaveBeenCalled();
     });
+
+    it('should not create notification when creator is not found', async () => {
+      const userId = 'test-user-id';
+      const mockTeam = fixtures.teams.validTeam();
+
+      vi.mocked(prisma.team.create).mockResolvedValue({
+        ...mockTeam,
+        members: [
+          {
+            id: 'member-id',
+            teamId: mockTeam.id,
+            userId,
+            role: 'PRODUCT_OWNER',
+            joinedAt: new Date(),
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            createdBy: userId,
+            updatedBy: null,
+            user: fixtures.users.validUser({ id: userId }),
+          },
+        ],
+      } as any);
+      vi.mocked(prisma.user.findUnique).mockResolvedValue(null as any);
+
+      await teamService.createTeam(userId, { name: mockTeam.name });
+
+      expect(prisma.notification.create).not.toHaveBeenCalled();
+    });
   });
 
   describe('deleteTeam', () => {
@@ -335,6 +392,50 @@ describe('TeamService', () => {
       } as any);
 
       await expect(teamService.deleteTeam(mockTeam.id, userId)).rejects.toThrow(ConflictError);
+    });
+
+    it('should send notifications to other members when team is deleted', async () => {
+      const userId = 'test-user-id';
+      const otherUserId = 'other-user-id';
+      const mockTeam = fixtures.teams.validTeam();
+      const mockDeleter = fixtures.users.validUser({ id: userId });
+
+      vi.mocked(prisma.team.findUnique).mockResolvedValue({
+        ...mockTeam,
+        productGoals: [],
+        members: [
+          {
+            id: 'deleter-member-id',
+            teamId: mockTeam.id,
+            userId,
+            role: 'PRODUCT_OWNER',
+            joinedAt: new Date(),
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            createdBy: null,
+            updatedBy: null,
+            user: mockDeleter,
+          },
+          {
+            id: 'other-member-id',
+            teamId: mockTeam.id,
+            userId: otherUserId,
+            role: 'DEVELOPER',
+            joinedAt: new Date(),
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            createdBy: null,
+            updatedBy: null,
+            user: fixtures.users.validUser({ id: otherUserId }),
+          },
+        ],
+      } as any);
+      vi.mocked(prisma.user.findUnique).mockResolvedValue(mockDeleter as any);
+      vi.mocked(prisma.team.delete).mockResolvedValue(mockTeam as any);
+
+      await teamService.deleteTeam(mockTeam.id, userId);
+
+      expect(prisma.notification.createMany).toHaveBeenCalled();
     });
   });
 
@@ -435,6 +536,237 @@ describe('TeamService', () => {
         ForbiddenError
       );
     });
+
+    it('should throw NotFoundError when member to remove is not found', async () => {
+      const userId = 'test-user-id';
+      const memberId = 'non-existent-member-id';
+      const mockTeam = fixtures.teams.validTeam();
+
+      vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce({
+        id: 'requester-member-id',
+        teamId: mockTeam.id,
+        userId,
+        role: 'SCRUM_MASTER',
+        joinedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: null,
+        updatedBy: null,
+      } as any);
+
+      vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce(null as any);
+
+      await expect(teamService.removeMember(mockTeam.id, userId, memberId)).rejects.toThrow(
+        NotFoundError
+      );
+    });
+
+    it('should throw ConflictError when member has multiple assigned tasks', async () => {
+      const userId = 'test-user-id';
+      const memberId = 'member-to-remove';
+      const memberUserId = 'member-user-id';
+      const mockTeam = fixtures.teams.validTeam();
+
+      vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce({
+        id: 'requester-member-id',
+        teamId: mockTeam.id,
+        userId,
+        role: 'SCRUM_MASTER',
+        joinedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: null,
+        updatedBy: null,
+      } as any);
+
+      vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce({
+        id: memberId,
+        teamId: mockTeam.id,
+        userId: memberUserId,
+        role: 'DEVELOPER',
+        joinedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: null,
+        updatedBy: null,
+      } as any);
+
+      vi.mocked(prisma.task.count).mockResolvedValue(2 as any);
+
+      await expect(teamService.removeMember(mockTeam.id, userId, memberId)).rejects.toThrow(
+        ConflictError
+      );
+    });
+
+    it('should throw ConflictError when member has 1 assigned task with singular wording', async () => {
+      const userId = 'test-user-id';
+      const memberId = 'member-to-remove';
+      const memberUserId = 'member-user-id';
+      const mockTeam = fixtures.teams.validTeam();
+
+      vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce({
+        id: 'requester-member-id',
+        teamId: mockTeam.id,
+        userId,
+        role: 'SCRUM_MASTER',
+        joinedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: null,
+        updatedBy: null,
+      } as any);
+
+      vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce({
+        id: memberId,
+        teamId: mockTeam.id,
+        userId: memberUserId,
+        role: 'DEVELOPER',
+        joinedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: null,
+        updatedBy: null,
+      } as any);
+
+      vi.mocked(prisma.task.count).mockResolvedValue(1 as any);
+
+      await expect(teamService.removeMember(mockTeam.id, userId, memberId)).rejects.toThrow(
+        ConflictError
+      );
+    });
+
+    it('should create notification for removed user when team and remover are found', async () => {
+      const userId = 'test-user-id';
+      const memberId = 'member-to-remove';
+      const memberUserId = 'member-user-id';
+      const mockTeam = fixtures.teams.validTeam();
+
+      vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce({
+        id: 'requester-member-id',
+        teamId: mockTeam.id,
+        userId,
+        role: 'SCRUM_MASTER',
+        joinedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: null,
+        updatedBy: null,
+      } as any);
+
+      vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce({
+        id: memberId,
+        teamId: mockTeam.id,
+        userId: memberUserId,
+        role: 'DEVELOPER',
+        joinedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: null,
+        updatedBy: null,
+      } as any);
+
+      vi.mocked(prisma.task.count).mockResolvedValue(0 as any);
+      vi.mocked(prisma.team.findUnique).mockResolvedValue(mockTeam as any);
+      vi.mocked(prisma.user.findUnique).mockResolvedValue(
+        fixtures.users.validUser({ id: userId }) as any
+      );
+      vi.mocked(prisma.teamMember.delete).mockResolvedValue({} as any);
+
+      await expect(teamService.removeMember(mockTeam.id, userId, memberId)).resolves.not.toThrow();
+    });
+  });
+
+  describe('addMember', () => {
+    it('should throw ConflictError when user is already a team member', async () => {
+      const userId = 'test-user-id';
+      const teamId = 'team-id';
+      const memberEmail = 'existing@example.com';
+
+      vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce({
+        id: 'requester-member-id',
+        teamId,
+        userId,
+        role: 'SCRUM_MASTER',
+        joinedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: null,
+        updatedBy: null,
+      } as any);
+
+      vi.mocked(prisma.user.findUnique).mockResolvedValue(
+        fixtures.users.validUser({ id: 'existing-user-id', email: memberEmail }) as any
+      );
+
+      vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce({
+        id: 'existing-member-id',
+        teamId,
+        userId: 'existing-user-id',
+        role: 'DEVELOPER',
+        joinedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: null,
+        updatedBy: null,
+      } as any);
+
+      await expect(
+        teamService.addMember(teamId, userId, { email: memberEmail, role: 'DEVELOPER' })
+      ).rejects.toThrow(ConflictError);
+    });
+
+    it('should create notification for invited user when team and inviter are found', async () => {
+      const userId = 'test-user-id';
+      const teamId = 'team-id';
+      const memberEmail = 'new-member@example.com';
+      const newUserId = 'new-user-id';
+      const mockTeam = fixtures.teams.validTeam({ id: teamId });
+
+      vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce({
+        id: 'requester-member-id',
+        teamId,
+        userId,
+        role: 'SCRUM_MASTER',
+        joinedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: null,
+        updatedBy: null,
+      } as any);
+
+      vi.mocked(prisma.user.findUnique).mockResolvedValueOnce(
+        fixtures.users.validUser({ id: newUserId, email: memberEmail }) as any
+      );
+
+      vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce(null as any);
+
+      vi.mocked(prisma.teamMember.create).mockResolvedValue({
+        id: 'new-member-id',
+        teamId,
+        userId: newUserId,
+        role: 'DEVELOPER',
+        joinedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: userId,
+        updatedBy: null,
+        user: fixtures.users.validUser({ id: newUserId }),
+        team: mockTeam,
+      } as any);
+
+      vi.mocked(prisma.team.findUnique).mockResolvedValue(mockTeam as any);
+      vi.mocked(prisma.user.findUnique).mockResolvedValue(
+        fixtures.users.validUser({ id: userId }) as any
+      );
+
+      const result = await teamService.addMember(teamId, userId, {
+        email: memberEmail,
+        role: 'DEVELOPER',
+      });
+
+      expect(result).toBeDefined();
+      expect(result.userId).toBe(newUserId);
+    });
   });
 
   describe('getUserRoleInTeam', () => {
@@ -502,6 +834,34 @@ describe('TeamService', () => {
       const result = await teamService.validateTeamMembership(userId, teamId);
 
       expect(result).toBe(false);
+    });
+  });
+
+  describe('getUserTeamsWithRoles', () => {
+    it('should throw NotFoundError when user is not found in team members', async () => {
+      const userId = 'test-user-id';
+
+      vi.mocked(prisma.team.findMany).mockResolvedValue([
+        {
+          ...fixtures.teams.validTeam(),
+          members: [
+            {
+              id: 'member-id',
+              teamId: 'team-id',
+              userId: 'other-user-id',
+              role: 'DEVELOPER',
+              joinedAt: new Date(),
+              createdAt: new Date(),
+              updatedAt: new Date(),
+              createdBy: null,
+              updatedBy: null,
+              user: fixtures.users.validUser({ id: 'other-user-id' }),
+            },
+          ],
+        },
+      ] as any);
+
+      await expect(teamService.getUserTeamsWithRoles(userId)).rejects.toThrow(NotFoundError);
     });
   });
 });

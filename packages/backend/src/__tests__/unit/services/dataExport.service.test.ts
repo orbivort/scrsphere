@@ -33,6 +33,7 @@ vi.mock('../../../utils/uuid', () => ({
 }));
 
 import prisma from '../../../utils/prisma';
+import { logger } from '../../../utils/logger';
 
 describe('DataExportService', () => {
   beforeEach(() => {
@@ -458,6 +459,180 @@ describe('DataExportService', () => {
       const result = await dataExportService.getActiveExports('user-1');
 
       expect(result.length).toBeGreaterThanOrEqual(0);
+    });
+  });
+
+  // ====== NEW TESTS FOR UNCOVERED BRANCHES ======
+
+  describe('initiateExport - non-Error rejection handling', () => {
+    it('should handle non-Error thrown during processing (branches #3, #20)', async () => {
+      (prisma.user.findUnique as any).mockRejectedValue('Database connection failed');
+
+      const job = await dataExportService.initiateExport('user-1');
+
+      await new Promise((resolve) => setTimeout(resolve, 200));
+
+      const status = await dataExportService.getExportStatus(job.id, 'user-1');
+      expect(status.status).toBe('failed');
+      expect(status.errorMessage).toBe('Unknown error');
+    });
+  });
+
+  describe('getExportStatus - startedAt fallback', () => {
+    it('should fall back to createdAt when startedAt is null for pending jobs (branch #8)', async () => {
+      const job = await dataExportService.initiateExport('user-1');
+
+      // For a fresh pending job, startedAt is null in the job queue,
+      // so job.startedAt ?? job.createdAt should return createdAt
+      const status = await dataExportService.getExportStatus(job.id, 'user-1');
+
+      expect(status.startedAt).toEqual(status.createdAt);
+    });
+  });
+
+  describe('getActiveExports - startedAt fallback', () => {
+    it('should use createdAt as startedAt for pending jobs (branches #40, #41)', async () => {
+      await dataExportService.initiateExport('user-1');
+
+      const activeExports = await dataExportService.getActiveExports('user-1');
+
+      expect(activeExports.length).toBeGreaterThan(0);
+      const delta = Math.abs(
+        activeExports[0]!.startedAt.getTime() - activeExports[0]!.createdAt.getTime()
+      );
+      expect(delta).toBeLessThanOrEqual(100);
+    });
+  });
+
+  describe('downloadExport - expired file', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('should throw ConflictError when export file has expired (branch #15)', async () => {
+      const mockUser = {
+        id: 'user-1',
+        email: 'user@example.com',
+        firstName: 'John',
+        lastName: 'Doe',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        avatarUrl: null,
+      };
+
+      (prisma.user.findUnique as any).mockResolvedValue(mockUser);
+      (prisma.teamMember.findMany as any).mockResolvedValue([]);
+      (prisma.refreshToken.findMany as any).mockResolvedValue([]);
+
+      const job = await dataExportService.initiateExport('user-1');
+
+      // Allow the async processing to complete
+      await vi.advanceTimersByTimeAsync(1000);
+
+      const status = await dataExportService.getExportStatus(job.id, 'user-1');
+      expect(status.status).toBe('completed');
+
+      // Advance time past the 7-day file expiration
+      await vi.advanceTimersByTimeAsync(8 * 24 * 60 * 60 * 1000);
+
+      // The file exists in storage but is expired
+      // downloadExport should check expiresAt and throw ConflictError
+      await expect(dataExportService.downloadExport(job.id, 'user-1')).rejects.toThrow(
+        ConflictError
+      );
+    });
+  });
+
+  describe('cleanupExpiredExports - timer-based expiration', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('should delete expired export files and set job status to expired (branches #32, #33, #36)', async () => {
+      const mockUser = {
+        id: 'user-1',
+        email: 'user@example.com',
+        firstName: 'John',
+        lastName: 'Doe',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        avatarUrl: null,
+      };
+
+      (prisma.user.findUnique as any).mockResolvedValue(mockUser);
+      (prisma.teamMember.findMany as any).mockResolvedValue([]);
+      (prisma.refreshToken.findMany as any).mockResolvedValue([]);
+
+      const job = await dataExportService.initiateExport('user-1');
+
+      await vi.advanceTimersByTimeAsync(1000);
+
+      const status = await dataExportService.getExportStatus(job.id, 'user-1');
+      expect(status.status).toBe('completed');
+
+      // Advance time past the 7-day expiration
+      await vi.advanceTimersByTimeAsync(8 * 24 * 60 * 60 * 1000);
+
+      const result = await dataExportService.cleanupExpiredExports();
+
+      // File was deleted (branch #32) and job existed (branch #33)
+      expect(result.deleted).toBe(1);
+
+      // deleted > 0 triggers logger.info (branch #36)
+      expect(logger.info).toHaveBeenCalledWith('Cleaned up expired exports', { deleted: 1 });
+
+      // The job was also deleted from jobQueue because it's old and expired
+      await expect(dataExportService.getExportStatus(job.id, 'user-1')).rejects.toThrow(
+        NotFoundError
+      );
+    });
+
+    it('should delete old failed jobs from queue (branches #34, #35 full true)', async () => {
+      (prisma.user.findUnique as any).mockRejectedValue(new Error('Database error'));
+
+      const job = await dataExportService.initiateExport('user-1');
+
+      // Allow the async processing to fail
+      await vi.advanceTimersByTimeAsync(1000);
+
+      const status = await dataExportService.getExportStatus(job.id, 'user-1');
+      expect(status.status).toBe('failed');
+
+      // Advance time past the 24-hour cleanup cutoff
+      await vi.advanceTimersByTimeAsync(25 * 60 * 60 * 1000);
+
+      // Cleanup should delete the old failed job from queue
+      await dataExportService.cleanupExpiredExports();
+
+      // The job should be gone from the queue
+      await expect(dataExportService.getExportStatus(job.id, 'user-1')).rejects.toThrow(
+        NotFoundError
+      );
+    });
+
+    it('should not delete old processing jobs that are not failed/expired (branch #35 left=true, right=false)', async () => {
+      // Make prisma.user.findUnique hang so the job stays in 'processing' status
+      (prisma.user.findUnique as any).mockReturnValue(new Promise(() => {}));
+
+      const job = await dataExportService.initiateExport('user-1');
+
+      // Advance time well past the 24-hour cutoff
+      await vi.advanceTimersByTimeAsync(25 * 60 * 60 * 1000);
+
+      // The job is old but still 'processing' (not failed or expired)
+      await dataExportService.cleanupExpiredExports();
+
+      // The job should still exist because it's not failed/expired
+      const status = await dataExportService.getExportStatus(job.id, 'user-1');
+      expect(status.status).toBe('processing');
     });
   });
 });
