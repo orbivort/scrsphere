@@ -1,6 +1,6 @@
 // Product Backlog Service
 import prisma from '../utils/prisma';
-import { NotFoundError, BadRequestError, ForbiddenError } from '../utils/errors';
+import { AppError, NotFoundError, BadRequestError, ForbiddenError } from '../utils/errors';
 import { generateUUIDv7 } from '../utils/uuid';
 import { workflowService } from './workflow.service';
 import { logger } from '../utils/logger';
@@ -60,6 +60,21 @@ export interface PaginatedResponse<T> {
     total: number;
     totalPages: number;
   };
+}
+
+// Bulk create error entry
+export interface BulkCreateError {
+  row: number;
+  field: string;
+  message: string;
+}
+
+// Bulk create result
+export interface BulkCreateResult {
+  successful: number;
+  failed: number;
+  errors: BulkCreateError[];
+  createdItems: ProductBacklogItem[];
 }
 
 class ProductBacklogService {
@@ -322,6 +337,113 @@ class ProductBacklogService {
     await prisma.productBacklogItem.delete({
       where: { id: pbiId },
     });
+  }
+
+  /**
+   * Bulk create PBIs
+   * Creates multiple backlog items in a transaction, catching per-item errors
+   * to provide detailed error reporting for each failed item
+   */
+  async createPBIBulk(
+    userId: string,
+    items: Array<CreatePBIData & { _rowNumber?: number }>
+  ): Promise<BulkCreateResult> {
+    const result: BulkCreateResult = {
+      successful: 0,
+      failed: 0,
+      errors: [],
+      createdItems: [],
+    };
+
+    for (const item of items) {
+      const { _rowNumber, ...createData } = item;
+
+      try {
+        const pbi = await prisma.$transaction(async (tx) => {
+          const pbiId = generateUUIDv7();
+          const initialStatus = createData.status ?? 'NEW';
+
+          const created = await tx.productBacklogItem.create({
+            data: {
+              id: pbiId,
+              teamId: createData.teamId,
+              goalId: createData.goalId,
+              title: createData.title,
+              description: createData.description,
+              storyPoints: createData.storyPoints,
+              labels: createData.labels ?? [],
+              acceptanceCriteria: createData.acceptanceCriteria,
+              createdBy: userId,
+              priority: createData.priority ?? 'COULD_HAVE',
+              businessValue: createData.businessValue,
+              status: initialStatus,
+            },
+          });
+
+          return created;
+        });
+
+        // Record workflow history outside the transaction to avoid coupling
+        try {
+          const teamMember = await prisma.teamMember.findFirst({
+            where: { teamId: createData.teamId, userId },
+          });
+
+          await workflowService.executeStatusChange({
+            entityType: 'BacklogItem',
+            entityId: pbi.id,
+            fromStatus: null,
+            toStatus: pbi.status,
+            userId,
+            userRoles: teamMember ? [teamMember.role] : [],
+            changeReason: 'Initial backlog item creation (bulk)',
+            metadata: {
+              teamId: createData.teamId,
+              title: createData.title,
+            },
+          });
+        } catch (historyError) {
+          logger.error('Failed to record initial status change history for bulk backlog item', {
+            error: historyError,
+            pbiId: pbi.id,
+          });
+        }
+
+        result.successful++;
+        result.createdItems.push(pbi);
+      } catch (error) {
+        const rowNumber = _rowNumber ?? -1;
+        result.failed++;
+
+        if (error instanceof AppError) {
+          const details = error.details;
+          if (details && details.length > 0) {
+            for (const detail of details) {
+              result.errors.push({
+                row: rowNumber,
+                field: detail.field,
+                message: detail.message,
+              });
+            }
+          } else {
+            result.errors.push({
+              row: rowNumber,
+              field: 'general',
+              message: error.message,
+            });
+          }
+        } else {
+          logger.error('Unexpected error in bulk PBI creation', { error, row: rowNumber });
+          result.errors.push({
+            row: rowNumber,
+            field: 'general',
+            message: 'An unexpected error occurred while creating this item',
+          });
+        }
+      }
+    }
+
+    return result;
   }
 
   /**

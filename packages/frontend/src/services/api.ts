@@ -81,6 +81,8 @@ class ApiService {
   getProductBacklog = productBacklogService.getProductBacklog.bind(productBacklogService);
   createProductBacklogItem =
     productBacklogService.createProductBacklogItem.bind(productBacklogService);
+  bulkCreateProductBacklogItems =
+    productBacklogService.bulkCreateProductBacklogItems.bind(productBacklogService);
   updateProductBacklogItem =
     productBacklogService.updateProductBacklogItem.bind(productBacklogService);
   updateBacklogItemPriority =

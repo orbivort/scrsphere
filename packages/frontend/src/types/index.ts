@@ -745,5 +745,19 @@ export interface StatusChangeHistoryItem {
   changer?: User;
 }
 
+// Bulk create types
+export interface BulkCreateError {
+  row: number;
+  field: string;
+  message: string;
+}
+
+export interface BulkCreateResponseData {
+  successful: number;
+  failed: number;
+  errors: BulkCreateError[];
+  createdItems: ProductBacklogItem[];
+}
+
 // Re-export auth types
 export type { TeamMembership, DeletionEligibilityResult, PendingDeletion } from './auth.types';

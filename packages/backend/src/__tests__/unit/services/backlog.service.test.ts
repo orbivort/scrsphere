@@ -14,6 +14,7 @@ vi.mock('../../../utils/prisma', () => ({
     teamMember: {
       findFirst: vi.fn(),
     },
+    $transaction: vi.fn(),
   },
 }));
 
@@ -528,6 +529,180 @@ describe('ProductBacklogService', () => {
       vi.mocked(prisma.productBacklogItem.findUnique).mockResolvedValue(mockPBI as any);
 
       await expect(productBacklogService.deletePBI(pbiId, userId)).rejects.toThrow(BadRequestError);
+    });
+  });
+
+  describe('createPBIBulk', () => {
+    const userId = 'test-user-id';
+    const teamId = 'test-team-id';
+
+    const mockItems = [
+      { _rowNumber: 1, teamId, title: 'Item 1', description: 'First item' },
+      { _rowNumber: 2, teamId, title: 'Item 2', description: 'Second item' },
+    ];
+
+    function createMockPBI(id: string, title: string) {
+      return {
+        id,
+        teamId,
+        title,
+        description: title === 'Item 1' ? 'First item' : 'Second item',
+        status: 'NEW',
+        priority: 'COULD_HAVE',
+        businessValue: null,
+        storyPoints: null,
+        labels: [],
+        acceptanceCriteria: null,
+        createdBy: userId,
+        goalId: null,
+        sprintId: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+    }
+
+    beforeEach(() => {
+      const mockTx = {
+        productBacklogItem: {
+          create: vi.fn(),
+        },
+      };
+
+      mockTx.productBacklogItem.create
+        .mockResolvedValueOnce(createMockPBI('test-pbi-uuid', 'Item 1') as any)
+        .mockResolvedValueOnce(createMockPBI('test-pbi-uuid', 'Item 2') as any);
+
+      vi.mocked(prisma.$transaction).mockImplementation(async (cb: any) => cb(mockTx));
+      vi.mocked(prisma.teamMember.findFirst).mockResolvedValue({
+        id: 'member-id',
+        teamId: 'test-team-id',
+        userId: 'test-user-id',
+        role: 'PRODUCT_OWNER',
+      } as any);
+    });
+
+    it('should create multiple items successfully', async () => {
+      const result = await productBacklogService.createPBIBulk(userId, mockItems);
+
+      expect(result.successful).toBe(2);
+      expect(result.failed).toBe(0);
+      expect(result.errors).toHaveLength(0);
+      expect(result.createdItems).toHaveLength(2);
+      expect(result.createdItems[0]!.title).toBe('Item 1');
+      expect(result.createdItems[1]!.title).toBe('Item 2');
+    });
+
+    it('should handle partial failure with AppError details', async () => {
+      const mockTx = {
+        productBacklogItem: {
+          create: vi
+            .fn()
+            .mockResolvedValueOnce(createMockPBI('test-pbi-uuid', 'Item 1') as any)
+            .mockRejectedValueOnce(
+              new BadRequestError('Validation failed', [
+                { field: 'title', message: 'Title is too long (max 200 characters)' },
+              ])
+            ),
+        },
+      };
+      vi.mocked(prisma.$transaction).mockImplementation(async (cb: any) => cb(mockTx));
+
+      const result = await productBacklogService.createPBIBulk(userId, mockItems);
+
+      expect(result.successful).toBe(1);
+      expect(result.failed).toBe(1);
+      expect(result.errors).toHaveLength(1);
+      expect(result.errors[0]!.row).toBe(2);
+      expect(result.errors[0]!.field).toBe('title');
+      expect(result.errors[0]!.message).toBe('Title is too long (max 200 characters)');
+    });
+
+    it('should handle partial failure with generic AppError', async () => {
+      const mockTx = {
+        productBacklogItem: {
+          create: vi
+            .fn()
+            .mockResolvedValueOnce(createMockPBI('test-pbi-uuid', 'Item 1') as any)
+            .mockRejectedValueOnce(new BadRequestError('Title is required')),
+        },
+      };
+      vi.mocked(prisma.$transaction).mockImplementation(async (cb: any) => cb(mockTx));
+
+      const result = await productBacklogService.createPBIBulk(userId, mockItems);
+
+      expect(result.successful).toBe(1);
+      expect(result.failed).toBe(1);
+      expect(result.errors).toHaveLength(1);
+      expect(result.errors[0]!.row).toBe(2);
+      expect(result.errors[0]!.field).toBe('general');
+      expect(result.errors[0]!.message).toBe('Title is required');
+    });
+
+    it('should record workflow history for each created item', async () => {
+      const mockTx = {
+        productBacklogItem: {
+          create: vi
+            .fn()
+            .mockResolvedValueOnce(createMockPBI('test-pbi-uuid', 'Item 1') as any)
+            .mockResolvedValueOnce(createMockPBI('test-pbi-uuid', 'Item 2') as any),
+        },
+      };
+      vi.mocked(prisma.$transaction).mockImplementation(async (cb: any) => cb(mockTx));
+
+      await productBacklogService.createPBIBulk(userId, mockItems);
+
+      expect(workflowService.executeStatusChange).toHaveBeenCalledTimes(2);
+      expect(workflowService.executeStatusChange).toHaveBeenNthCalledWith(1, {
+        entityType: 'BacklogItem',
+        entityId: 'test-pbi-uuid',
+        fromStatus: null,
+        toStatus: 'NEW',
+        userId: 'test-user-id',
+        userRoles: ['PRODUCT_OWNER'],
+        changeReason: 'Initial backlog item creation (bulk)',
+        metadata: {
+          teamId: 'test-team-id',
+          title: 'Item 1',
+        },
+      });
+      expect(workflowService.executeStatusChange).toHaveBeenNthCalledWith(2, {
+        entityType: 'BacklogItem',
+        entityId: 'test-pbi-uuid',
+        fromStatus: null,
+        toStatus: 'NEW',
+        userId: 'test-user-id',
+        userRoles: ['PRODUCT_OWNER'],
+        changeReason: 'Initial backlog item creation (bulk)',
+        metadata: {
+          teamId: 'test-team-id',
+          title: 'Item 2',
+        },
+      });
+    });
+
+    it('should handle errors when Prisma throws unexpected errors', async () => {
+      const mockTx = {
+        productBacklogItem: {
+          create: vi.fn().mockRejectedValue(new Error('Database connection error')),
+        },
+      };
+      vi.mocked(prisma.$transaction).mockImplementation(async (cb: any) => cb(mockTx));
+
+      const result = await productBacklogService.createPBIBulk(userId, mockItems);
+
+      expect(result.successful).toBe(0);
+      expect(result.failed).toBe(2);
+      expect(result.errors).toHaveLength(2);
+      expect(result.errors[0]!.row).toBe(1);
+      expect(result.errors[0]!.field).toBe('general');
+      expect(result.errors[0]!.message).toBe(
+        'An unexpected error occurred while creating this item'
+      );
+      expect(result.errors[1]!.row).toBe(2);
+      expect(result.errors[1]!.field).toBe('general');
+      expect(result.errors[1]!.message).toBe(
+        'An unexpected error occurred while creating this item'
+      );
     });
   });
 });

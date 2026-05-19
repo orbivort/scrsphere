@@ -58,6 +58,7 @@ vi.mock('./domain/productBacklog.service', () => ({
   productBacklogService: {
     getProductBacklog: vi.fn().mockResolvedValue({ data: [] }),
     createProductBacklogItem: vi.fn().mockResolvedValue({ data: {} }),
+    bulkCreateProductBacklogItems: vi.fn().mockResolvedValue({ data: {} }),
     updateProductBacklogItem: vi.fn().mockResolvedValue({}),
     updateBacklogItemPriority: vi.fn().mockResolvedValue({}),
     deleteProductBacklogItem: vi.fn().mockResolvedValue({}),

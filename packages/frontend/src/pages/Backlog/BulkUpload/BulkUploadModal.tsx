@@ -1,10 +1,10 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { apiService } from '../../../services';
 import { logger } from '../../../utils/logger';
 import { queryKeys } from '../../../hooks/queryKeys';
-import { ItemStatus, type ProductBacklogItem, type MoSCoWPriority } from '../../../types';
+import type { ProductBacklogItem } from '../../../types';
 
 import styles from './BulkUploadModal.module.css';
 import { FileDropZone } from './FileDropZone';
@@ -46,9 +46,7 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
   const [parseError, setParseError] = useState<string | null>(null);
   const [uploadProgress, setUploadProgress] = useState({ current: 0, total: 0, currentItem: '' });
   const [uploadResult, setUploadResult] = useState<UploadResult | null>(null);
-  const [isCancelling, setIsCancelling] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const cancelRef = useRef(false);
   const queryClient = useQueryClient();
 
   const resetState = useCallback(() => {
@@ -58,18 +56,16 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
     setParseError(null);
     setUploadProgress({ current: 0, total: 0, currentItem: '' });
     setUploadResult(null);
-    setIsCancelling(false);
     setIsUploading(false);
-    cancelRef.current = false;
   }, []);
 
   const handleClose = useCallback(() => {
-    if (isUploading && !isCancelling) {
+    if (isUploading) {
       return;
     }
     resetState();
     onClose();
-  }, [isUploading, isCancelling, resetState, onClose]);
+  }, [isUploading, resetState, onClose]);
 
   const handleFileSelect = useCallback(
     async (file: File) => {
@@ -113,11 +109,6 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
     }
   }, [step]);
 
-  const handleCancelUpload = useCallback(() => {
-    setIsCancelling(true);
-    cancelRef.current = true;
-  }, []);
-
   const handleImport = useCallback(async () => {
     const validItems = getValidItems(parsedItems);
     if (validItems.length === 0) {
@@ -126,77 +117,66 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
 
     setStep('progress');
     setIsUploading(true);
-    cancelRef.current = false;
     setUploadProgress({ current: 0, total: validItems.length, currentItem: '' });
 
-    const result: UploadResult = {
-      total: validItems.length,
-      successful: 0,
-      failed: 0,
-      duplicates: 0,
-      errors: [],
-      createdItems: [],
-    };
+    let result: UploadResult;
 
-    for (let i = 0; i < validItems.length; i++) {
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      if (cancelRef.current) {
-        result.failed = validItems.length - i;
-        break;
-      }
+    try {
+      // Show brief processing state while the bulk request is in flight
+      setUploadProgress({ current: 0, total: validItems.length, currentItem: 'Processing...' });
 
-      const item = validItems[i];
-      if (!item) continue;
-      const itemTitle = item.title ?? 'Untitled';
-      setUploadProgress({
-        current: i + 1,
-        total: validItems.length,
-        currentItem: itemTitle,
-      });
+      const response = await apiService.bulkCreateProductBacklogItems(validItems, teamId, goalId);
 
-      try {
-        const itemData: Partial<ProductBacklogItem> = {
-          teamId,
-          goalId,
-          title: itemTitle.trim(),
-          description: item.description?.trim() ?? undefined,
-          storyPoints: item.storyPoints,
-          businessValue: item.businessValue,
-          priority: item.priority ?? ('COULD_HAVE' as MoSCoWPriority),
-          labels: item.labels ?? [],
-          acceptanceCriteria: item.acceptanceCriteria?.trim() ?? undefined,
-          status: ItemStatus.NEW,
+      if (response.success && response.data) {
+        result = {
+          total: validItems.length,
+          successful: response.data.successful,
+          failed: response.data.failed,
+          duplicates: parsedItems.length - validItems.length,
+          errors: response.data.errors.map((err) => ({
+            row: err.row,
+            field: err.field,
+            message: err.message,
+          })),
+          createdItems: response.data.createdItems,
         };
-
-        const response = await apiService.createProductBacklogItem(itemData);
-        if (response.success && response.data) {
-          result.successful++;
-          result.createdItems.push(response.data);
-        } else {
-          result.failed++;
-          result.errors.push({
-            row: item._rowNumber,
-            field: 'general',
-            message: response.error?.message ?? 'Failed to create item',
-          });
-        }
-
-        await new Promise((resolve) => setTimeout(resolve, 50));
-      } catch (error: unknown) {
-        result.failed++;
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        result.errors.push({
-          row: item._rowNumber,
-          field: 'general',
-          message: errorMessage,
-        });
+      } else {
+        result = {
+          total: validItems.length,
+          successful: 0,
+          failed: validItems.length,
+          duplicates: parsedItems.length - validItems.length,
+          errors: [
+            {
+              row: 0,
+              field: 'general',
+              message: response.error?.message ?? 'Bulk upload failed',
+            },
+          ],
+          createdItems: [],
+        };
       }
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      result = {
+        total: validItems.length,
+        successful: 0,
+        failed: validItems.length,
+        duplicates: parsedItems.length - validItems.length,
+        errors: [
+          {
+            row: 0,
+            field: 'general',
+            message: errorMessage,
+          },
+        ],
+        createdItems: [],
+      };
     }
 
     setUploadResult(result);
     setStep('summary');
     setIsUploading(false);
-    setIsCancelling(false);
 
     if (result.successful > 0) {
       void queryClient.invalidateQueries({ queryKey: queryKeys.productBacklog.all });
@@ -226,7 +206,7 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
           <button
             className={styles['modal-close']}
             onClick={handleClose}
-            disabled={isUploading && !isCancelling}
+            disabled={isUploading}
             aria-label="Close modal"
           >
             <XIcon width="16" height="16" />
@@ -270,8 +250,6 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
                 current={uploadProgress.current}
                 total={uploadProgress.total}
                 currentItem={uploadProgress.currentItem}
-                isCancelling={isCancelling}
-                onCancel={handleCancelUpload}
               />
             )}
 

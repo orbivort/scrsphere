@@ -69,6 +69,15 @@ const querySchema = z.object({
   limit: z.string().regex(/^\d+$/).optional(),
 });
 
+const bulkCreateSchema = z
+  .array(
+    createPBISchema.extend({
+      _rowNumber: z.number().int().positive(),
+    })
+  )
+  .min(1, 'At least one item is required')
+  .max(100, 'Maximum 100 items per bulk request');
+
 /**
  * @route   GET /api/v1/product-backlog
  * @desc    Get product backlog for a team
@@ -82,6 +91,13 @@ router.get('/', validateQuery(querySchema), backlogController.getProductBacklog)
  * @access  Private
  */
 router.post('/', validateBody(createPBISchema), backlogController.createPBI);
+
+/**
+ * @route   POST /api/v1/product-backlog/bulk
+ * @desc    Bulk create PBIs
+ * @access  Private
+ */
+router.post('/bulk', validateBody(bulkCreateSchema), backlogController.createPBIBulk);
 
 /**
  * @route   GET /api/v1/product-backlog/:id

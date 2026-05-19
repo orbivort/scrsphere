@@ -59,7 +59,10 @@ import {
   type ConsentRecord,
   type WorkflowState,
   type WorkflowTransition,
+  type BulkCreateResponseData,
+  type BulkCreateError,
 } from '../types';
+import type { BulkUploadItem } from '../pages/Backlog/BulkUpload/bulkUploadUtils';
 
 import { mockSuccess, mockError, mockDelay } from './mockResponseUtils';
 import {
@@ -371,6 +374,63 @@ class MockApiService {
     mockProductBacklogItems.push(newItem);
 
     return { success: true, data: newItem };
+  }
+
+  async bulkCreateProductBacklogItems(
+    items: BulkUploadItem[],
+    teamId: string,
+    goalId: string
+  ): Promise<ApiResponse<BulkCreateResponseData>> {
+    await delay(500);
+
+    const createdItems: ProductBacklogItem[] = [];
+    const errors: BulkCreateError[] = [];
+    const timestamp = Date.now();
+
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i] as BulkUploadItem;
+      const rowNumber = item._rowNumber;
+
+      // Validate title
+      if (!item.title || item.title.trim().length === 0) {
+        errors.push({
+          row: rowNumber,
+          field: 'title',
+          message: 'Title is required',
+        });
+        continue;
+      }
+
+      const newItem: ProductBacklogItem = {
+        id: `pbi-bulk-${timestamp}-${i}`,
+        teamId,
+        title: item.title,
+        description: item.description,
+        priority: item.priority ?? MoSCoWPriority.COULD_HAVE,
+        storyPoints: item.storyPoints,
+        businessValue: item.businessValue,
+        status: ItemStatus.NEW,
+        labels: item.labels ?? [],
+        acceptanceCriteria: item.acceptanceCriteria,
+        goalId,
+        createdBy: getCurrentUser().id,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      mockProductBacklogItems.push(newItem);
+      createdItems.push(newItem);
+    }
+
+    return {
+      success: true,
+      data: {
+        successful: createdItems.length,
+        failed: errors.length,
+        errors,
+        createdItems,
+      },
+    };
   }
 
   async updateProductBacklogItem(

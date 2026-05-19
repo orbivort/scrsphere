@@ -100,3 +100,14 @@ export const reorderPBIs = asyncHandler(async (req: Request, res: Response) => {
   await productBacklogService.reorderPBIs(pbiIds);
   res.json(createSuccessResponse({ message: 'Items reordered successfully' }));
 });
+
+/**
+ * Bulk create PBIs
+ */
+export const createPBIBulk = asyncHandler(async (req: Request, res: Response) => {
+  if (!req.userId) {
+    throw new BadRequestError('User not authenticated');
+  }
+  const result = await productBacklogService.createPBIBulk(req.userId, req.body);
+  res.status(201).json(createSuccessResponse(result));
+});
