@@ -1969,4 +1969,729 @@ describe('TeamManagement - Multiple Teams', () => {
       expect(screen.getByTestId('team-management')).toBeInTheDocument();
     });
   });
+
+  describe('Additional Branch Coverage', () => {
+    const createMember = (
+      id: string,
+      userId: string,
+      role: string,
+      email: string,
+      firstName: string,
+      lastName: string,
+      joinedAt = '2024-01-01T00:00:00Z'
+    ) => ({
+      id,
+      teamId: '123e4567-e89b-12d3-a456-426614174001',
+      userId,
+      role,
+      joinedAt,
+      user: {
+        id: userId,
+        email,
+        firstName,
+        lastName,
+        createdAt: '2024-01-01T00:00:00Z',
+        updatedAt: '2024-01-01T00:00:00Z',
+      },
+    });
+
+    const baseTeam = {
+      id: '123e4567-e89b-12d3-a456-426614174001',
+      name: 'Alpha Team',
+      description: 'Main development team',
+      createdBy: 'user-1',
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-06-01T00:00:00Z',
+    };
+
+    const defaultTeamsList = [
+      {
+        id: '123e4567-e89b-12d3-a456-426614174001',
+        name: 'Alpha Team',
+        description: 'Main development team',
+        createdBy: 'user-1',
+        createdAt: '2024-01-01T00:00:00Z',
+        updatedAt: '2024-06-01T00:00:00Z',
+        userRole: 'developer',
+      },
+    ];
+
+    function setupDefaultMocks(members: Array<Record<string, unknown>>, userRole = 'developer') {
+      const currentTeam = { ...baseTeam, members };
+      const teamsList = [
+        {
+          ...defaultTeamsList[0],
+          userRole,
+        },
+      ] as typeof defaultTeamsList;
+
+      (apiService.getMyTeams as unknown as vi.Mock).mockResolvedValue({
+        success: true,
+        data: teamsList,
+      });
+      (apiService.getTeam as unknown as vi.Mock).mockResolvedValue({
+        success: true,
+        data: currentTeam,
+      });
+      (useTeamStore as unknown as vi.Mock).mockReturnValue({
+        currentTeam,
+        userTeamsWithRoles: teamsList,
+        setCurrentTeam: mockSetCurrentTeam,
+        switchTeam: mockSwitchTeam,
+        setUserTeamsWithRoles: mockSetUserTeamsWithRoles,
+        setUserRoleInCurrentTeam: mockSetUserRoleInCurrentTeam,
+      });
+      return { currentTeam, teamsList };
+    }
+
+    it('should toggle list view mode', async () => {
+      const user = userEvent.setup();
+      const members = [
+        createMember('member-1', 'user-2', 'developer', 'jane@example.com', 'Jane', 'Smith'),
+        createMember('member-2', 'user-3', 'scrum_master', 'bob@example.com', 'Bob', 'Johnson'),
+      ];
+      setupDefaultMocks(members);
+
+      render(<TeamManagement />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: 'Alpha Team' })).toBeInTheDocument();
+      });
+
+      const listViewButton = screen.getByLabelText('List view');
+      await user.click(listViewButton);
+
+      expect(screen.getByLabelText('List view')).toHaveAttribute('aria-pressed', 'true');
+      expect(screen.getByLabelText('Card view')).toHaveAttribute('aria-pressed', 'false');
+
+      const cardViewButton = screen.getByLabelText('Card view');
+      await user.click(cardViewButton);
+
+      expect(screen.getByLabelText('Card view')).toHaveAttribute('aria-pressed', 'true');
+      expect(screen.getByLabelText('List view')).toHaveAttribute('aria-pressed', 'false');
+    });
+
+    it('should show search no results message when search does not match any member', async () => {
+      const user = userEvent.setup();
+      const members = [
+        createMember('member-1', 'user-2', 'developer', 'jane@example.com', 'Jane', 'Smith'),
+        createMember('member-2', 'user-3', 'scrum_master', 'bob@example.com', 'Bob', 'Johnson'),
+      ];
+      setupDefaultMocks(members);
+
+      render(<TeamManagement />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: 'Alpha Team' })).toBeInTheDocument();
+      });
+
+      const searchInput = screen.getByPlaceholderText(/search by name or email/i);
+      await user.type(searchInput, 'nonexistent-person');
+
+      await waitFor(() => {
+        expect(screen.getByText(/no members match your search criteria/i)).toBeInTheDocument();
+      });
+
+      const clearFiltersBtn = screen.getByRole('button', { name: /clear all filters/i });
+      expect(clearFiltersBtn).toBeInTheDocument();
+    });
+
+    it('should show clear search button when search query is entered', async () => {
+      const user = userEvent.setup();
+      const members = [
+        createMember('member-1', 'user-2', 'developer', 'jane@example.com', 'Jane', 'Smith'),
+      ];
+      setupDefaultMocks(members);
+
+      render(<TeamManagement />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: 'Alpha Team' })).toBeInTheDocument();
+      });
+
+      const searchInput = screen.getByPlaceholderText(/search by name or email/i);
+      await user.type(searchInput, 'Jane');
+
+      const clearButton = screen.getByLabelText('Clear search');
+      expect(clearButton).toBeInTheDocument();
+
+      await user.click(clearButton);
+      expect(searchInput).toHaveValue('');
+    });
+
+    it('should show clear filters link in filter results when search is active', async () => {
+      const user = userEvent.setup();
+      const members = [
+        createMember('member-1', 'user-2', 'developer', 'jane@example.com', 'Jane', 'Smith'),
+      ];
+      setupDefaultMocks(members);
+
+      render(<TeamManagement />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: 'Alpha Team' })).toBeInTheDocument();
+      });
+
+      const searchInput = screen.getByPlaceholderText(/search by name or email/i);
+      await user.type(searchInput, 'Jane');
+
+      await waitFor(() => {
+        expect(screen.getByText(/showing 1 of 1 member/i)).toBeInTheDocument();
+      });
+
+      const clearFiltersLink = screen.getByRole('button', { name: /clear filters/i });
+      expect(clearFiltersLink).toBeInTheDocument();
+    });
+
+    it('should sort members by joined date', async () => {
+      const user = userEvent.setup();
+      const members = [
+        createMember(
+          'member-1',
+          'user-2',
+          'developer',
+          'jane@example.com',
+          'Jane',
+          'Smith',
+          '2024-03-01T00:00:00Z'
+        ),
+        createMember(
+          'member-2',
+          'user-3',
+          'developer',
+          'bob@example.com',
+          'Bob',
+          'Johnson',
+          '2024-01-15T00:00:00Z'
+        ),
+      ];
+      setupDefaultMocks(members);
+
+      render(<TeamManagement />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: 'Alpha Team' })).toBeInTheDocument();
+      });
+
+      const sortSelect = screen.getByLabelText(/sort members by/i);
+      await user.selectOptions(sortSelect, 'joined');
+
+      expect(sortSelect).toHaveValue('joined');
+    });
+
+    it('should filter members by role', async () => {
+      const user = userEvent.setup();
+      const members = [
+        createMember('member-1', 'user-2', 'developer', 'jane@example.com', 'Jane', 'Smith'),
+        createMember('member-2', 'user-3', 'scrum_master', 'bob@example.com', 'Bob', 'Johnson'),
+      ];
+      setupDefaultMocks(members);
+
+      render(<TeamManagement />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: 'Alpha Team' })).toBeInTheDocument();
+      });
+
+      const filterSelect = screen.getByLabelText(/filter by role/i);
+      await user.selectOptions(filterSelect, 'scrum_master');
+
+      expect(filterSelect).toHaveValue('scrum_master');
+    });
+
+    it('should show validation error when submitting invite with empty email', async () => {
+      const user = userEvent.setup();
+      const members: Array<Record<string, unknown>> = [];
+      setupDefaultMocks(members, 'product_owner');
+
+      render(<TeamManagement />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: 'Alpha Team' })).toBeInTheDocument();
+      });
+
+      const inviteButton = screen.getByRole('button', { name: /invite member/i });
+      await user.click(inviteButton);
+
+      await waitFor(() => {
+        expect(screen.getByText('Invite Team Member')).toBeInTheDocument();
+      });
+
+      fireEvent.submit(screen.getByText('Email Address').closest('form')!);
+
+      await waitFor(() => {
+        expect(screen.getByText('Email address is required')).toBeInTheDocument();
+      });
+    });
+
+    it('should show error when inviting with invalid email format', async () => {
+      const user = userEvent.setup();
+      const members: Array<Record<string, unknown>> = [];
+      setupDefaultMocks(members, 'product_owner');
+
+      render(<TeamManagement />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: 'Alpha Team' })).toBeInTheDocument();
+      });
+
+      const inviteButton = screen.getByRole('button', { name: /invite member/i });
+      await user.click(inviteButton);
+
+      await waitFor(() => {
+        expect(screen.getByText('Invite Team Member')).toBeInTheDocument();
+      });
+
+      const emailInput = screen.getByLabelText('Email Address');
+      await user.type(emailInput, 'not-an-email');
+
+      fireEvent.submit(screen.getByText('Email Address').closest('form')!);
+
+      await waitFor(() => {
+        expect(screen.getByText('Please enter a valid email address')).toBeInTheDocument();
+      });
+    });
+
+    it('should show error when inviting an already existing member', async () => {
+      const user = userEvent.setup();
+      const members = [
+        createMember('member-1', 'user-2', 'developer', 'existing@example.com', 'Existing', 'User'),
+      ];
+      setupDefaultMocks(members, 'product_owner');
+
+      render(<TeamManagement />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: 'Alpha Team' })).toBeInTheDocument();
+      });
+
+      const inviteButton = screen.getByRole('button', { name: /invite member/i });
+      await user.click(inviteButton);
+
+      await waitFor(() => {
+        expect(screen.getByText('Invite Team Member')).toBeInTheDocument();
+      });
+
+      const emailInput = screen.getByLabelText('Email Address');
+      await user.type(emailInput, 'existing@example.com');
+
+      const submitButton = screen.getByRole('button', { name: /send invite/i });
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(screen.getByText('This user is already a member of the team.')).toBeInTheDocument();
+      });
+    });
+
+    it('should show error in delete modal when member removal fails', async () => {
+      const user = userEvent.setup();
+      const members = [
+        createMember('member-1', 'user-2', 'developer', 'jane@example.com', 'Jane', 'Smith'),
+      ];
+      setupDefaultMocks(members, 'product_owner');
+
+      render(<TeamManagement />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: 'Alpha Team' })).toBeInTheDocument();
+      });
+
+      const removeButton = screen.getByLabelText(/remove jane smith from team/i);
+      await user.click(removeButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(/are you sure you want to remove/i)).toBeInTheDocument();
+      });
+
+      (apiService.removeTeamMember as unknown as vi.Mock).mockRejectedValue(
+        new Error('403 Forbidden')
+      );
+
+      const confirmButton = screen.getByRole('button', { name: /remove member/i });
+      await user.click(confirmButton);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(/you do not have permission to remove team members/i)
+        ).toBeInTheDocument();
+      });
+
+      const closeButton = screen.getByRole('button', { name: /close/i });
+      expect(closeButton).toBeInTheDocument();
+    });
+
+    it('should show unsaved changes warning when cancelling invite with typed email', async () => {
+      const user = userEvent.setup();
+      const members: Array<Record<string, unknown>> = [];
+      setupDefaultMocks(members, 'product_owner');
+
+      render(<TeamManagement />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: 'Alpha Team' })).toBeInTheDocument();
+      });
+
+      const inviteButton = screen.getByRole('button', { name: /invite member/i });
+      await user.click(inviteButton);
+
+      await waitFor(() => {
+        expect(screen.getByText('Invite Team Member')).toBeInTheDocument();
+      });
+
+      const emailInput = screen.getByLabelText('Email Address');
+      await user.type(emailInput, 'newuser@example.com');
+
+      const cancelButton = screen.getByRole('button', { name: /^cancel$/i });
+      await user.click(cancelButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(/unsent team invitation/i)).toBeInTheDocument();
+      });
+
+      const confirmDiscardButton = screen.getByRole('button', { name: /Discard Changes/i });
+      await user.click(confirmDiscardButton);
+
+      await waitFor(() => {
+        expect(screen.queryByText(/unsent team invitation/i)).not.toBeInTheDocument();
+      });
+    });
+
+    it('should not show remove button for own member', async () => {
+      const members = [
+        createMember('member-1', 'user-1', 'developer', 'test@example.com', 'Test', 'User'),
+      ];
+      setupDefaultMocks(members, 'product_owner');
+
+      mockUseAuthStore.mockReturnValue({
+        user: { id: 'user-1', name: 'Test User', email: 'test@example.com' },
+      });
+
+      render(<TeamManagement />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: 'Alpha Team' })).toBeInTheDocument();
+      });
+
+      expect(screen.queryByLabelText(/remove test user from team/i)).not.toBeInTheDocument();
+    });
+
+    it('should show team access required page for 422 validation error', async () => {
+      (apiService.getMyTeams as unknown as vi.Mock).mockResolvedValue({
+        success: true,
+        data: defaultTeamsList,
+      });
+      (apiService.getTeam as unknown as vi.Mock).mockRejectedValue(
+        new Error('422 Validation error')
+      );
+
+      (useTeamStore as unknown as vi.Mock).mockReturnValue({
+        currentTeam: { id: '123e4567-e89b-12d3-a456-426614174001', name: 'Alpha Team' },
+        userTeamsWithRoles: defaultTeamsList,
+        setCurrentTeam: mockSetCurrentTeam,
+        switchTeam: mockSwitchTeam,
+        setUserTeamsWithRoles: mockSetUserTeamsWithRoles,
+        setUserRoleInCurrentTeam: mockSetUserRoleInCurrentTeam,
+      });
+
+      render(<TeamManagement />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(screen.getByText(/welcome to scrsphere/i)).toBeInTheDocument();
+      });
+
+      expect(screen.getByRole('button', { name: /create new team/i })).toBeInTheDocument();
+    });
+
+    it('should show access denied error page for 403 forbidden error', async () => {
+      (apiService.getMyTeams as unknown as vi.Mock).mockResolvedValue({
+        success: true,
+        data: defaultTeamsList,
+      });
+      (apiService.getTeam as unknown as vi.Mock).mockRejectedValue(new Error('403 Forbidden'));
+
+      (useTeamStore as unknown as vi.Mock).mockReturnValue({
+        currentTeam: { id: '123e4567-e89b-12d3-a456-426614174001', name: 'Alpha Team' },
+        userTeamsWithRoles: defaultTeamsList,
+        setCurrentTeam: mockSetCurrentTeam,
+        switchTeam: mockSwitchTeam,
+        setUserTeamsWithRoles: mockSetUserTeamsWithRoles,
+        setUserRoleInCurrentTeam: mockSetUserRoleInCurrentTeam,
+      });
+
+      render(<TeamManagement />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(screen.getByText(/access denied/i)).toBeInTheDocument();
+      });
+
+      const retryButton = screen.getByRole('button', { name: /try again/i });
+      expect(retryButton).toBeInTheDocument();
+    });
+
+    it('should show success message when team member is removed successfully', async () => {
+      const user = userEvent.setup();
+      const members = [
+        createMember('member-1', 'user-2', 'developer', 'jane@example.com', 'Jane', 'Smith'),
+      ];
+      setupDefaultMocks(members, 'product_owner');
+      (apiService.removeTeamMember as unknown as vi.Mock).mockResolvedValue({
+        success: true,
+        data: undefined,
+      });
+
+      render(<TeamManagement />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: 'Alpha Team' })).toBeInTheDocument();
+      });
+
+      const removeButton = screen.getByLabelText(/remove jane smith from team/i);
+      await user.click(removeButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(/are you sure you want to remove/i)).toBeInTheDocument();
+      });
+
+      const confirmButton = screen.getByRole('button', { name: /remove member/i });
+      await user.click(confirmButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(/has been successfully removed/i)).toBeInTheDocument();
+      });
+    });
+
+    it('should show error when invite API returns 404 for non-registered user', async () => {
+      const user = userEvent.setup();
+      const members: Array<Record<string, unknown>> = [];
+      setupDefaultMocks(members, 'product_owner');
+      (apiService.addTeamMember as unknown as vi.Mock).mockRejectedValue(
+        new Error('404 User not found')
+      );
+
+      render(<TeamManagement />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: 'Alpha Team' })).toBeInTheDocument();
+      });
+
+      const inviteButton = screen.getByRole('button', { name: /invite member/i });
+      await user.click(inviteButton);
+
+      await waitFor(() => {
+        expect(screen.getByText('Invite Team Member')).toBeInTheDocument();
+      });
+
+      const emailInput = screen.getByLabelText('Email Address');
+      await user.type(emailInput, 'unregistered@example.com');
+
+      const emailInputEl = screen.getByLabelText('Email Address');
+      const form = emailInputEl.closest('form')!;
+      fireEvent.submit(form);
+
+      await waitFor(() => {
+        expect(screen.getByText(/no user found with this email/i)).toBeInTheDocument();
+      });
+    });
+
+    it('should show error when invite API returns 409 conflict', async () => {
+      const user = userEvent.setup();
+      const members = [
+        createMember('member-1', 'user-2', 'developer', 'existing@example.com', 'Existing', 'User'),
+      ];
+      setupDefaultMocks(members, 'product_owner');
+      (apiService.addTeamMember as unknown as vi.Mock).mockRejectedValue(
+        new Error('409 Conflict - User already in team')
+      );
+
+      render(<TeamManagement />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: 'Alpha Team' })).toBeInTheDocument();
+      });
+
+      const inviteButton = screen.getByRole('button', { name: /invite member/i });
+      await user.click(inviteButton);
+
+      await waitFor(() => {
+        expect(screen.getByText('Invite Team Member')).toBeInTheDocument();
+      });
+
+      const emailInput = screen.getByLabelText('Email Address');
+      await user.type(emailInput, 'new-member@example.com');
+
+      const submitButton = screen.getByRole('button', { name: /send invite/i });
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(/already a member of the team/i)).toBeInTheDocument();
+      });
+    });
+
+    it('should show error when invite API returns 403 forbidden', async () => {
+      const user = userEvent.setup();
+      const members: Array<Record<string, unknown>> = [];
+      setupDefaultMocks(members, 'product_owner');
+      (apiService.addTeamMember as unknown as vi.Mock).mockRejectedValue(
+        new Error('403 Forbidden')
+      );
+
+      render(<TeamManagement />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: 'Alpha Team' })).toBeInTheDocument();
+      });
+
+      const inviteButton = screen.getByRole('button', { name: /invite member/i });
+      await user.click(inviteButton);
+
+      await waitFor(() => {
+        expect(screen.getByText('Invite Team Member')).toBeInTheDocument();
+      });
+
+      const emailInput = screen.getByLabelText('Email Address');
+      await user.type(emailInput, 'newmember@example.com');
+
+      const emailInputEl = screen.getByLabelText('Email Address');
+      const form = emailInputEl.closest('form')!;
+      fireEvent.submit(form);
+
+      await waitFor(() => {
+        expect(screen.getByText(/do not have permission to add team members/i)).toBeInTheDocument();
+      });
+    });
+
+    it('should show error in delete modal when remove API returns 404', async () => {
+      const user = userEvent.setup();
+      const members = [
+        createMember('member-1', 'user-2', 'developer', 'jane@example.com', 'Jane', 'Smith'),
+      ];
+      setupDefaultMocks(members, 'product_owner');
+      (apiService.removeTeamMember as unknown as vi.Mock).mockRejectedValue(
+        new Error('404 Member not found')
+      );
+
+      render(<TeamManagement />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: 'Alpha Team' })).toBeInTheDocument();
+      });
+
+      const removeButton = screen.getByLabelText(/remove jane smith from team/i);
+      await user.click(removeButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(/are you sure you want to remove/i)).toBeInTheDocument();
+      });
+
+      const confirmButton = screen.getByRole('button', { name: /remove member/i });
+      await user.click(confirmButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(/may have already been removed/i)).toBeInTheDocument();
+      });
+    });
+
+    it('should show network error in delete modal when remove API fails with network error', async () => {
+      const user = userEvent.setup();
+      const members = [
+        createMember('member-1', 'user-2', 'developer', 'jane@example.com', 'Jane', 'Smith'),
+      ];
+      setupDefaultMocks(members, 'product_owner');
+      (apiService.removeTeamMember as unknown as vi.Mock).mockRejectedValue(
+        new Error('Network error occurred')
+      );
+
+      render(<TeamManagement />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: 'Alpha Team' })).toBeInTheDocument();
+      });
+
+      const removeButton = screen.getByLabelText(/remove jane smith from team/i);
+      await user.click(removeButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(/are you sure you want to remove/i)).toBeInTheDocument();
+      });
+
+      const confirmButton = screen.getByRole('button', { name: /remove member/i });
+      await user.click(confirmButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(/network error/i)).toBeInTheDocument();
+      });
+    });
+
+    it('should show generic error state when team API returns unsuccessful response', async () => {
+      const mockTeams = [
+        {
+          id: '123e4567-e89b-12d3-a456-426614174001',
+          name: 'Alpha Team',
+          description: 'Main development team',
+          createdBy: 'user-1',
+          createdAt: '2024-01-01T00:00:00Z',
+          updatedAt: '2024-06-01T00:00:00Z',
+          userRole: 'developer',
+        },
+      ];
+
+      (apiService.getMyTeams as unknown as vi.Mock).mockResolvedValue({
+        success: true,
+        data: mockTeams,
+      });
+
+      (apiService.getTeam as unknown as vi.Mock).mockResolvedValue({
+        success: false,
+        error: { message: 'Failed to load team data' },
+      });
+
+      (useTeamStore as unknown as vi.Mock).mockReturnValue({
+        currentTeam: { id: '123e4567-e89b-12d3-a456-426614174001', name: 'Alpha Team' },
+        userTeamsWithRoles: mockTeams,
+        setCurrentTeam: mockSetCurrentTeam,
+        switchTeam: mockSwitchTeam,
+        setUserTeamsWithRoles: mockSetUserTeamsWithRoles,
+        setUserRoleInCurrentTeam: mockSetUserRoleInCurrentTeam,
+      });
+
+      render(<TeamManagement />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(screen.getByText(/failed to load team data/i)).toBeInTheDocument();
+      });
+
+      const retryButton = screen.getByRole('button', { name: /try again/i });
+      expect(retryButton).toBeInTheDocument();
+    });
+
+    it('should show validation error for email exceeding maximum length', async () => {
+      const user = userEvent.setup();
+      const members: Array<Record<string, unknown>> = [];
+      setupDefaultMocks(members, 'product_owner');
+
+      render(<TeamManagement />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: 'Alpha Team' })).toBeInTheDocument();
+      });
+
+      const inviteButton = screen.getByRole('button', { name: /invite member/i });
+      await user.click(inviteButton);
+
+      await waitFor(() => {
+        expect(screen.getByText('Invite Team Member')).toBeInTheDocument();
+      });
+
+      const emailInput = screen.getByLabelText('Email Address');
+      const longLocalPart = 'a'.repeat(250);
+      await user.type(emailInput, `${longLocalPart}@b.com`);
+
+      const submitButton = screen.getByRole('button', { name: /send invite/i });
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(/email address is too long/i)).toBeInTheDocument();
+      });
+    });
+  });
 });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { vi } from 'vitest';
@@ -1509,6 +1509,222 @@ describe('TeamManagement', () => {
 
       const deleteButton = screen.getByRole('button', { name: /delete team alpha/i });
       await user.click(deleteButton);
+
+      expect(screen.getByRole('heading', { name: /delete team/i })).toBeInTheDocument();
+    });
+  });
+
+  describe('Create team error without message property', () => {
+    it('should use fallback error message when create error has no message property', async () => {
+      const user = userEvent.setup();
+      const mockMutateWithoutMessage = vi.fn((_data, options) => {
+        if (options?.onError) {
+          options.onError({});
+        }
+      });
+
+      vi.mocked(useTeamManagement.useCreateTeam).mockReturnValue({
+        mutate: mockMutateWithoutMessage,
+        isPending: false,
+        isSuccess: false,
+        isError: true,
+      } as unknown as ReturnType<typeof useTeamManagement.useCreateTeam>);
+
+      render(<TeamManagement />, { wrapper: createWrapper() });
+
+      const createButton = screen.getByRole('button', { name: /create team/i });
+      await user.click(createButton);
+
+      expect(screen.getByRole('heading', { name: /create new team/i })).toBeInTheDocument();
+
+      const nameInput = screen.getByLabelText(/team name/i);
+      await user.type(nameInput, 'Test Team');
+
+      const modal = screen.getByRole('dialog');
+      const submitButton = within(modal).getByRole('button', { name: /create team/i });
+      await user.click(submitButton);
+
+      expect(screen.getByRole('heading', { name: /create new team/i })).toBeInTheDocument();
+    });
+  });
+
+  describe('Update team error without message property', () => {
+    it('should use fallback error message when update error has no message property', async () => {
+      const user = userEvent.setup();
+      const mockUpdateMutate = vi.fn((_data, options) => {
+        if (options?.onError) {
+          options.onError({});
+        }
+      });
+
+      vi.mocked(useTeamManagement.useUpdateTeam).mockReturnValue({
+        mutate: mockUpdateMutate,
+        isPending: false,
+        isSuccess: false,
+        isError: true,
+      } as unknown as ReturnType<typeof useTeamManagement.useUpdateTeam>);
+
+      vi.mocked(TeamContext.useTeamContext).mockReturnValue({
+        userRole: 'PRODUCT_OWNER',
+        refreshTeams: mockRefreshTeams,
+        currentTeam: null,
+        userTeams: [],
+        isLoading: false,
+        error: null,
+        switchTeam: vi.fn(),
+        hasMultipleTeams: false,
+      });
+
+      render(<TeamManagement />, { wrapper: createWrapper() });
+
+      const editButton = screen.getByRole('button', { name: /edit team alpha/i });
+      await user.click(editButton);
+
+      expect(screen.getByRole('heading', { name: /edit team/i })).toBeInTheDocument();
+
+      const descriptionInput = screen.getByPlaceholderText(/describe your team/i);
+      await user.type(descriptionInput, ' updated');
+
+      const modal = screen.getByRole('dialog');
+      const saveButton = within(modal).getByRole('button', { name: /save changes/i });
+      await user.click(saveButton);
+
+      expect(screen.getByRole('heading', { name: /edit team/i })).toBeInTheDocument();
+    });
+  });
+
+  describe('Update team permission denied on submit', () => {
+    it('should deny update when permission check fails after role change', async () => {
+      const user = userEvent.setup();
+
+      vi.mocked(TeamContext.useTeamContext).mockReturnValue({
+        userRole: 'PRODUCT_OWNER',
+        refreshTeams: mockRefreshTeams,
+        currentTeam: null,
+        userTeams: [],
+        isLoading: false,
+        error: null,
+        switchTeam: vi.fn(),
+        hasMultipleTeams: false,
+      });
+
+      const { rerender } = render(<TeamManagement />, { wrapper: createWrapper() });
+
+      const editButton = screen.getByRole('button', { name: /edit team alpha/i });
+      await user.click(editButton);
+
+      expect(screen.getByRole('heading', { name: /edit team/i })).toBeInTheDocument();
+
+      const descriptionInput = screen.getByPlaceholderText(/describe your team/i);
+      await user.type(descriptionInput, ' updated');
+
+      vi.mocked(TeamContext.useTeamContext).mockReturnValue({
+        userRole: 'DEVELOPER',
+        refreshTeams: mockRefreshTeams,
+        currentTeam: null,
+        userTeams: [],
+        isLoading: false,
+        error: null,
+        switchTeam: vi.fn(),
+        hasMultipleTeams: false,
+      });
+
+      rerender(<TeamManagement />);
+
+      const modal = screen.getByRole('dialog');
+      const saveButton = within(modal).getByRole('button', { name: /save changes/i });
+      await user.click(saveButton);
+
+      expect(screen.queryByRole('heading', { name: /edit team/i })).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Delete team permission denied on submit', () => {
+    it('should deny delete when permission check fails after role change', async () => {
+      const user = userEvent.setup();
+
+      vi.mocked(TeamContext.useTeamContext).mockReturnValue({
+        userRole: 'PRODUCT_OWNER',
+        refreshTeams: mockRefreshTeams,
+        currentTeam: null,
+        userTeams: [],
+        isLoading: false,
+        error: null,
+        switchTeam: vi.fn(),
+        hasMultipleTeams: false,
+      });
+
+      const { rerender } = render(<TeamManagement />, { wrapper: createWrapper() });
+
+      const deleteButton = screen.getByRole('button', { name: /delete team alpha/i });
+      await user.click(deleteButton);
+
+      expect(screen.getByRole('heading', { name: /delete team/i })).toBeInTheDocument();
+
+      const confirmationInput = screen.getByRole('textbox', { name: /type/i });
+      await user.type(confirmationInput, 'Team Alpha');
+
+      vi.mocked(TeamContext.useTeamContext).mockReturnValue({
+        userRole: 'DEVELOPER',
+        refreshTeams: mockRefreshTeams,
+        currentTeam: null,
+        userTeams: [],
+        isLoading: false,
+        error: null,
+        switchTeam: vi.fn(),
+        hasMultipleTeams: false,
+      });
+
+      rerender(<TeamManagement />);
+
+      const modal = screen.getByRole('dialog');
+      const deleteConfirmButton = within(modal).getByRole('button', { name: /delete team/i });
+      await user.click(deleteConfirmButton);
+
+      expect(screen.queryByRole('heading', { name: /delete team/i })).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Delete team error falling through to else branch', () => {
+    it('should handle delete error without product goals message falling to else branch', async () => {
+      const user = userEvent.setup();
+      const mockDeleteMutate = vi.fn((id, options) => {
+        if (options?.onError) {
+          options.onError(new Error('Generic server error'));
+        }
+      });
+
+      vi.mocked(useTeamManagement.useDeleteTeam).mockReturnValue({
+        mutate: mockDeleteMutate,
+        isPending: false,
+        isSuccess: false,
+        isError: true,
+      } as unknown as ReturnType<typeof useTeamManagement.useDeleteTeam>);
+
+      vi.mocked(TeamContext.useTeamContext).mockReturnValue({
+        userRole: 'PRODUCT_OWNER',
+        refreshTeams: mockRefreshTeams,
+        currentTeam: null,
+        userTeams: [],
+        isLoading: false,
+        error: null,
+        switchTeam: vi.fn(),
+        hasMultipleTeams: false,
+      });
+
+      render(<TeamManagement />, { wrapper: createWrapper() });
+
+      const deleteButton = screen.getByRole('button', { name: /delete team alpha/i });
+      await user.click(deleteButton);
+
+      expect(screen.getByRole('heading', { name: /delete team/i })).toBeInTheDocument();
+
+      const confirmationInput = screen.getByRole('textbox', { name: /type/i });
+      await user.type(confirmationInput, 'Team Alpha');
+
+      const modal = screen.getByRole('dialog');
+      const deleteConfirmButton = within(modal).getByRole('button', { name: /delete team/i });
+      await user.click(deleteConfirmButton);
 
       expect(screen.getByRole('heading', { name: /delete team/i })).toBeInTheDocument();
     });

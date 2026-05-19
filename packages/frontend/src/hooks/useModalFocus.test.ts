@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { renderHook } from '@testing-library/react';
+import { renderHook, render } from '@testing-library/react';
+import React from 'react';
 
 import { useModalFocus } from './useModalFocus';
 
@@ -134,5 +135,98 @@ describe('useModalFocus', () => {
 
     // Note: The hook maintains state and doesn't auto-cleanup on rerender
     // Cleanup happens via the effect's cleanup function when isOpen changes
+  });
+
+  it('should not crash with Tab key when no focusable elements', () => {
+    renderHook(() => useModalFocus({ isOpen: true, onClose }));
+
+    const tabEvent = new KeyboardEvent('keydown', {
+      key: 'Tab',
+      bubbles: true,
+    });
+
+    expect(() => {
+      document.dispatchEvent(tabEvent);
+    }).not.toThrow();
+  });
+
+  it('should not crash with non-Tab key events', () => {
+    renderHook(() => useModalFocus({ isOpen: true, onClose }));
+
+    const arrowEvent = new KeyboardEvent('keydown', {
+      key: 'ArrowDown',
+      bubbles: true,
+    });
+
+    expect(() => {
+      document.dispatchEvent(arrowEvent);
+    }).not.toThrow();
+  });
+
+  it('should remove event listeners when modal transitions from open to closed', () => {
+    const removeEventListenerSpy = vi.spyOn(document, 'removeEventListener');
+
+    const { rerender, unmount } = renderHook(({ isOpen }) => useModalFocus({ isOpen, onClose }), {
+      initialProps: { isOpen: true },
+    });
+
+    rerender({ isOpen: false });
+    unmount();
+
+    expect(removeEventListenerSpy).toHaveBeenCalledWith('keydown', expect.any(Function));
+  });
+
+  it('should wrap focus to first element on Tab when on last element', () => {
+    function TestComponent({ isOpen }: { isOpen: boolean }) {
+      const { modalRef } = useModalFocus({ isOpen, onClose });
+      return React.createElement(
+        'div',
+        { ref: modalRef },
+        React.createElement('button', { id: 'first' }, 'First'),
+        React.createElement('button', { id: 'last' }, 'Last')
+      );
+    }
+
+    render(React.createElement(TestComponent, { isOpen: true }));
+
+    const lastButton = document.querySelector('#last') as HTMLElement;
+    lastButton.focus();
+
+    const tabEvent = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true });
+    const preventDefaultSpy = vi.spyOn(tabEvent, 'preventDefault');
+
+    document.dispatchEvent(tabEvent);
+
+    expect(preventDefaultSpy).toHaveBeenCalled();
+    expect(document.activeElement?.id).toBe('first');
+  });
+
+  it('should wrap focus to last element on Shift+Tab when on first element', () => {
+    function TestComponent({ isOpen }: { isOpen: boolean }) {
+      const { modalRef } = useModalFocus({ isOpen, onClose });
+      return React.createElement(
+        'div',
+        { ref: modalRef },
+        React.createElement('button', { id: 'first' }, 'First'),
+        React.createElement('button', { id: 'last' }, 'Last')
+      );
+    }
+
+    render(React.createElement(TestComponent, { isOpen: true }));
+
+    const firstButton = document.querySelector('#first') as HTMLElement;
+    firstButton.focus();
+
+    const shiftTabEvent = new KeyboardEvent('keydown', {
+      key: 'Tab',
+      shiftKey: true,
+      bubbles: true,
+    });
+    const preventDefaultSpy = vi.spyOn(shiftTabEvent, 'preventDefault');
+
+    document.dispatchEvent(shiftTabEvent);
+
+    expect(preventDefaultSpy).toHaveBeenCalled();
+    expect(document.activeElement?.id).toBe('last');
   });
 });

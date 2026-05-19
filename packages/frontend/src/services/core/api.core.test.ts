@@ -11,26 +11,28 @@ vi.mock('../../utils/logger', () => ({
   setStoreProvider: vi.fn(),
 }));
 
-vi.mock('axios', () => {
-  const mockAxiosInstance = {
-    get: vi.fn(),
-    post: vi.fn(),
-    put: vi.fn(),
-    patch: vi.fn(),
-    delete: vi.fn(),
-    request: vi.fn(),
+const { mockAxiosInstance } = vi.hoisted(() => {
+  const mockAxiosFn = vi.fn().mockReturnValue(Promise.resolve({ data: {} }));
+  const instance = Object.assign(mockAxiosFn, {
+    get: vi.fn().mockReturnValue(Promise.resolve({ data: {} })),
+    post: vi.fn().mockReturnValue(Promise.resolve({ data: {} })),
+    put: vi.fn().mockReturnValue(Promise.resolve({ data: {} })),
+    patch: vi.fn().mockReturnValue(Promise.resolve({ data: {} })),
+    delete: vi.fn().mockReturnValue(Promise.resolve({ data: {} })),
+    request: vi.fn().mockReturnValue(Promise.resolve({ data: {} })),
     interceptors: {
       request: { use: vi.fn() },
       response: { use: vi.fn() },
     },
-  };
-
-  return {
-    default: {
-      create: vi.fn(() => mockAxiosInstance),
-    },
-  };
+  });
+  return { mockAxiosInstance: instance };
 });
+
+vi.mock('axios', () => ({
+  default: {
+    create: vi.fn(() => mockAxiosInstance),
+  },
+}));
 
 import { CoreApiService, setAuthCallbacks, coreApiService } from './api.core';
 
@@ -57,6 +59,8 @@ describe('CoreApiService', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
+    vi.unstubAllGlobals();
+    document.cookie = 'csrfToken=; max-age=0';
   });
 
   describe('Constructor', () => {
@@ -400,6 +404,384 @@ describe('CoreApiService', () => {
       service.clearTeamContext();
 
       expect(service).toBeDefined();
+    });
+  });
+
+  describe('CSRF Token Handling in Request Interceptor', () => {
+    it('should not add CSRF header for GET requests', async () => {
+      document.cookie = 'csrfToken=existing-token';
+      new CoreApiService();
+
+      const config = {
+        headers: {} as Record<string, string>,
+        url: '/api/test',
+        method: 'get',
+      } as InternalAxiosRequestConfig;
+
+      const result = await requestInterceptor(config);
+
+      expect(result.headers['x-csrf-token']).toBeUndefined();
+    });
+
+    it('should add CSRF header from cookie for mutating request when cookie exists', async () => {
+      document.cookie = 'csrfToken=my-csrf-token';
+      new CoreApiService();
+
+      const config = {
+        headers: {} as Record<string, string>,
+        url: '/api/test',
+        method: 'post',
+      } as InternalAxiosRequestConfig;
+
+      const result = await requestInterceptor(config);
+
+      expect(result.headers['x-csrf-token']).toBe('my-csrf-token');
+    });
+
+    it('should fetch CSRF token when no cookie exists and add header when token obtained', async () => {
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockImplementation(async () => {
+          document.cookie = 'csrfToken=fetched-csrf-token';
+          return { ok: true };
+        })
+      );
+      new CoreApiService();
+
+      const config = {
+        headers: {} as Record<string, string>,
+        url: '/api/test',
+        method: 'post',
+      } as InternalAxiosRequestConfig;
+
+      const result = await requestInterceptor(config);
+
+      expect(result.headers['x-csrf-token']).toBe('fetched-csrf-token');
+      expect(fetch).toHaveBeenCalledWith(
+        expect.stringContaining('/auth/csrf-token'),
+        expect.objectContaining({ credentials: 'include' })
+      );
+    });
+
+    it('should not add CSRF header when fetchCsrfToken returns null', async () => {
+      vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('Network error')));
+      new CoreApiService();
+
+      const config = {
+        headers: {} as Record<string, string>,
+        url: '/api/test',
+        method: 'post',
+      } as InternalAxiosRequestConfig;
+
+      const result = await requestInterceptor(config);
+
+      expect(result.headers['x-csrf-token']).toBeUndefined();
+    });
+
+    it('should not add CSRF header when fetch response is not ok', async () => {
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false }));
+      new CoreApiService();
+
+      const config = {
+        headers: {} as Record<string, string>,
+        url: '/api/test',
+        method: 'post',
+      } as InternalAxiosRequestConfig;
+
+      const result = await requestInterceptor(config);
+
+      expect(result.headers['x-csrf-token']).toBeUndefined();
+    });
+
+    it('should add CSRF header for PUT, DELETE, PATCH methods', async () => {
+      document.cookie = 'csrfToken=csrf-token-value';
+
+      for (const method of ['put', 'delete', 'patch']) {
+        vi.clearAllMocks();
+        document.cookie = 'csrfToken=csrf-token-value';
+        new CoreApiService();
+
+        const config = {
+          headers: {} as Record<string, string>,
+          url: '/api/test',
+          method,
+        } as InternalAxiosRequestConfig;
+
+        const result = await requestInterceptor(config);
+
+        expect(result.headers['x-csrf-token']).toBe('csrf-token-value');
+      }
+    });
+  });
+
+  describe('Response Interceptor - CSRF Retry', () => {
+    it('should retry request on 403 with CSRF message and fetch new token', async () => {
+      const logoutCallback = vi.fn();
+      setAuthCallbacks(() => {}, logoutCallback);
+
+      new CoreApiService();
+
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true }));
+      document.cookie = 'csrfToken=new-csrf-token';
+
+      const mockInstance = axios.create();
+      const mockCallable = mockInstance as unknown as { mockResolvedValue: (val: unknown) => void };
+      mockCallable.mockResolvedValue({ data: {} });
+
+      const error = {
+        response: {
+          status: 403,
+          data: {
+            error: { message: 'CSRF token validation failed' },
+          },
+        },
+        config: {
+          url: '/api/test',
+          headers: {} as Record<string, string>,
+        },
+      } as AxiosError;
+
+      await responseErrorInterceptor(error);
+
+      expect(fetch).toHaveBeenCalledWith(
+        expect.stringContaining('/auth/csrf-token'),
+        expect.objectContaining({ credentials: 'include' })
+      );
+      expect(mockCallable).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: '/api/test',
+          headers: expect.objectContaining({
+            'x-csrf-token': 'new-csrf-token',
+          }),
+        })
+      );
+    });
+
+    it('should retry request on 403 with CSRF message when _csrfRetry is false', async () => {
+      const logoutCallback = vi.fn();
+      setAuthCallbacks(() => {}, logoutCallback);
+
+      new CoreApiService();
+
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true }));
+      document.cookie = 'csrfToken=retried-token';
+
+      const mockInstance = axios.create();
+      const mockCallable = mockInstance as unknown as { mockResolvedValue: (val: unknown) => void };
+      mockCallable.mockResolvedValue({ data: {} });
+
+      const error = {
+        response: {
+          status: 403,
+          data: {
+            error: { message: 'CSRF token expired' },
+          },
+        },
+        config: {
+          url: '/api/data',
+          headers: {} as Record<string, string>,
+          _csrfRetry: false,
+        },
+      } as AxiosError;
+
+      await responseErrorInterceptor(error);
+
+      expect(fetch).toHaveBeenCalled();
+      expect(mockCallable).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: '/api/data',
+          _csrfRetry: true,
+        })
+      );
+    });
+
+    it('should reject on 403 without CSRF message', async () => {
+      const logoutCallback = vi.fn();
+      setAuthCallbacks(() => {}, logoutCallback);
+
+      new CoreApiService();
+
+      const error = {
+        response: {
+          status: 403,
+          data: {
+            error: { message: 'Forbidden' },
+          },
+        },
+        config: {
+          url: '/api/test',
+          headers: {} as Record<string, string>,
+        },
+      } as AxiosError;
+
+      await expect(responseErrorInterceptor(error)).rejects.toBeDefined();
+    });
+
+    it('should reject on 403 CSRF when _csrfRetry is already true', async () => {
+      const logoutCallback = vi.fn();
+      setAuthCallbacks(() => {}, logoutCallback);
+
+      new CoreApiService();
+
+      const error = {
+        response: {
+          status: 403,
+          data: {
+            error: { message: 'CSRF token expired' },
+          },
+        },
+        config: {
+          url: '/api/test',
+          headers: {} as Record<string, string>,
+          _csrfRetry: true,
+        },
+      } as AxiosError;
+
+      await expect(responseErrorInterceptor(error)).rejects.toBeDefined();
+    });
+  });
+
+  describe('Response Interceptor - Refresh Token Retry', () => {
+    it('should retry request on 401 by refreshing token', async () => {
+      const logoutCallback = vi.fn();
+      setAuthCallbacks(() => {}, logoutCallback);
+
+      new CoreApiService();
+
+      const mockInstance = axios.create();
+      mockInstance.post.mockResolvedValue({ data: {} });
+      const mockCallable = mockInstance as unknown as { mockResolvedValue: (val: unknown) => void };
+      mockCallable.mockResolvedValue({ data: {} });
+
+      const error = {
+        response: { status: 401 },
+        config: {
+          url: '/api/protected-resource',
+          headers: {} as Record<string, string>,
+        },
+      } as AxiosError;
+
+      await responseErrorInterceptor(error);
+
+      expect(mockInstance.post).toHaveBeenCalledWith('/auth/refresh');
+      expect(mockCallable).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: '/api/protected-resource',
+          _retry: true,
+        })
+      );
+    });
+
+    it('should call onLogout and redirect to login on refresh failure', async () => {
+      const logoutCallback = vi.fn();
+      setAuthCallbacks(() => {}, logoutCallback);
+
+      const mockLocation = { pathname: '/dashboard', href: '' };
+      vi.stubGlobal('window', { location: mockLocation });
+
+      new CoreApiService();
+
+      const mockInstance = axios.create();
+      mockInstance.post.mockRejectedValue(new Error('Refresh failed'));
+
+      const error = {
+        response: { status: 401 },
+        config: {
+          url: '/api/protected-resource',
+          headers: {} as Record<string, string>,
+        },
+      } as AxiosError;
+
+      await expect(responseErrorInterceptor(error)).rejects.toBeDefined();
+
+      expect(logoutCallback).toHaveBeenCalled();
+      expect(mockLocation.href).toBe('/login');
+    });
+  });
+
+  describe('Refresh Token Deduplication', () => {
+    it('should reuse existing refreshPromise when already refreshing', async () => {
+      const logoutCallback = vi.fn();
+      setAuthCallbacks(() => {}, logoutCallback);
+
+      new CoreApiService();
+
+      let resolveRefresh!: () => void;
+      const deferredPromise = new Promise<void>((resolve) => {
+        resolveRefresh = resolve;
+      });
+
+      const mockInstance = axios.create();
+      mockInstance.post.mockReturnValue(deferredPromise);
+      const mockCallable = mockInstance as unknown as { mockResolvedValue: (val: unknown) => void };
+      mockCallable.mockResolvedValue({ data: {} });
+
+      const error1 = {
+        response: { status: 401 },
+        config: {
+          url: '/api/test1',
+          headers: {} as Record<string, string>,
+        },
+      } as AxiosError;
+
+      const error2 = {
+        response: { status: 401 },
+        config: {
+          url: '/api/test2',
+          headers: {} as Record<string, string>,
+        },
+      } as AxiosError;
+
+      const promise1 = responseErrorInterceptor(error1);
+      const promise2 = responseErrorInterceptor(error2);
+
+      expect(mockInstance.post).toHaveBeenCalledTimes(1);
+      expect(mockInstance.post).toHaveBeenCalledWith('/auth/refresh');
+
+      resolveRefresh();
+
+      await Promise.all([promise1, promise2]);
+
+      expect(mockCallable).toHaveBeenCalledTimes(2);
+    });
+
+    it('should clear refreshPromise after refresh completes', async () => {
+      const logoutCallback = vi.fn();
+      setAuthCallbacks(() => {}, logoutCallback);
+
+      new CoreApiService();
+
+      const mockInstance = axios.create();
+      mockInstance.post.mockResolvedValue({ data: {} });
+      const mockCallable = mockInstance as unknown as { mockResolvedValue: (val: unknown) => void };
+      mockCallable.mockResolvedValue({ data: {} });
+
+      const error = {
+        response: { status: 401 },
+        config: {
+          url: '/api/test',
+          headers: {} as Record<string, string>,
+        },
+      } as AxiosError;
+
+      await responseErrorInterceptor(error);
+
+      mockInstance.post.mockClear();
+
+      const error2 = {
+        response: { status: 401 },
+        config: {
+          url: '/api/test-again',
+          headers: {} as Record<string, string>,
+        },
+      } as AxiosError;
+
+      await responseErrorInterceptor(error2);
+
+      expect(mockInstance.post).toHaveBeenCalledTimes(1);
+      expect(mockCallable).toHaveBeenCalledWith(
+        expect.objectContaining({ url: '/api/test-again' })
+      );
     });
   });
 });

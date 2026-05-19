@@ -458,6 +458,57 @@ describe('AddTaskModal', () => {
       expect(cancelButton).toBeInTheDocument();
       expect(submitButton).toBeInTheDocument();
     });
+
+    it('should close modal on Escape key when no unsaved changes', () => {
+      render(<AddTaskModal {...defaultProps} />);
+
+      fireEvent.keyDown(document, { key: 'Escape' });
+
+      expect(defaultProps.onClose).toHaveBeenCalled();
+    });
+
+    it('should show unsaved changes modal on Escape key when changes exist', () => {
+      render(<AddTaskModal {...defaultProps} />);
+
+      const titleInput = screen.getByLabelText(/Task Title/i);
+      fireEvent.change(titleInput, { target: { value: 'Some Task' } });
+
+      fireEvent.keyDown(document, { key: 'Escape' });
+
+      expect(screen.getByTestId('unsaved-changes-modal')).toBeInTheDocument();
+      expect(defaultProps.onClose).not.toHaveBeenCalled();
+    });
+
+    it('should trap focus: Tab from last enabled element wraps to first', () => {
+      render(<AddTaskModal {...defaultProps} />);
+
+      // Fill in title and hours so Add Task button is enabled as last focusable
+      const titleInput = screen.getByLabelText(/Task Title/i);
+      fireEvent.change(titleInput, { target: { value: 'Test Task' } });
+      const hoursInput = screen.getByLabelText(/Estimated Hours/i);
+      fireEvent.change(hoursInput, { target: { value: '4' } });
+
+      const submitButton = screen.getByRole('button', { name: /Add Task$/i });
+      submitButton.focus();
+
+      fireEvent.keyDown(document, { key: 'Tab', shiftKey: false });
+
+      const closeButton = screen.getByLabelText('Close modal');
+      expect(closeButton).toHaveFocus();
+    });
+
+    it('should trap focus: Shift+Tab from first element wraps to last enabled element', () => {
+      render(<AddTaskModal {...defaultProps} />);
+
+      const closeButton = screen.getByLabelText('Close modal');
+      closeButton.focus();
+
+      fireEvent.keyDown(document, { key: 'Tab', shiftKey: true });
+
+      // Add Task button is disabled initially, so Cancel is the last enabled element
+      const cancelButton = screen.getByRole('button', { name: /Cancel/i });
+      expect(cancelButton).toHaveFocus();
+    });
   });
 
   describe('Form Reset', () => {

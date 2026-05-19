@@ -343,10 +343,14 @@ export const TeamManagement: React.FC = () => {
     if (!memberToDelete || !teamId) return;
 
     setDeleteError(null);
-    await removeTeamMemberMutation.mutateAsync({
-      teamId,
-      memberId: memberToDelete.id,
-    });
+    try {
+      await removeTeamMemberMutation.mutateAsync({
+        teamId,
+        memberId: memberToDelete.id,
+      });
+    } catch {
+      // Error is handled by onError callback
+    }
   };
 
   const handleCancelDelete = () => {
@@ -419,10 +423,14 @@ export const TeamManagement: React.FC = () => {
       return;
     }
 
-    await addTeamMemberMutation.mutateAsync({
-      email: normalizedEmail,
-      role: newMemberRole,
-    });
+    try {
+      await addTeamMemberMutation.mutateAsync({
+        email: normalizedEmail,
+        role: newMemberRole,
+      });
+    } catch {
+      // Error is handled by onError callback
+    }
   };
 
   const teams = teamsData?.success ? teamsData.data : userTeamsWithRoles;

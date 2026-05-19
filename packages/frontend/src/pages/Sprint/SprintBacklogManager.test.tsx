@@ -459,6 +459,133 @@ describe('SprintBacklogManager', () => {
         expect(featureA || johnDoe || screen.getByText('Recent Changes')).toBeTruthy();
       });
     });
+
+    it('should display time as "5 mins ago" for changes from 5 minutes ago', async () => {
+      const fiveMinsAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+      (apiService.getSprintBacklogChanges as ReturnType<typeof vi.fn>).mockResolvedValue({
+        data: [
+          {
+            id: 'change-5min',
+            pbiTitle: 'Five Min Feature',
+            changeType: 'ADDED',
+            changedByName: 'Test User',
+            createdAt: fiveMinsAgo,
+            reason: 'Urgent',
+          },
+        ],
+      });
+
+      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+
+      await waitFor(() => {
+        expect(screen.getByText(/5 mins ago/)).toBeInTheDocument();
+      });
+    });
+
+    it('should display time as "1 min ago" for changes from 1 minute ago', async () => {
+      const oneMinAgo = new Date(Date.now() - 60 * 1000).toISOString();
+      (apiService.getSprintBacklogChanges as ReturnType<typeof vi.fn>).mockResolvedValue({
+        data: [
+          {
+            id: 'change-1min',
+            pbiTitle: 'One Min Feature',
+            changeType: 'ADDED',
+            changedByName: 'Test User',
+            createdAt: oneMinAgo,
+          },
+        ],
+      });
+
+      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+
+      await waitFor(() => {
+        expect(screen.getByText(/1 min ago/)).toBeInTheDocument();
+      });
+    });
+
+    it('should display time as "1 hour ago" for changes from 1 hour ago', async () => {
+      const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+      (apiService.getSprintBacklogChanges as ReturnType<typeof vi.fn>).mockResolvedValue({
+        data: [
+          {
+            id: 'change-1hr',
+            pbiTitle: 'One Hour Feature',
+            changeType: 'ADDED',
+            changedByName: 'Test User',
+            createdAt: oneHourAgo,
+          },
+        ],
+      });
+
+      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+
+      await waitFor(() => {
+        expect(screen.getByText(/1 hour ago/)).toBeInTheDocument();
+      });
+    });
+
+    it('should display time as "2 hours ago" for changes from 2 hours ago', async () => {
+      const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
+      (apiService.getSprintBacklogChanges as ReturnType<typeof vi.fn>).mockResolvedValue({
+        data: [
+          {
+            id: 'change-2hr',
+            pbiTitle: 'Two Hour Feature',
+            changeType: 'ADDED',
+            changedByName: 'Test User',
+            createdAt: twoHoursAgo,
+          },
+        ],
+      });
+
+      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+
+      await waitFor(() => {
+        expect(screen.getByText(/2 hours ago/)).toBeInTheDocument();
+      });
+    });
+
+    it('should display time as "1 day ago" for changes from 1 day ago', async () => {
+      const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+      (apiService.getSprintBacklogChanges as ReturnType<typeof vi.fn>).mockResolvedValue({
+        data: [
+          {
+            id: 'change-1d',
+            pbiTitle: 'One Day Feature',
+            changeType: 'ADDED',
+            changedByName: 'Test User',
+            createdAt: oneDayAgo,
+          },
+        ],
+      });
+
+      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+
+      await waitFor(() => {
+        expect(screen.getByText(/1 day ago/)).toBeInTheDocument();
+      });
+    });
+
+    it('should display time as "2 days ago" for changes from 2 days ago', async () => {
+      const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString();
+      (apiService.getSprintBacklogChanges as ReturnType<typeof vi.fn>).mockResolvedValue({
+        data: [
+          {
+            id: 'change-2d',
+            pbiTitle: 'Two Day Feature',
+            changeType: 'ADDED',
+            changedByName: 'Test User',
+            createdAt: twoDaysAgo,
+          },
+        ],
+      });
+
+      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+
+      await waitFor(() => {
+        expect(screen.getByText(/2 days ago/)).toBeInTheDocument();
+      });
+    });
   });
 
   describe('Error Handling', () => {
@@ -467,6 +594,28 @@ describe('SprintBacklogManager', () => {
       (apiService.addPBIToSprint as ReturnType<typeof vi.fn>).mockRejectedValue({
         response: { data: { error: { message: 'Failed to add' } } },
       });
+
+      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+
+      await waitFor(() => {
+        expect(screen.getByText('+ Add Item')).toBeInTheDocument();
+      });
+
+      await user.click(screen.getByText('+ Add Item'));
+
+      await waitFor(() => {
+        expect(screen.getByText('Feature C')).toBeInTheDocument();
+      });
+
+      const addButton = screen.getAllByRole('button', { name: /add/i })[0];
+      await user.click(addButton);
+    });
+
+    it('should use fallback message when add PBI error has no details', async () => {
+      const user = userEvent.setup();
+      (apiService.addPBIToSprint as ReturnType<typeof vi.fn>).mockRejectedValue(
+        new Error('Network error')
+      );
 
       renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
 
@@ -672,6 +821,209 @@ describe('SprintBacklogManager', () => {
       await user.type(reasonInput, 'Moved to next sprint');
 
       expect(reasonInput).toHaveValue('Moved to next sprint');
+    });
+  });
+
+  describe('More Than 3 Tasks Preview', () => {
+    it('should show "+N more" when item has more than 3 tasks', async () => {
+      (apiService.getSprintTasks as ReturnType<typeof vi.fn>).mockResolvedValue({
+        data: [
+          { id: 'task-1', pbiId: 'pbi-1', title: 'Task 1', status: 'TODO' },
+          { id: 'task-2', pbiId: 'pbi-1', title: 'Task 2', status: 'DONE' },
+          { id: 'task-3', pbiId: 'pbi-1', title: 'Task 3', status: 'IN_PROGRESS' },
+          { id: 'task-4', pbiId: 'pbi-1', title: 'Task 4', status: 'TODO' },
+          { id: 'task-5', pbiId: 'pbi-1', title: 'Task 5', status: 'TODO' },
+        ],
+      });
+
+      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+
+      await waitFor(() => {
+        expect(screen.getByText(/\+2 more/)).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Change Type Display', () => {
+    it('should display REMOVED changes with minus icon', async () => {
+      (apiService.getSprintBacklogChanges as ReturnType<typeof vi.fn>).mockResolvedValue({
+        data: [
+          {
+            id: 'change-2',
+            pbiTitle: 'Feature B',
+            changeType: 'REMOVED',
+            changedByName: 'Jane Doe',
+            createdAt: new Date().toISOString(),
+            reason: 'Out of scope',
+          },
+        ],
+      });
+
+      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+
+      await waitFor(() => {
+        expect(screen.getByText('Feature B')).toBeInTheDocument();
+        expect(screen.getByText(/Jane Doe/)).toBeInTheDocument();
+      });
+    });
+
+    it('should display changes without a reason', async () => {
+      (apiService.getSprintBacklogChanges as ReturnType<typeof vi.fn>).mockResolvedValue({
+        data: [
+          {
+            id: 'change-3',
+            pbiTitle: 'Feature C',
+            changeType: 'ADDED',
+            changedByName: 'John Doe',
+            createdAt: new Date().toISOString(),
+          },
+        ],
+      });
+
+      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+
+      await waitFor(() => {
+        expect(screen.getByText('Feature C')).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Remove Modal Singular Text', () => {
+    it('should show singular "task" for item with exactly 1 task', async () => {
+      const user = userEvent.setup();
+
+      (apiService.getSprintTasks as ReturnType<typeof vi.fn>).mockResolvedValue({
+        data: [{ id: 'task-1', pbiId: 'pbi-1', title: 'Task 1', status: 'TODO' }],
+      });
+
+      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+
+      await waitFor(() => {
+        expect(screen.getByText('Implement login')).toBeInTheDocument();
+      });
+
+      const removeButtons = screen.getAllByTitle('Remove from sprint');
+      await user.click(removeButtons[0]);
+
+      await waitFor(() => {
+        expect(screen.getByText(/1 task associated/)).toBeInTheDocument();
+      });
+    });
+
+    it('should show "0 tasks" for item with no tasks', async () => {
+      const user = userEvent.setup();
+
+      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+
+      await waitFor(() => {
+        expect(screen.getByText('Implement logout')).toBeInTheDocument();
+      });
+
+      const removeButtons = screen.getAllByTitle('Remove from sprint');
+      await user.click(removeButtons[1]);
+
+      await waitFor(() => {
+        expect(screen.getByText(/0 tasks associated/)).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Search Available PBIs', () => {
+    it('should search available PBIs by description', async () => {
+      const user = userEvent.setup();
+
+      (apiService.getAvailablePBIsForSprint as ReturnType<typeof vi.fn>).mockResolvedValue({
+        data: [
+          {
+            id: 'pbi-5',
+            title: 'Feature E',
+            storyPoints: 5,
+            priority: 'MUST_HAVE',
+            description: 'searchable description text',
+          },
+          {
+            id: 'pbi-6',
+            title: 'Feature F',
+            storyPoints: 3,
+            priority: 'COULD_HAVE',
+            description: 'other content',
+          },
+        ],
+      });
+
+      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+
+      await waitFor(() => {
+        expect(screen.getByText('+ Add Item')).toBeInTheDocument();
+      });
+
+      await user.click(screen.getByText('+ Add Item'));
+
+      await waitFor(() => {
+        expect(screen.getByPlaceholderText('Search available items...')).toBeInTheDocument();
+      });
+
+      const searchInput = screen.getByPlaceholderText('Search available items...');
+      await user.type(searchInput, 'searchable');
+
+      await waitFor(() => {
+        expect(screen.getByText('Feature E')).toBeInTheDocument();
+        expect(screen.queryByText('Feature F')).not.toBeInTheDocument();
+      });
+    });
+
+    it('should show no items when search yields no results', async () => {
+      const user = userEvent.setup();
+
+      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+
+      await waitFor(() => {
+        expect(screen.getByText('+ Add Item')).toBeInTheDocument();
+      });
+
+      await user.click(screen.getByText('+ Add Item'));
+
+      await waitFor(() => {
+        expect(screen.getByPlaceholderText('Search available items...')).toBeInTheDocument();
+      });
+
+      const searchInput = screen.getByPlaceholderText('Search available items...');
+      await user.type(searchInput, 'nonexistent item');
+
+      await waitFor(() => {
+        expect(screen.getByText('No available items found')).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Add PBI Flow', () => {
+    it('should add PBI to sprint and close add modal on success', async () => {
+      const user = userEvent.setup();
+
+      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+
+      await waitFor(() => {
+        expect(screen.getByText('+ Add Item')).toBeInTheDocument();
+      });
+
+      await user.click(screen.getByText('+ Add Item'));
+
+      await waitFor(() => {
+        expect(screen.getByText('Feature C')).toBeInTheDocument();
+      });
+
+      // Click the first "Add" button in the available items list
+      const addItemButtons = screen.getAllByRole('button', { name: 'Add' });
+      await user.click(addItemButtons[0]);
+
+      await waitFor(() => {
+        expect(apiService.addPBIToSprint).toHaveBeenCalledWith('sprint-1', 'pbi-3', undefined);
+      });
+
+      // Modal should close after successful addition
+      await waitFor(() => {
+        expect(screen.queryByText('Add Item to Sprint')).not.toBeInTheDocument();
+      });
     });
   });
 });

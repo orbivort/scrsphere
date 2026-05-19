@@ -65,6 +65,14 @@ describe('Services Index', () => {
 
       expect(apiService).toBeDefined();
     });
+
+    it('should setAuthCallbacks be defined when using mock API', async () => {
+      const { setAuthCallbacks } = await import('./index');
+
+      expect(setAuthCallbacks).toBeDefined();
+      // With mock API, setAuthCallbacks should not throw
+      expect(() => setAuthCallbacks(vi.fn())).not.toThrow();
+    });
   });
 
   describe('with real API', () => {
@@ -86,6 +94,19 @@ describe('Services Index', () => {
       const { apiService } = await import('./index');
 
       expect(apiService).toBeDefined();
+    });
+
+    it('should use real setAuthCallbacks when VITE_USE_MOCK_API is false', async () => {
+      vi.stubGlobal('import.meta', {
+        env: {
+          VITE_USE_MOCK_API: 'false',
+        },
+      });
+
+      vi.resetModules();
+      const { setAuthCallbacks } = await import('./index');
+
+      expect(setAuthCallbacks).toBe(realSetAuthCallbacks);
     });
 
     it('should export setAuthCallbacks for real API', async () => {

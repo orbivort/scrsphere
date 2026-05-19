@@ -480,4 +480,4 @@ const createErrorReporter = (): ErrorReporter => {
 export const errorReporter = createErrorReporter();
 
 // Export utility functions
-export { redactSensitiveData };
+export { redactSensitiveData, CompositeErrorReporter };

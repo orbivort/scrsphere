@@ -2,9 +2,11 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
   ConsoleErrorReporter,
   SentryErrorReporter,
+  CompositeErrorReporter,
   errorReporter,
   redactSensitiveData,
 } from './errorReporter';
+import type { ErrorReporter } from './errorReporter';
 
 const mockEnv = (env: Record<string, string | boolean | undefined>) => {
   vi.stubGlobal('import.meta', {
@@ -462,6 +464,189 @@ describe('ErrorReporter', () => {
       reporter.captureException(new Error('Test'), { userId: 'user-1', action: 'test' });
 
       expect(consoleSpies.error).toHaveBeenCalled();
+    });
+  });
+});
+
+describe('createErrorReporter paths', () => {
+  it('should behave as ConsoleErrorReporter in development mode (direct construction)', () => {
+    const reporter = new ConsoleErrorReporter();
+
+    expect(() => {
+      reporter.captureException(new Error('Test error'));
+      reporter.captureMessage('Test message');
+      reporter.setUser({ id: 'user-1' });
+      reporter.setContext('custom', { key: 'value' });
+      reporter.clearContext('custom');
+    }).not.toThrow();
+  });
+
+  it('should behave as ConsoleErrorReporter in production without Sentry DSN (direct construction)', () => {
+    const reporter = new ConsoleErrorReporter();
+
+    expect(() => {
+      reporter.captureException(new Error('Test error'));
+      reporter.captureMessage('Test message');
+    }).not.toThrow();
+  });
+
+  it('should behave as CompositeErrorReporter in production with Sentry DSN (direct construction)', () => {
+    const sentryReporter = new SentryErrorReporter();
+    const consoleReporter = new ConsoleErrorReporter();
+    const reporter = new CompositeErrorReporter([sentryReporter, consoleReporter]);
+
+    expect(() => {
+      reporter.captureException(new Error('Test error'));
+      reporter.captureMessage('Test message', 'warning', { action: 'test' });
+      reporter.setUser({ id: 'user-1', email: 'test@example.com' });
+      reporter.setContext('custom', { key: 'value' });
+      reporter.clearContext('custom');
+    }).not.toThrow();
+  });
+
+  it('should not throw when calling methods on CompositeErrorReporter with Sentry DSN (direct construction)', () => {
+    const sentryReporter = new SentryErrorReporter();
+    const consoleReporter = new ConsoleErrorReporter();
+    const reporter = new CompositeErrorReporter([sentryReporter, consoleReporter]);
+
+    expect(() => {
+      reporter.captureException(new Error('Test error'));
+      reporter.captureMessage('Test message', 'warning', { action: 'test' });
+      reporter.setUser({ id: 'user-1', email: 'test@example.com' });
+      reporter.setContext('custom', { key: 'value' });
+      reporter.clearContext('custom');
+    }).not.toThrow();
+  });
+});
+
+describe('CompositeErrorReporter', () => {
+  let mockReporter1: ErrorReporter;
+  let mockReporter2: ErrorReporter;
+  let reporter: CompositeErrorReporter;
+
+  beforeEach(() => {
+    mockReporter1 = {
+      captureException: vi.fn(),
+      captureMessage: vi.fn(),
+      setUser: vi.fn(),
+      setContext: vi.fn(),
+      clearContext: vi.fn(),
+    };
+    mockReporter2 = {
+      captureException: vi.fn(),
+      captureMessage: vi.fn(),
+      setUser: vi.fn(),
+      setContext: vi.fn(),
+      clearContext: vi.fn(),
+    };
+    reporter = new CompositeErrorReporter([mockReporter1, mockReporter2]);
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should delegate captureException to all reporters', () => {
+    const error = new Error('Test error');
+    const context = { action: 'test' };
+
+    reporter.captureException(error, context);
+
+    expect(mockReporter1.captureException).toHaveBeenCalledWith(error, context);
+    expect(mockReporter2.captureException).toHaveBeenCalledWith(error, context);
+  });
+
+  it('should delegate captureMessage to all reporters', () => {
+    reporter.captureMessage('Test message', 'error', { action: 'test' });
+
+    expect(mockReporter1.captureMessage).toHaveBeenCalledWith('Test message', 'error', {
+      action: 'test',
+    });
+    expect(mockReporter2.captureMessage).toHaveBeenCalledWith('Test message', 'error', {
+      action: 'test',
+    });
+  });
+
+  it('should delegate setUser to all reporters', () => {
+    const user = { id: 'user-1', email: 'test@example.com' };
+
+    reporter.setUser(user);
+
+    expect(mockReporter1.setUser).toHaveBeenCalledWith(user);
+    expect(mockReporter2.setUser).toHaveBeenCalledWith(user);
+  });
+
+  it('should delegate setContext to all reporters', () => {
+    reporter.setContext('custom', { key: 'value' });
+
+    expect(mockReporter1.setContext).toHaveBeenCalledWith('custom', { key: 'value' });
+    expect(mockReporter2.setContext).toHaveBeenCalledWith('custom', { key: 'value' });
+  });
+
+  it('should delegate clearContext to all reporters', () => {
+    reporter.clearContext('custom');
+
+    expect(mockReporter1.clearContext).toHaveBeenCalledWith('custom');
+    expect(mockReporter2.clearContext).toHaveBeenCalledWith('custom');
+  });
+
+  describe('forEach failure handling', () => {
+    it('should not throw when a reporter fails in captureException', () => {
+      mockReporter1.captureException = vi.fn().mockImplementation(() => {
+        throw new Error('Reporter 1 failed');
+      });
+
+      expect(() => reporter.captureException(new Error('Test'))).not.toThrow();
+      expect(mockReporter2.captureException).toHaveBeenCalled();
+    });
+
+    it('should not throw when a reporter fails in captureMessage', () => {
+      mockReporter1.captureMessage = vi.fn().mockImplementation(() => {
+        throw new Error('Reporter 1 failed');
+      });
+
+      expect(() => reporter.captureMessage('Test')).not.toThrow();
+      expect(mockReporter2.captureMessage).toHaveBeenCalled();
+    });
+
+    it('should not throw when a reporter fails in setUser', () => {
+      mockReporter1.setUser = vi.fn().mockImplementation(() => {
+        throw new Error('Reporter 1 failed');
+      });
+
+      expect(() => reporter.setUser({ id: 'user-1' })).not.toThrow();
+      expect(mockReporter2.setUser).toHaveBeenCalled();
+    });
+
+    it('should not throw when a reporter fails in setContext', () => {
+      mockReporter1.setContext = vi.fn().mockImplementation(() => {
+        throw new Error('Reporter 1 failed');
+      });
+
+      expect(() => reporter.setContext('key', { value: 'test' })).not.toThrow();
+      expect(mockReporter2.setContext).toHaveBeenCalled();
+    });
+
+    it('should not throw when a reporter fails in clearContext', () => {
+      mockReporter1.clearContext = vi.fn().mockImplementation(() => {
+        throw new Error('Reporter 1 failed');
+      });
+
+      expect(() => reporter.clearContext('key')).not.toThrow();
+      expect(mockReporter2.clearContext).toHaveBeenCalled();
+    });
+
+    it('should continue calling subsequent reporters when one fails in captureException', () => {
+      mockReporter1.captureException = vi.fn().mockImplementation(() => {
+        throw new Error('Reporter 1 failed');
+      });
+      mockReporter2.captureException = vi.fn().mockImplementation(() => {
+        throw new Error('Reporter 2 failed');
+      });
+
+      expect(() => reporter.captureException(new Error('Test'))).not.toThrow();
+      expect(mockReporter1.captureException).toHaveBeenCalled();
+      expect(mockReporter2.captureException).toHaveBeenCalled();
     });
   });
 });

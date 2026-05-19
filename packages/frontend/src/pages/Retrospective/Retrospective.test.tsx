@@ -21,6 +21,7 @@ vi.mock('../../services', () => ({
     getRetrospectives: vi.fn(),
     addRetrospectiveItem: vi.fn(),
     voteRetrospectiveItem: vi.fn(),
+    unvoteRetrospectiveItem: vi.fn(),
     deleteRetrospectiveItem: vi.fn(),
     updateRetrospectiveItem: vi.fn(),
     addActionItem: vi.fn(),
@@ -1906,6 +1907,428 @@ describe('Retrospective Component', () => {
         },
         { timeout: 4000 }
       );
+    });
+  });
+
+  describe('Error Handling - HTTP Error Codes', () => {
+    it('should show network error message for Network Error type', async () => {
+      (apiService.addRetrospectiveItem as ReturnType<typeof vi.fn>).mockRejectedValue(
+        new Error('Network Error')
+      );
+
+      renderWithProviders(<SprintRetrospective />);
+
+      await waitFor(() => {
+        expect(screen.getByText('What went well')).toBeInTheDocument();
+      });
+
+      const wentWellColumn = screen.getByText('What went well').closest('[class*="retro-column"]');
+      const addButtons = within(wentWellColumn!).getAllByRole('button', { name: /\+ Add Item/i });
+      fireEvent.click(addButtons[0]);
+
+      const textarea = screen.getByPlaceholderText('What went well during this Sprint?');
+      fireEvent.change(textarea, { target: { value: 'Test item' } });
+
+      const submitButton = within(wentWellColumn!).getByRole('button', { name: /^Add$/i });
+      fireEvent.click(submitButton);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText('Network error. Please check your internet connection.')
+        ).toBeInTheDocument();
+      });
+    });
+
+    it('should show 404 error message for resource not found', async () => {
+      (apiService.addRetrospectiveItem as ReturnType<typeof vi.fn>).mockRejectedValue(
+        new Error('404')
+      );
+
+      renderWithProviders(<SprintRetrospective />);
+
+      await waitFor(() => {
+        expect(screen.getByText('What went well')).toBeInTheDocument();
+      });
+
+      const wentWellColumn = screen.getByText('What went well').closest('[class*="retro-column"]');
+      const addButtons = within(wentWellColumn!).getAllByRole('button', { name: /\+ Add Item/i });
+      fireEvent.click(addButtons[0]);
+
+      const textarea = screen.getByPlaceholderText('What went well during this Sprint?');
+      fireEvent.change(textarea, { target: { value: 'Test item' } });
+
+      const submitButton = within(wentWellColumn!).getByRole('button', { name: /^Add$/i });
+      fireEvent.click(submitButton);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText('Resource not found. It may have been deleted.')
+        ).toBeInTheDocument();
+      });
+    });
+
+    it('should show 401 error message for unauthorized', async () => {
+      (apiService.addRetrospectiveItem as ReturnType<typeof vi.fn>).mockRejectedValue(
+        new Error('401')
+      );
+
+      renderWithProviders(<SprintRetrospective />);
+
+      await waitFor(() => {
+        expect(screen.getByText('What went well')).toBeInTheDocument();
+      });
+
+      const wentWellColumn = screen.getByText('What went well').closest('[class*="retro-column"]');
+      const addButtons = within(wentWellColumn!).getAllByRole('button', { name: /\+ Add Item/i });
+      fireEvent.click(addButtons[0]);
+
+      const textarea = screen.getByPlaceholderText('What went well during this Sprint?');
+      fireEvent.change(textarea, { target: { value: 'Test item' } });
+
+      const submitButton = within(wentWellColumn!).getByRole('button', { name: /^Add$/i });
+      fireEvent.click(submitButton);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText('You are not authorized to perform this action.')
+        ).toBeInTheDocument();
+      });
+    });
+
+    it('should show 500 error message for server error', async () => {
+      (apiService.addRetrospectiveItem as ReturnType<typeof vi.fn>).mockRejectedValue(
+        new Error('500')
+      );
+
+      renderWithProviders(<SprintRetrospective />);
+
+      await waitFor(() => {
+        expect(screen.getByText('What went well')).toBeInTheDocument();
+      });
+
+      const wentWellColumn = screen.getByText('What went well').closest('[class*="retro-column"]');
+      const addButtons = within(wentWellColumn!).getAllByRole('button', { name: /\+ Add Item/i });
+      fireEvent.click(addButtons[0]);
+
+      const textarea = screen.getByPlaceholderText('What went well during this Sprint?');
+      fireEvent.change(textarea, { target: { value: 'Test item' } });
+
+      const submitButton = within(wentWellColumn!).getByRole('button', { name: /^Add$/i });
+      fireEvent.click(submitButton);
+
+      await waitFor(() => {
+        expect(screen.getByText('Server error. Please try again later.')).toBeInTheDocument();
+      });
+    });
+
+    it('should show 400 error message for invalid request', async () => {
+      (apiService.addRetrospectiveItem as ReturnType<typeof vi.fn>).mockRejectedValue(
+        new Error('400')
+      );
+
+      renderWithProviders(<SprintRetrospective />);
+
+      await waitFor(() => {
+        expect(screen.getByText('What went well')).toBeInTheDocument();
+      });
+
+      const wentWellColumn = screen.getByText('What went well').closest('[class*="retro-column"]');
+      const addButtons = within(wentWellColumn!).getAllByRole('button', { name: /\+ Add Item/i });
+      fireEvent.click(addButtons[0]);
+
+      const textarea = screen.getByPlaceholderText('What went well during this Sprint?');
+      fireEvent.change(textarea, { target: { value: 'Test item' } });
+
+      const submitButton = within(wentWellColumn!).getByRole('button', { name: /^Add$/i });
+      fireEvent.click(submitButton);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText('Invalid request. Please check your input and try again.')
+        ).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Action Items - Additional Branch Coverage', () => {
+    it('should show backlog badge when action item is added to sprint backlog', async () => {
+      (apiService.getRetrospectiveBySprintId as ReturnType<typeof vi.fn>).mockResolvedValue({
+        success: true,
+        data: {
+          ...mockRetrospective,
+          actionItems: [
+            {
+              ...mockRetrospective.actionItems[0],
+              id: 'action-backlog',
+              title: 'Backlog action item',
+              addedToSprintBacklog: true,
+              status: 'PENDING',
+            },
+          ],
+        },
+      });
+
+      renderWithProviders(<SprintRetrospective />);
+
+      await waitFor(() => {
+        expect(screen.getByText('✓ In Backlog')).toBeInTheDocument();
+      });
+
+      expect(
+        screen.queryByText('This item will be present in the Product Backlog page for action.')
+      ).not.toBeInTheDocument();
+    });
+
+    it('should show Unassigned for action item without owner', async () => {
+      (apiService.getRetrospectiveBySprintId as ReturnType<typeof vi.fn>).mockResolvedValue({
+        success: true,
+        data: {
+          ...mockRetrospective,
+          actionItems: [
+            {
+              ...mockRetrospective.actionItems[0],
+              id: 'action-no-owner',
+              title: 'Unassigned action',
+              ownerId: null,
+              owner: null,
+            },
+          ],
+        },
+      });
+
+      renderWithProviders(<SprintRetrospective />);
+
+      await waitFor(() => {
+        expect(screen.getAllByText(/Unassigned/).length).toBeGreaterThanOrEqual(2);
+      });
+
+      const ownerElement = screen.getByText(
+        (content) => content.includes('👤') && content.includes('Unassigned')
+      );
+      expect(ownerElement).toBeInTheDocument();
+    });
+
+    it('should not show due date when action item has no dueDate', async () => {
+      (apiService.getRetrospectiveBySprintId as ReturnType<typeof vi.fn>).mockResolvedValue({
+        success: true,
+        data: {
+          ...mockRetrospective,
+          actionItems: [
+            {
+              ...mockRetrospective.actionItems[0],
+              id: 'action-no-date',
+              title: 'Action without due date',
+              dueDate: null,
+            },
+          ],
+        },
+      });
+
+      renderWithProviders(<SprintRetrospective />);
+
+      await waitFor(() => {
+        expect(screen.getByText('Action without due date')).toBeInTheDocument();
+      });
+
+      expect(screen.queryByText(/Due:/)).not.toBeInTheDocument();
+    });
+
+    it('should hide backlog hint for COMPLETED action items', async () => {
+      (apiService.getRetrospectiveBySprintId as ReturnType<typeof vi.fn>).mockResolvedValue({
+        success: true,
+        data: {
+          ...mockRetrospective,
+          actionItems: [
+            {
+              ...mockRetrospective.actionItems[0],
+              id: 'action-completed',
+              title: 'Completed action',
+              status: 'COMPLETED',
+              addedToSprintBacklog: false,
+            },
+          ],
+        },
+      });
+
+      renderWithProviders(<SprintRetrospective />);
+
+      await waitFor(() => {
+        expect(screen.getByText('Completed action')).toBeInTheDocument();
+      });
+
+      expect(
+        screen.queryByText('This item will be present in the Product Backlog page for action.')
+      ).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Complete Retrospective - Validation Edge Cases', () => {
+    it('should show error when retrospective has no attendees', async () => {
+      (apiService.getRetrospectiveBySprintId as ReturnType<typeof vi.fn>).mockResolvedValue({
+        success: true,
+        data: {
+          ...mockRetrospective,
+          summary: 'Valid summary for completion',
+          attendees: [],
+        },
+      });
+
+      renderWithProviders(<SprintRetrospective />);
+
+      await waitFor(() => {
+        expect(screen.getByText('✓ Complete Retrospective')).toBeInTheDocument();
+      });
+
+      fireEvent.click(screen.getByText('✓ Complete Retrospective'));
+
+      await waitFor(() => {
+        expect(screen.getByText('Cannot Complete Retrospective')).toBeInTheDocument();
+      });
+
+      expect(
+        screen.getByText(
+          'At least one participant must be added before completing the retrospective.'
+        )
+      ).toBeInTheDocument();
+    });
+
+    it('should show OK button and close modal when confirming with validation errors', async () => {
+      (apiService.getRetrospectiveBySprintId as ReturnType<typeof vi.fn>).mockResolvedValue({
+        success: true,
+        data: {
+          ...mockRetrospective,
+          summary: null,
+        },
+      });
+
+      renderWithProviders(<SprintRetrospective />);
+
+      await waitFor(() => {
+        expect(screen.getByText('✓ Complete Retrospective')).toBeInTheDocument();
+      });
+
+      fireEvent.click(screen.getByText('✓ Complete Retrospective'));
+
+      await waitFor(() => {
+        expect(screen.getByText('Cannot Complete Retrospective')).toBeInTheDocument();
+      });
+
+      const okButton = screen.getByText('OK');
+      fireEvent.click(okButton);
+
+      await waitFor(() => {
+        expect(screen.queryByText('Cannot Complete Retrospective')).not.toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Sprint Information - Null Data', () => {
+    it('should handle sprint with null items', async () => {
+      (apiService.getSprint as ReturnType<typeof vi.fn>).mockResolvedValue({
+        success: true,
+        data: {
+          ...mockSprintData,
+          items: null,
+        },
+      });
+
+      renderWithProviders(<SprintRetrospective />);
+
+      await waitFor(() => {
+        expect(screen.getByText(/Sprint Retrospective/)).toBeInTheDocument();
+      });
+
+      expect(screen.getByText('0 items')).toBeInTheDocument();
+      expect(screen.queryByText('Included Product Backlog Items')).not.toBeInTheDocument();
+    });
+
+    it('should handle sprint with null tasks', async () => {
+      (apiService.getSprint as ReturnType<typeof vi.fn>).mockResolvedValue({
+        success: true,
+        data: {
+          ...mockSprintData,
+          tasks: null,
+        },
+      });
+
+      renderWithProviders(<SprintRetrospective />);
+
+      await waitFor(() => {
+        expect(screen.getByText(/Sprint Retrospective/)).toBeInTheDocument();
+      });
+
+      expect(screen.getByText('0 tasks')).toBeInTheDocument();
+      expect(screen.getByText('0 completed')).toBeInTheDocument();
+    });
+
+    it('should handle sprint with empty items array', async () => {
+      (apiService.getSprint as ReturnType<typeof vi.fn>).mockResolvedValue({
+        success: true,
+        data: {
+          ...mockSprintData,
+          items: [],
+        },
+      });
+
+      renderWithProviders(<SprintRetrospective />);
+
+      await waitFor(() => {
+        expect(screen.getByText(/Sprint Retrospective/)).toBeInTheDocument();
+      });
+
+      expect(screen.queryByText('Included Product Backlog Items')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Editing - Empty State Validation', () => {
+    it('should disable save button when edit content becomes empty', async () => {
+      renderWithProviders(<SprintRetrospective />);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText('Good collaboration on authentication feature')
+        ).toBeInTheDocument();
+      });
+
+      const item = screen
+        .getByText('Good collaboration on authentication feature')
+        .closest('[class*="retro-item"]');
+      const editButton = within(item!).getByTitle('Edit');
+      fireEvent.click(editButton);
+
+      const textarea = within(item!).getByDisplayValue(
+        'Good collaboration on authentication feature'
+      );
+      fireEvent.change(textarea, { target: { value: '' } });
+
+      const saveButton = within(item!).getByRole('button', { name: /Save/i });
+      expect(saveButton).toBeDisabled();
+    });
+  });
+
+  describe('Unvote Action', () => {
+    it('should call unvoteRetrospectiveItem when user clicks vote button on already voted item', async () => {
+      (apiService.unvoteRetrospectiveItem as ReturnType<typeof vi.fn>).mockResolvedValue({
+        success: true,
+        data: { id: 'item-1', votes: 2 },
+      });
+
+      renderWithProviders(<SprintRetrospective />);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText('Good collaboration on authentication feature')
+        ).toBeInTheDocument();
+      });
+
+      const voteButton = screen.getByRole('button', {
+        name: /Remove vote for this item \(3 votes\)/,
+      });
+      fireEvent.click(voteButton);
+
+      await waitFor(() => {
+        expect(apiService.unvoteRetrospectiveItem).toHaveBeenCalled();
+      });
     });
   });
 });

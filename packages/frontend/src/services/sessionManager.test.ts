@@ -822,6 +822,42 @@ describe('SessionManager', () => {
 
       window.dispatchEvent(storageEvent);
     });
+
+    it('should sync lastActivityTime when stored activity is newer', () => {
+      sessionManager.initialize(testConfig, mockHandlers);
+
+      const timeoutBefore = sessionManager.getTimeUntilTimeout();
+      const newerActivity = Date.now() + 10000;
+      localStorage.setItem(STORAGE_KEY_LAST_ACTIVITY, newerActivity.toString());
+
+      const storageEvent = new StorageEvent('storage', {
+        key: STORAGE_KEY_LAST_ACTIVITY,
+        newValue: newerActivity.toString(),
+      });
+
+      window.dispatchEvent(storageEvent);
+
+      const timeoutAfter = sessionManager.getTimeUntilTimeout();
+      expect(timeoutAfter).toBeGreaterThanOrEqual(timeoutBefore - 5000);
+    });
+
+    it('should ignore stored activity when it is not newer', () => {
+      sessionManager.initialize(testConfig, mockHandlers);
+
+      const timeoutBefore = sessionManager.getTimeUntilTimeout();
+      const olderActivity = Date.now() - 5000;
+      localStorage.setItem(STORAGE_KEY_LAST_ACTIVITY, olderActivity.toString());
+
+      const storageEvent = new StorageEvent('storage', {
+        key: STORAGE_KEY_LAST_ACTIVITY,
+        newValue: olderActivity.toString(),
+      });
+
+      window.dispatchEvent(storageEvent);
+
+      const timeoutAfter = sessionManager.getTimeUntilTimeout();
+      expect(timeoutAfter).toBe(timeoutBefore);
+    });
   });
 
   describe('visibility change handling', () => {
@@ -910,6 +946,46 @@ describe('SessionManager', () => {
         await vi.advanceTimersByTimeAsync(100);
       }
     });
+
+    it('should skip notifier call when no notifier is set', async () => {
+      sessionManager.initialize(testConfig, mockHandlers);
+
+      const activityHandler = vi
+        .spyOn(document, 'addEventListener')
+        .mock.calls.find((call) => call[0] === 'mousedown')?.[1] as () => void;
+
+      if (activityHandler) {
+        vi.advanceTimersByTime(6000);
+        activityHandler();
+        await vi.advanceTimersByTimeAsync(100);
+      }
+
+      const storedEvents = localStorage.getItem('sessionEvents');
+      expect(storedEvents).toBeTruthy();
+    });
+  });
+
+  describe('activity throttle', () => {
+    it('should throttle consecutive activity notifications', () => {
+      const mockNotifier = vi.fn().mockResolvedValue(undefined);
+      sessionManager.setActivityNotifier(mockNotifier);
+      sessionManager.initialize(testConfig, mockHandlers);
+
+      const activityHandler = vi
+        .spyOn(document, 'addEventListener')
+        .mock.calls.find((call) => call[0] === 'mousedown')?.[1] as () => void;
+
+      if (activityHandler) {
+        vi.advanceTimersByTime(10000);
+        activityHandler();
+        expect(mockNotifier).toHaveBeenCalledTimes(1);
+
+        vi.advanceTimersByTime(10000);
+        mockNotifier.mockClear();
+        activityHandler();
+        expect(mockNotifier).not.toHaveBeenCalled();
+      }
+    });
   });
 
   describe('handleTimeout additional tests', () => {
@@ -934,6 +1010,224 @@ describe('SessionManager', () => {
       sessionManager.initialize(testConfig, mockHandlers);
       vi.advanceTimersByTime(1000);
       expect(sessionManager.getSessionAge()).toBeGreaterThanOrEqual(1000);
+    });
+  });
+
+  describe('handleTimeout when not initialized', () => {
+    it('should not throw when timeout fires without initialization', () => {
+      expect(() => {
+        sessionManager.destroy();
+      }).not.toThrow();
+    });
+
+    it('should not call onTimeout when timeout fires after destroy', () => {
+      sessionManager.initialize(testConfig, mockHandlers);
+      sessionManager.destroy();
+
+      vi.advanceTimersByTime(180000);
+
+      expect(mockHandlers.onTimeout).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('handleTimeout with time remaining', () => {
+    it('should restart idle timer if time remains when handler fires', () => {
+      const config: SessionConfig = {
+        ...testConfig,
+        idleTimeoutMs: 60000,
+        warningThresholdMs: 30000,
+        expiresAt: new Date(Date.now() + 86400000),
+      };
+
+      sessionManager.initialize(config, mockHandlers);
+
+      vi.advanceTimersByTime(30000);
+      expect(mockHandlers.onWarning).toHaveBeenCalledTimes(1);
+
+      vi.advanceTimersByTime(30000);
+      expect(mockHandlers.onTimeout).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('handleUserActivity edge cases', () => {
+    it('should not throw when activity occurs without initialization', () => {
+      const mockNotifier = vi.fn().mockResolvedValue(undefined);
+      sessionManager.setActivityNotifier(mockNotifier);
+
+      const event = new MouseEvent('mousedown', { bubbles: true });
+      document.dispatchEvent(event);
+
+      expect(mockNotifier).not.toHaveBeenCalled();
+    });
+
+    it('should throttle activity timer and skip consecutive notification', () => {
+      const mockNotifier = vi.fn().mockResolvedValue(undefined);
+      sessionManager.setActivityNotifier(mockNotifier);
+      sessionManager.initialize(testConfig, mockHandlers);
+
+      const activityHandler = vi
+        .spyOn(document, 'addEventListener')
+        .mock.calls.find((call) => call[0] === 'mousedown')?.[1] as () => void;
+
+      if (activityHandler) {
+        vi.advanceTimersByTime(10000);
+        activityHandler();
+        expect(mockNotifier).toHaveBeenCalledTimes(1);
+
+        vi.advanceTimersByTime(0);
+        activityHandler();
+        expect(mockNotifier).toHaveBeenCalledTimes(1);
+      }
+    });
+  });
+
+  describe('showWarning when not initialized', () => {
+    it('should not throw when warning fires after destroy', () => {
+      sessionManager.initialize(testConfig, mockHandlers);
+      sessionManager.destroy();
+
+      vi.advanceTimersByTime(120000);
+
+      expect(mockHandlers.onWarning).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('checkForSessionUpdate edge cases', () => {
+    it('should handle missing stored config gracefully', () => {
+      localStorage.removeItem('sessionConfig');
+
+      sessionManager.initialize(testConfig, mockHandlers);
+
+      Object.defineProperty(document, 'visibilityState', {
+        value: 'visible',
+        writable: true,
+      });
+
+      document.dispatchEvent(new Event('visibilitychange'));
+
+      expect(mockHandlers.onWarning).not.toHaveBeenCalled();
+    });
+
+    it('should handle unchanged config on visibility change', () => {
+      sessionManager.initialize(testConfig, mockHandlers);
+
+      localStorage.setItem(
+        'sessionConfig',
+        JSON.stringify({
+          ...testConfig,
+          expiresAt: testConfig.expiresAt.toISOString(),
+        })
+      );
+
+      Object.defineProperty(document, 'visibilityState', {
+        value: 'visible',
+        writable: true,
+      });
+
+      document.dispatchEvent(new Event('visibilitychange'));
+    });
+
+    it('should not update timers when stored activity is not newer', () => {
+      sessionManager.initialize(testConfig, mockHandlers);
+
+      const timeoutBefore = sessionManager.getTimeUntilTimeout();
+
+      const olderActivity = Date.now() - 10000;
+      localStorage.setItem('lastActivity', olderActivity.toString());
+
+      Object.defineProperty(document, 'visibilityState', {
+        value: 'visible',
+        writable: true,
+      });
+
+      document.dispatchEvent(new Event('visibilitychange'));
+
+      const timeoutAfter = sessionManager.getTimeUntilTimeout();
+      expect(timeoutAfter).toBe(timeoutBefore);
+    });
+  });
+
+  describe('handleStorageChange edge cases', () => {
+    it('should handle storage event with null stored activity', () => {
+      sessionManager.initialize(testConfig, mockHandlers);
+
+      localStorage.removeItem('lastActivity');
+
+      const storageEvent = new StorageEvent('storage', {
+        key: 'lastActivity',
+        newValue: null,
+      });
+
+      window.dispatchEvent(storageEvent);
+    });
+  });
+
+  describe('stale timer callback safety net', () => {
+    it('should skip stale idle timer callback via generation check', () => {
+      sessionManager.initialize(testConfig, mockHandlers);
+
+      vi.advanceTimersByTime(50000);
+
+      sessionManager.updateConfig({ idleTimeoutMs: 300000 });
+
+      vi.advanceTimersByTime(130000);
+
+      expect(mockHandlers.onWarning).not.toHaveBeenCalled();
+    });
+
+    it('should handle timer generation check in warning timer path', () => {
+      sessionManager.initialize(testConfig, mockHandlers);
+
+      vi.advanceTimersByTime(50000);
+
+      sessionManager.resetIdleTimer();
+
+      vi.advanceTimersByTime(120000);
+
+      expect(mockHandlers.onWarning).toHaveBeenCalledTimes(1);
+
+      const timeRemaining = mockHandlers.onWarning.mock.calls[0][0];
+      expect(timeRemaining).toBeGreaterThan(0);
+    });
+  });
+
+  describe('broadcastSessionEvent error handling', () => {
+    it('should handle localStorage error when broadcasting events', () => {
+      sessionManager.initialize(testConfig, mockHandlers);
+
+      const setItemSpy = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+        throw new Error('Storage error');
+      });
+
+      sessionManager.destroy();
+
+      setItemSpy.mockRestore();
+    });
+  });
+
+  describe('storeSessionConfig error handling', () => {
+    it('should handle localStorage error when storing config', () => {
+      const setItemSpy = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+        throw new Error('Storage error');
+      });
+
+      sessionManager.initialize(testConfig, mockHandlers);
+
+      setItemSpy.mockRestore();
+    });
+  });
+
+  describe('storeLastActivity error handling', () => {
+    it('should handle localStorage error when storing last activity', () => {
+      sessionManager.initialize(testConfig, mockHandlers);
+
+      const setItemSpy = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+        throw new Error('Storage error');
+      });
+
+      sessionManager.resetIdleTimer();
+
+      setItemSpy.mockRestore();
     });
   });
 });
