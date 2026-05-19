@@ -154,9 +154,8 @@ This document contains the license information for third-party packages used in 
 | eslint-plugin-react-refresh               | 0.5.2   | MIT          | Arnaud Barré          | https://github.com/ArnaudBarre/eslint-plugin-react-refresh            |
 | globals                                   | 17.5.0  | MIT          | Sindre Sorhus         | https://github.com/sindresorhus/globals                               |
 | husky                                     | 9.1.7   | MIT          | Typicode              | https://github.com/typicode/husky                                     |
-| lint-staged                               | 16.4.0  | MIT          | Andrey Okonetchnikov  | https://github.com/lint-staged/lint-staged                            |
+| lint-staged                               | 17.0.5  | MIT          | Andrey Okonetchnikov  | https://github.com/lint-staged/lint-staged                            |
 | postcss                                   | 8.5.13  | MIT          | Andrey Sitnik         | https://github.com/postcss/postcss                                    |
-| postcss-values-parser                     | 7.0.0   | MIT          | Andy Jansson          | https://github.com/shellscape/postcss-values-parser                   |
 | prettier                                  | 3.8.3   | MIT          | Prettier              | https://github.com/prettier/prettier                                  |
 | rimraf                                    | 6.1.3   | MIT          | Isaac Z. Schlueter    | https://github.com/isaacs/rimraf                                      |
 | stylelint                                 | 17.9.1  | MIT          | stylelint             | https://github.com/stylelint/stylelint                                |
