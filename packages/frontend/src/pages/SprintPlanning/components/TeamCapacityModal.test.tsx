@@ -728,4 +728,55 @@ describe('TeamCapacityModal', () => {
       expect(saveButton).not.toBeDisabled();
     });
   });
+
+  describe('Keyboard Navigation', () => {
+    it('should close modal on Escape key when no unsaved changes', () => {
+      render(<TeamCapacityModal {...defaultProps} />);
+
+      fireEvent.keyDown(document, { key: 'Escape' });
+
+      expect(defaultProps.onClose).toHaveBeenCalled();
+    });
+
+    it('should show unsaved changes modal on Escape key when changes exist', () => {
+      render(<TeamCapacityModal {...defaultProps} />);
+
+      const incrementButtons = screen.getAllByLabelText(/Increase hours for/i);
+      fireEvent.click(incrementButtons[0]);
+
+      fireEvent.keyDown(document, { key: 'Escape' });
+
+      expect(screen.getByTestId('unsaved-changes-modal')).toBeInTheDocument();
+    });
+
+    it('should trap focus: Tab from last enabled element wraps to first', () => {
+      render(<TeamCapacityModal {...defaultProps} />);
+
+      // Make changes so Save Changes button is enabled as the last focusable
+      const incrementButtons = screen.getAllByLabelText(/Increase hours for/i);
+      fireEvent.click(incrementButtons[0]);
+
+      const saveButton = screen.getByRole('button', { name: /Save Changes/i });
+      saveButton.focus();
+
+      fireEvent.keyDown(document, { key: 'Tab', shiftKey: false });
+
+      // First focusable element (close button) should receive focus
+      const closeButton = screen.getByLabelText('Close modal');
+      expect(closeButton).toHaveFocus();
+    });
+
+    it('should trap focus: Shift+Tab from first element wraps to last enabled element', () => {
+      render(<TeamCapacityModal {...defaultProps} />);
+
+      const closeButton = screen.getByLabelText('Close modal');
+      closeButton.focus();
+
+      fireEvent.keyDown(document, { key: 'Tab', shiftKey: true });
+
+      // Last enabled focusable element (Cancel, since Save Changes is disabled) should receive focus
+      const cancelButton = screen.getByRole('button', { name: /Cancel/i });
+      expect(cancelButton).toHaveFocus();
+    });
+  });
 });

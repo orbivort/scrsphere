@@ -79,6 +79,12 @@ describe('useDragAndDrop', () => {
       const transitions = result.current.getAvailableTransitions(TaskStatus.DONE);
       expect(transitions).toEqual([TaskStatus.IN_PROGRESS]);
     });
+
+    it('should return empty array for unknown status', () => {
+      const { result } = renderHook(() => useDragAndDrop(defaultProps));
+      const transitions = result.current.getAvailableTransitions('UNKNOWN' as TaskStatus);
+      expect(transitions).toEqual([]);
+    });
   });
 
   describe('validateTransition', () => {
@@ -253,6 +259,42 @@ describe('useDragAndDrop', () => {
       expect(mockOnValidationError).toHaveBeenCalled();
       expect(mockOnStatusChange).not.toHaveBeenCalled();
     });
+
+    it('should do nothing on drop with no task id', () => {
+      const { result } = renderHook(() => useDragAndDrop(defaultProps));
+
+      const mockEvent = {
+        preventDefault: vi.fn(),
+        dataTransfer: {
+          getData: () => '',
+        },
+      } as unknown as React.DragEvent;
+
+      act(() => {
+        result.current.handleDrop(mockEvent, TaskStatus.IN_PROGRESS);
+      });
+
+      expect(mockOnStatusChange).not.toHaveBeenCalled();
+      expect(mockOnValidationError).not.toHaveBeenCalled();
+    });
+
+    it('should do nothing on drop with non-existent task id', () => {
+      const { result } = renderHook(() => useDragAndDrop(defaultProps));
+
+      const mockEvent = {
+        preventDefault: vi.fn(),
+        dataTransfer: {
+          getData: () => 'non-existent-task',
+        },
+      } as unknown as React.DragEvent;
+
+      act(() => {
+        result.current.handleDrop(mockEvent, TaskStatus.IN_PROGRESS);
+      });
+
+      expect(mockOnStatusChange).not.toHaveBeenCalled();
+      expect(mockOnValidationError).not.toHaveBeenCalled();
+    });
   });
 
   describe('keyboard navigation', () => {
@@ -325,6 +367,27 @@ describe('useDragAndDrop', () => {
 
       expect(result.current.draggedTaskId).toBeNull();
       expect(result.current.isDragging).toBe(false);
+    });
+
+    it('should call onValidationError when keyboard transition fails validation', () => {
+      const { result } = renderHook(() =>
+        useDragAndDrop({
+          ...defaultProps,
+          wipLimits: { todo: 10, in_progress: 0, done: 100 },
+        })
+      );
+
+      const mockEvent = {
+        key: 'ArrowRight',
+        preventDefault: vi.fn(),
+      } as unknown as React.KeyboardEvent;
+
+      act(() => {
+        result.current.handleKeyDown(mockEvent, mockTasks[0]);
+      });
+
+      expect(mockOnValidationError).toHaveBeenCalled();
+      expect(mockOnStatusChange).not.toHaveBeenCalled();
     });
   });
 

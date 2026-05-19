@@ -7,6 +7,7 @@ import {
   useTeamStore,
   useSessionStore,
   useAuthStore,
+  useToastStore,
   setQueryClient,
   initializeStoreSideEffects,
 } from './index';
@@ -536,5 +537,164 @@ describe('initializeStoreSideEffects', () => {
     initializeStoreSideEffects();
 
     expect(initializeStoreSideEffects).toBeDefined();
+  });
+});
+
+describe('useToastStore', () => {
+  beforeEach(() => {
+    act(() => {
+      useToastStore.getState().clearAll();
+    });
+  });
+
+  describe('addToast with zero duration', () => {
+    it('should not auto-remove toast when duration is 0', () => {
+      const setTimeoutSpy = vi.spyOn(window, 'setTimeout');
+
+      act(() => {
+        useToastStore.getState().addToast('info', 'No auto-remove', 0);
+      });
+
+      expect(useToastStore.getState().toasts).toHaveLength(1);
+      expect(useToastStore.getState().toasts[0].message).toBe('No auto-remove');
+      // setTimeout should not be called since duration is 0
+      expect(setTimeoutSpy).not.toHaveBeenCalled();
+
+      setTimeoutSpy.mockRestore();
+      act(() => {
+        useToastStore.getState().clearAll();
+      });
+    });
+  });
+
+  describe('addToast with positive duration', () => {
+    it('should auto-remove toast when duration is greater than 0', () => {
+      vi.useFakeTimers();
+      const setTimeoutSpy = vi.spyOn(window, 'setTimeout');
+
+      act(() => {
+        useToastStore.getState().addToast('info', 'Auto-remove toast', 100);
+      });
+
+      expect(useToastStore.getState().toasts).toHaveLength(1);
+      expect(useToastStore.getState().toasts[0].message).toBe('Auto-remove toast');
+      expect(setTimeoutSpy).toHaveBeenCalledTimes(1);
+      expect(setTimeoutSpy).toHaveBeenCalledWith(expect.any(Function), 100);
+
+      act(() => {
+        vi.advanceTimersByTime(100);
+      });
+
+      expect(useToastStore.getState().toasts).toHaveLength(0);
+
+      setTimeoutSpy.mockRestore();
+      vi.useRealTimers();
+      act(() => {
+        useToastStore.getState().clearAll();
+      });
+    });
+  });
+
+  describe('removeToast', () => {
+    it('should remove toast by id', () => {
+      let toastId: string;
+      act(() => {
+        toastId = useToastStore.getState().addToast('info', 'Remove me', 0);
+      });
+
+      expect(useToastStore.getState().toasts).toHaveLength(1);
+      expect(useToastStore.getState().toasts[0].id).toBe(toastId);
+
+      act(() => {
+        useToastStore.getState().removeToast(toastId);
+      });
+
+      const state = useToastStore.getState();
+      expect(state.toasts).toHaveLength(0);
+
+      act(() => {
+        useToastStore.getState().clearAll();
+      });
+    });
+  });
+
+  describe('convenience methods', () => {
+    it('should call addToast with success type', () => {
+      const addToastSpy = vi.spyOn(useToastStore.getState(), 'addToast');
+
+      act(() => {
+        useToastStore.getState().success('Success message');
+      });
+
+      expect(addToastSpy).toHaveBeenCalledWith('success', 'Success message', undefined);
+
+      addToastSpy.mockRestore();
+      act(() => {
+        useToastStore.getState().clearAll();
+      });
+    });
+
+    it('should call addToast with error type', () => {
+      const addToastSpy = vi.spyOn(useToastStore.getState(), 'addToast');
+
+      act(() => {
+        useToastStore.getState().error('Error message');
+      });
+
+      expect(addToastSpy).toHaveBeenCalledWith('error', 'Error message', undefined);
+
+      addToastSpy.mockRestore();
+      act(() => {
+        useToastStore.getState().clearAll();
+      });
+    });
+
+    it('should call addToast with info type', () => {
+      const addToastSpy = vi.spyOn(useToastStore.getState(), 'addToast');
+
+      act(() => {
+        useToastStore.getState().info('Info message');
+      });
+
+      expect(addToastSpy).toHaveBeenCalledWith('info', 'Info message', undefined);
+
+      addToastSpy.mockRestore();
+      act(() => {
+        useToastStore.getState().clearAll();
+      });
+    });
+
+    it('should call addToast with warning type', () => {
+      const addToastSpy = vi.spyOn(useToastStore.getState(), 'addToast');
+
+      act(() => {
+        useToastStore.getState().warning('Warning message');
+      });
+
+      expect(addToastSpy).toHaveBeenCalledWith('warning', 'Warning message', undefined);
+
+      addToastSpy.mockRestore();
+      act(() => {
+        useToastStore.getState().clearAll();
+      });
+    });
+  });
+
+  describe('clearAll', () => {
+    it('should clear all toasts', () => {
+      act(() => {
+        useToastStore.getState().addToast('info', 'Toast 1', 0);
+        useToastStore.getState().addToast('success', 'Toast 2', 0);
+        useToastStore.getState().addToast('warning', 'Toast 3', 0);
+      });
+
+      expect(useToastStore.getState().toasts).toHaveLength(3);
+
+      act(() => {
+        useToastStore.getState().clearAll();
+      });
+
+      expect(useToastStore.getState().toasts).toHaveLength(0);
+    });
   });
 });

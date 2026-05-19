@@ -32,6 +32,14 @@ const SetSelectedItem: React.FC<{ item: ReturnType<typeof createMockBacklogItem>
   return null;
 };
 
+const SetDetailContextValues: React.FC<{ workflowError?: string | null }> = ({ workflowError }) => {
+  const { setWorkflowError } = useBacklogContext();
+  React.useEffect(() => {
+    if (workflowError !== undefined) setWorkflowError(workflowError);
+  }, []);
+  return null;
+};
+
 const createTestQueryClient = () =>
   new QueryClient({
     defaultOptions: {
@@ -178,6 +186,183 @@ describe('ItemDetailModal', () => {
         const closeButton = document.querySelector('[data-modal-close]');
         expect(closeButton).toBeInTheDocument();
         expect(closeButton).toHaveAttribute('aria-label', 'Close modal');
+      });
+    });
+  });
+
+  describe('Done Status', () => {
+    it('should show done notice when item is done', async () => {
+      const doneItem = createMockBacklogItem({
+        ...mockItem,
+        status: ItemStatus.DONE,
+      });
+
+      const queryClient = createTestQueryClient();
+      render(
+        <QueryClientProvider client={queryClient}>
+          <BacklogProvider>
+            <SetSelectedItem item={doneItem} />
+            <ItemDetailModal
+              isOpen={true}
+              onClose={vi.fn()}
+              onEdit={vi.fn()}
+              onDelete={vi.fn()}
+              onStatusChange={vi.fn()}
+              isUpdating={false}
+              isLoadingChildTasks={false}
+            />
+          </BacklogProvider>
+        </QueryClientProvider>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText(/This item is completed and locked/i)).toBeInTheDocument();
+      });
+    });
+
+    it('should disable delete button when item is in progress', async () => {
+      const inProgressItem = createMockBacklogItem({
+        ...mockItem,
+        status: ItemStatus.IN_PROGRESS,
+      });
+
+      const queryClient = createTestQueryClient();
+      render(
+        <QueryClientProvider client={queryClient}>
+          <BacklogProvider>
+            <SetSelectedItem item={inProgressItem} />
+            <ItemDetailModal
+              isOpen={true}
+              onClose={vi.fn()}
+              onEdit={vi.fn()}
+              onDelete={vi.fn()}
+              onStatusChange={vi.fn()}
+              isUpdating={false}
+              isLoadingChildTasks={false}
+            />
+          </BacklogProvider>
+        </QueryClientProvider>
+      );
+
+      await waitFor(() => {
+        const deleteButton = screen.getByRole('button', { name: /delete item/i });
+        expect(deleteButton).toBeDisabled();
+      });
+    });
+  });
+
+  describe('Error Banner', () => {
+    it('should show workflow error banner', async () => {
+      const queryClient = createTestQueryClient();
+      render(
+        <QueryClientProvider client={queryClient}>
+          <BacklogProvider>
+            <SetDetailContextValues workflowError="Status transition failed" />
+            <SetSelectedItem item={mockItem} />
+            <ItemDetailModal
+              isOpen={true}
+              onClose={vi.fn()}
+              onEdit={vi.fn()}
+              onDelete={vi.fn()}
+              onStatusChange={vi.fn()}
+              isUpdating={false}
+              isLoadingChildTasks={false}
+            />
+          </BacklogProvider>
+        </QueryClientProvider>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('Status transition failed')).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Empty States', () => {
+    it('should show empty state when item has no description', async () => {
+      const itemNoDescription = createMockBacklogItem({
+        ...mockItem,
+        description: undefined,
+      });
+
+      const queryClient = createTestQueryClient();
+      render(
+        <QueryClientProvider client={queryClient}>
+          <BacklogProvider>
+            <SetSelectedItem item={itemNoDescription} />
+            <ItemDetailModal
+              isOpen={true}
+              onClose={vi.fn()}
+              onEdit={vi.fn()}
+              onDelete={vi.fn()}
+              onStatusChange={vi.fn()}
+              isUpdating={false}
+              isLoadingChildTasks={false}
+            />
+          </BacklogProvider>
+        </QueryClientProvider>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('No description provided')).toBeInTheDocument();
+      });
+    });
+
+    it('should show empty state when item has no labels', async () => {
+      const itemNoLabels = createMockBacklogItem({
+        ...mockItem,
+        labels: [],
+      });
+
+      const queryClient = createTestQueryClient();
+      render(
+        <QueryClientProvider client={queryClient}>
+          <BacklogProvider>
+            <SetSelectedItem item={itemNoLabels} />
+            <ItemDetailModal
+              isOpen={true}
+              onClose={vi.fn()}
+              onEdit={vi.fn()}
+              onDelete={vi.fn()}
+              onStatusChange={vi.fn()}
+              isUpdating={false}
+              isLoadingChildTasks={false}
+            />
+          </BacklogProvider>
+        </QueryClientProvider>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('No labels assigned')).toBeInTheDocument();
+      });
+    });
+
+    it('should show empty state when item has no acceptance criteria', async () => {
+      const itemNoCriteria = createMockBacklogItem({
+        ...mockItem,
+        acceptanceCriteria: undefined,
+      });
+
+      const queryClient = createTestQueryClient();
+      render(
+        <QueryClientProvider client={queryClient}>
+          <BacklogProvider>
+            <SetSelectedItem item={itemNoCriteria} />
+            <ItemDetailModal
+              isOpen={true}
+              onClose={vi.fn()}
+              onEdit={vi.fn()}
+              onDelete={vi.fn()}
+              onStatusChange={vi.fn()}
+              isUpdating={false}
+              isLoadingChildTasks={false}
+            />
+          </BacklogProvider>
+        </QueryClientProvider>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('No acceptance criteria defined')).toBeInTheDocument();
       });
     });
   });

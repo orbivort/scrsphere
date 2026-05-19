@@ -141,4 +141,12 @@ describe('useFormUnloadProtection', () => {
 
     expect(consoleSpy).not.toHaveBeenCalled();
   });
+
+  it('should log debug message when both debug and isDirty are true', () => {
+    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+    renderHook(() => useFormUnloadProtection(true, { debug: true }));
+
+    expect(consoleSpy).toHaveBeenCalled();
+  });
 });

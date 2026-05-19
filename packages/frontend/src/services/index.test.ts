@@ -30,55 +30,44 @@ describe('Services Index', () => {
   describe('with mock API', () => {
     beforeEach(() => {
       vi.resetModules();
-      vi.stubGlobal('import.meta', {
-        env: {
-          VITE_USE_MOCK_API: undefined,
-        },
-      });
     });
 
     afterEach(() => {
-      vi.unstubAllGlobals();
+      vi.unstubAllEnvs();
       vi.clearAllMocks();
     });
 
     it('should use mock API when VITE_USE_MOCK_API is not false', async () => {
-      vi.stubGlobal('import.meta', {
-        env: {
-          VITE_USE_MOCK_API: undefined,
-        },
-      });
-
       const { apiService } = await import('./index');
 
       expect(apiService).toBeDefined();
     });
 
     it('should use mock API when VITE_USE_MOCK_API is true', async () => {
-      vi.stubGlobal('import.meta', {
-        env: {
-          VITE_USE_MOCK_API: 'true',
-        },
-      });
+      vi.stubEnv('VITE_USE_MOCK_API', 'true');
 
       const { apiService } = await import('./index');
 
       expect(apiService).toBeDefined();
+    });
+
+    it('should setAuthCallbacks be defined when using mock API', async () => {
+      const { setAuthCallbacks } = await import('./index');
+
+      expect(setAuthCallbacks).toBeDefined();
+      // With mock API, setAuthCallbacks should not throw
+      expect(() => setAuthCallbacks(vi.fn())).not.toThrow();
     });
   });
 
   describe('with real API', () => {
     beforeEach(() => {
       vi.resetModules();
-      vi.stubGlobal('import.meta', {
-        env: {
-          VITE_USE_MOCK_API: 'false',
-        },
-      });
+      vi.stubEnv('VITE_USE_MOCK_API', 'false');
     });
 
     afterEach(() => {
-      vi.unstubAllGlobals();
+      vi.unstubAllEnvs();
       vi.clearAllMocks();
     });
 
@@ -86,6 +75,12 @@ describe('Services Index', () => {
       const { apiService } = await import('./index');
 
       expect(apiService).toBeDefined();
+    });
+
+    it('should use real setAuthCallbacks when VITE_USE_MOCK_API is false', async () => {
+      const { setAuthCallbacks } = await import('./index');
+
+      expect(setAuthCallbacks).toBe(realSetAuthCallbacks);
     });
 
     it('should export setAuthCallbacks for real API', async () => {
@@ -97,15 +92,11 @@ describe('Services Index', () => {
 
   describe('exports', () => {
     beforeEach(() => {
-      vi.stubGlobal('import.meta', {
-        env: {
-          VITE_USE_MOCK_API: 'false',
-        },
-      });
+      vi.stubEnv('VITE_USE_MOCK_API', 'false');
     });
 
     afterEach(() => {
-      vi.unstubAllGlobals();
+      vi.unstubAllEnvs();
       vi.clearAllMocks();
     });
 

@@ -392,3 +392,179 @@ describe('TeamContext error handling', () => {
     );
   });
 });
+
+describe('TeamInitializer edge cases', () => {
+  const mockSwitchTeam = vi.fn();
+  const mockRefreshTeams = vi.fn();
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    useAuthStore.setState({ isAuthenticated: true, user: null, isLoading: false, error: null });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('should navigate to /team when user has no teams', () => {
+    vi.mocked(useTeamStateModule.useTeamState).mockReturnValue({
+      teams: [],
+      teamsLoading: false,
+      teamsError: null,
+      currentTeam: null,
+      userRoleInCurrentTeam: null,
+      switchTeam: mockSwitchTeam,
+      refreshTeams: mockRefreshTeams,
+    });
+
+    render(
+      <MemoryRouter>
+        <TeamProvider>
+          <TeamInitializer>
+            <div data-testid="child">Content</div>
+          </TeamInitializer>
+        </TeamProvider>
+      </MemoryRouter>
+    );
+
+    expect(mockNavigate).toHaveBeenCalledWith('/team');
+  });
+
+  it('should auto-switch to single team when no current team', () => {
+    const singleTeam = createMockTeam('team-1', 'Single Team');
+
+    vi.mocked(useTeamStateModule.useTeamState).mockReturnValue({
+      teams: [singleTeam],
+      teamsLoading: false,
+      teamsError: null,
+      currentTeam: null,
+      userRoleInCurrentTeam: 'DEVELOPER',
+      switchTeam: mockSwitchTeam,
+      refreshTeams: mockRefreshTeams,
+    });
+
+    render(
+      <MemoryRouter>
+        <TeamProvider>
+          <TeamInitializer>
+            <div data-testid="child">Content</div>
+          </TeamInitializer>
+        </TeamProvider>
+      </MemoryRouter>
+    );
+
+    expect(mockSwitchTeam).toHaveBeenCalledWith('team-1');
+  });
+
+  it('should show team selection when multiple teams and no current team', () => {
+    const teams = [
+      createMockTeam('team-1', 'Team 1', 'PRODUCT_OWNER'),
+      createMockTeam('team-2', 'Team 2', 'DEVELOPER'),
+    ];
+
+    vi.mocked(useTeamStateModule.useTeamState).mockReturnValue({
+      teams,
+      teamsLoading: false,
+      teamsError: null,
+      currentTeam: null,
+      userRoleInCurrentTeam: null,
+      switchTeam: mockSwitchTeam,
+      refreshTeams: mockRefreshTeams,
+    });
+
+    render(
+      <MemoryRouter>
+        <TeamProvider>
+          <TeamInitializer>
+            <div data-testid="child">Content</div>
+          </TeamInitializer>
+        </TeamProvider>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Select a Team')).toBeInTheDocument();
+    expect(screen.getByText('Team 1')).toBeInTheDocument();
+    expect(screen.getByText('Team 2')).toBeInTheDocument();
+    expect(screen.getByText('Product Owner')).toBeInTheDocument();
+    expect(screen.getByText('Developer')).toBeInTheDocument();
+  });
+
+  it('should handle switchTeam error in provider', async () => {
+    const user = userEvent.setup();
+    mockSwitchTeam.mockRejectedValue(new Error('Switch failed'));
+
+    vi.mocked(useTeamStateModule.useTeamState).mockReturnValue({
+      teams: [],
+      teamsLoading: false,
+      teamsError: null,
+      currentTeam: null,
+      userRoleInCurrentTeam: null,
+      switchTeam: mockSwitchTeam,
+      refreshTeams: mockRefreshTeams,
+    });
+
+    const SwitchErrorTestComponent = () => {
+      const context = useTeamContext();
+      return (
+        <div>
+          <div data-testid="error-display">{context.error || 'no-error'}</div>
+          <button
+            data-testid="switch-btn"
+            onClick={async () => {
+              try {
+                await context.switchTeam('team-2');
+              } catch {
+                // Error is handled by the context provider
+              }
+            }}
+          >
+            Switch
+          </button>
+        </div>
+      );
+    };
+
+    render(
+      <MemoryRouter>
+        <TeamProvider>
+          <SwitchErrorTestComponent />
+        </TeamProvider>
+      </MemoryRouter>
+    );
+
+    await user.click(screen.getByTestId('switch-btn'));
+
+    expect(screen.getByTestId('error-display')).toHaveTextContent('Switch failed');
+  });
+
+  it('should show default role labels for unknown roles', () => {
+    const teams = [
+      createMockTeam('team-1', 'Team 1', 'UNKNOWN_ROLE'),
+      createMockTeam('team-2', 'Team 2', 'SCRUM_MASTER'),
+    ];
+
+    vi.mocked(useTeamStateModule.useTeamState).mockReturnValue({
+      teams,
+      teamsLoading: false,
+      teamsError: null,
+      currentTeam: null,
+      userRoleInCurrentTeam: null,
+      switchTeam: mockSwitchTeam,
+      refreshTeams: mockRefreshTeams,
+    });
+
+    render(
+      <MemoryRouter>
+        <TeamProvider>
+          <TeamInitializer>
+            <div data-testid="child">Content</div>
+          </TeamInitializer>
+        </TeamProvider>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Select a Team')).toBeInTheDocument();
+    expect(screen.getByText('UNKNOWN_ROLE')).toBeInTheDocument();
+    expect(screen.getByText('Scrum Master')).toBeInTheDocument();
+  });
+});
