@@ -210,6 +210,55 @@ describe('ProductGoalService', () => {
         })
       ).rejects.toThrow(BadRequestError);
     });
+
+    it('should throw ForbiddenError if status transition is not allowed on create', async () => {
+      const userId = 'test-user-id';
+
+      vi.mocked(prisma.team.findUnique).mockResolvedValue({ id: 'team-1' } as any);
+      vi.mocked(prisma.teamMember.findFirst).mockResolvedValue({
+        id: 'member-1',
+        teamId: 'team-1',
+        userId,
+        role: 'DEVELOPER',
+      } as any);
+      vi.mocked(workflowService.validateTransition).mockResolvedValue({
+        isValid: true,
+        allowed: false,
+        reason: 'Status not allowed for this role',
+      } as any);
+
+      await expect(
+        productGoalService.createProductGoal(userId, {
+          teamId: 'team-1',
+          title: 'New Goal',
+          status: 'ACTIVE',
+        })
+      ).rejects.toThrow(ForbiddenError);
+    });
+
+    it('should throw ForbiddenError with default reason if validation allowed is false and reason missing', async () => {
+      const userId = 'test-user-id';
+
+      vi.mocked(prisma.team.findUnique).mockResolvedValue({ id: 'team-1' } as any);
+      vi.mocked(prisma.teamMember.findFirst).mockResolvedValue({
+        id: 'member-1',
+        teamId: 'team-1',
+        userId,
+        role: 'DEVELOPER',
+      } as any);
+      vi.mocked(workflowService.validateTransition).mockResolvedValue({
+        isValid: true,
+        allowed: false,
+      } as any);
+
+      await expect(
+        productGoalService.createProductGoal(userId, {
+          teamId: 'team-1',
+          title: 'New Goal',
+          status: 'ACTIVE',
+        })
+      ).rejects.toThrow(ForbiddenError);
+    });
   });
 
   describe('updateProductGoal', () => {
@@ -295,6 +344,82 @@ describe('ProductGoalService', () => {
         productGoalService.updateProductGoal('non-existent-id', userId, { title: 'New Title' })
       ).rejects.toThrow(NotFoundError);
     });
+
+    it('should throw ForbiddenError if user is not a team member on update', async () => {
+      const userId = 'test-user-id';
+      const goalId = 'goal-1';
+      const mockGoal = {
+        id: goalId,
+        teamId: 'team-1',
+        title: 'Test Goal',
+        status: 'NEW',
+        createdBy: 'other-user',
+      };
+
+      vi.mocked(prisma.productGoal.findUnique).mockResolvedValue(mockGoal as any);
+      vi.mocked(prisma.teamMember.findFirst).mockResolvedValue(null as any);
+
+      await expect(
+        productGoalService.updateProductGoal(goalId, userId, { title: 'Updated Title' })
+      ).rejects.toThrow(ForbiddenError);
+    });
+
+    it('should throw BadRequestError if status transition is invalid on update', async () => {
+      const userId = 'test-user-id';
+      const goalId = 'goal-1';
+      const mockGoal = {
+        id: goalId,
+        teamId: 'team-1',
+        title: 'Test Goal',
+        status: 'NEW',
+        createdBy: userId,
+      };
+
+      vi.mocked(prisma.productGoal.findUnique).mockResolvedValue(mockGoal as any);
+      vi.mocked(prisma.teamMember.findFirst).mockResolvedValue({
+        id: 'member-1',
+        teamId: 'team-1',
+        userId,
+        role: 'DEVELOPER',
+      } as any);
+      vi.mocked(workflowService.validateTransition).mockResolvedValue({
+        isValid: false,
+        allowed: false,
+      } as any);
+
+      await expect(
+        productGoalService.updateProductGoal(goalId, userId, { status: 'COMPLETED' })
+      ).rejects.toThrow(BadRequestError);
+    });
+
+    it('should throw ForbiddenError if status transition is not allowed on update', async () => {
+      const userId = 'test-user-id';
+      const goalId = 'goal-1';
+      const mockGoal = {
+        id: goalId,
+        teamId: 'team-1',
+        title: 'Test Goal',
+        status: 'NEW',
+        createdBy: userId,
+      };
+
+      vi.mocked(prisma.productGoal.findUnique).mockResolvedValue(mockGoal as any);
+      vi.mocked(prisma.teamMember.findFirst).mockResolvedValue({
+        id: 'member-1',
+        teamId: 'team-1',
+        userId,
+        role: 'DEVELOPER',
+      } as any);
+      vi.mocked(workflowService.validateTransition).mockResolvedValue({
+        isValid: true,
+        allowed: false,
+        reason: 'Transition not allowed',
+      } as any);
+
+      await expect(
+        productGoalService.updateProductGoal(goalId, userId, { status: 'ACTIVE' })
+      ).rejects.toThrow(ForbiddenError);
+    });
   });
 
   describe('deleteProductGoal', () => {
@@ -343,6 +468,34 @@ describe('ProductGoalService', () => {
 
       await expect(productGoalService.deleteProductGoal(goalId, userId)).rejects.toThrow(
         BadRequestError
+      );
+    });
+
+    it('should throw NotFoundError for non-existent goal on delete', async () => {
+      const userId = 'test-user-id';
+
+      vi.mocked(prisma.productGoal.findUnique).mockResolvedValue(null as any);
+
+      await expect(productGoalService.deleteProductGoal('non-existent-id', userId)).rejects.toThrow(
+        NotFoundError
+      );
+    });
+
+    it('should throw ForbiddenError if user is not a team member on delete', async () => {
+      const userId = 'test-user-id';
+      const goalId = 'goal-1';
+      const mockGoal = {
+        id: goalId,
+        teamId: 'team-1',
+        title: 'Test Goal',
+        createdBy: 'other-user',
+      };
+
+      vi.mocked(prisma.productGoal.findUnique).mockResolvedValue(mockGoal as any);
+      vi.mocked(prisma.teamMember.findFirst).mockResolvedValue(null as any);
+
+      await expect(productGoalService.deleteProductGoal(goalId, userId)).rejects.toThrow(
+        ForbiddenError
       );
     });
   });

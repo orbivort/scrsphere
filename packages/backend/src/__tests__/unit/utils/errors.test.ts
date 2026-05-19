@@ -12,6 +12,15 @@ import {
   SessionAbsoluteTimeoutError,
   SessionRevokedError,
   SessionExpiredError,
+  AccountDeletionBlockedError,
+  InvalidConfirmationError,
+  EmailError,
+  EmailRateLimitError,
+  EmailProviderError,
+  EmailConnectionError,
+  EmailAuthenticationError,
+  EmailTemplateError,
+  EmailValidationError,
   createErrorResponse,
   createSuccessResponse,
   asyncHandler,
@@ -160,11 +169,21 @@ describe('Error Utilities', () => {
       expect(error.message).toBe('Session expired due to inactivity');
     });
 
+    it('should create SessionIdleTimeoutError with custom message', () => {
+      const error = new SessionIdleTimeoutError('Custom idle timeout');
+      expect(error.message).toBe('Custom idle timeout');
+    });
+
     it('should create SessionAbsoluteTimeoutError', () => {
       const error = new SessionAbsoluteTimeoutError();
       expect(error.statusCode).toBe(401);
       expect(error.code).toBe('SESSION_ABSOLUTE_TIMEOUT');
       expect(error.message).toBe('Session expired due to maximum duration reached');
+    });
+
+    it('should create SessionAbsoluteTimeoutError with custom message', () => {
+      const error = new SessionAbsoluteTimeoutError('Custom absolute timeout');
+      expect(error.message).toBe('Custom absolute timeout');
     });
 
     it('should create SessionRevokedError', () => {
@@ -174,11 +193,144 @@ describe('Error Utilities', () => {
       expect(error.message).toBe('Session has been revoked');
     });
 
+    it('should create SessionRevokedError with custom message', () => {
+      const error = new SessionRevokedError('Custom revoked');
+      expect(error.message).toBe('Custom revoked');
+    });
+
     it('should create SessionExpiredError', () => {
       const error = new SessionExpiredError();
       expect(error.statusCode).toBe(401);
       expect(error.code).toBe('SESSION_EXPIRED');
       expect(error.message).toBe('Session has expired');
+    });
+
+    it('should create SessionExpiredError with custom message', () => {
+      const error = new SessionExpiredError('Custom expired');
+      expect(error.message).toBe('Custom expired');
+    });
+  });
+
+  describe('AccountDeletion Errors', () => {
+    it('should create AccountDeletionBlockedError', () => {
+      const teams = [{ id: 'team-1', name: 'Test Team' }];
+      const error = new AccountDeletionBlockedError(teams);
+      expect(error.statusCode).toBe(403);
+      expect(error.code).toBe('FORBIDDEN');
+      expect(error.teams).toEqual(teams);
+      expect(error.guidance).toContain('Account deletion is blocked');
+    });
+
+    it('should create AccountDeletionBlockedError with custom guidance', () => {
+      const teams = [{ id: 'team-1', name: 'Test Team' }];
+      const error = new AccountDeletionBlockedError(teams, 'Custom guidance');
+      expect(error.guidance).toBe('Custom guidance');
+    });
+
+    it('should create InvalidConfirmationError', () => {
+      const error = new InvalidConfirmationError();
+      expect(error.statusCode).toBe(400);
+      expect(error.code).toBe('BAD_REQUEST');
+      expect(error.message).toContain('DELETE MY ACCOUNT');
+    });
+  });
+
+  describe('Email Errors', () => {
+    it('should create EmailError with default values', () => {
+      const error = new EmailError();
+      expect(error.statusCode).toBe(500);
+      expect(error.code).toBe('EMAIL_ERROR');
+      expect(error.message).toBe('Email error');
+    });
+
+    it('should create EmailError with custom values', () => {
+      const details = [{ field: 'to', message: 'Invalid recipient' }];
+      const error = new EmailError('Custom email error', 'CUSTOM_EMAIL_CODE', details);
+      expect(error.message).toBe('Custom email error');
+      expect(error.code).toBe('CUSTOM_EMAIL_CODE');
+      expect(error.details).toEqual(details);
+    });
+
+    it('should create EmailRateLimitError with default values', () => {
+      const error = new EmailRateLimitError();
+      expect(error.statusCode).toBe(429);
+      expect(error.code).toBe('EMAIL_RATE_LIMIT');
+      expect(error.message).toBe('Email rate limit exceeded');
+      expect(error.retryAfter).toBe(60);
+    });
+
+    it('should create EmailRateLimitError with custom values', () => {
+      const error = new EmailRateLimitError('Too many emails', 120);
+      expect(error.message).toBe('Too many emails');
+      expect(error.retryAfter).toBe(120);
+    });
+
+    it('should create EmailProviderError with default values', () => {
+      const error = new EmailProviderError();
+      expect(error.statusCode).toBe(502);
+      expect(error.code).toBe('EMAIL_PROVIDER_ERROR');
+      expect(error.message).toBe('Email provider error');
+      expect(error.providerError).toBeUndefined();
+    });
+
+    it('should create EmailProviderError with custom values', () => {
+      const error = new EmailProviderError('SendGrid error', 'Connection refused');
+      expect(error.message).toBe('SendGrid error');
+      expect(error.providerError).toBe('Connection refused');
+    });
+
+    it('should create EmailConnectionError with default values', () => {
+      const error = new EmailConnectionError();
+      expect(error.statusCode).toBe(503);
+      expect(error.code).toBe('EMAIL_CONNECTION_ERROR');
+      expect(error.message).toBe('Failed to connect to email server');
+      expect(error.host).toBeUndefined();
+    });
+
+    it('should create EmailConnectionError with custom values', () => {
+      const error = new EmailConnectionError('Cannot reach SMTP', 'smtp.gmail.com');
+      expect(error.message).toBe('Cannot reach SMTP');
+      expect(error.host).toBe('smtp.gmail.com');
+    });
+
+    it('should create EmailAuthenticationError with default values', () => {
+      const error = new EmailAuthenticationError();
+      expect(error.statusCode).toBe(500);
+      expect(error.code).toBe('EMAIL_AUTH_ERROR');
+      expect(error.message).toBe('Email authentication failed');
+    });
+
+    it('should create EmailAuthenticationError with custom message', () => {
+      const error = new EmailAuthenticationError('Invalid credentials');
+      expect(error.message).toBe('Invalid credentials');
+    });
+
+    it('should create EmailTemplateError with default values', () => {
+      const error = new EmailTemplateError();
+      expect(error.statusCode).toBe(500);
+      expect(error.code).toBe('EMAIL_TEMPLATE_ERROR');
+      expect(error.message).toBe('Email template error');
+      expect(error.templateName).toBeUndefined();
+    });
+
+    it('should create EmailTemplateError with custom values', () => {
+      const error = new EmailTemplateError('Template rendering failed', 'welcome.html');
+      expect(error.message).toBe('Template rendering failed');
+      expect(error.templateName).toBe('welcome.html');
+    });
+
+    it('should create EmailValidationError with default values', () => {
+      const error = new EmailValidationError();
+      expect(error.statusCode).toBe(400);
+      expect(error.code).toBe('BAD_REQUEST');
+      expect(error.message).toBe('Invalid email address');
+    });
+
+    it('should create EmailValidationError with custom values', () => {
+      const details = [{ field: 'email', message: 'Invalid format' }];
+      const error = new EmailValidationError('Custom validation error', details);
+      expect(error.message).toBe('Custom validation error');
+      expect(error.details).toEqual(details);
     });
   });
 

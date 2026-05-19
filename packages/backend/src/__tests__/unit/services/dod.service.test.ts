@@ -329,6 +329,53 @@ describe('DefinitionOfDoneService', () => {
       expect(prisma.definitionOfDone.create).toHaveBeenCalled();
       expect(result).toEqual(updatedDoD);
     });
+
+    it('should use default category when item has no category', async () => {
+      const existingDoD = {
+        id: 'dod-1',
+        teamId: 'team-1',
+        version: 1,
+      };
+
+      const updatedDoD = {
+        id: 'dod-1',
+        teamId: 'team-1',
+        version: 2,
+        updatedBy: 'user-1',
+        items: [
+          {
+            id: 'new-item-1',
+            description: 'Item without category',
+            category: 'quality',
+            isActive: true,
+            order: 0,
+          },
+        ],
+      };
+
+      vi.mocked(prisma.definitionOfDone.findUnique).mockResolvedValue(existingDoD as any);
+      vi.mocked(prisma.doDItem.deleteMany).mockResolvedValue({ count: 5 });
+      vi.mocked(prisma.definitionOfDone.update).mockResolvedValue(updatedDoD as any);
+
+      const items = [{ description: 'Item without category', isActive: true, order: 0 }];
+
+      await definitionOfDoneService.updateDefinitionOfDone('team-1', items, 'user-1');
+
+      expect(prisma.definitionOfDone.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            items: expect.objectContaining({
+              create: expect.arrayContaining([
+                expect.objectContaining({
+                  description: 'Item without category',
+                  category: 'quality',
+                }),
+              ]),
+            }),
+          }),
+        })
+      );
+    });
   });
 
   describe('getDoDItems', () => {
@@ -795,6 +842,165 @@ describe('DefinitionOfDoneService', () => {
       await expect(definitionOfDoneService.getDoDComplianceReport('sprint-1')).rejects.toThrow(
         InternalServerError
       );
+    });
+
+    it('should handle verifications referencing DoD items not in current definition', async () => {
+      const sprint = {
+        id: 'sprint-1',
+        teamId: 'team-123',
+        sprintBacklogItems: [
+          {
+            pbi: {
+              id: 'pbi-1',
+              title: 'Feature A',
+              status: 'DONE',
+            },
+          },
+        ],
+      };
+
+      const dod = {
+        id: 'dod-123',
+        teamId: 'team-123',
+        items: [
+          {
+            id: 'current-item-1',
+            description: 'Current item',
+            category: 'quality',
+            isActive: true,
+          },
+        ],
+      };
+
+      const verifications = [
+        {
+          id: 'ver-1',
+          pbiId: 'pbi-1',
+          dodItemId: 'old-item-1',
+          isVerified: true,
+          verifiedBy: 'user-1',
+          verifiedAt: new Date(),
+          notes: null,
+          createdAt: new Date(),
+          createdBy: 'user-1',
+          updatedAt: new Date(),
+          updatedBy: null,
+        },
+      ];
+
+      vi.mocked(prisma.sprint.findUnique).mockResolvedValue(sprint as any);
+      vi.mocked(prisma.definitionOfDone.findUnique).mockResolvedValue(dod as any);
+      vi.mocked(prisma.doDChecklistVerification.findMany).mockResolvedValue(verifications as any);
+
+      const result = await definitionOfDoneService.getDoDComplianceReport('sprint-1');
+
+      expect(result.totalPBIs).toBe(1);
+      expect(result.pbiDetails[0]!.verifications[0]!.dodItem.description).toBe('');
+      expect(result.pbiDetails[0]!.verifications[0]!.dodItem.category).toBe('quality');
+    });
+
+    it('should calculate compliance percentage correctly when DoD items exist', async () => {
+      const sprint = {
+        id: 'sprint-1',
+        teamId: 'team-123',
+        sprintBacklogItems: [
+          {
+            pbi: {
+              id: 'pbi-1',
+              title: 'Feature A',
+              status: 'DONE',
+            },
+          },
+          {
+            pbi: {
+              id: 'pbi-2',
+              title: 'Feature B',
+              status: 'IN_PROGRESS',
+            },
+          },
+        ],
+      };
+
+      const dod = {
+        id: 'dod-123',
+        teamId: 'team-123',
+        items: [
+          { id: 'item-1', description: 'Code reviewed', category: 'review', isActive: true },
+          { id: 'item-2', description: 'Tests passing', category: 'testing', isActive: true },
+        ],
+      };
+
+      const verificationsPBI1 = [
+        {
+          id: 'ver-1',
+          pbiId: 'pbi-1',
+          dodItemId: 'item-1',
+          isVerified: true,
+          verifiedBy: 'user-1',
+          verifiedAt: new Date(),
+          notes: null,
+          createdAt: new Date(),
+          createdBy: 'user-1',
+          updatedAt: new Date(),
+          updatedBy: null,
+        },
+        {
+          id: 'ver-2',
+          pbiId: 'pbi-1',
+          dodItemId: 'item-2',
+          isVerified: true,
+          verifiedBy: 'user-1',
+          verifiedAt: new Date(),
+          notes: null,
+          createdAt: new Date(),
+          createdBy: 'user-1',
+          updatedAt: new Date(),
+          updatedBy: null,
+        },
+      ];
+
+      const verificationsPBI2 = [
+        {
+          id: 'ver-3',
+          pbiId: 'pbi-2',
+          dodItemId: 'item-1',
+          isVerified: true,
+          verifiedBy: 'user-1',
+          verifiedAt: new Date(),
+          notes: 'Some notes',
+          createdAt: new Date(),
+          createdBy: 'user-1',
+          updatedAt: new Date(),
+          updatedBy: null,
+        },
+        {
+          id: 'ver-4',
+          pbiId: 'pbi-2',
+          dodItemId: 'item-2',
+          isVerified: false,
+          verifiedBy: 'user-1',
+          verifiedAt: new Date(),
+          notes: null,
+          createdAt: new Date(),
+          createdBy: 'user-1',
+          updatedAt: new Date(),
+          updatedBy: null,
+        },
+      ];
+
+      vi.mocked(prisma.sprint.findUnique).mockResolvedValue(sprint as any);
+      vi.mocked(prisma.definitionOfDone.findUnique).mockResolvedValue(dod as any);
+      vi.mocked(prisma.doDChecklistVerification.findMany)
+        .mockResolvedValueOnce(verificationsPBI1 as any)
+        .mockResolvedValueOnce(verificationsPBI2 as any);
+
+      const result = await definitionOfDoneService.getDoDComplianceReport('sprint-1');
+
+      expect(result.totalPBIs).toBe(2);
+      expect(result.dodCompliantPBIs).toBe(1);
+      expect(result.pbiDetails[0]!.compliancePercentage).toBe(100);
+      expect(result.pbiDetails[1]!.compliancePercentage).toBe(50);
+      expect(result.complianceRate).toBe(50);
     });
   });
 });

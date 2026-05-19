@@ -21,6 +21,7 @@ vi.mock('../../../utils/prisma', () => ({
       findMany: vi.fn(),
       findUnique: vi.fn(),
       create: vi.fn(),
+      createMany: vi.fn(),
       update: vi.fn(),
       delete: vi.fn(),
       deleteMany: vi.fn(),
@@ -29,6 +30,7 @@ vi.mock('../../../utils/prisma', () => ({
       findMany: vi.fn(),
       findUnique: vi.fn(),
       create: vi.fn(),
+      createMany: vi.fn(),
       update: vi.fn(),
       deleteMany: vi.fn(),
     },
@@ -55,9 +57,13 @@ vi.mock('../../../utils/uuid', () => ({
   generateUUIDv7: vi.fn().mockReturnValue('test-uuid'),
 }));
 
+const mockNotificationCreate = vi.hoisted(() =>
+  vi.fn().mockResolvedValue({ id: 'notification-id' })
+);
+
 vi.mock('../../../services/notification.service', () => ({
   NotificationService: class {
-    create = vi.fn().mockResolvedValue({ id: 'notification-id' });
+    create = mockNotificationCreate;
   },
 }));
 
@@ -140,6 +146,41 @@ describe('SprintReviewService', () => {
 
       expect(result.id).toBe(reviewId);
       expect(result.increment).toBeNull();
+    });
+
+    it('should include increment with PBIs when incrementId exists', async () => {
+      const reviewId = 'review-1';
+      const mockReview = {
+        id: reviewId,
+        teamId: 'team-id',
+        sprintId: 'sprint-1',
+        incrementId: 'increment-1',
+        status: 'completed',
+        reviewDate: new Date(),
+        sprint: { id: 'sprint-1', name: 'Sprint 1', status: 'COMPLETED', goal: 'Goal 1' },
+        attendees: [],
+        feedback: [],
+        backlogAdjustments: [],
+      };
+      const mockIncrement = {
+        id: 'increment-1',
+        name: 'Increment 1',
+        pbis: [
+          { pbi: { id: 'pbi-1', title: 'PBI 1', storyPoints: 5, status: 'DONE' } },
+          { pbi: { id: 'pbi-2', title: 'PBI 2', storyPoints: 3, status: 'IN_PROGRESS' } },
+        ],
+      };
+
+      vi.mocked(prisma.sprintReview.findUnique).mockResolvedValue(mockReview as any);
+      vi.mocked(prisma.increment.findUnique).mockResolvedValue(mockIncrement as any);
+
+      const result = await sprintReviewService.getSprintReviewById(reviewId);
+
+      expect(result.id).toBe(reviewId);
+      expect(result.increment).not.toBeNull();
+      expect(result.increment!.pbis).toHaveLength(2);
+      expect(result.increment!.pbis[0]!.title).toBe('PBI 1');
+      expect(result.increment!.pbis[1]!.title).toBe('PBI 2');
     });
 
     it('should throw NotFoundError when review does not exist', async () => {
@@ -307,6 +348,307 @@ describe('SprintReviewService', () => {
       mockGetById.mockRestore();
     });
 
+    it('should update reviewDate when provided', async () => {
+      const reviewId = 'review-1';
+      const userId = 'user-id';
+      const existingReview = {
+        id: reviewId,
+        summary: 'Old summary',
+        attendees: [],
+        feedback: [],
+        backlogAdjustments: [],
+      };
+      const newDate = new Date('2025-01-15');
+
+      vi.mocked(prisma.sprintReview.findUnique).mockResolvedValue(existingReview as any);
+      vi.mocked(prisma.sprintReview.update).mockResolvedValue({} as any);
+
+      const mockGetById = vi.spyOn(sprintReviewService, 'getSprintReviewById');
+      mockGetById.mockResolvedValue({ id: reviewId, reviewDate: newDate } as any);
+
+      await sprintReviewService.updateSprintReview(reviewId, userId, {
+        reviewDate: newDate,
+      });
+
+      expect(prisma.sprintReview.update).toHaveBeenCalledWith({
+        where: { id: reviewId },
+        data: {
+          reviewDate: newDate,
+          updatedBy: userId,
+        },
+      });
+
+      mockGetById.mockRestore();
+    });
+
+    it('should handle update without userId', async () => {
+      const reviewId = 'review-1';
+      const existingReview = {
+        id: reviewId,
+        summary: 'Old summary',
+        attendees: [],
+        feedback: [],
+        backlogAdjustments: [],
+      };
+
+      vi.mocked(prisma.sprintReview.findUnique).mockResolvedValue(existingReview as any);
+      vi.mocked(prisma.sprintReview.update).mockResolvedValue({} as any);
+
+      const mockGetById = vi.spyOn(sprintReviewService, 'getSprintReviewById');
+      mockGetById.mockResolvedValue({ id: reviewId, summary: 'New summary' } as any);
+
+      const result = await sprintReviewService.updateSprintReview(reviewId, undefined, {
+        summary: 'New summary',
+      });
+
+      expect(result.summary).toBe('New summary');
+      const updateCall = vi.mocked(prisma.sprintReview.update).mock.calls[0]![0];
+      expect(updateCall.data).not.toHaveProperty('updatedBy');
+
+      mockGetById.mockRestore();
+    });
+
+    it('should handle empty attendees array', async () => {
+      const reviewId = 'review-1';
+      const userId = 'user-id';
+      const existingReview = {
+        id: reviewId,
+        summary: 'Old summary',
+        attendees: [],
+        feedback: [],
+        backlogAdjustments: [],
+      };
+
+      vi.mocked(prisma.sprintReview.findUnique).mockResolvedValue(existingReview as any);
+      vi.mocked(prisma.sprintReview.update).mockResolvedValue({} as any);
+      vi.mocked(prisma.reviewAttendee.deleteMany).mockResolvedValue({ count: 0 } as any);
+
+      const mockGetById = vi.spyOn(sprintReviewService, 'getSprintReviewById');
+      mockGetById.mockResolvedValue({ id: reviewId } as any);
+
+      await sprintReviewService.updateSprintReview(reviewId, userId, {
+        attendees: [],
+      });
+
+      expect(prisma.reviewAttendee.deleteMany).toHaveBeenCalledWith({ where: { reviewId } });
+      expect(prisma.reviewAttendee.createMany).not.toHaveBeenCalled();
+
+      mockGetById.mockRestore();
+    });
+
+    it('should handle empty feedback array', async () => {
+      const reviewId = 'review-1';
+      const userId = 'user-id';
+      const existingReview = {
+        id: reviewId,
+        summary: 'Old summary',
+        attendees: [],
+        feedback: [],
+        backlogAdjustments: [],
+      };
+
+      vi.mocked(prisma.sprintReview.findUnique).mockResolvedValue(existingReview as any);
+      vi.mocked(prisma.sprintReview.update).mockResolvedValue({} as any);
+      vi.mocked(prisma.stakeholderFeedback.deleteMany).mockResolvedValue({ count: 0 } as any);
+
+      const mockGetById = vi.spyOn(sprintReviewService, 'getSprintReviewById');
+      mockGetById.mockResolvedValue({ id: reviewId } as any);
+
+      await sprintReviewService.updateSprintReview(reviewId, userId, {
+        feedback: [],
+      });
+
+      expect(prisma.stakeholderFeedback.deleteMany).toHaveBeenCalledWith({ where: { reviewId } });
+      expect(prisma.stakeholderFeedback.createMany).not.toHaveBeenCalled();
+
+      mockGetById.mockRestore();
+    });
+
+    it('should handle empty backlogAdjustments array', async () => {
+      const reviewId = 'review-1';
+      const userId = 'user-id';
+      const existingReview = {
+        id: reviewId,
+        summary: 'Old summary',
+        attendees: [],
+        feedback: [],
+        backlogAdjustments: [],
+      };
+
+      vi.mocked(prisma.sprintReview.findUnique).mockResolvedValue(existingReview as any);
+      vi.mocked(prisma.sprintReview.update).mockResolvedValue({} as any);
+      vi.mocked(prisma.backlogAdjustment.deleteMany).mockResolvedValue({ count: 0 } as any);
+
+      const mockGetById = vi.spyOn(sprintReviewService, 'getSprintReviewById');
+      mockGetById.mockResolvedValue({ id: reviewId } as any);
+
+      await sprintReviewService.updateSprintReview(reviewId, userId, {
+        backlogAdjustments: [],
+      });
+
+      expect(prisma.backlogAdjustment.deleteMany).toHaveBeenCalledWith({ where: { reviewId } });
+      expect(prisma.backlogAdjustment.create).not.toHaveBeenCalled();
+
+      mockGetById.mockRestore();
+    });
+
+    it('should handle unknown feedback category', async () => {
+      const reviewId = 'review-1';
+      const userId = 'user-id';
+      const existingReview = {
+        id: reviewId,
+        summary: 'Old summary',
+        attendees: [],
+        feedback: [],
+        backlogAdjustments: [],
+      };
+
+      vi.mocked(prisma.sprintReview.findUnique).mockResolvedValue(existingReview as any);
+      vi.mocked(prisma.sprintReview.update).mockResolvedValue({} as any);
+      vi.mocked(prisma.stakeholderFeedback.deleteMany).mockResolvedValue({ count: 0 } as any);
+      vi.mocked(prisma.stakeholderFeedback.createMany).mockResolvedValue({ count: 1 } as any);
+
+      const mockGetById = vi.spyOn(sprintReviewService, 'getSprintReviewById');
+      mockGetById.mockResolvedValue({ id: reviewId } as any);
+
+      await sprintReviewService.updateSprintReview(reviewId, userId, {
+        feedback: [
+          {
+            authorName: 'John Doe',
+            content: 'Some feedback',
+            category: 'unknown_category',
+          },
+        ],
+      });
+
+      expect(prisma.stakeholderFeedback.createMany).toHaveBeenCalledWith({
+        data: [
+          expect.objectContaining({
+            category: 'POSITIVE',
+            authorName: 'John Doe',
+          }),
+        ],
+      });
+
+      mockGetById.mockRestore();
+    });
+
+    it('should send notification to backlog adjustment owner', async () => {
+      const reviewId = 'review-1';
+      const userId = 'user-id';
+      const existingReview = {
+        id: reviewId,
+        summary: 'Old summary',
+        attendees: [],
+        feedback: [],
+        backlogAdjustments: [],
+      };
+      const mockAdjustment = {
+        id: 'test-uuid',
+        reviewId,
+        action: 'ADD',
+        description: 'Add new feature',
+        reason: 'Customer request',
+        implemented: false,
+        ownerId: 'owner-1',
+        createdBy: userId,
+      };
+
+      mockNotificationCreate.mockClear();
+
+      vi.mocked(prisma.sprintReview.findUnique).mockResolvedValue(existingReview as any);
+      vi.mocked(prisma.sprintReview.update).mockResolvedValue({} as any);
+      vi.mocked(prisma.backlogAdjustment.deleteMany).mockResolvedValue({ count: 0 } as any);
+      vi.mocked(prisma.backlogAdjustment.create).mockResolvedValue(mockAdjustment as any);
+
+      const mockGetById = vi.spyOn(sprintReviewService, 'getSprintReviewById');
+      mockGetById.mockResolvedValue({ id: reviewId } as any);
+
+      await sprintReviewService.updateSprintReview(reviewId, userId, {
+        backlogAdjustments: [
+          {
+            action: 'ADD',
+            description: 'Add new feature',
+            reason: 'Customer request',
+            ownerId: 'owner-1',
+            implemented: false,
+          },
+        ],
+      });
+
+      expect(prisma.backlogAdjustment.create).toHaveBeenCalled();
+      expect(mockNotificationCreate).toHaveBeenCalledWith({
+        userId: 'owner-1',
+        type: 'TASK_ASSIGNMENT',
+        title: 'New Backlog Adjustment Requires Your Action',
+        message: expect.stringContaining('ADD'),
+        data: {
+          adjustmentId: 'test-uuid',
+          reviewId,
+          action: 'ADD',
+        },
+        createdBy: userId,
+      });
+
+      mockGetById.mockRestore();
+    });
+
+    it('should truncate long backlog adjustment description in notification', async () => {
+      const reviewId = 'review-1';
+      const userId = 'user-id';
+      const existingReview = {
+        id: reviewId,
+        summary: 'Old summary',
+        attendees: [],
+        feedback: [],
+        backlogAdjustments: [],
+      };
+      const longDescription = 'A'.repeat(150);
+      const mockAdjustment = {
+        id: 'test-uuid',
+        reviewId,
+        action: 'ADD',
+        description: longDescription,
+        reason: 'Customer request',
+        implemented: false,
+        ownerId: 'owner-1',
+        createdBy: userId,
+      };
+
+      mockNotificationCreate.mockClear();
+
+      vi.mocked(prisma.sprintReview.findUnique).mockResolvedValue(existingReview as any);
+      vi.mocked(prisma.sprintReview.update).mockResolvedValue({} as any);
+      vi.mocked(prisma.backlogAdjustment.deleteMany).mockResolvedValue({ count: 0 } as any);
+      vi.mocked(prisma.backlogAdjustment.create).mockResolvedValue(mockAdjustment as any);
+
+      const mockGetById = vi.spyOn(sprintReviewService, 'getSprintReviewById');
+      mockGetById.mockResolvedValue({ id: reviewId } as any);
+
+      await sprintReviewService.updateSprintReview(reviewId, userId, {
+        backlogAdjustments: [
+          {
+            action: 'ADD',
+            description: longDescription,
+            reason: 'Customer request',
+            ownerId: 'owner-1',
+            implemented: false,
+          },
+        ],
+      });
+
+      expect(mockNotificationCreate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: expect.stringContaining('...'),
+        })
+      );
+      const callArg = mockNotificationCreate.mock.calls[0]![0];
+      const expectedMessage = `You have been assigned as the owner of a backlog adjustment: ADD - "${longDescription.substring(0, 100)}..."`;
+      expect(callArg.message).toBe(expectedMessage);
+
+      mockGetById.mockRestore();
+    });
+
     it('should throw NotFoundError when review does not exist', async () => {
       const reviewId = 'non-existent-id';
       const userId = 'user-id';
@@ -346,6 +688,134 @@ describe('SprintReviewService', () => {
 
       expect(result.authorName).toBe('John Doe');
       expect(result.category).toBe('positive');
+    });
+
+    it('should default to POSITIVE for unknown feedback category', async () => {
+      const reviewId = 'review-1';
+      const userId = 'user-id';
+      const mockReview = { id: reviewId, status: 'completed' };
+      const mockFeedback = {
+        id: 'test-uuid',
+        reviewId,
+        authorName: 'John Doe',
+        content: 'Some feedback',
+        category: 'POSITIVE',
+        actionRequired: false,
+        actionTaken: false,
+        owner: null,
+      };
+
+      vi.mocked(prisma.sprintReview.findUnique).mockResolvedValue(mockReview as any);
+      vi.mocked(prisma.stakeholderFeedback.create).mockResolvedValue(mockFeedback as any);
+
+      const result = await sprintReviewService.addStakeholderFeedback(reviewId, userId, {
+        authorName: 'John Doe',
+        content: 'Some feedback',
+        category: 'neutral',
+      });
+
+      expect(prisma.stakeholderFeedback.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            category: 'POSITIVE',
+          }),
+        })
+      );
+      expect(result.category).toBe('positive');
+    });
+
+    it('should send notification when ownerId and actionRequired are set', async () => {
+      const reviewId = 'review-1';
+      const userId = 'user-id';
+      const mockReview = { id: reviewId, status: 'completed' };
+      const mockFeedback = {
+        id: 'test-uuid',
+        reviewId,
+        authorName: 'John Doe',
+        content: 'Please fix this issue',
+        category: 'NEGATIVE',
+        actionRequired: true,
+        actionTaken: false,
+        owner: {
+          id: 'owner-1',
+          firstName: 'Owner',
+          lastName: 'User',
+          email: 'owner@example.com',
+        },
+      };
+
+      mockNotificationCreate.mockClear();
+
+      vi.mocked(prisma.sprintReview.findUnique).mockResolvedValue(mockReview as any);
+      vi.mocked(prisma.stakeholderFeedback.create).mockResolvedValue(mockFeedback as any);
+
+      const result = await sprintReviewService.addStakeholderFeedback(reviewId, userId, {
+        authorName: 'John Doe',
+        content: 'Please fix this issue',
+        category: 'negative',
+        actionRequired: true,
+        ownerId: 'owner-1',
+      });
+
+      expect(result.category).toBe('negative');
+      expect(mockNotificationCreate).toHaveBeenCalledWith({
+        userId: 'owner-1',
+        type: 'TASK_ASSIGNMENT',
+        title: 'New Feedback Requires Your Action',
+        message: expect.stringContaining('Please fix this issue'),
+        data: {
+          feedbackId: 'test-uuid',
+          reviewId,
+          category: 'negative',
+        },
+        createdBy: userId,
+      });
+    });
+
+    it('should truncate long feedback content in notification', async () => {
+      const reviewId = 'review-1';
+      const userId = 'user-id';
+      const mockReview = { id: reviewId, status: 'completed' };
+      const longContent = 'X'.repeat(150);
+      const mockFeedback = {
+        id: 'test-uuid',
+        reviewId,
+        authorName: 'John Doe',
+        content: longContent,
+        category: 'SUGGESTION',
+        actionRequired: true,
+        actionTaken: false,
+        owner: {
+          id: 'owner-1',
+          firstName: 'Owner',
+          lastName: 'User',
+          email: 'owner@example.com',
+        },
+      };
+
+      mockNotificationCreate.mockClear();
+
+      vi.mocked(prisma.sprintReview.findUnique).mockResolvedValue(mockReview as any);
+      vi.mocked(prisma.stakeholderFeedback.create).mockResolvedValue(mockFeedback as any);
+
+      await sprintReviewService.addStakeholderFeedback(reviewId, userId, {
+        authorName: 'John Doe',
+        content: longContent,
+        category: 'suggestion',
+        actionRequired: true,
+        ownerId: 'owner-1',
+      });
+
+      expect(mockNotificationCreate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: expect.stringContaining('...'),
+        })
+      );
+      const callArg = mockNotificationCreate.mock.calls[0]![0];
+      const prefix = 'You have been assigned as the owner of feedback from John Doe: "';
+      const suffix = '"';
+      const expectedTruncated = longContent.substring(0, 100);
+      expect(callArg.message).toBe(`${prefix}${expectedTruncated}...${suffix}`);
     });
 
     it('should throw NotFoundError when review does not exist', async () => {

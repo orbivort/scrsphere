@@ -1,8 +1,13 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
+  register,
+  login,
   logout,
+  logoutAllSessions,
   refreshToken,
   updateActivity,
+  getCurrentUser,
+  getActiveSessions,
   revokeSession,
   checkDeletionEligibility,
   deleteAccount,
@@ -10,9 +15,14 @@ import {
   cancelScheduledDeletion,
   forceDeleteAccount,
   getDeletionStatus,
+  updateProfile,
+  changePassword,
+  forgotPassword,
+  validateResetToken,
+  resetPassword,
 } from '../../../controllers/auth.controller';
 import { authService } from '../../../services/auth.service';
-import { BadRequestError } from '../../../utils/errors';
+import { BadRequestError, UnauthorizedError } from '../../../utils/errors';
 import { createMockRequest, createMockResponse, createMockNext } from '../../setup/testSetup';
 
 vi.mock('../../../services/auth.service', () => ({
@@ -32,6 +42,11 @@ vi.mock('../../../services/auth.service', () => ({
     cancelScheduledDeletion: vi.fn(),
     forceDeleteAccount: vi.fn(),
     getDeletionStatus: vi.fn(),
+    updateProfile: vi.fn(),
+    changePassword: vi.fn(),
+    requestPasswordReset: vi.fn(),
+    validateResetToken: vi.fn(),
+    resetPassword: vi.fn(),
   },
 }));
 
@@ -83,11 +98,103 @@ describe('Auth Controller', () => {
   let mockRes: ReturnType<typeof createMockResponse>;
   let mockNext: ReturnType<typeof createMockNext>;
 
+  const mockUser = {
+    id: 'user-id',
+    email: 'test@example.com',
+    firstName: 'Test',
+    lastName: 'User',
+  };
+
+  const mockTokens = {
+    accessToken: 'access-token',
+    refreshToken: 'refresh-token',
+  };
+
+  const mockSessionInfo = {
+    userAgent: 'test-agent',
+    ipAddress: '127.0.0.1',
+  };
+
   beforeEach(() => {
     vi.clearAllMocks();
     mockReq = createMockRequest();
     mockRes = createMockResponse();
     mockNext = createMockNext();
+  });
+
+  describe('register', () => {
+    it('should register a new user successfully', async () => {
+      mockReq.body = {
+        email: 'new@example.com',
+        password: 'Password123!',
+        firstName: 'New',
+        lastName: 'User',
+      };
+
+      (authService.register as any).mockResolvedValue({
+        user: mockUser,
+        tokens: mockTokens,
+        sessionInfo: mockSessionInfo,
+      });
+
+      register(mockReq as any, mockRes as any, mockNext);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(mockNext).not.toHaveBeenCalled();
+      expect(mockRes.cookie).toHaveBeenCalledTimes(2);
+      expect(mockRes._status).toBe(201);
+      expect(mockRes._json.success).toBe(true);
+      expect(mockRes._json.data.user).toEqual(mockUser);
+    });
+
+    it('should pass error to next when registration fails', async () => {
+      mockReq.body = {
+        email: 'existing@example.com',
+        password: 'Password123!',
+        firstName: 'Test',
+        lastName: 'User',
+      };
+
+      const error = new Error('Email already exists');
+      (authService.register as any).mockRejectedValue(error);
+
+      register(mockReq as any, mockRes as any, mockNext);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(mockNext).toHaveBeenCalledWith(error);
+    });
+  });
+
+  describe('login', () => {
+    it('should login successfully', async () => {
+      mockReq.body = { email: 'test@example.com', password: 'password' };
+      mockReq.headers['user-agent'] = 'test-agent';
+
+      (authService.login as any).mockResolvedValue({
+        user: mockUser,
+        tokens: mockTokens,
+        sessionInfo: mockSessionInfo,
+      });
+
+      login(mockReq as any, mockRes as any, mockNext);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(mockNext).not.toHaveBeenCalled();
+      expect(mockRes.cookie).toHaveBeenCalledTimes(2);
+      expect(mockRes._json.success).toBe(true);
+    });
+
+    it('should audit and rethrow on login failure', async () => {
+      mockReq.body = { email: 'test@example.com', password: 'wrong-password' };
+
+      const error = new UnauthorizedError('Invalid credentials');
+      (authService.login as any).mockRejectedValue(error);
+
+      login(mockReq as any, mockRes as any, mockNext);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(mockNext).toHaveBeenCalledWith(error);
+    });
   });
 
   describe('logout', () => {
@@ -100,6 +207,34 @@ describe('Auth Controller', () => {
       expect(authService.logout).not.toHaveBeenCalled();
       expect(mockRes.clearCookie).toHaveBeenCalledTimes(2);
     });
+
+    it('should handle logout with refresh token', async () => {
+      mockReq.cookies = { refreshToken: 'valid-refresh-token' };
+      mockReq.userId = 'user-id';
+
+      (authService.logout as any).mockResolvedValue(undefined);
+
+      logout(mockReq as any, mockRes as any, mockNext);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(authService.logout).toHaveBeenCalledWith('valid-refresh-token');
+      expect(mockRes._json.success).toBe(true);
+    });
+  });
+
+  describe('logoutAllSessions', () => {
+    it('should logout all sessions successfully', async () => {
+      mockReq.userId = 'user-id';
+
+      (authService.logoutAllSessions as any).mockResolvedValue(undefined);
+
+      logoutAllSessions(mockReq as any, mockRes as any, mockNext);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(authService.logoutAllSessions).toHaveBeenCalledWith('user-id');
+      expect(mockRes.clearCookie).toHaveBeenCalledTimes(2);
+      expect(mockRes._json.success).toBe(true);
+    });
   });
 
   describe('refreshToken', () => {
@@ -110,6 +245,23 @@ describe('Auth Controller', () => {
       await new Promise((resolve) => setTimeout(resolve, 0));
 
       expect(mockNext).toHaveBeenCalledWith(expect.any(BadRequestError));
+    });
+
+    it('should refresh token successfully', async () => {
+      mockReq.cookies = { refreshToken: 'valid-refresh-token' };
+
+      (authService.refreshAccessToken as any).mockResolvedValue({
+        accessToken: 'new-access-token',
+        refreshToken: 'new-refresh-token',
+        sessionInfo: { userId: 'user-id' },
+      });
+
+      refreshToken(mockReq as any, mockRes as any, mockNext);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(mockNext).not.toHaveBeenCalled();
+      expect(mockRes.cookie).toHaveBeenCalledTimes(2);
+      expect(mockRes._json.success).toBe(true);
     });
   });
 
@@ -123,6 +275,61 @@ describe('Auth Controller', () => {
       expect(authService.updateActivity).not.toHaveBeenCalled();
       expect(mockRes._json.success).toBe(true);
     });
+
+    it('should update activity with refresh token', async () => {
+      mockReq.cookies = { refreshToken: 'valid-refresh-token' };
+
+      (authService.updateActivity as any).mockResolvedValue(undefined);
+
+      updateActivity(mockReq as any, mockRes as any, mockNext);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(authService.updateActivity).toHaveBeenCalledWith('valid-refresh-token');
+      expect(mockRes._json.success).toBe(true);
+    });
+  });
+
+  describe('getCurrentUser', () => {
+    it('should return current user when authenticated', async () => {
+      mockReq.userId = 'user-id';
+
+      (authService.getCurrentUser as any).mockResolvedValue(mockUser);
+
+      getCurrentUser(mockReq as any, mockRes as any, mockNext);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(mockNext).not.toHaveBeenCalled();
+      expect(authService.getCurrentUser).toHaveBeenCalledWith('user-id');
+      expect(mockRes._json.success).toBe(true);
+      expect(mockRes._json.data).toEqual(mockUser);
+    });
+  });
+
+  describe('getActiveSessions', () => {
+    it('should return active sessions', async () => {
+      mockReq.userId = 'user-id';
+
+      const mockSessions = [
+        {
+          id: 'session-1',
+          createdAt: new Date(),
+          lastActivityAt: new Date(),
+          expiresAt: new Date(),
+          userAgent: 'test-agent',
+          ipAddress: '127.0.0.1',
+        },
+      ];
+
+      (authService.getActiveSessions as any).mockResolvedValue(mockSessions);
+
+      getActiveSessions(mockReq as any, mockRes as any, mockNext);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(mockNext).not.toHaveBeenCalled();
+      expect(authService.getActiveSessions).toHaveBeenCalledWith('user-id');
+      expect(mockRes._json.success).toBe(true);
+      expect(mockRes._json.data).toHaveLength(1);
+    });
   });
 
   describe('revokeSession', () => {
@@ -134,6 +341,20 @@ describe('Auth Controller', () => {
       await new Promise((resolve) => setTimeout(resolve, 0));
 
       expect(mockNext).toHaveBeenCalledWith(expect.any(BadRequestError));
+    });
+
+    it('should revoke session successfully', async () => {
+      mockReq.userId = 'user-id';
+      mockReq.params = { tokenId: 'token-to-revoke' };
+
+      (authService.revokeSession as any).mockResolvedValue(undefined);
+
+      revokeSession(mockReq as any, mockRes as any, mockNext);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(mockNext).not.toHaveBeenCalled();
+      expect(authService.revokeSession).toHaveBeenCalledWith('token-to-revoke', 'user-id');
+      expect(mockRes._json.success).toBe(true);
     });
   });
 
@@ -148,9 +369,8 @@ describe('Auth Controller', () => {
 
       (authService.checkDeletionEligibility as any).mockResolvedValue(mockResult);
 
-      // The asyncHandler doesn't return a promise, so we need to wait for the async operation
       checkDeletionEligibility(mockReq as any, mockRes as any, mockNext);
-      await new Promise((resolve) => setTimeout(resolve, 0)); // Wait for microtask queue
+      await new Promise((resolve) => setTimeout(resolve, 0));
 
       expect(mockNext).not.toHaveBeenCalled();
       expect(authService.checkDeletionEligibility).toHaveBeenCalledWith('user-id');
@@ -176,9 +396,8 @@ describe('Auth Controller', () => {
 
       (authService.checkDeletionEligibility as any).mockResolvedValue(mockResult);
 
-      // The asyncHandler doesn't return a promise, so we need to wait for the async operation
       checkDeletionEligibility(mockReq as any, mockRes as any, mockNext);
-      await new Promise((resolve) => setTimeout(resolve, 0)); // Wait for microtask queue
+      await new Promise((resolve) => setTimeout(resolve, 0));
 
       expect(mockNext).not.toHaveBeenCalled();
       expect(authService.checkDeletionEligibility).toHaveBeenCalledWith('user-id');
@@ -309,6 +528,111 @@ describe('Auth Controller', () => {
       expect(mockRes._json).not.toBeNull();
       expect(mockRes._json.success).toBe(true);
       expect(mockRes._json.data).toEqual(mockResult);
+    });
+  });
+
+  describe('updateProfile', () => {
+    it('should update profile successfully', async () => {
+      mockReq.userId = 'user-id';
+      mockReq.body = { firstName: 'Updated', lastName: 'Name' };
+
+      const updatedUser = { ...mockUser, firstName: 'Updated', lastName: 'Name' };
+      (authService.updateProfile as any).mockResolvedValue(updatedUser);
+
+      updateProfile(mockReq as any, mockRes as any, mockNext);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(mockNext).not.toHaveBeenCalled();
+      expect(authService.updateProfile).toHaveBeenCalledWith('user-id', {
+        firstName: 'Updated',
+        lastName: 'Name',
+      });
+      expect(mockRes._json.success).toBe(true);
+      expect(mockRes._json.data.firstName).toBe('Updated');
+    });
+  });
+
+  describe('changePassword', () => {
+    it('should change password successfully', async () => {
+      mockReq.userId = 'user-id';
+      mockReq.body = { currentPassword: 'old', newPassword: 'new-Password1' };
+      mockReq.headers['user-agent'] = 'test-agent';
+
+      (authService.changePassword as any).mockResolvedValue(undefined);
+
+      changePassword(mockReq as any, mockRes as any, mockNext);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(mockNext).not.toHaveBeenCalled();
+      expect(authService.changePassword).toHaveBeenCalledWith(
+        'user-id',
+        'old',
+        'new-Password1',
+        expect.any(Object)
+      );
+      expect(mockRes._json.success).toBe(true);
+      expect(mockRes._json.data.message).toBe('Password changed successfully');
+    });
+  });
+
+  describe('forgotPassword', () => {
+    it('should request password reset successfully', async () => {
+      mockReq.body = { email: 'test@example.com' };
+
+      (authService.requestPasswordReset as any).mockResolvedValue(undefined);
+
+      forgotPassword(mockReq as any, mockRes as any, mockNext);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(mockNext).not.toHaveBeenCalled();
+      expect(authService.requestPasswordReset).toHaveBeenCalledWith(
+        'test@example.com',
+        expect.any(Object)
+      );
+      expect(mockRes._json.success).toBe(true);
+    });
+  });
+
+  describe('validateResetToken', () => {
+    it('should throw BadRequestError without token', async () => {
+      mockReq.params = {};
+
+      validateResetToken(mockReq as any, mockRes as any, mockNext);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(mockNext).toHaveBeenCalledWith(expect.any(BadRequestError));
+    });
+
+    it('should validate reset token successfully', async () => {
+      mockReq.params = { token: 'valid-reset-token' };
+
+      (authService.validateResetToken as any).mockResolvedValue({ valid: true });
+
+      validateResetToken(mockReq as any, mockRes as any, mockNext);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(mockNext).not.toHaveBeenCalled();
+      expect(authService.validateResetToken).toHaveBeenCalledWith('valid-reset-token');
+      expect(mockRes._json.success).toBe(true);
+    });
+  });
+
+  describe('resetPassword', () => {
+    it('should reset password successfully', async () => {
+      mockReq.body = { token: 'reset-token', newPassword: 'new-Password1' };
+
+      (authService.resetPassword as any).mockResolvedValue(undefined);
+
+      resetPassword(mockReq as any, mockRes as any, mockNext);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(mockNext).not.toHaveBeenCalled();
+      expect(authService.resetPassword).toHaveBeenCalledWith(
+        'reset-token',
+        'new-Password1',
+        expect.any(Object)
+      );
+      expect(mockRes._json.success).toBe(true);
     });
   });
 });

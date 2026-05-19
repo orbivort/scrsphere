@@ -71,6 +71,7 @@ vi.mock('../../../utils/logger', () => ({
 }));
 
 import prisma from '../../../utils/prisma';
+import { WorkflowLockService } from '../../../services/workflow-lock.service';
 
 describe('WorkflowService', () => {
   let workflowService: WorkflowService;
@@ -124,6 +125,74 @@ describe('WorkflowService', () => {
 
     it('should return null for unknown entity type', async () => {
       const result = await workflowService.getWorkflowByEntityType('UnknownType', 'user-1');
+      expect(result).toBeNull();
+    });
+
+    it('should return in-progress initialization promise when initialization already in progress', async () => {
+      const mockWorkflow = {
+        id: 'workflow-1',
+        entityType: 'ProductGoal',
+        name: 'Product Goal Workflow',
+        defaultStatus: 'NEW',
+        states: [{ id: 'state-1', name: 'NEW', displayName: 'New', orderIndex: 1 }],
+        transitions: [],
+      };
+
+      (workflowService as any).initializationLocks.set(
+        'productgoal',
+        Promise.resolve(mockWorkflow)
+      );
+
+      const result = await workflowService.getWorkflowByEntityType('ProductGoal', 'user-1');
+      expect(result).toBe(mockWorkflow);
+      expect(prisma.workflow.findUnique).not.toHaveBeenCalled();
+    });
+
+    it('should handle double-check pattern when workflow created by another instance', async () => {
+      const mockWorkflow = {
+        id: 'workflow-1',
+        entityType: 'ProductGoal',
+        name: 'Product Goal Workflow',
+        defaultStatus: 'NEW',
+        states: [{ id: 'state-1', name: 'NEW', displayName: 'New', orderIndex: 1 }],
+        transitions: [],
+      };
+
+      (prisma.workflow.findUnique as any)
+        .mockResolvedValueOnce(null)
+        .mockResolvedValueOnce(mockWorkflow);
+
+      const result = await workflowService.getWorkflowByEntityType('ProductGoal', 'user-1');
+      expect(result).toBeDefined();
+      expect(result!.entityType).toBe('ProductGoal');
+    });
+
+    it('should handle P2002 error and recover by fetching existing workflow', async () => {
+      const mockWorkflow = {
+        id: 'workflow-1',
+        entityType: 'ProductGoal',
+        name: 'Product Goal Workflow',
+        defaultStatus: 'NEW',
+        states: [{ id: 'state-1', name: 'NEW', displayName: 'New', orderIndex: 1 }],
+        transitions: [],
+      };
+
+      (WorkflowLockService.withLock as any).mockRejectedValueOnce({ code: 'P2002' });
+      (prisma.workflow.findUnique as any)
+        .mockResolvedValueOnce(null)
+        .mockResolvedValueOnce(mockWorkflow);
+
+      const result = await workflowService.getWorkflowByEntityType('ProductGoal', 'user-1');
+      expect(result).toBeDefined();
+      expect(result!.entityType).toBe('ProductGoal');
+    });
+
+    it('should return null when no userId provided and workflow needs creation', async () => {
+      (prisma.workflow.findUnique as any).mockResolvedValue(null);
+      vi.spyOn(workflowService as any, 'delay').mockResolvedValue(undefined);
+
+      const result = await workflowService.getWorkflowByEntityType('ProductGoal');
+
       expect(result).toBeNull();
     });
   });
@@ -221,6 +290,12 @@ describe('WorkflowService', () => {
       (prisma.workflow.findUnique as any).mockResolvedValue(mockWorkflow);
 
       const result = await workflowService.getStateByName('ProductGoal', 'NONEXISTENT');
+
+      expect(result).toBeNull();
+    });
+
+    it('should return null when workflow not found for entity type', async () => {
+      const result = await workflowService.getStateByName('UnknownType', 'NEW');
 
       expect(result).toBeNull();
     });
@@ -421,6 +496,115 @@ describe('WorkflowService', () => {
 
       expect(result.isValid).toBe(false);
     });
+
+    it('should allow transition when no role or user restrictions exist', async () => {
+      const mockWorkflow = {
+        id: 'workflow-1',
+        entityType: 'ProductGoal',
+        name: 'Product Goal Workflow',
+        defaultStatus: 'NEW',
+        states: [
+          { id: 'state-1', name: 'NEW', displayName: 'New', orderIndex: 1 },
+          { id: 'state-2', name: 'ACTIVE', displayName: 'Active', orderIndex: 2 },
+        ],
+        transitions: [
+          {
+            id: 'trans-1',
+            fromStateId: 'state-1',
+            toStateId: 'state-2',
+            isActive: true,
+            allowedRoles: [],
+            allowedUserIds: [],
+          },
+        ],
+      };
+
+      (prisma.workflow.findUnique as any).mockResolvedValue(mockWorkflow);
+
+      const result = await workflowService.validateTransition(
+        'ProductGoal',
+        'NEW',
+        'ACTIVE',
+        'user-1',
+        []
+      );
+
+      expect(result.isValid).toBe(true);
+      expect(result.allowed).toBe(true);
+    });
+
+    it('should reject transition when user not in allowed list', async () => {
+      const mockWorkflow = {
+        id: 'workflow-1',
+        entityType: 'ProductGoal',
+        name: 'Product Goal Workflow',
+        defaultStatus: 'NEW',
+        states: [
+          { id: 'state-1', name: 'NEW', displayName: 'New', orderIndex: 1 },
+          { id: 'state-2', name: 'ACTIVE', displayName: 'Active', orderIndex: 2 },
+        ],
+        transitions: [
+          {
+            id: 'trans-1',
+            fromStateId: 'state-1',
+            toStateId: 'state-2',
+            isActive: true,
+            allowedRoles: [],
+            allowedUserIds: ['other-user'],
+          },
+        ],
+      };
+
+      (prisma.workflow.findUnique as any).mockResolvedValue(mockWorkflow);
+
+      const result = await workflowService.validateTransition(
+        'ProductGoal',
+        'NEW',
+        'ACTIVE',
+        'user-1',
+        []
+      );
+
+      expect(result.isValid).toBe(true);
+      expect(result.allowed).toBe(false);
+      expect(result.reason).toContain('do not have permission');
+    });
+
+    it('should allow transition when user is in allowed list', async () => {
+      const mockWorkflow = {
+        id: 'workflow-1',
+        entityType: 'ProductGoal',
+        name: 'Product Goal Workflow',
+        defaultStatus: 'NEW',
+        states: [
+          { id: 'state-1', name: 'NEW', displayName: 'New', orderIndex: 1 },
+          { id: 'state-2', name: 'ACTIVE', displayName: 'Active', orderIndex: 2 },
+        ],
+        transitions: [
+          {
+            id: 'trans-1',
+            fromStateId: 'state-1',
+            toStateId: 'state-2',
+            isActive: true,
+            allowedRoles: [],
+            allowedUserIds: ['user-1'],
+          },
+        ],
+      };
+
+      (prisma.workflow.findUnique as any).mockResolvedValue(mockWorkflow);
+
+      const result = await workflowService.validateTransition(
+        'ProductGoal',
+        'NEW',
+        'ACTIVE',
+        'user-1',
+        []
+      );
+
+      expect(result.isValid).toBe(true);
+      expect(result.allowed).toBe(true);
+    });
   });
 
   describe('executeStatusChange', () => {
@@ -533,6 +717,30 @@ describe('WorkflowService', () => {
         })
       ).rejects.toThrow(ForbiddenError);
     });
+
+    it('should throw BadRequestError when target state does not exist', async () => {
+      const mockWorkflow = {
+        id: 'workflow-1',
+        entityType: 'ProductGoal',
+        name: 'Product Goal Workflow',
+        defaultStatus: 'NEW',
+        states: [{ id: 'state-1', name: 'NEW', displayName: 'New', orderIndex: 1 }],
+        transitions: [],
+      };
+
+      (prisma.workflow.findUnique as any).mockResolvedValue(mockWorkflow);
+
+      await expect(
+        workflowService.executeStatusChange({
+          entityType: 'ProductGoal',
+          entityId: 'goal-1',
+          fromStatus: 'NEW',
+          toStatus: 'NONEXISTENT',
+          userId: 'user-1',
+          userRoles: [],
+        })
+      ).rejects.toThrow(BadRequestError);
+    });
   });
 
   describe('getStatusChangeHistory', () => {
@@ -580,6 +788,28 @@ describe('WorkflowService', () => {
           skip: 5,
         })
       );
+    });
+
+    it('should return null changer for unknown user', async () => {
+      const mockHistory = [
+        {
+          id: 'history-1',
+          entityType: 'ProductGoal',
+          entityId: 'goal-1',
+          fromStateId: 'state-1',
+          toStateId: 'state-2',
+          changedBy: 'unknown-user',
+          createdAt: new Date(),
+        },
+      ];
+
+      (prisma.statusChangeHistory.findMany as any).mockResolvedValue(mockHistory);
+      (prisma.user.findMany as any).mockResolvedValue([]);
+
+      const result = await workflowService.getStatusChangeHistory('ProductGoal', 'goal-1');
+
+      expect(result).toHaveLength(1);
+      expect((result[0] as any).changer).toBeNull();
     });
   });
 
@@ -678,6 +908,75 @@ describe('WorkflowService', () => {
             isActive: false,
             allowedRoles: [],
             allowedUserIds: [],
+          },
+        ],
+      };
+
+      (prisma.workflow.findUnique as any).mockResolvedValue(mockWorkflow);
+
+      const result = await workflowService.getAllowedTransitions(
+        'ProductGoal',
+        'NEW',
+        'user-1',
+        []
+      );
+
+      expect(result).toHaveLength(0);
+    });
+
+    it('should allow transition with user-specific permissions', async () => {
+      const mockWorkflow = {
+        id: 'workflow-1',
+        entityType: 'ProductGoal',
+        name: 'Product Goal Workflow',
+        defaultStatus: 'NEW',
+        states: [
+          { id: 'state-1', name: 'NEW', displayName: 'New', orderIndex: 1 },
+          { id: 'state-2', name: 'ACTIVE', displayName: 'Active', orderIndex: 2 },
+        ],
+        transitions: [
+          {
+            id: 'trans-1',
+            fromStateId: 'state-1',
+            toStateId: 'state-2',
+            isActive: true,
+            allowedRoles: [],
+            allowedUserIds: ['user-1'],
+          },
+        ],
+      };
+
+      (prisma.workflow.findUnique as any).mockResolvedValue(mockWorkflow);
+
+      const result = await workflowService.getAllowedTransitions(
+        'ProductGoal',
+        'NEW',
+        'user-1',
+        []
+      );
+
+      expect(result).toHaveLength(1);
+      expect(result[0]!.id).toBe('trans-1');
+    });
+
+    it('should reject transition when user not in allowedUserIds', async () => {
+      const mockWorkflow = {
+        id: 'workflow-1',
+        entityType: 'ProductGoal',
+        name: 'Product Goal Workflow',
+        defaultStatus: 'NEW',
+        states: [
+          { id: 'state-1', name: 'NEW', displayName: 'New', orderIndex: 1 },
+          { id: 'state-2', name: 'ACTIVE', displayName: 'Active', orderIndex: 2 },
+        ],
+        transitions: [
+          {
+            id: 'trans-1',
+            fromStateId: 'state-1',
+            toStateId: 'state-2',
+            isActive: true,
+            allowedRoles: [],
+            allowedUserIds: ['other-user'],
           },
         ],
       };
@@ -936,6 +1235,17 @@ describe('WorkflowService', () => {
       expect(result.healthy).toBe(true);
       // But all workflows should report as not existing
       expect(Object.values(result.workflows).every((r) => !r.exists)).toBe(true);
+    });
+
+    it('should handle non-Error thrown during health check', async () => {
+      (prisma.workflow.findUnique as any).mockRejectedValueOnce('db crash').mockResolvedValue(null);
+
+      const result = await workflowService.healthCheck();
+
+      expect(result.healthy).toBe(false);
+      expect(result.workflows.ProductGoal).toBeDefined();
+      expect(result.workflows.ProductGoal!.exists).toBe(false);
+      expect(result.workflows.ProductGoal!.error).toBe('Unknown error');
     });
   });
 

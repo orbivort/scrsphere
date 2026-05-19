@@ -41,7 +41,7 @@ vi.mock('../../../utils/uuid', () => ({
 import { productBacklogService } from '../../../services/backlog.service';
 import prisma from '../../../utils/prisma';
 import { workflowService } from '../../../services/workflow.service';
-import { NotFoundError } from '../../../utils/errors';
+import { NotFoundError, BadRequestError, ForbiddenError } from '../../../utils/errors';
 
 describe('ProductBacklogService', () => {
   beforeEach(() => {
@@ -322,6 +322,104 @@ describe('ProductBacklogService', () => {
 
       expect(result.status).toBe('REFINED');
     });
+
+    it('should throw BadRequestError when updating DONE items', async () => {
+      const userId = 'test-user-id';
+      const pbiId = 'pbi-id';
+      const mockPBI = {
+        id: pbiId,
+        teamId: 'team-id',
+        title: 'Test PBI',
+        status: 'DONE',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      vi.mocked(prisma.productBacklogItem.findUnique).mockResolvedValue(mockPBI as any);
+
+      await expect(
+        productBacklogService.updatePBI(pbiId, userId, { title: 'Updated' })
+      ).rejects.toThrow(BadRequestError);
+    });
+
+    it('should throw ForbiddenError when user is not a team member on update', async () => {
+      const userId = 'test-user-id';
+      const pbiId = 'pbi-id';
+      const mockPBI = {
+        id: pbiId,
+        teamId: 'team-id',
+        title: 'Test PBI',
+        status: 'NEW',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      vi.mocked(prisma.productBacklogItem.findUnique).mockResolvedValue(mockPBI as any);
+      vi.mocked(prisma.teamMember.findFirst).mockResolvedValue(null as any);
+
+      await expect(
+        productBacklogService.updatePBI(pbiId, userId, { title: 'Updated' })
+      ).rejects.toThrow(ForbiddenError);
+    });
+
+    it('should throw BadRequestError when status transition is invalid on update', async () => {
+      const userId = 'test-user-id';
+      const pbiId = 'pbi-id';
+      const mockPBI = {
+        id: pbiId,
+        teamId: 'team-id',
+        title: 'Test PBI',
+        status: 'NEW',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      vi.mocked(prisma.productBacklogItem.findUnique).mockResolvedValue(mockPBI as any);
+      vi.mocked(prisma.teamMember.findFirst).mockResolvedValue({
+        id: 'member-id',
+        teamId: mockPBI.teamId,
+        userId,
+        role: 'DEVELOPER',
+      } as any);
+      vi.mocked(workflowService.validateTransition).mockResolvedValue({
+        isValid: false,
+        allowed: false,
+      } as any);
+
+      await expect(
+        productBacklogService.updatePBI(pbiId, userId, { status: 'READY' })
+      ).rejects.toThrow(BadRequestError);
+    });
+
+    it('should throw ForbiddenError when status transition is not allowed on update', async () => {
+      const userId = 'test-user-id';
+      const pbiId = 'pbi-id';
+      const mockPBI = {
+        id: pbiId,
+        teamId: 'team-id',
+        title: 'Test PBI',
+        status: 'NEW',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      vi.mocked(prisma.productBacklogItem.findUnique).mockResolvedValue(mockPBI as any);
+      vi.mocked(prisma.teamMember.findFirst).mockResolvedValue({
+        id: 'member-id',
+        teamId: mockPBI.teamId,
+        userId,
+        role: 'DEVELOPER',
+      } as any);
+      vi.mocked(workflowService.validateTransition).mockResolvedValue({
+        isValid: true,
+        allowed: false,
+        reason: 'Transition not allowed',
+      } as any);
+
+      await expect(
+        productBacklogService.updatePBI(pbiId, userId, { status: 'DONE' })
+      ).rejects.toThrow(ForbiddenError);
+    });
   });
 
   describe('updatePriority', () => {
@@ -378,6 +476,58 @@ describe('ProductBacklogService', () => {
       await expect(productBacklogService.deletePBI('non-existent-id', userId)).rejects.toThrow(
         NotFoundError
       );
+    });
+
+    it('should throw BadRequestError when deleting IN_PROGRESS PBI', async () => {
+      const userId = 'test-user-id';
+      const pbiId = 'pbi-id';
+      const mockPBI = {
+        id: pbiId,
+        teamId: 'team-id',
+        title: 'Test PBI',
+        status: 'IN_PROGRESS',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      vi.mocked(prisma.productBacklogItem.findUnique).mockResolvedValue(mockPBI as any);
+
+      await expect(productBacklogService.deletePBI(pbiId, userId)).rejects.toThrow(BadRequestError);
+    });
+
+    it('should throw BadRequestError when deleting DONE PBI', async () => {
+      const userId = 'test-user-id';
+      const pbiId = 'pbi-id';
+      const mockPBI = {
+        id: pbiId,
+        teamId: 'team-id',
+        title: 'Test PBI',
+        status: 'DONE',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      vi.mocked(prisma.productBacklogItem.findUnique).mockResolvedValue(mockPBI as any);
+
+      await expect(productBacklogService.deletePBI(pbiId, userId)).rejects.toThrow(BadRequestError);
+    });
+
+    it('should throw BadRequestError when deleting PBI in a sprint', async () => {
+      const userId = 'test-user-id';
+      const pbiId = 'pbi-id';
+      const mockPBI = {
+        id: pbiId,
+        teamId: 'team-id',
+        title: 'Test PBI',
+        status: 'NEW',
+        sprintId: 'active-sprint-id',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      vi.mocked(prisma.productBacklogItem.findUnique).mockResolvedValue(mockPBI as any);
+
+      await expect(productBacklogService.deletePBI(pbiId, userId)).rejects.toThrow(BadRequestError);
     });
   });
 });
