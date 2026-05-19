@@ -541,6 +541,8 @@ describe('ProductBacklogService', () => {
       { _rowNumber: 2, teamId, title: 'Item 2', description: 'Second item' },
     ];
 
+    let mockTx: { productBacklogItem: { create: any } };
+
     function createMockPBI(id: string, title: string) {
       return {
         id,
@@ -562,15 +564,15 @@ describe('ProductBacklogService', () => {
     }
 
     beforeEach(() => {
-      const mockTx = {
+      mockTx = {
         productBacklogItem: {
           create: vi.fn(),
         },
       };
 
       mockTx.productBacklogItem.create
-        .mockResolvedValueOnce(createMockPBI('test-pbi-uuid', 'Item 1') as any)
-        .mockResolvedValueOnce(createMockPBI('test-pbi-uuid', 'Item 2') as any);
+        .mockResolvedValueOnce(createMockPBI('pbi-uuid-1', 'Item 1') as any)
+        .mockResolvedValueOnce(createMockPBI('pbi-uuid-2', 'Item 2') as any);
 
       vi.mocked(prisma.$transaction).mockImplementation(async (cb: any) => cb(mockTx));
       vi.mocked(prisma.teamMember.findFirst).mockResolvedValue({
@@ -703,6 +705,29 @@ describe('ProductBacklogService', () => {
       expect(result.errors[1]!.message).toBe(
         'An unexpected error occurred while creating this item'
       );
+    });
+
+    it('should reject duplicate titles within the same batch', async () => {
+      const duplicateItems = [
+        { _rowNumber: 1, teamId, title: 'Same Title' },
+        { _rowNumber: 2, teamId, title: 'Same Title' },
+      ];
+
+      const mockTx = {
+        productBacklogItem: {
+          create: vi.fn().mockResolvedValue(createMockPBI('pbi-uuid-1', 'Same Title') as any),
+        },
+      };
+      vi.mocked(prisma.$transaction).mockImplementation(async (cb: any) => cb(mockTx));
+
+      const result = await productBacklogService.createPBIBulk(userId, duplicateItems);
+
+      expect(result.successful).toBe(1);
+      expect(result.failed).toBe(1);
+      expect(result.errors).toHaveLength(1);
+      expect(result.errors[0]!.row).toBe(2);
+      expect(result.errors[0]!.field).toBe('title');
+      expect(result.errors[0]!.message).toBe('Duplicate title within the bulk upload');
     });
   });
 });

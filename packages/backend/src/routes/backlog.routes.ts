@@ -76,7 +76,7 @@ const bulkCreateSchema = z
     })
   )
   .min(1, 'At least one item is required')
-  .max(100, 'Maximum 100 items per bulk request');
+  .max(500, 'Maximum 500 items per bulk request');
 
 /**
  * @route   GET /api/v1/product-backlog
@@ -96,6 +96,10 @@ router.post('/', validateBody(createPBISchema), backlogController.createPBI);
  * @route   POST /api/v1/product-backlog/bulk
  * @desc    Bulk create PBIs
  * @access  Private
+ * @note    This route must be placed before GET /:id to avoid
+ *          Express matching "bulk" as an :id parameter on GET requests.
+ *          Since POST vs GET are method-specific, this is safe,
+ *          but be aware of the ordering convention.
  */
 router.post('/bulk', validateBody(bulkCreateSchema), backlogController.createPBIBulk);
 

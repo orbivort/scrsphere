@@ -355,7 +355,35 @@ class ProductBacklogService {
       createdItems: [],
     };
 
+    // Cache team member lookup (same user/team for all items, avoids N+1)
+    const firstItem = items[0];
+    const teamMember = firstItem
+      ? await prisma.teamMember.findFirst({
+          where: { teamId: firstItem.teamId, userId },
+        })
+      : null;
+    const userRoles = teamMember ? [teamMember.role] : [];
+
+    // Check for duplicate titles within the batch
+    const seenTitles = new Set<string>();
+    const processedItems: Array<CreatePBIData & { _rowNumber?: number }> = [];
+
     for (const item of items) {
+      const normalizedTitle = item.title.toLowerCase().trim();
+      if (seenTitles.has(normalizedTitle)) {
+        result.failed++;
+        result.errors.push({
+          row: item._rowNumber ?? -1,
+          field: 'title',
+          message: 'Duplicate title within the bulk upload',
+        });
+      } else {
+        seenTitles.add(normalizedTitle);
+        processedItems.push(item);
+      }
+    }
+
+    for (const item of processedItems) {
       const { _rowNumber, ...createData } = item;
 
       try {
@@ -385,17 +413,13 @@ class ProductBacklogService {
 
         // Record workflow history outside the transaction to avoid coupling
         try {
-          const teamMember = await prisma.teamMember.findFirst({
-            where: { teamId: createData.teamId, userId },
-          });
-
           await workflowService.executeStatusChange({
             entityType: 'BacklogItem',
             entityId: pbi.id,
             fromStatus: null,
             toStatus: pbi.status,
             userId,
-            userRoles: teamMember ? [teamMember.role] : [],
+            userRoles,
             changeReason: 'Initial backlog item creation (bulk)',
             metadata: {
               teamId: createData.teamId,

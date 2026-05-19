@@ -273,7 +273,11 @@ describe('ProductBacklogService', () => {
         goalId
       );
 
-      expect(mockApi.post).toHaveBeenCalledWith('/product-backlog/bulk', expect.any(Array));
+      expect(mockApi.post).toHaveBeenCalledWith(
+        '/product-backlog/bulk',
+        expect.any(Array),
+        expect.any(Object)
+      );
       expect(result.success).toBe(true);
       expect(result.data?.successful).toBe(2);
       expect(result.data?.failed).toBe(0);
@@ -295,7 +299,11 @@ describe('ProductBacklogService', () => {
 
       await productBacklogService.bulkCreateProductBacklogItems(items, teamId, goalId);
 
-      expect(mockApi.post).toHaveBeenCalledWith('/product-backlog/bulk', expect.any(Array));
+      expect(mockApi.post).toHaveBeenCalledWith(
+        '/product-backlog/bulk',
+        expect.any(Array),
+        expect.any(Object)
+      );
     });
 
     it('should map items with teamId and goalId in request body', async () => {
@@ -324,20 +332,24 @@ describe('ProductBacklogService', () => {
 
       await productBacklogService.bulkCreateProductBacklogItems(items, teamId, goalId);
 
-      expect(mockApi.post).toHaveBeenCalledWith('/product-backlog/bulk', [
-        {
-          teamId,
-          goalId,
-          title: 'Feature A',
-          description: 'Desc A',
-          storyPoints: 3,
-          businessValue: 8,
-          priority: MoSCoWPriority.SHOULD_HAVE,
-          labels: ['backend'],
-          acceptanceCriteria: 'AC for A',
-          _rowNumber: 1,
-        },
-      ]);
+      expect(mockApi.post).toHaveBeenCalledWith(
+        '/product-backlog/bulk',
+        [
+          {
+            teamId,
+            goalId,
+            title: 'Feature A',
+            description: 'Desc A',
+            storyPoints: 3,
+            businessValue: 8,
+            priority: MoSCoWPriority.SHOULD_HAVE,
+            labels: ['backend'],
+            acceptanceCriteria: 'AC for A',
+            _rowNumber: 1,
+          },
+        ],
+        expect.any(Object)
+      );
     });
 
     it('should handle API error response', async () => {
@@ -359,7 +371,11 @@ describe('ProductBacklogService', () => {
         goalId
       );
 
-      expect(mockApi.post).toHaveBeenCalledWith('/product-backlog/bulk', expect.any(Array));
+      expect(mockApi.post).toHaveBeenCalledWith(
+        '/product-backlog/bulk',
+        expect.any(Array),
+        expect.any(Object)
+      );
       expect(result.success).toBe(false);
       expect(result.error?.code).toBe('VALIDATION_ERROR');
     });

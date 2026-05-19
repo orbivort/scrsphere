@@ -56,7 +56,8 @@ class ProductBacklogService {
   async bulkCreateProductBacklogItems(
     items: BulkUploadItem[],
     teamId: string,
-    goalId: string
+    goalId: string,
+    signal?: AbortSignal
   ): Promise<ApiResponse<BulkCreateResponseData>> {
     const payload = items.map((item) => ({
       teamId,
@@ -70,7 +71,7 @@ class ProductBacklogService {
       acceptanceCriteria: item.acceptanceCriteria,
       _rowNumber: item._rowNumber,
     }));
-    const { data } = await this.api.post('/product-backlog/bulk', payload);
+    const { data } = await this.api.post('/product-backlog/bulk', payload, { signal });
     return data;
   }
 }

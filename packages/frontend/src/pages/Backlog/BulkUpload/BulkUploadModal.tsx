@@ -1,5 +1,6 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import type { AxiosError } from 'axios';
 
 import { apiService } from '../../../services';
 import { logger } from '../../../utils/logger';
@@ -47,7 +48,9 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
   const [uploadProgress, setUploadProgress] = useState({ current: 0, total: 0, currentItem: '' });
   const [uploadResult, setUploadResult] = useState<UploadResult | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
   const queryClient = useQueryClient();
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const resetState = useCallback(() => {
     setStep('upload');
@@ -57,15 +60,24 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
     setUploadProgress({ current: 0, total: 0, currentItem: '' });
     setUploadResult(null);
     setIsUploading(false);
+    setIsCancelling(false);
+    abortControllerRef.current = null;
   }, []);
 
   const handleClose = useCallback(() => {
-    if (isUploading) {
+    if (isUploading && !isCancelling) {
       return;
     }
     resetState();
     onClose();
-  }, [isUploading, resetState, onClose]);
+  }, [isUploading, isCancelling, resetState, onClose]);
+
+  const handleCancelUpload = useCallback(() => {
+    setIsCancelling(true);
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+  }, []);
 
   const handleFileSelect = useCallback(
     async (file: File) => {
@@ -117,15 +129,23 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
 
     setStep('progress');
     setIsUploading(true);
+    setIsCancelling(false);
     setUploadProgress({ current: 0, total: validItems.length, currentItem: '' });
+
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
 
     let result: UploadResult;
 
     try {
-      // Show brief processing state while the bulk request is in flight
       setUploadProgress({ current: 0, total: validItems.length, currentItem: 'Processing...' });
 
-      const response = await apiService.bulkCreateProductBacklogItems(validItems, teamId, goalId);
+      const response = await apiService.bulkCreateProductBacklogItems(
+        validItems,
+        teamId,
+        goalId,
+        controller.signal
+      );
 
       if (response.success && response.data) {
         result = {
@@ -157,26 +177,53 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
         };
       }
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      result = {
-        total: validItems.length,
-        successful: 0,
-        failed: validItems.length,
-        duplicates: parsedItems.length - validItems.length,
-        errors: [
-          {
-            row: 0,
-            field: 'general',
-            message: errorMessage,
-          },
-        ],
-        createdItems: [],
-      };
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        result = {
+          total: validItems.length,
+          successful: 0,
+          failed: validItems.length,
+          duplicates: parsedItems.length - validItems.length,
+          errors: [
+            {
+              row: 0,
+              field: 'general',
+              message: 'Upload cancelled by user',
+            },
+          ],
+          createdItems: [],
+        };
+      } else {
+        // Extract validation error details from Axios error response
+        const axiosError = error as AxiosError<{
+          error?: { message?: string; details?: Array<{ field: string; message: string }> };
+        }>;
+        const apiError = axiosError.response?.data.error;
+        const errorMessage =
+          apiError?.details?.map((d) => d.message).join('; ') ??
+          apiError?.message ??
+          (error instanceof Error ? error.message : 'Unknown error');
+        result = {
+          total: validItems.length,
+          successful: 0,
+          failed: validItems.length,
+          duplicates: parsedItems.length - validItems.length,
+          errors: [
+            {
+              row: 0,
+              field: 'general',
+              message: errorMessage,
+            },
+          ],
+          createdItems: [],
+        };
+      }
     }
 
+    abortControllerRef.current = null;
     setUploadResult(result);
     setStep('summary');
     setIsUploading(false);
+    setIsCancelling(false);
 
     if (result.successful > 0) {
       void queryClient.invalidateQueries({ queryKey: queryKeys.productBacklog.all });
@@ -206,7 +253,7 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
           <button
             className={styles['modal-close']}
             onClick={handleClose}
-            disabled={isUploading}
+            disabled={isUploading && !isCancelling}
             aria-label="Close modal"
           >
             <XIcon width="16" height="16" />
@@ -250,6 +297,8 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
                 current={uploadProgress.current}
                 total={uploadProgress.total}
                 currentItem={uploadProgress.currentItem}
+                isCancelling={isCancelling}
+                onCancel={handleCancelUpload}
               />
             )}
 

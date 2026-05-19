@@ -391,7 +391,7 @@ class MockApiService {
       const item = items[i] as BulkUploadItem;
       const rowNumber = item._rowNumber;
 
-      // Validate title
+      // Validate title (mirrors backend Zod: min 1, max 200)
       if (!item.title || item.title.trim().length === 0) {
         errors.push({
           row: rowNumber,
@@ -399,6 +399,40 @@ class MockApiService {
           message: 'Title is required',
         });
         continue;
+      }
+
+      if (item.title.trim().length > 200) {
+        errors.push({
+          row: rowNumber,
+          field: 'title',
+          message: 'Title must be less than 200 characters',
+        });
+        continue;
+      }
+
+      // Validate story points range (mirrors backend Zod: int 1-100)
+      if (item.storyPoints !== undefined) {
+        if (item.storyPoints < 1 || item.storyPoints > 100) {
+          errors.push({
+            row: rowNumber,
+            field: 'storyPoints',
+            message: 'Story points must be between 1 and 100',
+          });
+          continue;
+        }
+      }
+
+      // Validate priority (mirrors backend Zod enum)
+      if (item.priority) {
+        const validPriorities = ['MUST_HAVE', 'SHOULD_HAVE', 'COULD_HAVE', 'WONT_HAVE'];
+        if (!validPriorities.includes(item.priority)) {
+          errors.push({
+            row: rowNumber,
+            field: 'priority',
+            message: 'Invalid priority value',
+          });
+          continue;
+        }
       }
 
       const newItem: ProductBacklogItem = {
