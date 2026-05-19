@@ -30,36 +30,21 @@ describe('Services Index', () => {
   describe('with mock API', () => {
     beforeEach(() => {
       vi.resetModules();
-      vi.stubGlobal('import.meta', {
-        env: {
-          VITE_USE_MOCK_API: undefined,
-        },
-      });
     });
 
     afterEach(() => {
-      vi.unstubAllGlobals();
+      vi.unstubAllEnvs();
       vi.clearAllMocks();
     });
 
     it('should use mock API when VITE_USE_MOCK_API is not false', async () => {
-      vi.stubGlobal('import.meta', {
-        env: {
-          VITE_USE_MOCK_API: undefined,
-        },
-      });
-
       const { apiService } = await import('./index');
 
       expect(apiService).toBeDefined();
     });
 
     it('should use mock API when VITE_USE_MOCK_API is true', async () => {
-      vi.stubGlobal('import.meta', {
-        env: {
-          VITE_USE_MOCK_API: 'true',
-        },
-      });
+      vi.stubEnv('VITE_USE_MOCK_API', 'true');
 
       const { apiService } = await import('./index');
 
@@ -78,15 +63,11 @@ describe('Services Index', () => {
   describe('with real API', () => {
     beforeEach(() => {
       vi.resetModules();
-      vi.stubGlobal('import.meta', {
-        env: {
-          VITE_USE_MOCK_API: 'false',
-        },
-      });
+      vi.stubEnv('VITE_USE_MOCK_API', 'false');
     });
 
     afterEach(() => {
-      vi.unstubAllGlobals();
+      vi.unstubAllEnvs();
       vi.clearAllMocks();
     });
 
@@ -97,13 +78,6 @@ describe('Services Index', () => {
     });
 
     it('should use real setAuthCallbacks when VITE_USE_MOCK_API is false', async () => {
-      vi.stubGlobal('import.meta', {
-        env: {
-          VITE_USE_MOCK_API: 'false',
-        },
-      });
-
-      vi.resetModules();
       const { setAuthCallbacks } = await import('./index');
 
       expect(setAuthCallbacks).toBe(realSetAuthCallbacks);
@@ -118,15 +92,11 @@ describe('Services Index', () => {
 
   describe('exports', () => {
     beforeEach(() => {
-      vi.stubGlobal('import.meta', {
-        env: {
-          VITE_USE_MOCK_API: 'false',
-        },
-      });
+      vi.stubEnv('VITE_USE_MOCK_API', 'false');
     });
 
     afterEach(() => {
-      vi.unstubAllGlobals();
+      vi.unstubAllEnvs();
       vi.clearAllMocks();
     });
 
