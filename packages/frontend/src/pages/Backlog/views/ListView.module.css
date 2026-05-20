@@ -61,7 +61,7 @@
 /* Virtualized Grid Layout */
 .virtualized-header {
   display: grid;
-  grid-template-columns: 80px 1fr 120px 120px 120px 100px 150px;
+  grid-template-columns: 80px 1fr 120px 120px 120px 100px 200px;
   background: linear-gradient(135deg, var(--color-gray-50) 0%, var(--color-gray-100) 100%);
   border-bottom: var(--border-width-2) solid var(--color-border-default);
 }
@@ -83,9 +83,8 @@
 
 .virtualized-row {
   display: grid;
-  grid-template-columns: 80px 1fr 120px 120px 120px 100px 150px;
+  grid-template-columns: 80px 1fr 120px 120px 120px 100px 200px;
   width: 100%;
-  padding: var(--space-4) var(--space-5);
   border-bottom: var(--border-width-1) solid var(--color-gray-100);
   background: var(--color-background-card);
   cursor: pointer;
@@ -100,6 +99,7 @@
 .virtualized-cell {
   display: flex;
   align-items: center;
+  padding: var(--space-4) var(--space-5);
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
   overflow: hidden;
@@ -110,6 +110,7 @@
 .virtualized-cell.title-cell {
   font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);
+  max-width: 350px;
 }
 
 .status-badge {
@@ -540,14 +541,14 @@
 @media (width <= 1200px) {
   .virtualized-header,
   .virtualized-row {
-    grid-template-columns: 70px 1fr 110px 110px 100px 90px 130px;
+    grid-template-columns: 70px 1fr 110px 110px 100px 90px 180px;
   }
 }
 
 @media (width <= 900px) {
   .virtualized-header,
   .virtualized-row {
-    grid-template-columns: 60px 1fr 100px 100px 90px 80px 120px;
+    grid-template-columns: 60px 1fr 100px 100px 90px 80px 160px;
   }
 
   .virtualized-header-cell,
