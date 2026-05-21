@@ -104,6 +104,7 @@ export const useVirtualScroll = <T>(
   );
 
   const totalSize = virtualizer.getTotalSize();
+  const virtualItemsList = virtualizer.getVirtualItems();
 
   const virtualItems = useMemo(() => {
     if (!enabled) {
@@ -116,7 +117,6 @@ export const useVirtualScroll = <T>(
         key: String(index),
       }));
     }
-    const virtualItemsList = virtualizer.getVirtualItems();
     if (virtualItemsList.length === 0 && items.length > 0) {
       const limit = Math.min(items.length, INITIAL_RENDER_LIMIT + overscanCount);
       const fallbackItems = [];
@@ -146,7 +146,7 @@ export const useVirtualScroll = <T>(
         key: String(virtualItem.key),
       };
     });
-  }, [virtualizer.getVirtualItems(), items, enabled, estimateSize, overscanCount]);
+  }, [virtualItemsList, items, enabled, estimateSize, overscanCount]);
 
   return useMemo(
     () => ({

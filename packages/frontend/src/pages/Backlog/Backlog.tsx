@@ -25,7 +25,7 @@ import { PendingAdjustments } from './PendingAdjustments';
 import { PendingFeedback } from './PendingFeedback';
 import { PendingRetroActionItems } from './PendingRetroActionItems';
 import { BulkUploadModal } from './BulkUpload';
-import { BacklogHeader, BacklogFilterBar, ActiveGoalBanner } from './components';
+import { BacklogHeader, BacklogFilterBar, ActiveGoalBanner, LoadMoreButton } from './components';
 import { BoardView } from './views/BoardView';
 import { ListView } from './views/ListView';
 import {
@@ -74,10 +74,18 @@ const BacklogContent: React.FC = () => {
   const { currentTeam } = useTeamStore();
   const teamId = currentTeam?.id;
 
-  const { backlogData, activeGoal, filteredItems, isLoading, isLoadingGoals } = useBacklogData(
-    teamId,
-    filters
-  );
+  const {
+    backlogData,
+    activeGoal,
+    filteredItems,
+    isLoading,
+    isLoadingGoals,
+    totalCount,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+    isAutoLoading,
+  } = useBacklogData(teamId, filters);
 
   const { dorItems, dodItems } = useDefinitionOfReadyDone(teamId);
 
@@ -426,7 +434,7 @@ const BacklogContent: React.FC = () => {
       <ToastContainer toasts={toasts} onClose={removeToast} />
       <div className={styles['product-backlog']} data-testid="product-backlog">
         <BacklogHeader
-          itemCount={filteredItems.length}
+          itemCount={totalCount}
           viewMode={viewMode}
           onViewModeChange={setViewMode}
           onNewItem={handleOpenCreateModal}
@@ -504,6 +512,23 @@ const BacklogContent: React.FC = () => {
 
         {viewMode === 'list' && (
           <ListView items={filteredItems} onItemClick={handleOpenDetailModal} />
+        )}
+
+        {isAutoLoading && (
+          <div className={styles['auto-loading-indicator']}>
+            <span className={styles['loading-spinner']} aria-hidden="true" />
+            <span>Loading all items for search...</span>
+          </div>
+        )}
+
+        {!filters.search && (
+          <LoadMoreButton
+            onLoadMore={fetchNextPage}
+            isLoading={isFetchingNextPage}
+            hasMore={hasNextPage}
+            loadedCount={backlogData?.data.length ?? 0}
+            totalCount={totalCount}
+          />
         )}
 
         <CreateItemModal

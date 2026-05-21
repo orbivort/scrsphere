@@ -6,3 +6,4 @@ export { StatusChangeHistoryTimeline } from './StatusChangeHistoryTimeline';
 export { BacklogHeader } from './BacklogHeader';
 export { BacklogFilterBar } from './BacklogFilterBar';
 export { ActiveGoalBanner } from './ActiveGoalBanner';
+export { LoadMoreButton } from './LoadMoreButton';
