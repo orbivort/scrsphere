@@ -254,9 +254,10 @@ describe('ListView', () => {
 
       const { container } = render(<ListView items={manyItems} onItemClick={mockOnItemClick} />);
 
-      // Should have virtualized styles (table body container with overflow auto)
-      const tableBodyContainer = container.querySelector('[style*="overflow: auto"]');
-      expect(tableBodyContainer).toBeInTheDocument();
+      // Should have virtualized CSS class on the list-view container
+      const listViewElement = container.querySelector('[class*="list-view"]');
+      expect(listViewElement).toBeInTheDocument();
+      expect(listViewElement!.className).toContain('virtualized');
     });
 
     it('should not apply virtualized styles when items are below threshold', () => {
@@ -273,9 +274,10 @@ describe('ListView', () => {
 
       const { container } = render(<ListView items={fewItems} onItemClick={mockOnItemClick} />);
 
-      // Should not have overflow auto style (virtualization disabled)
-      const tableBodyContainer = container.querySelector('[style*="overflow: auto"]');
-      expect(tableBodyContainer).not.toBeInTheDocument();
+      // Should not have virtualized CSS class
+      const listViewElement = container.querySelector('[class*="list-view"]');
+      expect(listViewElement).toBeInTheDocument();
+      expect(listViewElement!.className).not.toContain('virtualized');
     });
 
     it('should handle empty list with virtual scrolling enabled', () => {
