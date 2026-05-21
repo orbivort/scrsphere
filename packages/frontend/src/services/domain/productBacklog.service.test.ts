@@ -1,4 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { MoSCoWPriority } from '../../types';
+import type { BulkUploadItem } from '../../pages/Backlog/BulkUpload/bulkUploadUtils';
 import { productBacklogService } from './productBacklog.service';
 import { coreApiService } from '../core/api.core';
 
@@ -225,6 +227,157 @@ describe('ProductBacklogService', () => {
 
       expect(mockApi.delete).toHaveBeenCalledWith('/product-backlog/999');
       expect(result.success).toBe(false);
+    });
+  });
+
+  describe('bulkCreateProductBacklogItems', () => {
+    it('should successfully bulk create backlog items', async () => {
+      const items: BulkUploadItem[] = [
+        {
+          title: 'Feature A',
+          description: 'Implement feature A',
+          storyPoints: 5,
+          businessValue: 10,
+          priority: MoSCoWPriority.MUST_HAVE,
+          labels: ['frontend'],
+          acceptanceCriteria: 'Must work',
+          _rowNumber: 1,
+        },
+        {
+          title: 'Feature B',
+          _rowNumber: 2,
+        },
+      ];
+      const teamId = 'team-1';
+      const goalId = 'goal-1';
+
+      const mockResponse = {
+        data: {
+          success: true,
+          data: {
+            successful: 2,
+            failed: 0,
+            errors: [],
+            createdItems: [
+              { id: 'pbi-1', title: 'Feature A', teamId, goalId },
+              { id: 'pbi-2', title: 'Feature B', teamId, goalId },
+            ],
+          },
+        },
+      };
+      vi.mocked(mockApi.post).mockResolvedValue(mockResponse);
+
+      const result = await productBacklogService.bulkCreateProductBacklogItems(
+        items,
+        teamId,
+        goalId
+      );
+
+      expect(mockApi.post).toHaveBeenCalledWith(
+        '/product-backlog/bulk',
+        expect.any(Array),
+        expect.any(Object)
+      );
+      expect(result.success).toBe(true);
+      expect(result.data?.successful).toBe(2);
+      expect(result.data?.failed).toBe(0);
+      expect(result.data?.createdItems).toHaveLength(2);
+    });
+
+    it('should POST to /product-backlog/bulk endpoint', async () => {
+      const items: BulkUploadItem[] = [{ title: 'Item 1', _rowNumber: 1 }];
+      const teamId = 'team-1';
+      const goalId = 'goal-1';
+
+      const mockResponse = {
+        data: {
+          success: true,
+          data: { successful: 1, failed: 0, errors: [], createdItems: [] },
+        },
+      };
+      vi.mocked(mockApi.post).mockResolvedValue(mockResponse);
+
+      await productBacklogService.bulkCreateProductBacklogItems(items, teamId, goalId);
+
+      expect(mockApi.post).toHaveBeenCalledWith(
+        '/product-backlog/bulk',
+        expect.any(Array),
+        expect.any(Object)
+      );
+    });
+
+    it('should map items with teamId and goalId in request body', async () => {
+      const items: BulkUploadItem[] = [
+        {
+          title: 'Feature A',
+          description: 'Desc A',
+          storyPoints: 3,
+          businessValue: 8,
+          priority: MoSCoWPriority.SHOULD_HAVE,
+          labels: ['backend'],
+          acceptanceCriteria: 'AC for A',
+          _rowNumber: 1,
+        },
+      ];
+      const teamId = 'team-1';
+      const goalId = 'goal-1';
+
+      const mockResponse = {
+        data: {
+          success: true,
+          data: { successful: 1, failed: 0, errors: [], createdItems: [] },
+        },
+      };
+      vi.mocked(mockApi.post).mockResolvedValue(mockResponse);
+
+      await productBacklogService.bulkCreateProductBacklogItems(items, teamId, goalId);
+
+      expect(mockApi.post).toHaveBeenCalledWith(
+        '/product-backlog/bulk',
+        [
+          {
+            teamId,
+            goalId,
+            title: 'Feature A',
+            description: 'Desc A',
+            storyPoints: 3,
+            businessValue: 8,
+            priority: MoSCoWPriority.SHOULD_HAVE,
+            labels: ['backend'],
+            acceptanceCriteria: 'AC for A',
+            _rowNumber: 1,
+          },
+        ],
+        expect.any(Object)
+      );
+    });
+
+    it('should handle API error response', async () => {
+      const items: BulkUploadItem[] = [{ title: 'Item 1', _rowNumber: 1 }];
+      const teamId = 'team-1';
+      const goalId = 'goal-1';
+
+      const mockResponse = {
+        data: {
+          success: false,
+          error: { code: 'VALIDATION_ERROR', message: 'Invalid data' },
+        },
+      };
+      vi.mocked(mockApi.post).mockResolvedValue(mockResponse);
+
+      const result = await productBacklogService.bulkCreateProductBacklogItems(
+        items,
+        teamId,
+        goalId
+      );
+
+      expect(mockApi.post).toHaveBeenCalledWith(
+        '/product-backlog/bulk',
+        expect.any(Array),
+        expect.any(Object)
+      );
+      expect(result.success).toBe(false);
+      expect(result.error?.code).toBe('VALIDATION_ERROR');
     });
   });
 });

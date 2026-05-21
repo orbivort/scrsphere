@@ -59,7 +59,10 @@ import {
   type ConsentRecord,
   type WorkflowState,
   type WorkflowTransition,
+  type BulkCreateResponseData,
+  type BulkCreateError,
 } from '../types';
+import type { BulkUploadItem } from '../pages/Backlog/BulkUpload/bulkUploadUtils';
 
 import { mockSuccess, mockError, mockDelay } from './mockResponseUtils';
 import {
@@ -371,6 +374,97 @@ class MockApiService {
     mockProductBacklogItems.push(newItem);
 
     return { success: true, data: newItem };
+  }
+
+  async bulkCreateProductBacklogItems(
+    items: BulkUploadItem[],
+    teamId: string,
+    goalId: string
+  ): Promise<ApiResponse<BulkCreateResponseData>> {
+    await delay(500);
+
+    const createdItems: ProductBacklogItem[] = [];
+    const errors: BulkCreateError[] = [];
+    const timestamp = Date.now();
+
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i] as BulkUploadItem;
+      const rowNumber = item._rowNumber;
+
+      // Validate title (mirrors backend Zod: min 1, max 200)
+      if (!item.title || item.title.trim().length === 0) {
+        errors.push({
+          row: rowNumber,
+          field: 'title',
+          message: 'Title is required',
+        });
+        continue;
+      }
+
+      if (item.title.trim().length > 200) {
+        errors.push({
+          row: rowNumber,
+          field: 'title',
+          message: 'Title must be less than 200 characters',
+        });
+        continue;
+      }
+
+      // Validate story points range (mirrors backend Zod: int 1-100)
+      if (item.storyPoints !== undefined) {
+        if (item.storyPoints < 1 || item.storyPoints > 100) {
+          errors.push({
+            row: rowNumber,
+            field: 'storyPoints',
+            message: 'Story points must be between 1 and 100',
+          });
+          continue;
+        }
+      }
+
+      // Validate priority (mirrors backend Zod enum)
+      if (item.priority) {
+        const validPriorities = ['MUST_HAVE', 'SHOULD_HAVE', 'COULD_HAVE', 'WONT_HAVE'];
+        if (!validPriorities.includes(item.priority)) {
+          errors.push({
+            row: rowNumber,
+            field: 'priority',
+            message: 'Invalid priority value',
+          });
+          continue;
+        }
+      }
+
+      const newItem: ProductBacklogItem = {
+        id: `pbi-bulk-${timestamp}-${i}`,
+        teamId,
+        title: item.title,
+        description: item.description,
+        priority: item.priority ?? MoSCoWPriority.COULD_HAVE,
+        storyPoints: item.storyPoints,
+        businessValue: item.businessValue,
+        status: ItemStatus.NEW,
+        labels: item.labels ?? [],
+        acceptanceCriteria: item.acceptanceCriteria,
+        goalId,
+        createdBy: getCurrentUser().id,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      mockProductBacklogItems.push(newItem);
+      createdItems.push(newItem);
+    }
+
+    return {
+      success: true,
+      data: {
+        successful: createdItems.length,
+        failed: errors.length,
+        errors,
+        createdItems,
+      },
+    };
   }
 
   async updateProductBacklogItem(

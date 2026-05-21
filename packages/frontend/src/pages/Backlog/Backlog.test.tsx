@@ -125,6 +125,7 @@ const setupApiMocks = (overrides = {}) => {
     getProductBacklog: vi.fn().mockResolvedValue({
       success: true,
       data: mockBacklogItems,
+      pagination: { page: 1, totalPages: 1, total: mockBacklogItems.length },
     }),
     getProductGoals: vi.fn().mockResolvedValue({
       success: true,
@@ -276,6 +277,7 @@ describe('ProductBacklog Component', () => {
           getProductBacklog: vi.fn().mockResolvedValue({
             success: true,
             data: [],
+            pagination: { page: 1, totalPages: 0, total: 0 },
           }),
         })
       );
@@ -299,7 +301,7 @@ describe('ProductBacklog Component', () => {
         expect(screen.getByText('Product Backlog')).toBeInTheDocument();
       });
 
-      expect(screen.getByText(/3 items/i)).toBeInTheDocument();
+      expect(screen.getByText(/4 items/i)).toBeInTheDocument();
     });
 
     it('should display active goal banner', async () => {
@@ -781,7 +783,7 @@ describe('ProductBacklog Component', () => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
       });
 
-      expect(screen.getByText(/3 items/i)).toBeInTheDocument();
+      expect(screen.getByText(/4 items/i)).toBeInTheDocument();
     });
   });
 
@@ -998,6 +1000,7 @@ describe('ProductBacklog Component', () => {
           getProductBacklog: vi.fn().mockResolvedValue({
             success: true,
             data: [mockItem],
+            pagination: { page: 1, totalPages: 1, total: 1 },
           }),
           getTasksByPbiId: vi.fn().mockRejectedValue(new Error('Network error')),
         })
@@ -1249,6 +1252,7 @@ describe('ProductBacklog Component', () => {
           getProductBacklog: vi.fn().mockResolvedValue({
             success: true,
             data: [mockItem],
+            pagination: { page: 1, totalPages: 1, total: 1 },
           }),
           getTasksByPbiId: vi.fn().mockImplementation(
             () =>
@@ -1569,7 +1573,7 @@ describe('ProductBacklog Component', () => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
       });
 
-      expect(screen.getByText(/3 items/i)).toBeInTheDocument();
+      expect(screen.getByText(/4 items/i)).toBeInTheDocument();
     });
   });
 

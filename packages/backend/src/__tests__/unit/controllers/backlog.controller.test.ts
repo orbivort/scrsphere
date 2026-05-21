@@ -7,6 +7,7 @@ import {
   updatePriority,
   deletePBI,
   reorderPBIs,
+  createPBIBulk,
 } from '../../../controllers/backlog.controller';
 import { productBacklogService } from '../../../services/backlog.service';
 import { BadRequestError } from '../../../utils/errors';
@@ -21,6 +22,9 @@ vi.mock('../../../services/backlog.service', () => ({
     updatePriority: vi.fn(),
     deletePBI: vi.fn(),
     reorderPBIs: vi.fn(),
+    createPBIBulk: vi.fn(),
+    validateGoalCapacity: vi.fn().mockResolvedValue(undefined),
+    validateBulkImportCapacity: vi.fn().mockResolvedValue(undefined),
   },
 }));
 
@@ -396,6 +400,73 @@ describe('Backlog Controller', () => {
       await new Promise((resolve) => setTimeout(resolve, 0));
 
       expect(mockNext).toHaveBeenCalledWith(error);
+    });
+  });
+
+  describe('createPBIBulk', () => {
+    it('should call service.createPBIBulk with items and userId', async () => {
+      mockReq.userId = 'user-123';
+      const mockItems = [
+        { teamId: 'team-123', title: 'Item 1' },
+        { teamId: 'team-123', title: 'Item 2' },
+      ];
+      mockReq.body = mockItems;
+      const mockResult = {
+        successful: 2,
+        failed: 0,
+        errors: [],
+        createdItems: [
+          { id: 'pbi-1', title: 'Item 1' },
+          { id: 'pbi-2', title: 'Item 2' },
+        ],
+      };
+
+      (productBacklogService.createPBIBulk as any).mockResolvedValue(mockResult);
+
+      createPBIBulk(mockReq as any, mockRes as any, mockNext);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(mockNext).not.toHaveBeenCalled();
+      expect(productBacklogService.createPBIBulk).toHaveBeenCalledWith('user-123', mockItems);
+      expect(mockRes._status).toBe(201);
+      expect(mockRes._json).toEqual({
+        success: true,
+        data: mockResult,
+      });
+    });
+
+    it('should throw BadRequestError if user is not authenticated', async () => {
+      mockReq.userId = undefined;
+      mockReq.body = [{ teamId: 'team-123', title: 'Item 1' }];
+
+      createPBIBulk(mockReq as any, mockRes as any, mockNext);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(mockNext).toHaveBeenCalledWith(expect.any(BadRequestError));
+      expect((mockNext.mock.calls[0] as any)[0].message).toBe('User not authenticated');
+    });
+
+    it('should return 201 with bulk result on success', async () => {
+      mockReq.userId = 'user-123';
+      const mockItems = [{ teamId: 'team-123', title: 'Item 1' }];
+      mockReq.body = mockItems;
+      const mockResult = {
+        successful: 1,
+        failed: 0,
+        errors: [],
+        createdItems: [{ id: 'pbi-1', title: 'Item 1' }],
+      };
+
+      (productBacklogService.createPBIBulk as any).mockResolvedValue(mockResult);
+
+      createPBIBulk(mockReq as any, mockRes as any, mockNext);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(mockRes._status).toBe(201);
+      expect(mockRes._json).toEqual({
+        success: true,
+        data: mockResult,
+      });
     });
   });
 });

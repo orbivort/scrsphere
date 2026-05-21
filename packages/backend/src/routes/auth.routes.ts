@@ -8,6 +8,7 @@ import {
   loginRateLimit,
   forgotPasswordRateLimit,
   resetPasswordRateLimit,
+  tokenRefreshRateLimit,
 } from '../middleware/rateLimit.middleware';
 import { generateCsrfTokenHandler } from '../middleware/csrf.middleware';
 import {
@@ -59,7 +60,8 @@ router.post('/logout-all', authenticate, authController.logoutAllSessions);
 
 // Token refresh uses cookie-based authentication - no body validation needed
 // The refresh token is extracted from httpOnly cookies in the controller
-router.post('/refresh', authRateLimit, authController.refreshToken);
+// Uses separate rate limiter with higher limit since this is an automatic operation
+router.post('/refresh', tokenRefreshRateLimit, authController.refreshToken);
 
 // Activity endpoint uses cookie-based auth, no body validation needed
 router.post('/activity', authController.updateActivity);

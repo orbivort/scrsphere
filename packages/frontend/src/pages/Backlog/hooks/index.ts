@@ -1,3 +1,7 @@
+export {
+  useBacklogCapacityValidation,
+  type CapacityValidationResult,
+} from './useBacklogCapacityValidation';
 export { useBacklogData } from './useBacklogData';
 export { useBacklogMutations } from './useBacklogMutations';
 export { useDefinitionOfReadyDone, type DefinitionItem } from './useDefinitionOfReadyDone';

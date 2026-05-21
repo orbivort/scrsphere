@@ -69,6 +69,15 @@ const querySchema = z.object({
   limit: z.string().regex(/^\d+$/).optional(),
 });
 
+const bulkCreateSchema = z
+  .array(
+    createPBISchema.extend({
+      _rowNumber: z.number().int().positive(),
+    })
+  )
+  .min(1, 'At least one item is required')
+  .max(200, 'Maximum 200 items per bulk request');
+
 /**
  * @route   GET /api/v1/product-backlog
  * @desc    Get product backlog for a team
@@ -82,6 +91,24 @@ router.get('/', validateQuery(querySchema), backlogController.getProductBacklog)
  * @access  Private
  */
 router.post('/', validateBody(createPBISchema), backlogController.createPBI);
+
+/**
+ * @route   POST /api/v1/product-backlog/bulk
+ * @desc    Bulk create PBIs
+ * @access  Private
+ * @note    This route must be placed before GET /:id to avoid
+ *          Express matching "bulk" as an :id parameter on GET requests.
+ *          Since POST vs GET are method-specific, this is safe,
+ *          but be aware of the ordering convention.
+ */
+router.post('/bulk', validateBody(bulkCreateSchema), backlogController.createPBIBulk);
+
+/**
+ * @route   GET /api/v1/product-backlog/count
+ * @desc    Get count of backlog items for a goal
+ * @access  Private
+ */
+router.get('/count', backlogController.getBacklogItemCount);
 
 /**
  * @route   GET /api/v1/product-backlog/:id

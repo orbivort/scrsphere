@@ -15,6 +15,17 @@ const DURATION_MAP: Record<SprintDuration, { days: number; label: string; offset
   FOUR_WEEKS: { days: 28, label: '4w', offset: 3 },
 };
 
+function adjustToPreviousFriday(date: Date): Date {
+  const adjusted = new Date(date);
+  const dayOfWeek = adjusted.getDay();
+  if (dayOfWeek === 6) {
+    adjusted.setDate(adjusted.getDate() - 1);
+  } else if (dayOfWeek === 0) {
+    adjusted.setDate(adjusted.getDate() - 2);
+  }
+  return adjusted;
+}
+
 export interface CreateSprintConfigData {
   teamId: string;
   duration: SprintDuration;
@@ -129,8 +140,9 @@ class SprintConfigurationService {
 
     while (currentDate.getFullYear() <= year) {
       const startDate = new Date(currentDate);
-      const endDate = new Date(currentDate);
-      endDate.setDate(endDate.getDate() + weekDuration - durationConfig.offset);
+      const rawEndDate = new Date(currentDate);
+      rawEndDate.setDate(rawEndDate.getDate() + weekDuration - durationConfig.offset);
+      const endDate = adjustToPreviousFriday(rawEndDate);
 
       if (startDate.getFullYear() > year) break;
 

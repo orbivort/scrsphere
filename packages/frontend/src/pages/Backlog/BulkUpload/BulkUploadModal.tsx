@@ -1,10 +1,12 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import type { AxiosError } from 'axios';
 
 import { apiService } from '../../../services';
 import { logger } from '../../../utils/logger';
 import { queryKeys } from '../../../hooks/queryKeys';
-import { ItemStatus, type ProductBacklogItem, type MoSCoWPriority } from '../../../types';
+import type { ProductBacklogItem } from '../../../types';
+import { useBacklogCapacityValidation } from '../hooks/useBacklogCapacityValidation';
 
 import styles from './BulkUploadModal.module.css';
 import { FileDropZone } from './FileDropZone';
@@ -46,10 +48,11 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
   const [parseError, setParseError] = useState<string | null>(null);
   const [uploadProgress, setUploadProgress] = useState({ current: 0, total: 0, currentItem: '' });
   const [uploadResult, setUploadResult] = useState<UploadResult | null>(null);
-  const [isCancelling, setIsCancelling] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const cancelRef = useRef(false);
+  const [isCancelling, setIsCancelling] = useState(false);
   const queryClient = useQueryClient();
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const { validateBulkImport } = useBacklogCapacityValidation();
 
   const resetState = useCallback(() => {
     setStep('upload');
@@ -58,9 +61,9 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
     setParseError(null);
     setUploadProgress({ current: 0, total: 0, currentItem: '' });
     setUploadResult(null);
-    setIsCancelling(false);
     setIsUploading(false);
-    cancelRef.current = false;
+    setIsCancelling(false);
+    abortControllerRef.current = null;
   }, []);
 
   const handleClose = useCallback(() => {
@@ -70,6 +73,13 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
     resetState();
     onClose();
   }, [isUploading, isCancelling, resetState, onClose]);
+
+  const handleCancelUpload = useCallback(() => {
+    setIsCancelling(true);
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+  }, []);
 
   const handleFileSelect = useCallback(
     async (file: File) => {
@@ -113,86 +123,131 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
     }
   }, [step]);
 
-  const handleCancelUpload = useCallback(() => {
-    setIsCancelling(true);
-    cancelRef.current = true;
-  }, []);
-
   const handleImport = useCallback(async () => {
     const validItems = getValidItems(parsedItems);
     if (validItems.length === 0) {
       return;
     }
 
+    // Validate capacity before importing
+    // All items inherit the goalId from the modal props
+    const itemsWithGoalId = validItems.map(() => ({ goalId }));
+    const capacityResult = await validateBulkImport(itemsWithGoalId);
+
+    if (!capacityResult.isValid) {
+      // Show capacity error in summary
+      const result: UploadResult = {
+        total: validItems.length,
+        successful: 0,
+        failed: validItems.length,
+        duplicates: parsedItems.length - validItems.length,
+        errors: [
+          {
+            row: 0,
+            field: 'capacity',
+            message: capacityResult.error ?? 'Capacity limit exceeded',
+          },
+        ],
+        createdItems: [],
+      };
+      setUploadResult(result);
+      setStep('summary');
+      return;
+    }
+
     setStep('progress');
     setIsUploading(true);
-    cancelRef.current = false;
+    setIsCancelling(false);
     setUploadProgress({ current: 0, total: validItems.length, currentItem: '' });
 
-    const result: UploadResult = {
-      total: validItems.length,
-      successful: 0,
-      failed: 0,
-      duplicates: 0,
-      errors: [],
-      createdItems: [],
-    };
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
 
-    for (let i = 0; i < validItems.length; i++) {
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      if (cancelRef.current) {
-        result.failed = validItems.length - i;
-        break;
-      }
+    let result: UploadResult;
 
-      const item = validItems[i];
-      if (!item) continue;
-      const itemTitle = item.title ?? 'Untitled';
-      setUploadProgress({
-        current: i + 1,
-        total: validItems.length,
-        currentItem: itemTitle,
-      });
+    try {
+      setUploadProgress({ current: 0, total: validItems.length, currentItem: 'Processing...' });
 
-      try {
-        const itemData: Partial<ProductBacklogItem> = {
-          teamId,
-          goalId,
-          title: itemTitle.trim(),
-          description: item.description?.trim() ?? undefined,
-          storyPoints: item.storyPoints,
-          businessValue: item.businessValue,
-          priority: item.priority ?? ('COULD_HAVE' as MoSCoWPriority),
-          labels: item.labels ?? [],
-          acceptanceCriteria: item.acceptanceCriteria?.trim() ?? undefined,
-          status: ItemStatus.NEW,
+      const response = await apiService.bulkCreateProductBacklogItems(
+        validItems,
+        teamId,
+        goalId,
+        controller.signal
+      );
+
+      if (response.success && response.data) {
+        result = {
+          total: validItems.length,
+          successful: response.data.successful,
+          failed: response.data.failed,
+          duplicates: parsedItems.length - validItems.length,
+          errors: response.data.errors.map((err) => ({
+            row: err.row,
+            field: err.field,
+            message: err.message,
+          })),
+          createdItems: response.data.createdItems,
         };
-
-        const response = await apiService.createProductBacklogItem(itemData);
-        if (response.success && response.data) {
-          result.successful++;
-          result.createdItems.push(response.data);
-        } else {
-          result.failed++;
-          result.errors.push({
-            row: item._rowNumber,
-            field: 'general',
-            message: response.error?.message ?? 'Failed to create item',
-          });
-        }
-
-        await new Promise((resolve) => setTimeout(resolve, 50));
-      } catch (error: unknown) {
-        result.failed++;
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        result.errors.push({
-          row: item._rowNumber,
-          field: 'general',
-          message: errorMessage,
-        });
+      } else {
+        result = {
+          total: validItems.length,
+          successful: 0,
+          failed: validItems.length,
+          duplicates: parsedItems.length - validItems.length,
+          errors: [
+            {
+              row: 0,
+              field: 'general',
+              message: response.error?.message ?? 'Bulk upload failed',
+            },
+          ],
+          createdItems: [],
+        };
+      }
+    } catch (error: unknown) {
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        result = {
+          total: validItems.length,
+          successful: 0,
+          failed: validItems.length,
+          duplicates: parsedItems.length - validItems.length,
+          errors: [
+            {
+              row: 0,
+              field: 'general',
+              message: 'Upload cancelled by user',
+            },
+          ],
+          createdItems: [],
+        };
+      } else {
+        // Extract validation error details from Axios error response
+        const axiosError = error as AxiosError<{
+          error?: { message?: string; details?: Array<{ field: string; message: string }> };
+        }>;
+        const apiError = axiosError.response?.data.error;
+        const errorMessage =
+          apiError?.details?.map((d) => d.message).join('; ') ??
+          apiError?.message ??
+          (error instanceof Error ? error.message : 'Unknown error');
+        result = {
+          total: validItems.length,
+          successful: 0,
+          failed: validItems.length,
+          duplicates: parsedItems.length - validItems.length,
+          errors: [
+            {
+              row: 0,
+              field: 'general',
+              message: errorMessage,
+            },
+          ],
+          createdItems: [],
+        };
       }
     }
 
+    abortControllerRef.current = null;
     setUploadResult(result);
     setStep('summary');
     setIsUploading(false);
@@ -203,7 +258,7 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
       void queryClient.invalidateQueries({ queryKey: queryKeys.productGoal.all });
       onUploadComplete?.();
     }
-  }, [parsedItems, teamId, goalId, queryClient, onUploadComplete]);
+  }, [parsedItems, teamId, goalId, queryClient, onUploadComplete, validateBulkImport]);
 
   const handleViewItems = useCallback(() => {
     resetState();

@@ -56,6 +56,30 @@ export const authRateLimit = rateLimit({
   skipSuccessfulRequests: false,
 });
 
+export const tokenRefreshRateLimit = rateLimit({
+  windowMs: parseInt(
+    process.env.TOKEN_REFRESH_RATE_LIMIT_WINDOW_MS ?? String(DEFAULT_RATE_LIMIT_WINDOW_MS),
+    10
+  ),
+  // Higher limit for token refresh - this is an automatic operation triggered by the frontend
+  // when the access token expires. Multiple tabs or rapid page refreshes can trigger
+  // multiple refresh attempts, so we need a higher limit than login/register.
+  max: parseInt(
+    process.env.TOKEN_REFRESH_RATE_LIMIT_MAX ?? (isTestEnvironment ? '1000000' : '50'),
+    10
+  ),
+  message: {
+    success: false,
+    error: {
+      code: 'RATE_LIMIT_EXCEEDED',
+      message: 'Too many token refresh attempts, please try again later.',
+    },
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+  skipSuccessfulRequests: true,
+});
+
 export const loginRateLimit = rateLimit({
   windowMs: parseInt(
     process.env.LOGIN_RATE_LIMIT_WINDOW_MS ?? String(DEFAULT_RATE_LIMIT_WINDOW_MS),

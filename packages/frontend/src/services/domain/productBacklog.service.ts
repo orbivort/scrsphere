@@ -1,5 +1,11 @@
 // Product Backlog Service
-import type { ProductBacklogItem, PaginatedResponse, ApiResponse } from '../../types';
+import type {
+  ProductBacklogItem,
+  PaginatedResponse,
+  ApiResponse,
+  BulkCreateResponseData,
+} from '../../types';
+import type { BulkUploadItem } from '../../pages/Backlog/BulkUpload/bulkUploadUtils';
 import { coreApiService } from '../core/api.core';
 
 class ProductBacklogService {
@@ -45,6 +51,40 @@ class ProductBacklogService {
   async deleteProductBacklogItem(id: string): Promise<ApiResponse<never>> {
     const { data } = await this.api.delete(`/product-backlog/${id}`);
     return data;
+  }
+
+  async bulkCreateProductBacklogItems(
+    items: BulkUploadItem[],
+    teamId: string,
+    goalId: string,
+    signal?: AbortSignal
+  ): Promise<ApiResponse<BulkCreateResponseData>> {
+    const payload = items.map((item) => ({
+      teamId,
+      goalId,
+      title: item.title,
+      description: item.description,
+      storyPoints: item.storyPoints,
+      businessValue: item.businessValue,
+      priority: item.priority,
+      labels: item.labels,
+      acceptanceCriteria: item.acceptanceCriteria,
+      _rowNumber: item._rowNumber,
+    }));
+    const { data } = await this.api.post('/product-backlog/bulk', payload, { signal });
+    return data;
+  }
+
+  /**
+   * Get count of backlog items for a specific goal
+   * @param goalId - The goal ID to get count for
+   * @returns The count of items for the goal
+   */
+  async getBacklogItemCountByGoal(goalId: string): Promise<number> {
+    const { data } = await this.api.get<{ count: number }>('/product-backlog/count', {
+      params: { goalId },
+    });
+    return data.count;
   }
 }
 

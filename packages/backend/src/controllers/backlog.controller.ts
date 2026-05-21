@@ -45,6 +45,8 @@ export const createPBI = asyncHandler(async (req: Request, res: Response) => {
   if (!req.userId) {
     throw new BadRequestError('User not authenticated');
   }
+  // Validate goal capacity before creating the item
+  await productBacklogService.validateGoalCapacity(req.body.goalId, 1);
   const pbi = await productBacklogService.createPBI(req.userId, req.body);
   res.status(201).json(createSuccessResponse(pbi));
 });
@@ -99,4 +101,32 @@ export const reorderPBIs = asyncHandler(async (req: Request, res: Response) => {
   const { pbiIds } = req.body;
   await productBacklogService.reorderPBIs(pbiIds);
   res.json(createSuccessResponse({ message: 'Items reordered successfully' }));
+});
+
+/**
+ * Bulk create PBIs
+ */
+export const createPBIBulk = asyncHandler(async (req: Request, res: Response) => {
+  if (!req.userId) {
+    throw new BadRequestError('User not authenticated');
+  }
+  // Validate bulk import capacity before creating items
+  await productBacklogService.validateBulkImportCapacity(req.body);
+  const result = await productBacklogService.createPBIBulk(req.userId, req.body);
+  res.status(201).json(createSuccessResponse(result));
+});
+
+/**
+ * Get count of backlog items for a goal
+ * @route GET /api/v1/product-backlog/count
+ */
+export const getBacklogItemCount = asyncHandler(async (req: Request, res: Response) => {
+  const { goalId } = req.query;
+
+  if (!goalId || typeof goalId !== 'string') {
+    throw new BadRequestError('goalId is required');
+  }
+
+  const count = await productBacklogService.countItemsByGoal(goalId);
+  res.json({ count });
 });

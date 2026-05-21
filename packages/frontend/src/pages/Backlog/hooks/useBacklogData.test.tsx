@@ -117,6 +117,7 @@ describe('useBacklogData', () => {
       vi.mocked(apiService.getProductBacklog).mockResolvedValue({
         success: true,
         data: mockItems,
+        pagination: { page: 1, limit: 100, totalPages: 1, total: mockItems.length },
       });
       vi.mocked(apiService.getProductGoals).mockResolvedValue({
         success: true,
@@ -138,6 +139,7 @@ describe('useBacklogData', () => {
       vi.mocked(apiService.getProductBacklog).mockResolvedValue({
         success: true,
         data: [],
+        pagination: { page: 1, limit: 100, totalPages: 1, total: 0 },
       });
       vi.mocked(apiService.getProductGoals).mockResolvedValue({
         success: true,
@@ -173,6 +175,7 @@ describe('useBacklogData', () => {
       vi.mocked(apiService.getProductBacklog).mockResolvedValue({
         success: true,
         data: [],
+        pagination: { page: 1, limit: 100, totalPages: 1, total: 0 },
       });
       vi.mocked(apiService.getProductGoals).mockResolvedValue({
         success: true,
@@ -194,6 +197,7 @@ describe('useBacklogData', () => {
       vi.mocked(apiService.getProductBacklog).mockResolvedValue({
         success: true,
         data: [],
+        pagination: { page: 1, limit: 100, totalPages: 1, total: 0 },
       });
       vi.mocked(apiService.getProductGoals).mockResolvedValue({
         success: true,
@@ -213,6 +217,7 @@ describe('useBacklogData', () => {
       vi.mocked(apiService.getProductBacklog).mockResolvedValue({
         success: true,
         data: [],
+        pagination: { page: 1, limit: 100, totalPages: 1, total: 0 },
       });
       vi.mocked(apiService.getProductGoals).mockResolvedValue({
         success: true,
@@ -234,6 +239,7 @@ describe('useBacklogData', () => {
       vi.mocked(apiService.getProductBacklog).mockResolvedValue({
         success: true,
         data: [],
+        pagination: { page: 1, limit: 100, totalPages: 1, total: 0 },
       });
       vi.mocked(apiService.getProductGoals).mockResolvedValue({
         success: true,
@@ -257,6 +263,7 @@ describe('useBacklogData', () => {
       vi.mocked(apiService.getProductBacklog).mockResolvedValue({
         success: true,
         data: [item1, item2],
+        pagination: { page: 1, limit: 100, totalPages: 1, total: 2 },
       });
       vi.mocked(apiService.getProductGoals).mockResolvedValue({
         success: true,
@@ -288,6 +295,7 @@ describe('useBacklogData', () => {
       vi.mocked(apiService.getProductBacklog).mockResolvedValue({
         success: true,
         data: [item1, item2],
+        pagination: { page: 1, limit: 100, totalPages: 1, total: 2 },
       });
       vi.mocked(apiService.getProductGoals).mockResolvedValue({
         success: true,
@@ -329,6 +337,7 @@ describe('useBacklogData', () => {
       vi.mocked(apiService.getProductBacklog).mockResolvedValue({
         success: true,
         data: [item1, item2, item3],
+        pagination: { page: 1, limit: 100, totalPages: 1, total: 3 },
       });
       vi.mocked(apiService.getProductGoals).mockResolvedValue({
         success: true,
@@ -363,6 +372,7 @@ describe('useBacklogData', () => {
       vi.mocked(apiService.getProductBacklog).mockResolvedValue({
         success: true,
         data: [item1, item2],
+        pagination: { page: 1, limit: 100, totalPages: 1, total: 2 },
       });
       vi.mocked(apiService.getProductGoals).mockResolvedValue({
         success: true,
@@ -399,6 +409,7 @@ describe('useBacklogData', () => {
       vi.mocked(apiService.getProductBacklog).mockResolvedValue({
         success: true,
         data: [item1, item2],
+        pagination: { page: 1, limit: 100, totalPages: 1, total: 2 },
       });
       vi.mocked(apiService.getProductGoals).mockResolvedValue({
         success: true,
@@ -435,6 +446,7 @@ describe('useBacklogData', () => {
       vi.mocked(apiService.getProductBacklog).mockResolvedValue({
         success: true,
         data: [item1, item2],
+        pagination: { page: 1, limit: 100, totalPages: 1, total: 2 },
       });
       vi.mocked(apiService.getProductGoals).mockResolvedValue({
         success: true,
@@ -466,6 +478,7 @@ describe('useBacklogData', () => {
       vi.mocked(apiService.getProductBacklog).mockResolvedValue({
         success: true,
         data: [item1],
+        pagination: { page: 1, limit: 100, totalPages: 1, total: 1 },
       });
       vi.mocked(apiService.getProductGoals).mockResolvedValue({
         success: true,
@@ -508,6 +521,7 @@ describe('useBacklogData', () => {
       vi.mocked(apiService.getProductBacklog).mockResolvedValue({
         success: true,
         data: [item1, item2, item3],
+        pagination: { page: 1, limit: 100, totalPages: 1, total: 3 },
       });
       vi.mocked(apiService.getProductGoals).mockResolvedValue({
         success: true,
@@ -535,6 +549,7 @@ describe('useBacklogData', () => {
       vi.mocked(apiService.getProductBacklog).mockResolvedValue({
         success: true,
         data: [item1, item2],
+        pagination: { page: 1, limit: 100, totalPages: 1, total: 2 },
       });
       vi.mocked(apiService.getProductGoals).mockResolvedValue({
         success: true,

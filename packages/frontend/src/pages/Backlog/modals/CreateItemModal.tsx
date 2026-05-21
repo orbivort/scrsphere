@@ -3,6 +3,7 @@ import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { MoSCoWPriority } from '../../../types';
 import { useBacklogContext } from '../context/BacklogContext';
 import { useFocusTrap } from '../hooks/useFocusTrap';
+import { useBacklogCapacityValidation } from '../hooks/useBacklogCapacityValidation';
 import { MOSCOW_CONFIG } from '../config/moscow.config';
 import { handleMoscowKeyDown } from '../utils/formHandlers';
 import { UnsavedChangesModal } from '../../../components/common/Form/UnsavedChangesModal';
@@ -16,6 +17,7 @@ import {
   XCircleIcon,
   PathIcon,
   CheckIcon,
+  InfoIcon,
 } from '@/components/common/Icons';
 
 export interface CreateItemModalProps {
@@ -23,6 +25,7 @@ export interface CreateItemModalProps {
   onClose: () => void;
   onSubmit: () => void;
   isSubmitting: boolean;
+  activeGoalId?: string;
 }
 
 export const CreateItemModal: React.FC<CreateItemModalProps> = ({
@@ -30,9 +33,16 @@ export const CreateItemModal: React.FC<CreateItemModalProps> = ({
   onClose,
   onSubmit,
   isSubmitting,
+  activeGoalId,
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const [showUnsavedModal, setShowUnsavedModal] = useState(false);
+  const [capacityError, setCapacityError] = useState<string | null>(null);
+  const [capacityInfo, setCapacityInfo] = useState<{
+    currentCount: number;
+    maxLimit: number;
+    availableSlots: number;
+  } | null>(null);
 
   const {
     formData,
@@ -49,7 +59,38 @@ export const CreateItemModal: React.FC<CreateItemModalProps> = ({
     removeLabelTag,
   } = useBacklogContext();
 
+  const { validateCapacity, isLimitEnabled, maxItemsPerGoal } = useBacklogCapacityValidation();
+
   useFocusTrap(isOpen, modalRef);
+
+  // Fetch capacity info when modal opens
+  useEffect(() => {
+    if (!isOpen || !isLimitEnabled || !activeGoalId) {
+      setCapacityInfo(null);
+      setCapacityError(null);
+      return;
+    }
+
+    const fetchCapacityInfo = async () => {
+      const result = await validateCapacity(activeGoalId, 0);
+      if (result.isValid && result.currentCount !== undefined) {
+        setCapacityInfo({
+          currentCount: result.currentCount,
+          maxLimit: result.maxLimit ?? maxItemsPerGoal,
+          availableSlots: result.availableSlots ?? 0,
+        });
+      }
+    };
+
+    void fetchCapacityInfo();
+  }, [isOpen, isLimitEnabled, activeGoalId, validateCapacity, maxItemsPerGoal]);
+
+  // Clear capacity error when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      setCapacityError(null);
+    }
+  }, [isOpen]);
 
   // Define all callbacks before any early returns to follow React Hooks rules
   const handleCloseAttempt = useCallback(() => {
@@ -78,6 +119,24 @@ export const CreateItemModal: React.FC<CreateItemModalProps> = ({
     },
     [handleCloseAttempt]
   );
+
+  // Handle form submission with capacity validation
+  const handleSubmitWithValidation = useCallback(async () => {
+    // Clear previous capacity error
+    setCapacityError(null);
+
+    // Validate capacity if limit is enabled
+    if (isLimitEnabled && activeGoalId) {
+      const result = await validateCapacity(activeGoalId, 1);
+      if (!result.isValid) {
+        setCapacityError(result.error ?? 'Capacity limit reached');
+        return;
+      }
+    }
+
+    // Proceed with submission
+    onSubmit();
+  }, [isLimitEnabled, activeGoalId, validateCapacity, onSubmit]);
 
   // Handle escape key for unsaved changes
   useEffect(() => {
@@ -145,6 +204,38 @@ export const CreateItemModal: React.FC<CreateItemModalProps> = ({
                     <XCircleIcon width="14" height="14" />
                   </button>
                 </div>
+              </div>
+            )}
+            {capacityError && (
+              <div className={styles['modal-error-banner']} role="alert">
+                <div className={styles['modal-error-content']}>
+                  <span className={styles['modal-error-icon']}>
+                    <AlertIcon width="16" height="16" />
+                  </span>
+                  <span className={styles['modal-error-text']}>{capacityError}</span>
+                  <button
+                    className={styles['modal-error-close']}
+                    onClick={() => setCapacityError(null)}
+                    aria-label="Close capacity error message"
+                  >
+                    <XCircleIcon width="14" height="14" />
+                  </button>
+                </div>
+              </div>
+            )}
+            {capacityInfo && !capacityError && (
+              <div
+                className={`${styles['capacity-info']} ${capacityInfo.availableSlots <= 5 ? styles['capacity-warning'] : ''}`}
+                aria-live="polite"
+              >
+                <span className={styles['capacity-info-icon']}>
+                  <InfoIcon width="16" height="16" />
+                </span>
+                <span className={styles['capacity-info-text']}>
+                  {capacityInfo.availableSlots === 0
+                    ? `This goal has reached its maximum capacity of ${capacityInfo.maxLimit} items.`
+                    : `This goal has ${capacityInfo.currentCount} of ${capacityInfo.maxLimit} items (${capacityInfo.availableSlots} slot${capacityInfo.availableSlots !== 1 ? 's' : ''} available).`}
+                </span>
               </div>
             )}
             <form className={styles['item-form']}>
@@ -400,7 +491,7 @@ export const CreateItemModal: React.FC<CreateItemModalProps> = ({
             </button>
             <button
               className={`${styles.button} ${styles['button-primary']}`}
-              onClick={onSubmit}
+              onClick={handleSubmitWithValidation}
               disabled={isSubmitting}
             >
               {isSubmitting ? (

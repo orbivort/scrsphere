@@ -89,6 +89,23 @@ export const useVirtualScroll = <T>(
     enabled,
   });
 
+  const scrollToIndex = useCallback(
+    (index: number, scrollOptions?: { align?: 'start' | 'center' | 'end' | 'auto' }) => {
+      virtualizer.scrollToIndex(index, scrollOptions);
+    },
+    [virtualizer]
+  );
+
+  const measureElement = useCallback(
+    (element: HTMLElement | null) => {
+      virtualizer.measureElement(element);
+    },
+    [virtualizer]
+  );
+
+  const totalSize = virtualizer.getTotalSize();
+  const virtualItemsList = virtualizer.getVirtualItems();
+
   const virtualItems = useMemo(() => {
     if (!enabled) {
       return items.map((item, index) => ({
@@ -100,9 +117,6 @@ export const useVirtualScroll = <T>(
         key: String(index),
       }));
     }
-    const virtualItemsList = virtualizer.getVirtualItems();
-    // If virtualizer hasn't calculated items yet (e.g., on initial render),
-    // fall back to rendering a limited number of items to prevent performance issues
     if (virtualItemsList.length === 0 && items.length > 0) {
       const limit = Math.min(items.length, INITIAL_RENDER_LIMIT + overscanCount);
       const fallbackItems = [];
@@ -132,31 +146,17 @@ export const useVirtualScroll = <T>(
         key: String(virtualItem.key),
       };
     });
-  }, [virtualizer, items, enabled, estimateSize, overscanCount]);
-
-  const scrollToIndex = useCallback(
-    (index: number, scrollOptions?: { align?: 'start' | 'center' | 'end' | 'auto' }) => {
-      virtualizer.scrollToIndex(index, scrollOptions);
-    },
-    [virtualizer]
-  );
-
-  const measureElement = useCallback(
-    (element: HTMLElement | null) => {
-      virtualizer.measureElement(element);
-    },
-    [virtualizer]
-  );
+  }, [virtualItemsList, items, enabled, estimateSize, overscanCount]);
 
   return useMemo(
     () => ({
       virtualItems,
-      totalSize: virtualizer.getTotalSize(),
+      totalSize,
       scrollToIndex,
       measureElement,
       containerRef: parentRef,
     }),
-    [virtualItems, virtualizer, scrollToIndex, measureElement]
+    [virtualItems, totalSize, scrollToIndex, measureElement]
   );
 };
 
