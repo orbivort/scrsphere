@@ -76,7 +76,7 @@ const bulkCreateSchema = z
     })
   )
   .min(1, 'At least one item is required')
-  .max(500, 'Maximum 500 items per bulk request');
+  .max(200, 'Maximum 200 items per bulk request');
 
 /**
  * @route   GET /api/v1/product-backlog
@@ -102,6 +102,13 @@ router.post('/', validateBody(createPBISchema), backlogController.createPBI);
  *          but be aware of the ordering convention.
  */
 router.post('/bulk', validateBody(bulkCreateSchema), backlogController.createPBIBulk);
+
+/**
+ * @route   GET /api/v1/product-backlog/count
+ * @desc    Get count of backlog items for a goal
+ * @access  Private
+ */
+router.get('/count', backlogController.getBacklogItemCount);
 
 /**
  * @route   GET /api/v1/product-backlog/:id

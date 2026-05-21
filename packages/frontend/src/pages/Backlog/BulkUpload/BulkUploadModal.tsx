@@ -6,6 +6,7 @@ import { apiService } from '../../../services';
 import { logger } from '../../../utils/logger';
 import { queryKeys } from '../../../hooks/queryKeys';
 import type { ProductBacklogItem } from '../../../types';
+import { useBacklogCapacityValidation } from '../hooks/useBacklogCapacityValidation';
 
 import styles from './BulkUploadModal.module.css';
 import { FileDropZone } from './FileDropZone';
@@ -51,6 +52,7 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
   const [isCancelling, setIsCancelling] = useState(false);
   const queryClient = useQueryClient();
   const abortControllerRef = useRef<AbortController | null>(null);
+  const { validateBulkImport } = useBacklogCapacityValidation();
 
   const resetState = useCallback(() => {
     setStep('upload');
@@ -124,6 +126,32 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
   const handleImport = useCallback(async () => {
     const validItems = getValidItems(parsedItems);
     if (validItems.length === 0) {
+      return;
+    }
+
+    // Validate capacity before importing
+    // All items inherit the goalId from the modal props
+    const itemsWithGoalId = validItems.map(() => ({ goalId }));
+    const capacityResult = await validateBulkImport(itemsWithGoalId);
+
+    if (!capacityResult.isValid) {
+      // Show capacity error in summary
+      const result: UploadResult = {
+        total: validItems.length,
+        successful: 0,
+        failed: validItems.length,
+        duplicates: parsedItems.length - validItems.length,
+        errors: [
+          {
+            row: 0,
+            field: 'capacity',
+            message: capacityResult.error ?? 'Capacity limit exceeded',
+          },
+        ],
+        createdItems: [],
+      };
+      setUploadResult(result);
+      setStep('summary');
       return;
     }
 
@@ -230,7 +258,7 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
       void queryClient.invalidateQueries({ queryKey: queryKeys.productGoal.all });
       onUploadComplete?.();
     }
-  }, [parsedItems, teamId, goalId, queryClient, onUploadComplete]);
+  }, [parsedItems, teamId, goalId, queryClient, onUploadComplete, validateBulkImport]);
 
   const handleViewItems = useCallback(() => {
     resetState();

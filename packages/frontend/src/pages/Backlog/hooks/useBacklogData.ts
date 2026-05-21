@@ -6,8 +6,8 @@ import { queryKeys } from '../../../hooks/queryKeys';
 import { type ProductBacklogItem, type ProductGoal, type ApiResponse } from '../../../types';
 import { type FilterState } from '../types/backlog.types';
 
-// Environment variable for backlog item limit (default: 200)
-const BACKLOG_ITEM_LIMIT = parseInt(import.meta.env.VITE_BACKLOG_ITEM_LIMIT ?? '200', 10);
+// Environment variable for backlog item limit (default: 100)
+const BACKLOG_ITEM_LIMIT = parseInt(import.meta.env.VITE_BACKLOG_ITEM_LIMIT ?? '100', 10);
 
 /**
  * Return type for useBacklogData hook

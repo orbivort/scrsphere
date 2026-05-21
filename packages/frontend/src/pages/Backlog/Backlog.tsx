@@ -511,6 +511,7 @@ const BacklogContent: React.FC = () => {
           onClose={handleCloseCreateModal}
           onSubmit={handleCreateSubmit}
           isSubmitting={createItemMutation.isPending}
+          activeGoalId={activeGoal.id}
         />
 
         <ItemDetailModal

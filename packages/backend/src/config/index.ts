@@ -527,4 +527,6 @@ export const validateConfig = (): void => {
   }
 };
 
+export { BACKLOG_CONFIG, isBacklogLimitEnabled } from './backlog.config.js';
+
 export default config;

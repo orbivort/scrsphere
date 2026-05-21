@@ -4,6 +4,7 @@ import { AppError, NotFoundError, BadRequestError, ForbiddenError } from '../uti
 import { generateUUIDv7 } from '../utils/uuid';
 import { workflowService } from './workflow.service';
 import { logger } from '../utils/logger';
+import { BACKLOG_CONFIG, isBacklogLimitEnabled } from '../config/backlog.config';
 import type {
   ProductBacklogItem,
   ItemStatus,
@@ -478,6 +479,81 @@ class ProductBacklogService {
     // With MoSCoW priority system, items are grouped by priority category
     // Reordering within categories would require a separate sort order field
     // For now, this is a no-op as the priority is now categorical
+  }
+
+  /**
+   * Count backlog items for a specific goal
+   * @param goalId - The ID of the product goal
+   * @returns The number of backlog items associated with the goal
+   */
+  async countItemsByGoal(goalId: string): Promise<number> {
+    return prisma.productBacklogItem.count({
+      where: { goalId },
+    });
+  }
+
+  /**
+   * Validate that adding items to a goal won't exceed the capacity limit
+   * @param goalId - The ID of the product goal (undefined/null skips validation)
+   * @param additionalItems - The number of items to add
+   * @throws BadRequestError if capacity would be exceeded
+   */
+  async validateGoalCapacity(goalId: string | undefined, additionalItems: number): Promise<void> {
+    // Skip validation if limit is disabled
+    if (!isBacklogLimitEnabled()) {
+      return;
+    }
+
+    // Skip validation if no goal specified
+    if (!goalId) {
+      return;
+    }
+
+    const currentCount = await this.countItemsByGoal(goalId);
+    const capacity = BACKLOG_CONFIG.MAX_ITEMS_PER_GOAL;
+    const projectedCount = currentCount + additionalItems;
+
+    if (projectedCount > capacity) {
+      const available = Math.max(0, capacity - currentCount);
+      throw new AppError(
+        `Cannot add ${additionalItems} item(s) to goal. This would exceed the maximum capacity of ${capacity} items per goal.`,
+        400,
+        'BACKLOG_GOAL_CAPACITY_EXCEEDED',
+        [
+          { field: 'goalId', message: goalId },
+          { field: 'capacity', message: String(capacity) },
+          { field: 'current', message: String(currentCount) },
+          { field: 'available', message: String(available) },
+          { field: 'requested', message: String(additionalItems) },
+        ]
+      );
+    }
+  }
+
+  /**
+   * Validate capacity for bulk import of backlog items
+   * @param items - Array of items with optional goalId to validate
+   * @throws BadRequestError if any goal's capacity would be exceeded
+   */
+  async validateBulkImportCapacity(items: Array<{ goalId?: string }>): Promise<void> {
+    // Skip validation if limit is disabled
+    if (!isBacklogLimitEnabled()) {
+      return;
+    }
+
+    // Group items by goalId
+    const itemsByGoal = new Map<string, number>();
+    for (const item of items) {
+      if (item.goalId) {
+        const count = itemsByGoal.get(item.goalId) ?? 0;
+        itemsByGoal.set(item.goalId, count + 1);
+      }
+    }
+
+    // Validate each goal's capacity
+    for (const [goalId, additionalItems] of itemsByGoal) {
+      await this.validateGoalCapacity(goalId, additionalItems);
+    }
   }
 }
 

@@ -74,6 +74,18 @@ class ProductBacklogService {
     const { data } = await this.api.post('/product-backlog/bulk', payload, { signal });
     return data;
   }
+
+  /**
+   * Get count of backlog items for a specific goal
+   * @param goalId - The goal ID to get count for
+   * @returns The count of items for the goal
+   */
+  async getBacklogItemCountByGoal(goalId: string): Promise<number> {
+    const { data } = await this.api.get<{ count: number }>('/product-backlog/count', {
+      params: { goalId },
+    });
+    return data.count;
+  }
 }
 
 export const productBacklogService = new ProductBacklogService();

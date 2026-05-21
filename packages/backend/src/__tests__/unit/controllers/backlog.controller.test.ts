@@ -23,6 +23,8 @@ vi.mock('../../../services/backlog.service', () => ({
     deletePBI: vi.fn(),
     reorderPBIs: vi.fn(),
     createPBIBulk: vi.fn(),
+    validateGoalCapacity: vi.fn().mockResolvedValue(undefined),
+    validateBulkImportCapacity: vi.fn().mockResolvedValue(undefined),
   },
 }));
 

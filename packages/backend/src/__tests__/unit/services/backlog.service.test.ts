@@ -38,11 +38,19 @@ vi.mock('../../../utils/uuid', () => ({
   generateUUIDv7: vi.fn().mockReturnValue('test-pbi-uuid'),
 }));
 
+vi.mock('../../../config/backlog.config', () => ({
+  BACKLOG_CONFIG: {
+    MAX_ITEMS_PER_GOAL: 200,
+  },
+  isBacklogLimitEnabled: vi.fn().mockReturnValue(true),
+}));
+
 // Now import the service and other dependencies
 import { productBacklogService } from '../../../services/backlog.service';
 import prisma from '../../../utils/prisma';
 import { workflowService } from '../../../services/workflow.service';
-import { NotFoundError, BadRequestError, ForbiddenError } from '../../../utils/errors';
+import { NotFoundError, BadRequestError, ForbiddenError, AppError } from '../../../utils/errors';
+import { isBacklogLimitEnabled, BACKLOG_CONFIG } from '../../../config/backlog.config';
 
 describe('ProductBacklogService', () => {
   beforeEach(() => {
@@ -728,6 +736,199 @@ describe('ProductBacklogService', () => {
       expect(result.errors[0]!.row).toBe(2);
       expect(result.errors[0]!.field).toBe('title');
       expect(result.errors[0]!.message).toBe('Duplicate title within the bulk upload');
+    });
+  });
+
+  describe('Backlog Capacity Validation', () => {
+    describe('countItemsByGoal', () => {
+      it('should return correct count for a goal', async () => {
+        const goalId = 'test-goal-id';
+        vi.mocked(prisma.productBacklogItem.count).mockResolvedValue(150);
+
+        const result = await productBacklogService.countItemsByGoal(goalId);
+
+        expect(result).toBe(150);
+        expect(prisma.productBacklogItem.count).toHaveBeenCalledWith({
+          where: { goalId },
+        });
+      });
+
+      it('should return 0 for goal with no items', async () => {
+        const goalId = 'empty-goal-id';
+        vi.mocked(prisma.productBacklogItem.count).mockResolvedValue(0);
+
+        const result = await productBacklogService.countItemsByGoal(goalId);
+
+        expect(result).toBe(0);
+      });
+    });
+
+    describe('validateGoalCapacity', () => {
+      it('should not throw when limit is disabled (0)', async () => {
+        vi.mocked(isBacklogLimitEnabled).mockReturnValueOnce(false);
+        vi.mocked(prisma.productBacklogItem.count).mockResolvedValue(150);
+
+        await expect(
+          productBacklogService.validateGoalCapacity('goal-id', 50)
+        ).resolves.not.toThrow();
+      });
+
+      it('should not throw when goalId is undefined', async () => {
+        vi.mocked(isBacklogLimitEnabled).mockReturnValueOnce(true);
+        vi.mocked(prisma.productBacklogItem.count).mockResolvedValue(0);
+
+        await expect(
+          productBacklogService.validateGoalCapacity(undefined, 10)
+        ).resolves.not.toThrow();
+      });
+
+      it('should not throw when within capacity', async () => {
+        vi.mocked(isBacklogLimitEnabled).mockReturnValueOnce(true);
+        vi.mocked(BACKLOG_CONFIG).MAX_ITEMS_PER_GOAL = 200;
+        vi.mocked(prisma.productBacklogItem.count).mockResolvedValue(180);
+
+        await expect(
+          productBacklogService.validateGoalCapacity('goal-id', 10)
+        ).resolves.not.toThrow();
+      });
+
+      it('should throw AppError when exceeding capacity', async () => {
+        vi.mocked(isBacklogLimitEnabled).mockReturnValueOnce(true);
+        vi.mocked(BACKLOG_CONFIG).MAX_ITEMS_PER_GOAL = 200;
+        vi.mocked(prisma.productBacklogItem.count).mockResolvedValue(180);
+
+        try {
+          await productBacklogService.validateGoalCapacity('goal-id', 30);
+          // Should not reach here
+          expect(true).toBe(false);
+        } catch (error) {
+          expect(error).toBeInstanceOf(AppError);
+          const appError = error as AppError;
+          expect(appError.code).toBe('BACKLOG_GOAL_CAPACITY_EXCEEDED');
+        }
+      });
+
+      it('should throw when exactly at capacity', async () => {
+        vi.mocked(isBacklogLimitEnabled).mockReturnValueOnce(true);
+        vi.mocked(BACKLOG_CONFIG).MAX_ITEMS_PER_GOAL = 200;
+        vi.mocked(prisma.productBacklogItem.count).mockResolvedValue(200);
+
+        try {
+          await productBacklogService.validateGoalCapacity('goal-id', 1);
+          // Should not reach here
+          expect(true).toBe(false);
+        } catch (error) {
+          expect(error).toBeInstanceOf(AppError);
+        }
+      });
+
+      it('should include helpful error details', async () => {
+        vi.mocked(isBacklogLimitEnabled).mockReturnValueOnce(true);
+        vi.mocked(BACKLOG_CONFIG).MAX_ITEMS_PER_GOAL = 200;
+        vi.mocked(prisma.productBacklogItem.count).mockResolvedValue(180);
+
+        try {
+          await productBacklogService.validateGoalCapacity('goal-id', 30);
+          // Should not reach here
+          expect(true).toBe(false);
+        } catch (error) {
+          expect(error).toBeInstanceOf(AppError);
+          const appError = error as AppError;
+
+          // Check error message contains relevant info
+          expect(appError.message).toContain('30');
+          expect(appError.message).toContain('200');
+
+          // Check error details
+          expect(appError.details).toBeDefined();
+          const detailsMap = new Map(appError.details?.map((d) => [d.field, d.message]));
+          expect(detailsMap.get('current')).toBe('180');
+          expect(detailsMap.get('requested')).toBe('30');
+          expect(detailsMap.get('capacity')).toBe('200');
+          expect(detailsMap.get('available')).toBe('20');
+        }
+      });
+    });
+
+    describe('validateBulkImportCapacity', () => {
+      it('should not throw when limit is disabled', async () => {
+        vi.mocked(isBacklogLimitEnabled).mockReturnValueOnce(false);
+        vi.mocked(prisma.productBacklogItem.count).mockResolvedValue(150);
+
+        const items = [{ goalId: 'goal-1' }, { goalId: 'goal-1' }, { goalId: 'goal-2' }];
+
+        await expect(
+          productBacklogService.validateBulkImportCapacity(items)
+        ).resolves.not.toThrow();
+      });
+
+      it('should validate all goals in import', async () => {
+        vi.mocked(isBacklogLimitEnabled).mockReturnValueOnce(true);
+        vi.mocked(BACKLOG_CONFIG).MAX_ITEMS_PER_GOAL = 200;
+        vi.mocked(prisma.productBacklogItem.count).mockResolvedValue(50);
+
+        const items = [
+          { goalId: 'goal-1' },
+          { goalId: 'goal-1' },
+          { goalId: 'goal-2' },
+          { goalId: 'goal-3' },
+          { goalId: 'goal-3' },
+          { goalId: 'goal-3' },
+        ];
+
+        await expect(
+          productBacklogService.validateBulkImportCapacity(items)
+        ).resolves.not.toThrow();
+      });
+
+      it('should throw when any goal exceeds capacity', async () => {
+        vi.mocked(isBacklogLimitEnabled).mockReturnValueOnce(true);
+        vi.mocked(BACKLOG_CONFIG).MAX_ITEMS_PER_GOAL = 200;
+        vi.mocked(prisma.productBacklogItem.count).mockResolvedValue(190);
+
+        const items = [
+          { goalId: 'goal-1' },
+          { goalId: 'goal-1' },
+          { goalId: 'goal-1' },
+          { goalId: 'goal-1' },
+          { goalId: 'goal-1' },
+          { goalId: 'goal-1' },
+          { goalId: 'goal-1' },
+          { goalId: 'goal-1' },
+          { goalId: 'goal-1' },
+          { goalId: 'goal-1' },
+          { goalId: 'goal-1' },
+          { goalId: 'goal-1' },
+          { goalId: 'goal-1' },
+          { goalId: 'goal-1' },
+          { goalId: 'goal-1' },
+        ];
+
+        try {
+          await productBacklogService.validateBulkImportCapacity(items);
+          // Should not reach here
+          expect(true).toBe(false);
+        } catch (error) {
+          expect(error).toBeInstanceOf(AppError);
+        }
+      });
+
+      it('should handle items without goalId', async () => {
+        vi.mocked(isBacklogLimitEnabled).mockReturnValueOnce(true);
+        vi.mocked(BACKLOG_CONFIG).MAX_ITEMS_PER_GOAL = 200;
+        vi.mocked(prisma.productBacklogItem.count).mockResolvedValue(50);
+
+        const items = [
+          { goalId: 'goal-1' },
+          { goalId: undefined },
+          { goalId: 'goal-2' },
+          { goalId: undefined },
+        ];
+
+        await expect(
+          productBacklogService.validateBulkImportCapacity(items)
+        ).resolves.not.toThrow();
+      });
     });
   });
 });
