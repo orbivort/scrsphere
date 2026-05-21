@@ -64,6 +64,7 @@ interface VirtualizedColumnProps {
   onDragOver: (e: React.DragEvent) => void;
   onItemClick: (item: ProductBacklogItem) => void;
   onPriorityChange: (itemId: string, newPriority: MoSCoWPriority) => void;
+  forceVirtualization?: boolean;
 }
 
 const VirtualizedColumn: React.FC<VirtualizedColumnProps> = ({
@@ -79,8 +80,10 @@ const VirtualizedColumn: React.FC<VirtualizedColumnProps> = ({
   onDragOver,
   onItemClick,
   onPriorityChange,
+  forceVirtualization,
 }) => {
-  const enableVirtualization = shouldEnableVirtualization(items.length, VIRTUALIZATION_THRESHOLD);
+  const enableVirtualization =
+    forceVirtualization ?? shouldEnableVirtualization(items.length, VIRTUALIZATION_THRESHOLD);
 
   const { virtualItems, totalSize, containerRef, measureElement } = useVirtualScroll(
     items,
@@ -144,7 +147,7 @@ const VirtualizedColumn: React.FC<VirtualizedColumnProps> = ({
         style={
           enableVirtualization
             ? {
-                position: 'relative',
+                flex: 'none',
                 height: 'calc(100vh - 350px)',
                 minHeight: '400px',
                 overflow: 'auto',
@@ -228,8 +231,8 @@ const VirtualizedColumn: React.FC<VirtualizedColumnProps> = ({
  * - Draggable cards for each item (with virtual scrolling for large lists)
  * - Empty state placeholder when no items
  *
- * Virtual scrolling is automatically enabled for columns with more than 50 items
- * to maintain smooth performance.
+ * Virtual scrolling is automatically enabled when total items across all columns
+ * exceed 50 to maintain smooth performance.
  *
  * @param props - Component props
  * @returns The rendered BoardView component
@@ -265,6 +268,24 @@ export const BoardView: React.FC<BoardViewProps> = ({
     };
   }, [itemsByMoscow]);
 
+  /**
+   * Calculate total items across all columns for virtualization decision
+   * Virtual scrolling is enabled based on total items, not per-column count
+   */
+  const totalItems = useMemo(() => {
+    return (
+      itemsByMoscow[MoSCoWPriority.MUST_HAVE].length +
+      itemsByMoscow[MoSCoWPriority.SHOULD_HAVE].length +
+      itemsByMoscow[MoSCoWPriority.COULD_HAVE].length +
+      itemsByMoscow[MoSCoWPriority.WONT_HAVE].length
+    );
+  }, [itemsByMoscow]);
+
+  /**
+   * Enable virtualization based on total items across all columns
+   */
+  const enableVirtualization = shouldEnableVirtualization(totalItems, VIRTUALIZATION_THRESHOLD);
+
   return (
     <div className={styles['moscow-board-view']} role="list" aria-label="MoSCoW priority board">
       {Object.values(MoSCoWPriority).map((priority) => {
@@ -287,6 +308,7 @@ export const BoardView: React.FC<BoardViewProps> = ({
             onDragOver={handleDragOver}
             onItemClick={onItemClick}
             onPriorityChange={onPriorityChange}
+            forceVirtualization={enableVirtualization}
           />
         );
       })}

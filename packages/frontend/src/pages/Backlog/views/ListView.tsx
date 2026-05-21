@@ -243,15 +243,7 @@ export const ListView = memo<ListViewProps>(({ items, onItemClick }) => {
       )}
 
       {/* Body */}
-      <div
-        ref={containerRef}
-        className={styles['table-body-container']}
-        style={
-          enableVirtualization
-            ? { height: 'calc(100vh - 350px)', minHeight: '300px', overflow: 'auto' }
-            : undefined
-        }
-      >
+      <div ref={containerRef} className={styles['table-body-container']} role="rowgroup">
         {enableVirtualization ? (
           <div
             className={styles['virtualized-body']}

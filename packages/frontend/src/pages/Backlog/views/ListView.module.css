@@ -10,6 +10,8 @@
 .list-view.virtualized {
   display: flex;
   flex-direction: column;
+  height: calc(100vh - 280px);
+  min-height: 400px;
 }
 
 .table-body-container {
@@ -18,6 +20,8 @@
 
 .list-view.virtualized .table-body-container {
   overflow-y: auto;
+  flex: 1 1 auto;
+  min-height: 300px;
 }
 
 .backlog-table {
