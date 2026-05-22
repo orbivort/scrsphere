@@ -172,7 +172,17 @@ jobs:
       - name: Run frontend tests
         run: pnpm --filter=@scrsphere/frontend run test -- --coverage
 
-      - name: Upload frontend coverage
+      - name: Upload frontend coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: packages/frontend/coverage
+          flags: frontend
+          name: frontend-coverage
+          fail_ci_if_error: false
+          verbose: true
+
+      - name: Upload frontend coverage artifact
         uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -381,7 +391,17 @@ jobs:
       - name: Run backend unit tests
         run: pnpm --filter=@scrsphere/backend run test:unit -- --coverage
 
-      - name: Upload backend coverage
+      - name: Upload backend unit coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: packages/backend/coverage
+          flags: backend-unit
+          name: backend-unit-coverage
+          fail_ci_if_error: false
+          verbose: true
+
+      - name: Upload backend coverage artifact
         uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -458,7 +478,17 @@ jobs:
       - name: Run integration tests
         run: pnpm --filter=@scrsphere/backend run test:integration -- --coverage
 
-      - name: Upload integration coverage
+      - name: Upload backend integration coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: packages/backend/coverage
+          flags: backend-integration
+          name: backend-integration-coverage
+          fail_ci_if_error: false
+          verbose: true
+
+      - name: Upload integration coverage artifact
         uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -535,7 +565,17 @@ jobs:
       - name: Run E2E tests
         run: pnpm --filter=@scrsphere/backend run test:e2e -- --coverage
 
-      - name: Upload E2E coverage
+      - name: Upload backend E2E coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: packages/backend/coverage
+          flags: backend-e2e
+          name: backend-e2e-coverage
+          fail_ci_if_error: false
+          verbose: true
+
+      - name: Upload E2E coverage artifact
         uses: actions/upload-artifact@v4
         if: always()
         with:
