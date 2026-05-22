@@ -121,6 +121,69 @@ describe('useTeamManagement Hooks', () => {
 
       expect(result.current.error).toBeInstanceOf(Error);
     });
+
+    it('should handle array response format', async () => {
+      vi.spyOn(apiService, 'getTeams').mockResolvedValue({
+        success: true,
+        data: [mockTeam],
+      });
+
+      const { result } = renderHook(() => useTeams(), {
+        wrapper: createWrapper(),
+      });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(result.current.data?.data.teams).toEqual([mockTeam]);
+    });
+
+    it('should handle empty array response', async () => {
+      vi.spyOn(apiService, 'getTeams').mockResolvedValue({
+        success: true,
+        data: [],
+      });
+
+      const { result } = renderHook(() => useTeams(), {
+        wrapper: createWrapper(),
+      });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(result.current.data?.data.teams).toEqual([]);
+    });
+
+    it('should handle response without data property', async () => {
+      vi.spyOn(apiService, 'getTeams').mockResolvedValue({
+        success: true,
+      } as { success: boolean });
+
+      const { result } = renderHook(() => useTeams(), {
+        wrapper: createWrapper(),
+      });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+    });
+
+    it('should handle response with null data', async () => {
+      vi.spyOn(apiService, 'getTeams').mockResolvedValue({
+        success: true,
+        data: null,
+      });
+
+      const { result } = renderHook(() => useTeams(), {
+        wrapper: createWrapper(),
+      });
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+    });
   });
 
   describe('useTeam', () => {
