@@ -389,25 +389,7 @@ jobs:
         run: pnpm --filter=@scrsphere/shared run build
 
       - name: Run backend unit tests
-        run: pnpm --filter=@scrsphere/backend run test:unit:coverage
-
-      - name: Upload backend unit coverage to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: packages/backend/coverage
-          flags: backend-unit
-          name: backend-unit-coverage
-          fail_ci_if_error: false
-          verbose: true
-
-      - name: Upload backend coverage artifact
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: backend-coverage
-          path: packages/backend/coverage
-          retention-days: 7
+        run: pnpm --filter=@scrsphere/backend run test:unit
 
   test-backend-integration:
     name: Backend Integration Tests
@@ -476,25 +458,7 @@ jobs:
         run: pnpm --filter=@scrsphere/backend exec prisma migrate deploy
 
       - name: Run integration tests
-        run: pnpm --filter=@scrsphere/backend run test:integration:coverage
-
-      - name: Upload backend integration coverage to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: packages/backend/coverage
-          flags: backend-integration
-          name: backend-integration-coverage
-          fail_ci_if_error: false
-          verbose: true
-
-      - name: Upload integration coverage artifact
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: backend-integration-coverage
-          path: packages/backend/coverage
-          retention-days: 7
+        run: pnpm --filter=@scrsphere/backend run test:integration
 
   test-backend-e2e:
     name: Backend E2E Tests
@@ -563,23 +527,92 @@ jobs:
         run: pnpm --filter=@scrsphere/backend exec prisma migrate deploy
 
       - name: Run E2E tests
-        run: pnpm --filter=@scrsphere/backend run test:e2e:coverage
+        run: pnpm --filter=@scrsphere/backend run test:e2e
 
-      - name: Upload backend E2E coverage to Codecov
+  test-backend-coverage:
+    name: Backend Coverage Report
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    needs: [test-backend, test-backend-integration, test-backend-e2e, detect-changes]
+    if: always() && (needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.shared == 'true') && (needs.test-backend.result == 'success' || needs.test-backend.result == 'skipped') && (needs.test-backend-integration.result == 'success' || needs.test-backend-integration.result == 'skipped') && (needs.test-backend-e2e.result == 'success' || needs.test-backend-e2e.result == 'skipped')
+    
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: scrsphere_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    
+    env:
+      DATABASE_URL: postgresql://test:test@localhost:5432/scrsphere_test
+      NODE_ENV: test
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+        id: pnpm-cache
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Setup Prisma Client
+        uses: ./.github/actions/setup-prisma
+
+      - name: Build shared package
+        run: pnpm --filter=@scrsphere/shared run build
+
+      - name: Run database migrations
+        run: pnpm --filter=@scrsphere/backend exec prisma migrate deploy
+
+      - name: Run all backend tests with coverage
+        run: pnpm --filter=@scrsphere/backend run test:coverage
+
+      - name: Upload backend coverage to Codecov
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: packages/backend/coverage
-          flags: backend-e2e
-          name: backend-e2e-coverage
+          flags: backend
+          name: backend-coverage
           fail_ci_if_error: false
           verbose: true
 
-      - name: Upload E2E coverage artifact
+      - name: Upload backend coverage artifact
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: backend-e2e-coverage
+          name: backend-coverage
           path: packages/backend/coverage
           retention-days: 7
 
@@ -587,8 +620,8 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    needs: [test-frontend, test-frontend-e2e, test-frontend-e2e-smoke, test-backend, test-backend-integration, test-backend-e2e, detect-changes]
-    if: always() && (needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.frontend == 'true' || needs.detect-changes.outputs.shared == 'true') && (needs.test-frontend.result == 'success' || needs.test-frontend.result == 'skipped') && (needs.test-frontend-e2e.result == 'success' || needs.test-frontend-e2e.result == 'skipped') && (needs.test-frontend-e2e-smoke.result == 'success' || needs.test-frontend-e2e-smoke.result == 'skipped')
+    needs: [test-frontend, test-frontend-e2e, test-frontend-e2e-smoke, test-backend, test-backend-integration, test-backend-e2e, test-backend-coverage, detect-changes]
+    if: always() && (needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.frontend == 'true' || needs.detect-changes.outputs.shared == 'true') && (needs.test-frontend.result == 'success' || needs.test-frontend.result == 'skipped') && (needs.test-frontend-e2e.result == 'success' || needs.test-frontend-e2e.result == 'skipped') && (needs.test-frontend-e2e-smoke.result == 'success' || needs.test-frontend-e2e-smoke.result == 'skipped') && (needs.test-backend-coverage.result == 'success' || needs.test-backend-coverage.result == 'skipped')
     
     steps:
       - name: Checkout repository
