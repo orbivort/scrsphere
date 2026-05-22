@@ -170,7 +170,7 @@ jobs:
         run: pnpm --filter=@scrsphere/shared run build
 
       - name: Run frontend tests
-        run: pnpm --filter=@scrsphere/frontend run test -- --coverage
+        run: pnpm --filter=@scrsphere/frontend run test:coverage
 
       - name: Upload frontend coverage to Codecov
         uses: codecov/codecov-action@v5
@@ -389,7 +389,7 @@ jobs:
         run: pnpm --filter=@scrsphere/shared run build
 
       - name: Run backend unit tests
-        run: pnpm --filter=@scrsphere/backend run test:unit -- --coverage
+        run: pnpm --filter=@scrsphere/backend run test:unit:coverage
 
       - name: Upload backend unit coverage to Codecov
         uses: codecov/codecov-action@v5
@@ -476,7 +476,7 @@ jobs:
         run: pnpm --filter=@scrsphere/backend exec prisma migrate deploy
 
       - name: Run integration tests
-        run: pnpm --filter=@scrsphere/backend run test:integration -- --coverage
+        run: pnpm --filter=@scrsphere/backend run test:integration:coverage
 
       - name: Upload backend integration coverage to Codecov
         uses: codecov/codecov-action@v5
@@ -563,7 +563,7 @@ jobs:
         run: pnpm --filter=@scrsphere/backend exec prisma migrate deploy
 
       - name: Run E2E tests
-        run: pnpm --filter=@scrsphere/backend run test:e2e -- --coverage
+        run: pnpm --filter=@scrsphere/backend run test:e2e:coverage
 
       - name: Upload backend E2E coverage to Codecov
         uses: codecov/codecov-action@v5
