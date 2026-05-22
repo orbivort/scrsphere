@@ -1,0 +1,68 @@
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 5%
+        base: auto
+        if_ci_failed: error
+        if_not_found: success
+        if_no_uploads: error
+    patch:
+      default:
+        target: auto
+        threshold: 5%
+        base: auto
+
+  notify:
+    wait_for_ci: true
+
+comment:
+  layout: header, diff, files, footer
+  behavior: default
+  require_base: false
+  require_head: true
+  hide_comment_coverage: false
+
+github_checks:
+  annotations: true
+
+ignore:
+  - '**/*.test.ts'
+  - '**/*.test.tsx'
+  - '**/*.spec.ts'
+  - '**/*.spec.tsx'
+  - '**/node_modules/**'
+  - '**/dist/**'
+  - '**/coverage/**'
+  - '**/__tests__/**'
+  - '**/__mocks__/**'
+  - '**/*.d.ts'
+  - '**/prisma/**'
+  - '**/src/generated/**'
+  - '**/src/types/**'
+  - '**/src/setupTests.ts'
+  - '**/src/test-utils.tsx'
+  - '**/e2e/**'
+  - '**/playwright-report/**'
+  - '**/test-results/**'
+  - 'packages/frontend/src/services/mockApi.ts'
+  - 'packages/frontend/src/services/mockData.ts'
+  - 'packages/frontend/src/services/mockDataUtils.ts'
+  - 'packages/frontend/src/services/mockErrorSimulation.ts'
+  - 'packages/frontend/src/services/mockResponseUtils.ts'
+
+component_management:
+  individual_components:
+    - component_id: frontend
+      name: Frontend
+      paths:
+        - packages/frontend/src/**
+    - component_id: backend
+      name: Backend
+      paths:
+        - packages/backend/src/**
+    - component_id: shared
+      name: Shared
+      paths:
+        - packages/shared/src/**
