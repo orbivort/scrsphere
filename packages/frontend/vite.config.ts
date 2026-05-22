@@ -122,7 +122,7 @@ export default defineConfig(({ mode }) => {
       testTimeout: 30000,
       coverage: {
         provider: 'v8',
-        reporter: ['text', 'json', 'html'],
+        reporter: ['text', 'json', 'html', 'lcov'],
         exclude: [
           'node_modules/',
           'src/setupTests.ts',
@@ -136,10 +136,10 @@ export default defineConfig(({ mode }) => {
         ],
         all: true,
         thresholds: {
-          lines: 75,
-          functions: 75,
-          branches: 70,
-          statements: 75,
+          lines: 80,
+          functions: 80,
+          branches: 80,
+          statements: 80,
         },
       },
     },
