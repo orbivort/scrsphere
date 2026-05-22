@@ -3,12 +3,19 @@
 **Agile Scrum Lifecycle Management System**
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
+[![CI](https://github.com/orbivort/scrsphere/actions/workflows/ci.yml/badge.svg)](https://github.com/orbivort/scrsphere/actions/workflows/ci.yml)
+[![Release](https://github.com/orbivort/scrsphere/actions/workflows/release.yml/badge.svg)](https://github.com/orbivort/scrsphere/actions/workflows/release.yml)
+[![codecov](https://codecov.io/github/orbivort/scrsphere/graph/badge.svg?token=Z2T4R3G8F7)](https://codecov.io/github/orbivort/scrsphere)
+
+[![CodeQL](https://github.com/orbivort/scrsphere/actions/workflows/codeql/badge.svg)](https://github.com/orbivort/scrsphere/security/code-scanning)
+[![Known Vulnerabilities](https://snyk.io/test/github/orbivort/scrsphere/badge.svg)](https://snyk.io/test/github/orbivort/scrsphere)
+[![pnpm](https://img.shields.io/badge/pnpm-10.33.0-orange.svg)](https://pnpm.io/)
+
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue.svg)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-19-blue.svg)](https://react.dev/)
 [![Node.js Version](https://img.shields.io/badge/node-%5E24.14.1-brightgreen.svg)](https://nodejs.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-18+-blue.svg)](https://www.postgresql.org/)
-
-[![codecov](https://codecov.io/github/orbivort/scrsphere/graph/badge.svg?token=Z2T4R3G8F7)](https://codecov.io/github/orbivort/scrsphere)
 
 ScrSphere is a self-hosted web application for managing Agile Scrum processes, built to faithfully follow the Scrum Guide with modern technologies and rigorous quality standards. It provides a complete solution that guides teams through the entire Scrum lifecycle — from product goals and backlogs to sprint reviews and retrospectives — all deployable on your own infrastructure with zero per‑user fees.
 
