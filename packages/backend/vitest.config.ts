@@ -24,7 +24,14 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],
-      exclude: ['node_modules/', 'src/__tests__/', 'src/types/', 'prisma/', 'src/generated/'],
+      exclude: [
+        'node_modules/',
+        'src/__tests__/',
+        'src/types/',
+        'src/*.d.ts',
+        'prisma/',
+        'src/generated/',
+      ],
       thresholds: {
         lines: 80,
         functions: 80,
