@@ -5,86 +5,66 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-05-22
+
+### Added
+
+- **ci**: add codecov coverage to CI workflow and codecov badge in README
+- **test**: add more tests to improve coverage and set the threshold to 80% for backend and frontend
+- **feature(product backlog)**: add configurable maximum backlog size control for product backlog functionalities
+
+### Changed
+
+- **feature(sprint configuration)**: adjust the generated sprint end date to previous friday if it falls on a weekend
+
 ## [1.3.0] - 2026-05-15
 
 ### Added
 
-- **sprint**: add 1-week and 3-week sprint duration options
-- **frontend**: add Definition of Ready and Definition of Done mock data for Alpha Team
-- **frontend**: swap user roles - demo@example.com to Scrum Master, sarah.smith to Developer
-- **frontend**: improve burndown chart mock data with null handling for future dates
-- **frontend**: update burndown chart mock data to match sprint-3 dates
-- **frontend**: add feedback items to DRAFT retrospective mock data
-- **frontend**: add attendees and summary to retrospective mock data
-- **frontend**: auto-populate login credentials when mock API enabled
-- **frontend**: add (DEMO) suffix to version badge when mock API enabled
-- add comprehensive mock data for Increments, Sprint Reviews, and Retrospectives
-- add comprehensive mock data for Active Sprint with all task statuses
-- add comprehensive mock data for Product Goals with all statuses
-- implement mock data flow enhancements for frontend
+- **feature(sprint configuration)**: add 1-week and 3-week sprint duration options
 
 ### Changed
 
-- **frontend**: change mock user email to demo@example.com
+- **feature(frontend)**: enhance mock data flow for running frontend without backend server
 
 ### Fixed
 
-- **e2e**: wait for email input to be visible before filling
-- **tests**: update Backlog.loading.test.tsx to use definitionService mocks
-- **frontend**: resolve circular dependency and update components to use definitionService directly
-- **frontend**: route definition service through mock API facade
-- **frontend**: make role comparison case-insensitive in navigation settings filter
-- **frontend**: update tests to work with mock API facade pattern
-- **frontend**: return correct user role from mock API based on team membership
-- **frontend**: route data export through mock-aware API service
-- add mock notification data with correct response structure for NotificationsResponse
-- route notification API calls through mock service when VITE_USE_MOCK_API=true
+- **security**: update sanitize-html dependency from v2.17.3 to v2.17.4. The related critical XSS vulnerability (CVE-2026-44990) is resolved
 
 ## [1.2.0] - 2026-05-10
 
 ### Added
 
 - **env**: add production environment templates and update CI config
+- **docs**: add comprehensive API and architecture documentation
 
 ### Changed
 
-- **e2e**: improve auth test reliability and mock state management
-- **e2e**: remove unused expect imports from page objects
-- improve type safety and clean up unused imports
+- **test(e2e)**: improve end-to-end test reliability and mock state management
 
 ### Fixed
 
-- **frontend**: resolve CodeQL warnings for useless conditionals and unreachable code
-- **frontend**: resolve issues for fixing lint warnings
-- **frontend**: resolve undefined/null values in various components
-- **frontend**: resolve lint warnings and failing tests in SprintReview
-- **frontend**: resolve 1232 ESLint warnings and 50 TypeScript errors
-- **backend**: include user relation in votesBy query to resolve type error
-- **backend**: resolve type safety issues with optional properties
-- **backend**: make includedPBIs and backlogItems optional in type definitions
-- **backend**: add optional chaining to fix integration test failures
-- **backend**: resolve all remaining ESLint warnings for clean build
-- **backend**: resolve test failures from lint fixes and maintain backward compatibility
-- **backend**: resolve all ESLint warnings for type safety
-- **backend**: resolve additional ESLint warnings for type safety
-- **backend**: resolve ESLint warnings for type safety and code quality
+- **frontend**: resolve 3 CodeQL warnings for useless conditionals and unreachable code
+- **frontend**: resolve 1232 ESLint warnings for type safety and code quality improvements
+- **backend**: resolve 351 ESLint warnings for type safety and code quality improvements
 
 ## [1.1.0] - 2026-05-06
 
-### Added
+### Changed
 
-- **Enhancements**: Code quality improvements
+- **enhancements**: improve code quality
   - Potential fix for code scanning alert no. 5: Log injection
   - Potential fix for code scanning alert no. 3: Missing rate limiting
   - Potential fix for code scanning alert no. 2: Missing rate limiting
   - Potential fix for code scanning alert no. 1: Missing CSRF middleware
   - tests: improve global teardown with conditional prisma disconnect
 
+- **security**: improve rate limiting and csrf protection
+
 ### Fixed
 
 - **release**: various release workflow fixes and optimizations
-- **CI**: various CI workflow fixes and optimizations
-- **security**: improve rate limiting and csrf protection
+- **ci**: various CI workflow fixes and optimizations
 
 ## [1.0.0] - 2026-05-04
 
@@ -618,6 +598,6 @@ For questions, issues, or security concerns:
 
 ---
 
-**Copyright 2024-2026 Scrsphere Team**
+**Copyright 2026 Orbivort**
 
 Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) for details.
