@@ -8,10 +8,11 @@
 [![codecov](https://codecov.io/github/orbivort/scrsphere/graph/badge.svg?token=Z2T4R3G8F7)](https://codecov.io/github/orbivort/scrsphere)
 [![Known Vulnerabilities](https://snyk.io/test/github/orbivort/scrsphere/badge.svg)](https://snyk.io/test/github/orbivort/scrsphere)
 
+[![GitHub release](https://img.shields.io/github/v/release/orbivort/scrsphere?include_prereleases)](https://github.com/orbivort/scrsphere/releases)
+[![GitHub issues](https://img.shields.io/github/issues/orbivort/scrsphere)](https://github.com/orbivort/scrsphere/issues)
+
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue.svg)](https://www.typescriptlang.org/)
-[![React](https://img.shields.io/badge/React-19-blue.svg)](https://react.dev/)
-[![Node.js Version](https://img.shields.io/badge/node-%5E24.14.1-brightgreen.svg)](https://nodejs.org/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-18+-blue.svg)](https://www.postgresql.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-24+-green.svg)](https://nodejs.org/)
 
 ScrSphere is a self-hosted web application for managing Agile Scrum processes, built to faithfully follow the Scrum Guide with modern technologies and rigorous quality standards. It provides a complete solution that guides teams through the entire Scrum lifecycle — from product goals and backlogs to sprint reviews and retrospectives — all deployable on your own infrastructure with zero per‑user fees.
 
