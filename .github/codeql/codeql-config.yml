@@ -28,6 +28,12 @@ paths-ignore:
   # Performance testing scripts (k6)
   - 'k6/**'
   
+  # Build output and compiled files
+  - '**/dist/**'
+  - '**/build/**'
+  - '**/*.js'
+  - '**/*.d.ts'
+  
   # Generated code
   - '**/generated/**'
   - '**/*.generated.ts'
@@ -47,9 +53,6 @@ paths-ignore:
   # Documentation
   - 'docs/**'
   - '**/*.md'
-  
-  # Type definitions (often contain unused imports for documentation)
-  - '**/*.d.ts'
 
 # Query suites to run
 # Using security-and-quality for comprehensive analysis
