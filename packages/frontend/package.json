@@ -53,7 +53,10 @@
     "test:e2e:codegen": "playwright codegen",
     "test:e2e:ci": "cross-env E2E_BROWSERS=desktop playwright test",
     "generate:icon-types": "tsx ../../scripts/utility/generate-icon-types.ts",
-    "generate:icon-types:watch": "tsx ../../scripts/utility/generate-icon-types.ts --watch"
+    "generate:icon-types:watch": "tsx ../../scripts/utility/generate-icon-types.ts --watch",
+    "build:github-pages": "tsc -b && vite build --mode production",
+    "preview:github-pages": "vite preview --mode production",
+    "serve:github-pages": "vite preview --mode production --host"
   },
   "dependencies": {
     "@scrsphere/shared": "workspace:*",

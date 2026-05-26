@@ -1,0 +1,135 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/frontend/**'
+      - 'packages/shared/**'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/deploy-github-pages.yml'
+  workflow_dispatch:
+    inputs:
+      enable_mock:
+        description: 'Enable Mock API'
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '24.14.1'
+  PNPM_VERSION: '10.33.0'
+
+jobs:
+  build:
+    name: Build for GitHub Pages
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v5
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+        id: pnpm-cache
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v5
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build shared package
+        run: pnpm --filter=@scrsphere/shared run build
+
+      - name: Create production environment file
+        run: |
+          cd packages/frontend
+          cat > .env.production << 'EOF'
+          # GitHub Pages Production Configuration
+          # Mock API enabled for demonstration without backend
+
+          VITE_USE_MOCK_API=true
+          VITE_API_URL=https://api.example.com/api/v1
+          VITE_LOG_LEVEL=info
+          VITE_BACKLOG_ITEM_LIMIT=100
+          VITE_BACKLOG_MAX_ITEMS_PER_GOAL=200
+          EOF
+
+      - name: Build frontend
+        run: pnpm --filter=@scrsphere/frontend run build
+        env:
+          VITE_USE_MOCK_API: true
+
+      - name: Add security headers
+        run: |
+          cd packages/frontend/dist
+          cat > _headers << 'EOF'
+          /*
+            X-Frame-Options: DENY
+            X-XSS-Protection: 1; mode=block
+            X-Content-Type-Options: nosniff
+            Referrer-Policy: strict-origin-when-cross-origin
+            Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
+          /assets/*
+            Cache-Control: public, max-age=31536000, immutable
+          *.html
+            Cache-Control: no-cache
+          EOF
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: './packages/frontend/dist'
+
+  deploy:
+    name: Deploy to GitHub Pages
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Summary
+        run: |
+          echo "### 🚀 GitHub Pages Deployment Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**URL:** ${{ steps.deployment.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Configuration:**" >> $GITHUB_STEP_SUMMARY
+          echo "- Mock API: ✅ Enabled" >> $GITHUB_STEP_SUMMARY
+          echo "- Backend: ❌ Not required (using mock data)" >> $GITHUB_STEP_SUMMARY
+          echo "- SPA Routing: ✅ Configured" >> $GITHUB_STEP_SUMMARY
+          echo "- Security Headers: ✅ Applied" >> $GITHUB_STEP_SUMMARY

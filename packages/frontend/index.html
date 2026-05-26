@@ -8,6 +8,22 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+    <script>
+      // Single Page Apps for GitHub Pages - SPA redirect handling
+      // MIT License - https://github.com/rafgraph/spa-github-pages
+      // This script checks if we were redirected from a 404 and restores the URL
+      (function() {
+        // Check if we have a redirect stored in sessionStorage
+        var redirect = sessionStorage.redirect;
+        delete sessionStorage.redirect;
+        
+        // If we have a redirect and it's different from current location, restore it
+        if (redirect && redirect !== location.href) {
+          // Replace the current history state with the correct URL
+          history.replaceState(null, null, redirect);
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
