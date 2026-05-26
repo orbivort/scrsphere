@@ -31,7 +31,13 @@ export default defineConfig(({ mode }) => {
   // Extract base URL for proxy (remove /api/v1 suffix if present)
   const proxyTarget = apiUrl.replace(/\/api\/v1\/?$/, '');
 
+  // Base path for GitHub Pages deployment
+  // For username.github.io, base is '/'
+  // For username.github.io/repo-name, set VITE_BASE_PATH='/repo-name/'
+  const base = env.VITE_BASE_PATH || '/';
+
   return {
+    base,
     define: {
       __APP_VERSION__: JSON.stringify(rootPackageJson.version),
     },
