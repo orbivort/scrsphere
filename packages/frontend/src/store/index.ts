@@ -10,6 +10,7 @@ import { apiService, sessionManager } from '../services';
 import type { SessionConfig } from '../services/sessionManager';
 import { logger, setStoreProvider } from '../utils/logger';
 import { TOAST_DURATION } from '../utils/constants';
+import { navigateTo } from '../utils/navigation';
 
 let queryClient: QueryClient | null = null;
 
@@ -216,7 +217,7 @@ export const useAuthStore = create<AuthState>()(
             // Clear all state and redirect to login
             await get().logout();
             // Redirect to login page
-            window.location.href = '/login';
+            navigateTo('/login');
           } else {
             set({
               deletionError: response.error?.message ?? 'Failed to delete account',

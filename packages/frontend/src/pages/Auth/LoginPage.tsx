@@ -9,6 +9,7 @@ import { useApiError } from '@/hooks';
 import { apiService } from '@/services';
 import { useAuthStore, useSessionStore, useTeamStore } from '@/store';
 import { logger } from '@/utils/logger';
+import { getCurrentPath } from '@/utils/navigation';
 import type { LoginCredentials } from '@/types';
 import { getUserFriendlyErrorMessage, type ErrorDetails } from '@/utils/authErrors';
 
@@ -63,7 +64,7 @@ export const LoginPage: React.FC = () => {
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      const currentPath = window.location.pathname;
+      const currentPath = getCurrentPath();
       if (currentPath === '/login' || currentPath === '/register') {
         void navigate('/dashboard');
       }

@@ -2,6 +2,7 @@ import { Component, type ErrorInfo, type ReactNode } from 'react';
 
 import { logger } from '../../utils/logger';
 import { errorReporter } from '../../utils/errorReporter';
+import { navigateTo } from '../../utils/navigation';
 
 import styles from './ErrorBoundary.module.css';
 
@@ -56,7 +57,7 @@ export class PageErrorBoundary extends Component<Props, State> {
   };
 
   handleNavigate = (path: string): void => {
-    window.location.href = path;
+    navigateTo(path);
   };
 
   render(): ReactNode {
