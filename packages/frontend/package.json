@@ -20,7 +20,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:test": "vite --mode test",
+    "dev:test": "cross-env NODE_ENV=test vite --mode test",
     "build": "tsc -b && vite build",
     "build:analyze": "tsc -b && vite build --mode analyze",
     "preview": "vite preview",
