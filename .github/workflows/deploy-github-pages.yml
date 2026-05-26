@@ -91,10 +91,25 @@ jobs:
 
       - name: Inject Cloudflare Web Analytics
         if: vars.CF_ANALYTICS_TOKEN != ''
+        shell: node {0}
+        env:
+          CF_TOKEN: ${{ vars.CF_ANALYTICS_TOKEN }}
         run: |
-          cd packages/frontend/dist
-          TOKEN="${{ vars.CF_ANALYTICS_TOKEN }}"
-          sed -i "s|</head>|<script defer src=\"https://static.cloudflareinsights.com/beacon.min.js\" data-cf-beacon='{\"token\": \"${TOKEN}\"}'></script></head>|" index.html
+          const fs = require('fs');
+          const path = './packages/frontend/dist/index.html';
+          const html = fs.readFileSync(path, 'utf8');
+          const snippet = `<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "${process.env.CF_TOKEN}"}'></script>`;
+          if (html.includes(snippet)) {
+            console.log('Cloudflare Analytics already injected, skipping');
+          } else {
+            const updated = html.replace('</head>', snippet + '</head>');
+            if (updated === html) {
+              console.error('ERROR: </head> not found in index.html');
+              process.exit(1);
+            }
+            fs.writeFileSync(path, updated);
+            console.log('Cloudflare Analytics injected successfully');
+          }
 
       - name: Add security headers
         run: |
