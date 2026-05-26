@@ -76,7 +76,7 @@ export default defineConfig({
         ['json', { outputFile: 'test-results/results.json' }],
       ],
   use: {
-    baseURL: process.env.E2E_BASE_URL || 'http://localhost:5174',
+    baseURL: process.env.E2E_BASE_URL || 'http://localhost:5173',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
@@ -85,9 +85,12 @@ export default defineConfig({
   },
   projects: getProjects(),
   webServer: {
-    command: 'pnpm run dev:test',
-    url: 'http://localhost:5174',
+    command: 'pnpm run dev',
+    url: 'http://localhost:5173',
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
+    env: {
+      VITE_BASE_PATH: '/',
+    },
   },
 });
