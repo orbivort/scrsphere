@@ -3,6 +3,7 @@ import axios, { type AxiosError, type AxiosInstance, type InternalAxiosRequestCo
 
 import type { ApiResponse } from '../../types';
 import { logger } from '../../utils/logger';
+import { navigateTo, getCurrentPath } from '../../utils/navigation';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:5001/api/v1';
 const API_TIMEOUT = parseInt(import.meta.env.VITE_API_TIMEOUT ?? '30000', 10);
@@ -106,8 +107,7 @@ export class CoreApiService {
           requestUrl.includes('/auth/register') ||
           requestUrl.includes('/auth/refresh');
 
-        const isLoginPage =
-          window.location.pathname === '/login' || window.location.pathname === '/register';
+        const isLoginPage = getCurrentPath() === '/login' || getCurrentPath() === '/register';
 
         if (
           error.response?.status === 403 &&
@@ -136,7 +136,7 @@ export class CoreApiService {
             return this.api(originalRequest);
           } catch (refreshError) {
             onLogout?.();
-            window.location.href = '/login';
+            navigateTo('/login');
             return Promise.reject(refreshError);
           }
         }

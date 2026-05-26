@@ -18,6 +18,7 @@ import { useAuthStore, useSessionStore, setQueryClient, initializeStoreSideEffec
 import { TeamProvider, TeamInitializer } from './contexts/TeamContext';
 import { apiService } from './services';
 import { logger } from './utils/logger';
+import { getRouterBasename } from './utils/navigation';
 import loadingStyles from './components/common/Loading/LoadingState.module.css';
 import {
   LazyDashboard as Dashboard,
@@ -43,6 +44,8 @@ import {
   LazyPrivacyData as PrivacyData,
   LazyIconGallery as IconGallery,
 } from './routes/lazyComponents';
+
+const ROUTER_BASENAME = getRouterBasename();
 
 // Lazy Route wrapper component
 const LazyRoute: React.FC<{
@@ -213,7 +216,7 @@ function App() {
       <GlobalToastContainer />
       <QueryClientProvider client={queryClient}>
         <AnnouncerProvider>
-          <Router>
+          <Router basename={ROUTER_BASENAME}>
             <AuthInitializer>
               <SessionWarningWrapper>
                 <TeamProvider>

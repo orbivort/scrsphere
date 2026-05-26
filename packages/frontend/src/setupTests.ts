@@ -15,6 +15,7 @@ Object.defineProperty(globalThis, 'import.meta', {
       VITE_USE_MOCK_API: 'true',
       VITE_API_BASE_URL: 'http://localhost:3000/api',
       VITE_LOG_LEVEL: 'debug',
+      VITE_BASE_PATH: '/',
       MODE: 'test',
       DEV: false,
       PROD: false,
