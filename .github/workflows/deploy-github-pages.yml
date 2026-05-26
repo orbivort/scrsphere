@@ -89,6 +89,13 @@ jobs:
         env:
           VITE_USE_MOCK_API: true
 
+      - name: Inject Cloudflare Web Analytics
+        if: vars.CF_ANALYTICS_TOKEN != ''
+        run: |
+          cd packages/frontend/dist
+          TOKEN="${{ vars.CF_ANALYTICS_TOKEN }}"
+          sed -i "s|</head>|<script defer src=\"https://static.cloudflareinsights.com/beacon.min.js\" data-cf-beacon='{\"token\": \"${TOKEN}\"}'></script></head>|" index.html
+
       - name: Add security headers
         run: |
           cd packages/frontend/dist
@@ -134,3 +141,4 @@ jobs:
           echo "- Backend: ❌ Not required (using mock data)" >> $GITHUB_STEP_SUMMARY
           echo "- SPA Routing: ✅ Configured" >> $GITHUB_STEP_SUMMARY
           echo "- Security Headers: ✅ Applied" >> $GITHUB_STEP_SUMMARY
+          echo "- Cloudflare Analytics: ✅ Injected" >> $GITHUB_STEP_SUMMARY
