@@ -10,15 +10,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - **frontend**: add base path support for deployment
+- **frontend**: add github pages support for live demo
+- **docs**: add user guide and core feature docs
+- **ci**: add prepare-release and release-on-merge workflows
 
 ### Changed
 
-- simplify 404 page SPA redirect script
+- **user role**: remove unused administrator user role and update related code
+- **ci**: update release workflow
 
 ### Fixed
 
-- **prisma migration**: correct table name to snake_case
-- **backlog**: resolve React Query cache conflict between Sprint Planning and Backlog
+- **product backlog**: resolve React Query cache conflict between Sprint Planning and Product Backlog
 
 ## [1.4.1] - 2026-05-23
 
