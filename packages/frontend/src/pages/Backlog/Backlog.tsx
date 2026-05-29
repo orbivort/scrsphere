@@ -526,7 +526,7 @@ const BacklogContent: React.FC = () => {
             onLoadMore={fetchNextPage}
             isLoading={isFetchingNextPage}
             hasMore={hasNextPage}
-            loadedCount={backlogData?.data.length ?? 0}
+            loadedCount={(backlogData?.data ?? []).length}
             totalCount={totalCount}
           />
         )}

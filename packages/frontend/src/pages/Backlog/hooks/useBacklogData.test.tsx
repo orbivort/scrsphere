@@ -19,6 +19,7 @@ vi.mock('../../../hooks/queryKeys', () => ({
   queryKeys: {
     productBacklog: {
       list: vi.fn().mockReturnValue(['productBacklog', 'list']),
+      infinite: vi.fn().mockReturnValue(['productBacklog', 'infinite']),
       all: ['productBacklog'],
     },
     productGoal: {
