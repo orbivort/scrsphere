@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-05-29
+
+### Added
+
+- **frontend**: add base path support for deployment
+
+### Changed
+
+- simplify 404 page SPA redirect script
+
+### Fixed
+
+- **prisma migration**: correct table name to snake_case
+- **backlog**: resolve React Query cache conflict between Sprint Planning and Backlog
+
 ## [1.4.1] - 2026-05-23
 
 ### Fixed
