@@ -959,7 +959,6 @@ model PasswordResetToken {
 }
 
 enum UserRole {
-  ADMINISTRATOR
   PRODUCT_OWNER
   SCRUM_MASTER
   DEVELOPER

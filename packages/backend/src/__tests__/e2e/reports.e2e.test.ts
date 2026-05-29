@@ -458,11 +458,11 @@ describe('E2E: Reports', () => {
       expect(response.body.success).toBe(true);
     });
 
-    it('should allow administrator to view reports', async () => {
+    it('should allow product owner to view reports', async () => {
       const email = `admin-reports-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { team } = await setupTeamWithUser(email, ROLES.ADMINISTRATOR);
+      const { team } = await setupTeamWithUser(email, ROLES.PRODUCT_OWNER);
 
       const cookies = await loginAndGetCookies(email);
 

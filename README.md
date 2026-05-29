@@ -122,7 +122,8 @@ scrsphere/
 ├── docs/
 │   ├── api/                  # REST API reference
 │   ├── architecture/         # System design, data model, security
-│   └── deployment/           # Deployment guides
+│   ├── deployment/           # Deployment guides
+│   └── user-guide/           # User documentation and guides
 ├── k6/                       # Load testing scenarios (k6)
 │   └── scripts/scenarios/    # pre-built load test scenarios
 ├── scripts/                  # Build and utility scripts
@@ -437,6 +438,7 @@ Live demo: <https://orbivort.github.io/scrsphere/>
 
 | Area                    | Location                                                                                                       |
 | ----------------------- | -------------------------------------------------------------------------------------------------------------- |
+| **User guide**          | [`docs/user-guide/`](docs/user-guide) — getting started, core features, Scrum workflows                        |
 | **REST API reference**  | [`docs/api/`](docs/api) — 19 endpoint groups (authentication, sprints, backlog, reports, etc.)                 |
 | **System architecture** | [`docs/architecture/`](docs/architecture) — system design, data model, component design, security architecture |
 | **Deployment guide**    | [`docs/deployment/DEPLOYMENT.md`](docs/deployment/DEPLOYMENT.md)                                               |

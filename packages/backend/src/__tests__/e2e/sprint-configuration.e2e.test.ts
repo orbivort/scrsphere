@@ -923,11 +923,11 @@ describe('E2E: Sprint Configuration', () => {
       expect(response.body.success).toBe(true);
     });
 
-    it('should allow administrator to create configuration', async () => {
+    it('should allow product owner to create configuration', async () => {
       const email = `admin-create-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { team } = await setupTeamWithUser(email, ROLES.ADMINISTRATOR);
+      const { team } = await setupTeamWithUser(email, ROLES.PRODUCT_OWNER);
 
       const cookies = await loginAndGetCookies(email);
       const { csrfToken } = extractCsrfFromCookies(cookies);

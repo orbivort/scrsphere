@@ -75,7 +75,7 @@ describe('Team Management Integration Tests', () => {
   const addTeamMember = async (
     teamId: string,
     userId: string,
-    role: 'ADMINISTRATOR' | 'PRODUCT_OWNER' | 'SCRUM_MASTER' | 'DEVELOPER'
+    role: 'PRODUCT_OWNER' | 'SCRUM_MASTER' | 'DEVELOPER'
   ) => {
     const membershipId = generateUUIDv7();
     await prisma.teamMember.create({
@@ -387,7 +387,7 @@ describe('Team Management Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'ADMINISTRATOR');
+      await addTeamMember(team.id, user.id, 'PRODUCT_OWNER');
 
       const cookies = await loginAndGetCookies(email);
 
@@ -428,7 +428,7 @@ describe('Team Management Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'ADMINISTRATOR');
+      await addTeamMember(team.id, user.id, 'PRODUCT_OWNER');
 
       const cookies = await loginAndGetCookies(email);
 

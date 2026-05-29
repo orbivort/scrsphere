@@ -280,7 +280,7 @@ describe('E2E: Team Management', () => {
   });
 
   describe('PUT /api/v1/teams/:teamId', () => {
-    it('should update team successfully as administrator', async () => {
+    it('should update team successfully as product owner', async () => {
       const email = `update-team-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
@@ -289,7 +289,7 @@ describe('E2E: Team Management', () => {
       testTeamNames.push(teamName);
 
       const team = await createTestTeamInDb(teamName);
-      await addTeamMember(team.id, user.id, ROLES.ADMINISTRATOR);
+      await addTeamMember(team.id, user.id, ROLES.PRODUCT_OWNER);
 
       const cookies = await loginAndGetCookies(email);
       const { csrfToken } = extractCsrfFromCookies(cookies);
@@ -311,7 +311,7 @@ describe('E2E: Team Management', () => {
   });
 
   describe('DELETE /api/v1/teams/:teamId', () => {
-    it('should delete team successfully as administrator', async () => {
+    it('should delete team successfully as product owner', async () => {
       const email = `delete-team-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
@@ -320,7 +320,7 @@ describe('E2E: Team Management', () => {
       testTeamNames.push(teamName);
 
       const team = await createTestTeamInDb(teamName);
-      await addTeamMember(team.id, user.id, ROLES.ADMINISTRATOR);
+      await addTeamMember(team.id, user.id, ROLES.PRODUCT_OWNER);
 
       const cookies = await loginAndGetCookies(email);
       const { csrfToken } = extractCsrfFromCookies(cookies);

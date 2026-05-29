@@ -71,7 +71,7 @@ describe('Retrospectives Integration Tests', () => {
   const addTeamMember = async (
     teamId: string,
     userId: string,
-    role: 'ADMINISTRATOR' | 'PRODUCT_OWNER' | 'SCRUM_MASTER' | 'DEVELOPER'
+    role: 'PRODUCT_OWNER' | 'SCRUM_MASTER' | 'DEVELOPER'
   ) => {
     const membershipId = generateUUIDv7();
     await prisma.teamMember.create({

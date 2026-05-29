@@ -1,0 +1,441 @@
+# Sprint Planning
+
+Sprint Planning is the ceremony where the Scrum Team defines the Sprint Goal and selects Product Backlog items to work on during the upcoming Sprint.
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Before Planning](#before-planning)
+- [Conducting Sprint Planning](#conducting-sprint-planning)
+- [Capacity Planning](#capacity-planning)
+- [Selecting Backlog Items](#selecting-backlog-items)
+- [Defining the Sprint Goal](#defining-the-sprint-goal)
+- [Starting the Sprint](#starting-the-sprint)
+- [Best Practices](#best-practices)
+
+---
+
+## Overview
+
+### Purpose of Sprint Planning
+
+Sprint Planning answers:
+
+1. **What** can be delivered in the upcoming Sprint?
+2. **How** will the work be achieved?
+3. **Why** is this work valuable (Sprint Goal)?
+
+### Participants
+
+| Role                 | Responsibility                                             |
+| -------------------- | ---------------------------------------------------------- |
+| **Product Owner**    | Presents backlog, clarifies requirements, negotiates scope |
+| **Development Team** | Estimates, commits to work, identifies how to achieve goal |
+| **Scrum Master**     | Facilitates, ensures Scrum practices are followed          |
+
+### Time Box
+
+- **Duration**: Maximum 8 hours for a 4-week sprint (2 hours per week of sprint)
+- **Typical**: 2-4 hours for a 2-week sprint
+
+---
+
+## Before Planning
+
+### Preparation Checklist
+
+**Product Owner:**
+
+- [ ] Backlog is refined and prioritized
+- [ ] Top items have acceptance criteria
+- [ ] Items are estimated (story points)
+- [ ] Dependencies are identified
+- [ ] Product Goal is clear
+
+**Development Team:**
+
+- [ ] Previous sprint is complete or near complete
+- [ ] Team capacity is known
+- [ ] Technical context is understood
+
+**Scrum Master:**
+
+- [ ] Meeting is scheduled
+- [ ] Room/tools are prepared
+- [ ] Previous sprint metrics available (velocity)
+
+### Backlog Readiness
+
+Items ready for sprint have:
+
+- Clear description and acceptance criteria
+- Story point estimate
+- No blocking dependencies
+- "Ready" status in the backlog
+
+---
+
+## Conducting Sprint Planning
+
+### Step 1: Navigate to Sprint Planning
+
+1. Click "Sprint Planning" in the sidebar
+2. The planning interface displays:
+   - Sprint selector (current, upcoming, or past sprints)
+   - Product backlog items available for selection
+   - Sprint backlog area for selected items
+   - Active Product Goal (if set)
+
+### Step 2: Select or Create a Sprint
+
+1. Use the sprint dropdown to select an existing sprint
+2. Sprints are categorized as:
+   - **[Active]**: Currently running sprint
+   - **[Upcoming]**: Future sprints
+   - **[Done]**: Completed sprints
+3. For new sprints, ensure they are pre-configured in sprint settings
+
+### Step 3: Review Previous Sprint
+
+Before planning the new sprint:
+
+1. Review velocity from previous sprints
+2. Identify carry-over items (if any)
+3. Discuss what went well and what to improve
+4. Note any capacity changes (vacations, new members)
+
+### Step 4: Set Sprint Parameters
+
+Configure the sprint:
+
+| Parameter       | Description        | Recommendation              |
+| --------------- | ------------------ | --------------------------- |
+| **Sprint Name** | Identifiable name  | "Sprint N: [Theme]"         |
+| **Start Date**  | When sprint begins | Typically next day          |
+| **End Date**    | When sprint ends   | Based on sprint length      |
+| **Sprint Goal** | Sprint objective   | Clear, achievable, valuable |
+
+**Editing Sprint Goal:**
+
+- Click the edit icon next to the sprint goal
+- Enter or update the goal in the Edit Sprint Goal modal
+- Save to update
+
+**Example:**
+
+```
+Sprint Name: Sprint 5: Payment Integration
+Start Date: January 15, 2026
+End Date: January 29, 2026
+Sprint Goal: Complete payment processing flow including credit card and PayPal
+```
+
+---
+
+## Capacity Planning
+
+### Understanding Capacity
+
+Capacity = Available time × Team members × Focus factor
+
+**Factors affecting capacity:**
+
+- Team size and availability
+- Holidays and vacations
+- Meetings and overhead
+- Technical debt and support
+
+### Using the Capacity Tool
+
+1. Click "Team Capacity" button in the planning interface
+2. The Team Capacity modal displays:
+   - List of team members
+   - Available hours per member (editable)
+   - Total team capacity calculation
+
+   | Member    | Available Hours     |
+   | --------- | ------------------- |
+   | Alice     | 80 hours            |
+   | Bob       | 64 hours (vacation) |
+   | Carol     | 80 hours            |
+   | **Total** | **224 hours**       |
+
+3. Adjust individual member hours as needed (e.g., for vacations)
+4. Use the total to guide sprint commitment
+
+### Velocity-Based Planning
+
+Use historical velocity to guide planning:
+
+```
+Average Velocity: 40 story points
+Team Capacity: Normal (no vacations)
+Recommended Commitment: 35-40 story points (leave buffer)
+```
+
+> **Tip**: Don't commit to more than 80-90% of average velocity to allow for unexpected work.
+
+---
+
+## Selecting Backlog Items
+
+### Selection Process
+
+1. **View Available Items**
+   - Product backlog items are displayed in the left panel
+   - Items show title, story points, and MoSCoW priority
+   - Only "Ready" items should be selected
+
+2. **Add Items to Sprint**
+   - Drag items from the product backlog to the sprint backlog area
+   - Alternatively, use keyboard navigation for accessibility
+   - Watch the capacity indicator as you add items
+
+3. **Review and Adjust**
+   - Reorder items within the sprint backlog as needed
+   - Remove items by dragging them back or using remove action
+   - Ensure selected items support the Sprint Goal
+
+4. **Verify Dependencies**
+   - Ensure dependent items are included
+   - Check for external dependencies
+   - Resolve blockers before committing
+
+### Capacity Indicator
+
+The planning interface shows sprint capacity:
+
+```
+┌─────────────────────────────────────────┐
+│ Sprint Capacity                         │
+│ ████████████████░░░░░░░ 35/40 points   │
+│ 35 selected | 5 remaining | 40 total   │
+└─────────────────────────────────────────┘
+```
+
+- **Green**: Within capacity
+- **Yellow**: Near capacity (80-90%)
+- **Red**: Over capacity
+
+### Item Details
+
+When viewing backlog items, you can see:
+
+- **Title**: Item description
+- **Story Points**: Effort estimate
+- **Priority**: MoSCoW classification (Must/Should/Could/Won't)
+- **Status**: Ready, In Progress, etc.
+- **Ready Checklist**: Confirmation of item readiness
+
+### Item Selection Guidelines
+
+**Include:**
+
+- Items supporting the Sprint Goal
+- High-priority items ready for development
+- Technical debt items (if agreed)
+- Bugs discovered in previous sprint
+
+**Avoid:**
+
+- Items without acceptance criteria
+- Items with blocking dependencies
+- Items larger than half the sprint (split them)
+- Items not aligned with the goal
+
+---
+
+## Defining the Sprint Goal
+
+### What Makes a Good Sprint Goal?
+
+A Sprint Goal should be:
+
+- **Specific**: Clear and well-defined
+- **Measurable**: Can determine when achieved
+- **Achievable**: Within sprint capacity
+- **Relevant**: Aligned with Product Goal
+- **Time-bound**: Achievable within the sprint
+
+### Examples
+
+**Good Sprint Goals:**
+
+```
+✅ "Complete user registration flow including email verification"
+✅ "Enable shopping cart functionality with add, remove, and update"
+✅ "Integrate payment gateway and process first test transaction"
+```
+
+**Poor Sprint Goals:**
+
+```
+❌ "Work on various features" (too vague)
+❌ "Finish everything in the backlog" (unrealistic)
+❌ "Improve performance" (not measurable)
+```
+
+### Sprint Goal Benefits
+
+- **Focus**: Team knows what's important
+- **Coherence**: Items work together toward a purpose
+- **Flexibility**: Can negotiate scope within the goal
+- **Motivation**: Clear objective to achieve
+
+---
+
+## Starting the Sprint
+
+### Pre-Start Checklist
+
+Before starting the sprint, verify:
+
+- [ ] Sprint Goal is defined and agreed
+- [ ] Selected items fit within capacity
+- [ ] All items have acceptance criteria
+- [ ] Team commits to the sprint backlog
+- [ ] Dependencies are resolved or planned for
+- [ ] Sprint dates are correct
+
+### Starting the Sprint
+
+1. **Review the Sprint Backlog**
+   - All team members agree
+   - Product Owner approves scope
+   - Sprint Goal is clear
+
+2. **Click "Start Sprint"**
+   - The Start Sprint modal opens
+   - Review sprint details (name, dates, goal)
+   - Review selected backlog items and tasks
+   - Confirm to start the sprint
+
+3. **After Confirmation**
+   - Sprint status changes to "Active"
+   - Items and tasks move to the Sprint Board
+   - Automatic redirect to Sprint Board
+
+### After Starting
+
+**Immediately:**
+
+- Create initial tasks for backlog items (if not auto-generated)
+- Set up any needed technical context
+- Clarify questions about acceptance criteria
+
+**Daily:**
+
+- Update task status on the board
+- Participate in Daily Scrum
+- Raise impediments immediately
+
+---
+
+## Best Practices
+
+### Effective Planning Sessions
+
+1. **Time-Box Strictly**
+   - Keep to the time limit
+   - Use a visible timer
+   - Defer detailed discussions
+
+2. **Collaborate Actively**
+   - Everyone participates
+   - Ask clarifying questions
+   - Raise concerns early
+
+3. **Focus on Value**
+   - Prioritize by value, not just "keep busy"
+   - Ensure Sprint Goal is meaningful
+   - Consider stakeholder needs
+
+4. **Be Realistic**
+   - Don't overcommit
+   - Account for uncertainty
+   - Leave buffer for the unexpected
+
+### Common Mistakes to Avoid
+
+| Mistake                 | Impact                            | Solution                     |
+| ----------------------- | --------------------------------- | ---------------------------- |
+| Overcommitting          | Incomplete sprint, demoralization | Use 80% of velocity          |
+| No Sprint Goal          | Lack of focus, scope creep        | Always define a goal         |
+| Selecting unready items | Delays, confusion                 | Only select refined items    |
+| Ignoring capacity       | Unrealistic expectations          | Account for availability     |
+| Gold-plating            | Wasted effort                     | Focus on acceptance criteria |
+
+### Sprint Planning Anti-Patterns
+
+**Avoid:**
+
+1. **"Fill the Sprint"**
+   - Don't add items just to fill capacity
+   - Every item should support the goal
+
+2. **"Product Owner Decides Alone"**
+   - Team must commit, not be assigned
+   - Collaborative decision-making
+
+3. **"No Discussion"**
+   - Planning is for clarification
+   - Surface risks and dependencies
+
+4. **"Copy Last Sprint"**
+   - Each sprint is unique
+   - Consider current context
+
+---
+
+## Example Planning Session
+
+### Scenario: E-commerce Team
+
+**Team Context:**
+
+- 4 developers, 1 QA
+- 2-week sprint
+- Average velocity: 35 points
+- One member on vacation (reduced capacity)
+
+**Planning Steps:**
+
+1. **Review Capacity**
+
+   ```
+   Normal capacity: 35 points
+   Vacation adjustment: -8 points
+   Buffer (10%): -3 points
+   Target commitment: ~24 points
+   ```
+
+2. **Define Sprint Goal**
+
+   ```
+   "Enable customers to save items for later purchase"
+   ```
+
+3. **Select Items**
+   | Item | Points | Priority |
+   |------|--------|----------|
+   | Save to wishlist | 5 | Must |
+   | View wishlist | 3 | Must |
+   | Remove from wishlist | 2 | Must |
+   | Wishlist count badge | 3 | Should |
+   | Move to cart | 5 | Should |
+   | Share wishlist | 5 | Could |
+   | **Total** | **23** | |
+
+4. **Verify and Commit**
+   - Team agrees to 23 points
+   - Sprint Goal is achievable
+   - Start sprint
+
+---
+
+**Related Topics**:
+
+- [Product Backlog](./product-backlog.md) - Source of sprint items
+- [Sprint Board](./sprint-board.md) - Track sprint progress
+- [Daily Scrum](./daily-scrum.md) - Daily synchronization
+- [Sprint Review](./sprint-review.md) - Review sprint outcome
