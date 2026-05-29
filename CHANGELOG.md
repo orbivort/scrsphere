@@ -5,11 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-05-29
+
+### Added
+
+- **frontend**: add base path support for deployment
+- **frontend**: add github pages support for live demo
+- **docs**: add user guide and core feature docs
+- **ci**: add prepare-release and release-on-merge workflows
+
+### Changed
+
+- **user role**: remove unused administrator user role and update related code
+- **ci**: update release workflow
+
+### Fixed
+
+- **security**: fix 4 vulnerabilities (2 high, 1 moderate, 1 low severity) in axios package (GHSA-pjwm-pj3p-43mv, GHSA-35jp-ww65-95wh, GHSA-898c-q2cr-xwhg, GHSA-654m-c8p4-x5fp)
+- **product backlog**: resolve React Query cache conflict between Sprint Planning and Product Backlog
+
 ## [1.4.1] - 2026-05-23
 
 ### Fixed
 
-- **security**: fix moderate severity DoS vulnerability in qs package (GHSA-q8mj-m7cp-5q26)
+- **security**: fix 1 moderate severity DoS vulnerability in qs package (GHSA-q8mj-m7cp-5q26)
 
 ## [1.4.0] - 2026-05-22
 

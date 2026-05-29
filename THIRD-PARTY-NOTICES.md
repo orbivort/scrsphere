@@ -87,7 +87,7 @@ This document contains the license information for third-party packages used in 
 | ----------------------- | ------- | ------------ | ---------------------- | ----------------------------------------------- |
 | @tanstack/react-query   | 5.99.2  | MIT          | Tanner Linsley         | https://github.com/TanStack/query               |
 | @tanstack/react-virtual | 3.13.24 | MIT          | Tanner Linsley         | https://github.com/TanStack/virtual             |
-| axios                   | 1.15.2  | MIT          | Matt Zabriskie         | https://github.com/axios/axios                  |
+| axios                   | 1.16.0  | MIT          | Matt Zabriskie         | https://github.com/axios/axios                  |
 | chart.js                | 4.5.1   | MIT          | Chart.js Contributors  | https://github.com/chartjs/Chart.js             |
 | date-fns                | 4.1.0   | MIT          | Sasha Koss, Lesha Koss | https://github.com/date-fns/date-fns            |
 | react                   | 19.2.5  | MIT          | Meta Platforms, Inc.   | https://github.com/facebook/react               |
