@@ -42,16 +42,41 @@ jobs:
           else
             VERSION="${{ github.ref_name }}"
           fi
-
+          
           if [[ ! "${VERSION}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+ ]]; then
             echo "::error::Invalid version format: ${VERSION}. Expected format: vMAJOR.MINOR.PATCH (e.g., v1.2.0)"
             exit 1
           fi
-
+          
           VERSION_NO_V="${VERSION#v}"
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
           echo "version_no_v=${VERSION_NO_V}" >> "$GITHUB_OUTPUT"
           echo "Release version: ${VERSION} (Docker tag: ${VERSION_NO_V})"
+
+      - name: Verify version matches tag
+        run: |
+          TAG_VERSION="${{ steps.version.outputs.version_no_v }}"
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          
+          echo "Tag version: ${TAG_VERSION}"
+          echo "package.json version: ${PACKAGE_VERSION}"
+          
+          if [[ "${PACKAGE_VERSION}" != "${TAG_VERSION}" ]]; then
+            echo ""
+            echo "::error::Version mismatch detected!"
+            echo "::error::The version in package.json (${PACKAGE_VERSION}) does not match the tag version (${TAG_VERSION})."
+            echo ""
+            echo "This usually happens when a tag is pushed directly without using the prepare-release workflow."
+            echo ""
+            echo "To create a proper release, please:"
+            echo "  1. Delete this tag: git push --delete origin ${{ steps.version.outputs.version }}"
+            echo "  2. Use the prepare-release workflow:"
+            echo "     gh workflow run prepare-release.yml -f version=${{ steps.version.outputs.version }}"
+            echo "  3. Review and merge the created PR"
+            exit 1
+          fi
+          
+          echo "✅ Version verified: package.json version matches tag version"
 
       - name: Verify CI passed on this commit
         env:
@@ -59,235 +84,43 @@ jobs:
         run: |
           SHA="${{ github.sha }}"
           echo "Checking CI status for commit ${SHA}..."
-
+          
           MAX_ATTEMPTS=12
           ATTEMPT=0
           while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
             ATTEMPT=$((ATTEMPT + 1))
-
+            
             RUNS=$(gh run list \
               --workflow=ci.yml \
               --commit="${SHA}" \
               --status=success \
               --limit=1 \
               --json databaseId 2>/dev/null || echo "[]")
-
+            
             if [[ "${RUNS}" != "[]" ]]; then
               echo "✅ CI validation passed for commit ${SHA}"
               exit 0
             fi
-
+            
             echo "  Attempt ${ATTEMPT}/${MAX_ATTEMPTS}: CI not yet passed, waiting 30s..."
             sleep 30
           done
-
+          
           echo "::error::CI workflow has not passed on commit ${SHA} after $((MAX_ATTEMPTS * 30))s. A successful CI run is required before releasing."
           echo "Trigger CI manually or wait for it to complete, then re-run this workflow."
           exit 1
-
-  bump-version:
-    name: Bump Version & Changelog
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    needs: validate
-    permissions:
-      contents: write
-    outputs:
-      bumped_sha: ${{ steps.commit.outputs.bumped_sha }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v5
-        with:
-          ref: main
-          token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 0
-
-      - name: Configure Git
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Generate changelog entry
-        id: changelog
-        env:
-          VERSION_NO_V: ${{ needs.validate.outputs.version_no_v }}
-        run: |
-          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
-
-          if [[ -n "${PREV_TAG}" ]]; then
-            echo "Generating changelog from ${PREV_TAG} to HEAD"
-            COMMIT_RANGE="${PREV_TAG}..HEAD"
-          else
-            echo "No previous tag found. Generating changelog from all commits."
-            COMMIT_RANGE="HEAD"
-          fi
-
-          echo "prev_tag=${PREV_TAG}" >> "$GITHUB_OUTPUT"
-
-          if grep -q "^## \[${VERSION_NO_V}\]" CHANGELOG.md 2>/dev/null; then
-            echo "changelog_exists=true" >> "$GITHUB_OUTPUT"
-            echo "Changelog section for [${VERSION_NO_V}] already exists. Skipping generation."
-            exit 0
-          fi
-
-          echo "changelog_exists=false" >> "$GITHUB_OUTPUT"
-
-          export COMMITS=$(git log ${COMMIT_RANGE} --format='%s' --no-merges)
-          export VERSION_NO_V="${{ needs.validate.outputs.version_no_v }}"
-
-          node << 'SCRIPT'
-          const fs = require('fs');
-          const commits = process.env.COMMITS.split('\n').filter(Boolean);
-          const version = process.env.VERSION_NO_V;
-          const today = new Date().toISOString().split('T')[0];
-
-          const sections = {
-            added: [],
-            changed: [],
-            deprecated: [],
-            removed: [],
-            fixed: [],
-            security: []
-          };
-
-          const typeMap = {
-            feat: 'added',
-            fix: 'fixed',
-            refactor: 'changed',
-            perf: 'changed',
-            improve: 'changed',
-            docs: null,
-            style: null,
-            test: null,
-            build: null,
-            ci: null,
-            chore: null,
-            deps: null
-          };
-
-          for (const commit of commits) {
-            const match = commit.match(/^(feat|fix|refactor|perf|improve|docs|style|test|build|ci|chore|deps)(\(([^)]+)\))?(!)?:\s*(.+)$/);
-            if (match) {
-              const [, type, , scope, breaking, desc] = match;
-              const section = typeMap[type];
-              if (section === null) continue;
-              let entry = scope ? `- **${scope}**: ${desc}` : `- ${desc}`;
-              if (breaking) {
-                sections.changed.push(`- **BREAKING**: ${desc}`);
-              }
-              sections[section].push(entry);
-            } else if (commit && !commit.startsWith('Merge')) {
-              sections.added.push(`- ${commit}`);
-            }
-          }
-
-          let entry = `## [${version}] - ${today}\n`;
-
-          const sectionNames = {
-            added: 'Added',
-            changed: 'Changed',
-            deprecated: 'Deprecated',
-            removed: 'Removed',
-            fixed: 'Fixed',
-            security: 'Security'
-          };
-
-          for (const [key, name] of Object.entries(sectionNames)) {
-            if (sections[key].length > 0) {
-              entry += `\n### ${name}\n\n${sections[key].join('\n')}\n`;
-            }
-          }
-
-          const changelog = fs.readFileSync('CHANGELOG.md', 'utf8');
-          const lines = changelog.split('\n');
-          const header = lines.slice(0, 6).join('\n');
-          const body = lines.slice(6).join('\n');
-
-          fs.writeFileSync('CHANGELOG.md', header + '\n\n' + entry + body);
-          console.log('Changelog entry generated for [' + version + ']');
-          SCRIPT
-
-      - name: Bump package.json versions
-        env:
-          VERSION_NO_V: ${{ needs.validate.outputs.version_no_v }}
-        run: |
-          CURRENT_ROOT=$(node -p "require('./package.json').version")
-          CURRENT_BACKEND=$(node -p "require('./packages/backend/package.json').version")
-          CURRENT_FRONTEND=$(node -p "require('./packages/frontend/package.json').version")
-          CURRENT_SHARED=$(node -p "require('./packages/shared/package.json').version")
-
-          if [[ "${CURRENT_ROOT}" == "${VERSION_NO_V}" && \
-                "${CURRENT_BACKEND}" == "${VERSION_NO_V}" && \
-                "${CURRENT_FRONTEND}" == "${VERSION_NO_V}" && \
-                "${CURRENT_SHARED}" == "${VERSION_NO_V}" ]]; then
-            echo "All package.json files already at version ${VERSION_NO_V}. Skipping bump."
-            echo "needs_bump=false" >> "$GITHUB_ENV"
-            exit 0
-          fi
-
-          echo "needs_bump=true" >> "$GITHUB_ENV"
-          echo "Bumping versions:"
-          echo "  Root:     ${CURRENT_ROOT} → ${VERSION_NO_V}"
-          echo "  Backend:  ${CURRENT_BACKEND} → ${VERSION_NO_V}"
-          echo "  Frontend: ${CURRENT_FRONTEND} → ${VERSION_NO_V}"
-          echo "  Shared:   ${CURRENT_SHARED} → ${VERSION_NO_V}"
-
-          node -e "
-            const fs = require('fs');
-            const v = process.env.VERSION_NO_V;
-            const files = [
-              'package.json',
-              'packages/backend/package.json',
-              'packages/frontend/package.json',
-              'packages/shared/package.json',
-            ];
-            for (const f of files) {
-              const pkg = JSON.parse(fs.readFileSync(f, 'utf8'));
-              pkg.version = v;
-              fs.writeFileSync(f, JSON.stringify(pkg, null, 2) + '\n');
-            }
-          "
-
-      - name: Commit and push version bump
-        id: commit
-        run: |
-          git add package.json packages/backend/package.json packages/frontend/package.json packages/shared/package.json CHANGELOG.md
-          if git diff --cached --quiet; then
-            echo "No changes to commit"
-            BUMPED_SHA=$(git rev-parse HEAD)
-          else
-            git commit -m "chore(release): bump version to ${{ needs.validate.outputs.version_no_v }}"
-            git push origin main
-            BUMPED_SHA=$(git rev-parse HEAD)
-            echo "Version bump committed: ${BUMPED_SHA}"
-          fi
-          echo "bumped_sha=${BUMPED_SHA}" >> "$GITHUB_OUTPUT"
-
-      - name: Write bump summary
-        run: |
-          echo "### 📦 Version Bump & Changelog" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Version:** \`${{ needs.validate.outputs.version_no_v }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          if [[ "${{ steps.changelog.outputs.changelog_exists }}" == "false" ]]; then
-            echo "**Changelog:** Auto-generated from conventional commits" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "**Changelog:** Existing entry preserved (no overwrite)" >> $GITHUB_STEP_SUMMARY
-          fi
 
   build-and-push-backend:
     name: Build & Push Backend
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    needs: [validate, bump-version]
+    needs: validate
     permissions:
       contents: read
       packages: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
-        with:
-          ref: ${{ needs.bump-version.outputs.bumped_sha }}
 
       - name: Log in to GHCR
         uses: docker/login-action@v4
@@ -337,15 +170,13 @@ jobs:
     name: Build & Push Frontend
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    needs: [validate, bump-version]
+    needs: validate
     permissions:
       contents: read
       packages: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
-        with:
-          ref: ${{ needs.bump-version.outputs.bumped_sha }}
 
       - name: Log in to GHCR
         uses: docker/login-action@v4
@@ -395,7 +226,7 @@ jobs:
     name: Smoke Test
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: [validate, bump-version, build-and-push-backend, build-and-push-frontend]
+    needs: [validate, build-and-push-backend, build-and-push-frontend]
     steps:
       - name: Log in to GHCR
         uses: docker/login-action@v4
@@ -411,7 +242,7 @@ jobs:
         run: |
           BACKEND_IMAGE=$(echo "$BACKEND_IMAGE" | tr '[:upper:]' '[:lower:]')
           FRONTEND_IMAGE=$(echo "$FRONTEND_IMAGE" | tr '[:upper:]' '[:lower:]')
-
+          
           cat > /tmp/smoke-test.yml << EOF
           services:
             postgres:
@@ -425,7 +256,7 @@ jobs:
                 interval: 5s
                 timeout: 3s
                 retries: 10
-                start_period: 10s
+                start-period: 10s
 
             backend:
               image: ${BACKEND_IMAGE}
@@ -449,7 +280,7 @@ jobs:
                 interval: 5s
                 timeout: 3s
                 retries: 12
-                start_period: 30s
+                start-period: 30s
 
             frontend:
               image: ${FRONTEND_IMAGE}
@@ -460,7 +291,7 @@ jobs:
                 interval: 10s
                 timeout: 5s
                 retries: 3
-                start_period: 5s
+                start-period: 5s
           EOF
 
       - name: Start PostgreSQL
@@ -571,14 +402,13 @@ jobs:
     name: Create GitHub Release
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    needs: [validate, bump-version, smoke-test]
+    needs: [validate, smoke-test]
     permissions:
       contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
         with:
-          ref: ${{ needs.bump-version.outputs.bumped_sha }}
           fetch-depth: 0
 
       - name: Get previous tag
@@ -591,14 +421,14 @@ jobs:
         id: changelog
         run: |
           VERSION_NO_V="${{ needs.validate.outputs.version_no_v }}"
-
+          
           if [[ ! -f "CHANGELOG.md" ]]; then
             echo "Release ${{ needs.validate.outputs.version }}. See CHANGELOG.md for details." > /tmp/changelog.md
             exit 0
           fi
-
+          
           sed -n "/^## \[${VERSION_NO_V}\]/,/^## \[/p" CHANGELOG.md | head -n -1 > /tmp/changelog.md
-
+          
           if [[ ! -s /tmp/changelog.md ]]; then
             echo "Release ${{ needs.validate.outputs.version }}. See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details." > /tmp/changelog.md
           fi
@@ -635,7 +465,7 @@ jobs:
             echo ""
             cat /tmp/changelog.md
           } > /tmp/release-body.md
-
+          
           if [[ -n "${PREV_TAG}" ]]; then
             echo "" >> /tmp/release-body.md
             echo "---" >> /tmp/release-body.md

@@ -1,0 +1,102 @@
+name: Release on Merge
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+concurrency:
+  group: release-on-merge-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  create-tag:
+    name: Create Release Tag
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: |
+      github.event.pull_request.merged == true &&
+      contains(github.event.pull_request.labels.*.name, 'release')
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Extract version from PR title
+        id: version
+        run: |
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          VERSION=$(echo "${PR_TITLE}" | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' || echo "")
+          
+          if [[ -z "${VERSION}" ]]; then
+            echo "::error::Could not extract version from PR title: ${PR_TITLE}"
+            exit 1
+          fi
+          
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Extracted version: ${VERSION}"
+
+      - name: Verify version in package.json
+        env:
+          VERSION_NO_V: ${{ steps.version.outputs.version_no_v }}
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          VERSION_NO_V="${VERSION#v}"
+          
+          ROOT_VERSION=$(node -p "require('./package.json').version")
+          
+          if [[ "${ROOT_VERSION}" != "${VERSION_NO_V}" ]]; then
+            echo "::error::Version mismatch: package.json has ${ROOT_VERSION}, but PR indicates ${VERSION_NO_V}"
+            exit 1
+          fi
+          
+          echo "✅ Version verified: ${VERSION_NO_V}"
+
+      - name: Check if tag already exists
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          
+          if git tag -l | grep -q "^${VERSION}$"; then
+            echo "::error::Tag ${VERSION} already exists. This should not happen for a new release."
+            exit 1
+          fi
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Create and push tag
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          MERGE_SHA="${{ github.event.pull_request.merge_commit_sha }}"
+          
+          echo "Creating tag ${VERSION} at commit ${MERGE_SHA}"
+          git tag -a "${VERSION}" -m "Release ${VERSION}" "${MERGE_SHA}"
+          git push origin "${VERSION}"
+          
+          echo "✅ Tag ${VERSION} created and pushed"
+
+      - name: Write summary
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          MERGE_SHA="${{ github.event.pull_request.merge_commit_sha }}"
+          
+          echo "### 🏷️ Release Tag Created" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Tag:** \`${VERSION}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** \`${MERGE_SHA}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Merged PR:** [#${PR_NUMBER}](https://github.com/${{ github.repository }}/pull/${PR_NUMBER})" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The \`release.yml\` workflow will now build and publish the release." >> $GITHUB_STEP_SUMMARY

@@ -1,0 +1,341 @@
+name: Prepare Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., v1.1.0)'
+        required: true
+        type: string
+
+concurrency:
+  group: prepare-release-${{ inputs.version }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  prepare:
+    name: Prepare Release PR
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      pr_number: ${{ steps.create-pr.outputs.pr_number }}
+      version: ${{ steps.validate.outputs.version }}
+      version_no_v: ${{ steps.validate.outputs.version_no_v }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Validate version format
+        id: validate
+        run: |
+          VERSION="${{ inputs.version }}"
+          
+          if [[ ! "${VERSION}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+ ]]; then
+            echo "::error::Invalid version format: ${VERSION}. Expected format: vMAJOR.MINOR.PATCH (e.g., v1.2.0)"
+            exit 1
+          fi
+          
+          VERSION_NO_V="${VERSION#v}"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "version_no_v=${VERSION_NO_V}" >> "$GITHUB_OUTPUT"
+          echo "Release version: ${VERSION} (numeric: ${VERSION_NO_V})"
+
+      - name: Check if tag already exists
+        run: |
+          if git tag -l | grep -q "^${{ steps.validate.outputs.version }}$"; then
+            echo "::error::Tag ${{ steps.validate.outputs.version }} already exists. Cannot prepare release for an existing tag."
+            exit 1
+          fi
+
+      - name: Check if PR already exists
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          EXISTING_PR=$(gh pr list \
+            --head "release/${{ steps.validate.outputs.version }}" \
+            --state open \
+            --json number 2>/dev/null || echo "[]")
+          
+          if [[ "${EXISTING_PR}" != "[]" ]]; then
+            echo "::error::A release PR for ${{ steps.validate.outputs.version }} already exists."
+            exit 1
+          fi
+
+      - name: Verify CI passed on main
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          SHA=$(git rev-parse main)
+          echo "Checking CI status for commit ${SHA}..."
+          
+          MAX_ATTEMPTS=12
+          ATTEMPT=0
+          while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+            ATTEMPT=$((ATTEMPT + 1))
+            
+            RUNS=$(gh run list \
+              --workflow=ci.yml \
+              --commit="${SHA}" \
+              --status=success \
+              --limit=1 \
+              --json databaseId 2>/dev/null || echo "[]")
+            
+            if [[ "${RUNS}" != "[]" ]]; then
+              echo "✅ CI validation passed for commit ${SHA}"
+              exit 0
+            fi
+            
+            echo "  Attempt ${ATTEMPT}/${MAX_ATTEMPTS}: CI not yet passed, waiting 30s..."
+            sleep 30
+          done
+          
+          echo "::error::CI workflow has not passed on commit ${SHA} after $((MAX_ATTEMPTS * 30))s. A successful CI run is required before preparing a release."
+          exit 1
+
+      - name: Create release branch
+        run: |
+          BRANCH_NAME="release/${{ steps.validate.outputs.version }}"
+          git checkout -b "${BRANCH_NAME}"
+          echo "Created branch: ${BRANCH_NAME}"
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Generate changelog entry
+        id: changelog
+        env:
+          VERSION_NO_V: ${{ steps.validate.outputs.version_no_v }}
+        run: |
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          
+          if [[ -n "${PREV_TAG}" ]]; then
+            echo "Generating changelog from ${PREV_TAG} to HEAD"
+            COMMIT_RANGE="${PREV_TAG}..HEAD"
+          else
+            echo "No previous tag found. Generating changelog from all commits."
+            COMMIT_RANGE="HEAD"
+          fi
+          
+          echo "prev_tag=${PREV_TAG}" >> "$GITHUB_OUTPUT"
+          
+          if grep -q "^## \[${VERSION_NO_V}\]" CHANGELOG.md 2>/dev/null; then
+            echo "changelog_exists=true" >> "$GITHUB_OUTPUT"
+            echo "Changelog section for [${VERSION_NO_V}] already exists. Skipping generation."
+            exit 0
+          fi
+          
+          echo "changelog_exists=false" >> "$GITHUB_OUTPUT"
+          
+          export COMMITS=$(git log ${COMMIT_RANGE} --format='%s' --no-merges)
+          export VERSION_NO_V="${{ steps.validate.outputs.version_no_v }}"
+          
+          node << 'SCRIPT'
+          const fs = require('fs');
+          const commits = process.env.COMMITS.split('\n').filter(Boolean);
+          const version = process.env.VERSION_NO_V;
+          const today = new Date().toISOString().split('T')[0];
+          
+          const sections = {
+            added: [],
+            changed: [],
+            deprecated: [],
+            removed: [],
+            fixed: [],
+            security: []
+          };
+          
+          const typeMap = {
+            feat: 'added',
+            fix: 'fixed',
+            refactor: 'changed',
+            perf: 'changed',
+            improve: 'changed',
+            docs: null,
+            style: null,
+            test: null,
+            build: null,
+            ci: null,
+            chore: null,
+            deps: null
+          };
+          
+          for (const commit of commits) {
+            const match = commit.match(/^(feat|fix|refactor|perf|improve|docs|style|test|build|ci|chore|deps)(\(([^)]+)\))?(!)?:\s*(.+)$/);
+            if (match) {
+              const [, type, , scope, breaking, desc] = match;
+              const section = typeMap[type];
+              if (section === null) continue;
+              let entry = scope ? `- **${scope}**: ${desc}` : `- ${desc}`;
+              if (breaking) {
+                sections.changed.push(`- **BREAKING**: ${desc}`);
+              }
+              sections[section].push(entry);
+            } else if (commit && !commit.startsWith('Merge')) {
+              sections.added.push(`- ${commit}`);
+            }
+          }
+          
+          let entry = `## [${version}] - ${today}\n`;
+          
+          const sectionNames = {
+            added: 'Added',
+            changed: 'Changed',
+            deprecated: 'Deprecated',
+            removed: 'Removed',
+            fixed: 'Fixed',
+            security: 'Security'
+          };
+          
+          for (const [key, name] of Object.entries(sectionNames)) {
+            if (sections[key].length > 0) {
+              entry += `\n### ${name}\n\n${sections[key].join('\n')}\n`;
+            }
+          }
+          
+          const changelog = fs.readFileSync('CHANGELOG.md', 'utf8');
+          const lines = changelog.split('\n');
+          const header = lines.slice(0, 6).join('\n');
+          const body = lines.slice(6).join('\n');
+          
+          fs.writeFileSync('CHANGELOG.md', header + '\n\n' + entry + body);
+          console.log('Changelog entry generated for [' + version + ']');
+          SCRIPT
+
+      - name: Bump package.json versions
+        id: bump
+        env:
+          VERSION_NO_V: ${{ steps.validate.outputs.version_no_v }}
+        run: |
+          CURRENT_ROOT=$(node -p "require('./package.json').version")
+          CURRENT_BACKEND=$(node -p "require('./packages/backend/package.json').version")
+          CURRENT_FRONTEND=$(node -p "require('./packages/frontend/package.json').version")
+          CURRENT_SHARED=$(node -p "require('./packages/shared/package.json').version")
+          
+          if [[ "${CURRENT_ROOT}" == "${VERSION_NO_V}" && \
+                "${CURRENT_BACKEND}" == "${VERSION_NO_V}" && \
+                "${CURRENT_FRONTEND}" == "${VERSION_NO_V}" && \
+                "${CURRENT_SHARED}" == "${VERSION_NO_V}" ]]; then
+            echo "All package.json files already at version ${VERSION_NO_V}. Skipping bump."
+            echo "needs_bump=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          
+          echo "needs_bump=true" >> "$GITHUB_OUTPUT"
+          echo "Bumping versions:"
+          echo "  Root:     ${CURRENT_ROOT} → ${VERSION_NO_V}"
+          echo "  Backend:  ${CURRENT_BACKEND} → ${VERSION_NO_V}"
+          echo "  Frontend: ${CURRENT_FRONTEND} → ${VERSION_NO_V}"
+          echo "  Shared:   ${CURRENT_SHARED} → ${VERSION_NO_V}"
+          
+          node -e "
+            const fs = require('fs');
+            const v = process.env.VERSION_NO_V;
+            const files = [
+              'package.json',
+              'packages/backend/package.json',
+              'packages/frontend/package.json',
+              'packages/shared/package.json',
+            ];
+            for (const f of files) {
+              const pkg = JSON.parse(fs.readFileSync(f, 'utf8'));
+              pkg.version = v;
+              fs.writeFileSync(f, JSON.stringify(pkg, null, 2) + '\n');
+            }
+          "
+
+      - name: Commit changes
+        id: commit
+        run: |
+          git add package.json packages/backend/package.json packages/frontend/package.json packages/shared/package.json CHANGELOG.md
+          
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m "chore(release): prepare ${{ steps.validate.outputs.version_no_v }}
+
+            - Bump version to ${{ steps.validate.outputs.version_no_v }}
+            - Update CHANGELOG.md with release notes"
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Push release branch
+        run: |
+          git push origin "release/${{ steps.validate.outputs.version }}"
+
+      - name: Create Pull Request
+        id: create-pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.validate.outputs.version }}
+          VERSION_NO_V: ${{ steps.validate.outputs.version_no_v }}
+        run: |
+          PREV_TAG="${{ steps.changelog.outputs.prev_tag }}"
+          CHANGELOG_EXISTS="${{ steps.changelog.outputs.changelog_exists }}"
+          
+          BODY=$(cat << EOF
+          ## Release Preparation
+
+          This PR prepares the release for **${VERSION}**.
+
+          ### Changes Included
+
+          - Version bump to \`${VERSION_NO_V}\` in all package.json files
+          - Changelog update $(if [[ "${CHANGELOG_EXISTS}" == "true" ]]; then echo "(existing entry preserved)"; else echo "(auto-generated)"; fi)
+
+          ### Review Checklist
+
+          Before merging, please verify:
+
+          - [ ] **Changelog**: Review and edit CHANGELOG.md if needed
+          - [ ] **Version**: Confirm version numbers are correct
+          - [ ] **CI**: Ensure all CI checks pass
+
+          ### After Merge
+
+          Once this PR is merged:
+          1. Tag \`${VERSION}\` will be created automatically
+          2. Docker images will be built and published
+          3. GitHub release will be created
+
+          ---
+
+          **Previous version**: ${PREV_TAG:-none}
+          **Target version**: ${VERSION}
+          EOF
+          )
+          
+          PR_URL=$(gh pr create \
+            --title "Release ${VERSION}" \
+            --body "${BODY}" \
+            --head "release/${VERSION}" \
+            --base main \
+            --label "release")
+          
+          PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
+          echo "pr_number=${PR_NUMBER}" >> "$GITHUB_OUTPUT"
+          echo "Created PR: ${PR_URL}"
+
+      - name: Write summary
+        run: |
+          echo "### 🚀 Release Preparation Created" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Version:** \`${{ steps.validate.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Pull Request:** [#${{ steps.create-pr.outputs.pr_number }}](https://github.com/${{ github.repository }}/pull/${{ steps.create-pr.outputs.pr_number }})" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Next Steps" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "1. Review and edit the changelog in the PR if needed" >> $GITHUB_STEP_SUMMARY
+          echo "2. Ensure CI passes" >> $GITHUB_STEP_SUMMARY
+          echo "3. Merge the PR to create the release" >> $GITHUB_STEP_SUMMARY
