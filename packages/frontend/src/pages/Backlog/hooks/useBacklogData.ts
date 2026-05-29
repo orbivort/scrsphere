@@ -33,7 +33,7 @@ export const useBacklogData = (
     hasNextPage,
     fetchNextPage,
   } = useInfiniteQuery({
-    queryKey: queryKeys.productBacklog.list({ teamId, limit: BACKLOG_ITEM_LIMIT }),
+    queryKey: queryKeys.productBacklog.infinite({ teamId, limit: BACKLOG_ITEM_LIMIT }),
     queryFn: async ({ pageParam = 1 }) => {
       const response = await apiService.getProductBacklog(teamId ?? '', {
         page: pageParam,

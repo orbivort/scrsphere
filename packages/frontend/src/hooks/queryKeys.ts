@@ -111,6 +111,9 @@ export const queryKeys = {
     lists: () => [...queryKeys.productBacklog.all, 'list'] as const,
     list: (filters: { teamId?: string; status?: string; limit?: number } = {}) =>
       [...queryKeys.productBacklog.lists(), filters] as const,
+    // Infinite query key for paginated backlog (different from regular list to avoid cache conflicts)
+    infinite: (filters: { teamId?: string; limit?: number } = {}) =>
+      [...queryKeys.productBacklog.all, 'infinite', filters] as const,
   },
 
   // Daily Update queries
