@@ -12,10 +12,14 @@ router.use(authenticate);
 router.post('/validate', workflowController.validateTransition);
 router.post('/status-change', workflowController.executeStatusChange);
 
-// Admin endpoints - require admin role
-router.post('/admin/create', requireRoles('admin'), workflowController.createWorkflow);
-router.post('/admin/states', requireRoles('admin'), workflowController.addWorkflowState);
-router.post('/admin/transitions', requireRoles('admin'), workflowController.addWorkflowTransition);
+// Admin endpoints - require Product Owner role
+router.post('/admin/create', requireRoles('PRODUCT_OWNER'), workflowController.createWorkflow);
+router.post('/admin/states', requireRoles('PRODUCT_OWNER'), workflowController.addWorkflowState);
+router.post(
+  '/admin/transitions',
+  requireRoles('PRODUCT_OWNER'),
+  workflowController.addWorkflowTransition
+);
 
 // Dynamic routes with parameters - more specific routes first
 router.get('/:entityType/:entityId/history', workflowController.getStatusChangeHistory);
