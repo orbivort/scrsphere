@@ -9,87 +9,82 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **frontend**: add base path support for deployment
-- **frontend**: add github pages support for live demo
-- **docs**: add user guide and core feature docs
-- **ci**: add prepare-release and release-on-merge workflows
+- **frontend**: add base path support for flexible deployment configurations
+- **frontend**: add GitHub Pages support for live demo deployment
+- **docs**: add user guide and core feature documentation
 
 ### Changed
 
-- **user role**: remove unused administrator user role and update related code
-- **ci**: update release workflow
+- **auth**: remove unused administrator role, streamline role-based access control
 
 ### Fixed
 
-- **security**: fix 4 vulnerabilities (2 high, 1 moderate, 1 low severity) in axios package (GHSA-pjwm-pj3p-43mv, GHSA-35jp-ww65-95wh, GHSA-898c-q2cr-xwhg, GHSA-654m-c8p4-x5fp)
-- **product backlog**: resolve React Query cache conflict between Sprint Planning and Product Backlog
+- **product backlog**: resolve React Query cache conflict between Sprint Planning and Product Backlog views
+
+### Security
+
+- **axios**: fix 4 vulnerabilities (2 high, 1 moderate, 1 low) - GHSA-pjwm-pj3p-43mv, GHSA-35jp-ww65-95wh, GHSA-898c-q2cr-xwhg, GHSA-654m-c8p4-x5fp
 
 ## [1.4.1] - 2026-05-23
 
-### Fixed
+### Security
 
-- **security**: fix 1 moderate severity DoS vulnerability in qs package (GHSA-q8mj-m7cp-5q26)
+- **qs**: fix moderate severity DoS vulnerability - GHSA-q8mj-m7cp-5q26
 
 ## [1.4.0] - 2026-05-22
 
 ### Added
 
-- **ci**: add codecov coverage to CI workflow and codecov badge in README
-- **test**: add more tests to improve coverage and set the threshold to 80% for backend and frontend
-- **feature(product backlog)**: add configurable maximum backlog size control for product backlog functionalities
+- **product backlog**: add configurable maximum backlog size control
 
 ### Changed
 
-- **feature(sprint configuration)**: adjust the generated sprint end date to previous friday if it falls on a weekend
+- **sprint configuration**: adjust sprint end date to previous Friday if it falls on a weekend
 
 ## [1.3.0] - 2026-05-15
 
 ### Added
 
-- **feature(sprint configuration)**: add 1-week and 3-week sprint duration options
+- **sprint configuration**: add 1-week and 3-week sprint duration options
 
 ### Changed
 
-- **feature(frontend)**: enhance mock data flow for running frontend without backend server
+- **frontend**: enhance mock data flow for running frontend without backend server
 
-### Fixed
+### Security
 
-- **security**: update sanitize-html dependency from v2.17.3 to v2.17.4. The related critical XSS vulnerability (CVE-2026-44990) is resolved
+- **sanitize-html**: fix critical XSS vulnerability - CVE-2026-44990
 
 ## [1.2.0] - 2026-05-10
 
 ### Added
 
-- **env**: add production environment templates and update CI config
+- **configuration**: add production environment templates
 - **docs**: add comprehensive API and architecture documentation
 
 ### Changed
 
-- **test(e2e)**: improve end-to-end test reliability and mock state management
+- **frontend**: improve end-to-end test reliability and mock state management
 
 ### Fixed
 
 - **frontend**: resolve 3 CodeQL warnings for useless conditionals and unreachable code
-- **frontend**: resolve 1232 ESLint warnings for type safety and code quality improvements
-- **backend**: resolve 351 ESLint warnings for type safety and code quality improvements
+- **frontend**: resolve 1232 ESLint warnings for type safety and code quality
+- **backend**: resolve 351 ESLint warnings for type safety and code quality
 
 ## [1.1.0] - 2026-05-06
 
 ### Changed
 
-- **enhancements**: improve code quality
-  - Potential fix for code scanning alert no. 5: Log injection
-  - Potential fix for code scanning alert no. 3: Missing rate limiting
-  - Potential fix for code scanning alert no. 2: Missing rate limiting
-  - Potential fix for code scanning alert no. 1: Missing CSRF middleware
-  - tests: improve global teardown with conditional prisma disconnect
+- **auth**: improve rate limiting configuration for API abuse prevention
+- **security**: add CSRF protection for all state-changing operations
+- **logging**: fix log injection vulnerability in audit logs
 
-- **security**: improve rate limiting and csrf protection
+### Security
 
-### Fixed
-
-- **release**: various release workflow fixes and optimizations
-- **ci**: various CI workflow fixes and optimizations
+- **api**: add rate limiting on all endpoints to prevent brute force attacks
+- **csrf**: implement CSRF middleware for state-changing operations
+- **logging**: resolve log injection vulnerability (CodeQL alert no. 5)
 
 ## [1.0.0] - 2026-05-04
 
