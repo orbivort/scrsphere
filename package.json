@@ -138,7 +138,8 @@
       "@hono/node-server": "^1.19.14",
       "fast-uri": "^3.1.2",
       "hono": "^4.12.18",
-      "qs": "^6.15.2"
+      "qs": "^6.15.2",
+      "https-proxy-agent": "^7.0.6"
     },
     "peerDependencyRules": {
       "allowedVersions": {
