@@ -11,12 +11,13 @@ concurrency:
 
 permissions:
   contents: write
+  actions: read
 
 jobs:
   create-tag:
     name: Create Release Tag
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     if: |
       github.event.pull_request.merged == true &&
       contains(github.event.pull_request.labels.*.name, 'release')
@@ -27,6 +28,51 @@ jobs:
           ref: main
           token: ${{ secrets.RELEASE_TOKEN }}
           fetch-depth: 0
+
+      - name: Wait for CI to pass
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          SHA="${{ github.event.pull_request.merge_commit_sha }}"
+          echo "Waiting for CI workflow to pass on commit ${SHA}..."
+
+          MAX_ATTEMPTS=20
+          ATTEMPT=0
+          while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+            ATTEMPT=$((ATTEMPT + 1))
+
+            # Check for successful CI run
+            RUNS=$(gh run list \
+              --workflow=ci.yml \
+              --commit="${SHA}" \
+              --status=success \
+              --limit=1 \
+              --json databaseId 2>/dev/null || echo "[]")
+
+            if [[ "${RUNS}" != "[]" ]]; then
+              echo "✅ CI validation passed for commit ${SHA}"
+              exit 0
+            fi
+
+            # Check for failed CI run
+            FAILED_RUNS=$(gh run list \
+              --workflow=ci.yml \
+              --commit="${SHA}" \
+              --status=failure \
+              --limit=1 \
+              --json databaseId 2>/dev/null || echo "[]")
+
+            if [[ "${FAILED_RUNS}" != "[]" ]]; then
+              echo "::error::CI workflow failed on commit ${SHA}. Release cannot proceed."
+              exit 1
+            fi
+
+            echo "  Attempt ${ATTEMPT}/${MAX_ATTEMPTS}: CI not yet completed, waiting 30s..."
+            sleep 30
+          done
+
+          echo "::error::CI workflow has not passed on commit ${SHA} after $((MAX_ATTEMPTS * 30))s. A successful CI run is required before creating a release tag."
+          exit 1
 
       - name: Extract version from PR title
         id: version
