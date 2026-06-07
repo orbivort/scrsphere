@@ -1425,6 +1425,11 @@ ALTER TABLE "product_backlog_items" ADD CONSTRAINT "chk_pbi_values" CHECK ("stor
 ALTER TABLE "increments" ADD CONSTRAINT "chk_increments_points" CHECK ("totalStoryPoints" >= 0);
 ALTER TABLE "burndown_data" ADD CONSTRAINT "chk_burndown_remaining" CHECK ("idealRemaining" >= 0);
 
+-- DROP GIN INDEXES
+DROP INDEX IF EXISTS "product_backlog_items_labels_idx";
+DROP INDEX IF EXISTS "status_change_history_metadata_idx";
+DROP INDEX IF EXISTS "notifications_data_idx";
+
 -- ============================================
 -- GIN INDEXES FOR JSONB AND ARRAY COLUMNS
 -- ============================================
