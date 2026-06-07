@@ -74,7 +74,7 @@ To prevent abuse, data export requests are rate-limited:
 
 ## Account Deletion Flow
 
-Scrsphere provides multiple account deletion pathways to balance user rights with data integrity:
+Scrumooth provides multiple account deletion pathways to balance user rights with data integrity:
 
 ### Deletion Options
 
@@ -211,7 +211,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X POST https://api.scrsphere.dev/api/v1/user/export-data \
+curl -X POST https://api.scrumooth.dev/api/v1/user/export-data \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -268,7 +268,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET https://api.scrsphere.dev/api/v1/user/export-data/active \
+curl -X GET https://api.scrumooth.dev/api/v1/user/export-data/active \
   -b cookies.txt
 ```
 
@@ -349,7 +349,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET https://api.scrsphere.dev/api/v1/user/export-data/status/550e8400-e29b-41d4-a716-446655440200 \
+curl -X GET https://api.scrumooth.dev/api/v1/user/export-data/status/550e8400-e29b-41d4-a716-446655440200 \
   -b cookies.txt
 ```
 
@@ -378,7 +378,7 @@ GET /api/v1/user/export-data/download/:jobId
 ```http
 HTTP/1.1 200 OK
 Content-Type: application/zip
-Content-Disposition: attachment; filename="scrsphere-export-2026-04-29.zip"
+Content-Disposition: attachment; filename="scrumooth-export-2026-04-29.zip"
 
 <binary file data>
 ```
@@ -386,7 +386,7 @@ Content-Disposition: attachment; filename="scrsphere-export-2026-04-29.zip"
 The downloaded ZIP archive contains:
 
 ```
-scrsphere-export-2026-04-29/
+scrumooth-export-2026-04-29/
 ├── manifest.json          # Export metadata and checksums
 ├── profile.json           # User profile data
 ├── sessions.json          # Session history
@@ -426,9 +426,9 @@ scrsphere-export-2026-04-29/
 **Example Request**
 
 ```bash
-curl -X GET https://api.scrsphere.dev/api/v1/user/export-data/download/550e8400-e29b-41d4-a716-446655440200 \
+curl -X GET https://api.scrumooth.dev/api/v1/user/export-data/download/550e8400-e29b-41d4-a716-446655440200 \
   -b cookies.txt \
-  -o scrsphere-export.zip
+  -o scrumooth-export.zip
 ```
 
 ---
@@ -495,7 +495,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X DELETE https://api.scrsphere.dev/api/v1/user/export-data/550e8400-e29b-41d4-a716-446655440200 \
+curl -X DELETE https://api.scrumooth.dev/api/v1/user/export-data/550e8400-e29b-41d4-a716-446655440200 \
   -b cookies.txt
 ```
 
@@ -566,7 +566,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET https://api.scrsphere.dev/api/v1/auth/me/deletion-check \
+curl -X GET https://api.scrumooth.dev/api/v1/auth/me/deletion-check \
   -b cookies.txt
 ```
 
@@ -638,7 +638,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X DELETE https://api.scrsphere.dev/api/v1/auth/me \
+curl -X DELETE https://api.scrumooth.dev/api/v1/auth/me \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -716,7 +716,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X POST https://api.scrsphere.dev/api/v1/auth/me/schedule-deletion \
+curl -X POST https://api.scrumooth.dev/api/v1/auth/me/schedule-deletion \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -772,7 +772,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X DELETE https://api.scrsphere.dev/api/v1/auth/me/schedule-deletion \
+curl -X DELETE https://api.scrumooth.dev/api/v1/auth/me/schedule-deletion \
   -b cookies.txt
 ```
 
@@ -832,7 +832,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X POST https://api.scrsphere.dev/api/v1/auth/me/force-delete \
+curl -X POST https://api.scrumooth.dev/api/v1/auth/me/force-delete \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -903,7 +903,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET https://api.scrsphere.dev/api/v1/auth/me/deletion-status \
+curl -X GET https://api.scrumooth.dev/api/v1/auth/me/deletion-status \
   -b cookies.txt
 ```
 

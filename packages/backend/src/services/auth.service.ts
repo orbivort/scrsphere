@@ -798,7 +798,7 @@ class AuthService {
         ipAddress: sessionInfo?.ipAddress,
         userAgent: sessionInfo?.userAgent,
         subject: 'Your Password Has Been Changed',
-        appName: 'Scrsphere',
+        appName: 'Scrumooth',
         appUrl: config.email.frontendUrl,
         supportEmail: config.email.defaults.replyTo || config.email.defaults.fromAddress,
         currentYear: new Date().getFullYear(),
@@ -899,7 +899,7 @@ class AuthService {
         resetUrl,
         expiresIn: '1 hour',
         subject: 'Reset Your Password',
-        appName: 'Scrsphere',
+        appName: 'Scrumooth',
         appUrl: config.email.frontendUrl,
         supportEmail: config.email.defaults.replyTo || config.email.defaults.fromAddress,
         currentYear: new Date().getFullYear(),
@@ -1060,7 +1060,7 @@ class AuthService {
         ipAddress: sessionInfo?.ipAddress,
         userAgent: sessionInfo?.userAgent,
         subject: 'Your Password Has Been Changed',
-        appName: 'Scrsphere',
+        appName: 'Scrumooth',
         appUrl: config.email.frontendUrl,
         supportEmail: config.email.defaults.replyTo || config.email.defaults.fromAddress,
         currentYear: new Date().getFullYear(),
@@ -1357,8 +1357,8 @@ class AuthService {
       const rendered = template.render({
         firstName: user.firstName,
         email: user.email,
-        subject: `Welcome to ${config.email.defaults.fromName || 'Scrsphere'}`,
-        appName: config.email.defaults.fromName || 'Scrsphere',
+        subject: `Welcome to ${config.email.defaults.fromName || 'Scrumooth'}`,
+        appName: config.email.defaults.fromName || 'Scrumooth',
         appUrl: config.email.frontendUrl,
         supportEmail: config.email.defaults.replyTo || config.email.defaults.fromAddress,
         currentYear: new Date().getFullYear(),
@@ -1366,7 +1366,7 @@ class AuthService {
 
       await emailService.send({
         to: [{ address: user.email, name: user.firstName }],
-        subject: `Welcome to ${config.email.defaults.fromName || 'Scrsphere'}`,
+        subject: `Welcome to ${config.email.defaults.fromName || 'Scrumooth'}`,
         html: rendered.html,
         text: rendered.text,
         metadata: {

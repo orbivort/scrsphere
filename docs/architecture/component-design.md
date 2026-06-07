@@ -1,6 +1,6 @@
 # Component Design
 
-This document provides a detailed overview of the Scrsphere component architecture, including frontend component hierarchy, state management patterns, data flow, styling conventions, and backend service layer design.
+This document provides a detailed overview of the Scrumooth component architecture, including frontend component hierarchy, state management patterns, data flow, styling conventions, and backend service layer design.
 
 ## Table of Contents
 
@@ -22,7 +22,7 @@ This document provides a detailed overview of the Scrsphere component architectu
 
 ## Overview
 
-Scrsphere follows a component-based architecture built on React 19 with TypeScript in strict mode. The design philosophy centers on four principles:
+Scrumooth follows a component-based architecture built on React 19 with TypeScript in strict mode. The design philosophy centers on four principles:
 
 1. **Separation of Concerns** - Each component has a single, well-defined responsibility. Business logic is extracted into hooks and services; presentation logic stays in components.
 2. **Composition over Inheritance** - Components are composed from smaller, reusable pieces rather than extended through class hierarchies. Shared behavior is achieved through custom hooks and shared utilities.
@@ -309,7 +309,7 @@ Three error boundary variants provide scoped error handling:
 
 ## State Management Architecture
 
-Scrsphere uses a dual state management strategy: TanStack Query for server state and Zustand for client state. This separation ensures that each tool handles what it is designed for.
+Scrumooth uses a dual state management strategy: TanStack Query for server state and Zustand for client state. This separation ensures that each tool handles what it is designed for.
 
 ### Server State (TanStack Query)
 
@@ -542,7 +542,7 @@ The data flow follows a strict layered pattern from API services through TanStac
 
 ## Routing Architecture
 
-Scrsphere uses React Router v6 with lazy-loaded route components and protected route wrappers.
+Scrumooth uses React Router v6 with lazy-loaded route components and protected route wrappers.
 
 ### Route Structure
 
@@ -633,7 +633,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 
 ## Styling Architecture
 
-Scrsphere uses CSS Modules combined with a design token system for consistent, maintainable styling.
+Scrumooth uses CSS Modules combined with a design token system for consistent, maintainable styling.
 
 ### Design Token System
 
@@ -840,7 +840,7 @@ export function useLogger({ componentName, context }: UseLoggerOptions): UseLogg
 
 ## Error Handling Patterns
 
-Scrsphere implements a multi-layered error handling strategy that isolates failures and provides user-friendly feedback at every level.
+Scrumooth implements a multi-layered error handling strategy that isolates failures and provides user-friendly feedback at every level.
 
 ### Error Boundary Hierarchy
 
@@ -919,7 +919,7 @@ API errors are handled at two levels:
 
 ## Loading State Patterns
 
-Scrsphere provides a comprehensive loading state system with multiple visual variants for different contexts.
+Scrumooth provides a comprehensive loading state system with multiple visual variants for different contexts.
 
 ### Loading Component Architecture
 
@@ -992,7 +992,7 @@ function SprintBoard() {
 
 ## Form Handling Patterns
 
-Scrsphere uses a combination of controlled components, form draft persistence, and unsaved changes protection.
+Scrumooth uses a combination of controlled components, form draft persistence, and unsaved changes protection.
 
 ### Form Architecture
 
@@ -1179,7 +1179,7 @@ async createTeamWithOwner(data: CreateTeamDto, ownerId: string) {
 
 ## Shared Package Architecture
 
-The `@scrsphere/shared` package provides types, constants, and utilities shared between frontend and backend, ensuring type consistency across the monorepo.
+The `@scrumooth/shared` package provides types, constants, and utilities shared between frontend and backend, ensuring type consistency across the monorepo.
 
 ### Package Structure
 
@@ -1237,11 +1237,11 @@ Utility functions defined in `packages/shared/src/utils/index.ts`:
 
 ### Import Convention
 
-Shared package imports use the `@scrsphere/shared` alias with type-only imports preferred:
+Shared package imports use the `@scrumooth/shared` alias with type-only imports preferred:
 
 ```typescript
-import type { User, Team, Sprint } from '@scrsphere/shared';
-import { WORKFLOW_STATES, NOTIFICATION_TYPES } from '@scrsphere/shared';
+import type { User, Team, Sprint } from '@scrumooth/shared';
+import { WORKFLOW_STATES, NOTIFICATION_TYPES } from '@scrumooth/shared';
 ```
 
 ---

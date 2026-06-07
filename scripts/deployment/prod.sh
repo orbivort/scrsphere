@@ -7,7 +7,7 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
-echo "Starting Scrsphere production environment..."
+echo "Starting Scrumooth production environment..."
 
 # Check if .env file exists
 if [ ! -f "$PROJECT_ROOT/.env" ]; then

@@ -1,17 +1,17 @@
 #!/bin/bash
 
-# PostgreSQL Backup Script for Scrsphere
+# PostgreSQL Backup Script for Scrumooth
 # Usage: ./db-backup.sh [backup_directory]
 
 set -e
 
 # Configuration
-CONTAINER_NAME="scrsphere-postgres"
-DB_NAME="scrsphere"
+CONTAINER_NAME="scrumooth-postgres"
+DB_NAME="scrumooth"
 DB_USER="postgres"
 BACKUP_DIR="${1:-./backups}"
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-BACKUP_FILE="scrsphere_backup_${TIMESTAMP}.sql"
+BACKUP_FILE="scrumooth_backup_${TIMESTAMP}.sql"
 BACKUP_PATH="${BACKUP_DIR}/${BACKUP_FILE}"
 
 # Colors for output
@@ -90,13 +90,13 @@ backup_database() {
 # Cleanup old backups (keep last 7 days)
 cleanup_old_backups() {
     log_info "Cleaning up backups older than 7 days..."
-    find "$BACKUP_DIR" -name "scrsphere_backup_*.sql.gz" -type f -mtime +7 -delete
+    find "$BACKUP_DIR" -name "scrumooth_backup_*.sql.gz" -type f -mtime +7 -delete
     log_info "Cleanup completed"
 }
 
 # Main execution
 main() {
-    log_info "=== Scrsphere Database Backup ==="
+    log_info "=== Scrumooth Database Backup ==="
     log_info "Backup directory: $BACKUP_DIR"
     log_info "Timestamp: $TIMESTAMP"
     

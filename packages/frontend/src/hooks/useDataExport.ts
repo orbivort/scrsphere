@@ -181,7 +181,7 @@ export function useDataExport(): UseDataExportReturn {
 
       // Create filename with timestamp
       const timestamp = new Date().toISOString().split('T')[0];
-      const filename = `scrsphere-data-export-${timestamp}.json`;
+      const filename = `scrumooth-data-export-${timestamp}.json`;
 
       // Create download URL and trigger download
       const url = dataExportService.createDownloadUrl(blob, filename);

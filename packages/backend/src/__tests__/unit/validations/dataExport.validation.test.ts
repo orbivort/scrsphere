@@ -463,7 +463,7 @@ describe('Data Export Validation', () => {
 
   describe('DATA_CONTROLLER_INFO', () => {
     it('should have correct data controller name', () => {
-      expect(DATA_CONTROLLER_INFO.name).toBe('ScrSphere');
+      expect(DATA_CONTROLLER_INFO.name).toBe('Scrumooth');
     });
 
     it('should have contact email', () => {

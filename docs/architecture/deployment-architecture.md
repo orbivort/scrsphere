@@ -1,6 +1,6 @@
 # Deployment Architecture
 
-This document provides a comprehensive overview of the Scrsphere deployment architecture, including container orchestration, CI/CD pipelines, environment configuration, scaling strategy, monitoring, backup procedures, and the differences between development and production setups.
+This document provides a comprehensive overview of the Scrumooth deployment architecture, including container orchestration, CI/CD pipelines, environment configuration, scaling strategy, monitoring, backup procedures, and the differences between development and production setups.
 
 ## Table of Contents
 
@@ -15,7 +15,7 @@ This document provides a comprehensive overview of the Scrsphere deployment arch
 
 ## Container Architecture
 
-Scrsphere uses Docker multi-stage builds to produce optimized, secure, and minimal production images for both the frontend and backend services.
+Scrumooth uses Docker multi-stage builds to produce optimized, secure, and minimal production images for both the frontend and backend services.
 
 ### Backend Docker Image
 
@@ -41,7 +41,7 @@ The backend is built using a two-stage Dockerfile at `packages/backend/Dockerfil
 │                PRODUCTION STAGE                  │
 │  Base: node:24-alpine                            │
 │                                                  │
-│  1. Create non-root user (scrsphere:nodejs)      │
+│  1. Create non-root user (scrumooth:nodejs)      │
 │  2. Create /app/logs directory                   │
 │  3. Copy dist/, prisma/, node_modules/           │
 │  4. Copy shared package to node_modules          │
@@ -54,10 +54,10 @@ The backend is built using a two-stage Dockerfile at `packages/backend/Dockerfil
 
 **Key design decisions:**
 
-- **Non-root user**: The container runs as the `scrsphere` user (UID 1001), not root, following the principle of least privilege.
+- **Non-root user**: The container runs as the `scrumooth` user (UID 1001), not root, following the principle of least privilege.
 - **Frozen lockfile**: `pnpm install --frozen-lockfile` ensures reproducible builds across environments.
 - **Prisma generation at runtime**: Allows the Prisma client to be generated against the actual production database schema after deployment.
-- **Shared package co-location**: The shared package is placed inside `node_modules/@scrsphere/shared/` so Node.js module resolution works correctly.
+- **Shared package co-location**: The shared package is placed inside `node_modules/@scrumooth/shared/` so Node.js module resolution works correctly.
 - **Import extension fixing**: A post-build script adds `.js` extensions to ESM imports since TypeScript does not emit them automatically.
 
 ### Frontend Docker Image
@@ -114,7 +114,7 @@ The production deployment is orchestrated via `docker-compose.yml` with six serv
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    SCRSPHERE DOCKER COMPOSE                     │
+│                    SCRUMOOTH DOCKER COMPOSE                     │
 │                                                                 │
 │  ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐   │
 │  │  Caddy   │◄──►│ Frontend │◄──►│ Backend  │◄──►│PgBouncer │   │
@@ -135,11 +135,11 @@ The production deployment is orchestrated via `docker-compose.yml` with six serv
 │       │                                                         │
 │  ┌────┴─────────────────────────────────────┐                   │
 │  │         Volumes                           │                  │
-│  │  - scrsphere_postgres_data               │                   │
+│  │  - scrumooth_postgres_data               │                   │
 │  │  - caddy_data / caddy_config             │                   │
 │  └──────────────────────────────────────────┘                   │
 │                                                                 │
-│  Network: scrsphere-network (bridge driver)                     │
+│  Network: scrumooth-network (bridge driver)                     │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -189,8 +189,8 @@ The Caddyfile configures:
 | --------------- | ----------------------------------------------------------------- |
 | Image           | `postgres:18-alpine`                                              |
 | Environment     | `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB` from env file |
-| Volume          | `scrsphere_postgres_data:/var/lib/postgresql/data`                |
-| Health Check    | `pg_isready -U postgres -d scrsphere`                             |
+| Volume          | `scrumooth_postgres_data:/var/lib/postgresql/data`                |
+| Health Check    | `pg_isready -U postgres -d scrumooth`                             |
 | Resource Limits | 1.0 CPU / 512 MB memory                                           |
 
 PostgreSQL is configured with comprehensive query logging:
@@ -228,11 +228,11 @@ PostgreSQL is configured with comprehensive query logging:
 
 ### Network Architecture
 
-All services communicate over a single Docker bridge network (`scrsphere-network`). The backend port (5000) and frontend port (80) are only exposed internally; only Caddy's ports (80/443) and PgBouncer's port (6432) are published to the host, ensuring that all external traffic passes through the reverse proxy.
+All services communicate over a single Docker bridge network (`scrumooth-network`). The backend port (5000) and frontend port (80) are only exposed internally; only Caddy's ports (80/443) and PgBouncer's port (6432) are published to the host, ensuring that all external traffic passes through the reverse proxy.
 
 ## CI/CD Pipeline
 
-Scrsphere uses GitHub Actions for continuous integration and delivery. Two primary workflows manage the lifecycle: **CI** (quality gate) and **Release** (deployment artifact publishing).
+Scrumooth uses GitHub Actions for continuous integration and delivery. Two primary workflows manage the lifecycle: **CI** (quality gate) and **Release** (deployment artifact publishing).
 
 ### CI Workflow (`ci.yml`)
 
@@ -483,7 +483,7 @@ packages/frontend/
 | -------------------- | ------- | ------------------------- | ----------------------------- |
 | `EMAIL_PROVIDER`     | string  | smtp                      | Provider: smtp, sendgrid, ses |
 | `EMAIL_TEST_MODE`    | boolean | true (dev) / false (prod) | Disable actual email sending  |
-| `EMAIL_FROM_ADDRESS` | string  | noreply@scrsphere.local   | Sender address                |
+| `EMAIL_FROM_ADDRESS` | string  | noreply@scrumooth.local   | Sender address                |
 | `FRONTEND_URL`       | url     | http://localhost:5173     | URL for email links           |
 | `SMTP_HOST`          | string  | -                         | SMTP server host              |
 | `SMTP_PORT`          | integer | 587                       | SMTP port                     |
@@ -662,7 +662,7 @@ Each service has a health check defined in `docker-compose.yml`:
 | Caddy      | `caddy validate --config /etc/caddy/Caddyfile`   | 30s      | 10s     | 3       | 10s          |
 | Backend    | `node -e "http.get('/health')"` (HTTP 200 check) | 30s      | 10s     | 3       | 30s          |
 | Frontend   | `wget --spider http://127.0.0.1/`                | 30s      | 10s     | 3       | 10s          |
-| PostgreSQL | `pg_isready -U postgres -d scrsphere`            | 10s      | 5s      | 5       | 30s          |
+| PostgreSQL | `pg_isready -U postgres -d scrumooth`            | 10s      | 5s      | 5       | 30s          |
 | PgBouncer  | `pg_isready -h localhost -p 6432`                | 10s      | 5s      | 5       | 10s          |
 
 ### Event Loop Monitoring
@@ -717,7 +717,7 @@ The `volume-backup` service handles file-level volume backups:
 Schedule: Weekly on Sunday at 3:00 AM
 Location: ./backups/volumes/ (host-mounted volume)
 Script:   scripts/maintenance/database/db-volume-backup.sh
-Source:   scrsphere_postgres_data volume (read-only mount)
+Source:   scrumooth_postgres_data volume (read-only mount)
 Logging:  ./backups/volumes/volume-backup.log
 ```
 
@@ -738,8 +738,8 @@ Logging:  ./backups/volumes/volume-backup.log
 │                                                     │
 │  2. Restore SQL dump                                │
 │     docker compose exec -T postgres \               │
-│       psql -U postgres -d scrsphere \               │
-│       < backups/scrsphere_YYYYMMDD_HHMMSS.sql       │
+│       psql -U postgres -d scrumooth \               │
+│       < backups/scrumooth_YYYYMMDD_HHMMSS.sql       │
 │                                                     │
 │  3. (Alternative) Restore volume backup             │
 │     - Stop all services                             │
@@ -770,11 +770,11 @@ Logging:  ./backups/volumes/volume-backup.log
 | **Reverse proxy**      | None (direct port access)                      | Caddy (TLS termination, security headers)   |
 | **PgBouncer**          | Not used                                       | Enabled (connection pooling)                |
 | **Backup services**    | Not used                                       | SQL daily + volume weekly                   |
-| **PostgreSQL**         | `scrsphere_dev` database                       | `scrsphere` database                        |
+| **PostgreSQL**         | `scrumooth_dev` database                       | `scrumooth` database                        |
 | **PostgreSQL ports**   | 5432 exposed to host                           | 5432 internal only                          |
 | **Backend ports**      | 5000 exposed to host                           | 5000 internal only                          |
 | **Frontend ports**     | 5173 exposed to host                           | 80 internal only                            |
-| **Volumes**            | `scrsphere_postgres_dev_data`                  | Production data + caddy_data + caddy_config |
+| **Volumes**            | `scrumooth_postgres_dev_data`                  | Production data + caddy_data + caddy_config |
 | **Env file**           | `packages/backend/.env`                        | `packages/backend/.env.production`          |
 | **NODE_ENV**           | `development`                                  | `production`                                |
 | **Email test mode**    | `true` (emails saved to files)                 | `false` (emails actually sent)              |
@@ -795,9 +795,9 @@ docker compose -f docker-compose.dev.yml up -d
 
 This launches three services:
 
-1. **postgres** (`scrsphere-postgres-dev`): PostgreSQL 18 on port 5432 with `scrsphere_dev` database.
-2. **backend** (`scrsphere-backend-dev`): Express with hot reload, port 5000, mounts `src/`, `prisma/`, and `shared/src/`.
-3. **frontend** (`scrsphere-frontend-dev`): Vite dev server with HMR, port 5173, mounts `src/`, `public/`, and `shared/src/`.
+1. **postgres** (`scrumooth-postgres-dev`): PostgreSQL 18 on port 5432 with `scrumooth_dev` database.
+2. **backend** (`scrumooth-backend-dev`): Express with hot reload, port 5000, mounts `src/`, `prisma/`, and `shared/src/`.
+3. **frontend** (`scrumooth-frontend-dev`): Vite dev server with HMR, port 5173, mounts `src/`, `public/`, and `shared/src/`.
 
 Source code changes on the host are immediately reflected inside the containers via bind mounts, enabling rapid iteration without rebuilding images.
 
@@ -814,8 +814,8 @@ Source code changes on the host are immediately reflected inside the containers 
 
 ```bash
 # 1. Clone repository at specific version
-git clone --depth 1 --branch v1.0.0 https://github.com/orbivort/scrsphere.git
-cd scrsphere
+git clone --depth 1 --branch v1.0.0 https://github.com/orbivort/scrumooth.git
+cd scrumooth
 
 # 2. Configure environment
 cp packages/backend/.env.production.example packages/backend/.env.production

@@ -57,7 +57,7 @@ Authorization: Bearer eyJhbGc...
 
 ## Account Deletion Options
 
-Scrsphere provides three account deletion strategies to balance user control with data safety:
+Scrumooth provides three account deletion strategies to balance user control with data safety:
 
 | Option           | Endpoint                                 | Confirmation Required | Grace Period | Reversible | Use Case                                     |
 | ---------------- | ---------------------------------------- | --------------------- | ------------ | ---------- | -------------------------------------------- |
@@ -79,7 +79,7 @@ When a user schedules account deletion, a 14-day grace period begins:
 
 1. **Scheduling**: User requests scheduled deletion with confirmation text `"SCHEDULE DELETION"`
 2. **Grace Period Starts**: The account is marked for deletion with a `scheduledDeletionDate` and `gracePeriodEnds` timestamp
-3. **During Grace**: The account remains fully functional; the user can continue using Scrsphere
+3. **During Grace**: The account remains fully functional; the user can continue using Scrumooth
 4. **Cancellation**: The user can cancel the scheduled deletion at any time before the grace period ends
 5. **Auto-Deletion**: After the grace period expires, the account is automatically and permanently deleted
 
@@ -182,7 +182,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET https://api.scrsphere.dev/api/v1/auth/me/deletion-check \
+curl -X GET https://api.scrumooth.dev/api/v1/auth/me/deletion-check \
   -b cookies.txt
 ```
 
@@ -253,7 +253,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X DELETE https://api.scrsphere.dev/api/v1/auth/me \
+curl -X DELETE https://api.scrumooth.dev/api/v1/auth/me \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -330,7 +330,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X POST https://api.scrsphere.dev/api/v1/auth/me/schedule-deletion \
+curl -X POST https://api.scrumooth.dev/api/v1/auth/me/schedule-deletion \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -385,7 +385,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X DELETE https://api.scrsphere.dev/api/v1/auth/me/schedule-deletion \
+curl -X DELETE https://api.scrumooth.dev/api/v1/auth/me/schedule-deletion \
   -b cookies.txt
 ```
 
@@ -456,7 +456,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X POST https://api.scrsphere.dev/api/v1/auth/me/force-delete \
+curl -X POST https://api.scrumooth.dev/api/v1/auth/me/force-delete \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -523,7 +523,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET https://api.scrsphere.dev/api/v1/auth/me/deletion-status \
+curl -X GET https://api.scrumooth.dev/api/v1/auth/me/deletion-status \
   -b cookies.txt
 ```
 
@@ -606,7 +606,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X POST https://api.scrsphere.dev/api/v1/consent/record \
+curl -X POST https://api.scrumooth.dev/api/v1/consent/record \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -689,7 +689,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET "https://api.scrsphere.dev/api/v1/consent/history?limit=10&offset=0" \
+curl -X GET "https://api.scrumooth.dev/api/v1/consent/history?limit=10&offset=0" \
   -b cookies.txt
 ```
 
@@ -751,7 +751,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET https://api.scrsphere.dev/api/v1/consent/latest \
+curl -X GET https://api.scrumooth.dev/api/v1/consent/latest \
   -b cookies.txt
 ```
 
@@ -788,7 +788,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X POST https://api.scrsphere.dev/api/v1/consent/withdraw \
+curl -X POST https://api.scrumooth.dev/api/v1/consent/withdraw \
   -b cookies.txt
 ```
 
@@ -854,7 +854,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET https://api.scrsphere.dev/api/v1/consent/550e8400-e29b-41d4-a716-446655440010 \
+curl -X GET https://api.scrumooth.dev/api/v1/consent/550e8400-e29b-41d4-a716-446655440010 \
   -b cookies.txt
 ```
 
@@ -862,7 +862,7 @@ curl -X GET https://api.scrsphere.dev/api/v1/consent/550e8400-e29b-41d4-a716-446
 
 ## Privacy Controls
 
-Scrsphere provides comprehensive privacy controls aligned with GDPR requirements:
+Scrumooth provides comprehensive privacy controls aligned with GDPR requirements:
 
 ### Data Export
 
@@ -894,7 +894,7 @@ Users can delete their accounts through multiple strategies:
 
 ## GDPR Compliance
 
-Scrsphere is designed to comply with the General Data Protection Regulation (GDPR). The following rights are supported:
+Scrumooth is designed to comply with the General Data Protection Regulation (GDPR). The following rights are supported:
 
 ### Right to Access (Article 15)
 

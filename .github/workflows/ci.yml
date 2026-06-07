@@ -167,10 +167,10 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build shared package
-        run: pnpm --filter=@scrsphere/shared run build
+        run: pnpm --filter=@scrumooth/shared run build
 
       - name: Run frontend tests
-        run: pnpm --filter=@scrsphere/frontend run test:coverage
+        run: pnpm --filter=@scrumooth/frontend run test:coverage
 
       - name: Upload frontend coverage to Codecov
         uses: codecov/codecov-action@v6
@@ -240,7 +240,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build shared package
-        run: pnpm --filter=@scrsphere/shared run build
+        run: pnpm --filter=@scrumooth/shared run build
 
       - name: Cache Playwright browsers
         uses: actions/cache@v5
@@ -252,10 +252,10 @@ jobs:
             ${{ runner.os }}-playwright-
 
       - name: Install Playwright browsers
-        run: pnpm --filter=@scrsphere/frontend exec playwright install --with-deps chromium firefox webkit
+        run: pnpm --filter=@scrumooth/frontend exec playwright install --with-deps chromium firefox webkit
 
       - name: Run frontend E2E tests (Shard ${{ matrix.shard }})
-        run: pnpm --filter=@scrsphere/frontend exec playwright test --shard=${{ matrix.shard }}
+        run: pnpm --filter=@scrumooth/frontend exec playwright test --shard=${{ matrix.shard }}
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v6
@@ -312,7 +312,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build shared package
-        run: pnpm --filter=@scrsphere/shared run build
+        run: pnpm --filter=@scrumooth/shared run build
 
       - name: Cache Playwright browsers
         uses: actions/cache@v5
@@ -325,14 +325,14 @@ jobs:
 
       - name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: pnpm --filter=@scrsphere/frontend exec playwright install --with-deps chromium
+        run: pnpm --filter=@scrumooth/frontend exec playwright install --with-deps chromium
 
       - name: Install Playwright browser dependencies
         if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: pnpm --filter=@scrsphere/frontend exec playwright install-deps chromium
+        run: pnpm --filter=@scrumooth/frontend exec playwright install-deps chromium
 
       - name: Run frontend E2E smoke tests
-        run: pnpm --filter=@scrsphere/frontend exec playwright test --grep=@smoke
+        run: pnpm --filter=@scrumooth/frontend exec playwright test --grep=@smoke
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v6
@@ -386,10 +386,10 @@ jobs:
         uses: ./.github/actions/setup-prisma
 
       - name: Build shared package
-        run: pnpm --filter=@scrsphere/shared run build
+        run: pnpm --filter=@scrumooth/shared run build
 
       - name: Run backend unit tests
-        run: pnpm --filter=@scrsphere/backend run test:unit
+        run: pnpm --filter=@scrumooth/backend run test:unit
 
   test-backend-integration:
     name: Backend Integration Tests
@@ -404,7 +404,7 @@ jobs:
         env:
           POSTGRES_USER: test
           POSTGRES_PASSWORD: test
-          POSTGRES_DB: scrsphere_test
+          POSTGRES_DB: scrumooth_test
         ports:
           - 5432:5432
         options: >-
@@ -414,7 +414,7 @@ jobs:
           --health-retries 5
     
     env:
-      DATABASE_URL: postgresql://test:test@localhost:5432/scrsphere_test
+      DATABASE_URL: postgresql://test:test@localhost:5432/scrumooth_test
       NODE_ENV: test
     
     steps:
@@ -452,13 +452,13 @@ jobs:
         uses: ./.github/actions/setup-prisma
 
       - name: Build shared package
-        run: pnpm --filter=@scrsphere/shared run build
+        run: pnpm --filter=@scrumooth/shared run build
 
       - name: Run database migrations
-        run: pnpm --filter=@scrsphere/backend exec prisma migrate deploy
+        run: pnpm --filter=@scrumooth/backend exec prisma migrate deploy
 
       - name: Run integration tests
-        run: pnpm --filter=@scrsphere/backend run test:integration
+        run: pnpm --filter=@scrumooth/backend run test:integration
 
   test-backend-e2e:
     name: Backend E2E Tests
@@ -473,7 +473,7 @@ jobs:
         env:
           POSTGRES_USER: test
           POSTGRES_PASSWORD: test
-          POSTGRES_DB: scrsphere_test
+          POSTGRES_DB: scrumooth_test
         ports:
           - 5432:5432
         options: >-
@@ -483,7 +483,7 @@ jobs:
           --health-retries 5
     
     env:
-      DATABASE_URL: postgresql://test:test@localhost:5432/scrsphere_test
+      DATABASE_URL: postgresql://test:test@localhost:5432/scrumooth_test
       NODE_ENV: test
     
     steps:
@@ -521,13 +521,13 @@ jobs:
         uses: ./.github/actions/setup-prisma
 
       - name: Build shared package
-        run: pnpm --filter=@scrsphere/shared run build
+        run: pnpm --filter=@scrumooth/shared run build
 
       - name: Run database migrations
-        run: pnpm --filter=@scrsphere/backend exec prisma migrate deploy
+        run: pnpm --filter=@scrumooth/backend exec prisma migrate deploy
 
       - name: Run E2E tests
-        run: pnpm --filter=@scrsphere/backend run test:e2e
+        run: pnpm --filter=@scrumooth/backend run test:e2e
 
   test-backend-coverage:
     name: Backend Coverage Report
@@ -542,7 +542,7 @@ jobs:
         env:
           POSTGRES_USER: test
           POSTGRES_PASSWORD: test
-          POSTGRES_DB: scrsphere_test
+          POSTGRES_DB: scrumooth_test
         ports:
           - 5432:5432
         options: >-
@@ -552,7 +552,7 @@ jobs:
           --health-retries 5
     
     env:
-      DATABASE_URL: postgresql://test:test@localhost:5432/scrsphere_test
+      DATABASE_URL: postgresql://test:test@localhost:5432/scrumooth_test
       NODE_ENV: test
     
     steps:
@@ -590,13 +590,13 @@ jobs:
         uses: ./.github/actions/setup-prisma
 
       - name: Build shared package
-        run: pnpm --filter=@scrsphere/shared run build
+        run: pnpm --filter=@scrumooth/shared run build
 
       - name: Run database migrations
-        run: pnpm --filter=@scrsphere/backend exec prisma migrate deploy
+        run: pnpm --filter=@scrumooth/backend exec prisma migrate deploy
 
       - name: Run all backend tests with coverage
-        run: pnpm --filter=@scrsphere/backend run test:coverage
+        run: pnpm --filter=@scrumooth/backend run test:coverage
 
       - name: Upload backend coverage to Codecov
         uses: codecov/codecov-action@v6
@@ -870,13 +870,13 @@ jobs:
           path: packages
 
       - name: Build shared package
-        run: pnpm --filter=@scrsphere/shared run build
+        run: pnpm --filter=@scrumooth/shared run build
 
       - name: Setup Prisma Client
         uses: ./.github/actions/setup-prisma
 
       - name: Run performance benchmarks
-        run: pnpm --filter=@scrsphere/backend run test -- --run --benchmark
+        run: pnpm --filter=@scrumooth/backend run test -- --run --benchmark
         env:
           NODE_ENV: test
         continue-on-error: true

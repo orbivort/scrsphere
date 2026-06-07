@@ -139,7 +139,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET https://api.scrsphere.dev/api/v1/sprints/550e8400-e29b-41d4-a716-446655440030/burndown \
+curl -X GET https://api.scrumooth.dev/api/v1/sprints/550e8400-e29b-41d4-a716-446655440030/burndown \
   -b cookies.txt
 ```
 
@@ -221,7 +221,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET https://api.scrsphere.dev/api/v1/sprints/550e8400-e29b-41d4-a716-446655440030/dod-compliance \
+curl -X GET https://api.scrumooth.dev/api/v1/sprints/550e8400-e29b-41d4-a716-446655440030/dod-compliance \
   -b cookies.txt
 ```
 
@@ -282,7 +282,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET "https://api.scrsphere.dev/api/v1/increments/metrics?teamId=550e8400-e29b-41d4-a716-446655440000" \
+curl -X GET "https://api.scrumooth.dev/api/v1/increments/metrics?teamId=550e8400-e29b-41d4-a716-446655440000" \
   -b cookies.txt
 ```
 
@@ -344,7 +344,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET "https://api.scrsphere.dev/api/v1/impediments/stats?teamId=550e8400-e29b-41d4-a716-446655440000" \
+curl -X GET "https://api.scrumooth.dev/api/v1/impediments/stats?teamId=550e8400-e29b-41d4-a716-446655440000" \
   -b cookies.txt
 ```
 
@@ -414,7 +414,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET "https://api.scrsphere.dev/api/v1/sprints?teamId=550e8400-e29b-41d4-a716-446655440000" \
+curl -X GET "https://api.scrumooth.dev/api/v1/sprints?teamId=550e8400-e29b-41d4-a716-446655440000" \
   -b cookies.txt
 ```
 
@@ -494,7 +494,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET https://api.scrsphere.dev/api/v1/retrospectives/team/550e8400-e29b-41d4-a716-446655440000/pending-action-items \
+curl -X GET https://api.scrumooth.dev/api/v1/retrospectives/team/550e8400-e29b-41d4-a716-446655440000/pending-action-items \
   -b cookies.txt
 ```
 

@@ -129,13 +129,13 @@ Begin by reading the Prime Directive (recommended practice):
 
 This establishes psychological safety and focuses on learning, not blame.
 
-> **Note**: The Prime Directive is a recommended practice for the facilitator to share verbally. It is not enforced in the Scrsphere UI.
+> **Note**: The Prime Directive is a recommended practice for the facilitator to share verbally. It is not enforced in the Scrumooth UI.
 
 ---
 
 ## Retrospective Formats
 
-Scrsphere currently implements the **What Went Well / What to Improve** format with three categories:
+Scrumooth currently implements the **What Went Well / What to Improve** format with three categories:
 
 ### What Went Well / What to Improve
 
@@ -160,7 +160,7 @@ The standard format with three columns:
 | **What Didn't Go Well** | 😟   | Identify challenges and issues faced      |
 | **What to Improve**     | 💡   | Suggest actionable improvements           |
 
-> **Note**: Additional formats (Start/Stop/Continue, 4Ls, Mad/Sad/Glad) are documented in Scrum literature but not currently implemented in Scrsphere. The three-column format provides a balanced view of successes, challenges, and improvement opportunities.
+> **Note**: Additional formats (Start/Stop/Continue, 4Ls, Mad/Sad/Glad) are documented in Scrum literature but not currently implemented in Scrumooth. The three-column format provides a balanced view of successes, challenges, and improvement opportunities.
 
 ---
 
@@ -190,7 +190,7 @@ The standard format with three columns:
 
 ### Dot Voting
 
-Scrsphere implements dot voting to help prioritize items:
+Scrumooth implements dot voting to help prioritize items:
 
 **How to Vote:**
 
@@ -260,7 +260,7 @@ Success Measure: [How we know it worked]
 ❌ "Management should hire more people" (not in team's control)
 ```
 
-### Creating Actions in Scrsphere
+### Creating Actions in Scrumooth
 
 1. In the retrospective interface, click "Add Action Item"
 2. Fill in:

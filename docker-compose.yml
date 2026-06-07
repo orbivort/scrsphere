@@ -5,7 +5,7 @@ services:
   # Handles TLS termination and SSL certificate management
   caddy:
     image: caddy:2-alpine
-    container_name: scrsphere-caddy
+    container_name: scrumooth-caddy
     ports:
       - "80:80"
       - "443:443"
@@ -18,7 +18,7 @@ services:
       - backend
     restart: unless-stopped
     networks:
-      - scrsphere-network
+      - scrumooth-network
     healthcheck:
       test: ["CMD", "caddy", "validate", "--config", "/etc/caddy/Caddyfile"]
       interval: 30s
@@ -44,7 +44,7 @@ services:
       context: .
       dockerfile: packages/backend/Dockerfile
       target: production
-    container_name: scrsphere-backend
+    container_name: scrumooth-backend
     expose:
       - "5000"
     env_file:
@@ -54,7 +54,7 @@ services:
         condition: service_healthy
     restart: unless-stopped
     networks:
-      - scrsphere-network
+      - scrumooth-network
     healthcheck:
       test: ["CMD", "node", "-e", "require('http').get('http://localhost:5000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
       interval: 30s
@@ -80,7 +80,7 @@ services:
       context: .
       dockerfile: packages/frontend/Dockerfile
       target: production
-    container_name: scrsphere-frontend
+    container_name: scrumooth-frontend
     expose:
       - "80"
     depends_on:
@@ -88,7 +88,7 @@ services:
         condition: service_healthy
     restart: unless-stopped
     networks:
-      - scrsphere-network
+      - scrumooth-network
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1/"]
       interval: 30s
@@ -111,22 +111,22 @@ services:
 
   postgres:
     image: postgres:18-alpine
-    container_name: scrsphere-postgres
+    container_name: scrumooth-postgres
     env_file:
       - ./packages/backend/.env.production
     environment:
       - POSTGRES_USER=${DB_USER:-postgres}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_NAME:-scrsphere}
+      - POSTGRES_DB=${DB_NAME:-scrumooth}
       - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --locale=en_US.UTF-8
     volumes:
-      - scrsphere_postgres_data:/var/lib/postgresql/data
+      - scrumooth_postgres_data:/var/lib/postgresql/data
       - ./logs/postgres:/var/log/postgresql
     restart: unless-stopped
     networks:
-      - scrsphere-network
+      - scrumooth-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d scrsphere"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d scrumooth"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -174,11 +174,11 @@ services:
   # PgBouncer - Connection Pooling for Production
   pgbouncer:
     image: pgbouncer/pgbouncer:1.22.1
-    container_name: scrsphere-pgbouncer
+    container_name: scrumooth-pgbouncer
     environment:
       DATABASES_HOST: postgres
       DATABASES_PORT: 5432
-      DATABASES_DATABASE: ${DB_NAME:-scrsphere}
+      DATABASES_DATABASE: ${DB_NAME:-scrumooth}
       DATABASES_USER: ${DB_USER:-postgres}
       DATABASES_PASSWORD: ${DB_PASSWORD}
       POOL_MODE: transaction
@@ -207,7 +207,7 @@ services:
         condition: service_healthy
     restart: unless-stopped
     networks:
-      - scrsphere-network
+      - scrumooth-network
     healthcheck:
       test: ["CMD", "pg_isready", "-h", "localhost", "-p", "6432"]
       interval: 10s
@@ -232,14 +232,14 @@ services:
   # Creates SQL dumps of the database daily at 2 AM
   backup:
     image: postgres:18-alpine
-    container_name: scrsphere-backup
+    container_name: scrumooth-backup
     volumes:
       - ./backups:/backups
       - ./scripts/maintenance/database:/scripts:ro
     environment:
       - POSTGRES_USER=${DB_USER:-postgres}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - DB_NAME=${DB_NAME:-scrsphere}
+      - DB_NAME=${DB_NAME:-scrumooth}
       - PGHOST=postgres
     command: >
       sh -c "
@@ -251,7 +251,7 @@ services:
       postgres:
         condition: service_healthy
     networks:
-      - scrsphere-network
+      - scrumooth-network
     restart: unless-stopped
     logging:
       driver: "json-file"
@@ -263,9 +263,9 @@ services:
   # Creates file-level backups of the PostgreSQL data volume weekly on Sundays at 3 AM
   volume-backup:
     image: docker:cli
-    container_name: scrsphere-volume-backup
+    container_name: scrumooth-volume-backup
     volumes:
-      - scrsphere_postgres_data:/data:ro
+      - scrumooth_postgres_data:/data:ro
       - ./backups/volumes:/backups
       - ./scripts/maintenance/database:/scripts:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -279,7 +279,7 @@ services:
       postgres:
         condition: service_healthy
     networks:
-      - scrsphere-network
+      - scrumooth-network
     restart: unless-stopped
     logging:
       driver: "json-file"
@@ -288,7 +288,7 @@ services:
         max-file: "3"
 
 volumes:
-  scrsphere_postgres_data:
+  scrumooth_postgres_data:
     driver: local
   caddy_data:
     driver: local
@@ -296,5 +296,5 @@ volumes:
     driver: local
 
 networks:
-  scrsphere-network:
+  scrumooth-network:
     driver: bridge

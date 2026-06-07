@@ -248,11 +248,11 @@ jobs:
             postgres:
               image: postgres:18-alpine
               environment:
-                POSTGRES_USER: scrsphere_smoke_test
+                POSTGRES_USER: scrumooth_smoke_test
                 POSTGRES_PASSWORD: Sm0keT3st_Str0ng_P@ssw0rd_2024!
-                POSTGRES_DB: scrsphere_test
+                POSTGRES_DB: scrumooth_test
               healthcheck:
-                test: ["CMD-SHELL", "pg_isready -U scrsphere_smoke_test -d scrsphere_test"]
+                test: ["CMD-SHELL", "pg_isready -U scrumooth_smoke_test -d scrumooth_test"]
                 interval: 5s
                 timeout: 3s
                 retries: 10
@@ -261,18 +261,18 @@ jobs:
             backend:
               image: ${BACKEND_IMAGE}
               environment:
-                DATABASE_URL: postgresql://scrsphere_smoke_test:Sm0keT3st_Str0ng_P@ssw0rd_2024!@postgres:5432/scrsphere_test
+                DATABASE_URL: postgresql://scrumooth_smoke_test:Sm0keT3st_Str0ng_P@ssw0rd_2024!@postgres:5432/scrumooth_test
                 JWT_SECRET: smoke-test-jwt-secret-for-production-validation-minimum-64-characters-long!
                 NODE_ENV: production
-                CORS_ORIGIN: https://scrsphere.example.com
+                CORS_ORIGIN: https://scrumooth.example.com
                 PORT: "5000"
                 EMAIL_PROVIDER: smtp
                 SMTP_HOST: smtp.example.com
                 SMTP_PORT: "587"
                 SMTP_USER: smoke-test@example.com
                 SMTP_PASS: Sm0keT3st_SMTP_P@ssw0rd_2024!
-                EMAIL_FROM_ADDRESS: noreply@scrsphere.example.com
-                FRONTEND_URL: https://scrsphere.example.com
+                EMAIL_FROM_ADDRESS: noreply@scrumooth.example.com
+                FRONTEND_URL: https://scrumooth.example.com
               ports:
                 - "5000:5000"
               healthcheck:
@@ -302,7 +302,7 @@ jobs:
           ELAPSED=0
           MAX_WAIT=60
           while [ $ELAPSED -lt $MAX_WAIT ]; do
-            if docker compose -f /tmp/smoke-test.yml exec -T postgres pg_isready -U scrsphere_smoke_test -d scrsphere_test > /dev/null 2>&1; then
+            if docker compose -f /tmp/smoke-test.yml exec -T postgres pg_isready -U scrumooth_smoke_test -d scrumooth_test > /dev/null 2>&1; then
               echo "PostgreSQL is ready"
               break
             fi
@@ -455,7 +455,7 @@ jobs:
             echo ""
             echo '```bash'
             echo "git clone --depth 1 --branch v${VERSION_NO_V} https://github.com/${REPO}.git"
-            echo "cd scrsphere"
+            echo "cd scrumooth"
             echo "cp packages/backend/.env.example packages/backend/.env.production"
             echo "# Edit .env.production with your settings"
             echo "docker compose up -d"
@@ -477,7 +477,7 @@ jobs:
         uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ needs.validate.outputs.version }}
-          name: ScrSphere ${{ needs.validate.outputs.version }}
+          name: Scrumooth ${{ needs.validate.outputs.version }}
           body_path: /tmp/release-body.md
           draft: false
           prerelease: ${{ contains(needs.validate.outputs.version, '-') }}

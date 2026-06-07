@@ -2,7 +2,7 @@
 
 ## Security Policy Overview
 
-The Scrsphere team takes security seriously. We are committed to ensuring the security and privacy of our users' data and maintaining the integrity of our Agile Scrum Lifecycle Management System. This document outlines our security policy, supported versions, and the process for reporting security vulnerabilities.
+The Scrumooth team takes security seriously. We are committed to ensuring the security and privacy of our users' data and maintaining the integrity of our Agile Scrum Lifecycle Management System. This document outlines our security policy, supported versions, and the process for reporting security vulnerabilities.
 
 ### Our Security Commitment
 
@@ -13,7 +13,7 @@ The Scrsphere team takes security seriously. We are committed to ensuring the se
 
 ## Supported Versions
 
-We provide security updates for the following versions of Scrsphere:
+We provide security updates for the following versions of Scrumooth:
 
 | Version | Supported | End of Life | Notes                  |
 | ------- | --------- | ----------- | ---------------------- |
@@ -33,13 +33,13 @@ We strongly recommend all users to:
 
 ## Reporting a Vulnerability
 
-We appreciate and welcome security research and responsible disclosure. If you discover a security vulnerability in Scrsphere, please report it to us immediately.
+We appreciate and welcome security research and responsible disclosure. If you discover a security vulnerability in Scrumooth, please report it to us immediately.
 
 ### How to Report
 
 **Preferred Method: GitHub Security Advisory**
 
-1. Navigate to our [Security Advisories page](https://github.com/orbivort/scrsphere/security/advisories)
+1. Navigate to our [Security Advisories page](https://github.com/orbivort/scrumooth/security/advisories)
 2. Click "Report a vulnerability"
 3. Fill out the form with detailed information
 4. Submit the report
@@ -64,7 +64,7 @@ Please provide as much information as possible:
    - Required privileges or authentication
 
 4. **Environment Details**
-   - Scrsphere version number
+   - Scrumooth version number
    - Node.js version
    - PostgreSQL version
    - Operating system
@@ -98,7 +98,7 @@ Please provide as much information as possible:
 [Description of potential impact]
 
 **Environment**:
-- Scrsphere Version: [version]
+- Scrumooth Version: [version]
 - Node.js Version: [version]
 - PostgreSQL Version: [version]
 - OS: [operating system]
@@ -140,7 +140,7 @@ We support responsible security research. We will not pursue legal action agains
 1. **Environment Variables**: Never commit `.env` files; use secure secret management
 2. **HTTPS**: Always use HTTPS in production
 3. **Database Security**: Use strong database passwords; restrict network access
-4. **Updates**: Keep Scrsphere and dependencies up to date
+4. **Updates**: Keep Scrumooth and dependencies up to date
 5. **Backups**: Regular database backups with encryption
 
 ### Infrastructure Security
@@ -161,7 +161,7 @@ We support responsible security research. We will not pursue legal action agains
 
 ## Security Features
 
-Scrsphere implements comprehensive security measures:
+Scrumooth implements comprehensive security measures:
 
 ### Authentication & Authorization
 
@@ -288,4 +288,4 @@ This security policy is reviewed and updated regularly. Last updated: **2026-05-
 
 ---
 
-**Thank you for helping keep Scrsphere and our users safe!**
+**Thank you for helping keep Scrumooth and our users safe!**

@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: packages/backend/Dockerfile.dev
-    container_name: scrsphere-backend-dev
+    container_name: scrumooth-backend-dev
     ports:
       - "5000:5000"
     env_file:
@@ -19,13 +19,13 @@ services:
     depends_on:
       - postgres
     networks:
-      - scrsphere-network
+      - scrumooth-network
 
   frontend:
     build:
       context: .
       dockerfile: packages/frontend/Dockerfile.dev
-    container_name: scrsphere-frontend-dev
+    container_name: scrumooth-frontend-dev
     ports:
       - "5173:5173"
     env_file:
@@ -39,25 +39,25 @@ services:
     depends_on:
       - backend
     networks:
-      - scrsphere-network
+      - scrumooth-network
 
   postgres:
     image: postgres:18-alpine
-    container_name: scrsphere-postgres-dev
+    container_name: scrumooth-postgres-dev
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=scrsphere_dev
+      - POSTGRES_DB=scrumooth_dev
     volumes:
-      - scrsphere_postgres_dev_data:/var/lib/postgresql/data
+      - scrumooth_postgres_dev_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     networks:
-      - scrsphere-network
+      - scrumooth-network
 
 volumes:
-  scrsphere_postgres_dev_data:
+  scrumooth_postgres_dev_data:
 
 networks:
-  scrsphere-network:
+  scrumooth-network:
     driver: bridge

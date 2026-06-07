@@ -1,6 +1,6 @@
 # Docker Image Deployment Guide
 
-This document provides a comprehensive guide for deploying ScrSphere using pre-built Docker images from GitHub Container Registry (GHCR). It covers pulling images, configuring environments, running containers, and verifying successful deployment.
+This document provides a comprehensive guide for deploying Scrumooth using pre-built Docker images from GitHub Container Registry (GHCR). It covers pulling images, configuring environments, running containers, and verifying successful deployment.
 
 ## Table of Contents
 
@@ -27,7 +27,7 @@ This document provides a comprehensive guide for deploying ScrSphere using pre-b
 
 ## Overview
 
-ScrSphere Docker images are automatically built and published to GitHub Container Registry (GHCR) when a release tag is created. The release workflow:
+Scrumooth Docker images are automatically built and published to GitHub Container Registry (GHCR) when a release tag is created. The release workflow:
 
 1. Validates the version tag format (e.g., `v1.2.0`)
 2. Verifies CI has passed on the tagged commit
@@ -52,10 +52,10 @@ Each release produces the following tags for both backend and frontend images:
 ## Container Registry Information
 
 - **Registry**: `ghcr.io`
-- **Repository**: `ghcr.io/{owner}/scrsphere`
+- **Repository**: `ghcr.io/{owner}/scrumooth`
 - **Images**:
-  - Backend: `ghcr.io/{owner}/scrsphere/backend`
-  - Frontend: `ghcr.io/{owner}/scrsphere/frontend`
+  - Backend: `ghcr.io/{owner}/scrumooth/backend`
+  - Frontend: `ghcr.io/{owner}/scrumooth/frontend`
 
 > **Note**: Replace `{owner}` with the actual GitHub repository owner (e.g., `orbivort`).
 
@@ -63,7 +63,7 @@ Each release produces the following tags for both backend and frontend images:
 
 ## Prerequisites
 
-Before deploying ScrSphere Docker images, ensure you have:
+Before deploying Scrumooth Docker images, ensure you have:
 
 ### Required Software
 
@@ -106,15 +106,15 @@ echo $GITHUB_TOKEN | docker login ghcr.io -u YOUR_GITHUB_USERNAME --password-std
 Or for public repositories, images can be pulled without authentication:
 
 ```bash
-docker pull ghcr.io/orbivort/scrsphere/backend:latest
-docker pull ghcr.io/orbivort/scrsphere/frontend:latest
+docker pull ghcr.io/orbivort/scrumooth/backend:latest
+docker pull ghcr.io/orbivort/scrumooth/frontend:latest
 ```
 
 ### 2. Create Environment File
 
 ```bash
-mkdir -p scrsphere-deployment
-cd scrsphere-deployment
+mkdir -p scrumooth-deployment
+cd scrumooth-deployment
 
 # Generate JWT secret first (run this command separately)
 JWT_SECRET=$(openssl rand -hex 64)
@@ -124,7 +124,7 @@ cat > .env << 'EOF'
 # Database
 DB_USER=postgres
 DB_PASSWORD=your-secure-password-here
-DB_NAME=scrsphere
+DB_NAME=scrumooth
 
 # Backend
 # IMPORTANT: Replace with output from: openssl rand -hex 64
@@ -170,7 +170,7 @@ services:
     restart: unless-stopped
 
   backend:
-    image: ghcr.io/orbivort/scrsphere/backend:1.0.0
+    image: ghcr.io/orbivort/scrumooth/backend:1.0.0
     environment:
       DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
       JWT_SECRET: ${JWT_SECRET}
@@ -197,7 +197,7 @@ services:
     restart: unless-stopped
 
   frontend:
-    image: ghcr.io/orbivort/scrsphere/frontend:1.0.0
+    image: ghcr.io/orbivort/scrumooth/frontend:1.0.0
     depends_on:
       backend:
         condition: service_healthy
@@ -256,7 +256,7 @@ curl http://localhost:5000/health
 | Base Image   | `node:24-alpine`                 |
 | Architecture | `linux/amd64`, `linux/arm64`     |
 | Exposed Port | `5000`                           |
-| User         | `scrsphere` (non-root, UID 1001) |
+| User         | `scrumooth` (non-root, UID 1001) |
 | Health Check | HTTP GET `/health` endpoint      |
 
 **Image Contents**:
@@ -303,18 +303,18 @@ curl http://localhost:5000/health
 
 ### Method 1: Docker Compose (Recommended)
 
-Docker Compose provides the simplest way to deploy the full ScrSphere stack with proper networking, health checks, and service dependencies.
+Docker Compose provides the simplest way to deploy the full Scrumooth stack with proper networking, health checks, and service dependencies.
 
 #### Step 1: Pull Images
 
 ```bash
 # Pull specific version
-docker pull ghcr.io/orbivort/scrsphere/backend:1.0.0
-docker pull ghcr.io/orbivort/scrsphere/frontend:1.0.0
+docker pull ghcr.io/orbivort/scrumooth/backend:1.0.0
+docker pull ghcr.io/orbivort/scrumooth/frontend:1.0.0
 
 # Or pull latest
-docker pull ghcr.io/orbivort/scrsphere/backend:latest
-docker pull ghcr.io/orbivort/scrsphere/frontend:latest
+docker pull ghcr.io/orbivort/scrumooth/backend:latest
+docker pull ghcr.io/orbivort/scrumooth/frontend:latest
 ```
 
 #### Step 2: Create Configuration Files
@@ -322,7 +322,7 @@ docker pull ghcr.io/orbivort/scrsphere/frontend:latest
 Create the following directory structure:
 
 ```
-scrsphere/
+scrumooth/
 ├── docker-compose.yml
 ├── .env
 ├── Caddyfile
@@ -339,7 +339,7 @@ Create `.env` file with your configuration:
 # ===========================================
 DB_USER=postgres
 DB_PASSWORD=your-secure-password-min-32-chars
-DB_NAME=scrsphere
+DB_NAME=scrumooth
 
 # ===========================================
 # Backend Configuration
@@ -351,10 +351,10 @@ NODE_ENV=production
 PORT=5000
 
 # CORS - comma-separated list of allowed origins
-CORS_ORIGIN=https://scrsphere.yourdomain.com
+CORS_ORIGIN=https://scrumooth.yourdomain.com
 
 # Frontend URL for email links
-FRONTEND_URL=https://scrsphere.yourdomain.com
+FRONTEND_URL=https://scrumooth.yourdomain.com
 
 # ===========================================
 # Email Configuration
@@ -365,12 +365,12 @@ SMTP_PORT=587
 SMTP_USER=your-smtp-username
 SMTP_PASS=your-smtp-password
 EMAIL_FROM_ADDRESS=noreply@yourdomain.com
-EMAIL_FROM_NAME="ScrSphere"
+EMAIL_FROM_NAME="Scrumooth"
 
 # ===========================================
 # Domain Configuration
 # ===========================================
-DOMAIN=scrsphere.yourdomain.com
+DOMAIN=scrumooth.yourdomain.com
 ```
 
 #### Step 4: Create Caddyfile
@@ -445,20 +445,20 @@ For environments where Docker Compose is not available, you can run containers i
 #### Step 1: Create Docker Network
 
 ```bash
-docker network create scrsphere-network
+docker network create scrumooth-network
 ```
 
 #### Step 2: Start PostgreSQL
 
 ```bash
 docker run -d \
-  --name scrsphere-postgres \
-  --network scrsphere-network \
+  --name scrumooth-postgres \
+  --network scrumooth-network \
   -e POSTGRES_USER=postgres \
   -e POSTGRES_PASSWORD=your-secure-password \
-  -e POSTGRES_DB=scrsphere \
-  -v scrsphere_postgres_data:/var/lib/postgresql/data \
-  --health-cmd="pg_isready -U postgres -d scrsphere" \
+  -e POSTGRES_DB=scrumooth \
+  -v scrumooth_postgres_data:/var/lib/postgresql/data \
+  --health-cmd="pg_isready -U postgres -d scrumooth" \
   --health-interval=10s \
   --health-timeout=5s \
   --health-retries=5 \
@@ -469,9 +469,9 @@ docker run -d \
 
 ```bash
 docker run -d \
-  --name scrsphere-backend \
-  --network scrsphere-network \
-  -e DATABASE_URL="postgresql://postgres:your-secure-password@scrsphere-postgres:5432/scrsphere" \
+  --name scrumooth-backend \
+  --network scrumooth-network \
+  -e DATABASE_URL="postgresql://postgres:your-secure-password@scrumooth-postgres:5432/scrumooth" \
   -e JWT_SECRET="your-jwt-secret-minimum-64-characters" \
   -e NODE_ENV=production \
   -e CORS_ORIGIN="https://your-domain.com" \
@@ -487,28 +487,28 @@ docker run -d \
   --health-timeout=10s \
   --health-retries=3 \
   --health-start-period=30s \
-  ghcr.io/orbivort/scrsphere/backend:1.0.0
+  ghcr.io/orbivort/scrumooth/backend:1.0.0
 ```
 
 #### Step 4: Start Frontend
 
 ```bash
 docker run -d \
-  --name scrsphere-frontend \
-  --network scrsphere-network \
+  --name scrumooth-frontend \
+  --network scrumooth-network \
   --health-cmd="wget --no-verbose --tries=1 --spider http://127.0.0.1/" \
   --health-interval=30s \
   --health-timeout=10s \
   --health-retries=3 \
-  ghcr.io/orbivort/scrsphere/frontend:1.0.0
+  ghcr.io/orbivort/scrumooth/frontend:1.0.0
 ```
 
 #### Step 5: Start Reverse Proxy (Optional)
 
 ```bash
 docker run -d \
-  --name scrsphere-caddy \
-  --network scrsphere-network \
+  --name scrumooth-caddy \
+  --network scrumooth-network \
   -p 80:80 \
   -p 443:443 \
   -v $(pwd)/Caddyfile:/etc/caddy/Caddyfile:ro \
@@ -527,7 +527,7 @@ For production Kubernetes deployments, use the following manifests as a starting
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: scrsphere
+  name: scrumooth
 ```
 
 #### ConfigMap
@@ -536,12 +536,12 @@ metadata:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: scrsphere-config
-  namespace: scrsphere
+  name: scrumooth-config
+  namespace: scrumooth
 data:
   NODE_ENV: 'production'
-  CORS_ORIGIN: 'https://scrsphere.yourdomain.com'
-  FRONTEND_URL: 'https://scrsphere.yourdomain.com'
+  CORS_ORIGIN: 'https://scrumooth.yourdomain.com'
+  FRONTEND_URL: 'https://scrumooth.yourdomain.com'
   EMAIL_PROVIDER: 'smtp'
   SMTP_HOST: 'smtp.yourdomain.com'
   SMTP_PORT: '587'
@@ -553,11 +553,11 @@ data:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: scrsphere-secrets
-  namespace: scrsphere
+  name: scrumooth-secrets
+  namespace: scrumooth
 type: Opaque
 stringData:
-  DATABASE_URL: 'postgresql://postgres:password@postgres:5432/scrsphere'
+  DATABASE_URL: 'postgresql://postgres:password@postgres:5432/scrumooth'
   JWT_SECRET: 'your-jwt-secret-minimum-64-characters'
   SMTP_USER: 'your-smtp-user'
   SMTP_PASS: 'your-smtp-password'
@@ -571,27 +571,27 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: backend
-  namespace: scrsphere
+  namespace: scrumooth
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: scrsphere-backend
+      app: scrumooth-backend
   template:
     metadata:
       labels:
-        app: scrsphere-backend
+        app: scrumooth-backend
     spec:
       containers:
         - name: backend
-          image: ghcr.io/orbivort/scrsphere/backend:1.0.0
+          image: ghcr.io/orbivort/scrumooth/backend:1.0.0
           ports:
             - containerPort: 5000
           envFrom:
             - configMapRef:
-                name: scrsphere-config
+                name: scrumooth-config
             - secretRef:
-                name: scrsphere-secrets
+                name: scrumooth-secrets
           livenessProbe:
             httpGet:
               path: /health
@@ -624,20 +624,20 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend
-  namespace: scrsphere
+  namespace: scrumooth
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: scrsphere-frontend
+      app: scrumooth-frontend
   template:
     metadata:
       labels:
-        app: scrsphere-frontend
+        app: scrumooth-frontend
     spec:
       containers:
         - name: frontend
-          image: ghcr.io/orbivort/scrsphere/frontend:1.0.0
+          image: ghcr.io/orbivort/scrumooth/frontend:1.0.0
           ports:
             - containerPort: 80
           livenessProbe:
@@ -761,10 +761,10 @@ services:
 
 ```bash
 # Backend
-docker run -p 5000:5000 ghcr.io/orbivort/scrsphere/backend:1.0.0
+docker run -p 5000:5000 ghcr.io/orbivort/scrumooth/backend:1.0.0
 
 # Frontend (requires backend at localhost:5000)
-docker run -p 80:80 ghcr.io/orbivort/scrsphere/frontend:1.0.0
+docker run -p 80:80 ghcr.io/orbivort/scrumooth/frontend:1.0.0
 ```
 
 #### Production (With Caddy)
@@ -784,7 +784,7 @@ caddy:
 
 | Volume                    | Container Path             | Purpose                      |
 | ------------------------- | -------------------------- | ---------------------------- |
-| `scrsphere_postgres_data` | `/var/lib/postgresql/data` | PostgreSQL data persistence  |
+| `scrumooth_postgres_data` | `/var/lib/postgresql/data` | PostgreSQL data persistence  |
 | `caddy_data`              | `/data`                    | Caddy certificates and state |
 | `caddy_config`            | `/config`                  | Caddy configuration cache    |
 
@@ -800,7 +800,7 @@ caddy:
 ```yaml
 volumes:
   # Persistent data
-  scrsphere_postgres_data:
+  scrumooth_postgres_data:
     driver: local
   caddy_data:
     driver: local
@@ -810,7 +810,7 @@ volumes:
 services:
   postgres:
     volumes:
-      - scrsphere_postgres_data:/var/lib/postgresql/data
+      - scrumooth_postgres_data:/var/lib/postgresql/data
       - ./logs/postgres:/var/log/postgresql
 
   backend:
@@ -834,7 +834,7 @@ services:
     command: >
       sh -c "
         apk add --no-cache bash &&
-        echo '0 2 * * * pg_dump -U $$POSTGRES_USER -d scrsphere > /backups/scrsphere_$$(date +\%Y\%m\%d_\%H\%M\%S).sql' | crontab - &&
+        echo '0 2 * * * pg_dump -U $$POSTGRES_USER -d scrumooth > /backups/scrumooth_$$(date +\%Y\%m\%d_\%H\%M\%S).sql' | crontab - &&
         crond -f -l 2
       "
     depends_on:
@@ -860,7 +860,7 @@ openssl req -x509 -newkey rsa:4096 \
   -keyout certs/pgbouncer/server.key \
   -out certs/pgbouncer/server.crt \
   -days 365 -nodes \
-  -subj "/CN=scrsphere-pgbouncer"
+  -subj "/CN=scrumooth-pgbouncer"
 
 # Set proper permissions
 chmod 600 certs/pgbouncer/server.key
@@ -872,11 +872,11 @@ chmod 644 certs/pgbouncer/server.crt
 ```yaml
 pgbouncer:
   image: pgbouncer/pgbouncer:1.22.1
-  container_name: scrsphere-pgbouncer
+  container_name: scrumooth-pgbouncer
   environment:
     DATABASES_HOST: postgres
     DATABASES_PORT: 5432
-    DATABASES_DATABASE: ${DB_NAME:-scrsphere}
+    DATABASES_DATABASE: ${DB_NAME:-scrumooth}
     DATABASES_USER: ${DB_USER:-postgres}
     DATABASES_PASSWORD: ${DB_PASSWORD}
     POOL_MODE: transaction
@@ -907,14 +907,14 @@ Creates SQL dumps of the database daily at 2:00 AM.
 ```yaml
 backup:
   image: postgres:18-alpine
-  container_name: scrsphere-backup
+  container_name: scrumooth-backup
   volumes:
     - ./backups:/backups
     - ./scripts/maintenance/database:/scripts:ro
   environment:
     - POSTGRES_USER=${DB_USER:-postgres}
     - POSTGRES_PASSWORD=${DB_PASSWORD}
-    - DB_NAME=${DB_NAME:-scrsphere}
+    - DB_NAME=${DB_NAME:-scrumooth}
     - PGHOST=postgres
   command: >
     sh -c "
@@ -935,9 +935,9 @@ Creates file-level backups of the PostgreSQL data volume weekly on Sundays at 3:
 ```yaml
 volume-backup:
   image: docker:cli
-  container_name: scrsphere-volume-backup
+  container_name: scrumooth-volume-backup
   volumes:
-    - scrsphere_postgres_data:/data:ro
+    - scrumooth_postgres_data:/data:ro
     - ./backups/volumes:/backups
     - ./scripts/maintenance/database:/scripts:ro
     - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -988,14 +988,14 @@ docker compose exec backend npx prisma migrate status
 #### Direct Connection
 
 ```bash
-DATABASE_URL=postgresql://user:password@postgres:5432/scrsphere
+DATABASE_URL=postgresql://user:password@postgres:5432/scrumooth
 ```
 
 #### With PgBouncer (Connection Pooling)
 
 ```bash
 # Point backend to PgBouncer instead of PostgreSQL directly
-DATABASE_URL=postgresql://user:password@pgbouncer:6432/scrsphere
+DATABASE_URL=postgresql://user:password@pgbouncer:6432/scrumooth
 ```
 
 ### Database Migrations During Upgrades
@@ -1031,10 +1031,10 @@ docker compose ps
 
 # Expected output:
 # NAME                 STATUS
-# scrsphere-backend    Up (healthy)
-# scrsphere-frontend   Up (healthy)
-# scrsphere-postgres   Up (healthy)
-# scrsphere-caddy      Up (healthy)
+# scrumooth-backend    Up (healthy)
+# scrumooth-frontend   Up (healthy)
+# scrumooth-postgres   Up (healthy)
+# scrumooth-caddy      Up (healthy)
 ```
 
 ### 2. Backend Health Endpoint
@@ -1086,7 +1086,7 @@ curl -s http://localhost/api/v1/health
 
 ```bash
 # Connect to PostgreSQL
-docker compose exec postgres psql -U postgres -d scrsphere -c "SELECT 1"
+docker compose exec postgres psql -U postgres -d scrumooth -c "SELECT 1"
 
 # Expected output:
 #  ?column?
@@ -1145,7 +1145,7 @@ docker compose logs backend | grep -i email
 #!/bin/bash
 set -e
 
-echo "=== ScrSphere Deployment Verification ==="
+echo "=== Scrumooth Deployment Verification ==="
 
 echo -e "\n1. Checking container status..."
 docker compose ps
@@ -1223,7 +1223,7 @@ echo -e "\n=== Verification Complete ==="
 echo $GITHUB_TOKEN | docker login ghcr.io -u YOUR_USERNAME --password-stdin
 
 # For public repos, ensure correct image name
-docker pull ghcr.io/orbivort/scrsphere/backend:1.0.0
+docker pull ghcr.io/orbivort/scrumooth/backend:1.0.0
 ```
 
 #### 2. Backend Health Check Fails
@@ -1352,7 +1352,7 @@ openssl req -x509 -newkey rsa:4096 \
   -keyout certs/pgbouncer/server.key \
   -out certs/pgbouncer/server.crt \
   -days 365 -nodes \
-  -subj "/CN=scrsphere-pgbouncer"
+  -subj "/CN=scrumooth-pgbouncer"
 chmod 600 certs/pgbouncer/server.key
 
 # Restart PgBouncer
@@ -1450,7 +1450,7 @@ chmod 755 backups
 df -h backups/
 
 # Manually trigger backup for testing
-docker compose exec backup pg_dump -U postgres scrsphere > test_backup.sql
+docker compose exec backup pg_dump -U postgres scrumooth > test_backup.sql
 ```
 
 ### Debugging Commands
@@ -1469,7 +1469,7 @@ docker compose exec backend sh
 docker stats
 
 # Inspect container configuration
-docker inspect scrsphere-backend
+docker inspect scrumooth-backend
 
 # Check network connectivity
 docker compose exec backend ping postgres
@@ -1513,7 +1513,7 @@ docker compose exec postgres psql -c "SET log_min_duration_statement = 100;"
 
 ```bash
 # Create database backup
-docker compose exec postgres pg_dump -U postgres scrsphere > backup_$(date +%Y%m%d).sql
+docker compose exec postgres pg_dump -U postgres scrumooth > backup_$(date +%Y%m%d).sql
 
 # Or use the backup service
 ls -la backups/
@@ -1523,8 +1523,8 @@ ls -la backups/
 
 ```bash
 # Pull specific version
-docker pull ghcr.io/orbivort/scrsphere/backend:1.1.0
-docker pull ghcr.io/orbivort/scrsphere/frontend:1.1.0
+docker pull ghcr.io/orbivort/scrumooth/backend:1.1.0
+docker pull ghcr.io/orbivort/scrumooth/frontend:1.1.0
 
 # Or update docker-compose.yml and pull
 docker compose pull
@@ -1571,10 +1571,10 @@ If upgrade fails, rollback to previous version:
 docker compose stop backend frontend
 
 # Restore database backup
-docker compose exec -T postgres psql -U postgres -d scrsphere < backup_20260525.sql
+docker compose exec -T postgres psql -U postgres -d scrumooth < backup_20260525.sql
 
 # Update image tags to previous version
-# Edit docker-compose.yml: image: ghcr.io/orbivort/scrsphere/backend:1.0.0
+# Edit docker-compose.yml: image: ghcr.io/orbivort/scrumooth/backend:1.0.0
 
 # Start previous version
 docker compose up -d backend frontend
@@ -1591,24 +1591,24 @@ curl http://localhost:5000/health
 services:
   postgres:
     image: postgres:18-alpine
-    container_name: scrsphere-postgres
+    container_name: scrumooth-postgres
     environment:
       POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME:-scrsphere}
+      POSTGRES_DB: ${DB_NAME:-scrumooth}
       POSTGRES_INITDB_ARGS: --encoding=UTF-8 --locale=en_US.UTF-8
     volumes:
-      - scrsphere_postgres_data:/var/lib/postgresql/data
+      - scrumooth_postgres_data:/var/lib/postgresql/data
       - ./logs/postgres:/var/log/postgresql
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-scrsphere}']
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-scrumooth}']
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 30s
     restart: unless-stopped
     networks:
-      - scrsphere-network
+      - scrumooth-network
     logging:
       driver: 'json-file'
       options:
@@ -1616,10 +1616,10 @@ services:
         max-file: '5'
 
   backend:
-    image: ghcr.io/orbivort/scrsphere/backend:${VERSION:-1.0.0}
-    container_name: scrsphere-backend
+    image: ghcr.io/orbivort/scrumooth/backend:${VERSION:-1.0.0}
+    container_name: scrumooth-backend
     environment:
-      DATABASE_URL: postgresql://${DB_USER:-postgres}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-scrsphere}
+      DATABASE_URL: postgresql://${DB_USER:-postgres}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-scrumooth}
       JWT_SECRET: ${JWT_SECRET}
       NODE_ENV: production
       PORT: '5000'
@@ -1631,7 +1631,7 @@ services:
       SMTP_USER: ${SMTP_USER}
       SMTP_PASS: ${SMTP_PASS}
       EMAIL_FROM_ADDRESS: ${EMAIL_FROM_ADDRESS}
-      EMAIL_FROM_NAME: ${EMAIL_FROM_NAME:-ScrSphere}
+      EMAIL_FROM_NAME: ${EMAIL_FROM_NAME:-Scrumooth}
       LOG_LEVEL: ${LOG_LEVEL:-info}
     depends_on:
       postgres:
@@ -1654,7 +1654,7 @@ services:
       start_period: 30s
     restart: unless-stopped
     networks:
-      - scrsphere-network
+      - scrumooth-network
     logging:
       driver: 'json-file'
       options:
@@ -1670,8 +1670,8 @@ services:
           memory: 128M
 
   frontend:
-    image: ghcr.io/orbivort/scrsphere/frontend:${VERSION:-1.0.0}
-    container_name: scrsphere-frontend
+    image: ghcr.io/orbivort/scrumooth/frontend:${VERSION:-1.0.0}
+    container_name: scrumooth-frontend
     depends_on:
       backend:
         condition: service_healthy
@@ -1685,7 +1685,7 @@ services:
       start_period: 10s
     restart: unless-stopped
     networks:
-      - scrsphere-network
+      - scrumooth-network
     logging:
       driver: 'json-file'
       options:
@@ -1702,7 +1702,7 @@ services:
 
   caddy:
     image: caddy:2-alpine
-    container_name: scrsphere-caddy
+    container_name: scrumooth-caddy
     ports:
       - '80:80'
       - '443:443'
@@ -1723,7 +1723,7 @@ services:
       start_period: 10s
     restart: unless-stopped
     networks:
-      - scrsphere-network
+      - scrumooth-network
     logging:
       driver: 'json-file'
       options:
@@ -1731,7 +1731,7 @@ services:
         max-file: '5'
 
 volumes:
-  scrsphere_postgres_data:
+  scrumooth_postgres_data:
     driver: local
   caddy_data:
     driver: local
@@ -1739,7 +1739,7 @@ volumes:
     driver: local
 
 networks:
-  scrsphere-network:
+  scrumooth-network:
     driver: bridge
 ```
 

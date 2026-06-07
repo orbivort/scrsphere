@@ -2,7 +2,7 @@
 CREATE SCHEMA IF NOT EXISTS "public";
 
 -- CreateEnum
-CREATE TYPE "UserRole" AS ENUM ('ADMINISTRATOR', 'PRODUCT_OWNER', 'SCRUM_MASTER', 'DEVELOPER');
+CREATE TYPE "UserRole" AS ENUM ('PRODUCT_OWNER', 'SCRUM_MASTER', 'DEVELOPER');
 
 -- CreateEnum
 CREATE TYPE "ItemStatus" AS ENUM ('NEW', 'REFINED', 'READY', 'IN_PROGRESS', 'DONE');
@@ -41,7 +41,7 @@ CREATE TYPE "ActionItemStatus" AS ENUM ('PENDING', 'IN_PROGRESS', 'COMPLETED', '
 CREATE TYPE "RetrospectiveStatus" AS ENUM ('DRAFT', 'IN_PROGRESS', 'COMPLETED');
 
 -- CreateEnum
-CREATE TYPE "SprintDuration" AS ENUM ('TWO_WEEKS', 'FOUR_WEEKS');
+CREATE TYPE "SprintDuration" AS ENUM ('ONE_WEEK', 'TWO_WEEKS', 'THREE_WEEKS', 'FOUR_WEEKS');
 
 -- CreateEnum
 CREATE TYPE "ScheduledDeletionStatus" AS ENUM ('PENDING', 'CANCELLED', 'EXECUTED', 'EXPIRED');
@@ -1424,6 +1424,11 @@ ALTER TABLE "tasks" ADD CONSTRAINT "chk_tasks_hours" CHECK ("estimatedHours" >= 
 ALTER TABLE "product_backlog_items" ADD CONSTRAINT "chk_pbi_values" CHECK ("storyPoints" >= 0 AND "businessValue" >= 0);
 ALTER TABLE "increments" ADD CONSTRAINT "chk_increments_points" CHECK ("totalStoryPoints" >= 0);
 ALTER TABLE "burndown_data" ADD CONSTRAINT "chk_burndown_remaining" CHECK ("idealRemaining" >= 0);
+
+-- DROP GIN INDEXES
+DROP INDEX IF EXISTS "product_backlog_items_labels_idx";
+DROP INDEX IF EXISTS "status_change_history_metadata_idx";
+DROP INDEX IF EXISTS "notifications_data_idx";
 
 -- ============================================
 -- GIN INDEXES FOR JSONB AND ARRAY COLUMNS

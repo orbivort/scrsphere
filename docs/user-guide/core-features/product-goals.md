@@ -155,7 +155,7 @@ Product goals provide context for backlog items. Linking them helps the team und
 
 ### Progress Indicators
 
-Scrsphere provides several ways to track goal progress:
+Scrumooth provides several ways to track goal progress:
 
 1. **Linked Items Progress**
    - View all backlog items linked to the goal

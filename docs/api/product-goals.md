@@ -151,7 +151,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET "https://api.scrsphere.dev/api/v1/product-goals?teamId=550e8400-e29b-41d4-a716-446655440000" \
+curl -X GET "https://api.scrumooth.dev/api/v1/product-goals?teamId=550e8400-e29b-41d4-a716-446655440000" \
   -b cookies.txt
 ```
 
@@ -222,7 +222,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET "https://api.scrsphere.dev/api/v1/product-goals/active?teamId=550e8400-e29b-41d4-a716-446655440000" \
+curl -X GET "https://api.scrumooth.dev/api/v1/product-goals/active?teamId=550e8400-e29b-41d4-a716-446655440000" \
   -b cookies.txt
 ```
 
@@ -344,7 +344,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X POST https://api.scrsphere.dev/api/v1/product-goals \
+curl -X POST https://api.scrumooth.dev/api/v1/product-goals \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -425,7 +425,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET https://api.scrsphere.dev/api/v1/product-goals/660e8400-e29b-41d4-a716-446655440000 \
+curl -X GET https://api.scrumooth.dev/api/v1/product-goals/660e8400-e29b-41d4-a716-446655440000 \
   -b cookies.txt
 ```
 
@@ -561,7 +561,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X PUT https://api.scrsphere.dev/api/v1/product-goals/660e8400-e29b-41d4-a716-446655440000 \
+curl -X PUT https://api.scrumooth.dev/api/v1/product-goals/660e8400-e29b-41d4-a716-446655440000 \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -639,7 +639,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X DELETE https://api.scrsphere.dev/api/v1/product-goals/660e8400-e29b-41d4-a716-446655440000 \
+curl -X DELETE https://api.scrumooth.dev/api/v1/product-goals/660e8400-e29b-41d4-a716-446655440000 \
   -b cookies.txt
 ```
 
@@ -717,7 +717,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET https://api.scrsphere.dev/api/v1/product-goals/660e8400-e29b-41d4-a716-446655440000/status-history \
+curl -X GET https://api.scrumooth.dev/api/v1/product-goals/660e8400-e29b-41d4-a716-446655440000/status-history \
   -b cookies.txt
 ```
 

@@ -88,7 +88,7 @@ export { RunnerIcon } from './RunnerIcon';
 export { SaveIcon } from './SaveIcon';
 export { ScissorsIcon } from './ScissorsIcon';
 export { RunningIcon } from './RunningIcon';
-export { ScrSphereIcon } from './ScrSphereIcon';
+export { ScrumoothIcon } from './ScrumoothIcon';
 export { SearchIcon } from './SearchIcon';
 export { SearchXIcon } from './SearchXIcon';
 export { SendIcon } from './SendIcon';

@@ -253,8 +253,8 @@ export const config = {
 
     // Default email settings
     defaults: {
-      fromName: process.env.EMAIL_FROM_NAME ?? 'Scrsphere',
-      fromAddress: process.env.EMAIL_FROM_ADDRESS ?? 'noreply@scrsphere.local',
+      fromName: process.env.EMAIL_FROM_NAME ?? 'Scrumooth',
+      fromAddress: process.env.EMAIL_FROM_ADDRESS ?? 'noreply@scrumooth.local',
       replyTo: process.env.EMAIL_REPLY_TO ?? '',
     },
 

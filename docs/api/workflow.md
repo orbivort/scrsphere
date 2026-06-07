@@ -23,7 +23,7 @@ Complete Workflow API reference for status transition management, workflow confi
 
 ## Overview
 
-The Workflow API provides a configurable state machine engine for managing entity status transitions across the Scrsphere platform. Capabilities include:
+The Workflow API provides a configurable state machine engine for managing entity status transitions across the Scrumooth platform. Capabilities include:
 
 - Transition validation before execution
 - Status change execution with audit trail
@@ -129,7 +129,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X POST https://api.scrsphere.dev/api/v1/workflows/validate \
+curl -X POST https://api.scrumooth.dev/api/v1/workflows/validate \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -211,7 +211,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X POST https://api.scrsphere.dev/api/v1/workflows/status-change \
+curl -X POST https://api.scrumooth.dev/api/v1/workflows/status-change \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -315,7 +315,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X POST https://api.scrsphere.dev/api/v1/workflows/admin/create \
+curl -X POST https://api.scrumooth.dev/api/v1/workflows/admin/create \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -387,7 +387,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X POST https://api.scrsphere.dev/api/v1/workflows/admin/states \
+curl -X POST https://api.scrumooth.dev/api/v1/workflows/admin/states \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -454,7 +454,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X POST https://api.scrsphere.dev/api/v1/workflows/admin/transitions \
+curl -X POST https://api.scrumooth.dev/api/v1/workflows/admin/transitions \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -527,7 +527,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET "https://api.scrsphere.dev/api/v1/workflows/product_backlog_item/550e8400-e29b-41d4-a716-446655440000/history" \
+curl -X GET "https://api.scrumooth.dev/api/v1/workflows/product_backlog_item/550e8400-e29b-41d4-a716-446655440000/history" \
   -b cookies.txt
 ```
 
@@ -584,7 +584,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET "https://api.scrsphere.dev/api/v1/workflows/product_backlog_item/allowed-transitions/NEW" \
+curl -X GET "https://api.scrumooth.dev/api/v1/workflows/product_backlog_item/allowed-transitions/NEW" \
   -b cookies.txt
 ```
 
@@ -635,7 +635,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET "https://api.scrsphere.dev/api/v1/workflows/product_backlog_item/states" \
+curl -X GET "https://api.scrumooth.dev/api/v1/workflows/product_backlog_item/states" \
   -b cookies.txt
 ```
 
@@ -686,7 +686,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET "https://api.scrsphere.dev/api/v1/workflows/product_backlog_item/transitions" \
+curl -X GET "https://api.scrumooth.dev/api/v1/workflows/product_backlog_item/transitions" \
   -b cookies.txt
 ```
 
@@ -762,7 +762,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET "https://api.scrsphere.dev/api/v1/workflows/product_backlog_item" \
+curl -X GET "https://api.scrumooth.dev/api/v1/workflows/product_backlog_item" \
   -b cookies.txt
 ```
 

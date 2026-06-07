@@ -278,7 +278,7 @@ describe('Layout Component', () => {
         </Layout>
       );
 
-      expect(screen.getByText('ScrSphere')).toBeInTheDocument();
+      expect(screen.getByText('Scrumooth')).toBeInTheDocument();
       expect(screen.getByTestId('main-children')).toBeInTheDocument();
       expect(screen.getByText('Main Content')).toBeInTheDocument();
     });
@@ -368,7 +368,7 @@ describe('Layout Component', () => {
 
       const logoText = document.querySelector('.logo-text');
       expect(logoText).toBeInTheDocument();
-      expect(logoText).toHaveTextContent('ScrSphere');
+      expect(logoText).toHaveTextContent('Scrumooth');
     });
   });
 
@@ -960,7 +960,7 @@ describe('Layout Component', () => {
         }),
       });
 
-      expect(screen.getByText('ScrSphere')).toBeInTheDocument();
+      expect(screen.getByText('Scrumooth')).toBeInTheDocument();
     });
 
     it('handles API error when fetching deletion eligibility', async () => {

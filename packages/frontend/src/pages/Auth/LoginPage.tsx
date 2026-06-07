@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 
 import styles from './LoginPage.module.css';
 
-import { EyeIcon, EyeOffIcon, LoaderIcon, ScrSphereIcon } from '@/components/common/Icons';
+import { EyeIcon, EyeOffIcon, LoaderIcon, ScrumoothIcon } from '@/components/common/Icons';
 import { ErrorMessage } from '@/components/ErrorMessage';
 import { useApiError } from '@/hooks';
 import { apiService } from '@/services';
@@ -293,13 +293,13 @@ export const LoginPage: React.FC = () => {
         {/* Header */}
         <div className={styles['auth-header']}>
           <div className={styles['auth-logo']} aria-hidden="true">
-            <ScrSphereIcon size={100} className={styles['auth-logo-icon']} />
+            <ScrumoothIcon size={100} className={styles['auth-logo-icon']} />
           </div>
           <h1 className={styles['auth-title']}>
             {isRegisterMode ? 'Create your account' : 'Welcome back'}
           </h1>
           <p className={styles['auth-subtitle']}>
-            {isRegisterMode ? 'Start managing your Agile Scrum lifecycle' : 'Sign in to ScrSphere'}
+            {isRegisterMode ? 'Start managing your Agile Scrum lifecycle' : 'Sign in to Scrumooth'}
           </p>
         </div>
 

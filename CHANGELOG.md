@@ -619,7 +619,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 For questions, issues, or security concerns:
 
 - **Documentation**: [docs/](docs/)
-- **Issues**: [GitHub Issues](https://github.com/scrsphere/scrsphere/issues)
+- **Issues**: [GitHub Issues](https://github.com/orbivort/scrumooth/issues)
 - **Security**: See [SECURITY.md](SECURITY.md) for security policy
 
 ---

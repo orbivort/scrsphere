@@ -1,9 +1,9 @@
 # Third-Party Notices
 
-This document contains the license information for third-party packages used in the Scrsphere project.
+This document contains the license information for third-party packages used in the Scrumooth project.
 
-**Project:** Scrsphere - Agile Scrum Lifecycle Management System  
-**License:** Apache-2.0  
+**Project:** Scrumooth - Agile Scrum Lifecycle Management System
+**License:** Apache-2.0
 **Last Updated:** June 5, 2026
 
 ---
@@ -166,7 +166,7 @@ This document contains the license information for third-party packages used in 
 
 ---
 
-## Shared Dependencies (@scrsphere/shared)
+## Shared Dependencies (@scrumooth/shared)
 
 | Dependency Name        | Version | License Type | Copyright Holder      | Source/Repository URL                              |
 | ---------------------- | ------- | ------------ | --------------------- | -------------------------------------------------- |
@@ -288,7 +288,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ## Compliance Statement
 
-All dependencies listed in this document use OSI-approved open-source licenses that are compatible with the Apache-2.0 license under which Scrsphere is distributed. No copyleft licenses (GPL, LGPL, AGPL) are present in the dependency tree.
+All dependencies listed in this document use OSI-approved open-source licenses that are compatible with the Apache-2.0 license under which Scrumooth is distributed. No copyleft licenses (GPL, LGPL, AGPL) are present in the dependency tree.
 
 ### Transitive Dependencies
 

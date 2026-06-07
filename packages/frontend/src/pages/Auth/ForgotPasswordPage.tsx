@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 
 import styles from './LoginPage.module.css';
 
-import { MailIcon, LoaderIcon, ScrSphereIcon, ArrowLeftIcon } from '@/components/common/Icons';
+import { MailIcon, LoaderIcon, ScrumoothIcon, ArrowLeftIcon } from '@/components/common/Icons';
 import { ErrorMessage } from '@/components/ErrorMessage';
 import { apiService } from '@/services';
 import { logger } from '@/utils/logger';
@@ -50,7 +50,7 @@ export const ForgotPasswordPage: React.FC = () => {
       <div className={styles['auth-card']}>
         <div className={styles['auth-header']}>
           <div className={styles['auth-logo']} aria-hidden="true">
-            <ScrSphereIcon size={100} className={styles['auth-logo-icon']} />
+            <ScrumoothIcon size={100} className={styles['auth-logo-icon']} />
           </div>
           <h1 className={styles['auth-title']}>Reset your password</h1>
           <p className={styles['auth-subtitle']}>

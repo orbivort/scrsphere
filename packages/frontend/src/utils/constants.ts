@@ -1,4 +1,4 @@
-import { TIME, VALIDATION } from '@scrsphere/shared';
+import { TIME, VALIDATION } from '@scrumooth/shared';
 
 export const DEFAULT_USER_ID = 'default-user';
 export const MAX_RETRIES = 3;

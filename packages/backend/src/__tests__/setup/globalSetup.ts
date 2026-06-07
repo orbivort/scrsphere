@@ -11,7 +11,7 @@ export default async function setup() {
   process.env.NODE_ENV = 'test';
   // Force test database URL if not set by .env.test
   process.env.DATABASE_URL =
-    process.env.DATABASE_URL || 'postgresql://test:test@localhost:5432/scrsphere_test';
+    process.env.DATABASE_URL || 'postgresql://test:test@localhost:5432/scrumooth_test';
   process.env.JWT_SECRET =
     process.env.JWT_SECRET || 'test-jwt-secret-key-for-testing-purposes-only';
   process.env.JWT_EXPIRES_IN = '15m';

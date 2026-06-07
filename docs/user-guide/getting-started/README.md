@@ -1,10 +1,10 @@
-# Getting Started with Scrsphere
+# Getting Started with Scrumooth
 
-Welcome to Scrsphere, your comprehensive Agile Scrum Lifecycle Management System. This guide will walk you through everything you need to know to get started, from creating your account to planning your first sprint.
+Welcome to Scrumooth, your comprehensive Agile Scrum Lifecycle Management System. This guide will walk you through everything you need to know to get started, from creating your account to planning your first sprint.
 
 ## Table of Contents
 
-- [What is Scrsphere?](#what-is-scrsphere)
+- [What is Scrumooth?](#what-is-scrumooth)
 - [Quick Start Overview](#quick-start-overview)
 - [Step 1: Account Registration](#step-1-account-registration)
 - [Step 2: Team Setup](#step-2-team-setup)
@@ -15,9 +15,9 @@ Welcome to Scrsphere, your comprehensive Agile Scrum Lifecycle Management System
 
 ---
 
-## What is Scrsphere?
+## What is Scrumooth?
 
-Scrsphere is a self-hosted web application designed to help teams manage their Agile Scrum processes. It faithfully follows the Scrum Guide and provides tools for:
+Scrumooth is a self-hosted web application designed to help teams manage their Agile Scrum processes. It faithfully follows the Scrum Guide and provides tools for:
 
 - **Product Goals** - Define and track strategic objectives
 - **Product Backlog** - Manage and prioritize work items
@@ -39,7 +39,7 @@ This guide is designed for:
 
 ## Quick Start Overview
 
-Here's the typical workflow to get started with Scrsphere:
+Here's the typical workflow to get started with Scrumooth:
 
 ```
 Register Account → Create Team → Invite Members →
@@ -55,7 +55,7 @@ Create Product Goal → Add Backlog Items → Plan Sprint → Execute!
 ### Creating Your Account
 
 1. **Navigate to the Login Page**
-   - Open Scrsphere in your web browser
+   - Open Scrumooth in your web browser
    - You'll see the login/registration page
 
 2. **Switch to Registration Mode**
@@ -111,7 +111,7 @@ If you forget your password:
 
 ## Step 2: Team Setup
 
-After registration, you'll need to create or join a team. Teams are the fundamental unit of organization in Scrsphere.
+After registration, you'll need to create or join a team. Teams are the fundamental unit of organization in Scrumooth.
 
 ### Creating a Team
 
@@ -240,7 +240,7 @@ Each backlog item contains:
 
 ### MoSCoW Prioritization
 
-Scrsphere uses MoSCoW prioritization to help focus on what matters most:
+Scrumooth uses MoSCoW prioritization to help focus on what matters most:
 
 | Priority        | Meaning                 | When to Use                       |
 | --------------- | ----------------------- | --------------------------------- |
@@ -437,6 +437,6 @@ Congratulations! You've completed the basic setup. Here's what to do next:
 
 ---
 
-**You're ready to start using Scrsphere!**
+**You're ready to start using Scrumooth!**
 
 Remember: Scrum is about inspection and adaptation. Start simple, inspect frequently, and adapt your process based on what you learn.

@@ -73,10 +73,10 @@ vi.mock('../../../config', () => ({
       cleanupIntervalMs: 3600000,
     },
     email: {
-      frontendUrl: 'https://app.scrsphere.local',
+      frontendUrl: 'https://app.scrumooth.local',
       defaults: {
-        fromAddress: 'noreply@scrsphere.local',
-        replyTo: 'support@scrsphere.local',
+        fromAddress: 'noreply@scrumooth.local',
+        replyTo: 'support@scrumooth.local',
       },
       testMode: {
         enabled: false,
@@ -105,10 +105,10 @@ vi.mock('../../../config', () => ({
       cleanupIntervalMs: 3600000,
     },
     email: {
-      frontendUrl: 'https://app.scrsphere.local',
+      frontendUrl: 'https://app.scrumooth.local',
       defaults: {
-        fromAddress: 'noreply@scrsphere.local',
-        replyTo: 'support@scrsphere.local',
+        fromAddress: 'noreply@scrumooth.local',
+        replyTo: 'support@scrumooth.local',
       },
       testMode: {
         enabled: false,

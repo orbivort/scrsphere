@@ -133,7 +133,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET "https://api.scrsphere.dev/api/v1/notifications?type=TASK_ASSIGNED&isRead=false" \
+curl -X GET "https://api.scrumooth.dev/api/v1/notifications?type=TASK_ASSIGNED&isRead=false" \
   -b cookies.txt
 ```
 
@@ -170,7 +170,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET https://api.scrsphere.dev/api/v1/notifications/unread-count \
+curl -X GET https://api.scrumooth.dev/api/v1/notifications/unread-count \
   -b cookies.txt
 ```
 
@@ -254,7 +254,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X POST https://api.scrsphere.dev/api/v1/notifications/send-message \
+curl -X POST https://api.scrumooth.dev/api/v1/notifications/send-message \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -321,7 +321,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X PATCH https://api.scrsphere.dev/api/v1/notifications/550e8400-e29b-41d4-a716-446655440010/read \
+curl -X PATCH https://api.scrumooth.dev/api/v1/notifications/550e8400-e29b-41d4-a716-446655440010/read \
   -b cookies.txt
 ```
 
@@ -368,7 +368,7 @@ Content-Type: application/json
 Mark all notifications as read:
 
 ```bash
-curl -X PATCH https://api.scrsphere.dev/api/v1/notifications/mark-all-read \
+curl -X PATCH https://api.scrumooth.dev/api/v1/notifications/mark-all-read \
   -H "Content-Type: application/json" \
   -b cookies.txt
 ```
@@ -376,7 +376,7 @@ curl -X PATCH https://api.scrsphere.dev/api/v1/notifications/mark-all-read \
 Mark specific notifications as read:
 
 ```bash
-curl -X PATCH https://api.scrsphere.dev/api/v1/notifications/mark-all-read \
+curl -X PATCH https://api.scrumooth.dev/api/v1/notifications/mark-all-read \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -439,7 +439,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X DELETE https://api.scrsphere.dev/api/v1/notifications/550e8400-e29b-41d4-a716-446655440010 \
+curl -X DELETE https://api.scrumooth.dev/api/v1/notifications/550e8400-e29b-41d4-a716-446655440010 \
   -b cookies.txt
 ```
 

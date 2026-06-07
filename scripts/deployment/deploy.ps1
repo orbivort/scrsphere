@@ -1,9 +1,9 @@
 #!/usr/bin/env pwsh
 # ===========================================
-# Scrsphere Production Deployment Script
+# Scrumooth Production Deployment Script
 # ===========================================
 # This script helps set up and deploy the
-# Scrsphere application to a local environment
+# Scrumooth application to a local environment
 # for testing before physical server deployment.
 # ===========================================
 
@@ -21,7 +21,7 @@ $ProjectRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScr
 
 function Show-Help {
     Write-Host @"
-Scrsphere Deployment Script
+Scrumooth Deployment Script
 ===========================
 
 Usage: .\scripts\deployment\deploy.ps1 [options]
@@ -74,15 +74,15 @@ function Invoke-Setup {
     # Create .env file
     $envContent = @"
 # ===========================================
-# Scrsphere Production Environment Configuration
+# Scrumooth Production Environment Configuration
 # Generated on $(Get-Date -Format "yyyy-MM-dd HH:mm:ss")
 # ===========================================
 
 # Database Configuration
-DATABASE_URL=postgresql://postgres:${dbPassword}@postgres:5432/scrsphere
+DATABASE_URL=postgresql://postgres:${dbPassword}@postgres:5432/scrumooth
 DB_USER=postgres
 DB_PASSWORD=${dbPassword}
-DB_NAME=scrsphere
+DB_NAME=scrumooth
 
 # JWT Configuration
 JWT_SECRET=${jwtSecret}

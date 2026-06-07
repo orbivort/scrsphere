@@ -27,7 +27,7 @@ import {
   EditIcon,
   LockIcon,
   LogOutIcon,
-  ScrSphereIcon,
+  ScrumoothIcon,
   UsersIcon,
 } from '../common/Icons';
 import { NAV_ITEMS, SETTINGS_GROUPS, getFilteredSettingsGroups } from '../../config/navigation';
@@ -182,8 +182,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       <aside className={styles.sidebar} ref={sidebarRef}>
         <div className={styles['sidebar-header']}>
           <h1 className={styles.logo}>
-            <ScrSphereIcon size={40} />
-            <span className={styles['logo-text']}>ScrSphere</span>
+            <ScrumoothIcon size={40} />
+            <span className={styles['logo-text']}>Scrumooth</span>
           </h1>
           <button
             className={styles['sidebar-toggle']}

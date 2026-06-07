@@ -1,29 +1,29 @@
-# ScrSphere
+# Scrumooth
 
 **Agile Scrum Lifecycle Management System**
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-[![CI](https://github.com/orbivort/scrsphere/actions/workflows/ci.yml/badge.svg)](https://github.com/orbivort/scrsphere/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/github/orbivort/scrsphere/graph/badge.svg?token=Z2T4R3G8F7)](https://codecov.io/github/orbivort/scrsphere)
-[![Known Vulnerabilities](https://snyk.io/test/github/orbivort/scrsphere/badge.svg)](https://snyk.io/test/github/orbivort/scrsphere)
+[![CI](https://github.com/orbivort/scrumooth/actions/workflows/ci.yml/badge.svg)](https://github.com/orbivort/scrumooth/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/github/orbivort/scrumooth/graph/badge.svg?token=Z2T4R3G8F7)](https://codecov.io/github/orbivort/scrumooth)
+[![Known Vulnerabilities](https://snyk.io/test/github/orbivort/scrumooth/badge.svg)](https://snyk.io/test/github/orbivort/scrumooth)
 
-[![GitHub release](https://img.shields.io/github/v/release/orbivort/scrsphere?include_prereleases)](https://github.com/orbivort/scrsphere/releases)
-[![GitHub issues](https://img.shields.io/github/issues/orbivort/scrsphere)](https://github.com/orbivort/scrsphere/issues)
+[![GitHub release](https://img.shields.io/github/v/release/orbivort/scrumooth?include_prereleases)](https://github.com/orbivort/scrumooth/releases)
+[![GitHub issues](https://img.shields.io/github/issues/orbivort/scrumooth)](https://github.com/orbivort/scrumooth/issues)
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue.svg)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-24+-green.svg)](https://nodejs.org/)
 
-[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-GitHub_Pages-success?style=for-the-badge)](https://orbivort.github.io/scrsphere/)
+[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-GitHub_Pages-success?style=for-the-badge)](https://orbivort.github.io/scrumooth/)
 
-ScrSphere is a self-hosted web application for managing Agile Scrum processes, built to faithfully follow the Scrum Guide with modern technologies and rigorous quality standards. It provides a complete solution that guides teams through the entire Scrum lifecycle — from product goals and backlogs to sprint reviews and retrospectives — all deployable on your own infrastructure with zero per‑user fees.
+Scrumooth is a self-hosted web application for managing Agile Scrum processes, built to faithfully follow the Scrum Guide with modern technologies and rigorous quality standards. It provides a complete solution that guides teams through the entire Scrum lifecycle — from product goals and backlogs to sprint reviews and retrospectives — all deployable on your own infrastructure with zero per‑user fees.
 
 ## 🚀 Live Demo
 
-Try ScrSphere instantly in your browser — no installation required. The demo runs with mock data (no backend needed) so you can explore the full Scrum lifecycle right away.
+Try Scrumooth instantly in your browser — no installation required. The demo runs with mock data (no backend needed) so you can explore the full Scrum lifecycle right away.
 
 <p align="center">
-  <a href="https://orbivort.github.io/scrsphere/" target="_blank" rel="noopener noreferrer">
+  <a href="https://orbivort.github.io/scrumooth/" target="_blank" rel="noopener noreferrer">
     <strong>👉 Launch the Live Demo on GitHub Pages</strong>
   </a>
 </p>
@@ -94,7 +94,7 @@ Try ScrSphere instantly in your browser — no installation required. The demo r
 ## 📁 Project Structure
 
 ```
-scrsphere/
+scrumooth/
 ├── packages/
 │   ├── backend/              # Express.js REST API
 │   │   ├── src/
@@ -147,8 +147,8 @@ scrsphere/
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/orbivort/scrsphere.git
-cd scrsphere
+git clone https://github.com/orbivort/scrumooth.git
+cd scrumooth
 ```
 
 ### 2. Install Dependencies
@@ -177,7 +177,7 @@ Edit the environment files with your configuration:
 
 ```env
 # Database Configuration
-DATABASE_URL=postgresql://postgres:password@localhost:5432/scrsphere
+DATABASE_URL=postgresql://postgres:password@localhost:5432/scrumooth
 
 # JWT Configuration (generate with: openssl rand -hex 64)
 JWT_SECRET=your-64-character-secret-key-here
@@ -412,12 +412,12 @@ docker compose down
 
 ```bash
 # Production images
-docker build -t scrsphere-backend ./packages/backend
-docker build -t scrsphere-frontend ./packages/frontend
+docker build -t scrumooth-backend ./packages/backend
+docker build -t scrumooth-frontend ./packages/frontend
 
 # Development images (with dev dependencies and watch mode)
-docker build -f ./packages/backend/Dockerfile.dev -t scrsphere-backend:dev ./packages/backend
-docker build -f ./packages/frontend/Dockerfile.dev -t scrsphere-frontend:dev ./packages/frontend
+docker build -f ./packages/backend/Dockerfile.dev -t scrumooth-backend:dev ./packages/backend
+docker build -f ./packages/frontend/Dockerfile.dev -t scrumooth-frontend:dev ./packages/frontend
 ```
 
 ## ☁️ Deployment
@@ -432,7 +432,7 @@ The `main` branch is automatically deployed to GitHub Pages via the [`Deploy to 
 
 - Uses an in-memory **mock API** (no backend or database required)
 
-Live demo: <https://orbivort.github.io/scrsphere/>
+Live demo: <https://orbivort.github.io/scrumooth/>
 
 ## 📚 Documentation
 
@@ -448,12 +448,12 @@ Live demo: <https://orbivort.github.io/scrsphere/>
 
 ## 🛟 Troubleshooting
 
-### `Cannot find module @scrsphere/shared`
+### `Cannot find module @scrumooth/shared`
 
 The shared package must be built before backend/frontend can resolve imports.
 
 ```bash
-pnpm --filter=@scrsphere/shared run build
+pnpm --filter=@scrumooth/shared run build
 ```
 
 This is normally handled automatically by `pnpm install` and the dev scripts, but is required after a manual `pnpm run clean`.

@@ -43,24 +43,24 @@ WORKDIR /app
 
 # Create non-root user for security
 RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 --ingroup nodejs scrsphere
+    adduser --system --uid 1001 --ingroup nodejs scrumooth
 
 # Create logs directory with proper permissions
-RUN mkdir -p /app/logs && chown -R scrsphere:nodejs /app/logs
+RUN mkdir -p /app/logs && chown -R scrumooth:nodejs /app/logs
 
 # Copy built artifacts - order matters to avoid directory conflicts
-COPY --from=builder --chown=scrsphere:nodejs /app/packages/backend/dist ./dist
-COPY --from=builder --chown=scrsphere:nodejs /app/packages/backend/prisma ./prisma
-COPY --from=builder --chown=scrsphere:nodejs /app/packages/backend/src/generated ./dist/generated
-COPY --from=builder --chown=scrsphere:nodejs /app/packages/backend/prisma.config.ts ./prisma.config.ts
-COPY --from=builder --chown=scrsphere:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=scrumooth:nodejs /app/packages/backend/dist ./dist
+COPY --from=builder --chown=scrumooth:nodejs /app/packages/backend/prisma ./prisma
+COPY --from=builder --chown=scrumooth:nodejs /app/packages/backend/src/generated ./dist/generated
+COPY --from=builder --chown=scrumooth:nodejs /app/packages/backend/prisma.config.ts ./prisma.config.ts
+COPY --from=builder --chown=scrumooth:nodejs /app/node_modules ./node_modules
 
 # Copy shared package properly - need full package structure
-COPY --from=builder --chown=scrsphere:nodejs /app/packages/shared/package.json /app/node_modules/@scrsphere/shared/package.json
-COPY --from=builder --chown=scrsphere:nodejs /app/packages/shared/dist /app/node_modules/@scrsphere/shared/dist
+COPY --from=builder --chown=scrumooth:nodejs /app/packages/shared/package.json /app/node_modules/@scrumooth/shared/package.json
+COPY --from=builder --chown=scrumooth:nodejs /app/packages/shared/dist /app/node_modules/@scrumooth/shared/dist
 
 # Copy backend package.json (not root, as root has type:module which conflicts with CommonJS output)
-COPY --from=builder --chown=scrsphere:nodejs /app/packages/backend/package.json ./package.json
+COPY --from=builder --chown=scrumooth:nodejs /app/packages/backend/package.json ./package.json
 
 # Generate Prisma client in production (schema is already copied)
 # Use npx to run local prisma which has access to dotenv
@@ -72,7 +72,7 @@ ENV NODE_ENV=production
 ENV PORT=5000
 
 # Switch to non-root user
-USER scrsphere
+USER scrumooth
 
 EXPOSE 5000
 

@@ -5,7 +5,7 @@ interface IconProps {
   className?: string;
 }
 
-export const ScrSphereIcon: React.FC<IconProps> = ({ size = 40, className, ...props }) => {
+export const ScrumoothIcon: React.FC<IconProps> = ({ size = 40, className, ...props }) => {
   return (
     <svg
       width={size}

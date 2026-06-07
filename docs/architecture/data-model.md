@@ -1,6 +1,6 @@
 # Data Model
 
-This document provides a comprehensive overview of the Scrsphere data model, including entity-relationship diagrams, database schema, data flows, and migration strategy.
+This document provides a comprehensive overview of the Scrumooth data model, including entity-relationship diagrams, database schema, data flows, and migration strategy.
 
 ## Table of Contents
 

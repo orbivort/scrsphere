@@ -1,6 +1,6 @@
 # Database Maintenance Guide
 
-This guide covers PostgreSQL database validation, backup, restore procedures, and production enhancements for the Scrsphere application.
+This guide covers PostgreSQL database validation, backup, restore procedures, and production enhancements for the Scrumooth application.
 
 ## Quick Reference
 
@@ -11,10 +11,10 @@ This guide covers PostgreSQL database validation, backup, restore procedures, an
 | Create Volume Backup  | `./scripts/maintenance/database/db-volume-backup.sh [./backups/volumes]`    |
 | Restore SQL Backup    | `./scripts/maintenance/database/db-restore.sh <backup_file>`                |
 | Restore Volume Backup | `./scripts/maintenance/database/db-volume-restore.sh <backup_file.tar.gz>`  |
-| View PostgreSQL Logs  | `docker logs scrsphere-postgres` or `cat ./logs/postgresql/*.log`           |
-| Check PgBouncer Stats | `docker exec scrsphere-pgbouncer psql -p 6432 pgbouncer -c "SHOW STATS;"`   |
-| Manual Backup         | `docker exec scrsphere-postgres pg_dump -U postgres scrsphere > backup.sql` |
-| Manual Restore        | `docker exec -i scrsphere-postgres psql -U postgres scrsphere < backup.sql` |
+| View PostgreSQL Logs  | `docker logs scrumooth-postgres` or `cat ./logs/postgresql/*.log`           |
+| Check PgBouncer Stats | `docker exec scrumooth-pgbouncer psql -p 6432 pgbouncer -c "SHOW STATS;"`   |
+| Manual Backup         | `docker exec scrumooth-postgres pg_dump -U postgres scrumooth > backup.sql` |
+| Manual Restore        | `docker exec -i scrumooth-postgres psql -U postgres scrumooth < backup.sql` |
 
 ---
 
@@ -49,7 +49,7 @@ chmod +x ./scripts/maintenance/database/db-validate.sh
 
 ```
 === Container Status ===
-[INFO] Container 'scrsphere-postgres' is running
+[INFO] Container 'scrumooth-postgres' is running
 [INFO] Container health: healthy
 
 === Database Connectivity ===
@@ -97,22 +97,22 @@ chmod +x ./scripts/maintenance/database/db-backup.sh
 #### Backup File Naming
 
 ```
-scrsphere_backup_YYYYMMDD_HHMMSS.sql.gz
+scrumooth_backup_YYYYMMDD_HHMMSS.sql.gz
 ```
 
-Example: `scrsphere_backup_20250427_143022.sql.gz`
+Example: `scrumooth_backup_20250427_143022.sql.gz`
 
 #### Manual Backup
 
 ```bash
 # Simple backup
-docker exec scrsphere-postgres pg_dump -U postgres scrsphere > backup.sql
+docker exec scrumooth-postgres pg_dump -U postgres scrumooth > backup.sql
 
 # Compressed backup
-docker exec scrsphere-postgres pg_dump -U postgres scrsphere | gzip > backup.sql.gz
+docker exec scrumooth-postgres pg_dump -U postgres scrumooth | gzip > backup.sql.gz
 
 # With custom filename
-docker exec scrsphere-postgres pg_dump -U postgres scrsphere > "backup_$(date +%Y%m%d).sql"
+docker exec scrumooth-postgres pg_dump -U postgres scrumooth > "backup_$(date +%Y%m%d).sql"
 ```
 
 ---
@@ -137,20 +137,20 @@ The restore script provides a safe way to restore from backups with pre-restore 
 chmod +x ./scripts/maintenance/database/db-restore.sh
 
 # Restore from compressed backup
-./scripts/maintenance/database/db-restore.sh ./backups/scrsphere_backup_20250427_143022.sql.gz
+./scripts/maintenance/database/db-restore.sh ./backups/scrumooth_backup_20250427_143022.sql.gz
 
 # Restore from uncompressed backup
-./scripts/maintenance/database/db-restore.sh ./backups/scrsphere_backup_20250427_143022.sql
+./scripts/maintenance/database/db-restore.sh ./backups/scrumooth_backup_20250427_143022.sql
 ```
 
 #### Manual Restore
 
 ```bash
 # Restore from SQL file
-docker exec -i scrsphere-postgres psql -U postgres scrsphere < backup.sql
+docker exec -i scrumooth-postgres psql -U postgres scrumooth < backup.sql
 
 # Restore from compressed file
-gunzip < backup.sql.gz | docker exec -i scrsphere-postgres psql -U postgres scrsphere
+gunzip < backup.sql.gz | docker exec -i scrumooth-postgres psql -U postgres scrumooth
 ```
 
 ---
@@ -166,7 +166,7 @@ Add to your host's crontab:
 crontab -e
 
 # Add daily backup at 2 AM
-0 2 * * * cd /path/to/scrsphere && ./scripts/maintenance/database/db-backup.sh ./backups >> ./logs/backup.log 2>&1
+0 2 * * * cd /path/to/scrumooth && ./scripts/maintenance/database/db-backup.sh ./backups >> ./logs/backup.log 2>&1
 ```
 
 ### Option 2: Using Backup Container
@@ -179,11 +179,11 @@ backup:
   volumes:
     - ./backups:/backups
     - ./scripts:/scripts
-    - scrsphere_postgres_data:/var/lib/postgresql/data:ro
+    - scrumooth_postgres_data:/var/lib/postgresql/data:ro
   environment:
     - POSTGRES_USER=postgres
     - POSTGRES_PASSWORD=${DB_PASSWORD}
-    - DB_NAME=scrsphere
+    - DB_NAME=scrumooth
   command: >
     sh -c "
       echo '0 2 * * * /scripts/db-backup.sh /backups' | crontab - &&
@@ -192,7 +192,7 @@ backup:
   depends_on:
     - postgres
   networks:
-    - scrsphere-network
+    - scrumooth-network
 ```
 
 ---
@@ -215,9 +215,9 @@ Volume backups create a complete snapshot of the PostgreSQL data files. This is 
 
 | Platform                 | SQL Backup | Volume Backup | Notes                        |
 | ------------------------ | ---------- | ------------- | ---------------------------- |
-| Linux                    | ✅ Full    | ✅ Full       | Both methods work natively   |
-| macOS                    | ✅ Full    | ✅ Full       | Both methods work natively   |
-| Windows (Docker Desktop) | ✅ Full    | ⚠️ Limited    | Use SQL backup (recommended) |
+| Linux                    | �?Full     | �?Full        | Both methods work natively   |
+| macOS                    | �?Full     | �?Full        | Both methods work natively   |
+| Windows (Docker Desktop) | �?Full     | ⚠️ Limited    | Use SQL backup (recommended) |
 
 ### Volume Backup Script
 
@@ -251,12 +251,12 @@ ls -la ./backups/volumes/postgres_volume_*.tar.gz
 
 | Aspect                    | SQL Backup (pg_dump)        | Volume Backup (tar)                  |
 | ------------------------- | --------------------------- | ------------------------------------ |
-| **Portability**           | ✅ High - SQL is universal  | ❌ Low - tied to PostgreSQL version  |
-| **Size**                  | ✅ Smaller (compressed)     | ❌ Larger (all data files)           |
-| **Speed**                 | ❌ Slower for large DBs     | ✅ Faster for large DBs              |
-| **Granularity**           | ✅ Table-level restore      | ❌ All-or-nothing                    |
-| **Version compatibility** | ✅ Works across versions    | ❌ Same version required             |
-| **Windows support**       | ✅ Full support             | ⚠️ Limited (Docker Desktop)          |
+| **Portability**           | �?High - SQL is universal   | �?Low - tied to PostgreSQL version   |
+| **Size**                  | �?Smaller (compressed)      | �?Larger (all data files)            |
+| **Speed**                 | �?Slower for large DBs      | �?Faster for large DBs               |
+| **Granularity**           | �?Table-level restore       | �?All-or-nothing                     |
+| **Version compatibility** | �?Works across versions     | �?Same version required              |
+| **Windows support**       | �?Full support              | ⚠️ Limited (Docker Desktop)          |
 | **Use case**              | Regular backups, migrations | Disaster recovery, large DBs (Linux) |
 
 ### Recommended Backup Strategy
@@ -264,13 +264,13 @@ ls -la ./backups/volumes/postgres_volume_*.tar.gz
 ```
 ./backups/
 ├── sql/                          # SQL dumps (daily)
-│   ├── daily/
-│   │   ├── scrsphere_backup_20250427_020000.sql.gz
-│   │   └── scrsphere_backup_20250428_020000.sql.gz
-│   ├── weekly/
-│   │   └── scrsphere_backup_20250427_020000.sql.gz
-│   └── monthly/
-│       └── scrsphere_backup_20250401_020000.sql.gz
+�?  ├── daily/
+�?  �?  ├── scrumooth_backup_20250427_020000.sql.gz
+�?  �?  └── scrumooth_backup_20250428_020000.sql.gz
+�?  ├── weekly/
+�?  �?  └── scrumooth_backup_20250427_020000.sql.gz
+�?  └── monthly/
+�?      └── scrumooth_backup_20250401_020000.sql.gz
 └── volumes/                      # Volume backups (weekly)
     └── postgres_volume_20250427_030000.tar.gz
 ```
@@ -279,13 +279,13 @@ ls -la ./backups/volumes/postgres_volume_*.tar.gz
 
 ```bash
 # Sync SQL backups to cloud storage
-rclone sync ./backups/sql remote:scrsphere-backups/sql
+rclone sync ./backups/sql remote:scrumooth-backups/sql
 
 # Sync volume backups (less frequently due to size)
-rclone sync ./backups/volumes remote:scrsphere-backups/volumes
+rclone sync ./backups/volumes remote:scrumooth-backups/volumes
 
 # Or using AWS CLI
-aws s3 sync ./backups s3://your-bucket/scrsphere-backups/
+aws s3 sync ./backups s3://your-bucket/scrumooth-backups/
 ```
 
 ---
@@ -312,17 +312,17 @@ The following logging settings are enabled in `docker-compose.yml`:
 
 ```bash
 # View logs via Docker
-docker logs scrsphere-postgres
+docker logs scrumooth-postgres
 
 # View log files (mounted to host)
 ls -la ./logs/postgresql/
 cat ./logs/postgresql/postgresql-2025-04-27_143022.log
 
 # Follow logs in real-time
-docker logs -f scrsphere-postgres
+docker logs -f scrumooth-postgres
 
 # Search for specific errors
-docker logs scrsphere-postgres 2>&1 | grep ERROR
+docker logs scrumooth-postgres 2>&1 | grep ERROR
 ```
 
 ### Log Rotation
@@ -361,12 +361,7 @@ PgBouncer is a lightweight connection pooler for PostgreSQL that improves perfor
 ### Architecture
 
 ```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│  Backend    │────▶│  PgBouncer  │────▶│  PostgreSQL │
-│  (Prisma)   │     │   :6432     │     │   :5432     │
-└─────────────┘     └─────────────┘     └─────────────┘
-                           │
-                    Connection Pool
+┌─────────────�?    ┌─────────────�?    ┌─────────────�?�? Backend    │────▶│  PgBouncer  │────▶│  PostgreSQL �?�? (Prisma)   �?    �?  :6432     �?    �?  :5432     �?└─────────────�?    └─────────────�?    └─────────────�?                           �?                    Connection Pool
                     (min: 5, max: 20)
 ```
 
@@ -388,13 +383,13 @@ PgBouncer is configured in `docker-compose.yml` with these settings:
 **Direct PostgreSQL (development):**
 
 ```
-postgresql://postgres:password@postgres:5432/scrsphere
+postgresql://postgres:password@postgres:5432/scrumooth
 ```
 
 **Via PgBouncer (production recommended):**
 
 ```
-postgresql://postgres:password@pgbouncer:6432/scrsphere
+postgresql://postgres:password@pgbouncer:6432/scrumooth
 ```
 
 The `.env.production` file is already configured to use PgBouncer.
@@ -403,16 +398,16 @@ The `.env.production` file is already configured to use PgBouncer.
 
 ```bash
 # Check PgBouncer stats
-docker exec scrsphere-pgbouncer psql -p 6432 pgbouncer -c "SHOW STATS;"
+docker exec scrumooth-pgbouncer psql -p 6432 pgbouncer -c "SHOW STATS;"
 
 # Check active connections
-docker exec scrsphere-pgbouncer psql -p 6432 pgbouncer -c "SHOW POOLS;"
+docker exec scrumooth-pgbouncer psql -p 6432 pgbouncer -c "SHOW POOLS;"
 
 # Check server connections
-docker exec scrsphere-pgbouncer psql -p 6432 pgbouncer -c "SHOW SERVERS;"
+docker exec scrumooth-pgbouncer psql -p 6432 pgbouncer -c "SHOW SERVERS;"
 
 # Check client connections
-docker exec scrsphere-pgbouncer psql -p 6432 pgbouncer -c "SHOW CLIENTS;"
+docker exec scrumooth-pgbouncer psql -p 6432 pgbouncer -c "SHOW CLIENTS;"
 ```
 
 ### PgBouncer Stats Explained
@@ -436,14 +431,14 @@ docker exec scrsphere-pgbouncer psql -p 6432 pgbouncer -c "SHOW CLIENTS;"
 docker ps | grep pgbouncer
 
 # Check PgBouncer logs
-docker logs scrsphere-pgbouncer
+docker logs scrumooth-pgbouncer
 ```
 
 **Pool exhaustion:**
 
 ```bash
 # Check pool usage
-docker exec scrsphere-pgbouncer psql -p 6432 pgbouncer -c "SHOW POOLS;"
+docker exec scrumooth-pgbouncer psql -p 6432 pgbouncer -c "SHOW POOLS;"
 
 # Look for high cl_active or sv_active values
 # If maxed out, consider increasing DEFAULT_POOL_SIZE
@@ -459,7 +454,7 @@ docker exec scrsphere-pgbouncer psql -p 6432 pgbouncer -c "SHOW POOLS;"
 
 ```bash
 # Check container status
-docker ps -a | grep scrsphere-postgres
+docker ps -a | grep scrumooth-postgres
 
 # Start containers
 docker-compose up -d postgres
@@ -480,10 +475,10 @@ chmod 755 ./backups
 
 ```bash
 # Check PostgreSQL logs
-docker logs scrsphere-postgres
+docker logs scrumooth-postgres
 
 # Verify environment variables
-docker exec scrsphere-postgres env | grep POSTGRES
+docker exec scrumooth-postgres env | grep POSTGRES
 ```
 
 #### 4. Backup File Corrupted
@@ -509,7 +504,7 @@ df -h
 2. **Remove old volume** (⚠️ Destructive):
 
    ```bash
-   docker volume rm scrsphere_scrsphere_postgres_data
+   docker volume rm scrumooth_scrumooth_postgres_data
    ```
 
 3. **Start fresh**:

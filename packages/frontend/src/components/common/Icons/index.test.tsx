@@ -87,7 +87,7 @@ import { RunnerIcon } from './RunnerIcon';
 import { RunningIcon } from './RunningIcon';
 import { SaveIcon } from './SaveIcon';
 import { ScissorsIcon } from './ScissorsIcon';
-import { ScrSphereIcon } from './ScrSphereIcon';
+import { ScrumoothIcon } from './ScrumoothIcon';
 import { SearchIcon } from './SearchIcon';
 import { SearchXIcon } from './SearchXIcon';
 import { SendIcon } from './SendIcon';
@@ -207,7 +207,7 @@ describe('Icons', () => {
     { name: 'RunningIcon', Icon: RunningIcon },
     { name: 'SaveIcon', Icon: SaveIcon },
     { name: 'ScissorsIcon', Icon: ScissorsIcon },
-    { name: 'ScrSphereIcon', Icon: ScrSphereIcon },
+    { name: 'ScrumoothIcon', Icon: ScrumoothIcon },
     { name: 'SearchIcon', Icon: SearchIcon },
     { name: 'SearchXIcon', Icon: SearchXIcon },
     { name: 'SendIcon', Icon: SendIcon },

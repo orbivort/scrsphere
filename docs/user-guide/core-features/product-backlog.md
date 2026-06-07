@@ -66,7 +66,7 @@ Each backlog item contains several components:
 
 ## MoSCoW Prioritization
 
-Scrsphere uses MoSCoW prioritization to help teams focus on what matters most.
+Scrumooth uses MoSCoW prioritization to help teams focus on what matters most.
 
 ### Priority Levels
 
@@ -260,7 +260,7 @@ Backlog refinement (formerly "grooming") is an ongoing activity:
 
 ### Available Views
 
-Scrsphere provides multiple views for the backlog:
+Scrumooth provides multiple views for the backlog:
 
 #### List View
 
@@ -336,7 +336,7 @@ Select multiple items to:
 
 ### Story Point Scale
 
-Scrsphere uses the Fibonacci sequence as the recommended scale for estimation:
+Scrumooth uses the Fibonacci sequence as the recommended scale for estimation:
 
 | Points | Complexity      | Example                           |
 | ------ | --------------- | --------------------------------- |

@@ -1,14 +1,14 @@
-# Scrsphere User Guide
+# Scrumooth User Guide
 
-Welcome to the Scrsphere User Guide. This comprehensive documentation will help you understand and effectively use Scrsphere, your Agile Scrum Lifecycle Management System.
+Welcome to the Scrumooth User Guide. This comprehensive documentation will help you understand and effectively use Scrumooth, your Agile Scrum Lifecycle Management System.
 
 ---
 
 ## About This Guide
 
-### What is Scrsphere?
+### What is Scrumooth?
 
-Scrsphere is a self-hosted web application for managing Agile Scrum processes. It faithfully follows the Scrum Guide and provides tools for the entire Scrum lifecycle:
+Scrumooth is a self-hosted web application for managing Agile Scrum processes. It faithfully follows the Scrum Guide and provides tools for the entire Scrum lifecycle:
 
 - **Product Goals** - Define and track strategic objectives
 - **Product Backlog** - Manage and prioritize work items
@@ -20,7 +20,7 @@ Scrsphere is a self-hosted web application for managing Agile Scrum processes. I
 
 ### Who Should Use This Guide?
 
-This guide is designed for all Scrsphere users:
+This guide is designed for all Scrumooth users:
 
 | Role               | Primary Sections                               |
 | ------------------ | ---------------------------------------------- |
@@ -52,7 +52,7 @@ user-guide/
 
 ## Quick Navigation
 
-### I'm New to Scrsphere
+### I'm New to Scrumooth
 
 **Start here**: [Getting Started Guide](./getting-started/README.md)
 
@@ -78,7 +78,7 @@ user-guide/
 
 ## Scrum Framework Overview
 
-Scrsphere implements the Scrum framework as defined in the [Scrum Guide](https://scrumguides.org/).
+Scrumooth implements the Scrum framework as defined in the [Scrum Guide](https://scrumguides.org/).
 
 ### Scrum Events
 
@@ -114,7 +114,7 @@ Scrsphere implements the Scrum framework as defined in the [Scrum Guide](https:/
 
 ### Scrum Roles
 
-| Role              | Responsibility         | Scrsphere Permissions              |
+| Role              | Responsibility         | Scrumooth Permissions              |
 | ----------------- | ---------------------- | ---------------------------------- |
 | **Product Owner** | Maximize product value | Manage backlog, goals, planning    |
 | **Scrum Master**  | Facilitate Scrum       | Facilitate ceremonies, impediments |
@@ -210,8 +210,8 @@ Scrsphere implements the Scrum framework as defined in the [Scrum Guide](https:/
 | --------------------- | ------------ |
 | **Version**           | 1.0          |
 | **Last Updated**      | January 2026 |
-| **Scrsphere Version** | 1.x          |
+| **Scrumooth Version** | 1.x          |
 
 ---
 
-**Ready to get started?** Head to the [Getting Started Guide](./getting-started/README.md) to begin your Scrsphere journey.
+**Ready to get started?** Head to the [Getting Started Guide](./getting-started/README.md) to begin your Scrumooth journey.
