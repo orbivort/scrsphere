@@ -4,7 +4,7 @@ This document contains the license information for third-party packages used in 
 
 **Project:** Scrumooth - Agile Scrum Lifecycle Management System
 **License:** Apache-2.0
-**Last Updated:** June 5, 2026
+**Last Updated:** June 7, 2026
 
 ---
 
@@ -67,7 +67,6 @@ This document contains the license information for third-party packages used in 
 | cross-env                        | 7.0.3   | MIT          | Kent C. Dodds         | https://github.com/kentcdodds/cross-env                |
 | eslint                           | 10.4.1  | MIT          | OpenJS Foundation     | https://github.com/eslint/eslint                       |
 | eslint-config-prettier           | 10.1.8  | MIT          | Simon Lydell          | https://github.com/prettier/eslint-config-prettier     |
-| eslint-plugin-prettier           | 5.5.6   | MIT          | Ted Piotrowski        | https://github.com/prettier/eslint-plugin-prettier     |
 | eslint-plugin-unicorn            | 64.0.0  | MIT          | Sindre Sorhus         | https://github.com/sindresorhus/eslint-plugin-unicorn  |
 | globals                          | 17.6.0  | MIT          | Sindre Sorhus         | https://github.com/sindresorhus/globals                |
 | prettier                         | 3.8.3   | MIT          | Prettier              | https://github.com/prettier/prettier                   |
@@ -76,7 +75,6 @@ This document contains the license information for third-party packages used in 
 | supertest                        | 7.2.2   | MIT          | TJ Holowaychuk        | https://github.com/ladjs/supertest                     |
 | tsx                              | 4.21.0  | MIT          | Hiroki Osame          | https://github.com/privatenumber/tsx                   |
 | typescript                       | 6.0.3   | Apache-2.0   | Microsoft Corporation | https://github.com/microsoft/TypeScript                |
-| vite-tsconfig-paths              | 6.1.1   | MIT          | Alec Larson           | https://github.com/aleclarson/vite-tsconfig-paths      |
 | vitest                           | 4.1.5   | MIT          | Vladimir Sheremet     | https://github.com/vitest-dev/vitest                   |
 
 ---
@@ -117,16 +115,15 @@ This document contains the license information for third-party packages used in 
 | @vitest/coverage-v8         | 4.1.5   | MIT          | Vladimir Sheremet          | https://github.com/vitest-dev/vitest                     |
 | @vitest/ui                  | 4.1.5   | MIT          | Vladimir Sheremet          | https://github.com/vitest-dev/vitest                     |
 | cross-env                   | 7.0.3   | MIT          | Kent C. Dodds              | https://github.com/kentcdodds/cross-env                  |
-| eslint                      | 10.2.1  | MIT          | OpenJS Foundation          | https://github.com/eslint/eslint                         |
+| eslint                      | 10.4.1  | MIT          | OpenJS Foundation          | https://github.com/eslint/eslint                         |
 | eslint-config-prettier      | 10.1.8  | MIT          | Simon Lydell               | https://github.com/prettier/eslint-config-prettier       |
-| eslint-plugin-prettier      | 5.5.6   | MIT          | Ted Piotrowski             | https://github.com/prettier/eslint-plugin-prettier       |
 | eslint-plugin-react         | 7.37.5  | MIT          | Yannick Croissant          | https://github.com/jsx-eslint/eslint-plugin-react        |
-| globals                     | 17.5.0  | MIT          | Sindre Sorhus              | https://github.com/sindresorhus/globals                  |
+| globals                     | 17.6.0  | MIT          | Sindre Sorhus              | https://github.com/sindresorhus/globals                  |
 | jsdom                       | 29.0.2  | MIT          | Elijah Insua               | https://github.com/jsdom/jsdom                           |
 | prettier                    | 3.8.3   | MIT          | Prettier                   | https://github.com/prettier/prettier                     |
 | rimraf                      | 6.1.3   | MIT          | Isaac Z. Schlueter         | https://github.com/isaacs/rimraf                         |
 | rollup-plugin-visualizer    | 7.0.1   | MIT          | Denis Bardadym             | https://github.com/btd/rollup-plugin-visualizer          |
-| stylelint                   | 17.12.0 | MIT          | stylelint                  | https://github.com/stylelint/stylelint                   |
+| stylelint                   | 17.13.0 | MIT          | stylelint                  | https://github.com/stylelint/stylelint                   |
 | stylelint-config-standard   | 40.0.0  | MIT          | stylelint                  | https://github.com/stylelint/stylelint-config-standard   |
 | typescript                  | 6.0.3   | Apache-2.0   | Microsoft Corporation      | https://github.com/microsoft/TypeScript                  |
 | typescript-eslint           | 8.60.1  | MIT          | TypeScript ESLint          | https://github.com/typescript-eslint/typescript-eslint   |
@@ -148,17 +145,15 @@ This document contains the license information for third-party packages used in 
 | eslint                                    | 10.4.1  | MIT          | OpenJS Foundation     | https://github.com/eslint/eslint                                      |
 | eslint-config-prettier                    | 10.1.8  | MIT          | Simon Lydell          | https://github.com/prettier/eslint-config-prettier                    |
 | eslint-plugin-import-x                    | 4.16.2  | MIT          | un-ts                 | https://github.com/un-ts/eslint-plugin-import-x                       |
-| eslint-plugin-prettier                    | 5.5.6   | MIT          | Ted Piotrowski        | https://github.com/prettier/eslint-plugin-prettier                    |
 | eslint-plugin-react                       | 7.37.5  | MIT          | Yannick Croissant     | https://github.com/jsx-eslint/eslint-plugin-react                     |
 | eslint-plugin-react-hooks                 | 7.1.1   | MIT          | Meta Platforms, Inc.  | https://github.com/facebook/react                                     |
 | eslint-plugin-react-refresh               | 0.5.2   | MIT          | Arnaud Barré          | https://github.com/ArnaudBarre/eslint-plugin-react-refresh            |
 | globals                                   | 17.6.0  | MIT          | Sindre Sorhus         | https://github.com/sindresorhus/globals                               |
 | husky                                     | 9.1.7   | MIT          | Typicode              | https://github.com/typicode/husky                                     |
 | lint-staged                               | 17.0.7  | MIT          | Andrey Okonetchnikov  | https://github.com/lint-staged/lint-staged                            |
-| postcss                                   | 8.5.15  | MIT          | Andrey Sitnik         | https://github.com/postcss/postcss                                    |
 | prettier                                  | 3.8.3   | MIT          | Prettier              | https://github.com/prettier/prettier                                  |
 | rimraf                                    | 6.1.3   | MIT          | Isaac Z. Schlueter    | https://github.com/isaacs/rimraf                                      |
-| stylelint                                 | 17.12.0 | MIT          | stylelint             | https://github.com/stylelint/stylelint                                |
+| stylelint                                 | 17.13.0 | MIT          | stylelint             | https://github.com/stylelint/stylelint                                |
 | stylelint-config-standard                 | 40.0.0  | MIT          | stylelint             | https://github.com/stylelint/stylelint-config-standard                |
 | stylelint-no-unsupported-browser-features | 8.1.1   | MIT          | Cédric Delpoux        | https://github.com/RJWadley/stylelint-no-unsupported-browser-features |
 | typescript                                | 6.0.3   | Apache-2.0   | Microsoft Corporation | https://github.com/microsoft/TypeScript                               |
@@ -174,7 +169,6 @@ This document contains the license information for third-party packages used in 
 | @types/node            | 24.12.2 | MIT          | DefinitelyTyped       | https://github.com/DefinitelyTyped/DefinitelyTyped |
 | eslint                 | 10.4.1  | MIT          | OpenJS Foundation     | https://github.com/eslint/eslint                   |
 | eslint-config-prettier | 10.1.8  | MIT          | Simon Lydell          | https://github.com/prettier/eslint-config-prettier |
-| eslint-plugin-prettier | 5.5.6   | MIT          | Ted Piotrowski        | https://github.com/prettier/eslint-plugin-prettier |
 | globals                | 17.6.0  | MIT          | Sindre Sorhus         | https://github.com/sindresorhus/globals            |
 | prettier               | 3.8.3   | MIT          | Prettier              | https://github.com/prettier/prettier               |
 | rimraf                 | 6.1.3   | MIT          | Isaac Z. Schlueter    | https://github.com/isaacs/rimraf                   |
@@ -279,10 +273,10 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 | License Type | Package Count | Percentage |
 | ------------ | ------------- | ---------- |
-| MIT          | 76            | 86.4%      |
-| Apache-2.0   | 7             | 8.0%       |
-| BSD-2-Clause | 3             | 3.4%       |
-| ISC          | 2             | 2.3%       |
+| MIT          | 70            | 85.4%      |
+| Apache-2.0   | 7             | 8.5%       |
+| BSD-2-Clause | 3             | 3.7%       |
+| ISC          | 2             | 2.4%       |
 
 ---
 
@@ -308,5 +302,5 @@ This document should be updated whenever:
 
 ---
 
-**Document Version:** 1.5  
-**Generated:** June 5, 2026
+**Document Version:** 1.6  
+**Generated:** June 7, 2026
