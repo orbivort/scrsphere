@@ -17,7 +17,7 @@
     "url": "https://github.com/orbivort/scrumooth.git"
   },
   "type": "module",
-  "packageManager": "pnpm@10.33.0",
+  "packageManager": "pnpm@11.5.0",
   "workspaces": [
     "packages/*"
   ],
@@ -127,24 +127,6 @@
   },
   "engines": {
     "node": "^24.14.1",
-    "pnpm": "^10.33.0"
-  },
-  "pnpm": {
-    "overrides": {
-      "brace-expansion": "^5.0.6",
-      "esbuild": "^0.25.0",
-      "glob": "^11.0.0",
-      "follow-redirects": "^1.16.0",
-      "@hono/node-server": "^1.19.14",
-      "fast-uri": "^3.1.2",
-      "hono": "^4.12.23",
-      "qs": "^6.15.2",
-      "https-proxy-agent": "^7.0.6"
-    },
-    "peerDependencyRules": {
-      "allowedVersions": {
-        "eslint": "^10.0.0"
-      }
-    }
+    "pnpm": "^11.5.0"
   }
 }

@@ -138,7 +138,7 @@ scrumooth/
 ## 📋 Prerequisites
 
 - **Node.js** v24.14.1 or higher
-- **pnpm** v10.33.0 or higher
+- **pnpm** v11.5.0 or higher
 - **PostgreSQL** v18 or higher
 - **Git**
 
@@ -463,7 +463,7 @@ This is normally handled automatically by `pnpm install` and the dev scripts, bu
 The repository enforces pnpm via a `preinstall` script. Install pnpm globally:
 
 ```bash
-npm install -g pnpm@10.33.0
+npm install -g pnpm@11.5.0
 ```
 
 ### Database connection errors on startup

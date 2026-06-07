@@ -3,7 +3,7 @@ FROM node:24-alpine AS builder
 WORKDIR /app
 
 # Install pnpm
-RUN corepack enable && corepack prepare pnpm@10.33.0 --activate
+RUN corepack enable && corepack prepare pnpm@11.5.0 --activate
 
 # Copy root package files for workspace resolution
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.json ./
