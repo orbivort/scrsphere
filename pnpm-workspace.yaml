@@ -1,6 +1,13 @@
 packages:
   - 'packages/*'
 
+# pnpm v11 configuration
+autoInstallPeers: true
+engineStrict: true
+publicHoistPattern:
+  - '*eslint*'
+  - '*prettier*'
+
 catalog:
   '@eslint/js': ^10.0.1
   '@types/node': ^24.12.2
@@ -24,11 +31,45 @@ catalog:
   typescript-eslint: ^8.60.1
   vitest: ^4.1.5
 
-onlyBuiltDependencies:
-  - bcrypt
-  - '@prisma/client'
-  - '@prisma/engines'
-  - prisma
-  - esbuild
+# Build configuration for pnpm v11
+allowBuilds:
+  bcrypt: true
+  '@prisma/client': true
+  '@prisma/engines': true
+  prisma: true
+  esbuild: true
+  unrs-resolver: true
 
 strictPeerDependencies: false
+
+# Package overrides (migrated from package.json)
+overrides:
+  brace-expansion: ^5.0.6
+  esbuild: ^0.25.0
+  glob: ^11.0.0
+  follow-redirects: ^1.16.0
+  '@hono/node-server': ^1.19.14
+  fast-uri: ^3.1.2
+  hono: ^4.12.23
+  qs: ^6.15.2
+  https-proxy-agent: ^7.0.6
+
+# Peer dependency rules (migrated from package.json)
+peerDependencyRules:
+  allowedVersions:
+    eslint: ^10.0.0
+
+# Security and Supply Chain Protection (pnpm v11 best practices)
+minimumReleaseAge: 1440 # 24 hours - prevents zero-day supply chain attacks
+minimumReleaseAgeExclude: # packages excluded from minimumReleaseAge check
+  - stylelint # recently published, verified safe
+blockExoticSubdeps: true # blocks exotic URL dependencies (git, gist, etc.)
+strictDepBuilds: true # ensures build scripts only run for allowed packages
+
+# Performance Optimizations
+optimisticRepeatInstall: true # speeds up repeat installs
+verifyDepsBeforeRun: install # verifies dependencies before running scripts
+
+# Audit Configuration
+auditConfig:
+  registry: https://registry.npmjs.org/ # use official registry for security audits

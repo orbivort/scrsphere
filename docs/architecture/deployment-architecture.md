@@ -307,7 +307,7 @@ Scrumooth uses GitHub Actions for continuous integration and delivery. Two prima
 | `bundle-size`              | ubuntu  | After build, on frontend/shared changes                 |
 | `performance`              | ubuntu  | After build, on backend/shared changes                  |
 
-**Environment**: Node.js 24.14.1, pnpm 10.33.0. E2E tests use Playwright across Chromium, Firefox, and WebKit (full suite) or Chromium-only (smoke tests).
+**Environment**: Node.js 24.14.1, pnpm 11.5.0. E2E tests use Playwright across Chromium, Firefox, and WebKit (full suite) or Chromium-only (smoke tests).
 
 ### Release Workflow (`release.yml`)
 

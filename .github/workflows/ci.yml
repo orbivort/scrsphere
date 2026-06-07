@@ -21,7 +21,7 @@ on:
 
 env:
   NODE_VERSION: '24.14.1'
-  PNPM_VERSION: '10.33.0'
+  PNPM_VERSION: '11.5.0'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.sha }}
@@ -700,8 +700,8 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: Run pnpm audit
-        run: pnpm audit --audit-level=high
+      - name: Run pnpm audit (using official registry)
+        run: pnpm audit --registry https://registry.npmjs.org/ --audit-level=high
 
   codeql:
     name: CodeQL Analysis
