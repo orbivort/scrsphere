@@ -1,6 +1,6 @@
 # Security Architecture
 
-This document provides a comprehensive overview of the Scrsphere security architecture, covering authentication, authorization, data protection, network security, session management, audit logging, account security, and compliance considerations.
+This document provides a comprehensive overview of the Scrumooth security architecture, covering authentication, authorization, data protection, network security, session management, audit logging, account security, and compliance considerations.
 
 ## Table of Contents
 
@@ -17,7 +17,7 @@ This document provides a comprehensive overview of the Scrsphere security archit
 
 ### JWT-Based Authentication Flow
 
-Scrsphere uses JSON Web Tokens (JWT) with HTTP-only cookies for stateless authentication, coupled with database-backed refresh tokens for secure token rotation.
+Scrumooth uses JSON Web Tokens (JWT) with HTTP-only cookies for stateless authentication, coupled with database-backed refresh tokens for secure token rotation.
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐
@@ -138,7 +138,7 @@ The password is never stored in plaintext or logged. All password comparisons us
 
 ### Role-Based Access Control (RBAC)
 
-Scrsphere implements a three-role RBAC model with hierarchical permissions:
+Scrumooth implements a three-role RBAC model with hierarchical permissions:
 
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
@@ -329,7 +329,7 @@ Cross-site scripting is prevented through multiple layers:
 
 ### CSRF Protection
 
-Scrsphere implements a **double-submit cookie pattern** with HMAC-signed tokens:
+Scrumooth implements a **double-submit cookie pattern** with HMAC-signed tokens:
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
@@ -449,7 +449,7 @@ The frontend nginx configuration adds additional security headers for static ass
 
 ### Network Isolation
 
-In the Docker Compose deployment, services communicate on an internal bridge network (`scrsphere-network`). Only Caddy (ports 80/443) and PgBouncer (port 6432) are published to the host. Backend, frontend, and PostgreSQL are not directly accessible from outside the Docker network.
+In the Docker Compose deployment, services communicate on an internal bridge network (`scrumooth-network`). Only Caddy (ports 80/443) and PgBouncer (port 6432) are published to the host. Backend, frontend, and PostgreSQL are not directly accessible from outside the Docker network.
 
 ## Session Security
 

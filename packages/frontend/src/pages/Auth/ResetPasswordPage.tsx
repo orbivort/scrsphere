@@ -7,7 +7,7 @@ import {
   EyeIcon,
   EyeOffIcon,
   LoaderIcon,
-  ScrSphereIcon,
+  ScrumoothIcon,
   ArrowLeftIcon,
   CheckCircleIcon,
   XCircleIcon,
@@ -137,7 +137,7 @@ export const ResetPasswordPage: React.FC = () => {
         <div className={styles['auth-card']}>
           <div className={styles['auth-header']}>
             <div className={styles['auth-logo']} aria-hidden="true">
-              <ScrSphereIcon size={100} className={styles['auth-logo-icon']} />
+              <ScrumoothIcon size={100} className={styles['auth-logo-icon']} />
             </div>
             <h1 className={styles['auth-title']}>Verifying reset link...</h1>
           </div>
@@ -155,7 +155,7 @@ export const ResetPasswordPage: React.FC = () => {
         <div className={styles['auth-card']}>
           <div className={styles['auth-header']}>
             <div className={styles['auth-logo']} aria-hidden="true">
-              <ScrSphereIcon size={100} className={styles['auth-logo-icon']} />
+              <ScrumoothIcon size={100} className={styles['auth-logo-icon']} />
             </div>
             <h1 className={styles['auth-title']}>Password reset successful</h1>
             <p className={styles['auth-subtitle']}>Your password has been changed successfully</p>
@@ -185,7 +185,7 @@ export const ResetPasswordPage: React.FC = () => {
         <div className={styles['auth-card']}>
           <div className={styles['auth-header']}>
             <div className={styles['auth-logo']} aria-hidden="true">
-              <ScrSphereIcon size={100} className={styles['auth-logo-icon']} />
+              <ScrumoothIcon size={100} className={styles['auth-logo-icon']} />
             </div>
             <h1 className={styles['auth-title']}>Invalid reset link</h1>
             <p className={styles['auth-subtitle']}>
@@ -219,7 +219,7 @@ export const ResetPasswordPage: React.FC = () => {
       <div className={styles['auth-card']}>
         <div className={styles['auth-header']}>
           <div className={styles['auth-logo']} aria-hidden="true">
-            <ScrSphereIcon size={100} className={styles['auth-logo-icon']} />
+            <ScrumoothIcon size={100} className={styles['auth-logo-icon']} />
           </div>
           <h1 className={styles['auth-title']}>Create new password</h1>
           <p className={styles['auth-subtitle']}>

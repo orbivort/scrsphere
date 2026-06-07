@@ -1,6 +1,6 @@
 # Scripts Directory
 
-This directory contains all utility scripts for the Scrsphere project, organized by functional category.
+This directory contains all utility scripts for the scrumooth project, organized by functional category.
 
 ## Directory Structure
 
@@ -81,7 +81,7 @@ General utility scripts for development and code quality.
 | ----------------------------- | ----------------------------------- | ----------------------------------------------------------- |
 | `check-package-manager.js`    | Enforces pnpm usage                 | Auto-run via npm pre-scripts                                |
 | `eslint-plugin-icon-rules.js` | ESLint plugin for icon usage        | Integrated in ESLint config                                 |
-| `generate-icon-types.ts`      | Generate TypeScript types for icons | `pnpm --filter=@scrsphere/frontend run generate:icon-types` |
+| `generate-icon-types.ts`      | Generate TypeScript types for icons | `pnpm --filter=@scrumooth/frontend run generate:icon-types` |
 
 ## Naming Conventions
 

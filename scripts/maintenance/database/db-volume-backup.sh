@@ -20,8 +20,8 @@ NC='\033[0m' # No Color
 # Configuration
 BACKUP_DIR="${1:-./backups/volumes}"
 # Try to find the PostgreSQL volume (handles both docker-compose prefixed and plain names)
-VOLUME_NAME=$(docker volume ls -q | grep -E "(scrsphere.*postgres_data|postgres_data)" | head -1)
-CONTAINER_NAME="scrsphere-postgres"
+VOLUME_NAME=$(docker volume ls -q | grep -E "(scrumooth.*postgres_data|postgres_data)" | head -1)
+CONTAINER_NAME="scrumooth-postgres"
 RETENTION_DAYS=7
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 BACKUP_FILE="postgres_volume_${TIMESTAMP}.tar.gz"

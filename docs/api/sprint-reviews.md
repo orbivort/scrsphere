@@ -121,7 +121,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET "https://api.scrsphere.dev/api/v1/sprint-reviews?teamId=550e8400-e29b-41d4-a716-446655440002" \
+curl -X GET "https://api.scrumooth.dev/api/v1/sprint-reviews?teamId=550e8400-e29b-41d4-a716-446655440002" \
   -b cookies.txt
 ```
 
@@ -193,7 +193,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET "https://api.scrsphere.dev/api/v1/sprint-reviews/adjustments/pending?teamId=550e8400-e29b-41d4-a716-446655440002" \
+curl -X GET "https://api.scrumooth.dev/api/v1/sprint-reviews/adjustments/pending?teamId=550e8400-e29b-41d4-a716-446655440002" \
   -b cookies.txt
 ```
 
@@ -257,7 +257,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X PUT https://api.scrsphere.dev/api/v1/sprint-reviews/adjustments/550e8400-e29b-41d4-a716-446655440010/implement \
+curl -X PUT https://api.scrumooth.dev/api/v1/sprint-reviews/adjustments/550e8400-e29b-41d4-a716-446655440010/implement \
   -b cookies.txt
 ```
 
@@ -330,7 +330,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET "https://api.scrsphere.dev/api/v1/sprint-reviews/feedback/pending?teamId=550e8400-e29b-41d4-a716-446655440002" \
+curl -X GET "https://api.scrumooth.dev/api/v1/sprint-reviews/feedback/pending?teamId=550e8400-e29b-41d4-a716-446655440002" \
   -b cookies.txt
 ```
 
@@ -395,7 +395,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X PUT https://api.scrsphere.dev/api/v1/sprint-reviews/feedback/550e8400-e29b-41d4-a716-446655440030/address \
+curl -X PUT https://api.scrumooth.dev/api/v1/sprint-reviews/feedback/550e8400-e29b-41d4-a716-446655440030/address \
   -b cookies.txt
 ```
 
@@ -492,7 +492,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET https://api.scrsphere.dev/api/v1/sprint-reviews/550e8400-e29b-41d4-a716-446655440000 \
+curl -X GET https://api.scrumooth.dev/api/v1/sprint-reviews/550e8400-e29b-41d4-a716-446655440000 \
   -b cookies.txt
 ```
 
@@ -583,7 +583,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X POST https://api.scrsphere.dev/api/v1/sprint-reviews \
+curl -X POST https://api.scrumooth.dev/api/v1/sprint-reviews \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -713,7 +713,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X PUT https://api.scrsphere.dev/api/v1/sprint-reviews/550e8400-e29b-41d4-a716-446655440000 \
+curl -X PUT https://api.scrumooth.dev/api/v1/sprint-reviews/550e8400-e29b-41d4-a716-446655440000 \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -814,7 +814,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X POST https://api.scrsphere.dev/api/v1/sprint-reviews/550e8400-e29b-41d4-a716-446655440000/feedback \
+curl -X POST https://api.scrumooth.dev/api/v1/sprint-reviews/550e8400-e29b-41d4-a716-446655440000/feedback \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -911,7 +911,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X POST https://api.scrsphere.dev/api/v1/sprint-reviews/550e8400-e29b-41d4-a716-446655440000/attendees \
+curl -X POST https://api.scrumooth.dev/api/v1/sprint-reviews/550e8400-e29b-41d4-a716-446655440000/attendees \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -991,7 +991,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X PUT https://api.scrsphere.dev/api/v1/sprint-reviews/attendees/550e8400-e29b-41d4-a716-446655440040 \
+curl -X PUT https://api.scrumooth.dev/api/v1/sprint-reviews/attendees/550e8400-e29b-41d4-a716-446655440040 \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -1051,7 +1051,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X DELETE https://api.scrsphere.dev/api/v1/sprint-reviews/attendees/550e8400-e29b-41d4-a716-446655440040 \
+curl -X DELETE https://api.scrumooth.dev/api/v1/sprint-reviews/attendees/550e8400-e29b-41d4-a716-446655440040 \
   -b cookies.txt
 ```
 
@@ -1106,7 +1106,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X DELETE https://api.scrsphere.dev/api/v1/sprint-reviews/550e8400-e29b-41d4-a716-446655440000 \
+curl -X DELETE https://api.scrumooth.dev/api/v1/sprint-reviews/550e8400-e29b-41d4-a716-446655440000 \
   -b cookies.txt
 ```
 

@@ -168,7 +168,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET https://api.scrsphere.dev/api/v1/teams/550e8400-e29b-41d4-a716-446655440000/definition-of-done \
+curl -X GET https://api.scrumooth.dev/api/v1/teams/550e8400-e29b-41d4-a716-446655440000/definition-of-done \
   -b cookies.txt
 ```
 
@@ -285,7 +285,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X PUT https://api.scrsphere.dev/api/v1/teams/550e8400-e29b-41d4-a716-446655440000/definition-of-done \
+curl -X PUT https://api.scrumooth.dev/api/v1/teams/550e8400-e29b-41d4-a716-446655440000/definition-of-done \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -423,7 +423,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET https://api.scrsphere.dev/api/v1/teams/550e8400-e29b-41d4-a716-446655440000/definition-of-done/history \
+curl -X GET https://api.scrumooth.dev/api/v1/teams/550e8400-e29b-41d4-a716-446655440000/definition-of-done/history \
   -b cookies.txt
 ```
 
@@ -539,7 +539,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X POST https://api.scrsphere.dev/api/v1/product-backlog/550e8400-e29b-41d4-a716-446655440050/verify-dod \
+curl -X POST https://api.scrumooth.dev/api/v1/product-backlog/550e8400-e29b-41d4-a716-446655440050/verify-dod \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -642,7 +642,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET https://api.scrsphere.dev/api/v1/product-backlog/550e8400-e29b-41d4-a716-446655440050/dod-verifications \
+curl -X GET https://api.scrumooth.dev/api/v1/product-backlog/550e8400-e29b-41d4-a716-446655440050/dod-verifications \
   -b cookies.txt
 ```
 
@@ -724,7 +724,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET https://api.scrsphere.dev/api/v1/sprints/550e8400-e29b-41d4-a716-446655440060/dod-compliance \
+curl -X GET https://api.scrumooth.dev/api/v1/sprints/550e8400-e29b-41d4-a716-446655440060/dod-compliance \
   -b cookies.txt
 ```
 

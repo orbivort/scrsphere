@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# PostgreSQL Restore Script for Scrsphere
+# PostgreSQL Restore Script for Scrumooth
 # Usage: ./db-restore.sh <backup_file>
 
 set -e
 
 # Configuration
-CONTAINER_NAME="scrsphere-postgres"
-DB_NAME="scrsphere"
+CONTAINER_NAME="scrumooth-postgres"
+DB_NAME="scrumooth"
 DB_USER="postgres"
 
 # Colors for output
@@ -50,7 +50,7 @@ validate_backup() {
     if [ -z "$backup_file" ]; then
         log_error "No backup file specified!"
         log_info "Usage: $0 <backup_file>"
-        log_info "Example: $0 ./backups/scrsphere_backup_20250427_120000.sql.gz"
+        log_info "Example: $0 ./backups/scrumooth_backup_20250427_120000.sql.gz"
         exit 1
     fi
     
@@ -173,7 +173,7 @@ main() {
     
     echo -e "${BLUE}"
     echo "╔══════════════════════════════════════════════════════════════╗"
-    echo "║              Scrsphere Database Restore                      ║"
+    echo "║              Scrumooth Database Restore                      ║"
     echo "╚══════════════════════════════════════════════════════════════╝"
     echo -e "${NC}"
     

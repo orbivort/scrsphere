@@ -20,7 +20,7 @@ const plugin = {
           description: 'Disallow inline SVG elements in favor of shared icon components',
           category: 'Best Practices',
           recommended: true,
-          url: 'https://github.com/scrsphere/scrsphere/blob/main/docs/development/icon-usage-guidelines.md',
+          url: 'https://github.com/orbivort/scrumooth/blob/main/docs/development/icon-usage-guidelines.md',
         },
         fixable: null,
         schema: [

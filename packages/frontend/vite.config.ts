@@ -54,7 +54,7 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
-        '@scrsphere/shared': path.resolve(__dirname, '../shared/dist'),
+        '@scrumooth/shared': path.resolve(__dirname, '../shared/dist'),
       },
     },
     server: {

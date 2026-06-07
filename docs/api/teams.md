@@ -52,7 +52,7 @@ Authorization: Bearer eyJhbGc...
 
 ## Team Roles
 
-Scrsphere uses role-based access control (RBAC) with three distinct roles:
+Scrumooth uses role-based access control (RBAC) with three distinct roles:
 
 | Role              | Permissions                                                           |
 | ----------------- | --------------------------------------------------------------------- |
@@ -139,7 +139,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET https://api.scrsphere.dev/api/v1/teams \
+curl -X GET https://api.scrumooth.dev/api/v1/teams \
   -b cookies.txt
 ```
 
@@ -184,7 +184,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET https://api.scrsphere.dev/api/v1/teams/my-teams \
+curl -X GET https://api.scrumooth.dev/api/v1/teams/my-teams \
   -b cookies.txt
 ```
 
@@ -277,12 +277,12 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X POST https://api.scrsphere.dev/api/v1/teams \
+curl -X POST https://api.scrumooth.dev/api/v1/teams \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
     "name": "Development Team",
-    "description": "Main development team for Scrsphere"
+    "description": "Main development team for Scrumooth"
   }'
 ```
 
@@ -372,7 +372,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET https://api.scrsphere.dev/api/v1/teams/550e8400-e29b-41d4-a716-446655440000 \
+curl -X GET https://api.scrumooth.dev/api/v1/teams/550e8400-e29b-41d4-a716-446655440000 \
   -b cookies.txt
 ```
 
@@ -442,7 +442,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X PUT https://api.scrsphere.dev/api/v1/teams/550e8400-e29b-41d4-a716-446655440000 \
+curl -X PUT https://api.scrumooth.dev/api/v1/teams/550e8400-e29b-41d4-a716-446655440000 \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -503,7 +503,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X DELETE https://api.scrsphere.dev/api/v1/teams/550e8400-e29b-41d4-a716-446655440000 \
+curl -X DELETE https://api.scrumooth.dev/api/v1/teams/550e8400-e29b-41d4-a716-446655440000 \
   -b cookies.txt
 ```
 
@@ -593,7 +593,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X POST https://api.scrsphere.dev/api/v1/teams/550e8400-e29b-41d4-a716-446655440000/members \
+curl -X POST https://api.scrumooth.dev/api/v1/teams/550e8400-e29b-41d4-a716-446655440000/members \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -667,7 +667,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X DELETE https://api.scrsphere.dev/api/v1/teams/550e8400-e29b-41d4-a716-446655440000/members/550e8400-e29b-41d4-a716-446655440003 \
+curl -X DELETE https://api.scrumooth.dev/api/v1/teams/550e8400-e29b-41d4-a716-446655440000/members/550e8400-e29b-41d4-a716-446655440003 \
   -b cookies.txt
 ```
 
@@ -725,7 +725,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X PUT https://api.scrsphere.dev/api/v1/teams/550e8400-e29b-41d4-a716-446655440000/members/550e8400-e29b-41d4-a716-446655440003 \
+curl -X PUT https://api.scrumooth.dev/api/v1/teams/550e8400-e29b-41d4-a716-446655440000/members/550e8400-e29b-41d4-a716-446655440003 \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -778,7 +778,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET https://api.scrsphere.dev/api/v1/teams/550e8400-e29b-41d4-a716-446655440000/my-role \
+curl -X GET https://api.scrumooth.dev/api/v1/teams/550e8400-e29b-41d4-a716-446655440000/my-role \
   -b cookies.txt
 ```
 
@@ -827,7 +827,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X POST https://api.scrsphere.dev/api/v1/teams/select-team \
+curl -X POST https://api.scrumooth.dev/api/v1/teams/select-team \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{

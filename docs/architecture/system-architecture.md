@@ -1,6 +1,6 @@
 # System Architecture
 
-This document provides a detailed overview of the Scrsphere system architecture, including architectural patterns, system components, communication protocols, and integration points.
+This document provides a detailed overview of the Scrumooth system architecture, including architectural patterns, system components, communication protocols, and integration points.
 
 ## Table of Contents
 
@@ -15,7 +15,7 @@ This document provides a detailed overview of the Scrsphere system architecture,
 
 ### 1. Layered Architecture
 
-Scrsphere follows a layered architecture pattern with clear separation of concerns:
+Scrumooth follows a layered architecture pattern with clear separation of concerns:
 
 ```
 ┌─────────────────────────────────────────┐
@@ -323,7 +323,7 @@ const team = await prisma.team.findUnique({
 
 ```http
 POST /api/v1/teams HTTP/1.1
-Host: api.scrsphere.dev
+Host: api.scrumooth.dev
 Content-Type: application/json
 Authorization: Bearer <token>
 Cookie: accessToken=<token>
@@ -551,7 +551,7 @@ sequenceDiagram
                             │ HTTPS
                             ▼
 ┌───────────────────────────────────────────────────────────┐
-│                      Scrsphere System                     │
+│                      Scrumooth System                     │
 │                                                           │
 │  ┌─────────────────┐  ┌────────────────┐  ┌────────────┐  │
 │  │   Frontend      │  │   Backend      │  │  Database  │  │

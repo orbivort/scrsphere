@@ -67,7 +67,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build shared package
-        run: pnpm --filter=@scrsphere/shared run build
+        run: pnpm --filter=@scrumooth/shared run build
 
       - name: Create production environment file
         run: |
@@ -76,7 +76,7 @@ jobs:
           # GitHub Pages Production Configuration
           # Mock API enabled for demonstration without backend
           
-          VITE_BASE_PATH=/scrsphere/
+          VITE_BASE_PATH=/scrumooth/
           VITE_USE_MOCK_API=true
           VITE_API_URL=https://api.example.com/api/v1
           VITE_LOG_LEVEL=info
@@ -85,7 +85,7 @@ jobs:
           EOF
 
       - name: Build frontend
-        run: pnpm --filter=@scrsphere/frontend run build
+        run: pnpm --filter=@scrumooth/frontend run build
         env:
           VITE_USE_MOCK_API: true
 

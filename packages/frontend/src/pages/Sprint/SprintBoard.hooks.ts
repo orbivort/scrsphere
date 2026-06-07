@@ -5,7 +5,7 @@ import {
   useQueryClient,
   type UseMutationResult,
 } from '@tanstack/react-query';
-import { TIME } from '@scrsphere/shared';
+import { TIME } from '@scrumooth/shared';
 
 import { apiService, definitionService } from '../../services';
 import { useAnnounce } from '../../components/LiveAnnouncer';

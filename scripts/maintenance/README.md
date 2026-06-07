@@ -1,6 +1,6 @@
 # Maintenance Scripts
 
-This directory contains scripts for maintaining the Scrsphere application.
+This directory contains scripts for maintaining the scrumooth application.
 
 ## Subdirectories
 

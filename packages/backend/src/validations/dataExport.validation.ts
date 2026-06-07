@@ -75,7 +75,7 @@ export const EXPORT_SCHEMA_VERSION = '1.0.0';
 
 // Data controller info
 export const DATA_CONTROLLER_INFO = {
-  name: 'ScrSphere',
+  name: 'Scrumooth',
   contactEmail: 'privacy@example.com',
   format: 'GDPR-PORTABLE-JSON' as const,
 };

@@ -151,7 +151,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET "https://api.scrsphere.dev/api/v1/impediments?teamId=550e8400-e29b-41d4-a716-446655440099" \
+curl -X GET "https://api.scrumooth.dev/api/v1/impediments?teamId=550e8400-e29b-41d4-a716-446655440099" \
   -b cookies.txt
 ```
 
@@ -209,7 +209,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET "https://api.scrsphere.dev/api/v1/impediments/stats?teamId=550e8400-e29b-41d4-a716-446655440099" \
+curl -X GET "https://api.scrumooth.dev/api/v1/impediments/stats?teamId=550e8400-e29b-41d4-a716-446655440099" \
   -b cookies.txt
 ```
 
@@ -311,7 +311,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET "https://api.scrsphere.dev/api/v1/impediments/550e8400-e29b-41d4-a716-446655440020?teamId=550e8400-e29b-41d4-a716-446655440099" \
+curl -X GET "https://api.scrumooth.dev/api/v1/impediments/550e8400-e29b-41d4-a716-446655440020?teamId=550e8400-e29b-41d4-a716-446655440099" \
   -b cookies.txt
 ```
 
@@ -405,7 +405,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X POST https://api.scrsphere.dev/api/v1/impediments \
+curl -X POST https://api.scrumooth.dev/api/v1/impediments \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -534,7 +534,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X PUT https://api.scrsphere.dev/api/v1/impediments/550e8400-e29b-41d4-a716-446655440020 \
+curl -X PUT https://api.scrumooth.dev/api/v1/impediments/550e8400-e29b-41d4-a716-446655440020 \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -599,7 +599,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X DELETE "https://api.scrsphere.dev/api/v1/impediments/550e8400-e29b-41d4-a716-446655440020?teamId=550e8400-e29b-41d4-a716-446655440099" \
+curl -X DELETE "https://api.scrumooth.dev/api/v1/impediments/550e8400-e29b-41d4-a716-446655440020?teamId=550e8400-e29b-41d4-a716-446655440099" \
   -b cookies.txt
 ```
 

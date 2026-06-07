@@ -1,0 +1,211 @@
+# =============================================================================
+# Git Attributes for Scrumooth - Agile Scrum Lifecycle Management System
+# =============================================================================
+# This file enforces consistent line endings across all environments.
+# Reference: https://git-scm.com/docs/gitattributes
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Auto-detect text files and normalize to LF
+# -----------------------------------------------------------------------------
+# This tells Git to treat all files as text and normalize line endings to LF
+* text=auto eol=lf
+
+# -----------------------------------------------------------------------------
+# Source Code Files (LF line endings)
+# -----------------------------------------------------------------------------
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.mjs text eol=lf
+*.cjs text eol=lf
+*.json text eol=lf
+*.json5 text eol=lf
+*.css text eol=lf
+*.scss text eol=lf
+*.sass text eol=lf
+*.less text eol=lf
+*.html text eol=lf
+*.htm text eol=lf
+*.xml text eol=lf
+*.svg text eol=lf
+*.vue text eol=lf
+*.svelte text eol=lf
+
+# -----------------------------------------------------------------------------
+# Configuration Files (LF line endings)
+# -----------------------------------------------------------------------------
+*.yml text eol=lf
+*.yaml text eol=lf
+*.toml text eol=lf
+*.ini text eol=lf
+*.cfg text eol=lf
+*.conf text eol=lf
+*.editorconfig text eol=lf
+*.gitattributes text eol=lf
+*.gitignore text eol=lf
+*.prettierignore text eol=lf
+*.eslintignore text eol=lf
+*.dockerignore text eol=lf
+
+# -----------------------------------------------------------------------------
+# Documentation Files (LF line endings)
+# -----------------------------------------------------------------------------
+*.md text eol=lf
+*.markdown text eol=lf
+*.txt text eol=lf
+*.rst text eol=lf
+*.adoc text eol=lf
+*.tex text eol=lf
+*.latex text eol=lf
+
+# -----------------------------------------------------------------------------
+# Script Files (LF line endings)
+# -----------------------------------------------------------------------------
+*.sh text eol=lf
+*.bash text eol=lf
+*.zsh text eol=lf
+*.fish text eol=lf
+*.ps1 text eol=lf
+*.psm1 text eol=lf
+*.bat text eol=lf
+*.cmd text eol=lf
+
+# -----------------------------------------------------------------------------
+# Template Files (LF line endings)
+# -----------------------------------------------------------------------------
+*.hbs text eol=lf
+*.handlebars text eol=lf
+*.mustache text eol=lf
+*.ejs text eol=lf
+*.pug text eol=lf
+*.jade text eol=lf
+*.njk text eol=lf
+*.nunjucks text eol=lf
+
+# -----------------------------------------------------------------------------
+# Data Files (LF line endings)
+# -----------------------------------------------------------------------------
+*.csv text eol=lf
+*.tsv text eol=lf
+*.sql text eol=lf
+*.graphql text eol=lf
+*.gql text eol=lf
+
+# -----------------------------------------------------------------------------
+# Lock Files (LF line endings)
+# -----------------------------------------------------------------------------
+package-lock.json text eol=lf
+yarn.lock text eol=lf
+pnpm-lock.yaml text eol=lf
+composer.lock text eol=lf
+Cargo.lock text eol=lf
+poetry.lock text eol=lf
+
+# -----------------------------------------------------------------------------
+# Binary Files (Never convert)
+# -----------------------------------------------------------------------------
+# Images
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.bmp binary
+*.ico binary
+*.tif binary
+*.tiff binary
+*.webp binary
+*.avif binary
+*.heic binary
+*.heif binary
+
+# Fonts
+*.ttf binary
+*.otf binary
+*.woff binary
+*.woff2 binary
+*.eot binary
+*.pfb binary
+*.pfm binary
+
+# Archives
+*.zip binary
+*.tar binary
+*.gz binary
+*.bz2 binary
+*.xz binary
+*.lzma binary
+*.7z binary
+*.rar binary
+*.tgz binary
+*.tbz2 binary
+
+# Documents
+*.pdf binary
+*.doc binary
+*.docx binary
+*.xls binary
+*.xlsx binary
+*.ppt binary
+*.pptx binary
+*.odt binary
+*.ods binary
+*.odp binary
+
+# Audio/Video
+*.mp3 binary
+*.mp4 binary
+*.wav binary
+*.ogg binary
+*.flac binary
+*.aac binary
+*.m4a binary
+*.webm binary
+*.avi binary
+*.mov binary
+*.mkv binary
+*.flv binary
+*.wmv binary
+
+# Executables
+*.exe binary
+*.dll binary
+*.so binary
+*.dylib binary
+*.bin binary
+*.app binary
+*.dmg binary
+*.deb binary
+*.rpm binary
+*.msi binary
+
+# Database files
+*.sqlite binary
+*.sqlite3 binary
+*.db binary
+*.mdb binary
+
+# Certificate and key files
+*.pem binary
+*.key binary
+*.crt binary
+*.cer binary
+*.der binary
+*.p12 binary
+*.pfx binary
+*.asc binary
+*.gpg binary
+
+# Other binary files
+*.class binary
+*.jar binary
+*.war binary
+*.ear binary
+*.swf binary
+*.node binary
+
+# -----------------------------------------------------------------------------
+# Project-Specific
+# -----------------------------------------------------------------------------
+# Add any project-specific attributes below

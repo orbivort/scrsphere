@@ -1,6 +1,6 @@
-# Scrsphere Architecture Documentation
+# Scrumooth Architecture Documentation
 
-Welcome to the Scrsphere Architecture Documentation. This comprehensive guide provides detailed information about the system's architecture, design decisions, and technical implementation.
+Welcome to the Scrumooth Architecture Documentation. This comprehensive guide provides detailed information about the system's architecture, design decisions, and technical implementation.
 
 ## Table of Contents
 
@@ -12,7 +12,7 @@ Welcome to the Scrsphere Architecture Documentation. This comprehensive guide pr
 
 ## Overview
 
-Scrsphere is an **Agile Scrum Lifecycle Management System** built with modern technologies and following industry best practices. The architecture is designed to be:
+Scrumooth is an **Agile Scrum Lifecycle Management System** built with modern technologies and following industry best practices. The architecture is designed to be:
 
 - **Scalable**: Horizontal scaling capability for growing user bases
 - **Maintainable**: Clean separation of concerns and modular design
@@ -22,7 +22,7 @@ Scrsphere is an **Agile Scrum Lifecycle Management System** built with modern te
 
 ### System Context
 
-Scrsphere operates as a web-based application that enables teams to manage their Agile Scrum processes, from product goals to sprint retrospectives.
+Scrumooth operates as a web-based application that enables teams to manage their Agile Scrum processes, from product goals to sprint retrospectives.
 
 ```
 ┌────────────────────────────────────────────────────────────┐
@@ -33,7 +33,7 @@ Scrsphere operates as a web-based application that enables teams to manage their
                               │ HTTPS
                               ▼
 ┌────────────────────────────────────────────────────────────┐
-│                      Scrsphere                             │
+│                      Scrumooth                             │
 │  Agile Scrum Lifecycle Management System                   │
 │                                                            │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
@@ -56,7 +56,7 @@ The system follows a clear separation between:
 ### 2. Monorepo Structure
 
 ```
-scrsphere/
+scrumooth/
 ├── packages/
 │   ├── backend/      # Express.js REST API
 │   ├── frontend/     # React web application
@@ -367,4 +367,4 @@ Key architectural decisions documented in this section:
 
 **Last Updated**: 2026-05-10  
 **Version**: 1.0.0  
-**Maintainers**: Scrsphere Team
+**Maintainers**: Scrumooth Team

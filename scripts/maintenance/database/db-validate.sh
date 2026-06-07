@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# PostgreSQL Database Validation Script for Scrsphere
+# PostgreSQL Database Validation Script for Scrumooth
 # Usage: ./db-validate.sh
 
 set -e
 
 # Configuration
-CONTAINER_NAME="scrsphere-postgres"
-DB_NAME="scrsphere"
+CONTAINER_NAME="scrumooth-postgres"
+DB_NAME="scrumooth"
 DB_USER="postgres"
 
 # Colors for output
@@ -231,7 +231,7 @@ generate_report() {
 main() {
     echo -e "${BLUE}"
     echo "╔══════════════════════════════════════════════════════════════╗"
-    echo "║           Scrsphere Database Validation Report               ║"
+    echo "║           Scrumooth Database Validation Report               ║"
     echo "╚══════════════════════════════════════════════════════════════╝"
     echo -e "${NC}"
     

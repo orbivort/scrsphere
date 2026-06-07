@@ -174,7 +174,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET "https://api.scrsphere.dev/api/v1/product-backlog?teamId=550e8400-e29b-41d4-a716-446655440000&status=READY&limit=10" \
+curl -X GET "https://api.scrumooth.dev/api/v1/product-backlog?teamId=550e8400-e29b-41d4-a716-446655440000&status=READY&limit=10" \
   -b cookies.txt
 ```
 
@@ -294,7 +294,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X POST https://api.scrsphere.dev/api/v1/product-backlog \
+curl -X POST https://api.scrumooth.dev/api/v1/product-backlog \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -381,7 +381,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET https://api.scrsphere.dev/api/v1/product-backlog/880e8400-e29b-41d4-a716-446655440000 \
+curl -X GET https://api.scrumooth.dev/api/v1/product-backlog/880e8400-e29b-41d4-a716-446655440000 \
   -b cookies.txt
 ```
 
@@ -515,7 +515,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X PUT https://api.scrsphere.dev/api/v1/product-backlog/880e8400-e29b-41d4-a716-446655440000 \
+curl -X PUT https://api.scrumooth.dev/api/v1/product-backlog/880e8400-e29b-41d4-a716-446655440000 \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -632,7 +632,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X PUT https://api.scrsphere.dev/api/v1/product-backlog/880e8400-e29b-41d4-a716-446655440000/priority \
+curl -X PUT https://api.scrumooth.dev/api/v1/product-backlog/880e8400-e29b-41d4-a716-446655440000/priority \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -708,7 +708,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X DELETE https://api.scrsphere.dev/api/v1/product-backlog/880e8400-e29b-41d4-a716-446655440000 \
+curl -X DELETE https://api.scrumooth.dev/api/v1/product-backlog/880e8400-e29b-41d4-a716-446655440000 \
   -b cookies.txt
 ```
 
@@ -788,7 +788,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET https://api.scrsphere.dev/api/v1/product-backlog/880e8400-e29b-41d4-a716-446655440000/tasks \
+curl -X GET https://api.scrumooth.dev/api/v1/product-backlog/880e8400-e29b-41d4-a716-446655440000/tasks \
   -b cookies.txt
 ```
 
@@ -898,7 +898,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X POST https://api.scrsphere.dev/api/v1/product-backlog/reorder \
+curl -X POST https://api.scrumooth.dev/api/v1/product-backlog/reorder \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -1036,7 +1036,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X POST https://api.scrsphere.dev/api/v1/product-backlog/880e8400-e29b-41d4-a716-446655440000/verify-dod \
+curl -X POST https://api.scrumooth.dev/api/v1/product-backlog/880e8400-e29b-41d4-a716-446655440000/verify-dod \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -1139,7 +1139,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET https://api.scrsphere.dev/api/v1/product-backlog/880e8400-e29b-41d4-a716-446655440000/dod-verifications \
+curl -X GET https://api.scrumooth.dev/api/v1/product-backlog/880e8400-e29b-41d4-a716-446655440000/dod-verifications \
   -b cookies.txt
 ```
 
@@ -1269,7 +1269,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X POST https://api.scrsphere.dev/api/v1/product-backlog/880e8400-e29b-41d4-a716-446655440000/verify-dor \
+curl -X POST https://api.scrumooth.dev/api/v1/product-backlog/880e8400-e29b-41d4-a716-446655440000/verify-dor \
   -H "Content-Type: application/json" \
   -b cookies.txt \
   -d '{
@@ -1372,7 +1372,7 @@ Content-Type: application/json
 **Example Request**
 
 ```bash
-curl -X GET https://api.scrsphere.dev/api/v1/product-backlog/880e8400-e29b-41d4-a716-446655440000/dor-verifications \
+curl -X GET https://api.scrumooth.dev/api/v1/product-backlog/880e8400-e29b-41d4-a716-446655440000/dor-verifications \
   -b cookies.txt
 ```
 

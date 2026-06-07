@@ -567,7 +567,7 @@ export const TeamManagement: React.FC = () => {
                 <SparklesIcon size={80} />
               </div>
               <h1 className={styles['welcome-title']}>
-                Welcome to ScrSphere, {user?.firstName ?? 'there'}!
+                Welcome to Scrumooth, {user?.firstName ?? 'there'}!
               </h1>
               <p className={styles['welcome-subtitle']}>
                 Your agile journey starts here. Choose your path below to get started with your team

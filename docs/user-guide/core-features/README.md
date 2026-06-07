@@ -1,6 +1,6 @@
 # Core Feature Guides
 
-This section provides comprehensive guides for all core features of Scrsphere. Each guide explains how to use the feature effectively and includes best practices.
+This section provides comprehensive guides for all core features of Scrumooth. Each guide explains how to use the feature effectively and includes best practices.
 
 ## Feature Overview
 
@@ -14,9 +14,9 @@ This section provides comprehensive guides for all core features of Scrsphere. E
 | [Sprint Review](./sprint-review.md)     | Demonstration and feedback              | Product Owner, Team |
 | [Retrospectives](./retrospectives.md)   | Process improvement                     | Scrum Master, Team  |
 
-## Scrum Framework in Scrsphere
+## Scrum Framework in Scrumooth
 
-Scrsphere implements the Scrum framework as defined in the [Scrum Guide](https://scrumguides.org/):
+Scrumooth implements the Scrum framework as defined in the [Scrum Guide](https://scrumguides.org/):
 
 ```
 ┌──────────────────────────────────────────────────────────────┐

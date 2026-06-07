@@ -16,8 +16,8 @@ NC='\033[0m' # No Color
 
 # Configuration
 # Try to find the PostgreSQL volume (handles both docker-compose prefixed and plain names)
-VOLUME_NAME=$(docker volume ls -q | grep -E "(scrsphere.*postgres_data|postgres_data)" | head -1)
-CONTAINER_NAME="scrsphere-postgres"
+VOLUME_NAME=$(docker volume ls -q | grep -E "(scrumooth.*postgres_data|postgres_data)" | head -1)
+CONTAINER_NAME="scrumooth-postgres"
 
 # Functions
 log_info() {
@@ -139,7 +139,7 @@ done
 
 # Verify database
 log_info "Verifying database..."
-docker exec "$CONTAINER_NAME" psql -U postgres -d scrsphere -c "SELECT COUNT(*) FROM users;" > /dev/null 2>&1 && {
+docker exec "$CONTAINER_NAME" psql -U postgres -d scrumooth -c "SELECT COUNT(*) FROM users;" > /dev/null 2>&1 && {
     log_success "Database verification passed!"
 } || {
     log_warning "Could not verify database, but restore may still be successful."

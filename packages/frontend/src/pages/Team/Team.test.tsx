@@ -314,7 +314,7 @@ describe('TeamManagement - Multiple Teams', () => {
       render(<TeamManagement />, { wrapper: createWrapper() });
 
       await waitFor(() => {
-        expect(screen.getByText(/Welcome to ScrSphere/i)).toBeInTheDocument();
+        expect(screen.getByText(/Welcome to Scrumooth/i)).toBeInTheDocument();
       });
     });
 
@@ -336,7 +336,7 @@ describe('TeamManagement - Multiple Teams', () => {
       render(<TeamManagement />, { wrapper: createWrapper() });
 
       await waitFor(() => {
-        expect(screen.getByText(/Welcome to ScrSphere/i)).toBeInTheDocument();
+        expect(screen.getByText(/Welcome to Scrumooth/i)).toBeInTheDocument();
       });
     });
 
@@ -1434,7 +1434,7 @@ describe('TeamManagement - Multiple Teams', () => {
       render(<TeamManagement />, { wrapper: createWrapper() });
 
       // Component shows welcome view when loading/no team
-      expect(screen.getByText(/welcome to scrsphere/i)).toBeInTheDocument();
+      expect(screen.getByText(/welcome to scrumooth/i)).toBeInTheDocument();
     });
   });
 
@@ -1474,7 +1474,7 @@ describe('TeamManagement - Multiple Teams', () => {
 
       // Component shows welcome view when there's an error
       await waitFor(() => {
-        expect(screen.getByText(/welcome to scrsphere/i)).toBeInTheDocument();
+        expect(screen.getByText(/welcome to scrumooth/i)).toBeInTheDocument();
       });
     });
 
@@ -1513,7 +1513,7 @@ describe('TeamManagement - Multiple Teams', () => {
 
       // Component renders - check for welcome message when no team/error state
       await waitFor(() => {
-        expect(screen.getByText(/welcome to scrsphere/i)).toBeInTheDocument();
+        expect(screen.getByText(/welcome to scrumooth/i)).toBeInTheDocument();
       });
     });
   });
@@ -2396,7 +2396,7 @@ describe('TeamManagement - Multiple Teams', () => {
       render(<TeamManagement />, { wrapper: createWrapper() });
 
       await waitFor(() => {
-        expect(screen.getByText(/welcome to scrsphere/i)).toBeInTheDocument();
+        expect(screen.getByText(/welcome to scrumooth/i)).toBeInTheDocument();
       });
 
       expect(screen.getByRole('button', { name: /create new team/i })).toBeInTheDocument();

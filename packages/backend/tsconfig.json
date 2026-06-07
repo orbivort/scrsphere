@@ -17,7 +17,7 @@
       "@utils/*": ["./src/utils/*"],
       "@types/*": ["./src/types/*"],
       "@prisma": ["./prisma"],
-      "@scrsphere/shared": ["../shared/dist"],
+      "@scrumooth/shared": ["../shared/dist"],
       "@e2e-helpers": ["./src/__tests__/e2e/helpers"]
     },
     "types": ["node"]

@@ -150,7 +150,7 @@ class DataExportService {
     }
 
     const timestamp = new Date().toISOString().split('T')[0];
-    const filename = `scrsphere-data-export-${timestamp}.json`;
+    const filename = `scrumooth-data-export-${timestamp}.json`;
 
     logger.info('Export file downloaded', { jobId, userId, filename });
 

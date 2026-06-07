@@ -315,7 +315,7 @@ The Scrum Master is responsible for:
 
 ## Asynchronous Daily Scrum
 
-For distributed teams across time zones, Scrsphere supports async updates.
+For distributed teams across time zones, Scrumooth supports async updates.
 
 ### How It Works
 

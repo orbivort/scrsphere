@@ -1,6 +1,6 @@
-# Scrsphere API Documentation
+# scrumooth API Documentation
 
-Welcome to the Scrsphere API documentation. This comprehensive guide provides detailed information about all available API endpoints, authentication methods, request/response formats, and error handling.
+Welcome to the scrumooth API documentation. This comprehensive guide provides detailed information about all available API endpoints, authentication methods, request/response formats, and error handling.
 
 ## Table of Contents
 
@@ -21,7 +21,7 @@ Welcome to the Scrsphere API documentation. This comprehensive guide provides de
 All API requests should be made to the following base URL:
 
 ```
-Production: https://api.scrsphere.dev/api/v1
+Production: https://api.scrumooth.dev/api/v1
 Development: http://localhost:3000/api/v1
 ```
 
@@ -38,7 +38,7 @@ Accept: application/json
 
 ```bash
 # Register a new user
-curl -X POST https://api.scrsphere.dev/api/v1/auth/register \
+curl -X POST https://api.scrumooth.dev/api/v1/auth/register \
   -H "Content-Type: application/json" \
   -d '{
     "email": "user@example.com",
@@ -48,7 +48,7 @@ curl -X POST https://api.scrsphere.dev/api/v1/auth/register \
   }'
 
 # Login
-curl -X POST https://api.scrsphere.dev/api/v1/auth/login \
+curl -X POST https://api.scrumooth.dev/api/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "email": "user@example.com",
@@ -58,7 +58,7 @@ curl -X POST https://api.scrsphere.dev/api/v1/auth/login \
 
 ## Authentication
 
-Scrsphere uses JWT (JSON Web Token) based authentication with secure HTTP-only cookies for enhanced security.
+scrumooth uses JWT (JSON Web Token) based authentication with secure HTTP-only cookies for enhanced security.
 
 ### Authentication Methods
 
@@ -457,10 +457,10 @@ async function fetchAllTeams(page = 1, limit = 20) {
 ### JavaScript/TypeScript
 
 ```typescript
-import { ScrsphereClient } from '@scrsphere/client';
+import { scrumoothClient } from '@scrumooth/client';
 
-const client = new ScrsphereClient({
-  baseURL: 'https://api.scrsphere.dev/api/v1',
+const client = new scrumoothClient({
+  baseURL: 'https://api.scrumooth.dev/api/v1',
   credentials: 'include',
 });
 

@@ -33,8 +33,8 @@ vi.mock('../../../config/index.js', () => ({
         maxConnections: 5,
       },
       defaults: {
-        fromName: 'Scrsphere',
-        fromAddress: 'noreply@scrsphere.local',
+        fromName: 'Scrumooth',
+        fromAddress: 'noreply@scrumooth.local',
         replyTo: '',
       },
     },
@@ -650,7 +650,7 @@ describe('Email Templates', () => {
         email: 'john@example.com',
         resetUrl: 'https://example.com/reset?token=abc123',
         expiresIn: '1 hour',
-        appName: 'Scrsphere',
+        appName: 'Scrumooth',
         appUrl: 'https://example.com',
         supportEmail: 'support@example.com',
         currentYear: 2024,
@@ -665,7 +665,7 @@ describe('Email Templates', () => {
       expect(result.html).toContain('john@example.com');
       expect(result.html).toContain('https://example.com/reset?token=abc123');
       expect(result.html).toContain('1 hour');
-      expect(result.html).toContain('Scrsphere');
+      expect(result.html).toContain('Scrumooth');
     });
 
     it('should render text version correctly', () => {
@@ -675,7 +675,7 @@ describe('Email Templates', () => {
         email: 'jane@example.com',
         resetUrl: 'https://example.com/reset?token=xyz789',
         expiresIn: '30 minutes',
-        appName: 'Scrsphere',
+        appName: 'Scrumooth',
         appUrl: 'https://example.com',
         currentYear: 2024,
       };
@@ -695,7 +695,7 @@ describe('Email Templates', () => {
         email: 'user@example.com',
         resetUrl: 'https://example.com/reset',
         expiresIn: '1 hour',
-        appName: 'Scrsphere',
+        appName: 'Scrumooth',
         appUrl: 'https://example.com',
         currentYear: 2024,
       };
@@ -749,7 +749,7 @@ describe('Email Templates', () => {
         firstName: 'John',
         email: 'john@example.com',
         changedAt: '2024-01-15 10:30:00 UTC',
-        appName: 'Scrsphere',
+        appName: 'Scrumooth',
         appUrl: 'https://example.com',
         supportEmail: 'support@example.com',
         currentYear: 2024,
@@ -771,7 +771,7 @@ describe('Email Templates', () => {
         firstName: 'Jane',
         email: 'jane@example.com',
         changedAt: '2024-02-20 14:45:00 UTC',
-        appName: 'Scrsphere',
+        appName: 'Scrumooth',
         appUrl: 'https://example.com',
         currentYear: 2024,
       };
@@ -793,7 +793,7 @@ describe('Email Templates', () => {
         changedAt: '2024-03-01 09:00:00 UTC',
         ipAddress: '192.168.1.100',
         userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-        appName: 'Scrsphere',
+        appName: 'Scrumooth',
         appUrl: 'https://example.com',
         currentYear: 2024,
       };
@@ -812,7 +812,7 @@ describe('Email Templates', () => {
         firstName: 'User',
         email: 'user@example.com',
         changedAt: '2024-01-01 00:00:00 UTC',
-        appName: 'Scrsphere',
+        appName: 'Scrumooth',
         appUrl: 'https://example.com',
         currentYear: 2024,
       };
@@ -860,7 +860,7 @@ describe('Email Templates', () => {
         subject: 'Welcome!',
         firstName: 'John',
         email: 'john@example.com',
-        appName: 'Scrsphere',
+        appName: 'Scrumooth',
         appUrl: 'https://example.com',
         supportEmail: 'support@example.com',
         currentYear: 2024,
@@ -870,7 +870,7 @@ describe('Email Templates', () => {
 
       expect(result.html).toBeDefined();
       expect(result.text).toBeDefined();
-      expect(result.html).toContain('Welcome to Scrsphere!');
+      expect(result.html).toContain('Welcome to Scrumooth!');
       expect(result.html).toContain('John');
       expect(result.html).toContain('john@example.com');
     });
@@ -880,7 +880,7 @@ describe('Email Templates', () => {
         subject: 'Welcome!',
         firstName: 'Jane',
         email: 'jane@example.com',
-        appName: 'Scrsphere',
+        appName: 'Scrumooth',
         appUrl: 'https://example.com',
         currentYear: 2024,
       };
@@ -897,7 +897,7 @@ describe('Email Templates', () => {
         subject: 'Welcome!',
         firstName: 'User',
         email: 'user@example.com',
-        appName: 'Scrsphere',
+        appName: 'Scrumooth',
         appUrl: 'https://example.com',
         currentYear: 2024,
       };
@@ -917,7 +917,7 @@ describe('Email Templates', () => {
         subject: 'Welcome!',
         firstName: 'User',
         email: 'user@example.com',
-        appName: 'Scrsphere',
+        appName: 'Scrumooth',
         appUrl: 'https://example.com',
         currentYear: 2024,
       };
@@ -936,7 +936,7 @@ describe('Email Templates', () => {
         subject: 'Welcome!',
         firstName: 'User',
         email: 'user@example.com',
-        appName: 'Scrsphere',
+        appName: 'Scrumooth',
         appUrl: 'https://example.com',
         currentYear: 2024,
       };
@@ -975,7 +975,7 @@ describe('Email Templates', () => {
         subject: 'Welcome!',
         firstName: 'User',
         email: 'user@example.com',
-        appName: 'Scrsphere',
+        appName: 'Scrumooth',
         appUrl: 'https://example.com',
         currentYear: 2024,
       };

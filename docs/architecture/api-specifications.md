@@ -1,6 +1,6 @@
 # API Specifications
 
-This document defines the comprehensive API specifications for Scrsphere, covering RESTful design principles, versioning strategy, request/response formats, authentication, error handling, rate limiting, pagination, the middleware pipeline, and validation patterns.
+This document defines the comprehensive API specifications for Scrumooth, covering RESTful design principles, versioning strategy, request/response formats, authentication, error handling, rate limiting, pagination, the middleware pipeline, and validation patterns.
 
 ## Table of Contents
 
@@ -19,7 +19,7 @@ This document defines the comprehensive API specifications for Scrsphere, coveri
 
 ## RESTful API Design
 
-Scrsphere follows RESTful architectural principles with consistent resource-oriented URL patterns, standard HTTP methods, and uniform naming conventions.
+Scrumooth follows RESTful architectural principles with consistent resource-oriented URL patterns, standard HTTP methods, and uniform naming conventions.
 
 ### Resource-Oriented URLs
 
@@ -93,7 +93,7 @@ Sub-collection: GET  /api/v1/{resources}/{id}/{sub-resources}
 
 ## API Versioning
 
-Scrsphere uses **URL-based versioning** to manage API evolution. The version is embedded directly in the URL path, ensuring clear separation between different API versions.
+Scrumooth uses **URL-based versioning** to manage API evolution. The version is embedded directly in the URL path, ensuring clear separation between different API versions.
 
 ### URL Structure
 
@@ -104,7 +104,7 @@ Scrsphere uses **URL-based versioning** to manage API evolution. The version is 
 The current version is `v1`:
 
 ```
-Production:  https://api.scrsphere.dev/api/v1/{resource}
+Production:  https://api.scrumooth.dev/api/v1/{resource}
 Development: http://localhost:3000/api/v1/{resource}
 ```
 
@@ -371,7 +371,7 @@ export const createErrorResponse = (
 
 ## Authentication
 
-Scrsphere uses **JWT (JSON Web Token)** based authentication with dual-mode support: HTTP-only cookies (primary, recommended for browsers) and Bearer token headers (alternative, for API clients).
+Scrumooth uses **JWT (JSON Web Token)** based authentication with dual-mode support: HTTP-only cookies (primary, recommended for browsers) and Bearer token headers (alternative, for API clients).
 
 ### Authentication Architecture
 
@@ -593,7 +593,7 @@ router.patch(
 
 ## Error Handling
 
-Scrsphere implements a robust error handling system based on a custom error class hierarchy, consistent error response formatting, and a centralized error handler middleware.
+Scrumooth implements a robust error handling system based on a custom error class hierarchy, consistent error response formatting, and a centralized error handler middleware.
 
 ### Error Class Hierarchy
 
@@ -670,7 +670,7 @@ All errors follow the consistent envelope structure:
 
 ### Error Handler Middleware
 
-The centralized `errorHandler` middleware (defined in [error.middleware.ts](file:///e:/ws1/ov/ce/scrsphere/packages/backend/src/middleware/error.middleware.ts)) processes errors in the following order:
+The centralized `errorHandler` middleware (defined in [error.middleware.ts](file:///e:/ws1/ov/ce/scrumooth/packages/backend/src/middleware/error.middleware.ts)) processes errors in the following order:
 
 ```
 Error enters middleware
@@ -747,7 +747,7 @@ Rate limiting protects the API from abuse and ensures fair resource allocation a
 
 ### Rate Limit Types
 
-The application defines four distinct rate limiters (defined in [rateLimit.middleware.ts](file:///e:/ws1/ov/ce/scrsphere/packages/backend/src/middleware/rateLimit.middleware.ts)):
+The application defines four distinct rate limiters (defined in [rateLimit.middleware.ts](file:///e:/ws1/ov/ce/scrumooth/packages/backend/src/middleware/rateLimit.middleware.ts)):
 
 | Limiter         | Limit | Window | Scope       | Applied To               |
 | --------------- | ----- | ------ | ----------- | ------------------------ |

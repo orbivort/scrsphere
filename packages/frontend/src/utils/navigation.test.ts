@@ -26,26 +26,26 @@ describe('navigation utilities', () => {
       expect(getFullPath('/settings/team')).toBe('/settings/team');
     });
 
-    it('prepends base path when VITE_BASE_PATH is "/scrsphere/"', async () => {
-      vi.stubEnv('VITE_BASE_PATH', '/scrsphere/');
+    it('prepends base path when VITE_BASE_PATH is "/scrumooth/"', async () => {
+      vi.stubEnv('VITE_BASE_PATH', '/scrumooth/');
       const { getFullPath } = await import('./navigation');
-      expect(getFullPath('/login')).toBe('/scrsphere/login');
-      expect(getFullPath('/dashboard')).toBe('/scrsphere/dashboard');
-      expect(getFullPath('/settings/team')).toBe('/scrsphere/settings/team');
+      expect(getFullPath('/login')).toBe('/scrumooth/login');
+      expect(getFullPath('/dashboard')).toBe('/scrumooth/dashboard');
+      expect(getFullPath('/settings/team')).toBe('/scrumooth/settings/team');
     });
 
     it('handles paths without leading slash', async () => {
-      vi.stubEnv('VITE_BASE_PATH', '/scrsphere/');
+      vi.stubEnv('VITE_BASE_PATH', '/scrumooth/');
       const { getFullPath } = await import('./navigation');
-      expect(getFullPath('login')).toBe('/scrsphere/login');
-      expect(getFullPath('dashboard')).toBe('/scrsphere/dashboard');
+      expect(getFullPath('login')).toBe('/scrumooth/login');
+      expect(getFullPath('dashboard')).toBe('/scrumooth/dashboard');
     });
 
     it('handles base path without trailing slash', async () => {
-      vi.stubEnv('VITE_BASE_PATH', '/scrsphere');
+      vi.stubEnv('VITE_BASE_PATH', '/scrumooth');
       const { getFullPath } = await import('./navigation');
-      expect(getFullPath('/login')).toBe('/scrsphere/login');
-      expect(getFullPath('/dashboard')).toBe('/scrsphere/dashboard');
+      expect(getFullPath('/login')).toBe('/scrumooth/login');
+      expect(getFullPath('/dashboard')).toBe('/scrumooth/dashboard');
     });
 
     it('handles nested base path', async () => {
@@ -64,10 +64,10 @@ describe('navigation utilities', () => {
 
   describe('navigateTo', () => {
     it('sets window.location.href with base path', async () => {
-      vi.stubEnv('VITE_BASE_PATH', '/scrsphere/');
+      vi.stubEnv('VITE_BASE_PATH', '/scrumooth/');
       const { navigateTo } = await import('./navigation');
       navigateTo('/login');
-      expect(window.location.href).toBe('/scrsphere/login');
+      expect(window.location.href).toBe('/scrumooth/login');
     });
 
     it('sets window.location.href without base path when "/"', async () => {
@@ -78,17 +78,17 @@ describe('navigation utilities', () => {
     });
 
     it('handles various paths', async () => {
-      vi.stubEnv('VITE_BASE_PATH', '/scrsphere/');
+      vi.stubEnv('VITE_BASE_PATH', '/scrumooth/');
       const { navigateTo } = await import('./navigation');
 
       navigateTo('/login');
-      expect(window.location.href).toBe('/scrsphere/login');
+      expect(window.location.href).toBe('/scrumooth/login');
 
       navigateTo('/settings/team-management');
-      expect(window.location.href).toBe('/scrsphere/settings/team-management');
+      expect(window.location.href).toBe('/scrumooth/settings/team-management');
 
       navigateTo('/sprint/123');
-      expect(window.location.href).toBe('/scrsphere/sprint/123');
+      expect(window.location.href).toBe('/scrumooth/sprint/123');
     });
   });
 
@@ -99,16 +99,16 @@ describe('navigation utilities', () => {
       expect(getRouterBasename()).toBe('/');
     });
 
-    it('returns "/scrsphere" when VITE_BASE_PATH is "/scrsphere/"', async () => {
-      vi.stubEnv('VITE_BASE_PATH', '/scrsphere/');
+    it('returns "/scrumooth" when VITE_BASE_PATH is "/scrumooth/"', async () => {
+      vi.stubEnv('VITE_BASE_PATH', '/scrumooth/');
       const { getRouterBasename } = await import('./navigation');
-      expect(getRouterBasename()).toBe('/scrsphere');
+      expect(getRouterBasename()).toBe('/scrumooth');
     });
 
-    it('returns "/scrsphere" when VITE_BASE_PATH is "/scrsphere" (no trailing slash)', async () => {
-      vi.stubEnv('VITE_BASE_PATH', '/scrsphere');
+    it('returns "/scrumooth" when VITE_BASE_PATH is "/scrumooth" (no trailing slash)', async () => {
+      vi.stubEnv('VITE_BASE_PATH', '/scrumooth');
       const { getRouterBasename } = await import('./navigation');
-      expect(getRouterBasename()).toBe('/scrsphere');
+      expect(getRouterBasename()).toBe('/scrumooth');
     });
 
     it('returns "/" when VITE_BASE_PATH is undefined', async () => {
@@ -138,11 +138,11 @@ describe('navigation utilities', () => {
     });
 
     it('strips base path from pathname', async () => {
-      vi.stubEnv('VITE_BASE_PATH', '/scrsphere/');
+      vi.stubEnv('VITE_BASE_PATH', '/scrumooth/');
       const { getCurrentPath } = await import('./navigation');
 
       Object.defineProperty(window, 'location', {
-        value: { pathname: '/scrsphere/login' },
+        value: { pathname: '/scrumooth/login' },
         writable: true,
       });
 
@@ -150,11 +150,11 @@ describe('navigation utilities', () => {
     });
 
     it('strips base path from nested paths', async () => {
-      vi.stubEnv('VITE_BASE_PATH', '/scrsphere/');
+      vi.stubEnv('VITE_BASE_PATH', '/scrumooth/');
       const { getCurrentPath } = await import('./navigation');
 
       Object.defineProperty(window, 'location', {
-        value: { pathname: '/scrsphere/settings/team-management' },
+        value: { pathname: '/scrumooth/settings/team-management' },
         writable: true,
       });
 
@@ -162,11 +162,11 @@ describe('navigation utilities', () => {
     });
 
     it('returns "/" when pathname equals base path', async () => {
-      vi.stubEnv('VITE_BASE_PATH', '/scrsphere/');
+      vi.stubEnv('VITE_BASE_PATH', '/scrumooth/');
       const { getCurrentPath } = await import('./navigation');
 
       Object.defineProperty(window, 'location', {
-        value: { pathname: '/scrsphere' },
+        value: { pathname: '/scrumooth' },
         writable: true,
       });
 
@@ -174,7 +174,7 @@ describe('navigation utilities', () => {
     });
 
     it('returns pathname as-is when it does not start with base path', async () => {
-      vi.stubEnv('VITE_BASE_PATH', '/scrsphere/');
+      vi.stubEnv('VITE_BASE_PATH', '/scrumooth/');
       const { getCurrentPath } = await import('./navigation');
 
       Object.defineProperty(window, 'location', {
@@ -200,23 +200,23 @@ describe('navigation utilities', () => {
 
   describe('integration scenarios', () => {
     it('GitHub Pages deployment scenario', async () => {
-      vi.stubEnv('VITE_BASE_PATH', '/scrsphere/');
+      vi.stubEnv('VITE_BASE_PATH', '/scrumooth/');
       const { getFullPath, getCurrentPath, getRouterBasename, navigateTo } =
         await import('./navigation');
 
-      expect(getRouterBasename()).toBe('/scrsphere');
+      expect(getRouterBasename()).toBe('/scrumooth');
 
-      expect(getFullPath('/login')).toBe('/scrsphere/login');
-      expect(getFullPath('/dashboard')).toBe('/scrsphere/dashboard');
+      expect(getFullPath('/login')).toBe('/scrumooth/login');
+      expect(getFullPath('/dashboard')).toBe('/scrumooth/dashboard');
 
       Object.defineProperty(window, 'location', {
-        value: { pathname: '/scrsphere/login', href: '' },
+        value: { pathname: '/scrumooth/login', href: '' },
         writable: true,
       });
       expect(getCurrentPath()).toBe('/login');
 
       navigateTo('/dashboard');
-      expect(window.location.href).toBe('/scrsphere/dashboard');
+      expect(window.location.href).toBe('/scrumooth/dashboard');
     });
 
     it('local development scenario', async () => {

@@ -13,7 +13,7 @@
     "incremental": true,
     "paths": {
       "@/*": ["./src/*"],
-      "@scrsphere/shared": ["../shared/dist"]
+      "@scrumooth/shared": ["../shared/dist"]
     }
   },
   "references": [{ "path": "../shared" }],

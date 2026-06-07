@@ -1,7 +1,7 @@
-# Scrsphere Caddy Configuration
+# Scrumooth Caddy Configuration
 # Production-ready reverse proxy with automatic HTTPS
 
-# Replace YOUR_DOMAIN with your actual domain (e.g., scrsphere.example.com)
+# Replace YOUR_DOMAIN with your actual domain (e.g., scrumooth.example.com)
 # For local development without a domain, use: http://localhost
 
 {$DOMAIN:localhost} {

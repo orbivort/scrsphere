@@ -1,7 +1,7 @@
 // Auth Validation Schemas
 import { z } from 'zod';
 import { sanitizeString } from '../utils/sanitization';
-import { VALIDATION, PASSWORD_REGEX } from '@scrsphere/shared';
+import { VALIDATION, PASSWORD_REGEX } from '@scrumooth/shared';
 
 const passwordRequirements = {
   minLength: VALIDATION.PASSWORD.MIN_LENGTH,

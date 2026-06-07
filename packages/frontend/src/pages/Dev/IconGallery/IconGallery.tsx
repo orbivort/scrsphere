@@ -71,7 +71,7 @@ const iconCategories: Record<string, string[]> = {
     'ImpedimentIcon',
     'RunnerIcon',
     'RunningIcon',
-    'ScrSphereIcon',
+    'ScrumoothIcon',
   ],
 };
 

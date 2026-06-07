@@ -276,7 +276,7 @@ describe('DataExportService', () => {
         const result = await dataExportService.downloadExport(job.id, 'user-1');
         expect(result).toBeDefined();
         expect(result.content).toBeDefined();
-        expect(result.filename).toContain('scrsphere-data-export');
+        expect(result.filename).toContain('scrumooth-data-export');
         expect(result.contentType).toBe('application/json');
       }
     });

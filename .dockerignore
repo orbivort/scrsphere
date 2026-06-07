@@ -1,5 +1,5 @@
 # =============================================================================
-# Docker Ignore File for Scrsphere
+# Docker Ignore File for Scrumooth
 # =============================================================================
 # This file is derived from .gitignore with Docker-specific additions.
 # Key principle: If it's not needed for the build, exclude it!

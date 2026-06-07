@@ -1,4 +1,4 @@
-import { TIME } from '@scrsphere/shared';
+import { TIME } from '@scrumooth/shared';
 
 export const MAX_DISPLAY_ITEMS = 5;
 

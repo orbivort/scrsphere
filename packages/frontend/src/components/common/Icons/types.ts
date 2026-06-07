@@ -99,7 +99,7 @@ export type IconName =
   | 'RocketIcon'
   | 'RunnerIcon'
   | 'RunningIcon'
-  | 'ScrSphereIcon'
+  | 'ScrumoothIcon'
   | 'SaveIcon'
   | 'ScissorsIcon'
   | 'SearchIcon'
@@ -223,7 +223,7 @@ export const iconNames: IconName[] = [
   'RocketIcon',
   'RunnerIcon',
   'RunningIcon',
-  'ScrSphereIcon',
+  'ScrumoothIcon',
   'SaveIcon',
   'ScissorsIcon',
   'SearchIcon',

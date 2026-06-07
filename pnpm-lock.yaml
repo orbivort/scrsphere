@@ -17,13 +17,13 @@ catalogs:
       version: 4.1.5
     eslint:
       specifier: ^10.4.1
-      version: 10.4.0
+      version: 10.4.1
     eslint-config-prettier:
       specifier: ^10.1.8
       version: 10.1.8
     eslint-plugin-prettier:
       specifier: ^5.5.6
-      version: 5.5.5
+      version: 5.5.6
     eslint-plugin-react-hooks:
       specifier: ^7.1.1
       version: 7.1.1
@@ -32,10 +32,10 @@ catalogs:
       version: 0.5.2
     globals:
       specifier: ^17.6.0
-      version: 17.4.0
+      version: 17.6.0
     prettier:
       specifier: ^3.8.3
-      version: 3.8.1
+      version: 3.8.3
     stylelint:
       specifier: ^17.12.0
       version: 17.12.0
@@ -142,7 +142,7 @@ importers:
       '@prisma/client':
         specifier: ^7.8.0
         version: 7.8.0(prisma@7.8.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(magicast@0.5.2)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@6.0.3))(typescript@6.0.3)
-      '@scrsphere/shared':
+      '@scrumooth/shared':
         specifier: workspace:*
         version: link:../shared
       bcrypt:
@@ -287,7 +287,7 @@ importers:
 
   packages/frontend:
     dependencies:
-      '@scrsphere/shared':
+      '@scrumooth/shared':
         specifier: workspace:*
         version: link:../shared
       '@tanstack/react-query':
