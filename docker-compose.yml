@@ -285,6 +285,7 @@ services:
       - POSTGRES_USER=${DB_USER:-scrumooth}
       - POSTGRES_PASSWORD=${DB_PASSWORD:-Str0ng!DBp@ss2026}
       - DB_NAME=${DB_NAME:-scrumooth}
+      - DB_USER=${DB_USER:-scrumooth}
       - PGHOST=postgres
     command: >
       sh -c "

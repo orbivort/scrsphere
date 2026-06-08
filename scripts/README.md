@@ -49,13 +49,14 @@ See [DATABASE_MAINTENANCE.md](./maintenance/database/DATABASE_MAINTENANCE.md) fo
 
 General utility scripts for development and code quality.
 
-| Script                        | Purpose                             | Usage                                                       |
-| ----------------------------- | ----------------------------------- | ----------------------------------------------------------- |
-| `check-package-manager.js`    | Enforces pnpm usage                 | Auto-run via npm pre-scripts                                |
-| `create-branch.js`            | Create git branch with validation   | `pnpm run branch:create feat/user-dashboard`                |
-| `eslint-plugin-icon-rules.js` | ESLint plugin for icon usage        | Integrated in ESLint config                                 |
-| `generate-icon-types.ts`      | Generate TypeScript types for icons | `pnpm --filter=@scrumooth/frontend run generate:icon-types` |
-| `validate-branch.js`          | Validate git branch names           | `pnpm run branch:validate [branch-name]`                    |
+| Script                        | Purpose                                  | Usage                                                       |
+| ----------------------------- | ---------------------------------------- | ----------------------------------------------------------- |
+| `add-import-extensions.js`    | Add `.js` extensions to relative imports | `node scripts/utility/add-import-extensions.js`             |
+| `check-package-manager.js`    | Enforces pnpm usage                      | Auto-run via npm pre-scripts                                |
+| `create-git-branch.js`        | Create git branch with validation        | `pnpm run branch:create feat/user-dashboard`                |
+| `eslint-plugin-icon-rules.js` | ESLint plugin for icon usage             | Integrated in ESLint config                                 |
+| `generate-icon-types.ts`      | Generate TypeScript types for icons      | `pnpm --filter=@scrumooth/frontend run generate:icon-types` |
+| `validate-git-branch.js`      | Validate git branch names                | `pnpm run branch:validate [branch-name]`                    |
 
 **Branch Name Validation:**
 

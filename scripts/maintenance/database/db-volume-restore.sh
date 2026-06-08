@@ -14,10 +14,12 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Configuration
+# Configuration (overridable via environment variables)
+CONTAINER_NAME="${CONTAINER_NAME:-scrumooth-postgres}"
+DB_NAME="${DB_NAME:-scrumooth}"
+DB_USER="${DB_USER:-scrumooth}"
 # Try to find the PostgreSQL volume (handles both docker-compose prefixed and plain names)
 VOLUME_NAME=$(docker volume ls -q | grep -E "(scrumooth.*postgres_data|postgres_data)" | head -1)
-CONTAINER_NAME="scrumooth-postgres"
 
 # Functions
 log_info() {
@@ -59,6 +61,14 @@ if ! docker info > /dev/null 2>&1; then
     exit 1
 fi
 
+# Check if volume exists
+if [ -z "$VOLUME_NAME" ]; then
+    log_error "PostgreSQL volume not found!"
+    log_info "Available volumes:"
+    docker volume ls
+    exit 1
+fi
+
 # Warning and confirmation
 echo ""
 log_warning "⚠️  WARNING: This will REPLACE the current PostgreSQL database data!"
@@ -66,6 +76,7 @@ log_warning "All current data will be lost and replaced with the backup."
 echo ""
 log_info "Backup file: $BACKUP_FILE"
 log_info "Backup size: $(du -h "$BACKUP_FILE" | cut -f1)"
+log_info "Target volume: $VOLUME_NAME"
 echo ""
 
 read -p "Are you sure you want to continue? (yes/no): " confirm
@@ -122,14 +133,14 @@ log_success "Volume restored successfully!"
 
 # Start PostgreSQL container
 log_info "Starting PostgreSQL container..."
-cd "$(dirname "$0")/../../.." && docker-compose up -d postgres
+cd "$(dirname "$0")/../../.." && docker compose up -d postgres
 
 # Wait for PostgreSQL to be ready
 log_info "Waiting for PostgreSQL to be ready..."
 sleep 5
 
 for i in {1..30}; do
-    if docker exec "$CONTAINER_NAME" pg_isready -U postgres > /dev/null 2>&1; then
+    if docker exec "$CONTAINER_NAME" pg_isready -U "$DB_USER" > /dev/null 2>&1; then
         log_success "PostgreSQL is ready!"
         break
     fi
@@ -139,7 +150,7 @@ done
 
 # Verify database
 log_info "Verifying database..."
-docker exec "$CONTAINER_NAME" psql -U postgres -d scrumooth -c "SELECT COUNT(*) FROM users;" > /dev/null 2>&1 && {
+docker exec "$CONTAINER_NAME" psql -U "$DB_USER" -d "$DB_NAME" -c "SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public';" > /dev/null 2>&1 && {
     log_success "Database verification passed!"
 } || {
     log_warning "Could not verify database, but restore may still be successful."

@@ -6,6 +6,6 @@ set -e
 
 # Only validate on branch checkout (not file checkout)
 if [ "$3" = "1" ]; then
-  echo "🌿 Validating branch name..."
-  node scripts/utility/validate-branch.js --quiet
+  echo "🌿 Validating git branch name..."
+  node scripts/utility/validate-git-branch.js --quiet
 fi

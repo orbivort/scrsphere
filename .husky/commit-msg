@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 set -e
 
-echo "📝 Validating commit message..."
+echo "📝 Validating git commit message..."
 
 npx --no -- commitlint --config .husky/commitlint.config.ts --edit "$1"

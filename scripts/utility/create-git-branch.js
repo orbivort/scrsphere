@@ -6,33 +6,33 @@
  * Creates a new git branch with name validation.
  *
  * Usage:
- *   node create-branch.js <type>/<description>
- *   node create-branch.js feat user-dashboard
+ *   node create-git-branch.js <type>/<description>
+ *   node create-git-branch.js feat user-dashboard
  *
  * Examples:
- *   node create-branch.js feat/user-dashboard
- *   node create-branch.js feat user-dashboard
+ *   node create-git-branch.js feat/user-dashboard
+ *   node create-git-branch.js feat user-dashboard
  */
 
 import { execSync } from 'child_process';
-import { validateBranchName, VALID_TYPES } from './validate-branch.js';
+import { validateBranchName, VALID_TYPES } from './validate-git-branch.js';
 
 function printUsage() {
   console.log(`
 Branch Creation with Validation
 
 Usage:
-  node create-branch.js <type>/<description>
-  node create-branch.js <type> <description>
+  node create-git-branch.js <type>/<description>
+  node create-git-branch.js <type> <description>
 
 Valid types:
   ${VALID_TYPES.join(', ')}
 
 Examples:
-  node create-branch.js feat/user-dashboard
-  node create-branch.js feat user-dashboard
-  node create-branch.js fix/login-validation
-  node create-branch.js chore/update-dependencies
+  node create-git-branch.js feat/user-dashboard
+  node create-git-branch.js feat user-dashboard
+  node create-git-branch.js fix/login-validation
+  node create-git-branch.js chore/update-dependencies
 `);
 }
 

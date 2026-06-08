@@ -153,7 +153,7 @@ function main() {
 Branch Name Validation
 
 Usage:
-  node validate-branch.js [branch-name] [options]
+  node validate-git-branch.js [branch-name] [options]
 
 Options:
   -q, --quiet    Suppress output, exit with code only
