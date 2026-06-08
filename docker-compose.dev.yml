@@ -90,6 +90,7 @@ services:
       - ./packages/frontend/src:/app/packages/frontend/src
       - ./packages/frontend/public:/app/packages/frontend/public
       - ./packages/shared/src:/app/packages/shared/src
+      - ./packages/shared/dist:/app/packages/shared/dist
       # Exclude node_modules to use container's installed dependencies
       - /app/node_modules
       - /app/packages/frontend/node_modules
