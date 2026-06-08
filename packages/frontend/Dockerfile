@@ -13,7 +13,7 @@ ARG NGINX_VERSION=1.27
 # =============================================================================
 # Stage 1: Builder
 # =============================================================================
-FROM debian:bookworm-slim AS builder
+FROM node:${NODE_VERSION}-slim AS builder
 
 # Build arguments for labels
 ARG VERSION=1.5.1
@@ -34,28 +34,10 @@ LABEL org.opencontainers.image.title="Scrumooth Frontend Builder" \
 
 WORKDIR /app
 
-# Install build dependencies and Node.js
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
-    ca-certificates \
-    xz-utils \
-    && rm -rf /var/lib/apt/lists/*
-
-# Download and install Node.js from official binaries
-ARG NODE_VERSION
-RUN curl -fsSL https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz -o /tmp/node.tar.xz && \
-    tar -xJf /tmp/node.tar.xz -C /usr/local --strip-components=1 && \
-    rm -f /tmp/node.tar.xz && \
-    ls -la /usr/local/bin/node && \
-    /usr/local/bin/node --version && \
-    /usr/local/bin/npm --version
-
-# Add Node.js to PATH
-ENV PATH="/usr/local/bin:${PATH}" \
-    CI=true
-
 # Install pnpm using corepack (recommended by Node.js)
 RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
+
+ENV CI=true
 
 # Copy package files first for better layer caching
 # Order: least frequently changed to most frequently changed
@@ -113,13 +95,17 @@ COPY packages/frontend/nginx.conf /etc/nginx/nginx.conf
 
 # Create required directories and set permissions in a single layer
 # This ensures nginx can write logs and cache
-RUN chown -R nginx:nginx /usr/share/nginx/html && \
+RUN mkdir -p /var/cache/nginx/client_temp /var/cache/nginx/proxy_temp /var/cache/nginx/fastcgi_temp /var/cache/nginx/uwsgi_temp /var/cache/nginx/scgi_temp && \
+    chown -R nginx:nginx /usr/share/nginx/html && \
     chown -R nginx:nginx /var/cache/nginx && \
     chown -R nginx:nginx /var/log/nginx && \
     touch /var/run/nginx.pid && \
-    chown nginx:nginx /var/run/nginx.pid
+    chown nginx:nginx /var/run/nginx.pid && \
+    rm -f /etc/nginx/conf.d/default.conf
 
 # Switch to non-root user (nginx user exists in nginx:alpine)
+# Disable default entrypoint scripts that try to modify read-only filesystem
+ENV NGINX_ENTRYPOINT_QUIET_LOGS=1
 USER nginx
 
 # Expose HTTP port

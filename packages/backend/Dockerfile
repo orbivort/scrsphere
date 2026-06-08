@@ -8,13 +8,11 @@
 # Build arguments for version pinning and reproducibility
 ARG NODE_VERSION=24.14.1
 ARG PNPM_VERSION=11.5.0
-ARG TYPESCRIPT_VERSION=6.0.3
-ARG PRISMA_VERSION=7.7.0
 
 # =============================================================================
 # Stage 1: Builder
 # =============================================================================
-FROM debian:bookworm-slim AS builder
+FROM node:${NODE_VERSION}-slim AS builder
 
 # Build arguments for labels
 ARG VERSION=1.5.1
@@ -35,29 +33,10 @@ LABEL org.opencontainers.image.title="Scrumooth Backend Builder" \
 
 WORKDIR /app
 
-# Install build dependencies and Node.js
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    dumb-init \
-    curl \
-    ca-certificates \
-    xz-utils \
-    && rm -rf /var/lib/apt/lists/*
-
-# Download and install Node.js from official binaries
-ARG NODE_VERSION
-RUN curl -fsSL https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz -o /tmp/node.tar.xz && \
-    tar -xJf /tmp/node.tar.xz -C /usr/local --strip-components=1 && \
-    rm -f /tmp/node.tar.xz && \
-    ls -la /usr/local/bin/node && \
-    /usr/local/bin/node --version && \
-    /usr/local/bin/npm --version
-
-# Add Node.js to PATH
-ENV PATH="/usr/local/bin:${PATH}" \
-    CI=true
-
 # Install pnpm using corepack (recommended by Node.js)
 RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
+
+ENV CI=true
 
 # Copy package files first for better layer caching
 # Order: least frequently changed to most frequently changed
@@ -66,8 +45,7 @@ COPY packages/shared/package.json packages/shared/tsconfig.json ./packages/share
 COPY packages/backend/package.json packages/backend/tsconfig.json ./packages/backend/
 
 # Install dependencies with frozen lockfile for reproducible builds
-# Use --shamefully-hoist to create flat node_modules (better for Prisma)
-RUN pnpm install --frozen-lockfile --shamefully-hoist
+RUN pnpm install --frozen-lockfile
 
 # Copy Prisma schema first (needed for client generation)
 COPY packages/backend/prisma ./packages/backend/prisma
@@ -88,20 +66,19 @@ RUN cd packages/shared && pnpm exec tsc
 RUN cd packages/backend && pnpm exec tsc
 
 # Fix import extensions for ESM compatibility
-COPY scripts/deployment/fix-imports.js /tmp/fix-imports.js
-RUN cd packages/backend/dist && node /tmp/fix-imports.js
+COPY scripts/utility/add-import-extensions.js /tmp/add-import-extensions.js
+RUN cd packages/backend/dist && node /tmp/add-import-extensions.js
 
 # =============================================================================
 # Stage 2: Production
 # =============================================================================
-FROM debian:bookworm-slim AS production
+FROM node:${NODE_VERSION}-slim AS production
 
 # Build arguments for labels
 ARG VERSION=1.5.1
 ARG BUILD_DATE
 ARG VCS_REF
 ARG NODE_VERSION
-ARG PNPM_VERSION
 
 # OCI Image Labels (Open Container Initiative)
 LABEL org.opencontainers.image.title="Scrumooth Backend" \
@@ -116,68 +93,46 @@ LABEL org.opencontainers.image.title="Scrumooth Backend" \
       org.opencontainers.image.documentation="https://github.com/orbivort/scrumooth/blob/main/docs/README.md" \
       org.opencontainers.image.authors="Scrumooth Team"
 
-# Security: Create non-root user and group with fixed IDs
-RUN groupadd --system --gid 1001 nodejs && \
-    useradd --system --uid 1001 --gid nodejs --home-dir /home/scrumooth --create-home scrumooth
-
-# Install runtime dependencies and Node.js
+# Install dumb-init for proper signal handling
 RUN apt-get update && apt-get install -y --no-install-recommends \
     dumb-init \
-    curl \
-    ca-certificates \
-    xz-utils \
     && rm -rf /var/lib/apt/lists/*
-
-# Download and install Node.js from official binaries
-ARG NODE_VERSION
-RUN curl -fsSL https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz -o /tmp/node.tar.xz && \
-    tar -xJf /tmp/node.tar.xz -C /usr/local --strip-components=1 && \
-    rm -f /tmp/node.tar.xz && \
-    ls -la /usr/local/bin/node && \
-    /usr/local/bin/node --version && \
-    /usr/local/bin/npm --version
-
-# Add Node.js to PATH
-ENV PATH="/usr/local/bin:${PATH}"
 
 WORKDIR /app
 
-# Create required directories with proper permissions before switching user
-RUN mkdir -p /app/logs /app/dist/generated && \
-    chown -R scrumooth:nodejs /app
+# Create required directories with proper permissions
+RUN mkdir -p /app/logs/emails && \
+    chown -R node:node /app
 
-# Copy built artifacts with proper ownership
-# Order matters to optimize layer caching
-COPY --from=builder --chown=scrumooth:nodejs /app/packages/backend/dist ./dist
-COPY --from=builder --chown=scrumooth:nodejs /app/packages/backend/prisma ./prisma
-COPY --from=builder --chown=scrumooth:nodejs /app/packages/backend/src/generated ./dist/generated
-COPY --from=builder --chown=scrumooth:nodejs /app/packages/backend/prisma.config.ts ./prisma.config.ts
+# Copy built artifacts from builder
+COPY --from=builder --chown=node:node /app/packages/backend/dist ./dist
+COPY --from=builder --chown=node:node /app/packages/backend/prisma ./prisma
+COPY --from=builder --chown=node:node /app/packages/backend/src/generated ./dist/generated
+COPY --from=builder --chown=node:node /app/packages/backend/prisma.config.ts ./prisma.config.ts
+COPY --from=builder --chown=node:node /app/packages/backend/package.json ./package.json
 
-# Copy node_modules (contains all dependencies including Prisma)
-COPY --from=builder --chown=scrumooth:nodejs /app/node_modules ./node_modules
+# Install production dependencies using npm (flat node_modules, no symlink issues)
+# This avoids pnpm's symlink-based node_modules structure which breaks in Docker COPY
+# Remove workspace dependency and catalog: protocol entries (pnpm-specific) first
+RUN apt-get update && apt-get install -y --no-install-recommends jq && rm -rf /var/lib/apt/lists/* && \
+    jq 'del(.dependencies["@scrumooth/shared"]) | .devDependencies |= with_entries(select(.value | startswith("catalog:") | not))' package.json > package.json.tmp && \
+    mv package.json.tmp package.json && \
+    npm install --omit=dev
 
-# Setup shared package in node_modules for proper resolution
-COPY --from=builder --chown=scrumooth:nodejs /app/packages/shared/package.json /app/node_modules/@scrumooth/shared/package.json
-COPY --from=builder --chown=scrumooth:nodejs /app/packages/shared/dist /app/node_modules/@scrumooth/shared/dist
-
-# Copy backend package.json
-COPY --from=builder --chown=scrumooth:nodejs /app/packages/backend/package.json ./package.json
-
-# Install pnpm for Prisma generate
-RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
+# Copy shared package build output into node_modules
+COPY --from=builder --chown=node:node /app/packages/shared/dist ./node_modules/@scrumooth/shared/dist
+COPY --from=builder --chown=node:node /app/packages/shared/package.json ./node_modules/@scrumooth/shared/package.json
 
 # Generate Prisma client in production stage
-# Schema is already copied, this generates the client with production config
 ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
-RUN pnpm exec prisma generate
+RUN npx prisma generate
 
 # Set production environment variables
 ENV NODE_ENV=production \
-    PORT=5000 \
-    CI=true
+    PORT=5000
 
-# Switch to non-root user for security
-USER scrumooth
+# Switch to non-root user for security (node user exists in node:bookworm-slim)
+USER node
 
 # Expose application port
 EXPOSE 5000

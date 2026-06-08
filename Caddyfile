@@ -4,7 +4,7 @@
 # Replace YOUR_DOMAIN with your actual domain (e.g., scrumooth.example.com)
 # For local development without a domain, use: http://localhost
 
-{$DOMAIN:localhost} {
+{$DOMAIN:scrumooth.local} {
     # Automatic HTTPS (comment out for local development without a domain)
     # tls {$EMAIL:}
 

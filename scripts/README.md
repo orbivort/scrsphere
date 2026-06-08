@@ -6,40 +6,12 @@ This directory contains all utility scripts for the scrumooth project, organized
 
 ```
 scripts/
-├── deployment/        # Deployment scripts
 ├── maintenance/       # Maintenance scripts
 │   └── database/      # Database maintenance scripts
 └── utility/           # Utility scripts
 ```
 
 ## Categories
-
-### 🚀 deployment/
-
-Scripts for deploying the application to various environments.
-
-| Script       | Platform    | Purpose                                      |
-| ------------ | ----------- | -------------------------------------------- |
-| `deploy.ps1` | Windows     | Production deployment with environment setup |
-| `dev.sh`     | Linux/macOS | Development environment startup              |
-| `prod.sh`    | Linux/macOS | Production environment startup               |
-
-**Windows Usage:**
-
-```powershell
-.\scripts\deployment\deploy.ps1 -Setup              # First-time setup
-.\scripts\deployment\deploy.ps1 -Deploy             # Start deployment
-.\scripts\deployment\deploy.ps1 -Stop               # Stop containers
-.\scripts\deployment\deploy.ps1 -Logs               # View logs
-.\scripts\deployment\deploy.ps1 -Clean              # Full cleanup
-```
-
-**Linux/macOS Usage:**
-
-```bash
-./scripts/deployment/dev.sh    # Development environment
-./scripts/deployment/prod.sh   # Production environment
-```
 
 ### 🔧 maintenance/
 

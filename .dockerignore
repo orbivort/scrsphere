@@ -216,11 +216,11 @@ helm/
 *.tfstate.*
 
 # -----------------------------------------------------------------------------
-# Scripts (only deployment scripts needed at build time)
+# Scripts
 # -----------------------------------------------------------------------------
-# Keep scripts/deployment/ for build process
-scripts/utility/
-scripts/maintenance/
+scripts/
+!scripts/utility/add-import-extensions.js
+!scripts/maintenance/databases/*
 
 # -----------------------------------------------------------------------------
 # Large Binary Files (should be downloaded or built)

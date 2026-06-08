@@ -86,7 +86,7 @@ services:
     read_only: true
     tmpfs:
       - /tmp
-      - /app/logs
+      - /app/logs:uid=1000,gid=1000
     healthcheck:
       test: ["CMD", "node", "-e", "require('http').get('http://localhost:5000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
       interval: 30s
@@ -136,8 +136,8 @@ services:
     read_only: true
     tmpfs:
       - /tmp
-      - /var/cache/nginx
-      - /var/run
+      - /var/cache/nginx:uid=101,gid=101
+      - /var/run:uid=101,gid=101
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1/"]
       interval: 30s
@@ -167,8 +167,8 @@ services:
     env_file:
       - ./packages/backend/.env.production
     environment:
-      - POSTGRES_USER=${DB_USER:-postgres}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_USER=${DB_USER:-scrumooth}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-Str0ng!DBp@ss2026}
       - POSTGRES_DB=${DB_NAME:-scrumooth}
       - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --locale=en_US.UTF-8
     volumes:
@@ -225,68 +225,51 @@ services:
 
   # ===========================================================================
   # PgBouncer - Connection Pooling for Production
+  # NOTE: Commented out due to Docker mirror availability issues.
+  # Uncomment and configure if you have access to bitnami/pgbouncer or edoburu/pgbouncer images.
   # ===========================================================================
-  pgbouncer:
-    image: pgbouncer/pgbouncer:1.22.1
-    container_name: scrumooth-pgbouncer
-    environment:
-      DATABASES_HOST: postgres
-      DATABASES_PORT: 5432
-      DATABASES_DATABASE: ${DB_NAME:-scrumooth}
-      DATABASES_USER: ${DB_USER:-postgres}
-      DATABASES_PASSWORD: ${DB_PASSWORD}
-      POOL_MODE: transaction
-      MAX_CLIENT_CONN: 100
-      DEFAULT_POOL_SIZE: 20
-      MIN_POOL_SIZE: 5
-      RESERVE_POOL_SIZE: 5
-      MAX_DB_CONNECTIONS: 50
-      MAX_USER_CONNECTIONS: 50
-      SERVER_IDLE_TIMEOUT: 600
-      SERVER_LIFETIME: 3600
-      CLIENT_IDLE_TIMEOUT: 0
-      CLIENT_LOGIN_TIMEOUT: 60
-      AUTODB_IDLE_TIMEOUT: 3600
-      QUERY_TIMEOUT: 0
-      QUERY_WAIT_TIMEOUT: 120
-      CLIENT_TLS_SSLMODE: require
-      CLIENT_TLS_KEYFILE: /etc/pgbouncer/tls/server.key
-      CLIENT_TLS_CERTFILE: /etc/pgbouncer/tls/server.crt
-    volumes:
-      - ./certs/pgbouncer:/etc/pgbouncer/tls:ro
-    ports:
-      - "6432:6432"
-    depends_on:
-      postgres:
-        condition: service_healthy
-    restart: unless-stopped
-    networks:
-      - scrumooth-network
-    # Security options
-    security_opt:
-      - no-new-privileges:true
-    read_only: true
-    tmpfs:
-      - /tmp
-    healthcheck:
-      test: ["CMD", "pg_isready", "-h", "localhost", "-p", "6432"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "5"
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 128M
-        reservations:
-          cpus: '0.1'
-          memory: 32M
+  # pgbouncer:
+  #   image: bitnami/pgbouncer:1.22
+  #   container_name: scrumooth-pgbouncer
+  #   environment:
+  #     PGBOUNCER_DATABASE_HOST: postgres
+  #     PGBOUNCER_DATABASE_PORT_NUMBER: 5432
+  #     PGBOUNCER_DATABASE_NAME: ${DB_NAME:-scrumooth}
+  #     PGBOUNCER_DATABASE_USER: ${DB_USER:-postgres}
+  #     PGBOUNCER_DATABASE_PASSWORD: ${DB_PASSWORD:-postgres}
+  #     PGBOUNCER_POOL_MODE: transaction
+  #     PGBOUNCER_MAX_CLIENT_CONN: 100
+  #     PGBOUNCER_DEFAULT_POOL_SIZE: 20
+  #     PGBOUNCER_MIN_POOL_SIZE: 5
+  #     PGBOUNCER_RESERVE_POOL_SIZE: 5
+  #     PGBOUNCER_MAX_DB_CONNECTIONS: 50
+  #     PGBOUNCER_SERVER_IDLE_TIMEOUT: 600
+  #     PGBOUNCER_SERVER_LIFETIME: 3600
+  #     PGBOUNCER_CLIENT_IDLE_TIMEOUT: 0
+  #     PGBOUNCER_CLIENT_LOGIN_TIMEOUT: 60
+  #     PGBOUNCER_QUERY_TIMEOUT: 0
+  #     PGBOUNCER_QUERY_WAIT_TIMEOUT: 120
+  #   ports:
+  #     - "6432:6432"
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #   restart: unless-stopped
+  #   networks:
+  #     - scrumooth-network
+  #   logging:
+  #     driver: "json-file"
+  #     options:
+  #       max-size: "10m"
+  #       max-file: "5"
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: '0.5'
+  #         memory: 128M
+  #       reservations:
+  #         cpus: '0.1'
+  #         memory: 32M
 
   # ===========================================================================
   # Automated SQL Backup Service
@@ -299,8 +282,8 @@ services:
       - ./backups:/backups
       - ./scripts/maintenance/database:/scripts:ro
     environment:
-      - POSTGRES_USER=${DB_USER:-postgres}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_USER=${DB_USER:-scrumooth}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-Str0ng!DBp@ss2026}
       - DB_NAME=${DB_NAME:-scrumooth}
       - PGHOST=postgres
     command: >
