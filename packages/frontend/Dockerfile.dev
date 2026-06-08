@@ -1,26 +1,80 @@
-# Development Dockerfile for Frontend
-FROM node:24-alpine
+# =============================================================================
+# Scrumooth Frontend - Development Dockerfile
+# =============================================================================
+# Optimized for development with hot reload and debugging support
+# Following Docker and OCI best practices
+# =============================================================================
+
+# Build arguments for version pinning
+ARG NODE_VERSION=24
+ARG ALPINE_VERSION=3.21
+ARG PNPM_VERSION=11.5.0
+
+FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION}
+
+# Build arguments for labels
+ARG VERSION=1.5.1
+ARG BUILD_DATE
+ARG VCS_REF
+
+# OCI Image Labels
+LABEL org.opencontainers.image.title="Scrumooth Frontend Development" \
+      org.opencontainers.image.description="Development environment for Scrumooth Frontend" \
+      org.opencontainers.image.version="${VERSION}" \
+      org.opencontainers.image.created="${BUILD_DATE}" \
+      org.opencontainers.image.revision="${VCS_REF}" \
+      org.opencontainers.image.vendor="Scrumooth" \
+      org.opencontainers.image.licenses="Apache-2.0" \
+      org.opencontainers.image.source="https://github.com/orbivort/scrumooth"
+
 WORKDIR /app
 
-# Install development dependencies
-RUN apk add --no-cache git
+# Install development dependencies in a single layer
+RUN apk add --no-cache \
+    dumb-init~=1.2.5 \
+    git~=2
 
-# Copy package files
-COPY package*.json ./
-COPY packages/shared/package*.json ./packages/shared/
-COPY packages/frontend/package*.json ./packages/frontend/
+# Install pnpm using corepack (recommended by Node.js)
+RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
+
+# Security: Create non-root user and group with fixed IDs
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 --ingroup nodejs --home /home/scrumooth scrumooth
+
+# Copy package files first for better layer caching
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.json ./
+COPY packages/shared/package.json packages/shared/tsconfig.json ./packages/shared/
+COPY packages/frontend/package.json packages/frontend/tsconfig.json ./packages/frontend/
 
 # Install dependencies
-RUN npm install
+RUN pnpm install --shamefully-hoist
 
-# Copy source
+# Copy source code
 COPY packages/shared ./packages/shared
 COPY packages/frontend ./packages/frontend
 
-# Set development environment
-ENV NODE_ENV=development
+# Build shared package (dependency for frontend)
+RUN cd packages/shared && pnpm exec tsc
 
+# Set proper ownership
+RUN chown -R scrumooth:nodejs /app
+
+# Set development environment
+ENV NODE_ENV=development \
+    PORT=5173
+
+# Switch to non-root user
+USER scrumooth
+
+# Expose Vite dev server port
 EXPOSE 5173
 
+# Health check for development
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:5173/ || exit 1
+
+# Use dumb-init as PID 1 for proper signal handling
+ENTRYPOINT ["dumb-init", "--"]
+
 # Start development server with hot reload
-CMD ["npm", "run", "dev:frontend"]
+CMD ["pnpm", "run", "dev:frontend"]

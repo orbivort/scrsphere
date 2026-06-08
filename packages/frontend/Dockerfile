@@ -1,11 +1,43 @@
-# Build stage
-FROM node:24-alpine AS builder
+# =============================================================================
+# Scrumooth Frontend - Production Dockerfile
+# =============================================================================
+# Multi-stage build for minimal image size and security
+# Following Docker and OCI best practices
+# =============================================================================
+
+# Build arguments for version pinning and reproducibility
+ARG NODE_VERSION=24
+ARG ALPINE_VERSION=3.21
+ARG PNPM_VERSION=11.5.0
+ARG NGINX_VERSION=1.27
+
+# =============================================================================
+# Stage 1: Builder
+# =============================================================================
+FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS builder
+
+# Build arguments for labels
+ARG VERSION=1.5.1
+ARG BUILD_DATE
+ARG VCS_REF
+
+# OCI Image Labels
+LABEL org.opencontainers.image.title="Scrumooth Frontend Builder" \
+      org.opencontainers.image.description="Builder stage for Scrumooth Frontend" \
+      org.opencontainers.image.version="${VERSION}" \
+      org.opencontainers.image.created="${BUILD_DATE}" \
+      org.opencontainers.image.revision="${VCS_REF}" \
+      org.opencontainers.image.vendor="Scrumooth" \
+      org.opencontainers.image.licenses="Apache-2.0" \
+      org.opencontainers.image.source="https://github.com/orbivort/scrumooth"
+
 WORKDIR /app
 
-# Install pnpm
-RUN corepack enable && corepack prepare pnpm@11.5.0 --activate
+# Install pnpm using corepack (recommended by Node.js)
+RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
 
-# Copy root package files for workspace resolution
+# Copy package files first for better layer caching
+# Order: least frequently changed to most frequently changed
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.json ./
 COPY packages/shared/package.json packages/shared/tsconfig.json ./packages/shared/
 COPY packages/frontend/package.json packages/frontend/tsconfig.json ./packages/frontend/
@@ -14,22 +46,42 @@ COPY packages/frontend/package.json packages/frontend/tsconfig.json ./packages/f
 # Use --shamefully-hoist for flat node_modules structure
 RUN pnpm install --frozen-lockfile --shamefully-hoist
 
-# Explicitly install TypeScript to ensure it's available
-RUN npm install -g typescript@6.0.3
-
-# Copy source
+# Copy source code (most frequently changed)
 COPY packages/shared ./packages/shared
 COPY packages/frontend ./packages/frontend
 
-# Build shared first, then frontend
-RUN cd packages/shared && tsc
-# Run TypeScript strict checks before Vite build
-RUN cd packages/frontend && ../../node_modules/.bin/tsc --noEmit
-# Build frontend with Vite
-RUN cd packages/frontend && ../../node_modules/.bin/vite build
+# Build shared package first (dependency for frontend)
+RUN cd packages/shared && pnpm exec tsc
 
-# Production stage - nginx
-FROM nginx:alpine AS production
+# Run TypeScript strict checks before Vite build
+RUN cd packages/frontend && pnpm exec tsc --noEmit
+
+# Build frontend with Vite
+RUN cd packages/frontend && pnpm exec vite build
+
+# =============================================================================
+# Stage 2: Production
+# =============================================================================
+FROM nginx:${NGINX_VERSION}-alpine AS production
+
+# Build arguments for labels
+ARG VERSION=1.5.1
+ARG BUILD_DATE
+ARG VCS_REF
+
+# OCI Image Labels (Open Container Initiative)
+LABEL org.opencontainers.image.title="Scrumooth Frontend" \
+      org.opencontainers.image.description="Frontend for Scrumooth - Agile Scrum Lifecycle Management System" \
+      org.opencontainers.image.version="${VERSION}" \
+      org.opencontainers.image.created="${BUILD_DATE}" \
+      org.opencontainers.image.revision="${VCS_REF}" \
+      org.opencontainers.image.vendor="Scrumooth" \
+      org.opencontainers.image.licenses="Apache-2.0" \
+      org.opencontainers.image.source="https://github.com/orbivort/scrumooth" \
+      org.opencontainers.image.url="https://scrumooth.com" \
+      org.opencontainers.image.documentation="https://github.com/orbivort/scrumooth/blob/main/docs/README.md" \
+      org.opencontainers.image.authors="Scrumooth Team"
+
 WORKDIR /usr/share/nginx/html
 
 # Copy built frontend with proper ownership
@@ -38,7 +90,8 @@ COPY --from=builder --chown=nginx:nginx /app/packages/frontend/dist .
 # Copy nginx configuration
 COPY packages/frontend/nginx.conf /etc/nginx/nginx.conf
 
-# Create required directories and set permissions
+# Create required directories and set permissions in a single layer
+# This ensures nginx can write logs and cache
 RUN chown -R nginx:nginx /usr/share/nginx/html && \
     chown -R nginx:nginx /var/cache/nginx && \
     chown -R nginx:nginx /var/log/nginx && \
@@ -48,7 +101,13 @@ RUN chown -R nginx:nginx /usr/share/nginx/html && \
 # Switch to non-root user (nginx user exists in nginx:alpine)
 USER nginx
 
+# Expose HTTP port
 EXPOSE 80
 
+# Health check with reasonable defaults
+# Uses wget spider mode to check if nginx is responding
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost/ || exit 1
+
+# nginx runs as foreground process by default in official images
+# No need for dumb-init as nginx handles signals properly

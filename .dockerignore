@@ -3,6 +3,7 @@
 # =============================================================================
 # This file is derived from .gitignore with Docker-specific additions.
 # Key principle: If it's not needed for the build, exclude it!
+# Optimized for minimal build context and faster builds
 # =============================================================================
 
 # -----------------------------------------------------------------------------
@@ -22,6 +23,7 @@ node_modules/
 .pnp.js
 .pnpm-debug.log*
 .pnpm-store/
+.pnpm-lock.yaml.bak
 
 # -----------------------------------------------------------------------------
 # Build Outputs (will be generated during build)
@@ -34,6 +36,8 @@ tsconfig.tsbuildinfo
 .vite/
 *.vite
 .rollup.cache/
+.next/
+.nuxt/
 
 # -----------------------------------------------------------------------------
 # Environment Files (security critical - never include)
@@ -91,6 +95,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
+pnpm-debug.log*
 
 # -----------------------------------------------------------------------------
 # Cache Directories (not needed for builds)
@@ -108,6 +113,7 @@ lerna-debug.log*
 .yarn-integrity
 .pnp.*
 .turbo
+.webpack-cache/
 
 # -----------------------------------------------------------------------------
 # Testing & Coverage (not needed for production builds)
@@ -126,6 +132,7 @@ __tests__/
 cypress/videos/
 cypress/screenshots/
 cypress/downloads/
+.jest-cache/
 
 # Loadtest results
 k6/results/
@@ -153,6 +160,8 @@ k6/results/
 *.der
 *.p12
 *.pfx
+secrets/
+.secrets/
 
 # -----------------------------------------------------------------------------
 # Documentation (not needed in images)
@@ -169,6 +178,7 @@ Dockerfile*
 docker-compose*.yml
 .docker/
 .dockerignore
+.docker-compose/
 
 # -----------------------------------------------------------------------------
 # CI/CD (not needed in images)
@@ -178,6 +188,7 @@ docker-compose*.yml
 .circleci/
 .travis.yml
 Jenkinsfile
+.gitlab-ci.yml
 
 # -----------------------------------------------------------------------------
 # Misc Build Artifacts
@@ -195,7 +206,42 @@ backups/
 storybook-static/
 
 # -----------------------------------------------------------------------------
-# Deployment Scripts (only needed at build time, not runtime)
-# Note: These ARE needed during build, so commented out
+# Kubernetes & Infrastructure (not needed in images)
 # -----------------------------------------------------------------------------
-# scripts/deployment/
+k8s/
+kubernetes/
+helm/
+.terraform/
+*.tfstate
+*.tfstate.*
+
+# -----------------------------------------------------------------------------
+# Scripts (only deployment scripts needed at build time)
+# -----------------------------------------------------------------------------
+# Keep scripts/deployment/ for build process
+scripts/utility/
+scripts/maintenance/
+
+# -----------------------------------------------------------------------------
+# Large Binary Files (should be downloaded or built)
+# -----------------------------------------------------------------------------
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+*.iso
+*.bin
+
+# -----------------------------------------------------------------------------
+# Package Manager Lock Files (keep pnpm-lock.yaml for reproducibility)
+# -----------------------------------------------------------------------------
+# Keep pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# -----------------------------------------------------------------------------
+# TypeScript Project References
+# -----------------------------------------------------------------------------
+tsconfig.tsbuildinfo
+**/tsconfig.tsbuildinfo

@@ -1,10 +1,24 @@
+# =============================================================================
+# Scrumooth - Development Docker Compose Configuration
+# =============================================================================
+# Development environment with hot reload and debugging support
+# =============================================================================
+
 version: '3.8'
 
 services:
+  # ===========================================================================
+  # Backend API Service (Development)
+  # ===========================================================================
   backend:
     build:
       context: .
       dockerfile: packages/backend/Dockerfile.dev
+      args:
+        VERSION: "1.5.1"
+        BUILD_DATE: "${BUILD_DATE:-}"
+        VCS_REF: "${VCS_REF:-}"
+    image: scrumooth-backend:dev
     container_name: scrumooth-backend-dev
     ports:
       - "5000:5000"
@@ -13,18 +27,54 @@ services:
     environment:
       - NODE_ENV=development
     volumes:
+      # Mount source code for hot reload
       - ./packages/backend/src:/app/packages/backend/src
       - ./packages/backend/prisma:/app/packages/backend/prisma
       - ./packages/shared/src:/app/packages/shared/src
+      # Exclude node_modules to use container's installed dependencies
+      - /app/node_modules
+      - /app/packages/backend/node_modules
+      - /app/packages/shared/node_modules
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     networks:
       - scrumooth-network
+    # Security options (less restrictive for development)
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:5000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
 
+  # ===========================================================================
+  # Frontend Service (Development)
+  # ===========================================================================
   frontend:
     build:
       context: .
       dockerfile: packages/frontend/Dockerfile.dev
+      args:
+        VERSION: "1.5.1"
+        BUILD_DATE: "${BUILD_DATE:-}"
+        VCS_REF: "${VCS_REF:-}"
+    image: scrumooth-frontend:dev
     container_name: scrumooth-frontend-dev
     ports:
       - "5173:5173"
@@ -33,14 +83,45 @@ services:
     environment:
       - NODE_ENV=development
     volumes:
+      # Mount source code for hot reload
       - ./packages/frontend/src:/app/packages/frontend/src
       - ./packages/frontend/public:/app/packages/frontend/public
       - ./packages/shared/src:/app/packages/shared/src
+      # Exclude node_modules to use container's installed dependencies
+      - /app/node_modules
+      - /app/packages/frontend/node_modules
+      - /app/packages/shared/node_modules
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     networks:
       - scrumooth-network
+    # Security options (less restrictive for development)
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5173/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
 
+  # ===========================================================================
+  # PostgreSQL Database (Development)
+  # ===========================================================================
   postgres:
     image: postgres:18-alpine
     container_name: scrumooth-postgres-dev
@@ -48,16 +129,50 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=scrumooth_dev
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --locale=en_US.UTF-8
     volumes:
       - scrumooth_postgres_dev_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     networks:
       - scrumooth-network
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d scrumooth_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
 
+# =============================================================================
+# Volumes
+# =============================================================================
 volumes:
   scrumooth_postgres_dev_data:
+    driver: local
 
+# =============================================================================
+# Networks
+# =============================================================================
 networks:
   scrumooth-network:
     driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.29.0.0/16

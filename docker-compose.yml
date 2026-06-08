@@ -1,8 +1,16 @@
+# =============================================================================
+# Scrumooth - Production Docker Compose Configuration
+# =============================================================================
+# Production-ready orchestration with security best practices
+# =============================================================================
+
 version: '3.8'
 
 services:
+  # ===========================================================================
   # Caddy Reverse Proxy with automatic HTTPS
   # Handles TLS termination and SSL certificate management
+  # ===========================================================================
   caddy:
     image: caddy:2-alpine
     container_name: scrumooth-caddy
@@ -14,11 +22,19 @@ services:
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
-      - frontend
-      - backend
+      frontend:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
     restart: unless-stopped
     networks:
       - scrumooth-network
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
     healthcheck:
       test: ["CMD", "caddy", "validate", "--config", "/etc/caddy/Caddyfile"]
       interval: 30s
@@ -39,11 +55,19 @@ services:
           cpus: '0.1'
           memory: 32M
 
+  # ===========================================================================
+  # Backend API Service
+  # ===========================================================================
   backend:
     build:
       context: .
       dockerfile: packages/backend/Dockerfile
       target: production
+      args:
+        VERSION: "1.5.1"
+        BUILD_DATE: "${BUILD_DATE:-}"
+        VCS_REF: "${VCS_REF:-}"
+    image: scrumooth-backend:${VERSION:-latest}
     container_name: scrumooth-backend
     expose:
       - "5000"
@@ -55,6 +79,14 @@ services:
     restart: unless-stopped
     networks:
       - scrumooth-network
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+    # Read-only root filesystem with writable paths
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /app/logs
     healthcheck:
       test: ["CMD", "node", "-e", "require('http').get('http://localhost:5000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
       interval: 30s
@@ -75,11 +107,19 @@ services:
           cpus: '0.25'
           memory: 128M
 
+  # ===========================================================================
+  # Frontend Service (Nginx)
+  # ===========================================================================
   frontend:
     build:
       context: .
       dockerfile: packages/frontend/Dockerfile
       target: production
+      args:
+        VERSION: "1.5.1"
+        BUILD_DATE: "${BUILD_DATE:-}"
+        VCS_REF: "${VCS_REF:-}"
+    image: scrumooth-frontend:${VERSION:-latest}
     container_name: scrumooth-frontend
     expose:
       - "80"
@@ -89,6 +129,15 @@ services:
     restart: unless-stopped
     networks:
       - scrumooth-network
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+    # Read-only root filesystem with writable paths for nginx
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/cache/nginx
+      - /var/run
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1/"]
       interval: 30s
@@ -109,6 +158,9 @@ services:
           cpus: '0.1'
           memory: 32M
 
+  # ===========================================================================
+  # PostgreSQL Database
+  # ===========================================================================
   postgres:
     image: postgres:18-alpine
     container_name: scrumooth-postgres
@@ -125,6 +177,9 @@ services:
     restart: unless-stopped
     networks:
       - scrumooth-network
+    # Security options
+    security_opt:
+      - no-new-privileges:true
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d scrumooth"]
       interval: 10s
@@ -167,11 +222,10 @@ services:
       - "log_min_duration_statement=1000"
       - "-c"
       - "log_line_prefix=%t [%p]: [%l-1] user=%u,db=%d,app=%a,client=%h "
-    # Uncomment to expose database port for external access
-    # ports:
-    #   - "5432:5432"
 
+  # ===========================================================================
   # PgBouncer - Connection Pooling for Production
+  # ===========================================================================
   pgbouncer:
     image: pgbouncer/pgbouncer:1.22.1
     container_name: scrumooth-pgbouncer
@@ -208,6 +262,12 @@ services:
     restart: unless-stopped
     networks:
       - scrumooth-network
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
     healthcheck:
       test: ["CMD", "pg_isready", "-h", "localhost", "-p", "6432"]
       interval: 10s
@@ -228,8 +288,10 @@ services:
           cpus: '0.1'
           memory: 32M
 
-  # Automated SQL backup service
+  # ===========================================================================
+  # Automated SQL Backup Service
   # Creates SQL dumps of the database daily at 2 AM
+  # ===========================================================================
   backup:
     image: postgres:18-alpine
     container_name: scrumooth-backup
@@ -253,14 +315,19 @@ services:
     networks:
       - scrumooth-network
     restart: unless-stopped
+    # Security options
+    security_opt:
+      - no-new-privileges:true
     logging:
       driver: "json-file"
       options:
         max-size: "10m"
         max-file: "3"
 
-  # Automated volume backup service
+  # ===========================================================================
+  # Automated Volume Backup Service
   # Creates file-level backups of the PostgreSQL data volume weekly on Sundays at 3 AM
+  # ===========================================================================
   volume-backup:
     image: docker:cli
     container_name: scrumooth-volume-backup
@@ -281,12 +348,18 @@ services:
     networks:
       - scrumooth-network
     restart: unless-stopped
+    # Security options
+    security_opt:
+      - no-new-privileges:true
     logging:
       driver: "json-file"
       options:
         max-size: "10m"
         max-file: "3"
 
+# =============================================================================
+# Volumes
+# =============================================================================
 volumes:
   scrumooth_postgres_data:
     driver: local
@@ -295,6 +368,13 @@ volumes:
   caddy_config:
     driver: local
 
+# =============================================================================
+# Networks
+# =============================================================================
 networks:
   scrumooth-network:
     driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.0.0/16
