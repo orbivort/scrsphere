@@ -80,8 +80,36 @@ General utility scripts for development and code quality.
 | Script                        | Purpose                             | Usage                                                       |
 | ----------------------------- | ----------------------------------- | ----------------------------------------------------------- |
 | `check-package-manager.js`    | Enforces pnpm usage                 | Auto-run via npm pre-scripts                                |
+| `create-branch.js`            | Create git branch with validation   | `pnpm run branch:create feat/user-dashboard`                |
 | `eslint-plugin-icon-rules.js` | ESLint plugin for icon usage        | Integrated in ESLint config                                 |
 | `generate-icon-types.ts`      | Generate TypeScript types for icons | `pnpm --filter=@scrumooth/frontend run generate:icon-types` |
+| `validate-branch.js`          | Validate git branch names           | `pnpm run branch:validate [branch-name]`                    |
+
+**Branch Name Validation:**
+
+Git branch names must follow the conventional pattern: `<type>/<description>`
+
+Valid types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`
+
+```bash
+# Validate current branch
+pnpm run branch:validate
+
+# Validate specific branch name
+pnpm run branch:validate feat/user-dashboard
+
+# Create new branch with validation
+pnpm run branch:create feat/user-dashboard
+pnpm run branch:create fix login validation  # Converts to fix/login-validation
+```
+
+**Examples:**
+
+- ✅ `feat/user-dashboard`
+- ✅ `fix/login-validation`
+- ✅ `chore/update-dependencies`
+- ❌ `my-feature` (missing type prefix)
+- ❌ `feature/user-dashboard` (invalid type)
 
 ## Naming Conventions
 
