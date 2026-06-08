@@ -6,8 +6,7 @@
 # =============================================================================
 
 # Build arguments for version pinning and reproducibility
-ARG NODE_VERSION=24
-ARG ALPINE_VERSION=3.21
+ARG NODE_VERSION=24.14.1
 ARG PNPM_VERSION=11.5.0
 ARG TYPESCRIPT_VERSION=6.0.3
 ARG PRISMA_VERSION=7.7.0
@@ -15,12 +14,14 @@ ARG PRISMA_VERSION=7.7.0
 # =============================================================================
 # Stage 1: Builder
 # =============================================================================
-FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS builder
+FROM debian:bookworm-slim AS builder
 
 # Build arguments for labels
 ARG VERSION=1.5.1
 ARG BUILD_DATE
 ARG VCS_REF
+ARG NODE_VERSION
+ARG PNPM_VERSION
 
 # OCI Image Labels
 LABEL org.opencontainers.image.title="Scrumooth Backend Builder" \
@@ -34,9 +35,26 @@ LABEL org.opencontainers.image.title="Scrumooth Backend Builder" \
 
 WORKDIR /app
 
-# Install build dependencies in a single layer
-# dumb-init for proper signal handling
-RUN apk add --no-cache dumb-init~=1.2.5
+# Install build dependencies and Node.js
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    dumb-init \
+    curl \
+    ca-certificates \
+    xz-utils \
+    && rm -rf /var/lib/apt/lists/*
+
+# Download and install Node.js from official binaries
+ARG NODE_VERSION
+RUN curl -fsSL https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz -o /tmp/node.tar.xz && \
+    tar -xJf /tmp/node.tar.xz -C /usr/local --strip-components=1 && \
+    rm -f /tmp/node.tar.xz && \
+    ls -la /usr/local/bin/node && \
+    /usr/local/bin/node --version && \
+    /usr/local/bin/npm --version
+
+# Add Node.js to PATH
+ENV PATH="/usr/local/bin:${PATH}" \
+    CI=true
 
 # Install pnpm using corepack (recommended by Node.js)
 RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
@@ -76,12 +94,14 @@ RUN cd packages/backend/dist && node /tmp/fix-imports.js
 # =============================================================================
 # Stage 2: Production
 # =============================================================================
-FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS production
+FROM debian:bookworm-slim AS production
 
 # Build arguments for labels
 ARG VERSION=1.5.1
 ARG BUILD_DATE
 ARG VCS_REF
+ARG NODE_VERSION
+ARG PNPM_VERSION
 
 # OCI Image Labels (Open Container Initiative)
 LABEL org.opencontainers.image.title="Scrumooth Backend" \
@@ -97,12 +117,28 @@ LABEL org.opencontainers.image.title="Scrumooth Backend" \
       org.opencontainers.image.authors="Scrumooth Team"
 
 # Security: Create non-root user and group with fixed IDs
-RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 --ingroup nodejs --home /home/scrumooth scrumooth
+RUN groupadd --system --gid 1001 nodejs && \
+    useradd --system --uid 1001 --gid nodejs --home-dir /home/scrumooth --create-home scrumooth
 
-# Install runtime dependencies in a single layer
-# dumb-init for proper signal handling (PID 1 zombie reaping)
-RUN apk add --no-cache dumb-init~=1.2.5
+# Install runtime dependencies and Node.js
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    dumb-init \
+    curl \
+    ca-certificates \
+    xz-utils \
+    && rm -rf /var/lib/apt/lists/*
+
+# Download and install Node.js from official binaries
+ARG NODE_VERSION
+RUN curl -fsSL https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz -o /tmp/node.tar.xz && \
+    tar -xJf /tmp/node.tar.xz -C /usr/local --strip-components=1 && \
+    rm -f /tmp/node.tar.xz && \
+    ls -la /usr/local/bin/node && \
+    /usr/local/bin/node --version && \
+    /usr/local/bin/npm --version
+
+# Add Node.js to PATH
+ENV PATH="/usr/local/bin:${PATH}"
 
 WORKDIR /app
 
@@ -127,6 +163,9 @@ COPY --from=builder --chown=scrumooth:nodejs /app/packages/shared/dist /app/node
 # Copy backend package.json
 COPY --from=builder --chown=scrumooth:nodejs /app/packages/backend/package.json ./package.json
 
+# Install pnpm for Prisma generate
+RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
+
 # Generate Prisma client in production stage
 # Schema is already copied, this generates the client with production config
 ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
@@ -134,7 +173,8 @@ RUN pnpm exec prisma generate
 
 # Set production environment variables
 ENV NODE_ENV=production \
-    PORT=5000
+    PORT=5000 \
+    CI=true
 
 # Switch to non-root user for security
 USER scrumooth

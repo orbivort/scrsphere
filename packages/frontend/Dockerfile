@@ -6,20 +6,21 @@
 # =============================================================================
 
 # Build arguments for version pinning and reproducibility
-ARG NODE_VERSION=24
-ARG ALPINE_VERSION=3.21
+ARG NODE_VERSION=24.14.1
 ARG PNPM_VERSION=11.5.0
 ARG NGINX_VERSION=1.27
 
 # =============================================================================
 # Stage 1: Builder
 # =============================================================================
-FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS builder
+FROM debian:bookworm-slim AS builder
 
 # Build arguments for labels
 ARG VERSION=1.5.1
 ARG BUILD_DATE
 ARG VCS_REF
+ARG NODE_VERSION
+ARG PNPM_VERSION
 
 # OCI Image Labels
 LABEL org.opencontainers.image.title="Scrumooth Frontend Builder" \
@@ -32,6 +33,26 @@ LABEL org.opencontainers.image.title="Scrumooth Frontend Builder" \
       org.opencontainers.image.source="https://github.com/orbivort/scrumooth"
 
 WORKDIR /app
+
+# Install build dependencies and Node.js
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    ca-certificates \
+    xz-utils \
+    && rm -rf /var/lib/apt/lists/*
+
+# Download and install Node.js from official binaries
+ARG NODE_VERSION
+RUN curl -fsSL https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz -o /tmp/node.tar.xz && \
+    tar -xJf /tmp/node.tar.xz -C /usr/local --strip-components=1 && \
+    rm -f /tmp/node.tar.xz && \
+    ls -la /usr/local/bin/node && \
+    /usr/local/bin/node --version && \
+    /usr/local/bin/npm --version
+
+# Add Node.js to PATH
+ENV PATH="/usr/local/bin:${PATH}" \
+    CI=true
 
 # Install pnpm using corepack (recommended by Node.js)
 RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate

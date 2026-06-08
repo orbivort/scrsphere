@@ -18,7 +18,7 @@ services:
         VERSION: "1.5.1"
         BUILD_DATE: "${BUILD_DATE:-}"
         VCS_REF: "${VCS_REF:-}"
-    image: scrumooth-backend:dev
+    # image tag removed - forces local build only
     container_name: scrumooth-backend-dev
     ports:
       - "5000:5000"
@@ -26,6 +26,8 @@ services:
       - ./packages/backend/.env
     environment:
       - NODE_ENV=development
+      - PORT=5000
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/scrumooth_dev
     volumes:
       # Mount source code for hot reload
       - ./packages/backend/src:/app/packages/backend/src
@@ -74,7 +76,7 @@ services:
         VERSION: "1.5.1"
         BUILD_DATE: "${BUILD_DATE:-}"
         VCS_REF: "${VCS_REF:-}"
-    image: scrumooth-frontend:dev
+    # image tag removed - forces local build only
     container_name: scrumooth-frontend-dev
     ports:
       - "5173:5173"
@@ -82,6 +84,7 @@ services:
       - ./packages/frontend/.env
     environment:
       - NODE_ENV=development
+      - VITE_API_URL=http://localhost:5000
     volumes:
       # Mount source code for hot reload
       - ./packages/frontend/src:/app/packages/frontend/src
@@ -113,11 +116,11 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.5'
-          memory: 256M
+          cpus: '1.0'
+          memory: 1G
         reservations:
-          cpus: '0.1'
-          memory: 64M
+          cpus: '0.25'
+          memory: 256M
 
   # ===========================================================================
   # PostgreSQL Database (Development)
@@ -131,7 +134,7 @@ services:
       - POSTGRES_DB=scrumooth_dev
       - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --locale=en_US.UTF-8
     volumes:
-      - scrumooth_postgres_dev_data:/var/lib/postgresql/data
+      - scrumooth_postgres_dev_data:/var/lib/postgresql
     ports:
       - "5432:5432"
     networks:

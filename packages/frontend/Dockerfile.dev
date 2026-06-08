@@ -6,16 +6,17 @@
 # =============================================================================
 
 # Build arguments for version pinning
-ARG NODE_VERSION=24
-ARG ALPINE_VERSION=3.21
+ARG NODE_VERSION=24.14.1
 ARG PNPM_VERSION=11.5.0
 
-FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION}
+FROM debian:bookworm-slim
 
 # Build arguments for labels
 ARG VERSION=1.5.1
 ARG BUILD_DATE
 ARG VCS_REF
+ARG NODE_VERSION
+ARG PNPM_VERSION
 
 # OCI Image Labels
 LABEL org.opencontainers.image.title="Scrumooth Frontend Development" \
@@ -29,17 +30,34 @@ LABEL org.opencontainers.image.title="Scrumooth Frontend Development" \
 
 WORKDIR /app
 
-# Install development dependencies in a single layer
-RUN apk add --no-cache \
-    dumb-init~=1.2.5 \
-    git~=2
+# Install build dependencies and Node.js
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    dumb-init \
+    git \
+    curl \
+    ca-certificates \
+    xz-utils \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install pnpm using corepack (recommended by Node.js)
+# Download and install Node.js from official binaries
+ARG NODE_VERSION
+RUN curl -fsSL https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz -o /tmp/node.tar.xz && \
+    tar -xJf /tmp/node.tar.xz -C /usr/local --strip-components=1 && \
+    rm -f /tmp/node.tar.xz && \
+    ls -la /usr/local/bin/node && \
+    /usr/local/bin/node --version && \
+    /usr/local/bin/npm --version
+
+# Add Node.js to PATH
+ENV PATH="/usr/local/bin:${PATH}" \
+    CI=true
+
+# Install pnpm using corepack
 RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
 
 # Security: Create non-root user and group with fixed IDs
-RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 --ingroup nodejs --home /home/scrumooth scrumooth
+RUN groupadd --system --gid 1001 nodejs && \
+    useradd --system --uid 1001 --gid nodejs --home-dir /home/scrumooth --create-home scrumooth
 
 # Copy package files first for better layer caching
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.json ./
@@ -61,7 +79,8 @@ RUN chown -R scrumooth:nodejs /app
 
 # Set development environment
 ENV NODE_ENV=development \
-    PORT=5173
+    PORT=5173 \
+    CI=true
 
 # Switch to non-root user
 USER scrumooth
@@ -71,7 +90,7 @@ EXPOSE 5173
 
 # Health check for development
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:5173/ || exit 1
+  CMD curl -f http://localhost:5173/ || exit 1
 
 # Use dumb-init as PID 1 for proper signal handling
 ENTRYPOINT ["dumb-init", "--"]
