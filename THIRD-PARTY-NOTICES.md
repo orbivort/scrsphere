@@ -49,7 +49,7 @@ This document contains the license information for third-party packages used in 
 | Dependency Name                  | Version | License Type | Copyright Holder      | Source/Repository URL                                  |
 | -------------------------------- | ------- | ------------ | --------------------- | ------------------------------------------------------ |
 | @eslint/js                       | 10.0.1  | MIT          | OpenJS Foundation     | https://github.com/eslint/eslint                       |
-| @faker-js/faker                  | 9.0.0   | MIT          | FakerJS               | https://github.com/faker-js/faker                      |
+| @faker-js/faker                  | 10.4.0  | MIT          | FakerJS               | https://github.com/faker-js/faker                      |
 | @types/bcrypt                    | 6.0.0   | MIT          | DefinitelyTyped       | https://github.com/DefinitelyTyped/DefinitelyTyped     |
 | @types/compression               | 1.8.1   | MIT          | DefinitelyTyped       | https://github.com/DefinitelyTyped/DefinitelyTyped     |
 | @types/cookie-parser             | 1.4.10  | MIT          | DefinitelyTyped       | https://github.com/DefinitelyTyped/DefinitelyTyped     |
@@ -64,7 +64,7 @@ This document contains the license information for third-party packages used in 
 | @typescript-eslint/eslint-plugin | 8.60.1  | MIT          | TypeScript ESLint     | https://github.com/typescript-eslint/typescript-eslint |
 | @typescript-eslint/parser        | 8.60.1  | MIT          | TypeScript ESLint     | https://github.com/typescript-eslint/typescript-eslint |
 | @vitest/coverage-v8              | 4.1.8   | MIT          | Vladimir Sheremet     | https://github.com/vitest-dev/vitest                   |
-| cross-env                        | 7.0.3   | MIT          | Kent C. Dodds         | https://github.com/kentcdodds/cross-env                |
+| cross-env                        | 10.1.0  | MIT          | Kent C. Dodds         | https://github.com/kentcdodds/cross-env                |
 | eslint                           | 10.4.1  | MIT          | OpenJS Foundation     | https://github.com/eslint/eslint                       |
 | eslint-config-prettier           | 10.1.8  | MIT          | Simon Lydell          | https://github.com/prettier/eslint-config-prettier     |
 | eslint-plugin-unicorn            | 64.0.0  | MIT          | Sindre Sorhus         | https://github.com/sindresorhus/eslint-plugin-unicorn  |
@@ -114,7 +114,7 @@ This document contains the license information for third-party packages used in 
 | @vitejs/plugin-react        | 6.0.2   | MIT          | Vite                       | https://github.com/vitejs/vite-plugin-react              |
 | @vitest/coverage-v8         | 4.1.8   | MIT          | Vladimir Sheremet          | https://github.com/vitest-dev/vitest                     |
 | @vitest/ui                  | 4.1.8   | MIT          | Vladimir Sheremet          | https://github.com/vitest-dev/vitest                     |
-| cross-env                   | 7.0.3   | MIT          | Kent C. Dodds              | https://github.com/kentcdodds/cross-env                  |
+| cross-env                   | 10.1.0  | MIT          | Kent C. Dodds              | https://github.com/kentcdodds/cross-env                  |
 | eslint                      | 10.4.1  | MIT          | OpenJS Foundation          | https://github.com/eslint/eslint                         |
 | eslint-config-prettier      | 10.1.8  | MIT          | Simon Lydell               | https://github.com/prettier/eslint-config-prettier       |
 | eslint-plugin-react         | 7.37.5  | MIT          | Yannick Croissant          | https://github.com/jsx-eslint/eslint-plugin-react        |
