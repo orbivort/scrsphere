@@ -62,12 +62,25 @@ jobs:
               - 'tsconfig.json'
               - 'eslint.config.js'
 
+  validate-branch-name:
+    name: Validate Branch Name
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    if: github.event_name == 'pull_request'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Validate branch name
+        run: node scripts/utility/validate-branch.js "${{ github.head_ref }}"
+
   lint-and-typecheck:
     name: Lint & TypeCheck
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    needs: detect-changes
-    if: needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.frontend == 'true' || needs.detect-changes.outputs.shared == 'true'
+    needs: [detect-changes, validate-branch-name]
+    if: always() && needs.validate-branch-name.result != 'failure' && (needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.frontend == 'true' || needs.detect-changes.outputs.shared == 'true')
     
     steps:
       - name: Checkout repository

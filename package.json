@@ -62,6 +62,8 @@
     "pretypecheck": "node scripts/utility/check-package-manager.js",
     "typecheck": "tsc -b",
     "prepare": "husky",
+    "branch:validate": "node scripts/utility/validate-branch.js",
+    "branch:create": "node scripts/utility/create-branch.js",
     "predb:generate": "node scripts/utility/check-package-manager.js",
     "db:generate": "pnpm --filter=@scrumooth/backend run db:generate",
     "predb:push": "node scripts/utility/check-package-manager.js",
@@ -88,6 +90,8 @@
     "loadtest:generate-data": "cd packages/backend && pnpm run loadtest:data"
   },
   "devDependencies": {
+    "@commitlint/cli": "^21.0.2",
+    "@commitlint/config-conventional": "^21.0.2",
     "@eslint/js": "catalog:",
     "@typescript-eslint/eslint-plugin": "catalog:",
     "@typescript-eslint/parser": "catalog:",

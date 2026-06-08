@@ -135,29 +135,31 @@ This document contains the license information for third-party packages used in 
 
 ## Root Workspace Dependencies
 
-| Dependency Name                           | Version | License Type | Copyright Holder      | Source/Repository URL                                                 |
-| ----------------------------------------- | ------- | ------------ | --------------------- | --------------------------------------------------------------------- |
-| @eslint/js                                | 10.0.1  | MIT          | OpenJS Foundation     | https://github.com/eslint/eslint                                      |
-| @typescript-eslint/eslint-plugin          | 8.60.1  | MIT          | TypeScript ESLint     | https://github.com/typescript-eslint/typescript-eslint                |
-| @typescript-eslint/parser                 | 8.60.1  | MIT          | TypeScript ESLint     | https://github.com/typescript-eslint/typescript-eslint                |
-| concurrently                              | 10.0.3  | MIT          | Kimmo Brunfeldt       | https://github.com/open-cli-tools/concurrently                        |
-| dotenv-cli                                | 11.0.0  | MIT          | Scott Donaldson       | https://github.com/entropitor/dotenv-cli                              |
-| eslint                                    | 10.4.1  | MIT          | OpenJS Foundation     | https://github.com/eslint/eslint                                      |
-| eslint-config-prettier                    | 10.1.8  | MIT          | Simon Lydell          | https://github.com/prettier/eslint-config-prettier                    |
-| eslint-plugin-import-x                    | 4.16.2  | MIT          | un-ts                 | https://github.com/un-ts/eslint-plugin-import-x                       |
-| eslint-plugin-react                       | 7.37.5  | MIT          | Yannick Croissant     | https://github.com/jsx-eslint/eslint-plugin-react                     |
-| eslint-plugin-react-hooks                 | 7.1.1   | MIT          | Meta Platforms, Inc.  | https://github.com/facebook/react                                     |
-| eslint-plugin-react-refresh               | 0.5.2   | MIT          | Arnaud Barré          | https://github.com/ArnaudBarre/eslint-plugin-react-refresh            |
-| globals                                   | 17.6.0  | MIT          | Sindre Sorhus         | https://github.com/sindresorhus/globals                               |
-| husky                                     | 9.1.7   | MIT          | Typicode              | https://github.com/typicode/husky                                     |
-| lint-staged                               | 17.0.7  | MIT          | Andrey Okonetchnikov  | https://github.com/lint-staged/lint-staged                            |
-| prettier                                  | 3.8.3   | MIT          | Prettier              | https://github.com/prettier/prettier                                  |
-| rimraf                                    | 6.1.3   | MIT          | Isaac Z. Schlueter    | https://github.com/isaacs/rimraf                                      |
-| stylelint                                 | 17.13.0 | MIT          | stylelint             | https://github.com/stylelint/stylelint                                |
-| stylelint-config-standard                 | 40.0.0  | MIT          | stylelint             | https://github.com/stylelint/stylelint-config-standard                |
-| stylelint-no-unsupported-browser-features | 8.1.1   | MIT          | Cédric Delpoux        | https://github.com/RJWadley/stylelint-no-unsupported-browser-features |
-| typescript                                | 6.0.3   | Apache-2.0   | Microsoft Corporation | https://github.com/microsoft/TypeScript                               |
-| typescript-eslint                         | 8.60.1  | MIT          | TypeScript ESLint     | https://github.com/typescript-eslint/typescript-eslint                |
+| Dependency Name                           | Version | License Type | Copyright Holder       | Source/Repository URL                                                 |
+| ----------------------------------------- | ------- | ------------ | ---------------------- | --------------------------------------------------------------------- |
+| @commitlint/cli                           | 21.0.2  | MIT          | conventional-changelog | https://github.com/conventional-changelog/commitlint                  |
+| @commitlint/config-conventional           | 21.0.2  | MIT          | conventional-changelog | https://github.com/conventional-changelog/commitlint                  |
+| @eslint/js                                | 10.0.1  | MIT          | OpenJS Foundation      | https://github.com/eslint/eslint                                      |
+| @typescript-eslint/eslint-plugin          | 8.60.1  | MIT          | TypeScript ESLint      | https://github.com/typescript-eslint/typescript-eslint                |
+| @typescript-eslint/parser                 | 8.60.1  | MIT          | TypeScript ESLint      | https://github.com/typescript-eslint/typescript-eslint                |
+| concurrently                              | 10.0.3  | MIT          | Kimmo Brunfeldt        | https://github.com/open-cli-tools/concurrently                        |
+| dotenv-cli                                | 11.0.0  | MIT          | Scott Donaldson        | https://github.com/entropitor/dotenv-cli                              |
+| eslint                                    | 10.4.1  | MIT          | OpenJS Foundation      | https://github.com/eslint/eslint                                      |
+| eslint-config-prettier                    | 10.1.8  | MIT          | Simon Lydell           | https://github.com/prettier/eslint-config-prettier                    |
+| eslint-plugin-import-x                    | 4.16.2  | MIT          | un-ts                  | https://github.com/un-ts/eslint-plugin-import-x                       |
+| eslint-plugin-react                       | 7.37.5  | MIT          | Yannick Croissant      | https://github.com/jsx-eslint/eslint-plugin-react                     |
+| eslint-plugin-react-hooks                 | 7.1.1   | MIT          | Meta Platforms, Inc.   | https://github.com/facebook/react                                     |
+| eslint-plugin-react-refresh               | 0.5.2   | MIT          | Arnaud Barré           | https://github.com/ArnaudBarre/eslint-plugin-react-refresh            |
+| globals                                   | 17.6.0  | MIT          | Sindre Sorhus          | https://github.com/sindresorhus/globals                               |
+| husky                                     | 9.1.7   | MIT          | Typicode               | https://github.com/typicode/husky                                     |
+| lint-staged                               | 17.0.7  | MIT          | Andrey Okonetchnikov   | https://github.com/lint-staged/lint-staged                            |
+| prettier                                  | 3.8.3   | MIT          | Prettier               | https://github.com/prettier/prettier                                  |
+| rimraf                                    | 6.1.3   | MIT          | Isaac Z. Schlueter     | https://github.com/isaacs/rimraf                                      |
+| stylelint                                 | 17.13.0 | MIT          | stylelint              | https://github.com/stylelint/stylelint                                |
+| stylelint-config-standard                 | 40.0.0  | MIT          | stylelint              | https://github.com/stylelint/stylelint-config-standard                |
+| stylelint-no-unsupported-browser-features | 8.1.1   | MIT          | Cédric Delpoux         | https://github.com/RJWadley/stylelint-no-unsupported-browser-features |
+| typescript                                | 6.0.3   | Apache-2.0   | Microsoft Corporation  | https://github.com/microsoft/TypeScript                               |
+| typescript-eslint                         | 8.60.1  | MIT          | TypeScript ESLint      | https://github.com/typescript-eslint/typescript-eslint                |
 
 ---
 
@@ -273,10 +275,10 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 | License Type | Package Count | Percentage |
 | ------------ | ------------- | ---------- |
-| MIT          | 70            | 85.4%      |
+| MIT          | 72            | 87.8%      |
 | Apache-2.0   | 7             | 8.5%       |
 | BSD-2-Clause | 3             | 3.7%       |
-| ISC          | 2             | 2.4%       |
+| ISC          | 0             | 0.0%       |
 
 ---
 
@@ -302,5 +304,5 @@ This document should be updated whenever:
 
 ---
 
-**Document Version:** 1.7  
+**Document Version:** 1.8  
 **Generated:** June 8, 2026
