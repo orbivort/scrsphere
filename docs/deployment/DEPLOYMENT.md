@@ -97,6 +97,34 @@ Before deploying Scrumooth Docker images, ensure you have:
 
 ## Quick Start
 
+### Option A: One-Command Deployment (Recommended)
+
+For the fastest deployment experience, use the provided deployment script:
+
+```bash
+# Clone the repository (or download just the script)
+git clone https://github.com/orbivort/scrumooth.git
+cd scrumooth
+
+# Run the deployment script
+./scripts/deployment/deploy.sh                    # Deploy latest to localhost
+./scripts/deployment/deploy.sh 1.0.0              # Deploy version 1.0.0 to localhost
+./scripts/deployment/deploy.sh 1.0.0 example.com  # Deploy version 1.0.0 to example.com
+```
+
+The script will:
+
+1. Pull Docker images from GHCR
+2. Generate secure configuration (JWT secrets, database passwords)
+3. Validate configuration before deployment
+4. Create Docker Compose file and Caddyfile
+5. Deploy and verify all services
+6. Display access URL and next steps
+
+> **Note**: The script is designed for Linux/macOS. Windows users should run it in WSL or Git Bash.
+
+### Option B: Manual Deployment
+
 ### 1. Authenticate with GHCR
 
 ```bash
@@ -1745,7 +1773,543 @@ networks:
 
 ---
 
-**Last Updated**: 2026-05-25
+## Rolling Back to a Previous Version
+
+If a deployment fails or introduces issues, you can quickly rollback to a previous version.
+
+### Immediate Rollback
+
+1. **Stop current deployment**:
+
+```bash
+docker compose down
+```
+
+2. **Pull previous version images**:
+
+```bash
+# Replace 1.0.0 with the version you want to rollback to
+docker pull ghcr.io/orbivort/scrumooth/backend:1.0.0
+docker pull ghcr.io/orbivort/scrumooth/frontend:1.0.0
+```
+
+3. **Update docker-compose.yml with previous version**:
+
+```yaml
+services:
+  backend:
+    image: ghcr.io/orbivort/scrumooth/backend:1.0.0
+    # ... rest of config
+
+  frontend:
+    image: ghcr.io/orbivort/scrumooth/frontend:1.0.0
+    # ... rest of config
+```
+
+4. **Start services**:
+
+```bash
+docker compose up -d
+```
+
+5. **Verify rollback**:
+
+```bash
+curl https://your-domain.com/health
+docker compose logs backend
+```
+
+### Database Migration Rollback
+
+If the deployment included database migrations that need to be rolled back:
+
+1. **Check migration status**:
+
+```bash
+docker compose exec backend npx prisma migrate status
+```
+
+2. **Rollback specific migration**:
+
+```bash
+# List applied migrations
+docker compose exec backend npx prisma migrate status
+
+# Mark migration as rolled back (manual intervention required)
+docker compose exec backend npx prisma migrate resolve --rolled-back <migration_name>
+```
+
+3. **Restore from backup** (if needed):
+
+```bash
+# List available backups
+ls -la backups/
+
+# Restore from backup
+docker compose exec -T postgres psql -U scrumooth -d scrumooth < backups/scrumooth-20260525.sql
+```
+
+### Rollback Best Practices
+
+- **Always backup before upgrading**: Create a database backup before applying new migrations
+- **Test rollback procedure**: Practice rollback in staging before production
+- **Monitor after rollback**: Verify all services are healthy and users can access the application
+- **Document issues**: Record what went wrong to prevent future occurrences
+- **Version pinning**: Always use specific version tags (e.g., `1.0.0`) instead of `latest` for easier rollback
+
+---
+
+## Upgrading Between Versions
+
+### Minor/Patch Updates (e.g., 1.0.0 → 1.0.1)
+
+Minor and patch updates typically include bug fixes and small improvements without breaking changes.
+
+1. **Review changelog**:
+
+```bash
+# Check CHANGELOG.md for changes
+curl -s https://raw.githubusercontent.com/orbivort/scrumooth/main/CHANGELOG.md | grep -A 20 "## \[1.0.1\]"
+```
+
+2. **Pull new images**:
+
+```bash
+docker pull ghcr.io/orbivort/scrumooth/backend:1.0.1
+docker pull ghcr.io/orbivort/scrumooth/frontend:1.0.1
+```
+
+3. **Update docker-compose.yml**:
+
+```yaml
+services:
+  backend:
+    image: ghcr.io/orbivort/scrumooth/backend:1.0.1
+  frontend:
+    image: ghcr.io/orbivort/scrumooth/frontend:1.0.1
+```
+
+4. **Deploy with zero downtime**:
+
+```bash
+# Backend
+docker compose up -d --no-deps backend
+
+# Wait for backend to be healthy
+sleep 30
+
+# Frontend
+docker compose up -d --no-deps frontend
+```
+
+5. **Verify**:
+
+```bash
+curl https://your-domain.com/health
+docker compose logs -f backend
+```
+
+### Major Updates (e.g., 1.x.x → 2.0.0)
+
+Major updates may include breaking changes. **Always test in staging first**.
+
+1. **Read migration guide**:
+   - Check CHANGELOG.md for breaking changes
+   - Review migration notes in the release documentation
+   - Check for deprecated features
+
+2. **Backup everything**:
+
+```bash
+# Database backup
+docker exec scrumooth-postgres pg_dump -U scrumooth scrumooth > backup-before-v2.sql
+
+# Volume backup
+docker run --rm -v scrumooth_postgres_data:/data -v $(pwd)/backups:/backup alpine tar czf /backup/postgres-data-$(date +%Y%m%d).tar.gz /data
+```
+
+3. **Update environment variables** (if required):
+
+```bash
+# Check .env.production.example for new required variables
+curl -s https://raw.githubusercontent.com/orbivort/scrumooth/v2.0.0/packages/backend/.env.production.example > .env.production.example.new
+
+# Compare and merge changes
+diff .env.production.example .env.production.example.new
+```
+
+4. **Test in staging**:
+   - Deploy to staging environment first
+   - Run full test suite
+   - Verify all features work correctly
+   - Check performance metrics
+
+5. **Schedule production upgrade**:
+   - Choose low-traffic time window
+   - Notify users of planned maintenance
+   - Have rollback plan ready
+
+6. **Execute upgrade**:
+
+```bash
+# Pull new images
+docker pull ghcr.io/orbivort/scrumooth/backend:2.0.0
+docker pull ghcr.io/orbivort/scrumooth/frontend:2.0.0
+
+# Stop services
+docker compose down
+
+# Start with new version
+docker compose up -d
+
+# Monitor logs
+docker compose logs -f
+```
+
+7. **Post-upgrade verification**:
+   - Verify health checks pass
+   - Test critical user flows
+   - Check error rates in logs
+   - Monitor performance metrics
+
+### Database Migration Handling
+
+When upgrading, database migrations are applied automatically by the entrypoint script. However, you may need to:
+
+1. **Check pending migrations**:
+
+```bash
+docker compose exec backend npx prisma migrate status
+```
+
+2. **Preview migration SQL**:
+
+```bash
+# View migration SQL without applying
+docker compose exec backend npx prisma migrate diff --from-schema-datasource prisma/schema.prisma --to-schema-datamodel prisma/schema.prisma --script
+```
+
+3. **Manual migration** (if automatic fails):
+
+```bash
+docker compose exec backend npx prisma migrate deploy
+```
+
+---
+
+## Network Security Best Practices
+
+### Docker Network Isolation
+
+For enhanced security, isolate services using separate Docker networks:
+
+```yaml
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+    internal: true # No external access
+  database:
+    driver: bridge
+    internal: true # No external access
+
+services:
+  caddy:
+    networks:
+      - frontend
+
+  frontend:
+    networks:
+      - frontend
+      - backend
+
+  backend:
+    networks:
+      - backend
+      - database
+
+  postgres:
+    networks:
+      - database
+```
+
+This ensures:
+
+- Frontend can only communicate with backend
+- Backend can only communicate with database
+- Database has no external network access
+
+### Kubernetes Network Policies
+
+If deploying to Kubernetes, use NetworkPolicies for fine-grained control:
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: backend-network-policy
+  namespace: scrumooth
+spec:
+  podSelector:
+    matchLabels:
+      app: scrumooth-backend
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Allow traffic from frontend only
+    - from:
+        - podSelector:
+            matchLabels:
+              app: scrumooth-frontend
+      ports:
+        - port: 5010
+          protocol: TCP
+  egress:
+    # Allow traffic to database only
+    - to:
+        - podSelector:
+            matchLabels:
+              app: postgres
+      ports:
+        - port: 5432
+          protocol: TCP
+    # Allow DNS resolution
+    - to:
+        - namespaceSelector: {}
+      ports:
+        - port: 53
+          protocol: UDP
+```
+
+### Firewall Rules
+
+For production deployments, configure firewall rules:
+
+```bash
+# Allow only HTTP/HTTPS from external
+ufw allow 80/tcp
+ufw allow 443/tcp
+
+# Block direct database access
+ufw deny 5432/tcp
+
+# Enable firewall
+ufw enable
+```
+
+### Security Checklist
+
+- [ ] Use internal networks for database and backend
+- [ ] Block direct database access from external IPs
+- [ ] Enable TLS/SSL for all external communication
+- [ ] Use secrets management (Docker secrets, Kubernetes Secrets)
+- [ ] Regularly update base images for security patches
+- [ ] Scan images for vulnerabilities (Trivy, Snyk)
+- [ ] Enable audit logging for database access
+- [ ] Use read-only root filesystem where possible
+
+---
+
+## Secrets Rotation
+
+Regularly rotating secrets is critical for security. Follow this schedule:
+
+| Secret                  | Rotation Frequency           | Impact                     | Rotation Procedure                            |
+| ----------------------- | ---------------------------- | -------------------------- | --------------------------------------------- |
+| `JWT_SECRET`            | Every 90 days                | All users must re-login    | Generate new, update env, restart backend     |
+| `DATABASE_URL` password | Every 90 days                | Brief downtime             | Update in PostgreSQL, update env, restart     |
+| `SMTP_PASS`             | When compromised or annually | Email delivery interrupted | Update in SMTP provider, update env, restart  |
+| `SENDGRID_API_KEY`      | When compromised or annually | Email delivery interrupted | Generate new in SendGrid, update env, restart |
+
+### JWT Secret Rotation
+
+1. **Generate new secret**:
+
+```bash
+NEW_JWT_SECRET=$(openssl rand -hex 64)
+echo "New JWT_SECRET: $NEW_JWT_SECRET"
+```
+
+2. **Update environment file**:
+
+```bash
+# Backup current config
+cp .env.production .env.production.backup
+
+# Update JWT_SECRET
+sed -i "s|^JWT_SECRET=.*|JWT_SECRET=$NEW_JWT_SECRET|" .env.production
+```
+
+3. **Restart backend**:
+
+```bash
+docker compose restart backend
+```
+
+4. **Verify**:
+
+```bash
+# Check backend is healthy
+docker compose ps backend
+
+# Test authentication (all users will need to re-login)
+curl -X POST https://your-domain.com/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","password":"password"}'
+```
+
+5. **Notify users**:
+   - Send notification that all users need to re-login
+   - Update documentation with rotation date
+
+### Database Password Rotation
+
+1. **Generate new password**:
+
+```bash
+NEW_DB_PASSWORD=$(openssl rand -hex 32)
+echo "New DB Password: $NEW_DB_PASSWORD"
+```
+
+2. **Update PostgreSQL**:
+
+```bash
+# Connect to PostgreSQL
+docker compose exec postgres psql -U postgres
+
+# Update password
+ALTER USER scrumooth WITH PASSWORD 'new_password';
+\q
+```
+
+3. **Update environment**:
+
+```bash
+# Update DATABASE_URL
+sed -i "s|postgresql://scrumooth:.*@|postgresql://scrumooth:$NEW_DB_PASSWORD@|" .env.production
+```
+
+4. **Restart services**:
+
+```bash
+docker compose restart backend
+```
+
+5. **Verify**:
+
+```bash
+# Test database connection
+docker compose exec backend npx prisma db execute --stdin <<< "SELECT 1"
+```
+
+### SMTP Credentials Rotation
+
+1. **Generate new credentials** in your SMTP provider (e.g., SendGrid, Mailgun)
+
+2. **Update environment**:
+
+```bash
+# Update SMTP credentials
+sed -i "s|^SMTP_PASS=.*|SMTP_PASS=new_smtp_password|" .env.production
+```
+
+3. **Restart backend**:
+
+```bash
+docker compose restart backend
+```
+
+4. **Test email sending**:
+
+```bash
+# Trigger a test email (e.g., password reset)
+curl -X POST https://your-domain.com/api/v1/auth/forgot-password \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com"}'
+```
+
+### Rotation Automation
+
+For automated rotation, consider using:
+
+- **HashiCorp Vault**: Secret management with automatic rotation
+- **AWS Secrets Manager**: Automatic rotation for AWS services
+- **Kubernetes External Secrets Operator**: Sync secrets from external sources
+
+Example with HashiCorp Vault:
+
+```yaml
+# docker-compose.yml with Vault
+services:
+  backend:
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      DATABASE_URL: ${DATABASE_URL}
+    # ... rest of config
+
+  # Vault agent sidecar for secret injection
+  vault-agent:
+    image: vault:1.13
+    command: agent -config=/vault/config/agent.hcl
+    volumes:
+      - ./vault/config:/vault/config
+      - vault-secrets:/secrets
+```
+
+---
+
+## Configuration Validation
+
+Before deploying, validate your configuration to catch errors early.
+
+### Using the Validation Script
+
+The backend image includes a configuration validation script:
+
+```bash
+# Validate configuration before deployment
+docker run --rm --env-file .env.production \
+  ghcr.io/orbivort/scrumooth/backend:latest \
+  node dist/scripts/validate-config.js
+```
+
+### What It Validates
+
+- ✅ Required environment variables are set
+- ✅ JWT_SECRET is at least 64 characters
+- ✅ DATABASE_URL is a valid PostgreSQL connection string
+- ✅ CORS_ORIGIN contains valid URLs
+- ✅ Email configuration is complete
+- ✅ Production-specific security checks
+
+### Example Output
+
+```
+🔍 Validating configuration...
+
+══════════════════════════════════════════════════════════════
+
+❌ ERRORS:
+
+  1. JWT_SECRET is too short (32 characters). Must be at least 64 characters for production security. Generate with: openssl rand -hex 64
+  2. EMAIL_TEST_MODE is set to "true" in production. Emails will NOT be sent. Set EMAIL_TEST_MODE=false for production.
+
+⚠️  WARNINGS:
+
+  1. DATABASE_URL uses localhost in production. Ensure this is correct for your deployment.
+
+❌ Configuration validation failed!
+
+Please fix the errors above before deploying.
+
+══════════════════════════════════════════════════════════════
+```
+
+---
+
+**Last Updated**: 2026-06-09
 
 **Related Documentation**:
 

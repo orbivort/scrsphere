@@ -6,12 +6,34 @@ This directory contains all utility scripts for the scrumooth project, organized
 
 ```
 scripts/
+├── deployment/        # Deployment scripts
 ├── maintenance/       # Maintenance scripts
 │   └── database/      # Database maintenance scripts
 └── utility/           # Utility scripts
 ```
 
 ## Categories
+
+### 🚀 deployment/
+
+Scripts for deploying Scrumooth to production environments.
+
+| Script      | Purpose                           |
+| ----------- | --------------------------------- |
+| `deploy.sh` | One-command production deployment |
+| `README.md` | Deployment scripts documentation  |
+
+**Quick Reference:**
+
+```bash
+# Deploy latest to localhost
+./scripts/deployment/deploy.sh
+
+# Deploy specific version to domain
+./scripts/deployment/deploy.sh 1.0.0 example.com
+```
+
+See [deployment/README.md](./deployment/README.md) for detailed documentation.
 
 ### 🔧 maintenance/
 

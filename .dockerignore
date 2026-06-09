@@ -220,7 +220,10 @@ helm/
 # -----------------------------------------------------------------------------
 scripts/
 !scripts/utility/add-import-extensions.js
-!scripts/maintenance/databases/*
+!scripts/maintenance/database/*
+!scripts/deployment/*
+# Allow backend scripts for configuration validation
+!packages/backend/scripts/*
 
 # -----------------------------------------------------------------------------
 # Large Binary Files (should be downloaded or built)

@@ -68,6 +68,9 @@ RUN cd packages/shared && pnpm exec tsc
 # Build backend
 RUN cd packages/backend && pnpm exec tsc
 
+# Compile scripts folder (validate-config.ts)
+RUN cd packages/backend && pnpm exec tsc scripts/validate-config.ts --outDir dist/scripts --esModuleInterop --moduleResolution node --target ES2023 --module ESNext
+
 # Fix import extensions for ESM compatibility
 COPY scripts/utility/add-import-extensions.js /tmp/add-import-extensions.js
 RUN cd packages/backend/dist && node /tmp/add-import-extensions.js
@@ -139,13 +142,13 @@ RUN chmod +x ./docker-entrypoint.sh
 
 # Set production environment variables
 ENV NODE_ENV=production \
-    PORT=5000
+    PORT=5010
 
 # Switch to non-root user for security (node user exists in node:bookworm-slim)
 USER node
 
 # Expose application port
-EXPOSE 5000
+EXPOSE 5010
 
 # Health check with reasonable defaults
 # Checks /health endpoint every 30s, allows 3s for response
