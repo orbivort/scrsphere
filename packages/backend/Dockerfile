@@ -139,13 +139,13 @@ RUN chmod +x ./docker-entrypoint.sh
 
 # Set production environment variables
 ENV NODE_ENV=production \
-    PORT=5000
+    PORT=5010
 
 # Switch to non-root user for security (node user exists in node:bookworm-slim)
 USER node
 
 # Expose application port
-EXPOSE 5000
+EXPOSE 5010
 
 # Health check with reasonable defaults
 # Checks /health endpoint every 30s, allows 3s for response
