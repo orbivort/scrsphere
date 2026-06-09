@@ -73,7 +73,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Validate branch name
-        run: node scripts/utility/validate-branch.js "${{ github.head_ref }}"
+        run: node scripts/utility/validate-git-branch.js "${{ github.head_ref }}"
 
   lint-and-typecheck:
     name: Lint & TypeCheck
