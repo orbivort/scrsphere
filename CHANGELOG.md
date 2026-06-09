@@ -7,6 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.0.0] - 2026-06-09
 
+### Changed
+
+- **BREAKING**: rename repository from scrsphere to scrumooth
+  - change repository url from github.com/orbivort/scrsphere to github.com/orbivort/scrumooth
+  - change package names from @scrsphere/* to @scrumooth/*
+  - change docker container names from scrsphere-* to scrumooth-*
+  - change database names from scrsphere to scrumooth
+  - update all import statements from @scrsphere/shared to @scrumooth/shared
+  - update all documentation files with new product name
+  - update environment configuration templates
+  - update docker compose configurations
+  - update github actions workflows
+  - update all scripts and utilities
+  - update brand assets
+- **pnpm**: upgrade to 11.5.0 and migrate configuration to pnpm-workspace.yaml
+- **docker**: update development and production configurations
+- **prisma**: remove old migrations and update initial migration
+- **dependencies**: update various frontend and backend dependencies
+- **dependencies**: remove unused dependencies
+
+### Security
+
+- **pnpm**: enable supply chain protection to prevent zero-day supply chain attacks
+- **dependencies**: fix 2 high transitive vulnerabilities
+  - CVE-2020-7788 (ini prototype pollution) - fixed by upgrading ini to 4.1.3
+  - CVE-2025-64756 (glob command injection) - fixed by upgrading glob to 11.1.0
+
 ## [1.5.1] - 2026-06-05
 
 ### Security
