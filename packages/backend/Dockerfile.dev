@@ -82,6 +82,10 @@ RUN cd packages/backend && pnpm exec prisma generate --schema=prisma/schema.pris
 RUN mkdir -p /app/logs && \
     chown -R scrumooth:nodejs /app
 
+# Copy entrypoint script
+COPY --chown=scrumooth:nodejs packages/backend/scripts/docker-entrypoint.dev.sh ./docker-entrypoint.sh
+RUN chmod +x ./docker-entrypoint.sh
+
 # Set development environment
 ENV NODE_ENV=development \
     PORT=5001 \
@@ -100,5 +104,5 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
 # Use dumb-init as PID 1 for proper signal handling
 ENTRYPOINT ["dumb-init", "--"]
 
-# Start development server with hot reload
-CMD ["pnpm", "run", "dev:backend"]
+# Start development server with database migrations
+CMD ["./docker-entrypoint.sh"]

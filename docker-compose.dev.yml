@@ -82,7 +82,7 @@ services:
       - ./packages/frontend/.env
     environment:
       - NODE_ENV=development
-      - VITE_API_URL=http://localhost:5001
+      - VITE_API_URL=http://localhost:5001/api/v1
     volumes:
       # Mount source code for hot reload
       - ./packages/frontend/src:/app/packages/frontend/src
@@ -102,7 +102,7 @@ services:
     security_opt:
       - no-new-privileges:true
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5173/"]
+      test: ["CMD", "curl", "-f", "http://localhost:5173/"]
       interval: 30s
       timeout: 10s
       retries: 3
