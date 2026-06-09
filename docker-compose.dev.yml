@@ -4,6 +4,8 @@
 # Development environment with hot reload and debugging support
 # =============================================================================
 
+name: scrumooth-dev
+
 services:
   # ===========================================================================
   # Backend API Service (Development)

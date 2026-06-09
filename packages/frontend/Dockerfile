@@ -22,6 +22,16 @@ ARG VCS_REF
 ARG NODE_VERSION
 ARG PNPM_VERSION
 
+# Build arguments for Vite environment variables (non-sensitive only)
+# These are passed from docker-compose.yml build.args
+ARG VITE_BASE_PATH=/scrumooth/
+# Use relative URL for API - nginx proxies /api to backend:5010
+ARG VITE_API_URL=/api/v1
+ARG VITE_USE_MOCK_API=false
+ARG VITE_BACKLOG_ITEM_LIMIT=100
+ARG VITE_BACKLOG_MAX_ITEMS_PER_GOAL=200
+ARG VITE_LOG_LEVEL=info
+
 # OCI Image Labels
 LABEL org.opencontainers.image.title="Scrumooth Frontend Builder" \
       org.opencontainers.image.description="Builder stage for Scrumooth Frontend" \
@@ -55,6 +65,15 @@ RUN pnpm install --frozen-lockfile --shamefully-hoist
 # Copy source code (most frequently changed)
 COPY packages/shared ./packages/shared
 COPY packages/frontend ./packages/frontend
+
+# Create .env.production file from build arguments
+# This ensures only non-sensitive variables are embedded in the build
+RUN echo "VITE_BASE_PATH=${VITE_BASE_PATH}" > packages/frontend/.env.production && \
+    echo "VITE_API_URL=${VITE_API_URL}" >> packages/frontend/.env.production && \
+    echo "VITE_USE_MOCK_API=${VITE_USE_MOCK_API}" >> packages/frontend/.env.production && \
+    echo "VITE_BACKLOG_ITEM_LIMIT=${VITE_BACKLOG_ITEM_LIMIT}" >> packages/frontend/.env.production && \
+    echo "VITE_BACKLOG_MAX_ITEMS_PER_GOAL=${VITE_BACKLOG_MAX_ITEMS_PER_GOAL}" >> packages/frontend/.env.production && \
+    echo "VITE_LOG_LEVEL=${VITE_LOG_LEVEL}" >> packages/frontend/.env.production
 
 # Build shared package first (dependency for frontend)
 RUN cd packages/shared && pnpm exec tsc

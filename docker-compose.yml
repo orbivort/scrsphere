@@ -4,6 +4,8 @@
 # Production-ready orchestration with security best practices
 # =============================================================================
 
+name: scrumooth
+
 services:
   # ===========================================================================
   # Caddy Reverse Proxy with automatic HTTPS
@@ -89,7 +91,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 30s
+      start_period: 60s
     logging:
       driver: "json-file"
       options:
@@ -115,8 +117,15 @@ services:
       args:
         BUILD_DATE: "${BUILD_DATE:-}"
         VCS_REF: "${VCS_REF:-}"
-    env_file:
-      - ./packages/frontend/.env.production
+        # Vite environment variables (non-sensitive only)
+        # Read from .env.production file
+        VITE_BASE_PATH: "${VITE_BASE_PATH:-/scrumooth/}"
+        # Use relative URL for API - nginx proxies /api to backend:5010
+        VITE_API_URL: "${VITE_API_URL:-/api/v1}"
+        VITE_USE_MOCK_API: "${VITE_USE_MOCK_API:-false}"
+        VITE_BACKLOG_ITEM_LIMIT: "${VITE_BACKLOG_ITEM_LIMIT:-100}"
+        VITE_BACKLOG_MAX_ITEMS_PER_GOAL: "${VITE_BACKLOG_MAX_ITEMS_PER_GOAL:-200}"
+        VITE_LOG_LEVEL: "${VITE_LOG_LEVEL:-info}"
     image: scrumooth-frontend:${VERSION:-latest}
     container_name: scrumooth-frontend
     expose:

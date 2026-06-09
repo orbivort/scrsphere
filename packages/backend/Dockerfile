@@ -133,6 +133,10 @@ COPY --from=builder --chown=node:node /app/packages/shared/package.json ./node_m
 ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
 RUN npx prisma generate
 
+# Copy entrypoint script
+COPY --chown=node:node packages/backend/scripts/docker-entrypoint.sh ./docker-entrypoint.sh
+RUN chmod +x ./docker-entrypoint.sh
+
 # Set production environment variables
 ENV NODE_ENV=production \
     PORT=5000
@@ -145,13 +149,13 @@ EXPOSE 5000
 
 # Health check with reasonable defaults
 # Checks /health endpoint every 30s, allows 3s for response
-# Starts checking after 10s grace period, retries 3 times before marking unhealthy
-HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+# Starts checking after 60s grace period (allows time for migrations), retries 3 times before marking unhealthy
+HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
   CMD node -e "require('http').get('http://localhost:5010/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
 
 # Use dumb-init as PID 1 for proper signal handling
 # This ensures graceful shutdown and zombie process reaping
 ENTRYPOINT ["dumb-init", "--"]
 
-# Start the application
-CMD ["node", "dist/index.js"]
+# Start the application with database migrations
+CMD ["./docker-entrypoint.sh"]

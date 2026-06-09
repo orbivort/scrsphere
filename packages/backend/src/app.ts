@@ -34,6 +34,10 @@ import { checkHealth } from './utils/prisma';
 
 const app: Application = express();
 
+// Trust proxy - required when behind reverse proxy (Caddy/nginx)
+// This allows express-rate-limit to correctly identify client IP from X-Forwarded-For header
+app.set('trust proxy', true);
+
 if (config.eventLoop.enabled) {
   eventLoopMonitor.start();
 }

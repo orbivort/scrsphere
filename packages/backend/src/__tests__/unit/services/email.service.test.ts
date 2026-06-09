@@ -17,7 +17,7 @@ vi.mock('../../../config/index.js', () => ({
       provider: 'smtp' as const,
       testMode: {
         enabled: false,
-        outputDirectory: 'test-emails',
+        outputDirectory: 'logs/test-emails',
         logToConsole: true,
         saveToFile: false,
       },
