@@ -75,8 +75,8 @@ if [ "$NODE_ENV" != "production" ]; then
 fi
 
 # Validate JWT_SECRET length
-JWT_LENGTH=$(echo -n "$JWT_SECRET" | wc -c)
-if [ $JWT_LENGTH -lt 64 ]; then
+JWT_LENGTH=$(printf '%s' "$JWT_SECRET" | wc -c)
+if [ "$JWT_LENGTH" -lt 64 ]; then
   log_error "JWT_SECRET is too short ($JWT_LENGTH characters)"
   log_error "Must be at least 64 characters for production security"
   log_error "Generate with: openssl rand -hex 64"
@@ -107,7 +107,7 @@ log_debug "Database host: $DB_HOST"
 
 while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
   # Try to connect to database
-  if npx prisma db execute --stdin <<< "SELECT 1" > /dev/null 2>&1; then
+  if echo "SELECT 1" | npx prisma db execute --stdin > /dev/null 2>&1; then
     log_info "Database connection established successfully"
     break
   fi
@@ -135,9 +135,11 @@ fi
 # =============================================================================
 log_info "Running Prisma migrations..."
 
-# Capture migration output
+# Capture migration output and exit code
+set +e
 MIGRATION_OUTPUT=$(npx prisma migrate deploy 2>&1)
 MIGRATION_EXIT_CODE=$?
+set -e
 
 if [ $MIGRATION_EXIT_CODE -ne 0 ]; then
   log_error "Database migrations failed with exit code $MIGRATION_EXIT_CODE"
@@ -204,7 +206,7 @@ log_info "Port: ${PORT:-5010}"
 log_info "Node.js version: $(node --version)"
 
 # Start the application and capture PID
-exec node dist/index.js &
+node dist/index.js &
 PID=$!
 
 log_info "Application started with PID $PID"
