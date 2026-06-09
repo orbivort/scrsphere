@@ -68,6 +68,9 @@ RUN cd packages/shared && pnpm exec tsc
 # Build backend
 RUN cd packages/backend && pnpm exec tsc
 
+# Compile scripts folder (validate-config.ts)
+RUN cd packages/backend && pnpm exec tsc scripts/validate-config.ts --outDir dist/scripts --esModuleInterop --moduleResolution node --target ES2023 --module ESNext
+
 # Fix import extensions for ESM compatibility
 COPY scripts/utility/add-import-extensions.js /tmp/add-import-extensions.js
 RUN cd packages/backend/dist && node /tmp/add-import-extensions.js
