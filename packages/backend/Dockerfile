@@ -15,7 +15,7 @@ ARG PNPM_VERSION=11.5.0
 FROM node:${NODE_VERSION}-slim AS builder
 
 # Build arguments for labels
-ARG VERSION=1.5.1
+ARG VERSION
 ARG BUILD_DATE
 ARG VCS_REF
 ARG NODE_VERSION
@@ -43,6 +43,9 @@ ENV CI=true
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.json ./
 COPY packages/shared/package.json packages/shared/tsconfig.json ./packages/shared/
 COPY packages/backend/package.json packages/backend/tsconfig.json ./packages/backend/
+
+# Extract app version from package.json (avoids hardcoding)
+RUN node -e "console.log(require('./packages/backend/package.json').version)" > /tmp/app_version
 
 # Install dependencies with frozen lockfile for reproducible builds
 RUN pnpm install --frozen-lockfile
@@ -75,7 +78,7 @@ RUN cd packages/backend/dist && node /tmp/add-import-extensions.js
 FROM node:${NODE_VERSION}-slim AS production
 
 # Build arguments for labels
-ARG VERSION=1.5.1
+ARG VERSION
 ARG BUILD_DATE
 ARG VCS_REF
 ARG NODE_VERSION
@@ -89,7 +92,7 @@ LABEL org.opencontainers.image.title="Scrumooth Backend" \
       org.opencontainers.image.vendor="Scrumooth" \
       org.opencontainers.image.licenses="Apache-2.0" \
       org.opencontainers.image.source="https://github.com/orbivort/scrumooth" \
-      org.opencontainers.image.url="https://scrumooth.com" \
+      org.opencontainers.image.url="https://app.local" \
       org.opencontainers.image.documentation="https://github.com/orbivort/scrumooth/blob/main/docs/README.md" \
       org.opencontainers.image.authors="Scrumooth Team"
 
@@ -103,6 +106,9 @@ WORKDIR /app
 # Create required directories with proper permissions
 RUN mkdir -p /app/logs/emails && \
     chown -R node:node /app
+
+# Copy app version extracted from package.json
+COPY --from=builder /tmp/app_version /tmp/app_version
 
 # Copy built artifacts from builder
 COPY --from=builder --chown=node:node /app/packages/backend/dist ./dist
@@ -141,7 +147,7 @@ EXPOSE 5000
 # Checks /health endpoint every 30s, allows 3s for response
 # Starts checking after 10s grace period, retries 3 times before marking unhealthy
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:5000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
+  CMD node -e "require('http').get('http://localhost:5010/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
 
 # Use dumb-init as PID 1 for proper signal handling
 # This ensures graceful shutdown and zombie process reaping

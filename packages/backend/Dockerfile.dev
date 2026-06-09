@@ -12,7 +12,7 @@ ARG PNPM_VERSION=11.5.0
 FROM debian:bookworm-slim
 
 # Build arguments for labels
-ARG VERSION=1.5.1
+ARG VERSION
 ARG BUILD_DATE
 ARG VCS_REF
 ARG NODE_VERSION
@@ -64,6 +64,9 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.json ./
 COPY packages/shared/package.json packages/shared/tsconfig.json ./packages/shared/
 COPY packages/backend/package.json packages/backend/tsconfig.json ./packages/backend/
 
+# Extract app version from package.json (avoids hardcoding)
+RUN node -e "console.log(require('./packages/backend/package.json').version)" > /tmp/app_version
+
 # Install dependencies
 RUN pnpm install --shamefully-hoist
 
@@ -81,18 +84,18 @@ RUN mkdir -p /app/logs && \
 
 # Set development environment
 ENV NODE_ENV=development \
-    PORT=5000 \
+    PORT=5001 \
     CI=true
 
 # Switch to non-root user
 USER scrumooth
 
 # Expose application port
-EXPOSE 5000
+EXPOSE 5001
 
 # Health check for development
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:5000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})" || exit 1
+  CMD node -e "require('http').get('http://localhost:5001/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})" || exit 1
 
 # Use dumb-init as PID 1 for proper signal handling
 ENTRYPOINT ["dumb-init", "--"]

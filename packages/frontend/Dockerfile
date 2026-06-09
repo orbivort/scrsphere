@@ -16,7 +16,7 @@ ARG NGINX_VERSION=1.27
 FROM node:${NODE_VERSION}-slim AS builder
 
 # Build arguments for labels
-ARG VERSION=1.5.1
+ARG VERSION
 ARG BUILD_DATE
 ARG VCS_REF
 ARG NODE_VERSION
@@ -45,6 +45,9 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.json ./
 COPY packages/shared/package.json packages/shared/tsconfig.json ./packages/shared/
 COPY packages/frontend/package.json packages/frontend/tsconfig.json ./packages/frontend/
 
+# Extract app version from package.json (avoids hardcoding)
+RUN node -e "console.log(require('./packages/frontend/package.json').version)" > /tmp/app_version
+
 # Install dependencies with frozen lockfile for reproducible builds
 # Use --shamefully-hoist for flat node_modules structure
 RUN pnpm install --frozen-lockfile --shamefully-hoist
@@ -68,7 +71,7 @@ RUN cd packages/frontend && pnpm exec vite build
 FROM nginx:${NGINX_VERSION}-alpine AS production
 
 # Build arguments for labels
-ARG VERSION=1.5.1
+ARG VERSION
 ARG BUILD_DATE
 ARG VCS_REF
 
@@ -81,7 +84,7 @@ LABEL org.opencontainers.image.title="Scrumooth Frontend" \
       org.opencontainers.image.vendor="Scrumooth" \
       org.opencontainers.image.licenses="Apache-2.0" \
       org.opencontainers.image.source="https://github.com/orbivort/scrumooth" \
-      org.opencontainers.image.url="https://scrumooth.com" \
+      org.opencontainers.image.url="https://app.local" \
       org.opencontainers.image.documentation="https://github.com/orbivort/scrumooth/blob/main/docs/README.md" \
       org.opencontainers.image.authors="Scrumooth Team"
 
@@ -89,6 +92,9 @@ WORKDIR /usr/share/nginx/html
 
 # Copy built frontend with proper ownership
 COPY --from=builder --chown=nginx:nginx /app/packages/frontend/dist .
+
+# Copy app version extracted from package.json
+COPY --from=builder /tmp/app_version /tmp/app_version
 
 # Copy nginx configuration
 COPY packages/frontend/nginx.conf /etc/nginx/nginx.conf
@@ -114,7 +120,7 @@ EXPOSE 80
 # Health check with reasonable defaults
 # Uses wget spider mode to check if nginx is responding
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost/ || exit 1
+  CMD wget --no-verbose --tries=1 --spider http://app.local/ || exit 1
 
 # nginx runs as foreground process by default in official images
 # No need for dumb-init as nginx handles signals properly

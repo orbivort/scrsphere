@@ -12,7 +12,7 @@ ARG PNPM_VERSION=11.5.0
 FROM debian:bookworm-slim
 
 # Build arguments for labels
-ARG VERSION=1.5.1
+ARG VERSION
 ARG BUILD_DATE
 ARG VCS_REF
 ARG NODE_VERSION
@@ -63,6 +63,9 @@ RUN groupadd --system --gid 1001 nodejs && \
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.json ./
 COPY packages/shared/package.json packages/shared/tsconfig.json ./packages/shared/
 COPY packages/frontend/package.json packages/frontend/tsconfig.json ./packages/frontend/
+
+# Extract app version from package.json (avoids hardcoding)
+RUN node -e "console.log(require('./packages/frontend/package.json').version)" > /tmp/app_version
 
 # Install dependencies
 RUN pnpm install --shamefully-hoist

@@ -4,7 +4,7 @@
 # Replace YOUR_DOMAIN with your actual domain (e.g., scrumooth.example.com)
 # For local development without a domain, use: http://localhost
 
-{$DOMAIN:scrumooth.local} {
+{$DOMAIN:app.local} {
     # Automatic HTTPS (comment out for local development without a domain)
     # tls {$EMAIL:}
 
@@ -20,7 +20,7 @@
 
     # API routes - proxy to backend
     handle /api/* {
-        reverse_proxy backend:5000 {
+        reverse_proxy backend:5010 {
             header_up X-Real-IP {remote_host}
             header_up X-Forwarded-For {remote_host}
             header_up X-Forwarded-Proto {scheme}
@@ -30,7 +30,7 @@
 
     # Health check endpoint
     handle /health {
-        reverse_proxy backend:5000
+        reverse_proxy backend:5010
     }
 
     # Static files and SPA routing
@@ -60,7 +60,7 @@
 # Health check endpoint (accessible without authentication)
 :80 {
     handle /health {
-        reverse_proxy backend:5000
+        reverse_proxy backend:5010
     }
 
     # Redirect all other HTTP traffic to HTTPS
