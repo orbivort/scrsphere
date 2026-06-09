@@ -7,13 +7,16 @@
  *   <type>/<description>
  *
  * Where:
- *   - type: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert
+ *   - type: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert, release
  *   - description: lowercase letters, numbers, and hyphens (no spaces or underscores)
+ *   - release branches: release/vX.Y.Z or release/X.Y.Z (semantic versioning)
  *
  * Examples:
  *   ✅ feat/user-dashboard
  *   ✅ fix/login-validation
  *   ✅ chore/update-dependencies
+ *   ✅ release/v2.0.0
+ *   ✅ release/1.5.3
  *   ❌ my-feature
  *   ❌ feature_user_dashboard
  *   ❌ Fix/something
@@ -33,11 +36,15 @@ export const VALID_TYPES = [
   'ci',
   'chore',
   'revert',
+  'release',
 ];
 
 export const PROTECTED_BRANCHES = ['main', 'master', 'develop', 'staging', 'production'];
 
 export const BRANCH_PATTERN = new RegExp(`^(${VALID_TYPES.join('|')})/([a-z0-9-]+)$`);
+
+// Pattern for release branches: release/vX.Y.Z or release/X.Y.Z
+export const RELEASE_BRANCH_PATTERN = /^release\/v?(\d+)\.(\d+)\.(\d+)$/;
 
 /**
  * Validates a branch name against the conventional branch naming convention.
@@ -58,6 +65,34 @@ export function validateBranchName(branchName) {
   // Allow HEAD (detached state)
   if (branchName === 'HEAD') {
     return { valid: true };
+  }
+
+  // Check for release branches first (special pattern)
+  if (branchName.startsWith('release/')) {
+    const releaseMatch = branchName.match(RELEASE_BRANCH_PATTERN);
+
+    if (releaseMatch) {
+      const [, major, minor, patch] = releaseMatch;
+      return {
+        valid: true,
+        type: 'release',
+        description: `v${major}.${minor}.${patch}`,
+      };
+    }
+
+    return {
+      valid: false,
+      error: `Invalid release branch format in "${branchName}"
+
+Release branches must follow semantic versioning: release/vX.Y.Z or release/X.Y.Z
+Where X, Y, Z are non-negative integers.
+
+Examples:
+  ✅ release/v2.0.0
+  ✅ release/1.5.3
+  ✅ release/v0.1.0
+  ❌ ${branchName}`,
+    };
   }
 
   // Check against pattern
@@ -141,12 +176,6 @@ export function getCurrentBranch() {
 function main() {
   const args = process.argv.slice(2);
 
-  // Get branch name from argument or current branch
-  const branchName = args[0] || getCurrentBranch();
-
-  // Handle --quiet flag
-  const quiet = args.includes('--quiet') || args.includes('-q');
-
   // Handle --help flag
   if (args.includes('--help') || args.includes('-h')) {
     console.log(`
@@ -165,6 +194,9 @@ Valid branch format:
 Valid types:
   ${VALID_TYPES.join(', ')}
 
+Release branches:
+  release/vX.Y.Z or release/X.Y.Z (semantic versioning)
+
 Protected branches (always allowed):
   ${PROTECTED_BRANCHES.join(', ')}
 
@@ -172,11 +204,19 @@ Examples:
   ✅ feat/user-dashboard
   ✅ fix/login-validation
   ✅ chore/update-dependencies
+  ✅ release/v2.0.0
+  ✅ release/1.5.3
   ❌ my-feature
   ❌ feature_user_dashboard
 `);
     process.exit(0);
   }
+
+  // Handle --quiet flag
+  const quiet = args.includes('--quiet') || args.includes('-q');
+
+  // Get branch name from argument (excluding flags) or current branch
+  const branchName = args.find((arg) => !arg.startsWith('-')) || getCurrentBranch();
 
   const result = validateBranchName(branchName);
 

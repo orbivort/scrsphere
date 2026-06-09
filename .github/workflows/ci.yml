@@ -183,25 +183,7 @@ jobs:
         run: pnpm --filter=@scrumooth/shared run build
 
       - name: Run frontend tests
-        run: pnpm --filter=@scrumooth/frontend run test:coverage
-
-      - name: Upload frontend coverage to Codecov
-        uses: codecov/codecov-action@v6
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: packages/frontend/coverage
-          flags: frontend
-          name: frontend-coverage
-          fail_ci_if_error: false
-          verbose: true
-
-      - name: Upload frontend coverage artifact
-        uses: actions/upload-artifact@v6
-        if: always()
-        with:
-          name: frontend-coverage
-          path: packages/frontend/coverage
-          retention-days: 7
+        run: pnpm --filter=@scrumooth/frontend run test
 
   test-frontend-e2e:
     name: Frontend E2E Tests
@@ -355,6 +337,68 @@ jobs:
           path: |
             packages/frontend/playwright-report
             packages/frontend/test-results
+          retention-days: 7
+
+  test-frontend-coverage:
+    name: Frontend Coverage Report
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [test-frontend, detect-changes]
+    if: always() && (needs.detect-changes.outputs.frontend == 'true' || needs.detect-changes.outputs.shared == 'true') && (needs.test-frontend.result == 'success' || needs.test-frontend.result == 'skipped')
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v5
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+        id: pnpm-cache
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v5
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build shared package
+        run: pnpm --filter=@scrumooth/shared run build
+
+      - name: Run frontend tests with coverage
+        run: pnpm --filter=@scrumooth/frontend run test:coverage
+
+      - name: Upload frontend coverage to Codecov
+        uses: codecov/codecov-action@v6
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: packages/frontend/coverage
+          flags: frontend
+          name: frontend-coverage
+          fail_ci_if_error: false
+          verbose: true
+
+      - name: Upload frontend coverage artifact
+        uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: frontend-coverage
+          path: packages/frontend/coverage
           retention-days: 7
 
   test-backend:
@@ -633,8 +677,8 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    needs: [test-frontend, test-frontend-e2e, test-frontend-e2e-smoke, test-backend, test-backend-integration, test-backend-e2e, test-backend-coverage, detect-changes]
-    if: always() && (needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.frontend == 'true' || needs.detect-changes.outputs.shared == 'true') && (needs.test-frontend.result == 'success' || needs.test-frontend.result == 'skipped') && (needs.test-frontend-e2e.result == 'success' || needs.test-frontend-e2e.result == 'skipped') && (needs.test-frontend-e2e-smoke.result == 'success' || needs.test-frontend-e2e-smoke.result == 'skipped') && (needs.test-backend-coverage.result == 'success' || needs.test-backend-coverage.result == 'skipped')
+    needs: [test-frontend, test-frontend-e2e, test-frontend-e2e-smoke, test-frontend-coverage, test-backend, test-backend-integration, test-backend-e2e, test-backend-coverage, detect-changes]
+    if: always() && (needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.frontend == 'true' || needs.detect-changes.outputs.shared == 'true') && (needs.test-frontend.result == 'success' || needs.test-frontend.result == 'skipped') && (needs.test-frontend-e2e.result == 'success' || needs.test-frontend-e2e.result == 'skipped') && (needs.test-frontend-e2e-smoke.result == 'success' || needs.test-frontend-e2e-smoke.result == 'skipped') && (needs.test-frontend-coverage.result == 'success' || needs.test-frontend-coverage.result == 'skipped') && (needs.test-backend-coverage.result == 'success' || needs.test-backend-coverage.result == 'skipped')
     
     steps:
       - name: Checkout repository
