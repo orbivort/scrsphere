@@ -6,7 +6,7 @@ This directory contains scripts for deploying Scrumooth to production environmen
 
 ### deploy.sh
 
-One-command deployment script for production deployments using Docker images from GHCR.
+One-command deployment script for production deployments using **pre-built** Docker images from GHCR.
 
 #### Usage
 
@@ -83,6 +83,35 @@ The script creates the following files in the current directory:
 - OpenSSL (for secret generation)
 - curl (for health checks)
 
+#### Important Notes
+
+**Vite Environment Variables (VITE\_\*)**
+
+Vite environment variables are **build-time variables**, not runtime variables. They are compiled into the frontend JavaScript bundle during the Docker build process. The pre-built images from GHCR already have these values baked in:
+
+| Variable                          | Default Value |
+| --------------------------------- | ------------- |
+| `VITE_BASE_PATH`                  | `/scrumooth/` |
+| `VITE_API_URL`                    | `/api/v1`     |
+| `VITE_USE_MOCK_API`               | `false`       |
+| `VITE_BACKLOG_ITEM_LIMIT`         | `100`         |
+| `VITE_BACKLOG_MAX_ITEMS_PER_GOAL` | `200`         |
+| `VITE_LOG_LEVEL`                  | `info`        |
+
+**To customize Vite variables**, you must build the frontend image locally:
+
+```bash
+# Set your custom values in .env or environment
+export VITE_BASE_PATH=/my-app/
+export VITE_API_URL=/api/v2
+
+# Build the frontend image locally
+docker compose -f docker-compose.yml build frontend
+
+# Then deploy with the custom image
+docker compose -f docker-compose.yml up -d
+```
+
 #### Notes
 
 - The script is designed for Linux/macOS
@@ -94,3 +123,4 @@ The script creates the following files in the current directory:
 
 - [Main Deployment Guide](../../docs/deployment/DEPLOYMENT.md)
 - [Database Maintenance Scripts](../maintenance/database/)
+- [Local Development with docker-compose.yml](../../docker-compose.yml)

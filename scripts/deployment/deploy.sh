@@ -9,12 +9,29 @@
 #   ./deploy.sh 1.0.0              # Deploy version 1.0.0 to localhost
 #   ./deploy.sh 1.0.0 example.com  # Deploy version 1.0.0 to example.com
 #
-# This script will:
-#   1. Pull Docker images from GHCR
-#   2. Generate configuration if not exists
+# This script deploys PRE-BUILT Docker images from GitHub Container Registry.
+# It does NOT build images locally - use docker-compose.yml for local builds.
+#
+# What this script does:
+#   1. Pull Docker images from GHCR (backend, frontend, backup)
+#   2. Generate configuration if not exists (.env.production)
 #   3. Validate configuration
-#   4. Deploy services
-#   5. Verify deployment
+#   4. Deploy services with Docker Compose
+#   5. Verify deployment health
+#
+# NOTE: Vite environment variables (VITE_*) are BUILD-TIME variables.
+# They are compiled into the frontend JavaScript bundle during the Docker build.
+# The pre-built images from GHCR already have these values baked in:
+#   - VITE_BASE_PATH=/scrumooth/
+#   - VITE_API_URL=/api/v1
+#   - VITE_USE_MOCK_API=false
+#   - VITE_BACKLOG_ITEM_LIMIT=100
+#   - VITE_BACKLOG_MAX_ITEMS_PER_GOAL=200
+#   - VITE_LOG_LEVEL=info
+#
+# To customize Vite variables, build the frontend image locally:
+#   docker compose -f docker-compose.yml build frontend
+#
 # =============================================================================
 
 set -e
@@ -284,6 +301,22 @@ EOF
   fi
 
   log_info "✅ Docker Compose file created: $COMPOSE_FILE"
+  
+  # Note about Vite environment variables
+  echo ""
+  log_warn "Note: Vite environment variables (VITE_*) are build-time variables."
+  log_warn "They are already baked into the pre-built frontend image from GHCR."
+  log_warn "Default values in the image:"
+  log_warn "  - VITE_BASE_PATH=/scrumooth/"
+  log_warn "  - VITE_API_URL=/api/v1"
+  log_warn "  - VITE_USE_MOCK_API=false"
+  log_warn "  - VITE_BACKLOG_ITEM_LIMIT=100"
+  log_warn "  - VITE_BACKLOG_MAX_ITEMS_PER_GOAL=200"
+  log_warn "  - VITE_LOG_LEVEL=info"
+  log_warn ""
+  log_warn "To customize these values, build the frontend image locally:"
+  log_warn "  docker compose -f docker-compose.yml build frontend"
+  echo ""
 else
   log_info "✅ Docker Compose file already exists: $COMPOSE_FILE"
 fi
