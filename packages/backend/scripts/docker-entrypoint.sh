@@ -27,20 +27,20 @@ else
 fi
 
 log_info() {
-  echo "${GREEN}[INFO]${NC} $1"
+  printf '%b[INFO]%b %s\n' "$GREEN" "$NC" "$1"
 }
 
 log_warn() {
-  echo "${YELLOW}[WARN]${NC} $1"
+  printf '%b[WARN]%b %s\n' "$YELLOW" "$NC" "$1"
 }
 
 log_error() {
-  echo "${RED}[ERROR]${NC} $1"
+  printf '%b[ERROR]%b %s\n' "$RED" "$NC" "$1"
 }
 
 log_debug() {
   if [ "${LOG_LEVEL}" = "debug" ]; then
-    echo "${BLUE}[DEBUG]${NC} $1"
+    printf '%b[DEBUG]%b %s\n' "$BLUE" "$NC" "$1"
   fi
 }
 
@@ -174,19 +174,19 @@ shutdown_handler() {
   # The Node.js application will handle graceful shutdown
   # We just need to forward the signal and wait
   if [ -n "$PID" ]; then
-    kill -TERM "$PID" 2>/dev/null || true
-    
+    kill -15 "$PID" 2>/dev/null || true
+
     # Wait for the process to exit gracefully
     WAIT_COUNT=0
     while kill -0 "$PID" 2>/dev/null && [ $WAIT_COUNT -lt $SHUTDOWN_TIMEOUT ]; do
       sleep 1
       WAIT_COUNT=$((WAIT_COUNT + 1))
     done
-    
+
     # Force kill if still running
     if kill -0 "$PID" 2>/dev/null; then
       log_warn "Process did not exit gracefully, forcing shutdown"
-      kill -KILL "$PID" 2>/dev/null || true
+      kill -9 "$PID" 2>/dev/null || true
     fi
   fi
   
@@ -194,8 +194,9 @@ shutdown_handler() {
   exit 0
 }
 
-# Register signal handlers
-trap 'shutdown_handler' SIGTERM SIGINT
+# Register signal handlers (use signal numbers for POSIX compatibility)
+# SIGTERM=15, SIGINT=2
+trap 'shutdown_handler' 15 2
 
 # =============================================================================
 # Start Application
