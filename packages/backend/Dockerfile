@@ -69,7 +69,7 @@ RUN cd packages/shared && pnpm exec tsc
 RUN cd packages/backend && pnpm exec tsc
 
 # Compile scripts folder (validate-config.ts)
-RUN cd packages/backend && pnpm exec tsc scripts/validate-config.ts --outDir dist/scripts --esModuleInterop --moduleResolution nodenext --target ES2023 --module ESNext --ignoreConfig
+RUN cd packages/backend && pnpm exec tsc scripts/validate-config.ts --outDir dist/scripts --esModuleInterop --moduleResolution nodenext --target ES2023 --module NodeNext --ignoreConfig
 
 # Fix import extensions for ESM compatibility
 COPY scripts/utility/add-import-extensions.js /tmp/add-import-extensions.js
