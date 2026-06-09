@@ -7,9 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.5.1] - 2026-06-05
 
-### Fixed
+### Security
 
-- **security**: multiple vulnerabilities (GHSA-8x6r-g9mw-2r78, GHSA-xrhx-7g5j-rcj5, GHSA-3hrh-pfw6-9m5x, GHSA-f577-qrjj-4474, GHSA-2gcr-mfcq-wcc3)
+- **react-router**: fix high DoS vulnerability - CVE-2026-42342
+- **hono**: fix 4 moderate vulnerabilities - CVE-2026-47673, CVE-2026-47674, CVE-2026-47675, CVE-2026-47676
 
 ## [1.5.0] - 2026-05-29
 
@@ -29,13 +30,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
-- **axios**: fix 4 vulnerabilities (2 high, 1 moderate, 1 low) - GHSA-pjwm-pj3p-43mv, GHSA-35jp-ww65-95wh, GHSA-898c-q2cr-xwhg, GHSA-654m-c8p4-x5fp
+- **axios**: fix 4 vulnerabilities (2 high, 1 moderate, 1 low) - CVE-2026-44492, CVE-2026-44494, CVE-2026-44490, CVE-2026-44489
 
 ## [1.4.1] - 2026-05-23
 
 ### Security
 
-- **qs**: fix moderate severity DoS vulnerability - GHSA-q8mj-m7cp-5q26
+- **qs**: fix moderate DoS vulnerability - CVE-2026-8723
 
 ## [1.4.0] - 2026-05-22
 
@@ -148,7 +149,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Logout functionality with token revocation
   - Session management with activity tracking
 - **Authorization**: Role-based access control (RBAC)
-  - User roles: Administrator, Product Owner, Scrum Master, Developer
+  - User roles: Product Owner, Scrum Master, Developer
   - Route protection middleware
   - Permission-based feature access
   - Role-based UI rendering
@@ -175,7 +176,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Team-specific workflows and processes
   - Team context management across application
 - **Team Member Management**: Member administration
-  - Team member role assignment (Administrator, Product Owner, Scrum Master, Developer)
+  - Team member role assignment (Product Owner, Scrum Master, Developer)
   - Team member invitations via email
   - Member removal with permission checks
   - Role updates and transfers
@@ -492,7 +493,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Configurable rate limits per endpoint
   - IP-based and user-based limiting
   - Graceful degradation with retry headers
-  - Rate limit bypass for administrators
 
 #### Performance Optimizations
 

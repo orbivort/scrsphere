@@ -56,4 +56,4 @@ function walkDir(dir) {
 }
 
 walkDir('.');
-console.log('Import extensions fixed successfully');
+console.log('Import extensions added successfully');

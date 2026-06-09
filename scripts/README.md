@@ -6,40 +6,12 @@ This directory contains all utility scripts for the scrumooth project, organized
 
 ```
 scripts/
-├── deployment/        # Deployment scripts
 ├── maintenance/       # Maintenance scripts
 │   └── database/      # Database maintenance scripts
 └── utility/           # Utility scripts
 ```
 
 ## Categories
-
-### 🚀 deployment/
-
-Scripts for deploying the application to various environments.
-
-| Script       | Platform    | Purpose                                      |
-| ------------ | ----------- | -------------------------------------------- |
-| `deploy.ps1` | Windows     | Production deployment with environment setup |
-| `dev.sh`     | Linux/macOS | Development environment startup              |
-| `prod.sh`    | Linux/macOS | Production environment startup               |
-
-**Windows Usage:**
-
-```powershell
-.\scripts\deployment\deploy.ps1 -Setup              # First-time setup
-.\scripts\deployment\deploy.ps1 -Deploy             # Start deployment
-.\scripts\deployment\deploy.ps1 -Stop               # Stop containers
-.\scripts\deployment\deploy.ps1 -Logs               # View logs
-.\scripts\deployment\deploy.ps1 -Clean              # Full cleanup
-```
-
-**Linux/macOS Usage:**
-
-```bash
-./scripts/deployment/dev.sh    # Development environment
-./scripts/deployment/prod.sh   # Production environment
-```
 
 ### 🔧 maintenance/
 
@@ -77,11 +49,40 @@ See [DATABASE_MAINTENANCE.md](./maintenance/database/DATABASE_MAINTENANCE.md) fo
 
 General utility scripts for development and code quality.
 
-| Script                        | Purpose                             | Usage                                                       |
-| ----------------------------- | ----------------------------------- | ----------------------------------------------------------- |
-| `check-package-manager.js`    | Enforces pnpm usage                 | Auto-run via npm pre-scripts                                |
-| `eslint-plugin-icon-rules.js` | ESLint plugin for icon usage        | Integrated in ESLint config                                 |
-| `generate-icon-types.ts`      | Generate TypeScript types for icons | `pnpm --filter=@scrumooth/frontend run generate:icon-types` |
+| Script                        | Purpose                                  | Usage                                                       |
+| ----------------------------- | ---------------------------------------- | ----------------------------------------------------------- |
+| `add-import-extensions.js`    | Add `.js` extensions to relative imports | `node scripts/utility/add-import-extensions.js`             |
+| `check-package-manager.js`    | Enforces pnpm usage                      | Auto-run via npm pre-scripts                                |
+| `create-git-branch.js`        | Create git branch with validation        | `pnpm run branch:create feat/user-dashboard`                |
+| `eslint-plugin-icon-rules.js` | ESLint plugin for icon usage             | Integrated in ESLint config                                 |
+| `generate-icon-types.ts`      | Generate TypeScript types for icons      | `pnpm --filter=@scrumooth/frontend run generate:icon-types` |
+| `validate-git-branch.js`      | Validate git branch names                | `pnpm run branch:validate [branch-name]`                    |
+
+**Branch Name Validation:**
+
+Git branch names must follow the conventional pattern: `<type>/<description>`
+
+Valid types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`
+
+```bash
+# Validate current branch
+pnpm run branch:validate
+
+# Validate specific branch name
+pnpm run branch:validate feat/user-dashboard
+
+# Create new branch with validation
+pnpm run branch:create feat/user-dashboard
+pnpm run branch:create fix login validation  # Converts to fix/login-validation
+```
+
+**Examples:**
+
+- ✅ `feat/user-dashboard`
+- ✅ `fix/login-validation`
+- ✅ `chore/update-dependencies`
+- ❌ `my-feature` (missing type prefix)
+- ❌ `feature/user-dashboard` (invalid type)
 
 ## Naming Conventions
 

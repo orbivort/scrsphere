@@ -52,7 +52,6 @@
     "@types/node": "catalog:",
     "eslint": "catalog:",
     "eslint-config-prettier": "catalog:",
-    "eslint-plugin-prettier": "catalog:",
     "globals": "catalog:",
     "prettier": "catalog:",
     "rimraf": "catalog:",

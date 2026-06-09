@@ -216,7 +216,7 @@ export const config = {
     // Test mode configuration
     testMode: {
       enabled: process.env.EMAIL_TEST_MODE === 'true',
-      outputDirectory: process.env.EMAIL_TEST_OUTPUT_DIR ?? 'logs/emails',
+      outputDirectory: process.env.EMAIL_TEST_OUTPUT_DIR ?? 'logs/test-emails',
       logToConsole: process.env.EMAIL_TEST_LOG_CONSOLE !== 'false',
       saveToFile: process.env.EMAIL_TEST_SAVE_FILE !== 'false',
     },

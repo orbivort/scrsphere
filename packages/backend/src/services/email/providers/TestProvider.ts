@@ -68,7 +68,7 @@ export class TestProvider implements IEmailProvider {
   private readonly capturedEmails: Map<string, CapturedEmail> = new Map();
 
   constructor(config?: TestProviderConfig) {
-    this.outputDir = config?.outputDir ?? 'test-emails';
+    this.outputDir = config?.outputDir ?? 'logs/test-emails';
     this.logToConsole = config?.logToConsole ?? true;
     this.saveToFile = config?.saveToFile ?? true;
 

@@ -132,7 +132,7 @@ vi.mock('../../../config', () => ({
       provider: 'test',
       testMode: {
         enabled: true,
-        outputDirectory: 'test-emails',
+        outputDirectory: 'logs/test-emails',
         logToConsole: false,
         saveToFile: false,
       },
@@ -167,7 +167,7 @@ vi.mock('../../../config', () => ({
       provider: 'test',
       testMode: {
         enabled: true,
-        outputDirectory: 'test-emails',
+        outputDirectory: 'logs/test-emails',
         logToConsole: false,
         saveToFile: false,
       },

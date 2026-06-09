@@ -1,8 +1,16 @@
-version: '3.8'
+# =============================================================================
+# Scrumooth - Production Docker Compose Configuration
+# =============================================================================
+# Production-ready orchestration with security best practices
+# =============================================================================
+
+name: scrumooth
 
 services:
+  # ===========================================================================
   # Caddy Reverse Proxy with automatic HTTPS
   # Handles TLS termination and SSL certificate management
+  # ===========================================================================
   caddy:
     image: caddy:2-alpine
     container_name: scrumooth-caddy
@@ -14,11 +22,19 @@ services:
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
-      - frontend
-      - backend
+      frontend:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
     restart: unless-stopped
     networks:
       - scrumooth-network
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
     healthcheck:
       test: ["CMD", "caddy", "validate", "--config", "/etc/caddy/Caddyfile"]
       interval: 30s
@@ -39,14 +55,21 @@ services:
           cpus: '0.1'
           memory: 32M
 
+  # ===========================================================================
+  # Backend API Service
+  # ===========================================================================
   backend:
     build:
       context: .
       dockerfile: packages/backend/Dockerfile
       target: production
+      args:
+        BUILD_DATE: "${BUILD_DATE:-}"
+        VCS_REF: "${VCS_REF:-}"
+    image: scrumooth-backend:${VERSION:-latest}
     container_name: scrumooth-backend
     expose:
-      - "5000"
+      - "5010"
     env_file:
       - ./packages/backend/.env.production
     depends_on:
@@ -55,12 +78,20 @@ services:
     restart: unless-stopped
     networks:
       - scrumooth-network
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+    # Read-only root filesystem with writable paths
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /app/logs:uid=1000,gid=1000
     healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:5000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:5010/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 30s
+      start_period: 60s
     logging:
       driver: "json-file"
       options:
@@ -75,11 +106,27 @@ services:
           cpus: '0.25'
           memory: 128M
 
+  # ===========================================================================
+  # Frontend Service (Nginx)
+  # ===========================================================================
   frontend:
     build:
       context: .
       dockerfile: packages/frontend/Dockerfile
       target: production
+      args:
+        BUILD_DATE: "${BUILD_DATE:-}"
+        VCS_REF: "${VCS_REF:-}"
+        # Vite environment variables (non-sensitive only)
+        # Read from .env.production file
+        VITE_BASE_PATH: "${VITE_BASE_PATH:-/scrumooth/}"
+        # Use relative URL for API - nginx proxies /api to backend:5010
+        VITE_API_URL: "${VITE_API_URL:-/api/v1}"
+        VITE_USE_MOCK_API: "${VITE_USE_MOCK_API:-false}"
+        VITE_BACKLOG_ITEM_LIMIT: "${VITE_BACKLOG_ITEM_LIMIT:-100}"
+        VITE_BACKLOG_MAX_ITEMS_PER_GOAL: "${VITE_BACKLOG_MAX_ITEMS_PER_GOAL:-200}"
+        VITE_LOG_LEVEL: "${VITE_LOG_LEVEL:-info}"
+    image: scrumooth-frontend:${VERSION:-latest}
     container_name: scrumooth-frontend
     expose:
       - "80"
@@ -89,6 +136,15 @@ services:
     restart: unless-stopped
     networks:
       - scrumooth-network
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+    # Read-only root filesystem with writable paths for nginx
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/cache/nginx:uid=101,gid=101
+      - /var/run:uid=101,gid=101
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1/"]
       interval: 30s
@@ -109,22 +165,28 @@ services:
           cpus: '0.1'
           memory: 32M
 
+  # ===========================================================================
+  # PostgreSQL Database
+  # ===========================================================================
   postgres:
     image: postgres:18-alpine
     container_name: scrumooth-postgres
     env_file:
       - ./packages/backend/.env.production
     environment:
-      - POSTGRES_USER=${DB_USER:-postgres}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_USER=${DB_USER:-scrumooth}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-Str0ng!DBp@ss2026}
       - POSTGRES_DB=${DB_NAME:-scrumooth}
       - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --locale=en_US.UTF-8
     volumes:
-      - scrumooth_postgres_data:/var/lib/postgresql/data
+      - scrumooth_postgres_data:/var/lib/postgresql
       - ./logs/postgres:/var/log/postgresql
     restart: unless-stopped
     networks:
       - scrumooth-network
+    # Security options
+    security_opt:
+      - no-new-privileges:true
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d scrumooth"]
       interval: 10s
@@ -167,69 +229,59 @@ services:
       - "log_min_duration_statement=1000"
       - "-c"
       - "log_line_prefix=%t [%p]: [%l-1] user=%u,db=%d,app=%a,client=%h "
-    # Uncomment to expose database port for external access
-    # ports:
-    #   - "5432:5432"
 
+  # ===========================================================================
   # PgBouncer - Connection Pooling for Production
-  pgbouncer:
-    image: pgbouncer/pgbouncer:1.22.1
-    container_name: scrumooth-pgbouncer
-    environment:
-      DATABASES_HOST: postgres
-      DATABASES_PORT: 5432
-      DATABASES_DATABASE: ${DB_NAME:-scrumooth}
-      DATABASES_USER: ${DB_USER:-postgres}
-      DATABASES_PASSWORD: ${DB_PASSWORD}
-      POOL_MODE: transaction
-      MAX_CLIENT_CONN: 100
-      DEFAULT_POOL_SIZE: 20
-      MIN_POOL_SIZE: 5
-      RESERVE_POOL_SIZE: 5
-      MAX_DB_CONNECTIONS: 50
-      MAX_USER_CONNECTIONS: 50
-      SERVER_IDLE_TIMEOUT: 600
-      SERVER_LIFETIME: 3600
-      CLIENT_IDLE_TIMEOUT: 0
-      CLIENT_LOGIN_TIMEOUT: 60
-      AUTODB_IDLE_TIMEOUT: 3600
-      QUERY_TIMEOUT: 0
-      QUERY_WAIT_TIMEOUT: 120
-      CLIENT_TLS_SSLMODE: require
-      CLIENT_TLS_KEYFILE: /etc/pgbouncer/tls/server.key
-      CLIENT_TLS_CERTFILE: /etc/pgbouncer/tls/server.crt
-    volumes:
-      - ./certs/pgbouncer:/etc/pgbouncer/tls:ro
-    ports:
-      - "6432:6432"
-    depends_on:
-      postgres:
-        condition: service_healthy
-    restart: unless-stopped
-    networks:
-      - scrumooth-network
-    healthcheck:
-      test: ["CMD", "pg_isready", "-h", "localhost", "-p", "6432"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "5"
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 128M
-        reservations:
-          cpus: '0.1'
-          memory: 32M
+  # NOTE: Commented out due to Docker mirror availability issues.
+  # Uncomment and configure if you have access to bitnami/pgbouncer or edoburu/pgbouncer images.
+  # ===========================================================================
+  # pgbouncer:
+  #   image: bitnami/pgbouncer:1.22
+  #   container_name: scrumooth-pgbouncer
+  #   environment:
+  #     PGBOUNCER_DATABASE_HOST: postgres
+  #     PGBOUNCER_DATABASE_PORT_NUMBER: 5432
+  #     PGBOUNCER_DATABASE_NAME: ${DB_NAME:-scrumooth}
+  #     PGBOUNCER_DATABASE_USER: ${DB_USER:-postgres}
+  #     PGBOUNCER_DATABASE_PASSWORD: ${DB_PASSWORD:-postgres}
+  #     PGBOUNCER_POOL_MODE: transaction
+  #     PGBOUNCER_MAX_CLIENT_CONN: 100
+  #     PGBOUNCER_DEFAULT_POOL_SIZE: 20
+  #     PGBOUNCER_MIN_POOL_SIZE: 5
+  #     PGBOUNCER_RESERVE_POOL_SIZE: 5
+  #     PGBOUNCER_MAX_DB_CONNECTIONS: 50
+  #     PGBOUNCER_SERVER_IDLE_TIMEOUT: 600
+  #     PGBOUNCER_SERVER_LIFETIME: 3600
+  #     PGBOUNCER_CLIENT_IDLE_TIMEOUT: 0
+  #     PGBOUNCER_CLIENT_LOGIN_TIMEOUT: 60
+  #     PGBOUNCER_QUERY_TIMEOUT: 0
+  #     PGBOUNCER_QUERY_WAIT_TIMEOUT: 120
+  #   ports:
+  #     - "6432:6432"
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #   restart: unless-stopped
+  #   networks:
+  #     - scrumooth-network
+  #   logging:
+  #     driver: "json-file"
+  #     options:
+  #       max-size: "10m"
+  #       max-file: "5"
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: '0.5'
+  #         memory: 128M
+  #       reservations:
+  #         cpus: '0.1'
+  #         memory: 32M
 
-  # Automated SQL backup service
+  # ===========================================================================
+  # Automated SQL Backup Service
   # Creates SQL dumps of the database daily at 2 AM
+  # ===========================================================================
   backup:
     image: postgres:18-alpine
     container_name: scrumooth-backup
@@ -237,9 +289,10 @@ services:
       - ./backups:/backups
       - ./scripts/maintenance/database:/scripts:ro
     environment:
-      - POSTGRES_USER=${DB_USER:-postgres}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_USER=${DB_USER:-scrumooth}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-Str0ng!DBp@ss2026}
       - DB_NAME=${DB_NAME:-scrumooth}
+      - DB_USER=${DB_USER:-scrumooth}
       - PGHOST=postgres
     command: >
       sh -c "
@@ -253,14 +306,19 @@ services:
     networks:
       - scrumooth-network
     restart: unless-stopped
+    # Security options
+    security_opt:
+      - no-new-privileges:true
     logging:
       driver: "json-file"
       options:
         max-size: "10m"
         max-file: "3"
 
-  # Automated volume backup service
+  # ===========================================================================
+  # Automated Volume Backup Service
   # Creates file-level backups of the PostgreSQL data volume weekly on Sundays at 3 AM
+  # ===========================================================================
   volume-backup:
     image: docker:cli
     container_name: scrumooth-volume-backup
@@ -281,12 +339,18 @@ services:
     networks:
       - scrumooth-network
     restart: unless-stopped
+    # Security options
+    security_opt:
+      - no-new-privileges:true
     logging:
       driver: "json-file"
       options:
         max-size: "10m"
         max-file: "3"
 
+# =============================================================================
+# Volumes
+# =============================================================================
 volumes:
   scrumooth_postgres_data:
     driver: local
@@ -295,6 +359,13 @@ volumes:
   caddy_config:
     driver: local
 
+# =============================================================================
+# Networks
+# =============================================================================
 networks:
   scrumooth-network:
     driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.0.0/16

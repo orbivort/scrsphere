@@ -10,15 +10,14 @@ publicHoistPattern:
 
 catalog:
   '@eslint/js': ^10.0.1
-  '@types/node': ^24.12.2
+  '@types/node': ^24.13.1
   '@typescript-eslint/eslint-plugin': ^8.60.1
   '@typescript-eslint/parser': ^8.60.1
-  '@vitest/coverage-v8': ^4.1.5
-  '@vitest/ui': ^4.1.5
-  cross-env: ^7.0.3
+  '@vitest/coverage-v8': ^4.1.8
+  '@vitest/ui': ^4.1.8
+  cross-env: ^10.1.0
   eslint: ^10.4.1
   eslint-config-prettier: ^10.1.8
-  eslint-plugin-prettier: ^5.5.6
   eslint-plugin-react-hooks: ^7.1.1
   eslint-plugin-react-refresh: ^0.5.2
   globals: ^17.6.0
@@ -26,10 +25,10 @@ catalog:
   rimraf: ^6.1.3
   stylelint: ^17.13.0
   stylelint-config-standard: ^40.0.0
-  tsx: ^4.21.0
+  tsx: ^4.22.4
   typescript: ^6.0.3
   typescript-eslint: ^8.60.1
-  vitest: ^4.1.5
+  vitest: ^4.1.8
 
 # Build configuration for pnpm v11
 allowBuilds:
@@ -46,7 +45,8 @@ strictPeerDependencies: false
 overrides:
   brace-expansion: ^5.0.6
   esbuild: ^0.25.0
-  glob: ^11.0.0
+  glob: ^11.1.0 # Fixed: GHSA-5j98-mcp5-4vw2 command injection vulnerability
+  ini: ^4.1.3 # Fixed: GHSA-qqgx-2p2h-9c37 prototype pollution vulnerability
   follow-redirects: ^1.16.0
   '@hono/node-server': ^1.19.14
   fast-uri: ^3.1.2
@@ -61,7 +61,8 @@ peerDependencyRules:
 
 # Security and Supply Chain Protection (pnpm v11 best practices)
 minimumReleaseAge: 1440 # 24 hours - prevents zero-day supply chain attacks
-minimumReleaseAgeExclude: # packages excluded from minimumReleaseAge check
+minimumReleaseAgeExclude:
+  # packages excluded from minimumReleaseAge check
   - stylelint # recently published, verified safe
 blockExoticSubdeps: true # blocks exotic URL dependencies (git, gist, etc.)
 strictDepBuilds: true # ensures build scripts only run for allowed packages

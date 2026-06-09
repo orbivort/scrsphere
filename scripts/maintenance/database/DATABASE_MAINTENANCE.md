@@ -171,29 +171,7 @@ crontab -e
 
 ### Option 2: Using Backup Container
 
-Add to `docker-compose.yml`:
-
-```yaml
-backup:
-  image: postgres:18-alpine
-  volumes:
-    - ./backups:/backups
-    - ./scripts:/scripts
-    - scrumooth_postgres_data:/var/lib/postgresql/data:ro
-  environment:
-    - POSTGRES_USER=postgres
-    - POSTGRES_PASSWORD=${DB_PASSWORD}
-    - DB_NAME=scrumooth
-  command: >
-    sh -c "
-      echo '0 2 * * * /scripts/db-backup.sh /backups' | crontab - &&
-      crond -f
-    "
-  depends_on:
-    - postgres
-  networks:
-    - scrumooth-network
-```
+The production `docker-compose.yml` already includes a fully configured backup service. See the [docker-compose.yml](file:///e:/ws1/ov/ce/scrumooth/docker-compose.yml) `backup` service definition (lines 278-308) for the actual configuration.
 
 ---
 
@@ -457,7 +435,7 @@ docker exec scrumooth-pgbouncer psql -p 6432 pgbouncer -c "SHOW POOLS;"
 docker ps -a | grep scrumooth-postgres
 
 # Start containers
-docker-compose up -d postgres
+docker compose up -d postgres
 ```
 
 #### 2. Permission Denied
@@ -498,7 +476,7 @@ df -h
 1. **Stop all containers**:
 
    ```bash
-   docker-compose down
+   docker compose down
    ```
 
 2. **Remove old volume** (⚠️ Destructive):
@@ -510,7 +488,7 @@ df -h
 3. **Start fresh**:
 
    ```bash
-   docker-compose up -d postgres
+   docker compose up -d postgres
    ```
 
 4. **Restore from backup**:

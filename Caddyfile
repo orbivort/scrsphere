@@ -4,7 +4,7 @@
 # Replace YOUR_DOMAIN with your actual domain (e.g., scrumooth.example.com)
 # For local development without a domain, use: http://localhost
 
-{$DOMAIN:localhost} {
+{$DOMAIN:app.local} {
     # Automatic HTTPS (comment out for local development without a domain)
     # tls {$EMAIL:}
 
@@ -20,7 +20,7 @@
 
     # API routes - proxy to backend
     handle /api/* {
-        reverse_proxy backend:5000 {
+        reverse_proxy backend:5010 {
             header_up X-Real-IP {remote_host}
             header_up X-Forwarded-For {remote_host}
             header_up X-Forwarded-Proto {scheme}
@@ -30,7 +30,7 @@
 
     # Health check endpoint
     handle /health {
-        reverse_proxy backend:5000
+        reverse_proxy backend:5010
     }
 
     # Static files and SPA routing
@@ -51,7 +51,7 @@
         # Referrer policy
         Referrer-Policy "strict-origin-when-cross-origin"
         # Content Security Policy
-        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:; frame-ancestors 'self';"
+        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https:; frame-ancestors 'self';"
         # Remove server information
         -Server
     }
@@ -60,7 +60,7 @@
 # Health check endpoint (accessible without authentication)
 :80 {
     handle /health {
-        reverse_proxy backend:5000
+        reverse_proxy backend:5010
     }
 
     # Redirect all other HTTP traffic to HTTPS

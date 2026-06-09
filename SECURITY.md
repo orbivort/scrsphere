@@ -17,7 +17,7 @@ We provide security updates for the following versions of Scrumooth:
 
 | Version | Supported | End of Life | Notes                  |
 | ------- | --------- | ----------- | ---------------------- |
-| 1.0.x   | ✅ Yes    | TBD         | Current stable release |
+| 2.x     | ✅ Yes    | <br />      | Current stable release |
 
 ### Version Support Policy
 
@@ -52,24 +52,20 @@ Please provide as much information as possible:
    - Clear and concise description of the vulnerability
    - Type of vulnerability (e.g., XSS, SQL injection, CSRF, authentication bypass)
    - Affected components or endpoints
-
 2. **Steps to Reproduce**
    - Detailed step-by-step instructions
    - Proof of concept (PoC) code if available
    - Screenshots or videos if applicable
-
 3. **Impact Assessment**
    - Potential impact on users and systems
    - Attack vector (network, local, physical)
    - Required privileges or authentication
-
 4. **Environment Details**
    - Scrumooth version number
    - Node.js version
    - PostgreSQL version
    - Operating system
    - Browser (if frontend-related)
-
 5. **Suggested Fix** (Optional)
    - Proposed solution or mitigation
    - Relevant code references
@@ -270,13 +266,14 @@ We will notify users of security incidents via:
 
 ## Policy Updates
 
-This security policy is reviewed and updated regularly. Last updated: **2026-05-04**
+This security policy is reviewed and updated regularly
 
 ### Version History
 
 | Version | Date       | Changes                 |
 | ------- | ---------- | ----------------------- |
 | 1.0     | 2026-05-04 | Initial security policy |
+| 2.0     | 2026-06-07 | Updated version         |
 
 ## Additional Resources
 
