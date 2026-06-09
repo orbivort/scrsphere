@@ -11,8 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **BREAKING**: rename repository from scrsphere to scrumooth
   - change repository url from github.com/orbivort/scrsphere to github.com/orbivort/scrumooth
-  - change package names from @scrsphere/* to @scrumooth/*
-  - change docker container names from scrsphere-* to scrumooth-*
+  - change package names from @scrsphere/_ to @scrumooth/_
+  - change docker container names from scrsphere-_ to scrumooth-_
   - change database names from scrsphere to scrumooth
   - update all import statements from @scrsphere/shared to @scrumooth/shared
   - update all documentation files with new product name
