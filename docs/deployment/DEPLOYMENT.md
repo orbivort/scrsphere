@@ -215,9 +215,9 @@ services:
       postgres:
         condition: service_healthy
     expose:
-      - "5000"
+      - "5010"
     healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:5000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:5010/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -270,7 +270,7 @@ docker compose up -d
 ### 5. Verify
 
 ```bash
-curl http://localhost:5000/health
+curl http://localhost:5010/health
 ```
 
 ---
@@ -283,7 +283,7 @@ curl http://localhost:5000/health
 | ------------ | -------------------------------- |
 | Base Image   | `node:24-alpine`                 |
 | Architecture | `linux/amd64`, `linux/arm64`     |
-| Exposed Port | `5000`                           |
+| Exposed Port | `5010`                           |
 | User         | `scrumooth` (non-root, UID 1001) |
 | Health Check | HTTP GET `/health` endpoint      |
 
@@ -320,7 +320,7 @@ curl http://localhost:5000/health
 **nginx Configuration Features**:
 
 - SPA routing support (`try_files`)
-- API reverse proxy (`/api` → backend:5000)
+- API reverse proxy (`/api` → backend:5010)
 - Gzip compression
 - Static asset caching (1 year expiry)
 - Security headers
@@ -376,7 +376,7 @@ DB_NAME=scrumooth
 JWT_SECRET=your-jwt-secret-minimum-64-characters-long-for-production-security
 
 NODE_ENV=production
-PORT=5000
+PORT=5010
 
 # CORS - comma-separated list of allowed origins
 CORS_ORIGIN=https://scrumooth.yourdomain.com
@@ -413,7 +413,7 @@ DOMAIN=scrumooth.yourdomain.com
     }
 
     handle /api/* {
-        reverse_proxy backend:5000 {
+        reverse_proxy backend:5010 {
             header_up X-Real-IP {remote_host}
             header_up X-Forwarded-For {remote_host}
             header_up X-Forwarded-Proto {scheme}
@@ -422,7 +422,7 @@ DOMAIN=scrumooth.yourdomain.com
     }
 
     handle /health {
-        reverse_proxy backend:5000
+        reverse_proxy backend:5010
     }
 
     handle {
@@ -441,7 +441,7 @@ DOMAIN=scrumooth.yourdomain.com
 
 :80 {
     handle /health {
-        reverse_proxy backend:5000
+        reverse_proxy backend:5010
     }
 }
 ```
@@ -510,7 +510,7 @@ docker run -d \
   -e SMTP_USER=your-smtp-user \
   -e SMTP_PASS=your-smtp-password \
   -e EMAIL_FROM_ADDRESS=noreply@example.com \
-  --health-cmd='node -e "require(\"http\").get(\"http://localhost:5000/health\", (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"' \
+  --health-cmd='node -e "require(\"http\").get(\"http://localhost:5010/health\", (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"' \
   --health-interval=30s \
   --health-timeout=10s \
   --health-retries=3 \
@@ -614,7 +614,7 @@ spec:
         - name: backend
           image: ghcr.io/orbivort/scrumooth/backend:1.0.0
           ports:
-            - containerPort: 5000
+            - containerPort: 5010
           envFrom:
             - configMapRef:
                 name: scrumooth-config
@@ -623,7 +623,7 @@ spec:
           livenessProbe:
             httpGet:
               path: /health
-              port: 5000
+              port: 5010
             initialDelaySeconds: 30
             periodSeconds: 30
             timeoutSeconds: 10
@@ -631,7 +631,7 @@ spec:
           readinessProbe:
             httpGet:
               path: /health
-              port: 5000
+              port: 5010
             initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 5
@@ -745,7 +745,7 @@ spec:
 
 | Variable                     | Default | Description                                      |
 | ---------------------------- | ------- | ------------------------------------------------ |
-| `PORT`                       | `5000`  | Backend server port                              |
+| `PORT`                       | `5010`  | Backend server port                              |
 | `JWT_EXPIRES_IN`             | `15m`   | Access token expiration                          |
 | `JWT_REFRESH_EXPIRES_IN`     | `7d`    | Refresh token expiration                         |
 | `LOG_LEVEL`                  | `info`  | Logging level (`debug`, `info`, `warn`, `error`) |
@@ -761,7 +761,7 @@ spec:
 | Service           | Internal Port | External Port   | Protocol   |
 | ----------------- | ------------- | --------------- | ---------- |
 | Frontend (nginx)  | 80            | - (via proxy)   | HTTP       |
-| Backend (Express) | 5000          | - (via proxy)   | HTTP       |
+| Backend (Express) | 5010          | - (via proxy)   | HTTP       |
 | PostgreSQL        | 5432          | - (internal)    | TCP        |
 | Caddy             | 80/443        | 80/443          | HTTP/HTTPS |
 | PgBouncer         | 6432          | 6432 (optional) | TCP        |
@@ -772,7 +772,7 @@ spec:
 services:
   backend:
     ports:
-      - '5000:5000' # Expose backend directly
+      - '5010:5010' # Expose backend directly
 
   frontend:
     ports:
@@ -789,9 +789,9 @@ services:
 
 ```bash
 # Backend
-docker run -p 5000:5000 ghcr.io/orbivort/scrumooth/backend:1.0.0
+docker run -p 5010:5010 ghcr.io/orbivort/scrumooth/backend:1.0.0
 
-# Frontend (requires backend at localhost:5000)
+# Frontend (requires backend at localhost:5010)
 docker run -p 80:80 ghcr.io/orbivort/scrumooth/frontend:1.0.0
 ```
 
@@ -1049,7 +1049,7 @@ docker compose exec backend npx prisma migrate deploy
 > - **Ubuntu/Debian**: `sudo apt-get install jq`
 > - **macOS**: `brew install jq`
 > - **Windows (WSL)**: `sudo apt-get install jq`
-> - **Windows (PowerShell)**: Use `ConvertFrom-Json` instead, e.g., `curl -s http://localhost:5000/health | ConvertFrom-Json`
+> - **Windows (PowerShell)**: Use `ConvertFrom-Json` instead, e.g., `curl -s http://localhost:5010/health | ConvertFrom-Json`
 
 ### 1. Container Health Checks
 
@@ -1068,7 +1068,7 @@ docker compose ps
 ### 2. Backend Health Endpoint
 
 ```bash
-curl -s http://localhost:5000/health | jq
+curl -s http://localhost:5010/health | jq
 ```
 
 Expected response:
@@ -1179,7 +1179,7 @@ echo -e "\n1. Checking container status..."
 docker compose ps
 
 echo -e "\n2. Checking backend health..."
-HEALTH=$(curl -s http://localhost:5000/health)
+HEALTH=$(curl -s http://localhost:5010/health)
 echo "$HEALTH" | jq -r '.status' | grep -q "healthy" && echo "✅ Backend healthy" || echo "❌ Backend unhealthy"
 
 echo -e "\n3. Checking database connection..."
@@ -1312,14 +1312,14 @@ docker compose exec postgres psql -U postgres -c "SELECT 1"
 # Check API proxy configuration
 
 # Verify backend is accessible from frontend
-docker compose exec frontend wget -q -O- http://backend:5000/health
+docker compose exec frontend wget -q -O- http://backend:5010/health
 ```
 
 **Solution**:
 
 ```bash
 # Ensure nginx.conf has correct proxy configuration
-# The frontend image has built-in proxy to 'backend:5000'
+# The frontend image has built-in proxy to 'backend:5010'
 # Ensure backend service is named 'backend' in compose
 ```
 
@@ -1584,7 +1584,7 @@ docker compose up -d backend frontend
 
 ```bash
 # Check health
-curl http://localhost:5000/health
+curl http://localhost:5010/health
 
 # Check version
 docker compose exec backend node -p "require('./package.json').version"
@@ -1608,7 +1608,7 @@ docker compose exec -T postgres psql -U postgres -d scrumooth < backup_20260525.
 docker compose up -d backend frontend
 
 # Verify
-curl http://localhost:5000/health
+curl http://localhost:5010/health
 ```
 
 ---
@@ -1650,7 +1650,7 @@ services:
       DATABASE_URL: postgresql://${DB_USER:-postgres}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-scrumooth}
       JWT_SECRET: ${JWT_SECRET}
       NODE_ENV: production
-      PORT: '5000'
+      PORT: '5010'
       CORS_ORIGIN: ${CORS_ORIGIN}
       FRONTEND_URL: ${FRONTEND_URL}
       EMAIL_PROVIDER: ${EMAIL_PROVIDER:-smtp}
@@ -1665,7 +1665,7 @@ services:
       postgres:
         condition: service_healthy
     expose:
-      - '5000'
+      - '5010'
     volumes:
       - ./logs/backend:/app/logs
     healthcheck:
@@ -1674,7 +1674,7 @@ services:
           'CMD',
           'node',
           '-e',
-          "require('http').get('http://localhost:5000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})",
+          "require('http').get('http://localhost:5010/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})",
         ]
       interval: 30s
       timeout: 10s
