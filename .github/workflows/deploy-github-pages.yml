@@ -127,10 +127,6 @@ jobs:
             Cache-Control: no-cache
           EOF
 
-      - name: Configure custom domain
-        run: |
-          echo 'scrumooth.orbivort.com' > packages/frontend/dist/CNAME
-
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5
         with:
