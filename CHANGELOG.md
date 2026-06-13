@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.0.1] - 2026-06-13
 
+### Security
+
+- **esbuild**: fix high RCE vulnerability via NPM_CONFIG_REGISTRY due to missing binary integrity verification in Deno module - GHSA-gv7w-rqvm-qjhr
+
 ## [2.0.0] - 2026-06-09
 
 ### Changed
