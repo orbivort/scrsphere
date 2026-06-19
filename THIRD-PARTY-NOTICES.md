@@ -4,7 +4,7 @@ This document contains the license information for third-party packages used in 
 
 **Project:** Scrumooth - Agile Scrum Lifecycle Management System
 **License:** Apache-2.0
-**Last Updated:** June 8, 2026
+**Last Updated:** June 19, 2026
 
 ---
 
@@ -35,7 +35,7 @@ This document contains the license information for third-party packages used in 
 | helmet                    | 8.1.0   | MIT          | Evan Hahn                     | https://github.com/helmetjs/helmet                       |
 | jsonwebtoken              | 9.0.3   | MIT          | Auth0, Inc.                   | https://github.com/auth0/node-jsonwebtoken               |
 | node-cron                 | 4.2.1   | MIT          | Lucas Merencia                | https://github.com/merencia/node-cron                    |
-| nodemailer                | 8.0.7   | MIT          | Andris Reinman                | https://github.com/nodemailer/nodemailer                 |
+| nodemailer                | 9.0.1   | MIT          | Andris Reinman                | https://github.com/nodemailer/nodemailer                 |
 | sanitize-html             | 2.17.4  | MIT          | Apostrophe Technologies, Inc. | https://github.com/apostrophecms/sanitize-html           |
 | uuid                      | 14.0.0  | MIT          | uuidjs                        | https://github.com/uuidjs/uuid                           |
 | winston                   | 3.19.0  | MIT          | Charlie Robbins               | https://github.com/winstonjs/winston                     |
@@ -304,5 +304,5 @@ This document should be updated whenever:
 
 ---
 
-**Document Version:** 1.8  
-**Generated:** June 8, 2026
+**Document Version:** 1.9  
+**Generated:** June 19, 2026
