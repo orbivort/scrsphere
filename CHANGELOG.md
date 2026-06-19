@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.0.3] - 2026-06-19
 
+### Security
+
+- **nodemailer**: fix high vulnerability - arbitrary file read and SSRF via message-level raw option bypassing disableFileAccess/disableUrlAccess - GHSA-p6gq-j5cr-w38f (upgrade to 9.0.1)
+- **undici**: fix high vulnerability - TLS certificate validation bypass via dropped requestTls in SOCKS5 ProxyAgent - CVE-2026-9697 / GHSA-vmh5-mc38-953g (override to 7.28.0)
+- **hono**: fix high vulnerability - CORS middleware reflects any Origin with credentials when `origin` defaults to the wildcard - CVE-2026-54290 / GHSA-88fw-hqm2-52qc (override to 4.12.25)
+
+- **undici**: fix moderate vulnerability - cross-user information disclosure via shared cache whitespace bypass - CVE-2026-9678 / GHSA-pr7r-676h-xcf6 (override to 7.28.0)
+- **hono**: fix 4 moderate vulnerabilities in Prisma dev tools transitive dependency (override to 4.12.25)
+  - CVE-2026-54286 / GHSA-wwfh-h76j-fc44 - path traversal in serve-static on Windows via encoded backslash
+  - CVE-2026-54287 / GHSA-j6c9-x7qj-28xf - AWS Lambda adapter merges multiple Set-Cookie headers incorrectly
+  - CVE-2026-54288 / GHSA-rv63-4mwf-qqc2 - Body Limit Middleware bypass on AWS Lambda
+  - CVE-2026-54289 / GHSA-wgpf-jwqj-8h8p - Lambda@Edge adapter drops repeated request headers
+
 ## [2.0.2] - 2026-06-16
 
 ### Security
