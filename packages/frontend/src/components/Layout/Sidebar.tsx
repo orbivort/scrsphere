@@ -25,11 +25,13 @@ import {
   XIcon,
   BellIcon,
   EditIcon,
+  GlobeIcon,
   LockIcon,
   LogOutIcon,
   ScrumoothIcon,
   UsersIcon,
 } from '../common/Icons';
+import { LanguageSwitcher } from '../common/LanguageSwitcher/LanguageSwitcher';
 import { NAV_ITEMS, SETTINGS_GROUPS, getFilteredSettingsGroups } from '../../config/navigation';
 import { getRoleLabel, getRoleBadgeClass } from '../../utils/roleUtils';
 
@@ -395,6 +397,10 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                     <LockIcon size={16} />
                     Change Password
                   </button>
+                  <div className={styles['user-dropdown-language']}>
+                    <GlobeIcon size={16} />
+                    <LanguageSwitcher />
+                  </div>
                   <div className={styles['user-dropdown-divider']} />
                   <button className={styles['user-dropdown-item']} onClick={logout}>
                     <LogOutIcon size={16} />

@@ -50,6 +50,7 @@ export { FileTextIcon } from './FileTextIcon';
 export { FilterIcon } from './FilterIcon';
 export { FlagIcon } from './FlagIcon';
 export { FolderIcon } from './FolderIcon';
+export { GlobeIcon } from './GlobeIcon';
 export { GoalIcon } from './GoalIcon';
 export { GridViewIcon } from './GridViewIcon';
 export { HourglassIcon } from './HourglassIcon';

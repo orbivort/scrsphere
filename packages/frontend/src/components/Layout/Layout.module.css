@@ -941,6 +941,15 @@
   transform: translateX(0);
 }
 
+.user-dropdown-language {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-2) var(--space-4);
+  color: var(--color-gray-700);
+}
+
 /* Main Content */
 .main-content {
   flex: 1;
