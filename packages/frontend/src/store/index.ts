@@ -301,6 +301,8 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'auth-storage',
+      version: 0,
+      migrate: (persistedState) => persistedState as AuthState,
       partialize: (state) => ({
         user: state.user,
         isAuthenticated: state.isAuthenticated,
@@ -326,6 +328,8 @@ export const useUIStore = create<UIState>()(
     }),
     {
       name: 'ui-storage',
+      version: 0,
+      migrate: (persistedState) => persistedState as UIState,
     }
   )
 );
@@ -449,6 +453,8 @@ export const useTeamStore = create<TeamState>()(
     }),
     {
       name: 'team-storage',
+      version: 0,
+      migrate: (persistedState) => persistedState as TeamState,
       partialize: (state) => ({
         // Only persist client state
         currentTeamId: state.currentTeamId,

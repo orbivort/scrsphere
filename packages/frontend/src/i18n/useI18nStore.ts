@@ -15,6 +15,8 @@ export const useI18nStore = create<I18nState>()(
     }),
     {
       name: 'scrumooth.locale',
+      version: 0,
+      migrate: (persistedState) => persistedState as I18nState,
       partialize: (state) => ({ locale: state.locale }),
     }
   )
