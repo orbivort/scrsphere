@@ -1,16 +1,16 @@
 {
   "title": "Dashboard",
-  "welcome": "Welcome, {{name}}",
-  "activeSprint": "Active Sprint",
-  "noActiveSprint": "No active sprint",
-  "teamMembers": "Team Members",
-  "recentActivity": "Recent Activity",
-  "sprintProgress": "Sprint Progress",
-  "upcomingDeadlines": "Upcoming Deadlines",
+  "welcome": "Benvenuto, {{name}}",
+  "activeSprint": "Sprint attivo",
+  "noActiveSprint": "Nessuno Sprint attivo",
+  "teamMembers": "Membri del team",
+  "recentActivity": "Attività recente",
+  "sprintProgress": "Avanzamento Sprint",
+  "upcomingDeadlines": "Scadenze imminenti",
   "metrics": {
-    "totalTasks": "Total Tasks",
-    "completedTasks": "Completed Tasks",
-    "remainingTasks": "Remaining Tasks",
-    "storyPointsCompleted": "Story Points Completed"
+    "totalTasks": "Task totali",
+    "completedTasks": "Task completati",
+    "remainingTasks": "Task rimanenti",
+    "storyPointsCompleted": "Story Points completati"
   }
 }

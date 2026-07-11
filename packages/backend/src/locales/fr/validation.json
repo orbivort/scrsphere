@@ -1,9 +1,9 @@
 {
-  "fieldRequired": "This field is required",
-  "fieldTooLong": "This field is too long",
-  "invalidEmail": "Please enter a valid email address",
-  "passwordTooShort": "Password must be at least {{min}} characters",
-  "passwordsDoNotMatch": "Passwords do not match",
-  "firstName": "First name",
-  "lastName": "Last name"
+  "fieldRequired": "Ce champ est requis",
+  "fieldTooLong": "Ce champ est trop long",
+  "invalidEmail": "Veuillez entrer une adresse e-mail valide",
+  "passwordTooShort": "Le mot de passe doit contenir au moins {{min}} caractères",
+  "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
+  "firstName": "Prénom",
+  "lastName": "Nom"
 }

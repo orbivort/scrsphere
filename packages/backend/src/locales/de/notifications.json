@@ -1,8 +1,8 @@
 {
-  "sprintStarted": "Sprint \"{{sprintName}}\" has started",
-  "sprintEnded": "Sprint \"{{sprintName}}\" has ended",
-  "taskAssigned": "Task \"{{taskTitle}}\" was assigned to you",
-  "mention": "{{userName}} mentioned you in a comment",
-  "impedimentCreated": "New impediment reported: {{title}}",
-  "impedimentResolved": "Impediment resolved: {{title}}"
+  "sprintStarted": "Sprint \"{{sprintName}}\" hat begonnen",
+  "sprintEnded": "Sprint \"{{sprintName}}\" ist beendet",
+  "taskAssigned": "Aufgabe \"{{taskTitle}}\" wurde Ihnen zugewiesen",
+  "mention": "{{userName}} hat Sie in einem Kommentar erwähnt",
+  "impedimentCreated": "Neues Hindernis gemeldet: {{title}}",
+  "impedimentResolved": "Hindernis gelöst: {{title}}"
 }

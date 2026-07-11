@@ -1,17 +1,17 @@
 {
   "passwordReset": {
-    "subject": "Reset your Scrumooth password",
-    "heading": "Hi {{name}},",
-    "bodyIntro": "We received a request to reset the password for {{email}}.",
-    "cta": "Reset password",
-    "expiresIn": "This link expires in {{duration}}.",
-    "ignoreIfNotRequested": "If you didn't request this, you can safely ignore this email."
+    "subject": "Reimpostare la password di Scrumooth",
+    "heading": "Gentile {{name}},",
+    "bodyIntro": "Abbiamo ricevuto una richiesta di reimpostazione della password per {{email}}.",
+    "cta": "Reimposta password",
+    "expiresIn": "Questo collegamento scade tra {{duration}}.",
+    "ignoreIfNotRequested": "Se non ha effettuato questa richiesta, può ignorare questa email in tutta sicurezza."
   },
   "welcome": {
-    "subject": "Welcome to Scrumooth",
-    "heading": "Welcome, {{name}}!",
-    "bodyIntro": "Your account has been created successfully.",
-    "cta": "Get started",
-    "closing": "We're excited to have you on board."
+    "subject": "Benvenuto in Scrumooth",
+    "heading": "Benvenuto, {{name}}!",
+    "bodyIntro": "Il Suo account è stato creato con successo.",
+    "cta": "Iniziare",
+    "closing": "Siamo felici di averLa con noi."
   }
 }

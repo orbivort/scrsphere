@@ -1,5 +1,5 @@
 {
-  "title": "Active Sprint",
-  "daysRemaining": "{{count}} day remaining",
-  "daysRemaining_other": "{{count}} days remaining"
+  "title": "Sprint activo",
+  "daysRemaining_one": "{{count}} día restante",
+  "daysRemaining_other": "{{count}} días restantes"
 }
