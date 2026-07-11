@@ -9,6 +9,51 @@ import { Layout } from './Sidebar';
 import * as storeModule from '../../store';
 import * as teamContextModule from '../../contexts/TeamContext';
 
+// Mock react-i18next — return the key itself so tests can find text by translation key
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => {
+      // Map common nav keys to their English values for test assertions
+      const map: Record<string, string> = {
+        'nav.dashboard': 'Dashboard',
+        'nav.productGoals': 'Product Goals',
+        'nav.productBacklog': 'Product Backlog',
+        'nav.sprintPlanning': 'Sprint Planning',
+        'nav.activeSprint': 'Active Sprint',
+        'nav.dailyScrum': 'Daily Scrum',
+        'nav.impediments': 'Impediments',
+        'nav.increments': 'Increments',
+        'nav.sprintReview': 'Sprint Review',
+        'nav.retrospective': 'Retrospective',
+        'nav.reports': 'Reports',
+        'nav.team': 'Team',
+        'nav.settingsLabel': 'Settings',
+        'nav.notifications': 'Notifications',
+        'nav.settings.team': 'Team',
+        'nav.settings.data': 'Data',
+        'nav.settings.sprintConfiguration': 'Sprint Configuration',
+        'nav.settings.teamDefinitions': 'Team Definitions',
+        'nav.settings.teamManagement': 'Team Management',
+        'nav.settings.privacyData': 'Privacy & Data',
+        'userMenu.editProfile': 'Edit Profile',
+        'userMenu.changePassword': 'Change Password',
+        'userMenu.logout': 'Logout',
+        noTeamSelected: 'No team selected',
+        unsavedChanges: 'Unsaved Changes',
+        'aria.openMenu': 'Open menu',
+        'aria.closeMenu': 'Close menu',
+        'aria.expandSidebar': 'Expand sidebar',
+        'aria.collapseSidebar': 'Collapse sidebar',
+        language: 'Language',
+        selectLanguage: 'Select language',
+      };
+      return map[key] ?? key;
+    },
+    i18n: { changeLanguage: vi.fn() },
+  }),
+  Trans: ({ children }: { children: React.ReactNode }) => children,
+}));
+
 vi.mock('./Layout.module.css', () => ({
   default: {
     layout: 'layout',
@@ -1130,7 +1175,7 @@ describe('Layout Component', () => {
       const teamGroups = screen.getAllByText('Team');
       const settingsGroupLabel = teamGroups.find((el) => el.classList.contains('nav-group-label'));
       const teamGroup = settingsGroupLabel?.closest('[role="group"]');
-      expect(teamGroup).toHaveAttribute('aria-label', 'Team settings');
+      expect(teamGroup).toHaveAttribute('aria-label', 'Team');
     });
   });
 });

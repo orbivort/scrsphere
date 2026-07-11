@@ -52,12 +52,45 @@
   "showMore": "Show more",
   "showLess": "Show less",
   "localeSyncFailed": "Failed to sync language preference. It will sync on next login.",
+  "noTeamSelected": "No team selected",
+  "unsavedChanges": "Unsaved Changes",
+  "nav": {
+    "dashboard": "Dashboard",
+    "productGoals": "Product Goals",
+    "productBacklog": "Product Backlog",
+    "sprintPlanning": "Sprint Planning",
+    "activeSprint": "Active Sprint",
+    "dailyScrum": "Daily Scrum",
+    "impediments": "Impediments",
+    "increments": "Increments",
+    "sprintReview": "Sprint Review",
+    "retrospective": "Retrospective",
+    "reports": "Reports",
+    "team": "Team",
+    "settingsLabel": "Settings",
+    "notifications": "Notifications",
+    "settings": {
+      "team": "Team",
+      "data": "Data",
+      "sprintConfiguration": "Sprint Configuration",
+      "teamDefinitions": "Team Definitions",
+      "teamManagement": "Team Management",
+      "privacyData": "Privacy & Data"
+    }
+  },
+  "userMenu": {
+    "editProfile": "Edit Profile",
+    "changePassword": "Change Password",
+    "logout": "Logout"
+  },
   "aria": {
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
     "toggleSidebar": "Toggle sidebar",
     "closeDialog": "Close dialog",
-    "navigateTo": "Navigate to {{page}}"
+    "navigateTo": "Navigate to {{page}}",
+    "expandSidebar": "Expand sidebar",
+    "collapseSidebar": "Collapse sidebar"
   },
   "error": {
     "boundary": {

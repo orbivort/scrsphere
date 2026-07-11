@@ -52,12 +52,45 @@
   "showMore": "Mehr anzeigen",
   "showLess": "Weniger anzeigen",
   "localeSyncFailed": "Sprachpräferenz konnte nicht synchronisiert werden. Sie wird bei der nächsten Anmeldung synchronisiert.",
+  "noTeamSelected": "Kein Team ausgewählt",
+  "unsavedChanges": "Ungespeicherte Änderungen",
+  "nav": {
+    "dashboard": "Dashboard",
+    "productGoals": "Produktziele",
+    "productBacklog": "Product Backlog",
+    "sprintPlanning": "Sprint-Planung",
+    "activeSprint": "Aktiver Sprint",
+    "dailyScrum": "Daily Scrum",
+    "impediments": "Hindernisse",
+    "increments": "Inkremente",
+    "sprintReview": "Sprint Review",
+    "retrospective": "Retrospektive",
+    "reports": "Berichte",
+    "team": "Team",
+    "settingsLabel": "Einstellungen",
+    "notifications": "Benachrichtigungen",
+    "settings": {
+      "team": "Team",
+      "data": "Daten",
+      "sprintConfiguration": "Sprint-Konfiguration",
+      "teamDefinitions": "Team-Definitionen",
+      "teamManagement": "Team-Verwaltung",
+      "privacyData": "Datenschutz & Daten"
+    }
+  },
+  "userMenu": {
+    "editProfile": "Profil bearbeiten",
+    "changePassword": "Passwort ändern",
+    "logout": "Abmelden"
+  },
   "aria": {
     "openMenu": "Menü öffnen",
     "closeMenu": "Menü schließen",
     "toggleSidebar": "Seitenleiste umschalten",
     "closeDialog": "Dialog schließen",
-    "navigateTo": "Navigieren zu {{page}}"
+    "navigateTo": "Navigieren zu {{page}}",
+    "expandSidebar": "Seitenleiste ausklappen",
+    "collapseSidebar": "Seitenleiste einklappen"
   },
   "error": {
     "boundary": {

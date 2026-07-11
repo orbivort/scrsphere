@@ -52,12 +52,45 @@
   "showMore": "Mostra di più",
   "showLess": "Mostra meno",
   "localeSyncFailed": "Impossibile sincronizzare la preferenza della lingua. Verrà sincronizzata al prossimo accesso.",
+  "noTeamSelected": "Nessun team selezionato",
+  "unsavedChanges": "Modifiche non salvate",
   "aria": {
     "openMenu": "Apri menu",
     "closeMenu": "Chiudi menu",
     "toggleSidebar": "Attiva/disattiva barra laterale",
     "closeDialog": "Chiudi finestra di dialogo",
-    "navigateTo": "Vai a {{page}}"
+    "navigateTo": "Vai a {{page}}",
+    "expandSidebar": "Espandi barra laterale",
+    "collapseSidebar": "Comprimi barra laterale"
+  },
+  "nav": {
+    "dashboard": "Cruscotto",
+    "productGoals": "Obiettivi del prodotto",
+    "productBacklog": "Product Backlog",
+    "sprintPlanning": "Pianificazione Sprint",
+    "activeSprint": "Sprint attivo",
+    "dailyScrum": "Daily Scrum",
+    "impediments": "Impedimenti",
+    "increments": "Incrementi",
+    "sprintReview": "Sprint Review",
+    "retrospective": "Retrospezione",
+    "reports": "Report",
+    "team": "Team",
+    "settingsLabel": "Impostazioni",
+    "notifications": "Notifiche",
+    "settings": {
+      "team": "Team",
+      "data": "Dati",
+      "sprintConfiguration": "Configurazione Sprint",
+      "teamDefinitions": "Definizioni team",
+      "teamManagement": "Gestione team",
+      "privacyData": "Privacy e dati"
+    }
+  },
+  "userMenu": {
+    "editProfile": "Modifica profilo",
+    "changePassword": "Cambia password",
+    "logout": "Esci"
   },
   "error": {
     "boundary": {

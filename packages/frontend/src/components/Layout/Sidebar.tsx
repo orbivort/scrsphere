@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import { useAuthStore, useUIStore } from '../../store';
 import { useTeamContext } from '../../contexts/TeamContext';
@@ -43,6 +44,7 @@ interface LayoutProps {
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { user, logout } = useAuthStore();
+  const { t } = useTranslation();
   const { sidebarCollapsed, toggleSidebar } = useUIStore();
   const { currentTeam, userRole, hasMultipleTeams, switchTeam, userTeams } = useTeamContext();
   const location = useLocation();
@@ -190,7 +192,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           <button
             className={styles['sidebar-toggle']}
             onClick={toggleSidebar}
-            aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            aria-label={sidebarCollapsed ? t('aria.expandSidebar') : t('aria.collapseSidebar')}
             aria-expanded={!sidebarCollapsed}
           >
             {sidebarCollapsed ? <ChevronRightIcon size={20} /> : <ChevronLeftIcon size={20} />}
@@ -211,19 +213,21 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <span className={styles['nav-icon']}>
                   <IconComponent size={20} />
                 </span>
-                {!sidebarCollapsed && <span className={styles['nav-label']}>{item.label}</span>}
+                {!sidebarCollapsed && (
+                  <span className={styles['nav-label']}>{t(item.labelKey as never)}</span>
+                )}
               </Link>
             );
           })}
 
           {!sidebarCollapsed && filteredSettingsGroups.length > 0 && (
-            <div className={styles['nav-divider']}>Settings</div>
+            <div className={styles['nav-divider']}>{t('nav.settingsLabel')}</div>
           )}
           {filteredSettingsGroups.map((group) => (
-            <div key={group.id} role="group" aria-label={`${group.label} settings`}>
+            <div key={group.id} role="group" aria-label={t(group.labelKey as never)}>
               {!sidebarCollapsed && (
                 <div className={styles['nav-group-label']} aria-hidden="true">
-                  {group.label}
+                  {t(group.labelKey as never)}
                 </div>
               )}
               {sidebarCollapsed && <div className={styles['nav-group-divider']} />}
@@ -241,7 +245,9 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                     <span className={styles['nav-icon']}>
                       <IconComponent size={20} />
                     </span>
-                    {!sidebarCollapsed && <span className={styles['nav-label']}>{item.label}</span>}
+                    {!sidebarCollapsed && (
+                      <span className={styles['nav-label']}>{t(item.labelKey as never)}</span>
+                    )}
                   </Link>
                 );
               })}
@@ -269,7 +275,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             <button
               className={styles['menu-toggle']}
               onClick={handleSidebarToggle}
-              aria-label={isMobileSidebarOpen ? 'Close menu' : 'Open menu'}
+              aria-label={isMobileSidebarOpen ? t('aria.closeMenu') : t('aria.openMenu')}
               aria-expanded={isMobileSidebarOpen}
               type="button"
             >
@@ -325,7 +331,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                   )}
                 </div>
               ) : (
-                <span className={styles['no-team-message']}>No team selected</span>
+                <span className={styles['no-team-message']}>{t('noTeamSelected')}</span>
               )}
             </div>
           </div>
@@ -334,7 +340,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
               <button
                 className={styles['notification-button']}
                 onClick={() => setNotificationPanelOpen(!notificationPanelOpen)}
-                aria-label="Notifications"
+                aria-label={t('nav.notifications')}
               >
                 <BellIcon size={20} />
                 <NotificationBadge />
@@ -385,7 +391,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                     }}
                   >
                     <EditIcon size={16} />
-                    Edit Profile
+                    {t('userMenu.editProfile')}
                   </button>
                   <button
                     className={styles['user-dropdown-item']}
@@ -395,7 +401,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                     }}
                   >
                     <LockIcon size={16} />
-                    Change Password
+                    {t('userMenu.changePassword')}
                   </button>
                   <div className={styles['user-dropdown-language']}>
                     <GlobeIcon size={16} />
@@ -404,7 +410,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                   <div className={styles['user-dropdown-divider']} />
                   <button className={styles['user-dropdown-item']} onClick={logout}>
                     <LogOutIcon size={16} />
-                    Logout
+                    {t('userMenu.logout')}
                   </button>
                   {/* Danger Zone for account deletion - separated from frequently used Logout */}
                   {accountDeletion.deletionEligibility && (
@@ -466,7 +472,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         isOpen={unsavedChanges.unsavedChangesModalOpen}
         onConfirm={handleUnsavedChangesConfirmWrapper}
         onCancel={unsavedChanges.handleUnsavedChangesCancel}
-        title="Unsaved Changes"
+        title={t('unsavedChanges')}
         message={unsavedChanges.getUnsavedChangesMessage()}
       />
     </div>

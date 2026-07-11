@@ -52,12 +52,45 @@
   "showMore": "Afficher plus",
   "showLess": "Afficher moins",
   "localeSyncFailed": "Échec de la synchronisation de la préférence de langue. La synchronisation aura lieu lors de la prochaine connexion.",
+  "noTeamSelected": "Aucune équipe sélectionnée",
+  "unsavedChanges": "Modifications non enregistrées",
   "aria": {
     "openMenu": "Ouvrir le menu",
     "closeMenu": "Fermer le menu",
     "toggleSidebar": "Basculer le panneau latéral",
     "closeDialog": "Fermer la boîte de dialogue",
-    "navigateTo": "Accéder à {{page}}"
+    "navigateTo": "Accéder à {{page}}",
+    "expandSidebar": "Agrandir le panneau latéral",
+    "collapseSidebar": "Réduire le panneau latéral"
+  },
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "productGoals": "Objectifs produit",
+    "productBacklog": "Product Backlog",
+    "sprintPlanning": "Planification de Sprint",
+    "activeSprint": "Sprint actif",
+    "dailyScrum": "Mêlée quotidienne",
+    "impediments": "Empêchements",
+    "increments": "Incréments",
+    "sprintReview": "Revue de Sprint",
+    "retrospective": "Rétrospective",
+    "reports": "Rapports",
+    "team": "Équipe",
+    "settingsLabel": "Paramètres",
+    "notifications": "Notifications",
+    "settings": {
+      "team": "Équipe",
+      "data": "Données",
+      "sprintConfiguration": "Configuration de Sprint",
+      "teamDefinitions": "Définitions d'équipe",
+      "teamManagement": "Gestion d'équipe",
+      "privacyData": "Confidentialité et données"
+    }
+  },
+  "userMenu": {
+    "editProfile": "Modifier le profil",
+    "changePassword": "Changer le mot de passe",
+    "logout": "Déconnexion"
   },
   "error": {
     "boundary": {
