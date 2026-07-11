@@ -23,6 +23,7 @@ import {
 } from '../../../controllers/auth.controller';
 import { authService } from '../../../services/auth.service';
 import { BadRequestError, UnauthorizedError } from '../../../utils/errors';
+import prisma from '../../../utils/prisma';
 import { createMockRequest, createMockResponse, createMockNext } from '../../setup/testSetup';
 
 vi.mock('../../../services/auth.service', () => ({
@@ -59,6 +60,14 @@ vi.mock('../../../utils/logger', () => ({
   },
   auditLogger: {
     info: vi.fn(),
+  },
+}));
+
+vi.mock('../../../utils/prisma', () => ({
+  default: {
+    user: {
+      findUnique: vi.fn(),
+    },
   },
 }));
 
@@ -141,7 +150,7 @@ describe('Auth Controller', () => {
       await new Promise((resolve) => setTimeout(resolve, 0));
 
       expect(mockNext).not.toHaveBeenCalled();
-      expect(mockRes.cookie).toHaveBeenCalledTimes(2);
+      expect(mockRes.cookie).toHaveBeenCalledTimes(3);
       expect(mockRes._status).toBe(201);
       expect(mockRes._json.success).toBe(true);
       expect(mockRes._json.data.user).toEqual(mockUser);
@@ -180,7 +189,7 @@ describe('Auth Controller', () => {
       await new Promise((resolve) => setTimeout(resolve, 0));
 
       expect(mockNext).not.toHaveBeenCalled();
-      expect(mockRes.cookie).toHaveBeenCalledTimes(2);
+      expect(mockRes.cookie).toHaveBeenCalledTimes(3);
       expect(mockRes._json.success).toBe(true);
     });
 
@@ -536,7 +545,8 @@ describe('Auth Controller', () => {
       mockReq.userId = 'user-id';
       mockReq.body = { firstName: 'Updated', lastName: 'Name' };
 
-      const updatedUser = { ...mockUser, firstName: 'Updated', lastName: 'Name' };
+      (prisma.user.findUnique as any).mockResolvedValue({ locale: 'en' });
+      const updatedUser = { ...mockUser, firstName: 'Updated', lastName: 'Name', locale: 'en' };
       (authService.updateProfile as any).mockResolvedValue(updatedUser);
 
       updateProfile(mockReq as any, mockRes as any, mockNext);

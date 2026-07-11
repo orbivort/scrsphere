@@ -324,6 +324,7 @@ describe('authService - Password Reset', () => {
           id: true,
           email: true,
           firstName: true,
+          locale: true,
         },
       });
     });

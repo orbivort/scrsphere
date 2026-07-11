@@ -49,6 +49,7 @@ describe('Auth Middleware', () => {
     marketingOptInAt: null,
     createdBy: null,
     updatedBy: null,
+    locale: 'en',
   };
 
   const mockTokenPayload = {

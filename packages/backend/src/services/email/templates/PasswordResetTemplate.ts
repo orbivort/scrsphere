@@ -7,6 +7,8 @@
 
 import type { BaseTemplateData, RenderedEmail } from './BaseEmailTemplate.js';
 import { BaseEmailTemplate } from './BaseEmailTemplate.js';
+import type { Locale } from '@scrumooth/shared';
+import { i18nInstance } from '../../../i18n/config.js';
 
 /**
  * Data required for the password reset email template
@@ -20,6 +22,8 @@ export interface PasswordResetTemplateData extends BaseTemplateData {
   resetUrl: string;
   /** Human-readable expiration time (e.g., "1 hour") */
   expiresIn: string;
+  /** Recipient's preferred locale */
+  locale: Locale;
 }
 
 /**
@@ -52,17 +56,21 @@ export class PasswordResetTemplate extends BaseEmailTemplate<PasswordResetTempla
    * @returns Object containing html and text versions
    */
   render(data: PasswordResetTemplateData): RenderedEmail {
-    const htmlContent = this.generateHtmlContent(data);
-    const textContent = this.generateTextContent(data);
+    const t = i18nInstance.getFixedT(data.locale, 'emails');
+    const localizedSubject = t('passwordReset.subject');
+    const htmlContent = this.generateHtmlContent(data, t);
+    const textContent = this.generateTextContent(data, t);
 
     const renderData: TemplateRenderData = {
       ...data,
+      subject: localizedSubject,
       recipientName: data.firstName,
       content: htmlContent,
     };
 
     const textRenderData: TemplateRenderData = {
       ...data,
+      subject: localizedSubject,
       recipientName: data.firstName,
       content: textContent,
     };
@@ -86,11 +94,14 @@ export class PasswordResetTemplate extends BaseEmailTemplate<PasswordResetTempla
    * @param data - The template data
    * @returns HTML content string
    */
-  private generateHtmlContent(data: PasswordResetTemplateData): string {
+  private generateHtmlContent(
+    data: PasswordResetTemplateData,
+    t: ReturnType<typeof i18nInstance.getFixedT>
+  ): string {
     return `
-      <h2 style="margin: 0 0 16px 0; color: #111827; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-size: 20px; font-weight: 600;">Reset Your Password</h2>
+      <h2 style="margin: 0 0 16px 0; color: #111827; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-size: 20px; font-weight: 600;">${t('passwordReset.heading', { name: data.firstName })}</h2>
 
-      <p style="margin: 0 0 16px 0; color: #374151; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-size: 16px; line-height: 1.6;">We received a request to reset the password for your account associated with <strong>${data.email}</strong>.</p>
+      <p style="margin: 0 0 16px 0; color: #374151; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-size: 16px; line-height: 1.6;">${t('passwordReset.bodyIntro', { email: data.email })}</p>
 
       <p style="margin: 0 0 16px 0; color: #374151; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-size: 16px; line-height: 1.6;">Click the button below to create a new password:</p>
 
@@ -100,12 +111,12 @@ export class PasswordResetTemplate extends BaseEmailTemplate<PasswordResetTempla
             <!--[if mso]>
             <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${data.resetUrl}" style="height:48px;v-text-anchor:middle;width:200px;" arcsize="12%" strokecolor="#667eea" fillcolor="#667eea">
               <w:anchorlock/>
-              <center style="color:#ffffff;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;font-weight:600;">Reset Password</center>
+              <center style="color:#ffffff;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;font-weight:600;">${t('passwordReset.cta')}</center>
             </v:roundrect>
             <![endif]-->
             <!--[if !mso]><!-->
             <a href="${data.resetUrl}" style="display: inline-block; padding: 12px 24px; background-color: #667eea; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff !important; text-decoration: none !important; border-radius: 6px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-size: 16px; font-weight: 600; text-align: center; border: 1px solid #667eea;">
-              Reset Password
+              ${t('passwordReset.cta')}
             </a>
             <!--<![endif]-->
           </td>
@@ -116,7 +127,7 @@ export class PasswordResetTemplate extends BaseEmailTemplate<PasswordResetTempla
         <tr>
           <td style="padding: 16px 20px;">
             <p style="margin: 0; color: #92400e; font-size: 14px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
-              <strong>This link will expire in ${data.expiresIn}.</strong> For security reasons, please reset your password promptly.
+              <strong>${t('passwordReset.expiresIn', { duration: data.expiresIn })}</strong>
             </p>
           </td>
         </tr>
@@ -137,7 +148,7 @@ export class PasswordResetTemplate extends BaseEmailTemplate<PasswordResetTempla
       <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;">
 
       <p style="color: #6b7280; font-size: 14px; margin: 0 0 16px 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
-        <strong>Security Notice:</strong> If you did not request a password reset, you can safely ignore this email. Your password will remain unchanged and your account is secure.
+        ${t('passwordReset.ignoreIfNotRequested')}
       </p>
 
       <p style="color: #6b7280; font-size: 14px; margin: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
@@ -152,21 +163,24 @@ export class PasswordResetTemplate extends BaseEmailTemplate<PasswordResetTempla
    * @param data - The template data
    * @returns Plain text content string
    */
-  private generateTextContent(data: PasswordResetTemplateData): string {
+  private generateTextContent(
+    data: PasswordResetTemplateData,
+    t: ReturnType<typeof i18nInstance.getFixedT>
+  ): string {
     return `
-RESET YOUR PASSWORD
+${t('passwordReset.heading', { name: data.firstName }).toUpperCase()}
 
-We received a request to reset the password for your account associated with ${data.email}.
+${t('passwordReset.bodyIntro', { email: data.email })}
 
 To create a new password, please visit the following link:
 
 ${data.resetUrl}
 
-IMPORTANT: This link will expire in ${data.expiresIn}. For security reasons, please reset your password promptly.
+IMPORTANT: ${t('passwordReset.expiresIn', { duration: data.expiresIn })}
 
 --------------------------------------------------------------------------------
 
-SECURITY NOTICE: If you did not request a password reset, you can safely ignore this email. Your password will remain unchanged and your account is secure.
+${t('passwordReset.ignoreIfNotRequested').toUpperCase()}
 
 If you have any questions or need assistance, please contact our support team.
     `.trim();

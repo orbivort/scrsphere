@@ -26,6 +26,7 @@ import dataExportRoutes from './routes/dataExport.routes';
 import consentRoutes from './routes/consent.routes';
 import { requestLogger } from './middleware/requestLogger.middleware';
 import { requestId } from './middleware/requestId.middleware';
+import { localeResolver } from './middleware/locale.middleware.js';
 import { contextMiddleware } from './middleware/context.middleware';
 import { csrfProtectionMiddleware, ensureCsrfToken } from './middleware/csrf.middleware';
 import { versionMiddleware } from './middleware/version.middleware';
@@ -102,6 +103,9 @@ app.use(csrfProtectionMiddleware);
 
 // Request logging
 app.use(requestLogger);
+
+// Locale resolution (must be after contextMiddleware and authenticate)
+app.use(localeResolver);
 
 // Health check endpoint
 app.get('/health', async (_req, res) => {

@@ -139,7 +139,7 @@
   font-size: var(--font-size-sm);
   color: var(--color-text-primary);
   font-weight: var(--font-weight-semibold);
-  text-align: right;
+  text-align: end;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -184,7 +184,7 @@
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-bold);
   color: var(--color-primary-600);
-  text-align: left;
+  text-align: start;
 }
 
 /* Detail Description */
@@ -262,7 +262,7 @@
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-bold);
   color: var(--color-primary-600);
-  text-align: right;
+  text-align: end;
 }
 
 /* Detail Metadata Grid */
@@ -399,7 +399,7 @@
   cursor: pointer;
   font-size: var(--font-size-sm);
   color: var(--color-text-primary);
-  text-align: left;
+  text-align: start;
   transition: all var(--transition-fast);
 }
 

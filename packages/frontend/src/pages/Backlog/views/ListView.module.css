@@ -32,7 +32,7 @@
 .backlog-table th {
   background: linear-gradient(135deg, var(--color-gray-50) 0%, var(--color-gray-100) 100%);
   padding: var(--space-4) var(--space-5);
-  text-align: left;
+  text-align: start;
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
   color: var(--color-text-secondary);
@@ -72,7 +72,7 @@
 
 .virtualized-header-cell {
   padding: var(--space-4) var(--space-5);
-  text-align: left;
+  text-align: start;
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
   color: var(--color-text-secondary);
@@ -291,7 +291,7 @@
 
 .status-label {
   flex: 1;
-  text-align: left;
+  text-align: start;
 }
 
 .status-arrow {
@@ -367,7 +367,7 @@
   transition:
     background-color var(--transition-fast),
     border-left-color var(--transition-fast);
-  text-align: left;
+  text-align: start;
   border-left: 3px solid transparent;
 }
 

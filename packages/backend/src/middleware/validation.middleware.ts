@@ -3,6 +3,17 @@ import { type Request, type Response, type NextFunction } from 'express';
 import { type ZodSchema, ZodError } from 'zod';
 import { ValidationError } from '../utils/errors';
 import { logger } from '../utils/logger';
+import { t } from '../i18n/requestT.js';
+
+/**
+ * Resolves a validation message. If the message contains a colon (ns:key format),
+ * it is treated as a translation key and resolved via t(). Otherwise, it is
+ * passed through unchanged — preserving backward compatibility with schemas
+ * that have not yet been migrated.
+ */
+const resolveMessage = (message: string, ctx?: Record<string, unknown>): string => {
+  return message.includes(':') ? t(message, ctx) : message;
+};
 
 // Extend Express Request to include validated data
 declare global {
@@ -33,7 +44,7 @@ export const validateBody = (schema: ZodSchema) => {
       if (error instanceof ZodError) {
         const details = error.issues.map((err) => ({
           field: err.path.join('.'),
-          message: err.message,
+          message: resolveMessage(err.message),
         }));
         logger.warn('Body validation failed', {
           path: req.path,
@@ -61,7 +72,7 @@ export const validateParams = (schema: ZodSchema) => {
       if (error instanceof ZodError) {
         const details = error.issues.map((err) => ({
           field: err.path.join('.'),
-          message: err.message,
+          message: resolveMessage(err.message),
         }));
         next(new ValidationError(details));
       } else {
@@ -84,7 +95,7 @@ export const validateQuery = (schema: ZodSchema) => {
       if (error instanceof ZodError) {
         const details = error.issues.map((err) => ({
           field: err.path.join('.'),
-          message: err.message,
+          message: resolveMessage(err.message),
         }));
         next(new ValidationError(details));
       } else {

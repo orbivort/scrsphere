@@ -1,7 +1,7 @@
 // Auth Validation Schemas
 import { z } from 'zod';
 import { sanitizeString } from '../utils/sanitization';
-import { VALIDATION, PASSWORD_REGEX } from '@scrumooth/shared';
+import { VALIDATION, PASSWORD_REGEX, SUPPORTED_LOCALES } from '@scrumooth/shared';
 
 const passwordRequirements = {
   minLength: VALIDATION.PASSWORD.MIN_LENGTH,
@@ -97,6 +97,7 @@ export const forceDeleteSchema = z.object({
 export const updateProfileSchema = z.object({
   firstName: sanitizedString('First name', 100),
   lastName: sanitizedString('Last name', 100),
+  locale: z.enum(SUPPORTED_LOCALES as unknown as [string, ...string[]]).optional(),
 });
 
 export const changePasswordSchema = z.object({

@@ -1,0 +1,47 @@
+import { type Request, type Response, type NextFunction } from 'express';
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES, type Locale } from '@scrumooth/shared';
+import { normalizeLocale } from '@scrumooth/shared';
+import { updateRequestContext } from '../utils/requestContext.js';
+
+/**
+ * Resolves the request locale and stores it in the AsyncLocalStorage request context.
+ *
+ * MUST be registered AFTER contextMiddleware (which creates the ALS store) and
+ * AFTER authenticate (so req.user.locale is available for authenticated requests).
+ * For unauthenticated requests it falls back to the Accept-Language header.
+ */
+export function localeResolver(req: Request, _res: Response, next: NextFunction): void {
+  let locale: Locale = DEFAULT_LOCALE;
+
+  // 1. Authenticated user's stored preference (authoritative, cross-device)
+  const userLocale = (req as Request & { user?: { locale?: string } }).user?.locale;
+  if (userLocale && (SUPPORTED_LOCALES as readonly string[]).includes(userLocale)) {
+    locale = userLocale as Locale;
+  }
+  // 2. Accept-Language header (guests / first visit)
+  else {
+    const acceptLang = req.headers['accept-language'];
+    if (typeof acceptLang === 'string') {
+      const detected = acceptLang
+        .split(',')
+        .map((l) => l.split(';')[0]?.trim() ?? '')
+        .map((l) => l.split('-')[0]?.toLowerCase() ?? '')
+        .find((l) => (SUPPORTED_LOCALES as readonly string[]).includes(l));
+      if (detected) {
+        locale = normalizeLocale(detected);
+      }
+    }
+  }
+
+  // Persist the locale cookie so SSR/refresh renders the correct language pre-hydration
+  _res.cookie('scrumooth_locale', locale, {
+    maxAge: 31536000,
+    sameSite: 'strict',
+    secure: true,
+    httpOnly: false,
+    path: '/',
+  });
+
+  updateRequestContext({ locale });
+  next();
+}

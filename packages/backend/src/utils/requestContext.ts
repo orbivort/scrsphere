@@ -1,5 +1,7 @@
 // Request Context Propagation using AsyncLocalStorage
 import { AsyncLocalStorage } from 'node:async_hooks';
+import type { Locale } from '@scrumooth/shared';
+import { DEFAULT_LOCALE, isSupportedLocale } from '@scrumooth/shared';
 
 /**
  * Request context interface for storing request-scoped data
@@ -11,6 +13,8 @@ export interface RequestContext {
   userId?: string;
   /** ID of the team context (if any) */
   teamId?: string;
+  /** Resolved locale for this request (added by i18n) */
+  locale?: Locale;
 }
 
 // Create AsyncLocalStorage instance for request context
@@ -68,6 +72,15 @@ export const updateRequestContext = (updates: Partial<RequestContext>): void => 
   if (store) {
     Object.assign(store, updates);
   }
+};
+
+/**
+ * Get the resolved locale from the request context.
+ * Falls back to DEFAULT_LOCALE if no locale is set.
+ */
+export const getRequestLocale = (): Locale => {
+  const locale = asyncLocalStorage.getStore()?.locale;
+  return locale && isSupportedLocale(locale) ? locale : DEFAULT_LOCALE;
 };
 
 export default asyncLocalStorage;

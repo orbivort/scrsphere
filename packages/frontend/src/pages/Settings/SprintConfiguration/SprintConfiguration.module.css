@@ -353,7 +353,7 @@
   background: var(--color-background-card);
   cursor: pointer;
   transition: all var(--transition-fast);
-  text-align: left;
+  text-align: start;
   position: relative;
   overflow: hidden;
 }

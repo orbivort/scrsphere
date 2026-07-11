@@ -341,7 +341,7 @@
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-secondary);
   min-width: var(--space-10);
-  text-align: right;
+  text-align: end;
   font-variant-numeric: tabular-nums;
 }
 
@@ -383,7 +383,7 @@
   border-radius: var(--radius-lg);
   padding: var(--space-4);
   margin-bottom: var(--space-5);
-  text-align: left;
+  text-align: start;
   animation: error-slide-in var(--transition-fast) ease-out;
 }
 
@@ -427,7 +427,7 @@
   border: var(--border-width-1) solid var(--color-border-default);
   border-radius: var(--radius-lg);
   padding: var(--space-4);
-  text-align: left;
+  text-align: start;
 }
 
 .info-text {

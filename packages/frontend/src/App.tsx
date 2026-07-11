@@ -19,6 +19,8 @@ import { TeamProvider, TeamInitializer } from './contexts/TeamContext';
 import { apiService } from './services';
 import { logger } from './utils/logger';
 import { getRouterBasename } from './utils/navigation';
+import { I18nProvider } from './i18n/I18nProvider';
+import { initI18n } from './i18n/config';
 import loadingStyles from './components/common/Loading/LoadingState.module.css';
 import {
   LazyDashboard as Dashboard,
@@ -46,6 +48,10 @@ import {
 } from './routes/lazyComponents';
 
 const ROUTER_BASENAME = getRouterBasename();
+
+// Initialize i18n early (returns a promise but we let it resolve asynchronously;
+// the bundled en/common namespace ensures no flash of untranslated text)
+void initI18n();
 
 // Lazy Route wrapper component
 const LazyRoute: React.FC<{
@@ -214,261 +220,263 @@ function App() {
   return (
     <ErrorBoundary>
       <GlobalToastContainer />
-      <QueryClientProvider client={queryClient}>
-        <AnnouncerProvider>
-          <Router basename={ROUTER_BASENAME}>
-            <AuthInitializer>
-              <SessionWarningWrapper>
-                <TeamProvider>
-                  <TeamInitializer>
-                    <Routes>
-                      {/* Public Routes */}
-                      <Route path="/login" element={<LoginPage />} />
-                      <Route path="/register" element={<LoginPage />} />
-                      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-                      <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+      <I18nProvider>
+        <QueryClientProvider client={queryClient}>
+          <AnnouncerProvider>
+            <Router basename={ROUTER_BASENAME}>
+              <AuthInitializer>
+                <SessionWarningWrapper>
+                  <TeamProvider>
+                    <TeamInitializer>
+                      <Routes>
+                        {/* Public Routes */}
+                        <Route path="/login" element={<LoginPage />} />
+                        <Route path="/register" element={<LoginPage />} />
+                        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                        <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
 
-                      {/* Protected Routes */}
-                      <Route
-                        path="/dashboard"
-                        element={
-                          <ProtectedRoute>
-                            <LazyRoute>
-                              <Dashboard />
-                            </LazyRoute>
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/backlog"
-                        element={
-                          <ProtectedRoute>
-                            <LazyRoute fallbackMessage="Loading backlog...">
-                              <ProductBacklog />
-                            </LazyRoute>
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/product-goals"
-                        element={
-                          <ProtectedRoute>
-                            <LazyRoute fallbackMessage="Loading product goals...">
-                              <ProductGoalsPage />
-                            </LazyRoute>
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/sprint-planning"
-                        element={
-                          <ProtectedRoute>
-                            <LazyRoute fallbackMessage="Loading sprint planning...">
-                              <SprintPlanning />
-                            </LazyRoute>
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/sprint"
-                        element={
-                          <ProtectedRoute>
-                            <LazyRoute fallbackMessage="Loading sprint board...">
-                              <SprintBoard />
-                            </LazyRoute>
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/daily-scrum"
-                        element={
-                          <ProtectedRoute>
-                            <LazyRoute fallbackMessage="Loading daily scrum...">
-                              <DailyScrum />
-                            </LazyRoute>
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/impediments"
-                        element={
-                          <ProtectedRoute>
-                            <LazyRoute fallbackMessage="Loading impediments...">
-                              <Impediments />
-                            </LazyRoute>
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/team"
-                        element={
-                          <ProtectedRoute>
-                            <PageErrorBoundary pageName="Team">
-                              <LazyRoute fallbackMessage="Loading team...">
-                                <TeamManagement />
+                        {/* Protected Routes */}
+                        <Route
+                          path="/dashboard"
+                          element={
+                            <ProtectedRoute>
+                              <LazyRoute>
+                                <Dashboard />
                               </LazyRoute>
-                            </PageErrorBoundary>
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/settings/team-management"
-                        element={
-                          <ProtectedRoute>
-                            <LazyRoute fallbackMessage="Loading team management...">
-                              <TeamManagementPage />
-                            </LazyRoute>
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/settings/team-definitions"
-                        element={
-                          <ProtectedRoute>
-                            <LazyRoute fallbackMessage="Loading team definitions...">
-                              <TeamDefinitionsPage />
-                            </LazyRoute>
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/settings/definition-of-done"
-                        element={<Navigate to="/settings/team-definitions?tab=dod" replace />}
-                      />
-                      <Route
-                        path="/reports"
-                        element={
-                          <ProtectedRoute>
-                            <LazyRoute fallbackMessage="Loading reports...">
-                              <Reports />
-                            </LazyRoute>
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/settings/sprint-configuration"
-                        element={
-                          <ProtectedRoute>
-                            <LazyRoute fallbackMessage="Loading sprint configuration...">
-                              <SprintConfiguration />
-                            </LazyRoute>
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/settings/privacy-data"
-                        element={
-                          <ProtectedRoute>
-                            <LazyRoute fallbackMessage="Loading privacy & data settings...">
-                              <PrivacyData />
-                            </LazyRoute>
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/increments"
-                        element={
-                          <ProtectedRoute>
-                            <LazyRoute fallbackMessage="Loading increments...">
-                              <IncrementList />
-                            </LazyRoute>
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/increment/:id"
-                        element={
-                          <ProtectedRoute>
-                            <LazyRoute fallbackMessage="Loading increment...">
-                              <IncrementDetail />
-                            </LazyRoute>
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/increment/create"
-                        element={
-                          <ProtectedRoute>
-                            <LazyRoute fallbackMessage="Loading increment creator...">
-                              <IncrementCreate />
-                            </LazyRoute>
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/sprint-review"
-                        element={
-                          <ProtectedRoute>
-                            <LazyRoute fallbackMessage="Loading sprint reviews...">
-                              <SprintReviewList />
-                            </LazyRoute>
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/sprint-review/:sprintId"
-                        element={
-                          <ProtectedRoute>
-                            <LazyRoute fallbackMessage="Loading sprint review...">
-                              <SprintReview />
-                            </LazyRoute>
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/retrospectives"
-                        element={
-                          <ProtectedRoute>
-                            <LazyRoute fallbackMessage="Loading retrospectives...">
-                              <RetrospectiveList />
-                            </LazyRoute>
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/retrospective/:sprintId"
-                        element={
-                          <ProtectedRoute>
-                            <LazyRoute fallbackMessage="Loading retrospective...">
-                              <SprintRetrospective />
-                            </LazyRoute>
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/notifications"
-                        element={
-                          <ProtectedRoute>
-                            <LazyRoute fallbackMessage="Loading notifications...">
-                              <Notifications />
-                            </LazyRoute>
-                          </ProtectedRoute>
-                        }
-                      />
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/backlog"
+                          element={
+                            <ProtectedRoute>
+                              <LazyRoute fallbackMessage="Loading backlog...">
+                                <ProductBacklog />
+                              </LazyRoute>
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/product-goals"
+                          element={
+                            <ProtectedRoute>
+                              <LazyRoute fallbackMessage="Loading product goals...">
+                                <ProductGoalsPage />
+                              </LazyRoute>
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/sprint-planning"
+                          element={
+                            <ProtectedRoute>
+                              <LazyRoute fallbackMessage="Loading sprint planning...">
+                                <SprintPlanning />
+                              </LazyRoute>
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/sprint"
+                          element={
+                            <ProtectedRoute>
+                              <LazyRoute fallbackMessage="Loading sprint board...">
+                                <SprintBoard />
+                              </LazyRoute>
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/daily-scrum"
+                          element={
+                            <ProtectedRoute>
+                              <LazyRoute fallbackMessage="Loading daily scrum...">
+                                <DailyScrum />
+                              </LazyRoute>
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/impediments"
+                          element={
+                            <ProtectedRoute>
+                              <LazyRoute fallbackMessage="Loading impediments...">
+                                <Impediments />
+                              </LazyRoute>
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/team"
+                          element={
+                            <ProtectedRoute>
+                              <PageErrorBoundary pageName="Team">
+                                <LazyRoute fallbackMessage="Loading team...">
+                                  <TeamManagement />
+                                </LazyRoute>
+                              </PageErrorBoundary>
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/settings/team-management"
+                          element={
+                            <ProtectedRoute>
+                              <LazyRoute fallbackMessage="Loading team management...">
+                                <TeamManagementPage />
+                              </LazyRoute>
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/settings/team-definitions"
+                          element={
+                            <ProtectedRoute>
+                              <LazyRoute fallbackMessage="Loading team definitions...">
+                                <TeamDefinitionsPage />
+                              </LazyRoute>
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/settings/definition-of-done"
+                          element={<Navigate to="/settings/team-definitions?tab=dod" replace />}
+                        />
+                        <Route
+                          path="/reports"
+                          element={
+                            <ProtectedRoute>
+                              <LazyRoute fallbackMessage="Loading reports...">
+                                <Reports />
+                              </LazyRoute>
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/settings/sprint-configuration"
+                          element={
+                            <ProtectedRoute>
+                              <LazyRoute fallbackMessage="Loading sprint configuration...">
+                                <SprintConfiguration />
+                              </LazyRoute>
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/settings/privacy-data"
+                          element={
+                            <ProtectedRoute>
+                              <LazyRoute fallbackMessage="Loading privacy & data settings...">
+                                <PrivacyData />
+                              </LazyRoute>
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/increments"
+                          element={
+                            <ProtectedRoute>
+                              <LazyRoute fallbackMessage="Loading increments...">
+                                <IncrementList />
+                              </LazyRoute>
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/increment/:id"
+                          element={
+                            <ProtectedRoute>
+                              <LazyRoute fallbackMessage="Loading increment...">
+                                <IncrementDetail />
+                              </LazyRoute>
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/increment/create"
+                          element={
+                            <ProtectedRoute>
+                              <LazyRoute fallbackMessage="Loading increment creator...">
+                                <IncrementCreate />
+                              </LazyRoute>
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/sprint-review"
+                          element={
+                            <ProtectedRoute>
+                              <LazyRoute fallbackMessage="Loading sprint reviews...">
+                                <SprintReviewList />
+                              </LazyRoute>
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/sprint-review/:sprintId"
+                          element={
+                            <ProtectedRoute>
+                              <LazyRoute fallbackMessage="Loading sprint review...">
+                                <SprintReview />
+                              </LazyRoute>
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/retrospectives"
+                          element={
+                            <ProtectedRoute>
+                              <LazyRoute fallbackMessage="Loading retrospectives...">
+                                <RetrospectiveList />
+                              </LazyRoute>
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/retrospective/:sprintId"
+                          element={
+                            <ProtectedRoute>
+                              <LazyRoute fallbackMessage="Loading retrospective...">
+                                <SprintRetrospective />
+                              </LazyRoute>
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/notifications"
+                          element={
+                            <ProtectedRoute>
+                              <LazyRoute fallbackMessage="Loading notifications...">
+                                <Notifications />
+                              </LazyRoute>
+                            </ProtectedRoute>
+                          }
+                        />
 
-                      {/* Dev Tools - Icon Gallery (Protected) */}
-                      <Route
-                        path="/dev/icons"
-                        element={
-                          <ProtectedRoute>
-                            <LazyRoute fallbackMessage="Loading icon gallery...">
-                              <IconGallery />
-                            </LazyRoute>
-                          </ProtectedRoute>
-                        }
-                      />
+                        {/* Dev Tools - Icon Gallery (Protected) */}
+                        <Route
+                          path="/dev/icons"
+                          element={
+                            <ProtectedRoute>
+                              <LazyRoute fallbackMessage="Loading icon gallery...">
+                                <IconGallery />
+                              </LazyRoute>
+                            </ProtectedRoute>
+                          }
+                        />
 
-                      {/* Default Route */}
-                      <Route path="/" element={<Navigate to="/login" replace />} />
-                      <Route path="*" element={<Navigate to="/login" replace />} />
-                    </Routes>
-                  </TeamInitializer>
-                </TeamProvider>
-              </SessionWarningWrapper>
-            </AuthInitializer>
-          </Router>
-        </AnnouncerProvider>
-      </QueryClientProvider>
+                        {/* Default Route */}
+                        <Route path="/" element={<Navigate to="/login" replace />} />
+                        <Route path="*" element={<Navigate to="/login" replace />} />
+                      </Routes>
+                    </TeamInitializer>
+                  </TeamProvider>
+                </SessionWarningWrapper>
+              </AuthInitializer>
+            </Router>
+          </AnnouncerProvider>
+        </QueryClientProvider>
+      </I18nProvider>
     </ErrorBoundary>
   );
 }

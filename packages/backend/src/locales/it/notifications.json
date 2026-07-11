@@ -1,0 +1,8 @@
+{
+  "sprintStarted": "Sprint \"{{sprintName}}\" has started",
+  "sprintEnded": "Sprint \"{{sprintName}}\" has ended",
+  "taskAssigned": "Task \"{{taskTitle}}\" was assigned to you",
+  "mention": "{{userName}} mentioned you in a comment",
+  "impedimentCreated": "New impediment reported: {{title}}",
+  "impedimentResolved": "Impediment resolved: {{title}}"
+}

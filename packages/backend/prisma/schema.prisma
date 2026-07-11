@@ -14,6 +14,7 @@ model User {
   firstName            String
   lastName             String
   avatarUrl            String?
+  locale               String                     @default("en") @db.VarChar(10)
   createdAt            DateTime                   @default(now()) @db.Timestamptz(3)
   createdBy            String?                    @db.Uuid
   updatedAt            DateTime                   @updatedAt @db.Timestamptz(3)

@@ -128,6 +128,12 @@ jobs:
       - name: Run TypeScript type check
         run: pnpm run typecheck
 
+      - name: i18n validation
+        run: |
+          pnpm run i18n:check
+          pnpm run i18n:completeness
+          pnpm run i18n:glossary
+
   dependency-review:
     name: Dependency Review
     runs-on: ubuntu-latest

@@ -408,7 +408,7 @@
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
   min-width: 110px;
-  text-align: right;
+  text-align: end;
   font-family: var(--font-family-mono);
   font-weight: var(--font-weight-medium);
 }
@@ -1410,7 +1410,7 @@
   border: var(--border-width-2) solid var(--color-border-default);
   border-radius: var(--radius-lg);
   font-size: var(--font-size-base);
-  text-align: right;
+  text-align: end;
   font-family: var(--font-family-mono);
   background: var(--color-background-card);
   transition:

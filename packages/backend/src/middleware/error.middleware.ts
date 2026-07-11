@@ -11,6 +11,7 @@ import {
   SessionExpiredError,
 } from '../utils/errors';
 import { logger, logError } from '../utils/logger';
+import { t } from '../i18n/requestT.js';
 
 const SENSITIVE_FIELDS = [
   'password',
@@ -120,12 +121,12 @@ export const errorHandler = (
   }
 
   if (error.name === 'JsonWebTokenError') {
-    res.status(401).json(createErrorResponse('INVALID_TOKEN', 'Invalid token'));
+    res.status(401).json(createErrorResponse('INVALID_TOKEN', t('errors:invalidToken')));
     return;
   }
 
   if (error.name === 'TokenExpiredError') {
-    res.status(401).json(createErrorResponse('TOKEN_EXPIRED', 'Token has expired'));
+    res.status(401).json(createErrorResponse('TOKEN_EXPIRED', t('errors:tokenExpired')));
     return;
   }
 
@@ -134,7 +135,7 @@ export const errorHandler = (
       .status(401)
       .json(
         createErrorResponse(error.code, error.message, [
-          { field: 'session', message: 'Please log in again to continue' },
+          { field: 'session', message: t('errors:pleaseLoginAgain') },
         ])
       );
     return;
@@ -145,7 +146,7 @@ export const errorHandler = (
       .status(401)
       .json(
         createErrorResponse(error.code, error.message, [
-          { field: 'session', message: 'Please log in again to continue' },
+          { field: 'session', message: t('errors:pleaseLoginAgain') },
         ])
       );
     return;
@@ -167,7 +168,7 @@ export const errorHandler = (
       .status(401)
       .json(
         createErrorResponse(error.code, error.message, [
-          { field: 'session', message: 'Please log in again to continue' },
+          { field: 'session', message: t('errors:pleaseLoginAgain') },
         ])
       );
     return;
@@ -180,7 +181,7 @@ export const errorHandler = (
     .json(
       createErrorResponse(
         'INTERNAL_ERROR',
-        isProduction ? 'An unexpected error occurred' : error.message
+        isProduction ? t('errors:unexpectedError') : error.message
       )
     );
 };
@@ -196,25 +197,23 @@ const handlePrismaError = (
       res
         .status(409)
         .json(
-          createErrorResponse('CONFLICT', `${field} already exists`, [
-            { field, message: `This ${field} is already taken` },
+          createErrorResponse('CONFLICT', t('errors:fieldAlreadyExists', { field }), [
+            { field, message: t('errors:fieldAlreadyTaken', { field }) },
           ])
         );
       break;
     }
 
     case 'P2025':
-      res.status(404).json(createErrorResponse('NOT_FOUND', 'Record not found'));
+      res.status(404).json(createErrorResponse('NOT_FOUND', t('errors:recordNotFound')));
       break;
 
     case 'P2003':
-      res
-        .status(400)
-        .json(createErrorResponse('INVALID_REFERENCE', 'Referenced record does not exist'));
+      res.status(400).json(createErrorResponse('INVALID_REFERENCE', t('errors:invalidReference')));
       break;
 
     case 'P2014':
-      res.status(400).json(createErrorResponse('RELATION_VIOLATION', 'Invalid relation'));
+      res.status(400).json(createErrorResponse('RELATION_VIOLATION', t('errors:invalidRelation')));
       break;
 
     default:
@@ -223,14 +222,19 @@ const handlePrismaError = (
         meta: error.meta,
         fingerprint,
       });
-      res.status(500).json(createErrorResponse('DATABASE_ERROR', 'A database error occurred'));
+      res.status(500).json(createErrorResponse('DATABASE_ERROR', t('errors:databaseError')));
   }
 };
 
 export const notFoundHandler = (req: Request, res: Response): void => {
   res
     .status(404)
-    .json(createErrorResponse('NOT_FOUND', `Route ${req.method} ${req.path} not found`));
+    .json(
+      createErrorResponse(
+        'NOT_FOUND',
+        t('errors:routeNotFound', { method: req.method, path: req.path })
+      )
+    );
 };
 
 export default errorHandler;

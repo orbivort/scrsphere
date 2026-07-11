@@ -14,7 +14,13 @@ import {
   getClearCookieOptions,
   COOKIE_NAMES,
 } from '../utils/cookieConfig';
-import { auditAuthEvent } from '../utils/auditLogger';
+import {
+  auditAuthEvent,
+  auditResourceEvent,
+  AuditEventTypes,
+  AuditActions,
+  AuditResults,
+} from '../utils/auditLogger';
 import type {
   RegisterInput,
   LoginInput,
@@ -26,6 +32,8 @@ import type {
   ForgotPasswordInput,
   ResetPasswordInput,
 } from '../validations/auth.validation';
+import { DEFAULT_LOCALE } from '@scrumooth/shared';
+import prisma from '../utils/prisma';
 
 interface SessionInfo {
   userAgent?: string;
@@ -75,6 +83,15 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     getRefreshTokenCookieOptions()
   );
 
+  // Set locale cookie for SSR/refresh
+  res.cookie('scrumooth_locale', result.user.locale, {
+    maxAge: 31536000,
+    sameSite: 'strict',
+    secure: true,
+    httpOnly: false,
+    path: '/',
+  });
+
   // Return user and session info, but NOT tokens
   res.status(201).json(
     createSuccessResponse({
@@ -106,6 +123,15 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
       result.tokens.refreshToken,
       getRefreshTokenCookieOptions()
     );
+
+    // Set locale cookie for SSR/refresh
+    res.cookie('scrumooth_locale', result.user.locale, {
+      maxAge: 31536000,
+      sameSite: 'strict',
+      secure: true,
+      httpOnly: false,
+      path: '/',
+    });
 
     // Return user and session info, but NOT tokens
     res.json(
@@ -353,7 +379,35 @@ export const updateProfile = asyncHandler(async (req: Request, res: Response) =>
   if (!userId) {
     throw new UnauthorizedError('User not authenticated');
   }
+
+  // Fetch previous locale before the update for audit comparison
+  const previous = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { locale: true },
+  });
+
   const user = await authService.updateProfile(userId, data);
+
+  // Audit-log locale change if it changed
+  if (data.locale && data.locale !== previous?.locale) {
+    auditResourceEvent(
+      AuditEventTypes.USER,
+      AuditActions.UPDATE,
+      AuditResults.SUCCESS,
+      { type: 'user', id: userId, name: user.email },
+      { field: 'locale', from: previous?.locale ?? DEFAULT_LOCALE, to: data.locale }
+    );
+  }
+
+  // Keep the locale cookie in sync for SSR/refresh
+  res.cookie('scrumooth_locale', user.locale, {
+    maxAge: 31536000,
+    sameSite: 'strict',
+    secure: true,
+    httpOnly: false,
+    path: '/',
+  });
+
   res.json(createSuccessResponse(user));
 });
 

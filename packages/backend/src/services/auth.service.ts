@@ -26,6 +26,7 @@ import {
 } from './email/templates/index.js';
 import type { User, RefreshToken } from '../generated/prisma/client';
 import type { DeletionEligibilityResult, ScheduledDeletion } from '../types/user.types';
+import type { Locale } from '@scrumooth/shared';
 
 interface TokenPayload {
   sub: string;
@@ -40,7 +41,7 @@ interface SessionInfo {
 }
 
 export interface LoginResponse {
-  user: Pick<User, 'id' | 'email' | 'firstName' | 'lastName' | 'avatarUrl'>;
+  user: Pick<User, 'id' | 'email' | 'firstName' | 'lastName' | 'avatarUrl' | 'locale'>;
   tokens: {
     accessToken: string;
     refreshToken: string;
@@ -171,6 +172,7 @@ class AuthService {
         firstName: true,
         lastName: true,
         avatarUrl: true,
+        locale: true,
       },
     });
 
@@ -345,6 +347,7 @@ class AuthService {
         firstName: true,
         lastName: true,
         avatarUrl: true,
+        locale: true,
         createdAt: true,
         createdBy: true,
         updatedAt: true,
@@ -733,15 +736,21 @@ class AuthService {
 
   async updateProfile(
     userId: string,
-    data: { firstName: string; lastName: string }
+    data: { firstName: string; lastName: string; locale?: string }
   ): Promise<Omit<User, 'password'>> {
+    const updateData: Record<string, unknown> = {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      updatedBy: userId,
+    };
+
+    if (data.locale !== undefined) {
+      updateData.locale = data.locale;
+    }
+
     const user = await prisma.user.update({
       where: { id: userId },
-      data: {
-        firstName: data.firstName,
-        lastName: data.lastName,
-        updatedBy: userId,
-      },
+      data: updateData,
     });
 
     logger.info('User profile updated', { userId });
@@ -856,6 +865,7 @@ class AuthService {
         id: true,
         email: true,
         firstName: true,
+        locale: true,
       },
     });
 
@@ -898,6 +908,7 @@ class AuthService {
         email: user.email,
         resetUrl,
         expiresIn: '1 hour',
+        locale: user.locale as Locale,
         subject: 'Reset Your Password',
         appName: 'Scrumooth',
         appUrl: config.email.frontendUrl,
@@ -1349,7 +1360,7 @@ class AuthService {
   }
 
   private async sendWelcomeEmail(
-    user: { id: string; email: string; firstName: string },
+    user: { id: string; email: string; firstName: string; locale: string },
     _sessionInfo?: SessionInfo
   ): Promise<void> {
     try {
@@ -1357,6 +1368,7 @@ class AuthService {
       const rendered = template.render({
         firstName: user.firstName,
         email: user.email,
+        locale: user.locale as Locale,
         subject: `Welcome to ${config.email.defaults.fromName || 'Scrumooth'}`,
         appName: config.email.defaults.fromName || 'Scrumooth',
         appUrl: config.email.frontendUrl,

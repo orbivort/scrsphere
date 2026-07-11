@@ -3,6 +3,9 @@ import prisma from '../utils/prisma';
 import { generateUUIDv7 } from '../utils/uuid';
 import config from '../config';
 import { NotFoundError } from '../utils/errors';
+import type { Locale } from '@scrumooth/shared';
+import { DEFAULT_LOCALE } from '@scrumooth/shared';
+import { i18nInstance } from '../i18n/config.js';
 
 export interface CreateNotificationInput {
   userId: string;
@@ -32,6 +35,41 @@ export class NotificationService {
         data: input.data ?? {},
         createdBy: input.createdBy ?? input.userId,
       },
+    });
+  }
+
+  /**
+   * Create a localized notification by resolving the recipient's locale
+   * and translating the title/message keys via i18next.
+   */
+  async createLocalized(input: {
+    userId: string;
+    type: string;
+    titleKey: string;
+    messageKey?: string;
+    messageParams?: Record<string, unknown>;
+    data?: unknown;
+    createdBy?: string;
+  }): Promise<Notification> {
+    const user = await prisma.user.findUnique({
+      where: { id: input.userId },
+      select: { locale: true },
+    });
+
+    const t = i18nInstance.getFixedT(
+      (user?.locale as Locale | undefined) ?? DEFAULT_LOCALE,
+      'notifications'
+    );
+    const title = t(input.titleKey, input.messageParams);
+    const message = input.messageKey ? t(input.messageKey, input.messageParams) : undefined;
+
+    return this.create({
+      userId: input.userId,
+      type: input.type as NotificationType,
+      title,
+      message,
+      data: input.data as Prisma.InputJsonValue,
+      createdBy: input.createdBy,
     });
   }
 

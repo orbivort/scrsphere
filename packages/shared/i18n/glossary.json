@@ -1,0 +1,86 @@
+{
+  "Sprint": {
+    "en": "Sprint",
+    "de": "Sprint",
+    "fr": "Sprint",
+    "es": "Sprint",
+    "it": "Sprint"
+  },
+  "Scrum Master": {
+    "en": "Scrum Master",
+    "de": "Scrum Master",
+    "fr": "Scrum Master",
+    "es": "Scrum Master",
+    "it": "Scrum Master"
+  },
+  "Product Owner": {
+    "en": "Product Owner",
+    "de": "Product Owner",
+    "fr": "Product Owner",
+    "es": "Product Owner",
+    "it": "Product Owner"
+  },
+  "Product Backlog": {
+    "en": "Product Backlog",
+    "de": "Product Backlog",
+    "fr": "Product Backlog",
+    "es": "Product Backlog",
+    "it": "Product Backlog"
+  },
+  "Burndown Chart": {
+    "en": "Burndown Chart",
+    "de": "Burndown-Diagramm",
+    "fr": "Graphique d'avancement",
+    "es": "Gráfico de burn-down",
+    "it": "Grafico burndown"
+  },
+  "Definition of Done": {
+    "en": "Definition of Done",
+    "de": "Definition of Done",
+    "fr": "Definition of Done",
+    "es": "Definición de Hecho",
+    "it": "Definition of Done"
+  },
+  "Story Points": {
+    "en": "Story Points",
+    "de": "Story Points",
+    "fr": "Story Points",
+    "es": "Story Points",
+    "it": "Story Points"
+  },
+  "Daily Scrum": {
+    "en": "Daily Scrum",
+    "de": "Daily Scrum",
+    "fr": "Mêlée quotidienne",
+    "es": "Daily Scrum",
+    "it": "Daily Scrum"
+  },
+  "Retrospective": {
+    "en": "Retrospective",
+    "de": "Retrospektive",
+    "fr": "Rétrospective",
+    "es": "Retrospectiva",
+    "it": "Retrospezione"
+  },
+  "Sprint Review": {
+    "en": "Sprint Review",
+    "de": "Sprint Review",
+    "fr": "Revue de Sprint",
+    "es": "Revisión de Sprint",
+    "it": "Sprint Review"
+  },
+  "Increment": {
+    "en": "Increment",
+    "de": "Inkrement",
+    "fr": "Incrément",
+    "es": "Incremento",
+    "it": "Incremento"
+  },
+  "Impediment": {
+    "en": "Impediment",
+    "de": "Hindernis",
+    "fr": "Empêchement",
+    "es": "Impedimento",
+    "it": "Impedimento"
+  }
+}

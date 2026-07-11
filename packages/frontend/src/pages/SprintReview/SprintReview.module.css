@@ -1274,7 +1274,7 @@
   border: var(--border-width-1) solid var(--color-primary-300);
   border-radius: var(--radius-xl);
   margin: var(--space-4) 0;
-  text-align: left;
+  text-align: start;
 }
 
 .notice-icon {
@@ -1458,7 +1458,7 @@
 }
 
 .sprint-list {
-  text-align: left;
+  text-align: start;
 }
 
 .sprint-list h4 {

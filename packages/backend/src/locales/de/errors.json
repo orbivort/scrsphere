@@ -1,0 +1,17 @@
+{
+  "entityNotFound": "{{entity}} not found",
+  "emailAlreadyExists": "An account with email {{email}} already exists",
+  "invalidCredentials": "Invalid email or password",
+  "forbidden": "You do not have permission to perform this action",
+  "invalidToken": "Invalid token",
+  "tokenExpired": "Token has expired",
+  "pleaseLoginAgain": "Please log in again to continue",
+  "routeNotFound": "{{method}} {{path}} not found",
+  "fieldAlreadyExists": "{{field}} already exists",
+  "fieldAlreadyTaken": "{{field}} is already taken",
+  "recordNotFound": "Record not found",
+  "invalidReference": "Invalid reference",
+  "invalidRelation": "Invalid relation",
+  "databaseError": "A database error occurred",
+  "unexpectedError": "An unexpected error occurred"
+}

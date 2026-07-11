@@ -39,3 +39,23 @@ export const ERROR_CODES = {
   CONFLICT: 'CONFLICT',
   INTERNAL_ERROR: 'INTERNAL_ERROR',
 } as const;
+
+export const SUPPORTED_LOCALES = ['en', 'de', 'fr', 'es', 'it'] as const;
+export type Locale = (typeof SUPPORTED_LOCALES)[number];
+export const DEFAULT_LOCALE: Locale = 'en';
+
+export const LOCALE_LABELS: Record<Locale, string> = {
+  en: 'English',
+  de: 'Deutsch',
+  fr: 'Français',
+  es: 'Español',
+  it: 'Italiano',
+};
+
+export const LOCALE_CURRENCIES: Record<Locale, string> = {
+  en: 'EUR',
+  de: 'EUR',
+  fr: 'EUR',
+  es: 'EUR',
+  it: 'EUR',
+};
