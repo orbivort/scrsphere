@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { type ApiResponse, type ProductBacklogItem, type TeamMember } from '../../types';
 import { useModalFocus } from '../../hooks/useModalFocus';
@@ -51,6 +52,7 @@ export const AddBacklogAdjustmentModal: React.FC<AddBacklogAdjustmentModalProps>
   isPending,
 }) => {
   const [showUnsavedChangesModal, setShowUnsavedChangesModal] = useState(false);
+  const { t } = useTranslation('sprint-review');
 
   const hasUnsavedChanges = useCallback(() => {
     return (
@@ -120,10 +122,10 @@ export const AddBacklogAdjustmentModal: React.FC<AddBacklogAdjustmentModalProps>
                 <ListIcon size={24} />
               </div>
               <h2 id="adjustment-form-title" className={styles['adjustment-form-title']}>
-                Add Backlog Adjustment
+                {t('addAdjustmentModal.title')}
               </h2>
               <p className={styles['adjustment-form-subtitle']}>
-                Record changes to the Product Backlog based on Sprint Review feedback
+                {t('addAdjustmentModal.subtitle')}
               </p>
             </div>
             <button
@@ -132,7 +134,7 @@ export const AddBacklogAdjustmentModal: React.FC<AddBacklogAdjustmentModalProps>
                 handleCloseAttempt();
                 setFormErrors({});
               }}
-              aria-label="Close dialog"
+              aria-label={t('addAdjustmentModal.cancel')}
               type="button"
             >
               <XIcon size={24} />
@@ -141,7 +143,7 @@ export const AddBacklogAdjustmentModal: React.FC<AddBacklogAdjustmentModalProps>
 
           <div className={styles['adjustment-form-body']}>
             <div className={styles['form-group']}>
-              <label htmlFor="adjustment-action">Action Type</label>
+              <label htmlFor="adjustment-action">{t('addAdjustmentModal.actionType')}</label>
               <div className={styles['action-type-wrapper']}>
                 <span className={styles['action-type-icon']} aria-hidden="true">
                   {getActionIcon()}
@@ -157,18 +159,21 @@ export const AddBacklogAdjustmentModal: React.FC<AddBacklogAdjustmentModalProps>
                   }
                   className={styles['action-type-select']}
                 >
-                  <option value="add">Add New Item</option>
-                  <option value="modify">Modify Existing</option>
-                  <option value="remove">Remove</option>
-                  <option value="reorder">Reorder</option>
-                  <option value="split">Split</option>
+                  <option value="add">{t('addAdjustmentModal.actionTypeOptions.add')}</option>
+                  <option value="modify">{t('addAdjustmentModal.actionTypeOptions.modify')}</option>
+                  <option value="remove">{t('addAdjustmentModal.actionTypeOptions.remove')}</option>
+                  <option value="reorder">
+                    {t('addAdjustmentModal.actionTypeOptions.reorder')}
+                  </option>
+                  <option value="split">{t('addAdjustmentModal.actionTypeOptions.split')}</option>
                 </select>
               </div>
             </div>
 
             <div className={styles['form-group']}>
               <label htmlFor="adjustment-description">
-                Description <span className={styles['required-asterisk']}>*</span>
+                {t('addAdjustmentModal.description')}{' '}
+                <span className={styles['required-asterisk']}>*</span>
               </label>
               <div className={styles['input-with-counter']}>
                 <textarea
@@ -177,7 +182,7 @@ export const AddBacklogAdjustmentModal: React.FC<AddBacklogAdjustmentModalProps>
                   onChange={(e) =>
                     setAdjustmentForm({ ...adjustmentForm, description: e.target.value })
                   }
-                  placeholder="Describe the adjustment..."
+                  placeholder={t('addAdjustmentModal.descriptionPlaceholder')}
                   rows={3}
                   className={formErrors.description ? styles.error : ''}
                   aria-required="true"
@@ -208,14 +213,15 @@ export const AddBacklogAdjustmentModal: React.FC<AddBacklogAdjustmentModalProps>
 
             <div className={styles['form-group']}>
               <label htmlFor="adjustment-reason">
-                Reason <span className={styles['required-asterisk']}>*</span>
+                {t('addAdjustmentModal.reason')}{' '}
+                <span className={styles['required-asterisk']}>*</span>
               </label>
               <div className={styles['input-with-counter']}>
                 <textarea
                   id="adjustment-reason"
                   value={adjustmentForm.reason}
                   onChange={(e) => setAdjustmentForm({ ...adjustmentForm, reason: e.target.value })}
-                  placeholder="Why is this adjustment needed?"
+                  placeholder={t('addAdjustmentModal.reasonPlaceholder')}
                   rows={2}
                   className={formErrors.reason ? styles.error : ''}
                   aria-required="true"
@@ -239,7 +245,7 @@ export const AddBacklogAdjustmentModal: React.FC<AddBacklogAdjustmentModalProps>
             </div>
 
             <div className={styles['form-group']}>
-              <label htmlFor="adjustment-pbi">Related PBI (Optional)</label>
+              <label htmlFor="adjustment-pbi">{t('addAdjustmentModal.relatedPbi')}</label>
               <select
                 id="adjustment-pbi"
                 value={adjustmentForm.pbiId ?? ''}
@@ -250,7 +256,7 @@ export const AddBacklogAdjustmentModal: React.FC<AddBacklogAdjustmentModalProps>
                   })
                 }
               >
-                <option value="">None</option>
+                <option value="">{t('addAdjustmentModal.none')}</option>
                 {sprintBacklogItems?.data?.map((pbi: ProductBacklogItem) => (
                   <option key={pbi.id} value={pbi.id}>
                     {pbi.title}
@@ -261,7 +267,8 @@ export const AddBacklogAdjustmentModal: React.FC<AddBacklogAdjustmentModalProps>
 
             <div className={styles['form-group']}>
               <label htmlFor="adjustment-owner" className={styles['required-label']}>
-                Owner <span className={styles['required-asterisk']}>*</span>
+                {t('addAdjustmentModal.owner')}{' '}
+                <span className={styles['required-asterisk']}>*</span>
               </label>
               <select
                 id="adjustment-owner"
@@ -272,7 +279,7 @@ export const AddBacklogAdjustmentModal: React.FC<AddBacklogAdjustmentModalProps>
                 aria-invalid={!!formErrors.ownerId}
                 aria-describedby={formErrors.ownerId ? 'adjustment-owner-error' : undefined}
               >
-                <option value="">Select owner...</option>
+                <option value="">{t('addAdjustmentModal.ownerPlaceholder')}</option>
                 {teamMembers?.map((member) => (
                   <option key={member.userId} value={member.userId}>
                     {member.user
@@ -298,7 +305,7 @@ export const AddBacklogAdjustmentModal: React.FC<AddBacklogAdjustmentModalProps>
               }}
               type="button"
             >
-              Cancel
+              {t('addAdjustmentModal.cancel')}
             </button>
             <button
               className={`${styles.button} ${styles['button-primary']}`}
@@ -307,10 +314,10 @@ export const AddBacklogAdjustmentModal: React.FC<AddBacklogAdjustmentModalProps>
               type="button"
             >
               {isPending ? (
-                'Adding...'
+                t('addAdjustmentModal.adding')
               ) : (
                 <>
-                  <PlusIcon size={24} /> Add Adjustment
+                  <PlusIcon size={24} /> {t('addAdjustmentModal.addAdjustment')}
                 </>
               )}
             </button>
@@ -322,8 +329,8 @@ export const AddBacklogAdjustmentModal: React.FC<AddBacklogAdjustmentModalProps>
         isOpen={showUnsavedChangesModal}
         onConfirm={handleDiscardChanges}
         onCancel={handleCancelDiscard}
-        title="Unsaved Backlog Adjustment Changes"
-        message="You have unsaved backlog adjustment. Are you sure you want to discard it?"
+        title={t('addAdjustmentModal.unsavedTitle')}
+        message={t('addAdjustmentModal.unsavedMessage')}
       />
     </>
   );

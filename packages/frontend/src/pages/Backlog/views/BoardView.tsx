@@ -10,6 +10,7 @@
  */
 
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { type ProductBacklogItem, MoSCoWPriority } from '../../../types';
 import { MOSCOW_CONFIG } from '../config/moscow.config';
@@ -82,6 +83,7 @@ const VirtualizedColumn: React.FC<VirtualizedColumnProps> = ({
   onPriorityChange,
   forceVirtualization,
 }) => {
+  const { t } = useTranslation('backlog');
   const enableVirtualization =
     forceVirtualization ?? shouldEnableVirtualization(items.length, VIRTUALIZATION_THRESHOLD);
 
@@ -137,7 +139,7 @@ const VirtualizedColumn: React.FC<VirtualizedColumnProps> = ({
         </div>
         <div className={styles['moscow-column-count']}>
           <span className={styles['count-number']}>{items.length}</span>
-          <span className={styles['count-label']}>items</span>
+          <span className={styles['count-label']}>{t('boardView.items') as string}</span>
         </div>
       </div>
 
@@ -169,7 +171,7 @@ const VirtualizedColumn: React.FC<VirtualizedColumnProps> = ({
             >
               <path d={config.icon} />
             </svg>
-            <span>Drop items here</span>
+            <span>{t('boardView.dropItemsHere') as string}</span>
           </div>
         ) : enableVirtualization ? (
           <div style={{ height: totalSize, position: 'relative', width: '100%' }}>

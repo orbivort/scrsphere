@@ -1,6 +1,7 @@
 import React, { useMemo, useCallback, useEffect, useState, useRef, lazy, Suspense } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 
 import { apiService } from '../../services';
 import { useTeamStore, useAuthStore } from '../../store';
@@ -52,24 +53,9 @@ const BurndownChart = lazy(() =>
 
 /**
  * Task 4.4: Format a date as relative time (e.g., "2 minutes ago")
+ * Note: This function needs the t() function from useTranslation.
+ * It is now defined inside the Dashboard component to access t().
  */
-function formatRelativeTime(date: Date): string {
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffSeconds = Math.floor(diffMs / 1000);
-  const diffMinutes = Math.floor(diffSeconds / 60);
-  const diffHours = Math.floor(diffMinutes / 60);
-
-  if (diffSeconds < 60) {
-    return 'just now';
-  } else if (diffMinutes < 60) {
-    return `${diffMinutes} minute${diffMinutes === 1 ? '' : 's'} ago`;
-  } else if (diffHours < 24) {
-    return `${diffHours} hour${diffHours === 1 ? '' : 's'} ago`;
-  } else {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  }
-}
 
 interface SprintStats {
   progress: number;
@@ -85,10 +71,35 @@ interface BurndownData {
 }
 
 export const Dashboard: React.FC = () => {
+  const { t } = useTranslation('dashboard');
   const { currentTeam } = useTeamStore();
   const { user, isAuthenticated } = useAuthStore();
   const { handleError } = useApiError();
   const navigate = useNavigate();
+
+  /**
+   * Format a date as relative time (e.g., "2 minutes ago")
+   */
+  const formatRelativeTime = useCallback(
+    (date: Date): string => {
+      const now = new Date();
+      const diffMs = now.getTime() - date.getTime();
+      const diffSeconds = Math.floor(diffMs / 1000);
+      const diffMinutes = Math.floor(diffSeconds / 60);
+      const diffHours = Math.floor(diffMinutes / 60);
+
+      if (diffSeconds < 60) {
+        return t('justNow');
+      } else if (diffMinutes < 60) {
+        return t('minutesAgo', { count: diffMinutes, plural: diffMinutes === 1 ? '' : 's' });
+      } else if (diffHours < 24) {
+        return t('hoursAgo', { count: diffHours, plural: diffHours === 1 ? '' : 's' });
+      } else {
+        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      }
+    },
+    [t]
+  );
 
   const teamId = currentTeam?.id;
   const currentUserId = user?.id;
@@ -230,13 +241,13 @@ export const Dashboard: React.FC = () => {
 
     if (diff > tenPercentOfIdeal) {
       status = 'ahead';
-      message = 'Team is burning down faster than planned. Great progress!';
+      message = t('burndownInsight.aheadDescription', { percentage: percentageDiff });
     } else if (diff >= 0) {
       status = 'on-track';
-      message = 'Team is progressing according to the sprint plan.';
+      message = t('burndownInsight.onTrackDescription');
     } else {
       status = 'behind';
-      message = 'Team has more work remaining than planned. Consider adjusting scope.';
+      message = t('burndownInsight.behindDescription', { percentage: Math.abs(percentageDiff) });
     }
 
     return { status, percentage: percentageDiff, message };
@@ -313,8 +324,8 @@ export const Dashboard: React.FC = () => {
       setLastUpdated(new Date());
       // Announce refresh completion after a short delay
       setTimeout(() => {
-        setRefreshAnnouncement('Dashboard data refreshed successfully');
-        showSuccessToast('Dashboard data refreshed successfully');
+        setRefreshAnnouncement(t('dataRefreshed'));
+        showSuccessToast(t('dataRefreshed'));
         // Clear announcement after timeout
         setTimeout(() => {
           setRefreshAnnouncement('');
@@ -323,11 +334,11 @@ export const Dashboard: React.FC = () => {
     } finally {
       setIsRefreshing(false);
     }
-  }, [refetchSprint, showSuccessToast]);
+  }, [refetchSprint, showSuccessToast, t]);
 
   // Early return for unauthenticated users - must be after all hooks
   if (!isAuthenticated || !currentUserId) {
-    return <LoadingState variant="page" label="Loading user context..." />;
+    return <LoadingState variant="page" label={t('loadingUserContext')} />;
   }
 
   if (!teamId) {
@@ -335,7 +346,7 @@ export const Dashboard: React.FC = () => {
   }
 
   if (sprintLoading) {
-    return <LoadingState variant="page" label="Loading dashboard..." />;
+    return <LoadingState variant="page" label={t('loadingDashboard')} />;
   }
 
   if (sprintError) {
@@ -345,15 +356,15 @@ export const Dashboard: React.FC = () => {
           <span className={styles['error-icon']} aria-hidden="true">
             <WarningIcon size={64} />
           </span>
-          <h2>Failed to Load Dashboard</h2>
-          <p>{handleError(sprintError, 'Unable to load sprint data. Please try again.')}</p>
+          <h2>{t('failedToLoad')}</h2>
+          <p>{handleError(sprintError, t('unableToLoadSprint'))}</p>
           <button
             type="button"
             onClick={handleRefresh}
             className={`button ${styles['button-primary']}`}
-            aria-label="Retry loading dashboard"
+            aria-label={t('retryLoadingDashboard')}
           >
-            Retry
+            {t('retry')}
           </button>
         </div>
       </div>
@@ -379,7 +390,7 @@ export const Dashboard: React.FC = () => {
         id="main-content"
         className={styles.dashboard}
         role="main"
-        aria-label="Dashboard"
+        aria-label={t('title')}
         tabIndex={-1}
         data-testid="dashboard"
       >
@@ -389,24 +400,22 @@ export const Dashboard: React.FC = () => {
               <span className={styles['page-title-icon']}>
                 <DashboardIcon size={24} aria-hidden="true" />
               </span>
-              Dashboard
+              {t('title')}
             </h1>
-            <p className={styles['page-subtitle']}>
-              Welcome back! Here's an overview of your active sprint.
-            </p>
+            <p className={styles['page-subtitle']}>{t('welcomeBack')}</p>
           </div>
           <div className={styles['header-actions']}>
             {/* Task 4.4: Display last updated timestamp */}
             {lastUpdated && (
               <span className={styles['last-updated']}>
-                Last updated: {formatRelativeTime(lastUpdated)}
+                {t('lastUpdated')}: {formatRelativeTime(lastUpdated)}
               </span>
             )}
             <button
               type="button"
               onClick={handleRefresh}
               className={`${styles['refresh-button']} ${isRefreshing ? styles.refreshing : ''}`}
-              aria-label={isRefreshing ? 'Refreshing dashboard data...' : 'Refresh dashboard data'}
+              aria-label={isRefreshing ? t('refreshingDashboard') : t('refreshDashboardData')}
               disabled={isRefreshing}
             >
               <RefreshIcon
@@ -414,7 +423,7 @@ export const Dashboard: React.FC = () => {
                 aria-hidden="true"
                 className={isRefreshing ? styles['icon-spin'] : undefined}
               />
-              {isRefreshing ? 'Refreshing...' : 'Refresh'}
+              {isRefreshing ? t('refreshing') : t('refresh')}
             </button>
           </div>
         </header>
@@ -432,7 +441,7 @@ export const Dashboard: React.FC = () => {
                 </h2>
                 <span
                   className={`${styles['sprint-status']} ${styles[sprint.status]}`}
-                  aria-label={`Sprint status: ${sprint.status}`}
+                  aria-label={t('sprintStatus', { status: sprint.status })}
                 >
                   {sprint.status}
                 </span>
@@ -446,9 +455,9 @@ export const Dashboard: React.FC = () => {
                   <div className={styles['stat-content']}>
                     <div className={styles['stat-value']}>
                       {sprintStats.daysRemaining}
-                      <span className={styles['visually-hidden']}> days remaining</span>
+                      <span className={styles['visually-hidden']}> {t('daysRemaining')}</span>
                     </div>
-                    <div className={styles['stat-label']}>Days Remaining</div>
+                    <div className={styles['stat-label']}>{t('daysRemainingLabel')}</div>
                   </div>
                 </div>
                 <div className={styles['sprint-stat']}>
@@ -458,9 +467,9 @@ export const Dashboard: React.FC = () => {
                   <div className={styles['stat-content']}>
                     <div className={styles['stat-value']}>
                       {sprintStats.progress}%
-                      <span className={styles['visually-hidden']}> completed</span>
+                      <span className={styles['visually-hidden']}> {t('completed')}</span>
                     </div>
-                    <div className={styles['stat-label']}>Completed</div>
+                    <div className={styles['stat-label']}>{t('completedLabel')}</div>
                   </div>
                 </div>
                 <div className={styles['sprint-stat']}>
@@ -470,23 +479,26 @@ export const Dashboard: React.FC = () => {
                   <div className={styles['stat-content']}>
                     <div className={styles['stat-value']}>
                       {sprintStats.completedTasks}
-                      <span className={styles['visually-hidden']}> tasks done</span>
+                      <span className={styles['visually-hidden']}> {t('tasksDone')}</span>
                     </div>
-                    <div className={styles['stat-label']}>Tasks Done</div>
+                    <div className={styles['stat-label']}>{t('tasksDoneLabel')}</div>
                   </div>
                 </div>
               </div>
               {/* Sprint Progress Bar */}
               <div className={styles['sprint-progress-section']}>
                 <div className={styles['progress-header']}>
-                  <span className={styles['progress-label']}>Sprint Progress</span>
+                  <span className={styles['progress-label']}>{t('sprintProgress')}</span>
                   <span className={styles['progress-detail']}>
-                    {sprintStats.completedTasks} of {sprintStats.totalTasks} tasks
+                    {t('tasksOf', {
+                      completed: sprintStats.completedTasks,
+                      total: sprintStats.totalTasks,
+                    })}
                   </span>
                 </div>
                 <ProgressBar
                   value={sprintStats.progress}
-                  label={`Sprint completion: ${sprintStats.progress}%`}
+                  label={t('sprintCompletion', { progress: sprintStats.progress })}
                   size="medium"
                   variant={
                     sprintStats.progress >= 70
@@ -498,8 +510,12 @@ export const Dashboard: React.FC = () => {
                 />
               </div>
               <div className={styles['sprint-card-footer']}>
-                <Link to="/sprint" className={styles['button-link']} aria-label="View Sprint Board">
-                  View Sprint Board
+                <Link
+                  to="/sprint"
+                  className={styles['button-link']}
+                  aria-label={t('viewSprintBoard')}
+                >
+                  {t('viewSprintBoard')}
                   <ArrowRightIcon size={16} aria-hidden="true" />
                 </Link>
               </div>
@@ -512,11 +528,11 @@ export const Dashboard: React.FC = () => {
               <div className={styles['sprint-goal-header']}>
                 <h2 id="sprint-goal-heading">
                   <GoalIcon size={20} aria-hidden="true" />
-                  Sprint Goal
+                  {t('sprintGoal')}
                 </h2>
               </div>
               <div className={styles['sprint-goal-body']}>
-                <p>{sprint.sprintGoal ?? 'No Sprint Goal defined yet.'}</p>
+                <p>{sprint.sprintGoal ?? t('noSprintGoal')}</p>
               </div>
             </article>
           </section>
@@ -530,11 +546,13 @@ export const Dashboard: React.FC = () => {
             aria-labelledby="burndown-chart-heading"
           >
             <h2 id="burndown-chart-heading" className={styles['visually-hidden']}>
-              Sprint Burndown Chart
+              {t('sprintBurndownChart')}
             </h2>
             <div className={styles['chart-container']}>
               <Suspense
-                fallback={<LoadingState variant="skeleton-chart" label="Loading burndown chart" />}
+                fallback={
+                  <LoadingState variant="skeleton-chart" label={t('loadingBurndownChart')} />
+                }
               >
                 <BurndownChart data={burndownData.data as BurndownData | undefined} />
               </Suspense>
@@ -553,11 +571,11 @@ export const Dashboard: React.FC = () => {
             <div className={styles['chart-legend']}>
               <div className={styles['legend-item']}>
                 <span className={`${styles['legend-line']} ${styles['legend-ideal']}`} />
-                <span className={styles['legend-label']}>Ideal Burndown</span>
+                <span className={styles['legend-label']}>{t('idealBurndown')}</span>
               </div>
               <div className={styles['legend-item']}>
                 <span className={`${styles['legend-line']} ${styles['legend-actual']}`} />
-                <span className={styles['legend-label']}>Actual Progress</span>
+                <span className={styles['legend-label']}>{t('actualProgress')}</span>
               </div>
             </div>
           </section>
@@ -566,29 +584,35 @@ export const Dashboard: React.FC = () => {
         {burndownError && (
           <section className={styles['chart-section']}>
             <div className={styles['chart-error']} role="alert">
-              <p>Unable to load burndown chart. {handleError(burndownError)}</p>
+              <p>
+                {t('unableToLoadBurndown')} {handleError(burndownError)}
+              </p>
             </div>
           </section>
         )}
 
         <section className={styles['dashboard-grid']} aria-labelledby="dashboard-details-heading">
           <h2 id="dashboard-details-heading" className={styles['visually-hidden']}>
-            Dashboard Details
+            {t('dashboardDetails')}
           </h2>
 
           <article
             className={`${styles['dashboard-card']} ${styles['animate-fade-in-up']} ${styles['stagger-2']}`}
           >
             <div className={styles['card-header']}>
-              <h3>My Tasks</h3>
-              <Link to="/sprint" className={styles['view-all-link']} aria-label="View all my tasks">
-                View All
+              <h3>{t('taskList.title')}</h3>
+              <Link
+                to="/sprint"
+                className={styles['view-all-link']}
+                aria-label={t('viewAllMyTasks')}
+              >
+                {t('viewAll')}
               </Link>
             </div>
             <div className={styles['card-body']}>
               <TaskList
                 tasks={myTasks}
-                emptyMessage="No tasks assigned to you yet."
+                emptyMessage={t('noTasksYet')}
                 onTaskClick={handleTaskClick}
               />
             </div>
@@ -599,7 +623,7 @@ export const Dashboard: React.FC = () => {
           >
             <div className={styles['card-header']}>
               <div className={styles['card-header-title']}>
-                <h3>Team Updates</h3>
+                <h3>{t('teamUpdates')}</h3>
                 {!dailyUpdatesLoading && (
                   <span
                     className={`${styles['submission-badge']} ${hasSubmittedDailyScrum ? styles.submitted : styles['not-submitted']}`}
@@ -611,10 +635,10 @@ export const Dashboard: React.FC = () => {
                         <span className={styles['badge-icon']} aria-hidden="true">
                           ✓
                         </span>
-                        <span className={styles['badge-text']}>Submitted</span>
+                        <span className={styles['badge-text']}>{t('submitted')}</span>
                       </>
                     ) : (
-                      <span className={styles['badge-text']}>Not submitted</span>
+                      <span className={styles['badge-text']}>{t('notSubmitted')}</span>
                     )}
                   </span>
                 )}
@@ -622,32 +646,38 @@ export const Dashboard: React.FC = () => {
               <Link
                 to="/daily-scrum"
                 className={styles['view-all-link']}
-                aria-label="View all team updates"
+                aria-label={t('viewAllTeamUpdates')}
               >
-                View All
+                {t('viewAll')}
               </Link>
             </div>
             <div className={styles['card-body']}>
               {dailyUpdatesLoading ? (
-                <LoadingState variant="skeleton-list" itemCount={3} label="Loading team updates" />
+                <LoadingState
+                  variant="skeleton-list"
+                  itemCount={3}
+                  label={t('loadingTeamUpdates')}
+                />
               ) : dailyUpdatesError ? (
                 <div className={styles['card-error']} role="alert">
-                  <p>Unable to load updates. {handleError(dailyUpdatesError)}</p>
+                  <p>
+                    {t('unableToLoadUpdates')} {handleError(dailyUpdatesError)}
+                  </p>
                   {/* Task 3.5: Retry button for Team Updates card */}
                   <button
                     type="button"
                     onClick={() => refetchDailyUpdates()}
                     className={styles['retry-button']}
-                    aria-label="Retry loading team updates"
+                    aria-label={t('retryLoadingTeamUpdates')}
                   >
                     <RefreshIcon size={14} aria-hidden="true" />
-                    Retry
+                    {t('retry')}
                   </button>
                 </div>
               ) : (
                 <DailyUpdateList
                   updates={dailyUpdates}
-                  emptyMessage="No daily updates for today yet."
+                  emptyMessage={t('noDailyUpdates')}
                   showSubmitButton
                 />
               )}
@@ -658,36 +688,42 @@ export const Dashboard: React.FC = () => {
             className={`${styles['dashboard-card']} ${styles['animate-fade-in-up']} ${styles['stagger-4']}`}
           >
             <div className={styles['card-header']}>
-              <h3>Open Impediments</h3>
+              <h3>{t('openImpediments')}</h3>
               <Link
                 to="/impediments"
                 className={styles['view-all-link']}
-                aria-label="View all open impediments"
+                aria-label={t('viewAllOpenImpediments')}
               >
-                View All
+                {t('viewAll')}
               </Link>
             </div>
             <div className={styles['card-body']}>
               {impedimentsLoading ? (
-                <LoadingState variant="skeleton-list" itemCount={3} label="Loading impediments" />
+                <LoadingState
+                  variant="skeleton-list"
+                  itemCount={3}
+                  label={t('loadingImpediments')}
+                />
               ) : impedimentsError ? (
                 <div className={styles['card-error']} role="alert">
-                  <p>Unable to load impediments. {handleError(impedimentsError)}</p>
+                  <p>
+                    {t('unableToLoadImpediments')} {handleError(impedimentsError)}
+                  </p>
                   {/* Task 3.5: Retry button for Open Impediments card */}
                   <button
                     type="button"
                     onClick={() => refetchImpediments()}
                     className={styles['retry-button']}
-                    aria-label="Retry loading impediments"
+                    aria-label={t('retryLoadingImpediments')}
                   >
                     <RefreshIcon size={14} aria-hidden="true" />
-                    Retry
+                    {t('retry')}
                   </button>
                 </div>
               ) : (
                 <ImpedimentList
                   impediments={openImpediments}
-                  emptyMessage="No open impediments. Great job!"
+                  emptyMessage={t('noOpenImpediments')}
                   onImpedimentClick={handleImpedimentClick}
                 />
               )}
@@ -699,48 +735,46 @@ export const Dashboard: React.FC = () => {
           className={`${styles['quick-actions']} ${styles['animate-fade-in-up']} ${styles['stagger-5']}`}
           aria-labelledby="quick-actions-heading"
         >
-          <h3 id="quick-actions-heading">Quick Actions</h3>
-          <nav className={styles['quick-actions-grid']} aria-label="Quick action shortcuts">
+          <h3 id="quick-actions-heading">{t('quickActions.title')}</h3>
+          <nav className={styles['quick-actions-grid']} aria-label={t('quickActions.title')}>
             <Link
               to="/daily-scrum"
               className={`${styles['quick-action-button']} ${hasSubmittedDailyScrum ? styles.submitted : ''}`}
               aria-label={
-                hasSubmittedDailyScrum
-                  ? 'View or update your daily scrum'
-                  : 'Submit your daily scrum update'
+                hasSubmittedDailyScrum ? t('viewOrUpdateDailyScrum') : t('submitDailyScrumUpdate')
               }
             >
               <span className={styles['action-icon']} aria-hidden="true">
                 {hasSubmittedDailyScrum ? <CheckmarkIcon size={32} /> : <SunIcon size={32} />}
               </span>
               <span className={styles['action-label']}>
-                {hasSubmittedDailyScrum ? 'Update Daily Scrum' : 'Submit Daily Scrum'}
+                {hasSubmittedDailyScrum ? t('updateDailyScrum') : t('submitDailyScrum')}
               </span>
               {hasSubmittedDailyScrum && (
                 <span className={styles['submitted-indicator']} aria-hidden="true">
-                  Submitted
+                  {t('submitted')}
                 </span>
               )}
             </Link>
             <Link
               to="/backlog"
               className={styles['quick-action-button']}
-              aria-label="Create a new backlog item"
+              aria-label={t('createNewBacklogItem')}
             >
               <span className={styles['action-icon']} aria-hidden="true">
                 <PlusIcon size={32} />
               </span>
-              <span className={styles['action-label']}>Create Backlog Item</span>
+              <span className={styles['action-label']}>{t('createBacklogItem')}</span>
             </Link>
             <Link
               to="/impediments"
               className={styles['quick-action-button']}
-              aria-label="Report a new impediment"
+              aria-label={t('reportNewImpediment')}
             >
               <span className={styles['action-icon']} aria-hidden="true">
                 <ImpedimentIcon size={32} />
               </span>
-              <span className={styles['action-label']}>Report Impediment</span>
+              <span className={styles['action-label']}>{t('reportImpediment')}</span>
             </Link>
           </nav>
         </section>

@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import { apiService } from '../../services';
 import { useTeamStore } from '../../store';
@@ -94,12 +95,8 @@ const initialAdjustmentForm: AdjustmentFormData = {
   ownerId: '',
 };
 
-const SECTION_TABS: { id: SectionType; label: string }[] = [
-  { id: 'overview', label: 'Overview' },
-  { id: 'increment', label: 'Increment' },
-  { id: 'feedback', label: 'Feedback' },
-  { id: 'adjustments', label: 'Backlog Adjustments' },
-];
+// Tab IDs for section navigation
+const SECTION_TAB_IDS: SectionType[] = ['overview', 'increment', 'feedback', 'adjustments'];
 
 // Pure helper functions moved outside component
 const getCategoryColor = (category: string): { bg: string; text: string } => {
@@ -137,24 +134,33 @@ const formatDate = (dateStr: string): string => {
 };
 
 // Helper component for hint text
-const BacklogHint: React.FC = () => (
+const BacklogHint: React.FC<{ message: string }> = ({ message }) => (
   <div className={styles['backlog-hint']}>
     <span className={styles['hint-icon']}>
       <InfoIcon size={16} />
     </span>
-    <span className={styles['hint-text']}>
-      This item will be present in the Product Backlog page for action.
-    </span>
+    <span className={styles['hint-text']}>{message}</span>
   </div>
 );
 
 export const SprintReview: React.FC = () => {
+  const { t } = useTranslation('sprint-review');
   const { sprintId: urlSprintId } = useParams<{ sprintId: string }>();
   const navigate = useNavigate();
   const [, setSearchParams] = useSearchParams();
   const { currentTeam } = useTeamStore();
   const queryClient = useQueryClient();
   const { handleMutationError } = useMutationErrorHandler();
+
+  const SECTION_TABS: { id: SectionType; label: string }[] = useMemo(
+    () => [
+      { id: 'overview', label: t('tabs.overview') },
+      { id: 'increment', label: t('tabs.increment') },
+      { id: 'feedback', label: t('tabs.feedback') },
+      { id: 'adjustments', label: t('tabs.backlogAdjustments') },
+    ],
+    [t]
+  );
 
   const [sprintId, setSprintId] = useState<string | undefined>(urlSprintId);
   const [activeSection, setActiveSection] = useState<SectionType>('overview');
@@ -431,17 +437,18 @@ export const SprintReview: React.FC = () => {
   const validateFeedbackForm = useCallback((): boolean => {
     const errors: Record<string, string> = {};
     if (!feedbackForm.authorName.trim()) {
-      errors.authorName = 'Author name is required';
+      errors.authorName = t('addFeedbackModal.authorName').replace(' *', '');
     }
     if (!feedbackForm.content.trim()) {
-      errors.content = 'Feedback content is required';
+      errors.content = t('addFeedbackModal.feedback').replace(' *', '');
     }
     if (feedbackForm.actionRequired && !feedbackForm.ownerId) {
-      errors.ownerId = 'Owner is required when action is required';
+      errors.ownerId = t('addFeedbackModal.owner').replace(' *', '');
     }
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   }, [
+    t,
     feedbackForm.authorName,
     feedbackForm.content,
     feedbackForm.actionRequired,
@@ -451,17 +458,17 @@ export const SprintReview: React.FC = () => {
   const validateAdjustmentForm = useCallback((): boolean => {
     const errors: Record<string, string> = {};
     if (!adjustmentForm.description.trim()) {
-      errors.description = 'Description is required';
+      errors.description = t('addAdjustmentModal.description').replace(' *', '');
     }
     if (!adjustmentForm.reason.trim()) {
-      errors.reason = 'Reason is required';
+      errors.reason = t('addAdjustmentModal.reason').replace(' *', '');
     }
     if (!adjustmentForm.ownerId) {
-      errors.ownerId = 'Owner is required';
+      errors.ownerId = t('addAdjustmentModal.owner').replace(' *', '');
     }
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
-  }, [adjustmentForm.description, adjustmentForm.reason, adjustmentForm.ownerId]);
+  }, [t, adjustmentForm.description, adjustmentForm.reason, adjustmentForm.ownerId]);
 
   // Event handlers wrapped in useCallback
   const handleAddFeedback = useCallback(() => {
@@ -517,18 +524,17 @@ export const SprintReview: React.FC = () => {
     setFormErrors({});
 
     if (!sprintId) {
-      setFormErrors({ sprintId: 'Sprint ID is required' });
+      setFormErrors({ sprintId: t('createModal.failed') });
       return;
     }
     if (!createReviewData.reviewDate) {
-      setFormErrors({ reviewDate: 'Review date is required' });
+      setFormErrors({ reviewDate: t('createModal.reviewDate').replace(' *', '') });
       return;
     }
 
     if (!increment) {
       setFormErrors({
-        increment:
-          'A delivered increment is required to create a sprint review. Please create and deliver an increment first.',
+        increment: t('createModal.incrementRequiredWarning'),
       });
       return;
     }
@@ -539,7 +545,7 @@ export const SprintReview: React.FC = () => {
       reviewDate: createReviewData.reviewDate,
       summary: createReviewData.summary,
     });
-  }, [sprintId, createReviewData, increment, teamId, createReviewMutation]);
+  }, [sprintId, createReviewData, increment, teamId, createReviewMutation, t]);
 
   const handleCompleteReview = useCallback(() => {
     if (!review?.id) {
@@ -551,14 +557,12 @@ export const SprintReview: React.FC = () => {
 
     const attendeesList = review.attendees;
     if (attendeesList.length === 0) {
-      errors.push('Please add at least one attendee before completing the sprint review.');
+      errors.push(t('completeReview.confirmationModal.validationAttendees'));
     }
 
     const attendedCount = attendeesList.filter((a) => a.attended).length;
     if (attendeesList.length > 0 && attendedCount === 0) {
-      errors.push(
-        'At least one attendee must be marked as attended before completing the sprint review.'
-      );
+      errors.push(t('completeReview.confirmationModal.validationAttended'));
     }
 
     const markedMemberNames = new Set(
@@ -584,7 +588,10 @@ export const SprintReview: React.FC = () => {
       const remaining =
         unmarkedTeamMembers.length > 3 ? ` and ${unmarkedTeamMembers.length - 3} more` : '';
       errors.push(
-        `All team members must be marked as attended or absent. Missing: ${unmarkedNames}${remaining}.`
+        t('completeReview.confirmationModal.validationTeamMembers', {
+          names: unmarkedNames,
+          remaining,
+        })
       );
     }
 
@@ -596,7 +603,7 @@ export const SprintReview: React.FC = () => {
 
     setValidationErrors([]);
     setShowCompleteConfirmation(true);
-  }, [review, teamMembers, updateReviewMutation.isPending]);
+  }, [review, teamMembers, updateReviewMutation.isPending, t]);
 
   const confirmCompleteReview = useCallback(() => {
     if (validationErrors.length > 0) {
@@ -604,12 +611,12 @@ export const SprintReview: React.FC = () => {
       return;
     }
     const updateData = {
-      summary: review?.summary ?? 'Sprint Review completed.',
+      summary: review?.summary ?? t('completeReview.defaultSummary'),
       status: 'completed',
     };
     updateReviewMutation.mutate(updateData);
     setShowCompleteConfirmation(false);
-  }, [updateReviewMutation, validationErrors, review?.summary]);
+  }, [updateReviewMutation, validationErrors, review?.summary, t]);
 
   const cancelCompleteReview = useCallback(() => {
     setShowCompleteConfirmation(false);
@@ -619,7 +626,7 @@ export const SprintReview: React.FC = () => {
   // Tab keyboard navigation handler
   const handleTabKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
-      const tabs = SECTION_TABS.map((t) => t.id);
+      const tabs = SECTION_TAB_IDS;
       const currentIndex = tabs.indexOf(activeSection);
 
       switch (e.key) {
@@ -656,50 +663,52 @@ export const SprintReview: React.FC = () => {
         <div className={styles['review-header']}>
           <div className={styles['header-left']}>
             <button className={styles['back-button']} onClick={() => navigate('/sprint-review')}>
-              <ArrowLeftIcon /> Back to Reviews
+              <ArrowLeftIcon /> {t('backToReviews')}
             </button>
             <h1 className={styles['page-title']}>
-              <FileTextIcon /> Sprint Review
+              <FileTextIcon /> {t('title')}
             </h1>
           </div>
         </div>
 
         <div className={styles['active-sprint-selector']}>
-          <h3>Select Sprint for Review</h3>
+          <h3>{t('selectSprint')}</h3>
           {isLoadingActiveSprint ? (
-            <LoadingState variant="spinner" label="Finding active sprint..." />
+            <LoadingState variant="spinner" label={t('findingActiveSprint')} />
           ) : (
             <>
               {activeSprintData?.data ? (
                 <div className={styles['active-sprint-card']}>
                   <div className={styles['sprint-card-header']}>
                     <span className={`${styles['sprint-status-badge']} ${styles['status-active']}`}>
-                      <ClockIcon /> Active Sprint
+                      <ClockIcon /> {t('activeSprint')}
                     </span>
                     <h4>{activeSprintData.data.name}</h4>
                   </div>
                   <div className={styles['sprint-card-details']}>
                     <div className={styles['detail-item']}>
-                      <span className={styles['detail-label']}>Status:</span>
+                      <span className={styles['detail-label']}>{t('detailLabels.status')}</span>
                       <span className={styles['detail-value']}>
                         {activeSprintData.data.status.toUpperCase()}
                       </span>
                     </div>
                     <div className={styles['detail-item']}>
-                      <span className={styles['detail-label']}>Start Date:</span>
+                      <span className={styles['detail-label']}>{t('detailLabels.startDate')}</span>
                       <span className={styles['detail-value']}>
                         {formatDate(activeSprintData.data.startDate)}
                       </span>
                     </div>
                     <div className={styles['detail-item']}>
-                      <span className={styles['detail-label']}>End Date:</span>
+                      <span className={styles['detail-label']}>{t('detailLabels.endDate')}</span>
                       <span className={styles['detail-value']}>
                         {formatDate(activeSprintData.data.endDate)}
                       </span>
                     </div>
                     {activeSprintData.data.sprintGoal && (
                       <div className={`${styles['detail-item']} ${styles['full-width']}`}>
-                        <span className={styles['detail-label']}>Sprint Goal:</span>
+                        <span className={styles['detail-label']}>
+                          {t('detailLabels.sprintGoal')}
+                        </span>
                         <span className={styles['detail-value']}>
                           {activeSprintData.data.sprintGoal}
                         </span>
@@ -715,15 +724,15 @@ export const SprintReview: React.FC = () => {
                       }
                     }}
                   >
-                    Review This Sprint
+                    {t('reviewThisSprint')}
                   </button>
                 </div>
               ) : (
                 <div className={styles['no-active-sprint']}>
-                  <p>No active sprint found for this team.</p>
+                  <p>{t('noActiveSprint')}</p>
                   {allSprintsData?.data && allSprintsData.data.length > 0 && (
                     <div className={styles['sprint-list']}>
-                      <h4>Available Sprints:</h4>
+                      <h4>{t('availableSprints')}</h4>
                       {allSprintsData.data.map((s) => (
                         <div key={s.id} className={styles['sprint-item']}>
                           <div className={styles['sprint-item-info']}>
@@ -741,7 +750,7 @@ export const SprintReview: React.FC = () => {
                               setSearchParams({ sprintId: s.id });
                             }}
                           >
-                            Select
+                            {t('select')}
                           </button>
                         </div>
                       ))}
@@ -757,7 +766,7 @@ export const SprintReview: React.FC = () => {
   }
 
   if (isLoading) {
-    return <LoadingState variant="spinner" label="Loading Sprint Review..." />;
+    return <LoadingState variant="spinner" label={t('loading')} />;
   }
 
   if (isReviewsError) {
@@ -766,16 +775,16 @@ export const SprintReview: React.FC = () => {
         <div className={styles['error-icon']}>
           <AlertTriangleIcon />
         </div>
-        <p>Failed to load Sprint Review</p>
+        <p>{t('error.failedToLoad')}</p>
         <p className={styles['error-details']}>
-          {reviewsError instanceof Error ? reviewsError.message : 'Unknown error'}
+          {reviewsError instanceof Error ? reviewsError.message : t('error.unknown')}
         </p>
         <button
           className={`${styles.button} ${styles['button-primary']}`}
           onClick={() => navigate('/sprint-review')}
           style={{ marginTop: '16px' }}
         >
-          Back to Reviews
+          {t('backToReviews')}
         </button>
       </div>
     );
@@ -787,10 +796,10 @@ export const SprintReview: React.FC = () => {
         <div className={styles['review-header']}>
           <div className={styles['header-left']}>
             <button className={styles['back-button']} onClick={() => navigate('/sprint-review')}>
-              <ArrowLeftIcon /> Back to Reviews
+              <ArrowLeftIcon /> {t('backToReviews')}
             </button>
             <h1 className={styles['page-title']}>
-              <FileTextIcon /> Sprint Review
+              <FileTextIcon /> {t('title')}
             </h1>
             <p className={styles['review-date']}>{sprint?.name ?? `Sprint ${sprintId}`}</p>
           </div>
@@ -801,19 +810,16 @@ export const SprintReview: React.FC = () => {
             <div className={styles['empty-icon']}>
               <FileTextIcon />
             </div>
-            <h3>No Sprint Review Created</h3>
-            <p>A Sprint Review has not been created for this sprint yet.</p>
+            <h3>{t('noReview.title')}</h3>
+            <p>{t('noReview.message')}</p>
             {!increment && (
               <div className={styles['increment-notice']}>
                 <span className={styles['notice-icon']}>
                   <PackageIcon />
                 </span>
                 <div className={styles['notice-content']}>
-                  <strong>Increment Required</strong>
-                  <p>
-                    A delivered increment is required to create a sprint review. Please create and
-                    deliver an increment first.
-                  </p>
+                  <strong>{t('noReview.incrementRequired')}</strong>
+                  <p>{t('noReview.incrementRequiredNotice')}</p>
                 </div>
               </div>
             )}
@@ -823,7 +829,7 @@ export const SprintReview: React.FC = () => {
                   className={`${styles.button} ${styles['button-secondary']}`}
                   onClick={() => navigate('/increments')}
                 >
-                  Create Increment
+                  {t('noReview.createIncrement')}
                 </button>
               )}
               <button
@@ -832,7 +838,7 @@ export const SprintReview: React.FC = () => {
                 disabled={!increment}
               >
                 <FileTextIcon size={16} />
-                Create Sprint Review
+                {t('noReview.createSprintReview')}
               </button>
             </div>
           </div>
@@ -863,22 +869,22 @@ export const SprintReview: React.FC = () => {
       <div className={styles['review-header']}>
         <div className={styles['header-left']}>
           <button className={styles['back-button']} onClick={() => navigate('/sprint-review')}>
-            <ArrowLeftIcon /> Back to Reviews
+            <ArrowLeftIcon /> {t('backToReviews')}
           </button>
           <h1 className={styles['page-title']}>
-            <FileTextIcon /> Sprint Review
+            <FileTextIcon /> {t('title')}
           </h1>
           <p className={styles['review-date']}>{formatDate(review.reviewDate)}</p>
         </div>
         <div className={styles['header-actions']}>
           <span className={styles['attendee-count']}>
             {review.attendees.filter((a) => a.attended).length} / {review.attendees.length}{' '}
-            Attendees
+            {t('overview.attendees')}
           </span>
         </div>
       </div>
 
-      <div className={styles['section-tabs']} role="tablist" aria-label="Sprint Review Sections">
+      <div className={styles['section-tabs']} role="tablist" aria-label={t('ariaLabels.sections')}>
         {SECTION_TABS.map((tab) => (
           <button
             key={tab.id}
@@ -906,27 +912,27 @@ export const SprintReview: React.FC = () => {
           >
             <div className={styles['sprint-header-compact']}>
               <div className={styles['sprint-title-row']}>
-                <h2 className={styles['sprint-name']}>{sprint?.name ?? 'Unknown Sprint'}</h2>
+                <h2 className={styles['sprint-name']}>{sprint?.name ?? t('unknownSprint')}</h2>
                 <span
                   className={`${styles['sprint-status-badge']} ${styles[`status-${sprint?.status ?? 'unknown'}`] ?? ''}`}
                 >
                   {sprint?.status === 'completed' ? <CheckIcon /> : <CircleIcon fill />}{' '}
-                  {sprint?.status.toUpperCase() ?? 'UNKNOWN'}
+                  {t(`list.statusLabels.${sprint?.status ?? 'unknown'}` as never)}
                 </span>
               </div>
               <div className={styles['sprint-meta-row']}>
                 <span className={styles['meta-item']}>
-                  <span className={styles['meta-label']}>Duration</span>
+                  <span className={styles['meta-label']}>{t('overview.duration')}</span>
                   <span className={styles['meta-value']}>
-                    {sprintDuration.workingDays} working days
+                    {sprintDuration.workingDays} {t('overview.workingDays')}
                   </span>
                 </span>
                 <span className={styles['meta-separator']}>•</span>
                 <span className={styles['meta-item']}>
-                  <span className={styles['meta-label']}>Period</span>
+                  <span className={styles['meta-label']}>{t('overview.period')}</span>
                   <span className={styles['meta-value']}>
-                    {sprint?.startDate ? formatDate(sprint.startDate) : 'Not set'} —{' '}
-                    {sprint?.endDate ? formatDate(sprint.endDate) : 'Not set'}
+                    {sprint?.startDate ? formatDate(sprint.startDate) : t('overview.notSet')} —{' '}
+                    {sprint?.endDate ? formatDate(sprint.endDate) : t('overview.notSet')}
                   </span>
                 </span>
               </div>
@@ -935,28 +941,28 @@ export const SprintReview: React.FC = () => {
             <div className={styles['overview-grid']}>
               <div className={`${styles['overview-card']} ${styles['sprint-goal-card']}`}>
                 <h3>
-                  <TargetIcon /> Sprint Goal
+                  <TargetIcon /> {t('overview.sprintGoal')}
                 </h3>
                 <p className={styles['sprint-goal-text']}>
-                  {sprint?.sprintGoal ?? 'No sprint goal defined.'}
+                  {sprint?.sprintGoal ?? t('overview.noSprintGoal')}
                 </p>
               </div>
 
               <div className={styles['overview-card']}>
                 <h3>
-                  <TrendingUpIcon /> Sprint Metrics
+                  <TrendingUpIcon /> {t('overview.sprintMetrics')}
                 </h3>
                 <div className={styles['stats-list']}>
                   <div className={styles['stat-row']}>
-                    <span>Story Points Committed</span>
+                    <span>{t('overview.storyPointsCommitted')}</span>
                     <strong>{sprintStats.committedStoryPoints}</strong>
                   </div>
                   <div className={styles['stat-row']}>
-                    <span>Story Points Completed</span>
+                    <span>{t('overview.storyPointsCompleted')}</span>
                     <strong className={styles.success}>{sprintStats.completedStoryPoints}</strong>
                   </div>
                   <div className={styles['stat-row']}>
-                    <span>Completion Rate</span>
+                    <span>{t('overview.completionRate')}</span>
                     <strong className={styles.success}>{sprintStats.completionRate}%</strong>
                   </div>
                 </div>
@@ -964,9 +970,9 @@ export const SprintReview: React.FC = () => {
 
               <div className={`${styles['overview-card']} ${styles['full-width']}`}>
                 <h3>
-                  <FileTextIcon /> Review Summary
+                  <FileTextIcon /> {t('overview.reviewSummary')}
                 </h3>
-                <p>{review.summary ?? 'No summary provided yet.'}</p>
+                <p>{review.summary ?? t('overview.noSummary')}</p>
               </div>
             </div>
 
@@ -1024,26 +1030,26 @@ export const SprintReview: React.FC = () => {
               <div className={styles['increment-presentation']}>
                 <div className={styles['increment-header']}>
                   <h3>
-                    <PackageIcon /> Increment Presented
+                    <PackageIcon /> {t('increment.title')}
                   </h3>
                   <span className={styles['increment-name']}>{increment.name}</span>
                 </div>
                 <p className={styles['increment-description']}>
-                  {increment.description ?? 'No description'}
+                  {increment.description ?? t('increment.noDescription')}
                 </p>
 
                 <div className={styles['included-items']}>
-                  <h4>Included Product Backlog Items</h4>
+                  <h4>{t('increment.includedPbis')}</h4>
                   <div className={styles['pbi-list']}>
                     {increment.pbis?.length === 0 ? (
-                      <p className={styles['no-data']}>No PBIs included in this increment.</p>
+                      <p className={styles['no-data']}>{t('increment.noPbis')}</p>
                     ) : (
                       increment.pbis?.map((pbi, index) => (
                         <div key={pbi.id || `pbi-${index}`} className={styles['pbi-card']}>
                           <span className={styles['pbi-title']}>{pbi.title}</span>
                           <span className={styles['pbi-points']}>{pbi.storyPoints ?? 0} pts</span>
                           <span className={`${styles['pbi-status']} ${styles.done}`}>
-                            <CheckIcon /> Done
+                            <CheckIcon /> {t('increment.done')}
                           </span>
                         </div>
                       ))
@@ -1052,37 +1058,39 @@ export const SprintReview: React.FC = () => {
                 </div>
 
                 <div className={styles['dod-verification']}>
-                  <h4>Definition of Done Verification</h4>
+                  <h4>{t('increment.dodVerification')}</h4>
                   <div className={styles['dod-status']}>
                     <span className={styles['dod-icon']}>
                       <CheckIcon />
                     </span>
-                    <span>All DoD criteria verified for included items</span>
+                    <span>{t('increment.dodAllVerified')}</span>
                   </div>
                 </div>
 
                 <div className={styles['increment-stats']}>
                   <div className={styles['stat-item']}>
-                    <span className={styles['stat-label']}>Total Story Points</span>
+                    <span className={styles['stat-label']}>{t('increment.totalStoryPoints')}</span>
                     <span className={styles['stat-value']}>{increment.totalStoryPoints || 0}</span>
                   </div>
                   <div className={styles['stat-item']}>
-                    <span className={styles['stat-label']}>Delivery Method</span>
+                    <span className={styles['stat-label']}>{t('increment.deliveryMethod')}</span>
                     <span className={styles['stat-value']}>
                       {increment.deliveryMethod?.toLowerCase() ===
                       DeliveryMethod.SPRINT_REVIEW.toLowerCase() ? (
-                        '📋 Sprint Review'
+                        t('increment.sprintReviewDelivery')
                       ) : (
                         <>
-                          <RocketIcon size={14} /> Early Release
+                          <RocketIcon size={14} /> {t('increment.earlyReleaseDelivery')}
                         </>
                       )}
                     </span>
                   </div>
                   <div className={styles['stat-item']}>
-                    <span className={styles['stat-label']}>Delivered At</span>
+                    <span className={styles['stat-label']}>{t('increment.deliveredAt')}</span>
                     <span className={styles['stat-value']}>
-                      {increment.deliveredAt ? formatDate(increment.deliveredAt) : 'Not delivered'}
+                      {increment.deliveredAt
+                        ? formatDate(increment.deliveredAt)
+                        : t('increment.notDelivered')}
                     </span>
                   </div>
                 </div>
@@ -1093,8 +1101,8 @@ export const SprintReview: React.FC = () => {
                   <div className={styles['empty-icon']}>
                     <PackageIcon />
                   </div>
-                  <h3>No Increment Available</h3>
-                  <p>No delivered increment is available for this sprint review.</p>
+                  <h3>{t('increment.noIncrement')}</h3>
+                  <p>{t('increment.noIncrementDescription')}</p>
                 </div>
               </div>
             )}
@@ -1110,7 +1118,7 @@ export const SprintReview: React.FC = () => {
           >
             <div className={styles['section-header']}>
               <h3>
-                <MessageSquareIcon /> Stakeholder Feedback
+                <MessageSquareIcon /> {t('feedback.title')}
               </h3>
               <button
                 className={`${styles.button} ${styles['button-primary']}`}
@@ -1119,12 +1127,14 @@ export const SprintReview: React.FC = () => {
                 aria-disabled={isReviewCompleted}
                 aria-label={
                   isReviewCompleted
-                    ? 'Add Feedback - disabled because review is completed'
-                    : 'Add Feedback'
+                    ? `${t('feedback.addFeedback')} - disabled`
+                    : t('feedback.addFeedback')
                 }
-                title={isReviewCompleted ? 'Cannot add feedback to a completed review' : ''}
+                title={
+                  isReviewCompleted ? t('completeReview.confirmationModal.cannotCompleteTitle') : ''
+                }
               >
-                <PlusIcon /> Add Feedback
+                <PlusIcon /> {t('feedback.addFeedback')}
               </button>
             </div>
 
@@ -1132,9 +1142,7 @@ export const SprintReview: React.FC = () => {
               {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- review data may be partial despite type */}
               {(review.feedback ?? []).length === 0 ? (
                 <div className={styles['empty-feedback']}>
-                  <p>
-                    No feedback collected yet. Click "Add Feedback" to add stakeholder feedback.
-                  </p>
+                  <p>{t('feedback.empty')}</p>
                 </div>
               ) : (
                 review.feedback.map((feedback, index) => {
@@ -1153,12 +1161,12 @@ export const SprintReview: React.FC = () => {
                         </span>
                         {feedback.actionRequired && !feedback.actionTaken && (
                           <span className={styles['action-required']}>
-                            <AlertTriangleIcon /> Action Required
+                            <AlertTriangleIcon /> {t('feedback.actionRequired')}
                           </span>
                         )}
                         {feedback.actionRequired && feedback.actionTaken && (
                           <span className={styles['action-taken']}>
-                            <CheckIcon /> Action Taken
+                            <CheckIcon /> {t('feedback.actionTaken')}
                           </span>
                         )}
                       </div>
@@ -1166,11 +1174,13 @@ export const SprintReview: React.FC = () => {
                       <span className={styles['feedback-author']}>
                         <UserIcon size={14} /> {feedback.authorName}
                       </span>
-                      {feedback.actionRequired && !feedback.actionTaken && <BacklogHint />}
+                      {feedback.actionRequired && !feedback.actionTaken && (
+                        <BacklogHint message={t('feedback.backlogHint')} />
+                      )}
                       {feedback.actionRequired && feedback.owner && (
                         <div className={styles['feedback-owner']}>
                           <span className={styles['owner-label']}>
-                            <UsersIcon /> Owner:
+                            <UsersIcon /> {t('feedback.owner')}
                           </span>
                           <span className={styles['owner-name']}>
                             {feedback.owner.firstName} {feedback.owner.lastName}
@@ -1195,11 +1205,9 @@ export const SprintReview: React.FC = () => {
             <div className={styles['section-header']}>
               <div>
                 <h3>
-                  <ListIcon /> Product Backlog Adjustments
+                  <ListIcon /> {t('adjustments.title')}
                 </h3>
-                <p className={styles['section-subtitle']}>
-                  Changes to the Product Backlog based on Sprint Review feedback.
-                </p>
+                <p className={styles['section-subtitle']}>{t('adjustments.description')}</p>
               </div>
               <button
                 className={`${styles.button} ${styles['button-primary']}`}
@@ -1208,12 +1216,12 @@ export const SprintReview: React.FC = () => {
                 aria-disabled={isReviewCompleted}
                 aria-label={
                   isReviewCompleted
-                    ? 'Add Adjustment - disabled because review is completed'
-                    : 'Add Adjustment'
+                    ? t('adjustments.addAdjustmentDisabled')
+                    : t('adjustments.addAdjustment')
                 }
-                title={isReviewCompleted ? 'Cannot add adjustment to a completed review' : ''}
+                title={isReviewCompleted ? t('adjustments.cannotAddAdjustmentTitle') : ''}
               >
-                <PlusIcon /> Add Adjustment
+                <PlusIcon /> {t('adjustments.addAdjustment')}
               </button>
             </div>
 
@@ -1221,7 +1229,7 @@ export const SprintReview: React.FC = () => {
               {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- review data may be partial despite type */}
               {(review.backlogAdjustments ?? []).length === 0 ? (
                 <div className={styles['empty-adjustments']}>
-                  <p>No backlog adjustments made during this review.</p>
+                  <p>{t('adjustments.empty')}</p>
                 </div>
               ) : (
                 review.backlogAdjustments.map((adjustment, index) => (
@@ -1233,27 +1241,27 @@ export const SprintReview: React.FC = () => {
                       <span className={styles['action-badge']}>
                         {adjustment.action === 'add' && (
                           <>
-                            <PlusIcon /> Add
+                            <PlusIcon /> {t('adjustments.actionTypes.add')}
                           </>
                         )}
                         {adjustment.action === 'modify' && (
                           <>
-                            <EditIcon /> Modify
+                            <EditIcon /> {t('adjustments.actionTypes.modify')}
                           </>
                         )}
                         {adjustment.action === 'remove' && (
                           <>
-                            <TrashIcon /> Remove
+                            <TrashIcon /> {t('adjustments.actionTypes.remove')}
                           </>
                         )}
                         {adjustment.action === 'reorder' && (
                           <>
-                            <RefreshCwIcon /> Reorder
+                            <RefreshCwIcon /> {t('adjustments.actionTypes.reorder')}
                           </>
                         )}
                         {adjustment.action === 'split' && (
                           <>
-                            <ScissorsIcon /> Split
+                            <ScissorsIcon /> {t('adjustments.actionTypes.split')}
                           </>
                         )}
                       </span>
@@ -1262,24 +1270,26 @@ export const SprintReview: React.FC = () => {
                       >
                         {adjustment.implemented ? (
                           <>
-                            <CheckIcon /> Implemented
+                            <CheckIcon /> {t('adjustments.status.implemented')}
                           </>
                         ) : (
                           <>
-                            <ClockIcon /> Pending
+                            <ClockIcon /> {t('adjustments.status.pending')}
                           </>
                         )}
                       </span>
                     </div>
                     <p className={styles['adjustment-description']}>{adjustment.description}</p>
                     <div className={styles['adjustment-reason']}>
-                      <strong>Reason:</strong> {adjustment.reason}
+                      <strong>{t('adjustments.reason')}</strong> {adjustment.reason}
                     </div>
-                    {!adjustment.implemented && <BacklogHint />}
+                    {!adjustment.implemented && (
+                      <BacklogHint message={t('adjustments.backlogHint')} />
+                    )}
                     {adjustment.owner && (
                       <div className={styles['adjustment-owner']}>
                         <span className={styles['owner-label']}>
-                          <UsersIcon /> Owner:
+                          <UsersIcon /> {t('adjustments.owner')}
                         </span>
                         <span className={styles['owner-name']}>
                           {adjustment.owner.firstName} {adjustment.owner.lastName}
@@ -1337,19 +1347,19 @@ export const SprintReview: React.FC = () => {
         >
           {review.status === 'completed' || isReviewCompleted ? (
             <>
-              <CheckIcon size={16} /> Sprint Review Completed
+              <CheckIcon size={16} /> {t('completeReview.badge')}
             </>
           ) : updateReviewMutation.isPending ? (
-            'Completing...'
+            t('completeReview.completing')
           ) : (
             <>
-              <CheckIcon size={16} /> Complete Sprint Review
+              <CheckIcon size={16} /> {t('completeReview.button')}
             </>
           )}
         </button>
         {updateReviewMutation.isError && (
           <div className={styles['review-action-error']}>
-            Failed to complete review. Please try again.
+            {t('completeReview.failed')}
             {updateReviewMutation.error instanceof Error && (
               <div className={styles['error-details']}>
                 Error: {updateReviewMutation.error.message}
@@ -1369,11 +1379,11 @@ export const SprintReview: React.FC = () => {
         >
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <div className={styles['modal-header']}>
-              <h3 id="success-modal-title">Success</h3>
+              <h3 id="success-modal-title">{t('completeReview.successModal.title')}</h3>
               <button
                 className={styles['close-button']}
                 onClick={() => setShowSuccessModal(false)}
-                aria-label="Close dialog"
+                aria-label={t('completeReview.confirmationModal.closeDialog')}
                 type="button"
               >
                 <XIcon />
@@ -1384,7 +1394,7 @@ export const SprintReview: React.FC = () => {
                 <div className={styles['success-icon']}>
                   <CheckIcon />
                 </div>
-                <p>Sprint Review completed successfully!</p>
+                <p>{t('completeReview.successModal.message')}</p>
               </div>
             </div>
             <div className={styles['modal-actions']}>
@@ -1392,7 +1402,7 @@ export const SprintReview: React.FC = () => {
                 className={`${styles.button} ${styles['button-primary']}`}
                 onClick={() => setShowSuccessModal(false)}
               >
-                Close
+                {t('completeReview.successModal.close')}
               </button>
             </div>
           </div>
@@ -1414,19 +1424,19 @@ export const SprintReview: React.FC = () => {
                 </div>
                 <h3 id="complete-modal-title">
                   {validationErrors.length > 0
-                    ? 'Cannot Complete Sprint Review'
-                    : 'Complete Sprint Review'}
+                    ? t('completeReview.confirmationModal.cannotCompleteTitle')
+                    : t('completeReview.confirmationModal.completeTitle')}
                 </h3>
                 <p className={styles['modal-subtitle']}>
                   {validationErrors.length > 0
-                    ? 'Please address the following issues before completing this sprint review'
-                    : 'Review all items and confirm to mark this sprint review as completed'}
+                    ? t('completeReview.confirmationModal.cannotCompleteSubtitle')
+                    : t('completeReview.confirmationModal.completeSubtitle')}
                 </p>
               </div>
               <button
                 className={styles['close-button']}
                 onClick={cancelCompleteReview}
-                aria-label="Close dialog"
+                aria-label={t('completeReview.confirmationModal.closeDialog')}
                 type="button"
               >
                 <XIcon />
@@ -1444,8 +1454,7 @@ export const SprintReview: React.FC = () => {
                 </ul>
               ) : (
                 <p className={styles['confirm-message']}>
-                  Are you sure you want to mark this sprint review as completed? This action cannot
-                  be undone.
+                  {t('completeReview.confirmationModal.confirmation')}
                 </p>
               )}
             </div>
@@ -1456,7 +1465,7 @@ export const SprintReview: React.FC = () => {
                   onClick={cancelCompleteReview}
                   type="button"
                 >
-                  <CheckIcon /> Got it
+                  <CheckIcon /> {t('completeReview.confirmationModal.gotIt')}
                 </button>
               ) : (
                 <>
@@ -1465,7 +1474,7 @@ export const SprintReview: React.FC = () => {
                     onClick={cancelCompleteReview}
                     type="button"
                   >
-                    Cancel
+                    {t('completeReview.confirmationModal.cancel')}
                   </button>
                   <button
                     className={`${styles.button} ${styles['button-primary']}`}
@@ -1474,10 +1483,10 @@ export const SprintReview: React.FC = () => {
                     type="button"
                   >
                     {updateReviewMutation.isPending ? (
-                      'Completing...'
+                      t('completeReview.completing')
                     ) : (
                       <>
-                        <CheckIcon /> Complete
+                        <CheckIcon /> {t('completeReview.confirmationModal.complete')}
                       </>
                     )}
                   </button>

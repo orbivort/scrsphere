@@ -90,7 +90,15 @@
     "closeDialog": "Close dialog",
     "navigateTo": "Navigate to {{page}}",
     "expandSidebar": "Expand sidebar",
-    "collapseSidebar": "Collapse sidebar"
+    "collapseSidebar": "Collapse sidebar",
+    "closeModal": "Close modal",
+    "closeForm": "Close form",
+    "closeErrorMessage": "Close error message",
+    "clearSearch": "Clear search",
+    "viewMode": "View mode",
+    "cardView": "Card view",
+    "listView": "List view",
+    "loadingNotifications": "Loading notifications"
   },
   "error": {
     "boundary": {
@@ -104,5 +112,63 @@
       "timeout": "The request took too long. Please try again.",
       "serverError": "A server error occurred. Our team has been notified."
     }
+  },
+  "profile": {
+    "editTitle": "Edit Profile",
+    "changePasswordTitle": "Change Password",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmNewPassword": "Confirm New Password",
+    "saving": "Saving...",
+    "saveChanges": "Save Changes",
+    "profileUpdated": "Profile updated successfully",
+    "passwordChanged": "Password changed successfully",
+    "currentPasswordIncorrect": "Current password is incorrect",
+    "passwordRequirements": "Password must be at least 8 characters and include uppercase, lowercase, number, and special character",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "readOnly": "Read-only",
+    "contactSupportToChangeEmail": "Contact support to change your email address",
+    "placeholder": {
+      "firstName": "Enter your first name",
+      "lastName": "Enter your last name"
+    }
+  },
+  "unsavedChangesModal": {
+    "title": "Unsaved Changes",
+    "message": "You have unsaved changes. Are you sure you want to discard them?",
+    "discard": "Discard",
+    "keepEditing": "Keep Editing"
+  },
+  "draftRestore": {
+    "unsavedDraftFound": "Unsaved Draft Found",
+    "restorePrompt": "Would you like to restore your previous draft?",
+    "discard": "Discard",
+    "restoreDraft": "Restore Draft",
+    "draftSaved": "Draft saved",
+    "justNow": "just now",
+    "minutesAgo": "{{count}}m ago",
+    "hoursAgo": "{{count}}h ago",
+    "daysAgo": "{{count}}d ago"
+  },
+  "chunkError": {
+    "title": "Update Available",
+    "description": "A new version of the application is available. Please reload to get the latest version.",
+    "reload": "Reload"
+  },
+  "helpPanel": {
+    "title": "Tips",
+    "goodExample": "Good example",
+    "avoidExample": "Avoid"
+  },
+  "characterCounter": {
+    "min": "{{current}}/{{max}} characters",
+    "approachingLimit": "Approaching character limit"
+  },
+  "emptyState": {
+    "noTeam": "No team selected",
+    "noActiveSprint": "No active sprint"
   }
 }

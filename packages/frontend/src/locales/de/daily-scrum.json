@@ -1,3 +1,160 @@
 {
-  "title": "Daily Scrum"
+  "title": "Daily Scrum",
+  "subtitle": "{{sprintName}} - Tag {{day}}",
+  "viewMode": {
+    "cards": "Karten",
+    "list": "Liste"
+  },
+  "datePicker": {
+    "label": "Datum fur tagliche Updates auswahlen",
+    "ariaLabel": "Datum fur tagliche Updates auswahlen"
+  },
+  "quickDates": {
+    "today": "Heute",
+    "yesterday": "Gestern"
+  },
+  "stats": {
+    "submitted": "Eingereicht",
+    "pending": "Ausstehend",
+    "impediments": "Hindernisse",
+    "participation": "Teilnahme"
+  },
+  "teamUpdates": "Team-Updates",
+  "yourDailyUpdate": "Ihr tagliches Update",
+  "submitUpdate": "Update einreichen",
+  "templates": {
+    "featureDevelopment": "Feature-Entwicklung",
+    "issueFixing": "Problembehebung",
+    "review": "Uberprufung",
+    "meetings": "Meetings"
+  },
+  "form": {
+    "yesterdayLabel": "Was haben Sie gestern getan, um das Team beim Erreichen des Sprint-Ziels zu unterstutzen?",
+    "todayLabel": "Was werden Sie heute tun, um das Team beim Erreichen des Sprint-Ziels zu unterstutzen?",
+    "impedimentLabel": "Irgendwelche Hindernisse? (optional)",
+    "yesterdayPlaceholder": "Beschreiben Sie, was Sie gestern erreicht haben...",
+    "todayPlaceholder": "Beschreiben Sie, was Sie heute zu arbeiten planen...",
+    "impedimentPlaceholder": "Beschreiben Sie alle Blocker oder Hindernisse...",
+    "impedimentHint": "Dieses Hindernis wird verfolgt und kann zu einem formalen Hindernis-Datensatz befordert werden",
+    "cancel": "Abbrechen",
+    "submitting": "Einreichen..."
+  },
+  "emptyState": {
+    "noUpdates": "Noch keine Updates",
+    "beFirst": "Seien Sie der Erste, der sein tagliches Update einreicht!",
+    "noUpdatesForDate": "Keine Team-Updates fur dieses Datum."
+  },
+  "waitingForUpdates": {
+    "title": "Warten auf Updates",
+    "sendReminder": "Erinnerung senden",
+    "sending": "Senden..."
+  },
+  "activeImpediments": {
+    "title": "Aktive Hindernisse",
+    "tracked": "Verfolgt",
+    "trackedImpediment": "Verfolgtes Hindernis",
+    "untrackedImpediment": "Nicht verfolgtes Hindernis",
+    "viewDetails": "Details anzeigen",
+    "trackAsImpediment": "Als Hindernis verfolgen",
+    "viewAllImpediments": "Alle {{count}} Hindernisse anzeigen"
+  },
+  "sprintProgress": {
+    "title": "Sprint-Fortschritt",
+    "dayOfTotal": "Tag {{current}} von {{total}}",
+    "viewSprintBoard": "Sprint-Board anzeigen"
+  },
+  "sprintGoal": {
+    "label": "Sprint-Ziel",
+    "noGoalDefined": "Kein Sprint-Ziel definiert.",
+    "addInPlanning": "In der Sprint-Planung hinzufugen"
+  },
+  "updateCard": {
+    "yesterday": "Gestern",
+    "today": "Heute",
+    "impediment": "Hindernis",
+    "tracked": "(Verfolgt)",
+    "viewImpediment": "Hindernis anzeigen",
+    "viewImpedimentDetails": "Hindernis-Details anzeigen",
+    "trackAsImpediment": "Als Hindernis verfolgen",
+    "trackAsFormalImpediment": "Als formales Hindernis verfolgen",
+    "clickToCollapse": "Klicken zum Einklappen",
+    "clickToExpand": "Klicken zum Ausklappen"
+  },
+  "impedimentStatus": {
+    "open": "Offen",
+    "inProgress": "In Bearbeitung",
+    "resolved": "Gelost",
+    "closed": "Geschlossen"
+  },
+  "promoteModal": {
+    "title": "Hindernis aus taglichem Update erstellen",
+    "fromUpdateBy": "Aus taglichem Update von:",
+    "originalImpedimentText": "Ursprunglicher Hindernis-Text:",
+    "titleLabel": "Titel",
+    "titlePlaceholder": "Kurzer Titel fur das Hindernis",
+    "descriptionLabel": "Beschreibung",
+    "descriptionPlaceholder": "Detaillierte Beschreibung des Hindernisses",
+    "priority": "Prioritat",
+    "priorityHigh": "Hoch",
+    "priorityMedium": "Mittel",
+    "priorityLow": "Niedrig",
+    "createImpediment": "Hindernis erstellen",
+    "creating": "Erstellen..."
+  },
+  "draftRestore": {
+    "title": "Ungespeicherter Entwurf gefunden",
+    "prompt": "Mochten Sie Ihren vorherigen Entwurf wiederherstellen?",
+    "discard": "Verwerfen",
+    "restoreDraft": "Entwurf wiederherstellen"
+  },
+  "retryPrompt": {
+    "title": "Einreichung fehlgeschlagen",
+    "message": "Ihr Update konnte nicht eingereicht werden. Ihre Daten wurden gespeichert.",
+    "dismiss": "Schliessen",
+    "retrySubmission": "Einreichung erneut versuchen",
+    "retrying": "Erneut versuchen..."
+  },
+  "unsavedModal": {
+    "title": "Ungespeicherte Anderungen",
+    "message": "Sie haben ungespeicherte Anderungen im Hindernis-Formular. Sind Sie sicher, dass Sie diese verwerfen mochten?"
+  },
+  "validation": {
+    "titleRequired": "Titel ist erforderlich",
+    "titleTooShort": "Titel muss mindestens 3 Zeichen haben",
+    "descriptionRequired": "Beschreibung ist erforderlich",
+    "descriptionTooShort": "Beschreibung muss mindestens 10 Zeichen haben"
+  },
+  "aria": {
+    "viewMode": "Ansichtsmodus",
+    "closeForm": "Formular schliessen",
+    "closeDialog": "Dialog schliessen",
+    "trackedAsFormalImpediment": "Als formales Hindernis verfolgt",
+    "impedimentStatus": "Hindernis-Status: {{status}}",
+    "dailyUpdateAriaLabel": "Tagliches Update von {{name}}. {{expandAction}}.",
+    "clickToCollapse": "Klicken zum Einklappen",
+    "clickToExpand": "Klicken zum Ausklappen"
+  },
+  "draftSaved": "Entwurf gespeichert {{timeSince}}",
+  "formatTimeSince": {
+    "justNow": "gerade eben",
+    "minutesAgo": "{{count}} Min.",
+    "hoursAgo": "{{count}} Std.",
+    "daysAgo": "{{count}} T."
+  },
+  "toast": {
+    "updateSubmitted": "Update erfolgreich eingereicht!",
+    "impedimentCreated": "Hindernis erfolgreich erstellt!",
+    "reminderSent": "Erinnerung gesendet!",
+    "noPendingUpdates": "Keine ausstehenden Updates",
+    "offline": "Sie scheinen offline zu sein. Bitte uberprufen Sie Ihre Internetverbindung und versuchen Sie es erneut.",
+    "networkError": "Ein Netzwerkfehler ist aufgetreten. Bitte uberprufen Sie Ihre Verbindung und versuchen Sie es erneut.",
+    "sessionExpired": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
+    "noPermissionCreateImpediments": "Sie haben keine Berechtigung, Hindernisse zu erstellen.",
+    "serverError": "Ein Serverfehler ist aufgetreten. Bitte versuchen Sie es spater erneut.",
+    "failedCreateImpediment": "Hindernis konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
+    "noPermissionReminders": "Sie haben keine Berechtigung, Erinnerungen zu senden.",
+    "failedSendReminder": "Erinnerung konnte nicht gesendet werden. Bitte versuchen Sie es erneut.",
+    "submitFailed": "Update konnte nicht eingereicht werden. Bitte versuchen Sie es erneut.",
+    "resourceNotFound": "Die angeforderte Ressource wurde nicht gefunden."
+  }
 }

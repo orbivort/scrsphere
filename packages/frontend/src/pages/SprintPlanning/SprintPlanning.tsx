@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { TIME } from '@scrumooth/shared';
 
 import { apiService } from '../../services';
@@ -70,12 +71,27 @@ interface ReadyChecklistItem {
   checked: boolean;
 }
 
-const MOSCOW_PRIORITY_CONFIG: Record<string, { label: string; shortLabel: string }> = {
-  MUST_HAVE: { label: 'Must Have', shortLabel: 'Must' },
-  SHOULD_HAVE: { label: 'Should Have', shortLabel: 'Should' },
-  COULD_HAVE: { label: 'Could Have', shortLabel: 'Could' },
-  WONT_HAVE: { label: "Won't Have", shortLabel: "Won't" },
-};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- TFunction signature varies by i18next version
+const getMoscowPriorityConfig = (
+  t: any
+): Record<string, { label: string; shortLabel: string }> => ({
+  MUST_HAVE: {
+    label: t('sprintPlanning.moscow.mustHave'),
+    shortLabel: t('sprintPlanning.moscow.must'),
+  },
+  SHOULD_HAVE: {
+    label: t('sprintPlanning.moscow.shouldHave'),
+    shortLabel: t('sprintPlanning.moscow.should'),
+  },
+  COULD_HAVE: {
+    label: t('sprintPlanning.moscow.couldHave'),
+    shortLabel: t('sprintPlanning.moscow.could'),
+  },
+  WONT_HAVE: {
+    label: t('sprintPlanning.moscow.wontHave'),
+    shortLabel: t('sprintPlanning.moscow.wont'),
+  },
+});
 
 type SprintTimeCategory = 'current' | 'future' | 'past';
 
@@ -110,23 +126,25 @@ const getSprintTimeCategory = (startDate: string, endDate: string): SprintTimeCa
   }
 };
 
-const formatSprintOptionLabel = (sprint: SprintWithCategory): string => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- TFunction signature varies by i18next version
+const formatSprintOptionLabel = (sprint: SprintWithCategory, t: any): string => {
   const categoryLabel =
     sprint.category === 'current'
-      ? '[Active]'
+      ? t('sprintPlanning.activeCategory')
       : sprint.category === 'future'
-        ? '[Upcoming]'
-        : '[Done]';
+        ? t('sprintPlanning.upcomingCategory')
+        : t('sprintPlanning.doneCategory');
   const statusDisplay =
     sprint.status.charAt(0).toUpperCase() + sprint.status.slice(1).toLowerCase();
   return `${categoryLabel} ${sprint.name} (${statusDisplay})`;
 };
 
-const DEFAULT_READY_CHECKLIST: ReadyChecklistItem[] = [
-  { id: '1', label: 'Has clear acceptance criteria', checked: false },
-  { id: '2', label: 'Estimated by team', checked: false },
-  { id: '3', label: 'Dependencies identified', checked: false },
-  { id: '4', label: 'Understandable by team', checked: false },
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- TFunction signature varies by i18next version
+const getDefaultReadyChecklist = (t: any): ReadyChecklistItem[] => [
+  { id: '1', label: t('sprintPlanning.readyChecklist.hasClearAcceptanceCriteria'), checked: false },
+  { id: '2', label: t('sprintPlanning.readyChecklist.estimatedByTeam'), checked: false },
+  { id: '3', label: t('sprintPlanning.readyChecklist.dependenciesIdentified'), checked: false },
+  { id: '4', label: t('sprintPlanning.readyChecklist.understandableByTeam'), checked: false },
 ];
 
 interface TaskGenerationConfig {
@@ -165,6 +183,7 @@ const generateDraftTasks = (pbiId: string, pbiTitle: string, storyPoints: number
 };
 
 export const SprintPlanning: React.FC = () => {
+  const { t } = useTranslation('sprint');
   const { currentTeam, userRoleInCurrentTeam } = useTeamStore();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -191,6 +210,8 @@ export const SprintPlanning: React.FC = () => {
 
   const sprintBacklogRef = useRef<HTMLDivElement>(null);
   const announce = useAnnounce();
+
+  const MOSCOW_PRIORITY_CONFIG = useMemo(() => getMoscowPriorityConfig(t), [t]);
 
   const { data: generatedSprintsData, isLoading: generatedSprintsLoading } = useQuery({
     queryKey: queryKeys.generatedSprint.byTeam(teamId),
@@ -267,10 +288,10 @@ export const SprintPlanning: React.FC = () => {
         void queryClient.removeQueries({ queryKey: queryKeys.sprintTasks.all });
         setShowStartSprintModal(false);
         setStartSprintError(null);
-        success('Sprint started successfully! Redirecting to Sprint Board...');
+        success(t('sprintPlanning.toast.sprintStarted'));
         setTimeout(() => void navigate('/sprint'), 1.5 * TIME.SECOND);
       } else {
-        const errorMsg = response.error?.message ?? 'Failed to start sprint';
+        const errorMsg = response.error?.message ?? t('sprintPlanning.toast.failedToStartSprint');
         setStartSprintError(errorMsg);
         showError(errorMsg);
       }
@@ -294,10 +315,10 @@ export const SprintPlanning: React.FC = () => {
     onSuccess: (response) => {
       if (response.success) {
         void queryClient.invalidateQueries({ queryKey: queryKeys.generatedSprint.all });
-        success('Sprint goal updated successfully');
+        success(t('sprintPlanning.toast.goalUpdated'));
         setShowSprintGoalModal(false);
       } else {
-        showError(response.error?.message ?? 'Failed to update sprint goal');
+        showError(response.error?.message ?? t('sprintPlanning.toast.failedToUpdateSprintGoal'));
       }
     },
     onError: (error: unknown) => {
@@ -455,35 +476,36 @@ export const SprintPlanning: React.FC = () => {
     }
   }, [selectedSprintId, planningStartTime]);
 
-  const checkItemReadiness = (
-    item: ProductBacklogItem
-  ): { isReady: boolean; checklist: ReadyChecklistItem[] } => {
-    const checklist = DEFAULT_READY_CHECKLIST.map((c) => ({ ...c }));
+  const checkItemReadiness = useCallback(
+    (item: ProductBacklogItem): { isReady: boolean; checklist: ReadyChecklistItem[] } => {
+      const checklist = getDefaultReadyChecklist(t).map((c) => ({ ...c }));
 
-    if (checklist[0])
-      checklist[0].checked = !!(item.acceptanceCriteria && item.acceptanceCriteria.length > 10);
-    if (checklist[1]) checklist[1].checked = !!(item.storyPoints && item.storyPoints > 0);
-    if (checklist[2]) checklist[2].checked = true;
-    if (checklist[3]) checklist[3].checked = !!(item.description && item.description.length > 10);
+      if (checklist[0])
+        checklist[0].checked = !!(item.acceptanceCriteria && item.acceptanceCriteria.length > 10);
+      if (checklist[1]) checklist[1].checked = !!(item.storyPoints && item.storyPoints > 0);
+      if (checklist[2]) checklist[2].checked = true;
+      if (checklist[3]) checklist[3].checked = !!(item.description && item.description.length > 10);
 
-    const isReady = checklist.every((c) => c.checked);
-    return { isReady, checklist };
-  };
+      const isReady = checklist.every((c) => c.checked);
+      return { isReady, checklist };
+    },
+    [t]
+  );
 
   const handleAddToSprint = useCallback(
     (item: ProductBacklogItem) => {
       if (!selectedSprintId) {
-        warning('Please select a sprint first');
+        warning(t('sprintPlanning.toast.selectSprintFirst'));
         return;
       }
 
       if (!item.id) {
-        showError('Invalid item: Item data is missing or corrupted');
+        showError(t('sprintPlanning.toast.invalidItem'));
         return;
       }
 
       if (sprintBacklogItems.some((sprintItem) => sprintItem.id === item.id)) {
-        warning(`"${item.title}" is already in the sprint backlog`);
+        warning(t('sprintPlanning.toast.alreadyInSprint', { title: item.title }));
         return;
       }
 
@@ -502,27 +524,28 @@ export const SprintPlanning: React.FC = () => {
 
         const taskInfo =
           generatedTasks.length > 0
-            ? ` with ${generatedTasks.length} draft task${generatedTasks.length > 1 ? 's' : ''}`
+            ? t('sprintPlanning.withDraftTask', { count: generatedTasks.length })
             : '';
-        success(`"${item.title}" added to sprint backlog${taskInfo}`);
+        success(t('sprintPlanning.toast.addedToSprint', { title: item.title, taskInfo }));
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred';
-        showError(`Error processing item: ${errorMessage}`);
+        const errorMessage =
+          err instanceof Error ? err.message : t('sprintPlanning.toast.unexpectedError');
+        showError(t('sprintPlanning.toast.errorProcessingItem', { error: errorMessage }));
       }
     },
-    [selectedSprintId, sprintBacklogItems, success, warning, showError]
+    [selectedSprintId, sprintBacklogItems, success, warning, showError, t, checkItemReadiness]
   );
 
   const handleRemoveFromSprint = useCallback(
     (itemId: string) => {
       if (!itemId) {
-        showError('Invalid item ID: Cannot remove item');
+        showError(t('sprintPlanning.toast.invalidItemId'));
         return;
       }
 
       const item = sprintBacklogItems.find((i) => i.id === itemId);
       if (!item) {
-        showError('Item not found in sprint backlog');
+        showError(t('sprintPlanning.toast.itemNotFound'));
         return;
       }
 
@@ -531,13 +554,14 @@ export const SprintPlanning: React.FC = () => {
 
         setSprintBacklogItems((prev) => prev.filter((i) => i.id !== itemId));
 
-        info(`"${itemTitle}" removed from sprint backlog`);
+        info(t('sprintPlanning.toast.removedFromSprint', { title: itemTitle }));
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred';
-        showError(`Error removing item: ${errorMessage}`);
+        const errorMessage =
+          err instanceof Error ? err.message : t('sprintPlanning.toast.unexpectedError');
+        showError(t('sprintPlanning.toast.errorRemovingItem', { error: errorMessage }));
       }
     },
-    [sprintBacklogItems, showError, info]
+    [sprintBacklogItems, showError, info, t]
   );
 
   const handleAddTask = useCallback(
@@ -568,9 +592,9 @@ export const SprintPlanning: React.FC = () => {
 
       setSelectedItemForTask(null);
       setShowTaskModal(false);
-      success('Task added successfully');
+      success(t('sprintPlanning.toast.taskAdded'));
     },
-    [selectedItemForTask, teamAvailability, success]
+    [selectedItemForTask, teamAvailability, success, t]
   );
 
   const handleUpdateTaskAssignee = useCallback(
@@ -663,18 +687,15 @@ export const SprintPlanning: React.FC = () => {
   const handleGrabItem = useCallback(
     (item: ProductBacklogItem) => {
       if (!selectedSprintId) {
-        warning('Please select a sprint first');
-        announce('Please select a sprint first', 'assertive');
+        warning(t('sprintPlanning.toast.selectSprintFirst'));
+        announce(t('sprintPlanning.toast.selectSprintFirst'), 'assertive');
         return;
       }
 
       setGrabbedItemId(item.id);
-      announce(
-        `Backlog item ${item.title} grabbed. Press Enter to add to sprint backlog. Escape to cancel.`,
-        'assertive'
-      );
+      announce(t('sprintPlanning.accessibility.grabbedItem', { title: item.title }), 'assertive');
     },
-    [selectedSprintId, warning, announce]
+    [selectedSprintId, warning, announce, t]
   );
 
   /**
@@ -684,12 +705,12 @@ export const SprintPlanning: React.FC = () => {
     if (grabbedItemId) {
       const item = filteredBacklogItems.find((i) => i.id === grabbedItemId);
       if (item) {
-        announce(`Drag cancelled. Item ${item.title} remains in product backlog.`, 'polite');
+        announce(t('sprintPlanning.accessibility.dragCancelled', { title: item.title }), 'polite');
       }
     }
     setGrabbedItemId(null);
     setFocusedItemIndex(-1);
-  }, [grabbedItemId, filteredBacklogItems, announce]);
+  }, [grabbedItemId, filteredBacklogItems, announce, t]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent, item: ProductBacklogItem, index: number) => {
@@ -739,11 +760,11 @@ export const SprintPlanning: React.FC = () => {
     const item = filteredBacklogItems.find((i) => i.id === grabbedItemId);
     if (item) {
       handleAddToSprint(item);
-      announce(`Item ${item.title} added to sprint backlog.`, 'polite');
+      announce(t('sprintPlanning.accessibility.itemAdded', { title: item.title }), 'polite');
     }
     setGrabbedItemId(null);
     setFocusedItemIndex(-1);
-  }, [grabbedItemId, filteredBacklogItems, handleAddToSprint, announce]);
+  }, [grabbedItemId, filteredBacklogItems, handleAddToSprint, announce, t]);
 
   /**
    * Handle removing item from sprint backlog with announcement
@@ -753,10 +774,10 @@ export const SprintPlanning: React.FC = () => {
       const item = sprintBacklogItems.find((i) => i.id === itemId);
       if (item) {
         handleRemoveFromSprint(itemId);
-        announce(`Item ${item.title} removed from sprint backlog.`, 'polite');
+        announce(t('sprintPlanning.accessibility.itemRemoved', { title: item.title }), 'polite');
       }
     },
-    [sprintBacklogItems, handleRemoveFromSprint, announce]
+    [sprintBacklogItems, handleRemoveFromSprint, announce, t]
   );
 
   const handleSprintBacklogKeyDown = useCallback(
@@ -806,27 +827,27 @@ export const SprintPlanning: React.FC = () => {
 
   const handleStartSprint = useCallback(() => {
     if (!teamId) {
-      showError('Team ID is required. Please select a team first.');
+      showError(t('sprintPlanning.toast.teamIdRequired'));
       return;
     }
 
     if (!selectedSprintId) {
-      showError('No sprint selected');
+      showError(t('sprintPlanning.toast.noSprintSelected'));
       return;
     }
 
     if (sprintBacklogItems.length === 0) {
-      showError('Cannot start sprint without any backlog items');
+      showError(t('sprintPlanning.toast.cannotStartWithoutItems'));
       return;
     }
 
     if (!selectedSprint?.sprintGoal?.trim()) {
-      showError('Please define a sprint goal before starting the sprint.');
+      showError(t('sprintPlanning.toast.defineGoalFirst'));
       return;
     }
 
     if (capacityPercentage > 100) {
-      warning('Sprint is over capacity. Consider removing some items.');
+      warning(t('sprintPlanning.toast.overCapacityWarning'));
     }
 
     setShowStartSprintModal(true);
@@ -838,6 +859,7 @@ export const SprintPlanning: React.FC = () => {
     selectedSprint,
     showError,
     warning,
+    t,
   ]);
 
   const handleConfirmStartSprint = async () => {
@@ -875,11 +897,11 @@ export const SprintPlanning: React.FC = () => {
   const handleSaveSprintGoal = useCallback(
     (goal: string) => {
       if (!selectedSprintId) {
-        showError('No sprint selected');
+        showError(t('sprintPlanning.toast.noSprintSelected'));
         return;
       }
       if (!goal.trim()) {
-        warning('Please enter a sprint goal');
+        warning(t('sprintPlanning.toast.enterGoal'));
         return;
       }
 
@@ -888,7 +910,7 @@ export const SprintPlanning: React.FC = () => {
         updates: { sprintGoal: goal.trim() },
       });
     },
-    [selectedSprintId, updateGeneratedSprintMutation, showError, warning]
+    [selectedSprintId, updateGeneratedSprintMutation, showError, warning, t]
   );
 
   const handleOpenCapacityModal = useCallback(() => {
@@ -935,7 +957,7 @@ export const SprintPlanning: React.FC = () => {
   }
 
   if (isLoading) {
-    return <LoadingState variant="page" label="Loading Sprint Planning..." />;
+    return <LoadingState variant="page" label={t('sprintPlanning.loadingSprintPlanning')} />;
   }
 
   if (!activeGoal) {
@@ -949,7 +971,7 @@ export const SprintPlanning: React.FC = () => {
       <div
         className={styles['sprint-planning']}
         role="main"
-        aria-label="Sprint Planning"
+        aria-label={t('sprintPlanning.title')}
         data-testid="sprint-planning"
       >
         {/* Header */}
@@ -959,18 +981,16 @@ export const SprintPlanning: React.FC = () => {
               <span className={styles['page-title-icon']}>
                 <CalendarIcon size={24} aria-hidden="true" />
               </span>
-              Sprint Planning
+              {t('sprintPlanning.title')}
             </h1>
-            <p className={styles['page-subtitle']}>
-              Plan your next sprint by selecting items from the product backlog
-            </p>
+            <p className={styles['page-subtitle']}>{t('sprintPlanning.subtitle')}</p>
           </div>
           <div className={styles['header-right']}>
             {planningStartTime && (
               <div
                 className={styles['planning-timer']}
                 role="timer"
-                aria-label={`Planning time: ${formatTime(elapsedTime)}`}
+                aria-label={t('sprintPlanning.planningTimeAria', { time: formatTime(elapsedTime) })}
               >
                 <span className={styles['timer-icon']} aria-hidden="true">
                   <ClockIcon size={16} />
@@ -980,11 +1000,11 @@ export const SprintPlanning: React.FC = () => {
                 >
                   {formatTime(elapsedTime)}
                 </span>
-                <span className={styles['timer-label']}>Planning Time</span>
+                <span className={styles['timer-label']}>{t('sprintPlanning.planningTime')}</span>
               </div>
             )}
             <label htmlFor="sprint-select" className={styles['visually-hidden']}>
-              Select Sprint
+              {t('sprintPlanning.selectSprint')}
             </label>
             <select
               id="sprint-select"
@@ -995,23 +1015,23 @@ export const SprintPlanning: React.FC = () => {
               aria-describedby="sprint-select-hint"
               disabled={generatedSprintsLoading}
             >
-              <option value="">Select Sprint...</option>
+              <option value="">{t('sprintPlanning.selectSprint')}</option>
 
               {categorizedSprints.current.length > 0 && (
-                <optgroup label="-- Active Sprint --">
+                <optgroup label={t('sprintPlanning.activeSprints')}>
                   {categorizedSprints.current.map((sprint) => (
                     <option key={sprint.id} value={sprint.id}>
-                      {formatSprintOptionLabel(sprint)}
+                      {formatSprintOptionLabel(sprint, t)}
                     </option>
                   ))}
                 </optgroup>
               )}
 
               {categorizedSprints.future.length > 0 && (
-                <optgroup label="-- Upcoming Sprints --">
+                <optgroup label={t('sprintPlanning.upcomingSprints')}>
                   {categorizedSprints.future.map((sprint) => (
                     <option key={sprint.id} value={sprint.id}>
-                      {formatSprintOptionLabel(sprint)}
+                      {formatSprintOptionLabel(sprint, t)}
                     </option>
                   ))}
                 </optgroup>
@@ -1019,27 +1039,27 @@ export const SprintPlanning: React.FC = () => {
 
               {categorizedSprints.current.length === 0 &&
                 categorizedSprints.future.length === 0 && (
-                  <optgroup label="No Sprints Available">
+                  <optgroup label={t('sprintPlanning.noSprintsAvailable')}>
                     <option disabled value="">
-                      No sprints configured - click Configure Sprints
+                      {t('sprintPlanning.noSprintsHint')}
                     </option>
                   </optgroup>
                 )}
             </select>
             <span id="sprint-select-hint" className={styles['visually-hidden']}>
-              Choose a sprint to plan or configure new sprints
+              {t('sprintPlanning.chooseSprint')}
             </span>
             <Link
               to="/settings/sprint-configuration"
               state={{ from: 'sprint-planning' }}
               className={`${styles.button} ${styles['button-secondary']} ${styles['config-link']}`}
-              aria-label="Configure sprint settings"
-              title="Set up sprint duration and generate sprints for the year"
+              aria-label={t('sprintPlanning.configureSprintSettings')}
+              title={t('sprintPlanning.setupSprintDuration')}
             >
               <span aria-hidden="true">
                 <SettingsIcon size={16} />
               </span>{' '}
-              Configure Sprints
+              {t('sprintPlanning.configureSprints')}
             </Link>
           </div>
         </header>
@@ -1052,13 +1072,20 @@ export const SprintPlanning: React.FC = () => {
             aria-labelledby="velocity-label"
           >
             <div className={styles['sprint-planning-metric-label']} id="velocity-label">
-              Avg Velocity
+              {t('sprintPlanning.avgVelocity')}
             </div>
-            <div className={styles['sprint-planning-metric-value']}>{velocityData.average} pts</div>
-            <div className={styles['sprint-planning-metric-hint']}>Range: {velocityData.range}</div>
+            <div className={styles['sprint-planning-metric-value']}>
+              {velocityData.average} {t('sprintPlanning.pts')}
+            </div>
+            <div className={styles['sprint-planning-metric-hint']}>
+              {t('sprintPlanning.range')} {velocityData.range}
+            </div>
             <div
               className={styles['velocity-indicator']}
-              aria-label={`Velocity range from ${velocityData.min} to ${velocityData.max} story points`}
+              aria-label={t('sprintPlanning.velocityRangeAria', {
+                min: velocityData.min,
+                max: velocityData.max,
+              })}
             >
               <div className={styles['velocity-bar']}>
                 <div
@@ -1071,7 +1098,7 @@ export const SprintPlanning: React.FC = () => {
                 <div
                   className={styles['velocity-average']}
                   style={{ left: `${(velocityData.average / (velocityData.max || 1)) * 100}%` }}
-                  title={`Average: ${velocityData.average} pts`}
+                  title={t('sprintPlanning.averageTitle', { avg: velocityData.average })}
                 />
               </div>
             </div>
@@ -1086,11 +1113,13 @@ export const SprintPlanning: React.FC = () => {
             aria-describedby="capacity-hint"
           >
             <div className={styles['sprint-planning-metric-label']} id="capacity-label">
-              Team Capacity
+              {t('sprintPlanning.teamCapacity')}
             </div>
-            <div className={styles['sprint-planning-metric-value']}>{totalTeamCapacity} hrs</div>
+            <div className={styles['sprint-planning-metric-value']}>
+              {totalTeamCapacity} {t('sprintPlanning.hrs')}
+            </div>
             <div className={styles['sprint-planning-metric-hint']} id="capacity-hint">
-              Click to adjust
+              {t('sprintPlanning.clickToAdjust')}
             </div>
           </div>
           <div
@@ -1099,13 +1128,13 @@ export const SprintPlanning: React.FC = () => {
             aria-labelledby="planned-label"
           >
             <div className={styles['sprint-planning-metric-label']} id="planned-label">
-              Planned Capacity
+              {t('sprintPlanning.plannedCapacity')}
             </div>
             <div className={styles['sprint-planning-metric-value']}>
-              {sprintStats.estimatedHours} hrs
+              {sprintStats.estimatedHours} {t('sprintPlanning.hrs')}
             </div>
             <div className={styles['sprint-planning-metric-hint']}>
-              {sprintStats.totalTasks} tasks
+              {sprintStats.totalTasks} {t('sprintPlanning.tasks')}
             </div>
           </div>
           <div
@@ -1114,7 +1143,7 @@ export const SprintPlanning: React.FC = () => {
             aria-labelledby="used-label"
           >
             <div className={styles['sprint-planning-metric-label']} id="used-label">
-              Capacity Used
+              {t('sprintPlanning.capacityUsed')}
             </div>
             <div
               className={`${styles['metric-value']} ${capacityPercentage > 100 ? styles.danger : capacityPercentage > 80 ? styles.warning : ''}`}
@@ -1123,10 +1152,10 @@ export const SprintPlanning: React.FC = () => {
             </div>
             <div className={styles['sprint-planning-metric-hint']}>
               {capacityPercentage > 100
-                ? 'Over capacity!'
+                ? t('sprintPlanning.overCapacity')
                 : capacityPercentage > 80
-                  ? 'Near limit'
-                  : 'Available'}
+                  ? t('sprintPlanning.nearLimit')
+                  : t('sprintPlanning.available')}
             </div>
           </div>
         </section>
@@ -1141,7 +1170,7 @@ export const SprintPlanning: React.FC = () => {
             aria-valuemax={100}
           >
             <div className={styles['capacity-label']} id="capacity-bar-label">
-              Sprint Capacity
+              {t('sprintPlanning.sprintCapacity')}
             </div>
             <div className={styles['capacity-progress']} aria-hidden="true">
               <div
@@ -1151,9 +1180,15 @@ export const SprintPlanning: React.FC = () => {
             </div>
             <div
               className={styles['capacity-text']}
-              aria-label={`${sprintStats.estimatedHours} of ${totalTeamCapacity} hours used`}
+              aria-label={t('sprintPlanning.capacityUsedAria', {
+                used: sprintStats.estimatedHours,
+                total: totalTeamCapacity,
+              })}
             >
-              {sprintStats.estimatedHours} / {totalTeamCapacity} hours
+              {t('sprintPlanning.capacityFormat', {
+                used: sprintStats.estimatedHours,
+                total: totalTeamCapacity,
+              })}
             </div>
           </div>
         )}
@@ -1164,21 +1199,25 @@ export const SprintPlanning: React.FC = () => {
           <section className={styles['backlog-pool']} aria-labelledby="backlog-title" role="region">
             <div className={styles['pool-header']}>
               <h3 id="backlog-title">
-                <FileTextIcon size={16} aria-hidden="true" /> Product Backlog
+                <FileTextIcon size={16} aria-hidden="true" /> {t('sprintPlanning.productBacklog')}
               </h3>
               <span
                 className={styles['item-count']}
-                aria-label={`${filteredBacklogItems.length} READY items available`}
+                aria-label={t('sprintPlanning.readyItemsCountAria', {
+                  count: filteredBacklogItems.length,
+                })}
               >
-                {filteredBacklogItems.length} READY items
+                {filteredBacklogItems.length} {t('sprintPlanning.readyItems')}
               </span>
             </div>
 
             <div className={styles['pool-filters']} role="group" aria-label="Filter backlog items">
               <div className={styles['filter-indicator']}>
-                <span className={`${styles['filter-badge']} ${styles.ready}`}>✓ READY Only</span>
+                <span className={`${styles['filter-badge']} ${styles.ready}`}>
+                  {t('sprintPlanning.readyOnly')}
+                </span>
                 <span className={styles['filter-hint']}>
-                  Only items marked as READY are displayed
+                  {t('sprintPlanning.readyOnlyDescription')}
                 </span>
               </div>
             </div>
@@ -1186,7 +1225,7 @@ export const SprintPlanning: React.FC = () => {
             <div
               className={styles['items-list']}
               role="listbox"
-              aria-label="Available READY backlog items for sprint planning"
+              aria-label={t('sprintPlanning.availableReadyItemsAria')}
             >
               {filteredBacklogItems.map((item, index) => {
                 const { isReady } = checkItemReadiness(item);
@@ -1208,7 +1247,17 @@ export const SprintPlanning: React.FC = () => {
                     aria-selected={isFocused}
                     aria-grabbed={isGrabbed ? 'true' : 'false'}
                     aria-roledescription="draggable backlog item"
-                    aria-label={`${item.title}, ${item.storyPoints ?? 0} points, priority ${MOSCOW_PRIORITY_CONFIG[item.priority]?.label ?? item.priority}${isReady ? ', ready for sprint' : ', needs refinement'}${isGrabbed ? ', currently grabbed' : ''}`}
+                    aria-label={t('sprintPlanning.itemAriaLabel', {
+                      title: item.title,
+                      points: item.storyPoints ?? 0,
+                      priority: MOSCOW_PRIORITY_CONFIG[item.priority]?.label ?? item.priority,
+                      readyLabel: isReady
+                        ? t('sprintPlanning.readyForSprint')
+                        : t('sprintPlanning.needsRefinement'),
+                      grabbedLabel: isGrabbed
+                        ? t('sprintPlanning.accessibility.currentlyGrabbed')
+                        : '',
+                    })}
                   >
                     <div className={styles['item-header']}>
                       <span className={styles['item-id']}>#{item.id.slice(-4)}</span>
@@ -1218,16 +1267,18 @@ export const SprintPlanning: React.FC = () => {
                       {isReady && (
                         <span
                           className={styles['ready-badge']}
-                          title="Ready for sprint"
-                          aria-label="Ready for sprint"
+                          title={t('sprintPlanning.readyForSprint')}
+                          aria-label={t('sprintPlanning.readyForSprint')}
                         >
-                          ✓ Ready
+                          {t('sprintPlanning.readyBadge')}
                         </span>
                       )}
                     </div>
                     <div className={styles['item-title']}>{item.title}</div>
                     <div className={styles['item-meta']}>
-                      <span className={styles['item-estimate']}>{item.storyPoints ?? 0} pts</span>
+                      <span className={styles['item-estimate']}>
+                        {item.storyPoints ?? 0} {t('sprintPlanning.pts')}
+                      </span>
                       <div className={styles['item-labels']}>
                         {item.labels.slice(0, 2).map((label) => (
                           <span key={label} className={styles['label-tag']}>
@@ -1242,19 +1293,17 @@ export const SprintPlanning: React.FC = () => {
                         e.stopPropagation();
                         handleAddToSprint(item);
                       }}
-                      aria-label={`Add ${item.title} to sprint`}
+                      aria-label={t('sprintPlanning.addItemAria', { title: item.title })}
                     >
-                      + Add to Sprint
+                      {t('sprintPlanning.addToSprint')}
                     </button>
                   </div>
                 );
               })}
               {filteredBacklogItems.length === 0 && (
                 <div className={styles['empty-pool']} role="status">
-                  <p>No READY items available</p>
-                  <p className={styles.hint}>
-                    Items must be marked as READY to be displayed for sprint planning
-                  </p>
+                  <p>{t('sprintPlanning.noReadyItems')}</p>
+                  <p className={styles.hint}>{t('sprintPlanning.noReadyItemsDescription')}</p>
                 </div>
               )}
             </div>
@@ -1274,13 +1323,13 @@ export const SprintPlanning: React.FC = () => {
           >
             <div className={styles['sprint-header']}>
               <h3 id="sprint-backlog-title">
-                <TargetIcon size={16} aria-hidden="true" /> Sprint Backlog
+                <TargetIcon size={16} aria-hidden="true" /> {t('sprintPlanning.sprintBacklog')}
               </h3>
               {selectedSprint && (
                 <div className={styles['sprint-info']}>
                   <span className={styles['sprint-name']}>{selectedSprint.name}</span>
                   <span className={styles['sprint-dates']}>
-                    {calculateSprintDuration()} days (
+                    {calculateSprintDuration()} {t('sprintPlanning.days')} (
                     {new Date(selectedSprint.startDate).toLocaleDateString()} -{' '}
                     {new Date(selectedSprint.endDate).toLocaleDateString()})
                   </span>
@@ -1293,30 +1342,29 @@ export const SprintPlanning: React.FC = () => {
                 <div className={styles['empty-icon-wrapper']} aria-hidden="true">
                   <ClockIcon size={32} />
                 </div>
-                <h4>No Sprint Selected</h4>
-                <p>
-                  Select a sprint from the dropdown above or create a new sprint to start planning
-                </p>
+                <h4>{t('sprintPlanning.noSprintSelected')}</h4>
+                <p>{t('sprintPlanning.selectOrCreateSprint')}</p>
               </div>
             ) : (
               <>
                 {selectedSprint && (
                   <div className={styles['sprint-goal-card']}>
                     <div className={styles['goal-header']}>
-                      <div className={styles['goal-label']}>Sprint Goal</div>
+                      <div className={styles['goal-label']}>{t('sprintPlanning.sprintGoal')}</div>
                       <button
                         className={styles['goal-edit-btn']}
                         onClick={() => {
                           setShowSprintGoalModal(true);
                         }}
-                        aria-label="Edit sprint goal"
+                        aria-label={t('sprintPlanning.editSprintGoalAria')}
                       >
-                        <EditIcon size={12} aria-hidden="true" /> Edit
+                        <EditIcon size={12} aria-hidden="true" />{' '}
+                        {t('sprintPlanning.accessibility.edit')}
                       </button>
                     </div>
                     <div className={styles['goal-text']}>
                       {/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- empty string should show No goal defined */}
-                      {selectedSprint.sprintGoal || 'No goal defined - click Edit to add one'}
+                      {selectedSprint.sprintGoal || t('sprintPlanning.noGoalDefined')}
                     </div>
                   </div>
                 )}
@@ -1324,38 +1372,38 @@ export const SprintPlanning: React.FC = () => {
                 <div
                   className={styles['sprint-planning-sprint-stats']}
                   role="group"
-                  aria-label="Sprint statistics"
+                  aria-label={t('sprintPlanning.sprintStatisticsAria')}
                 >
                   <div className={styles.stat}>
                     <span className={styles['stat-value']}>{sprintStats.totalItems}</span>
-                    <span className={styles['stat-label']}>Items</span>
+                    <span className={styles['stat-label']}>{t('sprintPlanning.items')}</span>
                   </div>
                   <div className={styles.stat}>
                     <span className={styles['stat-value']}>{sprintStats.totalPoints}</span>
-                    <span className={styles['stat-label']}>Story Points</span>
+                    <span className={styles['stat-label']}>{t('sprintPlanning.storyPoints')}</span>
                   </div>
                   <div className={styles.stat}>
                     <span className={styles['stat-value']}>{sprintStats.totalTasks}</span>
-                    <span className={styles['stat-label']}>Tasks</span>
+                    <span className={styles['stat-label']}>{t('sprintPlanning.tasks')}</span>
                   </div>
                   <div className={styles.stat}>
                     <span className={styles['stat-value']}>{sprintStats.remainingHours} h</span>
-                    <span className={styles['stat-label']}>Planned</span>
+                    <span className={styles['stat-label']}>{t('sprintPlanning.planned')}</span>
                   </div>
                 </div>
 
                 <div
                   className={styles['sprint-items-list']}
                   role="list"
-                  aria-label="Sprint backlog items"
+                  aria-label={t('sprintPlanning.sprintBacklogItemsAria')}
                 >
                   {sprintBacklogItems.length === 0 ? (
                     <div className={styles['empty-sprint']} role="status">
-                      <p>Drag READY items from the backlog or click to add</p>
+                      <p>{t('sprintPlanning.dragItemsHint')}</p>
                       <p className={styles.hint}>
                         {grabbedItemId
-                          ? 'Press Enter to add the grabbed item to sprint backlog'
-                          : 'Only items marked as READY are available in the backlog'}
+                          ? t('sprintPlanning.pressEnterToAdd')
+                          : t('sprintPlanning.onlyReadyAvailable')}
                       </p>
                     </div>
                   ) : (
@@ -1373,21 +1421,25 @@ export const SprintPlanning: React.FC = () => {
                             handleRemoveFromSprintWithAnnounce(item.id);
                           }
                         }}
-                        aria-label={`${item.title}, ${item.storyPoints ?? 0} points, ${item.tasks.length} tasks. Press Delete to remove.`}
+                        aria-label={t('sprintPlanning.sprintItemAria', {
+                          title: item.title,
+                          points: item.storyPoints ?? 0,
+                          taskCount: item.tasks.length,
+                        })}
                       >
                         <div className={styles['sprint-item-header']}>
                           <div className={styles['sprint-item-info']}>
                             <span className={styles['item-id']}>#{item.id.slice(-4)}</span>
                             <span className={styles['sprint-item-title']}>{item.title}</span>
                             <span className={styles['item-estimate']}>
-                              {item.storyPoints ?? 0} pts
+                              {item.storyPoints ?? 0} {t('sprintPlanning.pts')}
                             </span>
                           </div>
                           <button
                             className={styles['remove-item-btn']}
                             onClick={() => handleRemoveFromSprint(item.id)}
-                            title="Remove from sprint"
-                            aria-label={`Remove ${item.title} from sprint`}
+                            title={t('sprintPlanning.removeFromSprint')}
+                            aria-label={t('sprintPlanning.removeItemAria', { title: item.title })}
                           >
                             <XIcon size={14} />
                           </button>
@@ -1397,7 +1449,7 @@ export const SprintPlanning: React.FC = () => {
                         <div
                           className={styles['item-tasks']}
                           role="list"
-                          aria-label={`Tasks for ${item.title}`}
+                          aria-label={t('sprintPlanning.tasksForItemAria', { title: item.title })}
                         >
                           {item.tasks.map((task) => (
                             <div
@@ -1416,9 +1468,11 @@ export const SprintPlanning: React.FC = () => {
                                     e.target.value || undefined
                                   )
                                 }
-                                aria-label={`Task assignee: ${task.title}`}
+                                aria-label={t('sprintPlanning.taskAssigneeAria', {
+                                  title: task.title,
+                                })}
                               >
-                                <option value="">Unassigned</option>
+                                <option value="">{t('sprintPlanning.unassigned')}</option>
                                 {teamAvailability.map((member) => (
                                   <option key={member.memberId} value={member.userId}>
                                     {member.memberName}
@@ -1435,8 +1489,10 @@ export const SprintPlanning: React.FC = () => {
                               <button
                                 className={styles['remove-task-btn']}
                                 onClick={() => handleRemoveTask(item.id, task.id)}
-                                title="Remove task"
-                                aria-label={`Remove task: ${task.title}`}
+                                title={t('sprintPlanning.removeTaskTitle')}
+                                aria-label={t('sprintPlanning.removeTaskAria', {
+                                  title: task.title,
+                                })}
                               >
                                 <XIcon size={12} />
                               </button>
@@ -1448,9 +1504,11 @@ export const SprintPlanning: React.FC = () => {
                               setSelectedItemForTask(item.id);
                               setShowTaskModal(true);
                             }}
-                            aria-label={`Add task to ${item.title}`}
+                            aria-label={t('sprintPlanning.addTaskToItemAria', {
+                              title: item.title,
+                            })}
                           >
-                            + Add Task
+                            {t('sprintPlanning.addTask')}
                           </button>
                         </div>
                       </div>
@@ -1466,11 +1524,11 @@ export const SprintPlanning: React.FC = () => {
                     aria-busy={startSprintMutation.isPending}
                   >
                     {startSprintMutation.isPending ? (
-                      'Starting Sprint...'
+                      t('sprintPlanning.startingSprint')
                     ) : (
                       <>
                         <PlayIcon size={14} aria-hidden="true" />
-                        Start Sprint
+                        {t('sprintPlanning.startSprint')}
                       </>
                     )}
                   </button>

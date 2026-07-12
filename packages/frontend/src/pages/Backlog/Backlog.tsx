@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 
 import { apiService, definitionService } from '../../services';
 import { useTeamStore } from '../../store';
@@ -50,6 +51,7 @@ import {
 import { getAutoValidationChecks } from './utils/statusTransitions';
 
 const BacklogContent: React.FC = () => {
+  const { t } = useTranslation('backlog');
   const queryClient = useQueryClient();
   const [viewMode, setViewMode] = useState<'board' | 'list'>('board');
   const [filters, setFilters] = useState<FilterState>({
@@ -305,8 +307,13 @@ const BacklogContent: React.FC = () => {
             incompleteTasks.length > 3 ? ` and ${incompleteTasks.length - 3} more` : '';
 
           setWorkflowError(
-            `Cannot mark as Done. The following child tasks must be completed first: ${taskNames}${moreCount}. ` +
-              `Please complete all ${incompleteTasks.length} incomplete task(s) before changing the status to Done.`
+            t('itemDetail.cannotMarkAsDone' as never, {
+              taskNames,
+              moreCount,
+              incompleteCount: incompleteTasks.length,
+            }) ??
+              `Cannot mark as Done. The following child tasks must be completed first: ${taskNames}${moreCount}. ` +
+                `Please complete all ${incompleteTasks.length} incomplete task(s) before changing the status to Done.`
           );
           setIsLoadingChildTasks(false);
           return;
@@ -320,7 +327,7 @@ const BacklogContent: React.FC = () => {
         setShowValidationModal(true);
       } catch (error) {
         logger.error('Failed to fetch child tasks', undefined, { error });
-        setWorkflowError('Failed to verify child tasks. Please try again.');
+        setWorkflowError('Failed to verify child tasks. Please try again.' as string);
       } finally {
         setIsLoadingChildTasks(false);
       }
@@ -361,7 +368,7 @@ const BacklogContent: React.FC = () => {
           } else if (err.response?.status === 403) {
             setWorkflowError(
               err.response.data?.error?.message ??
-                'You do not have permission to perform this status transition'
+                ('You do not have permission to perform this status transition' as string)
             );
           }
         },
@@ -386,7 +393,7 @@ const BacklogContent: React.FC = () => {
         await definitionService.verifyDoDForPBI(selectedItem.id, verifications);
       } catch (error) {
         logger.error('Failed to save DoD verifications', undefined, { error });
-        setWorkflowError('Failed to save DoD verifications. Please try again.');
+        setWorkflowError('Failed to save DoD verifications. Please try again.' as string);
         return;
       }
     }
@@ -401,7 +408,7 @@ const BacklogContent: React.FC = () => {
         await definitionService.verifyDoRForPBI(selectedItem.id, verifications);
       } catch (error) {
         logger.error('Failed to save DoR verifications', undefined, { error });
-        setWorkflowError('Failed to save DoR verifications. Please try again.');
+        setWorkflowError('Failed to save DoR verifications. Please try again.' as string);
         return;
       }
     }
@@ -418,7 +425,7 @@ const BacklogContent: React.FC = () => {
   };
 
   if (isLoading || isLoadingGoals) {
-    return <LoadingState variant="page" label="Loading Product Backlog..." />;
+    return <LoadingState variant="page" label={t('title') as string} />;
   }
 
   if (!teamId) {
@@ -517,7 +524,7 @@ const BacklogContent: React.FC = () => {
         {isAutoLoading && (
           <div className={styles['auto-loading-indicator']}>
             <span className={styles['loading-spinner']} aria-hidden="true" />
-            <span>Loading all items for search...</span>
+            <span>{t('loadMore.loading') as string}</span>
           </div>
         )}
 

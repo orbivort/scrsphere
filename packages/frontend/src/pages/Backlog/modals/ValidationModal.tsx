@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import type { DefinitionItem } from '../hooks/useDefinitionOfReadyDone';
 import { useFocusTrap } from '../hooks/useFocusTrap';
@@ -38,6 +39,7 @@ export const ValidationModal: React.FC<ValidationModalProps> = ({
   isUpdating,
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation('backlog');
 
   const { selectedItem, workflowError, setWorkflowError } = useBacklogContext();
 
@@ -70,10 +72,19 @@ export const ValidationModal: React.FC<ValidationModalProps> = ({
               />
             </div>
             <div>
-              <h2>Definition of {validationType === 'ready' ? 'Ready' : 'Done'}</h2>
+              <h2>
+                {
+                  t(
+                    validationType === 'ready' ? 'validation.dorShort' : 'validation.dodShort'
+                  ) as string
+                }
+              </h2>
               <p className={styles['validation-subtitle']}>
-                Verify all criteria before marking as{' '}
-                {validationType === 'ready' ? 'Ready' : 'Done'}
+                {
+                  t('validation.verifyAllCriteria', {
+                    status: validationType === 'ready' ? t('status.ready') : t('status.done'),
+                  }) as string
+                }
               </p>
             </div>
           </div>
@@ -92,7 +103,7 @@ export const ValidationModal: React.FC<ValidationModalProps> = ({
                 <button
                   className={styles['modal-error-close']}
                   onClick={() => setWorkflowError(null)}
-                  aria-label="Close error message"
+                  aria-label={t('validation.closeError') as string}
                 >
                   <XIcon width="14" height="14" />
                 </button>
@@ -140,20 +151,21 @@ export const ValidationModal: React.FC<ValidationModalProps> = ({
               />
             </div>
             <span className={styles['progress-text']}>
-              {checkedCount} of {checks.length} criteria met
+              {checkedCount} of {checks.length}{' '}
+              {t('validation.criteriaMet', { met: checkedCount, total: checks.length }) as string}
             </span>
           </div>
 
           {!isComplete && (
             <div className={styles['validation-warning']}>
               <AlertTriangleIcon width="16" height="16" />
-              <span>All criteria must be verified before proceeding</span>
+              <span>{t('validation.allMustBeVerified') as string}</span>
             </div>
           )}
         </div>
         <div className={styles['modal-footer']}>
           <button className={`${styles.button} ${styles['button-secondary']}`} onClick={onCancel}>
-            Cancel
+            {t('validation.cancel') as string}
           </button>
           <button
             className={`${styles.button} ${styles['button-primary']}`}
@@ -161,11 +173,11 @@ export const ValidationModal: React.FC<ValidationModalProps> = ({
             disabled={isUpdating || !isComplete}
           >
             {isUpdating ? (
-              'Updating...'
+              (t('validation.updating') as string)
             ) : (
               <>
                 <CheckIcon width="16" height="16" />
-                Confirm Status Change
+                {t('validation.confirmStatusChange') as string}
               </>
             )}
           </button>

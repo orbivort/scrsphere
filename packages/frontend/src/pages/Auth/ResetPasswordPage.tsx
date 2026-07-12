@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import styles from './LoginPage.module.css';
 
@@ -34,16 +35,10 @@ function getPasswordStrength(password: string): PasswordStrength {
   return 'strong';
 }
 
-const STRENGTH_LABELS: Record<PasswordStrength, string> = {
-  weak: 'Weak',
-  fair: 'Fair',
-  good: 'Good',
-  strong: 'Strong',
-};
-
 export const ResetPasswordPage: React.FC = () => {
   const navigate = useNavigate();
   const { token } = useParams<{ token: string }>();
+  const { t } = useTranslation('auth');
 
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -62,7 +57,7 @@ export const ResetPasswordPage: React.FC = () => {
     const validateToken = async () => {
       if (!token) {
         setIsValidating(false);
-        setError('Invalid reset link. Please request a new password reset.');
+        setError(t('resetPassword.invalidResetLink'));
         return;
       }
 
@@ -73,18 +68,18 @@ export const ResetPasswordPage: React.FC = () => {
           setIsTokenValid(true);
           setTokenEmail(response.data.email ?? null);
         } else {
-          setError('This password reset link is invalid or has expired. Please request a new one.');
+          setError(t('resetPassword.invalidDescription'));
         }
       } catch (err) {
         logger.error('Token validation failed', undefined, { error: err });
-        setError('Failed to validate reset link. Please try again.');
+        setError(t('resetPassword.tokenValidationFailed'));
       } finally {
         setIsValidating(false);
       }
     };
 
     void validateToken();
-  }, [token]);
+  }, [token, t]);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -92,17 +87,17 @@ export const ResetPasswordPage: React.FC = () => {
       setError(null);
 
       if (newPassword !== confirmPassword) {
-        setError('Passwords do not match.');
+        setError(t('resetPassword.passwordMismatch'));
         return;
       }
 
       if (newPassword.length < 8) {
-        setError('Password must be at least 8 characters long.');
+        setError(t('resetPassword.passwordTooShort'));
         return;
       }
 
       if (!token) {
-        setError('Invalid reset token.');
+        setError(t('resetPassword.invalidResetToken'));
         return;
       }
 
@@ -115,16 +110,16 @@ export const ResetPasswordPage: React.FC = () => {
           setSuccess(true);
           logger.info('Password reset successful');
         } else {
-          setError(response.error?.message ?? 'Failed to reset password. Please try again.');
+          setError(response.error?.message ?? t('resetPassword.failedToReset'));
         }
       } catch (err) {
         logger.error('Password reset failed', undefined, { error: err });
-        setError('An unexpected error occurred. Please try again.');
+        setError(t('resetPassword.unexpectedError'));
       } finally {
         setIsLoading(false);
       }
     },
-    [token, newPassword, confirmPassword]
+    [token, newPassword, confirmPassword, t]
   );
 
   const clearError = () => {
@@ -139,7 +134,7 @@ export const ResetPasswordPage: React.FC = () => {
             <div className={styles['auth-logo']} aria-hidden="true">
               <ScrumoothIcon size={100} className={styles['auth-logo-icon']} />
             </div>
-            <h1 className={styles['auth-title']}>Verifying reset link...</h1>
+            <h1 className={styles['auth-title']}>{t('resetPassword.verifying')}</h1>
           </div>
           <div className={styles['loading-container']}>
             <LoaderIcon size={32} className={styles['spinner-icon']} />
@@ -157,21 +152,23 @@ export const ResetPasswordPage: React.FC = () => {
             <div className={styles['auth-logo']} aria-hidden="true">
               <ScrumoothIcon size={100} className={styles['auth-logo-icon']} />
             </div>
-            <h1 className={styles['auth-title']}>Password reset successful</h1>
-            <p className={styles['auth-subtitle']}>Your password has been changed successfully</p>
+            <h1 className={styles['auth-title']}>{t('resetPassword.passwordResetSuccessful')}</h1>
+            <p className={styles['auth-subtitle']}>
+              {t('resetPassword.passwordChangedSuccessfully')}
+            </p>
           </div>
 
           <div className={styles['success-container']}>
             <div className={styles['success-icon']}>
               <CheckCircleIcon size={48} />
             </div>
-            <p className={styles['success-text']}>You can now log in with your new password</p>
+            <p className={styles['success-text']}>{t('resetPassword.loginWithNewPassword')}</p>
             <button
               type="button"
               onClick={() => navigate('/login')}
               className={styles['submit-button']}
             >
-              Continue to login
+              {t('resetPassword.goToLogin')}
             </button>
           </div>
         </div>
@@ -187,26 +184,24 @@ export const ResetPasswordPage: React.FC = () => {
             <div className={styles['auth-logo']} aria-hidden="true">
               <ScrumoothIcon size={100} className={styles['auth-logo-icon']} />
             </div>
-            <h1 className={styles['auth-title']}>Invalid reset link</h1>
-            <p className={styles['auth-subtitle']}>
-              This password reset link is invalid or has expired
-            </p>
+            <h1 className={styles['auth-title']}>{t('resetPassword.invalidTitle')}</h1>
+            <p className={styles['auth-subtitle']}>{t('resetPassword.invalidOrExpired')}</p>
           </div>
 
           <div className={styles['success-container']}>
             <div className={`${styles['success-icon']} ${styles['error-icon']}`}>
               <XCircleIcon size={48} />
             </div>
-            <p className={styles['success-text']}>Please request a new password reset link</p>
+            <p className={styles['success-text']}>{t('resetPassword.requestNewResetLink')}</p>
             <Link to="/forgot-password" className={styles['submit-button']}>
-              Request new reset link
+              {t('resetPassword.requestNewLink')}
             </Link>
           </div>
 
           <div className={styles['auth-footer']}>
             <Link to="/login" className={styles['mode-toggle']}>
               <ArrowLeftIcon size={14} />
-              Back to login
+              {t('forgotPassword.backToLogin')}
             </Link>
           </div>
         </div>
@@ -221,9 +216,11 @@ export const ResetPasswordPage: React.FC = () => {
           <div className={styles['auth-logo']} aria-hidden="true">
             <ScrumoothIcon size={100} className={styles['auth-logo-icon']} />
           </div>
-          <h1 className={styles['auth-title']}>Create new password</h1>
+          <h1 className={styles['auth-title']}>{t('resetPassword.createNewPassword')}</h1>
           <p className={styles['auth-subtitle']}>
-            {tokenEmail ? `Resetting password for ${tokenEmail}` : 'Enter your new password below'}
+            {tokenEmail
+              ? t('resetPassword.resettingFor', { email: tokenEmail })
+              : t('resetPassword.enterNewPassword')}
           </p>
         </div>
 
@@ -231,7 +228,7 @@ export const ResetPasswordPage: React.FC = () => {
           <div className={styles['error-message']}>
             <ErrorMessage
               message={error}
-              title="Reset Failed"
+              title={t('resetPassword.resetFailed')}
               type="error"
               onDismiss={clearError}
             />
@@ -241,7 +238,7 @@ export const ResetPasswordPage: React.FC = () => {
         <form className={styles['auth-form']} onSubmit={handleSubmit}>
           <div className={styles['form-group']}>
             <label className={styles['form-label']} htmlFor="newPassword">
-              New Password
+              {t('resetPassword.newPassword')}
               <span className={styles['form-label-required']} aria-hidden="true">
                 *
               </span>
@@ -251,7 +248,7 @@ export const ResetPasswordPage: React.FC = () => {
                 id="newPassword"
                 type={showPassword ? 'text' : 'password'}
                 className={`${styles['input-field']} ${styles['input-field-has-trailing']}`}
-                placeholder="Enter your new password"
+                placeholder={t('resetPassword.placeholder.newPassword')}
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 required
@@ -262,7 +259,7 @@ export const ResetPasswordPage: React.FC = () => {
                 type="button"
                 className={styles['password-toggle']}
                 onClick={() => setShowPassword(!showPassword)}
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                aria-label={showPassword ? t('login.hidePassword') : t('login.showPassword')}
                 tabIndex={0}
               >
                 {showPassword ? <EyeOffIcon size={18} /> : <EyeIcon size={18} />}
@@ -304,7 +301,7 @@ export const ResetPasswordPage: React.FC = () => {
                           : styles['strength-label-strong']
                   }`}
                 >
-                  {STRENGTH_LABELS[passwordStrength]}
+                  {t(`login.passwordStrength.${passwordStrength}` as never)}
                 </span>
               </div>
             )}
@@ -312,7 +309,7 @@ export const ResetPasswordPage: React.FC = () => {
 
           <div className={styles['form-group']}>
             <label className={styles['form-label']} htmlFor="confirmPassword">
-              Confirm Password
+              {t('resetPassword.confirmNewPassword')}
               <span className={styles['form-label-required']} aria-hidden="true">
                 *
               </span>
@@ -322,7 +319,7 @@ export const ResetPasswordPage: React.FC = () => {
                 id="confirmPassword"
                 type={showConfirmPassword ? 'text' : 'password'}
                 className={`${styles['input-field']} ${styles['input-field-has-trailing']}`}
-                placeholder="Confirm your new password"
+                placeholder={t('resetPassword.placeholder.confirmPassword')}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
@@ -333,17 +330,19 @@ export const ResetPasswordPage: React.FC = () => {
                 type="button"
                 className={styles['password-toggle']}
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                aria-label={showConfirmPassword ? t('login.hidePassword') : t('login.showPassword')}
                 tabIndex={0}
               >
                 {showConfirmPassword ? <EyeOffIcon size={18} /> : <EyeIcon size={18} />}
               </button>
             </div>
             {confirmPassword && newPassword !== confirmPassword && (
-              <span className={styles['error-text']}>Passwords do not match</span>
+              <span className={styles['error-text']}>{t('resetPassword.passwordMismatch')}</span>
             )}
             {confirmPassword && newPassword === confirmPassword && (
-              <span className={styles['success-text-inline']}>Passwords match</span>
+              <span className={styles['success-text-inline']}>
+                {t('resetPassword.passwordsMatch')}
+              </span>
             )}
           </div>
 
@@ -357,10 +356,10 @@ export const ResetPasswordPage: React.FC = () => {
             {isLoading ? (
               <span className={styles['button-loading']}>
                 <LoaderIcon size={16} className={styles['spinner-icon']} />
-                Resetting...
+                {t('resetPassword.resetting')}
               </span>
             ) : (
-              'Reset password'
+              t('resetPassword.resetButton')
             )}
           </button>
         </form>
@@ -368,7 +367,7 @@ export const ResetPasswordPage: React.FC = () => {
         <div className={styles['auth-footer']}>
           <Link to="/login" className={styles['mode-toggle']}>
             <ArrowLeftIcon size={14} />
-            Back to login
+            {t('forgotPassword.backToLogin')}
           </Link>
         </div>
       </div>

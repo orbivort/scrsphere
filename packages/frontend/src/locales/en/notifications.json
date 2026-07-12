@@ -1,3 +1,48 @@
 {
-  "title": "Notifications"
+  "title": "Notifications",
+  "subtitle": "Stay updated with team activities and important updates",
+  "skipToMainContent": "Skip to main content",
+  "markAllAsRead": "Mark All as Read",
+  "marking": "Marking...",
+  "filters": {
+    "all": "All",
+    "unread": "Unread",
+    "teamInvitations": "Team Invitations",
+    "taskAssignments": "Task Assignments",
+    "impediments": "Impediments",
+    "reminders": "Reminders",
+    "teamCreated": "Team Created",
+    "teamUpdated": "Team Updated",
+    "teamDeleted": "Team Deleted",
+    "directMessages": "Direct Messages"
+  },
+  "loading": {
+    "title": "Loading notifications...",
+    "ariaLabel": "Loading notifications"
+  },
+  "error": {
+    "title": "Failed to load notifications",
+    "message": "Something went wrong while fetching your notifications.",
+    "tryAgain": "Try Again"
+  },
+  "empty": {
+    "title": "No notifications yet",
+    "message": "You will see notifications here when there is activity"
+  },
+  "dateGroups": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "thisWeek": "This Week",
+    "older": "Older"
+  },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "pageInfo": "Page {{current}} of {{total}}"
+  },
+  "ariaLabels": {
+    "notificationItem": "Notification from {{sender}}: {{message}}",
+    "markAsRead": "Mark as read",
+    "dismiss": "Dismiss notification"
+  }
 }

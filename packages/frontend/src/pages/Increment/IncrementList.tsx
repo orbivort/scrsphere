@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import { apiService } from '../../services';
 import { IncrementStatus } from '../../types';
@@ -27,6 +28,7 @@ import {
 // Icons imported from shared library
 
 export const IncrementList: React.FC = () => {
+  const { t } = useTranslation('increments');
   const navigate = useNavigate();
   const { currentTeam } = useTeamContext();
   const [filter, setFilter] = useState<'all' | 'active' | 'delivered' | 'archived'>('all');
@@ -83,13 +85,13 @@ export const IncrementList: React.FC = () => {
   const getStatusLabel = (status: IncrementStatus) => {
     switch (status) {
       case IncrementStatus.DRAFT:
-        return 'Draft';
+        return t('status.draft');
       case IncrementStatus.VERIFIED:
-        return 'Verified';
+        return t('status.verified');
       case IncrementStatus.DELIVERED:
-        return 'Delivered';
+        return t('status.delivered');
       case IncrementStatus.ARCHIVED:
-        return 'Archived';
+        return t('status.archived');
       default:
         return status;
     }
@@ -97,7 +99,9 @@ export const IncrementList: React.FC = () => {
 
   const getDeliveryMethodLabel = (method?: string) => {
     if (!method) return null;
-    return method.toLowerCase() === 'sprint_review' ? 'Sprint Review' : 'Early Release';
+    return method.toLowerCase() === 'sprint_review'
+      ? t('deliveryMethod.sprintReview')
+      : t('deliveryMethod.earlyRelease');
   };
 
   const getDeliveryMethodIcon = (method?: string) => {
@@ -124,7 +128,7 @@ export const IncrementList: React.FC = () => {
   if (isLoadingIncrements) {
     return (
       <div className={styles['increment-list-page']}>
-        <LoadingState variant="page" label="Loading increments..." />
+        <LoadingState variant="page" label={t('loading')} />
       </div>
     );
   }
@@ -137,12 +141,9 @@ export const IncrementList: React.FC = () => {
             <span className={styles['page-title-icon']}>
               <PackageIcon size={28} aria-hidden="true" />
             </span>
-            Increments
+            {t('title')}
           </h1>
-          <p className={styles['page-subtitle']}>
-            Manage and track your product increments. Increments represent working, usable
-            functionality that is ready for delivery to stakeholders.
-          </p>
+          <p className={styles['page-subtitle']}>{t('subtitle')}</p>
         </div>
         <div className={styles['header-actions']}>
           <button
@@ -150,7 +151,7 @@ export const IncrementList: React.FC = () => {
             onClick={() => navigate('/increment/create')}
           >
             <PlusIcon size={16} />
-            Create Increment
+            {t('createIncrement')}
           </button>
         </div>
       </div>
@@ -162,7 +163,7 @@ export const IncrementList: React.FC = () => {
           </div>
           <div className={styles['stat-content']}>
             <div className={styles['stat-value']}>{stats.total}</div>
-            <div className={styles['stat-label']}>Total Increments</div>
+            <div className={styles['stat-label']}>{t('list.stats.total')}</div>
           </div>
         </div>
         <div className={styles['stat-card']}>
@@ -171,7 +172,7 @@ export const IncrementList: React.FC = () => {
           </div>
           <div className={styles['stat-content']}>
             <div className={styles['stat-value']}>{stats.active}</div>
-            <div className={styles['stat-label']}>Active</div>
+            <div className={styles['stat-label']}>{t('list.stats.active')}</div>
           </div>
         </div>
         <div className={styles['stat-card']}>
@@ -180,7 +181,7 @@ export const IncrementList: React.FC = () => {
           </div>
           <div className={styles['stat-content']}>
             <div className={styles['stat-value']}>{stats.delivered}</div>
-            <div className={styles['stat-label']}>Delivered</div>
+            <div className={styles['stat-label']}>{t('list.stats.delivered')}</div>
           </div>
         </div>
         <div className={styles['stat-card']}>
@@ -189,7 +190,7 @@ export const IncrementList: React.FC = () => {
           </div>
           <div className={styles['stat-content']}>
             <div className={styles['stat-value']}>{stats.storyPoints}</div>
-            <div className={styles['stat-label']}>Story Points</div>
+            <div className={styles['stat-label']}>{t('list.stats.storyPoints')}</div>
           </div>
         </div>
       </div>
@@ -200,17 +201,17 @@ export const IncrementList: React.FC = () => {
           <input
             type="text"
             className={styles['search-input']}
-            placeholder="Search increments..."
+            placeholder={t('list.searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            aria-label="Search increments"
+            aria-label={t('list.ariaLabelSearch')}
           />
           {searchQuery && (
             <button
               className={styles['clear-search']}
               onClick={() => setSearchQuery('')}
-              aria-label="Clear search"
-              title="Clear search"
+              aria-label={t('list.clearSearch')}
+              title={t('list.clearSearch')}
             >
               ×
             </button>
@@ -221,25 +222,25 @@ export const IncrementList: React.FC = () => {
             className={`${styles['filter-tab']} ${filter === 'all' ? styles.active : ''}`}
             onClick={() => setFilter('all')}
           >
-            All
+            {t('list.filters.all')}
           </button>
           <button
             className={`${styles['filter-tab']} ${filter === 'active' ? styles.active : ''}`}
             onClick={() => setFilter('active')}
           >
-            Active
+            {t('list.filters.active')}
           </button>
           <button
             className={`${styles['filter-tab']} ${filter === 'delivered' ? styles.active : ''}`}
             onClick={() => setFilter('delivered')}
           >
-            Delivered
+            {t('list.filters.delivered')}
           </button>
           <button
             className={`${styles['filter-tab']} ${filter === 'archived' ? styles.active : ''}`}
             onClick={() => setFilter('archived')}
           >
-            Archived
+            {t('list.filters.archived')}
           </button>
         </div>
       </div>
@@ -250,11 +251,9 @@ export const IncrementList: React.FC = () => {
             <div className={styles['empty-illustration']}>
               <PackageIcon size={48} strokeWidth={1.5} />
             </div>
-            <h3>No Increments found</h3>
+            <h3>{t('list.empty.title')}</h3>
             <p className={styles['empty-description']}>
-              {searchQuery
-                ? 'No Increments match your search criteria. Try adjusting your filters.'
-                : "You haven't created any Increment yet. Get started by creating your first Increment."}
+              {searchQuery ? t('list.empty.noSearchResults') : t('list.empty.noIncrements')}
             </p>
             <div className={styles['empty-actions']}>
               <button
@@ -262,7 +261,7 @@ export const IncrementList: React.FC = () => {
                 onClick={() => navigate('/increment/create')}
               >
                 <PlusIcon size={16} />
-                Create Increment
+                {t('createIncrement')}
               </button>
             </div>
           </div>
@@ -287,7 +286,8 @@ export const IncrementList: React.FC = () => {
                     <SprintIcon size={14} />
                   </span>
                   <span className={styles['sprint-badge-name']}>
-                    {increment.sprint?.name ?? `SPRINT ${increment.sprintId}`}
+                    {increment.sprint?.name ??
+                      t('sprintPrefix' as never, { sprintId: increment.sprintId })}
                   </span>
                 </span>
               </div>
@@ -302,15 +302,15 @@ export const IncrementList: React.FC = () => {
                 </span>
               </div>
               <p className={styles['increment-description']}>
-                {increment.description ?? 'No description provided.'}
+                {increment.description ?? t('noDescription')}
               </p>
               <div className={styles['card-stats']}>
                 <div className={styles.stat}>
-                  <span className={styles['stat-label']}>PBIs</span>
+                  <span className={styles['stat-label']}>{t('list.cardStats.pbis')}</span>
                   <span className={styles['stat-value']}>{increment.includedPBIs.length || 0}</span>
                 </div>
                 <div className={styles.stat}>
-                  <span className={styles['stat-label']}>Points</span>
+                  <span className={styles['stat-label']}>{t('list.cardStats.points')}</span>
                   <span className={styles['stat-value']}>{increment.totalStoryPoints || 0}</span>
                 </div>
               </div>
@@ -318,12 +318,12 @@ export const IncrementList: React.FC = () => {
                 <div className={styles.dates}>
                   <span>
                     <CalendarIcon size={12} />
-                    Created {formatDate(increment.createdAt)}
+                    {t('dates.created')} {formatDate(increment.createdAt)}
                   </span>
                   {increment.deliveredAt && (
                     <span>
                       <CheckIcon size={12} strokeWidth={3} />
-                      Delivered {formatDate(increment.deliveredAt)}
+                      {t('dates.delivered')} {formatDate(increment.deliveredAt)}
                     </span>
                   )}
                 </div>

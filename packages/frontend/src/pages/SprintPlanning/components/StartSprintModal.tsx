@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import styles from './StartSprintModal.module.css';
 
@@ -40,98 +41,92 @@ export interface StartSprintModalProps {
 // Icons imported from shared library
 
 // Helper function to get user-friendly error message
-const getFriendlyErrorMessage = (error: string): { title: string; message: string } => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- TFunction signature varies by i18next version
+const getFriendlyErrorMessage = (error: string, t: any): { title: string; message: string } => {
   const lowerError = error.toLowerCase();
 
   // Check for specific business logic errors first (before generic HTTP status codes)
   if (lowerError.includes('another sprint is already active')) {
     return {
-      title: 'Active Sprint Exists',
-      message:
-        'Another sprint is already active. Please complete or cancel the current active sprint before starting a new one.',
+      title: t('sprintPlanning.startSprintModal.error.activeSprintExists'),
+      message: t('sprintPlanning.startSprintModal.error.anotherSprintActive'),
     };
   }
 
   if (lowerError.includes('assignee')) {
     return {
-      title: 'Invalid Task Assignment',
-      message:
-        'One or more tasks are assigned to invalid team members. Please review task assignments and ensure all assignees are current team members.',
+      title: t('sprintPlanning.startSprintModal.error.invalidTaskAssignment'),
+      message: t('sprintPlanning.startSprintModal.error.invalidTaskAssignmentMessage'),
     };
   }
 
   if (lowerError.includes('sprint goal') || lowerError.includes('goal is required')) {
     return {
-      title: 'Sprint Goal Required',
-      message: 'Please define a sprint goal before starting the sprint.',
+      title: t('sprintPlanning.startSprintModal.error.sprintGoalRequired'),
+      message: t('sprintPlanning.startSprintModal.error.sprintGoalRequiredMessage'),
     };
   }
 
   if (lowerError.includes('backlog') || lowerError.includes('no items')) {
     return {
-      title: 'Invalid Sprint Backlog',
-      message:
-        'There is an issue with the sprint backlog items. Please remove and re-add the items, then try again.',
+      title: t('sprintPlanning.startSprintModal.error.invalidSprintBacklog'),
+      message: t('sprintPlanning.startSprintModal.error.invalidSprintBacklogMessage'),
     };
   }
 
   // Check for HTTP status codes and generic errors
   if (lowerError.includes('401') || lowerError.includes('unauthorized')) {
     return {
-      title: 'Session Expired',
-      message: 'Your session has expired. Please log in again and retry.',
+      title: t('sprintPlanning.startSprintModal.error.sessionExpired'),
+      message: t('sprintPlanning.startSprintModal.error.sessionExpiredMessage'),
     };
   }
 
   if (lowerError.includes('403') || lowerError.includes('forbidden')) {
     return {
-      title: 'Permission Denied',
-      message:
-        'You do not have permission to start sprints. Please contact your team administrator.',
+      title: t('sprintPlanning.startSprintModal.error.unauthorized'),
+      message: t('sprintPlanning.startSprintModal.error.permissionDenied'),
     };
   }
 
   if (lowerError.includes('404') || lowerError.includes('not found')) {
     return {
-      title: 'Sprint Not Found',
-      message:
-        'The selected sprint no longer exists. It may have been deleted. Please refresh and select a different sprint.',
+      title: t('sprintPlanning.startSprintModal.error.sprintNotFound'),
+      message: t('sprintPlanning.startSprintModal.error.sprintNotFoundMessage'),
     };
   }
 
   if (lowerError.includes('409') || lowerError.includes('conflict')) {
     return {
-      title: 'Sprint Conflict',
-      message: 'This sprint is being modified by another user. Please wait a moment and try again.',
+      title: t('sprintPlanning.startSprintModal.error.sprintConflict'),
+      message: t('sprintPlanning.startSprintModal.error.sprintConflictMessage'),
     };
   }
 
   if (lowerError.includes('400') || lowerError.includes('bad request')) {
     return {
-      title: 'Invalid Request',
-      message:
-        'Please check your sprint data and try again. Make sure all required fields are filled correctly.',
+      title: t('sprintPlanning.startSprintModal.error.invalidRequest'),
+      message: t('sprintPlanning.startSprintModal.error.invalidRequestMessage'),
     };
   }
 
   if (lowerError.includes('network') || lowerError.includes('fetch')) {
     return {
-      title: 'Network Error',
-      message:
-        'Unable to connect to the server. Please check your internet connection and try again.',
+      title: t('sprintPlanning.startSprintModal.error.networkError'),
+      message: t('sprintPlanning.startSprintModal.error.networkErrorMessage'),
     };
   }
 
   if (lowerError.includes('timeout')) {
     return {
-      title: 'Request Timeout',
-      message: 'The request took too long to complete. Please try again.',
+      title: t('sprintPlanning.startSprintModal.error.timeout'),
+      message: t('sprintPlanning.startSprintModal.error.timeoutMessage'),
     };
   }
 
   // Default fallback
   return {
-    title: 'Unable to Start Sprint',
+    title: t('sprintPlanning.startSprintModal.error.unableToStart'),
     message: error,
   };
 };
@@ -150,6 +145,7 @@ export const StartSprintModal: React.FC<StartSprintModalProps> = ({
   isLoading = false,
   userRole,
 }) => {
+  const { t } = useTranslation('sprint');
   const modalRef = useRef<HTMLDivElement>(null);
   const previousActiveElement = useRef<HTMLElement | null>(null);
 
@@ -158,8 +154,8 @@ export const StartSprintModal: React.FC<StartSprintModalProps> = ({
   const isPreFormatted = error && (error.includes('. ') || error.length > 100);
   const friendlyError = error
     ? isPreFormatted
-      ? { title: 'Error', message: error }
-      : getFriendlyErrorMessage(error)
+      ? { title: t('sprintPlanning.startSprintModal.error.unableToStart'), message: error }
+      : getFriendlyErrorMessage(error, t)
     : null;
 
   // Reset and handle modal open/close
@@ -257,17 +253,19 @@ export const StartSprintModal: React.FC<StartSprintModalProps> = ({
               <RocketIcon size={24} />
             </div>
             <h2 id="start-sprint-title" className={styles.title}>
-              Start Sprint
+              {t('sprintPlanning.startSprintModal.title')}
             </h2>
             <p className={styles.subtitle}>
-              Ready to launch <span className={styles['sprint-highlight']}>{sprintName}</span>?
+              {t('sprintPlanning.startSprintModal.readyToLaunchPrefix')}
+              <span className={styles['sprint-highlight']}>{sprintName}</span>
+              {t('sprintPlanning.startSprintModal.readyToLaunchSuffix')}
             </p>
           </div>
           <button
             type="button"
             className={styles['close-button']}
             onClick={onClose}
-            aria-label="Close modal"
+            aria-label={t('sprintPlanning.startSprintModal.cancel')}
             disabled={isLoading}
           >
             <XIcon size={20} />
@@ -288,10 +286,11 @@ export const StartSprintModal: React.FC<StartSprintModalProps> = ({
                 <AlertTriangleIcon size={16} />
               </span>
               <div className={styles['error-content']}>
-                <span className={styles['error-title']}>Permission Required</span>
+                <span className={styles['error-title']}>
+                  {t('sprintPlanning.startSprintModal.permissionRequired')}
+                </span>
                 <span className={styles['error-text']}>
-                  Only Product Owner or Scrum Master can start a sprint. Please contact your team
-                  administrator if you need this permission.
+                  {t('sprintPlanning.startSprintModal.permissionDeniedMessage')}
                 </span>
               </div>
             </div>
@@ -313,8 +312,12 @@ export const StartSprintModal: React.FC<StartSprintModalProps> = ({
           {/* Sprint Summary Card */}
           <div className={styles['summary-card']}>
             <div className={styles['summary-header']}>
-              <h3 className={styles['summary-title']}>Sprint Summary</h3>
-              <span className={styles['summary-badge']}>Ready to Start</span>
+              <h3 className={styles['summary-title']}>
+                {t('sprintPlanning.startSprintModal.sprintSummary')}
+              </h3>
+              <span className={styles['summary-badge']}>
+                {t('sprintPlanning.startSprintModal.readyToStart')}
+              </span>
             </div>
 
             <div className={styles['summary-grid']}>
@@ -323,8 +326,12 @@ export const StartSprintModal: React.FC<StartSprintModalProps> = ({
                   <CalendarIcon size={16} />
                 </span>
                 <div className={styles['summary-content']}>
-                  <span className={styles['summary-label']}>Duration</span>
-                  <span className={styles['summary-value']}>{sprintDuration} days</span>
+                  <span className={styles['summary-label']}>
+                    {t('sprintPlanning.startSprintModal.duration')}
+                  </span>
+                  <span className={styles['summary-value']}>
+                    {sprintDuration} {t('sprintPlanning.startSprintModal.workingDays')}
+                  </span>
                 </div>
               </div>
 
@@ -333,7 +340,9 @@ export const StartSprintModal: React.FC<StartSprintModalProps> = ({
                   <FileTextIcon size={16} />
                 </span>
                 <div className={styles['summary-content']}>
-                  <span className={styles['summary-label']}>Backlog Items</span>
+                  <span className={styles['summary-label']}>
+                    {t('sprintPlanning.startSprintModal.items')}
+                  </span>
                   <span className={styles['summary-value']}>{stats.totalItems}</span>
                 </div>
               </div>
@@ -343,7 +352,9 @@ export const StartSprintModal: React.FC<StartSprintModalProps> = ({
                   <TargetIcon size={16} />
                 </span>
                 <div className={styles['summary-content']}>
-                  <span className={styles['summary-label']}>Story Points</span>
+                  <span className={styles['summary-label']}>
+                    {t('sprintPlanning.startSprintModal.storyPoints')}
+                  </span>
                   <span className={styles['summary-value']}>{stats.totalPoints}</span>
                 </div>
               </div>
@@ -353,7 +364,9 @@ export const StartSprintModal: React.FC<StartSprintModalProps> = ({
                   <CheckIcon size={16} />
                 </span>
                 <div className={styles['summary-content']}>
-                  <span className={styles['summary-label']}>Tasks</span>
+                  <span className={styles['summary-label']}>
+                    {t('sprintPlanning.startSprintModal.tasks')}
+                  </span>
                   <span className={styles['summary-value']}>{stats.totalTasks}</span>
                 </div>
               </div>
@@ -363,7 +376,9 @@ export const StartSprintModal: React.FC<StartSprintModalProps> = ({
                   <ClockIcon size={16} />
                 </span>
                 <div className={styles['summary-content']}>
-                  <span className={styles['summary-label']}>Est. Hours</span>
+                  <span className={styles['summary-label']}>
+                    {t('sprintPlanning.startSprintModal.estimatedHours')}
+                  </span>
                   <span className={styles['summary-value']}>{stats.estimatedHours}h</span>
                 </div>
               </div>
@@ -373,7 +388,9 @@ export const StartSprintModal: React.FC<StartSprintModalProps> = ({
                   <UsersIcon size={16} />
                 </span>
                 <div className={styles['summary-content']}>
-                  <span className={styles['summary-label']}>Team Capacity</span>
+                  <span className={styles['summary-label']}>
+                    {t('sprintPlanning.startSprintModal.teamCapacity')}
+                  </span>
                   <span className={styles['summary-value']}>{teamCapacity}h</span>
                 </div>
               </div>
@@ -382,7 +399,9 @@ export const StartSprintModal: React.FC<StartSprintModalProps> = ({
             {/* Capacity Indicator */}
             <div className={styles['capacity-section']}>
               <div className={styles['capacity-header']}>
-                <span className={styles['capacity-label']}>Capacity Utilization</span>
+                <span className={styles['capacity-label']}>
+                  {t('sprintPlanning.startSprintModal.capacityUtilization')}
+                </span>
                 <span
                   className={`${styles['capacity-value']} ${styles[`capacity-${capacityStatus}`]}`}
                 >
@@ -398,13 +417,13 @@ export const StartSprintModal: React.FC<StartSprintModalProps> = ({
               {capacityStatus === 'danger' && (
                 <p className={styles['capacity-warning-message']}>
                   <AlertTriangleIcon size={16} />
-                  Sprint is over capacity. Consider removing some items.
+                  {t('sprintPlanning.startSprintModal.overCapacityWarning')}
                 </p>
               )}
               {capacityStatus === 'warning' && (
                 <p className={styles['capacity-warning-message']}>
                   <AlertTriangleIcon size={16} />
-                  Sprint is near capacity. Monitor progress closely.
+                  {t('sprintPlanning.startSprintModal.nearCapacityWarning')}
                 </p>
               )}
             </div>
@@ -416,7 +435,9 @@ export const StartSprintModal: React.FC<StartSprintModalProps> = ({
                   <span className={styles['goal-icon']}>
                     <TargetIcon size={16} />
                   </span>
-                  <h4 className={styles['goal-title']}>Sprint Goal</h4>
+                  <h4 className={styles['goal-title']}>
+                    {t('sprintPlanning.startSprintModal.sprintGoal')}
+                  </h4>
                 </div>
                 <p className={styles['goal-text']}>{sprintGoal}</p>
               </div>
@@ -429,8 +450,7 @@ export const StartSprintModal: React.FC<StartSprintModalProps> = ({
               <CheckIcon size={16} />
             </span>
             <p className={styles['notice-text']}>
-              Starting this sprint will activate it and redirect you to the Sprint Board. Make sure
-              all items are properly planned.
+              {t('sprintPlanning.startSprintModal.startingNotice')}
             </p>
           </div>
         </div>
@@ -443,7 +463,7 @@ export const StartSprintModal: React.FC<StartSprintModalProps> = ({
             onClick={onClose}
             disabled={isLoading}
           >
-            Cancel
+            {t('sprintPlanning.startSprintModal.cancel')}
           </button>
           <button
             type="button"
@@ -453,21 +473,21 @@ export const StartSprintModal: React.FC<StartSprintModalProps> = ({
             aria-busy={isLoading}
             title={
               !hasPermissionToStart
-                ? 'Only Product Owner or Scrum Master can start a sprint'
+                ? t('sprintPlanning.startSprintModal.onlyPoSmCanStart')
                 : undefined
             }
           >
             {isLoading ? (
               <>
                 <span className={styles['button-spinner']} />
-                Starting...
+                {t('sprintPlanning.startSprintModal.starting')}
               </>
             ) : (
               <>
                 <span className={styles['button-icon']}>
                   <RocketIcon size={16} />
                 </span>
-                Start Sprint
+                {t('sprintPlanning.startSprintModal.start')}
               </>
             )}
           </button>

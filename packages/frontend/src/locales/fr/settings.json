@@ -1,3 +1,87 @@
 {
-  "title": "Paramètres"
+  "title": "Paramètres",
+  "privacyData": {
+    "title": "Confidentialité & Données",
+    "subtitle": "Gérer vos données personnelles et vos paramètres de confidentialité",
+    "activeSessions": {
+      "title": "Sessions actives",
+      "description": "Gérer vos sessions de connexion actives",
+      "loading": "Chargement des sessions...",
+      "empty": "Aucune session active trouvée",
+      "current": "Actuelle",
+      "ip": "IP:",
+      "lastActive": "Dernière activité:",
+      "revoke": "Révoquer",
+      "revoking": "Révocation...",
+      "revokeSession": "Révoquer cette session",
+      "signOutAll": "Déconnecter toutes les autres sessions",
+      "signingOut": "Déconnexion...",
+      "note": "Cela vous déconnectera de tous les autres appareils, à l'exception de celui-ci.",
+      "errors": {
+        "loadFailed": "Échec du chargement des sessions",
+        "revokeFailed": "Échec de la révocation de la session",
+        "signOutFailed": "Échec de la déconnexion des autres sessions"
+      },
+      "devices": {
+        "unknown": "Appareil inconnu",
+        "chrome": "Navigateur Chrome",
+        "firefox": "Navigateur Firefox",
+        "safari": "Navigateur Safari",
+        "edge": "Navigateur Edge"
+      }
+    },
+    "dataExport": {
+      "title": "Exporter vos données",
+      "description": "Télécharger une copie de vos données personnelles",
+      "rightToPortability": "Droit à la portabilité des données",
+      "portabilityDescription": "Vous avez le droit de recevoir vos données personnelles dans un format structuré, couramment utilisé et lisible par machine.",
+      "dataIncluded": "Données incluses dans l'export:",
+      "profileInformation": "Informations de profil",
+      "profileDescription": "Nom, email, avatar, préférences",
+      "teamMemberships": "Adhésions aux équipes",
+      "teamDescription": "Équipes auxquelles vous appartenez et vos rôles",
+      "sessionInformation": "Informations de session",
+      "sessionDescription": "Sessions actives et historique de connexion",
+      "formatLabel": "Format:",
+      "formatValue": "JSON (lisible par machine)",
+      "exportButton": "Exporter mes données",
+      "exporting": "Exportation...",
+      "downloadExport": "Télécharger l'export",
+      "ariaLabel": "Exporter vos données personnelles"
+    },
+    "dataExportModal": {
+      "title": "Export de données",
+      "closeModal": "Fermer le modal",
+      "statusMessages": {
+        "initializing": "Initialisation de l'export...",
+        "pending": "Préparation de votre export de données...",
+        "processing": "Collecte et formatage de vos données...",
+        "completed": "Votre export de données est prêt!",
+        "failed": "Échec de l'export. Veuillez réessayer.",
+        "expired": "Cet export a expiré. Veuillez créer un nouveau."
+      },
+      "exportProgress": "Progression de l'export",
+      "jobId": "ID du job:",
+      "infoText": "Vos données sont exportées au format JSON, qui est structuré, couramment utilisé et lisible par machine.",
+      "downloadJson": "Télécharger le fichier JSON",
+      "cancelExport": "Annuler l'export",
+      "close": "Fermer"
+    },
+    "dataRights": {
+      "title": "Vos droits sur les données",
+      "subtitle": "Vos droits concernant les données personnelles",
+      "rightToAccess": "Droit d'accès",
+      "rightToAccessDescription": "Vous pouvez demander une copie de toutes les données personnelles que nous conservons sur vous.",
+      "rightToRectification": "Droit de rectification",
+      "rightToRectificationDescription": "Vous pouvez corriger les données personnelles inexactes ou incomplètes.",
+      "rightToErasure": "Droit à l'effacement",
+      "rightToErasureDescription": "Vous pouvez demander la suppression de vos données personnelles lorsqu'elles ne sont plus nécessaires.",
+      "rightToPortability": "Droit à la portabilité",
+      "rightToPortabilityDescription": "Vous pouvez recevoir vos données dans un format structuré et lisible par machine."
+    },
+    "contactSection": {
+      "title": "Des questions sur vos données?",
+      "message": "Contactez votre équipe RH de protection des données ou le responsable de la protection des données de l'entreprise."
+    }
+  }
 }

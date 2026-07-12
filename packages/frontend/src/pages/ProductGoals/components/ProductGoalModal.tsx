@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { CharacterCounter } from '../../../components/common/Form/CharacterCounter';
 import { HelpPanel } from '../../../components/common/Form/HelpPanel';
@@ -96,6 +97,7 @@ export const ProductGoalModal: React.FC<ProductGoalModalProps> = ({
   onClearDraft,
   onClearError,
 }) => {
+  const { t } = useTranslation('backlog');
   const titleInputRef = useRef<HTMLInputElement | null>(null);
   const [showUnsavedChangesModal, setShowUnsavedChangesModal] = useState(false);
 
@@ -159,18 +161,20 @@ export const ProductGoalModal: React.FC<ProductGoalModalProps> = ({
                 {isEditMode ? <EditIcon size={24} /> : <TargetIcon size={24} />}
               </div>
               <h2 id="modal-title" className={styles['modal-title']}>
-                {isEditMode ? 'Edit Goal' : 'Create New Goal'}
+                {isEditMode
+                  ? (t('productGoals.editGoalTitle') as string)
+                  : (t('productGoals.createNewGoal') as string)}
               </h2>
               <p className={styles['modal-subtitle']}>
                 {isEditMode
-                  ? 'Update your product goal details and settings'
-                  : 'Define a clear objective to guide your product development'}
+                  ? (t('productGoals.editGoalSubtitle') as string)
+                  : (t('productGoals.createGoalSubtitle') as string)}
               </p>
             </div>
             <button
               className={styles['modal-close']}
               onClick={handleClose}
-              aria-label="Close modal"
+              aria-label={t('productGoals.closeModal') as string}
               type="button"
             >
               <CloseIcon size={18} />
@@ -182,7 +186,11 @@ export const ProductGoalModal: React.FC<ProductGoalModalProps> = ({
               aria-valuenow={formProgressPercentage}
               aria-valuemin={0}
               aria-valuemax={100}
-              aria-label={`Form completion: ${formProgressPercentage}%`}
+              aria-label={
+                t('productGoals.progressBarAriaLabel', {
+                  percentage: formProgressPercentage,
+                }) as string
+              }
             >
               <div
                 className={styles['modal-progress-fill-header']}
@@ -202,7 +210,7 @@ export const ProductGoalModal: React.FC<ProductGoalModalProps> = ({
                   <button
                     className={styles['modal-error-close']}
                     onClick={onClearError}
-                    aria-label="Close error message"
+                    aria-label={t('productGoals.closeError') as string}
                   >
                     ×
                   </button>
@@ -229,12 +237,12 @@ export const ProductGoalModal: React.FC<ProductGoalModalProps> = ({
               {/* Form Legend */}
               <p
                 className={styles['form-legend']}
-                aria-label="All fields marked with asterisk are required"
+                aria-label={t('productGoals.formLegendAriaLabel') as string}
               >
                 <span className={styles.required} aria-hidden="true">
                   *
                 </span>
-                <span>Required fields</span>
+                <span>{t('productGoals.requiredFields') as string}</span>
               </p>
 
               {/* Title Field */}
@@ -243,7 +251,8 @@ export const ProductGoalModal: React.FC<ProductGoalModalProps> = ({
               >
                 <div className={styles['label-row']}>
                   <label htmlFor="goal-title">
-                    Title <span className={styles['required']}>*</span>
+                    {t('productGoals.titleLabel') as string}{' '}
+                    <span className={styles['required']}>*</span>
                   </label>
                   <CharacterCounter
                     current={formData.title.length}
@@ -253,19 +262,22 @@ export const ProductGoalModal: React.FC<ProductGoalModalProps> = ({
                   />
                 </div>
                 <HelpPanel
-                  title="writing goal titles"
+                  title={t('productGoals.titleHelpPanelTitle') as string}
                   tips={[
-                    'Be specific about what you want to achieve',
-                    'Start with a verb when possible (e.g., "Launch", "Improve", "Reduce")',
-                    'Keep it concise for quick scanning and reference',
-                    'Avoid vague terms like "better" or "more" - use specific outcomes',
+                    t('productGoals.titleHelpPanelTip1') as string,
+                    t('productGoals.titleHelpPanelTip2') as string,
+                    t('productGoals.titleHelpPanelTip3') as string,
+                    t('productGoals.titleHelpPanelTip4') as string,
                   ]}
                   examples={{
                     good: {
-                      label: 'Good',
-                      text: 'Launch mobile app v2.0 with offline sync capability',
+                      label: t('productGoals.titleHelpPanelGoodLabel') as string,
+                      text: t('productGoals.titleHelpPanelGoodText') as string,
                     },
-                    avoid: { label: 'Avoid', text: 'App improvements' },
+                    avoid: {
+                      label: t('productGoals.titleHelpPanelAvoidLabel') as string,
+                      text: t('productGoals.titleHelpPanelAvoidText') as string,
+                    },
                   }}
                 />
                 <input
@@ -275,7 +287,7 @@ export const ProductGoalModal: React.FC<ProductGoalModalProps> = ({
                   value={formData.title}
                   onChange={(e) => onFieldChange('title', e.target.value)}
                   onBlur={(e) => onFieldBlur('title', e.target.value)}
-                  placeholder="e.g., Launch mobile app v2.0 with offline sync capability"
+                  placeholder={t('productGoals.titlePlaceholder') as string}
                   className={formErrors.title && touchedFields.title ? styles['input-error'] : ''}
                   aria-invalid={formErrors.title && touchedFields.title ? 'true' : 'false'}
                   aria-describedby={
@@ -295,7 +307,8 @@ export const ProductGoalModal: React.FC<ProductGoalModalProps> = ({
               >
                 <div className={styles['label-row']}>
                   <label htmlFor="goal-description">
-                    Description <span className={styles['required']}>*</span>
+                    {t('productGoals.descriptionLabel') as string}{' '}
+                    <span className={styles['required']}>*</span>
                   </label>
                   <CharacterCounter
                     current={formData.description.length}
@@ -305,21 +318,21 @@ export const ProductGoalModal: React.FC<ProductGoalModalProps> = ({
                   />
                 </div>
                 <HelpPanel
-                  title="writing descriptions"
+                  title={t('productGoals.descriptionHelpPanelTitle') as string}
                   tips={[
-                    'Explain the problem you are solving or the opportunity you are addressing',
-                    'Describe who benefits from this goal and how',
-                    'Include context about why this goal matters now',
-                    'Mention any dependencies or constraints',
+                    t('productGoals.descriptionHelpPanelTip1') as string,
+                    t('productGoals.descriptionHelpPanelTip2') as string,
+                    t('productGoals.descriptionHelpPanelTip3') as string,
+                    t('productGoals.descriptionHelpPanelTip4') as string,
                   ]}
                   examples={{
                     good: {
-                      label: 'Good',
-                      text: 'Our users struggle with accessing data when offline. This goal addresses that by implementing local storage sync, improving user productivity by 40% in low-connectivity environments.',
+                      label: t('productGoals.descriptionHelpPanelGoodLabel') as string,
+                      text: t('productGoals.descriptionHelpPanelGoodText') as string,
                     },
                     avoid: {
-                      label: 'Avoid',
-                      text: 'We need to make the app better.',
+                      label: t('productGoals.descriptionHelpPanelAvoidLabel') as string,
+                      text: t('productGoals.descriptionHelpPanelAvoidText') as string,
                     },
                   }}
                 />
@@ -329,7 +342,7 @@ export const ProductGoalModal: React.FC<ProductGoalModalProps> = ({
                   value={formData.description}
                   onChange={(e) => onFieldChange('description', e.target.value)}
                   onBlur={(e) => onFieldBlur('description', e.target.value)}
-                  placeholder="Describe the problem you're solving, who benefits, and why it matters..."
+                  placeholder={t('productGoals.descriptionPlaceholder') as string}
                   className={
                     formErrors.description && touchedFields.description ? styles['input-error'] : ''
                   }
@@ -351,7 +364,9 @@ export const ProductGoalModal: React.FC<ProductGoalModalProps> = ({
 
               {/* Strategic Alignment */}
               <div className={styles['form-group']}>
-                <label htmlFor="strategic-alignment">Strategic Alignment (Optional)</label>
+                <label htmlFor="strategic-alignment">
+                  {t('productGoals.strategicAlignment') as string}
+                </label>
                 <select
                   id="strategic-alignment"
                   value={formData.strategicAlignment}
@@ -364,7 +379,7 @@ export const ProductGoalModal: React.FC<ProductGoalModalProps> = ({
                   ))}
                 </select>
                 <span className={styles['field-hint']}>
-                  Linking goals to strategic objectives helps with prioritization and reporting
+                  {t('productGoals.strategicAlignmentHint') as string}
                 </span>
               </div>
 
@@ -373,7 +388,8 @@ export const ProductGoalModal: React.FC<ProductGoalModalProps> = ({
                 className={`${styles['form-group']} ${formErrors.targetDate && touchedFields.targetDate ? styles['has-error'] : ''}`}
               >
                 <label htmlFor="target-date">
-                  Target Date <span className={styles['required']}>*</span>
+                  {t('productGoals.targetDateLabel') as string}{' '}
+                  <span className={styles['required']}>*</span>
                 </label>
                 <input
                   id="target-date"
@@ -406,7 +422,8 @@ export const ProductGoalModal: React.FC<ProductGoalModalProps> = ({
               >
                 <div className={styles['label-row']}>
                   <label htmlFor="success-metrics">
-                    Success Metrics <span className={styles['required']}>*</span>
+                    {t('productGoals.successMetricsLabel') as string}{' '}
+                    <span className={styles['required']}>*</span>
                   </label>
                   <CharacterCounter
                     current={formData.successMetrics.length}
@@ -418,21 +435,21 @@ export const ProductGoalModal: React.FC<ProductGoalModalProps> = ({
                   />
                 </div>
                 <HelpPanel
-                  title="defining success metrics"
+                  title={t('productGoals.successMetricsHelpPanelTitle') as string}
                   tips={[
-                    'Use specific, measurable criteria (SMART goals)',
-                    'Include both quantitative and qualitative measures when applicable',
-                    'Define metrics that directly indicate goal achievement',
-                    'Set realistic but challenging targets',
+                    t('productGoals.successMetricsHelpPanelTip1') as string,
+                    t('productGoals.successMetricsHelpPanelTip2') as string,
+                    t('productGoals.successMetricsHelpPanelTip3') as string,
+                    t('productGoals.successMetricsHelpPanelTip4') as string,
                   ]}
                   examples={{
                     good: {
-                      label: 'Good',
-                      text: 'Achieve 25% increase in mobile app daily active users; reduce offline data sync time to under 5 seconds; maintain 4.5+ star app store rating',
+                      label: t('productGoals.successMetricsHelpPanelGoodLabel') as string,
+                      text: t('productGoals.successMetricsHelpPanelGoodText') as string,
                     },
                     avoid: {
-                      label: 'Avoid',
-                      text: 'Make users happy and improve performance',
+                      label: t('productGoals.successMetricsHelpPanelAvoidLabel') as string,
+                      text: t('productGoals.successMetricsHelpPanelAvoidText') as string,
                     },
                   }}
                 />
@@ -442,7 +459,7 @@ export const ProductGoalModal: React.FC<ProductGoalModalProps> = ({
                   value={formData.successMetrics}
                   onChange={(e) => onFieldChange('successMetrics', e.target.value)}
                   onBlur={(e) => onFieldBlur('successMetrics', e.target.value)}
-                  placeholder="Define measurable success criteria... e.g., 25% increase in DAU, 4.5+ app rating, <5s sync time"
+                  placeholder={t('productGoals.successMetricsPlaceholder') as string}
                   className={
                     formErrors.successMetrics && touchedFields.successMetrics
                       ? styles['input-error']
@@ -473,7 +490,7 @@ export const ProductGoalModal: React.FC<ProductGoalModalProps> = ({
               onClick={handleClose}
               disabled={isSubmitting}
             >
-              Cancel
+              {t('productGoals.cancel') as string}
             </button>
             <button
               type="submit"
@@ -482,20 +499,24 @@ export const ProductGoalModal: React.FC<ProductGoalModalProps> = ({
               }`}
               onClick={onSubmit}
               disabled={!isFormValid || isSubmitting}
-              title={!isFormValid ? 'Please fill in all required fields' : ''}
+              title={!isFormValid ? (t('productGoals.fillAllRequired') as string) : ''}
               aria-busy={isSubmitting}
             >
               {isSubmitting ? (
-                <span>{isEditMode ? 'Saving...' : 'Creating...'}</span>
+                <span>
+                  {isEditMode
+                    ? (t('productGoals.saving') as string)
+                    : (t('productGoals.creating') as string)}
+                </span>
               ) : isEditMode ? (
                 <>
                   <SaveIcon size={16} />
-                  <span>Save Changes</span>
+                  <span>{t('productGoals.saveChanges') as string}</span>
                 </>
               ) : (
                 <>
                   <PlusIcon size={16} />
-                  <span>Create Goal</span>
+                  <span>{t('productGoals.createGoal') as string}</span>
                 </>
               )}
             </button>

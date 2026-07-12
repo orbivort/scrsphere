@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { AxiosError } from 'axios';
 
 import { apiService } from '../../services';
@@ -110,6 +111,7 @@ const parseTeamError = (error: Error | null, teamId: string | undefined): TeamEr
 };
 
 export const TeamManagement: React.FC = () => {
+  const { t } = useTranslation('team');
   const { currentTeam, setCurrentTeam, userTeamsWithRoles } = useTeamStore();
   const { user } = useAuthStore();
   const navigate = useNavigate();
@@ -567,16 +569,13 @@ export const TeamManagement: React.FC = () => {
                 <SparklesIcon size={80} />
               </div>
               <h1 className={styles['welcome-title']}>
-                Welcome to Scrumooth, {user?.firstName ?? 'there'}!
+                {t('welcome.title', { name: user?.firstName ?? 'there' })}
               </h1>
-              <p className={styles['welcome-subtitle']}>
-                Your agile journey starts here. Choose your path below to get started with your team
-                collaboration experience.
-              </p>
+              <p className={styles['welcome-subtitle']}>{t('welcome.subtitle')}</p>
             </div>
 
             <div className={styles['role-selection-section']}>
-              <h2 className={styles['role-section-title']}>Select Your Role to Continue</h2>
+              <h2 className={styles['role-section-title']}>{t('welcome.selectRole')}</h2>
 
               <div className={styles['role-card-leadership']}>
                 <div className={styles['role-card-header']}>
@@ -585,7 +584,7 @@ export const TeamManagement: React.FC = () => {
                   </div>
                   <div className={styles['role-badge-leadership']}>Leadership</div>
                 </div>
-                <h3 className={styles['role-title']}>Scrum Master or Product Owner</h3>
+                <h3 className={styles['role-title']}>{t('leadership.title')}</h3>
                 <p className={styles['role-description']}>
                   As an agile leader, you have the authority to create and manage teams. Take charge
                   of your project&apos;s success by establishing your team workspace.
@@ -597,7 +596,7 @@ export const TeamManagement: React.FC = () => {
                     type="button"
                   >
                     <BriefcaseIcon size={24} />
-                    <span>Create New Team</span>
+                    <span>{t('leadership.createTeam')}</span>
                     <ArrowRightIcon size={20} />
                   </button>
                 </div>
@@ -606,17 +605,17 @@ export const TeamManagement: React.FC = () => {
                   <div className={styles['steps-indicator']}>
                     <div className={styles['step-item']}>
                       <span className={styles['step-number']}>1</span>
-                      <span>Create team</span>
+                      <span>{t('leadership.quickStart.step1')}</span>
                     </div>
                     <div className={styles['step-arrow']} aria-hidden="true" />
                     <div className={styles['step-item']}>
                       <span className={styles['step-number']}>2</span>
-                      <span>Invite members</span>
+                      <span>{t('leadership.quickStart.step2')}</span>
                     </div>
                     <div className={styles['step-arrow']} aria-hidden="true" />
                     <div className={styles['step-item']}>
                       <span className={styles['step-number']}>3</span>
-                      <span>Start sprint</span>
+                      <span>{t('leadership.quickStart.step3')}</span>
                     </div>
                   </div>
                 </div>
@@ -629,28 +628,22 @@ export const TeamManagement: React.FC = () => {
                   </div>
                   <div className={styles['role-badge-developer']}>Team Member</div>
                 </div>
-                <h3 className={styles['role-title']}>Developer</h3>
-                <p className={styles['role-description']}>
-                  Join an existing Scrum team to collaborate on sprints, track your work, and
-                  contribute to agile ceremonies.
-                </p>
+                <h3 className={styles['role-title']}>{t('developer.title')}</h3>
+                <p className={styles['role-description']}>{t('developer.description')}</p>
                 <div className={styles['developer-info-box']}>
                   <div className={styles['info-box-header']}>
                     <ShieldIcon size={24} />
-                    <h4>How to Join a Team</h4>
+                    <h4>{t('developer.howToJoin.title')}</h4>
                   </div>
                   <ul className={styles['info-box-list']}>
                     <li>
-                      <strong>Team invitations are sent by:</strong>
-                      <span>Scrum Masters or Product Owners only</span>
+                      <strong>{t('developer.howToJoin.invitationsSentBy')}</strong>
                     </li>
                     <li>
-                      <strong>Check your notifications:</strong>
-                      <span>Look for pending team invitations</span>
+                      <strong>{t('developer.howToJoin.checkNotifications')}</strong>
                     </li>
                     <li>
-                      <strong>Contact your leadership:</strong>
-                      <span>Reach out to your Scrum Master or Product Owner</span>
+                      <strong>{t('developer.howToJoin.contactLeadership')}</strong>
                     </li>
                   </ul>
                   <button
@@ -659,7 +652,7 @@ export const TeamManagement: React.FC = () => {
                     type="button"
                   >
                     <MailIcon size={20} />
-                    <span>Check Invitations</span>
+                    <span>{t('developer.checkInvitations')}</span>
                   </button>
                 </div>
               </div>
@@ -672,29 +665,29 @@ export const TeamManagement: React.FC = () => {
                   <div className={styles['feature-icon']}>
                     <UsersIcon size={24} />
                   </div>
-                  <h4>Team Collaboration</h4>
-                  <p>Work together with role-based permissions and real-time updates</p>
+                  <h4>{t('capabilities.teamCollaboration')}</h4>
+                  <p>{t('capabilities.teamCollaborationDesc')}</p>
                 </div>
                 <div className={styles['feature-card']}>
                   <div className={styles['feature-icon']}>
                     <ZapIcon size={24} />
                   </div>
-                  <h4>Sprint Planning</h4>
-                  <p>Plan iterations, estimate stories, and manage your backlog</p>
+                  <h4>{t('capabilities.sprintPlanning')}</h4>
+                  <p>{t('capabilities.sprintPlanningDesc')}</p>
                 </div>
                 <div className={styles['feature-card']}>
                   <div className={styles['feature-icon']}>
                     <ChartIcon size={24} />
                   </div>
-                  <h4>Progress Tracking</h4>
-                  <p>Monitor velocity, burndown charts, and team metrics</p>
+                  <h4>{t('capabilities.progressTracking')}</h4>
+                  <p>{t('capabilities.progressTrackingDesc')}</p>
                 </div>
                 <div className={styles['feature-card']}>
                   <div className={styles['feature-icon']}>
                     <RocketIcon size={24} />
                   </div>
-                  <h4>Agile Ceremonies</h4>
-                  <p>Run daily scrums, retrospectives, and sprint reviews</p>
+                  <h4>{t('capabilities.agileCeremonies')}</h4>
+                  <p>{t('capabilities.agileCeremoniesDesc')}</p>
                 </div>
               </div>
             </div>
@@ -704,7 +697,7 @@ export const TeamManagement: React.FC = () => {
                 <LightbulbIcon size={20} />
               </div>
               <div className={styles['help-content']}>
-                <h4>Need Help Getting Started?</h4>
+                <h4>{t('help.title')}</h4>
                 <p>
                   If you&apos;re unsure about your role or need assistance, contact your
                   organization administrator or check with your project manager.
@@ -731,7 +724,7 @@ export const TeamManagement: React.FC = () => {
             onClick={() => refetchTeam()}
             type="button"
           >
-            Try Again
+            {t('errorStates.tryAgain')}
           </button>
         </div>
       </div>
@@ -743,7 +736,7 @@ export const TeamManagement: React.FC = () => {
       <div className={styles['team-management']}>
         <div className={styles['team-loading']} role="status" aria-live="polite">
           <div className={styles['loading-spinner']} aria-hidden="true" />
-          <p>Loading team information...</p>
+          <p>{t('loading')}</p>
         </div>
       </div>
     );
@@ -757,9 +750,9 @@ export const TeamManagement: React.FC = () => {
             <span className={styles['page-title-icon']}>
               <UsersIcon size={24} />
             </span>
-            Team
+            {t('title')}
           </h1>
-          <p className={styles['page-subtitle']}>Manage team members and team standards</p>
+          <p className={styles['page-subtitle']}>{t('subtitle')}</p>
         </div>
         <div className={styles['header-right']}>
           <TeamSwitcher />
@@ -788,17 +781,15 @@ export const TeamManagement: React.FC = () => {
       ) : (
         <section className={styles['team-info-card']}>
           <div className={styles['team-info-header']}>
-            <h2>Team Information Unavailable</h2>
+            <h2>{t('teamInfo.unavailable')}</h2>
           </div>
-          <p className={styles['team-description']}>
-            Unable to load team details. Please try refreshing the page.
-          </p>
+          <p className={styles['team-description']}>{t('teamInfo.unableToLoad')}</p>
         </section>
       )}
 
       <section className={styles['team-members']} aria-labelledby="members-heading">
         <div className={styles['members-header']}>
-          <h3 id="members-heading">Team Members</h3>
+          <h3 id="members-heading">{t('members.title')}</h3>
           {canInviteMembers() && (
             <button
               className={`${styles.button} ${styles['button-primary']}`}
@@ -807,10 +798,10 @@ export const TeamManagement: React.FC = () => {
               type="button"
             >
               {addTeamMemberMutation.isPending ? (
-                'Adding...'
+                t('members.adding')
               ) : (
                 <>
-                  <PlusIcon size={16} /> Invite Member
+                  <PlusIcon size={16} /> {t('members.inviteMember')}
                 </>
               )}
             </button>
@@ -823,7 +814,7 @@ export const TeamManagement: React.FC = () => {
               <SearchIcon size={18} />
               <input
                 type="text"
-                placeholder="Search by name or email..."
+                placeholder={t('members.searchPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className={styles['search-input']}
@@ -847,10 +838,10 @@ export const TeamManagement: React.FC = () => {
                 className={styles['filter-select']}
                 aria-label="Filter by role"
               >
-                <option value="all">All Roles</option>
-                <option value="product_owner">Product Owner</option>
-                <option value="scrum_master">Scrum Master</option>
-                <option value="developer">Developer</option>
+                <option value="all">{t('members.filterOptions.allRoles')}</option>
+                <option value="product_owner">{t('members.filterOptions.productOwner')}</option>
+                <option value="scrum_master">{t('members.filterOptions.scrumMaster')}</option>
+                <option value="developer">{t('members.filterOptions.developer')}</option>
               </select>
               <select
                 value={sortBy}
@@ -858,9 +849,9 @@ export const TeamManagement: React.FC = () => {
                 className={styles['filter-select']}
                 aria-label="Sort members by"
               >
-                <option value="name">Sort by Name</option>
-                <option value="role">Sort by Role</option>
-                <option value="joined">Sort by Joined</option>
+                <option value="name">{t('members.sortOptions.byName')}</option>
+                <option value="role">{t('members.sortOptions.byRole')}</option>
+                <option value="joined">{t('members.sortOptions.byJoined')}</option>
               </select>
               <div className={styles['view-toggle']} role="group" aria-label="View mode">
                 <button
@@ -868,7 +859,7 @@ export const TeamManagement: React.FC = () => {
                   className={`${styles['view-toggle-btn']} ${viewMode === 'card' ? styles.active : ''}`}
                   onClick={() => setViewMode('card')}
                   aria-pressed={viewMode === 'card'}
-                  aria-label="Card view"
+                  aria-label={t('members.viewToggles.cardView')}
                 >
                   <GridViewIcon size={18} />
                 </button>
@@ -877,7 +868,7 @@ export const TeamManagement: React.FC = () => {
                   className={`${styles['view-toggle-btn']} ${viewMode === 'list' ? styles.active : ''}`}
                   onClick={() => setViewMode('list')}
                   aria-pressed={viewMode === 'list'}
-                  aria-label="List view"
+                  aria-label={t('members.viewToggles.listView')}
                 >
                   <ListViewIcon size={18} />
                 </button>
@@ -888,7 +879,7 @@ export const TeamManagement: React.FC = () => {
 
         {searchQuery || roleFilter !== 'all' ? (
           <div className={styles['filter-results']} role="status" aria-live="polite">
-            Showing {filteredCount} of {memberCount} member{memberCount !== 1 ? 's' : ''}
+            {t('members.filterResults', { shown: filteredCount, total: memberCount })}
             {searchQuery && (
               <button
                 type="button"
@@ -898,7 +889,7 @@ export const TeamManagement: React.FC = () => {
                   setRoleFilter('all');
                 }}
               >
-                Clear filters
+                {t('members.clearFilters')}
               </button>
             )}
           </div>
@@ -930,7 +921,7 @@ export const TeamManagement: React.FC = () => {
           </div>
         ) : memberCount > 0 ? (
           <div className={styles['no-results']} role="status">
-            <p>No members match your search criteria.</p>
+            <p>{t('members.noMatchSearch')}</p>
             <button
               type="button"
               className={styles['clear-filters-btn']}
@@ -939,12 +930,12 @@ export const TeamManagement: React.FC = () => {
                 setRoleFilter('all');
               }}
             >
-              Clear all filters
+              {t('members.clearAllFilters')}
             </button>
           </div>
         ) : (
           <div className={styles['members-empty']} role="status">
-            <p>No team members found.</p>
+            <p>{t('members.empty')}</p>
             {canInviteMembers() && (
               <button
                 className={`${styles.button} ${styles['button-primary']}`}
@@ -952,7 +943,9 @@ export const TeamManagement: React.FC = () => {
                 disabled={addTeamMemberMutation.isPending}
                 type="button"
               >
-                {addTeamMemberMutation.isPending ? 'Adding...' : 'Add First Member'}
+                {addTeamMemberMutation.isPending
+                  ? t('members.adding')
+                  : t('members.addFirstMember')}
               </button>
             )}
           </div>
@@ -966,7 +959,7 @@ export const TeamManagement: React.FC = () => {
           </div>
           <div className={styles['stat-content']}>
             <div className={styles['stat-value']}>{completedSprintsCount}</div>
-            <div className={styles['stat-label']}>Completed Sprints</div>
+            <div className={styles['stat-label']}>{t('teamStats.completedSprints')}</div>
           </div>
         </div>
         <div className={styles['stat-card']}>
@@ -975,7 +968,7 @@ export const TeamManagement: React.FC = () => {
           </div>
           <div className={styles['stat-content']}>
             <div className={styles['stat-value']}>{totalStoryPointsCompleted}</div>
-            <div className={styles['stat-label']}>Story Points Completed</div>
+            <div className={styles['stat-label']}>{t('teamStats.storyPointsCompleted')}</div>
           </div>
         </div>
         <div className={styles['stat-card']}>
@@ -984,7 +977,7 @@ export const TeamManagement: React.FC = () => {
           </div>
           <div className={styles['stat-content']}>
             <div className={styles['stat-value']}>{avgVelocity.toFixed(1)}</div>
-            <div className={styles['stat-label']}>Avg Velocity</div>
+            <div className={styles['stat-label']}>{t('teamStats.avgVelocity')}</div>
           </div>
         </div>
         <div className={styles['stat-card']}>
@@ -993,7 +986,7 @@ export const TeamManagement: React.FC = () => {
           </div>
           <div className={styles['stat-content']}>
             <div className={styles['stat-value']}>{sprintSuccessRate}%</div>
-            <div className={styles['stat-label']}>Sprint Success Rate</div>
+            <div className={styles['stat-label']}>{t('teamStats.sprintSuccessRate')}</div>
           </div>
         </div>
       </section>
@@ -1011,7 +1004,7 @@ export const TeamManagement: React.FC = () => {
               <span className={styles['modal-header-icon']} aria-hidden="true">
                 <UserXIcon size={24} />
               </span>
-              <h3 id="delete-modal-title">Remove Team Member</h3>
+              <h3 id="delete-modal-title">{t('deleteModal.title')}</h3>
             </header>
             <div className={styles['modal-body']}>
               {deleteError && (
@@ -1025,15 +1018,11 @@ export const TeamManagement: React.FC = () => {
               {!deleteError && (
                 <>
                   <p>
-                    Are you sure you want to remove{' '}
-                    <strong>
-                      {memberToDelete.user?.firstName} {memberToDelete.user?.lastName}
-                    </strong>{' '}
-                    from the team?
+                    {t('deleteModal.confirmation', {
+                      name: `${memberToDelete.user?.firstName} ${memberToDelete.user?.lastName}`,
+                    })}
                   </p>
-                  <p className={styles['modal-warning']}>
-                    This action cannot be undone. The user will lose access to all team resources.
-                  </p>
+                  <p className={styles['modal-warning']}>{t('deleteModal.warning')}</p>
                 </>
               )}
             </div>
@@ -1045,7 +1034,7 @@ export const TeamManagement: React.FC = () => {
                 onClick={handleCancelDelete}
                 disabled={removeTeamMemberMutation.isPending}
               >
-                {deleteError ? 'Close' : 'Cancel'}
+                {deleteError ? t('deleteModal.close') : t('deleteModal.cancel')}
               </button>
               <button
                 type="button"
@@ -1054,11 +1043,11 @@ export const TeamManagement: React.FC = () => {
                 disabled={removeTeamMemberMutation.isPending || !!deleteError}
               >
                 {removeTeamMemberMutation.isPending ? (
-                  'Removing...'
+                  t('deleteModal.removing')
                 ) : (
                   <>
                     <TrashIcon size={16} />
-                    Remove Member
+                    {t('deleteModal.removeMember')}
                   </>
                 )}
               </button>
@@ -1084,7 +1073,7 @@ export const TeamManagement: React.FC = () => {
               <span className={styles['modal-header-icon']} aria-hidden="true">
                 <UserPlusIcon size={24} />
               </span>
-              <h3 id="invite-modal-title">Invite Team Member</h3>
+              <h3 id="invite-modal-title">{t('inviteModal.title')}</h3>
             </header>
             <div className={styles['modal-body']}>
               {inviteError && (
@@ -1107,12 +1096,12 @@ export const TeamManagement: React.FC = () => {
                 <div className={styles['form-row']}>
                   <div className={styles['form-group']}>
                     <label htmlFor="member-email" className={styles['form-label']}>
-                      Email Address
+                      {t('inviteModal.emailLabel')}
                     </label>
                     <input
                       id="member-email"
                       type="email"
-                      placeholder="Enter email address"
+                      placeholder={t('inviteModal.emailPlaceholder')}
                       value={newMemberEmail}
                       onChange={(e) => {
                         setNewMemberEmail(e.target.value);
@@ -1126,7 +1115,7 @@ export const TeamManagement: React.FC = () => {
                   </div>
                   <div className={styles['form-group']}>
                     <label htmlFor="member-role" className={styles['form-label']}>
-                      Role
+                      {t('inviteModal.role')}
                     </label>
                     <select
                       id="member-role"
@@ -1139,9 +1128,11 @@ export const TeamManagement: React.FC = () => {
                       className={styles['role-select']}
                       disabled={addTeamMemberMutation.isPending}
                     >
-                      <option value="developer">Developer</option>
-                      <option value="scrum_master">Scrum Master</option>
-                      <option value="product_owner">Product Owner</option>
+                      <option value="developer">{t('members.filterOptions.developer')}</option>
+                      <option value="scrum_master">{t('members.filterOptions.scrumMaster')}</option>
+                      <option value="product_owner">
+                        {t('members.filterOptions.productOwner')}
+                      </option>
                     </select>
                   </div>
                 </div>
@@ -1155,7 +1146,7 @@ export const TeamManagement: React.FC = () => {
                 onClick={handleCancelInvite}
                 disabled={addTeamMemberMutation.isPending}
               >
-                Cancel
+                {t('inviteModal.cancel')}
               </button>
               <button
                 type="submit"
@@ -1164,10 +1155,10 @@ export const TeamManagement: React.FC = () => {
                 disabled={addTeamMemberMutation.isPending}
               >
                 {addTeamMemberMutation.isPending ? (
-                  'Adding...'
+                  t('inviteModal.adding')
                 ) : (
                   <>
-                    <SendIcon size={16} /> Send Invite
+                    <SendIcon size={16} /> {t('inviteModal.sendInvite')}
                   </>
                 )}
               </button>
@@ -1180,8 +1171,8 @@ export const TeamManagement: React.FC = () => {
         isOpen={showInviteUnsavedWarning}
         onConfirm={handleInviteUnsavedConfirm}
         onCancel={handleInviteUnsavedCancel}
-        title="Unsent Invitation"
-        message="You have an unsent team invitation. Are you sure you want to discard it?"
+        title={t('inviteModal.unsentTitle')}
+        message={t('inviteModal.unsentMessage')}
       />
     </div>
   );

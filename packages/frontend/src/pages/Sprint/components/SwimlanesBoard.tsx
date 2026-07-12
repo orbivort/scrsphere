@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import {
   TaskStatus as TaskStatusEnum,
@@ -19,6 +20,15 @@ import { useVirtualScroll, shouldEnableVirtualization } from '../../../hooks/use
 
 import styles from './SwimlanesBoard.module.css';
 import { TaskCard } from './TaskCard';
+
+/**
+ * Mapping from TaskStatus enum values to i18n key paths for status labels
+ */
+const STATUS_LABEL_KEYS: Record<TaskStatus, string> = {
+  [TaskStatusEnum.TODO]: 'taskStatus.todo',
+  [TaskStatusEnum.IN_PROGRESS]: 'taskStatus.inProgress',
+  [TaskStatusEnum.DONE]: 'taskStatus.done',
+};
 
 export interface SwimlanesBoardProps {
   groupedBySwimlane: Record<string, Task[]> | null;
@@ -87,20 +97,6 @@ interface VirtualizedTaskCellProps {
   onBlur: () => void;
 }
 
-/**
- * Format status for display (e.g., "TODO" -> "To Do")
- */
-const formatStatus = (status: TaskStatus): string => {
-  switch (status) {
-    case TaskStatusEnum.TODO:
-      return 'To Do';
-    case TaskStatusEnum.IN_PROGRESS:
-      return 'In Progress';
-    case TaskStatusEnum.DONE:
-      return 'Done';
-  }
-};
-
 const VirtualizedTaskCell: React.FC<VirtualizedTaskCellProps> = ({
   tasks,
   label,
@@ -120,6 +116,7 @@ const VirtualizedTaskCell: React.FC<VirtualizedTaskCellProps> = ({
   onFocus,
   onBlur,
 }) => {
+  const { t } = useTranslation('sprint');
   const enableVirtualization = shouldEnableVirtualization(tasks.length, VIRTUALIZATION_THRESHOLD);
 
   const { virtualItems, totalSize, containerRef } = useVirtualScroll(
@@ -137,7 +134,7 @@ const VirtualizedTaskCell: React.FC<VirtualizedTaskCellProps> = ({
     return classes.join(' ');
   };
 
-  const statusLabel = formatStatus(status);
+  const statusLabel = t(STATUS_LABEL_KEYS[status] as never);
 
   if (enableVirtualization) {
     return (
@@ -147,7 +144,11 @@ const VirtualizedTaskCell: React.FC<VirtualizedTaskCellProps> = ({
         onDragOver={(e) => onDragOver(e, status)}
         onDragLeave={onDragLeave}
         role="cell"
-        aria-label={`${label} - ${statusLabel}: ${tasks.length} tasks`}
+        aria-label={t('swimlanes.cellAriaLabel', {
+          label,
+          status: statusLabel,
+          count: tasks.length,
+        })}
       >
         <div
           ref={containerRef}
@@ -200,7 +201,7 @@ const VirtualizedTaskCell: React.FC<VirtualizedTaskCellProps> = ({
       onDragOver={(e) => onDragOver(e, status)}
       onDragLeave={onDragLeave}
       role="cell"
-      aria-label={`${label} - ${statusLabel}: ${tasks.length} tasks`}
+      aria-label={t('swimlanes.cellAriaLabel', { label, status: statusLabel, count: tasks.length })}
     >
       {tasks.map((task) => (
         <TaskCard
@@ -254,13 +255,15 @@ export const SwimlanesBoard = React.memo<SwimlanesBoardProps>(
     onFocus,
     onBlur,
   }) => {
+    const { t } = useTranslation('sprint');
+
     if (swimlaneGroup === 'none' || !groupedBySwimlane) {
       return (
         <div className={styles['swimlanes-empty']} role="status">
           <ChartIcon size={48} aria-hidden="true" />
-          <h3 className={styles['swimlanes-empty-title']}>No Grouping Selected</h3>
+          <h3 className={styles['swimlanes-empty-title']}>{t('swimlanes.noGroupingSelected')}</h3>
           <p className={styles['swimlanes-empty-description']}>
-            Select a grouping option from the dropdown above to view tasks in swimlanes.
+            {t('swimlanes.selectGroupingOption')}
           </p>
         </div>
       );
@@ -269,7 +272,10 @@ export const SwimlanesBoard = React.memo<SwimlanesBoardProps>(
     const getSwimlaneLabel = (key: string): { label: string; subtitle?: string } => {
       if (swimlaneGroup === 'assignee') {
         if (key === 'unassigned') {
-          return { label: 'Unassigned', subtitle: 'Tasks without an assignee' };
+          return {
+            label: t('swimlanes.unassigned'),
+            subtitle: t('swimlanes.tasksWithoutAssignee'),
+          };
         }
         const member = teamMembers.find((m) => m.userId === key);
         if (member?.user) {
@@ -278,16 +284,16 @@ export const SwimlanesBoard = React.memo<SwimlanesBoardProps>(
             subtitle: member.role,
           };
         }
-        return { label: 'Unknown User' };
+        return { label: t('swimlanes.unknownUser') };
       } else {
         const item = sprintItems.find((i) => i.id === key);
         if (item) {
           return {
             label: item.title,
-            subtitle: `${item.storyPoints ?? 0} story points`,
+            subtitle: t('swimlanes.storyPointsLabel', { points: item.storyPoints ?? 0 }),
           };
         }
-        return { label: 'Unknown Item' };
+        return { label: t('swimlanes.unknownItem') };
       }
     };
 
@@ -323,17 +329,23 @@ export const SwimlanesBoard = React.memo<SwimlanesBoardProps>(
     });
 
     return (
-      <div className={styles['swimlanes-container']} role="table" aria-label="Swimlanes view">
+      <div
+        className={styles['swimlanes-container']}
+        role="table"
+        aria-label={t('swimlanes.swimlanesView')}
+      >
         <div className={styles['swimlanes-header']} role="row">
           <div className={styles['swimlane-label-header']} role="columnheader">
-            {swimlaneGroup === 'assignee' ? 'Assignee' : 'Backlog Item'}
+            {swimlaneGroup === 'assignee'
+              ? t('swimlanes.assigneeHeader')
+              : t('swimlanes.backlogItemHeader')}
           </div>
           <div
             className={`${styles['swimlane-column-header']} ${styles.todo} ${dropTargetColumn === TaskStatusEnum.TODO ? styles['drop-target'] : ''} ${keyboardGrabState === 'grabbed' && keyboardDropTargetStatus === TaskStatusEnum.TODO ? styles['keyboard-drop-target'] : ''}`}
             role="columnheader"
             aria-dropeffect={keyboardGrabState === 'grabbed' ? 'move' : 'none'}
           >
-            <ClipboardListIcon size={14} aria-hidden="true" /> TO DO
+            <ClipboardListIcon size={14} aria-hidden="true" /> {t('taskStatus.todo').toUpperCase()}
             <span className={styles['column-total']}>{tasksByStatus.todo.length}</span>
           </div>
           <div
@@ -341,7 +353,7 @@ export const SwimlanesBoard = React.memo<SwimlanesBoardProps>(
             role="columnheader"
             aria-dropeffect={keyboardGrabState === 'grabbed' ? 'move' : 'none'}
           >
-            <ZapIcon size={14} aria-hidden="true" /> IN PROGRESS
+            <ZapIcon size={14} aria-hidden="true" /> {t('taskStatus.inProgress').toUpperCase()}
             <span className={styles['column-total']}>{tasksByStatus.in_progress.length}</span>
           </div>
           <div
@@ -349,7 +361,7 @@ export const SwimlanesBoard = React.memo<SwimlanesBoardProps>(
             role="columnheader"
             aria-dropeffect={keyboardGrabState === 'grabbed' ? 'move' : 'none'}
           >
-            <CheckCircleIcon size={14} aria-hidden="true" /> DONE
+            <CheckCircleIcon size={14} aria-hidden="true" /> {t('taskStatus.done').toUpperCase()}
             <span className={styles['column-total']}>{tasksByStatus.done.length}</span>
           </div>
         </div>
@@ -459,9 +471,9 @@ export const SwimlanesBoard = React.memo<SwimlanesBoardProps>(
         {sortedKeys.length === 0 && (
           <div className={styles['swimlanes-empty']} role="status">
             <MessageSquareIcon size={48} aria-hidden="true" />
-            <h3 className={styles['swimlanes-empty-title']}>No Tasks Found</h3>
+            <h3 className={styles['swimlanes-empty-title']}>{t('swimlanes.noTasksFound')}</h3>
             <p className={styles['swimlanes-empty-description']}>
-              There are no tasks to display in swimlanes view.
+              {t('swimlanes.noTasksInSwimlanes')}
             </p>
           </div>
         )}

@@ -2,6 +2,7 @@
 import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import { apiService } from '../../services';
 import { useTeamStore, useAuthStore } from '../../store';
@@ -31,12 +32,11 @@ import { CreateActionItemModal } from './CreateActionItemModal';
 
 import { AttendeesSection, type AttendeeFormData } from '@/components/AttendeesSection';
 
-const BacklogHint: React.FC = () => (
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- TFunction signature varies by i18next version
+const BacklogHint: React.FC<{ t: any }> = ({ t }) => (
   <div className={styles['backlog-hint']}>
     <InfoIcon className={styles['hint-icon']} />
-    <span className={styles['hint-text']}>
-      This item will be present in the Product Backlog page for action.
-    </span>
+    <span className={styles['hint-text']}>{t('backlogHint')}</span>
   </div>
 );
 
@@ -56,6 +56,7 @@ export const SprintRetrospective: React.FC = () => {
   const { currentTeam } = useTeamStore();
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
+  const { t } = useTranslation('retrospective');
 
   const [activeCategory, setActiveCategory] = useState<RetrospectiveCategory>(
     RetrospectiveCategory.WENT_WELL
@@ -152,15 +153,15 @@ export const SprintRetrospective: React.FC = () => {
         message = error.message;
 
         if (error.message.includes('Network Error') || error.message.includes('fetch')) {
-          message = 'Network error. Please check your internet connection.';
+          message = t('errors.network');
         } else if (error.message.includes('404')) {
-          message = 'Resource not found. It may have been deleted.';
+          message = t('errors.notFound');
         } else if (error.message.includes('401') || error.message.includes('403')) {
-          message = 'You are not authorized to perform this action.';
+          message = t('errors.unauthorized');
         } else if (error.message.includes('500')) {
-          message = 'Server error. Please try again later.';
+          message = t('errors.serverError');
         } else if (error.message.includes('400')) {
-          message = 'Invalid request. Please check your input and try again.';
+          message = t('errors.badRequest');
         }
 
         interface ApiErrorResponse {
@@ -191,7 +192,7 @@ export const SprintRetrospective: React.FC = () => {
         logger.error('Error', undefined, { error });
       }
     },
-    [showNotification]
+    [showNotification, t]
   );
 
   const handleSuccess = useCallback(
@@ -271,7 +272,7 @@ export const SprintRetrospective: React.FC = () => {
 
   useEffect(() => {
     if (fetchError) {
-      handleError(fetchError, 'Failed to load retrospective data. Please refresh the page.');
+      handleError(fetchError, t('errors.notLoaded'));
     }
   }, [fetchError, handleError]);
 
@@ -284,11 +285,11 @@ export const SprintRetrospective: React.FC = () => {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.bySprint(sprintId) });
-      handleSuccess('Item added successfully');
+      handleSuccess(t('toast.itemAdded'));
     },
     onError: (error) => {
       setUiState((prev) => ({ ...prev, showAddItem: true }));
-      handleError(error, 'Failed to add item');
+      handleError(error, t('toast.itemAddFailed'));
     },
   });
 
@@ -334,7 +335,7 @@ export const SprintRetrospective: React.FC = () => {
       if (context?.previousData) {
         queryClient.setQueryData(queryKeys.retrospective.bySprint(sprintId), context.previousData);
       }
-      handleError(error, 'Failed to vote');
+      handleError(error, t('toast.voteFailed'));
     },
     onSettled: () => {
       // Always refetch after error or success to ensure consistency
@@ -384,7 +385,7 @@ export const SprintRetrospective: React.FC = () => {
       if (context?.previousData) {
         queryClient.setQueryData(queryKeys.retrospective.bySprint(sprintId), context.previousData);
       }
-      handleError(error, 'Failed to remove vote');
+      handleError(error, t('toast.removeVoteFailed'));
     },
     onSettled: () => {
       // Always refetch after error or success to ensure consistency
@@ -397,9 +398,9 @@ export const SprintRetrospective: React.FC = () => {
       apiService.deleteRetrospectiveItem(retrospective?.id ?? '', itemId),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.bySprint(sprintId) });
-      handleSuccess('Item deleted successfully');
+      handleSuccess(t('toast.itemDeleted'));
     },
-    onError: (error) => handleError(error, 'Failed to delete item'),
+    onError: (error) => handleError(error, t('toast.itemDeleteFailed')),
   });
 
   const updateItemMutation = useMutation({
@@ -408,10 +409,10 @@ export const SprintRetrospective: React.FC = () => {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.bySprint(sprintId) });
       setEditState((prev) => ({ ...prev, editingItemId: null, editContent: '' }));
-      handleSuccess('Item updated successfully');
+      handleSuccess(t('toast.itemUpdated'));
     },
     onError: (error) => {
-      handleError(error, 'Failed to update item');
+      handleError(error, t('toast.itemUpdateFailed'));
     },
   });
 
@@ -429,11 +430,11 @@ export const SprintRetrospective: React.FC = () => {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.bySprint(sprintId) });
-      handleSuccess('Action item created successfully');
+      handleSuccess(t('toast.actionItemCreated'));
     },
     onError: (error) => {
       setUiState((prev) => ({ ...prev, showActionForm: true }));
-      handleError(error, 'Failed to create action item');
+      handleError(error, t('toast.actionItemCreateFailed'));
     },
   });
 
@@ -442,9 +443,9 @@ export const SprintRetrospective: React.FC = () => {
       apiService.deleteActionItem(retrospective?.id ?? '', actionItemId),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.bySprint(sprintId) });
-      handleSuccess('Action item deleted successfully');
+      handleSuccess(t('toast.actionItemDeleted'));
     },
-    onError: (error) => handleError(error, 'Failed to delete action item'),
+    onError: (error) => handleError(error, t('toast.actionItemDeleteFailed')),
   });
 
   const updateSummaryMutation = useMutation({
@@ -452,13 +453,13 @@ export const SprintRetrospective: React.FC = () => {
       apiService.updateRetrospective(retrospective?.id ?? '', data),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.bySprint(sprintId) });
-      handleSuccess('Summary updated successfully');
+      handleSuccess(t('toast.summaryUpdated'));
       setUiState((prev) => ({ ...prev, showSummaryForm: false }));
       setEditState((prev) => ({ ...prev, isEditingSummary: false }));
       setFormState((prev) => ({ ...prev, summaryContent: '' }));
     },
     onError: (error) => {
-      handleError(error, 'Failed to update summary');
+      handleError(error, t('toast.summaryUpdateFailed'));
     },
   });
 
@@ -471,11 +472,11 @@ export const SprintRetrospective: React.FC = () => {
       if (status === RetrospectiveStatus.COMPLETED) {
         setUiState((prev) => ({ ...prev, showSuccessModal: true }));
       } else {
-        handleSuccess('Retrospective status updated successfully');
+        handleSuccess(t('toast.statusUpdated'));
       }
     },
     onError: (error) => {
-      handleError(error, 'Failed to update retrospective status');
+      handleError(error, t('toast.statusUpdateFailed'));
     },
   });
 
@@ -485,7 +486,7 @@ export const SprintRetrospective: React.FC = () => {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.bySprint(sprintId) });
     },
-    onError: (error) => handleError(error, 'Failed to add participant'),
+    onError: (error) => handleError(error, t('toast.participantAddFailed')),
   });
 
   const updateAttendeeMutation = useMutation({
@@ -494,7 +495,7 @@ export const SprintRetrospective: React.FC = () => {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.bySprint(sprintId) });
     },
-    onError: (error) => handleError(error, 'Failed to update participant'),
+    onError: (error) => handleError(error, t('toast.participantUpdateFailed')),
   });
 
   const retrospective = retroData?.data;
@@ -515,29 +516,29 @@ export const SprintRetrospective: React.FC = () => {
       switch (field) {
         case 'title':
           if (!value.trim()) {
-            return 'Title is required';
+            return t('validation.titleRequired');
           }
           if (value.trim().length < 3) {
-            return 'Title must be at least 3 characters';
+            return t('validation.titleMinLength');
           }
           if (value.trim().length > 200) {
-            return 'Title must be 200 characters or less';
+            return t('validation.titleMaxLength');
           }
           return undefined;
         case 'ownerId':
           if (!value) {
-            return 'Owner is required';
+            return t('validation.ownerRequired');
           }
           return undefined;
         case 'dueDate': {
           if (!value) {
-            return 'Due date is required';
+            return t('validation.dueDateRequired');
           }
           const selectedDate = new Date(value);
           const today = new Date();
           today.setHours(0, 0, 0, 0);
           if (selectedDate < today) {
-            return 'Due date cannot be in the past';
+            return t('validation.dueDatePast');
           }
           return undefined;
         }
@@ -545,7 +546,7 @@ export const SprintRetrospective: React.FC = () => {
           return undefined;
       }
     },
-    []
+    [t]
   );
 
   const validateActionForm = useCallback((): boolean => {
@@ -593,7 +594,7 @@ export const SprintRetrospective: React.FC = () => {
       current.setDate(current.getDate() + 1);
     }
 
-    return `${businessDays} business day${businessDays !== 1 ? 's' : ''}`;
+    return t('sprintInfo.businessDay', { count: businessDays });
   };
 
   const calculateStoryPoints = (items: ProductBacklogItem[] | undefined) => {
@@ -620,22 +621,22 @@ export const SprintRetrospective: React.FC = () => {
   const getCategoryConfig = (category: RetrospectiveCategory) => {
     const configs = {
       [RetrospectiveCategory.WENT_WELL]: {
-        title: 'What went well',
+        title: t('categories.wentWell.title'),
         icon: '😊',
         color: { bg: '#D1FAE5', border: '#10B981', text: '#065F46' },
-        placeholder: 'What went well during this Sprint?',
+        placeholder: t('categories.wentWell.placeholder'),
       },
       [RetrospectiveCategory.DIDNT_GO_WELL]: {
-        title: "What didn't go well",
+        title: t('categories.didntGoWell.title'),
         icon: '😟',
         color: { bg: '#FEE2E2', border: '#EF4444', text: '#991B1B' },
-        placeholder: 'What challenges or issues did you face?',
+        placeholder: t('categories.didntGoWell.placeholder'),
       },
       [RetrospectiveCategory.IMPROVEMENT]: {
-        title: 'What can we improve',
+        title: t('categories.improvements.title'),
         icon: '💡',
         color: { bg: '#DBEAFE', border: '#3B82F6', text: '#1E40AF' },
-        placeholder: 'What improvements can we make for next Sprint?',
+        placeholder: t('categories.improvements.placeholder'),
       },
     };
     return configs[category];
@@ -643,18 +644,18 @@ export const SprintRetrospective: React.FC = () => {
 
   const handleAddItem = useCallback(() => {
     if (!retrospective?.id) {
-      showNotification('error', 'Retrospective not loaded. Please wait and try again.');
+      showNotification('error', t('errors.notLoaded'));
       return;
     }
 
     const trimmedContent = formState.newItemContent.trim();
     if (!trimmedContent) {
-      showNotification('error', 'Please enter content for the item');
+      showNotification('error', t('validation.itemContentRequired'));
       return;
     }
 
     if (trimmedContent.length > 500) {
-      showNotification('error', 'Item content must be 500 characters or less');
+      showNotification('error', t('validation.itemContentMaxLength'));
       return;
     }
 
@@ -670,12 +671,13 @@ export const SprintRetrospective: React.FC = () => {
     addItemMutation,
     showNotification,
     retrospective?.id,
+    t,
   ]);
 
   const handleVote = useCallback(
     (itemId: string) => {
       if (!retrospective?.id) {
-        showNotification('error', 'Retrospective not loaded. Please wait and try again.');
+        showNotification('error', t('errors.notLoaded'));
         return;
       }
       if (voteMutation.isPending || unvoteMutation.isPending) return;
@@ -702,20 +704,21 @@ export const SprintRetrospective: React.FC = () => {
       retrospective?.id,
       retrospective?.items,
       user?.id,
+      t,
     ]
   );
 
   const handleDeleteItem = useCallback(
     (itemId: string, itemContent: string) => {
       if (!retrospective?.id) {
-        showNotification('error', 'Retrospective not loaded. Please wait and try again.');
+        showNotification('error', t('errors.notLoaded'));
         return;
       }
       if (deleteItemMutation.isPending) return;
 
       setDeleteConfirmation({ show: true, itemId, itemContent });
     },
-    [deleteItemMutation, showNotification, retrospective?.id]
+    [deleteItemMutation, showNotification, retrospective?.id, t]
   );
 
   const confirmDeleteItem = useCallback(() => {
@@ -735,18 +738,18 @@ export const SprintRetrospective: React.FC = () => {
 
   const handleSaveEdit = useCallback(() => {
     if (!retrospective?.id) {
-      showNotification('error', 'Retrospective not loaded. Please wait and try again.');
+      showNotification('error', t('errors.notLoaded'));
       return;
     }
 
     const trimmedContent = editState.editContent.trim();
     if (!editState.editingItemId || !trimmedContent) {
-      showNotification('error', 'Please enter content for the item');
+      showNotification('error', t('validation.itemContentRequired'));
       return;
     }
 
     if (trimmedContent.length > 500) {
-      showNotification('error', 'Item content must be 500 characters or less');
+      showNotification('error', t('validation.itemContentMaxLength'));
       return;
     }
 
@@ -757,6 +760,7 @@ export const SprintRetrospective: React.FC = () => {
     updateItemMutation,
     showNotification,
     retrospective?.id,
+    t,
   ]);
 
   const handleCancelEdit = useCallback(() => {
@@ -765,55 +769,55 @@ export const SprintRetrospective: React.FC = () => {
 
   const handleAddSummary = useCallback(() => {
     if (!retrospective?.id) {
-      showNotification('error', 'Retrospective not loaded. Please wait and try again.');
+      showNotification('error', t('errors.notLoaded'));
       return;
     }
     setEditState((prev) => ({ ...prev, isEditingSummary: false }));
     setFormState((prev) => ({ ...prev, summaryContent: '' }));
     setUiState((prev) => ({ ...prev, showSummaryForm: true }));
-  }, [retrospective?.id, showNotification]);
+  }, [retrospective?.id, showNotification, t]);
 
   const handleEditSummary = useCallback(() => {
     if (!retrospective?.id) {
-      showNotification('error', 'Retrospective not loaded. Please wait and try again.');
+      showNotification('error', t('errors.notLoaded'));
       return;
     }
     setEditState((prev) => ({ ...prev, isEditingSummary: true }));
     setFormState((prev) => ({ ...prev, summaryContent: retrospective.summary ?? '' }));
     setUiState((prev) => ({ ...prev, showSummaryForm: true }));
-  }, [retrospective?.id, showNotification, retrospective?.summary]);
+  }, [retrospective?.id, showNotification, retrospective?.summary, t]);
 
   const handleSaveSummary = useCallback(() => {
     if (!retrospective?.id) {
-      showNotification('error', 'Retrospective not loaded. Please wait and try again.');
+      showNotification('error', t('errors.notLoaded'));
       return;
     }
 
     const trimmedSummary = formState.summaryContent.trim();
 
     if (!trimmedSummary) {
-      showNotification('error', 'Summary is required');
+      showNotification('error', t('validation.summaryRequired'));
       return;
     }
 
     if (trimmedSummary.length < 10) {
-      showNotification('error', 'Summary must be at least 10 characters');
+      showNotification('error', t('validation.summaryMinLength'));
       return;
     }
 
     if (trimmedSummary.length > 1000) {
-      showNotification('error', 'Summary must be 1000 characters or less');
+      showNotification('error', t('validation.summaryMaxLength'));
       return;
     }
 
     const htmlTagPattern = /<[^>]*>/g;
     if (htmlTagPattern.test(trimmedSummary)) {
-      showNotification('error', 'HTML tags are not allowed');
+      showNotification('error', t('validation.noHtmlTags'));
       return;
     }
 
     updateSummaryMutation.mutate({ summary: trimmedSummary });
-  }, [formState.summaryContent, showNotification, retrospective?.id, updateSummaryMutation]);
+  }, [formState.summaryContent, showNotification, retrospective?.id, updateSummaryMutation, t]);
 
   const handleCancelSummary = useCallback(() => {
     setUiState((prev) => ({ ...prev, showSummaryForm: false }));
@@ -823,7 +827,7 @@ export const SprintRetrospective: React.FC = () => {
 
   const handleAddActionItem = useCallback(() => {
     if (!retrospective?.id) {
-      showNotification('error', 'Retrospective not loaded. Please wait and try again.');
+      showNotification('error', t('errors.notLoaded'));
       return;
     }
 
@@ -833,12 +837,12 @@ export const SprintRetrospective: React.FC = () => {
 
     const trimmedTitle = formState.newActionItem.title.trim();
     if (trimmedTitle.length > 200) {
-      showNotification('error', 'Title must be 200 characters or less');
+      showNotification('error', t('validation.titleMaxLength'));
       return;
     }
 
     if (formState.newActionItem.description && formState.newActionItem.description.length > 1000) {
-      showNotification('error', 'Description must be 1000 characters or less');
+      showNotification('error', t('validation.summaryMaxLength'));
       return;
     }
 
@@ -849,19 +853,20 @@ export const SprintRetrospective: React.FC = () => {
     showNotification,
     retrospective?.id,
     validateActionForm,
+    t,
   ]);
 
   const handleDeleteActionItem = useCallback(
     (actionItemId: string, actionItemTitle: string) => {
       if (!retrospective?.id) {
-        showNotification('error', 'Retrospective not loaded. Please wait and try again.');
+        showNotification('error', t('errors.notLoaded'));
         return;
       }
       if (deleteActionMutation.isPending) return;
 
       setDeleteActionConfirmation({ show: true, actionItemId, actionItemTitle });
     },
-    [deleteActionMutation, showNotification, retrospective?.id]
+    [deleteActionMutation, showNotification, retrospective?.id, t]
   );
 
   const confirmDeleteActionItem = useCallback(() => {
@@ -887,7 +892,7 @@ export const SprintRetrospective: React.FC = () => {
 
   const handleCompleteRetrospective = useCallback(() => {
     if (!retrospective?.id) {
-      showNotification('error', 'Retrospective not loaded. Please wait and try again.');
+      showNotification('error', t('errors.notLoaded'));
       return;
     }
     if (updateStatusMutation.isPending) return;
@@ -896,17 +901,17 @@ export const SprintRetrospective: React.FC = () => {
 
     const summary = retrospective.summary;
     if (!summary || summary.trim().length === 0) {
-      errors.push('Retrospective Summary must be filled in before completing.');
+      errors.push(t('validation.summaryRequiredBeforeComplete'));
     }
 
     const attendees = retrospective.attendees;
     if (attendees.length === 0) {
-      errors.push('At least one participant must be added before completing the retrospective.');
+      errors.push(t('validation.participantRequired'));
     }
 
     const hasAttended = attendees.some((a: RetroAttendee) => a.attended);
     if (attendees.length > 0 && !hasAttended) {
-      errors.push('At least one participant must be marked as attended.');
+      errors.push(t('validation.participantAttendanceRequired'));
     }
 
     const markedMemberNames = new Set(attendees.map((a: RetroAttendee) => a.name.toLowerCase()));
@@ -929,9 +934,7 @@ export const SprintRetrospective: React.FC = () => {
         .join(', ');
       const remaining =
         unmarkedTeamMembers.length > 3 ? ` and ${unmarkedTeamMembers.length - 3} more` : '';
-      errors.push(
-        `All team members must be marked as attended or absent. Missing: ${unmarkedNames}${remaining}.`
-      );
+      errors.push(t('validation.allTeamMembersAttendance', { names: unmarkedNames, remaining }));
     }
 
     if (errors.length > 0) {
@@ -942,7 +945,7 @@ export const SprintRetrospective: React.FC = () => {
 
     setValidationErrors([]);
     setUiState((prev) => ({ ...prev, showCompleteConfirmation: true }));
-  }, [updateStatusMutation, showNotification, retrospective, teamMembers]);
+  }, [updateStatusMutation, showNotification, retrospective, teamMembers, t]);
 
   const confirmCompleteRetrospective = useCallback(() => {
     if (validationErrors.length > 0) {
@@ -959,7 +962,7 @@ export const SprintRetrospective: React.FC = () => {
   }, []);
 
   if (isLoading) {
-    return <LoadingState variant="page" label="Loading Retrospective..." />;
+    return <LoadingState variant="page" label={t('loading')} />;
   }
 
   if (!teamId) {
@@ -975,23 +978,21 @@ export const SprintRetrospective: React.FC = () => {
     return (
       <div className={styles['retro-loading']} role="status" aria-live="polite">
         <div className={styles['loading-spinner']} aria-hidden="true" />
-        <h2>Retrospective not found</h2>
-        <p className={styles['error-hint']}>
-          The retrospective for this sprint could not be loaded.
-        </p>
+        <h2>{t('errorState.title')}</h2>
+        <p className={styles['error-hint']}>{t('errorState.message')}</p>
         <div className={styles['form-actions']} style={{ marginTop: '20px' }}>
           <button
             className={`${styles.button} ${styles['button-secondary']}`}
             onClick={() => navigate('/retrospectives')}
           >
-            Back to Retrospectives
+            {t('errorState.backToRetrospectives')}
           </button>
           <button
             className={`${styles.button} ${styles['button-primary']}`}
             onClick={() => refetch()}
             disabled={isLoading}
           >
-            Retry
+            {t('errorState.retry')}
           </button>
         </div>
       </div>
@@ -1013,10 +1014,10 @@ export const SprintRetrospective: React.FC = () => {
 
         <ConfirmDialog
           isOpen={deleteConfirmation.show}
-          title="Confirm Deletion"
+          title={t('deleteModal.title')}
           name={deleteConfirmation.itemContent}
-          confirmLabel="Delete"
-          cancelLabel="Cancel"
+          confirmLabel={t('columnItem.delete')}
+          cancelLabel={t('columnItem.cancel')}
           onConfirm={confirmDeleteItem}
           onCancel={cancelDeleteItem}
           isLoading={deleteItemMutation.isPending}
@@ -1025,10 +1026,10 @@ export const SprintRetrospective: React.FC = () => {
 
         <ConfirmDialog
           isOpen={deleteActionConfirmation.show}
-          title="Delete Action Item"
+          title={t('deleteModal.message')}
           name={deleteActionConfirmation.actionItemTitle}
-          confirmLabel="Delete"
-          cancelLabel="Cancel"
+          confirmLabel={t('columnItem.delete')}
+          cancelLabel={t('columnItem.cancel')}
           onConfirm={confirmDeleteActionItem}
           onCancel={cancelDeleteActionItem}
           isLoading={deleteActionMutation.isPending}
@@ -1087,13 +1088,13 @@ export const SprintRetrospective: React.FC = () => {
                   </div>
                   <h2 id="complete-modal-title" className={styles['confirm-modal-title']}>
                     {validationErrors.length > 0
-                      ? 'Cannot Complete Retrospective'
-                      : 'Complete Retrospective'}
+                      ? t('confirmationModal.cannotCompleteTitle')
+                      : t('confirmationModal.completeTitle')}
                   </h2>
                   <p className={styles['confirm-modal-subtitle']}>
                     {validationErrors.length > 0
-                      ? 'Please address the following issues'
-                      : 'This action cannot be undone'}
+                      ? t('confirmationModal.validationIssues')
+                      : t('confirmationModal.cannotUndo')}
                   </p>
                 </div>
               </div>
@@ -1143,15 +1144,16 @@ export const SprintRetrospective: React.FC = () => {
                       </div>
                       <div className={styles['confirm-warning-card-title-group']}>
                         <h3 className={styles['confirm-warning-card-title']}>
-                          Confirmation Required
+                          {t('confirmationModal.confirmationRequired')}
                         </h3>
-                        <p className={styles['confirm-warning-card-subtitle']}>Final step</p>
+                        <p className={styles['confirm-warning-card-subtitle']}>
+                          {t('confirmationModal.finalStep')}
+                        </p>
                       </div>
                     </div>
                     <div className={styles['confirm-warning-card-content']}>
                       <p className={styles['confirm-warning-text']}>
-                        Are you sure you want to mark this retrospective as completed? This action
-                        cannot be undone.
+                        {t('confirmationModal.confirmationQuestion')}
                       </p>
                       <div className={styles['confirm-info-box']}>
                         <svg
@@ -1169,8 +1171,7 @@ export const SprintRetrospective: React.FC = () => {
                           <line x1="12" y1="8" x2="12.01" y2="8" />
                         </svg>
                         <span className={styles['confirm-info-text']}>
-                          Once completed, the retrospective will be locked and no further changes
-                          can be made.
+                          {t('confirmationModal.lockWarning')}
                         </span>
                       </div>
                     </div>
@@ -1186,7 +1187,7 @@ export const SprintRetrospective: React.FC = () => {
                     onClick={cancelCompleteRetrospective}
                     type="button"
                   >
-                    OK
+                    {t('confirmationModal.ok')}
                   </button>
                 ) : (
                   <>
@@ -1610,7 +1611,7 @@ export const SprintRetrospective: React.FC = () => {
                         </p>
                       )}
                       {!actionItem.addedToSprintBacklog && actionItem.status !== 'COMPLETED' && (
-                        <BacklogHint />
+                        <BacklogHint t={t} />
                       )}
                       <div className={styles['action-item-meta']}>
                         <span>

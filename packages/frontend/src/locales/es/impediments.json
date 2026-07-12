@@ -1,3 +1,104 @@
 {
-  "title": "Impedimentos"
+  "title": "Impedimentos",
+  "subtitle": "{{sprintName}} - Rastrear y resolver bloqueadores que afectan al equipo",
+  "filterByStatus": "Filtrar por estado",
+  "allStatus": "Todos los estados",
+  "reportImpediment": "Reportar Impedimento",
+  "status": {
+    "open": "Abierto",
+    "inProgress": "En Curso",
+    "resolved": "Resuelto",
+    "closed": "Cerrado"
+  },
+  "stats": {
+    "open": "Abierto",
+    "inProgress": "En Curso",
+    "resolved": "Resuelto",
+    "closed": "Cerrado"
+  },
+  "card": {
+    "sprint": "Sprint",
+    "fromDailyScrum": "Del Daily Scrum",
+    "createdFromDailyUpdate": "Creado desde Actualizacion Diaria",
+    "reportedBy": "Reportado por",
+    "owner": "Propietario",
+    "unknown": "Desconocido",
+    "resolution": "Resolucion",
+    "viewDetailsAria": "Ver detalles para impedimento: {{title}}. Estado: {{status}}"
+  },
+  "emptyState": {
+    "noImpedimentsForSprint": "Sin Impedimentos para {{sprintName}}",
+    "noImpedimentsForFilter": "Sin Impedimentos {{status}}",
+    "noImpedimentsDescription": "Excelente! Sin impedimentos reportados para el sprint activo \"{{sprintName}}\".",
+    "noFilterImpedimentsDescription": "No hay impedimentos {{status}} en \"{{sprintName}}\". Intenta seleccionar un filtro de estado diferente.",
+    "clearFilter": "Limpiar Filtro"
+  },
+  "createModal": {
+    "title": "Reportar Nuevo Impedimento",
+    "subtitle": "Documentar bloqueadores que afectan el progreso de tu equipo",
+    "sprintLabel": "Sprint",
+    "activeSprint": "(Activo)",
+    "titleLabel": "Titulo",
+    "titlePlaceholder": "Descripcion breve del impedimento",
+    "descriptionLabel": "Descripcion",
+    "descriptionPlaceholder": "Proporciona detalles sobre el impedimento",
+    "creating": "Creando...",
+    "createImpediment": "Crear Impedimento"
+  },
+  "detailModal": {
+    "title": "Detalles del Impedimento",
+    "subtitle": "Ver y gestionar informacion del impedimento",
+    "createdFromDailyScrum": "Creado desde Actualizacion Daily Scrum",
+    "viewDailyUpdate": "Ver Actualizacion Diaria",
+    "titleLabel": "Titulo",
+    "descriptionLabel": "Descripcion",
+    "sprintLabel": "Sprint",
+    "statusLabel": "Estado",
+    "reportedByLabel": "Reportado por",
+    "ownerLabel": "Propietario",
+    "createdLabel": "Creado",
+    "resolutionLabel": "Resolucion",
+    "resolutionPlaceholder": "Describe como se resolvio este impedimento...",
+    "saveResolution": "Guardar Resolucion",
+    "saving": "Guardando...",
+    "deleting": "Eliminando...",
+    "deleteLabel": "Eliminar"
+  },
+  "deleteModal": {
+    "title": "Eliminar Impedimento",
+    "subtitle": "Esta accion es permanente y no puede revertirse",
+    "actionWarning": "Advertencia de Accion",
+    "item": "Elemento:",
+    "unknownItem": "Elemento Desconocido",
+    "warningText": "Estas a punto de eliminar permanentemente este impedimento. Esta accion no puede revertirse. Todos los datos asociados seran permanentemente eliminados.",
+    "statusLabel": "Estado:",
+    "deleteImpediment": "Eliminar Impedimento",
+    "deleting": "Eliminando..."
+  },
+  "unsavedModal": {
+    "title": "Cambios No Guardados",
+    "message": "Tienes cambios no guardados en el formulario de impedimento. Seguro que quieres descartarlos?"
+  },
+  "toast": {
+    "created": "Impedimento creado exitosamente",
+    "updated": "Impedimento actualizado exitosamente",
+    "deleted": "Impedimento eliminado exitosamente",
+    "teamIdRequired": "ID del equipo es requerido. Por favor selecciona un equipo primero.",
+    "noActiveSprint": "No se encontro sprint activo. Por favor inicia un sprint primero.",
+    "failedCreate": "Fallo al crear impedimento. Por favor intenta de nuevo.",
+    "failedUpdate": "Fallo al actualizar impedimento. Por favor intenta de nuevo.",
+    "failedDelete": "Fallo al eliminar impedimento. Por favor intenta de nuevo."
+  },
+  "errorState": {
+    "title": "Error Cargando Datos",
+    "retry": "Reintentar",
+    "failedSprint": "Fallo al cargar informacion del sprint activo. Por favor intenta de nuevo.",
+    "failedImpediments": "Fallo al cargar impedimentos. Por favor intenta de nuevo."
+  },
+  "validation": {
+    "titleRequired": "El titulo es requerido",
+    "titleTooShort": "El titulo debe tener al menos 3 caracteres",
+    "descriptionRequired": "La descripcion es requerida",
+    "descriptionTooShort": "La descripcion debe tener al menos 10 caracteres"
+  }
 }

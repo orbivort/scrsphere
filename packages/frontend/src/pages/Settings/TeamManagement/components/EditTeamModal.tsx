@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import styles from './EditTeamModal.module.css';
 
@@ -29,13 +30,11 @@ export const EditTeamModal: React.FC<EditTeamModalProps> = ({
   const [isDirty, setIsDirty] = useState(false);
   const [showUnsavedChanges, setShowUnsavedChanges] = useState(false);
   const nameInputRef = useRef<HTMLInputElement>(null);
+  const { t } = useTranslation('settings');
 
   // Protect against accidental browser tab closure when form has unsaved changes
   // Note: isDirty is sufficient here as it's set when user modifies any field
-  useBeforeUnload(
-    isDirty,
-    'You have unsaved changes in the team edit form. Are you sure you want to leave?'
-  );
+  useBeforeUnload(isDirty, t('editTeamModal.beforeUnload'));
 
   const { modalRef } = useModalFocus({
     isOpen,
@@ -113,13 +112,13 @@ export const EditTeamModal: React.FC<EditTeamModalProps> = ({
     const newErrors: { name?: string; description?: string } = {};
 
     if (!name.trim()) {
-      newErrors.name = 'Team name is required';
+      newErrors.name = t('editTeamModal.validation.nameRequired');
     } else if (name.length > 100) {
-      newErrors.name = 'Team name must be less than 100 characters';
+      newErrors.name = t('editTeamModal.validation.nameMaxLength');
     }
 
     if (description && description.length > 1000) {
-      newErrors.description = 'Description must be less than 1000 characters';
+      newErrors.description = t('editTeamModal.validation.descriptionMaxLength');
     }
 
     setErrors(newErrors);
@@ -163,14 +162,14 @@ export const EditTeamModal: React.FC<EditTeamModalProps> = ({
                 <EditIcon size={24} />
               </div>
               <h2 id="edit-team-title" className={styles.title}>
-                Edit Team
+                {t('editTeamModal.title')}
               </h2>
-              <p className={styles.subtitle}>Update your team&apos;s information and settings</p>
+              <p className={styles.subtitle}>{t('editTeamModal.subtitle')}</p>
             </div>
             <button
               className={styles['close-button']}
               onClick={handleClose}
-              aria-label="Close modal"
+              aria-label={t('editTeamModal.closeModal')}
               type="button"
             >
               <XIcon size={18} />
@@ -184,28 +183,25 @@ export const EditTeamModal: React.FC<EditTeamModalProps> = ({
 
           {/* Modal Body */}
           <form className={styles.body} onSubmit={handleSubmit} noValidate>
-            <p
-              className={styles['form-legend']}
-              aria-label="All fields marked with asterisk are required"
-            >
+            <p className={styles['form-legend']} aria-label={t('editTeamModal.requiredFieldsAria')}>
               <span className={styles.required} aria-hidden="true">
                 *
               </span>
-              <span>Required fields</span>
+              <span>{t('editTeamModal.requiredFields')}</span>
             </p>
 
             {/* Change Indicator - shows when changes are made */}
             {hasChanges && (
               <div className={styles['change-indicator']}>
                 <InfoIcon size={16} />
-                <span>You have unsaved changes</span>
+                <span>{t('editTeamModal.unsavedChanges')}</span>
               </div>
             )}
 
             {/* Team Name Field */}
             <div className={styles['form-group']}>
               <label htmlFor="edit-team-name" className={styles['form-label']}>
-                Team Name
+                {t('editTeamModal.teamName')}
                 <span className={styles.required}>*</span>
               </label>
               <div className={styles['input-wrapper']}>
@@ -216,7 +212,7 @@ export const EditTeamModal: React.FC<EditTeamModalProps> = ({
                   className={styles['form-input']}
                   value={name}
                   onChange={handleNameChange}
-                  placeholder="Enter team name"
+                  placeholder={t('editTeamModal.teamNamePlaceholder')}
                   aria-invalid={!!errors.name}
                   aria-describedby={
                     errors.name
@@ -245,8 +241,8 @@ export const EditTeamModal: React.FC<EditTeamModalProps> = ({
             {/* Description Field */}
             <div className={styles['form-group']}>
               <label htmlFor="edit-team-description" className={styles['form-label']}>
-                Description
-                <span className={styles['optional-badge']}>Optional</span>
+                {t('editTeamModal.description')}
+                <span className={styles['optional-badge']}>{t('editTeamModal.optionalBadge')}</span>
               </label>
               <div className={styles['input-wrapper']}>
                 <textarea
@@ -254,7 +250,7 @@ export const EditTeamModal: React.FC<EditTeamModalProps> = ({
                   className={styles['form-textarea']}
                   value={description}
                   onChange={handleDescriptionChange}
-                  placeholder="Describe your team's purpose, goals, or working style..."
+                  placeholder={t('editTeamModal.descriptionPlaceholder')}
                   rows={4}
                   maxLength={1000}
                   aria-invalid={!!errors.description}
@@ -292,7 +288,7 @@ export const EditTeamModal: React.FC<EditTeamModalProps> = ({
                 onClick={handleClose}
                 disabled={isSubmitting}
               >
-                Cancel
+                {t('editTeamModal.cancel')}
               </button>
               <button
                 type="submit"
@@ -305,10 +301,10 @@ export const EditTeamModal: React.FC<EditTeamModalProps> = ({
                 {!isSubmitting && (
                   <>
                     <SaveIcon size={16} />
-                    <span>Save Changes</span>
+                    <span>{t('editTeamModal.saveChanges')}</span>
                   </>
                 )}
-                {isSubmitting && <span>Saving...</span>}
+                {isSubmitting && <span>{t('editTeamModal.saving')}</span>}
               </button>
             </div>
           </form>

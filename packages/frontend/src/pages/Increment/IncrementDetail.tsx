@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import { apiService } from '../../services';
 import { IncrementStatus, DeliveryMethod, type DoDChecklistVerification } from '../../types';
@@ -30,6 +31,7 @@ import {
 const LoadingSpinnerIcon = () => <div className={styles['loading-spinner']} />;
 
 export const IncrementDetail: React.FC = () => {
+  const { t } = useTranslation('increments');
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -75,7 +77,7 @@ export const IncrementDetail: React.FC = () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.increment.detail(id ?? '') });
       void queryClient.invalidateQueries({ queryKey: queryKeys.increment.all });
       setShowDeliverModal(false);
-      success('Increment delivered successfully!');
+      success(t('detail.toast.deliveredSuccess'));
 
       if (fromSprintComplete && sprintId) {
         setTimeout(() => {
@@ -84,7 +86,7 @@ export const IncrementDetail: React.FC = () => {
       }
     },
     onError: () => {
-      showError('Failed to deliver increment. Please try again.');
+      showError(t('detail.toast.deliverFailed'));
     },
   });
 
@@ -161,7 +163,7 @@ export const IncrementDetail: React.FC = () => {
     return (
       <div className={styles['increment-loading']}>
         <LoadingSpinnerIcon />
-        <p>Loading increment...</p>
+        <p>{t('detail.loading')}</p>
       </div>
     );
   }
@@ -170,7 +172,7 @@ export const IncrementDetail: React.FC = () => {
     return (
       <div className={styles['increment-loading']}>
         <AlertCircleIcon className={styles['error-icon']} />
-        <p>Failed to load increment</p>
+        <p>{t('detail.error.title')}</p>
         <p className={styles['error-details']}>
           {incrementError instanceof Error ? incrementError.message : 'Unknown error'}
         </p>
@@ -179,7 +181,7 @@ export const IncrementDetail: React.FC = () => {
           onClick={() => navigate('/increments')}
           style={{ marginTop: '16px' }}
         >
-          Back to Increments
+          {t('detail.error.backToIncrements')}
         </button>
       </div>
     );
@@ -195,7 +197,7 @@ export const IncrementDetail: React.FC = () => {
       <div className={styles['detail-header']}>
         <button className={styles['back-button']} onClick={handleBack}>
           <ArrowLeftIcon />
-          <span>{fromSprintComplete ? 'Skip to Sprint Review' : 'Back to Increments'}</span>
+          <span>{fromSprintComplete ? t('skipToSprintReview') : t('backToIncrements')}</span>
         </button>
         <div className={styles['header-content']}>
           <div className={styles['header-left']}>
@@ -214,8 +216,10 @@ export const IncrementDetail: React.FC = () => {
           </div>
           {fromSprintComplete && (
             <div className={styles['workflow-indicator']}>
-              <span className={styles['workflow-badge']}>Sprint Completion Workflow</span>
-              <span className={styles['workflow-step']}>Step 3 of 4: Deliver Increment</span>
+              <span className={styles['workflow-badge']}>
+                {t('detail.sprintCompletionWorkflow')}
+              </span>
+              <span className={styles['workflow-step']}>{t('detail.workflowStep3Of4')}</span>
             </div>
           )}
           {canDeliver && (
@@ -224,7 +228,7 @@ export const IncrementDetail: React.FC = () => {
               onClick={() => setShowDeliverModal(true)}
             >
               <RocketIcon size={16} />
-              <span>Deliver Increment</span>
+              <span>{t('detail.deliverIncrement')}</span>
             </button>
           )}
         </div>
@@ -237,23 +241,29 @@ export const IncrementDetail: React.FC = () => {
               <span className={styles['step-number']}>
                 <CheckIcon size={12} />
               </span>
-              <span className={styles['step-label']}>Sprint Completed</span>
+              <span className={styles['step-label']}>
+                {t('detail.workflowSteps.sprintCompleted')}
+              </span>
             </div>
             <div className={`${styles['progress-step']} ${styles.completed}`}>
               <span className={styles['step-number']}>
                 <CheckIcon size={12} />
               </span>
-              <span className={styles['step-label']}>Create Increment</span>
+              <span className={styles['step-label']}>
+                {t('detail.workflowSteps.createIncrement')}
+              </span>
             </div>
             <div className={`${styles['progress-step']} ${styles.active}`}>
               <span className={styles['step-number']}>
                 <ClockIcon size={12} />
               </span>
-              <span className={styles['step-label']}>Deliver Increment</span>
+              <span className={styles['step-label']}>
+                {t('detail.workflowSteps.deliverIncrement')}
+              </span>
             </div>
             <div className={`${styles['progress-step']}`}>
               <span className={styles['step-number']}>4</span>
-              <span className={styles['step-label']}>Sprint Review</span>
+              <span className={styles['step-label']}>{t('detail.workflowSteps.sprintReview')}</span>
             </div>
           </div>
         </div>
@@ -262,42 +272,44 @@ export const IncrementDetail: React.FC = () => {
       <div className={styles['detail-grid']}>
         <div className={styles['left-column']}>
           <div className={styles['detail-card']}>
-            <h3>Overview</h3>
+            <h3>{t('detail.overview.title')}</h3>
             <div className={styles['info-grid']}>
               <div className={styles['info-item']}>
-                <span className={styles.label}>Description</span>
-                <span className={styles.value}>{increment.description ?? 'No description'}</span>
+                <span className={styles.label}>{t('detail.overview.description')}</span>
+                <span className={styles.value}>
+                  {increment.description ?? t('detail.overview.noDescription')}
+                </span>
               </div>
               <div className={styles['info-item']}>
-                <span className={styles.label}>Sprint</span>
+                <span className={styles.label}>{t('detail.overview.sprint')}</span>
                 <span className={styles.value}>{increment.sprint?.name ?? increment.sprintId}</span>
               </div>
               <div className={styles['info-item']}>
-                <span className={styles.label}>Created</span>
+                <span className={styles.label}>{t('detail.overview.created')}</span>
                 <span className={styles.value}>{formatDate(increment.createdAt)}</span>
               </div>
               <div className={styles['info-item']}>
-                <span className={styles.label}>Story Points</span>
+                <span className={styles.label}>{t('detail.overview.storyPoints')}</span>
                 <span className={styles.value}>{increment.totalStoryPoints || 0}</span>
               </div>
               <div className={styles['info-item']}>
-                <span className={styles.label}>PBIs Included</span>
+                <span className={styles.label}>{t('detail.overview.pbisIncluded')}</span>
                 <span className={styles.value}>{increment.includedPBIs.length || 0}</span>
               </div>
               {increment.deliveredAt && (
                 <div className={styles['info-item']}>
-                  <span className={styles.label}>Delivered</span>
+                  <span className={styles.label}>{t('detail.overview.delivered')}</span>
                   <span className={styles.value}>{formatDate(increment.deliveredAt)}</span>
                 </div>
               )}
               {increment.deliveryMethod && (
                 <div className={styles['info-item']}>
-                  <span className={styles.label}>Delivery Method</span>
+                  <span className={styles.label}>{t('detail.overview.deliveryMethod')}</span>
                   <span className={styles.value}>
                     {increment.deliveryMethod.toLowerCase() ===
                     DeliveryMethod.SPRINT_REVIEW.toLowerCase()
-                      ? 'Sprint Review'
-                      : 'Early Release'}
+                      ? t('deliveryMethod.sprintReview')
+                      : t('deliveryMethod.earlyRelease')}
                   </span>
                 </div>
               )}
@@ -305,9 +317,9 @@ export const IncrementDetail: React.FC = () => {
           </div>
 
           <div className={styles['detail-card']}>
-            <h3>Included Product Backlog Items</h3>
+            <h3>{t('detail.pbis.title')}</h3>
             {includedPBIs.length === 0 ? (
-              <p className={styles['empty-message']}>No PBIs included in this increment.</p>
+              <p className={styles['empty-message']}>{t('detail.pbis.empty')}</p>
             ) : (
               <div className={styles['pbi-list']}>
                 {includedPBIs.map((pbi) => (
@@ -334,7 +346,7 @@ export const IncrementDetail: React.FC = () => {
 
         <div className={styles['right-column']}>
           <div className={styles['detail-card']}>
-            <h3>Definition of Done Verification</h3>
+            <h3>{t('detail.dodVerification.title')}</h3>
             <div className={styles['verification-summary']}>
               <div className={styles['progress-circle']}>
                 {/* eslint-disable-next-line icon-rules/no-inline-svg -- Progress ring visualization, not an icon */}
@@ -353,11 +365,15 @@ export const IncrementDetail: React.FC = () => {
               </div>
               <div className={styles['verification-stats']}>
                 <div className={styles['stat-row']}>
-                  <span className={styles['stat-label']}>Total Verifications</span>
+                  <span className={styles['stat-label']}>
+                    {t('detail.dodVerification.totalVerifications')}
+                  </span>
                   <span className={styles['stat-value']}>{verificationStats.total}</span>
                 </div>
                 <div className={styles['stat-row']}>
-                  <span className={styles['stat-label']}>Verified</span>
+                  <span className={styles['stat-label']}>
+                    {t('detail.dodVerification.verified')}
+                  </span>
                   <span className={`${styles['stat-value']} ${styles.verified}`}>
                     {verificationStats.verified}
                   </span>
@@ -368,7 +384,7 @@ export const IncrementDetail: React.FC = () => {
             {verificationStats.total > 0 && (
               <>
                 <div className={styles['verification-breakdown']}>
-                  <h4>Verification by Category</h4>
+                  <h4>{t('detail.dodVerification.byCategory')}</h4>
                   <div className={styles['category-breakdown']}>
                     {Object.entries(verificationStats.byCategory).map(([category, stats]) => (
                       <div key={category} className={styles['category-item']}>
@@ -394,7 +410,7 @@ export const IncrementDetail: React.FC = () => {
                 </div>
 
                 <div className={styles['verification-breakdown']}>
-                  <h4>Verification by PBI</h4>
+                  <h4>{t('detail.dodVerification.byPbi')}</h4>
                   <div className={styles['pbi-breakdown']}>
                     {Object.entries(verificationStats.byPbi).map(([pbiId, stats]) => (
                       <div key={pbiId} className={styles['pbi-verification-item']}>
@@ -424,23 +440,25 @@ export const IncrementDetail: React.FC = () => {
                 <span className={styles['no-verification-icon']}>
                   <ClipboardIcon size={48} strokeWidth={1.5} />
                 </span>
-                <p>No DoD verifications recorded for this increment.</p>
+                <p>{t('detail.dodVerification.noVerifications')}</p>
                 <p className={styles['no-verification-hint']}>
-                  Verifications are captured when completing a sprint.
+                  {t('detail.dodVerification.noVerificationsHint')}
                 </p>
               </div>
             )}
           </div>
 
           <div className={styles['detail-card']}>
-            <h3>Timeline</h3>
+            <h3>{t('detail.timeline.title')}</h3>
             <div className={styles.timeline}>
               <div className={styles['timeline-item']}>
                 <div className={`${styles['timeline-icon']} ${styles.created}`}>
                   <FileTextIcon size={20} />
                 </div>
                 <div className={styles['timeline-content']}>
-                  <span className={styles['timeline-label']}>Increment Created</span>
+                  <span className={styles['timeline-label']}>
+                    {t('detail.timeline.incrementCreated')}
+                  </span>
                   <span className={styles['timeline-date']}>{formatDate(increment.createdAt)}</span>
                 </div>
               </div>
@@ -451,11 +469,10 @@ export const IncrementDetail: React.FC = () => {
                   </div>
                   <div className={styles['timeline-content']}>
                     <span className={styles['timeline-label']}>
-                      Delivered via{' '}
                       {increment.deliveryMethod?.toLowerCase() ===
                       DeliveryMethod.SPRINT_REVIEW.toLowerCase()
-                        ? 'Sprint Review'
-                        : 'Early Release'}
+                        ? t('detail.timeline.deliveredViaSprintReview')
+                        : t('detail.timeline.deliveredViaEarlyRelease')}
                     </span>
                     <span className={styles['timeline-date']}>
                       {formatDate(increment.deliveredAt)}
@@ -486,23 +503,23 @@ export const IncrementDetail: React.FC = () => {
             <div className={styles['modal-header']}>
               <h3 id="deliver-modal-title">
                 <RocketIcon size={20} />
-                <span>Deliver Increment</span>
+                <span>{t('detail.deliverModal.title')}</span>
               </h3>
               <button
                 className={styles['close-button']}
                 onClick={() => setShowDeliverModal(false)}
-                aria-label="Close dialog"
+                aria-label={t('detail.deliverModal.closeDialog')}
               >
                 <CloseIcon size={16} />
               </button>
             </div>
             <div className={styles['modal-content']}>
               <p id="deliver-modal-description" className={styles['modal-description']}>
-                Mark this Increment as delivered to stakeholders. This action cannot be undone.
+                {t('detail.deliverModal.modalDescription')}
               </p>
 
               <div className={styles['form-group']}>
-                <label>Delivery Method</label>
+                <label>{t('detail.deliverModal.deliveryMethodLabel')}</label>
                 <div className={styles['delivery-options']}>
                   <label
                     className={`${styles['radio-option']} ${deliveryMethod === DeliveryMethod.SPRINT_REVIEW ? styles.selected : ''}`}
@@ -518,9 +535,11 @@ export const IncrementDetail: React.FC = () => {
                       <span className={styles['option-icon']}>
                         <CalendarIcon size={24} />
                       </span>
-                      <span className={styles['option-label']}>Sprint Review</span>
+                      <span className={styles['option-label']}>
+                        {t('detail.deliverModal.sprintReviewOption')}
+                      </span>
                       <span className={styles['option-desc']}>
-                        Presented at the Sprint Review meeting
+                        {t('detail.deliverModal.sprintReviewDescription')}
                       </span>
                     </div>
                   </label>
@@ -538,9 +557,11 @@ export const IncrementDetail: React.FC = () => {
                       <span className={styles['option-icon']}>
                         <ZapIcon size={24} />
                       </span>
-                      <span className={styles['option-label']}>Early Release</span>
+                      <span className={styles['option-label']}>
+                        {t('detail.deliverModal.earlyReleaseOption')}
+                      </span>
                       <span className={styles['option-desc']}>
-                        Delivered before the end of the Sprint
+                        {t('detail.deliverModal.earlyReleaseDescription')}
                       </span>
                     </div>
                   </label>
@@ -548,11 +569,11 @@ export const IncrementDetail: React.FC = () => {
               </div>
 
               <div className={styles['form-group']}>
-                <label>Notes (Optional)</label>
+                <label>{t('detail.deliverModal.notesLabel')}</label>
                 <textarea
                   value={deliveryNotes}
                   onChange={(e) => setDeliveryNotes(e.target.value)}
-                  placeholder="Add any notes about this delivery..."
+                  placeholder={t('detail.deliverModal.notesPlaceholder')}
                   rows={3}
                 />
               </div>
@@ -563,11 +584,10 @@ export const IncrementDetail: React.FC = () => {
                     type="checkbox"
                     checked={confirmDelivery}
                     onChange={(e) => setConfirmDelivery(e.target.checked)}
-                    aria-label="Confirm delivery action"
+                    aria-label={t('detail.deliverModal.confirmDeliveryAriaLabel')}
                   />
                   <span className={styles['checkbox-text']}>
-                    I understand this action is irreversible and the increment will be marked as
-                    delivered to stakeholders.
+                    {t('detail.deliverModal.checkboxText')}
                   </span>
                 </label>
               </div>
@@ -580,7 +600,7 @@ export const IncrementDetail: React.FC = () => {
                   setConfirmDelivery(false);
                 }}
               >
-                Cancel
+                {t('detail.deliverModal.cancel')}
               </button>
               <button
                 className={`${styles.button} ${styles['button-primary']}`}
@@ -592,21 +612,23 @@ export const IncrementDetail: React.FC = () => {
               >
                 {deliverMutation.isPending ? (
                   <>
-                    <LoadingState variant="spinner" size="sm" label="Delivering increment" />
-                    <span>Delivering...</span>
+                    <LoadingState
+                      variant="spinner"
+                      size="sm"
+                      label={t('detail.deliverModal.delivering')}
+                    />
+                    <span>{t('detail.deliverModal.delivering')}</span>
                   </>
                 ) : (
                   <>
                     <CheckIcon size={16} />
-                    <span>Confirm Delivery</span>
+                    <span>{t('detail.deliverModal.confirm')}</span>
                   </>
                 )}
               </button>
             </div>
             {deliverMutation.isError && (
-              <div className={styles['modal-error']}>
-                Failed to deliver increment. Please try again.
-              </div>
+              <div className={styles['modal-error']}>{t('detail.toast.deliverFailed')}</div>
             )}
           </div>
         </div>

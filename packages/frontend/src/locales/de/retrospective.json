@@ -1,3 +1,231 @@
 {
-  "title": "Retrospektive"
+  "title": "Sprint Retrospective",
+  "backToRetrospectives": "Zurück zu Retrospectives",
+  "backAriaLabel": "Zurück zur Retrospectives-Liste gehen",
+  "attendees": "Teilnehmer",
+  "attendeesLabel": "Teilnehmer",
+  "attendeesAriaLabel": "{{attended}} von {{total}} Teilnehmern haben teilgenommen",
+  "attendeesCount": "{{attended}} / {{total}} {{label}}",
+  "sprintInfo": {
+    "duration": "Dauer",
+    "productBacklog": "Product Backlog",
+    "items": "Elemente",
+    "storyPoints": "Story Points",
+    "completion": "Abschluss",
+    "tasks": "Aufgaben",
+    "tasksCount": "Aufgaben",
+    "completed": "abgeschlossen",
+    "includedPbis": "Enthaltene Product Backlog Items",
+    "moreItems": "+{{count}} weitere Elemente",
+    "goal": "Ziel:",
+    "businessDay_one": "{{count}} Arbeitstag",
+    "businessDay_other": "{{count}} Arbeitstage"
+  },
+  "categories": {
+    "wentWell": {
+      "title": "Was lief gut",
+      "placeholder": "Was lief gut während dieses Sprints?"
+    },
+    "didntGoWell": {
+      "title": "Was lief nicht gut",
+      "placeholder": "Welche Herausforderungen oder Probleme haben Sie erlebt?"
+    },
+    "improvements": {
+      "title": "Was können wir verbessern",
+      "placeholder": "Welche Verbesserungen können wir für den nächsten Sprint machen?"
+    }
+  },
+  "columnItem": {
+    "vote": "Abstimmen",
+    "removeVote": "Stimme entfernen",
+    "editItem": "Element bearbeiten",
+    "deleteItem": "Element löschen",
+    "cancel": "Abbrechen",
+    "adding": "Hinzufügen...",
+    "add": "Hinzufügen",
+    "addItem": "+ Element hinzufügen",
+    "saving": "Speichern...",
+    "save": "Speichern",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "voteAriaLabel": "{{action}} für dieses Element ({{count}} Stimmen)",
+    "itemsInColumn": "{{count}} Elemente in {{title}}"
+  },
+  "actionItems": {
+    "title": "Action Items",
+    "createActionItem": "+ Action Item erstellen",
+    "empty": "Noch keine Action Items. Wandeln Sie Verbesserungselemente in ausführbare Aufgaben um.",
+    "inBacklog": "Im Backlog",
+    "unassigned": "Nicht zugewiesen",
+    "due": "Fällig:",
+    "deleteActionItem": "Action Item löschen",
+    "deleteAriaLabel": "Action Item löschen"
+  },
+  "attendeesSection": {
+    "title": "Teilnehmer"
+  },
+  "ariaLabels": {
+    "columnsRegion": "Retrospective Feedback-Spalten",
+    "sprintInfoRegion": "Sprint-Informationen",
+    "summaryAriaLabel": "Retrospective-Zusammenfassung"
+  },
+  "summary": {
+    "title": "Retrospective-Zusammenfassung",
+    "editSummary": "Zusammenfassung bearbeiten",
+    "editAriaLabel": "Zusammenfassung bearbeiten",
+    "addSummary": "+ Zusammenfassung hinzufügen",
+    "editTitle": "Retrospective-Zusammenfassung bearbeiten",
+    "addTitle": "Retrospective-Zusammenfassung hinzufügen",
+    "editSubtitle": "Aktualisieren Sie die wichtigsten Insights und Takeaways aus dieser Retrospective",
+    "addSubtitle": "Dokumentieren Sie die wichtigsten Insights, Entscheidungen und Action Items",
+    "summaryLabel": "Zusammenfassung",
+    "takeawaysLabel": "Was waren die wichtigsten Takeaways aus dieser Retrospective?",
+    "placeholder": "Schreiben Sie eine Zusammenfassung der Retrospective-Ergebnisse, wichtigsten Takeaways und Action Items...",
+    "helperText": "Fassen Sie die Reflexionen des Teams und vereinbarten Verbesserungen zusammen",
+    "charHelpText": "Geben Sie wichtige Insights, Entscheidungen und Action Items aus der Retrospective ein. Mindestens 10 Zeichen, maximal 1000 Zeichen.",
+    "charCounter": "{{count}}/1000 Zeichen",
+    "approachingLimit": "Nähert sich Zeichenlimit",
+    "save": "Speichern",
+    "saving": "Speichern...",
+    "cancel": "Abbrechen",
+    "cancelAriaLabel": "Zusammenfassung-Änderungen abbrechen",
+    "saveAriaLabel": "Zusammenfassung speichern",
+    "empty": "Noch keine Zusammenfassung hinzugefügt...",
+    "emptyDescription": "Noch keine Zusammenfassung hinzugefügt. Fügen Sie eine Zusammenfassung hinzu, um wichtige Insights und Entscheidungen aus dieser Retrospective zu dokumentieren.",
+    "addSummaryAriaLabel": "Retrospective-Zusammenfassung hinzufügen",
+    "formAriaLabel": "Retrospective-Zusammenfassung-Formular"
+  },
+  "completeRetro": {
+    "button": "Retrospective abschließen",
+    "completing": "Abschließen...",
+    "description": "Markieren Sie diese Retrospective als abgeschlossen, um sie zu finalisieren und weitere Änderungen zu verhindern.",
+    "ariaLabel": "Retrospective als abgeschlossen markieren"
+  },
+  "confirmationModal": {
+    "cannotCompleteTitle": "Retrospective kann nicht abgeschlossen werden",
+    "completeTitle": "Retrospective abschließen",
+    "validationIssues": "Bitte beheben Sie die folgenden Probleme",
+    "cannotUndo": "Diese Aktion kann nicht rückgängig gemacht werden",
+    "confirmationRequired": "Bestätigung erforderlich",
+    "finalStep": "Letzter Schritt",
+    "confirmationQuestion": "Sind Sie sicher, dass Sie diese Retrospective als abgeschlossen markieren möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "lockWarning": "Nach Abschluss wird die Retrospective gesperrt und keine weiteren Änderungen können gemacht werden.",
+    "ok": "OK",
+    "cancel": "Abbrechen",
+    "complete": "Abschließen",
+    "completing": "Abschließen..."
+  },
+  "successModal": {
+    "title": "Erfolg",
+    "message": "Sprint Retrospective erfolgreich abgeschlossen!",
+    "close": "Schließen",
+    "closeDialog": "Dialog schließen"
+  },
+  "deleteModal": {
+    "title": "Löschen bestätigen",
+    "message": "Action Item löschen"
+  },
+  "toast": {
+    "itemAdded": "Element erfolgreich hinzugefügt",
+    "itemAddFailed": "Element konnte nicht hinzugefügt werden",
+    "voteFailed": "Abstimmung fehlgeschlagen",
+    "removeVoteFailed": "Stimme konnte nicht entfernt werden",
+    "itemDeleted": "Element erfolgreich gelöscht",
+    "itemDeleteFailed": "Element konnte nicht gelöscht werden",
+    "itemUpdated": "Element erfolgreich aktualisiert",
+    "itemUpdateFailed": "Element konnte nicht aktualisiert werden",
+    "actionItemCreated": "Action Item erfolgreich erstellt",
+    "actionItemCreateFailed": "Action Item konnte nicht erstellt werden",
+    "actionItemDeleted": "Action Item erfolgreich gelöscht",
+    "actionItemDeleteFailed": "Action Item konnte nicht gelöscht werden",
+    "summaryUpdated": "Zusammenfassung erfolgreich aktualisiert",
+    "summaryUpdateFailed": "Zusammenfassung konnte nicht aktualisiert werden",
+    "statusUpdated": "Retrospective-Status erfolgreich aktualisiert",
+    "statusUpdateFailed": "Retrospective-Status konnte nicht aktualisiert werden",
+    "participantAddFailed": "Participant konnte nicht hinzugefügt werden",
+    "participantUpdateFailed": "Participant konnte nicht aktualisiert werden"
+  },
+  "errors": {
+    "network": "Netzwerkfehler. Bitte überprüfen Sie Ihre Internetverbindung.",
+    "notFound": "Ressource nicht gefunden. Sie wurde möglicherweise gelöscht.",
+    "unauthorized": "Sie sind nicht berechtigt, diese Aktion auszuführen.",
+    "serverError": "Serverfehler. Bitte versuchen Sie es später erneut.",
+    "badRequest": "Ungültige Anfrage. Bitte überprüfen Sie Ihre Eingabe und versuchen Sie es erneut.",
+    "notLoaded": "Retrospective nicht geladen. Bitte warten und erneut versuchen."
+  },
+  "validation": {
+    "itemContentRequired": "Bitte geben Sie Inhalt für das Element ein",
+    "itemContentMaxLength": "Elementinhalt muss 500 Zeichen oder weniger sein",
+    "titleRequired": "Titel ist erforderlich",
+    "titleMinLength": "Titel muss mindestens 3 Zeichen haben",
+    "titleMaxLength": "Titel muss 200 Zeichen oder weniger sein",
+    "ownerRequired": "Eigentümer ist erforderlich",
+    "dueDateRequired": "Fälligkeitsdatum ist erforderlich",
+    "dueDatePast": "Fälligkeitsdatum kann nicht in der Vergangenheit sein",
+    "summaryRequired": "Zusammenfassung ist erforderlich",
+    "summaryMinLength": "Zusammenfassung muss mindestens 10 Zeichen haben",
+    "summaryMaxLength": "Zusammenfassung muss 1000 Zeichen oder weniger sein",
+    "noHtmlTags": "HTML-Tags sind nicht erlaubt",
+    "summaryRequiredBeforeComplete": "Retrospective-Zusammenfassung muss vor dem Abschluss ausgefüllt werden.",
+    "participantRequired": "Mindestens ein Participant muss vor dem Abschluss der Retrospective hinzugefügt werden.",
+    "participantAttendanceRequired": "Mindestens ein Participant muss als teilgenommen markiert sein.",
+    "teamMemberAttendance": "{{name}} muss als teilgenommen markiert sein.",
+    "allTeamMembersAttendance": "Alle Teammitglieder müssen als teilgenommen oder abwesend markiert sein. Fehlend: {{names}}{{remaining}}."
+  },
+  "errorState": {
+    "title": "Retrospective nicht gefunden",
+    "message": "Die Retrospective für diesen Sprint konnte nicht geladen werden.",
+    "backToRetrospectives": "Zurück zu Retrospectives",
+    "retry": "Erneut versuchen"
+  },
+  "loading": "Retrospective wird geladen...",
+  "backlogHint": "Dieses Element wird auf der Product Backlog-Seite für Aktionen vorhanden sein.",
+  "list": {
+    "title": "Sprint Retrospectives",
+    "subtitle": "Reflektieren über abgeschlossene Sprints, Verbesserungen identifizieren und Action Items verfolgen",
+    "loading": "Retrospectives werden geladen...",
+    "completedSprints": "Abgeschlossene Sprints",
+    "completedSprint": "Abgeschlossener Sprint",
+    "completedSprints_plural": "Abgeschlossene Sprints",
+    "reviewed": "Reviewed",
+    "goal": "Ziel:",
+    "items": "Elemente",
+    "actions": "Aktionen",
+    "creating": "Erstellen...",
+    "viewRetrospective": "Retrospective anzeigen",
+    "createRetrospective": "Retrospective erstellen",
+    "statusLabels": {
+      "active": "Aktiv",
+      "completed": "Abgeschlossen",
+      "planned": "Geplant",
+      "cancelled": "Abgebrochen"
+    },
+    "retroStatus": {
+      "completed": "Retrospective abgeschlossen",
+      "inProgress": "Retrospective in Bearbeitung",
+      "draft": "Retrospective Draft",
+      "ready": "Bereit für Retrospective"
+    }
+  },
+  "createActionItemModal": {
+    "title": "Action Item erstellen",
+    "subtitle": "Ein neues Action Item hinzufügen, um den Fortschritt zu verfolgen",
+    "titleLabel": "Titel *",
+    "titlePlaceholder": "Action Item-Titel eingeben",
+    "description": "Beschreibung",
+    "optionalBadge": "optional",
+    "descriptionPlaceholder": "Details zu diesem Action Item hinzufügen...",
+    "descriptionHelper": "Geben Sie zusätzlichen Kontext, um dem Assignee die Aufgabe zu verstehen",
+    "owner": "Eigentümer *",
+    "ownerPlaceholder": "Eigentümer auswählen...",
+    "loadingMembers": "Teammitglieder werden geladen...",
+    "noMembers": "Keine Teammitglieder verfügbar",
+    "unableToLoadMembers": "Teammitglieder konnten nicht geladen werden. Bitte aktualisieren Sie die Seite.",
+    "dueDate": "Fälligkeitsdatum *",
+    "cancel": "Abbrechen",
+    "creating": "Erstellen...",
+    "createActionItem": "Action Item erstellen",
+    "unsavedTitle": "Ungespeicherte Änderungen",
+    "unsavedMessage": "Sie haben ungespeicherte Änderungen im Action Item-Formular. Sind Sie sicher, dass Sie sie verwerfen möchten?"
+  }
 }

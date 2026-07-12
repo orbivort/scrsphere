@@ -1,3 +1,87 @@
 {
-  "title": "Impostazioni"
+  "title": "Impostazioni",
+  "privacyData": {
+    "title": "Privacy & Dati",
+    "subtitle": "Gestisci i tuoi dati personali e le impostazioni di privacy",
+    "activeSessions": {
+      "title": "Sessioni attive",
+      "description": "Gestisci le tue sessioni di login attive",
+      "loading": "Caricamento sessioni...",
+      "empty": "Nessuna sessione attiva trovata",
+      "current": "Corrente",
+      "ip": "IP:",
+      "lastActive": "Ultima attività:",
+      "revoke": "Revoca",
+      "revoking": "Revocando...",
+      "revokeSession": "Revoca questa sessione",
+      "signOutAll": "Disconnetti tutte le altre sessioni",
+      "signingOut": "Disconnessione...",
+      "note": "Ti disconnetterà da tutti gli altri dispositivi, eccetto questo.",
+      "errors": {
+        "loadFailed": "Caricamento sessioni fallito",
+        "revokeFailed": "Revoca sessione fallita",
+        "signOutFailed": "Disconnessione altre sessioni fallita"
+      },
+      "devices": {
+        "unknown": "Dispositivo sconosciuto",
+        "chrome": "Browser Chrome",
+        "firefox": "Browser Firefox",
+        "safari": "Browser Safari",
+        "edge": "Browser Edge"
+      }
+    },
+    "dataExport": {
+      "title": "Esporta i tuoi dati",
+      "description": "Scarica una copia dei tuoi dati personali",
+      "rightToPortability": "Diritto alla portabilità dei dati",
+      "portabilityDescription": "Hai il diritto di ricevere i tuoi dati personali in un formato strutturato, comunemente usato e leggibile dalla macchina.",
+      "dataIncluded": "Dati inclusi nell'export:",
+      "profileInformation": "Informazioni profilo",
+      "profileDescription": "Nome, email, avatar, preferenze",
+      "teamMemberships": "Membresie team",
+      "teamDescription": "Teams a cui appartieni e tuoi ruoli",
+      "sessionInformation": "Informazioni sessione",
+      "sessionDescription": "Sessioni attive e storico login",
+      "formatLabel": "Formato:",
+      "formatValue": "JSON (leggibile dalla macchina)",
+      "exportButton": "Esporta i miei dati",
+      "exporting": "Esportando...",
+      "downloadExport": "Scarica export",
+      "ariaLabel": "Esporta i tuoi dati personali"
+    },
+    "dataExportModal": {
+      "title": "Export dati",
+      "closeModal": "Chiudi modal",
+      "statusMessages": {
+        "initializing": "Inizializzazione export...",
+        "pending": "Preparazione del tuo export dati...",
+        "processing": "Raccolta e formattazione dei tuoi dati...",
+        "completed": "Il tuo export dati è pronto!",
+        "failed": "Export fallito. Per favore riprova.",
+        "expired": "Questo export è scaduto. Per favore crea un nuovo."
+      },
+      "exportProgress": "Progresso export",
+      "jobId": "ID job:",
+      "infoText": "I tuoi dati sono esportati in formato JSON, che è strutturato, comunemente usato e leggibile dalla macchina.",
+      "downloadJson": "Scarica file JSON",
+      "cancelExport": "Annulla export",
+      "close": "Chiudi"
+    },
+    "dataRights": {
+      "title": "I tuoi diritti sui dati",
+      "subtitle": "I tuoi diritti relativi ai dati personali",
+      "rightToAccess": "Diritto di accesso",
+      "rightToAccessDescription": "Puoi richiedere una copia di tutti i dati personali che abbiamo su te.",
+      "rightToRectification": "Diritto di rettifica",
+      "rightToRectificationDescription": "Puoi correggere dati personali inesatti o incompleti.",
+      "rightToErasure": "Diritto alla cancellazione",
+      "rightToErasureDescription": "Puoi richiedere la cancellazione dei tuoi dati personali quando non sono più necessari.",
+      "rightToPortability": "Diritto alla portabilità",
+      "rightToPortabilityDescription": "Puoi ricevere i tuoi dati in un formato strutturato e leggibile dalla macchina."
+    },
+    "contactSection": {
+      "title": "Domande sui tuoi dati?",
+      "message": "Contatta il tuo team HR di protezione dati o il Responsabile Protezione Dati aziendale."
+    }
+  }
 }

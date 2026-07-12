@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import { apiService } from '../../services';
 import { useTeamStore, useAuthStore } from '../../store';
@@ -42,25 +43,25 @@ import styles from './DailyScrum.module.css';
 const UPDATE_TEMPLATES = [
   {
     id: 'feature',
-    label: 'Feature Development',
+    labelKey: 'templates.featureDevelopment',
     yesterdayTemplate: 'Continued work on [feature name]:\n- ',
     todayTemplate: 'Continue development on [feature name]:\n- ',
   },
   {
     id: 'issuefix',
-    label: 'Issue Fixing',
+    labelKey: 'templates.issueFixing',
     yesterdayTemplate: 'Fixed issues:\n- ',
     todayTemplate: 'Continue fixing:\n- ',
   },
   {
     id: 'review',
-    label: 'Review',
+    labelKey: 'templates.review',
     yesterdayTemplate: 'Reviewed PRs:\n- ',
     todayTemplate: 'Continue reviewing:\n- ',
   },
   {
     id: 'meeting',
-    label: 'Meetings',
+    labelKey: 'templates.meetings',
     yesterdayTemplate: 'Attended meetings:\n- ',
     todayTemplate: 'Scheduled meetings:\n- ',
   },
@@ -75,6 +76,7 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
   onSelectTemplate,
   selectedTemplateId,
 }) => {
+  const { t } = useTranslation('daily-scrum');
   return (
     <div className={styles['template-selector']}>
       {UPDATE_TEMPLATES.map((template) => (
@@ -84,7 +86,7 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
           className={`${styles['template-btn']} ${selectedTemplateId === template.id ? styles.active : ''}`}
           onClick={() => onSelectTemplate(template.yesterdayTemplate, template.todayTemplate)}
         >
-          {template.label}
+          {t(template.labelKey as never)}
         </button>
       ))}
     </div>
@@ -92,6 +94,7 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
 };
 
 export const DailyScrum: React.FC = () => {
+  const { t } = useTranslation('daily-scrum');
   const { currentTeam } = useTeamStore();
   const { user: currentUser } = useAuthStore();
   const navigate = useNavigate();
@@ -253,10 +256,10 @@ export const DailyScrum: React.FC = () => {
 
   const getErrorMessage = (error: unknown): string => {
     if (!navigator.onLine) {
-      return 'You appear to be offline. Please check your internet connection and try again.';
+      return t('toast.offline');
     }
     if (isNetworkError(error)) {
-      return 'A network error occurred. Please check your connection and try again.';
+      return t('toast.networkError');
     }
     const axiosError = error as Error & {
       response?: { status: number; data?: { error?: { message: string } } };
@@ -265,18 +268,18 @@ export const DailyScrum: React.FC = () => {
       return axiosError.response.data.error.message;
     }
     if (axiosError.response?.status === 401) {
-      return 'Your session has expired. Please log in again.';
+      return t('toast.sessionExpired');
     }
     if (axiosError.response?.status === 403) {
-      return 'You do not have permission to perform this action.';
+      return t('toast.noPermissionCreateImpediments');
     }
     if (axiosError.response?.status === 404) {
-      return 'The requested resource was not found.';
+      return t('toast.resourceNotFound');
     }
     if (axiosError.response?.status && axiosError.response.status >= 500) {
-      return 'A server error occurred. Please try again later.';
+      return t('toast.serverError');
     }
-    return 'Failed to submit update. Please try again.';
+    return t('toast.submitFailed');
   };
 
   const submitMutation = useMutation({
@@ -295,7 +298,7 @@ export const DailyScrum: React.FC = () => {
       setFailedSubmissionData(null);
       setShowRetryPrompt(false);
       clearDraft();
-      showSuccessToast('Update submitted successfully!', 3000);
+      showSuccessToast(t('toast.updateSubmitted'), 3000);
     },
     onError: (
       error: Error & { response?: { status: number; data?: { error?: { message: string } } } }
@@ -333,7 +336,7 @@ export const DailyScrum: React.FC = () => {
       setSelectedUpdateForPromote(null);
       setPromoteFormData({ title: '', description: '', ownerId: '', priority: 'Medium' });
       setPromoteFormErrors({});
-      showSuccessToast('Impediment created successfully!', 3000);
+      showSuccessToast(t('toast.impedimentCreated'), 3000);
     },
     onError: (
       error: Error & {
@@ -346,17 +349,11 @@ export const DailyScrum: React.FC = () => {
       }
     ) => {
       if (!navigator.onLine) {
-        showErrorToast(
-          'You appear to be offline. Please check your internet connection and try again.',
-          5000
-        );
+        showErrorToast(t('toast.offline'), 5000);
         return;
       }
       if (isNetworkError(error)) {
-        showErrorToast(
-          'A network error occurred. Please check your connection and try again.',
-          5000
-        );
+        showErrorToast(t('toast.networkError'), 5000);
         return;
       }
       if (error.response?.data?.error?.details) {
@@ -368,13 +365,13 @@ export const DailyScrum: React.FC = () => {
       } else if (error.response?.data?.error?.message) {
         showErrorToast(error.response.data.error.message, 5000);
       } else if (error.response?.status === 401) {
-        showErrorToast('Your session has expired. Please log in again.', 5000);
+        showErrorToast(t('toast.sessionExpired'), 5000);
       } else if (error.response?.status === 403) {
-        showErrorToast('You do not have permission to create impediments.', 5000);
+        showErrorToast(t('toast.noPermissionCreateImpediments'), 5000);
       } else if (error.response?.status && error.response.status >= 500) {
-        showErrorToast('A server error occurred. Please try again later.', 5000);
+        showErrorToast(t('toast.serverError'), 5000);
       } else {
-        showErrorToast('Failed to create impediment. Please try again.', 5000);
+        showErrorToast(t('toast.failedCreateImpediment'), 5000);
       }
     },
   });
@@ -392,33 +389,27 @@ export const DailyScrum: React.FC = () => {
       if (result.data?.sentCount && result.data.sentCount > 0) {
         showSuccessToast(result.data.message, 3000);
       } else {
-        showInfoToast(result.data?.message ?? 'No pending updates', 3000);
+        showInfoToast(result.data?.message ?? t('toast.noPendingUpdates'), 3000);
       }
     },
     onError: (error: Error) => {
       if (!navigator.onLine) {
-        showErrorToast(
-          'You appear to be offline. Please check your internet connection and try again.',
-          5000
-        );
+        showErrorToast(t('toast.offline'), 5000);
         return;
       }
       if (isNetworkError(error)) {
-        showErrorToast(
-          'A network error occurred. Please check your connection and try again.',
-          5000
-        );
+        showErrorToast(t('toast.networkError'), 5000);
         return;
       }
       const axiosError = error as Error & { response?: { status: number } };
       if (axiosError.response?.status === 401) {
-        showErrorToast('Your session has expired. Please log in again.', 5000);
+        showErrorToast(t('toast.sessionExpired'), 5000);
       } else if (axiosError.response?.status === 403) {
-        showErrorToast('You do not have permission to send reminders.', 5000);
+        showErrorToast(t('toast.noPermissionReminders'), 5000);
       } else if (axiosError.response?.status && axiosError.response.status >= 500) {
-        showErrorToast('A server error occurred. Please try again later.', 5000);
+        showErrorToast(t('toast.serverError'), 5000);
       } else {
-        showErrorToast('Failed to send reminder. Please try again.', 5000);
+        showErrorToast(t('toast.failedSendReminder'), 5000);
       }
     },
   });
@@ -435,15 +426,15 @@ export const DailyScrum: React.FC = () => {
     const errors: Record<string, string> = {};
 
     if (!promoteFormData.title.trim()) {
-      errors.title = 'Title is required';
+      errors.title = t('validation.titleRequired');
     } else if (promoteFormData.title.trim().length < 3) {
-      errors.title = 'Title must be at least 3 characters';
+      errors.title = t('validation.titleTooShort');
     }
 
     if (!promoteFormData.description.trim()) {
-      errors.description = 'Description is required';
+      errors.description = t('validation.descriptionRequired');
     } else if (promoteFormData.description.trim().length < 10) {
-      errors.description = 'Description must be at least 10 characters';
+      errors.description = t('validation.descriptionTooShort');
     }
 
     setPromoteFormErrors(errors);
@@ -580,9 +571,9 @@ export const DailyScrum: React.FC = () => {
         date: formatLocalDate(d),
         label:
           i === 0
-            ? 'Today'
+            ? t('quickDates.today')
             : i === 1
-              ? 'Yesterday'
+              ? t('quickDates.yesterday')
               : d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
         isToday: i === 0,
       });
@@ -673,14 +664,14 @@ export const DailyScrum: React.FC = () => {
           <div className={styles['header-left']}>
             <h1 className={styles['page-title']}>
               <SunIcon size={28} />
-              Daily Scrum
+              {t('title')}
             </h1>
             <p className={styles['page-subtitle']}>
-              {sprint.name} • Day {getSprintDay(sprint)}
+              {t('subtitle', { sprintName: sprint.name, day: getSprintDay(sprint) })}
             </p>
           </div>
           <div className={styles['header-right']}>
-            <div className={styles['view-toggle']} role="group" aria-label="View mode">
+            <div className={styles['view-toggle']} role="group" aria-label={t('aria.viewMode')}>
               <button
                 className={`${styles['toggle-btn']} ${viewMode === 'card' ? styles.active : ''}`}
                 onClick={() => setViewMode('card')}
@@ -689,7 +680,7 @@ export const DailyScrum: React.FC = () => {
                 <span className={styles['toggle-icon']} aria-hidden="true">
                   <GridIcon size={16} />
                 </span>
-                <span className={styles['toggle-label']}>Cards</span>
+                <span className={styles['toggle-label']}>{t('viewMode.cards')}</span>
               </button>
               <button
                 className={`${styles['toggle-btn']} ${viewMode === 'compact' ? styles.active : ''}`}
@@ -699,12 +690,12 @@ export const DailyScrum: React.FC = () => {
                 <span className={styles['toggle-icon']} aria-hidden="true">
                   <ListIcon size={16} />
                 </span>
-                <span className={styles['toggle-label']}>List</span>
+                <span className={styles['toggle-label']}>{t('viewMode.list')}</span>
               </button>
             </div>
             <div className={styles['date-picker-container']}>
               <label htmlFor="scrum-date" className={styles['visually-hidden']}>
-                Select date for daily updates
+                {t('datePicker.label')}
               </label>
               <input
                 type="date"
@@ -713,13 +704,13 @@ export const DailyScrum: React.FC = () => {
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
                 max={getTodayDate()}
-                aria-label="Select date for daily updates"
+                aria-label={t('datePicker.ariaLabel')}
               />
             </div>
             {isToday && !showUpdateForm && !userHasSubmittedToday && (
               <Button variant="primary" onClick={() => setShowUpdateForm(true)}>
                 <PlusIcon size={16} />
-                Submit Update
+                {t('submitUpdate')}
               </Button>
             )}
           </div>
@@ -731,19 +722,21 @@ export const DailyScrum: React.FC = () => {
               <TargetIcon size={28} />
             </div>
             <div className={styles['daily-scrum-sprint-goal-content']}>
-              <span className={styles['daily-scrum-sprint-goal-label']}>Sprint Goal</span>
+              <span className={styles['daily-scrum-sprint-goal-label']}>
+                {t('sprintGoal.label')}
+              </span>
               {sprint.sprintGoal ? (
                 <p className={styles['daily-scrum-sprint-goal-text']}>{sprint.sprintGoal}</p>
               ) : (
                 <p
                   className={`${styles['daily-scrum-sprint-goal-text']} ${styles['daily-scrum-sprint-goal-empty']}`}
                 >
-                  No sprint goal defined.
+                  {t('sprintGoal.noGoalDefined')}
                   <button
                     className={styles['daily-scrum-sprint-goal-link']}
                     onClick={() => navigate('/sprint-planning')}
                   >
-                    Add one in Sprint Planning
+                    {t('sprintGoal.addInPlanning')}
                   </button>
                 </p>
               )}
@@ -794,7 +787,7 @@ export const DailyScrum: React.FC = () => {
             </div>
             <div className={styles['daily-scrum-stat-content']}>
               <span className={styles['daily-scrum-stat-value']}>{stats.submitted}</span>
-              <span className={styles['daily-scrum-stat-label']}>Submitted</span>
+              <span className={styles['daily-scrum-stat-label']}>{t('stats.submitted')}</span>
             </div>
           </div>
           <div className={styles['daily-scrum-stat-item']}>
@@ -803,7 +796,7 @@ export const DailyScrum: React.FC = () => {
             </div>
             <div className={styles['daily-scrum-stat-content']}>
               <span className={styles['daily-scrum-stat-value']}>{pendingMembers.length}</span>
-              <span className={styles['daily-scrum-stat-label']}>Pending</span>
+              <span className={styles['daily-scrum-stat-label']}>{t('stats.pending')}</span>
             </div>
           </div>
           <div className={styles['daily-scrum-stat-item']}>
@@ -812,7 +805,7 @@ export const DailyScrum: React.FC = () => {
             </div>
             <div className={styles['daily-scrum-stat-content']}>
               <span className={styles['daily-scrum-stat-value']}>{stats.impediments}</span>
-              <span className={styles['daily-scrum-stat-label']}>Impediments</span>
+              <span className={styles['daily-scrum-stat-label']}>{t('stats.impediments')}</span>
             </div>
           </div>
           <div className={`${styles['daily-scrum-stat-item']} ${styles.participation}`}>
@@ -821,7 +814,7 @@ export const DailyScrum: React.FC = () => {
             </div>
             <div className={styles['daily-scrum-stat-content']}>
               <span className={styles['daily-scrum-stat-value']}>{stats.participation}%</span>
-              <span className={styles['daily-scrum-stat-label']}>Participation</span>
+              <span className={styles['daily-scrum-stat-label']}>{t('stats.participation')}</span>
             </div>
             <div className={styles['participation-bar']}>
               <div
@@ -837,7 +830,7 @@ export const DailyScrum: React.FC = () => {
             <div className={styles['section-header']}>
               <h2 className={styles['section-title']}>
                 <EditIcon size={20} />
-                Team Updates
+                {t('teamUpdates')}
                 <span className={styles['update-count']}>{updates.length}</span>
               </h2>
               <span className={styles['date-display']}>
@@ -855,12 +848,12 @@ export const DailyScrum: React.FC = () => {
                 <div className={styles['form-header']}>
                   <h3>
                     <EditIcon size={18} />
-                    Your Daily Update
+                    {t('yourDailyUpdate')}
                   </h3>
                   <button
                     className={styles['close-button']}
                     onClick={() => setShowUpdateForm(false)}
-                    aria-label="Close form"
+                    aria-label={t('aria.closeForm')}
                   >
                     <XIcon size={20} />
                   </button>
@@ -873,8 +866,8 @@ export const DailyScrum: React.FC = () => {
                         <SaveIcon size={20} />
                       </span>
                       <div className={styles['draft-restore-text']}>
-                        <strong>Unsaved Draft Found</strong>
-                        <p>Would you like to restore your previous draft?</p>
+                        <strong>{t('draftRestore.title')}</strong>
+                        <p>{t('draftRestore.prompt')}</p>
                       </div>
                     </div>
                     <div className={styles['draft-restore-actions']}>
@@ -884,7 +877,7 @@ export const DailyScrum: React.FC = () => {
                         onClick={handleDismissRestorePrompt}
                       >
                         <XIcon size={16} />
-                        Discard
+                        {t('draftRestore.discard')}
                       </button>
                       <button
                         type="button"
@@ -892,7 +885,7 @@ export const DailyScrum: React.FC = () => {
                         onClick={handleRestoreDraft}
                       >
                         <SaveIcon size={16} />
-                        Restore Draft
+                        {t('draftRestore.restoreDraft')}
                       </button>
                     </div>
                   </div>
@@ -905,8 +898,8 @@ export const DailyScrum: React.FC = () => {
                         <AlertCircleIcon size={20} />
                       </span>
                       <div className={styles['retry-banner-text']}>
-                        <strong>Submission Failed</strong>
-                        <p>Your update could not be submitted. Your data has been preserved.</p>
+                        <strong>{t('retryPrompt.title')}</strong>
+                        <p>{t('retryPrompt.message')}</p>
                       </div>
                     </div>
                     <div className={styles['retry-banner-actions']}>
@@ -916,7 +909,7 @@ export const DailyScrum: React.FC = () => {
                         onClick={handleDismissRetryPrompt}
                       >
                         <XIcon size={16} />
-                        Dismiss
+                        {t('retryPrompt.dismiss')}
                       </button>
                       <button
                         type="button"
@@ -925,7 +918,9 @@ export const DailyScrum: React.FC = () => {
                         disabled={submitMutation.isPending}
                       >
                         <CheckIcon size={16} />
-                        {submitMutation.isPending ? 'Retrying...' : 'Retry Submission'}
+                        {submitMutation.isPending
+                          ? t('retryPrompt.retrying')
+                          : t('retryPrompt.retrySubmission')}
                       </button>
                     </div>
                   </div>
@@ -939,16 +934,14 @@ export const DailyScrum: React.FC = () => {
                   <div
                     className={`${styles['form-group']} ${formErrors.yesterdayWork ? styles['has-error'] : ''} ${formData.yesterdayWork.length > 900 ? styles['has-warning'] : ''}`}
                   >
-                    <label htmlFor="yesterday-work">
-                      What did you do yesterday to help team meet the sprint goal?
-                    </label>
+                    <label htmlFor="yesterday-work">{t('form.yesterdayLabel')}</label>
                     <textarea
                       ref={yesterdayWorkTextareaRef}
                       id="yesterday-work"
                       name="yesterday-work"
                       rows={3}
                       maxLength={1000}
-                      placeholder="Describe what you accomplished yesterday..."
+                      placeholder={t('form.yesterdayPlaceholder')}
                       value={formData.yesterdayWork}
                       onChange={(e) => {
                         setFormData({ ...formData, yesterdayWork: e.target.value });
@@ -984,15 +977,13 @@ export const DailyScrum: React.FC = () => {
                   <div
                     className={`${styles['form-group']} ${formErrors.todayWork ? styles['has-error'] : ''} ${formData.todayWork.length > 900 ? styles['has-warning'] : ''}`}
                   >
-                    <label htmlFor="today-work">
-                      What will you do today to help team meet the sprint goal?
-                    </label>
+                    <label htmlFor="today-work">{t('form.todayLabel')}</label>
                     <textarea
                       id="today-work"
                       name="today-work"
                       rows={3}
                       maxLength={1000}
-                      placeholder="Describe what you plan to work on today..."
+                      placeholder={t('form.todayPlaceholder')}
                       value={formData.todayWork}
                       onChange={(e) => {
                         setFormData({ ...formData, todayWork: e.target.value });
@@ -1028,13 +1019,13 @@ export const DailyScrum: React.FC = () => {
                   <div
                     className={`${styles['form-group']} ${formData.impediment.length > 900 ? styles['has-warning'] : ''}`}
                   >
-                    <label htmlFor="impediment">Any impediments? (optional)</label>
+                    <label htmlFor="impediment">{t('form.impedimentLabel')}</label>
                     <textarea
                       id="impediment"
                       name="impediment"
                       rows={2}
                       maxLength={1000}
-                      placeholder="Describe any blockers or impediments..."
+                      placeholder={t('form.impedimentPlaceholder')}
                       value={formData.impediment}
                       onChange={(e) => setFormData({ ...formData, impediment: e.target.value })}
                       aria-describedby={
@@ -1046,8 +1037,7 @@ export const DailyScrum: React.FC = () => {
                     <div className={styles['textarea-footer']}>
                       {formData.impediment && formData.impediment !== 'None' && (
                         <div id="impediment-hint" className={styles['impediment-hint']}>
-                          This impediment will be tracked and can be promoted to a formal impediment
-                          record
+                          {t('form.impedimentHint')}
                         </div>
                       )}
                       <CharacterCounter
@@ -1062,7 +1052,12 @@ export const DailyScrum: React.FC = () => {
                       {lastSavedAt && (
                         <span className={styles['draft-saved-text']}>
                           <CheckIcon size={14} />
-                          Draft saved {formatTimeSince(lastSavedAt)}
+                          {t('draftSaved', {
+                            timeSince: formatTimeSince(
+                              lastSavedAt,
+                              t as (key: string, options?: Record<string, unknown>) => string
+                            ),
+                          })}
                         </span>
                       )}
                     </div>
@@ -1072,11 +1067,11 @@ export const DailyScrum: React.FC = () => {
                         variant="secondary"
                         onClick={() => setShowUpdateForm(false)}
                       >
-                        Cancel
+                        {t('form.cancel')}
                       </Button>
                       <Button type="submit" variant="primary" loading={submitMutation.isPending}>
                         <CheckIcon size={16} />
-                        Submit Update
+                        {t('submitUpdate')}
                       </Button>
                     </div>
                   </div>
@@ -1106,16 +1101,12 @@ export const DailyScrum: React.FC = () => {
                   <span className={styles['empty-icon']}>
                     <MessageCircleIcon size={48} />
                   </span>
-                  <h3>No Updates Yet</h3>
-                  <p>
-                    {isToday
-                      ? 'Be the first to submit your daily update!'
-                      : 'No team updates for this date.'}
-                  </p>
+                  <h3>{t('emptyState.noUpdates')}</h3>
+                  <p>{isToday ? t('emptyState.beFirst') : t('emptyState.noUpdatesForDate')}</p>
                   {isToday && !showUpdateForm && !userHasSubmittedToday && (
                     <Button variant="primary" onClick={() => setShowUpdateForm(true)}>
                       <PlusIcon size={16} />
-                      Submit Update
+                      {t('submitUpdate')}
                     </Button>
                   )}
                 </div>
@@ -1130,7 +1121,7 @@ export const DailyScrum: React.FC = () => {
                   <span className={styles.icon}>
                     <HourglassIcon size={20} />
                   </span>
-                  Waiting for Updates
+                  {t('waitingForUpdates.title')}
                   <span className={styles.count}>{pendingMembers.length}</span>
                 </h3>
                 <div className={styles['pending-list']}>
@@ -1154,7 +1145,7 @@ export const DailyScrum: React.FC = () => {
                   loading={sendReminderMutation.isPending}
                 >
                   <BellIcon size={16} />
-                  Send Reminder
+                  {t('waitingForUpdates.sendReminder')}
                 </Button>
               </div>
             )}
@@ -1165,7 +1156,7 @@ export const DailyScrum: React.FC = () => {
                   <span className={styles.icon}>
                     <AlertCircleIcon size={20} />
                   </span>
-                  Active Impediments
+                  {t('activeImpediments.title')}
                   <span className={styles.count}>{stats.impediments}</span>
                 </h3>
                 <div className={styles['impediment-list']}>
@@ -1181,10 +1172,10 @@ export const DailyScrum: React.FC = () => {
                           {update.impedimentRecord?.id && (
                             <span
                               className={styles['tracked-badge']}
-                              title="Tracked as formal impediment"
+                              title={t('aria.trackedAsFormalImpediment')}
                             >
                               <CheckIcon size={12} />
-                              Tracked
+                              {t('activeImpediments.tracked')}
                             </span>
                           )}
                         </div>
@@ -1196,12 +1187,12 @@ export const DailyScrum: React.FC = () => {
                               navigate(`/impediments?id=${update.impedimentRecord?.id}`)
                             }
                           >
-                            View Details
+                            {t('activeImpediments.viewDetails')}
                           </Button>
                         ) : (
                           <Button variant="link" onClick={() => handlePromoteImpediment(update)}>
                             <AlertCircleIcon size={14} />
-                            Track as Impediment
+                            {t('activeImpediments.trackAsImpediment')}
                           </Button>
                         )}
                       </div>
@@ -1209,7 +1200,7 @@ export const DailyScrum: React.FC = () => {
                 </div>
                 {stats.impediments > 3 && (
                   <Button variant="link" onClick={() => navigate('/impediments')}>
-                    View all {stats.impediments} impediments
+                    {t('activeImpediments.viewAllImpediments', { count: stats.impediments })}
                   </Button>
                 )}
               </div>
@@ -1220,7 +1211,7 @@ export const DailyScrum: React.FC = () => {
                 <span className={styles.icon}>
                   <FlagIcon size={20} />
                 </span>
-                Sprint Progress
+                {t('sprintProgress.title')}
               </h3>
               <div className={styles['sprint-info']}>
                 <span className={styles['sprint-name']}>{sprint.name}</span>
@@ -1231,7 +1222,10 @@ export const DailyScrum: React.FC = () => {
               </div>
               <div className={styles['sprint-days']}>
                 <span className={styles['days-label']}>
-                  Day {getSprintDay(sprint)} of {getTotalSprintDays(sprint)}
+                  {t('sprintProgress.dayOfTotal', {
+                    current: getSprintDay(sprint),
+                    total: getTotalSprintDays(sprint),
+                  })}
                 </span>
                 <div className={styles['days-bar']}>
                   <div
@@ -1243,7 +1237,7 @@ export const DailyScrum: React.FC = () => {
                 </div>
               </div>
               <Button variant="link" onClick={() => navigate('/sprint')}>
-                View Sprint Board
+                {t('sprintProgress.viewSprintBoard')}
               </Button>
             </div>
           </div>
@@ -1265,7 +1259,7 @@ export const DailyScrum: React.FC = () => {
               <div className={styles['modal-header']}>
                 <h2 id="promote-modal-title">
                   <AlertCircleIcon size={20} />
-                  Create Impediment from Daily Update
+                  {t('promoteModal.title')}
                 </h2>
                 <button className={styles['modal-close']} onClick={handleClosePromoteModal}>
                   <XIcon size={24} />
@@ -1273,12 +1267,14 @@ export const DailyScrum: React.FC = () => {
               </div>
               <div className={styles['modal-body']}>
                 <div className={styles['source-context']}>
-                  <div className={styles['context-label']}>From Daily Update by:</div>
+                  <div className={styles['context-label']}>{t('promoteModal.fromUpdateBy')}</div>
                   <div className={styles['context-value']}>
                     {selectedUpdateForPromote.user?.firstName}{' '}
                     {selectedUpdateForPromote.user?.lastName}
                   </div>
-                  <div className={styles['context-label']}>Original Impediment Text:</div>
+                  <div className={styles['context-label']}>
+                    {t('promoteModal.originalImpedimentText')}
+                  </div>
                   <div className={styles['context-text']}>
                     {selectedUpdateForPromote.impediment}
                   </div>
@@ -1286,11 +1282,12 @@ export const DailyScrum: React.FC = () => {
                 <form onSubmit={handlePromoteSubmit} className={styles['promote-form']}>
                   <div className={styles['form-group']}>
                     <label>
-                      Title <span className={styles['required-indicator']}>*</span>
+                      {t('promoteModal.titleLabel')}{' '}
+                      <span className={styles['required-indicator']}>*</span>
                     </label>
                     <input
                       type="text"
-                      placeholder="Brief title for the impediment"
+                      placeholder={t('promoteModal.titlePlaceholder')}
                       value={promoteFormData.title}
                       onChange={(e) => {
                         setPromoteFormData({ ...promoteFormData, title: e.target.value });
@@ -1307,11 +1304,12 @@ export const DailyScrum: React.FC = () => {
                   </div>
                   <div className={styles['form-group']}>
                     <label>
-                      Description <span className={styles['required-indicator']}>*</span>
+                      {t('promoteModal.descriptionLabel')}{' '}
+                      <span className={styles['required-indicator']}>*</span>
                     </label>
                     <textarea
                       rows={4}
-                      placeholder="Detailed description of the impediment"
+                      placeholder={t('promoteModal.descriptionPlaceholder')}
                       value={promoteFormData.description}
                       onChange={(e) => {
                         setPromoteFormData({ ...promoteFormData, description: e.target.value });
@@ -1338,7 +1336,7 @@ export const DailyScrum: React.FC = () => {
                       disabled={promoteImpedimentMutation.isPending}
                     />
                     <div className={styles['form-group']}>
-                      <label>Priority</label>
+                      <label>{t('promoteModal.priority')}</label>
                       <select
                         value={promoteFormData.priority}
                         onChange={(e) =>
@@ -1349,9 +1347,9 @@ export const DailyScrum: React.FC = () => {
                         }
                         disabled={promoteImpedimentMutation.isPending}
                       >
-                        <option value="High">High</option>
-                        <option value="Medium">Medium</option>
-                        <option value="Low">Low</option>
+                        <option value="High">{t('promoteModal.priorityHigh')}</option>
+                        <option value="Medium">{t('promoteModal.priorityMedium')}</option>
+                        <option value="Low">{t('promoteModal.priorityLow')}</option>
                       </select>
                     </div>
                   </div>
@@ -1359,7 +1357,7 @@ export const DailyScrum: React.FC = () => {
               </div>
               <div className={styles['modal-footer']}>
                 <Button variant="secondary" onClick={handleClosePromoteModal}>
-                  Cancel
+                  {t('form.cancel')}
                 </Button>
                 <Button
                   variant="primary"
@@ -1368,7 +1366,7 @@ export const DailyScrum: React.FC = () => {
                   loading={promoteImpedimentMutation.isPending}
                 >
                   <AlertCircleIcon size={16} />
-                  Create Impediment
+                  {t('promoteModal.createImpediment')}
                 </Button>
               </div>
             </div>
@@ -1379,8 +1377,8 @@ export const DailyScrum: React.FC = () => {
           isOpen={showUnsavedModal}
           onConfirm={handleUnsavedConfirm}
           onCancel={handleUnsavedCancel}
-          title="Unsaved Changes"
-          message="You have unsaved changes in the impediment form. Are you sure you want to discard them?"
+          title={t('unsavedModal.title')}
+          message={t('unsavedModal.message')}
         />
 
         <ToastContainer toasts={toasts} onClose={removeToast} />
@@ -1407,6 +1405,7 @@ const UpdateCard: React.FC<UpdateCardProps> = React.memo(
     onPromoteImpediment,
     onNavigateToImpediment,
   }) => {
+    const { t } = useTranslation('daily-scrum');
     const hasImpediment = update.impediment && update.impediment !== 'None';
     const hasTrackedImpediment = !!update.impedimentRecord?.id;
 
@@ -1422,10 +1421,10 @@ const UpdateCard: React.FC<UpdateCardProps> = React.memo(
       };
 
       const statusLabels: Record<string, string> = {
-        OPEN: 'Open',
-        IN_PROGRESS: 'In Progress',
-        RESOLVED: 'Resolved',
-        CLOSED: 'Closed',
+        OPEN: t('impedimentStatus.open'),
+        IN_PROGRESS: t('impedimentStatus.inProgress'),
+        RESOLVED: t('impedimentStatus.resolved'),
+        CLOSED: t('impedimentStatus.closed'),
       };
 
       const style =
@@ -1435,7 +1434,7 @@ const UpdateCard: React.FC<UpdateCardProps> = React.memo(
         <span
           className={styles['impediment-status-badge']}
           style={{ backgroundColor: style.bg, color: style.color }}
-          title={`Impediment status: ${statusLabels[status ?? 'OPEN']}`}
+          title={t('aria.impedimentStatus', { status: statusLabels[status ?? 'OPEN'] })}
         >
           {statusLabels[status ?? 'OPEN']}
         </span>
@@ -1458,7 +1457,10 @@ const UpdateCard: React.FC<UpdateCardProps> = React.memo(
           role="button"
           aria-expanded={isExpanded}
           onKeyDown={handleKeyDown}
-          aria-label={`${update.user?.firstName} ${update.user?.lastName}'s daily update. ${isExpanded ? 'Click to collapse' : 'Click to expand'}.`}
+          aria-label={t('aria.dailyUpdateAriaLabel', {
+            name: `${update.user?.firstName} ${update.user?.lastName}`,
+            expandAction: isExpanded ? t('aria.clickToCollapse') : t('aria.clickToExpand'),
+          })}
         >
           <div className={styles['compact-header']}>
             <div className={styles['user-avatar']}>
@@ -1479,7 +1481,11 @@ const UpdateCard: React.FC<UpdateCardProps> = React.memo(
             {hasImpediment && (
               <span
                 className={styles['impediment-badge']}
-                title={hasTrackedImpediment ? 'Tracked impediment' : 'Untracked impediment'}
+                title={
+                  hasTrackedImpediment
+                    ? t('activeImpediments.trackedImpediment')
+                    : t('activeImpediments.untrackedImpediment')
+                }
               >
                 <AlertCircleIcon size={16} />
               </span>
@@ -1489,14 +1495,14 @@ const UpdateCard: React.FC<UpdateCardProps> = React.memo(
           {isExpanded && (
             <div className={styles['compact-details']}>
               <div className={styles['detail-section']}>
-                <strong>Yesterday:</strong> {update.yesterdayWork}
+                <strong>{t('updateCard.yesterday')}:</strong> {update.yesterdayWork}
               </div>
               <div className={styles['detail-section']}>
-                <strong>Today:</strong> {update.todayWork}
+                <strong>{t('updateCard.today')}:</strong> {update.todayWork}
               </div>
               {hasImpediment && (
                 <div className={`${styles['detail-section']} ${styles.impediment}`}>
-                  <strong>Impediment:</strong> {update.impediment}
+                  <strong>{t('updateCard.impediment')}:</strong> {update.impediment}
                   <div className={styles['impediment-actions']}>
                     {hasTrackedImpediment ? (
                       <Button
@@ -1506,7 +1512,7 @@ const UpdateCard: React.FC<UpdateCardProps> = React.memo(
                           onNavigateToImpediment(update.impedimentRecord?.id ?? '');
                         }}
                       >
-                        View Impediment
+                        {t('updateCard.viewImpediment')}
                       </Button>
                     ) : (
                       <Button
@@ -1517,7 +1523,7 @@ const UpdateCard: React.FC<UpdateCardProps> = React.memo(
                         }}
                       >
                         <AlertCircleIcon size={14} />
-                        Track as Impediment
+                        {t('updateCard.trackAsImpediment')}
                       </Button>
                     )}
                   </div>
@@ -1556,7 +1562,11 @@ const UpdateCard: React.FC<UpdateCardProps> = React.memo(
             {hasImpediment && (
               <div
                 className={styles['impediment-indicator']}
-                title={hasTrackedImpediment ? 'Tracked impediment' : 'Untracked impediment'}
+                title={
+                  hasTrackedImpediment
+                    ? t('activeImpediments.trackedImpediment')
+                    : t('activeImpediments.untrackedImpediment')
+                }
               >
                 <AlertCircleIcon size={16} />
               </div>
@@ -1569,7 +1579,7 @@ const UpdateCard: React.FC<UpdateCardProps> = React.memo(
               <span className={styles['label-icon']}>
                 <EditIcon size={12} />
               </span>
-              Yesterday
+              {t('updateCard.yesterday')}
             </div>
             <p>{update.yesterdayWork}</p>
           </div>
@@ -1578,7 +1588,7 @@ const UpdateCard: React.FC<UpdateCardProps> = React.memo(
               <span className={styles['label-icon']}>
                 <TargetIcon size={12} />
               </span>
-              Today
+              {t('updateCard.today')}
             </div>
             <p>{update.todayWork}</p>
           </div>
@@ -1588,8 +1598,10 @@ const UpdateCard: React.FC<UpdateCardProps> = React.memo(
                 <span className={styles['label-icon']}>
                   <AlertCircleIcon size={12} />
                 </span>
-                Impediment
-                {hasTrackedImpediment && <span className={styles['tracked-label']}>(Tracked)</span>}
+                {t('updateCard.impediment')}
+                {hasTrackedImpediment && (
+                  <span className={styles['tracked-label']}>{t('updateCard.tracked')}</span>
+                )}
               </div>
               <p>{update.impediment}</p>
               <div className={styles['impediment-actions']}>
@@ -1598,7 +1610,7 @@ const UpdateCard: React.FC<UpdateCardProps> = React.memo(
                     variant="link"
                     onClick={() => onNavigateToImpediment(update.impedimentRecord?.id ?? '')}
                   >
-                    View Impediment Details
+                    {t('updateCard.viewImpedimentDetails')}
                   </Button>
                 ) : (
                   <Button
@@ -1606,7 +1618,7 @@ const UpdateCard: React.FC<UpdateCardProps> = React.memo(
                     onClick={(e) => onPromoteImpediment(update, e.currentTarget)}
                   >
                     <AlertCircleIcon size={14} />
-                    Track as Formal Impediment
+                    {t('updateCard.trackAsFormalImpediment')}
                   </Button>
                 )}
               </div>
@@ -1656,26 +1668,29 @@ function getTotalSprintDays(sprint: { startDate: string; endDate: string }): num
   return countWeekdaysBetween(start, end);
 }
 
-function formatTimeSince(date: Date): string {
+function formatTimeSince(
+  date: Date,
+  t: (key: string, options?: Record<string, unknown>) => string
+): string {
   const now = new Date();
   const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
   if (seconds < 60) {
-    return 'just now';
+    return t('formatTimeSince.justNow');
   }
 
   const minutes = Math.floor(seconds / 60);
   if (minutes < 60) {
-    return `${minutes}m ago`;
+    return t('formatTimeSince.minutesAgo', { count: minutes });
   }
 
   const hours = Math.floor(minutes / 60);
   if (hours < 24) {
-    return `${hours}h ago`;
+    return t('formatTimeSince.hoursAgo', { count: hours });
   }
 
   const days = Math.floor(hours / 24);
-  return `${days}d ago`;
+  return t('formatTimeSince.daysAgo', { count: days });
 }
 
 export default DailyScrum;

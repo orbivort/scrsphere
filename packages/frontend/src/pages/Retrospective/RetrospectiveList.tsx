@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import { apiService } from '../../services';
 import { useTeamStore, useAuthStore } from '../../store';
@@ -36,6 +37,7 @@ interface SprintWithRetro extends Sprint {
 
 export const RetrospectiveList: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation('retrospective');
   const { currentTeam } = useTeamStore();
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
@@ -87,27 +89,27 @@ export const RetrospectiveList: React.FC = () => {
     switch (normalizedStatus) {
       case SprintStatus.ACTIVE:
         return {
-          label: 'Active',
+          label: t('list.statusLabels.active'),
           className: styles['status-active'] ?? '',
         };
       case SprintStatus.COMPLETED:
         return {
-          label: 'Completed',
+          label: t('list.statusLabels.completed'),
           className: styles['status-completed'] ?? '',
         };
       case SprintStatus.PLANNED:
         return {
-          label: 'Planned',
+          label: t('list.statusLabels.planned'),
           className: styles['status-planned'] ?? '',
         };
       case SprintStatus.CANCELLED:
         return {
-          label: 'Cancelled',
+          label: t('list.statusLabels.cancelled'),
           className: styles['status-cancelled'] ?? '',
         };
       default:
         return {
-          label: 'Planned',
+          label: t('list.statusLabels.planned'),
           className: styles['status-planned'] ?? '',
         };
     }
@@ -119,7 +121,7 @@ export const RetrospectiveList: React.FC = () => {
 
       if (retroStatus === RetrospectiveStatus.COMPLETED) {
         return {
-          label: 'Retrospective Completed',
+          label: t('list.retroStatus.completed'),
           className: styles['retro-completed'],
           canView: true,
           hasRetro: true,
@@ -130,7 +132,7 @@ export const RetrospectiveList: React.FC = () => {
 
       if (retroStatus === RetrospectiveStatus.IN_PROGRESS) {
         return {
-          label: 'Retrospective In Progress',
+          label: t('list.retroStatus.inProgress'),
           className: styles['retro-in-progress'],
           canView: true,
           hasRetro: true,
@@ -140,7 +142,7 @@ export const RetrospectiveList: React.FC = () => {
       }
 
       return {
-        label: 'Retrospective Draft',
+        label: t('list.retroStatus.draft'),
         className: styles['retro-draft'],
         canView: true,
         hasRetro: true,
@@ -150,7 +152,7 @@ export const RetrospectiveList: React.FC = () => {
     }
 
     return {
-      label: 'Ready for Retrospective',
+      label: t('list.retroStatus.ready'),
       className: styles['retro-ready'],
       canView: true,
       hasRetro: false,
@@ -198,7 +200,7 @@ export const RetrospectiveList: React.FC = () => {
   if (isLoadingSprints) {
     return (
       <div className={styles['page-container']}>
-        <LoadingState variant="page" label="Loading retrospectives..." />
+        <LoadingState variant="page" label={t('list.loading')} />
       </div>
     );
   }
@@ -211,17 +213,17 @@ export const RetrospectiveList: React.FC = () => {
             <span className={styles['page-title-icon']}>
               <SearchIcon size={24} />
             </span>
-            Sprint Retrospectives
+            {t('list.title')}
           </h1>
-          <p className={styles['page-subtitle']}>
-            Reflect on completed sprints, identify improvements, and track action items
-          </p>
+          <p className={styles['page-subtitle']}>{t('list.subtitle')}</p>
         </div>
         <div className={styles['header-stats']}>
           <div className={styles['stat-item']}>
             <span className={styles['stat-value']}>{completedSprints.length}</span>
             <span className={styles['stat-label']}>
-              Completed Sprint{completedSprints.length !== 1 ? 's' : ''}
+              {completedSprints.length === 1
+                ? t('list.completedSprint')
+                : t('list.completedSprints_plural')}
             </span>
           </div>
           <div className={styles['stat-item']}>
@@ -232,7 +234,7 @@ export const RetrospectiveList: React.FC = () => {
                 ).length
               }
             </span>
-            <span className={styles['stat-label']}>Reviewed</span>
+            <span className={styles['stat-label']}>{t('list.reviewed')}</span>
           </div>
         </div>
       </header>
@@ -244,7 +246,7 @@ export const RetrospectiveList: React.FC = () => {
           <section className={styles.section}>
             <h2 className={styles['section-title']}>
               <CheckCircleIcon className={styles['section-icon']} />
-              Completed Sprints
+              {t('list.completedSprints')}
             </h2>
             <div className={styles['sprint-grid']}>
               {completedSprints.map((sprint) => {
@@ -269,7 +271,7 @@ export const RetrospectiveList: React.FC = () => {
 
                     {sprint.sprintGoal && (
                       <div className={styles['sprint-goal']}>
-                        <span className={styles['goal-label']}>Goal:</span>
+                        <span className={styles['goal-label']}>{t('list.goal')}</span>
                         <span className={styles['goal-text']}>{sprint.sprintGoal}</span>
                       </div>
                     )}
@@ -287,11 +289,11 @@ export const RetrospectiveList: React.FC = () => {
                           </span>
                           <span className={styles['retro-meta-item']}>
                             <MessageSquareIcon className={styles['retro-meta-icon']} />
-                            {sprint.retrospective.items.length || 0} items
+                            {sprint.retrospective.items.length || 0} {t('list.items')}
                           </span>
                           <span className={styles['retro-meta-item']}>
                             <CheckSquareIcon className={styles['retro-meta-icon']} />
-                            {sprint.retrospective.actionItems.length || 0} actions
+                            {sprint.retrospective.actionItems.length || 0} {t('list.actions')}
                           </span>
                         </div>
                       </div>
@@ -310,14 +312,14 @@ export const RetrospectiveList: React.FC = () => {
                           disabled={creatingSprintId === sprint.id && createRetroMutation.isPending}
                         >
                           {creatingSprintId === sprint.id && createRetroMutation.isPending ? (
-                            'Creating...'
+                            t('list.creating')
                           ) : sprint.retrospective ? (
                             <>
-                              <EyeIcon size={16} /> View Retrospective
+                              <EyeIcon size={16} /> {t('list.viewRetrospective')}
                             </>
                           ) : (
                             <>
-                              <PlusIcon size={16} /> Create Retrospective
+                              <PlusIcon size={16} /> {t('list.createRetrospective')}
                             </>
                           )}
                         </button>

@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useFocusTrap } from '../hooks/useFocusTrap';
 import { useBacklogContext } from '../context/BacklogContext';
@@ -27,6 +28,7 @@ export const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
   isDeleting,
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation('backlog');
 
   const { selectedItem, workflowError, setWorkflowError } = useBacklogContext();
 
@@ -57,16 +59,14 @@ export const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
               <AlertTriangleIcon size={24} />
             </div>
             <h2 id="delete-modal-title" className={styles['modal-title']}>
-              Delete Backlog Item
+              {t('deleteItem.title') as string}
             </h2>
-            <p className={styles['modal-subtitle']}>
-              This action is permanent and cannot be undone
-            </p>
+            <p className={styles['modal-subtitle']}>{t('deleteItem.subtitle') as string}</p>
           </div>
           <button
             className={styles['modal-close']}
             onClick={onClose}
-            aria-label="Close modal"
+            aria-label={t('deleteItem.closeModal') as string}
             type="button"
             data-modal-close
           >
@@ -87,7 +87,7 @@ export const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
                 <button
                   className={styles['modal-error-close']}
                   onClick={() => setWorkflowError(null)}
-                  aria-label="Close error message"
+                  aria-label={t('deleteItem.closeError') as string}
                   type="button"
                 >
                   ×
@@ -103,18 +103,21 @@ export const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
                 <AlertTriangleIcon size={24} />
               </span>
               <div className={styles['warning-title-group']}>
-                <h3 className={styles['warning-title']}>Action Warning</h3>
+                <h3 className={styles['warning-title']}>
+                  {t('deleteItem.actionWarning') as string}
+                </h3>
                 <p className={styles['warning-subtitle']}>
-                  Item: <strong>&ldquo;{selectedItem.title || 'Unknown Item'}&rdquo;</strong>
+                  {t('deleteItem.itemLabel') as string}{' '}
+                  <strong>
+                    &ldquo;{selectedItem.title || (t('deleteItem.unknownItem') as string)}&rdquo;
+                  </strong>
                 </p>
               </div>
             </div>
 
             <div className={styles['warning-content']}>
               <p className={styles['delete-warning-text']}>
-                You are about to permanently delete this backlog item. This action{' '}
-                <strong>cannot be undone</strong>. All associated tasks, comments, and history will
-                be permanently removed.
+                {t('deleteItem.warningText') as string}
               </p>
 
               {/* Impact Alert */}
@@ -123,15 +126,21 @@ export const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
                   <FileTextIcon size={16} />
                 </span>
                 <span className={styles['impact-text']}>
-                  Status:{' '}
+                  {t('deleteItem.statusLabel') as string}{' '}
                   <strong className={`${styles['status-badge']} ${styles[statusClass]}`}>
                     {selectedItem.status}
                   </strong>
                   {selectedItem.storyPoints !== undefined && (
                     <>
                       {' '}
-                      • {selectedItem.storyPoints} story point
-                      {selectedItem.storyPoints !== 1 ? 's' : ''}
+                      &bull; {selectedItem.storyPoints}{' '}
+                      {
+                        t(
+                          selectedItem.storyPoints !== 1
+                            ? 'deleteItem.storyPoints'
+                            : 'deleteItem.storyPoint'
+                        ) as string
+                      }
                     </>
                   )}
                 </span>
@@ -148,7 +157,7 @@ export const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
             onClick={onClose}
             disabled={isDeleting}
           >
-            Cancel
+            {t('deleteItem.cancel') as string}
           </button>
           <button
             type="button"
@@ -160,12 +169,12 @@ export const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
             {isDeleting ? (
               <>
                 <span className={styles['button-spinner']} aria-hidden="true" />
-                Deleting...
+                {t('deleteItem.deleting') as string}
               </>
             ) : (
               <>
                 <TrashIcon size={16} />
-                Delete Item
+                {t('deleteItem.deleteItem') as string}
               </>
             )}
           </button>

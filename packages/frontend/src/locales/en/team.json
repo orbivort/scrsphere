@@ -1,3 +1,161 @@
 {
-  "title": "Team"
+  "title": "Team",
+  "subtitle": "Manage team members and team standards",
+  "welcome": {
+    "title": "Welcome to Scrumooth, {{name}}!",
+    "subtitle": "Your agile journey starts here...",
+    "selectRole": "Select Your Role to Continue"
+  },
+  "leadership": {
+    "title": "Scrum Master or Product Owner",
+    "createTeam": "Create New Team",
+    "quickStart": {
+      "step1": "Create team",
+      "step2": "Invite members",
+      "step3": "Start sprint"
+    }
+  },
+  "developer": {
+    "title": "Developer",
+    "description": "Join an existing Scrum team...",
+    "howToJoin": {
+      "title": "How to Join a Team",
+      "invitationsSentBy": "Team invitations are sent by: Scrum Masters or Product Owners only",
+      "checkNotifications": "Check your notifications: Look for pending team invitations",
+      "contactLeadership": "Contact your leadership: Reach out to your Scrum Master or Product Owner"
+    },
+    "checkInvitations": "Check Invitations"
+  },
+  "capabilities": {
+    "teamCollaboration": "Team Collaboration",
+    "teamCollaborationDesc": "Work together effectively with shared goals and visibility",
+    "sprintPlanning": "Sprint Planning",
+    "sprintPlanningDesc": "Plan and manage sprints with your team",
+    "progressTracking": "Progress Tracking",
+    "progressTrackingDesc": "Track progress with real-time dashboards and reports",
+    "agileCeremonies": "Agile Ceremonies",
+    "agileCeremoniesDesc": "Facilitate daily scrums, reviews, and retrospectives"
+  },
+  "help": {
+    "title": "Need Help Getting Started?"
+  },
+  "errorStates": {
+    "notInvited": "You haven't been invited to a team yet",
+    "teamAccessRequired": "Team access required",
+    "teamNotFound": "Team not found",
+    "accessDenied": "Access denied",
+    "unableToLoad": "Unable to load team",
+    "tryAgain": "Try Again"
+  },
+  "teamInfo": {
+    "unavailable": "Team Information Unavailable",
+    "unableToLoad": "Unable to load team details. Please try refreshing the page."
+  },
+  "members": {
+    "title": "Team Members",
+    "inviteMember": "Invite Member",
+    "adding": "Adding...",
+    "searchPlaceholder": "Search by name or email...",
+    "filterOptions": {
+      "allRoles": "All Roles",
+      "productOwner": "Product Owner",
+      "scrumMaster": "Scrum Master",
+      "developer": "Developer"
+    },
+    "sortOptions": {
+      "byName": "Sort by Name",
+      "byRole": "Sort by Role",
+      "byJoined": "Sort by Joined"
+    },
+    "viewToggles": {
+      "cardView": "Card view",
+      "listView": "List view"
+    },
+    "filterResults": "Showing {{shown}} of {{total}} member(s)",
+    "clearFilters": "Clear filters",
+    "noMatchSearch": "No members match your search criteria.",
+    "clearAllFilters": "Clear all filters",
+    "empty": "No team members found.",
+    "addFirstMember": "Add First Member"
+  },
+  "deleteModal": {
+    "title": "Remove Team Member",
+    "confirmation": "Are you sure you want to remove {{name}} from the team?",
+    "warning": "This action cannot be undone. The user will lose access to all team resources.",
+    "cancel": "Cancel",
+    "close": "Close",
+    "removing": "Removing...",
+    "removeMember": "Remove Member"
+  },
+  "inviteModal": {
+    "title": "Invite Team Member",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "Enter email address",
+    "role": "Role",
+    "cancel": "Cancel",
+    "adding": "Adding...",
+    "sendInvite": "Send Invite",
+    "unsentTitle": "Unsent Invitation",
+    "unsentMessage": "You have an unsent team invitation. Are you sure you want to discard it?"
+  },
+  "inviteErrors": {
+    "userNotFound": "No user found with this email address. The user must register first before they can be invited to a team.",
+    "alreadyMember": "This user is already a member of the team.",
+    "noPermission": "You do not have permission to add team members.",
+    "networkError": "Network error. Please check your connection and try again.",
+    "genericError": "Failed to add team member. Please try again later.",
+    "invalidEmail": "Please enter a valid email address.",
+    "emailRequired": "Email address is required."
+  },
+  "teamStats": {
+    "completedSprints": "Completed Sprints",
+    "storyPointsCompleted": "Story Points Completed",
+    "avgVelocity": "Avg Velocity",
+    "sprintSuccessRate": "Sprint Success Rate"
+  },
+  "loading": "Loading team information...",
+  "memberCard": {
+    "roleNames": {
+      "scrumMaster": "Scrum Master",
+      "productOwner": "Product Owner",
+      "developer": "Developer",
+      "administrator": "Administrator"
+    },
+    "unknownUser": "Unknown User",
+    "unknownDate": "Unknown",
+    "memberSince": "Member since",
+    "ariaLabels": {
+      "teamMember": "Team member: {{name}}",
+      "sendMessage": "Send message",
+      "sendMessageTo": "Send message to {{name}}",
+      "removeFromTeam": "Remove from team",
+      "removeNameFromTeam": "Remove {{name}} from team"
+    },
+    "titles": {
+      "sendMessage": "Send message",
+      "removeFromTeam": "Remove from team"
+    }
+  },
+  "sendMessageModal": {
+    "title": "Send Message",
+    "subtitle": "To: {{name}} ({{email}})",
+    "messageLabel": "Message",
+    "messagePlaceholder": "Type your message here...",
+    "cancel": "Cancel",
+    "sending": "Sending...",
+    "send": "Send Message",
+    "success": "Message sent successfully!",
+    "validation": {
+      "emptyMessage": "Please enter a message.",
+      "maxLength": "Message must be less than {{limit}} characters."
+    },
+    "errors": {
+      "recipientNotFound": "Recipient not found. The user may have been removed.",
+      "noPermission": "You do not have permission to send messages to this user.",
+      "networkError": "Network error. Please check your connection and try again.",
+      "genericError": "Failed to send message. Please try again later."
+    },
+    "unsavedTitle": "Unsent Message",
+    "unsavedMessage": "You have an unsent message. Are you sure you want to discard it?"
+  }
 }

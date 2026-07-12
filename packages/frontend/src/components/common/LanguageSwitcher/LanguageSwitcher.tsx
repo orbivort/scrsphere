@@ -5,6 +5,7 @@ import { LOCALE_LABELS, SUPPORTED_LOCALES, type Locale } from '@scrumooth/shared
 import styles from './LanguageSwitcher.module.css';
 
 import { useI18nStore } from '@/i18n/useI18nStore';
+import { useAuthStore } from '@/store';
 
 interface LanguageSwitcherProps {
   variant?: 'dropdown' | 'inline';
@@ -13,11 +14,23 @@ interface LanguageSwitcherProps {
 export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ variant = 'dropdown' }) => {
   const { t } = useTranslation();
   const { locale, setLocale } = useI18nStore();
+  const { user, updateProfile } = useAuthStore();
 
-  const handleChange = (newLocale: Locale) => {
+  const handleChange = async (newLocale: Locale) => {
     setLocale(newLocale);
-    // Server-side locale persistence will be added when the API
-    // supports locale updates in the profile endpoint
+
+    if (user) {
+      try {
+        await updateProfile({
+          firstName: user.firstName,
+          lastName: user.lastName,
+          locale: newLocale,
+        });
+      } catch {
+        // Local change remains; show warning toast
+        console.warn('Failed to sync language preference to server');
+      }
+    }
   };
 
   return (

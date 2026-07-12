@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import type { Task, ProductBacklogItem, TeamMember, User } from '../../../../types';
 import type { FormErrors, TaskFormData } from '../../SprintBoard.types';
@@ -44,6 +45,7 @@ export const TaskEditModal: React.FC<TaskEditModalProps> = ({
   isUpdating,
   modalRef,
 }) => {
+  const { t } = useTranslation('sprint');
   const [showUnsavedChangesModal, setShowUnsavedChangesModal] = useState(false);
   const [pendingAction, setPendingAction] = useState<'close' | 'back' | null>(null);
 
@@ -138,15 +140,15 @@ export const TaskEditModal: React.FC<TaskEditModalProps> = ({
               </div>
               <div className={styles['modal-title-group']}>
                 <h2 id="task-edit-title" className={styles['modal-title']}>
-                  Edit Task #{task.id.slice(-4)}
+                  {t('taskEdit.title', { id: task.id.slice(-4) })}
                 </h2>
-                <p className={styles['modal-subtitle']}>Make changes to your task</p>
+                <p className={styles['modal-subtitle']}>{t('taskEdit.subtitle')}</p>
               </div>
             </div>
             <button
               className={styles['modal-close']}
               onClick={handleCloseAttempt}
-              aria-label="Close modal"
+              aria-label={t('taskEdit.closeModal')}
               data-modal-close
               type="button"
             >
@@ -166,7 +168,7 @@ export const TaskEditModal: React.FC<TaskEditModalProps> = ({
                     <button
                       className={styles['modal-error-close']}
                       onClick={() => {}}
-                      aria-label="Close error message"
+                      aria-label={t('taskEdit.closeErrorMessage')}
                       type="button"
                     >
                       <XIcon size={12} aria-hidden="true" />
@@ -177,11 +179,11 @@ export const TaskEditModal: React.FC<TaskEditModalProps> = ({
 
               <div className={styles['form-legend']}>
                 <span className={styles['required-indicator']}>*</span>
-                <span>Required fields</span>
+                <span>{t('taskCreate.requiredFields')}</span>
               </div>
 
               <div className={styles['form-group']}>
-                <label htmlFor="edit-task-pbi">Parent Backlog Item</label>
+                <label htmlFor="edit-task-pbi">{t('taskCreate.parentBacklogItem')}</label>
                 <select
                   id="edit-task-pbi"
                   value={formData.pbiId}
@@ -189,25 +191,27 @@ export const TaskEditModal: React.FC<TaskEditModalProps> = ({
                   disabled
                   className={styles['disabled-select']}
                 >
-                  <option value="">Select a backlog item...</option>
+                  <option value="">{t('taskCreate.selectBacklogItem')}</option>
                   {sprintItems.map((item) => (
                     <option key={item.id} value={item.id}>
                       {item.title} ({item.storyPoints ?? 0} pts)
                     </option>
                   ))}
                 </select>
-                <span className={styles['form-hint']}>Parent item cannot be changed</span>
+                <span className={styles['form-hint']}>
+                  {t('taskEdit.parentItemCannotBeChanged')}
+                </span>
               </div>
 
               <div className={styles['form-group']}>
                 <label htmlFor="edit-task-title">
-                  Title
+                  {t('taskCreate.titleLabel')}
                   <RequiredIndicator />
                 </label>
                 <input
                   id="edit-task-title"
                   type="text"
-                  placeholder="Enter task title"
+                  placeholder={t('taskCreate.titlePlaceholder')}
                   value={formData.title}
                   onChange={(e) => onFormDataChange({ title: e.target.value })}
                   maxLength={100}
@@ -225,13 +229,13 @@ export const TaskEditModal: React.FC<TaskEditModalProps> = ({
 
               <div className={styles['form-group']}>
                 <label htmlFor="edit-task-desc">
-                  Description
+                  {t('taskCreate.descriptionLabel')}
                   <RequiredIndicator />
                 </label>
                 <textarea
                   id="edit-task-desc"
                   rows={3}
-                  placeholder="Enter task description"
+                  placeholder={t('taskCreate.descriptionPlaceholder')}
                   value={formData.description}
                   onChange={(e) => onFormDataChange({ description: e.target.value })}
                   className={formErrors.description ? styles.error : ''}
@@ -246,11 +250,11 @@ export const TaskEditModal: React.FC<TaskEditModalProps> = ({
               </div>
 
               <div className={styles['form-section-divider']} />
-              <h3 className={styles['form-section-title']}>Assignment</h3>
+              <h3 className={styles['form-section-title']}>{t('taskCreate.assignment')}</h3>
 
               <div className={styles['form-group']}>
                 <label htmlFor="edit-task-assignee">
-                  Assignee
+                  {t('taskCreate.assigneeLabel')}
                   <RequiredIndicator />
                 </label>
                 <select
@@ -261,7 +265,7 @@ export const TaskEditModal: React.FC<TaskEditModalProps> = ({
                   aria-invalid={!!formErrors.assigneeId}
                   aria-describedby={formErrors.assigneeId ? 'edit-task-assignee-error' : undefined}
                 >
-                  <option value="">Unassigned</option>
+                  <option value="">{t('taskCreate.unassigned')}</option>
                   {teamMembers.map((member) => (
                     <option key={member.id} value={member.userId}>
                       {member.user?.firstName} {member.user?.lastName}
@@ -276,12 +280,12 @@ export const TaskEditModal: React.FC<TaskEditModalProps> = ({
               </div>
 
               <div className={styles['form-section-divider']} />
-              <h3 className={styles['form-section-title']}>Time Tracking</h3>
+              <h3 className={styles['form-section-title']}>{t('taskCreate.timeTracking')}</h3>
 
               <div className={styles['form-row']}>
                 <div className={styles['form-group']}>
                   <label htmlFor="edit-task-estimated">
-                    Estimated Hours
+                    {t('taskCreate.estimatedHours')}
                     <RequiredIndicator />
                   </label>
                   <input
@@ -316,14 +320,14 @@ export const TaskEditModal: React.FC<TaskEditModalProps> = ({
                     </span>
                   ) : (
                     <span id="edit-task-estimated-hint" className={styles['form-hint']}>
-                      Remaining hours will default to estimated hours
+                      {t('taskCreate.remainingHoursHint')}
                     </span>
                   )}
                 </div>
 
                 <div className={styles['form-group']}>
                   <label htmlFor="edit-task-remaining">
-                    Remaining Hours
+                    {t('taskCreate.remainingHours')}
                     <RequiredIndicator />
                   </label>
                   <input
@@ -354,7 +358,7 @@ export const TaskEditModal: React.FC<TaskEditModalProps> = ({
                     </span>
                   ) : (
                     <span id="edit-task-remaining-hint" className={styles['form-hint']}>
-                      Update daily for accurate burndown
+                      {t('taskCreate.remainingHoursDailyHint')}
                     </span>
                   )}
                 </div>
@@ -370,7 +374,7 @@ export const TaskEditModal: React.FC<TaskEditModalProps> = ({
                   disabled={isUpdating}
                 >
                   <ArrowLeftIcon size={16} />
-                  Back to Details
+                  {t('taskEdit.backToDetails')}
                 </button>
               </div>
               <div className={styles['footer-action-section']}>
@@ -380,7 +384,7 @@ export const TaskEditModal: React.FC<TaskEditModalProps> = ({
                   onClick={handleCloseAttempt}
                   disabled={isUpdating}
                 >
-                  Cancel
+                  {t('taskEdit.cancel')}
                 </button>
                 <button
                   type="submit"
@@ -389,7 +393,7 @@ export const TaskEditModal: React.FC<TaskEditModalProps> = ({
                   aria-busy={isUpdating}
                 >
                   {!isUpdating && <SaveIcon size={16} />}
-                  {isUpdating ? 'Saving...' : 'Save Changes'}
+                  {isUpdating ? t('taskEdit.saving') : t('taskEdit.saveChanges')}
                 </button>
               </div>
             </div>
@@ -401,8 +405,8 @@ export const TaskEditModal: React.FC<TaskEditModalProps> = ({
         isOpen={showUnsavedChangesModal}
         onConfirm={handleConfirmDiscard}
         onCancel={handleCancelDiscard}
-        title="Discard Changes?"
-        message="You have unsaved changes to this task. Are you sure you want to discard them?"
+        title={t('taskEdit.discardTitle')}
+        message={t('taskEdit.discardMessage')}
       />
     </>
   );

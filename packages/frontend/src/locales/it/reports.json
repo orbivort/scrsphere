@@ -1,3 +1,58 @@
 {
-  "title": "Report"
+  "title": "Report",
+  "subtitle": "Seguire le prestazioni del team e le metriche del Sprint",
+  "skipToMainContent": "Passa al contenuto principale",
+  "error": {
+    "title": "Errore durante il caricamento dei report",
+    "message": "Impossibile caricare i dati del report. Riprova più tardi."
+  },
+  "metrics": {
+    "avgVelocity": {
+      "title": "Velocity media",
+      "unit": "Story Points per Sprint",
+      "fromLastSprint": "dall'ultimo Sprint"
+    },
+    "sprintSuccessRate": {
+      "title": "Tasso di successo del Sprint",
+      "unit": "Sprint Goals raggiunti",
+      "fromLastMonth": "dall'ultimo mese"
+    },
+    "impediments": {
+      "title": "Impediment",
+      "resolved": "Risolti",
+      "openCount": "impediment(s) aperto(i)"
+    },
+    "teamSatisfaction": {
+      "title": "Soddisfazione del team",
+      "unit": "Valutazione media",
+      "fromLastSprint": "dall'ultimo Sprint"
+    }
+  },
+  "sprintHistory": {
+    "title": "Storico degli Sprint",
+    "empty": "Nessuno storico di Sprint disponibile.",
+    "stats": {
+      "planned": "Pianificato",
+      "completed": "Completato",
+      "teamMembers": "Membri del team",
+      "impediments": "Impediment"
+    }
+  },
+  "insights": {
+    "title": "Insights chiave",
+    "empty": "Nessun insight disponibile ancora. Completa più Sprint per generare insights."
+  },
+  "velocityChart": {
+    "title": "Velocity del Sprint",
+    "yAxisLabel": "Story Points",
+    "xAxisLabel": "Sprint",
+    "planned": "Pianificato",
+    "completed": "Completato"
+  },
+  "loading": {
+    "velocityChart": "Caricando grafico velocity...",
+    "metrics": "Caricando metriche...",
+    "sprintHistory": "Caricando storico Sprint...",
+    "insights": "Caricando insights..."
+  }
 }

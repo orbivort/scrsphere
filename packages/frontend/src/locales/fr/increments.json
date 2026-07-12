@@ -1,3 +1,202 @@
 {
-  "title": "Incréments"
+  "title": "Increments",
+  "subtitle": "Gerer et suivre vos increments produit. Les increments representent une fonctionnalite exploitable, prete pour la livraison aux parties prenantes.",
+  "createIncrement": "Creer un increment",
+  "loading": "Chargement des increments...",
+  "skipToSprintReview": "Passer au Sprint Review",
+  "backToIncrements": "Retour aux increments",
+  "noDescription": "Aucune description fournie.",
+  "sprintPrefix": "SPRINT {{sprintId}}",
+  "list": {
+    "stats": {
+      "total": "Increments totaux",
+      "active": "Actifs",
+      "delivered": "Livrés",
+      "storyPoints": "Story Points"
+    },
+    "filters": {
+      "all": "Tous",
+      "active": "Actifs",
+      "delivered": "Livres",
+      "archived": "Archives"
+    },
+    "searchPlaceholder": "Rechercher des increments...",
+    "ariaLabelSearch": "Rechercher des increments",
+    "ariaLabelFilter": "Filtrer les increments par statut",
+    "clearSearch": "Effacer la recherche",
+    "empty": {
+      "title": "Aucun increment trouve",
+      "noSearchResults": "Aucun increment ne correspond a votre recherche. Essayez d'ajuster vos filtres.",
+      "noIncrements": "Aucun increment n'a encore ete cree. Creez votre premier increment pour commencer a suivre les livrables."
+    },
+    "cardStats": {
+      "pbis": "PBIs",
+      "points": "Points"
+    }
+  },
+  "status": {
+    "draft": "Brouillon",
+    "verified": "Verifie",
+    "delivered": "Livre",
+    "archived": "Archive"
+  },
+  "deliveryMethod": {
+    "sprintReview": "Sprint Review",
+    "earlyRelease": "Version anticipée"
+  },
+  "dates": {
+    "created": "Créé",
+    "delivered": "Livré"
+  },
+  "detail": {
+    "deliverIncrement": "Livrer l'increment",
+    "sprintCompletionWorkflow": "Workflow de completion du sprint",
+    "workflowStep3Of4": "Etape 3 sur 4 : Livrer l'increment",
+    "workflowSteps": {
+      "sprintCompleted": "Sprint termine",
+      "createIncrement": "Creer un increment",
+      "deliverIncrement": "Livrer l'increment",
+      "sprintReview": "Sprint Review"
+    },
+    "progressSteps": {
+      "completed": "Termine",
+      "current": "Actuel",
+      "upcoming": "A venir"
+    },
+    "overview": {
+      "title": "Apercu",
+      "description": "Description",
+      "sprint": "Sprint",
+      "created": "Cree",
+      "storyPoints": "Story Points",
+      "pbisIncluded": "PBIs inclus",
+      "delivered": "Livre",
+      "deliveryMethod": "Methode de livraison",
+      "noDescription": "Aucune description"
+    },
+    "pbis": {
+      "title": "Product Backlog Items inclus",
+      "empty": "Aucun PBI inclus dans cet increment."
+    },
+    "dodVerification": {
+      "title": "Verification Definition of Done",
+      "totalVerifications": "Verifications totales",
+      "verified": "Verifie",
+      "byCategory": "Verification par categorie",
+      "byPbi": "Verification par PBI",
+      "noVerifications": "Aucune verification DoD enregistree pour cet increment.",
+      "noVerificationsHint": "Les verifications sont capturees lors de l'achevement d'un sprint.",
+      "noVerificationsForPbi": "Aucune verification pour ce PBI."
+    },
+    "timeline": {
+      "title": "Chronologie",
+      "incrementCreated": "Increment cree",
+      "deliveredViaSprintReview": "Livre via Sprint Review",
+      "deliveredViaEarlyRelease": "Livre via version anticipee"
+    },
+    "deliverModal": {
+      "title": "Livrer l'increment",
+      "description": "Marquer cet Increment comme livre et enregistrer la methode de livraison.",
+      "modalDescription": "Marquer cet Increment comme livre aux parties prenantes. Cette action ne peut pas etre annulee.",
+      "deliveryMethodLabel": "Methode de livraison",
+      "sprintReviewOption": "Sprint Review",
+      "sprintReviewDescription": "Presente lors de la reunion Sprint Review",
+      "earlyReleaseOption": "Version anticipee",
+      "earlyReleaseDescription": "Livre avant la fin du Sprint",
+      "notesLabel": "Notes (optionnel)",
+      "notesPlaceholder": "Ajoutez des notes sur cette livraison...",
+      "confirmText": "Je confirme que cet Increment respecte le Definition of Done et est pret pour la livraison",
+      "checkboxText": "Je comprends que cette action est irreversible et que l'increment sera marque comme livre aux parties prenantes.",
+      "cancel": "Annuler",
+      "confirm": "Confirmer la livraison",
+      "delivering": "Livraison...",
+      "closeDialog": "Fermer le dialogue",
+      "confirmDeliveryAriaLabel": "Confirmer l'action de livraison"
+    },
+    "toast": {
+      "deliveredSuccess": "Increment livre avec succes !",
+      "deliverFailed": "Impossible de livrer l'increment. Veuillez reessayer."
+    },
+    "error": {
+      "title": "Impossible de charger l'increment",
+      "backToIncrements": "Retour aux increments"
+    },
+    "loading": "Chargement de l'increment..."
+  },
+  "create": {
+    "backToSprintReview": "Retour au Sprint Review",
+    "backToIncrements": "Retour aux increments",
+    "title": "Creer un increment",
+    "workflowSteps": {
+      "sprintCompleted": "Sprint termine",
+      "createIncrement": "Creer un increment",
+      "deliverIncrement": "Livrer l'increment",
+      "sprintReview": "Sprint Review"
+    },
+    "workflowIndicator": {
+      "title": "Workflow de completion du sprint",
+      "step2Of4": "Etape 2 sur 4 : Creer un increment",
+      "step3Of4": "Etape 3 sur 4 : Livrer l'increment",
+      "step4Of4": "Etape 4 sur 4 : Sprint Review"
+    },
+    "progressSteps": {
+      "creatingIncrement": "Creation de l'increment...",
+      "deliveringIncrement": "Livraison de l'increment...",
+      "redirecting": "Redirection..."
+    },
+    "form": {
+      "incrementDetails": "Details de l'increment",
+      "incrementDetailsSubtitle": "Fournissez un nom et une description optionnelle pour cet increment.",
+      "name": "Nom",
+      "namePlaceholder": "ex. Increment Sprint 5",
+      "sprint": "Sprint",
+      "sprintPlaceholder": "Selectionnez un sprint",
+      "description": "Description",
+      "descriptionPlaceholder": "Decrivez ce que cet increment contient..."
+    },
+    "pbis": {
+      "title": "Selectionner les Product Backlog Items",
+      "subtitle": "Choisissez les PBIs qui sont termines et prets a etre inclus dans cet increment.",
+      "selected": "selectionne(s)",
+      "deselectAll": "Deselectionner tout",
+      "selectAll": "Selectionner tout",
+      "noEligiblePbis": "Aucun PBI eligible trouve pour ce sprint.",
+      "mustBeDone": "Les PBIs doivent etre en statut \"Done\" et pas deja dans un autre increment.",
+      "alreadyInIncrement": "Deja dans un increment"
+    },
+    "summary": {
+      "title": "Resume",
+      "subtitle": "Verifiez votre increment avant la creation.",
+      "pbisSelected": "PBIs selectionnes",
+      "totalStoryPoints": "Total Story Points"
+    },
+    "actions": {
+      "skipToSprintReview": "Passer au Sprint Review",
+      "cancel": "Annuler",
+      "createAndContinue": "Creer & Continuer",
+      "createIncrement": "Creer l'increment",
+      "creating": "Creation...",
+      "delivering": "Livraison..."
+    },
+    "validation": {
+      "nameRequired": "Le nom est requis",
+      "sprintRequired": "Veuillez selectionner un sprint",
+      "atLeastOnePbi": "Au moins un PBI doit etre selectionne",
+      "noTeamSelected": "Aucune equipe selectionnee. Veuillez selectionner une equipe d'abord."
+    },
+    "toast": {
+      "createdAndDelivering": "Increment cree ! Livraison de l'increment...",
+      "deliveredSuccess": "Increment livre ! Redirection vers le Sprint Review...",
+      "createdSuccess": "Increment cree avec succes !",
+      "deliverFailed": "Impossible de livrer l'increment. Vous pouvez le livrer manuellement depuis la page de detail de l'increment.",
+      "createFailed": "Impossible de creer l'increment. Veuillez reessayer.",
+      "validationFailed": "Validation echouee"
+    },
+    "loading": "Chargement...",
+    "error": {
+      "title": "Erreur",
+      "message": "Impossible de charger les donnees. Veuillez reessayer.",
+      "failedLoadPbis": "Impossible de charger les PBIs eligibles"
+    }
+  }
 }

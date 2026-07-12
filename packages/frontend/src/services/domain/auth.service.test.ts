@@ -357,6 +357,29 @@ describe('AuthService', () => {
       expect(result.success).toBe(true);
       expect(result.data?.firstName).toBe('Jane');
     });
+
+    it('should update profile with locale', async () => {
+      const profileData = { firstName: 'Jane', lastName: 'Smith', locale: 'de' as const };
+      const mockResponse = {
+        data: {
+          success: true,
+          data: {
+            id: '1',
+            email: 'test@example.com',
+            firstName: 'Jane',
+            lastName: 'Smith',
+            locale: 'de',
+          },
+        },
+      };
+      vi.mocked(mockApi.put).mockResolvedValue(mockResponse);
+
+      const result = await authService.updateProfile(profileData);
+
+      expect(mockApi.put).toHaveBeenCalledWith('/auth/me/profile', profileData);
+      expect(result.success).toBe(true);
+      expect(result.data?.locale).toBe('de');
+    });
   });
 
   describe('changePassword', () => {

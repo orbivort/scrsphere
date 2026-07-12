@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 
 import { LoadingState } from '../../components/common/Loading';
 import { apiService } from '../../services';
@@ -32,6 +33,7 @@ export const PendingRetroActionItems: React.FC<PendingRetroActionItemsProps> = (
   onCreateWorkItem,
 }) => {
   const { currentTeam } = useTeamStore();
+  const { t } = useTranslation('backlog');
   const teamId = currentTeam?.id;
   const queryClient = useQueryClient();
   const [isExpanded, setIsExpanded] = useState(true);
@@ -70,22 +72,22 @@ export const PendingRetroActionItems: React.FC<PendingRetroActionItemsProps> = (
   ): { label: string; icon: React.ReactNode; className: string } => {
     const configs: Record<string, { label: string; icon: React.ReactNode; className: string }> = {
       PENDING: {
-        label: 'Pending',
+        label: t('pendingRetro.pending') as string,
         icon: <ClockIcon size={12} />,
         className: styles['status-pending'] ?? '',
       },
       IN_PROGRESS: {
-        label: 'In Progress',
+        label: t('pendingRetro.inProgress') as string,
         icon: <RefreshIcon size={12} />,
         className: styles['status-in-progress'] ?? '',
       },
       COMPLETED: {
-        label: 'Completed',
+        label: t('pendingRetro.completed') as string,
         icon: <CheckCircleIcon size={12} />,
         className: styles['status-completed'] ?? '',
       },
       CANCELLED: {
-        label: 'Cancelled',
+        label: t('pendingRetro.cancelled') as string,
         icon: <XCircleIcon size={12} />,
         className: styles['status-cancelled'] ?? '',
       },
@@ -120,7 +122,7 @@ export const PendingRetroActionItems: React.FC<PendingRetroActionItemsProps> = (
           <span className={styles['icon']}>
             <FileCheckIcon size={20} aria-hidden="true" />
           </span>
-          <h3 className={styles['title']}>Pending Action from Retrospective</h3>
+          <h3 className={styles['title']}>{t('pendingRetro.headerTitle') as string}</h3>
           <span className={styles['count']}>{actionItems.length}</span>
         </div>
         <button className={styles['toggle-button']}>
@@ -135,7 +137,7 @@ export const PendingRetroActionItems: React.FC<PendingRetroActionItemsProps> = (
               className={`${styles['filter-button']} ${filter === 'all' ? styles['active'] : ''}`}
               onClick={() => setFilter('all')}
             >
-              All ({actionItems.length})
+              {t('pendingRetro.all') as string} ({actionItems.length})
             </button>
             {['PENDING', 'IN_PROGRESS'].map((status) => {
               const count = actionItems.filter((item) => item.status === status).length;
@@ -154,7 +156,11 @@ export const PendingRetroActionItems: React.FC<PendingRetroActionItemsProps> = (
           </div>
 
           {isLoading ? (
-            <LoadingState variant="skeleton-list" itemCount={5} label="Loading action items" />
+            <LoadingState
+              variant="skeleton-list"
+              itemCount={5}
+              label={t('pendingRetro.loadingActionItems') as string}
+            />
           ) : (
             <div className={styles['action-items-list']}>
               {filteredActionItems.map((item) => {
@@ -177,19 +183,23 @@ export const PendingRetroActionItems: React.FC<PendingRetroActionItemsProps> = (
                     <div className={styles['meta']}>
                       {item.owner && (
                         <div className={styles['owner']}>
-                          <strong>Owner:</strong> {item.owner.firstName} {item.owner.lastName}
+                          <strong>{t('pendingRetro.owner') as string}</strong>{' '}
+                          {item.owner.firstName} {item.owner.lastName}
                         </div>
                       )}
                       {item.dueDate && (
                         <div className={styles['due-date']}>
-                          <strong>Due:</strong> {formatDate(item.dueDate)}
+                          <strong>{t('pendingRetro.due') as string}</strong>{' '}
+                          {formatDate(item.dueDate)}
                         </div>
                       )}
                     </div>
 
                     {item.sprint && (
                       <div className={styles['sprint-info']}>
-                        <span className={styles['sprint-label']}>From Sprint:</span>
+                        <span className={styles['sprint-label']}>
+                          {t('pendingRetro.fromSprint') as string}
+                        </span>
                         <span className={styles['sprint-name']}>{item.sprint.name}</span>
                       </div>
                     )}
@@ -199,14 +209,16 @@ export const PendingRetroActionItems: React.FC<PendingRetroActionItemsProps> = (
                         className={styles['create-item-button']}
                         onClick={() => handleCreateItem(item)}
                       >
-                        Create Item
+                        {t('pendingRetro.createItem') as string}
                       </button>
                       <button
                         className={styles['mark-added-button']}
                         onClick={() => handleMarkAdded(item)}
                         disabled={markAddedMutation.isPending}
                       >
-                        {markAddedMutation.isPending ? 'Updating...' : 'Mark Added'}
+                        {markAddedMutation.isPending
+                          ? (t('pendingRetro.updating') as string)
+                          : (t('pendingRetro.markAdded') as string)}
                       </button>
                     </div>
                   </div>

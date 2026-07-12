@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { type Task, type TaskStatus, TaskStatus as TaskStatusEnum } from '../../../types';
 import { useAnnounce } from '../../../components/LiveAnnouncer';
@@ -14,10 +15,10 @@ const STATUS_ORDER: TaskStatus[] = [
   TaskStatusEnum.DONE,
 ];
 
-const STATUS_LABELS: Record<TaskStatus, string> = {
-  [TaskStatusEnum.TODO]: 'To Do',
-  [TaskStatusEnum.IN_PROGRESS]: 'In Progress',
-  [TaskStatusEnum.DONE]: 'Done',
+const STATUS_LABEL_KEYS: Record<TaskStatus, string> = {
+  [TaskStatusEnum.TODO]: 'taskStatus.todo',
+  [TaskStatusEnum.IN_PROGRESS]: 'taskStatus.inProgress',
+  [TaskStatusEnum.DONE]: 'taskStatus.done',
 };
 
 export interface TaskCardProps {
@@ -81,6 +82,7 @@ export const TaskCard = React.memo<TaskCardProps>(
     wipLimits,
     tasksByStatus,
   }) => {
+    const { t } = useTranslation('sprint');
     const announce = useAnnounce();
     // Internal grab state (used when onMoveStatus is provided)
     const [internalIsGrabbed, setInternalIsGrabbed] = useState(false);
@@ -130,13 +132,16 @@ export const TaskCard = React.memo<TaskCardProps>(
         if (limit !== Infinity && adjustedCount > limit) {
           return {
             valid: false,
-            message: `Cannot move task. ${STATUS_LABELS[newStatus]} has reached WIP limit of ${limit}.`,
+            message: t('board.cannotMoveTaskWip', {
+              status: t(STATUS_LABEL_KEYS[newStatus] as never),
+              limit,
+            }),
           };
         }
 
         return { valid: true };
       },
-      [wipLimits, tasksByStatus, task.status]
+      [wipLimits, tasksByStatus, task.status, t]
     );
 
     // Get next/previous status
@@ -162,44 +167,52 @@ export const TaskCard = React.memo<TaskCardProps>(
 
     // Announce grab state
     const announceGrab = useCallback(() => {
-      const statusLabel = STATUS_LABELS[task.status];
-      const message = `Task ${task.title} grabbed. Current status: ${statusLabel}. Use ArrowLeft/Right to change status. Escape to cancel, Enter to drop.`;
+      const message = t('board.taskGrabbed', {
+        title: task.title,
+        status: t(STATUS_LABEL_KEYS[task.status] as never),
+      });
       announce(message, 'assertive');
-    }, [task.title, task.status, announce]);
+    }, [task.title, task.status, announce, t]);
 
     // Announce target status
     const announceTargetStatus = useCallback(
       (status: TaskStatus) => {
-        const statusLabel = STATUS_LABELS[status];
         const statusKey =
           status === TaskStatusEnum.IN_PROGRESS
             ? 'in_progress'
             : (status.toLowerCase() as keyof typeof tasksByStatus);
         const count = tasksByStatus?.[statusKey].length ?? 0;
         const limit = wipLimits?.[statusKey];
-        const limitText = limit && limit !== Infinity ? ` WIP limit: ${limit}.` : '';
-        const message = `Target status: ${statusLabel}. ${count} tasks currently in this column.${limitText}`;
+        const limitText = limit && limit !== Infinity ? t('board.wipLimit', { limit }) : '';
+        const message = t('board.targetStatus', {
+          status: t(STATUS_LABEL_KEYS[status] as never),
+          count,
+          limitText,
+        });
         announce(message, 'polite');
       },
-      [tasksByStatus, wipLimits, announce]
+      [tasksByStatus, wipLimits, announce, t]
     );
 
     // Announce drop
     const announceDrop = useCallback(
       (status: TaskStatus) => {
-        const statusLabel = STATUS_LABELS[status];
-        const message = `Task ${task.title} moved to ${statusLabel}.`;
+        const message = t('board.taskMovedTo', {
+          title: task.title,
+          status: t(STATUS_LABEL_KEYS[status] as never),
+        });
         announce(message, 'assertive');
       },
-      [task.title, announce]
+      [task.title, announce, t]
     );
 
     // Announce cancel
     const announceCancel = useCallback(() => {
-      const statusLabel = STATUS_LABELS[task.status];
-      const message = `Drag cancelled. Task remains in ${statusLabel}.`;
+      const message = t('board.dragCancelled', {
+        status: t(STATUS_LABEL_KEYS[task.status] as never),
+      });
       announce(message, 'assertive');
-    }, [task.status, announce]);
+    }, [task.status, announce, t]);
 
     // Announce WIP limit error
     const announceWIPError = useCallback(
@@ -233,7 +246,7 @@ export const TaskCard = React.memo<TaskCardProps>(
           if (available.includes(newStatus)) {
             const validation = validateWIPLimit(newStatus);
             if (!validation.valid) {
-              announceWIPError(validation.message ?? 'WIP limit validation failed');
+              announceWIPError(validation.message ?? t('board.transitionValidationFailed'));
               return;
             }
             setTargetStatus(newStatus);
@@ -250,6 +263,7 @@ export const TaskCard = React.memo<TaskCardProps>(
         validateWIPLimit,
         announceTargetStatus,
         announceWIPError,
+        t,
       ]
     );
 
@@ -269,7 +283,7 @@ export const TaskCard = React.memo<TaskCardProps>(
 
       const validation = validateWIPLimit(targetStatus);
       if (!validation.valid) {
-        announceWIPError(validation.message ?? 'WIP limit validation failed');
+        announceWIPError(validation.message ?? t('board.transitionValidationFailed'));
         return;
       }
 
@@ -286,6 +300,7 @@ export const TaskCard = React.memo<TaskCardProps>(
       validateWIPLimit,
       announceDrop,
       announceWIPError,
+      t,
     ]);
 
     // Handle cancel
@@ -337,7 +352,7 @@ export const TaskCard = React.memo<TaskCardProps>(
               if (nextStatus) {
                 const validation = validateWIPLimit(nextStatus);
                 if (!validation.valid) {
-                  announceWIPError(validation.message ?? 'WIP limit validation failed');
+                  announceWIPError(validation.message ?? t('board.transitionValidationFailed'));
                   return;
                 }
                 onMoveStatus(task.id, nextStatus);
@@ -351,7 +366,7 @@ export const TaskCard = React.memo<TaskCardProps>(
               if (prevStatus) {
                 const validation = validateWIPLimit(prevStatus);
                 if (!validation.valid) {
-                  announceWIPError(validation.message ?? 'WIP limit validation failed');
+                  announceWIPError(validation.message ?? t('board.transitionValidationFailed'));
                   return;
                 }
                 onMoveStatus(task.id, prevStatus);
@@ -388,6 +403,7 @@ export const TaskCard = React.memo<TaskCardProps>(
         validateWIPLimit,
         announceDrop,
         announceWIPError,
+        t,
       ]
     );
 
@@ -400,18 +416,26 @@ export const TaskCard = React.memo<TaskCardProps>(
 
     // Build ARIA label
     const buildAriaLabel = useCallback(() => {
-      const statusLabel = STATUS_LABELS[task.status];
+      const statusLabel = t(STATUS_LABEL_KEYS[task.status] as never);
       const assigneeLabel = task.assignee
-        ? `assigned to ${task.assignee.firstName} ${task.assignee.lastName}`
-        : 'unassigned';
-      const grabbedLabel = isGrabbed ? ', grabbed' : '';
+        ? t('board.assignedToLabel', {
+            name: `${task.assignee.firstName} ${task.assignee.lastName}`,
+          })
+        : t('board.unassignedLabel');
+      const grabbedLabel = isGrabbed ? t('board.grabbedLabel') : '';
       const targetLabel =
         targetStatus && targetStatus !== task.status
-          ? `, moving to ${STATUS_LABELS[targetStatus]}`
+          ? t('board.movingToLabel', { status: t(STATUS_LABEL_KEYS[targetStatus] as never) })
           : '';
 
-      return `${task.title}, ${statusLabel}, ${assigneeLabel}${grabbedLabel}${targetLabel}`;
-    }, [task, isGrabbed, targetStatus]);
+      return t('board.ariaLabel', {
+        title: task.title,
+        status: statusLabel,
+        assigneeLabel,
+        grabbedLabel,
+        targetLabel,
+      });
+    }, [task, isGrabbed, targetStatus, t]);
 
     // Build class names
     const classNames = [
@@ -450,7 +474,9 @@ export const TaskCard = React.memo<TaskCardProps>(
             <div
               className={styles['task-assignee']}
               title={`${task.assignee.firstName} ${task.assignee.lastName}`}
-              aria-label={`Assigned to ${task.assignee.firstName} ${task.assignee.lastName}`}
+              aria-label={t('board.assignedTo', {
+                name: `${task.assignee.firstName} ${task.assignee.lastName}`,
+              })}
             >
               {task.assignee.firstName.charAt(0)}
               {task.assignee.lastName.charAt(0)}
@@ -461,11 +487,16 @@ export const TaskCard = React.memo<TaskCardProps>(
         <h4 className={styles['task-title']}>{task.title}</h4>
 
         {task.pbi && (
-          <div className={styles['task-parent-pbi']} aria-label={`Part of: ${task.pbi.title}`}>
-            <span className={styles['pbi-label']}>PBI:</span>
+          <div
+            className={styles['task-parent-pbi']}
+            aria-label={t('board.partOf', { title: task.pbi.title })}
+          >
+            <span className={styles['pbi-label']}>{t('board.pbiLabel')}</span>
             <span className={styles['pbi-title']}>{task.pbi.title}</span>
             {task.pbi.storyPoints && (
-              <span className={styles['pbi-points']}>{task.pbi.storyPoints} pts</span>
+              <span className={styles['pbi-points']}>
+                {task.pbi.storyPoints} {t('taskCard.pts')}
+              </span>
             )}
           </div>
         )}
@@ -477,12 +508,16 @@ export const TaskCard = React.memo<TaskCardProps>(
             {task.estimatedHours && (
               <span
                 className={styles['task-hours']}
-                aria-label={`${task.remainingHours ?? task.estimatedHours} hours remaining`}
+                aria-label={t('board.hoursRemaining', {
+                  hours: task.remainingHours ?? task.estimatedHours,
+                })}
               >
                 <span aria-hidden="true">⏱️</span> {task.remainingHours ?? task.estimatedHours}h
                 {task.remainingHours !== undefined &&
                   task.remainingHours !== task.estimatedHours && (
-                    <span className={styles['hours-estimate']}> / {task.estimatedHours}h est.</span>
+                    <span className={styles['hours-estimate']}>
+                      {t('board.hoursEstimate', { hours: task.estimatedHours })}
+                    </span>
                   )}
               </span>
             )}
@@ -491,22 +526,26 @@ export const TaskCard = React.memo<TaskCardProps>(
             {task.assignee ? (
               <span
                 className={styles['task-assignee-name']}
-                aria-label={`Assigned to ${task.assignee.firstName} ${task.assignee.lastName}`}
+                aria-label={t('board.assignedTo', {
+                  name: `${task.assignee.firstName} ${task.assignee.lastName}`,
+                })}
               >
                 <span aria-hidden="true">👤</span> {task.assignee.firstName}{' '}
                 {task.assignee.lastName}
               </span>
             ) : (
-              <span className={styles['task-unassigned']} aria-label="Unassigned">
-                <span aria-hidden="true">👤</span> Unassigned
+              <span className={styles['task-unassigned']} aria-label={t('taskCard.unassigned')}>
+                <span aria-hidden="true">👤</span> {t('taskCard.unassigned')}
               </span>
             )}
           </div>
           <span
             className={`${styles['task-status-badge']} ${styles[task.status.toLowerCase().replace('_', '-') as 'todo' | 'in-progress' | 'done']}`}
-            aria-label={`Status: ${task.status.replace('_', ' ')}`}
+            aria-label={t('board.statusBadge', {
+              status: t(STATUS_LABEL_KEYS[task.status] as never),
+            })}
           >
-            {task.status.replace('_', ' ')}
+            {t(STATUS_LABEL_KEYS[task.status] as never)}
           </span>
         </div>
 
@@ -520,8 +559,10 @@ export const TaskCard = React.memo<TaskCardProps>(
             <span className={styles['grab-icon']}>✋</span>
             <span className={styles['grab-text']}>
               {targetStatus && targetStatus !== task.status
-                ? `Moving to ${STATUS_LABELS[targetStatus]}`
-                : 'Use Arrow keys to move'}
+                ? t('board.movingTo', {
+                    status: t(STATUS_LABEL_KEYS[targetStatus] as never),
+                  })
+                : t('board.useArrowKeys')}
             </span>
           </div>
         )}

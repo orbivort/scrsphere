@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 
 import { apiService } from '../../services';
 import { useTeamStore } from '../../store';
@@ -78,11 +79,18 @@ interface RemoveItemData {
 
 type TaskAction = 'delete' | 'return_to_backlog' | 'keep_in_sprint';
 
-const priorityLabels: Record<MoSCoWPriority, { label: string; color: string }> = {
-  [MoSCoWPriority.MUST_HAVE]: { label: 'MUST', color: '#ef4444' },
-  [MoSCoWPriority.SHOULD_HAVE]: { label: 'SHOULD', color: '#f59e0b' },
-  [MoSCoWPriority.COULD_HAVE]: { label: 'COULD', color: '#3b82f6' },
-  [MoSCoWPriority.WONT_HAVE]: { label: "WON'T", color: '#6b7280' },
+const PRIORITY_COLORS: Record<MoSCoWPriority, string> = {
+  [MoSCoWPriority.MUST_HAVE]: '#ef4444',
+  [MoSCoWPriority.SHOULD_HAVE]: '#f59e0b',
+  [MoSCoWPriority.COULD_HAVE]: '#3b82f6',
+  [MoSCoWPriority.WONT_HAVE]: '#6b7280',
+};
+
+const PRIORITY_LABEL_KEYS: Record<MoSCoWPriority, string> = {
+  [MoSCoWPriority.MUST_HAVE]: 'sprintPlanning.moscow.must',
+  [MoSCoWPriority.SHOULD_HAVE]: 'sprintPlanning.moscow.should',
+  [MoSCoWPriority.COULD_HAVE]: 'sprintPlanning.moscow.could',
+  [MoSCoWPriority.WONT_HAVE]: 'sprintPlanning.moscow.wont',
 };
 
 export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
@@ -91,6 +99,7 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
   sprintGoal,
   onClose,
 }) => {
+  const { t } = useTranslation('sprint');
   const { currentTeam } = useTeamStore();
   const queryClient = useQueryClient();
   const teamId = currentTeam?.id;
@@ -209,15 +218,15 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
 
           const taskInfo =
             draftTasks.length > 0
-              ? ` with ${draftTasks.length} draft task${draftTasks.length > 1 ? 's' : ''}`
+              ? t('sprintBacklogManager.withDraftTasks', { count: draftTasks.length })
               : '';
-          success(`PBI added to sprint${taskInfo}`);
+          success(t('sprintBacklogManager.pbiAddedToSprint', { taskInfo }));
         } catch (taskError: unknown) {
           logger.error('Failed to create draft tasks', undefined, { error: taskError });
-          warning('PBI added to sprint, but failed to create draft tasks');
+          warning(t('sprintBacklogManager.pbiAddedButTasksFailed'));
         }
       } else {
-        success('PBI added to sprint successfully');
+        success(t('sprintBacklogManager.pbiAddedSuccessfully'));
       }
 
       void queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
@@ -231,7 +240,7 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
     onError: (error: unknown) => {
       const message =
         (error as { response?: { data?: { error?: { message?: string } } } }).response?.data?.error
-          ?.message ?? 'Failed to add PBI to sprint';
+          ?.message ?? t('sprintBacklogManager.failedToAddPbi');
       showError(message);
     },
   });
@@ -256,12 +265,12 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
       setSelectedItemForRemoval(null);
       setRemoveReason('');
       setTaskAction('return_to_backlog');
-      success('PBI returned to backlog successfully');
+      success(t('sprintBacklogManager.pbiReturnedToBacklog'));
     },
     onError: (error: unknown) => {
       const message =
         (error as { response?: { data?: { error?: { message?: string } } } }).response?.data?.error
-          ?.message ?? 'Failed to return PBI to backlog';
+          ?.message ?? t('sprintBacklogManager.failedToReturnPbi');
       showError(message);
     },
   });
@@ -291,8 +300,10 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
   }, [removePBIMutation]);
 
   const getPriorityStyle = (priority: MoSCoWPriority) => {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- runtime priority may not match config keys
-    return priorityLabels[priority] ?? { label: '', color: 'transparent' };
+    return {
+      label: t(PRIORITY_LABEL_KEYS[priority] as never) ?? '',
+      color: PRIORITY_COLORS[priority] ?? 'transparent',
+    };
   };
 
   const getTaskStatusClass = (status: string) => {
@@ -307,10 +318,10 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
     const diffHours = Math.floor(diffMins / 60);
     const diffDays = Math.floor(diffHours / 24);
 
-    if (diffMins < 1) return 'just now';
-    if (diffMins < 60) return `${diffMins} min${diffMins === 1 ? '' : 's'} ago`;
-    if (diffHours < 24) return `${diffHours} hour${diffHours === 1 ? '' : 's'} ago`;
-    return `${diffDays} day${diffDays === 1 ? '' : 's'} ago`;
+    if (diffMins < 1) return t('sprintBacklogManager.justNow');
+    if (diffMins < 60) return t('sprintBacklogManager.minsAgo', { count: diffMins });
+    if (diffHours < 24) return t('sprintBacklogManager.hoursAgo', { count: diffHours });
+    return t('sprintBacklogManager.daysAgo', { count: diffDays });
   };
 
   if (sprintLoading) {
@@ -319,7 +330,7 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
         <div className={styles['sbm-modal']}>
           <div className={styles['sbm-loading']}>
             <div className={styles['sbm-spinner']}>⏳</div>
-            <p>Loading sprint backlog...</p>
+            <p>{t('sprintBacklogManager.loadingSprintBacklog')}</p>
           </div>
         </div>
       </div>
@@ -333,17 +344,21 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
         <div className={styles['sbm-modal']} onClick={(e) => e.stopPropagation()}>
           <div className={styles['sbm-header']}>
             <div className={styles['sbm-header-left']}>
-              <h2>📋 Sprint Backlog Manager</h2>
+              <h2>{t('sprintBacklogManager.title')}</h2>
               <span className={styles['sbm-sprint-name']}>{sprintName}</span>
             </div>
-            <button className={styles['sbm-close-btn']} onClick={onClose} aria-label="Close">
+            <button
+              className={styles['sbm-close-btn']}
+              onClick={onClose}
+              aria-label={t('sprintBacklogManager.cancel')}
+            >
               ×
             </button>
           </div>
 
           {sprintGoal && (
             <div className={styles['sbm-goal-banner']}>
-              <h3>🎯 Sprint Goal</h3>
+              <h3>{t('sprintBacklogManager.sprintGoal')}</h3>
               <p>{sprintGoal}</p>
             </div>
           )}
@@ -351,28 +366,30 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
           <div className={styles['sbm-stats']}>
             <div className={styles['sbm-stat-card']}>
               <div className={styles['sbm-stat-value']}>{sprintStats.totalItems}</div>
-              <div className={styles['sbm-stat-label']}>Items</div>
+              <div className={styles['sbm-stat-label']}>{t('sprintBacklogManager.items')}</div>
             </div>
             <div className={styles['sbm-stat-card']}>
               <div className={styles['sbm-stat-value']}>{sprintStats.totalPoints}</div>
-              <div className={styles['sbm-stat-label']}>Story Points</div>
+              <div className={styles['sbm-stat-label']}>
+                {t('sprintBacklogManager.storyPoints')}
+              </div>
             </div>
             <div className={styles['sbm-stat-card']}>
               <div className={styles['sbm-stat-value']}>{sprintStats.totalTasks}</div>
-              <div className={styles['sbm-stat-label']}>Tasks</div>
+              <div className={styles['sbm-stat-label']}>{t('sprintBacklogManager.tasks')}</div>
             </div>
             <div className={styles['sbm-stat-card']}>
               <div className={styles['sbm-stat-value']}>{sprintStats.totalRemainingHours}h</div>
-              <div className={styles['sbm-stat-label']}>Remaining</div>
+              <div className={styles['sbm-stat-label']}>{t('sprintBacklogManager.remaining')}</div>
             </div>
           </div>
 
           <div className={styles['sbm-content']}>
             <div className={styles['sbm-current-backlog']}>
               <div className={styles['sbm-section-header']}>
-                <h3>Current Sprint Backlog</h3>
+                <h3>{t('sprintBacklogManager.currentSprintBacklog')}</h3>
                 <button className={styles['sbm-add-btn']} onClick={() => setShowAddModal(true)}>
-                  + Add Item
+                  {t('sprintBacklogManager.addItem')}
                 </button>
               </div>
 
@@ -380,12 +397,12 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
                 {sprintBacklogItems.length === 0 ? (
                   <div className={styles['sbm-empty-state']}>
                     <span className={styles['sbm-empty-icon']}>📭</span>
-                    <p>No items in sprint backlog</p>
+                    <p>{t('sprintBacklogManager.noItemsInSprintBacklog')}</p>
                     <button
                       className={`${styles['sbm-add-btn']} ${styles['sbm-add-btn-center']}`}
                       onClick={() => setShowAddModal(true)}
                     >
-                      + Add First Item
+                      {t('sprintBacklogManager.addFirstItem')}
                     </button>
                   </div>
                 ) : (
@@ -406,7 +423,7 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
                           <button
                             className={styles['sbm-remove-btn']}
                             onClick={() => handleRemoveClick(item.id, item.title)}
-                            title="Remove from sprint"
+                            title={t('sprintBacklogManager.removeFromSprint')}
                           >
                             ✕
                           </button>
@@ -414,15 +431,17 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
                         <h4 className={styles['sbm-item-title']}>{item.title}</h4>
                         <div className={styles['sbm-item-meta']}>
                           <span className={styles['sbm-item-points']}>
-                            {item.storyPoints ?? 0} pts
+                            {item.storyPoints ?? 0} {t('sprintBacklogManager.pts')}
                           </span>
                           <span className={styles['sbm-item-tasks']}>
-                            {item.tasks.length} tasks
+                            {t('sprintBacklogManager.tasksCount', { count: item.tasks.length })}
                           </span>
                           {item.tasks.length > 0 && (
                             <span className={styles['sbm-item-progress']}>
-                              {item.tasks.filter((t) => t.status === 'DONE').length}/
-                              {item.tasks.length} done
+                              {t('sprintBacklogManager.doneCount', {
+                                done: item.tasks.filter((t) => t.status === 'DONE').length,
+                                total: item.tasks.length,
+                              })}
                             </span>
                           )}
                         </div>
@@ -439,7 +458,9 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
                             ))}
                             {item.tasks.length > 3 && (
                               <span className={styles['sbm-more-tasks']}>
-                                +{item.tasks.length - 3} more
+                                {t('sprintBacklogManager.moreCount', {
+                                  count: item.tasks.length - 3,
+                                })}
                               </span>
                             )}
                           </div>
@@ -453,12 +474,12 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
 
             <div className={styles['sbm-changes']}>
               <div className={styles['sbm-section-header']}>
-                <h3>Recent Changes</h3>
+                <h3>{t('sprintBacklogManager.recentChanges')}</h3>
               </div>
               <div className={styles['sbm-changes-list']}>
                 {recentChanges.length === 0 ? (
                   <div className={styles['sbm-no-changes']}>
-                    <p>No recent changes</p>
+                    <p>{t('sprintBacklogManager.noRecentChanges')}</p>
                   </div>
                 ) : (
                   recentChanges.map((change) => (
@@ -471,7 +492,7 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
                       <div className={styles['sbm-change-content']}>
                         <span className={styles['sbm-change-title']}>{change.pbiTitle}</span>
                         <span className={styles['sbm-change-meta']}>
-                          by {change.changedByName} •{' '}
+                          {t('sprintBacklogManager.byName', { name: change.changedByName })} •{' '}
                           {formatTimeAgo(change.createdAt ?? change.changedAt)}
                         </span>
                         {change.reason && (
@@ -492,7 +513,7 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
           <div className={styles['sbm-add-modal']} onClick={(e) => e.stopPropagation()}>
             <div className={styles['sbm-modal-header']}>
               <h3>
-                <PlusIcon size={18} /> Add Item to Sprint
+                <PlusIcon size={18} /> {t('sprintBacklogManager.addItemToSprint')}
               </h3>
               <button className={styles['sbm-modal-close']} onClick={() => setShowAddModal(false)}>
                 ×
@@ -502,7 +523,7 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
               <input
                 type="text"
                 className={styles['sbm-search-input']}
-                placeholder="Search available items..."
+                placeholder={t('sprintBacklogManager.searchAvailableItems')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -510,12 +531,15 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
               <div className={styles['sbm-available-items']}>
                 {availableLoading ? (
                   <div className={styles['sbm-loading-inline']}>
-                    <span className={styles['sbm-spinner-small']}>⏳</span> Loading...
+                    <span className={styles['sbm-spinner-small']}>⏳</span>{' '}
+                    {t('sprintBacklogManager.loading')}
                   </div>
                 ) : filteredAvailablePBIs.length === 0 ? (
                   <div className={styles['sbm-no-items']}>
-                    <p>No available items found</p>
-                    <span className={styles['sbm-hint']}>Items must be in READY status</span>
+                    <p>{t('sprintBacklogManager.noAvailableItems')}</p>
+                    <span className={styles['sbm-hint']}>
+                      {t('sprintBacklogManager.itemsMustBeReady')}
+                    </span>
                   </div>
                 ) : (
                   filteredAvailablePBIs.map((pbi) => {
@@ -531,7 +555,7 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
                           </span>
                           <span className={styles['sbm-item-title']}>{pbi.title}</span>
                           <span className={styles['sbm-item-points']}>
-                            {pbi.storyPoints ?? 0} pts
+                            {pbi.storyPoints ?? 0} {t('sprintBacklogManager.pts')}
                           </span>
                         </div>
                         <button
@@ -539,7 +563,7 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
                           onClick={() => handleAddPBI(pbi.id)}
                           disabled={addPBIMutation.isPending}
                         >
-                          <PlusIcon size={14} /> Add
+                          <PlusIcon size={14} /> {t('sprintBacklogManager.add')}
                         </button>
                       </div>
                     );
@@ -548,9 +572,9 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
               </div>
 
               <div className={styles['sbm-reason-input']}>
-                <label>Reason (optional)</label>
+                <label>{t('sprintBacklogManager.reasonOptional')}</label>
                 <textarea
-                  placeholder="Why are you adding this item?"
+                  placeholder={t('sprintBacklogManager.whyAddingItem')}
                   value={addReason}
                   onChange={(e) => setAddReason(e.target.value)}
                   rows={2}
@@ -565,7 +589,7 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
         <div className={styles['sbm-modal-overlay']} onClick={() => setShowRemoveModal(false)}>
           <div className={styles['sbm-remove-modal']} onClick={(e) => e.stopPropagation()}>
             <div className={`${styles['sbm-modal-header']} ${styles['sbm-modal-header-warning']}`}>
-              <h3>↩️ Return Item to Backlog</h3>
+              <h3>{t('sprintBacklogManager.returnItemToBacklog')}</h3>
               <button
                 className={styles['sbm-modal-close']}
                 onClick={() => setShowRemoveModal(false)}
@@ -577,26 +601,26 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
               <div className={styles['sbm-remove-preview']}>
                 <strong>{selectedItemForRemoval.pbiTitle}</strong>
                 <span>
-                  {selectedItemForRemoval.taskCount} task
-                  {selectedItemForRemoval.taskCount !== 1 ? 's' : ''} associated
+                  {t('sprintBacklogManager.taskCountAssociated', {
+                    count: selectedItemForRemoval.taskCount,
+                  })}
                 </span>
               </div>
 
               <div className={styles['sbm-task-action-group']}>
-                <label>What will happen when you remove this item?</label>
+                <label>{t('sprintBacklogManager.whatHappensOnRemove')}</label>
                 <div className={styles['sbm-task-actions']}>
                   <div
                     className={`${styles['sbm-task-action-option']} ${styles['sbm-task-action-single']}`}
                   >
                     <div className={styles['sbm-task-action-icon']}>↩️</div>
                     <div className={styles['sbm-task-action-content']}>
-                      <span className={styles['sbm-task-action-title']}>Return to Backlog</span>
+                      <span className={styles['sbm-task-action-title']}>
+                        {t('sprintBacklogManager.returnToBacklog')}
+                      </span>
                       <ul className={styles['sbm-task-action-list']}>
-                        <li>All tasks associated with this PBI will be permanently deleted</li>
-                        <li>
-                          The PBI will return to the READY status to be available for future sprint
-                          planning sessions
-                        </li>
+                        <li>{t('sprintBacklogManager.allTasksDeleted')}</li>
+                        <li>{t('sprintBacklogManager.pbiReturnsToReady')}</li>
                       </ul>
                     </div>
                   </div>
@@ -604,9 +628,9 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
               </div>
 
               <div className={styles['sbm-reason-input']}>
-                <label>Reason (optional)</label>
+                <label>{t('sprintBacklogManager.reasonOptional')}</label>
                 <textarea
-                  placeholder="Why are you removing this item?"
+                  placeholder={t('sprintBacklogManager.whyRemovingItem')}
                   value={removeReason}
                   onChange={(e) => setRemoveReason(e.target.value)}
                   rows={2}
@@ -618,7 +642,7 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
                 className={`${styles['sbm-btn']} ${styles['sbm-btn-secondary']}`}
                 onClick={() => setShowRemoveModal(false)}
               >
-                Cancel
+                {t('sprintBacklogManager.cancel')}
               </button>
               <button
                 className={`${styles['sbm-btn']} ${styles['sbm-btn-primary']}`}
@@ -626,7 +650,9 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
                 disabled={removePBIMutation.isPending}
               >
                 <ArrowLeftIcon size={16} />
-                {removePBIMutation.isPending ? 'Returning...' : 'Return to Backlog'}
+                {removePBIMutation.isPending
+                  ? t('sprintBacklogManager.returning')
+                  : t('sprintBacklogManager.returnToBacklogAction')}
               </button>
             </div>
           </div>

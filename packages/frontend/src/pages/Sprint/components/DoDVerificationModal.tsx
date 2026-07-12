@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import type { DoDItem, ProductBacklogItem, Task, DoDChecklistVerification } from '../../../types';
 import { definitionService } from '../../../services';
@@ -58,6 +59,7 @@ export const DoDVerificationModal: React.FC<DoDVerificationModalProps> = ({
   isLoading = false,
   existingVerifications = [],
 }) => {
+  const { t } = useTranslation('sprint');
   const [pbiVerifications, setPbiVerifications] = useState<Map<string, Map<string, boolean>>>(
     new Map()
   );
@@ -104,9 +106,7 @@ export const DoDVerificationModal: React.FC<DoDVerificationModalProps> = ({
       return allVerifications;
     } catch (error) {
       logger.error('Failed to fetch DoD verifications', undefined, { error });
-      setVerificationError(
-        'Failed to load existing verifications. You can still verify items manually.'
-      );
+      setVerificationError(t('dodVerification.failedToLoadVerifications'));
       return [];
     } finally {
       setIsLoadingVerifications(false);
@@ -273,13 +273,17 @@ export const DoDVerificationModal: React.FC<DoDVerificationModalProps> = ({
           <div className={styles['header-content']}>
             <h2 id="dod-verification-title">
               <span className={styles['header-icon']}>✅</span>
-              Definition of Done Verification
+              {t('dodVerification.title')}
             </h2>
             <p className={styles['header-subtitle']}>
-              Verify all DoD criteria before completing the sprint
+              {t('dodVerification.verifyAllDodCriteriaBeforeComplete')}
             </p>
           </div>
-          <button className={styles['close-button']} onClick={onClose} aria-label="Close">
+          <button
+            className={styles['close-button']}
+            onClick={onClose}
+            aria-label={t('dodVerification.close')}
+          >
             ×
           </button>
         </div>
@@ -289,7 +293,7 @@ export const DoDVerificationModal: React.FC<DoDVerificationModalProps> = ({
             <div className={styles['info-banner']} role="alert">
               <span className={styles['info-icon']}>⚠️</span>
               <div className={styles['info-content']}>
-                <strong>Warning</strong>
+                <strong>{t('dodVerification.warning')}</strong>
                 <p>{verificationError}</p>
               </div>
             </div>
@@ -297,11 +301,16 @@ export const DoDVerificationModal: React.FC<DoDVerificationModalProps> = ({
 
           <div className={styles['overall-progress']}>
             <div className={styles['progress-header']}>
-              <span className={styles['progress-label']}>Overall Progress</span>
+              <span className={styles['progress-label']}>
+                {t('dodVerification.overallProgress')}
+              </span>
               <span className={styles['progress-value']}>
                 {isLoadingVerifications
-                  ? 'Loading...'
-                  : `${totalVerified.verified} / ${totalVerified.total} criteria verified`}
+                  ? t('dodVerification.loadingStatus')
+                  : t('dodVerification.criteriaVerified', {
+                      verified: totalVerified.verified,
+                      total: totalVerified.total,
+                    })}
               </span>
             </div>
             <div className={styles['progress-bar-container']}>
@@ -316,22 +325,30 @@ export const DoDVerificationModal: React.FC<DoDVerificationModalProps> = ({
           </div>
 
           {isLoadingVerifications ? (
-            <LoadingState variant="spinner" size="sm" label="Loading verification status" />
+            <LoadingState
+              variant="spinner"
+              size="sm"
+              label={t('dodVerification.loadingVerificationStatus')}
+            />
           ) : pbisWithAllTasksDone.length === 0 ? (
             <div className={styles['empty-state']}>
               <span className={styles['empty-icon']}>📭</span>
-              <p>No PBIs ready for verification</p>
-              <p className={styles['empty-hint']}>
-                All tasks must be completed before verifying DoD
-              </p>
+              <p>{t('dodVerification.noPbisReadyForVerification')}</p>
+              <p className={styles['empty-hint']}>{t('dodVerification.allTasksMustBeCompleted')}</p>
             </div>
           ) : (
             <div className={styles['pbi-list']}>
               <div className={styles['pbi-list-header']}>
-                <span>Backlog Items to Verify ({pbisWithAllTasksDone.length})</span>
+                <span>
+                  {t('dodVerification.backlogItemsToVerify', {
+                    count: pbisWithAllTasksDone.length,
+                  })}
+                </span>
                 {totalVerified.readOnlyCount > 0 && (
                   <span className={styles['readonly-info']}>
-                    🔒 {totalVerified.readOnlyCount} already verified
+                    {t('dodVerification.alreadyVerifiedCount', {
+                      count: totalVerified.readOnlyCount,
+                    })}
                   </span>
                 )}
               </div>
@@ -360,7 +377,7 @@ export const DoDVerificationModal: React.FC<DoDVerificationModalProps> = ({
                         <span className={styles['expand-icon']}>{isExpanded ? '▼' : '▶'}</span>
                         <span className={styles['pbi-title']}>{pbi.title}</span>
                         <span className={styles['task-count']}>
-                          {pbiTasks.length} task{pbiTasks.length !== 1 ? 's' : ''}
+                          {t('dodVerification.taskCount', { count: pbiTasks.length })}
                         </span>
                         {status.readOnlyCount > 0 && (
                           <span className={styles['readonly-badge']}>
@@ -380,7 +397,7 @@ export const DoDVerificationModal: React.FC<DoDVerificationModalProps> = ({
                           data-status={status.percentage === 100 ? 'verified' : 'pending'}
                         >
                           {status.percentage === 100
-                            ? '✓ Verified'
+                            ? t('dodVerification.verifiedBadge')
                             : `${status.verified}/${status.total}`}
                         </span>
                       </div>
@@ -389,7 +406,7 @@ export const DoDVerificationModal: React.FC<DoDVerificationModalProps> = ({
                     {isExpanded && (
                       <div className={styles['pbi-card-content']}>
                         <div className={styles['dod-items-header']}>
-                          <span>Definition of Done Criteria</span>
+                          <span>{t('dodVerification.dodCriteria')}</span>
                           {nonReadOnlyItems.length > 0 && (
                             <button
                               className={styles['verify-all-button']}
@@ -398,7 +415,9 @@ export const DoDVerificationModal: React.FC<DoDVerificationModalProps> = ({
                                 handleVerifyAllForPbi(pbi.id);
                               }}
                             >
-                              {allNonReadOnlyVerified ? 'Uncheck New' : 'Verify All New'}
+                              {allNonReadOnlyVerified
+                                ? t('dodVerification.uncheckNew')
+                                : t('dodVerification.verifyAllNew')}
                             </button>
                           )}
                         </div>
@@ -423,7 +442,9 @@ export const DoDVerificationModal: React.FC<DoDVerificationModalProps> = ({
                                 role={isReadOnly ? 'status' : 'button'}
                                 aria-disabled={isReadOnly}
                                 title={
-                                  isReadOnly ? 'Already verified - cannot be changed' : undefined
+                                  isReadOnly
+                                    ? t('dodVerification.alreadyVerifiedCannotChange')
+                                    : undefined
                                 }
                               >
                                 <div
@@ -447,7 +468,7 @@ export const DoDVerificationModal: React.FC<DoDVerificationModalProps> = ({
                                 {isReadOnly && (
                                   <span
                                     className={styles['readonly-indicator']}
-                                    title="Already verified"
+                                    title={t('dodVerification.alreadyVerified')}
                                   >
                                     🔒
                                   </span>
@@ -469,12 +490,12 @@ export const DoDVerificationModal: React.FC<DoDVerificationModalProps> = ({
           <div className={styles['footer-info']}>
             {!allPbisFullyVerified && pbisWithAllTasksDone.length > 0 && (
               <span className={styles['warning-text']}>
-                ⚠️ All DoD criteria must be verified to complete the sprint
+                {t('dodVerification.allDodMustBeVerified')}
               </span>
             )}
             {allPbisFullyVerified && pbisWithAllTasksDone.length > 0 && (
               <span className={styles['success-text']}>
-                ✓ All DoD criteria verified. Ready to complete sprint.
+                {t('dodVerification.allDodVerifiedReady')}
               </span>
             )}
           </div>
@@ -484,7 +505,7 @@ export const DoDVerificationModal: React.FC<DoDVerificationModalProps> = ({
               onClick={onClose}
               disabled={isLoading}
             >
-              Cancel
+              {t('dodVerification.cancel')}
             </button>
             <button
               className={`${styles.button} ${styles['button-primary']}`}
@@ -492,11 +513,11 @@ export const DoDVerificationModal: React.FC<DoDVerificationModalProps> = ({
               disabled={!allPbisFullyVerified || isLoading || pbisWithAllTasksDone.length === 0}
             >
               {isLoading ? (
-                'Completing...'
+                t('dodVerification.completing')
               ) : (
                 <>
                   <CheckCircleIcon size={16} />
-                  Complete Sprint
+                  {t('dodVerification.completeSprint')}
                 </>
               )}
             </button>

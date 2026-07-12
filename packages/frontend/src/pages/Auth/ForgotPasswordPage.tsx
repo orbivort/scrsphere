@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import styles from './LoginPage.module.css';
 
@@ -10,6 +11,7 @@ import { logger } from '@/utils/logger';
 
 export const ForgotPasswordPage: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation('auth');
 
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -29,16 +31,16 @@ export const ForgotPasswordPage: React.FC = () => {
           setSuccess(true);
           logger.info('Password reset email sent', undefined, { email });
         } else {
-          setError(response.error?.message ?? 'Failed to send reset email. Please try again.');
+          setError(response.error?.message ?? t('forgotPassword.failedToSend'));
         }
       } catch (err) {
         logger.error('Forgot password request failed', undefined, { error: err });
-        setError('An unexpected error occurred. Please try again.');
+        setError(t('forgotPassword.unexpectedError'));
       } finally {
         setIsLoading(false);
       }
     },
-    [email]
+    [email, t]
   );
 
   const clearError = () => {
@@ -52,11 +54,9 @@ export const ForgotPasswordPage: React.FC = () => {
           <div className={styles['auth-logo']} aria-hidden="true">
             <ScrumoothIcon size={100} className={styles['auth-logo-icon']} />
           </div>
-          <h1 className={styles['auth-title']}>Reset your password</h1>
+          <h1 className={styles['auth-title']}>{t('forgotPassword.resetYourPassword')}</h1>
           <p className={styles['auth-subtitle']}>
-            {success
-              ? 'Check your email for a reset link'
-              : "Enter your email and we'll send you a reset link"}
+            {success ? t('forgotPassword.successSubtitle') : t('forgotPassword.subtitle')}
           </p>
         </div>
 
@@ -64,7 +64,7 @@ export const ForgotPasswordPage: React.FC = () => {
           <div className={styles['error-message']}>
             <ErrorMessage
               message={error}
-              title="Reset Request Failed"
+              title={t('forgotPassword.resetRequestFailed')}
               type="error"
               onDismiss={clearError}
             />
@@ -76,18 +76,9 @@ export const ForgotPasswordPage: React.FC = () => {
             <div className={styles['success-icon']}>
               <MailIcon size={48} />
             </div>
-            <p className={styles['success-text']}>
-              We&apos;ve sent a password reset link to <strong>{email}</strong>
-            </p>
+            <p className={styles['success-text']}>{t('forgotPassword.sentTo', { email })}</p>
             <p className={styles['success-hint']}>
-              Didn&apos;t receive the email? Check your spam folder or{' '}
-              <button
-                type="button"
-                onClick={() => setSuccess(false)}
-                className={styles['link-button']}
-              >
-                try again
-              </button>
+              {t('forgotPassword.didntReceive', { tryAgain: t('forgotPassword.tryAgain') })}
             </p>
             <button
               type="button"
@@ -95,14 +86,14 @@ export const ForgotPasswordPage: React.FC = () => {
               className={`${styles['submit-button']} ${styles['secondary-button']}`}
             >
               <ArrowLeftIcon size={16} />
-              Back to login
+              {t('forgotPassword.backToLogin')}
             </button>
           </div>
         ) : (
           <form className={styles['auth-form']} onSubmit={handleSubmit}>
             <div className={styles['form-group']}>
               <label className={styles['form-label']} htmlFor="email">
-                Email
+                {t('email')}
                 <span className={styles['form-label-required']} aria-hidden="true">
                   *
                 </span>
@@ -111,7 +102,7 @@ export const ForgotPasswordPage: React.FC = () => {
                 id="email"
                 type="email"
                 className={styles['input-field']}
-                placeholder="you@company.com"
+                placeholder={t('placeholder.email')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -128,10 +119,10 @@ export const ForgotPasswordPage: React.FC = () => {
               {isLoading ? (
                 <span className={styles['button-loading']}>
                   <LoaderIcon size={16} className={styles['spinner-icon']} />
-                  Sending...
+                  {t('forgotPassword.sending')}
                 </span>
               ) : (
-                'Send reset link'
+                t('forgotPassword.sendLink')
               )}
             </button>
           </form>
@@ -141,7 +132,7 @@ export const ForgotPasswordPage: React.FC = () => {
           <div className={styles['auth-footer']}>
             <Link to="/login" className={styles['mode-toggle']}>
               <ArrowLeftIcon size={14} />
-              Back to login
+              {t('forgotPassword.backToLogin')}
             </Link>
           </div>
         )}

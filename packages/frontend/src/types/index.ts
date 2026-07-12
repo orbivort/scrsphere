@@ -1,5 +1,7 @@
 // Type definitions for Agile Scrum Tracker
 
+import type { Locale } from '@scrumooth/shared';
+
 export enum UserRole {
   ADMINISTRATOR = 'administrator',
   PRODUCT_OWNER = 'product_owner',
@@ -54,6 +56,7 @@ export interface User {
   firstName: string;
   lastName: string;
   avatarUrl?: string;
+  locale?: Locale;
   termsAcceptedAt?: string;
   createdAt: string;
   updatedAt: string;

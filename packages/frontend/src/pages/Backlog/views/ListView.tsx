@@ -9,6 +9,7 @@
  */
 
 import { memo, useCallback, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { type ProductBacklogItem } from '../../../types';
 import { MoscowBadge } from '../components/MoscowBadge';
@@ -189,6 +190,7 @@ const VirtualizedRow: React.FC<VirtualizedRowProps> = ({
  * ```
  */
 export const ListView = memo<ListViewProps>(({ items, onItemClick }) => {
+  const { t } = useTranslation('backlog');
   const enableVirtualization = shouldEnableVirtualization(items.length, VIRTUALIZATION_THRESHOLD);
   const headerRef = useRef<HTMLDivElement>(null);
 
@@ -205,38 +207,38 @@ export const ListView = memo<ListViewProps>(({ items, onItemClick }) => {
       {enableVirtualization ? (
         <div ref={headerRef} className={styles['virtualized-header']} role="row">
           <div className={styles['virtualized-header-cell']} role="columnheader">
-            ID
+            {t('listView.id') as string}
           </div>
           <div className={styles['virtualized-header-cell']} role="columnheader">
-            Title
+            {t('listView.title') as string}
           </div>
           <div className={styles['virtualized-header-cell']} role="columnheader">
-            MoSCoW
+            {t('listView.moscow') as string}
           </div>
           <div className={styles['virtualized-header-cell']} role="columnheader">
-            Status
+            {t('listView.status') as string}
           </div>
           <div className={styles['virtualized-header-cell']} role="columnheader">
-            Business Value
+            {t('listView.businessValue') as string}
           </div>
           <div className={styles['virtualized-header-cell']} role="columnheader">
-            Estimate
+            {t('listView.estimate') as string}
           </div>
           <div className={styles['virtualized-header-cell']} role="columnheader">
-            Labels
+            {t('listView.labels') as string}
           </div>
         </div>
       ) : (
         <table className={styles['backlog-table']}>
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Title</th>
-              <th>MoSCoW</th>
-              <th>Status</th>
-              <th>Business Value</th>
-              <th>Estimate</th>
-              <th>Labels</th>
+              <th>{t('listView.id') as string}</th>
+              <th>{t('listView.title') as string}</th>
+              <th>{t('listView.moscow') as string}</th>
+              <th>{t('listView.status') as string}</th>
+              <th>{t('listView.businessValue') as string}</th>
+              <th>{t('listView.estimate') as string}</th>
+              <th>{t('listView.labels') as string}</th>
             </tr>
           </thead>
         </table>

@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import { TeamList } from './components/TeamList';
 import { TeamSearchBar } from './components/TeamSearchBar';
@@ -32,6 +33,7 @@ const canModifyTeam = (team: Team, userRole: string | null | undefined): boolean
 };
 
 export const TeamManagement: React.FC = () => {
+  const { t } = useTranslation('settings');
   const [searchParams, setSearchParams] = useSearchParams();
   const search = searchParams.get('q') ?? '';
   const page = parseInt(searchParams.get('page') ?? '1', 10);
@@ -99,7 +101,7 @@ export const TeamManagement: React.FC = () => {
       createTeamMutation.mutate(data, {
         onSuccess: () => {
           setIsCreateModalOpen(false);
-          success('Team created successfully');
+          success(t('teamManagement.toast.teamCreated'));
 
           // Refresh the team list and header to reflect the new team
           void (async () => {
@@ -110,15 +112,13 @@ export const TeamManagement: React.FC = () => {
                 error: refreshErr,
               });
               // Non-critical error - team was created successfully, but warn user
-              toastError(
-                'Team created, but failed to refresh team list. Please reload the page if needed.'
-              );
+              toastError(t('teamManagement.toast.teamCreatedRefreshFailed'));
             }
           })();
         },
         onError: (error: unknown) => {
           const err = error as Error;
-          toastError(err.message || 'Failed to create team');
+          toastError(err.message || t('teamManagement.toast.teamCreateFailed'));
         },
       });
     },
@@ -132,8 +132,8 @@ export const TeamManagement: React.FC = () => {
 
       // Check permissions
       if (!teamToUpdate || !canModifyTeam(teamToUpdate, currentUserRole)) {
-        setPermissionError('You do not have permission to edit this team.');
-        toastError('You do not have permission to edit this team.');
+        setPermissionError(t('teamManagement.permissionErrors.editTeam'));
+        toastError(t('teamManagement.permissionErrors.editTeam'));
         setIsEditModalOpen(false);
         setSelectedTeam(null);
         return;
@@ -146,7 +146,7 @@ export const TeamManagement: React.FC = () => {
             setIsEditModalOpen(false);
             setSelectedTeam(null);
             setPermissionError(null);
-            success('Team updated successfully');
+            success(t('teamManagement.toast.teamUpdated'));
 
             // Refresh the team list and header to reflect the updated team
             void (async () => {
@@ -157,15 +157,13 @@ export const TeamManagement: React.FC = () => {
                   error: refreshErr,
                 });
                 // Non-critical error - team was updated successfully, but warn user
-                toastError(
-                  'Team updated, but failed to refresh team list. Please reload the page if needed.'
-                );
+                toastError(t('teamManagement.toast.teamUpdatedRefreshFailed'));
               }
             })();
           },
           onError: (error: unknown) => {
             const err = error as Error;
-            toastError(err.message || 'Failed to update team');
+            toastError(err.message || t('teamManagement.toast.teamUpdateFailed'));
           },
         }
       );
@@ -180,8 +178,8 @@ export const TeamManagement: React.FC = () => {
 
       // Check permissions
       if (!teamToDelete || !canModifyTeam(teamToDelete, currentUserRole)) {
-        setPermissionError('You do not have permission to delete this team.');
-        toastError('You do not have permission to delete this team.');
+        setPermissionError(t('teamManagement.permissionErrors.deleteTeam'));
+        toastError(t('teamManagement.permissionErrors.deleteTeam'));
         setIsDeleteModalOpen(false);
         setSelectedTeam(null);
         return;
@@ -194,7 +192,7 @@ export const TeamManagement: React.FC = () => {
           setHasProductGoals(false);
           setDeleteError(null);
           setPermissionError(null);
-          success('Team deleted successfully');
+          success(t('teamManagement.toast.teamDeleted'));
 
           // Refresh the header team info to reflect the deletion
           void (async () => {
@@ -205,9 +203,7 @@ export const TeamManagement: React.FC = () => {
                 error: refreshErr,
               });
               // Non-critical error - team was deleted successfully, but warn user
-              toastError(
-                'Team deleted, but failed to refresh team list. Please reload the page if needed.'
-              );
+              toastError(t('teamManagement.toast.teamDeletedRefreshFailed'));
             }
           })();
         },
@@ -239,8 +235,8 @@ export const TeamManagement: React.FC = () => {
     (team: Team) => {
       // Check permissions before opening edit modal
       if (!canModifyTeam(team, currentUserRole)) {
-        setPermissionError('You do not have permission to edit this team.');
-        toastError('You do not have permission to edit this team.');
+        setPermissionError(t('teamManagement.permissionErrors.editTeam'));
+        toastError(t('teamManagement.permissionErrors.editTeam'));
         return;
       }
       setPermissionError(null);
@@ -254,8 +250,8 @@ export const TeamManagement: React.FC = () => {
     (team: Team) => {
       // Check permissions before opening delete modal
       if (!canModifyTeam(team, currentUserRole)) {
-        setPermissionError('You do not have permission to delete this team.');
-        toastError('You do not have permission to delete this team.');
+        setPermissionError(t('teamManagement.permissionErrors.deleteTeam'));
+        toastError(t('teamManagement.permissionErrors.deleteTeam'));
         return;
       }
       setPermissionError(null);
@@ -308,7 +304,7 @@ export const TeamManagement: React.FC = () => {
     <ErrorBoundary maxRetries={3}>
       <div className={styles.page} data-testid="team-management-settings">
         <a href="#main-content" className={styles['skip-link']}>
-          Skip to main content
+          {t('skipToMainContent')}
         </a>
         {permissionError && (
           <div className={styles['permission-banner']} role="alert" aria-live="assertive">
@@ -319,7 +315,7 @@ export const TeamManagement: React.FC = () => {
             <button
               className={styles['permission-banner-close']}
               onClick={() => setPermissionError(null)}
-              aria-label="Dismiss error"
+              aria-label={t('teamManagement.permissionBanner.dismissError')}
               type="button"
             >
               <CloseIcon size={16} />
@@ -332,16 +328,14 @@ export const TeamManagement: React.FC = () => {
               <span className={styles['page-title-icon']}>
                 <BuildingIcon />
               </span>
-              Team Management
+              {t('teamManagement.title')}
               {teams.length > 0 && (
                 <span className={styles['item-count']}>
-                  {teams.length} team{teams.length !== 1 ? 's' : ''}
+                  {t('teamManagement.teamCount', { count: teams.length })}
                 </span>
               )}
             </h1>
-            <p className={styles['page-subtitle']}>
-              Create and manage teams across the organization
-            </p>
+            <p className={styles['page-subtitle']}>{t('teamManagement.subtitle')}</p>
           </div>
           <div className={styles['header-right']}>
             <button
@@ -353,7 +347,7 @@ export const TeamManagement: React.FC = () => {
               <span className={styles['create-button-icon']}>
                 <PlusIcon size={16} />
               </span>
-              Create Team
+              {t('teamManagement.createTeam')}
             </button>
           </div>
         </header>
@@ -389,14 +383,17 @@ export const TeamManagement: React.FC = () => {
                 className={styles['pagination-button']}
                 onClick={() => setSearchParams({ q: search, page: String(Math.max(1, page - 1)) })}
                 disabled={page === 1 || isAnyMutationPending}
-                aria-label="Go to previous page"
+                aria-label={t('teamManagement.pagination.goToPrevious')}
                 aria-disabled={page === 1 || isAnyMutationPending}
                 type="button"
               >
-                Previous
+                {t('teamManagement.pagination.previous')}
               </button>
               <span className={styles['pagination-info']} aria-current="page">
-                Page {page} of {pagination.totalPages}
+                {t('teamManagement.pagination.pageInfo', {
+                  current: page,
+                  total: pagination.totalPages,
+                })}
               </span>
               <button
                 className={styles['pagination-button']}
@@ -407,11 +404,11 @@ export const TeamManagement: React.FC = () => {
                   })
                 }
                 disabled={page === pagination.totalPages || isAnyMutationPending}
-                aria-label="Go to next page"
+                aria-label={t('teamManagement.pagination.goToNext')}
                 aria-disabled={page === pagination.totalPages || isAnyMutationPending}
                 type="button"
               >
-                Next
+                {t('teamManagement.pagination.next')}
               </button>
             </nav>
           )}

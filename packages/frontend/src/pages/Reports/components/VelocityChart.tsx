@@ -10,6 +10,7 @@ import {
   Legend,
   type ChartOptions,
 } from 'chart.js';
+import { useTranslation } from 'react-i18next';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -23,53 +24,22 @@ interface VelocityChartProps {
   data: VelocityData | null | undefined;
 }
 
-const CHART_OPTIONS: ChartOptions<'bar'> = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: {
-      position: 'top',
-    },
-    title: {
-      display: true,
-      text: 'Sprint Velocity',
-      font: {
-        size: 18,
-        weight: 'bold',
-      },
-    },
-  },
-  scales: {
-    y: {
-      beginAtZero: true,
-      title: {
-        display: true,
-        text: 'Story Points',
-      },
-    },
-    x: {
-      title: {
-        display: true,
-        text: 'Sprint',
-      },
-    },
-  },
-};
-
 export const VelocityChart: React.FC<VelocityChartProps> = ({ data }) => {
+  const { t } = useTranslation('reports');
+
   const chartData = useMemo(
     () => ({
       labels: data?.sprints ?? [],
       datasets: [
         {
-          label: 'Planned',
+          label: t('velocityChart.planned'),
           data: data?.planned ?? [],
           backgroundColor: 'rgba(156, 163, 175, 0.8)',
           borderColor: '#9CA3AF',
           borderWidth: 1,
         },
         {
-          label: 'Completed',
+          label: t('velocityChart.completed'),
           data: data?.completed ?? [],
           backgroundColor: 'rgba(26, 102, 255, 0.8)',
           borderColor: '#1A66FF',
@@ -77,10 +47,46 @@ export const VelocityChart: React.FC<VelocityChartProps> = ({ data }) => {
         },
       ],
     }),
-    [data]
+    [data, t]
   );
 
-  return <Bar data={chartData} options={CHART_OPTIONS} />;
+  const chartOptions = useMemo<ChartOptions<'bar'>>(
+    () => ({
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'top',
+        },
+        title: {
+          display: true,
+          text: t('velocityChart.title'),
+          font: {
+            size: 18,
+            weight: 'bold',
+          },
+        },
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: t('velocityChart.yAxisLabel'),
+          },
+        },
+        x: {
+          title: {
+            display: true,
+            text: t('velocityChart.xAxisLabel'),
+          },
+        },
+      },
+    }),
+    [t]
+  );
+
+  return <Bar data={chartData} options={chartOptions} />;
 };
 
 export default VelocityChart;

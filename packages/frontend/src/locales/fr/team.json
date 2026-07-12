@@ -1,3 +1,161 @@
 {
-  "title": "Équipe"
+  "title": "Team",
+  "subtitle": "Gérer les membres de l'équipe et les standards de l'équipe",
+  "welcome": {
+    "title": "Bienvenue chez Scrumooth, {{name}}!",
+    "subtitle": "Votre voyage agile commence ici...",
+    "selectRole": "Sélectionnez votre rôle pour continuer"
+  },
+  "leadership": {
+    "title": "Scrum Master ou Product Owner",
+    "createTeam": "Créer un nouveau team",
+    "quickStart": {
+      "step1": "Créer team",
+      "step2": "Inviter membres",
+      "step3": "Démarrer Sprint"
+    }
+  },
+  "developer": {
+    "title": "Developer",
+    "description": "Rejoindre un team Scrum existant...",
+    "howToJoin": {
+      "title": "Comment rejoindre un team",
+      "invitationsSentBy": "Les invitations de team sont envoyées par: Scrum Masters ou Product Owners uniquement",
+      "checkNotifications": "Vérifiez vos notifications: Recherchez les invitations de team en attente",
+      "contactLeadership": "Contactez votre leadership: Contactez votre Scrum Master ou Product Owner"
+    },
+    "checkInvitations": "Vérifier les invitations"
+  },
+  "capabilities": {
+    "teamCollaboration": "Collaboration du team",
+    "teamCollaborationDesc": "Travailler ensemble efficacement avec des objectifs partagés et de la visibilité",
+    "sprintPlanning": "Sprint Planning",
+    "sprintPlanningDesc": "Planifier et gérer les Sprints avec votre team",
+    "progressTracking": "Suivi du progrès",
+    "progressTrackingDesc": "Suivre le progrès avec des dashboards et des rapports en temps réel",
+    "agileCeremonies": "Cérémonies Agile",
+    "agileCeremoniesDesc": "Faciliter les Daily Scrums, Reviews et Retrospectives"
+  },
+  "help": {
+    "title": "Besoin d'aide pour démarrer?"
+  },
+  "errorStates": {
+    "notInvited": "Vous n'avez pas encore été invité à un team",
+    "teamAccessRequired": "Accès au team requis",
+    "teamNotFound": "Team non trouvé",
+    "accessDenied": "Accès refusé",
+    "unableToLoad": "Impossible de charger le team",
+    "tryAgain": "Réessayer"
+  },
+  "teamInfo": {
+    "unavailable": "Informations du team non disponibles",
+    "unableToLoad": "Impossible de charger les détails du team. Veuillez actualiser la page."
+  },
+  "members": {
+    "title": "Membres du team",
+    "inviteMember": "Inviter un membre",
+    "adding": "Ajout...",
+    "searchPlaceholder": "Rechercher par nom ou email...",
+    "filterOptions": {
+      "allRoles": "Tous les rôles",
+      "productOwner": "Product Owner",
+      "scrumMaster": "Scrum Master",
+      "developer": "Developer"
+    },
+    "sortOptions": {
+      "byName": "Trier par nom",
+      "byRole": "Trier par rôle",
+      "byJoined": "Trier par date d'adhésion"
+    },
+    "viewToggles": {
+      "cardView": "Vue carte",
+      "listView": "Vue liste"
+    },
+    "filterResults": "Affichage de {{shown}} sur {{total}} membre(s)",
+    "clearFilters": "Effacer les filtres",
+    "noMatchSearch": "Aucun membre ne correspond à vos critères de recherche.",
+    "clearAllFilters": "Effacer tous les filtres",
+    "empty": "Aucun membre du team trouvé.",
+    "addFirstMember": "Ajouter le premier membre"
+  },
+  "deleteModal": {
+    "title": "Supprimer le membre du team",
+    "confirmation": "Êtes-vous sûr de vouloir supprimer {{name}} du team?",
+    "warning": "Cette action ne peut pas être annulée. L'utilisateur perdra l'accès à toutes les ressources du team.",
+    "cancel": "Annuler",
+    "close": "Fermer",
+    "removing": "Suppression...",
+    "removeMember": "Supprimer le membre"
+  },
+  "inviteModal": {
+    "title": "Inviter un membre du team",
+    "emailLabel": "Adresse email",
+    "emailPlaceholder": "Entrez l'adresse email",
+    "role": "Rôle",
+    "cancel": "Annuler",
+    "adding": "Ajout...",
+    "sendInvite": "Envoyer l'invitation",
+    "unsentTitle": "Invitation non envoyée",
+    "unsentMessage": "Vous avez une invitation de team non envoyée. Êtes-vous sûr de vouloir la supprimer?"
+  },
+  "inviteErrors": {
+    "userNotFound": "Aucun utilisateur trouvé avec cette adresse email. L'utilisateur doit s'inscrire d'abord avant de pouvoir être invité à un team.",
+    "alreadyMember": "Cet utilisateur est déjà membre du team.",
+    "noPermission": "Vous n'avez pas la permission d'ajouter des membres au team.",
+    "networkError": "Erreur réseau. Veuillez vérifier votre connexion et réessayer.",
+    "genericError": "Impossible d'ajouter le membre au team. Veuillez réessayer plus tard.",
+    "invalidEmail": "Veuillez entrer une adresse email valide.",
+    "emailRequired": "L'adresse email est requise."
+  },
+  "teamStats": {
+    "completedSprints": "Sprints terminés",
+    "storyPointsCompleted": "Story Points terminés",
+    "avgVelocity": "Velocity moyenne",
+    "sprintSuccessRate": "Taux de succès du Sprint"
+  },
+  "loading": "Chargement des informations du team...",
+  "memberCard": {
+    "roleNames": {
+      "scrumMaster": "Scrum Master",
+      "productOwner": "Product Owner",
+      "developer": "Developer",
+      "administrator": "Administrateur"
+    },
+    "unknownUser": "Utilisateur inconnu",
+    "unknownDate": "Inconnu",
+    "memberSince": "Membre depuis",
+    "ariaLabels": {
+      "teamMember": "Membre du team: {{name}}",
+      "sendMessage": "Envoyer un message",
+      "sendMessageTo": "Envoyer un message à {{name}}",
+      "removeFromTeam": "Supprimer du team",
+      "removeNameFromTeam": "Supprimer {{name}} du team"
+    },
+    "titles": {
+      "sendMessage": "Envoyer un message",
+      "removeFromTeam": "Supprimer du team"
+    }
+  },
+  "sendMessageModal": {
+    "title": "Envoyer un message",
+    "subtitle": "À: {{name}} ({{email}})",
+    "messageLabel": "Message",
+    "messagePlaceholder": "Tapez votre message ici...",
+    "cancel": "Annuler",
+    "sending": "Envoi...",
+    "send": "Envoyer le message",
+    "success": "Message envoyé avec succès!",
+    "validation": {
+      "emptyMessage": "Veuillez entrer un message.",
+      "maxLength": "Le message doit avoir moins de {{limit}} caractères."
+    },
+    "errors": {
+      "recipientNotFound": "Destinataire non trouvé. L'utilisateur a peut-être été supprimé.",
+      "noPermission": "Vous n'avez pas la permission d'envoyer des messages à cet utilisateur.",
+      "networkError": "Erreur réseau. Veuillez vérifier votre connexion et réessayer.",
+      "genericError": "Impossible d'envoyer le message. Veuillez réessayer plus tard."
+    },
+    "unsavedTitle": "Message non envoyé",
+    "unsavedMessage": "Vous avez un message non envoyé. Êtes-vous sûr de vouloir le supprimer?"
+  }
 }

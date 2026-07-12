@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import styles from './BulkUploadModal.module.css';
 import type { UploadResult } from './bulkUploadUtils';
@@ -12,6 +13,7 @@ interface UploadSummaryProps {
 }
 
 export const UploadSummary: React.FC<UploadSummaryProps> = ({ result, onClose, onViewItems }) => {
+  const { t } = useTranslation('backlog');
   const { total, successful, failed, errors } = result;
   const hasErrors = failed > 0;
   const allSuccess = successful === total && total > 0;
@@ -24,17 +26,24 @@ export const UploadSummary: React.FC<UploadSummaryProps> = ({ result, onClose, o
   };
 
   const getTitle = (): string => {
-    if (allSuccess) return 'Import Complete!';
-    if (partialSuccess) return 'Import Completed with Errors';
-    return 'Import Failed';
+    if (allSuccess) return t('bulkUpload.summary.importComplete') as string;
+    if (partialSuccess) return t('bulkUpload.summary.importCompletedWithErrors') as string;
+    return t('bulkUpload.summary.importFailed') as string;
   };
 
   const getSubtitle = (): string => {
     if (allSuccess)
-      return `Successfully imported ${successful} backlog item${successful !== 1 ? 's' : ''}.`;
+      return t('bulkUpload.summary.successfullyImported', {
+        count: successful,
+        plural: successful !== 1 ? 's' : '',
+      }) as string;
     if (partialSuccess)
-      return `${successful} item${successful !== 1 ? 's' : ''} imported, ${failed} failed.`;
-    return 'No items were imported due to errors.';
+      return t('bulkUpload.summary.partialSuccess', {
+        successful,
+        failed,
+        plural: successful !== 1 ? 's' : '',
+      }) as string;
+    return t('bulkUpload.summary.noItemsImported') as string;
   };
 
   return (
@@ -55,16 +64,22 @@ export const UploadSummary: React.FC<UploadSummaryProps> = ({ result, onClose, o
       <div className={styles['summary-stats']}>
         <div className={`${styles['summary-stat']} ${styles.total}`}>
           <span className={styles['summary-stat-value']}>{total}</span>
-          <span className={styles['summary-stat-label']}>Total</span>
+          <span className={styles['summary-stat-label']}>
+            {t('bulkUpload.summary.total') as string}
+          </span>
         </div>
         <div className={`${styles['summary-stat']} ${styles.success}`}>
           <span className={styles['summary-stat-value']}>{successful}</span>
-          <span className={styles['summary-stat-label']}>Imported</span>
+          <span className={styles['summary-stat-label']}>
+            {t('bulkUpload.summary.imported') as string}
+          </span>
         </div>
         {hasErrors && (
           <div className={`${styles['summary-stat']} ${styles.failed}`}>
             <span className={styles['summary-stat-value']}>{failed}</span>
-            <span className={styles['summary-stat-label']}>Failed</span>
+            <span className={styles['summary-stat-label']}>
+              {t('bulkUpload.summary.failedLabel') as string}
+            </span>
           </div>
         )}
       </div>
@@ -73,12 +88,14 @@ export const UploadSummary: React.FC<UploadSummaryProps> = ({ result, onClose, o
         <div className={styles['error-summary']}>
           <div className={styles['error-summary-title']}>
             <AlertCircleIcon size={16} />
-            Errors ({errors.length})
+            {t('bulkUpload.summary.errors', { count: errors.length }) as string}
           </div>
           <div className={styles['error-list-container']}>
             {errors.slice(0, 5).map((error, index) => (
               <div key={index} className={styles['error-item']}>
-                <span className={styles['error-item-row']}>Row {error.row}:</span>
+                <span className={styles['error-item-row']}>
+                  {t('bulkUpload.summary.row', { row: error.row }) as string}
+                </span>
                 <span className={styles['error-item-message']}>
                   {error.field} - {error.message}
                 </span>
@@ -87,7 +104,7 @@ export const UploadSummary: React.FC<UploadSummaryProps> = ({ result, onClose, o
             {errors.length > 5 && (
               <div className={styles['error-item']} style={{ justifyContent: 'center' }}>
                 <span className={styles['error-more-link']}>
-                  ...and {errors.length - 5} more errors
+                  {t('bulkUpload.summary.moreErrors', { count: errors.length - 5 }) as string}
                 </span>
               </div>
             )}
@@ -103,7 +120,7 @@ export const UploadSummary: React.FC<UploadSummaryProps> = ({ result, onClose, o
             onClick={onViewItems}
           >
             <EyeIcon size={16} />
-            View Imported Items
+            {t('bulkUpload.summary.viewImportedItems') as string}
           </button>
         )}
         <button
@@ -111,7 +128,7 @@ export const UploadSummary: React.FC<UploadSummaryProps> = ({ result, onClose, o
           className={`${styles.btn} ${styles['btn-secondary']}`}
           onClick={onClose}
         >
-          Close
+          {t('bulkUpload.summary.close') as string}
         </button>
       </div>
     </div>

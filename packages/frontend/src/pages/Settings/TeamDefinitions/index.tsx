@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import { useTeamStore } from '../../../store';
 import { EmptyState } from '../../../components/EmptyState';
@@ -12,6 +13,7 @@ import { FileTextIcon } from '@/components/common/Icons';
 type TabType = 'dor' | 'dod';
 
 export function TeamDefinitionsPage(): React.JSX.Element {
+  const { t } = useTranslation('settings');
   const [searchParams, setSearchParams] = useSearchParams();
   const initialTab = searchParams.get('tab') === 'dod' ? 'dod' : 'dor';
   const [activeTab, setActiveTab] = useState<TabType>(initialTab);
@@ -38,16 +40,18 @@ export function TeamDefinitionsPage(): React.JSX.Element {
             <span className={styles['title-icon']}>
               <FileTextIcon size={24} />
             </span>
-            Team Definitions
+            {t('teamDefinitions.title')}
           </h1>
-          <p className={styles.subtitle}>
-            Configure your team&apos;s Definition of Ready and Definition of Done criteria
-          </p>
+          <p className={styles.subtitle}>{t('teamDefinitions.subtitle')}</p>
         </div>
       </header>
 
       <div id="main-content" className={styles['main-content']} tabIndex={-1}>
-        <div className={styles.tabs} role="tablist" aria-label="Definition tabs">
+        <div
+          className={styles.tabs}
+          role="tablist"
+          aria-label={t('teamDefinitions.ariaLabels.definitionTabs')}
+        >
           <button
             role="tab"
             aria-selected={activeTab === 'dor'}
@@ -58,7 +62,7 @@ export function TeamDefinitionsPage(): React.JSX.Element {
             onClick={() => handleTabChange('dor')}
             type="button"
           >
-            Definition of Ready
+            {t('teamDefinitions.tabs.definitionOfReady')}
           </button>
           <button
             role="tab"
@@ -70,7 +74,7 @@ export function TeamDefinitionsPage(): React.JSX.Element {
             onClick={() => handleTabChange('dod')}
             type="button"
           >
-            Definition of Done
+            {t('teamDefinitions.tabs.definitionOfDone')}
           </button>
         </div>
 

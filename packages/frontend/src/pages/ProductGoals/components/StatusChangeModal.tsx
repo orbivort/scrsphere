@@ -8,6 +8,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import styles from './StatusChangeModal.module.css';
 
@@ -60,6 +61,7 @@ export function StatusChangeModal<T extends string>({
   validationMessage = null,
   isViewOnly = false,
 }: StatusChangeModalProps<T>) {
+  const { t } = useTranslation('backlog');
   const [selectedStatus, setSelectedStatus] = useState<T>(currentStatus);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -108,8 +110,13 @@ export function StatusChangeModal<T extends string>({
   if (!isOpen) return null;
 
   const hasChanges = selectedStatus !== currentStatus;
-  const entityTypeLabel = entityType === 'goal' ? 'Product Goal' : 'Backlog Item';
-  const modalTitle = isViewOnly ? 'Status History' : 'Change Status';
+  const entityTypeLabel =
+    entityType === 'goal'
+      ? (t('productGoals.productGoal') as string)
+      : (t('productGoals.backlogItem') as string);
+  const modalTitle = isViewOnly
+    ? (t('productGoals.viewStatusHistoryTitle') as string)
+    : (t('productGoals.changeStatusTitle') as string);
 
   return (
     <div className={styles['modal-overlay']} onClick={handleOverlayClick}>
@@ -133,15 +140,19 @@ export function StatusChangeModal<T extends string>({
             </h2>
             <p className={styles['modal-subtitle']}>
               {isViewOnly
-                ? `View status history for this ${entityTypeLabel.toLowerCase()}`
-                : `Update the status of this ${entityTypeLabel.toLowerCase()}`}
+                ? (t('productGoals.viewStatusHistoryDesc', {
+                    entityType: entityTypeLabel.toLowerCase(),
+                  }) as string)
+                : (t('productGoals.updateStatusDesc', {
+                    entityType: entityTypeLabel.toLowerCase(),
+                  }) as string)}
             </p>
           </div>
           <button
             className={styles['modal-close']}
             onClick={onClose}
             disabled={isSubmitting}
-            aria-label="Close modal"
+            aria-label={t('productGoals.closeModal') as string}
             type="button"
           >
             <CloseIcon size={18} />
@@ -187,11 +198,13 @@ export function StatusChangeModal<T extends string>({
           {/* Status Selection - Hidden in view-only mode */}
           {!isViewOnly && (
             <div className={styles['status-section']}>
-              <h3 className={styles['status-section-title']}>Select New Status</h3>
+              <h3 className={styles['status-section-title']}>
+                {t('productGoals.selectNewStatus') as string}
+              </h3>
               <div
                 className={styles['status-options']}
                 role="radiogroup"
-                aria-label="Status options"
+                aria-label={t('productGoals.statusOptions') as string}
               >
                 {statuses.map((status) => {
                   const config = statusConfig[status];
@@ -230,7 +243,7 @@ export function StatusChangeModal<T extends string>({
                       <span className={styles['status-option-content']}>
                         <span className={styles['status-option-label']}>
                           {config.label}
-                          {isCurrent && ' (Current)'}
+                          {isCurrent && ` ${t('productGoals.current') as string}`}
                         </span>
                         <span className={styles['status-option-desc']}>{config.description}</span>
                       </span>
@@ -260,7 +273,9 @@ export function StatusChangeModal<T extends string>({
             onClick={onClose}
             disabled={isSubmitting}
           >
-            {isViewOnly ? 'Close' : 'Cancel'}
+            {isViewOnly
+              ? (t('productGoals.close') as string)
+              : (t('productGoals.cancel') as string)}
           </button>
           {!isViewOnly && (
             <button
@@ -273,11 +288,11 @@ export function StatusChangeModal<T extends string>({
               aria-busy={isSubmitting}
             >
               {isSubmitting ? (
-                <span>Updating...</span>
+                <span>{t('productGoals.updating') as string}</span>
               ) : (
                 <>
                   <SaveIcon size={16} />
-                  <span>Confirm Change</span>
+                  <span>{t('productGoals.confirmChange') as string}</span>
                 </>
               )}
             </button>

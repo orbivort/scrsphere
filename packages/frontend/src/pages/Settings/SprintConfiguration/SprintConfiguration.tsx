@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 
 import { apiService } from '../../../services';
 import { useTeamStore } from '../../../store';
@@ -34,7 +35,7 @@ import {
 
 import styles from './SprintConfiguration.module.css';
 
-const DURATION_CONFIG: Record<
+const DURATION_I18N_KEYS: Record<
   SprintDuration,
   {
     label: string;
@@ -46,32 +47,32 @@ const DURATION_CONFIG: Record<
   }
 > = {
   [SprintDurationEnum.ONE_WEEK]: {
-    label: '1 Week',
-    description: 'Rapid 1-week sprint cycle',
+    label: 'sprintConfiguration.durationOptions.oneWeek',
+    description: 'sprintConfiguration.durationOptions.oneWeekDescription',
     icon: 'CalendarIcon',
     days: 7,
     shortLabel: '1w',
     offset: 1,
   },
   [SprintDurationEnum.TWO_WEEKS]: {
-    label: '2 Weeks',
-    description: 'Standard 2-week sprint cycle',
+    label: 'sprintConfiguration.durationOptions.twoWeeks',
+    description: 'sprintConfiguration.durationOptions.twoWeeksDescription',
     icon: 'CalendarIcon',
     days: 14,
     shortLabel: '2w',
     offset: 2,
   },
   [SprintDurationEnum.THREE_WEEKS]: {
-    label: '3 Weeks',
-    description: 'Balanced 3-week sprint cycle',
+    label: 'sprintConfiguration.durationOptions.threeWeeks',
+    description: 'sprintConfiguration.durationOptions.threeWeeksDescription',
     icon: 'CalendarRangeIcon',
     days: 21,
     shortLabel: '3w',
     offset: 2,
   },
   [SprintDurationEnum.FOUR_WEEKS]: {
-    label: '4 Weeks',
-    description: 'Extended 4-week sprint cycle',
+    label: 'sprintConfiguration.durationOptions.fourWeeks',
+    description: 'sprintConfiguration.durationOptions.fourWeeksDescription',
     icon: 'CalendarRangeIcon',
     days: 28,
     shortLabel: '4w',
@@ -80,6 +81,7 @@ const DURATION_CONFIG: Record<
 };
 
 export const SprintConfiguration: React.FC = () => {
+  const { t } = useTranslation('settings');
   const { currentTeam } = useTeamStore();
   const queryClient = useQueryClient();
   const location = useLocation();
@@ -135,14 +137,20 @@ export const SprintConfiguration: React.FC = () => {
         queryKey: queryKeys.sprintConfiguration.byTeam(teamId),
       });
       void queryClient.invalidateQueries({ queryKey: queryKeys.generatedSprint.byTeam(teamId) });
-      setNotification({ type: 'success', message: 'Configuration saved successfully!' });
+      setNotification({
+        type: 'success',
+        message: t('sprintConfiguration.notifications.configurationSaved'),
+      });
       setTimeout(() => setNotification(null), TOAST_SUCCESS_DURATION);
     },
     onError: (error: unknown) => {
       const message = handleMutationError(error, {
         operationName: 'save configuration',
       });
-      setNotification({ type: 'error', message: `Failed to save configuration: ${message}` });
+      setNotification({
+        type: 'error',
+        message: t('sprintConfiguration.notifications.configurationSaveFailed', { message }),
+      });
       setTimeout(() => setNotification(null), TOAST_DURATION);
     },
   });
@@ -155,14 +163,20 @@ export const SprintConfiguration: React.FC = () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.generatedSprint.byTeam(teamId) });
       void queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
       setShowPreview(false);
-      setNotification({ type: 'success', message: 'Sprints generated successfully!' });
+      setNotification({
+        type: 'success',
+        message: t('sprintConfiguration.notifications.sprintsGenerated'),
+      });
       setTimeout(() => setNotification(null), TOAST_SUCCESS_DURATION);
     },
     onError: (error: unknown) => {
       const message = handleMutationError(error, {
         operationName: 'generate sprints',
       });
-      setNotification({ type: 'error', message: `Failed to generate sprints: ${message}` });
+      setNotification({
+        type: 'error',
+        message: t('sprintConfiguration.notifications.sprintsGenerateFailed', { message }),
+      });
       setTimeout(() => setNotification(null), TOAST_DURATION);
     },
   });
@@ -174,14 +188,20 @@ export const SprintConfiguration: React.FC = () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.generatedSprint.byTeam(teamId) });
       void queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
       setShowDeleteConfirm(null);
-      setNotification({ type: 'success', message: 'Sprint deleted successfully!' });
+      setNotification({
+        type: 'success',
+        message: t('sprintConfiguration.notifications.sprintDeleted'),
+      });
       setTimeout(() => setNotification(null), TOAST_SUCCESS_DURATION);
     },
     onError: (error: unknown) => {
       const message = handleMutationError(error, {
         operationName: 'delete sprint',
       });
-      setNotification({ type: 'error', message: `Failed to delete sprint: ${message}` });
+      setNotification({
+        type: 'error',
+        message: t('sprintConfiguration.notifications.sprintDeleteFailed', { message }),
+      });
       setTimeout(() => setNotification(null), TOAST_DURATION);
     },
   });
@@ -247,7 +267,7 @@ export const SprintConfiguration: React.FC = () => {
     return (
       <div className={styles['loading-container']}>
         <div className={styles['loading-spinner']} />
-        <p className={styles['loading-text']}>Loading configuration...</p>
+        <p className={styles['loading-text']}>{t('sprintConfiguration.loading')}</p>
       </div>
     );
   }
@@ -260,18 +280,16 @@ export const SprintConfiguration: React.FC = () => {
             <span className={styles['page-title-icon']}>
               <SettingsIcon />
             </span>
-            Sprint Configuration
+            {t('sprintConfiguration.title')}
           </h1>
-          <p className={styles['page-subtitle']}>
-            Configure sprint duration and automatically generate sprint plans for the year
-          </p>
+          <p className={styles['page-subtitle']}>{t('sprintConfiguration.subtitle')}</p>
         </div>
         {location.state?.from === 'sprint-planning' && (
           <Link to="/sprint-planning" className={styles['return-link']}>
             <span className={styles['return-link-icon']}>
               <ArrowLeftIcon size={16} />
             </span>
-            Back to Sprint Planning
+            {t('sprintConfiguration.backToSprintPlanning')}
           </Link>
         )}
       </div>
@@ -294,7 +312,7 @@ export const SprintConfiguration: React.FC = () => {
             className={styles['notification-close']}
             onClick={() => setNotification(null)}
             type="button"
-            aria-label="Dismiss notification"
+            aria-label={t('sprintConfiguration.dismissNotification')}
           >
             <XIcon />
           </button>
@@ -307,15 +325,19 @@ export const SprintConfiguration: React.FC = () => {
             <span className={styles['card-header-icon']}>
               <ClipboardIcon size={20} />
             </span>
-            Current Configuration
+            {t('sprintConfiguration.currentConfiguration')}
           </h2>
           {existingConfig && (
-            <span className={styles['config-badge']}>Configured for {existingConfig.year}</span>
+            <span className={styles['config-badge']}>
+              {t('sprintConfiguration.configuredFor', { year: existingConfig.year })}
+            </span>
           )}
         </div>
         <div className={styles['card-body']}>
           <div className={styles['config-row']}>
-            <label className={styles['config-label']}>Sprint Duration</label>
+            <label className={styles['config-label']}>
+              {t('sprintConfiguration.sprintDuration')}
+            </label>
             <div className={styles['duration-options']}>
               {(
                 [
@@ -325,7 +347,7 @@ export const SprintConfiguration: React.FC = () => {
                   SprintDurationEnum.FOUR_WEEKS,
                 ] as const
               ).map((duration) => {
-                const config = DURATION_CONFIG[duration];
+                const config = DURATION_I18N_KEYS[duration];
                 const IconComponent =
                   config.icon === 'CalendarIcon' ? CalendarIcon : CalendarRangeIcon;
                 return (
@@ -339,9 +361,11 @@ export const SprintConfiguration: React.FC = () => {
                     <span className={styles['duration-button-icon']}>
                       <IconComponent />
                     </span>
-                    <span className={styles['duration-button-text']}>{config.label}</span>
+                    <span className={styles['duration-button-text']}>
+                      {t(config.label as never)}
+                    </span>
                     <span className={styles['duration-button-description']}>
-                      {config.description}
+                      {t(config.description as never)}
                     </span>
                   </button>
                 );
@@ -350,7 +374,7 @@ export const SprintConfiguration: React.FC = () => {
           </div>
 
           <div className={styles['config-row']}>
-            <label className={styles['config-label']}>Year</label>
+            <label className={styles['config-label']}>{t('sprintConfiguration.year')}</label>
             <select
               value={selectedYear}
               onChange={(e) => setSelectedYear(parseInt(e.target.value))}
@@ -372,7 +396,9 @@ export const SprintConfiguration: React.FC = () => {
               type="button"
             >
               <SaveIcon size={16} />
-              {saveConfigMutation.isPending ? 'Saving...' : 'Save Configuration'}
+              {saveConfigMutation.isPending
+                ? t('sprintConfiguration.saving')
+                : t('sprintConfiguration.saveConfiguration')}
             </button>
             <button
               className={`${styles['button']} ${styles['button-secondary']}`}
@@ -381,7 +407,7 @@ export const SprintConfiguration: React.FC = () => {
               type="button"
             >
               <PlayIcon size={16} />
-              Preview & Generate Sprints
+              {t('sprintConfiguration.previewAndGenerate')}
             </button>
           </div>
         </div>
@@ -394,9 +420,11 @@ export const SprintConfiguration: React.FC = () => {
               <span className={styles['card-header-icon']}>
                 <RunningIcon size={20} />
               </span>
-              Generated Sprints
+              {t('sprintConfiguration.generatedSprints')}
             </h2>
-            <span className={styles['sprint-count']}>{generatedSprints.length} sprints</span>
+            <span className={styles['sprint-count']}>
+              {t('sprintConfiguration.sprintCount', { count: generatedSprints.length })}
+            </span>
           </div>
           <div className={styles['sprints-grid']}>
             {generatedSprints.map((sprint) => (
@@ -415,9 +443,11 @@ export const SprintConfiguration: React.FC = () => {
                     <button
                       className={styles['delete-button']}
                       onClick={() => handleDeleteSprint(sprint.id)}
-                      title="Delete sprint"
+                      title={t('sprintConfiguration.deleteSprintTitle')}
                       type="button"
-                      aria-label={`Delete ${sprint.name}`}
+                      aria-label={t('sprintConfiguration.ariaLabels.deleteSprint', {
+                        name: sprint.name,
+                      })}
                     >
                       <TrashIcon size={16} />
                     </button>
@@ -446,13 +476,13 @@ export const SprintConfiguration: React.FC = () => {
                 <span className={styles['modal-header-icon']}>
                   <SearchIcon />
                 </span>
-                Sprint Generation Preview
+                {t('sprintConfiguration.previewModal.title')}
               </h2>
               <button
                 className={styles['modal-close']}
                 onClick={() => setShowPreview(false)}
                 type="button"
-                aria-label="Close preview modal"
+                aria-label={t('sprintConfiguration.ariaLabels.closePreviewModal')}
               >
                 <XIcon />
               </button>
@@ -460,20 +490,29 @@ export const SprintConfiguration: React.FC = () => {
             <div className={styles['modal-body']}>
               <div className={styles['preview-info']}>
                 <p className={styles['preview-info-row']}>
-                  <span className={styles['preview-info-label']}>Duration:</span>{' '}
-                  {DURATION_CONFIG[selectedDuration].label}
+                  <span className={styles['preview-info-label']}>
+                    {t('sprintConfiguration.previewModal.duration')}
+                  </span>{' '}
+                  {t(DURATION_I18N_KEYS[selectedDuration].label as never)}
                 </p>
                 <p className={styles['preview-info-row']}>
-                  <span className={styles['preview-info-label']}>Year:</span> {selectedYear}
+                  <span className={styles['preview-info-label']}>
+                    {t('sprintConfiguration.previewModal.year')}
+                  </span>{' '}
+                  {selectedYear}
                 </p>
                 <p className={styles['preview-info-row']}>
-                  <span className={styles['preview-info-label']}>Sprints to Generate:</span>{' '}
+                  <span className={styles['preview-info-label']}>
+                    {t('sprintConfiguration.previewModal.sprintsToGenerate')}
+                  </span>{' '}
                   {previewSprints.length}
                 </p>
               </div>
 
               <div>
-                <h3 className={styles['preview-list-title']}>Generated Sprints</h3>
+                <h3 className={styles['preview-list-title']}>
+                  {t('sprintConfiguration.previewModal.generatedSprints')}
+                </h3>
                 <div className={styles['preview-sprints']}>
                   {previewSprints.slice(0, 6).map((sprint, index) => (
                     <div key={index} className={styles['preview-sprint-item']}>
@@ -483,7 +522,9 @@ export const SprintConfiguration: React.FC = () => {
                   ))}
                   {previewSprints.length > 6 && (
                     <div className={styles['preview-more']}>
-                      ... and {previewSprints.length - 6} more sprints
+                      {t('sprintConfiguration.previewModal.moreSprints', {
+                        count: previewSprints.length - 6,
+                      })}
                     </div>
                   )}
                 </div>
@@ -494,8 +535,10 @@ export const SprintConfiguration: React.FC = () => {
                   <AlertTriangleIcon size={20} />
                 </span>
                 <p className={styles['warning-text']}>
-                  This will generate {previewSprints.length} sprints for {selectedYear}. Existing
-                  sprints for this year may be affected.
+                  {t('sprintConfiguration.previewModal.warning', {
+                    count: previewSprints.length,
+                    year: selectedYear,
+                  })}
                 </p>
               </div>
             </div>
@@ -505,7 +548,7 @@ export const SprintConfiguration: React.FC = () => {
                 onClick={() => setShowPreview(false)}
                 type="button"
               >
-                Cancel
+                {t('sprintConfiguration.previewModal.cancel')}
               </button>
               <button
                 className={`${styles['button']} ${styles['button-primary']}`}
@@ -515,8 +558,10 @@ export const SprintConfiguration: React.FC = () => {
               >
                 <RocketIcon size={16} />
                 {generateSprintsMutation.isPending
-                  ? 'Generating...'
-                  : `Generate ${previewSprints.length} Sprints`}
+                  ? t('sprintConfiguration.previewModal.generating')
+                  : t('sprintConfiguration.previewModal.generateButton', {
+                      count: previewSprints.length,
+                    })}
               </button>
             </div>
           </div>
@@ -539,22 +584,24 @@ export const SprintConfiguration: React.FC = () => {
                 <span className={styles['modal-header-icon']}>
                   <AlertTriangleIcon size={20} />
                 </span>
-                Delete Sprint
+                {t('sprintConfiguration.deleteModal.title')}
               </h2>
               <button
                 className={styles['modal-close']}
                 onClick={() => setShowDeleteConfirm(null)}
                 type="button"
-                aria-label="Close delete modal"
+                aria-label={t('sprintConfiguration.ariaLabels.closeDeleteModal')}
               >
                 <XIcon />
               </button>
             </div>
             <div className={styles['modal-body']}>
-              <p>Are you sure you want to delete this sprint?</p>
+              <p>{t('sprintConfiguration.deleteModal.confirmation')}</p>
               {generatedSprints.find((s) => s.id === showDeleteConfirm) && (
                 <div className={styles['delete-sprint-info']}>
-                  <p className={styles['delete-sprint-label']}>Sprint to delete:</p>
+                  <p className={styles['delete-sprint-label']}>
+                    {t('sprintConfiguration.deleteModal.sprintToDelete')}
+                  </p>
                   <p className={styles['delete-sprint-name']}>
                     {generatedSprints.find((s) => s.id === showDeleteConfirm)?.name}
                   </p>
@@ -569,7 +616,9 @@ export const SprintConfiguration: React.FC = () => {
                   </p>
                 </div>
               )}
-              <p className={styles['warning-text-danger']}>This action cannot be undone.</p>
+              <p className={styles['warning-text-danger']}>
+                {t('sprintConfiguration.deleteModal.cannotUndo')}
+              </p>
             </div>
             <div className={styles['modal-footer']}>
               <button
@@ -577,7 +626,7 @@ export const SprintConfiguration: React.FC = () => {
                 onClick={() => setShowDeleteConfirm(null)}
                 type="button"
               >
-                Cancel
+                {t('sprintConfiguration.deleteModal.cancel')}
               </button>
               <button
                 className={`${styles['button']} ${styles['button-danger']}`}
@@ -586,7 +635,9 @@ export const SprintConfiguration: React.FC = () => {
                 type="button"
               >
                 <TrashIcon size={16} />
-                {deleteSprintMutation.isPending ? 'Deleting...' : 'Delete Sprint'}
+                {deleteSprintMutation.isPending
+                  ? t('sprintConfiguration.deleteModal.deleting')
+                  : t('sprintConfiguration.deleteModal.deleteSprint')}
               </button>
             </div>
           </div>
@@ -602,7 +653,7 @@ function generateSprintPreview(
 ): Array<{ name: string; dateRange: string }> {
   const sprints: Array<{ name: string; dateRange: string }> = [];
   const shortYear = year.toString().slice(-2);
-  const durationConfig = DURATION_CONFIG[duration];
+  const durationConfig = DURATION_I18N_KEYS[duration];
   const weekDuration = durationConfig.days;
   const durationStr = durationConfig.shortLabel;
 

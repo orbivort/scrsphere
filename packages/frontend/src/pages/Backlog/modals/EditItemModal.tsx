@@ -1,4 +1,5 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { MoSCoWPriority } from '../../../types';
 import { useBacklogContext } from '../context/BacklogContext';
@@ -34,6 +35,7 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const [showUnsavedModal, setShowUnsavedModal] = useState(false);
+  const { t } = useTranslation('backlog');
 
   const {
     selectedItem,
@@ -119,14 +121,14 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
                 <EditIcon width="28" height="28" />
               </div>
               <h2 id="edit-modal-title" className={styles['modal-title']}>
-                Edit Backlog Item #{selectedItem.id.slice(-4)}
+                {t('editItem.editBacklogItem', { id: selectedItem.id.slice(-4) }) as string}
               </h2>
             </div>
             <button
               className={styles['close-button']}
               onClick={handleCloseAttempt}
               data-modal-close
-              aria-label="Close modal"
+              aria-label={t('editItem.closeModal') as string}
             >
               <XIcon width="20" height="20" />
             </button>
@@ -142,7 +144,7 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
                   <button
                     className={styles['error-close']}
                     onClick={() => setWorkflowError(null)}
-                    aria-label="Close error message"
+                    aria-label={t('editItem.closeError') as string}
                   >
                     <XCircleIcon width="14" height="14" />
                   </button>
@@ -153,22 +155,23 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
               <div className={styles['form-legend']}>
                 <span className={styles['required-indicator']}>*</span>
                 <span className={styles['legend-text']}>
-                  <strong>All fields are required</strong> - Please complete all sections before
-                  saving
+                  <strong>{t('editItem.allFieldsRequired') as string}</strong> -{' '}
+                  {t('editItem.allFieldsRequiredDesc') as string}
                 </span>
               </div>
 
               <div className={styles['form-section']}>
-                <h3 className={styles['section-title']}>Basic Information</h3>
+                <h3 className={styles['section-title']}>{t('editItem.basicInfo') as string}</h3>
 
                 <div className={styles['form-group']}>
                   <label htmlFor="edit-item-title">
-                    Title <span className={styles['required-indicator']}>*</span>
+                    {t('editItem.titleLabel') as string}{' '}
+                    <span className={styles['required-indicator']}>*</span>
                   </label>
                   <input
                     id="edit-item-title"
                     type="text"
-                    placeholder="Enter a clear, concise title for this backlog item (required)"
+                    placeholder={t('editItem.titlePlaceholder') as string}
                     value={formData.title}
                     onChange={(e) => handleFormChange('title', e.target.value)}
                     className={formErrors.title ? styles['input-error'] : ''}
@@ -177,8 +180,7 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
                     maxLength={200}
                   />
                   <span id="edit-title-help" className={styles['field-help']}>
-                    <strong>Required:</strong> Provide a brief, descriptive title (5-200 characters)
-                    that clearly summarizes what needs to be done.
+                    {t('editItem.titleHelp') as string}
                   </span>
                   {formErrors.title && (
                     <span id="edit-title-error" className={styles['error-message']} role="alert">
@@ -189,12 +191,13 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
 
                 <div className={styles['form-group']}>
                   <label htmlFor="edit-item-description">
-                    Description <span className={styles['required-indicator']}>*</span>
+                    {t('editItem.descriptionLabel') as string}{' '}
+                    <span className={styles['required-indicator']}>*</span>
                   </label>
                   <textarea
                     id="edit-item-description"
                     rows={4}
-                    placeholder="Describe the item in detail... (required)"
+                    placeholder={t('editItem.descriptionPlaceholder') as string}
                     value={formData.description}
                     onChange={(e) => handleFormChange('description', e.target.value)}
                     className={formErrors.description ? styles['input-error'] : ''}
@@ -202,8 +205,7 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
                     aria-required="true"
                   />
                   <span id="edit-description-help" className={styles['field-help']}>
-                    <strong>Required:</strong> Explain the context, purpose, implementation details,
-                    and any background information necessary for understanding this item.
+                    {t('editItem.descriptionHelp') as string}
                   </span>
                   {formErrors.description && (
                     <span
@@ -218,16 +220,19 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
               </div>
 
               <div className={styles['form-section']}>
-                <h3 className={styles['section-title']}>Priority & Value</h3>
+                <h3 className={styles['section-title']}>
+                  {t('editItem.priorityAndValue') as string}
+                </h3>
 
                 <div className={styles['form-group']}>
                   <label>
-                    MoSCoW Priority <span className={styles['required-indicator']}>*</span>
+                    {t('editItem.moscowLabel') as string}{' '}
+                    <span className={styles['required-indicator']}>*</span>
                   </label>
                   <div
                     className={styles['moscow-selector']}
                     role="radiogroup"
-                    aria-label="Select MoSCoW Priority"
+                    aria-label={t('editItem.selectMoscowPriority') as string}
                     aria-required="true"
                   >
                     {Object.values(MoSCoWPriority).map((priority, index) => {
@@ -267,11 +272,7 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
                       );
                     })}
                   </div>
-                  <span className={styles['field-help']}>
-                    <strong>Required:</strong> Select one priority level. Must Have = Critical for
-                    success | Should Have = Important but not vital | Could Have = Nice to have |
-                    Won't Have = Future consideration
-                  </span>
+                  <span className={styles['field-help']}>{t('editItem.moscowHelp') as string}</span>
                   {formErrors.moscowPriority && (
                     <span className={styles['error-message']} role="alert">
                       {formErrors.moscowPriority}
@@ -281,7 +282,8 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
 
                 <div className={styles['form-group']}>
                   <label htmlFor="edit-business-value">
-                    Business Value (Points) <span className={styles['required-indicator']}>*</span>
+                    {t('editItem.businessValueLabel') as string}{' '}
+                    <span className={styles['required-indicator']}>*</span>
                   </label>
                   <select
                     id="edit-business-value"
@@ -296,7 +298,7 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
                     aria-describedby="edit-business-value-help edit-business-value-error"
                     aria-required="true"
                   >
-                    <option value="">Select value... (required)</option>
+                    <option value="">{t('editItem.businessValuePlaceholder') as string}</option>
                     <option value={1}>1 - Minimal value</option>
                     <option value={2}>2 - Low value</option>
                     <option value={3}>3 - Moderate value</option>
@@ -305,8 +307,7 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
                     <option value={13}>13 - Critical value</option>
                   </select>
                   <span id="edit-business-value-help" className={styles['field-help']}>
-                    <strong>Required:</strong> Quantify the business impact. Higher numbers indicate
-                    greater strategic importance and ROI potential.
+                    {t('editItem.businessValueHelp') as string}
                   </span>
                   {formErrors.businessValue && (
                     <span
@@ -321,7 +322,8 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
 
                 <div className={styles['form-group']}>
                   <label htmlFor="edit-estimate">
-                    Estimate (Story Points) <span className={styles['required-indicator']}>*</span>
+                    {t('editItem.storyPointsLabel') as string}{' '}
+                    <span className={styles['required-indicator']}>*</span>
                   </label>
                   <select
                     id="edit-estimate"
@@ -336,7 +338,7 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
                     aria-describedby="edit-estimate-help edit-estimate-error"
                     aria-required="true"
                   >
-                    <option value="">Select estimate... (required)</option>
+                    <option value="">{t('editItem.storyPointsPlaceholder') as string}</option>
                     <option value={1}>1 - Trivial effort</option>
                     <option value={2}>2 - Very small effort</option>
                     <option value={3}>3 - Small effort</option>
@@ -345,8 +347,7 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
                     <option value={13}>13 - Very large effort</option>
                   </select>
                   <span id="edit-estimate-help" className={styles['field-help']}>
-                    <strong>Required:</strong> Estimate the relative effort using Fibonacci
-                    sequence. Consider complexity, uncertainty, and risk.
+                    {t('editItem.storyPointsHelp') as string}
                   </span>
                   {formErrors.estimate && (
                     <span id="edit-estimate-error" className={styles['error-message']} role="alert">
@@ -357,11 +358,14 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
               </div>
 
               <div className={styles['form-section']}>
-                <h3 className={styles['section-title']}>More Information</h3>
+                <h3 className={styles['section-title']}>
+                  {t('editItem.moreInformation') as string}
+                </h3>
 
                 <div className={styles['form-group']}>
                   <label htmlFor="edit-item-labels">
-                    Labels <span className={styles['required-indicator']}>*</span>
+                    {t('editItem.labelsLabel') as string}{' '}
+                    <span className={styles['required-indicator']}>*</span>
                   </label>
                   <div
                     className={`${styles['tag-input-container']} ${formErrors.labels ? styles['input-error'] : ''}`}
@@ -377,7 +381,7 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
                             e.stopPropagation();
                             removeLabelTag(tag);
                           }}
-                          aria-label={`Remove label ${tag}`}
+                          aria-label={t('editItem.removeLabel', { label: tag }) as string}
                         >
                           <XIcon width="12" height="12" />
                         </button>
@@ -388,8 +392,8 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
                       type="text"
                       placeholder={
                         labelTags.length === 0
-                          ? 'Type and press Enter to add labels... (required)'
-                          : 'Add more labels...'
+                          ? (t('editItem.labelsPlaceholderEmpty') as string)
+                          : (t('editItem.labelsPlaceholderMore') as string)
                       }
                       value={labelInputValue}
                       onChange={(e) => handleLabelInputChange(e.target.value)}
@@ -401,7 +405,7 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
                   </div>
                   {labelTags.length >= 10 && (
                     <span className={`${styles['field-help']} ${styles['field-help-warning']}`}>
-                      Maximum 10 labels reached. Remove a label to add more.
+                      {t('editItem.labelsMaxReached') as string}
                     </span>
                   )}
                   {formErrors.labels && (
@@ -410,20 +414,19 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
                     </span>
                   )}
                   <span id="edit-labels-help" className={styles['field-help']}>
-                    <strong>Required:</strong> Add at least one label. Press Enter to add. Use
-                    letters, numbers, hyphens, and underscores only. Maximum 10 labels, 30
-                    characters each.
+                    {t('editItem.labelsHelp') as string}
                   </span>
                 </div>
 
                 <div className={styles['form-group']}>
                   <label htmlFor="edit-acceptance-criteria">
-                    Acceptance Criteria <span className={styles['required-indicator']}>*</span>
+                    {t('editItem.acceptanceCriteriaLabel') as string}{' '}
+                    <span className={styles['required-indicator']}>*</span>
                   </label>
                   <textarea
                     id="edit-acceptance-criteria"
                     rows={4}
-                    placeholder="Define specific, testable conditions for completion... (required)"
+                    placeholder={t('editItem.acceptanceCriteriaPlaceholder') as string}
                     value={formData.acceptanceCriteria}
                     onChange={(e) => handleFormChange('acceptanceCriteria', e.target.value)}
                     className={formErrors.acceptanceCriteria ? styles['input-error'] : ''}
@@ -431,8 +434,7 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
                     aria-required="true"
                   />
                   <span id="edit-criteria-help" className={styles['field-help']}>
-                    <strong>Required:</strong> List clear, measurable conditions that must be met.
-                    Use bullet points or numbered lists for multiple criteria.
+                    {t('editItem.acceptanceCriteriaHelp') as string}
                   </span>
                   {formErrors.acceptanceCriteria && (
                     <span id="edit-criteria-error" className={styles['error-message']} role="alert">
@@ -449,7 +451,7 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
               onClick={handleCloseAttempt}
               disabled={isSubmitting}
             >
-              Cancel
+              {t('editItem.cancel') as string}
             </button>
             <button
               className={`${styles.button} ${styles['button-primary']}`}
@@ -459,12 +461,12 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
               {isSubmitting ? (
                 <>
                   <span className={styles['button-spinner']} />
-                  Saving...
+                  {t('editItem.saving') as string}
                 </>
               ) : (
                 <>
                   <SaveIcon width="18" height="18" aria-hidden="true" />
-                  Save Changes
+                  {t('editItem.saveChanges') as string}
                 </>
               )}
             </button>
@@ -475,7 +477,7 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
           <div className={styles['loading-overlay']}>
             <div className={styles['loading-content']}>
               <div className={styles['spinner-ring']} />
-              <p>Saving changes...</p>
+              <p>{t('editItem.savingChanges') as string}</p>
             </div>
           </div>
         )}
@@ -485,8 +487,8 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
         isOpen={showUnsavedModal}
         onConfirm={handleUnsavedConfirm}
         onCancel={handleUnsavedCancel}
-        title="Unsaved Changes"
-        message="You have unsaved changes. Are you sure you want to discard them?"
+        title={t('editItem.unsavedTitle') as string}
+        message={t('editItem.unsavedMessage') as string}
       />
     </>
   );

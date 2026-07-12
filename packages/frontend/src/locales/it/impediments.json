@@ -1,3 +1,104 @@
 {
-  "title": "Impedimenti"
+  "title": "Impedimenti",
+  "subtitle": "{{sprintName}} - Traccia e risolvi i blocchi che affliggono il team",
+  "filterByStatus": "Filtra per stato",
+  "allStatus": "Tutti gli stati",
+  "reportImpediment": "Segnala Impedimento",
+  "status": {
+    "open": "Aperto",
+    "inProgress": "In Corso",
+    "resolved": "Risolto",
+    "closed": "Chiuso"
+  },
+  "stats": {
+    "open": "Aperto",
+    "inProgress": "In Corso",
+    "resolved": "Risolto",
+    "closed": "Chiuso"
+  },
+  "card": {
+    "sprint": "Sprint",
+    "fromDailyScrum": "Dal Daily Scrum",
+    "createdFromDailyUpdate": "Creato da Aggiornamento Giornaliero",
+    "reportedBy": "Segnalato da",
+    "owner": "Proprietario",
+    "unknown": "Sconosciuto",
+    "resolution": "Risoluzione",
+    "viewDetailsAria": "Vedi dettagli per impedimento: {{title}}. Stato: {{status}}"
+  },
+  "emptyState": {
+    "noImpedimentsForSprint": "Nessun Impedimento per {{sprintName}}",
+    "noImpedimentsForFilter": "Nessun Impedimento {{status}}",
+    "noImpedimentsDescription": "Ottimo! Nessun impedimento segnalato per lo sprint attivo \"{{sprintName}}\".",
+    "noFilterImpedimentsDescription": "Non ci sono impedimenti {{status}} in \"{{sprintName}}\". Prova a selezionare un filtro di stato diverso.",
+    "clearFilter": "Cancella Filtro"
+  },
+  "createModal": {
+    "title": "Segnala Nuovo Impedimento",
+    "subtitle": "Documenta i blocchi che affliggono il progresso del tuo team",
+    "sprintLabel": "Sprint",
+    "activeSprint": "(Attivo)",
+    "titleLabel": "Titolo",
+    "titlePlaceholder": "Breve descrizione dell'impedimento",
+    "descriptionLabel": "Descrizione",
+    "descriptionPlaceholder": "Fornisci dettagli sull'impedimento",
+    "creating": "Creando...",
+    "createImpediment": "Crea Impedimento"
+  },
+  "detailModal": {
+    "title": "Dettagli Impedimento",
+    "subtitle": "Visualizza e gestisci le informazioni dell'impedimento",
+    "createdFromDailyScrum": "Creato da Aggiornamento Daily Scrum",
+    "viewDailyUpdate": "Vedi Aggiornamento Giornaliero",
+    "titleLabel": "Titolo",
+    "descriptionLabel": "Descrizione",
+    "sprintLabel": "Sprint",
+    "statusLabel": "Stato",
+    "reportedByLabel": "Segnalato da",
+    "ownerLabel": "Proprietario",
+    "createdLabel": "Creato",
+    "resolutionLabel": "Risoluzione",
+    "resolutionPlaceholder": "Descrivi come questo impedimento e stato risolto...",
+    "saveResolution": "Salva Risoluzione",
+    "saving": "Salvando...",
+    "deleting": "Eliminando...",
+    "deleteLabel": "Elimina"
+  },
+  "deleteModal": {
+    "title": "Elimina Impedimento",
+    "subtitle": "Questa azione e permanente e non puo essere annullata",
+    "actionWarning": "Avviso Azione",
+    "item": "Elemento:",
+    "unknownItem": "Elemento Sconosciuto",
+    "warningText": "Stai per eliminare permanentemente questo impedimento. Questa azione non puo essere annullata. Tutti i dati associati saranno permanentemente eliminati.",
+    "statusLabel": "Stato:",
+    "deleteImpediment": "Elimina Impedimento",
+    "deleting": "Eliminando..."
+  },
+  "unsavedModal": {
+    "title": "Modifiche Non Salvate",
+    "message": "Hai modifiche non salvate nel modulo impedimento. Sei sicuro di volerle scartare?"
+  },
+  "toast": {
+    "created": "Impedimento creato con successo",
+    "updated": "Impedimento aggiornato con successo",
+    "deleted": "Impedimento eliminato con successo",
+    "teamIdRequired": "ID del team e richiesto. Seleziona un team prima.",
+    "noActiveSprint": "Nessuno sprint attivo trovato. Inizia uno sprint prima.",
+    "failedCreate": "Fallimento creazione impedimento. Riprova.",
+    "failedUpdate": "Fallimento aggiornamento impedimento. Riprova.",
+    "failedDelete": "Fallimento eliminazione impedimento. Riprova."
+  },
+  "errorState": {
+    "title": "Errore Caricamento Dati",
+    "retry": "Riprova",
+    "failedSprint": "Fallimento caricamento informazioni sprint attivo. Riprova.",
+    "failedImpediments": "Fallimento caricamento impedimenti. Riprova."
+  },
+  "validation": {
+    "titleRequired": "Il titolo e richiesto",
+    "titleTooShort": "Il titolo deve avere almeno 3 caratteri",
+    "descriptionRequired": "La descrizione e richiesta",
+    "descriptionTooShort": "La descrizione deve avere almeno 10 caratteri"
+  }
 }

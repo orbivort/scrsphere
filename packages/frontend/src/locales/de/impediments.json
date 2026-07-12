@@ -1,3 +1,104 @@
 {
-  "title": "Hindernisse"
+  "title": "Hindernisse",
+  "subtitle": "{{sprintName}} - Blocker verfolgen und losen, die das Team betreffen",
+  "filterByStatus": "Nach Status filtern",
+  "allStatus": "Alle Status",
+  "reportImpediment": "Hindernis melden",
+  "status": {
+    "open": "Offen",
+    "inProgress": "In Bearbeitung",
+    "resolved": "Gelost",
+    "closed": "Geschlossen"
+  },
+  "stats": {
+    "open": "Offen",
+    "inProgress": "In Bearbeitung",
+    "resolved": "Gelost",
+    "closed": "Geschlossen"
+  },
+  "card": {
+    "sprint": "Sprint",
+    "fromDailyScrum": "Aus Daily Scrum",
+    "createdFromDailyUpdate": "Erstellt aus taglichem Update",
+    "reportedBy": "Gemeldet von",
+    "owner": "Eigentumer",
+    "unknown": "Unbekannt",
+    "resolution": "Losung",
+    "viewDetailsAria": "Details fur Hindernis anzeigen: {{title}}. Status: {{status}}"
+  },
+  "emptyState": {
+    "noImpedimentsForSprint": "Keine Hindernisse fur {{sprintName}}",
+    "noImpedimentsForFilter": "Keine {{status}} Hindernisse",
+    "noImpedimentsDescription": "Super! Keine Hindernisse fur den aktiven Sprint \"{{sprintName}}\" gemeldet.",
+    "noFilterImpedimentsDescription": "Es gibt keine {{status}} Hindernisse in \"{{sprintName}}\". Versuchen Sie einen anderen Status-Filter.",
+    "clearFilter": "Filter loschen"
+  },
+  "createModal": {
+    "title": "Neues Hindernis melden",
+    "subtitle": "Blocker dokumentieren, die den Fortschritt Ihres Teams behindern",
+    "sprintLabel": "Sprint",
+    "activeSprint": "(Aktiv)",
+    "titleLabel": "Titel",
+    "titlePlaceholder": "Kurze Beschreibung des Hindernisses",
+    "descriptionLabel": "Beschreibung",
+    "descriptionPlaceholder": "Details zum Hindernis angeben",
+    "creating": "Erstellen...",
+    "createImpediment": "Hindernis erstellen"
+  },
+  "detailModal": {
+    "title": "Hindernis-Details",
+    "subtitle": "Hindernis-Informationen anzeigen und verwalten",
+    "createdFromDailyScrum": "Erstellt aus Daily Scrum Update",
+    "viewDailyUpdate": "Tagliches Update anzeigen",
+    "titleLabel": "Titel",
+    "descriptionLabel": "Beschreibung",
+    "sprintLabel": "Sprint",
+    "statusLabel": "Status",
+    "reportedByLabel": "Gemeldet von",
+    "ownerLabel": "Eigentumer",
+    "createdLabel": "Erstellt",
+    "resolutionLabel": "Losung",
+    "resolutionPlaceholder": "Beschreiben Sie, wie dieses Hindernis gelost wurde...",
+    "saveResolution": "Losung speichern",
+    "saving": "Speichern...",
+    "deleting": "Loschen...",
+    "deleteLabel": "Loschen"
+  },
+  "deleteModal": {
+    "title": "Hindernis loschen",
+    "subtitle": "Diese Aktion ist dauerhaft und kann nicht ruckgangig gemacht werden",
+    "actionWarning": "Aktionswarnung",
+    "item": "Element:",
+    "unknownItem": "Unbekanntes Element",
+    "warningText": "Sie sind dabei, dieses Hindernis dauerhaft zu loschen. Diese Aktion kann nicht ruckgangig gemacht werden. Alle zugehorigen Daten werden dauerhaft entfernt.",
+    "statusLabel": "Status:",
+    "deleteImpediment": "Hindernis loschen",
+    "deleting": "Loschen..."
+  },
+  "unsavedModal": {
+    "title": "Ungespeicherte Anderungen",
+    "message": "Sie haben ungespeicherte Anderungen im Hindernis-Formular. Sind Sie sicher, dass Sie diese verwerfen mochten?"
+  },
+  "toast": {
+    "created": "Hindernis erfolgreich erstellt",
+    "updated": "Hindernis erfolgreich aktualisiert",
+    "deleted": "Hindernis erfolgreich geloscht",
+    "teamIdRequired": "Team-ID ist erforderlich. Bitte wahlen Sie zuerst ein Team.",
+    "noActiveSprint": "Kein aktiver Sprint gefunden. Bitte starten Sie zuerst einen Sprint.",
+    "failedCreate": "Hindernis konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
+    "failedUpdate": "Hindernis konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut.",
+    "failedDelete": "Hindernis konnte nicht geloscht werden. Bitte versuchen Sie es erneut."
+  },
+  "errorState": {
+    "title": "Fehler beim Laden der Daten",
+    "retry": "Erneut versuchen",
+    "failedSprint": "Aktive Sprint-Informationen konnten nicht geladen werden. Bitte versuchen Sie es erneut.",
+    "failedImpediments": "Hindernisse konnten nicht geladen werden. Bitte versuchen Sie es erneut."
+  },
+  "validation": {
+    "titleRequired": "Titel ist erforderlich",
+    "titleTooShort": "Titel muss mindestens 3 Zeichen haben",
+    "descriptionRequired": "Beschreibung ist erforderlich",
+    "descriptionTooShort": "Beschreibung muss mindestens 10 Zeichen haben"
+  }
 }

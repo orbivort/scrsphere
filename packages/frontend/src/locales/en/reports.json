@@ -1,3 +1,58 @@
 {
-  "title": "Reports"
+  "title": "Reports",
+  "subtitle": "Track team performance and sprint metrics",
+  "skipToMainContent": "Skip to main content",
+  "error": {
+    "title": "Error Loading Reports",
+    "message": "Unable to load report data. Please try again later."
+  },
+  "metrics": {
+    "avgVelocity": {
+      "title": "Average Velocity",
+      "unit": "Story Points per Sprint",
+      "fromLastSprint": "from last sprint"
+    },
+    "sprintSuccessRate": {
+      "title": "Sprint Success Rate",
+      "unit": "Sprint Goals Met",
+      "fromLastMonth": "from last month"
+    },
+    "impediments": {
+      "title": "Impediments",
+      "resolved": "Resolved",
+      "openCount": "open impediment(s)"
+    },
+    "teamSatisfaction": {
+      "title": "Team Satisfaction",
+      "unit": "Average Rating",
+      "fromLastSprint": "from last sprint"
+    }
+  },
+  "sprintHistory": {
+    "title": "Sprint History",
+    "empty": "No sprint history available.",
+    "stats": {
+      "planned": "Planned",
+      "completed": "Completed",
+      "teamMembers": "Team Members",
+      "impediments": "Impediments"
+    }
+  },
+  "insights": {
+    "title": "Key Insights",
+    "empty": "No insights available yet. Complete more sprints to generate insights."
+  },
+  "velocityChart": {
+    "title": "Sprint Velocity",
+    "yAxisLabel": "Story Points",
+    "xAxisLabel": "Sprint",
+    "planned": "Planned",
+    "completed": "Completed"
+  },
+  "loading": {
+    "velocityChart": "Loading velocity chart...",
+    "metrics": "Loading metrics...",
+    "sprintHistory": "Loading sprint history...",
+    "insights": "Loading insights..."
+  }
 }

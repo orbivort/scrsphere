@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { TaskStatus as TaskStatusEnum, type Impediment } from '../../../../types';
 
@@ -65,6 +66,7 @@ export const CompleteSprintModal: React.FC<CompleteSprintModalProps> = ({
   isCompleting,
   modalRef,
 }) => {
+  const { t } = useTranslation('sprint');
   const hasIncompleteTasks = incompleteTasksCount > 0;
   const hasOutstandingImpediments = outstandingImpedimentsCount > 0;
 
@@ -83,12 +85,12 @@ export const CompleteSprintModal: React.FC<CompleteSprintModalProps> = ({
         <div className={baseStyles['modal-header']}>
           <h2 id="complete-sprint-title" className={baseStyles['modal-title']}>
             <FlagIcon size={24} aria-hidden="true" className={baseStyles['icon-success']} />{' '}
-            Complete Sprint
+            {t('completeSprint.title')}
           </h2>
           <button
             className={baseStyles['modal-close']}
             onClick={onClose}
-            aria-label="Close modal"
+            aria-label={t('completeSprint.closeModal')}
             data-modal-close
           >
             <CloseIcon size={14} aria-hidden="true" />
@@ -114,36 +116,40 @@ export const CompleteSprintModal: React.FC<CompleteSprintModalProps> = ({
           )}
 
           <div className={styles['sprint-summary']}>
-            <h3 className={styles['sprint-summary-title']}>Sprint Summary</h3>
+            <h3 className={styles['sprint-summary-title']}>{t('completeSprint.sprintSummary')}</h3>
             <div className={styles['summary-grid']}>
               <div className={styles['summary-item']}>
-                <span className={styles['summary-label']}>Sprint:</span>
+                <span className={styles['summary-label']}>{t('completeSprint.sprint')}</span>
                 <span className={styles['summary-value']}>{sprintName}</span>
               </div>
               <div className={styles['summary-item']}>
-                <span className={styles['summary-label']}>Duration:</span>
+                <span className={styles['summary-label']}>{t('completeSprint.duration')}</span>
                 <span className={styles['summary-value']}>
-                  {daysRemaining > 0 ? `${daysRemaining} days remaining` : 'Timebox ended'}
+                  {daysRemaining > 0
+                    ? t('completeSprint.daysRemaining', { count: daysRemaining })
+                    : t('completeSprint.timeboxEnded')}
                 </span>
               </div>
               <div className={styles['summary-item']}>
-                <span className={styles['summary-label']}>Total Tasks:</span>
+                <span className={styles['summary-label']}>{t('completeSprint.totalTasks')}</span>
                 <span className={styles['summary-value']}>{sprintStats.totalTasks}</span>
               </div>
               <div className={styles['summary-item']}>
-                <span className={styles['summary-label']}>Completed Tasks:</span>
+                <span className={styles['summary-label']}>
+                  {t('completeSprint.completedTasks')}
+                </span>
                 <span className={`${styles['summary-value']} ${styles['summary-value-success']}`}>
                   {sprintStats.doneTasks}
                 </span>
               </div>
               <div className={styles['summary-item']}>
-                <span className={styles['summary-label']}>Story Points:</span>
+                <span className={styles['summary-label']}>{t('completeSprint.storyPoints')}</span>
                 <span className={styles['summary-value']}>
                   {sprintStats.completedStoryPoints} / {sprintStats.totalStoryPoints}
                 </span>
               </div>
               <div className={styles['summary-item']}>
-                <span className={styles['summary-label']}>Progress:</span>
+                <span className={styles['summary-label']}>{t('completeSprint.progress')}</span>
                 <span className={styles['summary-value']}>{sprintStats.progressPercentage}%</span>
               </div>
             </div>
@@ -159,20 +165,17 @@ export const CompleteSprintModal: React.FC<CompleteSprintModalProps> = ({
                 <span className={styles['warning-icon']} aria-hidden="true">
                   <AlertTriangleIcon size={20} />
                 </span>
-                <strong>Outstanding Impediments Detected</strong>
+                <strong>{t('completeSprint.outstandingImpediments')}</strong>
               </div>
               <p className={styles['impediments-warning-details']}>
-                You have{' '}
-                <strong>
-                  {outstandingImpedimentsCount} outstanding impediment
-                  {outstandingImpedimentsCount !== 1 ? 's' : ''}
-                </strong>{' '}
-                that need to be resolved or closed before completing the sprint.
+                {t('completeSprint.outstandingImpedimentsDetails', {
+                  count: outstandingImpedimentsCount,
+                })}
               </p>
 
               <div className={styles['outstanding-impediments-list']}>
                 <h4 className={styles['outstanding-impediments-list-title']}>
-                  Outstanding Impediments
+                  {t('completeSprint.outstandingImpedimentsList')}
                 </h4>
                 <ul className={styles['outstanding-impediments-items']}>
                   {outstandingImpediments.slice(0, 5).map((impediment) => (
@@ -185,7 +188,7 @@ export const CompleteSprintModal: React.FC<CompleteSprintModalProps> = ({
                               style={{ color: 'var(--color-error-500)' }}
                               aria-hidden="true"
                             />{' '}
-                            Open
+                            {t('completeSprint.open')}
                           </>
                         )}
                         {impediment.status === 'IN_PROGRESS' && (
@@ -195,7 +198,7 @@ export const CompleteSprintModal: React.FC<CompleteSprintModalProps> = ({
                               style={{ color: 'var(--color-warning-500)' }}
                               aria-hidden="true"
                             />{' '}
-                            In Progress
+                            {t('completeSprint.inProgress')}
                           </>
                         )}
                       </div>
@@ -212,8 +215,9 @@ export const CompleteSprintModal: React.FC<CompleteSprintModalProps> = ({
                   {outstandingImpedimentsCount > 5 && (
                     <li className={styles['outstanding-impediment-item']}>
                       <span className={styles['more-impediments']}>
-                        +{outstandingImpedimentsCount - 5} more impediment
-                        {outstandingImpedimentsCount - 5 !== 1 ? 's' : ''}
+                        {t('completeSprint.moreImpediments', {
+                          count: outstandingImpedimentsCount - 5,
+                        })}
                       </span>
                     </li>
                   )}
@@ -222,7 +226,8 @@ export const CompleteSprintModal: React.FC<CompleteSprintModalProps> = ({
 
               <div className={styles['outstanding-impediments-actions']}>
                 <button className={styles['button-view-impediments']} onClick={onViewImpediments}>
-                  <AlertTriangleIcon size={14} aria-hidden="true" /> View Impediments
+                  <AlertTriangleIcon size={14} aria-hidden="true" />{' '}
+                  {t('completeSprint.viewImpediments')}
                 </button>
               </div>
             </div>
@@ -234,34 +239,33 @@ export const CompleteSprintModal: React.FC<CompleteSprintModalProps> = ({
                 <span className={styles['warning-icon']} aria-hidden="true">
                   <AlertTriangleIcon size={20} />
                 </span>
-                <strong>Incomplete Work Detected</strong>
+                <strong>{t('completeSprint.incompleteWork')}</strong>
               </div>
               <p className={styles['warning-details']}>
-                You have{' '}
-                <strong>
-                  {incompleteTasksCount} incomplete task{incompleteTasksCount !== 1 ? 's' : ''}
-                </strong>{' '}
-                across{' '}
-                <strong>
-                  {incompletePbisCount} backlog item{incompletePbisCount !== 1 ? 's' : ''}
-                </strong>
-                . Please resolve these items before completing the sprint.
+                {t('completeSprint.incompleteWorkDetails', {
+                  taskCount: incompleteTasksCount,
+                  pbiCount: incompletePbisCount,
+                })}
               </p>
 
               <div className={styles['incomplete-tasks-list']}>
-                <h4 className={styles['incomplete-tasks-list-title']}>Incomplete Tasks</h4>
+                <h4 className={styles['incomplete-tasks-list-title']}>
+                  {t('completeSprint.incompleteTasksList')}
+                </h4>
                 <ul className={styles['incomplete-tasks-items']}>
                   {incompleteTasks.map((task) => (
                     <li key={task.id} className={styles['incomplete-task-item']}>
                       <div className={styles['task-status-badge']}>
                         {task.status === TaskStatusEnum.TODO && (
                           <>
-                            <ClipboardIcon size={12} aria-hidden="true" /> TODO
+                            <ClipboardIcon size={12} aria-hidden="true" />{' '}
+                            {t('taskStatus.todo').toUpperCase()}
                           </>
                         )}
                         {task.status === TaskStatusEnum.IN_PROGRESS && (
                           <>
-                            <RefreshCwIcon size={12} aria-hidden="true" /> In Progress
+                            <RefreshCwIcon size={12} aria-hidden="true" />{' '}
+                            {t('taskStatus.inProgress')}
                           </>
                         )}
                       </div>
@@ -276,16 +280,13 @@ export const CompleteSprintModal: React.FC<CompleteSprintModalProps> = ({
 
               <div className={styles['incomplete-tasks-actions']}>
                 <button className={styles['button-manage-backlog']} onClick={onManageBacklog}>
-                  <ClipboardIcon size={14} aria-hidden="true" /> Manage Backlog
+                  <ClipboardIcon size={14} aria-hidden="true" /> {t('completeSprint.manageBacklog')}
                 </button>
               </div>
             </div>
           ) : !hasOutstandingImpediments ? (
             <div className={styles['ready-to-complete']}>
-              <p className={styles['confirmation-text']}>
-                All tasks are complete! Before completing the sprint, you must verify that all
-                Product Backlog Items meet the Definition of Done criteria.
-              </p>
+              <p className={styles['confirmation-text']}>{t('completeSprint.readyToComplete')}</p>
             </div>
           ) : null}
         </div>
@@ -295,7 +296,7 @@ export const CompleteSprintModal: React.FC<CompleteSprintModalProps> = ({
             onClick={onClose}
             disabled={isCompleting}
           >
-            Cancel
+            {t('completeSprint.cancel')}
           </button>
           <button
             className={styles['button-complete-sprint-confirm']}
@@ -308,16 +309,16 @@ export const CompleteSprintModal: React.FC<CompleteSprintModalProps> = ({
             aria-busy={isCompleting}
             title={
               hasIncompleteTasks
-                ? 'Cannot complete sprint with incomplete tasks. Please complete all tasks or return them to backlog.'
+                ? t('completeSprint.cannotCompleteWithIncomplete')
                 : hasOutstandingImpediments
-                  ? 'Cannot complete sprint with outstanding impediments. Please resolve or close all impediments first.'
-                  : 'Proceed to Definition of Done verification'
+                  ? t('completeSprint.cannotCompleteWithImpediments')
+                  : t('completeSprint.proceedToDodVerificationTitle')
             }
           >
             {isCompleting ? (
               <>
                 <span className={baseStyles['button-spinner']} aria-hidden="true" />
-                Processing...
+                {t('completeSprint.processing')}
               </>
             ) : hasIncompleteTasks || hasOutstandingImpediments ? (
               <>
@@ -326,7 +327,7 @@ export const CompleteSprintModal: React.FC<CompleteSprintModalProps> = ({
                   aria-hidden="true"
                   className={styles['button-icon-disabled']}
                 />
-                Complete Sprint (Disabled)
+                {t('completeSprint.completeSprintDisabled')}
               </>
             ) : (
               <>
@@ -335,7 +336,7 @@ export const CompleteSprintModal: React.FC<CompleteSprintModalProps> = ({
                   aria-hidden="true"
                   className={styles['button-icon-active']}
                 />
-                Proceed to DoD Verification
+                {t('completeSprint.proceedToDodVerification')}
               </>
             )}
           </button>

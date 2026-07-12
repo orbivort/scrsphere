@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { apiService } from '../../../services';
 import { logger } from '../../../utils/logger';
@@ -18,6 +19,8 @@ interface SessionInfo {
 }
 
 export const PrivacyData: React.FC = () => {
+  const { t } = useTranslation('settings');
+
   const [sessions, setSessions] = useState<SessionInfo[]>([]);
   const [sessionsLoading, setSessionsLoading] = useState(true);
   const [sessionsError, setSessionsError] = useState<string | null>(null);
@@ -32,15 +35,15 @@ export const PrivacyData: React.FC = () => {
       if (response.success && response.data) {
         setSessions(response.data);
       } else {
-        setSessionsError('Failed to load sessions');
+        setSessionsError(t('privacyData.activeSessions.errors.loadFailed'));
       }
     } catch (error) {
       logger.error('Failed to fetch sessions', undefined, { error });
-      setSessionsError('Failed to load sessions');
+      setSessionsError(t('privacyData.activeSessions.errors.loadFailed'));
     } finally {
       setSessionsLoading(false);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     void fetchSessions();
@@ -53,11 +56,11 @@ export const PrivacyData: React.FC = () => {
       if (response.success) {
         setSessions((prev) => prev.filter((s) => s.id !== sessionId));
       } else {
-        setSessionsError('Failed to revoke session');
+        setSessionsError(t('privacyData.activeSessions.errors.revokeFailed'));
       }
     } catch (error) {
       logger.error('Failed to revoke session', undefined, { error });
-      setSessionsError('Failed to revoke session');
+      setSessionsError(t('privacyData.activeSessions.errors.revokeFailed'));
     } finally {
       setRevokingSessionId(null);
     }
@@ -72,11 +75,11 @@ export const PrivacyData: React.FC = () => {
       if (response.success) {
         await fetchSessions();
       } else {
-        setSessionsError('Failed to sign out other sessions');
+        setSessionsError(t('privacyData.activeSessions.errors.signOutFailed'));
       }
     } catch (error) {
       logger.error('Failed to revoke all sessions', undefined, { error });
-      setSessionsError('Failed to sign out other sessions');
+      setSessionsError(t('privacyData.activeSessions.errors.signOutFailed'));
     } finally {
       setRevokingAll(false);
     }
@@ -93,12 +96,12 @@ export const PrivacyData: React.FC = () => {
   };
 
   const parseUserAgent = (userAgent: string | null) => {
-    if (!userAgent) return 'Unknown device';
+    if (!userAgent) return t('privacyData.activeSessions.devices.unknown');
 
-    if (userAgent.includes('Chrome')) return 'Chrome Browser';
-    if (userAgent.includes('Firefox')) return 'Firefox Browser';
-    if (userAgent.includes('Safari')) return 'Safari Browser';
-    if (userAgent.includes('Edge')) return 'Edge Browser';
+    if (userAgent.includes('Chrome')) return t('privacyData.activeSessions.devices.chrome');
+    if (userAgent.includes('Firefox')) return t('privacyData.activeSessions.devices.firefox');
+    if (userAgent.includes('Safari')) return t('privacyData.activeSessions.devices.safari');
+    if (userAgent.includes('Edge')) return t('privacyData.activeSessions.devices.edge');
     return userAgent.substring(0, 50) + (userAgent.length > 50 ? '...' : '');
   };
 
@@ -108,8 +111,8 @@ export const PrivacyData: React.FC = () => {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <h1 className={styles.title}>Privacy & Data</h1>
-        <p className={styles.subtitle}>Manage your personal data and privacy settings</p>
+        <h1 className={styles.title}>{t('privacyData.title')}</h1>
+        <p className={styles.subtitle}>{t('privacyData.subtitle')}</p>
       </header>
 
       <div className={styles.content}>
@@ -119,18 +122,20 @@ export const PrivacyData: React.FC = () => {
               <SettingsIcon size={24} />
             </div>
             <div>
-              <h2 className={styles['section-title']}>Active Sessions</h2>
-              <p className={styles['section-description']}>Manage your active login sessions</p>
+              <h2 className={styles['section-title']}>{t('privacyData.activeSessions.title')}</h2>
+              <p className={styles['section-description']}>
+                {t('privacyData.activeSessions.description')}
+              </p>
             </div>
           </div>
 
           <div className={styles.card}>
             {sessionsLoading ? (
-              <p className={styles['loading-text']}>Loading sessions...</p>
+              <p className={styles['loading-text']}>{t('privacyData.activeSessions.loading')}</p>
             ) : sessionsError ? (
               <p className={styles['error-text']}>{sessionsError}</p>
             ) : sessions.length === 0 ? (
-              <p className={styles['empty-text']}>No active sessions found</p>
+              <p className={styles['empty-text']}>{t('privacyData.activeSessions.empty')}</p>
             ) : (
               <>
                 <div className={styles['sessions-list']}>
@@ -145,15 +150,20 @@ export const PrivacyData: React.FC = () => {
                             {parseUserAgent(session.userAgent)}
                           </span>
                           {session.id === currentSessionId && (
-                            <span className={styles['current-badge']}>Current</span>
+                            <span className={styles['current-badge']}>
+                              {t('privacyData.activeSessions.current')}
+                            </span>
                           )}
                         </div>
                         <div className={styles['session-details']}>
                           {session.ipAddress && (
-                            <span className={styles['session-ip']}>IP: {session.ipAddress}</span>
+                            <span className={styles['session-ip']}>
+                              {t('privacyData.activeSessions.ip')} {session.ipAddress}
+                            </span>
                           )}
                           <span className={styles['session-time']}>
-                            Last active: {formatDate(session.lastActivityAt)}
+                            {t('privacyData.activeSessions.lastActive')}{' '}
+                            {formatDate(session.lastActivityAt)}
                           </span>
                         </div>
                       </div>
@@ -163,9 +173,11 @@ export const PrivacyData: React.FC = () => {
                           onClick={() => handleRevokeSession(session.id)}
                           disabled={revokingSessionId === session.id}
                           className={styles['revoke-button']}
-                          aria-label="Revoke this session"
+                          aria-label={t('privacyData.activeSessions.revokeSession')}
                         >
-                          {revokingSessionId === session.id ? 'Revoking...' : 'Revoke'}
+                          {revokingSessionId === session.id
+                            ? t('privacyData.activeSessions.revoking')
+                            : t('privacyData.activeSessions.revoke')}
                         </button>
                       )}
                     </div>
@@ -181,10 +193,12 @@ export const PrivacyData: React.FC = () => {
                       className={styles['revoke-all-button']}
                     >
                       <LogOutIcon size={16} />
-                      {revokingAll ? 'Signing out...' : 'Sign out all other sessions'}
+                      {revokingAll
+                        ? t('privacyData.activeSessions.signingOut')
+                        : t('privacyData.activeSessions.signOutAll')}
                     </button>
                     <p className={styles['sessions-note']}>
-                      This will sign you out of all other devices except this one.
+                      {t('privacyData.activeSessions.note')}
                     </p>
                   </div>
                 )}
@@ -199,47 +213,52 @@ export const PrivacyData: React.FC = () => {
               <DownloadIcon size={24} />
             </div>
             <div>
-              <h2 className={styles['section-title']}>Export Your Data</h2>
-              <p className={styles['section-description']}>Download a copy of your personal data</p>
+              <h2 className={styles['section-title']}>{t('privacyData.dataExport.title')}</h2>
+              <p className={styles['section-description']}>
+                {t('privacyData.dataExport.description')}
+              </p>
             </div>
           </div>
 
           <div className={styles.card}>
             <div className={styles['info-box']}>
-              <h3 className={styles['info-title']}>Right to Data Portability</h3>
+              <h3 className={styles['info-title']}>
+                {t('privacyData.dataExport.rightToPortability')}
+              </h3>
               <p className={styles['info-text']}>
-                You have the right to receive your personal data in a structured, commonly used, and
-                machine-readable format.
+                {t('privacyData.dataExport.portabilityDescription')}
               </p>
             </div>
 
             <div className={styles['data-categories']}>
-              <h4 className={styles['categories-title']}>Data included in the export:</h4>
+              <h4 className={styles['categories-title']}>
+                {t('privacyData.dataExport.dataIncluded')}
+              </h4>
               <ul className={styles['categories-list']}>
                 <li className={styles['category-item']}>
                   <span className={styles['check-icon']}>✓</span>
                   <div>
-                    <strong>Profile Information</strong>
+                    <strong>{t('privacyData.dataExport.profileInformation')}</strong>
                     <span className={styles['category-desc']}>
-                      Name, email, avatar, preferences
+                      {t('privacyData.dataExport.profileDescription')}
                     </span>
                   </div>
                 </li>
                 <li className={styles['category-item']}>
                   <span className={styles['check-icon']}>✓</span>
                   <div>
-                    <strong>Team Memberships</strong>
+                    <strong>{t('privacyData.dataExport.teamMemberships')}</strong>
                     <span className={styles['category-desc']}>
-                      Teams you belong to and your roles
+                      {t('privacyData.dataExport.teamDescription')}
                     </span>
                   </div>
                 </li>
                 <li className={styles['category-item']}>
                   <span className={styles['check-icon']}>✓</span>
                   <div>
-                    <strong>Session Information</strong>
+                    <strong>{t('privacyData.dataExport.sessionInformation')}</strong>
                     <span className={styles['category-desc']}>
-                      Active sessions and login history
+                      {t('privacyData.dataExport.sessionDescription')}
                     </span>
                   </div>
                 </li>
@@ -249,7 +268,8 @@ export const PrivacyData: React.FC = () => {
             <div className={styles['export-section']}>
               <div className={styles['export-info']}>
                 <p className={styles['export-format']}>
-                  <strong>Format:</strong> JSON (machine-readable)
+                  <strong>{t('privacyData.dataExport.formatLabel')}</strong>{' '}
+                  {t('privacyData.dataExport.formatValue')}
                 </p>
               </div>
 
@@ -270,44 +290,52 @@ export const PrivacyData: React.FC = () => {
               <ShieldIcon size={24} />
             </div>
             <div>
-              <h2 className={styles['section-title']}>Your Data Rights</h2>
-              <p className={styles['section-description']}>Your rights regarding personal data</p>
+              <h2 className={styles['section-title']}>{t('privacyData.dataRights.title')}</h2>
+              <p className={styles['section-description']}>
+                {t('privacyData.dataRights.subtitle')}
+              </p>
             </div>
           </div>
 
           <div className={styles.card}>
             <div className={styles['rights-grid']}>
               <div className={styles['right-item']}>
-                <h4 className={styles['right-title']}>Right to Access</h4>
+                <h4 className={styles['right-title']}>
+                  {t('privacyData.dataRights.rightToAccess')}
+                </h4>
                 <p className={styles['right-description']}>
-                  You can request a copy of all personal data we hold about you.
+                  {t('privacyData.dataRights.rightToAccessDescription')}
                 </p>
               </div>
               <div className={styles['right-item']}>
-                <h4 className={styles['right-title']}>Right to Rectification</h4>
+                <h4 className={styles['right-title']}>
+                  {t('privacyData.dataRights.rightToRectification')}
+                </h4>
                 <p className={styles['right-description']}>
-                  You can correct inaccurate or incomplete personal data.
+                  {t('privacyData.dataRights.rightToRectificationDescription')}
                 </p>
               </div>
               <div className={styles['right-item']}>
-                <h4 className={styles['right-title']}>Right to Erasure</h4>
+                <h4 className={styles['right-title']}>
+                  {t('privacyData.dataRights.rightToErasure')}
+                </h4>
                 <p className={styles['right-description']}>
-                  You can request deletion of your personal data when no longer needed.
+                  {t('privacyData.dataRights.rightToErasureDescription')}
                 </p>
               </div>
               <div className={styles['right-item']}>
-                <h4 className={styles['right-title']}>Right to Portability</h4>
+                <h4 className={styles['right-title']}>
+                  {t('privacyData.dataRights.rightToPortability')}
+                </h4>
                 <p className={styles['right-description']}>
-                  You can receive your data in a structured, machine-readable format.
+                  {t('privacyData.dataRights.rightToPortabilityDescription')}
                 </p>
               </div>
             </div>
 
             <div className={styles['contact-section']}>
-              <h4 className={styles['contact-title']}>Questions about your data?</h4>
-              <p className={styles['contact-text']}>
-                Contact your HR Data Protection Team or the Corporate Data Protection Officer.
-              </p>
+              <h4 className={styles['contact-title']}>{t('privacyData.contactSection.title')}</h4>
+              <p className={styles['contact-text']}>{t('privacyData.contactSection.message')}</p>
             </div>
           </div>
         </section>

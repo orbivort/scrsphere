@@ -21,3 +21,10 @@ export const useI18nStore = create<I18nState>()(
     }
   )
 );
+
+export const syncLocaleFromUser = (userLocale: string) => {
+  const store = useI18nStore.getState();
+  if (store.locale !== userLocale) {
+    store.setLocale(userLocale as Locale);
+  }
+};

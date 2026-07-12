@@ -1,3 +1,87 @@
 {
-  "title": "Configuración"
+  "title": "Configuración",
+  "privacyData": {
+    "title": "Privacidad & Datos",
+    "subtitle": "Gestione sus datos personales y configuración de privacidad",
+    "activeSessions": {
+      "title": "Sesiones activas",
+      "description": "Gestione sus sesiones de inicio de sesión activas",
+      "loading": "Cargando sesiones...",
+      "empty": "No se encontraron sesiones activas",
+      "current": "Actual",
+      "ip": "IP:",
+      "lastActive": "Última actividad:",
+      "revoke": "Revocar",
+      "revoking": "Revocando...",
+      "revokeSession": "Revocar esta sesión",
+      "signOutAll": "Cerrar todas las otras sesiones",
+      "signingOut": "Cerrando...",
+      "note": "Esto le desconectará de todos los otros dispositivos, excepto este.",
+      "errors": {
+        "loadFailed": "Error al cargar sesiones",
+        "revokeFailed": "Error al revocar sesión",
+        "signOutFailed": "Error al cerrar otras sesiones"
+      },
+      "devices": {
+        "unknown": "Dispositivo desconocido",
+        "chrome": "Navegador Chrome",
+        "firefox": "Navegador Firefox",
+        "safari": "Navegador Safari",
+        "edge": "Navegador Edge"
+      }
+    },
+    "dataExport": {
+      "title": "Exportar sus datos",
+      "description": "Descargar una copia de sus datos personales",
+      "rightToPortability": "Derecho a la portabilidad de datos",
+      "portabilityDescription": "Tiene derecho a recibir sus datos personales en un formato estructurado, comúnmente utilizado y legible por máquina.",
+      "dataIncluded": "Datos incluidos en la exportación:",
+      "profileInformation": "Información de perfil",
+      "profileDescription": "Nombre, email, avatar, preferencias",
+      "teamMemberships": "Membresías de equipos",
+      "teamDescription": "Equipos a los que pertenece y sus roles",
+      "sessionInformation": "Información de sesión",
+      "sessionDescription": "Sesiones activas e historial de inicio de sesión",
+      "formatLabel": "Formato:",
+      "formatValue": "JSON (legible por máquina)",
+      "exportButton": "Exportar mis datos",
+      "exporting": "Exportando...",
+      "downloadExport": "Descargar exportación",
+      "ariaLabel": "Exportar sus datos personales"
+    },
+    "dataExportModal": {
+      "title": "Exportación de datos",
+      "closeModal": "Cerrar modal",
+      "statusMessages": {
+        "initializing": "Inicializando exportación...",
+        "pending": "Preparando su exportación de datos...",
+        "processing": "Recopilando y formateando sus datos...",
+        "completed": "¡Su exportación de datos está lista!",
+        "failed": "Exportación fallida. Por favor, inténtelo de nuevo.",
+        "expired": "Esta exportación ha expirado. Por favor, cree una nueva."
+      },
+      "exportProgress": "Progreso de exportación",
+      "jobId": "ID del trabajo:",
+      "infoText": "Sus datos se exportan en formato JSON, que es estructurado, comúnmente utilizado y legible por máquina.",
+      "downloadJson": "Descargar archivo JSON",
+      "cancelExport": "Cancelar exportación",
+      "close": "Cerrar"
+    },
+    "dataRights": {
+      "title": "Sus derechos sobre los datos",
+      "subtitle": "Sus derechos respecto a los datos personales",
+      "rightToAccess": "Derecho de acceso",
+      "rightToAccessDescription": "Puede solicitar una copia de todos los datos personales que tenemos sobre usted.",
+      "rightToRectification": "Derecho de rectificación",
+      "rightToRectificationDescription": "Puede corregir datos personales inexactos o incompletos.",
+      "rightToErasure": "Derecho de supresión",
+      "rightToErasureDescription": "Puede solicitar la eliminación de sus datos personales cuando ya no sean necesarios.",
+      "rightToPortability": "Derecho de portabilidad",
+      "rightToPortabilityDescription": "Puede recibir sus datos en un formato estructurado y legible por máquina."
+    },
+    "contactSection": {
+      "title": "¿Preguntas sobre sus datos?",
+      "message": "Contacte a su equipo de protección de datos de RR.HH. o al responsable de protección de datos de la empresa."
+    }
+  }
 }

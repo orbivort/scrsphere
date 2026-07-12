@@ -1,3 +1,161 @@
 {
-  "title": "Team"
+  "title": "Team",
+  "subtitle": "Gestire membri del team e standard del team",
+  "welcome": {
+    "title": "Benvenuto in Scrumooth, {{name}}!",
+    "subtitle": "Il tuo viaggio agile inizia qui...",
+    "selectRole": "Seleziona il tuo ruolo per continuare"
+  },
+  "leadership": {
+    "title": "Scrum Master o Product Owner",
+    "createTeam": "Crea Nuovo Team",
+    "quickStart": {
+      "step1": "Crea team",
+      "step2": "Invita membri",
+      "step3": "Inizia Sprint"
+    }
+  },
+  "developer": {
+    "title": "Developer",
+    "description": "Unisciti a un team Scrum esistente...",
+    "howToJoin": {
+      "title": "Come unirsi a un team",
+      "invitationsSentBy": "Gli inviti del team sono inviati da: Scrum Master o Product Owner solo",
+      "checkNotifications": "Controlla le tue notifiche: Cerca inviti del team in sospeso",
+      "contactLeadership": "Contatta la tua leadership: Rivolgiti al tuo Scrum Master o Product Owner"
+    },
+    "checkInvitations": "Controlla Inviti"
+  },
+  "capabilities": {
+    "teamCollaboration": "Collaborazione del Team",
+    "teamCollaborationDesc": "Lavorare insieme efficacemente con obiettivi condivisi e visibilità",
+    "sprintPlanning": "Sprint Planning",
+    "sprintPlanningDesc": "Pianificare e gestire Sprint con il tuo team",
+    "progressTracking": "Monitoraggio Progresso",
+    "progressTrackingDesc": "Seguire il progresso con dashboard e report in tempo reale",
+    "agileCeremonies": "Cerimonie Agile",
+    "agileCeremoniesDesc": "Facilitare Daily Scrum, Review e Retrospective"
+  },
+  "help": {
+    "title": "Hai bisogno di aiuto per iniziare?"
+  },
+  "errorStates": {
+    "notInvited": "Non sei stato ancora invitato a un team",
+    "teamAccessRequired": "Accesso al team richiesto",
+    "teamNotFound": "Team non trovato",
+    "accessDenied": "Accesso negato",
+    "unableToLoad": "Impossibile caricare il team",
+    "tryAgain": "Riprova"
+  },
+  "teamInfo": {
+    "unavailable": "Informazioni del Team non disponibili",
+    "unableToLoad": "Impossibile caricare i dettagli del team. Per favore prova ad aggiornare la pagina."
+  },
+  "members": {
+    "title": "Membri del Team",
+    "inviteMember": "Invita Membro",
+    "adding": "Aggiunta...",
+    "searchPlaceholder": "Cerca per nome o email...",
+    "filterOptions": {
+      "allRoles": "Tutti i Ruoli",
+      "productOwner": "Product Owner",
+      "scrumMaster": "Scrum Master",
+      "developer": "Developer"
+    },
+    "sortOptions": {
+      "byName": "Ordina per Nome",
+      "byRole": "Ordina per Ruolo",
+      "byJoined": "Ordina per Data di Adesione"
+    },
+    "viewToggles": {
+      "cardView": "Vista scheda",
+      "listView": "Vista elenco"
+    },
+    "filterResults": "Mostrando {{shown}} di {{total}} membro(i)",
+    "clearFilters": "Cancella filtri",
+    "noMatchSearch": "Nessun membro corrisponde ai tuoi criteri di ricerca.",
+    "clearAllFilters": "Cancella tutti i filtri",
+    "empty": "Nessun membro del team trovato.",
+    "addFirstMember": "Aggiungi Primo Membro"
+  },
+  "deleteModal": {
+    "title": "Rimuovi Membro del Team",
+    "confirmation": "Sei sicuro di voler rimuovere {{name}} dal team?",
+    "warning": "Questa azione non può essere annullata. L'utente perderà l'accesso a tutte le risorse del team.",
+    "cancel": "Annulla",
+    "close": "Chiudi",
+    "removing": "Rimuovendo...",
+    "removeMember": "Rimuovi Membro"
+  },
+  "inviteModal": {
+    "title": "Invita Membro del Team",
+    "emailLabel": "Indirizzo Email",
+    "emailPlaceholder": "Inserisci indirizzo email",
+    "role": "Ruolo",
+    "cancel": "Annulla",
+    "adding": "Aggiunta...",
+    "sendInvite": "Invia Invito",
+    "unsentTitle": "Invito Non Inviato",
+    "unsentMessage": "Hai un invito del team non inviato. Sei sicuro di volerlo scartare?"
+  },
+  "inviteErrors": {
+    "userNotFound": "Nessun utente trovato con questo indirizzo email. L'utente deve registrarsi prima di poter essere invitato a un team.",
+    "alreadyMember": "Questo utente è già membro del team.",
+    "noPermission": "Non hai il permesso di aggiungere membri al team.",
+    "networkError": "Errore di rete. Per favore controlla la tua connessione e riprova.",
+    "genericError": "Impossibile aggiungere membro al team. Per favore riprova più tardi.",
+    "invalidEmail": "Per favore inserisci un indirizzo email valido.",
+    "emailRequired": "L'indirizzo email è richiesto."
+  },
+  "teamStats": {
+    "completedSprints": "Sprint Completati",
+    "storyPointsCompleted": "Story Points Completati",
+    "avgVelocity": "Velocity Media",
+    "sprintSuccessRate": "Tasso di Successo Sprint"
+  },
+  "loading": "Caricando informazioni del team...",
+  "memberCard": {
+    "roleNames": {
+      "scrumMaster": "Scrum Master",
+      "productOwner": "Product Owner",
+      "developer": "Developer",
+      "administrator": "Amministratore"
+    },
+    "unknownUser": "Utente Sconosciuto",
+    "unknownDate": "Sconosciuto",
+    "memberSince": "Membro dal",
+    "ariaLabels": {
+      "teamMember": "Membro del team: {{name}}",
+      "sendMessage": "Invia messaggio",
+      "sendMessageTo": "Invia messaggio a {{name}}",
+      "removeFromTeam": "Rimuovi dal team",
+      "removeNameFromTeam": "Rimuovi {{name}} dal team"
+    },
+    "titles": {
+      "sendMessage": "Invia messaggio",
+      "removeFromTeam": "Rimuovi dal team"
+    }
+  },
+  "sendMessageModal": {
+    "title": "Invia Messaggio",
+    "subtitle": "A: {{name}} ({{email}})",
+    "messageLabel": "Messaggio",
+    "messagePlaceholder": "Scrivi il tuo messaggio qui...",
+    "cancel": "Annulla",
+    "sending": "Inviando...",
+    "send": "Invia Messaggio",
+    "success": "Messaggio inviato con successo!",
+    "validation": {
+      "emptyMessage": "Per favore inserisci un messaggio.",
+      "maxLength": "Il messaggio deve avere meno di {{limit}} caratteri."
+    },
+    "errors": {
+      "recipientNotFound": "Destinatario non trovato. L'utente potrebbe essere stato rimosso.",
+      "noPermission": "Non hai il permesso di inviare messaggi a questo utente.",
+      "networkError": "Errore di rete. Per favore controlla la tua connessione e riprova.",
+      "genericError": "Impossibile inviare il messaggio. Per favore riprova più tardi."
+    },
+    "unsavedTitle": "Messaggio Non Inviato",
+    "unsavedMessage": "Hai un messaggio non inviato. Sei sicuro di volerlo scartare?"
+  }
 }

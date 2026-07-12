@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import styles from './DeleteTeamModal.module.css';
 
@@ -89,6 +90,7 @@ export const DeleteTeamModal: React.FC<DeleteTeamModalProps> = ({
   const [confirmationText, setConfirmationText] = useState('');
   const confirmationInputRef = useRef<HTMLInputElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation('settings');
   const { modalRef } = useModalFocus({
     isOpen,
     onClose,
@@ -159,18 +161,18 @@ export const DeleteTeamModal: React.FC<DeleteTeamModalProps> = ({
               <AlertTriangleIcon size={24} />
             </div>
             <h2 id="delete-team-title" className={styles.title}>
-              Delete Team
+              {t('deleteTeamModal.title')}
             </h2>
             <p id="delete-team-description" className={styles.subtitle}>
               {hasProductGoals
-                ? 'This team cannot be deleted due to active product goals'
-                : 'This action is permanent and cannot be undone'}
+                ? t('deleteTeamModal.blockedSubtitle')
+                : t('deleteTeamModal.normalSubtitle')}
             </p>
           </div>
           <button
             className={styles['close-button']}
             onClick={onClose}
-            aria-label="Close modal"
+            aria-label={t('deleteTeamModal.closeModal')}
             type="button"
           >
             <CloseIcon size={18} />

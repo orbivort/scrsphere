@@ -1,6 +1,7 @@
 // Data Export Button Component
 
 import React, { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useDataExport } from '../../../../hooks/useDataExport';
 import type { DataExportButtonProps } from '../../../../types/dataExport.types';
@@ -18,6 +19,8 @@ export const DataExportButton: React.FC<DataExportButtonProps> = ({
   disabled = false,
   className = '',
 }) => {
+  const { t } = useTranslation('settings');
+
   const {
     state,
     initiateExport,
@@ -64,27 +67,27 @@ export const DataExportButton: React.FC<DataExportButtonProps> = ({
         onClick={handleClick}
         disabled={isDisabled}
         className={`${styles['export-button']} ${className}`}
-        aria-label="Export your personal data"
+        aria-label={t('privacyData.dataExport.ariaLabel')}
         aria-busy={isActive}
       >
         {isActive ? (
           <>
             <span className={styles.spinner} aria-hidden="true" />
-            Exporting...
+            {t('privacyData.dataExport.exporting')}
           </>
         ) : canDownload ? (
           <>
             <span className={styles.icon} aria-hidden="true">
               ↓
             </span>
-            Download Export
+            {t('privacyData.dataExport.downloadExport')}
           </>
         ) : (
           <>
             <span className={styles.icon} aria-hidden="true">
               📥
             </span>
-            Export My Data
+            {t('privacyData.dataExport.exportButton')}
           </>
         )}
       </button>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { ItemStatus } from '../../../types';
 import type { FilterState } from '../types/backlog.types';
@@ -13,6 +14,8 @@ export interface BacklogFilterBarProps {
 }
 
 export const BacklogFilterBar: React.FC<BacklogFilterBarProps> = ({ filters, onFiltersChange }) => {
+  const { t } = useTranslation('backlog');
+
   return (
     <div className={styles['filter-bar']}>
       <div className={styles['filter-main']}>
@@ -21,7 +24,7 @@ export const BacklogFilterBar: React.FC<BacklogFilterBarProps> = ({ filters, onF
           <input
             type="text"
             className={styles['filter-search-input']}
-            placeholder="Search items..."
+            placeholder={t('filter.searchItems') as string}
             value={filters.search}
             onChange={(e) => onFiltersChange({ ...filters, search: e.target.value })}
           />
@@ -29,7 +32,7 @@ export const BacklogFilterBar: React.FC<BacklogFilterBarProps> = ({ filters, onF
             <button
               className={styles['search-clear']}
               onClick={() => onFiltersChange({ ...filters, search: '' })}
-              aria-label="Clear search"
+              aria-label={t('filter.clearSearch') as string}
             >
               <XIcon width="12" height="12" />
             </button>
@@ -41,7 +44,7 @@ export const BacklogFilterBar: React.FC<BacklogFilterBarProps> = ({ filters, onF
             className={`${styles['status-chip']} ${filters.status.length === 0 ? styles.active : ''}`}
             onClick={() => onFiltersChange({ ...filters, status: [] })}
           >
-            ALL
+            {t('filter.all') as string}
           </button>
           {Object.values(ItemStatus).map((status) => (
             <button

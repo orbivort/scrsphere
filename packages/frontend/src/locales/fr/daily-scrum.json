@@ -1,3 +1,160 @@
 {
-  "title": "Mêlée quotidienne"
+  "title": "Daily Scrum",
+  "subtitle": "{{sprintName}} - Jour {{day}}",
+  "viewMode": {
+    "cards": "Cartes",
+    "list": "Liste"
+  },
+  "datePicker": {
+    "label": "Selectionner la date pour les mises a jour quotidiennes",
+    "ariaLabel": "Selectionner la date pour les mises a jour quotidiennes"
+  },
+  "quickDates": {
+    "today": "Aujourd'hui",
+    "yesterday": "Hier"
+  },
+  "stats": {
+    "submitted": "Soumis",
+    "pending": "En attente",
+    "impediments": "Hinderniss",
+    "participation": "Participation"
+  },
+  "teamUpdates": "Mises a jour de l'equipe",
+  "yourDailyUpdate": "Votre mise a jour quotidienne",
+  "submitUpdate": "Soumettre la mise a jour",
+  "templates": {
+    "featureDevelopment": "Developpement de fonctionnalite",
+    "issueFixing": "Correction de probleme",
+    "review": "Revue",
+    "meetings": "Reunions"
+  },
+  "form": {
+    "yesterdayLabel": "Qu'avez-vous fait hier pour aider l'equipe a atteindre le sprint goal?",
+    "todayLabel": "Que ferez-vous aujourd'hui pour aider l'equipe a atteindre le sprint goal?",
+    "impedimentLabel": "Des hinderniss? (optionnel)",
+    "yesterdayPlaceholder": "Decrivez ce que vous avez accompli hier...",
+    "todayPlaceholder": "Decrivez ce que vous prevoyez de faire aujourd'hui...",
+    "impedimentPlaceholder": "Decrivez tous les bloquants ou hinderniss...",
+    "impedimentHint": "Cet hindernis sera suivi et peut etre promu en enregistrement formel d'hindernis",
+    "cancel": "Annuler",
+    "submitting": "Soumission..."
+  },
+  "emptyState": {
+    "noUpdates": "Pas encore de mises a jour",
+    "beFirst": "Soyez le premier a soumettre votre mise a jour quotidienne!",
+    "noUpdatesForDate": "Aucune mise a jour d'equipe pour cette date."
+  },
+  "waitingForUpdates": {
+    "title": "En attente de mises a jour",
+    "sendReminder": "Envoyer un rappel",
+    "sending": "Envoi..."
+  },
+  "activeImpediments": {
+    "title": "Hinderniss actifs",
+    "tracked": "Suivi",
+    "trackedImpediment": "Hindernis suivi",
+    "untrackedImpediment": "Hindernis non suivi",
+    "viewDetails": "Voir les details",
+    "trackAsImpediment": "Suivre comme hindernis",
+    "viewAllImpediments": "Voir tous les {{count}} hinderniss"
+  },
+  "sprintProgress": {
+    "title": "Progression du sprint",
+    "dayOfTotal": "Jour {{current}} sur {{total}}",
+    "viewSprintBoard": "Voir le sprint board"
+  },
+  "sprintGoal": {
+    "label": "Sprint Goal",
+    "noGoalDefined": "Aucun sprint goal defini.",
+    "addInPlanning": "Ajouter un dans le Sprint Planning"
+  },
+  "updateCard": {
+    "yesterday": "Hier",
+    "today": "Aujourd'hui",
+    "impediment": "Hindernis",
+    "tracked": "(Suivi)",
+    "viewImpediment": "Voir l'handernis",
+    "viewImpedimentDetails": "Voir les details de l'handernis",
+    "trackAsImpediment": "Suivre comme hindernis",
+    "trackAsFormalImpediment": "Suivre comme hindernis formel",
+    "clickToCollapse": "Cliquer pour reduire",
+    "clickToExpand": "Cliquer pour developper"
+  },
+  "impedimentStatus": {
+    "open": "Ouvert",
+    "inProgress": "En cours",
+    "resolved": "Resolu",
+    "closed": "Ferme"
+  },
+  "promoteModal": {
+    "title": "Creer un hindernis a partir de la mise a jour quotidienne",
+    "fromUpdateBy": "De la mise a jour quotidienne de:",
+    "originalImpedimentText": "Texte original de l'handernis:",
+    "titleLabel": "Titre",
+    "titlePlaceholder": "Titre bref pour l'handernis",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Description detaillee de l'handernis",
+    "priority": "Priorite",
+    "priorityHigh": "Haute",
+    "priorityMedium": "Moyenne",
+    "priorityLow": "Basse",
+    "createImpediment": "Creer l'handernis",
+    "creating": "Creation..."
+  },
+  "draftRestore": {
+    "title": "Brouillon non sauvegarde trouve",
+    "prompt": "Voulez-vous restaurer votre brouillon precedent?",
+    "discard": "Supprimer",
+    "restoreDraft": "Restaurer le brouillon"
+  },
+  "retryPrompt": {
+    "title": "Soumission echouee",
+    "message": "Votre mise a jour n'a pas pu etre soumise. Vos donnees ont ete preservees.",
+    "dismiss": "Fermer",
+    "retrySubmission": "Retenter la soumission",
+    "retrying": "Nouvelle tentative..."
+  },
+  "unsavedModal": {
+    "title": "Modifications non sauvegardees",
+    "message": "Vous avez des modifications non sauvegardees dans le formulaire d'handernis. Etes-vous sur de vouloir les supprimer?"
+  },
+  "validation": {
+    "titleRequired": "Le titre est requis",
+    "titleTooShort": "Le titre doit avoir au moins 3 caracteres",
+    "descriptionRequired": "La description est requise",
+    "descriptionTooShort": "La description doit avoir au moins 10 caracteres"
+  },
+  "aria": {
+    "viewMode": "Mode d'affichage",
+    "closeForm": "Fermer le formulaire",
+    "closeDialog": "Fermer le dialogue",
+    "trackedAsFormalImpediment": "Suivi comme hindernis formel",
+    "impedimentStatus": "Statut de l'handernis : {{status}}",
+    "dailyUpdateAriaLabel": "Mise a jour quotidienne de {{name}}. {{expandAction}}.",
+    "clickToCollapse": "Cliquer pour reduire",
+    "clickToExpand": "Cliquer pour developper"
+  },
+  "draftSaved": "Brouillon sauvegarde {{timeSince}}",
+  "formatTimeSince": {
+    "justNow": "a l'instant",
+    "minutesAgo": "{{count}}m",
+    "hoursAgo": "{{count}}h",
+    "daysAgo": "{{count}}j"
+  },
+  "toast": {
+    "updateSubmitted": "Mise a jour soumise avec succes!",
+    "impedimentCreated": "Hindernis cree avec succes!",
+    "reminderSent": "Rappel envoye!",
+    "noPendingUpdates": "Aucune mise a jour en attente",
+    "offline": "Vous semblez etre hors ligne. Verifiez votre connexion internet et reessayez.",
+    "networkError": "Une erreur reseau s'est produite. Verifiez votre connexion et reessayez.",
+    "sessionExpired": "Votre session a expire. Veuillez vous reconnecter.",
+    "noPermissionCreateImpediments": "Vous n'avez pas la permission de creer des hinderniss.",
+    "serverError": "Une erreur serveur s'est produite. Veuillez reessayer plus tard.",
+    "failedCreateImpediment": "Impossible de creer l'handernis. Veuillez reessayer.",
+    "noPermissionReminders": "Vous n'avez pas la permission d'envoyer des rappels.",
+    "failedSendReminder": "Impossible d'envoyer le rappel. Veuillez reessayer.",
+    "submitFailed": "Impossible de soumettre la mise a jour. Veuillez reessayer.",
+    "resourceNotFound": "La ressource demandee n'a pas ete trouvee."
+  }
 }

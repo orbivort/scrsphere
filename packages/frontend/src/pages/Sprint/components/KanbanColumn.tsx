@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { TaskStatus as TaskStatusEnum, type Task, type TaskStatus } from '../../../types';
 import type { TasksByStatus, WIPLimits } from '../SprintBoard.types';
@@ -93,16 +94,16 @@ const getEmptyIcon = (status: TaskStatus): React.ReactNode => {
   }
 };
 
-const getEmptyMessage = (status: TaskStatus): string => {
+const getEmptyMessageKey = (status: TaskStatus): string => {
   switch (status) {
     case TaskStatusEnum.TODO:
-      return 'No tasks to do';
+      return 'board.noTasksToDo';
     case TaskStatusEnum.IN_PROGRESS:
-      return 'No tasks in progress';
+      return 'board.noTasksInProgress';
     case TaskStatusEnum.DONE:
-      return 'No completed tasks';
+      return 'board.noCompletedTasks';
     default:
-      return 'No tasks';
+      return 'board.noTasks';
   }
 };
 
@@ -247,7 +248,8 @@ export const KanbanColumn: React.FC<KanbanColumnProps> = ({
   const headerClass = getColumnHeaderClass(status);
   const icon = getColumnIcon(status);
   const emptyIcon = getEmptyIcon(status);
-  const emptyMessage = getEmptyMessage(status);
+  const { t } = useTranslation('sprint');
+  const emptyMessage = t(getEmptyMessageKey(status) as never);
   const isDropTarget = dropTargetColumn === status;
   const isKeyboardDropTarget =
     keyboardGrabState === 'grabbed' && keyboardDropTargetStatus === status;
@@ -260,7 +262,11 @@ export const KanbanColumn: React.FC<KanbanColumnProps> = ({
       onDragOver={(e) => onDragOver(e, status)}
       onDragLeave={onDragLeave}
       role="listitem"
-      aria-label={`${title} column, ${tasks.length} tasks${isWipExceeded ? ', WIP limit exceeded' : ''}`}
+      aria-label={t('board.columnAriaLabel', {
+        title,
+        count: tasks.length,
+        wipExceeded: isWipExceeded ? t('board.wipExceededLabel') : '',
+      })}
       aria-dropeffect={keyboardGrabState === 'grabbed' ? 'move' : 'none'}
     >
       <div className={`${styles['column-header']} ${headerClass}`}>

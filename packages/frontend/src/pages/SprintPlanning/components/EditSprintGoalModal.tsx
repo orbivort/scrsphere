@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { UnsavedChangesModal } from '../../../components/common/Form/UnsavedChangesModal';
 
@@ -31,6 +32,7 @@ export const EditSprintGoalModal: React.FC<EditSprintGoalModalProps> = ({
   sprintName,
   isSaving = false,
 }) => {
+  const { t } = useTranslation('sprint');
   const modalRef = useRef<HTMLDivElement>(null);
   const previousActiveElement = useRef<HTMLElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -134,14 +136,14 @@ export const EditSprintGoalModal: React.FC<EditSprintGoalModalProps> = ({
       if (isSaving) return;
 
       if (!(goal || '').trim()) {
-        setGoalError('Sprint goal is required');
+        setGoalError(t('sprintPlanning.editSprintGoalModal.goalRequired'));
         textareaRef.current?.focus();
         return;
       }
 
       onSave((goal || '').trim());
     },
-    [goal, onSave, isSaving]
+    [goal, onSave, isSaving, t]
   );
 
   const handleGoalChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -182,11 +184,12 @@ export const EditSprintGoalModal: React.FC<EditSprintGoalModalProps> = ({
                 <TargetIcon size={24} />
               </div>
               <h2 id="edit-goal-title" className={styles.title}>
-                Edit Sprint Goal
+                {t('sprintPlanning.editSprintGoalModal.title')}
               </h2>
               {sprintName && (
                 <p className={styles.subtitle}>
-                  Sprint: <span className={styles['sprint-highlight']}>{sprintName}</span>
+                  {t('sprintPlanning.editSprintGoalModal.sprintLabel')}{' '}
+                  <span className={styles['sprint-highlight']}>{sprintName}</span>
                 </p>
               )}
             </div>
@@ -194,7 +197,7 @@ export const EditSprintGoalModal: React.FC<EditSprintGoalModalProps> = ({
               type="button"
               className={styles['close-button']}
               onClick={handleClose}
-              aria-label="Close modal"
+              aria-label={t('sprintPlanning.editSprintGoalModal.cancel')}
             >
               <XIcon size={20} />
             </button>
@@ -214,7 +217,7 @@ export const EditSprintGoalModal: React.FC<EditSprintGoalModalProps> = ({
               {/* Sprint Goal Field */}
               <div className={styles['form-group']}>
                 <label htmlFor="sprint-goal" className={styles['form-label']}>
-                  Sprint Goal
+                  {t('sprintPlanning.editSprintGoalModal.title')}
                   <span className={styles.required}>*</span>
                 </label>
                 <div className={styles['textarea-wrapper']}>
@@ -223,7 +226,7 @@ export const EditSprintGoalModal: React.FC<EditSprintGoalModalProps> = ({
                     id="sprint-goal"
                     value={goal}
                     onChange={handleGoalChange}
-                    placeholder="Define a clear, achievable goal for this sprint..."
+                    placeholder={t('sprintPlanning.editSprintGoalModal.placeholder')}
                     rows={4}
                     className={`${styles['form-textarea']} ${goalError ? styles['input-error'] : ''}`}
                     aria-required="true"
@@ -248,7 +251,7 @@ export const EditSprintGoalModal: React.FC<EditSprintGoalModalProps> = ({
                   </div>
                 )}
                 <span className={styles['input-hint']}>
-                  A good sprint goal focuses on value delivery and aligns with the product vision
+                  {t('sprintPlanning.editSprintGoalModal.goodSprintGoalHint')}
                 </span>
               </div>
 
@@ -258,32 +261,34 @@ export const EditSprintGoalModal: React.FC<EditSprintGoalModalProps> = ({
                   <span className={styles['tips-icon']}>
                     <LightbulbIcon size={16} />
                   </span>
-                  <h3 className={styles['tips-title']}>Tips for a good Sprint Goal</h3>
+                  <h3 className={styles['tips-title']}>
+                    {t('sprintPlanning.editSprintGoalModal.tipsTitle')}
+                  </h3>
                 </div>
                 <ul className={styles['tips-list']}>
                   <li className={styles['tip-item']}>
                     <span className={styles['tip-check']}>
                       <CheckIcon size={16} />
                     </span>
-                    Focus on value delivery, not just completing tasks
+                    {t('sprintPlanning.editSprintGoalModal.tipValueDelivery')}
                   </li>
                   <li className={styles['tip-item']}>
                     <span className={styles['tip-check']}>
                       <CheckIcon size={16} />
                     </span>
-                    Be specific and measurable
+                    {t('sprintPlanning.editSprintGoalModal.tipSpecificMeasurable')}
                   </li>
                   <li className={styles['tip-item']}>
                     <span className={styles['tip-check']}>
                       <CheckIcon size={16} />
                     </span>
-                    Align with the Product Goal
+                    {t('sprintPlanning.editSprintGoalModal.tipAlignWithProductGoal')}
                   </li>
                   <li className={styles['tip-item']}>
                     <span className={styles['tip-check']}>
                       <CheckIcon size={16} />
                     </span>
-                    Keep it achievable within the sprint
+                    {t('sprintPlanning.editSprintGoalModal.tipAchievable')}
                   </li>
                 </ul>
               </div>
@@ -298,7 +303,7 @@ export const EditSprintGoalModal: React.FC<EditSprintGoalModalProps> = ({
               onClick={handleClose}
               disabled={isSaving}
             >
-              Cancel
+              {t('sprintPlanning.editSprintGoalModal.cancel')}
             </button>
             <button
               type="submit"
@@ -310,14 +315,14 @@ export const EditSprintGoalModal: React.FC<EditSprintGoalModalProps> = ({
               {isSaving ? (
                 <>
                   <span className={styles['button-spinner']} />
-                  Saving...
+                  {t('sprintPlanning.editSprintGoalModal.saving')}
                 </>
               ) : (
                 <>
                   <span className={styles['button-icon']}>
                     <CheckIcon size={16} />
                   </span>
-                  Save Goal
+                  {t('sprintPlanning.editSprintGoalModal.saveGoal')}
                 </>
               )}
             </button>
@@ -330,8 +335,8 @@ export const EditSprintGoalModal: React.FC<EditSprintGoalModalProps> = ({
         isOpen={showUnsavedChangesModal}
         onConfirm={handleDiscardChanges}
         onCancel={handleCancelUnsavedChanges}
-        title="Unsaved Sprint Goal Change"
-        message="You have unsaved change to the sprint goal. Are you sure you want to discard it?"
+        title={t('sprintPlanning.editSprintGoalModal.unsavedSprintGoalTitle')}
+        message={t('sprintPlanning.editSprintGoalModal.unsavedSprintGoalMessage')}
       />
     </>
   );

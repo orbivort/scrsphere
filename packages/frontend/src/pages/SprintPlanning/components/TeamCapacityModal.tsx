@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { UnsavedChangesModal } from '../../../components/common/Form/UnsavedChangesModal';
 import {
@@ -33,6 +34,7 @@ export const TeamCapacityModal: React.FC<TeamCapacityModalProps> = ({
   onSave,
   teamAvailability,
 }) => {
+  const { t } = useTranslation('sprint');
   const modalRef = useRef<HTMLDivElement>(null);
   const previousActiveElement = useRef<HTMLElement | null>(null);
   const [localAvailability, setLocalAvailability] = React.useState<TeamMemberAvailability[]>([]);
@@ -196,15 +198,15 @@ export const TeamCapacityModal: React.FC<TeamCapacityModalProps> = ({
               <UsersIcon size={24} />
             </div>
             <h2 id="capacity-modal-title" className={styles.title}>
-              Team Capacity
+              {t('sprintPlanning.teamCapacityModal.title')}
             </h2>
-            <p className={styles.subtitle}>Adjust available hours for each team member</p>
+            <p className={styles.subtitle}>{t('sprintPlanning.teamCapacityModal.subtitle')}</p>
           </div>
           <button
             type="button"
             className={styles['close-button']}
             onClick={handleCancel}
-            aria-label="Close modal"
+            aria-label={t('sprintPlanning.teamCapacityModal.cancel')}
           >
             <CloseIcon size={20} />
           </button>
@@ -223,26 +225,32 @@ export const TeamCapacityModal: React.FC<TeamCapacityModalProps> = ({
               <ClockIcon size={16} />
             </div>
             <div className={styles['total-content']}>
-              <span className={styles['total-label']}>Total Team Capacity</span>
-              <span className={styles['total-value']}>{totalCapacity} hours</span>
+              <span className={styles['total-label']}>
+                {t('sprintPlanning.teamCapacityModal.totalTeamCapacity')}
+              </span>
+              <span className={styles['total-value']}>
+                {totalCapacity} {t('sprintPlanning.teamCapacityModal.hours')}
+              </span>
             </div>
             {hasChanges && (
               <button
                 type="button"
                 className={styles['reset-button']}
                 onClick={handleReset}
-                aria-label="Reset changes"
-                title="Reset to original values"
+                aria-label={t('sprintPlanning.teamCapacityModal.resetToOriginalValues')}
+                title={t('sprintPlanning.teamCapacityModal.resetToOriginalValues')}
               >
                 <RefreshCwIcon size={16} />
-                Reset
+                {t('sprintPlanning.teamCapacityModal.reset')}
               </button>
             )}
           </div>
 
           {/* Member List */}
           <div className={styles['members-section']}>
-            <h3 className={styles['section-title']}>Team Members</h3>
+            <h3 className={styles['section-title']}>
+              {t('sprintPlanning.teamCapacityModal.teamMembers')}
+            </h3>
             <div className={styles['members-list']} role="list">
               {localAvailability.map((member, index) => (
                 <div key={member.memberId} className={styles['member-row']} role="listitem">
@@ -263,7 +271,9 @@ export const TeamCapacityModal: React.FC<TeamCapacityModalProps> = ({
                       type="button"
                       className={styles['adjust-button']}
                       onClick={() => handleDecrement(index)}
-                      aria-label={`Decrease hours for ${member.memberName}`}
+                      aria-label={t('sprintPlanning.teamCapacityModal.decreaseHoursFor', {
+                        name: member.memberName,
+                      })}
                       disabled={member.availableHours <= 0}
                     >
                       <MinusIcon size={16} />
@@ -277,7 +287,9 @@ export const TeamCapacityModal: React.FC<TeamCapacityModalProps> = ({
                         onChange={(e) => handleUpdateHours(index, parseInt(e.target.value) || 0)}
                         min="0"
                         max="60"
-                        aria-label={`${member.memberName} available hours`}
+                        aria-label={t('sprintPlanning.teamCapacityModal.availableHoursFor', {
+                          name: member.memberName,
+                        })}
                       />
                       <span className={styles['hours-suffix']}>h</span>
                     </div>
@@ -286,7 +298,9 @@ export const TeamCapacityModal: React.FC<TeamCapacityModalProps> = ({
                       type="button"
                       className={styles['adjust-button']}
                       onClick={() => handleIncrement(index)}
-                      aria-label={`Increase hours for ${member.memberName}`}
+                      aria-label={t('sprintPlanning.teamCapacityModal.increaseHoursFor', {
+                        name: member.memberName,
+                      })}
                       disabled={member.availableHours >= 60}
                     >
                       <PlusIcon size={16} />
@@ -297,9 +311,9 @@ export const TeamCapacityModal: React.FC<TeamCapacityModalProps> = ({
 
               {localAvailability.length === 0 && (
                 <div className={styles['empty-state']}>
-                  <p>No team members found</p>
+                  <p>{t('sprintPlanning.teamCapacityModal.noTeamMembers')}</p>
                   <p className={styles['empty-hint']}>
-                    Team members will appear here once added to the team
+                    {t('sprintPlanning.teamCapacityModal.teamMembersWillAppear')}
                   </p>
                 </div>
               )}
@@ -309,8 +323,7 @@ export const TeamCapacityModal: React.FC<TeamCapacityModalProps> = ({
           {/* Info Notice */}
           <div className={styles['notice-box']}>
             <p className={styles['notice-text']}>
-              Capacity hours represent the total available time each team member can contribute to
-              the sprint. The default is 40 hours (1 week) per person.
+              {t('sprintPlanning.teamCapacityModal.capacityNotice')}
             </p>
           </div>
         </div>
@@ -318,7 +331,7 @@ export const TeamCapacityModal: React.FC<TeamCapacityModalProps> = ({
         {/* Footer */}
         <footer className={styles.footer}>
           <button type="button" className={styles['button-secondary']} onClick={handleCancel}>
-            Cancel
+            {t('sprintPlanning.teamCapacityModal.cancel')}
           </button>
           <button
             type="button"
@@ -327,7 +340,7 @@ export const TeamCapacityModal: React.FC<TeamCapacityModalProps> = ({
             disabled={!hasChanges}
           >
             <SaveIcon size={16} aria-hidden="true" />
-            Save Changes
+            {t('sprintPlanning.teamCapacityModal.saveChanges')}
           </button>
         </footer>
       </div>
@@ -337,8 +350,8 @@ export const TeamCapacityModal: React.FC<TeamCapacityModalProps> = ({
         isOpen={showUnsavedChangesModal}
         onConfirm={handleDiscardChanges}
         onCancel={handleCancelUnsavedChanges}
-        title="Unsaved Capacity Changes"
-        message="You have unsaved changes to the team capacity. Are you sure you want to discard them?"
+        title={t('sprintPlanning.teamCapacityModal.unsavedCapacityTitle')}
+        message={t('sprintPlanning.teamCapacityModal.unsavedCapacityMessage')}
       />
     </div>
   );

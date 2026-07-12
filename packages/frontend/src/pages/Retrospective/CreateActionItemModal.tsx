@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import styles from './CreateActionItemModal.module.css';
 
@@ -87,6 +88,7 @@ export const CreateActionItemModal: React.FC<CreateActionItemModalProps> = ({
 }) => {
   // State for tracking initial form data (set when modal opens)
   const [initialFormData, setInitialFormData] = useState<ActionItemFormData>(INITIAL_FORM_STATE);
+  const { t } = useTranslation('retrospective');
 
   // State for unsaved changes modal
   const [showUnsavedChangesModal, setShowUnsavedChangesModal] = useState(false);
@@ -286,9 +288,9 @@ export const CreateActionItemModal: React.FC<CreateActionItemModalProps> = ({
             </div>
             <div>
               <h2 id="action-modal-title" className={styles['modal-title']}>
-                Create Action Item
+                {t('createActionItemModal.title')}
               </h2>
-              <p className={styles['modal-subtitle']}>Add a new action item to track progress</p>
+              <p className={styles['modal-subtitle']}>{t('createActionItemModal.subtitle')}</p>
             </div>
           </div>
 
@@ -297,7 +299,7 @@ export const CreateActionItemModal: React.FC<CreateActionItemModalProps> = ({
             {/* Title Field */}
             <div className={`${styles['form-group']} ${hasTitleError ? styles['has-error'] : ''}`}>
               <label htmlFor="action-title" className={styles['form-label']}>
-                Title
+                {t('createActionItemModal.titleLabel')}
                 <span className={styles['required-indicator']}>*</span>
               </label>
               <input
@@ -307,7 +309,7 @@ export const CreateActionItemModal: React.FC<CreateActionItemModalProps> = ({
                 value={formData.title}
                 onChange={handleTitleChange}
                 onBlur={handleTitleBlur}
-                placeholder="Enter action item title"
+                placeholder={t('createActionItemModal.titlePlaceholder')}
                 className={styles['form-input']}
                 aria-invalid={!!hasTitleError}
                 aria-describedby={hasTitleError ? 'title-error' : undefined}
@@ -324,27 +326,29 @@ export const CreateActionItemModal: React.FC<CreateActionItemModalProps> = ({
             {/* Description Field */}
             <div className={styles['form-group']}>
               <label htmlFor="action-description" className={styles['form-label']}>
-                Description
-                <span className={styles['optional-badge']}>optional</span>
+                {t('createActionItemModal.description')}
+                <span className={styles['optional-badge']}>
+                  {t('createActionItemModal.optionalBadge')}
+                </span>
               </label>
               <textarea
                 id="action-description"
                 value={formData.description}
                 onChange={handleDescriptionChange}
-                placeholder="Add details about this action item..."
+                placeholder={t('createActionItemModal.descriptionPlaceholder')}
                 rows={3}
                 className={styles['form-textarea']}
                 disabled={isPending}
               />
               <p className={styles['helper-text']}>
-                Provide additional context to help the assignee understand the task
+                {t('createActionItemModal.descriptionHelper')}
               </p>
             </div>
 
             {/* Owner Field */}
             <div className={`${styles['form-group']} ${hasOwnerError ? styles['has-error'] : ''}`}>
               <label htmlFor="action-owner" className={styles['form-label']}>
-                Owner
+                {t('createActionItemModal.owner')}
                 <span className={styles['required-indicator']}>*</span>
               </label>
               <select
@@ -357,7 +361,7 @@ export const CreateActionItemModal: React.FC<CreateActionItemModalProps> = ({
                 aria-invalid={!!hasOwnerError}
                 aria-describedby={hasOwnerError ? 'owner-error' : undefined}
               >
-                <option value="">Select owner...</option>
+                <option value="">{t('createActionItemModal.ownerPlaceholder')}</option>
                 {teamMembers.length > 0 ? (
                   teamMembers.map((member) => (
                     <option key={member.id} value={member.id}>
@@ -366,7 +370,9 @@ export const CreateActionItemModal: React.FC<CreateActionItemModalProps> = ({
                   ))
                 ) : (
                   <option value="" disabled>
-                    {isLoadingTeam ? 'Loading team members...' : 'No team members available'}
+                    {isLoadingTeam
+                      ? t('createActionItemModal.loadingMembers')
+                      : t('createActionItemModal.noMembers')}
                   </option>
                 )}
               </select>
@@ -380,7 +386,7 @@ export const CreateActionItemModal: React.FC<CreateActionItemModalProps> = ({
                 <div className={styles['error-message']} role="alert">
                   <AlertCircleIcon size={16} className={styles['error-icon']} />
                   <span className={styles['error-text']}>
-                    Unable to load team members. Please refresh the page.
+                    {t('createActionItemModal.unableToLoadMembers')}
                   </span>
                 </div>
               )}
@@ -391,7 +397,7 @@ export const CreateActionItemModal: React.FC<CreateActionItemModalProps> = ({
               className={`${styles['form-group']} ${hasDueDateError ? styles['has-error'] : ''}`}
             >
               <label htmlFor="action-due-date" className={styles['form-label']}>
-                Due Date
+                {t('createActionItemModal.dueDate')}
                 <span className={styles['required-indicator']}>*</span>
               </label>
               <input
@@ -423,7 +429,7 @@ export const CreateActionItemModal: React.FC<CreateActionItemModalProps> = ({
               type="button"
               disabled={isPending}
             >
-              Cancel
+              {t('createActionItemModal.cancel')}
             </button>
             <button
               className={`${styles.btn} ${styles['btn-primary']} ${isPending ? styles['btn-loading'] : ''}`}
@@ -432,7 +438,9 @@ export const CreateActionItemModal: React.FC<CreateActionItemModalProps> = ({
               type="button"
             >
               {!isPending && <CheckIcon size={16} />}
-              {isPending ? 'Creating...' : 'Create Action Item'}
+              {isPending
+                ? t('createActionItemModal.creating')
+                : t('createActionItemModal.createActionItem')}
             </button>
           </div>
         </div>
@@ -443,8 +451,8 @@ export const CreateActionItemModal: React.FC<CreateActionItemModalProps> = ({
         isOpen={showUnsavedChangesModal}
         onConfirm={handleDiscardChanges}
         onCancel={handleCancelUnsavedChanges}
-        title="Unsaved Changes"
-        message="You have unsaved changes in the action item form. Are you sure you want to discard them?"
+        title={t('createActionItemModal.unsavedTitle')}
+        message={t('createActionItemModal.unsavedMessage')}
       />
     </>
   );

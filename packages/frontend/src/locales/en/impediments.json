@@ -1,3 +1,104 @@
 {
-  "title": "Impediments"
+  "title": "Impediments",
+  "subtitle": "{{sprintName}} - Track and resolve blockers affecting the team",
+  "filterByStatus": "Filter by status",
+  "allStatus": "All Status",
+  "reportImpediment": "Report Impediment",
+  "status": {
+    "open": "Open",
+    "inProgress": "In Progress",
+    "resolved": "Resolved",
+    "closed": "Closed"
+  },
+  "stats": {
+    "open": "Open",
+    "inProgress": "In Progress",
+    "resolved": "Resolved",
+    "closed": "Closed"
+  },
+  "card": {
+    "sprint": "Sprint",
+    "fromDailyScrum": "From Daily Scrum",
+    "createdFromDailyUpdate": "Created from Daily Update",
+    "reportedBy": "Reported by",
+    "owner": "Owner",
+    "unknown": "Unknown",
+    "resolution": "Resolution",
+    "viewDetailsAria": "View details for impediment: {{title}}. Status: {{status}}"
+  },
+  "emptyState": {
+    "noImpedimentsForSprint": "No Impediments for {{sprintName}}",
+    "noImpedimentsForFilter": "No {{status}} Impediments",
+    "noImpedimentsDescription": "Great! No impediments reported for the current active sprint \"{{sprintName}}\".",
+    "noFilterImpedimentsDescription": "There are no {{status}} impediments in \"{{sprintName}}\". Try selecting a different status filter.",
+    "clearFilter": "Clear Filter"
+  },
+  "createModal": {
+    "title": "Report New Impediment",
+    "subtitle": "Document blockers affecting your team's progress",
+    "sprintLabel": "Sprint",
+    "activeSprint": "(Active)",
+    "titleLabel": "Title",
+    "titlePlaceholder": "Brief description of the impediment",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Provide details about the impediment",
+    "creating": "Creating...",
+    "createImpediment": "Create Impediment"
+  },
+  "detailModal": {
+    "title": "Impediment Details",
+    "subtitle": "View and manage impediment information",
+    "createdFromDailyScrum": "Created from Daily Scrum Update",
+    "viewDailyUpdate": "View Daily Update",
+    "titleLabel": "Title",
+    "descriptionLabel": "Description",
+    "sprintLabel": "Sprint",
+    "statusLabel": "Status",
+    "reportedByLabel": "Reported by",
+    "ownerLabel": "Owner",
+    "createdLabel": "Created",
+    "resolutionLabel": "Resolution",
+    "resolutionPlaceholder": "Describe how this impediment was resolved...",
+    "saveResolution": "Save Resolution",
+    "saving": "Saving...",
+    "deleting": "Deleting...",
+    "deleteLabel": "Delete"
+  },
+  "deleteModal": {
+    "title": "Delete Impediment",
+    "subtitle": "This action is permanent and cannot be undone",
+    "actionWarning": "Action Warning",
+    "item": "Item:",
+    "unknownItem": "Unknown Item",
+    "warningText": "You are about to permanently delete this impediment. This action cannot be undone. All associated data will be permanently removed.",
+    "statusLabel": "Status:",
+    "deleteImpediment": "Delete Impediment",
+    "deleting": "Deleting..."
+  },
+  "unsavedModal": {
+    "title": "Unsaved Changes",
+    "message": "You have unsaved changes in the impediment form. Are you sure you want to discard them?"
+  },
+  "toast": {
+    "created": "Impediment created successfully",
+    "updated": "Impediment updated successfully",
+    "deleted": "Impediment deleted successfully",
+    "teamIdRequired": "Team ID is required. Please select a team first.",
+    "noActiveSprint": "No active sprint found. Please start a sprint first.",
+    "failedCreate": "Failed to create impediment. Please try again.",
+    "failedUpdate": "Failed to update impediment. Please try again.",
+    "failedDelete": "Failed to delete impediment. Please try again."
+  },
+  "errorState": {
+    "title": "Error Loading Data",
+    "retry": "Retry",
+    "failedSprint": "Failed to load active sprint information. Please try again.",
+    "failedImpediments": "Failed to load impediments. Please try again."
+  },
+  "validation": {
+    "titleRequired": "Title is required",
+    "titleTooShort": "Title must be at least 3 characters",
+    "descriptionRequired": "Description is required",
+    "descriptionTooShort": "Description must be at least 10 characters"
+  }
 }
