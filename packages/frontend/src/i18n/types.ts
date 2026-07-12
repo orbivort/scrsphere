@@ -1,19 +1,19 @@
-import type enCommon from '../locales/en/common.json';
-import type enAuth from '../locales/en/auth.json';
-import type enDashboard from '../locales/en/dashboard.json';
-import type enBacklog from '../locales/en/backlog.json';
-import type enSprint from '../locales/en/sprint.json';
-import type enDailyScrum from '../locales/en/daily-scrum.json';
-import type enImpediments from '../locales/en/impediments.json';
-import type enIncrements from '../locales/en/increments.json';
-import type enSprintReview from '../locales/en/sprint-review.json';
-import type enRetrospective from '../locales/en/retrospective.json';
-import type enReports from '../locales/en/reports.json';
-import type enTeam from '../locales/en/team.json';
-import type enSettings from '../locales/en/settings.json';
-import type enNotifications from '../locales/en/notifications.json';
-import type enErrors from '../locales/en/errors.json';
-import type enValidation from '../locales/en/validation.json';
+import type enCommon from '../../public/locales/en/common.json';
+import type enAuth from '../../public/locales/en/auth.json';
+import type enDashboard from '../../public/locales/en/dashboard.json';
+import type enBacklog from '../../public/locales/en/backlog.json';
+import type enSprint from '../../public/locales/en/sprint.json';
+import type enDailyScrum from '../../public/locales/en/daily-scrum.json';
+import type enImpediments from '../../public/locales/en/impediments.json';
+import type enIncrements from '../../public/locales/en/increments.json';
+import type enSprintReview from '../../public/locales/en/sprint-review.json';
+import type enRetrospective from '../../public/locales/en/retrospective.json';
+import type enReports from '../../public/locales/en/reports.json';
+import type enTeam from '../../public/locales/en/team.json';
+import type enSettings from '../../public/locales/en/settings.json';
+import type enNotifications from '../../public/locales/en/notifications.json';
+import type enErrors from '../../public/locales/en/errors.json';
+import type enValidation from '../../public/locales/en/validation.json';
 
 declare module 'i18next' {
   interface CustomTypeOptions {

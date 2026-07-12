@@ -274,7 +274,7 @@ export const SprintRetrospective: React.FC = () => {
     if (fetchError) {
       handleError(fetchError, t('errors.notLoaded'));
     }
-  }, [fetchError, handleError]);
+  }, [fetchError, handleError, t]);
 
   const addItemMutation = useMutation({
     mutationFn: (item: Partial<RetrospectiveItem>) =>

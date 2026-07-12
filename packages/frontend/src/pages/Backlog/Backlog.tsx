@@ -307,13 +307,11 @@ const BacklogContent: React.FC = () => {
             incompleteTasks.length > 3 ? ` and ${incompleteTasks.length - 3} more` : '';
 
           setWorkflowError(
-            t('itemDetail.cannotMarkAsDone' as never, {
+            t('itemDetail.cannotMarkAsDone', {
               taskNames,
               moreCount,
               incompleteCount: incompleteTasks.length,
-            }) ??
-              `Cannot mark as Done. The following child tasks must be completed first: ${taskNames}${moreCount}. ` +
-                `Please complete all ${incompleteTasks.length} incomplete task(s) before changing the status to Done.`
+            })
           );
           setIsLoadingChildTasks(false);
           return;

@@ -251,7 +251,7 @@ export const Dashboard: React.FC = () => {
     }
 
     return { status, percentage: percentageDiff, message };
-  }, [burndownData]);
+  }, [burndownData, t]);
 
   // Task 2.6: Include slice inside useMemo to prevent new references
   // Task 3.3: Sort tasks by status priority: IN_PROGRESS > TODO > DONE

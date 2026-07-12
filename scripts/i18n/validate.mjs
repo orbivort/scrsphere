@@ -14,7 +14,7 @@
 import { readFileSync, readdirSync, statSync, existsSync } from 'fs';
 import { join, relative } from 'path';
 
-const LOCALES_DIR_FRONTEND = join(process.cwd(), 'packages/frontend/src/locales');
+const LOCALES_DIR_FRONTEND = join(process.cwd(), 'packages/frontend/public/locales');
 const LOCALES_DIR_BACKEND = join(process.cwd(), 'packages/backend/src/locales');
 const I18NIGNORE_PATH = join(process.cwd(), '.i18nignore');
 

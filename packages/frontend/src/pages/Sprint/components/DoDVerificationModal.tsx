@@ -82,36 +82,39 @@ export const DoDVerificationModal: React.FC<DoDVerificationModalProps> = ({
     });
   }, [pbis, tasks]);
 
-  const fetchVerificationsForPbis = useCallback(async (pbiIds: string[]) => {
-    setIsLoadingVerifications(true);
-    setVerificationError(null);
+  const fetchVerificationsForPbis = useCallback(
+    async (pbiIds: string[]) => {
+      setIsLoadingVerifications(true);
+      setVerificationError(null);
 
-    try {
-      const fetchPromises = pbiIds.map((pbiId) =>
-        definitionService
-          .getDoDVerificationsForPBI(pbiId)
-          .catch(() => ({ success: false, data: [] as DoDChecklistVerification[] }))
-      );
+      try {
+        const fetchPromises = pbiIds.map((pbiId) =>
+          definitionService
+            .getDoDVerificationsForPBI(pbiId)
+            .catch(() => ({ success: false, data: [] as DoDChecklistVerification[] }))
+        );
 
-      const results = await Promise.all(fetchPromises);
-      const allVerifications: DoDChecklistVerification[] = [];
+        const results = await Promise.all(fetchPromises);
+        const allVerifications: DoDChecklistVerification[] = [];
 
-      results.forEach((result: { data?: DoDChecklistVerification[] }) => {
-        if (result.data && Array.isArray(result.data)) {
-          allVerifications.push(...result.data);
-        }
-      });
+        results.forEach((result: { data?: DoDChecklistVerification[] }) => {
+          if (result.data && Array.isArray(result.data)) {
+            allVerifications.push(...result.data);
+          }
+        });
 
-      setLoadedVerifications(allVerifications);
-      return allVerifications;
-    } catch (error) {
-      logger.error('Failed to fetch DoD verifications', undefined, { error });
-      setVerificationError(t('dodVerification.failedToLoadVerifications'));
-      return [];
-    } finally {
-      setIsLoadingVerifications(false);
-    }
-  }, []);
+        setLoadedVerifications(allVerifications);
+        return allVerifications;
+      } catch (error) {
+        logger.error('Failed to fetch DoD verifications', undefined, { error });
+        setVerificationError(t('dodVerification.failedToLoadVerifications'));
+        return [];
+      } finally {
+        setIsLoadingVerifications(false);
+      }
+    },
+    [t]
+  );
 
   useEffect(() => {
     if (isOpen && pbisWithAllTasksDone.length > 0) {

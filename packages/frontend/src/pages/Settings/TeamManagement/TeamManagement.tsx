@@ -122,7 +122,7 @@ export const TeamManagement: React.FC = () => {
         },
       });
     },
-    [createTeamMutation, success, toastError, refreshTeams]
+    [createTeamMutation, success, toastError, refreshTeams, t]
   );
 
   const handleUpdateTeam = useCallback(
@@ -168,7 +168,7 @@ export const TeamManagement: React.FC = () => {
         }
       );
     },
-    [updateTeamMutation, success, toastError, refreshTeams, teams, currentUserRole]
+    [updateTeamMutation, success, toastError, refreshTeams, teams, currentUserRole, t]
   );
 
   const handleDeleteTeam = useCallback(
@@ -228,7 +228,7 @@ export const TeamManagement: React.FC = () => {
         },
       });
     },
-    [deleteTeamMutation, success, toastError, refreshTeams, teams, currentUserRole]
+    [deleteTeamMutation, success, toastError, refreshTeams, teams, currentUserRole, t]
   );
 
   const handleEditClick = useCallback(
@@ -243,7 +243,7 @@ export const TeamManagement: React.FC = () => {
       setSelectedTeam(team);
       setIsEditModalOpen(true);
     },
-    [currentUserRole, toastError]
+    [currentUserRole, toastError, t]
   );
 
   const handleDeleteClick = useCallback(
@@ -260,7 +260,7 @@ export const TeamManagement: React.FC = () => {
       setDeleteError(null);
       setIsDeleteModalOpen(true);
     },
-    [currentUserRole, toastError]
+    [currentUserRole, toastError, t]
   );
 
   const handleRetry = useCallback(() => {

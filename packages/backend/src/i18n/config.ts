@@ -1,4 +1,5 @@
 import i18next, { type i18n as I18nType } from 'i18next';
+import 'intl-pluralrules';
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@scrumooth/shared';
 
 import enEmails from '../locales/en/emails.json' with { type: 'json' };

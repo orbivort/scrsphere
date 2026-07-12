@@ -301,8 +301,8 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
 
   const getPriorityStyle = (priority: MoSCoWPriority) => {
     return {
-      label: t(PRIORITY_LABEL_KEYS[priority] as never) ?? '',
-      color: PRIORITY_COLORS[priority] ?? 'transparent',
+      label: t(PRIORITY_LABEL_KEYS[priority]),
+      color: PRIORITY_COLORS[priority],
     };
   };
 

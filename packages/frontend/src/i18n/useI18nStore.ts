@@ -11,7 +11,14 @@ export const useI18nStore = create<I18nState>()(
   persist(
     (set) => ({
       locale: DEFAULT_LOCALE,
-      setLocale: (locale) => set({ locale }),
+      setLocale: (locale) => {
+        set({ locale });
+        // Sync locale to cookie so backend can read it on subsequent requests
+        const expires = new Date();
+        expires.setFullYear(expires.getFullYear() + 1);
+        const isSecure = window.location.protocol === 'https:';
+        document.cookie = `scrumooth_locale=${locale}; expires=${expires.toUTCString()}; path=/; SameSite=Strict${isSecure ? '; Secure' : ''}`;
+      },
     }),
     {
       name: 'scrumooth.locale',

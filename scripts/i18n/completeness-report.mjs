@@ -11,7 +11,7 @@ import { readFileSync, readdirSync, existsSync } from 'fs';
 import { join } from 'path';
 
 const LOCALES_DIRS = [
-  { label: 'Frontend', path: join(process.cwd(), 'packages/frontend/src/locales') },
+  { label: 'Frontend', path: join(process.cwd(), 'packages/frontend/public/locales') },
   { label: 'Backend', path: join(process.cwd(), 'packages/backend/src/locales') },
 ];
 

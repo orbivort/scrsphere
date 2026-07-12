@@ -11,7 +11,7 @@ import { join } from 'path';
 
 const GLOSSARY_PATH = join(process.cwd(), 'packages/shared/i18n/glossary.json');
 const LOCALES_DIRS = [
-  join(process.cwd(), 'packages/frontend/src/locales'),
+  join(process.cwd(), 'packages/frontend/public/locales'),
   join(process.cwd(), 'packages/backend/src/locales'),
 ];
 

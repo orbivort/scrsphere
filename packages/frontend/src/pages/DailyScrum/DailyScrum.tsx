@@ -579,7 +579,7 @@ export const DailyScrum: React.FC = () => {
       });
     }
     return dates;
-  }, []);
+  }, [t]);
 
   if (isLoading) {
     return (

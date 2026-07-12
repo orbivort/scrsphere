@@ -178,6 +178,7 @@ export const LoginPage: React.FC = () => {
       setUserRoleInCurrentTeam,
       setUserTeamsWithRoles,
       handleError,
+      t,
     ]
   );
 
@@ -273,6 +274,7 @@ export const LoginPage: React.FC = () => {
       initializeSession,
       setCurrentTeam,
       handleError,
+      t,
     ]
   );
 
