@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { formatDistanceToNow } from 'date-fns';
 
 import { useNotifications, useMarkAsRead, useMarkAllAsRead } from '../../hooks/useNotifications';
@@ -48,6 +49,7 @@ interface NotificationPanelProps {
 }
 
 export const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, onClose }) => {
+  const { t } = useTranslation('common');
   const navigate = useNavigate();
   const panelRef = useRef<HTMLDivElement>(null);
   const { data, isLoading } = useNotifications({ limit: 10 });
@@ -98,23 +100,23 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, on
   return (
     <div ref={panelRef} className={styles['notification-panel']}>
       <div className={styles['panel-header']}>
-        <h3>Notifications</h3>
+        <h3>{t('notifications.title')}</h3>
         {unreadCount > 0 && (
           <button
             onClick={handleMarkAllRead}
             className={styles['mark-all-read']}
             disabled={markAllAsRead.isPending}
           >
-            Mark all as read
+            {t('notifications.markAllRead')}
           </button>
         )}
       </div>
 
       <div className={styles['panel-content']}>
         {isLoading ? (
-          <div className={styles.loading}>Loading notifications...</div>
+          <div className={styles.loading}>{t('notifications.loading')}</div>
         ) : notifications.length === 0 ? (
-          <div className={styles.empty}>No notifications yet</div>
+          <div className={styles.empty}>{t('notifications.empty')}</div>
         ) : (
           notifications.map((notification: Notification) => (
             <div
@@ -158,7 +160,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, on
           }}
           className={styles['view-all']}
         >
-          View all notifications
+          {t('notifications.viewAll')}
           <ChevronRightIcon size={14} />
         </button>
       </div>

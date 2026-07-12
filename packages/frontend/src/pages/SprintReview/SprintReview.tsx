@@ -739,7 +739,13 @@ export const SprintReview: React.FC = () => {
                             <span
                               className={`${styles['sprint-status-badge']} ${styles[s.status]}`}
                             >
-                              {s.status.toUpperCase()}
+                              {t(
+                                `sprintStatus.${s.status.toUpperCase()}` as
+                                  | 'sprintStatus.ACTIVE'
+                                  | 'sprintStatus.COMPLETED'
+                                  | 'sprintStatus.PLANNED'
+                                  | 'sprintStatus.CANCELLED'
+                              )}
                             </span>
                             <span className={styles['sprint-name']}>{s.name}</span>
                           </div>
@@ -917,7 +923,7 @@ export const SprintReview: React.FC = () => {
                   className={`${styles['sprint-status-badge']} ${styles[`status-${sprint?.status ?? 'unknown'}`] ?? ''}`}
                 >
                   {sprint?.status === 'completed' ? <CheckIcon /> : <CircleIcon fill />}{' '}
-                  {t(`list.statusLabels.${sprint?.status ?? 'unknown'}` as never)}
+                  {t(`list.statusLabels.${(sprint?.status ?? 'unknown').toLowerCase()}` as never)}
                 </span>
               </div>
               <div className={styles['sprint-meta-row']}>

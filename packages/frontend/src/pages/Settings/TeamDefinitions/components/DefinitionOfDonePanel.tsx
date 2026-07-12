@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 
 import { LoadingState } from '../../../../components/common/Loading';
 import { ToastContainer } from '../../../../components/common/ToastContainer';
@@ -16,6 +17,25 @@ import { DOD_CATEGORIES, getCategoryColor } from './categories';
 import styles from './DefinitionOfDonePanel.module.css';
 
 import { EditIcon, PlusIcon, RefreshCwIcon } from '@/components/common/Icons';
+
+/**
+ * Maps default DoD descriptions to translation keys
+ */
+const DOD_DESCRIPTION_MAP: Record<string, string> = {
+  'Code is peer-reviewed and approved': 'dodPanel.item.codeReviewed',
+  'Unit tests written and passing (minimum 80% coverage)': 'dodPanel.item.unitTests',
+  'Integration tests passing': 'dodPanel.item.integrationTests',
+  'Code is properly documented': 'dodPanel.item.documentation',
+  'No critical or high-severity bugs': 'dodPanel.item.noCriticalBugs',
+};
+
+/**
+ * Translates a DoD item description if it matches a known default
+ */
+function getTranslatedDescription(item: DoDItem, t: TFunction<'settings'>): string {
+  const translationKey = DOD_DESCRIPTION_MAP[item.description];
+  return translationKey ? t(translationKey as never) : item.description;
+}
 
 export function DefinitionOfDonePanel(): React.ReactElement {
   const { t } = useTranslation('settings');
@@ -205,7 +225,7 @@ export function DefinitionOfDonePanel(): React.ReactElement {
                 >
                   {category?.icon ?? '📌'}
                 </div>
-                <div className={styles['item-text']}>{item.description}</div>
+                <div className={styles['item-text']}>{getTranslatedDescription(item, t)}</div>
               </div>
             );
           })}

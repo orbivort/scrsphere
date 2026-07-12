@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { CloseIcon, InfoIcon, WarningIcon, XCircleIcon } from '../common/Icons';
 
@@ -21,6 +22,7 @@ export const ErrorMessage: React.FC<ErrorMessageProps> = ({
   className = '',
   id,
 }) => {
+  const { t } = useTranslation('common');
   const errorId = useMemo(() => {
     if (id) return id;
     return `error-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
@@ -70,7 +72,7 @@ export const ErrorMessage: React.FC<ErrorMessageProps> = ({
           type="button"
           className={styles['error-message-dismiss']}
           onClick={onDismiss}
-          aria-label="Dismiss error message"
+          aria-label={t('errorMessage.dismiss')}
         >
           <CloseIcon size={16} />
         </button>

@@ -1,4 +1,5 @@
 import React, { useRef, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import styles from './TeamList.module.css';
 
@@ -11,10 +12,6 @@ import {
   CheckIcon,
   PlusIcon,
 } from '@/components/common/Icons';
-
-const getPluralSuffix = (count: number): string => {
-  return Number(count) === 1 ? '' : 's';
-};
 
 interface TeamListProps {
   teams: Team[];
@@ -53,6 +50,7 @@ export const TeamList: React.FC<TeamListProps> = ({
 }) => {
   const editButtonRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
   const deleteButtonRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
+  const { t } = useTranslation('settings');
 
   const handleCardKeyDown = useCallback(
     (e: React.KeyboardEvent, team: Team, index: number) => {
@@ -121,7 +119,7 @@ export const TeamList: React.FC<TeamListProps> = ({
         <div className={styles['loading-spinner']} aria-hidden="true">
           <div className={styles['loading-spinner-circle']} />
         </div>
-        <p>Loading teams...</p>
+        <p>{t('teamList.loading')}</p>
       </div>
     );
   }
@@ -132,10 +130,10 @@ export const TeamList: React.FC<TeamListProps> = ({
         <span className={styles['error-icon']} aria-hidden="true">
           <AlertCircleIcon size={48} strokeWidth={1.5} />
         </span>
-        <p>Failed to load teams. Please try again.</p>
+        <p>{t('teamList.error')}</p>
         {onRetry && (
           <button className={styles['button-primary']} onClick={onRetry} type="button">
-            Retry
+            {t('teamList.retry')}
           </button>
         )}
       </div>
@@ -166,22 +164,15 @@ export const TeamList: React.FC<TeamListProps> = ({
           {/* Content */}
           <div className={styles['empty-content']}>
             <h3 className={styles['empty-title']}>
-              {search ? (
-                <>No teams found matching &quot;{search}&quot;</>
-              ) : (
-                <>Build Your Dream Team</>
-              )}
+              {search
+                ? t('teamList.empty.searchNoResults', { search })
+                : t('teamList.empty.defaultTitle')}
             </h3>
 
             <p className={styles['empty-description']}>
-              {search ? (
-                <>Try adjusting your search terms or create a new team to get started.</>
-              ) : (
-                <>
-                  Teams are the foundation of effective collaboration. Create your first team to
-                  start planning sprints, tracking progress, and achieving your goals together.
-                </>
-              )}
+              {search
+                ? t('teamList.empty.searchDescription')
+                : t('teamList.empty.defaultDescription')}
             </p>
 
             {/* Benefits List */}
@@ -191,19 +182,19 @@ export const TeamList: React.FC<TeamListProps> = ({
                   <span className={styles['benefit-icon']}>
                     <CheckIcon size={16} />
                   </span>
-                  <span>Organize work with sprint planning</span>
+                  <span>{t('teamList.empty.benefits.sprintPlanning')}</span>
                 </li>
                 <li className={styles['benefit-item']}>
                   <span className={styles['benefit-icon']}>
                     <CheckIcon size={16} />
                   </span>
-                  <span>Track progress with real-time metrics</span>
+                  <span>{t('teamList.empty.benefits.progressTracking')}</span>
                 </li>
                 <li className={styles['benefit-item']}>
                   <span className={styles['benefit-icon']}>
                     <CheckIcon size={16} />
                   </span>
-                  <span>Collaborate with agile ceremonies</span>
+                  <span>{t('teamList.empty.benefits.agileCeremonies')}</span>
                 </li>
               </ul>
             )}
@@ -219,7 +210,11 @@ export const TeamList: React.FC<TeamListProps> = ({
                   <span className={styles['cta-icon']}>
                     <PlusIcon size={20} />
                   </span>
-                  <span>{search ? 'Create New Team' : 'Create Your First Team'}</span>
+                  <span>
+                    {search
+                      ? t('teamList.empty.createNewTeam')
+                      : t('teamList.empty.createFirstTeam')}
+                  </span>
                 </button>
 
                 {search && (
@@ -228,7 +223,7 @@ export const TeamList: React.FC<TeamListProps> = ({
                     onClick={onClearSearch}
                     type="button"
                   >
-                    Clear search and browse all teams
+                    {t('teamList.empty.clearSearchBrowse')}
                   </button>
                 )}
               </div>
@@ -247,7 +242,7 @@ export const TeamList: React.FC<TeamListProps> = ({
   }
 
   return (
-    <div className={styles['team-list']} role="list" aria-label="Teams">
+    <div className={styles['team-list']} role="list" aria-label={t('teamList.ariaLabel')}>
       {teams.map((team, index) => (
         <article
           key={team.id}
@@ -256,12 +251,15 @@ export const TeamList: React.FC<TeamListProps> = ({
           tabIndex={0}
           data-team-index={index}
           onKeyDown={(e) => handleCardKeyDown(e, team, index)}
-          aria-label={`${team.name}, ${team.memberCount ?? 0} members. Use arrow keys to navigate between cards, Enter or Space to access actions.`}
+          aria-label={t('teamList.card.cardAriaLabel', {
+            name: team.name,
+            count: team.memberCount ?? 0,
+          })}
         >
           <div className={styles['team-card-header']}>
             <h3 className={styles['team-card-name']}>{team.name}</h3>
             <span className={styles['team-card-members']}>
-              {team.memberCount ?? 0} member{getPluralSuffix(team.memberCount ?? 0)}
+              {t('teamList.card.memberCount', { count: team.memberCount ?? 0 })}
             </span>
           </div>
 
@@ -271,7 +269,10 @@ export const TeamList: React.FC<TeamListProps> = ({
 
           <div className={styles['team-card-meta']}>
             <span className={styles['team-card-creator']}>
-              Created by {team.creator?.firstName} {team.creator?.lastName}
+              {t('teamList.card.createdBy', {
+                firstName: team.creator?.firstName ?? '',
+                lastName: team.creator?.lastName ?? '',
+              })}
             </span>
             <span className={styles['team-card-date']}>
               {new Date(team.createdAt).toLocaleDateString(navigator.language, {
@@ -290,7 +291,7 @@ export const TeamList: React.FC<TeamListProps> = ({
                 }}
                 className={`${styles['team-card-action']} ${styles['team-card-action-edit']}`}
                 onClick={() => onEdit(team)}
-                aria-label={`Edit ${team.name}`}
+                aria-label={t('teamList.card.editTeam', { name: team.name })}
                 aria-busy={editingTeamId === team.id}
                 disabled={editingTeamId === team.id || deletingTeamId === team.id}
                 type="button"
@@ -298,12 +299,12 @@ export const TeamList: React.FC<TeamListProps> = ({
                 {editingTeamId === team.id ? (
                   <>
                     <span className={styles['button-spinner']} aria-hidden="true" />
-                    Loading...
+                    {t('teamList.card.loading')}
                   </>
                 ) : (
                   <>
                     <EditIcon size={16} className={styles['button-icon']} />
-                    Edit
+                    {t('teamList.card.edit')}
                   </>
                 )}
               </button>
@@ -315,7 +316,7 @@ export const TeamList: React.FC<TeamListProps> = ({
                 }}
                 className={`${styles['team-card-action']} ${styles['team-card-action-delete']}`}
                 onClick={() => onDelete(team)}
-                aria-label={`Delete ${team.name}`}
+                aria-label={t('teamList.card.deleteTeam', { name: team.name })}
                 aria-busy={deletingTeamId === team.id}
                 disabled={editingTeamId === team.id || deletingTeamId === team.id}
                 type="button"
@@ -323,12 +324,12 @@ export const TeamList: React.FC<TeamListProps> = ({
                 {deletingTeamId === team.id ? (
                   <>
                     <span className={styles['button-spinner']} aria-hidden="true" />
-                    Deleting...
+                    {t('teamList.card.deleting')}
                   </>
                 ) : (
                   <>
                     <TrashIcon size={16} className={styles['button-icon']} />
-                    Delete
+                    {t('teamList.card.delete')}
                   </>
                 )}
               </button>

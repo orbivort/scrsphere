@@ -2,6 +2,12 @@
   "title": "Sprint Retrospective",
   "backToRetrospectives": "Back to Retrospectives",
   "backAriaLabel": "Go back to Retrospectives list",
+  "sprintStatus": {
+    "PLANNED": "Planned",
+    "ACTIVE": "Active",
+    "COMPLETED": "Completed",
+    "CANCELLED": "Cancelled"
+  },
   "attendees": "attendees",
   "attendeesLabel": "Attendees",
   "attendeesAriaLabel": "{{attended}} of {{total}} attendees attended",
@@ -19,7 +25,24 @@
     "moreItems": "+{{count}} more items",
     "goal": "Goal:",
     "businessDay_one": "{{count}} business day",
-    "businessDay_other": "{{count}} business days"
+    "businessDay_other": "{{count}} business days",
+    "itemsCount": "{{count}} items",
+    "storyPointsCount": "{{count}} story points",
+    "taskCount": "{{count}} tasks",
+    "taskCompletion": "{{completed}}/{{total}} completed",
+    "priorityLabels": {
+      "MUST_HAVE": "Must Have",
+      "SHOULD_HAVE": "Should Have",
+      "COULD_HAVE": "Could Have",
+      "WONT_HAVE": "Won't Have"
+    },
+    "statusLabels": {
+      "NEW": "New",
+      "REFINED": "Refined",
+      "READY": "Ready",
+      "IN_PROGRESS": "In Progress",
+      "DONE": "Done"
+    }
   },
   "categories": {
     "wentWell": {
@@ -59,7 +82,13 @@
     "unassigned": "Unassigned",
     "due": "Due:",
     "deleteActionItem": "Delete Action Item",
-    "deleteAriaLabel": "Delete action item"
+    "deleteAriaLabel": "Delete action item",
+    "status": {
+      "PENDING": "Pending",
+      "IN_PROGRESS": "In Progress",
+      "COMPLETED": "Completed",
+      "CANCELLED": "Cancelled"
+    }
   },
   "attendeesSection": {
     "title": "Attendees"

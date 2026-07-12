@@ -38,9 +38,52 @@
       "impediments": "Impediments"
     }
   },
+  "sprintStatusLabels": {
+    "PLANNED": "Planifié",
+    "ACTIVE": "Actif",
+    "COMPLETED": "Terminé"
+  },
   "insights": {
     "title": "Insights clés",
-    "empty": "Aucun insight disponible encore. Terminez plus de Sprints pour générer des insights."
+    "empty": "Aucun insight disponible encore. Terminez plus de Sprints pour générer des insights.",
+    "items": {
+      "velocity-improvement": {
+        "title": "Amélioration de la vélocité",
+        "description": "La vélocité moyenne a augmenté de {{trend}}% par rapport aux Sprints précédents"
+      },
+      "velocity-decline": {
+        "title": "Baisse de vélocité",
+        "description": "La vélocité moyenne a diminué de {{trend}}%. Envisagez de revoir la planification du Sprint."
+      },
+      "consistent-delivery": {
+        "title": "Livraison cohérente",
+        "description": "L'équipe a maintenu 100% de réalisation des objectifs de Sprint lors des {{count}} derniers Sprints"
+      },
+      "impediment-trend": {
+        "title": "Tendance des impediments",
+        "description": "{{count}} impediment(s) actuellement ouverts. Envisagez de les traiter proactivement."
+      },
+      "high-success-rate": {
+        "title": "Taux de réussite élevé",
+        "description": "L'équipe a atteint {{rate}}% de taux de réussite des Sprints. Continuez ainsi !"
+      },
+      "low-success-rate": {
+        "title": "Attention au taux de réussite",
+        "description": "Le taux de réussite des Sprints est de {{rate}}%. Envisagez de revoir la capacité et la planification."
+      },
+      "recent-improvement": {
+        "title": "Amélioration récente",
+        "description": "Le dernier Sprint a montré une amélioration de {{improvement}}% des Story Points terminés."
+      },
+      "active-sprint-impediments": {
+        "title": "Impediments du Sprint actif",
+        "description": "Le Sprint actuel a {{count}} impediment(s). Surveillez de près."
+      },
+      "get-started": {
+        "title": "Pour commencer",
+        "description": "Terminez plus de Sprints pour générer des insights sur les performances de l'équipe."
+      }
+    }
   },
   "velocityChart": {
     "title": "Velocity du Sprint",

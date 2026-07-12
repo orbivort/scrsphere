@@ -43,6 +43,20 @@ const OVERSCAN_COUNT = 5;
 const VIRTUALIZATION_THRESHOLD = 50;
 
 /**
+ * Helper function to get translated status label
+ */
+const getStatusLabel = (status: string, t: (key: string) => string): string => {
+  const statusMap: Record<string, string> = {
+    NEW: 'status.new',
+    REFINED: 'status.refined',
+    READY: 'status.ready',
+    IN_PROGRESS: 'status.inProgress',
+    DONE: 'status.done',
+  };
+  return t(statusMap[status] ?? status);
+};
+
+/**
  * TableRow Component
  *
  * Renders a single table row for a backlog item (non-virtualized mode).
@@ -53,6 +67,7 @@ interface TableRowProps {
 }
 
 const TableRow: React.FC<TableRowProps> = ({ item, onItemClick }) => {
+  const { t } = useTranslation('backlog');
   const handleClick = useCallback(() => {
     onItemClick(item);
   }, [item, onItemClick]);
@@ -66,7 +81,7 @@ const TableRow: React.FC<TableRowProps> = ({ item, onItemClick }) => {
       </td>
       <td>
         <span className={`${styles['status-badge']} ${styles[item.status]}`}>
-          {item.status.replace('_', ' ')}
+          {getStatusLabel(item.status, t as (key: string) => string)}
         </span>
       </td>
       <td>{item.businessValue ? `${item.businessValue} pts` : '-'}</td>
@@ -110,6 +125,7 @@ const VirtualizedRow: React.FC<VirtualizedRowProps> = ({
   style,
   measureRef,
 }) => {
+  const { t } = useTranslation('backlog');
   const handleClick = useCallback(() => {
     onItemClick(item);
   }, [item, onItemClick]);
@@ -134,7 +150,7 @@ const VirtualizedRow: React.FC<VirtualizedRowProps> = ({
       </div>
       <div className={styles['virtualized-cell']} role="cell">
         <span className={`${styles['status-badge']} ${styles[item.status]}`}>
-          {item.status.replace('_', ' ')}
+          {getStatusLabel(item.status, t as (key: string) => string)}
         </span>
       </div>
       <div className={styles['virtualized-cell']} role="cell">

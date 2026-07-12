@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import type { PendingDeletion } from '../../types/auth.types';
 
@@ -9,6 +10,8 @@ interface GracePeriodProgressProps {
 }
 
 export const GracePeriodProgress: React.FC<GracePeriodProgressProps> = ({ pendingDeletion }) => {
+  const { t } = useTranslation('common');
+
   const requestedDate = new Date(pendingDeletion.requestedAt);
   const scheduledDate = new Date(pendingDeletion.scheduledDeletionAt);
   const now = new Date();
@@ -32,20 +35,26 @@ export const GracePeriodProgress: React.FC<GracePeriodProgressProps> = ({ pendin
       aria-labelledby="grace-period-title"
     >
       <h4 id="grace-period-title" className={styles['grace-period-title']}>
-        Deletion Scheduled
+        {t('deleteAccount.gracePeriodProgress.title')}
       </h4>
 
       <div className={styles['grace-period-dates']}>
         <div className={styles['grace-period-date-item']}>
-          <span className={styles['grace-period-date-label']}>Requested</span>
+          <span className={styles['grace-period-date-label']}>
+            {t('deleteAccount.gracePeriodProgress.requested')}
+          </span>
           <span className={styles['grace-period-date-value']}>{formatDate(requestedDate)}</span>
         </div>
         <div className={styles['grace-period-date-item']}>
-          <span className={styles['grace-period-date-label']}>Deletion date</span>
+          <span className={styles['grace-period-date-label']}>
+            {t('deleteAccount.gracePeriodProgress.deletionDate')}
+          </span>
           <span className={styles['grace-period-date-value']}>{formatDate(scheduledDate)}</span>
         </div>
         <div className={styles['grace-period-date-item']}>
-          <span className={styles['grace-period-date-label']}>Days remaining</span>
+          <span className={styles['grace-period-date-label']}>
+            {t('deleteAccount.gracePeriodProgress.daysRemaining')}
+          </span>
           <span className={styles['grace-period-date-value']}>{daysRemaining}</span>
         </div>
       </div>
@@ -57,7 +66,9 @@ export const GracePeriodProgress: React.FC<GracePeriodProgressProps> = ({ pendin
           aria-valuenow={Math.round(progressPercent)}
           aria-valuemin={0}
           aria-valuemax={100}
-          aria-label={`${Math.round(progressPercent)}% of grace period elapsed`}
+          aria-label={t('deleteAccount.gracePeriodProgress.progressAriaLabel', {
+            percent: Math.round(progressPercent),
+          })}
           style={{ width: `${progressPercent}%` }}
         />
       </div>

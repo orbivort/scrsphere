@@ -7,8 +7,11 @@
     "selectRole": "Sélectionnez votre rôle pour continuer"
   },
   "leadership": {
+    "badge": "Leadership",
     "title": "Scrum Master ou Product Owner",
+    "description": "En tant que leader agile, vous avez l'autorité de créer et gérer des teams. Prenez en charge le succès de votre projet en établissant votre espace de travail team.",
     "createTeam": "Créer un nouveau team",
+    "quickStartTitle": "Processus Quick Start:",
     "quickStart": {
       "step1": "Créer team",
       "step2": "Inviter membres",
@@ -17,6 +20,7 @@
   },
   "developer": {
     "title": "Developer",
+    "badge": "Membre du Team",
     "description": "Rejoindre un team Scrum existant...",
     "howToJoin": {
       "title": "Comment rejoindre un team",
@@ -27,6 +31,7 @@
     "checkInvitations": "Vérifier les invitations"
   },
   "capabilities": {
+    "title": "Capacités de la Plateforme",
     "teamCollaboration": "Collaboration du team",
     "teamCollaborationDesc": "Travailler ensemble efficacement avec des objectifs partagés et de la visibilité",
     "sprintPlanning": "Sprint Planning",
@@ -37,7 +42,8 @@
     "agileCeremoniesDesc": "Faciliter les Daily Scrums, Reviews et Retrospectives"
   },
   "help": {
-    "title": "Besoin d'aide pour démarrer?"
+    "title": "Besoin d'aide pour démarrer?",
+    "description": "Si vous n'êtes pas sûr de votre rôle ou si vous avez besoin d'aide, contactez votre administrateur d'organisation ou consultez votre chef de projet."
   },
   "errorStates": {
     "notInvited": "Vous n'avez pas encore été invité à un team",
@@ -48,6 +54,10 @@
     "tryAgain": "Réessayer"
   },
   "teamInfo": {
+    "memberCount": "{{count}} membres",
+    "created": "Créé : {{date}}",
+    "lastUpdated": "Dernière mise à jour : {{date}}",
+    "teamId": "ID du team : {{id}}",
     "unavailable": "Informations du team non disponibles",
     "unableToLoad": "Impossible de charger les détails du team. Veuillez actualiser la page."
   },
@@ -157,5 +167,15 @@
     },
     "unsavedTitle": "Message non envoyé",
     "unsavedMessage": "Vous avez un message non envoyé. Êtes-vous sûr de vouloir le supprimer?"
+  },
+  "errors": {
+    "memberAlreadyExists": "Cet utilisateur est déjà membre de l'équipe.",
+    "noPermissionToAddMembers": "Vous n'avez pas la permission d'ajouter des membres à l'équipe. Seuls les Product Owners et Scrum Masters peuvent inviter des membres.",
+    "noPermissionToRemoveMembers": "Vous n'avez pas la permission de supprimer des membres de l'équipe. Seuls les Scrum Masters et Product Owners peuvent supprimer des membres.",
+    "networkError": "Erreur réseau. Veuillez vérifier votre connexion et réessayer.",
+    "memberNotFound": "Membre non trouvé. Il a peut-être déjà été supprimé.",
+    "genericInviteError": "Impossible d'ajouter le membre. Veuillez réessayer plus tard.",
+    "genericRemoveError": "Impossible de supprimer le membre. Veuillez réessayer plus tard.",
+    "memberRemoved": "Le membre a été supprimé avec succès."
   }
 }

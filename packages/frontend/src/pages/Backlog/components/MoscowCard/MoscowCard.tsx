@@ -9,10 +9,10 @@
  */
 
 import React, { memo, useState, useCallback, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { type ProductBacklogItem, MoSCoWPriority } from '../../../../types';
 import { STATUS_CONFIG } from '../../config/status.config';
-import { MOSCOW_CONFIG } from '../../config/moscow.config';
 import { useAnnounce } from '../../../../components/LiveAnnouncer';
 
 import styles from './MoscowCard.module.css';
@@ -50,11 +50,31 @@ const PRIORITY_ORDER: MoSCoWPriority[] = [
 ];
 
 /**
- * Get the label for a priority
+ * Helper function to get translated status label
  */
-function getPriorityLabel(priority: MoSCoWPriority): string {
-  return MOSCOW_CONFIG[priority].label;
-}
+const getStatusLabel = (status: string, t: (key: string) => string): string => {
+  const statusMap: Record<string, string> = {
+    NEW: 'status.new',
+    REFINED: 'status.refined',
+    READY: 'status.ready',
+    IN_PROGRESS: 'status.inProgress',
+    DONE: 'status.done',
+  };
+  return t(statusMap[status] ?? status);
+};
+
+/**
+ * Helper function to get translated priority label
+ */
+const getPriorityLabel = (priority: MoSCoWPriority, t: (key: string) => string): string => {
+  const priorityMap: Record<MoSCoWPriority, string> = {
+    [MoSCoWPriority.MUST_HAVE]: 'moscow.mustHave',
+    [MoSCoWPriority.SHOULD_HAVE]: 'moscow.shouldHave',
+    [MoSCoWPriority.COULD_HAVE]: 'moscow.couldHave',
+    [MoSCoWPriority.WONT_HAVE]: 'moscow.wontHave',
+  };
+  return t(priorityMap[priority]);
+};
 
 /**
  * MoscowCard Component
@@ -86,6 +106,7 @@ function getPriorityLabel(priority: MoSCoWPriority): string {
  */
 export const MoscowCard = memo<MoscowCardProps>(
   ({ item, onDragStart, onDragEnd, onClick, isDragging, onMovePriority, itemsCountByPriority }) => {
+    const { t } = useTranslation('backlog');
     const statusConfig = STATUS_CONFIG[item.status];
     const announce = useAnnounce();
 
@@ -125,13 +146,13 @@ export const MoscowCard = memo<MoscowCardProps>(
       setIsGrabbed(true);
       setTargetPriority(item.priority);
 
-      const currentPriorityLabel = getPriorityLabel(item.priority);
+      const currentPriorityLabel = getPriorityLabel(item.priority, t as (key: string) => string);
       const itemCount = itemsCountByPriority?.[item.priority] ?? 0;
 
       announceMessage(
         `Backlog item ${item.title} grabbed. Current priority: ${currentPriorityLabel}. ${itemCount} items currently in this column. Use ArrowLeft or ArrowRight to change priority. Escape to cancel, Enter to drop.`
       );
-    }, [item.priority, item.title, itemsCountByPriority, onMovePriority, announceMessage]);
+    }, [item.priority, item.title, itemsCountByPriority, onMovePriority, announceMessage, t]);
 
     /**
      * Handle keyboard navigation between priorities
@@ -152,14 +173,14 @@ export const MoscowCard = memo<MoscowCardProps>(
         if (!newPriority) return;
         setTargetPriority(newPriority);
 
-        const newPriorityLabel = getPriorityLabel(newPriority);
+        const newPriorityLabel = getPriorityLabel(newPriority, t as (key: string) => string);
         const itemCount = itemsCountByPriority?.[newPriority] ?? 0;
 
         announceMessage(
           `Target priority: ${newPriorityLabel}. ${itemCount} items currently in this column.`
         );
       },
-      [isGrabbed, onMovePriority, getCurrentPriorityIndex, itemsCountByPriority, announceMessage]
+      [isGrabbed, onMovePriority, getCurrentPriorityIndex, itemsCountByPriority, announceMessage, t]
     );
 
     /**
@@ -173,7 +194,7 @@ export const MoscowCard = memo<MoscowCardProps>(
         setIsGrabbed(false);
         setTargetPriority(null);
         announceMessage(
-          `Drag cancelled. Item remains in ${getPriorityLabel(item.priority)} priority.`
+          `Drag cancelled. Item remains in ${getPriorityLabel(item.priority, t as (key: string) => string)} priority.`
         );
         return;
       }
@@ -181,7 +202,7 @@ export const MoscowCard = memo<MoscowCardProps>(
       // Execute the priority change
       onMovePriority(item.id, targetPriority);
 
-      const newPriorityLabel = getPriorityLabel(targetPriority);
+      const newPriorityLabel = getPriorityLabel(targetPriority, t as (key: string) => string);
       announceMessage(`Item ${item.title} moved to ${newPriorityLabel} priority.`);
 
       setIsGrabbed(false);
@@ -194,6 +215,7 @@ export const MoscowCard = memo<MoscowCardProps>(
       item.title,
       item.priority,
       announceMessage,
+      t,
     ]);
 
     /**
@@ -202,12 +224,15 @@ export const MoscowCard = memo<MoscowCardProps>(
     const handleCancel = useCallback(() => {
       if (!isGrabbed) return;
 
-      const originalPriorityLabel = getPriorityLabel(originalPriorityRef.current);
+      const originalPriorityLabel = getPriorityLabel(
+        originalPriorityRef.current,
+        t as (key: string) => string
+      );
       announceMessage(`Drag cancelled. Item remains in ${originalPriorityLabel} priority.`);
 
       setIsGrabbed(false);
       setTargetPriority(null);
-    }, [isGrabbed, announceMessage]);
+    }, [isGrabbed, announceMessage, t]);
 
     /**
      * Handle keydown events
@@ -270,11 +295,11 @@ export const MoscowCard = memo<MoscowCardProps>(
      * Build the aria-label with priority information
      */
     const buildAriaLabel = (): string => {
-      const priorityLabel = getPriorityLabel(item.priority);
+      const priorityLabel = getPriorityLabel(item.priority, t as (key: string) => string);
       let label = `Backlog item: ${item.title}. Priority: ${priorityLabel}`;
 
       if (isGrabbed && targetPriority) {
-        const targetLabel = getPriorityLabel(targetPriority);
+        const targetLabel = getPriorityLabel(targetPriority, t as (key: string) => string);
         label = `Dragging ${item.title}. Current: ${priorityLabel}. Target: ${targetLabel}`;
       }
 
@@ -324,7 +349,7 @@ export const MoscowCard = memo<MoscowCardProps>(
             <CheckCircleIcon width="16" height="16" />
             <span className={styles['grab-indicator-text']}>
               {targetPriority && targetPriority !== item.priority
-                ? `Moving to ${getPriorityLabel(targetPriority)}`
+                ? `Moving to ${getPriorityLabel(targetPriority, t as (key: string) => string)}`
                 : 'Use Arrow keys to change priority'}
             </span>
           </div>
@@ -339,7 +364,7 @@ export const MoscowCard = memo<MoscowCardProps>(
               color: statusConfig.color,
             }}
           >
-            {statusConfig.label}
+            {getStatusLabel(item.status, t as (key: string) => string)}
           </span>
         </div>
 

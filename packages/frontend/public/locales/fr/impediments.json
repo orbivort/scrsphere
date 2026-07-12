@@ -8,13 +8,21 @@
     "open": "Ouvert",
     "inProgress": "En cours",
     "resolved": "Resolu",
-    "closed": "Ferme"
+    "closed": "Ferme",
+    "OPEN": "Ouvert",
+    "IN_PROGRESS": "En cours",
+    "RESOLVED": "Resolu",
+    "CLOSED": "Ferme"
   },
   "stats": {
     "open": "Ouvert",
     "inProgress": "En cours",
     "resolved": "Resolu",
-    "closed": "Ferme"
+    "closed": "Ferme",
+    "OPEN": "Ouvert",
+    "IN_PROGRESS": "En cours",
+    "RESOLVED": "Resolu",
+    "CLOSED": "Ferme"
   },
   "card": {
     "sprint": "Sprint",

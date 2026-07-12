@@ -137,5 +137,22 @@
     "viewSprintBoard": "Voir le tableau Sprint",
     "createIncrement": "Créer un incrément",
     "startSprintPlanning": "Démarrer la planification du sprint"
+  },
+  "sprintStatus": {
+    "PLANNED": "Planifié",
+    "ACTIVE": "Actif",
+    "COMPLETED": "Terminé",
+    "CANCELLED": "Annulé"
+  },
+  "impedimentStatus": {
+    "OPEN": "Ouvert",
+    "IN_PROGRESS": "En cours",
+    "RESOLVED": "Résolu",
+    "CLOSED": "Fermé"
+  },
+  "taskStatus": {
+    "TODO": "Todo",
+    "IN_PROGRESS": "En cours",
+    "DONE": "Terminé"
   }
 }

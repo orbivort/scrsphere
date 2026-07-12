@@ -21,6 +21,28 @@ import { useVirtualScroll, shouldEnableVirtualization } from '../../../hooks/use
 import styles from './BoardView.module.css';
 
 /**
+ * Helper function to get translated MoSCoW labels
+ */
+const getMoscowLabels = (t: (key: string) => string) => ({
+  [MoSCoWPriority.MUST_HAVE]: {
+    label: t('moscow.mustHave') as string,
+    description: t('moscow.mustHaveDesc') as string,
+  },
+  [MoSCoWPriority.SHOULD_HAVE]: {
+    label: t('moscow.shouldHave') as string,
+    description: t('moscow.shouldHaveDesc') as string,
+  },
+  [MoSCoWPriority.COULD_HAVE]: {
+    label: t('moscow.couldHave') as string,
+    description: t('moscow.couldHaveDesc') as string,
+  },
+  [MoSCoWPriority.WONT_HAVE]: {
+    label: t('moscow.wontHave') as string,
+    description: t('moscow.wontHaveDesc') as string,
+  },
+});
+
+/**
  * Props for the BoardView component
  */
 export interface BoardViewProps {
@@ -84,6 +106,7 @@ const VirtualizedColumn: React.FC<VirtualizedColumnProps> = ({
   forceVirtualization,
 }) => {
   const { t } = useTranslation('backlog');
+  const moscowLabels = getMoscowLabels(t as (key: string) => string);
   const enableVirtualization =
     forceVirtualization ?? shouldEnableVirtualization(items.length, VIRTUALIZATION_THRESHOLD);
 
@@ -98,13 +121,16 @@ const VirtualizedColumn: React.FC<VirtualizedColumnProps> = ({
     onDrop(e, priority);
   };
 
+  const translatedLabel = moscowLabels[priority].label;
+  const translatedDescription = moscowLabels[priority].description;
+
   return (
     <div
       className={`${styles['moscow-column']} ${isDraggingOver ? styles['drag-active'] : ''}`}
       onDrop={handleDrop}
       onDragOver={onDragOver}
       role="list"
-      aria-label={`${config.label} column, ${items.length} items`}
+      aria-label={`${translatedLabel} column, ${items.length} items`}
       style={
         {
           '--column-color': config.color,
@@ -133,8 +159,8 @@ const VirtualizedColumn: React.FC<VirtualizedColumnProps> = ({
             </svg>
           </div>
           <div className={styles['moscow-column-title-info']}>
-            <h3 className={styles['moscow-column-title']}>{config.label}</h3>
-            <span className={styles['moscow-column-desc']}>{config.description}</span>
+            <h3 className={styles['moscow-column-title']}>{translatedLabel}</h3>
+            <span className={styles['moscow-column-desc']}>{translatedDescription}</span>
           </div>
         </div>
         <div className={styles['moscow-column-count']}>

@@ -2,10 +2,37 @@
   "title": "Active Sprint",
   "daysRemaining_one": "{{count}} day remaining",
   "daysRemaining_other": "{{count}} days remaining",
+  "sprintStatus": {
+    "PLANNED": "Planned",
+    "ACTIVE": "Active",
+    "COMPLETED": "Completed",
+    "CANCELLED": "Cancelled"
+  },
   "taskStatus": {
     "todo": "To Do",
+    "todoDesc": "Task is ready to be started",
     "inProgress": "In Progress",
-    "done": "Done"
+    "inProgressDesc": "Task is currently being worked on",
+    "done": "Done",
+    "doneDesc": "Task has been completed"
+  },
+  "validation": {
+    "taskAlreadyInStatus": "Task is already in this status",
+    "invalidTaskTransition": "Transition from {{current}} to {{target}} is not allowed. Allowed transitions: {{allowed}}",
+    "invalidTransition": "Invalid status transition",
+    "none": "None",
+    "wipLimitReached": "WIP limit reached for In Progress ({{limit}} tasks max)",
+    "fieldAssignee": "Assignee",
+    "fieldEstimatedHours": "Estimated Hours",
+    "missingFieldsForInProgress": "Cannot move to In Progress. Please set: {{fields}}",
+    "titleRequired": "Task title is required",
+    "titleTooLong": "Title must be 100 characters or less",
+    "descriptionRequired": "Description is required",
+    "selectParentPbi": "Please select a parent backlog item",
+    "assigneeRequired": "Assignee is required",
+    "estimatedHoursPositive": "Estimated hours must be greater than 0",
+    "remainingHoursPositive": "Remaining hours must be greater than 0",
+    "remainingHoursExceed": "Remaining hours cannot exceed estimated hours"
   },
   "boardHeader": {
     "burndown": "Burndown",
@@ -80,6 +107,13 @@
     "uncheckNew": "Uncheck New",
     "alreadyVerifiedCannotChange": "Already verified - cannot be changed",
     "alreadyVerified": "Already verified",
+    "item": {
+      "codeReviewed": "Code is peer-reviewed and approved",
+      "unitTests": "Unit tests written and passing (minimum 80% coverage)",
+      "integrationTests": "Integration tests passing",
+      "documentation": "Code is properly documented",
+      "noCriticalBugs": "No critical or high-severity bugs"
+    },
     "allDodMustBeVerified": "⚠️ All DoD criteria must be verified to complete the sprint",
     "allDodVerifiedReady": "✓ All DoD criteria verified. Ready to complete sprint.",
     "cancel": "Cancel",
@@ -256,7 +290,14 @@
     "noTasksToDo": "No tasks to do",
     "noTasksInProgress": "No tasks in progress",
     "noCompletedTasks": "No completed tasks",
-    "noTasks": "No tasks"
+    "noTasks": "No tasks",
+    "taskCreated": "Task created successfully",
+    "taskUpdated": "Task updated successfully",
+    "taskDeleted": "Task deleted successfully",
+    "taskMovedToDone": "Task moved to Done (Remaining hours set to 0)",
+    "sprintCompleted": "Sprint completed successfully! Redirecting to create Increment...",
+    "teamIdRequired": "Team ID is required. Please select a team first.",
+    "invalidTransition": "Invalid transition"
   },
   "burndownChart": {
     "sprintBurndown": "Sprint Burndown",

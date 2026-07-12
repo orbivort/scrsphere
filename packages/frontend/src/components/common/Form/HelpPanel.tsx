@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import styles from './HelpPanel.module.css';
 
@@ -17,6 +18,7 @@ interface HelpPanelProps {
 }
 
 export const HelpPanel: React.FC<HelpPanelProps> = ({ title, tips, examples }) => {
+  const { t } = useTranslation('common');
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -29,7 +31,7 @@ export const HelpPanel: React.FC<HelpPanelProps> = ({ title, tips, examples }) =
         aria-controls="help-content"
       >
         <span className={styles['help-icon']}>💡</span>
-        <span className={styles['help-text']}>Tips for {title}</span>
+        <span className={styles['help-text']}>{t('helpPanel.tipsFor', { title })}</span>
         <span className={`${styles.chevron} ${isExpanded ? styles.expanded : ''}`}>▼</span>
       </button>
 
@@ -47,13 +49,13 @@ export const HelpPanel: React.FC<HelpPanelProps> = ({ title, tips, examples }) =
             <div className={styles.examples}>
               {examples.good && (
                 <div className={`${styles.example} ${styles['good-example']}`}>
-                  <span className={styles['example-label']}>✓ Good example:</span>
+                  <span className={styles['example-label']}>{t('helpPanel.goodExample')}</span>
                   <p className={styles['example-text']}>{examples.good.text}</p>
                 </div>
               )}
               {examples.avoid && (
                 <div className={`${styles.example} ${styles['avoid-example']}`}>
-                  <span className={styles['example-label']}>✗ Avoid:</span>
+                  <span className={styles['example-label']}>{t('helpPanel.avoidExample')}</span>
                   <p className={styles['example-text']}>{examples.avoid.text}</p>
                 </div>
               )}

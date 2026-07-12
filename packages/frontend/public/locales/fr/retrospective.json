@@ -19,7 +19,24 @@
     "moreItems": "+{{count}} autres éléments",
     "goal": "Goal:",
     "businessDay_one": "{{count}} jour de travail",
-    "businessDay_other": "{{count}} jours de travail"
+    "businessDay_other": "{{count}} jours de travail",
+    "itemsCount": "{{count}} éléments",
+    "storyPointsCount": "{{count}} Story Points",
+    "taskCount": "{{count}} tâches",
+    "taskCompletion": "{{completed}}/{{total}} terminées",
+    "priorityLabels": {
+      "MUST_HAVE": "Indispensable",
+      "SHOULD_HAVE": "Souhaitable",
+      "COULD_HAVE": "Optionnel",
+      "WONT_HAVE": "Pas pour cette version"
+    },
+    "statusLabels": {
+      "NEW": "Nouveau",
+      "REFINED": "Affiné",
+      "READY": "Prêt",
+      "IN_PROGRESS": "En cours",
+      "DONE": "Terminé"
+    }
   },
   "categories": {
     "wentWell": {
@@ -52,14 +69,20 @@
     "itemsInColumn": "{{count}} éléments dans {{title}}"
   },
   "actionItems": {
-    "title": "Action Items",
-    "createActionItem": "+ Créer un Action Item",
-    "empty": "Pas encore d'Action Items. Convertissez les éléments d'amélioration en tâches actionables.",
+    "title": "Points d'action",
+    "createActionItem": "+ Créer un point d'action",
+    "empty": "Pas encore de points d'action. Convertissez les éléments d'amélioration en tâches actionnables.",
     "inBacklog": "Dans le Backlog",
     "unassigned": "Non assigné",
-    "due": "Échéance:",
-    "deleteActionItem": "Supprimer l'Action Item",
-    "deleteAriaLabel": "Supprimer l'Action Item"
+    "due": "Échéance :",
+    "deleteActionItem": "Supprimer le point d'action",
+    "deleteAriaLabel": "Supprimer le point d'action",
+    "status": {
+      "PENDING": "En attente",
+      "IN_PROGRESS": "En cours",
+      "COMPLETED": "Terminé",
+      "CANCELLED": "Annulé"
+    }
   },
   "attendeesSection": {
     "title": "Participants"

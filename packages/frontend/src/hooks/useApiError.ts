@@ -7,6 +7,7 @@ import type { AxiosError } from 'axios';
 import { useAuthStore } from '../store';
 import { logger } from '../utils/logger';
 import type { ApiResponse } from '../types';
+import { i18nInstance } from '../i18n/config';
 
 export interface ApiError {
   code: string;
@@ -218,6 +219,12 @@ function isPermissionTransitionError(error: unknown): boolean {
 }
 
 function getHttpErrorMessage(status: number): string {
+  const key = `common:error.http.${status}`;
+  const fallback = getHttpErrorMessageFallback(status);
+  return i18nInstance.t(key, fallback);
+}
+
+function getHttpErrorMessageFallback(status: number): string {
   const messages: Record<number, string> = {
     400: 'Invalid request. Please check your input.',
     401: 'Authentication required. Please log in.',

@@ -38,9 +38,52 @@
       "impediments": "Impedimentos"
     }
   },
+  "sprintStatusLabels": {
+    "PLANNED": "Planificado",
+    "ACTIVE": "Activo",
+    "COMPLETED": "Completado"
+  },
   "insights": {
     "title": "Insights clave",
-    "empty": "Sin insights disponibles aún. Complete más Sprints para generar insights."
+    "empty": "Sin insights disponibles aún. Complete más Sprints para generar insights.",
+    "items": {
+      "velocity-improvement": {
+        "title": "Mejora de Velocity",
+        "description": "La velocity promedio aumentó un {{trend}}% en comparación con Sprints anteriores"
+      },
+      "velocity-decline": {
+        "title": "Disminución de Velocity",
+        "description": "La velocity promedio disminuyó un {{trend}}%. Considere revisar la planificación del Sprint."
+      },
+      "consistent-delivery": {
+        "title": "Entrega consistente",
+        "description": "El equipo ha mantenido el 100% de cumplimiento de objetivos en los últimos {{count}} Sprints"
+      },
+      "impediment-trend": {
+        "title": "Tendencia de impedimentos",
+        "description": "{{count}} impedimento(s) actualmente abiertos. Considere abordarlos proactivamente."
+      },
+      "high-success-rate": {
+        "title": "Alta tasa de éxito",
+        "description": "El equipo ha alcanzado {{rate}}% de tasa de éxito en Sprints. ¡Sigan así!"
+      },
+      "low-success-rate": {
+        "title": "Atención a la tasa de éxito",
+        "description": "La tasa de éxito del Sprint es del {{rate}}%. Considere revisar la capacidad y planificación."
+      },
+      "recent-improvement": {
+        "title": "Mejora reciente",
+        "description": "El último Sprint mostró una mejora del {{improvement}}% en Story Points completados."
+      },
+      "active-sprint-impediments": {
+        "title": "Impedimentos del Sprint activo",
+        "description": "El Sprint actual tiene {{count}} impedimento(s). Monitoree de cerca."
+      },
+      "get-started": {
+        "title": "Comenzando",
+        "description": "Complete más Sprints para generar insights de rendimiento del equipo."
+      }
+    }
   },
   "velocityChart": {
     "title": "Velocity del Sprint",

@@ -1,10 +1,11 @@
 import React, { Component, type ErrorInfo } from 'react';
+import { withTranslation, type WithTranslation } from 'react-i18next';
 
 import { logger } from '../../../utils/logger';
 
 import styles from './ChunkErrorBoundary.module.css';
 
-interface Props {
+interface Props extends WithTranslation {
   children: React.ReactNode;
   fallback?: React.ReactNode;
 }
@@ -14,7 +15,7 @@ interface State {
   error: Error | null;
 }
 
-export class ChunkErrorBoundary extends Component<Props, State> {
+class ChunkErrorBoundaryClass extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = { hasError: false, error: null };
@@ -46,6 +47,8 @@ export class ChunkErrorBoundary extends Component<Props, State> {
   };
 
   render(): React.ReactNode {
+    const { t } = this.props;
+
     if (this.state.hasError) {
       if (this.props.fallback) {
         return this.props.fallback;
@@ -54,13 +57,10 @@ export class ChunkErrorBoundary extends Component<Props, State> {
       return (
         <div className={styles['chunk-error']} role="alert">
           <div className={styles['error-content']}>
-            <h2>Unable to load page</h2>
-            <p>
-              A portion of the application failed to load. This may be due to a network issue or an
-              outdated version.
-            </p>
+            <h2>{t('chunkError.title')}</h2>
+            <p>{t('chunkError.description')}</p>
             <button onClick={this.handleRetry} className="button button-primary">
-              Retry
+              {t('chunkError.reload')}
             </button>
           </div>
         </div>
@@ -70,3 +70,8 @@ export class ChunkErrorBoundary extends Component<Props, State> {
     return this.props.children;
   }
 }
+
+export const ChunkErrorBoundary: React.ComponentType<{
+  children: React.ReactNode;
+  fallback?: React.ReactNode;
+}> = withTranslation('common')(ChunkErrorBoundaryClass);

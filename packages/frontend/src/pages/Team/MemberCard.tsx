@@ -35,7 +35,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({
   isDeleting,
   viewMode = 'card',
 }) => {
-  const { t } = useTranslation('team');
+  const { t, i18n } = useTranslation('team');
   const [showMessageModal, setShowMessageModal] = useState(false);
 
   const user = member.user;
@@ -70,7 +70,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({
   };
 
   const memberSince = member.joinedAt
-    ? new Date(member.joinedAt).toLocaleDateString('en-US', {
+    ? new Date(member.joinedAt).toLocaleDateString(i18n.language, {
         year: 'numeric',
         month: 'short',
         day: 'numeric',

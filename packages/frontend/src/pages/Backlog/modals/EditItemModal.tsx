@@ -260,8 +260,12 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
                             <PathIcon path={config.icon} size={20} />
                           </span>
                           <span className={styles['moscow-content']}>
-                            <span className={styles['moscow-label']}>{config.label}</span>
-                            <span className={styles['moscow-desc']}>{config.description}</span>
+                            <span className={styles['moscow-label']}>
+                              {t(`moscowLabels.${priority}` as const)}
+                            </span>
+                            <span className={styles['moscow-desc']}>
+                              {t(`moscowDescriptions.${priority}` as const)}
+                            </span>
                           </span>
                           {isSelected && (
                             <span className={styles['moscow-check']} aria-hidden="true">

@@ -20,6 +20,8 @@
 
 import React, { memo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 
 import type { EmptyStateProps, EmptyStateType } from './types';
 import {
@@ -35,9 +37,11 @@ import {
 import styles from './EmptyState.module.css';
 
 /**
- * Default configurations for predefined empty state types
+ * Helper function to get default configurations for empty state types with translations
  */
-const DEFAULT_CONFIGS: Record<
+const getDefaultConfigs = (
+  t: TFunction
+): Record<
   EmptyStateType,
   {
     icon: React.ReactNode;
@@ -49,53 +53,53 @@ const DEFAULT_CONFIGS: Record<
       variant: 'primary' | 'secondary';
     };
   }
-> = {
+> => ({
   'no-team': {
     icon: <UsersIcon size={64} />,
-    title: 'No Team Selected',
-    description: 'Please select a team to continue.',
+    title: t('emptyState.noTeam.title'),
+    description: t('emptyState.noTeam.description'),
   },
   'no-active-goal': {
     icon: <GoalIcon size={64} />,
-    title: 'No Active Goal',
-    description: 'Please set an active product goal before continuing.',
+    title: t('emptyState.noActiveGoal.title'),
+    description: t('emptyState.noActiveGoal.description'),
     action: {
-      label: 'Go to Product Goals',
+      label: t('emptyState.noActiveGoal.action'),
       path: '/product-goals',
       variant: 'primary',
     },
   },
   'no-active-sprint': {
     icon: <SprintIcon size={64} />,
-    title: 'No Active Sprint',
-    description: 'Start a new sprint from Sprint Planning to continue.',
+    title: t('emptyState.noActiveSprint.title'),
+    description: t('emptyState.noActiveSprint.description'),
     action: {
-      label: 'Go to Sprint Planning',
+      label: t('emptyState.noActiveSprint.action'),
       path: '/sprint-planning',
       variant: 'primary',
     },
   },
   'no-completed-sprint': {
     icon: <ClipboardListIcon size={64} />,
-    title: 'No Completed Sprint',
-    description: 'Complete a sprint to start tracking.',
+    title: t('emptyState.noCompletedSprint.title'),
+    description: t('emptyState.noCompletedSprint.description'),
   },
   'no-data': {
     icon: <InboxIcon size={64} />,
-    title: 'No Data Available',
-    description: 'There is no data to display at this time.',
+    title: t('emptyState.noData.title'),
+    description: t('emptyState.noData.description'),
   },
   error: {
     icon: <ErrorIcon size={64} />,
-    title: 'Something Went Wrong',
-    description: 'An error occurred while loading the data. Please try again.',
+    title: t('emptyState.error.title'),
+    description: t('emptyState.error.description'),
   },
   custom: {
     icon: <SearchIcon size={64} />,
     title: '',
     description: '',
   },
-};
+});
 
 /**
  * EmptyState Component
@@ -117,7 +121,8 @@ export const EmptyState = memo<EmptyStateProps>(
     'data-testid': dataTestId = 'empty-state',
   }) => {
     const navigate = useNavigate();
-    const config = DEFAULT_CONFIGS[type];
+    const { t } = useTranslation('common');
+    const config = getDefaultConfigs(t)[type];
 
     // Determine final values (custom props override defaults)
     const finalIcon = icon ?? config.icon;

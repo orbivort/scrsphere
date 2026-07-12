@@ -101,6 +101,15 @@ export function StatusChangeModal<T extends string>({
     }
   };
 
+  // Build status name map for translation
+  const statusNameMap: Record<string, string> = {};
+  statuses.forEach((status) => {
+    const config = statusConfig[status];
+    if (config.label) {
+      statusNameMap[status.toUpperCase()] = config.label;
+    }
+  });
+
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget && !isSubmitting) {
       onClose();
@@ -261,7 +270,11 @@ export function StatusChangeModal<T extends string>({
 
           {/* Status History - Using shared StatusHistorySection component */}
           <div className={styles['history-section-wrapper']}>
-            <StatusHistorySection history={statusHistory} isLoading={isHistoryLoading} />
+            <StatusHistorySection
+              history={statusHistory}
+              isLoading={isHistoryLoading}
+              statusNameMap={statusNameMap}
+            />
           </div>
         </div>
 

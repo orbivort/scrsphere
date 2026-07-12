@@ -137,5 +137,22 @@
     "viewSprintBoard": "Vedi Bacheca Sprint",
     "createIncrement": "Crea incremento",
     "startSprintPlanning": "Avvia pianificazione sprint"
+  },
+  "sprintStatus": {
+    "PLANNED": "Pianificato",
+    "ACTIVE": "Attivo",
+    "COMPLETED": "Completato",
+    "CANCELLED": "Annullato"
+  },
+  "impedimentStatus": {
+    "OPEN": "Aperto",
+    "IN_PROGRESS": "In Corso",
+    "RESOLVED": "Risolto",
+    "CLOSED": "Chiuso"
+  },
+  "taskStatus": {
+    "TODO": "Todo",
+    "IN_PROGRESS": "In Corso",
+    "DONE": "Completato"
   }
 }

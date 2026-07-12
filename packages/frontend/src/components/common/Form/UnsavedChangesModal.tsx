@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { AlertTriangleIcon, CloseIcon, FileTextIcon, ArrowLeftIcon, TrashIcon } from '../Icons';
 
@@ -16,12 +17,16 @@ export const UnsavedChangesModal: React.FC<UnsavedChangesModalProps> = ({
   isOpen,
   onConfirm,
   onCancel,
-  title = 'Unsaved Changes',
-  message = 'You have unsaved changes. Are you sure you want to discard them?',
+  title,
+  message,
 }) => {
+  const { t } = useTranslation('common');
   const modalRef = useRef<HTMLDivElement>(null);
   const previousActiveElement = useRef<HTMLElement | null>(null);
   const confirmButtonRef = useRef<HTMLButtonElement>(null);
+
+  const defaultTitle = t('unsavedChanges.title');
+  const defaultMessage = t('unsavedChanges.message');
 
   // Handle focus trap and initial focus
   useEffect(() => {
@@ -104,15 +109,15 @@ export const UnsavedChangesModal: React.FC<UnsavedChangesModalProps> = ({
               <AlertTriangleIcon size={24} />
             </div>
             <h2 id="unsaved-changes-title" className={styles.title}>
-              {title}
+              {title ?? defaultTitle}
             </h2>
-            <p className={styles.subtitle}>Please review before continuing</p>
+            <p className={styles.subtitle}>{t('unsavedChanges.subtitle')}</p>
           </div>
           <button
             type="button"
             className={styles['close-button']}
             onClick={onCancel}
-            aria-label="Close modal"
+            aria-label={t('close')}
           >
             <CloseIcon size={18} />
           </button>
@@ -127,34 +132,35 @@ export const UnsavedChangesModal: React.FC<UnsavedChangesModalProps> = ({
                 <AlertTriangleIcon size={24} />
               </span>
               <div className={styles['warning-title-group']}>
-                <h3 className={styles['warning-title']}>Attention Required</h3>
-                <p className={styles['warning-subtitle']}>Unsaved modifications detected</p>
+                <h3 className={styles['warning-title']}>{t('unsavedChanges.attentionRequired')}</h3>
+                <p className={styles['warning-subtitle']}>
+                  {t('unsavedChanges.unsavedModifications')}
+                </p>
               </div>
             </div>
 
             <div className={styles['warning-content']}>
               <p id="unsaved-changes-message" className={styles['warning-text']}>
-                {message}
+                {message ?? defaultMessage}
               </p>
 
               <div className={styles['info-box']}>
                 <span className={styles['info-icon']}>
                   <FileTextIcon size={20} />
                 </span>
-                <span className={styles['info-text']}>
-                  Your changes will be permanently lost if you discard them. This action cannot be
-                  undone.
-                </span>
+                <span className={styles['info-text']}>{t('unsavedChanges.permanentlyLost')}</span>
               </div>
 
               <div className={styles['options-list']}>
-                <p className={styles['options-title']}>What would you like to do?</p>
+                <p className={styles['options-title']}>{t('unsavedChanges.whatWouldYouDo')}</p>
                 <ul className={styles['options-items']}>
                   <li>
-                    <strong>Go Back</strong> - Continue editing and save your changes
+                    <strong>{t('unsavedChanges.goBack')}</strong> -{' '}
+                    {t('unsavedChanges.goBackDescription')}
                   </li>
                   <li>
-                    <strong>Discard</strong> - Close without saving and lose all modifications
+                    <strong>{t('unsavedChanges.discard')}</strong> -{' '}
+                    {t('unsavedChanges.discardDescription')}
                   </li>
                 </ul>
               </div>
@@ -170,7 +176,7 @@ export const UnsavedChangesModal: React.FC<UnsavedChangesModalProps> = ({
             onClick={onCancel}
           >
             <ArrowLeftIcon size={16} />
-            Go Back
+            {t('unsavedChanges.goBack')}
           </button>
           <button
             ref={confirmButtonRef}
@@ -179,7 +185,7 @@ export const UnsavedChangesModal: React.FC<UnsavedChangesModalProps> = ({
             onClick={onConfirm}
           >
             <TrashIcon size={16} />
-            Discard Changes
+            {t('unsavedChanges.discardChanges')}
           </button>
         </div>
       </div>

@@ -1,6 +1,12 @@
 {
   "title": "Settings",
   "skipToMainContent": "Skip to main content",
+  "sprintStatus": {
+    "PLANNED": "Planned",
+    "ACTIVE": "Active",
+    "COMPLETED": "Completed",
+    "CANCELLED": "Cancelled"
+  },
   "sprintConfiguration": {
     "title": "Sprint Configuration",
     "subtitle": "Configure sprint duration and automatically generate sprint plans for the year",
@@ -93,6 +99,18 @@
     "toast": {
       "updatedSuccessfully": "Definition of Ready updated successfully",
       "updateFailed": "Failed to update Definition of Ready"
+    },
+    "item": {
+      "clearTitle": "Clear title and description provided",
+      "acceptanceCriteria": "Acceptance criteria defined and agreed",
+      "storyPointsEstimated": "Story points estimated by the team",
+      "businessValue": "Business value assigned",
+      "dependencies": "Dependencies identified and documented",
+      "noBlockers": "No blockers or impediments",
+      "userStoryWritten": "User story clearly written",
+      "acceptanceCriteriaDefined": "Acceptance criteria defined",
+      "storyPointsEstimatedOld": "Story points estimated",
+      "dependenciesIdentified": "Dependencies identified"
     }
   },
   "dodPanel": {
@@ -121,6 +139,13 @@
     "toast": {
       "updatedSuccessfully": "Definition of Done updated successfully",
       "updateFailed": "Failed to update Definition of Done"
+    },
+    "item": {
+      "codeReviewed": "Code is peer-reviewed and approved",
+      "unitTests": "Unit tests written and passing (minimum 80% coverage)",
+      "integrationTests": "Integration tests passing",
+      "documentation": "Code is properly documented",
+      "noCriticalBugs": "No critical or high-severity bugs"
     }
   },
   "definitionEditor": {
@@ -229,14 +254,16 @@
       "clearSearchBrowse": "Clear search and browse all teams"
     },
     "card": {
-      "createdBy": "Created by",
-      "memberCount": "{{count}} member(s)",
+      "createdBy": "Created by {{firstName}} {{lastName}}",
+      "memberCount": "{{count}} member",
+      "memberCount_plural": "{{count}} members",
       "edit": "Edit",
       "delete": "Delete",
       "loading": "Loading...",
       "deleting": "Deleting...",
       "editTeam": "Edit {{name}}",
-      "deleteTeam": "Delete {{name}}"
+      "deleteTeam": "Delete {{name}}",
+      "cardAriaLabel": "{{name}}, {{count}} members. Use arrow keys to navigate between cards, Enter or Space to access actions."
     }
   },
   "createTeamModal": {

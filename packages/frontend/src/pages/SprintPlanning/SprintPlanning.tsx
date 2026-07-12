@@ -71,9 +71,8 @@ interface ReadyChecklistItem {
   checked: boolean;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- TFunction signature varies by i18next version
 const getMoscowPriorityConfig = (
-  t: any
+  t: (key: string) => string
 ): Record<string, { label: string; shortLabel: string }> => ({
   MUST_HAVE: {
     label: t('sprintPlanning.moscow.mustHave'),
@@ -134,8 +133,7 @@ const formatSprintOptionLabel = (sprint: SprintWithCategory, t: any): string => 
       : sprint.category === 'future'
         ? t('sprintPlanning.upcomingCategory')
         : t('sprintPlanning.doneCategory');
-  const statusDisplay =
-    sprint.status.charAt(0).toUpperCase() + sprint.status.slice(1).toLowerCase();
+  const statusDisplay = t(`sprintStatus.${sprint.status.toUpperCase()}`);
   return `${categoryLabel} ${sprint.name} (${statusDisplay})`;
 };
 
@@ -211,7 +209,10 @@ export const SprintPlanning: React.FC = () => {
   const sprintBacklogRef = useRef<HTMLDivElement>(null);
   const announce = useAnnounce();
 
-  const MOSCOW_PRIORITY_CONFIG = useMemo(() => getMoscowPriorityConfig(t), [t]);
+  const MOSCOW_PRIORITY_CONFIG = useMemo(
+    () => getMoscowPriorityConfig(t as (key: string) => string),
+    [t]
+  );
 
   const { data: generatedSprintsData, isLoading: generatedSprintsLoading } = useQuery({
     queryKey: queryKeys.generatedSprint.byTeam(teamId),

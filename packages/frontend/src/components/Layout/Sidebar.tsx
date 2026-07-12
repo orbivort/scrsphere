@@ -472,7 +472,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         isOpen={unsavedChanges.unsavedChangesModalOpen}
         onConfirm={handleUnsavedChangesConfirmWrapper}
         onCancel={unsavedChanges.handleUnsavedChangesCancel}
-        title={t('unsavedChanges')}
+        title={t('unsavedChanges.title')}
         message={unsavedChanges.getUnsavedChangesMessage()}
       />
     </div>

@@ -22,6 +22,26 @@ import { useToast } from '../../hooks/useToast';
 import { ToastContainer } from '../../components/common/ToastContainer';
 import { EmptyState } from '../../components/EmptyState';
 import { LoadingState } from '../../components/common/Loading';
+import { i18nInstance } from '../../i18n/config';
+
+/**
+ * Helper function to detect and translate backend error messages
+ */
+function getTranslatedErrorMessage(message: string): string {
+  // Detect transition error messages
+  if (message.includes('Transition from') && message.includes('is not allowed')) {
+    return i18nInstance.t('backlog:productGoals.invalidTransition');
+  }
+  // Detect permission-related error messages
+  if (
+    message.includes('You do not have permission') ||
+    message.includes('Required roles') ||
+    message.includes('Insufficient permissions')
+  ) {
+    return i18nInstance.t('common:permission.transitionError');
+  }
+  return message;
+}
 
 import { StatusChangeModal } from './components/StatusChangeModal';
 import {
@@ -95,6 +115,18 @@ export const ProductGoalsPage: React.FC = () => {
   const { handleError } = useApiError();
   const { t } = useTranslation('backlog');
   const teamId = currentTeam?.id;
+
+  // Status label i18n key mapping for product goals
+  const GOAL_STATUS_LABEL_KEYS: Record<string, string> = {
+    new: 'productGoals.new',
+    NEW: 'productGoals.new',
+    active: 'productGoals.active',
+    ACTIVE: 'productGoals.active',
+    completed: 'productGoals.completed',
+    COMPLETED: 'productGoals.completed',
+    abandoned: 'productGoals.abandoned',
+    ABANDONED: 'productGoals.abandoned',
+  };
 
   // Build status config with i18n labels/descriptions
   const PRODUCT_GOAL_STATUS_CONFIG: Record<ProductGoalStatus, StatusConfig> = useMemo(
@@ -343,10 +375,10 @@ export const ProductGoalsPage: React.FC = () => {
     },
     onError: (error: unknown) => {
       const err = error as { response?: { data?: { error?: { message?: string } } } };
-      const userMessage = handleError(
-        error,
-        `${t('productGoals.failedToChangeStatus') as string}: ${err.response?.data?.error?.message}`
-      );
+      const backendMessage = err.response?.data?.error?.message ?? '';
+      // Translate the backend error message if it's a known pattern
+      const translatedDetail = backendMessage ? getTranslatedErrorMessage(backendMessage) : '';
+      const userMessage = translatedDetail || (t('productGoals.failedToChangeStatus') as string);
       setStatusChangeError(userMessage);
       showErrorToast(userMessage);
     },
@@ -1094,7 +1126,15 @@ export const ProductGoalsPage: React.FC = () => {
                   <div className={styles['goal-card-header']}>
                     <div className={styles['goal-status-indicator']}>
                       <span className={`${styles['status-dot']} ${styles[statusClass]}`} />
-                      <span className={styles['status-text']}>{goal.status}</span>
+                      <span className={styles['status-text']}>
+                        {t(
+                          `productGoalStatus.${goal.status.toUpperCase()}` as
+                            | 'productGoalStatus.NEW'
+                            | 'productGoalStatus.ACTIVE'
+                            | 'productGoalStatus.COMPLETED'
+                            | 'productGoalStatus.ABANDONED'
+                        )}
+                      </span>
                     </div>
                     <div className={styles['goal-actions']}>
                       <button
@@ -1261,7 +1301,13 @@ export const ProductGoalsPage: React.FC = () => {
                         </td>
                         <td>
                           <span className={`${styles['status-badge']} ${styles[tableStatusClass]}`}>
-                            {goal.status}
+                            {t(
+                              `productGoalStatus.${goal.status.toUpperCase()}` as
+                                | 'productGoalStatus.NEW'
+                                | 'productGoalStatus.ACTIVE'
+                                | 'productGoalStatus.COMPLETED'
+                                | 'productGoalStatus.ABANDONED'
+                            )}
                           </span>
                         </td>
                         <td>
@@ -1493,7 +1539,7 @@ export const ProductGoalsPage: React.FC = () => {
                               <strong
                                 className={`${styles['status-badge']} ${styles[goalToDelete.status.toLowerCase()]}`}
                               >
-                                {goalToDelete.status}
+                                {t(GOAL_STATUS_LABEL_KEYS[goalToDelete.status] as never)}
                               </strong>
                             </span>
                           </div>

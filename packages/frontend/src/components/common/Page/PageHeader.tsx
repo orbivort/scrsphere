@@ -1,6 +1,7 @@
 // Page Header Component
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { ArrowLeftIcon } from '../Icons';
 
@@ -22,9 +23,12 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   title,
   subtitle,
   onBack,
-  backLabel = 'Back',
+  backLabel,
   actions,
 }) => {
+  const { t } = useTranslation('common');
+  const displayBackLabel = backLabel ?? t('back');
+
   return (
     <header className={styles.header}>
       <div className={styles.content}>
@@ -34,10 +38,10 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
               type="button"
               className={styles['back-button']}
               onClick={onBack}
-              aria-label={backLabel}
+              aria-label={displayBackLabel}
             >
               <ArrowLeftIcon size={20} />
-              <span className={styles['back-label']}>{backLabel}</span>
+              <span className={styles['back-label']}>{displayBackLabel}</span>
             </button>
           )}
           <div className={styles['text-content']}>

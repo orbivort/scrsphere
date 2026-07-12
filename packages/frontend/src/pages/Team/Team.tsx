@@ -61,18 +61,21 @@ const isInvalidTeamId = (teamId: string | undefined): boolean => {
   );
 };
 
-const parseTeamError = (error: Error | null, teamId: string | undefined): TeamErrorState => {
+const parseTeamError = (
+  error: Error | null,
+  teamId: string | undefined,
+  t: (key: string) => string
+): TeamErrorState => {
   if (isInvalidTeamId(teamId)) {
     return {
       type: 'no_team',
-      message: "You haven't been invited to a team yet",
-      details:
-        'Your account is registered but you need to be invited to a team by project administrator before you can access team features.',
+      message: t('errorStates.notInvited'),
+      details: t('errorStates.notInvitedDetails'),
     };
   }
 
   if (!error) {
-    return { type: 'unknown', message: 'An unexpected error occurred' };
+    return { type: 'unknown', message: t('errorStates.unexpectedError') };
   }
 
   const errorMessage = error.message.toLowerCase();
@@ -80,38 +83,36 @@ const parseTeamError = (error: Error | null, teamId: string | undefined): TeamEr
   if (errorMessage.includes('422') || errorMessage.includes('validation')) {
     return {
       type: 'validation_error',
-      message: 'Team access required',
-      details:
-        'Your account needs to be associated with a valid team. Please contact project administrator to receive a team invitation.',
+      message: t('errorStates.teamAccessRequired'),
+      details: t('errorStates.teamAccessRequiredDetails'),
     };
   }
 
   if (errorMessage.includes('404') || errorMessage.includes('not found')) {
     return {
       type: 'not_found',
-      message: 'Team not found',
-      details: "The team you're looking for doesn't exist or has been deleted.",
+      message: t('errorStates.teamNotFound'),
+      details: t('errorStates.teamNotFoundDetails'),
     };
   }
 
   if (errorMessage.includes('403') || errorMessage.includes('forbidden')) {
     return {
       type: 'forbidden',
-      message: 'Access denied',
-      details:
-        "You don't have permission to access this team. Please contact your team administrator.",
+      message: t('errorStates.accessDenied'),
+      details: t('errorStates.accessDeniedDetails'),
     };
   }
 
   return {
     type: 'unknown',
-    message: 'Unable to load team',
-    details: 'An error occurred while loading team information. Please try again later.',
+    message: t('errorStates.unableToLoad'),
+    details: t('errorStates.unableToLoadDetails'),
   };
 };
 
 export const TeamManagement: React.FC = () => {
-  const { t } = useTranslation('team');
+  const { t, i18n } = useTranslation('team');
   const { currentTeam, setCurrentTeam, userTeamsWithRoles } = useTeamStore();
   const { user } = useAuthStore();
   const navigate = useNavigate();
@@ -150,17 +151,17 @@ export const TeamManagement: React.FC = () => {
 
   const validateEmail = (email: string): { valid: boolean; error?: string } => {
     if (!email || email.trim() === '') {
-      return { valid: false, error: 'Email address is required' };
+      return { valid: false, error: t('inviteErrors.emailRequired') };
     }
 
     const trimmedEmail = email.trim().toLowerCase();
 
     if (!EMAIL_REGEX.test(trimmedEmail)) {
-      return { valid: false, error: 'Please enter a valid email address' };
+      return { valid: false, error: t('inviteErrors.invalidEmail') };
     }
 
     if (trimmedEmail.length > 254) {
-      return { valid: false, error: 'Email address is too long' };
+      return { valid: false, error: t('inviteErrors.emailTooLong') };
     }
 
     return { valid: true };
@@ -267,7 +268,12 @@ export const TeamManagement: React.FC = () => {
         ? `${response.data.user.firstName} ${response.data.user.lastName || ''}`.trim()
         : (response.data?.user?.email ?? 'User');
       setInviteSuccess(
-        `${memberName} has been successfully added to the team as ${newMemberRole.replace('_', ' ')}`
+        t('inviteModal.addedSuccess', {
+          name: memberName,
+          role: t(
+            `memberCard.roleNames.${newMemberRole === 'scrum_master' ? 'scrumMaster' : newMemberRole === 'product_owner' ? 'productOwner' : newMemberRole}` as never
+          ),
+        })
       );
     },
     onError: (error: Error) => {
@@ -275,23 +281,19 @@ export const TeamManagement: React.FC = () => {
       const errorMessage = error.message.toLowerCase();
 
       if (errorMessage.includes('404') || errorMessage.includes('not found')) {
-        setInviteError(
-          'No user found with this email address. The user must register first before being added to a team.'
-        );
+        setInviteError(t('inviteErrors.userNotFound'));
       } else if (
         errorMessage.includes('409') ||
         errorMessage.includes('conflict') ||
         errorMessage.includes('already')
       ) {
-        setInviteError('This user is already a member of the team.');
+        setInviteError(t('errors.memberAlreadyExists'));
       } else if (errorMessage.includes('403') || errorMessage.includes('forbidden')) {
-        setInviteError(
-          'You do not have permission to add team members. Only Product Owners and Scrum Masters can invite members.'
-        );
+        setInviteError(t('errors.noPermissionToAddMembers'));
       } else if (errorMessage.includes('network') || errorMessage.includes('connection')) {
-        setInviteError('Network error. Please check your connection and try again.');
+        setInviteError(t('errors.networkError'));
       } else {
-        setInviteError('Failed to add team member. Please try again later.');
+        setInviteError(t('errors.genericInviteError'));
       }
     },
   });
@@ -304,12 +306,12 @@ export const TeamManagement: React.FC = () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.team.byId(teamId) });
       setMemberToDelete(null);
       setDeleteError(null);
-      setDeleteSuccess('Team member has been successfully removed.');
+      setDeleteSuccess(t('errors.memberRemoved'));
     },
     onError: (error: Error | AxiosError<ApiResponse<never>>) => {
       logger.error('Failed to remove team member', undefined, { error });
 
-      let errorMessage = 'Failed to remove team member. Please try again later.';
+      let errorMessage = t('errors.genericRemoveError');
 
       if (error instanceof AxiosError && error.response?.data) {
         const apiError = error.response.data;
@@ -321,12 +323,11 @@ export const TeamManagement: React.FC = () => {
       } else if (error.message) {
         const msg = error.message.toLowerCase();
         if (msg.includes('403') || msg.includes('forbidden')) {
-          errorMessage =
-            'You do not have permission to remove team members. Only Scrum Masters and Product Owners can remove members.';
+          errorMessage = t('errors.noPermissionToRemoveMembers');
         } else if (msg.includes('404') || msg.includes('not found')) {
-          errorMessage = 'Team member not found. They may have already been removed.';
+          errorMessage = t('errors.memberNotFound');
         } else if (msg.includes('network') || msg.includes('connection')) {
-          errorMessage = 'Network error. Please check your connection and try again.';
+          errorMessage = t('errors.networkError');
         } else {
           errorMessage = error.message;
         }
@@ -421,7 +422,7 @@ export const TeamManagement: React.FC = () => {
     const normalizedEmail = newMemberEmail.trim().toLowerCase();
 
     if (isUserAlreadyMember(normalizedEmail)) {
-      setInviteError('This user is already a member of the team.');
+      setInviteError(t('inviteErrors.alreadyMember'));
       return;
     }
 
@@ -441,13 +442,13 @@ export const TeamManagement: React.FC = () => {
     let errorState: TeamErrorState | null = null;
 
     if (isUninvitedUser) {
-      errorState = parseTeamError(null, teamId);
+      errorState = parseTeamError(null, teamId, t as (key: string) => string);
     } else if (teamsError) {
-      errorState = parseTeamError(teamsError, teamId);
+      errorState = parseTeamError(teamsError, teamId, t as (key: string) => string);
     } else if (!teams || teams.length === 0) {
-      errorState = parseTeamError(null, teamId);
+      errorState = parseTeamError(null, teamId, t as (key: string) => string);
     } else if (teamQueryError) {
-      errorState = parseTeamError(teamQueryError, teamId);
+      errorState = parseTeamError(teamQueryError, teamId, t as (key: string) => string);
     } else if (teamData && !teamData.success) {
       errorState = {
         type: 'unknown',
@@ -456,7 +457,7 @@ export const TeamManagement: React.FC = () => {
     }
 
     return errorState;
-  }, [teamData, teamQueryError, isUninvitedUser, teamId, teamsError, teams]);
+  }, [teamData, teamQueryError, isUninvitedUser, teamId, teamsError, teams, t]);
 
   useEffect(() => {
     if (teamData?.success && teamData.data) {
@@ -582,13 +583,10 @@ export const TeamManagement: React.FC = () => {
                   <div className={styles['role-icon-leadership']}>
                     <CrownIcon size={24} />
                   </div>
-                  <div className={styles['role-badge-leadership']}>Leadership</div>
+                  <div className={styles['role-badge-leadership']}>{t('leadership.badge')}</div>
                 </div>
                 <h3 className={styles['role-title']}>{t('leadership.title')}</h3>
-                <p className={styles['role-description']}>
-                  As an agile leader, you have the authority to create and manage teams. Take charge
-                  of your project&apos;s success by establishing your team workspace.
-                </p>
+                <p className={styles['role-description']}>{t('leadership.description')}</p>
                 <div className={styles['role-actions']}>
                   <button
                     className={styles['cta-button-primary']}
@@ -601,7 +599,7 @@ export const TeamManagement: React.FC = () => {
                   </button>
                 </div>
                 <div className={styles['role-steps']}>
-                  <h4>Quick Start Process:</h4>
+                  <h4>{t('leadership.quickStartTitle')}</h4>
                   <div className={styles['steps-indicator']}>
                     <div className={styles['step-item']}>
                       <span className={styles['step-number']}>1</span>
@@ -626,7 +624,7 @@ export const TeamManagement: React.FC = () => {
                   <div className={styles['role-icon-developer']}>
                     <CodeIcon size={24} />
                   </div>
-                  <div className={styles['role-badge-developer']}>Team Member</div>
+                  <div className={styles['role-badge-developer']}>{t('developer.badge')}</div>
                 </div>
                 <h3 className={styles['role-title']}>{t('developer.title')}</h3>
                 <p className={styles['role-description']}>{t('developer.description')}</p>
@@ -659,7 +657,7 @@ export const TeamManagement: React.FC = () => {
             </div>
 
             <div className={styles['features-section']}>
-              <h3 className={styles['features-title']}>Platform Capabilities</h3>
+              <h3 className={styles['features-title']}>{t('capabilities.title')}</h3>
               <div className={styles['welcome-features']}>
                 <div className={styles['feature-card']}>
                   <div className={styles['feature-icon']}>
@@ -698,10 +696,7 @@ export const TeamManagement: React.FC = () => {
               </div>
               <div className={styles['help-content']}>
                 <h4>{t('help.title')}</h4>
-                <p>
-                  If you&apos;re unsure about your role or need assistance, contact your
-                  organization administrator or check with your project manager.
-                </p>
+                <p>{t('help.description')}</p>
               </div>
             </div>
           </div>
@@ -756,7 +751,9 @@ export const TeamManagement: React.FC = () => {
         </div>
         <div className={styles['header-right']}>
           <TeamSwitcher />
-          {team && <span className={styles['team-id']}>Team ID: {team.id}</span>}
+          {team && (
+            <span className={styles['team-id']}>{t('teamInfo.teamId', { id: team.id })}</span>
+          )}
         </div>
       </header>
 
@@ -765,16 +762,20 @@ export const TeamManagement: React.FC = () => {
           <div className={styles['team-info-header']}>
             <h2 id="team-name">{team.name}</h2>
             <span className={styles['team-size']}>
-              {team.members?.length ?? 0} member{team.members?.length !== 1 ? 's' : ''}
+              {t('teamInfo.memberCount', { count: team.members?.length ?? 0 })}
             </span>
           </div>
           {team.description && <p className={styles['team-description']}>{team.description}</p>}
           <div className={styles['team-meta']}>
             <span className={styles['meta-item']}>
-              Created: {new Date(team.createdAt).toLocaleDateString()}
+              {t('teamInfo.created', {
+                date: new Date(team.createdAt).toLocaleDateString(i18n.language),
+              })}
             </span>
             <span className={styles['meta-item']}>
-              Last updated: {new Date(team.updatedAt).toLocaleDateString()}
+              {t('teamInfo.lastUpdated', {
+                date: new Date(team.updatedAt).toLocaleDateString(i18n.language),
+              })}
             </span>
           </div>
         </section>
@@ -818,14 +819,14 @@ export const TeamManagement: React.FC = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className={styles['search-input']}
-                aria-label="Search team members"
+                aria-label={t('members.searchAriaLabel')}
               />
               {searchQuery && (
                 <button
                   type="button"
                   className={styles['search-clear']}
                   onClick={() => setSearchQuery('')}
-                  aria-label="Clear search"
+                  aria-label={t('members.clearSearchAriaLabel')}
                 >
                   <CloseIcon size={14} />
                 </button>
@@ -836,7 +837,7 @@ export const TeamManagement: React.FC = () => {
                 value={roleFilter}
                 onChange={(e) => setRoleFilter(e.target.value)}
                 className={styles['filter-select']}
-                aria-label="Filter by role"
+                aria-label={t('members.filterByRoleAriaLabel')}
               >
                 <option value="all">{t('members.filterOptions.allRoles')}</option>
                 <option value="product_owner">{t('members.filterOptions.productOwner')}</option>
@@ -847,13 +848,17 @@ export const TeamManagement: React.FC = () => {
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as 'name' | 'role' | 'joined')}
                 className={styles['filter-select']}
-                aria-label="Sort members by"
+                aria-label={t('members.sortByAriaLabel')}
               >
                 <option value="name">{t('members.sortOptions.byName')}</option>
                 <option value="role">{t('members.sortOptions.byRole')}</option>
                 <option value="joined">{t('members.sortOptions.byJoined')}</option>
               </select>
-              <div className={styles['view-toggle']} role="group" aria-label="View mode">
+              <div
+                className={styles['view-toggle']}
+                role="group"
+                aria-label={t('members.viewModeAriaLabel')}
+              >
                 <button
                   type="button"
                   className={`${styles['view-toggle-btn']} ${viewMode === 'card' ? styles.active : ''}`}

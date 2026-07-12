@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { AlertTriangleIcon } from '../common/Icons';
 import { useUnreadCount } from '../../hooks/useNotifications';
@@ -6,6 +7,7 @@ import { useUnreadCount } from '../../hooks/useNotifications';
 import styles from './NotificationBadge.module.css';
 
 export const NotificationBadge: React.FC = () => {
+  const { t } = useTranslation('common');
   const { data, isLoading, error } = useUnreadCount();
 
   const count = data?.count ?? 0;
@@ -13,7 +15,10 @@ export const NotificationBadge: React.FC = () => {
 
   if (error) {
     return (
-      <div className={styles['notification-badge-error']} title="Connection error">
+      <div
+        className={styles['notification-badge-error']}
+        title={t('notifications.connectionError')}
+      >
         <AlertTriangleIcon size={12} />
       </div>
     );

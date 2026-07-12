@@ -56,7 +56,18 @@
     "error": "Failed to load status history",
     "failedToLoadHistory": "Failed to load history",
     "empty": "No status changes recorded",
-    "noStatusChangesYet": "No status changes recorded yet"
+    "noStatusChangesYet": "No status changes recorded yet",
+    "timeJustNow": "Just now",
+    "timeMinutesAgo": "{{count}}m ago",
+    "timeHoursAgo": "{{count}}h ago",
+    "timeDaysAgo": "{{count}}d ago",
+    "errorUnexpected": "An unexpected error occurred",
+    "errorAttempts": "Attempt {{attempt}} of 3 failed",
+    "retrying": "Retrying...",
+    "dismiss": "Dismiss",
+    "stateNew": "New",
+    "stateUnknown": "Unknown",
+    "unknownUser": "Unknown User"
   },
   "createItem": {
     "title": "Create Backlog Item",
@@ -195,7 +206,8 @@
     "noLabelsAssigned": "No labels assigned",
     "noAcceptanceCriteriaDefined": "No acceptance criteria defined",
     "noAssignee": "Unassigned",
-    "viewStatusHistory": "View Status History"
+    "viewStatusHistory": "View Status History",
+    "cannotMarkAsDone": "Cannot mark as Done. The following tasks are incomplete: {{taskNames}}{{moreCount}}. Total incomplete tasks: {{incompleteCount}}"
   },
   "validation": {
     "dorTitle": "Definition of Ready Verification",
@@ -217,19 +229,68 @@
   "moscow": {
     "mustHave": "Must Have",
     "mustShort": "Must",
+    "mustHaveDesc": "Critical for delivery - Non-negotiable",
     "shouldHave": "Should Have",
     "shouldShort": "Should",
+    "shouldHaveDesc": "Important but not vital - High priority",
     "couldHave": "Could Have",
     "couldShort": "Could",
+    "couldHaveDesc": "Desirable if possible - Nice to have",
     "wontHave": "Won't Have",
-    "wontShort": "Won't"
+    "wontShort": "Won't",
+    "wontHaveDesc": "Not in this release - Out of scope"
   },
   "status": {
     "new": "New",
+    "newDesc": "Newly created item",
     "refined": "Refined",
+    "refinedDesc": "Requirements clarified",
     "ready": "Ready",
+    "readyDesc": "Ready for sprint",
     "inProgress": "In Progress",
-    "done": "Done"
+    "inProgressDesc": "Currently being worked on",
+    "done": "Done",
+    "doneDesc": "Completed"
+  },
+  "businessValueOptions": {
+    "1": "Minimal value",
+    "2": "Low value",
+    "3": "Moderate value",
+    "5": "High value",
+    "8": "Very high value",
+    "13": "Critical value"
+  },
+  "estimateOptions": {
+    "1": "Trivial effort",
+    "2": "Very small effort",
+    "3": "Small effort",
+    "5": "Medium effort",
+    "8": "Large effort",
+    "13": "Very large effort"
+  },
+  "productGoalStatus": {
+    "NEW": "New",
+    "ACTIVE": "Active",
+    "COMPLETED": "Completed",
+    "ABANDONED": "Abandoned"
+  },
+  "sprintStatus": {
+    "PLANNED": "Planned",
+    "ACTIVE": "Active",
+    "COMPLETED": "Completed",
+    "CANCELLED": "Cancelled"
+  },
+  "moscowLabels": {
+    "MUST_HAVE": "Must Have",
+    "SHOULD_HAVE": "Should Have",
+    "COULD_HAVE": "Could Have",
+    "WONT_HAVE": "Won't Have"
+  },
+  "moscowDescriptions": {
+    "MUST_HAVE": "Critical for delivery - Non-negotiable",
+    "SHOULD_HAVE": "Important but not vital - High priority",
+    "COULD_HAVE": "Desirable if possible - Nice to have",
+    "WONT_HAVE": "Not in this release - Out of scope"
   },
   "pendingRetro": {
     "title": "Pending Retro Actions",
@@ -451,6 +512,7 @@
     "failedToUpdateGoal": "Failed to update product goal",
     "failedToDeleteGoal": "Failed to delete product goal",
     "failedToChangeStatus": "Failed to change status",
+    "invalidTransition": "This status transition is not allowed. Please check the allowed status transitions.",
     "cannotEditGoalStatus": "Cannot edit product goal with status \"{{status}}\". Completed and abandoned goals cannot be edited.",
     "cannotDeleteGoalStatus": "Cannot delete product goal with status \"{{status}}\". Only goals with \"new\" or \"abandoned\" status can be deleted.",
     "cannotDeleteGoalHasItems": "Cannot delete product goal \"{{title}}\" because it has {{count}} associated backlog item{{plural}}. Please remove or reassign the backlog items before deleting this goal.",
@@ -534,5 +596,43 @@
     "successMetricsHelpPanelGoodText": "Achieve 25% increase in mobile app daily active users; reduce offline data sync time to under 5 seconds; maintain 4.5+ star app store rating",
     "successMetricsHelpPanelAvoidLabel": "Avoid",
     "successMetricsHelpPanelAvoidText": "Make users happy and improve performance"
+  },
+  "validation": {
+    "teamIdRequired": "Team ID is required. Please select a team first.",
+    "activeGoalRequired": "An active goal is required. Please set an active product goal first.",
+    "titleRequired": "Title is required. Please enter a descriptive title for this backlog item.",
+    "titleTooShort": "Title is too short ({{length}} characters). Please use at least 5 characters to provide a clear description.",
+    "titleTooLong": "Title exceeds maximum length by {{overBy}} character{{plural}}. Current: {{current}}/200 characters. Please shorten your title.",
+    "descriptionRequired": "Description is required. Please provide detailed information about this backlog item.",
+    "moscowPriorityRequired": "MoSCoW Priority is required. Please select one of the four priority levels.",
+    "estimateRequired": "Estimate is required. Please select a story point value from the dropdown.",
+    "estimateMinimum": "Estimate must be at least 1 story point. Please select a valid value.",
+    "estimateMinimumOptional": "Estimate must be at least 1 story point. Please select a value from the dropdown or leave empty if not ready to estimate.",
+    "estimateTooLarge": "Estimate ({{estimate}}) exceeds maximum of 100 story points. For larger work items, consider breaking this into smaller, more manageable backlog items.",
+    "businessValueRequired": "Business Value is required. Please select a value that reflects the importance of this item.",
+    "businessValueMinimum": "Business Value must be at least 1 point. Please select a valid value.",
+    "businessValueMinimumOptional": "Business Value must be at least 1 point. Please select a value that reflects the relative importance of this item.",
+    "businessValueTooLarge": "Business Value ({{value}}) exceeds maximum of 100 points. Please select a value that fits within the standard range.",
+    "labelsRequired": "At least one label is required. Please add a label to categorize this item.",
+    "acceptanceCriteriaRequired": "Acceptance Criteria is required. Please define specific, testable conditions for completion.",
+    "statusRequired": "Status is required.",
+    "statusAlreadySet": "Item is already in this status",
+    "invalidTransition": "Transition from {{current}} to {{target}} is not allowed. Allowed transitions: {{allowed}}",
+    "none": "None",
+    "fieldTitle": "Title (minimum 5 characters)",
+    "fieldDescription": "Description",
+    "fieldMoscowPriority": "MoSCoW Priority",
+    "fieldBusinessValue": "Business Value",
+    "fieldEstimate": "Estimate (Story Points)",
+    "fieldLabels": "Labels (at least one)",
+    "fieldAcceptanceCriteria": "Acceptance Criteria",
+    "cannotChangeStatus": "Cannot change status to \"{{status}}\". The following mandatory fields must be completed first: {{fields}}. Please click \"Edit Item\" to update this backlog item."
+  },
+  "workflowTransitions": {
+    "newDescription": "New items must be refined first",
+    "refinedDescription": "Refined items can be marked ready or sent back to new",
+    "readyDescription": "Ready items can be started or sent back to refined",
+    "inProgressDescription": "In progress items can be completed or sent back to ready",
+    "doneDescription": "Completed items cannot be transitioned"
   }
 }

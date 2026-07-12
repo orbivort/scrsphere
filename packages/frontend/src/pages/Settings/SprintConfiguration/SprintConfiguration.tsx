@@ -431,7 +431,15 @@ export const SprintConfiguration: React.FC = () => {
               <div key={sprint.id} className={getSprintItemClassName(sprint.status)}>
                 <div className={styles['sprint-item-header']}>
                   <span className={styles['sprint-name']}>{sprint.name}</span>
-                  <span className={getSprintStatusClassName(sprint.status)}>{sprint.status}</span>
+                  <span className={getSprintStatusClassName(sprint.status)}>
+                    {t(
+                      `sprintStatus.${sprint.status.toUpperCase()}` as
+                        | 'sprintStatus.ACTIVE'
+                        | 'sprintStatus.COMPLETED'
+                        | 'sprintStatus.PLANNED'
+                        | 'sprintStatus.CANCELLED'
+                    )}
+                  </span>
                 </div>
                 <div className={styles['sprint-item-dates']}>
                   <span className={styles['date-range']}>

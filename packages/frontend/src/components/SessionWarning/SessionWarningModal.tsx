@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useModalFocus } from '../../hooks/useModalFocus';
 import { logger } from '../../utils/logger';
@@ -20,6 +21,7 @@ export const SessionWarningModal: React.FC<SessionWarningModalProps> = ({
   onExtendSession,
   onLogout,
 }) => {
+  const { t } = useTranslation('common');
   const [countdown, setCountdown] = useState(timeRemaining);
   const [isExtending, setIsExtending] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
@@ -123,14 +125,13 @@ export const SessionWarningModal: React.FC<SessionWarningModalProps> = ({
               <div className={styles['icon-ring']} />
             </div>
             <h3 id="session-warning-title" className={styles.title}>
-              Session Timeout Warning
+              {t('sessionWarning.title')}
             </h3>
           </div>
 
           {/* Message */}
           <p id="session-warning-message" className={styles.message}>
-            Your session will expire soon due to inactivity. You will be automatically logged out
-            in:
+            {t('sessionWarning.message')}
           </p>
 
           {/* Countdown timer */}
@@ -151,12 +152,12 @@ export const SessionWarningModal: React.FC<SessionWarningModalProps> = ({
               <RefreshIcon
                 className={`${styles['button-icon']} ${isExtending ? styles.spinning : ''}`}
               />
-              {isExtending ? 'Extending...' : 'Stay Logged In'}
+              {isExtending ? t('sessionWarning.extending') : t('sessionWarning.stayLoggedIn')}
             </button>
 
             <button onClick={onLogout} className={styles['secondary-button']}>
               <LogOutIcon className={styles['button-icon']} />
-              Log Out
+              {t('sessionWarning.logOut')}
             </button>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useAuthStore, useToastStore } from '../../store';
 import { validatePasswordChange, type ValidationErrors } from '../../utils/validation';
@@ -6,7 +7,6 @@ import {
   checkPasswordRequirements,
   calculatePasswordStrength,
   getPasswordStrengthColor,
-  getPasswordStrengthLabel,
   type PasswordRequirements,
   type PasswordStrength,
 } from '../../utils/passwordStrength';
@@ -36,6 +36,8 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
 }) => {
   const { changePassword, isChangingPassword, passwordChangeError, clearProfileErrors } =
     useAuthStore();
+  const { t } = useTranslation('common');
+  const success = useToastStore((state) => state.success);
 
   const [formData, setFormData] = useState({
     currentPassword: '',
@@ -55,7 +57,6 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
     hasSpecial: false,
   });
   const [passwordStrength, setPasswordStrength] = useState<PasswordStrength>('weak');
-  const success = useToastStore((state) => state.success);
 
   const currentPasswordInputRef = useRef<HTMLInputElement>(null);
 
@@ -103,17 +104,25 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
       handlePasswordChange(value);
     }
 
-    const validationErrors = validatePasswordChange({
-      ...formData,
-      [field]: value,
-    });
+    const validationErrors = validatePasswordChange(
+      {
+        ...formData,
+        [field]: value,
+      },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Dynamic validation key
+      (key, options) => (t as any)(key, options) as string
+    );
     setErrors(validationErrors);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const validationErrors = validatePasswordChange(formData);
+    const validationErrors = validatePasswordChange(
+      formData,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Dynamic validation key
+      (key, options) => (t as any)(key, options) as string
+    );
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
@@ -131,7 +140,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
         confirmPassword: '',
       });
       onDirtyChange?.(false);
-      success('Password changed successfully');
+      success(t('profile.passwordChanged'));
       onClose();
     }
   };
@@ -159,12 +168,12 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
             <span className={styles['header-icon']}>
               <LockIcon size={24} />
             </span>
-            Change Password
+            {t('profile.changePasswordTitle')}
           </h2>
           <button
             onClick={onClose}
             className={styles['close-button']}
-            aria-label="Close"
+            aria-label={t('close')}
             type="button"
           >
             <CloseIcon size={18} />
@@ -183,7 +192,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
 
           <div className={styles['form-group']}>
             <label htmlFor="currentPassword" className={styles['form-label']}>
-              Current Password
+              {t('profile.currentPassword')}
               <span className={styles.required}>*</span>
             </label>
             <div className={styles['password-input-wrapper']}>
@@ -197,13 +206,15 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
                 aria-describedby={errors.currentPassword ? 'currentPassword-error' : undefined}
                 disabled={isChangingPassword}
                 autoComplete="current-password"
-                placeholder="Enter your current password"
+                placeholder={t('profile.placeholder.currentPassword')}
               />
               <button
                 type="button"
                 className={styles['toggle-password']}
                 onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                aria-label={showCurrentPassword ? 'Hide password' : 'Show password'}
+                aria-label={
+                  showCurrentPassword ? t('profile.hidePassword') : t('profile.showPassword')
+                }
                 tabIndex={-1}
               >
                 {showCurrentPassword ? <EyeOffIcon size={18} /> : <EyeIcon size={18} />}
@@ -218,7 +229,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
 
           <div className={styles['form-group']}>
             <label htmlFor="newPassword" className={styles['form-label']}>
-              New Password
+              {t('profile.newPassword')}
               <span className={styles.required}>*</span>
             </label>
             <div className={styles['password-input-wrapper']}>
@@ -233,13 +244,13 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
                 }
                 disabled={isChangingPassword}
                 autoComplete="new-password"
-                placeholder="Enter your new password"
+                placeholder={t('profile.placeholder.newPassword')}
               />
               <button
                 type="button"
                 className={styles['toggle-password']}
                 onClick={() => setShowNewPassword(!showNewPassword)}
-                aria-label={showNewPassword ? 'Hide password' : 'Show password'}
+                aria-label={showNewPassword ? t('profile.hidePassword') : t('profile.showPassword')}
                 tabIndex={-1}
               >
                 {showNewPassword ? <EyeOffIcon size={18} /> : <EyeIcon size={18} />}
@@ -267,12 +278,14 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
                     className={styles['strength-label']}
                     style={{ color: getPasswordStrengthColor(passwordStrength) }}
                   >
-                    {getPasswordStrengthLabel(passwordStrength)}
+                    {t(`profile.passwordStrength.strengthLabels.${passwordStrength}`)}
                   </span>
                 </div>
 
                 <div id="password-requirements" className={styles.requirements}>
-                  <p className={styles['requirements-title']}>Password Requirements:</p>
+                  <p className={styles['requirements-title']}>
+                    {t('profile.passwordStrength.requirementsTitle')}
+                  </p>
                   <ul className={styles['requirements-list']}>
                     <li
                       className={`${styles['requirement-item']} ${passwordRequirements.minLength ? styles.met : styles.unmet}`}
@@ -284,7 +297,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
                           <XCircleIcon size={14} />
                         )}
                       </span>
-                      At least 12 characters
+                      {t('profile.passwordStrength.minLength')}
                     </li>
                     <li
                       className={`${styles['requirement-item']} ${passwordRequirements.hasUppercase ? styles.met : styles.unmet}`}
@@ -296,7 +309,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
                           <XCircleIcon size={14} />
                         )}
                       </span>
-                      One uppercase letter (A-Z)
+                      {t('profile.passwordStrength.uppercase')}
                     </li>
                     <li
                       className={`${styles['requirement-item']} ${passwordRequirements.hasLowercase ? styles.met : styles.unmet}`}
@@ -308,7 +321,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
                           <XCircleIcon size={14} />
                         )}
                       </span>
-                      One lowercase letter (a-z)
+                      {t('profile.passwordStrength.lowercase')}
                     </li>
                     <li
                       className={`${styles['requirement-item']} ${passwordRequirements.hasNumber ? styles.met : styles.unmet}`}
@@ -320,7 +333,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
                           <XCircleIcon size={14} />
                         )}
                       </span>
-                      One number (0-9)
+                      {t('profile.passwordStrength.number')}
                     </li>
                     <li
                       className={`${styles['requirement-item']} ${passwordRequirements.hasSpecial ? styles.met : styles.unmet}`}
@@ -332,7 +345,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
                           <XCircleIcon size={14} />
                         )}
                       </span>
-                      One special character (!@#$%^&*)
+                      {t('profile.passwordStrength.special')}
                     </li>
                   </ul>
                 </div>
@@ -342,7 +355,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
 
           <div className={styles['form-group']}>
             <label htmlFor="confirmPassword" className={styles['form-label']}>
-              Confirm New Password
+              {t('profile.confirmNewPassword')}
               <span className={styles.required}>*</span>
             </label>
             <div className={styles['password-input-wrapper']}>
@@ -355,13 +368,15 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
                 aria-describedby={errors.confirmPassword ? 'confirmPassword-error' : undefined}
                 disabled={isChangingPassword}
                 autoComplete="new-password"
-                placeholder="Confirm your new password"
+                placeholder={t('profile.placeholder.confirmPassword')}
               />
               <button
                 type="button"
                 className={styles['toggle-password']}
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                aria-label={
+                  showConfirmPassword ? t('profile.hidePassword') : t('profile.showPassword')
+                }
                 tabIndex={-1}
               >
                 {showConfirmPassword ? <EyeOffIcon size={18} /> : <EyeIcon size={18} />}
@@ -373,7 +388,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
               </span>
             )}
             {formData.confirmPassword && formData.newPassword === formData.confirmPassword && (
-              <span className={styles.success}>Passwords match</span>
+              <span className={styles.success}>{t('profile.passwordsMatch')}</span>
             )}
           </div>
 
@@ -384,7 +399,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
               className={`${styles.button} ${styles['button-secondary']}`}
               disabled={isChangingPassword}
             >
-              Cancel
+              {t('cancel')}
             </button>
             <button
               type="submit"
@@ -394,10 +409,10 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
               {!isChangingPassword && (
                 <>
                   <SaveIcon size={16} />
-                  Change Password
+                  {t('profile.changePasswordTitle')}
                 </>
               )}
-              {isChangingPassword && 'Changing...'}
+              {isChangingPassword && t('profile.changing')}
             </button>
           </div>
         </form>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 
 import type { TeamMembership } from '../../types/auth.types';
 import { useModalFocus } from '../../hooks/useModalFocus';
@@ -55,6 +56,7 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
   isDeleting,
   error,
 }) => {
+  const { t } = useTranslation('common');
   const [confirmationText, setConfirmationText] = useState('');
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [scheduleConfirmationText, setScheduleConfirmationText] = useState('');
@@ -164,12 +166,12 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
             <span className={styles['modal-title-icon']}>
               <AlertTriangleIcon size={24} />
             </span>
-            Delete Account
+            {t('deleteAccount.title')}
           </h2>
           <button
             onClick={handleClose}
             className={styles['modal-close']}
-            aria-label="Close"
+            aria-label={t('deleteAccount.close')}
             type="button"
             disabled={isDeleting}
           >
@@ -183,40 +185,43 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
               <AlertTriangleIcon size={24} />
             </span>
             <p id="delete-account-description" className={styles['warning-banner-text']}>
-              This action is permanent and cannot be undone. All your data will be permanently
-              deleted.
+              {t('deleteAccount.warningTitle')}
             </p>
           </div>
 
           <div className={styles['user-info-section']}>
-            <p className={styles['user-info-section-label']}>Account to be deleted</p>
+            <p className={styles['user-info-section-label']}>
+              {t('deleteAccount.accountToBeDeleted')}
+            </p>
             <p className={styles['user-info-section-name']}>{userName}</p>
             <p className={styles['user-info-section-email']}>{userEmail}</p>
           </div>
 
           <div className={styles['data-section']}>
-            <h3 className={styles['section-title']}>Data that will be deleted</h3>
+            <h3 className={styles['section-title']}>{t('deleteAccount.dataWillBeDeleted')}</h3>
             <ul className={styles['data-list']}>
               <li className={styles['data-list-item']}>
                 <span className={styles['data-list-icon']}>
                   <ShieldIcon size={16} />
                 </span>
-                Your profile and account information
+                {t('deleteAccount.profileAndAccount')}
               </li>
               <li className={styles['data-list-item']}>
                 <span className={styles['data-list-icon']}>
                   <UsersIcon size={16} />
                 </span>
-                Team memberships and roles
+                {t('deleteAccount.teamMemberships')}
                 {teams.length > 0 && (
-                  <span className={styles['team-count']}>({teams.length} teams)</span>
+                  <span className={styles['team-count']}>
+                    {t('deleteAccount.teamsCount', { count: teams.length })}
+                  </span>
                 )}
               </li>
               <li className={styles['data-list-item']}>
                 <span className={styles['data-list-icon']}>
                   <DatabaseIcon size={16} />
                 </span>
-                All associated data and activity history
+                {t('deleteAccount.associatedData')}
               </li>
             </ul>
           </div>
@@ -225,7 +230,10 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
             <>
               <div className={styles['confirmation-section']}>
                 <label htmlFor="confirmation-input" className={styles['confirmation-label']}>
-                  Type <strong>{CONFIRMATION_PHRASE}</strong> to confirm
+                  <Trans
+                    i18nKey="deleteAccount.confirmationLabel"
+                    values={{ phrase: CONFIRMATION_PHRASE }}
+                  />
                 </label>
                 <input
                   ref={confirmationInputRef}
@@ -234,13 +242,15 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
                   value={confirmationText}
                   onChange={handleConfirmationChange}
                   className={`${styles['confirmation-input']} ${confirmationText && !isConfirmed ? styles['confirmation-input-error'] : ''}`}
-                  placeholder={`Type ${CONFIRMATION_PHRASE}`}
+                  placeholder={t('deleteAccount.confirmationPlaceholder', {
+                    phrase: CONFIRMATION_PHRASE,
+                  })}
                   disabled={isDeleting}
                   autoComplete="off"
                   aria-describedby="confirmation-help"
                 />
                 <span id="confirmation-help" className={styles['confirmation-help']}>
-                  This helps prevent accidental deletion
+                  {t('deleteAccount.confirmationHelp')}
                 </span>
               </div>
 
@@ -255,8 +265,7 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
                     aria-describedby="confirmation-checkbox-help"
                   />
                   <span id="confirmation-checkbox-help" className={styles['checkbox-text']}>
-                    I understand that this action is permanent and cannot be undone. I want to
-                    delete my account and all associated data.
+                    {t('deleteAccount.confirmationCheckbox')}
                   </span>
                 </label>
               </div>
@@ -272,7 +281,10 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
                   htmlFor="schedule-confirmation-input"
                   className={styles['confirmation-label']}
                 >
-                  Type <strong>{SCHEDULE_DELETION_PHRASE}</strong> to schedule deletion
+                  <Trans
+                    i18nKey="deleteAccount.scheduleConfirmationLabel"
+                    values={{ phrase: SCHEDULE_DELETION_PHRASE }}
+                  />
                 </label>
                 <input
                   ref={scheduleConfirmationInputRef}
@@ -281,13 +293,15 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
                   value={scheduleConfirmationText}
                   onChange={handleScheduleConfirmationChange}
                   className={`${styles['confirmation-input']} ${scheduleConfirmationText && !isScheduleConfirmed ? styles['confirmation-input-error'] : ''}`}
-                  placeholder={`Type ${SCHEDULE_DELETION_PHRASE}`}
+                  placeholder={t('deleteAccount.scheduleConfirmationPlaceholder', {
+                    phrase: SCHEDULE_DELETION_PHRASE,
+                  })}
                   disabled={isDeleting}
                   autoComplete="off"
                   aria-describedby="schedule-confirmation-help"
                 />
                 <span id="schedule-confirmation-help" className={styles['confirmation-help']}>
-                  This starts a 14-day grace period
+                  {t('deleteAccount.scheduleConfirmationHelp')}
                 </span>
               </div>
 
@@ -302,8 +316,7 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
                     aria-describedby="schedule-checkbox-help"
                   />
                   <span id="schedule-checkbox-help" className={styles['checkbox-text']}>
-                    I understand that a 14-day grace period will begin, during which team members
-                    will be notified. I can cancel at any time.
+                    {t('deleteAccount.scheduleCheckbox')}
                   </span>
                 </label>
               </div>
@@ -315,12 +328,14 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
               <GracePeriodProgress pendingDeletion={pendingDeletion} />
 
               <div className={styles['what-happens-next']}>
-                <h4 className={styles['what-happens-next-title']}>What happens next</h4>
+                <h4 className={styles['what-happens-next-title']}>
+                  {t('deleteAccount.whatHappensNext')}
+                </h4>
                 <ul className={styles['what-happens-next-list']}>
-                  <li>Team members have been notified</li>
-                  <li>You can still assign a new Product Owner</li>
-                  <li>After the deletion date, you can force-delete your account</li>
-                  <li>You can cancel this request at any time</li>
+                  <li>{t('deleteAccount.teamMembersNotified')}</li>
+                  <li>{t('deleteAccount.canAssignNewPO')}</li>
+                  <li>{t('deleteAccount.afterDeletionDate')}</li>
+                  <li>{t('deleteAccount.canCancelAnytime')}</li>
                 </ul>
               </div>
             </>
@@ -332,7 +347,10 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
 
               <div className={styles['confirmation-section']}>
                 <label htmlFor="force-confirmation-input" className={styles['confirmation-label']}>
-                  Type <strong>{CONFIRMATION_PHRASE}</strong> to confirm
+                  <Trans
+                    i18nKey="deleteAccount.confirmationLabel"
+                    values={{ phrase: CONFIRMATION_PHRASE }}
+                  />
                 </label>
                 <input
                   ref={forceConfirmationInputRef}
@@ -341,13 +359,15 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
                   value={confirmationText}
                   onChange={handleConfirmationChange}
                   className={`${styles['confirmation-input']} ${confirmationText && !isConfirmed ? styles['confirmation-input-error'] : ''}`}
-                  placeholder={`Type ${CONFIRMATION_PHRASE}`}
+                  placeholder={t('deleteAccount.confirmationPlaceholder', {
+                    phrase: CONFIRMATION_PHRASE,
+                  })}
                   disabled={isDeleting}
                   autoComplete="off"
                   aria-describedby="force-confirmation-help"
                 />
                 <span id="force-confirmation-help" className={styles['confirmation-help']}>
-                  This action cannot be undone
+                  {t('deleteAccount.forceConfirmationHelp')}
                 </span>
               </div>
 
@@ -362,8 +382,7 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
                     aria-describedby="force-checkbox-help"
                   />
                   <span id="force-checkbox-help" className={styles['checkbox-text']}>
-                    I understand that teams will lose their Product Owner and I want to permanently
-                    delete my account anyway.
+                    {t('deleteAccount.forceCheckbox')}
                   </span>
                 </label>
               </div>
@@ -390,7 +409,7 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
                 type="button"
               >
                 <XIcon size={16} />
-                Cancel Deletion
+                {t('deleteAccount.cancelDeletion')}
               </button>
               <button
                 onClick={handleClose}
@@ -398,7 +417,7 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
                 disabled={isDeleting}
                 type="button"
               >
-                Close
+                {t('deleteAccount.close')}
               </button>
             </>
           )}
@@ -412,7 +431,7 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
                 type="button"
               >
                 <XIcon size={16} />
-                Cancel Deletion
+                {t('deleteAccount.cancelDeletion')}
               </button>
               <button
                 onClick={handleClose}
@@ -420,7 +439,7 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
                 disabled={isDeleting}
                 type="button"
               >
-                Close
+                {t('deleteAccount.close')}
               </button>
               <button
                 onClick={handleForceDelete}
@@ -431,10 +450,10 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
                 {!isDeleting && (
                   <>
                     <TrashIcon size={16} />
-                    Delete Anyway
+                    {t('deleteAccount.deleteAnyway')}
                   </>
                 )}
-                {isDeleting && 'Deleting...'}
+                {isDeleting && t('deleteAccount.deleting')}
               </button>
             </>
           )}
@@ -447,7 +466,7 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
                 disabled={isDeleting}
                 type="button"
               >
-                Cancel
+                {t('cancel')}
               </button>
               <button
                 onClick={handleDelete}
@@ -458,10 +477,10 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
                 {!isDeleting && (
                   <>
                     <TrashIcon size={16} />
-                    Delete Account
+                    {t('deleteAccount.deleteAccount')}
                   </>
                 )}
-                {isDeleting && 'Deleting...'}
+                {isDeleting && t('deleteAccount.deleting')}
               </button>
             </>
           )}
@@ -474,7 +493,7 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
                 disabled={isDeleting}
                 type="button"
               >
-                Cancel
+                {t('cancel')}
               </button>
               <button
                 onClick={handleScheduleDeletion}
@@ -485,10 +504,10 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
                 {!isDeleting && (
                   <>
                     <CalendarIcon size={16} />
-                    Schedule Deletion
+                    {t('deleteAccount.scheduleDeletion')}
                   </>
                 )}
-                {isDeleting && 'Scheduling...'}
+                {isDeleting && t('deleteAccount.scheduling')}
               </button>
             </>
           )}

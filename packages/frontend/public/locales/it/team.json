@@ -7,8 +7,11 @@
     "selectRole": "Seleziona il tuo ruolo per continuare"
   },
   "leadership": {
+    "badge": "Leadership",
     "title": "Scrum Master o Product Owner",
+    "description": "Come leader agile, hai l'autorità di creare e gestire teams. Assumi la responsabilità del successo del tuo progetto stabilendo il tuo workspace del team.",
     "createTeam": "Crea Nuovo Team",
+    "quickStartTitle": "Processo Quick Start:",
     "quickStart": {
       "step1": "Crea team",
       "step2": "Invita membri",
@@ -17,6 +20,7 @@
   },
   "developer": {
     "title": "Developer",
+    "badge": "Membro del Team",
     "description": "Unisciti a un team Scrum esistente...",
     "howToJoin": {
       "title": "Come unirsi a un team",
@@ -27,6 +31,7 @@
     "checkInvitations": "Controlla Inviti"
   },
   "capabilities": {
+    "title": "Capacità della Piattaforma",
     "teamCollaboration": "Collaborazione del Team",
     "teamCollaborationDesc": "Lavorare insieme efficacemente con obiettivi condivisi e visibilità",
     "sprintPlanning": "Sprint Planning",
@@ -37,7 +42,8 @@
     "agileCeremoniesDesc": "Facilitare Daily Scrum, Review e Retrospective"
   },
   "help": {
-    "title": "Hai bisogno di aiuto per iniziare?"
+    "title": "Hai bisogno di aiuto per iniziare?",
+    "description": "Se non sei sicuro del tuo ruolo o hai bisogno di assistenza, contatta l'amministratore della tua organizzazione o verifica con il tuo project manager."
   },
   "errorStates": {
     "notInvited": "Non sei stato ancora invitato a un team",
@@ -48,6 +54,10 @@
     "tryAgain": "Riprova"
   },
   "teamInfo": {
+    "memberCount": "{{count}} membri",
+    "created": "Creato: {{date}}",
+    "lastUpdated": "Ultimo aggiornamento: {{date}}",
+    "teamId": "ID del team: {{id}}",
     "unavailable": "Informazioni del Team non disponibili",
     "unableToLoad": "Impossibile caricare i dettagli del team. Per favore prova ad aggiornare la pagina."
   },
@@ -157,5 +167,15 @@
     },
     "unsavedTitle": "Messaggio Non Inviato",
     "unsavedMessage": "Hai un messaggio non inviato. Sei sicuro di volerlo scartare?"
+  },
+  "errors": {
+    "memberAlreadyExists": "Questo utente è già membro del team.",
+    "noPermissionToAddMembers": "Non hai il permesso di aggiungere membri al team. Solo i Product Owner e gli Scrum Master possono invitare membri.",
+    "noPermissionToRemoveMembers": "Non hai il permesso di rimuovere membri dal team. Solo gli Scrum Master e i Product Owner possono rimuovere membri.",
+    "networkError": "Errore di rete. Per favore controlla la tua connessione e riprova.",
+    "memberNotFound": "Membro non trovato. Potrebbe essere stato già rimosso.",
+    "genericInviteError": "Impossibile aggiungere il membro. Per favore riprova più tardi.",
+    "genericRemoveError": "Impossibile rimuovere il membro. Per favore riprova più tardi.",
+    "memberRemoved": "Il membro è stato rimosso con successo."
   }
 }

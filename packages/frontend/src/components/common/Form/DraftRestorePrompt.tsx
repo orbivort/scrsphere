@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import styles from './DraftRestorePrompt.module.css';
 
@@ -13,8 +14,10 @@ export const DraftRestorePrompt: React.FC<DraftRestorePromptProps> = ({
   onRestore,
   onDiscard,
 }) => {
+  const { t } = useTranslation('common');
+
   const formatTime = (date: Date | null): string => {
-    if (!date) return 'recently';
+    if (!date) return t('draftRestore.recently');
 
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
@@ -22,10 +25,10 @@ export const DraftRestorePrompt: React.FC<DraftRestorePromptProps> = ({
     const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-    if (diffMins < 1) return 'just now';
-    if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? 's' : ''} ago`;
-    if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
-    return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+    if (diffMins < 1) return t('draftRestore.justNow');
+    if (diffMins < 60) return t('draftRestore.minutesAgo', { count: diffMins });
+    if (diffHours < 24) return t('draftRestore.hoursAgo', { count: diffHours });
+    return t('draftRestore.daysAgo', { count: diffDays });
   };
 
   return (
@@ -33,18 +36,18 @@ export const DraftRestorePrompt: React.FC<DraftRestorePromptProps> = ({
       <div className={styles['draft-icon']}>📝</div>
       <div className={styles['draft-content']}>
         <h4 id="draft-title" className={styles['draft-title']}>
-          Restore unsaved progress?
+          {t('draftRestore.restorePrompt')}
         </h4>
         <p className={styles['draft-text']}>
-          We found a draft you were working on {formatTime(lastSavedAt)}.
+          {t('draftRestore.draftFound', { time: formatTime(lastSavedAt) })}
         </p>
       </div>
       <div className={styles['draft-actions']}>
         <button type="button" className={styles['discard-btn']} onClick={onDiscard}>
-          Start Fresh
+          {t('draftRestore.startFresh')}
         </button>
         <button type="button" className={styles['restore-btn']} onClick={onRestore} autoFocus>
-          Restore Draft
+          {t('draftRestore.restoreDraft')}
         </button>
       </div>
     </div>

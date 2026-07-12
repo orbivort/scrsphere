@@ -1,5 +1,6 @@
 /* eslint-disable icon-rules/no-inline-svg -- Dynamic icons from config and loading spinner */
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import styles from './StatusSelector.module.css';
 
@@ -41,6 +42,7 @@ export function StatusSelector<T extends string>({
   disabled = false,
   availableStatuses,
 }: StatusSelectorProps<T>) {
+  const { t } = useTranslation('common');
   const [isOpen, setIsOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState<DropdownPosition>('left');
@@ -182,7 +184,11 @@ export function StatusSelector<T extends string>({
         }
         aria-haspopup={disabled ? undefined : 'listbox'}
         aria-expanded={disabled ? undefined : isOpen}
-        aria-label={`Current status: ${currentConfig.label}${disabled ? ' (locked)' : '. Click to change status.'}`}
+        aria-label={
+          disabled
+            ? t('statusSelector.currentStatusLocked', { status: currentConfig.label })
+            : t('statusSelector.currentStatusClickable', { status: currentConfig.label })
+        }
       >
         <span className={styles['status-icon-wrapper']}>
           <svg
@@ -238,10 +244,10 @@ export function StatusSelector<T extends string>({
           ref={dropdownMenuRef}
           className={`${styles['status-dropdown']} ${dropdownPositionClass}`}
           role="listbox"
-          aria-label="Status options"
+          aria-label={t('statusSelector.statusOptions')}
         >
           <div className={styles['dropdown-header']}>
-            <p className={styles['dropdown-title']}>Change Status</p>
+            <p className={styles['dropdown-title']}>{t('statusSelector.changeStatus')}</p>
           </div>
           <div className={styles['status-options']}>
             {statuses.map((status) => {
@@ -298,7 +304,7 @@ export function StatusSelector<T extends string>({
             })}
           </div>
           <div className={styles['dropdown-footer']}>
-            <p className={styles['dropdown-hint']}>Click to change item status</p>
+            <p className={styles['dropdown-hint']}>{t('statusSelector.changeItemStatusHint')}</p>
           </div>
         </div>
       )}

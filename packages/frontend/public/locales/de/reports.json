@@ -38,9 +38,52 @@
       "impediments": "Hindernisse"
     }
   },
+  "sprintStatusLabels": {
+    "PLANNED": "Geplant",
+    "ACTIVE": "Aktiv",
+    "COMPLETED": "Abgeschlossen"
+  },
   "insights": {
     "title": "Wichtige Insights",
-    "empty": "Noch keine Insights verfügbar. Schließen Sie weitere Sprints ab, um Insights zu generieren."
+    "empty": "Noch keine Insights verfügbar. Schließen Sie weitere Sprints ab, um Insights zu generieren.",
+    "items": {
+      "velocity-improvement": {
+        "title": "Velocity-Verbesserung",
+        "description": "Durchschnittliche Velocity um {{trend}}% im Vergleich zu vorherigen Sprints gestiegen"
+      },
+      "velocity-decline": {
+        "title": "Velocity-Rückgang",
+        "description": "Durchschnittliche Velocity um {{trend}}% gesunken. Sprint-Planung überprüfen."
+      },
+      "consistent-delivery": {
+        "title": "Konstante Lieferung",
+        "description": "Team hat in den letzten {{count}} Sprints 100% der Sprint-Ziele erreicht"
+      },
+      "impediment-trend": {
+        "title": "Hindernis-Trend",
+        "description": "{{count}} Hindernis(se) derzeit offen. Proaktiv angehen."
+      },
+      "high-success-rate": {
+        "title": "Hohe Erfolgsrate",
+        "description": "Team hat {{rate}}% Sprint-Erfolgsrate erreicht. Großartige Arbeit!"
+      },
+      "low-success-rate": {
+        "title": "Erfolgsrate beachten",
+        "description": "Sprint-Erfolgsrate beträgt {{rate}}%. Sprint-Kapazität und -Planung überprüfen."
+      },
+      "recent-improvement": {
+        "title": "Aktuelle Verbesserung",
+        "description": "Letzter Sprint zeigte {{improvement}}% Verbesserung bei abgeschlossenen Story Points."
+      },
+      "active-sprint-impediments": {
+        "title": "Aktive Sprint-Hindernisse",
+        "description": "Aktueller Sprint hat {{count}} Hindernis(se). Genau beobachten."
+      },
+      "get-started": {
+        "title": "Erste Schritte",
+        "description": "Schließen Sie weitere Sprints ab, um Team-Leistungs-Insights zu generieren."
+      }
+    }
   },
   "velocityChart": {
     "title": "Sprint-Velocity",

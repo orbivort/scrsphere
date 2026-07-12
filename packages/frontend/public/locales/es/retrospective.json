@@ -19,7 +19,24 @@
     "moreItems": "+{{count}} más elementos",
     "goal": "Goal:",
     "businessDay_one": "{{count}} día de trabajo",
-    "businessDay_other": "{{count}} días de trabajo"
+    "businessDay_other": "{{count}} días de trabajo",
+    "itemsCount": "{{count}} elementos",
+    "storyPointsCount": "{{count}} Story Points",
+    "taskCount": "{{count}} tareas",
+    "taskCompletion": "{{completed}}/{{total}} completadas",
+    "priorityLabels": {
+      "MUST_HAVE": "Debe tener",
+      "SHOULD_HAVE": "Debería tener",
+      "COULD_HAVE": "Podría tener",
+      "WONT_HAVE": "No tendrá"
+    },
+    "statusLabels": {
+      "NEW": "Nuevo",
+      "REFINED": "Refinado",
+      "READY": "Listo",
+      "IN_PROGRESS": "En progreso",
+      "DONE": "Hecho"
+    }
   },
   "categories": {
     "wentWell": {
@@ -52,14 +69,20 @@
     "itemsInColumn": "{{count}} elementos en {{title}}"
   },
   "actionItems": {
-    "title": "Action Items",
-    "createActionItem": "+ Crear Action Item",
-    "empty": "Sin Action Items aún. Convierta elementos de mejora en tareas accionables.",
-    "inBacklog": "En Backlog",
+    "title": "Elementos de acción",
+    "createActionItem": "+ Crear elemento de acción",
+    "empty": "Aún no hay elementos de acción. Convierta elementos de mejora en tareas accionables.",
+    "inBacklog": "En el Backlog",
     "unassigned": "Sin asignar",
     "due": "Vence:",
-    "deleteActionItem": "Eliminar Action Item",
-    "deleteAriaLabel": "Eliminar Action Item"
+    "deleteActionItem": "Eliminar elemento de acción",
+    "deleteAriaLabel": "Eliminar elemento de acción",
+    "status": {
+      "PENDING": "Pendiente",
+      "IN_PROGRESS": "En progreso",
+      "COMPLETED": "Completado",
+      "CANCELLED": "Cancelado"
+    }
   },
   "attendeesSection": {
     "title": "Participantes"

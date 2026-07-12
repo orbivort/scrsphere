@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import type { Task } from '../../../../types';
+import { TaskStatus as TaskStatusEnum, type Task, type TaskStatus } from '../../../../types';
 import {
   AlertTriangleIcon,
   CloseIcon,
@@ -10,6 +10,13 @@ import {
 } from '../../../../components/common/Icons';
 
 import styles from './DeleteConfirmModal.module.css';
+
+// Status label i18n key mapping
+const STATUS_LABEL_KEYS: Record<TaskStatus, string> = {
+  [TaskStatusEnum.TODO]: 'taskStatus.todo',
+  [TaskStatusEnum.IN_PROGRESS]: 'taskStatus.inProgress',
+  [TaskStatusEnum.DONE]: 'taskStatus.done',
+};
 
 export interface DeleteConfirmModalProps {
   task: Task;
@@ -87,7 +94,7 @@ export const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
                 <span className={styles['impact-text']}>
                   {t('deleteConfirm.statusLabel')}{' '}
                   <strong className={`${styles['status-badge']} ${styles[statusClass]}`}>
-                    {task.status}
+                    {t(STATUS_LABEL_KEYS[task.status] as never)}
                   </strong>
                   {task.remainingHours !== undefined && task.remainingHours > 0 && (
                     <> • {t('deleteConfirm.hoursRemaining', { count: task.remainingHours })}</>

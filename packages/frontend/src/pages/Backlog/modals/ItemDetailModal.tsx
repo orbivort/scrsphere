@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ItemStatus } from '../../../types';
 import { useBacklogContext } from '../context/BacklogContext';
 import { useFocusTrap } from '../hooks/useFocusTrap';
-import { STATUS_CONFIG } from '../config/status.config';
+import { getStatusConfig } from '../config/status.config';
 import { MoscowBadge } from '../components/MoscowBadge';
 
 import styles from './ItemDetailModal.module.css';
@@ -50,6 +50,8 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation('backlog');
+
+  const STATUS_CONFIG = getStatusConfig(t as (key: string) => string);
 
   const { selectedItem, workflowError, setWorkflowError } = useBacklogContext();
 

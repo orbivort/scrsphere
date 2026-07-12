@@ -31,19 +31,51 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
   }, []);
 
   // Sync locale from authenticated user's stored preference (run once)
+  // Only sync if there's no explicit persisted preference (first-time user)
   useEffect(() => {
     const user = useAuthStore.getState().user;
     if (user?.locale && isSupportedLocale(user.locale)) {
+      // Check if user has an explicit preference persisted in localStorage
+      const persistedData = localStorage.getItem('scrumooth.locale');
+      if (persistedData) {
+        try {
+          const parsed = JSON.parse(persistedData);
+          // If persisted locale exists and differs from user.locale, respect persisted preference
+          if (parsed?.state?.locale && parsed.state.locale !== user.locale) {
+            return; // Don't override user's explicit choice
+          }
+        } catch {
+          // Invalid data, proceed with sync
+        }
+      }
       syncLocaleFromUser(user.locale);
     }
   }, []);
 
   // Subscribe to auth store user changes for locale sync
+  // Only sync on login (user becoming non-null), not on subsequent updates
   useEffect(() => {
+    let previousUser = useAuthStore.getState().user;
     const unsubscribe = useAuthStore.subscribe((state) => {
-      if (state.user?.locale && isSupportedLocale(state.user.locale)) {
+      // Only sync when user transitions from null to having a value (login)
+      // This prevents overriding explicit preference on page refresh
+      if (!previousUser && state.user?.locale && isSupportedLocale(state.user.locale)) {
+        // Check if user has an explicit preference persisted in localStorage
+        const persistedData = localStorage.getItem('scrumooth.locale');
+        if (persistedData) {
+          try {
+            const parsed = JSON.parse(persistedData);
+            if (parsed?.state?.locale && parsed.state.locale !== state.user.locale) {
+              previousUser = state.user;
+              return; // Don't override user's explicit choice
+            }
+          } catch {
+            // Invalid data, proceed with sync
+          }
+        }
         syncLocaleFromUser(state.user.locale);
       }
+      previousUser = state.user;
     });
     return unsubscribe;
   }, []);

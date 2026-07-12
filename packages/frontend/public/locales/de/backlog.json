@@ -56,7 +56,18 @@
     "error": "Fehler beim Laden der Status-Historie",
     "failedToLoadHistory": "Historie konnte nicht geladen werden",
     "empty": "Keine Status-Änderungen aufgezeichnet",
-    "noStatusChangesYet": "Noch keine Status-Änderungen aufgezeichnet"
+    "noStatusChangesYet": "Noch keine Status-Änderungen aufgezeichnet",
+    "timeJustNow": "Gerade eben",
+    "timeMinutesAgo": "{{count}} Min. her",
+    "timeHoursAgo": "{{count}} Std. her",
+    "timeDaysAgo": "{{count}} Tage her",
+    "errorUnexpected": "Ein unerwarteter Fehler ist aufgetreten",
+    "errorAttempts": "Versuch {{attempt}} von 3 fehlgeschlagen",
+    "retrying": "Wird erneut versucht...",
+    "dismiss": "Schließen",
+    "stateNew": "Neu",
+    "stateUnknown": "Unbekannt",
+    "unknownUser": "Unbekannter Benutzer"
   },
   "createItem": {
     "title": "Backlog-Eintrag erstellen",
@@ -195,7 +206,8 @@
     "noLabelsAssigned": "Keine Labels zugewiesen",
     "noAcceptanceCriteriaDefined": "Keine Akzeptanzkriterien definiert",
     "noAssignee": "Nicht zugewiesen",
-    "viewStatusHistory": "Status-Historie anzeigen"
+    "viewStatusHistory": "Status-Historie anzeigen",
+    "cannotMarkAsDone": "Kann nicht als Erledigt markiert werden. Die folgenden Aufgaben sind unvollständig: {{taskNames}}{{moreCount}}. Gesamt unvollständige Aufgaben: {{incompleteCount}}"
   },
   "validation": {
     "dorTitle": "Definition of Ready Überprüfung",
@@ -215,21 +227,70 @@
     "closeError": "Fehlermeldung schließen"
   },
   "moscow": {
-    "mustHave": "Must Have",
-    "mustShort": "Must",
-    "shouldHave": "Should Have",
-    "shouldShort": "Should",
-    "couldHave": "Could Have",
-    "couldShort": "Could",
-    "wontHave": "Won't Have",
-    "wontShort": "Won't"
+    "mustHave": "Muss haben",
+    "mustShort": "Muss",
+    "mustHaveDesc": "Kritisch für die Lieferung - Nicht verhandelbar",
+    "shouldHave": "Sollte haben",
+    "shouldShort": "Sollte",
+    "shouldHaveDesc": "Wichtig, aber nicht vital - Hohe Priorität",
+    "couldHave": "Könnte haben",
+    "couldShort": "Könnte",
+    "couldHaveDesc": "Wünschenswert wenn möglich - Nice to have",
+    "wontHave": "Wird nicht haben",
+    "wontShort": "Nicht",
+    "wontHaveDesc": "Nicht in diesem Release - Außerhalb des Rahmens"
   },
   "status": {
     "new": "Neu",
+    "newDesc": "Neu erstellter Eintrag",
     "refined": "Verfeinert",
-    "ready": "Ready",
+    "refinedDesc": "Anforderungen geklärt",
+    "ready": "Bereit",
+    "readyDesc": "Bereit für Sprint",
     "inProgress": "In Arbeit",
-    "done": "Erledigt"
+    "inProgressDesc": "Wird aktuell bearbeitet",
+    "done": "Erledigt",
+    "doneDesc": "Abgeschlossen"
+  },
+  "businessValueOptions": {
+    "1": "Minimaler Wert",
+    "2": "Niedriger Wert",
+    "3": "Mittlerer Wert",
+    "5": "Hoher Wert",
+    "8": "Sehr hoher Wert",
+    "13": "Kritischer Wert"
+  },
+  "estimateOptions": {
+    "1": "Minimaler Aufwand",
+    "2": "Sehr geringer Aufwand",
+    "3": "Geringer Aufwand",
+    "5": "Mittlerer Aufwand",
+    "8": "Großer Aufwand",
+    "13": "Sehr großer Aufwand"
+  },
+  "productGoalStatus": {
+    "NEW": "Neu",
+    "ACTIVE": "Aktiv",
+    "COMPLETED": "Erledigt",
+    "ABANDONED": "Abgebrochen"
+  },
+  "sprintStatus": {
+    "PLANNED": "Geplant",
+    "ACTIVE": "Aktiv",
+    "COMPLETED": "Abgeschlossen",
+    "CANCELLED": "Abgebrochen"
+  },
+  "moscowLabels": {
+    "MUST_HAVE": "Must Have",
+    "SHOULD_HAVE": "Should Have",
+    "COULD_HAVE": "Could Have",
+    "WONT_HAVE": "Won't Have"
+  },
+  "moscowDescriptions": {
+    "MUST_HAVE": "Kritisch für die Lieferung - Unverhandelbar",
+    "SHOULD_HAVE": "Wichtig, aber nicht vital - Hohe Priorität",
+    "COULD_HAVE": "Erwünscht, wenn möglich - Nice to have",
+    "WONT_HAVE": "Nicht in diesem Release - Außerhalb des Scope"
   },
   "pendingRetro": {
     "title": "Offene Retro-Aktionen",
@@ -451,6 +512,7 @@
     "failedToUpdateGoal": "Produktziel konnte nicht aktualisiert werden",
     "failedToDeleteGoal": "Produktziel konnte nicht gelöscht werden",
     "failedToChangeStatus": "Status konnte nicht geändert werden",
+    "invalidTransition": "Dieser Statuswechsel ist nicht erlaubt. Bitte überprüfen Sie die erlaubten Statuswechsel.",
     "cannotEditGoalStatus": "Kann Produktziel mit Status \"{{status}}\" nicht bearbeiten. Erledigte und abgebrochene Ziele können nicht bearbeitet werden.",
     "cannotDeleteGoalStatus": "Kann Produktziel mit Status \"{{status}}\" nicht löschen. Nur Ziele mit \"neu\" oder \"abgebrochen\" Status können gelöscht werden.",
     "cannotDeleteGoalHasItems": "Kann Produktziel \"{{title}}\" nicht löschen, weil es {{count}} zugehörige Backlog-Einträge{{plural}} hat. Bitte entfernen oder reassignieren Sie die Backlog-Einträge vor Löschen dieses Ziels.",
@@ -534,5 +596,43 @@
     "successMetricsHelpPanelGoodText": "Erreichen 25% Erhöhung der Mobile App Daily Active Users; reduziere Offline Data Sync-Zeit auf unter 5 Sekunden; maintainiere 4.5+ Stern App Store Bewertung",
     "successMetricsHelpPanelAvoidLabel": "Vermeiden",
     "successMetricsHelpPanelAvoidText": "Mache Benutzer glücklich und verbessere Performance"
+  },
+  "validation": {
+    "teamIdRequired": "Team-ID ist erforderlich. Bitte wählen Sie zuerst ein Team.",
+    "activeGoalRequired": "Ein aktives Ziel ist erforderlich. Bitte setzen Sie zuerst ein aktives Produkt-Ziel.",
+    "titleRequired": "Titel ist erforderlich. Bitte geben Sie einen beschreibenden Titel für dieses Backlog-Element ein.",
+    "titleTooShort": "Titel ist zu kurz ({{length}} Zeichen). Bitte verwenden Sie mindestens 5 Zeichen für eine klare Beschreibung.",
+    "titleTooLong": "Titel überschreitet maximale Länge um {{overBy}} Zeichen{{plural}}. Aktuell: {{current}}/200 Zeichen. Bitte verkürzen Sie Ihren Titel.",
+    "descriptionRequired": "Beschreibung ist erforderlich. Bitte geben Sie detaillierte Informationen zu diesem Backlog-Element.",
+    "moscowPriorityRequired": "MoSCoW-Priorität ist erforderlich. Bitte wählen Sie eine der vier Prioritätsstufen.",
+    "estimateRequired": "Aufwandsschätzung ist erforderlich. Bitte wählen Sie einen Story-Point-Wert aus dem Dropdown.",
+    "estimateMinimum": "Aufwandsschätzung muss mindestens 1 Story-Point sein. Bitte wählen Sie einen gültigen Wert.",
+    "estimateMinimumOptional": "Aufwandsschätzung muss mindestens 1 Story-Point sein. Bitte wählen Sie einen Wert aus dem Dropdown oder lassen Sie es leer, wenn Sie noch nicht schätzen möchten.",
+    "estimateTooLarge": "Aufwandsschätzung ({{estimate}}) überschreitet das Maximum von 100 Story-Points. Für größere Arbeitspakete sollten Sie dieses in kleinere Backlog-Elemente aufteilen.",
+    "businessValueRequired": "Business Value ist erforderlich. Bitte wählen Sie einen Wert, der die Bedeutung dieses Elements widerspiegelt.",
+    "businessValueMinimum": "Business Value muss mindestens 1 Punkt sein. Bitte wählen Sie einen gültigen Wert.",
+    "businessValueMinimumOptional": "Business Value muss mindestens 1 Punkt sein. Bitte wählen Sie einen Wert, der die relative Bedeutung dieses Elements widerspiegelt.",
+    "businessValueTooLarge": "Business Value ({{value}}) überschreitet das Maximum von 100 Punkten. Bitte wählen Sie einen Wert im Standard-Bereich.",
+    "labelsRequired": "Mindestens ein Label ist erforderlich. Bitte fügen Sie ein Label hinzu, um dieses Element zu kategorisieren.",
+    "acceptanceCriteriaRequired": "Akzeptanzkriterien sind erforderlich. Bitte definieren Sie spezifische, testbare Bedingungen für die Fertigstellung.",
+    "statusRequired": "Status ist erforderlich.",
+    "statusAlreadySet": "Element hat bereits diesen Status",
+    "invalidTransition": "Übergang von {{current}} zu {{target}} ist nicht erlaubt. Erlaubte Übergänge: {{allowed}}",
+    "none": "Keine",
+    "fieldTitle": "Titel (mindestens 5 Zeichen)",
+    "fieldDescription": "Beschreibung",
+    "fieldMoscowPriority": "MoSCoW-Priorität",
+    "fieldBusinessValue": "Business Value",
+    "fieldEstimate": "Aufwandsschätzung (Story Points)",
+    "fieldLabels": "Labels (mindestens eines)",
+    "fieldAcceptanceCriteria": "Akzeptanzkriterien",
+    "cannotChangeStatus": "Status kann nicht auf \"{{status}}\" geändert werden. Die folgenden obligatorischen Felder müssen zuerst ausgefüllt werden: {{fields}}. Bitte klicken Sie auf \"Element bearbeiten\" um dieses Backlog-Element zu aktualisieren."
+  },
+  "workflowTransitions": {
+    "newDescription": "Neue Einträge müssen zuerst verfeinert werden",
+    "refinedDescription": "Verfeinerte Einträge können als bereit markiert oder zurück zu neu gesetzt werden",
+    "readyDescription": "Bereite Einträge können gestartet oder zurück zu verfeinert gesetzt werden",
+    "inProgressDescription": "Einträge in Arbeit können abgeschlossen oder zurück zu bereit gesetzt werden",
+    "doneDescription": "Abgeschlossene Einträge können nicht überführt werden"
   }
 }

@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { ItemStatus as ItemStatusEnum, type ItemStatus } from '../../../types';
 import { useFocusTrap } from '../hooks/useFocusTrap';
 import { useBacklogContext } from '../context/BacklogContext';
 
@@ -13,6 +14,15 @@ import {
   AlertCircleIcon,
   FileTextIcon,
 } from '@/components/common/Icons';
+
+// Status label i18n key mapping
+const STATUS_LABEL_KEYS: Record<ItemStatus, string> = {
+  [ItemStatusEnum.NEW]: 'status.new',
+  [ItemStatusEnum.REFINED]: 'status.refined',
+  [ItemStatusEnum.READY]: 'status.ready',
+  [ItemStatusEnum.IN_PROGRESS]: 'status.inProgress',
+  [ItemStatusEnum.DONE]: 'status.done',
+};
 
 export interface DeleteConfirmModalProps {
   isOpen: boolean;
@@ -128,7 +138,7 @@ export const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
                 <span className={styles['impact-text']}>
                   {t('deleteItem.statusLabel') as string}{' '}
                   <strong className={`${styles['status-badge']} ${styles[statusClass]}`}>
-                    {selectedItem.status}
+                    {t(STATUS_LABEL_KEYS[selectedItem.status] as never)}
                   </strong>
                   {selectedItem.storyPoints !== undefined && (
                     <>

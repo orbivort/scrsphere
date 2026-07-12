@@ -86,7 +86,13 @@ const PRIORITY_COLORS: Record<MoSCoWPriority, string> = {
   [MoSCoWPriority.WONT_HAVE]: '#6b7280',
 };
 
-const PRIORITY_LABEL_KEYS: Record<MoSCoWPriority, string> = {
+const PRIORITY_LABEL_KEYS: Record<
+  MoSCoWPriority,
+  | 'sprintPlanning.moscow.must'
+  | 'sprintPlanning.moscow.should'
+  | 'sprintPlanning.moscow.could'
+  | 'sprintPlanning.moscow.wont'
+> = {
   [MoSCoWPriority.MUST_HAVE]: 'sprintPlanning.moscow.must',
   [MoSCoWPriority.SHOULD_HAVE]: 'sprintPlanning.moscow.should',
   [MoSCoWPriority.COULD_HAVE]: 'sprintPlanning.moscow.could',
@@ -301,7 +307,7 @@ export const SprintBacklogManager: React.FC<SprintBacklogManagerProps> = ({
 
   const getPriorityStyle = (priority: MoSCoWPriority) => {
     return {
-      label: t(PRIORITY_LABEL_KEYS[priority]),
+      label: t(PRIORITY_LABEL_KEYS[priority]) as string,
       color: PRIORITY_COLORS[priority],
     };
   };

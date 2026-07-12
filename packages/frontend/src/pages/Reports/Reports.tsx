@@ -39,7 +39,7 @@ interface VelocityData {
 }
 
 export const Reports: React.FC = () => {
-  const { t } = useTranslation('reports');
+  const { t, i18n } = useTranslation('reports');
   const { currentTeam } = useTeamStore();
   const teamId = currentTeam?.id;
 
@@ -73,7 +73,11 @@ export const Reports: React.FC = () => {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    return date.toLocaleDateString(i18n.language, {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
   };
 
   const getStatusBadgeClass = (status: string) => {
@@ -325,7 +329,9 @@ export const Reports: React.FC = () => {
                         {formatDate(sprint.startDate)} - {formatDate(sprint.endDate)}
                       </span>
                     </div>
-                    <span className={getStatusBadgeClass(sprint.status)}>{sprint.status}</span>
+                    <span className={getStatusBadgeClass(sprint.status)}>
+                      {t(`sprintStatusLabels.${sprint.status}` as never)}
+                    </span>
                   </div>
                   <div className={styles['history-stats']}>
                     <div className={styles.stat}>
@@ -371,8 +377,8 @@ export const Reports: React.FC = () => {
                 >
                   <span className={styles['insight-icon']}>{getInsightIcon(insight.type)}</span>
                   <div className={styles['insight-content']}>
-                    <h4>{insight.title}</h4>
-                    <p>{insight.description}</p>
+                    <h4>{t(`insights.items.${insight.id}.title` as never)}</h4>
+                    <p>{t(`insights.items.${insight.id}.description` as never)}</p>
                   </div>
                 </div>
               ))}

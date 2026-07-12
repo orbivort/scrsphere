@@ -77,6 +77,7 @@ const getStatusConfig = (status: string, t: any): { label: string; className: st
 
 const getReviewStatusConfig = (
   sprint: SprintWithReview,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- TFunction signature varies by i18next version
   t: any
 ): {
   label: string;

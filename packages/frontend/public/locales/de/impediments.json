@@ -8,13 +8,21 @@
     "open": "Offen",
     "inProgress": "In Bearbeitung",
     "resolved": "Gelost",
-    "closed": "Geschlossen"
+    "closed": "Geschlossen",
+    "OPEN": "Offen",
+    "IN_PROGRESS": "In Bearbeitung",
+    "RESOLVED": "Gelost",
+    "CLOSED": "Geschlossen"
   },
   "stats": {
     "open": "Offen",
     "inProgress": "In Bearbeitung",
     "resolved": "Gelost",
-    "closed": "Geschlossen"
+    "closed": "Geschlossen",
+    "OPEN": "Offen",
+    "IN_PROGRESS": "In Bearbeitung",
+    "RESOLVED": "Gelost",
+    "CLOSED": "Geschlossen"
   },
   "card": {
     "sprint": "Sprint",

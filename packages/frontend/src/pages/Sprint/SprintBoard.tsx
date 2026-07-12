@@ -1,4 +1,4 @@
-import React, { useState, useReducer, useCallback, useRef } from 'react';
+import React, { useState, useReducer, useCallback, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -15,10 +15,26 @@ import {
 } from '../../types';
 import { EmptyState } from '../../components/EmptyState';
 import { LoadingState } from '../../components/common/Loading';
+import { i18nInstance } from '../../i18n/config';
+
+/**
+ * Helper function to detect permission-related error messages and translate them
+ */
+function getTranslatedPermissionError(message: string): string {
+  const isPermissionMessage =
+    message.includes('You do not have permission') ||
+    message.includes('Required roles') ||
+    message.includes('Insufficient permissions');
+
+  if (isPermissionMessage) {
+    return i18nInstance.t('common:permission.transitionError');
+  }
+  return message;
+}
 
 import { DoDVerificationModal } from './components/DoDVerificationModal';
 import type { ViewMode, SwimlaneGroup } from './SprintBoard.types';
-import { TASK_STATUS_CONFIG } from './SprintBoard.constants';
+import { TASK_STATUS_CONFIG_BASE } from './SprintBoard.constants';
 import {
   initialModalState,
   modalReducer,
@@ -59,6 +75,28 @@ export const SprintBoard: React.FC = () => {
   const navigate = useNavigate();
   const { t } = useTranslation('sprint');
   const teamId = currentTeam?.id;
+
+  // Build TASK_STATUS_CONFIG with i18n labels
+  const TASK_STATUS_CONFIG: Record<
+    TaskStatus,
+    { label: string; color: string; bgColor: string; borderColor: string; icon: string }
+  > = useMemo(
+    () => ({
+      [TaskStatusEnum.TODO]: {
+        ...TASK_STATUS_CONFIG_BASE[TaskStatusEnum.TODO],
+        label: t('taskStatus.todo'),
+      },
+      [TaskStatusEnum.IN_PROGRESS]: {
+        ...TASK_STATUS_CONFIG_BASE[TaskStatusEnum.IN_PROGRESS],
+        label: t('taskStatus.inProgress'),
+      },
+      [TaskStatusEnum.DONE]: {
+        ...TASK_STATUS_CONFIG_BASE[TaskStatusEnum.DONE],
+        label: t('taskStatus.done'),
+      },
+    }),
+    [t]
+  );
 
   const [modalState, modalDispatch] = useReducer(modalReducer, initialModalState);
   const {
@@ -435,10 +473,12 @@ export const SprintBoard: React.FC = () => {
               response?: { data?: { error?: { message?: string } } };
               message?: string;
             };
-            const errorMessage =
+            const rawMessage =
               err.response?.data?.error?.message ??
               err.message ??
               t('board.failedToUpdateTaskStatus');
+            // Translate permission-related error messages
+            const errorMessage = getTranslatedPermissionError(rawMessage);
             modalDispatch({ type: 'SET_WORKFLOW_ERROR', payload: errorMessage });
           },
         }
@@ -454,6 +494,7 @@ export const SprintBoard: React.FC = () => {
       toastError,
       toastSuccess,
       t,
+      TASK_STATUS_CONFIG,
     ]
   );
 

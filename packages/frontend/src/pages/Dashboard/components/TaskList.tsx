@@ -94,7 +94,12 @@ const TaskList: React.FC<TaskListProps> = memo(({ tasks, emptyMessage, onTaskCli
             className={`${styles['task-status-badge']} ${styles[task.status.toLowerCase()]}`}
             aria-hidden={onTaskClick ? true : undefined}
           >
-            {task.status.replace('_', ' ')}
+            {t(
+              `taskStatus.${task.status.toUpperCase()}` as
+                | 'taskStatus.TODO'
+                | 'taskStatus.IN_PROGRESS'
+                | 'taskStatus.DONE'
+            )}
           </span>
         </li>
       ))}

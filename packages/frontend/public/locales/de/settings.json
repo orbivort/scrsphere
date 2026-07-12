@@ -1,6 +1,12 @@
 {
   "title": "Einstellungen",
   "skipToMainContent": "Zum Hauptinhalt springen",
+  "sprintStatus": {
+    "PLANNED": "Geplant",
+    "ACTIVE": "Aktiv",
+    "COMPLETED": "Abgeschlossen",
+    "CANCELLED": "Abgebrochen"
+  },
   "sprintConfiguration": {
     "title": "Sprint-Konfiguration",
     "subtitle": "Konfigurieren Sie die Sprint-Dauer und generieren Sie automatisch Sprint-Pläne für das Jahr",
@@ -93,6 +99,18 @@
     "toast": {
       "updatedSuccessfully": "Definition of Ready erfolgreich aktualisiert",
       "updateFailed": "Definition of Ready konnte nicht aktualisiert werden"
+    },
+    "item": {
+      "clearTitle": "Klarer Titel und Beschreibung bereitgestellt",
+      "acceptanceCriteria": "Akzeptanzkriterien definiert und vereinbart",
+      "storyPointsEstimated": "Story-Punkte vom Team geschätzt",
+      "businessValue": "Business-Wert zugewiesen",
+      "dependencies": "Abhängigkeiten identifiziert und dokumentiert",
+      "noBlockers": "Keine Blocker oder Hindernisse",
+      "userStoryWritten": "User Story klar geschrieben",
+      "acceptanceCriteriaDefined": "Akzeptanzkriterien definiert",
+      "storyPointsEstimatedOld": "Story-Punkte geschätzt",
+      "dependenciesIdentified": "Abhängigkeiten identifiziert"
     }
   },
   "dodPanel": {
@@ -121,6 +139,13 @@
     "toast": {
       "updatedSuccessfully": "Definition of Done erfolgreich aktualisiert",
       "updateFailed": "Definition of Done konnte nicht aktualisiert werden"
+    },
+    "item": {
+      "codeReviewed": "Code wurde peer-reviewed und genehmigt",
+      "unitTests": "Unit-Tests geschrieben und erfolgreich (mindestens 80% Coverage)",
+      "integrationTests": "Integration-Tests erfolgreich",
+      "documentation": "Code ist ordnungsgemäß dokumentiert",
+      "noCriticalBugs": "Keine kritischen oder hochgradigen Bugs"
     }
   },
   "definitionEditor": {
@@ -229,14 +254,16 @@
       "clearSearchBrowse": "Suche löschen und alle Teams durchsuchen"
     },
     "card": {
-      "createdBy": "Erstellt von",
-      "memberCount": "{{count}} Mitglied(er)",
+      "createdBy": "Erstellt von {{firstName}} {{lastName}}",
+      "memberCount": "{{count}} Mitglied",
+      "memberCount_plural": "{{count}} Mitglieder",
       "edit": "Bearbeiten",
       "delete": "Löschen",
       "loading": "Laden...",
       "deleting": "Löschen...",
       "editTeam": "{{name}} bearbeiten",
-      "deleteTeam": "{{name}} löschen"
+      "deleteTeam": "{{name}} löschen",
+      "cardAriaLabel": "{{name}}, {{count}} Mitglieder. Verwenden Sie die Pfeiltasten zum Navigieren zwischen Karten, Enter oder Leertaste für Aktionen."
     }
   },
   "createTeamModal": {

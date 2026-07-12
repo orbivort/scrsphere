@@ -86,7 +86,7 @@ const ImpedimentList: React.FC<ImpedimentListProps> = memo(
               onImpedimentClick
                 ? t('impedimentList.impedimentAriaLabel', {
                     title: impediment.title,
-                    status: impediment.status.replace('_', ' '),
+                    status: t(`impedimentStatus.${impediment.status}`),
                   })
                 : undefined
             }
@@ -98,7 +98,7 @@ const ImpedimentList: React.FC<ImpedimentListProps> = memo(
                 className={`${styles['impediment-status-badge']} ${styles[impediment.status.toLowerCase()]}`}
                 aria-hidden={onImpedimentClick ? true : undefined}
               >
-                {impediment.status.replace('_', ' ')}
+                {t(`impedimentStatus.${impediment.status}`)}
               </span>
             </div>
           </li>

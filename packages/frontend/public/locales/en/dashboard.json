@@ -137,5 +137,22 @@
     "viewSprintBoard": "View Sprint Board",
     "createIncrement": "Create Increment",
     "startSprintPlanning": "Start Sprint Planning"
+  },
+  "sprintStatus": {
+    "PLANNED": "Planned",
+    "ACTIVE": "Active",
+    "COMPLETED": "Completed",
+    "CANCELLED": "Cancelled"
+  },
+  "impedimentStatus": {
+    "OPEN": "Open",
+    "IN_PROGRESS": "In Progress",
+    "RESOLVED": "Resolved",
+    "CLOSED": "Closed"
+  },
+  "taskStatus": {
+    "TODO": "Todo",
+    "IN_PROGRESS": "In Progress",
+    "DONE": "Done"
   }
 }

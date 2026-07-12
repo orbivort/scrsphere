@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 
 import { LoadingState } from '../../../../components/common/Loading';
 import { ToastContainer } from '../../../../components/common/ToastContainer';
@@ -16,6 +17,30 @@ import { DOR_CATEGORIES, getCategoryColor } from './categories';
 import styles from './DefinitionOfReadyPanel.module.css';
 
 import { EditIcon, PlusIcon, RefreshCwIcon } from '@/components/common/Icons';
+
+/**
+ * Maps default DoR descriptions to translation keys
+ */
+const DOR_DESCRIPTION_MAP: Record<string, string> = {
+  'User story clearly written': 'dorPanel.item.userStoryWritten',
+  'Acceptance criteria defined': 'dorPanel.item.acceptanceCriteriaDefined',
+  'Story points estimated': 'dorPanel.item.storyPointsEstimatedOld',
+  'Dependencies identified': 'dorPanel.item.dependenciesIdentified',
+  'Clear title and description provided': 'dorPanel.item.clearTitle',
+  'Acceptance criteria defined and agreed': 'dorPanel.item.acceptanceCriteria',
+  'Story points estimated by the team': 'dorPanel.item.storyPointsEstimated',
+  'Business value assigned': 'dorPanel.item.businessValue',
+  'Dependencies identified and documented': 'dorPanel.item.dependencies',
+  'No blockers or impediments': 'dorPanel.item.noBlockers',
+};
+
+/**
+ * Translates a DoR item description if it matches a known default
+ */
+function getTranslatedDescription(item: DoRItem, t: TFunction<'settings'>): string {
+  const translationKey = DOR_DESCRIPTION_MAP[item.description];
+  return translationKey ? t(translationKey as never) : item.description;
+}
 
 export function DefinitionOfReadyPanel(): React.JSX.Element {
   const { t } = useTranslation('settings');
@@ -197,7 +222,9 @@ export function DefinitionOfReadyPanel(): React.JSX.Element {
                 >
                   {category?.icon} {t(`definitionEditor.dorCategories.${category?.value}` as never)}
                 </span>
-                <span className={styles['item-description']}>{item.description}</span>
+                <span className={styles['item-description']}>
+                  {getTranslatedDescription(item, t)}
+                </span>
               </div>
             );
           })}

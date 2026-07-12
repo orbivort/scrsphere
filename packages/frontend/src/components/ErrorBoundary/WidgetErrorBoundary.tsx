@@ -1,11 +1,12 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
+import { withTranslation, type WithTranslation } from 'react-i18next';
 
 import { logger } from '../../utils/logger';
 import { errorReporter } from '../../utils/errorReporter';
 
 import styles from './ErrorBoundary.module.css';
 
-interface Props {
+interface Props extends WithTranslation {
   children: ReactNode;
   widgetName: string;
   onRetry?: () => void;
@@ -16,7 +17,7 @@ interface State {
   error: Error | null;
 }
 
-export class WidgetErrorBoundary extends Component<Props, State> {
+class WidgetErrorBoundaryClass extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -52,7 +53,7 @@ export class WidgetErrorBoundary extends Component<Props, State> {
 
   render(): ReactNode {
     const { hasError } = this.state;
-    const { children, widgetName } = this.props;
+    const { children, widgetName, t } = this.props;
 
     if (hasError) {
       return (
@@ -62,15 +63,17 @@ export class WidgetErrorBoundary extends Component<Props, State> {
               ⚠️
             </span>
 
-            <p className={styles['widget-error-message']}>{widgetName} failed to load</p>
+            <p className={styles['widget-error-message']}>
+              {t('widgetError.failedToLoad', { widgetName })}
+            </p>
 
             <button
               onClick={this.handleRetry}
               className={styles['widget-error-button']}
               type="button"
-              aria-label={`Retry loading ${widgetName}`}
+              aria-label={t('widgetError.retryAria', { widgetName })}
             >
-              Retry
+              {t('retry')}
             </button>
           </div>
         </div>
@@ -80,3 +83,9 @@ export class WidgetErrorBoundary extends Component<Props, State> {
     return children;
   }
 }
+
+export const WidgetErrorBoundary: React.ComponentType<{
+  children: ReactNode;
+  widgetName: string;
+  onRetry?: () => void;
+}> = withTranslation('common')(WidgetErrorBoundaryClass);

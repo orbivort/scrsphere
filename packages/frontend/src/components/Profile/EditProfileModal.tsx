@@ -68,17 +68,25 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
 
-    const validationErrors = validateProfileUpdate({
-      ...formData,
-      [field]: value,
-    });
+    const validationErrors = validateProfileUpdate(
+      {
+        ...formData,
+        [field]: value,
+      },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Dynamic validation key
+      (key, options) => (t as any)(key, options) as string
+    );
     setErrors(validationErrors);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const validationErrors = validateProfileUpdate(formData);
+    const validationErrors = validateProfileUpdate(
+      formData,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Dynamic validation key
+      (key, options) => (t as any)(key, options) as string
+    );
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;

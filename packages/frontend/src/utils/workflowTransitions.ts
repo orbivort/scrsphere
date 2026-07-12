@@ -6,30 +6,39 @@ export interface WorkflowTransition {
   requiresValidation?: boolean;
 }
 
+// Translation keys for status descriptions
+export const WORKFLOW_DESCRIPTION_KEYS: Record<ItemStatus, string> = {
+  [ItemStatus.NEW]: 'workflowTransitions.newDescription',
+  [ItemStatus.REFINED]: 'workflowTransitions.refinedDescription',
+  [ItemStatus.READY]: 'workflowTransitions.readyDescription',
+  [ItemStatus.IN_PROGRESS]: 'workflowTransitions.inProgressDescription',
+  [ItemStatus.DONE]: 'workflowTransitions.doneDescription',
+};
+
 export const WORKFLOW_TRANSITIONS: Record<ItemStatus, WorkflowTransition> = {
   [ItemStatus.NEW]: {
     allowed: [ItemStatus.REFINED],
-    description: 'New items must be refined first',
+    description: 'workflowTransitions.newDescription',
     requiresValidation: false,
   },
   [ItemStatus.REFINED]: {
     allowed: [ItemStatus.READY, ItemStatus.NEW],
-    description: 'Refined items can be marked ready or sent back to new',
+    description: 'workflowTransitions.refinedDescription',
     requiresValidation: false,
   },
   [ItemStatus.READY]: {
     allowed: [ItemStatus.IN_PROGRESS, ItemStatus.REFINED],
-    description: 'Ready items can be started or sent back to refined',
+    description: 'workflowTransitions.readyDescription',
     requiresValidation: true,
   },
   [ItemStatus.IN_PROGRESS]: {
     allowed: [ItemStatus.DONE, ItemStatus.READY],
-    description: 'In progress items can be completed or sent back to ready',
+    description: 'workflowTransitions.inProgressDescription',
     requiresValidation: true,
   },
   [ItemStatus.DONE]: {
     allowed: [],
-    description: 'Completed items cannot be transitioned',
+    description: 'workflowTransitions.doneDescription',
     requiresValidation: false,
   },
 };
@@ -43,13 +52,30 @@ export const getValidTransitions = (currentStatus: ItemStatus): ItemStatus[] => 
   return WORKFLOW_TRANSITIONS[currentStatus].allowed;
 };
 
-export const getTransitionDescription = (from: ItemStatus, to: ItemStatus): string => {
-  if (!canTransition(from, to)) {
-    const allowedStatuses = WORKFLOW_TRANSITIONS[from].allowed
-      .map((s) => s.replace('_', ' '))
-      .join(', ');
-    return `Transition from ${from.replace('_', ' ')} to ${to.replace('_', ' ')} is not allowed. Allowed transitions: ${allowedStatuses || 'None'}`;
-  }
+/**
+ * Get transition error message key for i18n
+ */
+export const getTransitionErrorKey = (): string => {
+  return 'validation.invalidTransition';
+};
+
+/**
+ * Get transition error message data for i18n
+ */
+export const getTransitionErrorData = (
+  from: ItemStatus,
+  to: ItemStatus,
+  statusLabels: Record<ItemStatus, string>
+): { current: string; target: string; allowed: string } => {
+  const allowedStatuses = WORKFLOW_TRANSITIONS[from].allowed.map((s) => statusLabels[s]).join(', ');
+  return {
+    current: statusLabels[from],
+    target: statusLabels[to],
+    allowed: allowedStatuses || 'None',
+  };
+};
+
+export const getTransitionDescription = (from: ItemStatus, _to: ItemStatus): string => {
   return WORKFLOW_TRANSITIONS[from].description;
 };
 
@@ -57,14 +83,22 @@ export const requiresValidation = (from: ItemStatus, to: ItemStatus): boolean =>
   return canTransition(from, to) && WORKFLOW_TRANSITIONS[from].requiresValidation === true;
 };
 
+/**
+ * Validate transition - returns translation key and data for i18n
+ */
 export const validateTransition = (
   currentStatus: ItemStatus,
   newStatus: ItemStatus
-): { valid: boolean; message?: string; requiresValidation: boolean } => {
+): {
+  valid: boolean;
+  messageKey?: string;
+  messageData?: Record<string, string>;
+  requiresValidation: boolean;
+} => {
   if (currentStatus === newStatus) {
     return {
       valid: false,
-      message: 'Item is already in this status',
+      messageKey: 'validation.statusAlreadySet',
       requiresValidation: false,
     };
   }
@@ -72,7 +106,7 @@ export const validateTransition = (
   if (!canTransition(currentStatus, newStatus)) {
     return {
       valid: false,
-      message: getTransitionDescription(currentStatus, newStatus),
+      messageKey: 'validation.invalidTransition',
       requiresValidation: false,
     };
   }

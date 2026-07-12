@@ -342,8 +342,12 @@ export const CreateItemModal: React.FC<CreateItemModalProps> = ({
                             <PathIcon path={config.icon} size={20} />
                           </span>
                           <span className={styles['moscow-content']}>
-                            <span className={styles['moscow-label']}>{config.label}</span>
-                            <span className={styles['moscow-desc']}>{config.description}</span>
+                            <span className={styles['moscow-label']}>
+                              {t(`moscowLabels.${priority}` as const)}
+                            </span>
+                            <span className={styles['moscow-desc']}>
+                              {t(`moscowDescriptions.${priority}` as const)}
+                            </span>
                           </span>
                           {isSelected && (
                             <span className={styles['moscow-check']} aria-hidden="true">
@@ -380,12 +384,12 @@ export const CreateItemModal: React.FC<CreateItemModalProps> = ({
                     aria-describedby="business-value-help"
                   >
                     <option value="">{t('createItem.businessValuePlaceholder') as string}</option>
-                    <option value={1}>1 - Minimal value</option>
-                    <option value={2}>2 - Low value</option>
-                    <option value={3}>3 - Moderate value</option>
-                    <option value={5}>5 - High value</option>
-                    <option value={8}>8 - Very high value</option>
-                    <option value={13}>13 - Critical value</option>
+                    <option value={1}>1 - {t('businessValueOptions.1') as string}</option>
+                    <option value={2}>2 - {t('businessValueOptions.2') as string}</option>
+                    <option value={3}>3 - {t('businessValueOptions.3') as string}</option>
+                    <option value={5}>5 - {t('businessValueOptions.5') as string}</option>
+                    <option value={8}>8 - {t('businessValueOptions.8') as string}</option>
+                    <option value={13}>13 - {t('businessValueOptions.13') as string}</option>
                   </select>
                   <span id="business-value-help" className={styles['field-help']}>
                     {t('createItem.businessValueHelp') as string}
@@ -406,12 +410,12 @@ export const CreateItemModal: React.FC<CreateItemModalProps> = ({
                     aria-describedby="estimate-help"
                   >
                     <option value="">{t('createItem.storyPointsPlaceholder') as string}</option>
-                    <option value={1}>1 - Trivial effort</option>
-                    <option value={2}>2 - Very small effort</option>
-                    <option value={3}>3 - Small effort</option>
-                    <option value={5}>5 - Medium effort</option>
-                    <option value={8}>8 - Large effort</option>
-                    <option value={13}>13 - Very large effort</option>
+                    <option value={1}>1 - {t('estimateOptions.1') as string}</option>
+                    <option value={2}>2 - {t('estimateOptions.2') as string}</option>
+                    <option value={3}>3 - {t('estimateOptions.3') as string}</option>
+                    <option value={5}>5 - {t('estimateOptions.5') as string}</option>
+                    <option value={8}>8 - {t('estimateOptions.8') as string}</option>
+                    <option value={13}>13 - {t('estimateOptions.13') as string}</option>
                   </select>
                   <span id="estimate-help" className={styles['field-help']}>
                     {t('createItem.storyPointsHelp') as string}

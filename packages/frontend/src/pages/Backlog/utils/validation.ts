@@ -4,6 +4,13 @@ import type { ItemFormData, FormErrors } from '../types/backlog.types';
 import { validateLabels } from './labelUtils';
 
 /**
+ * Generic translation function type that accepts any string key
+ * This is used to avoid TypeScript strict key checking issues
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type TranslateFunction = (key: string, options?: Record<string, unknown>) => any;
+
+/**
  * Validation context for form validation
  */
 export interface ValidationContext {
@@ -45,12 +52,13 @@ export interface ItemValidationResult {
  *
  * @param formData - The form data to validate
  * @param context - Validation context containing team and goal information
+ * @param t - Translation function for i18n
  * @param isEditMode - Whether the form is in edit mode (requires more fields)
  * @returns Validation result with errors and workflow error if any
  *
  * @example
  * ```typescript
- * const result = validateFormData(formData, { teamId: '123', activeGoalId: '456' }, true);
+ * const result = validateFormData(formData, { teamId: '123', activeGoalId: '456' }, t, true);
  * if (!result.isValid) {
  *   console.log('Validation errors:', result.errors);
  * }
@@ -59,6 +67,7 @@ export interface ItemValidationResult {
 export const validateFormData = (
   formData: ItemFormData,
   context: ValidationContext,
+  t: TranslateFunction,
   isEditMode: boolean = false
 ): ValidationResult => {
   const errors: FormErrors = {};
@@ -66,56 +75,56 @@ export const validateFormData = (
 
   // Validate team and goal context
   if (!context.teamId) {
-    workflowError = 'Team ID is required. Please select a team first.';
+    workflowError = t('validation.teamIdRequired');
     return { isValid: false, errors, workflowError };
   }
 
   if (!context.activeGoalId) {
-    workflowError = 'An active goal is required. Please set an active product goal first.';
+    workflowError = t('validation.activeGoalRequired');
     return { isValid: false, errors, workflowError };
   }
 
   // Enhanced Title Validation with specific error messages
   if (!formData.title.trim()) {
-    errors.title = 'Title is required. Please enter a descriptive title for this backlog item.';
+    errors.title = t('validation.titleRequired');
   } else if (formData.title.trim().length < 5) {
-    errors.title = `Title is too short (${formData.title.trim().length} characters). Please use at least 5 characters to provide a clear description.`;
+    errors.title = t('validation.titleTooShort', { length: formData.title.trim().length });
   } else if (formData.title.length > 200) {
     const overBy = formData.title.length - 200;
-    errors.title = `Title exceeds maximum length by ${overBy} character${overBy > 1 ? 's' : ''}. Current: ${formData.title.length}/200 characters. Please shorten your title.`;
+    errors.title = t('validation.titleTooLong', {
+      overBy,
+      current: formData.title.length,
+      plural: overBy > 1 ? 's' : '',
+    });
   }
 
   // Description Validation - Required for Edit mode
   if (isEditMode && !formData.description.trim()) {
-    errors.description =
-      'Description is required. Please provide detailed information about this backlog item.';
+    errors.description = t('validation.descriptionRequired');
   }
 
   // MoSCoW Priority Validation - Always required
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (!formData.moscowPriority) {
-    errors.moscowPriority =
-      'MoSCoW Priority is required. Please select one of the four priority levels.';
+    errors.moscowPriority = t('validation.moscowPriorityRequired');
   }
 
   // Enhanced Estimate Validation - Required for Edit mode
   if (isEditMode) {
     if (formData.estimate === undefined) {
-      errors.estimate =
-        'Estimate is required. Please select a story point value from the dropdown.';
+      errors.estimate = t('validation.estimateRequired');
     } else if (formData.estimate < 1) {
-      errors.estimate = 'Estimate must be at least 1 story point. Please select a valid value.';
+      errors.estimate = t('validation.estimateMinimum');
     } else if (formData.estimate > 100) {
-      errors.estimate = `Estimate (${formData.estimate}) exceeds maximum of 100 story points. For larger work items, consider breaking this into smaller, more manageable backlog items.`;
+      errors.estimate = t('validation.estimateTooLarge', { estimate: formData.estimate });
     }
   } else {
     // Create mode - optional but validated if provided
     if (formData.estimate !== undefined) {
       if (formData.estimate < 1) {
-        errors.estimate =
-          'Estimate must be at least 1 story point. Please select a value from the dropdown or leave empty if not ready to estimate.';
+        errors.estimate = t('validation.estimateMinimumOptional');
       } else if (formData.estimate > 100) {
-        errors.estimate = `Estimate (${formData.estimate}) exceeds maximum of 100 story points. For larger work items, consider breaking this into smaller, more manageable backlog items.`;
+        errors.estimate = t('validation.estimateTooLarge', { estimate: formData.estimate });
       }
     }
   }
@@ -123,22 +132,23 @@ export const validateFormData = (
   // Enhanced Business Value Validation - Required for Edit mode
   if (isEditMode) {
     if (formData.businessValue === undefined) {
-      errors.businessValue =
-        'Business Value is required. Please select a value that reflects the importance of this item.';
+      errors.businessValue = t('validation.businessValueRequired');
     } else if (formData.businessValue < 1) {
-      errors.businessValue =
-        'Business Value must be at least 1 point. Please select a valid value.';
+      errors.businessValue = t('validation.businessValueMinimum');
     } else if (formData.businessValue > 100) {
-      errors.businessValue = `Business Value (${formData.businessValue}) exceeds maximum of 100 points. Please select a value that fits within the standard range.`;
+      errors.businessValue = t('validation.businessValueTooLarge', {
+        value: formData.businessValue,
+      });
     }
   } else {
     // Create mode - optional but validated if provided
     if (formData.businessValue !== undefined) {
       if (formData.businessValue < 1) {
-        errors.businessValue =
-          'Business Value must be at least 1 point. Please select a value that reflects the relative importance of this item.';
+        errors.businessValue = t('validation.businessValueMinimumOptional');
       } else if (formData.businessValue > 100) {
-        errors.businessValue = `Business Value (${formData.businessValue}) exceeds maximum of 100 points. Please select a value that fits within the standard range.`;
+        errors.businessValue = t('validation.businessValueTooLarge', {
+          value: formData.businessValue,
+        });
       }
     }
   }
@@ -146,7 +156,7 @@ export const validateFormData = (
   // Labels Validation - Required for Edit mode
   if (isEditMode) {
     if (!formData.labels.trim()) {
-      errors.labels = 'At least one label is required. Please add a label to categorize this item.';
+      errors.labels = t('validation.labelsRequired');
     } else {
       const labelErrors = validateLabels(formData.labels);
       if (labelErrors.length > 0) {
@@ -165,14 +175,13 @@ export const validateFormData = (
 
   // Acceptance Criteria Validation - Required for Edit mode
   if (isEditMode && !formData.acceptanceCriteria.trim()) {
-    errors.acceptanceCriteria =
-      'Acceptance Criteria is required. Please define specific, testable conditions for completion.';
+    errors.acceptanceCriteria = t('validation.acceptanceCriteriaRequired');
   }
 
   // Status Validation - Required for Edit mode
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (isEditMode && !formData.status) {
-    errors.status = 'Status is required.';
+    errors.status = t('validation.statusRequired');
   }
 
   return {
@@ -190,11 +199,12 @@ export const validateFormData = (
  *
  * @param currentStatus - The current status of the item
  * @param newStatus - The target status to transition to
+ * @param t - Translation function for i18n
  * @returns Validation result indicating if the transition is valid
  *
  * @example
  * ```typescript
- * const result = validateStatusTransition(ItemStatus.NEW, ItemStatus.REFINED);
+ * const result = validateStatusTransition(ItemStatus.NEW, ItemStatus.REFINED, t);
  * if (!result.valid) {
  *   console.log('Invalid transition:', result.message);
  * }
@@ -202,7 +212,8 @@ export const validateFormData = (
  */
 export const validateStatusTransition = (
   currentStatus: ItemStatus,
-  newStatus: ItemStatus
+  newStatus: ItemStatus,
+  t: TranslateFunction
 ): StatusTransitionValidation => {
   const validTransitions: Record<ItemStatus, ItemStatus[]> = {
     [ItemStatus.NEW]: [ItemStatus.REFINED],
@@ -213,16 +224,20 @@ export const validateStatusTransition = (
   };
 
   if (currentStatus === newStatus) {
-    return { valid: false, message: 'Item is already in this status' };
+    return { valid: false, message: t('validation.statusAlreadySet') };
   }
 
   if (!validTransitions[currentStatus].includes(newStatus)) {
     const allowedStatuses = validTransitions[currentStatus]
-      .map((s) => s.replace('_', ' '))
+      .map((s) => t(`status.${s.toLowerCase().replace('_', '')}`))
       .join(', ');
     return {
       valid: false,
-      message: `Transition from ${currentStatus.replace('_', ' ')} to ${newStatus.replace('_', ' ')} is not allowed. Allowed transitions: ${allowedStatuses || 'None'}`,
+      message: t('validation.invalidTransition', {
+        current: t(`status.${currentStatus.toLowerCase().replace('_', '')}`),
+        target: t(`status.${newStatus.toLowerCase().replace('_', '')}`),
+        allowed: allowedStatuses || t('validation.none'),
+      }),
     };
   }
 
@@ -237,11 +252,12 @@ export const validateStatusTransition = (
  *
  * @param item - The backlog item to validate
  * @param targetStatus - The target status to transition to
+ * @param t - Translation function for i18n
  * @returns Validation result with missing fields if any
  *
  * @example
  * ```typescript
- * const result = validateItemForStatusChange(item, ItemStatus.READY);
+ * const result = validateItemForStatusChange(item, ItemStatus.READY, t);
  * if (!result.valid) {
  *   console.log('Missing fields:', result.missingFields);
  * }
@@ -249,7 +265,8 @@ export const validateStatusTransition = (
  */
 export const validateItemForStatusChange = (
   item: ProductBacklogItem,
-  targetStatus: ItemStatus
+  targetStatus: ItemStatus,
+  t: TranslateFunction
 ): ItemValidationResult => {
   const missingFields: string[] = [];
   const requiresFullValidation = targetStatus !== ItemStatus.NEW;
@@ -259,37 +276,41 @@ export const validateItemForStatusChange = (
   }
 
   if (!item.title || item.title.trim().length < 5) {
-    missingFields.push('Title (minimum 5 characters)');
+    missingFields.push(t('validation.fieldTitle'));
   }
 
   if (!item.description || item.description.trim().length === 0) {
-    missingFields.push('Description');
+    missingFields.push(t('validation.fieldDescription'));
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (!item.priority) {
-    missingFields.push('MoSCoW Priority');
+    missingFields.push(t('validation.fieldMoscowPriority'));
   }
 
   if (!item.businessValue || item.businessValue < 1) {
-    missingFields.push('Business Value');
+    missingFields.push(t('validation.fieldBusinessValue'));
   }
 
   if (!item.storyPoints || item.storyPoints < 1) {
-    missingFields.push('Estimate (Story Points)');
+    missingFields.push(t('validation.fieldEstimate'));
   }
 
   if (item.labels.length === 0) {
-    missingFields.push('Labels (at least one)');
+    missingFields.push(t('validation.fieldLabels'));
   }
 
   if (!item.acceptanceCriteria || item.acceptanceCriteria.trim().length === 0) {
-    missingFields.push('Acceptance Criteria');
+    missingFields.push(t('validation.fieldAcceptanceCriteria'));
   }
 
   if (missingFields.length > 0) {
     const fieldList = missingFields.map((f) => `"${f}"`).join(', ');
-    const message = `Cannot change status to "${targetStatus.replace('_', ' ')}". The following mandatory fields must be completed first: ${fieldList}. Please click "Edit Item" to update this backlog item.`;
+    const targetStatusLabel = t(`status.${targetStatus.toLowerCase().replace('_', '')}`);
+    const message = t('validation.cannotChangeStatus', {
+      status: targetStatusLabel,
+      fields: fieldList,
+    });
     return { valid: false, missingFields, message };
   }
 

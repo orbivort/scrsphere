@@ -152,7 +152,12 @@ const BacklogContent: React.FC = () => {
   );
 
   const validateForm = (isEditMode: boolean = false): boolean => {
-    const result = validateFormData(formData, { teamId, activeGoalId: activeGoal?.id }, isEditMode);
+    const result = validateFormData(
+      formData,
+      { teamId, activeGoalId: activeGoal?.id },
+      t as (key: string, options?: Record<string, unknown>) => string,
+      isEditMode
+    );
 
     if (result.workflowError) {
       setWorkflowError(result.workflowError);
@@ -276,13 +281,21 @@ const BacklogContent: React.FC = () => {
   const handleQuickStatusChange = async (newStatus: ItemStatus) => {
     if (!selectedItem) return;
 
-    const validationResult = validateStatusTransition(selectedItem.status, newStatus);
+    const validationResult = validateStatusTransition(
+      selectedItem.status,
+      newStatus,
+      t as (key: string, options?: Record<string, unknown>) => string
+    );
     if (!validationResult.valid) {
-      setWorkflowError(validationResult.message ?? 'Invalid status transition');
+      setWorkflowError(validationResult.message ?? t('validation.invalidTransition'));
       return;
     }
 
-    const fieldValidation = validateItemForStatusChange(selectedItem, newStatus);
+    const fieldValidation = validateItemForStatusChange(
+      selectedItem,
+      newStatus,
+      t as (key: string, options?: Record<string, unknown>) => string
+    );
     if (!fieldValidation.valid) {
       setWorkflowError(fieldValidation.message ?? null);
       return;
@@ -311,7 +324,7 @@ const BacklogContent: React.FC = () => {
               taskNames,
               moreCount,
               incompleteCount: incompleteTasks.length,
-            })
+            }) as string
           );
           setIsLoadingChildTasks(false);
           return;
@@ -366,7 +379,7 @@ const BacklogContent: React.FC = () => {
           } else if (err.response?.status === 403) {
             setWorkflowError(
               err.response.data?.error?.message ??
-                ('You do not have permission to perform this status transition' as string)
+                (t as (key: string) => string)('common:permission.transitionError')
             );
           }
         },

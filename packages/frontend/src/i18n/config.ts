@@ -17,12 +17,16 @@ export function initI18n(): Promise<TFunction> {
       loadPath: '/locales/{{lng}}/{{ns}}.json',
     },
 
-    // Auto-detect language: cookie → localStorage → navigator → default
+    // Auto-detect language: cookie → navigator → default
+    // NOTE: We intentionally exclude localStorage from detection because:
+    // - Zustand persist uses localStorage key 'scrumooth.locale' with JSON format
+    // - i18next LanguageDetector expects plain string format
+    // - This collision causes i18next to overwrite and break Zustand's persisted state
+    // - Cookie (set by Zustand's setLocale) is sufficient for detection
     detection: {
-      order: ['cookie', 'localStorage', 'navigator'],
+      order: ['cookie', 'navigator'],
       lookupCookie: 'scrumooth_locale',
-      lookupLocalStorage: 'scrumooth.locale',
-      caches: ['localStorage'],
+      caches: ['cookie'],
     },
 
     fallbackLng: DEFAULT_LOCALE,

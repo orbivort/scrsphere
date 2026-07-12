@@ -6,6 +6,7 @@ import type { AxiosError } from 'axios';
 
 import type { ApiResponse } from '../types';
 import { logger } from '../utils/logger';
+import { i18nInstance } from '../i18n/config';
 
 import { useApiError } from './useApiError';
 
@@ -93,7 +94,10 @@ export const useMutationErrorHandler = (): UseMutationErrorHandlerResult => {
 
       // For permission transition errors, show a cleaner message
       if (isPermissionError) {
-        userMessage = 'You do not have permission to perform this transition.';
+        userMessage = i18nInstance.t(
+          'common:permission.transitionError',
+          'You do not have permission to perform this transition.'
+        );
       }
 
       // Handle validation errors (400)
@@ -135,8 +139,32 @@ export const useMutationErrorHandler = (): UseMutationErrorHandlerResult => {
         const response = (error as { response?: { data?: { error?: { message?: string } } } })
           .response;
         const errorMessage = response?.data?.error?.message;
+
+        // Detect permission-related backend messages and use translated version
+        const isPermissionMessage =
+          errorMessage &&
+          (errorMessage.includes('You do not have permission') ||
+            errorMessage.includes('Required roles') ||
+            errorMessage.includes('Insufficient permissions'));
+
         if (setWorkflowError) {
-          setWorkflowError(errorMessage ?? 'You do not have permission to perform this action');
+          if (isPermissionMessage) {
+            // Use translated message instead of backend message
+            setWorkflowError(
+              i18nInstance.t(
+                'common:permission.transitionError',
+                'You do not have permission to perform this transition.'
+              )
+            );
+          } else {
+            setWorkflowError(
+              errorMessage ??
+                i18nInstance.t(
+                  'common:permission.actionError',
+                  'You do not have permission to perform this action.'
+                )
+            );
+          }
         }
       }
 

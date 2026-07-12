@@ -53,7 +53,11 @@
   "showLess": "Afficher moins",
   "localeSyncFailed": "Échec de la synchronisation de la préférence de langue. La synchronisation aura lieu lors de la prochaine connexion.",
   "noTeamSelected": "Aucune équipe sélectionnée",
-  "unsavedChanges": "Modifications non enregistrées",
+
+  "confirmDialog": {
+    "removeMessage": "Êtes-vous sûr de vouloir supprimer {{name}}?",
+    "defaultMessage": "Êtes-vous sûr de vouloir continuer?"
+  },
   "aria": {
     "openMenu": "Ouvrir le menu",
     "closeMenu": "Fermer le menu",
@@ -61,7 +65,8 @@
     "closeDialog": "Fermer la boîte de dialogue",
     "navigateTo": "Accéder à {{page}}",
     "expandSidebar": "Agrandir le panneau latéral",
-    "collapseSidebar": "Réduire le panneau latéral"
+    "collapseSidebar": "Réduire le panneau latéral",
+    "skipToMainContent": "Aller au contenu principal"
   },
   "nav": {
     "dashboard": "Tableau de bord",
@@ -104,5 +109,339 @@
       "timeout": "La requête a pris trop de temps. Veuillez réessayer.",
       "serverError": "Une erreur serveur s'est produite. Notre équipe a été informée."
     }
+  },
+  "profile": {
+    "editTitle": "Modifier le profil",
+    "changePasswordTitle": "Changer le mot de passe",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "email": "E-mail",
+    "currentPassword": "Mot de passe actuel",
+    "newPassword": "Nouveau mot de passe",
+    "confirmNewPassword": "Confirmer le nouveau mot de passe",
+    "saving": "Enregistrement...",
+    "saveChanges": "Enregistrer les modifications",
+    "profileUpdated": "Profil mis à jour avec succès",
+    "passwordChanged": "Mot de passe modifié avec succès",
+    "currentPasswordIncorrect": "Le mot de passe actuel est incorrect",
+    "passwordRequirements": "Le mot de passe doit contenir au moins 8 caractères, incluant des majuscules, minuscules, chiffres et caractères spéciaux",
+    "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
+    "readOnly": "Lecture seule",
+    "contactSupportToChangeEmail": "Contactez le support pour modifier votre adresse e-mail",
+    "placeholder": {
+      "firstName": "Entrez votre prénom",
+      "lastName": "Entrez votre nom",
+      "currentPassword": "Entrez votre mot de passe actuel",
+      "newPassword": "Entrez votre nouveau mot de passe",
+      "confirmPassword": "Confirmez votre nouveau mot de passe"
+    },
+    "passwordStrength": {
+      "requirementsTitle": "Exigences du mot de passe :",
+      "minLength": "Au moins 12 caractères",
+      "uppercase": "Une majuscule (A-Z)",
+      "lowercase": "Une minuscule (a-z)",
+      "number": "Un chiffre (0-9)",
+      "special": "Un caractère spécial (!@#$%^&*)",
+      "strengthLabels": {
+        "weak": "Faible",
+        "medium": "Moyen",
+        "strong": "Fort"
+      }
+    },
+    "showPassword": "Afficher le mot de passe",
+    "hidePassword": "Masquer le mot de passe",
+    "passwordsMatch": "Les mots de passe correspondent",
+    "changing": "Modification..."
+  },
+  "deleteAccount": {
+    "title": "Supprimer le compte",
+    "close": "Fermer",
+    "warningTitle": "Cette action est définitive et ne peut pas être annulée. Toutes vos données seront supprimées de manière permanente.",
+    "accountToBeDeleted": "Compte à supprimer",
+    "dataWillBeDeleted": "Données qui seront supprimées",
+    "profileAndAccount": "Votre profil et informations de compte",
+    "teamMemberships": "Appartenances aux équipes et rôles",
+    "teamsCount": "({{count}} équipes)",
+    "associatedData": "Toutes les données associées et l'historique d'activité",
+    "confirmationLabel": "Tapez <strong>{{phrase}}</strong> pour confirmer",
+    "confirmationPlaceholder": "Tapez {{phrase}}",
+    "confirmationHelp": "Cela permet d'éviter les suppressions accidentelles",
+    "confirmationCheckbox": "Je comprends que cette action est définitive et ne peut pas être annulée. Je souhaite supprimer mon compte et toutes les données associées.",
+    "scheduleConfirmationLabel": "Tapez <strong>{{phrase}}</strong> pour planifier la suppression",
+    "scheduleConfirmationPlaceholder": "Tapez {{phrase}}",
+    "scheduleConfirmationHelp": "Cela lance une période de grâce de 14 jours",
+    "scheduleCheckbox": "Je comprends qu'une période de grâce de 14 jours commence, pendant laquelle les membres de l'équipe seront informés. Je peux annuler à tout moment.",
+    "whatHappensNext": "Ce qui se passe ensuite",
+    "teamMembersNotified": "Les membres de l'équipe ont été informés",
+    "canAssignNewPO": "Vous pouvez toujours désigner un nouveau Product Owner",
+    "afterDeletionDate": "Après la date de suppression, vous pouvez forcer la suppression de votre compte",
+    "canCancelAnytime": "Vous pouvez annuler cette demande à tout moment",
+    "forceDeleteWarning": "Cela laissera des équipes sans Product Owner",
+    "forceConfirmationHelp": "Cette action ne peut pas être annulée",
+    "forceCheckbox": "Je comprends que les équipes perdront leur Product Owner et je souhaite quand même supprimer définitivement mon compte.",
+    "cancelDeletion": "Annuler la suppression",
+    "deleteAnyway": " supprimer quand même",
+    "deleteAccount": "Supprimer le compte",
+    "scheduleDeletion": "Planifier la suppression",
+    "deleting": "Suppression...",
+    "scheduling": "Planification...",
+    "dangerZone": {
+      "title": "Zone de danger",
+      "subtitle": "Irréversible et destructeur",
+      "expand": "Développer la zone de danger",
+      "collapse": "Réduire la zone de danger",
+      "deleteAccount": {
+        "title": "Supprimer le compte",
+        "description": "Supprimer définitivement votre compte et toutes les données associées",
+        "ariaLabel": "Supprimer définitivement votre compte"
+      },
+      "delete": "Supprimer"
+    },
+    "confirmationInput": {
+      "label": "Pour confirmer la suppression, veuillez taper:",
+      "placeholder": "Tapez \"{{phrase}}\" pour confirmer",
+      "instructions": "Tapez le texte exactement comme indiqué, sensible à la casse, pour activer le bouton de suppression. Appuyez sur Entrée lorsque le texte correspond pour envoyer.",
+      "error": "Le texte ne correspond pas. Veuillez taper exactement:",
+      "success": "Le texte de confirmation correspond"
+    },
+    "deletionRightsNotice": {
+      "title": "Votre droit à l'effacement",
+      "description": "Vous avez le droit de supprimer votre compte. Comme vous êtes le dernier Product Owner, nous vous demandons de planifier la suppression avec une période de grâce de 14 jours afin que vos équipes puissent se préparer.",
+      "list": {
+        "teamMembersNotified": "Les membres de l'équipe seront informés",
+        "assignNewPO": "Vous pouvez désigner un nouveau Product Owner",
+        "cancelAnytime": "Vous pouvez annuler la suppression à tout moment"
+      },
+      "afterGracePeriod": "Après 14 jours, vous pouvez supprimer définitivement votre compte indépendamment."
+    },
+    "forceDeleteWarning": {
+      "title": "Période de grâce terminée",
+      "description": "La période de grâce de 14 jours est terminée. Vous pouvez maintenant supprimer définitivement votre compte.",
+      "impact": {
+        "title": "Cela va:",
+        "removePO": "Vous supprimer comme Product Owner des équipes sans remplaçant désigné",
+        "deleteAllData": "Supprimer définitivement toutes vos données",
+        "cannotUndo": "Cette action NE PEUT PAS être annulée"
+      },
+      "teams": {
+        "title": "Les équipes suivantes n'auront AUCUN Product Owner:",
+        "consequences": "Ces équipes ne pourra pas ajouter ou supprimer des membres, gérer des sprints, ou accéder aux paramètres de l'équipe."
+      }
+    },
+    "gracePeriodProgress": {
+      "title": "Suppression planifiée",
+      "requested": "Demandée",
+      "deletionDate": "Date de suppression",
+      "daysRemaining": "Jours restants",
+      "progressAriaLabel": "{{percent}}% de la période de grâce écoulée"
+    },
+    "teamImpact": {
+      "title": "Impact sur les équipes",
+      "description": "Vous êtes membre de {{count}} équipe",
+      "description_plural": "Vous êtes membre de {{count}} équipes",
+      "blocked": {
+        "warning": "Vous êtes le seul Product Owner. Si vous supprimez votre compte, cette équipe n'aura aucun Product Owner. Vous pouvez planifier la suppression avec une période de grâce de 14 jours.",
+        "goToSettings": "Accéder aux paramètres de l'équipe",
+        "goToSettingsAria": "Accéder aux paramètres de {{teamName}} pour désigner un nouveau Product Owner"
+      },
+      "regular": {
+        "message": "Vous seront supprimé de cette équipe."
+      }
+    }
+  },
+  "unsavedChanges": {
+    "title": "Modifications non enregistrées",
+    "message": "Vous avez des modifications non enregistrées. Êtes-vous sûr de vouloir les ignorer?",
+    "subtitle": "Veuillez vérifier avant de continuer",
+    "attentionRequired": "Attention requise",
+    "unsavedModifications": "Modifications non enregistrées détectées",
+    "permanentlyLost": "Vos modifications seront définitivement perdues si vous les ignorez. Cette action ne peut pas être annulée.",
+    "whatWouldYouDo": "Que souhaitez-vous faire?",
+    "goBack": "Retour",
+    "goBackDescription": "Continuer la modification et enregistrer vos modifications",
+    "discard": "Ignorer",
+    "discardDescription": "Fermer sans enregistrer et perdre toutes les modifications",
+    "discardChanges": "Ignorer les modifications",
+    "messages": {
+      "profileEdit": "Vous avez des modifications non enregistrées dans le formulaire de modification du profil. Êtes-vous sûr de vouloir les ignorer?",
+      "passwordChange": "Vous avez des modifications non enregistrées dans le formulaire de changement de mot de passe. Êtes-vous sûr de vouloir les ignorer?"
+    }
+  },
+  "emptyState": {
+    "noTeam": {
+      "title": "Aucune équipe sélectionnée",
+      "description": "Veuillez sélectionner une équipe pour continuer."
+    },
+    "noActiveGoal": {
+      "title": "Aucun objectif actif",
+      "description": "Veuillez définir un objectif produit actif avant de continuer.",
+      "action": "Aller aux objectifs produit"
+    },
+    "noActiveSprint": {
+      "title": "Aucun sprint actif",
+      "description": "Démarrez un nouveau sprint depuis la planification de sprint pour continuer.",
+      "action": "Aller à la planification de sprint"
+    },
+    "noCompletedSprint": {
+      "title": "Aucun sprint terminé",
+      "description": "Terminez un sprint pour commencer le suivi."
+    },
+    "noData": {
+      "title": "Aucune donnée disponible",
+      "description": "Il n'y a aucune donnée à afficher pour le moment."
+    },
+    "error": {
+      "title": "Une erreur est survenue",
+      "description": "Une erreur s'est produite lors du chargement des données. Veuillez réessayer."
+    }
+  },
+  "draftRestore": {
+    "restorePrompt": "Restaurer la progression non sauvegardée ?",
+    "draftFound": "Nous avons trouvé un brouillon sur lequel vous travailliez {{time}}.",
+    "startFresh": "Recommencer",
+    "recently": "récemment",
+    "minutesAgo": "{{count}} minute",
+    "minutesAgo_other": "{{count}} minutes",
+    "hoursAgo": "{{count}} heure",
+    "hoursAgo_other": "{{count}} heures",
+    "daysAgo": "{{count}} jour",
+    "daysAgo_other": "{{count}} jours"
+  },
+  "chunkError": {
+    "title": "Impossible de charger la page",
+    "description": "Une partie de l'application n'a pas pu être chargée. Cela peut être dû à un problème réseau ou à une version obsolète.",
+    "reload": "Recharger"
+  },
+  "helpPanel": {
+    "tipsFor": "Conseils pour {{title}}",
+    "goodExample": "✓ Bon exemple :",
+    "avoidExample": "✗ À éviter :"
+  },
+  "loadingStates": {
+    "loadingContent": "Chargement du contenu",
+    "loadingListItems": "Chargement des éléments de liste",
+    "loadingChart": "Chargement du graphique",
+    "loadingCardContent": "Chargement du contenu de la carte"
+  },
+  "errorBoundary": {
+    "title": "Une erreur s'est produite",
+    "networkError": "Impossible de se connecter au serveur. Vérifiez votre connexion internet.",
+    "authError": "Votre session a expiré. Veuillez vous reconnecter.",
+    "validationError": "Données invalides. Veuillez vérifier votre saisie.",
+    "notFoundError": "La ressource demandée n'a pas été trouvée.",
+    "runtimeError": "Une erreur inattendue s'est produite. Veuillez réessayer.",
+    "defaultError": "Une erreur s'est produite. Veuillez réessayer plus tard.",
+    "devDetails": "Détails de l'erreur (Développement uniquement)",
+    "tryAgain": "Réessayer",
+    "reloadPage": "Recharger la page",
+    "connectionError": "Erreur de connexion",
+    "timeoutError": "La requête a expiré. Veuillez réessayer.",
+    "forbiddenError": "Vous n'avez pas la permission d'effectuer cette action.",
+    "serverError": "Une erreur serveur s'est produite. Veuillez réessayer plus tard.",
+    "apiError": "Une erreur de communication avec le serveur s'est produite."
+  },
+  "pageError": {
+    "title": "Erreur {{pageName}}",
+    "description": "Une erreur s'est produite lors du chargement de cette page. Cela peut être dû à un problème temporaire ou à un problème de connexion.",
+    "reloadPage": "Recharger la page",
+    "backToDashboard": "Retour au tableau de bord",
+    "technicalDetails": "Détails techniques"
+  },
+  "widgetError": {
+    "failedToLoad": "{{widgetName}} n'a pas pu être chargé",
+    "retryAria": "Recharger {{widgetName}}"
+  },
+  "sessionWarning": {
+    "title": "Avertissement d'expiration de session",
+    "message": "Votre session va bientôt expirer pour inactivité. Vous serez automatiquement déconnecté dans :",
+    "extending": "Prolongation...",
+    "stayLoggedIn": "Rester connecté",
+    "logOut": "Se déconnecter"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Marquer tout comme lu",
+    "loading": "Chargement des notifications...",
+    "empty": "Pas encore de notifications",
+    "viewAll": "Voir toutes les notifications",
+    "connectionError": "Erreur de connexion"
+  },
+  "teamSelection": {
+    "title": "Sélectionner une équipe",
+    "loading": "Chargement des équipes...",
+    "empty": "Vous n'avez pas encore d'équipes.",
+    "goToTeamPage": "Aller à la page Équipe",
+    "switching": "Changement...",
+    "roles": {
+      "productOwner": "Product Owner",
+      "scrumMaster": "Scrum Master",
+      "developer": "Développeur"
+    }
+  },
+  "errorMessage": {
+    "dismiss": "Fermer le message d'erreur"
+  },
+  "statusSelector": {
+    "currentStatusLocked": "Statut actuel: {{status}} (verrouillé)",
+    "currentStatusClickable": "Statut actuel: {{status}}. Cliquez pour changer le statut.",
+    "statusOptions": "Options de statut",
+    "changeStatus": "Changer le statut",
+    "changeItemStatusHint": "Cliquez pour changer le statut de l'élément"
+  },
+  "attendeeForm": {
+    "nameRequired": "Le nom est requis",
+    "nameMaxLength": "Le nom doit contenir 100 caractères ou moins",
+    "emailInvalid": "Veuillez entrer une adresse e-mail valide",
+    "roleRequired": "Le rôle est requis"
+  },
+  "attendeesSection": {
+    "title": "Participants",
+    "attendanceCount": "{{attended}} / {{total}} présents",
+    "addAttendees": "Ajouter des participants",
+    "addAttendeesAriaLabel": "Ajouter des participants",
+    "cannotAddToCompleted": "Impossible d'ajouter à un review terminé",
+    "filterAriaLabel": "Filtrer les participants par type",
+    "filterAll": "Tous ({{count}})",
+    "filterTeam": "Équipe ({{count}})",
+    "filterGuests": "Invités ({{count}})",
+    "unmarkedTitle": "Membres de l'équipe non encore marqués ({{count}})",
+    "markAsAttended": "Marquer comme présent",
+    "markAsAbsent": "Marquer comme absent",
+    "attended": "Présent",
+    "absent": "Absent",
+    "emptyMessage": "Aucun participant enregistré pour le moment.",
+    "emptyHint": "Marquez les membres de l'équipe ci-dessus ou ajoutez manuellement des participants.",
+    "addAttendeeTitle": "Ajouter un participant",
+    "editAttendeeTitle": "Modifier le participant",
+    "addAttendeeSubtitle": "Ajouter un nouveau participant à cette session de review",
+    "editAttendeeSubtitle": "Mettre à jour les informations du participant pour ce review",
+    "formNameLabel": "Nom",
+    "formNameRequired": "*",
+    "formNamePlaceholder": "Entrez le nom du participant",
+    "formEmailLabel": "E-mail",
+    "formEmailPlaceholder": "Entrez l'adresse e-mail (optionnel)",
+    "formRoleLabel": "Rôle",
+    "formRoleRequired": "*",
+    "formAttendedLabel": "Présent",
+    "roleProductOwner": "Product Owner",
+    "roleScrumMaster": "Scrum Master",
+    "roleDeveloper": "Développeur",
+    "roleStakeholder": "Partie prenante",
+    "cancel": "Annuler",
+    "saving": "Enregistrement...",
+    "addAttendee": "Ajouter un participant",
+    "update": "Mettre à jour",
+    "saveError": "Échec de l'enregistrement du participant. Veuillez réessayer.",
+    "closeModal": "Fermer la fenêtre",
+    "removeAttendeeTitle": "Supprimer le participant",
+    "removeAttendeeConfirm": "Supprimer",
+    "teamMemberCannotEdit": "Les membres de l'équipe ne peuvent pas être modifiés",
+    "editAttendee": "Modifier le participant",
+    "removeAttendee": "Supprimer le participant"
+  },
+  "permission": {
+    "transitionError": "Vous n'avez pas la permission d'effectuer cette transition.",
+    "actionError": "Vous n'avez pas la permission d'effectuer cette action.",
+    "insufficientRoles": "Permissions insuffisantes. Rôles requis: {{roles}}"
   }
 }

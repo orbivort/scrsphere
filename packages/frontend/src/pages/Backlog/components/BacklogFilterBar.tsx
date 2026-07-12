@@ -8,6 +8,20 @@ import styles from './BacklogFilterBar.module.css';
 
 import { SearchIcon, XIcon } from '@/components/common/Icons';
 
+/**
+ * Helper function to get translated status label
+ */
+const getStatusLabel = (status: string, t: (key: string) => string): string => {
+  const statusMap: Record<string, string> = {
+    NEW: 'status.new',
+    REFINED: 'status.refined',
+    READY: 'status.ready',
+    IN_PROGRESS: 'status.inProgress',
+    DONE: 'status.done',
+  };
+  return t(statusMap[status] ?? status);
+};
+
 export interface BacklogFilterBarProps {
   filters: FilterState;
   onFiltersChange: (filters: FilterState) => void;
@@ -46,22 +60,24 @@ export const BacklogFilterBar: React.FC<BacklogFilterBarProps> = ({ filters, onF
           >
             {t('filter.all') as string}
           </button>
-          {Object.values(ItemStatus).map((status) => (
-            <button
-              key={status}
-              className={`${styles['status-chip']} ${filters.status.includes(status) ? styles.active : ''}`}
-              onClick={() =>
-                onFiltersChange({
-                  ...filters,
-                  status: filters.status.includes(status)
-                    ? filters.status.filter((s) => s !== status)
-                    : [...filters.status, status],
-                })
-              }
-            >
-              {status.replace('_', ' ')}
-            </button>
-          ))}
+          {Object.values(ItemStatus).map((status) => {
+            return (
+              <button
+                key={status}
+                className={`${styles['status-chip']} ${filters.status.includes(status) ? styles.active : ''}`}
+                onClick={() =>
+                  onFiltersChange({
+                    ...filters,
+                    status: filters.status.includes(status)
+                      ? filters.status.filter((s) => s !== status)
+                      : [...filters.status, status],
+                  })
+                }
+              >
+                {getStatusLabel(status, t as (key: string) => string)}
+              </button>
+            );
+          })}
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-export { ErrorBoundary, APIErrorBoundary } from './ErrorBoundary';
+export { ErrorBoundary } from './ErrorBoundary';
+export { APIErrorBoundary } from './APIErrorBoundary';
 export { PageErrorBoundary } from './PageErrorBoundary';
 export { WidgetErrorBoundary } from './WidgetErrorBoundary';
-export type { default as ErrorBoundaryType } from './ErrorBoundary';

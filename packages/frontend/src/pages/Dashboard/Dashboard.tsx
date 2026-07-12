@@ -441,9 +441,15 @@ export const Dashboard: React.FC = () => {
                 </h2>
                 <span
                   className={`${styles['sprint-status']} ${styles[sprint.status]}`}
-                  aria-label={t('sprintStatus', { status: sprint.status })}
+                  aria-label={`Sprint-Status: ${t(`sprintStatus.${sprint.status.toUpperCase()}` as 'sprintStatus.PLANNED' | 'sprintStatus.ACTIVE' | 'sprintStatus.COMPLETED' | 'sprintStatus.CANCELLED')}`}
                 >
-                  {sprint.status}
+                  {t(
+                    `sprintStatus.${sprint.status.toUpperCase()}` as
+                      | 'sprintStatus.PLANNED'
+                      | 'sprintStatus.ACTIVE'
+                      | 'sprintStatus.COMPLETED'
+                      | 'sprintStatus.CANCELLED'
+                  )}
                 </span>
               </div>
               <div className={styles['sprint-card-body']}>

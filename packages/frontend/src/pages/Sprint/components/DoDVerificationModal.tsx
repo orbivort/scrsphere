@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 
 import type { DoDItem, ProductBacklogItem, Task, DoDChecklistVerification } from '../../../types';
 import { definitionService } from '../../../services';
@@ -9,6 +10,25 @@ import { LoadingState } from '../../../components/common/Loading';
 import styles from './DoDVerificationModal.module.css';
 
 import { CheckCircleIcon } from '@/components/common/Icons';
+
+/**
+ * Maps default DoD descriptions to translation keys in the sprint namespace
+ */
+const DOD_DESCRIPTION_MAP: Record<string, string> = {
+  'Code is peer-reviewed and approved': 'dodVerification.item.codeReviewed',
+  'Unit tests written and passing (minimum 80% coverage)': 'dodVerification.item.unitTests',
+  'Integration tests passing': 'dodVerification.item.integrationTests',
+  'Code is properly documented': 'dodVerification.item.documentation',
+  'No critical or high-severity bugs': 'dodVerification.item.noCriticalBugs',
+};
+
+/**
+ * Translates a DoD item description if it matches a known default
+ */
+function getTranslatedDescription(item: DoDItem, t: TFunction<'sprint'>): string {
+  const translationKey = DOD_DESCRIPTION_MAP[item.description];
+  return translationKey ? t(translationKey as never) : item.description;
+}
 
 export interface DoDVerificationData {
   pbiId: string;
@@ -466,7 +486,7 @@ export const DoDVerificationModal: React.FC<DoDVerificationModalProps> = ({
                                   {getCategoryIcon(item.category)}
                                 </span>
                                 <span className={styles['dod-description']}>
-                                  {item.description}
+                                  {getTranslatedDescription(item, t)}
                                 </span>
                                 {isReadOnly && (
                                   <span

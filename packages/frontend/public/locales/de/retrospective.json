@@ -2,6 +2,12 @@
   "title": "Sprint Retrospective",
   "backToRetrospectives": "Zurück zu Retrospectives",
   "backAriaLabel": "Zurück zur Retrospectives-Liste gehen",
+  "sprintStatus": {
+    "PLANNED": "Geplant",
+    "ACTIVE": "Aktiv",
+    "COMPLETED": "Abgeschlossen",
+    "CANCELLED": "Abgebrochen"
+  },
   "attendees": "Teilnehmer",
   "attendeesLabel": "Teilnehmer",
   "attendeesAriaLabel": "{{attended}} von {{total}} Teilnehmern haben teilgenommen",
@@ -19,7 +25,24 @@
     "moreItems": "+{{count}} weitere Elemente",
     "goal": "Ziel:",
     "businessDay_one": "{{count}} Arbeitstag",
-    "businessDay_other": "{{count}} Arbeitstage"
+    "businessDay_other": "{{count}} Arbeitstage",
+    "itemsCount": "{{count}} Elemente",
+    "storyPointsCount": "{{count}} Story Points",
+    "taskCount": "{{count}} Aufgaben",
+    "taskCompletion": "{{completed}}/{{total}} abgeschlossen",
+    "priorityLabels": {
+      "MUST_HAVE": "Muss haben",
+      "SHOULD_HAVE": "Sollte haben",
+      "COULD_HAVE": "Könnte haben",
+      "WONT_HAVE": "Wird nicht haben"
+    },
+    "statusLabels": {
+      "NEW": "Neu",
+      "REFINED": "Verfeinert",
+      "READY": "Bereit",
+      "IN_PROGRESS": "In Bearbeitung",
+      "DONE": "Erledigt"
+    }
   },
   "categories": {
     "wentWell": {
@@ -52,14 +75,20 @@
     "itemsInColumn": "{{count}} Elemente in {{title}}"
   },
   "actionItems": {
-    "title": "Action Items",
-    "createActionItem": "+ Action Item erstellen",
-    "empty": "Noch keine Action Items. Wandeln Sie Verbesserungselemente in ausführbare Aufgaben um.",
+    "title": "Aktionspunkte",
+    "createActionItem": "+ Aktionspunkt erstellen",
+    "empty": "Noch keine Aktionspunkte. Wandeln Sie Verbesserungselemente in ausführbare Aufgaben um.",
     "inBacklog": "Im Backlog",
     "unassigned": "Nicht zugewiesen",
     "due": "Fällig:",
-    "deleteActionItem": "Action Item löschen",
-    "deleteAriaLabel": "Action Item löschen"
+    "deleteActionItem": "Aktionspunkt löschen",
+    "deleteAriaLabel": "Aktionspunkt löschen",
+    "status": {
+      "PENDING": "Ausstehend",
+      "IN_PROGRESS": "In Bearbeitung",
+      "COMPLETED": "Abgeschlossen",
+      "CANCELLED": "Abgebrochen"
+    }
   },
   "attendeesSection": {
     "title": "Teilnehmer"
