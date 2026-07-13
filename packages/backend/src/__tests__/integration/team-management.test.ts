@@ -9,6 +9,8 @@ import { generateUUIDv7 } from '../../utils/uuid';
 import bcrypt from 'bcrypt';
 import { CSRF_CONSTANTS } from '../../middleware/csrf.middleware';
 import { getCsrfToken, extractCsrfFromCookies } from '../helpers/test-helpers';
+import { setLocaleHeader, expectLocaleCookie, SUPPORTED_LOCALES } from '../helpers/i18n-helpers';
+import type { Locale } from '@scrumooth/shared';
 
 // Helper to generate unique test identifier
 const uniqueId = () => `${Date.now()}-${Math.random().toString(36).substring(7)}`;
@@ -711,6 +713,340 @@ describe('Team Management Integration Tests', () => {
         .expect(200);
 
       expect(response.body.success).toBe(true);
+    });
+  });
+
+  describe('i18n Locale Support', () => {
+    const testEmails: string[] = [];
+    const testTeams: string[] = [];
+
+    afterEach(async () => {
+      await cleanupTeams(testTeams);
+      await cleanupTestData(testEmails);
+      testEmails.length = 0;
+      testTeams.length = 0;
+    });
+
+    describe('Locale cookie and header resolution', () => {
+      it('should set locale cookie based on Accept-Language header for team list request', async () => {
+        const email = `locale-team-list-${uniqueId()}@example.com`;
+        testEmails.push(email);
+
+        const user = await createTestUserInDb(email);
+        const teamName = `Locale Team ${uniqueId()}`;
+        testTeams.push(teamName);
+
+        const team = await createTestTeam(teamName);
+        await addTeamMember(team.id, user.id, 'DEVELOPER');
+
+        const cookies = await loginAndGetCookies(email);
+
+        const response = await request(app)
+          .get('/api/v1/teams')
+          .set('Cookie', cookies)
+          .set(setLocaleHeader('de'))
+          .expect(200);
+
+        expectLocaleCookie(response, 'de');
+        expect(response.body.success).toBe(true);
+      });
+
+      it('should set locale cookie for all supported locales', async () => {
+        const email = `locale-all-${uniqueId()}@example.com`;
+        testEmails.push(email);
+
+        const user = await createTestUserInDb(email);
+        const teamName = `Locale All Team ${uniqueId()}`;
+        testTeams.push(teamName);
+
+        const team = await createTestTeam(teamName);
+        await addTeamMember(team.id, user.id, 'DEVELOPER');
+
+        const cookies = await loginAndGetCookies(email);
+
+        for (const locale of SUPPORTED_LOCALES) {
+          const response = await request(app)
+            .get('/api/v1/teams')
+            .set('Cookie', cookies)
+            .set(setLocaleHeader(locale as Locale))
+            .expect(200);
+
+          expectLocaleCookie(response, locale as Locale);
+        }
+      });
+    });
+
+    describe('Translated team role messages', () => {
+      it('should return 403 with FORBIDDEN code when developer tries to update member role', async () => {
+        const scrumMasterEmail = `sm-role-${uniqueId()}@example.com`;
+        const developerEmail = `dev-role-${uniqueId()}@example.com`;
+        const targetMemberEmail = `target-role-${uniqueId()}@example.com`;
+        testEmails.push(scrumMasterEmail, developerEmail, targetMemberEmail);
+
+        const scrumMaster = await createTestUserInDb(scrumMasterEmail);
+        const developer = await createTestUserInDb(developerEmail);
+        const targetMember = await createTestUserInDb(targetMemberEmail);
+
+        const teamName = `Role Team ${uniqueId()}`;
+        testTeams.push(teamName);
+
+        const team = await createTestTeam(teamName);
+        await addTeamMember(team.id, scrumMaster.id, 'SCRUM_MASTER');
+        await addTeamMember(team.id, developer.id, 'DEVELOPER');
+
+        const membership = await prisma.teamMember.create({
+          data: {
+            id: generateUUIDv7(),
+            teamId: team.id,
+            userId: targetMember.id,
+            role: 'DEVELOPER',
+          },
+        });
+
+        // Login as developer (who doesn't have permission to update roles)
+        const cookies = await loginAndGetCookies(developerEmail);
+        const { csrfToken } = extractCsrfFromCookies(cookies);
+
+        const response = await request(app)
+          .put(`/api/v1/teams/${team.id}/members/${membership.id}`)
+          .set('Cookie', cookies)
+          .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+          .set(setLocaleHeader('de'))
+          .send({ role: 'PRODUCT_OWNER' })
+          .expect(403);
+
+        expect(response.body.success).toBe(false);
+        expect(response.body.error.code).toBe('FORBIDDEN');
+        expectLocaleCookie(response, 'de');
+      });
+
+      it('should return localized locale cookie for role update success in multiple locales', async () => {
+        const scrumMasterEmail = `sm-success-${uniqueId()}@example.com`;
+        const memberEmail = `member-success-${uniqueId()}@example.com`;
+        testEmails.push(scrumMasterEmail, memberEmail);
+
+        const scrumMaster = await createTestUserInDb(scrumMasterEmail);
+        const member = await createTestUserInDb(memberEmail);
+
+        const teamName = `Success Role Team ${uniqueId()}`;
+        testTeams.push(teamName);
+
+        const team = await createTestTeam(teamName);
+        await addTeamMember(team.id, scrumMaster.id, 'SCRUM_MASTER');
+
+        const membership = await prisma.teamMember.create({
+          data: {
+            id: generateUUIDv7(),
+            teamId: team.id,
+            userId: member.id,
+            role: 'DEVELOPER',
+          },
+        });
+
+        const cookies = await loginAndGetCookies(scrumMasterEmail);
+        const { csrfToken } = extractCsrfFromCookies(cookies);
+
+        // Test role update with German locale
+        const responseDe = await request(app)
+          .put(`/api/v1/teams/${team.id}/members/${membership.id}`)
+          .set('Cookie', cookies)
+          .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+          .set(setLocaleHeader('de'))
+          .send({ role: 'PRODUCT_OWNER' })
+          .expect(200);
+
+        expect(responseDe.body.success).toBe(true);
+        expectLocaleCookie(responseDe, 'de');
+
+        // Update role back to DEVELOPER with Spanish locale
+        const responseEs = await request(app)
+          .put(`/api/v1/teams/${team.id}/members/${membership.id}`)
+          .set('Cookie', cookies)
+          .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+          .set(setLocaleHeader('es'))
+          .send({ role: 'DEVELOPER' })
+          .expect(200);
+
+        expect(responseEs.body.success).toBe(true);
+        expectLocaleCookie(responseEs, 'es');
+      });
+    });
+
+    describe('Translated permission denied messages', () => {
+      it('should return 403 Forbidden with locale cookie set for unauthorized team access', async () => {
+        const ownerEmail = `owner-403-${uniqueId()}@example.com`;
+        const outsiderEmail = `outsider-403-${uniqueId()}@example.com`;
+        testEmails.push(ownerEmail, outsiderEmail);
+
+        const owner = await createTestUserInDb(ownerEmail);
+        await createTestUserInDb(outsiderEmail);
+
+        const teamName = `Private Team ${uniqueId()}`;
+        testTeams.push(teamName);
+
+        const team = await createTestTeam(teamName);
+        await addTeamMember(team.id, owner.id, 'PRODUCT_OWNER');
+
+        // Login as outsider who is not a team member
+        const cookies = await loginAndGetCookies(outsiderEmail);
+
+        const response = await request(app)
+          .get(`/api/v1/teams/${team.id}`)
+          .set('Cookie', cookies)
+          .set(setLocaleHeader('fr'))
+          .expect(403);
+
+        expect(response.body.success).toBe(false);
+        expect(response.body.error.code).toBe('FORBIDDEN');
+        expectLocaleCookie(response, 'fr');
+      });
+
+      it('should return 403 Forbidden with correct locale for multiple locales', async () => {
+        const ownerEmail = `owner-multi-${uniqueId()}@example.com`;
+        const outsiderEmail = `outsider-multi-${uniqueId()}@example.com`;
+        testEmails.push(ownerEmail, outsiderEmail);
+
+        const owner = await createTestUserInDb(ownerEmail);
+        await createTestUserInDb(outsiderEmail);
+
+        const teamName = `Multi Locale Team ${uniqueId()}`;
+        testTeams.push(teamName);
+
+        const team = await createTestTeam(teamName);
+        await addTeamMember(team.id, owner.id, 'PRODUCT_OWNER');
+
+        const cookies = await loginAndGetCookies(outsiderEmail);
+
+        // Test with Italian locale
+        const responseIt = await request(app)
+          .get(`/api/v1/teams/${team.id}`)
+          .set('Cookie', cookies)
+          .set(setLocaleHeader('it'))
+          .expect(403);
+
+        expect(responseIt.body.success).toBe(false);
+        expect(responseIt.body.error.code).toBe('FORBIDDEN');
+        expectLocaleCookie(responseIt, 'it');
+
+        // Test with English locale
+        const responseEn = await request(app)
+          .get(`/api/v1/teams/${team.id}`)
+          .set('Cookie', cookies)
+          .set(setLocaleHeader('en'))
+          .expect(403);
+
+        expect(responseEn.body.success).toBe(false);
+        expect(responseEn.body.error.code).toBe('FORBIDDEN');
+        expectLocaleCookie(responseEn, 'en');
+      });
+    });
+
+    describe('Translated team member invitation messages', () => {
+      it('should set locale cookie for invitation request in German', async () => {
+        const adminEmail = `admin-invite-${uniqueId()}@example.com`;
+        const newMemberEmail = `new-member-invite-${uniqueId()}@example.com`;
+        testEmails.push(adminEmail, newMemberEmail);
+
+        const admin = await createTestUserInDb(adminEmail);
+        await createTestUserInDb(newMemberEmail);
+
+        const teamName = `Invite Team ${uniqueId()}`;
+        testTeams.push(teamName);
+
+        const team = await createTestTeam(teamName);
+        await addTeamMember(team.id, admin.id, 'SCRUM_MASTER');
+
+        const cookies = await loginAndGetCookies(adminEmail);
+        const { csrfToken } = extractCsrfFromCookies(cookies);
+
+        const response = await request(app)
+          .post(`/api/v1/teams/${team.id}/members`)
+          .set('Cookie', cookies)
+          .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+          .set(setLocaleHeader('de'))
+          .send({
+            email: newMemberEmail,
+            role: 'DEVELOPER',
+          })
+          .expect(201);
+
+        expect(response.body.success).toBe(true);
+        expectLocaleCookie(response, 'de');
+
+        // Verify notification was created for the invited member
+        const notification = await prisma.notification.findFirst({
+          where: {
+            userId: (
+              await prisma.user.findUnique({ where: { email: newMemberEmail.toLowerCase() } })
+            )?.id,
+            type: 'TEAM_INVITATION',
+          },
+        });
+        expect(notification).not.toBeNull();
+      });
+
+      it('should return 404 with locale cookie when inviting non-existent user', async () => {
+        const adminEmail = `admin-nonexist-${uniqueId()}@example.com`;
+        testEmails.push(adminEmail);
+
+        const admin = await createTestUserInDb(adminEmail);
+
+        const teamName = `Nonexist Invite Team ${uniqueId()}`;
+        testTeams.push(teamName);
+
+        const team = await createTestTeam(teamName);
+        await addTeamMember(team.id, admin.id, 'SCRUM_MASTER');
+
+        const cookies = await loginAndGetCookies(adminEmail);
+        const { csrfToken } = extractCsrfFromCookies(cookies);
+
+        const response = await request(app)
+          .post(`/api/v1/teams/${team.id}/members`)
+          .set('Cookie', cookies)
+          .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+          .set(setLocaleHeader('es'))
+          .send({
+            email: 'nonexistent-user@example.com',
+            role: 'DEVELOPER',
+          })
+          .expect(404);
+
+        expect(response.body.success).toBe(false);
+        expect(response.body.error.code).toBe('NOT_FOUND');
+        expectLocaleCookie(response, 'es');
+      });
+
+      it('should handle invitation request with French locale', async () => {
+        const adminEmail = `admin-fr-${uniqueId()}@example.com`;
+        const newMemberEmail = `member-fr-${uniqueId()}@example.com`;
+        testEmails.push(adminEmail, newMemberEmail);
+
+        const admin = await createTestUserInDb(adminEmail);
+        await createTestUserInDb(newMemberEmail);
+
+        const teamName = `French Invite Team ${uniqueId()}`;
+        testTeams.push(teamName);
+
+        const team = await createTestTeam(teamName);
+        await addTeamMember(team.id, admin.id, 'PRODUCT_OWNER');
+
+        const cookies = await loginAndGetCookies(adminEmail);
+        const { csrfToken } = extractCsrfFromCookies(cookies);
+
+        const response = await request(app)
+          .post(`/api/v1/teams/${team.id}/members`)
+          .set('Cookie', cookies)
+          .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+          .set(setLocaleHeader('fr'))
+          .send({
+            email: newMemberEmail,
+            role: 'DEVELOPER',
+          })
+          .expect(201);
+
+        expect(response.body.success).toBe(true);
+        expectLocaleCookie(response, 'fr');
+      });
     });
   });
 });

@@ -34,8 +34,9 @@ export function localeResolver(req: Request, _res: Response, next: NextFunction)
   }
 
   // Persist the locale cookie so SSR/refresh renders the correct language pre-hydration
+  // maxAge is in milliseconds: 1 year = 365 * 24 * 60 * 60 * 1000 = 31536000000
   _res.cookie('scrumooth_locale', locale, {
-    maxAge: 31536000,
+    maxAge: 365 * 24 * 60 * 60 * 1000, // 1 year in milliseconds
     sameSite: 'strict',
     secure: true,
     httpOnly: false,

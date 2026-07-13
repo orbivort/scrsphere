@@ -2,6 +2,7 @@
   "entityNotFound": "{{entity}} introuvable",
   "emailAlreadyExists": "Un compte avec l'e-mail {{email}} existe déjà",
   "invalidCredentials": "E-mail ou mot de passe invalide",
+  "unauthorized": "Authentification requise",
   "forbidden": "Vous n'avez pas la permission d'effectuer cette action",
   "invalidToken": "Jeton invalide",
   "tokenExpired": "Le jeton a expiré",

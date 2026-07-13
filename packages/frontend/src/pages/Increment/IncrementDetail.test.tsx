@@ -254,23 +254,25 @@ describe('IncrementDetail', () => {
     });
 
     it('should display story points', async () => {
-      renderComponent();
+      const { container } = renderComponent();
 
       await waitFor(() => {
-        const { container } = renderComponent();
-        const detailGrid = container.querySelector('[class*="detail-grid"]');
-        expect(detailGrid?.textContent).toContain('21');
+        expect(screen.getByText('Test Increment')).toBeInTheDocument();
       });
+
+      const detailGrid = container.querySelector('[class*="detail-grid"]');
+      expect(detailGrid?.textContent).toContain('21');
     });
 
     it('should display PBIs count', async () => {
-      renderComponent();
+      const { container } = renderComponent();
 
       await waitFor(() => {
-        const { container } = renderComponent();
-        const detailGrid = container.querySelector('[class*="detail-grid"]');
-        expect(detailGrid?.textContent).toContain('3');
+        expect(screen.getByText('Test Increment')).toBeInTheDocument();
       });
+
+      const detailGrid = container.querySelector('[class*="detail-grid"]');
+      expect(detailGrid?.textContent).toContain('3');
     });
 
     it('should display created date', async () => {

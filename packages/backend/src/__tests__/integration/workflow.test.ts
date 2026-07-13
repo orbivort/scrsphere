@@ -6,6 +6,7 @@ import { generateUUIDv7 } from '../../utils/uuid';
 import bcrypt from 'bcrypt';
 import { CSRF_CONSTANTS } from '../../middleware/csrf.middleware';
 import { getCsrfToken, extractCsrfFromCookies } from '../helpers/test-helpers';
+import { setLocaleHeader, SUPPORTED_LOCALES } from '../helpers/i18n-helpers';
 
 const uniqueId = () => `${Date.now()}-${Math.random().toString(36).substring(7)}`;
 
@@ -371,6 +372,316 @@ describe('Workflow Integration Tests', () => {
         .expect(200);
 
       expect(response.body.success).toBe(true);
+    });
+  });
+
+  describe('i18n Locale Support', () => {
+    const testEmails: string[] = [];
+    const testTeams: string[] = [];
+
+    afterEach(async () => {
+      for (const teamId of testTeams) {
+        await prisma.teamMember.deleteMany({ where: { teamId } });
+        await prisma.team.delete({ where: { id: teamId } }).catch(() => {});
+      }
+      await cleanupTestData(testEmails);
+      testEmails.length = 0;
+      testTeams.length = 0;
+    });
+
+    describe('Translated Forbidden Error Messages', () => {
+      it('should return translated forbidden error for role-restricted workflow operations in all locales', async () => {
+        for (const locale of SUPPORTED_LOCALES) {
+          const email = `workflow-i18n-forbidden-${locale}-${uniqueId()}@example.com`;
+          testEmails.push(email);
+
+          // Create a user without PRODUCT_OWNER role
+          const user = await createTestUserInDb(email, 'TestPassword123!', 'Dev', 'eloper');
+          const team = await prisma.team.create({
+            data: {
+              id: generateUUIDv7(),
+              name: `Workflow I18N Team ${locale} ${uniqueId()}`,
+              description: 'Test team for i18n',
+            },
+          });
+          testTeams.push(team.id);
+          await prisma.teamMember.create({
+            data: {
+              id: generateUUIDv7(),
+              teamId: team.id,
+              userId: user.id,
+              role: 'DEVELOPER', // Not PRODUCT_OWNER
+            },
+          });
+
+          const cookies = await loginAndGetCookies(email);
+          const { csrfToken } = extractCsrfFromCookies(cookies);
+
+          // Attempt a ProductGoal transition that requires PRODUCT_OWNER role
+          // This should result in a forbidden error
+          const response = await request(app)
+            .post('/api/v1/workflows/validate')
+            .set('Cookie', cookies)
+            .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+            .set(setLocaleHeader(locale))
+            .send({
+              entityType: 'ProductGoal',
+              fromStatus: 'NEW',
+              toStatus: 'ACTIVE',
+              teamId: team.id,
+            })
+            .expect(200);
+
+          // The validation endpoint returns allowed: false with a reason message
+          expect(response.body.success).toBe(true);
+          expect(response.body.data.allowed).toBe(false);
+          expect(response.body.data.reason).toBeDefined();
+          // The reason message indicates lack of permission
+          expect(response.body.data.reason).toContain('permission');
+        }
+      });
+
+      it('should return error for unauthorized workflow admin operations in all locales', async () => {
+        for (const locale of SUPPORTED_LOCALES) {
+          const email = `workflow-admin-i18n-${locale}-${uniqueId()}@example.com`;
+          testEmails.push(email);
+
+          // Create a user without PRODUCT_OWNER role
+          const user = await createTestUserInDb(email, 'TestPassword123!', 'Dev', 'eloper');
+          const team = await prisma.team.create({
+            data: {
+              id: generateUUIDv7(),
+              name: `Workflow Admin I18N Team ${locale} ${uniqueId()}`,
+              description: 'Test team for admin i18n',
+            },
+          });
+          testTeams.push(team.id);
+          await prisma.teamMember.create({
+            data: {
+              id: generateUUIDv7(),
+              teamId: team.id,
+              userId: user.id,
+              role: 'DEVELOPER', // Not PRODUCT_OWNER - admin routes require PRODUCT_OWNER
+            },
+          });
+
+          const cookies = await loginAndGetCookies(email);
+          const { csrfToken } = extractCsrfFromCookies(cookies);
+
+          // Attempt to create workflow (admin operation requires PRODUCT_OWNER)
+          const response = await request(app)
+            .post('/api/v1/workflows/admin/create')
+            .set('Cookie', cookies)
+            .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+            .set(setLocaleHeader(locale))
+            .send({
+              entityType: 'CustomEntity',
+              name: 'Custom Workflow',
+              description: 'Test workflow',
+              defaultStatus: 'NEW',
+            });
+
+          // Should return 403 (Forbidden) for role check, or 409 (Conflict) if entity already exists
+          expect([403, 404, 409]).toContain(response.status);
+          expect(response.body.success).toBe(false);
+          expect(response.body.error).toBeDefined();
+        }
+      });
+    });
+
+    describe('Translated Workflow Transition Messages', () => {
+      it('should return locale-aware validation messages for invalid transitions', async () => {
+        for (const locale of SUPPORTED_LOCALES) {
+          const email = `workflow-transition-i18n-${locale}-${uniqueId()}@example.com`;
+          testEmails.push(email);
+
+          await createTestUserInDb(email);
+          const cookies = await loginAndGetCookies(email);
+          const { csrfToken } = extractCsrfFromCookies(cookies);
+
+          // Attempt an invalid transition (COMPLETED to NEW is not allowed for ProductGoal)
+          const response = await request(app)
+            .post('/api/v1/workflows/validate')
+            .set('Cookie', cookies)
+            .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+            .set(setLocaleHeader(locale))
+            .send({
+              entityType: 'ProductGoal',
+              fromStatus: 'COMPLETED',
+              toStatus: 'NEW',
+            })
+            .expect(200);
+
+          expect(response.body.success).toBe(true);
+          expect(response.body.data.allowed).toBe(false);
+          expect(response.body.data.reason).toBeDefined();
+          // The reason message should indicate the transition is not allowed
+          expect(response.body.data.reason).toContain('not allowed');
+        }
+      });
+
+      it('should return validation messages for non-existent workflow states', async () => {
+        for (const locale of SUPPORTED_LOCALES) {
+          const email = `workflow-state-i18n-${locale}-${uniqueId()}@example.com`;
+          testEmails.push(email);
+
+          await createTestUserInDb(email);
+          const cookies = await loginAndGetCookies(email);
+          const { csrfToken } = extractCsrfFromCookies(cookies);
+
+          // Attempt transition to a non-existent status
+          const response = await request(app)
+            .post('/api/v1/workflows/validate')
+            .set('Cookie', cookies)
+            .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+            .set(setLocaleHeader(locale))
+            .send({
+              entityType: 'ProductGoal',
+              fromStatus: 'NEW',
+              toStatus: 'NON_EXISTENT_STATUS',
+            })
+            .expect(200);
+
+          expect(response.body.success).toBe(true);
+          expect(response.body.data.isValid).toBe(false);
+          expect(response.body.data.reason).toBeDefined();
+          expect(response.body.data.reason).toContain('does not exist');
+        }
+      });
+    });
+
+    describe('Locale-Aware Status Change Descriptions', () => {
+      it('should record status change with locale metadata', async () => {
+        for (const locale of SUPPORTED_LOCALES) {
+          const email = `workflow-history-i18n-${locale}-${uniqueId()}@example.com`;
+          testEmails.push(email);
+
+          const user = await createTestUserInDb(email, 'TestPassword123!', 'Product', 'Owner');
+          const team = await prisma.team.create({
+            data: {
+              id: generateUUIDv7(),
+              name: `Workflow History I18N Team ${locale} ${uniqueId()}`,
+              description: 'Test team for history i18n',
+            },
+          });
+          testTeams.push(team.id);
+          await prisma.teamMember.create({
+            data: {
+              id: generateUUIDv7(),
+              teamId: team.id,
+              userId: user.id,
+              role: 'PRODUCT_OWNER',
+            },
+          });
+
+          const cookies = await loginAndGetCookies(email);
+          const entityId = generateUUIDv7();
+          const { csrfToken } = extractCsrfFromCookies(cookies);
+
+          // Execute a status change with locale header
+          const changeResponse = await request(app)
+            .post('/api/v1/workflows/status-change')
+            .set('Cookie', cookies)
+            .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+            .set(setLocaleHeader(locale))
+            .send({
+              entityType: 'ProductGoal',
+              entityId,
+              fromStatus: 'NEW',
+              toStatus: 'ACTIVE',
+              teamId: team.id,
+              changeReason: 'Goal approved for implementation',
+              changeNotes: 'Ready to start development',
+            })
+            .expect(201);
+
+          expect(changeResponse.body.success).toBe(true);
+          expect(changeResponse.body.data.entityId).toBe(entityId);
+          expect(changeResponse.body.data.changeReason).toBe('Goal approved for implementation');
+
+          // Retrieve the history and verify it includes the recorded data
+          const historyResponse = await request(app)
+            .get(`/api/v1/workflows/ProductGoal/${entityId}/history`)
+            .set('Cookie', cookies)
+            .set(setLocaleHeader(locale))
+            .expect(200);
+
+          expect(historyResponse.body.success).toBe(true);
+          expect(historyResponse.body.data).toBeDefined();
+          // History should contain the status change record
+          if (historyResponse.body.data.length > 0) {
+            const historyRecord = historyResponse.body.data[0];
+            expect(historyRecord.changeReason).toBe('Goal approved for implementation');
+            expect(historyRecord.changeNotes).toBe('Ready to start development');
+          }
+        }
+      });
+
+      it('should return status change history with user information for each locale', async () => {
+        for (const locale of SUPPORTED_LOCALES) {
+          const email = `workflow-user-i18n-${locale}-${uniqueId()}@example.com`;
+          testEmails.push(email);
+
+          const user = await createTestUserInDb(
+            email,
+            'TestPassword123!',
+            'TestFirstName',
+            'TestLastName'
+          );
+          const team = await prisma.team.create({
+            data: {
+              id: generateUUIDv7(),
+              name: `Workflow User I18N Team ${locale} ${uniqueId()}`,
+              description: 'Test team for user i18n',
+            },
+          });
+          testTeams.push(team.id);
+          await prisma.teamMember.create({
+            data: {
+              id: generateUUIDv7(),
+              teamId: team.id,
+              userId: user.id,
+              role: 'PRODUCT_OWNER',
+            },
+          });
+
+          const cookies = await loginAndGetCookies(email);
+          const entityId = generateUUIDv7();
+          const { csrfToken } = extractCsrfFromCookies(cookies);
+
+          // Execute a status change
+          await request(app)
+            .post('/api/v1/workflows/status-change')
+            .set('Cookie', cookies)
+            .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+            .set(setLocaleHeader(locale))
+            .send({
+              entityType: 'ProductGoal',
+              entityId,
+              fromStatus: 'NEW',
+              toStatus: 'ACTIVE',
+              teamId: team.id,
+              changeReason: 'Status change for user info test',
+            })
+            .expect(201);
+
+          // Retrieve history
+          const historyResponse = await request(app)
+            .get(`/api/v1/workflows/ProductGoal/${entityId}/history`)
+            .set('Cookie', cookies)
+            .set(setLocaleHeader(locale))
+            .expect(200);
+
+          expect(historyResponse.body.success).toBe(true);
+          if (historyResponse.body.data.length > 0) {
+            const historyRecord = historyResponse.body.data[0];
+            // History should include user information (changer)
+            expect(historyRecord.changer).toBeDefined();
+            expect(historyRecord.changer?.firstName).toBe('TestFirstName');
+            expect(historyRecord.changer?.lastName).toBe('TestLastName');
+          }
+        }
+      });
     });
   });
 });

@@ -6,6 +6,7 @@ import { logger } from '../utils/logger';
 import prisma from '../utils/prisma';
 import { COOKIE_NAMES } from '../utils/cookieConfig';
 import { updateRequestContext } from '../utils/requestContext';
+import { t } from '../i18n/requestT.js';
 
 /**
  * Authentication middleware
@@ -33,7 +34,7 @@ export const authenticate = async (
     }
 
     if (!token) {
-      throw new UnauthorizedError('No token provided');
+      throw new UnauthorizedError(t('errors:unauthorized'));
     }
 
     // Verify token

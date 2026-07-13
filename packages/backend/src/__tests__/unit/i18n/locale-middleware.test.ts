@@ -40,7 +40,7 @@ describe('localeResolver middleware', () => {
         'scrumooth_locale',
         'de',
         expect.objectContaining({
-          maxAge: 31536000,
+          maxAge: 365 * 24 * 60 * 60 * 1000, // 1 year in milliseconds
           sameSite: 'strict',
           secure: true,
           httpOnly: false,
@@ -153,7 +153,7 @@ describe('localeResolver middleware', () => {
         'scrumooth_locale',
         'fr',
         expect.objectContaining({
-          maxAge: 31536000,
+          maxAge: 365 * 24 * 60 * 60 * 1000, // 1 year in milliseconds
           sameSite: 'strict',
           secure: true,
           httpOnly: false,

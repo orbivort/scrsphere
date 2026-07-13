@@ -1,0 +1,21 @@
+{
+  "categoryWentWell": "What went well",
+  "categoryDidntGoWell": "What didn't go well",
+  "categoryImprovement": "Improvements",
+  "statusPending": "Pending",
+  "statusInProgress": "In progress",
+  "statusCompleted": "Completed",
+  "statusCancelled": "Cancelled",
+  "actionItemCreated": "Action item \"{{title}}\" created successfully",
+  "actionItemUpdated": "Action item \"{{title}}\" updated successfully",
+  "actionItemDeleted": "Action item deleted successfully",
+  "itemCreated": "Retrospective item created successfully",
+  "itemUpdated": "Retrospective item updated successfully",
+  "itemDeleted": "Retrospective item deleted successfully",
+  "voteAdded": "Vote added successfully",
+  "voteRemoved": "Vote removed successfully",
+  "attendeeAdded": "Attendee added successfully",
+  "attendeeRemoved": "Attendee removed successfully",
+  "retrospectiveCreated": "Retrospective created successfully",
+  "retrospectiveUpdated": "Retrospective updated successfully"
+}

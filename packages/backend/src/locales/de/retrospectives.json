@@ -1,0 +1,21 @@
+{
+  "categoryWentWell": "Was gut lief",
+  "categoryDidntGoWell": "Was nicht gut lief",
+  "categoryImprovement": "Verbesserungen",
+  "statusPending": "Ausstehend",
+  "statusInProgress": "In Bearbeitung",
+  "statusCompleted": "Abgeschlossen",
+  "statusCancelled": "Abgebrochen",
+  "actionItemCreated": "Aktionspunkt \"{{title}}\" erfolgreich erstellt",
+  "actionItemUpdated": "Aktionspunkt \"{{title}}\" erfolgreich aktualisiert",
+  "actionItemDeleted": "Aktionspunkt erfolgreich gelöscht",
+  "itemCreated": "Retrospektive-Element erfolgreich erstellt",
+  "itemUpdated": "Retrospektive-Element erfolgreich aktualisiert",
+  "itemDeleted": "Retrospektive-Element erfolgreich gelöscht",
+  "voteAdded": "Abstimmung erfolgreich hinzugefügt",
+  "voteRemoved": "Abstimmung erfolgreich entfernt",
+  "attendeeAdded": "Teilnehmer erfolgreich hinzugefügt",
+  "attendeeRemoved": "Teilnehmer erfolgreich entfernt",
+  "retrospectiveCreated": "Retrospektive erfolgreich erstellt",
+  "retrospectiveUpdated": "Retrospektive erfolgreich aktualisiert"
+}

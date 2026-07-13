@@ -22,6 +22,11 @@ import itEmails from '../locales/it/emails.json' with { type: 'json' };
 import itNotifications from '../locales/it/notifications.json' with { type: 'json' };
 import itErrors from '../locales/it/errors.json' with { type: 'json' };
 import itValidation from '../locales/it/validation.json' with { type: 'json' };
+import itRetrospectives from '../locales/it/retrospectives.json' with { type: 'json' };
+import enRetrospectives from '../locales/en/retrospectives.json' with { type: 'json' };
+import deRetrospectives from '../locales/de/retrospectives.json' with { type: 'json' };
+import frRetrospectives from '../locales/fr/retrospectives.json' with { type: 'json' };
+import esRetrospectives from '../locales/es/retrospectives.json' with { type: 'json' };
 
 const resources = {
   en: {
@@ -29,30 +34,35 @@ const resources = {
     notifications: enNotifications,
     errors: enErrors,
     validation: enValidation,
+    retrospectives: enRetrospectives,
   },
   de: {
     emails: deEmails,
     notifications: deNotifications,
     errors: deErrors,
     validation: deValidation,
+    retrospectives: deRetrospectives,
   },
   fr: {
     emails: frEmails,
     notifications: frNotifications,
     errors: frErrors,
     validation: frValidation,
+    retrospectives: frRetrospectives,
   },
   es: {
     emails: esEmails,
     notifications: esNotifications,
     errors: esErrors,
     validation: esValidation,
+    retrospectives: esRetrospectives,
   },
   it: {
     emails: itEmails,
     notifications: itNotifications,
     errors: itErrors,
     validation: itValidation,
+    retrospectives: itRetrospectives,
   },
 };
 
@@ -61,7 +71,7 @@ export const i18nInstance: I18nType = i18next.createInstance({
   fallbackLng: DEFAULT_LOCALE,
   supportedLngs: [...SUPPORTED_LOCALES],
   load: 'languageOnly',
-  ns: ['emails', 'notifications', 'errors', 'validation'],
+  ns: ['emails', 'notifications', 'errors', 'validation', 'retrospectives'],
   defaultNS: 'errors',
   interpolation: { escapeValue: false },
   returnNull: false,

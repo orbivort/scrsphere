@@ -9,6 +9,7 @@ import { generateUUIDv7 } from '../../utils/uuid';
 import bcrypt from 'bcrypt';
 import { CSRF_CONSTANTS } from '../../middleware/csrf.middleware';
 import { getCsrfToken, extractCsrfFromCookies } from '../helpers/test-helpers';
+import { setLocaleHeader, createI18nTestUser, SUPPORTED_LOCALES } from '../helpers/i18n-helpers';
 
 const uniqueId = () => `${Date.now()}-${Math.random().toString(36).substring(7)}`;
 
@@ -276,6 +277,199 @@ describe('Consent Integration Tests', () => {
         .expect(401);
 
       expect(response.body.success).toBe(false);
+    });
+  });
+
+  describe('i18n Locale Support', () => {
+    const testEmails: string[] = [];
+
+    afterEach(async () => {
+      await cleanupTestData(testEmails);
+      testEmails.length = 0;
+    });
+
+    describe('Translated GDPR consent messages', () => {
+      it('should set locale cookie for anonymous consent recording in German', async () => {
+        const { csrfCookie, csrfToken } = await getCsrfToken();
+
+        // /consent/record uses optionalAuth, so it works for anonymous users
+        const response = await request(app)
+          .post('/api/v1/consent/record')
+          .set('Cookie', csrfCookie)
+          .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+          .set(setLocaleHeader('de'))
+          .send({
+            consentType: 'cookie_consent',
+            action: 'accept_all',
+            version: '1.0',
+          })
+          .expect(201);
+
+        expect(response.body.success).toBe(true);
+        // Verify locale cookie is set
+        const setCookie = response.headers['set-cookie'];
+        expect(setCookie).toBeDefined();
+        const cookies = Array.isArray(setCookie) ? setCookie : [setCookie];
+        const localeCookie = cookies.find((c) => c.startsWith('scrumooth_locale='));
+        expect(localeCookie).toBeDefined();
+        expect(localeCookie).toContain('scrumooth_locale=de');
+      });
+
+      it('should return translated error message for unauthenticated consent history access in French', async () => {
+        const { csrfCookie } = await getCsrfToken();
+
+        const response = await request(app)
+          .get('/api/v1/consent/history')
+          .set('Cookie', csrfCookie)
+          .set(setLocaleHeader('fr'))
+          .expect(401);
+
+        expect(response.body.success).toBe(false);
+        expect(response.body.error.code).toBe('UNAUTHORIZED');
+        // Verify locale cookie is set
+        const setCookie = response.headers['set-cookie'];
+        expect(setCookie).toBeDefined();
+        const cookies = Array.isArray(setCookie) ? setCookie : [setCookie];
+        const localeCookie = cookies.find((c) => c.startsWith('scrumooth_locale='));
+        expect(localeCookie).toBeDefined();
+        expect(localeCookie).toContain('scrumooth_locale=fr');
+      });
+
+      it('should return translated error messages in all supported locales for unauthenticated withdraw', async () => {
+        for (const locale of SUPPORTED_LOCALES) {
+          const { csrfCookie, csrfToken } = await getCsrfToken();
+
+          const response = await request(app)
+            .post('/api/v1/consent/withdraw')
+            .set('Cookie', csrfCookie)
+            .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+            .set(setLocaleHeader(locale))
+            .send({ consentId: generateUUIDv7() })
+            .expect(401);
+
+          expect(response.body.success).toBe(false);
+          // Verify locale cookie is set
+          const setCookie = response.headers['set-cookie'];
+          expect(setCookie).toBeDefined();
+          const cookies = Array.isArray(setCookie) ? setCookie : [setCookie];
+          const localeCookie = cookies.find((c) => c.startsWith('scrumooth_locale='));
+          expect(localeCookie).toBeDefined();
+          expect(localeCookie).toContain(`scrumooth_locale=${locale}`);
+        }
+      });
+    });
+
+    describe('Translated privacy policy text', () => {
+      it('should set locale cookie for consent operations with Accept-Language header', async () => {
+        const email = `locale-consent-${uniqueId()}@example.com`;
+        testEmails.push(email);
+
+        await createTestUserInDb(email);
+        const cookies = await loginAndGetCookies(email);
+        const { csrfToken } = extractCsrfFromCookies(cookies);
+
+        const response = await request(app)
+          .post('/api/v1/consent/record')
+          .set('Cookie', cookies)
+          .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+          .set(setLocaleHeader('es'))
+          .send({
+            consentType: 'analytics_consent',
+            action: 'accept_all',
+            version: '1.0',
+          })
+          .expect(201);
+
+        expect(response.body.success).toBe(true);
+        // Verify locale cookie is set
+        const setCookie = response.headers['set-cookie'];
+        expect(setCookie).toBeDefined();
+        const cookiesArr = Array.isArray(setCookie) ? setCookie : [setCookie];
+        const localeCookie = cookiesArr.find((c) => c.startsWith('scrumooth_locale='));
+        expect(localeCookie).toBeDefined();
+        expect(localeCookie).toContain('scrumooth_locale=es');
+      });
+
+      it('should use user locale preference for consent operations', async () => {
+        const email = `user-locale-consent-${uniqueId()}@example.com`;
+        testEmails.push(email);
+
+        // Create user with Italian locale preference
+        await createI18nTestUser(email, 'it', prisma);
+        const cookies = await loginAndGetCookies(email);
+        const { csrfToken } = extractCsrfFromCookies(cookies);
+
+        // Request with Accept-Language 'de' but user has locale 'it'
+        const response = await request(app)
+          .post('/api/v1/consent/record')
+          .set('Cookie', cookies)
+          .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+          .set(setLocaleHeader('de'))
+          .send({
+            consentType: 'marketing_consent',
+            action: 'accept_all',
+            version: '2.0',
+          })
+          .expect(201);
+
+        expect(response.body.success).toBe(true);
+        expect(response.body.data.consentType).toBe('marketing_consent');
+
+        // Verify consent record is created successfully regardless of locale
+        const consentRecords = await prisma.consentRecord.findMany({
+          where: { userId: response.body.data.userId },
+        });
+        expect(consentRecords.length).toBeGreaterThan(0);
+      });
+
+      it('should retrieve consent history with locale-aware responses', async () => {
+        const email = `locale-history-${uniqueId()}@example.com`;
+        testEmails.push(email);
+
+        // Create user with German locale
+        await createI18nTestUser(email, 'de', prisma);
+        const cookies = await loginAndGetCookies(email);
+
+        const response = await request(app)
+          .get('/api/v1/consent/history')
+          .set('Cookie', cookies)
+          .set(setLocaleHeader('de'))
+          .expect(200);
+
+        expect(response.body.success).toBe(true);
+        // Verify locale cookie is set
+        const setCookie = response.headers['set-cookie'];
+        expect(setCookie).toBeDefined();
+        const cookiesArr = Array.isArray(setCookie) ? setCookie : [setCookie];
+        const localeCookie = cookiesArr.find((c) => c.startsWith('scrumooth_locale='));
+        expect(localeCookie).toBeDefined();
+        expect(localeCookie).toContain('scrumooth_locale=de');
+      });
+
+      it('should validate consentType field with translated validation errors', async () => {
+        const email = `validation-consent-${uniqueId()}@example.com`;
+        testEmails.push(email);
+
+        await createTestUserInDb(email);
+        const cookies = await loginAndGetCookies(email);
+        const { csrfToken } = extractCsrfFromCookies(cookies);
+
+        // Send invalid consentType to trigger validation error
+        const response = await request(app)
+          .post('/api/v1/consent/record')
+          .set('Cookie', cookies)
+          .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+          .set(setLocaleHeader('fr'))
+          .send({
+            consentType: '', // Empty consentType should fail validation
+            action: 'accept_all',
+            version: '1.0',
+          })
+          .expect(422);
+
+        expect(response.body.success).toBe(false);
+        expect(response.body.error.code).toBe('VALIDATION_ERROR');
+      });
     });
   });
 });

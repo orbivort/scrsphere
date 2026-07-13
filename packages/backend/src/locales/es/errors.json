@@ -2,6 +2,7 @@
   "entityNotFound": "{{entity}} no encontrado",
   "emailAlreadyExists": "Ya existe una cuenta con el correo electrónico {{email}}",
   "invalidCredentials": "Correo electrónico o contraseña inválidos",
+  "unauthorized": "Se requiere autenticación",
   "forbidden": "No tiene permiso para realizar esta acción",
   "invalidToken": "Token inválido",
   "tokenExpired": "El token ha expirado",
