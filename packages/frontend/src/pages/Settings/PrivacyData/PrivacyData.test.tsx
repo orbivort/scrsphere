@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
+import { screen, waitFor, renderWithProviders, initTestI18n } from '../../../test-utils';
 import userEvent from '@testing-library/user-event';
 
 import { PrivacyData } from './PrivacyData';
@@ -109,6 +109,10 @@ describe('PrivacyData Component', () => {
   const originalConsoleLog = console.log;
   const originalConsoleError = console.error;
 
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
     console.log = vi.fn();
@@ -122,7 +126,7 @@ describe('PrivacyData Component', () => {
 
   describe('Component Rendering', () => {
     it('should render the main container with correct structure', () => {
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       expect(screen.getByText('Privacy & Data')).toBeInTheDocument();
       expect(
@@ -131,21 +135,21 @@ describe('PrivacyData Component', () => {
     });
 
     it('should render the Active Sessions section', () => {
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       expect(screen.getByText('Active Sessions')).toBeInTheDocument();
       expect(screen.getByText('Manage your active login sessions')).toBeInTheDocument();
     });
 
     it('should render the Export Your Data section', () => {
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       expect(screen.getByText('Export Your Data')).toBeInTheDocument();
       expect(screen.getByText('Download a copy of your personal data')).toBeInTheDocument();
     });
 
     it('should render Right to Data Portability information', () => {
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       expect(screen.getByText('Right to Data Portability')).toBeInTheDocument();
       expect(
@@ -156,7 +160,7 @@ describe('PrivacyData Component', () => {
     });
 
     it('should render data categories section', () => {
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       expect(screen.getByText('Data included in the export:')).toBeInTheDocument();
       expect(screen.getByText('Profile Information')).toBeInTheDocument();
@@ -165,27 +169,27 @@ describe('PrivacyData Component', () => {
     });
 
     it('should render export format information', () => {
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       const formatElements = screen.getAllByText(/Format:/);
       expect(formatElements.length).toBeGreaterThan(0);
     });
 
     it('should render DataExportButton component', () => {
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       expect(screen.getByTestId('data-export-button')).toBeInTheDocument();
     });
 
     it('should render Your Data Rights section', () => {
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       expect(screen.getByText('Your Data Rights')).toBeInTheDocument();
       expect(screen.getByText('Your rights regarding personal data')).toBeInTheDocument();
     });
 
     it('should render all four data rights', () => {
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       expect(screen.getByText('Right to Access')).toBeInTheDocument();
       expect(screen.getByText('Right to Rectification')).toBeInTheDocument();
@@ -194,7 +198,7 @@ describe('PrivacyData Component', () => {
     });
 
     it('should render right descriptions', () => {
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       expect(
         screen.getByText(/You can request a copy of all personal data we hold about you/)
@@ -211,7 +215,7 @@ describe('PrivacyData Component', () => {
     });
 
     it('should render contact section with DPO email', () => {
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       expect(screen.getByText('Questions about your data?')).toBeInTheDocument();
       expect(
@@ -222,14 +226,14 @@ describe('PrivacyData Component', () => {
     });
 
     it('should render check icon for data categories', () => {
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       const checkIcons = screen.getAllByText('✓');
       expect(checkIcons.length).toBe(3);
     });
 
     it('should render download, shield, and settings icons', () => {
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       const svgElements = document.querySelectorAll('svg');
       expect(svgElements.length).toBeGreaterThanOrEqual(3);
@@ -240,7 +244,7 @@ describe('PrivacyData Component', () => {
     it('should call onExportStart when export button is clicked', async () => {
       const user = userEvent.setup();
       const { logger } = await import('../../../utils/logger');
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       const exportButton = screen.getByTestId('data-export-button');
       await user.click(exportButton);
@@ -249,7 +253,7 @@ describe('PrivacyData Component', () => {
     });
 
     it('should render export button with correct accessibility attributes', () => {
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       const exportButton = screen.getByTestId('data-export-button');
       expect(exportButton).toHaveAttribute('type', 'button');
@@ -258,14 +262,14 @@ describe('PrivacyData Component', () => {
 
   describe('State Management', () => {
     it('should render all sections in correct order', () => {
-      const { container } = render(<PrivacyData />);
+      const { container } = renderWithProviders(<PrivacyData />);
 
       const sections = container.querySelectorAll('section');
       expect(sections).toHaveLength(3);
     });
 
     it('should render header and content sections', () => {
-      const { container } = render(<PrivacyData />);
+      const { container } = renderWithProviders(<PrivacyData />);
 
       const header = container.querySelector('header');
       const sections = container.querySelectorAll('section');
@@ -275,7 +279,7 @@ describe('PrivacyData Component', () => {
     });
 
     it('should maintain proper heading hierarchy', () => {
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       const h1 = screen.getByRole('heading', { level: 1 });
       const h2s = screen.getAllByRole('heading', { level: 2 });
@@ -289,12 +293,12 @@ describe('PrivacyData Component', () => {
 
   describe('Prop Validation', () => {
     it('should render without crashing with default props', () => {
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
       expect(screen.getByText('Privacy & Data')).toBeInTheDocument();
     });
 
     it('should render DataExportButton with callback props', () => {
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       const callArgs = DataExportButton.mock.calls[0][0];
       expect(callArgs.onExportStart).toBeDefined();
@@ -307,7 +311,7 @@ describe('PrivacyData Component', () => {
     it('should handle multiple rapid clicks on export button', async () => {
       const user = userEvent.setup();
       const { logger } = await import('../../../utils/logger');
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       const exportButton = screen.getByTestId('data-export-button');
 
@@ -319,14 +323,14 @@ describe('PrivacyData Component', () => {
     });
 
     it('should render with empty category list gracefully', () => {
-      const { container } = render(<PrivacyData />);
+      const { container } = renderWithProviders(<PrivacyData />);
 
       const listItems = container.querySelectorAll('li');
       expect(listItems.length).toBeGreaterThan(0);
     });
 
     it('should render contact section', () => {
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       expect(screen.getByText('Questions about your data?')).toBeInTheDocument();
       expect(
@@ -339,34 +343,34 @@ describe('PrivacyData Component', () => {
 
   describe('Accessibility', () => {
     it('should have proper heading structure for screen readers', () => {
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       const mainHeading = screen.getByRole('heading', { level: 1 });
       expect(mainHeading).toHaveTextContent('Privacy & Data');
     });
 
     it('should have descriptive section headings', () => {
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       expect(screen.getByText('Export Your Data')).toBeInTheDocument();
       expect(screen.getByText('Your Data Rights')).toBeInTheDocument();
     });
 
     it('should have accessible contact section', () => {
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       expect(screen.getByText('Questions about your data?')).toBeInTheDocument();
     });
 
     it('should have button with accessible label', () => {
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       const exportButton = screen.getByTestId('data-export-button');
       expect(exportButton).toHaveAttribute('type', 'button');
     });
 
     it('should render list with proper semantic structure', () => {
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       const list = screen.getByRole('list');
       expect(list).toBeInTheDocument();
@@ -378,7 +382,7 @@ describe('PrivacyData Component', () => {
 
   describe('Contact Section', () => {
     it('should render contact section with help text', () => {
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       expect(screen.getByText('Questions about your data?')).toBeInTheDocument();
       expect(
@@ -395,13 +399,13 @@ describe('PrivacyData Component', () => {
         new Promise((resolve) => setTimeout(() => resolve({ success: true, data: [] }), 1000))
       );
 
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       expect(screen.getByText('Loading sessions...')).toBeInTheDocument();
     });
 
     it('should display sessions when API returns successfully', async () => {
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       await waitFor(() => {
         expect(screen.getByText('Chrome Browser')).toBeInTheDocument();
@@ -414,7 +418,7 @@ describe('PrivacyData Component', () => {
     it('should display error message when API fails', async () => {
       (apiService.getActiveSessions as any).mockRejectedValueOnce(new Error('Network error'));
 
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       await waitFor(() => {
         expect(screen.getByText('Failed to load sessions')).toBeInTheDocument();
@@ -427,7 +431,7 @@ describe('PrivacyData Component', () => {
         data: null,
       });
 
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       await waitFor(() => {
         expect(screen.getByText('Failed to load sessions')).toBeInTheDocument();
@@ -440,7 +444,7 @@ describe('PrivacyData Component', () => {
         data: [],
       });
 
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       await waitFor(() => {
         expect(screen.getByText('No active sessions found')).toBeInTheDocument();
@@ -470,7 +474,7 @@ describe('PrivacyData Component', () => {
         ],
       });
 
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       await waitFor(() => {
         expect(screen.getByText('Chrome Browser')).toBeInTheDocument();
@@ -482,7 +486,7 @@ describe('PrivacyData Component', () => {
     });
 
     it('should not show revoke button for current session', async () => {
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       await waitFor(() => {
         expect(screen.getByText('Chrome Browser')).toBeInTheDocument();
@@ -518,7 +522,7 @@ describe('PrivacyData Component', () => {
       });
       (apiService.revokeSession as any).mockResolvedValueOnce({ success: true });
 
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       await waitFor(() => {
         expect(screen.getByText('Firefox Browser')).toBeInTheDocument();
@@ -557,7 +561,7 @@ describe('PrivacyData Component', () => {
       });
       (apiService.revokeSession as any).mockResolvedValueOnce({ success: false });
 
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       await waitFor(() => {
         expect(screen.getByText('Firefox Browser')).toBeInTheDocument();
@@ -594,7 +598,7 @@ describe('PrivacyData Component', () => {
         ],
       });
 
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       await waitFor(() => {
         expect(
@@ -604,7 +608,7 @@ describe('PrivacyData Component', () => {
     });
 
     it('should not show revoke all button when only one session exists', async () => {
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       await waitFor(() => {
         expect(screen.getByText('Chrome Browser')).toBeInTheDocument();
@@ -654,7 +658,7 @@ describe('PrivacyData Component', () => {
         });
       (apiService.logoutAllSessions as any).mockResolvedValueOnce({ success: true });
 
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       await waitFor(() => {
         expect(screen.getByRole('button', { name: /Sign out all other sessions/i }));
@@ -715,7 +719,7 @@ describe('PrivacyData Component', () => {
         ],
       });
 
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       await waitFor(() => {
         expect(screen.getByText('Chrome Browser')).toBeInTheDocument();
@@ -749,7 +753,7 @@ describe('PrivacyData Component', () => {
         ],
       });
 
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       await waitFor(() => {
         expect(screen.getByText(`${'A'.repeat(50)}...`)).toBeInTheDocument();
@@ -781,7 +785,7 @@ describe('PrivacyData Component', () => {
       });
       (apiService.revokeSession as any).mockRejectedValueOnce(new Error('Network error'));
 
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       await waitFor(() => {
         expect(screen.getByText('Firefox Browser')).toBeInTheDocument();
@@ -825,7 +829,7 @@ describe('PrivacyData Component', () => {
       });
       (apiService.logoutAllSessions as any).mockRejectedValueOnce(new Error('Network error'));
 
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       await waitFor(() => {
         expect(screen.getByRole('button', { name: /Sign out all other sessions/i }));
@@ -847,7 +851,7 @@ describe('PrivacyData Component', () => {
 
   describe('Date Formatting', () => {
     it('should format dates correctly in session details', async () => {
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       await waitFor(() => {
         expect(screen.getByText(/Last active:/)).toBeInTheDocument();
@@ -861,7 +865,7 @@ describe('PrivacyData Component', () => {
 
   describe('Data Export Callbacks', () => {
     it('should pass onExportComplete callback to DataExportButton', () => {
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       const mockExportButton = DataExportButton as any;
       expect(mockExportButton).toHaveBeenCalled();
@@ -872,7 +876,7 @@ describe('PrivacyData Component', () => {
     });
 
     it('should pass onExportError callback to DataExportButton', () => {
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       const mockExportButton = DataExportButton as any;
       const mockProps = mockExportButton.mock.calls[0][0];
@@ -882,7 +886,7 @@ describe('PrivacyData Component', () => {
     });
 
     it('should pass onExportStart callback to DataExportButton', () => {
-      render(<PrivacyData />);
+      renderWithProviders(<PrivacyData />);
 
       const mockExportButton = DataExportButton as any;
       const mockProps = mockExportButton.mock.calls[0][0];

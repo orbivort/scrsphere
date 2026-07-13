@@ -1,7 +1,5 @@
-import { renderHook, waitFor, act } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { type ReactNode } from 'react';
+import { renderHook, waitFor, act, initTestI18n, AllProviders } from '../test-utils';
+import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
 
 import { useSprintBoard } from './useSprintBoard';
 import { apiService } from '../services';
@@ -13,25 +11,6 @@ vi.mock('../services', () => ({
     completeSprint: vi.fn(),
   },
 }));
-
-const createWrapper = () => {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        gcTime: 0,
-        staleTime: 0,
-      },
-      mutations: {
-        retry: false,
-      },
-    },
-  });
-
-  return function Wrapper({ children }: { children: ReactNode }) {
-    return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
-  };
-};
 
 const createMockTask = (
   id: string,
@@ -85,13 +64,17 @@ const createMockSprint = (
 describe('useSprintBoard', () => {
   const mockTeamId = 'team-1';
 
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   describe('data fetching', () => {
     it('should not fetch when teamId is null', () => {
-      renderHook(() => useSprintBoard({ teamId: null }), { wrapper: createWrapper() });
+      renderHook(() => useSprintBoard({ teamId: null }), { wrapper: AllProviders });
 
       expect(apiService.getActiveSprint).not.toHaveBeenCalled();
     });
@@ -104,7 +87,7 @@ describe('useSprintBoard', () => {
         data: mockSprint,
       });
 
-      renderHook(() => useSprintBoard({ teamId: mockTeamId }), { wrapper: createWrapper() });
+      renderHook(() => useSprintBoard({ teamId: mockTeamId }), { wrapper: AllProviders });
 
       await waitFor(() => {
         expect(apiService.getActiveSprint).toHaveBeenCalledWith(mockTeamId);
@@ -115,7 +98,7 @@ describe('useSprintBoard', () => {
       vi.mocked(apiService.getActiveSprint).mockImplementation(() => new Promise(() => {}));
 
       const { result } = renderHook(() => useSprintBoard({ teamId: mockTeamId }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       expect(result.current.isLoading).toBe(true);
@@ -125,7 +108,7 @@ describe('useSprintBoard', () => {
       vi.mocked(apiService.getActiveSprint).mockRejectedValue(new Error('Failed to fetch'));
 
       const { result } = renderHook(() => useSprintBoard({ teamId: mockTeamId }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       await waitFor(() => {
@@ -141,7 +124,7 @@ describe('useSprintBoard', () => {
       });
 
       const { result } = renderHook(() => useSprintBoard({ teamId: mockTeamId }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       await waitFor(() => {
@@ -160,7 +143,7 @@ describe('useSprintBoard', () => {
       });
 
       const { result } = renderHook(() => useSprintBoard({ teamId: mockTeamId }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       await waitFor(() => {
@@ -175,7 +158,7 @@ describe('useSprintBoard', () => {
       });
 
       const { result } = renderHook(() => useSprintBoard({ teamId: mockTeamId }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       await waitFor(() => {
@@ -202,7 +185,7 @@ describe('useSprintBoard', () => {
       });
 
       const { result } = renderHook(() => useSprintBoard({ teamId: mockTeamId }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       await waitFor(() => {
@@ -227,7 +210,7 @@ describe('useSprintBoard', () => {
       });
 
       const { result } = renderHook(() => useSprintBoard({ teamId: mockTeamId }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       await waitFor(() => {
@@ -242,7 +225,7 @@ describe('useSprintBoard', () => {
       });
 
       const { result } = renderHook(() => useSprintBoard({ teamId: mockTeamId }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       await waitFor(() => {
@@ -269,7 +252,7 @@ describe('useSprintBoard', () => {
       });
 
       const { result } = renderHook(() => useSprintBoard({ teamId: mockTeamId }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       await waitFor(() => {
@@ -296,7 +279,7 @@ describe('useSprintBoard', () => {
       });
 
       const { result } = renderHook(() => useSprintBoard({ teamId: mockTeamId }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       await waitFor(() => {
@@ -322,7 +305,7 @@ describe('useSprintBoard', () => {
       });
 
       const { result } = renderHook(() => useSprintBoard({ teamId: mockTeamId }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       await waitFor(() => {
@@ -349,7 +332,7 @@ describe('useSprintBoard', () => {
       });
 
       const { result } = renderHook(() => useSprintBoard({ teamId: mockTeamId }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       await waitFor(() => {
@@ -364,7 +347,7 @@ describe('useSprintBoard', () => {
       });
 
       const { result } = renderHook(() => useSprintBoard({ teamId: mockTeamId }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       await waitFor(() => {
@@ -400,7 +383,7 @@ describe('useSprintBoard', () => {
       });
 
       const { result } = renderHook(() => useSprintBoard({ teamId: mockTeamId }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       await waitFor(() => {
@@ -423,7 +406,7 @@ describe('useSprintBoard', () => {
       });
 
       const { result } = renderHook(() => useSprintBoard({ teamId: mockTeamId }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       await waitFor(() => {
@@ -453,7 +436,7 @@ describe('useSprintBoard', () => {
       });
 
       const { result } = renderHook(() => useSprintBoard({ teamId: mockTeamId }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       await waitFor(() => {
@@ -478,7 +461,7 @@ describe('useSprintBoard', () => {
       });
 
       const { result } = renderHook(() => useSprintBoard({ teamId: mockTeamId }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       await waitFor(() => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent, renderWithProviders, initTestI18n } from '../../../../test-utils';
 import { vi } from 'vitest';
 
 import { DefinitionEditor } from './DefinitionEditor';
@@ -16,13 +16,17 @@ describe('DefinitionEditor', () => {
   let onSaveMock: ReturnType<typeof vi.fn>;
   let onCancelMock: ReturnType<typeof vi.fn>;
 
+  beforeAll(() => {
+    initTestI18n();
+  });
+
   beforeEach(() => {
     onSaveMock = vi.fn();
     onCancelMock = vi.fn();
   });
 
   it('should render with initial items', () => {
-    render(
+    renderWithProviders(
       <DefinitionEditor
         definition={{ items: mockItems, version: 1, updatedAt: '2024-01-01T00:00:00Z' }}
         definitionType="DoR"
@@ -36,7 +40,7 @@ describe('DefinitionEditor', () => {
   });
 
   it('should add a new item', () => {
-    render(
+    renderWithProviders(
       <DefinitionEditor
         definition={{ items: [], version: 1, updatedAt: '2024-01-01T00:00:00Z' }}
         definitionType="DoR"
@@ -56,7 +60,7 @@ describe('DefinitionEditor', () => {
   });
 
   it('should remove an item', () => {
-    render(
+    renderWithProviders(
       <DefinitionEditor
         definition={{ items: mockItems, version: 1, updatedAt: '2024-01-01T00:00:00Z' }}
         definitionType="DoR"
@@ -73,7 +77,7 @@ describe('DefinitionEditor', () => {
   });
 
   it('should toggle item active state', () => {
-    render(
+    renderWithProviders(
       <DefinitionEditor
         definition={{ items: [mockItems[0]!], version: 1, updatedAt: '2024-01-01T00:00:00Z' }}
         definitionType="DoR"
@@ -91,7 +95,7 @@ describe('DefinitionEditor', () => {
 
   it('should call onSave when save button clicked', async () => {
     onSaveMock.mockResolvedValue(undefined);
-    render(
+    renderWithProviders(
       <DefinitionEditor
         definition={{ items: mockItems, version: 1, updatedAt: '2024-01-01T00:00:00Z' }}
         definitionType="DoR"
@@ -112,7 +116,7 @@ describe('DefinitionEditor', () => {
   });
 
   it('should call onCancel when cancel button clicked and no changes', () => {
-    render(
+    renderWithProviders(
       <DefinitionEditor
         definition={{ items: mockItems, version: 1, updatedAt: '2024-01-01T00:00:00Z' }}
         definitionType="DoR"
@@ -129,7 +133,7 @@ describe('DefinitionEditor', () => {
   });
 
   it('should show cancel dialog when cancel button clicked with changes', () => {
-    render(
+    renderWithProviders(
       <DefinitionEditor
         definition={{ items: mockItems, version: 1, updatedAt: '2024-01-01T00:00:00Z' }}
         definitionType="DoR"
@@ -151,7 +155,7 @@ describe('DefinitionEditor', () => {
 
   describe('Definition Type', () => {
     it('should render "Definition of Done" for DoD type', () => {
-      render(
+      renderWithProviders(
         <DefinitionEditor
           definition={{ items: mockItems, version: 1, updatedAt: '2024-01-01T00:00:00Z' }}
           definitionType="DoD"
@@ -165,7 +169,7 @@ describe('DefinitionEditor', () => {
     });
 
     it('should render correct info text for DoD type', () => {
-      render(
+      renderWithProviders(
         <DefinitionEditor
           definition={{ items: mockItems, version: 1, updatedAt: '2024-01-01T00:00:00Z' }}
           definitionType="DoD"
@@ -179,7 +183,7 @@ describe('DefinitionEditor', () => {
     });
 
     it('should render correct placeholder for DoD type', () => {
-      render(
+      renderWithProviders(
         <DefinitionEditor
           definition={{ items: [], version: 1, updatedAt: '2024-01-01T00:00:00Z' }}
           definitionType="DoD"
@@ -195,7 +199,7 @@ describe('DefinitionEditor', () => {
 
   describe('Empty State', () => {
     it('should show empty state message when no items', () => {
-      render(
+      renderWithProviders(
         <DefinitionEditor
           definition={{ items: [], version: 1, updatedAt: '2024-01-01T00:00:00Z' }}
           definitionType="DoR"
@@ -209,7 +213,7 @@ describe('DefinitionEditor', () => {
     });
 
     it('should set items from definition when definition has items', () => {
-      render(
+      renderWithProviders(
         <DefinitionEditor
           definition={{ items: mockItems, version: 1, updatedAt: '2024-01-01T00:00:00Z' }}
           definitionType="DoR"
@@ -226,7 +230,7 @@ describe('DefinitionEditor', () => {
 
   describe('Add Item', () => {
     it('should not add item when text is empty', () => {
-      render(
+      renderWithProviders(
         <DefinitionEditor
           definition={{ items: [], version: 1, updatedAt: '2024-01-01T00:00:00Z' }}
           definitionType="DoR"
@@ -241,7 +245,7 @@ describe('DefinitionEditor', () => {
     });
 
     it('should add item on Enter key press', () => {
-      render(
+      renderWithProviders(
         <DefinitionEditor
           definition={{ items: [], version: 1, updatedAt: '2024-01-01T00:00:00Z' }}
           definitionType="DoR"
@@ -261,7 +265,7 @@ describe('DefinitionEditor', () => {
 
   describe('Move Items', () => {
     it('should disable move up button for first item', () => {
-      render(
+      renderWithProviders(
         <DefinitionEditor
           definition={{ items: mockItems, version: 1, updatedAt: '2024-01-01T00:00:00Z' }}
           definitionType="DoR"
@@ -276,7 +280,7 @@ describe('DefinitionEditor', () => {
     });
 
     it('should disable move down button for last item', () => {
-      render(
+      renderWithProviders(
         <DefinitionEditor
           definition={{ items: mockItems, version: 1, updatedAt: '2024-01-01T00:00:00Z' }}
           definitionType="DoR"
@@ -291,7 +295,7 @@ describe('DefinitionEditor', () => {
     });
 
     it('should move item down and update order', () => {
-      render(
+      renderWithProviders(
         <DefinitionEditor
           definition={{ items: mockItems, version: 1, updatedAt: '2024-01-01T00:00:00Z' }}
           definitionType="DoR"
@@ -327,7 +331,7 @@ describe('DefinitionEditor', () => {
           order: 2,
         },
       ];
-      render(
+      renderWithProviders(
         <DefinitionEditor
           definition={{ items: threeItems, version: 1, updatedAt: '2024-01-01T00:00:00Z' }}
           definitionType="DoR"
@@ -362,7 +366,7 @@ describe('DefinitionEditor', () => {
           order: 2,
         },
       ];
-      render(
+      renderWithProviders(
         <DefinitionEditor
           definition={{ items: threeItems, version: 1, updatedAt: '2024-01-01T00:00:00Z' }}
           definitionType="DoR"
@@ -382,7 +386,7 @@ describe('DefinitionEditor', () => {
 
   describe('Category Change', () => {
     it('should change item category', () => {
-      render(
+      renderWithProviders(
         <DefinitionEditor
           definition={{ items: [mockItems[0]], version: 1, updatedAt: '2024-01-01T00:00:00Z' }}
           definitionType="DoR"
@@ -399,7 +403,7 @@ describe('DefinitionEditor', () => {
     });
 
     it('should only change category of the target item', () => {
-      render(
+      renderWithProviders(
         <DefinitionEditor
           definition={{ items: mockItems, version: 1, updatedAt: '2024-01-01T00:00:00Z' }}
           definitionType="DoR"
@@ -419,7 +423,7 @@ describe('DefinitionEditor', () => {
 
   describe('Save and Cancel Flows', () => {
     it('should disable save button when there are no changes', () => {
-      render(
+      renderWithProviders(
         <DefinitionEditor
           definition={{ items: mockItems, version: 1, updatedAt: '2024-01-01T00:00:00Z' }}
           definitionType="DoR"
@@ -434,7 +438,7 @@ describe('DefinitionEditor', () => {
     });
 
     it('should show "Saving..." when isLoading is true', () => {
-      render(
+      renderWithProviders(
         <DefinitionEditor
           definition={{ items: mockItems, version: 1, updatedAt: '2024-01-01T00:00:00Z' }}
           definitionType="DoR"
@@ -449,7 +453,7 @@ describe('DefinitionEditor', () => {
     });
 
     it('should show unsaved warning banner after making changes', () => {
-      render(
+      renderWithProviders(
         <DefinitionEditor
           definition={{ items: mockItems, version: 1, updatedAt: '2024-01-01T00:00:00Z' }}
           definitionType="DoR"
@@ -466,7 +470,7 @@ describe('DefinitionEditor', () => {
     });
 
     it('should dismiss cancel dialog when clicking "Keep Editing"', () => {
-      render(
+      renderWithProviders(
         <DefinitionEditor
           definition={{ items: mockItems, version: 1, updatedAt: '2024-01-01T00:00:00Z' }}
           definitionType="DoR"
@@ -494,7 +498,7 @@ describe('DefinitionEditor', () => {
     });
 
     it('should call onCancel when confirming discard in cancel dialog', () => {
-      render(
+      renderWithProviders(
         <DefinitionEditor
           definition={{ items: mockItems, version: 1, updatedAt: '2024-01-01T00:00:00Z' }}
           definitionType="DoR"
@@ -522,7 +526,7 @@ describe('DefinitionEditor', () => {
 
   describe('Summary Counts', () => {
     it('should display active and inactive item counts', () => {
-      render(
+      renderWithProviders(
         <DefinitionEditor
           definition={{ items: mockItems, version: 1, updatedAt: '2024-01-01T00:00:00Z' }}
           definitionType="DoR"

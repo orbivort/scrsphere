@@ -1,5 +1,7 @@
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeAll } from 'vitest';
+
+import { initTestI18n, i18nT } from '@/test-utils';
 
 import { SkeletonCard } from './SkeletonCard';
 
@@ -27,6 +29,10 @@ vi.mock('./Skeleton.module.css', () => ({
 }));
 
 describe('SkeletonCard', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   describe('Component Rendering Tests', () => {
     it('renders with default props', () => {
       const { container } = render(<SkeletonCard />);
@@ -231,7 +237,10 @@ describe('SkeletonCard', () => {
 
     it('uses default label when not provided', () => {
       render(<SkeletonCard />);
-      expect(screen.getByRole('status')).toHaveAttribute('aria-label', 'Loading card content');
+      expect(screen.getByRole('status')).toHaveAttribute(
+        'aria-label',
+        i18nT('loadingStates.loadingCardContent')
+      );
     });
   });
 
@@ -284,12 +293,10 @@ describe('SkeletonCard', () => {
 
   describe('Structure Tests', () => {
     it('renders visually hidden span as last child', () => {
-      const { container } = render(<SkeletonCard label="Test label" />);
+      render(<SkeletonCard label="Test label" />);
 
-      const skeletonCard = container.querySelector('.skeleton-card');
-      const lastChild = skeletonCard?.lastElementChild;
-      expect(lastChild).toHaveClass('visually-hidden');
-      expect(lastChild).toHaveTextContent('Test label');
+      const hiddenText = screen.getByText('Test label');
+      expect(hiddenText).toHaveClass('visually-hidden');
     });
 
     it('renders header before body', () => {

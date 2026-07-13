@@ -1,9 +1,9 @@
 import React from 'react';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
-import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { BrowserRouter } from 'react-router-dom';
+import { screen, waitFor, fireEvent } from '@testing-library/react';
+import { vi, describe, it, expect, beforeEach, afterEach, beforeAll } from 'vitest';
 import userEvent from '@testing-library/user-event';
+
+import { renderWithProviders, initTestI18n } from '../../test-utils';
 
 import { SprintPlanning } from './SprintPlanning';
 
@@ -287,32 +287,10 @@ vi.mock('lucide-react', async () => {
 import { useTeamStore, useAuthStore } from '../../store';
 import { apiService } from '../../services';
 
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        gcTime: 0,
-        staleTime: 0,
-      },
-      mutations: {
-        retry: false,
-      },
-    },
-  });
-
-const renderWithProviders = (ui: React.ReactElement) => {
-  const queryClient = createTestQueryClient();
-  const renderResult = render(
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>{ui}</BrowserRouter>
-    </QueryClientProvider>
-  );
-  return {
-    ...renderResult,
-    queryClient,
-  };
-};
+// Initialize i18n before all tests
+beforeAll(async () => {
+  await initTestI18n();
+});
 
 import {
   createMockTeam,

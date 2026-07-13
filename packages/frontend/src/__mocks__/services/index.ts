@@ -113,6 +113,20 @@ export const sessionManager: Record<string, Mock<AnyFn>> = {
   isSessionExpired: vi.fn(),
 };
 
+export const definitionService: Record<string, Mock<AnyFn>> = {
+  getDefinitionOfDone: vi.fn(),
+  updateDefinitionOfDone: vi.fn(),
+  getDoDHistory: vi.fn(),
+  verifyDoDForPBI: vi.fn(),
+  getDoDVerificationsForPBI: vi.fn(),
+  getDoDComplianceReport: vi.fn(),
+  getDefinitionOfReady: vi.fn(),
+  updateDefinitionOfReady: vi.fn(),
+  getDoRHistory: vi.fn(),
+  verifyDoRForPBI: vi.fn(),
+  getDoRVerificationsForPBI: vi.fn(),
+};
+
 export const notificationApi: Record<string, Mock<AnyFn>> = {
   getNotifications: vi.fn(),
   getConfig: vi.fn(),

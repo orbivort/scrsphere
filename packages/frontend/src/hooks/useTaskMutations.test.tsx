@@ -1,7 +1,5 @@
-import { renderHook, waitFor, act } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { type ReactNode } from 'react';
+import { renderHook, waitFor, act, initTestI18n, AllProviders } from '../test-utils';
+import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
 
 import { useTaskMutations, type CreateTaskInput, type UpdateTaskInput } from './useTaskMutations';
 import { apiService } from '../services';
@@ -14,25 +12,6 @@ vi.mock('../services', () => ({
     deleteTask: vi.fn(),
   },
 }));
-
-const createWrapper = () => {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        gcTime: 0,
-        staleTime: 0,
-      },
-      mutations: {
-        retry: false,
-      },
-    },
-  });
-
-  return function Wrapper({ children }: { children: ReactNode }) {
-    return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
-  };
-};
 
 const createMockTask = (id: string, title: string): Task => ({
   id,
@@ -47,6 +26,10 @@ const createMockTask = (id: string, title: string): Task => ({
 
 describe('useTaskMutations', () => {
   const mockSprintId = 'sprint-1';
+
+  beforeAll(async () => {
+    await initTestI18n();
+  });
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -67,7 +50,7 @@ describe('useTaskMutations', () => {
       });
 
       const { result } = renderHook(() => useTaskMutations({ sprintId: mockSprintId }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       act(() => {
@@ -86,7 +69,7 @@ describe('useTaskMutations', () => {
       };
 
       const { result } = renderHook(() => useTaskMutations({ sprintId: undefined }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       act(() => {
@@ -113,7 +96,7 @@ describe('useTaskMutations', () => {
       });
 
       const { result } = renderHook(() => useTaskMutations({ sprintId: mockSprintId, onSuccess }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       act(() => {
@@ -135,7 +118,7 @@ describe('useTaskMutations', () => {
       vi.mocked(apiService.createTask).mockRejectedValue(new Error('Creation failed'));
 
       const { result } = renderHook(() => useTaskMutations({ sprintId: mockSprintId, onError }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       act(() => {
@@ -161,7 +144,7 @@ describe('useTaskMutations', () => {
       vi.mocked(apiService.createTask).mockRejectedValue(new Error('Creation failed'));
 
       const { result } = renderHook(() => useTaskMutations({ sprintId: mockSprintId }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       act(() => {
@@ -197,7 +180,7 @@ describe('useTaskMutations', () => {
       });
 
       const { result } = renderHook(() => useTaskMutations({ sprintId: mockSprintId }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       act(() => {
@@ -227,7 +210,7 @@ describe('useTaskMutations', () => {
       });
 
       const { result } = renderHook(() => useTaskMutations({ sprintId: mockSprintId, onSuccess }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       act(() => {
@@ -248,7 +231,7 @@ describe('useTaskMutations', () => {
       vi.mocked(apiService.updateTask).mockRejectedValue(new Error('Update failed'));
 
       const { result } = renderHook(() => useTaskMutations({ sprintId: mockSprintId }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       act(() => {
@@ -277,7 +260,7 @@ describe('useTaskMutations', () => {
       });
 
       const { result } = renderHook(() => useTaskMutations({ sprintId: mockSprintId }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       act(() => {
@@ -298,7 +281,7 @@ describe('useTaskMutations', () => {
       });
 
       const { result } = renderHook(() => useTaskMutations({ sprintId: mockSprintId, onSuccess }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       act(() => {
@@ -315,7 +298,7 @@ describe('useTaskMutations', () => {
       vi.mocked(apiService.deleteTask).mockRejectedValue(new Error('Delete failed'));
 
       const { result } = renderHook(() => useTaskMutations({ sprintId: mockSprintId }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       act(() => {
@@ -347,7 +330,7 @@ describe('useTaskMutations', () => {
       });
 
       const { result } = renderHook(() => useTaskMutations({ sprintId: mockSprintId }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       act(() => {
@@ -374,7 +357,7 @@ describe('useTaskMutations', () => {
       });
 
       const { result } = renderHook(() => useTaskMutations({ sprintId: mockSprintId }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       act(() => {
@@ -411,7 +394,7 @@ describe('useTaskMutations', () => {
       vi.mocked(apiService.createTask).mockRejectedValue(apiError);
 
       const { result } = renderHook(() => useTaskMutations({ sprintId: mockSprintId }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       act(() => {
@@ -440,7 +423,7 @@ describe('useTaskMutations', () => {
       vi.mocked(apiService.createTask).mockRejectedValue(validationError);
 
       const { result } = renderHook(() => useTaskMutations({ sprintId: mockSprintId }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       act(() => {
@@ -465,7 +448,7 @@ describe('useTaskMutations', () => {
       vi.mocked(apiService.createTask).mockRejectedValue('Unknown error');
 
       const { result } = renderHook(() => useTaskMutations({ sprintId: mockSprintId }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       act(() => {
@@ -489,7 +472,7 @@ describe('useTaskMutations', () => {
       vi.mocked(apiService.createTask).mockRejectedValue(new Error('Network error'));
 
       const { result } = renderHook(() => useTaskMutations({ sprintId: mockSprintId }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       act(() => {
@@ -519,7 +502,7 @@ describe('useTaskMutations', () => {
       });
 
       const { result } = renderHook(() => useTaskMutations({ sprintId: mockSprintId }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       expect(result.current.isCreating).toBe(false);
@@ -546,7 +529,7 @@ describe('useTaskMutations', () => {
       });
 
       const { result } = renderHook(() => useTaskMutations({ sprintId: mockSprintId }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       expect(result.current.isUpdating).toBe(false);
@@ -567,7 +550,7 @@ describe('useTaskMutations', () => {
       });
 
       const { result } = renderHook(() => useTaskMutations({ sprintId: mockSprintId }), {
-        wrapper: createWrapper(),
+        wrapper: AllProviders,
       });
 
       expect(result.current.isDeleting).toBe(false);

@@ -1,14 +1,24 @@
 import React from 'react';
-import { render, screen, waitFor, fireEvent, within } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { BrowserRouter } from 'react-router-dom';
-import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
+import {
+  screen,
+  waitFor,
+  fireEvent,
+  within,
+  renderWithProviders,
+  initTestI18n,
+  i18nT,
+} from '../../test-utils';
+import { vi, describe, it, expect, beforeEach, afterEach, beforeAll } from 'vitest';
 
 import { useTeamStore, useAuthStore } from '../../store';
 import { apiService } from '../../services';
 import { RetrospectiveCategory, RetrospectiveStatus } from '../../types';
 
 import { SprintRetrospective } from './Retrospective';
+
+beforeAll(async () => {
+  await initTestI18n();
+});
 
 vi.mock('../../store', () => ({
   useTeamStore: vi.fn(),
@@ -46,24 +56,6 @@ vi.mock('react-router-dom', async () => {
     useParams: () => ({ sprintId: 'sprint-1' }),
   };
 });
-
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-    },
-  });
-
-const renderWithProviders = (ui: React.ReactElement) => {
-  const testQueryClient = createTestQueryClient();
-  return render(
-    <QueryClientProvider client={testQueryClient}>
-      <BrowserRouter>{ui}</BrowserRouter>
-    </QueryClientProvider>
-  );
-};
 
 const mockRetrospective = {
   id: 'retro-1',
@@ -343,7 +335,7 @@ describe('Retrospective Component', () => {
       renderWithProviders(<SprintRetrospective />);
 
       await waitFor(() => {
-        expect(screen.getByText('🔍 Sprint Retrospective')).toBeInTheDocument();
+        expect(screen.getByText(i18nT('retrospective:title'))).toBeInTheDocument();
       });
 
       // The retro date appears in the header - use getAllByText since dates appear multiple times
@@ -364,10 +356,10 @@ describe('Retrospective Component', () => {
       renderWithProviders(<SprintRetrospective />);
 
       await waitFor(() => {
-        expect(screen.getByText('← Back to Retrospectives')).toBeInTheDocument();
+        expect(screen.getByText(i18nT('retrospective:backToRetrospectives'))).toBeInTheDocument();
       });
 
-      fireEvent.click(screen.getByText('← Back to Retrospectives'));
+      fireEvent.click(screen.getByText(i18nT('retrospective:backToRetrospectives')));
 
       expect(mockNavigate).toHaveBeenCalledWith('/retrospectives');
     });
@@ -396,7 +388,7 @@ describe('Retrospective Component', () => {
       renderWithProviders(<SprintRetrospective />);
 
       await waitFor(() => {
-        expect(screen.getByText('ACTIVE')).toBeInTheDocument();
+        expect(screen.getByText(i18nT('retrospective:sprintStatus.ACTIVE'))).toBeInTheDocument();
       });
     });
 
@@ -980,7 +972,7 @@ describe('Retrospective Component', () => {
       renderWithProviders(<SprintRetrospective />);
 
       await waitFor(() => {
-        expect(screen.getByText('📋 Action Items')).toBeInTheDocument();
+        expect(screen.getByText(i18nT('retrospective:actionItems.title'))).toBeInTheDocument();
       });
     });
 
@@ -1043,15 +1035,19 @@ describe('Retrospective Component', () => {
       renderWithProviders(<SprintRetrospective />);
 
       await waitFor(() => {
-        expect(screen.getByText('📋 Action Items')).toBeInTheDocument();
+        expect(screen.getByText(i18nT('retrospective:actionItems.title'))).toBeInTheDocument();
       });
 
-      const createButton = screen.getByText('+ Create Action Item');
+      const createButton = screen.getByText(i18nT('retrospective:actionItems.createActionItem'));
       fireEvent.click(createButton);
 
       // Use getByRole to distinguish between heading and button
-      expect(screen.getByRole('heading', { name: 'Create Action Item' })).toBeInTheDocument();
-      expect(screen.getByPlaceholderText('Enter action item title')).toBeInTheDocument();
+      expect(
+        screen.getByRole('heading', { name: i18nT('retrospective:createActionItemModal.title') })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByPlaceholderText(i18nT('retrospective:createActionItemModal.titlePlaceholder'))
+      ).toBeInTheDocument();
     });
 
     it('should call addActionItem when submitting form', async () => {
@@ -1063,32 +1059,38 @@ describe('Retrospective Component', () => {
       renderWithProviders(<SprintRetrospective />);
 
       await waitFor(() => {
-        expect(screen.getByText('📋 Action Items')).toBeInTheDocument();
+        expect(screen.getByText(i18nT('retrospective:actionItems.title'))).toBeInTheDocument();
       });
 
-      const createButton = screen.getByText('+ Create Action Item');
+      const createButton = screen.getByText(i18nT('retrospective:actionItems.createActionItem'));
       fireEvent.click(createButton);
 
       // Fill in the form fields that are available
-      const titleInput = screen.queryByPlaceholderText('Enter action item title');
+      const titleInput = screen.queryByPlaceholderText(
+        i18nT('retrospective:createActionItemModal.titlePlaceholder')
+      );
       if (titleInput) {
         fireEvent.change(titleInput, { target: { value: 'New action item' } });
       }
 
-      const descriptionInput = screen.queryByPlaceholderText('Add details...');
+      const descriptionInput = screen.queryByPlaceholderText(
+        i18nT('retrospective:createActionItemModal.descriptionPlaceholder')
+      );
       if (descriptionInput) {
         fireEvent.change(descriptionInput, { target: { value: 'Description' } });
       }
 
       // Try to find owner select by label or query selector
       const ownerSelect =
-        screen.queryByLabelText(/Owner/i) || document.querySelector('select[name="ownerId"]');
+        screen.queryByLabelText(new RegExp(i18nT('retrospective:createActionItemModal.owner'))) ||
+        document.querySelector('select[name="ownerId"]');
       if (ownerSelect) {
         fireEvent.change(ownerSelect, { target: { value: 'user-1' } });
       }
 
       const dueDateInput =
-        screen.queryByLabelText(/Due Date/i) || document.querySelector('input[type="date"]');
+        screen.queryByLabelText(new RegExp(i18nT('retrospective:createActionItemModal.dueDate'))) ||
+        document.querySelector('input[type="date"]');
       if (dueDateInput) {
         const futureDate = new Date();
         futureDate.setDate(futureDate.getDate() + 7);
@@ -1099,7 +1101,9 @@ describe('Retrospective Component', () => {
 
       // Wait for form state to update and find the enabled submit button
       await waitFor(() => {
-        const submitButtons = screen.queryAllByRole('button', { name: /Create Action Item/i });
+        const submitButtons = screen.queryAllByRole('button', {
+          name: new RegExp(i18nT('retrospective:createActionItemModal.createActionItem')),
+        });
         const enabledSubmitButton = submitButtons.find((btn) => !btn.hasAttribute('disabled'));
 
         if (enabledSubmitButton) {
@@ -1121,8 +1125,9 @@ describe('Retrospective Component', () => {
         } else {
           // If API wasn't called, verify the form is still open (validation prevented submission)
           const formStillOpen =
-            screen.queryByPlaceholderText('Enter action item title') ||
-            screen.queryByText('Create Action Item');
+            screen.queryByPlaceholderText(
+              i18nT('retrospective:createActionItemModal.titlePlaceholder')
+            ) || screen.queryByText(i18nT('retrospective:createActionItemModal.title'));
           expect(formStillOpen).toBeTruthy();
         }
       });
@@ -1132,20 +1137,24 @@ describe('Retrospective Component', () => {
       renderWithProviders(<SprintRetrospective />);
 
       await waitFor(() => {
-        expect(screen.getByText('📋 Action Items')).toBeInTheDocument();
+        expect(screen.getByText(i18nT('retrospective:actionItems.title'))).toBeInTheDocument();
       });
 
-      const createButton = screen.getByText('+ Create Action Item');
+      const createButton = screen.getByText(i18nT('retrospective:actionItems.createActionItem'));
       fireEvent.click(createButton);
 
       // Wait for form to be visible
       await waitFor(() => {
-        const titleInput = screen.queryByPlaceholderText('Enter action item title');
+        const titleInput = screen.queryByPlaceholderText(
+          i18nT('retrospective:createActionItemModal.titlePlaceholder')
+        );
         expect(titleInput).toBeTruthy();
       });
 
       // Try to submit without filling required fields
-      const submitButtons = screen.queryAllByRole('button', { name: /Create Action Item/i });
+      const submitButtons = screen.queryAllByRole('button', {
+        name: new RegExp(i18nT('retrospective:createActionItemModal.createActionItem')),
+      });
       const submitButton = submitButtons[submitButtons.length - 1]; // Get the last one (submit button in modal)
 
       if (submitButton) {
@@ -1241,16 +1250,18 @@ describe('Retrospective Component', () => {
       renderWithProviders(<SprintRetrospective />);
 
       await waitFor(() => {
-        expect(screen.getByText('📋 Action Items')).toBeInTheDocument();
+        expect(screen.getByText(i18nT('retrospective:actionItems.title'))).toBeInTheDocument();
       });
 
-      const createButton = screen.getByText('+ Create Action Item');
+      const createButton = screen.getByText(i18nT('retrospective:actionItems.createActionItem'));
       fireEvent.click(createButton);
 
-      const cancelButton = screen.getByText('Cancel');
+      const cancelButton = screen.getByText(i18nT('retrospective:createActionItemModal.cancel'));
       fireEvent.click(cancelButton);
 
-      expect(screen.queryByText('Create Action Item')).not.toBeInTheDocument();
+      expect(
+        screen.queryByText(i18nT('retrospective:createActionItemModal.title'))
+      ).not.toBeInTheDocument();
     });
 
     it('should disable create action item button when retrospective is completed', async () => {
@@ -1262,10 +1273,10 @@ describe('Retrospective Component', () => {
       renderWithProviders(<SprintRetrospective />);
 
       await waitFor(() => {
-        expect(screen.getByText('📋 Action Items')).toBeInTheDocument();
+        expect(screen.getByText(i18nT('retrospective:actionItems.title'))).toBeInTheDocument();
       });
 
-      expect(screen.getByText('+ Create Action Item')).toBeDisabled();
+      expect(screen.getByText(i18nT('retrospective:actionItems.createActionItem'))).toBeDisabled();
     });
   });
 
@@ -1467,7 +1478,9 @@ describe('Retrospective Component', () => {
       renderWithProviders(<SprintRetrospective />);
 
       await waitFor(() => {
-        expect(screen.getByText('✓ Complete Retrospective')).toBeInTheDocument();
+        expect(
+          screen.getByText(new RegExp(i18nT('retrospective:completeRetro.button')))
+        ).toBeInTheDocument();
       });
     });
 
@@ -1480,17 +1493,21 @@ describe('Retrospective Component', () => {
       renderWithProviders(<SprintRetrospective />);
 
       await waitFor(() => {
-        expect(screen.getByText('✓ Complete Retrospective')).toBeInTheDocument();
+        expect(
+          screen.getByText(new RegExp(i18nT('retrospective:completeRetro.button')))
+        ).toBeInTheDocument();
       });
 
-      fireEvent.click(screen.getByText('✓ Complete Retrospective'));
+      fireEvent.click(screen.getByText(new RegExp(i18nT('retrospective:completeRetro.button'))));
 
       await waitFor(() => {
-        expect(screen.getByText('Cannot Complete Retrospective')).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('retrospective:confirmationModal.cannotCompleteTitle'))
+        ).toBeInTheDocument();
       });
 
       expect(
-        screen.getByText('Retrospective Summary must be filled in before completing.')
+        screen.getByText(i18nT('retrospective:validation.summaryRequiredBeforeComplete'))
       ).toBeInTheDocument();
     });
 
@@ -1517,10 +1534,12 @@ describe('Retrospective Component', () => {
       renderWithProviders(<SprintRetrospective />);
 
       await waitFor(() => {
-        expect(screen.getByText('✓ Complete Retrospective')).toBeInTheDocument();
+        expect(
+          screen.getByText(new RegExp(i18nT('retrospective:completeRetro.button')))
+        ).toBeInTheDocument();
       });
 
-      fireEvent.click(screen.getByText('✓ Complete Retrospective'));
+      fireEvent.click(screen.getByText(new RegExp(i18nT('retrospective:completeRetro.button'))));
 
       await waitFor(() => {
         // Check for validation error with flexible matching
@@ -1545,17 +1564,27 @@ describe('Retrospective Component', () => {
 
       renderWithProviders(<SprintRetrospective />);
 
+      // Wait for and click the complete retrospective button using aria-label
       await waitFor(() => {
-        expect(screen.getByText('✓ Complete Retrospective')).toBeInTheDocument();
+        const completeButton = screen.getByLabelText(
+          i18nT('retrospective:completeRetro.ariaLabel')
+        );
+        expect(completeButton).toBeInTheDocument();
       });
 
-      fireEvent.click(screen.getByText('✓ Complete Retrospective'));
+      // Click the button that opens the confirmation modal
+      fireEvent.click(screen.getByLabelText(i18nT('retrospective:completeRetro.ariaLabel')));
 
+      // Wait for the confirmation modal to appear
       await waitFor(() => {
-        expect(screen.getByText('Complete Retrospective')).toBeInTheDocument();
+        // Check for the modal by looking for the "Complete" button inside the modal
+        expect(
+          screen.getByText(i18nT('retrospective:confirmationModal.complete'))
+        ).toBeInTheDocument();
       });
 
-      const confirmButton = screen.getByText('Complete');
+      // Click the "Complete" button in the modal
+      const confirmButton = screen.getByText(i18nT('retrospective:confirmationModal.complete'));
       fireEvent.click(confirmButton);
 
       await waitFor(() => {
@@ -1582,22 +1611,28 @@ describe('Retrospective Component', () => {
       renderWithProviders(<SprintRetrospective />);
 
       await waitFor(() => {
-        expect(screen.getByText('✓ Complete Retrospective')).toBeInTheDocument();
+        expect(
+          screen.getByText(new RegExp(i18nT('retrospective:completeRetro.button')))
+        ).toBeInTheDocument();
       });
 
-      fireEvent.click(screen.getByText('✓ Complete Retrospective'));
-
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: 'Complete' })).toBeInTheDocument();
-      });
-
-      fireEvent.click(screen.getByRole('button', { name: 'Complete' }));
+      fireEvent.click(screen.getByText(new RegExp(i18nT('retrospective:completeRetro.button'))));
 
       await waitFor(() => {
         expect(
-          screen.getByText('Sprint Retrospective completed successfully!')
+          screen.getByRole('button', { name: i18nT('retrospective:confirmationModal.cancel') })
         ).toBeInTheDocument();
+        expect(
+          screen.getByRole('button', { name: i18nT('retrospective:confirmationModal.complete') })
+        ).toBeInTheDocument();
+      });
+
+      fireEvent.click(
+        screen.getByRole('button', { name: i18nT('retrospective:confirmationModal.complete') })
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText(i18nT('retrospective:successModal.message'))).toBeInTheDocument();
       });
     });
 
@@ -1610,10 +1645,12 @@ describe('Retrospective Component', () => {
       renderWithProviders(<SprintRetrospective />);
 
       await waitFor(() => {
-        expect(screen.getByText(/Sprint Retrospective/)).toBeInTheDocument();
+        expect(screen.getByText(i18nT('retrospective:title'))).toBeInTheDocument();
       });
 
-      expect(screen.queryByText('✓ Complete Retrospective')).not.toBeInTheDocument();
+      expect(
+        screen.queryByText(new RegExp(i18nT('retrospective:completeRetro.button')))
+      ).not.toBeInTheDocument();
     });
   });
 
@@ -2071,12 +2108,12 @@ describe('Retrospective Component', () => {
       renderWithProviders(<SprintRetrospective />);
 
       await waitFor(() => {
-        expect(screen.getByText('✓ In Backlog')).toBeInTheDocument();
+        expect(
+          screen.getByText(new RegExp(i18nT('retrospective:actionItems.inBacklog')))
+        ).toBeInTheDocument();
       });
 
-      expect(
-        screen.queryByText('This item will be present in the Product Backlog page for action.')
-      ).not.toBeInTheDocument();
+      expect(screen.queryByText(i18nT('retrospective:backlogHint'))).not.toBeInTheDocument();
     });
 
     it('should show Unassigned for action item without owner', async () => {
@@ -2176,19 +2213,21 @@ describe('Retrospective Component', () => {
       renderWithProviders(<SprintRetrospective />);
 
       await waitFor(() => {
-        expect(screen.getByText('✓ Complete Retrospective')).toBeInTheDocument();
+        expect(
+          screen.getByText(new RegExp(i18nT('retrospective:completeRetro.button')))
+        ).toBeInTheDocument();
       });
 
-      fireEvent.click(screen.getByText('✓ Complete Retrospective'));
+      fireEvent.click(screen.getByText(new RegExp(i18nT('retrospective:completeRetro.button'))));
 
       await waitFor(() => {
-        expect(screen.getByText('Cannot Complete Retrospective')).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('retrospective:confirmationModal.cannotCompleteTitle'))
+        ).toBeInTheDocument();
       });
 
       expect(
-        screen.getByText(
-          'At least one participant must be added before completing the retrospective.'
-        )
+        screen.getByText(i18nT('retrospective:validation.participantRequired'))
       ).toBeInTheDocument();
     });
 
@@ -2204,20 +2243,26 @@ describe('Retrospective Component', () => {
       renderWithProviders(<SprintRetrospective />);
 
       await waitFor(() => {
-        expect(screen.getByText('✓ Complete Retrospective')).toBeInTheDocument();
+        expect(
+          screen.getByText(new RegExp(i18nT('retrospective:completeRetro.button')))
+        ).toBeInTheDocument();
       });
 
-      fireEvent.click(screen.getByText('✓ Complete Retrospective'));
+      fireEvent.click(screen.getByText(new RegExp(i18nT('retrospective:completeRetro.button'))));
 
       await waitFor(() => {
-        expect(screen.getByText('Cannot Complete Retrospective')).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('retrospective:confirmationModal.cannotCompleteTitle'))
+        ).toBeInTheDocument();
       });
 
-      const okButton = screen.getByText('OK');
+      const okButton = screen.getByText(i18nT('retrospective:confirmationModal.ok'));
       fireEvent.click(okButton);
 
       await waitFor(() => {
-        expect(screen.queryByText('Cannot Complete Retrospective')).not.toBeInTheDocument();
+        expect(
+          screen.queryByText(i18nT('retrospective:confirmationModal.cannotCompleteTitle'))
+        ).not.toBeInTheDocument();
       });
     });
   });
@@ -2254,11 +2299,17 @@ describe('Retrospective Component', () => {
       renderWithProviders(<SprintRetrospective />);
 
       await waitFor(() => {
-        expect(screen.getByText(/Sprint Retrospective/)).toBeInTheDocument();
+        expect(screen.getByText(i18nT('retrospective:title'))).toBeInTheDocument();
       });
 
-      expect(screen.getByText('0 tasks')).toBeInTheDocument();
-      expect(screen.getByText('0 completed')).toBeInTheDocument();
+      expect(
+        screen.getByText(i18nT('retrospective:sprintInfo.taskCount', { count: 0 }))
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          i18nT('retrospective:sprintInfo.taskCompletion', { completed: 0, total: 0 })
+        )
+      ).toBeInTheDocument();
     });
 
     it('should handle sprint with empty items array', async () => {

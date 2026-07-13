@@ -1,7 +1,6 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
+import { renderWithProviders, screen, initTestI18n } from '../test-utils';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router-dom';
 
 import { TeamProvider, TeamInitializer, useTeamContext } from './TeamContext';
 import { useAuthStore } from '../store';
@@ -67,6 +66,10 @@ describe('TeamProvider', () => {
   const mockSwitchTeam = vi.fn();
   const mockRefreshTeams = vi.fn();
 
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
     useAuthStore.setState({ isAuthenticated: true, user: null, isLoading: false, error: null });
@@ -87,12 +90,10 @@ describe('TeamProvider', () => {
       refreshTeams: mockRefreshTeams,
     });
 
-    render(
-      <MemoryRouter>
-        <TeamProvider>
-          <TestComponent />
-        </TeamProvider>
-      </MemoryRouter>
+    renderWithProviders(
+      <TeamProvider>
+        <TestComponent />
+      </TeamProvider>
     );
 
     expect(screen.getByTestId('current-team')).toHaveTextContent('No team');
@@ -114,12 +115,10 @@ describe('TeamProvider', () => {
       refreshTeams: mockRefreshTeams,
     });
 
-    render(
-      <MemoryRouter>
-        <TeamProvider>
-          <TestComponent />
-        </TeamProvider>
-      </MemoryRouter>
+    renderWithProviders(
+      <TeamProvider>
+        <TestComponent />
+      </TeamProvider>
     );
 
     expect(screen.getByTestId('current-team')).toHaveTextContent('Test Team');
@@ -138,12 +137,10 @@ describe('TeamProvider', () => {
       refreshTeams: mockRefreshTeams,
     });
 
-    render(
-      <MemoryRouter>
-        <TeamProvider>
-          <TestComponent />
-        </TeamProvider>
-      </MemoryRouter>
+    renderWithProviders(
+      <TeamProvider>
+        <TestComponent />
+      </TeamProvider>
     );
 
     expect(screen.getByTestId('is-loading')).toHaveTextContent('loading');
@@ -162,12 +159,10 @@ describe('TeamProvider', () => {
       refreshTeams: mockRefreshTeams,
     });
 
-    render(
-      <MemoryRouter>
-        <TeamProvider>
-          <TestComponent />
-        </TeamProvider>
-      </MemoryRouter>
+    renderWithProviders(
+      <TeamProvider>
+        <TestComponent />
+      </TeamProvider>
     );
 
     expect(screen.getByTestId('is-loading')).toHaveTextContent('not-loading');
@@ -184,12 +179,10 @@ describe('TeamProvider', () => {
       refreshTeams: mockRefreshTeams,
     });
 
-    render(
-      <MemoryRouter>
-        <TeamProvider>
-          <TestComponent />
-        </TeamProvider>
-      </MemoryRouter>
+    renderWithProviders(
+      <TeamProvider>
+        <TestComponent />
+      </TeamProvider>
     );
 
     expect(screen.getByTestId('has-error')).toHaveTextContent('Failed to fetch teams');
@@ -212,12 +205,10 @@ describe('TeamProvider', () => {
       refreshTeams: mockRefreshTeams,
     });
 
-    render(
-      <MemoryRouter>
-        <TeamProvider>
-          <TestComponent />
-        </TeamProvider>
-      </MemoryRouter>
+    renderWithProviders(
+      <TeamProvider>
+        <TestComponent />
+      </TeamProvider>
     );
 
     expect(screen.getByTestId('has-multiple')).toHaveTextContent('yes');
@@ -238,12 +229,10 @@ describe('TeamProvider', () => {
       refreshTeams: mockRefreshTeams,
     });
 
-    render(
-      <MemoryRouter>
-        <TeamProvider>
-          <TestComponent />
-        </TeamProvider>
-      </MemoryRouter>
+    renderWithProviders(
+      <TeamProvider>
+        <TestComponent />
+      </TeamProvider>
     );
 
     await user.click(screen.getByTestId('switch-team-btn'));
@@ -264,12 +253,10 @@ describe('TeamProvider', () => {
       refreshTeams: mockRefreshTeams,
     });
 
-    render(
-      <MemoryRouter>
-        <TeamProvider>
-          <TestComponent />
-        </TeamProvider>
-      </MemoryRouter>
+    renderWithProviders(
+      <TeamProvider>
+        <TestComponent />
+      </TeamProvider>
     );
 
     await user.click(screen.getByTestId('refresh-teams-btn'));
@@ -281,6 +268,10 @@ describe('TeamProvider', () => {
 describe('TeamInitializer', () => {
   const mockSwitchTeam = vi.fn();
   const mockRefreshTeams = vi.fn();
+
+  beforeAll(async () => {
+    await initTestI18n();
+  });
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -304,14 +295,12 @@ describe('TeamInitializer', () => {
       refreshTeams: mockRefreshTeams,
     });
 
-    render(
-      <MemoryRouter>
-        <TeamProvider>
-          <TeamInitializer>
-            <InitializerTestComponent />
-          </TeamInitializer>
-        </TeamProvider>
-      </MemoryRouter>
+    renderWithProviders(
+      <TeamProvider>
+        <TeamInitializer>
+          <InitializerTestComponent />
+        </TeamInitializer>
+      </TeamProvider>
     );
 
     expect(screen.getByTestId('initialized-content')).toBeInTheDocument();
@@ -328,14 +317,12 @@ describe('TeamInitializer', () => {
       refreshTeams: mockRefreshTeams,
     });
 
-    render(
-      <MemoryRouter>
-        <TeamProvider>
-          <TeamInitializer>
-            <InitializerTestComponent />
-          </TeamInitializer>
-        </TeamProvider>
-      </MemoryRouter>
+    renderWithProviders(
+      <TeamProvider>
+        <TeamInitializer>
+          <InitializerTestComponent />
+        </TeamInitializer>
+      </TeamProvider>
     );
 
     expect(screen.getByText('Initializing team context...')).toBeInTheDocument();
@@ -354,14 +341,12 @@ describe('TeamInitializer', () => {
       refreshTeams: mockRefreshTeams,
     });
 
-    render(
-      <MemoryRouter>
-        <TeamProvider>
-          <TeamInitializer>
-            <InitializerTestComponent />
-          </TeamInitializer>
-        </TeamProvider>
-      </MemoryRouter>
+    renderWithProviders(
+      <TeamProvider>
+        <TeamInitializer>
+          <InitializerTestComponent />
+        </TeamInitializer>
+      </TeamProvider>
     );
 
     expect(screen.getByTestId('initialized-content')).toBeInTheDocument();
@@ -370,6 +355,10 @@ describe('TeamInitializer', () => {
 });
 
 describe('TeamContext error handling', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   it('should throw error when useTeamContext is used outside provider', () => {
     // Create a component that uses the hook outside provider
     const TestComponentOutsideProvider = () => {
@@ -381,11 +370,7 @@ describe('TeamContext error handling', () => {
       }
     };
 
-    render(
-      <MemoryRouter>
-        <TestComponentOutsideProvider />
-      </MemoryRouter>
-    );
+    renderWithProviders(<TestComponentOutsideProvider />);
 
     expect(screen.getByTestId('error-thrown')).toHaveTextContent(
       'useTeamContext must be used within a TeamProvider'
@@ -396,6 +381,10 @@ describe('TeamContext error handling', () => {
 describe('TeamInitializer edge cases', () => {
   const mockSwitchTeam = vi.fn();
   const mockRefreshTeams = vi.fn();
+
+  beforeAll(async () => {
+    await initTestI18n();
+  });
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -417,14 +406,12 @@ describe('TeamInitializer edge cases', () => {
       refreshTeams: mockRefreshTeams,
     });
 
-    render(
-      <MemoryRouter>
-        <TeamProvider>
-          <TeamInitializer>
-            <div data-testid="child">Content</div>
-          </TeamInitializer>
-        </TeamProvider>
-      </MemoryRouter>
+    renderWithProviders(
+      <TeamProvider>
+        <TeamInitializer>
+          <div data-testid="child">Content</div>
+        </TeamInitializer>
+      </TeamProvider>
     );
 
     expect(mockNavigate).toHaveBeenCalledWith('/team');
@@ -443,14 +430,12 @@ describe('TeamInitializer edge cases', () => {
       refreshTeams: mockRefreshTeams,
     });
 
-    render(
-      <MemoryRouter>
-        <TeamProvider>
-          <TeamInitializer>
-            <div data-testid="child">Content</div>
-          </TeamInitializer>
-        </TeamProvider>
-      </MemoryRouter>
+    renderWithProviders(
+      <TeamProvider>
+        <TeamInitializer>
+          <div data-testid="child">Content</div>
+        </TeamInitializer>
+      </TeamProvider>
     );
 
     expect(mockSwitchTeam).toHaveBeenCalledWith('team-1');
@@ -472,14 +457,12 @@ describe('TeamInitializer edge cases', () => {
       refreshTeams: mockRefreshTeams,
     });
 
-    render(
-      <MemoryRouter>
-        <TeamProvider>
-          <TeamInitializer>
-            <div data-testid="child">Content</div>
-          </TeamInitializer>
-        </TeamProvider>
-      </MemoryRouter>
+    renderWithProviders(
+      <TeamProvider>
+        <TeamInitializer>
+          <div data-testid="child">Content</div>
+        </TeamInitializer>
+      </TeamProvider>
     );
 
     expect(screen.getByText('Select a Team')).toBeInTheDocument();
@@ -524,12 +507,10 @@ describe('TeamInitializer edge cases', () => {
       );
     };
 
-    render(
-      <MemoryRouter>
-        <TeamProvider>
-          <SwitchErrorTestComponent />
-        </TeamProvider>
-      </MemoryRouter>
+    renderWithProviders(
+      <TeamProvider>
+        <SwitchErrorTestComponent />
+      </TeamProvider>
     );
 
     await user.click(screen.getByTestId('switch-btn'));
@@ -553,14 +534,12 @@ describe('TeamInitializer edge cases', () => {
       refreshTeams: mockRefreshTeams,
     });
 
-    render(
-      <MemoryRouter>
-        <TeamProvider>
-          <TeamInitializer>
-            <div data-testid="child">Content</div>
-          </TeamInitializer>
-        </TeamProvider>
-      </MemoryRouter>
+    renderWithProviders(
+      <TeamProvider>
+        <TeamInitializer>
+          <div data-testid="child">Content</div>
+        </TeamInitializer>
+      </TeamProvider>
     );
 
     expect(screen.getByText('Select a Team')).toBeInTheDocument();

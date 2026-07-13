@@ -1,14 +1,20 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { screen, fireEvent, waitFor, initTestI18n, AllProviders, i18nT } from '../../test-utils';
+import { vi, describe, it, expect, beforeEach, beforeAll } from 'vitest';
+import { Route, Routes } from 'react-router-dom';
+import { QueryClient } from '@tanstack/react-query';
+import { render } from '@testing-library/react';
 
 import { SprintReview } from './SprintReview';
 import { SprintStatus, IncrementStatus } from '../../types';
 import * as apiServiceModule from '../../services';
 import * as teamStoreModule from '../../store';
 import * as useMutationErrorHandlerModule from '../../hooks/useMutationErrorHandler';
+
+// Initialize i18n before all tests
+beforeAll(async () => {
+  await initTestI18n();
+});
 
 // Mock useMutationErrorHandler to avoid store dependencies
 vi.spyOn(useMutationErrorHandlerModule, 'useMutationErrorHandler').mockReturnValue({
@@ -98,13 +104,11 @@ function renderComponent(sprintId = 'sprint-1') {
   } as any);
 
   return render(
-    <QueryClientProvider client={queryClient}>
-      <MemoryRouter initialEntries={[`/sprint-review/${sprintId}`]}>
-        <Routes>
-          <Route path="/sprint-review/:sprintId" element={<SprintReview />} />
-        </Routes>
-      </MemoryRouter>
-    </QueryClientProvider>
+    <AllProviders queryClient={queryClient} initialRoute={`/sprint-review/${sprintId}`}>
+      <Routes>
+        <Route path="/sprint-review/:sprintId" element={<SprintReview />} />
+      </Routes>
+    </AllProviders>
   );
 }
 
@@ -335,7 +339,9 @@ describe('SprintReview Component', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('ACTIVE')).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('sprint-review:list.statusLabels.active'))
+        ).toBeInTheDocument();
       });
     });
 
@@ -343,7 +349,9 @@ describe('SprintReview Component', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('COMPLETED')).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('sprint-review:list.statusLabels.completed'))
+        ).toBeInTheDocument();
       });
     });
 
@@ -356,7 +364,9 @@ describe('SprintReview Component', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('PLANNED')).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('sprint-review:list.statusLabels.planned'))
+        ).toBeInTheDocument();
       });
     });
 
@@ -369,7 +379,9 @@ describe('SprintReview Component', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('CANCELLED')).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('sprint-review:list.statusLabels.cancelled'))
+        ).toBeInTheDocument();
       });
     });
   });

@@ -5,9 +5,9 @@
  */
 
 import React from 'react';
-import { render, screen, cleanup, waitFor } from '@testing-library/react';
+import { screen, cleanup, waitFor, renderWithProviders, initTestI18n } from '../../test-utils';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
 
 import {
   LiveAnnouncer,
@@ -63,6 +63,10 @@ const TestComponentOutsideProvider: React.FC = () => {
 };
 
 describe('LiveAnnouncer', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     // Clean up any existing live regions
     const existingPolite = document.getElementById('sr-announcer-polite');
@@ -86,7 +90,7 @@ describe('LiveAnnouncer', () => {
 
   describe('AnnouncerProvider', () => {
     it('should provide the announcer context to children', () => {
-      render(
+      renderWithProviders(
         <AnnouncerProvider>
           <div data-testid="child">Child</div>
         </AnnouncerProvider>
@@ -96,7 +100,7 @@ describe('LiveAnnouncer', () => {
     });
 
     it('should create a live region on mount', () => {
-      render(
+      renderWithProviders(
         <AnnouncerProvider>
           <div>Child</div>
         </AnnouncerProvider>
@@ -111,7 +115,7 @@ describe('LiveAnnouncer', () => {
     });
 
     it('should remove the live region on unmount', () => {
-      const { unmount } = render(
+      const { unmount } = renderWithProviders(
         <AnnouncerProvider>
           <div>Child</div>
         </AnnouncerProvider>
@@ -127,7 +131,7 @@ describe('LiveAnnouncer', () => {
     it('should accept custom configuration', () => {
       const config = { delayBetweenAnnouncements: 200 };
 
-      render(
+      renderWithProviders(
         <AnnouncerProvider config={config}>
           <div>Child</div>
         </AnnouncerProvider>
@@ -142,7 +146,7 @@ describe('LiveAnnouncer', () => {
     it('should return an announce function', () => {
       const onAnnounce = vi.fn();
 
-      render(
+      renderWithProviders(
         <AnnouncerProvider>
           <TestComponent onAnnounce={onAnnounce} />
         </AnnouncerProvider>
@@ -163,7 +167,7 @@ describe('LiveAnnouncer', () => {
       // Suppress console.error for this test
       const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-      expect(() => render(<TestComponentOutsideProvider />)).toThrow(
+      expect(() => renderWithProviders(<TestComponentOutsideProvider />)).toThrow(
         'useAnnouncement must be used within an AnnouncerProvider'
       );
 
@@ -174,7 +178,7 @@ describe('LiveAnnouncer', () => {
       const user = userEvent.setup();
       let capturedAnnounce: ((message: string, priority?: AnnouncerPriority) => void) | null = null;
 
-      render(
+      renderWithProviders(
         <AnnouncerProvider>
           <TestComponent
             onAnnounce={(announce) => {
@@ -201,7 +205,7 @@ describe('LiveAnnouncer', () => {
     it('should allow announcing messages with assertive priority', async () => {
       let capturedAnnounce: ((message: string, priority?: AnnouncerPriority) => void) | null = null;
 
-      render(
+      renderWithProviders(
         <AnnouncerProvider>
           <TestComponent
             onAnnounce={(announce) => {
@@ -229,7 +233,7 @@ describe('LiveAnnouncer', () => {
     it('should default to polite priority when not specified', async () => {
       let capturedAnnounce: ((message: string, priority?: AnnouncerPriority) => void) | null = null;
 
-      render(
+      renderWithProviders(
         <AnnouncerProvider>
           <TestComponent
             onAnnounce={(announce) => {
@@ -256,7 +260,7 @@ describe('LiveAnnouncer', () => {
     it('should return the announce function directly', () => {
       const onAnnounce = vi.fn();
 
-      render(
+      renderWithProviders(
         <AnnouncerProvider>
           <TestComponentWithUseAnnounce onAnnounce={onAnnounce} />
         </AnnouncerProvider>
@@ -271,21 +275,21 @@ describe('LiveAnnouncer', () => {
 
   describe('LiveAnnouncer component', () => {
     it('should render nothing when not using separate regions', () => {
-      const { container } = render(<LiveAnnouncer />);
+      const { container } = renderWithProviders(<LiveAnnouncer />);
 
       // Should render an empty fragment
       expect(container.firstChild).toBeNull();
     });
 
     it('should create a live region via the utility when not using separate regions', () => {
-      render(<LiveAnnouncer />);
+      renderWithProviders(<LiveAnnouncer />);
 
       // The ScreenReaderAnnouncer creates a live region
       expect(document.getElementById('sr-announcer')).toBeInTheDocument();
     });
 
     it('should remove the live region on unmount', () => {
-      const { unmount } = render(<LiveAnnouncer />);
+      const { unmount } = renderWithProviders(<LiveAnnouncer />);
 
       expect(document.getElementById('sr-announcer')).toBeInTheDocument();
 
@@ -295,7 +299,7 @@ describe('LiveAnnouncer', () => {
     });
 
     it('should render separate live regions when separateRegions is true', () => {
-      render(<LiveAnnouncer separateRegions />);
+      renderWithProviders(<LiveAnnouncer separateRegions />);
 
       // Should render separate polite and assertive regions
       const politeRegion = document.getElementById('sr-announcer-polite');
@@ -315,7 +319,7 @@ describe('LiveAnnouncer', () => {
     });
 
     it('should apply visually hidden styles to separate regions', () => {
-      render(<LiveAnnouncer separateRegions />);
+      renderWithProviders(<LiveAnnouncer separateRegions />);
 
       const politeRegion = document.getElementById('sr-announcer-polite');
       const assertiveRegion = document.getElementById('sr-announcer-assertive');
@@ -328,7 +332,7 @@ describe('LiveAnnouncer', () => {
     it('should accept custom configuration', () => {
       const config = { delayBetweenAnnouncements: 300 };
 
-      render(<LiveAnnouncer config={config} />);
+      renderWithProviders(<LiveAnnouncer config={config} />);
 
       // Live region should still be created
       expect(document.getElementById('sr-announcer')).toBeInTheDocument();
@@ -347,7 +351,7 @@ describe('LiveAnnouncer', () => {
         announce: (message: string, priority?: AnnouncerPriority) => void;
       } | null = null;
 
-      render(
+      renderWithProviders(
         <AnnouncerProvider>
           <AnnouncerContext.Consumer>
             {(value) => {
@@ -367,7 +371,7 @@ describe('LiveAnnouncer', () => {
     it('should handle multiple announcements in sequence', async () => {
       let capturedAnnounce: ((message: string, priority?: AnnouncerPriority) => void) | null = null;
 
-      render(
+      renderWithProviders(
         <AnnouncerProvider config={{ delayBetweenAnnouncements: 50 }}>
           <TestComponent
             onAnnounce={(announce) => {
@@ -398,7 +402,7 @@ describe('LiveAnnouncer', () => {
     it('should handle empty messages gracefully', () => {
       let capturedAnnounce: ((message: string, priority?: AnnouncerPriority) => void) | null = null;
 
-      render(
+      renderWithProviders(
         <AnnouncerProvider>
           <TestComponent
             onAnnounce={(announce) => {
@@ -420,7 +424,7 @@ describe('LiveAnnouncer', () => {
     it('should work with nested providers (last provider wins)', () => {
       const onAnnounce = vi.fn();
 
-      render(
+      renderWithProviders(
         <AnnouncerProvider>
           <AnnouncerProvider>
             <TestComponent onAnnounce={onAnnounce} />

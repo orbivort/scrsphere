@@ -1,7 +1,8 @@
-import { render, screen } from '@testing-library/react';
+import { screen, renderWithProviders } from '@/test-utils';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeAll } from 'vitest';
 
+import { initTestI18n } from '@/test-utils';
 import { ToastContainer } from './ToastContainer';
 
 import type { Toast } from '@/hooks/useToast';
@@ -34,15 +35,19 @@ const createMockToast = (type: Toast['type'], message: string): Toast => ({
 });
 
 describe('ToastContainer', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   describe('Rendering Tests', () => {
     it('renders nothing when there are no toasts', () => {
-      const { container } = render(<ToastContainer toasts={[]} onClose={vi.fn()} />);
+      const { container } = renderWithProviders(<ToastContainer toasts={[]} onClose={vi.fn()} />);
       expect(container.firstChild).toBeNull();
     });
 
     it('renders the toast container when there are toasts', () => {
       const mockToast = createMockToast('success', 'Test success message');
-      render(<ToastContainer toasts={[mockToast]} onClose={vi.fn()} />);
+      renderWithProviders(<ToastContainer toasts={[mockToast]} onClose={vi.fn()} />);
       expect(screen.getByRole('region', { name: /notifications/i })).toBeInTheDocument();
     });
 
@@ -52,7 +57,7 @@ describe('ToastContainer', () => {
         createMockToast('error', 'Second toast'),
         createMockToast('info', 'Third toast'),
       ];
-      render(<ToastContainer toasts={toasts} onClose={vi.fn()} />);
+      renderWithProviders(<ToastContainer toasts={toasts} onClose={vi.fn()} />);
 
       expect(screen.getAllByRole('alert')).toHaveLength(3);
       expect(screen.getByText('First toast')).toBeInTheDocument();
@@ -64,7 +69,7 @@ describe('ToastContainer', () => {
   describe('Toast Type Tests', () => {
     it('renders success toast with correct icon and style', () => {
       const mockToast = createMockToast('success', 'Success!');
-      render(<ToastContainer toasts={[mockToast]} onClose={vi.fn()} />);
+      renderWithProviders(<ToastContainer toasts={[mockToast]} onClose={vi.fn()} />);
 
       const toast = screen.getByRole('alert');
       expect(toast).toHaveClass('toast');
@@ -75,7 +80,7 @@ describe('ToastContainer', () => {
 
     it('renders error toast with correct icon and style', () => {
       const mockToast = createMockToast('error', 'Error occurred');
-      render(<ToastContainer toasts={[mockToast]} onClose={vi.fn()} />);
+      renderWithProviders(<ToastContainer toasts={[mockToast]} onClose={vi.fn()} />);
 
       const toast = screen.getByRole('alert');
       expect(toast).toHaveClass('toast');
@@ -85,7 +90,7 @@ describe('ToastContainer', () => {
 
     it('renders warning toast with correct icon and style', () => {
       const mockToast = createMockToast('warning', 'Warning message');
-      render(<ToastContainer toasts={[mockToast]} onClose={vi.fn()} />);
+      renderWithProviders(<ToastContainer toasts={[mockToast]} onClose={vi.fn()} />);
 
       const toast = screen.getByRole('alert');
       expect(toast).toHaveClass('toast');
@@ -95,7 +100,7 @@ describe('ToastContainer', () => {
 
     it('renders info toast with correct icon and style', () => {
       const mockToast = createMockToast('info', 'Info message');
-      render(<ToastContainer toasts={[mockToast]} onClose={vi.fn()} />);
+      renderWithProviders(<ToastContainer toasts={[mockToast]} onClose={vi.fn()} />);
 
       const toast = screen.getByRole('alert');
       expect(toast).toHaveClass('toast');
@@ -109,7 +114,7 @@ describe('ToastContainer', () => {
       const onCloseMock = vi.fn();
       const mockToast = createMockToast('info', 'Click to close');
 
-      render(<ToastContainer toasts={[mockToast]} onClose={onCloseMock} />);
+      renderWithProviders(<ToastContainer toasts={[mockToast]} onClose={onCloseMock} />);
 
       const closeButton = screen.getByLabelText(/close notification/i);
       await user.click(closeButton);
@@ -124,7 +129,7 @@ describe('ToastContainer', () => {
       const toast1 = createMockToast('success', 'Toast 1');
       const toast2 = createMockToast('error', 'Toast 2');
 
-      render(<ToastContainer toasts={[toast1, toast2]} onClose={onCloseMock} />);
+      renderWithProviders(<ToastContainer toasts={[toast1, toast2]} onClose={onCloseMock} />);
 
       const closeButtons = screen.getAllByLabelText(/close notification/i);
       await user.click(closeButtons[1]);
@@ -136,7 +141,7 @@ describe('ToastContainer', () => {
   describe('Accessibility Tests', () => {
     it('has proper accessibility attributes on container', () => {
       const mockToast = createMockToast('info', 'Accessibility test');
-      render(<ToastContainer toasts={[mockToast]} onClose={vi.fn()} />);
+      renderWithProviders(<ToastContainer toasts={[mockToast]} onClose={vi.fn()} />);
 
       const container = screen.getByRole('region', { name: /notifications/i });
       expect(container).toBeInTheDocument();
@@ -144,7 +149,7 @@ describe('ToastContainer', () => {
 
     it('has proper accessibility attributes on toast', () => {
       const mockToast = createMockToast('success', 'Accessible toast');
-      render(<ToastContainer toasts={[mockToast]} onClose={vi.fn()} />);
+      renderWithProviders(<ToastContainer toasts={[mockToast]} onClose={vi.fn()} />);
 
       const toast = screen.getByRole('alert');
       expect(toast).toBeInTheDocument();
@@ -153,7 +158,7 @@ describe('ToastContainer', () => {
 
     it('close button has proper aria-label', () => {
       const mockToast = createMockToast('warning', 'Close me');
-      render(<ToastContainer toasts={[mockToast]} onClose={vi.fn()} />);
+      renderWithProviders(<ToastContainer toasts={[mockToast]} onClose={vi.fn()} />);
 
       const closeButton = screen.getByLabelText(/close notification/i);
       expect(closeButton).toBeInTheDocument();
@@ -163,7 +168,7 @@ describe('ToastContainer', () => {
   describe('Edge Cases', () => {
     it('handles empty toast message', () => {
       const mockToast = { ...createMockToast('info', ''), message: '' };
-      render(<ToastContainer toasts={[mockToast]} onClose={vi.fn()} />);
+      renderWithProviders(<ToastContainer toasts={[mockToast]} onClose={vi.fn()} />);
 
       expect(screen.getByRole('alert')).toBeInTheDocument();
     });
@@ -171,7 +176,7 @@ describe('ToastContainer', () => {
     it('handles special characters in message', () => {
       const specialMessage = 'Message with <script>alert("xss")</script> & special chars!';
       const mockToast = createMockToast('success', specialMessage);
-      render(<ToastContainer toasts={[mockToast]} onClose={vi.fn()} />);
+      renderWithProviders(<ToastContainer toasts={[mockToast]} onClose={vi.fn()} />);
 
       expect(screen.getByText(specialMessage)).toBeInTheDocument();
     });

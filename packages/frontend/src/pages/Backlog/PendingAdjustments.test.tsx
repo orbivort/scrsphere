@@ -1,8 +1,8 @@
-import { screen, render, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, beforeAll, vi } from 'vitest';
 
+import { renderWithProviders, initTestI18n } from '../../test-utils';
 import { PendingAdjustments } from './PendingAdjustments';
 import { useTeamStore } from '../../store';
 import { apiService } from '../../services';
@@ -18,25 +18,11 @@ vi.mock('../../services', () => ({
   },
 }));
 
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-    },
+describe('PendingAdjustments', () => {
+  beforeAll(async () => {
+    await initTestI18n();
   });
 
-const renderPendingAdjustments = (props = {}) => {
-  const queryClient = createTestQueryClient();
-  return render(
-    <QueryClientProvider client={queryClient}>
-      <PendingAdjustments {...props} />
-    </QueryClientProvider>
-  );
-};
-
-describe('PendingAdjustments', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     (useTeamStore as ReturnType<typeof vi.fn>).mockReturnValue({
@@ -50,7 +36,7 @@ describe('PendingAdjustments', () => {
         data: [],
       });
 
-      renderPendingAdjustments();
+      renderWithProviders(<PendingAdjustments />);
 
       expect(screen.queryByText('Pending Adjustments')).not.toBeInTheDocument();
     });
@@ -74,7 +60,7 @@ describe('PendingAdjustments', () => {
     });
 
     it('should render title with count', async () => {
-      renderPendingAdjustments();
+      renderWithProviders(<PendingAdjustments />);
 
       await waitFor(() => {
         expect(screen.getByText('Pending Adjustments')).toBeInTheDocument();
@@ -82,7 +68,7 @@ describe('PendingAdjustments', () => {
     });
 
     it('should render adjustment cards', async () => {
-      renderPendingAdjustments();
+      renderWithProviders(<PendingAdjustments />);
 
       await waitFor(() => {
         expect(screen.getByText('Add new feature')).toBeInTheDocument();
@@ -106,7 +92,7 @@ describe('PendingAdjustments', () => {
     });
 
     it('should be expanded by default', async () => {
-      renderPendingAdjustments();
+      renderWithProviders(<PendingAdjustments />);
 
       await waitFor(() => {
         expect(screen.getByText('Test')).toBeInTheDocument();
@@ -114,7 +100,7 @@ describe('PendingAdjustments', () => {
     });
 
     it('should collapse when clicking header', async () => {
-      renderPendingAdjustments();
+      renderWithProviders(<PendingAdjustments />);
 
       await waitFor(() => {
         expect(screen.getByText('Pending Adjustments')).toBeInTheDocument();

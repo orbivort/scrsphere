@@ -1,6 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { screen, fireEvent, renderWithProviders, initTestI18n } from '../../../../test-utils';
 import { vi } from 'vitest';
 
 import { definitionService } from '../../../../services';
@@ -31,22 +30,12 @@ const mockTeam = {
   name: 'Test Team',
 };
 
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-    },
-  });
-
-const renderWithProviders = (ui: React.ReactElement) => {
-  const testQueryClient = createTestQueryClient();
-  return render(<QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>);
-};
-
 describe('DefinitionOfReadyPanel', () => {
   let useTeamStoreMock: ReturnType<typeof vi.fn>;
+
+  beforeAll(() => {
+    initTestI18n();
+  });
 
   beforeEach(async () => {
     vi.clearAllMocks();

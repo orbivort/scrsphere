@@ -1,7 +1,8 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
+import { screen, fireEvent, renderWithProviders } from '@/test-utils';
 import { axe } from 'vi-axe';
+
+import { initTestI18n, i18nT } from '@/test-utils';
 
 import { EmptyState, NoTeamSelected, NoActiveGoal, NoActiveSprint } from './EmptyState';
 import type { EmptyStateType } from './types';
@@ -24,6 +25,10 @@ vi.mock('./EmptyState.module.css', () => ({
 }));
 
 describe('EmptyState Component', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -32,94 +37,90 @@ describe('EmptyState Component', () => {
     vi.restoreAllMocks();
   });
 
-  const renderWithRouter = (ui: React.ReactElement) => {
-    return render(<MemoryRouter>{ui}</MemoryRouter>);
-  };
-
   describe('Predefined Types Rendering Tests', () => {
     it('should render "no-team" type correctly', () => {
-      renderWithRouter(<EmptyState type="no-team" />);
+      renderWithProviders(<EmptyState type="no-team" />);
 
-      expect(screen.getByText('No Team Selected')).toBeInTheDocument();
-      expect(screen.getByText('Please select a team to continue.')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('emptyState.noTeam.title'))).toBeInTheDocument();
+      expect(screen.getByText(i18nT('emptyState.noTeam.description'))).toBeInTheDocument();
       expect(screen.getByTestId('empty-state').querySelector('svg')).toBeInTheDocument();
     });
 
     it('should render "no-active-goal" type correctly', () => {
-      renderWithRouter(<EmptyState type="no-active-goal" />);
+      renderWithProviders(<EmptyState type="no-active-goal" />);
 
-      expect(screen.getByText('No Active Goal')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('emptyState.noActiveGoal.title'))).toBeInTheDocument();
+      expect(screen.getByText(i18nT('emptyState.noActiveGoal.description'))).toBeInTheDocument();
       expect(
-        screen.getByText('Please set an active product goal before continuing.')
+        screen.getByRole('button', { name: i18nT('emptyState.noActiveGoal.action') })
       ).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'Go to Product Goals' })).toBeInTheDocument();
     });
 
     it('should render "no-active-sprint" type correctly', () => {
-      renderWithRouter(<EmptyState type="no-active-sprint" />);
+      renderWithProviders(<EmptyState type="no-active-sprint" />);
 
-      expect(screen.getByText('No Active Sprint')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('emptyState.noActiveSprint.title'))).toBeInTheDocument();
+      expect(screen.getByText(i18nT('emptyState.noActiveSprint.description'))).toBeInTheDocument();
       expect(
-        screen.getByText('Start a new sprint from Sprint Planning to continue.')
+        screen.getByRole('button', { name: i18nT('emptyState.noActiveSprint.action') })
       ).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'Go to Sprint Planning' })).toBeInTheDocument();
     });
 
     it('should render "no-completed-sprint" type correctly', () => {
-      renderWithRouter(<EmptyState type="no-completed-sprint" />);
+      renderWithProviders(<EmptyState type="no-completed-sprint" />);
 
-      expect(screen.getByText('No Completed Sprint')).toBeInTheDocument();
-      expect(screen.getByText('Complete a sprint to start tracking.')).toBeInTheDocument();
-    });
-
-    it('should render "no-data" type correctly', () => {
-      renderWithRouter(<EmptyState type="no-data" />);
-
-      expect(screen.getByText('No Data Available')).toBeInTheDocument();
-      expect(screen.getByText('There is no data to display at this time.')).toBeInTheDocument();
-    });
-
-    it('should render "error" type correctly', () => {
-      renderWithRouter(<EmptyState type="error" />);
-
-      expect(screen.getByText('Something Went Wrong')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('emptyState.noCompletedSprint.title'))).toBeInTheDocument();
       expect(
-        screen.getByText('An error occurred while loading the data. Please try again.')
+        screen.getByText(i18nT('emptyState.noCompletedSprint.description'))
       ).toBeInTheDocument();
     });
 
-    it('should render "custom" type with default empty values', () => {
-      renderWithRouter(<EmptyState type="custom" />);
+    it('should render "no-data" type correctly', () => {
+      renderWithProviders(<EmptyState type="no-data" />);
 
-      expect(screen.queryByText('No Team Selected')).not.toBeInTheDocument();
+      expect(screen.getByText(i18nT('emptyState.noData.title'))).toBeInTheDocument();
+      expect(screen.getByText(i18nT('emptyState.noData.description'))).toBeInTheDocument();
+    });
+
+    it('should render "error" type correctly', () => {
+      renderWithProviders(<EmptyState type="error" />);
+
+      expect(screen.getByText(i18nT('emptyState.error.title'))).toBeInTheDocument();
+      expect(screen.getByText(i18nT('emptyState.error.description'))).toBeInTheDocument();
+    });
+
+    it('should render "custom" type with default empty values', () => {
+      renderWithProviders(<EmptyState type="custom" />);
+
+      expect(screen.queryByText(i18nT('emptyState.noTeam.title'))).not.toBeInTheDocument();
     });
   });
 
   describe('Custom Props Override Tests', () => {
     it('should override icon when custom icon is provided', () => {
       const customIcon = <span data-testid="custom-icon">Custom Icon</span>;
-      renderWithRouter(<EmptyState type="no-team" icon={customIcon} />);
+      renderWithProviders(<EmptyState type="no-team" icon={customIcon} />);
 
       expect(screen.getByTestId('custom-icon')).toBeInTheDocument();
     });
 
     it('should override title when custom title is provided', () => {
-      renderWithRouter(<EmptyState type="no-team" title="Custom Title" />);
+      renderWithProviders(<EmptyState type="no-team" title="Custom Title" />);
 
       expect(screen.getByText('Custom Title')).toBeInTheDocument();
-      expect(screen.queryByText('No Team Selected')).not.toBeInTheDocument();
+      expect(screen.queryByText(i18nT('emptyState.noTeam.title'))).not.toBeInTheDocument();
     });
 
     it('should override description when custom description is provided', () => {
-      renderWithRouter(<EmptyState type="no-team" description="Custom description text" />);
+      renderWithProviders(<EmptyState type="no-team" description="Custom description text" />);
 
       expect(screen.getByText('Custom description text')).toBeInTheDocument();
-      expect(screen.queryByText('Please select a team to continue.')).not.toBeInTheDocument();
+      expect(screen.queryByText(i18nT('emptyState.noTeam.description'))).not.toBeInTheDocument();
     });
 
     it('should override action when custom action is provided', () => {
       const handleAction = vi.fn();
-      renderWithRouter(
+      renderWithProviders(
         <EmptyState
           type="no-active-goal"
           action={{ label: 'Custom Action', onClick: handleAction }}
@@ -127,12 +128,14 @@ describe('EmptyState Component', () => {
       );
 
       expect(screen.getByRole('button', { name: 'Custom Action' })).toBeInTheDocument();
-      expect(screen.queryByRole('button', { name: 'Go to Product Goals' })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', { name: i18nT('emptyState.noActiveGoal.action') })
+      ).not.toBeInTheDocument();
     });
 
     it('should render multiple custom overrides together', () => {
       const customIcon = <span data-testid="custom-icon">Custom</span>;
-      renderWithRouter(
+      renderWithProviders(
         <EmptyState
           type="no-team"
           icon={customIcon}
@@ -150,7 +153,7 @@ describe('EmptyState Component', () => {
   describe('Action Button Tests', () => {
     it('should call onClick when action button is clicked', () => {
       const handleAction = vi.fn();
-      renderWithRouter(
+      renderWithProviders(
         <EmptyState type="no-team" action={{ label: 'Take Action', onClick: handleAction }} />
       );
 
@@ -159,19 +162,23 @@ describe('EmptyState Component', () => {
     });
 
     it('should navigate to correct path for "no-active-goal" action', () => {
-      renderWithRouter(<EmptyState type="no-active-goal" />);
+      renderWithProviders(<EmptyState type="no-active-goal" />);
 
-      fireEvent.click(screen.getByRole('button', { name: 'Go to Product Goals' }));
+      fireEvent.click(
+        screen.getByRole('button', { name: i18nT('emptyState.noActiveGoal.action') })
+      );
     });
 
     it('should navigate to correct path for "no-active-sprint" action', () => {
-      renderWithRouter(<EmptyState type="no-active-sprint" />);
+      renderWithProviders(<EmptyState type="no-active-sprint" />);
 
-      fireEvent.click(screen.getByRole('button', { name: 'Go to Sprint Planning' }));
+      fireEvent.click(
+        screen.getByRole('button', { name: i18nT('emptyState.noActiveSprint.action') })
+      );
     });
 
     it('should render primary button variant', () => {
-      renderWithRouter(
+      renderWithProviders(
         <EmptyState
           type="no-team"
           action={{ label: 'Primary Action', variant: 'primary', onClick: vi.fn() }}
@@ -183,7 +190,7 @@ describe('EmptyState Component', () => {
     });
 
     it('should render secondary button variant', () => {
-      renderWithRouter(
+      renderWithProviders(
         <EmptyState
           type="no-team"
           action={{ label: 'Secondary Action', variant: 'secondary', onClick: vi.fn() }}
@@ -197,28 +204,28 @@ describe('EmptyState Component', () => {
 
   describe('Variant Tests', () => {
     it('should apply default variant by default', () => {
-      renderWithRouter(<EmptyState type="no-team" />);
+      renderWithProviders(<EmptyState type="no-team" />);
 
       const container = screen.getByTestId('empty-state');
       expect(container.className).toContain('default');
     });
 
     it('should apply compact variant', () => {
-      renderWithRouter(<EmptyState type="no-team" variant="compact" />);
+      renderWithProviders(<EmptyState type="no-team" variant="compact" />);
 
       const container = screen.getByTestId('empty-state');
       expect(container.className).toContain('compact');
     });
 
     it('should apply full-page variant', () => {
-      renderWithRouter(<EmptyState type="no-team" variant="full-page" />);
+      renderWithProviders(<EmptyState type="no-team" variant="full-page" />);
 
       const container = screen.getByTestId('empty-state');
       expect(container.className).toContain('full-page');
     });
 
     it('should apply custom className', () => {
-      renderWithRouter(<EmptyState type="no-team" className="custom-class" />);
+      renderWithProviders(<EmptyState type="no-team" className="custom-class" />);
 
       const container = screen.getByTestId('empty-state');
       expect(container.className).toContain('custom-class');
@@ -227,53 +234,53 @@ describe('EmptyState Component', () => {
 
   describe('Accessibility Tests', () => {
     it('should have role attribute set to status by default', () => {
-      renderWithRouter(<EmptyState type="no-team" />);
+      renderWithProviders(<EmptyState type="no-team" />);
 
       const container = screen.getByTestId('empty-state');
       expect(container).toHaveAttribute('role', 'status');
     });
 
     it('should have custom role attribute when provided', () => {
-      renderWithRouter(<EmptyState type="no-team" role="alert" />);
+      renderWithProviders(<EmptyState type="no-team" role="alert" />);
 
       const container = screen.getByTestId('empty-state');
       expect(container).toHaveAttribute('role', 'alert');
     });
 
     it('should have aria-live set to polite by default', () => {
-      renderWithRouter(<EmptyState type="no-team" />);
+      renderWithProviders(<EmptyState type="no-team" />);
 
       const container = screen.getByTestId('empty-state');
       expect(container).toHaveAttribute('aria-live', 'polite');
     });
 
     it('should have custom aria-live attribute when provided', () => {
-      renderWithRouter(<EmptyState type="no-team" aria-live="assertive" />);
+      renderWithProviders(<EmptyState type="no-team" aria-live="assertive" />);
 
       const container = screen.getByTestId('empty-state');
       expect(container).toHaveAttribute('aria-live', 'assertive');
     });
 
     it('should have no accessibility violations for default type', async () => {
-      const { container } = renderWithRouter(<EmptyState type="no-team" />);
+      const { container } = renderWithProviders(<EmptyState type="no-team" />);
       const results = await axe(container);
       expect(results).toHaveNoViolations();
     });
 
     it('should have no accessibility violations for error type', async () => {
-      const { container } = renderWithRouter(<EmptyState type="error" />);
+      const { container } = renderWithProviders(<EmptyState type="error" />);
       const results = await axe(container);
       expect(results).toHaveNoViolations();
     });
 
     it('should have no accessibility violations for type with action', async () => {
-      const { container } = renderWithRouter(<EmptyState type="no-active-goal" />);
+      const { container } = renderWithProviders(<EmptyState type="no-active-goal" />);
       const results = await axe(container);
       expect(results).toHaveNoViolations();
     });
 
     it('should hide icon from screen readers', () => {
-      renderWithRouter(<EmptyState type="no-team" />);
+      renderWithProviders(<EmptyState type="no-team" />);
 
       const icon = screen.getByTestId('empty-state').querySelector('[aria-hidden="true"]');
       expect(icon).toBeInTheDocument();
@@ -282,13 +289,13 @@ describe('EmptyState Component', () => {
 
   describe('Data Test Id Tests', () => {
     it('should have default data-testid', () => {
-      renderWithRouter(<EmptyState type="no-team" />);
+      renderWithProviders(<EmptyState type="no-team" />);
 
       expect(screen.getByTestId('empty-state')).toBeInTheDocument();
     });
 
     it('should have custom data-testid when provided', () => {
-      renderWithRouter(<EmptyState type="no-team" data-testid="custom-test-id" />);
+      renderWithProviders(<EmptyState type="no-team" data-testid="custom-test-id" />);
 
       expect(screen.getByTestId('custom-test-id')).toBeInTheDocument();
     });
@@ -296,27 +303,25 @@ describe('EmptyState Component', () => {
 
   describe('Content Visibility Tests', () => {
     it('should not render title when not provided', () => {
-      renderWithRouter(<EmptyState type="custom" title="" />);
+      renderWithProviders(<EmptyState type="custom" title="" />);
 
       expect(screen.queryByRole('heading')).not.toBeInTheDocument();
     });
 
     it('should not render description when not provided', () => {
-      renderWithRouter(<EmptyState type="custom" description="" />);
+      renderWithProviders(<EmptyState type="custom" description="" />);
 
-      expect(
-        screen.queryByText('There is no data to display at this time.')
-      ).not.toBeInTheDocument();
+      expect(screen.queryByText(i18nT('emptyState.noData.description'))).not.toBeInTheDocument();
     });
 
     it('should not render action when not provided', () => {
-      renderWithRouter(<EmptyState type="no-team" />);
+      renderWithProviders(<EmptyState type="no-team" />);
 
       expect(screen.queryByRole('button')).not.toBeInTheDocument();
     });
 
     it('should render with all content provided', () => {
-      renderWithRouter(
+      renderWithProviders(
         <EmptyState
           type="custom"
           title="Full Content Title"
@@ -333,63 +338,61 @@ describe('EmptyState Component', () => {
 
   describe('Default Config Override Tests', () => {
     it('should use default icon but custom title', () => {
-      renderWithRouter(<EmptyState type="no-team" title="Overridden Title" />);
+      renderWithProviders(<EmptyState type="no-team" title="Overridden Title" />);
 
       expect(screen.getByText('Overridden Title')).toBeInTheDocument();
       expect(screen.getByTestId('empty-state').querySelector('svg')).toBeInTheDocument();
     });
 
     it('should use default description but custom action', () => {
-      renderWithRouter(
+      renderWithProviders(
         <EmptyState type="no-active-goal" action={{ label: 'New Action', onClick: vi.fn() }} />
       );
 
-      expect(
-        screen.getByText('Please set an active product goal before continuing.')
-      ).toBeInTheDocument();
+      expect(screen.getByText(i18nT('emptyState.noActiveGoal.description'))).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'New Action' })).toBeInTheDocument();
     });
   });
 
   describe('Edge Cases', () => {
     it('should handle type with no default action', () => {
-      renderWithRouter(<EmptyState type="no-data" />);
+      renderWithProviders(<EmptyState type="no-data" />);
 
       expect(screen.queryByRole('button')).not.toBeInTheDocument();
     });
 
     it('should handle type with default action', () => {
-      renderWithRouter(<EmptyState type="no-active-goal" />);
+      renderWithProviders(<EmptyState type="no-active-goal" />);
 
-      expect(screen.getByRole('button', { name: 'Go to Product Goals' })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: i18nT('emptyState.noActiveGoal.action') })
+      ).toBeInTheDocument();
     });
 
     it('should handle long title text', () => {
       const longTitle = 'A'.repeat(100);
-      renderWithRouter(<EmptyState type="custom" title={longTitle} />);
+      renderWithProviders(<EmptyState type="custom" title={longTitle} />);
 
       expect(screen.getByText(longTitle)).toBeInTheDocument();
     });
 
     it('should handle long description text', () => {
       const longDescription = 'B'.repeat(200);
-      renderWithRouter(<EmptyState type="custom" description={longDescription} />);
+      renderWithProviders(<EmptyState type="custom" description={longDescription} />);
 
       expect(screen.getByText(longDescription)).toBeInTheDocument();
     });
 
     it('should handle custom onClick that navigates', () => {
       const navigateFn = vi.fn();
-      render(
-        <MemoryRouter>
-          <EmptyState
-            type="no-active-goal"
-            action={{
-              label: 'Go to Goals',
-              onClick: () => navigateFn('/product-goals'),
-            }}
-          />
-        </MemoryRouter>
+      renderWithProviders(
+        <EmptyState
+          type="no-active-goal"
+          action={{
+            label: 'Go to Goals',
+            onClick: () => navigateFn('/product-goals'),
+          }}
+        />
       );
 
       fireEvent.click(screen.getByRole('button', { name: 'Go to Goals' }));
@@ -397,7 +400,7 @@ describe('EmptyState Component', () => {
     });
 
     it('should handle undefined action onClick gracefully', () => {
-      renderWithRouter(<EmptyState type="no-team" action={{ label: 'Action' } as any} />);
+      renderWithProviders(<EmptyState type="no-team" action={{ label: 'Action' } as any} />);
 
       const button = screen.getByRole('button', { name: 'Action' });
       expect(() => fireEvent.click(button)).not.toThrow();
@@ -406,84 +409,86 @@ describe('EmptyState Component', () => {
 
   describe('Convenience Exports Tests', () => {
     it('NoTeamSelected should render correctly', () => {
-      renderWithRouter(<NoTeamSelected />);
+      renderWithProviders(<NoTeamSelected />);
 
-      expect(screen.getByText('No Team Selected')).toBeInTheDocument();
-      expect(screen.getByText('Please select a team to continue.')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('emptyState.noTeam.title'))).toBeInTheDocument();
+      expect(screen.getByText(i18nT('emptyState.noTeam.description'))).toBeInTheDocument();
     });
 
     it('NoActiveGoal should render correctly', () => {
-      renderWithRouter(<NoActiveGoal />);
+      renderWithProviders(<NoActiveGoal />);
 
-      expect(screen.getByText('No Active Goal')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('emptyState.noActiveGoal.title'))).toBeInTheDocument();
+      expect(screen.getByText(i18nT('emptyState.noActiveGoal.description'))).toBeInTheDocument();
       expect(
-        screen.getByText('Please set an active product goal before continuing.')
+        screen.getByRole('button', { name: i18nT('emptyState.noActiveGoal.action') })
       ).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'Go to Product Goals' })).toBeInTheDocument();
     });
 
     it('NoActiveSprint should render correctly', () => {
-      renderWithRouter(<NoActiveSprint />);
+      renderWithProviders(<NoActiveSprint />);
 
-      expect(screen.getByText('No Active Sprint')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('emptyState.noActiveSprint.title'))).toBeInTheDocument();
+      expect(screen.getByText(i18nT('emptyState.noActiveSprint.description'))).toBeInTheDocument();
       expect(
-        screen.getByText('Start a new sprint from Sprint Planning to continue.')
+        screen.getByRole('button', { name: i18nT('emptyState.noActiveSprint.action') })
       ).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'Go to Sprint Planning' })).toBeInTheDocument();
     });
 
     it('NoTeamSelected should accept custom props', () => {
-      renderWithRouter(<NoTeamSelected title="Custom Title" />);
+      renderWithProviders(<NoTeamSelected title="Custom Title" />);
 
       expect(screen.getByText('Custom Title')).toBeInTheDocument();
-      expect(screen.queryByText('No Team Selected')).not.toBeInTheDocument();
+      expect(screen.queryByText(i18nT('emptyState.noTeam.title'))).not.toBeInTheDocument();
     });
 
     it('NoActiveGoal should accept custom props', () => {
       const handleAction = vi.fn();
-      renderWithRouter(<NoActiveGoal action={{ label: 'Custom', onClick: handleAction }} />);
+      renderWithProviders(<NoActiveGoal action={{ label: 'Custom', onClick: handleAction }} />);
 
       expect(screen.getByRole('button', { name: 'Custom' })).toBeInTheDocument();
-      expect(screen.queryByRole('button', { name: 'Go to Product Goals' })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', { name: i18nT('emptyState.noActiveGoal.action') })
+      ).not.toBeInTheDocument();
     });
   });
 
   describe('Default Props Tests', () => {
     it('should use default type of "custom"', () => {
-      renderWithRouter(<EmptyState />);
+      renderWithProviders(<EmptyState />);
 
       expect(screen.getByTestId('empty-state')).toBeInTheDocument();
     });
 
     it('should use default variant of "default"', () => {
-      renderWithRouter(<EmptyState type="no-team" />);
+      renderWithProviders(<EmptyState type="no-team" />);
 
       const container = screen.getByTestId('empty-state');
       expect(container.className).toContain('default');
     });
 
     it('should use default role of "status"', () => {
-      renderWithRouter(<EmptyState type="no-team" />);
+      renderWithProviders(<EmptyState type="no-team" />);
 
       const container = screen.getByTestId('empty-state');
       expect(container).toHaveAttribute('role', 'status');
     });
 
     it('should use default aria-live of "polite"', () => {
-      renderWithRouter(<EmptyState type="no-team" />);
+      renderWithProviders(<EmptyState type="no-team" />);
 
       const container = screen.getByTestId('empty-state');
       expect(container).toHaveAttribute('aria-live', 'polite');
     });
 
     it('should use default data-testid of "empty-state"', () => {
-      renderWithRouter(<EmptyState type="no-team" />);
+      renderWithProviders(<EmptyState type="no-team" />);
 
       expect(screen.getByTestId('empty-state')).toBeInTheDocument();
     });
 
     it('should use default className of empty string', () => {
-      renderWithRouter(<EmptyState type="no-team" />);
+      renderWithProviders(<EmptyState type="no-team" />);
 
       const container = screen.getByTestId('empty-state');
       expect(container.className).toContain('empty-state-container');
@@ -492,32 +497,32 @@ describe('EmptyState Component', () => {
 
   describe('Structure Tests', () => {
     it('should render icon in correct element', () => {
-      renderWithRouter(<EmptyState type="no-team" />);
+      renderWithProviders(<EmptyState type="no-team" />);
 
       const iconContainer = screen.getByTestId('empty-state').querySelector('.empty-state-icon');
       expect(iconContainer).toBeInTheDocument();
     });
 
     it('should render title in h2 element', () => {
-      renderWithRouter(<EmptyState type="no-team" />);
+      renderWithProviders(<EmptyState type="no-team" />);
 
       expect(screen.getByRole('heading', { level: 2 })).toBeInTheDocument();
     });
 
     it('should render description in p element', () => {
-      renderWithRouter(<EmptyState type="no-team" />);
+      renderWithProviders(<EmptyState type="no-team" />);
 
-      expect(screen.getByText('Please select a team to continue.')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('emptyState.noTeam.description'))).toBeInTheDocument();
     });
 
     it('should render action in button element', () => {
-      renderWithRouter(<EmptyState type="no-active-goal" />);
+      renderWithProviders(<EmptyState type="no-active-goal" />);
 
       expect(screen.getByRole('button')).toBeInTheDocument();
     });
 
     it('should render action wrapper div', () => {
-      renderWithRouter(<EmptyState type="no-active-goal" />);
+      renderWithProviders(<EmptyState type="no-active-goal" />);
 
       const actionsWrapper = screen
         .getByTestId('empty-state')
@@ -528,9 +533,9 @@ describe('EmptyState Component', () => {
 });
 
 describe('EmptyState Default Configs', () => {
-  const renderWithRouter = (ui: React.ReactElement) => {
-    return render(<MemoryRouter>{ui}</MemoryRouter>);
-  };
+  beforeAll(async () => {
+    await initTestI18n();
+  });
 
   const predefinedTypes: EmptyStateType[] = [
     'no-team',
@@ -544,7 +549,7 @@ describe('EmptyState Default Configs', () => {
 
   predefinedTypes.forEach((type) => {
     it(`should render ${type} without crashing`, () => {
-      expect(() => renderWithRouter(<EmptyState type={type} />)).not.toThrow();
+      expect(() => renderWithProviders(<EmptyState type={type} />)).not.toThrow();
     });
   });
 
@@ -559,14 +564,14 @@ describe('EmptyState Default Configs', () => {
     ];
 
     typesWithoutCustom.forEach((type) => {
-      const { container } = renderWithRouter(<EmptyState type={type} />);
+      const { container } = renderWithProviders(<EmptyState type={type} />);
       expect(container.querySelector('.empty-state-icon')).toBeInTheDocument();
     });
   });
 
   it('should have unique titles for each predefined type', () => {
     predefinedTypes.forEach((type) => {
-      renderWithRouter(<EmptyState type={type} />);
+      renderWithProviders(<EmptyState type={type} />);
     });
 
     const uniqueTypes = new Set(predefinedTypes);
@@ -574,43 +579,43 @@ describe('EmptyState Default Configs', () => {
   });
 
   it('should render UsersIcon for no-team type', () => {
-    const { container } = renderWithRouter(<EmptyState type="no-team" />);
+    const { container } = renderWithProviders(<EmptyState type="no-team" />);
     const svg = container.querySelector('.empty-state-icon svg');
     expect(svg).toBeInTheDocument();
   });
 
   it('should render GoalIcon for no-active-goal type', () => {
-    const { container } = renderWithRouter(<EmptyState type="no-active-goal" />);
+    const { container } = renderWithProviders(<EmptyState type="no-active-goal" />);
     const svg = container.querySelector('.empty-state-icon svg');
     expect(svg).toBeInTheDocument();
   });
 
   it('should render SprintIcon for no-active-sprint type', () => {
-    const { container } = renderWithRouter(<EmptyState type="no-active-sprint" />);
+    const { container } = renderWithProviders(<EmptyState type="no-active-sprint" />);
     const svg = container.querySelector('.empty-state-icon svg');
     expect(svg).toBeInTheDocument();
   });
 
   it('should render ClipboardListIcon for no-completed-sprint type', () => {
-    const { container } = renderWithRouter(<EmptyState type="no-completed-sprint" />);
+    const { container } = renderWithProviders(<EmptyState type="no-completed-sprint" />);
     const svg = container.querySelector('.empty-state-icon svg');
     expect(svg).toBeInTheDocument();
   });
 
   it('should render InboxIcon for no-data type', () => {
-    const { container } = renderWithRouter(<EmptyState type="no-data" />);
+    const { container } = renderWithProviders(<EmptyState type="no-data" />);
     const svg = container.querySelector('.empty-state-icon svg');
     expect(svg).toBeInTheDocument();
   });
 
   it('should render ErrorIcon for error type', () => {
-    const { container } = renderWithRouter(<EmptyState type="error" />);
+    const { container } = renderWithProviders(<EmptyState type="error" />);
     const svg = container.querySelector('.empty-state-icon svg');
     expect(svg).toBeInTheDocument();
   });
 
   it('should render SearchIcon for custom type with default config', () => {
-    const { container } = renderWithRouter(<EmptyState type="custom" />);
+    const { container } = renderWithProviders(<EmptyState type="custom" />);
     const iconElement = container.querySelector('.empty-state-icon');
     expect(iconElement).toBeInTheDocument();
   });

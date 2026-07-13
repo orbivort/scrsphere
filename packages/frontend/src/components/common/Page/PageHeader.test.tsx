@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, beforeAll } from 'vitest';
+import { screen, fireEvent, renderWithProviders, initTestI18n } from '../../../test-utils';
 import userEvent from '@testing-library/user-event';
 
 import { PageHeader } from './PageHeader';
@@ -20,35 +20,39 @@ vi.mock('./PageHeader.module.css', () => ({
 }));
 
 describe('PageHeader Component', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   describe('Component Rendering Tests', () => {
     it('renders with required title prop', () => {
-      render(<PageHeader title="Test Page" />);
+      renderWithProviders(<PageHeader title="Test Page" />);
 
       expect(screen.getByText('Test Page')).toBeInTheDocument();
     });
 
     it('renders title as h1 element', () => {
-      render(<PageHeader title="Page Title" />);
+      renderWithProviders(<PageHeader title="Page Title" />);
 
       const heading = screen.getByRole('heading', { level: 1 });
       expect(heading).toHaveTextContent('Page Title');
     });
 
     it('renders with subtitle when provided', () => {
-      render(<PageHeader title="Page Title" subtitle="Page subtitle description" />);
+      renderWithProviders(<PageHeader title="Page Title" subtitle="Page subtitle description" />);
 
       expect(screen.getByText('Page subtitle description')).toBeInTheDocument();
     });
 
     it('does not render subtitle when not provided', () => {
-      render(<PageHeader title="Page Title" />);
+      renderWithProviders(<PageHeader title="Page Title" />);
 
       const subtitle = document.querySelector('.subtitle');
       expect(subtitle).not.toBeInTheDocument();
     });
 
     it('renders within header element', () => {
-      const { container } = render(<PageHeader title="Page Title" />);
+      const { container } = renderWithProviders(<PageHeader title="Page Title" />);
 
       const header = container.querySelector('header');
       expect(header).toBeInTheDocument();
@@ -58,14 +62,14 @@ describe('PageHeader Component', () => {
   describe('Back Button Tests', () => {
     it('renders back button when onBack prop is provided', () => {
       const handleBack = vi.fn();
-      render(<PageHeader title="Page Title" onBack={handleBack} />);
+      renderWithProviders(<PageHeader title="Page Title" onBack={handleBack} />);
 
       const backButton = screen.getByRole('button', { name: /back/i });
       expect(backButton).toBeInTheDocument();
     });
 
     it('does not render back button when onBack prop is not provided', () => {
-      render(<PageHeader title="Page Title" />);
+      renderWithProviders(<PageHeader title="Page Title" />);
 
       const backButton = screen.queryByRole('button', { name: /back/i });
       expect(backButton).not.toBeInTheDocument();
@@ -73,7 +77,7 @@ describe('PageHeader Component', () => {
 
     it('calls onBack handler when back button is clicked', () => {
       const handleBack = vi.fn();
-      render(<PageHeader title="Page Title" onBack={handleBack} />);
+      renderWithProviders(<PageHeader title="Page Title" onBack={handleBack} />);
 
       const backButton = screen.getByRole('button', { name: /back/i });
       fireEvent.click(backButton);
@@ -83,21 +87,23 @@ describe('PageHeader Component', () => {
 
     it('renders default back label', () => {
       const handleBack = vi.fn();
-      render(<PageHeader title="Page Title" onBack={handleBack} />);
+      renderWithProviders(<PageHeader title="Page Title" onBack={handleBack} />);
 
       expect(screen.getByText('Back')).toBeInTheDocument();
     });
 
     it('renders custom back label when provided', () => {
       const handleBack = vi.fn();
-      render(<PageHeader title="Page Title" onBack={handleBack} backLabel="Return" />);
+      renderWithProviders(<PageHeader title="Page Title" onBack={handleBack} backLabel="Return" />);
 
       expect(screen.getByText('Return')).toBeInTheDocument();
     });
 
     it('back button has correct aria-label', () => {
       const handleBack = vi.fn();
-      render(<PageHeader title="Page Title" onBack={handleBack} backLabel="Go Back" />);
+      renderWithProviders(
+        <PageHeader title="Page Title" onBack={handleBack} backLabel="Go Back" />
+      );
 
       const backButton = screen.getByRole('button', { name: /go back/i });
       expect(backButton).toHaveAttribute('aria-label', 'Go Back');
@@ -105,7 +111,7 @@ describe('PageHeader Component', () => {
 
     it('back button has type="button"', () => {
       const handleBack = vi.fn();
-      render(<PageHeader title="Page Title" onBack={handleBack} />);
+      renderWithProviders(<PageHeader title="Page Title" onBack={handleBack} />);
 
       const backButton = screen.getByRole('button', { name: /back/i });
       expect(backButton).toHaveAttribute('type', 'button');
@@ -113,7 +119,7 @@ describe('PageHeader Component', () => {
 
     it('back button renders back arrow icon', () => {
       const handleBack = vi.fn();
-      render(<PageHeader title="Page Title" onBack={handleBack} />);
+      renderWithProviders(<PageHeader title="Page Title" onBack={handleBack} />);
 
       const backButton = screen.getByRole('button', { name: /back/i });
       const svg = backButton.querySelector('svg');
@@ -122,7 +128,7 @@ describe('PageHeader Component', () => {
 
     it('back icon has aria-hidden="true"', () => {
       const handleBack = vi.fn();
-      render(<PageHeader title="Page Title" onBack={handleBack} />);
+      renderWithProviders(<PageHeader title="Page Title" onBack={handleBack} />);
 
       const svg = document.querySelector('svg');
       expect(svg).toHaveAttribute('aria-hidden', 'true');
@@ -131,7 +137,7 @@ describe('PageHeader Component', () => {
 
   describe('Actions Tests', () => {
     it('renders actions when provided', () => {
-      render(
+      renderWithProviders(
         <PageHeader title="Page Title" actions={<button data-testid="action-btn">Action</button>} />
       );
 
@@ -139,14 +145,14 @@ describe('PageHeader Component', () => {
     });
 
     it('does not render actions container when actions not provided', () => {
-      const { container } = render(<PageHeader title="Page Title" />);
+      const { container } = renderWithProviders(<PageHeader title="Page Title" />);
 
       const actionsDiv = container.querySelector('.actions');
       expect(actionsDiv).not.toBeInTheDocument();
     });
 
     it('renders multiple action elements', () => {
-      render(
+      renderWithProviders(
         <PageHeader
           title="Page Title"
           actions={
@@ -164,7 +170,7 @@ describe('PageHeader Component', () => {
 
     it('action buttons are clickable', () => {
       const handleAction = vi.fn();
-      render(
+      renderWithProviders(
         <PageHeader
           title="Page Title"
           actions={<button onClick={handleAction}>Click Action</button>}
@@ -180,21 +186,21 @@ describe('PageHeader Component', () => {
 
   describe('CSS Classes Tests', () => {
     it('applies header class to header element', () => {
-      const { container } = render(<PageHeader title="Page Title" />);
+      const { container } = renderWithProviders(<PageHeader title="Page Title" />);
 
       const header = container.querySelector('header');
       expect(header).toHaveClass('header');
     });
 
     it('applies title class to h1 element', () => {
-      render(<PageHeader title="Page Title" />);
+      renderWithProviders(<PageHeader title="Page Title" />);
 
       const heading = screen.getByRole('heading', { level: 1 });
       expect(heading).toHaveClass('title');
     });
 
     it('applies subtitle class to subtitle paragraph', () => {
-      render(<PageHeader title="Page Title" subtitle="Subtitle text" />);
+      renderWithProviders(<PageHeader title="Page Title" subtitle="Subtitle text" />);
 
       const subtitle = document.querySelector('.subtitle');
       expect(subtitle).toHaveClass('subtitle');
@@ -202,14 +208,14 @@ describe('PageHeader Component', () => {
 
     it('applies back-button class to back button', () => {
       const handleBack = vi.fn();
-      render(<PageHeader title="Page Title" onBack={handleBack} />);
+      renderWithProviders(<PageHeader title="Page Title" onBack={handleBack} />);
 
       const backButton = screen.getByRole('button', { name: /back/i });
       expect(backButton).toHaveClass('back-button');
     });
 
     it('applies actions class to actions container', () => {
-      const { container } = render(
+      const { container } = renderWithProviders(
         <PageHeader title="Page Title" actions={<button>Action</button>} />
       );
 
@@ -220,7 +226,7 @@ describe('PageHeader Component', () => {
 
   describe('Accessibility Tests', () => {
     it('has single h1 element for page structure', () => {
-      render(<PageHeader title="Page Title" />);
+      renderWithProviders(<PageHeader title="Page Title" />);
 
       const headings = screen.getAllByRole('heading', { level: 1 });
       expect(headings).toHaveLength(1);
@@ -229,7 +235,7 @@ describe('PageHeader Component', () => {
     it('back button is keyboard accessible', async () => {
       const user = userEvent.setup();
       const handleBack = vi.fn();
-      render(<PageHeader title="Page Title" onBack={handleBack} />);
+      renderWithProviders(<PageHeader title="Page Title" onBack={handleBack} />);
 
       const backButton = screen.getByRole('button', { name: /back/i });
       await user.tab();
@@ -240,7 +246,7 @@ describe('PageHeader Component', () => {
     it('back button can be activated with Enter key', async () => {
       const user = userEvent.setup();
       const handleBack = vi.fn();
-      render(<PageHeader title="Page Title" onBack={handleBack} />);
+      renderWithProviders(<PageHeader title="Page Title" onBack={handleBack} />);
 
       const backButton = screen.getByRole('button', { name: /back/i });
       await user.type(backButton, '{enter}');
@@ -252,7 +258,7 @@ describe('PageHeader Component', () => {
     it('back button can be activated with Space key', async () => {
       const user = userEvent.setup();
       const handleBack = vi.fn();
-      render(<PageHeader title="Page Title" onBack={handleBack} />);
+      renderWithProviders(<PageHeader title="Page Title" onBack={handleBack} />);
 
       const backButton = screen.getByRole('button', { name: /back/i });
       await user.type(backButton, ' ');
@@ -263,7 +269,7 @@ describe('PageHeader Component', () => {
 
     it('action buttons are keyboard accessible', async () => {
       const user = userEvent.setup();
-      render(
+      renderWithProviders(
         <PageHeader title="Page Title" actions={<button data-testid="action-btn">Action</button>} />
       );
 
@@ -276,7 +282,7 @@ describe('PageHeader Component', () => {
 
   describe('Edge Cases', () => {
     it('handles empty title', () => {
-      render(<PageHeader title="" />);
+      renderWithProviders(<PageHeader title="" />);
 
       const heading = screen.getByRole('heading', { level: 1 });
       expect(heading).toHaveTextContent('');
@@ -284,19 +290,19 @@ describe('PageHeader Component', () => {
 
     it('handles very long title', () => {
       const longTitle = 'Very Long Page Title that should be displayed properly';
-      render(<PageHeader title={longTitle} />);
+      renderWithProviders(<PageHeader title={longTitle} />);
 
       expect(screen.getByText(longTitle)).toBeInTheDocument();
     });
 
     it('handles special characters in title', () => {
-      render(<PageHeader title="Page <Title> & Special" />);
+      renderWithProviders(<PageHeader title="Page <Title> & Special" />);
 
       expect(screen.getByText('Page <Title> & Special')).toBeInTheDocument();
     });
 
     it('handles empty subtitle (does not render)', () => {
-      render(<PageHeader title="Page Title" subtitle="" />);
+      renderWithProviders(<PageHeader title="Page Title" subtitle="" />);
 
       const subtitle = document.querySelector('.subtitle');
       expect(subtitle).not.toBeInTheDocument();
@@ -304,14 +310,14 @@ describe('PageHeader Component', () => {
 
     it('handles very long subtitle', () => {
       const longSubtitle = 'Very long subtitle that should be displayed';
-      render(<PageHeader title="Page Title" subtitle={longSubtitle} />);
+      renderWithProviders(<PageHeader title="Page Title" subtitle={longSubtitle} />);
 
       expect(screen.getByText(longSubtitle)).toBeInTheDocument();
     });
 
     it('handles empty back label', () => {
       const handleBack = vi.fn();
-      render(<PageHeader title="Page Title" onBack={handleBack} backLabel="" />);
+      renderWithProviders(<PageHeader title="Page Title" onBack={handleBack} backLabel="" />);
 
       const backButton = screen.getByRole('button');
       expect(backButton).toHaveAttribute('aria-label', '');
@@ -319,7 +325,7 @@ describe('PageHeader Component', () => {
 
     it('renders with both back button and actions', () => {
       const handleBack = vi.fn();
-      render(
+      renderWithProviders(
         <PageHeader
           title="Page Title"
           onBack={handleBack}
@@ -333,7 +339,7 @@ describe('PageHeader Component', () => {
 
     it('renders with all props combined', () => {
       const handleBack = vi.fn();
-      render(
+      renderWithProviders(
         <PageHeader
           title="Complete Page"
           subtitle="With all features"
@@ -359,7 +365,7 @@ describe('PageHeader Component', () => {
   describe('Integration Tests', () => {
     it('maintains proper DOM structure', () => {
       const handleBack = vi.fn();
-      const { container } = render(
+      const { container } = renderWithProviders(
         <PageHeader
           title="Test Page"
           subtitle="Test Subtitle"
@@ -383,7 +389,7 @@ describe('PageHeader Component', () => {
       const parentClick = vi.fn();
       const handleBack = vi.fn();
 
-      render(
+      renderWithProviders(
         <div onClick={parentClick}>
           <PageHeader title="Page Title" onBack={handleBack} />
         </div>

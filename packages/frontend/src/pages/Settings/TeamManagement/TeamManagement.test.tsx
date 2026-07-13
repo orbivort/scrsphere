@@ -1,7 +1,9 @@
 import React from 'react';
-import { render, screen, within } from '@testing-library/react';
+import { screen, within, initTestI18n } from '../../../test-utils';
+import { render } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { I18nextProvider } from 'react-i18next';
 import { vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 
@@ -9,6 +11,7 @@ import { TeamManagement } from './TeamManagement';
 import * as useTeamManagement from '@/hooks/useTeamManagement';
 import * as TeamContext from '@/contexts/TeamContext';
 import type { Team, TeamsResponse } from '@/types/teamManagement.types';
+import { getTestI18nInstance } from '@/i18n/testConfig';
 
 // Mock the hooks and services
 vi.mock('@/hooks/useTeamManagement');
@@ -95,15 +98,18 @@ interface WrapperProps {
 
 const createWrapper = () => {
   const queryClient = createMockQueryClient();
+  const i18n = getTestI18nInstance();
 
   const Wrapper: React.FC<WrapperProps> = ({ children }) => (
-    <QueryClientProvider client={queryClient}>
-      <MemoryRouter initialEntries={['/settings/team-management']}>
-        <Routes>
-          <Route path="/settings/team-management" element={children} />
-        </Routes>
-      </MemoryRouter>
-    </QueryClientProvider>
+    <I18nextProvider i18n={i18n}>
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter initialEntries={['/settings/team-management']}>
+          <Routes>
+            <Route path="/settings/team-management" element={children} />
+          </Routes>
+        </MemoryRouter>
+      </QueryClientProvider>
+    </I18nextProvider>
   );
   return Wrapper;
 };
@@ -111,6 +117,10 @@ const createWrapper = () => {
 describe('TeamManagement', () => {
   const mockRefreshTeams = vi.fn();
   const mockMutate = vi.fn();
+
+  beforeAll(async () => {
+    await initTestI18n();
+  });
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -430,14 +440,17 @@ describe('TeamManagement', () => {
     it('should disable next button on last page', () => {
       const WrapperWithPage2 = () => {
         const queryClient = createMockQueryClient();
+        const i18n = getTestI18nInstance();
         return (
-          <QueryClientProvider client={queryClient}>
-            <MemoryRouter initialEntries={['/settings/team-management?page=2']}>
-              <Routes>
-                <Route path="/settings/team-management" element={<TeamManagement />} />
-              </Routes>
-            </MemoryRouter>
-          </QueryClientProvider>
+          <I18nextProvider i18n={i18n}>
+            <QueryClientProvider client={queryClient}>
+              <MemoryRouter initialEntries={['/settings/team-management?page=2']}>
+                <Routes>
+                  <Route path="/settings/team-management" element={<TeamManagement />} />
+                </Routes>
+              </MemoryRouter>
+            </QueryClientProvider>
+          </I18nextProvider>
         );
       };
 
@@ -860,14 +873,17 @@ describe('TeamManagement', () => {
 
       const WrapperWithPage2 = () => {
         const queryClient = createMockQueryClient();
+        const i18n = getTestI18nInstance();
         return (
-          <QueryClientProvider client={queryClient}>
-            <MemoryRouter initialEntries={['/settings/team-management?page=2']}>
-              <Routes>
-                <Route path="/settings/team-management" element={<TeamManagement />} />
-              </Routes>
-            </MemoryRouter>
-          </QueryClientProvider>
+          <I18nextProvider i18n={i18n}>
+            <QueryClientProvider client={queryClient}>
+              <MemoryRouter initialEntries={['/settings/team-management?page=2']}>
+                <Routes>
+                  <Route path="/settings/team-management" element={<TeamManagement />} />
+                </Routes>
+              </MemoryRouter>
+            </QueryClientProvider>
+          </I18nextProvider>
         );
       };
 
@@ -973,7 +989,7 @@ describe('TeamManagement', () => {
     it('should display team count', () => {
       render(<TeamManagement />, { wrapper: createWrapper() });
 
-      expect(screen.getByText(/3 teams/i)).toBeInTheDocument();
+      expect(screen.getByText(/3 team/i)).toBeInTheDocument();
     });
 
     it('should display team names', () => {

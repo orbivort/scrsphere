@@ -1,9 +1,9 @@
-import { screen, render } from '@testing-library/react';
+import { screen, renderWithProviders } from '../../../test-utils';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, beforeAll, vi } from 'vitest';
 
 import { MoSCoWPriority, ItemStatus } from '../../../types';
-import { createMockBacklogItem } from '../../../test-utils';
+import { createMockBacklogItem, initTestI18n } from '../../../test-utils';
 
 import { BoardView } from './BoardView';
 
@@ -53,13 +53,17 @@ describe('BoardView', () => {
   const mockOnItemClick = vi.fn();
   const mockOnPriorityChange = vi.fn();
 
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   describe('Rendering', () => {
     it('should render all MoSCoW columns', () => {
-      render(
+      renderWithProviders(
         <BoardView
           itemsByMoscow={mockItemsByMoscow}
           onItemClick={mockOnItemClick}
@@ -81,7 +85,7 @@ describe('BoardView', () => {
     });
 
     it('should render items in correct columns', () => {
-      render(
+      renderWithProviders(
         <BoardView
           itemsByMoscow={mockItemsByMoscow}
           onItemClick={mockOnItemClick}
@@ -96,7 +100,7 @@ describe('BoardView', () => {
     });
 
     it('should render item counts in column headers', () => {
-      render(
+      renderWithProviders(
         <BoardView
           itemsByMoscow={mockItemsByMoscow}
           onItemClick={mockOnItemClick}
@@ -116,7 +120,7 @@ describe('BoardView', () => {
         [MoSCoWPriority.WONT_HAVE]: [],
       };
 
-      render(
+      renderWithProviders(
         <BoardView
           itemsByMoscow={emptyItemsByMoscow}
           onItemClick={mockOnItemClick}
@@ -131,7 +135,7 @@ describe('BoardView', () => {
 
   describe('Drag and Drop', () => {
     it('should render draggable cards', () => {
-      render(
+      renderWithProviders(
         <BoardView
           itemsByMoscow={mockItemsByMoscow}
           onItemClick={mockOnItemClick}
@@ -144,7 +148,7 @@ describe('BoardView', () => {
     });
 
     it('should have proper ARIA attributes for accessibility', () => {
-      render(
+      renderWithProviders(
         <BoardView
           itemsByMoscow={mockItemsByMoscow}
           onItemClick={mockOnItemClick}
@@ -159,7 +163,7 @@ describe('BoardView', () => {
 
   describe('Item Interaction', () => {
     it('should call onItemClick when clicking an item', async () => {
-      render(
+      renderWithProviders(
         <BoardView
           itemsByMoscow={mockItemsByMoscow}
           onItemClick={mockOnItemClick}
@@ -177,7 +181,7 @@ describe('BoardView', () => {
 
   describe('Column Descriptions', () => {
     it('should display column descriptions', () => {
-      render(
+      renderWithProviders(
         <BoardView
           itemsByMoscow={mockItemsByMoscow}
           onItemClick={mockOnItemClick}
@@ -209,7 +213,7 @@ describe('BoardView', () => {
         [MoSCoWPriority.WONT_HAVE]: [],
       };
 
-      render(
+      renderWithProviders(
         <BoardView
           itemsByMoscow={itemsByMoscowWithFewItems}
           onItemClick={mockOnItemClick}
@@ -241,7 +245,7 @@ describe('BoardView', () => {
         [MoSCoWPriority.WONT_HAVE]: [],
       };
 
-      render(
+      renderWithProviders(
         <BoardView
           itemsByMoscow={itemsByMoscowWithManyItems}
           onItemClick={mockOnItemClick}
@@ -272,7 +276,7 @@ describe('BoardView', () => {
         [MoSCoWPriority.WONT_HAVE]: [],
       };
 
-      render(
+      renderWithProviders(
         <BoardView
           itemsByMoscow={itemsByMoscowWithFewItems}
           onItemClick={mockOnItemClick}
@@ -303,7 +307,7 @@ describe('BoardView', () => {
         [MoSCoWPriority.WONT_HAVE]: [],
       };
 
-      render(
+      renderWithProviders(
         <BoardView
           itemsByMoscow={itemsByMoscowWithManyItems}
           onItemClick={mockOnItemClick}
@@ -341,7 +345,7 @@ describe('BoardView', () => {
         [MoSCoWPriority.WONT_HAVE]: [],
       };
 
-      render(
+      renderWithProviders(
         <BoardView
           itemsByMoscow={itemsByMoscowMixed}
           onItemClick={mockOnItemClick}

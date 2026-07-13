@@ -10,10 +10,8 @@
  * - Accessibility during loading (ARIA attributes)
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor, act } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { BrowserRouter } from 'react-router-dom';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
+import { screen, waitFor, act, renderWithProviders, initTestI18n } from '../../test-utils';
 
 import { ProductGoalsPage } from './ProductGoals';
 import { useTeamStore, useAuthStore } from '../../store';
@@ -107,27 +105,8 @@ vi.mock('../../components/common/ToastContainer', () => ({
   ToastContainer: () => <div data-testid="toast-container" />,
 }));
 
-// Test utilities
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        staleTime: 0,
-      },
-    },
-  });
-
-const renderProductGoals = (queryClient?: QueryClient) => {
-  const testQueryClient = queryClient || createTestQueryClient();
-  return render(
-    <QueryClientProvider client={testQueryClient}>
-      <BrowserRouter>
-        <ProductGoalsPage />
-      </BrowserRouter>
-    </QueryClientProvider>
-  );
-};
+// Helper function using renderWithProviders
+const renderProductGoals = () => renderWithProviders(<ProductGoalsPage />);
 
 // Mock data
 const mockTeam = {
@@ -190,6 +169,10 @@ describe('ProductGoals - Loading State Tests', () => {
   let mockUseTeamStore: ReturnType<typeof vi.fn>;
   let mockUseAuthStore: ReturnType<typeof vi.fn>;
   let mockApiService: typeof apiService;
+
+  beforeAll(async () => {
+    await initTestI18n();
+  });
 
   beforeEach(() => {
     vi.useFakeTimers();

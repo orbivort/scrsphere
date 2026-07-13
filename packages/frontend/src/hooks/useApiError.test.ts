@@ -19,6 +19,13 @@ vi.mock('../utils/logger', () => ({
   setStoreProvider: vi.fn(),
 }));
 
+// Mock i18n config - i18nInstance.t returns fallback messages
+vi.mock('../i18n/config', () => ({
+  i18nInstance: {
+    t: (key: string, fallback: string) => fallback,
+  },
+}));
+
 describe('useApiError', () => {
   const mockLogout = vi.fn();
   const mockSetError = vi.fn();

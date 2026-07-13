@@ -11,36 +11,20 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { BrowserRouter } from 'react-router-dom';
-import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { screen, fireEvent, renderWithProviders, initTestI18n } from '../../test-utils';
+import { vi, describe, it, expect, beforeEach, afterEach, beforeAll } from 'vitest';
 
 import { CreateActionItemModal } from './CreateActionItemModal';
+
+beforeAll(async () => {
+  await initTestI18n();
+});
 
 vi.mock('../../services', () => ({
   apiService: {
     addActionItem: vi.fn(),
   },
 }));
-
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-    },
-  });
-
-const renderWithProviders = (ui: React.ReactElement) => {
-  const testQueryClient = createTestQueryClient();
-  return render(
-    <QueryClientProvider client={testQueryClient}>
-      <BrowserRouter>{ui}</BrowserRouter>
-    </QueryClientProvider>
-  );
-};
 
 const defaultTeamMembers = [
   {

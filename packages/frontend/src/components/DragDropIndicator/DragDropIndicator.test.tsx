@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeAll } from 'vitest';
+import { screen, renderWithProviders, initTestI18n } from '../../test-utils';
 
 import { DragDropIndicator } from './DragDropIndicator';
 
@@ -15,9 +15,13 @@ vi.mock('./DragDropIndicator.module.css', () => ({
 }));
 
 describe('DragDropIndicator Component', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   describe('Grabbed State', () => {
     it('should render children when visible', () => {
-      render(
+      renderWithProviders(
         <DragDropIndicator type="grabbed" visible={true}>
           <div>Test content</div>
         </DragDropIndicator>
@@ -28,7 +32,7 @@ describe('DragDropIndicator Component', () => {
     });
 
     it('should apply visible class when visible is true', () => {
-      render(
+      renderWithProviders(
         <DragDropIndicator type="grabbed" visible={true}>
           <div>Content</div>
         </DragDropIndicator>
@@ -40,7 +44,7 @@ describe('DragDropIndicator Component', () => {
     });
 
     it('should apply hidden class when visible is false', () => {
-      render(
+      renderWithProviders(
         <DragDropIndicator type="grabbed" visible={false}>
           <div>Content</div>
         </DragDropIndicator>
@@ -52,7 +56,7 @@ describe('DragDropIndicator Component', () => {
     });
 
     it('should have aria-hidden set to true', () => {
-      render(
+      renderWithProviders(
         <DragDropIndicator type="grabbed" visible={true}>
           <div>Content</div>
         </DragDropIndicator>
@@ -63,7 +67,7 @@ describe('DragDropIndicator Component', () => {
     });
 
     it('should have role="presentation"', () => {
-      render(
+      renderWithProviders(
         <DragDropIndicator type="grabbed" visible={true}>
           <div>Content</div>
         </DragDropIndicator>
@@ -76,7 +80,7 @@ describe('DragDropIndicator Component', () => {
 
   describe('Drop Target State', () => {
     it('should render children when visible', () => {
-      render(
+      renderWithProviders(
         <DragDropIndicator type="drop-target" visible={true}>
           <div>Drop zone</div>
         </DragDropIndicator>
@@ -87,7 +91,7 @@ describe('DragDropIndicator Component', () => {
     });
 
     it('should apply correct classes for drop-target type', () => {
-      render(
+      renderWithProviders(
         <DragDropIndicator type="drop-target" visible={true}>
           <div>Content</div>
         </DragDropIndicator>
@@ -99,7 +103,7 @@ describe('DragDropIndicator Component', () => {
     });
 
     it('should apply hidden class when not visible', () => {
-      render(
+      renderWithProviders(
         <DragDropIndicator type="drop-target" visible={false}>
           <div>Content</div>
         </DragDropIndicator>
@@ -110,7 +114,7 @@ describe('DragDropIndicator Component', () => {
     });
 
     it('should have aria-hidden set to true', () => {
-      render(
+      renderWithProviders(
         <DragDropIndicator type="drop-target" visible={true}>
           <div>Content</div>
         </DragDropIndicator>
@@ -123,7 +127,7 @@ describe('DragDropIndicator Component', () => {
 
   describe('Moving State', () => {
     it('should render moving indicator with position', () => {
-      render(
+      renderWithProviders(
         <DragDropIndicator type="moving" visible={true} position={{ x: 100, y: 200 }}>
           <div>Moving content</div>
         </DragDropIndicator>
@@ -134,7 +138,7 @@ describe('DragDropIndicator Component', () => {
     });
 
     it('should apply transform style based on position', () => {
-      render(
+      renderWithProviders(
         <DragDropIndicator type="moving" visible={true} position={{ x: 150, y: 250 }}>
           <div>Content</div>
         </DragDropIndicator>
@@ -145,7 +149,7 @@ describe('DragDropIndicator Component', () => {
     });
 
     it('should not render when visible is false', () => {
-      render(
+      renderWithProviders(
         <DragDropIndicator type="moving" visible={false} position={{ x: 100, y: 200 }}>
           <div>Content</div>
         </DragDropIndicator>
@@ -155,7 +159,7 @@ describe('DragDropIndicator Component', () => {
     });
 
     it('should not render when position is undefined', () => {
-      render(
+      renderWithProviders(
         <DragDropIndicator type="moving" visible={true}>
           <div>Content</div>
         </DragDropIndicator>
@@ -165,7 +169,7 @@ describe('DragDropIndicator Component', () => {
     });
 
     it('should have aria-hidden set to true', () => {
-      render(
+      renderWithProviders(
         <DragDropIndicator type="moving" visible={true} position={{ x: 100, y: 200 }}>
           <div>Content</div>
         </DragDropIndicator>
@@ -176,7 +180,7 @@ describe('DragDropIndicator Component', () => {
     });
 
     it('should have role="presentation"', () => {
-      render(
+      renderWithProviders(
         <DragDropIndicator type="moving" visible={true} position={{ x: 100, y: 200 }}>
           <div>Content</div>
         </DragDropIndicator>
@@ -189,7 +193,7 @@ describe('DragDropIndicator Component', () => {
 
   describe('Label Prop', () => {
     it('should render label for grabbed state', () => {
-      render(
+      renderWithProviders(
         <DragDropIndicator type="grabbed" visible={true} label="Item grabbed">
           <div>Content</div>
         </DragDropIndicator>
@@ -200,7 +204,7 @@ describe('DragDropIndicator Component', () => {
     });
 
     it('should render label for drop-target state', () => {
-      render(
+      renderWithProviders(
         <DragDropIndicator type="drop-target" visible={true} label="Drop target active">
           <div>Content</div>
         </DragDropIndicator>
@@ -210,7 +214,7 @@ describe('DragDropIndicator Component', () => {
     });
 
     it('should render label for moving state', () => {
-      render(
+      renderWithProviders(
         <DragDropIndicator
           type="moving"
           visible={true}
@@ -225,7 +229,7 @@ describe('DragDropIndicator Component', () => {
     });
 
     it('should not render label element when label is not provided', () => {
-      render(
+      renderWithProviders(
         <DragDropIndicator type="grabbed" visible={true}>
           <div>Content</div>
         </DragDropIndicator>
@@ -238,7 +242,7 @@ describe('DragDropIndicator Component', () => {
 
   describe('Accessibility', () => {
     it('should have aria-hidden on all indicator types', () => {
-      const { rerender } = render(
+      const { rerender } = renderWithProviders(
         <DragDropIndicator type="grabbed" visible={true}>
           <div>Content</div>
         </DragDropIndicator>
@@ -264,7 +268,7 @@ describe('DragDropIndicator Component', () => {
     });
 
     it('should have presentation role on all indicator types', () => {
-      const { rerender } = render(
+      const { rerender } = renderWithProviders(
         <DragDropIndicator type="grabbed" visible={true}>
           <div>Content</div>
         </DragDropIndicator>
@@ -292,7 +296,7 @@ describe('DragDropIndicator Component', () => {
 
   describe('Children Rendering', () => {
     it('should render complex children for grabbed state', () => {
-      render(
+      renderWithProviders(
         <DragDropIndicator type="grabbed" visible={true}>
           <div data-testid="child-1">Child 1</div>
           <div data-testid="child-2">Child 2</div>
@@ -304,7 +308,7 @@ describe('DragDropIndicator Component', () => {
     });
 
     it('should render complex children for drop-target state', () => {
-      render(
+      renderWithProviders(
         <DragDropIndicator type="drop-target" visible={true}>
           <div data-testid="child-1">Child 1</div>
           <div data-testid="child-2">Child 2</div>
@@ -316,7 +320,7 @@ describe('DragDropIndicator Component', () => {
     });
 
     it('should render complex children for moving state', () => {
-      render(
+      renderWithProviders(
         <DragDropIndicator type="moving" visible={true} position={{ x: 0, y: 0 }}>
           <div data-testid="child-1">Child 1</div>
           <div data-testid="child-2">Child 2</div>
@@ -328,7 +332,7 @@ describe('DragDropIndicator Component', () => {
     });
 
     it('should render without children', () => {
-      render(<DragDropIndicator type="grabbed" visible={true} />);
+      renderWithProviders(<DragDropIndicator type="grabbed" visible={true} />);
 
       expect(screen.getByTestId('drag-drop-grabbed')).toBeInTheDocument();
       expect(screen.getByTestId('drag-drop-grabbed').children.length).toBe(0);
@@ -337,7 +341,7 @@ describe('DragDropIndicator Component', () => {
 
   describe('Edge Cases', () => {
     it('should handle zero position values', () => {
-      render(
+      renderWithProviders(
         <DragDropIndicator type="moving" visible={true} position={{ x: 0, y: 0 }}>
           <div>Content</div>
         </DragDropIndicator>
@@ -348,7 +352,7 @@ describe('DragDropIndicator Component', () => {
     });
 
     it('should handle negative position values', () => {
-      render(
+      renderWithProviders(
         <DragDropIndicator type="moving" visible={true} position={{ x: -50, y: -100 }}>
           <div>Content</div>
         </DragDropIndicator>
@@ -359,7 +363,7 @@ describe('DragDropIndicator Component', () => {
     });
 
     it('should handle large position values', () => {
-      render(
+      renderWithProviders(
         <DragDropIndicator type="moving" visible={true} position={{ x: 9999, y: 9999 }}>
           <div>Content</div>
         </DragDropIndicator>
@@ -370,7 +374,7 @@ describe('DragDropIndicator Component', () => {
     });
 
     it('should handle decimal position values', () => {
-      render(
+      renderWithProviders(
         <DragDropIndicator type="moving" visible={true} position={{ x: 10.5, y: 20.75 }}>
           <div>Content</div>
         </DragDropIndicator>

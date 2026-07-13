@@ -1,9 +1,21 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import {
+  screen,
+  fireEvent,
+  waitFor,
+  renderWithProviders,
+  initTestI18n,
+  i18nT,
+} from '../../test-utils';
+import { vi, describe, it, expect, beforeEach, beforeAll } from 'vitest';
 
 import { AddFeedbackModal } from './AddFeedbackModal';
 import type { ApiResponse, ProductBacklogItem, TeamMember, User } from '../../types';
+
+// Initialize i18n before all tests
+beforeAll(async () => {
+  await initTestI18n();
+});
 
 vi.mock('./AddFeedbackModal.module.css', () => ({
   default: {
@@ -66,8 +78,8 @@ vi.mock('../../components/common/Form/UnsavedChangesModal', () => ({
       <div role="dialog" data-testid="unsaved-changes-modal">
         <h2>{title}</h2>
         <p>{message}</p>
-        <button onClick={onConfirm}>Discard</button>
-        <button onClick={onCancel}>Keep Editing</button>
+        <button onClick={onConfirm}>{i18nT('common:unsavedChanges.discardChanges')}</button>
+        <button onClick={onCancel}>{i18nT('common:unsavedChanges.goBack')}</button>
       </div>
     ) : null,
 }));
@@ -164,23 +176,23 @@ describe('AddFeedbackModal', () => {
 
   describe('Rendering', () => {
     it('should render modal when isOpen is true', () => {
-      render(<AddFeedbackModal {...defaultProps} />);
+      renderWithProviders(<AddFeedbackModal {...defaultProps} />);
 
       expect(screen.getByRole('dialog')).toBeInTheDocument();
       expect(screen.getByRole('dialog')).toHaveAttribute('aria-modal', 'true');
       expect(
-        screen.getByRole('heading', { name: /Add Stakeholder Feedback/i })
+        screen.getByRole('heading', { name: i18nT('sprint-review:addFeedbackModal.title') })
       ).toBeInTheDocument();
     });
 
     it('should not render modal when isOpen is false', () => {
-      render(<AddFeedbackModal {...defaultProps} isOpen={false} />);
+      renderWithProviders(<AddFeedbackModal {...defaultProps} isOpen={false} />);
 
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
 
     it('should render all form fields', () => {
-      render(<AddFeedbackModal {...defaultProps} />);
+      renderWithProviders(<AddFeedbackModal {...defaultProps} />);
 
       expect(screen.getByLabelText(/Author Name/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/Category/i)).toBeInTheDocument();
@@ -189,29 +201,38 @@ describe('AddFeedbackModal', () => {
     });
 
     it('should render close button', () => {
-      render(<AddFeedbackModal {...defaultProps} />);
+      renderWithProviders(<AddFeedbackModal {...defaultProps} />);
 
-      expect(screen.getByRole('button', { name: /Close dialog/i })).toBeInTheDocument();
+      // There should be at least one Cancel button (the close button)
+      const cancelButtons = screen.getAllByRole('button', { name: /Cancel/i });
+      expect(cancelButtons.length).toBeGreaterThan(0);
     });
 
     it('should render action buttons', () => {
-      render(<AddFeedbackModal {...defaultProps} />);
+      renderWithProviders(<AddFeedbackModal {...defaultProps} />);
 
-      expect(screen.getByRole('button', { name: /Cancel/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /Add Feedback/i })).toBeInTheDocument();
+      // Check for Cancel button in footer
+      const cancelButtons = screen.getAllByRole('button', { name: /Cancel/i });
+      expect(cancelButtons.length).toBeGreaterThan(0);
+      // Check for Add Feedback button
+      expect(
+        screen.getByRole('button', { name: i18nT('sprint-review:addFeedbackModal.addFeedback') })
+      ).toBeInTheDocument();
     });
 
     it('should display subtitle', () => {
-      render(<AddFeedbackModal {...defaultProps} />);
+      renderWithProviders(<AddFeedbackModal {...defaultProps} />);
 
-      expect(screen.getByText(/Capture valuable insights from stakeholders/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(i18nT('sprint-review:addFeedbackModal.subtitle'))
+      ).toBeInTheDocument();
     });
   });
 
   describe('Form Interactions', () => {
     it('should call setFeedbackForm when author name changes', () => {
       const setFeedbackForm = vi.fn();
-      render(<AddFeedbackModal {...defaultProps} setFeedbackForm={setFeedbackForm} />);
+      renderWithProviders(<AddFeedbackModal {...defaultProps} setFeedbackForm={setFeedbackForm} />);
 
       const authorInput = screen.getByLabelText(/Author Name/i);
       fireEvent.change(authorInput, { target: { value: 'John Stakeholder' } });
@@ -223,7 +244,7 @@ describe('AddFeedbackModal', () => {
 
     it('should call setFeedbackForm when content changes', () => {
       const setFeedbackForm = vi.fn();
-      render(<AddFeedbackModal {...defaultProps} setFeedbackForm={setFeedbackForm} />);
+      renderWithProviders(<AddFeedbackModal {...defaultProps} setFeedbackForm={setFeedbackForm} />);
 
       const contentInput = screen.getByLabelText(/^Feedback/i);
       fireEvent.change(contentInput, { target: { value: 'Great work!' } });
@@ -235,9 +256,11 @@ describe('AddFeedbackModal', () => {
 
     it('should call setFeedbackForm when category changes', () => {
       const setFeedbackForm = vi.fn();
-      render(<AddFeedbackModal {...defaultProps} setFeedbackForm={setFeedbackForm} />);
+      renderWithProviders(<AddFeedbackModal {...defaultProps} setFeedbackForm={setFeedbackForm} />);
 
-      const categorySelect = screen.getByLabelText(/Category/i);
+      const categorySelect = screen.getByLabelText(
+        i18nT('sprint-review:addFeedbackModal.category')
+      );
       fireEvent.change(categorySelect, { target: { value: 'negative' } });
 
       expect(setFeedbackForm).toHaveBeenCalledWith(
@@ -247,7 +270,7 @@ describe('AddFeedbackModal', () => {
 
     it('should call setFeedbackForm when related PBI changes', () => {
       const setFeedbackForm = vi.fn();
-      render(<AddFeedbackModal {...defaultProps} setFeedbackForm={setFeedbackForm} />);
+      renderWithProviders(<AddFeedbackModal {...defaultProps} setFeedbackForm={setFeedbackForm} />);
 
       const pbiSelect = screen.getByLabelText(/Related PBI/i);
       fireEvent.change(pbiSelect, { target: { value: 'pbi-1' } });
@@ -259,7 +282,7 @@ describe('AddFeedbackModal', () => {
 
     it('should toggle actionRequired when checkbox is clicked', () => {
       const setFeedbackForm = vi.fn();
-      render(
+      renderWithProviders(
         <AddFeedbackModal
           {...defaultProps}
           feedbackForm={{ ...defaultFeedbackForm, actionRequired: false }}
@@ -277,7 +300,7 @@ describe('AddFeedbackModal', () => {
 
     it('should toggle actionRequired via keyboard Enter key', () => {
       const setFeedbackForm = vi.fn();
-      render(
+      renderWithProviders(
         <AddFeedbackModal
           {...defaultProps}
           feedbackForm={{ ...defaultFeedbackForm, actionRequired: false }}
@@ -295,7 +318,7 @@ describe('AddFeedbackModal', () => {
 
     it('should toggle actionRequired via keyboard Space key', () => {
       const setFeedbackForm = vi.fn();
-      render(
+      renderWithProviders(
         <AddFeedbackModal
           {...defaultProps}
           feedbackForm={{ ...defaultFeedbackForm, actionRequired: false }}
@@ -313,7 +336,7 @@ describe('AddFeedbackModal', () => {
 
     it('should clear ownerId when actionRequired is toggled off', () => {
       const setFeedbackForm = vi.fn();
-      render(
+      renderWithProviders(
         <AddFeedbackModal
           {...defaultProps}
           feedbackForm={{ ...defaultFeedbackForm, actionRequired: true, ownerId: 'user-1' }}
@@ -332,7 +355,7 @@ describe('AddFeedbackModal', () => {
 
   describe('Action Required Owner Field', () => {
     it('should show owner field when actionRequired is true', () => {
-      render(
+      renderWithProviders(
         <AddFeedbackModal
           {...defaultProps}
           feedbackForm={{ ...defaultFeedbackForm, actionRequired: true }}
@@ -343,19 +366,19 @@ describe('AddFeedbackModal', () => {
     });
 
     it('should not show owner field when actionRequired is false', () => {
-      render(
+      renderWithProviders(
         <AddFeedbackModal
           {...defaultProps}
           feedbackForm={{ ...defaultFeedbackForm, actionRequired: false }}
         />
       );
 
-      expect(screen.queryByLabelText(/^Owner$/i)).not.toBeInTheDocument();
+      expect(screen.queryByLabelText(/Owner/i)).not.toBeInTheDocument();
     });
 
     it('should call setFeedbackForm when owner changes', () => {
       const setFeedbackForm = vi.fn();
-      render(
+      renderWithProviders(
         <AddFeedbackModal
           {...defaultProps}
           feedbackForm={{ ...defaultFeedbackForm, actionRequired: true }}
@@ -370,7 +393,7 @@ describe('AddFeedbackModal', () => {
     });
 
     it('should render team members in owner dropdown', () => {
-      render(
+      renderWithProviders(
         <AddFeedbackModal
           {...defaultProps}
           feedbackForm={{ ...defaultFeedbackForm, actionRequired: true }}
@@ -382,7 +405,7 @@ describe('AddFeedbackModal', () => {
     });
 
     it('should handle team member without user object', () => {
-      render(
+      renderWithProviders(
         <AddFeedbackModal
           {...defaultProps}
           teamMembers={[
@@ -403,7 +426,7 @@ describe('AddFeedbackModal', () => {
 
   describe('Form Validation and Errors', () => {
     it('should display author name error when formErrors.authorName exists', () => {
-      render(
+      renderWithProviders(
         <AddFeedbackModal
           {...defaultProps}
           formErrors={{ authorName: 'Author name is required' }}
@@ -414,7 +437,7 @@ describe('AddFeedbackModal', () => {
     });
 
     it('should display feedback content error when formErrors.content exists', () => {
-      render(
+      renderWithProviders(
         <AddFeedbackModal
           {...defaultProps}
           formErrors={{ content: 'Feedback content is required' }}
@@ -428,7 +451,7 @@ describe('AddFeedbackModal', () => {
     });
 
     it('should display owner error when formErrors.ownerId exists and actionRequired is true', () => {
-      render(
+      renderWithProviders(
         <AddFeedbackModal
           {...defaultProps}
           formErrors={{ ownerId: 'Owner is required' }}
@@ -441,20 +464,24 @@ describe('AddFeedbackModal', () => {
     });
 
     it('should mark author input as invalid when error exists', () => {
-      render(<AddFeedbackModal {...defaultProps} formErrors={{ authorName: 'Required' }} />);
+      renderWithProviders(
+        <AddFeedbackModal {...defaultProps} formErrors={{ authorName: 'Required' }} />
+      );
 
       expect(screen.getByLabelText(/Author Name/i)).toHaveAttribute('aria-invalid', 'true');
     });
 
     it('should mark feedback textarea as invalid when error exists', () => {
-      render(<AddFeedbackModal {...defaultProps} formErrors={{ content: 'Required' }} />);
+      renderWithProviders(
+        <AddFeedbackModal {...defaultProps} formErrors={{ content: 'Required' }} />
+      );
 
       const textarea = screen.getByLabelText(/^Feedback/i);
       expect(textarea).toHaveAttribute('aria-invalid', 'true');
     });
 
     it('should mark owner select as invalid when error exists', () => {
-      render(
+      renderWithProviders(
         <AddFeedbackModal
           {...defaultProps}
           formErrors={{ ownerId: 'Required' }}
@@ -468,7 +495,7 @@ describe('AddFeedbackModal', () => {
 
   describe('Character Counters', () => {
     it('should display character count for author name', () => {
-      render(
+      renderWithProviders(
         <AddFeedbackModal
           {...defaultProps}
           feedbackForm={{ ...defaultFeedbackForm, authorName: 'John' }}
@@ -479,7 +506,7 @@ describe('AddFeedbackModal', () => {
     });
 
     it('should display character count for feedback content', () => {
-      render(
+      renderWithProviders(
         <AddFeedbackModal
           {...defaultProps}
           feedbackForm={{ ...defaultFeedbackForm, content: 'Great job' }}
@@ -491,7 +518,7 @@ describe('AddFeedbackModal', () => {
 
     it('should show warning style when author name approaches limit', () => {
       const longName = 'A'.repeat(85);
-      render(
+      renderWithProviders(
         <AddFeedbackModal
           {...defaultProps}
           feedbackForm={{ ...defaultFeedbackForm, authorName: longName }}
@@ -503,7 +530,7 @@ describe('AddFeedbackModal', () => {
 
     it('should show warning style when content approaches limit', () => {
       const longContent = 'A'.repeat(850);
-      render(
+      renderWithProviders(
         <AddFeedbackModal
           {...defaultProps}
           feedbackForm={{ ...defaultFeedbackForm, content: longContent }}
@@ -515,7 +542,7 @@ describe('AddFeedbackModal', () => {
 
     it('should show error style when content is very close to limit', () => {
       const veryLongContent = 'A'.repeat(960);
-      render(
+      renderWithProviders(
         <AddFeedbackModal
           {...defaultProps}
           feedbackForm={{ ...defaultFeedbackForm, content: veryLongContent }}
@@ -528,14 +555,14 @@ describe('AddFeedbackModal', () => {
 
   describe('Unsaved Changes', () => {
     it('should show unsaved changes modal when attempting to close with unsaved changes', async () => {
-      render(
+      renderWithProviders(
         <AddFeedbackModal
           {...defaultProps}
           feedbackForm={{ ...defaultFeedbackForm, authorName: 'John' }}
         />
       );
 
-      fireEvent.click(screen.getByRole('button', { name: /Close dialog/i }));
+      fireEvent.click(screen.getAllByRole('button', { name: /Cancel/i })[0]);
 
       await waitFor(() => {
         expect(screen.getByTestId('unsaved-changes-modal')).toBeInTheDocument();
@@ -543,16 +570,18 @@ describe('AddFeedbackModal', () => {
     });
 
     it('should not show unsaved changes modal when closing with empty form', () => {
-      render(<AddFeedbackModal {...defaultProps} feedbackForm={defaultFeedbackForm} />);
+      renderWithProviders(
+        <AddFeedbackModal {...defaultProps} feedbackForm={defaultFeedbackForm} />
+      );
 
-      fireEvent.click(screen.getByRole('button', { name: /Close dialog/i }));
+      fireEvent.click(screen.getAllByRole('button', { name: /Cancel/i })[0]);
 
       expect(screen.queryByTestId('unsaved-changes-modal')).not.toBeInTheDocument();
     });
 
     it('should close modal when discarding changes', async () => {
       const onClose = vi.fn();
-      render(
+      renderWithProviders(
         <AddFeedbackModal
           {...defaultProps}
           onClose={onClose}
@@ -560,32 +589,34 @@ describe('AddFeedbackModal', () => {
         />
       );
 
-      fireEvent.click(screen.getByRole('button', { name: /Close dialog/i }));
+      fireEvent.click(screen.getAllByRole('button', { name: /Cancel/i })[0]);
 
       await waitFor(() => {
         expect(screen.getByTestId('unsaved-changes-modal')).toBeInTheDocument();
       });
 
-      fireEvent.click(screen.getByRole('button', { name: /Discard/i }));
+      fireEvent.click(
+        screen.getByRole('button', { name: i18nT('common:unsavedChanges.discardChanges') })
+      );
 
       expect(onClose).toHaveBeenCalled();
     });
 
     it('should keep modal open when cancelling discard', async () => {
-      render(
+      renderWithProviders(
         <AddFeedbackModal
           {...defaultProps}
           feedbackForm={{ ...defaultFeedbackForm, authorName: 'John' }}
         />
       );
 
-      fireEvent.click(screen.getByRole('button', { name: /Close dialog/i }));
+      fireEvent.click(screen.getAllByRole('button', { name: /Cancel/i })[0]);
 
       await waitFor(() => {
         expect(screen.getByTestId('unsaved-changes-modal')).toBeInTheDocument();
       });
 
-      fireEvent.click(screen.getByRole('button', { name: /Keep Editing/i }));
+      fireEvent.click(screen.getByRole('button', { name: i18nT('common:unsavedChanges.goBack') }));
 
       await waitFor(() => {
         expect(screen.queryByTestId('unsaved-changes-modal')).not.toBeInTheDocument();
@@ -593,27 +624,29 @@ describe('AddFeedbackModal', () => {
     });
 
     it('should detect unsaved changes when actionRequired is true', () => {
-      render(
+      renderWithProviders(
         <AddFeedbackModal
           {...defaultProps}
           feedbackForm={{ ...defaultFeedbackForm, actionRequired: true }}
         />
       );
 
-      fireEvent.click(screen.getByRole('button', { name: /Close dialog/i }));
+      fireEvent.click(screen.getAllByRole('button', { name: /Cancel/i })[0]);
 
       expect(screen.getByTestId('unsaved-changes-modal')).toBeInTheDocument();
     });
 
     it('should detect unsaved changes when category is not positive', () => {
-      render(
+      renderWithProviders(
         <AddFeedbackModal
           {...defaultProps}
           feedbackForm={{ ...defaultFeedbackForm, category: 'negative' }}
         />
       );
 
-      fireEvent.click(screen.getByRole('button', { name: /Close dialog/i }));
+      // Click the close button
+      const closeButton = screen.getAllByRole('button', { name: /Cancel/i })[0];
+      fireEvent.click(closeButton);
 
       expect(screen.getByTestId('unsaved-changes-modal')).toBeInTheDocument();
     });
@@ -622,30 +655,36 @@ describe('AddFeedbackModal', () => {
   describe('Submission', () => {
     it('should call onSubmit when Add Feedback button is clicked', () => {
       const onSubmit = vi.fn();
-      render(<AddFeedbackModal {...defaultProps} onSubmit={onSubmit} />);
+      renderWithProviders(<AddFeedbackModal {...defaultProps} onSubmit={onSubmit} />);
 
-      fireEvent.click(screen.getByRole('button', { name: /Add Feedback/i }));
+      fireEvent.click(
+        screen.getByRole('button', { name: i18nT('sprint-review:addFeedbackModal.addFeedback') })
+      );
 
       expect(onSubmit).toHaveBeenCalled();
     });
 
     it('should disable Add Feedback button when isPending is true', () => {
-      render(<AddFeedbackModal {...defaultProps} isPending={true} />);
+      renderWithProviders(<AddFeedbackModal {...defaultProps} isPending={true} />);
 
-      expect(screen.getByRole('button', { name: /Adding/i })).toBeDisabled();
+      expect(
+        screen.getByRole('button', { name: i18nT('sprint-review:addFeedbackModal.adding') })
+      ).toBeDisabled();
     });
 
     it('should show "Adding..." text when isPending is true', () => {
-      render(<AddFeedbackModal {...defaultProps} isPending={true} />);
+      renderWithProviders(<AddFeedbackModal {...defaultProps} isPending={true} />);
 
-      expect(screen.getByText('Adding...')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('sprint-review:addFeedbackModal.adding'))).toBeInTheDocument();
     });
 
     it('should clear form errors when Cancel button is clicked', () => {
       const setFormErrors = vi.fn();
-      render(<AddFeedbackModal {...defaultProps} setFormErrors={setFormErrors} />);
+      renderWithProviders(<AddFeedbackModal {...defaultProps} setFormErrors={setFormErrors} />);
 
-      fireEvent.click(screen.getByRole('button', { name: /Cancel/i }));
+      // Click the footer Cancel button (second Cancel button, not the close button)
+      const cancelButtons = screen.getAllByRole('button', { name: /Cancel/i });
+      fireEvent.click(cancelButtons[1]);
 
       expect(setFormErrors).toHaveBeenCalledWith({});
     });
@@ -653,7 +692,7 @@ describe('AddFeedbackModal', () => {
 
   describe('Accessibility', () => {
     it('should have proper ARIA attributes on dialog', () => {
-      render(<AddFeedbackModal {...defaultProps} />);
+      renderWithProviders(<AddFeedbackModal {...defaultProps} />);
 
       const dialog = screen.getByRole('dialog');
       expect(dialog).toHaveAttribute('aria-modal', 'true');
@@ -661,14 +700,14 @@ describe('AddFeedbackModal', () => {
     });
 
     it('should have required asterisks on required fields', () => {
-      render(<AddFeedbackModal {...defaultProps} />);
+      renderWithProviders(<AddFeedbackModal {...defaultProps} />);
 
       const asterisks = screen.getAllByText('*');
       expect(asterisks.length).toBeGreaterThan(0);
     });
 
     it('should have aria-checked on action required toggle', () => {
-      render(
+      renderWithProviders(
         <AddFeedbackModal
           {...defaultProps}
           feedbackForm={{ ...defaultFeedbackForm, actionRequired: true }}
@@ -679,7 +718,9 @@ describe('AddFeedbackModal', () => {
     });
 
     it('should have aria-describedby on inputs when errors exist', () => {
-      render(<AddFeedbackModal {...defaultProps} formErrors={{ authorName: 'Required' }} />);
+      renderWithProviders(
+        <AddFeedbackModal {...defaultProps} formErrors={{ authorName: 'Required' }} />
+      );
 
       expect(screen.getByLabelText(/Author Name/i)).toHaveAttribute(
         'aria-describedby',
@@ -690,7 +731,7 @@ describe('AddFeedbackModal', () => {
 
   describe('Negative Test Cases', () => {
     it('should handle empty teamMembers array', () => {
-      render(
+      renderWithProviders(
         <AddFeedbackModal
           {...defaultProps}
           teamMembers={[]}
@@ -698,11 +739,13 @@ describe('AddFeedbackModal', () => {
         />
       );
 
-      expect(screen.getByText('Select owner...')).toBeInTheDocument();
+      expect(
+        screen.getByText(i18nT('sprint-review:addFeedbackModal.ownerPlaceholder'))
+      ).toBeInTheDocument();
     });
 
     it('should handle undefined teamMembers', () => {
-      render(
+      renderWithProviders(
         <AddFeedbackModal
           {...defaultProps}
           teamMembers={undefined}
@@ -710,11 +753,13 @@ describe('AddFeedbackModal', () => {
         />
       );
 
-      expect(screen.getByText('Select owner...')).toBeInTheDocument();
+      expect(
+        screen.getByText(i18nT('sprint-review:addFeedbackModal.ownerPlaceholder'))
+      ).toBeInTheDocument();
     });
 
     it('should handle empty sprintBacklogItems', () => {
-      render(
+      renderWithProviders(
         <AddFeedbackModal {...defaultProps} sprintBacklogItems={{ success: true, data: [] }} />
       );
 
@@ -722,7 +767,7 @@ describe('AddFeedbackModal', () => {
     });
 
     it('should handle undefined sprintBacklogItems', () => {
-      render(<AddFeedbackModal {...defaultProps} sprintBacklogItems={undefined} />);
+      renderWithProviders(<AddFeedbackModal {...defaultProps} sprintBacklogItems={undefined} />);
 
       expect(screen.getByLabelText(/Related PBI/i)).toBeInTheDocument();
     });

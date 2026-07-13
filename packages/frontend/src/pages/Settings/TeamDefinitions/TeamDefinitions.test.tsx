@@ -1,7 +1,6 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MemoryRouter, useSearchParams } from 'react-router-dom';
+import { screen, fireEvent, renderWithProviders, initTestI18n } from '../../../test-utils';
+import { useSearchParams } from 'react-router-dom';
 import { vi } from 'vitest';
 
 import { definitionService } from '../../../services';
@@ -40,26 +39,12 @@ const mockTeam = {
   updatedAt: '2024-01-01T00:00:00Z',
 };
 
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-    },
-  });
-
-const renderWithRouter = (ui: React.ReactElement, initialEntries: string[] = ['/']) => {
-  const testQueryClient = createTestQueryClient();
-  return render(
-    <QueryClientProvider client={testQueryClient}>
-      <MemoryRouter initialEntries={initialEntries}>{ui}</MemoryRouter>
-    </QueryClientProvider>
-  );
-};
-
 describe('TeamDefinitionsPage', () => {
   let useTeamStoreMock: ReturnType<typeof vi.fn>;
+
+  beforeAll(() => {
+    initTestI18n();
+  });
 
   beforeEach(async () => {
     vi.clearAllMocks();
@@ -91,7 +76,7 @@ describe('TeamDefinitionsPage', () => {
 
   describe('Rendering', () => {
     it('should render page with tabs', () => {
-      renderWithRouter(<TeamDefinitionsPage />);
+      renderWithProviders(<TeamDefinitionsPage />);
 
       expect(screen.getByRole('heading', { name: 'Team Definitions' })).toBeInTheDocument();
       expect(screen.getByRole('tablist')).toBeInTheDocument();
@@ -100,7 +85,7 @@ describe('TeamDefinitionsPage', () => {
     });
 
     it('should show Definition of Ready tab by default', () => {
-      renderWithRouter(<TeamDefinitionsPage />);
+      renderWithProviders(<TeamDefinitionsPage />);
 
       const dorTab = screen.getByRole('tab', { name: 'Definition of Ready' });
       expect(dorTab).toHaveAttribute('aria-selected', 'true');
@@ -108,7 +93,7 @@ describe('TeamDefinitionsPage', () => {
     });
 
     it('should show page subtitle', () => {
-      renderWithRouter(<TeamDefinitionsPage />);
+      renderWithProviders(<TeamDefinitionsPage />);
 
       expect(
         screen.getByText(
@@ -120,7 +105,7 @@ describe('TeamDefinitionsPage', () => {
 
   describe('Tab Switching', () => {
     it('should switch to Definition of Done tab when clicked', () => {
-      renderWithRouter(<TeamDefinitionsPage />);
+      renderWithProviders(<TeamDefinitionsPage />);
 
       const dodTab = screen.getByRole('tab', { name: 'Definition of Done' });
       fireEvent.click(dodTab);
@@ -134,7 +119,7 @@ describe('TeamDefinitionsPage', () => {
     });
 
     it('should switch back to Definition of Ready tab when clicked', () => {
-      renderWithRouter(<TeamDefinitionsPage />);
+      renderWithProviders(<TeamDefinitionsPage />);
 
       const dodTab = screen.getByRole('tab', { name: 'Definition of Done' });
       fireEvent.click(dodTab);
@@ -159,7 +144,7 @@ describe('TeamDefinitionsPage', () => {
         );
       };
 
-      renderWithRouter(<TestWrapper />);
+      renderWithProviders(<TestWrapper />);
 
       expect(screen.getByTestId('current-tab')).toHaveTextContent('dor');
 
@@ -170,7 +155,7 @@ describe('TeamDefinitionsPage', () => {
     });
 
     it('should read initial tab from URL query param (?tab=dod)', () => {
-      renderWithRouter(<TeamDefinitionsPage />, ['/?tab=dod']);
+      renderWithProviders(<TeamDefinitionsPage />, { initialRoute: '/?tab=dod' });
 
       const dodTab = screen.getByRole('tab', { name: 'Definition of Done' });
       expect(dodTab).toHaveAttribute('aria-selected', 'true');
@@ -178,7 +163,7 @@ describe('TeamDefinitionsPage', () => {
     });
 
     it('should default to dor tab for invalid query param', () => {
-      renderWithRouter(<TeamDefinitionsPage />, ['/?tab=invalid']);
+      renderWithProviders(<TeamDefinitionsPage />, { initialRoute: '/?tab=invalid' });
 
       const dorTab = screen.getByRole('tab', { name: 'Definition of Ready' });
       expect(dorTab).toHaveAttribute('aria-selected', 'true');
@@ -196,7 +181,7 @@ describe('TeamDefinitionsPage', () => {
         );
       };
 
-      renderWithRouter(<TestWrapper />, ['/?tab=dod']);
+      renderWithProviders(<TestWrapper />, { initialRoute: '/?tab=dod' });
 
       expect(screen.getByTestId('current-tab')).toHaveTextContent('dod');
 
@@ -213,7 +198,7 @@ describe('TeamDefinitionsPage', () => {
         currentTeam: null,
       });
 
-      renderWithRouter(<TeamDefinitionsPage />);
+      renderWithProviders(<TeamDefinitionsPage />);
 
       expect(screen.getByRole('heading', { name: 'No Team Selected' })).toBeInTheDocument();
       expect(screen.getByText('Please select a team to continue.')).toBeInTheDocument();
@@ -224,7 +209,7 @@ describe('TeamDefinitionsPage', () => {
         currentTeam: null,
       });
 
-      renderWithRouter(<TeamDefinitionsPage />);
+      renderWithProviders(<TeamDefinitionsPage />);
 
       expect(screen.queryByRole('tablist')).not.toBeInTheDocument();
     });
@@ -232,7 +217,7 @@ describe('TeamDefinitionsPage', () => {
 
   describe('Keyboard Navigation', () => {
     it('should switch tab on Enter key press', () => {
-      renderWithRouter(<TeamDefinitionsPage />);
+      renderWithProviders(<TeamDefinitionsPage />);
 
       const dodTab = screen.getByRole('tab', { name: 'Definition of Done' });
       dodTab.focus();
@@ -243,7 +228,7 @@ describe('TeamDefinitionsPage', () => {
     });
 
     it('should switch tab on Space key press', () => {
-      renderWithRouter(<TeamDefinitionsPage />);
+      renderWithProviders(<TeamDefinitionsPage />);
 
       const dodTab = screen.getByRole('tab', { name: 'Definition of Done' });
       dodTab.focus();
@@ -254,7 +239,7 @@ describe('TeamDefinitionsPage', () => {
     });
 
     it('should handle Tab key to navigate between tabs', () => {
-      renderWithRouter(<TeamDefinitionsPage />);
+      renderWithProviders(<TeamDefinitionsPage />);
 
       const dorTab = screen.getByRole('tab', { name: 'Definition of Ready' });
       const dodTab = screen.getByRole('tab', { name: 'Definition of Done' });
@@ -270,7 +255,7 @@ describe('TeamDefinitionsPage', () => {
 
   describe('Accessibility', () => {
     it('should have proper ARIA attributes for tabs', () => {
-      renderWithRouter(<TeamDefinitionsPage />);
+      renderWithProviders(<TeamDefinitionsPage />);
 
       const tablist = screen.getByRole('tablist');
       expect(tablist).toBeInTheDocument();
@@ -288,7 +273,7 @@ describe('TeamDefinitionsPage', () => {
     });
 
     it('should have proper ARIA attributes for tab panels', () => {
-      renderWithRouter(<TeamDefinitionsPage />);
+      renderWithProviders(<TeamDefinitionsPage />);
 
       const tabpanels = screen.getAllByRole('tabpanel', { hidden: true });
       expect(tabpanels).toHaveLength(2);
@@ -301,7 +286,7 @@ describe('TeamDefinitionsPage', () => {
     });
 
     it('should update aria-selected when tabs change', () => {
-      renderWithRouter(<TeamDefinitionsPage />);
+      renderWithProviders(<TeamDefinitionsPage />);
 
       const dorTab = screen.getByRole('tab', { name: 'Definition of Ready' });
       const dodTab = screen.getByRole('tab', { name: 'Definition of Done' });
@@ -316,7 +301,7 @@ describe('TeamDefinitionsPage', () => {
     });
 
     it('should have hidden attribute on inactive tab panel', () => {
-      renderWithRouter(<TeamDefinitionsPage />);
+      renderWithProviders(<TeamDefinitionsPage />);
 
       const tabpanels = screen.getAllByRole('tabpanel', { hidden: true });
       const dodPanel = tabpanels.find((panel) => panel.id === 'dod-panel');

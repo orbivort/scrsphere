@@ -1,7 +1,10 @@
 import '@testing-library/jest-dom';
 import 'vi-axe/extend-expect';
+import { vi } from 'vitest';
 
 // Extend Vitest expect with vi-axe matchers
+
+// i18n is initialized globally in src/globalSetup.ts before all tests run
 
 // Mock import.meta.env for Vite - must be done before any imports
 const globalImport = globalThis as { import?: { meta: { env: Record<string, string> } } };

@@ -1,8 +1,13 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { vi } from 'vitest';
+import {
+  screen,
+  fireEvent,
+  waitFor,
+  renderWithProviders,
+  initTestI18n,
+  i18nT,
+} from '../../test-utils';
+import { vi, beforeAll } from 'vitest';
 import { IncrementCreate } from './IncrementCreate';
 import { apiService } from './../../services';
 import { useTeamContext } from './../../contexts/TeamContext';
@@ -26,17 +31,12 @@ vi.mock('react-router-dom', async () => {
 });
 
 describe('IncrementCreate', () => {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-    },
+  beforeAll(async () => {
+    await initTestI18n();
   });
 
   beforeEach(() => {
     vi.clearAllMocks();
-    queryClient.clear();
     (useTeamContext as vi.Mock).mockReturnValue({
       currentTeam: { id: 'team-1', name: 'Test Team' },
     });
@@ -54,15 +54,7 @@ describe('IncrementCreate', () => {
   });
 
   const renderComponent = (initialEntries = ['/increment/create']) => {
-    return render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter initialEntries={initialEntries}>
-          <Routes>
-            <Route path="/increment/create" element={<IncrementCreate />} />
-          </Routes>
-        </MemoryRouter>
-      </QueryClientProvider>
-    );
+    return renderWithProviders(<IncrementCreate />, { initialRoute: initialEntries[0] });
   };
 
   describe('Sprint Selection', () => {
@@ -394,7 +386,7 @@ describe('IncrementCreate', () => {
 
       await waitFor(() => {
         expect(mockToast.error).toHaveBeenCalledWith(
-          'Failed to deliver increment. You can deliver it manually from the increment details page.'
+          i18nT('increments:create.toast.deliverFailed')
         );
       });
 

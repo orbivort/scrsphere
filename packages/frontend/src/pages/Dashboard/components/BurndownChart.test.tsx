@@ -1,8 +1,9 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { screen, renderWithProviders } from '@/test-utils';
+import { vi, describe, it, expect, beforeEach, beforeAll } from 'vitest';
 import { Line } from 'react-chartjs-2';
 
+import { initTestI18n } from '@/test-utils';
 import { BurndownChart } from './BurndownChart';
 
 const { mockLine } = vi.hoisted(() => ({
@@ -37,20 +38,24 @@ const mockValidData = {
 };
 
 describe('BurndownChart Component', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   describe('Rendering with Valid Data', () => {
     it('should render the Line chart component when valid data is provided', () => {
-      render(<BurndownChart data={mockValidData} />);
+      renderWithProviders(<BurndownChart data={mockValidData} />);
 
       const chart = screen.getByTestId('mock-line-chart');
       expect(chart).toBeInTheDocument();
     });
 
     it('should render chart with correct structure', () => {
-      const { container } = render(<BurndownChart data={mockValidData} />);
+      const { container } = renderWithProviders(<BurndownChart data={mockValidData} />);
 
       expect(container.querySelector('[data-testid="mock-line-chart"]')).toBeInTheDocument();
     });
@@ -58,42 +63,46 @@ describe('BurndownChart Component', () => {
 
   describe('Rendering with Invalid Data', () => {
     it('should render chart even when data is null', () => {
-      render(<BurndownChart data={null} />);
+      renderWithProviders(<BurndownChart data={null} />);
 
       const chart = screen.getByTestId('mock-line-chart');
       expect(chart).toBeInTheDocument();
     });
 
     it('should render chart even when data is undefined', () => {
-      render(<BurndownChart data={undefined} />);
+      renderWithProviders(<BurndownChart data={undefined} />);
 
       const chart = screen.getByTestId('mock-line-chart');
       expect(chart).toBeInTheDocument();
     });
 
     it('should render chart with empty arrays', () => {
-      render(<BurndownChart data={{ dates: [], ideal: [], actual: [] }} />);
+      renderWithProviders(<BurndownChart data={{ dates: [], ideal: [], actual: [] }} />);
 
       const chart = screen.getByTestId('mock-line-chart');
       expect(chart).toBeInTheDocument();
     });
 
     it('should render chart when dates array is empty but others have data', () => {
-      render(<BurndownChart data={{ dates: [], ideal: [100], actual: [100] }} />);
+      renderWithProviders(<BurndownChart data={{ dates: [], ideal: [100], actual: [100] }} />);
 
       const chart = screen.getByTestId('mock-line-chart');
       expect(chart).toBeInTheDocument();
     });
 
     it('should render chart when ideal array is empty', () => {
-      render(<BurndownChart data={{ dates: ['2026-02-01'], ideal: [], actual: [100] }} />);
+      renderWithProviders(
+        <BurndownChart data={{ dates: ['2026-02-01'], ideal: [], actual: [100] }} />
+      );
 
       const chart = screen.getByTestId('mock-line-chart');
       expect(chart).toBeInTheDocument();
     });
 
     it('should render chart when actual array is empty', () => {
-      render(<BurndownChart data={{ dates: ['2026-02-01'], ideal: [100], actual: [] }} />);
+      renderWithProviders(
+        <BurndownChart data={{ dates: ['2026-02-01'], ideal: [100], actual: [] }} />
+      );
 
       const chart = screen.getByTestId('mock-line-chart');
       expect(chart).toBeInTheDocument();
@@ -106,7 +115,7 @@ describe('BurndownChart Component', () => {
         actual: [100, 85],
       };
 
-      render(<BurndownChart data={mismatchedData} />);
+      renderWithProviders(<BurndownChart data={mismatchedData} />);
 
       const chart = screen.getByTestId('mock-line-chart');
       expect(chart).toBeInTheDocument();
@@ -115,49 +124,49 @@ describe('BurndownChart Component', () => {
 
   describe('Chart Summary Generation', () => {
     it('should display chart summary in visually hidden element', () => {
-      render(<BurndownChart data={mockValidData} />);
+      renderWithProviders(<BurndownChart data={mockValidData} />);
 
       const summary = screen.getByText(/Sprint burndown chart:/);
       expect(summary).toBeInTheDocument();
     });
 
     it('should show correct total days in summary', () => {
-      render(<BurndownChart data={mockValidData} />);
+      renderWithProviders(<BurndownChart data={mockValidData} />);
 
       const summary = screen.getByText(/5 days tracked/);
       expect(summary).toBeInTheDocument();
     });
 
     it('should show current day in summary', () => {
-      render(<BurndownChart data={mockValidData} />);
+      renderWithProviders(<BurndownChart data={mockValidData} />);
 
       const summary = screen.getByText(/Current day: 2026-02-05/);
       expect(summary).toBeInTheDocument();
     });
 
     it('should show starting story points in summary', () => {
-      render(<BurndownChart data={mockValidData} />);
+      renderWithProviders(<BurndownChart data={mockValidData} />);
 
       const summary = screen.getByText(/Starting story points: 100/);
       expect(summary).toBeInTheDocument();
     });
 
     it('should show ideal remaining points in summary', () => {
-      render(<BurndownChart data={mockValidData} />);
+      renderWithProviders(<BurndownChart data={mockValidData} />);
 
       const summary = screen.getByText(/Ideal remaining: 20 points/);
       expect(summary).toBeInTheDocument();
     });
 
     it('should show actual remaining points in summary', () => {
-      render(<BurndownChart data={mockValidData} />);
+      renderWithProviders(<BurndownChart data={mockValidData} />);
 
       const summary = screen.getByText(/Actual remaining: 30 points/);
       expect(summary).toBeInTheDocument();
     });
 
     it('should show empty summary when data is null', () => {
-      render(<BurndownChart data={null} />);
+      renderWithProviders(<BurndownChart data={null} />);
 
       const summaryElement = document.getElementById('burndown-chart-summary');
       expect(summaryElement).toBeInTheDocument();
@@ -165,7 +174,7 @@ describe('BurndownChart Component', () => {
     });
 
     it('should show empty summary when data is undefined', () => {
-      render(<BurndownChart data={undefined} />);
+      renderWithProviders(<BurndownChart data={undefined} />);
 
       const summaryElement = document.getElementById('burndown-chart-summary');
       expect(summaryElement).toBeInTheDocument();
@@ -173,21 +182,25 @@ describe('BurndownChart Component', () => {
     });
 
     it('should show no data message when dates array is empty', () => {
-      render(<BurndownChart data={{ dates: [], ideal: [], actual: [] }} />);
+      renderWithProviders(<BurndownChart data={{ dates: [], ideal: [], actual: [] }} />);
 
       const summary = screen.getByText('No burndown data available.');
       expect(summary).toBeInTheDocument();
     });
 
     it('should show no data message when ideal array is empty', () => {
-      render(<BurndownChart data={{ dates: ['2026-02-01'], ideal: [], actual: [100] }} />);
+      renderWithProviders(
+        <BurndownChart data={{ dates: ['2026-02-01'], ideal: [], actual: [100] }} />
+      );
 
       const summary = screen.getByText('No burndown data available.');
       expect(summary).toBeInTheDocument();
     });
 
     it('should show no data message when actual array is empty', () => {
-      render(<BurndownChart data={{ dates: ['2026-02-01'], ideal: [100], actual: [] }} />);
+      renderWithProviders(
+        <BurndownChart data={{ dates: ['2026-02-01'], ideal: [100], actual: [] }} />
+      );
 
       const summary = screen.getByText('No burndown data available.');
       expect(summary).toBeInTheDocument();
@@ -196,14 +209,14 @@ describe('BurndownChart Component', () => {
 
   describe('Accessibility', () => {
     it('should have aria-describedby for chart summary', () => {
-      const { container } = render(<BurndownChart data={mockValidData} />);
+      const { container } = renderWithProviders(<BurndownChart data={mockValidData} />);
 
       const chartWrapper = container.querySelector('[aria-describedby="burndown-chart-summary"]');
       expect(chartWrapper).toBeInTheDocument();
     });
 
     it('should have aria-label on the Line component', () => {
-      render(<BurndownChart data={mockValidData} />);
+      renderWithProviders(<BurndownChart data={mockValidData} />);
 
       const firstCallArgs = mockLine.mock.calls[0][0] as Record<string, unknown>;
       expect(firstCallArgs).toMatchObject({
@@ -212,7 +225,7 @@ describe('BurndownChart Component', () => {
     });
 
     it('should have visually hidden summary for screen readers', () => {
-      render(<BurndownChart data={mockValidData} />);
+      renderWithProviders(<BurndownChart data={mockValidData} />);
 
       const summaryElement = document.getElementById('burndown-chart-summary');
       expect(summaryElement).toBeInTheDocument();
@@ -222,7 +235,7 @@ describe('BurndownChart Component', () => {
 
   describe('Data Validation and Logging', () => {
     it('should log warning when dates array is empty', () => {
-      render(<BurndownChart data={{ dates: [], ideal: [100], actual: [100] }} />);
+      renderWithProviders(<BurndownChart data={{ dates: [], ideal: [100], actual: [100] }} />);
 
       expect(mockWarn).toHaveBeenCalledWith('Burndown chart data validation failed: Empty arrays');
     });
@@ -234,7 +247,7 @@ describe('BurndownChart Component', () => {
         actual: [100, 85],
       };
 
-      render(<BurndownChart data={mismatchedData} />);
+      renderWithProviders(<BurndownChart data={mismatchedData} />);
 
       expect(mockWarn).toHaveBeenCalledWith(
         'Burndown chart data validation failed: Array length mismatch - dates: 2, ideal: 3, actual: 2'
@@ -250,7 +263,7 @@ describe('BurndownChart Component', () => {
         actual: [100],
       };
 
-      render(<BurndownChart data={singleDayData} />);
+      renderWithProviders(<BurndownChart data={singleDayData} />);
 
       const summary = screen.getByText(/1 days tracked/);
       expect(summary).toBeInTheDocument();
@@ -263,7 +276,7 @@ describe('BurndownChart Component', () => {
         actual: Array.from({ length: 100 }, (_, i) => 1000 - i * 8),
       };
 
-      render(<BurndownChart data={manyDaysData} />);
+      renderWithProviders(<BurndownChart data={manyDaysData} />);
 
       const summary = screen.getByText(/100 days tracked/);
       expect(summary).toBeInTheDocument();
@@ -276,7 +289,7 @@ describe('BurndownChart Component', () => {
         actual: [0, 0],
       };
 
-      render(<BurndownChart data={zeroData} />);
+      renderWithProviders(<BurndownChart data={zeroData} />);
 
       const chart = screen.getByTestId('mock-line-chart');
       expect(chart).toBeInTheDocument();
@@ -289,7 +302,7 @@ describe('BurndownChart Component', () => {
         actual: [100, 0],
       };
 
-      render(<BurndownChart data={negativeData} />);
+      renderWithProviders(<BurndownChart data={negativeData} />);
 
       const summary = screen.getByText(/Actual remaining: 0 points/);
       expect(summary).toBeInTheDocument();
@@ -302,7 +315,7 @@ describe('BurndownChart Component', () => {
         actual: [100, 55, 20],
       };
 
-      render(<BurndownChart data={aheadData} />);
+      renderWithProviders(<BurndownChart data={aheadData} />);
 
       const summary = screen.getByText(/Current day: 2026-02-03/);
       expect(summary).toBeInTheDocument();
@@ -315,7 +328,7 @@ describe('BurndownChart Component', () => {
         actual: [100, 80, 60],
       };
 
-      render(<BurndownChart data={behindData} />);
+      renderWithProviders(<BurndownChart data={behindData} />);
 
       const summary = screen.getByText(/Current day: 2026-02-03/);
       expect(summary).toBeInTheDocument();
@@ -325,7 +338,7 @@ describe('BurndownChart Component', () => {
   describe('Line Chart Options', () => {
     it('should pass options to Line component', () => {
       const LineComponent = vi.mocked(Line);
-      render(<BurndownChart data={mockValidData} />);
+      renderWithProviders(<BurndownChart data={mockValidData} />);
 
       const firstCall = LineComponent.mock.calls[0][0] as Record<string, unknown>;
       expect(firstCall).toMatchObject({
@@ -338,7 +351,7 @@ describe('BurndownChart Component', () => {
 
     it('should pass datasets to Line component with correct structure', () => {
       const LineComponent = vi.mocked(Line);
-      render(<BurndownChart data={mockValidData} />);
+      renderWithProviders(<BurndownChart data={mockValidData} />);
 
       const firstCall = LineComponent.mock.calls[0][0] as Record<string, unknown>;
       const data = firstCall.data as Record<string, unknown>;
@@ -361,7 +374,7 @@ describe('BurndownChart Component', () => {
 
     it('should configure legend position to top', () => {
       const LineComponent = vi.mocked(Line);
-      render(<BurndownChart data={mockValidData} />);
+      renderWithProviders(<BurndownChart data={mockValidData} />);
 
       const firstCall = LineComponent.mock.calls[0][0] as Record<string, unknown>;
       const options = firstCall.options as Record<string, unknown>;
@@ -374,7 +387,7 @@ describe('BurndownChart Component', () => {
 
     it('should configure chart title', () => {
       const LineComponent = vi.mocked(Line);
-      render(<BurndownChart data={mockValidData} />);
+      renderWithProviders(<BurndownChart data={mockValidData} />);
 
       const firstCall = LineComponent.mock.calls[0][0] as Record<string, unknown>;
       const options = firstCall.options as Record<string, unknown>;
@@ -388,7 +401,7 @@ describe('BurndownChart Component', () => {
 
     it('should configure y-axis to begin at zero', () => {
       const LineComponent = vi.mocked(Line);
-      render(<BurndownChart data={mockValidData} />);
+      renderWithProviders(<BurndownChart data={mockValidData} />);
 
       const firstCall = LineComponent.mock.calls[0][0] as Record<string, unknown>;
       const options = firstCall.options as Record<string, unknown>;
@@ -401,7 +414,7 @@ describe('BurndownChart Component', () => {
 
     it('should configure y-axis title', () => {
       const LineComponent = vi.mocked(Line);
-      render(<BurndownChart data={mockValidData} />);
+      renderWithProviders(<BurndownChart data={mockValidData} />);
 
       const firstCall = LineComponent.mock.calls[0][0] as Record<string, unknown>;
       const options = firstCall.options as Record<string, unknown>;
@@ -416,7 +429,7 @@ describe('BurndownChart Component', () => {
 
     it('should configure x-axis title', () => {
       const LineComponent = vi.mocked(Line);
-      render(<BurndownChart data={mockValidData} />);
+      renderWithProviders(<BurndownChart data={mockValidData} />);
 
       const firstCall = LineComponent.mock.calls[0][0] as Record<string, unknown>;
       const options = firstCall.options as Record<string, unknown>;

@@ -8,10 +8,15 @@
  * - Accessibility during loading
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, act } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { BrowserRouter } from 'react-router-dom';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
+import {
+  renderWithProviders,
+  screen,
+  act,
+  initTestI18n,
+  createTestQueryClient,
+} from '../../test-utils';
+import type { QueryClient } from '@tanstack/react-query';
 
 import { Dashboard } from './Dashboard';
 import { useTeamStore, useAuthStore } from '../../store';
@@ -76,25 +81,11 @@ vi.mock('./components/ImpedimentsSection/ImpedimentsSection', () => ({
   ),
 }));
 
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        staleTime: 0,
-      },
-    },
-  });
+// Use createTestQueryClient from test-utils instead of defining locally
 
 const renderDashboard = (queryClient?: QueryClient) => {
   const testQueryClient = queryClient || createTestQueryClient();
-  return render(
-    <QueryClientProvider client={testQueryClient}>
-      <BrowserRouter>
-        <Dashboard />
-      </BrowserRouter>
-    </QueryClientProvider>
-  );
+  return renderWithProviders(<Dashboard />, { queryClient: testQueryClient });
 };
 
 const mockTeam = {
@@ -116,6 +107,10 @@ describe('Dashboard - Loading State Tests', () => {
   let mockUseTeamStore: ReturnType<typeof vi.fn>;
   let mockUseAuthStore: ReturnType<typeof vi.fn>;
   let mockApiService: typeof apiService;
+
+  beforeAll(async () => {
+    await initTestI18n();
+  });
 
   beforeEach(() => {
     mockUseTeamStore = vi.mocked(useTeamStore);

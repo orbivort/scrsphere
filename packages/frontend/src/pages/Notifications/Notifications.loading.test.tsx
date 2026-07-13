@@ -10,10 +10,8 @@
  * - Accessibility during loading (ARIA attributes)
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MemoryRouter } from 'react-router-dom';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
+import { screen, waitFor, renderWithProviders, initTestI18n } from '../../test-utils';
 
 import { Notifications } from './Notifications';
 import { useNotifications, useMarkAsRead, useMarkAllAsRead } from '../../hooks/useNotifications';
@@ -36,27 +34,10 @@ vi.mock('react-router-dom', async () => {
   };
 });
 
-// Test utilities
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        staleTime: 0,
-      },
-    },
-  });
-
-const renderNotifications = (queryClient?: QueryClient) => {
-  const testQueryClient = queryClient || createTestQueryClient();
-  return render(
-    <QueryClientProvider client={testQueryClient}>
-      <MemoryRouter>
-        <Notifications />
-      </MemoryRouter>
-    </QueryClientProvider>
-  );
-};
+// Initialize i18n before all tests
+beforeAll(async () => {
+  await initTestI18n();
+});
 
 // Mock data
 const mockNotifications = [
@@ -147,7 +128,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      renderNotifications();
+      renderWithProviders(<Notifications />);
 
       expect(screen.getByRole('status')).toBeInTheDocument();
     });
@@ -159,7 +140,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      renderNotifications();
+      renderWithProviders(<Notifications />);
 
       const loader = screen.getByRole('status');
       expect(loader).toHaveAttribute('aria-label', 'Loading notifications');
@@ -172,7 +153,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      renderNotifications();
+      renderWithProviders(<Notifications />);
 
       expect(screen.getByRole('status')).toBeInTheDocument();
       // Check that loading text appears (it appears in both aria-label and visible text)
@@ -187,7 +168,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      renderNotifications();
+      renderWithProviders(<Notifications />);
 
       expect(screen.queryByText('Team Invitation')).not.toBeInTheDocument();
       expect(screen.queryByText('Task Assigned')).not.toBeInTheDocument();
@@ -202,7 +183,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      renderNotifications();
+      renderWithProviders(<Notifications />);
 
       await waitFor(() => {
         expect(screen.queryByRole('status')).not.toBeInTheDocument();
@@ -218,7 +199,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      renderNotifications();
+      renderWithProviders(<Notifications />);
 
       await waitFor(() => {
         expect(screen.getByText('Today')).toBeInTheDocument();
@@ -232,7 +213,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      renderNotifications();
+      renderWithProviders(<Notifications />);
 
       await waitFor(() => {
         expect(screen.getByText('No notifications yet')).toBeInTheDocument();
@@ -246,7 +227,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      renderNotifications();
+      renderWithProviders(<Notifications />);
 
       await waitFor(() => {
         expect(screen.getByText('Mark All as Read')).toBeInTheDocument();
@@ -266,7 +247,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      renderNotifications();
+      renderWithProviders(<Notifications />);
 
       await waitFor(() => {
         expect(screen.queryByText('Mark All as Read')).not.toBeInTheDocument();
@@ -282,7 +263,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      renderNotifications();
+      renderWithProviders(<Notifications />);
 
       expect(screen.getByRole('status')).toBeInTheDocument();
     });
@@ -294,7 +275,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      const { rerender } = renderNotifications();
+      const { rerender } = renderWithProviders(<Notifications />);
 
       expect(screen.getByRole('status')).toBeInTheDocument();
 
@@ -305,13 +286,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      rerender(
-        <QueryClientProvider client={createTestQueryClient()}>
-          <MemoryRouter>
-            <Notifications />
-          </MemoryRouter>
-        </QueryClientProvider>
-      );
+      rerender(<Notifications />);
 
       await waitFor(() => {
         expect(screen.queryByRole('status')).not.toBeInTheDocument();
@@ -325,7 +300,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      const { rerender } = renderNotifications();
+      const { rerender } = renderWithProviders(<Notifications />);
 
       await waitFor(() => {
         expect(screen.queryByRole('status')).not.toBeInTheDocument();
@@ -338,13 +313,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      rerender(
-        <QueryClientProvider client={createTestQueryClient()}>
-          <MemoryRouter>
-            <Notifications />
-          </MemoryRouter>
-        </QueryClientProvider>
-      );
+      rerender(<Notifications />);
 
       expect(screen.getByRole('status')).toBeInTheDocument();
     });
@@ -358,7 +327,7 @@ describe('Notifications - Loading State Tests', () => {
         error: new Error('Network error'),
       } as unknown as ReturnType<typeof useNotifications>);
 
-      renderNotifications();
+      renderWithProviders(<Notifications />);
 
       await waitFor(() => {
         expect(screen.getByText('Failed to load notifications')).toBeInTheDocument();
@@ -372,7 +341,7 @@ describe('Notifications - Loading State Tests', () => {
         error: new Error('Network error'),
       } as unknown as ReturnType<typeof useNotifications>);
 
-      renderNotifications();
+      renderWithProviders(<Notifications />);
 
       await waitFor(() => {
         expect(screen.getByText('Try Again')).toBeInTheDocument();
@@ -386,7 +355,7 @@ describe('Notifications - Loading State Tests', () => {
         error: new Error('Network error'),
       } as unknown as ReturnType<typeof useNotifications>);
 
-      renderNotifications();
+      renderWithProviders(<Notifications />);
 
       await waitFor(() => {
         expect(screen.queryByRole('status')).not.toBeInTheDocument();
@@ -400,7 +369,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      const { rerender } = renderNotifications();
+      const { rerender } = renderWithProviders(<Notifications />);
 
       expect(screen.getByRole('status')).toBeInTheDocument();
 
@@ -411,13 +380,7 @@ describe('Notifications - Loading State Tests', () => {
         error: new Error('Network error'),
       } as unknown as ReturnType<typeof useNotifications>);
 
-      rerender(
-        <QueryClientProvider client={createTestQueryClient()}>
-          <MemoryRouter>
-            <Notifications />
-          </MemoryRouter>
-        </QueryClientProvider>
-      );
+      rerender(<Notifications />);
 
       await waitFor(() => {
         expect(screen.queryByRole('status')).not.toBeInTheDocument();
@@ -434,7 +397,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      renderNotifications();
+      renderWithProviders(<Notifications />);
 
       expect(screen.getByRole('status')).toBeInTheDocument();
     });
@@ -447,7 +410,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      const { rerender } = renderNotifications();
+      const { rerender } = renderWithProviders(<Notifications />);
 
       expect(screen.getByRole('status')).toBeInTheDocument();
 
@@ -458,13 +421,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      rerender(
-        <QueryClientProvider client={createTestQueryClient()}>
-          <MemoryRouter>
-            <Notifications />
-          </MemoryRouter>
-        </QueryClientProvider>
-      );
+      rerender(<Notifications />);
 
       await waitFor(() => {
         expect(screen.queryByRole('status')).not.toBeInTheDocument();
@@ -478,7 +435,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      renderNotifications();
+      renderWithProviders(<Notifications />);
 
       // Simulate extended loading time - still shows loading
       expect(screen.getByRole('status')).toBeInTheDocument();
@@ -497,7 +454,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      renderNotifications();
+      renderWithProviders(<Notifications />);
 
       await waitFor(() => {
         expect(screen.getByText('No notifications yet')).toBeInTheDocument();
@@ -511,7 +468,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      renderNotifications();
+      renderWithProviders(<Notifications />);
 
       await waitFor(() => {
         expect(screen.getByText('No notifications yet')).toBeInTheDocument();
@@ -525,7 +482,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      renderNotifications();
+      renderWithProviders(<Notifications />);
 
       await waitFor(() => {
         expect(screen.getByText('No notifications yet')).toBeInTheDocument();
@@ -541,17 +498,11 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      const { rerender } = renderNotifications();
+      const { rerender } = renderWithProviders(<Notifications />);
 
       // Simulate rapid filter changes
       for (let i = 0; i < 5; i++) {
-        rerender(
-          <QueryClientProvider client={createTestQueryClient()}>
-            <MemoryRouter>
-              <Notifications />
-            </MemoryRouter>
-          </QueryClientProvider>
-        );
+        rerender(<Notifications />);
 
         expect(screen.getByRole('status')).toBeInTheDocument();
       }
@@ -563,13 +514,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      rerender(
-        <QueryClientProvider client={createTestQueryClient()}>
-          <MemoryRouter>
-            <Notifications />
-          </MemoryRouter>
-        </QueryClientProvider>
-      );
+      rerender(<Notifications />);
 
       await waitFor(() => {
         expect(screen.queryByRole('status')).not.toBeInTheDocument();
@@ -583,7 +528,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      renderNotifications();
+      renderWithProviders(<Notifications />);
 
       expect(screen.getByRole('status')).toBeInTheDocument();
 
@@ -605,7 +550,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      renderNotifications();
+      renderWithProviders(<Notifications />);
 
       const loader = screen.getByRole('status');
       expect(loader).toBeInTheDocument();
@@ -619,7 +564,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      renderNotifications();
+      renderWithProviders(<Notifications />);
 
       const loader = screen.getByRole('status');
       expect(loader).toHaveAttribute('aria-label', 'Loading notifications');
@@ -632,7 +577,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      renderNotifications();
+      renderWithProviders(<Notifications />);
 
       // Check that loading text appears (it appears in both aria-label and visible text)
       const loadingTexts = screen.getAllByText('Loading notifications...');
@@ -646,7 +591,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      renderNotifications();
+      renderWithProviders(<Notifications />);
 
       const loader = screen.getByRole('status');
       expect(loader).toBeInTheDocument();
@@ -660,7 +605,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      const { rerender } = renderNotifications();
+      const { rerender } = renderWithProviders(<Notifications />);
 
       const loader = screen.getByRole('status');
       expect(loader).toBeInTheDocument();
@@ -673,13 +618,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      rerender(
-        <QueryClientProvider client={createTestQueryClient()}>
-          <MemoryRouter>
-            <Notifications />
-          </MemoryRouter>
-        </QueryClientProvider>
-      );
+      rerender(<Notifications />);
 
       await waitFor(() => {
         expect(screen.queryByRole('status')).not.toBeInTheDocument();
@@ -698,7 +637,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      const { unmount } = renderNotifications();
+      const { unmount } = renderWithProviders(<Notifications />);
 
       expect(screen.getByRole('status')).toBeInTheDocument();
 
@@ -714,7 +653,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      const { unmount } = renderNotifications();
+      const { unmount } = renderWithProviders(<Notifications />);
 
       unmount();
 
@@ -728,7 +667,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      const { unmount } = renderNotifications();
+      const { unmount } = renderWithProviders(<Notifications />);
 
       await waitFor(() => {
         expect(screen.queryByRole('status')).not.toBeInTheDocument();
@@ -751,7 +690,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      const { rerender } = renderNotifications();
+      const { rerender } = renderWithProviders(<Notifications />);
 
       await waitFor(() => {
         expect(screen.getByText('Page 1 of 2')).toBeInTheDocument();
@@ -764,13 +703,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      rerender(
-        <QueryClientProvider client={createTestQueryClient()}>
-          <MemoryRouter>
-            <Notifications />
-          </MemoryRouter>
-        </QueryClientProvider>
-      );
+      rerender(<Notifications />);
 
       expect(screen.getByRole('status')).toBeInTheDocument();
     });
@@ -782,7 +715,7 @@ describe('Notifications - Loading State Tests', () => {
         error: null,
       } as unknown as ReturnType<typeof useNotifications>);
 
-      renderNotifications();
+      renderWithProviders(<Notifications />);
 
       expect(screen.getByRole('status')).toBeInTheDocument();
     });

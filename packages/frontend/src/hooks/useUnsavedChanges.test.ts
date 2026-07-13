@@ -1,6 +1,21 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 
+// Mock react-i18next before importing the hook
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => {
+      const translations: Record<string, string> = {
+        'unsavedChanges.messages.profileEdit':
+          'You have unsaved changes in the profile edit form. Are you sure you want to discard them?',
+        'unsavedChanges.messages.passwordChange':
+          'You have unsaved changes in the password change form. Are you sure you want to discard them?',
+      };
+      return translations[key] ?? key;
+    },
+  }),
+}));
+
 import { useUnsavedChanges } from './useUnsavedChanges';
 
 describe('useUnsavedChanges', () => {
@@ -144,7 +159,7 @@ describe('useUnsavedChanges', () => {
       });
 
       const message = result.current.getUnsavedChangesMessage();
-      expect(message).toContain('profile edit');
+      expect(message).toContain('unsaved changes in the profile edit');
     });
 
     it('should return password change message for other modals', () => {
@@ -155,7 +170,7 @@ describe('useUnsavedChanges', () => {
       });
 
       const message = result.current.getUnsavedChangesMessage();
-      expect(message).toContain('password change');
+      expect(message).toContain('unsaved changes in the password change');
     });
 
     it('should return password change message for unknown modal ids', () => {
@@ -166,7 +181,7 @@ describe('useUnsavedChanges', () => {
       });
 
       const message = result.current.getUnsavedChangesMessage();
-      expect(message).toContain('password change');
+      expect(message).toContain('unsaved changes in the password change');
     });
 
     it('should update message when pendingModalClose changes', () => {
@@ -177,7 +192,7 @@ describe('useUnsavedChanges', () => {
       });
 
       const profileMessage = result.current.getUnsavedChangesMessage();
-      expect(profileMessage).toContain('profile edit');
+      expect(profileMessage).toContain('unsaved changes in the profile edit');
 
       act(() => {
         result.current.handleUnsavedChangesCancel();
@@ -188,7 +203,7 @@ describe('useUnsavedChanges', () => {
       });
 
       const passwordMessage = result.current.getUnsavedChangesMessage();
-      expect(passwordMessage).toContain('password change');
+      expect(passwordMessage).toContain('unsaved changes in the password change');
     });
   });
 

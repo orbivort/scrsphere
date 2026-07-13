@@ -1,7 +1,8 @@
 import React from 'react';
-import { render, screen, fireEvent, within } from '@testing-library/react';
-import { vi } from 'vitest';
+import { screen, fireEvent, within, renderWithProviders, i18nT } from '@/test-utils';
+import { vi, beforeAll } from 'vitest';
 
+import { initTestI18n } from '@/test-utils';
 import { TeamList } from './TeamList';
 import type { Team } from '@/types/teamManagement.types';
 
@@ -46,13 +47,17 @@ describe('TeamList', () => {
   const mockOnRetry = vi.fn();
   const mockOnCreateTeam = vi.fn();
 
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   describe('Permission-based rendering', () => {
     it('should show edit/delete buttons when canEdit and canDelete are true', () => {
-      render(
+      renderWithProviders(
         <TeamList
           teams={mockTeams}
           isLoading={false}
@@ -64,14 +69,30 @@ describe('TeamList', () => {
         />
       );
 
-      expect(screen.getByRole('button', { name: /edit team alpha/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /delete team alpha/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /edit team beta/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /delete team beta/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', {
+          name: i18nT('settings:teamList.card.editTeam', { name: 'Team Alpha' }),
+        })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', {
+          name: i18nT('settings:teamList.card.deleteTeam', { name: 'Team Alpha' }),
+        })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', {
+          name: i18nT('settings:teamList.card.editTeam', { name: 'Team Beta' }),
+        })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', {
+          name: i18nT('settings:teamList.card.deleteTeam', { name: 'Team Beta' }),
+        })
+      ).toBeInTheDocument();
     });
 
     it('should NOT show edit/delete buttons when canEdit and canDelete are false', () => {
-      render(
+      renderWithProviders(
         <TeamList
           teams={mockTeams}
           isLoading={false}
@@ -83,15 +104,19 @@ describe('TeamList', () => {
         />
       );
 
-      expect(screen.queryByRole('button', { name: /edit/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole('button', { name: /delete/i })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', { name: i18nT('settings:teamList.card.edit') })
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', { name: i18nT('settings:teamList.card.delete') })
+      ).not.toBeInTheDocument();
     });
 
     it('should respect per-team permission checks when canEditTeam is provided', () => {
       // Only allow editing teams where userRole is PRODUCT_OWNER
       const canEditTeam = (team: Team) => team.userRole === 'PRODUCT_OWNER';
 
-      render(
+      renderWithProviders(
         <TeamList
           teams={mockTeams}
           isLoading={false}
@@ -105,21 +130,37 @@ describe('TeamList', () => {
       );
 
       // Team Alpha has PRODUCT_OWNER role, should show edit button
-      expect(screen.getByRole('button', { name: /edit team alpha/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', {
+          name: i18nT('settings:teamList.card.editTeam', { name: 'Team Alpha' }),
+        })
+      ).toBeInTheDocument();
 
       // Team Beta has DEVELOPER role, should NOT show edit button
-      expect(screen.queryByRole('button', { name: /edit team beta/i })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', {
+          name: i18nT('settings:teamList.card.editTeam', { name: 'Team Beta' }),
+        })
+      ).not.toBeInTheDocument();
 
       // Both teams should show delete buttons (no canDeleteTeam restriction)
-      expect(screen.getByRole('button', { name: /delete team alpha/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /delete team beta/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', {
+          name: i18nT('settings:teamList.card.deleteTeam', { name: 'Team Alpha' }),
+        })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', {
+          name: i18nT('settings:teamList.card.deleteTeam', { name: 'Team Beta' }),
+        })
+      ).toBeInTheDocument();
     });
 
     it('should respect per-team permission checks when canDeleteTeam is provided', () => {
       // Only allow deleting teams where userRole is PRODUCT_OWNER
       const canDeleteTeam = (team: Team) => team.userRole === 'PRODUCT_OWNER';
 
-      render(
+      renderWithProviders(
         <TeamList
           teams={mockTeams}
           isLoading={false}
@@ -133,21 +174,37 @@ describe('TeamList', () => {
       );
 
       // Both teams should show edit buttons (no canEditTeam restriction)
-      expect(screen.getByRole('button', { name: /edit team alpha/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /edit team beta/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', {
+          name: i18nT('settings:teamList.card.editTeam', { name: 'Team Alpha' }),
+        })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', {
+          name: i18nT('settings:teamList.card.editTeam', { name: 'Team Beta' }),
+        })
+      ).toBeInTheDocument();
 
       // Team Alpha has PRODUCT_OWNER role, should show delete button
-      expect(screen.getByRole('button', { name: /delete team alpha/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', {
+          name: i18nT('settings:teamList.card.deleteTeam', { name: 'Team Alpha' }),
+        })
+      ).toBeInTheDocument();
 
       // Team Beta has DEVELOPER role, should NOT show delete button
-      expect(screen.queryByRole('button', { name: /delete team beta/i })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', {
+          name: i18nT('settings:teamList.card.deleteTeam', { name: 'Team Beta' }),
+        })
+      ).not.toBeInTheDocument();
     });
 
     it('should respect both canEditTeam and canDeleteTeam together', () => {
       const canEditTeam = (team: Team) => team.userRole === 'PRODUCT_OWNER';
       const canDeleteTeam = (team: Team) => team.userRole === 'PRODUCT_OWNER';
 
-      render(
+      renderWithProviders(
         <TeamList
           teams={mockTeams}
           isLoading={false}
@@ -162,16 +219,32 @@ describe('TeamList', () => {
       );
 
       // Team Alpha has PRODUCT_OWNER role, should show both buttons
-      expect(screen.getByRole('button', { name: /edit team alpha/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /delete team alpha/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', {
+          name: i18nT('settings:teamList.card.editTeam', { name: 'Team Alpha' }),
+        })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', {
+          name: i18nT('settings:teamList.card.deleteTeam', { name: 'Team Alpha' }),
+        })
+      ).toBeInTheDocument();
 
       // Team Beta has DEVELOPER role, should NOT show any buttons
-      expect(screen.queryByRole('button', { name: /edit team beta/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole('button', { name: /delete team beta/i })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', {
+          name: i18nT('settings:teamList.card.editTeam', { name: 'Team Beta' }),
+        })
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', {
+          name: i18nT('settings:teamList.card.deleteTeam', { name: 'Team Beta' }),
+        })
+      ).not.toBeInTheDocument();
     });
 
     it('should call onEdit with correct team when edit button is clicked', () => {
-      render(
+      renderWithProviders(
         <TeamList
           teams={mockTeams}
           isLoading={false}
@@ -183,14 +256,16 @@ describe('TeamList', () => {
         />
       );
 
-      const editButton = screen.getByRole('button', { name: /edit team alpha/i });
+      const editButton = screen.getByRole('button', {
+        name: i18nT('settings:teamList.card.editTeam', { name: 'Team Alpha' }),
+      });
       fireEvent.click(editButton);
 
       expect(mockOnEdit).toHaveBeenCalledWith(mockTeams[0]);
     });
 
     it('should call onDelete with correct team when delete button is clicked', () => {
-      render(
+      renderWithProviders(
         <TeamList
           teams={mockTeams}
           isLoading={false}
@@ -202,14 +277,16 @@ describe('TeamList', () => {
         />
       );
 
-      const deleteButton = screen.getByRole('button', { name: /delete team alpha/i });
+      const deleteButton = screen.getByRole('button', {
+        name: i18nT('settings:teamList.card.deleteTeam', { name: 'Team Alpha' }),
+      });
       fireEvent.click(deleteButton);
 
       expect(mockOnDelete).toHaveBeenCalledWith(mockTeams[0]);
     });
 
     it('should disable buttons when editingTeamId matches', () => {
-      render(
+      renderWithProviders(
         <TeamList
           teams={mockTeams}
           isLoading={false}
@@ -222,15 +299,19 @@ describe('TeamList', () => {
         />
       );
 
-      const editButton = screen.getByRole('button', { name: /edit team alpha/i });
-      const deleteButton = screen.getByRole('button', { name: /delete team alpha/i });
+      const editButton = screen.getByRole('button', {
+        name: i18nT('settings:teamList.card.editTeam', { name: 'Team Alpha' }),
+      });
+      const deleteButton = screen.getByRole('button', {
+        name: i18nT('settings:teamList.card.deleteTeam', { name: 'Team Alpha' }),
+      });
 
       expect(editButton).toBeDisabled();
       expect(deleteButton).toBeDisabled();
     });
 
     it('should disable buttons when deletingTeamId matches', () => {
-      render(
+      renderWithProviders(
         <TeamList
           teams={mockTeams}
           isLoading={false}
@@ -243,8 +324,12 @@ describe('TeamList', () => {
         />
       );
 
-      const editButton = screen.getByRole('button', { name: /edit team alpha/i });
-      const deleteButton = screen.getByRole('button', { name: /delete team alpha/i });
+      const editButton = screen.getByRole('button', {
+        name: i18nT('settings:teamList.card.editTeam', { name: 'Team Alpha' }),
+      });
+      const deleteButton = screen.getByRole('button', {
+        name: i18nT('settings:teamList.card.deleteTeam', { name: 'Team Alpha' }),
+      });
 
       expect(editButton).toBeDisabled();
       expect(deleteButton).toBeDisabled();
@@ -253,7 +338,7 @@ describe('TeamList', () => {
 
   describe('Loading state', () => {
     it('should show loading spinner when isLoading is true', () => {
-      render(
+      renderWithProviders(
         <TeamList
           teams={[]}
           isLoading={true}
@@ -265,11 +350,11 @@ describe('TeamList', () => {
         />
       );
 
-      expect(screen.getByRole('status')).toHaveTextContent(/loading teams/i);
+      expect(screen.getByRole('status')).toHaveTextContent(i18nT('settings:teamList.loading'));
     });
 
     it('should NOT show team cards when loading', () => {
-      render(
+      renderWithProviders(
         <TeamList
           teams={mockTeams}
           isLoading={true}
@@ -289,7 +374,7 @@ describe('TeamList', () => {
     it('should show error message when error is provided', () => {
       const error = new Error('Failed to load teams');
 
-      render(
+      renderWithProviders(
         <TeamList
           teams={[]}
           isLoading={false}
@@ -302,13 +387,13 @@ describe('TeamList', () => {
         />
       );
 
-      expect(screen.getByRole('alert')).toHaveTextContent(/failed to load teams/i);
+      expect(screen.getByRole('alert')).toHaveTextContent(i18nT('settings:teamList.error'));
     });
 
     it('should call onRetry when retry button is clicked', () => {
       const error = new Error('Failed to load teams');
 
-      render(
+      renderWithProviders(
         <TeamList
           teams={[]}
           isLoading={false}
@@ -321,7 +406,7 @@ describe('TeamList', () => {
         />
       );
 
-      const retryButton = screen.getByRole('button', { name: /retry/i });
+      const retryButton = screen.getByRole('button', { name: i18nT('settings:teamList.retry') });
       fireEvent.click(retryButton);
 
       expect(mockOnRetry).toHaveBeenCalled();
@@ -330,7 +415,7 @@ describe('TeamList', () => {
 
   describe('Empty state', () => {
     it('should show empty message when no teams are provided', () => {
-      render(
+      renderWithProviders(
         <TeamList
           teams={[]}
           isLoading={false}
@@ -342,11 +427,13 @@ describe('TeamList', () => {
         />
       );
 
-      expect(screen.getByRole('status')).toHaveTextContent(/build your dream team/i);
+      expect(screen.getByRole('status')).toHaveTextContent(
+        i18nT('settings:teamList.empty.defaultTitle')
+      );
     });
 
     it('should show search-specific message when search term is provided', () => {
-      render(
+      renderWithProviders(
         <TeamList
           teams={[]}
           isLoading={false}
@@ -360,12 +447,12 @@ describe('TeamList', () => {
       );
 
       expect(screen.getByRole('status')).toHaveTextContent(
-        /no teams found matching "nonexistent"/i
+        i18nT('settings:teamList.empty.searchNoResults', { search: 'nonexistent' })
       );
     });
 
     it('should call onCreateTeam when create team link is clicked', () => {
-      render(
+      renderWithProviders(
         <TeamList
           teams={[]}
           isLoading={false}
@@ -378,7 +465,9 @@ describe('TeamList', () => {
         />
       );
 
-      const createLink = screen.getByRole('button', { name: /create your first team/i });
+      const createLink = screen.getByRole('button', {
+        name: i18nT('settings:teamList.empty.createFirstTeam'),
+      });
       fireEvent.click(createLink);
 
       expect(mockOnCreateTeam).toHaveBeenCalled();
@@ -387,7 +476,7 @@ describe('TeamList', () => {
     it('should show clear search button when search term is provided and empty state', () => {
       const mockOnClearSearch = vi.fn();
       const mockOnCreateTeam = vi.fn();
-      render(
+      renderWithProviders(
         <TeamList
           teams={[]}
           isLoading={false}
@@ -403,7 +492,7 @@ describe('TeamList', () => {
       );
 
       const clearButton = screen.getByRole('button', {
-        name: /clear search and browse all teams/i,
+        name: i18nT('settings:teamList.empty.clearSearchBrowse'),
       });
       fireEvent.click(clearButton);
 
@@ -413,7 +502,7 @@ describe('TeamList', () => {
 
   describe('Team card rendering', () => {
     it('should display team information correctly', () => {
-      render(
+      renderWithProviders(
         <TeamList
           teams={mockTeams}
           isLoading={false}
@@ -429,17 +518,29 @@ describe('TeamList', () => {
       expect(screen.getByRole('heading', { name: /team alpha/i })).toBeInTheDocument();
       expect(screen.getByRole('heading', { name: /team beta/i })).toBeInTheDocument();
 
-      // Check member counts
-      expect(screen.getByText(/5 members/i)).toBeInTheDocument();
-      expect(screen.getByText(/3 members/i)).toBeInTheDocument();
+      // Check member counts (plural form for 5 and 3)
+      expect(
+        screen.getByText(i18nT('settings:teamList.card.memberCount', { count: 5 }))
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(i18nT('settings:teamList.card.memberCount', { count: 3 }))
+      ).toBeInTheDocument();
 
       // Check descriptions
       expect(screen.getByText(/alpha description/i)).toBeInTheDocument();
       expect(screen.getByText(/beta description/i)).toBeInTheDocument();
 
       // Check creator names
-      expect(screen.getByText(/created by john doe/i)).toBeInTheDocument();
-      expect(screen.getByText(/created by jane smith/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          i18nT('settings:teamList.card.createdBy', { firstName: 'John', lastName: 'Doe' })
+        )
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          i18nT('settings:teamList.card.createdBy', { firstName: 'Jane', lastName: 'Smith' })
+        )
+      ).toBeInTheDocument();
     });
 
     it('should handle singular member count correctly', () => {
@@ -448,7 +549,7 @@ describe('TeamList', () => {
         memberCount: 1,
       };
 
-      render(
+      renderWithProviders(
         <TeamList
           teams={[singleMemberTeam]}
           isLoading={false}
@@ -460,11 +561,13 @@ describe('TeamList', () => {
         />
       );
 
-      expect(screen.getByText((content) => content.includes('1 member'))).toBeInTheDocument();
+      expect(
+        screen.getByText(i18nT('settings:teamList.card.memberCount', { count: 1 }))
+      ).toBeInTheDocument();
     });
 
     it('should navigate between cards with arrow keys', () => {
-      render(
+      renderWithProviders(
         <TeamList
           teams={mockTeams}
           isLoading={false}
@@ -492,7 +595,7 @@ describe('TeamList', () => {
     });
 
     it('should navigate between action buttons with arrow keys', () => {
-      render(
+      renderWithProviders(
         <TeamList
           teams={mockTeams}
           isLoading={false}
@@ -505,8 +608,12 @@ describe('TeamList', () => {
       );
 
       const cards = screen.getAllByRole('listitem');
-      const editButton = within(cards[0]).getByRole('button', { name: /edit team alpha/i });
-      const deleteButton = within(cards[0]).getByRole('button', { name: /delete team alpha/i });
+      const editButton = within(cards[0]).getByRole('button', {
+        name: i18nT('settings:teamList.card.editTeam', { name: 'Team Alpha' }),
+      });
+      const deleteButton = within(cards[0]).getByRole('button', {
+        name: i18nT('settings:teamList.card.deleteTeam', { name: 'Team Alpha' }),
+      });
 
       // Focus card and press Enter to focus first action
       cards[0].focus();
@@ -523,7 +630,7 @@ describe('TeamList', () => {
     });
 
     it('should have descriptive aria-label for team cards', () => {
-      render(
+      renderWithProviders(
         <TeamList
           teams={mockTeams}
           isLoading={false}
@@ -539,7 +646,10 @@ describe('TeamList', () => {
 
       // Check that cards have descriptive aria-labels
       expect(cards[0]).toHaveAttribute('aria-label', expect.stringContaining('Team Alpha'));
-      expect(cards[0]).toHaveAttribute('aria-label', expect.stringContaining('5 members'));
+      expect(cards[0]).toHaveAttribute(
+        'aria-label',
+        expect.stringContaining(i18nT('settings:teamList.card.memberCount', { count: 5 }))
+      );
       expect(cards[0]).toHaveAttribute(
         'aria-label',
         expect.stringContaining('Use arrow keys to navigate')
@@ -548,7 +658,7 @@ describe('TeamList', () => {
 
     it('should handle team with no description', () => {
       const teamWithoutDesc: Team = { ...mockTeams[0], description: undefined };
-      render(
+      renderWithProviders(
         <TeamList
           teams={[teamWithoutDesc]}
           isLoading={false}
@@ -565,7 +675,7 @@ describe('TeamList', () => {
 
     it('should handle team with 0 members', () => {
       const teamWithNoMembers: Team = { ...mockTeams[0], memberCount: 0 };
-      render(
+      renderWithProviders(
         <TeamList
           teams={[teamWithNoMembers]}
           isLoading={false}
@@ -577,11 +687,13 @@ describe('TeamList', () => {
         />
       );
 
-      expect(screen.getByText(/0 members/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(i18nT('settings:teamList.card.memberCount', { count: 0 }))
+      ).toBeInTheDocument();
     });
 
     it('should show loading state for edit button when editingTeamId matches', () => {
-      render(
+      renderWithProviders(
         <TeamList
           teams={mockTeams}
           isLoading={false}
@@ -594,13 +706,15 @@ describe('TeamList', () => {
         />
       );
 
-      const editButton = screen.getByRole('button', { name: /edit team alpha/i });
+      const editButton = screen.getByRole('button', {
+        name: i18nT('settings:teamList.card.editTeam', { name: 'Team Alpha' }),
+      });
       expect(editButton).toBeInTheDocument();
       expect(editButton).toBeDisabled();
     });
 
     it('should show loading state for delete button when deletingTeamId matches', () => {
-      render(
+      renderWithProviders(
         <TeamList
           teams={mockTeams}
           isLoading={false}
@@ -613,14 +727,16 @@ describe('TeamList', () => {
         />
       );
 
-      const deleteButton = screen.getByRole('button', { name: /delete team alpha/i });
+      const deleteButton = screen.getByRole('button', {
+        name: i18nT('settings:teamList.card.deleteTeam', { name: 'Team Alpha' }),
+      });
       expect(deleteButton).toBeInTheDocument();
       expect(deleteButton).toBeDisabled();
     });
 
     it('should navigate with only edit button available', () => {
       const canEditTeam = (team: Team) => team.id === 'team-1';
-      render(
+      renderWithProviders(
         <TeamList
           teams={[mockTeams[0]]}
           isLoading={false}
@@ -634,7 +750,9 @@ describe('TeamList', () => {
       );
 
       const cards = screen.getAllByRole('listitem');
-      const editButton = within(cards[0]).getByRole('button', { name: /edit team alpha/i });
+      const editButton = within(cards[0]).getByRole('button', {
+        name: i18nT('settings:teamList.card.editTeam', { name: 'Team Alpha' }),
+      });
 
       // Focus card and press Enter to focus edit button
       cards[0].focus();
@@ -644,7 +762,7 @@ describe('TeamList', () => {
 
     it('should navigate with only delete button available', () => {
       const canDeleteTeam = (team: Team) => team.id === 'team-1';
-      render(
+      renderWithProviders(
         <TeamList
           teams={[mockTeams[0]]}
           isLoading={false}
@@ -658,7 +776,9 @@ describe('TeamList', () => {
       );
 
       const cards = screen.getAllByRole('listitem');
-      const deleteButton = within(cards[0]).getByRole('button', { name: /delete team alpha/i });
+      const deleteButton = within(cards[0]).getByRole('button', {
+        name: i18nT('settings:teamList.card.deleteTeam', { name: 'Team Alpha' }),
+      });
 
       // Focus card and press Enter to focus delete button
       cards[0].focus();

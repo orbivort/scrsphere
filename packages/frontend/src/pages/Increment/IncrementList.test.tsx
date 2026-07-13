@@ -15,10 +15,15 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MemoryRouter } from 'react-router-dom';
-import { vi } from 'vitest';
+import {
+  screen,
+  fireEvent,
+  waitFor,
+  renderWithProviders,
+  initTestI18n,
+  i18nT,
+} from '../../test-utils';
+import { vi, beforeAll } from 'vitest';
 import { IncrementList } from './IncrementList';
 import { apiService } from '../../services';
 import { useTeamContext } from '../../contexts/TeamContext';
@@ -45,12 +50,8 @@ vi.mock('../../components/EmptyState', () => ({
 }));
 
 describe('IncrementList', () => {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-    },
+  beforeAll(async () => {
+    await initTestI18n();
   });
 
   const mockTeam = {
@@ -113,20 +114,13 @@ describe('IncrementList', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    queryClient.clear();
     (useTeamContext as vi.Mock).mockReturnValue({
       currentTeam: mockTeam,
     });
   });
 
   const renderComponent = () => {
-    return render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-          <IncrementList />
-        </MemoryRouter>
-      </QueryClientProvider>
-    );
+    return renderWithProviders(<IncrementList />);
   };
 
   describe('Team Context', () => {
@@ -148,7 +142,7 @@ describe('IncrementList', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('Increments')).toBeInTheDocument();
+        expect(screen.getByText(i18nT('increments:title'))).toBeInTheDocument();
       });
     });
   });
@@ -162,10 +156,10 @@ describe('IncrementList', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('Increments')).toBeInTheDocument();
+        expect(screen.getByText(i18nT('increments:title'))).toBeInTheDocument();
       });
 
-      expect(screen.getByText(/Manage and track your product increments/i)).toBeInTheDocument();
+      expect(screen.getByText(i18nT('increments:subtitle'))).toBeInTheDocument();
     });
 
     it('should have Create Increment button', async () => {
@@ -176,7 +170,7 @@ describe('IncrementList', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('Create Increment')).toBeInTheDocument();
+        expect(screen.getByText(i18nT('increments:createIncrement'))).toBeInTheDocument();
       });
     });
 
@@ -188,10 +182,10 @@ describe('IncrementList', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('Create Increment')).toBeInTheDocument();
+        expect(screen.getByText(i18nT('increments:createIncrement'))).toBeInTheDocument();
       });
 
-      fireEvent.click(screen.getByText('Create Increment'));
+      fireEvent.click(screen.getByText(i18nT('increments:createIncrement')));
 
       expect(mockNavigate).toHaveBeenCalledWith('/increment/create');
     });
@@ -209,11 +203,11 @@ describe('IncrementList', () => {
         // Check stats grid contains the expected values
         const statsGrid = container.querySelector('[class*="stats-grid"]');
         expect(statsGrid?.textContent).toContain('4'); // Total
-        expect(statsGrid?.textContent).toContain('Total Increments');
-        expect(statsGrid?.textContent).toContain('Active');
-        expect(statsGrid?.textContent).toContain('Delivered');
+        expect(statsGrid?.textContent).toContain(i18nT('increments:list.stats.total'));
+        expect(statsGrid?.textContent).toContain(i18nT('increments:list.stats.active'));
+        expect(statsGrid?.textContent).toContain(i18nT('increments:list.stats.delivered'));
         expect(statsGrid?.textContent).toContain('47'); // Story Points (8+13+21+5)
-        expect(statsGrid?.textContent).toContain('Story Points');
+        expect(statsGrid?.textContent).toContain(i18nT('increments:list.stats.storyPoints'));
       });
 
       // Verify stat values in stat cards (using stat-content to avoid duplicates in cards)
@@ -224,10 +218,22 @@ describe('IncrementList', () => {
         return { value: valueEl?.textContent, label: labelEl?.textContent };
       });
 
-      expect(statValues).toContainEqual({ value: '4', label: 'Total Increments' });
-      expect(statValues).toContainEqual({ value: '2', label: 'Active' });
-      expect(statValues).toContainEqual({ value: '1', label: 'Delivered' });
-      expect(statValues).toContainEqual({ value: '47', label: 'Story Points' });
+      expect(statValues).toContainEqual({
+        value: '4',
+        label: i18nT('increments:list.stats.total'),
+      });
+      expect(statValues).toContainEqual({
+        value: '2',
+        label: i18nT('increments:list.stats.active'),
+      });
+      expect(statValues).toContainEqual({
+        value: '1',
+        label: i18nT('increments:list.stats.delivered'),
+      });
+      expect(statValues).toContainEqual({
+        value: '47',
+        label: i18nT('increments:list.stats.storyPoints'),
+      });
     });
 
     it('should display zero stats when no increments', async () => {
@@ -264,10 +270,10 @@ describe('IncrementList', () => {
 
       // Check that filter tabs exist in the filter-tabs container
       const filterTabs = document.querySelector('[class*="filter-tabs"]');
-      expect(filterTabs?.textContent).toContain('All');
-      expect(filterTabs?.textContent).toContain('Active');
-      expect(filterTabs?.textContent).toContain('Delivered');
-      expect(filterTabs?.textContent).toContain('Archived');
+      expect(filterTabs?.textContent).toContain(i18nT('increments:list.filters.all'));
+      expect(filterTabs?.textContent).toContain(i18nT('increments:list.filters.active'));
+      expect(filterTabs?.textContent).toContain(i18nT('increments:list.filters.delivered'));
+      expect(filterTabs?.textContent).toContain(i18nT('increments:list.filters.archived'));
     });
 
     it('should filter by active status', async () => {
@@ -390,7 +396,7 @@ describe('IncrementList', () => {
         expect(screen.getByText('Draft Increment')).toBeInTheDocument();
       });
 
-      const searchInput = screen.getByPlaceholderText('Search increments...');
+      const searchInput = screen.getByPlaceholderText(i18nT('increments:list.searchPlaceholder'));
       fireEvent.change(searchInput, { target: { value: 'Draft' } });
 
       await waitFor(() => {
@@ -412,7 +418,7 @@ describe('IncrementList', () => {
         expect(screen.getByText('Draft Increment')).toBeInTheDocument();
       });
 
-      const searchInput = screen.getByPlaceholderText('Search increments...');
+      const searchInput = screen.getByPlaceholderText(i18nT('increments:list.searchPlaceholder'));
       fireEvent.change(searchInput, { target: { value: 'verified' } });
 
       await waitFor(() => {
@@ -433,7 +439,7 @@ describe('IncrementList', () => {
         expect(screen.getByText('Draft Increment')).toBeInTheDocument();
       });
 
-      const searchInput = screen.getByPlaceholderText('Search increments...');
+      const searchInput = screen.getByPlaceholderText(i18nT('increments:list.searchPlaceholder'));
       fireEvent.change(searchInput, { target: { value: 'DRAFT' } });
 
       await waitFor(() => {
@@ -452,14 +458,14 @@ describe('IncrementList', () => {
         expect(screen.getByText('Draft Increment')).toBeInTheDocument();
       });
 
-      const searchInput = screen.getByPlaceholderText('Search increments...');
+      const searchInput = screen.getByPlaceholderText(i18nT('increments:list.searchPlaceholder'));
       fireEvent.change(searchInput, { target: { value: 'nonexistent' } });
 
       await waitFor(() => {
-        expect(screen.getByText(/No Increments found/i)).toBeInTheDocument();
+        expect(screen.getByText(i18nT('increments:list.empty.title'))).toBeInTheDocument();
       });
 
-      expect(screen.getByText(/No Increments match your search criteria/i)).toBeInTheDocument();
+      expect(screen.getByText(i18nT('increments:list.empty.noSearchResults'))).toBeInTheDocument();
     });
   });
 
@@ -480,10 +486,10 @@ describe('IncrementList', () => {
 
       // Check for status badge and stats within the card
       const card = screen.getByText('Draft Increment').closest('[class*="increment-card"]');
-      expect(card?.textContent).toContain('Draft');
-      expect(card?.textContent).toContain('PBIs');
+      expect(card?.textContent).toContain(i18nT('increments:status.draft'));
+      expect(card?.textContent).toContain(i18nT('increments:list.cardStats.pbis'));
       expect(card?.textContent).toContain('2');
-      expect(card?.textContent).toContain('Points');
+      expect(card?.textContent).toContain(i18nT('increments:list.cardStats.points'));
       expect(card?.textContent).toContain('8');
     });
 
@@ -502,7 +508,7 @@ describe('IncrementList', () => {
       const cardFooter = screen
         .getByText('Delivered Increment')
         .closest('[class*="increment-card"]');
-      expect(cardFooter?.textContent).toContain('Delivered');
+      expect(cardFooter?.textContent).toContain(i18nT('increments:dates.delivered'));
     });
 
     it('should display delivery method badge', async () => {
@@ -518,7 +524,7 @@ describe('IncrementList', () => {
 
       // Check for delivery method in the card
       const card = screen.getByText('Delivered Increment').closest('[class*="increment-card"]');
-      expect(card?.textContent).toContain('Sprint Review');
+      expect(card?.textContent).toContain(i18nT('increments:deliveryMethod.sprintReview'));
     });
 
     it('should navigate to increment detail on card click', async () => {
@@ -569,10 +575,10 @@ describe('IncrementList', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText(/No Increments found/i)).toBeInTheDocument();
+        expect(screen.getByText(i18nT('increments:list.empty.title'))).toBeInTheDocument();
       });
 
-      expect(screen.getByText(/You haven't created any Increment yet/i)).toBeInTheDocument();
+      expect(screen.getByText(i18nT('increments:list.empty.noIncrements'))).toBeInTheDocument();
     });
 
     it('should have Create Increment button in empty state', async () => {
@@ -583,10 +589,10 @@ describe('IncrementList', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText(/No Increments found/i)).toBeInTheDocument();
+        expect(screen.getByText(i18nT('increments:list.empty.title'))).toBeInTheDocument();
       });
 
-      const createButton = screen.getAllByText('Create Increment')[0];
+      const createButton = screen.getAllByText(i18nT('increments:createIncrement'))[0];
       fireEvent.click(createButton);
 
       expect(mockNavigate).toHaveBeenCalledWith('/increment/create');
@@ -607,10 +613,10 @@ describe('IncrementList', () => {
 
       // Check that all increment cards are rendered with their status badges
       const incrementsGrid = document.querySelector('[class*="increments-grid"]');
-      expect(incrementsGrid?.textContent).toContain('Draft');
-      expect(incrementsGrid?.textContent).toContain('Verified');
-      expect(incrementsGrid?.textContent).toContain('Delivered');
-      expect(incrementsGrid?.textContent).toContain('Archived');
+      expect(incrementsGrid?.textContent).toContain(i18nT('increments:status.draft'));
+      expect(incrementsGrid?.textContent).toContain(i18nT('increments:status.verified'));
+      expect(incrementsGrid?.textContent).toContain(i18nT('increments:status.delivered'));
+      expect(incrementsGrid?.textContent).toContain(i18nT('increments:status.archived'));
     });
   });
 
@@ -621,11 +627,11 @@ describe('IncrementList', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('Increments')).toBeInTheDocument();
+        expect(screen.getByText(i18nT('increments:title'))).toBeInTheDocument();
       });
 
       // Should still render the page structure even on error
-      expect(screen.getByText('Total Increments')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('increments:list.stats.total'))).toBeInTheDocument();
     });
   });
 });

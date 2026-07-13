@@ -1,6 +1,7 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { fireEvent } from '@testing-library/react';
+import { screen, renderWithProviders, initTestI18n, i18nT } from '../../../test-utils';
+import { vi, describe, it, expect, beforeEach, afterEach, beforeAll } from 'vitest';
 
 import { TeamCapacityModal, type TeamMemberAvailability } from './TeamCapacityModal';
 
@@ -84,6 +85,10 @@ const defaultProps = {
 };
 
 describe('TeamCapacityModal', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -94,20 +99,24 @@ describe('TeamCapacityModal', () => {
 
   describe('Rendering', () => {
     it('should render modal when isOpen is true', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
       expect(screen.getByRole('dialog')).toBeInTheDocument();
-      expect(screen.getByRole('heading', { name: /Team Capacity/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('heading', {
+          name: i18nT('sprint:sprintPlanning.teamCapacityModal.title'),
+        })
+      ).toBeInTheDocument();
     });
 
     it('should not render modal when isOpen is false', () => {
-      render(<TeamCapacityModal {...defaultProps} isOpen={false} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} isOpen={false} />);
 
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
 
     it('should display all team members', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
       expect(screen.getByText('John Doe')).toBeInTheDocument();
       expect(screen.getByText('Jane Smith')).toBeInTheDocument();
@@ -115,14 +124,15 @@ describe('TeamCapacityModal', () => {
     });
 
     it('should display total capacity', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
       // Total should be 40 + 35 + 40 = 115
-      expect(screen.getByText('115 hours')).toBeInTheDocument();
+      const hoursText = i18nT('sprint:sprintPlanning.teamCapacityModal.hours');
+      expect(screen.getByText(`115 ${hoursText}`)).toBeInTheDocument();
     });
 
     it('should display current hours for each member', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
       const hourInputs = screen.getAllByRole('spinbutton');
       expect(hourInputs).toHaveLength(3);
@@ -132,24 +142,36 @@ describe('TeamCapacityModal', () => {
     });
 
     it('should render action buttons', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
-      expect(screen.getByRole('button', { name: /Cancel/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /Save Changes/i })).toBeInTheDocument();
+      // Cancel button - use getAllByRole since there are two Cancel buttons (close button and footer button)
+      const cancelButtons = screen.getAllByRole('button', {
+        name: i18nT('sprint:sprintPlanning.teamCapacityModal.cancel'),
+      });
+      expect(cancelButtons.length).toBe(2); // Both close button and Cancel button
+      expect(
+        screen.getByRole('button', {
+          name: i18nT('sprint:sprintPlanning.teamCapacityModal.saveChanges'),
+        })
+      ).toBeInTheDocument();
     });
 
     it('should render empty state when no team members', () => {
-      render(<TeamCapacityModal {...defaultProps} teamAvailability={[]} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} teamAvailability={[]} />);
 
-      expect(screen.getByText(/No team members found/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(i18nT('sprint:sprintPlanning.teamCapacityModal.noTeamMembers'))
+      ).toBeInTheDocument();
     });
   });
 
   describe('Hours Adjustment', () => {
     it('should increment hours when clicking plus button', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
-      const incrementButtons = screen.getAllByLabelText(/Increase hours for/i);
+      const incrementButtons = screen.getAllByLabelText(
+        i18nT('sprint:sprintPlanning.teamCapacityModal.increaseHoursFor', { name: 'John Doe' })
+      );
       fireEvent.click(incrementButtons[0]);
 
       const hourInputs = screen.getAllByRole('spinbutton');
@@ -157,9 +179,11 @@ describe('TeamCapacityModal', () => {
     });
 
     it('should decrement hours when clicking minus button', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
-      const decrementButtons = screen.getAllByLabelText(/Decrease hours for/i);
+      const decrementButtons = screen.getAllByLabelText(
+        i18nT('sprint:sprintPlanning.teamCapacityModal.decreaseHoursFor', { name: 'John Doe' })
+      );
       fireEvent.click(decrementButtons[0]);
 
       const hourInputs = screen.getAllByRole('spinbutton');
@@ -167,7 +191,7 @@ describe('TeamCapacityModal', () => {
     });
 
     it('should not decrement below 0', () => {
-      render(
+      renderWithProviders(
         <TeamCapacityModal
           {...defaultProps}
           teamAvailability={[
@@ -176,12 +200,14 @@ describe('TeamCapacityModal', () => {
         />
       );
 
-      const decrementButton = screen.getByLabelText(/Decrease hours for John Doe/i);
+      const decrementButton = screen.getByLabelText(
+        i18nT('sprint:sprintPlanning.teamCapacityModal.decreaseHoursFor', { name: 'John Doe' })
+      );
       expect(decrementButton).toBeDisabled();
     });
 
     it('should not increment above 60', () => {
-      render(
+      renderWithProviders(
         <TeamCapacityModal
           {...defaultProps}
           teamAvailability={[
@@ -190,12 +216,14 @@ describe('TeamCapacityModal', () => {
         />
       );
 
-      const incrementButton = screen.getByLabelText(/Increase hours for John Doe/i);
+      const incrementButton = screen.getByLabelText(
+        i18nT('sprint:sprintPlanning.teamCapacityModal.increaseHoursFor', { name: 'John Doe' })
+      );
       expect(incrementButton).toBeDisabled();
     });
 
     it('should update hours via input field', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
       const hourInputs = screen.getAllByRole('spinbutton');
       fireEvent.change(hourInputs[0], { target: { value: '25' } });
@@ -204,20 +232,21 @@ describe('TeamCapacityModal', () => {
     });
 
     it('should update total when hours change', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
       // Initial total: 115
-      expect(screen.getByText('115 hours')).toBeInTheDocument();
+      const hoursText = i18nT('sprint:sprintPlanning.teamCapacityModal.hours');
+      expect(screen.getByText(`115 ${hoursText}`)).toBeInTheDocument();
 
       const hourInputs = screen.getAllByRole('spinbutton');
       fireEvent.change(hourInputs[0], { target: { value: '20' } });
 
       // New total: 20 + 35 + 40 = 95
-      expect(screen.getByText('95 hours')).toBeInTheDocument();
+      expect(screen.getByText(`95 ${hoursText}`)).toBeInTheDocument();
     });
 
     it('should handle non-numeric input gracefully', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
       const hourInputs = screen.getAllByRole('spinbutton');
       fireEvent.change(hourInputs[0], { target: { value: 'abc' } });
@@ -229,31 +258,41 @@ describe('TeamCapacityModal', () => {
 
   describe('Save Functionality', () => {
     it('should disable save button when no changes made', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
-      const saveButton = screen.getByRole('button', { name: /Save Changes/i });
+      const saveButton = screen.getByRole('button', {
+        name: i18nT('sprint:sprintPlanning.teamCapacityModal.saveChanges'),
+      });
       expect(saveButton).toBeDisabled();
     });
 
     it('should enable save button when changes are made', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
-      const incrementButtons = screen.getAllByLabelText(/Increase hours for/i);
+      const incrementButtons = screen.getAllByLabelText(
+        i18nT('sprint:sprintPlanning.teamCapacityModal.increaseHoursFor', { name: 'John Doe' })
+      );
       fireEvent.click(incrementButtons[0]);
 
-      const saveButton = screen.getByRole('button', { name: /Save Changes/i });
+      const saveButton = screen.getByRole('button', {
+        name: i18nT('sprint:sprintPlanning.teamCapacityModal.saveChanges'),
+      });
       expect(saveButton).not.toBeDisabled();
     });
 
     it('should call onSave with updated availability when saving', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
       // Make a change
-      const incrementButtons = screen.getAllByLabelText(/Increase hours for/i);
+      const incrementButtons = screen.getAllByLabelText(
+        i18nT('sprint:sprintPlanning.teamCapacityModal.increaseHoursFor', { name: 'John Doe' })
+      );
       fireEvent.click(incrementButtons[0]);
 
       // Save
-      const saveButton = screen.getByRole('button', { name: /Save Changes/i });
+      const saveButton = screen.getByRole('button', {
+        name: i18nT('sprint:sprintPlanning.teamCapacityModal.saveChanges'),
+      });
       fireEvent.click(saveButton);
 
       expect(defaultProps.onSave).toHaveBeenCalledWith([
@@ -267,26 +306,41 @@ describe('TeamCapacityModal', () => {
 
   describe('Reset Functionality', () => {
     it('should show reset button when changes are made', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
       // Initially no reset button
-      expect(screen.queryByLabelText(/Reset changes/i)).not.toBeInTheDocument();
+      expect(
+        screen.queryByLabelText(
+          i18nT('sprint:sprintPlanning.teamCapacityModal.resetToOriginalValues')
+        )
+      ).not.toBeInTheDocument();
 
       // Make a change
-      const incrementButtons = screen.getAllByLabelText(/Increase hours for/i);
+      const incrementButtons = screen.getAllByLabelText(
+        i18nT('sprint:sprintPlanning.teamCapacityModal.increaseHoursFor', { name: 'John Doe' })
+      );
       fireEvent.click(incrementButtons[0]);
 
       // Reset button should appear
-      expect(screen.getByLabelText(/Reset changes/i)).toBeInTheDocument();
+      expect(
+        screen.getByLabelText(
+          i18nT('sprint:sprintPlanning.teamCapacityModal.resetToOriginalValues')
+        )
+      ).toBeInTheDocument();
     });
 
     it('should reset to original values when clicking reset', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
       // Make changes
-      const incrementButtons = screen.getAllByLabelText(/Increase hours for/i);
-      fireEvent.click(incrementButtons[0]);
-      fireEvent.click(incrementButtons[1]);
+      const incrementButtonsJohn = screen.getAllByLabelText(
+        i18nT('sprint:sprintPlanning.teamCapacityModal.increaseHoursFor', { name: 'John Doe' })
+      );
+      const incrementButtonsJane = screen.getAllByLabelText(
+        i18nT('sprint:sprintPlanning.teamCapacityModal.increaseHoursFor', { name: 'Jane Smith' })
+      );
+      fireEvent.click(incrementButtonsJohn[0]);
+      fireEvent.click(incrementButtonsJane[0]);
 
       // Verify changes
       const hourInputs = screen.getAllByRole('spinbutton');
@@ -294,7 +348,9 @@ describe('TeamCapacityModal', () => {
       expect(hourInputs[1]).toHaveValue(36);
 
       // Reset
-      const resetButton = screen.getByLabelText(/Reset changes/i);
+      const resetButton = screen.getByLabelText(
+        i18nT('sprint:sprintPlanning.teamCapacityModal.resetToOriginalValues')
+      );
       fireEvent.click(resetButton);
 
       // Verify reset
@@ -303,41 +359,56 @@ describe('TeamCapacityModal', () => {
     });
 
     it('should hide reset button after resetting', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
       // Make a change
-      const incrementButtons = screen.getAllByLabelText(/Increase hours for/i);
+      const incrementButtons = screen.getAllByLabelText(
+        i18nT('sprint:sprintPlanning.teamCapacityModal.increaseHoursFor', { name: 'John Doe' })
+      );
       fireEvent.click(incrementButtons[0]);
 
       // Reset
-      const resetButton = screen.getByLabelText(/Reset changes/i);
+      const resetButton = screen.getByLabelText(
+        i18nT('sprint:sprintPlanning.teamCapacityModal.resetToOriginalValues')
+      );
       fireEvent.click(resetButton);
 
       // Reset button should be hidden
-      expect(screen.queryByLabelText(/Reset changes/i)).not.toBeInTheDocument();
+      expect(
+        screen.queryByLabelText(
+          i18nT('sprint:sprintPlanning.teamCapacityModal.resetToOriginalValues')
+        )
+      ).not.toBeInTheDocument();
     });
   });
 
   describe('Modal Close Behavior', () => {
     it('should call onClose when clicking cancel button without changes', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
-      const cancelButton = screen.getByRole('button', { name: /Cancel/i });
-      fireEvent.click(cancelButton);
+      // Use getAllByRole to get both buttons, select the Cancel button in footer (index 1)
+      const cancelButtons = screen.getAllByRole('button', {
+        name: i18nT('sprint:sprintPlanning.teamCapacityModal.cancel'),
+      });
+      fireEvent.click(cancelButtons[1]); // Cancel button in footer
 
       expect(defaultProps.onClose).toHaveBeenCalled();
     });
 
     it('should show unsaved changes modal when closing with changes', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
       // Make a change
-      const incrementButtons = screen.getAllByLabelText(/Increase hours for/i);
+      const incrementButtons = screen.getAllByLabelText(
+        i18nT('sprint:sprintPlanning.teamCapacityModal.increaseHoursFor', { name: 'John Doe' })
+      );
       fireEvent.click(incrementButtons[0]);
 
-      // Try to close
-      const cancelButton = screen.getByRole('button', { name: /Cancel/i });
-      fireEvent.click(cancelButton);
+      // Try to close - use getAllByRole to get both buttons, select Cancel button in footer (index 1)
+      const cancelButtons = screen.getAllByRole('button', {
+        name: i18nT('sprint:sprintPlanning.teamCapacityModal.cancel'),
+      });
+      fireEvent.click(cancelButtons[1]); // Cancel button in footer
 
       // Should show unsaved changes modal
       expect(screen.getByTestId('unsaved-changes-modal')).toBeInTheDocument();
@@ -345,15 +416,19 @@ describe('TeamCapacityModal', () => {
     });
 
     it('should close when confirming discard of unsaved changes', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
       // Make a change
-      const incrementButtons = screen.getAllByLabelText(/Increase hours for/i);
+      const incrementButtons = screen.getAllByLabelText(
+        i18nT('sprint:sprintPlanning.teamCapacityModal.increaseHoursFor', { name: 'John Doe' })
+      );
       fireEvent.click(incrementButtons[0]);
 
-      // Try to close
-      const cancelButton = screen.getByRole('button', { name: /Cancel/i });
-      fireEvent.click(cancelButton);
+      // Try to close - use the Cancel button in footer (second one)
+      const cancelButtons = screen.getAllByRole('button', {
+        name: i18nT('sprint:sprintPlanning.teamCapacityModal.cancel'),
+      });
+      fireEvent.click(cancelButtons[1]); // Cancel button in footer
 
       // Confirm discard
       const discardButton = screen.getByTestId('confirm-discard');
@@ -363,15 +438,19 @@ describe('TeamCapacityModal', () => {
     });
 
     it('should stay open when canceling discard of unsaved changes', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
       // Make a change
-      const incrementButtons = screen.getAllByLabelText(/Increase hours for/i);
+      const incrementButtons = screen.getAllByLabelText(
+        i18nT('sprint:sprintPlanning.teamCapacityModal.increaseHoursFor', { name: 'John Doe' })
+      );
       fireEvent.click(incrementButtons[0]);
 
-      // Try to close
-      const cancelButton = screen.getByRole('button', { name: /Cancel/i });
-      fireEvent.click(cancelButton);
+      // Try to close - use the Cancel button in footer (second one)
+      const cancelButtons = screen.getAllByRole('button', {
+        name: i18nT('sprint:sprintPlanning.teamCapacityModal.cancel'),
+      });
+      fireEvent.click(cancelButtons[1]); // Cancel button in footer
 
       // Cancel discard
       const cancelDiscardButton = screen.getByTestId('cancel-discard');
@@ -383,7 +462,7 @@ describe('TeamCapacityModal', () => {
     });
 
     it('should call onClose when clicking overlay without changes', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
       const overlay = screen.getByRole('presentation');
       fireEvent.click(overlay);
@@ -392,7 +471,7 @@ describe('TeamCapacityModal', () => {
     });
 
     it('should not close when clicking modal content', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
       const modal = screen.getByRole('dialog');
       fireEvent.click(modal);
@@ -403,7 +482,7 @@ describe('TeamCapacityModal', () => {
 
   describe('Accessibility', () => {
     it('should have correct ARIA attributes on dialog', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
       const dialog = screen.getByRole('dialog');
       expect(dialog).toHaveAttribute('aria-modal', 'true');
@@ -411,25 +490,41 @@ describe('TeamCapacityModal', () => {
     });
 
     it('should have accessible labels on hour inputs', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
       const hourInputs = screen.getAllByRole('spinbutton');
-      expect(hourInputs[0]).toHaveAttribute('aria-label', 'John Doe available hours');
-      expect(hourInputs[1]).toHaveAttribute('aria-label', 'Jane Smith available hours');
+      expect(hourInputs[0]).toHaveAttribute(
+        'aria-label',
+        i18nT('sprint:sprintPlanning.teamCapacityModal.availableHoursFor', { name: 'John Doe' })
+      );
+      expect(hourInputs[1]).toHaveAttribute(
+        'aria-label',
+        i18nT('sprint:sprintPlanning.teamCapacityModal.availableHoursFor', { name: 'Jane Smith' })
+      );
     });
 
     it('should have accessible labels on adjust buttons', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
-      const decrementButtons = screen.getAllByLabelText(/Decrease hours for/i);
-      const incrementButtons = screen.getAllByLabelText(/Increase hours for/i);
+      const decrementButtons = screen.getAllByLabelText(
+        i18nT('sprint:sprintPlanning.teamCapacityModal.decreaseHoursFor', { name: 'John Doe' })
+      );
+      const incrementButtons = screen.getAllByLabelText(
+        i18nT('sprint:sprintPlanning.teamCapacityModal.increaseHoursFor', { name: 'John Doe' })
+      );
 
-      expect(decrementButtons[0]).toHaveAttribute('aria-label', 'Decrease hours for John Doe');
-      expect(incrementButtons[0]).toHaveAttribute('aria-label', 'Increase hours for John Doe');
+      expect(decrementButtons[0]).toHaveAttribute(
+        'aria-label',
+        i18nT('sprint:sprintPlanning.teamCapacityModal.decreaseHoursFor', { name: 'John Doe' })
+      );
+      expect(incrementButtons[0]).toHaveAttribute(
+        'aria-label',
+        i18nT('sprint:sprintPlanning.teamCapacityModal.increaseHoursFor', { name: 'John Doe' })
+      );
     });
 
     it('should use list roles for member list', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
       expect(screen.getByRole('list')).toBeInTheDocument();
       expect(screen.getAllByRole('listitem')).toHaveLength(3);
@@ -438,7 +533,7 @@ describe('TeamCapacityModal', () => {
 
   describe('Member Avatar', () => {
     it('should display initials for each member', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
       expect(screen.getByText('JD')).toBeInTheDocument(); // John Doe
       expect(screen.getByText('JS')).toBeInTheDocument(); // Jane Smith
@@ -446,7 +541,7 @@ describe('TeamCapacityModal', () => {
     });
 
     it('should handle single name members', () => {
-      render(
+      renderWithProviders(
         <TeamCapacityModal
           {...defaultProps}
           teamAvailability={[
@@ -459,7 +554,7 @@ describe('TeamCapacityModal', () => {
     });
 
     it('should handle names with multiple parts', () => {
-      render(
+      renderWithProviders(
         <TeamCapacityModal
           {...defaultProps}
           teamAvailability={[
@@ -479,11 +574,15 @@ describe('TeamCapacityModal', () => {
 
   describe('Form State Management', () => {
     it('should reset to initial values when modal reopens', () => {
-      const { rerender } = render(<TeamCapacityModal {...defaultProps} isOpen={false} />);
+      const { rerender } = renderWithProviders(
+        <TeamCapacityModal {...defaultProps} isOpen={false} />
+      );
 
       rerender(<TeamCapacityModal {...defaultProps} isOpen={true} />);
 
-      const incrementButtons = screen.getAllByLabelText(/Increase hours for/i);
+      const incrementButtons = screen.getAllByLabelText(
+        i18nT('sprint:sprintPlanning.teamCapacityModal.increaseHoursFor', { name: 'John Doe' })
+      );
       fireEvent.click(incrementButtons[0]);
 
       rerender(<TeamCapacityModal {...defaultProps} isOpen={false} />);
@@ -494,7 +593,7 @@ describe('TeamCapacityModal', () => {
     });
 
     it('should update when teamAvailability prop changes', () => {
-      const { rerender } = render(<TeamCapacityModal {...defaultProps} />);
+      const { rerender } = renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
       const newAvailability: TeamMemberAvailability[] = [
         {
@@ -507,12 +606,13 @@ describe('TeamCapacityModal', () => {
 
       rerender(<TeamCapacityModal {...defaultProps} teamAvailability={newAvailability} />);
 
+      const hoursText = i18nT('sprint:sprintPlanning.teamCapacityModal.hours');
       expect(screen.getByText('New Member')).toBeInTheDocument();
-      expect(screen.getByText('20 hours')).toBeInTheDocument();
+      expect(screen.getByText(`20 ${hoursText}`)).toBeInTheDocument();
     });
 
     it('should show total capacity as 0 when all members have 0 hours', () => {
-      render(
+      renderWithProviders(
         <TeamCapacityModal
           {...defaultProps}
           teamAvailability={[
@@ -522,11 +622,12 @@ describe('TeamCapacityModal', () => {
         />
       );
 
-      expect(screen.getByText('0 hours')).toBeInTheDocument();
+      const hoursText = i18nT('sprint:sprintPlanning.teamCapacityModal.hours');
+      expect(screen.getByText(`0 ${hoursText}`)).toBeInTheDocument();
     });
 
     it('should handle single team member correctly', () => {
-      render(
+      renderWithProviders(
         <TeamCapacityModal
           {...defaultProps}
           teamAvailability={[
@@ -540,8 +641,9 @@ describe('TeamCapacityModal', () => {
         />
       );
 
+      const hoursText = i18nT('sprint:sprintPlanning.teamCapacityModal.hours');
       expect(screen.getByText('Solo Member')).toBeInTheDocument();
-      expect(screen.getByText('40 hours')).toBeInTheDocument();
+      expect(screen.getByText(`40 ${hoursText}`)).toBeInTheDocument();
       const hourInputs = screen.getAllByRole('spinbutton');
       expect(hourInputs).toHaveLength(1);
     });
@@ -554,28 +656,31 @@ describe('TeamCapacityModal', () => {
         availableHours: 40,
       }));
 
-      render(<TeamCapacityModal {...defaultProps} teamAvailability={manyMembers} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} teamAvailability={manyMembers} />);
 
+      const hoursText = i18nT('sprint:sprintPlanning.teamCapacityModal.hours');
       const hourInputs = screen.getAllByRole('spinbutton');
       expect(hourInputs).toHaveLength(10);
-      expect(screen.getByText('400 hours')).toBeInTheDocument();
+      expect(screen.getByText(`400 ${hoursText}`)).toBeInTheDocument();
     });
   });
 
   describe('Hours Input Edge Cases', () => {
     it('should handle zero hours correctly', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
       const hourInputs = screen.getAllByRole('spinbutton');
       fireEvent.change(hourInputs[0], { target: { value: '0' } });
 
       expect(hourInputs[0]).toHaveValue(0);
-      const decrementButton = screen.getAllByLabelText(/Decrease hours for John Doe/i)[0];
+      const decrementButton = screen.getAllByLabelText(
+        i18nT('sprint:sprintPlanning.teamCapacityModal.decreaseHoursFor', { name: 'John Doe' })
+      )[0];
       expect(decrementButton).toBeDisabled();
     });
 
     it('should handle maximum hours limit (60)', () => {
-      render(
+      renderWithProviders(
         <TeamCapacityModal
           {...defaultProps}
           teamAvailability={[
@@ -587,12 +692,14 @@ describe('TeamCapacityModal', () => {
       const hourInputs = screen.getAllByRole('spinbutton');
       expect(hourInputs[0]).toHaveValue(60);
 
-      const incrementButton = screen.getByLabelText(/Increase hours for John Doe/i);
+      const incrementButton = screen.getByLabelText(
+        i18nT('sprint:sprintPlanning.teamCapacityModal.increaseHoursFor', { name: 'John Doe' })
+      );
       expect(incrementButton).toBeDisabled();
     });
 
     it('should handle values at minimum boundary (0)', () => {
-      render(
+      renderWithProviders(
         <TeamCapacityModal
           {...defaultProps}
           teamAvailability={[
@@ -604,43 +711,42 @@ describe('TeamCapacityModal', () => {
       const hourInputs = screen.getAllByRole('spinbutton');
       expect(hourInputs[0]).toHaveValue(0);
 
-      const decrementButton = screen.getByLabelText(/Decrease hours for John Doe/i);
+      const decrementButton = screen.getByLabelText(
+        i18nT('sprint:sprintPlanning.teamCapacityModal.decreaseHoursFor', { name: 'John Doe' })
+      );
       expect(decrementButton).toBeDisabled();
     });
 
     it('should update capacity when hours changed via input', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
-      expect(screen.getByText('115 hours')).toBeInTheDocument();
+      const hoursText = i18nT('sprint:sprintPlanning.teamCapacityModal.hours');
+      expect(screen.getByText(`115 ${hoursText}`)).toBeInTheDocument();
 
       const hourInputs = screen.getAllByRole('spinbutton');
       fireEvent.change(hourInputs[0], { target: { value: '10' } });
 
-      expect(screen.getByText('85 hours')).toBeInTheDocument();
+      expect(screen.getByText(`85 ${hoursText}`)).toBeInTheDocument();
     });
   });
 
   describe('Notice Box', () => {
     it('should display capacity information notice', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
       expect(
-        screen.getByText(/Capacity hours represent the total available time/i)
+        screen.getByText(i18nT('sprint:sprintPlanning.teamCapacityModal.capacityNotice'))
       ).toBeInTheDocument();
-    });
-
-    it('should display default hours notice', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
-
-      expect(screen.getByText(/The default is 40 hours/i)).toBeInTheDocument();
     });
   });
 
   describe('Hours Control Interactions', () => {
     it('should increment multiple times correctly', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
-      const incrementButtons = screen.getAllByLabelText(/Increase hours for/i);
+      const incrementButtons = screen.getAllByLabelText(
+        i18nT('sprint:sprintPlanning.teamCapacityModal.increaseHoursFor', { name: 'John Doe' })
+      );
       const hourInputs = screen.getAllByRole('spinbutton');
 
       fireEvent.click(incrementButtons[0]);
@@ -651,9 +757,11 @@ describe('TeamCapacityModal', () => {
     });
 
     it('should decrement multiple times correctly', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
-      const decrementButtons = screen.getAllByLabelText(/Decrease hours for/i);
+      const decrementButtons = screen.getAllByLabelText(
+        i18nT('sprint:sprintPlanning.teamCapacityModal.decreaseHoursFor', { name: 'John Doe' })
+      );
       const hourInputs = screen.getAllByRole('spinbutton');
 
       fireEvent.click(decrementButtons[0]);
@@ -664,7 +772,7 @@ describe('TeamCapacityModal', () => {
     });
 
     it('should not go below 0 when decrementing', () => {
-      render(
+      renderWithProviders(
         <TeamCapacityModal
           {...defaultProps}
           teamAvailability={[
@@ -673,7 +781,9 @@ describe('TeamCapacityModal', () => {
         />
       );
 
-      const decrementButton = screen.getByLabelText(/Decrease hours for John Doe/i);
+      const decrementButton = screen.getByLabelText(
+        i18nT('sprint:sprintPlanning.teamCapacityModal.decreaseHoursFor', { name: 'John Doe' })
+      );
       expect(decrementButton).toBeDisabled();
 
       const hourInputs = screen.getAllByRole('spinbutton');
@@ -681,7 +791,7 @@ describe('TeamCapacityModal', () => {
     });
 
     it('should not exceed 60 when incrementing', () => {
-      render(
+      renderWithProviders(
         <TeamCapacityModal
           {...defaultProps}
           teamAvailability={[
@@ -690,7 +800,9 @@ describe('TeamCapacityModal', () => {
         />
       );
 
-      const incrementButton = screen.getByLabelText(/Increase hours for John Doe/i);
+      const incrementButton = screen.getByLabelText(
+        i18nT('sprint:sprintPlanning.teamCapacityModal.increaseHoursFor', { name: 'John Doe' })
+      );
       expect(incrementButton).toBeDisabled();
 
       const hourInputs = screen.getAllByRole('spinbutton');
@@ -698,7 +810,7 @@ describe('TeamCapacityModal', () => {
     });
 
     it('should enable save button after incrementing from 0', () => {
-      render(
+      renderWithProviders(
         <TeamCapacityModal
           {...defaultProps}
           teamAvailability={[
@@ -707,22 +819,30 @@ describe('TeamCapacityModal', () => {
         />
       );
 
-      const saveButton = screen.getByRole('button', { name: /Save Changes/i });
+      const saveButton = screen.getByRole('button', {
+        name: i18nT('sprint:sprintPlanning.teamCapacityModal.saveChanges'),
+      });
       expect(saveButton).toBeDisabled();
 
-      const incrementButton = screen.getByLabelText(/Increase hours for John Doe/i);
+      const incrementButton = screen.getByLabelText(
+        i18nT('sprint:sprintPlanning.teamCapacityModal.increaseHoursFor', { name: 'John Doe' })
+      );
       fireEvent.click(incrementButton);
 
       expect(saveButton).not.toBeDisabled();
     });
 
     it('should enable save button after decrementing to 0', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
-      const saveButton = screen.getByRole('button', { name: /Save Changes/i });
+      const saveButton = screen.getByRole('button', {
+        name: i18nT('sprint:sprintPlanning.teamCapacityModal.saveChanges'),
+      });
       expect(saveButton).toBeDisabled();
 
-      const decrementButtons = screen.getAllByLabelText(/Decrease hours for/i);
+      const decrementButtons = screen.getAllByLabelText(
+        i18nT('sprint:sprintPlanning.teamCapacityModal.decreaseHoursFor', { name: 'John Doe' })
+      );
       fireEvent.click(decrementButtons[0]);
 
       expect(saveButton).not.toBeDisabled();
@@ -731,7 +851,7 @@ describe('TeamCapacityModal', () => {
 
   describe('Keyboard Navigation', () => {
     it('should close modal on Escape key when no unsaved changes', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
       fireEvent.keyDown(document, { key: 'Escape' });
 
@@ -739,9 +859,11 @@ describe('TeamCapacityModal', () => {
     });
 
     it('should show unsaved changes modal on Escape key when changes exist', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
-      const incrementButtons = screen.getAllByLabelText(/Increase hours for/i);
+      const incrementButtons = screen.getAllByLabelText(
+        i18nT('sprint:sprintPlanning.teamCapacityModal.increaseHoursFor', { name: 'John Doe' })
+      );
       fireEvent.click(incrementButtons[0]);
 
       fireEvent.keyDown(document, { key: 'Escape' });
@@ -750,33 +872,42 @@ describe('TeamCapacityModal', () => {
     });
 
     it('should trap focus: Tab from last enabled element wraps to first', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
       // Make changes so Save Changes button is enabled as the last focusable
-      const incrementButtons = screen.getAllByLabelText(/Increase hours for/i);
+      const incrementButtons = screen.getAllByLabelText(
+        i18nT('sprint:sprintPlanning.teamCapacityModal.increaseHoursFor', { name: 'John Doe' })
+      );
       fireEvent.click(incrementButtons[0]);
 
-      const saveButton = screen.getByRole('button', { name: /Save Changes/i });
+      const saveButton = screen.getByRole('button', {
+        name: i18nT('sprint:sprintPlanning.teamCapacityModal.saveChanges'),
+      });
       saveButton.focus();
 
       fireEvent.keyDown(document, { key: 'Tab', shiftKey: false });
 
       // First focusable element (close button) should receive focus
-      const closeButton = screen.getByLabelText('Close modal');
-      expect(closeButton).toHaveFocus();
+      // There are two buttons with "Cancel" label, so we select the first one (close button)
+      const closeButtons = screen.getAllByLabelText(
+        i18nT('sprint:sprintPlanning.teamCapacityModal.cancel')
+      );
+      expect(closeButtons[0]).toHaveFocus(); // Close button is first
     });
 
     it('should trap focus: Shift+Tab from first element wraps to last enabled element', () => {
-      render(<TeamCapacityModal {...defaultProps} />);
+      renderWithProviders(<TeamCapacityModal {...defaultProps} />);
 
-      const closeButton = screen.getByLabelText('Close modal');
-      closeButton.focus();
+      // Use getAllByRole to get both buttons - close button (first) and Cancel button in footer (second)
+      const cancelButtons = screen.getAllByRole('button', {
+        name: i18nT('sprint:sprintPlanning.teamCapacityModal.cancel'),
+      });
+      cancelButtons[0].focus(); // Close button is first
 
       fireEvent.keyDown(document, { key: 'Tab', shiftKey: true });
 
       // Last enabled focusable element (Cancel, since Save Changes is disabled) should receive focus
-      const cancelButton = screen.getByRole('button', { name: /Cancel/i });
-      expect(cancelButton).toHaveFocus();
+      expect(cancelButtons[1]).toHaveFocus(); // Cancel button in footer is second
     });
   });
 });

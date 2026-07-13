@@ -1,8 +1,6 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
-import { MemoryRouter } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { screen, fireEvent, waitFor, renderWithProviders, initTestI18n } from '../../test-utils';
+import { vi, describe, it, expect, beforeEach, beforeAll } from 'vitest';
 
 import { SprintReviewList } from './SprintReviewList';
 import { SprintStatus, IncrementStatus } from '../../types';
@@ -18,14 +16,6 @@ vi.mock('react-router-dom', async (importOriginal) => {
 });
 
 const mockNavigate = vi.fn();
-
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: { retry: false, gcTime: 0, staleTime: 0 },
-      mutations: { retry: false },
-    },
-  });
 
 const mockTeam = {
   id: 'team-1',
@@ -105,18 +95,14 @@ function renderComponent(overrides: { currentTeam?: typeof mockTeam | null } = {
     loadTeam: vi.fn(),
   } as any);
 
-  const queryClient = createTestQueryClient();
-
-  return render(
-    <QueryClientProvider client={queryClient}>
-      <MemoryRouter>
-        <SprintReviewList />
-      </MemoryRouter>
-    </QueryClientProvider>
-  );
+  return renderWithProviders(<SprintReviewList />);
 }
 
 describe('SprintReviewList', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
     mockNavigate.mockClear();

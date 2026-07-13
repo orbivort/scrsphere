@@ -1,7 +1,7 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, renderWithProviders, initTestI18n, fireEvent } from '../../../test-utils';
 import userEvent from '@testing-library/user-event';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { vi, describe, it, expect, beforeEach, beforeAll } from 'vitest';
 
 import { SwimlanesBoard, type SwimlanesBoardProps } from './SwimlanesBoard';
 import {
@@ -11,6 +11,10 @@ import {
   type TeamMember,
   type ProductBacklogItem,
 } from '../../../types';
+
+beforeAll(async () => {
+  await initTestI18n();
+});
 
 const createMockTask = (overrides: Partial<Task> = {}): Task => ({
   id: 'task-1',
@@ -91,7 +95,9 @@ describe('SwimlanesBoard', () => {
 
   describe('Rendering - No Grouping', () => {
     it('should render empty state when swimlaneGroup is none', () => {
-      render(<SwimlanesBoard {...defaultProps} swimlaneGroup="none" groupedBySwimlane={null} />);
+      renderWithProviders(
+        <SwimlanesBoard {...defaultProps} swimlaneGroup="none" groupedBySwimlane={null} />
+      );
 
       expect(screen.getByText('No Grouping Selected')).toBeInTheDocument();
       expect(
@@ -102,13 +108,17 @@ describe('SwimlanesBoard', () => {
     });
 
     it('should render empty state when groupedBySwimlane is null', () => {
-      render(<SwimlanesBoard {...defaultProps} swimlaneGroup="none" groupedBySwimlane={null} />);
+      renderWithProviders(
+        <SwimlanesBoard {...defaultProps} swimlaneGroup="none" groupedBySwimlane={null} />
+      );
 
       expect(screen.getByText('No Grouping Selected')).toBeInTheDocument();
     });
 
     it('should have proper role attributes for empty state', () => {
-      render(<SwimlanesBoard {...defaultProps} swimlaneGroup="none" groupedBySwimlane={null} />);
+      renderWithProviders(
+        <SwimlanesBoard {...defaultProps} swimlaneGroup="none" groupedBySwimlane={null} />
+      );
 
       expect(screen.getByRole('status')).toBeInTheDocument();
     });
@@ -159,7 +169,7 @@ describe('SwimlanesBoard', () => {
     ];
 
     it('should render column headers', () => {
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -174,7 +184,7 @@ describe('SwimlanesBoard', () => {
     });
 
     it('should render swimlane labels', () => {
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -189,7 +199,7 @@ describe('SwimlanesBoard', () => {
     });
 
     it('should render unassigned swimlane last', () => {
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -203,7 +213,7 @@ describe('SwimlanesBoard', () => {
     });
 
     it('should render swimlane role subtitle', () => {
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -216,7 +226,7 @@ describe('SwimlanesBoard', () => {
     });
 
     it('should render task cards in correct columns', () => {
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -243,7 +253,7 @@ describe('SwimlanesBoard', () => {
           done: [createMockTask({ id: 'task-3' })],
         },
       };
-      render(<SwimlanesBoard {...propsWithTasks} />);
+      renderWithProviders(<SwimlanesBoard {...propsWithTasks} />);
 
       expect(screen.getAllByText('TO DO').length).toBeGreaterThan(0);
       expect(screen.getAllByText('IN PROGRESS').length).toBeGreaterThan(0);
@@ -266,7 +276,7 @@ describe('SwimlanesBoard', () => {
     ];
 
     it('should render PBI titles as swimlane labels', () => {
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="pbi"
@@ -280,7 +290,7 @@ describe('SwimlanesBoard', () => {
     });
 
     it('should render PBI story points as subtitle', () => {
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="pbi"
@@ -299,7 +309,7 @@ describe('SwimlanesBoard', () => {
         'pbi-1': [createMockTask({ id: 'task-2', title: 'Task A' })],
       };
 
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="pbi"
@@ -340,7 +350,7 @@ describe('SwimlanesBoard', () => {
     const mockTeamMembers = [createMockTeamMember({ id: 'tm-1', userId: 'user-1' })];
 
     it('should render stats for task counts', () => {
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -366,7 +376,7 @@ describe('SwimlanesBoard', () => {
         ],
       };
 
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -386,7 +396,7 @@ describe('SwimlanesBoard', () => {
     const mockTeamMembers = [createMockTeamMember({ id: 'tm-1', userId: 'user-1' })];
 
     it('should render draggable task cards', () => {
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -401,7 +411,7 @@ describe('SwimlanesBoard', () => {
 
     it('should call onDragStart when task drag starts', () => {
       const onDragStart = vi.fn();
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -421,7 +431,7 @@ describe('SwimlanesBoard', () => {
 
     it('should call onDragEnd when task drag ends', () => {
       const onDragEnd = vi.fn();
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -447,7 +457,7 @@ describe('SwimlanesBoard', () => {
     const mockTeamMembers = [createMockTeamMember({ id: 'tm-1', userId: 'user-1' })];
 
     it('should render drop target indicator when dropTargetColumn is set', () => {
-      const { container } = render(
+      const { container } = renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -461,7 +471,7 @@ describe('SwimlanesBoard', () => {
     });
 
     it('should render keyboard drop target indicator when keyboard drag is active', () => {
-      const { container } = render(
+      const { container } = renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -485,7 +495,7 @@ describe('SwimlanesBoard', () => {
     it('should call onTaskClick when task is clicked', async () => {
       const onTaskClick = vi.fn();
       const user = userEvent.setup();
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -502,7 +512,7 @@ describe('SwimlanesBoard', () => {
 
     it('should call onKeyDown when task receives key event', () => {
       const onKeyDown = vi.fn();
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -520,7 +530,7 @@ describe('SwimlanesBoard', () => {
 
     it('should call onFocus when task receives focus', () => {
       const onFocus = vi.fn();
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -538,7 +548,7 @@ describe('SwimlanesBoard', () => {
 
     it('should call onBlur when task loses focus', () => {
       const onBlur = vi.fn();
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -562,7 +572,7 @@ describe('SwimlanesBoard', () => {
     const mockTeamMembers = [createMockTeamMember({ id: 'tm-1', userId: 'user-1' })];
 
     it('should render placeholder for empty cells', () => {
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -575,7 +585,7 @@ describe('SwimlanesBoard', () => {
     });
 
     it('should hide empty cell placeholders from accessibility', () => {
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -591,7 +601,7 @@ describe('SwimlanesBoard', () => {
 
   describe('Empty Swimlanes State', () => {
     it('should render empty state when sortedKeys is empty', () => {
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -614,7 +624,7 @@ describe('SwimlanesBoard', () => {
     const mockTeamMembers = [createMockTeamMember({ id: 'tm-1', userId: 'user-1' })];
 
     it('should render keyboard navigation attributes', () => {
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -628,7 +638,7 @@ describe('SwimlanesBoard', () => {
     });
 
     it('should set aria-dropeffect based on keyboard grab state', () => {
-      const { container } = render(
+      const { container } = renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -650,7 +660,7 @@ describe('SwimlanesBoard', () => {
     const mockTeamMembers = [createMockTeamMember({ id: 'tm-1', userId: 'user-1' })];
 
     it('should have table role', () => {
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -663,7 +673,7 @@ describe('SwimlanesBoard', () => {
     });
 
     it('should have proper table label', () => {
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -676,7 +686,7 @@ describe('SwimlanesBoard', () => {
     });
 
     it('should have column headers', () => {
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -690,7 +700,7 @@ describe('SwimlanesBoard', () => {
     });
 
     it('should have aria-labels on cells', () => {
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -711,7 +721,7 @@ describe('SwimlanesBoard', () => {
         'unknown-user': [createMockTask({ id: 'task-1', assigneeId: 'unknown-user' })],
       };
 
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -728,7 +738,7 @@ describe('SwimlanesBoard', () => {
         'unknown-pbi': [createMockTask({ id: 'task-1', pbiId: 'unknown-pbi' })],
       };
 
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="pbi"
@@ -754,7 +764,7 @@ describe('SwimlanesBoard', () => {
         },
       ];
 
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -774,7 +784,7 @@ describe('SwimlanesBoard', () => {
       };
       const mockTeamMembers = [createMockTeamMember({ id: 'tm-1', userId: 'user-1' })];
 
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -807,7 +817,7 @@ describe('SwimlanesBoard', () => {
         }),
       ];
 
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -839,7 +849,7 @@ describe('SwimlanesBoard', () => {
         }),
       ];
 
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -899,7 +909,7 @@ describe('SwimlanesBoard', () => {
         }),
       ];
 
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -922,7 +932,7 @@ describe('SwimlanesBoard', () => {
         createMockPBI({ id: 'pbi-2', title: 'Beta' }),
       ];
 
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="pbi"
@@ -952,7 +962,7 @@ describe('SwimlanesBoard', () => {
           ),
       };
 
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -980,7 +990,7 @@ describe('SwimlanesBoard', () => {
           ),
       };
 
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -1007,7 +1017,7 @@ describe('SwimlanesBoard', () => {
           ),
       };
 
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -1034,7 +1044,7 @@ describe('SwimlanesBoard', () => {
           ),
       };
 
-      const { container } = render(
+      const { container } = renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -1062,7 +1072,7 @@ describe('SwimlanesBoard', () => {
           ),
       };
 
-      const { container } = render(
+      const { container } = renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -1081,7 +1091,7 @@ describe('SwimlanesBoard', () => {
         'user-1': [],
       };
 
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -1107,7 +1117,7 @@ describe('SwimlanesBoard', () => {
           ),
       };
 
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"
@@ -1172,7 +1182,7 @@ describe('SwimlanesBoard', () => {
         }),
       ];
 
-      render(
+      renderWithProviders(
         <SwimlanesBoard
           {...defaultProps}
           swimlaneGroup="assignee"

@@ -1,5 +1,5 @@
-import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeAll } from 'vitest';
+import { screen, renderWithProviders, initTestI18n } from '../../test-utils';
 
 import type { TeamMembership } from '../../types/auth.types';
 
@@ -22,6 +22,10 @@ vi.mock('./ForceDeleteWarning.module.css', () => ({
   },
 }));
 
+beforeAll(async () => {
+  await initTestI18n();
+});
+
 const mockBlockedTeams: TeamMembership[] = [
   { id: 'team-1', name: 'Team Alpha', role: 'PRODUCT_OWNER', isLastPO: true },
   { id: 'team-2', name: 'Team Beta', role: 'PRODUCT_OWNER', isLastPO: true },
@@ -29,38 +33,38 @@ const mockBlockedTeams: TeamMembership[] = [
 
 describe('ForceDeleteWarning', () => {
   it('should render grace period complete title', () => {
-    render(<ForceDeleteWarning blockedTeams={mockBlockedTeams} />);
+    renderWithProviders(<ForceDeleteWarning blockedTeams={mockBlockedTeams} />);
     expect(screen.getByText('Grace Period Complete')).toBeInTheDocument();
   });
 
   it('should mention permanent deletion', () => {
-    render(<ForceDeleteWarning blockedTeams={mockBlockedTeams} />);
+    renderWithProviders(<ForceDeleteWarning blockedTeams={mockBlockedTeams} />);
     expect(screen.getByText(/permanently delete your account/)).toBeInTheDocument();
   });
 
   it('should list blocked teams', () => {
-    render(<ForceDeleteWarning blockedTeams={mockBlockedTeams} />);
+    renderWithProviders(<ForceDeleteWarning blockedTeams={mockBlockedTeams} />);
     expect(screen.getByText('Team Alpha')).toBeInTheDocument();
     expect(screen.getByText('Team Beta')).toBeInTheDocument();
   });
 
   it('should show NO Product Owner warning', () => {
-    render(<ForceDeleteWarning blockedTeams={mockBlockedTeams} />);
+    renderWithProviders(<ForceDeleteWarning blockedTeams={mockBlockedTeams} />);
     expect(screen.getByText(/NO Product Owner/)).toBeInTheDocument();
   });
 
   it('should mention consequences for teams', () => {
-    render(<ForceDeleteWarning blockedTeams={mockBlockedTeams} />);
+    renderWithProviders(<ForceDeleteWarning blockedTeams={mockBlockedTeams} />);
     expect(screen.getByText(/add or remove team members/)).toBeInTheDocument();
   });
 
   it('should say action cannot be undone', () => {
-    render(<ForceDeleteWarning blockedTeams={mockBlockedTeams} />);
+    renderWithProviders(<ForceDeleteWarning blockedTeams={mockBlockedTeams} />);
     expect(screen.getByText(/CANNOT be undone/)).toBeInTheDocument();
   });
 
   it('should not show teams section when no blocked teams', () => {
-    render(<ForceDeleteWarning blockedTeams={[]} />);
+    renderWithProviders(<ForceDeleteWarning blockedTeams={[]} />);
     expect(screen.queryByText(/NO Product Owner/)).not.toBeInTheDocument();
   });
 });

@@ -10,15 +10,28 @@
  * - Accessibility during loading (ARIA attributes)
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor, act } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
+import {
+  screen,
+  waitFor,
+  act,
+  initTestI18n,
+  AllProviders,
+  createTestQueryClient,
+} from '../../test-utils';
+import { render } from '@testing-library/react';
+import { Route, Routes } from 'react-router-dom';
+import { type QueryClient } from '@tanstack/react-query';
 
 import { SprintReview } from './SprintReview';
 import { useTeamStore } from '../../store';
 import { apiService } from '../../services';
 import { SprintStatus, IncrementStatus, DeliveryMethod, UserRole } from '../../types';
+
+// Initialize i18n before all tests
+beforeAll(async () => {
+  await initTestI18n();
+});
 
 // Mock stores
 vi.mock('../../store', () => ({
@@ -93,27 +106,15 @@ vi.mock('../../components/EmptyState', () => ({
 }));
 
 // Test utilities
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        staleTime: 0,
-      },
-    },
-  });
-
 const renderSprintReview = (initialRoute = '/sprint-review', queryClient?: QueryClient) => {
   const testQueryClient = queryClient || createTestQueryClient();
   return render(
-    <QueryClientProvider client={testQueryClient}>
-      <MemoryRouter initialEntries={[initialRoute]}>
-        <Routes>
-          <Route path="/sprint-review" element={<SprintReview />} />
-          <Route path="/sprint-review/:sprintId" element={<SprintReview />} />
-        </Routes>
-      </MemoryRouter>
-    </QueryClientProvider>
+    <AllProviders queryClient={testQueryClient} initialRoute={initialRoute}>
+      <Routes>
+        <Route path="/sprint-review" element={<SprintReview />} />
+        <Route path="/sprint-review/:sprintId" element={<SprintReview />} />
+      </Routes>
+    </AllProviders>
   );
 };
 
@@ -652,21 +653,10 @@ describe('SprintReview - Loading State Tests', () => {
 
       expect(screen.getByRole('status')).toBeInTheDocument();
 
+      // Resolve all promises together to complete loading
       await act(async () => {
         resolveSprint!({ data: mockSprint });
-        vi.runAllTimersAsync();
-      });
-
-      await waitFor(() => {
-        expect(screen.getByRole('status')).toBeInTheDocument();
-      });
-
-      await act(async () => {
         resolveReviews!({ data: [mockReview] });
-        vi.runAllTimersAsync();
-      });
-
-      await act(async () => {
         resolveIncrements!({ data: [mockIncrement] });
         vi.runAllTimersAsync();
       });

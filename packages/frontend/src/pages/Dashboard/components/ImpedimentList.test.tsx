@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { renderWithProviders, screen, waitFor, initTestI18n, i18nT } from '../../../test-utils';
+import { vi, describe, it, expect, beforeEach, beforeAll } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { ImpedimentList, type ImpedimentListProps } from './ImpedimentList';
 import { ImpedimentStatus } from '../../../types';
@@ -44,13 +44,17 @@ describe('ImpedimentList Component', () => {
     emptyMessage: 'No open impediments. Great job!',
   };
 
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   describe('Rendering', () => {
     it('should render impediment list with impediments', () => {
-      render(<ImpedimentList {...defaultProps} />);
+      renderWithProviders(<ImpedimentList {...defaultProps} />);
 
       expect(screen.getByText('API downtime')).toBeInTheDocument();
       expect(screen.getByText('Database performance issue')).toBeInTheDocument();
@@ -60,7 +64,7 @@ describe('ImpedimentList Component', () => {
       const openImpediments = mockImpediments.filter(
         (imp) => imp.status === ImpedimentStatus.OPEN || imp.status === ImpedimentStatus.IN_PROGRESS
       );
-      render(<ImpedimentList {...defaultProps} impediments={openImpediments} />);
+      renderWithProviders(<ImpedimentList {...defaultProps} impediments={openImpediments} />);
 
       expect(screen.getByText('API downtime')).toBeInTheDocument();
       expect(screen.getByText('Database performance issue')).toBeInTheDocument();
@@ -71,22 +75,22 @@ describe('ImpedimentList Component', () => {
       const openImpediments = mockImpediments.filter(
         (imp) => imp.status === ImpedimentStatus.OPEN || imp.status === ImpedimentStatus.IN_PROGRESS
       );
-      render(<ImpedimentList {...defaultProps} impediments={openImpediments} />);
+      renderWithProviders(<ImpedimentList {...defaultProps} impediments={openImpediments} />);
 
-      const openBadges = screen.getAllByText('OPEN');
-      const inProgressBadges = screen.getAllByText('IN PROGRESS');
+      const openBadges = screen.getAllByText(i18nT('dashboard:impedimentStatus.OPEN'));
+      const inProgressBadges = screen.getAllByText(i18nT('dashboard:impedimentStatus.IN_PROGRESS'));
       expect(openBadges.length).toBeGreaterThan(0);
       expect(inProgressBadges.length).toBeGreaterThan(0);
     });
 
     it('should render empty message when no impediments', () => {
-      render(<ImpedimentList {...defaultProps} impediments={[]} />);
+      renderWithProviders(<ImpedimentList {...defaultProps} impediments={[]} />);
 
       expect(screen.getByText('No open impediments. Great job!')).toBeInTheDocument();
     });
 
     it('should have proper ARIA attributes', () => {
-      render(<ImpedimentList {...defaultProps} />);
+      renderWithProviders(<ImpedimentList {...defaultProps} />);
 
       const list = screen.getByRole('list', { name: 'Impediments list' });
       expect(list).toBeInTheDocument();
@@ -96,7 +100,9 @@ describe('ImpedimentList Component', () => {
   describe('Impediment Click Handler', () => {
     it('should call onImpedimentClick when impediment is clicked', async () => {
       const mockOnImpedimentClick = vi.fn();
-      render(<ImpedimentList {...defaultProps} onImpedimentClick={mockOnImpedimentClick} />);
+      renderWithProviders(
+        <ImpedimentList {...defaultProps} onImpedimentClick={mockOnImpedimentClick} />
+      );
 
       const impedimentItem = screen.getByText('API downtime').closest('[role="button"]');
       if (impedimentItem) {
@@ -109,7 +115,7 @@ describe('ImpedimentList Component', () => {
     });
 
     it('should not make impediments clickable when onImpedimentClick is not provided', () => {
-      render(<ImpedimentList {...defaultProps} />);
+      renderWithProviders(<ImpedimentList {...defaultProps} />);
 
       const impedimentItem = screen.getByText('API downtime').closest('li');
       expect(impedimentItem).not.toHaveAttribute('role', 'button');
@@ -118,7 +124,7 @@ describe('ImpedimentList Component', () => {
 
   describe('Keyboard Navigation', () => {
     it('should not have keyboard navigation when onImpedimentClick is not provided', () => {
-      render(<ImpedimentList {...defaultProps} />);
+      renderWithProviders(<ImpedimentList {...defaultProps} />);
 
       const list = screen.getByRole('list', { name: 'Impediments list' });
       expect(list).not.toHaveAttribute('aria-activedescendant');
@@ -126,7 +132,9 @@ describe('ImpedimentList Component', () => {
 
     it('should have aria-activedescendant when onImpedimentClick is provided', () => {
       const mockOnImpedimentClick = vi.fn();
-      render(<ImpedimentList {...defaultProps} onImpedimentClick={mockOnImpedimentClick} />);
+      renderWithProviders(
+        <ImpedimentList {...defaultProps} onImpedimentClick={mockOnImpedimentClick} />
+      );
 
       const list = screen.getByRole('list', { name: 'Impediments list' });
       expect(list).toHaveAttribute('aria-activedescendant');
@@ -135,7 +143,9 @@ describe('ImpedimentList Component', () => {
     it('should navigate down with ArrowDown key and loop around', async () => {
       const user = userEvent.setup();
       const mockOnImpedimentClick = vi.fn();
-      render(<ImpedimentList {...defaultProps} onImpedimentClick={mockOnImpedimentClick} />);
+      renderWithProviders(
+        <ImpedimentList {...defaultProps} onImpedimentClick={mockOnImpedimentClick} />
+      );
 
       const list = screen.getByRole('list', { name: 'Impediments list' });
       const firstItem = screen.getByText('API downtime').closest('[role="button"]') as HTMLElement;
@@ -158,7 +168,9 @@ describe('ImpedimentList Component', () => {
     it('should navigate up with ArrowUp key and loop around', async () => {
       const user = userEvent.setup();
       const mockOnImpedimentClick = vi.fn();
-      render(<ImpedimentList {...defaultProps} onImpedimentClick={mockOnImpedimentClick} />);
+      renderWithProviders(
+        <ImpedimentList {...defaultProps} onImpedimentClick={mockOnImpedimentClick} />
+      );
 
       const firstItem = screen.getByText('API downtime').closest('[role="button"]') as HTMLElement;
       firstItem.focus();
@@ -173,7 +185,9 @@ describe('ImpedimentList Component', () => {
     it('should jump to first item with Home key', async () => {
       const user = userEvent.setup();
       const mockOnImpedimentClick = vi.fn();
-      render(<ImpedimentList {...defaultProps} onImpedimentClick={mockOnImpedimentClick} />);
+      renderWithProviders(
+        <ImpedimentList {...defaultProps} onImpedimentClick={mockOnImpedimentClick} />
+      );
 
       const list = screen.getByRole('list', { name: 'Impediments list' });
 
@@ -190,7 +204,9 @@ describe('ImpedimentList Component', () => {
     it('should jump to last item with End key', async () => {
       const user = userEvent.setup();
       const mockOnImpedimentClick = vi.fn();
-      render(<ImpedimentList {...defaultProps} onImpedimentClick={mockOnImpedimentClick} />);
+      renderWithProviders(
+        <ImpedimentList {...defaultProps} onImpedimentClick={mockOnImpedimentClick} />
+      );
 
       const list = screen.getByRole('list', { name: 'Impediments list' });
 
@@ -202,7 +218,9 @@ describe('ImpedimentList Component', () => {
     it('should trigger click action with Enter key', async () => {
       const user = userEvent.setup();
       const mockOnImpedimentClick = vi.fn();
-      render(<ImpedimentList {...defaultProps} onImpedimentClick={mockOnImpedimentClick} />);
+      renderWithProviders(
+        <ImpedimentList {...defaultProps} onImpedimentClick={mockOnImpedimentClick} />
+      );
 
       const firstItem = screen.getByText('API downtime').closest('[role="button"]') as HTMLElement;
       firstItem.focus();
@@ -214,7 +232,9 @@ describe('ImpedimentList Component', () => {
     it('should trigger click action with Space key', async () => {
       const user = userEvent.setup();
       const mockOnImpedimentClick = vi.fn();
-      render(<ImpedimentList {...defaultProps} onImpedimentClick={mockOnImpedimentClick} />);
+      renderWithProviders(
+        <ImpedimentList {...defaultProps} onImpedimentClick={mockOnImpedimentClick} />
+      );
 
       const firstItem = screen.getByText('API downtime').closest('[role="button"]') as HTMLElement;
       firstItem.focus();
@@ -226,7 +246,9 @@ describe('ImpedimentList Component', () => {
     it('should blur list with Escape key', async () => {
       const user = userEvent.setup();
       const mockOnImpedimentClick = vi.fn();
-      render(<ImpedimentList {...defaultProps} onImpedimentClick={mockOnImpedimentClick} />);
+      renderWithProviders(
+        <ImpedimentList {...defaultProps} onImpedimentClick={mockOnImpedimentClick} />
+      );
 
       const list = screen.getByRole('list', { name: 'Impediments list' });
       const firstItem = screen.getByText('API downtime').closest('[role="button"]') as HTMLElement;
@@ -245,7 +267,7 @@ describe('ImpedimentList Component', () => {
       const openImpediments = mockImpediments.filter(
         (imp) => imp.status === ImpedimentStatus.OPEN || imp.status === ImpedimentStatus.IN_PROGRESS
       );
-      render(<ImpedimentList {...defaultProps} impediments={openImpediments} />);
+      renderWithProviders(<ImpedimentList {...defaultProps} impediments={openImpediments} />);
 
       expect(screen.getByText('API downtime')).toBeInTheDocument();
       expect(screen.getByText('Database performance issue')).toBeInTheDocument();
@@ -253,7 +275,7 @@ describe('ImpedimentList Component', () => {
     });
 
     it('should show empty state when no impediments are passed', () => {
-      render(<ImpedimentList {...defaultProps} impediments={[]} />);
+      renderWithProviders(<ImpedimentList {...defaultProps} impediments={[]} />);
 
       expect(screen.getByText('No open impediments. Great job!')).toBeInTheDocument();
     });

@@ -1,10 +1,10 @@
-import { screen, render, waitFor, fireEvent } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
+import { screen, renderWithProviders, waitFor, fireEvent } from '../../../test-utils';
+import { describe, it, expect, beforeEach, beforeAll, vi, afterEach } from 'vitest';
 
 import { BulkUploadModal } from './BulkUploadModal';
 import { apiService } from '../../../services';
 import { BacklogProvider } from '../context/BacklogContext';
+import { initTestI18n } from '../../../test-utils';
 
 vi.mock('../../../services', () => ({
   apiService: {
@@ -20,31 +20,19 @@ vi.mock('../hooks/useBacklogCapacityValidation', () => ({
   }),
 }));
 
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-    },
-  });
-
 const renderBulkUploadModal = (props = {}) => {
-  const queryClient = createTestQueryClient();
-  return render(
-    <QueryClientProvider client={queryClient}>
-      <BacklogProvider>
-        <BulkUploadModal
-          isOpen={true}
-          onClose={vi.fn()}
-          onUploadComplete={vi.fn()}
-          teamId="team-1"
-          goalId="goal-1"
-          existingItems={[]}
-          {...props}
-        />
-      </BacklogProvider>
-    </QueryClientProvider>
+  return renderWithProviders(
+    <BacklogProvider>
+      <BulkUploadModal
+        isOpen={true}
+        onClose={vi.fn()}
+        onUploadComplete={vi.fn()}
+        teamId="team-1"
+        goalId="goal-1"
+        existingItems={[]}
+        {...props}
+      />
+    </BacklogProvider>
   );
 };
 
@@ -60,6 +48,10 @@ const createMockFile = (name: string, content: string, type: string = 'text/csv'
 describe('BulkUploadModal Integration Tests', () => {
   const mockOnClose = vi.fn();
   const mockOnUploadComplete = vi.fn();
+
+  beforeAll(async () => {
+    await initTestI18n();
+  });
 
   beforeEach(() => {
     vi.clearAllMocks();

@@ -10,10 +10,8 @@
  * - Accessibility during loading (ARIA attributes)
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor, act } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MemoryRouter } from 'react-router-dom';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
+import { screen, waitFor, act, renderWithProviders, initTestI18n } from '../../test-utils';
 
 import { IncrementList } from './IncrementList';
 import { useTeamContext } from '../../contexts/TeamContext';
@@ -51,26 +49,8 @@ vi.mock('../../components/EmptyState', () => ({
   ),
 }));
 
-// Test utilities
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        staleTime: 0,
-      },
-    },
-  });
-
-const renderIncrementList = (queryClient?: QueryClient) => {
-  const testQueryClient = queryClient || createTestQueryClient();
-  return render(
-    <QueryClientProvider client={testQueryClient}>
-      <MemoryRouter>
-        <IncrementList />
-      </MemoryRouter>
-    </QueryClientProvider>
-  );
+const renderIncrementList = () => {
+  return renderWithProviders(<IncrementList />);
 };
 
 // Mock data
@@ -111,6 +91,10 @@ const mockIncrements = [
 ];
 
 describe('IncrementList - Loading State Tests', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   let mockUseTeamContext: ReturnType<typeof vi.fn>;
   let mockApiService: typeof apiService;
 

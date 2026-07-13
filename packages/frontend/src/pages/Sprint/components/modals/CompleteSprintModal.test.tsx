@@ -1,9 +1,13 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { screen, renderWithProviders, initTestI18n, i18nT } from '../../../../test-utils';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeAll } from 'vitest';
 
 import { CompleteSprintModal, type CompleteSprintModalProps } from './CompleteSprintModal';
+
+beforeAll(async () => {
+  await initTestI18n();
+});
 import { ImpedimentStatus, type Impediment } from '../../../../types';
 
 describe('CompleteSprintModal', () => {
@@ -36,7 +40,7 @@ describe('CompleteSprintModal', () => {
 
   describe('Rendering', () => {
     it('should render modal with sprint name', () => {
-      render(<CompleteSprintModal {...defaultProps} />);
+      renderWithProviders(<CompleteSprintModal {...defaultProps} />);
 
       expect(screen.getByRole('dialog')).toBeInTheDocument();
       expect(screen.getByText('Complete Sprint')).toBeInTheDocument();
@@ -44,21 +48,25 @@ describe('CompleteSprintModal', () => {
     });
 
     it('should render sprint stats', () => {
-      render(<CompleteSprintModal {...defaultProps} />);
+      renderWithProviders(<CompleteSprintModal {...defaultProps} />);
 
       expect(screen.getByText('10')).toBeInTheDocument();
       expect(screen.getByText('7')).toBeInTheDocument();
     });
 
     it('should render incomplete tasks warning', () => {
-      render(<CompleteSprintModal {...defaultProps} />);
+      renderWithProviders(<CompleteSprintModal {...defaultProps} />);
 
-      expect(screen.getByText(/Incomplete Work Detected/)).toBeInTheDocument();
-      expect(screen.getByText(/2 incomplete tasks/)).toBeInTheDocument();
+      expect(screen.getByText(i18nT('sprint:completeSprint.incompleteWork'))).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          i18nT('sprint:completeSprint.incompleteWorkDetails', { taskCount: 2, pbiCount: 2 })
+        )
+      ).toBeInTheDocument();
     });
 
     it('should render action buttons', () => {
-      render(<CompleteSprintModal {...defaultProps} />);
+      renderWithProviders(<CompleteSprintModal {...defaultProps} />);
 
       expect(screen.getByText('Cancel')).toBeInTheDocument();
     });
@@ -79,13 +87,13 @@ describe('CompleteSprintModal', () => {
     };
 
     it('should show success message when all tasks completed', () => {
-      render(<CompleteSprintModal {...allCompletedProps} />);
+      renderWithProviders(<CompleteSprintModal {...allCompletedProps} />);
 
       expect(screen.getByText(/All tasks are complete/)).toBeInTheDocument();
     });
 
     it('should not show incomplete tasks warning when all done', () => {
-      render(<CompleteSprintModal {...allCompletedProps} />);
+      renderWithProviders(<CompleteSprintModal {...allCompletedProps} />);
 
       expect(screen.queryByText(/Incomplete Work/)).not.toBeInTheDocument();
     });
@@ -93,7 +101,7 @@ describe('CompleteSprintModal', () => {
 
   describe('No Tasks', () => {
     it('should handle empty tasks array', () => {
-      render(
+      renderWithProviders(
         <CompleteSprintModal
           {...defaultProps}
           sprintStats={{ ...defaultProps.sprintStats, totalTasks: 0, doneTasks: 0 }}
@@ -110,7 +118,7 @@ describe('CompleteSprintModal', () => {
 
   describe('Error State', () => {
     it('should display error message when present', () => {
-      render(
+      renderWithProviders(
         <CompleteSprintModal {...defaultProps} completeSprintError="Failed to complete sprint" />
       );
 
@@ -119,7 +127,7 @@ describe('CompleteSprintModal', () => {
     });
 
     it('should not show error message text when error is null', () => {
-      render(<CompleteSprintModal {...defaultProps} completeSprintError={null} />);
+      renderWithProviders(<CompleteSprintModal {...defaultProps} completeSprintError={null} />);
 
       // The specific error message should not be present
       expect(screen.queryByText('Failed to complete sprint')).not.toBeInTheDocument();
@@ -131,7 +139,7 @@ describe('CompleteSprintModal', () => {
       const onClose = vi.fn();
       const user = userEvent.setup();
 
-      render(<CompleteSprintModal {...defaultProps} onClose={onClose} />);
+      renderWithProviders(<CompleteSprintModal {...defaultProps} onClose={onClose} />);
 
       const cancelButton = screen.getByText('Cancel');
       await user.click(cancelButton);
@@ -143,7 +151,9 @@ describe('CompleteSprintModal', () => {
       const onManageBacklog = vi.fn();
       const user = userEvent.setup();
 
-      render(<CompleteSprintModal {...defaultProps} onManageBacklog={onManageBacklog} />);
+      renderWithProviders(
+        <CompleteSprintModal {...defaultProps} onManageBacklog={onManageBacklog} />
+      );
 
       const manageButton = screen.getByText('Manage Backlog');
       await user.click(manageButton);
@@ -154,13 +164,13 @@ describe('CompleteSprintModal', () => {
 
   describe('Loading State', () => {
     it('should show loading state when completing', () => {
-      render(<CompleteSprintModal {...defaultProps} isCompleting={true} />);
+      renderWithProviders(<CompleteSprintModal {...defaultProps} isCompleting={true} />);
 
       expect(screen.getByText('Processing...')).toBeInTheDocument();
     });
 
     it('should disable buttons when completing', () => {
-      render(<CompleteSprintModal {...defaultProps} isCompleting={true} />);
+      renderWithProviders(<CompleteSprintModal {...defaultProps} isCompleting={true} />);
 
       const cancelButton = screen.getByText('Cancel');
       expect(cancelButton).toBeDisabled();
@@ -169,21 +179,21 @@ describe('CompleteSprintModal', () => {
 
   describe('Accessibility', () => {
     it('should have correct dialog role', () => {
-      render(<CompleteSprintModal {...defaultProps} />);
+      renderWithProviders(<CompleteSprintModal {...defaultProps} />);
 
       const dialog = screen.getByRole('dialog');
       expect(dialog).toHaveAttribute('aria-modal', 'true');
     });
 
     it('should have aria-labelledby pointing to title', () => {
-      render(<CompleteSprintModal {...defaultProps} />);
+      renderWithProviders(<CompleteSprintModal {...defaultProps} />);
 
       const dialog = screen.getByRole('dialog');
       expect(dialog).toHaveAttribute('aria-labelledby', 'complete-sprint-title');
     });
 
     it('should have aria-hidden on decorative icons', () => {
-      const { container } = render(<CompleteSprintModal {...defaultProps} />);
+      const { container } = renderWithProviders(<CompleteSprintModal {...defaultProps} />);
 
       const hiddenElements = container.querySelectorAll('[aria-hidden="true"]');
       expect(hiddenElements.length).toBeGreaterThan(0);
@@ -222,21 +232,25 @@ describe('CompleteSprintModal', () => {
     };
 
     it('should show outstanding impediments warning when impediments exist', () => {
-      render(<CompleteSprintModal {...impedimentsProps} />);
+      renderWithProviders(<CompleteSprintModal {...impedimentsProps} />);
 
-      expect(screen.getByText(/Outstanding Impediments Detected/)).toBeInTheDocument();
-      expect(screen.getByText(/2 outstanding impediments/)).toBeInTheDocument();
+      expect(
+        screen.getByText(i18nT('sprint:completeSprint.outstandingImpediments'))
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(i18nT('sprint:completeSprint.outstandingImpedimentsDetails', { count: 2 }))
+      ).toBeInTheDocument();
     });
 
     it('should render OPEN status badge for open impediments', () => {
-      render(<CompleteSprintModal {...impedimentsProps} />);
+      renderWithProviders(<CompleteSprintModal {...impedimentsProps} />);
 
       expect(screen.getByText('Open')).toBeInTheDocument();
       expect(screen.getByText('Database connection timeout')).toBeInTheDocument();
     });
 
     it('should render IN_PROGRESS status badge for in-progress impediments', () => {
-      render(<CompleteSprintModal {...impedimentsProps} />);
+      renderWithProviders(<CompleteSprintModal {...impedimentsProps} />);
 
       // Find all elements with "In Progress" text (one for task, one for impediment)
       const inProgressElements = screen.getAllByText('In Progress');
@@ -245,7 +259,7 @@ describe('CompleteSprintModal', () => {
     });
 
     it('should show sprint name when impediment has sprint association', () => {
-      render(<CompleteSprintModal {...impedimentsProps} />);
+      renderWithProviders(<CompleteSprintModal {...impedimentsProps} />);
 
       // Find all "Sprint 1" elements (one in summary header, one in impediment)
       const sprintElements = screen.getAllByText('Sprint 1');
@@ -264,7 +278,7 @@ describe('CompleteSprintModal', () => {
         updatedAt: new Date().toISOString(),
       }));
 
-      render(
+      renderWithProviders(
         <CompleteSprintModal
           {...defaultProps}
           outstandingImpediments={manyImpediments}
@@ -272,14 +286,18 @@ describe('CompleteSprintModal', () => {
         />
       );
 
-      expect(screen.getByText('+2 more impediments')).toBeInTheDocument();
+      expect(
+        screen.getByText(i18nT('sprint:completeSprint.moreImpediments', { count: 2 }))
+      ).toBeInTheDocument();
     });
 
     it('should call onViewImpediments when View Impediments button clicked', async () => {
       const onViewImpediments = vi.fn();
       const user = userEvent.setup();
 
-      render(<CompleteSprintModal {...impedimentsProps} onViewImpediments={onViewImpediments} />);
+      renderWithProviders(
+        <CompleteSprintModal {...impedimentsProps} onViewImpediments={onViewImpediments} />
+      );
 
       const viewButton = screen.getByText('View Impediments');
       await user.click(viewButton);
@@ -288,7 +306,7 @@ describe('CompleteSprintModal', () => {
     });
 
     it('should disable Complete Sprint button when impediments exist', () => {
-      render(<CompleteSprintModal {...impedimentsProps} />);
+      renderWithProviders(<CompleteSprintModal {...impedimentsProps} />);
 
       const completeButton = screen.getByRole('button', { name: /Complete Sprint/i });
       expect(completeButton).toBeDisabled();
@@ -298,13 +316,13 @@ describe('CompleteSprintModal', () => {
 
   describe('Duration Display', () => {
     it('should show days remaining when daysRemaining > 0', () => {
-      render(<CompleteSprintModal {...defaultProps} daysRemaining={3} />);
+      renderWithProviders(<CompleteSprintModal {...defaultProps} daysRemaining={3} />);
 
       expect(screen.getByText('3 days remaining')).toBeInTheDocument();
     });
 
     it('should show timebox ended when daysRemaining is 0', () => {
-      render(<CompleteSprintModal {...defaultProps} daysRemaining={0} />);
+      renderWithProviders(<CompleteSprintModal {...defaultProps} daysRemaining={0} />);
 
       expect(screen.getByText('Timebox ended')).toBeInTheDocument();
     });
@@ -327,13 +345,13 @@ describe('CompleteSprintModal', () => {
     };
 
     it('should show ready to complete message when all tasks done and no impediments', () => {
-      render(<CompleteSprintModal {...allClearProps} />);
+      renderWithProviders(<CompleteSprintModal {...allClearProps} />);
 
       expect(screen.getByText(/All tasks are complete/)).toBeInTheDocument();
     });
 
     it('should show Proceed to DoD Verification button when all clear', () => {
-      render(<CompleteSprintModal {...allClearProps} />);
+      renderWithProviders(<CompleteSprintModal {...allClearProps} />);
 
       const dodButton = screen.getByText('Proceed to DoD Verification');
       expect(dodButton).toBeInTheDocument();
@@ -344,7 +362,7 @@ describe('CompleteSprintModal', () => {
       const onProceedToDodVerification = vi.fn();
       const user = userEvent.setup();
 
-      render(
+      renderWithProviders(
         <CompleteSprintModal
           {...allClearProps}
           onProceedToDodVerification={onProceedToDodVerification}
@@ -358,7 +376,7 @@ describe('CompleteSprintModal', () => {
     });
 
     it('should show correct title attribute tooltip for all-clear button', () => {
-      render(<CompleteSprintModal {...allClearProps} />);
+      renderWithProviders(<CompleteSprintModal {...allClearProps} />);
 
       const dodButton = screen.getByText('Proceed to DoD Verification');
       expect(dodButton.closest('button')).toHaveAttribute(
@@ -391,14 +409,14 @@ describe('CompleteSprintModal', () => {
     };
 
     it('should show impediments warning but not incomplete tasks warning', () => {
-      render(<CompleteSprintModal {...impedimentsOnlyProps} />);
+      renderWithProviders(<CompleteSprintModal {...impedimentsOnlyProps} />);
 
       expect(screen.getByText(/Outstanding Impediments Detected/)).toBeInTheDocument();
       expect(screen.queryByText(/Incomplete Work Detected/)).not.toBeInTheDocument();
     });
 
     it('should show singular "impediment" when count is 1', () => {
-      render(<CompleteSprintModal {...impedimentsOnlyProps} />);
+      renderWithProviders(<CompleteSprintModal {...impedimentsOnlyProps} />);
 
       expect(screen.getByText(/1 outstanding impediment/)).toBeInTheDocument();
     });

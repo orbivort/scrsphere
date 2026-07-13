@@ -106,7 +106,8 @@
     "adding": "Hinzufügen...",
     "sendInvite": "Einladung senden",
     "unsentTitle": "Ungesendete Einladung",
-    "unsentMessage": "Sie haben eine ungesendete Team-Einladung. Sind Sie sicher, dass Sie sie verwerfen möchten?"
+    "unsentMessage": "Sie haben eine ungesendete Team-Einladung. Sind Sie sicher, dass Sie sie verwerfen möchten?",
+    "addedSuccess": "{{name}} wurde als {{role}} zum Team hinzugefügt."
   },
   "inviteErrors": {
     "userNotFound": "Kein Benutzer mit dieser E-Mail-Adresse gefunden. Der Benutzer muss sich zuerst registrieren, bevor er zu einem Team eingeladen werden kann.",

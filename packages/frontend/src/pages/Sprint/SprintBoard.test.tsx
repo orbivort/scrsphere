@@ -1,8 +1,11 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
 import { screen, render, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter } from 'react-router-dom';
+import { I18nextProvider } from 'react-i18next';
 
+import { initTestI18n, i18nT } from '@/test-utils';
+import { getTestI18nInstance } from '../../i18n/testConfig';
 import { useTeamStore } from '../../store';
 import {
   createMockTask,
@@ -181,15 +184,21 @@ const getDefaultMutations = () => {
 
 const renderSprintBoard = (queryClient = createTestQueryClient()) => {
   return render(
-    <QueryClientProvider client={queryClient}>
-      <MemoryRouter>
-        <SprintBoard />
-      </MemoryRouter>
-    </QueryClientProvider>
+    <I18nextProvider i18n={getTestI18nInstance()}>
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <SprintBoard />
+        </MemoryRouter>
+      </QueryClientProvider>
+    </I18nextProvider>
   );
 };
 
 describe('SprintBoard Component', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   let queryClient: QueryClient;
   let useSprintBoardData: ReturnType<typeof vi.fn>;
   let useTaskMutations: ReturnType<typeof vi.fn>;
@@ -288,7 +297,9 @@ describe('SprintBoard Component', () => {
 
       renderSprintBoard(queryClient);
 
-      expect(screen.getByRole('status', { name: /loading sprint board/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('status', { name: i18nT('sprint:board.loadingBoard') })
+      ).toBeInTheDocument();
     });
 
     it('should show no team message when team is not selected', async () => {
@@ -311,7 +322,7 @@ describe('SprintBoard Component', () => {
       renderSprintBoard(queryClient);
 
       await waitFor(() => {
-        expect(screen.getByText(/no team selected/i)).toBeInTheDocument();
+        expect(screen.getByText(i18nT('common:emptyState.noTeam.title'))).toBeInTheDocument();
       });
     });
 
@@ -324,7 +335,9 @@ describe('SprintBoard Component', () => {
       renderSprintBoard(queryClient);
 
       await waitFor(() => {
-        expect(screen.getByText(/no active sprint/i)).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('common:emptyState.noActiveSprint.title'))
+        ).toBeInTheDocument();
       });
     });
 
@@ -345,9 +358,15 @@ describe('SprintBoard Component', () => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
       });
 
-      expect(screen.getByRole('heading', { name: /to do/i })).toBeInTheDocument();
-      expect(screen.getByRole('heading', { name: /in progress/i })).toBeInTheDocument();
-      expect(screen.getByRole('heading', { name: /done/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('heading', { name: i18nT('sprint:taskStatus.todo') })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('heading', { name: i18nT('sprint:taskStatus.inProgress') })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('heading', { name: i18nT('sprint:taskStatus.done') })
+      ).toBeInTheDocument();
     });
   });
 
@@ -431,7 +450,7 @@ describe('SprintBoard Component', () => {
 
       await waitFor(() => {
         const mainElement = screen.getByRole('main');
-        expect(mainElement).toHaveAttribute('aria-label', 'Sprint Board');
+        expect(mainElement).toHaveAttribute('aria-label', i18nT('sprint:board.sprintBoard'));
       });
     });
 
@@ -439,7 +458,7 @@ describe('SprintBoard Component', () => {
       renderSprintBoard(queryClient);
 
       await waitFor(() => {
-        const board = screen.getByRole('list', { name: 'Task board' });
+        const board = screen.getByRole('list', { name: i18nT('sprint:board.taskBoard') });
         expect(board).toBeInTheDocument();
       });
     });
@@ -455,7 +474,9 @@ describe('SprintBoard Component', () => {
       renderSprintBoard(queryClient);
 
       await waitFor(() => {
-        expect(screen.getByText(/no active sprint/i)).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('common:emptyState.noActiveSprint.title'))
+        ).toBeInTheDocument();
       });
     });
   });
@@ -1099,6 +1120,10 @@ describe('SprintBoard Helper Functions', () => {
 });
 
 describe('SprintBoard Modal Interactions', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   let queryClient: QueryClient;
   let useSprintBoardData: ReturnType<typeof vi.fn>;
   let useTaskMutations: ReturnType<typeof vi.fn>;

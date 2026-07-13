@@ -19,6 +19,14 @@ describe('workflowTransitions', () => {
         expect(Array.isArray(WORKFLOW_TRANSITIONS[status].allowed)).toBe(true);
       });
     });
+
+    it('should have description keys for all statuses', () => {
+      const statuses = Object.values(ItemStatus);
+      statuses.forEach((status) => {
+        const description = WORKFLOW_TRANSITIONS[status].description;
+        expect(description).toContain('workflowTransitions.');
+      });
+    });
   });
 
   describe('canTransition', () => {
@@ -58,15 +66,14 @@ describe('workflowTransitions', () => {
   });
 
   describe('getTransitionDescription', () => {
-    it('should return description for valid transitions', () => {
+    it('should return i18n key for valid transitions', () => {
       const description = getTransitionDescription(ItemStatus.NEW, ItemStatus.REFINED);
-      expect(description).toBe('New items must be refined first');
+      expect(description).toBe('workflowTransitions.newDescription');
     });
 
-    it('should return error message for invalid transitions', () => {
-      const description = getTransitionDescription(ItemStatus.NEW, ItemStatus.DONE);
-      expect(description).toContain('not allowed');
-      expect(description).toContain('REFINED');
+    it('should return i18n key based on source status', () => {
+      const description = getTransitionDescription(ItemStatus.REFINED, ItemStatus.READY);
+      expect(description).toBe('workflowTransitions.refinedDescription');
     });
   });
 
@@ -91,18 +98,19 @@ describe('workflowTransitions', () => {
       const result = validateTransition(ItemStatus.NEW, ItemStatus.REFINED);
       expect(result.valid).toBe(true);
       expect(result.requiresValidation).toBe(false);
+      expect(result.messageKey).toBeUndefined();
     });
 
     it('should reject same status transitions', () => {
       const result = validateTransition(ItemStatus.NEW, ItemStatus.NEW);
       expect(result.valid).toBe(false);
-      expect(result.message).toBe('Item is already in this status');
+      expect(result.messageKey).toBe('validation.statusAlreadySet');
     });
 
     it('should reject invalid transitions', () => {
       const result = validateTransition(ItemStatus.NEW, ItemStatus.DONE);
       expect(result.valid).toBe(false);
-      expect(result.message).toContain('not allowed');
+      expect(result.messageKey).toBe('validation.invalidTransition');
     });
 
     it('should indicate validation requirement', () => {

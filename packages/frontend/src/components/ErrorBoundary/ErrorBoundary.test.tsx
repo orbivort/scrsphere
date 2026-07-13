@@ -1,6 +1,7 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
+import { screen, fireEvent, renderWithProviders } from '@/test-utils';
 
+import { initTestI18n, i18nT } from '@/test-utils';
 import { ErrorBoundary } from './ErrorBoundary';
 import { APIErrorBoundary } from './APIErrorBoundary';
 
@@ -35,6 +36,10 @@ vi.mock('./ErrorBoundary.module.css', () => ({
 }));
 
 describe('ErrorBoundary Component', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     console.error = vi.fn();
   });
@@ -46,7 +51,7 @@ describe('ErrorBoundary Component', () => {
 
   describe('Component Rendering Tests', () => {
     it('should render children when no error occurs', () => {
-      render(
+      renderWithProviders(
         <ErrorBoundary>
           <div>Test content</div>
         </ErrorBoundary>
@@ -56,28 +61,28 @@ describe('ErrorBoundary Component', () => {
     });
 
     it('should render error UI when an error is thrown', () => {
-      render(
+      renderWithProviders(
         <ErrorBoundary>
           <ThrowError error={new Error('Test error')} />
         </ErrorBoundary>
       );
 
-      expect(screen.getByText('Something went wrong')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('errorBoundary.title'))).toBeInTheDocument();
     });
 
     it('should render custom fallback when provided', () => {
-      render(
+      renderWithProviders(
         <ErrorBoundary fallback={<div>Custom fallback</div>}>
           <ThrowError error={new Error('Test error')} />
         </ErrorBoundary>
       );
 
       expect(screen.getByText('Custom fallback')).toBeInTheDocument();
-      expect(screen.queryByText('Something went wrong')).not.toBeInTheDocument();
+      expect(screen.queryByText(i18nT('errorBoundary.title'))).not.toBeInTheDocument();
     });
 
     it('should display error icon', () => {
-      const { container } = render(
+      const { container } = renderWithProviders(
         <ErrorBoundary>
           <ThrowError error={new Error('Test error')} />
         </ErrorBoundary>
@@ -89,112 +94,104 @@ describe('ErrorBoundary Component', () => {
 
   describe('Error Categorization Tests', () => {
     it('should display network error message for Network Error', () => {
-      render(
+      renderWithProviders(
         <ErrorBoundary>
           <ThrowError error={new Error('Network Error: Failed to fetch')} />
         </ErrorBoundary>
       );
 
-      expect(
-        screen.getByText('Unable to connect to the server. Please check your internet connection.')
-      ).toBeInTheDocument();
+      expect(screen.getByText(i18nT('errorBoundary.networkError'))).toBeInTheDocument();
     });
 
     it('should display auth error message for 401 errors', () => {
-      render(
+      renderWithProviders(
         <ErrorBoundary>
           <ThrowError error={new Error('401 Unauthorized')} />
         </ErrorBoundary>
       );
 
-      expect(
-        screen.getByText('Your session has expired. Please log in again.')
-      ).toBeInTheDocument();
+      expect(screen.getByText(i18nT('errorBoundary.authError'))).toBeInTheDocument();
     });
 
     it('should display validation error message for 400 errors', () => {
-      render(
+      renderWithProviders(
         <ErrorBoundary>
           <ThrowError error={new Error('400 Bad Request')} />
         </ErrorBoundary>
       );
 
-      expect(
-        screen.getByText('Invalid data provided. Please check your input.')
-      ).toBeInTheDocument();
+      expect(screen.getByText(i18nT('errorBoundary.validationError'))).toBeInTheDocument();
     });
 
     it('should display not found error message for 404 errors', () => {
-      render(
+      renderWithProviders(
         <ErrorBoundary>
           <ThrowError error={new Error('404 Not Found')} />
         </ErrorBoundary>
       );
 
-      expect(screen.getByText('The requested resource was not found.')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('errorBoundary.notFoundError'))).toBeInTheDocument();
     });
 
     it('should display generic error message for unknown errors', () => {
-      render(
+      renderWithProviders(
         <ErrorBoundary>
           <ThrowError error={new Error('Unknown error')} />
         </ErrorBoundary>
       );
 
-      expect(
-        screen.getByText('An unexpected error occurred. Please try again.')
-      ).toBeInTheDocument();
+      expect(screen.getByText(i18nT('errorBoundary.runtimeError'))).toBeInTheDocument();
     });
 
     it('should display validation error for 422 errors', () => {
-      render(
+      renderWithProviders(
         <ErrorBoundary>
           <ThrowError error={new Error('422 Unprocessable Entity')} />
         </ErrorBoundary>
       );
 
-      expect(
-        screen.getByText('Invalid data provided. Please check your input.')
-      ).toBeInTheDocument();
+      expect(screen.getByText(i18nT('errorBoundary.validationError'))).toBeInTheDocument();
     });
 
     it('should display validation error for validation keyword', () => {
-      render(
+      renderWithProviders(
         <ErrorBoundary>
           <ThrowError error={new Error('validation failed')} />
         </ErrorBoundary>
       );
 
-      expect(
-        screen.getByText('Invalid data provided. Please check your input.')
-      ).toBeInTheDocument();
+      expect(screen.getByText(i18nT('errorBoundary.validationError'))).toBeInTheDocument();
     });
   });
 
   describe('User Interaction Tests', () => {
     it('should show Try Again button when retries are available', () => {
-      render(
+      renderWithProviders(
         <ErrorBoundary maxRetries={3}>
           <ThrowError error={new Error('Test error')} />
         </ErrorBoundary>
       );
 
-      expect(screen.getByText('Try Again')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('errorBoundary.tryAgain'))).toBeInTheDocument();
     });
 
     it('should hide Try Again button when max retries reached', () => {
-      render(
+      renderWithProviders(
         <ErrorBoundary maxRetries={0}>
           <ThrowError error={new Error('Test error')} />
         </ErrorBoundary>
       );
 
-      expect(screen.queryByText('Try Again')).not.toBeInTheDocument();
+      expect(screen.queryByText(i18nT('errorBoundary.tryAgain'))).not.toBeInTheDocument();
     });
   });
 });
 
 describe('APIErrorBoundary Component', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     console.error = vi.fn();
   });
@@ -206,7 +203,7 @@ describe('APIErrorBoundary Component', () => {
 
   describe('Component Rendering Tests', () => {
     it('should render children when no error occurs', () => {
-      render(
+      renderWithProviders(
         <APIErrorBoundary>
           <div>API content</div>
         </APIErrorBoundary>
@@ -216,155 +213,145 @@ describe('APIErrorBoundary Component', () => {
     });
 
     it('should render error UI for network errors', () => {
-      render(
+      renderWithProviders(
         <APIErrorBoundary>
           <ThrowError error={new Error('Network Error')} />
         </APIErrorBoundary>
       );
 
-      expect(screen.getByText('Connection Error')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('errorBoundary.connectionError'))).toBeInTheDocument();
     });
 
     it('should render error UI for timeout errors', () => {
-      render(
+      renderWithProviders(
         <APIErrorBoundary>
           <ThrowError error={new Error('Request timeout')} />
         </APIErrorBoundary>
       );
 
-      expect(screen.getByText('Connection Error')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('errorBoundary.connectionError'))).toBeInTheDocument();
     });
 
     it('should render error UI for 401 errors', () => {
-      render(
+      renderWithProviders(
         <APIErrorBoundary>
           <ThrowError error={new Error('401 Unauthorized')} />
         </APIErrorBoundary>
       );
 
-      expect(screen.getByText('Connection Error')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('errorBoundary.connectionError'))).toBeInTheDocument();
     });
 
     it('should render error UI for 403 errors', () => {
-      render(
+      renderWithProviders(
         <APIErrorBoundary>
           <ThrowError error={new Error('403 Forbidden')} />
         </APIErrorBoundary>
       );
 
-      expect(screen.getByText('Connection Error')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('errorBoundary.connectionError'))).toBeInTheDocument();
     });
 
     it('should render error UI for 404 errors', () => {
-      render(
+      renderWithProviders(
         <APIErrorBoundary>
           <ThrowError error={new Error('404 Not Found')} />
         </APIErrorBoundary>
       );
 
-      expect(screen.getByText('Connection Error')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('errorBoundary.connectionError'))).toBeInTheDocument();
     });
 
     it('should render error UI for 500 errors', () => {
-      render(
+      renderWithProviders(
         <APIErrorBoundary>
           <ThrowError error={new Error('500 Internal Server Error')} />
         </APIErrorBoundary>
       );
 
-      expect(screen.getByText('Connection Error')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('errorBoundary.connectionError'))).toBeInTheDocument();
     });
 
     it('should render error UI for API errors', () => {
-      render(
+      renderWithProviders(
         <APIErrorBoundary>
           <ThrowError error={new Error('API request failed')} />
         </APIErrorBoundary>
       );
 
-      expect(screen.getByText('Connection Error')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('errorBoundary.connectionError'))).toBeInTheDocument();
     });
   });
 
   describe('Error Message Tests', () => {
     it('should display network error message', () => {
-      render(
+      renderWithProviders(
         <APIErrorBoundary>
           <ThrowError error={new Error('Network Error')} />
         </APIErrorBoundary>
       );
 
-      expect(
-        screen.getByText('Unable to connect to the server. Please check your internet connection.')
-      ).toBeInTheDocument();
+      expect(screen.getByText(i18nT('errorBoundary.networkError'))).toBeInTheDocument();
     });
 
     it('should display timeout error message', () => {
-      render(
+      renderWithProviders(
         <APIErrorBoundary>
           <ThrowError error={new Error('Request timeout')} />
         </APIErrorBoundary>
       );
 
-      expect(screen.getByText('The request timed out. Please try again.')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('errorBoundary.timeoutError'))).toBeInTheDocument();
     });
 
     it('should display 401 error message', () => {
-      render(
+      renderWithProviders(
         <APIErrorBoundary>
           <ThrowError error={new Error('401 Unauthorized')} />
         </APIErrorBoundary>
       );
 
-      expect(
-        screen.getByText('Your session has expired. Please log in again.')
-      ).toBeInTheDocument();
+      expect(screen.getByText(i18nT('errorBoundary.authError'))).toBeInTheDocument();
     });
 
     it('should display 403 error message', () => {
-      render(
+      renderWithProviders(
         <APIErrorBoundary>
           <ThrowError error={new Error('403 Forbidden')} />
         </APIErrorBoundary>
       );
 
-      expect(
-        screen.getByText('You do not have permission to perform this action.')
-      ).toBeInTheDocument();
+      expect(screen.getByText(i18nT('errorBoundary.forbiddenError'))).toBeInTheDocument();
     });
 
     it('should display 404 error message', () => {
-      render(
+      renderWithProviders(
         <APIErrorBoundary>
           <ThrowError error={new Error('404 Not Found')} />
         </APIErrorBoundary>
       );
 
-      expect(screen.getByText('The requested resource was not found.')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('errorBoundary.notFoundError'))).toBeInTheDocument();
     });
 
     it('should display 500 error message', () => {
-      render(
+      renderWithProviders(
         <APIErrorBoundary>
           <ThrowError error={new Error('500 Internal Server Error')} />
         </APIErrorBoundary>
       );
 
-      expect(
-        screen.getByText('A server error occurred. Please try again later.')
-      ).toBeInTheDocument();
+      expect(screen.getByText(i18nT('errorBoundary.serverError'))).toBeInTheDocument();
     });
 
     it('should display generic error message for unknown API errors', () => {
-      render(
+      renderWithProviders(
         <APIErrorBoundary>
           <ThrowError error={new Error('API error')} />
         </APIErrorBoundary>
       );
 
-      expect(
-        screen.getByText('An error occurred while communicating with the server.')
-      ).toBeInTheDocument();
+      expect(screen.getByText(i18nT('errorBoundary.apiError'))).toBeInTheDocument();
     });
   });
 
@@ -372,20 +359,20 @@ describe('APIErrorBoundary Component', () => {
     it('should call onRetry when Retry button is clicked', () => {
       const onRetry = vi.fn();
 
-      render(
+      renderWithProviders(
         <APIErrorBoundary onRetry={onRetry}>
           <ThrowError error={new Error('Network Error')} />
         </APIErrorBoundary>
       );
 
-      const retryButton = screen.getByText('Retry');
+      const retryButton = screen.getByText(i18nT('retry'));
       fireEvent.click(retryButton);
 
       expect(onRetry).toHaveBeenCalled();
     });
 
     it('should reset error state when Retry button is clicked', () => {
-      const { container, rerender } = render(
+      const { container, rerender } = renderWithProviders(
         <APIErrorBoundary>
           <ThrowError error={new Error('Network Error')} />
         </APIErrorBoundary>
@@ -402,7 +389,7 @@ describe('APIErrorBoundary Component', () => {
       expect(container.querySelector('.api-error-boundary')).toBeInTheDocument();
 
       // Now click retry to reset the error state
-      const retryButton = screen.getByText('Retry');
+      const retryButton = screen.getByText(i18nT('retry'));
       fireEvent.click(retryButton);
 
       // After retry, the error boundary should show the children
@@ -420,7 +407,7 @@ describe('APIErrorBoundary Component', () => {
       // Non-API errors should not be caught by APIErrorBoundary
       // The error boundary will re-throw them
       expect(() => {
-        render(
+        renderWithProviders(
           <APIErrorBoundary>
             <ThrowError error={nonAPIError} />
           </APIErrorBoundary>

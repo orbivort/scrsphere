@@ -1,7 +1,5 @@
-import { renderHook, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { type ReactNode } from 'react';
+import { renderHook, waitFor, initTestI18n, AllProviders } from '../test-utils';
+import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
 
 import { useSprintsData } from './useSprintsData';
 import * as storeModule from '../store';
@@ -17,22 +15,6 @@ vi.mock('../services', () => ({
     getGeneratedSprints: vi.fn(),
   },
 }));
-
-const createWrapper = () => {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        gcTime: 0,
-        staleTime: 0,
-      },
-    },
-  });
-
-  return function Wrapper({ children }: { children: ReactNode }) {
-    return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
-  };
-};
 
 const createMockSprint = (
   id: string,
@@ -52,6 +34,10 @@ const createMockSprint = (
 describe('useSprintsData', () => {
   const mockTeamId = 'team-1';
 
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
 
@@ -66,7 +52,7 @@ describe('useSprintsData', () => {
         currentTeam: null,
       } as any);
 
-      renderHook(() => useSprintsData(2024), { wrapper: createWrapper() });
+      renderHook(() => useSprintsData(2024), { wrapper: AllProviders });
 
       expect(apiService.getGeneratedSprints).not.toHaveBeenCalled();
     });
@@ -79,7 +65,7 @@ describe('useSprintsData', () => {
         data: mockSprints,
       });
 
-      renderHook(() => useSprintsData(2024), { wrapper: createWrapper() });
+      renderHook(() => useSprintsData(2024), { wrapper: AllProviders });
 
       await waitFor(() => {
         expect(apiService.getGeneratedSprints).toHaveBeenCalledWith(mockTeamId, 2024);
@@ -89,7 +75,7 @@ describe('useSprintsData', () => {
     it('should return loading state correctly', async () => {
       vi.mocked(apiService.getGeneratedSprints).mockImplementation(() => new Promise(() => {}));
 
-      const { result } = renderHook(() => useSprintsData(2024), { wrapper: createWrapper() });
+      const { result } = renderHook(() => useSprintsData(2024), { wrapper: AllProviders });
 
       expect(result.current.isLoading).toBe(true);
     });
@@ -99,7 +85,7 @@ describe('useSprintsData', () => {
 
       vi.mocked(apiService.getGeneratedSprints).mockRejectedValue(mockError);
 
-      const { result } = renderHook(() => useSprintsData(2024), { wrapper: createWrapper() });
+      const { result } = renderHook(() => useSprintsData(2024), { wrapper: AllProviders });
 
       await waitFor(() => {
         expect(result.current.error).toBeDefined();
@@ -132,7 +118,7 @@ describe('useSprintsData', () => {
         data: [currentSprint, futureSprint],
       });
 
-      const { result } = renderHook(() => useSprintsData(2024), { wrapper: createWrapper() });
+      const { result } = renderHook(() => useSprintsData(2024), { wrapper: AllProviders });
 
       await waitFor(() => {
         expect(result.current.sprints).toHaveLength(2);
@@ -158,7 +144,7 @@ describe('useSprintsData', () => {
         data: [pastSprint],
       });
 
-      const { result } = renderHook(() => useSprintsData(2024), { wrapper: createWrapper() });
+      const { result } = renderHook(() => useSprintsData(2024), { wrapper: AllProviders });
 
       await waitFor(() => {
         expect(result.current.sprints).toHaveLength(1);
@@ -184,7 +170,7 @@ describe('useSprintsData', () => {
         data: [sprintWithoutDates],
       });
 
-      const { result } = renderHook(() => useSprintsData(2024), { wrapper: createWrapper() });
+      const { result } = renderHook(() => useSprintsData(2024), { wrapper: AllProviders });
 
       await waitFor(() => {
         expect(result.current.sprints).toHaveLength(1);
@@ -220,7 +206,7 @@ describe('useSprintsData', () => {
         data: [sprint1, sprint2],
       });
 
-      const { result } = renderHook(() => useSprintsData(2024), { wrapper: createWrapper() });
+      const { result } = renderHook(() => useSprintsData(2024), { wrapper: AllProviders });
 
       await waitFor(() => {
         expect(result.current.categorizedSprints.future).toHaveLength(2);
@@ -236,7 +222,7 @@ describe('useSprintsData', () => {
         data: null,
       });
 
-      const { result } = renderHook(() => useSprintsData(2024), { wrapper: createWrapper() });
+      const { result } = renderHook(() => useSprintsData(2024), { wrapper: AllProviders });
 
       await waitFor(() => {
         expect(result.current.sprints).toEqual([]);

@@ -1,6 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 
+import { i18nT } from '@/test-utils';
+
 import { SkeletonList } from './SkeletonList';
 
 // Mock the CSS module
@@ -116,7 +118,10 @@ describe('SkeletonList', () => {
 
     it('has default aria-label when not provided', () => {
       render(<SkeletonList />);
-      expect(screen.getByRole('status')).toHaveAttribute('aria-label', 'Loading list items');
+      expect(screen.getByRole('status')).toHaveAttribute(
+        'aria-label',
+        i18nT('loadingStates.loadingListItems')
+      );
     });
 
     it('has visually hidden text for screen readers', () => {
@@ -160,7 +165,10 @@ describe('SkeletonList', () => {
 
     it('uses default label when not provided', () => {
       render(<SkeletonList />);
-      expect(screen.getByRole('status')).toHaveAttribute('aria-label', 'Loading list items');
+      expect(screen.getByRole('status')).toHaveAttribute(
+        'aria-label',
+        i18nT('loadingStates.loadingListItems')
+      );
     });
   });
 

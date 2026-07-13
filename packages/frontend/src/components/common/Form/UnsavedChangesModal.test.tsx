@@ -1,6 +1,13 @@
-import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react';
+import {
+  screen,
+  fireEvent,
+  waitFor,
+  cleanup,
+  renderWithProviders,
+  initTestI18n,
+} from '../../../test-utils';
 import userEvent from '@testing-library/user-event';
-import { vi } from 'vitest';
+import { vi, beforeAll } from 'vitest';
 
 import { UnsavedChangesModal } from './UnsavedChangesModal';
 
@@ -38,6 +45,10 @@ vi.mock('./UnsavedChangesModal.module.css', () => ({
 }));
 
 describe('UnsavedChangesModal', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   const mockOnConfirm = vi.fn();
   const mockOnCancel = vi.fn();
 
@@ -50,7 +61,7 @@ describe('UnsavedChangesModal', () => {
   });
 
   it('should not render when isOpen is false', () => {
-    render(
+    renderWithProviders(
       <UnsavedChangesModal isOpen={false} onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
     );
 
@@ -58,14 +69,18 @@ describe('UnsavedChangesModal', () => {
   });
 
   it('should render when isOpen is true', () => {
-    render(<UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />);
+    renderWithProviders(
+      <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
+    );
 
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     expect(screen.getByText('Unsaved Changes')).toBeInTheDocument();
   });
 
   it('should display default message', () => {
-    render(<UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />);
+    renderWithProviders(
+      <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
+    );
 
     expect(
       screen.getByText('You have unsaved changes. Are you sure you want to discard them?')
@@ -73,7 +88,7 @@ describe('UnsavedChangesModal', () => {
   });
 
   it('should display custom title and message', () => {
-    render(
+    renderWithProviders(
       <UnsavedChangesModal
         isOpen
         onConfirm={mockOnConfirm}
@@ -88,14 +103,18 @@ describe('UnsavedChangesModal', () => {
   });
 
   it('should call onConfirm when discard button is clicked', () => {
-    render(<UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />);
+    renderWithProviders(
+      <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
+    );
 
     fireEvent.click(screen.getByText('Discard Changes'));
     expect(mockOnConfirm).toHaveBeenCalledTimes(1);
   });
 
   it('should call onCancel when cancel button is clicked', () => {
-    render(<UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />);
+    renderWithProviders(
+      <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
+    );
 
     // Click the secondary button (Go Back)
     const cancelButton = screen.getByRole('button', { name: /go back/i });
@@ -104,14 +123,18 @@ describe('UnsavedChangesModal', () => {
   });
 
   it('should call onCancel when close button is clicked', () => {
-    render(<UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />);
+    renderWithProviders(
+      <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
+    );
 
-    fireEvent.click(screen.getByLabelText('Close modal'));
+    fireEvent.click(screen.getByLabelText('Close'));
     expect(mockOnCancel).toHaveBeenCalledTimes(1);
   });
 
   it('should not call onCancel when overlay is clicked (feature disabled)', () => {
-    render(<UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />);
+    renderWithProviders(
+      <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
+    );
 
     const overlay = screen.getByRole('dialog');
     fireEvent.click(overlay);
@@ -119,14 +142,18 @@ describe('UnsavedChangesModal', () => {
   });
 
   it('should call onCancel when Escape key is pressed', () => {
-    render(<UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />);
+    renderWithProviders(
+      <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
+    );
 
     fireEvent.keyDown(document, { key: 'Escape' });
     expect(mockOnCancel).toHaveBeenCalledTimes(1);
   });
 
   it('should have correct ARIA attributes', () => {
-    render(<UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />);
+    renderWithProviders(
+      <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
+    );
 
     const dialog = screen.getByRole('dialog');
     expect(dialog).toHaveAttribute('aria-modal', 'true');
@@ -135,7 +162,9 @@ describe('UnsavedChangesModal', () => {
   });
 
   it('should display warning box with icon', () => {
-    render(<UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />);
+    renderWithProviders(
+      <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
+    );
 
     expect(screen.getByText('Attention Required')).toBeInTheDocument();
     expect(
@@ -146,7 +175,9 @@ describe('UnsavedChangesModal', () => {
   });
 
   it('should focus discard button when opened', async () => {
-    render(<UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />);
+    renderWithProviders(
+      <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
+    );
 
     await waitFor(() => {
       expect(screen.getByText('Discard Changes')).toHaveFocus();
@@ -154,23 +185,27 @@ describe('UnsavedChangesModal', () => {
   });
 
   it('should have focusable elements', () => {
-    render(<UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />);
+    renderWithProviders(
+      <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
+    );
 
     // Verify all interactive elements are present
-    expect(screen.getByLabelText('Close modal')).toBeInTheDocument();
+    expect(screen.getByLabelText('Close')).toBeInTheDocument();
     // Use getAllByText since 'Go Back' appears in both the options list and button
     expect(screen.getAllByText('Go Back').length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText('Discard Changes')).toBeInTheDocument();
   });
 
   it('should prevent body scroll when open', () => {
-    render(<UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />);
+    renderWithProviders(
+      <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
+    );
 
     expect(document.body.style.overflow).toBe('hidden');
   });
 
   it('should restore body scroll when closed', () => {
-    const { unmount } = render(
+    const { unmount } = renderWithProviders(
       <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
     );
 
@@ -181,9 +216,11 @@ describe('UnsavedChangesModal', () => {
   describe('Focus Trap Keyboard Navigation', () => {
     it('should trap focus within modal when Tab is pressed', async () => {
       const user = userEvent.setup();
-      render(<UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />);
+      renderWithProviders(
+        <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
+      );
 
-      const closeButton = screen.getByLabelText('Close modal');
+      const closeButton = screen.getByLabelText('Close');
       const goBackButton = screen.getByRole('button', { name: /go back/i });
       const discardButton = screen.getByRole('button', { name: /discard changes/i });
 
@@ -202,9 +239,11 @@ describe('UnsavedChangesModal', () => {
 
     it('should trap focus within modal when Shift+Tab is pressed', async () => {
       const user = userEvent.setup();
-      render(<UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />);
+      renderWithProviders(
+        <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
+      );
 
-      const closeButton = screen.getByLabelText('Close modal');
+      const closeButton = screen.getByLabelText('Close');
       const goBackButton = screen.getByRole('button', { name: /go back/i });
       const discardButton = screen.getByRole('button', { name: /discard changes/i });
 
@@ -222,7 +261,9 @@ describe('UnsavedChangesModal', () => {
     });
 
     it('should not call onCancel for non-Escape keys', () => {
-      render(<UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />);
+      renderWithProviders(
+        <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
+      );
 
       fireEvent.keyDown(document, { key: 'Enter' });
       fireEvent.keyDown(document, { key: 'Space' });
@@ -234,9 +275,11 @@ describe('UnsavedChangesModal', () => {
 
     it('should handle rapid Tab key presses', async () => {
       const user = userEvent.setup();
-      render(<UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />);
+      renderWithProviders(
+        <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
+      );
 
-      await user.click(screen.getByLabelText('Close modal'));
+      await user.click(screen.getByLabelText('Close'));
 
       for (let i = 0; i < 5; i++) {
         await user.tab();
@@ -248,35 +291,45 @@ describe('UnsavedChangesModal', () => {
 
   describe('Accessibility Tests', () => {
     it('should have h2 heading for dialog title', () => {
-      render(<UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />);
+      renderWithProviders(
+        <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
+      );
 
       const heading = screen.getByRole('heading', { level: 2 });
       expect(heading).toHaveTextContent('Unsaved Changes');
     });
 
     it('should have h3 heading for warning title', () => {
-      render(<UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />);
+      renderWithProviders(
+        <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
+      );
 
       const warningHeading = screen.getByRole('heading', { level: 3 });
       expect(warningHeading).toHaveTextContent('Attention Required');
     });
 
     it('should have a ul element for options list', () => {
-      render(<UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />);
+      renderWithProviders(
+        <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
+      );
 
       const optionsList = screen.getByRole('list');
       expect(optionsList).toBeInTheDocument();
     });
 
     it('should have list items in options list', () => {
-      render(<UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />);
+      renderWithProviders(
+        <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
+      );
 
       const listItems = screen.getAllByRole('listitem');
       expect(listItems.length).toBeGreaterThanOrEqual(2);
     });
 
     it('should have all interactive buttons accessible', () => {
-      render(<UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />);
+      renderWithProviders(
+        <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
+      );
 
       const buttons = screen.getAllByRole('button');
       expect(buttons.length).toBe(3);
@@ -287,7 +340,7 @@ describe('UnsavedChangesModal', () => {
     });
 
     it('should reference correct aria-describedby element', () => {
-      render(
+      renderWithProviders(
         <UnsavedChangesModal
           isOpen
           onConfirm={mockOnConfirm}
@@ -307,7 +360,7 @@ describe('UnsavedChangesModal', () => {
     it('should handle long custom title', () => {
       const longTitle =
         'This is a very long title that exceeds normal length and should still display correctly';
-      render(
+      renderWithProviders(
         <UnsavedChangesModal
           isOpen
           onConfirm={mockOnConfirm}
@@ -322,7 +375,7 @@ describe('UnsavedChangesModal', () => {
     it('should handle long custom message', () => {
       const longMessage =
         'This is a very long custom message that contains multiple sentences and should still be displayed correctly without any issues. It provides detailed information about what will happen if the user chooses to discard their changes.';
-      render(
+      renderWithProviders(
         <UnsavedChangesModal
           isOpen
           onConfirm={mockOnConfirm}
@@ -335,7 +388,7 @@ describe('UnsavedChangesModal', () => {
     });
 
     it('should handle special characters in title and message', () => {
-      render(
+      renderWithProviders(
         <UnsavedChangesModal
           isOpen
           onConfirm={mockOnConfirm}
@@ -350,7 +403,7 @@ describe('UnsavedChangesModal', () => {
     });
 
     it('should handle empty custom title and message', () => {
-      render(
+      renderWithProviders(
         <UnsavedChangesModal
           isOpen
           onConfirm={mockOnConfirm}
@@ -366,7 +419,7 @@ describe('UnsavedChangesModal', () => {
     });
 
     it('should handle rapid open/close transitions', () => {
-      const { rerender } = render(
+      const { rerender } = renderWithProviders(
         <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
       );
 
@@ -380,7 +433,9 @@ describe('UnsavedChangesModal', () => {
     });
 
     it('should handle repeated onConfirm calls gracefully', () => {
-      render(<UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />);
+      renderWithProviders(
+        <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
+      );
 
       const discardButton = screen.getByText('Discard Changes');
       fireEvent.click(discardButton);
@@ -394,7 +449,9 @@ describe('UnsavedChangesModal', () => {
   describe('User Interaction Tests with userEvent', () => {
     it('should call onConfirm when discard button is clicked via userEvent', async () => {
       const user = userEvent.setup();
-      render(<UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />);
+      renderWithProviders(
+        <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
+      );
 
       await user.click(screen.getByText('Discard Changes'));
       expect(mockOnConfirm).toHaveBeenCalledTimes(1);
@@ -402,7 +459,9 @@ describe('UnsavedChangesModal', () => {
 
     it('should call onCancel when go back button is clicked via userEvent', async () => {
       const user = userEvent.setup();
-      render(<UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />);
+      renderWithProviders(
+        <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
+      );
 
       await user.click(screen.getByRole('button', { name: /go back/i }));
       expect(mockOnCancel).toHaveBeenCalledTimes(1);
@@ -410,15 +469,19 @@ describe('UnsavedChangesModal', () => {
 
     it('should call onCancel when close button is clicked via userEvent', async () => {
       const user = userEvent.setup();
-      render(<UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />);
+      renderWithProviders(
+        <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
+      );
 
-      await user.click(screen.getByLabelText('Close modal'));
+      await user.click(screen.getByLabelText('Close'));
       expect(mockOnCancel).toHaveBeenCalledTimes(1);
     });
 
     it('should handle Enter key on interactive elements', async () => {
       const user = userEvent.setup();
-      render(<UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />);
+      renderWithProviders(
+        <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
+      );
 
       const discardButton = screen.getByText('Discard Changes');
       await user.click(discardButton);
@@ -429,21 +492,27 @@ describe('UnsavedChangesModal', () => {
 
   describe('Visual Elements Tests', () => {
     it('should render gradient orb decorative element', () => {
-      render(<UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />);
+      renderWithProviders(
+        <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
+      );
 
       const orb = document.querySelector('[class*="gradient-orb"]');
       expect(orb).toBeInTheDocument();
     });
 
     it('should render warning card with proper styling', () => {
-      render(<UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />);
+      renderWithProviders(
+        <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
+      );
 
       const warningCard = document.querySelector('[class*="warning-card"]');
       expect(warningCard).toBeInTheDocument();
     });
 
     it('should render info box with icon and text', () => {
-      render(<UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />);
+      renderWithProviders(
+        <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
+      );
 
       expect(
         screen.getByText(/Your changes will be permanently lost if you discard them/)
@@ -451,14 +520,18 @@ describe('UnsavedChangesModal', () => {
     });
 
     it('should render header with icon wrapper', () => {
-      render(<UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />);
+      renderWithProviders(
+        <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
+      );
 
       const headerContent = document.querySelector('[class*="header-content"]');
       expect(headerContent).toBeInTheDocument();
     });
 
     it('should render footer with action buttons', () => {
-      render(<UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />);
+      renderWithProviders(
+        <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
+      );
 
       const footer = document.querySelector('[class*="footer"]');
       expect(footer).toBeInTheDocument();
@@ -469,7 +542,9 @@ describe('UnsavedChangesModal', () => {
 
   describe('Callback Behavior Tests', () => {
     it('should not call any callbacks when overlay is clicked but modal content is not', () => {
-      render(<UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />);
+      renderWithProviders(
+        <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
+      );
 
       const overlay = document.querySelector('[class*="overlay"]');
       if (overlay) {
@@ -482,7 +557,9 @@ describe('UnsavedChangesModal', () => {
 
     it('should call correct callback based on button clicked', async () => {
       const user = userEvent.setup();
-      render(<UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />);
+      renderWithProviders(
+        <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
+      );
 
       await user.click(screen.getByRole('button', { name: /go back/i }));
       expect(mockOnCancel).toHaveBeenCalledTimes(1);
@@ -496,7 +573,9 @@ describe('UnsavedChangesModal', () => {
     });
 
     it('should handle callbacks that are functions', () => {
-      render(<UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />);
+      renderWithProviders(
+        <UnsavedChangesModal isOpen onConfirm={mockOnConfirm} onCancel={mockOnCancel} />
+      );
 
       expect(typeof mockOnConfirm).toBe('function');
       expect(typeof mockOnCancel).toBe('function');

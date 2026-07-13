@@ -1,9 +1,9 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { screen, fireEvent, waitFor, renderWithProviders, initTestI18n } from '../../test-utils';
+import { vi, describe, it, expect, beforeEach, beforeAll } from 'vitest';
 import type * as ReactRouter from 'react-router-dom';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Route, Routes } from 'react-router-dom';
+import { QueryClient } from '@tanstack/react-query';
 
 import { SprintReview } from './SprintReview';
 import { SprintStatus, IncrementStatus, DeliveryMethod } from '../../types';
@@ -197,14 +197,14 @@ function renderComponent(sprintId = 'sprint-1') {
     loadTeam: vi.fn(),
   } as unknown as ReturnType<typeof teamStoreModule.useTeamStore>);
 
-  return render(
-    <QueryClientProvider client={queryClient}>
-      <MemoryRouter initialEntries={[`/sprint-review/${sprintId}`]}>
-        <Routes>
-          <Route path="/sprint-review/:sprintId" element={<SprintReview />} />
-        </Routes>
-      </MemoryRouter>
-    </QueryClientProvider>
+  return renderWithProviders(
+    <Routes>
+      <Route path="/sprint-review/:sprintId" element={<SprintReview />} />
+    </Routes>,
+    {
+      queryClient,
+      initialRoute: `/sprint-review/${sprintId}`,
+    }
   );
 }
 
@@ -250,6 +250,10 @@ function setupBasicMocks(
     success: true,
   });
 }
+
+beforeAll(async () => {
+  await initTestI18n();
+});
 
 describe('SprintReview - Keyboard Navigation Tests', () => {
   beforeEach(() => {
@@ -830,7 +834,7 @@ describe('SprintReview - Feedback Display Tests', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText(/This item will be present in the Product Backlog page/i)
+        screen.getByText(/Use Backlog Adjustments tab to make changes based on this feedback/i)
       ).toBeInTheDocument();
     });
   });
@@ -1308,15 +1312,15 @@ describe('SprintReview - Active Sprint Selector Tests', () => {
       loadTeam: vi.fn(),
     } as unknown as ReturnType<typeof teamStoreModule.useTeamStore>);
 
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter initialEntries={['/sprint-review']}>
-          <Routes>
-            <Route path="/sprint-review" element={<SprintReview />} />
-            <Route path="/sprint-review/:sprintId" element={<SprintReview />} />
-          </Routes>
-        </MemoryRouter>
-      </QueryClientProvider>
+    renderWithProviders(
+      <Routes>
+        <Route path="/sprint-review" element={<SprintReview />} />
+        <Route path="/sprint-review/:sprintId" element={<SprintReview />} />
+      </Routes>,
+      {
+        queryClient,
+        initialRoute: '/sprint-review',
+      }
     );
 
     await waitFor(() => {
@@ -1343,15 +1347,15 @@ describe('SprintReview - Active Sprint Selector Tests', () => {
       loadTeam: vi.fn(),
     } as unknown as ReturnType<typeof teamStoreModule.useTeamStore>);
 
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter initialEntries={['/sprint-review']}>
-          <Routes>
-            <Route path="/sprint-review" element={<SprintReview />} />
-            <Route path="/sprint-review/:sprintId" element={<SprintReview />} />
-          </Routes>
-        </MemoryRouter>
-      </QueryClientProvider>
+    renderWithProviders(
+      <Routes>
+        <Route path="/sprint-review" element={<SprintReview />} />
+        <Route path="/sprint-review/:sprintId" element={<SprintReview />} />
+      </Routes>,
+      {
+        queryClient,
+        initialRoute: '/sprint-review',
+      }
     );
 
     await waitFor(() => {
@@ -1378,15 +1382,15 @@ describe('SprintReview - Active Sprint Selector Tests', () => {
       loadTeam: vi.fn(),
     } as unknown as ReturnType<typeof teamStoreModule.useTeamStore>);
 
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter initialEntries={['/sprint-review']}>
-          <Routes>
-            <Route path="/sprint-review" element={<SprintReview />} />
-            <Route path="/sprint-review/:sprintId" element={<SprintReview />} />
-          </Routes>
-        </MemoryRouter>
-      </QueryClientProvider>
+    renderWithProviders(
+      <Routes>
+        <Route path="/sprint-review" element={<SprintReview />} />
+        <Route path="/sprint-review/:sprintId" element={<SprintReview />} />
+      </Routes>,
+      {
+        queryClient,
+        initialRoute: '/sprint-review',
+      }
     );
 
     await waitFor(() => {
@@ -1414,15 +1418,15 @@ describe('SprintReview - Active Sprint Selector Tests', () => {
       loadTeam: vi.fn(),
     } as unknown as ReturnType<typeof teamStoreModule.useTeamStore>);
 
-    render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter initialEntries={['/sprint-review']}>
-          <Routes>
-            <Route path="/sprint-review" element={<SprintReview />} />
-            <Route path="/sprint-review/:sprintId" element={<SprintReview />} />
-          </Routes>
-        </MemoryRouter>
-      </QueryClientProvider>
+    renderWithProviders(
+      <Routes>
+        <Route path="/sprint-review" element={<SprintReview />} />
+        <Route path="/sprint-review/:sprintId" element={<SprintReview />} />
+      </Routes>,
+      {
+        queryClient,
+        initialRoute: '/sprint-review',
+      }
     );
 
     await waitFor(() => {

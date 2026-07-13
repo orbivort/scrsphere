@@ -1,12 +1,15 @@
-import { screen, render, waitFor } from '@testing-library/react';
+import { screen, renderWithProviders, waitFor } from '../../test-utils';
 import userEvent from '@testing-library/user-event';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MemoryRouter } from 'react-router-dom';
-import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { vi, describe, it, expect, beforeEach, beforeAll, afterEach } from 'vitest';
 
 import { useTeamStore } from '../../store';
 import { apiService, definitionService } from '../../services';
-import { createMockBacklogItem, createMockTeam, createMockProductGoal } from '../../test-utils';
+import {
+  createMockBacklogItem,
+  createMockTeam,
+  createMockProductGoal,
+  initTestI18n,
+} from '../../test-utils';
 import { ItemStatus, MoSCoWPriority, TaskStatus } from '../../types';
 
 import { ProductBacklog } from './Backlog';
@@ -51,30 +54,6 @@ Object.assign(navigator, {
 });
 
 const mockTeamStore = useTeamStore as ReturnType<typeof vi.fn>;
-
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        gcTime: 0,
-        staleTime: 0,
-      },
-      mutations: {
-        retry: false,
-      },
-    },
-  });
-
-const renderBacklog = (queryClient = createTestQueryClient()) => {
-  return render(
-    <QueryClientProvider client={queryClient}>
-      <MemoryRouter>
-        <ProductBacklog />
-      </MemoryRouter>
-    </QueryClientProvider>
-  );
-};
 
 const mockTeam = createMockTeam({ id: 'team-1', name: 'Test Team' });
 
@@ -186,11 +165,12 @@ const setupApiMocks = (overrides = {}) => {
 };
 
 describe('Backlog Branch Coverage Tests', () => {
-  let queryClient: QueryClient;
+  beforeAll(async () => {
+    await initTestI18n();
+  });
 
   beforeEach(() => {
     vi.clearAllMocks();
-    queryClient = createTestQueryClient();
 
     mockTeamStore.mockReturnValue({
       currentTeam: mockTeam,
@@ -212,12 +192,12 @@ describe('Backlog Branch Coverage Tests', () => {
   });
 
   afterEach(() => {
-    queryClient.clear();
+    vi.clearAllMocks();
   });
 
   describe('Status Change Validation Branches', () => {
     it('should not change status when no selected item', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -227,7 +207,7 @@ describe('Backlog Branch Coverage Tests', () => {
     });
 
     it('should handle invalid status transition', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -260,7 +240,7 @@ describe('Backlog Branch Coverage Tests', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
@@ -283,7 +263,7 @@ describe('Backlog Branch Coverage Tests', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -310,7 +290,7 @@ describe('Backlog Branch Coverage Tests', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -325,7 +305,7 @@ describe('Backlog Branch Coverage Tests', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
@@ -349,7 +329,7 @@ describe('Backlog Branch Coverage Tests', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -378,7 +358,7 @@ describe('Backlog Branch Coverage Tests', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -390,7 +370,7 @@ describe('Backlog Branch Coverage Tests', () => {
       (definitionService as { verifyDoDForPBI: typeof mockVerifyDoD }).verifyDoDForPBI =
         mockVerifyDoD;
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -419,7 +399,7 @@ describe('Backlog Branch Coverage Tests', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -431,7 +411,7 @@ describe('Backlog Branch Coverage Tests', () => {
       (definitionService as { verifyDoRForPBI: typeof mockVerifyDoR }).verifyDoRForPBI =
         mockVerifyDoR;
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -447,7 +427,7 @@ describe('Backlog Branch Coverage Tests', () => {
       });
       Object.assign(apiService, setupApiMocks({ updateProductBacklogItem: mockUpdate }));
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -464,7 +444,7 @@ describe('Backlog Branch Coverage Tests', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -481,7 +461,7 @@ describe('Backlog Branch Coverage Tests', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -498,7 +478,7 @@ describe('Backlog Branch Coverage Tests', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -508,7 +488,7 @@ describe('Backlog Branch Coverage Tests', () => {
 
   describe('Form Validation Branches', () => {
     it('should validate form with workflow errors', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -547,7 +527,7 @@ describe('Backlog Branch Coverage Tests', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
@@ -574,7 +554,7 @@ describe('Backlog Branch Coverage Tests', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -605,7 +585,7 @@ describe('Backlog Branch Coverage Tests', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -632,7 +612,7 @@ describe('Backlog Branch Coverage Tests', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -658,7 +638,7 @@ describe('Backlog Branch Coverage Tests', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -685,7 +665,7 @@ describe('Backlog Branch Coverage Tests', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -709,7 +689,7 @@ describe('Backlog Branch Coverage Tests', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -757,7 +737,7 @@ describe('Backlog Branch Coverage Tests', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
@@ -797,7 +777,7 @@ describe('Backlog Branch Coverage Tests', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
@@ -824,7 +804,7 @@ describe('Backlog Branch Coverage Tests', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
@@ -848,7 +828,7 @@ describe('Backlog Branch Coverage Tests', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
@@ -858,7 +838,7 @@ describe('Backlog Branch Coverage Tests', () => {
 
   describe('Filter State Changes', () => {
     it('should handle status filter changes', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -875,7 +855,7 @@ describe('Backlog Branch Coverage Tests', () => {
     });
 
     it('should handle search filter changes', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -890,7 +870,7 @@ describe('Backlog Branch Coverage Tests', () => {
     });
 
     it('should handle combined filters', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -907,7 +887,7 @@ describe('Backlog Branch Coverage Tests', () => {
 
   describe('View Mode Switching', () => {
     it('should switch to list view and back to board view', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -930,7 +910,7 @@ describe('Backlog Branch Coverage Tests', () => {
 
   describe('Modal State Management', () => {
     it('should open and close create modal', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -950,7 +930,7 @@ describe('Backlog Branch Coverage Tests', () => {
     });
 
     it('should open and close detail modal', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -973,7 +953,7 @@ describe('Backlog Branch Coverage Tests', () => {
     });
 
     it('should open bulk upload modal', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -996,7 +976,7 @@ describe('Backlog Branch Coverage Tests', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         const backlogElement = screen.queryByTestId('product-backlog');
@@ -1016,7 +996,7 @@ describe('Backlog Branch Coverage Tests', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1043,7 +1023,7 @@ describe('Backlog Branch Coverage Tests', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1053,7 +1033,7 @@ describe('Backlog Branch Coverage Tests', () => {
 
   describe('Auto Loading State', () => {
     it('should show auto loading indicator during search', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1081,7 +1061,7 @@ describe('Backlog Branch Coverage Tests', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1089,7 +1069,7 @@ describe('Backlog Branch Coverage Tests', () => {
     });
 
     it('should not show load more button when all items loaded', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1099,7 +1079,7 @@ describe('Backlog Branch Coverage Tests', () => {
 
   describe('Active Goal Banner', () => {
     it('should display active goal information', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1110,7 +1090,7 @@ describe('Backlog Branch Coverage Tests', () => {
     });
 
     it('should show goal progress metrics', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1122,7 +1102,7 @@ describe('Backlog Branch Coverage Tests', () => {
 
   describe('Priority Change on Board', () => {
     it('should handle priority change via board view', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1134,7 +1114,7 @@ describe('Backlog Branch Coverage Tests', () => {
 
   describe('Labels Parsing', () => {
     it('should handle labels with commas', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1148,7 +1128,7 @@ describe('Backlog Branch Coverage Tests', () => {
     });
 
     it('should handle empty labels', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1162,7 +1142,7 @@ describe('Backlog Branch Coverage Tests', () => {
     });
 
     it('should handle labels with whitespace', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1178,7 +1158,7 @@ describe('Backlog Branch Coverage Tests', () => {
 
   describe('Form Data Initialization', () => {
     it('should initialize form data for create', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1195,7 +1175,7 @@ describe('Backlog Branch Coverage Tests', () => {
     });
 
     it('should initialize form data for edit', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1211,7 +1191,7 @@ describe('Backlog Branch Coverage Tests', () => {
 
   describe('Workflow Error Display', () => {
     it('should display workflow errors in modal', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1227,7 +1207,7 @@ describe('Backlog Branch Coverage Tests', () => {
 
   describe('Backlog Provider', () => {
     it('should render with BacklogProvider', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();

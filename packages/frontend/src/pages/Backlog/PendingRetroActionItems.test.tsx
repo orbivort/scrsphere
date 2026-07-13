@@ -1,8 +1,8 @@
-import { screen, render, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, beforeAll, vi } from 'vitest';
 
+import { renderWithProviders, initTestI18n } from '../../test-utils';
 import { PendingRetroActionItems } from './PendingRetroActionItems';
 import { useTeamStore } from '../../store';
 import { apiService } from '../../services';
@@ -18,25 +18,11 @@ vi.mock('../../services', () => ({
   },
 }));
 
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-    },
+describe('PendingRetroActionItems', () => {
+  beforeAll(async () => {
+    await initTestI18n();
   });
 
-const renderPendingRetroActionItems = (props = {}) => {
-  const queryClient = createTestQueryClient();
-  return render(
-    <QueryClientProvider client={queryClient}>
-      <PendingRetroActionItems {...props} />
-    </QueryClientProvider>
-  );
-};
-
-describe('PendingRetroActionItems', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     (useTeamStore as ReturnType<typeof vi.fn>).mockReturnValue({
@@ -50,7 +36,7 @@ describe('PendingRetroActionItems', () => {
         data: [],
       });
 
-      renderPendingRetroActionItems();
+      renderWithProviders(<PendingRetroActionItems />);
 
       expect(screen.queryByText('Pending Action from Retrospective')).not.toBeInTheDocument();
     });
@@ -79,7 +65,7 @@ describe('PendingRetroActionItems', () => {
     });
 
     it('should render title with count', async () => {
-      renderPendingRetroActionItems();
+      renderWithProviders(<PendingRetroActionItems />);
 
       await waitFor(() => {
         expect(screen.getByText('Pending Action from Retrospective')).toBeInTheDocument();
@@ -87,7 +73,7 @@ describe('PendingRetroActionItems', () => {
     });
 
     it('should render action item cards', async () => {
-      renderPendingRetroActionItems();
+      renderWithProviders(<PendingRetroActionItems />);
 
       await waitFor(() => {
         expect(screen.getByText('Improve code review process')).toBeInTheDocument();
@@ -111,7 +97,7 @@ describe('PendingRetroActionItems', () => {
     });
 
     it('should be expanded by default', async () => {
-      renderPendingRetroActionItems();
+      renderWithProviders(<PendingRetroActionItems />);
 
       await waitFor(() => {
         expect(screen.getByText('Test Action')).toBeInTheDocument();
@@ -119,7 +105,7 @@ describe('PendingRetroActionItems', () => {
     });
 
     it('should collapse when clicking header', async () => {
-      renderPendingRetroActionItems();
+      renderWithProviders(<PendingRetroActionItems />);
 
       await waitFor(() => {
         expect(screen.getByText('Pending Action from Retrospective')).toBeInTheDocument();

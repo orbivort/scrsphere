@@ -1,8 +1,8 @@
-import { describe, it, expect, vi, beforeEach, afterEach, type Mock } from 'vitest';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, type Mock } from 'vitest';
+import { screen, waitFor, fireEvent, renderWithProviders, initTestI18n } from '../../test-utils';
 import userEvent from '@testing-library/user-event';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MemoryRouter, useNavigate } from 'react-router-dom';
+import { QueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 
 import { useTeamStore, useAuthStore } from '../../store';
 import { apiService } from '../../services';
@@ -214,6 +214,14 @@ const mockApiService = apiService as {
 };
 
 // ============================================================================
+// I18N INITIALIZATION
+// ============================================================================
+
+beforeAll(async () => {
+  await initTestI18n();
+});
+
+// ============================================================================
 // TEST UTILITIES
 // ============================================================================
 
@@ -230,18 +238,15 @@ function createTestQueryClient(): QueryClient {
 
 function renderDailyScrum({
   queryClient = createTestQueryClient(),
-  initialEntries = ['/daily-scrum'],
+  initialRoute = '/daily-scrum',
 }: {
   queryClient?: QueryClient;
-  initialEntries?: string[];
+  initialRoute?: string;
 } = {}) {
-  return render(
-    <QueryClientProvider client={queryClient}>
-      <MemoryRouter initialEntries={initialEntries}>
-        <DailyScrum />
-      </MemoryRouter>
-    </QueryClientProvider>
-  );
+  return renderWithProviders(<DailyScrum />, {
+    queryClient,
+    initialRoute,
+  });
 }
 
 // ============================================================================

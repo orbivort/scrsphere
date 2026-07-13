@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
+import { screen, renderWithProviders, initTestI18n } from '../../../../test-utils';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 
@@ -32,6 +32,10 @@ describe('DataExportModal Component', () => {
     isPolling: false,
   };
 
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
     document.body.style.overflow = '';
@@ -46,7 +50,7 @@ describe('DataExportModal Component', () => {
   });
 
   const renderModal = (props = defaultProps) => {
-    return render(<DataExportModal {...props} />);
+    return renderWithProviders(<DataExportModal {...props} />);
   };
 
   describe('Component Rendering', () => {

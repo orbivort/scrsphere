@@ -106,7 +106,8 @@
     "adding": "Agregando...",
     "sendInvite": "Enviar Invitación",
     "unsentTitle": "Invitación No Enviada",
-    "unsentMessage": "Tienes una invitación de team no enviada. Estás seguro de que deseas descartarla?"
+    "unsentMessage": "Tienes una invitación de team no enviada. Estás seguro de que deseas descartarla?",
+    "addedSuccess": "{{name}} ha sido agregado al team como {{role}}."
   },
   "inviteErrors": {
     "userNotFound": "No se encontró usuario con esta dirección de email. El usuario debe registrarse primero antes de poder ser invitado a un team.",

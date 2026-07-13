@@ -1,7 +1,5 @@
-import { renderHook, waitFor, act } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { type ReactNode } from 'react';
+import { renderHook, waitFor, act, initTestI18n, AllProviders } from '../test-utils';
+import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
 
 import {
   useNotifications,
@@ -24,26 +22,11 @@ vi.mock('../services/notificationApi', () => ({
   },
 }));
 
-const createWrapper = () => {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        gcTime: 0,
-        staleTime: 0,
-      },
-      mutations: {
-        retry: false,
-      },
-    },
+describe('useNotifications', () => {
+  beforeAll(async () => {
+    await initTestI18n();
   });
 
-  return function Wrapper({ children }: { children: ReactNode }) {
-    return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
-  };
-};
-
-describe('useNotifications', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -59,7 +42,7 @@ describe('useNotifications', () => {
       data: mockNotifications,
     });
 
-    renderHook(() => useNotifications(), { wrapper: createWrapper() });
+    renderHook(() => useNotifications(), { wrapper: AllProviders });
 
     await waitFor(() => {
       expect(notificationApi.getNotifications).toHaveBeenCalled();
@@ -76,7 +59,7 @@ describe('useNotifications', () => {
 
     const filters = { isRead: false, type: 'INFO' };
 
-    renderHook(() => useNotifications(filters), { wrapper: createWrapper() });
+    renderHook(() => useNotifications(filters), { wrapper: AllProviders });
 
     await waitFor(() => {
       expect(notificationApi.getNotifications).toHaveBeenCalledWith(filters);
@@ -97,7 +80,7 @@ describe('useNotificationConfig', () => {
       data: mockConfig,
     });
 
-    renderHook(() => useNotificationConfig(), { wrapper: createWrapper() });
+    renderHook(() => useNotificationConfig(), { wrapper: AllProviders });
 
     await waitFor(() => {
       expect(notificationApi.getConfig).toHaveBeenCalled();
@@ -121,7 +104,7 @@ describe('useUnreadCount', () => {
       data: { count: 5 },
     });
 
-    renderHook(() => useUnreadCount(), { wrapper: createWrapper() });
+    renderHook(() => useUnreadCount(), { wrapper: AllProviders });
 
     await waitFor(() => {
       expect(notificationApi.getUnreadCount).toHaveBeenCalled();
@@ -140,7 +123,7 @@ describe('useMarkAsRead', () => {
       data: undefined,
     });
 
-    const { result } = renderHook(() => useMarkAsRead(), { wrapper: createWrapper() });
+    const { result } = renderHook(() => useMarkAsRead(), { wrapper: AllProviders });
 
     act(() => {
       result.current.mutate('notification-1');
@@ -163,7 +146,7 @@ describe('useMarkAllAsRead', () => {
       data: undefined,
     });
 
-    const { result } = renderHook(() => useMarkAllAsRead(), { wrapper: createWrapper() });
+    const { result } = renderHook(() => useMarkAllAsRead(), { wrapper: AllProviders });
 
     act(() => {
       result.current.mutate();
@@ -180,7 +163,7 @@ describe('useMarkAllAsRead', () => {
       data: undefined,
     });
 
-    const { result } = renderHook(() => useMarkAllAsRead(), { wrapper: createWrapper() });
+    const { result } = renderHook(() => useMarkAllAsRead(), { wrapper: AllProviders });
 
     const notificationIds = ['1', '2', '3'];
 
@@ -205,7 +188,7 @@ describe('useDeleteNotification', () => {
       data: undefined,
     });
 
-    const { result } = renderHook(() => useDeleteNotification(), { wrapper: createWrapper() });
+    const { result } = renderHook(() => useDeleteNotification(), { wrapper: AllProviders });
 
     act(() => {
       result.current.mutate('notification-1');

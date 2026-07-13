@@ -7,10 +7,9 @@
  * - Accessibility during loading
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, act } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MemoryRouter } from 'react-router-dom';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
+import { screen, act, renderWithProviders, initTestI18n } from '../../test-utils';
+import { QueryClient } from '@tanstack/react-query';
 
 import { DailyScrum } from './DailyScrum';
 import { useTeamStore, useAuthStore } from '../../store';
@@ -59,6 +58,18 @@ vi.mock('../../components/common/ToastContainer', () => ({
   ToastContainer: () => <div data-testid="toast-container" />,
 }));
 
+// ============================================================================
+// I18N INITIALIZATION
+// ============================================================================
+
+beforeAll(async () => {
+  await initTestI18n();
+});
+
+// ============================================================================
+// TEST UTILITIES
+// ============================================================================
+
 const createTestQueryClient = () =>
   new QueryClient({
     defaultOptions: {
@@ -71,13 +82,10 @@ const createTestQueryClient = () =>
 
 const renderDailyScrum = (queryClient?: QueryClient) => {
   const testQueryClient = queryClient || createTestQueryClient();
-  return render(
-    <QueryClientProvider client={testQueryClient}>
-      <MemoryRouter>
-        <DailyScrum />
-      </MemoryRouter>
-    </QueryClientProvider>
-  );
+  return renderWithProviders(<DailyScrum />, {
+    queryClient: testQueryClient,
+    initialRoute: '/',
+  });
 };
 
 const mockTeam = {

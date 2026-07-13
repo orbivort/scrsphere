@@ -66,6 +66,11 @@
     "inviteMember": "Invite Member",
     "adding": "Adding...",
     "searchPlaceholder": "Search by name or email...",
+    "searchAriaLabel": "Search by name or email",
+    "clearSearchAriaLabel": "Clear search",
+    "filterByRoleAriaLabel": "Filter members by role",
+    "sortByAriaLabel": "Sort members by",
+    "viewModeAriaLabel": "View mode toggle",
     "filterOptions": {
       "allRoles": "All Roles",
       "productOwner": "Product Owner",
@@ -106,7 +111,8 @@
     "adding": "Adding...",
     "sendInvite": "Send Invite",
     "unsentTitle": "Unsent Invitation",
-    "unsentMessage": "You have an unsent team invitation. Are you sure you want to discard it?"
+    "unsentMessage": "You have an unsent team invitation. Are you sure you want to discard it?",
+    "addedSuccess": "{{name}} has been added to the team as {{role}}."
   },
   "inviteErrors": {
     "userNotFound": "No user found with this email address. The user must register first before they can be invited to a team.",
@@ -115,7 +121,8 @@
     "networkError": "Network error. Please check your connection and try again.",
     "genericError": "Failed to add team member. Please try again later.",
     "invalidEmail": "Please enter a valid email address.",
-    "emailRequired": "Email address is required."
+    "emailRequired": "Email address is required.",
+    "emailTooLong": "Email address is too long. Maximum length is 254 characters."
   },
   "teamStats": {
     "completedSprints": "Completed Sprints",

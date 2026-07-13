@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { vi } from 'vitest';
+import { screen, fireEvent, waitFor, renderWithProviders, initTestI18n } from '../../../test-utils';
+import { vi, beforeAll } from 'vitest';
 
 import { StatusChangeModal, type StatusChangeModalProps } from './StatusChangeModal';
 
@@ -90,12 +90,16 @@ const defaultProps: StatusChangeModalProps<TestStatus> = {
 const setup = (overrides: Partial<StatusChangeModalProps<TestStatus>> = {}) => {
   const props = { ...defaultProps, ...overrides };
   return {
-    render: () => render(<StatusChangeModal {...props} />),
+    render: () => renderWithProviders(<StatusChangeModal {...props} />),
     props,
   };
 };
 
 describe('StatusChangeModal', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });

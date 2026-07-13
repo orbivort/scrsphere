@@ -1,14 +1,18 @@
-import { screen, render } from '@testing-library/react';
-import { describe, it, expect, beforeEach } from 'vitest';
+import { screen, renderWithProviders, initTestI18n } from '../../../test-utils';
+import { describe, it, expect, beforeEach, beforeAll } from 'vitest';
 
 import { DataPreview } from './DataPreview';
 import { MoSCoWPriority } from '../../../types';
 import type { BulkUploadItem } from './bulkUploadUtils';
 
 describe('DataPreview', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   describe('Empty State', () => {
     it('should render empty state when no items', () => {
-      render(<DataPreview items={[]} />);
+      renderWithProviders(<DataPreview items={[]} />);
 
       expect(screen.getByText('No data to preview')).toBeInTheDocument();
     });
@@ -44,19 +48,19 @@ describe('DataPreview', () => {
     });
 
     it('should render preview title', () => {
-      render(<DataPreview items={mockItems} />);
+      renderWithProviders(<DataPreview items={mockItems} />);
 
       expect(screen.getByText('Data Preview')).toBeInTheDocument();
     });
 
     it('should render valid count', () => {
-      render(<DataPreview items={mockItems} />);
+      renderWithProviders(<DataPreview items={mockItems} />);
 
       expect(screen.getByText('2 valid')).toBeInTheDocument();
     });
 
     it('should render table headers', () => {
-      render(<DataPreview items={mockItems} />);
+      renderWithProviders(<DataPreview items={mockItems} />);
 
       expect(screen.getByText('#')).toBeInTheDocument();
       expect(screen.getByText('Status')).toBeInTheDocument();
@@ -69,48 +73,48 @@ describe('DataPreview', () => {
     });
 
     it('should render item titles', () => {
-      render(<DataPreview items={mockItems} />);
+      renderWithProviders(<DataPreview items={mockItems} />);
 
       expect(screen.getByText('Feature A')).toBeInTheDocument();
       expect(screen.getByText('Feature B')).toBeInTheDocument();
     });
 
     it('should render row numbers', () => {
-      render(<DataPreview items={mockItems} />);
+      renderWithProviders(<DataPreview items={mockItems} />);
 
       expect(screen.getByText('2')).toBeInTheDocument();
       expect(screen.getByText('3')).toBeInTheDocument();
     });
 
     it('should render story points', () => {
-      render(<DataPreview items={mockItems} />);
+      renderWithProviders(<DataPreview items={mockItems} />);
 
       const pointsCells = screen.getAllByText('8');
       expect(pointsCells.length).toBeGreaterThan(0);
     });
 
     it('should render business value', () => {
-      render(<DataPreview items={mockItems} />);
+      renderWithProviders(<DataPreview items={mockItems} />);
 
       expect(screen.getByText('13')).toBeInTheDocument();
     });
 
     it('should render priority badges', () => {
-      render(<DataPreview items={mockItems} />);
+      renderWithProviders(<DataPreview items={mockItems} />);
 
       expect(screen.getByText('Must')).toBeInTheDocument();
       expect(screen.getByText('Should')).toBeInTheDocument();
     });
 
     it('should render labels', () => {
-      render(<DataPreview items={mockItems} />);
+      renderWithProviders(<DataPreview items={mockItems} />);
 
       expect(screen.getByText('frontend')).toBeInTheDocument();
       expect(screen.getByText('backend')).toBeInTheDocument();
     });
 
     it('should render OK for valid items', () => {
-      render(<DataPreview items={mockItems} />);
+      renderWithProviders(<DataPreview items={mockItems} />);
 
       const okElements = screen.getAllByText('OK');
       expect(okElements.length).toBe(2);
@@ -128,19 +132,19 @@ describe('DataPreview', () => {
     ];
 
     it('should render invalid count', () => {
-      render(<DataPreview items={invalidItems} />);
+      renderWithProviders(<DataPreview items={invalidItems} />);
 
       expect(screen.getByText('1 with errors')).toBeInTheDocument();
     });
 
     it('should render missing title indicator', () => {
-      render(<DataPreview items={invalidItems} />);
+      renderWithProviders(<DataPreview items={invalidItems} />);
 
       expect(screen.getByText('Missing title')).toBeInTheDocument();
     });
 
     it('should render error messages', () => {
-      render(<DataPreview items={invalidItems} />);
+      renderWithProviders(<DataPreview items={invalidItems} />);
 
       expect(screen.getByText(/title: Title is required/)).toBeInTheDocument();
     });
@@ -158,7 +162,7 @@ describe('DataPreview', () => {
         },
       ];
 
-      render(<DataPreview items={itemsWithManyLabels} />);
+      renderWithProviders(<DataPreview items={itemsWithManyLabels} />);
 
       expect(screen.getByText('label1')).toBeInTheDocument();
       expect(screen.getByText('label2')).toBeInTheDocument();
@@ -176,7 +180,7 @@ describe('DataPreview', () => {
         },
       ];
 
-      render(<DataPreview items={itemsNoLabels} />);
+      renderWithProviders(<DataPreview items={itemsNoLabels} />);
 
       const dashElements = screen.getAllByText('-');
       expect(dashElements.length).toBeGreaterThan(0);
@@ -195,7 +199,7 @@ describe('DataPreview', () => {
         },
       ];
 
-      render(<DataPreview items={items} />);
+      renderWithProviders(<DataPreview items={items} />);
 
       expect(screen.getByText('Could')).toBeInTheDocument();
     });
@@ -211,7 +215,7 @@ describe('DataPreview', () => {
         },
       ];
 
-      render(<DataPreview items={items} />);
+      renderWithProviders(<DataPreview items={items} />);
 
       expect(screen.getByText("Won't")).toBeInTheDocument();
     });
@@ -226,7 +230,7 @@ describe('DataPreview', () => {
         },
       ];
 
-      render(<DataPreview items={items} />);
+      renderWithProviders(<DataPreview items={items} />);
 
       const dashElements = screen.getAllByText('-');
       expect(dashElements.length).toBeGreaterThan(0);
@@ -245,7 +249,7 @@ describe('DataPreview', () => {
         },
       ];
 
-      render(<DataPreview items={items} />);
+      renderWithProviders(<DataPreview items={items} />);
 
       const dashElements = screen.getAllByText('-');
       expect(dashElements.length).toBeGreaterThan(0);
@@ -262,7 +266,7 @@ describe('DataPreview', () => {
         },
       ];
 
-      render(<DataPreview items={items} />);
+      renderWithProviders(<DataPreview items={items} />);
 
       const dashElements = screen.getAllByText('-');
       expect(dashElements.length).toBeGreaterThan(0);

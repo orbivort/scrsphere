@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { vi } from 'vitest';
+import { screen, fireEvent, renderWithProviders, initTestI18n } from '../../test-utils';
+import { vi, beforeAll } from 'vitest';
 
 import { MemberCard } from './MemberCard';
 
@@ -41,12 +41,16 @@ const defaultProps = {
 const setup = (overrides = {}) => {
   const props = { ...defaultProps, ...overrides };
   return {
-    render: () => render(<MemberCard {...props} />),
+    render: () => renderWithProviders(<MemberCard {...props} />),
     props,
   };
 };
 
 describe('MemberCard', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });

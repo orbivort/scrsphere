@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
+import { screen, renderWithProviders, initTestI18n } from '../../../../test-utils';
 import userEvent from '@testing-library/user-event';
 
 import { DataExportButton } from './DataExportButton';
@@ -74,6 +74,10 @@ describe('DataExportButton Component', () => {
     return { ...defaultReturn, ...stateOverrides };
   };
 
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
     mockDataExportModal.mockClear();
@@ -85,7 +89,7 @@ describe('DataExportButton Component', () => {
         createMockHookReturn()
       );
 
-      render(
+      renderWithProviders(
         <DataExportButton
           onExportStart={mockOnExportStart}
           onExportComplete={mockOnExportComplete}
@@ -101,7 +105,7 @@ describe('DataExportButton Component', () => {
         createMockHookReturn()
       );
 
-      render(
+      renderWithProviders(
         <DataExportButton
           onExportStart={mockOnExportStart}
           onExportComplete={mockOnExportComplete}
@@ -119,7 +123,7 @@ describe('DataExportButton Component', () => {
         createMockHookReturn()
       );
 
-      render(
+      renderWithProviders(
         <DataExportButton
           onExportStart={mockOnExportStart}
           onExportComplete={mockOnExportComplete}
@@ -138,7 +142,7 @@ describe('DataExportButton Component', () => {
         })
       );
 
-      render(
+      renderWithProviders(
         <DataExportButton
           onExportStart={mockOnExportStart}
           onExportComplete={mockOnExportComplete}
@@ -161,7 +165,7 @@ describe('DataExportButton Component', () => {
         })
       );
 
-      render(
+      renderWithProviders(
         <DataExportButton
           onExportStart={mockOnExportStart}
           onExportComplete={mockOnExportComplete}
@@ -177,7 +181,7 @@ describe('DataExportButton Component', () => {
         createMockHookReturn()
       );
 
-      render(
+      renderWithProviders(
         <DataExportButton
           onExportStart={mockOnExportStart}
           onExportComplete={mockOnExportComplete}
@@ -200,7 +204,7 @@ describe('DataExportButton Component', () => {
         })
       );
 
-      render(
+      renderWithProviders(
         <DataExportButton
           onExportStart={mockOnExportStart}
           onExportComplete={mockOnExportComplete}
@@ -225,7 +229,7 @@ describe('DataExportButton Component', () => {
         })
       );
 
-      render(
+      renderWithProviders(
         <DataExportButton
           onExportStart={mockOnExportStart}
           onExportComplete={mockOnExportComplete}
@@ -248,7 +252,7 @@ describe('DataExportButton Component', () => {
         })
       );
 
-      render(
+      renderWithProviders(
         <DataExportButton
           onExportStart={mockOnExportStart}
           onExportComplete={mockOnExportComplete}
@@ -280,7 +284,7 @@ describe('DataExportButton Component', () => {
         })
       );
 
-      render(
+      renderWithProviders(
         <DataExportButton
           onExportStart={mockOnExportStart}
           onExportComplete={mockOnExportComplete}
@@ -292,7 +296,7 @@ describe('DataExportButton Component', () => {
     });
 
     it('should update aria-busy when isActive changes', () => {
-      const { rerender } = render(
+      const { rerender } = renderWithProviders(
         <DataExportButton
           onExportStart={mockOnExportStart}
           onExportComplete={mockOnExportComplete}
@@ -334,7 +338,7 @@ describe('DataExportButton Component', () => {
         })
       );
 
-      render(
+      renderWithProviders(
         <DataExportButton
           onExportStart={mockOnExportStart}
           onExportComplete={mockOnExportComplete}
@@ -354,7 +358,7 @@ describe('DataExportButton Component', () => {
       );
 
       expect(() => {
-        render(
+        renderWithProviders(
           <DataExportButton
             onExportStart={mockOnExportStart}
             onExportComplete={mockOnExportComplete}
@@ -371,7 +375,7 @@ describe('DataExportButton Component', () => {
         createMockHookReturn()
       );
 
-      render(
+      renderWithProviders(
         <DataExportButton
           onExportStart={mockOnExportStart}
           onExportComplete={mockOnExportComplete}
@@ -392,7 +396,7 @@ describe('DataExportButton Component', () => {
         })
       );
 
-      render(
+      renderWithProviders(
         <DataExportButton
           onExportStart={mockOnExportStart}
           onExportComplete={mockOnExportComplete}
@@ -411,7 +415,7 @@ describe('DataExportButton Component', () => {
         })
       );
 
-      render(
+      renderWithProviders(
         <DataExportButton
           onExportStart={mockOnExportStart}
           onExportComplete={mockOnExportComplete}
@@ -435,7 +439,7 @@ describe('DataExportButton Component', () => {
         })
       );
 
-      render(
+      renderWithProviders(
         <DataExportButton
           onExportStart={mockOnExportStart}
           onExportComplete={mockOnExportComplete}
@@ -470,7 +474,7 @@ describe('DataExportButton Component', () => {
           })
         );
 
-        const { unmount } = render(
+        const { unmount } = renderWithProviders(
           <DataExportButton
             onExportStart={mockOnExportStart}
             onExportComplete={mockOnExportComplete}
@@ -490,7 +494,7 @@ describe('DataExportButton Component', () => {
         createMockHookReturn()
       );
 
-      render(
+      renderWithProviders(
         <DataExportButton
           onExportStart={mockOnExportStart}
           onExportComplete={mockOnExportComplete}
@@ -513,7 +517,7 @@ describe('DataExportButton Component', () => {
         })
       );
 
-      render(
+      renderWithProviders(
         <DataExportButton
           onExportStart={mockOnExportStart}
           onExportComplete={mockOnExportComplete}
@@ -539,7 +543,7 @@ describe('DataExportButton Component', () => {
       );
 
       expect(() => {
-        render(<DataExportButton />);
+        renderWithProviders(<DataExportButton />);
       }).not.toThrow();
     });
 
@@ -553,7 +557,7 @@ describe('DataExportButton Component', () => {
         })
       );
 
-      render(<DataExportButton />);
+      renderWithProviders(<DataExportButton />);
 
       const button = screen.getByRole('button');
       await user.click(button);
@@ -568,7 +572,7 @@ describe('DataExportButton Component', () => {
         createMockHookReturn()
       );
 
-      render(<DataExportButton />);
+      renderWithProviders(<DataExportButton />);
 
       expect(screen.getByText('Export My Data')).toBeInTheDocument();
     });
@@ -581,7 +585,7 @@ describe('DataExportButton Component', () => {
         })
       );
 
-      render(<DataExportButton />);
+      renderWithProviders(<DataExportButton />);
 
       expect(screen.getByText('Exporting...')).toBeInTheDocument();
     });
@@ -594,7 +598,7 @@ describe('DataExportButton Component', () => {
         })
       );
 
-      render(<DataExportButton />);
+      renderWithProviders(<DataExportButton />);
 
       expect(screen.getByText('Download Export')).toBeInTheDocument();
     });
@@ -607,7 +611,7 @@ describe('DataExportButton Component', () => {
         })
       );
 
-      render(<DataExportButton />);
+      renderWithProviders(<DataExportButton />);
 
       const button = screen.getByRole('button');
       expect(button).toHaveAttribute('aria-busy', 'true');
@@ -623,7 +627,7 @@ describe('DataExportButton Component', () => {
         })
       );
 
-      render(<DataExportButton />);
+      renderWithProviders(<DataExportButton />);
 
       expect(mockOnExportError).not.toHaveBeenCalled();
     });
@@ -636,7 +640,7 @@ describe('DataExportButton Component', () => {
         })
       );
 
-      render(<DataExportButton />);
+      renderWithProviders(<DataExportButton />);
 
       expect(mockOnExportError).not.toHaveBeenCalled();
     });
@@ -651,7 +655,7 @@ describe('DataExportButton Component', () => {
         })
       );
 
-      render(<DataExportButton disabled={false} />);
+      renderWithProviders(<DataExportButton disabled={false} />);
 
       const button = screen.getByRole('button');
       expect(button).toBeDisabled();
@@ -664,7 +668,7 @@ describe('DataExportButton Component', () => {
         })
       );
 
-      render(<DataExportButton disabled={true} />);
+      renderWithProviders(<DataExportButton disabled={true} />);
 
       const button = screen.getByRole('button');
       expect(button).toBeDisabled();
@@ -686,7 +690,7 @@ describe('DataExportButton Component', () => {
         })
       );
 
-      render(<DataExportButton />);
+      renderWithProviders(<DataExportButton />);
 
       const modalCall = mockDataExportModal.mock.calls[0][0];
       expect(modalCall.isOpen).toBe(true);
@@ -704,7 +708,7 @@ describe('DataExportButton Component', () => {
         })
       );
 
-      render(<DataExportButton />);
+      renderWithProviders(<DataExportButton />);
 
       const modalCall = mockDataExportModal.mock.calls[0][0];
       expect(modalCall.isOpen).toBe(false);
@@ -721,7 +725,7 @@ describe('DataExportButton Component', () => {
         })
       );
 
-      render(<DataExportButton />);
+      renderWithProviders(<DataExportButton />);
 
       expect(screen.getByText('↓')).toBeInTheDocument();
     });
@@ -731,7 +735,7 @@ describe('DataExportButton Component', () => {
         createMockHookReturn()
       );
 
-      render(<DataExportButton />);
+      renderWithProviders(<DataExportButton />);
 
       expect(screen.getByText('📥')).toBeInTheDocument();
     });

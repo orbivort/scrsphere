@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
+import { screen, fireEvent, waitFor, renderWithProviders, initTestI18n } from '../../test-utils';
 import userEvent from '@testing-library/user-event';
 
 import { ConfirmDialog } from './ConfirmDialog';
@@ -24,6 +24,10 @@ describe('ConfirmDialog Component', () => {
   const mockOnConfirm = vi.fn();
   const mockOnCancel = vi.fn();
 
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -34,7 +38,7 @@ describe('ConfirmDialog Component', () => {
 
   describe('Component Rendering Tests', () => {
     it('should not render when isOpen is false', () => {
-      render(
+      renderWithProviders(
         <ConfirmDialog
           isOpen={false}
           title="Confirm Action"
@@ -48,7 +52,7 @@ describe('ConfirmDialog Component', () => {
     });
 
     it('should render when isOpen is true', () => {
-      render(
+      renderWithProviders(
         <ConfirmDialog
           isOpen
           title="Confirm Action"
@@ -62,7 +66,7 @@ describe('ConfirmDialog Component', () => {
     });
 
     it('should render title', () => {
-      render(
+      renderWithProviders(
         <ConfirmDialog
           isOpen
           title="Delete Item"
@@ -76,7 +80,7 @@ describe('ConfirmDialog Component', () => {
     });
 
     it('should render message', () => {
-      render(
+      renderWithProviders(
         <ConfirmDialog
           isOpen
           title="Confirm Action"
@@ -90,7 +94,7 @@ describe('ConfirmDialog Component', () => {
     });
 
     it('should render default button labels', () => {
-      render(
+      renderWithProviders(
         <ConfirmDialog
           isOpen
           title="Confirm Action"
@@ -105,7 +109,7 @@ describe('ConfirmDialog Component', () => {
     });
 
     it('should render custom button labels', () => {
-      render(
+      renderWithProviders(
         <ConfirmDialog
           isOpen
           title="Confirm Action"
@@ -124,7 +128,7 @@ describe('ConfirmDialog Component', () => {
 
   describe('Variant Tests', () => {
     it('should apply danger variant by default', () => {
-      render(
+      renderWithProviders(
         <ConfirmDialog
           isOpen
           title="Confirm Action"
@@ -139,7 +143,7 @@ describe('ConfirmDialog Component', () => {
     });
 
     it('should apply danger variant explicitly', () => {
-      render(
+      renderWithProviders(
         <ConfirmDialog
           isOpen
           title="Confirm Action"
@@ -155,7 +159,7 @@ describe('ConfirmDialog Component', () => {
     });
 
     it('should apply warning variant', () => {
-      render(
+      renderWithProviders(
         <ConfirmDialog
           isOpen
           title="Confirm Action"
@@ -171,7 +175,7 @@ describe('ConfirmDialog Component', () => {
     });
 
     it('should apply info variant', () => {
-      render(
+      renderWithProviders(
         <ConfirmDialog
           isOpen
           title="Confirm Action"
@@ -189,7 +193,7 @@ describe('ConfirmDialog Component', () => {
 
   describe('Loading State Tests', () => {
     it('should show loading state on confirm button', () => {
-      render(
+      renderWithProviders(
         <ConfirmDialog
           isOpen
           title="Confirm Action"
@@ -204,7 +208,7 @@ describe('ConfirmDialog Component', () => {
     });
 
     it('should disable buttons when loading', () => {
-      render(
+      renderWithProviders(
         <ConfirmDialog
           isOpen
           title="Confirm Action"
@@ -223,7 +227,7 @@ describe('ConfirmDialog Component', () => {
     });
 
     it('should not call onConfirm when loading and clicked', () => {
-      render(
+      renderWithProviders(
         <ConfirmDialog
           isOpen
           title="Confirm Action"
@@ -241,7 +245,7 @@ describe('ConfirmDialog Component', () => {
     });
 
     it('should not call onCancel when loading and escape pressed', () => {
-      render(
+      renderWithProviders(
         <ConfirmDialog
           isOpen
           title="Confirm Action"
@@ -260,7 +264,7 @@ describe('ConfirmDialog Component', () => {
 
   describe('User Interaction Tests', () => {
     it('should call onConfirm when confirm button is clicked', () => {
-      render(
+      renderWithProviders(
         <ConfirmDialog
           isOpen
           title="Confirm Action"
@@ -277,7 +281,7 @@ describe('ConfirmDialog Component', () => {
     });
 
     it('should call onCancel when cancel button is clicked', () => {
-      render(
+      renderWithProviders(
         <ConfirmDialog
           isOpen
           title="Confirm Action"
@@ -294,7 +298,7 @@ describe('ConfirmDialog Component', () => {
     });
 
     it('should call onCancel when Escape key is pressed', () => {
-      render(
+      renderWithProviders(
         <ConfirmDialog
           isOpen
           title="Confirm Action"
@@ -310,7 +314,7 @@ describe('ConfirmDialog Component', () => {
     });
 
     it('should not call onCancel for other keys', () => {
-      render(
+      renderWithProviders(
         <ConfirmDialog
           isOpen
           title="Confirm Action"
@@ -327,7 +331,7 @@ describe('ConfirmDialog Component', () => {
     });
 
     it('should not call onCancel when clicking dialog content', () => {
-      render(
+      renderWithProviders(
         <ConfirmDialog
           isOpen
           title="Confirm Action"
@@ -348,7 +352,7 @@ describe('ConfirmDialog Component', () => {
 
   describe('Accessibility Tests', () => {
     it('should have role="alertdialog"', () => {
-      render(
+      renderWithProviders(
         <ConfirmDialog
           isOpen
           title="Confirm Action"
@@ -362,7 +366,7 @@ describe('ConfirmDialog Component', () => {
     });
 
     it('should have aria-modal="true"', () => {
-      render(
+      renderWithProviders(
         <ConfirmDialog
           isOpen
           title="Confirm Action"
@@ -376,7 +380,7 @@ describe('ConfirmDialog Component', () => {
     });
 
     it('should have aria-labelledby pointing to title', () => {
-      render(
+      renderWithProviders(
         <ConfirmDialog
           isOpen
           title="Confirm Action"
@@ -392,7 +396,7 @@ describe('ConfirmDialog Component', () => {
     });
 
     it('should have aria-describedby pointing to message', () => {
-      render(
+      renderWithProviders(
         <ConfirmDialog
           isOpen
           title="Confirm Action"
@@ -408,7 +412,7 @@ describe('ConfirmDialog Component', () => {
     });
 
     it('should focus confirm button when opened', async () => {
-      render(
+      renderWithProviders(
         <ConfirmDialog
           isOpen
           title="Confirm Action"
@@ -429,7 +433,7 @@ describe('ConfirmDialog Component', () => {
     it('should handle long title', () => {
       const longTitle =
         'This is a very long title that should still be displayed correctly without any issues';
-      render(
+      renderWithProviders(
         <ConfirmDialog
           isOpen
           title={longTitle}
@@ -445,7 +449,7 @@ describe('ConfirmDialog Component', () => {
     it('should handle long message', () => {
       const longMessage =
         'This is a very long message that should still be displayed correctly without any issues. It contains multiple sentences and should be readable.';
-      render(
+      renderWithProviders(
         <ConfirmDialog
           isOpen
           title="Confirm Action"
@@ -459,7 +463,7 @@ describe('ConfirmDialog Component', () => {
     });
 
     it('should handle special characters in title and message', () => {
-      render(
+      renderWithProviders(
         <ConfirmDialog
           isOpen
           title="Delete <item> & 'quotes'"
@@ -474,7 +478,7 @@ describe('ConfirmDialog Component', () => {
     });
 
     it('should handle empty title and message', () => {
-      render(
+      renderWithProviders(
         <ConfirmDialog
           isOpen
           title=""
@@ -491,7 +495,7 @@ describe('ConfirmDialog Component', () => {
   describe('Keyboard Navigation Tests', () => {
     it('should handle Enter key on confirm button', async () => {
       const user = userEvent.setup();
-      render(
+      renderWithProviders(
         <ConfirmDialog
           isOpen
           title="Confirm Action"

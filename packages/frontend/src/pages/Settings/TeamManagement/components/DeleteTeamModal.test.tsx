@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent, renderWithProviders, initTestI18n } from '../../../../test-utils';
 import { vi } from 'vitest';
 
 import { DeleteTeamModal } from './DeleteTeamModal';
@@ -26,13 +26,17 @@ describe('DeleteTeamModal', () => {
   const mockOnClose = vi.fn();
   const mockOnConfirm = vi.fn();
 
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   describe('Rendering', () => {
     it('should render modal when isOpen is true and team is provided', () => {
-      render(
+      renderWithProviders(
         <DeleteTeamModal
           isOpen={true}
           team={mockTeam}
@@ -47,7 +51,7 @@ describe('DeleteTeamModal', () => {
     });
 
     it('should NOT render modal when isOpen is false', () => {
-      render(
+      renderWithProviders(
         <DeleteTeamModal
           isOpen={false}
           team={mockTeam}
@@ -61,7 +65,7 @@ describe('DeleteTeamModal', () => {
     });
 
     it('should NOT render modal when team is null', () => {
-      render(
+      renderWithProviders(
         <DeleteTeamModal
           isOpen={true}
           team={null}
@@ -75,7 +79,7 @@ describe('DeleteTeamModal', () => {
     });
 
     it('should display team name in modal', () => {
-      render(
+      renderWithProviders(
         <DeleteTeamModal
           isOpen={true}
           team={mockTeam}
@@ -89,7 +93,7 @@ describe('DeleteTeamModal', () => {
     });
 
     it('should render action buttons', () => {
-      render(
+      renderWithProviders(
         <DeleteTeamModal
           isOpen={true}
           team={mockTeam}
@@ -106,7 +110,7 @@ describe('DeleteTeamModal', () => {
 
   describe('Confirmation input', () => {
     it('should have confirmation input field', () => {
-      render(
+      renderWithProviders(
         <DeleteTeamModal
           isOpen={true}
           team={mockTeam}
@@ -120,7 +124,7 @@ describe('DeleteTeamModal', () => {
     });
 
     it('should show awaiting confirmation status initially', () => {
-      render(
+      renderWithProviders(
         <DeleteTeamModal
           isOpen={true}
           team={mockTeam}
@@ -134,7 +138,7 @@ describe('DeleteTeamModal', () => {
     });
 
     it('should show match confirmed when correct team name is typed', () => {
-      render(
+      renderWithProviders(
         <DeleteTeamModal
           isOpen={true}
           team={mockTeam}
@@ -151,7 +155,7 @@ describe('DeleteTeamModal', () => {
     });
 
     it('should enable delete button when correct team name is typed', () => {
-      render(
+      renderWithProviders(
         <DeleteTeamModal
           isOpen={true}
           team={mockTeam}
@@ -169,7 +173,7 @@ describe('DeleteTeamModal', () => {
     });
 
     it('should disable delete button when incorrect team name is typed', () => {
-      render(
+      renderWithProviders(
         <DeleteTeamModal
           isOpen={true}
           team={mockTeam}
@@ -189,7 +193,7 @@ describe('DeleteTeamModal', () => {
 
   describe('Paste prevention', () => {
     it('should show paste warning when attempting to paste', () => {
-      render(
+      renderWithProviders(
         <DeleteTeamModal
           isOpen={true}
           team={mockTeam}
@@ -208,7 +212,7 @@ describe('DeleteTeamModal', () => {
 
   describe('Input states and styling', () => {
     it('should show success styling when confirmation matches', () => {
-      render(
+      renderWithProviders(
         <DeleteTeamModal
           isOpen={true}
           team={mockTeam}
@@ -225,7 +229,7 @@ describe('DeleteTeamModal', () => {
     });
 
     it('should show warning styling when paste warning is active', () => {
-      render(
+      renderWithProviders(
         <DeleteTeamModal
           isOpen={true}
           team={mockTeam}
@@ -244,7 +248,7 @@ describe('DeleteTeamModal', () => {
 
   describe('Error handling with product goals', () => {
     it('should not show confirmation input when hasProductGoals is true', () => {
-      render(
+      renderWithProviders(
         <DeleteTeamModal
           isOpen={true}
           team={mockTeam}
@@ -259,7 +263,7 @@ describe('DeleteTeamModal', () => {
     });
 
     it('should not submit when Enter is pressed and hasProductGoals is true', () => {
-      render(
+      renderWithProviders(
         <DeleteTeamModal
           isOpen={true}
           team={mockTeam}
@@ -275,7 +279,7 @@ describe('DeleteTeamModal', () => {
     });
 
     it('should show delete error when deleteError is provided and hasProductGoals is false', () => {
-      render(
+      renderWithProviders(
         <DeleteTeamModal
           isOpen={true}
           team={mockTeam}
@@ -290,7 +294,7 @@ describe('DeleteTeamModal', () => {
     });
 
     it('should not show delete error when hasProductGoals is true', () => {
-      render(
+      renderWithProviders(
         <DeleteTeamModal
           isOpen={true}
           team={mockTeam}
@@ -308,7 +312,7 @@ describe('DeleteTeamModal', () => {
 
   describe('Delete action', () => {
     it('should call onConfirm with team id when confirmed', () => {
-      render(
+      renderWithProviders(
         <DeleteTeamModal
           isOpen={true}
           team={mockTeam}
@@ -328,7 +332,7 @@ describe('DeleteTeamModal', () => {
     });
 
     it('should show loading state when deleting', () => {
-      render(
+      renderWithProviders(
         <DeleteTeamModal
           isOpen={true}
           team={mockTeam}
@@ -342,7 +346,7 @@ describe('DeleteTeamModal', () => {
     });
 
     it('should disable buttons when deleting', () => {
-      render(
+      renderWithProviders(
         <DeleteTeamModal
           isOpen={true}
           team={mockTeam}
@@ -362,7 +366,7 @@ describe('DeleteTeamModal', () => {
 
   describe('Cancel action', () => {
     it('should call onClose when cancel button is clicked', () => {
-      render(
+      renderWithProviders(
         <DeleteTeamModal
           isOpen={true}
           team={mockTeam}
@@ -379,7 +383,7 @@ describe('DeleteTeamModal', () => {
     });
 
     it('should call onClose when close button is clicked', () => {
-      render(
+      renderWithProviders(
         <DeleteTeamModal
           isOpen={true}
           team={mockTeam}
@@ -398,7 +402,7 @@ describe('DeleteTeamModal', () => {
 
   describe('Product goals blocking', () => {
     it('should show blocked message when hasProductGoals is true', () => {
-      render(
+      renderWithProviders(
         <DeleteTeamModal
           isOpen={true}
           team={mockTeam}
@@ -417,7 +421,7 @@ describe('DeleteTeamModal', () => {
     });
 
     it('should hide confirmation input when hasProductGoals is true', () => {
-      render(
+      renderWithProviders(
         <DeleteTeamModal
           isOpen={true}
           team={mockTeam}
@@ -432,7 +436,7 @@ describe('DeleteTeamModal', () => {
     });
 
     it('should show cannot delete button when hasProductGoals is true', () => {
-      render(
+      renderWithProviders(
         <DeleteTeamModal
           isOpen={true}
           team={mockTeam}
@@ -448,7 +452,7 @@ describe('DeleteTeamModal', () => {
     });
 
     it('should show required actions list when hasProductGoals is true', () => {
-      render(
+      renderWithProviders(
         <DeleteTeamModal
           isOpen={true}
           team={mockTeam}
@@ -466,7 +470,7 @@ describe('DeleteTeamModal', () => {
 
   describe('Delete error display', () => {
     it('should display error message when deleteError is provided', () => {
-      render(
+      renderWithProviders(
         <DeleteTeamModal
           isOpen={true}
           team={mockTeam}
@@ -481,7 +485,7 @@ describe('DeleteTeamModal', () => {
     });
 
     it('should not display error when deleteError is undefined', () => {
-      render(
+      renderWithProviders(
         <DeleteTeamModal
           isOpen={true}
           team={mockTeam}
@@ -497,7 +501,7 @@ describe('DeleteTeamModal', () => {
 
   describe('Member count display', () => {
     it('should show member impact alert when team has members', () => {
-      render(
+      renderWithProviders(
         <DeleteTeamModal
           isOpen={true}
           team={mockTeam}
@@ -514,7 +518,7 @@ describe('DeleteTeamModal', () => {
     it('should use singular form when team has 1 member', () => {
       const singleMemberTeam = { ...mockTeam, memberCount: 1 };
 
-      render(
+      renderWithProviders(
         <DeleteTeamModal
           isOpen={true}
           team={singleMemberTeam}
@@ -530,7 +534,7 @@ describe('DeleteTeamModal', () => {
 
   describe('Progress bar', () => {
     it('should show progress based on confirmation text length', () => {
-      render(
+      renderWithProviders(
         <DeleteTeamModal
           isOpen={true}
           team={mockTeam}
@@ -548,7 +552,7 @@ describe('DeleteTeamModal', () => {
     });
 
     it('should show complete progress when full team name is typed', () => {
-      render(
+      renderWithProviders(
         <DeleteTeamModal
           isOpen={true}
           team={mockTeam}
@@ -568,7 +572,7 @@ describe('DeleteTeamModal', () => {
 
   describe('Keyboard interactions', () => {
     it('should submit on Enter when confirmation is complete', () => {
-      render(
+      renderWithProviders(
         <DeleteTeamModal
           isOpen={true}
           team={mockTeam}
@@ -586,7 +590,7 @@ describe('DeleteTeamModal', () => {
     });
 
     it('should not submit on Enter when hasProductGoals is true', () => {
-      render(
+      renderWithProviders(
         <DeleteTeamModal
           isOpen={true}
           team={mockTeam}

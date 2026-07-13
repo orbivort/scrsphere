@@ -54,7 +54,9 @@ export const DangerZone: React.FC<DangerZoneProps> = ({ onDeleteClick }) => {
         aria-expanded={isExpanded}
         aria-controls="danger-zone-content"
         id="danger-zone-header"
-        aria-label={t('deleteAccount.dangerZone.collapse')}
+        aria-label={t(
+          isExpanded ? 'deleteAccount.dangerZone.collapse' : 'deleteAccount.dangerZone.expand'
+        )}
       >
         {isExpanded ? (
           <>

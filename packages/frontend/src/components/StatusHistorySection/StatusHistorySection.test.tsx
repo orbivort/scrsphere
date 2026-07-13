@@ -1,7 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
+import { screen, waitFor, renderWithProviders, initTestI18n } from '../../test-utils';
 import userEvent from '@testing-library/user-event';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import {
   StatusHistorySection,
@@ -57,20 +56,6 @@ vi.mock('./StatusHistorySection.module.css', () => ({
     'timeline-notes': 'timeline-notes',
   },
 }));
-
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        gcTime: 0,
-        staleTime: 0,
-      },
-      mutations: {
-        retry: false,
-      },
-    },
-  });
 
 const mockHistoryItem: StatusChangeHistoryItem = {
   id: 'history-1',
@@ -140,44 +125,43 @@ const defaultProps: StatusHistorySectionProps = {
   entityType: 'BacklogItem',
 };
 
-const renderWithQueryClient = (ui: React.ReactElement, queryClient?: QueryClient) => {
-  const client = queryClient || createTestQueryClient();
-  return render(<QueryClientProvider client={client}>{ui}</QueryClientProvider>);
-};
-
 describe('StatusHistorySection Component', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   describe('Component Rendering Tests', () => {
     it('renders collapsed by default', () => {
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       expect(screen.getByText('Status History')).toBeInTheDocument();
       expect(screen.queryByText('Loading history...')).not.toBeInTheDocument();
     });
 
     it('renders toggle button', () => {
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       expect(screen.getByRole('button', { name: /status history/i })).toBeInTheDocument();
     });
 
     it('renders section heading', () => {
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       expect(screen.getByRole('heading', { name: /status history/i })).toBeInTheDocument();
     });
 
     it('renders custom title when provided', () => {
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} title="Custom Title" />);
+      renderWithProviders(<StatusHistorySection {...defaultProps} title="Custom Title" />);
 
       expect(screen.getByText('Custom Title')).toBeInTheDocument();
     });
 
     it('renders with custom className', () => {
-      const { container } = renderWithQueryClient(
+      const { container } = renderWithProviders(
         <StatusHistorySection {...defaultProps} className="custom-class" />
       );
 
@@ -185,21 +169,21 @@ describe('StatusHistorySection Component', () => {
     });
 
     it('renders clock icon', () => {
-      const { container } = renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      const { container } = renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const svg = container.querySelector('.history-toggle-left svg');
       expect(svg).toBeInTheDocument();
     });
 
     it('renders chevron icon', () => {
-      const { container } = renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      const { container } = renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const chevron = container.querySelector('.toggle-chevron');
       expect(chevron).toBeInTheDocument();
     });
 
     it('has aria-expanded attribute', () => {
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       expect(button).toHaveAttribute('aria-expanded', 'false');
@@ -213,7 +197,7 @@ describe('StatusHistorySection Component', () => {
         pagination: { total: 0, limit: 20, offset: 0 },
       });
 
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -227,7 +211,7 @@ describe('StatusHistorySection Component', () => {
         pagination: { total: 0, limit: 20, offset: 0 },
       });
 
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -243,7 +227,7 @@ describe('StatusHistorySection Component', () => {
         pagination: { total: 0, limit: 20, offset: 0 },
       });
 
-      const { container } = renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      const { container } = renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -259,7 +243,7 @@ describe('StatusHistorySection Component', () => {
         pagination: { total: 0, limit: 20, offset: 0 },
       });
 
-      const { container } = renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      const { container } = renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -282,7 +266,7 @@ describe('StatusHistorySection Component', () => {
           )
       );
 
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -301,7 +285,7 @@ describe('StatusHistorySection Component', () => {
           )
       );
 
-      const { container } = renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      const { container } = renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -310,9 +294,7 @@ describe('StatusHistorySection Component', () => {
     });
 
     it('uses external loading state when provided', async () => {
-      renderWithQueryClient(
-        <StatusHistorySection {...defaultProps} isLoading={true} history={[]} />
-      );
+      renderWithProviders(<StatusHistorySection {...defaultProps} isLoading={true} history={[]} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -325,7 +307,7 @@ describe('StatusHistorySection Component', () => {
     it('shows error state when API call fails', async () => {
       vi.mocked(apiService.getStatusChangeHistory).mockRejectedValue(new Error('404 Not Found'));
 
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -338,7 +320,7 @@ describe('StatusHistorySection Component', () => {
     it('displays error message', async () => {
       vi.mocked(apiService.getStatusChangeHistory).mockRejectedValue(new Error('404 Not found'));
 
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -351,7 +333,7 @@ describe('StatusHistorySection Component', () => {
     it('renders retry button', async () => {
       vi.mocked(apiService.getStatusChangeHistory).mockRejectedValue(new Error('404 Not Found'));
 
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -364,7 +346,7 @@ describe('StatusHistorySection Component', () => {
     it('renders dismiss button', async () => {
       vi.mocked(apiService.getStatusChangeHistory).mockRejectedValue(new Error('404 Not Found'));
 
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -382,7 +364,7 @@ describe('StatusHistorySection Component', () => {
           pagination: { total: 1, limit: 20, offset: 0 },
         });
 
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -402,7 +384,7 @@ describe('StatusHistorySection Component', () => {
     it('collapses when dismiss button is clicked', async () => {
       vi.mocked(apiService.getStatusChangeHistory).mockRejectedValue(new Error('404 Not Found'));
 
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -418,7 +400,7 @@ describe('StatusHistorySection Component', () => {
     });
 
     it('uses external error state when provided', async () => {
-      renderWithQueryClient(
+      renderWithProviders(
         <StatusHistorySection {...defaultProps} error={new Error('External error')} history={[]} />
       );
 
@@ -431,10 +413,9 @@ describe('StatusHistorySection Component', () => {
     });
 
     it('shows retry attempt count', async () => {
-      const queryClient = createTestQueryClient();
       vi.mocked(apiService.getStatusChangeHistory).mockRejectedValue(new Error('500 Server Error'));
 
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} />, queryClient);
+      renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -455,7 +436,7 @@ describe('StatusHistorySection Component', () => {
         pagination: { total: 0, limit: 20, offset: 0 },
       });
 
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -471,7 +452,7 @@ describe('StatusHistorySection Component', () => {
         pagination: { total: 0, limit: 20, offset: 0 },
       });
 
-      const { container } = renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      const { container } = renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -489,7 +470,7 @@ describe('StatusHistorySection Component', () => {
         pagination: { total: 1, limit: 20, offset: 0 },
       });
 
-      const { container } = renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      const { container } = renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -505,7 +486,7 @@ describe('StatusHistorySection Component', () => {
         pagination: { total: 2, limit: 20, offset: 0 },
       });
 
-      const { container } = renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      const { container } = renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -522,7 +503,7 @@ describe('StatusHistorySection Component', () => {
         pagination: { total: 1, limit: 20, offset: 0 },
       });
 
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -539,7 +520,7 @@ describe('StatusHistorySection Component', () => {
         pagination: { total: 1, limit: 20, offset: 0 },
       });
 
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -555,7 +536,7 @@ describe('StatusHistorySection Component', () => {
         pagination: { total: 1, limit: 20, offset: 0 },
       });
 
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -571,7 +552,7 @@ describe('StatusHistorySection Component', () => {
         pagination: { total: 1, limit: 20, offset: 0 },
       });
 
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -587,7 +568,7 @@ describe('StatusHistorySection Component', () => {
         pagination: { total: 1, limit: 20, offset: 0 },
       });
 
-      const { container } = renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      const { container } = renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -603,7 +584,7 @@ describe('StatusHistorySection Component', () => {
         pagination: { total: 2, limit: 20, offset: 0 },
       });
 
-      const { container } = renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      const { container } = renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -620,7 +601,7 @@ describe('StatusHistorySection Component', () => {
         pagination: { total: 2, limit: 20, offset: 0 },
       });
 
-      const { container } = renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      const { container } = renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -644,7 +625,7 @@ describe('StatusHistorySection Component', () => {
         pagination: { total: 1, limit: 20, offset: 0 },
       });
 
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -666,7 +647,7 @@ describe('StatusHistorySection Component', () => {
         pagination: { total: 1, limit: 20, offset: 0 },
       });
 
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -688,7 +669,7 @@ describe('StatusHistorySection Component', () => {
         pagination: { total: 1, limit: 20, offset: 0 },
       });
 
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -710,7 +691,7 @@ describe('StatusHistorySection Component', () => {
         pagination: { total: 1, limit: 20, offset: 0 },
       });
 
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -732,7 +713,7 @@ describe('StatusHistorySection Component', () => {
         pagination: { total: 1, limit: 20, offset: 0 },
       });
 
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -755,7 +736,7 @@ describe('StatusHistorySection Component', () => {
         pagination: { total: 1, limit: 20, offset: 0 },
       });
 
-      const { container } = renderWithQueryClient(
+      const { container } = renderWithProviders(
         <StatusHistorySection {...defaultProps} statusColorMap={customColors} />
       );
 
@@ -774,7 +755,7 @@ describe('StatusHistorySection Component', () => {
         pagination: { total: 1, limit: 20, offset: 0 },
       });
 
-      const { container } = renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      const { container } = renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -795,7 +776,7 @@ describe('StatusHistorySection Component', () => {
         pagination: { total: 1, limit: 20, offset: 0 },
       });
 
-      const { container } = renderWithQueryClient(
+      const { container } = renderWithProviders(
         <StatusHistorySection {...defaultProps} statusColorMap={customColors} />
       );
 
@@ -811,7 +792,7 @@ describe('StatusHistorySection Component', () => {
 
   describe('External Data Tests', () => {
     it('uses external history data when provided', async () => {
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} history={[mockHistoryItem]} />);
+      renderWithProviders(<StatusHistorySection {...defaultProps} history={[mockHistoryItem]} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -822,7 +803,7 @@ describe('StatusHistorySection Component', () => {
     });
 
     it('does not call API when external data is provided', async () => {
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} history={[mockHistoryItem]} />);
+      renderWithProviders(<StatusHistorySection {...defaultProps} history={[mockHistoryItem]} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -831,9 +812,7 @@ describe('StatusHistorySection Component', () => {
     });
 
     it('handles external loading state', async () => {
-      renderWithQueryClient(
-        <StatusHistorySection {...defaultProps} isLoading={true} history={[]} />
-      );
+      renderWithProviders(<StatusHistorySection {...defaultProps} isLoading={true} history={[]} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -842,7 +821,7 @@ describe('StatusHistorySection Component', () => {
     });
 
     it('handles external error state', async () => {
-      renderWithQueryClient(
+      renderWithProviders(
         <StatusHistorySection {...defaultProps} error={new Error('External error')} history={[]} />
       );
 
@@ -862,7 +841,7 @@ describe('StatusHistorySection Component', () => {
         pagination: { total: 1, limit: 20, offset: 0 },
       });
 
-      const { container } = renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      const { container } = renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -878,7 +857,7 @@ describe('StatusHistorySection Component', () => {
         pagination: { total: 1, limit: 20, offset: 0 },
       });
 
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -895,7 +874,7 @@ describe('StatusHistorySection Component', () => {
         pagination: { total: 1, limit: 20, offset: 0 },
       });
 
-      const { container } = renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      const { container } = renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -912,7 +891,7 @@ describe('StatusHistorySection Component', () => {
         pagination: { total: 1, limit: 20, offset: 0 },
       });
 
-      const { container } = renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      const { container } = renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -933,7 +912,7 @@ describe('StatusHistorySection Component', () => {
         pagination: { total: 1, limit: 20, offset: 0 },
       });
 
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -952,7 +931,7 @@ describe('StatusHistorySection Component', () => {
         pagination: { total: 1, limit: 20, offset: 0 },
       });
 
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -970,7 +949,7 @@ describe('StatusHistorySection Component', () => {
         pagination: { total: 1, limit: 20, offset: 0 },
       });
 
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -992,7 +971,7 @@ describe('StatusHistorySection Component', () => {
         pagination: { total: 20, limit: 20, offset: 0 },
       });
 
-      const { container } = renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      const { container } = renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -1006,7 +985,7 @@ describe('StatusHistorySection Component', () => {
 
   describe('Accessibility Tests', () => {
     it('has accessible toggle button', () => {
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       expect(button).toHaveAttribute('type', 'button');
@@ -1018,7 +997,7 @@ describe('StatusHistorySection Component', () => {
         pagination: { total: 0, limit: 20, offset: 0 },
       });
 
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       expect(button).toHaveAttribute('aria-expanded', 'false');
@@ -1034,7 +1013,7 @@ describe('StatusHistorySection Component', () => {
         pagination: { total: 0, limit: 20, offset: 0 },
       });
 
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       await user.tab();
       const button = screen.getByRole('button', { name: /status history/i });
@@ -1052,7 +1031,7 @@ describe('StatusHistorySection Component', () => {
         pagination: { total: 1, limit: 20, offset: 0 },
       });
 
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} />);
+      renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -1068,13 +1047,12 @@ describe('StatusHistorySection Component', () => {
     });
 
     it('caches query results', async () => {
-      const queryClient = createTestQueryClient();
       vi.mocked(apiService.getStatusChangeHistory).mockResolvedValue({
         data: [mockHistoryItem],
         pagination: { total: 1, limit: 20, offset: 0 },
       });
 
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} />, queryClient);
+      renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);
@@ -1087,13 +1065,12 @@ describe('StatusHistorySection Component', () => {
     });
 
     it('refetches on window focus', async () => {
-      const queryClient = createTestQueryClient();
       vi.mocked(apiService.getStatusChangeHistory).mockResolvedValue({
         data: [mockHistoryItem],
         pagination: { total: 1, limit: 20, offset: 0 },
       });
 
-      renderWithQueryClient(<StatusHistorySection {...defaultProps} />, queryClient);
+      renderWithProviders(<StatusHistorySection {...defaultProps} />);
 
       const button = screen.getByRole('button', { name: /status history/i });
       await userEvent.click(button);

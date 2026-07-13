@@ -1,5 +1,5 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { screen, fireEvent, renderWithProviders, initTestI18n } from '../../../test-utils';
+import { describe, it, expect, vi, beforeAll, beforeEach, afterEach } from 'vitest';
 
 import { ChunkErrorBoundary } from './ChunkErrorBoundary';
 
@@ -8,6 +8,10 @@ const ThrowError = ({ error }: { error: Error }) => {
 };
 
 describe('ChunkErrorBoundary', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.spyOn(console, 'error').mockImplementation(() => {});
   });
@@ -17,7 +21,7 @@ describe('ChunkErrorBoundary', () => {
   });
 
   it('renders children when no error occurs', () => {
-    render(
+    renderWithProviders(
       <ChunkErrorBoundary>
         <div>Test content</div>
       </ChunkErrorBoundary>
@@ -28,14 +32,14 @@ describe('ChunkErrorBoundary', () => {
   it('displays error UI for chunk loading errors', () => {
     const chunkError = new Error('Loading chunk 123 failed');
 
-    render(
+    renderWithProviders(
       <ChunkErrorBoundary>
         <ThrowError error={chunkError} />
       </ChunkErrorBoundary>
     );
 
     expect(screen.getByText('Unable to load page')).toBeInTheDocument();
-    expect(screen.getByText('Retry')).toBeInTheDocument();
+    expect(screen.getByText('Reload')).toBeInTheDocument();
   });
 
   it('reloads page on retry click', () => {
@@ -48,13 +52,13 @@ describe('ChunkErrorBoundary', () => {
 
     const chunkError = new Error('Loading chunk failed');
 
-    render(
+    renderWithProviders(
       <ChunkErrorBoundary>
         <ThrowError error={chunkError} />
       </ChunkErrorBoundary>
     );
 
-    fireEvent.click(screen.getByText('Retry'));
+    fireEvent.click(screen.getByText('Reload'));
     expect(reloadMock).toHaveBeenCalled();
 
     // Clean up the stub
@@ -64,7 +68,7 @@ describe('ChunkErrorBoundary', () => {
   it('renders custom fallback when provided', () => {
     const chunkError = new Error('Loading chunk failed');
 
-    render(
+    renderWithProviders(
       <ChunkErrorBoundary fallback={<div>Custom error</div>}>
         <ThrowError error={chunkError} />
       </ChunkErrorBoundary>
@@ -78,7 +82,7 @@ describe('ChunkErrorBoundary', () => {
 
     // This should throw because it's not a chunk error
     expect(() => {
-      render(
+      renderWithProviders(
         <ChunkErrorBoundary>
           <ThrowError error={normalError} />
         </ChunkErrorBoundary>

@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
+import { screen, fireEvent, act, renderWithProviders, initTestI18n } from '../../test-utils';
 
 import { SessionWarningModal } from './SessionWarningModal';
 
@@ -41,6 +41,10 @@ describe('SessionWarningModal Component', () => {
   const mockOnExtendSession = vi.fn();
   const mockOnLogout = vi.fn();
 
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
     vi.useFakeTimers();
@@ -53,7 +57,7 @@ describe('SessionWarningModal Component', () => {
 
   describe('Component Rendering Tests', () => {
     it('should not render when isOpen is false', () => {
-      render(
+      renderWithProviders(
         <SessionWarningModal
           isOpen={false}
           timeRemaining={60000}
@@ -66,7 +70,7 @@ describe('SessionWarningModal Component', () => {
     });
 
     it('should render when isOpen is true', () => {
-      render(
+      renderWithProviders(
         <SessionWarningModal
           isOpen
           timeRemaining={60000}
@@ -79,7 +83,7 @@ describe('SessionWarningModal Component', () => {
     });
 
     it('should display warning message', () => {
-      render(
+      renderWithProviders(
         <SessionWarningModal
           isOpen
           timeRemaining={60000}
@@ -96,7 +100,7 @@ describe('SessionWarningModal Component', () => {
     });
 
     it('should render Stay Logged In button', () => {
-      render(
+      renderWithProviders(
         <SessionWarningModal
           isOpen
           timeRemaining={60000}
@@ -109,7 +113,7 @@ describe('SessionWarningModal Component', () => {
     });
 
     it('should render Log Out button', () => {
-      render(
+      renderWithProviders(
         <SessionWarningModal
           isOpen
           timeRemaining={60000}
@@ -124,7 +128,7 @@ describe('SessionWarningModal Component', () => {
 
   describe('Countdown Timer Tests', () => {
     it('should display initial time remaining', () => {
-      render(
+      renderWithProviders(
         <SessionWarningModal
           isOpen
           timeRemaining={120000}
@@ -137,7 +141,7 @@ describe('SessionWarningModal Component', () => {
     });
 
     it('should countdown every second', () => {
-      render(
+      renderWithProviders(
         <SessionWarningModal
           isOpen
           timeRemaining={10000}
@@ -156,7 +160,7 @@ describe('SessionWarningModal Component', () => {
     });
 
     it('should call onLogout when countdown reaches zero', () => {
-      render(
+      renderWithProviders(
         <SessionWarningModal
           isOpen
           timeRemaining={1000}
@@ -173,7 +177,7 @@ describe('SessionWarningModal Component', () => {
     });
 
     it('should format time correctly for minutes and seconds', () => {
-      const { rerender } = render(
+      const { rerender } = renderWithProviders(
         <SessionWarningModal
           isOpen
           timeRemaining={90000}
@@ -197,7 +201,7 @@ describe('SessionWarningModal Component', () => {
     });
 
     it('should pad seconds with zero', () => {
-      render(
+      renderWithProviders(
         <SessionWarningModal
           isOpen
           timeRemaining={5000}
@@ -212,7 +216,7 @@ describe('SessionWarningModal Component', () => {
 
   describe('Urgent State Tests', () => {
     it('should apply urgent class when time is less than 30 seconds', () => {
-      const { container } = render(
+      const { container } = renderWithProviders(
         <SessionWarningModal
           isOpen
           timeRemaining={25000}
@@ -226,7 +230,7 @@ describe('SessionWarningModal Component', () => {
     });
 
     it('should not apply urgent class when time is more than 30 seconds', () => {
-      const { container } = render(
+      const { container } = renderWithProviders(
         <SessionWarningModal
           isOpen
           timeRemaining={60000}
@@ -240,7 +244,7 @@ describe('SessionWarningModal Component', () => {
     });
 
     it('should transition to urgent state when countdown reaches 30 seconds', () => {
-      const { container } = render(
+      const { container } = renderWithProviders(
         <SessionWarningModal
           isOpen
           timeRemaining={32000}
@@ -264,7 +268,7 @@ describe('SessionWarningModal Component', () => {
     it('should call onExtendSession when Stay Logged In button is clicked', async () => {
       mockOnExtendSession.mockResolvedValue(undefined);
 
-      render(
+      renderWithProviders(
         <SessionWarningModal
           isOpen
           timeRemaining={60000}
@@ -280,7 +284,7 @@ describe('SessionWarningModal Component', () => {
     });
 
     it('should call onLogout when Log Out button is clicked', () => {
-      render(
+      renderWithProviders(
         <SessionWarningModal
           isOpen
           timeRemaining={60000}
@@ -304,7 +308,7 @@ describe('SessionWarningModal Component', () => {
           })
       );
 
-      render(
+      renderWithProviders(
         <SessionWarningModal
           isOpen
           timeRemaining={60000}
@@ -332,7 +336,7 @@ describe('SessionWarningModal Component', () => {
           })
       );
 
-      render(
+      renderWithProviders(
         <SessionWarningModal
           isOpen
           timeRemaining={60000}
@@ -354,7 +358,7 @@ describe('SessionWarningModal Component', () => {
     it('should reset loading state after extending session', async () => {
       mockOnExtendSession.mockResolvedValue(undefined);
 
-      render(
+      renderWithProviders(
         <SessionWarningModal
           isOpen
           timeRemaining={60000}
@@ -378,7 +382,7 @@ describe('SessionWarningModal Component', () => {
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
       mockOnExtendSession.mockRejectedValue(new Error('Failed to extend'));
 
-      render(
+      renderWithProviders(
         <SessionWarningModal
           isOpen
           timeRemaining={60000}
@@ -402,7 +406,7 @@ describe('SessionWarningModal Component', () => {
 
   describe('Accessibility Tests', () => {
     it('should have proper heading structure', () => {
-      render(
+      renderWithProviders(
         <SessionWarningModal
           isOpen
           timeRemaining={60000}
@@ -415,7 +419,7 @@ describe('SessionWarningModal Component', () => {
     });
 
     it('should have accessible button labels', () => {
-      render(
+      renderWithProviders(
         <SessionWarningModal
           isOpen
           timeRemaining={60000}
@@ -429,7 +433,7 @@ describe('SessionWarningModal Component', () => {
     });
 
     it('should have alertdialog role for screen reader accessibility', () => {
-      const { container } = render(
+      const { container } = renderWithProviders(
         <SessionWarningModal
           isOpen
           timeRemaining={60000}
@@ -443,7 +447,7 @@ describe('SessionWarningModal Component', () => {
     });
 
     it('should have aria-modal attribute set to true', () => {
-      const { container } = render(
+      const { container } = renderWithProviders(
         <SessionWarningModal
           isOpen
           timeRemaining={60000}
@@ -457,7 +461,7 @@ describe('SessionWarningModal Component', () => {
     });
 
     it('should have aria-labelledby pointing to the title', () => {
-      const { container } = render(
+      const { container } = renderWithProviders(
         <SessionWarningModal
           isOpen
           timeRemaining={60000}
@@ -474,7 +478,7 @@ describe('SessionWarningModal Component', () => {
     });
 
     it('should have aria-describedby pointing to the message', () => {
-      const { container } = render(
+      const { container } = renderWithProviders(
         <SessionWarningModal
           isOpen
           timeRemaining={60000}
@@ -492,7 +496,7 @@ describe('SessionWarningModal Component', () => {
 
   describe('Edge Case Tests', () => {
     it('should handle zero time remaining', () => {
-      render(
+      renderWithProviders(
         <SessionWarningModal
           isOpen
           timeRemaining={0}
@@ -505,7 +509,7 @@ describe('SessionWarningModal Component', () => {
     });
 
     it('should handle very large time remaining', () => {
-      render(
+      renderWithProviders(
         <SessionWarningModal
           isOpen
           timeRemaining={3600000}
@@ -518,7 +522,7 @@ describe('SessionWarningModal Component', () => {
     });
 
     it('should update countdown when timeRemaining prop changes', () => {
-      const { rerender } = render(
+      const { rerender } = renderWithProviders(
         <SessionWarningModal
           isOpen
           timeRemaining={60000}
@@ -542,7 +546,7 @@ describe('SessionWarningModal Component', () => {
     });
 
     it('should stop countdown when modal is closed', () => {
-      const { rerender } = render(
+      const { rerender } = renderWithProviders(
         <SessionWarningModal
           isOpen
           timeRemaining={10000}
@@ -570,7 +574,7 @@ describe('SessionWarningModal Component', () => {
 
   describe('Animation Tests', () => {
     it('should apply visible class after short delay', async () => {
-      const { container } = render(
+      const { container } = renderWithProviders(
         <SessionWarningModal
           isOpen
           timeRemaining={60000}
@@ -588,7 +592,7 @@ describe('SessionWarningModal Component', () => {
     });
 
     it('should apply visible class when transitioning from closed to open', async () => {
-      const { container, rerender } = render(
+      const { container, rerender } = renderWithProviders(
         <SessionWarningModal
           isOpen={false}
           timeRemaining={0}

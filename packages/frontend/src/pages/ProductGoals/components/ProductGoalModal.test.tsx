@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { vi } from 'vitest';
+import { screen, fireEvent, renderWithProviders, initTestI18n } from '../../../test-utils';
+import { vi, beforeAll } from 'vitest';
 
 import { ProductGoalModal, type ProductGoalModalProps } from './ProductGoalModal';
 
@@ -79,12 +79,16 @@ const defaultProps: ProductGoalModalProps = {
 const setup = (overrides: Partial<ProductGoalModalProps> = {}) => {
   const props = { ...defaultProps, ...overrides };
   return {
-    render: () => render(<ProductGoalModal {...props} />),
+    render: () => renderWithProviders(<ProductGoalModal {...props} />),
     props,
   };
 };
 
 describe('ProductGoalModal', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });

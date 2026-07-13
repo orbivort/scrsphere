@@ -1,5 +1,5 @@
-import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeAll } from 'vitest';
+import { screen, renderWithProviders, initTestI18n } from '../../test-utils';
 
 import type { PendingDeletion } from '../../types/auth.types';
 
@@ -18,6 +18,10 @@ vi.mock('./GracePeriodProgress.module.css', () => ({
   },
 }));
 
+beforeAll(async () => {
+  await initTestI18n();
+});
+
 const futureDate = new Date();
 futureDate.setDate(futureDate.getDate() + 14);
 
@@ -29,27 +33,27 @@ const mockPendingDeletion: PendingDeletion = {
 
 describe('GracePeriodProgress', () => {
   it('should render deletion scheduled title', () => {
-    render(<GracePeriodProgress pendingDeletion={mockPendingDeletion} />);
+    renderWithProviders(<GracePeriodProgress pendingDeletion={mockPendingDeletion} />);
     expect(screen.getByText('Deletion Scheduled')).toBeInTheDocument();
   });
 
   it('should display requested date', () => {
-    render(<GracePeriodProgress pendingDeletion={mockPendingDeletion} />);
+    renderWithProviders(<GracePeriodProgress pendingDeletion={mockPendingDeletion} />);
     expect(screen.getByText('Requested')).toBeInTheDocument();
   });
 
   it('should display deletion date label', () => {
-    render(<GracePeriodProgress pendingDeletion={mockPendingDeletion} />);
+    renderWithProviders(<GracePeriodProgress pendingDeletion={mockPendingDeletion} />);
     expect(screen.getByText('Deletion date')).toBeInTheDocument();
   });
 
   it('should display days remaining label', () => {
-    render(<GracePeriodProgress pendingDeletion={mockPendingDeletion} />);
+    renderWithProviders(<GracePeriodProgress pendingDeletion={mockPendingDeletion} />);
     expect(screen.getByText('Days remaining')).toBeInTheDocument();
   });
 
   it('should render progress bar with proper aria attributes', () => {
-    render(<GracePeriodProgress pendingDeletion={mockPendingDeletion} />);
+    renderWithProviders(<GracePeriodProgress pendingDeletion={mockPendingDeletion} />);
     const progressBar = screen.getByRole('progressbar');
     expect(progressBar).toBeInTheDocument();
     expect(progressBar).toHaveAttribute('aria-valuemin', '0');

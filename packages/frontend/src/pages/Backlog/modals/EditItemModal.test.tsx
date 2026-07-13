@@ -1,10 +1,10 @@
 import React from 'react';
-import { screen, render, waitFor } from '@testing-library/react';
+import { screen, renderWithProviders, waitFor } from '../../../test-utils';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, beforeAll, vi } from 'vitest';
 
 import { MoSCoWPriority, ItemStatus } from '../../../types';
-import { createMockBacklogItem } from '../../../test-utils';
+import { createMockBacklogItem, initTestI18n } from '../../../test-utils';
 import { BacklogProvider, useBacklogContext } from '../context/BacklogContext';
 
 import { EditItemModal } from './EditItemModal';
@@ -45,7 +45,7 @@ const SetSelectedItem: React.FC<{ item: ReturnType<typeof createMockBacklogItem>
 };
 
 const renderEditModal = (props = {}) => {
-  return render(
+  return renderWithProviders(
     <BacklogProvider>
       <SetSelectedItem item={mockItem} />
       <EditItemModal
@@ -63,6 +63,10 @@ describe('EditItemModal', () => {
   const mockOnClose = vi.fn();
   const mockOnSubmit = vi.fn();
 
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -77,7 +81,7 @@ describe('EditItemModal', () => {
     });
 
     it('should not render when closed', () => {
-      render(
+      renderWithProviders(
         <BacklogProvider>
           <SetSelectedItem item={mockItem} />
           <EditItemModal
@@ -119,7 +123,7 @@ describe('EditItemModal', () => {
     });
 
     it('should disable buttons during submission', async () => {
-      render(
+      renderWithProviders(
         <BacklogProvider>
           <SetSelectedItem item={mockItem} />
           <EditItemModal
@@ -291,7 +295,7 @@ describe('EditItemModal', () => {
         ],
       });
 
-      render(
+      renderWithProviders(
         <BacklogProvider>
           <SetSelectedItem item={itemWithManyLabels} />
           <EditItemModal
@@ -348,7 +352,7 @@ describe('EditItemModal', () => {
     });
 
     it('should disable save button during submission', async () => {
-      render(
+      renderWithProviders(
         <BacklogProvider>
           <SetSelectedItem item={mockItem} />
           <EditItemModal
@@ -367,7 +371,7 @@ describe('EditItemModal', () => {
     });
 
     it('should show loading state during submission', async () => {
-      render(
+      renderWithProviders(
         <BacklogProvider>
           <SetSelectedItem item={mockItem} />
           <EditItemModal
@@ -427,7 +431,7 @@ describe('EditItemModal', () => {
         return null;
       };
 
-      render(
+      renderWithProviders(
         <BacklogProvider>
           <SetSelectedItem item={mockItem} />
           <WorkflowErrorComponent />
@@ -454,7 +458,7 @@ describe('EditItemModal', () => {
         return null;
       };
 
-      render(
+      renderWithProviders(
         <BacklogProvider>
           <SetSelectedItem item={mockItem} />
           <WorkflowErrorComponent />

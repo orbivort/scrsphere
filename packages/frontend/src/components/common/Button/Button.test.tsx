@@ -1,7 +1,8 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, beforeAll } from 'vitest';
+import { screen, fireEvent, renderWithProviders } from '@/test-utils';
 import userEvent from '@testing-library/user-event';
 
+import { initTestI18n } from '@/test-utils';
 import { Button } from './Button';
 
 // Mock CSS modules
@@ -23,78 +24,82 @@ vi.mock('./Button.module.css', () => ({
 }));
 
 describe('Button Component', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   describe('Component Rendering Tests', () => {
     it('renders with default props', () => {
-      render(<Button>Click me</Button>);
+      renderWithProviders(<Button>Click me</Button>);
 
       const button = screen.getByRole('button', { name: /click me/i });
       expect(button).toBeInTheDocument();
     });
 
     it('renders children correctly', () => {
-      render(<Button>Test Button</Button>);
+      renderWithProviders(<Button>Test Button</Button>);
 
       expect(screen.getByText('Test Button')).toBeInTheDocument();
     });
 
     it('renders with primary variant by default', () => {
-      render(<Button>Primary Button</Button>);
+      renderWithProviders(<Button>Primary Button</Button>);
 
       const button = screen.getByRole('button');
       expect(button).toHaveClass('button-primary');
     });
 
     it('renders with secondary variant', () => {
-      render(<Button variant="secondary">Secondary Button</Button>);
+      renderWithProviders(<Button variant="secondary">Secondary Button</Button>);
 
       const button = screen.getByRole('button');
       expect(button).toHaveClass('button-secondary');
     });
 
     it('renders with link variant', () => {
-      render(<Button variant="link">Link Button</Button>);
+      renderWithProviders(<Button variant="link">Link Button</Button>);
 
       const button = screen.getByRole('button');
       expect(button).toHaveClass('button-link');
     });
 
     it('renders with danger variant', () => {
-      render(<Button variant="danger">Danger Button</Button>);
+      renderWithProviders(<Button variant="danger">Danger Button</Button>);
 
       const button = screen.getByRole('button');
       expect(button).toHaveClass('button-danger');
     });
 
     it('renders with medium size by default', () => {
-      render(<Button>Medium Button</Button>);
+      renderWithProviders(<Button>Medium Button</Button>);
 
       const button = screen.getByRole('button');
       expect(button).toHaveClass('button-md');
     });
 
     it('renders with small size', () => {
-      render(<Button size="sm">Small Button</Button>);
+      renderWithProviders(<Button size="sm">Small Button</Button>);
 
       const button = screen.getByRole('button');
       expect(button).toHaveClass('button-sm');
     });
 
     it('renders with large size', () => {
-      render(<Button size="lg">Large Button</Button>);
+      renderWithProviders(<Button size="lg">Large Button</Button>);
 
       const button = screen.getByRole('button');
       expect(button).toHaveClass('button-lg');
     });
 
     it('applies custom className', () => {
-      render(<Button className="custom-class">Custom Button</Button>);
+      renderWithProviders(<Button className="custom-class">Custom Button</Button>);
 
       const button = screen.getByRole('button');
       expect(button).toHaveClass('custom-class');
     });
 
     it('combines multiple CSS classes correctly', () => {
-      render(
+      renderWithProviders(
         <Button variant="primary" size="lg" className="extra-class">
           Combined Classes
         </Button>
@@ -110,63 +115,63 @@ describe('Button Component', () => {
 
   describe('Loading State Tests', () => {
     it('renders loading spinner when loading is true', () => {
-      render(<Button loading>Loading Button</Button>);
+      renderWithProviders(<Button loading>Loading Button</Button>);
 
       const spinner = document.querySelector('.spinner');
       expect(spinner).toBeInTheDocument();
     });
 
     it('does not render spinner when loading is false', () => {
-      render(<Button loading={false}>Normal Button</Button>);
+      renderWithProviders(<Button loading={false}>Normal Button</Button>);
 
       const spinner = document.querySelector('.spinner');
       expect(spinner).not.toBeInTheDocument();
     });
 
     it('applies loading class when loading', () => {
-      render(<Button loading>Loading Button</Button>);
+      renderWithProviders(<Button loading>Loading Button</Button>);
 
       const button = screen.getByRole('button');
       expect(button).toHaveClass('button-loading');
     });
 
     it('disables button when loading', () => {
-      render(<Button loading>Loading Button</Button>);
+      renderWithProviders(<Button loading>Loading Button</Button>);
 
       const button = screen.getByRole('button');
       expect(button).toBeDisabled();
     });
 
     it('has aria-busy="true" when loading', () => {
-      render(<Button loading>Loading Button</Button>);
+      renderWithProviders(<Button loading>Loading Button</Button>);
 
       const button = screen.getByRole('button');
       expect(button).toHaveAttribute('aria-busy', 'true');
     });
 
     it('has aria-busy="false" when not loading', () => {
-      render(<Button loading={false}>Normal Button</Button>);
+      renderWithProviders(<Button loading={false}>Normal Button</Button>);
 
       const button = screen.getByRole('button');
       expect(button).toHaveAttribute('aria-busy', 'false');
     });
 
     it('spinner has aria-hidden="true"', () => {
-      render(<Button loading>Loading Button</Button>);
+      renderWithProviders(<Button loading>Loading Button</Button>);
 
       const spinner = document.querySelector('.spinner');
       expect(spinner).toHaveAttribute('aria-hidden', 'true');
     });
 
     it('applies button-text class to text when loading', () => {
-      render(<Button loading>Loading Button</Button>);
+      renderWithProviders(<Button loading>Loading Button</Button>);
 
       const textSpan = screen.getByText('Loading Button');
       expect(textSpan).toHaveClass('button-text');
     });
 
     it('does not apply button-text class when not loading', () => {
-      render(<Button>Normal Button</Button>);
+      renderWithProviders(<Button>Normal Button</Button>);
 
       const textSpan = screen.getByText('Normal Button');
       expect(textSpan).not.toHaveClass('button-text');
@@ -175,21 +180,21 @@ describe('Button Component', () => {
 
   describe('Disabled State Tests', () => {
     it('disables button when disabled prop is true', () => {
-      render(<Button disabled>Disabled Button</Button>);
+      renderWithProviders(<Button disabled>Disabled Button</Button>);
 
       const button = screen.getByRole('button');
       expect(button).toBeDisabled();
     });
 
     it('does not disable button by default', () => {
-      render(<Button>Enabled Button</Button>);
+      renderWithProviders(<Button>Enabled Button</Button>);
 
       const button = screen.getByRole('button');
       expect(button).not.toBeDisabled();
     });
 
     it('disables button when both disabled and loading', () => {
-      render(
+      renderWithProviders(
         <Button disabled loading>
           Disabled Loading Button
         </Button>
@@ -203,7 +208,7 @@ describe('Button Component', () => {
   describe('User Interaction Tests', () => {
     it('calls onClick handler when clicked', () => {
       const handleClick = vi.fn();
-      render(<Button onClick={handleClick}>Clickable Button</Button>);
+      renderWithProviders(<Button onClick={handleClick}>Clickable Button</Button>);
 
       const button = screen.getByRole('button');
       fireEvent.click(button);
@@ -213,7 +218,7 @@ describe('Button Component', () => {
 
     it('does not call onClick when disabled', () => {
       const handleClick = vi.fn();
-      render(
+      renderWithProviders(
         <Button onClick={handleClick} disabled>
           Disabled Button
         </Button>
@@ -227,7 +232,7 @@ describe('Button Component', () => {
 
     it('does not call onClick when loading', () => {
       const handleClick = vi.fn();
-      render(
+      renderWithProviders(
         <Button onClick={handleClick} loading>
           Loading Button
         </Button>
@@ -241,7 +246,7 @@ describe('Button Component', () => {
 
     it('is focusable via keyboard', async () => {
       const user = userEvent.setup();
-      render(<Button>Focusable Button</Button>);
+      renderWithProviders(<Button>Focusable Button</Button>);
 
       const button = screen.getByRole('button');
       await user.tab();
@@ -252,7 +257,7 @@ describe('Button Component', () => {
     it('can be activated with Enter key', async () => {
       const user = userEvent.setup();
       const handleClick = vi.fn();
-      render(<Button onClick={handleClick}>Enter Button</Button>);
+      renderWithProviders(<Button onClick={handleClick}>Enter Button</Button>);
 
       const button = screen.getByRole('button');
       await user.type(button, '{enter}');
@@ -263,7 +268,7 @@ describe('Button Component', () => {
     it('can be activated with Space key', async () => {
       const user = userEvent.setup();
       const handleClick = vi.fn();
-      render(<Button onClick={handleClick}>Space Button</Button>);
+      renderWithProviders(<Button onClick={handleClick}>Space Button</Button>);
 
       const button = screen.getByRole('button');
       await user.type(button, ' ');
@@ -274,35 +279,35 @@ describe('Button Component', () => {
 
   describe('HTML Attributes Tests', () => {
     it('forwards type attribute', () => {
-      render(<Button type="submit">Submit Button</Button>);
+      renderWithProviders(<Button type="submit">Submit Button</Button>);
 
       const button = screen.getByRole('button');
       expect(button).toHaveAttribute('type', 'submit');
     });
 
     it('forwards type="button" attribute', () => {
-      render(<Button type="button">Button Type</Button>);
+      renderWithProviders(<Button type="button">Button Type</Button>);
 
       const button = screen.getByRole('button');
       expect(button).toHaveAttribute('type', 'button');
     });
 
     it('forwards id attribute', () => {
-      render(<Button id="test-button">Button with ID</Button>);
+      renderWithProviders(<Button id="test-button">Button with ID</Button>);
 
       const button = screen.getByRole('button');
       expect(button).toHaveAttribute('id', 'test-button');
     });
 
     it('forwards data attributes', () => {
-      render(<Button data-testid="custom-button">Button with Data</Button>);
+      renderWithProviders(<Button data-testid="custom-button">Button with Data</Button>);
 
       const button = screen.getByTestId('custom-button');
       expect(button).toBeInTheDocument();
     });
 
     it('forwards aria attributes', () => {
-      render(
+      renderWithProviders(
         <Button aria-label="Close dialog" aria-expanded="false">
           Close
         </Button>
@@ -314,7 +319,7 @@ describe('Button Component', () => {
     });
 
     it('forwards title attribute', () => {
-      render(<Button title="Click for more info">Info Button</Button>);
+      renderWithProviders(<Button title="Click for more info">Info Button</Button>);
 
       const button = screen.getByRole('button');
       expect(button).toHaveAttribute('title', 'Click for more info');
@@ -323,7 +328,7 @@ describe('Button Component', () => {
 
   describe('Edge Cases', () => {
     it('handles empty children', () => {
-      render(<Button />);
+      renderWithProviders(<Button />);
 
       const button = screen.getByRole('button');
       expect(button).toBeInTheDocument();
@@ -331,13 +336,13 @@ describe('Button Component', () => {
     });
 
     it('handles numeric children', () => {
-      render(<Button>{42}</Button>);
+      renderWithProviders(<Button>{42}</Button>);
 
       expect(screen.getByText('42')).toBeInTheDocument();
     });
 
     it('handles React element children', () => {
-      render(
+      renderWithProviders(
         <Button>
           <span data-testid="child-span">Child Element</span>
         </Button>
@@ -347,7 +352,7 @@ describe('Button Component', () => {
     });
 
     it('handles multiple children', () => {
-      render(
+      renderWithProviders(
         <Button>
           <span>Icon</span>
           <span>Text</span>
@@ -360,13 +365,13 @@ describe('Button Component', () => {
 
     it('handles very long text content', () => {
       const longText = 'Very long button text that should be displayed properly';
-      render(<Button>{longText}</Button>);
+      renderWithProviders(<Button>{longText}</Button>);
 
       expect(screen.getByText(longText)).toBeInTheDocument();
     });
 
     it('handles special characters in children', () => {
-      render(<Button>Special &lt;chars&gt; & "quotes"</Button>);
+      renderWithProviders(<Button>Special &lt;chars&gt; & "quotes"</Button>);
 
       expect(screen.getByText('Special <chars> & "quotes"')).toBeInTheDocument();
     });
@@ -380,7 +385,7 @@ describe('Button Component', () => {
       ];
 
       variants.forEach((variant) => {
-        const { container } = render(<Button variant={variant}>{variant}</Button>);
+        const { container } = renderWithProviders(<Button variant={variant}>{variant}</Button>);
         const button = container.querySelector('button');
         expect(button).toHaveClass(`button-${variant}`);
       });
@@ -390,7 +395,7 @@ describe('Button Component', () => {
       const sizes: Array<'sm' | 'md' | 'lg'> = ['sm', 'md', 'lg'];
 
       sizes.forEach((size) => {
-        const { container } = render(<Button size={size}>{size}</Button>);
+        const { container } = renderWithProviders(<Button size={size}>{size}</Button>);
         const button = container.querySelector('button');
         expect(button).toHaveClass(`button-${size}`);
       });
@@ -400,7 +405,7 @@ describe('Button Component', () => {
   describe('Ref Forwarding', () => {
     it('forwards ref correctly', () => {
       const ref = { current: null as HTMLButtonElement | null };
-      render(<Button ref={ref}>Ref Button</Button>);
+      renderWithProviders(<Button ref={ref}>Ref Button</Button>);
 
       expect(ref.current).toBeInstanceOf(HTMLButtonElement);
       expect(ref.current?.tagName).toBe('BUTTON');
@@ -408,7 +413,7 @@ describe('Button Component', () => {
 
     it('ref has access to button methods', () => {
       const ref = { current: null as HTMLButtonElement | null };
-      render(<Button ref={ref}>Ref Button</Button>);
+      renderWithProviders(<Button ref={ref}>Ref Button</Button>);
 
       expect(typeof ref.current?.click).toBe('function');
       expect(typeof ref.current?.focus).toBe('function');
@@ -418,7 +423,7 @@ describe('Button Component', () => {
   describe('Event Handler Tests', () => {
     it('handles onMouseEnter event', () => {
       const handleMouseEnter = vi.fn();
-      render(<Button onMouseEnter={handleMouseEnter}>Hover Button</Button>);
+      renderWithProviders(<Button onMouseEnter={handleMouseEnter}>Hover Button</Button>);
 
       const button = screen.getByRole('button');
       fireEvent.mouseEnter(button);
@@ -428,7 +433,7 @@ describe('Button Component', () => {
 
     it('handles onMouseLeave event', () => {
       const handleMouseLeave = vi.fn();
-      render(<Button onMouseLeave={handleMouseLeave}>Hover Button</Button>);
+      renderWithProviders(<Button onMouseLeave={handleMouseLeave}>Hover Button</Button>);
 
       const button = screen.getByRole('button');
       fireEvent.mouseLeave(button);
@@ -438,7 +443,7 @@ describe('Button Component', () => {
 
     it('handles onFocus event', () => {
       const handleFocus = vi.fn();
-      render(<Button onFocus={handleFocus}>Focus Button</Button>);
+      renderWithProviders(<Button onFocus={handleFocus}>Focus Button</Button>);
 
       const button = screen.getByRole('button');
       fireEvent.focus(button);
@@ -448,7 +453,7 @@ describe('Button Component', () => {
 
     it('handles onBlur event', () => {
       const handleBlur = vi.fn();
-      render(<Button onBlur={handleBlur}>Blur Button</Button>);
+      renderWithProviders(<Button onBlur={handleBlur}>Blur Button</Button>);
 
       const button = screen.getByRole('button');
       fireEvent.blur(button);

@@ -2,11 +2,14 @@ import React from 'react';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter } from 'react-router-dom';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { I18nextProvider } from 'react-i18next';
+import { vi, describe, it, expect, beforeEach, beforeAll } from 'vitest';
 
 import { useTeamStore, useAuthStore } from '../../store';
 import { apiService } from '../../services';
 import { SprintStatus, TaskStatus, ImpedimentStatus } from '../../types';
+import { initTestI18n, i18nT } from '@/test-utils';
+import { getTestI18nInstance } from '../../i18n/testConfig';
 
 import { Dashboard } from './Dashboard';
 
@@ -43,9 +46,11 @@ const createTestQueryClient = () =>
 const renderWithProviders = (ui: React.ReactElement) => {
   const testQueryClient = createTestQueryClient();
   return render(
-    <QueryClientProvider client={testQueryClient}>
-      <BrowserRouter>{ui}</BrowserRouter>
-    </QueryClientProvider>
+    <I18nextProvider i18n={getTestI18nInstance()}>
+      <QueryClientProvider client={testQueryClient}>
+        <BrowserRouter>{ui}</BrowserRouter>
+      </QueryClientProvider>
+    </I18nextProvider>
   );
 };
 
@@ -172,6 +177,10 @@ const mockImpediments = [
 ];
 
 describe('Dashboard Component', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.resetAllMocks();
     (useTeamStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
@@ -206,8 +215,8 @@ describe('Dashboard Component', () => {
 
       renderWithProviders(<Dashboard />);
 
-      expect(screen.getByText('No Team Selected')).toBeInTheDocument();
-      expect(screen.getByText('Please select a team to continue.')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('common:emptyState.noTeam.title'))).toBeInTheDocument();
+      expect(screen.getByText(i18nT('common:emptyState.noTeam.description'))).toBeInTheDocument();
     });
 
     it('should have proper ARIA attributes for empty state', () => {
@@ -231,7 +240,7 @@ describe('Dashboard Component', () => {
       renderWithProviders(<Dashboard />);
 
       // PageLoader renders message in both visually-hidden span and visible p tag
-      expect(screen.getAllByText('Loading dashboard...').length).toBeGreaterThan(0);
+      expect(screen.getAllByText(i18nT('dashboard:loadingDashboard')).length).toBeGreaterThan(0);
     });
 
     it('should have proper ARIA attributes for loading state', () => {
@@ -271,7 +280,7 @@ describe('Dashboard Component', () => {
       await waitFor(
         () => {
           expect(
-            screen.getByText((content) => content.includes('Failed to Load'))
+            screen.getByText((content) => content.includes(i18nT('dashboard:failedToLoad')))
           ).toBeInTheDocument();
         },
         { timeout: 10000 }
@@ -300,7 +309,9 @@ describe('Dashboard Component', () => {
 
       await waitFor(
         () => {
-          expect(screen.getByRole('button', { name: /Retry/i })).toBeInTheDocument();
+          expect(
+            screen.getByRole('button', { name: i18nT('dashboard:retryLoadingDashboard') })
+          ).toBeInTheDocument();
         },
         { timeout: 10000 }
       );
@@ -339,7 +350,9 @@ describe('Dashboard Component', () => {
       // Wait for error state to appear (after automatic retries)
       await waitFor(
         () => {
-          const retryBtn = screen.queryByRole('button', { name: /Retry/i });
+          const retryBtn = screen.queryByRole('button', {
+            name: i18nT('dashboard:retryLoadingDashboard'),
+          });
           expect(retryBtn).toBeTruthy();
         },
         { timeout: 20000, interval: 500 }
@@ -350,7 +363,9 @@ describe('Dashboard Component', () => {
       expect(initialCallCount).toBeGreaterThanOrEqual(1);
 
       // Click retry button
-      const retryButton = screen.getByRole('button', { name: /Retry/i });
+      const retryButton = screen.getByRole('button', {
+        name: i18nT('dashboard:retryLoadingDashboard'),
+      });
       fireEvent.click(retryButton);
 
       // Verify the API was called again after clicking retry
@@ -395,7 +410,7 @@ describe('Dashboard Component', () => {
       renderWithProviders(<Dashboard />);
 
       await waitFor(() => {
-        expect(screen.getByText('active')).toBeInTheDocument();
+        expect(screen.getByText(i18nT('dashboard:sprintStatus.ACTIVE'))).toBeInTheDocument();
       });
     });
 
@@ -411,9 +426,9 @@ describe('Dashboard Component', () => {
       renderWithProviders(<Dashboard />);
 
       await waitFor(() => {
-        expect(screen.getByText('Days Remaining')).toBeInTheDocument();
-        expect(screen.getByText('Completed')).toBeInTheDocument();
-        expect(screen.getByText('Tasks Done')).toBeInTheDocument();
+        expect(screen.getByText(i18nT('dashboard:daysRemainingLabel'))).toBeInTheDocument();
+        expect(screen.getByText(i18nT('dashboard:completedLabel'))).toBeInTheDocument();
+        expect(screen.getByText(i18nT('dashboard:tasksDoneLabel'))).toBeInTheDocument();
       });
     });
 
@@ -432,7 +447,7 @@ describe('Dashboard Component', () => {
 
       await waitFor(() => {
         // Check for the link by aria-label since text includes an icon
-        const sprintLink = screen.getByLabelText('View Sprint Board');
+        const sprintLink = screen.getByLabelText(i18nT('dashboard:viewSprintBoard'));
         expect(sprintLink).toBeInTheDocument();
         expect(sprintLink).toHaveAttribute('href', '/sprint');
       });
@@ -449,8 +464,12 @@ describe('Dashboard Component', () => {
       renderWithProviders(<Dashboard />);
 
       await waitFor(() => {
-        expect(screen.getByText('No Active Sprint')).toBeInTheDocument();
-        expect(screen.getByText('Go to Sprint Planning')).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('common:emptyState.noActiveSprint.title'))
+        ).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('common:emptyState.noActiveSprint.action'))
+        ).toBeInTheDocument();
       });
     });
   });
@@ -497,8 +516,8 @@ describe('Dashboard Component', () => {
 
       await waitFor(() => {
         // Use getAllByText since status may appear in multiple places
-        const doneBadges = screen.getAllByText('DONE');
-        const inProgressBadges = screen.getAllByText('IN PROGRESS');
+        const doneBadges = screen.getAllByText(i18nT('dashboard:taskStatus.DONE'));
+        const inProgressBadges = screen.getAllByText(i18nT('dashboard:taskStatus.IN_PROGRESS'));
         expect(doneBadges.length).toBeGreaterThan(0);
         expect(inProgressBadges.length).toBeGreaterThan(0);
       });
@@ -517,7 +536,7 @@ describe('Dashboard Component', () => {
       await waitFor(
         () => {
           expect(
-            screen.getByText((content) => content.includes('No tasks assigned'))
+            screen.getByText((content) => content.includes(i18nT('dashboard:taskList.noTasks')))
           ).toBeInTheDocument();
         },
         { timeout: 5000 }
@@ -599,7 +618,9 @@ describe('Dashboard Component', () => {
 
       await waitFor(() => {
         // LoadingState and SkeletonList both render aria-label
-        expect(screen.getAllByLabelText('Loading team updates').length).toBeGreaterThan(0);
+        expect(
+          screen.getAllByLabelText(i18nT('dashboard:loadingTeamUpdates')).length
+        ).toBeGreaterThan(0);
       });
     });
 
@@ -625,7 +646,7 @@ describe('Dashboard Component', () => {
       await waitFor(
         () => {
           expect(
-            screen.getByText((content) => content.includes('Unable to load updates'))
+            screen.getByText((content) => content.includes(i18nT('dashboard:unableToLoadUpdates')))
           ).toBeInTheDocument();
         },
         { timeout: 3000 }
@@ -653,7 +674,7 @@ describe('Dashboard Component', () => {
       renderWithProviders(<Dashboard />);
 
       await waitFor(() => {
-        expect(screen.getByText('No daily updates for today yet.')).toBeInTheDocument();
+        expect(screen.getByText(i18nT('dashboard:noDailyUpdates'))).toBeInTheDocument();
       });
     });
 
@@ -678,7 +699,7 @@ describe('Dashboard Component', () => {
       renderWithProviders(<Dashboard />);
 
       await waitFor(() => {
-        const submitButton = screen.getByLabelText('Submit your daily scrum update');
+        const submitButton = screen.getByLabelText(i18nT('dashboard:submitDailyScrumUpdate'));
         expect(submitButton).toBeInTheDocument();
         expect(submitButton).toHaveAttribute('href', '/daily-scrum');
       });
@@ -759,8 +780,10 @@ describe('Dashboard Component', () => {
 
       await waitFor(() => {
         // Use getAllByText since status may appear in multiple places
-        const openBadges = screen.getAllByText('OPEN');
-        const inProgressBadges = screen.getAllByText('IN PROGRESS');
+        const openBadges = screen.getAllByText(i18nT('dashboard:impedimentStatus.OPEN'));
+        const inProgressBadges = screen.getAllByText(
+          i18nT('dashboard:impedimentStatus.IN_PROGRESS')
+        );
         expect(openBadges.length).toBeGreaterThan(0);
         expect(inProgressBadges.length).toBeGreaterThan(0);
       });
@@ -787,7 +810,9 @@ describe('Dashboard Component', () => {
 
       await waitFor(() => {
         // LoadingState and SkeletonList both render aria-label
-        expect(screen.getAllByLabelText('Loading impediments').length).toBeGreaterThan(0);
+        expect(
+          screen.getAllByLabelText(i18nT('dashboard:loadingImpediments')).length
+        ).toBeGreaterThan(0);
       });
     });
 
@@ -813,7 +838,9 @@ describe('Dashboard Component', () => {
       await waitFor(
         () => {
           expect(
-            screen.getByText((content) => content.includes('Unable to load impediments'))
+            screen.getByText((content) =>
+              content.includes(i18nT('dashboard:unableToLoadImpediments'))
+            )
           ).toBeInTheDocument();
         },
         { timeout: 3000 }
@@ -841,7 +868,7 @@ describe('Dashboard Component', () => {
       renderWithProviders(<Dashboard />);
 
       await waitFor(() => {
-        expect(screen.getByText('No open impediments. Great job!')).toBeInTheDocument();
+        expect(screen.getByText(i18nT('dashboard:noOpenImpediments'))).toBeInTheDocument();
       });
     });
 
@@ -866,7 +893,7 @@ describe('Dashboard Component', () => {
       renderWithProviders(<Dashboard />);
 
       await waitFor(() => {
-        expect(screen.getByText('No open impediments. Great job!')).toBeInTheDocument();
+        expect(screen.getByText(i18nT('dashboard:noOpenImpediments'))).toBeInTheDocument();
       });
     });
   });
@@ -920,7 +947,7 @@ describe('Dashboard Component', () => {
       await waitFor(
         () => {
           expect(
-            screen.getByText((content) => content.includes('Unable to load burndown'))
+            screen.getByText((content) => content.includes(i18nT('dashboard:unableToLoadBurndown')))
           ).toBeInTheDocument();
         },
         { timeout: 3000 }
@@ -950,9 +977,9 @@ describe('Dashboard Component', () => {
       renderWithProviders(<Dashboard />);
 
       await waitFor(() => {
-        expect(screen.getByText('Submit Daily Scrum')).toBeInTheDocument();
-        expect(screen.getByText('Create Backlog Item')).toBeInTheDocument();
-        expect(screen.getByText('Report Impediment')).toBeInTheDocument();
+        expect(screen.getByText(i18nT('dashboard:submitDailyScrum'))).toBeInTheDocument();
+        expect(screen.getByText(i18nT('dashboard:createBacklogItem'))).toBeInTheDocument();
+        expect(screen.getByText(i18nT('dashboard:reportImpediment'))).toBeInTheDocument();
       });
     });
 
@@ -977,13 +1004,13 @@ describe('Dashboard Component', () => {
       renderWithProviders(<Dashboard />);
 
       await waitFor(() => {
-        const dailyScrumLink = screen.getByLabelText('Submit your daily scrum update');
+        const dailyScrumLink = screen.getByLabelText(i18nT('dashboard:submitDailyScrumUpdate'));
         expect(dailyScrumLink).toHaveAttribute('href', '/daily-scrum');
 
-        const backlogLink = screen.getByLabelText('Create a new backlog item');
+        const backlogLink = screen.getByLabelText(i18nT('dashboard:createNewBacklogItem'));
         expect(backlogLink).toHaveAttribute('href', '/backlog');
 
-        const impedimentLink = screen.getByLabelText('Report a new impediment');
+        const impedimentLink = screen.getByLabelText(i18nT('dashboard:reportNewImpediment'));
         expect(impedimentLink).toHaveAttribute('href', '/impediments');
       });
     });
@@ -1012,7 +1039,7 @@ describe('Dashboard Component', () => {
 
       await waitFor(() => {
         expect(screen.getByRole('main')).toBeInTheDocument();
-        expect(screen.getByRole('main')).toHaveAttribute('aria-label', 'Dashboard');
+        expect(screen.getByRole('main')).toHaveAttribute('aria-label', i18nT('dashboard:title'));
       });
     });
 
@@ -1038,7 +1065,7 @@ describe('Dashboard Component', () => {
 
       await waitFor(() => {
         const h1 = screen.getByRole('heading', { level: 1 });
-        expect(h1).toHaveTextContent('Dashboard');
+        expect(h1).toHaveTextContent(i18nT('dashboard:title'));
       });
     });
 
@@ -1063,8 +1090,8 @@ describe('Dashboard Component', () => {
       renderWithProviders(<Dashboard />);
 
       await waitFor(() => {
-        expect(screen.getByLabelText('Refresh dashboard data')).toBeInTheDocument();
-        expect(screen.getByLabelText('View Sprint Board')).toBeInTheDocument();
+        expect(screen.getByLabelText(i18nT('dashboard:refreshDashboardData'))).toBeInTheDocument();
+        expect(screen.getByLabelText(i18nT('dashboard:viewSprintBoard'))).toBeInTheDocument();
       });
     });
 
@@ -1116,10 +1143,12 @@ describe('Dashboard Component', () => {
 
       await waitFor(() => {
         // Check specific navigation links have proper labels
-        expect(screen.getByLabelText('View Sprint Board')).toBeInTheDocument();
-        expect(screen.getByLabelText('View all my tasks')).toBeInTheDocument();
-        expect(screen.getByLabelText('View all team updates')).toBeInTheDocument();
-        expect(screen.getByLabelText('View all open impediments')).toBeInTheDocument();
+        expect(screen.getByLabelText(i18nT('dashboard:viewSprintBoard'))).toBeInTheDocument();
+        expect(screen.getByLabelText(i18nT('dashboard:viewAllMyTasks'))).toBeInTheDocument();
+        expect(screen.getByLabelText(i18nT('dashboard:viewAllTeamUpdates'))).toBeInTheDocument();
+        expect(
+          screen.getByLabelText(i18nT('dashboard:viewAllOpenImpediments'))
+        ).toBeInTheDocument();
       });
     });
   });
@@ -1146,7 +1175,7 @@ describe('Dashboard Component', () => {
       renderWithProviders(<Dashboard />);
 
       await waitFor(() => {
-        expect(screen.getByLabelText('Refresh dashboard data')).toBeInTheDocument();
+        expect(screen.getByLabelText(i18nT('dashboard:refreshDashboardData'))).toBeInTheDocument();
       });
     });
 
@@ -1171,10 +1200,10 @@ describe('Dashboard Component', () => {
       renderWithProviders(<Dashboard />);
 
       await waitFor(() => {
-        expect(screen.getByLabelText('Refresh dashboard data')).toBeInTheDocument();
+        expect(screen.getByLabelText(i18nT('dashboard:refreshDashboardData'))).toBeInTheDocument();
       });
 
-      fireEvent.click(screen.getByLabelText('Refresh dashboard data'));
+      fireEvent.click(screen.getByLabelText(i18nT('dashboard:refreshDashboardData')));
 
       await waitFor(() => {
         expect(apiService.getActiveSprint).toHaveBeenCalledTimes(2);

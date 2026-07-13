@@ -14,10 +14,16 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { vi } from 'vitest';
+import {
+  screen,
+  fireEvent,
+  waitFor,
+  renderWithProviders,
+  initTestI18n,
+  i18nT,
+} from '../../test-utils';
+import { vi, beforeAll } from 'vitest';
+
 import { IncrementDetail } from './IncrementDetail';
 import { apiService } from '../../services';
 import { useToast } from '../../hooks/useToast';
@@ -48,12 +54,8 @@ vi.mock('react-router-dom', async () => {
 });
 
 describe('IncrementDetail', () => {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-    },
+  beforeAll(async () => {
+    await initTestI18n();
   });
 
   const mockIncrement = {
@@ -132,22 +134,13 @@ describe('IncrementDetail', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    queryClient.clear();
     (useToast as vi.Mock).mockReturnValue(mockToast);
     mockUseParams.mockReturnValue({ id: 'inc-1' });
     mockUseSearchParams.mockReturnValue([new URLSearchParams(), vi.fn()]);
   });
 
   const renderComponent = (initialEntries = ['/increment/inc-1']) => {
-    return render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter initialEntries={initialEntries}>
-          <Routes>
-            <Route path="/increment/:id" element={<IncrementDetail />} />
-          </Routes>
-        </MemoryRouter>
-      </QueryClientProvider>
-    );
+    return renderWithProviders(<IncrementDetail />, { initialRoute: initialEntries[0] });
   };
 
   describe('Loading States', () => {
@@ -156,7 +149,7 @@ describe('IncrementDetail', () => {
 
       renderComponent();
 
-      expect(screen.getByText(/Loading increment/i)).toBeInTheDocument();
+      expect(screen.getByText(i18nT('increments:detail.loading'))).toBeInTheDocument();
     });
 
     it('should show loading spinner', () => {
@@ -175,7 +168,7 @@ describe('IncrementDetail', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText(/Failed to load increment/i)).toBeInTheDocument();
+        expect(screen.getByText(i18nT('increments:detail.error.title'))).toBeInTheDocument();
       });
     });
 
@@ -195,7 +188,9 @@ describe('IncrementDetail', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText(/Back to Increments/i)).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('increments:detail.error.backToIncrements'))
+        ).toBeInTheDocument();
       });
     });
 
@@ -205,10 +200,12 @@ describe('IncrementDetail', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText(/Back to Increments/i)).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('increments:detail.error.backToIncrements'))
+        ).toBeInTheDocument();
       });
 
-      fireEvent.click(screen.getByText(/Back to Increments/i));
+      fireEvent.click(screen.getByText(i18nT('increments:detail.error.backToIncrements')));
 
       expect(mockNavigate).toHaveBeenCalledWith('/increments');
     });
@@ -302,7 +299,7 @@ describe('IncrementDetail', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText(/Back to Increments/i)).toBeInTheDocument();
+        expect(screen.getByText(i18nT('increments:backToIncrements'))).toBeInTheDocument();
       });
     });
 
@@ -310,10 +307,10 @@ describe('IncrementDetail', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText(/Back to Increments/i)).toBeInTheDocument();
+        expect(screen.getByText(i18nT('increments:backToIncrements'))).toBeInTheDocument();
       });
 
-      fireEvent.click(screen.getByText(/Back to Increments/i));
+      fireEvent.click(screen.getByText(i18nT('increments:backToIncrements')));
 
       expect(mockNavigate).toHaveBeenCalledWith('/increments');
     });
@@ -331,7 +328,7 @@ describe('IncrementDetail', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText(/Deliver Increment/i)).toBeInTheDocument();
+        expect(screen.getByText(i18nT('increments:detail.deliverIncrement'))).toBeInTheDocument();
       });
     });
 
@@ -346,7 +343,7 @@ describe('IncrementDetail', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText(/Deliver Increment/i)).toBeInTheDocument();
+        expect(screen.getByText(i18nT('increments:detail.deliverIncrement'))).toBeInTheDocument();
       });
     });
 
@@ -368,7 +365,9 @@ describe('IncrementDetail', () => {
         expect(screen.getByText('Test Increment')).toBeInTheDocument();
       });
 
-      expect(screen.queryByText(/Deliver Increment/i)).not.toBeInTheDocument();
+      expect(
+        screen.queryByText(i18nT('increments:detail.deliverIncrement'))
+      ).not.toBeInTheDocument();
     });
 
     it('should not show deliver button for ARCHIVED status', async () => {
@@ -385,7 +384,9 @@ describe('IncrementDetail', () => {
         expect(screen.getByText('Test Increment')).toBeInTheDocument();
       });
 
-      expect(screen.queryByText(/Deliver Increment/i)).not.toBeInTheDocument();
+      expect(
+        screen.queryByText(i18nT('increments:detail.deliverIncrement'))
+      ).not.toBeInTheDocument();
     });
   });
 
@@ -404,43 +405,45 @@ describe('IncrementDetail', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText(/Deliver Increment/i)).toBeInTheDocument();
+        expect(screen.getByText(i18nT('increments:detail.deliverIncrement'))).toBeInTheDocument();
       });
 
-      fireEvent.click(screen.getByText(/Deliver Increment/i));
+      fireEvent.click(screen.getByText(i18nT('increments:detail.deliverIncrement')));
 
       await waitFor(() => {
         expect(screen.getByRole('dialog')).toBeInTheDocument();
       });
 
-      expect(screen.getByText(/Mark this Increment as delivered/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(i18nT('increments:detail.deliverModal.modalDescription'))
+      ).toBeInTheDocument();
     });
 
     it('should show delivery method options', async () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText(/Deliver Increment/i)).toBeInTheDocument();
+        expect(screen.getByText(i18nT('increments:detail.deliverIncrement'))).toBeInTheDocument();
       });
 
-      fireEvent.click(screen.getByText(/Deliver Increment/i));
+      fireEvent.click(screen.getByText(i18nT('increments:detail.deliverIncrement')));
 
       await waitFor(() => {
         expect(screen.getByRole('dialog')).toBeInTheDocument();
       });
 
-      expect(screen.getByText('Sprint Review')).toBeInTheDocument();
-      expect(screen.getByText('Early Release')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('increments:deliveryMethod.sprintReview'))).toBeInTheDocument();
+      expect(screen.getByText(i18nT('increments:deliveryMethod.earlyRelease'))).toBeInTheDocument();
     });
 
     it('should have notes textarea', async () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText(/Deliver Increment/i)).toBeInTheDocument();
+        expect(screen.getByText(i18nT('increments:detail.deliverIncrement'))).toBeInTheDocument();
       });
 
-      fireEvent.click(screen.getByText(/Deliver Increment/i));
+      fireEvent.click(screen.getByText(i18nT('increments:detail.deliverIncrement')));
 
       await waitFor(() => {
         expect(screen.getByRole('dialog')).toBeInTheDocument();
@@ -455,17 +458,19 @@ describe('IncrementDetail', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText(/Deliver Increment/i)).toBeInTheDocument();
+        expect(screen.getByText(i18nT('increments:detail.deliverIncrement'))).toBeInTheDocument();
       });
 
-      fireEvent.click(screen.getByText(/Deliver Increment/i));
+      fireEvent.click(screen.getByText(i18nT('increments:detail.deliverIncrement')));
 
       await waitFor(() => {
         expect(screen.getByRole('dialog')).toBeInTheDocument();
       });
 
       expect(
-        screen.getByLabelText(/I understand this action is irreversible/i)
+        screen.getByLabelText(
+          new RegExp(i18nT('increments:detail.deliverModal.checkboxText').substring(0, 20))
+        )
       ).toBeInTheDocument();
     });
 
@@ -473,16 +478,18 @@ describe('IncrementDetail', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText(/Deliver Increment/i)).toBeInTheDocument();
+        expect(screen.getByText(i18nT('increments:detail.deliverIncrement'))).toBeInTheDocument();
       });
 
-      fireEvent.click(screen.getByText(/Deliver Increment/i));
+      fireEvent.click(screen.getByText(i18nT('increments:detail.deliverIncrement')));
 
       await waitFor(() => {
         expect(screen.getByRole('dialog')).toBeInTheDocument();
       });
 
-      const confirmButton = screen.getByRole('button', { name: /Confirm Delivery/i });
+      const confirmButton = screen.getByRole('button', {
+        name: i18nT('increments:detail.deliverModal.confirm'),
+      });
       expect(confirmButton).toBeDisabled();
     });
 
@@ -490,19 +497,23 @@ describe('IncrementDetail', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText(/Deliver Increment/i)).toBeInTheDocument();
+        expect(screen.getByText(i18nT('increments:detail.deliverIncrement'))).toBeInTheDocument();
       });
 
-      fireEvent.click(screen.getByText(/Deliver Increment/i));
+      fireEvent.click(screen.getByText(i18nT('increments:detail.deliverIncrement')));
 
       await waitFor(() => {
         expect(screen.getByRole('dialog')).toBeInTheDocument();
       });
 
-      const checkbox = screen.getByLabelText(/I understand this action is irreversible/i);
+      const checkbox = screen.getByLabelText(
+        new RegExp(i18nT('increments:detail.deliverModal.checkboxText').substring(0, 20))
+      );
       fireEvent.click(checkbox);
 
-      const confirmButton = screen.getByRole('button', { name: /Confirm Delivery/i });
+      const confirmButton = screen.getByRole('button', {
+        name: i18nT('increments:detail.deliverModal.confirm'),
+      });
       expect(confirmButton).not.toBeDisabled();
     });
 
@@ -510,19 +521,23 @@ describe('IncrementDetail', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText(/Deliver Increment/i)).toBeInTheDocument();
+        expect(screen.getByText(i18nT('increments:detail.deliverIncrement'))).toBeInTheDocument();
       });
 
-      fireEvent.click(screen.getByText(/Deliver Increment/i));
+      fireEvent.click(screen.getByText(i18nT('increments:detail.deliverIncrement')));
 
       await waitFor(() => {
         expect(screen.getByRole('dialog')).toBeInTheDocument();
       });
 
-      const checkbox = screen.getByLabelText(/I understand this action is irreversible/i);
+      const checkbox = screen.getByLabelText(
+        new RegExp(i18nT('increments:detail.deliverModal.checkboxText').substring(0, 20))
+      );
       fireEvent.click(checkbox);
 
-      fireEvent.click(screen.getByRole('button', { name: /Confirm Delivery/i }));
+      fireEvent.click(
+        screen.getByRole('button', { name: i18nT('increments:detail.deliverModal.confirm') })
+      );
 
       await waitFor(() => {
         expect(apiService.deliverIncrement).toHaveBeenCalledWith(
@@ -537,16 +552,18 @@ describe('IncrementDetail', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText(/Deliver Increment/i)).toBeInTheDocument();
+        expect(screen.getByText(i18nT('increments:detail.deliverIncrement'))).toBeInTheDocument();
       });
 
-      fireEvent.click(screen.getByText(/Deliver Increment/i));
+      fireEvent.click(screen.getByText(i18nT('increments:detail.deliverIncrement')));
 
       await waitFor(() => {
         expect(screen.getByRole('dialog')).toBeInTheDocument();
       });
 
-      fireEvent.click(screen.getByRole('button', { name: /Cancel/i }));
+      fireEvent.click(
+        screen.getByRole('button', { name: i18nT('increments:detail.deliverModal.cancel') })
+      );
 
       await waitFor(() => {
         expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
@@ -557,22 +574,28 @@ describe('IncrementDetail', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText(/Deliver Increment/i)).toBeInTheDocument();
+        expect(screen.getByText(i18nT('increments:detail.deliverIncrement'))).toBeInTheDocument();
       });
 
-      fireEvent.click(screen.getByText(/Deliver Increment/i));
+      fireEvent.click(screen.getByText(i18nT('increments:detail.deliverIncrement')));
 
       await waitFor(() => {
         expect(screen.getByRole('dialog')).toBeInTheDocument();
       });
 
-      const checkbox = screen.getByLabelText(/I understand this action is irreversible/i);
+      const checkbox = screen.getByLabelText(
+        new RegExp(i18nT('increments:detail.deliverModal.checkboxText').substring(0, 20))
+      );
       fireEvent.click(checkbox);
 
-      fireEvent.click(screen.getByRole('button', { name: /Confirm Delivery/i }));
+      fireEvent.click(
+        screen.getByRole('button', { name: i18nT('increments:detail.deliverModal.confirm') })
+      );
 
       await waitFor(() => {
-        expect(mockToast.success).toHaveBeenCalledWith('Increment delivered successfully!');
+        expect(mockToast.success).toHaveBeenCalledWith(
+          i18nT('increments:detail.toast.deliveredSuccess')
+        );
       });
     });
 
@@ -582,23 +605,27 @@ describe('IncrementDetail', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText(/Deliver Increment/i)).toBeInTheDocument();
+        expect(screen.getByText(i18nT('increments:detail.deliverIncrement'))).toBeInTheDocument();
       });
 
-      fireEvent.click(screen.getByText(/Deliver Increment/i));
+      fireEvent.click(screen.getByText(i18nT('increments:detail.deliverIncrement')));
 
       await waitFor(() => {
         expect(screen.getByRole('dialog')).toBeInTheDocument();
       });
 
-      const checkbox = screen.getByLabelText(/I understand this action is irreversible/i);
+      const checkbox = screen.getByLabelText(
+        new RegExp(i18nT('increments:detail.deliverModal.checkboxText').substring(0, 20))
+      );
       fireEvent.click(checkbox);
 
-      fireEvent.click(screen.getByRole('button', { name: /Confirm Delivery/i }));
+      fireEvent.click(
+        screen.getByRole('button', { name: i18nT('increments:detail.deliverModal.confirm') })
+      );
 
       await waitFor(() => {
         expect(mockToast.error).toHaveBeenCalledWith(
-          'Failed to deliver increment. Please try again.'
+          i18nT('increments:detail.toast.deliverFailed')
         );
       });
     });
@@ -621,10 +648,12 @@ describe('IncrementDetail', () => {
       renderComponent(['/increment/inc-1?fromSprintComplete=true&sprintId=sprint-1']);
 
       await waitFor(() => {
-        expect(screen.getByText('Sprint Completion Workflow')).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('increments:detail.sprintCompletionWorkflow'))
+        ).toBeInTheDocument();
       });
 
-      expect(screen.getByText('Step 3 of 4: Deliver Increment')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('increments:detail.workflowStep3Of4'))).toBeInTheDocument();
     });
 
     it('should show workflow progress steps', async () => {
@@ -643,14 +672,20 @@ describe('IncrementDetail', () => {
       renderComponent(['/increment/inc-1?fromSprintComplete=true&sprintId=sprint-1']);
 
       await waitFor(() => {
-        expect(screen.getByText('Sprint Completed')).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('increments:detail.workflowSteps.sprintCompleted'))
+        ).toBeInTheDocument();
       });
 
       // Check workflow steps are displayed
       const workflowIndicator = document.querySelector('[class*="workflow-indicator"]');
-      expect(workflowIndicator?.textContent).toContain('Sprint Completion Workflow');
+      expect(workflowIndicator?.textContent).toContain(
+        i18nT('increments:detail.sprintCompletionWorkflow')
+      );
       expect(workflowIndicator?.textContent).toContain('Step 3 of 4');
-      expect(workflowIndicator?.textContent).toContain('Deliver Increment');
+      expect(workflowIndicator?.textContent).toContain(
+        i18nT('increments:detail.workflowSteps.deliverIncrement')
+      );
     });
 
     it('should show Skip to Sprint Review back button in workflow mode', async () => {
@@ -669,7 +704,7 @@ describe('IncrementDetail', () => {
       renderComponent(['/increment/inc-1?fromSprintComplete=true&sprintId=sprint-1']);
 
       await waitFor(() => {
-        expect(screen.getByText('Skip to Sprint Review')).toBeInTheDocument();
+        expect(screen.getByText(i18nT('increments:skipToSprintReview'))).toBeInTheDocument();
       });
     });
   });
@@ -688,7 +723,9 @@ describe('IncrementDetail', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('Increment Created')).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('increments:detail.timeline.incrementCreated'))
+        ).toBeInTheDocument();
       });
     });
 
@@ -705,7 +742,9 @@ describe('IncrementDetail', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText(/Delivered via Sprint Review/i)).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('increments:detail.timeline.deliveredViaSprintReview'))
+        ).toBeInTheDocument();
       });
     });
   });

@@ -1,8 +1,6 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { BrowserRouter } from 'react-router-dom';
-import { vi } from 'vitest';
+import { screen, fireEvent, waitFor, renderWithProviders, initTestI18n } from '../../test-utils';
+import { vi, beforeAll } from 'vitest';
 
 import { ItemStatus, type ProductGoal, type ProductBacklogItem } from '../../types';
 import styles from './ProductGoals.module.css';
@@ -101,14 +99,6 @@ const mockBacklogItems: ProductBacklogItem[] = [
 ];
 
 const setup = (overrides = {}) => {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-    },
-  });
-
   mockUseTeamStore.mockReturnValue({
     currentTeam: mockTeam,
     ...overrides.teamStore,
@@ -128,19 +118,16 @@ const setup = (overrides = {}) => {
     handleError: vi.fn((error, defaultMessage) => defaultMessage),
   });
 
-  const Wrapper = ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>{children}</BrowserRouter>
-    </QueryClientProvider>
-  );
-
   return {
-    render: () => render(<ProductGoalsPage />, { wrapper: Wrapper }),
-    queryClient,
+    render: () => renderWithProviders(<ProductGoalsPage />),
   };
 };
 
 describe('ProductGoalsPage', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
