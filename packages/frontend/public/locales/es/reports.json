@@ -1,5 +1,5 @@
 {
-  "title": "Reportes",
+  "title": "Informes",
   "subtitle": "Seguir el rendimiento del equipo y las métricas del Sprint",
   "skipToMainContent": "Saltar al contenido principal",
   "error": {
@@ -14,7 +14,7 @@
     },
     "sprintSuccessRate": {
       "title": "Tasa de éxito del Sprint",
-      "unit": "Sprint Goals cumplidos",
+      "unit": "Objetivos Sprint cumplidos",
       "fromLastMonth": "del último mes"
     },
     "impediments": {

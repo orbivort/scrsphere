@@ -150,7 +150,7 @@
   },
   "definitionEditor": {
     "editTitle": "Editar {{label}}",
-    "dodInfo": "La Definición de Done es una descripción formal del estado del Increment cuando cumple con las medidas de calidad requeridas para el producto. El trabajo no puede considerarse parte de un Increment a menos que cumpla con la Definición de Done.",
+    "dodInfo": "La Definición de Done es una descripción formal del estado del Incremento cuando cumple con las medidas de calidad requeridas para el producto. El trabajo no puede considerarse parte de un Incremento a menos que cumpla con la Definición de Done.",
     "dorInfo": "La Definición de Ready es una lista de criterios que una historia de usuario debe cumplir antes de poder ser tomada en un sprint. Asegura que el equipo tenga suficiente información para completar el trabajo exitosamente.",
     "newItemPlaceholder": "Ingrese nuevo criterio de {{shortLabel}}...",
     "addItem": "Agregar elemento",

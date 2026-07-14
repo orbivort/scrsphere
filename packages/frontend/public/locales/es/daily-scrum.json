@@ -29,8 +29,8 @@
     "meetings": "Reuniones"
   },
   "form": {
-    "yesterdayLabel": "Que hiciste ayer para ayudar al equipo a alcanzar el sprint goal?",
-    "todayLabel": "Que haras hoy para ayudar al equipo a alcanzar el sprint goal?",
+    "yesterdayLabel": "Que hiciste ayer para ayudar al equipo a alcanzar el Objetivo Sprint?",
+    "todayLabel": "Que haras hoy para ayudar al equipo a alcanzar el Objetivo Sprint?",
     "impedimentLabel": "Algum impedimento? (opcional)",
     "yesterdayPlaceholder": "Describe lo que lograste ayer...",
     "todayPlaceholder": "Describe lo que planeas trabajar hoy...",
@@ -64,8 +64,8 @@
     "viewSprintBoard": "Ver Sprint Board"
   },
   "sprintGoal": {
-    "label": "Sprint Goal",
-    "noGoalDefined": "Sin sprint goal definido.",
+    "label": "Objetivo Sprint",
+    "noGoalDefined": "Sin Objetivo Sprint definido.",
     "addInPlanning": "Agregar uno en Sprint Planning"
   },
   "updateCard": {

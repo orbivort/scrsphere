@@ -1,9 +1,9 @@
 {
   "title": "Incrementos",
-  "subtitle": "Gestiona y rastrea tus incrementos de producto. Los incrementos representan funcionalidad util y lista para entrega a los stakeholders.",
+  "subtitle": "Gestiona y rastrea tus Incrementos de Producto. Los Incrementos representan funcionalidad util y lista para entrega a las Partes interesadas.",
   "createIncrement": "Crear Incremento",
   "loading": "Cargando incrementos...",
-  "skipToSprintReview": "Ir a Sprint Review",
+  "skipToSprintReview": "Ir a Revisión de Sprint",
   "backToIncrements": "Volver a Incrementos",
   "noDescription": "Sin descripcion.",
   "sprintPrefix": "SPRINT {{sprintId}}",
@@ -56,7 +56,7 @@
       "sprintCompleted": "Sprint Completado",
       "createIncrement": "Crear Incremento",
       "deliverIncrement": "Entregar Incremento",
-      "sprintReview": "Sprint Review"
+      "sprintReview": "Revisión de Sprint"
     },
     "progressSteps": {
       "completed": "Completado",
@@ -79,7 +79,7 @@
       "empty": "Ningun PBI incluido en este incremento."
     },
     "dodVerification": {
-      "title": "Verificacion Definition of Done",
+      "title": "Verificacion Definición de Hecho",
       "totalVerifications": "Verificaciones Totales",
       "verified": "Verificado",
       "byCategory": "Verificacion por Categoria",
@@ -91,22 +91,22 @@
     "timeline": {
       "title": "Linea de Tiempo",
       "incrementCreated": "Incremento Creado",
-      "deliveredViaSprintReview": "Entregado via Sprint Review",
+      "deliveredViaSprintReview": "Entregado via Revisión de Sprint",
       "deliveredViaEarlyRelease": "Entregado via Liberacion Temprana"
     },
     "deliverModal": {
       "title": "Entregar Incremento",
       "description": "Marcar este Incremento como entregado y registrar el metodo de entrega.",
-      "modalDescription": "Marcar este Incremento como entregado a los stakeholders. Esta accion no puede deshacerse.",
+      "modalDescription": "Marcar este Incremento como entregado a las Partes interesadas. Esta accion no puede deshacerse.",
       "deliveryMethodLabel": "Metodo de Entrega",
-      "sprintReviewOption": "Sprint Review",
-      "sprintReviewDescription": "Presentado en la reunion Sprint Review",
+      "sprintReviewOption": "Revisión de Sprint",
+      "sprintReviewDescription": "Presentado en la reunión Revisión de Sprint",
       "earlyReleaseOption": "Liberacion Temprana",
       "earlyReleaseDescription": "Entregado antes del final del Sprint",
       "notesLabel": "Notas (Opcional)",
       "notesPlaceholder": "Agrega notas sobre esta entrega...",
-      "confirmText": "Confirmo que este Incremento cumple con el Definition of Done y esta listo para entrega",
-      "checkboxText": "Entiendo que esta accion es irreversible y el incremento sera marcado como entregado a los stakeholders.",
+      "confirmText": "Confirmo que este Incremento cumple con la Definición de Hecho y esta listo para entrega",
+      "checkboxText": "Entiendo que esta accion es irreversible y el incremento sera marcado como entregado a las Partes interesadas.",
       "cancel": "Cancelar",
       "confirm": "Confirmar Entrega",
       "delivering": "Entregando...",
@@ -131,7 +131,7 @@
       "sprintCompleted": "Sprint Completado",
       "createIncrement": "Crear Incremento",
       "deliverIncrement": "Entregar Incremento",
-      "sprintReview": "Sprint Review"
+      "sprintReview": "Revisión de Sprint"
     },
     "workflowIndicator": {
       "title": "Workflow de Completacion de Sprint",
@@ -171,7 +171,7 @@
       "totalStoryPoints": "Total Story Points"
     },
     "actions": {
-      "skipToSprintReview": "Ir a Sprint Review",
+      "skipToSprintReview": "Ir a Revisión de Sprint",
       "cancel": "Cancelar",
       "createAndContinue": "Crear & Continuar",
       "createIncrement": "Crear Incremento",

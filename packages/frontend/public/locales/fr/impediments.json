@@ -1,9 +1,9 @@
 {
-  "title": "Hinderniss",
+  "title": "Empêchements",
   "subtitle": "{{sprintName}} - Suivre et resoudre les bloquants affectant l'equipe",
   "filterByStatus": "Filtrer par statut",
   "allStatus": "Tous les statuts",
-  "reportImpediment": "Signaler un hindernis",
+  "reportImpediment": "Signaler un empêchement",
   "status": {
     "open": "Ouvert",
     "inProgress": "En cours",
@@ -26,37 +26,37 @@
   },
   "card": {
     "sprint": "Sprint",
-    "fromDailyScrum": "Du Daily Scrum",
+    "fromDailyScrum": "De la Mêlée quotidienne",
     "createdFromDailyUpdate": "Cree a partir de la mise a jour quotidienne",
     "reportedBy": "Signale par",
     "owner": "Proprietaire",
     "unknown": "Inconnu",
     "resolution": "Resolution",
-    "viewDetailsAria": "Voir les details pour l'handernis : {{title}}. Statut : {{status}}"
+    "viewDetailsAria": "Voir les details pour l'empêchement : {{title}}. Statut : {{status}}"
   },
   "emptyState": {
-    "noImpedimentsForSprint": "Aucun hindernis pour {{sprintName}}",
-    "noImpedimentsForFilter": "Aucun hindernis {{status}}",
-    "noImpedimentsDescription": "Super ! Aucun hindernis signale pour le sprint actif \"{{sprintName}}\".",
-    "noFilterImpedimentsDescription": "Il n'y a pas d'handerniss {{status}} dans \"{{sprintName}}\". Essayez de selectionner un autre filtre de statut.",
+    "noImpedimentsForSprint": "Aucun empêchement pour {{sprintName}}",
+    "noImpedimentsForFilter": "Aucun empêchement {{status}}",
+    "noImpedimentsDescription": "Super ! Aucun empêchement signale pour le sprint actif \"{{sprintName}}\".",
+    "noFilterImpedimentsDescription": "Il n'y a pas d'empêchements {{status}} dans \"{{sprintName}}\". Essayez de selectionner un autre filtre de statut.",
     "clearFilter": "Effacer le filtre"
   },
   "createModal": {
-    "title": "Signaler un nouvel hindernis",
+    "title": "Signaler un nouvel empêchement",
     "subtitle": "Documenter les bloquants affectant la progression de votre equipe",
     "sprintLabel": "Sprint",
     "activeSprint": "(Actif)",
     "titleLabel": "Titre",
-    "titlePlaceholder": "Description breve de l'handernis",
+    "titlePlaceholder": "Description breve de l'empêchement",
     "descriptionLabel": "Description",
-    "descriptionPlaceholder": "Fournir des details sur l'handernis",
+    "descriptionPlaceholder": "Fournir des details sur l'empêchement",
     "creating": "Creation...",
-    "createImpediment": "Creer l'handernis"
+    "createImpediment": "Creer l'empêchement"
   },
   "detailModal": {
-    "title": "Details de l'handernis",
-    "subtitle": "Voir et gerer les informations de l'handernis",
-    "createdFromDailyScrum": "Cree a partir de la mise a jour Daily Scrum",
+    "title": "Details de l'empêchement",
+    "subtitle": "Voir et gerer les informations de l'empêchement",
+    "createdFromDailyScrum": "Cree a partir de la mise a jour de la Mêlée quotidienne",
     "viewDailyUpdate": "Voir la mise a jour quotidienne",
     "titleLabel": "Titre",
     "descriptionLabel": "Description",
@@ -66,42 +66,42 @@
     "ownerLabel": "Proprietaire",
     "createdLabel": "Cree",
     "resolutionLabel": "Resolution",
-    "resolutionPlaceholder": "Decrivez comment cet hindernis a ete resolu...",
+    "resolutionPlaceholder": "Decrivez comment cet empêchement a ete resolu...",
     "saveResolution": "Sauvegarder la resolution",
     "saving": "Sauvegarde...",
     "deleting": "Suppression...",
     "deleteLabel": "Supprimer"
   },
   "deleteModal": {
-    "title": "Supprimer l'handernis",
+    "title": "Supprimer l'empêchement",
     "subtitle": "Cette action est permanente et ne peut pas etre annulee",
     "actionWarning": "Avertissement d'action",
     "item": "Element :",
     "unknownItem": "Element inconnu",
-    "warningText": "Vous allez supprimer definitivement cet hindernis. Cette action ne peut pas etre annulee. Toutes les donnees associees seront definitivement supprimees.",
+    "warningText": "Vous allez supprimer definitivement cet empêchement. Cette action ne peut pas etre annulee. Toutes les donnees associees seront definitivement supprimees.",
     "statusLabel": "Statut :",
-    "deleteImpediment": "Supprimer l'handernis",
+    "deleteImpediment": "Supprimer l'empêchement",
     "deleting": "Suppression..."
   },
   "unsavedModal": {
     "title": "Modifications non sauvegardees",
-    "message": "Vous avez des modifications non sauvegardees dans le formulaire d'handernis. Etes-vous sur de vouloir les supprimer?"
+    "message": "Vous avez des modifications non sauvegardees dans le formulaire d'empêchement. Etes-vous sur de vouloir les supprimer?"
   },
   "toast": {
-    "created": "Hindernis cree avec succes",
-    "updated": "Hindernis mis a jour avec succes",
-    "deleted": "Hindernis supprime avec succes",
+    "created": "Empêchement cree avec succes",
+    "updated": "Empêchement mis a jour avec succes",
+    "deleted": "Empêchement supprime avec succes",
     "teamIdRequired": "L'ID de l'equipe est requis. Veuillez selectionner une equipe d'abord.",
     "noActiveSprint": "Aucun sprint actif trouve. Veuillez demarrer un sprint d'abord.",
-    "failedCreate": "Impossible de creer l'handernis. Veuillez reessayer.",
-    "failedUpdate": "Impossible de mettre a jour l'handernis. Veuillez reessayer.",
-    "failedDelete": "Impossible de supprimer l'handernis. Veuillez reessayer."
+    "failedCreate": "Impossible de creer l'empêchement. Veuillez reessayer.",
+    "failedUpdate": "Impossible de mettre a jour l'empêchement. Veuillez reessayer.",
+    "failedDelete": "Impossible de supprimer l'empêchement. Veuillez reessayer."
   },
   "errorState": {
     "title": "Erreur de chargement des donnees",
     "retry": "Reessayer",
     "failedSprint": "Impossible de charger les informations du sprint actif. Veuillez reessayer.",
-    "failedImpediments": "Impossible de charger les hinderniss. Veuillez reessayer."
+    "failedImpediments": "Impossible de charger les empêchements. Veuillez reessayer."
   },
   "validation": {
     "titleRequired": "Le titre est requis",

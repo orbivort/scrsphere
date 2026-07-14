@@ -18,9 +18,9 @@
       "fromLastMonth": "dall'ultimo mese"
     },
     "impediments": {
-      "title": "Impediment",
+      "title": "Impedimento",
       "resolved": "Risolti",
-      "openCount": "impediment(s) aperto(i)"
+      "openCount": "impedimento(i) aperto(i)"
     },
     "teamSatisfaction": {
       "title": "Soddisfazione del team",
@@ -35,7 +35,7 @@
       "planned": "Pianificato",
       "completed": "Completato",
       "teamMembers": "Membri del team",
-      "impediments": "Impediment"
+      "impediments": "Impedimento"
     }
   },
   "sprintStatusLabels": {
@@ -60,8 +60,8 @@
         "description": "Il team ha mantenuto il 100% del raggiungimento degli obiettivi negli ultimi {{count}} Sprint"
       },
       "impediment-trend": {
-        "title": "Andamento impediment",
-        "description": "{{count}} impediment(s) attualmente aperti. Considera di affrontarli proattivamente."
+        "title": "Andamento impedimento",
+        "description": "{{count}} impedimento(i) attualmente aperto(i). Considera di affrontarli proattivamente."
       },
       "high-success-rate": {
         "title": "Alto tasso di successo",
@@ -76,8 +76,8 @@
         "description": "L'ultimo Sprint ha mostrato un miglioramento del {{improvement}}% nei Story Points completati."
       },
       "active-sprint-impediments": {
-        "title": "Impediment dello Sprint attivo",
-        "description": "Lo Sprint attuale ha {{count}} impediment(s). Monitora attentamente."
+        "title": "Impedimento dello Sprint attivo",
+        "description": "Lo Sprint attuale ha {{count}} impedimento(i). Monitora attentamente."
       },
       "get-started": {
         "title": "Per iniziare",

@@ -1,5 +1,5 @@
 {
-  "title": "Sprint Review",
+  "title": "Revisión de Sprint",
   "backToReviews": "Volver a Reviews",
   "selectSprint": "Seleccionar Sprint para Review",
   "findingActiveSprint": "Buscando Sprint activo...",
@@ -17,7 +17,7 @@
     "status": "Estado:",
     "startDate": "Fecha de inicio:",
     "endDate": "Fecha de fin:",
-    "sprintGoal": "Sprint Goal:"
+    "sprintGoal": "Objetivo Sprint:"
   },
   "reviewThisSprint": "Reviewar este Sprint",
   "tabs": {
@@ -31,8 +31,8 @@
     "workingDays": "días de trabajo",
     "period": "Período",
     "notSet": "No establecido",
-    "sprintGoal": "Sprint Goal",
-    "noSprintGoal": "Sin Sprint Goal definido.",
+    "sprintGoal": "Objetivo Sprint",
+    "noSprintGoal": "Sin Objetivo Sprint definido.",
     "sprintMetrics": "Métricas del Sprint",
     "storyPointsCommitted": "Story Points comprometidos",
     "storyPointsCompleted": "Story Points completados",
@@ -42,26 +42,26 @@
     "attendees": "Asistentes"
   },
   "increment": {
-    "title": "Increment presentado",
+    "title": "Incremento presentado",
     "noDescription": "Sin descripción",
     "includedPbis": "Product Backlog Items incluidos",
-    "noPbis": "No hay PBIs incluidos en este Increment.",
+    "noPbis": "No hay PBIs incluidos en este Incremento.",
     "done": "Completado",
-    "dodVerification": "Verificación de Definition of Done",
+    "dodVerification": "Verificación de Definición de Hecho",
     "dodAllVerified": "Todos los criterios DoD verificados para elementos incluidos",
     "totalStoryPoints": "Story Points totales",
     "deliveryMethod": "Método de entrega",
-    "sprintReviewDelivery": "Sprint Review",
+    "sprintReviewDelivery": "Revisión de Sprint",
     "earlyReleaseDelivery": "Entrega anticipada",
     "deliveredAt": "Entregado el",
     "notDelivered": "No entregado",
-    "noIncrement": "Sin Increment disponible",
-    "noIncrementDescription": "No hay Increment entregado disponible para este Sprint Review."
+    "noIncrement": "Sin Incremento disponible",
+    "noIncrementDescription": "No hay Incremento entregado disponible para esta Revisión de Sprint."
   },
   "feedback": {
-    "title": "Feedback de Stakeholders",
+    "title": "Feedback de Partes interesadas",
     "addFeedback": "Agregar Feedback",
-    "empty": "Sin feedback recopilado. Haga clic en \"Agregar Feedback\" para añadir feedback de stakeholders.",
+    "empty": "Sin feedback recopilado. Haga clic en \"Agregar Feedback\" para añadir feedback de Partes interesadas.",
     "categories": {
       "positive": "Feedback positivo",
       "negative": "Feedback negativo",
@@ -75,7 +75,7 @@
   },
   "adjustments": {
     "title": "Ajustes del Product Backlog",
-    "description": "Cambios al Product Backlog basados en feedback del Sprint Review.",
+    "description": "Cambios al Product Backlog basados en feedback de la Revisión de Sprint.",
     "addAdjustment": "Agregar ajuste",
     "addAdjustmentDisabled": "Agregar ajuste - deshabilitado",
     "cannotAddAdjustmentTitle": "No se puede agregar ajuste a un Review completado",
@@ -96,26 +96,26 @@
     "owner": "Propietario:"
   },
   "completeReview": {
-    "badge": "Sprint Review completado",
-    "button": "Completar Sprint Review",
+    "badge": "Revisión de Sprint completado",
+    "button": "Completar Revisión de Sprint",
     "completing": "Completando...",
-    "defaultSummary": "Sprint Review completado.",
+    "defaultSummary": "Revisión de Sprint completado.",
     "failed": "No se pudo completar el Review. Por favor intente nuevamente.",
     "successModal": {
       "title": "Éxito",
-      "message": "Sprint Review completado exitosamente!",
+      "message": "Revisión de Sprint completado exitosamente!",
       "close": "Cerrar"
     },
     "confirmationModal": {
-      "cannotCompleteTitle": "No se puede completar el Sprint Review",
-      "completeTitle": "Completar Sprint Review",
-      "cannotCompleteSubtitle": "Por favor resuelva los siguientes problemas antes de completar este Sprint Review",
-      "completeSubtitle": "Revise todos los elementos y confirme para marcar este Sprint Review como completado",
-      "validationAttendees": "Por favor agregue al menos un asistente antes de completar el Sprint Review.",
-      "validationAttended": "Al menos un asistente debe estar marcado como atendido antes de completar el Sprint Review.",
+      "cannotCompleteTitle": "No se puede completar la Revisión de Sprint",
+      "completeTitle": "Completar Revisión de Sprint",
+      "cannotCompleteSubtitle": "Por favor resuelva los siguientes problemas antes de completar esta Revisión de Sprint",
+      "completeSubtitle": "Revise todos los elementos y confirme para marcar esta Revisión de Sprint como completado",
+      "validationAttendees": "Por favor agregue al menos un asistente antes de completar la Revisión de Sprint.",
+      "validationAttended": "Al menos un asistente debe estar marcado como atendido antes de completar la Revisión de Sprint.",
       "validationTeamMembers": "Todos los miembros del equipo deben estar marcados como atendidos o ausentes. Faltantes: {{names}}{{remaining}}.",
-      "validationSummary": "Un resumen del Review es requerido para completar el Sprint Review.",
-      "confirmation": "¿Está seguro de que desea marcar este Sprint Review como completado? Esta acción no puede ser revertida.",
+      "validationSummary": "Un resumen del Review es requerido para completar la Revisión de Sprint.",
+      "confirmation": "¿Está seguro de que desea marcar esta Revisión de Sprint como completado? Esta acción no puede ser revertida.",
       "gotIt": "Entendido",
       "cancel": "Cancelar",
       "complete": "Completar",
@@ -123,17 +123,17 @@
     }
   },
   "noReview": {
-    "title": "Sin Sprint Review creado",
-    "message": "No se ha creado un Sprint Review para este Sprint.",
-    "incrementRequired": "Increment requerido",
-    "incrementRequiredNotice": "Un Increment entregado es requerido antes de crear un Sprint Review. Por favor cree y entregue un Increment primero.",
-    "createIncrement": "Crear Increment",
-    "createSprintReview": "Crear Sprint Review"
+    "title": "Sin Revisión de Sprint creado",
+    "message": "No se ha creado una Revisión de Sprint para este Sprint.",
+    "incrementRequired": "Incremento requerido",
+    "incrementRequiredNotice": "Un Incremento entregado es requerido antes de crear una Revisión de Sprint. Por favor cree y entregue un Incremento primero.",
+    "createIncrement": "Crear Incremento",
+    "createSprintReview": "Crear Revisión de Sprint"
   },
   "error": {
     "title": "Error",
-    "failedToLoad": "No se pudo cargar el Sprint Review",
-    "message": "No se pudieron cargar los datos del Sprint Review. Por favor intente nuevamente.",
+    "failedToLoad": "No se pudo cargar la Revisión de Sprint",
+    "message": "No se pudieron cargar los datos de la Revisión de Sprint. Por favor intente nuevamente.",
     "retry": "Reintentar",
     "unknown": "Error desconocido"
   },
@@ -141,24 +141,24 @@
   "ariaLabels": {
     "sections": "Secciones del Sprint Review"
   },
-  "loading": "Cargando Sprint Review...",
+  "loading": "Cargando Revisión de Sprint...",
   "createModal": {
-    "title": "Crear Sprint Review",
+    "title": "Crear Revisión de Sprint",
     "reviewDate": "Fecha del Review *",
     "summary": "Resumen (Opcional)",
-    "summaryPlaceholder": "Ingrese un resumen del Sprint Review...",
+    "summaryPlaceholder": "Ingrese un resumen de la Revisión de Sprint...",
     "cancel": "Cancelar",
     "creating": "Creando...",
     "createReview": "Crear Review",
-    "failed": "No se pudo crear el Sprint Review. Por favor intente nuevamente.",
-    "incrementRequiredWarning": "Un Increment es requerido antes de crear un Sprint Review."
+    "failed": "No se pudo crear la Revisión de Sprint. Por favor intente nuevamente.",
+    "incrementRequiredWarning": "Un Incremento es requerido antes de crear una Revisión de Sprint."
   },
   "addFeedbackModal": {
-    "title": "Agregar Feedback de Stakeholder",
-    "subtitle": "Capturar insights valiosos de stakeholders para mejorar su producto",
+    "title": "Agregar Feedback de Parte interesada",
+    "subtitle": "Capturar insights valiosos de Partes interesadas para mejorar su Producto",
     "requiredFieldsNote": "Los campos requeridos están marcados con *",
     "authorName": "Nombre del autor *",
-    "authorNamePlaceholder": "Ingrese nombre del stakeholder",
+    "authorNamePlaceholder": "Ingrese nombre de la Parte interesada",
     "category": "Categoría",
     "categoryOptions": {
       "positive": "Feedback positivo",
@@ -181,7 +181,7 @@
   },
   "addAdjustmentModal": {
     "title": "Agregar ajuste del Backlog",
-    "subtitle": "Registrar cambios al Product Backlog basados en feedback del Sprint Review",
+    "subtitle": "Registrar cambios al Product Backlog basados en feedback de la Revisión de Sprint",
     "actionType": "Tipo de acción",
     "actionTypeOptions": {
       "add": "Agregar nuevo elemento",
@@ -205,15 +205,15 @@
     "unsavedMessage": "Tiene un ajuste del backlog no guardado. ¿Está seguro de que desea descartarlo?"
   },
   "list": {
-    "title": "Sprint Reviews",
-    "subtitle": "Reviewar Sprints completados, inspeccionar Increments y recopilar feedback de stakeholders",
-    "loading": "Cargando Sprint Reviews...",
+    "title": "Revisiones de Sprint",
+    "subtitle": "Reviewar Sprints completados, inspeccionar Incrementos y recopilar feedback de Partes interesadas",
+    "loading": "Cargando Revisiones de Sprint...",
     "completedSprints": "Sprints completados",
     "completedSprint": "Sprint completado",
     "completedSprints_plural": "Sprints completados",
     "reviewed": "Reviewed",
     "goal": "Goal:",
-    "createIncrement": "Crear Increment",
+    "createIncrement": "Crear Incremento",
     "viewReview": "Ver Review",
     "viewDetails": "Ver detalles",
     "statusLabels": {
@@ -225,7 +225,7 @@
     "reviewStatus": {
       "completed": "Review completado",
       "inProgress": "Review en progreso",
-      "incrementRequired": "Increment requerido",
+      "incrementRequired": "Incremento requerido",
       "readyForReview": "Listo para Review"
     }
   }

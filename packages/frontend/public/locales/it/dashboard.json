@@ -1,5 +1,5 @@
 {
-  "title": "Dashboard",
+  "title": "Cruscotto",
   "welcome": "Benvenuto, {{name}}",
   "activeSprint": "Sprint attivo",
   "noActiveSprint": "Nessuno sprint attivo",
@@ -135,7 +135,7 @@
     "addBacklogItem": "Aggiungi elemento al backlog",
     "reportImpediment": "Segnala impedimento",
     "viewSprintBoard": "Vedi Bacheca Sprint",
-    "createIncrement": "Crea incremento",
+    "createIncrement": "Crea Incremento",
     "startSprintPlanning": "Avvia pianificazione sprint"
   },
   "sprintStatus": {

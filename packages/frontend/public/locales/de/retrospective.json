@@ -1,7 +1,7 @@
 {
-  "title": "Sprint Retrospective",
-  "backToRetrospectives": "Zurück zu Retrospectives",
-  "backAriaLabel": "Zurück zur Retrospectives-Liste gehen",
+  "title": "Retrospektive",
+  "backToRetrospectives": "Zurück zu Retrospektiven",
+  "backAriaLabel": "Zurück zur Retrospektiven-Liste gehen",
   "sprintStatus": {
     "PLANNED": "Geplant",
     "ACTIVE": "Aktiv",
@@ -94,24 +94,24 @@
     "title": "Teilnehmer"
   },
   "ariaLabels": {
-    "columnsRegion": "Retrospective Feedback-Spalten",
+    "columnsRegion": "Retrospektive Feedback-Spalten",
     "sprintInfoRegion": "Sprint-Informationen",
-    "summaryAriaLabel": "Retrospective-Zusammenfassung"
+    "summaryAriaLabel": "Retrospektive-Zusammenfassung"
   },
   "summary": {
-    "title": "Retrospective-Zusammenfassung",
+    "title": "Retrospektive-Zusammenfassung",
     "editSummary": "Zusammenfassung bearbeiten",
     "editAriaLabel": "Zusammenfassung bearbeiten",
     "addSummary": "+ Zusammenfassung hinzufügen",
-    "editTitle": "Retrospective-Zusammenfassung bearbeiten",
-    "addTitle": "Retrospective-Zusammenfassung hinzufügen",
-    "editSubtitle": "Aktualisieren Sie die wichtigsten Insights und Takeaways aus dieser Retrospective",
+    "editTitle": "Retrospektive-Zusammenfassung bearbeiten",
+    "addTitle": "Retrospektive-Zusammenfassung hinzufügen",
+    "editSubtitle": "Aktualisieren Sie die wichtigsten Insights und Takeaways aus dieser Retrospektive",
     "addSubtitle": "Dokumentieren Sie die wichtigsten Insights, Entscheidungen und Action Items",
     "summaryLabel": "Zusammenfassung",
-    "takeawaysLabel": "Was waren die wichtigsten Takeaways aus dieser Retrospective?",
-    "placeholder": "Schreiben Sie eine Zusammenfassung der Retrospective-Ergebnisse, wichtigsten Takeaways und Action Items...",
+    "takeawaysLabel": "Was waren die wichtigsten Takeaways aus dieser Retrospektive?",
+    "placeholder": "Schreiben Sie eine Zusammenfassung der Retrospektive-Ergebnisse, wichtigsten Takeaways und Action Items...",
     "helperText": "Fassen Sie die Reflexionen des Teams und vereinbarten Verbesserungen zusammen",
-    "charHelpText": "Geben Sie wichtige Insights, Entscheidungen und Action Items aus der Retrospective ein. Mindestens 10 Zeichen, maximal 1000 Zeichen.",
+    "charHelpText": "Geben Sie wichtige Insights, Entscheidungen und Action Items aus der Retrospektive ein. Mindestens 10 Zeichen, maximal 1000 Zeichen.",
     "charCounter": "{{count}}/1000 Zeichen",
     "approachingLimit": "Nähert sich Zeichenlimit",
     "save": "Speichern",
@@ -120,25 +120,25 @@
     "cancelAriaLabel": "Zusammenfassung-Änderungen abbrechen",
     "saveAriaLabel": "Zusammenfassung speichern",
     "empty": "Noch keine Zusammenfassung hinzugefügt...",
-    "emptyDescription": "Noch keine Zusammenfassung hinzugefügt. Fügen Sie eine Zusammenfassung hinzu, um wichtige Insights und Entscheidungen aus dieser Retrospective zu dokumentieren.",
-    "addSummaryAriaLabel": "Retrospective-Zusammenfassung hinzufügen",
-    "formAriaLabel": "Retrospective-Zusammenfassung-Formular"
+    "emptyDescription": "Noch keine Zusammenfassung hinzugefügt. Fügen Sie eine Zusammenfassung hinzu, um wichtige Insights und Entscheidungen aus dieser Retrospektive zu dokumentieren.",
+    "addSummaryAriaLabel": "Retrospektive-Zusammenfassung hinzufügen",
+    "formAriaLabel": "Retrospektive-Zusammenfassung-Formular"
   },
   "completeRetro": {
-    "button": "Retrospective abschließen",
+    "button": "Retrospektive abschließen",
     "completing": "Abschließen...",
-    "description": "Markieren Sie diese Retrospective als abgeschlossen, um sie zu finalisieren und weitere Änderungen zu verhindern.",
-    "ariaLabel": "Retrospective als abgeschlossen markieren"
+    "description": "Markieren Sie diese Retrospektive als abgeschlossen, um sie zu finalisieren und weitere Änderungen zu verhindern.",
+    "ariaLabel": "Retrospektive als abgeschlossen markieren"
   },
   "confirmationModal": {
-    "cannotCompleteTitle": "Retrospective kann nicht abgeschlossen werden",
-    "completeTitle": "Retrospective abschließen",
+    "cannotCompleteTitle": "Retrospektive kann nicht abgeschlossen werden",
+    "completeTitle": "Retrospektive abschließen",
     "validationIssues": "Bitte beheben Sie die folgenden Probleme",
     "cannotUndo": "Diese Aktion kann nicht rückgängig gemacht werden",
     "confirmationRequired": "Bestätigung erforderlich",
     "finalStep": "Letzter Schritt",
-    "confirmationQuestion": "Sind Sie sicher, dass Sie diese Retrospective als abgeschlossen markieren möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
-    "lockWarning": "Nach Abschluss wird die Retrospective gesperrt und keine weiteren Änderungen können gemacht werden.",
+    "confirmationQuestion": "Sind Sie sicher, dass Sie diese Retrospektive als abgeschlossen markieren möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "lockWarning": "Nach Abschluss wird die Retrospektive gesperrt und keine weiteren Änderungen können gemacht werden.",
     "ok": "OK",
     "cancel": "Abbrechen",
     "complete": "Abschließen",
@@ -169,8 +169,8 @@
     "actionItemDeleteFailed": "Action Item konnte nicht gelöscht werden",
     "summaryUpdated": "Zusammenfassung erfolgreich aktualisiert",
     "summaryUpdateFailed": "Zusammenfassung konnte nicht aktualisiert werden",
-    "statusUpdated": "Retrospective-Status erfolgreich aktualisiert",
-    "statusUpdateFailed": "Retrospective-Status konnte nicht aktualisiert werden",
+    "statusUpdated": "Retrospektive-Status erfolgreich aktualisiert",
+    "statusUpdateFailed": "Retrospektive-Status konnte nicht aktualisiert werden",
     "participantAddFailed": "Participant konnte nicht hinzugefügt werden",
     "participantUpdateFailed": "Participant konnte nicht aktualisiert werden"
   },
@@ -180,7 +180,7 @@
     "unauthorized": "Sie sind nicht berechtigt, diese Aktion auszuführen.",
     "serverError": "Serverfehler. Bitte versuchen Sie es später erneut.",
     "badRequest": "Ungültige Anfrage. Bitte überprüfen Sie Ihre Eingabe und versuchen Sie es erneut.",
-    "notLoaded": "Retrospective nicht geladen. Bitte warten und erneut versuchen."
+    "notLoaded": "Retrospektive nicht geladen. Bitte warten und erneut versuchen."
   },
   "validation": {
     "itemContentRequired": "Bitte geben Sie Inhalt für das Element ein",
@@ -195,24 +195,24 @@
     "summaryMinLength": "Zusammenfassung muss mindestens 10 Zeichen haben",
     "summaryMaxLength": "Zusammenfassung muss 1000 Zeichen oder weniger sein",
     "noHtmlTags": "HTML-Tags sind nicht erlaubt",
-    "summaryRequiredBeforeComplete": "Retrospective-Zusammenfassung muss vor dem Abschluss ausgefüllt werden.",
-    "participantRequired": "Mindestens ein Participant muss vor dem Abschluss der Retrospective hinzugefügt werden.",
+    "summaryRequiredBeforeComplete": "Retrospektive-Zusammenfassung muss vor dem Abschluss ausgefüllt werden.",
+    "participantRequired": "Mindestens ein Participant muss vor dem Abschluss der Retrospektive hinzugefügt werden.",
     "participantAttendanceRequired": "Mindestens ein Participant muss als teilgenommen markiert sein.",
     "teamMemberAttendance": "{{name}} muss als teilgenommen markiert sein.",
     "allTeamMembersAttendance": "Alle Teammitglieder müssen als teilgenommen oder abwesend markiert sein. Fehlend: {{names}}{{remaining}}."
   },
   "errorState": {
-    "title": "Retrospective nicht gefunden",
-    "message": "Die Retrospective für diesen Sprint konnte nicht geladen werden.",
-    "backToRetrospectives": "Zurück zu Retrospectives",
+    "title": "Retrospektive nicht gefunden",
+    "message": "Die Retrospektive für diesen Sprint konnte nicht geladen werden.",
+    "backToRetrospectives": "Zurück zu Retrospektiven",
     "retry": "Erneut versuchen"
   },
-  "loading": "Retrospective wird geladen...",
+  "loading": "Retrospektive wird geladen...",
   "backlogHint": "Dieses Element wird auf der Product Backlog-Seite für Aktionen vorhanden sein.",
   "list": {
-    "title": "Sprint Retrospectives",
+    "title": "Sprint Retrospektiven",
     "subtitle": "Reflektieren über abgeschlossene Sprints, Verbesserungen identifizieren und Action Items verfolgen",
-    "loading": "Retrospectives werden geladen...",
+    "loading": "Retrospektiven werden geladen...",
     "completedSprints": "Abgeschlossene Sprints",
     "completedSprint": "Abgeschlossener Sprint",
     "completedSprints_plural": "Abgeschlossene Sprints",
@@ -221,8 +221,8 @@
     "items": "Elemente",
     "actions": "Aktionen",
     "creating": "Erstellen...",
-    "viewRetrospective": "Retrospective anzeigen",
-    "createRetrospective": "Retrospective erstellen",
+    "viewRetrospective": "Retrospektive anzeigen",
+    "createRetrospective": "Retrospektive erstellen",
     "statusLabels": {
       "active": "Aktiv",
       "completed": "Abgeschlossen",
@@ -230,10 +230,10 @@
       "cancelled": "Abgebrochen"
     },
     "retroStatus": {
-      "completed": "Retrospective abgeschlossen",
-      "inProgress": "Retrospective in Bearbeitung",
-      "draft": "Retrospective Draft",
-      "ready": "Bereit für Retrospective"
+      "completed": "Retrospektive abgeschlossen",
+      "inProgress": "Retrospektive in Bearbeitung",
+      "draft": "Retrospektive Draft",
+      "ready": "Bereit für Retrospektive"
     }
   },
   "createActionItemModal": {

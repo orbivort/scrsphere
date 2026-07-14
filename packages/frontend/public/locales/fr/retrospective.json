@@ -1,7 +1,7 @@
 {
-  "title": "Sprint Retrospective",
-  "backToRetrospectives": "Retour aux Retrospectives",
-  "backAriaLabel": "Revenir à la liste des Retrospectives",
+  "title": "Rétrospective",
+  "backToRetrospectives": "Retour aux Rétrospectives",
+  "backAriaLabel": "Revenir à la liste des Rétrospectives",
   "sprintStatus": {
     "PLANNED": "Planifié",
     "ACTIVE": "Actif",
@@ -210,7 +210,7 @@
   "loading": "Chargement de la Retrospective...",
   "backlogHint": "Cet élément sera présent dans la page Product Backlog pour action.",
   "list": {
-    "title": "Sprint Retrospectives",
+    "title": "Rétrospectives de Sprint",
     "subtitle": "Réfléchir aux Sprints terminés, identifier les améliorations et suivre les Action Items",
     "loading": "Chargement des Retrospectives...",
     "completedSprints": "Sprints terminés",

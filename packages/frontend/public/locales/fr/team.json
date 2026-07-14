@@ -1,5 +1,5 @@
 {
-  "title": "Team",
+  "title": "Équipe",
   "subtitle": "Gérer les membres de l'équipe et les standards de l'équipe",
   "initializing": "Initialisation du contexte d'équipe...",
   "selectTeam": "Sélectionner une équipe",
@@ -43,7 +43,7 @@
     "progressTracking": "Suivi du progrès",
     "progressTrackingDesc": "Suivre le progrès avec des dashboards et des rapports en temps réel",
     "agileCeremonies": "Cérémonies Agile",
-    "agileCeremoniesDesc": "Faciliter les Daily Scrums, Reviews et Retrospectives"
+    "agileCeremoniesDesc": "Faciliter les Mêlées quotidiennes, Revues et Rétrospectives"
   },
   "help": {
     "title": "Besoin d'aide pour démarrer?",

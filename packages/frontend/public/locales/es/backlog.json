@@ -211,9 +211,9 @@
   },
   "validation": {
     "dorTitle": "Verificación de Definition of Ready",
-    "dodTitle": "Verificación de Definition of Done",
+    "dodTitle": "Verificación de Definición de Hecho",
     "dorShort": "Definition of Ready",
-    "dodShort": "Definition of Done",
+    "dodShort": "Definición de Hecho",
     "verifyAllCriteria": "Verificar todos los criterios antes de marcar como {{status}}",
     "verify": "Verificar",
     "criteriaMet": "{{met}} de {{total}} criterios cumplidos",
@@ -270,7 +270,7 @@
       "storyPointsEstimatedByTeam": "Story points estimados por el equipo",
       "businessValueAssigned": "Valor de negocio asignado",
       "dependenciesIdentifiedAndDocumented": "Dependencias identificadas y documentadas",
-      "noBlockersOrImpediments": "Sin bloqueos ni impedimentos",
+      "noBlockersOrImpediments": "Sin bloqueos ni Impedimentos",
       "userStoryClearlyWritten": "Historia de usuario claramente escrita",
       "acceptanceCriteriaDefined": "Criterios de aceptación definidos",
       "storyPointsEstimated": "Story points estimados",
@@ -382,7 +382,7 @@
     "loadingActionItems": "Cargando acciones"
   },
   "pendingFeedback": {
-    "title": "Feedback de Sprint Review pendiente",
+    "title": "Feedback de Revisión de Sprint pendiente",
     "headerTitle": "Feedback pendiente",
     "category": "Categoría",
     "positive": "Positivo",
@@ -547,7 +547,7 @@
     "deleteGoal": "Eliminar objetivo",
     "targetDescription": "Objetivo",
     "progress": "Progreso",
-    "title": "Objetivos de Producto",
+    "title": "Objetivos del Producto",
     "subtitle": "Defina y rastree objetivos para guiar el desarrollo del producto",
     "newGoal": "Nuevo objetivo",
     "grid": "Cuadrícula",

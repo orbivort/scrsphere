@@ -1,5 +1,5 @@
 {
-  "title": "Daily Scrum",
+  "title": "Mêlée quotidienne",
   "subtitle": "{{sprintName}} - Jour {{day}}",
   "viewMode": {
     "cards": "Cartes",
@@ -16,7 +16,7 @@
   "stats": {
     "submitted": "Soumis",
     "pending": "En attente",
-    "impediments": "Hinderniss",
+    "impediments": "Empêchements",
     "participation": "Participation"
   },
   "teamUpdates": "Mises a jour de l'equipe",
@@ -29,13 +29,13 @@
     "meetings": "Reunions"
   },
   "form": {
-    "yesterdayLabel": "Qu'avez-vous fait hier pour aider l'equipe a atteindre le sprint goal?",
-    "todayLabel": "Que ferez-vous aujourd'hui pour aider l'equipe a atteindre le sprint goal?",
-    "impedimentLabel": "Des hinderniss? (optionnel)",
+    "yesterdayLabel": "Qu'avez-vous fait hier pour aider l'equipe a atteindre l'Objectif de Sprint?",
+    "todayLabel": "Que ferez-vous aujourd'hui pour aider l'equipe a atteindre l'Objectif de Sprint?",
+    "impedimentLabel": "Des empêchements? (optionnel)",
     "yesterdayPlaceholder": "Decrivez ce que vous avez accompli hier...",
     "todayPlaceholder": "Decrivez ce que vous prevoyez de faire aujourd'hui...",
-    "impedimentPlaceholder": "Decrivez tous les bloquants ou hinderniss...",
-    "impedimentHint": "Cet hindernis sera suivi et peut etre promu en enregistrement formel d'hindernis",
+    "impedimentPlaceholder": "Decrivez tous les bloquants ou empêchements...",
+    "impedimentHint": "Cet empêchement sera suivi et peut etre promu en enregistrement formel d'empêchement",
     "cancel": "Annuler",
     "submitting": "Soumission..."
   },
@@ -50,13 +50,13 @@
     "sending": "Envoi..."
   },
   "activeImpediments": {
-    "title": "Hinderniss actifs",
+    "title": "Empêchements actifs",
     "tracked": "Suivi",
-    "trackedImpediment": "Hindernis suivi",
-    "untrackedImpediment": "Hindernis non suivi",
+    "trackedImpediment": "Empêchement suivi",
+    "untrackedImpediment": "Empêchement non suivi",
     "viewDetails": "Voir les details",
-    "trackAsImpediment": "Suivre comme hindernis",
-    "viewAllImpediments": "Voir tous les {{count}} hinderniss"
+    "trackAsImpediment": "Suivre comme empêchement",
+    "viewAllImpediments": "Voir tous les {{count}} empêchements"
   },
   "sprintProgress": {
     "title": "Progression du sprint",
@@ -64,19 +64,19 @@
     "viewSprintBoard": "Voir le sprint board"
   },
   "sprintGoal": {
-    "label": "Sprint Goal",
-    "noGoalDefined": "Aucun sprint goal defini.",
+    "label": "Objectif de Sprint",
+    "noGoalDefined": "Aucun Objectif de Sprint defini.",
     "addInPlanning": "Ajouter un dans le Sprint Planning"
   },
   "updateCard": {
     "yesterday": "Hier",
     "today": "Aujourd'hui",
-    "impediment": "Hindernis",
+    "impediment": "Empêchement",
     "tracked": "(Suivi)",
-    "viewImpediment": "Voir l'handernis",
-    "viewImpedimentDetails": "Voir les details de l'handernis",
-    "trackAsImpediment": "Suivre comme hindernis",
-    "trackAsFormalImpediment": "Suivre comme hindernis formel",
+    "viewImpediment": "Voir l'empêchement",
+    "viewImpedimentDetails": "Voir les details de l'empêchement",
+    "trackAsImpediment": "Suivre comme empêchement",
+    "trackAsFormalImpediment": "Suivre comme empêchement formel",
     "clickToCollapse": "Cliquer pour reduire",
     "clickToExpand": "Cliquer pour developper"
   },
@@ -87,18 +87,18 @@
     "closed": "Ferme"
   },
   "promoteModal": {
-    "title": "Creer un hindernis a partir de la mise a jour quotidienne",
+    "title": "Creer un empêchement a partir de la mise a jour quotidienne",
     "fromUpdateBy": "De la mise a jour quotidienne de:",
-    "originalImpedimentText": "Texte original de l'handernis:",
+    "originalImpedimentText": "Texte original de l'empêchement:",
     "titleLabel": "Titre",
-    "titlePlaceholder": "Titre bref pour l'handernis",
+    "titlePlaceholder": "Titre bref pour l'empêchement",
     "descriptionLabel": "Description",
-    "descriptionPlaceholder": "Description detaillee de l'handernis",
+    "descriptionPlaceholder": "Description detaillee de l'empêchement",
     "priority": "Priorite",
     "priorityHigh": "Haute",
     "priorityMedium": "Moyenne",
     "priorityLow": "Basse",
-    "createImpediment": "Creer l'handernis",
+    "createImpediment": "Creer l'empêchement",
     "creating": "Creation..."
   },
   "draftRestore": {
@@ -116,7 +116,7 @@
   },
   "unsavedModal": {
     "title": "Modifications non sauvegardees",
-    "message": "Vous avez des modifications non sauvegardees dans le formulaire d'handernis. Etes-vous sur de vouloir les supprimer?"
+    "message": "Vous avez des modifications non sauvegardees dans le formulaire d'empêchement. Etes-vous sur de vouloir les supprimer?"
   },
   "validation": {
     "titleRequired": "Le titre est requis",
@@ -128,8 +128,8 @@
     "viewMode": "Mode d'affichage",
     "closeForm": "Fermer le formulaire",
     "closeDialog": "Fermer le dialogue",
-    "trackedAsFormalImpediment": "Suivi comme hindernis formel",
-    "impedimentStatus": "Statut de l'handernis : {{status}}",
+    "trackedAsFormalImpediment": "Suivi comme empêchement formel",
+    "impedimentStatus": "Statut de l'empêchement : {{status}}",
     "dailyUpdateAriaLabel": "Mise a jour quotidienne de {{name}}. {{expandAction}}.",
     "clickToCollapse": "Cliquer pour reduire",
     "clickToExpand": "Cliquer pour developper"
@@ -143,7 +143,7 @@
   },
   "toast": {
     "updateSubmitted": "Mise a jour soumise avec succes!",
-    "impedimentCreated": "Hindernis cree avec succes!",
+    "impedimentCreated": "Empêchement cree avec succes!",
     "reminderSent": "Rappel envoyé !",
     "noPendingUpdates": "Aucune mise à jour en attente",
     "remindersSentOne": "Rappels envoyés à 1 membre de l'équipe",
@@ -152,9 +152,9 @@
     "offline": "Vous semblez etre hors ligne. Verifiez votre connexion internet et reessayez.",
     "networkError": "Une erreur reseau s'est produite. Verifiez votre connexion et reessayez.",
     "sessionExpired": "Votre session a expire. Veuillez vous reconnecter.",
-    "noPermissionCreateImpediments": "Vous n'avez pas la permission de creer des hinderniss.",
+    "noPermissionCreateImpediments": "Vous n'avez pas la permission de creer des empêchements.",
     "serverError": "Une erreur serveur s'est produite. Veuillez reessayer plus tard.",
-    "failedCreateImpediment": "Impossible de creer l'handernis. Veuillez reessayer.",
+    "failedCreateImpediment": "Impossible de creer l'empêchement. Veuillez reessayer.",
     "noPermissionReminders": "Vous n'avez pas la permission d'envoyer des rappels.",
     "failedSendReminder": "Impossible d'envoyer le rappel. Veuillez reessayer.",
     "submitFailed": "Impossible de soumettre la mise a jour. Veuillez reessayer.",

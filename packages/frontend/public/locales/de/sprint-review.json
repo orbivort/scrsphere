@@ -22,7 +22,7 @@
   "reviewThisSprint": "Diesen Sprint reviewen",
   "tabs": {
     "overview": "Übersicht",
-    "increment": "Increment",
+    "increment": "Inkrement",
     "feedback": "Feedback",
     "backlogAdjustments": "Backlog-Anpassungen"
   },
@@ -42,10 +42,10 @@
     "attendees": "Teilnehmer"
   },
   "increment": {
-    "title": "Präsentiertes Increment",
+    "title": "Präsentiertes Inkrement",
     "noDescription": "Keine Beschreibung",
     "includedPbis": "Enthaltene Product Backlog Items",
-    "noPbis": "Keine PBIs in diesem Increment enthalten.",
+    "noPbis": "Keine PBIs in diesem Inkrement enthalten.",
     "done": "Abgeschlossen",
     "dodVerification": "Definition of Done-Verifikation",
     "dodAllVerified": "Alle DoD-Kriterien für enthaltenen Elemente verifiziert",
@@ -55,8 +55,8 @@
     "earlyReleaseDelivery": "Vorzeitige Freigabe",
     "deliveredAt": "Geliefert am",
     "notDelivered": "Nicht geliefert",
-    "noIncrement": "Kein Increment verfügbar",
-    "noIncrementDescription": "Kein geliefertes Increment ist für dieses Sprint Review verfügbar."
+    "noIncrement": "Kein Inkrement verfügbar",
+    "noIncrementDescription": "Kein geliefertes Inkrement ist für dieses Sprint Review verfügbar."
   },
   "feedback": {
     "title": "Stakeholder-Feedback",
@@ -125,9 +125,9 @@
   "noReview": {
     "title": "Kein Sprint Review erstellt",
     "message": "Für diesen Sprint wurde noch kein Sprint Review erstellt.",
-    "incrementRequired": "Increment erforderlich",
-    "incrementRequiredNotice": "Ein geliefertes Increment ist erforderlich, bevor ein Sprint Review erstellt werden kann. Bitte erstellen und liefern Sie zuerst ein Increment.",
-    "createIncrement": "Increment erstellen",
+    "incrementRequired": "Inkrement erforderlich",
+    "incrementRequiredNotice": "Ein geliefertes Inkrement ist erforderlich, bevor ein Sprint Review erstellt werden kann. Bitte erstellen und liefern Sie zuerst ein Inkrement.",
+    "createIncrement": "Inkrement erstellen",
     "createSprintReview": "Sprint Review erstellen"
   },
   "error": {
@@ -151,7 +151,7 @@
     "creating": "Erstellen...",
     "createReview": "Review erstellen",
     "failed": "Sprint Review konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
-    "incrementRequiredWarning": "Ein Increment ist erforderlich, bevor ein Sprint Review erstellt werden kann."
+    "incrementRequiredWarning": "Ein Inkrement ist erforderlich, bevor ein Sprint Review erstellt werden kann."
   },
   "addFeedbackModal": {
     "title": "Stakeholder-Feedback hinzufügen",
@@ -206,14 +206,14 @@
   },
   "list": {
     "title": "Sprint Reviews",
-    "subtitle": "Abgeschlossene Sprints reviewen, Increments inspizieren und Stakeholder-Feedback sammeln",
+    "subtitle": "Abgeschlossene Sprints reviewen, Inkremente inspizieren und Stakeholder-Feedback sammeln",
     "loading": "Sprint Reviews werden geladen...",
     "completedSprints": "Abgeschlossene Sprints",
     "completedSprint": "Abgeschlossener Sprint",
     "completedSprints_plural": "Abgeschlossene Sprints",
     "reviewed": "Reviewed",
     "goal": "Ziel:",
-    "createIncrement": "Increment erstellen",
+    "createIncrement": "Inkrement erstellen",
     "viewReview": "Review anzeigen",
     "viewDetails": "Details anzeigen",
     "statusLabels": {
@@ -225,7 +225,7 @@
     "reviewStatus": {
       "completed": "Review abgeschlossen",
       "inProgress": "Review in Bearbeitung",
-      "incrementRequired": "Increment erforderlich",
+      "incrementRequired": "Inkrement erforderlich",
       "readyForReview": "Bereit für Review"
     }
   }

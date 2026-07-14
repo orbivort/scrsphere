@@ -150,7 +150,7 @@
   },
   "definitionEditor": {
     "editTitle": "{{label}} bearbeiten",
-    "dodInfo": "Die Definition of Done ist eine formale Beschreibung des Zustands des Increments, wenn es die für das Produkt erforderlichen Qualitätsmaßnahmen erfüllt. Arbeit kann nicht als Teil eines Increments betrachtet werden, es sei denn, sie erfüllt die Definition of Done.",
+    "dodInfo": "Die Definition of Done ist eine formale Beschreibung des Zustands des Inkrements, wenn es die für das Produkt erforderlichen Qualitätsmaßnahmen erfüllt. Arbeit kann nicht als Teil eines Inkrements betrachtet werden, es sei denn, sie erfüllt die Definition of Done.",
     "dorInfo": "Die Definition of Ready ist eine Checkliste von Kriterien, die eine User Story erfüllen muss, bevor sie in einen Sprint aufgenommen werden kann. Sie stellt sicher, dass das Team genügend Informationen hat, um die Arbeit erfolgreich abzuschließen.",
     "newItemPlaceholder": "Neues {{shortLabel}}-Kriterium eingeben...",
     "addItem": "Element hinzufügen",
@@ -222,7 +222,7 @@
       "teamDeleted": "Team erfolgreich gelöscht",
       "teamDeletedRefreshFailed": "Team gelöscht, aber Team-Liste konnte nicht aktualisiert werden. Bitte laden Sie die Seite neu falls nötig.",
       "teamDeleteFailed": "Team konnte nicht gelöscht werden",
-      "cannotDeleteWithGoals": "Team mit bestehenden Product Goals kann nicht gelöscht werden"
+      "cannotDeleteWithGoals": "Team mit bestehenden Produkt-Zielen kann nicht gelöscht werden"
     },
     "permissionErrors": {
       "editTeam": "Sie haben keine Berechtigung, dieses Team zu bearbeiten.",
@@ -312,15 +312,15 @@
   "deleteTeamModal": {
     "title": "Team löschen",
     "closeModal": "Modal schließen",
-    "blockedSubtitle": "Dieses Team kann aufgrund aktiver Product Goals nicht gelöscht werden",
+    "blockedSubtitle": "Dieses Team kann aufgrund aktiver Produkt-Ziele nicht gelöscht werden",
     "normalSubtitle": "Diese Aktion ist dauerhaft und kann nicht rückgängig gemacht werden",
     "warningCard": {
       "title": "Kritische Aktionswarnung",
       "teamLabel": "Team:",
       "blockedBadge": "Löschen blockiert",
-      "blockedMessage": "Dieses Team hat ein oder mehrere Product Goals zugeordnet. Um dieses Team zu löschen, müssen Sie zuerst alle verknüpften Product Goals entfernen.",
+      "blockedMessage": "Dieses Team hat ein oder mehrere Produkt-Ziele zugeordnet. Um dieses Team zu löschen, müssen Sie zuerst alle verknüpften Produkt-Ziele entfernen.",
       "requiredActions": "Erforderliche Aktionen:",
-      "step1": "Navigieren Sie zum Product Goals-Bereich",
+      "step1": "Navigieren Sie zum Produkt-Ziele-Bereich",
       "step2": "Löschen oder ordnen Sie alle Goals für \"{{name}}\" neu zu",
       "step3": "Kehren Sie hierher zurück, um das Löschen des Teams abzuschließen",
       "deleteWarning": "Sie sind dabei, dieses Team dauerhaft zu löschen. Diese Aktion kann nicht rückgängig gemacht werden.",

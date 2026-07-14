@@ -1,5 +1,5 @@
 {
-  "title": "Sprint Attivo",
+  "title": "Sprint attivo",
   "daysRemaining_one": "{{count}} giorno rimanente",
   "daysRemaining_other": "{{count}} giorni rimanenti",
   "sprintStatus": {
@@ -301,11 +301,11 @@
   },
   "burndownChart": {
     "sprintBurndown": "Sprint Burndown",
-    "sprintBurndownChart": "Sprint Burndown Chart",
+    "sprintBurndownChart": "Grafico burndown dello Sprint",
     "hideDataTable": "Nascondi Tabella Dati",
     "viewDataTable": "Vedi Tabella Dati",
     "closeBurndownChart": "Chiudi burndown chart",
-    "dataTableCaption": "Dati Burndown Chart - {{sprintName}}",
+    "dataTableCaption": "Dati Grafico burndown - {{sprintName}}",
     "day": "Giorno",
     "date": "Data",
     "idealHours": "Ore Ideali",
@@ -406,7 +406,7 @@
     "daysAgo_other": "{{count}} giorni"
   },
   "sprintPlanning": {
-    "title": "Sprint Planning",
+    "title": "Pianificazione Sprint",
     "subtitle": "Pianifica il tuo prossimo sprint selezionando elementi dal product backlog",
     "planningTime": "Tempo Pianificazione",
     "selectSprint": "Seleziona Sprint...",
