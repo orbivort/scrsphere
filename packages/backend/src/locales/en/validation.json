@@ -5,5 +5,15 @@
   "passwordTooShort": "Password must be at least {{min}} characters",
   "passwordsDoNotMatch": "Passwords do not match",
   "firstName": "First name",
-  "lastName": "Last name"
+  "lastName": "Last name",
+  "workflow": {
+    "noWorkflow": "No workflow configured for entity type {{entityType}}",
+    "targetStateNotFound": "Target state {{toStatus}} does not exist in workflow",
+    "initialStatusMustBe": "Initial status must be {{defaultStatus}}",
+    "transitionNotAllowed": "Transition from {{fromStatus}} to {{toStatus}} is not allowed",
+    "transitionDisabled": "This transition is currently disabled",
+    "permissionDeniedRoles": "You do not have permission to perform this transition. Required roles: {{roles}}",
+    "authenticationRequired": "User authentication required for this transition",
+    "permissionDenied": "You do not have permission to perform this transition"
+  }
 }

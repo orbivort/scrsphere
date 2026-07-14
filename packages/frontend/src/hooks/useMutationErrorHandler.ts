@@ -74,6 +74,23 @@ export const useMutationErrorHandler = (): UseMutationErrorHandlerResult => {
   const { handleError } = useApiError();
 
   /**
+   * Maps operation names to i18n keys for error messages
+   */
+  const getOperationErrorKey = (operationName: string): string => {
+    // Convert "create backlog item" → "createBacklogItem"
+    const camelCase = operationName
+      .split(' ')
+      .map((word, index) =>
+        index === 0
+          ? word.toLowerCase()
+          : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+      )
+      .join('');
+
+    return `common:error.operations.${camelCase}`;
+  };
+
+  /**
    * Handles mutation errors with standardized logic
    */
   const handleMutationError = useCallback(
@@ -89,8 +106,12 @@ export const useMutationErrorHandler = (): UseMutationErrorHandlerResult => {
       // Check if this is a permission transition error for user-friendly messaging
       const isPermissionError = isPermissionTransitionError(error);
 
+      // Get translated error message for this operation
+      const operationErrorKey = getOperationErrorKey(operationName);
+      const translatedMessage = i18nInstance.t(operationErrorKey, `Failed to ${operationName}`);
+
       // Extract user-friendly message
-      let userMessage = handleError(error, `Failed to ${operationName}`);
+      let userMessage = handleError(error, translatedMessage);
 
       // For permission transition errors, show a cleaner message
       if (isPermissionError) {

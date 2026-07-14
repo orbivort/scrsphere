@@ -68,6 +68,16 @@ export class CoreApiService {
         config.headers['X-Team-Id'] = this.currentTeamId;
       }
 
+      // Add Accept-Language header for i18n
+      // Priority: user's current frontend locale > database locale
+      const locale = document.cookie
+        .split(';')
+        .find((c) => c.trim().startsWith('scrumooth_locale='))
+        ?.split('=')[1];
+      if (locale) {
+        config.headers['Accept-Language'] = locale;
+      }
+
       const method = config.method?.toUpperCase();
       if (method && ['POST', 'PUT', 'DELETE', 'PATCH'].includes(method)) {
         let csrfToken = getCsrfTokenFromCookie();

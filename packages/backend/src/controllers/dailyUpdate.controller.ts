@@ -6,6 +6,7 @@ import prisma from '../utils/prisma';
 import { generateUUIDv7 } from '../utils/uuid';
 import { getParamValue } from '../utils/validation';
 import { logger } from '../utils/logger';
+import { t } from '../i18n/requestT.js';
 
 export const getDailyUpdates = asyncHandler(async (req: Request, res: Response) => {
   const sprintId = getParamValue(req.params.sprintId);
@@ -88,7 +89,7 @@ export const deleteDailyUpdate = asyncHandler(async (req: Request, res: Response
   }
   await dailyUpdateService.deleteDailyUpdate(id, userId);
 
-  res.json(createSuccessResponse({ message: 'Daily update deleted successfully' }));
+  res.json(createSuccessResponse({ message: t('notifications:dailyUpdateDeleted') }));
 });
 
 export const getTeamMembersWithUpdates = asyncHandler(async (req: Request, res: Response) => {
@@ -189,7 +190,7 @@ export const sendReminder = asyncHandler(async (req: Request, res: Response) => 
     res.json(
       createSuccessResponse({
         sentCount: 0,
-        message: 'All team members have submitted their updates',
+        message: t('notifications:allSubmitted'),
       })
     );
     return;
@@ -204,15 +205,16 @@ export const sendReminder = asyncHandler(async (req: Request, res: Response) => 
 
   for (const member of pendingMembers) {
     try {
+      const senderName = sender ? `${sender.firstName} ${sender.lastName}` : '';
       await prisma.notification.create({
         data: {
           id: generateUUIDv7(),
           userId: member.userId,
           type: NotificationType.DAILY_UPDATE_REMINDER,
-          title: 'Daily update reminder',
+          title: t('notifications:dailyUpdateReminderTitle'),
           message: sender
-            ? `${sender.firstName} ${sender.lastName} reminded you to submit your daily update`
-            : "Don't forget to submit your daily update!",
+            ? t('notifications:dailyUpdateReminderFromUser', { senderName })
+            : t('notifications:dailyUpdateReminderDefault'),
           data: {
             sprintId,
             sprintName: sprint.name,
@@ -227,7 +229,8 @@ export const sendReminder = asyncHandler(async (req: Request, res: Response) => 
         userId: member.userId,
         error: error instanceof Error ? error.message : 'Unknown error',
       });
-      errors.push(`Failed to send reminder to ${member.user.firstName} ${member.user.lastName}`);
+      const memberName = `${member.user.firstName} ${member.user.lastName}`;
+      errors.push(t('notifications:reminderFailed', { memberName }));
     }
   }
 
@@ -237,8 +240,8 @@ export const sendReminder = asyncHandler(async (req: Request, res: Response) => 
       totalPending: pendingMembers.length,
       message:
         successCount > 0
-          ? `Reminders sent to ${successCount} team member${successCount > 1 ? 's' : ''}`
-          : 'No reminders sent',
+          ? t('notifications:remindersSent', { count: successCount })
+          : t('notifications:remindersNone'),
       errors: errors.length > 0 ? errors : undefined,
     })
   );

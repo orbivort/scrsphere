@@ -144,8 +144,11 @@
   "toast": {
     "updateSubmitted": "Mise a jour soumise avec succes!",
     "impedimentCreated": "Hindernis cree avec succes!",
-    "reminderSent": "Rappel envoye!",
-    "noPendingUpdates": "Aucune mise a jour en attente",
+    "reminderSent": "Rappel envoyé !",
+    "noPendingUpdates": "Aucune mise à jour en attente",
+    "remindersSentOne": "Rappels envoyés à 1 membre de l'équipe",
+    "remindersSentPlural": "Rappels envoyés à {{count}} membres de l'équipe",
+    "allSubmitted": "Tous les membres de l'équipe ont soumis leurs mises à jour",
     "offline": "Vous semblez etre hors ligne. Verifiez votre connexion internet et reessayez.",
     "networkError": "Une erreur reseau s'est produite. Verifiez votre connexion et reessayez.",
     "sessionExpired": "Votre session a expire. Veuillez vous reconnecter.",

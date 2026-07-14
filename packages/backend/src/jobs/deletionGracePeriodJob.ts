@@ -1,7 +1,7 @@
 import cron from 'node-cron';
-import crypto from 'node:crypto';
 import prisma from '../utils/prisma';
 import logger from '../utils/logger';
+import { notificationService } from '../services/notification.service';
 
 const EXPIRY_THRESHOLD_DAYS = 7;
 const DELETION_GRACE_PERIOD_CRON = '0 3 * * *';
@@ -10,13 +10,6 @@ const INITIAL_RETRY_DELAY_MS = 100;
 const MAX_CONSECUTIVE_FAILURES = 5;
 
 type ReminderType = 'mid-grace' | 'final-day';
-
-interface NotificationData {
-  reminderType: ReminderType;
-  scheduledDeletionId: string;
-  teamId: string;
-  [key: string]: string | undefined;
-}
 
 function isRetryableError(error: unknown): boolean {
   if (error instanceof Error) {
@@ -178,18 +171,16 @@ async function sendReminderNotifications(
 
       const createResult = await retryWithBackoff(
         () =>
-          prisma.notification.create({
+          notificationService.createLocalized({
+            userId: member.userId,
+            type: 'ACCOUNT_DELETION_SCHEDULED',
+            titleKey: 'accountDeletionReminderTitle',
+            messageKey: 'accountDeletionReminderMessage',
+            messageParams: { daysText },
             data: {
-              id: crypto.randomUUID(),
-              userId: member.userId,
-              type: 'ACCOUNT_DELETION_SCHEDULED',
-              title: 'Account deletion reminder',
-              message: `A Product Owner in your team will have their account permanently deleted in ${daysText}. Please assign a new Product Owner if needed.`,
-              data: {
-                reminderType,
-                scheduledDeletionId: deletion.id,
-                teamId,
-              } as NotificationData,
+              reminderType,
+              scheduledDeletionId: deletion.id,
+              teamId,
             },
           }),
         'createNotification',

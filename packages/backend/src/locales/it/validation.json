@@ -1,9 +1,19 @@
 {
   "fieldRequired": "Questo campo è obbligatorio",
   "fieldTooLong": "Questo campo è troppo lungo",
-  "invalidEmail": "Inserisca un indirizzo email valido",
-  "passwordTooShort": "La password deve contenere almeno {{min}} caratteri",
+  "invalidEmail": "Inserisci un indirizzo email valido",
+  "passwordTooShort": "La password deve avere almeno {{min}} caratteri",
   "passwordsDoNotMatch": "Le password non corrispondono",
   "firstName": "Nome",
-  "lastName": "Cognome"
+  "lastName": "Cognome",
+  "workflow": {
+    "noWorkflow": "Nessun flusso di lavoro configurato per il tipo di entità {{entityType}}",
+    "targetStateNotFound": "Lo stato di destinazione {{toStatus}} non esiste nel flusso di lavoro",
+    "initialStatusMustBe": "Lo stato iniziale deve essere {{defaultStatus}}",
+    "transitionNotAllowed": "La transizione da {{fromStatus}} a {{toStatus}} non è permessa",
+    "transitionDisabled": "Questa transizione è attualmente disabilitata",
+    "permissionDeniedRoles": "Non hai il permesso di eseguire questa transizione. Ruoli richiesti: {{roles}}",
+    "authenticationRequired": "Autenticazione utente richiesta per questa transizione",
+    "permissionDenied": "Non hai il permesso di eseguire questa transizione"
+  }
 }

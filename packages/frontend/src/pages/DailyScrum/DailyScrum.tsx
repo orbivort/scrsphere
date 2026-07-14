@@ -387,9 +387,14 @@ export const DailyScrum: React.FC = () => {
       }>
     ) => {
       if (result.data?.sentCount && result.data.sentCount > 0) {
-        showSuccessToast(result.data.message, 3000);
+        showSuccessToast(
+          result.data.sentCount === 1
+            ? t('toast.remindersSentOne')
+            : t('toast.remindersSentPlural', { count: result.data.sentCount }),
+          3000
+        );
       } else {
-        showInfoToast(result.data?.message ?? t('toast.noPendingUpdates'), 3000);
+        showInfoToast(t('toast.allSubmitted'), 3000);
       }
     },
     onError: (error: Error) => {

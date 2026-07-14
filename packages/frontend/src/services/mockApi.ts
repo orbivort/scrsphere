@@ -1,6 +1,8 @@
 // Mock API Service for Prototype Demo
 // This service returns mock data instead of making real API calls
 
+import i18n from 'i18next';
+
 import {
   RetrospectiveCategory,
   IncrementStatus,
@@ -947,15 +949,21 @@ class MockApiService {
     const submittedUserIds = new Set(todayUpdates.map((u) => u.userId));
     const pendingMembers = (team.members ?? []).filter((m) => !submittedUserIds.has(m.userId));
 
+    // Note: Mock API doesn't do i18n - this matches the backend response pattern
+    // In real API, backend handles translation via request locale
+    const message =
+      pendingMembers.length > 0
+        ? pendingMembers.length === 1
+          ? 'Reminders sent to 1 team member'
+          : `Reminders sent to ${pendingMembers.length} team members`
+        : 'All team members have submitted their updates';
+
     return {
       success: true,
       data: {
         sentCount: pendingMembers.length,
         totalPending: pendingMembers.length,
-        message:
-          pendingMembers.length > 0
-            ? `Reminder sent to ${pendingMembers.length} team member(s)`
-            : 'All team members have already submitted their updates',
+        message,
       },
     };
   }
@@ -3854,7 +3862,10 @@ class MockApiService {
     }
     return mockSuccess({
       valid: false,
-      message: `Transition from ${fromStatus} to ${toStatus} is not allowed for ${entityType}`,
+      message: i18n.t('validation.workflow.transitionNotAllowed' as never, {
+        fromStatus,
+        toStatus,
+      }) as string,
     });
   }
 

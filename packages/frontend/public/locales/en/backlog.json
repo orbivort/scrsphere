@@ -253,7 +253,49 @@
     "fieldEstimate": "Estimate (Story Points)",
     "fieldLabels": "Labels (at least one)",
     "fieldAcceptanceCriteria": "Acceptance Criteria",
-    "cannotChangeStatus": "Cannot change status to \"{{status}}\". The following mandatory fields must be completed first: {{fields}}. Please click \"Edit Item\" to update this backlog item."
+    "cannotChangeStatus": "Cannot change status to \"{{status}}\". The following mandatory fields must be completed first: {{fields}}. Please click \"Edit Item\" to update this backlog item.",
+    "workflow": {
+      "noWorkflow": "No workflow configured for entity type {{entityType}}",
+      "targetStateNotFound": "Target state {{toStatus}} does not exist in workflow",
+      "initialStatusMustBe": "Initial status must be {{defaultStatus}}",
+      "transitionNotAllowed": "Transition from {{fromStatus}} to {{toStatus}} is not allowed",
+      "transitionDisabled": "This transition is currently disabled",
+      "permissionDeniedRoles": "You do not have permission to perform this transition. Required roles: {{roles}}",
+      "authenticationRequired": "User authentication required for this transition",
+      "permissionDenied": "You do not have permission to perform this transition"
+    },
+    "dorItems": {
+      "clearTitleAndDescription": "Clear title and description provided",
+      "acceptanceCriteriaDefinedAndAgreed": "Acceptance criteria defined and agreed",
+      "storyPointsEstimatedByTeam": "Story points estimated by the team",
+      "businessValueAssigned": "Business value assigned",
+      "dependenciesIdentifiedAndDocumented": "Dependencies identified and documented",
+      "noBlockersOrImpediments": "No blockers or impediments",
+      "userStoryClearlyWritten": "User story clearly written",
+      "acceptanceCriteriaDefined": "Acceptance criteria defined",
+      "storyPointsEstimated": "Story points estimated",
+      "dependenciesIdentified": "Dependencies identified"
+    },
+    "dodItems": {
+      "codePeerReviewed": "Code is peer-reviewed and approved",
+      "unitTestsWritten": "Unit tests written and passing (minimum 80% coverage)",
+      "integrationTestsPassing": "Integration tests passing",
+      "codeProperlyDocumented": "Code is properly documented",
+      "noCriticalBugs": "No critical or high-severity bugs"
+    },
+    "categories": {
+      "documentation": "documentation",
+      "estimation": "estimation",
+      "dependencies": "dependencies",
+      "clarity": "clarity",
+      "acceptance": "acceptance",
+      "technical": "technical",
+      "value": "value",
+      "quality": "quality",
+      "testing": "testing",
+      "deployment": "deployment",
+      "review": "review"
+    }
   },
   "moscow": {
     "mustHave": "Must Have",

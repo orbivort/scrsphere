@@ -5,5 +5,15 @@
   "passwordTooShort": "La contraseña debe tener al menos {{min}} caracteres",
   "passwordsDoNotMatch": "Las contraseñas no coinciden",
   "firstName": "Nombre",
-  "lastName": "Apellido"
+  "lastName": "Apellido",
+  "workflow": {
+    "noWorkflow": "No hay flujo de trabajo configurado para el tipo de entidad {{entityType}}",
+    "targetStateNotFound": "El estado objetivo {{toStatus}} no existe en el flujo de trabajo",
+    "initialStatusMustBe": "El estado inicial debe ser {{defaultStatus}}",
+    "transitionNotAllowed": "La transición de {{fromStatus}} a {{toStatus}} no está permitida",
+    "transitionDisabled": "Esta transición está actualmente deshabilitada",
+    "permissionDeniedRoles": "No tiene permiso para realizar esta transición. Roles requeridos: {{roles}}",
+    "authenticationRequired": "Se requiere autenticación de usuario para esta transición",
+    "permissionDenied": "No tiene permiso para realizar esta transición"
+  }
 }

@@ -253,7 +253,49 @@
     "fieldEstimate": "Estimation (Story Points)",
     "fieldLabels": "Labels (almeno uno)",
     "fieldAcceptanceCriteria": "Criteri di accettazione",
-    "cannotChangeStatus": "Impossibile cambiare lo stato a \"{{status}}\". I seguenti campi obbligatori devono essere completati prima: {{fields}}. Clicca su \"Modifica elemento\" per aggiornare questo elemento del backlog."
+    "cannotChangeStatus": "Impossibile cambiare lo stato in \"{{status}}\". I seguenti campi obbligatori devono essere compilati prima: {{fields}}. Si prega di cliccare su \"Modifica elemento\" per aggiornare questo elemento del backlog.",
+    "workflow": {
+      "noWorkflow": "Nessun flusso di lavoro configurato per il tipo di entità {{entityType}}",
+      "targetStateNotFound": "Lo stato di destinazione {{toStatus}} non esiste nel flusso di lavoro",
+      "initialStatusMustBe": "Lo stato iniziale deve essere {{defaultStatus}}",
+      "transitionNotAllowed": "La transizione da {{fromStatus}} a {{toStatus}} non è permessa",
+      "transitionDisabled": "Questa transizione è attualmente disabilitata",
+      "permissionDeniedRoles": "Non hai il permesso di eseguire questa transizione. Ruoli richiesti: {{roles}}",
+      "authenticationRequired": "Autenticazione utente richiesta per questa transizione",
+      "permissionDenied": "Non hai il permesso di eseguire questa transizione"
+    },
+    "dorItems": {
+      "clearTitleAndDescription": "Titolo e descrizione chiari forniti",
+      "acceptanceCriteriaDefinedAndAgreed": "Criteri di accettazione definiti e concordati",
+      "storyPointsEstimatedByTeam": "Story points stimati dal team",
+      "businessValueAssigned": "Valore business assegnato",
+      "dependenciesIdentifiedAndDocumented": "Dipendenze identificate e documentate",
+      "noBlockersOrImpediments": "Nessun blocco o impedimento",
+      "userStoryClearlyWritten": "User story chiaramente scritta",
+      "acceptanceCriteriaDefined": "Criteri di accettazione definiti",
+      "storyPointsEstimated": "Story points stimati",
+      "dependenciesIdentified": "Dipendenze identificate"
+    },
+    "dodItems": {
+      "codePeerReviewed": "Codice revisionato dai pari e approvato",
+      "unitTestsWritten": "Test unitari scritti e superati (minimo 80% copertura)",
+      "integrationTestsPassing": "Test di integrazione superati",
+      "codeProperlyDocumented": "Codice correttamente documentato",
+      "noCriticalBugs": "Nessun bug critico o di alta severità"
+    },
+    "categories": {
+      "documentation": "documentazione",
+      "estimation": "stima",
+      "dependencies": "dipendenze",
+      "clarity": "chiarezza",
+      "acceptance": "accettazione",
+      "technical": "tecnico",
+      "value": "valore",
+      "quality": "qualità",
+      "testing": "test",
+      "deployment": "distribuzione",
+      "review": "revisione"
+    }
   },
   "moscow": {
     "mustHave": "Deve avere",

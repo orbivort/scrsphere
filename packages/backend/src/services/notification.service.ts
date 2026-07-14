@@ -183,3 +183,5 @@ export class NotificationService {
     return result.count;
   }
 }
+
+export const notificationService = new NotificationService();

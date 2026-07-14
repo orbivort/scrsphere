@@ -6,6 +6,7 @@ import { NotFoundError, BadRequestError, ForbiddenError, ConflictError } from '.
 import { generateUUIDv7 } from '../utils/uuid';
 import { WorkflowLockService } from './workflow-lock.service';
 import logger from '../utils/logger';
+import { t as requestT } from '../i18n/requestT.js';
 
 // Workflow Types
 export interface Workflow {
@@ -729,7 +730,7 @@ class WorkflowService {
       return {
         isValid: false,
         allowed: false,
-        reason: `No workflow configured for entity type ${entityType}`,
+        reason: requestT('validation:workflow.noWorkflow', { entityType }),
       };
     }
 
@@ -740,7 +741,7 @@ class WorkflowService {
       return {
         isValid: false,
         allowed: false,
-        reason: `Target state ${toStatus} does not exist in workflow`,
+        reason: requestT('validation:workflow.targetStateNotFound', { toStatus }),
       };
     }
 
@@ -755,7 +756,9 @@ class WorkflowService {
       return {
         isValid: false,
         allowed: false,
-        reason: `Initial status must be ${workflow.defaultStatus}`,
+        reason: requestT('validation:workflow.initialStatusMustBe', {
+          defaultStatus: workflow.defaultStatus,
+        }),
       };
     }
 
@@ -768,7 +771,10 @@ class WorkflowService {
       return {
         isValid: true,
         allowed: false,
-        reason: `Transition from ${fromStatus} to ${toStatus} is not allowed`,
+        reason: requestT('validation:workflow.transitionNotAllowed', {
+          fromStatus,
+          toStatus,
+        }),
       };
     }
 
@@ -777,7 +783,7 @@ class WorkflowService {
       return {
         isValid: true,
         allowed: false,
-        reason: 'This transition is currently disabled',
+        reason: requestT('validation:workflow.transitionDisabled'),
       };
     }
 
@@ -788,7 +794,9 @@ class WorkflowService {
         return {
           isValid: true,
           allowed: false,
-          reason: `You do not have permission to perform this transition. Required roles: ${transition.allowedRoles.join(', ')}`,
+          reason: requestT('validation:workflow.permissionDeniedRoles', {
+            roles: transition.allowedRoles.join(', '),
+          }),
         };
       }
     }
@@ -799,7 +807,7 @@ class WorkflowService {
         return {
           isValid: true,
           allowed: false,
-          reason: 'User authentication required for this transition',
+          reason: requestT('validation:workflow.authenticationRequired'),
         };
       }
       const hasUserPermission = transition.allowedUserIds.includes(userId);
@@ -807,7 +815,7 @@ class WorkflowService {
         return {
           isValid: true,
           allowed: false,
-          reason: 'You do not have permission to perform this transition',
+          reason: requestT('validation:workflow.permissionDenied'),
         };
       }
     }

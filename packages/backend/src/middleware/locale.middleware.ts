@@ -8,28 +8,30 @@ import { updateRequestContext } from '../utils/requestContext.js';
  *
  * MUST be registered AFTER contextMiddleware (which creates the ALS store) and
  * AFTER authenticate (so req.user.locale is available for authenticated requests).
- * For unauthenticated requests it falls back to the Accept-Language header.
+ *
+ * Priority: Accept-Language header > User's database locale > Default locale
+ * This ensures the frontend's current locale takes precedence.
  */
 export function localeResolver(req: Request, _res: Response, next: NextFunction): void {
   let locale: Locale = DEFAULT_LOCALE;
 
-  // 1. Authenticated user's stored preference (authoritative, cross-device)
-  const userLocale = (req as Request & { user?: { locale?: string } }).user?.locale;
-  if (userLocale && (SUPPORTED_LOCALES as readonly string[]).includes(userLocale)) {
-    locale = userLocale as Locale;
+  // 1. Accept-Language header (highest priority - frontend's current locale)
+  const acceptLang = req.headers['accept-language'];
+  if (typeof acceptLang === 'string') {
+    const detected = acceptLang
+      .split(',')
+      .map((l) => l.split(';')[0]?.trim() ?? '')
+      .map((l) => l.split('-')[0]?.toLowerCase() ?? '')
+      .find((l) => (SUPPORTED_LOCALES as readonly string[]).includes(l));
+    if (detected) {
+      locale = normalizeLocale(detected);
+    }
   }
-  // 2. Accept-Language header (guests / first visit)
+  // 2. Authenticated user's stored preference (fallback if no Accept-Language)
   else {
-    const acceptLang = req.headers['accept-language'];
-    if (typeof acceptLang === 'string') {
-      const detected = acceptLang
-        .split(',')
-        .map((l) => l.split(';')[0]?.trim() ?? '')
-        .map((l) => l.split('-')[0]?.toLowerCase() ?? '')
-        .find((l) => (SUPPORTED_LOCALES as readonly string[]).includes(l));
-      if (detected) {
-        locale = normalizeLocale(detected);
-      }
+    const userLocale = (req as Request & { user?: { locale?: string } }).user?.locale;
+    if (userLocale && (SUPPORTED_LOCALES as readonly string[]).includes(userLocale)) {
+      locale = userLocale as Locale;
     }
   }
 

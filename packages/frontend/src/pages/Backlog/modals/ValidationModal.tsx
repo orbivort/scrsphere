@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 
 import type { DefinitionItem } from '../hooks/useDefinitionOfReadyDone';
 import { useFocusTrap } from '../hooks/useFocusTrap';
@@ -14,6 +15,68 @@ import {
   AlertIcon,
   CheckIcon,
 } from '@/components/common/Icons';
+
+/**
+ * Maps DoR item descriptions to translation keys
+ */
+const DOR_ITEM_MAP: Record<string, string> = {
+  'Clear title and description provided': 'validation.dorItems.clearTitleAndDescription',
+  'Acceptance criteria defined and agreed':
+    'validation.dorItems.acceptanceCriteriaDefinedAndAgreed',
+  'Story points estimated by the team': 'validation.dorItems.storyPointsEstimatedByTeam',
+  'Business value assigned': 'validation.dorItems.businessValueAssigned',
+  'Dependencies identified and documented':
+    'validation.dorItems.dependenciesIdentifiedAndDocumented',
+  'No blockers or impediments': 'validation.dorItems.noBlockersOrImpediments',
+  'User story clearly written': 'validation.dorItems.userStoryClearlyWritten',
+  'Acceptance criteria defined': 'validation.dorItems.acceptanceCriteriaDefined',
+  'Story points estimated': 'validation.dorItems.storyPointsEstimated',
+  'Dependencies identified': 'validation.dorItems.dependenciesIdentified',
+};
+
+/**
+ * Maps DoD item descriptions to translation keys
+ */
+const DOD_ITEM_MAP: Record<string, string> = {
+  'Code is peer-reviewed and approved': 'validation.dodItems.codePeerReviewed',
+  'Unit tests written and passing (minimum 80% coverage)': 'validation.dodItems.unitTestsWritten',
+  'Integration tests passing': 'validation.dodItems.integrationTestsPassing',
+  'Code is properly documented': 'validation.dodItems.codeProperlyDocumented',
+  'No critical or high-severity bugs': 'validation.dodItems.noCriticalBugs',
+};
+
+/**
+ * Maps categories to translation keys
+ */
+const CATEGORY_MAP: Record<string, string> = {
+  documentation: 'validation.categories.documentation',
+  estimation: 'validation.categories.estimation',
+  dependencies: 'validation.categories.dependencies',
+  clarity: 'validation.categories.clarity',
+  acceptance: 'validation.categories.acceptance',
+  technical: 'validation.categories.technical',
+  value: 'validation.categories.value',
+  quality: 'validation.categories.quality',
+  testing: 'validation.categories.testing',
+  deployment: 'validation.categories.deployment',
+  review: 'validation.categories.review',
+};
+
+/**
+ * Translates a DoR/DoD item label if it matches a known default
+ */
+function getTranslatedLabel(item: DefinitionItem, t: TFunction<'backlog'>): string {
+  const translationKey = DOR_ITEM_MAP[item.label] ?? DOD_ITEM_MAP[item.label];
+  return translationKey ? (t(translationKey as never) as string) : item.label;
+}
+
+/**
+ * Translates a category if it matches a known category
+ */
+function getTranslatedCategory(category: string, t: TFunction<'backlog'>): string {
+  const translationKey = CATEGORY_MAP[category];
+  return translationKey ? (t(translationKey as never) as string) : category;
+}
 
 export interface ValidationModalProps {
   isOpen: boolean;
@@ -134,8 +197,10 @@ export const ValidationModal: React.FC<ValidationModalProps> = ({
                   </span>
                 </div>
                 <div className={styles['check-content']}>
-                  <span className={styles['check-label']}>{check.label}</span>
-                  <span className={styles['check-desc']}>{check.description}</span>
+                  <span className={styles['check-label']}>{getTranslatedLabel(check, t)}</span>
+                  <span className={styles['check-desc']}>
+                    {getTranslatedCategory(check.description, t)}
+                  </span>
                 </div>
               </label>
             ))}

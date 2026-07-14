@@ -253,7 +253,49 @@
     "fieldEstimate": "Estimación (Story Points)",
     "fieldLabels": "Labels (al menos uno)",
     "fieldAcceptanceCriteria": "Criterios de aceptación",
-    "cannotChangeStatus": "No se puede cambiar el estado a \"{{status}}\". Los siguientes campos obligatorios deben completarse primero: {{fields}}. Por favor haga clic en \"Editar elemento\" para actualizar este elemento del backlog."
+    "cannotChangeStatus": "No se puede cambiar el estado a \"{{status}}\". Los siguientes campos obligatorios deben completarse primero: {{fields}}. Por favor haga clic en \"Editar elemento\" para actualizar este elemento del backlog.",
+    "workflow": {
+      "noWorkflow": "No hay flujo de trabajo configurado para el tipo de entidad {{entityType}}",
+      "targetStateNotFound": "El estado objetivo {{toStatus}} no existe en el flujo de trabajo",
+      "initialStatusMustBe": "El estado inicial debe ser {{defaultStatus}}",
+      "transitionNotAllowed": "La transición de {{fromStatus}} a {{toStatus}} no está permitida",
+      "transitionDisabled": "Esta transición está actualmente deshabilitada",
+      "permissionDeniedRoles": "No tiene permiso para realizar esta transición. Roles requeridos: {{roles}}",
+      "authenticationRequired": "Se requiere autenticación de usuario para esta transición",
+      "permissionDenied": "No tiene permiso para realizar esta transición"
+    },
+    "dorItems": {
+      "clearTitleAndDescription": "Título y descripción claros proporcionados",
+      "acceptanceCriteriaDefinedAndAgreed": "Criterios de aceptación definidos y acordados",
+      "storyPointsEstimatedByTeam": "Story points estimados por el equipo",
+      "businessValueAssigned": "Valor de negocio asignado",
+      "dependenciesIdentifiedAndDocumented": "Dependencias identificadas y documentadas",
+      "noBlockersOrImpediments": "Sin bloqueos ni impedimentos",
+      "userStoryClearlyWritten": "Historia de usuario claramente escrita",
+      "acceptanceCriteriaDefined": "Criterios de aceptación definidos",
+      "storyPointsEstimated": "Story points estimados",
+      "dependenciesIdentified": "Dependencias identificadas"
+    },
+    "dodItems": {
+      "codePeerReviewed": "Código revisado por pares y aprobado",
+      "unitTestsWritten": "Tests unitarios escritos y pasando (mínimo 80% cobertura)",
+      "integrationTestsPassing": "Tests de integración pasando",
+      "codeProperlyDocumented": "Código propiamente documentado",
+      "noCriticalBugs": "Sin bugs críticos o de alta severidad"
+    },
+    "categories": {
+      "documentation": "documentación",
+      "estimation": "estimación",
+      "dependencies": "dependencias",
+      "clarity": "claridad",
+      "acceptance": "aceptación",
+      "technical": "técnico",
+      "value": "valor",
+      "quality": "calidad",
+      "testing": "pruebas",
+      "deployment": "despliegue",
+      "review": "revisión"
+    }
   },
   "moscow": {
     "mustHave": "Debe tener",
