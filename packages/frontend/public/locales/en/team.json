@@ -1,6 +1,10 @@
 {
   "title": "Team",
   "subtitle": "Manage team members and team standards",
+  "initializing": "Initializing team context...",
+  "selectTeam": "Select a Team",
+  "noTeam": "No Team",
+  "yourTeams": "Your Teams",
   "welcome": {
     "title": "Welcome to Scrumooth, {{name}}!",
     "subtitle": "Your agile journey starts here...",

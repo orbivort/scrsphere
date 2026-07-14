@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 
 import { Layout } from './components/Layout/Sidebar';
 import { ErrorBoundary, PageErrorBoundary } from './components/ErrorBoundary';
@@ -86,6 +87,7 @@ const queryClient = new QueryClient({
 
 // Protected Route Component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { t } = useTranslation('common');
   const { isAuthenticated, isLoading } = useAuthStore();
   const [loadingTimeout, setLoadingTimeout] = useState(false);
 
@@ -105,7 +107,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
     return (
       <div className={loadingStyles['loading-screen']}>
         <div className={loadingStyles['loading-spinner']} />
-        <p>Loading...</p>
+        <p>{t('loading')}</p>
       </div>
     );
   }
@@ -119,6 +121,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 
 // Auth Callback Initializer Component
 const AuthInitializer: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { t } = useTranslation('common');
   const [isInitialized, setIsInitialized] = useState(false);
   const [initTimeout, setInitTimeout] = useState(false);
   const { isAuthenticated, setUser, logout } = useAuthStore();
@@ -176,7 +179,7 @@ const AuthInitializer: React.FC<{ children: React.ReactNode }> = ({ children }) 
     return (
       <div className={loadingStyles['loading-screen']}>
         <div className={loadingStyles['loading-spinner']} />
-        <p>Initializing...</p>
+        <p>{t('initializing')}</p>
       </div>
     );
   }

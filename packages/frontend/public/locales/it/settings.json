@@ -1,5 +1,84 @@
 {
   "title": "Impostazioni",
+  "skipToMainContent": "Vai al contenuto principale",
+  "sprintStatus": {
+    "PLANNED": "Pianificato",
+    "ACTIVE": "Attivo",
+    "COMPLETED": "Completato",
+    "CANCELLED": "Annullato"
+  },
+  "sprintConfiguration": {
+    "title": "Configurazione Sprint",
+    "subtitle": "Configura la durata dello sprint e genera automaticamente piani sprint per l'anno",
+    "backToSprintPlanning": "Torna alla Pianificazione Sprint",
+    "currentConfiguration": "Configurazione attuale",
+    "configuredFor": "Configurato per {{year}}",
+    "sprintDuration": "Durata Sprint",
+    "durationOptions": {
+      "oneWeek": "1 Settimana",
+      "oneWeekDescription": "Ciclo sprint rapido di 1 settimana",
+      "twoWeeks": "2 Settimane",
+      "twoWeeksDescription": "Ciclo sprint standard di 2 settimane",
+      "threeWeeks": "3 Settimane",
+      "threeWeeksDescription": "Ciclo sprint bilanciato di 3 settimane",
+      "fourWeeks": "4 Settimane",
+      "fourWeeksDescription": "Ciclo sprint esteso di 4 settimane"
+    },
+    "year": "Anno",
+    "saving": "Salvataggio...",
+    "saveConfiguration": "Salva configurazione",
+    "previewAndGenerate": "Anteprima e genera Sprint",
+    "generatedSprints": "Sprint generati",
+    "sprintCount": "{{count}} sprint",
+    "deleteSprintTitle": "Elimina sprint",
+    "previewModal": {
+      "title": "Anteprima generazione Sprint",
+      "duration": "Durata:",
+      "year": "Anno:",
+      "sprintsToGenerate": "Sprint da generare:",
+      "generatedSprints": "Sprint generati",
+      "moreSprints": "... e altri {{count}} sprint",
+      "warning": "Verranno generati {{count}} sprint per {{year}}. Gli sprint esistenti per questo anno potrebbero essere interessati.",
+      "cancel": "Annulla",
+      "generating": "Generazione...",
+      "generateButton": "Genera {{count}} Sprint"
+    },
+    "deleteModal": {
+      "title": "Elimina Sprint",
+      "confirmation": "Sei sicuro di voler eliminare questo sprint?",
+      "sprintToDelete": "Sprint da eliminare:",
+      "cannotUndo": "Questa azione non può essere annullata.",
+      "cancel": "Annulla",
+      "deleting": "Eliminazione...",
+      "deleteSprint": "Elimina Sprint"
+    },
+    "notifications": {
+      "configurationSaved": "Configurazione salvata con successo!",
+      "configurationSaveFailed": "Salvataggio configurazione fallito: {{message}}",
+      "sprintsGenerated": "Sprint generati con successo!",
+      "sprintsGenerateFailed": "Generazione sprint fallita: {{message}}",
+      "sprintDeleted": "Sprint eliminato con successo!",
+      "sprintDeleteFailed": "Eliminazione sprint fallita: {{message}}"
+    },
+    "loading": "Caricamento configurazione...",
+    "dismissNotification": "Ignora notifica",
+    "ariaLabels": {
+      "deleteSprint": "Elimina {{name}}",
+      "closePreviewModal": "Chiudi modale di anteprima",
+      "closeDeleteModal": "Chiudi modale di eliminazione"
+    }
+  },
+  "teamDefinitions": {
+    "title": "Definizioni team",
+    "subtitle": "Configura i criteri di Definizione di Ready e Definizione di Done del tuo team",
+    "tabs": {
+      "definitionOfReady": "Definizione di Ready",
+      "definitionOfDone": "Definizione di Done"
+    },
+    "ariaLabels": {
+      "definitionTabs": "Schede definizioni"
+    }
+  },
   "dorPanel": {
     "title": "Definizione di Ready",
     "shortLabel": "DoR",
@@ -67,6 +146,55 @@
       "integrationTests": "Test di integrazione superati",
       "documentation": "Code documentato correttamente",
       "noCriticalBugs": "Nessun bug critico o di alta severità"
+    }
+  },
+  "definitionEditor": {
+    "editTitle": "Modifica {{label}}",
+    "dodInfo": "La Definizione di Done è una descrizione formale dello stato dell'Increment quando soddisfa le misure di qualità richieste per il prodotto. Il lavoro non può essere considerato parte di un Increment a meno che non soddisfi la Definizione di Done.",
+    "dorInfo": "La Definizione di Ready è una lista di criteri che una user story deve soddisfare prima di poter essere inserita in uno sprint. Garantisce che il team abbia informazioni sufficienti per completare il lavoro con successo.",
+    "newItemPlaceholder": "Inserisci nuovo criterio {{shortLabel}}...",
+    "addItem": "Aggiungi elemento",
+    "ariaLabels": {
+      "addNewItem": "Aggiungi nuovo elemento",
+      "itemDescription": "Descrizione elemento",
+      "moveUp": "Sposta su",
+      "moveItemUp": "Sposta elemento su",
+      "moveDown": "Sposta giù",
+      "moveItemDown": "Sposta elemento giù",
+      "deactivate": "Disattiva",
+      "deactivateItem": "Disattiva elemento",
+      "activate": "Attiva",
+      "activateItem": "Attiva elemento",
+      "remove": "Rimuovi",
+      "removeItem": "Rimuovi elemento"
+    },
+    "empty": "Nessun elemento {{shortLabel}} ancora. Aggiungi il tuo primo criterio sopra.",
+    "activeItems": "{{count}} elementi attivi",
+    "inactive": "{{count}} inattivi",
+    "cancel": "Annulla",
+    "saving": "Salvataggio...",
+    "saveChanges": "Salva modifiche",
+    "unsavedWarning": "Hai modifiche non salvate",
+    "discardDialog": {
+      "title": "Scartare le modifiche?",
+      "message": "Hai modifiche non salvate. Sei sicuro di voler annullare?",
+      "keepEditing": "Continua a modificare",
+      "discardChanges": "Scarta le modifiche"
+    },
+    "dodCategories": {
+      "quality": "Qualità",
+      "testing": "Test",
+      "documentation": "Documentazione",
+      "deployment": "Deploy",
+      "review": "Revisione"
+    },
+    "dorCategories": {
+      "clarity": "Chiarezza",
+      "acceptance": "Accettazione",
+      "estimation": "Stima",
+      "dependencies": "Dipendenze",
+      "technical": "Tecnico",
+      "value": "Valore"
     }
   },
   "teamManagement": {

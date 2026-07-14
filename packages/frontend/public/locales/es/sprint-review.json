@@ -7,6 +7,12 @@
   "noActiveSprint": "No se encontró Sprint activo para este equipo.",
   "availableSprints": "Sprints disponibles:",
   "select": "Seleccionar",
+  "sprintStatus": {
+    "PLANNED": "Planificado",
+    "ACTIVE": "Activo",
+    "COMPLETED": "Completado",
+    "CANCELLED": "Cancelado"
+  },
   "detailLabels": {
     "status": "Estado:",
     "startDate": "Fecha de inicio:",

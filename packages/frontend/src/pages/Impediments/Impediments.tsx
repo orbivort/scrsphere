@@ -36,7 +36,7 @@ const QUERY_STALE_TIME = 5 * 60 * 1000;
 const QUERY_CACHE_TIME = 10 * 60 * 1000;
 
 export const Impediments: React.FC = () => {
-  const { t } = useTranslation('impediments');
+  const { t } = useTranslation(['impediments', 'common']);
   const { currentTeam } = useTeamStore();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -723,7 +723,7 @@ export const Impediments: React.FC = () => {
               <button
                 className={styles['modal-close']}
                 onClick={() => handleCloseCreateModal()}
-                aria-label="Close modal"
+                aria-label={t('common:aria.closeModal')}
               >
                 <XIcon className={styles['modal-close-icon']} />
               </button>
@@ -872,7 +872,7 @@ export const Impediments: React.FC = () => {
               <button
                 className={styles['modal-close']}
                 onClick={handleCloseDetail}
-                aria-label="Close modal"
+                aria-label={t('common:aria.closeModal')}
               >
                 <XIcon className={styles['modal-close-icon']} />
               </button>
@@ -1122,7 +1122,7 @@ export const Impediments: React.FC = () => {
               <button
                 className={styles['modal-close']}
                 onClick={() => setShowDeleteConfirm(false)}
-                aria-label="Close modal"
+                aria-label={t('common:aria.closeModal')}
                 type="button"
               >
                 <XIcon className={styles['modal-close-icon']} />

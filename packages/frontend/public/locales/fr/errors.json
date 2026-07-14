@@ -1,3 +1,53 @@
 {
-  "title": "Erreur"
+  "title": "Erreur",
+  "network": {
+    "connectionLost": "Erreur réseau. Veuillez vérifier votre connexion internet.",
+    "timeout": "La requête a expiré. Veuillez réessayer.",
+    "serverUnreachable": "Impossible de joindre le serveur. Veuillez vérifier votre connexion."
+  },
+  "http": {
+    "badRequest": "Requête invalide. Veuillez vérifier votre saisie et réessayer.",
+    "unauthorized": "Vous n'êtes pas autorisé à effectuer cette action.",
+    "forbidden": "Accès refusé. Vous n'avez pas la permission pour cette ressource.",
+    "notFound": "Ressource introuvable. Elle a peut-être été supprimée.",
+    "conflict": "Un conflit est survenu. La ressource a peut-être été modifiée par un autre utilisateur.",
+    "validationFailed": "Échec de la validation. Veuillez vérifier votre saisie.",
+    "internalServerError": "Erreur serveur. Veuillez réessayer plus tard.",
+    "serviceUnavailable": "Service temporairement indisponible. Veuillez réessayer plus tard."
+  },
+  "permission": {
+    "notAuthorized": "Vous n'êtes pas autorisé à effectuer cette action.",
+    "noPermission": "Vous n'avez pas la permission d'effectuer cette action.",
+    "accessDenied": "Accès refusé.",
+    "loginRequired": "Veuillez vous connecter pour continuer."
+  },
+  "workflow": {
+    "notFound": "{{resource}} introuvable.",
+    "alreadyExists": "{{resource}} existe déjà.",
+    "cannotModify": "Impossible de modifier {{resource}} dans son état actuel.",
+    "cannotDelete": "Impossible de supprimer {{resource}}.",
+    "operationFailed": "Échec de {{operation}}. Veuillez réessayer.",
+    "loadFailed": "Échec du chargement de {{resource}}.",
+    "saveFailed": "Échec de l'enregistrement de {{resource}}.",
+    "deleteFailed": "Échec de la suppression de {{resource}}.",
+    "updateFailed": "Échec de la mise à jour de {{resource}}.",
+    "createFailed": "Échec de la création de {{resource}}."
+  },
+  "session": {
+    "expired": "Votre session a expiré. Veuillez vous reconnecter.",
+    "idleTimeout": "Votre session a expiré pour cause d'inactivité.",
+    "absoluteTimeout": "Votre session a expiré. Veuillez vous reconnecter.",
+    "concurrentSession": "Votre session a été terminée car vous vous êtes connecté depuis un autre appareil."
+  },
+  "chunk": {
+    "loadFailed": "Échec du chargement des ressources de l'application.",
+    "refreshRequired": "Une nouvelle version est disponible. Veuillez actualiser la page."
+  },
+  "generic": {
+    "unexpectedError": "Une erreur inattendue s'est produite. Veuillez réessayer.",
+    "tryAgain": "Veuillez réessayer.",
+    "retry": "Réessayer",
+    "goBack": "Retour",
+    "contactSupport": "Si le problème persiste, veuillez contacter le support."
+  }
 }

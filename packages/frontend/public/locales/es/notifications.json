@@ -1,3 +1,48 @@
 {
-  "title": "Notificaciones"
+  "title": "Notificaciones",
+  "subtitle": "Manténgase actualizado con las actividades del equipo y actualizaciones importantes",
+  "skipToMainContent": "Ir al contenido principal",
+  "markAllAsRead": "Marcar todo como leído",
+  "marking": "Marcando...",
+  "filters": {
+    "all": "Todos",
+    "unread": "No leídos",
+    "teamInvitations": "Invitaciones de equipo",
+    "taskAssignments": "Asignaciones de tareas",
+    "impediments": "Impedimentos",
+    "reminders": "Recordatorios",
+    "teamCreated": "Equipo creado",
+    "teamUpdated": "Equipo actualizado",
+    "teamDeleted": "Equipo eliminado",
+    "directMessages": "Mensajes directos"
+  },
+  "loading": {
+    "title": "Cargando notificaciones...",
+    "ariaLabel": "Cargando notificaciones"
+  },
+  "error": {
+    "title": "Error al cargar notificaciones",
+    "message": "Algo salió mal al obtener sus notificaciones.",
+    "tryAgain": "Intentar nuevamente"
+  },
+  "empty": {
+    "title": "Aún no hay notificaciones",
+    "message": "Verá notificaciones aquí cuando haya actividad"
+  },
+  "dateGroups": {
+    "today": "Hoy",
+    "yesterday": "Ayer",
+    "thisWeek": "Esta semana",
+    "older": "Anteriores"
+  },
+  "pagination": {
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "pageInfo": "Página {{current}} de {{total}}"
+  },
+  "ariaLabels": {
+    "notificationItem": "Notificación de {{sender}}: {{message}}",
+    "markAsRead": "Marcar como leído",
+    "dismiss": "Descartar notificación"
+  }
 }

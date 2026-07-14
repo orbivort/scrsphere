@@ -1,3 +1,48 @@
 {
-  "title": "Notifiche"
+  "title": "Notifiche",
+  "subtitle": "Resta aggiornato sulle attività del team e sugli aggiornamenti importanti",
+  "skipToMainContent": "Vai al contenuto principale",
+  "markAllAsRead": "Segna tutte come lette",
+  "marking": "Contrassegnando...",
+  "filters": {
+    "all": "Tutte",
+    "unread": "Non lette",
+    "teamInvitations": "Inviti team",
+    "taskAssignments": "Assegnazioni attività",
+    "impediments": "Impedimenti",
+    "reminders": "Promemoria",
+    "teamCreated": "Team creato",
+    "teamUpdated": "Team aggiornato",
+    "teamDeleted": "Team eliminato",
+    "directMessages": "Messaggi diretti"
+  },
+  "loading": {
+    "title": "Caricamento notifiche...",
+    "ariaLabel": "Caricamento notifiche"
+  },
+  "error": {
+    "title": "Caricamento notifiche fallito",
+    "message": "Si è verificato un errore durante il recupero delle notifiche.",
+    "tryAgain": "Riprova"
+  },
+  "empty": {
+    "title": "Nessuna notifica ancora",
+    "message": "Vedrai le notifiche qui quando ci sarà attività"
+  },
+  "dateGroups": {
+    "today": "Oggi",
+    "yesterday": "Ieri",
+    "thisWeek": "Questa settimana",
+    "older": "Più vecchie"
+  },
+  "pagination": {
+    "previous": "Precedente",
+    "next": "Successiva",
+    "pageInfo": "Pagina {{current}} di {{total}}"
+  },
+  "ariaLabels": {
+    "notificationItem": "Notifica da {{sender}}: {{message}}",
+    "markAsRead": "Segna come letta",
+    "dismiss": "Ignora notifica"
+  }
 }

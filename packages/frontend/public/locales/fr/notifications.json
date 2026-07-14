@@ -1,3 +1,48 @@
 {
-  "title": "Notifications"
+  "title": "Notifications",
+  "subtitle": "Restez informé des activités de l'équipe et des mises à jour importantes",
+  "skipToMainContent": "Aller au contenu principal",
+  "markAllAsRead": "Tout marquer comme lu",
+  "marking": "Marquage...",
+  "filters": {
+    "all": "Tout",
+    "unread": "Non lu",
+    "teamInvitations": "Invitations d'équipe",
+    "taskAssignments": "Attributions de tâches",
+    "impediments": "Empêchements",
+    "reminders": "Rappels",
+    "teamCreated": "Équipe créée",
+    "teamUpdated": "Équipe mise à jour",
+    "teamDeleted": "Équipe supprimée",
+    "directMessages": "Messages directs"
+  },
+  "loading": {
+    "title": "Chargement des notifications...",
+    "ariaLabel": "Chargement des notifications"
+  },
+  "error": {
+    "title": "Échec du chargement des notifications",
+    "message": "Une erreur s'est produite lors de la récupération de vos notifications.",
+    "tryAgain": "Réessayer"
+  },
+  "empty": {
+    "title": "Aucune notification",
+    "message": "Vous verrez les notifications ici en cas d'activité"
+  },
+  "dateGroups": {
+    "today": "Aujourd'hui",
+    "yesterday": "Hier",
+    "thisWeek": "Cette semaine",
+    "older": "Plus ancien"
+  },
+  "pagination": {
+    "previous": "Précédent",
+    "next": "Suivant",
+    "pageInfo": "Page {{current}} sur {{total}}"
+  },
+  "ariaLabels": {
+    "notificationItem": "Notification de {{sender}} : {{message}}",
+    "markAsRead": "Marquer comme lu",
+    "dismiss": "Ignorer la notification"
+  }
 }

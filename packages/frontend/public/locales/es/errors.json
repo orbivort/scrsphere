@@ -1,3 +1,53 @@
 {
-  "title": "Error"
+  "title": "Error",
+  "network": {
+    "connectionLost": "Error de red. Por favor verifique su conexión a internet.",
+    "timeout": "La solicitud expiró. Por favor intente nuevamente.",
+    "serverUnreachable": "No se puede alcanzar el servidor. Por favor verifique su conexión."
+  },
+  "http": {
+    "badRequest": "Solicitud inválida. Por favor verifique su entrada e intente nuevamente.",
+    "unauthorized": "No está autorizado para realizar esta acción.",
+    "forbidden": "Acceso denegado. No tiene permiso para este recurso.",
+    "notFound": "Recurso no encontrado. Puede haber sido eliminado.",
+    "conflict": "Ocurrió un conflicto. El recurso puede haber sido modificado por otro usuario.",
+    "validationFailed": "Validación fallida. Por favor verifique su entrada.",
+    "internalServerError": "Error del servidor. Por favor intente más tarde.",
+    "serviceUnavailable": "Servicio temporalmente no disponible. Por favor intente más tarde."
+  },
+  "permission": {
+    "notAuthorized": "No está autorizado para realizar esta acción.",
+    "noPermission": "No tiene permiso para realizar esta acción.",
+    "accessDenied": "Acceso denegado.",
+    "loginRequired": "Por favor inicie sesión para continuar."
+  },
+  "workflow": {
+    "notFound": "{{resource}} no encontrado.",
+    "alreadyExists": "{{resource}} ya existe.",
+    "cannotModify": "No se puede modificar {{resource}} en su estado actual.",
+    "cannotDelete": "No se puede eliminar {{resource}}.",
+    "operationFailed": "Error al {{operation}}. Por favor intente nuevamente.",
+    "loadFailed": "Error al cargar {{resource}}.",
+    "saveFailed": "Error al guardar {{resource}}.",
+    "deleteFailed": "Error al eliminar {{resource}}.",
+    "updateFailed": "Error al actualizar {{resource}}.",
+    "createFailed": "Error al crear {{resource}}."
+  },
+  "session": {
+    "expired": "Su sesión ha expirado. Por favor inicie sesión nuevamente.",
+    "idleTimeout": "Su sesión ha expirado por inactividad.",
+    "absoluteTimeout": "Su sesión ha expirado. Por favor inicie sesión nuevamente.",
+    "concurrentSession": "Su sesión fue terminada porque inició sesión desde otro dispositivo."
+  },
+  "chunk": {
+    "loadFailed": "Error al cargar los recursos de la aplicación.",
+    "refreshRequired": "Una nueva versión está disponible. Por favor actualice la página."
+  },
+  "generic": {
+    "unexpectedError": "Ocurrió un error inesperado. Por favor intente nuevamente.",
+    "tryAgain": "Por favor intente nuevamente.",
+    "retry": "Reintentar",
+    "goBack": "Volver",
+    "contactSupport": "Si el problema persiste, por favor contacte al soporte."
+  }
 }

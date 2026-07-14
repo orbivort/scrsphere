@@ -129,6 +129,12 @@
     "*.css": [
       "stylelint --fix --allow-empty-input",
       "prettier --write"
+    ],
+    "packages/frontend/public/locales/**/*.json": [
+      "pnpm run i18n:check"
+    ],
+    "packages/backend/src/locales/**/*.json": [
+      "pnpm run i18n:check"
     ]
   },
   "engines": {

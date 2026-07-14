@@ -279,6 +279,7 @@ export const BoardView: React.FC<BoardViewProps> = ({
   onItemClick,
   onPriorityChange,
 }) => {
+  const { t } = useTranslation('backlog');
   const { draggedItem, handleDragStart, handleDrop, handleDragOver, handleDragEnd } =
     useDragAndDrop({
       onDrop: onPriorityChange,
@@ -315,7 +316,11 @@ export const BoardView: React.FC<BoardViewProps> = ({
   const enableVirtualization = shouldEnableVirtualization(totalItems, VIRTUALIZATION_THRESHOLD);
 
   return (
-    <div className={styles['moscow-board-view']} role="list" aria-label="MoSCoW priority board">
+    <div
+      className={styles['moscow-board-view']}
+      role="list"
+      aria-label={t('aria.priorityBoard') as string}
+    >
       {Object.values(MoSCoWPriority).map((priority) => {
         const config = MOSCOW_CONFIG[priority];
         const items = itemsByMoscow[priority];

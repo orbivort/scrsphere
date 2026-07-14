@@ -7,6 +7,7 @@
   "delete": "Delete",
   "edit": "Edit",
   "loading": "Loading...",
+  "initializing": "Initializing...",
   "search": "Search",
   "noResults": "No results found",
   "confirm": "Confirm",
@@ -52,6 +53,7 @@
   "showMore": "Show more",
   "showLess": "Show less",
   "localeSyncFailed": "Failed to sync language preference. It will sync on next login.",
+  "unassigned": "Unassigned",
   "noTeamSelected": "No team selected",
   "unsavedChanges": "Unsaved Changes",
   "confirmDialog": {
@@ -98,12 +100,14 @@
     "closeModal": "Close modal",
     "closeForm": "Close form",
     "closeErrorMessage": "Close error message",
+    "closeNotification": "Close notification",
     "clearSearch": "Clear search",
     "viewMode": "View mode",
     "cardView": "Card view",
     "listView": "List view",
     "loadingNotifications": "Loading notifications",
-    "skipToMainContent": "Skip to main content"
+    "skipToMainContent": "Skip to main content",
+    "switchTeam": "Switch team"
   },
   "error": {
     "boundary": {

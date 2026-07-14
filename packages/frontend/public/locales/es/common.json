@@ -7,6 +7,7 @@
   "delete": "Eliminar",
   "edit": "Editar",
   "loading": "Cargando...",
+  "initializing": "Inicializando...",
   "search": "Buscar",
   "noResults": "No se encontraron resultados",
   "confirm": "Confirmar",
@@ -52,6 +53,7 @@
   "showMore": "Mostrar más",
   "showLess": "Mostrar menos",
   "localeSyncFailed": "No se pudo sincronizar la preferencia de idioma. Se sincronizará en el próximo inicio de sesión.",
+  "unassigned": "Sin asignar",
   "noTeamSelected": "Ningún equipo seleccionado",
 
   "confirmDialog": {
@@ -66,7 +68,17 @@
     "navigateTo": "Navegar a {{page}}",
     "expandSidebar": "Expandir barra lateral",
     "collapseSidebar": "Contraer barra lateral",
-    "skipToMainContent": "Ir al contenido principal"
+    "closeModal": "Cerrar modal",
+    "closeForm": "Cerrar formulario",
+    "closeErrorMessage": "Cerrar mensaje de error",
+    "closeNotification": "Cerrar notificación",
+    "clearSearch": "Limpiar búsqueda",
+    "viewMode": "Modo de vista",
+    "cardView": "Vista de tarjetas",
+    "listView": "Vista de lista",
+    "loadingNotifications": "Cargando notificaciones",
+    "skipToMainContent": "Ir al contenido principal",
+    "switchTeam": "Cambiar equipo"
   },
   "nav": {
     "dashboard": "Panel de control",
@@ -295,9 +307,20 @@
       "description": "Ocurrió un error al cargar los datos. Inténtelo nuevamente."
     }
   },
+  "unsavedChangesModal": {
+    "title": "Cambios sin guardar",
+    "message": "Tiene cambios sin guardar. ¿Está seguro de que desea descartarlos?",
+    "discard": "Descartar",
+    "keepEditing": "Seguir editando"
+  },
   "draftRestore": {
+    "unsavedDraftFound": "Borrador sin guardar encontrado",
     "restorePrompt": "¿Restaurar el progreso no guardado?",
     "draftFound": "Encontramos un borrador en el que estabas trabajando {{time}}.",
+    "discard": "Descartar",
+    "restoreDraft": "Restaurar borrador",
+    "draftSaved": "Borrador guardado",
+    "justNow": "justo ahora",
     "startFresh": "Empezar de nuevo",
     "recently": "recientemente",
     "minutesAgo": "{{count}} minuto",
@@ -313,9 +336,14 @@
     "reload": "Recargar"
   },
   "helpPanel": {
+    "title": "Consejos",
     "tipsFor": "Consejos para {{title}}",
     "goodExample": "✓ Buen ejemplo:",
     "avoidExample": "✗ Evitar:"
+  },
+  "characterCounter": {
+    "min": "{{current}}/{{max}} caracteres",
+    "approachingLimit": "Acercándose al límite de caracteres"
   },
   "loadingStates": {
     "loadingContent": "Cargando contenido",

@@ -7,6 +7,7 @@
   "delete": "Elimina",
   "edit": "Modifica",
   "loading": "Caricamento...",
+  "initializing": "Inizializzazione...",
   "search": "Cerca",
   "noResults": "Nessun risultato trovato",
   "confirm": "Conferma",
@@ -52,6 +53,7 @@
   "showMore": "Mostra di più",
   "showLess": "Mostra meno",
   "localeSyncFailed": "Impossibile sincronizzare la preferenza della lingua. Verrà sincronizzata al prossimo accesso.",
+  "unassigned": "Non assegnato",
   "noTeamSelected": "Nessun team selezionato",
 
   "confirmDialog": {
@@ -66,7 +68,17 @@
     "navigateTo": "Vai a {{page}}",
     "expandSidebar": "Espandi barra laterale",
     "collapseSidebar": "Comprimi barra laterale",
-    "skipToMainContent": "Vai al contenuto principale"
+    "closeModal": "Chiudi modale",
+    "closeForm": "Chiudi modulo",
+    "closeErrorMessage": "Chiudi messaggio di errore",
+    "closeNotification": "Chiudi notifica",
+    "clearSearch": "Cancella ricerca",
+    "viewMode": "Modalità di visualizzazione",
+    "cardView": "Vista scheda",
+    "listView": "Vista elenco",
+    "loadingNotifications": "Caricamento notifiche",
+    "skipToMainContent": "Vai al contenuto principale",
+    "switchTeam": "Cambia team"
   },
   "nav": {
     "dashboard": "Cruscotto",
@@ -249,6 +261,12 @@
       }
     }
   },
+  "unsavedChangesModal": {
+    "title": "Modifiche non salvate",
+    "message": "Hai modifiche non salvate. Sei sicuro di volerle scartare?",
+    "discard": "Scarta",
+    "keepEditing": "Continua a modificare"
+  },
   "unsavedChanges": {
     "title": "Modifiche non salvate",
     "message": "Hai modifiche non salvate. Sei sicuro di volerle scartare?",
@@ -296,8 +314,13 @@
     }
   },
   "draftRestore": {
+    "unsavedDraftFound": "Bozza non salvata trovata",
     "restorePrompt": "Ripristinare il progresso non salvato?",
     "draftFound": "Abbiamo trovato una bozza su cui stavi lavorando {{time}}.",
+    "discard": "Scarta",
+    "restoreDraft": "Ripristina bozza",
+    "draftSaved": "Bozza salvata",
+    "justNow": "adesso",
     "startFresh": "Ricominciare",
     "recently": "di recente",
     "minutesAgo": "{{count}} minuto fa",
@@ -313,9 +336,14 @@
     "reload": "Ricarica"
   },
   "helpPanel": {
+    "title": "Suggerimenti",
     "tipsFor": "Suggerimenti per {{title}}",
     "goodExample": "✓ Buon esempio:",
     "avoidExample": "✗ Evitare:"
+  },
+  "characterCounter": {
+    "min": "{{current}}/{{max}} caratteri",
+    "approachingLimit": "Avvicinandosi al limite di caratteri"
   },
   "loadingStates": {
     "loadingContent": "Caricamento contenuto",

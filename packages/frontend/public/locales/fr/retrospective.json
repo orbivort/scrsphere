@@ -2,6 +2,12 @@
   "title": "Sprint Retrospective",
   "backToRetrospectives": "Retour aux Retrospectives",
   "backAriaLabel": "Revenir à la liste des Retrospectives",
+  "sprintStatus": {
+    "PLANNED": "Planifié",
+    "ACTIVE": "Actif",
+    "COMPLETED": "Terminé",
+    "CANCELLED": "Annulé"
+  },
   "attendees": "participants",
   "attendeesLabel": "Participants",
   "attendeesAriaLabel": "{{attended}} de {{total}} participants ont participé",

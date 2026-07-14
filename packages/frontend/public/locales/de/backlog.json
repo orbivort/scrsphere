@@ -626,6 +626,9 @@
     "successMetricsHelpPanelAvoidLabel": "Vermeiden",
     "successMetricsHelpPanelAvoidText": "Mache Benutzer glücklich und verbessere Performance"
   },
+  "aria": {
+    "priorityBoard": "MoSCoW-Prioritätsboard"
+  },
   "workflowTransitions": {
     "newDescription": "Neue Einträge müssen zuerst verfeinert werden",
     "refinedDescription": "Verfeinerte Einträge können als bereit markiert oder zurück zu neu gesetzt werden",

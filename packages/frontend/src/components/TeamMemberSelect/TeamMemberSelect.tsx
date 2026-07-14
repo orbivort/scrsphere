@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import type { TeamMember } from '../../types';
 
@@ -23,6 +24,8 @@ export const TeamMemberSelect: React.FC<TeamMemberSelectProps> = ({
   id = 'impediment-owner',
   error,
 }) => {
+  const { t } = useTranslation();
+
   const getRoleLabel = (role: string): string => {
     switch (role) {
       case 'product_owner':
@@ -53,7 +56,7 @@ export const TeamMemberSelect: React.FC<TeamMemberSelectProps> = ({
         aria-invalid={!!error}
         aria-describedby={error ? `${id}-error` : undefined}
       >
-        <option value="">Unassigned</option>
+        <option value="">{t('unassigned')}</option>
         {teamMembers.map((member) => {
           const displayName =
             member.user?.firstName && member.user.lastName

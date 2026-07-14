@@ -7,6 +7,7 @@
   "delete": "Supprimer",
   "edit": "Modifier",
   "loading": "Chargement…",
+  "initializing": "Initialisation...",
   "search": "Rechercher",
   "noResults": "Aucun résultat trouvé",
   "confirm": "Confirmer",
@@ -52,7 +53,9 @@
   "showMore": "Afficher plus",
   "showLess": "Afficher moins",
   "localeSyncFailed": "Échec de la synchronisation de la préférence de langue. La synchronisation aura lieu lors de la prochaine connexion.",
+  "unassigned": "Non assigné",
   "noTeamSelected": "Aucune équipe sélectionnée",
+  "unsavedChanges": "Modifications non enregistrées",
 
   "confirmDialog": {
     "removeMessage": "Êtes-vous sûr de vouloir supprimer {{name}}?",
@@ -66,7 +69,17 @@
     "navigateTo": "Accéder à {{page}}",
     "expandSidebar": "Agrandir le panneau latéral",
     "collapseSidebar": "Réduire le panneau latéral",
-    "skipToMainContent": "Aller au contenu principal"
+    "closeModal": "Fermer la fenêtre modale",
+    "closeForm": "Fermer le formulaire",
+    "closeErrorMessage": "Fermer le message d'erreur",
+    "closeNotification": "Fermer la notification",
+    "clearSearch": "Effacer la recherche",
+    "viewMode": "Mode d'affichage",
+    "cardView": "Vue carte",
+    "listView": "Vue liste",
+    "loadingNotifications": "Chargement des notifications",
+    "skipToMainContent": "Aller au contenu principal",
+    "switchTeam": "Changer d'équipe"
   },
   "nav": {
     "dashboard": "Tableau de bord",
@@ -267,6 +280,12 @@
       "passwordChange": "Vous avez des modifications non enregistrées dans le formulaire de changement de mot de passe. Êtes-vous sûr de vouloir les ignorer?"
     }
   },
+  "unsavedChangesModal": {
+    "title": "Modifications non enregistrées",
+    "message": "Vous avez des modifications non enregistrées. Êtes-vous sûr de vouloir les ignorer?",
+    "discard": "Ignorer",
+    "keepEditing": "Continuer la modification"
+  },
   "emptyState": {
     "noTeam": {
       "title": "Aucune équipe sélectionnée",
@@ -296,8 +315,13 @@
     }
   },
   "draftRestore": {
+    "unsavedDraftFound": "Brouillon non sauvegardé trouvé",
     "restorePrompt": "Restaurer la progression non sauvegardée ?",
     "draftFound": "Nous avons trouvé un brouillon sur lequel vous travailliez {{time}}.",
+    "discard": "Ignorer",
+    "restoreDraft": "Restaurer le brouillon",
+    "draftSaved": "Brouillon sauvegardé",
+    "justNow": "à l'instant",
     "startFresh": "Recommencer",
     "recently": "récemment",
     "minutesAgo": "{{count}} minute",
@@ -313,9 +337,14 @@
     "reload": "Recharger"
   },
   "helpPanel": {
+    "title": "Conseils",
     "tipsFor": "Conseils pour {{title}}",
     "goodExample": "✓ Bon exemple :",
     "avoidExample": "✗ À éviter :"
+  },
+  "characterCounter": {
+    "min": "{{current}}/{{max}} caractères",
+    "approachingLimit": "Approche de la limite de caractères"
   },
   "loadingStates": {
     "loadingContent": "Chargement du contenu",

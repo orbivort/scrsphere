@@ -1,6 +1,10 @@
 {
   "title": "Team",
   "subtitle": "Teammitglieder und Team-Standards verwalten",
+  "initializing": "Team-Kontext wird initialisiert...",
+  "selectTeam": "Team auswählen",
+  "noTeam": "Kein Team",
+  "yourTeams": "Ihre Teams",
   "welcome": {
     "title": "Willkommen bei Scrumooth, {{name}}!",
     "subtitle": "Ihre Agile-Reise beginnt hier...",
@@ -66,6 +70,11 @@
     "inviteMember": "Mitglied einladen",
     "adding": "Hinzufügen...",
     "searchPlaceholder": "Nach Name oder E-Mail suchen...",
+    "searchAriaLabel": "Nach Name oder E-Mail suchen",
+    "clearSearchAriaLabel": "Suche leeren",
+    "filterByRoleAriaLabel": "Mitglieder nach Rolle filtern",
+    "sortByAriaLabel": "Mitglieder sortieren nach",
+    "viewModeAriaLabel": "Ansichtsmodus umschalten",
     "filterOptions": {
       "allRoles": "Alle Rollen",
       "productOwner": "Product Owner",
@@ -116,7 +125,8 @@
     "networkError": "Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
     "genericError": "Teammitglied konnte nicht hinzugefügt werden. Bitte versuchen Sie es später erneut.",
     "invalidEmail": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
-    "emailRequired": "E-Mail-Adresse ist erforderlich."
+    "emailRequired": "E-Mail-Adresse ist erforderlich.",
+    "emailTooLong": "E-Mail-Adresse ist zu lang. Maximale Länge ist 254 Zeichen."
   },
   "teamStats": {
     "completedSprints": "Abgeschlossene Sprints",

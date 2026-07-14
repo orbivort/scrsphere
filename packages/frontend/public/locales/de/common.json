@@ -7,6 +7,7 @@
   "delete": "Löschen",
   "edit": "Bearbeiten",
   "loading": "Laden...",
+  "initializing": "Initialisierung...",
   "search": "Suchen",
   "noResults": "Keine Ergebnisse gefunden",
   "confirm": "Bestätigen",
@@ -52,6 +53,7 @@
   "showMore": "Mehr anzeigen",
   "showLess": "Weniger anzeigen",
   "localeSyncFailed": "Sprachpräferenz konnte nicht synchronisiert werden. Sie wird bei der nächsten Anmeldung synchronisiert.",
+  "unassigned": "Nicht zugewiesen",
   "noTeamSelected": "Kein Team ausgewählt",
   "unsavedChanges": "Ungespeicherte Änderungen",
   "confirmDialog": {
@@ -95,7 +97,17 @@
     "navigateTo": "Navigieren zu {{page}}",
     "expandSidebar": "Seitenleiste ausklappen",
     "collapseSidebar": "Seitenleiste einklappen",
-    "skipToMainContent": "Zum Hauptinhalt springen"
+    "closeModal": "Modal schließen",
+    "closeForm": "Formular schließen",
+    "closeErrorMessage": "Fehlermeldung schließen",
+    "closeNotification": "Benachrichtigung schließen",
+    "clearSearch": "Suche leeren",
+    "viewMode": "Ansichtsmodus",
+    "cardView": "Kartenansicht",
+    "listView": "Listenansicht",
+    "loadingNotifications": "Benachrichtigungen werden geladen",
+    "skipToMainContent": "Zum Hauptinhalt springen",
+    "switchTeam": "Team wechseln"
   },
   "error": {
     "boundary": {
@@ -267,6 +279,12 @@
       "passwordChange": "Sie haben ungespeicherte Änderungen im Passwortänderungsformular. Sind Sie sicher, dass Sie sie verwerfen möchten?"
     }
   },
+  "unsavedChangesModal": {
+    "title": "Ungespeicherte Änderungen",
+    "message": "Sie haben ungespeicherte Änderungen. Sind Sie sicher, dass Sie sie verwerfen möchten?",
+    "discard": "Verwerfen",
+    "keepEditing": "Weiter bearbeiten"
+  },
   "emptyState": {
     "noTeam": {
       "title": "Kein Team ausgewählt",
@@ -296,8 +314,13 @@
     }
   },
   "draftRestore": {
+    "unsavedDraftFound": "Ungespeicherter Entwurf gefunden",
     "restorePrompt": "Ungespeicherten Fortschritt wiederherstellen?",
     "draftFound": "Wir haben einen Entwurf gefunden, an dem Sie gearbeitet haben {{time}}.",
+    "discard": "Verwerfen",
+    "restoreDraft": "Entwurf wiederherstellen",
+    "draftSaved": "Entwurf gespeichert",
+    "justNow": "gerade eben",
     "startFresh": "Neu beginnen",
     "recently": "kürzlich",
     "minutesAgo": "{{count}} Minute her",
@@ -313,9 +336,14 @@
     "reload": "Neu laden"
   },
   "helpPanel": {
+    "title": "Tipps",
     "tipsFor": "Tipps für {{title}}",
     "goodExample": "✓ Gutes Beispiel:",
     "avoidExample": "✗ Vermeiden:"
+  },
+  "characterCounter": {
+    "min": "{{current}}/{{max}} Zeichen",
+    "approachingLimit": "Zeichenlimit nahezu erreicht"
   },
   "loadingStates": {
     "loadingContent": "Inhalt wird geladen",

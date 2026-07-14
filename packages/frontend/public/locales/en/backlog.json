@@ -626,6 +626,9 @@
     "successMetricsHelpPanelAvoidLabel": "Avoid",
     "successMetricsHelpPanelAvoidText": "Make users happy and improve performance"
   },
+  "aria": {
+    "priorityBoard": "MoSCoW priority board"
+  },
   "workflowTransitions": {
     "newDescription": "New items must be refined first",
     "refinedDescription": "Refined items can be marked ready or sent back to new",

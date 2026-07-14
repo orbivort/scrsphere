@@ -626,6 +626,9 @@
     "successMetricsHelpPanelAvoidLabel": "Evitare",
     "successMetricsHelpPanelAvoidText": "Rendere gli utenti felici e migliorare le prestazioni"
   },
+  "aria": {
+    "priorityBoard": "Tabella priorità MoSCoW"
+  },
   "workflowTransitions": {
     "newDescription": "Gli elementi nuovi devono essere raffinati prima",
     "refinedDescription": "Gli elementi raffinati possono essere segnati pronti o rimandati a nuovo",

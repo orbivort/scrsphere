@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import { useAuthStore } from '../store';
 import { useTeamState } from '../hooks';
@@ -93,6 +94,7 @@ export const useTeamContext = (): TeamContextType => {
 };
 
 export const TeamInitializer: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { t } = useTranslation();
   const { currentTeam, userTeams, isLoading, switchTeam } = useTeamContext();
   const { isAuthenticated } = useAuthStore();
   const [showTeamSelection, setShowTeamSelection] = useState(false);
@@ -161,7 +163,7 @@ export const TeamInitializer: React.FC<{ children: React.ReactNode }> = ({ child
     return (
       <div className={loadingStyles['loading-screen']}>
         <div className={loadingStyles['loading-spinner']} />
-        <p>Initializing team context...</p>
+        <p>{t('initializing', { ns: 'team' })}</p>
       </div>
     );
   }
@@ -173,11 +175,11 @@ export const TeamInitializer: React.FC<{ children: React.ReactNode }> = ({ child
         <div className="team-selection-overlay">
           <div className="team-selection-modal">
             <div className="team-selection-header">
-              <h2>Select a Team</h2>
+              <h2>{t('selectTeam', { ns: 'team' })}</h2>
               <button
                 className="close-button"
                 onClick={() => setShowTeamSelection(false)}
-                aria-label="Close"
+                aria-label={t('aria.closeDialog')}
               >
                 ×
               </button>
