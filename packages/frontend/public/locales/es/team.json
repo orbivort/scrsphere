@@ -188,5 +188,9 @@
     "genericInviteError": "No se pudo agregar el miembro. Por favor intenta más tarde.",
     "genericRemoveError": "No se pudo eliminar el miembro. Por favor intenta más tarde.",
     "memberRemoved": "El miembro ha sido eliminado exitosamente."
+  },
+  "aria": {
+    "closeModal": "Cerrar modal",
+    "teamStatistics": "Estadísticas del Equipo"
   }
 }

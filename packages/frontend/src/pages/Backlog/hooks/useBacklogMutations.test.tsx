@@ -7,6 +7,22 @@ import { useBacklogMutations } from './useBacklogMutations';
 import { apiService } from '../../../services';
 import { ItemStatus, MoSCoWPriority } from '../../../types';
 
+// Mock react-i18next
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => {
+      const translations: Record<string, string> = {
+        'success.itemCreated': 'Backlog item created successfully',
+        'success.itemUpdated': 'Backlog item updated successfully',
+        'success.itemDeleted': 'Backlog item deleted successfully',
+        'success.statusUpdated': 'Status updated successfully',
+        'success.priorityUpdated': 'Priority updated successfully',
+      };
+      return translations[key] || key;
+    },
+  }),
+}));
+
 vi.mock('../../../services', () => ({
   apiService: {
     createProductBacklogItem: vi.fn(),

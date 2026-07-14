@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import styles from './BulkUploadModal.module.css';
 import { isValidFileType, formatFileSize, downloadTemplate } from './bulkUploadUtils';
 
+import { useI18nStore } from '@/i18n/useI18nStore';
 import {
   CheckCircleIcon,
   UploadIcon,
@@ -29,6 +30,7 @@ export const FileDropZone: React.FC<FileDropZoneProps> = ({
   const [isDragActive, setIsDragActive] = useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const { t } = useTranslation('backlog');
+  const { locale } = useI18nStore();
 
   const handleDragEnter = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -99,10 +101,13 @@ export const FileDropZone: React.FC<FileDropZoneProps> = ({
     [onFileRemove]
   );
 
-  const handleDownloadTemplate = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    downloadTemplate();
-  }, []);
+  const handleDownloadTemplate = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      downloadTemplate(locale);
+    },
+    [locale]
+  );
 
   return (
     <div>

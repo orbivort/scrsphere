@@ -1,5 +1,6 @@
 import type React from 'react';
 import { useMutation, useQueryClient, type UseMutationResult } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 
 import { apiService } from '../../../services';
 import { useMutationErrorHandler } from '../../../hooks/useMutationErrorHandler';
@@ -100,6 +101,7 @@ export const useBacklogMutations = (props: UseBacklogMutationsProps): UseBacklog
     onErrorToast = () => {},
   } = props;
 
+  const { t } = useTranslation('backlog');
   const queryClient = useQueryClient();
   const { handleMutationError } = useMutationErrorHandler();
 
@@ -113,7 +115,7 @@ export const useBacklogMutations = (props: UseBacklogMutationsProps): UseBacklog
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.productBacklog.all });
       void queryClient.invalidateQueries({ queryKey: queryKeys.productGoal.all });
-      onSuccessToast('Backlog item created successfully');
+      onSuccessToast(t('success.itemCreated'));
       onCreateSuccess?.();
       resetForm();
     },
@@ -140,9 +142,9 @@ export const useBacklogMutations = (props: UseBacklogMutationsProps): UseBacklog
         queryKey: ['statusChangeHistory', 'BacklogItem', variables.id],
       });
       if (variables.updates.status) {
-        onSuccessToast('Status updated successfully');
+        onSuccessToast(t('success.statusUpdated'));
       } else if (variables.updates.priority) {
-        onSuccessToast('Priority updated successfully');
+        onSuccessToast(t('success.priorityUpdated'));
       }
     },
     onError: (error: unknown) => {
@@ -168,7 +170,7 @@ export const useBacklogMutations = (props: UseBacklogMutationsProps): UseBacklog
       void queryClient.invalidateQueries({
         queryKey: ['statusChangeHistory', 'BacklogItem', variables.id],
       });
-      onSuccessToast('Backlog item updated successfully');
+      onSuccessToast(t('success.itemUpdated'));
       onEditSuccess?.();
       setSelectedItem(null);
       resetForm();
@@ -194,7 +196,7 @@ export const useBacklogMutations = (props: UseBacklogMutationsProps): UseBacklog
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.productBacklog.all });
       void queryClient.invalidateQueries({ queryKey: queryKeys.productGoal.all });
-      onSuccessToast('Backlog item deleted successfully');
+      onSuccessToast(t('success.itemDeleted'));
       onDeleteSuccess?.();
       setSelectedItem(null);
       setWorkflowError(null);

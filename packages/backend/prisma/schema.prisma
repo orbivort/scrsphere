@@ -821,19 +821,21 @@ model StatusChangeHistory {
 }
 
 model Notification {
-  id        String           @id @db.Uuid
-  userId    String           @db.Uuid
-  type      NotificationType
-  title     String
-  message   String?
-  data      Json?
-  isRead    Boolean          @default(false)
-  readAt    DateTime?        @db.Timestamptz(3)
-  createdAt DateTime         @default(now()) @db.Timestamptz(3)
-  createdBy String?          @db.Uuid
-  updatedAt DateTime         @updatedAt @db.Timestamptz(3)
-  updatedBy String?          @db.Uuid
-  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id         String           @id @db.Uuid
+  userId     String           @db.Uuid
+  type       NotificationType
+  title      String           // For backward compatibility and email/push fallback
+  message    String?          // For backward compatibility and email/push fallback
+  messageKey String?          // Translation key for display-time localization
+  params     Json?            // Translation parameters
+  data       Json?            // Additional metadata (teamId, etc)
+  isRead     Boolean          @default(false)
+  readAt     DateTime?        @db.Timestamptz(3)
+  createdAt  DateTime         @default(now()) @db.Timestamptz(3)
+  createdBy  String?          @db.Uuid
+  updatedAt  DateTime         @updatedAt @db.Timestamptz(3)
+  updatedBy  String?          @db.Uuid
+  user       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([userId, isRead])

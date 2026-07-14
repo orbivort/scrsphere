@@ -41,6 +41,8 @@ export class NotificationService {
   /**
    * Create a localized notification by resolving the recipient's locale
    * and translating the title/message keys via i18next.
+   * Stores both canonical data (messageKey + params) and rendered text (title/message)
+   * for backward compatibility and email/push notifications.
    */
   async createLocalized(input: {
     userId: string;
@@ -63,13 +65,19 @@ export class NotificationService {
     const title = t(input.titleKey, input.messageParams);
     const message = input.messageKey ? t(input.messageKey, input.messageParams) : undefined;
 
-    return this.create({
-      userId: input.userId,
-      type: input.type as NotificationType,
-      title,
-      message,
-      data: input.data as Prisma.InputJsonValue,
-      createdBy: input.createdBy,
+    // Create notification with both canonical data and rendered text
+    return await prisma.notification.create({
+      data: {
+        id: generateUUIDv7(),
+        userId: input.userId,
+        type: input.type as NotificationType,
+        title, // Rendered text for email/push fallback
+        message, // Rendered text for email/push fallback
+        messageKey: input.titleKey, // Canonical key for display-time translation
+        params: (input.messageParams ?? {}) as Prisma.InputJsonValue, // Canonical params
+        data: input.data as Prisma.InputJsonValue,
+        createdBy: input.createdBy ?? input.userId,
+      },
     });
   }
 

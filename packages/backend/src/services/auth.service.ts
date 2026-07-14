@@ -18,6 +18,9 @@ import {
 } from '../utils/errors';
 import { generateUUIDv7 } from '../utils/uuid';
 import { logger } from '../utils/logger';
+import { NotificationService } from './notification.service';
+
+const notificationService = new NotificationService();
 import { emailService } from './email/index.js';
 import {
   PasswordResetTemplate,
@@ -660,14 +663,15 @@ class AuthService {
       });
 
       for (const member of members) {
-        await prisma.notification.create({
-          data: {
-            id: crypto.randomUUID(),
-            userId: member.userId,
-            type: 'ACCOUNT_DELETION_SCHEDULED',
-            title: 'Team member scheduled account deletion',
-            message: `A Product Owner in your team has scheduled their account deletion. The account will be permanently deleted on ${scheduledDeletionAt.toLocaleDateString()}. Please assign a new Product Owner before then.`,
+        await notificationService.createLocalized({
+          userId: member.userId,
+          type: 'ACCOUNT_DELETION_SCHEDULED',
+          titleKey: 'accountDeletionScheduled',
+          messageKey: 'accountDeletionScheduledMessage',
+          messageParams: {
+            deletionDate: scheduledDeletionAt.toLocaleDateString(),
           },
+          createdBy: userId,
         });
       }
     }
@@ -684,14 +688,12 @@ class AuthService {
       });
 
       for (const member of members) {
-        await prisma.notification.create({
-          data: {
-            id: crypto.randomUUID(),
-            userId: member.userId,
-            type: 'ACCOUNT_DELETION_CANCELLED',
-            title: 'Account deletion cancelled',
-            message: 'A team member has cancelled their scheduled account deletion.',
-          },
+        await notificationService.createLocalized({
+          userId: member.userId,
+          type: 'ACCOUNT_DELETION_CANCELLED',
+          titleKey: 'accountDeletionCancelled',
+          messageKey: 'accountDeletionCancelledMessage',
+          createdBy: userId,
         });
       }
     }

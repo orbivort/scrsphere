@@ -433,14 +433,14 @@
     "sprintCapacity": "Capacidad del Sprint",
     "capacityFormat": "{{used}} / {{total}} horas",
     "productBacklog": "Product Backlog",
-    "readyItems": "Elementos READY",
-    "readyOnly": "Solo READY",
-    "readyOnlyDescription": "Solo elementos marcados como READY son mostrados",
+    "readyItems": "Elementos {{status}}",
+    "readyOnly": "Solo {{status}}",
+    "readyOnlyDescription": "Solo elementos marcados como {{status}} son mostrados",
     "readyBadge": "Ready",
     "readyForSprint": "Listo para sprint",
     "addToSprint": "+ Agregar al Sprint",
-    "noReadyItems": "Sin elementos READY disponibles",
-    "noReadyItemsDescription": "Los elementos deben marcarse como READY para mostrarse en sprint planning",
+    "noReadyItems": "Sin elementos {{status}} disponibles",
+    "noReadyItemsDescription": "Los elementos deben marcarse como {{status}} para mostrarse en sprint planning",
     "needsRefinement": "necesita refinamiento",
     "sprintBacklog": "Sprint Backlog",
     "days": "dias",
@@ -462,8 +462,8 @@
     "velocityRangeAria": "Rango de velocidad de {{min}} a {{max}} story points",
     "averageTitle": "Media: {{avg}} pts",
     "capacityUsedAria": "{{used}} de {{total}} horas usadas",
-    "readyItemsCountAria": "{{count}} elementos READY disponibles",
-    "availableReadyItemsAria": "Elementos READY del backlog disponibles para sprint planning",
+    "readyItemsCountAria": "{{count}} elementos {{status}} disponibles",
+    "availableReadyItemsAria": "Elementos {{status}} del backlog disponibles para sprint planning",
     "itemAriaLabel": "{{title}}, {{points}} puntos, prioridad {{priority}}{{readyLabel}}{{grabbedLabel}}",
     "addItemAria": "Agregar {{title}} al sprint",
     "removeItemAria": "Eliminar {{title}} del sprint",
@@ -657,5 +657,11 @@
       "unsavedTaskMessage": "Tienes cambios sin guardar en la tarea. Seguro que quieres descartarlos?",
       "cancel": "Cancelar"
     }
+  },
+  "aria": {
+    "sprintMetrics": "Métricas del sprint",
+    "filterBacklogItems": "Filtrar elementos del backlog",
+    "boardControls": "Controles del tablero",
+    "sprintOverview": "Resumen del Sprint"
   }
 }

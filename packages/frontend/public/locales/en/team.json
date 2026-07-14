@@ -188,5 +188,9 @@
     "genericInviteError": "Failed to add team member. Please try again later.",
     "genericRemoveError": "Failed to remove team member. Please try again later.",
     "memberRemoved": "Team member has been successfully removed."
+  },
+  "aria": {
+    "closeModal": "Close modal",
+    "teamStatistics": "Team Statistics"
   }
 }

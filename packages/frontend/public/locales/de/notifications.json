@@ -43,6 +43,27 @@
   "ariaLabels": {
     "notificationItem": "Benachrichtigung von {{sender}}: {{message}}",
     "markAsRead": "Als gelesen markieren",
-    "dismiss": "Benachrichtigung schließen"
-  }
+    "dismiss": "Benachrichtigung schließen",
+    "goToPreviousPage": "Zur vorherigen Seite",
+    "goToNextPage": "Zur nächsten Seite"
+  },
+  "teamCreated": "Team erstellt: \"{{teamName}}\"",
+  "teamCreatedMessage": "Sie haben das Team erfolgreich erstellt",
+  "teamUpdated": "Team aktualisiert: \"{{teamName}}\"",
+  "teamUpdatedMessage": "Aktualisiert von {{updaterName}}",
+  "teamDeleted": "Team gelöscht: \"{{teamName}}\"",
+  "teamDeletedMessage": "Gelöscht von {{deleterName}}",
+  "teamInvitation": "Sie wurden eingeladen, dem Team \"{{teamName}}\" beizutreten",
+  "teamInvitationMessage": "Eingeladen von {{inviterName}}",
+  "teamRemoval": "Sie wurden aus dem Team \"{{teamName}}\" entfernt",
+  "teamRemovalMessage": "Entfernt von {{removerName}}",
+  "impedimentAssigned": "Neues Hindernis zugewiesen: \"{{impedimentTitle}}\"",
+  "accountDeletionScheduled": "Teammitglied hat Kontolöschung geplant",
+  "accountDeletionScheduledMessage": "Ein Product Owner in Ihrem Team hat die Löschung seines Kontos geplant. Das Konto wird am {{deletionDate}} endgültig gelöscht. Bitte weisen Sie vorher einen neuen Product Owner zu.",
+  "accountDeletionCancelled": "Kontolöschung abgebrochen",
+  "accountDeletionCancelledMessage": "Die geplante Kontolöschung wurde abgebrochen.",
+  "backlogAdjustmentRequired": "Neue Backlog-Anpassung erfordert Ihre Aktion",
+  "backlogAdjustmentRequiredMessage": "Ihnen wurde als Eigentümer einer Backlog-Anpassung zugewiesen: {{action}} - \"{{description}}\"",
+  "feedbackRequired": "Neues Feedback erfordert Ihre Aktion",
+  "feedbackRequiredMessage": "Ihnen wurde als Eigentümer von Feedback von {{authorName}} zugewiesen: \"{{content}}\""
 }

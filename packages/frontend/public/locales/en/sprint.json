@@ -433,14 +433,14 @@
     "sprintCapacity": "Sprint Capacity",
     "capacityFormat": "{{used}} / {{total}} hours",
     "productBacklog": "Product Backlog",
-    "readyItems": "READY items",
-    "readyOnly": "✓ READY Only",
-    "readyOnlyDescription": "Only items marked as READY are displayed",
+    "readyItems": "{{status}} items",
+    "readyOnly": "✓ {{status}} Only",
+    "readyOnlyDescription": "Only items marked as {{status}} are displayed",
     "readyBadge": "✓ Ready",
     "readyForSprint": "Ready for sprint",
     "addToSprint": "+ Add to Sprint",
-    "noReadyItems": "No READY items available",
-    "noReadyItemsDescription": "Items must be marked as READY to be displayed for sprint planning",
+    "noReadyItems": "No {{status}} items available",
+    "noReadyItemsDescription": "Items must be marked as {{status}} to be displayed for sprint planning",
     "needsRefinement": "needs refinement",
     "sprintBacklog": "Sprint Backlog",
     "days": "days",
@@ -462,8 +462,8 @@
     "velocityRangeAria": "Velocity range from {{min}} to {{max}} story points",
     "averageTitle": "Average: {{avg}} pts",
     "capacityUsedAria": "{{used}} of {{total}} hours used",
-    "readyItemsCountAria": "{{count}} READY items available",
-    "availableReadyItemsAria": "Available READY backlog items for sprint planning",
+    "readyItemsCountAria": "{{count}} {{status}} items available",
+    "availableReadyItemsAria": "Available {{status}} backlog items for sprint planning",
     "itemAriaLabel": "{{title}}, {{points}} points, priority {{priority}}{{readyLabel}}{{grabbedLabel}}",
     "addItemAria": "Add {{title}} to sprint",
     "removeItemAria": "Remove {{title}} from sprint",
@@ -657,5 +657,11 @@
       "unsavedTaskMessage": "You have unsaved changes to the task. Are you sure you want to discard them?",
       "cancel": "Cancel"
     }
+  },
+  "aria": {
+    "sprintMetrics": "Sprint metrics",
+    "filterBacklogItems": "Filter backlog items",
+    "boardControls": "Board controls",
+    "sprintOverview": "Sprint Overview"
   }
 }

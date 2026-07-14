@@ -188,5 +188,9 @@
     "genericInviteError": "Impossible d'ajouter le membre. Veuillez réessayer plus tard.",
     "genericRemoveError": "Impossible de supprimer le membre. Veuillez réessayer plus tard.",
     "memberRemoved": "Le membre a été supprimé avec succès."
+  },
+  "aria": {
+    "closeModal": "Fermer la fenêtre",
+    "teamStatistics": "Statistiques de l'équipe"
   }
 }

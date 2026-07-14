@@ -170,7 +170,7 @@ export const SendMessageModal: React.FC<SendMessageModalProps> = ({
               className={styles['close-button']}
               onClick={handleClose}
               disabled={sendMessageMutation.isPending}
-              aria-label="Close modal"
+              aria-label={t('aria.closeModal')}
             >
               <CloseIcon size={18} />
             </button>

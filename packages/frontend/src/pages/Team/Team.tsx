@@ -957,7 +957,7 @@ export const TeamManagement: React.FC = () => {
         )}
       </section>
 
-      <section className={styles['team-stats']} aria-label="Team Statistics">
+      <section className={styles['team-stats']} aria-label={t('aria.teamStatistics')}>
         <div className={styles['stat-card']}>
           <div className={styles['stat-icon']} aria-hidden="true">
             <ChartIcon size={24} />

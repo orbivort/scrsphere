@@ -6,6 +6,9 @@ import { formatDistanceToNow } from 'date-fns';
 import { useNotifications, useMarkAsRead, useMarkAllAsRead } from '../../hooks/useNotifications';
 import type { Notification, NotificationType } from '../../types/notification.types';
 import { ChevronRightIcon } from '../common/Icons';
+import { useI18nStore } from '../../i18n/useI18nStore';
+import { getDateLocale } from '../../utils/dateLocale';
+import { getNotificationTitle, getNotificationMessage } from '../../utils/notificationTranslation';
 
 import styles from './NotificationPanel.module.css';
 
@@ -50,10 +53,13 @@ interface NotificationPanelProps {
 
 export const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, onClose }) => {
   const { t } = useTranslation('common');
+  const { t: tNotifications } = useTranslation('notifications');
   const navigate = useNavigate();
   const panelRef = useRef<HTMLDivElement>(null);
   const { data, isLoading } = useNotifications({ limit: 10 });
   const markAsRead = useMarkAsRead();
+  const { locale } = useI18nStore();
+  const dateLocale = getDateLocale(locale);
   const markAllAsRead = useMarkAllAsRead();
 
   useEffect(() => {
@@ -137,13 +143,18 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, on
                 {getNotificationIcon(notification.type)}
               </span>
               <div className={styles['notification-content']}>
-                <div className={styles['notification-title']}>{notification.title}</div>
-                {notification.message && (
-                  <div className={styles['notification-message']}>{notification.message}</div>
+                <div className={styles['notification-title']}>
+                  {getNotificationTitle(notification, tNotifications)}
+                </div>
+                {getNotificationMessage(notification, tNotifications) && (
+                  <div className={styles['notification-message']}>
+                    {getNotificationMessage(notification, tNotifications)}
+                  </div>
                 )}
                 <div className={styles['notification-time']}>
                   {formatDistanceToNow(new Date(notification.createdAt), {
                     addSuffix: true,
+                    locale: dateLocale,
                   })}
                 </div>
               </div>

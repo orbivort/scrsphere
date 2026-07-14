@@ -188,5 +188,9 @@
     "genericInviteError": "Teammitglied konnte nicht hinzugefügt werden. Bitte versuchen Sie es später erneut.",
     "genericRemoveError": "Teammitglied konnte nicht entfernt werden. Bitte versuchen Sie es später erneut.",
     "memberRemoved": "Teammitglied wurde erfolgreich entfernt."
+  },
+  "aria": {
+    "closeModal": "Modal schließen",
+    "teamStatistics": "Team-Statistiken"
   }
 }

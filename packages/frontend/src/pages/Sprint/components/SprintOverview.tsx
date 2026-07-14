@@ -44,7 +44,7 @@ export const SprintOverview: React.FC<SprintOverviewProps> = ({
   const goalText = sprintGoal || t('sprintOverview.noGoalDefined');
 
   return (
-    <section className={styles['sprint-overview']} aria-label="Sprint Overview">
+    <section className={styles['sprint-overview']} aria-label={t('aria.sprintOverview')}>
       <div className={styles['overview-main']}>
         {/* Goal Section */}
         <div className={styles['goal-section']}>

@@ -92,6 +92,20 @@ const getMoscowPriorityConfig = (
   },
 });
 
+/**
+ * Helper function to get translated status label
+ */
+const getStatusLabel = (status: string, t: (key: string) => string): string => {
+  const statusMap: Record<string, string> = {
+    NEW: 'status.new',
+    REFINED: 'status.refined',
+    READY: 'status.ready',
+    IN_PROGRESS: 'status.inProgress',
+    DONE: 'status.done',
+  };
+  return t(statusMap[status] ?? status);
+};
+
 type SprintTimeCategory = 'current' | 'future' | 'past';
 
 interface SprintWithCategory {
@@ -182,6 +196,7 @@ const generateDraftTasks = (pbiId: string, pbiTitle: string, storyPoints: number
 
 export const SprintPlanning: React.FC = () => {
   const { t } = useTranslation('sprint');
+  const { t: tBacklog } = useTranslation('backlog');
   const { currentTeam, userRoleInCurrentTeam } = useTeamStore();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -212,6 +227,11 @@ export const SprintPlanning: React.FC = () => {
   const MOSCOW_PRIORITY_CONFIG = useMemo(
     () => getMoscowPriorityConfig(t as (key: string) => string),
     [t]
+  );
+
+  const readyStatusLabel = useMemo(
+    () => getStatusLabel('READY', tBacklog as (key: string) => string),
+    [tBacklog]
   );
 
   const { data: generatedSprintsData, isLoading: generatedSprintsLoading } = useQuery({
@@ -1066,7 +1086,10 @@ export const SprintPlanning: React.FC = () => {
         </header>
 
         {/* Metrics Bar */}
-        <section className={styles['sprint-planning-metrics-bar']} aria-label="Sprint metrics">
+        <section
+          className={styles['sprint-planning-metrics-bar']}
+          aria-label={t('aria.sprintMetrics')}
+        >
           <div
             className={styles['sprint-planning-metric-card']}
             role="group"
@@ -1206,19 +1229,25 @@ export const SprintPlanning: React.FC = () => {
                 className={styles['item-count']}
                 aria-label={t('sprintPlanning.readyItemsCountAria', {
                   count: filteredBacklogItems.length,
+                  status: readyStatusLabel,
                 })}
               >
-                {filteredBacklogItems.length} {t('sprintPlanning.readyItems')}
+                {filteredBacklogItems.length}{' '}
+                {t('sprintPlanning.readyItems', { status: readyStatusLabel })}
               </span>
             </div>
 
-            <div className={styles['pool-filters']} role="group" aria-label="Filter backlog items">
+            <div
+              className={styles['pool-filters']}
+              role="group"
+              aria-label={t('aria.filterBacklogItems')}
+            >
               <div className={styles['filter-indicator']}>
                 <span className={`${styles['filter-badge']} ${styles.ready}`}>
-                  {t('sprintPlanning.readyOnly')}
+                  {t('sprintPlanning.readyOnly', { status: readyStatusLabel })}
                 </span>
                 <span className={styles['filter-hint']}>
-                  {t('sprintPlanning.readyOnlyDescription')}
+                  {t('sprintPlanning.readyOnlyDescription', { status: readyStatusLabel })}
                 </span>
               </div>
             </div>
@@ -1226,7 +1255,9 @@ export const SprintPlanning: React.FC = () => {
             <div
               className={styles['items-list']}
               role="listbox"
-              aria-label={t('sprintPlanning.availableReadyItemsAria')}
+              aria-label={t('sprintPlanning.availableReadyItemsAria', {
+                status: readyStatusLabel,
+              })}
             >
               {filteredBacklogItems.map((item, index) => {
                 const { isReady } = checkItemReadiness(item);
@@ -1303,8 +1334,10 @@ export const SprintPlanning: React.FC = () => {
               })}
               {filteredBacklogItems.length === 0 && (
                 <div className={styles['empty-pool']} role="status">
-                  <p>{t('sprintPlanning.noReadyItems')}</p>
-                  <p className={styles.hint}>{t('sprintPlanning.noReadyItemsDescription')}</p>
+                  <p>{t('sprintPlanning.noReadyItems', { status: readyStatusLabel })}</p>
+                  <p className={styles.hint}>
+                    {t('sprintPlanning.noReadyItemsDescription', { status: readyStatusLabel })}
+                  </p>
                 </div>
               )}
             </div>

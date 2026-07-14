@@ -43,6 +43,27 @@
   "ariaLabels": {
     "notificationItem": "Notifica da {{sender}}: {{message}}",
     "markAsRead": "Segna come letta",
-    "dismiss": "Ignora notifica"
-  }
+    "dismiss": "Ignora notifica",
+    "goToPreviousPage": "Vai alla pagina precedente",
+    "goToNextPage": "Vai alla pagina successiva"
+  },
+  "teamCreated": "Team creato: \"{{teamName}}\"",
+  "teamCreatedMessage": "Ha creato con successo il team",
+  "teamUpdated": "Team aggiornato: \"{{teamName}}\"",
+  "teamUpdatedMessage": "Aggiornato da {{updaterName}}",
+  "teamDeleted": "Team eliminato: \"{{teamName}}\"",
+  "teamDeletedMessage": "Eliminato da {{deleterName}}",
+  "teamInvitation": "È stato invitato a unirsi al team \"{{teamName}}\"",
+  "teamInvitationMessage": "Invitato da {{inviterName}}",
+  "teamRemoval": "È stato rimosso dal team \"{{teamName}}\"",
+  "teamRemovalMessage": "Rimosso da {{removerName}}",
+  "impedimentAssigned": "Nuovo impedimento assegnato: \"{{impedimentTitle}}\"",
+  "accountDeletionScheduled": "Un membro del team ha programmato l'eliminazione dell'account",
+  "accountDeletionScheduledMessage": "Un Product Owner nel suo team ha programmato l'eliminazione del proprio account. L'account sarà eliminato definitivamente il {{deletionDate}}. Si prega di assegnare un nuovo Product Owner prima di allora.",
+  "accountDeletionCancelled": "Eliminazione account annullata",
+  "accountDeletionCancelledMessage": "L'eliminazione account programmata è stata annullata.",
+  "backlogAdjustmentRequired": "Nuova Regolazione del Backlog Richiede la Sua Azione",
+  "backlogAdjustmentRequiredMessage": "Le è stato assegnato come proprietario di una regolazione del backlog: {{action}} - \"{{description}}\"",
+  "feedbackRequired": "Nuovo Feedback Richiede la Sua Azione",
+  "feedbackRequiredMessage": "Le è stato assegnato come proprietario del feedback di {{authorName}}: \"{{content}}\""
 }

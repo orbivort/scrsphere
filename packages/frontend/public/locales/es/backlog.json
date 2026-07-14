@@ -310,10 +310,10 @@
     "CANCELLED": "Cancelado"
   },
   "moscowLabels": {
-    "MUST_HAVE": "Must Have",
-    "SHOULD_HAVE": "Should Have",
-    "COULD_HAVE": "Could Have",
-    "WONT_HAVE": "Won't Have"
+    "MUST_HAVE": "Debe tener",
+    "SHOULD_HAVE": "Debería tener",
+    "COULD_HAVE": "Podría tener",
+    "WONT_HAVE": "No tendrá"
   },
   "moscowDescriptions": {
     "MUST_HAVE": "Crítico para la entrega - No negociable",
@@ -448,7 +448,48 @@
     },
     "back": "Atrás",
     "cancel": "Cancelar",
-    "importItems": "Importar {{count}} elemento{{plural}}"
+    "importItems": "Importar {{count}} elemento{{plural}}",
+    "template": {
+      "headers": {
+        "title": "Título",
+        "description": "Descripción",
+        "storyPoints": "Story Points",
+        "businessValue": "Valor de negocio",
+        "priority": "Prioridad",
+        "labels": "Etiquetas",
+        "acceptanceCriteria": "Criterios de aceptación"
+      },
+      "examples": [
+        {
+          "title": "Autenticación de usuario",
+          "description": "Implementar inicio de sesión OAuth2 con proveedores de Google y GitHub para autenticación segura de usuarios",
+          "storyPoints": 8,
+          "businessValue": 13,
+          "priority": "Debe tener",
+          "labels": "auth, seguridad, backend",
+          "acceptanceCriteria": "1. Los usuarios pueden iniciar sesión con Google\n2. Los usuarios pueden iniciar sesión con GitHub\n3. La sesión expira después de 30 minutos\n4. Un inicio de sesión inválido muestra mensaje de error"
+        },
+        {
+          "title": "Gráficos del dashboard",
+          "description": "Agregar gráficos interactivos al dashboard para visualización del progreso del sprint y velocidad del equipo",
+          "storyPoints": 5,
+          "businessValue": 8,
+          "priority": "Debería tener",
+          "labels": "frontend, gráficos, dashboard",
+          "acceptanceCriteria": "1. El gráfico de progreso del sprint se muestra correctamente\n2. El gráfico de velocidad del equipo muestra los últimos 6 sprints\n3. Los gráficos son responsivos en dispositivos móviles"
+        },
+        {
+          "title": "Notificaciones por correo",
+          "description": "Configurar notificaciones por correo para inicio de sprint, fin de sprint e impedimentos críticos",
+          "storyPoints": 3,
+          "businessValue": 5,
+          "priority": "Podría tener",
+          "labels": "notificaciones, correo, backend",
+          "acceptanceCriteria": "1. Correo enviado cuando inicia el sprint\n2. Correo enviado cuando termina el sprint\n3. Correo enviado para impedimentos críticos\n4. Los usuarios pueden darse de baja"
+        }
+      ],
+      "filename": "plantilla-importacion-backlog.csv"
+    }
   },
   "productGoals": {
     "active": "Activo",
@@ -635,5 +676,22 @@
     "readyDescription": "Los elementos listos pueden iniciarse o enviarse de vuelta a refinado",
     "inProgressDescription": "Los elementos en progreso pueden completarse o enviarse de vuelta a listo",
     "doneDescription": "Los elementos completados no pueden ser transicionados"
+  },
+  "success": {
+    "itemCreated": "Elemento del backlog creado exitosamente",
+    "itemUpdated": "Elemento del backlog actualizado exitosamente",
+    "itemDeleted": "Elemento del backlog eliminado exitosamente",
+    "statusUpdated": "Estado actualizado exitosamente",
+    "priorityUpdated": "Prioridad actualizada exitosamente"
+  },
+  "errors": {
+    "verifyChildTasksFailed": "Error al verificar las tareas secundarias. Por favor, inténtelo de nuevo.",
+    "saveDodFailed": "Error al guardar las verificaciones de DoD. Por favor, inténtelo de nuevo.",
+    "saveDorFailed": "Error al guardar las verificaciones de DoR. Por favor, inténtelo de nuevo."
+  },
+  "aria": {
+    "priorityBoard": "Tablero de prioridad MoSCoW",
+    "backlogItem": "Elemento del backlog: {{title}}. Prioridad: {{priority}}.",
+    "draggingItem": "Arrastrando {{title}}. Actual: {{current}}. Objetivo: {{target}}."
   }
 }

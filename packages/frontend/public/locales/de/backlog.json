@@ -310,10 +310,10 @@
     "CANCELLED": "Abgebrochen"
   },
   "moscowLabels": {
-    "MUST_HAVE": "Must Have",
-    "SHOULD_HAVE": "Should Have",
-    "COULD_HAVE": "Could Have",
-    "WONT_HAVE": "Won't Have"
+    "MUST_HAVE": "Muss haben",
+    "SHOULD_HAVE": "Sollte haben",
+    "COULD_HAVE": "Könnte haben",
+    "WONT_HAVE": "Wird nicht haben"
   },
   "moscowDescriptions": {
     "MUST_HAVE": "Kritisch für die Lieferung - Unverhandelbar",
@@ -448,7 +448,48 @@
     },
     "back": "Zurück",
     "cancel": "Abbrechen",
-    "importItems": "{{count}} Eintrag{{plural}} importieren"
+    "importItems": "{{count}} Eintrag{{plural}} importieren",
+    "template": {
+      "headers": {
+        "title": "Titel",
+        "description": "Beschreibung",
+        "storyPoints": "Story Points",
+        "businessValue": "Business Value",
+        "priority": "Priorität",
+        "labels": "Labels",
+        "acceptanceCriteria": "Akzeptanzkriterien"
+      },
+      "examples": [
+        {
+          "title": "Benutzer-Authentifizierung",
+          "description": "Implementierung von OAuth2-Login mit Google und GitHub-Anbietern für sichere Benutzer-Authentifizierung",
+          "storyPoints": 8,
+          "businessValue": 13,
+          "priority": "Muss haben",
+          "labels": "auth, sicherheit, backend",
+          "acceptanceCriteria": "1. Benutzer können sich mit Google anmelden\n2. Benutzer können sich mit GitHub anmelden\n3. Sitzung läuft nach 30 Minuten ab\n4. Ungültige Anmeldung zeigt Fehlermeldung"
+        },
+        {
+          "title": "Dashboard-Diagramme",
+          "description": "Hinzufügen von interaktiven Diagrammen zum Dashboard für Sprint-Fortschritt und Team-Geschwindigkeit",
+          "storyPoints": 5,
+          "businessValue": 8,
+          "priority": "Sollte haben",
+          "labels": "frontend, diagramme, dashboard",
+          "acceptanceCriteria": "1. Sprint-Fortschrittsdiagramm wird korrekt angezeigt\n2. Team-Geschwindigkeitsdiagramm zeigt die letzten 6 Sprints\n3. Diagramme sind auf Mobilgeräten responsive"
+        },
+        {
+          "title": "E-Mail-Benachrichtigungen",
+          "description": "Konfiguration von E-Mail-Benachrichtigungen für Sprint-Start, Sprint-Ende und kritische Hindernisse",
+          "storyPoints": 3,
+          "businessValue": 5,
+          "priority": "Könnte haben",
+          "labels": "benachrichtigungen, email, backend",
+          "acceptanceCriteria": "1. E-Mail wird gesendet, wenn Sprint beginnt\n2. E-Mail wird gesendet, wenn Sprint endet\n3. E-Mail wird für kritische Hindernisse gesendet\n4. Benutzer können sich abmelden"
+        }
+      ],
+      "filename": "backlog-import-vorlage.csv"
+    }
   },
   "productGoals": {
     "active": "Aktiv",
@@ -635,5 +676,22 @@
     "readyDescription": "Bereite Einträge können gestartet oder zurück zu verfeinert gesetzt werden",
     "inProgressDescription": "Einträge in Arbeit können abgeschlossen oder zurück zu bereit gesetzt werden",
     "doneDescription": "Abgeschlossene Einträge können nicht überführt werden"
+  },
+  "success": {
+    "itemCreated": "Backlog-Element erfolgreich erstellt",
+    "itemUpdated": "Backlog-Element erfolgreich aktualisiert",
+    "itemDeleted": "Backlog-Element erfolgreich gelöscht",
+    "statusUpdated": "Status erfolgreich aktualisiert",
+    "priorityUpdated": "Priorität erfolgreich aktualisiert"
+  },
+  "errors": {
+    "verifyChildTasksFailed": "Fehler beim Überprüfen der untergeordneten Aufgaben. Bitte versuchen Sie es erneut.",
+    "saveDodFailed": "Fehler beim Speichern der DoD-Verifizierungen. Bitte versuchen Sie es erneut.",
+    "saveDorFailed": "Fehler beim Speichern der DoR-Verifizierungen. Bitte versuchen Sie es erneut."
+  },
+  "aria": {
+    "priorityBoard": "MoSCoW-Prioritätsboard",
+    "backlogItem": "Backlog-Element: {{title}}. Priorität: {{priority}}.",
+    "draggingItem": "Ziehe {{title}}. Aktuell: {{current}}. Ziel: {{target}}."
   }
 }

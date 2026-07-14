@@ -39,7 +39,7 @@ export const BoardFilters: React.FC<BoardFiltersProps> = ({
   const { t } = useTranslation('sprint');
 
   return (
-    <div className={styles['board-controls']} role="toolbar" aria-label="Board controls">
+    <div className={styles['board-controls']} role="toolbar" aria-label={t('aria.boardControls')}>
       <div className={styles['filter-group']}>
         <label htmlFor="filter-assignee" className={styles['visually-hidden']}>
           {t('boardFilters.filterByAssignee')}

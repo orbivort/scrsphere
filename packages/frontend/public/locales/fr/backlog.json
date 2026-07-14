@@ -310,10 +310,10 @@
     "CANCELLED": "Annulé"
   },
   "moscowLabels": {
-    "MUST_HAVE": "Must Have",
-    "SHOULD_HAVE": "Should Have",
-    "COULD_HAVE": "Could Have",
-    "WONT_HAVE": "Won't Have"
+    "MUST_HAVE": "Doit avoir",
+    "SHOULD_HAVE": "Devrait avoir",
+    "COULD_HAVE": "Pourrait avoir",
+    "WONT_HAVE": "N'aura pas"
   },
   "moscowDescriptions": {
     "MUST_HAVE": "Critique pour la livraison - Non négociable",
@@ -448,7 +448,48 @@
     },
     "back": "Retour",
     "cancel": "Annuler",
-    "importItems": "Importer {{count}} élément{{plural}}"
+    "importItems": "Importer {{count}} élément{{plural}}",
+    "template": {
+      "headers": {
+        "title": "Titre",
+        "description": "Description",
+        "storyPoints": "Story Points",
+        "businessValue": "Valeur Métier",
+        "priority": "Priorité",
+        "labels": "Étiquettes",
+        "acceptanceCriteria": "Critères d'acceptation"
+      },
+      "examples": [
+        {
+          "title": "Authentification utilisateur",
+          "description": "Implémenter la connexion OAuth2 avec les fournisseurs Google et GitHub pour une authentification sécurisée",
+          "storyPoints": 8,
+          "businessValue": 13,
+          "priority": "Doit avoir",
+          "labels": "auth, sécurité, backend",
+          "acceptanceCriteria": "1. Les utilisateurs peuvent se connecter avec Google\n2. Les utilisateurs peuvent se connecter avec GitHub\n3. La session expire après 30 minutes\n4. Une connexion invalide affiche un message d'erreur"
+        },
+        {
+          "title": "Graphiques du tableau de bord",
+          "description": "Ajouter des graphiques interactifs au tableau de bord pour la visualisation de la progression du sprint et de la vélocité de l'équipe",
+          "storyPoints": 5,
+          "businessValue": 8,
+          "priority": "Devrait avoir",
+          "labels": "frontend, graphiques, dashboard",
+          "acceptanceCriteria": "1. Le graphique de progression du sprint s'affiche correctement\n2. Le graphique de vélocité de l'équipe affiche les 6 derniers sprints\n3. Les graphiques sont responsives sur les appareils mobiles"
+        },
+        {
+          "title": "Notifications par email",
+          "description": "Configurer les notifications par email pour le début du sprint, la fin du sprint et les impediments critiques",
+          "storyPoints": 3,
+          "businessValue": 5,
+          "priority": "Pourrait avoir",
+          "labels": "notifications, email, backend",
+          "acceptanceCriteria": "1. Email envoyé au début du sprint\n2. Email envoyé à la fin du sprint\n3. Email envoyé pour les impediments critiques\n4. Les utilisateurs peuvent se désabonner"
+        }
+      ],
+      "filename": "modele-import-backlog.csv"
+    }
   },
   "productGoals": {
     "active": "Actif",
@@ -635,5 +676,22 @@
     "readyDescription": "Les éléments prêts peuvent être démarrés ou renvoyés à raffiné",
     "inProgressDescription": "Les éléments en cours peuvent être terminés ou renvoyés à prêt",
     "doneDescription": "Les éléments terminés ne peuvent pas être transitionnés"
+  },
+  "success": {
+    "itemCreated": "Élément du backlog créé avec succès",
+    "itemUpdated": "Élément du backlog mis à jour avec succès",
+    "itemDeleted": "Élément du backlog supprimé avec succès",
+    "statusUpdated": "Statut mis à jour avec succès",
+    "priorityUpdated": "Priorité mise à jour avec succès"
+  },
+  "errors": {
+    "verifyChildTasksFailed": "Échec de la vérification des tâches enfants. Veuillez réessayer.",
+    "saveDodFailed": "Échec de l'enregistrement des vérifications DoD. Veuillez réessayer.",
+    "saveDorFailed": "Échec de l'enregistrement des vérifications DoR. Veuillez réessayer."
+  },
+  "aria": {
+    "priorityBoard": "Tableau de priorité MoSCoW",
+    "backlogItem": "Élément du backlog: {{title}}. Priorité: {{priority}}.",
+    "draggingItem": "Glissement de {{title}}. Actuel: {{current}}. Cible: {{target}}."
   }
 }

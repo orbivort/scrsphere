@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow, isToday, isYesterday, isThisWeek } from 'date-fns';
+import type { Locale } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 
 import { useNotifications, useMarkAsRead, useMarkAllAsRead } from '../../hooks/useNotifications';
@@ -20,6 +21,9 @@ import {
   EditIcon,
   TrashIcon,
 } from '../../components/common/Icons';
+import { useI18nStore } from '../../i18n/useI18nStore';
+import { getDateLocale } from '../../utils/dateLocale';
+import { getNotificationTitle, getNotificationMessage } from '../../utils/notificationTranslation';
 
 import styles from './Notifications.module.css';
 
@@ -116,6 +120,8 @@ export const Notifications: React.FC = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState<FilterType>('all');
+  const { locale } = useI18nStore();
+  const dateLocale = getDateLocale(locale);
 
   const filters = useMemo(
     () => ({
@@ -244,21 +250,29 @@ export const Notifications: React.FC = () => {
               title={t('dateGroups.today')}
               notifications={groupedNotifications.today}
               onNotificationClick={handleNotificationClick}
+              dateLocale={dateLocale}
+              t={t}
             />
             <NotificationGroup
               title={t('dateGroups.yesterday')}
               notifications={groupedNotifications.yesterday}
               onNotificationClick={handleNotificationClick}
+              dateLocale={dateLocale}
+              t={t}
             />
             <NotificationGroup
               title={t('dateGroups.thisWeek')}
               notifications={groupedNotifications.thisWeek}
               onNotificationClick={handleNotificationClick}
+              dateLocale={dateLocale}
+              t={t}
             />
             <NotificationGroup
               title={t('dateGroups.older')}
               notifications={groupedNotifications.older}
               onNotificationClick={handleNotificationClick}
+              dateLocale={dateLocale}
+              t={t}
             />
 
             {data.pagination.totalPages > 1 && (
@@ -267,7 +281,7 @@ export const Notifications: React.FC = () => {
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
                   className={styles['pagination-button']}
-                  aria-label="Go to previous page"
+                  aria-label={t('ariaLabels.goToPreviousPage')}
                   aria-disabled={page === 1}
                   type="button"
                 >
@@ -280,7 +294,7 @@ export const Notifications: React.FC = () => {
                   onClick={() => setPage((p) => Math.min(data.pagination.totalPages, p + 1))}
                   disabled={page === data.pagination.totalPages}
                   className={styles['pagination-button']}
-                  aria-label="Go to next page"
+                  aria-label={t('ariaLabels.goToNextPage')}
                   aria-disabled={page === data.pagination.totalPages}
                   type="button"
                 >
@@ -299,12 +313,17 @@ interface NotificationGroupProps {
   title: string;
   notifications: Notification[];
   onNotificationClick: (notification: Notification) => void;
+  dateLocale: Locale;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- TFunction signature varies by i18next version
+  t: any;
 }
 
 const NotificationGroup: React.FC<NotificationGroupProps> = ({
   title,
   notifications,
   onNotificationClick,
+  dateLocale,
+  t,
 }) => {
   if (notifications.length === 0) return null;
 
@@ -325,7 +344,7 @@ const NotificationGroup: React.FC<NotificationGroupProps> = ({
                 onNotificationClick(notification);
               }
             }}
-            aria-label={`${notification.title}. ${notification.message ?? ''}. ${formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}`}
+            aria-label={`${getNotificationTitle(notification, t)}. ${getNotificationMessage(notification, t) ?? ''}. ${formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true, locale: dateLocale })}`}
           >
             <div
               className={styles['notification-icon']}
@@ -335,9 +354,13 @@ const NotificationGroup: React.FC<NotificationGroupProps> = ({
               {getNotificationIcon(notification.type)}
             </div>
             <div className={styles['notification-content']}>
-              <h3 className={styles['notification-title']}>{notification.title}</h3>
-              {notification.message && (
-                <p className={styles['notification-message']}>{notification.message}</p>
+              <h3 className={styles['notification-title']}>
+                {getNotificationTitle(notification, t)}
+              </h3>
+              {getNotificationMessage(notification, t) && (
+                <p className={styles['notification-message']}>
+                  {getNotificationMessage(notification, t)}
+                </p>
               )}
               <div className={styles['notification-meta']}>
                 {!notification.isRead && (
@@ -346,6 +369,7 @@ const NotificationGroup: React.FC<NotificationGroupProps> = ({
                 <time className={styles['notification-time']} dateTime={notification.createdAt}>
                   {formatDistanceToNow(new Date(notification.createdAt), {
                     addSuffix: true,
+                    locale: dateLocale,
                   })}
                 </time>
               </div>

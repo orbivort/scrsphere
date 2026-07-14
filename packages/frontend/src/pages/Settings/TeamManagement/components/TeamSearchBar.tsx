@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import styles from './TeamSearchBar.module.css';
 
@@ -15,6 +16,8 @@ export const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
   onSearchChange,
   isDebouncing = false,
 }) => {
+  const { t } = useTranslation('settings');
+
   return (
     <div className={styles['search-bar']}>
       <span className={styles['search-icon']}>
@@ -24,10 +27,10 @@ export const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
         type="text"
         name="team-search"
         className={styles['search-input']}
-        placeholder="Search teams by name..."
+        placeholder={t('teamSearchBar.placeholder')}
         value={search}
         onChange={(e) => onSearchChange(e.target.value)}
-        aria-label="Search teams"
+        aria-label={t('teamSearchBar.ariaLabel')}
         autoComplete="off"
       />
       {search && !isDebouncing && (
@@ -35,7 +38,7 @@ export const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
           type="button"
           className={styles['search-clear']}
           onClick={() => onSearchChange('')}
-          aria-label="Clear search"
+          aria-label={t('teamSearchBar.clearSearch')}
         >
           <CloseIcon size={14} />
         </button>

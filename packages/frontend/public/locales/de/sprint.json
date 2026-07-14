@@ -433,14 +433,14 @@
     "sprintCapacity": "Sprint-Kapazität",
     "capacityFormat": "{{used}} / {{total}} Stunden",
     "productBacklog": "Product Backlog",
-    "readyItems": "READY-Elemente",
-    "readyOnly": "✓ Nur READY",
-    "readyOnlyDescription": "Nur als READY markierte Elemente werden angezeigt",
+    "readyItems": "{{status}}-Elemente",
+    "readyOnly": "✓ Nur {{status}}",
+    "readyOnlyDescription": "Nur als {{status}} markierte Elemente werden angezeigt",
     "readyBadge": "✓ Ready",
     "readyForSprint": "Bereit für Sprint",
     "addToSprint": "+ Zum Sprint hinzufügen",
-    "noReadyItems": "Keine READY-Elemente verfügbar",
-    "noReadyItemsDescription": "Elemente müssen als READY markiert sein, um für die Sprint-Planung angezeigt zu werden",
+    "noReadyItems": "Keine {{status}}-Elemente verfügbar",
+    "noReadyItemsDescription": "Elemente müssen als {{status}} markiert sein, um für die Sprint-Planung angezeigt zu werden",
     "needsRefinement": "benötigt Raffinierung",
     "sprintBacklog": "Sprint-Backlog",
     "days": "Tage",
@@ -462,8 +462,8 @@
     "velocityRangeAria": "Velocity-Bereich von {{min}} bis {{max}} Story Points",
     "averageTitle": "Durchschnitt: {{avg}} Pkt",
     "capacityUsedAria": "{{used}} von {{total}} Stunden genutzt",
-    "readyItemsCountAria": "{{count}} READY-Elemente verfügbar",
-    "availableReadyItemsAria": "Verfügbare READY-Backlog-Elemente für Sprint-Planung",
+    "readyItemsCountAria": "{{count}} {{status}}-Elemente verfügbar",
+    "availableReadyItemsAria": "Verfügbare {{status}}-Backlog-Elemente für Sprint-Planung",
     "itemAriaLabel": "{{title}}, {{points}} Punkte, Priorität {{priority}}{{readyLabel}}{{grabbedLabel}}",
     "addItemAria": "{{title}} zum Sprint hinzufügen",
     "removeItemAria": "{{title}} aus Sprint entfernen",
@@ -657,5 +657,11 @@
       "unsavedTaskMessage": "Sie haben ungespeicherte Änderungen an der Aufgabe. Sind Sie sicher, dass Sie diese verwerfen möchten?",
       "cancel": "Abbrechen"
     }
+  },
+  "aria": {
+    "sprintMetrics": "Sprint-Metriken",
+    "filterBacklogItems": "Backlog-Elemente filtern",
+    "boardControls": "Board-Steuerung",
+    "sprintOverview": "Sprint-Überblick"
   }
 }

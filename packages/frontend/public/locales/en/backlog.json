@@ -448,7 +448,48 @@
     },
     "back": "Back",
     "cancel": "Cancel",
-    "importItems": "Import {{count}} Item{{plural}}"
+    "importItems": "Import {{count}} Item{{plural}}",
+    "template": {
+      "headers": {
+        "title": "Title",
+        "description": "Description",
+        "storyPoints": "Story Points",
+        "businessValue": "Business Value",
+        "priority": "Priority",
+        "labels": "Labels",
+        "acceptanceCriteria": "Acceptance Criteria"
+      },
+      "examples": [
+        {
+          "title": "User Authentication",
+          "description": "Implement OAuth2 login with Google and GitHub providers for secure user authentication",
+          "storyPoints": 8,
+          "businessValue": 13,
+          "priority": "Must Have",
+          "labels": "auth, security, backend",
+          "acceptanceCriteria": "1. Users can log in with Google\n2. Users can log in with GitHub\n3. Session expires after 30 minutes\n4. Invalid login shows error message"
+        },
+        {
+          "title": "Dashboard Charts",
+          "description": "Add interactive charts to the dashboard for sprint progress and team velocity visualization",
+          "storyPoints": 5,
+          "businessValue": 8,
+          "priority": "Should Have",
+          "labels": "frontend, charts, dashboard",
+          "acceptanceCriteria": "1. Sprint progress chart displays correctly\n2. Team velocity chart shows last 6 sprints\n3. Charts are responsive on mobile devices"
+        },
+        {
+          "title": "Email Notifications",
+          "description": "Configure email notifications for sprint start, sprint end, and critical impediments",
+          "storyPoints": 3,
+          "businessValue": 5,
+          "priority": "Could Have",
+          "labels": "notifications, email, backend",
+          "acceptanceCriteria": "1. Email sent when sprint starts\n2. Email sent when sprint ends\n3. Email sent for critical impediments\n4. Users can unsubscribe"
+        }
+      ],
+      "filename": "backlog-import-template.csv"
+    }
   },
   "productGoals": {
     "active": "Active",
@@ -635,5 +676,22 @@
     "readyDescription": "Ready items can be started or sent back to refined",
     "inProgressDescription": "In progress items can be completed or sent back to ready",
     "doneDescription": "Completed items cannot be transitioned"
+  },
+  "success": {
+    "itemCreated": "Backlog item created successfully",
+    "itemUpdated": "Backlog item updated successfully",
+    "itemDeleted": "Backlog item deleted successfully",
+    "statusUpdated": "Status updated successfully",
+    "priorityUpdated": "Priority updated successfully"
+  },
+  "errors": {
+    "verifyChildTasksFailed": "Failed to verify child tasks. Please try again.",
+    "saveDodFailed": "Failed to save DoD verifications. Please try again.",
+    "saveDorFailed": "Failed to save DoR verifications. Please try again."
+  },
+  "aria": {
+    "priorityBoard": "MoSCoW priority board",
+    "backlogItem": "Backlog item: {{title}}. Priority: {{priority}}.",
+    "draggingItem": "Dragging {{title}}. Current: {{current}}. Target: {{target}}."
   }
 }

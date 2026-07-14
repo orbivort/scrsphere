@@ -338,7 +338,7 @@ const BacklogContent: React.FC = () => {
         setShowValidationModal(true);
       } catch (error) {
         logger.error('Failed to fetch child tasks', undefined, { error });
-        setWorkflowError('Failed to verify child tasks. Please try again.' as string);
+        setWorkflowError(t('errors.verifyChildTasksFailed'));
       } finally {
         setIsLoadingChildTasks(false);
       }
@@ -404,7 +404,7 @@ const BacklogContent: React.FC = () => {
         await definitionService.verifyDoDForPBI(selectedItem.id, verifications);
       } catch (error) {
         logger.error('Failed to save DoD verifications', undefined, { error });
-        setWorkflowError('Failed to save DoD verifications. Please try again.' as string);
+        setWorkflowError(t('errors.saveDodFailed'));
         return;
       }
     }
@@ -419,7 +419,7 @@ const BacklogContent: React.FC = () => {
         await definitionService.verifyDoRForPBI(selectedItem.id, verifications);
       } catch (error) {
         logger.error('Failed to save DoR verifications', undefined, { error });
-        setWorkflowError('Failed to save DoR verifications. Please try again.' as string);
+        setWorkflowError(t('errors.saveDorFailed'));
         return;
       }
     }

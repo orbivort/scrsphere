@@ -1272,7 +1272,10 @@ export const SprintRetrospective: React.FC = () => {
         </div>
 
         {sprint && (
-          <section className={styles['sprint-info-section']} aria-label="Sprint Information">
+          <section
+            className={styles['sprint-info-section']}
+            aria-label={t('ariaLabels.sprintInfoRegion')}
+          >
             <div className={styles['sprint-info-header']}>
               <div className={styles['sprint-info-title']}>
                 <span className={styles['sprint-icon']} aria-hidden="true">
@@ -1417,7 +1420,7 @@ export const SprintRetrospective: React.FC = () => {
           <div
             className={styles['retro-columns']}
             role="region"
-            aria-label="Retrospective feedback columns"
+            aria-label={t('ariaLabels.columnsRegion')}
           >
             {Object.values(RetrospectiveCategory).map((category) => {
               const config = getCategoryConfig(category);

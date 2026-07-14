@@ -1,6 +1,8 @@
 import prisma from '../utils/prisma';
 import { ImpedimentStatus, NotificationType } from '../generated/prisma/client';
-import { generateUUIDv7 } from '../utils/uuid';
+import { NotificationService } from './notification.service';
+
+const notificationService = new NotificationService();
 
 interface CreateImpedimentInput {
   teamId: string;
@@ -158,19 +160,18 @@ class ImpedimentService {
         where: { id: data.reportedById },
       });
       if (reporter) {
-        await prisma.notification.create({
-          data: {
-            id: generateUUIDv7(),
-            userId: data.ownerId,
-            type: NotificationType.IMPEDIMENT_ASSIGNMENT,
-            title: `New impediment assigned: "${impediment.title}"`,
-            message: `Reported by ${reporter.firstName} ${reporter.lastName}`,
-            data: {
-              impedimentId: impediment.id,
-              teamId: impediment.teamId,
-            },
-            createdBy: data.reportedById,
+        await notificationService.createLocalized({
+          userId: data.ownerId,
+          type: NotificationType.IMPEDIMENT_ASSIGNMENT,
+          titleKey: 'impedimentAssigned',
+          messageParams: {
+            impedimentTitle: impediment.title,
           },
+          data: {
+            impedimentId: impediment.id,
+            teamId: impediment.teamId,
+          },
+          createdBy: data.reportedById,
         });
       }
     }

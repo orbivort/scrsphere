@@ -296,14 +296,20 @@ export const MoscowCard = memo<MoscowCardProps>(
      */
     const buildAriaLabel = (): string => {
       const priorityLabel = getPriorityLabel(item.priority, t as (key: string) => string);
-      let label = `Backlog item: ${item.title}. Priority: ${priorityLabel}`;
 
       if (isGrabbed && targetPriority) {
         const targetLabel = getPriorityLabel(targetPriority, t as (key: string) => string);
-        label = `Dragging ${item.title}. Current: ${priorityLabel}. Target: ${targetLabel}`;
+        return t('aria.draggingItem', {
+          title: item.title,
+          current: priorityLabel,
+          target: targetLabel,
+        });
       }
 
-      return label;
+      return t('aria.backlogItem', {
+        title: item.title,
+        priority: priorityLabel,
+      });
     };
 
     /**
