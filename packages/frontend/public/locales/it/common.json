@@ -329,6 +329,7 @@
     "authError": "La tua sessione è scaduta. Effettua nuovamente l'accesso.",
     "validationError": "Dati non validi. Verifica l'input.",
     "notFoundError": "La risorsa richiesta non è stata trovata.",
+    "i18nError": "Impossibile caricare le risorse linguistiche. Ricarica la pagina.",
     "runtimeError": "Si è verificato un errore imprevisto. Riprova.",
     "defaultError": "Si è verificato un errore. Riprova più tardi.",
     "devDetails": "Dettagli errore (Solo sviluppo)",

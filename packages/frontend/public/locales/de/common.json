@@ -329,6 +329,7 @@
     "authError": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
     "validationError": "Ungültige Daten angegeben. Bitte überprüfen Sie Ihre Eingabe.",
     "notFoundError": "Die angeforderte Ressource wurde nicht gefunden.",
+    "i18nError": "Sprachressourcen konnten nicht geladen werden. Bitte laden Sie die Seite neu.",
     "runtimeError": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
     "defaultError": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.",
     "devDetails": "Fehlerdetails (nur Entwicklung)",

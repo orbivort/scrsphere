@@ -208,6 +208,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                 to={item.path}
                 className={`${styles['nav-item']} ${location.pathname === item.path ? styles.active : ''}`}
                 onClick={handleNavItemClick}
+                data-testid={`nav-${item.labelKey.split('.').pop()}`}
                 prefetch="intent"
               >
                 <span className={styles['nav-icon']}>
@@ -408,7 +409,11 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                     <LanguageSwitcher />
                   </div>
                   <div className={styles['user-dropdown-divider']} />
-                  <button className={styles['user-dropdown-item']} onClick={logout}>
+                  <button
+                    className={styles['user-dropdown-item']}
+                    onClick={logout}
+                    data-testid="logout-button"
+                  >
                     <LogOutIcon size={16} />
                     {t('userMenu.logout')}
                   </button>

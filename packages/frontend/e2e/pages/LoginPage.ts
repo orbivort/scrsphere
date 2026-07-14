@@ -19,7 +19,8 @@ export class LoginPage extends BasePage {
     this.emailInput = page.locator('#email');
     this.passwordInput = page.locator('#password');
     this.submitButton = page.locator('button[type="submit"]');
-    this.toggleModeButton = page.locator('button[class*="mode-toggle"]');
+    // Use data-testid for locale-independent selector
+    this.toggleModeButton = page.locator('[data-testid="mode-toggle"]');
     this.firstNameInput = page.locator('#firstName');
     this.lastNameInput = page.locator('#lastName');
     this.termsCheckbox = page.locator('input[type="checkbox"]').first();
@@ -55,7 +56,7 @@ export class LoginPage extends BasePage {
         if (retries === 0) {
           try {
             const altToggle = this.page
-              .locator('button:has-text("Sign up"), button:has-text("Create")')
+              .locator('[data-testid="mode-toggle"], button[class*="mode-toggle"]')
               .first();
             await altToggle.click({ force: true });
             await this.firstNameInput.waitFor({ state: 'visible', timeout: 5000 });
@@ -92,7 +93,7 @@ export class LoginPage extends BasePage {
         if (retries === 0) {
           try {
             const altToggle = this.page
-              .locator('button:has-text("Sign in"), button:has-text("Log in")')
+              .locator('[data-testid="mode-toggle"], button[class*="mode-toggle"]')
               .first();
             await altToggle.click({ force: true });
             await expect(this.firstNameInput).not.toBeVisible({ timeout: 5000 });

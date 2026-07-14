@@ -114,7 +114,9 @@ test.describe('Dashboard Page', () => {
     await test.step('Click sprint board navigation', async () => {
       await page.waitForLoadState('domcontentloaded');
       await page.waitForTimeout(500);
-      const sprintLink = page.locator('a:has-text("Active Sprint")').first();
+      const sprintLink = page
+        .locator('[data-testid="nav-activeSprint"], a[href="/sprint"]')
+        .first();
       const isVisible = await sprintLink.isVisible().catch(() => false);
 
       if (isVisible) {

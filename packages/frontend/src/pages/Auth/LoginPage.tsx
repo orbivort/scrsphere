@@ -508,7 +508,12 @@ export const LoginPage: React.FC = () => {
 
         {/* Footer */}
         <div className={styles['auth-footer']}>
-          <button type="button" className={styles['mode-toggle']} onClick={toggleMode}>
+          <button
+            type="button"
+            className={styles['mode-toggle']}
+            onClick={toggleMode}
+            data-testid="mode-toggle"
+          >
             {isRegisterMode ? t('login.alreadyHaveAccount') : t('login.noAccountYet')}
           </button>
         </div>

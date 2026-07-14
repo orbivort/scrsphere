@@ -329,6 +329,7 @@
     "authError": "Votre session a expiré. Veuillez vous reconnecter.",
     "validationError": "Données invalides. Veuillez vérifier votre saisie.",
     "notFoundError": "La ressource demandée n'a pas été trouvée.",
+    "i18nError": "Échec du chargement des ressources linguistiques. Veuillez recharger la page.",
     "runtimeError": "Une erreur inattendue s'est produite. Veuillez réessayer.",
     "defaultError": "Une erreur s'est produite. Veuillez réessayer plus tard.",
     "devDetails": "Détails de l'erreur (Développement uniquement)",

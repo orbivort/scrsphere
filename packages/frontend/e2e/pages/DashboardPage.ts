@@ -13,7 +13,8 @@ export class DashboardPage extends BasePage {
   constructor(page: Page) {
     super(page);
     this.userMenu = page.locator('[class*="user-menu"], [data-testid="user-menu"]').first();
-    this.logoutButton = page.locator('button:has-text("Logout"), button:has-text("Log out")');
+    // Use data-testid instead of hardcoded text to be locale-independent
+    this.logoutButton = page.locator('[data-testid="logout-button"]');
     this.sprintCard = page.locator('[class*="sprint-card"]').first();
     this.burndownChart = page
       .locator('[class*="chart-container"] canvas, [class*="burndown"] canvas')
@@ -63,6 +64,7 @@ export class DashboardPage extends BasePage {
   }
 
   async navigateToSprintBoard(): Promise<void> {
-    await this.page.click('a:has-text("Sprint"), a:has-text("Board")');
+    // Use data-testid instead of hardcoded text to be locale-independent
+    await this.page.click('[data-testid="nav-activeSprint"], a[href="/sprint"]');
   }
 }

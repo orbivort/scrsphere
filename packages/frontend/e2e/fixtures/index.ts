@@ -355,36 +355,101 @@ async function mockAuthApi(page: Page) {
     });
   });
 
-  await page.route('**/api/v1/sprint/active', async (route: Route) => {
+  // =====================================================
+  // MOCK API ROUTES
+  // =====================================================
+  // Playwright route matching uses REVERSE registration order:
+  // the LAST registered route is checked FIRST.
+  // Therefore: register catch-all patterns FIRST, specific patterns LAST,
+  // so that specific routes (registered last) are checked before catch-alls.
+  //
+  // All patterns end with ** to match query parameters
+  // (e.g. ?teamId=team-1) which are part of the full URL.
+  // =====================================================
+
+  // --- Catch-all routes (registered FIRST → checked LAST) ---
+
+  await page.route('**/api/v1/workflows/**', async (route: Route) => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify({
-        success: true,
-        data: mockSprint,
-      }),
+      body: JSON.stringify({ success: true, data: [] }),
     });
   });
 
+  await page.route('**/api/v1/sprint-reviews**', async (route: Route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ success: true, data: [] }),
+    });
+  });
+
+  // Notification catch-all - must be registered BEFORE specific notification routes
+  await page.route('**/api/v1/notifications**', async (route: Route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ success: true, data: [] }),
+    });
+  });
+
+  await page.route('**/api/v1/retrospectives/**', async (route: Route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ success: true, data: [] }),
+    });
+  });
+
+  await page.route('**/api/v1/increments**', async (route: Route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ success: true, data: [] }),
+    });
+  });
+
+  await page.route('**/api/v1/reports/**', async (route: Route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ success: true, data: [] }),
+    });
+  });
+
+  await page.route('**/api/v1/daily-updates/**', async (route: Route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ success: true, data: [] }),
+    });
+  });
+
+  // Product goals catch-all - must be registered BEFORE /product-goals/active
+  await page.route('**/api/v1/product-goals**', async (route: Route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ success: true, data: [] }),
+    });
+  });
+
+  // Sprint catch-all - must be registered BEFORE specific sprint routes
+  await page.route('**/api/v1/sprints**', async (route: Route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ success: true, data: [] }),
+    });
+  });
+
+  // Tasks catch-all - must be registered BEFORE /tasks/my-tasks
   await page.route('**/api/v1/tasks**', async (route: Route) => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify({
-        success: true,
-        data: mockTasks,
-      }),
-    });
-  });
-
-  await page.route('**/api/v1/tasks/my-tasks', async (route: Route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({
-        success: true,
-        data: mockTasks,
-      }),
+      body: JSON.stringify({ success: true, data: mockTasks }),
     });
   });
 
@@ -392,10 +457,7 @@ async function mockAuthApi(page: Page) {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify({
-        success: true,
-        data: [],
-      }),
+      body: JSON.stringify({ success: true, data: [] }),
     });
   });
 
@@ -403,47 +465,41 @@ async function mockAuthApi(page: Page) {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify({
-        success: true,
-        data: mockBacklogItems,
-      }),
+      body: JSON.stringify({ success: true, data: mockBacklogItems }),
     });
   });
 
-  await page.route('**/api/v1/product-goals/active', async (route: Route) => {
+  // --- Simple routes (no catch-all conflict) ---
+
+  await page.route('**/api/v1/teams/*/members**', async (route: Route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ success: true, data: mockTeamMembers }),
+    });
+  });
+
+  await page.route('**/api/v1/teams/select-team**', async (route: Route) => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify({
         success: true,
-        data: mockActiveGoal,
+        data: {
+          id: 'team-1',
+          name: 'Test Team',
+          slug: 'test-team',
+          description: 'A test team for E2E testing',
+          createdBy: 'test-user-id',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          userRole: 'ADMIN',
+        },
       }),
     });
   });
 
-  await page.route('**/api/v1/teams/*/members', async (route: Route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({
-        success: true,
-        data: mockTeamMembers,
-      }),
-    });
-  });
-
-  await page.route('**/api/v1/sprint/*/items', async (route: Route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({
-        success: true,
-        data: mockBacklogItems.filter((item) => item.status === 'ready'),
-      }),
-    });
-  });
-
-  await page.route('**/api/v1/dor-items', async (route: Route) => {
+  await page.route('**/api/v1/dor-items**', async (route: Route) => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
@@ -457,7 +513,7 @@ async function mockAuthApi(page: Page) {
     });
   });
 
-  await page.route('**/api/v1/dod-items', async (route: Route) => {
+  await page.route('**/api/v1/dod-items**', async (route: Route) => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
@@ -471,95 +527,68 @@ async function mockAuthApi(page: Page) {
     });
   });
 
-  await page.route('**/api/v1/wip-limits', async (route: Route) => {
+  await page.route('**/api/v1/wip-limits**', async (route: Route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ success: true, data: { todo: 10, in_progress: 5, done: null } }),
+    });
+  });
+
+  // --- Specific routes (registered LAST → checked FIRST) ---
+
+  // Notification specific routes - registered AFTER catch-all so they take priority
+  await page.route('**/api/v1/config/notifications**', async (route: Route) => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify({
         success: true,
-        data: { todo: 10, in_progress: 5, done: null },
+        data: {
+          pollingIntervalMs: 30000,
+          maxPageSize: 50,
+          retentionDays: 90,
+        },
       }),
     });
   });
 
-  await page.route('**/api/v1/daily-updates/**', async (route: Route) => {
+  await page.route('**/api/v1/notifications/unread-count**', async (route: Route) => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify({
-        success: true,
-        data: [],
-      }),
+      body: JSON.stringify({ success: true, data: { count: 0 } }),
     });
   });
 
-  await page.route('**/api/v1/reports/**', async (route: Route) => {
+  // Product goals specific route - registered AFTER catch-all
+  await page.route('**/api/v1/product-goals/active**', async (route: Route) => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify({
-        success: true,
-        data: [],
-      }),
+      body: JSON.stringify({ success: true, data: mockActiveGoal }),
     });
   });
 
-  await page.route('**/api/v1/increments**', async (route: Route) => {
+  // Tasks specific route - registered AFTER catch-all
+  await page.route('**/api/v1/tasks/my-tasks**', async (route: Route) => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify({
-        success: true,
-        data: [],
-      }),
+      body: JSON.stringify({ success: true, data: mockTasks }),
     });
   });
 
-  await page.route('**/api/v1/retrospectives/**', async (route: Route) => {
+  // Sprint specific routes - registered AFTER catch-all so they take priority
+  await page.route('**/api/v1/sprints/active**', async (route: Route) => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify({
-        success: true,
-        data: [],
-      }),
+      body: JSON.stringify({ success: true, data: mockSprint }),
     });
   });
 
-  await page.route('**/api/v1/sprints**', async (route: Route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({
-        success: true,
-        data: [],
-      }),
-    });
-  });
-
-  await page.route('**/api/v1/product-goals**', async (route: Route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({
-        success: true,
-        data: [],
-      }),
-    });
-  });
-
-  await page.route('**/api/v1/sprint-reviews**', async (route: Route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({
-        success: true,
-        data: [],
-      }),
-    });
-  });
-
-  await page.route('**/api/v1/sprint/*/burndown', async (route: Route) => {
+  await page.route('**/api/v1/sprints/*/burndown**', async (route: Route) => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
@@ -574,24 +603,24 @@ async function mockAuthApi(page: Page) {
     });
   });
 
-  await page.route('**/api/v1/sprints/active', async (route: Route) => {
+  await page.route('**/api/v1/sprints/*/items**', async (route: Route) => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify({
         success: true,
-        data: mockSprint,
+        data: mockBacklogItems.filter((item) => item.status === 'ready'),
       }),
     });
   });
 
-  await page.route('**/api/v1/workflows/**', async (route: Route) => {
+  await page.route('**/api/v1/sprints/available-pbis**', async (route: Route) => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify({
         success: true,
-        data: [],
+        data: mockBacklogItems.filter((item) => item.status === 'ready'),
       }),
     });
   });

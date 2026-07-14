@@ -5,6 +5,28 @@ import { logger } from '../../../utils/logger';
 
 import styles from './ChunkErrorBoundary.module.css';
 
+/**
+ * Hardcoded English fallbacks for chunk/i18n error text.
+ * Used when `t()` is unavailable or throws.
+ */
+const FALLBACK_TEXT = {
+  title: 'Page failed to load',
+  description:
+    'A required resource could not be loaded. This may be caused by a network issue or an outdated version of the application.',
+  reload: 'Reload Page',
+} as const;
+
+function safeT(t: WithTranslation['t'], key: keyof typeof FALLBACK_TEXT): string {
+  try {
+    const i18nKey = `chunkError.${key}`;
+    // Cast t to a loose signature to bypass i18next's strict key types.
+    const result = (t as (key: string) => string)(i18nKey);
+    return result === i18nKey ? FALLBACK_TEXT[key] : result;
+  } catch {
+    return FALLBACK_TEXT[key];
+  }
+}
+
 interface Props extends WithTranslation {
   children: React.ReactNode;
   fallback?: React.ReactNode;
@@ -22,20 +44,23 @@ class ChunkErrorBoundaryClass extends Component<Props, State> {
   }
 
   static getDerivedStateFromError(error: Error): State {
-    const isChunkError =
+    const isChunkOrI18nError =
       error.message.includes('Loading chunk') ||
       error.message.includes('Loading CSS chunk') ||
-      error.name === 'ChunkLoadError';
+      error.name === 'ChunkLoadError' ||
+      // i18n namespace load failures
+      error.message.includes('loadNamespace') ||
+      error.message.includes('i18next');
 
     return {
-      hasError: isChunkError,
-      error: isChunkError ? error : null,
+      hasError: isChunkOrI18nError,
+      error: isChunkOrI18nError ? error : null,
     };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     if (this.state.hasError) {
-      logger.error('Chunk loading failed', undefined, {
+      logger.error('Resource loading failed (chunk or i18n)', undefined, {
         error,
         componentStack: errorInfo.componentStack,
       });
@@ -57,10 +82,10 @@ class ChunkErrorBoundaryClass extends Component<Props, State> {
       return (
         <div className={styles['chunk-error']} role="alert">
           <div className={styles['error-content']}>
-            <h2>{t('chunkError.title')}</h2>
-            <p>{t('chunkError.description')}</p>
+            <h2>{safeT(t, 'title')}</h2>
+            <p>{safeT(t, 'description')}</p>
             <button onClick={this.handleRetry} className="button button-primary">
-              {t('chunkError.reload')}
+              {safeT(t, 'reload')}
             </button>
           </div>
         </div>

@@ -329,6 +329,7 @@
     "authError": "Su sesión ha expirado. Por favor inicie sesión nuevamente.",
     "validationError": "Datos inválidos. Por favor verifique su entrada.",
     "notFoundError": "El recurso solicitado no fue encontrado.",
+    "i18nError": "No se pudieron cargar los recursos de idioma. Por favor recargue la página.",
     "runtimeError": "Ocurrió un error inesperado. Por favor intente nuevamente.",
     "defaultError": "Ocurrió un error. Por favor intente más tarde.",
     "devDetails": "Detalles del error (Solo desarrollo)",

@@ -325,6 +325,7 @@
     "authError": "Your session has expired. Please log in again.",
     "validationError": "Invalid data provided. Please check your input.",
     "notFoundError": "The requested resource was not found.",
+    "i18nError": "Failed to load language resources. Please reload the page.",
     "runtimeError": "An unexpected error occurred. Please try again.",
     "defaultError": "An error occurred. Please try again later.",
     "devDetails": "Error Details (Development Only)",

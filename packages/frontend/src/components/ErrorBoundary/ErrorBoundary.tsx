@@ -12,7 +12,44 @@ enum ErrorType {
   AUTH = 'AUTH',
   VALIDATION = 'VALIDATION',
   NOT_FOUND = 'NOT_FOUND',
+  I18N = 'I18N',
   RUNTIME = 'RUNTIME',
+}
+
+/**
+ * Hardcoded English fallbacks for error boundary text.
+ * These are used when `t()` fails (e.g., i18n namespace not loaded),
+ * ensuring the error boundary can always render meaningful text.
+ */
+const FALLBACK_TEXT = {
+  title: 'Something went wrong',
+  networkError: 'A network error occurred. Please check your connection.',
+  authError: 'Authentication error. Please log in again.',
+  validationError: 'The submitted data is invalid.',
+  notFoundError: 'The requested resource was not found.',
+  i18nError: 'Failed to load language resources. Please reload the page.',
+  runtimeError: 'An unexpected error occurred.',
+  defaultError: 'An error occurred.',
+  devDetails: 'Developer Details',
+  tryAgain: 'Try Again',
+  reloadPage: 'Reload Page',
+} as const;
+
+/**
+ * Safe translation wrapper that falls back to hardcoded English
+ * when `t()` is unavailable or throws (e.g., i18n not initialized).
+ */
+function safeT(t: WithTranslation['t'], key: keyof typeof FALLBACK_TEXT): string {
+  try {
+    const i18nKey = `errorBoundary.${key}`;
+    // Cast t to a loose signature to bypass i18next's strict key types.
+    // The safeT wrapper itself guarantees correctness via FALLBACK_TEXT.
+    const result = (t as (key: string) => string)(i18nKey);
+    // If t() returns the key itself (missing translation), use fallback
+    return result === i18nKey ? FALLBACK_TEXT[key] : result;
+  } catch {
+    return FALLBACK_TEXT[key];
+  }
 }
 
 interface Props extends WithTranslation {
@@ -90,6 +127,15 @@ class ErrorBoundaryClass extends Component<Props, State> {
   };
 
   private categorizeError(error: Error): ErrorType {
+    // Detect i18n resource loading failures
+    if (
+      error.message.includes('i18n') ||
+      error.message.includes('loadNamespace') ||
+      error.message.includes('failed to load') ||
+      error.message.includes('locales/')
+    ) {
+      return ErrorType.I18N;
+    }
     if (error.message.includes('Network Error') || error.message.includes('fetch')) {
       return ErrorType.NETWORK;
     }
@@ -112,18 +158,20 @@ class ErrorBoundaryClass extends Component<Props, State> {
   private getErrorMessage(error: Error): string {
     const { t } = this.props;
     switch (this.categorizeError(error)) {
+      case ErrorType.I18N:
+        return safeT(t, 'i18nError');
       case ErrorType.NETWORK:
-        return t('errorBoundary.networkError');
+        return safeT(t, 'networkError');
       case ErrorType.AUTH:
-        return t('errorBoundary.authError');
+        return safeT(t, 'authError');
       case ErrorType.VALIDATION:
-        return t('errorBoundary.validationError');
+        return safeT(t, 'validationError');
       case ErrorType.NOT_FOUND:
-        return t('errorBoundary.notFoundError');
+        return safeT(t, 'notFoundError');
       case ErrorType.RUNTIME:
-        return t('errorBoundary.runtimeError');
+        return safeT(t, 'runtimeError');
       default:
-        return t('errorBoundary.defaultError');
+        return safeT(t, 'defaultError');
     }
   }
 
@@ -142,14 +190,14 @@ class ErrorBoundaryClass extends Component<Props, State> {
             <div className={styles['error-icon']}>
               <AlertTriangleIcon size={48} />
             </div>
-            <h1 className={styles['error-title']}>{t('errorBoundary.title')}</h1>
+            <h1 className={styles['error-title']}>{safeT(t, 'title')}</h1>
             <p className={styles['error-message']}>
               {this.getErrorMessage(error ?? new Error('Unknown error'))}
             </p>
 
             {import.meta.env.DEV && error && (
               <details className={styles['error-details']}>
-                <summary>{t('errorBoundary.devDetails')}</summary>
+                <summary>{safeT(t, 'devDetails')}</summary>
                 <pre>{error.toString()}</pre>
                 {errorInfo?.componentStack && <pre>{errorInfo.componentStack}</pre>}
               </details>
@@ -161,14 +209,14 @@ class ErrorBoundaryClass extends Component<Props, State> {
                   className={`${styles['error-button']} ${styles['error-button.primary']}`}
                   onClick={this.handleRetry}
                 >
-                  {t('errorBoundary.tryAgain')}
+                  {safeT(t, 'tryAgain')}
                 </button>
               )}
               <button
                 className={`${styles['error-button']} ${styles['error-button.secondary']}`}
                 onClick={this.handleReload}
               >
-                {t('errorBoundary.reloadPage')}
+                {safeT(t, 'reloadPage')}
               </button>
             </div>
           </div>
