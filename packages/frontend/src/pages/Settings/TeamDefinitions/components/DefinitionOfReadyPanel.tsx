@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
+import { formatLocaleDate } from '@scrumooth/shared';
 
 import { LoadingState } from '../../../../components/common/Loading';
 import { ToastContainer } from '../../../../components/common/ToastContainer';
@@ -16,6 +17,7 @@ import { DefinitionEditor } from './DefinitionEditor';
 import { DOR_CATEGORIES, getCategoryColor } from './categories';
 import styles from './DefinitionOfReadyPanel.module.css';
 
+import { useI18nStore } from '@/i18n/useI18nStore';
 import { EditIcon, PlusIcon, RefreshCwIcon } from '@/components/common/Icons';
 
 /**
@@ -44,6 +46,7 @@ function getTranslatedDescription(item: DoRItem, t: TFunction<'settings'>): stri
 
 export function DefinitionOfReadyPanel(): React.JSX.Element {
   const { t } = useTranslation('settings');
+  const { locale } = useI18nStore();
   const [isEditing, setIsEditing] = useState(false);
   const queryClient = useQueryClient();
   const { currentTeam } = useTeamStore();
@@ -154,14 +157,6 @@ export function DefinitionOfReadyPanel(): React.JSX.Element {
   const activeItems = sortedItems.filter((item) => item.isActive);
   const inactiveItems = sortedItems.filter((item) => !item.isActive);
 
-  const formatDate = (dateString: string): string => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
-  };
-
   const isEmpty = items.length === 0 || (response?.data?.items.length ?? 0) === 0;
 
   if (isEmpty) {
@@ -194,7 +189,7 @@ export function DefinitionOfReadyPanel(): React.JSX.Element {
               <span className={styles['version-badge']}>v{definition?.version ?? 1}</span>
               {definition?.updatedAt && (
                 <span className={styles['updated-date']}>
-                  {t('dorPanel.lastUpdated')} {formatDate(definition.updatedAt)}
+                  {t('dorPanel.lastUpdated')} {formatLocaleDate(definition.updatedAt, locale)}
                 </span>
               )}
             </div>

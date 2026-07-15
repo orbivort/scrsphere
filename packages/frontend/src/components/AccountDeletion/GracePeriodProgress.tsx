@@ -1,9 +1,12 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { formatLocaleDate } from '@scrumooth/shared';
 
 import type { PendingDeletion } from '../../types/auth.types';
 
 import styles from './GracePeriodProgress.module.css';
+
+import { useI18nStore } from '@/i18n/useI18nStore';
 
 interface GracePeriodProgressProps {
   pendingDeletion: PendingDeletion;
@@ -11,6 +14,7 @@ interface GracePeriodProgressProps {
 
 export const GracePeriodProgress: React.FC<GracePeriodProgressProps> = ({ pendingDeletion }) => {
   const { t } = useTranslation('common');
+  const { locale } = useI18nStore();
 
   const requestedDate = new Date(pendingDeletion.requestedAt);
   const scheduledDate = new Date(pendingDeletion.scheduledDeletionAt);
@@ -24,9 +28,6 @@ export const GracePeriodProgress: React.FC<GracePeriodProgressProps> = ({ pendin
     0,
     Math.ceil((scheduledDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
   );
-
-  const formatDate = (date: Date): string =>
-    date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
 
   return (
     <div
@@ -43,13 +44,17 @@ export const GracePeriodProgress: React.FC<GracePeriodProgressProps> = ({ pendin
           <span className={styles['grace-period-date-label']}>
             {t('deleteAccount.gracePeriodProgress.requested')}
           </span>
-          <span className={styles['grace-period-date-value']}>{formatDate(requestedDate)}</span>
+          <span className={styles['grace-period-date-value']}>
+            {formatLocaleDate(requestedDate, locale, 'PPPP')}
+          </span>
         </div>
         <div className={styles['grace-period-date-item']}>
           <span className={styles['grace-period-date-label']}>
             {t('deleteAccount.gracePeriodProgress.deletionDate')}
           </span>
-          <span className={styles['grace-period-date-value']}>{formatDate(scheduledDate)}</span>
+          <span className={styles['grace-period-date-value']}>
+            {formatLocaleDate(scheduledDate, locale, 'PPPP')}
+          </span>
         </div>
         <div className={styles['grace-period-date-item']}>
           <span className={styles['grace-period-date-label']}>

@@ -13,6 +13,8 @@ export {
   formatList,
   createCollator,
   sortLocaleStrings,
+  formatDateRange,
+  formatDateRangeCompact,
 } from './formatters.js';
 
 // Backward-compatible formatDate (uses DEFAULT_LOCALE)

@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { formatLocaleDate, formatDateRange } from '@scrumooth/shared';
 
 import { apiService } from '../../services';
 import { useTeamStore, useAuthStore } from '../../store';
@@ -39,6 +40,8 @@ import { EmptyState } from '../../components/EmptyState';
 import { UnsavedChangesModal } from '../../components/common/Form/UnsavedChangesModal';
 
 import styles from './DailyScrum.module.css';
+
+import { useI18nStore } from '@/i18n/useI18nStore';
 
 const UPDATE_TEMPLATES = [
   {
@@ -99,6 +102,7 @@ export const DailyScrum: React.FC = () => {
   const { user: currentUser } = useAuthStore();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { locale } = useI18nStore();
   const {
     toasts,
     success: showSuccessToast,
@@ -579,12 +583,12 @@ export const DailyScrum: React.FC = () => {
             ? t('quickDates.today')
             : i === 1
               ? t('quickDates.yesterday')
-              : d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
+              : formatLocaleDate(d, locale, 'PP'),
         isToday: i === 0,
       });
     }
     return dates;
-  }, [t]);
+  }, [t, locale]);
 
   if (isLoading) {
     return (
@@ -839,12 +843,7 @@ export const DailyScrum: React.FC = () => {
                 <span className={styles['update-count']}>{updates.length}</span>
               </h2>
               <span className={styles['date-display']}>
-                {new Date(selectedDate).toLocaleDateString('en-US', {
-                  weekday: 'long',
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
+                {formatLocaleDate(selectedDate, locale, 'PPPP')}
               </span>
             </div>
 
@@ -1221,8 +1220,7 @@ export const DailyScrum: React.FC = () => {
               <div className={styles['sprint-info']}>
                 <span className={styles['sprint-name']}>{sprint.name}</span>
                 <span className={styles['sprint-dates']}>
-                  {new Date(sprint.startDate).toLocaleDateString()} -{' '}
-                  {new Date(sprint.endDate).toLocaleDateString()}
+                  {formatDateRange(sprint.startDate, sprint.endDate, locale)}
                 </span>
               </div>
               <div className={styles['sprint-days']}>

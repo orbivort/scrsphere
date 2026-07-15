@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { formatLocaleDate } from '@scrumooth/shared';
 
 import { TaskStatus as TaskStatusEnum, type Task, type TaskStatus } from '../../../../types';
 import { StatusSelector, type StatusConfig } from '../../../../components/StatusSelector';
@@ -15,6 +16,8 @@ import {
 
 import baseStyles from './base/ModalBase.module.css';
 import detailStyles from './TaskDetailModal.module.css';
+
+import { useI18nStore } from '@/i18n/useI18nStore';
 
 const styles = { ...baseStyles, ...detailStyles };
 
@@ -94,6 +97,7 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
   modalRef,
 }) => {
   const { t } = useTranslation('sprint');
+  const { locale } = useI18nStore();
   const isViewOnlyMode = task.status === TaskStatusEnum.DONE;
 
   // Build full TASK_STATUS_CONFIG with i18n labels
@@ -263,21 +267,13 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
               <div className={styles['detail-metadata-item']}>
                 <span className={styles['detail-metadata-label']}>{t('taskDetail.created')}</span>
                 <span className={styles['detail-metadata-value']}>
-                  {new Date(task.createdAt).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                  })}
+                  {formatLocaleDate(task.createdAt, locale)}
                 </span>
               </div>
               <div className={styles['detail-metadata-item']}>
                 <span className={styles['detail-metadata-label']}>{t('taskDetail.updated')}</span>
                 <span className={styles['detail-metadata-value']}>
-                  {new Date(task.updatedAt).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                  })}
+                  {formatLocaleDate(task.updatedAt, locale)}
                 </span>
               </div>
             </div>

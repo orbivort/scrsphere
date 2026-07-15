@@ -3,6 +3,7 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { formatLocaleDate } from '@scrumooth/shared';
 
 import { apiService } from '../../services';
 import { useTeamStore } from '../../store';
@@ -52,6 +53,7 @@ import {
 } from './components/ProductGoalModal';
 import styles from './ProductGoals.module.css';
 
+import { useI18nStore } from '@/i18n/useI18nStore';
 import {
   TargetIcon,
   CloseIcon,
@@ -111,6 +113,7 @@ const PRODUCT_GOAL_STATUS_CONFIG_BASE = {
 
 export const ProductGoalsPage: React.FC = () => {
   const { currentTeam } = useTeamStore();
+  const { locale } = useI18nStore();
   const queryClient = useQueryClient();
   const { handleError } = useApiError();
   const { t } = useTranslation('backlog');
@@ -1239,7 +1242,7 @@ export const ProductGoalsPage: React.FC = () => {
                       <span
                         className={`${styles['deadline-value']} ${daysRemaining !== null && daysRemaining < 0 ? styles.overdue : daysRemaining !== null && daysRemaining < 30 ? styles.urgent : ''}`}
                       >
-                        {new Date(goal.targetDate).toLocaleDateString()}
+                        {formatLocaleDate(goal.targetDate, locale)}
                         {daysRemaining !== null && (
                           <span className={styles['days-remaining']}>
                             (
@@ -1324,7 +1327,7 @@ export const ProductGoalsPage: React.FC = () => {
                         <td>
                           {goal.targetDate ? (
                             <div>
-                              <div>{new Date(goal.targetDate).toLocaleDateString()}</div>
+                              <div>{formatLocaleDate(goal.targetDate, locale)}</div>
                               {daysRemaining !== null && (
                                 <small className={daysRemaining < 0 ? styles.overdue : ''}>
                                   {daysRemaining < 0

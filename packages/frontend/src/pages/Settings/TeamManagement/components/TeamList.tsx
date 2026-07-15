@@ -1,9 +1,11 @@
 import React, { useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { formatLocaleDate } from '@scrumooth/shared';
 
 import styles from './TeamList.module.css';
 
 import type { Team } from '@/types/teamManagement.types';
+import { useI18nStore } from '@/i18n/useI18nStore';
 import {
   EditIcon,
   TrashIcon,
@@ -51,6 +53,7 @@ export const TeamList: React.FC<TeamListProps> = ({
   const editButtonRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
   const deleteButtonRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
   const { t } = useTranslation('settings');
+  const { locale } = useI18nStore();
 
   const handleCardKeyDown = useCallback(
     (e: React.KeyboardEvent, team: Team, index: number) => {
@@ -275,11 +278,7 @@ export const TeamList: React.FC<TeamListProps> = ({
               })}
             </span>
             <span className={styles['team-card-date']}>
-              {new Date(team.createdAt).toLocaleDateString(navigator.language, {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-              })}
+              {formatLocaleDate(team.createdAt, locale)}
             </span>
           </div>
 

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
+import { formatLocaleDate } from '@scrumooth/shared';
 
 import { LoadingState } from '../../../../components/common/Loading';
 import { ToastContainer } from '../../../../components/common/ToastContainer';
@@ -16,6 +17,7 @@ import { DefinitionEditor } from './DefinitionEditor';
 import { DOD_CATEGORIES, getCategoryColor } from './categories';
 import styles from './DefinitionOfDonePanel.module.css';
 
+import { useI18nStore } from '@/i18n/useI18nStore';
 import { EditIcon, PlusIcon, RefreshCwIcon } from '@/components/common/Icons';
 
 /**
@@ -39,6 +41,7 @@ function getTranslatedDescription(item: DoDItem, t: TFunction<'settings'>): stri
 
 export function DefinitionOfDonePanel(): React.ReactElement {
   const { t } = useTranslation('settings');
+  const { locale } = useI18nStore();
   const [isEditMode, setIsEditMode] = useState(false);
   const queryClient = useQueryClient();
   const { currentTeam } = useTeamStore();
@@ -173,14 +176,6 @@ export function DefinitionOfDonePanel(): React.ReactElement {
     );
   }
 
-  const formatDate = (dateString: string): string => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
-  };
-
   return (
     <>
       <ToastContainer toasts={toasts} onClose={removeToast} />
@@ -191,7 +186,7 @@ export function DefinitionOfDonePanel(): React.ReactElement {
             <div className={styles['version-info']}>
               <span className={styles['version-badge']}>v{definition.version}</span>
               <span className={styles['updated-info']}>
-                {t('dodPanel.lastUpdated')} {formatDate(definition.updatedAt)}
+                {t('dodPanel.lastUpdated')} {formatLocaleDate(definition.updatedAt, locale)}
               </span>
             </div>
           </div>

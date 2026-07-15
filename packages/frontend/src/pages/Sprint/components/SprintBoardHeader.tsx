@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { formatDateRange } from '@scrumooth/shared';
 
 import {
   ZapIcon,
@@ -11,6 +12,8 @@ import {
 } from '../../../components/common/Icons';
 import type { Sprint } from '../../../types';
 import styles from '../SprintBoard.module.css';
+
+import { useI18nStore } from '@/i18n/useI18nStore';
 
 export interface SprintBoardHeaderProps {
   sprint: Sprint;
@@ -34,6 +37,7 @@ export const SprintBoardHeader: React.FC<SprintBoardHeaderProps> = ({
   showBurndown,
 }) => {
   const { t } = useTranslation('sprint');
+  const { locale } = useI18nStore();
 
   return (
     <header className={styles['sprint-board-header']}>
@@ -42,8 +46,7 @@ export const SprintBoardHeader: React.FC<SprintBoardHeaderProps> = ({
           <ZapIcon size={24} aria-hidden="true" /> {sprint.name}
         </h1>
         <span className={styles['sprint-dates']}>
-          {new Date(sprint.startDate).toLocaleDateString()} -{' '}
-          {new Date(sprint.endDate).toLocaleDateString()}
+          {formatDateRange(sprint.startDate, sprint.endDate, locale)}
           <span
             className={`${styles['days-remaining']} ${daysRemaining <= 2 ? styles.warning : ''}`}
           >

@@ -1,8 +1,9 @@
-﻿import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import axios, { type AxiosError } from 'axios';
+import { formatDateRange } from '@scrumooth/shared';
 
 import { apiService } from '../../services';
 import { useToast } from '../../hooks/useToast';
@@ -22,6 +23,8 @@ import {
 } from '../../components/common/Icons';
 
 import styles from './IncrementCreate.module.css';
+
+import { useI18nStore } from '@/i18n/useI18nStore';
 
 /**
  * IncrementCreate Component
@@ -53,6 +56,7 @@ export const IncrementCreate: React.FC = () => {
   const { toasts, success, error: showError, removeToast } = useToast();
   const { currentTeam } = useTeamContext();
   const { user } = useAuthStore();
+  const { locale } = useI18nStore();
 
   const fromSprintComplete = searchParams.get('fromSprintComplete') === 'true';
   const urlSprintId = searchParams.get('sprintId') ?? '';
@@ -129,10 +133,10 @@ export const IncrementCreate: React.FC = () => {
     if (sprint && fromSprintComplete) {
       setName(`${sprint.name} Increment`);
       setDescription(
-        `Increment created from ${sprint.name} (${new Date(sprint.startDate).toLocaleDateString()} - ${new Date(sprint.endDate).toLocaleDateString()})`
+        `Increment created from ${sprint.name} (${formatDateRange(sprint.startDate, sprint.endDate, locale)})`
       );
     }
-  }, [sprint, fromSprintComplete]);
+  }, [sprint, fromSprintComplete, locale]);
 
   // Effect: Auto-select eligible PBIs that are not already in increments
   React.useEffect(() => {

@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AxiosError } from 'axios';
+import { formatLocaleDate } from '@scrumooth/shared';
 
 import { apiService } from '../../services';
 import { useTeamStore, useAuthStore } from '../../store';
@@ -43,6 +44,8 @@ import type { Team, TeamMember, ApiResponse, TeamMetrics, SprintHistoryItem } fr
 
 import { MemberCard } from './MemberCard';
 import styles from './Team.module.css';
+
+import { useI18nStore } from '@/i18n/useI18nStore';
 
 type TeamErrorType = 'no_team' | 'validation_error' | 'not_found' | 'forbidden' | 'unknown';
 
@@ -112,7 +115,8 @@ const parseTeamError = (
 };
 
 export const TeamManagement: React.FC = () => {
-  const { t, i18n } = useTranslation('team');
+  const { t } = useTranslation('team');
+  const { locale } = useI18nStore();
   const { currentTeam, setCurrentTeam, userTeamsWithRoles } = useTeamStore();
   const { user } = useAuthStore();
   const navigate = useNavigate();
@@ -769,12 +773,12 @@ export const TeamManagement: React.FC = () => {
           <div className={styles['team-meta']}>
             <span className={styles['meta-item']}>
               {t('teamInfo.created', {
-                date: new Date(team.createdAt).toLocaleDateString(i18n.language),
+                date: formatLocaleDate(team.createdAt, locale),
               })}
             </span>
             <span className={styles['meta-item']}>
               {t('teamInfo.lastUpdated', {
-                date: new Date(team.updatedAt).toLocaleDateString(i18n.language),
+                date: formatLocaleDate(team.updatedAt, locale),
               })}
             </span>
           </div>

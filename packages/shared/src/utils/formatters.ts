@@ -1,8 +1,8 @@
 import { format, parseISO, type Locale as DateFnsLocale } from 'date-fns';
-import { enUS, de, fr, es, it } from 'date-fns/locale';
+import { enGB, de, fr, es, it } from 'date-fns/locale';
 import type { Locale } from '../constants/index.js';
 
-const DATE_FNS_LOCALES: Record<Locale, DateFnsLocale> = { en: enUS, de, fr, es, it };
+const DATE_FNS_LOCALES: Record<Locale, DateFnsLocale> = { en: enGB, de, fr, es, it };
 
 function resolveDateFnsLocale(locale: Locale): DateFnsLocale {
   // Locale is a union of all keys in DATE_FNS_LOCALES, so access is always safe
@@ -58,4 +58,30 @@ export function createCollator(
 
 export function sortLocaleStrings(items: string[], locale: Locale): string[] {
   return [...items].sort(createCollator(locale).compare);
+}
+
+export function formatDateRange(
+  startDate: Date | string,
+  endDate: Date | string,
+  locale: Locale,
+  fmt = 'PP'
+): string {
+  const start = typeof startDate === 'string' ? parseISO(startDate) : startDate;
+  const end = typeof endDate === 'string' ? parseISO(endDate) : endDate;
+  const startFormatted = format(start, fmt, { locale: resolveDateFnsLocale(locale) });
+  const endFormatted = format(end, fmt, { locale: resolveDateFnsLocale(locale) });
+  return `${startFormatted} - ${endFormatted}`;
+}
+
+export function formatDateRangeCompact(
+  startDate: Date | string,
+  endDate: Date | string,
+  locale: Locale
+): string {
+  const start = typeof startDate === 'string' ? parseISO(startDate) : startDate;
+  const end = typeof endDate === 'string' ? parseISO(endDate) : endDate;
+  const fmt = 'PP';
+  const startFormatted = format(start, fmt, { locale: resolveDateFnsLocale(locale) });
+  const endFormatted = format(end, fmt, { locale: resolveDateFnsLocale(locale) });
+  return `${startFormatted} - ${endFormatted}`;
 }

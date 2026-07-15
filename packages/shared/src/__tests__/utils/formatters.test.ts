@@ -7,6 +7,8 @@ import {
   formatList,
   createCollator,
   sortLocaleStrings,
+  formatDateRange,
+  formatDateRangeCompact,
 } from '../../utils/formatters.js';
 import type { Locale } from '../../constants/index.js';
 
@@ -16,7 +18,7 @@ describe('formatters', () => {
       const date = new Date('2024-06-15T12:00:00Z');
       const result = formatDate(date, 'en');
       expect(result).toBeTruthy();
-      // PP format produces something like "Jun 15, 2024" in English
+      // PP format produces something like "15 Jun 2024" in English
       expect(result).toContain('2024');
     });
 
@@ -272,6 +274,41 @@ describe('formatters', () => {
     it('should handle single-element arrays', () => {
       const result = sortLocaleStrings(['solo'], 'en');
       expect(result).toEqual(['solo']);
+    });
+  });
+
+  describe('formatDateRange', () => {
+    it('should format a date range correctly', () => {
+      const start = new Date('2024-06-15T12:00:00Z');
+      const end = new Date('2024-06-20T12:00:00Z');
+      const result = formatDateRange(start, end, 'en');
+      expect(result).toContain('2024');
+      expect(result).toContain(' - ');
+    });
+
+    it('should use custom format string', () => {
+      const start = new Date('2024-06-15T12:00:00Z');
+      const end = new Date('2024-06-20T12:00:00Z');
+      const result = formatDateRange(start, end, 'en', 'yyyy-MM-dd');
+      expect(result).toBe('2024-06-15 - 2024-06-20');
+    });
+
+    it('should work with different locales', () => {
+      const start = new Date('2024-06-15T12:00:00Z');
+      const end = new Date('2024-06-20T12:00:00Z');
+      const enResult = formatDateRange(start, end, 'en');
+      const deResult = formatDateRange(start, end, 'de');
+      expect(enResult).not.toBe(deResult);
+    });
+  });
+
+  describe('formatDateRangeCompact', () => {
+    it('should format a compact date range', () => {
+      const start = new Date('2024-06-15T12:00:00Z');
+      const end = new Date('2024-06-20T12:00:00Z');
+      const result = formatDateRangeCompact(start, end, 'en');
+      expect(result).toContain('2024');
+      expect(result).toContain(' - ');
     });
   });
 });

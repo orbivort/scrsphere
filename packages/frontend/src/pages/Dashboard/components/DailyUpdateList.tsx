@@ -1,11 +1,14 @@
 import React, { memo } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { formatLocaleDate } from '@scrumooth/shared';
 
 import type { DailyUpdate } from '../../../types';
 import buttonStyles from '../../../components/common/Button/Button.module.css';
 
 import styles from './DailyUpdateList.module.css';
+
+import { useI18nStore } from '@/i18n/useI18nStore';
 
 interface DailyUpdateListProps {
   updates: DailyUpdate[];
@@ -16,6 +19,7 @@ interface DailyUpdateListProps {
 const DailyUpdateList: React.FC<DailyUpdateListProps> = memo(
   ({ updates, emptyMessage, showSubmitButton = false }) => {
     const { t } = useTranslation('dashboard');
+    const { locale } = useI18nStore();
 
     if (updates.length === 0) {
       return (
@@ -49,7 +53,7 @@ const DailyUpdateList: React.FC<DailyUpdateListProps> = memo(
                   : t('dailyUpdate.unknownUser')}
               </span>
               <span className={styles['update-date']}>
-                {new Date(update.updateDate).toLocaleDateString()}
+                {formatLocaleDate(update.updateDate, locale)}
               </span>
             </div>
             {update.yesterdayWork && (

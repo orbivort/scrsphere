@@ -1,13 +1,12 @@
 import React, { useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { formatDistanceToNow } from 'date-fns';
+import { formatRelativeTime } from '@scrumooth/shared';
 
 import { useNotifications, useMarkAsRead, useMarkAllAsRead } from '../../hooks/useNotifications';
 import type { Notification, NotificationType } from '../../types/notification.types';
 import { ChevronRightIcon } from '../common/Icons';
 import { useI18nStore } from '../../i18n/useI18nStore';
-import { getDateLocale } from '../../utils/dateLocale';
 import { getNotificationTitle, getNotificationMessage } from '../../utils/notificationTranslation';
 
 import styles from './NotificationPanel.module.css';
@@ -59,7 +58,6 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, on
   const { data, isLoading } = useNotifications({ limit: 10 });
   const markAsRead = useMarkAsRead();
   const { locale } = useI18nStore();
-  const dateLocale = getDateLocale(locale);
   const markAllAsRead = useMarkAllAsRead();
 
   useEffect(() => {
@@ -152,10 +150,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, on
                   </div>
                 )}
                 <div className={styles['notification-time']}>
-                  {formatDistanceToNow(new Date(notification.createdAt), {
-                    addSuffix: true,
-                    locale: dateLocale,
-                  })}
+                  {formatRelativeTime(notification.createdAt, locale)}
                 </div>
               </div>
             </div>

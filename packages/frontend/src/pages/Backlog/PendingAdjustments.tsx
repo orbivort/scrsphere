@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { formatLocaleDate } from '@scrumooth/shared';
 
 import { LoadingState } from '../../components/common/Loading';
 import { apiService } from '../../services';
@@ -20,6 +21,8 @@ import {
 
 import styles from './PendingAdjustments.module.css';
 
+import { useI18nStore } from '@/i18n/useI18nStore';
+
 interface BacklogAdjustmentWithSprint extends BacklogAdjustment {
   sprint?: {
     name: string;
@@ -33,6 +36,7 @@ interface PendingAdjustmentsProps {
 export const PendingAdjustments: React.FC<PendingAdjustmentsProps> = ({ onImplementAdd }) => {
   const { currentTeam } = useTeamStore();
   const { t } = useTranslation('backlog');
+  const { locale } = useI18nStore();
   const teamId = currentTeam?.id;
   const queryClient = useQueryClient();
   const [isExpanded, setIsExpanded] = useState(true);
@@ -61,11 +65,7 @@ export const PendingAdjustments: React.FC<PendingAdjustmentsProps> = ({ onImplem
       : adjustments.filter((a: BacklogAdjustmentWithSprint) => a.action === filter);
 
   const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
+    return formatLocaleDate(dateStr, locale);
   };
 
   const getActionConfig = (action: string) => {

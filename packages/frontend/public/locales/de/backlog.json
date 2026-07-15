@@ -67,7 +67,12 @@
     "dismiss": "Schließen",
     "stateNew": "Neu",
     "stateUnknown": "Unbekannt",
-    "unknownUser": "Unbekannter Benutzer"
+    "unknownUser": "Unbekannter Benutzer",
+    "changeReasonInitialCreation": "Initiale Erstellung des Backlog-Eintrags",
+    "changeReasonStatusUpdate": "Backlog-Eintrag Status aktualisiert",
+    "changeReasonInitialCreationBulk": "Initiale Erstellung des Backlog-Eintrags (Massenimport)",
+    "changeReasonGoalInitialCreation": "Initiale Ziel-Erstellung",
+    "changeReasonGoalStatusUpdate": "Ziel-Status aktualisiert"
   },
   "createItem": {
     "title": "Backlog-Eintrag erstellen",

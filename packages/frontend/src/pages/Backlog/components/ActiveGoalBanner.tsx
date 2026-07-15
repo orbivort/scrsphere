@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { formatLocaleDate } from '@scrumooth/shared';
 
 import { MoSCoWPriority, type ProductGoal, type ProductBacklogItem } from '../../../types';
 
@@ -7,6 +8,7 @@ import styles from './ActiveGoalBanner.module.css';
 import { GoalProgressBar } from './GoalProgressBar';
 
 import { TargetIcon } from '@/components/common/Icons';
+import { useI18nStore } from '@/i18n/useI18nStore';
 
 export interface ActiveGoalBannerProps {
   goal: ProductGoal;
@@ -24,6 +26,7 @@ export const ActiveGoalBanner: React.FC<ActiveGoalBannerProps> = ({
   totalCount,
 }) => {
   const { t } = useTranslation('backlog');
+  const { locale } = useI18nStore();
 
   return (
     <div className={styles['active-goal-banner']}>
@@ -36,7 +39,7 @@ export const ActiveGoalBanner: React.FC<ActiveGoalBannerProps> = ({
           <h2 className={styles['goal-banner-title']}>{goal.title}</h2>
           {goal.targetDate && (
             <span className={styles['goal-banner-deadline']}>
-              {t('activeGoal.target') as string}: {new Date(goal.targetDate).toLocaleDateString()}
+              {t('activeGoal.target') as string}: {formatLocaleDate(goal.targetDate, locale)}
             </span>
           )}
         </div>

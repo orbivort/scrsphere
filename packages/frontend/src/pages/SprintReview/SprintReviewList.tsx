@@ -2,9 +2,8 @@ import React, { useMemo, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { formatDateRange } from '@scrumooth/shared';
 
-import { apiService } from '../../services';
-import { useTeamStore } from '../../store';
 import {
   SprintStatus,
   IncrementStatus,
@@ -12,6 +11,8 @@ import {
   type SprintReview,
   type Increment,
 } from '../../types';
+import { useTeamStore } from '../../store';
+import { apiService } from '../../services';
 import { EmptyState } from '../../components/EmptyState';
 import { LoadingState } from '../../components/common/Loading';
 import {
@@ -25,6 +26,8 @@ import {
 
 import styles from './SprintReviewList.module.css';
 
+import { useI18nStore } from '@/i18n/useI18nStore';
+
 interface SprintWithReview extends Sprint {
   review?: SprintReview;
   increment?: Increment;
@@ -33,14 +36,7 @@ interface SprintWithReview extends Sprint {
 
 // Pure helper functions moved outside component
 const normalizeStatus = (status: string): SprintStatus => {
-  return status.toLowerCase() as SprintStatus;
-};
-
-const formatDateRange = (startDate: string, endDate: string): string => {
-  const start = new Date(startDate);
-  const end = new Date(endDate);
-  const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
-  return `${start.toLocaleDateString('en-US', options)} - ${end.toLocaleDateString('en-US', options)}, ${end.getFullYear()}`;
+  return status.toUpperCase() as SprintStatus;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- TFunction signature varies by i18next version
@@ -123,6 +119,7 @@ export const SprintReviewList: React.FC = () => {
   const { t } = useTranslation('sprint-review');
   const navigate = useNavigate();
   const { currentTeam } = useTeamStore();
+  const { locale } = useI18nStore();
   const teamId = currentTeam?.id;
 
   const { data: sprintsData, isLoading: isLoadingSprints } = useQuery({
@@ -247,7 +244,7 @@ export const SprintReviewList: React.FC = () => {
                     </div>
 
                     <div className={styles['card-date']}>
-                      {formatDateRange(sprint.startDate, sprint.endDate)}
+                      {formatDateRange(sprint.startDate, sprint.endDate, locale)}
                     </div>
 
                     {sprint.sprintGoal && (

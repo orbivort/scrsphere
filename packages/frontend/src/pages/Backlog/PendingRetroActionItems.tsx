@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { formatLocaleDate } from '@scrumooth/shared';
 
 import { LoadingState } from '../../components/common/Loading';
 import { apiService } from '../../services';
@@ -19,6 +20,8 @@ import {
 
 import styles from './PendingRetroActionItems.module.css';
 
+import { useI18nStore } from '@/i18n/useI18nStore';
+
 interface RetroActionItemWithSprint extends RetroActionItem {
   sprint?: {
     name: string;
@@ -34,6 +37,7 @@ export const PendingRetroActionItems: React.FC<PendingRetroActionItemsProps> = (
 }) => {
   const { currentTeam } = useTeamStore();
   const { t } = useTranslation('backlog');
+  const { locale } = useI18nStore();
   const teamId = currentTeam?.id;
   const queryClient = useQueryClient();
   const [isExpanded, setIsExpanded] = useState(true);
@@ -60,11 +64,7 @@ export const PendingRetroActionItems: React.FC<PendingRetroActionItemsProps> = (
     filter === 'all' ? actionItems : actionItems.filter((item) => item.status === filter);
 
   const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
+    return formatLocaleDate(dateStr, locale);
   };
 
   const getStatusConfig = (

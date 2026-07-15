@@ -3,6 +3,7 @@ import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { formatLocaleDate } from '@scrumooth/shared';
 
 import { apiService } from '../../services';
 import { useTeamStore, useAuthStore } from '../../store';
@@ -31,6 +32,7 @@ import styles from './Retrospective.module.css';
 import { CreateActionItemModal } from './CreateActionItemModal';
 
 import { AttendeesSection, type AttendeeFormData } from '@/components/AttendeesSection';
+import { useI18nStore } from '@/i18n/useI18nStore';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- TFunction signature varies by i18next version
 const BacklogHint: React.FC<{ t: any }> = ({ t }) => (
@@ -57,6 +59,7 @@ export const SprintRetrospective: React.FC = () => {
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
   const { t } = useTranslation('retrospective');
+  const { locale } = useI18nStore();
 
   const [activeCategory, setActiveCategory] = useState<RetrospectiveCategory>(
     RetrospectiveCategory.WENT_WELL
@@ -501,15 +504,6 @@ export const SprintRetrospective: React.FC = () => {
   const retrospective = retroData?.data;
 
   const isCompleted = retrospective?.status === RetrospectiveStatus.COMPLETED;
-
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('en-US', {
-      weekday: 'long',
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric',
-    });
-  };
 
   const validateActionFormField = useCallback(
     (field: string, value: string): string | undefined => {
@@ -1254,7 +1248,9 @@ export const SprintRetrospective: React.FC = () => {
               {t('backToRetrospectives')}
             </button>
             <h1 className={styles['page-title']}>{t('title')}</h1>
-            <p className={styles['retro-date']}>{formatDate(retrospective.retroDate)}</p>
+            <p className={styles['retro-date']}>
+              {formatLocaleDate(retrospective.retroDate, locale, 'PPPP')}
+            </p>
           </div>
           <div className={styles['header-actions']}>
             <span
@@ -1308,7 +1304,8 @@ export const SprintRetrospective: React.FC = () => {
                 <div className={styles['info-card-content']}>
                   <span className={styles['info-card-label']}>{t('sprintInfo.duration')}</span>
                   <span className={styles['info-card-value']}>
-                    {formatDate(sprint.startDate)} — {formatDate(sprint.endDate)}
+                    {formatLocaleDate(sprint.startDate, locale, 'PPPP')} —{' '}
+                    {formatLocaleDate(sprint.endDate, locale, 'PPPP')}
                   </span>
                   <span className={styles['info-card-sub']}>
                     {calculateDuration(sprint.startDate, sprint.endDate)}
@@ -1659,7 +1656,8 @@ export const SprintRetrospective: React.FC = () => {
                         </span>
                         {actionItem.dueDate && (
                           <span className={styles['due-date']}>
-                            {t('actionItems.due')} {formatDate(actionItem.dueDate)}
+                            {t('actionItems.due')}{' '}
+                            {formatLocaleDate(actionItem.dueDate, locale, 'PPPP')}
                           </span>
                         )}
                       </div>

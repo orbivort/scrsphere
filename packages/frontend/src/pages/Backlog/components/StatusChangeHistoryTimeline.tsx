@@ -10,11 +10,13 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { formatLocaleDate } from '@scrumooth/shared';
 
 import { apiService } from '../../../services';
 
 import styles from './StatusChangeHistoryTimeline.module.css';
 
+import { useI18nStore } from '@/i18n/useI18nStore';
 import {
   ClockIcon,
   ChevronDownIcon,
@@ -96,6 +98,7 @@ export const StatusChangeHistoryTimeline: React.FC<StatusChangeHistoryTimelinePr
   entityType,
 }) => {
   const { t } = useTranslation('backlog');
+  const { locale } = useI18nStore();
   const [isExpanded, setIsExpanded] = useState(false);
 
   const {
@@ -127,7 +130,7 @@ export const StatusChangeHistoryTimeline: React.FC<StatusChangeHistoryTimelinePr
     if (diffMins < 60) return `${diffMins}m ago`;
     if (diffHours < 24) return `${diffHours}h ago`;
     if (diffDays < 7) return `${diffDays}d ago`;
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    return formatLocaleDate(date, locale);
   };
 
   /**

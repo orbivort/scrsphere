@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { TIME } from '@scrumooth/shared';
+import { TIME, formatDateRange } from '@scrumooth/shared';
 
 import { apiService } from '../../services';
 import { useTeamStore } from '../../store';
@@ -37,6 +37,8 @@ import { EditSprintGoalModal } from './components/EditSprintGoalModal';
 import { StartSprintModal } from './components/StartSprintModal';
 import { TeamCapacityModal } from './components/TeamCapacityModal';
 import styles from './SprintPlanning.module.css';
+
+import { useI18nStore } from '@/i18n/useI18nStore';
 
 // Environment variable for backlog item limit (default: 100)
 const BACKLOG_ITEM_LIMIT = parseInt(import.meta.env.VITE_BACKLOG_ITEM_LIMIT ?? '100', 10);
@@ -198,6 +200,7 @@ export const SprintPlanning: React.FC = () => {
   const { t } = useTranslation('sprint');
   const { t: tBacklog } = useTranslation('backlog');
   const { currentTeam, userRoleInCurrentTeam } = useTeamStore();
+  const { locale } = useI18nStore();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const teamId = currentTeam?.id;
@@ -1364,8 +1367,7 @@ export const SprintPlanning: React.FC = () => {
                   <span className={styles['sprint-name']}>{selectedSprint.name}</span>
                   <span className={styles['sprint-dates']}>
                     {calculateSprintDuration()} {t('sprintPlanning.days')} (
-                    {new Date(selectedSprint.startDate).toLocaleDateString()} -{' '}
-                    {new Date(selectedSprint.endDate).toLocaleDateString()})
+                    {formatDateRange(selectedSprint.startDate, selectedSprint.endDate, locale)})
                   </span>
                 </div>
               )}

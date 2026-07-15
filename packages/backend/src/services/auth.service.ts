@@ -669,7 +669,9 @@ class AuthService {
           titleKey: 'accountDeletionScheduled',
           messageKey: 'accountDeletionScheduledMessage',
           messageParams: {
-            deletionDate: scheduledDeletionAt.toLocaleDateString(),
+            deletionDate: new Intl.DateTimeFormat('en', { dateStyle: 'long' }).format(
+              scheduledDeletionAt
+            ),
           },
           createdBy: userId,
         });
@@ -805,7 +807,9 @@ class AuthService {
       const rendered = template.render({
         firstName: user.firstName,
         email: user.email,
-        changedAt: new Date().toLocaleString(),
+        changedAt: new Intl.DateTimeFormat('en', { dateStyle: 'long', timeStyle: 'short' }).format(
+          new Date()
+        ),
         ipAddress: sessionInfo?.ipAddress,
         userAgent: sessionInfo?.userAgent,
         subject: 'Your Password Has Been Changed',
@@ -1069,7 +1073,9 @@ class AuthService {
       const rendered = template.render({
         firstName: user.firstName,
         email: user.email,
-        changedAt: new Date().toLocaleString(),
+        changedAt: new Intl.DateTimeFormat('en', { dateStyle: 'long', timeStyle: 'short' }).format(
+          new Date()
+        ),
         ipAddress: sessionInfo?.ipAddress,
         userAgent: sessionInfo?.userAgent,
         subject: 'Your Password Has Been Changed',

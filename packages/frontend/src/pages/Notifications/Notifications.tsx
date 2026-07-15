@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { formatDistanceToNow, isToday, isYesterday, isThisWeek } from 'date-fns';
-import type { Locale } from 'date-fns';
+import { isToday, isYesterday, isThisWeek } from 'date-fns';
 import { useTranslation } from 'react-i18next';
+import { formatRelativeTime, type Locale } from '@scrumooth/shared';
 
 import { useNotifications, useMarkAsRead, useMarkAllAsRead } from '../../hooks/useNotifications';
 import { NotificationType, type Notification } from '../../types/notification.types';
@@ -22,7 +22,6 @@ import {
   TrashIcon,
 } from '../../components/common/Icons';
 import { useI18nStore } from '../../i18n/useI18nStore';
-import { getDateLocale } from '../../utils/dateLocale';
 import { getNotificationTitle, getNotificationMessage } from '../../utils/notificationTranslation';
 
 import styles from './Notifications.module.css';
@@ -121,7 +120,6 @@ export const Notifications: React.FC = () => {
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState<FilterType>('all');
   const { locale } = useI18nStore();
-  const dateLocale = getDateLocale(locale);
 
   const filters = useMemo(
     () => ({
@@ -250,28 +248,28 @@ export const Notifications: React.FC = () => {
               title={t('dateGroups.today')}
               notifications={groupedNotifications.today}
               onNotificationClick={handleNotificationClick}
-              dateLocale={dateLocale}
+              locale={locale}
               t={t}
             />
             <NotificationGroup
               title={t('dateGroups.yesterday')}
               notifications={groupedNotifications.yesterday}
               onNotificationClick={handleNotificationClick}
-              dateLocale={dateLocale}
+              locale={locale}
               t={t}
             />
             <NotificationGroup
               title={t('dateGroups.thisWeek')}
               notifications={groupedNotifications.thisWeek}
               onNotificationClick={handleNotificationClick}
-              dateLocale={dateLocale}
+              locale={locale}
               t={t}
             />
             <NotificationGroup
               title={t('dateGroups.older')}
               notifications={groupedNotifications.older}
               onNotificationClick={handleNotificationClick}
-              dateLocale={dateLocale}
+              locale={locale}
               t={t}
             />
 
@@ -313,7 +311,7 @@ interface NotificationGroupProps {
   title: string;
   notifications: Notification[];
   onNotificationClick: (notification: Notification) => void;
-  dateLocale: Locale;
+  locale: Locale;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- TFunction signature varies by i18next version
   t: any;
 }
@@ -322,7 +320,7 @@ const NotificationGroup: React.FC<NotificationGroupProps> = ({
   title,
   notifications,
   onNotificationClick,
-  dateLocale,
+  locale,
   t,
 }) => {
   if (notifications.length === 0) return null;
@@ -344,7 +342,7 @@ const NotificationGroup: React.FC<NotificationGroupProps> = ({
                 onNotificationClick(notification);
               }
             }}
-            aria-label={`${getNotificationTitle(notification, t)}. ${getNotificationMessage(notification, t) ?? ''}. ${formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true, locale: dateLocale })}`}
+            aria-label={`${getNotificationTitle(notification, t)}. ${getNotificationMessage(notification, t) ?? ''}. ${formatRelativeTime(notification.createdAt, locale)}`}
           >
             <div
               className={styles['notification-icon']}
@@ -367,10 +365,7 @@ const NotificationGroup: React.FC<NotificationGroupProps> = ({
                   <span className={styles['unread-indicator']} aria-hidden="true" />
                 )}
                 <time className={styles['notification-time']} dateTime={notification.createdAt}>
-                  {formatDistanceToNow(new Date(notification.createdAt), {
-                    addSuffix: true,
-                    locale: dateLocale,
-                  })}
+                  {formatRelativeTime(notification.createdAt, locale)}
                 </time>
               </div>
             </div>

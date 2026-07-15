@@ -1,6 +1,7 @@
 import React, { lazy, Suspense } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { formatLocaleDate } from '@scrumooth/shared';
 
 import { apiService } from '../../services';
 import { useTeamStore } from '../../store';
@@ -25,6 +26,8 @@ import {
 
 import styles from './Reports.module.css';
 
+import { useI18nStore } from '@/i18n/useI18nStore';
+
 // Lazy load the VelocityChart component to reduce initial bundle size
 const VelocityChart = lazy(() =>
   import('./components/VelocityChart').then((module) => ({
@@ -39,7 +42,8 @@ interface VelocityData {
 }
 
 export const Reports: React.FC = () => {
-  const { t, i18n } = useTranslation('reports');
+  const { t } = useTranslation('reports');
+  const { locale } = useI18nStore();
   const { currentTeam } = useTeamStore();
   const teamId = currentTeam?.id;
 
@@ -72,12 +76,7 @@ export const Reports: React.FC = () => {
   });
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString(i18n.language, {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
+    return formatLocaleDate(dateString, locale);
   };
 
   const getStatusBadgeClass = (status: string) => {

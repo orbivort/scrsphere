@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { formatLocaleDate } from '@scrumooth/shared';
 
 import { apiService } from '../../../services';
 import { useTeamStore } from '../../../store';
@@ -34,6 +35,8 @@ import {
 } from '../../../components/common/Icons';
 
 import styles from './SprintConfiguration.module.css';
+
+import { useI18nStore } from '@/i18n/useI18nStore';
 
 const DURATION_I18N_KEYS: Record<
   SprintDuration,
@@ -83,6 +86,7 @@ const DURATION_I18N_KEYS: Record<
 export const SprintConfiguration: React.FC = () => {
   const { t } = useTranslation('settings');
   const { currentTeam } = useTeamStore();
+  const { locale } = useI18nStore();
   const queryClient = useQueryClient();
   const location = useLocation();
   const teamId = currentTeam?.id;
@@ -443,7 +447,8 @@ export const SprintConfiguration: React.FC = () => {
                 </div>
                 <div className={styles['sprint-item-dates']}>
                   <span className={styles['date-range']}>
-                    {formatDate(sprint.startDate)} - {formatDate(sprint.endDate)}
+                    {formatLocaleDate(sprint.startDate, locale)} -{' '}
+                    {formatLocaleDate(sprint.endDate, locale)}
                   </span>
                 </div>
                 <div className={styles['sprint-item-actions']}>
@@ -614,12 +619,14 @@ export const SprintConfiguration: React.FC = () => {
                     {generatedSprints.find((s) => s.id === showDeleteConfirm)?.name}
                   </p>
                   <p className={styles['delete-sprint-dates']}>
-                    {formatDate(
-                      generatedSprints.find((s) => s.id === showDeleteConfirm)?.startDate ?? ''
+                    {formatLocaleDate(
+                      generatedSprints.find((s) => s.id === showDeleteConfirm)?.startDate ?? '',
+                      locale
                     )}{' '}
                     -{' '}
-                    {formatDate(
-                      generatedSprints.find((s) => s.id === showDeleteConfirm)?.endDate ?? ''
+                    {formatLocaleDate(
+                      generatedSprints.find((s) => s.id === showDeleteConfirm)?.endDate ?? '',
+                      locale
                     )}
                   </p>
                 </div>
@@ -693,15 +700,6 @@ function generateSprintPreview(
   }
 
   return sprints;
-}
-
-function formatDate(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
 }
 
 function formatDateSimple(date: Date): string {

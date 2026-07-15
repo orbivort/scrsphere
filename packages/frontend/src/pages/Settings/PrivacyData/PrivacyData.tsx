@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { formatLocaleDate } from '@scrumooth/shared';
 
 import { apiService } from '../../../services';
 import { logger } from '../../../utils/logger';
@@ -7,6 +8,7 @@ import { logger } from '../../../utils/logger';
 import { DataExportButton } from './components';
 import styles from './PrivacyData.module.css';
 
+import { useI18nStore } from '@/i18n/useI18nStore';
 import { DownloadIcon, ShieldIcon, SettingsIcon, LogOutIcon } from '@/components/common/Icons';
 
 interface SessionInfo {
@@ -20,6 +22,7 @@ interface SessionInfo {
 
 export const PrivacyData: React.FC = () => {
   const { t } = useTranslation('settings');
+  const { locale } = useI18nStore();
 
   const [sessions, setSessions] = useState<SessionInfo[]>([]);
   const [sessionsLoading, setSessionsLoading] = useState(true);
@@ -86,13 +89,7 @@ export const PrivacyData: React.FC = () => {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleString(undefined, {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+    return formatLocaleDate(dateString, locale, 'PPp');
   };
 
   const parseUserAgent = (userAgent: string | null) => {

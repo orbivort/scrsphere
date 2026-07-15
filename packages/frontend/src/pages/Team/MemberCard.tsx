@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { formatLocaleDate } from '@scrumooth/shared';
 
 import type { TeamMember } from '../../types';
 import { MailIcon, TrashIcon } from '../../components/common/Icons';
 
 import { SendMessageModal } from './SendMessageModal';
 import styles from './Team.module.css';
+
+import { useI18nStore } from '@/i18n/useI18nStore';
 
 const ROLE_BADGE_CLASSES: Record<string, string> = {
   scrum_master: 'role-scrum-master',
@@ -35,7 +38,8 @@ export const MemberCard: React.FC<MemberCardProps> = ({
   isDeleting,
   viewMode = 'card',
 }) => {
-  const { t, i18n } = useTranslation('team');
+  const { t } = useTranslation('team');
+  const { locale } = useI18nStore();
   const [showMessageModal, setShowMessageModal] = useState(false);
 
   const user = member.user;
@@ -70,11 +74,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({
   };
 
   const memberSince = member.joinedAt
-    ? new Date(member.joinedAt).toLocaleDateString(i18n.language, {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      })
+    ? formatLocaleDate(member.joinedAt, locale)
     : t('memberCard.unknownDate');
 
   const handleSendMessage = () => {

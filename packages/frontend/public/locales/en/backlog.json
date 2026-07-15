@@ -67,7 +67,12 @@
     "dismiss": "Dismiss",
     "stateNew": "New",
     "stateUnknown": "Unknown",
-    "unknownUser": "Unknown User"
+    "unknownUser": "Unknown User",
+    "changeReasonInitialCreation": "Initial backlog item creation",
+    "changeReasonStatusUpdate": "Backlog item status updated",
+    "changeReasonInitialCreationBulk": "Initial backlog item creation (bulk)",
+    "changeReasonGoalInitialCreation": "Initial goal creation",
+    "changeReasonGoalStatusUpdate": "Goal status updated"
   },
   "createItem": {
     "title": "Create Backlog Item",

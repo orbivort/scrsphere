@@ -719,7 +719,8 @@ describe('StatusHistorySection Component', () => {
       await userEvent.click(button);
 
       await waitFor(() => {
-        const timeElement = screen.getByText(/\w{3} \d{1,2}, \d{4}/);
+        // Date format is "D Mon YYYY" (e.g., "5 Jul 2026")
+        const timeElement = screen.getByText(/\d{1,2} \w{3} \d{4}/);
         expect(timeElement).toBeInTheDocument();
       });
     });
@@ -918,8 +919,9 @@ describe('StatusHistorySection Component', () => {
       await userEvent.click(button);
 
       await waitFor(() => {
-        expect(screen.getByText('NEW')).toBeInTheDocument();
-        expect(screen.getByText('IN_PROGRESS')).toBeInTheDocument();
+        // Status names are now translated using i18n
+        expect(screen.getByText('New')).toBeInTheDocument();
+        expect(screen.getByText('In Progress')).toBeInTheDocument();
       });
     });
 

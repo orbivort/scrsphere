@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { formatLocaleDate, formatDateRange } from '@scrumooth/shared';
 
 import { apiService } from '../../services';
 import { useTeamStore, useAuthStore } from '../../store';
@@ -30,6 +31,7 @@ import {
   EyeIcon,
   PlusIcon,
 } from '@/components/common/Icons';
+import { useI18nStore } from '@/i18n/useI18nStore';
 
 interface SprintWithRetro extends Sprint {
   retrospective?: SprintRetrospective;
@@ -41,6 +43,7 @@ export const RetrospectiveList: React.FC = () => {
   const { currentTeam } = useTeamStore();
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
+  const { locale } = useI18nStore();
   const teamId = currentTeam?.id;
   const [creatingSprintId, setCreatingSprintId] = useState<string | null>(null);
 
@@ -76,13 +79,6 @@ export const RetrospectiveList: React.FC = () => {
       })
       .sort((a, b) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime());
   }, [sprints, retrospectives]);
-
-  const formatDateRange = (startDate: string, endDate: string) => {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
-    return `${start.toLocaleDateString('en-US', options)} - ${end.toLocaleDateString('en-US', options)}, ${end.getFullYear()}`;
-  };
 
   const getStatusConfig = (status: string): { label: string; className: string } => {
     const normalizedStatus = normalizeStatus(status);
@@ -266,7 +262,7 @@ export const RetrospectiveList: React.FC = () => {
 
                     <div className={styles['card-date']}>
                       <CalendarIcon className={styles['card-date-icon']} />
-                      {formatDateRange(sprint.startDate, sprint.endDate)}
+                      {formatDateRange(sprint.startDate, sprint.endDate, locale, 'PP')}
                     </div>
 
                     {sprint.sprintGoal && (
@@ -281,11 +277,7 @@ export const RetrospectiveList: React.FC = () => {
                         <div className={styles['retro-meta']}>
                           <span className={styles['retro-meta-item']}>
                             <CalendarIcon className={styles['retro-meta-icon']} />
-                            {new Date(sprint.retrospective.retroDate).toLocaleDateString('en-US', {
-                              month: 'short',
-                              day: 'numeric',
-                              year: 'numeric',
-                            })}
+                            {formatLocaleDate(sprint.retrospective.retroDate, locale)}
                           </span>
                           <span className={styles['retro-meta-item']}>
                             <MessageSquareIcon className={styles['retro-meta-icon']} />

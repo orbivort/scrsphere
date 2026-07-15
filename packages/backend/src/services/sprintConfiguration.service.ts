@@ -147,13 +147,15 @@ class SprintConfigurationService {
       if (startDate.getFullYear() > year) break;
 
       const formattedSprintNum = sprintNumber.toString().padStart(2, '0');
-      const formatDateSimple = (d: Date) => {
+      // Format date as ISO 8601 (YYYY-MM-DD) for unambiguous, sortable sprint names
+      const formatDateSimple = (d: Date): string => {
         const y = d.getFullYear();
         const m = String(d.getMonth() + 1).padStart(2, '0');
         const day = String(d.getDate()).padStart(2, '0');
-        return `${y}/${m}/${day}`;
+        return `${y}-${m}-${day}`;
       };
-      const dateRange = `${formatDateSimple(startDate)}-${formatDateSimple(endDate)}`;
+      // Use en-dash (U+2013) as typographically correct range separator
+      const dateRange = `${formatDateSimple(startDate)} – ${formatDateSimple(endDate)}`;
       const name = `Sprint-${durationStr}-${shortYear}${formattedSprintNum} (${dateRange})`;
 
       const sprintId = generateUUIDv7();

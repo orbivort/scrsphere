@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { formatLocaleDate } from '@scrumooth/shared';
 
 import { apiService } from '../../services';
 import { IncrementStatus, DeliveryMethod, type DoDChecklistVerification } from '../../types';
@@ -13,6 +14,7 @@ import { ToastContainer } from '../../components/common/ToastContainer';
 
 import styles from './IncrementDetail.module.css';
 
+import { useI18nStore } from '@/i18n/useI18nStore';
 import {
   AlertCircleIcon,
   ArrowLeftIcon,
@@ -32,6 +34,7 @@ const LoadingSpinnerIcon = () => <div className={styles['loading-spinner']} />;
 
 export const IncrementDetail: React.FC = () => {
   const { t } = useTranslation('increments');
+  const { locale } = useI18nStore();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -98,15 +101,6 @@ export const IncrementDetail: React.FC = () => {
       [IncrementStatus.ARCHIVED]: { bg: '#F9FAFB', text: '#9CA3AF' },
     };
     return colors[status];
-  };
-
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('en-US', {
-      weekday: 'long',
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric',
-    });
   };
 
   const handleDeliver = () => {
@@ -286,7 +280,9 @@ export const IncrementDetail: React.FC = () => {
               </div>
               <div className={styles['info-item']}>
                 <span className={styles.label}>{t('detail.overview.created')}</span>
-                <span className={styles.value}>{formatDate(increment.createdAt)}</span>
+                <span className={styles.value}>
+                  {formatLocaleDate(increment.createdAt, locale, 'PPPP')}
+                </span>
               </div>
               <div className={styles['info-item']}>
                 <span className={styles.label}>{t('detail.overview.storyPoints')}</span>
@@ -299,7 +295,9 @@ export const IncrementDetail: React.FC = () => {
               {increment.deliveredAt && (
                 <div className={styles['info-item']}>
                   <span className={styles.label}>{t('detail.overview.delivered')}</span>
-                  <span className={styles.value}>{formatDate(increment.deliveredAt)}</span>
+                  <span className={styles.value}>
+                    {formatLocaleDate(increment.deliveredAt, locale, 'PPPP')}
+                  </span>
                 </div>
               )}
               {increment.deliveryMethod && (
@@ -459,7 +457,9 @@ export const IncrementDetail: React.FC = () => {
                   <span className={styles['timeline-label']}>
                     {t('detail.timeline.incrementCreated')}
                   </span>
-                  <span className={styles['timeline-date']}>{formatDate(increment.createdAt)}</span>
+                  <span className={styles['timeline-date']}>
+                    {formatLocaleDate(increment.createdAt, locale, 'PPPP')}
+                  </span>
                 </div>
               </div>
               {increment.deliveredAt && (
@@ -475,7 +475,7 @@ export const IncrementDetail: React.FC = () => {
                         : t('detail.timeline.deliveredViaEarlyRelease')}
                     </span>
                     <span className={styles['timeline-date']}>
-                      {formatDate(increment.deliveredAt)}
+                      {formatLocaleDate(increment.deliveredAt, locale, 'PPPP')}
                     </span>
                   </div>
                 </div>

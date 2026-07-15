@@ -10,6 +10,7 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { formatLocaleDate } from '@scrumooth/shared';
 
 import { apiService } from '../../services';
 import {
@@ -24,6 +25,8 @@ import {
 } from '../common/Icons';
 
 import styles from './StatusHistorySection.module.css';
+
+import { useI18nStore } from '@/i18n/useI18nStore';
 
 /**
  * Color configuration for a status
@@ -136,13 +139,14 @@ export const StatusHistorySection: React.FC<StatusHistorySectionProps> = ({
   statusNameMap,
 }) => {
   const { t } = useTranslation('backlog');
+  const { locale } = useI18nStore();
   const [isExpanded, setIsExpanded] = useState(false);
 
   // Default title from translation if not provided
   const sectionTitle = title ?? t('statusHistory.title');
 
   /**
-   * Translates a status name using the provided mapping
+   * Translates a status name using the provided mapping or i18n keys
    */
   const getTranslatedStatusName = (statusName: string | undefined): string => {
     if (!statusName) return t('statusHistory.stateUnknown');
@@ -150,8 +154,52 @@ export const StatusHistorySection: React.FC<StatusHistorySectionProps> = ({
     if (statusNameMap?.[statusName.toUpperCase()]) {
       return statusNameMap[statusName.toUpperCase()] ?? statusName;
     }
+    // Map status names to i18n keys
+    const statusKeyMap: Record<
+      string,
+      'status.new' | 'status.refined' | 'status.ready' | 'status.inProgress' | 'status.done'
+    > = {
+      NEW: 'status.new',
+      REFINED: 'status.refined',
+      READY: 'status.ready',
+      IN_PROGRESS: 'status.inProgress',
+      DONE: 'status.done',
+      TODO: 'status.new', // TODO maps to New
+    };
+    const key = statusKeyMap[statusName.toUpperCase()];
+    if (key) {
+      return t(key);
+    }
     // Fallback to the original name
     return statusName;
+  };
+
+  /**
+   * Translates a change reason using i18n keys
+   */
+  const getTranslatedChangeReason = (reason: string | undefined): string => {
+    if (!reason) return '';
+    // Map change reason strings to i18n keys
+    const reasonKeyMap: Record<
+      string,
+      | 'statusHistory.changeReasonInitialCreation'
+      | 'statusHistory.changeReasonStatusUpdate'
+      | 'statusHistory.changeReasonInitialCreationBulk'
+      | 'statusHistory.changeReasonGoalInitialCreation'
+      | 'statusHistory.changeReasonGoalStatusUpdate'
+    > = {
+      'Initial backlog item creation': 'statusHistory.changeReasonInitialCreation',
+      'Backlog item status updated': 'statusHistory.changeReasonStatusUpdate',
+      'Initial backlog item creation (bulk)': 'statusHistory.changeReasonInitialCreationBulk',
+      'Initial goal creation': 'statusHistory.changeReasonGoalInitialCreation',
+      'Goal status updated': 'statusHistory.changeReasonGoalStatusUpdate',
+    };
+    const key = reasonKeyMap[reason];
+    if (key) {
+      return t(key);
+    }
+    // Return original if no mapping found
+    return reason;
   };
 
   // Use external data if provided, otherwise fetch from API
@@ -199,7 +247,7 @@ export const StatusHistorySection: React.FC<StatusHistorySectionProps> = ({
       return t('statusHistory.timeHoursAgo', `${diffHours}h ago`, { count: diffHours });
     if (diffDays < 7)
       return t('statusHistory.timeDaysAgo', `${diffDays}d ago`, { count: diffDays });
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    return formatLocaleDate(dateString, locale);
   };
 
   /**
@@ -416,7 +464,7 @@ export const StatusHistorySection: React.FC<StatusHistorySectionProps> = ({
                         {item.changeReason && (
                           <div className={styles['timeline-reason']}>
                             <MessageSquareIcon size={12} />
-                            <span>{item.changeReason}</span>
+                            <span>{getTranslatedChangeReason(item.changeReason)}</span>
                           </div>
                         )}
                       </div>

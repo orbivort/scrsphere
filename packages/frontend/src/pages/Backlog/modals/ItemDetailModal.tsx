@@ -1,5 +1,6 @@
 import React, { useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { formatLocaleDate } from '@scrumooth/shared';
 
 import { ItemStatus } from '../../../types';
 import { useBacklogContext } from '../context/BacklogContext';
@@ -9,6 +10,7 @@ import { MoscowBadge } from '../components/MoscowBadge';
 
 import styles from './ItemDetailModal.module.css';
 
+import { useI18nStore } from '@/i18n/useI18nStore';
 import { StatusSelector } from '@/components/StatusSelector';
 import { StatusHistorySection } from '@/components/StatusHistorySection';
 import {
@@ -50,6 +52,7 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation('backlog');
+  const { locale } = useI18nStore();
 
   const STATUS_CONFIG = getStatusConfig(t as (key: string) => string);
 
@@ -274,7 +277,7 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
                     {t('itemDetail.created') as string}
                   </span>
                   <span className={styles['metadata-value']}>
-                    {new Date(selectedItem.createdAt).toLocaleDateString()}
+                    {formatLocaleDate(selectedItem.createdAt, locale)}
                   </span>
                 </div>
               </div>
@@ -285,7 +288,7 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
                     {t('itemDetail.updated') as string}
                   </span>
                   <span className={styles['metadata-value']}>
-                    {new Date(selectedItem.updatedAt).toLocaleDateString()}
+                    {formatLocaleDate(selectedItem.updatedAt, locale)}
                   </span>
                 </div>
               </div>

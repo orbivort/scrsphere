@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { formatLocaleDate } from '@scrumooth/shared';
 
 import { apiService } from '../../services';
 import { IncrementStatus } from '../../types';
@@ -11,6 +12,7 @@ import { LoadingState } from '../../components/common/Loading';
 
 import styles from './IncrementList.module.css';
 
+import { useI18nStore } from '@/i18n/useI18nStore';
 import {
   ArchiveIcon,
   CalendarIcon,
@@ -31,6 +33,7 @@ export const IncrementList: React.FC = () => {
   const { t } = useTranslation('increments');
   const navigate = useNavigate();
   const { currentTeam } = useTeamContext();
+  const { locale } = useI18nStore();
   const [filter, setFilter] = useState<'all' | 'active' | 'delivered' | 'archived'>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -111,14 +114,6 @@ export const IncrementList: React.FC = () => {
     ) : (
       <ZapIcon size={12} />
     );
-  };
-
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
   };
 
   if (!currentTeam?.id) {
@@ -318,12 +313,12 @@ export const IncrementList: React.FC = () => {
                 <div className={styles.dates}>
                   <span>
                     <CalendarIcon size={12} />
-                    {t('dates.created')} {formatDate(increment.createdAt)}
+                    {t('dates.created')} {formatLocaleDate(increment.createdAt, locale)}
                   </span>
                   {increment.deliveredAt && (
                     <span>
                       <CheckIcon size={12} strokeWidth={3} />
-                      {t('dates.delivered')} {formatDate(increment.deliveredAt)}
+                      {t('dates.delivered')} {formatLocaleDate(increment.deliveredAt, locale)}
                     </span>
                   )}
                 </div>

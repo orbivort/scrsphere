@@ -2,6 +2,7 @@ import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { formatLocaleDate } from '@scrumooth/shared';
 
 import { apiService } from '../../services';
 import { useTeamStore } from '../../store';
@@ -32,6 +33,8 @@ import {
 
 import styles from './Impediments.module.css';
 
+import { useI18nStore } from '@/i18n/useI18nStore';
+
 const QUERY_STALE_TIME = 5 * 60 * 1000;
 const QUERY_CACHE_TIME = 10 * 60 * 1000;
 
@@ -39,6 +42,7 @@ export const Impediments: React.FC = () => {
   const { t } = useTranslation(['impediments', 'common']);
   const { currentTeam } = useTeamStore();
   const navigate = useNavigate();
+  const { locale } = useI18nStore();
   const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
 
@@ -591,7 +595,7 @@ export const Impediments: React.FC = () => {
                 <div className={styles['card-meta']}>
                   <span className={styles['meta-item']}>
                     <CalendarIcon className={styles['meta-icon']} />
-                    {new Date(impediment.createdAt).toLocaleDateString()}
+                    {formatLocaleDate(impediment.createdAt, locale)}
                   </span>
                   {impediment.sprintId && (
                     <span className={styles['meta-item']}>
@@ -890,9 +894,10 @@ export const Impediments: React.FC = () => {
                         <span className={styles['source-date']}>
                           by {effectiveSelectedImpediment.dailyUpdate.user?.firstName}{' '}
                           {effectiveSelectedImpediment.dailyUpdate.user?.lastName} on{' '}
-                          {new Date(
-                            effectiveSelectedImpediment.dailyUpdate.updateDate
-                          ).toLocaleDateString()}
+                          {formatLocaleDate(
+                            effectiveSelectedImpediment.dailyUpdate.updateDate,
+                            locale
+                          )}
                         </span>
                       </div>
                       <button
@@ -1058,7 +1063,7 @@ export const Impediments: React.FC = () => {
                   {t('detailModal.createdLabel')}
                 </label>
                 <p className={styles['detail-value']}>
-                  {new Date(effectiveSelectedImpediment.createdAt).toLocaleString()}
+                  {formatLocaleDate(effectiveSelectedImpediment.createdAt, locale, 'PPp')}
                 </p>
               </div>
             </div>

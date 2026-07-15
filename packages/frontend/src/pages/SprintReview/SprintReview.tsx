@@ -2,9 +2,8 @@ import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { formatLocaleDate } from '@scrumooth/shared';
 
-import { apiService } from '../../services';
-import { useTeamStore } from '../../store';
 import {
   IncrementStatus,
   DeliveryMethod,
@@ -17,6 +16,8 @@ import {
 import { useModalFocus } from '../../hooks/useModalFocus';
 import { useMutationErrorHandler } from '../../hooks/useMutationErrorHandler';
 import { queryKeys } from '../../hooks/queryKeys';
+import { useTeamStore } from '../../store';
+import { apiService } from '../../services';
 import { EmptyState } from '../../components/EmptyState';
 import { LoadingState } from '../../components/common/Loading';
 import {
@@ -48,6 +49,7 @@ import { AddFeedbackModal } from './AddFeedbackModal';
 import { AddBacklogAdjustmentModal } from './AddBacklogAdjustmentModal';
 import { CreateSprintReviewModal } from './CreateSprintReviewModal';
 
+import { useI18nStore } from '@/i18n/useI18nStore';
 import { AttendeesSection, type AttendeeFormData } from '@/components/AttendeesSection';
 
 const mapTeamRoleToAttendeeRole = (role?: string): string => {
@@ -124,15 +126,6 @@ const getCategoryIcon = (category: string): string => {
   return icons[category] ?? '💬';
 };
 
-const formatDate = (dateStr: string): string => {
-  return new Date(dateStr).toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  });
-};
-
 // Helper component for hint text
 const BacklogHint: React.FC<{ message: string }> = ({ message }) => (
   <div className={styles['backlog-hint']}>
@@ -151,6 +144,7 @@ export const SprintReview: React.FC = () => {
   const { currentTeam } = useTeamStore();
   const queryClient = useQueryClient();
   const { handleMutationError } = useMutationErrorHandler();
+  const { locale } = useI18nStore();
 
   const SECTION_TABS: { id: SectionType; label: string }[] = useMemo(
     () => [
@@ -695,13 +689,13 @@ export const SprintReview: React.FC = () => {
                     <div className={styles['detail-item']}>
                       <span className={styles['detail-label']}>{t('detailLabels.startDate')}</span>
                       <span className={styles['detail-value']}>
-                        {formatDate(activeSprintData.data.startDate)}
+                        {formatLocaleDate(activeSprintData.data.startDate, locale, 'PPPP')}
                       </span>
                     </div>
                     <div className={styles['detail-item']}>
                       <span className={styles['detail-label']}>{t('detailLabels.endDate')}</span>
                       <span className={styles['detail-value']}>
-                        {formatDate(activeSprintData.data.endDate)}
+                        {formatLocaleDate(activeSprintData.data.endDate, locale, 'PPPP')}
                       </span>
                     </div>
                     {activeSprintData.data.sprintGoal && (
@@ -880,7 +874,9 @@ export const SprintReview: React.FC = () => {
           <h1 className={styles['page-title']}>
             <FileTextIcon /> {t('title')}
           </h1>
-          <p className={styles['review-date']}>{formatDate(review.reviewDate)}</p>
+          <p className={styles['review-date']}>
+            {formatLocaleDate(review.reviewDate, locale, 'PPPP')}
+          </p>
         </div>
         <div className={styles['header-actions']}>
           <span className={styles['attendee-count']}>
@@ -937,8 +933,13 @@ export const SprintReview: React.FC = () => {
                 <span className={styles['meta-item']}>
                   <span className={styles['meta-label']}>{t('overview.period')}</span>
                   <span className={styles['meta-value']}>
-                    {sprint?.startDate ? formatDate(sprint.startDate) : t('overview.notSet')} —{' '}
-                    {sprint?.endDate ? formatDate(sprint.endDate) : t('overview.notSet')}
+                    {sprint?.startDate
+                      ? formatLocaleDate(sprint.startDate, locale, 'PPPP')
+                      : t('overview.notSet')}{' '}
+                    —{' '}
+                    {sprint?.endDate
+                      ? formatLocaleDate(sprint.endDate, locale, 'PPPP')
+                      : t('overview.notSet')}
                   </span>
                 </span>
               </div>
@@ -1095,7 +1096,7 @@ export const SprintReview: React.FC = () => {
                     <span className={styles['stat-label']}>{t('increment.deliveredAt')}</span>
                     <span className={styles['stat-value']}>
                       {increment.deliveredAt
-                        ? formatDate(increment.deliveredAt)
+                        ? formatLocaleDate(increment.deliveredAt, locale, 'PPPP')
                         : t('increment.notDelivered')}
                     </span>
                   </div>

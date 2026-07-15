@@ -67,7 +67,12 @@
     "dismiss": "Chiudi",
     "stateNew": "Nuovo",
     "stateUnknown": "Sconosciuto",
-    "unknownUser": "Utente sconosciuto"
+    "unknownUser": "Utente sconosciuto",
+    "changeReasonInitialCreation": "Creazione iniziale dell'elemento del backlog",
+    "changeReasonStatusUpdate": "Stato dell'elemento del backlog aggiornato",
+    "changeReasonInitialCreationBulk": "Creazione iniziale dell'elemento del backlog (importazione in massa)",
+    "changeReasonGoalInitialCreation": "Creazione iniziale dell'obiettivo",
+    "changeReasonGoalStatusUpdate": "Stato dell'obiettivo aggiornato"
   },
   "createItem": {
     "title": "Crea elemento del backlog",

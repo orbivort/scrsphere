@@ -202,6 +202,20 @@ export default tseslint.config(
       // Icon system rules - enforce shared icon usage
       'icon-rules/no-inline-svg': 'error',
       'icon-rules/prefer-icon-import': 'warn',
+      // Date formatting - enforce shared formatters
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'CallExpression[callee.property.name="toLocaleDateString"]',
+          message:
+            'Use formatLocaleDate from @scrumooth/shared instead of toLocaleDateString(). This ensures consistent locale-aware date formatting.',
+        },
+        {
+          selector: 'CallExpression[callee.property.name="toLocaleString"]',
+          message:
+            'Use formatLocaleDate from @scrumooth/shared instead of toLocaleString(). This ensures consistent locale-aware date/time formatting.',
+        },
+      ],
     },
   },
   {
