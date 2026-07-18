@@ -99,7 +99,8 @@ describe('BurndownChart', () => {
       renderWithProviders(<BurndownChart {...defaultProps} showDataTable={true} />);
 
       expect(screen.getByText('1')).toBeInTheDocument();
-      expect(screen.getByText('2026-01-01')).toBeInTheDocument();
+      // Date is now locale-formatted via formatChartDate (e.g., "1 Jan" for en locale)
+      expect(screen.getByText('1 Jan')).toBeInTheDocument();
     });
 
     it('should show variance for data points with actual values', () => {

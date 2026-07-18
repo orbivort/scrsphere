@@ -5,6 +5,7 @@ import { CharacterCounter } from '../../../components/common/Form/CharacterCount
 import { HelpPanel } from '../../../components/common/Form/HelpPanel';
 import { DraftRestorePrompt } from '../../../components/common/Form/DraftRestorePrompt';
 import { UnsavedChangesModal } from '../../../components/common/Form/UnsavedChangesModal';
+import { LocaleDateInput } from '../../../components/common/Form/LocaleDateInput';
 import type { ProductGoal } from '../../../types';
 import { useModalFocus } from '../../../hooks/useModalFocus';
 
@@ -391,23 +392,13 @@ export const ProductGoalModal: React.FC<ProductGoalModalProps> = ({
                   {t('productGoals.targetDateLabel') as string}{' '}
                   <span className={styles['required']}>*</span>
                 </label>
-                <input
+                <LocaleDateInput
                   id="target-date"
-                  type="date"
                   value={formData.targetDate}
-                  onChange={(e) => onFieldChange('targetDate', e.target.value)}
-                  onBlur={(e) => onFieldBlur('targetDate', e.target.value)}
-                  className={
-                    formErrors.targetDate && touchedFields.targetDate ? styles['input-error'] : ''
-                  }
-                  aria-invalid={
-                    formErrors.targetDate && touchedFields.targetDate ? 'true' : 'false'
-                  }
-                  aria-describedby={
-                    formErrors.targetDate && touchedFields.targetDate
-                      ? 'targetDate-error'
-                      : undefined
-                  }
+                  onChange={(value) => onFieldChange('targetDate', value)}
+                  onBlur={(value) => onFieldBlur('targetDate', value)}
+                  hasError={formErrors.targetDate && touchedFields.targetDate ? true : false}
+                  errorId="targetDate-error"
                 />
                 {formErrors.targetDate && touchedFields.targetDate && (
                   <span id="targetDate-error" className={styles['field-error']} role="alert">

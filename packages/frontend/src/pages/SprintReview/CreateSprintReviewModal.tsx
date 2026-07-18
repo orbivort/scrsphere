@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useModalFocus } from '../../hooks/useModalFocus';
 import { XIcon, AlertTriangleIcon, CheckIcon, FileTextIcon } from '../../components/common/Icons';
+import { LocaleDateInput } from '../../components/common/Form/LocaleDateInput';
 
 import styles from './CreateSprintReviewModal.module.css';
 
@@ -75,17 +76,13 @@ export const CreateSprintReviewModal: React.FC<CreateSprintReviewModalProps> = (
         <div className={styles['modal-content']}>
           <div className={styles['form-group']}>
             <label htmlFor="review-date">{t('createModal.reviewDate')}</label>
-            <input
+            <LocaleDateInput
               id="review-date"
-              type="date"
-              value={createReviewData.reviewDate}
-              onChange={(e) =>
-                setCreateReviewData({ ...createReviewData, reviewDate: e.target.value })
-              }
-              className={formErrors.reviewDate ? styles.error : ''}
-              aria-required="true"
-              aria-invalid={!!formErrors.reviewDate}
-              aria-describedby={formErrors.reviewDate ? 'review-date-error' : undefined}
+              value={createReviewData.reviewDate ?? ''}
+              onChange={(value) => setCreateReviewData({ ...createReviewData, reviewDate: value })}
+              hasError={!!formErrors.reviewDate}
+              errorId="review-date-error"
+              required
             />
             {formErrors.reviewDate && (
               <span id="review-date-error" className={styles['error-message']} role="alert">

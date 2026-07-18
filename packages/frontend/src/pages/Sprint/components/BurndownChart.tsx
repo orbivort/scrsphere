@@ -1,9 +1,12 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { formatChartDate } from '@scrumooth/shared';
 
 import type { BurndownDataPoint } from '../SprintBoard.types';
 
 import styles from './BurndownChart.module.css';
+
+import { useI18nStore } from '@/i18n/useI18nStore';
 
 export interface BurndownChartProps {
   sprintName: string;
@@ -31,6 +34,7 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({
   onClose,
 }) => {
   const { t } = useTranslation('sprint');
+  const { locale } = useI18nStore();
 
   return (
     <div
@@ -88,7 +92,7 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({
                 return (
                   <tr key={index}>
                     <td>{point.day + 1}</td>
-                    <td>{point.date}</td>
+                    <td>{formatChartDate(point.date, locale)}</td>
                     <td>{idealHours}h</td>
                     <td>{point.actual !== null ? `${actualHours}h` : t('burndownChart.noData')}</td>
                     <td>

@@ -13,7 +13,9 @@ import {
   type ChartOptions,
 } from 'chart.js';
 import { useTranslation } from 'react-i18next';
+import { formatChartDate } from '@scrumooth/shared';
 
+import { useI18nStore } from '../../../i18n/useI18nStore';
 import { logger } from '../../../utils/logger';
 
 ChartJS.register(
@@ -39,6 +41,7 @@ interface BurndownChartProps {
 
 export const BurndownChart: React.FC<BurndownChartProps> = ({ data }) => {
   const { t } = useTranslation('dashboard');
+  const { locale } = useI18nStore();
 
   const chartOptions = useMemo<ChartOptions<'line'>>(
     () => ({
@@ -132,7 +135,7 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({ data }) => {
     }
 
     return {
-      labels: dates,
+      labels: dates.map((d) => formatChartDate(d, locale)),
       datasets: [
         {
           label: t('burndown.ideal'),
@@ -152,7 +155,7 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({ data }) => {
         },
       ],
     };
-  }, [data, t]);
+  }, [data, t, locale]);
 
   const chartSummary = useMemo(() => {
     if (!data) return '';

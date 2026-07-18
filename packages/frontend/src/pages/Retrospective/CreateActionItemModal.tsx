@@ -5,6 +5,7 @@ import styles from './CreateActionItemModal.module.css';
 
 import { UnsavedChangesModal } from '@/components/common/Form/UnsavedChangesModal';
 import { AlertCircleIcon, PlusIcon, CheckIcon } from '@/components/common/Icons';
+import { LocaleDateInput } from '@/components/common/Form/LocaleDateInput';
 
 export interface TeamMember {
   id: string;
@@ -234,15 +235,15 @@ export const CreateActionItemModal: React.FC<CreateActionItemModalProps> = ({
     }
   };
 
-  const handleDueDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onFieldChange('dueDate', e.target.value);
+  const handleDueDateChange = (value: string) => {
+    onFieldChange('dueDate', value);
   };
 
-  const handleDueDateBlur = () => {
+  const handleDueDateBlur = (value: string) => {
     onFieldBlur('dueDate');
-    const error = validateField('dueDate', formData.dueDate);
+    const error = validateField('dueDate', value);
     if (error) {
-      onFieldChange('dueDate', formData.dueDate);
+      onFieldChange('dueDate', value);
     }
   };
 
@@ -400,16 +401,14 @@ export const CreateActionItemModal: React.FC<CreateActionItemModalProps> = ({
                 {t('createActionItemModal.dueDate')}
                 <span className={styles['required-indicator']}>*</span>
               </label>
-              <input
+              <LocaleDateInput
                 id="action-due-date"
-                type="date"
                 value={formData.dueDate}
                 onChange={handleDueDateChange}
                 onBlur={handleDueDateBlur}
-                min={new Date().toISOString().split('T')[0]}
-                className={styles['form-input']}
-                aria-invalid={!!hasDueDateError}
-                aria-describedby={hasDueDateError ? 'duedate-error' : undefined}
+                hasError={!!hasDueDateError}
+                errorId="duedate-error"
+                required
                 disabled={isPending}
               />
               {hasDueDateError && (

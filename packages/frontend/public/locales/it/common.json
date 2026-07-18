@@ -515,5 +515,6 @@
     "transitionError": "Non hai l'autorizzazione per eseguire questa transizione.",
     "actionError": "Non hai l'autorizzazione per eseguire questa azione.",
     "insufficientRoles": "Autorizzazioni insufficienti. Ruoli richiesti: {{roles}}"
-  }
+  },
+  "dateInput": { "clearDate": "Cancella data", "openCalendar": "Apri calendario" }
 }

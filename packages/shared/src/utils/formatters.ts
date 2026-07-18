@@ -1,5 +1,6 @@
-import { format, parseISO, type Locale as DateFnsLocale } from 'date-fns';
+import { format, parse, parseISO, isValid, type Locale as DateFnsLocale } from 'date-fns';
 import { enGB, de, fr, es, it } from 'date-fns/locale';
+import { DATE_INPUT_FORMATS } from '../constants/index.js';
 import type { Locale } from '../constants/index.js';
 
 const DATE_FNS_LOCALES: Record<Locale, DateFnsLocale> = { en: enGB, de, fr, es, it };
@@ -70,7 +71,7 @@ export function formatDateRange(
   const end = typeof endDate === 'string' ? parseISO(endDate) : endDate;
   const startFormatted = format(start, fmt, { locale: resolveDateFnsLocale(locale) });
   const endFormatted = format(end, fmt, { locale: resolveDateFnsLocale(locale) });
-  return `${startFormatted} - ${endFormatted}`;
+  return `${startFormatted}\u2013${endFormatted}`;
 }
 
 export function formatDateRangeCompact(
@@ -83,5 +84,120 @@ export function formatDateRangeCompact(
   const fmt = 'PP';
   const startFormatted = format(start, fmt, { locale: resolveDateFnsLocale(locale) });
   const endFormatted = format(end, fmt, { locale: resolveDateFnsLocale(locale) });
-  return `${startFormatted} - ${endFormatted}`;
+  return `${startFormatted}\u2013${endFormatted}`;
+}
+
+/**
+ * Format a date for display in a date input field using locale-specific format
+ * @param date - Date to format (Date object or ISO string)
+ * @param locale - Target locale
+ * @returns Formatted date string in locale-specific format (e.g., '15.06.2024' for German)
+ */
+export function formatDateForInput(date: Date | string, locale: Locale): string {
+  const d = typeof date === 'string' ? parseISO(date) : date;
+  if (!isValid(d)) {
+    return '';
+  }
+  const formatStr = DATE_INPUT_FORMATS[locale];
+  return format(d, formatStr, { locale: resolveDateFnsLocale(locale) });
+}
+
+/**
+ * Parse a locale-formatted date string from an input field into ISO format
+ * @param dateString - Date string in locale-specific format
+ * @param locale - Source locale
+ * @returns ISO date string (YYYY-MM-DD) or empty string if invalid
+ */
+export function parseDateFromInput(dateString: string, locale: Locale): string {
+  if (!dateString || dateString.trim() === '') {
+    return '';
+  }
+
+  const formatStr = DATE_INPUT_FORMATS[locale];
+  const dateFnsLocale = resolveDateFnsLocale(locale);
+
+  try {
+    const parsed = parse(dateString, formatStr, new Date(), { locale: dateFnsLocale });
+    if (isValid(parsed)) {
+      // Return ISO format YYYY-MM-DD
+      return format(parsed, 'yyyy-MM-dd');
+    }
+    return '';
+  } catch {
+    return '';
+  }
+}
+
+/**
+ * Validate if a date string matches the locale-specific format
+ * @param dateString - Date string to validate
+ * @param locale - Target locale
+ * @returns True if valid, false otherwise
+ */
+export function isValidDateForLocale(dateString: string, locale: Locale): boolean {
+  if (!dateString || dateString.trim() === '') {
+    return false;
+  }
+
+  const formatStr = DATE_INPUT_FORMATS[locale];
+  const dateFnsLocale = resolveDateFnsLocale(locale);
+
+  try {
+    const parsed = parse(dateString, formatStr, new Date(), { locale: dateFnsLocale });
+    return isValid(parsed);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Format a time for display using locale-specific conventions.
+ * All locales use 24-hour format, aligning with the enGB date-fns locale
+ * (British English defaults to 24-hour in business/technical contexts).
+ * The target organization is European, where 24-hour time is the standard.
+ * @param date - Date to format (Date object or ISO string)
+ * @param locale - Target locale
+ * @returns Formatted time string in 24-hour format (e.g., '14:30')
+ */
+export function formatTime(date: Date | string, locale: Locale): string {
+  const d = typeof date === 'string' ? parseISO(date) : date;
+  return d.toLocaleTimeString(locale, {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+}
+
+/**
+ * Format a date and time for display using locale-specific conventions.
+ * Combines date-fns locale-aware date formatting with Intl time formatting.
+ * @param date - Date to format (Date object or ISO string)
+ * @param locale - Target locale
+ * @param dateFormat - date-fns format string for the date part (default: 'PP')
+ * @returns Formatted date-time string (e.g., '15. Jun. 2024, 14:30' for German)
+ */
+export function formatDateTime(
+  date: Date | string,
+  locale: Locale,
+  dateFormat: string = 'PP'
+): string {
+  const d = typeof date === 'string' ? parseISO(date) : date;
+  const dateStr = format(d, dateFormat, { locale: resolveDateFnsLocale(locale) });
+  const timeStr = formatTime(d, locale);
+  return `${dateStr}, ${timeStr}`;
+}
+
+/**
+ * Format a date for chart axis labels using a compact, locale-aware format.
+ * Falls back to the raw string if the date is invalid.
+ * @param date - Date to format (Date object or ISO string)
+ * @param locale - Target locale
+ * @returns Compact formatted date string (e.g., '15 Jun' for English, '15. Jun' for German)
+ */
+export function formatChartDate(date: Date | string, locale: Locale): string {
+  const d = typeof date === 'string' ? parseISO(date) : date;
+  if (!isValid(d)) {
+    return typeof date === 'string' ? date : '';
+  }
+  return format(d, 'd MMM', { locale: resolveDateFnsLocale(locale) });
 }

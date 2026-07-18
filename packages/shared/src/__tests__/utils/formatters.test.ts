@@ -9,8 +9,14 @@ import {
   sortLocaleStrings,
   formatDateRange,
   formatDateRangeCompact,
+  formatDateForInput,
+  parseDateFromInput,
+  isValidDateForLocale,
+  formatTime,
+  formatDateTime,
+  formatChartDate,
 } from '../../utils/formatters.js';
-import type { Locale } from '../../constants/index.js';
+import { DATE_INPUT_FORMATS, DATE_FORMAT_EXAMPLES, type Locale } from '../../constants/index.js';
 
 describe('formatters', () => {
   describe('formatDate', () => {
@@ -283,14 +289,14 @@ describe('formatters', () => {
       const end = new Date('2024-06-20T12:00:00Z');
       const result = formatDateRange(start, end, 'en');
       expect(result).toContain('2024');
-      expect(result).toContain(' - ');
+      expect(result).toContain('\u2013');
     });
 
     it('should use custom format string', () => {
       const start = new Date('2024-06-15T12:00:00Z');
       const end = new Date('2024-06-20T12:00:00Z');
       const result = formatDateRange(start, end, 'en', 'yyyy-MM-dd');
-      expect(result).toBe('2024-06-15 - 2024-06-20');
+      expect(result).toBe('2024-06-15\u20132024-06-20');
     });
 
     it('should work with different locales', () => {
@@ -308,7 +314,234 @@ describe('formatters', () => {
       const end = new Date('2024-06-20T12:00:00Z');
       const result = formatDateRangeCompact(start, end, 'en');
       expect(result).toContain('2024');
-      expect(result).toContain(' - ');
+      expect(result).toContain('\u2013');
+    });
+  });
+
+  describe('formatDateForInput', () => {
+    it('should format date in English format (dd/MM/yyyy)', () => {
+      const date = new Date('2024-06-15T12:00:00Z');
+      const result = formatDateForInput(date, 'en');
+      expect(result).toBe('15/06/2024');
+    });
+
+    it('should format date in German format (dd.MM.yyyy)', () => {
+      const date = new Date('2024-06-15T12:00:00Z');
+      const result = formatDateForInput(date, 'de');
+      expect(result).toBe('15.06.2024');
+    });
+
+    it('should format date in French format (dd/MM/yyyy)', () => {
+      const date = new Date('2024-06-15T12:00:00Z');
+      const result = formatDateForInput(date, 'fr');
+      expect(result).toBe('15/06/2024');
+    });
+
+    it('should format date in Spanish format (dd/MM/yyyy)', () => {
+      const date = new Date('2024-06-15T12:00:00Z');
+      const result = formatDateForInput(date, 'es');
+      expect(result).toBe('15/06/2024');
+    });
+
+    it('should format date in Italian format (dd/MM/yyyy)', () => {
+      const date = new Date('2024-06-15T12:00:00Z');
+      const result = formatDateForInput(date, 'it');
+      expect(result).toBe('15/06/2024');
+    });
+
+    it('should accept ISO date string', () => {
+      const result = formatDateForInput('2024-06-15', 'en');
+      expect(result).toBe('15/06/2024');
+    });
+
+    it('should return empty string for invalid date', () => {
+      const result = formatDateForInput('invalid', 'en');
+      expect(result).toBe('');
+    });
+
+    it('should return empty string for empty input', () => {
+      const result = formatDateForInput('', 'en');
+      expect(result).toBe('');
+    });
+  });
+
+  describe('parseDateFromInput', () => {
+    it('should parse English format (dd/MM/yyyy) to ISO', () => {
+      const result = parseDateFromInput('15/06/2024', 'en');
+      expect(result).toBe('2024-06-15');
+    });
+
+    it('should parse German format (dd.MM.yyyy) to ISO', () => {
+      const result = parseDateFromInput('15.06.2024', 'de');
+      expect(result).toBe('2024-06-15');
+    });
+
+    it('should parse French format (dd/MM/yyyy) to ISO', () => {
+      const result = parseDateFromInput('15/06/2024', 'fr');
+      expect(result).toBe('2024-06-15');
+    });
+
+    it('should parse Spanish format (dd/MM/yyyy) to ISO', () => {
+      const result = parseDateFromInput('15/06/2024', 'es');
+      expect(result).toBe('2024-06-15');
+    });
+
+    it('should parse Italian format (dd/MM/yyyy) to ISO', () => {
+      const result = parseDateFromInput('15/06/2024', 'it');
+      expect(result).toBe('2024-06-15');
+    });
+
+    it('should return empty string for invalid format', () => {
+      const result = parseDateFromInput('2024-06-15', 'en');
+      expect(result).toBe('');
+    });
+
+    it('should return empty string for empty input', () => {
+      const result = parseDateFromInput('', 'en');
+      expect(result).toBe('');
+    });
+
+    it('should handle edge case dates', () => {
+      const result = parseDateFromInput('01/01/2024', 'en');
+      expect(result).toBe('2024-01-01');
+    });
+  });
+
+  describe('isValidDateForLocale', () => {
+    it('should validate English format correctly', () => {
+      expect(isValidDateForLocale('15/06/2024', 'en')).toBe(true);
+      expect(isValidDateForLocale('2024-06-15', 'en')).toBe(false);
+      expect(isValidDateForLocale('invalid', 'en')).toBe(false);
+    });
+
+    it('should validate German format correctly', () => {
+      expect(isValidDateForLocale('15.06.2024', 'de')).toBe(true);
+      expect(isValidDateForLocale('15/06/2024', 'de')).toBe(false);
+    });
+
+    it('should return false for empty string', () => {
+      expect(isValidDateForLocale('', 'en')).toBe(false);
+    });
+  });
+
+  describe('DATE_INPUT_FORMATS', () => {
+    it('should have format for all supported locales', () => {
+      const locales: Locale[] = ['en', 'de', 'fr', 'es', 'it'];
+      for (const locale of locales) {
+        expect(DATE_INPUT_FORMATS[locale]).toBeTruthy();
+        expect(typeof DATE_INPUT_FORMATS[locale]).toBe('string');
+      }
+    });
+
+    it('should use correct separators', () => {
+      expect(DATE_INPUT_FORMATS.en).toContain('/');
+      expect(DATE_INPUT_FORMATS.de).toContain('.');
+      expect(DATE_INPUT_FORMATS.fr).toContain('/');
+      expect(DATE_INPUT_FORMATS.es).toContain('/');
+      expect(DATE_INPUT_FORMATS.it).toContain('/');
+    });
+  });
+
+  describe('DATE_FORMAT_EXAMPLES', () => {
+    it('should have examples for all supported locales', () => {
+      const locales: Locale[] = ['en', 'de', 'fr', 'es', 'it'];
+      for (const locale of locales) {
+        expect(DATE_FORMAT_EXAMPLES[locale]).toBeTruthy();
+        expect(typeof DATE_FORMAT_EXAMPLES[locale]).toBe('string');
+      }
+    });
+  });
+
+  describe('formatTime', () => {
+    it('should format time in 24-hour format for English locale', () => {
+      const date = new Date('2024-06-15T14:30:00Z');
+      const result = formatTime(date, 'en');
+      expect(result).not.toMatch(/AM|PM/);
+      expect(result).toContain(':');
+    });
+
+    it('should format time in 24-hour format for German locale', () => {
+      const date = new Date('2024-06-15T14:30:00Z');
+      const result = formatTime(date, 'de');
+      expect(result).not.toMatch(/AM|PM/);
+      expect(result).toContain(':');
+    });
+
+    it('should format time in 24-hour format for French locale', () => {
+      const date = new Date('2024-06-15T14:30:00Z');
+      const result = formatTime(date, 'fr');
+      expect(result).not.toMatch(/AM|PM/);
+    });
+
+    it('should format time in 24-hour format for Spanish locale', () => {
+      const date = new Date('2024-06-15T14:30:00Z');
+      const result = formatTime(date, 'es');
+      expect(result).not.toMatch(/AM|PM/);
+    });
+
+    it('should format time in 24-hour format for Italian locale', () => {
+      const date = new Date('2024-06-15T14:30:00Z');
+      const result = formatTime(date, 'it');
+      expect(result).not.toMatch(/AM|PM/);
+    });
+
+    it('should accept ISO string input', () => {
+      const result = formatTime('2024-06-15T14:30:00Z', 'de');
+      expect(result).toContain(':');
+    });
+  });
+
+  describe('formatDateTime', () => {
+    it('should combine date and time for English locale', () => {
+      const date = new Date('2024-06-15T14:30:00Z');
+      const result = formatDateTime(date, 'en');
+      expect(result).toContain('2024');
+      expect(result).toContain(',');
+    });
+
+    it('should combine date and time for German locale with 24h time', () => {
+      const date = new Date('2024-06-15T14:30:00Z');
+      const result = formatDateTime(date, 'de');
+      expect(result).toContain('2024');
+      expect(result).not.toMatch(/AM|PM/);
+    });
+
+    it('should accept custom date format', () => {
+      const date = new Date('2024-06-15T14:30:00Z');
+      const result = formatDateTime(date, 'en', 'yyyy-MM-dd');
+      expect(result).toContain('2024-06-15');
+    });
+
+    it('should accept ISO string input', () => {
+      const result = formatDateTime('2024-06-15T14:30:00Z', 'en');
+      expect(result).toContain('2024');
+    });
+  });
+
+  describe('formatChartDate', () => {
+    it('should format date in compact format for English locale', () => {
+      const date = new Date('2024-06-15T12:00:00Z');
+      const result = formatChartDate(date, 'en');
+      expect(result).toContain('Jun');
+    });
+
+    it('should format date in compact format for German locale', () => {
+      const date = new Date('2024-06-15T12:00:00Z');
+      const result = formatChartDate(date, 'de');
+      expect(result).toContain('Jun');
+    });
+
+    it('should produce different output for different locales', () => {
+      const date = new Date('2024-06-15T12:00:00Z');
+      const enResult = formatChartDate(date, 'en');
+      const deResult = formatChartDate(date, 'de');
+      // German uses dots in date format, English does not
+      expect(enResult).not.toBe(deResult);
+    });
+
+    it('should accept ISO string input', () => {
+      const result = formatChartDate('2024-06-15T12:00:00Z', 'en');
+      expect(result).toContain('Jun');
     });
   });
 });

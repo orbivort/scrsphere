@@ -10,7 +10,7 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { formatLocaleDate } from '@scrumooth/shared';
+import { formatLocaleDate, formatRelativeTime } from '@scrumooth/shared';
 
 import { apiService } from '../../services';
 import {
@@ -230,23 +230,18 @@ export const StatusHistorySection: React.FC<StatusHistorySectionProps> = ({
   const history: StatusChangeHistoryItem[] = externalHistory ?? historyData?.data ?? [];
 
   /**
-   * Formats a date string to relative time
+   * Formats a date string to locale-aware relative time for recent items,
+   * or locale-aware absolute date for older items (7+ days)
    */
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return t('statusHistory.timeJustNow', 'Just now');
-    if (diffMins < 60)
-      return t('statusHistory.timeMinutesAgo', `${diffMins}m ago`, { count: diffMins });
-    if (diffHours < 24)
-      return t('statusHistory.timeHoursAgo', `${diffHours}h ago`, { count: diffHours });
-    if (diffDays < 7)
-      return t('statusHistory.timeDaysAgo', `${diffDays}d ago`, { count: diffDays });
+    if (diffDays < 7) {
+      return formatRelativeTime(dateString, locale);
+    }
     return formatLocaleDate(dateString, locale);
   };
 

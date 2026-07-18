@@ -631,7 +631,7 @@ describe('StatusHistorySection Component', () => {
       await userEvent.click(button);
 
       await waitFor(() => {
-        expect(screen.getByText('Just now')).toBeInTheDocument();
+        expect(screen.getByText('now')).toBeInTheDocument();
       });
     });
 
@@ -653,7 +653,7 @@ describe('StatusHistorySection Component', () => {
       await userEvent.click(button);
 
       await waitFor(() => {
-        expect(screen.getByText('5m ago')).toBeInTheDocument();
+        expect(screen.getByText('5 minutes ago')).toBeInTheDocument();
       });
     });
 
@@ -675,7 +675,7 @@ describe('StatusHistorySection Component', () => {
       await userEvent.click(button);
 
       await waitFor(() => {
-        expect(screen.getByText('3h ago')).toBeInTheDocument();
+        expect(screen.getByText('3 hours ago')).toBeInTheDocument();
       });
     });
 
@@ -697,7 +697,7 @@ describe('StatusHistorySection Component', () => {
       await userEvent.click(button);
 
       await waitFor(() => {
-        expect(screen.getByText('3d ago')).toBeInTheDocument();
+        expect(screen.getByText('3 days ago')).toBeInTheDocument();
       });
     });
 

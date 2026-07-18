@@ -515,5 +515,6 @@
     "transitionError": "Sie haben keine Berechtigung, diesen Übergang durchzuführen.",
     "actionError": "Sie haben keine Berechtigung, diese Aktion auszuführen.",
     "insufficientRoles": "Unzureichende Berechtigungen. Erforderliche Rollen: {{roles}}"
-  }
+  },
+  "dateInput": { "clearDate": "Datum löschen", "openCalendar": "Kalender öffnen" }
 }

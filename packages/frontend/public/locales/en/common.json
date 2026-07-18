@@ -511,6 +511,10 @@
     "editAttendee": "Edit attendee",
     "removeAttendee": "Remove attendee"
   },
+  "dateInput": {
+    "clearDate": "Clear date",
+    "openCalendar": "Open calendar"
+  },
   "permission": {
     "transitionError": "You do not have permission to perform this transition.",
     "actionError": "You do not have permission to perform this action.",

@@ -355,8 +355,10 @@ describe('BurndownChart Component', () => {
 
       const firstCall = LineComponent.mock.calls[0][0] as Record<string, unknown>;
       const data = firstCall.data as Record<string, unknown>;
+      const labels = data.labels as string[];
+      // Labels are now locale-formatted via formatChartDate, not raw ISO dates
+      expect(labels.length).toBe(mockValidData.dates.length);
       expect(data).toMatchObject({
-        labels: mockValidData.dates,
         datasets: expect.arrayContaining([
           expect.objectContaining({
             label: 'Ideal',

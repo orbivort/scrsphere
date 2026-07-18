@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { formatLocaleDate, formatDateRange } from '@scrumooth/shared';
+import { formatLocaleDate, formatDateRange, formatTime } from '@scrumooth/shared';
 
 import { apiService } from '../../services';
 import { useTeamStore, useAuthStore } from '../../store';
@@ -38,6 +38,7 @@ import { useToast } from '../../hooks/useToast';
 import { ToastContainer } from '../../components/common/ToastContainer';
 import { EmptyState } from '../../components/EmptyState';
 import { UnsavedChangesModal } from '../../components/common/Form/UnsavedChangesModal';
+import { LocaleDateInput } from '../../components/common/Form/LocaleDateInput';
 
 import styles from './DailyScrum.module.css';
 
@@ -706,14 +707,11 @@ export const DailyScrum: React.FC = () => {
               <label htmlFor="scrum-date" className={styles['visually-hidden']}>
                 {t('datePicker.label')}
               </label>
-              <input
-                type="date"
+              <LocaleDateInput
                 id="scrum-date"
-                className={styles['date-picker']}
                 value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-                max={getTodayDate()}
-                aria-label={t('datePicker.ariaLabel')}
+                onChange={(value) => setSelectedDate(value)}
+                className={styles['date-picker']}
               />
             </div>
             {isToday && !showUpdateForm && !userHasSubmittedToday && (
@@ -1409,6 +1407,7 @@ const UpdateCard: React.FC<UpdateCardProps> = React.memo(
     onNavigateToImpediment,
   }) => {
     const { t } = useTranslation('daily-scrum');
+    const { locale } = useI18nStore();
     const hasImpediment = update.impediment && update.impediment !== 'None';
     const hasTrackedImpediment = !!update.impedimentRecord?.id;
 
@@ -1474,12 +1473,7 @@ const UpdateCard: React.FC<UpdateCardProps> = React.memo(
               <span className={styles['user-name']}>
                 {update.user?.firstName} {update.user?.lastName}
               </span>
-              <span className={styles['update-time']}>
-                {new Date(update.createdAt).toLocaleTimeString('en-US', {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
-              </span>
+              <span className={styles['update-time']}>{formatTime(update.createdAt, locale)}</span>
             </div>
             {hasImpediment && (
               <span
@@ -1552,12 +1546,7 @@ const UpdateCard: React.FC<UpdateCardProps> = React.memo(
               <div className={styles['user-name']}>
                 {update.user?.firstName} {update.user?.lastName}
               </div>
-              <div className={styles['update-time']}>
-                {new Date(update.createdAt).toLocaleTimeString('en-US', {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
-              </div>
+              <div className={styles['update-time']}>{formatTime(update.createdAt, locale)}</div>
             </div>
           </div>
           <div className={styles['header-badges']}>

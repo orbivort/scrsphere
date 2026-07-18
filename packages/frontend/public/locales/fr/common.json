@@ -516,5 +516,6 @@
     "transitionError": "Vous n'avez pas la permission d'effectuer cette transition.",
     "actionError": "Vous n'avez pas la permission d'effectuer cette action.",
     "insufficientRoles": "Permissions insuffisantes. Rôles requis: {{roles}}"
-  }
+  },
+  "dateInput": { "clearDate": "Effacer la date", "openCalendar": "Ouvrir le calendrier" }
 }

@@ -59,3 +59,38 @@ export const LOCALE_CURRENCIES: Record<Locale, string> = {
   es: 'EUR',
   it: 'EUR',
 };
+
+/**
+ * Locale-specific date format patterns for input fields
+ * These formats match user expectations in each language/region
+ */
+export const DATE_INPUT_FORMATS: Record<Locale, string> = {
+  en: 'dd/MM/yyyy', // British format (matches enGB locale)
+  de: 'dd.MM.yyyy', // German format with dots
+  fr: 'dd/MM/yyyy', // French format
+  es: 'dd/MM/yyyy', // Spanish format
+  it: 'dd/MM/yyyy', // Italian format
+};
+
+/**
+ * Human-readable date format examples for each locale
+ * Used in placeholders and help text
+ */
+export const DATE_FORMAT_EXAMPLES: Record<Locale, string> = {
+  en: 'dd/mm/yyyy',
+  de: 'tt.mm.jjjj',
+  fr: 'jj/mm/aaaa',
+  es: 'dd/mm/aaaa',
+  it: 'gg/mm/aaaa',
+};
+
+/**
+ * Locale-specific date separators
+ */
+export const DATE_SEPARATORS: Record<Locale, string> = {
+  en: '/',
+  de: '.',
+  fr: '/',
+  es: '/',
+  it: '/',
+};
