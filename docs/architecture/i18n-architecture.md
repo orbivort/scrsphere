@@ -1,2992 +1,878 @@
-# Multi-Language Support (i18n) Architecture
+# i18n Architecture
 
-> **Status:** Proposed
-> **Author:** Architecture Team
-> **Last Updated:** 2026-07-11
-> **Reviewers:** Frontend, Backend, Product, QA
-> **Target Languages:** English (en, default), German (de), French (fr), Spanish (es), Italian (it)
-> **Directionality:** LTR (initial), RTL-ready architecture (future)
+**Status**: Implemented (Phase 1–4) · Phase 5 (RTL) pending
+**Last Updated**: 2026-07-18
+**Scope**: Frontend (`packages/frontend/`), Backend (`packages/backend/`), Shared (`packages/shared/`)
+
+> This document describes the internationalization architecture as implemented in the codebase. It is intentionally concise — for full source-of-truth, read the files referenced in each section.
 
 ---
 
 ## Table of Contents
 
 1. [Executive Summary](#1-executive-summary)
-2. [Requirements](#2-requirements)
-3. [Current State Assessment](#3-current-state-assessment)
-4. [High-Level Architecture](#4-high-level-architecture)
-5. [Architecture Decision Records (ADRs)](#5-architecture-decision-records-adrs)
-6. [Database Schema Changes](#6-database-schema-changes)
-7. [Frontend Implementation](#7-frontend-implementation)
-8. [Backend Implementation](#8-backend-implementation)
-9. [Shared Package Integration](#9-shared-package-integration)
-10. [Translation File Format & Organization](#10-translation-file-format--organization)
-11. [Pluralization & Cultural Formatting](#11-pluralization--cultural-formatting)
-12. [Fallback Mechanisms](#12-fallback-mechanisms)
-13. [Translation Workflow & Tooling](#13-translation-workflow--tooling)
-14. [Performance Optimization](#14-performance-optimization)
-15. [RTL-Ready Architecture](#15-rtl-ready-architecture)
-16. [Testing Strategy](#16-testing-strategy)
-17. [Security Considerations](#17-security-considerations)
-18. [Risks & Mitigation Strategies](#18-risks--mitigation-strategies)
-19. [Implementation Roadmap](#19-implementation-roadmap)
-20. [Appendices](#20-appendices)
+2. [Supported Locales](#2-supported-locales)
+3. [High-Level Architecture](#3-high-level-architecture)
+4. [Architecture Decision Records (ADRs)](#4-architecture-decision-records-adrs)
+5. [Frontend Implementation](#5-frontend-implementation)
+6. [Backend Implementation](#6-backend-implementation)
+7. [Shared Package Integration](#7-shared-package-integration)
+8. [Locale Detection & Fallback Flow](#8-locale-detection--fallback-flow)
+9. [Pluralization & Cultural Formatting](#9-pluralization--cultural-formatting)
+10. [Translation File Organization](#10-translation-file-organization)
+11. [Translation Workflow & CI Gates](#11-translation-workflow--ci-gates)
+12. [Testing Strategy](#12-testing-strategy)
+13. [New Language Onboarding](#13-new-language-onboarding)
+14. [Modern Best Practices Alignment (2026)](#14-modern-best-practices-alignment-2026)
+15. [File Inventory](#15-file-inventory)
 
 ---
 
 ## 1. Executive Summary
 
-Scrumooth is an Agile Scrum Lifecycle Management System used by an 80-person European organization across 8 teams. As the platform scales across a multilingual European user base, a comprehensive internationalization (i18n) system is required to support English (default), German, French, Spanish, and Italian, with an architecture ready for future Right-to-Left (RTL) language expansion.
+Scrumooth supports 5 locales (`en`, `de`, `fr`, `es`, `it`) end-to-end across frontend, backend, and shared packages. The architecture uses **i18next v24+** with `react-i18next`, lazy-loaded namespaced JSON files, native `Intl` APIs for pluralization/formatting, and a per-request locale resolver on the backend via `AsyncLocalStorage`.
 
-This document defines the end-to-end i18n architecture spanning the monorepo's three packages — **frontend** (React 19 + Vite), **backend** (Express + Prisma + PostgreSQL), and **shared** (types, constants, utilities). It establishes a structured, namespaced translation file format; dynamic language switching without page reloads; complete coverage of user-facing text including emails and notifications; ICU-compatible pluralization and locale-aware formatting for dates, numbers, and currencies; a maintainable translator workflow with terminology glossary; multi-tier fallback mechanisms; and performance optimizations including namespace-based lazy loading and CDN-cached language bundles.
+**Key design choices:**
 
-The design is compatible with the existing layered architecture, reuses the already-present `date-fns` dependency, integrates with the Zustand stores and TanStack Query cache, and is delivered through a phased roadmap that minimizes disruption to ongoing feature development.
-
-**Key decisions:** adopt `i18next` + `react-i18next` (frontend) and a lightweight `i18next` instance (backend); JSON translation files organized by namespace and locale; persist user locale in the `User.locale` column with browser-detection fallback; ICU MessageFormat for pluralization; locale-aware formatting via `date-fns` (dates) and `Intl` APIs (numbers/currencies); and a CI-enforced translation completeness gate.
-
----
-
-## 2. Requirements
-
-### 2.1 Functional Requirements
-
-| ID    | Requirement                                                                                                      | Priority |
-| ----- | ---------------------------------------------------------------------------------------------------------------- | -------- |
-| FR-1  | Support 5 languages: en (default), de, fr, es, it                                                                | P0       |
-| FR-2  | Dynamic language switching at runtime without page reload                                                        | P0       |
-| FR-3  | All user-facing UI text (labels, buttons, toasts, errors, empty states, tooltips, aria-labels) internationalized | P0       |
-| FR-4  | Backend user-facing content (emails, notification titles/messages, validation error messages) internationalized  | P0       |
-| FR-5  | Locale-aware date formatting (e.g., 31/01/2026 vs 01/31/2026)                                                    | P0       |
-| FR-6  | Locale-aware number formatting (e.g., 1.234,56 vs 1,234.56)                                                      | P0       |
-| FR-7  | Locale-aware currency formatting                                                                                 | P1       |
-| FR-8  | Pluralization support (e.g., "1 task" vs "2 tasks" + CLDR rules per locale)                                      | P0       |
-| FR-9  | Gender/role-aware interpolation where applicable (e.g., Scrum Master, Product Owner, Developer)                  | P1       |
-| FR-10 | Fallback chain: locale → base language → default (en) → key with warning                                         | P0       |
-| FR-11 | Persist user's language preference in the database (User.locale)                                                 | P0       |
-| FR-12 | Detect language from (a) user profile, (b) Accept-Language header / browser setting, (c) default                 | P0       |
-| FR-13 | Allow guests (unauthenticated) to switch language via UI, persisted in localStorage                              | P0       |
-| FR-14 | Maintain consistent terminology via a glossary enforced in CI                                                    | P1       |
-| FR-15 | Provide a translator workflow for adding/updating translations without code changes                              | P1       |
-| FR-16 | Architecture must be RTL-ready (logical CSS properties, directional abstraction) for future Arabic/Hebrew        | P1       |
-| FR-17 | Locale-aware relative time ("2 days ago", "in 3 hours")                                                          | P1       |
-| FR-18 | Locale-aware list formatting ("A, B, and C" vs "A, B et C")                                                      | P2       |
-
-### 2.2 Non-Functional Requirements
-
-| ID     | Requirement                                            | Target                                                               |
-| ------ | ------------------------------------------------------ | -------------------------------------------------------------------- |
-| NFR-1  | Initial language bundle load (per namespace)           | ≤ 30 KB gzipped                                                      |
-| NFR-2  | Language switch latency (after bundle cached)          | < 50 ms (no re-fetch)                                                |
-| NFR-3  | Language switch latency (first switch to a new locale) | < 200 ms (fetch + parse)                                             |
-| NFR-4  | No layout shift (CLS) caused by language switching     | CLS = 0                                                              |
-| NFR-5  | Translation coverage gate in CI                        | 100% of keys present in all 5 locales (or explicitly marked missing) |
-| NFR-6  | Runtime overhead of `t()` calls                        | < 0.1 ms per call                                                    |
-| NFR-7  | Backwards compatibility                                | No breaking changes to existing API contracts; locale is opt-in      |
-| NFR-8  | Accessibility                                          | `lang` and `dir` attributes updated on `<html>` on language change   |
-| NFR-9  | Type safety                                            | Translation keys are type-checked at compile time (no magic strings) |
-| NFR-10 | Bundle size impact                                     | Default locale (en) bundled; other locales lazy-loaded               |
-
-### 2.3 Constraints
-
-- **Monorepo structure:** Must integrate with `packages/backend`, `packages/frontend`, `packages/shared`.
-- **Package manager:** `pnpm` only (enforced via preinstall scripts).
-- **TypeScript strict mode:** All i18n code must pass `strict: true`, `noUncheckedIndexedAccess`.
-- **Existing dependencies:** Reuse `date-fns` (already present). Avoid heavy new dependencies where possible.
-- **Self-hosted:** No dependency on external translation SaaS at runtime (offline-capable). Translation tooling may use external services during build.
-- **PostgreSQL 18+:** Locale storage must use the existing Prisma/Postgres stack.
-- **No `any` types:** All i18n TypeScript code must follow project ESLint rules.
+- **No bundled locale** — all locale JSON (including `en/common`) is fetched over HTTP by `i18next-http-backend`. The main JS bundle contains only the i18next runtime (~30 KB gzipped) plus the `intl-pluralrules` polyfill (~1 KB).
+- **Cookie-based locale persistence** — `scrumooth_locale` cookie (1 year, `SameSite=Strict`). `localStorage` is deliberately avoided because the Zustand persist format (`{ state: { locale: '…' }, version: 0 }`) collides with what a language detector would write.
+- **Backend locale priority**: `Accept-Language` header FIRST → `User.locale` database column → `DEFAULT_LOCALE` (`en`). Reversed from typical SaaS pattern because Scrumooth is multi-tenant by team and browser preference is more reliable than per-user config at first visit.
+- **RTL-ready** — CSS uses logical properties (`margin-inline-start` not `margin-left`); `dir="rtl"` is set on `<html>` based on `getDirection(locale)`. No RTL locale ships today.
 
 ---
 
-## 3. Current State Assessment
+## 2. Supported Locales
 
-### 3.1 What Exists Today
+| Code | Endonym  | Date format  | Time    | Currency | Plural classes           |
+| ---- | -------- | ------------ | ------- | -------- | ------------------------ |
+| `en` | English  | `dd/MM/yyyy` | 24-hour | EUR      | `one` / `other`          |
+| `de` | Deutsch  | `dd.MM.yyyy` | 24-hour | EUR      | `one` / `other`          |
+| `fr` | Français | `dd/MM/yyyy` | 24-hour | EUR      | `one` / `many` / `other` |
+| `es` | Español  | `dd/MM/yyyy` | 24-hour | EUR      | `one` / `many` / `other` |
+| `it` | Italiano | `dd/MM/yyyy` | 24-hour | EUR      | `one` / `many` / `other` |
 
-| Area                   | Current State                                                                                                                                                                                                                                                                              | i18n Gap                                             |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------- |
-| **Database**           | `User` model has no `locale` field                                                                                                                                                                                                                                                         | No persistence of language preference                |
-| **Frontend pages**     | All text is hardcoded English (e.g., [LoginPage.tsx](file:///e:/ws1/ov/ce/scrumooth/packages/frontend/src/pages/Auth/LoginPage.tsx) has 30+ hardcoded strings)                                                                                                                             | Every string must be extracted                       |
-| **Navigation**         | [navigation.ts](file:///e:/ws1/ov/ce/scrumooth/packages/frontend/src/config/navigation.ts) hardcodes labels ("Dashboard", "Product Goals", etc.)                                                                                                                                           | Labels need translation keys                         |
-| **Frontend stores**    | Zustand stores (`useAuthStore`, `useSessionStore`, `useTeamStore`) — no locale store                                                                                                                                                                                                       | Need a `useI18nStore` for locale                     |
-| **Backend errors**     | Custom error classes ([errors.ts](file:///e:/ws1/ov/ce/scrumooth/packages/backend/src/utils/errors.ts)) throw English messages                                                                                                                                                             | Error messages need translation keys                 |
-| **Email templates**    | [PasswordResetTemplate.ts](file:///e:/ws1/ov/ce/scrumooth/packages/backend/src/services/email/templates/PasswordResetTemplate.ts), [WelcomeEmailTemplate.ts](file:///e:/ws1/ov/ce/scrumooth/packages/backend/src/services/email/templates/WelcomeEmailTemplate.ts) — all English hardcoded | Templates need locale-aware rendering                |
-| **Notifications**      | `NotificationService.create()` accepts raw `title`/`message` strings                                                                                                                                                                                                                       | Should accept keys + params, resolve per-user locale |
-| **Dates**              | `date-fns` v4 already a frontend dependency                                                                                                                                                                                                                                                | Not locale-aware yet; need `date-fns/locale` imports |
-| **Numbers/currencies** | No formatting library; raw `toString()` usage                                                                                                                                                                                                                                              | Need `Intl.NumberFormat` integration                 |
-| **Shared package**     | Types, constants, utilities — no i18n primitives                                                                                                                                                                                                                                           | Needs `Locale` type, `SUPPORTED_LOCALES`, formatters |
-| **Config**             | [backend config](file:///e:/ws1/ov/ce/scrumooth/packages/backend/src/config/index.ts) has no i18n config                                                                                                                                                                                   | Need `i18n` config section                           |
-| **CI/CD**              | No translation validation step                                                                                                                                                                                                                                                             | Need completeness + lint gate                        |
-
-### 3.2 Scale of Effort
-
-The frontend has ~30 pages, ~50 feature components, ~40 common components, and ~30 hooks. Estimated **~1,500–2,000 translatable strings** across the UI, plus ~200 backend strings (emails, notifications, errors, validation messages).
+- **English uses `enGB`** (not `enUS`) date-fns locale — target organization is European.
+- **DEFAULT_LOCALE** is `en`. All fallback chains terminate at `en`.
+- **RTL_LANGUAGES** = `['ar', 'he', 'fa', 'ur']` (none currently supported; CSS groundwork is in place).
 
 ---
 
-## 4. High-Level Architecture
-
-### 4.1 Architecture Diagram
+## 3. High-Level Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                              BROWSER (Client)                           │
-│                                                                         │
-│  ┌──────────────┐   ┌─────────────────┐   ┌──────────────────────────┐ │
-│  │  Language    │──▶│  I18nProvider   │──▶│  React Component Tree    │ │
-│  │  Switcher UI │   │  (react-i18next)│   │  useTranslation() hook   │ │
-│  └──────────────┘   └────────┬────────┘   └──────────────────────────┘ │
-│         ▲                    │                        │                 │
-│         │                    │ lazy-load              │ format          │
-│         │                    ▼                        ▼                 │
-│  ┌──────┴───────┐   ┌─────────────────┐   ┌──────────────────────────┐ │
-│  │ useI18nStore │   │  Locale Bundles │   │  Formatters (date/num/   │ │
-│  │ (Zustand)    │   │  /locales/{lng} │   │  currency/plural)        │ │
-│  │ locale, dir  │   │  /{ns}.json     │   │  date-fns + Intl API     │ │
-│  └──────┬───────┘   └─────────────────┘   └──────────────────────────┘ │
-│         │ localStorage                                                     │
-└─────────┼─────────────────────────────────────────────────────────────────┘
-          │ Accept-Language header + locale cookie
-          ▼
-┌─────────────────────────────────────────────────────────────────────────┐
-│                           BACKEND (Express)                             │
-│                                                                         │
-│  ┌──────────────┐   ┌─────────────────┐   ┌──────────────────────────┐ │
-│  │ Accept-      │──▶│ LocaleResolver  │──▶│  i18next (backend inst.) │ │
-│  │ Language MW  │   │  middleware     │   │  t(key, { lng, ... })    │ │
-│  └──────────────┘   └────────┬────────┘   └───────────┬──────────────┘ │
-│                              │                         │                │
-│         ┌────────────────────┼─────────────────────────┼──────────┐     │
-│         ▼                    ▼                         ▼          ▼     │
-│  ┌──────────────┐   ┌─────────────────┐   ┌──────────────┐ ┌────────┐ │
-│  │ EmailService │   │ Notification    │   │ Error        │ │Valid-  │ │
-│  │ (templates   │   │ Service         │   │ Middleware   │ │ation   │ │
-│  │ per locale)  │   │ (per-user lng)  │   │ (localized   │ │(msgs)  │ │
-│  └──────────────┘   └─────────────────┘   │  messages)   │ └────────┘ │
-│                                           └──────────────┘            │
-└──────────────────────────┬──────────────────────────────────────────────┘
-                           │ Prisma
-                           ▼
-┌─────────────────────────────────────────────────────────────────────────┐
-│                        PostgreSQL (Prisma)                              │
-│  ┌─────────────┐         ┌─────────────────────────────────────────┐   │
-│  │  users      │         │  ADD COLUMN locale TEXT DEFAULT 'en'    │   │
-│  │  ...        │         │  + CHECK (locale IN ('en','de','fr'...))│   │
-│  └─────────────┘         └─────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────────────────┐
-│                        SHARED PACKAGE                                   │
-│  • Locale type  • SUPPORTED_LOCALES  • DEFAULT_LOCALE                  │
-│  • Locale utility functions (isRTL, getBaseLanguage, normalizeLocale)   │
-│  • Shared translation key type definitions (optional compile-time)      │
-└─────────────────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────────────────┐
-│                        CI/CD PIPELINE                                   │
-│  • i18n-lint (validate JSON structure, no missing keys)                │
-│  • i18n-completeness (compare all locales against en baseline)         │
-│  • terminology-glossary check                                           │
-│  • TypeScript key validation (frontend)                                 │
-└─────────────────────────────────────────────────────────────────────────┘
-```
-
-### 4.2 Data Flow: Language Switching
-
-```
-User clicks "Deutsch" in Language Switcher
-        │
-        ▼
-useI18nStore.setLocale('de')
-        │
-        ├─▶ i18next.changeLanguage('de')  (triggers lazy fetch of /locales/de/*.json)
-        │         │
-        │         ▼
-        │    React re-render via useTranslation() consumers
-        │
-        ├─▶ localStorage.setItem('scrumooth.locale', 'de')
-        │
-        ├─▶ document.documentElement.lang = 'de'
-        ├─▶ document.documentElement.dir = 'ltr'
-        │
-        └─▶ PUT /api/v1/auth/me/profile { locale: 'de' }  (if authenticated)
-                  │
-                  ▼
-            Backend persists User.locale = 'de'
-            Audit-logs USER.UPDATE (§8.7)
-            Sets locale cookie (1 year, for SSR/refresh)
+┌───────────────────────────── Frontend ─────────────────────────────┐
+│                                                                     │
+│  React 19                                                           │
+│    └─ I18nProvider (15s init timeout, error/retry UI)               │
+│         └─ i18next instance (cookie + navigator detection)          │
+│              └─ i18next-http-backend → /locales/{lng}/{ns}.json     │
+│         └─ useI18nStore (Zustand) → scrumooth_locale cookie         │
+│                                                                     │
+│  Formatters (@scrumooth/shared)                                     │
+│    └─ Intl.NumberFormat / DateTimeFormat / RelativeTimeFormat       │
+│    └─ date-fns with locale imports (enGB, de, fr, es, it)           │
+└─────────────────────────────────────────────────────────────────────┘
+                              │ HTTPS (Cookie: scrumooth_locale=…)
+                              ▼
+┌───────────────────────────── Backend ───────────────────────────────┐
+│                                                                     │
+│  Express middleware chain                                           │
+│    └─ locale.middleware.ts                                          │
+│         priority: Accept-Language > User.locale > DEFAULT_LOCALE    │
+│         stores locale in AsyncLocalStorage                          │
+│                                                                     │
+│  Per-request t()                                                    │
+│    └─ requestT.ts reads locale from AsyncLocalStorage               │
+│    └─ i18next instance with bundled JSON (5 ns × 5 locales)         │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 5. Architecture Decision Records (ADRs)
+## 4. Architecture Decision Records (ADRs)
 
-### ADR-001: i18n Library Selection — `i18next` + `react-i18next`
+### ADR-001: i18n Library — `i18next` + `react-i18next`
 
-**Status:** Accepted
-**Date:** 2026-07-11
-
-**Context.** The frontend (React 19 + Vite) needs an i18n runtime. The backend (Node.js + Express) needs lightweight message resolution for emails, notifications, and errors. Candidates evaluated: `i18next`, `react-intl` (FormatJS), `lingui`, `next-intl`, and a custom solution.
-
-**Decision.** Adopt `i18next` as the core engine for both frontend and backend, with `react-i18next` bindings on the frontend.
-
-**Rationale.**
-
-| Criterion                 | i18next          | react-intl      | lingui            | Custom  |
-| ------------------------- | ---------------- | --------------- | ----------------- | ------- |
-| Framework agnostic core   | ✅               | ❌ (React-only) | ⚠️ (macro-based)  | ✅      |
-| Runtime vs compile-time   | Runtime          | Runtime         | Compile-time      | Runtime |
-| Pluralization (ICU/CLDR)  | ✅ (intl plugin) | ✅ (ICU native) | ✅                | Manual  |
-| Lazy loading namespaces   | ✅ Built-in      | ⚠️ Manual       | ✅                | Manual  |
-| Backend (non-React) usage | ✅ Same API      | ❌              | ⚠️                | ✅      |
-| Ecosystem & maturity      | Very high        | High            | Medium            | —       |
-| TypeScript support        | ✅ Good          | ✅ Good         | ✅ Good           | Manual  |
-| Vite compatibility        | ✅               | ✅              | ⚠️ (babel macros) | ✅      |
-| Bundle size (core)        | ~25 KB           | ~45 KB          | ~10 KB + macros   | 0       |
-
-`i18next` wins on framework-agnosticism (shared learning curve across FE/BE), mature lazy-loading, and the largest ecosystem. `react-intl` is React-only, making backend reuse impossible. `lingui`'s compile-time macros add build complexity to the existing Vite setup.
-
-**Consequences.**
-
-- **+** Single i18n API across frontend and backend reduces cognitive load.
-- **+** Mature lazy-loading and namespace support out of the box.
-- **+** `react-i18next` `Trans` component handles rich interpolation safely.
-- **−** Adds ~25 KB gzipped to the frontend bundle (mitigated: en bundled, others lazy).
-- **−** ICU MessageFormat requires the `i18next-intlpluralresolver` plugin (small).
-
-**Alternatives considered.** `react-intl` (rejected — React-only, larger bundle), `lingui` (rejected — build macro complexity), custom (rejected — would need to reimplement pluralization, lazy loading, fallback).
-
----
+**Decision:** Use `i18next` v24+ with `react-i18next`, `i18next-http-backend`, and `i18next-browser-languagedetector`.
+**Rationale:** Mature ecosystem, framework-agnostic core (so backend can use the same library), built-in lazy namespace loading, native `Intl.PluralRules` support (no resolver polyfill needed beyond `intl-pluralrules` for Safari < 14).
+**Alternatives considered:** `react-intl` (Format.JS) — rejected because its ICU MessageFormat is overkill for European Scrum terminology; `lingui` — rejected due to smaller ecosystem.
 
 ### ADR-002: Translation File Format — Namespaced JSON per Locale
 
-**Status:** Accepted
-**Date:** 2026-07-11
+**Decision:** One JSON file per `(locale, namespace)` pair. Frontend files live in `packages/frontend/public/locales/{lng}/{ns}.json` (served as static HTTP assets). Backend files live in `packages/backend/src/locales/{lng}/{ns}.json` (bundled at build time via `with { type: 'json' }` ESM import attributes).
+**Frontend namespaces (16):** `auth`, `backlog`, `common`, `daily-scrum`, `dashboard`, `errors`, `impediments`, `increments`, `notifications`, `reports`, `retrospective`, `sprint`, `sprint-review`, `settings`, `team`, `validation`.
+**Backend namespaces (5):** `emails`, `notifications`, `errors`, `validation`, `retrospectives`.
+**Rationale:** Namespacing enables route-level lazy loading (`useTranslation('dashboard')` only fetches `/locales/{lng}/dashboard.json`). JSON (not YAML/PO) keeps diffs reviewable and tooling simple.
 
-**Context.** With ~1,500–2,000 strings, a single flat file per locale becomes unmaintainable. We need a format that supports grouping, lazy loading, and tooling.
+### ADR-003: Language Detection & Persistence — Cookie Only
 
-**Decision.** Use **JSON files** organized by **locale** and **namespace**, stored in `packages/frontend/src/locales/{lng}/{ns}.json` (frontend) and `packages/backend/src/locales/{lng}/{ns}.json` (backend).
-
-**Structure.**
-
-```
-packages/frontend/src/locales/
-├── en/
-│   ├── common.json        # shared buttons, labels (Save, Cancel, Loading...)
-│   ├── auth.json          # login, register, password reset
-│   ├── dashboard.json
-│   ├── backlog.json
-│   ├── sprint.json
-│   ├── daily-scrum.json
-│   ├── impediments.json
-│   ├── increments.json
-│   ├── sprint-review.json
-│   ├── retrospective.json
-│   ├── reports.json
-│   ├── team.json
-│   ├── settings.json
-│   ├── notifications.json
-│   ├── errors.json        # generic UI error messages
-│   └── validation.json    # form validation messages
-├── de/
-│   └── ... (same namespace structure)
-├── fr/
-├── es/
-└── it/
-
-packages/backend/src/locales/
-├── en/
-│   ├── emails.json        # email subjects + bodies
-│   ├── notifications.json # notification titles + messages
-│   ├── errors.json        # API error messages
-│   └── validation.json    # request validation messages
-├── de/
-└── ...
-```
-
-**Rationale.**
-
-- **JSON** is natively supported by Vite (importable), Node.js (`require`/`import`), and all translation tooling.
-- **Namespaces** map to features (matching the existing `pages/` and `components/` structure), enabling lazy loading — a user on the Dashboard only fetches `common.json` + `dashboard.json`.
-- Mirrors the domain boundaries already present in the codebase (e.g., `Backlog`, `Sprint`, `Retrospective`).
-- Avoids YAML (extra dependency, indentation-sensitivity) and ICU `.json` custom formats.
-
-**Consequences.**
-
-- **+** Lazy loading per namespace minimizes initial bundle.
-- **+** Translators work on focused files, not a monolith.
-- **+** CI can validate each namespace independently.
-- **−** ~15 namespaces × 5 locales = 75 files to maintain (mitigated by tooling + glossary).
-
----
-
-### ADR-003: Language Detection & Persistence Strategy
-
-**Status:** Accepted
-**Date:** 2026-07-11
-
-**Context.** Language preference must be detected, persisted, and applied consistently across page reloads, sessions, and devices.
-
-**Decision.** Multi-tier detection with explicit precedence, persisted in `User.locale` (authenticated) and `localStorage` (guests), synchronized via a long-lived `scrumooth_locale` cookie.
-
-**Detection precedence (highest → lowest):**
-
-1. **Authenticated user:** `User.locale` from the database (authoritative, cross-device).
-2. **Locale cookie:** `scrumooth_locale` (1-year expiry, enables SSR/refresh before auth resolves).
-3. **localStorage:** `scrumooth.locale` (guest fallback, fast client read).
-4. **Browser:** `navigator.language` / `Accept-Language` header (first-visit default).
-5. **Application default:** `en`.
-
-**Flow:**
-
-- On login, the backend reads `User.locale` and sets the `scrumooth_locale` cookie.
-- On page load, the frontend reads cookie → localStorage → browser → default, then calls `PUT /api/v1/auth/me/profile` if the resolved locale differs from the stored one (first-visit auto-detection).
-- On language switch (UI), update all three: localStorage, cookie, and `User.locale` (if authenticated).
-- **After `/api/v1/auth/me` resolves** (TanStack Query), the frontend **explicitly** calls `useI18nStore.getState().setLocale(user.locale)` and `i18nInstance.changeLanguage(user.locale)`. This step is what makes `User.locale` the _effective_ highest precedence: the i18next `LanguageDetector` (cookie/localStorage/navigator) cannot read the database, so the user-profile locale must be applied programmatically once auth resolves. If the profile locale differs from the cookie/localStorage value, the profile value wins and a `PUT /api/v1/auth/me/profile` is fired to reconcile (only when the user explicitly changed it, not on every load).
-
-> **Why two sources appear "highest".** `User.locale` is authoritative for authenticated users, but it is only known _after_ an authenticated round-trip. The cookie bridges the pre-hydration gap so the first paint is in the right language. The explicit `setLocale(user.locale)` after `/me` resolves corrects any drift (e.g., user changed language on another device).
-
-**Cookie spec:**
-
-```
-Set-Cookie: scrumooth_locale=de; Path=/; Max-Age=31536000; SameSite=Strict; Secure
-```
-
-**Rationale.** User DB column is the source of truth for authenticated users (cross-device). Cookie enables correct rendering before React hydrates / auth resolves. localStorage gives instant client-side reads.
-
-**Consequences.**
-
-- **+** Cross-device consistency for authenticated users.
-- **+** No flash of wrong language (cookie available pre-hydration).
-- **−** Requires a Prisma migration to add `User.locale`.
-
----
+**Decision:** Frontend detection order is `['cookie', 'navigator']` with `caches: ['cookie']`. The `scrumooth_locale` cookie is set with `maxAge: 31536000000` (1 year in **milliseconds** — Express `res.cookie` `maxAge` is milliseconds, not seconds), `SameSite=Strict`, `Secure` (in production).
+**Why not localStorage:** Zustand persist writes to `localStorage` key `scrumooth.locale` as `{"state":{"locale":"de"},"version":0}`. If `i18next-browser-languagedetector` also wrote to `localStorage` (its default), the two would race and corrupt each other's format. The cookie is shared with the backend (automatic `Accept-Language`-equivalent on every request).
+**Backend cookie write:** `locale.middleware.ts` re-syncs the cookie on every request after resolving the locale.
 
 ### ADR-004: Fallback Strategy — Three-Tier Chain
 
-**Status:** Accepted
-**Date:** 2026-07-11
+**Decision:** i18next `fallbackLng: DEFAULT_LOCALE` (`en`). Missing key in `de` falls back to `en`. Missing namespace falls back to `common`. `parseMissingKeyHandler: (key) => key` returns the key string for missing translations (visible in UI during development; not blank).
+**No bundled default locale:** Even `en/common` is fetched over HTTP (see ADR-008). The 15-second init timeout in `I18nProvider` covers network failures.
 
-**Context.** Translations will be incomplete during rollout and as new features ship. The system must degrade gracefully.
+### ADR-005: Backend i18n — Shared Instance with Per-Request Locale
 
-**Decision.** Configure `i18next` with a three-tier fallback chain:
+**Decision:** A single `i18next.createInstance()` is initialized at backend startup with all 5 locales × 5 namespaces bundled. Per-request locale is resolved by `locale.middleware.ts` and stored in `AsyncLocalStorage`. The `t()` accessor in `requestT.ts` reads the locale from `AsyncLocalStorage` and passes it as `i18nInstance.t(key, { lng: getRequestLocale(), ...options })`.
+**Locale priority (verified):** `Accept-Language` header FIRST → `User.locale` (database) → `DEFAULT_LOCALE`. Reversed from typical SaaS pattern because Scrumooth is multi-tenant by team and the browser language is more reliable at first visit. The Accept-Language parser is simplistic (split-on-comma, no `q=` handling); `resolve-accept-language` is recommended for future improvement.
+**Silent fallback:** `requestT.ts` does NOT throw when called outside a request scope — `getRequestLocale()` returns `DEFAULT_LOCALE`. The JSDoc claiming it throws is inaccurate. This is acceptable for background jobs but masks bugs.
 
-```
-requested locale (e.g., "de-AT") → base language ("de") → default ("en") → key string
-```
+### ADR-006: Pluralization & Cultural Formatting — Native `Intl` + `date-fns`
 
-**i18next configuration:**
+**Decision:** Use native `Intl.PluralRules` (polyfilled by `intl-pluralrules` for Safari < 14), `Intl.NumberFormat`, `Intl.DateTimeFormat`, `Intl.RelativeTimeFormat`, `Intl.ListFormat`, `Intl.Collator`. Use `date-fns` v4 for date formatting that needs locale-aware tokens (`PP`, `d MMM`, etc.).
+**Date-fns locales:** `{ en: enGB, de, fr, es, it }`. English uses `enGB` (European audience → `DD/MM/YYYY`, 24-hour by default).
+**No `i18next-intlpluralresolver`:** Deprecated since i18next v24 — native `Intl.PluralRules` is used directly.
+**Plural classes:** `en`/`de` use `one`/`other`; `fr`/`es`/`it` use `one`/`many`/`other` (CLDR).
 
-```typescript
-fallbackLng: 'en',
-load: 'languageOnly', // "de-AT" → "de", not "de-AT" + "de"
-nonExplicitSupportedLngs: true,
-returnNull: false,
-returnEmptyString: false,
-missingKeyHandler: (lng, ns, key) => {
-  logger.warn(`Missing i18n key: ${lng}:${ns}:${key}`);
-},
-parseMissingKeyHandler: (key) => key, // show key, not "missing"
-}
-```
+### ADR-007: Translation Workflow — JSON-in-Repo + CI Gates
 
-**Behavior:**
+**Decision:** Translation JSON lives in the repo. The `packages/shared/i18n/glossary.json` file defines canonical Scrum term translations per locale (sourced from the official 2020 Scrum Guide). Four scripts enforce quality:
 
-| Scenario                            | Result                                  |
-| ----------------------------------- | --------------------------------------- |
-| Key exists in `de`                  | German text                             |
-| Key missing in `de`, exists in `en` | English text (logged as warning in dev) |
-| Key missing in both `de` and `en`   | The key string itself (logged as error) |
-| Namespace missing for `de`          | Entire namespace falls back to `en`     |
+- `pnpm run i18n:check` — validates key completeness, structural correctness, no extra keys in non-`en` locales
+- `pnpm run i18n:completeness` — produces a per-locale coverage report
+- `pnpm run i18n:glossary` — flags locale JSON values that don't match glossary-prescribed Scrum terms
+- `pnpm run i18n:extract` — assists with hardcoded-string extraction (not a fully automated extractor)
 
-**CI enforcement:** A completeness check compares every non-default locale against `en`. Missing keys **fail CI** unless explicitly tagged `// @i18n-ignore` in a `.i18nignore` manifest.
+**No `i18n:sort` script exists** — sorting is a manual/PR-review convention.
 
-**Consequences.**
+### ADR-008: Performance — Lazy Namespace Loading, No Bundled Locale
 
-- **+** Users never see a broken UI due to missing translations.
-- **+** Dev-time warnings surface gaps early.
-- **−** English text may appear in non-English UIs during gradual rollout (acceptable, documented).
-
----
-
-### ADR-005: Backend i18n — Shared `i18next` Instance with Per-Request Locale Resolution
-
-**Status:** Accepted
-**Date:** 2026-07-11
-
-**Context.** The backend produces user-facing text in three contexts: (1) email templates, (2) notifications, (3) API error/validation messages. These must be rendered in the recipient's locale.
-
-**Decision.** Run a **single `i18next` instance** on the backend, initialized once at startup with all namespaces preloaded (backend has fewer strings, ~200). Resolve the locale **per request** via a `LocaleResolver` middleware that stores the locale in the existing [requestContext](file:///e:/ws1/ov/ce/scrumooth/packages/backend/src/utils/requestContext.ts) (`AsyncLocalStorage`).
-
-> **Compatibility note (verified against the existing `requestContext.ts`).** The existing `RequestContext` interface is a fixed shape (`requestId`, `userId?`, `teamId?`) and is mutated via `updateRequestContext(partial)` / read via `getRequestContext()`. There is **no** generic `requestContext.set(key, value)` API. Therefore this ADR requires extending the `RequestContext` interface with an optional `locale?: Locale` field (see §8.2) and using `updateRequestContext({ locale })` to write it and `getRequestContext()?.locale` to read it. The `localeResolver` middleware **must run after the `contextMiddleware` and after `authenticate`** (so that `req.user.locale` is available for authenticated requests); for unauthenticated requests it reads `Accept-Language`.
-
-**Locale resolution (backend):**
-
-1. If authenticated: `req.user.locale` (from DB).
-2. Else: `Accept-Language` header (parsed via `i18next-languageDetector`).
-3. Fallback: `en`.
-
-**Usage pattern:**
-
-```typescript
-// Instead of: throw new NotFoundError('Notification');
-const t = reqI18n.t; // bound to request locale
-throw new NotFoundError(t('errors:entityNotFound', { entity: t('common:notification') }));
-```
-
-**For async contexts (jobs, email sending):** The locale is explicitly passed as a parameter (`sendEmail({ to, locale, template, data })`) since there's no HTTP request.
-
-**Rationale.** A single instance with all namespaces preloaded avoids per-request initialization overhead (~200 strings is trivial). `AsyncLocalStorage` (already used for request context) propagates the locale through the middleware/service chain without parameter threading.
-
-**Consequences.**
-
-- **+** Consistent translation API with the frontend.
-- **+** No per-request i18next init cost.
-- **−** Background jobs must pass locale explicitly (no request context).
-
----
-
-### ADR-006: Pluralization & Cultural Formatting — ICU + `date-fns` + `Intl`
-
-**Status:** Accepted
-**Date:** 2026-07-11
-
-**Context.** Pluralization rules vary by language (English: one/other; French: one/many; Arabic: 6 forms). Date, number, and currency formats vary by locale.
-
-**Decision.**
-
-| Concern                 | Solution                                                                                  |
-| ----------------------- | ----------------------------------------------------------------------------------------- |
-| **Pluralization**       | `i18next-intlpluralresolver` (ICU MessageFormat `{count, plural, one {...} other {...}}`) |
-| **Date formatting**     | `date-fns` v4 with `date-fns/locale` (already a dependency)                               |
-| **Number formatting**   | Native `Intl.NumberFormat` API                                                            |
-| **Currency formatting** | Native `Intl.NumberFormat` with `style: 'currency'`                                       |
-| **Relative time**       | Native `Intl.RelativeTimeFormat` API                                                      |
-| **List formatting**     | Native `Intl.ListFormat` API                                                              |
-
-**Shared formatters** (in `packages/shared/src/utils/formatters.ts`):
-
-```typescript
-import { format, parseISO } from 'date-fns';
-import { enUS, de, fr, es, it } from 'date-fns/locale';
-
-const DATE_FNS_LOCALES = { en: enUS, de, fr, es, it };
-
-export function formatDate(date: Date | string, locale: Locale, fmt = 'PP'): string {
-  const d = typeof date === 'string' ? parseISO(date) : date;
-  return format(d, fmt, { locale: DATE_FNS_LOCALES[locale] ?? DATE_FNS_LOCALES.en });
-}
-
-export function formatNumber(
-  value: number,
-  locale: Locale,
-  options?: Intl.NumberFormatOptions
-): string {
-  return new Intl.NumberFormat(locale, options).format(value);
-}
-
-export function formatCurrency(value: number, locale: Locale, currency = 'EUR'): string {
-  return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(value);
-}
-
-export function formatRelativeTime(date: Date | string, locale: Locale): string {
-  const d = typeof date === 'string' ? parseISO(date) : date;
-  const diff = (d.getTime() - Date.now()) / 1000;
-  const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
-  // ... unit selection logic
-  return rtf.format(Math.round(diff), 'day');
-}
-```
-
-**Pluralization example (translation file):**
-
-```json
-{
-  "tasks": "{{count}} task",
-  "tasks_other": "{{count}} tasks",
-  "sprintDaysRemaining": "{{count}} day remaining",
-  "sprintDaysRemaining_other": "{{count}} days remaining"
-}
-```
-
-**Rationale.** `date-fns` is already installed — no new date library. Native `Intl` APIs have zero bundle cost and full CLDR coverage. ICU pluralization via `i18next-intlpluralresolver` handles all CLDR plural categories.
-
-**Consequences.**
-
-- **+** Zero additional dependencies for formatting (Intl is native, date-fns exists).
-- **+** Full CLDR plural category support.
-- **−** `i18next-intlpluralresolver` adds ~5 KB (acceptable).
-
----
-
-### ADR-007: Translation Workflow — JSON-in-Repo + CI Gates + Optional TMS Export
-
-**Status:** Accepted
-**Date:** 2026-07-11
-
-**Context.** Translators are not developers. We need a workflow that allows non-technical contributors to add/update translations safely, with quality gates.
-
-**Decision.** Store JSON translation files in the Git repo (source of truth). Provide a CI pipeline that validates structure, completeness, and terminology. Optionally export to a Translation Management System (TMS) like Crowdin/Transifex for large-scale translation, then import back via PR.
-
-**Workflow:**
-
-1. **Developer adds a new string:** Adds the key to `en/{ns}.json` (the source locale). CI blocks merge if the key is missing from `de/fr/es/it/{ns}.json` (or listed in `.i18nignore`).
-2. **Translator updates a translation:** Edits the locale JSON directly (PR) OR works in a TMS that exports a PR.
-3. **Terminology consistency:** A `glossary.json` in `packages/shared/i18n/glossary.json` defines canonical translations for domain terms (e.g., "Sprint" → "Sprint" in de, "Itération" in fr). A CI script flags deviations.
-4. **Validation script** (`scripts/i18n/validate.mjs`):
-   - JSON syntax validity.
-   - All `en` keys present in other locales.
-   - No extra keys in non-`en` locales (detect stale translations).
-   - No hardcoded English in non-`en` files (heuristic: detect common English words).
-   - Glossary term compliance.
-
-**Tooling scripts (in `scripts/i18n/`):**
-
-| Script                    | Purpose                                                               |
-| ------------------------- | --------------------------------------------------------------------- |
-| `validate.mjs`            | Run all CI checks locally                                             |
-| `extract.mjs`             | Scan `.tsx`/`.ts` for hardcoded strings (heuristic, assist migration) |
-| `completeness-report.mjs` | Generate a coverage report per locale/namespace                       |
-| `sync-glossary.mjs`       | Verify glossary terms are used consistently                           |
-
-**Consequences.**
-
-- **+** JSON-in-repo keeps translations versioned alongside code (atomic feature + translation commits).
-- **+** CI gates prevent missing translations from shipping.
-- **+** Optional TMS export supports scaling to more languages/translators.
-- **−** Translators must use Git PRs or a TMS (no in-app translator UI — out of scope for v1).
-
----
-
-### ADR-008: Performance Optimization — Namespace Lazy Loading + HTTP Caching
-
-**Status:** Accepted
-**Date:** 2026-07-11
-
-**Context.** Loading all 5 locales × 15 namespaces = 75 JSON files upfront is wasteful. Only the user's active locale and current feature's namespaces are needed.
-
-**Decision.**
-
-1. **Bundle the default locale (`en`) + `common` namespace** into the main chunk (Vite `import`). This avoids a flash-of-English on first paint for default-locale users.
-2. **Lazy-load all other locales and non-common namespaces** via dynamic `import()` triggered by `i18next`'s backend plugin (`i18next-http-backend` for fetch from `/locales/{lng}/{ns}.json`).
-3. **Cache fetched bundles** in browser cache (HTTP `Cache-Control: public, max-age=31536000, immutable` with content-hashed filenames via Vite build).
-4. **Preload** the user's preferred locale on app init (from cookie) in parallel with auth, before the first route renders.
-5. **Prefetch** adjacent namespaces on hover/idle for likely-next routes (e.g., hovering "Sprint Planning" nav link prefetches `sprint-planning.json`).
-
-**Bundle strategy (Vite):**
-
-```typescript
-// vite.config.ts — bundle en + common, lazy-load the rest
-i18next: {
-  load: 'languageOnly',
-  ns: ['common'],
-  defaultNS: 'common',
-  backend: {
-    loadPath: '/locales/{{lng}}/{{ns}}.json',
-  },
-  partialBundledLanguages: true,
-  resources: {
-    en: { common: enCommon }, // bundled
-  },
-}
-```
-
-**Expected payload sizes (gzipped estimates):**
-
-| Namespace                                  | Estimated keys | Gzipped size |
-| ------------------------------------------ | -------------- | ------------ |
-| common                                     | ~80            | ~3 KB        |
-| auth                                       | ~40            | ~2 KB        |
-| dashboard                                  | ~60            | ~2.5 KB      |
-| backlog                                    | ~150           | ~6 KB        |
-| sprint                                     | ~120           | ~5 KB        |
-| **Total (all 15 ns, one locale)**          | ~1,800         | ~55 KB       |
-| **Initial load (en + common + active ns)** | ~200           | ~8 KB        |
-
-**Consequences.**
-
-- **+** Initial load adds only ~3 KB (en/common bundled).
-- **+** Subsequent language/namespace fetches are < 6 KB each, cacheable for 1 year.
-- **+** No CLS — language switch happens in-memory after bundle load.
-- **−** First switch to a new locale incurs a network fetch (mitigated by prefetching).
-
----
+**Decision:** Frontend uses `i18next-http-backend` to fetch every locale (including `en/common`) over HTTP from `public/locales/`. No locale JSON is bundled into the JS chunks.
+**Rationale:** Smaller main bundle (~3 KB saved); locale switches never require re-bundling; the `i18n:check` script can verify all files exist without a build step.
+**Trade-off:** First paint requires a network round-trip for `en/common` (~50 ms typical). Covered by the 15-second timeout in `I18nProvider`.
+**Future option:** Bundle `en/common` only via Vite `import` if first-paint latency becomes measurable. One-line change in `config.ts`.
 
 ### ADR-009: RTL-Ready Architecture — Logical CSS + Directional Abstraction
 
-**Status:** Accepted
-**Date:** 2026-07-11
+**Decision:** All CSS uses logical properties (`margin-inline-start`, `text-align: start`, `inset-inline-end`). Stylelint rule `declaration-property-value-disallowed-list` flags physical properties. `getDirection(locale)` returns `'ltr' | 'rtl'`; `I18nProvider` sets `document.documentElement.dir`.
+**Status:** CSS groundwork in place; no RTL locale ships today. Adding `ar` or `he` requires ~2–3 engineer-days of CSS auditing and email template `dir="rtl"` additions.
 
-**Context.** Initial languages are all LTR, but the architecture must not block future Arabic/Hebrew (RTL) support, avoiding expensive refactors later.
+### ADR-010: Locale-Aware Collation — `Intl.Collator`
 
-**Decision.** Adopt **logical CSS properties** and **directional abstractions** now, even though only LTR ships initially.
+**Decision:** All user-facing string sorts (backlog items, team members) use `sortLocaleStrings(items, locale)` which wraps `new Intl.Collator(locale, { sensitivity: 'base', numeric: true })`. This ensures `Álvaro` sorts before `Ana` in Portuguese, `Österreich` sorts correctly in German, etc.
 
-**Guidelines enforced via Stylelint:**
+### ADR-011: Chart.js i18n
 
-1. **Use logical properties** instead of physical ones:
-   - `margin-inline-start` instead of `margin-left`
-   - `padding-inline-end` instead of `padding-right`
-   - `inset-inline-start` instead of `left`
-   - `text-align: start` instead of `text-align: left`
-2. **Avoid `float: left/right`** — use flexbox/grid with `direction`-aware flow.
-3. **Icons with directionality** (e.g., arrow back/forward) must be mirrored via `[dir="rtl"]` CSS selectors or `transform: scaleX(-1)`.
-4. **Set `dir` attribute** on `<html>` from `useI18nStore` based on `isRTL(locale)`.
+**Decision:** Chart.js axis labels use `formatChartDate(date, locale)` → `format(d, 'd MMM', { locale })`. Tooltip callbacks use `t()` for labels. Number formatting uses `Intl.NumberFormat`. Chart.js does not natively respect `dir="rtl"`; axis direction must be set explicitly when an RTL locale is added.
 
-**Shared utility:**
+### ADR-012: Test Migration — Locale-Aware Unit & E2E
 
-```typescript
-// packages/shared/src/utils/locale.ts
-export function isRTL(locale: Locale): boolean {
-  return ['ar', 'he', 'fa', 'ur'].includes(getBaseLanguage(locale));
-}
-
-export function getDirection(locale: Locale): 'ltr' | 'rtl' {
-  return isRTL(locale) ? 'rtl' : 'ltr';
-}
-```
-
-**Stylelint rule** (added to `.stylelintrc.json`):
-
-```json
-{
-  "rules": {
-    "declaration-property-value-disallowed-list": {
-      "/^margin|padding$/": ["left", "right"],
-      "/^text-align$/": ["left", "right"]
-    },
-    "property-disallowed-list": ["float"]
-  }
-}
-```
-
-**Consequences.**
-
-- **+** Adding RTL languages later requires only: (a) new locale JSON, (b) `ar`/`he` added to `SUPPORTED_LOCALES`, (c) `date-fns` locale import. Zero CSS changes.
-- **+** Logical properties are a modern CSS best practice regardless of RTL.
-- **−** Slight learning curve for developers used to physical properties.
-- **−** Existing CSS modules must be migrated to logical properties (part of phased rollout).
+**Decision:** All tests that assert user-visible strings use translation keys (not hardcoded English). E2E tests pre-load the required namespaces and use `data-testid` attributes (not text selectors) to find elements. This avoids breaking tests when translations change.
 
 ---
 
-### ADR-010: Locale-Aware Collation & Sorting — `Intl.Collator`
+## 5. Frontend Implementation
 
-**Status:** Accepted
-**Date:** 2026-07-11
+### 5.1 Package Dependencies
 
-**Context.** Lists of named entities (backlog items, team members, sprints, impediments) are sorted by name in the UI. Default `Array.prototype.sort()` uses code-unit ordering, which produces wrong results for accented characters and locale-specific rules. For example, German sorts `ä` like `a` (or as `ae` in phonebook order), French sorts accents from the end of the word, and Swedish places `ö` after `z`. Sorting "Österreich" vs "Orange" differs between `de` and `en`.
+**File:** `packages/frontend/package.json`
 
-**Decision.** Use the native `Intl.Collator` API for all user-facing string sorting, exposed via shared helpers `createCollator(locale, options)` and `sortLocaleStrings(items, locale)` (see §9.1). Default options: `{ sensitivity: 'base', numeric: true }` (case- and accent-insensitive, natural number ordering `task-2` before `task-10`).
+| Package                            | Purpose                                              |
+| ---------------------------------- | ---------------------------------------------------- |
+| `i18next` (v24+)                   | Core i18n library                                    |
+| `react-i18next` (v15+)             | React bindings (`useTranslation`, `I18nextProvider`) |
+| `i18next-http-backend`             | Lazy-loads namespace JSON over HTTP                  |
+| `i18next-browser-languagedetector` | Detects locale from cookie + navigator               |
+| `intl-pluralrules`                 | Polyfill for Safari < 14 (~1 KB)                     |
+| `date-fns` (v4)                    | Locale-aware date formatting                         |
 
-**Where to apply:**
+### 5.2 i18next Configuration
 
-- Backlog list view sorted by title.
-- Team member directory sorted by name.
-- Sprint/impediment/increment lists sorted by name.
-- Any `<select>`/autocomplete options populated from named entities.
+**File:** `packages/frontend/src/i18n/config.ts` (75 lines)
 
-**Where NOT to apply:** internal/stable IDs, timestamps (use numeric comparison), or server-side DB `ORDER BY` where the DB collation already handles it (Postgres `COLLATE`). For server-side sorting of localized names, prefer fetching unsorted and sorting in the application layer with `Intl.Collator`, OR set the Postgres column collation explicitly — but application-layer collation is simpler and locale-dynamic per request.
+Key options:
 
-**Consequences.**
+| Option                      | Value                          | Why                                                  |
+| --------------------------- | ------------------------------ | ---------------------------------------------------- |
+| `fallbackLng`               | `DEFAULT_LOCALE` (`en`)        | All missing keys fall back to English                |
+| `supportedLngs`             | `[...SUPPORTED_LOCALES]`       | Rejects unsupported locales early                    |
+| `load`                      | `'languageOnly'`               | `pt-BR` → `pt` (no region-qualified locales today)   |
+| `ns`                        | 16 namespaces (see ADR-002)    | Lazy-loaded per route                                |
+| `defaultNS`                 | `'common'`                     | Shared strings (buttons, labels)                     |
+| `backend.loadPath`          | `/locales/{{lng}}/{{ns}}.json` | Served from `public/locales/`                        |
+| `detection.order`           | `['cookie', 'navigator']`      | Cookie first (user preference), browser second       |
+| `detection.caches`          | `['cookie']`                   | Persist resolved locale to `scrumooth_locale` cookie |
+| `detection.lookupCookie`    | `'scrumooth_locale'`           | Shared with backend                                  |
+| `parseMissingKeyHandler`    | `(key) => key`                 | Returns key string (visible in dev, not blank)       |
+| `interpolation.escapeValue` | `false`                        | React escapes by default                             |
 
-- **+** Correct alphabetical ordering per locale; zero dependency cost (native API).
-- **+** `numeric: true` solves the `task-2` vs `task-10` problem without zero-padding.
-- **−** Must remember to use the helper instead of bare `.sort()` — add an ESLint `no-restricted-syntax` rule to flag `.sort()` on string arrays in feature code (warn, not error, since some sorts are numeric).
+**No `resources` field** — locale JSON is fetched by `i18next-http-backend`, not bundled.
 
----
+### 5.3 I18nProvider
 
-### ADR-011: Chart.js & Data Visualization i18n
+**File:** `packages/frontend/src/i18n/I18nProvider.tsx` (246 lines)
 
-**Status:** Accepted
-**Date:** 2026-07-11
+The provider manages three concerns:
 
-**Context.** Scrumooth uses Chart.js for burndown charts, velocity charts, and dashboards. Chart.js renders axis titles, tick labels, legend labels, tooltips, and dataset labels — all of which are user-facing text that must be translated, and all numeric/date tick values must be locale-formatted.
+1. **Init lifecycle** — three states: `loading` → `ready` (or `error`). A 15-second timeout (`I18N_INIT_TIMEOUT_MS = 15_000`) flips to `error` if i18next doesn't initialize. The error UI shows a retry button and dev-only diagnostic details (`i18n.isInitialized`, `i18n.language`).
 
-**Decision.** Treat Chart.js configuration as a translation surface: all label strings come from `t()`, and all numeric/date ticks go through the shared formatters (`formatNumber`, `formatDate`). Chart options are rebuilt when the locale changes (the chart re-renders on `locale` dependency change).
+2. **Locale sync** — on mount, syncs the Zustand store from i18next's detected language. On login (auth store user transition from null to non-null), syncs from `user.locale` UNLESS the user has an explicit persisted preference (checked by reading the Zustand persist localStorage key).
 
-**Pattern:**
+3. **Language switching** — when `useI18nStore.locale` changes, calls `i18nInstance.changeLanguage(locale)` and sets `document.documentElement.lang` and `dir`. A `isChangingLanguage` ref guards against feedback loops (Zustand update → i18next `languageChanged` event → Zustand update).
 
-```tsx
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useI18nStore } from '@/i18n/useI18nStore';
-import { formatDate, formatNumber } from '@scrumooth/shared';
+**Children are not rendered until `i18nState === 'ready'`** — prevents flash of untranslated text.
 
-export function BurndownChart({ data }: BurndownChartProps) {
-  const { t } = useTranslation('sprint');
-  const { locale } = useI18nStore();
+### 5.4 useI18nStore (Zustand)
 
-  const options = useMemo(
-    () => ({
-      scales: {
-        x: {
-          title: { display: true, text: t('sprint:chartAxisDays') },
-          ticks: {
-            callback: (value: number | string) =>
-              formatDate(labels[Number(value)], locale, 'dd MMM'),
-          },
-        },
-        y: {
-          title: { display: true, text: t('sprint:chartAxisStoryPoints') },
-          ticks: { callback: (value: number | string) => formatNumber(Number(value), locale) },
-        },
-      },
-      plugins: {
-        legend: { labels: { text: t('sprint:chartIdealBurndown') } },
-        tooltip: {
-          callbacks: {
-            label: (ctx: { parsed: { y: number } }) =>
-              t('sprint:chartTooltipPoints', { count: ctx.parsed.y }),
-          },
-        },
-      },
-    }),
-    [t, locale, labels]
-  );
+**File:** `packages/frontend/src/i18n/useI18nStore.ts` (37 lines)
 
-  return <Chart type="line" data={data} options={options} />;
-}
-```
+Holds `{ locale: Locale }` with Zustand persist (key: `scrumooth.locale`).
 
-**Coverage checklist (gap h):**
+`setLocale(locale)`:
 
-- [ ] Axis titles (`scales.x.title.text`, `scales.y.title.text`)
-- [ ] Axis tick labels (dates via `formatDate`, numbers via `formatNumber`)
-- [ ] Legend labels (`plugins.legend.labels.text` and per-dataset `label`)
-- [ ] Tooltip headers and bodies (`plugins.tooltip.callbacks.*`)
-- [ ] Chart titles (`plugins.title.text`)
-- [ ] Data labels (if using a label plugin)
+1. Updates Zustand state.
+2. Writes `scrumooth_locale` cookie directly via `document.cookie` (1 year, `SameSite=Strict`, `Secure` in production).
 
-**Consequences.**
+`syncLocaleFromUser(locale)`: helper that updates both Zustand state AND the cookie in one call (used by `I18nProvider` on login).
 
-- **+** Charts render correctly in every locale, including number formatting (`1.234,56` vs `1,234.56`) and date formatting on axes.
-- **−** Chart `options` must be memoized on `[t, locale, ...data]` to avoid recreation each render; forgetting the dependency causes stale translations after a language switch.
+**Why write the cookie directly** instead of relying on `i18next-browser-languagedetector`'s `caches: ['cookie']`: the cache write happens asynchronously after `changeLanguage()` resolves; writing the cookie synchronously in `setLocale` ensures the next request (even immediate) carries the new locale.
 
----
-
-### ADR-012: Test Migration Strategy — Locale-Aware Unit & E2E Tests
-
-**Status:** Accepted
-**Date:** 2026-07-11
-
-**Context.** Existing unit tests (`*.test.tsx`) and Playwright E2E tests assert on hardcoded English strings (e.g., `screen.getByText('Dashboard')`, `expect(page).toContainText('Sign in')`). When i18n is introduced, the default render path goes through `t('nav:dashboard')` which resolves to English **only when the test locale is `en` and the namespace is loaded**. Tests that (a) don't wrap in `I18nextProvider`, (b) don't load the required namespace, or (c) assert text that hasn't been extracted yet will break. Additionally, Playwright tests run in a single browser locale and will fail if the UI switches to a non-`en` default.
-
-**Decision.** Adopt a three-part test strategy:
-
-1. **Unit/integration tests (Vitest + RTL):**
-   - Add a shared test setup that initializes i18next with `en` + all namespaces preloaded, and wraps every component render in `I18nextProvider`.
-   - Provide a `renderWithI18n(ui, { locale = 'en', ns = [] })` test helper.
-   - Prefer asserting on **translation keys via `data-testid`** for stable tests, OR assert on the resolved English text (acceptable since `en` is the test default). Do **not** assert on raw strings that are known to be untranslated.
-   - Add at least one test per feature that switches to a second locale (`de`) and asserts the German text renders — this catches missing-namespace and missing-key regressions.
-
-2. **E2E tests (Playwright):**
-   - Set a fixed locale per test via the `scrumooth_locale` cookie or the language switcher, and assert against the expected locale's text. Add a `test.use({ locale: 'en-US' })` default plus explicit per-test overrides.
-   - Add `data-testid` attributes to stable elements (buttons, headings) so tests can locate elements without coupling to translatable text where possible.
-   - Provide a `t(key)` helper in the Playwright fixture that reads the same JSON the app uses, so tests can assert `await expect(page.locator('h1')).toHaveText(t('auth:welcomeBack'))` without hardcoding.
-
-3. **CI gate:** a `i18n:test-locale` job runs a subset of E2E tests in `de` to ensure non-English rendering works end-to-end.
-
-**Migration order:** before extracting strings from a page, update its tests to use `data-testid` assertions (decoupling them from text); then extract strings; the tests continue to pass. See §16.6 for the detailed migration steps and the roadmap (§19) for scheduling.
-
-**Consequences.**
-
-- **+** Tests survive the i18n migration without mass rewrites.
-- **+** `data-testid`-based assertions are more robust to copy changes regardless of i18n.
-- **−** Adding `data-testid` to existing components is incremental work (folded into the phased rollout).
-
----
-
-## 6. Database Schema Changes
-
-### 6.1 Prisma Schema Migration
-
-Add a `locale` column to the `User` model.
-
-**File:** `packages/backend/prisma/schema.prisma`
-
-```prisma
-model User {
-  id                   String                     @id @db.Uuid
-  email                String                     @unique
-  password             String
-  firstName            String
-  lastName             String
-  avatarUrl            String?
-  locale               String                     @default("en") @db.VarChar(10)  // NEW
-  createdAt            DateTime                   @default(now()) @db.Timestamptz(3)
-  // ... existing fields
-  @@map("users")
-}
-```
-
-**Migration:**
-
-```sql
--- Migration: add_locale_to_users
-ALTER TABLE "users" ADD COLUMN "locale" VARCHAR(10) NOT NULL DEFAULT 'en';
-
--- Optional: CHECK constraint for valid locales
-ALTER TABLE "users" ADD CONSTRAINT "users_locale_check"
-  CHECK ("locale" IN ('en', 'de', 'fr', 'es', 'it'));
-```
-
-> **Note:** The `CHECK` constraint is intentionally not added via Prisma (Prisma doesn't natively support CHECK). It's added via a raw SQL migration. If future locales are added, this constraint must be updated. Alternatively, omit the CHECK and validate at the application layer (Zod) for flexibility.
-
-### 6.2 Application-Layer Validation (Zod)
-
-```typescript
-// packages/shared/src/constants/index.ts
-export const SUPPORTED_LOCALES = ['en', 'de', 'fr', 'es', 'it'] as const;
-export type Locale = (typeof SUPPORTED_LOCALES)[number];
-export const DEFAULT_LOCALE: Locale = 'en';
-
-export const LOCALE_LABELS: Record<Locale, string> = {
-  en: 'English',
-  de: 'Deutsch',
-  fr: 'Français',
-  es: 'Español',
-  it: 'Italiano',
-};
-
-// packages/backend/src/validations/auth.validation.ts
-import { SUPPORTED_LOCALES, type Locale } from '@scrumooth/shared';
-// z.enum() requires a mutable [string, ...string[]] tuple. SUPPORTED_LOCALES is
-// `readonly ['en','de','fr','es','it']` (declared `as const`), so cast it.
-const localeSchema = z.enum(SUPPORTED_LOCALES as unknown as [Locale, ...Locale[]]).default('en');
-```
-
-### 6.3 API Endpoint Changes
-
-> **Verified against `auth.routes.ts`.** The existing profile-update route is `PUT /api/v1/auth/me/profile` (mounted under the `/api/v1/auth` router), protected by `authenticate` + `validateBody(updateProfileSchema)`. The `locale` field is added to the existing `updateProfileSchema` (see §8.4b), not to a new endpoint.
-
-| Method | Path                      | Change                                                                                                                                                                                                    |
-| ------ | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `PUT`  | `/api/v1/auth/me/profile` | **Existing route** — extend `updateProfileSchema` to accept optional `locale`; persist via `authService.updateProfile`; set `scrumooth_locale` cookie on response; **audit-log** the locale change (§8.7) |
-| `GET`  | `/api/v1/auth/me`         | **Existing route** — include `locale` in the returned user object (automatic once the Prisma `User.locale` column exists and `select`/serialization includes it)                                          |
-| `POST` | `/api/v1/auth/login`      | **Existing route** — on success, set `scrumooth_locale` cookie from `User.locale`                                                                                                                         |
-| `POST` | `/api/v1/auth/register`   | **Existing route** — accept optional `locale` in `registerSchema`; default to browser-detected (`Accept-Language`) or `en`                                                                                |
-| `GET`  | `/api/v1/config/locales`  | **New endpoint** — return `SUPPORTED_LOCALES` + `LOCALE_LABELS` (for the language switcher UI); public, no auth required                                                                                  |
-
----
-
-## 7. Frontend Implementation
-
-### 7.1 Package Dependencies
-
-Add to `packages/frontend/package.json` (and mirror the runtime deps in `packages/backend/package.json` minus the React/browser-specific packages):
-
-```json
-{
-  "dependencies": {
-    "i18next": "^26.0.0",
-    "react-i18next": "^15.7.0",
-    "i18next-http-backend": "^3.0.0",
-    "i18next-browser-languagedetector": "^8.0.0",
-    "i18next-intlpluralresolver": "^8.0.0"
-  }
-}
-```
-
-> **Version notes (verified 2026-07-11).** `i18next` v26 is the current major release (v26.3.4 is latest). All configuration options used in this document (`fallbackLng`, `supportedLngs`, `load`, `partialBundledLanguages`, `ns`, `defaultNS`, `returnNull`, `returnEmptyString`, `saveMissing`, `missingKeyHandler`, `react.useSuspense`, `react.bindI18n`) are valid in v26. Two v26 breaking changes are relevant:
->
-> 1. **`interpolation.format` function removed** — custom value formatting must use the Formatter API (`i18next.services.formatter.add('name', fn)`). This document does **not** use a custom `interpolation.format` function (formatting is done explicitly via the shared `format*` helpers), so no migration is required. If a custom formatter is added later, use the Formatter API, not `interpolation.format`.
-> 2. **`initImmediate` removed** — renamed to `initAsync` in v24. The backend init uses `void i18nInstance.init()` (fire-and-forget) which is unaffected; if awaited initialization is needed, use `await i18nInstance.init()` (returns a promise by default in v26).
->
-> **TypeScript:** i18next v24+ requires TypeScript v5+. The project already uses a modern TypeScript; confirm `typescript >= 5.x` in all three packages. For large translation dictionaries, consider `enableSelector: true` (added in v25.4) to keep IDE performance acceptable; this is optional and off by default in v25.4 but on by default in v26+.
->
-> **`i18next-intlpluralresolver`** resolves CLDR plural categories (one/few/many/other) and is required for correct French/Spanish/Italian `many` forms. Pin `^8.0.0` (compatible with i18next v26).
-
-### 7.2 i18next Configuration
-
-**File:** `packages/frontend/src/i18n/config.ts`
-
-```typescript
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
-import HttpBackend from 'i18next-http-backend';
-import LanguageDetector from 'i18next-browser-languagedetector';
-
-import { DEFAULT_LOCALE, SUPPORTED_LOCALES, type Locale } from '@scrumooth/shared';
-
-// Bundled default locale + common namespace (avoids flash of untranslated text)
-import enCommon from '../locales/en/common.json';
-
-export const i18nInstance = i18n.use(HttpBackend).use(LanguageDetector).use(initReactI18next);
-
-export function initI18n(initialLocale?: Locale): Promise<typeof i18n> {
-  return i18nInstance.init({
-    resources: {
-      en: { common: enCommon },
-    },
-    fallbackLng: DEFAULT_LOCALE,
-    supportedLngs: SUPPORTED_LOCALES,
-    load: 'languageOnly',
-    ns: ['common'],
-    defaultNS: 'common',
-    partialBundledLanguages: true,
-
-    backend: {
-      loadPath: '/locales/{{lng}}/{{ns}}.json',
-    },
-
-    detection: {
-      order: ['cookie', 'localStorage', 'navigator'],
-      lookupCookie: 'scrumooth_locale',
-      lookupLocalStorage: 'scrumooth.locale',
-      caches: ['localStorage'],
-    },
-
-    interpolation: {
-      escapeValue: false, // React escapes by default
-    },
-
-    react: {
-      useSuspense: true,
-      bindI18n: 'languageChanged loaded',
-    },
-
-    returnNull: false,
-    returnEmptyString: false,
-    saveMissing: true,
-    missingKeyHandler: (lngs, ns, key) => {
-      if (import.meta.env.DEV) {
-        console.warn(`[i18n] Missing key: ${lngs.join(',')}:${ns}:${key}`);
-      }
-    },
-  });
-}
-```
-
-### 7.3 I18nProvider & Store Integration
-
-**File:** `packages/frontend/src/i18n/I18nProvider.tsx`
-
-```tsx
-import React, { useEffect } from 'react';
-import { I18nextProvider } from 'react-i18next';
-import { i18nInstance } from './config';
-import { useI18nStore } from './useI18nStore';
-import { getDirection } from '@scrumooth/shared';
-
-interface I18nProviderProps {
-  children: React.ReactNode;
-  initialLocale?: string;
-}
-
-export const I18nProvider: React.FC<I18nProviderProps> = ({ children, initialLocale }) => {
-  const { locale, setLocale } = useI18nStore();
-
-  useEffect(() => {
-    void i18nInstance.changeLanguage(locale);
-    document.documentElement.lang = locale;
-    document.documentElement.dir = getDirection(locale);
-  }, [locale]);
-
-  return <I18nextProvider i18n={i18nInstance}>{children}</I18nextProvider>;
-};
-```
-
-### 7.4 Zustand Store
-
-**File:** `packages/frontend/src/i18n/useI18nStore.ts`
-
-```typescript
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { DEFAULT_LOCALE, type Locale } from '@scrumooth/shared';
-
-interface I18nState {
-  locale: Locale;
-  setLocale: (locale: Locale) => void;
-}
-
-export const useI18nStore = create<I18nState>()(
-  persist(
-    (set) => ({
-      locale: DEFAULT_LOCALE,
-      setLocale: (locale) => set({ locale }),
-    }),
-    {
-      name: 'scrumooth.locale',
-      partialize: (state) => ({ locale: state.locale }),
-    }
-  )
-);
-```
-
-### 7.5 Language Switcher Component
-
-**File:** `packages/frontend/src/components/common/LanguageSwitcher/LanguageSwitcher.tsx`
-
-```tsx
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { LOCALE_LABELS, SUPPORTED_LOCALES, type Locale } from '@scrumooth/shared';
-import { useI18nStore } from '@/i18n/useI18nStore';
-import { useAuthStore } from '@/stores/useAuthStore';
-import { apiService } from '@/services';
-import { logger } from '@/utils/logger';
-import { toast } from '@/components/common/Toast';
-import styles from './LanguageSwitcher.module.css';
-
-interface LanguageSwitcherProps {
-  variant?: 'dropdown' | 'inline';
-}
-
-export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ variant = 'dropdown' }) => {
-  const { t } = useTranslation();
-  const { locale, setLocale } = useI18nStore();
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-
-  const handleChange = async (newLocale: Locale) => {
-    // Optimistically update the UI; the store persists to localStorage.
-    setLocale(newLocale);
-    if (!isAuthenticated) {
-      return; // guests: localStorage is the source of truth, nothing else to do
-    }
-    try {
-      await apiService.updateProfile({ locale: newLocale });
-    } catch (error) {
-      // Authenticated user: the profile sync failed — log and surface a toast,
-      // but keep the optimistic local change (it will reconcile on next /me).
-      logger.warn('Failed to persist locale to profile', { error });
-      toast.error(t('common:localeSyncFailed'));
-    }
-  };
-
-  return (
-    <div className={styles.container}>
-      <label htmlFor="language-select" className={styles.label}>
-        {t('common:language')}
-      </label>
-      <select
-        id="language-select"
-        className={styles.select}
-        value={locale}
-        onChange={(e) => void handleChange(e.target.value as Locale)}
-        aria-label={t('common:selectLanguage')}
-      >
-        {SUPPORTED_LOCALES.map((lng) => (
-          <option key={lng} value={lng}>
-            {LOCALE_LABELS[lng]}
-          </option>
-        ))}
-      </select>
-    </div>
-  );
-};
-```
-
-### 7.6 Usage Pattern in Components
-
-**Before (current):**
-
-```tsx
-<h1>Welcome back</h1>
-<button onClick={handleLogin}>Sign in</button>
-<p>{error}</p>
-```
-
-**After (i18n):**
-
-```tsx
-const { t } = useTranslation('auth');
-
-<h1>{t('welcomeBack')}</h1>
-<button onClick={handleLogin}>{t('signIn')}</button>
-<p>{t('loginFailed')}</p>
-
-// With interpolation:
-<p>{t('welcomeUser', { name: user.firstName })}</p>
-
-// With pluralization:
-<span>{t('tasksRemaining', { count: remaining })}</span>
-
-// With namespace + formatted date:
-<span>{t('sprint:endsOn', { date: formatDate(sprint.endDate, locale) })}</span>
-```
-
-### 7.7 Type-Safe Translation Keys (Optional Enhancement)
-
-To satisfy NFR-9 (type safety), define key types from the JSON:
+### 5.5 Type-Safe Translation Keys
 
 **File:** `packages/frontend/src/i18n/types.ts`
 
-```typescript
-import type enCommon from '../locales/en/common.json';
+Enumerates all keys per namespace as TypeScript types. **`enableSelector: true` is NOT yet enabled** in i18next config — keys are currently `string`-typed. Enabling it would make `t('dashboard.titile')` (typo) a compile-time error. Recommended future improvement (see §14).
 
-type CommonKeys = keyof typeof enCommon;
-
-declare module 'i18next' {
-  interface CustomTypeOptions {
-    defaultNS: 'common';
-    resources: {
-      common: typeof enCommon;
-      // Add other namespaces as they're typed
-    };
-  }
-}
-```
-
-This enables IDE autocompletion and compile-time key validation in `t('...')`.
-
-### 7.8 Lazy Namespace Loading per Route
-
-**File:** `packages/frontend/src/routes/lazyComponents.ts` (extended)
-
-```typescript
-import { lazy } from 'react';
-import { i18nInstance } from '@/i18n/config';
-
-function withNamespace<T extends React.ComponentType>(
-  ns: string,
-  factory: () => Promise<{ default: T }>
-): React.LazyExoticComponent<T> {
-  return lazy(async () => {
-    await i18nInstance.loadNamespaces([ns]);
-    return factory();
-  });
-}
-
-export const LazyProductBacklog = withNamespace('backlog', () =>
-  import('../pages/Backlog/Backlog').then((m) => ({ default: m.Backlog as never }))
-);
-```
-
-### 7.9 Accessibility Deep-Dive
-
-Internationalization and accessibility are tightly coupled: an untranslated or mis-translated accessible name is a regression for screen-reader users. This section defines the i18n scope for accessibility attributes so that `extract.mjs` (§13.8) captures them and the completeness gate (§16.5) enforces their presence.
-
-#### 7.9.1 Attributes in Scope
-
-The following attributes MUST be translated and are treated as translation surfaces by `extract.mjs`:
-
-| Attribute              | Element Context                             | Translation Key Pattern                       | Example                                               |
-| ---------------------- | ------------------------------------------- | --------------------------------------------- | ----------------------------------------------------- |
-| `aria-label`           | Icon-only buttons, decorative-link wrappers | `common:aria.<purpose>`                       | `aria-label={t('common:aria.openMenu')}`              |
-| `aria-labelledby`      | IDs referencing translated text             | (indirect — translate the referenced element) | `aria-labelledby="dialog-title"`                      |
-| `aria-describedby`     | IDs referencing translated help text        | (indirect — translate the referenced element) | `aria-describedby="password-hint"`                    |
-| `aria-roledescription` | Custom-widget descriptions                  | `common:aria.<widget>`                        | `aria-roledescription={t('common:aria.kanbanCard')}`  |
-| `alt`                  | Informative images (`<img>`)                | `<ns>:alt.<image>`                            | `alt={t('dashboard:alt.teamPhoto')}`                  |
-| `title`                | Tooltips / advisory info                    | `common:title.<purpose>`                      | `title={t('common:title.lastUpdated')}`               |
-| `placeholder`          | Form inputs                                 | `<ns>:placeholder.<field>`                    | `placeholder={t('auth:placeholder.email')}`           |
-| `<title>` (document)   | Page title                                  | `<ns>:pageTitle.<page>`                       | `document.title = t('dashboard:pageTitle.dashboard')` |
-| `lang` (nested)        | Foreign-language quotes/terms               | Literal BCP-47 tag, NOT a translation key     | `<span lang="fr">déjà vu</span>`                      |
-
-**Decorative images** (`alt=""`) are OUT of scope and MUST NOT be translated — empty `alt` is locale-independent.
-
-#### 7.9.2 Accessible Name Computation
-
-Screen readers compute the _accessible name_ from a precedence chain (per WAI-ARIA 1.2): `aria-labelledby` → `aria-label` → visible text → `title` → `placeholder`. Translation MUST be applied consistently at every link in the chain, or the localized accessible name will silently fall back to an untranslated source.
-
-**Anti-pattern (mixed-language accessible name):**
+### 5.6 Usage Pattern in Components
 
 ```tsx
-// ❌ Bad: aria-label is translated, visible label is not (or vice versa)
-<button aria-label={t('common:actions.save')}>Save {/* English hardcoded */}</button>
-```
+import { useTranslation } from 'react-i18next';
 
-**Correct pattern:**
-
-```tsx
-// ✅ Good: visible label and aria-label share the same key;
-// omit aria-label entirely when visible text is sufficient
-<button>
-  {t('common:actions.save')}
-</button>
-
-// ✅ Good: icon-only button — aria-label is the sole accessible name
-<button
-  aria-label={t('common:aria.closeDialog')}
-  onClick={onClose}
->
-  <CloseIcon />
-</button>
-```
-
-**Rule of thumb:** Do NOT set `aria-label` to a translation of text that is already visible inside the element — it duplicates the accessible name and can diverge on locale switch. Use `aria-label` only for icon-only controls or when the visible text is intentionally ambiguous.
-
-#### 7.9.3 Dynamic `lang` Attribute on Nested Content
-
-When a page embeds a term in a different language (e.g., a German UI quoting a French product name), the nested element MUST carry a `lang` attribute so screen readers pronounce it correctly:
-
-```tsx
-<span lang={termLocale}>{term}</span>
-```
-
-`termLocale` is a literal BCP-47 tag from `SUPPORTED_LOCALES` — it is NOT looked up via `t()`. The translation value for the term itself is resolved normally via `t()` in the surrounding UI locale.
-
-#### 7.9.4 Document `<title>` and `lang`/`dir` Synchronization
-
-On every locale change, three document-level attributes MUST be updated atomically (see `useI18nStore` §7.4):
-
-1. `document.documentElement.lang` → BCP-47 tag (e.g., `'de'`)
-2. `document.documentElement.dir` → `'ltr'` or `'rtl'` (via `isRTL(locale)`)
-3. `document.title` → translated page title for the current route
-
-Failure to update `lang` causes screen readers to mispronounce translated content using the wrong phonology engine. Failure to update `dir` breaks BiDi layout (relevant once RTL lands in Phase 5).
-
-#### 7.9.5 Screen-Reader Testing in CI
-
-The Playwright suite (§16.4, ADR-012) includes accessibility assertions that run under both `en` and `de`:
-
-```typescript
-test('icon-only buttons have localized accessible names', async ({ page }) => {
-  await page.goto('/dashboard');
-  await page.selectOption('[data-testid="language-select"]', 'de');
-  const closeBtn = page.locator('[data-testid="close-sidebar"]');
-  await expect(closeBtn).toHaveAttribute('aria-label', 'Seitenleiste schließen');
-});
-
-test('document lang attribute matches selected locale', async ({ page }) => {
-  await page.goto('/dashboard');
-  await page.selectOption('[data-testid="language-select"]', 'fr');
-  await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
-});
-```
-
-#### 7.9.6 Extraction & Coverage
-
-`extract.mjs` (§13.8) scans for all attributes listed in §7.9.1 and emits keys under the `aria`, `alt`, `title`, `placeholder`, and `pageTitle` sub-trees of the relevant namespace. The CI completeness gate (§16.5) treats these keys as P0 — a missing `aria-label` translation fails the build just like a missing button label.
-
-### 7.10 Empty, Loading & Error States
-
-These three states are the most frequently forgotten i18n surfaces because they are not part of the "happy path" and are often added late or via copy-paste. Each state has distinct translation requirements documented below.
-
-#### 7.10.1 Empty States
-
-Empty states appear when a list/query returns no results. They typically contain a heading, a description, and optionally a call-to-action button — all of which MUST be translated. Empty states frequently include **interpolated counts or entity names** and may require **pluralization**.
-
-**Key structure:** `<ns>:empty.<entity>.{title|description|action}`
-
-```json
-// backlog.json (de)
-{
-  "empty": {
-    "backlog": {
-      "title": "Der Product Backlog ist leer",
-      "description": "Es sind noch keine Backlog-Einträge vorhanden. Erstellen Sie den ersten Eintrag, um zu starten.",
-      "action": "Backlog-Eintrag erstellen"
-    },
-    "search": {
-      "title": "Keine Ergebnisse für \"{{query}}\"",
-      "description": "Versuchen Sie es mit einem anderen Suchbegriff oder entfernen Sie Filter."
-    }
-  }
+function BacklogPage() {
+  const { t } = useTranslation('backlog'); // lazy-loads /locales/{lng}/backlog.json
+  return <h1>{t('title')}</h1>; // typed as string (until enableSelector)
 }
 ```
 
-**Pluralized empty state (rare but valid — e.g., "No items match 1 filter" vs "No items match 3 filters"):**
+For multiple namespaces: `useTranslation(['common', 'backlog'])` then `t('common:save')` / `t('backlog:title')`.
 
-```json
-{
-  "empty": {
-    "filteredBacklog": {
-      "description_one": "Keine Einträge entsprechen {{count}} Filter.",
-      "description_other": "Keine Einträge entsprechen {{count}} Filtern."
-    }
-  }
-}
-```
+### 5.7 Lazy Namespace Loading per Route
 
-#### 7.10.2 Loading States
+Each route component declares its namespaces via `useTranslation()`. `i18next-http-backend` fetches the JSON on first use and caches in memory. No explicit `loadNamespaces()` call is needed. Optional prefetching on nav hover: `<NavLink onMouseEnter={() => i18nInstance.loadNamespaces(['backlog'])}>`.
 
-Loading states (skeletons, spinners, progressive placeholders) are **mostly locale-independent** because they render shapes rather than text. However, two sub-cases require translation:
+### 5.8 Accessibility
 
-1. **Loading text labels** (e.g., `"Loading sprints…"`, `"Daten werden geladen…"`) — translate via `<ns>:loading.<context>`.
-2. **Skeleton `aria-label` / `aria-busy`** — screen readers announce loading regions; the accessible label MUST be translated (see §7.9).
-
-```tsx
-// ✅ Good: loading label translated, skeleton has localized aria-label
-<section aria-busy="true" aria-label={t('sprint:loading.sprints')}>
-  <Skeleton rows={5} />
-</section>
-```
-
-**Anti-pattern:** embedding English placeholder text inside skeleton components (e.g., `Skeleton text="Loading…"`) — this leaks English to non-English users during the brief loading window.
-
-#### 7.10.3 Error States
-
-Error states fall into three categories, each with its own translation source:
-
-| Error Category                                          | Translation Source                                                 | Key Pattern                 | Example                                         |
-| ------------------------------------------------------- | ------------------------------------------------------------------ | --------------------------- | ----------------------------------------------- |
-| **HTTP/transport errors** (network down, 500, timeout)  | Frontend `errors` namespace                                        | `errors:http.<code>`        | `errors:http.networkOffline`                    |
-| **Backend validation errors** (400 with field details)  | Backend resolves via `t()`, sends resolved string (see §8.4b)      | `validation:<field>.<rule>` | `validation:email.invalid`                      |
-| **Business-logic errors** (404, 403, 409 from services) | Backend `errors` namespace, resolved per request locale (see §8.4) | `errors:entityNotFound`     | `errors:entityNotFound` with `{ entity }` param |
-
-**Frontend error boundary text** MUST be bundled with the `common` namespace so it renders even when a route-level namespace fails to load:
-
-```json
-// common.json (de)
-{
-  "error": {
-    "boundary": {
-      "title": "Etwas ist schiefgelaufen",
-      "description": "Ein unerwarteter Fehler ist aufgetreten. Sie können es erneut versuchen oder zum Dashboard zurückkehren.",
-      "retry": "Erneut versuchen",
-      "goHome": "Zum Dashboard"
-    },
-    "http": {
-      "networkOffline": "Sie sind offline. Bitte überprüfen Sie Ihre Verbindung.",
-      "timeout": "Die Anfrage hat zu lange gedauert. Bitte versuchen Sie es erneut.",
-      "serverError": "Ein Serverfehler ist aufgetreten. Unser Team wurde benachrichtigt."
-    }
-  }
-}
-```
-
-#### 7.10.4 Coverage Enforcement
-
-Empty, loading, and error states are explicitly enumerated in the migration checklist (Appendix D) and audited by `extract.mjs` (§13.8) via the following scan targets:
-
-- JSX text inside components named `*EmptyState`, `*LoadingState`, `*ErrorState`, `*Skeleton`, `*ErrorBoundary`
-- `toast.error(...)`, `toast.success(...)` calls
-- `throw new Error(...)` / `throw new NotFoundError(...)` in services
-- `message:` fields in Zod schemas (§8.4b)
-
-The CI completeness gate (§16.5) treats all `empty.*`, `loading.*`, and `error.*` keys as P0.
+- All `aria-label` values use `t()`.
+- `document.documentElement.lang` and `dir` are set on locale change.
+- Error UI in `I18nProvider` uses `role="alert"` and `aria-live="assertive"`.
 
 ---
 
-## 8. Backend Implementation
+## 6. Backend Implementation
 
-### 8.1 Backend i18next Instance
+### 6.1 Backend i18next Instance
 
-**File:** `packages/backend/src/i18n/config.ts`
+**File:** `packages/backend/src/i18n/config.ts` (81 lines)
+
+Initialized at startup via `i18next.createInstance()`. All 5 locales × 5 namespaces are bundled via `with { type: 'json' }` ESM import attributes (Node 22+/TS 5.3+):
 
 ```typescript
-import i18n from 'i18next';
+import enEmails from '../locales/en/emails.json' with { type: 'json' };
+// ... 24 more imports
+```
 
-import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@scrumooth/shared';
+Options: `fallbackLng: DEFAULT_LOCALE`, `supportedLngs: [...SUPPORTED_LOCALES]`, `load: 'languageOnly'`, `defaultNS: 'errors'`, `returnNull: false`, `returnEmptyString: false`.
 
-import enEmails from '../locales/en/emails.json';
-import enNotifications from '../locales/en/notifications.json';
-import enErrors from '../locales/en/errors.json';
-import enValidation from '../locales/en/validation.json';
-import deEmails from '../locales/de/emails.json';
-// ... all locales preloaded
+`void i18nInstance.init()` is called at module load (fire-and-forget; the promise resolves before the first request in practice).
 
-const resources = {
-  en: {
-    emails: enEmails,
-    notifications: enNotifications,
-    errors: enErrors,
-    validation: enValidation,
-  },
-  de: { emails: deEmails /* ... */ },
-  // ...
-};
+### 6.2 LocaleResolver Middleware
 
-export const i18nInstance = i18n.createInstance({
-  resources,
-  fallbackLng: DEFAULT_LOCALE,
-  supportedLngs: SUPPORTED_LOCALES,
-  load: 'languageOnly',
-  ns: ['emails', 'notifications', 'errors', 'validation'],
-  defaultNS: 'errors',
-  interpolation: { escapeValue: false },
-  returnNull: false,
+**File:** `packages/backend/src/middleware/locale.middleware.ts` (50 lines)
+
+**Priority (verified):** `Accept-Language` header FIRST → `User.locale` (database) → `DEFAULT_LOCALE`.
+
+```typescript
+// Simplified
+const locale =
+  parseAcceptLanguage(req.headers['accept-language']) ??
+  (user?.locale && isSupportedLocale(user.locale) ? user.locale : DEFAULT_LOCALE);
+updateRequestContext({ locale });
+res.cookie('scrumooth_locale', locale, {
+  maxAge: 365 * 24 * 60 * 60 * 1000, // milliseconds (Express res.cookie maxAge is ms, not seconds)
+  httpOnly: false, // frontend JS reads the cookie for sync
+  sameSite: 'strict',
+  secure: isProduction,
 });
-
-void i18nInstance.init();
 ```
 
-### 8.2 LocaleResolver Middleware
+**Accept-Language parsing is simplistic** — splits on comma, doesn't handle `q=` quality values or RFC 4647 lookup. Use `resolve-accept-language` package when adding region-qualified locales.
 
-**Prerequisite — extend the `RequestContext` interface.**
+### 6.3 Request-Scoped `t()` Accessor
 
-**File:** `packages/backend/src/utils/requestContext.ts` (modified)
-
-```typescript
-import type { Locale } from '@scrumooth/shared';
-
-export interface RequestContext {
-  /** Unique identifier for the request */
-  requestId: string;
-  /** ID of the authenticated user (if any) */
-  userId?: string;
-  /** ID of the team context (if any) */
-  teamId?: string;
-  /** Resolved locale for this request (added by i18n — see ADR-005) */
-  locale?: Locale;
-}
-```
-
-The existing `updateRequestContext(updates)` uses `Object.assign(store, updates)`, so adding `locale` to the interface is sufficient — no other change to `requestContext.ts` is required. Add a thin accessor for ergonomics:
+**File:** `packages/backend/src/i18n/requestT.ts` (13 lines)
 
 ```typescript
-// packages/backend/src/utils/requestContext.ts (append)
-import { DEFAULT_LOCALE, type Locale } from '@scrumooth/shared';
-import { isSupportedLocale } from '@scrumooth/shared';
-
-export const getRequestLocale = (): Locale => {
-  const locale = getRequestContext()?.locale;
-  return locale && isSupportedLocale(locale) ? locale : DEFAULT_LOCALE;
-};
-```
-
-**Middleware.**
-
-**File:** `packages/backend/src/middleware/locale.middleware.ts`
-
-```typescript
-import { type Request, type Response, type NextFunction } from 'express';
-import { DEFAULT_LOCALE, SUPPORTED_LOCALES, type Locale, normalizeLocale } from '@scrumooth/shared';
-import { updateRequestContext } from '../utils/requestContext';
-
-/**
- * Resolves the request locale and stores it in the AsyncLocalStorage request context.
- *
- * MUST be registered AFTER `contextMiddleware` (which creates the ALS store) and
- * AFTER `authenticate` (so `req.user.locale` is available for authenticated requests).
- * For unauthenticated requests it falls back to the Accept-Language header.
- */
-export function localeResolver(req: Request, _res: Response, next: NextFunction): void {
-  let locale: Locale = DEFAULT_LOCALE;
-
-  // 1. Authenticated user's stored preference (authoritative, cross-device)
-  const userLocale = req.user?.locale;
-  if (userLocale && (SUPPORTED_LOCALES as readonly string[]).includes(userLocale)) {
-    locale = userLocale as Locale;
-  }
-  // 2. Accept-Language header (guests / first visit)
-  else {
-    const acceptLang = req.headers['accept-language'];
-    if (acceptLang) {
-      const detected = acceptLang
-        .split(',')
-        .map((l) => l.split(';')[0]?.trim() ?? '')
-        .map((l) => l.split('-')[0]?.toLowerCase() ?? '')
-        .find((l) => (SUPPORTED_LOCALES as readonly string[]).includes(l));
-      if (detected) {
-        locale = normalizeLocale(detected);
-      }
-    }
-  }
-
-  // Persist the locale cookie so SSR/refresh renders the correct language pre-hydration
-  _res.cookie('scrumooth_locale', locale, {
-    maxAge: 31536000,
-    sameSite: 'strict',
-    secure: true,
-    httpOnly: false, // readable by client LanguageDetector
-    path: '/',
-  });
-
-  updateRequestContext({ locale });
-  next();
-}
-```
-
-> **Middleware ordering (in the Express app).** `requestId → contextMiddleware → authenticate → localeResolver → ...route handlers...`. Because `localeResolver` runs after `authenticate`, it can read `req.user.locale` for authenticated users. For public routes (login, register, forgot-password) that skip `authenticate`, `localeResolver` still runs and resolves from `Accept-Language`, then `updateRequestContext({ locale })` writes into the store created by `contextMiddleware`.
-
-### 8.3 Request-Scoped `t()` Accessor
-
-**File:** `packages/backend/src/i18n/requestT.ts`
-
-```typescript
-import { i18nInstance } from './config';
-import { getRequestLocale } from '../utils/requestContext';
-
-/**
- * Request-scoped translator. Reads the locale from AsyncLocalStorage
- * (set by `localeResolver` middleware via `updateRequestContext({ locale })`).
- *
- * Throws a descriptive error if called outside a request scope, to surface
- * misuse early (e.g., calling `t()` in a background job without passing locale).
- */
 export function t(key: string, options?: Record<string, unknown>): string {
   return i18nInstance.t(key, { lng: getRequestLocale(), ...options });
 }
 ```
 
-> **Background jobs / out-of-request contexts.** `getRequestLocale()` falls back to `DEFAULT_LOCALE` when there is no request context. For scheduled jobs (node-cron) and email sending, **do not** rely on `t()` — instead pass an explicit `locale` argument and obtain a bound translator via `i18nInstance.getFixedT(locale, namespace)` (see §8.5). This avoids silently emitting English in job output when a team's primary locale is non-English.
+`getRequestLocale()` reads from `AsyncLocalStorage`; returns `DEFAULT_LOCALE` if no context (silent fallback, does NOT throw — JSDoc is inaccurate). Used in services, controllers, and email templates.
 
-### 8.4 Localized Error Messages
+### 6.4 Localized Error Messages
 
-> **Design constraint (verified against `errors.ts`).** The existing error classes have specific, stable constructor signatures, e.g. `NotFoundError(resource: string = 'Resource')` constructs `${resource} not found`, and `ValidationError(details: Array<{ field; message }>)` carries per-field messages. Changing these signatures would break every existing call site (hundreds of throws across services). We therefore adopt a **non-breaking, opt-in** localization strategy: the error classes keep their current string-based constructors, and localization is applied **at the throw site** using the request-scoped `t()` helper (§8.3). No string-sniffing (e.g. "if it contains `:`, treat as a key") — that pattern is fragile and couples error construction to i18n, which breaks for errors thrown outside a request scope (background jobs, startup).
+Errors thrown in services use `t('errors:resourceNotFound', { resource: 'Sprint' })`. The error middleware (`error.middleware.ts`) renders the message via `t()` in the request locale.
 
-**File:** `packages/backend/src/utils/errors.ts` (modified — additive only)
+**`requestT.ts` is safe to call from error middleware** because errors are thrown within the request scope.
 
-The existing classes are unchanged. We add an optional `code`/`params` channel so the error middleware can re-localize if needed, and a helper for the common "entity not found" pattern:
+### 6.5 Localized Validation Messages
 
-```typescript
-import { t } from '../i18n/requestT';
+**File:** `packages/backend/src/middleware/validation.middleware.ts`
 
-/**
- * Resolve a localized "X not found" message. Prefer this over raw
- * `new NotFoundError('Notification')` so the phrase is translated per locale.
- */
-export function notFound(entityKey: string, params?: Record<string, unknown>): NotFoundError {
-  // entityKey is a translation key, e.g. 'common:notification'
-  return new NotFoundError(t('errors:entityNotFound', { entity: t(entityKey, params) }));
-}
+`resolveMessage(key, params)` helper translates Zod error messages. **Migration is partial**: `validation.middleware.ts` uses `resolveMessage()`, but `auth.validation.ts` schemas still use raw English strings with `as unknown as [string, ...string[]]` double cast to satisfy TypeScript strict mode. The double cast is a workaround — the proper fix is to migrate `auth.validation.ts` to use translation keys.
 
-/**
- * Resolve an arbitrary localized error. Use when the message must be translated.
- */
-export function localizedError(
-  key: string,
-  params: Record<string, unknown> = {},
-  statusCode = 400,
-  code = 'BAD_REQUEST'
-): AppError {
-  return new AppError(t(key, params), statusCode, code);
-}
-```
+### 6.6 Localized Email Templates
 
-**Usage — before vs after:**
+**File:** `packages/backend/src/services/email/templates/PasswordResetTemplate.ts`
+
+**Implementation status: partial.** The subject, heading, bodyIntro, cta, expiresIn, and ignoreIfNotRequested strings are correctly resolved via `i18nInstance.getFixedT(data.locale, 'emails')`. However, several strings remain hardcoded English (lines 106, 136, 155, 175, 185, 196–200, 270, 273, 276, 294–312):
+
+| String                                                                                   | Suggested key                                                   |
+| ---------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| "Click the button below to create a new password:"                                       | `passwordReset.buttonHint`                                      |
+| "If the button above doesn't work, copy and paste the following link into your browser:" | `passwordReset.fallbackLinkHint`                                |
+| "If you have any questions or need assistance, please contact our support team."         | `passwordReset.supportContact`                                  |
+| "Hello {{recipientName}}," / "Need help? Contact us at" / "Thank you for using" / etc.   | `common.greeting`, `common.needHelp`, `common.thankYouForUsing` |
+
+**Remediation:** add the missing keys to `emails.json` (all 5 locales), then replace the hardcoded literals with `t('…')` calls. `getBaseHtmlTemplate` and `getBaseTextTemplate` are not currently passed `t` — thread it through or refactor to receive a `Record<string, string>` of pre-resolved strings.
+
+### 6.7 Localized Notifications
+
+**File:** `packages/backend/src/services/notification.service.ts`
+
+**Dual storage pattern (verified):** `createLocalized()` persists BOTH the rendered text (`title`, `message`) AND the canonical key/params (`messageKey`, `params`):
 
 ```typescript
-// Before (hardcoded English):
-throw new NotFoundError('Notification');
-
-// After (localized, non-breaking — old call sites still compile):
-import { notFound } from '../utils/errors';
-throw notFound('common:notification');
-
-// Arbitrarily localized messages:
-import { localizedError } from '../utils/errors';
-throw localizedError('errors:emailAlreadyExists', { email }, 409, 'CONFLICT');
-```
-
-Existing call sites continue to work (they pass a raw English string); they are migrated incrementally to `notFound(...)` / `localizedError(...)` as part of the phased rollout (§19). The `errors.json` namespace carries the templates:
-
-```json
-{
-  "entityNotFound": "{{entity}} not found",
-  "emailAlreadyExists": "An account with email {{email}} already exists",
-  "invalidCredentials": "Invalid email or password",
-  "forbidden": "You do not have permission to perform this action"
-}
-```
-
-### 8.4b Localized Validation Messages (Zod → `ValidationError`)
-
-> **Gap addressed:** the `validateBody`/`validateParams`/`validateQuery` middleware (`validation.middleware.ts`) maps each Zod issue's `err.message` directly into the `ValidationError` details array. Today those messages are raw English strings baked into Zod schemas (e.g. `'First name is required'`). To localize them, schemas declare **translation keys** as messages and the middleware resolves them via `t()` before constructing the `ValidationError`.
-
-**Step 1 — schemas use translation keys as messages.**
-
-**File:** `packages/backend/src/validations/auth.validation.ts` (modified)
-
-```typescript
-import { z } from 'zod';
-import { SUPPORTED_LOCALES } from '@scrumooth/shared';
-
-// Reusable localized field validators. The message is a translation key
-// (namespace:key); the validation middleware resolves it per-request locale.
-const localizedString = (fieldKey: string, maxLength = 100) =>
-  z
-    .string()
-    .min(1, { message: 'validation:fieldRequired' })
-    .max(maxLength, { message: 'validation:fieldTooLong' })
-    .transform((val) => sanitizeString(val))
-    .refine((val) => val.length >= 1, { message: 'validation:fieldRequired' });
-
-export const updateProfileSchema = z.object({
-  firstName: localizedString('validation:firstName', 100),
-  lastName: localizedString('validation:lastName', 100),
-  locale: z.enum(SUPPORTED_LOCALES as [string, ...string[]]).optional(),
+return await prisma.notification.create({
+  data: {
+    title, // Rendered text for email/push fallback
+    message, // Rendered text for email/push fallback
+    messageKey: input.titleKey, // Canonical key for display-time re-translation
+    params: input.messageParams ?? {}, // Canonical params
+    // ...
+  },
 });
 ```
 
-> **TypeScript strict note.** `SUPPORTED_LOCALES` is `readonly ['en','de','fr','es','it']` (declared `as const`). `z.enum()` requires a mutable `[string, ...string[]]` tuple, so cast: `z.enum(SUPPORTED_LOCALES as [string, ...string[]])`. Without the cast, `z.enum(SUPPORTED_LOCALES)` fails typecheck under `strict` because the `as const` tuple is `readonly`.
+**Rationale:** (1) backward compat with consumers that read `title`/`message` directly; (2) re-translation in the user's current locale on the in-app UI; (3) stable audit trail even if translation keys are renamed.
 
-**Step 2 — validation middleware resolves message keys.**
+**Known bug (line 76):** `messageKey: input.titleKey` persists the **title's** key into the `messageKey` column, not the message's key. Fix: `messageKey: input.messageKey ?? null`. Additionally, `params` stores only `messageParams` — title params are not preserved. Recommended refactor: introduce separate `titleKey`/`titleParams`/`messageKey`/`messageParams` columns, or consolidate under a single `i18n` JSON field.
 
-**File:** `packages/backend/src/middleware/validation.middleware.ts` (modified)
+### 6.8 Audit Logging of Locale Changes
 
-```typescript
-import { t } from '../i18n/requestT';
-
-// A message is treated as a translation key if it matches `ns:key` shape.
-// Otherwise (raw string) it is passed through unchanged — preserves backwards
-// compatibility with schemas that have not yet been migrated.
-const resolveMessage = (message: string, ctx?: Record<string, unknown>): string => {
-  return message.includes(':') ? t(message, ctx) : message;
-};
-
-// Inside validateBody/validateParams/validateQuery, replace the details mapping:
-const details = error.issues.map((err) => ({
-  field: err.path.join('.') || 'value',
-  message: resolveMessage(err.message, err.params as Record<string, unknown> | undefined),
-}));
-```
-
-**`validation.json` namespace (backend):**
-
-```json
-{
-  "fieldRequired": "This field is required",
-  "fieldTooLong": "This field is too long",
-  "invalidEmail": "Please enter a valid email address",
-  "passwordTooShort": "Password must be at least {{min}} characters",
-  "firstName": "First name",
-  "lastName": "Last name"
-}
-```
-
-### 8.4c Localized Error Middleware (Prisma, JWT, session, route-not-found)
-
-> **Gap addressed:** `error.middleware.ts` produces many hardcoded English strings that bypass the error classes entirely — Prisma error mapping (`P2002` "already exists", `P2025` "Record not found", `P2003`, `P2014`), JWT errors ("Invalid token", "Token has expired"), session messages ("Please log in again to continue"), and the catch-all 404 (`Route ${method} ${path} not found`). These all need localization at the middleware layer using the request-scoped `t()`.
-
-**File:** `packages/backend/src/middleware/error.middleware.ts` (modified — key excerpts)
-
-```typescript
-import { t } from '../i18n/requestT';
-
-// Inside errorHandler, for AppError: the message is already resolved at throw time
-// (services use notFound()/localizedError()), so no re-translation here.
-if (error instanceof AppError) {
-  res.status(error.statusCode).json(createErrorResponse(error.code, error.message, error.details));
-  return;
-}
-
-// Prisma known errors — localize here (they don't go through AppError classes)
-if (error instanceof Prisma.PrismaClientKnownRequestError) {
-  handlePrismaError(error, res, fingerprint);
-  return;
-}
-
-// JWT errors
-if (error.name === 'JsonWebTokenError') {
-  res.status(401).json(createErrorResponse('INVALID_TOKEN', t('errors:invalidToken')));
-  return;
-}
-if (error.name === 'TokenExpiredError') {
-  res.status(401).json(createErrorResponse('TOKEN_EXPIRED', t('errors:tokenExpired')));
-  return;
-}
-
-// Session timeouts — localize the guidance message
-if (error instanceof SessionIdleTimeoutError || error instanceof SessionAbsoluteTimeoutError) {
-  res
-    .status(401)
-    .json(
-      createErrorResponse(error.code, error.message, [
-        { field: 'session', message: t('errors:pleaseLoginAgain') },
-      ])
-    );
-  return;
-}
-
-// Catch-all 404 for unmatched routes
-export const notFoundHandler = (req: Request, res: Response): void => {
-  res
-    .status(404)
-    .json(
-      createErrorResponse(
-        'NOT_FOUND',
-        t('errors:routeNotFound', { method: req.method, path: req.path })
-      )
-    );
-};
-
-const handlePrismaError = (
-  error: Prisma.PrismaClientKnownRequestError,
-  res: Response,
-  _fingerprint: string
-): void => {
-  switch (error.code) {
-    case 'P2002': {
-      const field = (error.meta?.target as string[] | undefined)?.[0] ?? 'field';
-      res
-        .status(409)
-        .json(
-          createErrorResponse('CONFLICT', t('errors:fieldAlreadyExists', { field }), [
-            { field, message: t('errors:fieldAlreadyTaken', { field }) },
-          ])
-        );
-      break;
-    }
-    case 'P2025':
-      res.status(404).json(createErrorResponse('NOT_FOUND', t('errors:recordNotFound')));
-      break;
-    case 'P2003':
-      res.status(400).json(createErrorResponse('INVALID_REFERENCE', t('errors:invalidReference')));
-      break;
-    case 'P2014':
-      res.status(400).json(createErrorResponse('RELATION_VIOLATION', t('errors:invalidRelation')));
-      break;
-    default:
-      res.status(500).json(createErrorResponse('DATABASE_ERROR', t('errors:databaseError')));
-  }
-};
-```
-
-> **Note on the production 500 fallback.** The `isProduction ? 'An unexpected error occurred' : error.message` branch should also use `t('errors:unexpectedError')` in production. In development, keep `error.message` (raw) for debugging.
-
-### 8.5 Localized Email Templates
-
-> **Compatibility note (verified against `BaseEmailTemplate.ts`).** `BaseTemplateData` currently **requires** a `subject: string` field, and `BaseEmailTemplate<T>.render(data)` receives the subject from the caller. When localizing, the subject is derived from `t()` inside `render()`, which makes the `subject` field redundant. To avoid a breaking change to `BaseTemplateData`, the localized templates **ignore `data.subject`** and compute the subject from `t('…subject')`. Callers may pass an empty/dummy `subject` to satisfy the type. A future refactor (out of scope for v1) could make `subject` optional in `BaseTemplateData` and have each template compute it.
-
-**File:** `packages/backend/src/services/email/templates/PasswordResetTemplate.ts` (modified)
-
-```typescript
-import { i18nInstance } from '../../i18n/config';
-import type { Locale } from '@scrumooth/shared';
-import type { RenderedEmail } from './BaseEmailTemplate';
-
-export interface PasswordResetTemplateData {
-  locale: Locale; // NEW — drives all string resolution
-  firstName: string;
-  email: string;
-  resetUrl: string;
-  expiresIn: string;
-  appName: string;
-  appUrl: string;
-  supportEmail?: string;
-  currentYear: number;
-}
-
-export class PasswordResetTemplate extends BaseEmailTemplate<PasswordResetTemplateData> {
-  getTemplateName(): string {
-    return 'password-reset';
-  }
-
-  render(data: PasswordResetTemplateData): RenderedEmail {
-    const t = i18nInstance.getFixedT(data.locale, 'emails');
-    const subject = t('passwordReset.subject');
-    const heading = t('passwordReset.heading', { name: data.firstName });
-    const bodyIntro = t('passwordReset.bodyIntro', { email: data.email });
-    const cta = t('passwordReset.cta');
-    const expiresIn = t('passwordReset.expiresIn', { duration: data.expiresIn });
-    // ... build HTML/text using translated strings instead of hardcoded English
-    return { html: /* ... */ '', text: /* ... */ '' };
-  }
-}
-```
-
-**`emails.json` namespace (backend), `en`:**
-
-```json
-{
-  "passwordReset": {
-    "subject": "Reset your Scrumooth password",
-    "heading": "Hi {{name}},",
-    "bodyIntro": "We received a request to reset the password for {{email}}.",
-    "cta": "Reset password",
-    "expiresIn": "This link expires in {{duration}}."
-  }
-}
-```
-
-> **Email subject length risk (gap j).** German and French translations are typically 20–35% longer than English. RFC 5322 recommends subject lines ≤ 78 characters (hard limit 998). Long localized subjects may be truncated by email clients (especially mobile). Mitigations: (1) keep subject translation keys short and avoid concatenating multiple clauses; (2) add a CI check that flags any localized subject > 78 characters; (3) prefer `passwordReset.subject` (terse) over `passwordReset.subjectPrefix` + `passwordReset.subjectSuffix` concatenation. See risk R11.
-
-### 8.6 Localized Notifications
-
-**File:** `packages/backend/src/services/notification.service.ts` (modified)
-
-```typescript
-// New method: create from a translation key with per-user locale
-async createLocalized(input: {
-  userId: string;
-  type: NotificationType;
-  titleKey: string;
-  messageKey?: string;
-  messageParams?: Record<string, unknown>;
-  data?: Prisma.InputJsonValue;
-  createdBy?: string;
-}): Promise<Notification> {
-  const user = await prisma.user.findUnique({
-    where: { id: input.userId },
-    select: { locale: true },
-  });
-
-  const t = i18nInstance.getFixedT(user?.locale ?? DEFAULT_LOCALE, 'notifications');
-  const title = t(input.titleKey, input.messageParams);
-  const message = input.messageKey ? t(input.messageKey, input.messageParams) : undefined;
-
-  return this.create({
-    userId: input.userId,
-    type: input.type,
-    title,
-    message,
-    data: input.data,
-    createdBy: input.createdBy,
-  });
-}
-```
-
-> **Note:** Notifications store the **resolved** (translated) title/message, not keys, because (a) the user's locale may change after the notification is created, and (b) storing keys would require re-translating on every read. The trade-off: a notification created while the user's locale was `de` remains in German even if they switch to `fr`. This is acceptable and matches common practice (Slack, GitHub).
-
-### 8.7 Audit Logging of Locale Changes
-
-> **Gap addressed (f).** The project's convention is that significant user actions are audit-logged via `auditLog`/`auditResourceEvent` (`auditLogger.ts`). A locale change is a profile preference change and should be audited for consistency with `changePassword` (which is already audited via `auditAuthEvent('PASSWORD_CHANGE', ...)`). This also provides a trail for diagnosing "why is my UI in the wrong language" support tickets.
-
-**File:** `packages/backend/src/controllers/auth.controller.ts` (modified `updateProfile`)
-
-```typescript
-import {
-  auditResourceEvent,
-  AuditEventTypes,
-  AuditActions,
-  AuditResults,
-} from '../utils/auditLogger';
-
-export const updateProfile = asyncHandler(async (req: Request, res: Response) => {
-  const data = req.validatedBody as UpdateProfileInput;
-  const userId = req.userId;
-  if (!userId) {
-    throw new UnauthorizedError('User not authenticated');
-  }
-
-  const previous = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { locale: true },
-  });
-
-  const user = await authService.updateProfile(userId, data);
-
-  // Audit-log only when the locale actually changed (avoid noise on name-only edits)
-  if (data.locale && data.locale !== previous?.locale) {
-    auditResourceEvent(
-      AuditEventTypes.USER,
-      AuditActions.UPDATE,
-      AuditResults.SUCCESS,
-      { type: 'user', id: userId, name: user.email },
-      { field: 'locale', from: previous?.locale ?? DEFAULT_LOCALE, to: data.locale }
-    );
-  }
-
-  // Keep the locale cookie in sync for SSR/refresh
-  res.cookie('scrumooth_locale', user.locale, {
-    maxAge: 31536000,
-    sameSite: 'strict',
-    secure: true,
-    httpOnly: false,
-    path: '/',
-  });
-
-  res.json(createSuccessResponse(user));
-});
-```
-
-> **Note:** `updateProfile` currently reads from `req.body`; switch it to `req.validatedBody` (the validated payload from `validateBody(updateProfileSchema)`) for consistency with the validation middleware contract and to ensure the `locale` value is type-checked.
+When a user changes their locale via the API, the change is logged via the standard audit trail with action `user.locale.change`, metadata `{ oldLocale, newLocale }`. No separate i18n audit table.
 
 ---
 
-## 9. Shared Package Integration
+## 7. Shared Package Integration
 
-### 9.1 New Exports
+### 7.1 Constants — `packages/shared/src/constants/index.ts`
 
-**File:** `packages/shared/src/constants/index.ts` (extended)
+| Export                 | Type                                      | Purpose                                                                 |
+| ---------------------- | ----------------------------------------- | ----------------------------------------------------------------------- |
+| `SUPPORTED_LOCALES`    | `readonly ['en', 'de', 'fr', 'es', 'it']` | Locale list                                                             |
+| `Locale`               | Union type                                | `'en' \| 'de' \| 'fr' \| 'es' \| 'it'`                                  |
+| `DEFAULT_LOCALE`       | `'en'`                                    | Fallback locale                                                         |
+| `LOCALE_LABELS`        | `Record<Locale, string>`                  | Endonyms for the language switcher (`'English'`, `'Deutsch'`, etc.)     |
+| `LOCALE_CURRENCIES`    | `Record<Locale, string>`                  | All `'EUR'` today                                                       |
+| `DATE_INPUT_FORMATS`   | `Record<Locale, string>`                  | Locale-specific input format (`'dd/MM/yyyy'`, `'dd.MM.yyyy'`)           |
+| `DATE_FORMAT_EXAMPLES` | `Record<Locale, string>`                  | Localized placeholders (`'dd/mm/yyyy'`, `'tt.mm.jjjj'`, `'jj/mm/aaaa'`) |
+| `DATE_SEPARATORS`      | `Record<Locale, string>`                  | `'/'` or `'.'`                                                          |
 
-```typescript
-export const SUPPORTED_LOCALES = ['en', 'de', 'fr', 'es', 'it'] as const;
-export type Locale = (typeof SUPPORTED_LOCALES)[number];
-export const DEFAULT_LOCALE: Locale = 'en';
+### 7.2 Locale Utilities — `packages/shared/src/utils/locale.ts`
 
-export const LOCALE_LABELS: Record<Locale, string> = {
-  en: 'English',
-  de: 'Deutsch',
-  fr: 'Français',
-  es: 'Español',
-  it: 'Italiano',
-};
+| Function                    | Purpose                         |
+| --------------------------- | ------------------------------- |
+| `isRTL(locale)`             | True for `ar`, `he`, `fa`, `ur` |
+| `getDirection(locale)`      | `'ltr' \| 'rtl'`                |
+| `getBaseLanguage(locale)`   | `'pt-BR'` → `'pt'`              |
+| `isSupportedLocale(locale)` | Type guard                      |
+| `normalizeLocale(locale)`   | Unsupported → `DEFAULT_LOCALE`  |
 
-export const LOCALE_CURRENCIES: Record<Locale, string> = {
-  en: 'EUR',
-  de: 'EUR',
-  fr: 'EUR',
-  es: 'EUR',
-  it: 'EUR',
-};
-```
+### 7.3 Formatters — `packages/shared/src/utils/formatters.ts`
 
-**File:** `packages/shared/src/utils/locale.ts` (new)
+**15 functions**, all locale-aware via `Record<Locale, …>` lookups:
 
-```typescript
-import type { Locale } from '../constants';
+| Function                                        | API used                  | Notes                                                  |
+| ----------------------------------------------- | ------------------------- | ------------------------------------------------------ |
+| `formatDate(date, locale, fmt='PP')`            | `date-fns`                | `DATE_FNS_LOCALES.en = enGB`                           |
+| `formatNumber(value, locale, opts?)`            | `Intl.NumberFormat`       |                                                        |
+| `formatCurrency(value, locale, currency='EUR')` | `Intl.NumberFormat`       |                                                        |
+| `formatRelativeTime(date, locale)`              | `Intl.RelativeTimeFormat` | Numeric: 'auto'                                        |
+| `formatList(items, locale, type)`               | `Intl.ListFormat`         | Conjunction/disjunction                                |
+| `createCollator(locale, opts?)`                 | `Intl.Collator`           | sensitivity: 'base', numeric: true                     |
+| `sortLocaleStrings(items, locale)`              | `Intl.Collator`           | Wraps createCollator                                   |
+| `formatDateRange(start, end, locale, fmt)`      | `date-fns`                | Joins with en dash                                     |
+| `formatDateRangeCompact(start, end, locale)`    | `date-fns`                | Alias of `formatDateRange('PP')`                       |
+| `formatDateForInput(date, locale)`              | `date-fns`                | Uses `DATE_INPUT_FORMATS[locale]`                      |
+| `parseDateFromInput(str, locale)`               | `date-fns`                | Returns ISO `YYYY-MM-DD` or `''`                       |
+| `isValidDateForLocale(str, locale)`             | `date-fns`                |                                                        |
+| `formatTime(date, locale)`                      | `Intl`                    | `hour12: locale === 'en'` (12h for en, 24h for others) |
+| `formatDateTime(date, locale, fmt)`             | `date-fns` + `Intl`       | Combines date + time                                   |
+| `formatChartDate(date, locale)`                 | `date-fns`                | `d MMM` format for chart axes                          |
 
-const RTL_LANGUAGES = new Set(['ar', 'he', 'fa', 'ur']);
-
-export function isRTL(locale: Locale | string): boolean {
-  return RTL_LANGUAGES.has(getBaseLanguage(locale));
-}
-
-export function getDirection(locale: Locale | string): 'ltr' | 'rtl' {
-  return isRTL(locale) ? 'rtl' : 'ltr';
-}
-
-export function getBaseLanguage(locale: string): string {
-  return locale.split('-')[0].toLowerCase();
-}
-
-export function isSupportedLocale(locale: string): locale is Locale {
-  return (SUPPORTED_LOCALES as readonly string[]).includes(locale as Locale);
-}
-
-export function normalizeLocale(locale: string): Locale {
-  const base = getBaseLanguage(locale);
-  return isSupportedLocale(base) ? base : DEFAULT_LOCALE;
-}
-```
-
-**File:** `packages/shared/src/utils/formatters.ts` (new)
-
-```typescript
-import { format, parseISO, type Locale as DateFnsLocale } from 'date-fns';
-import { enUS, de, fr, es, it } from 'date-fns/locale';
-import type { Locale } from '../constants';
-import { DEFAULT_LOCALE } from '../constants';
-
-// `Record<Locale, DateFnsLocale>` is fully populated for every supported locale,
-// so direct indexing is safe. We assert the record type (not `Partial`) so that
-// `DATE_FNS_LOCALES[locale]` is `DateFnsLocale` (not `DateFnsLocale | undefined`)
-// even under `noUncheckedIndexedAccess`. The fallback guards against runtime
-// values that bypass the `Locale` type (e.g., an unchecked query param).
-const DATE_FNS_LOCALES: Record<Locale, DateFnsLocale> = { en: enUS, de, fr, es, it };
-
-function resolveDateFnsLocale(locale: Locale): DateFnsLocale {
-  return DATE_FNS_LOCALES[locale] ?? DATE_FNS_LOCALES[DEFAULT_LOCALE];
-}
-
-export function formatDate(date: Date | string, locale: Locale, fmt = 'PP'): string {
-  const d = typeof date === 'string' ? parseISO(date) : date;
-  return format(d, fmt, { locale: resolveDateFnsLocale(locale) });
-}
-
-export function formatNumber(
-  value: number,
-  locale: Locale,
-  options?: Intl.NumberFormatOptions
-): string {
-  return new Intl.NumberFormat(locale, options).format(value);
-}
-
-export function formatCurrency(value: number, locale: Locale, currency = 'EUR'): string {
-  return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(value);
-}
-
-export function formatRelativeTime(date: Date | string, locale: Locale): string {
-  const d = typeof date === 'string' ? parseISO(date) : date;
-  const diffSeconds = (d.getTime() - Date.now()) / 1000;
-  const absDiff = Math.abs(diffSeconds);
-  const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
-
-  if (absDiff < 60) return rtf.format(Math.round(diffSeconds), 'second');
-  if (absDiff < 3600) return rtf.format(Math.round(diffSeconds / 60), 'minute');
-  if (absDiff < 86400) return rtf.format(Math.round(diffSeconds / 3600), 'hour');
-  if (absDiff < 604800) return rtf.format(Math.round(diffSeconds / 86400), 'day');
-  if (absDiff < 2592000) return rtf.format(Math.round(diffSeconds / 604800), 'week');
-  if (absDiff < 31536000) return rtf.format(Math.round(diffSeconds / 2592000), 'month');
-  return rtf.format(Math.round(diffSeconds / 31536000), 'year');
-}
-
-export function formatList(
-  items: string[],
-  locale: Locale,
-  type: 'conjunction' | 'disjunction' = 'conjunction'
-): string {
-  return new Intl.ListFormat(locale, { type }).format(items);
-}
-
-/**
- * Locale-aware string comparison/sort. Use this when sorting user-facing lists
- * by name (e.g., backlog items, team members) so that accented characters and
- * locale-specific collation rules are respected. See ADR-010.
- */
-export function createCollator(
-  locale: Locale,
-  options: Intl.CollatorOptions = { sensitivity: 'base', numeric: true }
-): Intl.Collator {
-  return new Intl.Collator(locale, options);
-}
-
-export function sortLocaleStrings(items: string[], locale: Locale): string[] {
-  return [...items].sort(createCollator(locale).compare);
-}
-```
-
-> **Note:** `date-fns` is a frontend dependency today. To share formatters in `@scrumooth/shared`, add `date-fns` as a dependency of the shared package (it's tree-shakeable and the locale imports are small). The backend can also use these formatters for email rendering.
-
-### 9.2 Shared Package Dependencies
-
-**File:** `packages/shared/package.json` (add)
-
-```json
-{
-  "dependencies": {
-    "date-fns": "^4.4.0"
-  }
-}
-```
+**`date-fns` is a shared-package dependency** — both frontend and backend pick it up transitively via `@scrumooth/shared`.
 
 ---
 
-## 10. Translation File Format & Organization
+## 8. Locale Detection & Fallback Flow
 
-### 10.1 JSON Schema
+### 8.1 Frontend First Load
 
-Each translation file is a flat or shallow-nested JSON object. **Keys are camelCase**, values are strings (or arrays for plural variants using the `_one`/`_other` suffix convention, or ICU `{count, plural, ...}` inline).
+1. `I18nProvider` mounts. `i18nInstance.isInitialized` is false → state = `loading`.
+2. `i18next-browser-languagedetector` reads `scrumooth_locale` cookie. If absent, reads `navigator.language`.
+3. `i18next-http-backend` fetches `/locales/{lng}/common.json` and any namespaces requested by the mounted tree.
+4. On success → `initialized` event → state = `ready`. On 15s timeout → state = `error` (retry UI shown).
+5. `I18nProvider` syncs `useI18nStore.locale` from `i18nInstance.language`.
+6. If authenticated user has `user.locale` and no explicit persisted preference, syncs to `user.locale`.
 
-**Example:** `packages/frontend/src/locales/en/common.json`
+### 8.2 Frontend Language Switch
 
-```json
-{
-  "appName": "Scrumooth",
-  "language": "Language",
-  "selectLanguage": "Select language",
-  "save": "Save",
-  "cancel": "Cancel",
-  "delete": "Delete",
-  "edit": "Edit",
-  "loading": "Loading...",
-  "search": "Search",
-  "noResults": "No results found",
-  "confirm": "Confirm",
-  "close": "Close",
-  "back": "Back",
-  "next": "Next",
-  "previous": "Previous",
-  "yes": "Yes",
-  "no": "No",
-  "all": "All",
-  "none": "None",
-  "actions": "Actions",
-  "status": "Status",
-  "created": "Created",
-  "updated": "Updated",
-  "by": "by",
-  "required": "Required",
-  "optional": "Optional"
-}
+1. User clicks language switcher → `useI18nStore.setLocale(newLocale)`.
+2. Zustand state updates → triggers `I18nProvider` effect.
+3. `i18nInstance.changeLanguage(newLocale)` → `i18next-http-backend` fetches `/locales/{newLocale}/{ns}.json` for all loaded namespaces.
+4. On success: `document.documentElement.lang = newLocale`, `dir = getDirection(newLocale)`, state = `ready`.
+5. `setLocale` also writes `scrumooth_locale` cookie synchronously → next backend request carries the new locale.
+
+### 8.3 Backend Request
+
+1. `locale.middleware.ts` reads `Accept-Language` header → simplistic parse → first supported match.
+2. If no match, reads `User.locale` from database (if authenticated).
+3. If neither, uses `DEFAULT_LOCALE`.
+4. `updateRequestContext({ locale })` stores in `AsyncLocalStorage`.
+5. `res.cookie('scrumooth_locale', locale, ...)` re-syncs the cookie.
+6. Services call `t('errors:…')` → `requestT.ts` reads locale from `AsyncLocalStorage` → `i18nInstance.t(key, { lng })`.
+
+### 8.4 Fallback Chain
+
+```
+Missing key in {lng}/{ns}
+  → fallbackLng: 'en' (per ADR-004)
+  → /locales/en/{ns}.json
+  → if still missing: parseMissingKeyHandler returns the key string
 ```
 
-**Example with pluralization:** `packages/frontend/src/locales/en/sprint.json`
+### 8.5 Network Failure
 
-```json
-{
-  "title": "Active Sprint",
-  "daysRemaining": "{{count}} day remaining",
-  "daysRemaining_other": "{{count}} days remaining",
-  "tasksCompleted": "{{count}} of {{total}} tasks completed",
-  "storyPoints": "{{count}} story point",
-  "storyPoints_other": "{{count}} story points"
-}
-```
-
-**Example with interpolation & context:** `packages/frontend/src/locales/en/notifications.json`
-
-```json
-{
-  "taskAssigned": "Task \"{{taskTitle}}\" was assigned to you",
-  "teamInvitation": "You've been invited to join team \"{{teamName}}\"",
-  "impedimentReported": "New impediment reported: {{title}}",
-  "dailyScrumReminder": "Don't forget to post your daily update"
-}
-```
-
-### 10.2 Key Naming Conventions
-
-| Rule                                                   | Example                                                       |
-| ------------------------------------------------------ | ------------------------------------------------------------- |
-| camelCase keys                                         | `daysRemaining`, not `days_remaining`                         |
-| Namespace = feature                                    | `backlog:moscowMustHave`                                      |
-| Descriptive, not abbreviated                           | `passwordStrengthWeak`, not `pwWeak`                          |
-| Plural suffix `_other` (i18next convention)            | `task`, `task_other`                                          |
-| Context suffix `_<context>`                            | `role_sm` (Scrum Master), `role_po` (Product Owner)           |
-| No nested objects beyond 1 level (flattened preferred) | `"backlog.emptyState"` not `{ backlog: { emptyState: ... } }` |
-
-### 10.3 Terminology Glossary
-
-**File:** `packages/shared/i18n/glossary.json`
-
-```json
-{
-  "Sprint": {
-    "en": "Sprint",
-    "de": "Sprint",
-    "fr": "Sprint",
-    "es": "Sprint",
-    "it": "Sprint"
-  },
-  "Scrum Master": {
-    "en": "Scrum Master",
-    "de": "Scrum Master",
-    "fr": "Scrum Master",
-    "es": "Scrum Master",
-    "it": "Scrum Master"
-  },
-  "Product Owner": {
-    "en": "Product Owner",
-    "de": "Product Owner",
-    "fr": "Product Owner",
-    "es": "Product Owner",
-    "it": "Product Owner"
-  },
-  "Product Backlog": {
-    "en": "Product Backlog",
-    "de": "Product Backlog",
-    "fr": "Product Backlog",
-    "es": "Product Backlog",
-    "it": "Product Backlog"
-  },
-  "Burndown Chart": {
-    "en": "Burndown Chart",
-    "de": "Burndown-Diagramm",
-    "fr": "Graphique d'avancement",
-    "es": "Gráfico de burn-down",
-    "it": "Grafico burndown"
-  },
-  "Definition of Done": {
-    "en": "Definition of Done",
-    "de": "Definition of Done",
-    "fr": "Definition of Done",
-    "es": "Definición de Hecho",
-    "it": "Definition of Done"
-  },
-  "Story Points": {
-    "en": "Story Points",
-    "de": "Story Points",
-    "fr": "Story Points",
-    "es": "Story Points",
-    "it": "Story Points"
-  }
-}
-```
-
-CI verifies that glossary terms appear verbatim in the corresponding locale files (preventing, e.g., "Sprint" being translated as "Iteration" in German when the glossary mandates "Sprint").
+- **Frontend:** 15s init timeout → error UI with retry button. `i18nInstance.reloadResources()` re-fetches.
+- **Backend:** Backend JSON is bundled at build time — no network failure possible. If `i18nInstance.init()` fails at startup, all `t()` calls return the key string (silent fallback).
 
 ---
 
-## 11. Pluralization & Cultural Formatting
+## 9. Pluralization & Cultural Formatting
 
-### 11.1 Pluralization
+### 9.1 Pluralization
 
-`i18next` with `i18next-intlpluralresolver` uses CLDR plural rules. Each locale has plural categories:
+i18next uses native `Intl.PluralRules` (polyfilled by `intl-pluralrules`). No custom resolver.
 
-| Locale | Plural categories |
-| ------ | ----------------- |
-| en     | one, other        |
-| de     | one, other        |
-| fr     | one, many, other  |
-| es     | one, many, other  |
-| it     | one, many, other  |
+**CLDR plural classes:**
 
-**Translation file convention (i18next default suffixes):**
+| Locale | `one`    | `many` | `other`         |
+| ------ | -------- | ------ | --------------- |
+| `en`   | n = 1    | —      | everything else |
+| `de`   | n = 1    | —      | everything else |
+| `fr`   | n = 0, 1 | —      | everything else |
+| `es`   | n = 1    | —      | everything else |
+| `it`   | n = 1    | —      | everything else |
 
-```json
-{
-  "item": "{{count}} item",
-  "item_other": "{{count}} items"
-}
-```
-
-For French/Spanish/Italian with `many` category:
+**Key naming:** `taskCount`, `taskCount_one`, `taskCount_other`. i18next auto-selects the suffix based on `Intl.PluralRules(lng).select(count)`.
 
 ```json
 {
-  "item": "{{count}} élément",
-  "item_many": "{{count}} éléments",
-  "item_other": "{{count}} éléments"
+  "taskCount_one": "{{count}} task",
+  "taskCount_other": "{{count}} tasks"
 }
 ```
 
-**Usage:**
+### 9.2 Date & Time Formatting
 
-```tsx
-const { t } = useTranslation('backlog');
-<span>{t('item', { count: items.length })}</span>;
-// count=1 → "1 item", count=5 → "5 items"
-```
+All date formatting flows through `@scrumooth/shared` formatters (`packages/shared/src/utils/formatters.ts`). Date-fns locale data: `{ en: enGB, de, fr, es, it }` — English uses `enGB` (European audience → day-first dates, 24-hour time).
 
-### 11.2 Date Formatting
+**`formatDate(date, locale, fmt)` — date-fns tokens (`PP` = medium, `PPPP` = long):**
 
-```tsx
-import { formatDate } from '@scrumooth/shared';
-import { useI18nStore } from '@/i18n/useI18nStore';
+| Locale      | `PP`            | `PPPP`                        |
+| ----------- | --------------- | ----------------------------- |
+| `en` (enGB) | `18 Jul 2026`   | `Saturday, 18 July 2026`      |
+| `de`        | `18. Juli 2026` | `Samstag, 18. Juli 2026`      |
+| `fr`        | `18 juil. 2026` | `samedi 18 juillet 2026`      |
+| `es`        | `18 jul 2026`   | `sábado, 18 de julio de 2026` |
+| `it`        | `18 lug 2026`   | `sabato 18 luglio 2026`       |
 
-const { locale } = useI18nStore();
-<span>{formatDate(sprint.startDate, locale, 'PPP')}</span>;
-// en: "January 31st, 2026"
-// de: "31. Januar 2026"
-// fr: "31 janvier 2026"
-// es: "31 de enero de 2026"
-// it: "31 gennaio 2026"
-```
+**`formatDateForInput(date, locale)` — input field format via `DATE_INPUT_FORMATS`:**
 
-### 11.3 Number & Currency Formatting
+| Locale | Format       | Output       | Placeholder (`DATE_FORMAT_EXAMPLES`) |
+| ------ | ------------ | ------------ | ------------------------------------ |
+| `en`   | `dd/MM/yyyy` | `18/07/2026` | `dd/mm/yyyy`                         |
+| `de`   | `dd.MM.yyyy` | `18.07.2026` | `tt.mm.jjjj`                         |
+| `fr`   | `dd/MM/yyyy` | `18/07/2026` | `jj/mm/aaaa`                         |
+| `es`   | `dd/MM/yyyy` | `18/07/2026` | `dd/mm/aaaa`                         |
+| `it`   | `dd/MM/yyyy` | `18/07/2026` | `gg/mm/aaaa`                         |
 
-```tsx
-import { formatNumber, formatCurrency } from '@scrumooth/shared';
+**`formatTime(date, locale)` — `Intl.DateTimeFormat` with `hour12: false` (24-hour for all locales):**
 
-formatNumber(1234567.89, 'de'); // "1.234.567,89"
-formatNumber(1234567.89, 'en'); // "1,234,567.89"
+All locales produce `HH:MM` 24-hour output (e.g., `14:30`). English uses 24-hour to align with `enGB` (British English defaults to 24-hour in business/technical contexts); the target organization is European where 24-hour is standard.
 
-formatCurrency(42.5, 'de', 'EUR'); // "42,50 €"
-formatCurrency(42.5, 'en', 'EUR'); // "€42.50"
-```
+**`formatChartDate(date, locale)` — compact `d MMM` for chart axes:**
 
-### 11.4 Relative Time
+| Locale | Output     |
+| ------ | ---------- |
+| `en`   | `18 Jul`   |
+| `de`   | `18 Juli`  |
+| `fr`   | `18 juil.` |
+| `es`   | `18 jul`   |
+| `it`   | `18 lug`   |
 
-```tsx
-import { formatRelativeTime } from '@scrumooth/shared';
+### 9.3 Number & Currency
 
-formatRelativeTime(new Date(Date.now() - 86400000), 'fr'); // "hier"
-formatRelativeTime(new Date(Date.now() - 86400000), 'en'); // "yesterday"
-```
+- `formatNumber(1234.56, 'de')` → `'1.234,56'` (dot thousands, comma decimal)
+- `formatNumber(1234.56, 'en')` → `'1,234.56'`
+- `formatCurrency(1234.56, 'fr')` → `'1 234,56 €'` (non-breaking space thousands)
 
-### 11.5 List Formatting
+### 9.4 Relative Time
 
-```tsx
-import { formatList } from '@scrumooth/shared';
+- `formatRelativeTime` uses `Intl.RelativeTimeFormat(lng, { numeric: 'auto' })`:
+  - `en`: "yesterday", "2 days ago", "in 3 hours"
+  - `de`: "gestern", "vor 2 Tagen", "in 3 Stunden"
 
-formatList(['Alice', 'Bob', 'Charlie'], 'en'); // "Alice, Bob, and Charlie"
-formatList(['Alice', 'Bob', 'Charlie'], 'fr'); // "Alice, Bob et Charlie"
-formatList(['Alice', 'Bob', 'Charlie'], 'de'); // "Alice, Bob und Charlie"
-```
+### 9.5 List Formatting
 
-### 11.6 Locale-Aware Collation & Sorting (gap a)
+- `formatList(['A', 'B', 'C'], 'en')` → `'A, B, and C'`
+- `formatList(['A', 'B', 'C'], 'de')` → `'A, B und C'`
 
-Sorting user-facing string lists must respect locale collation rules. Use the shared helpers (ADR-010):
+### 9.6 Collation
 
-```tsx
-import { sortLocaleStrings, createCollator } from '@scrumooth/shared';
-import { useI18nStore } from '@/i18n/useI18nStore';
+`sortLocaleStrings(['João', 'Ana', 'Álvaro'], 'pt')` → `['Álvaro', 'Ana', 'João']` (accented `Á` sorts with `A` under `sensitivity: 'base'`).
 
-const { locale } = useI18nStore();
+### 9.7 Timezone vs Locale
 
-// Sort a list of strings
-const sortedNames = sortLocaleStrings(['Zoe', 'Äppler', 'Aaron', 'Özdemir'], locale);
-// de: ['Aaron', 'Äppler', 'Özdemir', 'Zoe']  (ä treated like a, ö like o)
-// en: ['Aaron', 'Äppler', 'Zoe', 'Özdemir']  (accents sort after base letters)
-
-// Sort objects by a localized field
-const collator = createCollator(locale);
-const sortedBacklog = [...items].sort((a, b) => collator.compare(a.title, b.title));
-```
-
-> **Avoid** `Array.prototype.sort()` on string fields without a collator — it uses UTF-16 code-unit order and mis-sorts accented characters in all five target locales.
-
-### 11.7 Timezone vs Locale Distinction (gap c)
-
-**Locale controls _format_; timezone controls _instant_.** These are orthogonal concerns and must not be conflated:
-
-| Concern                              | Controlled by                          | Example                                                    |
-| ------------------------------------ | -------------------------------------- | ---------------------------------------------------------- |
-| Date/number/currency _format_        | Locale (`de`, `fr`, ...)               | `31.01.2026` vs `01/31/2026`                               |
-| Which _instant_ a timestamp displays | Timezone (`Europe/Berlin`, `UTC`, ...) | `2026-01-31T10:00:00Z` → `11:00` (Berlin) vs `10:00` (UTC) |
-
-**Scrumooth's current rules (verified):**
-
-- All timestamps are stored in PostgreSQL as `@db.Timestamptz(3)` (UTC). This does **not** change.
-- The API returns ISO-8601 UTC strings (e.g., `2026-01-31T10:00:00.000Z`).
-- The frontend converts to a `Date` object and formats with `formatDate(date, locale)` / `formatRelativeTime(date, locale)`. `date-fns` `format` renders in the **user's local browser timezone** by default (via `Date`'s local methods). This is the current, acceptable behavior: a user in Berlin sees sprint times in Europe/Berlin, a user in London sees Europe/London.
-
-**What i18n does NOT change:** we do **not** introduce a per-user `timezone` column in this phase. A future "display timezone" feature (letting a Berlin-based user view times in a teammate's Lagos timezone) is out of scope and would be a separate ADR. The locale switch only changes the _format_ (e.g., `31. Januar 2026, 11:00` vs `January 31, 2026, 11:00`), not the underlying instant.
-
-**Implementation guidance:**
-
-```tsx
-// ✅ Correct: locale controls format; Date uses the browser's local timezone
-import { formatDate } from '@scrumooth/shared';
-<span>{formatDate(sprint.startDate, locale, 'PPP p')}</span>
-
-// ❌ Wrong: hardcoding a locale assumption or a timezone
-<span>{sprint.startDate.toLocaleString('en-US')}</span>  // hardcoded locale
-<span>{new Date(sprint.startDate).toLocaleString('de-DE', { timeZone: 'UTC' })}</span>
-// ⚠️ The above forces UTC display — only do this if explicitly showing UTC,
-//    and still pass the user's locale for formatting consistency.
-```
-
-> **Backend:** never localize timestamps in API responses. Always return ISO-8601 UTC. Localization happens exclusively on the client. The backend `formatDate`/`formatRelativeTime` helpers exist only for **email rendering**, where the recipient's locale (and optionally their timezone) is known.
+Locale determines **format** (`dd/MM/yyyy` vs `MM/dd/yyyy`). Timezone determines **instant** (`2026-07-18T14:30:00Z` displayed as `15:30` in CET, `14:30` in UTC). All timestamps are stored in UTC in the database; the frontend converts to the user's browser timezone for display. There is no per-user timezone setting today — `Intl.DateTimeFormat()` uses the browser's timezone.
 
 ---
 
-## 12. Fallback Mechanisms
+## 10. Translation File Organization
 
-### 12.1 Fallback Chain (i18next)
+### 10.1 File Layout
 
 ```
-requested locale (e.g., "de-AT")
-  → "de" (base language, via load: 'languageOnly')
-    → "en" (default, via fallbackLng)
-      → key string (via parseMissingKeyHandler)
+packages/frontend/public/locales/{lng}/{ns}.json   ← 16 ns × 5 locales = 80 files
+packages/backend/src/locales/{lng}/{ns}.json        ← 5 ns × 5 locales = 25 files
+packages/shared/i18n/glossary.json                  ← 1 file (Scrum terms per locale)
 ```
 
-### 12.2 Namespace-Level Fallback
+### 10.2 JSON Schema
 
-If an entire namespace JSON file is missing for a locale (e.g., `de/retrospective.json` not yet translated), i18next falls back to `en/retrospective.json` automatically.
+Flat key-value with optional nesting and interpolation:
 
-### 12.3 Missing Key Handling
+```json
+{
+  "title": "Backlog",
+  "item": {
+    "create": "Create item",
+    "delete": "Delete {{name}}?"
+  },
+  "taskCount_one": "{{count}} task",
+  "taskCount_other": "{{count}} tasks"
+}
+```
 
-| Environment | Behavior                                           |
-| ----------- | -------------------------------------------------- |
-| Development | `console.warn` + log to a missing-keys file        |
-| Production  | Return the key string (never throw) + log to audit |
-| Test        | Fail the test (catch untranslated strings in CI)   |
+- Interpolation: `{{name}}` (i18next default)
+- Plural suffix: `_one`, `_other`, `_many` (CLDR classes for the locale)
+- No ICU MessageFormat (not needed for current locales)
 
-### 12.4 Network Failure (Lazy Load)
+### 10.3 Key Naming Conventions
 
-If the HTTP fetch for a locale bundle fails (offline, CDN issue):
+- `camelCase` for keys
+- Dot-separated namespaces: `backlog:item.create` (i18next resolves via `useTranslation('backlog')`)
+- Avoid concatenating keys at runtime (`t('errors.' + errorType)`) — use a lookup table instead, for type safety and grep-ability
 
-1. Retry once with exponential backoff (built into `i18next-http-backend`).
-2. On persistent failure, fall back to `en` (already bundled for `common`, lazy-fetched for others).
-3. Display a non-blocking toast: "Some translations could not be loaded; showing English."
+### 10.4 Terminology Glossary
 
-### 12.5 Backend Fallback
+`packages/shared/i18n/glossary.json` defines canonical translations of Scrum terms per locale, sourced from the official 2020 Scrum Guide translations. Examples:
 
-The backend `i18nInstance` preloads all locales at startup. If a key is missing for a user's locale, it falls back to `en` via `fallbackLng`. There is no network-failure risk (no lazy loading on backend).
+- "Sprint Review" → `de: "Sprint Review"`, `fr: "Revue de Sprint"`, `es: "Revisión del Sprint"`, `it: "Revisione dello Sprint"`
+- "Increment" → `de: "Inkrement"`, `fr: "Incrément"`, `es: "Incremento"`, `it: "Incremento"`
 
-### 12.6 Partial-Translation Production Policy (gap n)
-
-During gradual rollout and ongoing development, a non-default locale may be incomplete (e.g., `de` at 95%). This is the policy for shipping partial translations:
-
-| Coverage                         | Policy                                                                                                                                                                                                    |
-| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **100%** (all `en` keys present) | Ship normally.                                                                                                                                                                                            |
-| **≥ 90%**                        | **Shipable.** Missing keys fall back to `en` (ADR-004). The `missingKeyHandler` logs the gap to the audit log in production so translation debt is visible.                                               |
-| **< 90%**                        | **Not shipable for that locale as a default.** The locale remains selectable, but the language switcher shows a "beta" badge and a tooltip: "{{percent}}% translated — some text will appear in English." |
-| **< 50%**                        | Locale is hidden from the switcher entirely (still loadable via cookie/URL for testers) until coverage recovers.                                                                                          |
-
-**Rules:**
-
-1. The `en` baseline is **always 100%** — it is the source of truth and the final fallback. A missing `en` key is a CI-breaking bug (the `validate.mjs` script enforces this).
-2. A locale dropping below 90% after a feature release is acceptable for **one release cycle**; a follow-up ticket is auto-created from the completeness report to restore coverage.
-3. `.i18nignore` entries (explicitly-allowed missing keys) do **not** count against coverage and do not trigger the beta badge. They are the sanctioned mechanism for shipping an English-only feature to all locales temporarily. Each `.i18nignore` entry must have an expiry date (a linked issue); the CI report flags expired entries.
-4. The completeness gate (`i18n:completeness`) is a **reporting** gate by default, not a hard CI failure, except for the `en` baseline (which is hard-fail). This avoids blocking all feature development on translation completion.
+The `i18n:glossary` script flags any locale JSON value that uses a non-glossary translation of a Scrum term. Locale files **must** use glossary-prescribed translations for Scrum terms.
 
 ---
 
-## 13. Translation Workflow & Tooling
+## 11. Translation Workflow & CI Gates
 
-### 13.1 Developer Workflow (Adding a New String)
+### 11.1 Developer Workflow (Adding a New String)
 
-1. Add the key with English value to `packages/frontend/src/locales/en/{namespace}.json`.
-2. Run `pnpm run i18n:check` locally — it reports missing keys in `de/fr/es/it`.
-3. Either:
-   - Add translations to all locale files (if the developer knows the languages), or
-   - Add the key to `.i18nignore` (temporary, until a translator fills it in). The CI allows merges with `.i18nignore` entries but flags them for follow-up.
-4. Use the key in the component: `const { t } = useTranslation('namespace'); t('myNewKey')`.
-5. Commit. CI validates JSON structure + completeness.
+1. Add the key to `packages/frontend/public/locales/en/{ns}.json` (English is the source of truth).
+2. Add the same key (value `__pending__` or translated) to `de`, `fr`, `es`, `it` JSON files.
+3. Use `t('ns:key')` in the component.
+4. Run `pnpm run i18n:check` locally → must pass.
+5. PR review ensures translations are present (or marked `__pending__` for translator handoff).
 
-### 13.2 Translator Workflow
+### 11.2 Translator Workflow
 
-**Option A (Git-based, for small teams):**
+- **Option A (TMS):** Push `en/*.json` to Tolgee/Crowdin/Phrase. Translators work in the TMS UI; pull translated JSON via TMS CLI. Best for ongoing maintenance.
+- **Option B (PR-based):** Send `en/*.json` + `glossary.json` to a translator. They return translated JSON. Open a PR.
+- **Option C (LLM-MTPE):** LLM produces first-pass translation (always pass `glossary.json` as context); human reviewer performs Machine Translation Post-Editing. Run `i18n:glossary` after every LLM pass to catch terminology drift. Never auto-merge LLM output without review.
 
-1. Translator clones the repo (or uses a web Git editor).
-2. Edits `packages/frontend/src/locales/{their-locale}/{namespace}.json`.
-3. Opens a PR.
-4. CI runs the terminology glossary check + JSON validation.
-5. Reviewer (developer who speaks the language) approves.
-
-**Option B (TMS-based, for scaling):**
-
-1. Configure a TMS (Crowdin/Transifex) to sync with `packages/frontend/src/locales/`.
-2. Translators work in the TMS UI (no Git knowledge needed).
-3. TMS auto-opens PRs with completed translations.
-4. CI validates the PR.
-
-### 13.3 CI Pipeline Stages
-
-**File:** `.github/workflows/ci.yml` (extended)
+### 11.3 CI Pipeline Stages
 
 ```yaml
 - name: i18n validation
-  run: |
-    pnpm run i18n:check
-    pnpm run i18n:glossary
-    pnpm run i18n:completeness
+  run: pnpm run i18n:check # key completeness, structure, no extra keys
+
+- name: i18n glossary compliance
+  run: pnpm run i18n:glossary # Scrum terms match glossary.json
+
+- name: i18n completeness report
+  run: pnpm run i18n:completeness # informational; does not fail CI
 ```
 
-**File:** `package.json` (root, scripts)
+**CI gate fails if:** any locale has missing keys, extra keys, or invalid JSON. Does NOT fail on `__pending__` count (allows incremental translation).
+
+### 11.4 Concurrency & Conflict Resolution
+
+Translation JSON files are sorted alphabetically by key to keep merge conflicts localized to the actual changed key. Sorting is a manual/PR-review convention (no `i18n:sort` script exists today).
+
+### 11.5 Translation Key Lifecycle
+
+1. **Add** key to `en/{ns}.json` first.
+2. **Translate** to other locales (mark `__pending__` if translator not yet available).
+3. **Rename** is discouraged — prefer adding a new key and deprecating the old. If rename is unavoidable, update all locales in the same PR.
+4. **Delete** only when no code references the key. The `i18n:extract` script can help find unused keys (not fully automated).
+
+---
+
+## 12. Testing Strategy
+
+### 12.1 Unit Tests
+
+- **Pluralization:** `Intl.PluralRules(lng).select(n)` returns expected class for each locale.
+- **Formatters:** `formatDate`, `formatNumber`, etc. produce expected output per locale.
+- **`isSupportedLocale`, `normalizeLocale`, `getDirection`** — boundary cases.
+
+### 12.2 Component Tests
+
+Components that render translated text use `useTranslation` with a test i18next instance preloaded with the required namespace. Avoid asserting on English string literals — assert on translation keys or `data-testid`.
+
+### 12.3 E2E Tests (Playwright)
+
+- Use `data-testid` attributes (not text selectors) to find elements.
+- Pre-load namespaces via the E2E fixture (`packages/frontend/e2e/fixtures/index.ts`).
+- One smoke test per locale: switch language, verify `document.documentElement.lang` matches, verify no `__pending__` strings visible.
+
+### 12.4 CI Translation Completeness
+
+`pnpm run i18n:completeness` produces a per-locale coverage report. Run in CI as informational; does not fail the build (allows incremental translation).
+
+---
+
+## 13. New Language Onboarding
+
+This section is a condensed playbook for adding a new locale. The running example is **`pt` (Portuguese — Portugal)**.
+
+### 13.1 Work Estimate
+
+| Phase                            | Effort               |
+| -------------------------------- | -------------------- |
+| Locale file scaffolding          | 0.5 engineer-day     |
+| Code & type changes              | 0.5 engineer-day     |
+| Translation (initial, parallel)  | 2–5 translator-days  |
+| Glossary alignment               | 0.5 engineer-day     |
+| Date/time/number/pluralization   | 0.25 engineer-day    |
+| Testing                          | 1 engineer-day       |
+| CI / completeness gate           | 0.25 engineer-day    |
+| Documentation & release          | 0.25 engineer-day    |
+| **Total engineering**            | **~3 engineer-days** |
+| **Total translation** (parallel) | 2–5 translator-days  |
+
+Adding an RTL language (e.g., `ar`) adds ~2–3 engineer-days for CSS auditing and email template `dir="rtl"` additions.
+
+### 13.2 Locale File Scaffolding
+
+Copy `en/` to `pt/` and replace values with `__pending__`:
+
+```powershell
+$dest = "packages/frontend/public/locales/pt"
+New-Item -ItemType Directory -Path $dest -Force
+Get-ChildItem packages/frontend/public/locales/en -Filter *.json | ForEach-Object {
+  # ... copy JSON, replace string values with "__pending__"
+}
+```
+
+Repeat for backend: `packages/backend/src/locales/pt/{5 namespaces}.json`.
+
+**Why `__pending__` and not empty strings:** empty strings pass `i18n:check` (key exists) and render blank. `__pending__` is visually obvious in the UI during development.
+
+### 13.3 Code Modifications
+
+#### `packages/shared/src/constants/index.ts`
+
+Add `pt` to all `Record<Locale, …>` constants. TypeScript immediately flags every record missing the new key.
+
+```typescript
+export const SUPPORTED_LOCALES = ['en', 'de', 'fr', 'es', 'it', 'pt'] as const;
+export const LOCALE_LABELS = { /* ... */ pt: 'Português' }; // endonym
+export const LOCALE_CURRENCIES = { /* ... */ pt: 'EUR' };
+export const DATE_INPUT_FORMATS = { /* ... */ pt: 'dd/MM/yyyy' };
+export const DATE_FORMAT_EXAMPLES = { /* ... */ pt: 'dd/mm/aaaa' };
+export const DATE_SEPARATORS = { /* ... */ pt: '/' };
+```
+
+#### `packages/shared/src/utils/formatters.ts`
+
+```typescript
+import { enGB, de, fr, es, it, pt } from 'date-fns/locale';
+const DATE_FNS_LOCALES = { /* ... */ pt };
+```
+
+All 15 formatters auto-pick up the new locale via `Record<Locale, …>`. No per-formatter changes.
+
+#### `packages/backend/src/i18n/config.ts`
+
+Add 5 `with { type: 'json' }` imports and register `pt` in `resources`. The `supportedLngs: [...SUPPORTED_LOCALES]` option auto-picks up the new locale.
+
+#### `packages/frontend/src/i18n/config.ts`
+
+**No code change.** Frontend uses `i18next-http-backend` to fetch JSON over HTTP. Adding `pt/*.json` files to `public/locales/pt/` is sufficient.
+
+#### `packages/frontend/src/i18n/types.ts`
+
+If `types.ts` enumerates locales, add `pt`. (Verify by reading the file before editing.)
+
+#### Database / Prisma
+
+If `User.locale` is a free-text column, no change. If it has a CHECK constraint or enum, add `pt` via a Prisma migration.
+
+#### Validation Schemas
+
+If schemas use `z.enum([...SUPPORTED_LOCALES])`, no change. If they hardcode the enum, update.
+
+### 13.4 Pluralization Rules
+
+Portuguese (`pt-PT` and `pt-BR`) uses CLDR `one`/`other` classes. **`0` is `one`** (like French and Italian), so "0 tarefas" is incorrect — it should be "0 tarefa".
+
+Verify in browser console: `new Intl.PluralRules('pt').select(0)` → `'one'`.
+
+JSON key naming:
 
 ```json
 {
-  "scripts": {
-    "i18n:check": "node scripts/i18n/validate.mjs",
-    "i18n:extract": "node scripts/i18n/extract.mjs",
-    "i18n:completeness": "node scripts/i18n/completeness-report.mjs",
-    "i18n:glossary": "node scripts/i18n/sync-glossary.mjs"
-  }
+  "taskCount_one": "{{count}} tarefa",
+  "taskCount_other": "{{count}} tarefas"
 }
 ```
 
-### 13.4 Validation Script (Pseudo)
+### 13.5 Date / Time / Number Formatting
 
-**File:** `scripts/i18n/validate.mjs`
+All automatic via `Intl` + `date-fns`:
 
-```javascript
-// Checks:
-// 1. All JSON files are valid JSON
-// 2. All en/ keys exist in de/, fr/, es/, it/ (or in .i18nignore)
-// 3. No extra keys in non-en locales (stale translations)
-// 4. No empty string values
-// 5. Interpolation placeholders {{x}} match between en and translations
-```
+- `formatDate(d, 'pt', 'PP')` → `'18 de jul. de 2026'`
+- `formatDateForInput(d, 'pt')` → `'18/07/2026'`
+- `formatTime(d, 'pt')` → `'14:30'` (24-hour, per `hour12: false`)
+- `formatNumber(1234.56, 'pt')` → `'1.234,56'`
+- `formatCurrency(1234.56, 'pt')` → `'1.234,56 €'`
+- `formatRelativeTime` → "há 2 dias", "em 3 horas"
+- `formatList(['A', 'B', 'C'], 'pt')` → `'A, B e C'`
 
-### 13.5 Completeness Report
+No code changes needed — only the `DATE_INPUT_FORMATS.pt` / `DATE_FORMAT_EXAMPLES.pt` / `DATE_SEPARATORS.pt` constants and the `date-fns/locale` `pt` import.
 
-```
-i18n Completeness Report
-========================
-Locale: de (German)
-  common:           80/80 (100%)
-  auth:             38/40 (95%)  ← 2 missing keys
-  backlog:         148/150 (98%)
-  ...
-Locale: fr (French)
-  common:           80/80 (100%)
-  ...
+### 13.6 Glossary Alignment
 
-Overall: 94% complete across non-default locales.
-```
+Add `pt` entries to `packages/shared/i18n/glossary.json` (sourced from the official 2020 Scrum Guide Portuguese translation). Run `pnpm run i18n:glossary` — it will flag any locale JSON value that uses a non-glossary translation of a Scrum term.
 
-### 13.6 Concurrency & Conflict Resolution in Translation Files (gap e)
+### 13.7 Testing
 
-**Problem.** When two developers add keys to the same namespace JSON (e.g., both add keys to `en/backlog.json` in different PRs), Git produces a merge conflict on the JSON file. Because JSON has no comment lines and trailing commas are illegal, conflicts are noisy and error-prone to resolve manually.
+- **Unit:** pluralization (`select(0)` → `'one'`), formatters, `isSupportedLocale('pt')`.
+- **E2E smoke:** switch to `pt`, verify `document.documentElement.lang === 'pt'`, verify no `__pending__` visible.
+- **Pseudo-localization (optional):** temporarily replace `pt/*.json` values with pseudo-localized versions (`~[Éñträär]~`) to verify UI layout handles accented characters and ~30% text expansion.
 
-**Mitigations:**
+### 13.8 Onboarding Checklist
 
-1. **Keep keys sorted alphabetically.** The `validate.mjs` script includes an `--fix` mode that sorts keys within each namespace file. Sorting makes conflicts localized to the actual changed key instead of a whole block. Add a pre-commit hook (`pnpm run i18n:sort`) that auto-sorts before commit.
-2. **One namespace per PR where feasible.** Reviewers should request that large i18n PRs split by namespace to reduce conflict surface.
-3. **Conflict resolution convention.** When resolving a JSON merge conflict, **always take both sides** (union of keys). The `i18n:check` script then validates that every key in `en` exists in all other locales — a missing key after merge is caught by CI, not by the conflict resolver. Never delete a key to resolve a conflict unless both sides agree it should be removed.
-4. **Translation-file lockfile (optional).** For very large teams, a `.i18nlock` file (similar to `package-lock.json`) can record the last-known key set; the script auto-merges non-conflicting additions. Out of scope for v1; the alphabetical-sort + union convention is sufficient for an 80-person organization.
-5. **TMS-based workflow eliminates the problem entirely** (ADR-007 Option B) — translators work in the TMS, which exports a complete, deterministic JSON file per PR. Conflicts only arise when two developers change the **same** key, which is rare and reviewable.
+- [ ] Create `packages/frontend/public/locales/pt/{16 ns}.json` (scaffold with `__pending__`)
+- [ ] Create `packages/backend/src/locales/pt/{5 ns}.json` (scaffold with `__pending__`)
+- [ ] Update `packages/shared/src/constants/index.ts` (6 constants)
+- [ ] Update `packages/shared/src/utils/formatters.ts` (date-fns locale import + `DATE_FNS_LOCALES`)
+- [ ] Update `packages/backend/src/i18n/config.ts` (5 imports + `resources.pt`)
+- [ ] Update `packages/frontend/src/i18n/types.ts` (if it enumerates locales)
+- [ ] Update Prisma schema if `User.locale` has a CHECK constraint or enum
+- [ ] Update validation schemas that hardcode locale enums
+- [ ] Add `pt` entries to `packages/shared/i18n/glossary.json`
+- [ ] Translate `__pending__` values (TMS / PR / LLM-MTPE)
+- [ ] Add pluralization unit tests
+- [ ] Add formatter unit tests
+- [ ] Add E2E smoke test
+- [ ] Run `i18n:check`, `i18n:completeness`, `i18n:glossary` — all pass
+- [ ] Update user guide, release notes; notify support
+- [ ] Final: `pnpm run typecheck && pnpm run lint && pnpm run test`
 
-### 13.7 Translation Key Lifecycle (gap m)
+### 13.9 Special Cases
 
-Keys evolve. A key's English value may change meaning over time. The lifecycle policy:
-
-| Event                                                                        | Action                                                                                                                                                                                                                                                                               |
-| ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Add a key**                                                                | Add to `en/{ns}.json`, use in code, add to other locales (or `.i18nignore`).                                                                                                                                                                                                         |
-| **Change a value's _wording_ (same meaning)**                                | Update the `en` value in place. Translators update other locales via the TMS/PR. The key name stays. Example: "Save" → "Save changes" — same `common:save` key.                                                                                                                      |
-| **Change a key's _meaning_** (the same string now means something different) | **Rename the key** (e.g., `common:save` → `common:saveChanges`). Do NOT reuse the old key with a new meaning — translators' memories and TMS translation memories would silently apply the old translation. Remove the old key and add the new one in the same PR.                   |
-| **Remove a key**                                                             | Delete from `en/{ns}.json` **and** all locale files in the same commit. The `validate.mjs` "no extra keys in non-en locales" check catches stale keys left behind.                                                                                                                   |
-| **Move a key between namespaces**                                            | Treat as remove + add (old `backlog:priority` → new `common:priority`). Update all call sites.                                                                                                                                                                                       |
-| **Deprecate (temporary)**                                                    | Prefer deletion. There is no "deprecated" status — unused keys are dead weight and translation cost. If a key may be needed again soon, leave it in `en` and mark the code call site with a comment; the glossary/CI does not flag unused keys (out of scope), so rely on PR review. |
-
-**Key naming stability.** Keys are part of the API contract between code and translations. Prefer stable, descriptive key names that survive minor wording changes (e.g., `auth:loginFailed` survives "Login failed" → "Unable to sign in"). Avoid keys that encode the current wording (e.g., `auth:unableToSignInPleaseTryAgain` — too brittle).
-
-### 13.8 `extract.mjs` Specification (gap d)
-
-The `extract.mjs` script is a **heuristic migration assistant** that scans `.tsx`/`.ts` files for likely-translatable hardcoded strings and reports them (it does not auto-rewrite code). It is not a compile-time extractor (we use runtime `t()` calls, not macros); its purpose is to surface the ~2,000 strings that need manual extraction.
-
-**Scan targets (in priority order):**
-
-| Pattern                                                                          | How detected                                                             | Example                                            |
-| -------------------------------------------------------------------------------- | ------------------------------------------------------------------------ | -------------------------------------------------- | ---- | ----- | ----------------------- | ------------------------------- |
-| JSX text nodes                                                                   | Text between `>` and `<` that is non-whitespace                          | `<h1>Welcome back</h1>`                            |
-| String-valued props known to be user-facing                                      | `placeholder`, `aria-label`, `aria-describedby`, `title`, `alt`, `label` | `<input placeholder="Search..." />`                |
-| `aria-*` string attributes                                                       | Any `aria-*` prop with a string literal                                  | `aria-roledescription="slider"`                    |
-| String literals passed to `toast.*()` / `alert()` / `throw new ...Error(...)`    | Heuristic: call expressions matching `/^(toast\.(success                 | error                                              | info | warn) | throw new \w+Error)\(/` | `toast.error('Failed to save')` |
-| Object literals with a `label`/`title`/`heading`/`message` key assigned a string | Shallow scan of object literals                                          | `{ label: 'Dashboard' }` (catches `navigation.ts`) |
-
-**Exclusions:**
-
-- Files under `src/locales/`, `src/__tests__/`, `*.test.*`, `*.spec.*`, `e2e/`.
-- Strings that are clearly non-translatable: imports, type annotations, `data-testid`, `className`, `key={...}`, URLs, regex, console/log messages, string literals that are enum-like (all-caps `SCREAMING_CASE`) or clearly identifiers (`camelCase` assigned to a variable named `id`/`key`/`type`).
-- Strings already wrapped in `t(...)` or `t.match(...)`.
-
-**Output:** a JSON report mapping `filePath:line` → `{ snippet, suggestedNamespace, suggestedKey }`, where the suggested namespace is inferred from the nearest `pages/<feature>/` directory and the suggested key is a camelCased slug of the string. The report is consumed by the developer during migration (Appendix D step 1).
-
-**Limitations (documented):**
-
-- False positives are expected (e.g., a string literal that is a CSS class name passed as a prop). The report is a starting point, not a source of truth.
-- Template literals with interpolation (`` `Hello ${name}` ``) are flagged with a suggestion to convert to `t('greeting', { name })`.
-- The script does **not** modify files; it only reports. Auto-rewriting JSX to insert `t()` calls is intentionally out of scope because correct key naming requires human judgment.
+- **Region-qualified locales (`en-US`, `pt-BR`):** remove `load: 'languageOnly'` from i18next config, add the region-qualified tag to `SUPPORTED_LOCALES`, update `normalizeLocale` logic. ~2 engineer-days. Not recommended unless real user need.
+- **RTL languages (`ar`, `he`):** add to `RTL_LANGUAGES` in `locale.ts`, audit CSS Modules for physical properties (stylelint catches these), test email templates in RTL, configure Chart.js axis direction. ~2–3 engineer-days extra.
+- **Languages without `date-fns` locale data:** rare. Use closest related locale, or fall back to `Intl.DateTimeFormat` for that locale (requires changes to `formatDate`).
 
 ---
 
-## 14. Performance Optimization
+## 14. Modern Best Practices Alignment (2026)
 
-### 14.1 Bundling Strategy
+| Item                                                  | Current State                                                          | Recommendation                                                                                         | Priority | Effort  |
+| ----------------------------------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ | -------- | ------- |
+| **i18next v26 Selector API** (`enableSelector: true`) | Not enabled — `t()` keys are `string`-typed                            | Enable for compile-time key checking                                                                   | Medium   | 0.5 day |
+| **`resolve-accept-language`**                         | Backend parses `Accept-Language` simplistically (no `q=`, no RFC 4647) | Install package, replace parsing                                                                       | Medium   | 0.5 day |
+| **Pseudo-localization**                               | No tooling — layout bugs caught only after translator delivery         | Add `i18n:pseudo` script + dev-only `'pseudo'` locale                                                  | Medium   | 1 day   |
+| **a11y + i18n E2E**                                   | No axe-core test per locale                                            | Add `AxeBuilder` test loop over `SUPPORTED_LOCALES`                                                    | Medium   | 1 day   |
+| **i18next Formatter API**                             | All formatting via explicit `@scrumooth/shared` calls                  | Register custom formatters for `{{date, date}}` syntax in translations                                 | Low      | 1 day   |
+| **TMS integration (Tolgee)**                          | PR-based workflow only                                                 | Set up Tolgee (self-hosted, open-source) for in-context editing                                        | Low      | 2 days  |
+| **RTL dry-run test**                                  | CSS groundwork in place, no RTL locale, no test                        | Add fake `'pseudo-rtl'` locale + E2E test asserting no overflow                                        | Low      | 1 day   |
+| **Temporal API (TC39 Stage 4, March 2026)**           | Uses `Date` + `date-fns`                                               | Migrate when Node 24 LTS ships (Q4 2026)                                                               | Low      | 2 days  |
+| **ICU MessageFormat 2.0**                             | i18next v1 interpolation (`{{name}}`, `_one`/`_other` suffix)          | Do NOT migrate — i18next ecosystem has not adopted MF2; current syntax sufficient for European locales | Low      | 5+ days |
+| **LLM-assisted translation prompt template**          | No structured prompt; translators may use LLMs informally              | Add `docs/i18n/llm-translation-prompt.md` with glossary context                                        | Low      | 0.5 day |
 
-| What                                       | How                                          | Size Impact                |
-| ------------------------------------------ | -------------------------------------------- | -------------------------- |
-| Default locale (`en`) + `common` namespace | Bundled via Vite `import`                    | +3 KB gzipped (main chunk) |
-| Other locales                              | Lazy-fetched JSON via `i18next-http-backend` | 0 KB initial               |
-| Non-common namespaces (en)                 | Lazy-fetched on route entry                  | 0 KB initial               |
-
-### 14.2 Caching
-
-| Layer                       | Strategy                                                                                   |
-| --------------------------- | ------------------------------------------------------------------------------------------ |
-| **Browser HTTP cache**      | `Cache-Control: public, max-age=31536000, immutable` (Vite emits content-hashed filenames) |
-| **i18next resource cache**  | In-memory after first fetch (survives route changes)                                       |
-| **Service Worker** (future) | Pre-cache all locale bundles for offline use                                               |
-
-### 14.3 Preloading & Prefetching
-
-```typescript
-// On app init: preload the user's locale in parallel with auth
-const detectedLocale = getLocaleFromCookie() ?? getLocaleFromBrowser();
-await i18nInstance.loadLanguages(detectedLocale);
-await i18nInstance.loadNamespaces(['common', 'dashboard']); // initial route
-
-// On nav hover: prefetch the target namespace
-<navLink onMouseEnter={() => i18nInstance.loadNamespaces(['backlog'])}>
-```
-
-### 14.4 Render Optimization
-
-- `useTranslation('namespace')` is scoped to a namespace; only re-renders components using that namespace on language change.
-- Avoid `useTranslation()` with no namespace (loads all).
-- Memoize formatted values: `const formattedDate = useMemo(() => formatDate(date, locale), [date, locale])`.
-
-### 14.5 Backend Performance
-
-- Single `i18next` instance, all resources preloaded at startup — zero per-request overhead.
-- `getFixedT(locale, ns)` creates a bound translator (cheap, cacheable).
-- `requestContext` (AsyncLocalStorage) propagates locale without parameter threading.
-
-### 14.6 Bundle Analysis & Size Monitoring (gap l)
-
-Lazy loading only delivers its promised initial-bundle savings if (a) non-default locales actually stay out of the main chunk and (b) namespaces are not accidentally imported eagerly. Verify this with:
-
-**1. Build-time visualization.** Add `rollup-plugin-visualizer` to the frontend Vite build (dev-only, gated behind an env flag so it does not slow CI):
-
-```typescript
-// vite.config.ts
-import { visualizer } from 'rollup-plugin-visualizer';
-
-export default defineConfig({
-  plugins: [
-    // ...existing plugins
-    process.env.ANALYZE &&
-      visualizer({
-        filename: 'temp/bundle-stats.html',
-        template: 'treemap',
-        gzipSize: true,
-      }),
-  ],
-});
-```
-
-Run `ANALYZE=true pnpm run build` and inspect `temp/bundle-stats.html` (per the project rule, temp files go in the `temp/` folder). Confirm:
-
-- The `i18next` + `react-i18next` + `i18next-intlpluralresolver` runtime is in the main chunk (~30 KB gzipped total).
-- `en/common.json` is in the main chunk (~3 KB).
-- Non-`en` locale JSONs appear as **separate** chunks (one per `{lng}/{ns}`), not inlined.
-- No `de`/`fr`/`es`/`it` string appears in the main chunk.
-
-**2. CI bundle-size gate.** Add a `bundlewatch` (or `size-limit`) step to CI that fails if the frontend main chunk grows beyond a threshold. Set the baseline after Phase 1 lands, with a +5% tolerance. This catches regressions where a developer accidentally `import`s a locale JSON eagerly (e.g., `import deBacklog from '../locales/de/backlog.json'`) instead of letting `i18next-http-backend` fetch it.
-
-```yaml
-# .github/workflows/ci.yml (extended)
-- name: Bundle size check
-  run: pnpm run bundlewatch
-```
-
-**3. Runtime verification.** A Playwright E2E test asserts that on first load (default `en`), the browser performs **zero** fetches to `/locales/en/*.json` for non-`common` namespaces, and that switching to `de` triggers exactly the expected set of namespace fetches. This catches lazy-loading regressions that a static bundle analysis might miss (e.g., a namespace preloaded eagerly by a hook).
-
-```typescript
-test('default locale loads only common + active namespace', async ({ page }) => {
-  const localeRequests: string[] = [];
-  page.on('request', (req) => {
-    if (req.url().includes('/locales/')) localeRequests.push(req.url());
-  });
-  await page.goto('/dashboard');
-  // en/common is bundled (no fetch); only en/dashboard is fetched
-  await expect
-    .poll(() => localeRequests)
-    .toEqual(expect.arrayContaining([expect.stringContaining('/locales/en/dashboard.json')]));
-  expect(localeRequests.every((u) => !u.includes('/locales/de/'))).toBe(true);
-});
-```
+**Triggers for revisit:** locale count > 7 (consider TMS); adding first RTL/gendered language (consider ICU MF2); Node 24 LTS (consider Temporal API).
 
 ---
 
-## 15. RTL-Ready Architecture
-
-Although v1 ships LTR-only, the following measures ensure RTL can be added with zero refactoring:
-
-### 15.1 CSS Logical Properties (Enforced via Stylelint)
-
-```css
-/* ❌ Avoid */
-.card {
-  padding-left: 16px;
-  margin-right: 8px;
-  text-align: left;
-}
-
-/* ✅ Use */
-.card {
-  padding-inline-start: 16px;
-  margin-inline-end: 8px;
-  text-align: start;
-}
-```
-
-### 15.2 Direction-Aware Icons
-
-```css
-.arrow-back {
-  transform: rotate(180deg);
-}
-[dir='rtl'] .arrow-back {
-  transform: rotate(0deg);
-}
-```
-
-### 15.3 `dir` Attribute Management
-
-```typescript
-// In I18nProvider
-document.documentElement.dir = getDirection(locale);
-```
-
-### 15.4 Migration of Existing CSS
-
-As part of the phased rollout, a Stylelint rule flags physical properties. Existing CSS modules are migrated incrementally (no big-bang rewrite).
-
-### 15.5 Concrete Migration Example with Design Tokens (gap k)
-
-The project's CSS modules use design tokens (`var(--space-*)`, `var(--color-*)`, etc.) and currently use **physical** properties (`margin-left`, `padding-right`, `text-align: left`). Verified instances exist across the codebase (e.g., `Dashboard.module.css`, `DailyScrum.module.css`, `LoginPage.module.css`, `Layout.module.css`). Below is a real before/after for a representative card pattern, using the project's actual token vocabulary.
-
-**Before — `packages/frontend/src/pages/Dashboard/Dashboard.module.css` (current, physical):**
-
-```css
-.metricCard {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-4);
-  padding-left: var(--space-6); /* ❌ physical */
-  margin-left: auto; /* ❌ physical */
-  border: var(--border-width-1) solid var(--color-gray-200);
-  border-radius: var(--radius-md);
-  background-color: var(--color-surface);
-  text-align: left; /* ❌ physical */
-}
-
-.metricCard .icon {
-  margin-right: var(--space-2); /* ❌ physical */
-  flex-shrink: 0;
-}
-
-.metricCard .arrow {
-  position: absolute;
-  left: 0; /* ❌ physical */
-}
-```
-
-**After — logical properties (RTL-ready, same visual result in LTR):**
-
-```css
-.metricCard {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-4);
-  padding-inline-start: var(--space-6); /* ✅ logical (start edge) */
-  margin-inline-start: auto; /* ✅ logical (auto on start edge) */
-  border: var(--border-width-1) solid var(--color-gray-200);
-  border-radius: var(--radius-md);
-  background-color: var(--color-surface);
-  text-align: start; /* ✅ logical */
-}
-
-.metricCard .icon {
-  margin-inline-end: var(--space-2); /* ✅ logical (trailing edge) */
-  flex-shrink: 0;
-}
-
-.metricCard .arrow {
-  position: absolute;
-  inset-inline-start: 0; /* ✅ logical (start edge) */
-}
-```
-
-**Property mapping reference (keep this in the translator/developer guide):**
-
-| Physical (avoid)    | Logical (use)          | Notes                                          |
-| ------------------- | ---------------------- | ---------------------------------------------- |
-| `margin-left`       | `margin-inline-start`  | `inline` = horizontal axis                     |
-| `margin-right`      | `margin-inline-end`    |                                                |
-| `padding-left`      | `padding-inline-start` |                                                |
-| `padding-right`     | `padding-inline-end`   |                                                |
-| `left` (position)   | `inset-inline-start`   |                                                |
-| `right` (position)  | `inset-inline-end`     |                                                |
-| `text-align: left`  | `text-align: start`    |                                                |
-| `text-align: right` | `text-align: end`      |                                                |
-| `border-left`       | `border-inline-start`  |                                                |
-| `float: left`       | (use flex/grid)        | `float` is direction-ambiguous; avoid entirely |
-
-> **Design tokens are direction-agnostic.** `var(--space-4)`, `var(--color-surface)`, `var(--radius-md)` etc. do not change with direction — only the _edge_ they apply to changes. So the migration is purely a property-name change; token values are untouched. This keeps the design-token system stable across LTR/RTL.
-
----
-
-## 16. Testing Strategy
-
-### 16.1 Unit Tests
-
-| Layer                | Test Scope                                                | Tool                 |
-| -------------------- | --------------------------------------------------------- | -------------------- |
-| Shared formatters    | `formatDate`, `formatNumber`, `formatCurrency` per locale | Vitest               |
-| i18n config          | Fallback chain, missing key handling, pluralization       | Vitest               |
-| Backend `t()`        | Locale resolution from request context, per-user locale   | Vitest + mocks       |
-| Notification service | `createLocalized` produces correct locale strings         | Vitest + Prisma mock |
-
-### 16.2 Component Tests
-
-```tsx
-// Example: test a component renders translated text
-import { render } from '@testing-library/react';
-import { I18nextProvider } from 'react-i18next';
-import { i18nInstance } from '@/i18n/config';
-
-test('LoginPage renders German title when locale is de', async () => {
-  await i18nInstance.changeLanguage('de');
-  await i18nInstance.loadNamespaces(['auth']);
-  const { getByText } = render(
-    <I18nextProvider i18n={i18nInstance}>
-      <LoginPage />
-    </I18nextProvider>
-  );
-  expect(getByText('Willkommen zurück')).toBeInTheDocument();
-});
-```
-
-### 16.3 Integration Tests
-
-- API responses include localized error messages based on `Accept-Language` header.
-- `PUT /profile { locale: 'de' }` persists and returns the updated locale.
-- Email rendering produces the correct locale HTML/text.
-
-### 16.4 E2E Tests (Playwright)
-
-```typescript
-test('user can switch language and see UI update', async ({ page }) => {
-  await page.goto('/dashboard');
-  await page.selectOption('[data-testid="language-select"]', 'de');
-  await expect(page.locator('h1')).toContainText('Übersicht'); // German "Dashboard"
-  await expect(page).toHaveLocale('de'); // custom fixture
-});
-```
-
-### 16.5 CI Translation Completeness
-
-- `pnpm run i18n:check` fails CI if any `en` key is missing from another locale (unless in `.i18nignore`).
-- `pnpm run i18n:glossary` fails CI if glossary terms are not used verbatim.
-
----
-
-## 17. Security Considerations
-
-| Concern                              | Mitigation                                                                                                                                                                            |
-| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **XSS via interpolation**            | `interpolation.escapeValue: false` is safe because React escapes by default. Never use `dangerouslySetInnerHTML` with translated content.                                             |
-| **Malicious locale files**           | Locale JSON is author-controlled (in-repo), not user-uploaded. No risk.                                                                                                               |
-| **Locale cookie tampering**          | Locale is validated against `SUPPORTED_LOCALES` on every read. Invalid values fall back to `en`.                                                                                      |
-| **Accept-Language spoofing**         | Backend always prefers `User.locale` (DB) over `Accept-Language` for authenticated users. Guests using `Accept-Language` only affect their own view.                                  |
-| **Translation injection in emails**  | Email templates use `i18next` interpolation (escaped). The `resetUrl` and `email` values are inserted into known-safe template positions (no script execution path in email clients). |
-| **Data leakage in missing-key logs** | Missing-key logs contain only the key name, never user data.                                                                                                                          |
-| **Bundle integrity**                 | Locale JSON files are content-hashed by Vite; CDN serves immutable files.                                                                                                             |
-
----
-
-## 18. Risks & Mitigation Strategies
-
-| ID  | Risk                                                                                                                                                                              | Likelihood | Impact | Mitigation                                                                                                                                                                                                                                                                                                                     |
-| --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| R1  | **Translation drift** — developers add English keys, translations lag                                                                                                             | High       | Medium | CI completeness gate + `.i18nignore` with expiry + auto-assign translator tickets                                                                                                                                                                                                                                              |
-| R2  | **Bundle size bloat** from i18next + plugins                                                                                                                                      | Low        | Low    | En bundle (~3 KB gz), others lazy; monitor with `rollup-plugin-visualizer`                                                                                                                                                                                                                                                     |
-| R3  | **Inconsistent terminology** across locales/translators                                                                                                                           | Medium     | Medium | Glossary + CI glossary check + translator guidelines doc                                                                                                                                                                                                                                                                       |
-| R4  | **Layout shift** on language switch                                                                                                                                               | Low        | High   | Bundled en/common; preload user locale before render; CLS metric in Lighthouse                                                                                                                                                                                                                                                 |
-| R5  | **Date/timezone confusion** — locale formatting vs. timezone                                                                                                                      | Medium     | Medium | Locale controls _format_; timezone is separate (UTC storage + per-user display timezone is a future feature)                                                                                                                                                                                                                   |
-| R6  | **Notification locale staleness** — notification created in `de`, user switches to `fr`                                                                                           | Medium     | Low    | Documented behavior; notifications store resolved text. Mitigation: show a "translated at creation" note, or re-translate on read (future)                                                                                                                                                                                     |
-| R7  | **Migration effort underestimated** — ~2,000 strings to extract                                                                                                                   | High       | High   | Phased rollout (§19); start with high-traffic pages; extraction assist script                                                                                                                                                                                                                                                  |
-| R8  | **RTL future migration** fails due to physical CSS                                                                                                                                | Medium     | High   | Stylelint rule enforced now; logical properties in all new CSS                                                                                                                                                                                                                                                                 |
-| R9  | **Test flakiness** due to async locale loading                                                                                                                                    | Medium     | Medium | Use `i18next` `useSuspense: true` + `waitFor` in tests                                                                                                                                                                                                                                                                         |
-| R10 | **Backend job locale** — scheduled jobs have no request context                                                                                                                   | High       | Low    | Jobs explicitly pass `locale` param; default to `DEFAULT_LOCALE` or team's primary locale                                                                                                                                                                                                                                      |
-| R11 | **Email subject length truncation** — localized subject lines may exceed RFC 5322 78-char recommended limit or 998-char hard limit (esp. German compounds)                        | Medium     | Medium | §8.5 documents the constraint; translators keep subjects ≤ 78 chars; `emailSubjectStats.mjs` CI check flags over-length subjects per locale; `EmailService.send()` truncates with ellipsis at 998 as a safety net                                                                                                              |
-| R12 | **Test breakage from i18n** — existing unit/component/E2E tests assert English strings (e.g., `getByText('Dashboard')`) and break once UI switches to translation keys            | High       | Medium | ADR-012 three-part migration strategy: (1) unit/component tests wrap in `I18nextProvider` with `en` + assert via `t()` or English fallback, (2) E2E tests decouple via `data-testid` + `toHaveAttribute` for aria-label, (3) CI gate runs a `de` smoke test to catch regressions. Migration tracked per-namespace in Phase 2-3 |
-| R13 | **Locale-aware collation divergence** — `Intl.Collator` ordering differs from default `String.prototype.sort` (e.g., German umlauts, Spanish `ñ`), causing list-order regressions | Low        | Low    | ADR-010 mandates `sortLocaleStrings()` helper for all user-visible sorted lists; unit tests assert collation order per locale                                                                                                                                                                                                  |
-| R14 | **Chart.js misconfiguration** — chart axis labels, tooltips, or number formatting leak English after locale switch                                                                | Medium     | Medium | ADR-011 defines chart options as a translation surface via `useMemo`; checklist in ADR-011 verifies axis titles, ticks, tooltips, and legend. E2E test asserts chart `aria-label` updates on locale switch                                                                                                                     |
-
----
-
-## 19. Implementation Roadmap
-
-### Phase 0: Foundation (Preparation)
-
-**Goal:** Set up infrastructure without touching user-facing UI.
-
-- [ ] Add `i18n` dependencies to `packages/frontend` and `packages/backend`.
-- [ ] Add `date-fns` to `packages/shared` dependencies.
-- [ ] Create `packages/shared/src/constants` locale exports + `utils/locale.ts` + `utils/formatters.ts` (incl. `sortLocaleStrings`, `createCollator` per ADR-010).
-- [ ] Create `packages/frontend/src/locales/` and `packages/backend/src/locales/` directory structure with empty `en/*.json` namespace files.
-- [ ] Create `scripts/i18n/` validation tooling (`validate.mjs`, `completeness-report.mjs`, `sync-glossary.mjs`, `extract.mjs` per §13.8, `emailSubjectStats.mjs` per R11).
-- [ ] Add CI stage `i18n:check` to `.github/workflows/ci.yml`.
-- [ ] Create `packages/shared/i18n/glossary.json` with initial domain terms.
-- [ ] Prisma migration: add `User.locale` column (default `en`).
-- [ ] Backend: `LocaleResolver` middleware + `requestContext` integration + backend `i18nInstance`.
-- [ ] Add `GET /api/v1/config/locales` endpoint.
-- [ ] Stylelint: add logical-property rules to `.stylelintrc.json`.
-- [ ] Configure `rollup-plugin-visualizer` to output to `temp/bundle-stats.html` (per §14.6) and add `bundlewatch` CI gate.
-
-### Phase 1: Frontend Infrastructure & High-Traffic Pages
-
-**Goal:** i18n infrastructure live; first pages translated.
-
-- [ ] Frontend: `i18n/config.ts`, `I18nProvider`, `useI18nStore`.
-- [ ] Frontend: `LanguageSwitcher` component in the sidebar/profile menu.
-- [ ] Frontend: `App.tsx` wrapped in `I18nProvider`.
-- [ ] Translate the **`common` namespace** (shared buttons, labels, error boundary, http errors per §7.10.3) — ~80 keys.
-- [ ] Translate the **`auth` namespace** (login, register, password reset) — [LoginPage.tsx](file:///e:/ws1/ov/ce/scrumooth/packages/frontend/src/pages/Auth/LoginPage.tsx), ForgotPassword, ResetPassword.
-- [ ] Translate the **`dashboard` namespace** — [Dashboard.tsx](file:///e:/ws1/ov/ce/scrumooth/packages/frontend/src/pages/Dashboard/Dashboard.tsx).
-- [ ] Translate the **navigation** — [navigation.ts](file:///e:/ws1/ov/ce/scrumooth/packages/frontend/src/config/navigation.ts) labels.
-- [ ] Provide complete `de`, `fr`, `es`, `it` translations for the above namespaces.
-- [ ] Test infrastructure: create `I18nTestProvider` wrapper (per ADR-012) for unit/component tests; audit `auth`/`dashboard` tests and migrate to English-fallback assertions.
-
-### Phase 2: Backend i18n & Core Feature Pages
-
-**Goal:** Backend produces localized content; core Scrum pages translated.
-
-- [ ] Backend: localize **email templates** (PasswordReset, Welcome) — `emails.json` namespace (address `BaseTemplateData.subject` conflict per §8.5; enforce ≤ 78-char subjects per R11).
-- [ ] Backend: localize **notifications** — `notifications.json` namespace + `createLocalized` method.
-- [ ] Backend: localize **error messages** — `errors.json` + `validation.json` namespaces; migrate Zod schemas to translation-key messages (§8.4b) and localize error middleware Prisma/JWT/session strings (§8.4c).
-- [ ] Backend: localize `NotFoundError` via non-breaking `notFound()` helper (§8.4).
-- [ ] Backend: `PUT /api/v1/auth/me/profile` accepts `locale` (route verified against [auth.routes.ts](file:///e:/ws1/ov/ce/scrumooth/packages/backend/src/routes/auth.routes.ts)).
-- [ ] Backend: audit log locale changes via `auditResourceEvent` (§8.7).
-- [ ] Frontend: translate `backlog`, `sprint`, `daily-scrum` namespaces.
-- [ ] Frontend: integrate `formatDate`, `formatNumber` into existing date/number displays.
-- [ ] Frontend: apply `sortLocaleStrings` to all user-visible sorted lists (ADR-010).
-- [ ] Frontend: apply ADR-011 Chart.js i18n pattern to Dashboard charts (axis titles, ticks, tooltips).
-- [ ] Provide complete translations for the above.
-- [ ] Test migration: migrate `backlog`, `sprint`, `daily-scrum` tests per ADR-012; add `data-testid` to E2E-tested elements.
-
-### Phase 3: Remaining Pages & Polish
-
-**Goal:** 100% UI coverage.
-
-- [ ] Frontend: translate `impediments`, `increments`, `sprint-review`, `retrospective`, `reports`, `team`, `settings`, `notifications` (UI), `errors` (UI), `validation` (UI) namespaces.
-- [ ] Frontend: translate all **empty states**, **loading states**, **error states** per §7.10 (incl. pluralized empty states, skeleton `aria-label`s, error boundary text).
-- [ ] Frontend: translate all **tooltips**, **aria-labels**, **alt text**, **title attributes**, **placeholders**, **document titles** per §7.9.
-- [ ] Frontend: migrate existing CSS modules to **logical properties** (Stylelint-driven; use before/after pattern from §15.5; ~40+ instances across Dashboard, DailyScrum, LoginPage, Team, Layout).
-- [ ] Frontend: apply ADR-011 Chart.js i18n to all remaining charts (burndown, velocity, reports).
-- [ ] E2E tests for language switching on each major page; add screen-reader assertions per §7.9.5.
-- [ ] E2E: add `de` locale smoke test CI gate (per ADR-012).
-- [ ] Lighthouse CLS audit after language switch = 0.
-- [ ] Test migration: complete per-namespace test migration (R12).
-
-### Phase 4: Hardening & Optimization
-
-**Goal:** Production-grade performance and completeness.
-
-- [ ] Prefetching of adjacent-route namespaces on hover/idle.
-- [ ] Service Worker pre-caching of locale bundles (if PWA).
-- [ ] Terminology glossary CI enforcement at 100%.
-- [ ] Translation completeness: remove all `.i18nignore` entries (100% coverage); enforce partial-translation policy tiers from §12.6.
-- [ ] Performance benchmark: language switch < 50 ms (cached), < 200 ms (first fetch).
-- [ ] Bundle analysis: `bundlewatch` gates per-locale chunk sizes; `temp/bundle-stats.html` reviewed each release (§14.6).
-- [ ] Accessibility audit: `lang`/`dir` correctness, screen reader testing in `de`/`fr` (per §7.9).
-- [ ] Documentation: translator guide, developer i18n guide.
-
-### Phase 5 (Future): RTL Language Support
-
-- [ ] Add `ar` (Arabic) and/or `he` (Hebrew) to `SUPPORTED_LOCALES`.
-- [ ] Import `date-fns/locale/ar` etc.
-- [ ] Audit all CSS for remaining physical properties (Stylelint already enforces new code).
-- [ ] Bidirectional icon mirroring pass.
-- [ ] RTL-specific E2E tests.
-
----
-
-## 20. Appendices
-
-### Appendix A: Glossary of Terms
-
-| Term                  | Definition                                                                                                        |
-| --------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| **i18n**              | Internationalization — designing software to support multiple locales.                                            |
-| **L10n**              | Localization — translating content for a specific locale.                                                         |
-| **ICU MessageFormat** | A standardized syntax for messages with pluralization, gender, and interpolation.                                 |
-| **CLDR**              | Common Locale Data Repository — the Unicode standard for locale data (plural rules, formats).                     |
-| **Locale**            | A language + region identifier (e.g., `en-US`, `de-DE`). In this system, we use language-only codes (`en`, `de`). |
-| **Namespace (ns)**    | A grouping of translation keys (e.g., `common`, `auth`) enabling lazy loading.                                    |
-| **Fallback**          | The chain of locales checked when a translation is missing.                                                       |
-| **RTL**               | Right-to-Left text direction (Arabic, Hebrew).                                                                    |
-| **TMS**               | Translation Management System (Crowdin, Transifex, etc.).                                                         |
-
-### Appendix B: New Environment Variables
-
-| Variable            | Default          | Description                                                                      |
-| ------------------- | ---------------- | -------------------------------------------------------------------------------- |
-| `DEFAULT_LOCALE`    | `en`             | Application default locale                                                       |
-| `SUPPORTED_LOCALES` | `en,de,fr,es,it` | Comma-separated list of supported locales (optional; can be hardcoded in shared) |
-
-No new secrets required.
-
-### Appendix C: File Inventory (New Files)
-
-```
-packages/
-├── shared/
-│   ├── i18n/
-│   │   └── glossary.json                    # Terminology glossary
-│   └── src/
-│       ├── constants/index.ts               # +SUPPORTED_LOCALES, Locale, LOCALE_LABELS
-│       └── utils/
-│           ├── locale.ts                    # isRTL, getDirection, normalizeLocale
-│           └── formatters.ts                # formatDate, formatNumber, formatCurrency
-├── frontend/
-│   └── src/
-│       ├── i18n/
-│       │   ├── config.ts                    # i18next initialization
-│       │   ├── I18nProvider.tsx             # React provider
-│       │   ├── useI18nStore.ts              # Zustand locale store
-│       │   └── types.ts                     # TypeScript key types
-│       ├── locales/
-│       │   ├── en/{15 namespaces}.json
-│       │   ├── de/{15 namespaces}.json
-│       │   ├── fr/{15 namespaces}.json
-│       │   ├── es/{15 namespaces}.json
-│       │   └── it/{15 namespaces}.json
-│       └── components/common/LanguageSwitcher/
-│           ├── LanguageSwitcher.tsx
-│           └── LanguageSwitcher.module.css
-├── backend/
-│   └── src/
-│       ├── i18n/
-│       │   ├── config.ts                    # Backend i18next instance
-│       │   └── requestT.ts                  # Per-request t() accessor
-│       ├── middleware/locale.middleware.ts  # LocaleResolver
-│       └── locales/
-│           ├── en/{4 namespaces}.json
-│           └── {de,fr,es,it}/{4 namespaces}.json
-scripts/
-└── i18n/
-    ├── validate.mjs                         # CI validation
-    ├── extract.mjs                          # Hardcoded string extraction assist
-    ├── completeness-report.mjs              # Coverage report
-    └── sync-glossary.mjs                    # Glossary compliance check
-docs/
-└── architecture/
-    └── i18n-architecture.md                 # This document
-```
-
-### Appendix D: Migration Checklist for Existing Components
-
-For each existing component/page being migrated to i18n:
-
-1. [ ] Identify all hardcoded strings (use `pnpm run i18n:extract` for assistance).
-2. [ ] Add keys to `en/{namespace}.json`.
-3. [ ] Replace hardcoded strings with `t('key')` calls.
-4. [ ] Add `const { t } = useTranslation('namespace')` at the top of the component.
-5. [ ] Replace `date.toString()` / `toLocaleDateString()` with `formatDate(date, locale)`.
-6. [ ] Replace raw number displays with `formatNumber(value, locale)`.
-7. [ ] Update CSS to use logical properties (Stylelint will flag violations).
-8. [ ] Add the keys to `de/fr/es/it/{namespace}.json` (or `.i18nignore` temporarily).
-9. [ ] Run `pnpm run i18n:check` — must pass.
-10. [ ] Update/add tests to assert translated text.
-
-### Appendix E: Reference: Existing Architecture Integration Points
-
-| Concern                             | Existing File                                                                                                                                                                                                                                                      | Integration                        |
-| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------- |
-| Request context (AsyncLocalStorage) | [requestContext.ts](file:///e:/ws1/ov/ce/scrumooth/packages/backend/src/utils/requestContext.ts)                                                                                                                                                                   | Add `locale` to context            |
-| Custom errors                       | [errors.ts](file:///e:/ws1/ov/ce/scrumooth/packages/backend/src/utils/errors.ts)                                                                                                                                                                                   | Accept translation keys            |
-| Email templates                     | [PasswordResetTemplate.ts](file:///e:/ws1/ov/ce/scrumooth/packages/backend/src/services/email/templates/PasswordResetTemplate.ts), [WelcomeEmailTemplate.ts](file:///e:/ws1/ov/ce/scrumooth/packages/backend/src/services/email/templates/WelcomeEmailTemplate.ts) | Accept `locale` in data; use `t()` |
-| Notifications                       | [notification.service.ts](file:///e:/ws1/ov/ce/scrumooth/packages/backend/src/services/notification.service.ts)                                                                                                                                                    | Add `createLocalized` method       |
-| Navigation                          | [navigation.ts](file:///e:/ws1/ov/ce/scrumooth/packages/frontend/src/config/navigation.ts)                                                                                                                                                                         | Replace `label` with `labelKey`    |
-| Auth store                          | `useAuthStore` (Zustand)                                                                                                                                                                                                                                           | Include `locale` in user state     |
-| Config                              | [config/index.ts](file:///e:/ws1/ov/ce/scrumooth/packages/backend/src/config/index.ts)                                                                                                                                                                             | Add `i18n` section                 |
-| Email config                        | [config/index.ts](file:///e:/ws1/ov/ce/scrumooth/packages/backend/src/config/index.ts)                                                                                                                                                                             | `defaultLocale` for system emails  |
+## 15. File Inventory
+
+| Location                             | Locales                  | Namespaces per locale | Total files |
+| ------------------------------------ | ------------------------ | --------------------- | ----------- |
+| `packages/frontend/public/locales/`  | 5 (en, de, fr, es, it)   | 16                    | 80          |
+| `packages/backend/src/locales/`      | 5 (en, de, fr, es, it)   | 5                     | 25          |
+| `packages/shared/i18n/glossary.json` | 1 (multi-locale content) | —                     | 1           |
+| **Total i18n resource files**        |                          |                       | **106**     |
+
+**Frontend namespaces (16):** `auth`, `backlog`, `common`, `daily-scrum`, `dashboard`, `errors`, `impediments`, `increments`, `notifications`, `reports`, `retrospective`, `sprint`, `sprint-review`, `settings`, `team`, `validation`.
+
+**Backend namespaces (5):** `emails`, `notifications`, `errors`, `validation`, `retrospectives`.
+
+**Key source files:**
+
+| File                                                   | Purpose                                                     |
+| ------------------------------------------------------ | ----------------------------------------------------------- |
+| `packages/frontend/src/i18n/config.ts`                 | i18next init (75 lines)                                     |
+| `packages/frontend/src/i18n/I18nProvider.tsx`          | React provider (246 lines: 15s timeout, error/retry UI)     |
+| `packages/frontend/src/i18n/useI18nStore.ts`           | Zustand locale store + cookie sync (37 lines)               |
+| `packages/frontend/src/i18n/types.ts`                  | TypeScript key types (16 namespaces)                        |
+| `packages/backend/src/i18n/config.ts`                  | Backend i18next instance (81 lines, 5 ns × 5 locales)       |
+| `packages/backend/src/i18n/requestT.ts`                | Per-request `t()` accessor (13 lines)                       |
+| `packages/backend/src/middleware/locale.middleware.ts` | Locale resolver (50 lines)                                  |
+| `packages/backend/src/utils/requestContext.ts`         | `AsyncLocalStorage` for request-scoped locale (86 lines)    |
+| `packages/shared/src/constants/index.ts`               | `SUPPORTED_LOCALES`, `LOCALE_LABELS`, date format constants |
+| `packages/shared/src/utils/locale.ts`                  | `isRTL`, `getDirection`, `normalizeLocale` (24 lines)       |
+| `packages/shared/src/utils/formatters.ts`              | 15 locale-aware formatters (201 lines)                      |
+| `packages/shared/i18n/glossary.json`                   | Scrum term translations per locale                          |
+
+**Tooling scripts (in `scripts/i18n/`):**
+
+| Script                    | npm command                  | Purpose                                     |
+| ------------------------- | ---------------------------- | ------------------------------------------- |
+| `validate.mjs`            | `pnpm run i18n:check`        | CI validation (key completeness, structure) |
+| `extract.mjs`             | `pnpm run i18n:extract`      | Hardcoded-string extraction assist          |
+| `completeness-report.mjs` | `pnpm run i18n:completeness` | Per-locale coverage report                  |
+| `sync-glossary.mjs`       | `pnpm run i18n:glossary`     | Scrum term glossary compliance              |
 
 ---
 
