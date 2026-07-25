@@ -21,6 +21,10 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
   const [i18nState, setI18nState] = useState<I18nState>(
     i18nInstance.isInitialized ? 'ready' : 'loading'
   );
+  // Tracks whether the initial i18next → Zustand sync has completed.
+  // Without this, the changeLanguage effect fires on mount with the Zustand
+  // default locale ('en') and overrides the i18next-detected browser language.
+  const [initialSyncDone, setInitialSyncDone] = useState(false);
   const isChangingLanguage = useRef(false);
 
   // On mount: sync Zustand store from i18next's detected language (run once)
@@ -29,12 +33,10 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
     if (detectedLng && isSupportedLocale(detectedLng)) {
       const storeLocale = useI18nStore.getState().locale;
       if (detectedLng !== storeLocale) {
-        // Update store without triggering the changeLanguage effect
-        isChangingLanguage.current = true;
         useI18nStore.setState({ locale: detectedLng as Locale });
-        isChangingLanguage.current = false;
       }
     }
+    setInitialSyncDone(true);
   }, []);
 
   // Sync locale from authenticated user's stored preference (run once)
@@ -88,7 +90,11 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
   }, []);
 
   // Change i18next language when store locale changes
+  // Skipped on initial render until the i18next-detected language has been
+  // synced to Zustand — otherwise the default locale ('en') overrides the
+  // browser-detected language before the sync effect can correct it.
   useEffect(() => {
+    if (!initialSyncDone) return;
     if (isChangingLanguage.current) return;
 
     let cancelled = false;
@@ -116,7 +122,7 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
     return () => {
       cancelled = true;
     };
-  }, [locale]);
+  }, [locale, initialSyncDone]);
 
   // Listen for i18n ready state + timeout protection
   useEffect(() => {
