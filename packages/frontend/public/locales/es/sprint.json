@@ -250,7 +250,9 @@
     "toggleBurndown": "Mostrar/ocultar burndown chart",
     "focusSearch": "Foco en caja de busqueda",
     "showHelp": "Mostrar esta ayuda",
-    "tip": "Tip: Usa el enlace de salto (primer tab stop) para saltar navegacion e ir directamente al board de tareas."
+    "tip": "Tip: Usa el enlace de salto (primer tab stop) para saltar navegacion e ir directamente al board de tareas.",
+    "rightArrowLabel": "(Right Arrow)",
+    "leftArrowLabel": "(Left Arrow)"
   },
   "board": {
     "loadingBoard": "Cargando sprint board...",

@@ -5,7 +5,17 @@
     "bodyIntro": "We received a request to reset the password for {{email}}.",
     "cta": "Reset password",
     "expiresIn": "This link expires in {{duration}}.",
-    "ignoreIfNotRequested": "If you didn't request this, you can safely ignore this email."
+    "ignoreIfNotRequested": "If you didn't request this, you can safely ignore this email.",
+    "buttonHint": "Click the button below to create a new password:",
+    "fallbackLinkHint": "If the button above doesn't work, copy and paste the following link into your browser:",
+    "supportContact": "If you have any questions or need assistance, please contact our support team."
+  },
+  "common": {
+    "greeting": "Hello",
+    "needHelp": "Need help? Contact us at",
+    "thankYouForUsing": "Thank you for using",
+    "visitApp": "Visit",
+    "allRightsReserved": "All rights reserved."
   },
   "welcome": {
     "subject": "Welcome to Scrumooth",

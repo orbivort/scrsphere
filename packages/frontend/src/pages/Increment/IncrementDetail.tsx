@@ -324,7 +324,9 @@ export const IncrementDetail: React.FC = () => {
                   <div key={pbi.id} className={styles['pbi-item']}>
                     <div className={styles['pbi-header']}>
                       <span className={styles['pbi-title']}>{pbi.title}</span>
-                      <span className={styles['pbi-points']}>{pbi.storyPoints ?? 0} pts</span>
+                      <span className={styles['pbi-points']}>
+                        {pbi.storyPoints ?? 0} {t('pts')}
+                      </span>
                     </div>
                     {pbi.labels.length > 0 && (
                       <div className={styles['pbi-labels']}>

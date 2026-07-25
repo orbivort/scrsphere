@@ -55,6 +55,7 @@
   "localeSyncFailed": "Sprachpräferenz konnte nicht synchronisiert werden. Sie wird bei der nächsten Anmeldung synchronisiert.",
   "unassigned": "Nicht zugewiesen",
   "noTeamSelected": "Kein Team ausgewählt",
+  "translationPending": "Übersetzung ausstehend",
   "unsavedChanges": "Ungespeicherte Änderungen",
   "confirmDialog": {
     "removeMessage": "Sind Sie sicher, dass Sie {{name}} entfernen möchten?",
@@ -515,6 +516,18 @@
     "transitionError": "Sie haben keine Berechtigung, diesen Übergang durchzuführen.",
     "actionError": "Sie haben keine Berechtigung, diese Aktion auszuführen.",
     "insufficientRoles": "Unzureichende Berechtigungen. Erforderliche Rollen: {{roles}}"
+  },
+  "minLabel": "min {{min}}",
+  "iconGallery": {
+    "title": "Icon Gallery",
+    "subtitle": "Browse and copy import statements for all available icons. Click any icon to copy its import statement.",
+    "totalIcons": "{{count}} total icons",
+    "categories": "{{count}} categories",
+    "matching": "{{count}} matching",
+    "searchPlaceholder": "Search icons by name or category...",
+    "searchAriaLabel": "Search icons",
+    "noResults": "No icons found",
+    "noResultsHint": "Try adjusting your search query"
   },
   "dateInput": { "clearDate": "Datum löschen", "openCalendar": "Kalender öffnen" }
 }

@@ -184,7 +184,7 @@ export const DeleteTeamModal: React.FC<DeleteTeamModalProps> = ({
           ref={bodyRef}
           className={styles.body}
           role="region"
-          aria-label="Delete confirmation content"
+          aria-label={t('deleteTeamModal.bodyAriaLabel')}
         >
           {/* Delete Error Message */}
           {deleteError && !hasProductGoals && (
@@ -205,9 +205,11 @@ export const DeleteTeamModal: React.FC<DeleteTeamModalProps> = ({
                 <AlertTriangleIcon size={32} />
               </span>
               <div className={styles['warning-title-group']}>
-                <h3 className={styles['warning-title']}>Critical Action Warning</h3>
+                <h3 className={styles['warning-title']}>
+                  {t('deleteTeamModal.criticalActionWarning')}
+                </h3>
                 <p className={styles['warning-subtitle']}>
-                  Team: <strong>&ldquo;{team.name}&rdquo;</strong>
+                  {t('deleteTeamModal.teamLabel')} <strong>&ldquo;{team.name}&rdquo;</strong>
                 </p>
               </div>
             </div>
@@ -217,26 +219,25 @@ export const DeleteTeamModal: React.FC<DeleteTeamModalProps> = ({
                 <div className={styles['blocked-section']}>
                   <div className={styles['blocked-badge']}>
                     <XCircleIcon size={16} aria-hidden="true" />
-                    Deletion Blocked
+                    {t('deleteTeamModal.deletionBlocked')}
                   </div>
                   <p className={styles['warning-text']}>
-                    This team has one or more <strong>product goals</strong> associated with it. To
-                    delete this team, you must first remove all product goals linked to it.
+                    {t('deleteTeamModal.blockedDescription')}
                   </p>
                   <div className={styles['action-steps']}>
-                    <p className={styles['steps-title']}>Required actions:</p>
+                    <p className={styles['steps-title']}>{t('deleteTeamModal.requiredActions')}</p>
                     <ol className={styles['steps-list']}>
-                      <li>Navigate to the Product Goals section</li>
-                      <li>Delete or reassign all goals for &ldquo;{team.name}&rdquo;</li>
-                      <li>Return here to complete team deletion</li>
+                      <li>{t('deleteTeamModal.step1')}</li>
+                      <li>{t('deleteTeamModal.step2', { teamName: team.name })}</li>
+                      <li>{t('deleteTeamModal.step3')}</li>
                     </ol>
                   </div>
                 </div>
               ) : (
                 <>
                   <p className={styles['warning-text']}>
-                    You are about to permanently delete this team. This action{' '}
-                    <strong>cannot be undone</strong>.
+                    {t('deleteTeamModal.deleteWarning')}
+                    <strong>{t('deleteTeamModal.cannotBeUndone')}</strong>.
                   </p>
 
                   {team.memberCount && team.memberCount > 0 && (
@@ -245,21 +246,20 @@ export const DeleteTeamModal: React.FC<DeleteTeamModalProps> = ({
                         <UsersIcon size={18} />
                       </span>
                       <span className={styles['impact-text']}>
-                        <strong>
-                          {team.memberCount} member{team.memberCount !== 1 ? 's' : ''}
-                        </strong>{' '}
-                        will be removed from this team
+                        {t('deleteTeamModal.memberImpact', { count: team.memberCount })}
                       </span>
                     </div>
                   )}
 
                   <div className={styles['consequences-list']}>
-                    <p className={styles['consequences-title']}>Consequences of deletion:</p>
+                    <p className={styles['consequences-title']}>
+                      {t('deleteTeamModal.consequencesTitle')}
+                    </p>
                     <ul className={styles['consequences-items']}>
-                      <li>All team data will be permanently removed</li>
-                      <li>Team members will lose access to team resources</li>
-                      <li>Associated settings and configurations will be deleted</li>
-                      <li>This action is irreversible</li>
+                      <li>{t('deleteTeamModal.consequence1')}</li>
+                      <li>{t('deleteTeamModal.consequence2')}</li>
+                      <li>{t('deleteTeamModal.consequence3')}</li>
+                      <li>{t('deleteTeamModal.consequence4')}</li>
                     </ul>
                   </div>
                 </>
@@ -272,9 +272,7 @@ export const DeleteTeamModal: React.FC<DeleteTeamModalProps> = ({
             <div className={styles['confirmation-section']}>
               <div className={styles['confirmation-header']}>
                 <label htmlFor="delete-confirmation" className={styles['confirmation-label']}>
-                  Type{' '}
-                  <span className={styles['team-name-highlight']}>&ldquo;{team.name}&rdquo;</span>{' '}
-                  to confirm
+                  {t('deleteTeamModal.confirmLabel', { teamName: team.name })}
                 </label>
                 <span
                   className={`${styles['match-indicator']} ${canDelete ? styles['match-success'] : ''}`}
@@ -283,12 +281,12 @@ export const DeleteTeamModal: React.FC<DeleteTeamModalProps> = ({
                   {canDelete ? (
                     <>
                       <CheckIcon size={14} strokeWidth={3} aria-hidden="true" />
-                      Match confirmed
+                      {t('deleteTeamModal.matchConfirmed')}
                     </>
                   ) : (
                     <>
                       <AlertCircleIcon size={14} aria-hidden="true" />
-                      Awaiting confirmation
+                      {t('deleteTeamModal.awaitingConfirmation')}
                     </>
                   )}
                 </span>
@@ -341,14 +339,13 @@ export const DeleteTeamModal: React.FC<DeleteTeamModalProps> = ({
                     <AlertTriangleIcon size={16} />
                   </span>
                   <span className={styles['paste-warning-text']}>
-                    Manual typing required for security. Copy-paste is disabled.
+                    {t('deleteTeamModal.pasteWarning')}
                   </span>
                 </div>
               )}
 
               <span id="delete-confirmation-hint" className={styles['sr-only']}>
-                Type the team name exactly as shown to enable the delete button, then press Enter or
-                click Delete Team
+                {t('deleteTeamModal.srConfirmHint')}
               </span>
             </div>
           )}
@@ -362,7 +359,7 @@ export const DeleteTeamModal: React.FC<DeleteTeamModalProps> = ({
             onClick={onClose}
             disabled={isDeleting}
           >
-            Cancel
+            {t('deleteTeamModal.cancelButton')}
           </button>
           <button
             type="button"
@@ -374,17 +371,17 @@ export const DeleteTeamModal: React.FC<DeleteTeamModalProps> = ({
             {isDeleting ? (
               <>
                 <span className={styles['button-spinner']} aria-hidden="true" />
-                Deleting...
+                {t('deleteTeamModal.deletingButton')}
               </>
             ) : hasProductGoals ? (
               <>
                 <XCircleIcon size={16} aria-hidden="true" />
-                Cannot Delete
+                {t('deleteTeamModal.cannotDeleteButton')}
               </>
             ) : (
               <>
                 <TrashIcon size={16} aria-hidden="true" />
-                Delete Team
+                {t('deleteTeamModal.deleteButton')}
               </>
             )}
           </button>

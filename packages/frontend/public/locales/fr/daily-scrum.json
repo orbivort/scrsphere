@@ -159,5 +159,14 @@
     "failedSendReminder": "Impossible d'envoyer le rappel. Veuillez reessayer.",
     "submitFailed": "Impossible de soumettre la mise a jour. Veuillez reessayer.",
     "resourceNotFound": "La ressource demandee n'a pas ete trouvee."
+  },
+  "loading": {
+    "pageHeader": "Loading page header...",
+    "actions": "Loading actions...",
+    "statistics": "Loading statistics...",
+    "sectionHeader": "Loading section header...",
+    "teamUpdates": "Loading team updates...",
+    "pendingMembers": "Loading pending members...",
+    "sprintProgress": "Loading sprint progress..."
   }
 }

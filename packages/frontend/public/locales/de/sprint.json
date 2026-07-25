@@ -250,7 +250,9 @@
     "toggleBurndown": "Burndown-Chart umschalten",
     "focusSearch": "Suchfeld fokussieren",
     "showHelp": "Diesen Hilfedialog anzeigen",
-    "tip": "Tipp: Verwenden Sie den Skip-Link (erster Tab-Stop) um die Navigation zu überspringen und direkt zum Aufgaben-Board zu gelangen."
+    "tip": "Tipp: Verwenden Sie den Skip-Link (erster Tab-Stop) um die Navigation zu überspringen und direkt zum Aufgaben-Board zu gelangen.",
+    "rightArrowLabel": "(Right Arrow)",
+    "leftArrowLabel": "(Left Arrow)"
   },
   "board": {
     "loadingBoard": "Sprint-Board wird geladen...",

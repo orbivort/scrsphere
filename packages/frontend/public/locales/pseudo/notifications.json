@@ -1,0 +1,69 @@
+{
+  "title": "[Nótífícàtíónsssss]",
+  "subtitle": "[Stày úpdàtéd wíth téàm àctívítíés ànd ímpórtànt úpdàtéssssssssssssssssss]",
+  "skipToMainContent": "[Skíp tó màín cónténttttttt]",
+  "markAllAsRead": "[Màrk Àll às Réàdddddd]",
+  "marking": "[Màrkíngggg...]",
+  "filters": {
+    "all": "[Àlll]",
+    "unread": "[Únréàddd]",
+    "teamInvitations": "[Téàm Ínvítàtíónssssss]",
+    "taskAssignments": "[Tàsk Àssígnméntssssss]",
+    "impediments": "[Ímpédíméntsssss]",
+    "reminders": "[Rémíndérssss]",
+    "teamCreated": "[Téàm Créàtéddddd]",
+    "teamUpdated": "[Téàm Úpdàtéddddd]",
+    "teamDeleted": "[Téàm Délétéddddd]",
+    "directMessages": "[Díréct Méssàgéssssss]"
+  },
+  "loading": {
+    "title": "[Lóàdíng nótífícàtíónsssssssss...]",
+    "ariaLabel": "[Lóàdíng nótífícàtíónssssssss]"
+  },
+  "error": {
+    "title": "[Fàíléd tó lóàd nótífícàtíónssssssssss]",
+    "message": "[Sóméthíng wént wróng whílé fétchíng yóúr nótífícàtíónssssssssssssssssss.]",
+    "tryAgain": "[Try Àgàínnnn]"
+  },
+  "empty": {
+    "title": "[Nó nótífícàtíóns yéttttttt]",
+    "message": "[Yóú wíll séé nótífícàtíóns héré whén théré ís àctívítyyyyyyyyyyyyyyyyyy]"
+  },
+  "dateGroups": {
+    "today": "[Tódàyyy]",
+    "yesterday": "[Yéstérdàyyyy]",
+    "thisWeek": "[Thís Wéékkkk]",
+    "older": "[Óldérrr]"
+  },
+  "pagination": {
+    "previous": "[Prévíóússss]",
+    "next": "[NNééxxt]",
+    "pageInfo": "[PPààggé {{current}} óóff {{total}}]"
+  },
+  "ariaLabels": {
+    "notificationItem": "[Nótífícàtíón frómmmmmmm {{sender}}: {{message}}]",
+    "markAsRead": "[Màrk às réàddddd]",
+    "dismiss": "[Dísmíss nótífícàtíónnnnnnn]",
+    "goToPreviousPage": "[Gó tó prévíóús pàgééééééé]",
+    "goToNextPage": "[Gó tó néxt pàgéééééé]"
+  },
+  "teamCreated": "[Téàm créàtédddddd: \"{{teamName}}\"]",
+  "teamCreatedMessage": "[Yóú hàvé súccéssfúlly créàtéd thé téàmmmmmmmmmmmmm]",
+  "teamUpdated": "[Téàm úpdàtédddddd: \"{{teamName}}\"]",
+  "teamUpdatedMessage": "[Úpdàtéd byyyyy {{updaterName}}]",
+  "teamDeleted": "[Téàm délétédddddd: \"{{teamName}}\"]",
+  "teamDeletedMessage": "[Délétéd byyyyy {{deleterName}}]",
+  "teamInvitation": "[Yóú'vé béén ínvítéd tó jóín téàmmmmmmmmmmmm \"{{teamName}}\"]",
+  "teamInvitationMessage": "[Ínvítéd byyyyy {{inviterName}}]",
+  "teamRemoval": "[Yóú'vé béén rémóvéd fróm téàmmmmmmmmmmm \"{{teamName}}\"]",
+  "teamRemovalMessage": "[Rémóvéd byyyyy {{removerName}}]",
+  "impedimentAssigned": "[Néw ímpédímént àssígnéddddddddd: \"{{impedimentTitle}}\"]",
+  "accountDeletionScheduled": "[Téàm mémbér schédúléd àccóúnt délétíónnnnnnnnnnnnn]",
+  "accountDeletionScheduledMessage": "[À Pródúct Ównér ín yóúr téàm hàs schédúléd théír àccóúnt délétíón. Thé àccóúnt wíll bé pérmànéntly délétéd ónnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn {{deletionDate}}. Pléàsé àssígn à néw Pródúct Ównér béfóré thénnnnnnnnnnnnnnnn.]",
+  "accountDeletionCancelled": "[Àccóúnt délétíón càncélléddddddddd]",
+  "accountDeletionCancelledMessage": "[Thé schédúléd àccóúnt délétíón hàs béén càncéllédddddddddddddddd.]",
+  "backlogAdjustmentRequired": "[Néw Bàcklóg Àdjústmént Réqúírés Yóúr Àctíónnnnnnnnnnnnnn]",
+  "backlogAdjustmentRequiredMessage": "[Yóú hàvé béén àssígnéd às thé ównér óf à bàcklóg àdjústméntttttttttttttttttttt: {{action}} - \"{{description}}\"]",
+  "feedbackRequired": "[Néw Féédbàck Réqúírés Yóúr Àctíónnnnnnnnnnn]",
+  "feedbackRequiredMessage": "[Yóú hàvé béén àssígnéd às thé ównér óf féédbàck frómmmmmmmmmmmmmmmmm {{authorName}}: \"{{content}}\"]"
+}

@@ -1,0 +1,69 @@
+{
+  "title": "Notifications",
+  "subtitle": "Stay updated with team activities and important updates",
+  "skipToMainContent": "Skip to main content",
+  "markAllAsRead": "Mark All as Read",
+  "marking": "Marking...",
+  "filters": {
+    "all": "All",
+    "unread": "Unread",
+    "teamInvitations": "Team Invitations",
+    "taskAssignments": "Task Assignments",
+    "impediments": "Impediments",
+    "reminders": "Reminders",
+    "teamCreated": "Team Created",
+    "teamUpdated": "Team Updated",
+    "teamDeleted": "Team Deleted",
+    "directMessages": "Direct Messages"
+  },
+  "loading": {
+    "title": "Loading notifications...",
+    "ariaLabel": "Loading notifications"
+  },
+  "error": {
+    "title": "Failed to load notifications",
+    "message": "Something went wrong while fetching your notifications.",
+    "tryAgain": "Try Again"
+  },
+  "empty": {
+    "title": "No notifications yet",
+    "message": "You will see notifications here when there is activity"
+  },
+  "dateGroups": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "thisWeek": "This Week",
+    "older": "Older"
+  },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "pageInfo": "Page {{current}} of {{total}}"
+  },
+  "ariaLabels": {
+    "notificationItem": "Notification from {{sender}}: {{message}}",
+    "markAsRead": "Mark as read",
+    "dismiss": "Dismiss notification",
+    "goToPreviousPage": "Go to previous page",
+    "goToNextPage": "Go to next page"
+  },
+  "teamCreated": "Team created: \"{{teamName}}\"",
+  "teamCreatedMessage": "You have successfully created the team",
+  "teamUpdated": "Team updated: \"{{teamName}}\"",
+  "teamUpdatedMessage": "Updated by {{updaterName}}",
+  "teamDeleted": "Team deleted: \"{{teamName}}\"",
+  "teamDeletedMessage": "Deleted by {{deleterName}}",
+  "teamInvitation": "You've been invited to join team \"{{teamName}}\"",
+  "teamInvitationMessage": "Invited by {{inviterName}}",
+  "teamRemoval": "You've been removed from team \"{{teamName}}\"",
+  "teamRemovalMessage": "Removed by {{removerName}}",
+  "impedimentAssigned": "New impediment assigned: \"{{impedimentTitle}}\"",
+  "accountDeletionScheduled": "Team member scheduled account deletion",
+  "accountDeletionScheduledMessage": "A Product Owner in your team has scheduled their account deletion. The account will be permanently deleted on {{deletionDate}}. Please assign a new Product Owner before then.",
+  "accountDeletionCancelled": "Account deletion cancelled",
+  "accountDeletionCancelledMessage": "The scheduled account deletion has been cancelled.",
+  "backlogAdjustmentRequired": "New Backlog Adjustment Requires Your Action",
+  "backlogAdjustmentRequiredMessage": "You have been assigned as the owner of a backlog adjustment: {{action}} - \"{{description}}\"",
+  "feedbackRequired": "New Feedback Requires Your Action",
+  "feedbackRequiredMessage": "You have been assigned as the owner of feedback from {{authorName}}: \"{{content}}\""
+}

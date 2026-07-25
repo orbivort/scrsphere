@@ -380,14 +380,14 @@ export const MoscowCard = memo<MoscowCardProps>(
           {item.storyPoints && (
             <span className={styles['moscow-card-estimate']}>
               <StoryPointsIcon size={12} storyPoints={item.storyPoints} />
-              {item.storyPoints} pts
+              {item.storyPoints} {t('pts' as never)}
             </span>
           )}
           <div className={styles['moscow-card-ve']}>
-            <span className={styles['ve-mini']} title="Business Value">
+            <span className={styles['ve-mini']} title={t('businessValue')}>
               V{item.businessValue ?? 0}
             </span>
-            <span className={styles['ve-mini']} title="Effort (Story Points)">
+            <span className={styles['ve-mini']} title={t('effortStoryPoints')}>
               E{item.storyPoints ?? 0}
             </span>
           </div>

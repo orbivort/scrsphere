@@ -177,7 +177,8 @@
       "genericError": "Failed to send message. Please try again later."
     },
     "unsavedTitle": "Unsent Message",
-    "unsavedMessage": "You have an unsent message. Are you sure you want to discard it?"
+    "unsavedMessage": "You have an unsent message. Are you sure you want to discard it?",
+    "requiredAriaLabel": "required"
   },
   "errors": {
     "memberAlreadyExists": "This user is already a member of the team.",

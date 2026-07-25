@@ -628,7 +628,7 @@ export const IncrementCreate: React.FC = () => {
                             <div className={styles['pbi-selection-header']}>
                               <span className={styles['pbi-title']}>{pbi.title}</span>
                               <span className={styles['pbi-points']}>
-                                {pbi.storyPoints ?? 0} pts
+                                {pbi.storyPoints ?? 0} {t('pts')}
                               </span>
                             </div>
                             {isAlreadyInIncrement && (

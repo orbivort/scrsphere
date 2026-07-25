@@ -210,7 +210,8 @@
       "next": "Siguiente",
       "pageInfo": "Página {{current}} de {{total}}",
       "goToPrevious": "Ir a la página anterior",
-      "goToNext": "Ir a la página siguiente"
+      "goToNext": "Ir a la página siguiente",
+      "ariaLabel": "Pagination"
     },
     "toast": {
       "teamCreated": "Equipo creado exitosamente",
@@ -342,7 +343,32 @@
     "cancel": "Cancelar",
     "cannotDelete": "No Puede Eliminar",
     "deleteTeam": "Eliminar Equipo",
-    "deleting": "Eliminando..."
+    "deleting": "Eliminando...",
+    "bodyAriaLabel": "Delete confirmation content",
+    "criticalActionWarning": "Critical Action Warning",
+    "teamLabel": "Team:",
+    "deletionBlocked": "Deletion Blocked",
+    "blockedDescription": "This team has one or more product goals associated with it. To delete this team, you must first remove all product goals linked to it.",
+    "requiredActions": "Required actions:",
+    "step1": "Navigate to the Product Goals section",
+    "step2": "Delete or reassign all goals for \"{{teamName}}\"",
+    "step3": "Return here to complete team deletion",
+    "deleteWarning": "You are about to permanently delete this team. This action cannot be undone.",
+    "cannotBeUndone": "cannot be undone",
+    "memberImpact": "{{count}} member(s) will be removed from this team",
+    "consequencesTitle": "Consequences of deletion:",
+    "consequence1": "All team data will be permanently removed",
+    "consequence2": "Team members will lose access to team resources",
+    "consequence3": "Associated settings and configurations will be deleted",
+    "consequence4": "This action is irreversible",
+    "confirmLabel": "Type \"{{teamName}}\" to confirm",
+    "matchConfirmed": "Match confirmed",
+    "awaitingConfirmation": "Awaiting confirmation",
+    "srConfirmHint": "Type the team name exactly as shown to enable the delete button, then press Enter or click Delete Team",
+    "cancelButton": "Cancel",
+    "deletingButton": "Deleting...",
+    "cannotDeleteButton": "Cannot Delete",
+    "deleteButton": "Delete Team"
   },
   "privacyData": {
     "title": "Privacidad & Datos",

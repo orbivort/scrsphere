@@ -45,7 +45,9 @@
     "markAsRead": "Marquer comme lu",
     "dismiss": "Ignorer la notification",
     "goToPreviousPage": "Aller à la page précédente",
-    "goToNextPage": "Aller à la page suivante"
+    "goToNextPage": "Aller à la page suivante",
+    "filterNotifications": "Filter notifications",
+    "pagination": "Pagination"
   },
   "teamCreated": "Équipe créée : « {{teamName}} »",
   "teamCreatedMessage": "Vous avez créé l'équipe avec succès",

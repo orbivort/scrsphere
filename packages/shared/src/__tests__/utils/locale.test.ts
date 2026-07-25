@@ -4,9 +4,11 @@ import {
   getDirection,
   getBaseLanguage,
   isSupportedLocale,
+  isSupportedLocaleDev,
   normalizeLocale,
+  normalizeLocaleDev,
 } from '../../utils/locale.js';
-import { SUPPORTED_LOCALES, DEFAULT_LOCALE } from '../../constants/index.js';
+import { SUPPORTED_LOCALES, SUPPORTED_LOCALES_DEV, DEFAULT_LOCALE } from '../../constants/index.js';
 
 describe('locale utilities', () => {
   describe('isRTL', () => {
@@ -53,6 +55,14 @@ describe('locale utilities', () => {
     it('should detect RTL from locale tags like he-IL', () => {
       expect(isRTL('he-IL')).toBe(true);
     });
+
+    it('should return true for pseudo-rtl dev locale', () => {
+      expect(isRTL('pseudo-rtl')).toBe(true);
+    });
+
+    it('should return false for pseudo dev locale', () => {
+      expect(isRTL('pseudo')).toBe(false);
+    });
   });
 
   describe('getDirection', () => {
@@ -76,6 +86,14 @@ describe('locale utilities', () => {
 
     it('should return ltr for LTR locale tags with region', () => {
       expect(getDirection('de-AT')).toBe('ltr');
+    });
+
+    it('should return rtl for pseudo-rtl dev locale', () => {
+      expect(getDirection('pseudo-rtl')).toBe('rtl');
+    });
+
+    it('should return ltr for pseudo dev locale', () => {
+      expect(getDirection('pseudo')).toBe('ltr');
     });
   });
 
@@ -175,6 +193,65 @@ describe('locale utilities', () => {
 
     it('should fall back to DEFAULT_LOCALE for completely unsupported locale tags', () => {
       expect(normalizeLocale('zh-Hans')).toBe(DEFAULT_LOCALE);
+    });
+  });
+
+  describe('isSupportedLocaleDev', () => {
+    it('should return true for all SUPPORTED_LOCALES', () => {
+      for (const locale of SUPPORTED_LOCALES) {
+        expect(isSupportedLocaleDev(locale)).toBe(true);
+      }
+    });
+
+    it('should return true for dev-only locales', () => {
+      expect(isSupportedLocaleDev('pseudo')).toBe(true);
+      expect(isSupportedLocaleDev('pseudo-rtl')).toBe(true);
+    });
+
+    it('should return false for unsupported locales', () => {
+      expect(isSupportedLocaleDev('ar')).toBe(false);
+      expect(isSupportedLocaleDev('zh')).toBe(false);
+    });
+
+    it('should return false for empty string', () => {
+      expect(isSupportedLocaleDev('')).toBe(false);
+    });
+
+    it('should return true for all SUPPORTED_LOCALES_DEV', () => {
+      for (const locale of SUPPORTED_LOCALES_DEV) {
+        expect(isSupportedLocaleDev(locale)).toBe(true);
+      }
+    });
+  });
+
+  describe('normalizeLocaleDev', () => {
+    it('should return production locales as-is', () => {
+      expect(normalizeLocaleDev('en')).toBe('en');
+      expect(normalizeLocaleDev('de')).toBe('de');
+      expect(normalizeLocaleDev('fr')).toBe('fr');
+      expect(normalizeLocaleDev('es')).toBe('es');
+      expect(normalizeLocaleDev('it')).toBe('it');
+    });
+
+    it('should return dev-only locales as-is', () => {
+      expect(normalizeLocaleDev('pseudo')).toBe('pseudo');
+      expect(normalizeLocaleDev('pseudo-rtl')).toBe('pseudo-rtl');
+    });
+
+    it('should normalize locale tags by extracting base language', () => {
+      expect(normalizeLocaleDev('de-AT')).toBe('de');
+      expect(normalizeLocaleDev('en-US')).toBe('en');
+    });
+
+    it('should fall back to DEFAULT_LOCALE for unsupported locales', () => {
+      expect(normalizeLocaleDev('zh')).toBe(DEFAULT_LOCALE);
+      expect(normalizeLocaleDev('ja')).toBe(DEFAULT_LOCALE);
+    });
+
+    it('should not strip compound dev locale codes like pseudo-rtl to pseudo', () => {
+      // This is critical: getBaseLanguage('pseudo-rtl') === 'pseudo',
+      // but normalizeLocaleDev should return 'pseudo-rtl' intact.
+      expect(normalizeLocaleDev('pseudo-rtl')).toBe('pseudo-rtl');
     });
   });
 });

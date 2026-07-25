@@ -405,6 +405,7 @@ describe('Notifications Integration Tests', () => {
           userId: user.id,
           type: 'TASK_ASSIGNMENT',
           titleKey: 'taskAssigned',
+          titleParams: { taskTitle: 'Test Task' },
           messageParams: { taskTitle: 'Test Task' },
         });
 
@@ -440,6 +441,7 @@ describe('Notifications Integration Tests', () => {
             userId: user.id,
             type: 'TASK_ASSIGNMENT',
             titleKey: 'taskAssigned',
+            titleParams: { taskTitle: 'Test Task' },
             messageParams: { taskTitle: 'Test Task' },
           });
 
@@ -466,6 +468,7 @@ describe('Notifications Integration Tests', () => {
           userId: user.id,
           type: 'TEAM_INVITATION',
           titleKey: 'teamInvitation',
+          titleParams: { teamName: 'Team 42' },
           messageParams: { teamName: 'Team 42' },
         });
 
@@ -510,6 +513,7 @@ describe('Notifications Integration Tests', () => {
           userId: user.id,
           type: 'TASK_ASSIGNMENT',
           titleKey: 'taskAssigned',
+          titleParams: { taskTitle: 'Implement Feature X' },
           messageParams: { taskTitle: 'Implement Feature X' },
         });
 
@@ -534,6 +538,7 @@ describe('Notifications Integration Tests', () => {
           userId: user.id,
           type: 'IMPEDIMENT_ASSIGNMENT',
           titleKey: 'impedimentCreated',
+          titleParams: { title: 'Database connection issue' },
           messageParams: { title: 'Database connection issue' },
         });
 
@@ -558,6 +563,7 @@ describe('Notifications Integration Tests', () => {
           userId: user.id,
           type: 'TASK_ASSIGNMENT',
           titleKey: 'taskAssigned',
+          titleParams: { taskTitle: 'Implement feature X' },
           messageParams: { taskTitle: 'Implement feature X' },
         });
 

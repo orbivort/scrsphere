@@ -198,5 +198,6 @@
       "message": "Impossible de charger les donnees. Veuillez reessayer.",
       "failedLoadPbis": "Impossible de charger les PBIs eligibles"
     }
-  }
+  },
+  "pts": "pts"
 }

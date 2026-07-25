@@ -250,6 +250,8 @@
     "toggleBurndown": "Mostra/nascondi burndown chart",
     "focusSearch": "Focus su box ricerca",
     "showHelp": "Mostra questo aiuto",
+    "rightArrowLabel": "(Right Arrow)",
+    "leftArrowLabel": "(Left Arrow)",
     "tip": "Tip: Usa il link skip (primo tab stop) per bypassare navigazione e andare direttamente al task board."
   },
   "board": {

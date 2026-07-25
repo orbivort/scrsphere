@@ -194,7 +194,7 @@ export const TaskEditModal: React.FC<TaskEditModalProps> = ({
                   <option value="">{t('taskCreate.selectBacklogItem')}</option>
                   {sprintItems.map((item) => (
                     <option key={item.id} value={item.id}>
-                      {item.title} ({item.storyPoints ?? 0} pts)
+                      {item.title} ({item.storyPoints ?? 0} {t('pts' as never)})
                     </option>
                   ))}
                 </select>

@@ -199,7 +199,10 @@ export const SendMessageModal: React.FC<SendMessageModalProps> = ({
               <div className={styles['form-group']}>
                 <label htmlFor="message-content" className={styles['form-label']}>
                   {t('sendMessageModal.messageLabel')}
-                  <span className={styles['required-indicator']} aria-label="required">
+                  <span
+                    className={styles['required-indicator']}
+                    aria-label={t('sendMessageModal.requiredAriaLabel')}
+                  >
                     *
                   </span>
                 </label>

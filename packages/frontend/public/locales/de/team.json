@@ -160,6 +160,7 @@
   "sendMessageModal": {
     "title": "Nachricht senden",
     "subtitle": "An: {{name}} ({{email}})",
+    "requiredAriaLabel": "required",
     "messageLabel": "Nachricht",
     "messagePlaceholder": "Geben Sie hier Ihre Nachricht ein...",
     "cancel": "Abbrechen",

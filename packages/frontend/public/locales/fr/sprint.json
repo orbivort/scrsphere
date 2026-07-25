@@ -250,7 +250,9 @@
     "toggleBurndown": "Afficher/masquer le burndown chart",
     "focusSearch": "Focus sur la barre de recherche",
     "showHelp": "Afficher cette aide",
-    "tip": "Conseil : Utilisez le lien de saut (premier tab stop) pour contourner la navigation et aller directement au board des taches."
+    "tip": "Conseil : Utilisez le lien de saut (premier tab stop) pour contourner la navigation et aller directement au board des taches.",
+    "rightArrowLabel": "(Right Arrow)",
+    "leftArrowLabel": "(Left Arrow)"
   },
   "board": {
     "loadingBoard": "Chargement du sprint board...",

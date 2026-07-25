@@ -1,6 +1,7 @@
 {
   "title": "Berichte",
   "subtitle": "Team-Performance und Sprint-Metriken verfolgen",
+  "pts": "pts",
   "skipToMainContent": "Zum Hauptinhalt springen",
   "error": {
     "title": "Fehler beim Laden der Berichte",

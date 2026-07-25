@@ -1,4 +1,13 @@
 {
+  "loading": {
+    "pageHeader": "Loading page header...",
+    "actions": "Loading actions...",
+    "statistics": "Loading statistics...",
+    "sectionHeader": "Loading section header...",
+    "teamUpdates": "Loading team updates...",
+    "pendingMembers": "Loading pending members...",
+    "sprintProgress": "Loading sprint progress..."
+  },
   "title": "Daily Scrum",
   "subtitle": "{{sprintName}} - Dia {{day}}",
   "viewMode": {

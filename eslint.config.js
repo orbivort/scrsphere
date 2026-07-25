@@ -8,6 +8,8 @@ import reactRefresh from 'eslint-plugin-react-refresh';
 import importX from 'eslint-plugin-import-x';
 import unicorn from 'eslint-plugin-unicorn';
 import iconRules from './scripts/utility/eslint-plugin-icon-rules.js';
+import i18nSecurity from './scripts/utility/eslint-plugin-i18n-security.js';
+import noLiteralJsxString from './scripts/utility/eslint-plugin-no-literal-jsx-string.js';
 
 export default tseslint.config(
   {
@@ -27,6 +29,8 @@ export default tseslint.config(
       'packages/backend/src/generated/prisma/**',
       'packages/frontend/e2e/**',
       'packages/frontend/playwright.config.ts',
+      'packages/frontend/temp/**',
+      'temp/**',
       '**/scripts/**',
       'k6/**',
     ],
@@ -166,6 +170,8 @@ export default tseslint.config(
       'react-refresh': reactRefresh,
       'import-x': importX,
       'icon-rules': iconRules,
+      'i18n-security': i18nSecurity,
+      'no-literal-jsx-string': noLiteralJsxString,
     },
     languageOptions: {
       globals: {
@@ -202,6 +208,10 @@ export default tseslint.config(
       // Icon system rules - enforce shared icon usage
       'icon-rules/no-inline-svg': 'error',
       'icon-rules/prefer-icon-import': 'warn',
+      // i18n security - prevent XSS via dangerouslySetInnerHTML with translated content
+      'i18n-security/no-dangerous-i18n': 'error',
+      // i18n - disallow hardcoded user-facing strings in JSX (use t() instead)
+      'no-literal-jsx-string/no-literal-jsx-string': 'warn',
       // Date formatting - enforce shared formatters
       'no-restricted-syntax': [
         'error',

@@ -3,8 +3,18 @@ export {
   getDirection,
   getBaseLanguage,
   isSupportedLocale,
+  isSupportedLocaleDev,
   normalizeLocale,
+  normalizeLocaleDev,
 } from './locale.js';
+export {
+  getCachedNumberFormat,
+  getCachedDateTimeFormat,
+  getCachedRelativeTimeFormat,
+  getCachedListFormat,
+  getCachedCollator,
+} from './intlCache.js';
+export { escapeHtml } from './escapeHtml.js';
 export {
   formatDate as formatLocaleDate,
   formatNumber,

@@ -56,7 +56,8 @@
     "generate:icon-types:watch": "tsx ../../scripts/utility/generate-icon-types.ts --watch",
     "build:github-pages": "tsc -b && vite build --mode production",
     "preview:github-pages": "vite preview --mode production",
-    "serve:github-pages": "vite preview --mode production --host"
+    "serve:github-pages": "vite preview --mode production --host",
+    "i18n:extract:ast": "i18next-cli extract --config i18next.config.ts"
   },
   "dependencies": {
     "@scrumooth/shared": "workspace:*",
@@ -80,6 +81,7 @@
     "zustand": "^5.0.14"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.12.1",
     "@eslint/js": "catalog:",
     "@playwright/test": "^1.60.0",
     "@testing-library/jest-dom": "^6.9.1",
@@ -96,6 +98,7 @@
     "eslint-config-prettier": "catalog:",
     "eslint-plugin-react": "^7.37.5",
     "globals": "catalog:",
+    "i18next-cli": "^1.67.0",
     "jsdom": "^29.1.1",
     "prettier": "catalog:",
     "rimraf": "catalog:",

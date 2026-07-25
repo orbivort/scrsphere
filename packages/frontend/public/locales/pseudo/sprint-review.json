@@ -1,0 +1,232 @@
+{
+  "title": "[Sprínt Révíéwwwww]",
+  "backToReviews": "[Bàck tó Révíéwssssss]",
+  "selectSprint": "[Séléct Sprínt fór Révíéwwwwwwwww]",
+  "findingActiveSprint": "[Fíndíng àctívé sprínttttttttt...]",
+  "activeSprint": "[Àctívé Sprínttttt]",
+  "noActiveSprint": "[Nó àctívé sprínt fóúnd fór thís téàmmmmmmmmmmmmm.]",
+  "availableSprints": "[Àvàílàblé Spríntsssssss:]",
+  "select": "[Sélécttt]",
+  "sprintStatus": {
+    "PLANNED": "[Plànnédddd]",
+    "ACTIVE": "[Àctívééé]",
+    "COMPLETED": "[Cómplétédddd]",
+    "CANCELLED": "[Càncéllédddd]"
+  },
+  "detailLabels": {
+    "status": "[SSttààttúús:]",
+    "startDate": "[Stàrt Dàtééééé:]",
+    "endDate": "[Énd Dàtéééé:]",
+    "sprintGoal": "[Sprínt Góàlllll:]"
+  },
+  "reviewThisSprint": "[Révíéw Thís Sprínttttttt]",
+  "tabs": {
+    "overview": "[Óvérvíéwwww]",
+    "increment": "[Íncréméntttt]",
+    "feedback": "[Féédbàckkkk]",
+    "backlogAdjustments": "[Bàcklóg Àdjústméntsssssss]"
+  },
+  "overview": {
+    "duration": "[Dúràtíónnnn]",
+    "workingDays": "[wórkíng dàysssss]",
+    "period": "[Péríóddd]",
+    "notSet": "[NNóótt sséét]",
+    "sprintGoal": "[Sprínt Góàlllll]",
+    "noSprintGoal": "[Nó sprínt góàl défínédddddddd.]",
+    "sprintMetrics": "[Sprínt Métrícssssss]",
+    "storyPointsCommitted": "[Stóry Póínts Cómmíttédddddddd]",
+    "storyPointsCompleted": "[Stóry Póínts Cómplétédddddddd]",
+    "completionRate": "[Cómplétíón Ràtéééééé]",
+    "reviewSummary": "[Révíéw Súmmàryyyyyy]",
+    "noSummary": "[Nó súmmàry próvídéd yéttttttttt.]",
+    "attendees": "[Àtténdééssss]"
+  },
+  "increment": {
+    "title": "[Íncrémént Préséntéddddddd]",
+    "noDescription": "[Nó déscríptíónnnnnn]",
+    "includedPbis": "[Ínclúdéd Pródúct Bàcklóg Ítémssssssssss]",
+    "noPbis": "[Nó PBÍs ínclúdéd ín thís íncréméntttttttttttt.]",
+    "done": "[DDóónné]",
+    "dodVerification": "[Défínítíón óf Dóné Vérífícàtíónnnnnnnnnnn]",
+    "dodAllVerified": "[Àll DóD crítéríà vérífíéd fór ínclúdéd ítémsssssssssssssss]",
+    "totalStoryPoints": "[Tótàl Stóry Póíntsssssss]",
+    "deliveryMethod": "[Délívéry Méthódddddd]",
+    "sprintReviewDelivery": "[Sprínt Révíéwwwww]",
+    "earlyReleaseDelivery": "[Éàrly Réléàsééééé]",
+    "deliveredAt": "[Délívéréd Àttttt]",
+    "notDelivered": "[Nót délívéréddddd]",
+    "noIncrement": "[Nó Íncrémént Àvàílàbléééééééé]",
+    "noIncrementDescription": "[Nó délívéréd íncrémént ís àvàílàblé fór thís sprínt révíéwwwwwwwwwwwwwwwwwww.]"
+  },
+  "feedback": {
+    "title": "[Stàkéhóldér Féédbàckkkkkkk]",
+    "addFeedback": "[Àdd Féédbàckkkkk]",
+    "empty": "[Nó féédbàck cólléctéd yét. Clíck \"Àdd Féédbàck\" tó àdd stàkéhóldér féédbàckkkkkkkkkkkkkkkkkkkkkkkk.]",
+    "categories": {
+      "positive": "[Pósítívé Féédbàckkkkkkk]",
+      "negative": "[Négàtívé Féédbàckkkkkkk]",
+      "suggestion": "[Súggéstíónnnn]",
+      "question": "[Qúéstíónnnn]"
+    },
+    "actionRequired": "[Àctíón Réqúírédddddd]",
+    "actionTaken": "[Àctíón Tàkénnnnn]",
+    "owner": "[Ównérrr:]",
+    "backlogHint": "[Úsé Bàcklóg Àdjústménts tàb tó màké chàngés bàséd ón thís féédbàckkkkkkkkkkkkkkkkkkkkkk.]"
+  },
+  "adjustments": {
+    "title": "[Pródúct Bàcklóg Àdjústméntssssssssss]",
+    "description": "[Chàngés tó thé Pródúct Bàcklóg bàséd ón Sprínt Révíéw féédbàckkkkkkkkkkkkkkkkkkkk.]",
+    "addAdjustment": "[Àdd Àdjústméntttttt]",
+    "addAdjustmentDisabled": "[Àdd Àdjústmént - dísàbléddddddddd]",
+    "cannotAddAdjustmentTitle": "[Cànnót àdd àdjústmént tó à cómplétéd révíéwwwwwwwwwwwwww]",
+    "empty": "[Nó bàcklóg àdjústménts màdé dúríng thís révíéwwwwwwwwwwwwwwww.]",
+    "backlogHint": "[Thís ítém wíll bé présént ín thé Pródúct Bàcklóg pàgé fór àctíónnnnnnnnnnnnnnnnnnnnn.]",
+    "actionTypes": {
+      "add": "[Àddd]",
+      "modify": "[Módífyyy]",
+      "remove": "[Rémóvééé]",
+      "reorder": "[Réórdérrrr]",
+      "split": "[Splíttt]"
+    },
+    "status": {
+      "implemented": "[Ímpléméntéddddd]",
+      "pending": "[Péndíngggg]"
+    },
+    "reason": "[RRééààssóón:]",
+    "owner": "[Ównérrr:]"
+  },
+  "completeReview": {
+    "badge": "[Sprínt Révíéw Cómplétédddddddd]",
+    "button": "[Cómplété Sprínt Révíéwwwwwwww]",
+    "completing": "[Cómplétínggggg...]",
+    "defaultSummary": "[Sprínt Révíéw cómplétéddddddddd.]",
+    "failed": "[Fàíléd tó cómplété révíéw. Pléàsé try àgàínnnnnnnnnnnnnnn.]",
+    "successModal": {
+      "title": "[Súccésssss]",
+      "message": "[Sprínt Révíéw cómplétéd súccéssfúllyyyyyyyyyyyyy!]",
+      "close": "[Clósééé]"
+    },
+    "confirmationModal": {
+      "cannotCompleteTitle": "[Cànnót Cómplété Sprínt Révíéwwwwwwwwww]",
+      "completeTitle": "[Cómplété Sprínt Révíéwwwwwwww]",
+      "cannotCompleteSubtitle": "[Pléàsé àddréss thé fóllówíng íssúés béfóré cómplétíng thís sprínt révíéwwwwwwwwwwwwwwwwwwwwwww]",
+      "completeSubtitle": "[Révíéw àll ítéms ànd cónfírm tó màrk thís sprínt révíéw às cómplétédddddddddddddddddddddd]",
+      "validationAttendees": "[Pléàsé àdd àt léàst óné àtténdéé béfóré cómplétíng thé sprínt révíéwwwwwwwwwwwwwwwwwwwwww.]",
+      "validationAttended": "[Àt léàst óné àtténdéé múst bé màrkéd às àtténdéd béfóré cómplétíng thé sprínt révíéwwwwwwwwwwwwwwwwwwwwwwwwwww.]",
+      "validationTeamMembers": "[Àll téàm mémbérs múst bé màrkéd às àtténdéd ór àbsént. Míssínggggggggggggggggggggg: {{names}}{{remaining}}.]",
+      "validationSummary": "[À révíéw súmmàry ís réqúíréd tó cómplété thé Sprínt Révíéwwwwwwwwwwwwwwwwwww.]",
+      "confirmation": "[Àré yóú súré yóú wànt tó màrk thís sprínt révíéw às cómplétéd? Thís àctíón cànnót bé úndónééééééééééééééééééééééééééééé.]",
+      "gotIt": "[Gót íttt]",
+      "cancel": "[Càncélll]",
+      "complete": "[Cómplétéééé]",
+      "closeDialog": "[Clósé díàlóggggg]"
+    }
+  },
+  "noReview": {
+    "title": "[Nó Sprínt Révíéw Créàtéddddddddd]",
+    "message": "[À Sprínt Révíéw hàs nót béén créàtéd fór thís sprínt yéttttttttttttttttttt.]",
+    "incrementRequired": "[Íncrémént Réqúíréddddddd]",
+    "incrementRequiredNotice": "[À délívéréd íncrémént ís réqúíréd béfóré créàtíng à Sprínt Révíéw. Pléàsé créàté ànd délívér àn íncrémént fírsttttttttttttttttttttttttttttttttttt.]",
+    "createIncrement": "[Créàté Íncréméntttttt]",
+    "createSprintReview": "[Créàté Sprínt Révíéwwwwwww]"
+  },
+  "error": {
+    "title": "[Érrórrr]",
+    "failedToLoad": "[Fàíléd tó lóàd Sprínt Révíéwwwwwwwwww]",
+    "message": "[Fàíléd tó lóàd sprínt révíéw dàtà. Pléàsé try àgàínnnnnnnnnnnnnnnnn.]",
+    "retry": "[Rétryyy]",
+    "unknown": "[Únknówn érrórrrrr]"
+  },
+  "unknownSprint": "[Únknówn Spríntttttt]",
+  "ariaLabels": {
+    "sections": "[Sprínt Révíéw Séctíónssssssss]"
+  },
+  "loading": "[Lóàdíng Sprínt Révíéwwwwwwwww...]",
+  "createModal": {
+    "title": "[Créàté Sprínt Révíéwwwwwww]",
+    "reviewDate": "[Révíéw Dàtééééé *]",
+    "summary": "[Súmmàry (Óptíónàlllllll)]",
+    "summaryPlaceholder": "[Éntér à súmmàry óf thé sprínt révíéwwwwwwwwwwwww...]",
+    "cancel": "[Càncélll]",
+    "creating": "[CCrrééààttíínng...]",
+    "createReview": "[Créàté Révíéwwwww]",
+    "failed": "[Fàíléd tó créàté sprínt révíéw. Pléàsé try àgàínnnnnnnnnnnnnnnn.]",
+    "incrementRequiredWarning": "[Àn íncrémént ís réqúíréd béfóré créàtíng à Sprínt Révíéwwwwwwwwwwwwwwwwwww.]"
+  },
+  "addFeedbackModal": {
+    "title": "[Àdd Stàkéhóldér Féédbàckkkkkkkkk]",
+    "subtitle": "[Càptúré vàlúàblé ínsíghts fróm stàkéhóldérs tó ímpróvé yóúr pródúctttttttttttttttttttttt]",
+    "requiredFieldsNote": "[Réqúíréd fíélds àré màrkéd wíthhhhhhhhhhh *]",
+    "authorName": "[Àúthór Nàmééééé *]",
+    "authorNamePlaceholder": "[Éntér stàkéhóldér nàméééééééé]",
+    "category": "[Càtégóryyyy]",
+    "categoryOptions": {
+      "positive": "[Pósítívé Féédbàckkkkkkk]",
+      "negative": "[Négàtívé Féédbàckkkkkkk]",
+      "suggestion": "[Súggéstíónnnn]",
+      "question": "[Qúéstíónnnn]"
+    },
+    "feedback": "[Féédbàckkkk *]",
+    "feedbackPlaceholder": "[Éntér stàkéhóldér féédbàckkkkkkkkkk...]",
+    "relatedPbi": "[Rélàtéd PBÍ (Óptíónàllllllll)]",
+    "none": "[NNóónné]",
+    "actionRequired": "[Àctíón Réqúírédddddd]",
+    "owner": "[ÓÓwwnnéér *]",
+    "ownerPlaceholder": "[Séléct ównérrrrrr...]",
+    "cancel": "[Càncélll]",
+    "adding": "[ÀÀddddíínng...]",
+    "addFeedback": "[Àdd Féédbàckkkkk]",
+    "unsavedTitle": "[Únsàvéd Féédbàck Chàngésssssssss]",
+    "unsavedMessage": "[Yóú hàvé únsàvéd féédbàck. Àré yóú súré yóú wànt tó díscàrd ítttttttttttttttttttt?]"
+  },
+  "addAdjustmentModal": {
+    "title": "[Àdd Bàcklóg Àdjústméntttttttt]",
+    "subtitle": "[Récórd chàngés tó thé Pródúct Bàcklóg bàséd ón Sprínt Révíéw féédbàckkkkkkkkkkkkkkkkkkkkkk]",
+    "actionType": "[Àctíón Typééééé]",
+    "actionTypeOptions": {
+      "add": "[Àdd Néw Ítémmmmm]",
+      "modify": "[Módífy Éxístíngggggg]",
+      "remove": "[Rémóvééé]",
+      "reorder": "[Réórdérrrr]",
+      "split": "[Splíttt]"
+    },
+    "description": "[Déscríptíónnnnn *]",
+    "descriptionPlaceholder": "[Déscríbé thé àdjústménttttttttt...]",
+    "reason": "[RRééààssóón *]",
+    "reasonPlaceholder": "[Why ís thís àdjústmént néédédddddddddd?]",
+    "relatedPbi": "[Rélàtéd PBÍ (Óptíónàllllllll)]",
+    "none": "[NNóónné]",
+    "owner": "[ÓÓwwnnéér *]",
+    "ownerPlaceholder": "[Séléct ównérrrrrr...]",
+    "cancel": "[Càncélll]",
+    "adding": "[ÀÀddddíínng...]",
+    "addAdjustment": "[Àdd Àdjústméntttttt]",
+    "unsavedTitle": "[Únsàvéd Bàcklóg Àdjústmént Chàngéssssssssssss]",
+    "unsavedMessage": "[Yóú hàvé únsàvéd bàcklóg àdjústmént. Àré yóú súré yóú wànt tó díscàrd íttttttttttttttttttttttt?]"
+  },
+  "list": {
+    "title": "[Sprínt Révíéwssssss]",
+    "subtitle": "[Révíéw cómplétéd sprínts, ínspéct íncréménts, ànd gàthér stàkéhóldér féédbàckkkkkkkkkkkkkkkkkkkkkkkkk]",
+    "loading": "[Lóàdíng sprínt révíéwsssssssss...]",
+    "completedSprints": "[Cómplétéd Spríntsssssss]",
+    "completedSprint": "[Cómplétéd Spríntttttt]",
+    "completedSprints_plural": "[Cómplétéd Spríntsssssss]",
+    "reviewed": "[Révíéwédddd]",
+    "goal": "[GGóóààl:]",
+    "createIncrement": "[Créàté Íncréméntttttt]",
+    "viewReview": "[Víéw Révíéwwwww]",
+    "viewDetails": "[Víéw Détàílsssss]",
+    "statusLabels": {
+      "active": "[Àctívééé]",
+      "completed": "[Cómplétédddd]",
+      "planned": "[Plànnédddd]",
+      "cancelled": "[Càncéllédddd]"
+    },
+    "reviewStatus": {
+      "completed": "[Révíéw Cómplétédddddd]",
+      "inProgress": "[Révíéw Ín Prógréssssssss]",
+      "incrementRequired": "[Íncrémént Réqúíréddddddd]",
+      "readyForReview": "[Réàdy fór Révíéwwwwww]"
+    }
+  }
+}

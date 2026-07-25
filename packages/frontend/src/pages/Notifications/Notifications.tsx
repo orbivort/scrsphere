@@ -197,7 +197,11 @@ export const Notifications: React.FC = () => {
         </div>
       </header>
 
-      <div className={styles['filter-bar']} role="tablist" aria-label="Filter notifications">
+      <div
+        className={styles['filter-bar']}
+        role="tablist"
+        aria-label={t('ariaLabels.filterNotifications')}
+      >
         {getFilterOptions(t).map((option) => (
           <button
             key={option.value}
@@ -274,7 +278,11 @@ export const Notifications: React.FC = () => {
             />
 
             {data.pagination.totalPages > 1 && (
-              <nav className={styles.pagination} aria-label="Pagination" role="navigation">
+              <nav
+                className={styles.pagination}
+                aria-label={t('ariaLabels.pagination')}
+                role="navigation"
+              >
                 <button
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}

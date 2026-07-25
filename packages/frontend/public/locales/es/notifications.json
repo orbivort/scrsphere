@@ -44,6 +44,8 @@
     "notificationItem": "Notificación de {{sender}}: {{message}}",
     "markAsRead": "Marcar como leído",
     "dismiss": "Descartar notificación",
+    "filterNotifications": "Filter notifications",
+    "pagination": "Pagination",
     "goToPreviousPage": "Ir a la página anterior",
     "goToNextPage": "Ir a la página siguiente"
   },

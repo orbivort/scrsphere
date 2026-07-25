@@ -2,6 +2,13 @@ import { format, parse, parseISO, isValid, type Locale as DateFnsLocale } from '
 import { enGB, de, fr, es, it } from 'date-fns/locale';
 import { DATE_INPUT_FORMATS } from '../constants/index.js';
 import type { Locale } from '../constants/index.js';
+import {
+  getCachedNumberFormat,
+  getCachedDateTimeFormat,
+  getCachedRelativeTimeFormat,
+  getCachedListFormat,
+  getCachedCollator,
+} from './intlCache.js';
 
 const DATE_FNS_LOCALES: Record<Locale, DateFnsLocale> = { en: enGB, de, fr, es, it };
 
@@ -20,18 +27,18 @@ export function formatNumber(
   locale: Locale,
   options?: Intl.NumberFormatOptions
 ): string {
-  return new Intl.NumberFormat(locale, options).format(value);
+  return getCachedNumberFormat(locale, options).format(value);
 }
 
 export function formatCurrency(value: number, locale: Locale, currency = 'EUR'): string {
-  return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(value);
+  return getCachedNumberFormat(locale, { style: 'currency', currency }).format(value);
 }
 
 export function formatRelativeTime(date: Date | string, locale: Locale): string {
   const d = typeof date === 'string' ? parseISO(date) : date;
   const diffSeconds = (d.getTime() - Date.now()) / 1000;
   const absDiff = Math.abs(diffSeconds);
-  const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
+  const rtf = getCachedRelativeTimeFormat(locale, { numeric: 'auto' });
 
   if (absDiff < 60) return rtf.format(Math.round(diffSeconds), 'second');
   if (absDiff < 3600) return rtf.format(Math.round(diffSeconds / 60), 'minute');
@@ -47,14 +54,14 @@ export function formatList(
   locale: Locale,
   type: 'conjunction' | 'disjunction' = 'conjunction'
 ): string {
-  return new Intl.ListFormat(locale, { type }).format(items);
+  return getCachedListFormat(locale, { type }).format(items);
 }
 
 export function createCollator(
   locale: Locale,
   options: Intl.CollatorOptions = { sensitivity: 'base', numeric: true }
 ): Intl.Collator {
-  return new Intl.Collator(locale, options);
+  return getCachedCollator(locale, options);
 }
 
 export function sortLocaleStrings(items: string[], locale: Locale): string[] {
@@ -161,11 +168,12 @@ export function isValidDateForLocale(dateString: string, locale: Locale): boolea
  */
 export function formatTime(date: Date | string, locale: Locale): string {
   const d = typeof date === 'string' ? parseISO(date) : date;
-  return d.toLocaleTimeString(locale, {
+  const options: Intl.DateTimeFormatOptions = {
     hour: '2-digit',
     minute: '2-digit',
     hour12: false,
-  });
+  };
+  return getCachedDateTimeFormat(locale, options).format(d);
 }
 
 /**

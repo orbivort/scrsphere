@@ -1,6 +1,13 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { I18nextProvider } from 'react-i18next';
-import { getDirection, isSupportedLocale, normalizeLocale, type Locale } from '@scrumooth/shared';
+import {
+  getDirection,
+  isSupportedLocale,
+  isSupportedLocaleDev,
+  normalizeLocale,
+  normalizeLocaleDev,
+  type Locale,
+} from '@scrumooth/shared';
 
 import { i18nInstance } from './config';
 import { useI18nStore, syncLocaleFromUser } from './useI18nStore';
@@ -40,16 +47,26 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
       // Without this normalization, isSupportedLocale('de-DE') returns false,
       // setLocale is skipped, and the store stays at the default 'en' — which
       // then triggers changeLanguage('en') and overwrites the cookie.
+      //
+      // In development mode we also accept dev-only locales like 'pseudo' and
+      // 'pseudo-rtl' so that pseudo-localization and RTL dry-run testing work.
       const rawLng = i18nInstance.language;
-      const detectedLng = rawLng ? normalizeLocale(rawLng) : null;
 
-      if (detectedLng && isSupportedLocale(detectedLng)) {
-        const storeLocale = useI18nStore.getState().locale;
-        if (detectedLng !== storeLocale) {
-          // Use setLocale (not setState) so the scrumooth_locale cookie is
-          // also updated — otherwise the cookie retains the stale default 'en'
-          // and the next page load reads the wrong value from the cookie detector.
-          useI18nStore.getState().setLocale(detectedLng as Locale);
+      if (import.meta.env.DEV) {
+        const detectedLngDev = rawLng ? normalizeLocaleDev(rawLng) : null;
+        if (detectedLngDev && isSupportedLocaleDev(detectedLngDev)) {
+          const storeLocale = useI18nStore.getState().locale;
+          if (detectedLngDev !== storeLocale) {
+            useI18nStore.getState().setLocale(detectedLngDev as Locale);
+          }
+        }
+      } else {
+        const detectedLng = rawLng ? normalizeLocale(rawLng) : null;
+        if (detectedLng && isSupportedLocale(detectedLng)) {
+          const storeLocale = useI18nStore.getState().locale;
+          if (detectedLng !== storeLocale) {
+            useI18nStore.getState().setLocale(detectedLng as Locale);
+          }
         }
       }
       // Mark sync as done so the changeLanguage effect can fire. If setLocale
@@ -241,6 +258,7 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
         }}
       >
         <div style={{ maxWidth: '480px', textAlign: 'center' }}>
+          {/* eslint-disable no-literal-jsx-string/no-literal-jsx-string -- Error state when i18n itself is broken, cannot use translations */}
           <h1
             style={{
               fontSize: '1.5rem',
@@ -298,6 +316,7 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
             </details>
           )}
         </div>
+        {/* eslint-enable no-literal-jsx-string/no-literal-jsx-string */}
       </div>
     );
   }

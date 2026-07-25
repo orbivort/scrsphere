@@ -5,7 +5,17 @@
     "bodyIntro": "Wir haben eine Anfrage erhalten, das Passwort für {{email}} zurückzusetzen.",
     "cta": "Passwort zurücksetzen",
     "expiresIn": "Dieser Link läuft in {{duration}} ab.",
-    "ignoreIfNotRequested": "Falls Sie dies nicht angefordert haben, können Sie diese E-Mail ignorieren."
+    "ignoreIfNotRequested": "Falls Sie dies nicht angefordert haben, können Sie diese E-Mail ignorieren.",
+    "buttonHint": "Klicken Sie auf die Schaltfläche unten, um ein neues Passwort zu erstellen:",
+    "fallbackLinkHint": "Wenn die Schaltfläche oben nicht funktioniert, kopieren Sie den folgenden Link in Ihren Browser:",
+    "supportContact": "Wenn Sie Fragen haben oder Hilfe benötigen, wenden Sie sich bitte an unser Support-Team."
+  },
+  "common": {
+    "greeting": "Hallo",
+    "needHelp": "Brauchen Sie Hilfe? Kontaktieren Sie uns unter",
+    "thankYouForUsing": "Vielen Dank, dass Sie",
+    "visitApp": "Besuchen",
+    "allRightsReserved": "Alle Rechte vorbehalten."
   },
   "welcome": {
     "subject": "Willkommen bei Scrumooth",

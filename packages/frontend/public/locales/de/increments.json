@@ -5,6 +5,7 @@
   "loading": "Inkremente werden geladen...",
   "skipToSprintReview": "Zum Sprint Review springen",
   "backToIncrements": "Zuruck zu Inkrementen",
+  "pts": "pts",
   "noDescription": "Keine Beschreibung vorhanden.",
   "sprintPrefix": "SPRINT {{sprintId}}",
   "list": {

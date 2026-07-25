@@ -55,6 +55,8 @@
   "localeSyncFailed": "Impossibile sincronizzare la preferenza della lingua. Verrà sincronizzata al prossimo accesso.",
   "unassigned": "Non assegnato",
   "noTeamSelected": "Nessun team selezionato",
+  "translationPending": "Traduzione in corso",
+  "minLabel": "min {{min}}",
 
   "confirmDialog": {
     "removeMessage": "Sei sicuro di voler rimuovere {{name}}?",
@@ -516,5 +518,16 @@
     "actionError": "Non hai l'autorizzazione per eseguire questa azione.",
     "insufficientRoles": "Autorizzazioni insufficienti. Ruoli richiesti: {{roles}}"
   },
-  "dateInput": { "clearDate": "Cancella data", "openCalendar": "Apri calendario" }
+  "dateInput": { "clearDate": "Cancella data", "openCalendar": "Apri calendario" },
+  "iconGallery": {
+    "title": "Icon Gallery",
+    "subtitle": "Browse and copy import statements for all available icons. Click any icon to copy its import statement.",
+    "totalIcons": "{{count}} total icons",
+    "categories": "{{count}} categories",
+    "matching": "{{count}} matching",
+    "searchPlaceholder": "Search icons by name or category...",
+    "searchAriaLabel": "Search icons",
+    "noResults": "No icons found",
+    "noResultsHint": "Try adjusting your search query"
+  }
 }

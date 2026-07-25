@@ -3,12 +3,15 @@
 /**
  * i18n Validation Script
  *
- * Validates:
+ * Validates (exits with code 1 on failure):
  * 1. All JSON files are valid JSON
  * 2. All en/ keys exist in other locales (or in .i18nignore)
  * 3. No extra keys in non-en locales (stale translations)
  * 4. No empty string values
  * 5. Interpolation placeholders match between en and translations
+ *
+ * Warnings (exit with code 0):
+ * - Missing locale files (expected during incremental translation)
  */
 
 import { readFileSync, readdirSync, statSync, existsSync } from 'fs';
@@ -117,16 +120,16 @@ function validateLocaleDir(localesDir, label) {
       for (const key of enKeys) {
         const fullKey = `${locale}/${ns}:${key}`;
         if (!targetKeys.has(key) && !ignoreSet.has(fullKey) && !ignoreSet.has(key)) {
-          console.warn(`⚠️  Missing key in ${locale}/${ns}.json: ${key}`);
-          hasWarnings = true;
+          console.error(`❌ Missing key in ${locale}/${ns}.json: ${key}`);
+          hasErrors = true;
         }
       }
 
       // Extra keys (stale translations)
       for (const key of targetKeys) {
         if (!enKeys.includes(key)) {
-          console.warn(`⚠️  Extra key in ${locale}/${ns}.json: ${key} (not in en)`);
-          hasWarnings = true;
+          console.error(`❌ Extra key in ${locale}/${ns}.json: ${key} (not in en)`);
+          hasErrors = true;
         }
       }
 
@@ -141,8 +144,8 @@ function validateLocaleDir(localesDir, label) {
 
           for (const p of enPlaceholders) {
             if (!targetPlaceholders.includes(p)) {
-              console.warn(`⚠️  Missing placeholder {{${p}}} in ${locale}/${ns}.json: ${key}`);
-              hasWarnings = true;
+              console.error(`❌ Missing placeholder {{${p}}} in ${locale}/${ns}.json: ${key}`);
+              hasErrors = true;
             }
           }
         }

@@ -164,6 +164,9 @@ class ImpedimentService {
           userId: data.ownerId,
           type: NotificationType.IMPEDIMENT_ASSIGNMENT,
           titleKey: 'impedimentAssigned',
+          titleParams: {
+            impedimentTitle: impediment.title,
+          },
           messageParams: {
             impedimentTitle: impediment.title,
           },

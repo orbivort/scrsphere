@@ -303,12 +303,12 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
                     aria-required="true"
                   >
                     <option value="">{t('editItem.businessValuePlaceholder') as string}</option>
-                    <option value={1}>1 - Minimal value</option>
-                    <option value={2}>2 - Low value</option>
-                    <option value={3}>3 - Moderate value</option>
-                    <option value={5}>5 - High value</option>
-                    <option value={8}>8 - Very high value</option>
-                    <option value={13}>13 - Critical value</option>
+                    <option value={1}>{t('editItem.businessValue1') as string}</option>
+                    <option value={2}>{t('editItem.businessValue2') as string}</option>
+                    <option value={3}>{t('editItem.businessValue3') as string}</option>
+                    <option value={5}>{t('editItem.businessValue5') as string}</option>
+                    <option value={8}>{t('editItem.businessValue8') as string}</option>
+                    <option value={13}>{t('editItem.businessValue13') as string}</option>
                   </select>
                   <span id="edit-business-value-help" className={styles['field-help']}>
                     {t('editItem.businessValueHelp') as string}
@@ -343,12 +343,12 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
                     aria-required="true"
                   >
                     <option value="">{t('editItem.storyPointsPlaceholder') as string}</option>
-                    <option value={1}>1 - Trivial effort</option>
-                    <option value={2}>2 - Very small effort</option>
-                    <option value={3}>3 - Small effort</option>
-                    <option value={5}>5 - Medium effort</option>
-                    <option value={8}>8 - Large effort</option>
-                    <option value={13}>13 - Very large effort</option>
+                    <option value={1}>{t('editItem.effort1') as string}</option>
+                    <option value={2}>{t('editItem.effort2') as string}</option>
+                    <option value={3}>{t('editItem.effort3') as string}</option>
+                    <option value={5}>{t('editItem.effort5') as string}</option>
+                    <option value={8}>{t('editItem.effort8') as string}</option>
+                    <option value={13}>{t('editItem.effort13') as string}</option>
                   </select>
                   <span id="edit-estimate-help" className={styles['field-help']}>
                     {t('editItem.storyPointsHelp') as string}

@@ -70,7 +70,9 @@
     "saveResolution": "Sauvegarder la resolution",
     "saving": "Sauvegarde...",
     "deleting": "Suppression...",
-    "deleteLabel": "Supprimer"
+    "deleteLabel": "Supprimer",
+    "cancel": "Cancel",
+    "close": "Close"
   },
   "deleteModal": {
     "title": "Supprimer l'empêchement",

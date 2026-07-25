@@ -824,7 +824,7 @@ export const Impediments: React.FC = () => {
                 className={`${styles.btn} ${styles['btn-secondary']}`}
                 onClick={() => handleCloseCreateModal()}
               >
-                Cancel
+                {t('detailModal.cancel')}
               </button>
               <button
                 className={`${styles.btn} ${styles['btn-primary']}`}
@@ -991,7 +991,7 @@ export const Impediments: React.FC = () => {
                         setResolutionInput('');
                       }}
                     >
-                      Cancel
+                      {t('detailModal.cancel')}
                     </button>
                     <button
                       className={`${styles.btn} ${styles['btn-primary']}`}
@@ -1089,7 +1089,7 @@ export const Impediments: React.FC = () => {
                 className={`${styles.btn} ${styles['btn-secondary']}`}
                 onClick={handleCloseDetail}
               >
-                Close
+                {t('detailModal.close')}
               </button>
             </div>
           </div>
@@ -1183,7 +1183,7 @@ export const Impediments: React.FC = () => {
                 onClick={() => setShowDeleteConfirm(false)}
                 disabled={deleteMutation.isPending}
               >
-                Cancel
+                {t('detailModal.cancel')}
               </button>
               <button
                 type="button"

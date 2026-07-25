@@ -141,6 +141,15 @@
     "hoursAgo": "{{count}}h",
     "daysAgo": "{{count}}g"
   },
+  "loading": {
+    "pageHeader": "Loading page header...",
+    "actions": "Loading actions...",
+    "statistics": "Loading statistics...",
+    "sectionHeader": "Loading section header...",
+    "teamUpdates": "Loading team updates...",
+    "pendingMembers": "Loading pending members...",
+    "sprintProgress": "Loading sprint progress..."
+  },
   "toast": {
     "updateSubmitted": "Aggiornamento inviato con successo!",
     "impedimentCreated": "Impedimento creato con successo!",

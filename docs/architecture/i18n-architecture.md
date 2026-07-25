@@ -43,13 +43,13 @@ Scrumooth supports 5 locales (`en`, `de`, `fr`, `es`, `it`) end-to-end across fr
 
 ## 2. Supported Locales
 
-| Code | Endonym  | Date format  | Time    | Currency | Plural classes           |
-| ---- | -------- | ------------ | ------- | -------- | ------------------------ |
-| `en` | English  | `dd/MM/yyyy` | 24-hour | EUR      | `one` / `other`          |
-| `de` | Deutsch  | `dd.MM.yyyy` | 24-hour | EUR      | `one` / `other`          |
-| `fr` | Français | `dd/MM/yyyy` | 24-hour | EUR      | `one` / `many` / `other` |
-| `es` | Español  | `dd/MM/yyyy` | 24-hour | EUR      | `one` / `many` / `other` |
-| `it` | Italiano | `dd/MM/yyyy` | 24-hour | EUR      | `one` / `many` / `other` |
+| Code | Endonym  | Date format  | Time    | Currency | Plural classes  |
+| ---- | -------- | ------------ | ------- | -------- | --------------- |
+| `en` | English  | `dd/MM/yyyy` | 24-hour | EUR      | `one` / `other` |
+| `de` | Deutsch  | `dd.MM.yyyy` | 24-hour | EUR      | `one` / `other` |
+| `fr` | Français | `dd/MM/yyyy` | 24-hour | EUR      | `one` / `other` |
+| `es` | Español  | `dd/MM/yyyy` | 24-hour | EUR      | `one` / `other` |
+| `it` | Italiano | `dd/MM/yyyy` | 24-hour | EUR      | `one` / `other` |
 
 - **English uses `enGB`** (not `enUS`) date-fns locale — target organization is European.
 - **DEFAULT_LOCALE** is `en`. All fallback chains terminate at `en`.
@@ -120,14 +120,14 @@ Scrumooth supports 5 locales (`en`, `de`, `fr`, `es`, `it`) end-to-end across fr
 
 **Decision:** A single `i18next.createInstance()` is initialized at backend startup with all 5 locales × 5 namespaces bundled. Per-request locale is resolved by `locale.middleware.ts` and stored in `AsyncLocalStorage`. The `t()` accessor in `requestT.ts` reads the locale from `AsyncLocalStorage` and passes it as `i18nInstance.t(key, { lng: getRequestLocale(), ...options })`.
 **Locale priority (verified):** `Accept-Language` header FIRST → `User.locale` (database) → `DEFAULT_LOCALE`. Reversed from typical SaaS pattern because Scrumooth is multi-tenant by team and the browser language is more reliable at first visit. The Accept-Language parser is simplistic (split-on-comma, no `q=` handling); `resolve-accept-language` is recommended for future improvement.
-**Silent fallback:** `requestT.ts` does NOT throw when called outside a request scope — `getRequestLocale()` returns `DEFAULT_LOCALE`. The JSDoc claiming it throws is inaccurate. This is acceptable for background jobs but masks bugs.
+**Silent fallback:** `requestT.ts` does NOT throw when called outside a request scope — `getRequestLocale()` returns `DEFAULT_LOCALE`. A `logger.warn` is emitted to surface misuse. The JSDoc accurately describes this behavior.
 
 ### ADR-006: Pluralization & Cultural Formatting — Native `Intl` + `date-fns`
 
 **Decision:** Use native `Intl.PluralRules` (polyfilled by `intl-pluralrules` for Safari < 14), `Intl.NumberFormat`, `Intl.DateTimeFormat`, `Intl.RelativeTimeFormat`, `Intl.ListFormat`, `Intl.Collator`. Use `date-fns` v4 for date formatting that needs locale-aware tokens (`PP`, `d MMM`, etc.).
 **Date-fns locales:** `{ en: enGB, de, fr, es, it }`. English uses `enGB` (European audience → `DD/MM/YYYY`, 24-hour by default).
 **No `i18next-intlpluralresolver`:** Deprecated since i18next v24 — native `Intl.PluralRules` is used directly.
-**Plural classes:** `en`/`de` use `one`/`other`; `fr`/`es`/`it` use `one`/`many`/`other` (CLDR).
+**Plural classes:** All five locales use `one`/`other` only (CLDR). No locale in the supported set has a `many` plural category.
 
 ### ADR-007: Translation Workflow — JSON-in-Repo + CI Gates
 
@@ -312,7 +312,7 @@ export function t(key: string, options?: Record<string, unknown>): string {
 }
 ```
 
-`getRequestLocale()` reads from `AsyncLocalStorage`; returns `DEFAULT_LOCALE` if no context (silent fallback, does NOT throw — JSDoc is inaccurate). Used in services, controllers, and email templates.
+`getRequestLocale()` reads from `AsyncLocalStorage`; returns `DEFAULT_LOCALE` if no context (silent fallback with `logger.warn`). Used in services, controllers, and email templates.
 
 ### 6.4 Localized Error Messages
 
@@ -398,23 +398,23 @@ When a user changes their locale via the API, the change is logged via the stand
 
 **15 functions**, all locale-aware via `Record<Locale, …>` lookups:
 
-| Function                                        | API used                  | Notes                                                  |
-| ----------------------------------------------- | ------------------------- | ------------------------------------------------------ |
-| `formatDate(date, locale, fmt='PP')`            | `date-fns`                | `DATE_FNS_LOCALES.en = enGB`                           |
-| `formatNumber(value, locale, opts?)`            | `Intl.NumberFormat`       |                                                        |
-| `formatCurrency(value, locale, currency='EUR')` | `Intl.NumberFormat`       |                                                        |
-| `formatRelativeTime(date, locale)`              | `Intl.RelativeTimeFormat` | Numeric: 'auto'                                        |
-| `formatList(items, locale, type)`               | `Intl.ListFormat`         | Conjunction/disjunction                                |
-| `createCollator(locale, opts?)`                 | `Intl.Collator`           | sensitivity: 'base', numeric: true                     |
-| `sortLocaleStrings(items, locale)`              | `Intl.Collator`           | Wraps createCollator                                   |
-| `formatDateRange(start, end, locale, fmt)`      | `date-fns`                | Joins with en dash                                     |
-| `formatDateRangeCompact(start, end, locale)`    | `date-fns`                | Alias of `formatDateRange('PP')`                       |
-| `formatDateForInput(date, locale)`              | `date-fns`                | Uses `DATE_INPUT_FORMATS[locale]`                      |
-| `parseDateFromInput(str, locale)`               | `date-fns`                | Returns ISO `YYYY-MM-DD` or `''`                       |
-| `isValidDateForLocale(str, locale)`             | `date-fns`                |                                                        |
-| `formatTime(date, locale)`                      | `Intl`                    | `hour12: locale === 'en'` (12h for en, 24h for others) |
-| `formatDateTime(date, locale, fmt)`             | `date-fns` + `Intl`       | Combines date + time                                   |
-| `formatChartDate(date, locale)`                 | `date-fns`                | `d MMM` format for chart axes                          |
+| Function                                        | API used                  | Notes                                                        |
+| ----------------------------------------------- | ------------------------- | ------------------------------------------------------------ |
+| `formatDate(date, locale, fmt='PP')`            | `date-fns`                | `DATE_FNS_LOCALES.en = enGB`                                 |
+| `formatNumber(value, locale, opts?)`            | `Intl.NumberFormat`       |                                                              |
+| `formatCurrency(value, locale, currency='EUR')` | `Intl.NumberFormat`       |                                                              |
+| `formatRelativeTime(date, locale)`              | `Intl.RelativeTimeFormat` | Numeric: 'auto'                                              |
+| `formatList(items, locale, type)`               | `Intl.ListFormat`         | Conjunction/disjunction                                      |
+| `createCollator(locale, opts?)`                 | `Intl.Collator`           | sensitivity: 'base', numeric: true                           |
+| `sortLocaleStrings(items, locale)`              | `Intl.Collator`           | Wraps createCollator                                         |
+| `formatDateRange(start, end, locale, fmt)`      | `date-fns`                | Joins with en dash                                           |
+| `formatDateRangeCompact(start, end, locale)`    | `date-fns`                | Alias of `formatDateRange('PP')`                             |
+| `formatDateForInput(date, locale)`              | `date-fns`                | Uses `DATE_INPUT_FORMATS[locale]`                            |
+| `parseDateFromInput(str, locale)`               | `date-fns`                | Returns ISO `YYYY-MM-DD` or `''`                             |
+| `isValidDateForLocale(str, locale)`             | `date-fns`                |                                                              |
+| `formatTime(date, locale)`                      | `Intl`                    | `hour12: false` (24-hour for all locales, European standard) |
+| `formatDateTime(date, locale, fmt)`             | `date-fns` + `Intl`       | Combines date + time                                         |
+| `formatChartDate(date, locale)`                 | `date-fns`                | `d MMM` format for chart axes                                |
 
 **`date-fns` is a shared-package dependency** — both frontend and backend pick it up transitively via `@scrumooth/shared`.
 
@@ -472,13 +472,13 @@ i18next uses native `Intl.PluralRules` (polyfilled by `intl-pluralrules`). No cu
 
 **CLDR plural classes:**
 
-| Locale | `one`    | `many` | `other`         |
-| ------ | -------- | ------ | --------------- |
-| `en`   | n = 1    | —      | everything else |
-| `de`   | n = 1    | —      | everything else |
-| `fr`   | n = 0, 1 | —      | everything else |
-| `es`   | n = 1    | —      | everything else |
-| `it`   | n = 1    | —      | everything else |
+| Locale | `one`    | `other`         |
+| ------ | -------- | --------------- |
+| `en`   | n = 1    | everything else |
+| `de`   | n = 1    | everything else |
+| `fr`   | n = 0, 1 | everything else |
+| `es`   | n = 1    | everything else |
+| `it`   | n = 1    | everything else |
 
 **Key naming:** `taskCount`, `taskCount_one`, `taskCount_other`. i18next auto-selects the suffix based on `Intl.PluralRules(lng).select(count)`.
 
@@ -548,9 +548,11 @@ All locales produce `HH:MM` 24-hour output (e.g., `14:30`). English uses 24-hour
 
 `sortLocaleStrings(['João', 'Ana', 'Álvaro'], 'pt')` → `['Álvaro', 'Ana', 'João']` (accented `Á` sorts with `A` under `sensitivity: 'base'`).
 
-### 9.7 Timezone vs Locale
+### 9.7 Timezone Handling
 
-Locale determines **format** (`dd/MM/yyyy` vs `MM/dd/yyyy`). Timezone determines **instant** (`2026-07-18T14:30:00Z` displayed as `15:30` in CET, `14:30` in UTC). All timestamps are stored in UTC in the database; the frontend converts to the user's browser timezone for display. There is no per-user timezone setting today — `Intl.DateTimeFormat()` uses the browser's timezone.
+All timestamps are stored in UTC in the database (`Timestamptz(3)`). The frontend relies on the browser's built-in `Intl.DateTimeFormat()` API to display times in the user's local timezone automatically — no per-user timezone setting is required. Locale determines **format** (e.g., `dd/MM/yyyy` vs `MM/dd/yyyy`); the browser's timezone determines **instant** (e.g., `2026-07-18T14:30:00Z` displayed as `15:30` in CET, `14:30` in UTC).
+
+For self-hosted deployments where users typically share one or a few timezones, browser-detected timezone is sufficient and eliminates the complexity of per-user timezone configuration. DST transitions are handled automatically by the IANA timezone database built into browsers.
 
 ---
 
@@ -581,7 +583,7 @@ Flat key-value with optional nesting and interpolation:
 ```
 
 - Interpolation: `{{name}}` (i18next default)
-- Plural suffix: `_one`, `_other`, `_many` (CLDR classes for the locale)
+- Plural suffix: `_one`, `_other` (only CLDR classes used by our 5 locales; `_many` not needed)
 - No ICU MessageFormat (not needed for current locales)
 
 ### 10.3 Key Naming Conventions

@@ -40,6 +40,7 @@ export const KeyboardHelpModal: React.FC<KeyboardHelpModalProps> = ({ onClose })
         </div>
         <div className={baseStyles['modal-body']}>
           <div className={styles['keyboard-shortcuts-grid']}>
+            {/* eslint-disable no-literal-jsx-string/no-literal-jsx-string -- Keyboard key names should not be translated */}
             <section className={styles['shortcut-section']}>
               <h3 className={styles['shortcut-section-title']}>{t('keyboardHelp.navigation')}</h3>
               <dl className={styles['shortcut-list']}>
@@ -75,13 +76,13 @@ export const KeyboardHelpModal: React.FC<KeyboardHelpModalProps> = ({ onClose })
               <dl className={styles['shortcut-list']}>
                 <div className={styles['shortcut-item']}>
                   <dt>
-                    <kbd>→</kbd> (Right Arrow)
+                    <kbd>→</kbd> {t('keyboardHelp.rightArrowLabel')}
                   </dt>
                   <dd>{t('keyboardHelp.moveNextColumn')}</dd>
                 </div>
                 <div className={styles['shortcut-item']}>
                   <dt>
-                    <kbd>←</kbd> (Left Arrow)
+                    <kbd>←</kbd> {t('keyboardHelp.leftArrowLabel')}
                   </dt>
                   <dd>{t('keyboardHelp.movePreviousColumn')}</dd>
                 </div>
@@ -136,6 +137,7 @@ export const KeyboardHelpModal: React.FC<KeyboardHelpModalProps> = ({ onClose })
               </dl>
             </section>
           </div>
+          {/* eslint-enable no-literal-jsx-string/no-literal-jsx-string */}
 
           <div className={styles['keyboard-help-tip']}>
             <p>{t('keyboardHelp.tip')}</p>

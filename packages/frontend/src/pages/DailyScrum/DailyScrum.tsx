@@ -600,7 +600,7 @@ export const DailyScrum: React.FC = () => {
               variant="skeleton-text"
               lines={2}
               lastLineWidth="90%"
-              label="Loading page header..."
+              label={t('loading.pageHeader') as string}
             />
           </div>
           <div className={styles['header-right']}>
@@ -608,7 +608,7 @@ export const DailyScrum: React.FC = () => {
               variant="skeleton-text"
               lines={1}
               lastLineWidth="100%"
-              label="Loading actions..."
+              label={t('loading.actions') as string}
             />
           </div>
         </div>
@@ -618,7 +618,7 @@ export const DailyScrum: React.FC = () => {
             variant="skeleton-card"
             cardVariant="stats"
             itemCount={4}
-            label="Loading statistics..."
+            label={t('loading.statistics') as string}
           />
         </div>
 
@@ -629,11 +629,15 @@ export const DailyScrum: React.FC = () => {
                 variant="skeleton-text"
                 lines={2}
                 lastLineWidth="75%"
-                label="Loading section header..."
+                label={t('loading.sectionHeader') as string}
               />
             </div>
             <div className={styles['updates-list-card']}>
-              <LoadingState variant="skeleton-card" itemCount={3} label="Loading team updates..." />
+              <LoadingState
+                variant="skeleton-card"
+                itemCount={3}
+                label={t('loading.teamUpdates') as string}
+              />
             </div>
           </div>
 
@@ -642,7 +646,7 @@ export const DailyScrum: React.FC = () => {
               <LoadingState
                 variant="skeleton-list"
                 itemCount={2}
-                label="Loading pending members..."
+                label={t('loading.pendingMembers') as string}
               />
             </div>
 
@@ -650,7 +654,7 @@ export const DailyScrum: React.FC = () => {
               <LoadingState
                 variant="skeleton-card"
                 itemCount={1}
-                label="Loading sprint progress..."
+                label={t('loading.sprintProgress') as string}
               />
             </div>
           </div>

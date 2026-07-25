@@ -5,7 +5,17 @@
     "bodyIntro": "Recibimos una solicitud para restablecer la contraseña de {{email}}.",
     "cta": "Restablecer contraseña",
     "expiresIn": "Este enlace expira en {{duration}}.",
-    "ignoreIfNotRequested": "Si no solicitó esto, puede ignorar este correo electrónico con seguridad."
+    "ignoreIfNotRequested": "Si no solicitó esto, puede ignorar este correo electrónico con seguridad.",
+    "buttonHint": "Haga clic en el botón de abajo para crear una nueva contraseña:",
+    "fallbackLinkHint": "Si el botón de arriba no funciona, copie y pegue el siguiente enlace en su navegador:",
+    "supportContact": "Si tiene alguna pregunta o necesita asistencia, por favor contacte a nuestro equipo de soporte."
+  },
+  "common": {
+    "greeting": "Hola",
+    "needHelp": "¿Necesita ayuda? Contáctenos en",
+    "thankYouForUsing": "Gracias por usar",
+    "visitApp": "Visitar",
+    "allRightsReserved": "Todos los derechos reservados."
   },
   "welcome": {
     "subject": "Bienvenido a Scrumooth",

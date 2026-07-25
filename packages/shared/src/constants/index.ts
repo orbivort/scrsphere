@@ -44,6 +44,14 @@ export const SUPPORTED_LOCALES = ['en', 'de', 'fr', 'es', 'it'] as const;
 export type Locale = (typeof SUPPORTED_LOCALES)[number];
 export const DEFAULT_LOCALE: Locale = 'en';
 
+/**
+ * Development-only locale list that includes the pseudo-localization locale.
+ * Use this in dev builds to allow switching to the "pseudo" locale for
+ * visual testing of i18n string expansion and accent folding.
+ */
+export const SUPPORTED_LOCALES_DEV = [...SUPPORTED_LOCALES, 'pseudo', 'pseudo-rtl'] as const;
+export type LocaleDev = (typeof SUPPORTED_LOCALES_DEV)[number];
+
 export const LOCALE_LABELS: Record<Locale, string> = {
   en: 'English',
   de: 'Deutsch',

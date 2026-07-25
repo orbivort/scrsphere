@@ -177,7 +177,8 @@
       "genericError": "Impossible d'envoyer le message. Veuillez réessayer plus tard."
     },
     "unsavedTitle": "Message non envoyé",
-    "unsavedMessage": "Vous avez un message non envoyé. Êtes-vous sûr de vouloir le supprimer?"
+    "unsavedMessage": "Vous avez un message non envoyé. Êtes-vous sûr de vouloir le supprimer?",
+    "requiredAriaLabel": "required"
   },
   "errors": {
     "memberAlreadyExists": "Cet utilisateur est déjà membre de l'équipe.",

@@ -378,7 +378,11 @@ export const TeamManagement: React.FC = () => {
           />
 
           {pagination.totalPages > 1 && (
-            <nav className={styles.pagination} aria-label="Pagination" role="navigation">
+            <nav
+              className={styles.pagination}
+              aria-label={t('teamManagement.pagination.ariaLabel')}
+              role="navigation"
+            >
               <button
                 className={styles['pagination-button']}
                 onClick={() => setSearchParams({ q: search, page: String(Math.max(1, page - 1)) })}

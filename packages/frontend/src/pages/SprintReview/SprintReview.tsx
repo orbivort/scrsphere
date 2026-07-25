@@ -1054,7 +1054,9 @@ export const SprintReview: React.FC = () => {
                       increment.pbis?.map((pbi, index) => (
                         <div key={pbi.id || `pbi-${index}`} className={styles['pbi-card']}>
                           <span className={styles['pbi-title']}>{pbi.title}</span>
-                          <span className={styles['pbi-points']}>{pbi.storyPoints ?? 0} pts</span>
+                          <span className={styles['pbi-points']}>
+                            {pbi.storyPoints ?? 0} {t('pts')}
+                          </span>
                           <span className={`${styles['pbi-status']} ${styles.done}`}>
                             <CheckIcon /> {t('increment.done')}
                           </span>
@@ -1369,7 +1371,7 @@ export const SprintReview: React.FC = () => {
             {t('completeReview.failed')}
             {updateReviewMutation.error instanceof Error && (
               <div className={styles['error-details']}>
-                Error: {updateReviewMutation.error.message}
+                {t('errorPrefix', { message: updateReviewMutation.error.message })}
               </div>
             )}
           </div>

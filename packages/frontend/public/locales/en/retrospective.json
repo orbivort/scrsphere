@@ -1,5 +1,6 @@
 {
   "title": "Sprint Retrospective",
+  "pts": "pts",
   "backToRetrospectives": "Back to Retrospectives",
   "backAriaLabel": "Go back to Retrospectives list",
   "sprintStatus": {

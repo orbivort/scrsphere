@@ -1,0 +1,53 @@
+{
+  "title": "Error",
+  "network": {
+    "connectionLost": "Network error. Please check your internet connection.",
+    "timeout": "Request timed out. Please try again.",
+    "serverUnreachable": "Unable to reach the server. Please check your connection."
+  },
+  "http": {
+    "badRequest": "Invalid request. Please check your input and try again.",
+    "unauthorized": "You are not authorized to perform this action.",
+    "forbidden": "Access denied. You do not have permission for this resource.",
+    "notFound": "Resource not found. It may have been deleted.",
+    "conflict": "A conflict occurred. The resource may have been modified by another user.",
+    "validationFailed": "Validation failed. Please check your input.",
+    "internalServerError": "Server error. Please try again later.",
+    "serviceUnavailable": "Service temporarily unavailable. Please try again later."
+  },
+  "permission": {
+    "notAuthorized": "You are not authorized to perform this action.",
+    "noPermission": "You do not have permission to perform this action.",
+    "accessDenied": "Access denied.",
+    "loginRequired": "Please log in to continue."
+  },
+  "workflow": {
+    "notFound": "{{resource}} not found.",
+    "alreadyExists": "{{resource}} already exists.",
+    "cannotModify": "Cannot modify {{resource}} in its current state.",
+    "cannotDelete": "Cannot delete {{resource}}.",
+    "operationFailed": "Failed to {{operation}}. Please try again.",
+    "loadFailed": "Failed to load {{resource}}.",
+    "saveFailed": "Failed to save {{resource}}.",
+    "deleteFailed": "Failed to delete {{resource}}.",
+    "updateFailed": "Failed to update {{resource}}.",
+    "createFailed": "Failed to create {{resource}}."
+  },
+  "session": {
+    "expired": "Your session has expired. Please log in again.",
+    "idleTimeout": "Your session has timed out due to inactivity.",
+    "absoluteTimeout": "Your session has expired. Please log in again.",
+    "concurrentSession": "Your session was terminated because you logged in from another device."
+  },
+  "chunk": {
+    "loadFailed": "Failed to load application resources.",
+    "refreshRequired": "A new version is available. Please refresh the page."
+  },
+  "generic": {
+    "unexpectedError": "An unexpected error occurred. Please try again.",
+    "tryAgain": "Please try again.",
+    "retry": "Retry",
+    "goBack": "Go Back",
+    "contactSupport": "If the problem persists, please contact support."
+  }
+}

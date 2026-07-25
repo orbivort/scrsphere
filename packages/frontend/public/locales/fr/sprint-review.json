@@ -228,5 +228,7 @@
       "incrementRequired": "Incrément requis",
       "readyForReview": "Prêt pour Review"
     }
-  }
+  },
+  "pts": "pts",
+  "errorPrefix": "Error: {{message}}"
 }

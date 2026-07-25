@@ -166,6 +166,7 @@
     "sending": "Enviando...",
     "send": "Enviar Mensaje",
     "success": "Mensaje enviado exitosamente!",
+    "requiredAriaLabel": "required",
     "validation": {
       "emptyMessage": "Por favor ingresa un mensaje.",
       "maxLength": "El mensaje debe tener menos de {{limit}} caracteres."

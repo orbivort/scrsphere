@@ -5,7 +5,17 @@
     "bodyIntro": "Abbiamo ricevuto una richiesta di reimpostazione della password per {{email}}.",
     "cta": "Reimposta password",
     "expiresIn": "Questo collegamento scade tra {{duration}}.",
-    "ignoreIfNotRequested": "Se non ha effettuato questa richiesta, può ignorare questa email in tutta sicurezza."
+    "ignoreIfNotRequested": "Se non ha effettuato questa richiesta, può ignorare questa email in tutta sicurezza.",
+    "buttonHint": "Fare clic sul pulsante in basso per creare una nuova password:",
+    "fallbackLinkHint": "Se il pulsante sopra non funziona, copiare e incollare il seguente collegamento nel browser:",
+    "supportContact": "Per qualsiasi domanda o assistenza, si prega di contattare il nostro team di supporto."
+  },
+  "common": {
+    "greeting": "Ciao",
+    "needHelp": "Hai bisogno di aiuto? Contattaci a",
+    "thankYouForUsing": "Grazie per utilizzare",
+    "visitApp": "Visita",
+    "allRightsReserved": "Tutti i diritti riservati."
   },
   "welcome": {
     "subject": "Benvenuto in Scrumooth",

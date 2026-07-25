@@ -1397,7 +1397,9 @@ export const SprintRetrospective: React.FC = () => {
                       <h4 className={styles['story-title']}>{item.title}</h4>
                       {item.storyPoints && (
                         <div className={styles['story-points']}>
-                          <span className={styles['points-badge']}>{item.storyPoints} pts</span>
+                          <span className={styles['points-badge']}>
+                            {item.storyPoints} {t('pts')}
+                          </span>
                         </div>
                       )}
                     </div>

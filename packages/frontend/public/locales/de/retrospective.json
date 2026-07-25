@@ -1,5 +1,6 @@
 {
   "title": "Retrospektive",
+  "pts": "pts",
   "backToRetrospectives": "Zurück zu Retrospektiven",
   "backAriaLabel": "Zurück zur Retrospektiven-Liste gehen",
   "sprintStatus": {

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import styles from './CharacterCounter.module.css';
 
@@ -17,6 +18,7 @@ export const CharacterCounter: React.FC<CharacterCounterProps> = ({
   showMin = false,
   id,
 }) => {
+  const { t } = useTranslation();
   const isOverLimit = current > max;
   const isUnderMin = min !== undefined && current < min && current > 0;
   const isValid = !isOverLimit && !isUnderMin && current > 0;
@@ -37,7 +39,7 @@ export const CharacterCounter: React.FC<CharacterCounterProps> = ({
     >
       {showMin && min !== undefined && current < min && (
         <span className={styles['min-indicator']} data-testid="min-indicator">
-          min {min} ·{' '}
+          {t('minLabel', { min })} ·{' '}
         </span>
       )}
       <span className={styles.count} data-testid="count">

@@ -42,7 +42,6 @@ describe('localeResolver middleware', () => {
         expect.objectContaining({
           maxAge: 365 * 24 * 60 * 60 * 1000, // 1 year in milliseconds
           sameSite: 'strict',
-          secure: true,
           httpOnly: false,
           path: '/',
         })
@@ -62,21 +61,54 @@ describe('localeResolver middleware', () => {
       }
     });
 
-    it('should ignore unsupported user locale and fall back', () => {
+    it('should ignore unsupported user locale and fall back to Accept-Language', () => {
+      mockReq.user = { locale: 'zh' };
+      mockReq.headers = { 'accept-language': 'de-DE,de;q=0.9,en;q=0.5' };
+
+      localeResolver(mockReq as any, mockRes as any, mockNext);
+
+      // Should fall back to Accept-Language since 'zh' is not supported
+      expect(mockUpdateRequestContext).toHaveBeenCalledWith({ locale: 'de' });
+    });
+
+    it('should ignore unsupported user locale and fall back to DEFAULT_LOCALE when no Accept-Language', () => {
       mockReq.user = { locale: 'zh' };
       mockReq.headers = {};
 
       localeResolver(mockReq as any, mockRes as any, mockNext);
 
-      // Should fall back to DEFAULT_LOCALE since 'zh' is not supported
+      // Should fall back to DEFAULT_LOCALE since 'zh' is not supported and no Accept-Language
       expect(mockUpdateRequestContext).toHaveBeenCalledWith({ locale: DEFAULT_LOCALE });
     });
   });
 
-  describe('Accept-Language header fallback', () => {
-    it('should fall back to Accept-Language header when no user', () => {
-      mockReq.user = undefined;
+  describe('authenticated user priority: User.locale > Accept-Language', () => {
+    it('should prefer User.locale over Accept-Language when both are present and supported', () => {
+      mockReq.user = { locale: 'fr' };
       mockReq.headers = { 'accept-language': 'de-DE,de;q=0.9,en;q=0.5' };
+
+      localeResolver(mockReq as any, mockRes as any, mockNext);
+
+      // User.locale ('fr') should win over Accept-Language ('de')
+      expect(mockUpdateRequestContext).toHaveBeenCalledWith({ locale: 'fr' });
+    });
+
+    it('should fall back to Accept-Language when User.locale is not supported', () => {
+      mockReq.user = { locale: 'zh' };
+      mockReq.headers = { 'accept-language': 'it-IT,it;q=0.9,en;q=0.5' };
+
+      localeResolver(mockReq as any, mockRes as any, mockNext);
+
+      // Unsupported User.locale falls through to Accept-Language
+      expect(mockUpdateRequestContext).toHaveBeenCalledWith({ locale: 'it' });
+    });
+  });
+
+  describe('Accept-Language header parsing (RFC 4647/9110)', () => {
+    it('should resolve Accept-Language with quality values correctly', () => {
+      mockReq.user = undefined;
+      // de-DE has implicit q=1.0, de has q=0.9, en has q=0.8
+      mockReq.headers = { 'accept-language': 'de-DE,de;q=0.9,en;q=0.8' };
 
       localeResolver(mockReq as any, mockRes as any, mockNext);
 
@@ -84,7 +116,17 @@ describe('localeResolver middleware', () => {
       expect(mockNext).toHaveBeenCalledWith();
     });
 
-    it('should extract base language from Accept-Language header', () => {
+    it('should respect quality value ordering', () => {
+      mockReq.user = undefined;
+      // en has higher q than de
+      mockReq.headers = { 'accept-language': 'de;q=0.5,en;q=0.9' };
+
+      localeResolver(mockReq as any, mockRes as any, mockNext);
+
+      expect(mockUpdateRequestContext).toHaveBeenCalledWith({ locale: 'en' });
+    });
+
+    it('should extract base language from Accept-Language header with region tag', () => {
       mockReq.user = undefined;
       mockReq.headers = { 'accept-language': 'fr-FR,fr;q=0.9' };
 
@@ -93,9 +135,9 @@ describe('localeResolver middleware', () => {
       expect(mockUpdateRequestContext).toHaveBeenCalledWith({ locale: 'fr' });
     });
 
-    it('should find first supported locale from Accept-Language', () => {
+    it('should find supported locale from mixed Accept-Language with unsupported entries', () => {
       mockReq.user = undefined;
-      // First is unsupported (zh), second is supported (es)
+      // First is unsupported (zh-CN), second is supported (es)
       mockReq.headers = { 'accept-language': 'zh-CN,zh;q=0.9,es;q=0.8' };
 
       localeResolver(mockReq as any, mockRes as any, mockNext);
@@ -103,16 +145,16 @@ describe('localeResolver middleware', () => {
       expect(mockUpdateRequestContext).toHaveBeenCalledWith({ locale: 'es' });
     });
 
-    it('should fall back to DEFAULT_LOCALE when no matching Accept-Language', () => {
+    it('should fall back to DEFAULT_LOCALE when all Accept-Language entries are unsupported', () => {
       mockReq.user = undefined;
-      mockReq.headers = { 'accept-language': 'zh-CN,ja;q=0.9,ko;q=0.8' };
+      mockReq.headers = { 'accept-language': 'zh-CN,zh;q=0.9,ja;q=0.8' };
 
       localeResolver(mockReq as any, mockRes as any, mockNext);
 
       expect(mockUpdateRequestContext).toHaveBeenCalledWith({ locale: DEFAULT_LOCALE });
     });
 
-    it('should handle Accept-Language with quality values', () => {
+    it('should handle Accept-Language with quality values for Italian', () => {
       mockReq.user = undefined;
       mockReq.headers = { 'accept-language': 'it-IT,it;q=0.9,en;q=0.5' };
 
@@ -155,7 +197,6 @@ describe('localeResolver middleware', () => {
         expect.objectContaining({
           maxAge: 365 * 24 * 60 * 60 * 1000, // 1 year in milliseconds
           sameSite: 'strict',
-          secure: true,
           httpOnly: false,
           path: '/',
         })

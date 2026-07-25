@@ -250,7 +250,9 @@
     "toggleBurndown": "Toggle burndown chart",
     "focusSearch": "Focus search box",
     "showHelp": "Show this help dialog",
-    "tip": "Tip: Use the skip link (first tab stop) to bypass navigation and go directly to the task board."
+    "tip": "Tip: Use the skip link (first tab stop) to bypass navigation and go directly to the task board.",
+    "rightArrowLabel": "(Right Arrow)",
+    "leftArrowLabel": "(Left Arrow)"
   },
   "board": {
     "loadingBoard": "Loading sprint board...",

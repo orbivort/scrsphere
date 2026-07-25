@@ -277,6 +277,7 @@ class TeamService {
           userId,
           type: NotificationType.TEAM_CREATED,
           titleKey: 'teamCreated',
+          titleParams: { teamName: team.name },
           messageKey: 'teamCreatedMessage',
           messageParams: { teamName: team.name },
           data: { teamId: team.id, teamName: team.name },
@@ -350,6 +351,7 @@ class TeamService {
             userId: member.userId,
             type: NotificationType.TEAM_UPDATED,
             titleKey: 'teamUpdated',
+            titleParams: { teamName: team.name },
             messageKey: 'teamUpdatedMessage',
             messageParams: {
               teamName: team.name,
@@ -413,6 +415,7 @@ class TeamService {
             userId: member.userId,
             type: NotificationType.TEAM_DELETED,
             titleKey: 'teamDeleted',
+            titleParams: { teamName: team.name },
             messageKey: 'teamDeletedMessage',
             messageParams: {
               teamName: team.name,
@@ -495,6 +498,7 @@ class TeamService {
         userId: userToAdd.id,
         type: NotificationType.TEAM_INVITATION,
         titleKey: 'teamInvitation',
+        titleParams: { teamName: team.name },
         messageKey: 'teamInvitationMessage',
         messageParams: {
           teamName: team.name,
@@ -557,6 +561,7 @@ class TeamService {
         userId: removedUserId,
         type: NotificationType.TEAM_REMOVAL,
         titleKey: 'teamRemoval',
+        titleParams: { teamName: team.name },
         messageKey: 'teamRemovalMessage',
         messageParams: {
           teamName: team.name,

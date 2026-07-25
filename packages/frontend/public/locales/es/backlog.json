@@ -1,6 +1,8 @@
 {
   "title": "Product Backlog",
   "description": "Gestione y priorice los elementos de su Product Backlog",
+  "businessValue": "Business Value",
+  "effortStoryPoints": "Effort (Story Points)",
   "newItem": "Nuevo elemento",
   "bulkImport": "Importar en masa",
   "viewToggle": {
@@ -161,7 +163,19 @@
     "selectMoscowPriority": "Seleccionar prioridad MoSCoW",
     "removeLabel": "Eliminar etiqueta {{label}}",
     "unsavedTitle": "Cambios no guardados",
-    "unsavedMessage": "Tiene cambios sin guardar. ¿Está seguro de que desea descartarlos?"
+    "unsavedMessage": "Tiene cambios sin guardar. ¿Está seguro de que desea descartarlos?",
+    "businessValue1": "1 - Minimal value",
+    "businessValue2": "2 - Low value",
+    "businessValue3": "3 - Moderate value",
+    "businessValue5": "5 - High value",
+    "businessValue8": "8 - Very high value",
+    "businessValue13": "13 - Critical value",
+    "effort1": "1 - Trivial effort",
+    "effort2": "2 - Very small effort",
+    "effort3": "3 - Small effort",
+    "effort5": "5 - Medium effort",
+    "effort8": "8 - Large effort",
+    "effort13": "13 - Very large effort"
   },
   "deleteItem": {
     "title": "Eliminar elemento del backlog",

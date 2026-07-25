@@ -8,6 +8,7 @@
   "edit": "Edit",
   "loading": "Loading...",
   "initializing": "Initializing...",
+  "minLabel": "min {{min}}",
   "search": "Search",
   "noResults": "No results found",
   "confirm": "Confirm",
@@ -55,6 +56,7 @@
   "localeSyncFailed": "Failed to sync language preference. It will sync on next login.",
   "unassigned": "Unassigned",
   "noTeamSelected": "No team selected",
+  "translationPending": "Translation pending",
   "unsavedChanges": "Unsaved Changes",
   "confirmDialog": {
     "removeMessage": "Are you sure you want to remove {{name}}?",
@@ -424,6 +426,17 @@
   },
   "errorMessage": {
     "dismiss": "Dismiss error message"
+  },
+  "iconGallery": {
+    "title": "Icon Gallery",
+    "subtitle": "Browse and copy import statements for all available icons. Click any icon to copy its import statement.",
+    "totalIcons": "{{count}} total icons",
+    "categories": "{{count}} categories",
+    "matching": "{{count}} matching",
+    "searchPlaceholder": "Search icons by name or category...",
+    "searchAriaLabel": "Search icons",
+    "noResults": "No icons found",
+    "noResultsHint": "Try adjusting your search query"
   },
   "emptyState": {
     "noTeam": {

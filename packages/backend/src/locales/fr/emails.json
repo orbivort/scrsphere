@@ -5,7 +5,17 @@
     "bodyIntro": "Nous avons reçu une demande de réinitialisation du mot de passe pour {{email}}.",
     "cta": "Réinitialiser le mot de passe",
     "expiresIn": "Ce lien expire dans {{duration}}.",
-    "ignoreIfNotRequested": "Si vous n'êtes pas à l'origine de cette demande, vous pouvez ignorer cet e-mail en toute sécurité."
+    "ignoreIfNotRequested": "Si vous n'êtes pas à l'origine de cette demande, vous pouvez ignorer cet e-mail en toute sécurité.",
+    "buttonHint": "Cliquez sur le bouton ci-dessous pour créer un nouveau mot de passe :",
+    "fallbackLinkHint": "Si le bouton ci-dessus ne fonctionne pas, copiez et collez le lien suivant dans votre navigateur :",
+    "supportContact": "Si vous avez des questions ou besoin d'assistance, veuillez contacter notre équipe de support."
+  },
+  "common": {
+    "greeting": "Bonjour",
+    "needHelp": "Besoin d'aide ? Contactez-nous à",
+    "thankYouForUsing": "Merci d'utiliser",
+    "visitApp": "Visiter",
+    "allRightsReserved": "Tous droits réservés."
   },
   "welcome": {
     "subject": "Bienvenue sur Scrumooth",

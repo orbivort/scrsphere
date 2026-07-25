@@ -97,5 +97,6 @@
     "metrics": "Chargement des métriques...",
     "sprintHistory": "Chargement de l'historique des Sprints...",
     "insights": "Chargement des insights..."
-  }
+  },
+  "pts": "pts"
 }

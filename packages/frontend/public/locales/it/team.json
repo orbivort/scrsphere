@@ -176,6 +176,7 @@
       "networkError": "Errore di rete. Per favore controlla la tua connessione e riprova.",
       "genericError": "Impossibile inviare il messaggio. Per favore riprova più tardi."
     },
+    "requiredAriaLabel": "required",
     "unsavedTitle": "Messaggio Non Inviato",
     "unsavedMessage": "Hai un messaggio non inviato. Sei sicuro di volerlo scartare?"
   },

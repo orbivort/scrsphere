@@ -1,5 +1,7 @@
 {
   "title": "Sprint Review",
+  "pts": "pts",
+  "errorPrefix": "Error: {{message}}",
   "backToReviews": "Zurück zu Reviews",
   "selectSprint": "Sprint für Review auswählen",
   "findingActiveSprint": "Aktiver Sprint wird gesucht...",

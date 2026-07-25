@@ -256,5 +256,6 @@
     "createActionItem": "Créer l'Action Item",
     "unsavedTitle": "Modifications non sauvegardées",
     "unsavedMessage": "Vous avez des modifications non sauvegardées dans le formulaire Action Item. Êtes-vous sûr de vouloir les supprimer?"
-  }
+  },
+  "pts": "pts"
 }

@@ -45,7 +45,9 @@
     "markAsRead": "Als gelesen markieren",
     "dismiss": "Benachrichtigung schließen",
     "goToPreviousPage": "Zur vorherigen Seite",
-    "goToNextPage": "Zur nächsten Seite"
+    "goToNextPage": "Zur nächsten Seite",
+    "filterNotifications": "Filter notifications",
+    "pagination": "Pagination"
   },
   "teamCreated": "Team erstellt: \"{{teamName}}\"",
   "teamCreatedMessage": "Sie haben das Team erfolgreich erstellt",

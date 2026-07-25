@@ -335,11 +335,15 @@ export const Reports: React.FC = () => {
                   <div className={styles['history-stats']}>
                     <div className={styles.stat}>
                       <span className={styles.label}>{t('sprintHistory.stats.planned')}</span>
-                      <span className={styles.value}>{sprint.plannedPoints} pts</span>
+                      <span className={styles.value}>
+                        {sprint.plannedPoints} {t('pts')}
+                      </span>
                     </div>
                     <div className={styles.stat}>
                       <span className={styles.label}>{t('sprintHistory.stats.completed')}</span>
-                      <span className={styles.value}>{sprint.completedPoints} pts</span>
+                      <span className={styles.value}>
+                        {sprint.completedPoints} {t('pts')}
+                      </span>
                     </div>
                     <div className={styles.stat}>
                       <span className={styles.label}>{t('sprintHistory.stats.teamMembers')}</span>

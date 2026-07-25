@@ -38,6 +38,7 @@ allowBuilds:
   prisma: true
   esbuild: true
   unrs-resolver: true
+  '@swc/core': true
 
 strictPeerDependencies: false
 

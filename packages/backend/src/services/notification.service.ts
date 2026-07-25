@@ -41,13 +41,26 @@ export class NotificationService {
   /**
    * Create a localized notification by resolving the recipient's locale
    * and translating the title/message keys via i18next.
-   * Stores both canonical data (messageKey + params) and rendered text (title/message)
-   * for backward compatibility and email/push notifications.
+   * Stores both canonical data (messageKey column + params JSON) and rendered
+   * text (title/message columns) for backward compatibility and email/push
+   * notifications.
+   *
+   * The `messageKey` database column stores the message's i18n key (not the
+   * title key). The `params` column stores a full i18n context object
+   * containing both title and message keys with their respective parameters,
+   * so the notification can be re-translated at display time if the user's
+   * locale changes.
+   *
+   * @param input.titleKey   - i18n key for the notification title
+   * @param input.titleParams - Interpolation parameters for the title key (optional)
+   * @param input.messageKey  - i18n key for the notification message (optional)
+   * @param input.messageParams - Interpolation parameters for the message key (optional)
    */
   async createLocalized(input: {
     userId: string;
     type: string;
     titleKey: string;
+    titleParams?: Record<string, unknown>;
     messageKey?: string;
     messageParams?: Record<string, unknown>;
     data?: unknown;
@@ -62,7 +75,7 @@ export class NotificationService {
       (user?.locale as Locale | undefined) ?? DEFAULT_LOCALE,
       'notifications'
     );
-    const title = t(input.titleKey, input.messageParams);
+    const title = t(input.titleKey, input.titleParams);
     const message = input.messageKey ? t(input.messageKey, input.messageParams) : undefined;
 
     // Create notification with both canonical data and rendered text
@@ -73,8 +86,13 @@ export class NotificationService {
         type: input.type as NotificationType,
         title, // Rendered text for email/push fallback
         message, // Rendered text for email/push fallback
-        messageKey: input.titleKey, // Canonical key for display-time translation
-        params: (input.messageParams ?? {}) as Prisma.InputJsonValue, // Canonical params
+        messageKey: input.messageKey ?? null, // Canonical message key for display-time translation
+        params: {
+          titleKey: input.titleKey,
+          titleParams: input.titleParams ?? {},
+          messageKey: input.messageKey ?? null,
+          messageParams: input.messageParams ?? {},
+        } as Prisma.InputJsonValue, // Canonical i18n context for re-translation
         data: input.data as Prisma.InputJsonValue,
         createdBy: input.createdBy ?? input.userId,
       },

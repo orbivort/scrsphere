@@ -1,0 +1,524 @@
+{
+  "appName": "Scrumooth",
+  "language": "Language",
+  "selectLanguage": "Select language",
+  "save": "Save",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "edit": "Edit",
+  "loading": "Loading...",
+  "initializing": "Initializing...",
+  "search": "Search",
+  "noResults": "No results found",
+  "confirm": "Confirm",
+  "close": "Close",
+  "back": "Back",
+  "next": "Next",
+  "previous": "Previous",
+  "yes": "Yes",
+  "no": "No",
+  "all": "All",
+  "none": "None",
+  "actions": "Actions",
+  "status": "Status",
+  "created": "Created",
+  "updated": "Updated",
+  "by": "by",
+  "required": "Required",
+  "optional": "Optional",
+  "add": "Add",
+  "remove": "Remove",
+  "create": "Create",
+  "update": "Update",
+  "view": "View",
+  "download": "Download",
+  "upload": "Upload",
+  "refresh": "Refresh",
+  "retry": "Retry",
+  "submit": "Submit",
+  "reset": "Reset",
+  "clear": "Clear",
+  "apply": "Apply",
+  "filter": "Filter",
+  "sort": "Sort",
+  "export": "Export",
+  "import": "Import",
+  "print": "Print",
+  "copy": "Copy",
+  "copied": "Copied!",
+  "undo": "Undo",
+  "redo": "Redo",
+  "expand": "Expand",
+  "collapse": "Collapse",
+  "showMore": "Show more",
+  "showLess": "Show less",
+  "localeSyncFailed": "Failed to sync language preference. It will sync on next login.",
+  "unassigned": "Unassigned",
+  "noTeamSelected": "No team selected",
+  "translationPending": "Translation pending",
+  "unsavedChanges": "Unsaved Changes",
+  "confirmDialog": {
+    "removeMessage": "Are you sure you want to remove {{name}}?",
+    "defaultMessage": "Are you sure you want to proceed?"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "productGoals": "Product Goals",
+    "productBacklog": "Product Backlog",
+    "sprintPlanning": "Sprint Planning",
+    "activeSprint": "Active Sprint",
+    "dailyScrum": "Daily Scrum",
+    "impediments": "Impediments",
+    "increments": "Increments",
+    "sprintReview": "Sprint Review",
+    "retrospective": "Retrospective",
+    "reports": "Reports",
+    "team": "Team",
+    "settingsLabel": "Settings",
+    "notifications": "Notifications",
+    "settings": {
+      "team": "Team",
+      "data": "Data",
+      "sprintConfiguration": "Sprint Configuration",
+      "teamDefinitions": "Team Definitions",
+      "teamManagement": "Team Management",
+      "privacyData": "Privacy & Data"
+    }
+  },
+  "userMenu": {
+    "editProfile": "Edit Profile",
+    "changePassword": "Change Password",
+    "logout": "Logout"
+  },
+  "aria": {
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "toggleSidebar": "Toggle sidebar",
+    "closeDialog": "Close dialog",
+    "navigateTo": "Navigate to {{page}}",
+    "expandSidebar": "Expand sidebar",
+    "collapseSidebar": "Collapse sidebar",
+    "closeModal": "Close modal",
+    "closeForm": "Close form",
+    "closeErrorMessage": "Close error message",
+    "closeNotification": "Close notification",
+    "clearSearch": "Clear search",
+    "viewMode": "View mode",
+    "cardView": "Card view",
+    "listView": "List view",
+    "loadingNotifications": "Loading notifications",
+    "skipToMainContent": "Skip to main content",
+    "switchTeam": "Switch team"
+  },
+  "error": {
+    "boundary": {
+      "title": "Something went wrong",
+      "description": "An unexpected error occurred. You can try again or go back to the dashboard.",
+      "retry": "Try again",
+      "goHome": "Go to dashboard"
+    },
+    "http": {
+      "networkOffline": "You are offline. Please check your connection.",
+      "timeout": "The request took too long. Please try again.",
+      "serverError": "A server error occurred. Our team has been notified."
+    },
+    "operations": {
+      "createBacklogItem": "Failed to create backlog item",
+      "updateBacklogItem": "Failed to update backlog item",
+      "editBacklogItem": "Failed to edit backlog item",
+      "deleteBacklogItem": "Failed to delete backlog item",
+      "createSprint": "Failed to create sprint",
+      "updateSprint": "Failed to update sprint",
+      "deleteSprint": "Failed to delete sprint",
+      "startSprint": "Failed to start sprint",
+      "completeSprint": "Failed to complete sprint",
+      "createTask": "Failed to create task",
+      "updateTask": "Failed to update task",
+      "deleteTask": "Failed to delete task",
+      "createImpediment": "Failed to create impediment",
+      "updateImpediment": "Failed to update impediment",
+      "deleteImpediment": "Failed to delete impediment",
+      "createGoal": "Failed to create goal",
+      "updateGoal": "Failed to update goal",
+      "deleteGoal": "Failed to delete goal",
+      "updateProfile": "Failed to update profile",
+      "changePassword": "Failed to change password",
+      "createTeam": "Failed to create team",
+      "updateTeam": "Failed to update team",
+      "deleteTeam": "Failed to delete team",
+      "addTeamMember": "Failed to add team member",
+      "removeTeamMember": "Failed to remove team member",
+      "updateTeamMemberRole": "Failed to update team member role",
+      "selectTeam": "Failed to select team",
+      "createIncrement": "Failed to create increment",
+      "updateIncrement": "Failed to update increment",
+      "deleteIncrement": "Failed to delete increment",
+      "createReview": "Failed to create review",
+      "updateReview": "Failed to update review",
+      "deleteReview": "Failed to delete review",
+      "createRetrospective": "Failed to create retrospective",
+      "updateRetrospective": "Failed to update retrospective",
+      "deleteRetrospective": "Failed to delete retrospective",
+      "createDefinition": "Failed to create definition",
+      "updateDefinition": "Failed to update definition",
+      "deleteDefinition": "Failed to delete definition",
+      "exportData": "Failed to export data",
+      "importData": "Failed to import data"
+    }
+  },
+  "profile": {
+    "editTitle": "Edit Profile",
+    "changePasswordTitle": "Change Password",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmNewPassword": "Confirm New Password",
+    "saving": "Saving...",
+    "saveChanges": "Save Changes",
+    "profileUpdated": "Profile updated successfully",
+    "passwordChanged": "Password changed successfully",
+    "currentPasswordIncorrect": "Current password is incorrect",
+    "passwordRequirements": "Password must be at least 8 characters and include uppercase, lowercase, number, and special character",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "readOnly": "Read-only",
+    "contactSupportToChangeEmail": "Contact support to change your email address",
+    "placeholder": {
+      "firstName": "Enter your first name",
+      "lastName": "Enter your last name",
+      "currentPassword": "Enter your current password",
+      "newPassword": "Enter your new password",
+      "confirmPassword": "Confirm your new password"
+    },
+    "passwordStrength": {
+      "requirementsTitle": "Password Requirements:",
+      "minLength": "At least 12 characters",
+      "uppercase": "One uppercase letter (A-Z)",
+      "lowercase": "One lowercase letter (a-z)",
+      "number": "One number (0-9)",
+      "special": "One special character (!@#$%^&*)",
+      "strengthLabels": {
+        "weak": "Weak",
+        "medium": "Medium",
+        "strong": "Strong"
+      }
+    },
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "passwordsMatch": "Passwords match",
+    "changing": "Changing..."
+  },
+  "deleteAccount": {
+    "title": "Delete Account",
+    "close": "Close",
+    "warningTitle": "This action is permanent and cannot be undone. All your data will be permanently deleted.",
+    "accountToBeDeleted": "Account to be deleted",
+    "dataWillBeDeleted": "Data that will be deleted",
+    "profileAndAccount": "Your profile and account information",
+    "teamMemberships": "Team memberships and roles",
+    "teamsCount": "({{count}} teams)",
+    "associatedData": "All associated data and activity history",
+    "confirmationLabel": "Type <strong>{{phrase}}</strong> to confirm",
+    "confirmationPlaceholder": "Type {{phrase}}",
+    "confirmationHelp": "This helps prevent accidental deletion",
+    "confirmationCheckbox": "I understand that this action is permanent and cannot be undone. I want to delete my account and all associated data.",
+    "scheduleConfirmationLabel": "Type <strong>{{phrase}}</strong> to schedule deletion",
+    "scheduleConfirmationPlaceholder": "Type {{phrase}}",
+    "scheduleConfirmationHelp": "This starts a 14-day grace period",
+    "scheduleCheckbox": "I understand that a 14-day grace period will begin, during which team members will be notified. I can cancel at any time.",
+    "whatHappensNext": "What happens next",
+    "teamMembersNotified": "Team members have been notified",
+    "canAssignNewPO": "You can still assign a new Product Owner",
+    "afterDeletionDate": "After the deletion date, you can force-delete your account",
+    "canCancelAnytime": "You can cancel this request at any time",
+    "forceDeleteWarning": "This will leave teams without a Product Owner",
+    "forceConfirmationHelp": "This action cannot be undone",
+    "forceCheckbox": "I understand that teams will lose their Product Owner and I want to permanently delete my account anyway.",
+    "cancelDeletion": "Cancel Deletion",
+    "deleteAnyway": "Delete Anyway",
+    "deleteAccount": "Delete Account",
+    "scheduleDeletion": "Schedule Deletion",
+    "deleting": "Deleting...",
+    "scheduling": "Scheduling...",
+    "dangerZone": {
+      "title": "Danger Zone",
+      "subtitle": "Irreversible and destructive",
+      "expand": "Expand Danger Zone",
+      "collapse": "Collapse Danger Zone",
+      "deleteAccount": {
+        "title": "Delete Account",
+        "description": "Permanently remove your account and all associated data",
+        "ariaLabel": "Delete your account permanently"
+      },
+      "delete": "Delete"
+    },
+    "confirmationInput": {
+      "label": "To confirm deletion, please type:",
+      "placeholder": "Type \"{{phrase}}\" to confirm",
+      "instructions": "Type the phrase exactly as shown, case-sensitive, to enable the delete button. Press Enter when the phrase matches to submit.",
+      "error": "Phrase does not match. Please type exactly:",
+      "success": "Confirmation phrase matches"
+    },
+    "deletionRightsNotice": {
+      "title": "Your Right to Erasure",
+      "description": "You have the right to delete your account. Since you are the last Product Owner, we ask that you schedule deletion with a 14-day grace period so your teams can prepare.",
+      "list": {
+        "teamMembersNotified": "Team members will be notified",
+        "assignNewPO": "You can assign a new Product Owner",
+        "cancelAnytime": "You can cancel the deletion at any time"
+      },
+      "afterGracePeriod": "After 14 days, you can permanently delete your account regardless."
+    },
+    "forceDeleteWarning": {
+      "title": "Grace Period Complete",
+      "description": "The 14-day grace period has ended. You can now permanently delete your account.",
+      "impact": {
+        "title": "This will:",
+        "removePO": "Remove you as Product Owner from teams with no replacement assigned",
+        "deleteAllData": "Delete all your data permanently",
+        "cannotUndo": "This action CANNOT be undone"
+      },
+      "teams": {
+        "title": "The following teams will have NO Product Owner:",
+        "consequences": "These teams will not be able to add or remove team members, manage sprints, or access team settings."
+      }
+    },
+    "gracePeriodProgress": {
+      "title": "Deletion Scheduled",
+      "requested": "Requested",
+      "deletionDate": "Deletion date",
+      "daysRemaining": "Days remaining",
+      "progressAriaLabel": "{{percent}}% of grace period elapsed"
+    },
+    "teamImpact": {
+      "title": "Team Impact",
+      "description": "You are a member of {{count}} team",
+      "description_plural": "You are a member of {{count}} teams",
+      "blocked": {
+        "warning": "You are the only Product Owner. If you delete your account, this team will have no Product Owner. You can schedule deletion with a 14-day grace period.",
+        "goToSettings": "Go to Team Settings",
+        "goToSettingsAria": "Go to {{teamName}} settings to assign a new Product Owner"
+      },
+      "regular": {
+        "message": "You will be removed from this team."
+      }
+    }
+  },
+  "unsavedChanges": {
+    "title": "Unsaved Changes",
+    "message": "You have unsaved changes. Are you sure you want to discard them?",
+    "subtitle": "Please review before continuing",
+    "attentionRequired": "Attention Required",
+    "unsavedModifications": "Unsaved modifications detected",
+    "permanentlyLost": "Your changes will be permanently lost if you discard them. This action cannot be undone.",
+    "whatWouldYouDo": "What would you like to do?",
+    "goBack": "Go Back",
+    "goBackDescription": "Continue editing and save your changes",
+    "discard": "Discard",
+    "discardDescription": "Close without saving and lose all modifications",
+    "discardChanges": "Discard Changes",
+    "messages": {
+      "profileEdit": "You have unsaved changes in the profile edit form. Are you sure you want to discard them?",
+      "passwordChange": "You have unsaved changes in the password change form. Are you sure you want to discard them?"
+    }
+  },
+  "unsavedChangesModal": {
+    "title": "Unsaved Changes",
+    "message": "You have unsaved changes. Are you sure you want to discard them?",
+    "discard": "Discard",
+    "keepEditing": "Keep Editing"
+  },
+  "draftRestore": {
+    "unsavedDraftFound": "Unsaved Draft Found",
+    "restorePrompt": "Restore unsaved progress?",
+    "draftFound": "We found a draft you were working on {{time}}.",
+    "discard": "Discard",
+    "restoreDraft": "Restore Draft",
+    "draftSaved": "Draft saved",
+    "justNow": "just now",
+    "recently": "recently",
+    "startFresh": "Start Fresh",
+    "minutesAgo": "{{count}} minute ago",
+    "minutesAgo_other": "{{count}} minutes ago",
+    "hoursAgo": "{{count}} hour ago",
+    "hoursAgo_other": "{{count}} hours ago",
+    "daysAgo": "{{count}} day ago",
+    "daysAgo_other": "{{count}} days ago"
+  },
+  "chunkError": {
+    "title": "Unable to load page",
+    "description": "A portion of the application failed to load. This may be due to a network issue or an outdated version.",
+    "reload": "Reload"
+  },
+  "helpPanel": {
+    "title": "Tips",
+    "tipsFor": "Tips for {{title}}",
+    "goodExample": "✓ Good example:",
+    "avoidExample": "✗ Avoid:"
+  },
+  "characterCounter": {
+    "min": "{{current}}/{{max}} characters",
+    "approachingLimit": "Approaching character limit"
+  },
+  "loadingStates": {
+    "loadingContent": "Loading content",
+    "loadingListItems": "Loading list items",
+    "loadingChart": "Loading chart",
+    "loadingCardContent": "Loading card content"
+  },
+  "errorBoundary": {
+    "title": "Something went wrong",
+    "networkError": "Unable to connect to the server. Please check your internet connection.",
+    "authError": "Your session has expired. Please log in again.",
+    "validationError": "Invalid data provided. Please check your input.",
+    "notFoundError": "The requested resource was not found.",
+    "i18nError": "Failed to load language resources. Please reload the page.",
+    "runtimeError": "An unexpected error occurred. Please try again.",
+    "defaultError": "An error occurred. Please try again later.",
+    "devDetails": "Error Details (Development Only)",
+    "tryAgain": "Try Again",
+    "reloadPage": "Reload Page",
+    "connectionError": "Connection Error",
+    "timeoutError": "The request timed out. Please try again.",
+    "forbiddenError": "You do not have permission to perform this action.",
+    "serverError": "A server error occurred. Please try again later.",
+    "apiError": "An error occurred while communicating with the server."
+  },
+  "pageError": {
+    "title": "{{pageName}} Error",
+    "description": "We encountered an error while loading this page. This might be due to a temporary issue or a problem with your connection.",
+    "reloadPage": "Reload Page",
+    "backToDashboard": "Back to Dashboard",
+    "technicalDetails": "Technical Details"
+  },
+  "widgetError": {
+    "failedToLoad": "{{widgetName}} failed to load",
+    "retryAria": "Retry loading {{widgetName}}"
+  },
+  "sessionWarning": {
+    "title": "Session Timeout Warning",
+    "message": "Your session will expire soon due to inactivity. You will be automatically logged out in:",
+    "extending": "Extending...",
+    "stayLoggedIn": "Stay Logged In",
+    "logOut": "Log Out"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark all as read",
+    "loading": "Loading notifications...",
+    "empty": "No notifications yet",
+    "viewAll": "View all notifications",
+    "connectionError": "Connection error"
+  },
+  "teamSelection": {
+    "title": "Select a Team",
+    "loading": "Loading teams...",
+    "empty": "You don't have any teams yet.",
+    "goToTeamPage": "Go to Team Page",
+    "switching": "Switching...",
+    "roles": {
+      "productOwner": "Product Owner",
+      "scrumMaster": "Scrum Master",
+      "developer": "Developer"
+    }
+  },
+  "errorMessage": {
+    "dismiss": "Dismiss error message"
+  },
+  "emptyState": {
+    "noTeam": {
+      "title": "No Team Selected",
+      "description": "Please select a team to continue."
+    },
+    "noActiveGoal": {
+      "title": "No Active Goal",
+      "description": "Please set an active product goal before continuing.",
+      "action": "Go to Product Goals"
+    },
+    "noActiveSprint": {
+      "title": "No Active Sprint",
+      "description": "Start a new sprint from Sprint Planning to continue.",
+      "action": "Go to Sprint Planning"
+    },
+    "noCompletedSprint": {
+      "title": "No Completed Sprint",
+      "description": "Complete a sprint to start tracking."
+    },
+    "noData": {
+      "title": "No Data Available",
+      "description": "There is no data to display at this time."
+    },
+    "error": {
+      "title": "Something Went Wrong",
+      "description": "An error occurred while loading the data. Please try again."
+    }
+  },
+  "statusSelector": {
+    "currentStatusLocked": "Current status: {{status}} (locked)",
+    "currentStatusClickable": "Current status: {{status}}. Click to change status.",
+    "statusOptions": "Status options",
+    "changeStatus": "Change Status",
+    "changeItemStatusHint": "Click to change item status"
+  },
+  "attendeeForm": {
+    "nameRequired": "Name is required",
+    "nameMaxLength": "Name must be 100 characters or less",
+    "emailInvalid": "Please enter a valid email address",
+    "roleRequired": "Role is required"
+  },
+  "attendeesSection": {
+    "title": "Attendees",
+    "attendanceCount": "{{attended}} / {{total}} attended",
+    "addAttendees": "Add Attendees",
+    "addAttendeesAriaLabel": "Add Attendees",
+    "cannotAddToCompleted": "Cannot add to a completed review",
+    "filterAriaLabel": "Filter attendees by type",
+    "filterAll": "All ({{count}})",
+    "filterTeam": "Team ({{count}})",
+    "filterGuests": "Guests ({{count}})",
+    "unmarkedTitle": "Team members not yet marked ({{count}})",
+    "markAsAttended": "Mark as attended",
+    "markAsAbsent": "Mark as absent",
+    "attended": "Attended",
+    "absent": "Absent",
+    "emptyMessage": "No attendees recorded yet.",
+    "emptyHint": "Mark team members above or add attendees manually.",
+    "addAttendeeTitle": "Add Attendee",
+    "editAttendeeTitle": "Edit Attendee",
+    "addAttendeeSubtitle": "Add a new attendee to this review session",
+    "editAttendeeSubtitle": "Update attendee information for this review",
+    "formNameLabel": "Name",
+    "formNameRequired": "*",
+    "formNamePlaceholder": "Enter attendee name",
+    "formEmailLabel": "Email",
+    "formEmailPlaceholder": "Enter email address (optional)",
+    "formRoleLabel": "Role",
+    "formRoleRequired": "*",
+    "formAttendedLabel": "Attended",
+    "roleProductOwner": "Product Owner",
+    "roleScrumMaster": "Scrum Master",
+    "roleDeveloper": "Developer",
+    "roleStakeholder": "Stakeholder",
+    "cancel": "Cancel",
+    "saving": "Saving...",
+    "addAttendee": "Add Attendee",
+    "update": "Update",
+    "saveError": "Failed to save attendee. Please try again.",
+    "closeModal": "Close modal",
+    "removeAttendeeTitle": "Remove Attendee",
+    "removeAttendeeConfirm": "Remove",
+    "teamMemberCannotEdit": "Team members cannot be edited",
+    "editAttendee": "Edit attendee",
+    "removeAttendee": "Remove attendee"
+  },
+  "dateInput": {
+    "clearDate": "Clear date",
+    "openCalendar": "Open calendar"
+  },
+  "permission": {
+    "transitionError": "You do not have permission to perform this transition.",
+    "actionError": "You do not have permission to perform this action.",
+    "insufficientRoles": "Insufficient permissions. Required roles: {{roles}}"
+  }
+}

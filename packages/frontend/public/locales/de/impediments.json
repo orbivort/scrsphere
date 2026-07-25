@@ -70,7 +70,9 @@
     "saveResolution": "Losung speichern",
     "saving": "Speichern...",
     "deleting": "Loschen...",
-    "deleteLabel": "Loschen"
+    "deleteLabel": "Loschen",
+    "cancel": "Cancel",
+    "close": "Close"
   },
   "deleteModal": {
     "title": "Hindernis loschen",

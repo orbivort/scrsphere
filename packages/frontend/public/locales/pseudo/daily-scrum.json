@@ -1,0 +1,163 @@
+{
+  "title": "[Dàíly Scrúmmmmm]",
+  "subtitle": "[{{sprintName}} - DDààyy {{day}}]",
+  "viewMode": {
+    "cards": "[Càrdsss]",
+    "list": "[LLíísst]"
+  },
+  "datePicker": {
+    "label": "[Séléct dàté fór dàíly úpdàtéssssssssss]",
+    "ariaLabel": "[Séléct dàté fór dàíly úpdàtéssssssssss]"
+  },
+  "quickDates": {
+    "today": "[Tódàyyy]",
+    "yesterday": "[Yéstérdàyyyy]"
+  },
+  "stats": {
+    "submitted": "[Súbmíttédddd]",
+    "pending": "[Péndíngggg]",
+    "impediments": "[Ímpédíméntsssss]",
+    "participation": "[Pàrtícípàtíónnnnn]"
+  },
+  "teamUpdates": "[Téàm Úpdàtésssss]",
+  "yourDailyUpdate": "[Yóúr Dàíly Úpdàtééééééé]",
+  "submitUpdate": "[Súbmít Úpdàtééééé]",
+  "templates": {
+    "featureDevelopment": "[Féàtúré Dévélópménttttttt]",
+    "issueFixing": "[Íssúé Fíxínggggg]",
+    "review": "[Révíéwww]",
+    "meetings": "[Méétíngssss]"
+  },
+  "form": {
+    "yesterdayLabel": "[Whàt díd yóú dó yéstérdày tó hélp téàm méét thé sprínt góàlllllllllllllllllll?]",
+    "todayLabel": "[Whàt wíll yóú dó tódày tó hélp téàm méét thé sprínt góàlllllllllllllllllll?]",
+    "impedimentLabel": "[Àny ímpédíménts? (óptíónàllllllllll)]",
+    "yesterdayPlaceholder": "[Déscríbé whàt yóú àccómplíshéd yéstérdàyyyyyyyyyyyyyy...]",
+    "todayPlaceholder": "[Déscríbé whàt yóú plàn tó wórk ón tódàyyyyyyyyyyyyyy...]",
+    "impedimentPlaceholder": "[Déscríbé àny blóckérs ór ímpédíméntsssssssssssss...]",
+    "impedimentHint": "[Thís ímpédímént wíll bé tràckéd ànd càn bé prómótéd tó à fórmàl ímpédímént récórdddddddddddddddddddddddddd]",
+    "cancel": "[Càncélll]",
+    "submitting": "[Súbmíttínggggg...]"
+  },
+  "emptyState": {
+    "noUpdates": "[Nó Úpdàtés Yétttttt]",
+    "beFirst": "[Bé thé fírst tó súbmít yóúr dàíly úpdàtéééééééééééééé!]",
+    "noUpdatesForDate": "[Nó téàm úpdàtés fór thís dàtéééééééééé.]"
+  },
+  "waitingForUpdates": {
+    "title": "[Wàítíng fór Úpdàtésssssss]",
+    "sendReminder": "[Sénd Rémíndérrrrr]",
+    "sending": "[Séndíngggg...]"
+  },
+  "activeImpediments": {
+    "title": "[Àctívé Ímpédíméntsssssss]",
+    "tracked": "[Tràckédddd]",
+    "trackedImpediment": "[Tràckéd ímpédíménttttttt]",
+    "untrackedImpediment": "[Úntràckéd ímpédíménttttttt]",
+    "viewDetails": "[Víéw Détàílsssss]",
+    "trackAsImpediment": "[Tràck às Ímpédíménttttttt]",
+    "viewAllImpediments": "[Víéw àlllll {{count}} ímpédíméntsssss]"
+  },
+  "sprintProgress": {
+    "title": "[Sprínt Prógrésssssss]",
+    "dayOfTotal": "[DDàày {{current}} óóff {{total}}]",
+    "viewSprintBoard": "[Víéw Sprínt Bóàrddddddd]"
+  },
+  "sprintGoal": {
+    "label": "[Sprínt Góàlllll]",
+    "noGoalDefined": "[Nó sprínt góàl défínédddddddd.]",
+    "addInPlanning": "[Àdd óné ín Sprínt Plànnínggggggggg]"
+  },
+  "updateCard": {
+    "yesterday": "[Yéstérdàyyyy]",
+    "today": "[Tódàyyy]",
+    "impediment": "[Ímpédíméntttt]",
+    "tracked": "[(Tràckédddd)]",
+    "viewImpediment": "[Víéw Ímpédíméntttttt]",
+    "viewImpedimentDetails": "[Víéw Ímpédímént Détàílssssssss]",
+    "trackAsImpediment": "[Tràck às Ímpédíménttttttt]",
+    "trackAsFormalImpediment": "[Tràck às Fórmàl Ímpédíménttttttttt]",
+    "clickToCollapse": "[Clíck tó cóllàpsééééééé]",
+    "clickToExpand": "[Clíck tó éxpàndddddd]"
+  },
+  "impedimentStatus": {
+    "open": "[ÓÓppéén]",
+    "inProgress": "[Ín Prógréssssss]",
+    "resolved": "[Résólvédddd]",
+    "closed": "[Clóséddd]"
+  },
+  "promoteModal": {
+    "title": "[Créàté Ímpédímént fróm Dàíly Úpdàtéééééééééééé]",
+    "fromUpdateBy": "[Fróm Dàíly Úpdàté byyyyyyyy:]",
+    "originalImpedimentText": "[Órígínàl Ímpédímént Téxttttttttt:]",
+    "titleLabel": "[Títlééé]",
+    "titlePlaceholder": "[Bríéf títlé fór thé ímpédíméntttttttttt]",
+    "descriptionLabel": "[Déscríptíónnnnn]",
+    "descriptionPlaceholder": "[Détàíléd déscríptíón óf thé ímpédíménttttttttttttt]",
+    "priority": "[Príórítyyyy]",
+    "priorityHigh": "[HHííggh]",
+    "priorityMedium": "[Médíúmmm]",
+    "priorityLow": "[Lóww]",
+    "createImpediment": "[Créàté Ímpédíménttttttt]",
+    "creating": "[CCrrééààttíínng...]"
+  },
+  "draftRestore": {
+    "title": "[Únsàvéd Dràft Fóúnddddddd]",
+    "prompt": "[Wóúld yóú líké tó réstóré yóúr prévíóús dràfttttttttttttttt?]",
+    "discard": "[Díscàrdddd]",
+    "restoreDraft": "[Réstóré Dràfttttt]"
+  },
+  "retryPrompt": {
+    "title": "[Súbmíssíón Fàíléddddddd]",
+    "message": "[Yóúr úpdàté cóúld nót bé súbmíttéd. Yóúr dàtà hàs béén présérvéddddddddddddddddddddd.]",
+    "dismiss": "[Dísmísssss]",
+    "retrySubmission": "[Rétry Súbmíssíónnnnnn]",
+    "retrying": "[RRééttrryyíínng...]"
+  },
+  "unsavedModal": {
+    "title": "[Únsàvéd Chàngéssssss]",
+    "message": "[Yóú hàvé únsàvéd chàngés ín thé ímpédímént fórm. Àré yóú súré yóú wànt tó díscàrd thémmmmmmmmmmmmmmmmmmmmmmmmmmmm?]"
+  },
+  "validation": {
+    "titleRequired": "[Títlé ís réqúíréddddddd]",
+    "titleTooShort": "[Títlé múst bé àt léàst 3 chàràctérssssssssssss]",
+    "descriptionRequired": "[Déscríptíón ís réqúírédddddddd]",
+    "descriptionTooShort": "[Déscríptíón múst bé àt léàst 10 chàràctérssssssssssssss]"
+  },
+  "aria": {
+    "viewMode": "[Víéw módéééé]",
+    "closeForm": "[Clósé fórmmmm]",
+    "closeDialog": "[Clósé díàlóggggg]",
+    "trackedAsFormalImpediment": "[Tràckéd às fórmàl ímpédíméntttttttttt]",
+    "impedimentStatus": "[Ímpédímént stàtússsssss: {{status}}]",
+    "dailyUpdateAriaLabel": "[{{name}}'ss ddààííllyy úúppddààtté. {{expandAction}}.]",
+    "clickToCollapse": "[Clíck tó cóllàpsééééééé]",
+    "clickToExpand": "[Clíck tó éxpàndddddd]"
+  },
+  "draftSaved": "[Dràft sàvéddddd {{timeSince}}]",
+  "formatTimeSince": {
+    "justNow": "[júst nówwww]",
+    "minutesAgo": "[{{count}}mm ààggó]",
+    "hoursAgo": "[{{count}}hh ààggó]",
+    "daysAgo": "[{{count}}dd ààggó]"
+  },
+  "toast": {
+    "updateSubmitted": "[Úpdàté súbmíttéd súccéssfúllyyyyyyyyyy!]",
+    "impedimentCreated": "[Ímpédímént créàtéd súccéssfúllyyyyyyyyyyy!]",
+    "reminderSent": "[Rémíndér séntttttt!]",
+    "noPendingUpdates": "[Nó péndíng úpdàtésssssss]",
+    "remindersSentOne": "[Rémíndérs sént tó 1 téàm mémbérrrrrrrrrrr]",
+    "remindersSentPlural": "[Rémíndérs sént tóóóóóóó {{count}} téàm mémbérsssss]",
+    "allSubmitted": "[Àll téàm mémbérs hàvé súbmíttéd théír úpdàtésssssssssssssss]",
+    "offline": "[Yóú àppéàr tó bé ófflíné. Pléàsé chéck yóúr íntérnét cónnéctíón ànd try àgàínnnnnnnnnnnnnnnnnnnnnnnnn.]",
+    "networkError": "[À nétwórk érrór óccúrréd. Pléàsé chéck yóúr cónnéctíón ànd try àgàínnnnnnnnnnnnnnnnnnnnnn.]",
+    "sessionExpired": "[Yóúr séssíón hàs éxpíréd. Pléàsé lóg ín àgàínnnnnnnnnnnnnnn.]",
+    "noPermissionCreateImpediments": "[Yóú dó nót hàvé pérmíssíón tó créàté ímpédíméntssssssssssssssss.]",
+    "serverError": "[À sérvér érrór óccúrréd. Pléàsé try àgàín làtérrrrrrrrrrrrrrrr.]",
+    "failedCreateImpediment": "[Fàíléd tó créàté ímpédímént. Pléàsé try àgàínnnnnnnnnnnnnnn.]",
+    "noPermissionReminders": "[Yóú dó nót hàvé pérmíssíón tó sénd rémíndérsssssssssssssss.]",
+    "failedSendReminder": "[Fàíléd tó sénd rémíndér. Pléàsé try àgàínnnnnnnnnnnnnn.]",
+    "submitFailed": "[Fàíléd tó súbmít úpdàté. Pléàsé try àgàínnnnnnnnnnnnnn.]",
+    "resourceNotFound": "[Thé réqúéstéd résóúrcé wàs nót fóúnddddddddddddd.]"
+  }
+}

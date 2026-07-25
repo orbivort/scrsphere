@@ -161,7 +161,19 @@
     "selectMoscowPriority": "MoSCoW Priorität auswählen",
     "removeLabel": "Label {{label}} entfernen",
     "unsavedTitle": "Ungespeicherte Änderungen",
-    "unsavedMessage": "Sie haben ungespeicherte Änderungen. Sind Sie sicher, dass Sie sie verwerfen wollen?"
+    "unsavedMessage": "Sie haben ungespeicherte Änderungen. Sind Sie sicher, dass Sie sie verwerfen wollen?",
+    "businessValue1": "1 - Minimal value",
+    "businessValue2": "2 - Low value",
+    "businessValue3": "3 - Moderate value",
+    "businessValue5": "5 - High value",
+    "businessValue8": "8 - Very high value",
+    "businessValue13": "13 - Critical value",
+    "effort1": "1 - Trivial effort",
+    "effort2": "2 - Very small effort",
+    "effort3": "3 - Small effort",
+    "effort5": "5 - Medium effort",
+    "effort8": "8 - Large effort",
+    "effort13": "13 - Very large effort"
   },
   "deleteItem": {
     "title": "Backlog-Eintrag löschen",
@@ -724,6 +736,8 @@
     "inProgressDescription": "Einträge in Arbeit können abgeschlossen oder zurück zu bereit gesetzt werden",
     "doneDescription": "Abgeschlossene Einträge können nicht überführt werden"
   },
+  "businessValue": "Business Value",
+  "effortStoryPoints": "Effort (Story Points)",
   "success": {
     "itemCreated": "Backlog-Element erfolgreich erstellt",
     "itemUpdated": "Backlog-Element erfolgreich aktualisiert",

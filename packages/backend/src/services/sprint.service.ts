@@ -967,6 +967,7 @@ class SprintService {
           userId: data.assigneeId,
           type: NotificationType.TASK_ASSIGNMENT,
           titleKey: 'newTaskAssignedTitle',
+          titleParams: { taskTitle: task.title },
           messageKey: 'newTaskAssignedMessage',
           messageParams: { taskTitle: task.title, sprintName: task.sprint.name },
           data: {
@@ -1096,6 +1097,7 @@ class SprintService {
             userId: data.assigneeId,
             type: NotificationType.TASK_ASSIGNMENT,
             titleKey: 'taskReassignedTitle',
+            titleParams: { taskTitle: task.title },
             messageKey: 'taskReassignedMessage',
             messageParams: { taskTitle: task.title, sprintName: task.sprint.name },
             data: {

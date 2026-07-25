@@ -187,6 +187,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         <div className={styles['sidebar-header']}>
           <h1 className={styles.logo}>
             <ScrumoothIcon size={40} />
+            {/* eslint-disable-next-line no-literal-jsx-string/no-literal-jsx-string -- App brand name should not be translated */}
             <span className={styles['logo-text']}>Scrumooth</span>
           </h1>
           <button

@@ -1,0 +1,101 @@
+{
+  "title": "[Répórtssss]",
+  "subtitle": "[Tràck téàm pérfórmàncé ànd sprínt métrícssssssssssssss]",
+  "skipToMainContent": "[Skíp tó màín cónténttttttt]",
+  "error": {
+    "title": "[Érrór Lóàdíng Répórtssssssss]",
+    "message": "[Únàblé tó lóàd répórt dàtà. Pléàsé try àgàín làtérrrrrrrrrrrrrrrrr.]"
+  },
+  "metrics": {
+    "avgVelocity": {
+      "title": "[Àvéràgé Vélócítyyyyyy]",
+      "unit": "[Stóry Póínts pér Spríntttttttt]",
+      "fromLastSprint": "[fróm làst spríntttttt]"
+    },
+    "sprintSuccessRate": {
+      "title": "[Sprínt Súccéss Ràtééééééé]",
+      "unit": "[Sprínt Góàls Métttttt]",
+      "fromLastMonth": "[fróm làst mónthhhhhh]"
+    },
+    "impediments": {
+      "title": "[Ímpédíméntsssss]",
+      "resolved": "[Résólvédddd]",
+      "openCount": "[ópén ímpédímént(sssssss)]"
+    },
+    "teamSatisfaction": {
+      "title": "[Téàm Sàtísfàctíónnnnnnn]",
+      "unit": "[Àvéràgé Ràtíngggggg]",
+      "fromLastSprint": "[fróm làst spríntttttt]"
+    }
+  },
+  "sprintHistory": {
+    "title": "[Sprínt Hístóryyyyyy]",
+    "empty": "[Nó sprínt hístóry àvàílàbléééééééééé.]",
+    "stats": {
+      "planned": "[Plànnédddd]",
+      "completed": "[Cómplétédddd]",
+      "teamMembers": "[Téàm Mémbérsssss]",
+      "impediments": "[Ímpédíméntsssss]"
+    }
+  },
+  "sprintStatusLabels": {
+    "PLANNED": "[Plànnédddd]",
+    "ACTIVE": "[Àctívééé]",
+    "COMPLETED": "[Cómplétédddd]"
+  },
+  "insights": {
+    "title": "[Kéy Ínsíghtsssss]",
+    "empty": "[Nó ínsíghts àvàílàblé yét. Cómplété móré sprínts tó généràté ínsíghtssssssssssssssssssssss.]",
+    "items": {
+      "velocity-improvement": {
+        "title": "[Vélócíty Ímpróvéménttttttt]",
+        "description": "[Àvéràgé vélócíty íncréàséd byyyyyyyyyy {{trend}}% cómpàréd tó prévíóús spríntssssssssss]"
+      },
+      "velocity-decline": {
+        "title": "[Vélócíty Déclínéééééé]",
+        "description": "[Àvéràgé vélócíty décréàséd byyyyyyyyyy {{trend}}%. Cónsídér révíéwíng sprínt plànnínggggggggggggg.]"
+      },
+      "consistent-delivery": {
+        "title": "[Cónsístént Délívéryyyyyyy]",
+        "description": "[Téàm hàs màíntàínéd 100% sprínt góàl cómplétíón ín thé làsttttttttttttttttttt {{count}} spríntssss]"
+      },
+      "impediment-trend": {
+        "title": "[Ímpédímént Tréndddddd]",
+        "description": "[{{count}} ímpédímént(s) cúrréntly ópén. Cónsídér àddréssíng próàctívélyyyyyyyyyyyyyyyyyyyy.]"
+      },
+      "high-success-rate": {
+        "title": "[Hígh Súccéss Ràtééééééé]",
+        "description": "[Téàm hàs àchíévéddddddd {{rate}}% sprínt súccéss ràté. Kéép úp thé gréàt wórkkkkkkkkkkkkkkk!]"
+      },
+      "low-success-rate": {
+        "title": "[Súccéss Ràté Àtténtíónnnnnnnn]",
+        "description": "[Sprínt súccéss ràté íssssssss {{rate}}%. Cónsídér révíéwíng sprínt càpàcíty ànd plànnínggggggggggggggggg.]"
+      },
+      "recent-improvement": {
+        "title": "[Récént Ímpróvéménttttttt]",
+        "description": "[Làst sprínt shówéddddddd {{improvement}}% ímpróvémént ín cómplétéd stóry póíntsssssssssssss.]"
+      },
+      "active-sprint-impediments": {
+        "title": "[Àctívé Sprínt Ímpédíméntsssssssss]",
+        "description": "[Cúrrént sprínt hàsssssss {{count}} ímpédímént(s). Mónítór clósélyyyyyyyyyyy.]"
+      },
+      "get-started": {
+        "title": "[Géttíng Stàrtédddddd]",
+        "description": "[Cómplété móré sprínts tó généràté téàm pérfórmàncé ínsíghtsssssssssssssssssss.]"
+      }
+    }
+  },
+  "velocityChart": {
+    "title": "[Sprínt Vélócítyyyyyy]",
+    "yAxisLabel": "[Stóry Póíntsssss]",
+    "xAxisLabel": "[Sprínttt]",
+    "planned": "[Plànnédddd]",
+    "completed": "[Cómplétédddd]"
+  },
+  "loading": {
+    "velocityChart": "[Lóàdíng vélócíty chàrttttttttt...]",
+    "metrics": "[Lóàdíng métrícsssssss...]",
+    "sprintHistory": "[Lóàdíng sprínt hístóryyyyyyyyy...]",
+    "insights": "[Lóàdíng ínsíghtsssssss...]"
+  }
+}

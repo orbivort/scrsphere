@@ -70,7 +70,9 @@
     "saveResolution": "Save Resolution",
     "saving": "Saving...",
     "deleting": "Deleting...",
-    "deleteLabel": "Delete"
+    "deleteLabel": "Delete",
+    "cancel": "Cancel",
+    "close": "Close"
   },
   "deleteModal": {
     "title": "Delete Impediment",

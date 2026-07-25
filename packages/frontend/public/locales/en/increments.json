@@ -1,5 +1,6 @@
 {
   "title": "Increments",
+  "pts": "pts",
   "subtitle": "Manage and track your product increments. Increments represent working, usable functionality that is ready for delivery to stakeholders.",
   "createIncrement": "Create Increment",
   "loading": "Loading increments...",
