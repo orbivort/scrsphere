@@ -2,6 +2,7 @@ import { type Request, type Response, type NextFunction } from 'express';
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES, type Locale } from '@scrumooth/shared';
 import { normalizeLocale } from '@scrumooth/shared';
 import { updateRequestContext } from '../utils/requestContext.js';
+import { getLocaleCookieOptions, COOKIE_NAMES } from '../utils/cookieConfig.js';
 
 /**
  * Resolves the request locale and stores it in the AsyncLocalStorage request context.
@@ -36,14 +37,7 @@ export function localeResolver(req: Request, _res: Response, next: NextFunction)
   }
 
   // Persist the locale cookie so SSR/refresh renders the correct language pre-hydration
-  // maxAge is in milliseconds: 1 year = 365 * 24 * 60 * 60 * 1000 = 31536000000
-  _res.cookie('scrumooth_locale', locale, {
-    maxAge: 365 * 24 * 60 * 60 * 1000, // 1 year in milliseconds
-    sameSite: 'strict',
-    secure: true,
-    httpOnly: false,
-    path: '/',
-  });
+  _res.cookie(COOKIE_NAMES.LOCALE, locale, getLocaleCookieOptions());
 
   updateRequestContext({ locale });
   next();

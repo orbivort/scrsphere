@@ -27,6 +27,13 @@ export function initI18n(): Promise<TFunction> {
       order: ['cookie', 'navigator'],
       lookupCookie: 'scrumooth_locale',
       caches: ['cookie'],
+      // Align cookie cache attributes with Zustand setLocale and backend locale.middleware
+      // so all three writers produce consistent cookie metadata.
+      cookieOptions: {
+        path: '/',
+        sameSite: 'strict',
+        secure: window.location.protocol === 'https:',
+      },
     },
 
     fallbackLng: DEFAULT_LOCALE,

@@ -12,6 +12,7 @@ import {
   getAccessTokenCookieOptions,
   getRefreshTokenCookieOptions,
   getClearCookieOptions,
+  getLocaleCookieOptions,
   COOKIE_NAMES,
 } from '../utils/cookieConfig';
 import {
@@ -84,13 +85,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   );
 
   // Set locale cookie for SSR/refresh
-  res.cookie('scrumooth_locale', result.user.locale, {
-    maxAge: 31536000,
-    sameSite: 'strict',
-    secure: true,
-    httpOnly: false,
-    path: '/',
-  });
+  res.cookie(COOKIE_NAMES.LOCALE, result.user.locale, getLocaleCookieOptions());
 
   // Return user and session info, but NOT tokens
   res.status(201).json(
@@ -125,13 +120,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     );
 
     // Set locale cookie for SSR/refresh
-    res.cookie('scrumooth_locale', result.user.locale, {
-      maxAge: 31536000,
-      sameSite: 'strict',
-      secure: true,
-      httpOnly: false,
-      path: '/',
-    });
+    res.cookie(COOKIE_NAMES.LOCALE, result.user.locale, getLocaleCookieOptions());
 
     // Return user and session info, but NOT tokens
     res.json(
@@ -400,13 +389,7 @@ export const updateProfile = asyncHandler(async (req: Request, res: Response) =>
   }
 
   // Keep the locale cookie in sync for SSR/refresh
-  res.cookie('scrumooth_locale', user.locale, {
-    maxAge: 31536000,
-    sameSite: 'strict',
-    secure: true,
-    httpOnly: false,
-    path: '/',
-  });
+  res.cookie(COOKIE_NAMES.LOCALE, user.locale, getLocaleCookieOptions());
 
   res.json(createSuccessResponse(user));
 });

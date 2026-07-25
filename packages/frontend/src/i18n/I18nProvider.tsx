@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { I18nextProvider } from 'react-i18next';
-import { getDirection, isSupportedLocale, type Locale } from '@scrumooth/shared';
+import { getDirection, isSupportedLocale, normalizeLocale, type Locale } from '@scrumooth/shared';
 
 import { i18nInstance } from './config';
 import { useI18nStore, syncLocaleFromUser } from './useI18nStore';
@@ -27,16 +27,70 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
   const [initialSyncDone, setInitialSyncDone] = useState(false);
   const isChangingLanguage = useRef(false);
 
-  // On mount: sync Zustand store from i18next's detected language (run once)
+  // Wait for Zustand persist rehydration before syncing i18next → Zustand.
+  // Without waiting, the async hydration overwrites our setState with the stale
+  // persisted value. We subscribe to Zustand's onFinishHydration and also add
+  // a fallback timeout in case the event never fires (e.g. storage unavailable).
   useEffect(() => {
-    const detectedLng = i18nInstance.language;
-    if (detectedLng && isSupportedLocale(detectedLng)) {
-      const storeLocale = useI18nStore.getState().locale;
-      if (detectedLng !== storeLocale) {
-        useI18nStore.setState({ locale: detectedLng as Locale });
+    const syncDetectedLocale = () => {
+      // i18next may report the raw detected language (e.g. 'de-DE' from
+      // navigator.language) instead of the normalized code ('de'). We must
+      // normalize before checking support because SUPPORTED_LOCALES only
+      // contains base codes like 'de', not region tags like 'de-DE'.
+      // Without this normalization, isSupportedLocale('de-DE') returns false,
+      // setLocale is skipped, and the store stays at the default 'en' — which
+      // then triggers changeLanguage('en') and overwrites the cookie.
+      const rawLng = i18nInstance.language;
+      const detectedLng = rawLng ? normalizeLocale(rawLng) : null;
+
+      if (detectedLng && isSupportedLocale(detectedLng)) {
+        const storeLocale = useI18nStore.getState().locale;
+        if (detectedLng !== storeLocale) {
+          // Use setLocale (not setState) so the scrumooth_locale cookie is
+          // also updated — otherwise the cookie retains the stale default 'en'
+          // and the next page load reads the wrong value from the cookie detector.
+          useI18nStore.getState().setLocale(detectedLng as Locale);
+        }
       }
+      // Mark sync as done so the changeLanguage effect can fire. If setLocale
+      // was called, locale is now the normalized base code (e.g. 'de'), and
+      // the changeLanguage effect will call i18nInstance.changeLanguage('de'),
+      // which also normalizes i18next's language and re-caches the cookie
+      // with the correct value (overwriting the raw 'de-DE' that i18next's
+      // LanguageDetector may have written during initialization).
+      setInitialSyncDone(true);
+    };
+
+    // If already hydrated (e.g. synchronous storage), sync immediately
+    if (useI18nStore.persist.hasHydrated()) {
+      syncDetectedLocale();
+      return;
     }
-    setInitialSyncDone(true);
+
+    let syncCompleted = false;
+
+    // Subscribe to hydration completion
+    const unsubFinishHydration = useI18nStore.persist.onFinishHydration(() => {
+      if (!syncCompleted) {
+        syncCompleted = true;
+        syncDetectedLocale();
+      }
+    });
+
+    // Fallback: if hydration doesn't complete within 300ms, proceed anyway.
+    // This prevents the UI from being stuck if localStorage is unavailable
+    // or the persist middleware fails to hydrate.
+    const fallbackTimer = setTimeout(() => {
+      if (!syncCompleted) {
+        syncCompleted = true;
+        syncDetectedLocale();
+      }
+    }, 300);
+
+    return () => {
+      unsubFinishHydration();
+      clearTimeout(fallbackTimer);
+    };
   }, []);
 
   // Sync locale from authenticated user's stored preference (run once)

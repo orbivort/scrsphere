@@ -52,7 +52,16 @@ function parseDuration(duration: string): number {
   }
 }
 
+export const getLocaleCookieOptions = (): CookieOptions => ({
+  httpOnly: false, // Must be readable by frontend JS for i18next detection
+  secure: config.nodeEnv === 'production',
+  sameSite: 'strict',
+  path: '/',
+  maxAge: 365 * 24 * 60 * 60 * 1000, // 1 year in milliseconds
+});
+
 export const COOKIE_NAMES = {
   ACCESS_TOKEN: 'accessToken',
   REFRESH_TOKEN: 'refreshToken',
+  LOCALE: 'scrumooth_locale',
 } as const;
