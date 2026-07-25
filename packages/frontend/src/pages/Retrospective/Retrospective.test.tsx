@@ -340,7 +340,8 @@ describe('Retrospective Component', () => {
 
       // The retro date appears in the header - use getAllByText since dates appear multiple times
       // Note: Date may be Feb 14 or 15 depending on timezone (mock data is 2026-02-14T18:00:00Z)
-      const retroDates = screen.getAllByText(/February 1[45], 2026/);
+      // Format: PPPP produces "Sunday, 15 February 2026" (day of week + day + month + year)
+      const retroDates = screen.getAllByText(/1[45] February 2026/);
       expect(retroDates.length).toBeGreaterThan(0);
     });
 
@@ -397,10 +398,11 @@ describe('Retrospective Component', () => {
 
       await waitFor(() => {
         // Use getAllByText since dates appear multiple times in the UI
-        const feb1Dates = screen.getAllByText(/February 1, 2026/);
+        // Format: PPPP produces "Sunday, 1 February 2026" (day of week + day + month + year)
+        const feb1Dates = screen.getAllByText(/1 February 2026/);
         expect(feb1Dates.length).toBeGreaterThan(0);
 
-        const feb28Dates = screen.getAllByText(/February 28, 2026/);
+        const feb28Dates = screen.getAllByText(/28 February 2026/);
         expect(feb28Dates.length).toBeGreaterThan(0);
       });
 
@@ -989,8 +991,8 @@ describe('Retrospective Component', () => {
       const ownerElements = screen.getAllByText(/Jane Smith/);
       expect(ownerElements.length).toBeGreaterThan(0);
 
-      // Due date format may vary, check for partial match
-      const dueDateElements = screen.getAllByText(/February 28, 2026/);
+      // Due date format: PPPP produces "Saturday, 28 February 2026"
+      const dueDateElements = screen.getAllByText(/28 February 2026/);
       expect(dueDateElements.length).toBeGreaterThan(0);
     });
 

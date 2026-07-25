@@ -45,9 +45,18 @@ vi.mock('../../../utils/logger', () => ({
 }));
 
 // Mock notification service
+const mockNotificationCreate = vi.hoisted(() =>
+  vi.fn().mockResolvedValue({ id: 'notification-id' })
+);
+
+const mockNotificationCreateLocalized = vi.hoisted(() =>
+  vi.fn().mockResolvedValue({ id: 'notification-id' })
+);
+
 vi.mock('../../../services/notification.service', () => ({
   NotificationService: class {
-    create = vi.fn().mockResolvedValue({ id: 'notification-id' });
+    create = mockNotificationCreate;
+    createLocalized = mockNotificationCreateLocalized;
   },
 }));
 
@@ -295,11 +304,16 @@ describe('TeamService', () => {
         ],
       } as any);
       vi.mocked(prisma.user.findUnique).mockResolvedValue(mockUser as any);
-      vi.mocked(prisma.notification.create).mockResolvedValue({ id: 'notification-id' } as any);
+      mockNotificationCreateLocalized.mockClear();
 
       await teamService.createTeam(userId, { name: mockTeam.name });
 
-      expect(prisma.notification.create).toHaveBeenCalled();
+      expect(mockNotificationCreateLocalized).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId,
+          type: 'TEAM_CREATED',
+        })
+      );
     });
 
     it('should not create notification when creator is not found', async () => {
@@ -324,10 +338,11 @@ describe('TeamService', () => {
         ],
       } as any);
       vi.mocked(prisma.user.findUnique).mockResolvedValue(null as any);
+      mockNotificationCreateLocalized.mockClear();
 
       await teamService.createTeam(userId, { name: mockTeam.name });
 
-      expect(prisma.notification.create).not.toHaveBeenCalled();
+      expect(mockNotificationCreateLocalized).not.toHaveBeenCalled();
     });
   });
 
@@ -432,10 +447,16 @@ describe('TeamService', () => {
       } as any);
       vi.mocked(prisma.user.findUnique).mockResolvedValue(mockDeleter as any);
       vi.mocked(prisma.team.delete).mockResolvedValue(mockTeam as any);
+      mockNotificationCreateLocalized.mockClear();
 
       await teamService.deleteTeam(mockTeam.id, userId);
 
-      expect(prisma.notification.createMany).toHaveBeenCalled();
+      expect(mockNotificationCreateLocalized).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: otherUserId,
+          type: 'TEAM_DELETED',
+        })
+      );
     });
   });
 
@@ -473,7 +494,13 @@ describe('TeamService', () => {
       } as any);
 
       vi.mocked(prisma.task.count).mockResolvedValue(0 as any);
+      // Mock for notification - team and remover
+      vi.mocked(prisma.team.findUnique).mockResolvedValue(mockTeam as any);
+      vi.mocked(prisma.user.findUnique).mockResolvedValue(
+        fixtures.users.validUser({ id: userId }) as any
+      );
       vi.mocked(prisma.teamMember.delete).mockResolvedValue({} as any);
+      mockNotificationCreateLocalized.mockClear();
 
       await expect(teamService.removeMember(mockTeam.id, userId, memberId)).resolves.not.toThrow();
     });
@@ -671,8 +698,16 @@ describe('TeamService', () => {
         fixtures.users.validUser({ id: userId }) as any
       );
       vi.mocked(prisma.teamMember.delete).mockResolvedValue({} as any);
+      mockNotificationCreateLocalized.mockClear();
 
-      await expect(teamService.removeMember(mockTeam.id, userId, memberId)).resolves.not.toThrow();
+      await teamService.removeMember(mockTeam.id, userId, memberId);
+
+      expect(mockNotificationCreateLocalized).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: memberUserId,
+          type: 'TEAM_REMOVAL',
+        })
+      );
     });
   });
 
@@ -758,6 +793,7 @@ describe('TeamService', () => {
       vi.mocked(prisma.user.findUnique).mockResolvedValue(
         fixtures.users.validUser({ id: userId }) as any
       );
+      mockNotificationCreateLocalized.mockClear();
 
       const result = await teamService.addMember(teamId, userId, {
         email: memberEmail,
@@ -766,6 +802,12 @@ describe('TeamService', () => {
 
       expect(result).toBeDefined();
       expect(result.userId).toBe(newUserId);
+      expect(mockNotificationCreateLocalized).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: newUserId,
+          type: 'TEAM_INVITATION',
+        })
+      );
     });
   });
 

@@ -83,8 +83,10 @@ describe('CreateSprintReviewModal', () => {
 
       const dateInput = screen.getByLabelText(/Review Date/i);
       expect(dateInput).toBeInTheDocument();
-      expect(dateInput).toHaveAttribute('type', 'date');
-      expect(dateInput).toHaveAttribute('aria-required', 'true');
+      // LocaleDateInput uses a visible text input, not a date input
+      expect(dateInput).toHaveAttribute('type', 'text');
+      // LocaleDateInput uses required HTML attribute, not aria-required
+      expect(dateInput).toBeRequired();
     });
 
     it('should render summary textarea', () => {
@@ -110,7 +112,8 @@ describe('CreateSprintReviewModal', () => {
         />
       );
 
-      expect(screen.getByLabelText(/Review Date/i)).toHaveValue('2026-02-15');
+      // LocaleDateInput displays dates in locale format (dd/MM/yyyy for en)
+      expect(screen.getByLabelText(/Review Date/i)).toHaveValue('15/02/2026');
     });
 
     it('should display summary value from createReviewData', () => {
@@ -133,7 +136,8 @@ describe('CreateSprintReviewModal', () => {
       );
 
       const dateInput = screen.getByLabelText(/Review Date/i);
-      fireEvent.change(dateInput, { target: { value: '2026-03-20' } });
+      // LocaleDateInput expects locale format (dd/MM/yyyy for en)
+      fireEvent.change(dateInput, { target: { value: '20/03/2026' } });
 
       expect(setCreateReviewData).toHaveBeenCalledWith({
         reviewDate: '2026-03-20',

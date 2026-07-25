@@ -1,11 +1,14 @@
 import { ItemStatus } from '../types';
 import {
   WORKFLOW_TRANSITIONS,
+  WORKFLOW_DESCRIPTION_KEYS,
   canTransition,
   getValidTransitions,
   getTransitionDescription,
   requiresValidation,
   validateTransition,
+  getTransitionErrorKey,
+  getTransitionErrorData,
 } from './workflowTransitions';
 
 describe('workflowTransitions', () => {
@@ -117,6 +120,73 @@ describe('workflowTransitions', () => {
       const result = validateTransition(ItemStatus.READY, ItemStatus.IN_PROGRESS);
       expect(result.valid).toBe(true);
       expect(result.requiresValidation).toBe(true);
+    });
+  });
+
+  describe('WORKFLOW_DESCRIPTION_KEYS', () => {
+    it('should have description keys for all statuses', () => {
+      const statuses = Object.values(ItemStatus);
+      statuses.forEach((status) => {
+        expect(WORKFLOW_DESCRIPTION_KEYS[status]).toBeDefined();
+        expect(WORKFLOW_DESCRIPTION_KEYS[status]).toContain('workflowTransitions.');
+      });
+    });
+  });
+
+  describe('getTransitionErrorKey', () => {
+    it('should return the error key for invalid transitions', () => {
+      const errorKey = getTransitionErrorKey();
+      expect(errorKey).toBe('validation.invalidTransition');
+    });
+  });
+
+  describe('getTransitionErrorData', () => {
+    it('should return error data with allowed transitions', () => {
+      const statusLabels: Record<ItemStatus, string> = {
+        [ItemStatus.NEW]: 'New',
+        [ItemStatus.REFINED]: 'Refined',
+        [ItemStatus.READY]: 'Ready',
+        [ItemStatus.IN_PROGRESS]: 'In Progress',
+        [ItemStatus.DONE]: 'Done',
+      };
+
+      const result = getTransitionErrorData(ItemStatus.NEW, ItemStatus.DONE, statusLabels);
+
+      expect(result.current).toBe('New');
+      expect(result.target).toBe('Done');
+      expect(result.allowed).toBe('Refined');
+    });
+
+    it('should return "None" when no allowed transitions', () => {
+      const statusLabels: Record<ItemStatus, string> = {
+        [ItemStatus.NEW]: 'New',
+        [ItemStatus.REFINED]: 'Refined',
+        [ItemStatus.READY]: 'Ready',
+        [ItemStatus.IN_PROGRESS]: 'In Progress',
+        [ItemStatus.DONE]: 'Done',
+      };
+
+      const result = getTransitionErrorData(ItemStatus.DONE, ItemStatus.NEW, statusLabels);
+
+      expect(result.current).toBe('Done');
+      expect(result.target).toBe('New');
+      expect(result.allowed).toBe('None');
+    });
+
+    it('should return multiple allowed transitions', () => {
+      const statusLabels: Record<ItemStatus, string> = {
+        [ItemStatus.NEW]: 'New',
+        [ItemStatus.REFINED]: 'Refined',
+        [ItemStatus.READY]: 'Ready',
+        [ItemStatus.IN_PROGRESS]: 'In Progress',
+        [ItemStatus.DONE]: 'Done',
+      };
+
+      const result = getTransitionErrorData(ItemStatus.REFINED, ItemStatus.DONE, statusLabels);
+
+      expect(result.current).toBe('Refined');
+      expect(result.target).toBe('Done');
+      expect(result.allowed).toBe('Ready, New');
     });
   });
 });

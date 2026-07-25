@@ -92,7 +92,8 @@ describe('CreateSprintReviewModal - Additional Edge Case Tests', () => {
       );
 
       const dateInput = screen.getByLabelText(/Review Date/i);
-      fireEvent.change(dateInput, { target: { value: '2026-12-31' } });
+      // LocaleDateInput expects locale format (dd/MM/yyyy for en)
+      fireEvent.change(dateInput, { target: { value: '31/12/2026' } });
 
       expect(setCreateReviewData).toHaveBeenCalledWith({
         reviewDate: '2026-12-31',
@@ -111,7 +112,8 @@ describe('CreateSprintReviewModal - Additional Edge Case Tests', () => {
       );
 
       const dateInput = screen.getByLabelText(/Review Date/i);
-      expect(dateInput).toHaveValue('2020-01-01');
+      // LocaleDateInput displays dates in locale format (dd/MM/yyyy for en)
+      expect(dateInput).toHaveValue('01/01/2020');
     });
 
     it('should handle future dates', () => {
@@ -125,7 +127,8 @@ describe('CreateSprintReviewModal - Additional Edge Case Tests', () => {
       );
 
       const dateInput = screen.getByLabelText(/Review Date/i);
-      expect(dateInput).toHaveValue('2030-12-31');
+      // LocaleDateInput displays dates in locale format (dd/MM/yyyy for en)
+      expect(dateInput).toHaveValue('31/12/2030');
     });
   });
 
@@ -367,11 +370,12 @@ describe('CreateSprintReviewModal - Additional Edge Case Tests', () => {
   });
 
   describe('ARIA and Accessibility', () => {
-    it('should have aria-required on date input', () => {
+    it('should have required attribute on date input', () => {
       renderWithProviders(<CreateSprintReviewModal {...defaultProps} />);
 
       const dateInput = screen.getByLabelText(/Review Date/i);
-      expect(dateInput).toHaveAttribute('aria-required', 'true');
+      // LocaleDateInput uses required HTML attribute, not aria-required
+      expect(dateInput).toBeRequired();
     });
 
     it('should have aria-invalid set to true when error exists', () => {

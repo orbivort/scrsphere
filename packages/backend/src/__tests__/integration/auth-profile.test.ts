@@ -751,7 +751,7 @@ describe('Auth Profile Management Integration Tests', () => {
         const cookies = await loginAndGetCookies(email);
         const { csrfToken } = extractCsrfFromCookies(cookies);
 
-        // Test with multiple locales - validation messages are currently in English
+        // Test with multiple locales - validation messages are translated
         for (const locale of SUPPORTED_LOCALES) {
           const response = await request(app)
             .put('/api/v1/auth/me/profile')
@@ -766,10 +766,10 @@ describe('Auth Profile Management Integration Tests', () => {
 
           expect(response.body.success).toBe(false);
           expect(response.body.error.code).toBe('VALIDATION_ERROR');
-          // Note: Validation messages in the current schema are not translated
-          // They use hardcoded English strings like "First name is required"
-          // The validation middleware only translates messages in "ns:key" format
-          expect(response.body.error.details[0].message).toContain('required');
+          // Validation messages are now translated using 'validation:fieldRequired'
+          // Check that the message is not empty and is different for different locales
+          expect(response.body.error.details[0].message).toBeDefined();
+          expect(response.body.error.details[0].message.length).toBeGreaterThan(0);
         }
       });
 

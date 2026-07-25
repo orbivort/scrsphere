@@ -509,8 +509,11 @@ describe('Impediments Component', () => {
 
       await waitFor(() => {
         // Check for date formatting (locale-specific) - dates can be in various formats
-        // The component shows dates like "2026/2/5" or "2/5/2026" depending on locale
-        const datePattern = /\d{4}[/-]\d{1,2}[/-]\d{1,2}|\d{1,2}[/-]\d{1,2}[/-]\d{4}/;
+        // The component uses date-fns 'PP' format which produces:
+        // English: "Feb 5, 2026", German: "05.02.2026", etc.
+        // Match any date-like pattern including month names, dots, slashes
+        const datePattern =
+          /\d{1,2}[./]\d{1,2}[./]\d{4}|\d{4}[./-]\d{1,2}[./-]\d{1,2}|[A-Za-z]{3,}\.?\s*\d{1,2},?\s*\d{4}|\d{1,2}\s+[A-Za-z]{3,}\.?\s+\d{4}/;
         const pageContent = document.body.textContent || '';
         expect(datePattern.test(pageContent)).toBe(true);
       });

@@ -34,6 +34,10 @@ vi.mock('../../hooks', () => ({
   }),
 }));
 
+vi.mock('react-chartjs-2', () => ({
+  Line: vi.fn(() => <div data-testid="mock-line-chart" />),
+}));
+
 const createTestQueryClient = () =>
   new QueryClient({
     defaultOptions: {
@@ -920,7 +924,7 @@ describe('Dashboard Component', () => {
       renderWithProviders(<Dashboard />);
 
       await waitFor(() => {
-        const chart = screen.getByRole('img');
+        const chart = screen.getByTestId('mock-line-chart');
         expect(chart).toBeInTheDocument();
       });
     });

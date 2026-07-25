@@ -817,11 +817,18 @@ describe('DailyScrum Component', () => {
         expect(screen.getByRole('heading', { name: /daily scrum/i })).toBeInTheDocument();
       });
 
-      const datePicker = screen.getByLabelText(/select date for daily updates/i);
-      fireEvent.change(datePicker, { target: { value: '2024-03-15' } });
+      // Get initial call count after component loads
+      const initialCallCount = mockApiService.getDailyUpdates.mock.calls.length;
+
+      // LocaleDateInput has a hidden date input that accepts ISO format
+      const hiddenDateInput = document.querySelector('input[type="date"]');
+      if (hiddenDateInput) {
+        fireEvent.change(hiddenDateInput, { target: { value: '2024-03-15' } });
+      }
 
       await waitFor(() => {
-        expect(mockApiService.getDailyUpdates).toHaveBeenCalledTimes(2);
+        // Verify that getDailyUpdates was called again after date change
+        expect(mockApiService.getDailyUpdates).toHaveBeenCalledTimes(initialCallCount + 1);
       });
     });
 
@@ -1373,7 +1380,9 @@ describe('DailyScrum Component', () => {
       });
 
       const datePicker = screen.getByLabelText(/select date for daily updates/i);
-      expect(datePicker).toHaveAttribute('type', 'date');
+      // LocaleDateInput uses type="text" for the visible input
+      // The hidden input uses type="date" for native date picker
+      expect(datePicker).toHaveAttribute('type', 'text');
     });
 
     it('should have accessible form labels', async () => {

@@ -212,4 +212,42 @@ describe('useDebounceCallback', () => {
     expect(callback).toHaveBeenCalledTimes(1);
     expect(callback).toHaveBeenCalledWith(4);
   });
+
+  it('should clear existing timeout when called again after state update', () => {
+    const callback = vi.fn();
+    const { result } = renderHook(() => useDebounceCallback(callback, 100));
+
+    // First call sets up the timeout
+    act(() => {
+      result.current('first');
+    });
+
+    // Advance time to allow state update
+    act(() => {
+      vi.advanceTimersByTime(0);
+    });
+
+    // Second call should clear the existing timeout
+    act(() => {
+      result.current('second');
+    });
+
+    // Advance time to allow state update
+    act(() => {
+      vi.advanceTimersByTime(0);
+    });
+
+    // Third call should clear the second timeout
+    act(() => {
+      result.current('third');
+    });
+
+    // Let the final timeout complete
+    act(() => {
+      vi.advanceTimersByTime(100);
+    });
+
+    expect(callback).toHaveBeenCalledTimes(1);
+    expect(callback).toHaveBeenCalledWith('third');
+  });
 });

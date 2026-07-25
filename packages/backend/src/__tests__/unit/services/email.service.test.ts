@@ -705,7 +705,9 @@ describe('Email Templates', () => {
 
       const result = template.render(data);
 
-      expect(result.html).toContain("didn't request this");
+      // HTML escapes apostrophes as &#x27;
+      expect(result.html).toContain('didn&#x27;t request this');
+      // Text version is uppercase (no HTML escaping)
       expect(result.text).toContain("DIDN'T REQUEST THIS");
     });
 

@@ -1271,13 +1271,12 @@ describe('Password Reset Integration Tests', () => {
 
         expect(response.body.success).toBe(false);
         expect(response.body.error.code).toBe('VALIDATION_ERROR');
-        // Note: Validation schema uses hardcoded "Passwords do not match"
-        // TODO: Should use 'validation:passwordsDoNotMatch' for translation
+        // Validation schema uses 'validation:auth.passwordsDoNotMatch' which is translated
         expect(response.body.error.details).toBeDefined();
+        // Check for the Spanish translation of "Passwords do not match"
+        const spanishMessage = 'Las contraseñas no coinciden';
         expect(
-          response.body.error.details.some((d: { message: string }) =>
-            d.message.includes('Passwords do not match')
-          )
+          response.body.error.details.some((d: { message: string }) => d.message === spanishMessage)
         ).toBe(true);
       });
     });

@@ -36,7 +36,7 @@ interface SprintWithReview extends Sprint {
 
 // Pure helper functions moved outside component
 const normalizeStatus = (status: string): SprintStatus => {
-  return status.toUpperCase() as SprintStatus;
+  return status.toLowerCase() as SprintStatus;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- TFunction signature varies by i18next version

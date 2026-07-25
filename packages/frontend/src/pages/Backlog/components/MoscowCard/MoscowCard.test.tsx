@@ -282,9 +282,10 @@ describe('MoscowCard', () => {
 
       const card = screen.getByRole('listitem');
       const mustHaveLabel = i18nT('backlog:moscow.mustHave');
+      // The i18n key 'aria.backlogItem' includes a trailing period
       expect(card).toHaveAttribute(
         'aria-label',
-        `Backlog item: Test Backlog Item. Priority: ${mustHaveLabel}`
+        `Backlog item: Test Backlog Item. Priority: ${mustHaveLabel}.`
       );
     });
 
@@ -643,9 +644,10 @@ describe('MoscowCard', () => {
 
       const mustHaveLabel = i18nT('backlog:moscow.mustHave');
       await waitFor(() => {
+        // The i18n key 'aria.draggingItem' includes a trailing period
         expect(card).toHaveAttribute(
           'aria-label',
-          `Dragging Test Backlog Item. Current: ${mustHaveLabel}. Target: ${mustHaveLabel}`
+          `Dragging Test Backlog Item. Current: ${mustHaveLabel}. Target: ${mustHaveLabel}.`
         );
       });
     });

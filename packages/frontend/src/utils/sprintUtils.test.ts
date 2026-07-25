@@ -76,6 +76,21 @@ describe('sprintUtils', () => {
       expect(label).toContain('Sprint 2');
       expect(label).toContain('Planned');
     });
+
+    it('should format sprint label with past icon', () => {
+      const sprint = {
+        name: 'Sprint 0',
+        status: 'completed',
+        startDate: '2024-01-01',
+        endDate: '2024-01-10',
+        category: 'past' as const,
+      };
+
+      const label = formatSprintOptionLabel(sprint);
+      expect(label).toContain('✓');
+      expect(label).toContain('Sprint 0');
+      expect(label).toContain('Completed');
+    });
   });
 
   describe('calculateSprintDuration', () => {

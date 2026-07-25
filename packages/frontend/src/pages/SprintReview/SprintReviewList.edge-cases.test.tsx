@@ -1,8 +1,6 @@
 import React from 'react';
-import { render, screen, waitFor, initTestI18n, i18nT } from '../../test-utils';
+import { screen, waitFor, renderWithProviders, initTestI18n, i18nT } from '../../test-utils';
 import { vi, describe, it, expect, beforeEach, beforeAll } from 'vitest';
-import { MemoryRouter } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { SprintReviewList } from './SprintReviewList';
 import { SprintStatus, IncrementStatus } from '../../types';
@@ -24,14 +22,6 @@ beforeAll(async () => {
   await initTestI18n();
 });
 
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: { retry: false, gcTime: 0, staleTime: 0 },
-      mutations: { retry: false },
-    },
-  });
-
 const mockTeam = {
   id: 'team-1',
   name: 'Test Team',
@@ -51,15 +41,7 @@ function renderComponent(overrides: { currentTeam?: typeof mockTeam | null } = {
     loadTeam: vi.fn(),
   } as any);
 
-  const queryClient = createTestQueryClient();
-
-  return render(
-    <QueryClientProvider client={queryClient}>
-      <MemoryRouter>
-        <SprintReviewList />
-      </MemoryRouter>
-    </QueryClientProvider>
-  );
+  return renderWithProviders(<SprintReviewList />);
 }
 
 describe('SprintReviewList - Additional Edge Case Tests', () => {

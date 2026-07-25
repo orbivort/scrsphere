@@ -68,6 +68,12 @@ vi.mock('../../../utils/logger', () => ({
     warn: vi.fn(),
     debug: vi.fn(),
   },
+  logger: {
+    info: vi.fn(),
+    error: vi.fn(),
+    warn: vi.fn(),
+    debug: vi.fn(),
+  },
 }));
 
 import prisma from '../../../utils/prisma';
