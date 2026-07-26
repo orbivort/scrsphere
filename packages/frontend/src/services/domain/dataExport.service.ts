@@ -1,5 +1,6 @@
 // Data Export Service for GDPR Article 20 Compliance
 
+import { coreApiService } from '../core/api.core';
 import { apiService } from '../index';
 import type {
   InitiateExportResponse,
@@ -27,11 +28,19 @@ class DataExportService {
   }
 
   async downloadExport(jobId: string): Promise<Blob> {
-    return apiService.downloadExport(jobId);
+    // Use coreApiService directly to avoid circular call:
+    // apiService.downloadExport delegates back to this method, creating
+    // infinite recursion (Maximum call stack size exceeded).
+    const response = await coreApiService.axiosInstance.get(
+      `${this.baseUrl}/export-data/download/${jobId}`,
+      { responseType: 'blob' }
+    );
+    return response.data;
   }
 
   async cancelExport(jobId: string): Promise<void> {
-    await apiService.cancelExport(jobId);
+    // Use coreApiService directly to avoid circular call (same reason as downloadExport).
+    await coreApiService.axiosInstance.delete(`${this.baseUrl}/export-data/${jobId}`);
   }
 
   async getActiveExports(): Promise<ActiveExportsResponse> {

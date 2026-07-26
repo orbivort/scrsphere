@@ -1,6 +1,6 @@
 // Data Export Button Component
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useDataExport } from '../../../../hooks/useDataExport';
@@ -21,6 +21,18 @@ export const DataExportButton: React.FC<DataExportButtonProps> = ({
 }) => {
   const { t } = useTranslation('settings');
 
+  // Use refs for callback props to avoid unstable references causing infinite re-render loops.
+  // Parent components typically pass inline arrow functions which create new references on
+  // every render — including them in effect/callback deps would trigger cascading re-renders.
+  const onExportStartRef = useRef(onExportStart);
+  onExportStartRef.current = onExportStart;
+
+  const onExportCompleteRef = useRef(onExportComplete);
+  onExportCompleteRef.current = onExportComplete;
+
+  const onExportErrorRef = useRef(onExportError);
+  onExportErrorRef.current = onExportError;
+
   const {
     state,
     initiateExport,
@@ -33,16 +45,16 @@ export const DataExportButton: React.FC<DataExportButtonProps> = ({
   } = useDataExport();
 
   const handleClick = useCallback(async () => {
-    onExportStart?.();
+    onExportStartRef.current?.();
     await initiateExport();
-  }, [initiateExport, onExportStart]);
+  }, [initiateExport]);
 
   const handleDownload = useCallback(async () => {
     if (state.currentJobId) {
       await downloadExport(state.currentJobId);
-      onExportComplete?.();
+      onExportCompleteRef.current?.();
     }
-  }, [downloadExport, state.currentJobId, onExportComplete]);
+  }, [downloadExport, state.currentJobId]);
 
   const handleClose = useCallback(() => {
     if (state.currentJobId && (state.status === 'pending' || state.status === 'processing')) {
@@ -51,12 +63,15 @@ export const DataExportButton: React.FC<DataExportButtonProps> = ({
     reset();
   }, [cancelExport, reset, state.currentJobId, state.status]);
 
-  // Handle errors
-  React.useEffect(() => {
+  // Handle errors — use ref for the callback to prevent infinite re-render loops.
+  // Previously, having `onExportError` (an unstable inline function) in the dependency
+  // array caused: effect fires → callback triggers re-render → new function ref →
+  // effect fires again → Maximum call stack size exceeded.
+  useEffect(() => {
     if (hasError && state.error) {
-      onExportError?.(new Error(state.error));
+      onExportErrorRef.current?.(new Error(state.error));
     }
-  }, [hasError, state.error, onExportError]);
+  }, [hasError, state.error]);
 
   const isDisabled = disabled || isActive || state.isLoading;
 

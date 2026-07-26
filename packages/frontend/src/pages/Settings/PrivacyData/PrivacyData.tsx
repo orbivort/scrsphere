@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatLocaleDate } from '@scrumooth/shared';
 
+import type { DataExportButtonProps } from '../../../types/dataExport.types';
 import { apiService } from '../../../services';
 import { logger } from '../../../utils/logger';
 
@@ -101,6 +102,24 @@ export const PrivacyData: React.FC = () => {
     if (userAgent.includes('Edge')) return t('privacyData.activeSessions.devices.edge');
     return userAgent.substring(0, 50) + (userAgent.length > 50 ? '...' : '');
   };
+
+  // Stabilize DataExportButton callback props with useCallback to prevent
+  // unnecessary re-renders of the child component (defense-in-depth alongside
+  // the ref pattern used inside DataExportButton).
+  const handleExportStart = useCallback<NonNullable<DataExportButtonProps['onExportStart']>>(
+    () => logger.debug('Export started'),
+    []
+  );
+
+  const handleExportComplete = useCallback<NonNullable<DataExportButtonProps['onExportComplete']>>(
+    () => logger.debug('Export completed'),
+    []
+  );
+
+  const handleExportError = useCallback<NonNullable<DataExportButtonProps['onExportError']>>(
+    (error: Error) => logger.error('Export failed', undefined, { error }),
+    []
+  );
 
   const currentSessionId = sessions.length > 0 ? (sessions[0] as { id: string }).id : null;
   const otherSessions = sessions.slice(1);
@@ -272,9 +291,9 @@ export const PrivacyData: React.FC = () => {
 
               <div className={styles['export-action']}>
                 <DataExportButton
-                  onExportStart={() => logger.debug('Export started')}
-                  onExportComplete={() => logger.debug('Export completed')}
-                  onExportError={(error) => logger.error('Export failed', undefined, { error })}
+                  onExportStart={handleExportStart}
+                  onExportComplete={handleExportComplete}
+                  onExportError={handleExportError}
                 />
               </div>
             </div>
