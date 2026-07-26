@@ -571,6 +571,7 @@ export interface RegisterData {
   firstName: string;
   lastName: string;
   termsAccepted: true;
+  locale?: Locale;
 }
 
 export interface AuthTokens {

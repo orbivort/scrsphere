@@ -68,7 +68,12 @@ export function getLocaleCookieOptions(
     sameSite: LOCALE_COOKIE_SAME_SITE,
     path: LOCALE_COOKIE_PATH,
     secure,
-    httpOnly: runtime === 'node',
+    // The locale cookie MUST be httpOnly: false so that the frontend's
+    // i18next LanguageDetector can read it via document.cookie.
+    // This is intentional and safe: the locale value is a short,
+    // non-sensitive string (e.g., 'de', 'fr') that cannot be used for
+    // authentication or session hijacking.
+    httpOnly: false,
   };
 }
 

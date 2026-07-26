@@ -18,6 +18,7 @@ import {
 } from '../utils/errors';
 import { generateUUIDv7 } from '../utils/uuid';
 import { logger } from '../utils/logger';
+import { getRequestLocale } from '../utils/requestContext.js';
 import { NotificationService } from './notification.service';
 
 const notificationService = new NotificationService();
@@ -64,6 +65,7 @@ export interface RegisterData {
   lastName: string;
   termsAccepted: true;
   marketingOptIn: boolean;
+  locale?: Locale;
 }
 
 interface SessionValidationResult {
@@ -115,6 +117,7 @@ class AuthService {
         termsAcceptedAt: now,
         marketingOptIn: data.marketingOptIn,
         marketingOptInAt: data.marketingOptIn ? now : null,
+        locale: data.locale ?? getRequestLocale(),
       },
     });
 

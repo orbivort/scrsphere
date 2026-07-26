@@ -58,6 +58,7 @@ export const registerSchema = z.object({
     error: 'validation:auth.termsRequired',
   }),
   marketingOptIn: z.boolean().default(false),
+  locale: z.enum(SUPPORTED_LOCALES as unknown as ['en', 'de', 'fr', 'it', 'es']).optional(),
 });
 
 export const loginSchema = z.object({
@@ -90,7 +91,7 @@ export const forceDeleteSchema = z.object({
 export const updateProfileSchema = z.object({
   firstName: sanitizedString(100),
   lastName: sanitizedString(100),
-  locale: z.enum([...SUPPORTED_LOCALES] as [string, ...string[]]).optional(),
+  locale: z.enum(SUPPORTED_LOCALES as unknown as ['en', 'de', 'fr', 'it', 'es']).optional(),
 });
 
 export const changePasswordSchema = z.object({

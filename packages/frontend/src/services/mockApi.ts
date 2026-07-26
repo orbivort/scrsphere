@@ -148,6 +148,7 @@ class MockApiService {
       email: userData.email,
       firstName: userData.firstName,
       lastName: userData.lastName,
+      locale: userData.locale ?? 'en',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

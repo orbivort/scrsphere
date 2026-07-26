@@ -13,7 +13,7 @@ import { logger } from '@/utils/logger';
 import { getCurrentPath } from '@/utils/navigation';
 import type { LoginCredentials } from '@/types';
 import { getUserFriendlyErrorMessage, type ErrorDetails } from '@/utils/authErrors';
-import { syncLocaleFromUser } from '@/i18n/useI18nStore';
+import { syncLocaleFromUser, useI18nStore } from '@/i18n/useI18nStore';
 
 type PasswordStrength = 'weak' | 'fair' | 'good' | 'strong';
 
@@ -196,6 +196,7 @@ export const LoginPage: React.FC = () => {
           firstName,
           lastName,
           termsAccepted: true as const,
+          locale: useI18nStore.getState().locale,
         });
 
         if (response.success && response.data) {
