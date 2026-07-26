@@ -1,101 +1,101 @@
 {
-  "title": "Reports",
-  "subtitle": "Track team performance and sprint metrics",
-  "skipToMainContent": "Skip to main content",
   "error": {
-    "title": "Error Loading Reports",
-    "message": "Unable to load report data. Please try again later."
+    "message": "Unable to load report data. Please try again later.",
+    "title": "Error Loading Reports"
+  },
+  "insights": {
+    "empty": "No insights available yet. Complete more sprints to generate insights.",
+    "items": {
+      "active-sprint-impediments": {
+        "description": "Current sprint has {{count}} impediment(s). Monitor closely.",
+        "title": "Active Sprint Impediments"
+      },
+      "consistent-delivery": {
+        "description": "Team has maintained 100% sprint goal completion in the last {{count}} sprints",
+        "title": "Consistent Delivery"
+      },
+      "get-started": {
+        "description": "Complete more sprints to generate team performance insights.",
+        "title": "Getting Started"
+      },
+      "high-success-rate": {
+        "description": "Team has achieved {{rate}}% sprint success rate. Keep up the great work!",
+        "title": "High Success Rate"
+      },
+      "impediment-trend": {
+        "description": "{{count}} impediment(s) currently open. Consider addressing proactively.",
+        "title": "Impediment Trend"
+      },
+      "low-success-rate": {
+        "description": "Sprint success rate is {{rate}}%. Consider reviewing sprint capacity and planning.",
+        "title": "Success Rate Attention"
+      },
+      "recent-improvement": {
+        "description": "Last sprint showed {{improvement}}% improvement in completed story points.",
+        "title": "Recent Improvement"
+      },
+      "velocity-decline": {
+        "description": "Average velocity decreased by {{trend}}%. Consider reviewing sprint planning.",
+        "title": "Velocity Decline"
+      },
+      "velocity-improvement": {
+        "description": "Average velocity increased by {{trend}}% compared to previous sprints",
+        "title": "Velocity Improvement"
+      }
+    },
+    "title": "Key Insights"
+  },
+  "loading": {
+    "insights": "Loading insights...",
+    "metrics": "Loading metrics...",
+    "sprintHistory": "Loading sprint history...",
+    "velocityChart": "Loading velocity chart..."
   },
   "metrics": {
     "avgVelocity": {
+      "fromLastSprint": "from last sprint",
       "title": "Average Velocity",
-      "unit": "Story Points per Sprint",
-      "fromLastSprint": "from last sprint"
-    },
-    "sprintSuccessRate": {
-      "title": "Sprint Success Rate",
-      "unit": "Sprint Goals Met",
-      "fromLastMonth": "from last month"
+      "unit": "Story Points per Sprint"
     },
     "impediments": {
-      "title": "Impediments",
+      "openCount": "open impediment(s)",
       "resolved": "Resolved",
-      "openCount": "open impediment(s)"
+      "title": "Impediments"
+    },
+    "sprintSuccessRate": {
+      "fromLastMonth": "from last month",
+      "title": "Sprint Success Rate",
+      "unit": "Sprint Goals Met"
     },
     "teamSatisfaction": {
+      "fromLastSprint": "from last sprint",
       "title": "Team Satisfaction",
-      "unit": "Average Rating",
-      "fromLastSprint": "from last sprint"
+      "unit": "Average Rating"
     }
   },
+  "skipToMainContent": "Skip to main content",
   "sprintHistory": {
-    "title": "Sprint History",
     "empty": "No sprint history available.",
     "stats": {
-      "planned": "Planned",
       "completed": "Completed",
-      "teamMembers": "Team Members",
-      "impediments": "Impediments"
-    }
+      "impediments": "Impediments",
+      "planned": "Planned",
+      "teamMembers": "Team Members"
+    },
+    "title": "Sprint History"
   },
   "sprintStatusLabels": {
-    "PLANNED": "Planned",
     "ACTIVE": "Active",
-    "COMPLETED": "Completed"
+    "COMPLETED": "Completed",
+    "PLANNED": "Planned"
   },
-  "insights": {
-    "title": "Key Insights",
-    "empty": "No insights available yet. Complete more sprints to generate insights.",
-    "items": {
-      "velocity-improvement": {
-        "title": "Velocity Improvement",
-        "description": "Average velocity increased by {{trend}}% compared to previous sprints"
-      },
-      "velocity-decline": {
-        "title": "Velocity Decline",
-        "description": "Average velocity decreased by {{trend}}%. Consider reviewing sprint planning."
-      },
-      "consistent-delivery": {
-        "title": "Consistent Delivery",
-        "description": "Team has maintained 100% sprint goal completion in the last {{count}} sprints"
-      },
-      "impediment-trend": {
-        "title": "Impediment Trend",
-        "description": "{{count}} impediment(s) currently open. Consider addressing proactively."
-      },
-      "high-success-rate": {
-        "title": "High Success Rate",
-        "description": "Team has achieved {{rate}}% sprint success rate. Keep up the great work!"
-      },
-      "low-success-rate": {
-        "title": "Success Rate Attention",
-        "description": "Sprint success rate is {{rate}}%. Consider reviewing sprint capacity and planning."
-      },
-      "recent-improvement": {
-        "title": "Recent Improvement",
-        "description": "Last sprint showed {{improvement}}% improvement in completed story points."
-      },
-      "active-sprint-impediments": {
-        "title": "Active Sprint Impediments",
-        "description": "Current sprint has {{count}} impediment(s). Monitor closely."
-      },
-      "get-started": {
-        "title": "Getting Started",
-        "description": "Complete more sprints to generate team performance insights."
-      }
-    }
-  },
+  "subtitle": "Track team performance and sprint metrics",
+  "title": "Reports",
   "velocityChart": {
-    "title": "Sprint Velocity",
-    "yAxisLabel": "Story Points",
-    "xAxisLabel": "Sprint",
+    "completed": "Completed",
     "planned": "Planned",
-    "completed": "Completed"
-  },
-  "loading": {
-    "velocityChart": "Loading velocity chart...",
-    "metrics": "Loading metrics...",
-    "sprintHistory": "Loading sprint history...",
-    "insights": "Loading insights..."
+    "title": "Sprint Velocity",
+    "xAxisLabel": "Sprint",
+    "yAxisLabel": "Story Points"
   }
 }

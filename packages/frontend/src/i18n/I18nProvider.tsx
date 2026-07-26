@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { I18nextProvider } from 'react-i18next';
 import {
   getDirection,
+  getDirectionDev,
   isSupportedLocale,
   isSupportedLocaleDev,
   normalizeLocale,
@@ -12,6 +13,7 @@ import {
 import { i18nInstance } from './config';
 import { useI18nStore, syncLocaleFromUser } from './useI18nStore';
 
+import I18nError from '@/components/i18n/I18nError/I18nError';
 import { useAuthStore } from '@/store';
 
 /** Maximum time to wait for i18n initialization before showing an error (ms) */
@@ -33,6 +35,10 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
   // default locale ('en') and overrides the i18next-detected browser language.
   const [initialSyncDone, setInitialSyncDone] = useState(false);
   const isChangingLanguage = useRef(false);
+
+  // Track i18n initialization duration for dev diagnostics / RUM breadcrumbs
+  const mountTimeRef = useRef(performance.now());
+  const initDurationRef = useRef<number | null>(null);
 
   // Wait for Zustand persist rehydration before syncing i18next → Zustand.
   // Without waiting, the async hydration overwrites our setState with the stale
@@ -175,14 +181,19 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
         await i18nInstance.changeLanguage(locale);
         if (!cancelled) {
           document.documentElement.lang = locale;
-          document.documentElement.dir = getDirection(locale);
+          document.documentElement.dir = import.meta.env.DEV
+            ? getDirectionDev(locale)
+            : getDirection(locale);
           setI18nState('ready');
+          // Record init duration on first ready transition
+          initDurationRef.current ??= performance.now() - mountTimeRef.current;
         }
       } catch (error) {
         if (!cancelled) {
           console.error('Failed to change language:', error);
           // Language change failed but i18n is still initialized — proceed with current locale
           setI18nState('ready');
+          initDurationRef.current ??= performance.now() - mountTimeRef.current;
         }
       } finally {
         isChangingLanguage.current = false;
@@ -199,11 +210,15 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
   useEffect(() => {
     if (i18nInstance.isInitialized) {
       setI18nState('ready');
+      // Record init duration if this is the first ready transition
+      initDurationRef.current ??= performance.now() - mountTimeRef.current;
       return;
     }
 
     const handleInitialized = () => {
       setI18nState('ready');
+      // Record init duration on first ready transition
+      initDurationRef.current ??= performance.now() - mountTimeRef.current;
     };
 
     // Timeout: if i18n doesn't initialize within the limit, show an error
@@ -244,80 +259,17 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
 
   if (i18nState === 'error') {
     return (
-      <div
-        role="alert"
-        aria-live="assertive"
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          minHeight: '100vh',
-          padding: '2rem',
-          fontFamily: 'system-ui, -apple-system, sans-serif',
-          backgroundColor: 'var(--color-background-page, #f9fafb)',
+      <I18nError
+        onRetry={handleRetry}
+        timeoutMs={I18N_INIT_TIMEOUT_MS}
+        devDetails={{
+          timeoutMs: I18N_INIT_TIMEOUT_MS,
+          initDurationMs: initDurationRef.current,
+          isInitialized: i18nInstance.isInitialized,
+          language: i18nInstance.language || 'undefined',
+          hint: 'Check: /locales/{lng}/{ns}.json files are served correctly.',
         }}
-      >
-        <div style={{ maxWidth: '480px', textAlign: 'center' }}>
-          {/* eslint-disable no-literal-jsx-string/no-literal-jsx-string -- Error state when i18n itself is broken, cannot use translations */}
-          <h1
-            style={{
-              fontSize: '1.5rem',
-              fontWeight: 600,
-              color: 'var(--color-interactive-danger, #dc2626)',
-              marginBottom: '1rem',
-            }}
-          >
-            Unable to Load Translations
-          </h1>
-          <p
-            style={{
-              fontSize: '1rem',
-              color: 'var(--color-text-secondary, #6b7280)',
-              lineHeight: 1.5,
-              marginBottom: '1.5rem',
-            }}
-          >
-            The application could not load its language resources. This may be caused by a network
-            issue or a missing configuration. Please check your connection and try again.
-          </p>
-          <button
-            onClick={handleRetry}
-            style={{
-              padding: '0.75rem 1.5rem',
-              fontSize: '0.875rem',
-              fontWeight: 500,
-              color: '#fff',
-              backgroundColor: 'var(--color-interactive-primary, #2563eb)',
-              border: 'none',
-              borderRadius: '0.5rem',
-              cursor: 'pointer',
-            }}
-          >
-            Try Again
-          </button>
-          {import.meta.env.DEV && (
-            <details
-              style={{
-                marginTop: '1.5rem',
-                padding: '1rem',
-                background: 'var(--color-warning-100, #fef3c7)',
-                borderRadius: '0.5rem',
-                textAlign: 'left',
-                fontSize: '0.75rem',
-              }}
-            >
-              <summary style={{ cursor: 'pointer', fontWeight: 500 }}>Developer Details</summary>
-              <p style={{ marginTop: '0.5rem', whiteSpace: 'pre-wrap' }}>
-                {`i18n initialization timed out after ${I18N_INIT_TIMEOUT_MS}ms.\n`}
-                {`i18n.isInitialized: ${String(i18nInstance.isInitialized)}\n`}
-                {`i18n.language: ${i18nInstance.language || 'undefined'}\n`}
-                {`Check: /locales/{lng}/{ns}.json files are served correctly.`}
-              </p>
-            </details>
-          )}
-        </div>
-        {/* eslint-enable no-literal-jsx-string/no-literal-jsx-string */}
-      </div>
+      />
     );
   }
 

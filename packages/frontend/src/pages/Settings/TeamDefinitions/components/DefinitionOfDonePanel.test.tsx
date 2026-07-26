@@ -86,7 +86,7 @@ describe('DefinitionOfDonePanel', () => {
           {
             id: 'item-1',
             description: 'Test item 1',
-            category: 'code-quality',
+            category: 'quality',
             isActive: true,
             order: 0,
           },
@@ -118,7 +118,7 @@ describe('DefinitionOfDonePanel', () => {
           {
             id: 'item-1',
             description: 'Test item',
-            category: 'code-quality',
+            category: 'quality',
             isActive: true,
             order: 0,
           },

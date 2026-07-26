@@ -6,17 +6,28 @@ import {
   type LocaleDev,
 } from '../constants/index.js';
 
-const RTL_LANGUAGES = new Set(['ar', 'he', 'fa', 'ur', 'pseudo-rtl']);
+/** Production RTL languages — does NOT include dev-only pseudo locales */
+export const RTL_LANGUAGES = new Set(['ar', 'he', 'fa', 'ur']);
+
+/** Dev-only RTL languages — includes pseudo-rtl for dry-run testing */
+export const RTL_LANGUAGES_DEV = new Set([...RTL_LANGUAGES, 'pseudo-rtl']);
 
 export function isRTL(locale: Locale | string): boolean {
-  // Check the full locale first (e.g. 'pseudo-rtl'), then fall back to the
-  // base language code (e.g. 'ar' from 'ar-EG'). This allows dev-only RTL
-  // locales like 'pseudo-rtl' whose base language ('pseudo') is not RTL.
-  return RTL_LANGUAGES.has(locale) || RTL_LANGUAGES.has(getBaseLanguage(locale));
+  const base = getBaseLanguage(locale);
+  return RTL_LANGUAGES.has(base) || RTL_LANGUAGES.has(locale);
+}
+
+export function isRTLDev(locale: Locale | string): boolean {
+  const base = getBaseLanguage(locale);
+  return RTL_LANGUAGES_DEV.has(base) || RTL_LANGUAGES_DEV.has(locale);
 }
 
 export function getDirection(locale: Locale | string): 'ltr' | 'rtl' {
   return isRTL(locale) ? 'rtl' : 'ltr';
+}
+
+export function getDirectionDev(locale: Locale | string): 'ltr' | 'rtl' {
+  return isRTLDev(locale) ? 'rtl' : 'ltr';
 }
 
 export function getBaseLanguage(locale: string): string {

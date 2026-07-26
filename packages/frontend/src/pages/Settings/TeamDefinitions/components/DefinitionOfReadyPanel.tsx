@@ -215,7 +215,10 @@ export function DefinitionOfReadyPanel(): React.JSX.Element {
                   className={styles['item-category']}
                   style={getCategoryColor(item.category ?? '', DOR_CATEGORIES)}
                 >
-                  {category?.icon} {t(`definitionEditor.dorCategories.${category?.value}` as never)}
+                  {category?.icon}{' '}
+                  {category
+                    ? t(`definitionEditor.dorCategories.${category.value}` as never)
+                    : t('dorPanel.uncategorized')}
                 </span>
                 <span className={styles['item-description']}>
                   {getTranslatedDescription(item, t)}

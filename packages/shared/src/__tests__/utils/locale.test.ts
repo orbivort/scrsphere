@@ -1,7 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import {
   isRTL,
+  isRTLDev,
   getDirection,
+  getDirectionDev,
   getBaseLanguage,
   isSupportedLocale,
   isSupportedLocaleDev,
@@ -56,12 +58,38 @@ describe('locale utilities', () => {
       expect(isRTL('he-IL')).toBe(true);
     });
 
-    it('should return true for pseudo-rtl dev locale', () => {
-      expect(isRTL('pseudo-rtl')).toBe(true);
+    it('should return false for pseudo-rtl dev locale (production isRTL excludes dev locales)', () => {
+      expect(isRTL('pseudo-rtl')).toBe(false);
     });
 
     it('should return false for pseudo dev locale', () => {
       expect(isRTL('pseudo')).toBe(false);
+    });
+  });
+
+  describe('isRTLDev', () => {
+    it('should return true for production RTL languages', () => {
+      expect(isRTLDev('ar')).toBe(true);
+      expect(isRTLDev('he')).toBe(true);
+      expect(isRTLDev('fa')).toBe(true);
+      expect(isRTLDev('ur')).toBe(true);
+    });
+
+    it('should return true for pseudo-rtl dev locale', () => {
+      expect(isRTLDev('pseudo-rtl')).toBe(true);
+    });
+
+    it('should return false for pseudo dev locale', () => {
+      expect(isRTLDev('pseudo')).toBe(false);
+    });
+
+    it('should return false for LTR production locales', () => {
+      expect(isRTLDev('en')).toBe(false);
+      expect(isRTLDev('de')).toBe(false);
+    });
+
+    it('should detect RTL from locale tags like ar-SA', () => {
+      expect(isRTLDev('ar-SA')).toBe(true);
     });
   });
 
@@ -88,12 +116,32 @@ describe('locale utilities', () => {
       expect(getDirection('de-AT')).toBe('ltr');
     });
 
-    it('should return rtl for pseudo-rtl dev locale', () => {
-      expect(getDirection('pseudo-rtl')).toBe('rtl');
+    it('should return ltr for pseudo-rtl dev locale (production getDirection excludes dev locales)', () => {
+      expect(getDirection('pseudo-rtl')).toBe('ltr');
     });
 
     it('should return ltr for pseudo dev locale', () => {
       expect(getDirection('pseudo')).toBe('ltr');
+    });
+  });
+
+  describe('getDirectionDev', () => {
+    it('should return rtl for production RTL locales', () => {
+      expect(getDirectionDev('ar')).toBe('rtl');
+      expect(getDirectionDev('he')).toBe('rtl');
+    });
+
+    it('should return rtl for pseudo-rtl dev locale', () => {
+      expect(getDirectionDev('pseudo-rtl')).toBe('rtl');
+    });
+
+    it('should return ltr for LTR locales', () => {
+      expect(getDirectionDev('en')).toBe('ltr');
+      expect(getDirectionDev('de')).toBe('ltr');
+    });
+
+    it('should return ltr for pseudo dev locale', () => {
+      expect(getDirectionDev('pseudo')).toBe('ltr');
     });
   });
 

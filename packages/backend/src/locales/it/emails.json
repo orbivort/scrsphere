@@ -1,27 +1,27 @@
 {
-  "passwordReset": {
-    "subject": "Reimpostare la password di Scrumooth",
-    "heading": "Gentile {{name}},",
-    "bodyIntro": "Abbiamo ricevuto una richiesta di reimpostazione della password per {{email}}.",
-    "cta": "Reimposta password",
-    "expiresIn": "Questo collegamento scade tra {{duration}}.",
-    "ignoreIfNotRequested": "Se non ha effettuato questa richiesta, può ignorare questa email in tutta sicurezza.",
-    "buttonHint": "Fare clic sul pulsante in basso per creare una nuova password:",
-    "fallbackLinkHint": "Se il pulsante sopra non funziona, copiare e incollare il seguente collegamento nel browser:",
-    "supportContact": "Per qualsiasi domanda o assistenza, si prega di contattare il nostro team di supporto."
-  },
   "common": {
+    "allRightsReserved": "Tutti i diritti riservati.",
     "greeting": "Ciao",
     "needHelp": "Hai bisogno di aiuto? Contattaci a",
     "thankYouForUsing": "Grazie per utilizzare",
-    "visitApp": "Visita",
-    "allRightsReserved": "Tutti i diritti riservati."
+    "visitApp": "Visita"
+  },
+  "passwordReset": {
+    "bodyIntro": "Abbiamo ricevuto una richiesta di reimpostazione della password per {{email}}.",
+    "buttonHint": "Fare clic sul pulsante in basso per creare una nuova password:",
+    "cta": "Reimposta password",
+    "expiresIn": "Questo collegamento scade tra {{duration}}.",
+    "fallbackLinkHint": "Se il pulsante sopra non funziona, copiare e incollare il seguente collegamento nel browser:",
+    "heading": "Gentile {{name}},",
+    "ignoreIfNotRequested": "Se non ha effettuato questa richiesta, può ignorare questa email in tutta sicurezza.",
+    "subject": "Reimpostare la password di Scrumooth",
+    "supportContact": "Per qualsiasi domanda o assistenza, si prega di contattare il nostro team di supporto."
   },
   "welcome": {
-    "subject": "Benvenuto in Scrumooth",
-    "heading": "Benvenuto, {{name}}!",
     "bodyIntro": "Il Suo account è stato creato con successo.",
+    "closing": "Siamo felici di averLa con noi.",
     "cta": "Iniziare",
-    "closing": "Siamo felici di averLa con noi."
+    "heading": "Benvenuto, {{name}}!",
+    "subject": "Benvenuto in Scrumooth"
   }
 }

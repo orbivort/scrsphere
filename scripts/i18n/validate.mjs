@@ -24,6 +24,9 @@ const I18NIGNORE_PATH = join(process.cwd(), '.i18nignore');
 const BASE_LOCALE = 'en';
 const TARGET_LOCALES = ['de', 'fr', 'es', 'it'];
 
+const args = process.argv.slice(2);
+const isStrict = args.includes('--strict');
+
 let hasErrors = false;
 let hasWarnings = false;
 
@@ -154,10 +157,72 @@ function validateLocaleDir(localesDir, label) {
   }
 }
 
+function findPendingValues(obj, path = '') {
+  for (const [key, value] of Object.entries(obj)) {
+    const currentPath = path ? `${path}.${key}` : key;
+    if (typeof value === 'string' && value === '__pending__') {
+      return true;
+    } else if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+      if (findPendingValues(value, currentPath)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+function validateStrictPending(localesDir, label) {
+  if (!existsSync(localesDir)) return;
+
+  let hasPendingErrors = false;
+
+  for (const locale of TARGET_LOCALES) {
+    const localeDir = join(localesDir, locale);
+    if (!existsSync(localeDir) || !statSync(localeDir).isDirectory()) continue;
+
+    for (const file of readdirSync(localeDir)) {
+      if (!file.endsWith('.json')) continue;
+
+      const filePath = join(localeDir, file);
+      const content = readJson(filePath);
+      if (!content) continue;
+
+      function checkPending(obj, path = '') {
+        for (const [key, value] of Object.entries(obj)) {
+          const currentPath = path ? `${path}.${key}` : key;
+          if (typeof value === 'string' && value === '__pending__') {
+            console.error(`  ❌ ${relative(process.cwd(), filePath)}: ${currentPath} = "__pending__"`);
+            hasPendingErrors = true;
+          } else if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+            checkPending(value, currentPath);
+          }
+        }
+      }
+
+      checkPending(content);
+    }
+  }
+
+  return hasPendingErrors;
+}
+
 // Run validation
 console.log('🔍 i18n Validation\n===================');
 validateLocaleDir(LOCALES_DIR_FRONTEND, 'Frontend locales');
 validateLocaleDir(LOCALES_DIR_BACKEND, 'Backend locales');
+
+if (isStrict) {
+  console.log('\n📋 Strict mode: Checking for __pending__ values...');
+  const frontendPending = validateStrictPending(LOCALES_DIR_FRONTEND, 'Frontend locales');
+  const backendPending = validateStrictPending(LOCALES_DIR_BACKEND, 'Backend locales');
+
+  if (frontendPending || backendPending) {
+    console.error('\n❌ Strict mode failed: __pending__ values found in non-source locales.');
+    process.exit(1);
+  } else {
+    console.log('  ✅ No __pending__ values found in non-source locales.');
+  }
+}
 
 if (hasErrors) {
   console.log('\n❌ Validation failed with errors');

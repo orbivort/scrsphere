@@ -18,6 +18,16 @@ const LOCALES_DIRS = [
 const BASE_LOCALE = 'en';
 const TARGET_LOCALES = ['de', 'fr', 'es', 'it'];
 
+const args = process.argv.slice(2);
+const minCoverageIndex = args.indexOf('--min-coverage');
+const minCoverage = minCoverageIndex !== -1 ? parseInt(args[minCoverageIndex + 1], 10) : 0;
+
+// Aggregate coverage across all locale dirs for threshold check
+const localeCoverage = {};
+for (const locale of TARGET_LOCALES) {
+  localeCoverage[locale] = { totalKeys: 0, translatedKeys: 0 };
+}
+
 function getKeys(obj, prefix = '') {
   const keys = [];
   for (const [key, value] of Object.entries(obj)) {
@@ -74,5 +84,29 @@ for (const { label, path: localesDir } of LOCALES_DIRS) {
 
     const overallPct = totalKeys > 0 ? Math.round((translatedKeys / totalKeys) * 100) : 0;
     console.log(`  ${'Overall'.padEnd(20)} ${translatedKeys}/${totalKeys} (${overallPct}%)`);
+
+    // Aggregate for threshold check
+    localeCoverage[locale].totalKeys += totalKeys;
+    localeCoverage[locale].translatedKeys += translatedKeys;
+  }
+}
+
+if (minCoverage > 0) {
+  console.log('\n📊 Coverage Threshold Check');
+  console.log('='.repeat(40));
+
+  const belowThreshold = [];
+  for (const [locale, { totalKeys, translatedKeys }] of Object.entries(localeCoverage)) {
+    const coverage = totalKeys > 0 ? (translatedKeys / totalKeys) * 100 : 0;
+    if (coverage < minCoverage) {
+      belowThreshold.push(`  ❌ ${locale}: ${coverage.toFixed(1)}% (below ${minCoverage}%)`);
+    }
+  }
+
+  if (belowThreshold.length > 0) {
+    console.error(`\n❌ Coverage threshold not met:\n${belowThreshold.join('\n')}`);
+    process.exit(1);
+  } else {
+    console.log(`\n✅ All locales meet the ${minCoverage}% coverage threshold.`);
   }
 }

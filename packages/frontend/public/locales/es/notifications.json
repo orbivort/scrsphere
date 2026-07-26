@@ -1,71 +1,71 @@
 {
-  "title": "Notificaciones",
-  "subtitle": "Manténgase actualizado con las actividades del equipo y actualizaciones importantes",
-  "skipToMainContent": "Ir al contenido principal",
-  "markAllAsRead": "Marcar todo como leído",
-  "marking": "Marcando...",
-  "filters": {
-    "all": "Todos",
-    "unread": "No leídos",
-    "teamInvitations": "Invitaciones de equipo",
-    "taskAssignments": "Asignaciones de tareas",
-    "impediments": "Impedimentos",
-    "reminders": "Recordatorios",
-    "teamCreated": "Equipo creado",
-    "teamUpdated": "Equipo actualizado",
-    "teamDeleted": "Equipo eliminado",
-    "directMessages": "Mensajes directos"
-  },
-  "loading": {
-    "title": "Cargando notificaciones...",
-    "ariaLabel": "Cargando notificaciones"
-  },
-  "error": {
-    "title": "Error al cargar notificaciones",
-    "message": "Algo salió mal al obtener sus notificaciones.",
-    "tryAgain": "Intentar nuevamente"
-  },
-  "empty": {
-    "title": "Aún no hay notificaciones",
-    "message": "Verá notificaciones aquí cuando haya actividad"
-  },
-  "dateGroups": {
-    "today": "Hoy",
-    "yesterday": "Ayer",
-    "thisWeek": "Esta semana",
-    "older": "Anteriores"
-  },
-  "pagination": {
-    "previous": "Anterior",
-    "next": "Siguiente",
-    "pageInfo": "Página {{current}} de {{total}}"
-  },
+  "accountDeletionCancelled": "Eliminación de cuenta cancelada",
+  "accountDeletionCancelledMessage": "La eliminación de cuenta programada ha sido cancelada.",
+  "accountDeletionScheduled": "Miembro del equipo programó eliminación de cuenta",
+  "accountDeletionScheduledMessage": "Un Product Owner en su equipo ha programado la eliminación de su cuenta. La cuenta se eliminará permanentemente el {{deletionDate}}. Por favor asigne un nuevo Product Owner antes de entonces.",
   "ariaLabels": {
-    "notificationItem": "Notificación de {{sender}}: {{message}}",
-    "markAsRead": "Marcar como leído",
     "dismiss": "Descartar notificación",
     "filterNotifications": "Filter notifications",
-    "pagination": "Pagination",
+    "goToNextPage": "Ir a la página siguiente",
     "goToPreviousPage": "Ir a la página anterior",
-    "goToNextPage": "Ir a la página siguiente"
+    "markAsRead": "Marcar como leído",
+    "notificationItem": "Notificación de {{sender}}: {{message}}",
+    "pagination": "Pagination"
   },
+  "backlogAdjustmentRequired": "Nueva Ajuste del Backlog Requiere Su Acción",
+  "backlogAdjustmentRequiredMessage": "Se le ha asignado como propietario de un ajuste del backlog: {{action}} - \"{{description}}\"",
+  "dateGroups": {
+    "older": "Anteriores",
+    "thisWeek": "Esta semana",
+    "today": "Hoy",
+    "yesterday": "Ayer"
+  },
+  "empty": {
+    "message": "Verá notificaciones aquí cuando haya actividad",
+    "title": "Aún no hay notificaciones"
+  },
+  "error": {
+    "message": "Algo salió mal al obtener sus notificaciones.",
+    "title": "Error al cargar notificaciones",
+    "tryAgain": "Intentar nuevamente"
+  },
+  "feedbackRequired": "Nuevo Feedback Requiere Su Acción",
+  "feedbackRequiredMessage": "Se le ha asignado como propietario de feedback de {{authorName}}: \"{{content}}\"",
+  "filters": {
+    "all": "Todos",
+    "directMessages": "Mensajes directos",
+    "impediments": "Impedimentos",
+    "reminders": "Recordatorios",
+    "taskAssignments": "Asignaciones de tareas",
+    "teamCreated": "Equipo creado",
+    "teamDeleted": "Equipo eliminado",
+    "teamInvitations": "Invitaciones de equipo",
+    "teamUpdated": "Equipo actualizado",
+    "unread": "No leídos"
+  },
+  "impedimentAssigned": "Nuevo impedimento asignado: \"{{impedimentTitle}}\"",
+  "loading": {
+    "ariaLabel": "Cargando notificaciones",
+    "title": "Cargando notificaciones..."
+  },
+  "markAllAsRead": "Marcar todo como leído",
+  "marking": "Marcando...",
+  "pagination": {
+    "next": "Siguiente",
+    "pageInfo": "Página {{current}} de {{total}}",
+    "previous": "Anterior"
+  },
+  "skipToMainContent": "Ir al contenido principal",
+  "subtitle": "Manténgase actualizado con las actividades del equipo y actualizaciones importantes",
   "teamCreated": "Equipo creado: \"{{teamName}}\"",
   "teamCreatedMessage": "Ha creado exitosamente el equipo",
-  "teamUpdated": "Equipo actualizado: \"{{teamName}}\"",
-  "teamUpdatedMessage": "Actualizado por {{updaterName}}",
   "teamDeleted": "Equipo eliminado: \"{{teamName}}\"",
   "teamDeletedMessage": "Eliminado por {{deleterName}}",
   "teamInvitation": "Ha sido invitado a unirse al equipo \"{{teamName}}\"",
   "teamInvitationMessage": "Invitado por {{inviterName}}",
   "teamRemoval": "Ha sido eliminado del equipo \"{{teamName}}\"",
   "teamRemovalMessage": "Eliminado por {{removerName}}",
-  "impedimentAssigned": "Nuevo impedimento asignado: \"{{impedimentTitle}}\"",
-  "accountDeletionScheduled": "Miembro del equipo programó eliminación de cuenta",
-  "accountDeletionScheduledMessage": "Un Product Owner en su equipo ha programado la eliminación de su cuenta. La cuenta se eliminará permanentemente el {{deletionDate}}. Por favor asigne un nuevo Product Owner antes de entonces.",
-  "accountDeletionCancelled": "Eliminación de cuenta cancelada",
-  "accountDeletionCancelledMessage": "La eliminación de cuenta programada ha sido cancelada.",
-  "backlogAdjustmentRequired": "Nueva Ajuste del Backlog Requiere Su Acción",
-  "backlogAdjustmentRequiredMessage": "Se le ha asignado como propietario de un ajuste del backlog: {{action}} - \"{{description}}\"",
-  "feedbackRequired": "Nuevo Feedback Requiere Su Acción",
-  "feedbackRequiredMessage": "Se le ha asignado como propietario de feedback de {{authorName}}: \"{{content}}\""
+  "teamUpdated": "Equipo actualizado: \"{{teamName}}\"",
+  "teamUpdatedMessage": "Actualizado por {{updaterName}}",
+  "title": "Notificaciones"
 }

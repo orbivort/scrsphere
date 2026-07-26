@@ -1,203 +1,203 @@
 {
-  "pts": "pts",
-  "title": "Incrementi",
-  "subtitle": "Gestisci e traccia i tuoi incrementi di prodotto. Gli incrementi rappresentano funzionalita operative, pronte per la consegna agli stakeholder.",
-  "createIncrement": "Crea Incremento",
-  "loading": "Caricando incrementi...",
-  "skipToSprintReview": "Salta a Sprint Review",
   "backToIncrements": "Torna agli Incrementi",
-  "noDescription": "Nessuna descrizione fornita.",
-  "sprintPrefix": "SPRINT {{sprintId}}",
-  "list": {
-    "stats": {
-      "total": "Incrementi Totali",
-      "active": "Attivi",
-      "delivered": "Consegnati",
-      "storyPoints": "Story Points"
-    },
-    "filters": {
-      "all": "Tutti",
-      "active": "Attivi",
-      "delivered": "Consegnati",
-      "archived": "Archiviati"
-    },
-    "searchPlaceholder": "Cerca incrementi...",
-    "ariaLabelSearch": "Cerca incrementi",
-    "ariaLabelFilter": "Filtra incrementi per stato",
-    "clearSearch": "Cancella ricerca",
-    "empty": {
-      "title": "Nessun Incremento trovato",
-      "noSearchResults": "Nessun incrementi corrisponde alla tua ricerca. Prova a modificare i filtri.",
-      "noIncrements": "Nessun incrementi e stato ancora creato. Crea il tuo primo incrementi per iniziare a tracciare le consegne."
-    },
-    "cardStats": {
-      "pbis": "PBIs",
-      "points": "Punti"
-    }
-  },
-  "status": {
-    "draft": "Bozza",
-    "verified": "Verificato",
-    "delivered": "Consegnato",
-    "archived": "Archiviato"
-  },
-  "deliveryMethod": {
-    "sprintReview": "Sprint Review",
-    "earlyRelease": "Rilascio Anticipato"
-  },
-  "dates": {
-    "created": "Creato",
-    "delivered": "Consegnato"
-  },
-  "detail": {
-    "deliverIncrement": "Consegna Incremento",
-    "sprintCompletionWorkflow": "Workflow Completamento Sprint",
-    "workflowStep3Of4": "Passo 3 di 4: Consegna Incremento",
-    "workflowSteps": {
-      "sprintCompleted": "Sprint Completato",
-      "createIncrement": "Crea Incremento",
-      "deliverIncrement": "Consegna Incremento",
-      "sprintReview": "Sprint Review"
-    },
-    "progressSteps": {
-      "completed": "Completato",
-      "current": "Attuale",
-      "upcoming": "In arrivo"
-    },
-    "overview": {
-      "title": "Panoramica",
-      "description": "Descrizione",
-      "sprint": "Sprint",
-      "created": "Creato",
-      "storyPoints": "Story Points",
-      "pbisIncluded": "PBIs Inclusi",
-      "delivered": "Consegnato",
-      "deliveryMethod": "Metodo di Consegna",
-      "noDescription": "Nessuna descrizione"
-    },
-    "pbis": {
-      "title": "Product Backlog Items Inclusi",
-      "empty": "Nessun PBI incluso in questo incremento."
-    },
-    "dodVerification": {
-      "title": "Verifica Definition of Done",
-      "totalVerifications": "Verifiche Totali",
-      "verified": "Verificato",
-      "byCategory": "Verifica per Categoria",
-      "byPbi": "Verifica per PBI",
-      "noVerifications": "Nessuna verifica DoD registrata per questo incremento.",
-      "noVerificationsHint": "Le verifiche vengono catturate al completamento di uno sprint.",
-      "noVerificationsForPbi": "Nessuna verifica per questo PBI."
-    },
-    "timeline": {
-      "title": "Sequenza Temporale",
-      "incrementCreated": "Incremento Creato",
-      "deliveredViaSprintReview": "Consegnato via Sprint Review",
-      "deliveredViaEarlyRelease": "Consegnato via Rilascio Anticipato"
-    },
-    "deliverModal": {
-      "title": "Consegna Incremento",
-      "description": "Segna questo Incremento come consegnato e registra il metodo di consegna.",
-      "modalDescription": "Segna questo Incremento come consegnato agli stakeholder. Questa azione non puo essere annullata.",
-      "deliveryMethodLabel": "Metodo di Consegna",
-      "sprintReviewOption": "Sprint Review",
-      "sprintReviewDescription": "Presentato alla riunione Sprint Review",
-      "earlyReleaseOption": "Rilascio Anticipato",
-      "earlyReleaseDescription": "Consegnato prima della fine dello Sprint",
-      "notesLabel": "Note (Opzionale)",
-      "notesPlaceholder": "Aggiungi note su questa consegna...",
-      "confirmText": "Confermo che questo Incremento soddisfa il Definition of Done ed e pronto per la consegna",
-      "checkboxText": "Capisco che questa azione e irreversibile e l'incremento sara segnato come consegnato agli stakeholder.",
-      "cancel": "Annulla",
-      "confirm": "Conferma Consegna",
-      "delivering": "Consegnando...",
-      "closeDialog": "Chiudi dialogo",
-      "confirmDeliveryAriaLabel": "Conferma azione di consegna"
-    },
-    "toast": {
-      "deliveredSuccess": "Incremento consegnato con successo!",
-      "deliverFailed": "Fallimento consegna incremento. Riprova."
-    },
-    "error": {
-      "title": "Fallimento caricamento incremento",
-      "backToIncrements": "Torna agli Incrementi"
-    },
-    "loading": "Caricando incremento..."
-  },
   "create": {
-    "backToSprintReview": "Torna a Sprint Review",
-    "backToIncrements": "Torna agli Incrementi",
-    "title": "Crea Incremento",
-    "workflowSteps": {
-      "sprintCompleted": "Sprint Completato",
+    "actions": {
+      "cancel": "Annulla",
+      "createAndContinue": "Crea & Continua",
       "createIncrement": "Crea Incremento",
-      "deliverIncrement": "Consegna Incremento",
-      "sprintReview": "Sprint Review"
+      "creating": "Creando...",
+      "delivering": "Consegnando...",
+      "skipToSprintReview": "Salta a Sprint Review"
     },
-    "workflowIndicator": {
-      "title": "Workflow Completamento Sprint",
-      "step2Of4": "Passo 2 di 4: Crea Incremento",
-      "step3Of4": "Passo 3 di 4: Consegna Incremento",
-      "step4Of4": "Passo 4 di 4: Sprint Review"
+    "backToIncrements": "Torna agli Incrementi",
+    "backToSprintReview": "Torna a Sprint Review",
+    "error": {
+      "failedLoadPbis": "Fallimento caricamento PBIs elegibili",
+      "message": "Fallimento caricamento dati. Riprova.",
+      "title": "Errore"
+    },
+    "form": {
+      "description": "Descrizione",
+      "descriptionPlaceholder": "Descrivi cosa include questo incremento...",
+      "incrementDetails": "Dettagli Incremento",
+      "incrementDetailsSubtitle": "Fornisci un nome e descrizione opzionale per questo incremento.",
+      "name": "Nome",
+      "namePlaceholder": "es. Incremento Sprint 5",
+      "sprint": "Sprint",
+      "sprintPlaceholder": "Seleziona uno sprint"
+    },
+    "loading": "Caricando...",
+    "pbis": {
+      "alreadyInIncrement": "Gia in un incremento",
+      "deselectAll": "Deseleziona Tutti",
+      "mustBeDone": "I PBIs devono essere in stato \"Done\" e non gia in un altro incremento.",
+      "noEligiblePbis": "Nessun PBI elegibile trovato per questo sprint.",
+      "selectAll": "Seleziona Tutti",
+      "selected": "selezionato(i)",
+      "subtitle": "Scegli i PBIs che sono completi e pronti per essere inclusi in questo incremento.",
+      "title": "Seleziona Product Backlog Items"
     },
     "progressSteps": {
       "creatingIncrement": "Creando Incremento...",
       "deliveringIncrement": "Consegnando Incremento...",
       "redirecting": "Reindirizzamento..."
     },
-    "form": {
-      "incrementDetails": "Dettagli Incremento",
-      "incrementDetailsSubtitle": "Fornisci un nome e descrizione opzionale per questo incremento.",
-      "name": "Nome",
-      "namePlaceholder": "es. Incremento Sprint 5",
-      "sprint": "Sprint",
-      "sprintPlaceholder": "Seleziona uno sprint",
-      "description": "Descrizione",
-      "descriptionPlaceholder": "Descrivi cosa include questo incremento..."
-    },
-    "pbis": {
-      "title": "Seleziona Product Backlog Items",
-      "subtitle": "Scegli i PBIs che sono completi e pronti per essere inclusi in questo incremento.",
-      "selected": "selezionato(i)",
-      "deselectAll": "Deseleziona Tutti",
-      "selectAll": "Seleziona Tutti",
-      "noEligiblePbis": "Nessun PBI elegibile trovato per questo sprint.",
-      "mustBeDone": "I PBIs devono essere in stato \"Done\" e non gia in un altro incremento.",
-      "alreadyInIncrement": "Gia in un incremento"
-    },
     "summary": {
-      "title": "Riepilogo",
-      "subtitle": "Verifica il tuo incremento prima di creare.",
       "pbisSelected": "PBIs Selezionati",
+      "subtitle": "Verifica il tuo incremento prima di creare.",
+      "title": "Riepilogo",
       "totalStoryPoints": "Totale Story Points"
     },
-    "actions": {
-      "skipToSprintReview": "Salta a Sprint Review",
-      "cancel": "Annulla",
-      "createAndContinue": "Crea & Continua",
-      "createIncrement": "Crea Incremento",
-      "creating": "Creando...",
-      "delivering": "Consegnando..."
-    },
-    "validation": {
-      "nameRequired": "Il nome e richiesto",
-      "sprintRequired": "Seleziona uno sprint",
-      "atLeastOnePbi": "Almeno un PBI deve essere selezionato",
-      "noTeamSelected": "Nessun team selezionato. Seleziona un team prima."
-    },
+    "title": "Crea Incremento",
     "toast": {
+      "createFailed": "Fallimento creazione incremento. Riprova.",
       "createdAndDelivering": "Incremento creato! Consegna incremento...",
-      "deliveredSuccess": "Incremento consegnato! Reindirizzamento a Sprint Review...",
       "createdSuccess": "Incremento creato con successo!",
       "deliverFailed": "Fallimento consegna incremento. Puoi consegnarlo manualmente dalla pagina dettaglio incremento.",
-      "createFailed": "Fallimento creazione incremento. Riprova.",
+      "deliveredSuccess": "Incremento consegnato! Reindirizzamento a Sprint Review...",
       "validationFailed": "Validazione fallita"
     },
-    "loading": "Caricando...",
-    "error": {
-      "title": "Errore",
-      "message": "Fallimento caricamento dati. Riprova.",
-      "failedLoadPbis": "Fallimento caricamento PBIs elegibili"
+    "validation": {
+      "atLeastOnePbi": "Almeno un PBI deve essere selezionato",
+      "nameRequired": "Il nome e richiesto",
+      "noTeamSelected": "Nessun team selezionato. Seleziona un team prima.",
+      "sprintRequired": "Seleziona uno sprint"
+    },
+    "workflowIndicator": {
+      "step2Of4": "Passo 2 di 4: Crea Incremento",
+      "step3Of4": "Passo 3 di 4: Consegna Incremento",
+      "step4Of4": "Passo 4 di 4: Sprint Review",
+      "title": "Workflow Completamento Sprint"
+    },
+    "workflowSteps": {
+      "createIncrement": "Crea Incremento",
+      "deliverIncrement": "Consegna Incremento",
+      "sprintCompleted": "Sprint Completato",
+      "sprintReview": "Sprint Review"
     }
-  }
+  },
+  "createIncrement": "Crea Incremento",
+  "dates": {
+    "created": "Creato",
+    "delivered": "Consegnato"
+  },
+  "deliveryMethod": {
+    "earlyRelease": "Rilascio Anticipato",
+    "sprintReview": "Sprint Review"
+  },
+  "detail": {
+    "deliverIncrement": "Consegna Incremento",
+    "deliverModal": {
+      "cancel": "Annulla",
+      "checkboxText": "Capisco che questa azione e irreversibile e l'incremento sara segnato come consegnato agli stakeholder.",
+      "closeDialog": "Chiudi dialogo",
+      "confirm": "Conferma Consegna",
+      "confirmDeliveryAriaLabel": "Conferma azione di consegna",
+      "confirmText": "Confermo che questo Incremento soddisfa il Definition of Done ed e pronto per la consegna",
+      "delivering": "Consegnando...",
+      "deliveryMethodLabel": "Metodo di Consegna",
+      "description": "Segna questo Incremento come consegnato e registra il metodo di consegna.",
+      "earlyReleaseDescription": "Consegnato prima della fine dello Sprint",
+      "earlyReleaseOption": "Rilascio Anticipato",
+      "modalDescription": "Segna questo Incremento come consegnato agli stakeholder. Questa azione non puo essere annullata.",
+      "notesLabel": "Note (Opzionale)",
+      "notesPlaceholder": "Aggiungi note su questa consegna...",
+      "sprintReviewDescription": "Presentato alla riunione Sprint Review",
+      "sprintReviewOption": "Sprint Review",
+      "title": "Consegna Incremento"
+    },
+    "dodVerification": {
+      "byCategory": "Verifica per Categoria",
+      "byPbi": "Verifica per PBI",
+      "noVerifications": "Nessuna verifica DoD registrata per questo incremento.",
+      "noVerificationsForPbi": "Nessuna verifica per questo PBI.",
+      "noVerificationsHint": "Le verifiche vengono catturate al completamento di uno sprint.",
+      "title": "Verifica Definition of Done",
+      "totalVerifications": "Verifiche Totali",
+      "verified": "Verificato"
+    },
+    "error": {
+      "backToIncrements": "Torna agli Incrementi",
+      "title": "Fallimento caricamento incremento"
+    },
+    "loading": "Caricando incremento...",
+    "overview": {
+      "created": "Creato",
+      "delivered": "Consegnato",
+      "deliveryMethod": "Metodo di Consegna",
+      "description": "Descrizione",
+      "noDescription": "Nessuna descrizione",
+      "pbisIncluded": "PBIs Inclusi",
+      "sprint": "Sprint",
+      "storyPoints": "Story Points",
+      "title": "Panoramica"
+    },
+    "pbis": {
+      "empty": "Nessun PBI incluso in questo incremento.",
+      "title": "Product Backlog Items Inclusi"
+    },
+    "progressSteps": {
+      "completed": "Completato",
+      "current": "Attuale",
+      "upcoming": "In arrivo"
+    },
+    "sprintCompletionWorkflow": "Workflow Completamento Sprint",
+    "timeline": {
+      "deliveredViaEarlyRelease": "Consegnato via Rilascio Anticipato",
+      "deliveredViaSprintReview": "Consegnato via Sprint Review",
+      "incrementCreated": "Incremento Creato",
+      "title": "Sequenza Temporale"
+    },
+    "toast": {
+      "deliverFailed": "Fallimento consegna incremento. Riprova.",
+      "deliveredSuccess": "Incremento consegnato con successo!"
+    },
+    "workflowStep3Of4": "Passo 3 di 4: Consegna Incremento",
+    "workflowSteps": {
+      "createIncrement": "Crea Incremento",
+      "deliverIncrement": "Consegna Incremento",
+      "sprintCompleted": "Sprint Completato",
+      "sprintReview": "Sprint Review"
+    }
+  },
+  "list": {
+    "ariaLabelFilter": "Filtra incrementi per stato",
+    "ariaLabelSearch": "Cerca incrementi",
+    "cardStats": {
+      "pbis": "PBIs",
+      "points": "Punti"
+    },
+    "clearSearch": "Cancella ricerca",
+    "empty": {
+      "noIncrements": "Nessun incrementi e stato ancora creato. Crea il tuo primo incrementi per iniziare a tracciare le consegne.",
+      "noSearchResults": "Nessun incrementi corrisponde alla tua ricerca. Prova a modificare i filtri.",
+      "title": "Nessun Incremento trovato"
+    },
+    "filters": {
+      "active": "Attivi",
+      "all": "Tutti",
+      "archived": "Archiviati",
+      "delivered": "Consegnati"
+    },
+    "searchPlaceholder": "Cerca incrementi...",
+    "stats": {
+      "active": "Attivi",
+      "delivered": "Consegnati",
+      "storyPoints": "Story Points",
+      "total": "Incrementi Totali"
+    }
+  },
+  "loading": "Caricando incrementi...",
+  "noDescription": "Nessuna descrizione fornita.",
+  "pts": "pts",
+  "skipToSprintReview": "Salta a Sprint Review",
+  "sprintPrefix": "SPRINT {{sprintId}}",
+  "status": {
+    "archived": "Archiviato",
+    "delivered": "Consegnato",
+    "draft": "Bozza",
+    "verified": "Verificato"
+  },
+  "subtitle": "Gestisci e traccia i tuoi incrementi di prodotto. Gli incrementi rappresentano funzionalita operative, pronte per la consegna agli stakeholder.",
+  "title": "Incrementi"
 }

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { DEFAULT_LOCALE, type Locale } from '@scrumooth/shared';
+import { DEFAULT_LOCALE, type Locale, getLocaleCookieOptions } from '@scrumooth/shared';
 
 interface I18nState {
   locale: Locale;
@@ -14,10 +14,9 @@ export const useI18nStore = create<I18nState>()(
       setLocale: (locale) => {
         set({ locale });
         // Sync locale to cookie so backend can read it on subsequent requests
-        const expires = new Date();
-        expires.setFullYear(expires.getFullYear() + 1);
-        const isSecure = window.location.protocol === 'https:';
-        document.cookie = `scrumooth_locale=${locale}; expires=${expires.toUTCString()}; path=/; SameSite=Strict${isSecure ? '; Secure' : ''}`;
+        const opts = getLocaleCookieOptions('browser');
+        const expires = new Date(Date.now() + opts.maxAge).toUTCString();
+        document.cookie = `${opts.name}=${locale}; Expires=${expires}; Path=${opts.path}; SameSite=${opts.sameSite}${opts.secure ? '; Secure' : ''}`;
       },
     }),
     {

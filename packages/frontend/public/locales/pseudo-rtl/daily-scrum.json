@@ -1,163 +1,163 @@
 {
-  "title": "Daily Scrum",
-  "subtitle": "{{sprintName}} - Day {{day}}",
-  "viewMode": {
-    "cards": "Cards",
-    "list": "List"
+  "activeImpediments": {
+    "title": "Active Impediments",
+    "trackAsImpediment": "Track as Impediment",
+    "tracked": "Tracked",
+    "trackedImpediment": "Tracked impediment",
+    "untrackedImpediment": "Untracked impediment",
+    "viewAllImpediments": "View all {{count}} impediments",
+    "viewDetails": "View Details"
+  },
+  "aria": {
+    "clickToCollapse": "Click to collapse",
+    "clickToExpand": "Click to expand",
+    "closeDialog": "Close dialog",
+    "closeForm": "Close form",
+    "dailyUpdateAriaLabel": "{{name}}'s daily update. {{expandAction}}.",
+    "impedimentStatus": "Impediment status: {{status}}",
+    "trackedAsFormalImpediment": "Tracked as formal impediment",
+    "viewMode": "View mode"
   },
   "datePicker": {
-    "label": "Select date for daily updates",
-    "ariaLabel": "Select date for daily updates"
+    "ariaLabel": "Select date for daily updates",
+    "label": "Select date for daily updates"
+  },
+  "draftRestore": {
+    "discard": "Discard",
+    "prompt": "Would you like to restore your previous draft?",
+    "restoreDraft": "Restore Draft",
+    "title": "Unsaved Draft Found"
+  },
+  "draftSaved": "Draft saved {{timeSince}}",
+  "emptyState": {
+    "beFirst": "Be the first to submit your daily update!",
+    "noUpdates": "No Updates Yet",
+    "noUpdatesForDate": "No team updates for this date."
+  },
+  "form": {
+    "cancel": "Cancel",
+    "impedimentHint": "This impediment will be tracked and can be promoted to a formal impediment record",
+    "impedimentLabel": "Any impediments? (optional)",
+    "impedimentPlaceholder": "Describe any blockers or impediments...",
+    "submitting": "Submitting...",
+    "todayLabel": "What will you do today to help team meet the sprint goal?",
+    "todayPlaceholder": "Describe what you plan to work on today...",
+    "yesterdayLabel": "What did you do yesterday to help team meet the sprint goal?",
+    "yesterdayPlaceholder": "Describe what you accomplished yesterday..."
+  },
+  "formatTimeSince": {
+    "daysAgo": "{{count}}d ago",
+    "hoursAgo": "{{count}}h ago",
+    "justNow": "just now",
+    "minutesAgo": "{{count}}m ago"
+  },
+  "impedimentStatus": {
+    "closed": "Closed",
+    "inProgress": "In Progress",
+    "open": "Open",
+    "resolved": "Resolved"
+  },
+  "promoteModal": {
+    "createImpediment": "Create Impediment",
+    "creating": "Creating...",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Detailed description of the impediment",
+    "fromUpdateBy": "From Daily Update by:",
+    "originalImpedimentText": "Original Impediment Text:",
+    "priority": "Priority",
+    "priorityHigh": "High",
+    "priorityLow": "Low",
+    "priorityMedium": "Medium",
+    "title": "Create Impediment from Daily Update",
+    "titleLabel": "Title",
+    "titlePlaceholder": "Brief title for the impediment"
   },
   "quickDates": {
     "today": "Today",
     "yesterday": "Yesterday"
   },
-  "stats": {
-    "submitted": "Submitted",
-    "pending": "Pending",
-    "impediments": "Impediments",
-    "participation": "Participation"
+  "retryPrompt": {
+    "dismiss": "Dismiss",
+    "message": "Your update could not be submitted. Your data has been preserved.",
+    "retrySubmission": "Retry Submission",
+    "retrying": "Retrying...",
+    "title": "Submission Failed"
   },
-  "teamUpdates": "Team Updates",
-  "yourDailyUpdate": "Your Daily Update",
+  "sprintGoal": {
+    "addInPlanning": "Add one in Sprint Planning",
+    "label": "Sprint Goal",
+    "noGoalDefined": "No sprint goal defined."
+  },
+  "sprintProgress": {
+    "dayOfTotal": "Day {{current}} of {{total}}",
+    "title": "Sprint Progress",
+    "viewSprintBoard": "View Sprint Board"
+  },
+  "stats": {
+    "impediments": "Impediments",
+    "participation": "Participation",
+    "pending": "Pending",
+    "submitted": "Submitted"
+  },
   "submitUpdate": "Submit Update",
+  "subtitle": "{{sprintName}} - Day {{day}}",
+  "teamUpdates": "Team Updates",
   "templates": {
     "featureDevelopment": "Feature Development",
     "issueFixing": "Issue Fixing",
-    "review": "Review",
-    "meetings": "Meetings"
+    "meetings": "Meetings",
+    "review": "Review"
   },
-  "form": {
-    "yesterdayLabel": "What did you do yesterday to help team meet the sprint goal?",
-    "todayLabel": "What will you do today to help team meet the sprint goal?",
-    "impedimentLabel": "Any impediments? (optional)",
-    "yesterdayPlaceholder": "Describe what you accomplished yesterday...",
-    "todayPlaceholder": "Describe what you plan to work on today...",
-    "impedimentPlaceholder": "Describe any blockers or impediments...",
-    "impedimentHint": "This impediment will be tracked and can be promoted to a formal impediment record",
-    "cancel": "Cancel",
-    "submitting": "Submitting..."
+  "title": "Daily Scrum",
+  "toast": {
+    "allSubmitted": "All team members have submitted their updates",
+    "failedCreateImpediment": "Failed to create impediment. Please try again.",
+    "failedSendReminder": "Failed to send reminder. Please try again.",
+    "impedimentCreated": "Impediment created successfully!",
+    "networkError": "A network error occurred. Please check your connection and try again.",
+    "noPendingUpdates": "No pending updates",
+    "noPermissionCreateImpediments": "You do not have permission to create impediments.",
+    "noPermissionReminders": "You do not have permission to send reminders.",
+    "offline": "You appear to be offline. Please check your internet connection and try again.",
+    "reminderSent": "Reminder sent!",
+    "remindersSentOne": "Reminders sent to 1 team member",
+    "remindersSentPlural": "Reminders sent to {{count}} team members",
+    "resourceNotFound": "The requested resource was not found.",
+    "serverError": "A server error occurred. Please try again later.",
+    "sessionExpired": "Your session has expired. Please log in again.",
+    "submitFailed": "Failed to submit update. Please try again.",
+    "updateSubmitted": "Update submitted successfully!"
   },
-  "emptyState": {
-    "noUpdates": "No Updates Yet",
-    "beFirst": "Be the first to submit your daily update!",
-    "noUpdatesForDate": "No team updates for this date."
-  },
-  "waitingForUpdates": {
-    "title": "Waiting for Updates",
-    "sendReminder": "Send Reminder",
-    "sending": "Sending..."
-  },
-  "activeImpediments": {
-    "title": "Active Impediments",
-    "tracked": "Tracked",
-    "trackedImpediment": "Tracked impediment",
-    "untrackedImpediment": "Untracked impediment",
-    "viewDetails": "View Details",
-    "trackAsImpediment": "Track as Impediment",
-    "viewAllImpediments": "View all {{count}} impediments"
-  },
-  "sprintProgress": {
-    "title": "Sprint Progress",
-    "dayOfTotal": "Day {{current}} of {{total}}",
-    "viewSprintBoard": "View Sprint Board"
-  },
-  "sprintGoal": {
-    "label": "Sprint Goal",
-    "noGoalDefined": "No sprint goal defined.",
-    "addInPlanning": "Add one in Sprint Planning"
+  "unsavedModal": {
+    "message": "You have unsaved changes in the impediment form. Are you sure you want to discard them?",
+    "title": "Unsaved Changes"
   },
   "updateCard": {
-    "yesterday": "Yesterday",
-    "today": "Today",
+    "clickToCollapse": "Click to collapse",
+    "clickToExpand": "Click to expand",
     "impediment": "Impediment",
+    "today": "Today",
+    "trackAsFormalImpediment": "Track as Formal Impediment",
+    "trackAsImpediment": "Track as Impediment",
     "tracked": "(Tracked)",
     "viewImpediment": "View Impediment",
     "viewImpedimentDetails": "View Impediment Details",
-    "trackAsImpediment": "Track as Impediment",
-    "trackAsFormalImpediment": "Track as Formal Impediment",
-    "clickToCollapse": "Click to collapse",
-    "clickToExpand": "Click to expand"
-  },
-  "impedimentStatus": {
-    "open": "Open",
-    "inProgress": "In Progress",
-    "resolved": "Resolved",
-    "closed": "Closed"
-  },
-  "promoteModal": {
-    "title": "Create Impediment from Daily Update",
-    "fromUpdateBy": "From Daily Update by:",
-    "originalImpedimentText": "Original Impediment Text:",
-    "titleLabel": "Title",
-    "titlePlaceholder": "Brief title for the impediment",
-    "descriptionLabel": "Description",
-    "descriptionPlaceholder": "Detailed description of the impediment",
-    "priority": "Priority",
-    "priorityHigh": "High",
-    "priorityMedium": "Medium",
-    "priorityLow": "Low",
-    "createImpediment": "Create Impediment",
-    "creating": "Creating..."
-  },
-  "draftRestore": {
-    "title": "Unsaved Draft Found",
-    "prompt": "Would you like to restore your previous draft?",
-    "discard": "Discard",
-    "restoreDraft": "Restore Draft"
-  },
-  "retryPrompt": {
-    "title": "Submission Failed",
-    "message": "Your update could not be submitted. Your data has been preserved.",
-    "dismiss": "Dismiss",
-    "retrySubmission": "Retry Submission",
-    "retrying": "Retrying..."
-  },
-  "unsavedModal": {
-    "title": "Unsaved Changes",
-    "message": "You have unsaved changes in the impediment form. Are you sure you want to discard them?"
+    "yesterday": "Yesterday"
   },
   "validation": {
-    "titleRequired": "Title is required",
-    "titleTooShort": "Title must be at least 3 characters",
     "descriptionRequired": "Description is required",
-    "descriptionTooShort": "Description must be at least 10 characters"
+    "descriptionTooShort": "Description must be at least 10 characters",
+    "titleRequired": "Title is required",
+    "titleTooShort": "Title must be at least 3 characters"
   },
-  "aria": {
-    "viewMode": "View mode",
-    "closeForm": "Close form",
-    "closeDialog": "Close dialog",
-    "trackedAsFormalImpediment": "Tracked as formal impediment",
-    "impedimentStatus": "Impediment status: {{status}}",
-    "dailyUpdateAriaLabel": "{{name}}'s daily update. {{expandAction}}.",
-    "clickToCollapse": "Click to collapse",
-    "clickToExpand": "Click to expand"
+  "viewMode": {
+    "cards": "Cards",
+    "list": "List"
   },
-  "draftSaved": "Draft saved {{timeSince}}",
-  "formatTimeSince": {
-    "justNow": "just now",
-    "minutesAgo": "{{count}}m ago",
-    "hoursAgo": "{{count}}h ago",
-    "daysAgo": "{{count}}d ago"
+  "waitingForUpdates": {
+    "sendReminder": "Send Reminder",
+    "sending": "Sending...",
+    "title": "Waiting for Updates"
   },
-  "toast": {
-    "updateSubmitted": "Update submitted successfully!",
-    "impedimentCreated": "Impediment created successfully!",
-    "reminderSent": "Reminder sent!",
-    "noPendingUpdates": "No pending updates",
-    "remindersSentOne": "Reminders sent to 1 team member",
-    "remindersSentPlural": "Reminders sent to {{count}} team members",
-    "allSubmitted": "All team members have submitted their updates",
-    "offline": "You appear to be offline. Please check your internet connection and try again.",
-    "networkError": "A network error occurred. Please check your connection and try again.",
-    "sessionExpired": "Your session has expired. Please log in again.",
-    "noPermissionCreateImpediments": "You do not have permission to create impediments.",
-    "serverError": "A server error occurred. Please try again later.",
-    "failedCreateImpediment": "Failed to create impediment. Please try again.",
-    "noPermissionReminders": "You do not have permission to send reminders.",
-    "failedSendReminder": "Failed to send reminder. Please try again.",
-    "submitFailed": "Failed to submit update. Please try again.",
-    "resourceNotFound": "The requested resource was not found."
-  }
+  "yourDailyUpdate": "Your Daily Update"
 }

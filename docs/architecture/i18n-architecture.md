@@ -1,10 +1,14 @@
 # i18n Architecture
 
 **Status**: Implemented (Phase 1–4) · Phase 5 (RTL) pending
-**Last Updated**: 2026-07-18
+**Last Updated**: 2026-07-26
 **Scope**: Frontend (`packages/frontend/`), Backend (`packages/backend/`), Shared (`packages/shared/`)
 
 > This document describes the internationalization architecture as implemented in the codebase. It is intentionally concise — for full source-of-truth, read the files referenced in each section.
+
+### Changelog
+
+- **2026-07-26:** Refreshed to match codebase after i18n remediation program (Sprints 1–5). Fixed 13+ discrepancies, added ADR-013 (pendingGuard) and ADR-014 (Intl cache).
 
 ---
 
@@ -36,7 +40,7 @@ Scrumooth supports 5 locales (`en`, `de`, `fr`, `it`, `es`) end-to-end across fr
 
 - **No bundled locale** — all locale JSON (including `en/common`) is fetched over HTTP by `i18next-http-backend`. The main JS bundle contains only the i18next runtime (~30 KB gzipped) plus the `intl-pluralrules` polyfill (~1 KB).
 - **Cookie-based locale persistence** — `scrumooth_locale` cookie (1 year, `SameSite=Strict`). `localStorage` is deliberately avoided because the Zustand persist format (`{ state: { locale: '…' }, version: 0 }`) collides with what a language detector would write.
-- **Backend locale priority**: `Accept-Language` header FIRST → `User.locale` database column → `DEFAULT_LOCALE` (`en`). Reversed from typical SaaS pattern because Scrumooth is multi-tenant by team and browser preference is more reliable than per-user config at first visit.
+- **Backend locale priority** — Authenticated: `User.locale > Accept-Language > DEFAULT_LOCALE`; Unauthenticated: `Accept-Language > DEFAULT_LOCALE`. For authenticated users, the stored `User.locale` takes priority — it represents an explicit user choice, which is more reliable than a browser header. For unauthenticated requests, `Accept-Language` is the best signal.
 - **RTL-ready** — CSS uses logical properties (`margin-inline-start` not `margin-left`); `dir="rtl"` is set on `<html>` based on `getDirection(locale)`. No RTL locale ships today.
 
 ---
@@ -53,7 +57,8 @@ Scrumooth supports 5 locales (`en`, `de`, `fr`, `it`, `es`) end-to-end across fr
 
 - **English uses `enGB`** (not `enUS`) date-fns locale — target organization is European.
 - **DEFAULT_LOCALE** is `en`. All fallback chains terminate at `en`.
-- **RTL_LANGUAGES** = `['ar', 'he', 'fa', 'ur']` (none currently supported; CSS groundwork is in place).
+- **RTL_LANGUAGES** = `['ar', 'he', 'fa', 'ur']` (production; `pseudo-rtl` is in `RTL_LANGUAGES_DEV` only for dry-run testing; none of the production locales are RTL). CSS groundwork is in place.
+- **SUPPORTED_LOCALES_DEV** and **LocaleDev** type extend the production locale set with pseudo locales (`pseudo`, `pseudo-rtl`) for development and testing only.
 
 ---
 
@@ -78,7 +83,8 @@ Scrumooth supports 5 locales (`en`, `de`, `fr`, `it`, `es`) end-to-end across fr
 │                                                                     │
 │  Express middleware chain                                           │
 │    └─ locale.middleware.ts                                          │
-│         priority: Accept-Language > User.locale > DEFAULT_LOCALE    │
+│         Authenticated: User.locale > Accept-Language > DEFAULT_LOCALE │
+│         Unauthenticated: Accept-Language > DEFAULT_LOCALE           │
 │         stores locale in AsyncLocalStorage                          │
 │                                                                     │
 │  Per-request t()                                                    │
@@ -119,8 +125,10 @@ Scrumooth supports 5 locales (`en`, `de`, `fr`, `it`, `es`) end-to-end across fr
 ### ADR-005: Backend i18n — Shared Instance with Per-Request Locale
 
 **Decision:** A single `i18next.createInstance()` is initialized at backend startup with all 5 locales × 5 namespaces bundled. Per-request locale is resolved by `locale.middleware.ts` and stored in `AsyncLocalStorage`. The `t()` accessor in `requestT.ts` reads the locale from `AsyncLocalStorage` and passes it as `i18nInstance.t(key, { lng: getRequestLocale(), ...options })`.
-**Locale priority (verified):** `Accept-Language` header FIRST → `User.locale` (database) → `DEFAULT_LOCALE`. Reversed from typical SaaS pattern because Scrumooth is multi-tenant by team and the browser language is more reliable at first visit. The Accept-Language parser is simplistic (split-on-comma, no `q=` handling); `resolve-accept-language` is recommended for future improvement.
+**Locale priority (verified):** Authenticated: `User.locale > Accept-Language > DEFAULT_LOCALE`; Unauthenticated: `Accept-Language > DEFAULT_LOCALE`. For authenticated users, the stored `User.locale` takes priority — it represents an explicit user choice, which is more reliable than a browser header. For unauthenticated requests, `Accept-Language` is the best signal. Accept-Language parsing uses `resolve-accept-language` (RFC 4647/9110 compliant, handles `q=` quality values).
 **Silent fallback:** `requestT.ts` does NOT throw when called outside a request scope — `getRequestLocale()` returns `DEFAULT_LOCALE`. A `logger.warn` is emitted to surface misuse. The JSDoc accurately describes this behavior.
+
+**Note on `defaultNS: 'errors'`:** The backend uses `errors` as the default namespace because error messages are the most frequently translated backend strings. This avoids the `errors:` prefix on every `t()` call in error-handling code. Risk: a `t('someKey')` call without a namespace prefix silently resolves to `errors:someKey`. Mitigation: developers are encouraged to use explicit namespace prefixes (`validation:`, `notifications:`, `emails:`) for non-error translations, and the lint rule `no-restricted-syntax` could be configured to flag bare `t()` calls in non-error contexts.
 
 ### ADR-006: Pluralization & Cultural Formatting — Native `Intl` + `date-fns`
 
@@ -137,8 +145,7 @@ Scrumooth supports 5 locales (`en`, `de`, `fr`, `it`, `es`) end-to-end across fr
 - `pnpm run i18n:completeness` — produces a per-locale coverage report
 - `pnpm run i18n:glossary` — flags locale JSON values that don't match glossary-prescribed Scrum terms
 - `pnpm run i18n:extract` — assists with hardcoded-string extraction (not a fully automated extractor)
-
-**No `i18n:sort` script exists** — sorting is a manual/PR-review convention.
+- `pnpm run i18n:sort` — sorts locale JSON keys alphabetically to keep merge conflicts localized
 
 ### ADR-008: Performance — Lazy Namespace Loading, No Bundled Locale
 
@@ -164,6 +171,22 @@ Scrumooth supports 5 locales (`en`, `de`, `fr`, `it`, `es`) end-to-end across fr
 
 **Decision:** All tests that assert user-visible strings use translation keys (not hardcoded English). E2E tests pre-load the required namespaces and use `data-testid` attributes (not text selectors) to find elements. This avoids breaking tests when translations change.
 
+### ADR-013: pendingGuard Post-Processor
+
+**Decision:** Use a custom i18next post-processor to replace `__pending__` translation values with a localized fallback at runtime.
+
+**Rationale:** Prevents raw `__pending__` strings from appearing in production UI while allowing translators to mark incomplete entries. The fallback `t('common:translationPending')` provides a consistent user experience.
+
+**Consequence:** Translation debt is invisible at runtime — operators must rely on `i18n:completeness` reports and CI strict mode to catch pending entries.
+
+### ADR-014: Intl Formatter Caching
+
+**Decision:** Cache all `Intl` formatter instances (`NumberFormat`, `DateTimeFormat`, `RelativeTimeFormat`, `ListFormat`, `Collator`) in a shared LRU cache (max 100 entries) keyed by `locale + JSON.stringify(options)`.
+
+**Rationale:** `Intl` constructors parse CLDR data on each call, which is expensive (~0.5ms per call). Caching eliminates ~95% of that cost for repeated calls with the same locale+options.
+
+**Consequence:** Cache must be bounded to avoid memory leaks in long-running processes. True LRU eviction ensures frequently-used formatters stay cached.
+
 ---
 
 ## 5. Frontend Implementation
@@ -187,25 +210,28 @@ Scrumooth supports 5 locales (`en`, `de`, `fr`, `it`, `es`) end-to-end across fr
 
 Key options:
 
-| Option                      | Value                          | Why                                                  |
-| --------------------------- | ------------------------------ | ---------------------------------------------------- |
-| `fallbackLng`               | `DEFAULT_LOCALE` (`en`)        | All missing keys fall back to English                |
-| `supportedLngs`             | `[...SUPPORTED_LOCALES]`       | Rejects unsupported locales early                    |
-| `load`                      | `'languageOnly'`               | `pt-BR` → `pt` (no region-qualified locales today)   |
-| `ns`                        | 16 namespaces (see ADR-002)    | Lazy-loaded per route                                |
-| `defaultNS`                 | `'common'`                     | Shared strings (buttons, labels)                     |
-| `backend.loadPath`          | `/locales/{{lng}}/{{ns}}.json` | Served from `public/locales/`                        |
-| `detection.order`           | `['cookie', 'navigator']`      | Cookie first (user preference), browser second       |
-| `detection.caches`          | `['cookie']`                   | Persist resolved locale to `scrumooth_locale` cookie |
-| `detection.lookupCookie`    | `'scrumooth_locale'`           | Shared with backend                                  |
-| `parseMissingKeyHandler`    | `(key) => key`                 | Returns key string (visible in dev, not blank)       |
-| `interpolation.escapeValue` | `false`                        | React escapes by default                             |
+| Option                      | Value                          | Why                                                               |
+| --------------------------- | ------------------------------ | ----------------------------------------------------------------- |
+| `fallbackLng`               | `DEFAULT_LOCALE` (`en`)        | All missing keys fall back to English                             |
+| `supportedLngs`             | `[...SUPPORTED_LOCALES]`       | Rejects unsupported locales early                                 |
+| `load`                      | `'currentOnly'`                | Only load the exact locale (no region fallback)                   |
+| `nonExplicitSupportedLngs`  | `true`                         | Allow `en-US` to match `en` without explicit mapping              |
+| `ns`                        | 16 namespaces (see ADR-002)    | Lazy-loaded per route                                             |
+| `defaultNS`                 | `'common'`                     | Shared strings (buttons, labels)                                  |
+| `backend.loadPath`          | `/locales/{{lng}}/{{ns}}.json` | Served from `public/locales/`                                     |
+| `detection.order`           | `['cookie', 'navigator']`      | Cookie first (user preference), browser second                    |
+| `detection.caches`          | `['cookie']`                   | Persist resolved locale to `scrumooth_locale` cookie              |
+| `detection.lookupCookie`    | `'scrumooth_locale'`           | Shared with backend                                               |
+| `parseMissingKeyHandler`    | (see below)                    | Returns key's last segment in production, full key in development |
+| `interpolation.escapeValue` | `false`                        | React escapes by default                                          |
+| `react.useSuspense`         | `true`                         | Suspense-based loading for namespaces                             |
+| `postProcess`               | `['pendingGuard']`             | Custom post-processor for `__pending__` entries (see ADR-013)     |
 
 **No `resources` field** — locale JSON is fetched by `i18next-http-backend`, not bundled.
 
 ### 5.3 I18nProvider
 
-**File:** `packages/frontend/src/i18n/I18nProvider.tsx` (246 lines)
+**File:** `packages/frontend/src/i18n/I18nProvider.tsx` (325 lines)
 
 The provider manages three concerns:
 
@@ -276,21 +302,22 @@ import enEmails from '../locales/en/emails.json' with { type: 'json' };
 // ... 24 more imports
 ```
 
-Options: `fallbackLng: DEFAULT_LOCALE`, `supportedLngs: [...SUPPORTED_LOCALES]`, `load: 'languageOnly'`, `defaultNS: 'errors'`, `returnNull: false`, `returnEmptyString: false`.
+Options: `fallbackLng: DEFAULT_LOCALE`, `supportedLngs: [...SUPPORTED_LOCALES]`, `load: 'currentOnly'`, `nonExplicitSupportedLngs: true`, `defaultNS: 'errors'`, `returnNull: false`, `returnEmptyString: false`.
 
 `void i18nInstance.init()` is called at module load (fire-and-forget; the promise resolves before the first request in practice).
 
 ### 6.2 LocaleResolver Middleware
 
-**File:** `packages/backend/src/middleware/locale.middleware.ts` (50 lines)
+**File:** `packages/backend/src/middleware/locale.middleware.ts` (61 lines)
 
-**Priority (verified):** `Accept-Language` header FIRST → `User.locale` (database) → `DEFAULT_LOCALE`.
+**Priority (verified):** Authenticated: `User.locale > Accept-Language > DEFAULT_LOCALE`; Unauthenticated: `Accept-Language > DEFAULT_LOCALE`.
 
 ```typescript
 // Simplified
 const locale =
-  parseAcceptLanguage(req.headers['accept-language']) ??
-  (user?.locale && isSupportedLocale(user.locale) ? user.locale : DEFAULT_LOCALE);
+  user?.locale && isSupportedLocale(user.locale)
+    ? user.locale
+    : (parseAcceptLanguage(req.headers['accept-language']) ?? DEFAULT_LOCALE);
 updateRequestContext({ locale });
 res.cookie('scrumooth_locale', locale, {
   maxAge: 365 * 24 * 60 * 60 * 1000, // milliseconds (Express res.cookie maxAge is ms, not seconds)
@@ -300,7 +327,7 @@ res.cookie('scrumooth_locale', locale, {
 });
 ```
 
-**Accept-Language parsing is simplistic** — splits on comma, doesn't handle `q=` quality values or RFC 4647 lookup. Use `resolve-accept-language` package when adding region-qualified locales.
+**Accept-Language parsing** uses `resolve-accept-language` (RFC 4647/9110 compliant, handles `q=` quality values).
 
 ### 6.3 Request-Scoped `t()` Accessor
 
@@ -324,22 +351,13 @@ Errors thrown in services use `t('errors:resourceNotFound', { resource: 'Sprint'
 
 **File:** `packages/backend/src/middleware/validation.middleware.ts`
 
-`resolveMessage(key, params)` helper translates Zod error messages. **Migration is partial**: `validation.middleware.ts` uses `resolveMessage()`, but `auth.validation.ts` schemas still use raw English strings with `as unknown as [string, ...string[]]` double cast to satisfy TypeScript strict mode. The double cast is a workaround — the proper fix is to migrate `auth.validation.ts` to use translation keys.
+`resolveMessage(key, params)` helper translates Zod error messages. Migration is complete — all auth validation schemas use `validation:` namespaced keys; the `as unknown as [string, ...string[]]` double cast has been eliminated.
 
 ### 6.6 Localized Email Templates
 
 **File:** `packages/backend/src/services/email/templates/PasswordResetTemplate.ts`
 
-**Implementation status: partial.** The subject, heading, bodyIntro, cta, expiresIn, and ignoreIfNotRequested strings are correctly resolved via `i18nInstance.getFixedT(data.locale, 'emails')`. However, several strings remain hardcoded English (lines 106, 136, 155, 175, 185, 196–200, 270, 273, 276, 294–312):
-
-| String                                                                                   | Suggested key                                                   |
-| ---------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| "Click the button below to create a new password:"                                       | `passwordReset.buttonHint`                                      |
-| "If the button above doesn't work, copy and paste the following link into your browser:" | `passwordReset.fallbackLinkHint`                                |
-| "If you have any questions or need assistance, please contact our support team."         | `passwordReset.supportContact`                                  |
-| "Hello {{recipientName}}," / "Need help? Contact us at" / "Thank you for using" / etc.   | `common.greeting`, `common.needHelp`, `common.thankYouForUsing` |
-
-**Remediation:** add the missing keys to `emails.json` (all 5 locales), then replace the hardcoded literals with `t('…')` calls. `getBaseHtmlTemplate` and `getBaseTextTemplate` are not currently passed `t` — thread it through or refactor to receive a `Record<string, string>` of pre-resolved strings.
+All strings are localized via `t()` and HTML-escaped via `escapeHtml()`. The template is fully i18n-complete.
 
 ### 6.7 Localized Notifications
 
@@ -352,16 +370,14 @@ return await prisma.notification.create({
   data: {
     title, // Rendered text for email/push fallback
     message, // Rendered text for email/push fallback
-    messageKey: input.titleKey, // Canonical key for display-time re-translation
-    params: input.messageParams ?? {}, // Canonical params
+    messageKey: input.messageKey ?? null, // Canonical key for display-time re-translation
+    params: input.messageParams ?? {}, // Canonical params with full i18n context
     // ...
   },
 });
 ```
 
-**Rationale:** (1) backward compat with consumers that read `title`/`message` directly; (2) re-translation in the user's current locale on the in-app UI; (3) stable audit trail even if translation keys are renamed.
-
-**Known bug (line 76):** `messageKey: input.titleKey` persists the **title's** key into the `messageKey` column, not the message's key. Fix: `messageKey: input.messageKey ?? null`. Additionally, `params` stores only `messageParams` — title params are not preserved. Recommended refactor: introduce separate `titleKey`/`titleParams`/`messageKey`/`messageParams` columns, or consolidate under a single `i18n` JSON field.
+**Rationale:** (1) backward compat with consumers that read `title`/`message` directly; (2) re-translation in the user's current locale on the in-app UI; (3) stable audit trail even if translation keys are renamed. The `messageKey` bug has been fixed: `messageKey: input.messageKey ?? null` with full i18n context in params.
 
 ### 6.8 Audit Logging of Locale Changes
 
@@ -383,16 +399,20 @@ When a user changes their locale via the API, the change is logged via the stand
 | `DATE_INPUT_FORMATS`   | `Record<Locale, string>`                  | Locale-specific input format (`'dd/MM/yyyy'`, `'dd.MM.yyyy'`)           |
 | `DATE_FORMAT_EXAMPLES` | `Record<Locale, string>`                  | Localized placeholders (`'dd/mm/yyyy'`, `'tt.mm.jjjj'`, `'jj/mm/aaaa'`) |
 | `DATE_SEPARATORS`      | `Record<Locale, string>`                  | `'/'` or `'.'`                                                          |
+| `LOCALE_BCP47_MAP`     | `Record<Locale, string>`                  | BCP47 locale mapping for Accept-Language (`en` → `en-US`, etc.)         |
+| `BCP47_DEFAULT`        | `'en-US'`                                 | Default BCP47 locale for Accept-Language fallback                       |
 
 ### 7.2 Locale Utilities — `packages/shared/src/utils/locale.ts`
 
-| Function                    | Purpose                         |
-| --------------------------- | ------------------------------- |
-| `isRTL(locale)`             | True for `ar`, `he`, `fa`, `ur` |
-| `getDirection(locale)`      | `'ltr' \| 'rtl'`                |
-| `getBaseLanguage(locale)`   | `'pt-BR'` → `'pt'`              |
-| `isSupportedLocale(locale)` | Type guard                      |
-| `normalizeLocale(locale)`   | Unsupported → `DEFAULT_LOCALE`  |
+| Function                    | Purpose                                        |
+| --------------------------- | ---------------------------------------------- |
+| `isRTL(locale)`             | True for `ar`, `he`, `fa`, `ur` (production)   |
+| `isRTLDev(locale)`          | Also true for `pseudo-rtl` (dev-only)          |
+| `getDirection(locale)`      | `'ltr' \| 'rtl'` (production)                  |
+| `getDirectionDev(locale)`   | `'ltr' \| 'rtl'` (includes dev pseudo locales) |
+| `getBaseLanguage(locale)`   | `'pt-BR'` → `'pt'`                             |
+| `isSupportedLocale(locale)` | Type guard                                     |
+| `normalizeLocale(locale)`   | Unsupported → `DEFAULT_LOCALE`                 |
 
 ### 7.3 Formatters — `packages/shared/src/utils/formatters.ts`
 
@@ -441,12 +461,10 @@ When a user changes their locale via the API, the change is logged via the stand
 
 ### 8.3 Backend Request
 
-1. `locale.middleware.ts` reads `Accept-Language` header → simplistic parse → first supported match.
-2. If no match, reads `User.locale` from database (if authenticated).
-3. If neither, uses `DEFAULT_LOCALE`.
-4. `updateRequestContext({ locale })` stores in `AsyncLocalStorage`.
-5. `res.cookie('scrumooth_locale', locale, ...)` re-syncs the cookie.
-6. Services call `t('errors:…')` → `requestT.ts` reads locale from `AsyncLocalStorage` → `i18nInstance.t(key, { lng })`.
+1. `locale.middleware.ts` resolves locale — Authenticated: `User.locale > Accept-Language > DEFAULT_LOCALE`; Unauthenticated: `Accept-Language > DEFAULT_LOCALE`. Accept-Language parsing uses `resolve-accept-language` (RFC 4647/9110 compliant).
+2. `updateRequestContext({ locale })` stores in `AsyncLocalStorage`.
+3. `res.cookie('scrumooth_locale', locale, ...)` re-syncs the cookie.
+4. Services call `t('errors:…')` → `requestT.ts` reads locale from `AsyncLocalStorage` → `i18nInstance.t(key, { lng })`.
 
 ### 8.4 Fallback Chain
 
@@ -636,7 +654,7 @@ The `i18n:glossary` script flags any locale JSON value that uses a non-glossary 
 
 ### 11.4 Concurrency & Conflict Resolution
 
-Translation JSON files are sorted alphabetically by key to keep merge conflicts localized to the actual changed key. Sorting is a manual/PR-review convention (no `i18n:sort` script exists today).
+Translation JSON files are sorted alphabetically by key via `pnpm run i18n:sort` to keep merge conflicts localized to the actual changed key.
 
 ### 11.5 Translation Key Lifecycle
 
@@ -812,7 +830,7 @@ Add `pt` entries to `packages/shared/i18n/glossary.json` (sourced from the offic
 
 ### 13.9 Special Cases
 
-- **Region-qualified locales (`en-US`, `pt-BR`):** remove `load: 'languageOnly'` from i18next config, add the region-qualified tag to `SUPPORTED_LOCALES`, update `normalizeLocale` logic. ~2 engineer-days. Not recommended unless real user need.
+- **Region-qualified locales (`en-US`, `pt-BR`):** update `SUPPORTED_LOCALES` with the region-qualified tag, update `normalizeLocale` logic. ~2 engineer-days. Not recommended unless real user need.
 - **RTL languages (`ar`, `he`):** add to `RTL_LANGUAGES` in `locale.ts`, audit CSS Modules for physical properties (stylelint catches these), test email templates in RTL, configure Chart.js axis direction. ~2–3 engineer-days extra.
 - **Languages without `date-fns` locale data:** rare. Use closest related locale, or fall back to `Intl.DateTimeFormat` for that locale (requires changes to `formatDate`).
 
@@ -820,18 +838,18 @@ Add `pt` entries to `packages/shared/i18n/glossary.json` (sourced from the offic
 
 ## 14. Modern Best Practices Alignment (2026)
 
-| Item                                                  | Current State                                                          | Recommendation                                                                                         | Priority | Effort  |
-| ----------------------------------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ | -------- | ------- |
-| **i18next v26 Selector API** (`enableSelector: true`) | Not enabled — `t()` keys are `string`-typed                            | Enable for compile-time key checking                                                                   | Medium   | 0.5 day |
-| **`resolve-accept-language`**                         | Backend parses `Accept-Language` simplistically (no `q=`, no RFC 4647) | Install package, replace parsing                                                                       | Medium   | 0.5 day |
-| **Pseudo-localization**                               | No tooling — layout bugs caught only after translator delivery         | Add `i18n:pseudo` script + dev-only `'pseudo'` locale                                                  | Medium   | 1 day   |
-| **a11y + i18n E2E**                                   | No axe-core test per locale                                            | Add `AxeBuilder` test loop over `SUPPORTED_LOCALES`                                                    | Medium   | 1 day   |
-| **i18next Formatter API**                             | All formatting via explicit `@scrumooth/shared` calls                  | Register custom formatters for `{{date, date}}` syntax in translations                                 | Low      | 1 day   |
-| **TMS integration (Tolgee)**                          | PR-based workflow only                                                 | Set up Tolgee (self-hosted, open-source) for in-context editing                                        | Low      | 2 days  |
-| **RTL dry-run test**                                  | CSS groundwork in place, no RTL locale, no test                        | Add fake `'pseudo-rtl'` locale + E2E test asserting no overflow                                        | Low      | 1 day   |
-| **Temporal API (TC39 Stage 4, March 2026)**           | Uses `Date` + `date-fns`                                               | Migrate when Node 24 LTS ships (Q4 2026)                                                               | Low      | 2 days  |
-| **ICU MessageFormat 2.0**                             | i18next v1 interpolation (`{{name}}`, `_one`/`_other` suffix)          | Do NOT migrate — i18next ecosystem has not adopted MF2; current syntax sufficient for European locales | Low      | 5+ days |
-| **LLM-assisted translation prompt template**          | No structured prompt; translators may use LLMs informally              | Add `docs/i18n/llm-translation-prompt.md` with glossary context                                        | Low      | 0.5 day |
+| Item                                                  | Current State                                                      | Recommendation                                                                                         | Priority | Effort  |
+| ----------------------------------------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ | -------- | ------- |
+| **i18next v26 Selector API** (`enableSelector: true`) | Not enabled — `t()` keys are `string`-typed                        | Enable for compile-time key checking                                                                   | Medium   | 0.5 day |
+| **`resolve-accept-language`**                         | Implemented — RFC 4647/9110 compliant, handles `q=` quality values | Done                                                                                                   | Done     | —       |
+| **Pseudo-localization**                               | Implemented — `i18n:pseudo` script + dev-only `'pseudo'` locale    | Done                                                                                                   | Done     | —       |
+| **a11y + i18n E2E**                                   | Implemented — `i18n-a11y.spec.ts` per-locale accessibility tests   | Done                                                                                                   | Done     | —       |
+| **i18next Formatter API**                             | All formatting via explicit `@scrumooth/shared` calls              | Register custom formatters for `{{date, date}}` syntax in translations                                 | Low      | 1 day   |
+| **TMS integration (Tolgee)**                          | PR-based workflow only                                             | Set up Tolgee (self-hosted, open-source) for in-context editing                                        | Low      | 2 days  |
+| **RTL dry-run test**                                  | Implemented — `i18n-rtl.spec.ts` with `'pseudo-rtl'` locale        | Done                                                                                                   | Done     | —       |
+| **Temporal API (TC39 Stage 4, March 2026)**           | Uses `Date` + `date-fns`                                           | Migrate when Node 24 LTS ships (Q4 2026)                                                               | Low      | 2 days  |
+| **ICU MessageFormat 2.0**                             | i18next v1 interpolation (`{{name}}`, `_one`/`_other` suffix)      | Do NOT migrate — i18next ecosystem has not adopted MF2; current syntax sufficient for European locales | Low      | 5+ days |
+| **LLM-assisted translation prompt template**          | No structured prompt; translators may use LLMs informally          | Add `docs/i18n/llm-translation-prompt.md` with glossary context                                        | Low      | 0.5 day |
 
 **Triggers for revisit:** locale count > 7 (consider TMS); adding first RTL/gendered language (consider ICU MF2); Node 24 LTS (consider Temporal API).
 
@@ -852,29 +870,39 @@ Add `pt` entries to `packages/shared/i18n/glossary.json` (sourced from the offic
 
 **Key source files:**
 
-| File                                                   | Purpose                                                     |
-| ------------------------------------------------------ | ----------------------------------------------------------- |
-| `packages/frontend/src/i18n/config.ts`                 | i18next init (75 lines)                                     |
-| `packages/frontend/src/i18n/I18nProvider.tsx`          | React provider (246 lines: 15s timeout, error/retry UI)     |
-| `packages/frontend/src/i18n/useI18nStore.ts`           | Zustand locale store + cookie sync (37 lines)               |
-| `packages/frontend/src/i18n/types.ts`                  | TypeScript key types (16 namespaces)                        |
-| `packages/backend/src/i18n/config.ts`                  | Backend i18next instance (81 lines, 5 ns × 5 locales)       |
-| `packages/backend/src/i18n/requestT.ts`                | Per-request `t()` accessor (13 lines)                       |
-| `packages/backend/src/middleware/locale.middleware.ts` | Locale resolver (50 lines)                                  |
-| `packages/backend/src/utils/requestContext.ts`         | `AsyncLocalStorage` for request-scoped locale (86 lines)    |
-| `packages/shared/src/constants/index.ts`               | `SUPPORTED_LOCALES`, `LOCALE_LABELS`, date format constants |
-| `packages/shared/src/utils/locale.ts`                  | `isRTL`, `getDirection`, `normalizeLocale` (24 lines)       |
-| `packages/shared/src/utils/formatters.ts`              | 15 locale-aware formatters (201 lines)                      |
-| `packages/shared/i18n/glossary.json`                   | Scrum term translations per locale                          |
+| File                                                     | Purpose                                                     |
+| -------------------------------------------------------- | ----------------------------------------------------------- |
+| `packages/frontend/src/i18n/config.ts`                   | i18next init (75 lines)                                     |
+| `packages/frontend/src/i18n/I18nProvider.tsx`            | React provider (325 lines: 15s timeout, error/retry UI)     |
+| `packages/frontend/src/i18n/useI18nStore.ts`             | Zustand locale store + cookie sync (37 lines)               |
+| `packages/frontend/src/i18n/types.ts`                    | TypeScript key types (16 namespaces)                        |
+| `packages/backend/src/i18n/config.ts`                    | Backend i18next instance (81 lines, 5 ns × 5 locales)       |
+| `packages/backend/src/i18n/requestT.ts`                  | Per-request `t()` accessor (13 lines)                       |
+| `packages/backend/src/middleware/locale.middleware.ts`   | Locale resolver (61 lines)                                  |
+| `packages/backend/src/utils/requestContext.ts`           | `AsyncLocalStorage` for request-scoped locale (86 lines)    |
+| `packages/shared/src/constants/index.ts`                 | `SUPPORTED_LOCALES`, `LOCALE_LABELS`, date format constants |
+| `packages/shared/src/utils/locale.ts`                    | `isRTL`, `getDirection`, `normalizeLocale` (24 lines)       |
+| `packages/shared/src/utils/formatters.ts`                | 15 locale-aware formatters (211 lines)                      |
+| `packages/shared/src/utils/intlCache.ts`                 | LRU cache for Intl formatters                               |
+| `packages/shared/i18n/glossary.json`                     | Scrum term translations per locale                          |
+| `scripts/i18n/pseudo-localize.mjs`                       | Pseudo-localization generator                               |
+| `packages/frontend/e2e/tests/i18n-a11y.spec.ts`          | a11y E2E tests per locale                                   |
+| `packages/frontend/e2e/tests/i18n-rtl.spec.ts`           | RTL dry-run E2E tests                                       |
+| `scripts/utility/eslint-plugin-i18n-security.js`         | XSS prevention for i18n                                     |
+| `scripts/utility/eslint-plugin-no-literal-jsx-string.js` | Hardcoded string prevention                                 |
+| `packages/backend/src/utils/cookieConfig.ts`             | Centralized cookie configuration                            |
 
 **Tooling scripts (in `scripts/i18n/`):**
 
-| Script                    | npm command                  | Purpose                                     |
-| ------------------------- | ---------------------------- | ------------------------------------------- |
-| `validate.mjs`            | `pnpm run i18n:check`        | CI validation (key completeness, structure) |
-| `extract.mjs`             | `pnpm run i18n:extract`      | Hardcoded-string extraction assist          |
-| `completeness-report.mjs` | `pnpm run i18n:completeness` | Per-locale coverage report                  |
-| `sync-glossary.mjs`       | `pnpm run i18n:glossary`     | Scrum term glossary compliance              |
+| Script                    | npm command                   | Purpose                                              |
+| ------------------------- | ----------------------------- | ---------------------------------------------------- |
+| `validate.mjs`            | `pnpm run i18n:check`         | CI validation (key completeness, structure)          |
+| `extract.mjs`             | `pnpm run i18n:extract`       | Hardcoded-string extraction assist                   |
+| `extract.mjs`             | `pnpm run i18n:extract:check` | Check for missing translation keys (non-destructive) |
+| `completeness-report.mjs` | `pnpm run i18n:completeness`  | Per-locale coverage report                           |
+| `sync-glossary.mjs`       | `pnpm run i18n:glossary`      | Scrum term glossary compliance                       |
+| `sort.mjs`                | `pnpm run i18n:sort`          | Sort locale JSON keys alphabetically                 |
+| `pseudo-localize.mjs`     | `pnpm run i18n:pseudo`        | Pseudo-localization generator                        |
 
 ---
 

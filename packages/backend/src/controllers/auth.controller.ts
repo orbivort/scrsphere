@@ -15,6 +15,7 @@ import {
   getLocaleCookieOptions,
   COOKIE_NAMES,
 } from '../utils/cookieConfig';
+import config from '../config/index.js';
 import {
   auditAuthEvent,
   auditResourceEvent,
@@ -85,7 +86,11 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   );
 
   // Set locale cookie for SSR/refresh
-  res.cookie(COOKIE_NAMES.LOCALE, result.user.locale, getLocaleCookieOptions());
+  res.cookie(
+    COOKIE_NAMES.LOCALE,
+    result.user.locale,
+    getLocaleCookieOptions('node', config.nodeEnv === 'production')
+  );
 
   // Return user and session info, but NOT tokens
   res.status(201).json(
@@ -120,7 +125,11 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     );
 
     // Set locale cookie for SSR/refresh
-    res.cookie(COOKIE_NAMES.LOCALE, result.user.locale, getLocaleCookieOptions());
+    res.cookie(
+      COOKIE_NAMES.LOCALE,
+      result.user.locale,
+      getLocaleCookieOptions('node', config.nodeEnv === 'production')
+    );
 
     // Return user and session info, but NOT tokens
     res.json(
@@ -389,7 +398,11 @@ export const updateProfile = asyncHandler(async (req: Request, res: Response) =>
   }
 
   // Keep the locale cookie in sync for SSR/refresh
-  res.cookie(COOKIE_NAMES.LOCALE, user.locale, getLocaleCookieOptions());
+  res.cookie(
+    COOKIE_NAMES.LOCALE,
+    user.locale,
+    getLocaleCookieOptions('node', config.nodeEnv === 'production')
+  );
 
   res.json(createSuccessResponse(user));
 });

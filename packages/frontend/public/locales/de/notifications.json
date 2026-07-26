@@ -1,71 +1,71 @@
 {
-  "title": "Benachrichtigungen",
-  "subtitle": "Bleiben Sie über Team-Aktivitäten und wichtige Updates informiert",
-  "skipToMainContent": "Zum Hauptinhalt springen",
-  "markAllAsRead": "Alle als gelesen markieren",
-  "marking": "Markieren...",
-  "filters": {
-    "all": "Alle",
-    "unread": "Ungelesen",
-    "teamInvitations": "Team-Einladungen",
-    "taskAssignments": "Aufgaben-Zuweisungen",
-    "impediments": "Hindernisse",
-    "reminders": "Erinnerungen",
-    "teamCreated": "Team erstellt",
-    "teamUpdated": "Team aktualisiert",
-    "teamDeleted": "Team gelöscht",
-    "directMessages": "Direktnachrichten"
-  },
-  "loading": {
-    "title": "Benachrichtigungen werden geladen...",
-    "ariaLabel": "Benachrichtigungen laden"
-  },
-  "error": {
-    "title": "Benachrichtigungen konnten nicht geladen werden",
-    "message": "Etwas ist beim Abrufen Ihrer Benachrichtigungen schiefgegangen.",
-    "tryAgain": "Erneut versuchen"
-  },
-  "empty": {
-    "title": "Noch keine Benachrichtigungen",
-    "message": "Sie sehen hier Benachrichtigungen, wenn Aktivitäten stattfinden"
-  },
-  "dateGroups": {
-    "today": "Heute",
-    "yesterday": "Gestern",
-    "thisWeek": "Diese Woche",
-    "older": "Älter"
-  },
-  "pagination": {
-    "previous": "Vorherige",
-    "next": "Nächste",
-    "pageInfo": "Seite {{current}} von {{total}}"
-  },
+  "accountDeletionCancelled": "Kontolöschung abgebrochen",
+  "accountDeletionCancelledMessage": "Die geplante Kontolöschung wurde abgebrochen.",
+  "accountDeletionScheduled": "Teammitglied hat Kontolöschung geplant",
+  "accountDeletionScheduledMessage": "Ein Product Owner in Ihrem Team hat die Löschung seines Kontos geplant. Das Konto wird am {{deletionDate}} endgültig gelöscht. Bitte weisen Sie vorher einen neuen Product Owner zu.",
   "ariaLabels": {
-    "notificationItem": "Benachrichtigung von {{sender}}: {{message}}",
-    "markAsRead": "Als gelesen markieren",
     "dismiss": "Benachrichtigung schließen",
-    "goToPreviousPage": "Zur vorherigen Seite",
-    "goToNextPage": "Zur nächsten Seite",
     "filterNotifications": "Filter notifications",
+    "goToNextPage": "Zur nächsten Seite",
+    "goToPreviousPage": "Zur vorherigen Seite",
+    "markAsRead": "Als gelesen markieren",
+    "notificationItem": "Benachrichtigung von {{sender}}: {{message}}",
     "pagination": "Pagination"
   },
+  "backlogAdjustmentRequired": "Neue Backlog-Anpassung erfordert Ihre Aktion",
+  "backlogAdjustmentRequiredMessage": "Ihnen wurde als Eigentümer einer Backlog-Anpassung zugewiesen: {{action}} - \"{{description}}\"",
+  "dateGroups": {
+    "older": "Älter",
+    "thisWeek": "Diese Woche",
+    "today": "Heute",
+    "yesterday": "Gestern"
+  },
+  "empty": {
+    "message": "Sie sehen hier Benachrichtigungen, wenn Aktivitäten stattfinden",
+    "title": "Noch keine Benachrichtigungen"
+  },
+  "error": {
+    "message": "Etwas ist beim Abrufen Ihrer Benachrichtigungen schiefgegangen.",
+    "title": "Benachrichtigungen konnten nicht geladen werden",
+    "tryAgain": "Erneut versuchen"
+  },
+  "feedbackRequired": "Neues Feedback erfordert Ihre Aktion",
+  "feedbackRequiredMessage": "Ihnen wurde als Eigentümer von Feedback von {{authorName}} zugewiesen: \"{{content}}\"",
+  "filters": {
+    "all": "Alle",
+    "directMessages": "Direktnachrichten",
+    "impediments": "Hindernisse",
+    "reminders": "Erinnerungen",
+    "taskAssignments": "Aufgaben-Zuweisungen",
+    "teamCreated": "Team erstellt",
+    "teamDeleted": "Team gelöscht",
+    "teamInvitations": "Team-Einladungen",
+    "teamUpdated": "Team aktualisiert",
+    "unread": "Ungelesen"
+  },
+  "impedimentAssigned": "Neues Hindernis zugewiesen: \"{{impedimentTitle}}\"",
+  "loading": {
+    "ariaLabel": "Benachrichtigungen laden",
+    "title": "Benachrichtigungen werden geladen..."
+  },
+  "markAllAsRead": "Alle als gelesen markieren",
+  "marking": "Markieren...",
+  "pagination": {
+    "next": "Nächste",
+    "pageInfo": "Seite {{current}} von {{total}}",
+    "previous": "Vorherige"
+  },
+  "skipToMainContent": "Zum Hauptinhalt springen",
+  "subtitle": "Bleiben Sie über Team-Aktivitäten und wichtige Updates informiert",
   "teamCreated": "Team erstellt: \"{{teamName}}\"",
   "teamCreatedMessage": "Sie haben das Team erfolgreich erstellt",
-  "teamUpdated": "Team aktualisiert: \"{{teamName}}\"",
-  "teamUpdatedMessage": "Aktualisiert von {{updaterName}}",
   "teamDeleted": "Team gelöscht: \"{{teamName}}\"",
   "teamDeletedMessage": "Gelöscht von {{deleterName}}",
   "teamInvitation": "Sie wurden eingeladen, dem Team \"{{teamName}}\" beizutreten",
   "teamInvitationMessage": "Eingeladen von {{inviterName}}",
   "teamRemoval": "Sie wurden aus dem Team \"{{teamName}}\" entfernt",
   "teamRemovalMessage": "Entfernt von {{removerName}}",
-  "impedimentAssigned": "Neues Hindernis zugewiesen: \"{{impedimentTitle}}\"",
-  "accountDeletionScheduled": "Teammitglied hat Kontolöschung geplant",
-  "accountDeletionScheduledMessage": "Ein Product Owner in Ihrem Team hat die Löschung seines Kontos geplant. Das Konto wird am {{deletionDate}} endgültig gelöscht. Bitte weisen Sie vorher einen neuen Product Owner zu.",
-  "accountDeletionCancelled": "Kontolöschung abgebrochen",
-  "accountDeletionCancelledMessage": "Die geplante Kontolöschung wurde abgebrochen.",
-  "backlogAdjustmentRequired": "Neue Backlog-Anpassung erfordert Ihre Aktion",
-  "backlogAdjustmentRequiredMessage": "Ihnen wurde als Eigentümer einer Backlog-Anpassung zugewiesen: {{action}} - \"{{description}}\"",
-  "feedbackRequired": "Neues Feedback erfordert Ihre Aktion",
-  "feedbackRequiredMessage": "Ihnen wurde als Eigentümer von Feedback von {{authorName}} zugewiesen: \"{{content}}\""
+  "teamUpdated": "Team aktualisiert: \"{{teamName}}\"",
+  "teamUpdatedMessage": "Aktualisiert von {{updaterName}}",
+  "title": "Benachrichtigungen"
 }

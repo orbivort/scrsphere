@@ -1,27 +1,27 @@
 {
-  "passwordReset": {
-    "subject": "Reset your Scrumooth password",
-    "heading": "Hi {{name}},",
-    "bodyIntro": "We received a request to reset the password for {{email}}.",
-    "cta": "Reset password",
-    "expiresIn": "This link expires in {{duration}}.",
-    "ignoreIfNotRequested": "If you didn't request this, you can safely ignore this email.",
-    "buttonHint": "Click the button below to create a new password:",
-    "fallbackLinkHint": "If the button above doesn't work, copy and paste the following link into your browser:",
-    "supportContact": "If you have any questions or need assistance, please contact our support team."
-  },
   "common": {
+    "allRightsReserved": "All rights reserved.",
     "greeting": "Hello",
     "needHelp": "Need help? Contact us at",
     "thankYouForUsing": "Thank you for using",
-    "visitApp": "Visit",
-    "allRightsReserved": "All rights reserved."
+    "visitApp": "Visit"
+  },
+  "passwordReset": {
+    "bodyIntro": "We received a request to reset the password for {{email}}.",
+    "buttonHint": "Click the button below to create a new password:",
+    "cta": "Reset password",
+    "expiresIn": "This link expires in {{duration}}.",
+    "fallbackLinkHint": "If the button above doesn't work, copy and paste the following link into your browser:",
+    "heading": "Hi {{name}},",
+    "ignoreIfNotRequested": "If you didn't request this, you can safely ignore this email.",
+    "subject": "Reset your Scrumooth password",
+    "supportContact": "If you have any questions or need assistance, please contact our support team."
   },
   "welcome": {
-    "subject": "Welcome to Scrumooth",
-    "heading": "Welcome, {{name}}!",
     "bodyIntro": "Your account has been created successfully.",
+    "closing": "We're excited to have you on board.",
     "cta": "Get started",
-    "closing": "We're excited to have you on board."
+    "heading": "Welcome, {{name}}!",
+    "subject": "Welcome to Scrumooth"
   }
 }

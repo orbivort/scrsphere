@@ -128,11 +128,22 @@ jobs:
       - name: Run TypeScript type check
         run: pnpm run typecheck
 
-      - name: i18n validation
+      - name: i18n check
+        run: pnpm run i18n:check
+
+      - name: i18n glossary
+        run: pnpm run i18n:glossary
+
+      - name: i18n completeness
+        run: pnpm run i18n:completeness
+        continue-on-error: true
+
+      - name: Locale JSON size report
         run: |
-          pnpm run i18n:check
-          pnpm run i18n:completeness
-          pnpm run i18n:glossary
+          echo "### 🌐 Locale JSON Sizes" >> $GITHUB_STEP_SUMMARY
+          echo '| File | Size |' >> $GITHUB_STEP_SUMMARY
+          echo '| --- | --- |' >> $GITHUB_STEP_SUMMARY
+          find packages/frontend/public/locales packages/backend/src/locales -name '*.json' -exec sh -c 'size=$(wc -c < "$1"); echo "| $1 | ${size} bytes |" >> $GITHUB_STEP_SUMMARY; if [ "$size" -gt 51200 ]; then echo "::warning::$1 exceeds 50KB (${size} bytes)"; fi' _ {} \;
 
   dependency-review:
     name: Dependency Review

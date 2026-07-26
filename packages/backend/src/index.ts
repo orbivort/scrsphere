@@ -9,6 +9,7 @@ import { startNotificationCleanup } from './jobs/notificationCleanup';
 import { startDeletionGracePeriodJob } from './jobs/deletionGracePeriodJob';
 import { authService } from './services/auth.service';
 import { eventLoopMonitor } from './utils/eventLoopMonitor';
+import { i18nInitPromise } from './i18n/config.js';
 
 // Validate configuration
 validateConfig();
@@ -48,6 +49,10 @@ const checkPortAvailable = (port: number): Promise<boolean> => {
 
 // Start server
 const startServer = async () => {
+  // Ensure i18n is initialized before accepting requests
+  await i18nInitPromise;
+  logger.info('i18n initialized');
+
   // Check port availability first
   const isAvailable = await checkPortAvailable(config.port);
   if (!isAvailable) {

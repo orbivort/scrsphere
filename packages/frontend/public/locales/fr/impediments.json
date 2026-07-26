@@ -1,114 +1,114 @@
 {
-  "title": "Empêchements",
-  "subtitle": "{{sprintName}} - Suivre et resoudre les bloquants affectant l'equipe",
-  "filterByStatus": "Filtrer par statut",
   "allStatus": "Tous les statuts",
-  "reportImpediment": "Signaler un empêchement",
-  "status": {
-    "open": "Ouvert",
-    "inProgress": "En cours",
-    "resolved": "Resolu",
-    "closed": "Ferme",
-    "OPEN": "Ouvert",
-    "IN_PROGRESS": "En cours",
-    "RESOLVED": "Resolu",
-    "CLOSED": "Ferme"
-  },
-  "stats": {
-    "open": "Ouvert",
-    "inProgress": "En cours",
-    "resolved": "Resolu",
-    "closed": "Ferme",
-    "OPEN": "Ouvert",
-    "IN_PROGRESS": "En cours",
-    "RESOLVED": "Resolu",
-    "CLOSED": "Ferme"
-  },
   "card": {
-    "sprint": "Sprint",
-    "fromDailyScrum": "De la Mêlée quotidienne",
     "createdFromDailyUpdate": "Cree a partir de la mise a jour quotidienne",
-    "reportedBy": "Signale par",
+    "fromDailyScrum": "De la Mêlée quotidienne",
     "owner": "Proprietaire",
-    "unknown": "Inconnu",
+    "reportedBy": "Signale par",
     "resolution": "Resolution",
+    "sprint": "Sprint",
+    "unknown": "Inconnu",
     "viewDetailsAria": "Voir les details pour l'empêchement : {{title}}. Statut : {{status}}"
   },
-  "emptyState": {
-    "noImpedimentsForSprint": "Aucun empêchement pour {{sprintName}}",
-    "noImpedimentsForFilter": "Aucun empêchement {{status}}",
-    "noImpedimentsDescription": "Super ! Aucun empêchement signale pour le sprint actif \"{{sprintName}}\".",
-    "noFilterImpedimentsDescription": "Il n'y a pas d'empêchements {{status}} dans \"{{sprintName}}\". Essayez de selectionner un autre filtre de statut.",
-    "clearFilter": "Effacer le filtre"
-  },
   "createModal": {
-    "title": "Signaler un nouvel empêchement",
-    "subtitle": "Documenter les bloquants affectant la progression de votre equipe",
-    "sprintLabel": "Sprint",
     "activeSprint": "(Actif)",
-    "titleLabel": "Titre",
-    "titlePlaceholder": "Description breve de l'empêchement",
+    "createImpediment": "Creer l'empêchement",
+    "creating": "Creation...",
     "descriptionLabel": "Description",
     "descriptionPlaceholder": "Fournir des details sur l'empêchement",
-    "creating": "Creation...",
-    "createImpediment": "Creer l'empêchement"
+    "sprintLabel": "Sprint",
+    "subtitle": "Documenter les bloquants affectant la progression de votre equipe",
+    "title": "Signaler un nouvel empêchement",
+    "titleLabel": "Titre",
+    "titlePlaceholder": "Description breve de l'empêchement"
+  },
+  "deleteModal": {
+    "actionWarning": "Avertissement d'action",
+    "deleteImpediment": "Supprimer l'empêchement",
+    "deleting": "Suppression...",
+    "item": "Element :",
+    "statusLabel": "Statut :",
+    "subtitle": "Cette action est permanente et ne peut pas etre annulee",
+    "title": "Supprimer l'empêchement",
+    "unknownItem": "Element inconnu",
+    "warningText": "Vous allez supprimer definitivement cet empêchement. Cette action ne peut pas etre annulee. Toutes les donnees associees seront definitivement supprimees."
   },
   "detailModal": {
-    "title": "Details de l'empêchement",
-    "subtitle": "Voir et gerer les informations de l'empêchement",
+    "cancel": "Cancel",
+    "close": "Close",
     "createdFromDailyScrum": "Cree a partir de la mise a jour de la Mêlée quotidienne",
-    "viewDailyUpdate": "Voir la mise a jour quotidienne",
-    "titleLabel": "Titre",
-    "descriptionLabel": "Description",
-    "sprintLabel": "Sprint",
-    "statusLabel": "Statut",
-    "reportedByLabel": "Signale par",
-    "ownerLabel": "Proprietaire",
     "createdLabel": "Cree",
+    "deleteLabel": "Supprimer",
+    "deleting": "Suppression...",
+    "descriptionLabel": "Description",
+    "ownerLabel": "Proprietaire",
+    "reportedByLabel": "Signale par",
     "resolutionLabel": "Resolution",
     "resolutionPlaceholder": "Decrivez comment cet empêchement a ete resolu...",
     "saveResolution": "Sauvegarder la resolution",
     "saving": "Sauvegarde...",
-    "deleting": "Suppression...",
-    "deleteLabel": "Supprimer",
-    "cancel": "Cancel",
-    "close": "Close"
+    "sprintLabel": "Sprint",
+    "statusLabel": "Statut",
+    "subtitle": "Voir et gerer les informations de l'empêchement",
+    "title": "Details de l'empêchement",
+    "titleLabel": "Titre",
+    "viewDailyUpdate": "Voir la mise a jour quotidienne"
   },
-  "deleteModal": {
-    "title": "Supprimer l'empêchement",
-    "subtitle": "Cette action est permanente et ne peut pas etre annulee",
-    "actionWarning": "Avertissement d'action",
-    "item": "Element :",
-    "unknownItem": "Element inconnu",
-    "warningText": "Vous allez supprimer definitivement cet empêchement. Cette action ne peut pas etre annulee. Toutes les donnees associees seront definitivement supprimees.",
-    "statusLabel": "Statut :",
-    "deleteImpediment": "Supprimer l'empêchement",
-    "deleting": "Suppression..."
-  },
-  "unsavedModal": {
-    "title": "Modifications non sauvegardees",
-    "message": "Vous avez des modifications non sauvegardees dans le formulaire d'empêchement. Etes-vous sur de vouloir les supprimer?"
-  },
-  "toast": {
-    "created": "Empêchement cree avec succes",
-    "updated": "Empêchement mis a jour avec succes",
-    "deleted": "Empêchement supprime avec succes",
-    "teamIdRequired": "L'ID de l'equipe est requis. Veuillez selectionner une equipe d'abord.",
-    "noActiveSprint": "Aucun sprint actif trouve. Veuillez demarrer un sprint d'abord.",
-    "failedCreate": "Impossible de creer l'empêchement. Veuillez reessayer.",
-    "failedUpdate": "Impossible de mettre a jour l'empêchement. Veuillez reessayer.",
-    "failedDelete": "Impossible de supprimer l'empêchement. Veuillez reessayer."
+  "emptyState": {
+    "clearFilter": "Effacer le filtre",
+    "noFilterImpedimentsDescription": "Il n'y a pas d'empêchements {{status}} dans \"{{sprintName}}\". Essayez de selectionner un autre filtre de statut.",
+    "noImpedimentsDescription": "Super ! Aucun empêchement signale pour le sprint actif \"{{sprintName}}\".",
+    "noImpedimentsForFilter": "Aucun empêchement {{status}}",
+    "noImpedimentsForSprint": "Aucun empêchement pour {{sprintName}}"
   },
   "errorState": {
-    "title": "Erreur de chargement des donnees",
-    "retry": "Reessayer",
+    "failedImpediments": "Impossible de charger les empêchements. Veuillez reessayer.",
     "failedSprint": "Impossible de charger les informations du sprint actif. Veuillez reessayer.",
-    "failedImpediments": "Impossible de charger les empêchements. Veuillez reessayer."
+    "retry": "Reessayer",
+    "title": "Erreur de chargement des donnees"
+  },
+  "filterByStatus": "Filtrer par statut",
+  "reportImpediment": "Signaler un empêchement",
+  "stats": {
+    "CLOSED": "Ferme",
+    "IN_PROGRESS": "En cours",
+    "OPEN": "Ouvert",
+    "RESOLVED": "Resolu",
+    "closed": "Ferme",
+    "inProgress": "En cours",
+    "open": "Ouvert",
+    "resolved": "Resolu"
+  },
+  "status": {
+    "CLOSED": "Ferme",
+    "IN_PROGRESS": "En cours",
+    "OPEN": "Ouvert",
+    "RESOLVED": "Resolu",
+    "closed": "Ferme",
+    "inProgress": "En cours",
+    "open": "Ouvert",
+    "resolved": "Resolu"
+  },
+  "subtitle": "{{sprintName}} - Suivre et resoudre les bloquants affectant l'equipe",
+  "title": "Empêchements",
+  "toast": {
+    "created": "Empêchement cree avec succes",
+    "deleted": "Empêchement supprime avec succes",
+    "failedCreate": "Impossible de creer l'empêchement. Veuillez reessayer.",
+    "failedDelete": "Impossible de supprimer l'empêchement. Veuillez reessayer.",
+    "failedUpdate": "Impossible de mettre a jour l'empêchement. Veuillez reessayer.",
+    "noActiveSprint": "Aucun sprint actif trouve. Veuillez demarrer un sprint d'abord.",
+    "teamIdRequired": "L'ID de l'equipe est requis. Veuillez selectionner une equipe d'abord.",
+    "updated": "Empêchement mis a jour avec succes"
+  },
+  "unsavedModal": {
+    "message": "Vous avez des modifications non sauvegardees dans le formulaire d'empêchement. Etes-vous sur de vouloir les supprimer?",
+    "title": "Modifications non sauvegardees"
   },
   "validation": {
-    "titleRequired": "Le titre est requis",
-    "titleTooShort": "Le titre doit avoir au moins 3 caracteres",
     "descriptionRequired": "La description est requise",
-    "descriptionTooShort": "La description doit avoir au moins 10 caracteres"
+    "descriptionTooShort": "La description doit avoir au moins 10 caracteres",
+    "titleRequired": "Le titre est requis",
+    "titleTooShort": "Le titre doit avoir au moins 3 caracteres"
   }
 }

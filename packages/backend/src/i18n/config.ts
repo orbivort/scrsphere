@@ -1,6 +1,7 @@
 import i18next, { type i18n as I18nType } from 'i18next';
 import 'intl-pluralrules';
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@scrumooth/shared';
+import { logger } from '../utils/logger.js';
 
 import enEmails from '../locales/en/emails.json' with { type: 'json' };
 import enNotifications from '../locales/en/notifications.json' with { type: 'json' };
@@ -70,12 +71,24 @@ export const i18nInstance: I18nType = i18next.createInstance({
   resources,
   fallbackLng: DEFAULT_LOCALE,
   supportedLngs: [...SUPPORTED_LOCALES],
-  load: 'languageOnly',
+  // Use 'currentOnly' so that compound locale codes like 'pseudo-rtl' are
+  // loaded as-is instead of being stripped to their base language.
+  // Production locales (en, de, fr, es, it) are single-segment codes so they
+  // are unaffected by this change.
+  load: 'currentOnly',
+  nonExplicitSupportedLngs: true,
   ns: ['emails', 'notifications', 'errors', 'validation', 'retrospectives'],
   defaultNS: 'errors',
   interpolation: { escapeValue: false },
   returnNull: false,
   returnEmptyString: false,
+  missingKeyHandler: (lngs, ns, key) => {
+    void logger.warn('Missing i18n key', { lng: lngs, ns, key });
+  },
+  parseMissingKeyHandler: (key) => {
+    const parts = key.split(/[:.]/);
+    return parts[parts.length - 1] ?? key;
+  },
 });
 
-void i18nInstance.init();
+export const i18nInitPromise: Promise<void> = i18nInstance.init().then(() => {});

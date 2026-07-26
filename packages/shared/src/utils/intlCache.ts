@@ -1,6 +1,9 @@
 /**
  * LRU cache for Intl formatter instances.
  *
+ * True LRU eviction — entries accessed via get() are moved to the
+ * most-recently-used position.
+ *
  * Intl.*Format constructors are expensive (they parse CLDR data). This cache
  * avoids redundant construction by memoizing instances keyed by locale + options.
  *
@@ -14,7 +17,13 @@ class LRUMap<K, V> {
   private map = new Map<K, V>();
 
   get(key: K): V | undefined {
-    return this.map.get(key);
+    const value = this.map.get(key);
+    if (value !== undefined) {
+      // True LRU: move accessed entry to most-recently-used position
+      this.map.delete(key);
+      this.map.set(key, value);
+    }
+    return value;
   }
 
   set(key: K, value: V): void {

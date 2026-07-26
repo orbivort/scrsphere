@@ -102,3 +102,19 @@ export const DATE_SEPARATORS: Record<Locale, string> = {
   it: '/',
   es: '/',
 };
+
+/**
+ * BCP47 locale mapping for each supported locale.
+ * Used by Accept-Language resolution (resolve-accept-language).
+ * When adding a new locale, TypeScript will flag this as incomplete.
+ */
+export const LOCALE_BCP47_MAP: Record<Locale, string> = {
+  en: 'en-US',
+  de: 'de-DE',
+  fr: 'fr-FR',
+  es: 'es-ES',
+  it: 'it-IT',
+};
+
+/** Default BCP47 locale for Accept-Language fallback */
+export const BCP47_DEFAULT = 'en-US' as const;

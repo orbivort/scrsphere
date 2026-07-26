@@ -1,112 +1,112 @@
 {
-  "title": "[Ímpédíméntsssss]",
-  "subtitle": "[{{sprintName}} - Tràck ànd résólvé blóckérs àfféctíng thé téàmmmmmmmmmmmmmmmm]",
-  "filterByStatus": "[Fíltér by stàtússssss]",
   "allStatus": "[Àll Stàtússss]",
-  "reportImpediment": "[Répórt Ímpédíménttttttt]",
-  "status": {
-    "open": "[ÓÓppéén]",
-    "inProgress": "[Ín Prógréssssss]",
-    "resolved": "[Résólvédddd]",
-    "closed": "[Clóséddd]",
-    "OPEN": "[ÓÓppéén]",
-    "IN_PROGRESS": "[Ín Prógréssssss]",
-    "RESOLVED": "[Résólvédddd]",
-    "CLOSED": "[Clóséddd]"
-  },
-  "stats": {
-    "open": "[ÓÓppéén]",
-    "inProgress": "[Ín Prógréssssss]",
-    "resolved": "[Résólvédddd]",
-    "closed": "[Clóséddd]",
-    "OPEN": "[ÓÓppéén]",
-    "IN_PROGRESS": "[Ín Prógréssssss]",
-    "RESOLVED": "[Résólvédddd]",
-    "CLOSED": "[Clóséddd]"
-  },
   "card": {
-    "sprint": "[Sprínttt]",
-    "fromDailyScrum": "[Fróm Dàíly Scrúmmmmmm]",
     "createdFromDailyUpdate": "[Créàtéd fróm Dàíly Úpdàtééééééééé]",
-    "reportedBy": "[Répórtéd byyyyy]",
+    "fromDailyScrum": "[Fróm Dàíly Scrúmmmmmm]",
     "owner": "[Ównérrr]",
-    "unknown": "[Únknównnnn]",
+    "reportedBy": "[Répórtéd byyyyy]",
     "resolution": "[Résólútíónnnn]",
+    "sprint": "[Sprínttt]",
+    "unknown": "[Únknównnnn]",
     "viewDetailsAria": "[Víéw détàíls fór ímpédíméntttttttttt: {{title}}. SSttààttúús: {{status}}]"
   },
-  "emptyState": {
-    "noImpedimentsForSprint": "[Nó Ímpédíménts fórrrrrrr {{sprintName}}]",
-    "noImpedimentsForFilter": "[NNó {{status}} Ímpédíméntsssss]",
-    "noImpedimentsDescription": "[Gréàt! Nó ímpédíménts répórtéd fór thé cúrrént àctívé spríntttttttttttttttttttt \"{{sprintName}}\".]",
-    "noFilterImpedimentsDescription": "[Théré àré nóóóóó {{status}} ímpédíménts ínnnnnnn \"{{sprintName}}\". Try séléctíng à dífférént stàtús fíltérrrrrrrrrrrrrr.]",
-    "clearFilter": "[Cléàr Fíltérrrrr]"
-  },
   "createModal": {
-    "title": "[Répórt Néw Ímpédíméntttttttt]",
-    "subtitle": "[Dócúmént blóckérs àfféctíng yóúr téàm's prógrésssssssssssssssss]",
-    "sprintLabel": "[Sprínttt]",
     "activeSprint": "[(ÀÀccttíívvé)]",
-    "titleLabel": "[Títlééé]",
-    "titlePlaceholder": "[Bríéf déscríptíón óf thé ímpédíméntttttttttttt]",
+    "createImpediment": "[Créàté Ímpédíménttttttt]",
+    "creating": "[CCrrééààttíínng...]",
     "descriptionLabel": "[Déscríptíónnnnn]",
     "descriptionPlaceholder": "[Próvídé détàíls àbóút thé ímpédíméntttttttttttt]",
-    "creating": "[CCrrééààttíínng...]",
-    "createImpediment": "[Créàté Ímpédíménttttttt]"
+    "sprintLabel": "[Sprínttt]",
+    "subtitle": "[Dócúmént blóckérs àfféctíng yóúr téàm's prógrésssssssssssssssss]",
+    "title": "[Répórt Néw Ímpédíméntttttttt]",
+    "titleLabel": "[Títlééé]",
+    "titlePlaceholder": "[Bríéf déscríptíón óf thé ímpédíméntttttttttttt]"
+  },
+  "deleteModal": {
+    "actionWarning": "[Àctíón Wàrníngggggg]",
+    "deleteImpediment": "[Délété Ímpédíménttttttt]",
+    "deleting": "[DDééllééttíínng...]",
+    "item": "[ÍÍttéém:]",
+    "statusLabel": "[SSttààttúús:]",
+    "subtitle": "[Thís àctíón ís pérmànént ànd cànnót bé úndónééééééééééééééé]",
+    "title": "[Délété Ímpédíménttttttt]",
+    "unknownItem": "[Únknówn Ítémmmmm]",
+    "warningText": "[Yóú àré àbóút tó pérmànéntly délété thís ímpédímént. Thís àctíón cànnót bé úndóné. Àll àssócíàtéd dàtà wíll bé pérmànéntly rémóvéddddddddddddddddddddddddddddddddddddddddd.]"
   },
   "detailModal": {
-    "title": "[Ímpédímént Détàílsssssss]",
-    "subtitle": "[Víéw ànd mànàgé ímpédímént ínfórmàtíónnnnnnnnnnnnn]",
     "createdFromDailyScrum": "[Créàtéd fróm Dàíly Scrúm Úpdàtééééééééééé]",
-    "viewDailyUpdate": "[Víéw Dàíly Úpdàtééééééé]",
-    "titleLabel": "[Títlééé]",
-    "descriptionLabel": "[Déscríptíónnnnn]",
-    "sprintLabel": "[Sprínttt]",
-    "statusLabel": "[Stàtússs]",
-    "reportedByLabel": "[Répórtéd byyyyy]",
-    "ownerLabel": "[Ównérrr]",
     "createdLabel": "[Créàtédddd]",
+    "deleteLabel": "[Délétééé]",
+    "deleting": "[DDééllééttíínng...]",
+    "descriptionLabel": "[Déscríptíónnnnn]",
+    "ownerLabel": "[Ównérrr]",
+    "reportedByLabel": "[Répórtéd byyyyy]",
     "resolutionLabel": "[Résólútíónnnn]",
     "resolutionPlaceholder": "[Déscríbé hów thís ímpédímént wàs résólvéddddddddddddddd...]",
     "saveResolution": "[Sàvé Résólútíónnnnnn]",
     "saving": "[SSààvvíínng...]",
-    "deleting": "[DDééllééttíínng...]",
-    "deleteLabel": "[Délétééé]"
+    "sprintLabel": "[Sprínttt]",
+    "statusLabel": "[Stàtússs]",
+    "subtitle": "[Víéw ànd mànàgé ímpédímént ínfórmàtíónnnnnnnnnnnnn]",
+    "title": "[Ímpédímént Détàílsssssss]",
+    "titleLabel": "[Títlééé]",
+    "viewDailyUpdate": "[Víéw Dàíly Úpdàtééééééé]"
   },
-  "deleteModal": {
-    "title": "[Délété Ímpédíménttttttt]",
-    "subtitle": "[Thís àctíón ís pérmànént ànd cànnót bé úndónééééééééééééééé]",
-    "actionWarning": "[Àctíón Wàrníngggggg]",
-    "item": "[ÍÍttéém:]",
-    "unknownItem": "[Únknówn Ítémmmmm]",
-    "warningText": "[Yóú àré àbóút tó pérmànéntly délété thís ímpédímént. Thís àctíón cànnót bé úndóné. Àll àssócíàtéd dàtà wíll bé pérmànéntly rémóvéddddddddddddddddddddddddddddddddddddddddd.]",
-    "statusLabel": "[SSttààttúús:]",
-    "deleteImpediment": "[Délété Ímpédíménttttttt]",
-    "deleting": "[DDééllééttíínng...]"
-  },
-  "unsavedModal": {
-    "title": "[Únsàvéd Chàngéssssss]",
-    "message": "[Yóú hàvé únsàvéd chàngés ín thé ímpédímént fórm. Àré yóú súré yóú wànt tó díscàrd thémmmmmmmmmmmmmmmmmmmmmmmmmmmm?]"
-  },
-  "toast": {
-    "created": "[Ímpédímént créàtéd súccéssfúllyyyyyyyyyyy]",
-    "updated": "[Ímpédímént úpdàtéd súccéssfúllyyyyyyyyyyy]",
-    "deleted": "[Ímpédímént délétéd súccéssfúllyyyyyyyyyyy]",
-    "teamIdRequired": "[Téàm ÍD ís réqúíréd. Pléàsé séléct à téàm fírstttttttttttttttt.]",
-    "noActiveSprint": "[Nó àctívé sprínt fóúnd. Pléàsé stàrt à sprínt fírsttttttttttttttttt.]",
-    "failedCreate": "[Fàíléd tó créàté ímpédímént. Pléàsé try àgàínnnnnnnnnnnnnnn.]",
-    "failedUpdate": "[Fàíléd tó úpdàté ímpédímént. Pléàsé try àgàínnnnnnnnnnnnnnn.]",
-    "failedDelete": "[Fàíléd tó délété ímpédímént. Pléàsé try àgàínnnnnnnnnnnnnnn.]"
+  "emptyState": {
+    "clearFilter": "[Cléàr Fíltérrrrr]",
+    "noFilterImpedimentsDescription": "[Théré àré nóóóóó {{status}} ímpédíménts ínnnnnnn \"{{sprintName}}\". Try séléctíng à dífférént stàtús fíltérrrrrrrrrrrrrr.]",
+    "noImpedimentsDescription": "[Gréàt! Nó ímpédíménts répórtéd fór thé cúrrént àctívé spríntttttttttttttttttttt \"{{sprintName}}\".]",
+    "noImpedimentsForFilter": "[NNó {{status}} Ímpédíméntsssss]",
+    "noImpedimentsForSprint": "[Nó Ímpédíménts fórrrrrrr {{sprintName}}]"
   },
   "errorState": {
-    "title": "[Érrór Lóàdíng Dàtààààààà]",
-    "retry": "[Rétryyy]",
+    "failedImpediments": "[Fàíléd tó lóàd ímpédíménts. Pléàsé try àgàínnnnnnnnnnnnnnn.]",
     "failedSprint": "[Fàíléd tó lóàd àctívé sprínt ínfórmàtíón. Pléàsé try àgàínnnnnnnnnnnnnnnnnnn.]",
-    "failedImpediments": "[Fàíléd tó lóàd ímpédíménts. Pléàsé try àgàínnnnnnnnnnnnnnn.]"
+    "retry": "[Rétryyy]",
+    "title": "[Érrór Lóàdíng Dàtààààààà]"
+  },
+  "filterByStatus": "[Fíltér by stàtússssss]",
+  "reportImpediment": "[Répórt Ímpédíménttttttt]",
+  "stats": {
+    "CLOSED": "[Clóséddd]",
+    "IN_PROGRESS": "[Ín Prógréssssss]",
+    "OPEN": "[ÓÓppéén]",
+    "RESOLVED": "[Résólvédddd]",
+    "closed": "[Clóséddd]",
+    "inProgress": "[Ín Prógréssssss]",
+    "open": "[ÓÓppéén]",
+    "resolved": "[Résólvédddd]"
+  },
+  "status": {
+    "CLOSED": "[Clóséddd]",
+    "IN_PROGRESS": "[Ín Prógréssssss]",
+    "OPEN": "[ÓÓppéén]",
+    "RESOLVED": "[Résólvédddd]",
+    "closed": "[Clóséddd]",
+    "inProgress": "[Ín Prógréssssss]",
+    "open": "[ÓÓppéén]",
+    "resolved": "[Résólvédddd]"
+  },
+  "subtitle": "[{{sprintName}} - Tràck ànd résólvé blóckérs àfféctíng thé téàmmmmmmmmmmmmmmmm]",
+  "title": "[Ímpédíméntsssss]",
+  "toast": {
+    "created": "[Ímpédímént créàtéd súccéssfúllyyyyyyyyyyy]",
+    "deleted": "[Ímpédímént délétéd súccéssfúllyyyyyyyyyyy]",
+    "failedCreate": "[Fàíléd tó créàté ímpédímént. Pléàsé try àgàínnnnnnnnnnnnnnn.]",
+    "failedDelete": "[Fàíléd tó délété ímpédímént. Pléàsé try àgàínnnnnnnnnnnnnnn.]",
+    "failedUpdate": "[Fàíléd tó úpdàté ímpédímént. Pléàsé try àgàínnnnnnnnnnnnnnn.]",
+    "noActiveSprint": "[Nó àctívé sprínt fóúnd. Pléàsé stàrt à sprínt fírsttttttttttttttttt.]",
+    "teamIdRequired": "[Téàm ÍD ís réqúíréd. Pléàsé séléct à téàm fírstttttttttttttttt.]",
+    "updated": "[Ímpédímént úpdàtéd súccéssfúllyyyyyyyyyyy]"
+  },
+  "unsavedModal": {
+    "message": "[Yóú hàvé únsàvéd chàngés ín thé ímpédímént fórm. Àré yóú súré yóú wànt tó díscàrd thémmmmmmmmmmmmmmmmmmmmmmmmmmmm?]",
+    "title": "[Únsàvéd Chàngéssssss]"
   },
   "validation": {
-    "titleRequired": "[Títlé ís réqúíréddddddd]",
-    "titleTooShort": "[Títlé múst bé àt léàst 3 chàràctérssssssssssss]",
     "descriptionRequired": "[Déscríptíón ís réqúírédddddddd]",
-    "descriptionTooShort": "[Déscríptíón múst bé àt léàst 10 chàràctérssssssssssssss]"
+    "descriptionTooShort": "[Déscríptíón múst bé àt léàst 10 chàràctérssssssssssssss]",
+    "titleRequired": "[Títlé ís réqúíréddddddd]",
+    "titleTooShort": "[Títlé múst bé àt léàst 3 chàràctérssssssssssss]"
   }
 }

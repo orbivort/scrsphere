@@ -662,6 +662,23 @@ export const SprintConfiguration: React.FC = () => {
   );
 };
 
+/**
+ * Adjusts date to previous Friday if it falls on weekend
+ * Mirrors backend's adjustToPreviousFriday logic
+ */
+function adjustToPreviousFriday(date: Date): Date {
+  const adjusted = new Date(date);
+  const dayOfWeek = adjusted.getDay();
+  if (dayOfWeek === 6) {
+    // Saturday -> Friday
+    adjusted.setDate(adjusted.getDate() - 1);
+  } else if (dayOfWeek === 0) {
+    // Sunday -> Friday
+    adjusted.setDate(adjusted.getDate() - 2);
+  }
+  return adjusted;
+}
+
 function generateSprintPreview(
   year: number,
   duration: SprintDuration
@@ -684,13 +701,22 @@ function generateSprintPreview(
 
   while (currentDate.getFullYear() <= year) {
     const startDate = new Date(currentDate);
-    const endDate = new Date(currentDate);
-    endDate.setDate(endDate.getDate() + weekDuration - durationConfig.offset);
+    const rawEndDate = new Date(currentDate);
+    rawEndDate.setDate(rawEndDate.getDate() + weekDuration - durationConfig.offset);
+    const endDate = adjustToPreviousFriday(rawEndDate);
 
     if (startDate.getFullYear() > year) break;
 
     const formattedSprintNum = sprintNumber.toString().padStart(2, '0');
-    const dateRange = `${formatDateSimple(startDate)}-${formatDateSimple(endDate)}`;
+    // Format date as ISO 8601 (YYYY-MM-DD) for unambiguous, sortable sprint names
+    const formatDateSimple = (d: Date): string => {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    };
+    // Use en-dash (U+2013) as typographically correct range separator
+    const dateRange = `${formatDateSimple(startDate)} – ${formatDateSimple(endDate)}`;
     const name = `Sprint-${durationStr}-${shortYear}${formattedSprintNum} (${dateRange})`;
 
     sprints.push({ name, dateRange });
@@ -700,11 +726,4 @@ function generateSprintPreview(
   }
 
   return sprints;
-}
-
-function formatDateSimple(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}/${month}/${day}`;
 }

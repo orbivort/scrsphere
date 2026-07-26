@@ -1,25 +1,25 @@
 import { type Request, type Response, type NextFunction } from 'express';
-import { DEFAULT_LOCALE, SUPPORTED_LOCALES, type Locale, normalizeLocale } from '@scrumooth/shared';
+import {
+  DEFAULT_LOCALE,
+  SUPPORTED_LOCALES,
+  LOCALE_BCP47_MAP,
+  BCP47_DEFAULT,
+  type Locale,
+  normalizeLocale,
+} from '@scrumooth/shared';
 import { resolveAcceptLanguage } from 'resolve-accept-language';
 import { updateRequestContext } from '../utils/requestContext.js';
 import { getLocaleCookieOptions, COOKIE_NAMES } from '../utils/cookieConfig.js';
+import config from '../config/index.js';
 
 /**
  * BCP 47 locale identifiers corresponding to SUPPORTED_LOCALES.
- * `resolve-accept-language` requires `language-country` format identifiers.
+ * Derived from the shared LOCALE_BCP47_MAP so adding a new locale
+ * only requires updating one file (packages/shared/src/constants/index.ts).
  */
-const BCP47_LOCALES: readonly string[] = SUPPORTED_LOCALES.map((locale) => {
-  const map: Record<Locale, string> = {
-    en: 'en-US',
-    de: 'de-DE',
-    fr: 'fr-FR',
-    es: 'es-ES',
-    it: 'it-IT',
-  };
-  return map[locale];
-});
-
-const BCP47_DEFAULT = 'en-US';
+const BCP47_LOCALES: readonly string[] = SUPPORTED_LOCALES.map(
+  (locale) => LOCALE_BCP47_MAP[locale]
+);
 
 /**
  * Resolves the request locale, storing it in the AsyncLocalStorage request context.
@@ -54,7 +54,11 @@ export function localeResolver(req: Request, _res: Response, next: NextFunction)
   }
 
   // Persist the locale cookie so SSR/refresh renders the correct language pre-hydration
-  _res.cookie(COOKIE_NAMES.LOCALE, locale, getLocaleCookieOptions());
+  _res.cookie(
+    COOKIE_NAMES.LOCALE,
+    locale,
+    getLocaleCookieOptions('node', config.nodeEnv === 'production')
+  );
 
   updateRequestContext({ locale });
   next();

@@ -1,102 +1,102 @@
 {
-  "pts": "pts",
-  "title": "Report",
-  "subtitle": "Seguire le prestazioni del team e le metriche del Sprint",
-  "skipToMainContent": "Passa al contenuto principale",
   "error": {
-    "title": "Errore durante il caricamento dei report",
-    "message": "Impossibile caricare i dati del report. Riprova più tardi."
+    "message": "Impossibile caricare i dati del report. Riprova più tardi.",
+    "title": "Errore durante il caricamento dei report"
+  },
+  "insights": {
+    "empty": "Nessun insight disponibile ancora. Completa più Sprint per generare insights.",
+    "items": {
+      "active-sprint-impediments": {
+        "description": "Lo Sprint attuale ha {{count}} impedimento(i). Monitora attentamente.",
+        "title": "Impedimento dello Sprint attivo"
+      },
+      "consistent-delivery": {
+        "description": "Il team ha mantenuto il 100% del raggiungimento degli obiettivi negli ultimi {{count}} Sprint",
+        "title": "Consegna costante"
+      },
+      "get-started": {
+        "description": "Completa più Sprint per generare insights sulle prestazioni del team.",
+        "title": "Per iniziare"
+      },
+      "high-success-rate": {
+        "description": "Il team ha raggiunto {{rate}}% di tasso di successo degli Sprint. Ottimo lavoro!",
+        "title": "Alto tasso di successo"
+      },
+      "impediment-trend": {
+        "description": "{{count}} impedimento(i) attualmente aperto(i). Considera di affrontarli proattivamente.",
+        "title": "Andamento impedimento"
+      },
+      "low-success-rate": {
+        "description": "Il tasso di successo degli Sprint è {{rate}}%. Considera di rivedere capacità e pianificazione.",
+        "title": "Attenzione al tasso di successo"
+      },
+      "recent-improvement": {
+        "description": "L'ultimo Sprint ha mostrato un miglioramento del {{improvement}}% nei Story Points completati.",
+        "title": "Miglioramento recente"
+      },
+      "velocity-decline": {
+        "description": "La velocity media è diminuita del {{trend}}%. Considera di rivedere la pianificazione dello Sprint.",
+        "title": "Calo della Velocity"
+      },
+      "velocity-improvement": {
+        "description": "La velocity media è aumentata del {{trend}}% rispetto agli Sprint precedenti",
+        "title": "Miglioramento della Velocity"
+      }
+    },
+    "title": "Insights chiave"
+  },
+  "loading": {
+    "insights": "Caricando insights...",
+    "metrics": "Caricando metriche...",
+    "sprintHistory": "Caricando storico Sprint...",
+    "velocityChart": "Caricando grafico velocity..."
   },
   "metrics": {
     "avgVelocity": {
+      "fromLastSprint": "dall'ultimo Sprint",
       "title": "Velocity media",
-      "unit": "Story Points per Sprint",
-      "fromLastSprint": "dall'ultimo Sprint"
-    },
-    "sprintSuccessRate": {
-      "title": "Tasso di successo del Sprint",
-      "unit": "Sprint Goals raggiunti",
-      "fromLastMonth": "dall'ultimo mese"
+      "unit": "Story Points per Sprint"
     },
     "impediments": {
-      "title": "Impedimento",
+      "openCount": "impedimento(i) aperto(i)",
       "resolved": "Risolti",
-      "openCount": "impedimento(i) aperto(i)"
+      "title": "Impedimento"
+    },
+    "sprintSuccessRate": {
+      "fromLastMonth": "dall'ultimo mese",
+      "title": "Tasso di successo del Sprint",
+      "unit": "Sprint Goals raggiunti"
     },
     "teamSatisfaction": {
+      "fromLastSprint": "dall'ultimo Sprint",
       "title": "Soddisfazione del team",
-      "unit": "Valutazione media",
-      "fromLastSprint": "dall'ultimo Sprint"
+      "unit": "Valutazione media"
     }
   },
+  "pts": "pts",
+  "skipToMainContent": "Passa al contenuto principale",
   "sprintHistory": {
-    "title": "Storico degli Sprint",
     "empty": "Nessuno storico di Sprint disponibile.",
     "stats": {
-      "planned": "Pianificato",
       "completed": "Completato",
-      "teamMembers": "Membri del team",
-      "impediments": "Impedimento"
-    }
+      "impediments": "Impedimento",
+      "planned": "Pianificato",
+      "teamMembers": "Membri del team"
+    },
+    "title": "Storico degli Sprint"
   },
   "sprintStatusLabels": {
-    "PLANNED": "Pianificato",
     "ACTIVE": "Attivo",
-    "COMPLETED": "Completato"
+    "COMPLETED": "Completato",
+    "PLANNED": "Pianificato"
   },
-  "insights": {
-    "title": "Insights chiave",
-    "empty": "Nessun insight disponibile ancora. Completa più Sprint per generare insights.",
-    "items": {
-      "velocity-improvement": {
-        "title": "Miglioramento della Velocity",
-        "description": "La velocity media è aumentata del {{trend}}% rispetto agli Sprint precedenti"
-      },
-      "velocity-decline": {
-        "title": "Calo della Velocity",
-        "description": "La velocity media è diminuita del {{trend}}%. Considera di rivedere la pianificazione dello Sprint."
-      },
-      "consistent-delivery": {
-        "title": "Consegna costante",
-        "description": "Il team ha mantenuto il 100% del raggiungimento degli obiettivi negli ultimi {{count}} Sprint"
-      },
-      "impediment-trend": {
-        "title": "Andamento impedimento",
-        "description": "{{count}} impedimento(i) attualmente aperto(i). Considera di affrontarli proattivamente."
-      },
-      "high-success-rate": {
-        "title": "Alto tasso di successo",
-        "description": "Il team ha raggiunto {{rate}}% di tasso di successo degli Sprint. Ottimo lavoro!"
-      },
-      "low-success-rate": {
-        "title": "Attenzione al tasso di successo",
-        "description": "Il tasso di successo degli Sprint è {{rate}}%. Considera di rivedere capacità e pianificazione."
-      },
-      "recent-improvement": {
-        "title": "Miglioramento recente",
-        "description": "L'ultimo Sprint ha mostrato un miglioramento del {{improvement}}% nei Story Points completati."
-      },
-      "active-sprint-impediments": {
-        "title": "Impedimento dello Sprint attivo",
-        "description": "Lo Sprint attuale ha {{count}} impedimento(i). Monitora attentamente."
-      },
-      "get-started": {
-        "title": "Per iniziare",
-        "description": "Completa più Sprint per generare insights sulle prestazioni del team."
-      }
-    }
-  },
+  "subtitle": "Seguire le prestazioni del team e le metriche del Sprint",
+  "title": "Report",
   "velocityChart": {
-    "title": "Velocity del Sprint",
-    "yAxisLabel": "Story Points",
-    "xAxisLabel": "Sprint",
+    "completed": "Completato",
     "planned": "Pianificato",
-    "completed": "Completato"
-  },
-  "loading": {
-    "velocityChart": "Caricando grafico velocity...",
-    "metrics": "Caricando metriche...",
-    "sprintHistory": "Caricando storico Sprint...",
-    "insights": "Caricando insights..."
+    "title": "Velocity del Sprint",
+    "xAxisLabel": "Sprint",
+    "yAxisLabel": "Story Points"
   }
 }

@@ -1,6 +1,10 @@
 export {
+  RTL_LANGUAGES,
+  RTL_LANGUAGES_DEV,
   isRTL,
+  isRTLDev,
   getDirection,
+  getDirectionDev,
   getBaseLanguage,
   isSupportedLocale,
   isSupportedLocaleDev,
@@ -15,6 +19,15 @@ export {
   getCachedCollator,
 } from './intlCache.js';
 export { escapeHtml } from './escapeHtml.js';
+export {
+  LOCALE_COOKIE_NAME,
+  LOCALE_COOKIE_MAX_AGE,
+  LOCALE_COOKIE_SAME_SITE,
+  LOCALE_COOKIE_PATH,
+  getLocaleCookieOptions,
+  buildLocaleCookieString,
+  type LocaleCookieOptions,
+} from './cookieConfig.js';
 export {
   formatDate as formatLocaleDate,
   formatNumber,

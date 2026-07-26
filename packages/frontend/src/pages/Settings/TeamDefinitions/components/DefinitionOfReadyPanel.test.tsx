@@ -82,14 +82,14 @@ describe('DefinitionOfReadyPanel', () => {
           {
             id: 'item-1',
             description: 'Test item 1',
-            category: 'requirements',
+            category: 'clarity',
             isActive: true,
             order: 0,
           },
           {
             id: 'item-2',
             description: 'Test item 2',
-            category: 'testing',
+            category: 'acceptance',
             isActive: true,
             order: 1,
           },
@@ -114,7 +114,7 @@ describe('DefinitionOfReadyPanel', () => {
           {
             id: 'item-1',
             description: 'Test item',
-            category: 'requirements',
+            category: 'clarity',
             isActive: true,
             order: 0,
           },

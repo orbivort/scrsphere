@@ -211,7 +211,7 @@ export default tseslint.config(
       // i18n security - prevent XSS via dangerouslySetInnerHTML with translated content
       'i18n-security/no-dangerous-i18n': 'error',
       // i18n - disallow hardcoded user-facing strings in JSX (use t() instead)
-      'no-literal-jsx-string/no-literal-jsx-string': 'warn',
+      'no-literal-jsx-string/no-literal-jsx-string': 'error',
       // Date formatting - enforce shared formatters
       'no-restricted-syntax': [
         'error',

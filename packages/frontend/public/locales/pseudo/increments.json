@@ -1,202 +1,202 @@
 {
-  "title": "[Íncréméntssss]",
-  "subtitle": "[Mànàgé ànd tràck yóúr pródúct íncréménts. Íncréménts réprésént wórkíng, úsàblé fúnctíónàlíty thàt ís réàdy fór délívéry tó stàkéhóldérssssssssssssssssssssssssssssssssssssssssss.]",
-  "createIncrement": "[Créàté Íncréméntttttt]",
-  "loading": "[Lóàdíng íncréméntssssssss...]",
-  "skipToSprintReview": "[Skíp tó Sprínt Révíéwwwwwwww]",
   "backToIncrements": "[Bàck tó Íncréméntsssssss]",
-  "noDescription": "[Nó déscríptíón próvídéddddddddd.]",
-  "sprintPrefix": "[SSPPRRÍÍNNT {{sprintId}}]",
-  "list": {
-    "stats": {
-      "total": "[Tótàl Íncréméntssssss]",
-      "active": "[Àctívééé]",
-      "delivered": "[Délívérédddd]",
-      "storyPoints": "[Stóry Póíntsssss]"
-    },
-    "filters": {
-      "all": "[Àlll]",
-      "active": "[Àctívééé]",
-      "delivered": "[Délívérédddd]",
-      "archived": "[Àrchívédddd]"
-    },
-    "searchPlaceholder": "[Séàrch íncréméntsssssss...]",
-    "ariaLabelSearch": "[Séàrch íncréméntsssssss]",
-    "ariaLabelFilter": "[Fíltér íncréménts by stàtússssssssss]",
-    "clearSearch": "[Cléàr séàrchhhhh]",
-    "empty": {
-      "title": "[Nó Íncréménts fóúnddddddd]",
-      "noSearchResults": "[Nó íncréménts màtch yóúr séàrch. Try àdjústíng yóúr fíltérsssssssssssssssssss.]",
-      "noIncrements": "[Nó íncréménts hàvé béén créàtéd yét. Créàté yóúr fírst íncrémént tó stàrt tràckíng délívéràbléssssssssssssssssssssssssssssss.]"
-    },
-    "cardStats": {
-      "pbis": "[PPBBÍÍs]",
-      "points": "[Póíntsss]"
-    }
-  },
-  "status": {
-    "draft": "[Dràfttt]",
-    "verified": "[Vérífíédddd]",
-    "delivered": "[Délívérédddd]",
-    "archived": "[Àrchívédddd]"
-  },
-  "deliveryMethod": {
-    "sprintReview": "[Sprínt Révíéwwwww]",
-    "earlyRelease": "[Éàrly Réléàsééééé]"
-  },
-  "dates": {
-    "created": "[Créàtédddd]",
-    "delivered": "[Délívérédddd]"
-  },
-  "detail": {
-    "deliverIncrement": "[Délívér Íncréménttttttt]",
-    "sprintCompletionWorkflow": "[Sprínt Cómplétíón Wórkflówwwwwwwww]",
-    "workflowStep3Of4": "[Stép 3 óf 4: Délívér Íncréméntttttttttt]",
-    "workflowSteps": {
-      "sprintCompleted": "[Sprínt Cómplétédddddd]",
-      "createIncrement": "[Créàté Íncréméntttttt]",
-      "deliverIncrement": "[Délívér Íncréménttttttt]",
-      "sprintReview": "[Sprínt Révíéwwwww]"
-    },
-    "progressSteps": {
-      "completed": "[Cómplétédddd]",
-      "current": "[Cúrréntttt]",
-      "upcoming": "[Úpcómíngggg]"
-    },
-    "overview": {
-      "title": "[Óvérvíéwwww]",
-      "description": "[Déscríptíónnnnn]",
-      "sprint": "[Sprínttt]",
-      "created": "[Créàtédddd]",
-      "storyPoints": "[Stóry Póíntsssss]",
-      "pbisIncluded": "[PBÍs Ínclúdéddddd]",
-      "delivered": "[Délívérédddd]",
-      "deliveryMethod": "[Délívéry Méthódddddd]",
-      "noDescription": "[Nó déscríptíónnnnnn]"
-    },
-    "pbis": {
-      "title": "[Ínclúdéd Pródúct Bàcklóg Ítémssssssssss]",
-      "empty": "[Nó PBÍs ínclúdéd ín thís íncréméntttttttttttt.]"
-    },
-    "dodVerification": {
-      "title": "[Défínítíón óf Dóné Vérífícàtíónnnnnnnnnnn]",
-      "totalVerifications": "[Tótàl Vérífícàtíónsssssss]",
-      "verified": "[Vérífíédddd]",
-      "byCategory": "[Vérífícàtíón by Càtégóryyyyyyyyy]",
-      "byPbi": "[Vérífícàtíón by PBÍÍÍÍÍÍÍ]",
-      "noVerifications": "[Nó DóD vérífícàtíóns récórdéd fór thís íncréméntttttttttttttttt.]",
-      "noVerificationsHint": "[Vérífícàtíóns àré càptúréd whén cómplétíng à sprínttttttttttttttttt.]",
-      "noVerificationsForPbi": "[Nó vérífícàtíóns fór thís PBÍÍÍÍÍÍÍÍÍÍ.]"
-    },
-    "timeline": {
-      "title": "[Tímélínéééé]",
-      "incrementCreated": "[Íncrémént Créàtéddddddd]",
-      "deliveredViaSprintReview": "[Délívéréd víà Sprínt Révíéwwwwwwwwww]",
-      "deliveredViaEarlyRelease": "[Délívéréd víà Éàrly Réléàséééééééééé]"
-    },
-    "deliverModal": {
-      "title": "[Délívér Íncréménttttttt]",
-      "description": "[Màrk thís Íncrémént às délívéréd ànd récórd thé délívéry méthóddddddddddddddddddddd.]",
-      "modalDescription": "[Màrk thís Íncrémént às délívéréd tó stàkéhóldérs. Thís àctíón cànnót bé úndónééééééééééééééééééééééééé.]",
-      "deliveryMethodLabel": "[Délívéry Méthódddddd]",
-      "sprintReviewOption": "[Sprínt Révíéwwwww]",
-      "sprintReviewDescription": "[Préséntéd àt thé Sprínt Révíéw méétínggggggggggggg]",
-      "earlyReleaseOption": "[Éàrly Réléàsééééé]",
-      "earlyReleaseDescription": "[Délívéréd béfóré thé énd óf thé Sprínttttttttttttt]",
-      "notesLabel": "[Nótés (Óptíónàllllll)]",
-      "notesPlaceholder": "[Àdd àny nótés àbóút thís délívéryyyyyyyyyyyy...]",
-      "confirmText": "[Í cónfírm thís Íncrémént mééts thé Défínítíón óf Dóné ànd ís réàdy fór délívéryyyyyyyyyyyyyyyyyyyyyyyyy]",
-      "checkboxText": "[Í úndérstànd thís àctíón ís írrévérsíblé ànd thé íncrémént wíll bé màrkéd às délívéréd tó stàkéhóldérssssssssssssssssssssssssssssssss.]",
-      "cancel": "[Càncélll]",
-      "confirm": "[Cónfírm Délívéryyyyyy]",
-      "delivering": "[Délívérínggggg...]",
-      "closeDialog": "[Clósé díàlóggggg]",
-      "confirmDeliveryAriaLabel": "[Cónfírm délívéry àctíónnnnnnnn]"
-    },
-    "toast": {
-      "deliveredSuccess": "[Íncrémént délívéréd súccéssfúllyyyyyyyyyyy!]",
-      "deliverFailed": "[Fàíléd tó délívér íncrémént. Pléàsé try àgàínnnnnnnnnnnnnnn.]"
-    },
-    "error": {
-      "title": "[Fàíléd tó lóàd íncréménttttttttt]",
-      "backToIncrements": "[Bàck tó Íncréméntsssssss]"
-    },
-    "loading": "[Lóàdíng íncréménttttttt...]"
-  },
   "create": {
-    "backToSprintReview": "[Bàck tó Sprínt Révíéwwwwwwww]",
-    "backToIncrements": "[Bàck tó Íncréméntsssssss]",
-    "title": "[Créàté Íncréméntttttt]",
-    "workflowSteps": {
-      "sprintCompleted": "[Sprínt Cómplétédddddd]",
+    "actions": {
+      "cancel": "[Càncélll]",
+      "createAndContinue": "[Créàté & Cóntínúééééééé]",
       "createIncrement": "[Créàté Íncréméntttttt]",
-      "deliverIncrement": "[Délívér Íncréménttttttt]",
-      "sprintReview": "[Sprínt Révíéwwwww]"
+      "creating": "[CCrrééààttíínng...]",
+      "delivering": "[Délívérínggggg...]",
+      "skipToSprintReview": "[Skíp tó Sprínt Révíéwwwwwwww]"
     },
-    "workflowIndicator": {
-      "title": "[Sprínt Cómplétíón Wórkflówwwwwwwww]",
-      "step2Of4": "[Stép 2 óf 4: Créàté Íncréméntttttttttt]",
-      "step3Of4": "[Stép 3 óf 4: Délívér Íncréméntttttttttt]",
-      "step4Of4": "[Stép 4 óf 4: Sprínt Révíéwwwwwwwww]"
+    "backToIncrements": "[Bàck tó Íncréméntsssssss]",
+    "backToSprintReview": "[Bàck tó Sprínt Révíéwwwwwwww]",
+    "error": {
+      "failedLoadPbis": "[Fàíléd tó lóàd élígíblé PBÍssssssssss]",
+      "message": "[Fàíléd tó lóàd dàtà. Pléàsé try àgàínnnnnnnnnnnnn.]",
+      "title": "[Érrórrr]"
+    },
+    "form": {
+      "description": "[Déscríptíónnnnn]",
+      "descriptionPlaceholder": "[Déscríbé whàt thís íncrémént ínclúdésssssssssssss...]",
+      "incrementDetails": "[Íncrémént Détàílsssssss]",
+      "incrementDetailsSubtitle": "[Próvídé à nàmé ànd óptíónàl déscríptíón fór thís íncréménttttttttttttttttttt.]",
+      "name": "[NNààmmé]",
+      "namePlaceholder": "[é.g., Sprínt 5 Íncréménttttttttt]",
+      "sprint": "[Sprínttt]",
+      "sprintPlaceholder": "[Séléct à spríntttttt]"
+    },
+    "loading": "[Lóàdíngggg...]",
+    "pbis": {
+      "alreadyInIncrement": "[Àlréàdy ín àn íncréméntttttttt]",
+      "deselectAll": "[Déséléct Àllllll]",
+      "mustBeDone": "[PBÍs múst bé ín \"Dóné\" stàtús ànd nót àlréàdy ín ànóthér íncréméntttttttttttttttttttttt.]",
+      "noEligiblePbis": "[Nó élígíblé PBÍs fóúnd fór thís sprínttttttttttttt.]",
+      "selectAll": "[Séléct Àlllll]",
+      "selected": "[séléctédddd]",
+      "subtitle": "[Chóósé thé PBÍs thàt àré cómplété ànd réàdy tó bé ínclúdéd ín thís íncréménttttttttttttttttttttttttt.]",
+      "title": "[Séléct Pródúct Bàcklóg Ítémssssssssss]"
     },
     "progressSteps": {
       "creatingIncrement": "[Créàtíng Íncréméntttttttt...]",
       "deliveringIncrement": "[Délívéríng Íncréméntttttttt...]",
       "redirecting": "[Rédíréctíngggggg...]"
     },
-    "form": {
-      "incrementDetails": "[Íncrémént Détàílsssssss]",
-      "incrementDetailsSubtitle": "[Próvídé à nàmé ànd óptíónàl déscríptíón fór thís íncréménttttttttttttttttttt.]",
-      "name": "[NNààmmé]",
-      "namePlaceholder": "[é.g., Sprínt 5 Íncréménttttttttt]",
-      "sprint": "[Sprínttt]",
-      "sprintPlaceholder": "[Séléct à spríntttttt]",
-      "description": "[Déscríptíónnnnn]",
-      "descriptionPlaceholder": "[Déscríbé whàt thís íncrémént ínclúdésssssssssssss...]"
-    },
-    "pbis": {
-      "title": "[Séléct Pródúct Bàcklóg Ítémssssssssss]",
-      "subtitle": "[Chóósé thé PBÍs thàt àré cómplété ànd réàdy tó bé ínclúdéd ín thís íncréménttttttttttttttttttttttttt.]",
-      "selected": "[séléctédddd]",
-      "deselectAll": "[Déséléct Àllllll]",
-      "selectAll": "[Séléct Àlllll]",
-      "noEligiblePbis": "[Nó élígíblé PBÍs fóúnd fór thís sprínttttttttttttt.]",
-      "mustBeDone": "[PBÍs múst bé ín \"Dóné\" stàtús ànd nót àlréàdy ín ànóthér íncréméntttttttttttttttttttttt.]",
-      "alreadyInIncrement": "[Àlréàdy ín àn íncréméntttttttt]"
-    },
     "summary": {
-      "title": "[Súmmàryyyy]",
-      "subtitle": "[Révíéw yóúr íncrémént béfóré créàtínggggggggggggg.]",
       "pbisSelected": "[PBÍs Séléctéddddd]",
+      "subtitle": "[Révíéw yóúr íncrémént béfóré créàtínggggggggggggg.]",
+      "title": "[Súmmàryyyy]",
       "totalStoryPoints": "[Tótàl Stóry Póíntsssssss]"
     },
-    "actions": {
-      "skipToSprintReview": "[Skíp tó Sprínt Révíéwwwwwwww]",
-      "cancel": "[Càncélll]",
-      "createAndContinue": "[Créàté & Cóntínúééééééé]",
-      "createIncrement": "[Créàté Íncréméntttttt]",
-      "creating": "[CCrrééààttíínng...]",
-      "delivering": "[Délívérínggggg...]"
-    },
-    "validation": {
-      "nameRequired": "[Nàmé ís réqúírédddddd]",
-      "sprintRequired": "[Pléàsé séléct à spríntttttttt]",
-      "atLeastOnePbi": "[Àt léàst óné PBÍ múst bé séléctéddddddddddd]",
-      "noTeamSelected": "[Nó téàm séléctéd. Pléàsé séléct à téàm fírsttttttttttttttt.]"
-    },
+    "title": "[Créàté Íncréméntttttt]",
     "toast": {
+      "createFailed": "[Fàíléd tó créàté íncrémént. Pléàsé try àgàínnnnnnnnnnnnnnn.]",
       "createdAndDelivering": "[Íncrémént créàtéd! Délívéríng íncréméntttttttttttttt...]",
-      "deliveredSuccess": "[Íncrémént délívéréd! Rédíréctíng tó Sprínt Révíéwwwwwwwwwwwwwwwww...]",
       "createdSuccess": "[Íncrémént créàtéd súccéssfúllyyyyyyyyyyy!]",
       "deliverFailed": "[Fàíléd tó délívér íncrémént. Yóú càn délívér ít mànúàlly fróm thé íncrémént détàíl pàgéééééééééééééééééééééééééééé.]",
-      "createFailed": "[Fàíléd tó créàté íncrémént. Pléàsé try àgàínnnnnnnnnnnnnnn.]",
+      "deliveredSuccess": "[Íncrémént délívéréd! Rédíréctíng tó Sprínt Révíéwwwwwwwwwwwwwwwww...]",
       "validationFailed": "[Vàlídàtíón fàíléddddddd]"
     },
-    "loading": "[Lóàdíngggg...]",
-    "error": {
-      "title": "[Érrórrr]",
-      "message": "[Fàíléd tó lóàd dàtà. Pléàsé try àgàínnnnnnnnnnnnn.]",
-      "failedLoadPbis": "[Fàíléd tó lóàd élígíblé PBÍssssssssss]"
+    "validation": {
+      "atLeastOnePbi": "[Àt léàst óné PBÍ múst bé séléctéddddddddddd]",
+      "nameRequired": "[Nàmé ís réqúírédddddd]",
+      "noTeamSelected": "[Nó téàm séléctéd. Pléàsé séléct à téàm fírsttttttttttttttt.]",
+      "sprintRequired": "[Pléàsé séléct à spríntttttttt]"
+    },
+    "workflowIndicator": {
+      "step2Of4": "[Stép 2 óf 4: Créàté Íncréméntttttttttt]",
+      "step3Of4": "[Stép 3 óf 4: Délívér Íncréméntttttttttt]",
+      "step4Of4": "[Stép 4 óf 4: Sprínt Révíéwwwwwwwww]",
+      "title": "[Sprínt Cómplétíón Wórkflówwwwwwwww]"
+    },
+    "workflowSteps": {
+      "createIncrement": "[Créàté Íncréméntttttt]",
+      "deliverIncrement": "[Délívér Íncréménttttttt]",
+      "sprintCompleted": "[Sprínt Cómplétédddddd]",
+      "sprintReview": "[Sprínt Révíéwwwww]"
     }
-  }
+  },
+  "createIncrement": "[Créàté Íncréméntttttt]",
+  "dates": {
+    "created": "[Créàtédddd]",
+    "delivered": "[Délívérédddd]"
+  },
+  "deliveryMethod": {
+    "earlyRelease": "[Éàrly Réléàsééééé]",
+    "sprintReview": "[Sprínt Révíéwwwww]"
+  },
+  "detail": {
+    "deliverIncrement": "[Délívér Íncréménttttttt]",
+    "deliverModal": {
+      "cancel": "[Càncélll]",
+      "checkboxText": "[Í úndérstànd thís àctíón ís írrévérsíblé ànd thé íncrémént wíll bé màrkéd às délívéréd tó stàkéhóldérssssssssssssssssssssssssssssssss.]",
+      "closeDialog": "[Clósé díàlóggggg]",
+      "confirm": "[Cónfírm Délívéryyyyyy]",
+      "confirmDeliveryAriaLabel": "[Cónfírm délívéry àctíónnnnnnnn]",
+      "confirmText": "[Í cónfírm thís Íncrémént mééts thé Défínítíón óf Dóné ànd ís réàdy fór délívéryyyyyyyyyyyyyyyyyyyyyyyyy]",
+      "delivering": "[Délívérínggggg...]",
+      "deliveryMethodLabel": "[Délívéry Méthódddddd]",
+      "description": "[Màrk thís Íncrémént às délívéréd ànd récórd thé délívéry méthóddddddddddddddddddddd.]",
+      "earlyReleaseDescription": "[Délívéréd béfóré thé énd óf thé Sprínttttttttttttt]",
+      "earlyReleaseOption": "[Éàrly Réléàsééééé]",
+      "modalDescription": "[Màrk thís Íncrémént às délívéréd tó stàkéhóldérs. Thís àctíón cànnót bé úndónééééééééééééééééééééééééé.]",
+      "notesLabel": "[Nótés (Óptíónàllllll)]",
+      "notesPlaceholder": "[Àdd àny nótés àbóút thís délívéryyyyyyyyyyyy...]",
+      "sprintReviewDescription": "[Préséntéd àt thé Sprínt Révíéw méétínggggggggggggg]",
+      "sprintReviewOption": "[Sprínt Révíéwwwww]",
+      "title": "[Délívér Íncréménttttttt]"
+    },
+    "dodVerification": {
+      "byCategory": "[Vérífícàtíón by Càtégóryyyyyyyyy]",
+      "byPbi": "[Vérífícàtíón by PBÍÍÍÍÍÍÍ]",
+      "noVerifications": "[Nó DóD vérífícàtíóns récórdéd fór thís íncréméntttttttttttttttt.]",
+      "noVerificationsForPbi": "[Nó vérífícàtíóns fór thís PBÍÍÍÍÍÍÍÍÍÍ.]",
+      "noVerificationsHint": "[Vérífícàtíóns àré càptúréd whén cómplétíng à sprínttttttttttttttttt.]",
+      "title": "[Défínítíón óf Dóné Vérífícàtíónnnnnnnnnnn]",
+      "totalVerifications": "[Tótàl Vérífícàtíónsssssss]",
+      "verified": "[Vérífíédddd]"
+    },
+    "error": {
+      "backToIncrements": "[Bàck tó Íncréméntsssssss]",
+      "title": "[Fàíléd tó lóàd íncréménttttttttt]"
+    },
+    "loading": "[Lóàdíng íncréménttttttt...]",
+    "overview": {
+      "created": "[Créàtédddd]",
+      "delivered": "[Délívérédddd]",
+      "deliveryMethod": "[Délívéry Méthódddddd]",
+      "description": "[Déscríptíónnnnn]",
+      "noDescription": "[Nó déscríptíónnnnnn]",
+      "pbisIncluded": "[PBÍs Ínclúdéddddd]",
+      "sprint": "[Sprínttt]",
+      "storyPoints": "[Stóry Póíntsssss]",
+      "title": "[Óvérvíéwwww]"
+    },
+    "pbis": {
+      "empty": "[Nó PBÍs ínclúdéd ín thís íncréméntttttttttttt.]",
+      "title": "[Ínclúdéd Pródúct Bàcklóg Ítémssssssssss]"
+    },
+    "progressSteps": {
+      "completed": "[Cómplétédddd]",
+      "current": "[Cúrréntttt]",
+      "upcoming": "[Úpcómíngggg]"
+    },
+    "sprintCompletionWorkflow": "[Sprínt Cómplétíón Wórkflówwwwwwwww]",
+    "timeline": {
+      "deliveredViaEarlyRelease": "[Délívéréd víà Éàrly Réléàséééééééééé]",
+      "deliveredViaSprintReview": "[Délívéréd víà Sprínt Révíéwwwwwwwwww]",
+      "incrementCreated": "[Íncrémént Créàtéddddddd]",
+      "title": "[Tímélínéééé]"
+    },
+    "toast": {
+      "deliverFailed": "[Fàíléd tó délívér íncrémént. Pléàsé try àgàínnnnnnnnnnnnnnn.]",
+      "deliveredSuccess": "[Íncrémént délívéréd súccéssfúllyyyyyyyyyyy!]"
+    },
+    "workflowStep3Of4": "[Stép 3 óf 4: Délívér Íncréméntttttttttt]",
+    "workflowSteps": {
+      "createIncrement": "[Créàté Íncréméntttttt]",
+      "deliverIncrement": "[Délívér Íncréménttttttt]",
+      "sprintCompleted": "[Sprínt Cómplétédddddd]",
+      "sprintReview": "[Sprínt Révíéwwwww]"
+    }
+  },
+  "list": {
+    "ariaLabelFilter": "[Fíltér íncréménts by stàtússssssssss]",
+    "ariaLabelSearch": "[Séàrch íncréméntsssssss]",
+    "cardStats": {
+      "pbis": "[PPBBÍÍs]",
+      "points": "[Póíntsss]"
+    },
+    "clearSearch": "[Cléàr séàrchhhhh]",
+    "empty": {
+      "noIncrements": "[Nó íncréménts hàvé béén créàtéd yét. Créàté yóúr fírst íncrémént tó stàrt tràckíng délívéràbléssssssssssssssssssssssssssssss.]",
+      "noSearchResults": "[Nó íncréménts màtch yóúr séàrch. Try àdjústíng yóúr fíltérsssssssssssssssssss.]",
+      "title": "[Nó Íncréménts fóúnddddddd]"
+    },
+    "filters": {
+      "active": "[Àctívééé]",
+      "all": "[Àlll]",
+      "archived": "[Àrchívédddd]",
+      "delivered": "[Délívérédddd]"
+    },
+    "searchPlaceholder": "[Séàrch íncréméntsssssss...]",
+    "stats": {
+      "active": "[Àctívééé]",
+      "delivered": "[Délívérédddd]",
+      "storyPoints": "[Stóry Póíntsssss]",
+      "total": "[Tótàl Íncréméntssssss]"
+    }
+  },
+  "loading": "[Lóàdíng íncréméntssssssss...]",
+  "noDescription": "[Nó déscríptíón próvídéddddddddd.]",
+  "skipToSprintReview": "[Skíp tó Sprínt Révíéwwwwwwww]",
+  "sprintPrefix": "[SSPPRRÍÍNNT {{sprintId}}]",
+  "status": {
+    "archived": "[Àrchívédddd]",
+    "delivered": "[Délívérédddd]",
+    "draft": "[Dràfttt]",
+    "verified": "[Vérífíédddd]"
+  },
+  "subtitle": "[Mànàgé ànd tràck yóúr pródúct íncréménts. Íncréménts réprésént wórkíng, úsàblé fúnctíónàlíty thàt ís réàdy fór délívéry tó stàkéhóldérssssssssssssssssssssssssssssssssssssssssss.]",
+  "title": "[Íncréméntssss]"
 }

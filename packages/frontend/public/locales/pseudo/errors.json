@@ -1,53 +1,53 @@
 {
-  "title": "[Érrórrr]",
-  "network": {
-    "connectionLost": "[Nétwórk érrór. Pléàsé chéck yóúr íntérnét cónnéctíónnnnnnnnnnnnnnnnn.]",
-    "timeout": "[Réqúést tíméd óút. Pléàsé try àgàínnnnnnnnnnnn.]",
-    "serverUnreachable": "[Únàblé tó réàch thé sérvér. Pléàsé chéck yóúr cónnéctíónnnnnnnnnnnnnnnnnnn.]"
-  },
-  "http": {
-    "badRequest": "[Ínvàlíd réqúést. Pléàsé chéck yóúr ínpút ànd try àgàínnnnnnnnnnnnnnnnnn.]",
-    "unauthorized": "[Yóú àré nót àúthórízéd tó pérfórm thís àctíónnnnnnnnnnnnnnn.]",
-    "forbidden": "[Àccéss déníéd. Yóú dó nót hàvé pérmíssíón fór thís résóúrcééééééééééééééééééé.]",
-    "notFound": "[Résóúrcé nót fóúnd. Ít mày hàvé béén délétéddddddddddddddd.]",
-    "conflict": "[À cónflíct óccúrréd. Thé résóúrcé mày hàvé béén módífíéd by ànóthér úsérrrrrrrrrrrrrrrrrrrrrrr.]",
-    "validationFailed": "[Vàlídàtíón fàíléd. Pléàsé chéck yóúr ínpútttttttttttttt.]",
-    "internalServerError": "[Sérvér érrór. Pléàsé try àgàín làtérrrrrrrrrrrrr.]",
-    "serviceUnavailable": "[Sérvícé témpóràríly únàvàílàblé. Pléàsé try àgàín làtérrrrrrrrrrrrrrrrrr.]"
-  },
-  "permission": {
-    "notAuthorized": "[Yóú àré nót àúthórízéd tó pérfórm thís àctíónnnnnnnnnnnnnnn.]",
-    "noPermission": "[Yóú dó nót hàvé pérmíssíón tó pérfórm thís àctíónnnnnnnnnnnnnnnn.]",
-    "accessDenied": "[Àccéss déníédddddd.]",
-    "loginRequired": "[Pléàsé lóg ín tó cóntínúééééééééé.]"
-  },
-  "workflow": {
-    "notFound": "[{{resource}} nnóótt ffóóúúnnd.]",
-    "alreadyExists": "[{{resource}} àlréàdy éxístssssss.]",
-    "cannotModify": "[Cànnót módífyyyyyy {{resource}} ín íts cúrrént stàtéééééééé.]",
-    "cannotDelete": "[Cànnót délétéééééé {{resource}}.]",
-    "operationFailed": "[Fàíléd tóóóó {{operation}}. Pléàsé try àgàínnnnnnn.]",
-    "loadFailed": "[Fàíléd tó lóàdddddd {{resource}}.]",
-    "saveFailed": "[Fàíléd tó sàvéééééé {{resource}}.]",
-    "deleteFailed": "[Fàíléd tó délétééééééé {{resource}}.]",
-    "updateFailed": "[Fàíléd tó úpdàtééééééé {{resource}}.]",
-    "createFailed": "[Fàíléd tó créàtééééééé {{resource}}.]"
-  },
-  "session": {
-    "expired": "[Yóúr séssíón hàs éxpíréd. Pléàsé lóg ín àgàínnnnnnnnnnnnnnn.]",
-    "idleTimeout": "[Yóúr séssíón hàs tíméd óút dúé tó ínàctívítyyyyyyyyyyyyyyy.]",
-    "absoluteTimeout": "[Yóúr séssíón hàs éxpíréd. Pléàsé lóg ín àgàínnnnnnnnnnnnnnn.]",
-    "concurrentSession": "[Yóúr séssíón wàs térmínàtéd bécàúsé yóú lóggéd ín fróm ànóthér dévícéééééééééééééééééééééé.]"
-  },
   "chunk": {
     "loadFailed": "[Fàíléd tó lóàd àpplícàtíón résóúrcésssssssssssss.]",
     "refreshRequired": "[À néw vérsíón ís àvàílàblé. Pléàsé réfrésh thé pàgééééééééééééééééé.]"
   },
   "generic": {
-    "unexpectedError": "[Àn únéxpéctéd érrór óccúrréd. Pléàsé try àgàínnnnnnnnnnnnnnnn.]",
-    "tryAgain": "[Pléàsé try àgàínnnnnnn.]",
-    "retry": "[Rétryyy]",
+    "contactSupport": "[Íf thé próblém pérsísts, pléàsé cóntàct súppórtttttttttttttttt.]",
     "goBack": "[GGóó BBààcck]",
-    "contactSupport": "[Íf thé próblém pérsísts, pléàsé cóntàct súppórtttttttttttttttt.]"
+    "retry": "[Rétryyy]",
+    "tryAgain": "[Pléàsé try àgàínnnnnnn.]",
+    "unexpectedError": "[Àn únéxpéctéd érrór óccúrréd. Pléàsé try àgàínnnnnnnnnnnnnnnn.]"
+  },
+  "http": {
+    "badRequest": "[Ínvàlíd réqúést. Pléàsé chéck yóúr ínpút ànd try àgàínnnnnnnnnnnnnnnnnn.]",
+    "conflict": "[À cónflíct óccúrréd. Thé résóúrcé mày hàvé béén módífíéd by ànóthér úsérrrrrrrrrrrrrrrrrrrrrrr.]",
+    "forbidden": "[Àccéss déníéd. Yóú dó nót hàvé pérmíssíón fór thís résóúrcééééééééééééééééééé.]",
+    "internalServerError": "[Sérvér érrór. Pléàsé try àgàín làtérrrrrrrrrrrrr.]",
+    "notFound": "[Résóúrcé nót fóúnd. Ít mày hàvé béén délétéddddddddddddddd.]",
+    "serviceUnavailable": "[Sérvícé témpóràríly únàvàílàblé. Pléàsé try àgàín làtérrrrrrrrrrrrrrrrrr.]",
+    "unauthorized": "[Yóú àré nót àúthórízéd tó pérfórm thís àctíónnnnnnnnnnnnnnn.]",
+    "validationFailed": "[Vàlídàtíón fàíléd. Pléàsé chéck yóúr ínpútttttttttttttt.]"
+  },
+  "network": {
+    "connectionLost": "[Nétwórk érrór. Pléàsé chéck yóúr íntérnét cónnéctíónnnnnnnnnnnnnnnnn.]",
+    "serverUnreachable": "[Únàblé tó réàch thé sérvér. Pléàsé chéck yóúr cónnéctíónnnnnnnnnnnnnnnnnnn.]",
+    "timeout": "[Réqúést tíméd óút. Pléàsé try àgàínnnnnnnnnnnn.]"
+  },
+  "permission": {
+    "accessDenied": "[Àccéss déníédddddd.]",
+    "loginRequired": "[Pléàsé lóg ín tó cóntínúééééééééé.]",
+    "noPermission": "[Yóú dó nót hàvé pérmíssíón tó pérfórm thís àctíónnnnnnnnnnnnnnnn.]",
+    "notAuthorized": "[Yóú àré nót àúthórízéd tó pérfórm thís àctíónnnnnnnnnnnnnnn.]"
+  },
+  "session": {
+    "absoluteTimeout": "[Yóúr séssíón hàs éxpíréd. Pléàsé lóg ín àgàínnnnnnnnnnnnnnn.]",
+    "concurrentSession": "[Yóúr séssíón wàs térmínàtéd bécàúsé yóú lóggéd ín fróm ànóthér dévícéééééééééééééééééééééé.]",
+    "expired": "[Yóúr séssíón hàs éxpíréd. Pléàsé lóg ín àgàínnnnnnnnnnnnnnn.]",
+    "idleTimeout": "[Yóúr séssíón hàs tíméd óút dúé tó ínàctívítyyyyyyyyyyyyyyy.]"
+  },
+  "title": "[Érrórrr]",
+  "workflow": {
+    "alreadyExists": "[{{resource}} àlréàdy éxístssssss.]",
+    "cannotDelete": "[Cànnót délétéééééé {{resource}}.]",
+    "cannotModify": "[Cànnót módífyyyyyy {{resource}} ín íts cúrrént stàtéééééééé.]",
+    "createFailed": "[Fàíléd tó créàtééééééé {{resource}}.]",
+    "deleteFailed": "[Fàíléd tó délétééééééé {{resource}}.]",
+    "loadFailed": "[Fàíléd tó lóàdddddd {{resource}}.]",
+    "notFound": "[{{resource}} nnóótt ffóóúúnnd.]",
+    "operationFailed": "[Fàíléd tóóóó {{operation}}. Pléàsé try àgàínnnnnnn.]",
+    "saveFailed": "[Fàíléd tó sàvéééééé {{resource}}.]",
+    "updateFailed": "[Fàíléd tó úpdàtééééééé {{resource}}.]"
   }
 }

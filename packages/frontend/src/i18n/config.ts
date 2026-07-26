@@ -3,7 +3,14 @@ import { initReactI18next } from 'react-i18next';
 import HttpBackend from 'i18next-http-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import 'intl-pluralrules';
-import { DEFAULT_LOCALE, SUPPORTED_LOCALES, SUPPORTED_LOCALES_DEV } from '@scrumooth/shared';
+import {
+  DEFAULT_LOCALE,
+  SUPPORTED_LOCALES,
+  SUPPORTED_LOCALES_DEV,
+  LOCALE_COOKIE_NAME,
+  LOCALE_COOKIE_PATH,
+  LOCALE_COOKIE_SAME_SITE,
+} from '@scrumooth/shared';
 
 /**
  * Post-processor that replaces `__pending__` translation placeholders with a
@@ -21,6 +28,10 @@ const pendingGuardPostProcessor: PostProcessorModule = {
     translator: any
   ) => {
     if (import.meta.env.PROD && value === '__pending__') {
+      // Sampled metric emission (~1% of renders)
+      if (Math.random() < 0.01) {
+        console.warn('Pending translation rendered', { key: _key, lng: options.lng });
+      }
       return translator.translate('common:translationPending', { ...options, lng: options.lng });
     }
     return value;
@@ -51,14 +62,14 @@ export function initI18n(): Promise<TFunction> {
     // - Cookie (set by Zustand's setLocale) is sufficient for detection
     detection: {
       order: ['cookie', 'navigator'],
-      lookupCookie: 'scrumooth_locale',
+      lookupCookie: LOCALE_COOKIE_NAME,
       caches: ['cookie'],
       // Align cookie cache attributes with Zustand setLocale and backend locale.middleware
       // so all three writers produce consistent cookie metadata.
       cookieOptions: {
-        path: '/',
-        sameSite: 'strict',
-        secure: window.location.protocol === 'https:',
+        path: LOCALE_COOKIE_PATH,
+        sameSite: LOCALE_COOKIE_SAME_SITE,
+        secure: typeof window !== 'undefined' && window.location.protocol === 'https:',
       },
     },
 

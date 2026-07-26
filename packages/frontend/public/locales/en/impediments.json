@@ -1,114 +1,114 @@
 {
-  "title": "Impediments",
-  "subtitle": "{{sprintName}} - Track and resolve blockers affecting the team",
-  "filterByStatus": "Filter by status",
   "allStatus": "All Status",
-  "reportImpediment": "Report Impediment",
-  "status": {
-    "open": "Open",
-    "inProgress": "In Progress",
-    "resolved": "Resolved",
-    "closed": "Closed",
-    "OPEN": "Open",
-    "IN_PROGRESS": "In Progress",
-    "RESOLVED": "Resolved",
-    "CLOSED": "Closed"
-  },
-  "stats": {
-    "open": "Open",
-    "inProgress": "In Progress",
-    "resolved": "Resolved",
-    "closed": "Closed",
-    "OPEN": "Open",
-    "IN_PROGRESS": "In Progress",
-    "RESOLVED": "Resolved",
-    "CLOSED": "Closed"
-  },
   "card": {
-    "sprint": "Sprint",
-    "fromDailyScrum": "From Daily Scrum",
     "createdFromDailyUpdate": "Created from Daily Update",
-    "reportedBy": "Reported by",
+    "fromDailyScrum": "From Daily Scrum",
     "owner": "Owner",
-    "unknown": "Unknown",
+    "reportedBy": "Reported by",
     "resolution": "Resolution",
+    "sprint": "Sprint",
+    "unknown": "Unknown",
     "viewDetailsAria": "View details for impediment: {{title}}. Status: {{status}}"
   },
-  "emptyState": {
-    "noImpedimentsForSprint": "No Impediments for {{sprintName}}",
-    "noImpedimentsForFilter": "No {{status}} Impediments",
-    "noImpedimentsDescription": "Great! No impediments reported for the current active sprint \"{{sprintName}}\".",
-    "noFilterImpedimentsDescription": "There are no {{status}} impediments in \"{{sprintName}}\". Try selecting a different status filter.",
-    "clearFilter": "Clear Filter"
-  },
   "createModal": {
-    "title": "Report New Impediment",
-    "subtitle": "Document blockers affecting your team's progress",
-    "sprintLabel": "Sprint",
     "activeSprint": "(Active)",
-    "titleLabel": "Title",
-    "titlePlaceholder": "Brief description of the impediment",
+    "createImpediment": "Create Impediment",
+    "creating": "Creating...",
     "descriptionLabel": "Description",
     "descriptionPlaceholder": "Provide details about the impediment",
-    "creating": "Creating...",
-    "createImpediment": "Create Impediment"
+    "sprintLabel": "Sprint",
+    "subtitle": "Document blockers affecting your team's progress",
+    "title": "Report New Impediment",
+    "titleLabel": "Title",
+    "titlePlaceholder": "Brief description of the impediment"
+  },
+  "deleteModal": {
+    "actionWarning": "Action Warning",
+    "deleteImpediment": "Delete Impediment",
+    "deleting": "Deleting...",
+    "item": "Item:",
+    "statusLabel": "Status:",
+    "subtitle": "This action is permanent and cannot be undone",
+    "title": "Delete Impediment",
+    "unknownItem": "Unknown Item",
+    "warningText": "You are about to permanently delete this impediment. This action cannot be undone. All associated data will be permanently removed."
   },
   "detailModal": {
-    "title": "Impediment Details",
-    "subtitle": "View and manage impediment information",
+    "cancel": "Cancel",
+    "close": "Close",
     "createdFromDailyScrum": "Created from Daily Scrum Update",
-    "viewDailyUpdate": "View Daily Update",
-    "titleLabel": "Title",
-    "descriptionLabel": "Description",
-    "sprintLabel": "Sprint",
-    "statusLabel": "Status",
-    "reportedByLabel": "Reported by",
-    "ownerLabel": "Owner",
     "createdLabel": "Created",
+    "deleteLabel": "Delete",
+    "deleting": "Deleting...",
+    "descriptionLabel": "Description",
+    "ownerLabel": "Owner",
+    "reportedByLabel": "Reported by",
     "resolutionLabel": "Resolution",
     "resolutionPlaceholder": "Describe how this impediment was resolved...",
     "saveResolution": "Save Resolution",
     "saving": "Saving...",
-    "deleting": "Deleting...",
-    "deleteLabel": "Delete",
-    "cancel": "Cancel",
-    "close": "Close"
+    "sprintLabel": "Sprint",
+    "statusLabel": "Status",
+    "subtitle": "View and manage impediment information",
+    "title": "Impediment Details",
+    "titleLabel": "Title",
+    "viewDailyUpdate": "View Daily Update"
   },
-  "deleteModal": {
-    "title": "Delete Impediment",
-    "subtitle": "This action is permanent and cannot be undone",
-    "actionWarning": "Action Warning",
-    "item": "Item:",
-    "unknownItem": "Unknown Item",
-    "warningText": "You are about to permanently delete this impediment. This action cannot be undone. All associated data will be permanently removed.",
-    "statusLabel": "Status:",
-    "deleteImpediment": "Delete Impediment",
-    "deleting": "Deleting..."
-  },
-  "unsavedModal": {
-    "title": "Unsaved Changes",
-    "message": "You have unsaved changes in the impediment form. Are you sure you want to discard them?"
-  },
-  "toast": {
-    "created": "Impediment created successfully",
-    "updated": "Impediment updated successfully",
-    "deleted": "Impediment deleted successfully",
-    "teamIdRequired": "Team ID is required. Please select a team first.",
-    "noActiveSprint": "No active sprint found. Please start a sprint first.",
-    "failedCreate": "Failed to create impediment. Please try again.",
-    "failedUpdate": "Failed to update impediment. Please try again.",
-    "failedDelete": "Failed to delete impediment. Please try again."
+  "emptyState": {
+    "clearFilter": "Clear Filter",
+    "noFilterImpedimentsDescription": "There are no {{status}} impediments in \"{{sprintName}}\". Try selecting a different status filter.",
+    "noImpedimentsDescription": "Great! No impediments reported for the current active sprint \"{{sprintName}}\".",
+    "noImpedimentsForFilter": "No {{status}} Impediments",
+    "noImpedimentsForSprint": "No Impediments for {{sprintName}}"
   },
   "errorState": {
-    "title": "Error Loading Data",
-    "retry": "Retry",
+    "failedImpediments": "Failed to load impediments. Please try again.",
     "failedSprint": "Failed to load active sprint information. Please try again.",
-    "failedImpediments": "Failed to load impediments. Please try again."
+    "retry": "Retry",
+    "title": "Error Loading Data"
+  },
+  "filterByStatus": "Filter by status",
+  "reportImpediment": "Report Impediment",
+  "stats": {
+    "CLOSED": "Closed",
+    "IN_PROGRESS": "In Progress",
+    "OPEN": "Open",
+    "RESOLVED": "Resolved",
+    "closed": "Closed",
+    "inProgress": "In Progress",
+    "open": "Open",
+    "resolved": "Resolved"
+  },
+  "status": {
+    "CLOSED": "Closed",
+    "IN_PROGRESS": "In Progress",
+    "OPEN": "Open",
+    "RESOLVED": "Resolved",
+    "closed": "Closed",
+    "inProgress": "In Progress",
+    "open": "Open",
+    "resolved": "Resolved"
+  },
+  "subtitle": "{{sprintName}} - Track and resolve blockers affecting the team",
+  "title": "Impediments",
+  "toast": {
+    "created": "Impediment created successfully",
+    "deleted": "Impediment deleted successfully",
+    "failedCreate": "Failed to create impediment. Please try again.",
+    "failedDelete": "Failed to delete impediment. Please try again.",
+    "failedUpdate": "Failed to update impediment. Please try again.",
+    "noActiveSprint": "No active sprint found. Please start a sprint first.",
+    "teamIdRequired": "Team ID is required. Please select a team first.",
+    "updated": "Impediment updated successfully"
+  },
+  "unsavedModal": {
+    "message": "You have unsaved changes in the impediment form. Are you sure you want to discard them?",
+    "title": "Unsaved Changes"
   },
   "validation": {
-    "titleRequired": "Title is required",
-    "titleTooShort": "Title must be at least 3 characters",
     "descriptionRequired": "Description is required",
-    "descriptionTooShort": "Description must be at least 10 characters"
+    "descriptionTooShort": "Description must be at least 10 characters",
+    "titleRequired": "Title is required",
+    "titleTooShort": "Title must be at least 3 characters"
   }
 }

@@ -1,172 +1,172 @@
 {
-  "title": "Mêlée quotidienne",
-  "subtitle": "{{sprintName}} - Jour {{day}}",
-  "viewMode": {
-    "cards": "Cartes",
-    "list": "Liste"
+  "activeImpediments": {
+    "title": "Empêchements actifs",
+    "trackAsImpediment": "Suivre comme empêchement",
+    "tracked": "Suivi",
+    "trackedImpediment": "Empêchement suivi",
+    "untrackedImpediment": "Empêchement non suivi",
+    "viewAllImpediments": "Voir tous les {{count}} empêchements",
+    "viewDetails": "Voir les details"
+  },
+  "aria": {
+    "clickToCollapse": "Cliquer pour reduire",
+    "clickToExpand": "Cliquer pour developper",
+    "closeDialog": "Fermer le dialogue",
+    "closeForm": "Fermer le formulaire",
+    "dailyUpdateAriaLabel": "Mise a jour quotidienne de {{name}}. {{expandAction}}.",
+    "impedimentStatus": "Statut de l'empêchement : {{status}}",
+    "trackedAsFormalImpediment": "Suivi comme empêchement formel",
+    "viewMode": "Mode d'affichage"
   },
   "datePicker": {
-    "label": "Selectionner la date pour les mises a jour quotidiennes",
-    "ariaLabel": "Selectionner la date pour les mises a jour quotidiennes"
+    "ariaLabel": "Selectionner la date pour les mises a jour quotidiennes",
+    "label": "Selectionner la date pour les mises a jour quotidiennes"
+  },
+  "draftRestore": {
+    "discard": "Supprimer",
+    "prompt": "Voulez-vous restaurer votre brouillon precedent?",
+    "restoreDraft": "Restaurer le brouillon",
+    "title": "Brouillon non sauvegarde trouve"
+  },
+  "draftSaved": "Brouillon sauvegarde {{timeSince}}",
+  "emptyState": {
+    "beFirst": "Soyez le premier a soumettre votre mise a jour quotidienne!",
+    "noUpdates": "Pas encore de mises a jour",
+    "noUpdatesForDate": "Aucune mise a jour d'equipe pour cette date."
+  },
+  "form": {
+    "cancel": "Annuler",
+    "impedimentHint": "Cet empêchement sera suivi et peut etre promu en enregistrement formel d'empêchement",
+    "impedimentLabel": "Des empêchements? (optionnel)",
+    "impedimentPlaceholder": "Decrivez tous les bloquants ou empêchements...",
+    "submitting": "Soumission...",
+    "todayLabel": "Que ferez-vous aujourd'hui pour aider l'equipe a atteindre l'Objectif de Sprint?",
+    "todayPlaceholder": "Decrivez ce que vous prevoyez de faire aujourd'hui...",
+    "yesterdayLabel": "Qu'avez-vous fait hier pour aider l'equipe a atteindre l'Objectif de Sprint?",
+    "yesterdayPlaceholder": "Decrivez ce que vous avez accompli hier..."
+  },
+  "formatTimeSince": {
+    "daysAgo": "{{count}}j",
+    "hoursAgo": "{{count}}h",
+    "justNow": "a l'instant",
+    "minutesAgo": "{{count}}m"
+  },
+  "impedimentStatus": {
+    "closed": "Ferme",
+    "inProgress": "En cours",
+    "open": "Ouvert",
+    "resolved": "Resolu"
+  },
+  "loading": {
+    "actions": "Loading actions...",
+    "pageHeader": "Loading page header...",
+    "pendingMembers": "Loading pending members...",
+    "sectionHeader": "Loading section header...",
+    "sprintProgress": "Loading sprint progress...",
+    "statistics": "Loading statistics...",
+    "teamUpdates": "Loading team updates..."
+  },
+  "promoteModal": {
+    "createImpediment": "Creer l'empêchement",
+    "creating": "Creation...",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Description detaillee de l'empêchement",
+    "fromUpdateBy": "De la mise a jour quotidienne de:",
+    "originalImpedimentText": "Texte original de l'empêchement:",
+    "priority": "Priorite",
+    "priorityHigh": "Haute",
+    "priorityLow": "Basse",
+    "priorityMedium": "Moyenne",
+    "title": "Creer un empêchement a partir de la mise a jour quotidienne",
+    "titleLabel": "Titre",
+    "titlePlaceholder": "Titre bref pour l'empêchement"
   },
   "quickDates": {
     "today": "Aujourd'hui",
     "yesterday": "Hier"
   },
-  "stats": {
-    "submitted": "Soumis",
-    "pending": "En attente",
-    "impediments": "Empêchements",
-    "participation": "Participation"
+  "retryPrompt": {
+    "dismiss": "Fermer",
+    "message": "Votre mise a jour n'a pas pu etre soumise. Vos donnees ont ete preservees.",
+    "retrySubmission": "Retenter la soumission",
+    "retrying": "Nouvelle tentative...",
+    "title": "Soumission echouee"
   },
-  "teamUpdates": "Mises a jour de l'equipe",
-  "yourDailyUpdate": "Votre mise a jour quotidienne",
+  "sprintGoal": {
+    "addInPlanning": "Ajouter un dans le Sprint Planning",
+    "label": "Objectif de Sprint",
+    "noGoalDefined": "Aucun Objectif de Sprint defini."
+  },
+  "sprintProgress": {
+    "dayOfTotal": "Jour {{current}} sur {{total}}",
+    "title": "Progression du sprint",
+    "viewSprintBoard": "Voir le sprint board"
+  },
+  "stats": {
+    "impediments": "Empêchements",
+    "participation": "Participation",
+    "pending": "En attente",
+    "submitted": "Soumis"
+  },
   "submitUpdate": "Soumettre la mise a jour",
+  "subtitle": "{{sprintName}} - Jour {{day}}",
+  "teamUpdates": "Mises a jour de l'equipe",
   "templates": {
     "featureDevelopment": "Developpement de fonctionnalite",
     "issueFixing": "Correction de probleme",
-    "review": "Revue",
-    "meetings": "Reunions"
+    "meetings": "Reunions",
+    "review": "Revue"
   },
-  "form": {
-    "yesterdayLabel": "Qu'avez-vous fait hier pour aider l'equipe a atteindre l'Objectif de Sprint?",
-    "todayLabel": "Que ferez-vous aujourd'hui pour aider l'equipe a atteindre l'Objectif de Sprint?",
-    "impedimentLabel": "Des empêchements? (optionnel)",
-    "yesterdayPlaceholder": "Decrivez ce que vous avez accompli hier...",
-    "todayPlaceholder": "Decrivez ce que vous prevoyez de faire aujourd'hui...",
-    "impedimentPlaceholder": "Decrivez tous les bloquants ou empêchements...",
-    "impedimentHint": "Cet empêchement sera suivi et peut etre promu en enregistrement formel d'empêchement",
-    "cancel": "Annuler",
-    "submitting": "Soumission..."
+  "title": "Mêlée quotidienne",
+  "toast": {
+    "allSubmitted": "Tous les membres de l'équipe ont soumis leurs mises à jour",
+    "failedCreateImpediment": "Impossible de creer l'empêchement. Veuillez reessayer.",
+    "failedSendReminder": "Impossible d'envoyer le rappel. Veuillez reessayer.",
+    "impedimentCreated": "Empêchement cree avec succes!",
+    "networkError": "Une erreur reseau s'est produite. Verifiez votre connexion et reessayez.",
+    "noPendingUpdates": "Aucune mise à jour en attente",
+    "noPermissionCreateImpediments": "Vous n'avez pas la permission de creer des empêchements.",
+    "noPermissionReminders": "Vous n'avez pas la permission d'envoyer des rappels.",
+    "offline": "Vous semblez etre hors ligne. Verifiez votre connexion internet et reessayez.",
+    "reminderSent": "Rappel envoyé !",
+    "remindersSentOne": "Rappels envoyés à 1 membre de l'équipe",
+    "remindersSentPlural": "Rappels envoyés à {{count}} membres de l'équipe",
+    "resourceNotFound": "La ressource demandee n'a pas ete trouvee.",
+    "serverError": "Une erreur serveur s'est produite. Veuillez reessayer plus tard.",
+    "sessionExpired": "Votre session a expire. Veuillez vous reconnecter.",
+    "submitFailed": "Impossible de soumettre la mise a jour. Veuillez reessayer.",
+    "updateSubmitted": "Mise a jour soumise avec succes!"
   },
-  "emptyState": {
-    "noUpdates": "Pas encore de mises a jour",
-    "beFirst": "Soyez le premier a soumettre votre mise a jour quotidienne!",
-    "noUpdatesForDate": "Aucune mise a jour d'equipe pour cette date."
-  },
-  "waitingForUpdates": {
-    "title": "En attente de mises a jour",
-    "sendReminder": "Envoyer un rappel",
-    "sending": "Envoi..."
-  },
-  "activeImpediments": {
-    "title": "Empêchements actifs",
-    "tracked": "Suivi",
-    "trackedImpediment": "Empêchement suivi",
-    "untrackedImpediment": "Empêchement non suivi",
-    "viewDetails": "Voir les details",
-    "trackAsImpediment": "Suivre comme empêchement",
-    "viewAllImpediments": "Voir tous les {{count}} empêchements"
-  },
-  "sprintProgress": {
-    "title": "Progression du sprint",
-    "dayOfTotal": "Jour {{current}} sur {{total}}",
-    "viewSprintBoard": "Voir le sprint board"
-  },
-  "sprintGoal": {
-    "label": "Objectif de Sprint",
-    "noGoalDefined": "Aucun Objectif de Sprint defini.",
-    "addInPlanning": "Ajouter un dans le Sprint Planning"
+  "unsavedModal": {
+    "message": "Vous avez des modifications non sauvegardees dans le formulaire d'empêchement. Etes-vous sur de vouloir les supprimer?",
+    "title": "Modifications non sauvegardees"
   },
   "updateCard": {
-    "yesterday": "Hier",
-    "today": "Aujourd'hui",
+    "clickToCollapse": "Cliquer pour reduire",
+    "clickToExpand": "Cliquer pour developper",
     "impediment": "Empêchement",
+    "today": "Aujourd'hui",
+    "trackAsFormalImpediment": "Suivre comme empêchement formel",
+    "trackAsImpediment": "Suivre comme empêchement",
     "tracked": "(Suivi)",
     "viewImpediment": "Voir l'empêchement",
     "viewImpedimentDetails": "Voir les details de l'empêchement",
-    "trackAsImpediment": "Suivre comme empêchement",
-    "trackAsFormalImpediment": "Suivre comme empêchement formel",
-    "clickToCollapse": "Cliquer pour reduire",
-    "clickToExpand": "Cliquer pour developper"
-  },
-  "impedimentStatus": {
-    "open": "Ouvert",
-    "inProgress": "En cours",
-    "resolved": "Resolu",
-    "closed": "Ferme"
-  },
-  "promoteModal": {
-    "title": "Creer un empêchement a partir de la mise a jour quotidienne",
-    "fromUpdateBy": "De la mise a jour quotidienne de:",
-    "originalImpedimentText": "Texte original de l'empêchement:",
-    "titleLabel": "Titre",
-    "titlePlaceholder": "Titre bref pour l'empêchement",
-    "descriptionLabel": "Description",
-    "descriptionPlaceholder": "Description detaillee de l'empêchement",
-    "priority": "Priorite",
-    "priorityHigh": "Haute",
-    "priorityMedium": "Moyenne",
-    "priorityLow": "Basse",
-    "createImpediment": "Creer l'empêchement",
-    "creating": "Creation..."
-  },
-  "draftRestore": {
-    "title": "Brouillon non sauvegarde trouve",
-    "prompt": "Voulez-vous restaurer votre brouillon precedent?",
-    "discard": "Supprimer",
-    "restoreDraft": "Restaurer le brouillon"
-  },
-  "retryPrompt": {
-    "title": "Soumission echouee",
-    "message": "Votre mise a jour n'a pas pu etre soumise. Vos donnees ont ete preservees.",
-    "dismiss": "Fermer",
-    "retrySubmission": "Retenter la soumission",
-    "retrying": "Nouvelle tentative..."
-  },
-  "unsavedModal": {
-    "title": "Modifications non sauvegardees",
-    "message": "Vous avez des modifications non sauvegardees dans le formulaire d'empêchement. Etes-vous sur de vouloir les supprimer?"
+    "yesterday": "Hier"
   },
   "validation": {
-    "titleRequired": "Le titre est requis",
-    "titleTooShort": "Le titre doit avoir au moins 3 caracteres",
     "descriptionRequired": "La description est requise",
-    "descriptionTooShort": "La description doit avoir au moins 10 caracteres"
+    "descriptionTooShort": "La description doit avoir au moins 10 caracteres",
+    "titleRequired": "Le titre est requis",
+    "titleTooShort": "Le titre doit avoir au moins 3 caracteres"
   },
-  "aria": {
-    "viewMode": "Mode d'affichage",
-    "closeForm": "Fermer le formulaire",
-    "closeDialog": "Fermer le dialogue",
-    "trackedAsFormalImpediment": "Suivi comme empêchement formel",
-    "impedimentStatus": "Statut de l'empêchement : {{status}}",
-    "dailyUpdateAriaLabel": "Mise a jour quotidienne de {{name}}. {{expandAction}}.",
-    "clickToCollapse": "Cliquer pour reduire",
-    "clickToExpand": "Cliquer pour developper"
+  "viewMode": {
+    "cards": "Cartes",
+    "list": "Liste"
   },
-  "draftSaved": "Brouillon sauvegarde {{timeSince}}",
-  "formatTimeSince": {
-    "justNow": "a l'instant",
-    "minutesAgo": "{{count}}m",
-    "hoursAgo": "{{count}}h",
-    "daysAgo": "{{count}}j"
+  "waitingForUpdates": {
+    "sendReminder": "Envoyer un rappel",
+    "sending": "Envoi...",
+    "title": "En attente de mises a jour"
   },
-  "toast": {
-    "updateSubmitted": "Mise a jour soumise avec succes!",
-    "impedimentCreated": "Empêchement cree avec succes!",
-    "reminderSent": "Rappel envoyé !",
-    "noPendingUpdates": "Aucune mise à jour en attente",
-    "remindersSentOne": "Rappels envoyés à 1 membre de l'équipe",
-    "remindersSentPlural": "Rappels envoyés à {{count}} membres de l'équipe",
-    "allSubmitted": "Tous les membres de l'équipe ont soumis leurs mises à jour",
-    "offline": "Vous semblez etre hors ligne. Verifiez votre connexion internet et reessayez.",
-    "networkError": "Une erreur reseau s'est produite. Verifiez votre connexion et reessayez.",
-    "sessionExpired": "Votre session a expire. Veuillez vous reconnecter.",
-    "noPermissionCreateImpediments": "Vous n'avez pas la permission de creer des empêchements.",
-    "serverError": "Une erreur serveur s'est produite. Veuillez reessayer plus tard.",
-    "failedCreateImpediment": "Impossible de creer l'empêchement. Veuillez reessayer.",
-    "noPermissionReminders": "Vous n'avez pas la permission d'envoyer des rappels.",
-    "failedSendReminder": "Impossible d'envoyer le rappel. Veuillez reessayer.",
-    "submitFailed": "Impossible de soumettre la mise a jour. Veuillez reessayer.",
-    "resourceNotFound": "La ressource demandee n'a pas ete trouvee."
-  },
-  "loading": {
-    "pageHeader": "Loading page header...",
-    "actions": "Loading actions...",
-    "statistics": "Loading statistics...",
-    "sectionHeader": "Loading section header...",
-    "teamUpdates": "Loading team updates...",
-    "pendingMembers": "Loading pending members...",
-    "sprintProgress": "Loading sprint progress..."
-  }
+  "yourDailyUpdate": "Votre mise a jour quotidienne"
 }

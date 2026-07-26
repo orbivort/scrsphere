@@ -116,6 +116,36 @@ describe('intlCache', () => {
       const afterEviction = getCachedNumberFormat('de');
       expect(afterEviction).not.toBe(firstFmt);
     });
+
+    it('should evict least-recently-used entry (not oldest insertion) — true LRU', () => {
+      // Use a different cache (DateTimeFormat) to avoid interference with the
+      // NumberFormat cache used by the existing eviction test above.
+      // Fill 3 unique entries: a, b, c
+      const fmtA = getCachedDateTimeFormat('en', { dateStyle: 'full' });
+      getCachedDateTimeFormat('fr', { dateStyle: 'full' });
+      getCachedDateTimeFormat('de', { dateStyle: 'full' });
+
+      // Access 'a' via get — it becomes most recently used (true LRU)
+      const fmtAAccessed = getCachedDateTimeFormat('en', { dateStyle: 'full' });
+      expect(fmtAAccessed).toBe(fmtA); // Same instance — still cached after access
+
+      // Now add enough entries to fill the cache to max and evict the LRU entry.
+      // After accessing 'a', the order is: b(fr), c(de), a(en).
+      // The LRU is b(fr). We need 97 more unique entries to push b out.
+      const validLocales = ['en', 'fr', 'es', 'it', 'de', 'pt', 'nl', 'ja', 'zh', 'ko'];
+      const dateStyles = ['full', 'long', 'medium', 'short'] as const;
+      const timeStyles = ['full', 'long', 'medium', 'short'] as const;
+      for (let i = 0; i < 97; i++) {
+        const locale = validLocales[i % validLocales.length];
+        const dateStyle = dateStyles[Math.floor(i / 10) % dateStyles.length];
+        const timeStyle = timeStyles[Math.floor(i / 40) % timeStyles.length];
+        getCachedDateTimeFormat(locale!, { dateStyle, timeStyle });
+      }
+
+      // 'a' (en:full) should still be cached because it was accessed recently
+      const fmtAAfterEviction = getCachedDateTimeFormat('en', { dateStyle: 'full' });
+      expect(fmtAAfterEviction).toBe(fmtA); // Still cached — was accessed before eviction
+    });
   });
 
   describe('cache key generation', () => {

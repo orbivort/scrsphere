@@ -234,6 +234,13 @@ export function DefinitionEditor<
                 className={styles['item-category']}
                 style={getCategoryColor(item.category ?? categories[0]?.value ?? '', categories)}
               >
+                {!categories.find((c) => c.value === item.category) && item.category && (
+                  <option value={item.category}>
+                    {definitionType === 'DoD'
+                      ? t('dodPanel.uncategorized')
+                      : t('dorPanel.uncategorized')}
+                  </option>
+                )}
                 {categories.map((cat) => (
                   <option key={cat.value} value={cat.value}>
                     {cat.icon}{' '}

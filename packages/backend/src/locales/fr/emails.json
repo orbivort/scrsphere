@@ -1,27 +1,27 @@
 {
-  "passwordReset": {
-    "subject": "Réinitialisez votre mot de passe Scrumooth",
-    "heading": "Bonjour {{name}},",
-    "bodyIntro": "Nous avons reçu une demande de réinitialisation du mot de passe pour {{email}}.",
-    "cta": "Réinitialiser le mot de passe",
-    "expiresIn": "Ce lien expire dans {{duration}}.",
-    "ignoreIfNotRequested": "Si vous n'êtes pas à l'origine de cette demande, vous pouvez ignorer cet e-mail en toute sécurité.",
-    "buttonHint": "Cliquez sur le bouton ci-dessous pour créer un nouveau mot de passe :",
-    "fallbackLinkHint": "Si le bouton ci-dessus ne fonctionne pas, copiez et collez le lien suivant dans votre navigateur :",
-    "supportContact": "Si vous avez des questions ou besoin d'assistance, veuillez contacter notre équipe de support."
-  },
   "common": {
+    "allRightsReserved": "Tous droits réservés.",
     "greeting": "Bonjour",
     "needHelp": "Besoin d'aide ? Contactez-nous à",
     "thankYouForUsing": "Merci d'utiliser",
-    "visitApp": "Visiter",
-    "allRightsReserved": "Tous droits réservés."
+    "visitApp": "Visiter"
+  },
+  "passwordReset": {
+    "bodyIntro": "Nous avons reçu une demande de réinitialisation du mot de passe pour {{email}}.",
+    "buttonHint": "Cliquez sur le bouton ci-dessous pour créer un nouveau mot de passe :",
+    "cta": "Réinitialiser le mot de passe",
+    "expiresIn": "Ce lien expire dans {{duration}}.",
+    "fallbackLinkHint": "Si le bouton ci-dessus ne fonctionne pas, copiez et collez le lien suivant dans votre navigateur :",
+    "heading": "Bonjour {{name}},",
+    "ignoreIfNotRequested": "Si vous n'êtes pas à l'origine de cette demande, vous pouvez ignorer cet e-mail en toute sécurité.",
+    "subject": "Réinitialisez votre mot de passe Scrumooth",
+    "supportContact": "Si vous avez des questions ou besoin d'assistance, veuillez contacter notre équipe de support."
   },
   "welcome": {
-    "subject": "Bienvenue sur Scrumooth",
-    "heading": "Bienvenue, {{name}} !",
     "bodyIntro": "Votre compte a été créé avec succès.",
+    "closing": "Nous sommes ravis de vous compter parmi nous.",
     "cta": "Commencer",
-    "closing": "Nous sommes ravis de vous compter parmi nous."
+    "heading": "Bienvenue, {{name}} !",
+    "subject": "Bienvenue sur Scrumooth"
   }
 }

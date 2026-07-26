@@ -6,8 +6,8 @@ import { DefinitionEditor } from './DefinitionEditor';
 import { DOR_CATEGORIES, DOD_CATEGORIES } from './categories';
 
 const mockItems = [
-  { id: 'item-1', description: 'Test item 1', category: 'requirements', isActive: true, order: 0 },
-  { id: 'item-2', description: 'Test item 2', category: 'testing', isActive: false, order: 1 },
+  { id: 'item-1', description: 'Test item 1', category: 'clarity', isActive: true, order: 0 },
+  { id: 'item-2', description: 'Test item 2', category: 'acceptance', isActive: false, order: 1 },
 ];
 
 const mockCategories = DOR_CATEGORIES;
@@ -318,15 +318,21 @@ describe('DefinitionEditor', () => {
         {
           id: 'item-1',
           description: 'First item',
-          category: 'requirements',
+          category: 'clarity',
           isActive: true,
           order: 0,
         },
-        { id: 'item-2', description: 'Second item', category: 'testing', isActive: true, order: 1 },
+        {
+          id: 'item-2',
+          description: 'Second item',
+          category: 'estimation',
+          isActive: true,
+          order: 1,
+        },
         {
           id: 'item-3',
           description: 'Third item',
-          category: 'requirements',
+          category: 'acceptance',
           isActive: false,
           order: 2,
         },
@@ -353,15 +359,21 @@ describe('DefinitionEditor', () => {
         {
           id: 'item-1',
           description: 'First item',
-          category: 'requirements',
+          category: 'clarity',
           isActive: true,
           order: 0,
         },
-        { id: 'item-2', description: 'Second item', category: 'testing', isActive: true, order: 1 },
+        {
+          id: 'item-2',
+          description: 'Second item',
+          category: 'estimation',
+          isActive: true,
+          order: 1,
+        },
         {
           id: 'item-3',
           description: 'Third item',
-          category: 'requirements',
+          category: 'acceptance',
           isActive: false,
           order: 2,
         },
