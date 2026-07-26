@@ -224,13 +224,13 @@
       "title": "Si è verificato un errore"
     },
     "noActiveGoal": {
-      "action": "Vai agli obiettivi del prodotto",
+      "action": "Vai ai Product Goals",
       "description": "Imposti un obiettivo prodotto attivo prima di continuare.",
       "title": "Nessun obiettivo attivo"
     },
     "noActiveSprint": {
-      "action": "Vai alla pianificazione sprint",
-      "description": "Avvii un nuovo sprint dalla pianificazione sprint per continuare.",
+      "action": "Vai al Sprint Planning",
+      "description": "Avvii un nuovo Sprint dal Sprint Planning per continuare.",
       "title": "Nessun sprint attivo"
     },
     "noCompletedSprint": {
@@ -364,14 +364,15 @@
   "nav": {
     "activeSprint": "Sprint attivo",
     "dailyScrum": "Daily Scrum",
-    "dashboard": "Cruscotto",
-    "impediments": "Impedimenti",
-    "increments": "Incrementi",
+    "dashboard": "Dashboard",
+    "impediments": "Impediments",
+    "increments": "Increments",
     "notifications": "Notifiche",
     "productBacklog": "Product Backlog",
-    "productGoals": "Obiettivi del prodotto",
+    "productGoals": "Product Goals",
     "reports": "Report",
-    "retrospective": "Retrospezione",
+    "retrospective": "Retrospective",
+    "retrospectives": "Retrospectives",
     "settings": {
       "data": "Dati",
       "privacyData": "Privacy e dati",
@@ -381,7 +382,7 @@
       "teamManagement": "Gestione team"
     },
     "settingsLabel": "Impostazioni",
-    "sprintPlanning": "Pianificazione Sprint",
+    "sprintPlanning": "Sprint Planning",
     "sprintReview": "Sprint Review",
     "team": "Team"
   },

@@ -7,10 +7,10 @@
       "createIncrement": "Crear Incremento",
       "creating": "Creando...",
       "delivering": "Entregando...",
-      "skipToSprintReview": "Ir a Revisión de Sprint"
+      "skipToSprintReview": "Ir a Revisión del Sprint"
     },
     "backToIncrements": "Volver a Incrementos",
-    "backToSprintReview": "Volver a Sprint Review",
+    "backToSprintReview": "Volver a Revisión del Sprint",
     "error": {
       "failedLoadPbis": "Fallo al cargar PBIs elegibles",
       "message": "Fallo al cargar datos. Por favor intenta de nuevo.",
@@ -35,7 +35,7 @@
       "selectAll": "Seleccionar Todos",
       "selected": "seleccionados",
       "subtitle": "Elige los PBIs que estan completos y listos para incluirse en este incremento.",
-      "title": "Seleccionar Product Backlog Items"
+      "title": "Seleccionar Pila del producto Items"
     },
     "progressSteps": {
       "creatingIncrement": "Creando Incremento...",
@@ -54,7 +54,7 @@
       "createdAndDelivering": "Incremento creado! Entregando incremento...",
       "createdSuccess": "Incremento creado exitosamente!",
       "deliverFailed": "Fallo al entregar incremento. Puedes entregarlo manualmente desde la pagina de detalle del incremento.",
-      "deliveredSuccess": "Incremento entregado! Redirigiendo a Sprint Review...",
+      "deliveredSuccess": "Incremento entregado! Redirigiendo a Revisión del Sprint...",
       "validationFailed": "Validacion fallida"
     },
     "validation": {
@@ -66,14 +66,14 @@
     "workflowIndicator": {
       "step2Of4": "Paso 2 de 4: Crear Incremento",
       "step3Of4": "Paso 3 de 4: Entregar Incremento",
-      "step4Of4": "Paso 4 de 4: Sprint Review",
+      "step4Of4": "Paso 4 de 4: Revisión del Sprint",
       "title": "Workflow de Completacion de Sprint"
     },
     "workflowSteps": {
       "createIncrement": "Crear Incremento",
       "deliverIncrement": "Entregar Incremento",
       "sprintCompleted": "Sprint Completado",
-      "sprintReview": "Revisión de Sprint"
+      "sprintReview": "Revisión del Sprint"
     }
   },
   "createIncrement": "Crear Incremento",
@@ -83,7 +83,7 @@
   },
   "deliveryMethod": {
     "earlyRelease": "Liberacion Temprana",
-    "sprintReview": "Sprint Review"
+    "sprintReview": "Revisión del Sprint"
   },
   "detail": {
     "deliverIncrement": "Entregar Incremento",
@@ -102,8 +102,8 @@
       "modalDescription": "Marcar este Incremento como entregado a las Partes interesadas. Esta accion no puede deshacerse.",
       "notesLabel": "Notas (Opcional)",
       "notesPlaceholder": "Agrega notas sobre esta entrega...",
-      "sprintReviewDescription": "Presentado en la reunión Revisión de Sprint",
-      "sprintReviewOption": "Revisión de Sprint",
+      "sprintReviewDescription": "Presentado en la reunión Revisión del Sprint",
+      "sprintReviewOption": "Revisión del Sprint",
       "title": "Entregar Incremento"
     },
     "dodVerification": {
@@ -134,7 +134,7 @@
     },
     "pbis": {
       "empty": "Ningun PBI incluido en este incremento.",
-      "title": "Product Backlog Items Incluidos"
+      "title": "Pila del producto Items Incluidos"
     },
     "progressSteps": {
       "completed": "Completado",
@@ -144,7 +144,7 @@
     "sprintCompletionWorkflow": "Workflow de Completacion de Sprint",
     "timeline": {
       "deliveredViaEarlyRelease": "Entregado via Liberacion Temprana",
-      "deliveredViaSprintReview": "Entregado via Revisión de Sprint",
+      "deliveredViaSprintReview": "Entregado via Revisión del Sprint",
       "incrementCreated": "Incremento Creado",
       "title": "Linea de Tiempo"
     },
@@ -157,7 +157,7 @@
       "createIncrement": "Crear Incremento",
       "deliverIncrement": "Entregar Incremento",
       "sprintCompleted": "Sprint Completado",
-      "sprintReview": "Revisión de Sprint"
+      "sprintReview": "Revisión del Sprint"
     }
   },
   "list": {
@@ -190,7 +190,7 @@
   "loading": "Cargando incrementos...",
   "noDescription": "Sin descripcion.",
   "pts": "pts",
-  "skipToSprintReview": "Ir a Revisión de Sprint",
+  "skipToSprintReview": "Ir a Revisión del Sprint",
   "sprintPrefix": "SPRINT {{sprintId}}",
   "status": {
     "archived": "Archivado",

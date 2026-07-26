@@ -1,16 +1,16 @@
 {
-  "backToIncrements": "Retour aux incrémentes",
+  "backToIncrements": "Retour aux Incrementes",
   "create": {
     "actions": {
       "cancel": "Annuler",
       "createAndContinue": "Creer & Continuer",
-      "createIncrement": "Creer l'incrément",
+      "createIncrement": "Creer l'Increment",
       "creating": "Creation...",
       "delivering": "Livraison...",
-      "skipToSprintReview": "Passer à la Revue de Sprint"
+      "skipToSprintReview": "Passer à la Sprint Review"
     },
-    "backToIncrements": "Retour aux incrémentes",
-    "backToSprintReview": "Retour à la Revue de Sprint",
+    "backToIncrements": "Retour aux Incrementes",
+    "backToSprintReview": "Retour à la Sprint Review",
     "error": {
       "failedLoadPbis": "Impossible de charger les PBIs eligibles",
       "message": "Impossible de charger les donnees. Veuillez reessayer.",
@@ -18,11 +18,11 @@
     },
     "form": {
       "description": "Description",
-      "descriptionPlaceholder": "Decrivez ce que cet incrément contient...",
-      "incrementDetails": "Details de l'incrément",
-      "incrementDetailsSubtitle": "Fournissez un nom et une description optionnelle pour cet incrément.",
+      "descriptionPlaceholder": "Decrivez ce que cet Increment contient...",
+      "incrementDetails": "Details de l'Increment",
+      "incrementDetailsSubtitle": "Fournissez un nom et une description optionnelle pour cet Increment.",
       "name": "Nom",
-      "namePlaceholder": "ex. Incrément Sprint 5",
+      "namePlaceholder": "ex. Increment Sprint 5",
       "sprint": "Sprint",
       "sprintPlaceholder": "Selectionnez un sprint"
     },
@@ -38,23 +38,23 @@
       "title": "Selectionner les Product Backlog Items"
     },
     "progressSteps": {
-      "creatingIncrement": "Creation de l'incrément...",
-      "deliveringIncrement": "Livraison de l'incrément...",
+      "creatingIncrement": "Creation de l'Increment...",
+      "deliveringIncrement": "Livraison de l'Increment...",
       "redirecting": "Redirection..."
     },
     "summary": {
       "pbisSelected": "PBIs selectionnes",
-      "subtitle": "Verifiez votre incrément avant la creation.",
+      "subtitle": "Verifiez votre Increment avant la creation.",
       "title": "Resume",
       "totalStoryPoints": "Total Story Points"
     },
-    "title": "Creer un incrément",
+    "title": "Creer un Increment",
     "toast": {
-      "createFailed": "Impossible de creer l'incrément. Veuillez reessayer.",
-      "createdAndDelivering": "Incrément cree ! Livraison de l'incrément...",
-      "createdSuccess": "Incrément cree avec succes !",
-      "deliverFailed": "Impossible de livrer l'incrément. Vous pouvez le livrer manuellement depuis la page de detail de l'incrément.",
-      "deliveredSuccess": "Incrément livre ! Redirection vers la Revue de Sprint...",
+      "createFailed": "Impossible de creer l'Increment. Veuillez reessayer.",
+      "createdAndDelivering": "Increment cree ! Livraison de l'Increment...",
+      "createdSuccess": "Increment cree avec succes !",
+      "deliverFailed": "Impossible de livrer l'Increment. Vous pouvez le livrer manuellement depuis la page de detail de l'Increment.",
+      "deliveredSuccess": "Increment livre ! Redirection vers la Sprint Review...",
       "validationFailed": "Validation echouee"
     },
     "validation": {
@@ -64,47 +64,47 @@
       "sprintRequired": "Veuillez selectionner un sprint"
     },
     "workflowIndicator": {
-      "step2Of4": "Etape 2 sur 4 : Creer un incrément",
-      "step3Of4": "Etape 3 sur 4 : Livrer l'incrément",
-      "step4Of4": "Etape 4 sur 4 : Revue de Sprint",
+      "step2Of4": "Etape 2 sur 4 : Creer un Increment",
+      "step3Of4": "Etape 3 sur 4 : Livrer l'Increment",
+      "step4Of4": "Etape 4 sur 4 : Sprint Review",
       "title": "Workflow de completion du sprint"
     },
     "workflowSteps": {
-      "createIncrement": "Creer un incrément",
-      "deliverIncrement": "Livrer l'incrément",
+      "createIncrement": "Creer un Increment",
+      "deliverIncrement": "Livrer l'Increment",
       "sprintCompleted": "Sprint termine",
-      "sprintReview": "Revue de Sprint"
+      "sprintReview": "Sprint Review"
     }
   },
-  "createIncrement": "Creer un incrément",
+  "createIncrement": "Creer un Increment",
   "dates": {
     "created": "Créé",
     "delivered": "Livré"
   },
   "deliveryMethod": {
     "earlyRelease": "Version anticipée",
-    "sprintReview": "Revue de Sprint"
+    "sprintReview": "Sprint Review"
   },
   "detail": {
-    "deliverIncrement": "Livrer l'incrément",
+    "deliverIncrement": "Livrer l'Increment",
     "deliverModal": {
       "cancel": "Annuler",
-      "checkboxText": "Je comprends que cette action est irreversible et que l'incrément sera marque comme livre aux parties prenantes.",
+      "checkboxText": "Je comprends que cette action est irreversible et que l'Increment sera marque comme livre aux parties prenantes.",
       "closeDialog": "Fermer le dialogue",
       "confirm": "Confirmer la livraison",
       "confirmDeliveryAriaLabel": "Confirmer l'action de livraison",
-      "confirmText": "Je confirme que cet Incrément respecte le Definition of Done et est pret pour la livraison",
+      "confirmText": "Je confirme que cet Increment respecte le Definition of Done et est pret pour la livraison",
       "delivering": "Livraison...",
       "deliveryMethodLabel": "Methode de livraison",
-      "description": "Marquer cet Incrément comme livre et enregistrer la methode de livraison.",
+      "description": "Marquer cet Increment comme livre et enregistrer la methode de livraison.",
       "earlyReleaseDescription": "Livre avant la fin du Sprint",
       "earlyReleaseOption": "Version anticipee",
-      "modalDescription": "Marquer cet Incrément comme livre aux parties prenantes. Cette action ne peut pas etre annulee.",
+      "modalDescription": "Marquer cet Increment comme livre aux parties prenantes. Cette action ne peut pas etre annulee.",
       "notesLabel": "Notes (optionnel)",
       "notesPlaceholder": "Ajoutez des notes sur cette livraison...",
-      "sprintReviewDescription": "Presente lors de la reunion Revue de Sprint",
-      "sprintReviewOption": "Revue de Sprint",
-      "title": "Livrer l'incrément"
+      "sprintReviewDescription": "Presente lors de la reunion Sprint Review",
+      "sprintReviewOption": "Sprint Review",
+      "title": "Livrer l'Increment"
     },
     "dodVerification": {
       "byCategory": "Verification par categorie",
@@ -117,10 +117,10 @@
       "verified": "Verifie"
     },
     "error": {
-      "backToIncrements": "Retour aux incrémentes",
-      "title": "Impossible de charger l'incrément"
+      "backToIncrements": "Retour aux Incrementes",
+      "title": "Impossible de charger l'Increment"
     },
-    "loading": "Chargement de l'incrément...",
+    "loading": "Chargement de l'Increment...",
     "overview": {
       "created": "Cree",
       "delivered": "Livre",
@@ -144,34 +144,34 @@
     "sprintCompletionWorkflow": "Workflow de completion du sprint",
     "timeline": {
       "deliveredViaEarlyRelease": "Livre via version anticipee",
-      "deliveredViaSprintReview": "Livre via Revue de Sprint",
-      "incrementCreated": "Incrément cree",
+      "deliveredViaSprintReview": "Livre via Sprint Review",
+      "incrementCreated": "Increment cree",
       "title": "Chronologie"
     },
     "toast": {
-      "deliverFailed": "Impossible de livrer l'incrément. Veuillez reessayer.",
-      "deliveredSuccess": "Incrément livre avec succes !"
+      "deliverFailed": "Impossible de livrer l'Increment. Veuillez reessayer.",
+      "deliveredSuccess": "Increment livre avec succes !"
     },
-    "workflowStep3Of4": "Etape 3 sur 4 : Livrer l'incrément",
+    "workflowStep3Of4": "Etape 3 sur 4 : Livrer l'Increment",
     "workflowSteps": {
-      "createIncrement": "Creer un incrément",
-      "deliverIncrement": "Livrer l'incrément",
+      "createIncrement": "Creer un Increment",
+      "deliverIncrement": "Livrer l'Increment",
       "sprintCompleted": "Sprint termine",
-      "sprintReview": "Revue de Sprint"
+      "sprintReview": "Sprint Review"
     }
   },
   "list": {
-    "ariaLabelFilter": "Filtrer les incrémentes par statut",
-    "ariaLabelSearch": "Rechercher des incrémentes",
+    "ariaLabelFilter": "Filtrer les Incrementes par statut",
+    "ariaLabelSearch": "Rechercher des Incrementes",
     "cardStats": {
       "pbis": "PBIs",
       "points": "Points"
     },
     "clearSearch": "Effacer la recherche",
     "empty": {
-      "noIncrements": "Aucun incrément n'a encore ete cree. Creez votre premier incrément pour commencer a suivre les livrables.",
-      "noSearchResults": "Aucun incrément ne correspond a votre recherche. Essayez d'ajuster vos filtres.",
-      "title": "Aucun incrément trouve"
+      "noIncrements": "Aucun Increment n'a encore ete cree. Creez votre premier Increment pour commencer a suivre les livrables.",
+      "noSearchResults": "Aucun Increment ne correspond a votre recherche. Essayez d'ajuster vos filtres.",
+      "title": "Aucun Increment trouve"
     },
     "filters": {
       "active": "Actifs",
@@ -179,18 +179,18 @@
       "archived": "Archives",
       "delivered": "Livres"
     },
-    "searchPlaceholder": "Rechercher des incrémentes...",
+    "searchPlaceholder": "Rechercher des Incrementes...",
     "stats": {
       "active": "Actifs",
       "delivered": "Livrés",
       "storyPoints": "Story Points",
-      "total": "Incréments totaux"
+      "total": "Increments totaux"
     }
   },
-  "loading": "Chargement des incrémentes...",
+  "loading": "Chargement des Incrementes...",
   "noDescription": "Aucune description fournie.",
   "pts": "pts",
-  "skipToSprintReview": "Passer à la Revue de Sprint",
+  "skipToSprintReview": "Passer à la Sprint Review",
   "sprintPrefix": "SPRINT {{sprintId}}",
   "status": {
     "archived": "Archive",
@@ -198,6 +198,6 @@
     "draft": "Brouillon",
     "verified": "Verifie"
   },
-  "subtitle": "Gerer et suivre vos incrémentes produit. Les incrémentes representent une fonctionnalite exploitable, prete pour la livraison aux parties prenantes.",
-  "title": "Incréments"
+  "subtitle": "Gerer et suivre vos Incrementes produit. Les Incrementes representent une fonctionnalite exploitable, prete pour la livraison aux parties prenantes.",
+  "title": "Increments"
 }

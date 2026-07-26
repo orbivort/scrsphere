@@ -1,5 +1,5 @@
 {
-  "backToIncrements": "Torna agli Incrementi",
+  "backToIncrements": "Torna agli Increments",
   "create": {
     "actions": {
       "cancel": "Annulla",
@@ -9,7 +9,7 @@
       "delivering": "Consegnando...",
       "skipToSprintReview": "Salta a Sprint Review"
     },
-    "backToIncrements": "Torna agli Incrementi",
+    "backToIncrements": "Torna agli Increments",
     "backToSprintReview": "Torna a Sprint Review",
     "error": {
       "failedLoadPbis": "Fallimento caricamento PBIs elegibili",
@@ -117,7 +117,7 @@
       "verified": "Verificato"
     },
     "error": {
-      "backToIncrements": "Torna agli Incrementi",
+      "backToIncrements": "Torna agli Increments",
       "title": "Fallimento caricamento incremento"
     },
     "loading": "Caricando incremento...",
@@ -161,16 +161,16 @@
     }
   },
   "list": {
-    "ariaLabelFilter": "Filtra incrementi per stato",
-    "ariaLabelSearch": "Cerca incrementi",
+    "ariaLabelFilter": "Filtra Increments per stato",
+    "ariaLabelSearch": "Cerca Increments",
     "cardStats": {
       "pbis": "PBIs",
       "points": "Punti"
     },
     "clearSearch": "Cancella ricerca",
     "empty": {
-      "noIncrements": "Nessun incrementi e stato ancora creato. Crea il tuo primo incrementi per iniziare a tracciare le consegne.",
-      "noSearchResults": "Nessun incrementi corrisponde alla tua ricerca. Prova a modificare i filtri.",
+      "noIncrements": "Nessun Increments e stato ancora creato. Crea il tuo primo Increments per iniziare a tracciare le consegne.",
+      "noSearchResults": "Nessun Increments corrisponde alla tua ricerca. Prova a modificare i filtri.",
       "title": "Nessun Incremento trovato"
     },
     "filters": {
@@ -179,15 +179,15 @@
       "archived": "Archiviati",
       "delivered": "Consegnati"
     },
-    "searchPlaceholder": "Cerca incrementi...",
+    "searchPlaceholder": "Cerca Increments...",
     "stats": {
       "active": "Attivi",
       "delivered": "Consegnati",
       "storyPoints": "Story Points",
-      "total": "Incrementi Totali"
+      "total": "Increments Totali"
     }
   },
-  "loading": "Caricando incrementi...",
+  "loading": "Caricando Increments...",
   "noDescription": "Nessuna descrizione fornita.",
   "pts": "pts",
   "skipToSprintReview": "Salta a Sprint Review",
@@ -198,6 +198,6 @@
     "draft": "Bozza",
     "verified": "Verificato"
   },
-  "subtitle": "Gestisci e traccia i tuoi incrementi di prodotto. Gli incrementi rappresentano funzionalita operative, pronte per la consegna agli stakeholder.",
-  "title": "Incrementi"
+  "subtitle": "Gestisci e traccia i tuoi Increments di prodotto. Gli Increments rappresentano funzionalita operative, pronte per la consegna agli stakeholder.",
+  "title": "Increments"
 }

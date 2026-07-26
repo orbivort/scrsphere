@@ -1,11 +1,11 @@
 {
   "activeImpediments": {
-    "title": "Impedimenti Attivi",
+    "title": "Impediments Attivi",
     "trackAsImpediment": "Traccia come Impedimento",
     "tracked": "Tracciato",
     "trackedImpediment": "Impedimento tracciato",
     "untrackedImpediment": "Impedimento non tracciato",
-    "viewAllImpediments": "Vedi tutti i {{count}} impedimenti",
+    "viewAllImpediments": "Vedi tutti i {{count}} Impediments",
     "viewDetails": "Vedi Dettagli"
   },
   "aria": {
@@ -38,7 +38,7 @@
     "cancel": "Annulla",
     "impedimentHint": "Questo impedimento sara tracciato e puo essere promosso a un registro formale di impedimento",
     "impedimentLabel": "Qualche impedimento? (opzionale)",
-    "impedimentPlaceholder": "Descrivi eventuali blocchi o impedimenti...",
+    "impedimentPlaceholder": "Descrivi eventuali blocchi o Impediments...",
     "submitting": "Inviando...",
     "todayLabel": "Cosa farai oggi per aiutare il team a raggiungere lo sprint goal?",
     "todayPlaceholder": "Descrivi cosa prevedi di lavorare oggi...",
@@ -103,7 +103,7 @@
     "viewSprintBoard": "Vedi Sprint Board"
   },
   "stats": {
-    "impediments": "Impedimenti",
+    "impediments": "Impediments",
     "participation": "Partecipazione",
     "pending": "In sospeso",
     "submitted": "Inviato"
@@ -125,7 +125,7 @@
     "impedimentCreated": "Impedimento creato con successo!",
     "networkError": "Si e verificato un errore di rete. Verifica la tua connessione e riprova.",
     "noPendingUpdates": "Nessun aggiornamento in sospeso",
-    "noPermissionCreateImpediments": "Non hai il permesso di creare impedimenti.",
+    "noPermissionCreateImpediments": "Non hai il permesso di creare Impediments.",
     "noPermissionReminders": "Non hai il permesso di inviare promemoria.",
     "offline": "Sembra che tu sia offline. Verifica la tua connessione internet e riprova.",
     "reminderSent": "Promemoria inviato!",

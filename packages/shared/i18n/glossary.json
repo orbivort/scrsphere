@@ -1,13 +1,12 @@
 {
   "_meta": {
-    "source": "The 2020 Scrum Guide by Ken Schwaber & Jeff Sutherland for offical English version, and translators for non-English versions.",
+    "source": "The 2020 Scrum Guide by Ken Schwaber & Jeff Sutherland for official English version, and translators for non-English versions.",
     "sourceUrl": "https://scrumguides.org/",
     "languages": ["en", "de", "fr", "it", "es"],
     "notes": [
       "All term translations are from the official Scrum Guide 2020 PDFs in each language.",
       "Core Scrum terms (Sprint, Product Backlog, Sprint Goal, etc.) follow the official",
-      "translation guidelines - some terms remain in English per Scrum.org directives.",
-      "The 'definition' field provides the official Scrum Guide definition for reference."
+      "translation guidelines - some terms remain in English per Scrum.org directives."
     ],
     "files": {
       "en": "2020-Scrum-Guide-English.pdf",
@@ -16,7 +15,7 @@
       "it": "2020-Scrum-Guide-Italian-2.0.pdf",
       "es": "2020-Scrum-Guide-Spanish-European.pdf"
     },
-    "lastUpdated": "2026-07-14",
+    "lastUpdated": "2026-07-26",
     "maintainer": "Scrumooth Team"
   },
   "Scrum": {
@@ -24,503 +23,167 @@
     "de": "Scrum",
     "fr": "Scrum",
     "it": "Scrum",
-    "es": "Scrum",
-    "definition": {
-      "en": "A lightweight framework that helps people, teams and organizations generate value through adaptive solutions for complex problems.",
-      "de": "Ein leichtgewichtiges Rahmenwerk, welches Menschen, Teams und Organisationen hilft, Wert durch adaptive Lösungen für komplexe Probleme zu generieren.",
-      "fr": "Un cadre de travail léger qui aide les personnes, les équipes et les organisations à générer de la valeur grâce à des solutions adaptatives pour des problèmes complexes.",
-      "it": "Un framework leggero che aiuta persone, team ed organizzazioni a generare valore attraverso soluzioni adattive per problemi complessi.",
-      "es": "Un marco ligero que ayuda a las personas, equipos y organizaciones a generar valor a través de soluciones adaptables para problemas complejos."
-    }
+    "es": "Scrum"
   },
   "Scrum Team": {
     "en": "Scrum Team",
     "de": "Scrum Team",
     "fr": "Scrum Team",
     "it": "Scrum Team",
-    "es": "Equipo Scrum",
-    "definition": {
-      "en": "A small team of people, consisting of one Scrum Master, one Product Owner, and Developers. There are no sub-teams or hierarchies. It is a cohesive unit of professionals focused on one objective at a time, the Product Goal. Scrum Teams are cross-functional and self-managing, typically 10 or fewer people.",
-      "de": "Ein kleines Team von Menschen, bestehend aus einem:einer Scrum Master:in, einem:einer Product Owner:in und Developer:innen. Es gibt keine Teilteams oder Hierarchien. Es ist eine geschlossene Einheit von Fachleuten, die sich auf ein Ziel konzentrieren, das Produkt-Ziel. Scrum Teams sind interdisziplinär und managen sich selbst, üblicherweise 10 oder weniger Personen.",
-      "fr": "Une petite équipe, composée d'un Scrum Master, d'un Product Owner et de Developers. Il n'y a pas d'équipe dans l'équipe ni de hiérarchies. Il s'agit d'une unité stable de professionnels focalisés sur un seul objectif à la fois, l'Objectif de Produit. Les Scrum Teams sont pluridisciplinaires et autogérées, habituellement dix personnes au plus.",
-      "it": "Un piccolo gruppo di persone, composto da uno Scrum Master, un Product Owner e dai Developer. All'interno dello Scrum Team non ci sono sottogruppi o gerarchie. È un'unità coesa di professionisti concentrati su un unico obiettivo alla volta, il Product Goal. Gli Scrum Team sono cross-funzionali e autogestiti, di solito 10 persone o meno.",
-      "es": "Un pequeño equipo de personas, compuesto por un Scrum Master, un Product Owner y desarrolladores. No hay sub-equipos ni jerarquías. Es una unidad cohesiva de profesionales enfocada en un objetivo a la vez, el Objetivo del Producto. Los equipos Scrum son multifuncionales y autogestionados, típicamente 10 personas o menos."
-    }
+    "es": "Equipo Scrum"
   },
   "Scrum Master": {
     "en": "Scrum Master",
     "de": "Scrum Master",
     "fr": "Scrum Master",
     "it": "Scrum Master",
-    "es": "Scrum Master",
-    "definition": {
-      "en": "Accountable for establishing Scrum as defined in the Scrum Guide, helping everyone understand Scrum theory and practice. Accountable for the Scrum Team's effectiveness by enabling the team to improve its practices within the Scrum framework. A true leader who serves the Scrum Team and the larger organization.",
-      "de": "Ergebnisverantwortlich für die Einführung von Scrum, wie es im Scrum Guide definiert ist, und hilft allen, die Scrum-Theorie und -Praxis zu verstehen. Ergebnisverantwortlich für die Effektivität des Scrum Teams, indem er:sie das Team in die Lage versetzt, seine Praktiken innerhalb des Scrum-Rahmenwerks zu verbessern. Eine echte Führungspersönlichkeit, die dem Scrum Team und der Gesamtorganisation dient.",
-      "fr": "Redevable de la mise en place de Scrum tel que défini dans le Guide Scrum, il aide tout un chacun à comprendre la théorie et la pratique Scrum. Redevable de l'efficacité de la Scrum Team en permettant à l'équipe d'améliorer ses pratiques dans le cadre de travail Scrum. Un véritable leader au service de la Scrum Team et de l'ensemble de l'organisation.",
-      "it": "Responsabile di promuovere Scrum così com'è definito nella Guida Scrum, aiutando tutti a comprendere la teoria e le pratiche Scrum. Responsabile dell'efficacia dello Scrum Team, permettendo al team di migliorare le proprie pratiche definite nel framework Scrum. Un vero leader al servizio dello Scrum Team e dell'organizzazione in generale.",
-      "es": "Responsable de establecer Scrum tal como se define en la Guía de Scrum, ayudando a todos a comprender la teoría y la práctica de Scrum. Responsable de la efectividad del equipo Scrum, permitiendo que el equipo mejore sus prácticas dentro del marco de Scrum. Un verdadero líder que sirve al equipo Scrum y a toda la organización."
-    }
+    "es": "Scrum Master"
   },
   "Product Owner": {
     "en": "Product Owner",
     "de": "Product Owner",
     "fr": "Product Owner",
     "it": "Product Owner",
-    "es": "Product Owner",
-    "definition": {
-      "en": "Accountable for maximizing the value of the product resulting from the work of the Scrum Team. Also accountable for effective Product Backlog management, including developing and communicating the Product Goal, creating and communicating Product Backlog items, ordering them, and ensuring the Product Backlog is transparent, visible and understood. One person, not a committee.",
-      "de": "Ergebnisverantwortlich für die Maximierung des Wertes des Produkts, der sich aus der Arbeit des Scrum Teams ergibt. Auch ergebnisverantwortlich für ein effektives Product-Backlog-Management, einschließlich der Entwicklung und Kommunikation des Produkt-Ziels, der Erstellung und Kommunikation von Product-Backlog-Einträgen, deren Reihenfolge und der Sicherstellung, dass das Product Backlog transparent, sichtbar und verstanden ist. Eine Person, kein Gremium.",
-      "fr": "Redevable de maximiser la valeur du produit résultant du travail de la Scrum Team. Également redevable de la gestion efficace du Product Backlog, y compris formuler et communiquer l'Objectif de Produit, créer et communiquer les éléments du Product Backlog, les ordonner et s'assurer que le Product Backlog est transparent, visible et compris. Une personne et non un comité.",
-      "it": "Responsabile nel massimizzare il valore del prodotto risultante dal lavoro svolto dallo Scrum Team. Anche responsabile per l'effettiva gestione del Product Backlog, che include sviluppare e comunicare esplicitamente il Product Goal, creare e comunicare chiaramente gli elementi del Product Backlog, ordinarli e assicurarsi che il Product Backlog sia trasparente, visibile e chiaro. Una singola persona e non un gruppo.",
-      "es": "Responsable de maximizar el valor del producto resultante del trabajo del equipo Scrum. También responsable de la gestión eficaz del Product Backlog, incluyendo desarrollar y comunicar el Objetivo del Producto, crear y comunicar elementos del Product Backlog, ordenarlos y asegurar que el Product Backlog sea transparente, visible y comprendido. Una persona, no un comité."
-    }
+    "es": "Product Owner"
   },
   "Developers": {
     "en": "Developers",
     "de": "Developer",
     "fr": "Developers",
     "it": "Developer",
-    "es": "Desarrolladores",
-    "definition": {
-      "en": "The people in the Scrum Team that are committed to creating any aspect of a usable Increment each Sprint. Always accountable for creating a plan for the Sprint (the Sprint Backlog), instilling quality by adhering to a Definition of Done, adapting their plan each day toward the Sprint Goal, and holding each other accountable as professionals.",
-      "de": "Die Personen im Scrum Team, die sich der Aufgabe verschrieben haben, jeden Sprint jeden Aspekt eines nutzbaren Increments zu schaffen. Immer ergebnisverantwortlich für die Erstellung eines Plans für den Sprint (das Sprint Backlog), das Einbringen von Qualität durch Einhaltung einer Definition of Done, die tägliche Anpassung ihres Plans zur Erreichung des Sprint-Ziels und die wechselseitige Verantwortung als Expert:innen.",
-      "fr": "Les membres de la Scrum Team qui s'engagent à traiter tout ou partie utile d'un Increment à chaque Sprint. Toujours redevables de créer un plan de Sprint (le Sprint Backlog), d'inculquer la qualité en adhérant à une Definition of Done, d'adapter leur plan chaque jour par rapport à l'Objectif de Sprint et de se tenir mutuellement responsables en tant que professionnels.",
-      "it": "Le persone all'interno dello Scrum Team che hanno il compito di creare qualsiasi aspetto di un Increment usabile ad ogni Sprint. Sempre responsabili di creare una pianificazione per lo Sprint (lo Sprint Backlog), instillare la qualità aderendo ad una Definition of Done, adattare quotidianamente la pianificazione allo Sprint Goal e ritenersi reciprocamente responsabili come professionisti.",
-      "es": "Las personas del equipo Scrum que se comprometen a crear cualquier aspecto de un Incremento útil en cada Sprint. Siempre responsables de crear un plan para el Sprint (el Sprint Backlog), inculcar la calidad adhiriéndose a una Definición de Hecho, adaptar su plan cada día hacia el Objetivo Sprint y responsabilizarse mutuamente como profesionales."
-    }
+    "es": "Desarrolladores"
   },
   "Sprint": {
     "en": "Sprint",
     "de": "Sprint",
     "fr": "Sprint",
     "it": "Sprint",
-    "es": "Sprint",
-    "definition": {
-      "en": "The heartbeat of Scrum, where ideas are turned into value. Fixed length events of one month or less to create consistency. A new Sprint starts immediately after the conclusion of the previous Sprint. All the work necessary to achieve the Product Goal, including Sprint Planning, Daily Scrums, Sprint Review, and Sprint Retrospective, happen within Sprints.",
-      "de": "Der Herzschlag von Scrum, wo Ideen in Wert umgewandelt werden. Events mit fester Länge von einem Monat oder weniger, um Konsistenz zu schaffen. Ein neuer Sprint beginnt unmittelbar nach dem Abschluss des vorherigen Sprints. Alle Arbeiten, die notwendig sind, um das Produkt-Ziel zu erreichen, einschließlich Sprint Planning, Daily Scrums, Sprint Review und Sprint Retrospective, finden innerhalb der Sprints statt.",
-      "fr": "Le cœur de Scrum, où les idées sont transformées en valeur. Événements d'une durée fixe, d'un mois ou moins, pour créer une cohérence. Un nouveau Sprint commence immédiatement après la fin du précédent. Tout le travail nécessaire pour atteindre l'Objectif de Produit, y compris le Sprint Planning, les Daily Scrums, la Sprint Review et la Sprint Retrospective, se fait dans le cadre des Sprints.",
-      "it": "Il cuore pulsante di Scrum, dove le idee sono trasformate in valore. Eventi di durata fissa di un mese o meno per creare coerenza. Un nuovo Sprint inizia subito dopo la conclusione dello Sprint precedente. Tutto il lavoro necessario per raggiungere il Product Goal, inclusi lo Sprint Planning, i Daily Scrum, la Sprint Review e la Sprint Retrospective, si svolge all'interno degli Sprint.",
-      "es": "El latido del corazón de Scrum, donde las ideas se convierten en valor. Eventos de longitud fija de un mes o menos para crear consistencia. Un nuevo Sprint comienza inmediatamente después de la conclusión del Sprint anterior. Todo el trabajo necesario para alcanzar el Objetivo del Producto, incluyendo el Sprint Planning, Daily Scrums, Sprint Review y Sprint Retrospective, ocurre dentro de los Sprints."
-    }
+    "es": "Sprint"
   },
   "Sprint Planning": {
     "en": "Sprint Planning",
     "de": "Sprint Planning",
     "fr": "Sprint Planning",
     "it": "Sprint Planning",
-    "es": "Sprint Planning",
-    "definition": {
-      "en": "Initiates the Sprint by laying out the work to be performed for the Sprint. The resulting plan is created by the collaborative work of the entire Scrum Team. Addresses three topics: Why is this Sprint valuable? What can be Done this Sprint? How will the chosen work get done? Timeboxed to a maximum of eight hours for a one-month Sprint.",
-      "de": "Initiiert den Sprint, indem es die für den Sprint auszuführenden Arbeiten darlegt. Der resultierende Plan wird durch die gemeinschaftliche Arbeit des gesamten Scrum Teams erstellt. Behandelt drei Themen: Warum ist dieser Sprint wertvoll? Was kann in diesem Sprint abgeschlossen werden? Wie wird die ausgewählte Arbeit erledigt? Zeitlich beschränkt auf maximal acht Stunden für einen einmonatigen Sprint.",
-      "fr": "Lance le Sprint en présentant le travail à effectuer durant le Sprint. Le plan qui en résulte est créé par le travail collaboratif de toute la Scrum Team. Aborde trois thèmes : Pourquoi ce Sprint est-il important ? Que peut-on faire durant ce Sprint ? Comment le travail choisi sera-t-il réalisé ? Limité dans le temps à un maximum de huit heures pour un Sprint d'un mois.",
-      "it": "Dà il via allo Sprint, stabilendo il lavoro da svolgere durante lo stesso. Il piano che ne risulta è frutto del lavoro collaborativo di tutto lo Scrum Team. Affronta tre argomenti: perché questo Sprint è di valore? Cosa si può fare in questo Sprint? Come si svolgerà il lavoro scelto? Limitato ad un massimo di otto ore per uno Sprint di un mese.",
-      "es": "Inicia el Sprint estableciendo el trabajo que se realizará para el mismo. El plan resultante es creado por el trabajo colaborativo de todo el equipo Scrum. Aborda tres temas: ¿Por qué este Sprint es valioso? ¿Qué se puede hacer este Sprint? ¿Cómo se realizará el trabajo elegido? Limitado a un máximo de ocho horas para un Sprint de un mes."
-    }
+    "es": "Planificación de Sprint"
   },
   "Daily Scrum": {
     "en": "Daily Scrum",
     "de": "Daily Scrum",
-    "fr": "Mêlée quotidienne",
+    "fr": "Daily Scrum",
     "it": "Daily Scrum",
-    "es": "Daily Scrum",
-    "definition": {
-      "en": "A 15-minute event for the Developers of the Scrum Team to inspect progress toward the Sprint Goal and adapt the Sprint Backlog as necessary, adjusting the upcoming planned work. Held at the same time and place every working day of the Sprint to reduce complexity. Improves communications, identifies impediments, promotes quick decision-making, and eliminates the need for other meetings.",
-      "de": "Ein 15-minütiges Event für die Developer:innen des Scrum Teams, um den Fortschritt in Richtung des Sprint-Ziels zu überprüfen und das Sprint Backlog bei Bedarf anzupassen. Wird an jedem Arbeitstag des Sprints zur gleichen Zeit und am gleichen Ort abgehalten, um die Komplexität zu reduzieren. Verbessert die Kommunikation, identifiziert Hindernisse, fördert die schnelle Entscheidungsfindung und eliminiert die Notwendigkeit für andere Meetings.",
-      "fr": "Un événement de 15 minutes pour les Developers de la Scrum Team afin d'inspecter la progression vers l'Objectif de Sprint et d'adapter le Sprint Backlog si nécessaire. Tenu à la même heure et au même lieu chaque jour ouvré du Sprint pour réduire la complexité. Améliore la communication, aide à identifier les obstacles, favorise la prise de décision rapide et élimine la nécessité de faire d'autres réunions.",
-      "it": "Un evento di 15 minuti che coinvolge i Developer dello Scrum Team per ispezionare l'avanzamento verso lo Sprint Goal e adattare lo Sprint Backlog secondo le esigenze. Si tiene alla stessa ora e nello stesso luogo ogni giorno lavorativo dello Sprint per ridurre la complessità. Migliora le comunicazioni, identifica gli impedimenti, promuove un rapido processo decisionale ed elimina la necessità di ulteriori meeting.",
-      "es": "Un evento de 15 minutos para los desarrolladores del equipo Scrum para inspeccionar el progreso hacia el Objetivo Sprint y adaptar el Sprint Backlog según sea necesario. Se lleva a cabo al mismo tiempo y lugar todos los días laborables del Sprint para reducir la complejidad. Mejora las comunicaciones, identifica impedimentos, promueve la toma de decisiones rápida y elimina la necesidad de otras reuniones."
-    }
+    "es": "Scrum diario"
   },
   "Sprint Review": {
     "en": "Sprint Review",
     "de": "Sprint Review",
-    "fr": "Revue de Sprint",
+    "fr": "Sprint Review",
     "it": "Sprint Review",
-    "es": "Revisión de Sprint",
-    "definition": {
-      "en": "The purpose of the Sprint Review is to inspect the outcome of the Sprint and determine future adaptations. The Scrum Team presents the results of their work to key stakeholders and progress toward the Product Goal is discussed. A working session, not just a presentation. Timeboxed to a maximum of four hours for a one-month Sprint.",
-      "de": "Zweck des Sprint Reviews ist es, das Ergebnis des Sprints zu überprüfen und künftige Anpassungen festzulegen. Das Scrum Team stellt die Ergebnisse seiner Arbeit den wichtigsten Stakeholder:innen vor, und die Fortschritte in Richtung des Produkt-Ziels werden diskutiert. Ein Arbeitstermin, keine bloße Präsentation. Zeitlich beschränkt auf maximal vier Stunden für einen einmonatigen Sprint.",
-      "fr": "L'objectif de la Sprint Review est d'inspecter le résultat du Sprint et de déterminer les adaptations futures. La Scrum Team présente les résultats de son travail aux principales parties prenantes et les progressions vers l'Objectif de Produit sont discutées. Une session de travail, pas seulement une présentation. Limitée dans le temps à un maximum de quatre heures pour un Sprint d'un mois.",
-      "it": "Lo scopo della Sprint Review è quello di ispezionare il risultato dello Sprint e di determinare i futuri adattamenti. Lo Scrum Team mostra il risultato del proprio lavoro agli stakeholder chiave e discute l'avanzamento verso il Product Goal. Una sessione di lavoro, non una mera presentazione. Ha una durata massima di quattro ore per uno Sprint di un mese.",
-      "es": "El propósito de la Revisión de Sprint es inspeccionar el resultado del Sprint y determinar futuras adaptaciones. El equipo Scrum presenta los resultados de su trabajo a las partes interesadas clave y se discute el progreso hacia el Objetivo de Producto. Una sesión de trabajo, no solo una presentación. Limitada a un máximo de cuatro horas para un Sprint de un mes."
-    }
+    "es": "Revisión del Sprint"
   },
   "Sprint Retrospective": {
     "en": "Sprint Retrospective",
     "de": "Sprint Retrospective",
-    "fr": "Rétrospective de Sprint",
+    "fr": "Sprint Retrospective",
     "it": "Sprint Retrospective",
-    "es": "Retrospectiva de Sprint",
-    "definition": {
-      "en": "The purpose of the Sprint Retrospective is to plan ways to increase quality and effectiveness. The Scrum Team inspects how the last Sprint went with regards to individuals, interactions, processes, tools, and their Definition of Done. Identifies the most helpful changes to improve effectiveness. Concludes the Sprint. Timeboxed to a maximum of three hours for a one-month Sprint.",
-      "de": "Der Zweck der Sprint Retrospective ist es, Wege zur Steigerung von Qualität und Effektivität zu planen. Das Scrum Team überprüft, wie der letzte Sprint in Bezug auf Individuen, Interaktionen, Prozesse, Werkzeuge und seine Definition of Done verlief. Identifiziert die hilfreichsten Änderungen zur Verbesserung der Effektivität. Schließt den Sprint ab. Zeitlich beschränkt auf maximal drei Stunden für einen einmonatigen Sprint.",
-      "fr": "L'objectif de la Sprint Retrospective consiste à réfléchir à des pistes pour améliorer la qualité et l'efficacité. La Scrum Team inspecte le déroulement du dernier Sprint en ce qui concerne les individus, les interactions, les processus, les outils et leur Definition of Done. Identifie les changements les plus utiles pour améliorer l'efficacité. Conclut le Sprint. Limitée dans le temps à un maximum de trois heures pour un Sprint d'un mois.",
-      "it": "Lo scopo della Sprint Retrospective è quello di pianificare modi per incrementare la qualità e l'efficacia. Lo Scrum Team ispeziona come è andato il precedente Sprint relativamente agli individui, alle interazioni, ai processi, agli strumenti ed alla propria Definition of Done. Identifica i cambiamenti più utili per migliorare la propria efficacia. Conclude lo Sprint. Ha una durata massima di tre ore per uno Sprint di un mese.",
-      "es": "El propósito de la Retrospectiva de Sprint es planificar formas de aumentar la calidad y la eficacia. El equipo Scrum inspecciona cómo fue el último Sprint con respecto a individuos, interacciones, procesos, herramientas y su Definición de Hecho. Identifica los cambios más útiles para mejorar la eficacia. Concluye el Sprint. Limitada a un máximo de tres horas para un Sprint de un mes."
-    }
+    "es": "Retrospectiva del Sprint"
   },
   "Retrospective": {
     "en": "Retrospective",
-    "de": "Retrospektive",
-    "fr": "Rétrospective",
-    "it": "Retrospezione",
-    "es": "Retrospectiva",
-    "definition": {
-      "en": "Short for Sprint Retrospective. The Scrum event where the team reflects on the past Sprint to identify improvements for the next one.",
-      "de": "Kurzform für Sprint Retrospective. Das Scrum Event, in dem das Team über den vergangenen Sprint nachdenkt, um Verbesserungen für den nächsten zu identifizieren.",
-      "fr": "Abréviation de Sprint Retrospective. L'événement Scrum où l'équipe réfléchit sur le Sprint passé pour identifier des améliorations pour le prochain.",
-      "it": "Abbreviazione di Sprint Retrospective. L'evento Scrum in cui il team riflette sullo Sprint passato per identificare miglioramenti per il prossimo.",
-      "es": "Abreviatura de Retrospectiva de Sprint. El evento Scrum donde el equipo reflexiona sobre el Sprint pasado para identificar mejoras para el siguiente."
-    }
+    "de": "Retrospective",
+    "fr": "Retrospective",
+    "it": "Retrospective",
+    "es": "Retrospectiva"
   },
   "Product Backlog": {
     "en": "Product Backlog",
     "de": "Product Backlog",
     "fr": "Product Backlog",
     "it": "Product Backlog",
-    "es": "Product Backlog",
-    "definition": {
-      "en": "An emergent, ordered list of what is needed to improve the product. It is the single source of work undertaken by the Scrum Team. Product Backlog items that can be Done by the Scrum Team within one Sprint are deemed ready for selection in a Sprint Planning event. They usually acquire this degree of transparency after refining activities.",
-      "de": "Eine emergente, geordnete Liste der Dinge, die zur Produktverbesserung benötigt werden. Es ist die einzige Quelle von Arbeit, die durch das Scrum Team erledigt wird. Product-Backlog-Einträge, die durch das Scrum Team innerhalb eines Sprints abgeschlossen werden können, gelten als bereit für die Auswahl in einem Sprint-Planning-Event. Diesen Transparenzgrad erlangen sie in der Regel durch Refinement-Aktivitäten.",
-      "fr": "Une liste ordonnée et émergente de ce qui est nécessaire pour améliorer le produit. C'est l'unique source du travail entrepris par la Scrum Team. Les éléments du Product Backlog qui sont susceptibles d'être réalisés dans un seul Sprint par la Scrum Team sont considérés comme prêts à être traités en Sprint Planning. Ils acquièrent généralement ce degré de transparence après avoir été affinés.",
-      "it": "Un elenco emergente e ordinato di ciò che è necessario per migliorare il prodotto. È l'unica fonte del lavoro intrapreso dallo Scrum Team. Gli elementi del Product Backlog che possono essere completati dallo Scrum Team all'interno di uno Sprint sono considerati pronti per la selezione in un evento di Sprint Planning. Di solito acquisiscono questo grado di trasparenza dopo le attività di Refinement.",
-      "es": "Una lista emergente y ordenada de lo que se necesita para mejorar el producto. Es la única fuente de trabajo emprendida por el equipo Scrum. Los elementos del Product Backlog que pueden ser Hechos por el equipo Scrum dentro de un Sprint se consideran listos para su selección en un evento de Sprint Planning. Por lo general adquieren este grado de transparencia después de las actividades de refinación."
-    }
+    "es": "Pila del producto"
   },
   "Sprint Backlog": {
     "en": "Sprint Backlog",
     "de": "Sprint Backlog",
     "fr": "Sprint Backlog",
     "it": "Sprint Backlog",
-    "es": "Sprint Backlog",
-    "definition": {
-      "en": "Composed of the Sprint Goal (why), the set of Product Backlog items selected for the Sprint (what), as well as an actionable plan for delivering the Increment (how). A plan by and for the Developers. A highly visible, real-time picture of the work that the Developers plan to accomplish during the Sprint in order to achieve the Sprint Goal. Updated throughout the Sprint as more is learned.",
-      "de": "Bestehend aus dem Sprint-Ziel (Wofür), den für den Sprint ausgewählten Product-Backlog-Einträgen (Was) sowie einem umsetzbaren Plan für die Lieferung des Increments (Wie). Ein Plan von und für die Developer:innen. Ein deutlich sichtbares Echtzeitbild der Arbeit, welche die Developer:innen während des Sprints zur Erreichung des Sprint-Ziels ausführen wollen. Wird während des gesamten Sprints aktualisiert, sobald mehr gelernt wurde.",
-      "fr": "Composé de l'Objectif de Sprint (le « pourquoi »), de l'ensemble des éléments du Product Backlog choisis pour le Sprint (le « quoi »), ainsi que d'un plan d'action pour la réalisation de l'Increment (le « comment »). Un plan élaboré par et pour les Developers. Une image très visible et en temps réel du travail que les Developers prévoient d'accomplir durant le Sprint afin d'atteindre l'Objectif de Sprint. Mis à jour tout au long du Sprint selon ce qu'on en apprend.",
-      "it": "Composto dallo Sprint Goal (il perché), dall'insieme degli elementi del Product Backlog selezionati per lo Sprint (il cosa), nonché da un piano attuabile per consegnare l'Increment (il come). Un piano elaborato da e per i Developer. Una fotografia altamente visibile, in tempo reale, del lavoro che i Developer intendono realizzare durante lo Sprint per raggiungere lo Sprint Goal. Aggiornato durante lo Sprint, man mano che si approfondisce l'apprendimento.",
-      "es": "Compuesto por el Objetivo Sprint (por qué), el conjunto de elementos del Product Backlog seleccionados para el Sprint (qué), así como un plan accionable para entregar el Incremento (cómo). Un plan por y para los desarrolladores. Una imagen muy visible y en tiempo real del trabajo que los desarrolladores planean realizar durante el Sprint para lograr el Objetivo Sprint. Se actualiza a lo largo del Sprint a medida que se aprende más."
-    }
+    "es": "Pila del Sprint"
   },
   "Increment": {
     "en": "Increment",
-    "de": "Inkrement",
-    "fr": "Incrément",
-    "it": "Incremento",
-    "es": "Incremento",
-    "definition": {
-      "en": "A concrete stepping stone toward the Product Goal. Each Increment is additive to all prior Increments and thoroughly verified, ensuring that all Increments work together. In order to provide value, the Increment must be usable. Multiple Increments may be created within a Sprint. Work cannot be considered part of an Increment unless it meets the Definition of Done.",
-      "de": "Ein konkreter Schritt in Richtung des Produkt-Ziels. Jedes Increment ist additiv zu allen vorherigen Increments und gründlich geprüft, um sicherzustellen, dass sie alle zusammen funktionieren. Um einen Mehrwert zu erzielen, muss das Increment verwendbar sein. Innerhalb eines Sprints kann mehr als ein Increment erstellt werden. Arbeit kann nicht als Teil eines Increments betrachtet werden, solange sie nicht der Definition of Done entspricht.",
-      "fr": "Une première étape concrète vers l'Objectif de Produit. Chaque Increment s'ajoute à tous les Increments précédents et fait l'objet d'une vérification approfondie, garantissant que tous les Increments fonctionnent ensemble. Afin de fournir une valeur, l'Increment doit être utilisable. Plusieurs Increments peuvent être créés durant un Sprint. Un travail qui ne remplirait pas les conditions de la Definition of Done ne peut pas être considéré comme un Increment.",
-      "it": "Una pietra miliare verso il Product Goal. Ogni Increment si aggiunge in maniera cumulativa a tutti gli Increment precedenti ed è verificato accuratamente, garantendo che tutti gli Increment funzionino insieme. Al fine di fornire valore l'Increment deve essere usabile. È possibile creare più Increment all'interno di uno Sprint. Il lavoro non può essere considerato parte di un Increment a meno che non soddisfi la Definition of Done.",
-      "es": "Un paso concreto hacia el Objetivo del Producto. Cada Incremento es aditivo a todos los Incrementos anteriores y verificado a fondo, asegurando que todos los Incrementos funcionen juntos. Para proporcionar valor, el Incremento debe ser utilizable. Se pueden crear varios Incrementos dentro de un Sprint. El trabajo no se puede considerar parte de un Incremento a menos que cumpla con la Definición de Hecho."
-    }
+    "de": "Increment",
+    "fr": "Increment",
+    "it": "Increment",
+    "es": "Incremento"
   },
   "Product Goal": {
     "en": "Product Goal",
     "de": "Produkt-Ziel",
     "fr": "Objectif de Produit",
     "it": "Product Goal",
-    "es": "Objetivo del Producto",
-    "definition": {
-      "en": "Describes a future state of the product which can serve as a target for the Scrum Team to plan against. The Product Goal is in the Product Backlog. The rest of the Product Backlog emerges to define what will fulfill the Product Goal. The long-term objective for the Scrum Team. They must fulfill (or abandon) one objective before taking on the next. Commitment for the Product Backlog.",
-      "de": "Beschreibt einen zukünftigen Zustand des Produkts, welches dem Scrum Team als Planungsziel dienen kann. Das Produkt-Ziel befindet sich im Product Backlog. Der Rest des Product Backlogs entsteht, um zu definieren, was das Produkt-Ziel erfüllt. Das langfristige Ziel für das Scrum Team. Das Scrum Team muss eine Zielvorgabe erfüllen (oder aufgeben), bevor es die nächste angeht. Commitment für das Product Backlog.",
-      "fr": "Décrit un état futur du produit qui peut servir de cible à la Scrum Team pour planifier. L'Objectif de Produit est dans le Product Backlog. Le reste du Product Backlog émerge pour définir ce qui permettra d'atteindre l'Objectif de Produit. L'objectif à long terme de la Scrum Team. Ils doivent atteindre (ou abandonner) un objectif avant de s'attaquer au suivant. Engagement du Product Backlog.",
-      "it": "Descrive uno stato futuro del prodotto che può servire come obiettivo per lo Scrum Team rispetto al quale pianificare. Il Product Goal è nel Product Backlog. Il resto del Product Backlog emerge per definire cosa soddisferà il Product Goal. L'obiettivo a lungo termine per lo Scrum Team. Bisogna raggiungere (o abbandonare) un obiettivo prima di affrontarne un altro. Impegno per il Product Backlog.",
-      "es": "Describe un estado futuro del producto que puede servir como objetivo para el equipo Scrum contra el cual planificar. El Objetivo del Producto se encuentra en el Product Backlog. El resto del Product Backlog surge para definir qué cumplirá el Objetivo del Producto. El objetivo a largo plazo para el equipo Scrum. Deben cumplir (o abandonar) un objetivo antes de asumir el siguiente. Compromiso del Product Backlog."
-    }
+    "es": "Objetivo del Producto"
   },
   "Sprint Goal": {
     "en": "Sprint Goal",
     "de": "Sprint-Ziel",
     "fr": "Objectif de Sprint",
     "it": "Sprint Goal",
-    "es": "Objetivo Sprint",
-    "definition": {
-      "en": "The single objective for the Sprint. Although the Sprint Goal is a commitment by the Developers, it provides flexibility in terms of the exact work needed to achieve it. Creates coherence and focus, encouraging the Scrum Team to work together rather than on separate initiatives. Created during Sprint Planning and added to the Sprint Backlog. Commitment for the Sprint Backlog.",
-      "de": "Die einzige Zielsetzung für den Sprint. Obwohl das Sprint-Ziel ein Commitment der Developer:innen ist, bietet es Flexibilität in Bezug auf die genaue Arbeit, die erforderlich ist, um es zu erreichen. Schafft Kohärenz und Fokus und ermutigt das Scrum Team, zusammen statt in separaten Initiativen zu arbeiten. Wird während des Sprint-Planning-Events erstellt und zum Sprint Backlog hinzugefügt. Commitment für das Sprint Backlog.",
-      "fr": "L'unique but du Sprint. Bien que l'Objectif de Sprint soit un engagement fait par les Developers, il offre une certaine flexibilité en termes de travail nécessaire pour atteindre cet objectif. Crée de la cohérence et du focus, encourageant la Scrum Team à travailler ensemble plutôt que sur des initiatives séparées. Créé pendant le Sprint Planning et ajouté au Sprint Backlog. Engagement du Sprint Backlog.",
-      "it": "L'unico obiettivo per lo Sprint. Sebbene lo Sprint Goal sia un impegno da parte dei Developer, esso fornisce flessibilità in termini dell'esatto lavoro necessario per raggiungerlo. Crea coerenza e focus, incoraggiando lo Scrum Team a lavorare insieme piuttosto che su iniziative separate. Creato durante lo Sprint Planning e poi aggiunto allo Sprint Backlog. Impegno per lo Sprint Backlog.",
-      "es": "El único objetivo para el Sprint. Aunque el Objetivo Sprint es un compromiso de los desarrolladores, proporciona flexibilidad en términos del trabajo exacto necesario para lograrlo. Crea coherencia y enfoque, animando al equipo Scrum a trabajar juntos en lugar de en iniciativas separadas. Creado durante el Sprint Planning y agregado al Sprint Backlog. Compromiso del Sprint Backlog."
-    }
+    "es": "Objetivo Sprint"
   },
   "Definition of Done": {
     "en": "Definition of Done",
     "de": "Definition of Done",
     "fr": "Definition of Done",
     "it": "Definition of Done",
-    "es": "Definición de Hecho",
-    "definition": {
-      "en": "A formal description of the state of the Increment when it meets the quality measures required for the product. The moment a Product Backlog item meets the Definition of Done, an Increment is born. Creates transparency by providing everyone a shared understanding of what work was completed as part of the Increment. If a Product Backlog item does not meet the Definition of Done, it cannot be released or even presented at the Sprint Review. Commitment for the Increment.",
-      "de": "Eine formale Beschreibung des Zustands des Increments, wenn es die für das Produkt erforderlichen Qualitätsmaßnahmen erfüllt. In dem Moment, in dem ein Product-Backlog-Eintrag die Definition of Done erfüllt, wird ein Increment geboren. Schafft Transparenz, indem sie allen ein gemeinsames Verständnis darüber vermittelt, welche Arbeiten als Teil des Increments abgeschlossen wurden. Wenn ein Product-Backlog-Eintrag nicht der Definition of Done entspricht, kann er weder released noch beim Sprint Review präsentiert werden. Commitment für das Increment.",
-      "fr": "Une description formelle de l'état de l'Increment lorsqu'il satisfait les mesures de qualité requises pour le produit. Dès qu'un élément du Product Backlog satisfait à la Definition of Done, il se transforme en Increment. Apporte de la transparence en permettant à chacun une compréhension commune du travail accompli dans le cadre de l'Increment. Si un élément du Product Backlog n'est pas conforme à la Definition of Done, il ne peut pas être publié ni même présenté lors de la Sprint Review. Engagement de l'Increment.",
-      "it": "Una descrizione formale dello stato dell'Increment quando questo soddisfa le metriche di qualità richieste per il prodotto. Nel momento in cui un elemento del Product Backlog soddisfa la Definition of Done, nasce un Increment. Crea trasparenza fornendo a tutti una comprensione condivisa di quale lavoro è stato completato come parte dell'Increment. Se un elemento del Product Backlog non soddisfa la Definition of Done, non può essere rilasciato e nemmeno presentato durante la Sprint Review. Impegno per l'Increment.",
-      "es": "Una descripción formal del estado del Incremento cuando cumple con las medidas de calidad requeridas para el producto. En el momento en que un elemento del Product Backlog cumple con la Definición de Hecho, se crea un Incremento. Crea transparencia al proporcionar a todos una comprensión compartida de qué trabajo se completó como parte del Incremento. Si un elemento del Product Backlog no cumple con la Definición de Hecho, no se puede liberar ni siquiera presentar en la Revisión de Sprint. Compromiso del Incremento."
-    }
-  },
-  "Product Backlog Refinement": {
-    "en": "Product Backlog Refinement",
-    "de": "Refinement des Product Backlogs",
-    "fr": "Affinement du Product Backlog",
-    "it": "Refinement del Product Backlog",
-    "es": "Refinamiento del Product Backlog",
-    "definition": {
-      "en": "The act of breaking down and further defining Product Backlog items into smaller more precise items. This is an ongoing activity to add details, such as a description, order, and size. Attributes often vary with the domain of work.",
-      "de": "Der Vorgang, durch den Product-Backlog-Einträge in kleinere, präzisere Elemente zerlegt und weiter definiert werden. Dies ist eine kontinuierliche Aktivität, wodurch weitere Details wie Beschreibung, Reihenfolge und Größe ergänzt werden. Attribute variieren oft je nach Arbeitsdomäne.",
-      "fr": "Consiste à décomposer et à définir davantage les éléments du Product Backlog en éléments plus fins et plus précis. Il s'agit d'une activité continue visant à ajouter des détails, tels qu'une description, un ordre et une taille. Les attributs varient souvent en fonction du domaine d'activité.",
-      "it": "L'atto di scomporre e definire ulteriormente gli elementi del Product Backlog in elementi più piccoli e più precisi. Si tratta di un'attività continuativa per aggiungere dettagli, come la descrizione, l'ordine e la dimensione. Gli attributi spesso variano con il dominio di lavoro.",
-      "es": "El acto de descomponer y definir aún más los elementos del Product Backlog en artículos más pequeños y precisos. Esta es una actividad en curso para agregar detalles, como una descripción, un pedido y un tamaño. Los atributos a menudo varían con el dominio del trabajo."
-    }
+    "es": "Definición de Hecho"
   },
   "Burndown Chart": {
     "en": "Burndown Chart",
     "de": "Burndown-Diagramm",
     "fr": "Graphique d'avancement",
     "it": "Grafico burndown",
-    "es": "Gráfico de burn-down",
-    "definition": {
-      "en": "A graphical representation of the amount of work remaining in a Sprint or release over time. While proven useful as a forecasting practice, it does not replace the importance of empiricism. In complex environments, what will happen is unknown; only what has already happened may be used for forward-looking decision making.",
-      "de": "Eine grafische Darstellung der verbleibenden Arbeit in einem Sprint oder Release über die Zeit. Obwohl als Prognosepraxis nützlich bewiesen, ersetzt sie nicht die Wichtigkeit der Empirie. In komplexen Umgebungen ist unbekannt, was passieren wird; nur was bereits passiert ist, kann für vorausschauende Entscheidungsfindung herangezogen werden.",
-      "fr": "Une représentation graphique de la quantité de travail restant dans un Sprint ou une release au fil du temps. Bien qu'elle se soit révélée utile comme pratique de prévision, elle ne remplace pas l'importance de l'empirisme. Dans des environnements complexes, ce qui va se passer est inconnu ; seul ce qui s'est déjà passé peut être utilisé pour la prise de décision prospective.",
-      "it": "Una rappresentazione grafica della quantità di lavoro rimanente in uno Sprint o in un rilascio nel tempo. Sebbene sia dimostrata utile come pratica di previsione, non sostituisce l'importanza dell'empirismo. In ambienti complessi, ciò che accadrà è sconosciuto; solo ciò che è già accaduto può essere utilizzato per decisioni prospective.",
-      "es": "Una representación gráfica de la cantidad de trabajo restante en un Sprint o liberación a lo largo del tiempo. Aunque se ha demostrado útil como práctica de previsión, no reemplaza la importancia del empirismo. En entornos complejos, lo que sucederá es desconocido; solo lo que ya ha sucedido puede utilizarse para la toma de decisiones prospectivas."
-    }
+    "es": "Gráfico de burn-down"
   },
   "Story Points": {
     "en": "Story Points",
     "de": "Story Points",
     "fr": "Story Points",
     "it": "Story Points",
-    "es": "Story Points",
-    "definition": {
-      "en": "A relative unit of measure for estimating the effort required to complete a Product Backlog item. Not prescribed by the Scrum Guide but commonly used by Scrum Teams. The Developers who perform the work are responsible for the sizing.",
-      "de": "Ein relatives Maß zur Schätzung des Aufwands, der zum Abschließen eines Product-Backlog-Eintrags erforderlich ist. Vom Scrum Guide nicht vorgeschrieben, aber von Scrum Teams häufig verwendet. Die Developer:innen, die die Arbeit ausführen, sind für die Größenschätzung verantwortlich.",
-      "fr": "Une unité de mesure relative pour estimer l'effort requis pour réaliser un élément du Product Backlog. Non prescrite par le Guide Scrum mais couramment utilisée par les Scrum Teams. Les Developers qui effectueront le travail sont responsables du dimensionnement.",
-      "it": "Un'unità di misura relativa per stimare lo sforzo richiesto per completare un elemento del Product Backlog. Non prescritta dalla Guida Scrum ma comunemente utilizzata dagli Scrum Team. I Developer che svolgeranno il lavoro sono responsabili della stima della dimensione.",
-      "es": "Una unidad de medida relativa para estimar el esfuerzo requerido para completar un elemento del Product Backlog. No prescrita por la Guía de Scrum pero comúnmente utilizada por los equipos Scrum. Los desarrolladores que realizarán el trabajo son responsables del tamaño."
-    }
+    "es": "Story Points"
   },
   "Impediment": {
     "en": "Impediment",
     "de": "Hindernis",
-    "fr": "Empêchement",
-    "it": "Impedimento",
-    "es": "Impedimento",
-    "definition": {
-      "en": "Any obstacle that prevents the Scrum Team from making progress toward the Sprint Goal. The Scrum Master is accountable for causing the removal of impediments to the Scrum Team's progress. Daily Scrums improve communications and identify impediments.",
-      "de": "Jedes Hindernis, das das Scrum Team daran hindert, Fortschritte in Richtung des Sprint-Ziels zu machen. Der:die Scrum Master:in ist ergebnisverantwortlich für die Beseitigung von Hindernissen für den Fortschritt des Scrum Teams. Daily Scrums verbessern die Kommunikation und identifizieren Hindernisse.",
-      "fr": "Tout obstacle qui empêche la Scrum Team de progresser vers l'Objectif de Sprint. Le Scrum Master est redevable de faire en sorte qu'il n'y ait pas d'obstacles pouvant entraver la progression de la Scrum Team. Les Daily Scrums améliorent la communication et aident à identifier les obstacles.",
-      "it": "Qualsiasi barriera che impedisce allo Scrum Team di progredire verso lo Sprint Goal. Lo Scrum Master è responsabile di causare la rimozione degli impedimenti ai progressi dello Scrum Team. I Daily Scrum migliorano le comunicazioni e identificano gli impedimenti.",
-      "es": "Cualquier obstáculo que impida al equipo Scrum progresar hacia el Objetivo Sprint. El Scrum Master es responsable de lograr la eliminación de impedimentos para el progreso del equipo Scrum. Los Daily Scrums mejoran las comunicaciones e identifican impedimentos."
-    }
-  },
-  "Empiricism": {
-    "en": "Empiricism",
-    "de": "Empirie",
-    "fr": "Empirisme",
-    "it": "Empirismo",
-    "es": "Empirismo",
-    "definition": {
-      "en": "Asserts that knowledge comes from experience and making decisions based on what is observed. Scrum is founded on empiricism and lean thinking. The three pillars of empiricism are transparency, inspection, and adaptation.",
-      "de": "Besagt, dass Wissen aus Erfahrung gewonnen wird und Entscheidungen auf der Grundlage von Beobachtungen getroffen werden. Scrum basiert auf Empirie und Lean Thinking. Die drei Säulen der Empirie sind Transparenz, Überprüfung und Anpassung.",
-      "fr": "Affirme que la connaissance provient de l'expérience et que la prise de décision s'appuie sur l'observation de faits. Scrum est fondé sur l'empirisme et la pensée Lean. Les trois piliers de l'empirisme sont la transparence, l'inspection et l'adaptation.",
-      "it": "Afferma che la conoscenza derivi dall'esperienza e dal prendere decisioni basate su ciò che si è osservato. Scrum è fondato sull'empirismo e sul pensiero Lean. I tre pilastri dell'empirismo sono trasparenza, ispezione e adattamento.",
-      "es": "Afirma que el conocimiento proviene de la experiencia y la toma de decisiones basadas en lo que se observa. Scrum se basa en el empirismo y el pensamiento Lean. Los tres pilares del empirismo son la transparencia, la inspección y la adaptación."
-    }
+    "fr": "Obstacle",
+    "it": "Impediment",
+    "es": "Impedimento"
   },
   "Transparency": {
     "en": "Transparency",
     "de": "Transparenz",
     "fr": "Transparence",
     "it": "Trasparenza",
-    "es": "Transparencia",
-    "definition": {
-      "en": "The emergent process and work must be visible to those performing the work as well as those receiving the work. Important decisions are based on the perceived state of its three formal artifacts. Artifacts that have low transparency can lead to decisions that diminish value and increase risk. Transparency enables inspection.",
-      "de": "Der sich entwickelnde Prozess und die entstehende Arbeit müssen sowohl für diejenigen sichtbar sein, die die Arbeit ausführen, als auch für diejenigen, die die Arbeit empfangen. Wichtige Entscheidungen basieren auf dem wahrgenommenen Zustand der drei formalen Artefakte. Artefakte mit wenig Transparenz können zu Entscheidungen führen, die den Wert mindern und das Risiko erhöhen. Transparenz ermöglicht Überprüfung.",
-      "fr": "Le processus et le travail émergents doivent être visibles pour ceux qui effectuent le travail ainsi que pour ceux qui le reçoivent. Les décisions importantes sont fondées sur l'état perçu de ses trois artefacts formels. Des artefacts peu transparents peuvent mener à des décisions qui diminuent la valeur et augmentent le risque. La transparence permet l'inspection.",
-      "it": "Il processo ed il lavoro emergenti devono essere visibili sia a coloro che svolgono il lavoro che a quelli che ne beneficiano. Le decisioni importanti sono basate sulla percezione dello stato dei tre artefatti formali. Artefatti con un basso livello di trasparenza possono portare a decisioni che riducono il valore ed aumentano i rischi. La trasparenza permette l'ispezione.",
-      "es": "El proceso y el trabajo emergentes deben ser visibles para aquellos que realizan el trabajo, así como para los que reciben el trabajo. Las decisiones importantes se basan en el estado percibido de sus tres artefactos formales. Los artefactos que tienen poca transparencia pueden conducir a decisiones que disminuyen el valor y aumentan el riesgo. La transparencia permite la inspección."
-    }
+    "es": "Transparencia"
   },
   "Inspection": {
     "en": "Inspection",
     "de": "Überprüfung",
     "fr": "Inspection",
     "it": "Ispezione",
-    "es": "Inspección",
-    "definition": {
-      "en": "The Scrum artifacts and the progress toward agreed goals must be inspected frequently and diligently to detect potentially undesirable variances or problems. Scrum provides cadence in the form of its five events. Inspection enables adaptation. Inspection without adaptation is considered pointless.",
-      "de": "Die Scrum-Artefakte und der Fortschritt in Richtung der vereinbarten Ziele müssen häufig und sorgfältig überprüft werden, um potenziell unerwünschte Abweichungen oder Probleme aufzudecken. Scrum bietet einen Rhythmus in Form seiner fünf Events. Überprüfung ermöglicht Anpassung. Überprüfung ohne Anpassung wird als unsinnig betrachtet.",
-      "fr": "Les artefacts Scrum et les progrès vers les objectifs convenus doivent être inspectés fréquemment et avec diligence pour détecter des écarts ou des problèmes potentiellement indésirables. Scrum fournit une cadence sous la forme de ses cinq événements. L'inspection permet l'adaptation. Une inspection sans adaptation est considérée comme infructueuse.",
-      "it": "Gli artefatti di Scrum e l'avanzamento verso gli obiettivi concordati devono essere ispezionati frequentemente e diligentemente, per rilevare deviazioni o problemi indesiderati. Scrum fornisce una cadenza sotto forma dei suoi cinque eventi. L'ispezione consente l'adattamento. Un'ispezione senza adattamento è considerata inutile.",
-      "es": "Los artefactos de Scrum y el progreso hacia objetivos acordados deben ser inspeccionados con frecuencia y diligentemente para detectar varianzas o problemas potencialmente indeseables. Scrum proporciona cadencia en forma de sus cinco eventos. La inspección permite la adaptación. La inspección sin adaptación se considera inútil."
-    }
+    "es": "Inspección"
   },
   "Adaptation": {
     "en": "Adaptation",
     "de": "Anpassung",
     "fr": "Adaptation",
     "it": "Adattamento",
-    "es": "Adaptación",
-    "definition": {
-      "en": "If any aspects of a process deviate outside acceptable limits or if the resulting product is unacceptable, the process being applied or the materials being produced must be adjusted. The adjustment must be made as soon as possible to minimize further deviation. A Scrum Team is expected to adapt the moment it learns anything new through inspection.",
-      "de": "Wenn einzelne Aspekte eines Prozesses von akzeptablen Grenzen abweichen oder wenn das resultierende Produkt nicht akzeptabel ist, müssen der angewandte Prozess oder die produzierten Ergebnisse angepasst werden. Die Anpassung muss so schnell wie möglich erfolgen, um weitere Abweichungen zu minimieren. Von einem Scrum Team wird erwartet, dass es sich in dem Moment anpasst, in dem es durch Überprüfung etwas Neues lernt.",
-      "fr": "Si certains aspects d'un processus s'écartent des limites acceptables ou si le produit résultant est inacceptable, alors le processus appliqué ou les éléments produits doivent être adaptés. L'adaptation doit être effectuée le plus rapidement possible afin de minimiser tout écart supplémentaire. Une Scrum Team doit s'adapter dès lors que l'inspection révèle quelque chose de nouveau.",
-      "it": "Se qualunque aspetto di un processo devia al di fuori dei limiti accettabili o se il prodotto risultante è inaccettabile, il processo applicato o i materiali prodotti devono essere adattati. L'adattamento deve essere effettuato il più presto possibile per ridurre al minimo ulteriori deviazioni. Ci si aspetta che uno Scrum Team si adatti nel momento in cui apprende qualcosa di nuovo attraverso l'ispezione.",
-      "es": "Si algún aspecto de un proceso se desvía fuera de los límites aceptables o si el producto resultante es inaceptable, el proceso que se está aplicando o los materiales que se producen deben ajustarse. El ajuste debe realizarse lo antes posible para minimizar la desviación adicional. Se espera que un equipo Scrum se adapte en el momento en que aprenda algo nuevo por medio de la inspección."
-    }
+    "es": "Adaptación"
   },
-  "Commitment": {
-    "en": "Commitment",
-    "de": "Commitment",
-    "fr": "Engagement",
-    "it": "Impegno",
-    "es": "Compromiso",
-    "definition": {
-      "en": "One of the Scrum Values. The Scrum Team commits to achieving its goals and to supporting each other. The decisions that are made and the steps taken should reinforce this value, not diminish or undermine it.",
-      "de": "Einer der Scrum-Werte. Das Scrum Team committet sich, seine Ziele zu erreichen und sich gegenseitig zu unterstützen. Die getroffenen Entscheidungen und unternommenen Schritte sollten diesen Wert stärken, nicht schmälern oder untergraben.",
-      "fr": "L'une des Valeurs Scrum. La Scrum Team s'engage à atteindre ses objectifs et à se soutenir mutuellement. Les décisions prises et les mesures adoptées doivent renforcer cette valeur, ne pas la diminuer ni la saper.",
-      "it": "Uno dei Valori di Scrum. Lo Scrum Team si impegna a raggiungere i propri obiettivi, nonché a supportarsi reciprocamente. Le decisioni prese e i passi intrapresi devono rafforzare questo valore, non diminuirlo o minarlo.",
-      "es": "Uno de los Valores de Scrum. El equipo Scrum se compromete a lograr sus objetivos y apoyarse mutuamente. Las decisiones que se toman y las medidas adoptadas deben reforzar este valor, no disminuirlo ni socavarlo."
-    }
-  },
-  "Focus": {
-    "en": "Focus",
-    "de": "Fokus",
-    "fr": "Focus",
-    "it": "Focus",
-    "es": "Enfoque",
-    "definition": {
-      "en": "One of the Scrum Values. The primary focus is on the work of the Sprint to make the best possible progress toward these goals. The Sprint Goal provides focus for the Sprint.",
-      "de": "Einer der Scrum-Werte. Der primäre Fokus liegt auf der Arbeit des Sprints, um den bestmöglichen Fortschritt in Richtung dieser Ziele zu bewirken. Das Sprint-Ziel gibt dem Sprint Fokus.",
-      "fr": "L'une des Valeurs Scrum. Le but principal est la réalisation du Sprint pour progresser le plus possible vers ces objectifs. L'Objectif de Sprint donne le focus au Sprint.",
-      "it": "Uno dei Valori di Scrum. Il focus principale è sul lavoro oggetto dello Sprint, con l'obiettivo di ottenere il miglior progresso possibile verso questi traguardi. Lo Sprint Goal fornisce focus allo Sprint.",
-      "es": "Uno de los Valores de Scrum. El enfoque principal es el trabajo del Sprint para hacer el mejor progreso posible hacia estos objetivos. El Objetivo Sprint proporciona enfoque para el Sprint."
-    }
-  },
-  "Openness": {
-    "en": "Openness",
-    "de": "Offenheit",
-    "fr": "Ouverture",
-    "it": "Apertura",
-    "es": "Apertura",
-    "definition": {
-      "en": "One of the Scrum Values. The Scrum Team and its stakeholders are open about the work and the challenges. Transparency requires openness.",
-      "de": "Einer der Scrum-Werte. Das Scrum Team und dessen Stakeholder:innen sind offen in Bezug auf die Arbeit und die Herausforderungen. Transparenz erfordert Offenheit.",
-      "fr": "L'une des Valeurs Scrum. La Scrum Team et ses parties prenantes sont ouvertes sur le travail et les défis à relever. La transparence nécessite l'ouverture.",
-      "it": "Uno dei Valori di Scrum. Lo Scrum Team e gli stakeholder sono aperti nei confronti del lavoro e delle sfide. La trasparenza richiede apertura.",
-      "es": "Uno de los Valores de Scrum. El equipo Scrum y sus partes interesadas están abiertos sobre el trabajo y los desafíos. La transparencia requiere apertura."
-    }
-  },
-  "Respect": {
-    "en": "Respect",
-    "de": "Respekt",
-    "fr": "Respect",
-    "it": "Rispetto",
-    "es": "Respeto",
-    "definition": {
-      "en": "One of the Scrum Values. Scrum Team members respect each other to be capable, independent people, and are respected as such by the people with whom they work.",
-      "de": "Einer der Scrum-Werte. Die Mitglieder des Scrum Teams respektieren sich gegenseitig als fähige, unabhängige Personen und werden als solche auch von den Menschen, mit denen sie zusammenarbeiten, respektiert.",
-      "fr": "L'une des Valeurs Scrum. Les membres de la Scrum Team se respectent mutuellement pour être des personnes compétentes et indépendantes et sont respectés en tant que tels par les personnes avec lesquelles ils travaillent.",
-      "it": "Uno dei Valori di Scrum. I membri dello Scrum Team si rispettano reciprocamente come persone capaci ed indipendenti e vengono a loro volta rispettati come tali dalle persone con le quali lavorano.",
-      "es": "Uno de los Valores de Scrum. Los miembros del equipo Scrum se respetan mutuamente como personas capaces e independientes, y son respetados como tales por las personas con las que trabajan."
-    }
-  },
-  "Courage": {
-    "en": "Courage",
-    "de": "Mut",
-    "fr": "Courage",
-    "it": "Coraggio",
-    "es": "Coraje",
-    "definition": {
-      "en": "One of the Scrum Values. The Scrum Team members have the courage to do the right thing, to work on tough problems.",
-      "de": "Einer der Scrum-Werte. Die Mitglieder des Scrum Teams haben den Mut, das Richtige zu tun: an schwierigen Problemen zu arbeiten.",
-      "fr": "L'une des Valeurs Scrum. Les membres de la Scrum Team ont le courage de mener les bonnes actions et de travailler sur des problèmes difficiles.",
-      "it": "Uno dei Valori di Scrum. I membri dello Scrum Team hanno il coraggio di fare la cosa giusta e di lavorare su problemi difficili.",
-      "es": "Uno de los Valores de Scrum. Los miembros del equipo Scrum tienen el valor de hacer lo correcto y de trabajar en problemas complejos."
-    }
-  },
-  "Self-Management": {
-    "en": "Self-Management",
-    "de": "Selbstmanagement",
-    "fr": "Autogestion",
-    "it": "Autogestione",
-    "es": "Autogestión",
-    "definition": {
-      "en": "Scrum Teams are self-managing, meaning they internally decide who does what, when, and how. The 2020 Scrum Guide emphasizes a self-managing Scrum Team over the previous concept of self-organizing teams.",
-      "de": "Scrum Teams managen sich selbst, d.h. sie entscheiden intern, wer was wann und wie macht. Der Scrum Guide 2020 betont ein selbstmanagendes Scrum Team gegenüber dem früheren Konzept der sich selbst organisierenden Teams.",
-      "fr": "Les Scrum Teams sont autogérées, elles décident en interne qui fait quoi, quand et comment. Le Guide Scrum 2020 met l'accent sur une Scrum Team autogérée par rapport au concept précédent d'équipe auto-organisée.",
-      "it": "Gli Scrum Team sono autogestiti, cioè decidono al loro interno chi fa cosa, quando e come. La Guida Scrum 2020 enfatizza uno Scrum Team autogestito rispetto al concetto precedente di team auto-organizzato.",
-      "es": "Los equipos Scrum son autogestionados, lo que significa que internamente deciden quién hace qué, cuándo y cómo. La Guía de Scrum 2020 enfatiza un equipo Scrum autogestionado frente al concepto anterior de equipo autoorganizado."
-    }
-  },
-  "Cross-Functional": {
-    "en": "Cross-Functional",
-    "de": "Interdisziplinär",
-    "fr": "Pluridisciplinaire",
-    "it": "Cross-funzionale",
-    "es": "Multifuncional",
-    "definition": {
-      "en": "Scrum Teams are cross-functional, meaning the members have all the skills necessary to create value each Sprint.",
-      "de": "Scrum Teams sind interdisziplinär, d.h. die Mitglieder verfügen über alle Fähigkeiten, die erforderlich sind, um in jedem Sprint Wert zu schaffen.",
-      "fr": "Les Scrum Teams sont pluridisciplinaires, leurs membres ont toutes les compétences nécessaires pour créer de la valeur à chaque Sprint.",
-      "it": "Gli Scrum Team sono cross-funzionali, ovvero i membri del team hanno tutte le competenze necessarie a creare valore ad ogni Sprint.",
-      "es": "Los equipos Scrum son multifuncionales, lo que significa que los miembros tienen todas las habilidades necesarias para crear valor en cada Sprint."
-    }
-  },
-  "Stakeholders": {
-    "en": "Stakeholders",
-    "de": "Stakeholder",
-    "fr": "Parties prenantes",
-    "it": "Stakeholder",
-    "es": "Partes interesadas",
-    "definition": {
-      "en": "People external to the Scrum Team with an interest in the product. Those wanting to change the Product Backlog can do so by trying to convince the Product Owner. Key stakeholders are invited to the Sprint Review.",
-      "de": "Personen außerhalb des Scrum Teams mit einem Interesse am Produkt. Diejenigen, die das Product Backlog ändern möchten, können dies tun, indem sie versuchen, den:die Product Owner:in zu überzeugen. Wichtige Stakeholder:innen werden zum Sprint Review eingeladen.",
-      "fr": "Personnes externes à la Scrum Team ayant un intérêt dans le produit. Ceux qui souhaitent modifier le Product Backlog peuvent le faire en essayant de convaincre le Product Owner. Les parties prenantes clés sont invitées à la Sprint Review.",
-      "it": "Persone esterne allo Scrum Team con un interesse nel prodotto. Coloro che volessero modificare il Product Backlog possono farlo provando a convincere il Product Owner. Gli stakeholder chiave sono invitati alla Sprint Review.",
-      "es": "Personas externas al equipo Scrum con un interés en el producto. Aquellos que deseen cambiar el Product Backlog pueden hacerlo intentando convencer al Product Owner. Las partes interesadas clave son invitadas a la Revisión de Sprint."
-    }
-  },
-  "Timebox": {
-    "en": "Timebox",
-    "de": "Timebox",
-    "fr": "Timebox",
-    "it": "Timebox",
-    "es": "Tiempo establecido",
-    "definition": {
-      "en": "A maximum duration for a Scrum event. Sprint Planning: max 8 hours (one-month Sprint). Daily Scrum: 15 minutes. Sprint Review: max 4 hours (one-month Sprint). Sprint Retrospective: max 3 hours (one-month Sprint). For shorter Sprints, events are usually shorter.",
-      "de": "Eine maximale Dauer für ein Scrum Event. Sprint Planning: max 8 Stunden (einmonatiger Sprint). Daily Scrum: 15 Minuten. Sprint Review: max 4 Stunden (einmonatiger Sprint). Sprint Retrospective: max 3 Stunden (einmonatiger Sprint). Bei kürzeren Sprints sind die Events in der Regel kürzer.",
-      "fr": "Une durée maximale pour un événement Scrum. Sprint Planning : max 8 heures (Sprint d'un mois). Daily Scrum : 15 minutes. Sprint Review : max 4 heures (Sprint d'un mois). Sprint Retrospective : max 3 heures (Sprint d'un mois). Pour les Sprints plus courts, les événements sont généralement plus courts.",
-      "it": "Una durata massima per un evento Scrum. Sprint Planning: max 8 ore (Sprint di un mese). Daily Scrum: 15 minuti. Sprint Review: max 4 ore (Sprint di un mese). Sprint Retrospective: max 3 ore (Sprint di un mese). Per Sprint più brevi, gli eventi sono solitamente più brevi.",
-      "es": "Una duración máxima para un evento Scrum. Sprint Planning: máximo 8 horas (Sprint de un mes). Daily Scrum: 15 minutos. Sprint Review: máximo 4 horas (Sprint de un mes). Sprint Retrospective: máximo 3 horas (Sprint de un mes). Para Sprints más cortos, los eventos suelen ser más cortos."
-    }
-  },
-  "Product": {
-    "en": "Product",
-    "de": "Produkt",
-    "fr": "Produit",
-    "it": "Prodotto",
-    "es": "Producto",
-    "definition": {
-      "en": "A vehicle to deliver value. It has a clear boundary, known stakeholders, well-defined users or customers. A product could be a service, a physical product, or something more abstract.",
-      "de": "Ein Instrument, um Wert zu liefern. Es hat klare Grenzen, bekannte Stakeholder:innen, eindeutig definierte Benutzer:innen oder Kund:innen. Ein Produkt kann eine Dienstleistung, ein physisches Produkt oder etwas Abstrakteres sein.",
-      "fr": "Un vecteur de valeur. Il a une limite claire, des parties prenantes connues, des utilisateurs ou des clients bien définis. Un produit peut être un service, un produit physique ou quelque chose de plus abstrait.",
-      "it": "Un veicolo per fornire valore. Ha dei chiari contorni, degli stakeholder identificati, degli utenti o dei clienti ben definiti. Un prodotto può essere un servizio, un prodotto fisico o qualcosa di più astratto.",
-      "es": "Un vehículo para entregar valor. Tiene un límite claro, partes interesadas conocidas, usuarios o clientes bien definidos. Un producto podría ser un servicio, un producto físico o algo más abstracto."
-    }
-  },
-  "Lean Thinking": {
-    "en": "Lean Thinking",
-    "de": "Lean Thinking",
-    "fr": "Pensée Lean",
-    "it": "Pensiero Lean",
-    "es": "Pensamiento Lean",
-    "definition": {
-      "en": "Reduces waste and focuses on the essentials. One of the two foundations of Scrum, along with empiricism.",
-      "de": "Reduziert Verschwendung und fokussiert auf das Wesentliche. Eines der beiden Fundamente von Scrum, neben der Empirie.",
-      "fr": "Réduit le gaspillage et se focalise sur l'essentiel. L'un des deux fondements de Scrum, avec l'empirisme.",
-      "it": "Riduce gli sprechi e si focalizza su ciò che è essenziale. Uno dei due fondamenti di Scrum, insieme all'empirismo.",
-      "es": "Reduce los desperdicios y se centra en lo esencial. Uno de los dos fundamentos de Scrum, junto con el empirismo."
-    }
+  "Artifact": {
+    "en": "Artifact",
+    "de": "Artefakt",
+    "fr": "Artefact",
+    "it": "Artefatto",
+    "es": "Artefacto"
   }
 }

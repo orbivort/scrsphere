@@ -5,7 +5,7 @@
   },
   "capabilities": {
     "agileCeremonies": "Cerimonie Agile",
-    "agileCeremoniesDesc": "Facilitare Daily Scrum, Review e Retrospezione",
+    "agileCeremoniesDesc": "Facilitare Daily Scrum, Review e Retrospective",
     "progressTracking": "Monitoraggio Progresso",
     "progressTrackingDesc": "Seguire il progresso con dashboard e report in tempo reale",
     "sprintPlanning": "Sprint Planning",

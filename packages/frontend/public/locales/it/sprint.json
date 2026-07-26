@@ -103,7 +103,7 @@
   },
   "completeSprint": {
     "cancel": "Annulla",
-    "cannotCompleteWithImpediments": "Impossibile completare sprint con impedimenti outstanding. Risolvi o chiudi tutti gli impedimenti prima.",
+    "cannotCompleteWithImpediments": "Impossibile completare sprint con Impediments outstanding. Risolvi o chiudi tutti gli Impediments prima.",
     "cannotCompleteWithIncomplete": "Impossibile completare sprint con task incompleti. Completa tutti i task o restituiscili al backlog.",
     "closeModal": "Chiudi modal",
     "completeSprintDisabled": "Completa Sprint (Disabilitato)",
@@ -117,9 +117,9 @@
     "manageBacklog": "Gestisci Backlog",
     "moreImpediments": "+{{count}} altro impedimento(s)",
     "open": "Da fare",
-    "outstandingImpediments": "Impedimenti Outstanding",
+    "outstandingImpediments": "Impediments Outstanding",
     "outstandingImpedimentsDetails": "Hai {{count}} impedimento(s) outstanding che devono essere risolti o chiusi prima di completare lo sprint.",
-    "outstandingImpedimentsList": "Impedimenti Outstanding",
+    "outstandingImpedimentsList": "Impediments Outstanding",
     "proceedToDodVerification": "Procedi a Verifica DoD",
     "proceedToDodVerificationTitle": "Procedi a verifica Definition of Done",
     "processing": "Processando...",
@@ -131,7 +131,7 @@
     "timeboxEnded": "Timebox terminato",
     "title": "Completa Sprint",
     "totalTasks": "Tasks Totali:",
-    "viewImpediments": "Vedi Impedimenti"
+    "viewImpediments": "Vedi Impediments"
   },
   "daysRemaining_one": "{{count}} giorno rimanente",
   "daysRemaining_other": "{{count}} giorni rimanenti",
@@ -513,7 +513,7 @@
       "unsavedCapacityMessage": "Hai modifiche non salvate alla capacita del team. Sei sicuro di volerle scartare?",
       "unsavedCapacityTitle": "Modifiche Capacita Non Salvate"
     },
-    "title": "Pianificazione Sprint",
+    "title": "Sprint Planning",
     "toast": {
       "addedToSprint": "\"{{title}}\" aggiunto al sprint backlog{{taskInfo}}",
       "alreadyInSprint": "\"{{title}}\" e gia nel sprint backlog",

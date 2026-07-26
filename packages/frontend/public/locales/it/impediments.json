@@ -56,13 +56,13 @@
   },
   "emptyState": {
     "clearFilter": "Cancella Filtro",
-    "noFilterImpedimentsDescription": "Non ci sono impedimenti {{status}} in \"{{sprintName}}\". Prova a selezionare un filtro di stato diverso.",
+    "noFilterImpedimentsDescription": "Non ci sono Impediments {{status}} in \"{{sprintName}}\". Prova a selezionare un filtro di stato diverso.",
     "noImpedimentsDescription": "Ottimo! Nessun impedimento segnalato per lo sprint attivo \"{{sprintName}}\".",
     "noImpedimentsForFilter": "Nessun Impedimento {{status}}",
     "noImpedimentsForSprint": "Nessun Impedimento per {{sprintName}}"
   },
   "errorState": {
-    "failedImpediments": "Fallimento caricamento impedimenti. Riprova.",
+    "failedImpediments": "Fallimento caricamento Impediments. Riprova.",
     "failedSprint": "Fallimento caricamento informazioni sprint attivo. Riprova.",
     "retry": "Riprova",
     "title": "Errore Caricamento Dati"
@@ -90,7 +90,7 @@
     "resolved": "Risolto"
   },
   "subtitle": "{{sprintName}} - Traccia e risolvi i blocchi che affliggono il team",
-  "title": "Impedimenti",
+  "title": "Impediments",
   "toast": {
     "created": "Impedimento creato con successo",
     "deleted": "Impedimento eliminato con successo",

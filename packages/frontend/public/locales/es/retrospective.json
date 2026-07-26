@@ -29,7 +29,7 @@
   },
   "backAriaLabel": "Volver a la lista de Retrospectivas",
   "backToRetrospectives": "Volver a Retrospectivas",
-  "backlogHint": "Este elemento estará presente en la página Product Backlog para acción.",
+  "backlogHint": "Este elemento estará presente en la página Pila del producto para acción.",
   "categories": {
     "didntGoWell": {
       "placeholder": "Qué desafíos o problemas enfrentó?",
@@ -155,7 +155,7 @@
     "completion": "Completación",
     "duration": "Duración",
     "goal": "Objetivo Sprint:",
-    "includedPbis": "Product Backlog Items incluidos",
+    "includedPbis": "Pila del producto Items incluidos",
     "items": "elementos",
     "itemsCount": "{{count}} elementos",
     "moreItems": "+{{count}} más elementos",
@@ -165,7 +165,7 @@
       "SHOULD_HAVE": "Debería tener",
       "WONT_HAVE": "No tendrá"
     },
-    "productBacklog": "Product Backlog",
+    "productBacklog": "Pila del producto",
     "statusLabels": {
       "DONE": "Hecho",
       "IN_PROGRESS": "En progreso",
@@ -189,7 +189,7 @@
   "successModal": {
     "close": "Cerrar",
     "closeDialog": "Cerrar diálogo",
-    "message": "Sprint Retrospective completada exitosamente!",
+    "message": "Retrospectiva del Sprint completada exitosamente!",
     "title": "Éxito"
   },
   "summary": {

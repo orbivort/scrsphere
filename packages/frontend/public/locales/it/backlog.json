@@ -117,12 +117,12 @@
         },
         {
           "title": "Notifiche email",
-          "description": "Configurare le notifiche email per l'inizio dello sprint, la fine dello sprint e gli impedimenti critici",
+          "description": "Configurare le notifiche email per l'inizio dello sprint, la fine dello sprint e gli Impediments critici",
           "storyPoints": 3,
           "businessValue": 5,
           "priority": "Potrebbe avere",
           "labels": "notifiche, email, backend",
-          "acceptanceCriteria": "1. Email inviata all'inizio dello sprint\n2. Email inviata alla fine dello sprint\n3. Email inviata per impedimenti critici\n4. Gli utenti possono disiscriversi"
+          "acceptanceCriteria": "1. Email inviata all'inizio dello sprint\n2. Email inviata alla fine dello sprint\n3. Email inviata per Impediments critici\n4. Gli utenti possono disiscriversi"
         }
       ],
       "filename": "modello-importazione-backlog.csv",
@@ -579,7 +579,7 @@
     "targetDateTooFar": "La data target è a più di 1 anno. Considera di suddividerla in milestone più piccole.",
     "targetDescription": "Target",
     "teamIdRequired": "L'ID del team è richiesto. Seleziona prima un team.",
-    "title": "Obiettivi del prodotto",
+    "title": "Product Goals",
     "titleHelpPanelAvoidLabel": "Evitare",
     "titleHelpPanelAvoidText": "Miglioramenti app",
     "titleHelpPanelGoodLabel": "Buono",

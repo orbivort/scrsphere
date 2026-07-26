@@ -2,41 +2,41 @@
   "allStatus": "Tous les statuts",
   "card": {
     "createdFromDailyUpdate": "Cree a partir de la mise a jour quotidienne",
-    "fromDailyScrum": "De la Mêlée quotidienne",
+    "fromDailyScrum": "De la Daily Scrum",
     "owner": "Proprietaire",
     "reportedBy": "Signale par",
     "resolution": "Resolution",
     "sprint": "Sprint",
     "unknown": "Inconnu",
-    "viewDetailsAria": "Voir les details pour l'empêchement : {{title}}. Statut : {{status}}"
+    "viewDetailsAria": "Voir les details pour l'obstacle : {{title}}. Statut : {{status}}"
   },
   "createModal": {
     "activeSprint": "(Actif)",
-    "createImpediment": "Creer l'empêchement",
+    "createImpediment": "Creer l'obstacle",
     "creating": "Creation...",
     "descriptionLabel": "Description",
-    "descriptionPlaceholder": "Fournir des details sur l'empêchement",
+    "descriptionPlaceholder": "Fournir des details sur l'obstacle",
     "sprintLabel": "Sprint",
     "subtitle": "Documenter les bloquants affectant la progression de votre equipe",
-    "title": "Signaler un nouvel empêchement",
+    "title": "Signaler un nouvel obstacle",
     "titleLabel": "Titre",
-    "titlePlaceholder": "Description breve de l'empêchement"
+    "titlePlaceholder": "Description breve de l'obstacle"
   },
   "deleteModal": {
     "actionWarning": "Avertissement d'action",
-    "deleteImpediment": "Supprimer l'empêchement",
+    "deleteImpediment": "Supprimer l'obstacle",
     "deleting": "Suppression...",
     "item": "Element :",
     "statusLabel": "Statut :",
     "subtitle": "Cette action est permanente et ne peut pas etre annulee",
-    "title": "Supprimer l'empêchement",
+    "title": "Supprimer l'obstacle",
     "unknownItem": "Element inconnu",
-    "warningText": "Vous allez supprimer definitivement cet empêchement. Cette action ne peut pas etre annulee. Toutes les donnees associees seront definitivement supprimees."
+    "warningText": "Vous allez supprimer definitivement cet obstacle. Cette action ne peut pas etre annulee. Toutes les donnees associees seront definitivement supprimees."
   },
   "detailModal": {
     "cancel": "Cancel",
     "close": "Close",
-    "createdFromDailyScrum": "Cree a partir de la mise a jour de la Mêlée quotidienne",
+    "createdFromDailyScrum": "Cree a partir de la mise a jour de la Daily Scrum",
     "createdLabel": "Cree",
     "deleteLabel": "Supprimer",
     "deleting": "Suppression...",
@@ -44,31 +44,31 @@
     "ownerLabel": "Proprietaire",
     "reportedByLabel": "Signale par",
     "resolutionLabel": "Resolution",
-    "resolutionPlaceholder": "Decrivez comment cet empêchement a ete resolu...",
+    "resolutionPlaceholder": "Decrivez comment cet obstacle a ete resolu...",
     "saveResolution": "Sauvegarder la resolution",
     "saving": "Sauvegarde...",
     "sprintLabel": "Sprint",
     "statusLabel": "Statut",
-    "subtitle": "Voir et gerer les informations de l'empêchement",
-    "title": "Details de l'empêchement",
+    "subtitle": "Voir et gerer les informations de l'obstacle",
+    "title": "Details de l'obstacle",
     "titleLabel": "Titre",
     "viewDailyUpdate": "Voir la mise a jour quotidienne"
   },
   "emptyState": {
     "clearFilter": "Effacer le filtre",
-    "noFilterImpedimentsDescription": "Il n'y a pas d'empêchements {{status}} dans \"{{sprintName}}\". Essayez de selectionner un autre filtre de statut.",
-    "noImpedimentsDescription": "Super ! Aucun empêchement signale pour le sprint actif \"{{sprintName}}\".",
-    "noImpedimentsForFilter": "Aucun empêchement {{status}}",
-    "noImpedimentsForSprint": "Aucun empêchement pour {{sprintName}}"
+    "noFilterImpedimentsDescription": "Il n'y a pas d'obstacles {{status}} dans \"{{sprintName}}\". Essayez de selectionner un autre filtre de statut.",
+    "noImpedimentsDescription": "Super ! Aucun obstacle signale pour le sprint actif \"{{sprintName}}\".",
+    "noImpedimentsForFilter": "Aucun obstacle {{status}}",
+    "noImpedimentsForSprint": "Aucun obstacle pour {{sprintName}}"
   },
   "errorState": {
-    "failedImpediments": "Impossible de charger les empêchements. Veuillez reessayer.",
+    "failedImpediments": "Impossible de charger les obstacles. Veuillez reessayer.",
     "failedSprint": "Impossible de charger les informations du sprint actif. Veuillez reessayer.",
     "retry": "Reessayer",
     "title": "Erreur de chargement des donnees"
   },
   "filterByStatus": "Filtrer par statut",
-  "reportImpediment": "Signaler un empêchement",
+  "reportImpediment": "Signaler un obstacle",
   "stats": {
     "CLOSED": "Ferme",
     "IN_PROGRESS": "En cours",
@@ -90,19 +90,19 @@
     "resolved": "Resolu"
   },
   "subtitle": "{{sprintName}} - Suivre et resoudre les bloquants affectant l'equipe",
-  "title": "Empêchements",
+  "title": "Obstacles",
   "toast": {
-    "created": "Empêchement cree avec succes",
-    "deleted": "Empêchement supprime avec succes",
-    "failedCreate": "Impossible de creer l'empêchement. Veuillez reessayer.",
-    "failedDelete": "Impossible de supprimer l'empêchement. Veuillez reessayer.",
-    "failedUpdate": "Impossible de mettre a jour l'empêchement. Veuillez reessayer.",
+    "created": "Obstacle cree avec succes",
+    "deleted": "Obstacle supprime avec succes",
+    "failedCreate": "Impossible de creer l'obstacle. Veuillez reessayer.",
+    "failedDelete": "Impossible de supprimer l'obstacle. Veuillez reessayer.",
+    "failedUpdate": "Impossible de mettre a jour l'obstacle. Veuillez reessayer.",
     "noActiveSprint": "Aucun sprint actif trouve. Veuillez demarrer un sprint d'abord.",
     "teamIdRequired": "L'ID de l'equipe est requis. Veuillez selectionner une equipe d'abord.",
-    "updated": "Empêchement mis a jour avec succes"
+    "updated": "Obstacle mis a jour avec succes"
   },
   "unsavedModal": {
-    "message": "Vous avez des modifications non sauvegardees dans le formulaire d'empêchement. Etes-vous sur de vouloir les supprimer?",
+    "message": "Vous avez des modifications non sauvegardees dans le formulaire d'obstacle. Etes-vous sur de vouloir les supprimer?",
     "title": "Modifications non sauvegardees"
   },
   "validation": {

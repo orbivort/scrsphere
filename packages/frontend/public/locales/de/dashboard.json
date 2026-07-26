@@ -92,9 +92,9 @@
   "openImpediments": "Offene Hindernisse",
   "quickActions": {
     "addBacklogItem": "Backlog-Element hinzufügen",
-    "createIncrement": "Inkrement erstellen",
+    "createIncrement": "Increment erstellen",
     "reportImpediment": "Hindernis melden",
-    "startSprintPlanning": "Sprint-Planung starten",
+    "startSprintPlanning": "Sprint Planning starten",
     "submitDailyUpdate": "Tägliches Update einreichen",
     "title": "Schnellaktionen",
     "viewSprintBoard": "Sprint-Board anzeigen"

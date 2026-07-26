@@ -1,11 +1,11 @@
 {
   "activeImpediments": {
-    "title": "Empêchements actifs",
-    "trackAsImpediment": "Suivre comme empêchement",
+    "title": "Obstacles actifs",
+    "trackAsImpediment": "Suivre comme obstacle",
     "tracked": "Suivi",
-    "trackedImpediment": "Empêchement suivi",
-    "untrackedImpediment": "Empêchement non suivi",
-    "viewAllImpediments": "Voir tous les {{count}} empêchements",
+    "trackedImpediment": "Obstacle suivi",
+    "untrackedImpediment": "Obstacle non suivi",
+    "viewAllImpediments": "Voir tous les {{count}} obstacles",
     "viewDetails": "Voir les details"
   },
   "aria": {
@@ -14,8 +14,8 @@
     "closeDialog": "Fermer le dialogue",
     "closeForm": "Fermer le formulaire",
     "dailyUpdateAriaLabel": "Mise a jour quotidienne de {{name}}. {{expandAction}}.",
-    "impedimentStatus": "Statut de l'empêchement : {{status}}",
-    "trackedAsFormalImpediment": "Suivi comme empêchement formel",
+    "impedimentStatus": "Statut de l'obstacle : {{status}}",
+    "trackedAsFormalImpediment": "Suivi comme obstacle formel",
     "viewMode": "Mode d'affichage"
   },
   "datePicker": {
@@ -36,9 +36,9 @@
   },
   "form": {
     "cancel": "Annuler",
-    "impedimentHint": "Cet empêchement sera suivi et peut etre promu en enregistrement formel d'empêchement",
-    "impedimentLabel": "Des empêchements? (optionnel)",
-    "impedimentPlaceholder": "Decrivez tous les bloquants ou empêchements...",
+    "impedimentHint": "Cet obstacle sera suivi et peut etre promu en enregistrement formel d'obstacle",
+    "impedimentLabel": "Des obstacles? (optionnel)",
+    "impedimentPlaceholder": "Decrivez tous les bloquants ou obstacles...",
     "submitting": "Soumission...",
     "todayLabel": "Que ferez-vous aujourd'hui pour aider l'equipe a atteindre l'Objectif de Sprint?",
     "todayPlaceholder": "Decrivez ce que vous prevoyez de faire aujourd'hui...",
@@ -67,19 +67,19 @@
     "teamUpdates": "Loading team updates..."
   },
   "promoteModal": {
-    "createImpediment": "Creer l'empêchement",
+    "createImpediment": "Creer l'obstacle",
     "creating": "Creation...",
     "descriptionLabel": "Description",
-    "descriptionPlaceholder": "Description detaillee de l'empêchement",
+    "descriptionPlaceholder": "Description detaillee de l'obstacle",
     "fromUpdateBy": "De la mise a jour quotidienne de:",
-    "originalImpedimentText": "Texte original de l'empêchement:",
+    "originalImpedimentText": "Texte original de l'obstacle:",
     "priority": "Priorite",
     "priorityHigh": "Haute",
     "priorityLow": "Basse",
     "priorityMedium": "Moyenne",
-    "title": "Creer un empêchement a partir de la mise a jour quotidienne",
+    "title": "Creer un obstacle a partir de la mise a jour quotidienne",
     "titleLabel": "Titre",
-    "titlePlaceholder": "Titre bref pour l'empêchement"
+    "titlePlaceholder": "Titre bref pour l'obstacle"
   },
   "quickDates": {
     "today": "Aujourd'hui",
@@ -103,7 +103,7 @@
     "viewSprintBoard": "Voir le sprint board"
   },
   "stats": {
-    "impediments": "Empêchements",
+    "impediments": "Obstacles",
     "participation": "Participation",
     "pending": "En attente",
     "submitted": "Soumis"
@@ -117,15 +117,15 @@
     "meetings": "Reunions",
     "review": "Revue"
   },
-  "title": "Mêlée quotidienne",
+  "title": "Daily Scrum",
   "toast": {
     "allSubmitted": "Tous les membres de l'équipe ont soumis leurs mises à jour",
-    "failedCreateImpediment": "Impossible de creer l'empêchement. Veuillez reessayer.",
+    "failedCreateImpediment": "Impossible de creer l'obstacle. Veuillez reessayer.",
     "failedSendReminder": "Impossible d'envoyer le rappel. Veuillez reessayer.",
-    "impedimentCreated": "Empêchement cree avec succes!",
+    "impedimentCreated": "Obstacle cree avec succes!",
     "networkError": "Une erreur reseau s'est produite. Verifiez votre connexion et reessayez.",
     "noPendingUpdates": "Aucune mise à jour en attente",
-    "noPermissionCreateImpediments": "Vous n'avez pas la permission de creer des empêchements.",
+    "noPermissionCreateImpediments": "Vous n'avez pas la permission de creer des obstacles.",
     "noPermissionReminders": "Vous n'avez pas la permission d'envoyer des rappels.",
     "offline": "Vous semblez etre hors ligne. Verifiez votre connexion internet et reessayez.",
     "reminderSent": "Rappel envoyé !",
@@ -138,19 +138,19 @@
     "updateSubmitted": "Mise a jour soumise avec succes!"
   },
   "unsavedModal": {
-    "message": "Vous avez des modifications non sauvegardees dans le formulaire d'empêchement. Etes-vous sur de vouloir les supprimer?",
+    "message": "Vous avez des modifications non sauvegardees dans le formulaire d'obstacle. Etes-vous sur de vouloir les supprimer?",
     "title": "Modifications non sauvegardees"
   },
   "updateCard": {
     "clickToCollapse": "Cliquer pour reduire",
     "clickToExpand": "Cliquer pour developper",
-    "impediment": "Empêchement",
+    "impediment": "Obstacle",
     "today": "Aujourd'hui",
-    "trackAsFormalImpediment": "Suivre comme empêchement formel",
-    "trackAsImpediment": "Suivre comme empêchement",
+    "trackAsFormalImpediment": "Suivre comme obstacle formel",
+    "trackAsImpediment": "Suivre comme obstacle",
     "tracked": "(Suivi)",
-    "viewImpediment": "Voir l'empêchement",
-    "viewImpedimentDetails": "Voir les details de l'empêchement",
+    "viewImpediment": "Voir l'obstacle",
+    "viewImpedimentDetails": "Voir les details de l'obstacle",
     "yesterday": "Hier"
   },
   "validation": {

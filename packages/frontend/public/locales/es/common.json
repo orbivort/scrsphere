@@ -248,8 +248,8 @@
   },
   "error": {
     "boundary": {
-      "description": "Ocurrió un error inesperado. Puede intentar nuevamente o volver al panel de control.",
-      "goHome": "Ir al panel de control",
+      "description": "Ocurrió un error inesperado. Puede intentar nuevamente o volver al Tablero.",
+      "goHome": "Ir al Tablero",
       "retry": "Intentar nuevamente",
       "title": "Algo salió mal"
     },
@@ -363,15 +363,16 @@
   "minLabel": "min {{min}}",
   "nav": {
     "activeSprint": "Sprint activo",
-    "dailyScrum": "Daily Scrum",
-    "dashboard": "Panel de control",
+    "dailyScrum": "Scrum diario",
+    "dashboard": "Tablero",
     "impediments": "Impedimentos",
     "increments": "Incrementos",
     "notifications": "Notificaciones",
-    "productBacklog": "Product Backlog",
-    "productGoals": "Objetivos del Producto",
+    "productBacklog": "Pila del producto",
+    "productGoals": "Objetivos del producto",
     "reports": "Informes",
     "retrospective": "Retrospectiva",
+    "retrospectives": "Retrospectivas",
     "settings": {
       "data": "Datos",
       "privacyData": "Privacidad y datos",
@@ -382,7 +383,7 @@
     },
     "settingsLabel": "Configuración",
     "sprintPlanning": "Planificación de Sprint",
-    "sprintReview": "Revisión de Sprint",
+    "sprintReview": "Revisión del Sprint",
     "team": "Equipo"
   },
   "next": "Siguiente",

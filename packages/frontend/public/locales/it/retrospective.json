@@ -16,9 +16,9 @@
     "unassigned": "Non assegnato"
   },
   "ariaLabels": {
-    "columnsRegion": "Colonne di feedback della Retrospezione",
+    "columnsRegion": "Colonne di feedback della Retrospective",
     "sprintInfoRegion": "Informazioni del Sprint",
-    "summaryAriaLabel": "Riepilogo della Retrospezione"
+    "summaryAriaLabel": "Riepilogo della Retrospective"
   },
   "attendees": "partecipanti",
   "attendeesAriaLabel": "{{attended}} di {{total}} partecipanti hanno partecipato",
@@ -27,8 +27,8 @@
   "attendeesSection": {
     "title": "Partecipanti"
   },
-  "backAriaLabel": "Torna alla lista delle Retrospezioni",
-  "backToRetrospectives": "Torna alle Retrospezioni",
+  "backAriaLabel": "Torna alla lista delle Retrospectives",
+  "backToRetrospectives": "Torna alle Retrospectives",
   "backlogHint": "Questo elemento sarà presente nella pagina Product Backlog per l'azione.",
   "categories": {
     "didntGoWell": {
@@ -61,22 +61,22 @@
     "voteAriaLabel": "{{action}} per questo elemento ({{count}} voti)"
   },
   "completeRetro": {
-    "ariaLabel": "Marca Retrospezione come completata",
-    "button": "Completa Retrospezione",
+    "ariaLabel": "Marca Retrospective come completata",
+    "button": "Completa Retrospective",
     "completing": "Completando...",
-    "description": "Marca questa Retrospezione come completata per finalizzarla e prevenire ulteriori modifiche."
+    "description": "Marca questa Retrospective come completata per finalizzarla e prevenire ulteriori modifiche."
   },
   "confirmationModal": {
     "cancel": "Annulla",
-    "cannotCompleteTitle": "Impossibile completare la Retrospezione",
+    "cannotCompleteTitle": "Impossibile completare la Retrospective",
     "cannotUndo": "Questa azione non può essere annullata",
     "complete": "Completa",
-    "completeTitle": "Completa Retrospezione",
+    "completeTitle": "Completa Retrospective",
     "completing": "Completando...",
-    "confirmationQuestion": "Sei sicuro di voler markare questa Retrospezione come completata? Questa azione non può essere annullata.",
+    "confirmationQuestion": "Sei sicuro di voler markare questa Retrospective come completata? Questa azione non può essere annullata.",
     "confirmationRequired": "Conferma richiesta",
     "finalStep": "Ultimo passo",
-    "lockWarning": "Una volta completata, la Retrospezione sarà bloccata e nessuna ulteriore modifica potrà essere fatta.",
+    "lockWarning": "Una volta completata, la Retrospective sarà bloccata e nessuna ulteriore modifica potrà essere fatta.",
     "ok": "OK",
     "validationIssues": "Per favore risolvi i seguenti problemi"
   },
@@ -106,16 +106,16 @@
     "title": "Conferma Eliminazione"
   },
   "errorState": {
-    "backToRetrospectives": "Torna alle Retrospezioni",
-    "message": "La Retrospezione per questo Sprint non può essere caricata.",
+    "backToRetrospectives": "Torna alle Retrospectives",
+    "message": "La Retrospective per questo Sprint non può essere caricata.",
     "retry": "Riprova",
-    "title": "Retrospezione non trovata"
+    "title": "Retrospective non trovata"
   },
   "errors": {
     "badRequest": "Richiesta invalida. Per favore verifica il tuo input e riprova.",
     "network": "Errore di rete. Per favore verifica la tua connessione internet.",
     "notFound": "Risorsa non trovata. Potrebbe essere stata eliminata.",
-    "notLoaded": "Retrospezione non caricata. Per favore aspetta e riprova.",
+    "notLoaded": "Retrospective non caricata. Per favore aspetta e riprova.",
     "serverError": "Errore del server. Per favore riprova più tardi.",
     "unauthorized": "Non sei autorizzato a eseguire questa azione."
   },
@@ -124,16 +124,16 @@
     "completedSprint": "Sprint completato",
     "completedSprints": "Sprints completati",
     "completedSprints_plural": "Sprints completati",
-    "createRetrospective": "Crea Retrospezione",
+    "createRetrospective": "Crea Retrospective",
     "creating": "Creando...",
     "goal": "Goal:",
     "items": "elementi",
-    "loading": "Caricando Retrospezioni...",
+    "loading": "Caricando Retrospectives...",
     "retroStatus": {
-      "completed": "Retrospezione completata",
-      "draft": "Bozza Retrospezione",
-      "inProgress": "Retrospezione in corso",
-      "ready": "Pronto per Retrospezione"
+      "completed": "Retrospective completata",
+      "draft": "Bozza Retrospective",
+      "inProgress": "Retrospective in corso",
+      "ready": "Pronto per Retrospective"
     },
     "reviewed": "Reviewed",
     "statusLabels": {
@@ -143,10 +143,10 @@
       "planned": "Pianificato"
     },
     "subtitle": "Riflettere sui Sprints completati, identificare miglioramenti e seguire Action Items",
-    "title": "Sprint Retrospezioni",
-    "viewRetrospective": "Vedi Retrospezione"
+    "title": "Sprint Retrospectives",
+    "viewRetrospective": "Vedi Retrospective"
   },
-  "loading": "Caricando Retrospezione...",
+  "loading": "Caricando Retrospective...",
   "pts": "pts",
   "sprintInfo": {
     "businessDay_one": "{{count}} giorno lavorativo",
@@ -195,30 +195,30 @@
   "summary": {
     "addSubtitle": "Documenta gli insights chiave, le decisioni e gli Action Items",
     "addSummary": "+ Aggiungi Riepilogo",
-    "addSummaryAriaLabel": "Aggiungi riepilogo della Retrospezione",
-    "addTitle": "Aggiungi Riepilogo della Retrospezione",
+    "addSummaryAriaLabel": "Aggiungi riepilogo della Retrospective",
+    "addTitle": "Aggiungi Riepilogo della Retrospective",
     "approachingLimit": "Avvicinandosi al limite di caratteri",
     "cancel": "Annulla",
     "cancelAriaLabel": "Annulla modifiche del riepilogo",
     "charCounter": "{{count}}/1000 caratteri",
-    "charHelpText": "Inserisci insights chiave, decisioni e Action Items dalla Retrospezione. Minimo 10 caratteri, massimo 1000 caratteri.",
+    "charHelpText": "Inserisci insights chiave, decisioni e Action Items dalla Retrospective. Minimo 10 caratteri, massimo 1000 caratteri.",
     "editAriaLabel": "Modifica riepilogo",
-    "editSubtitle": "Aggiorna gli insights chiave e i takeaways da questa Retrospezione",
+    "editSubtitle": "Aggiorna gli insights chiave e i takeaways da questa Retrospective",
     "editSummary": "Modifica riepilogo",
-    "editTitle": "Modifica Riepilogo della Retrospezione",
+    "editTitle": "Modifica Riepilogo della Retrospective",
     "empty": "Nessun riepilogo è stato aggiunto ancora...",
-    "emptyDescription": "Nessun riepilogo è stato aggiunto ancora. Aggiungi un riepilogo per documentare insights chiave e decisioni da questa Retrospezione.",
-    "formAriaLabel": "Formulario di riepilogo della Retrospezione",
+    "emptyDescription": "Nessun riepilogo è stato aggiunto ancora. Aggiungi un riepilogo per documentare insights chiave e decisioni da questa Retrospective.",
+    "formAriaLabel": "Formulario di riepilogo della Retrospective",
     "helperText": "Riepiloga le riflessioni del team e i miglioramenti concordati",
-    "placeholder": "Scrivi un riepilogo dei risultati della Retrospezione, takeaways chiave e Action Items...",
+    "placeholder": "Scrivi un riepilogo dei risultati della Retrospective, takeaways chiave e Action Items...",
     "save": "Salva",
     "saveAriaLabel": "Salva riepilogo",
     "saving": "Salvando...",
     "summaryLabel": "Riepilogo",
-    "takeawaysLabel": "Quali erano i takeaways chiave di questa Retrospezione?",
-    "title": "Riepilogo della Retrospezione"
+    "takeawaysLabel": "Quali erano i takeaways chiave di questa Retrospective?",
+    "title": "Riepilogo della Retrospective"
   },
-  "title": "Retrospezione",
+  "title": "Retrospective",
   "toast": {
     "actionItemCreateFailed": "Impossibile creare Action Item",
     "actionItemCreated": "Action Item creato con successo",
@@ -233,8 +233,8 @@
     "participantAddFailed": "Impossibile aggiungere partecipante",
     "participantUpdateFailed": "Impossibile aggiornare partecipante",
     "removeVoteFailed": "Impossibile rimuovere voto",
-    "statusUpdateFailed": "Impossibile aggiornare stato della Retrospezione",
-    "statusUpdated": "Stato della Retrospezione aggiornato con successo",
+    "statusUpdateFailed": "Impossibile aggiornare stato della Retrospective",
+    "statusUpdated": "Stato della Retrospective aggiornato con successo",
     "summaryUpdateFailed": "Impossibile aggiornare riepilogo",
     "summaryUpdated": "Riepilogo aggiornato con successo",
     "voteFailed": "Impossibile votare"
@@ -248,11 +248,11 @@
     "noHtmlTags": "I tag HTML non sono permessi",
     "ownerRequired": "Il proprietario è richiesto",
     "participantAttendanceRequired": "Almeno un partecipante deve essere markato come presente.",
-    "participantRequired": "Almeno un partecipante deve essere aggiunto prima di completare la Retrospezione.",
+    "participantRequired": "Almeno un partecipante deve essere aggiunto prima di completare la Retrospective.",
     "summaryMaxLength": "Il riepilogo deve avere 1000 caratteri o meno",
     "summaryMinLength": "Il riepilogo deve avere almeno 10 caratteri",
     "summaryRequired": "Il riepilogo è richiesto",
-    "summaryRequiredBeforeComplete": "Il Riepilogo della Retrospezione deve essere compilato prima di completare.",
+    "summaryRequiredBeforeComplete": "Il Riepilogo della Retrospective deve essere compilato prima di completare.",
     "teamMemberAttendance": "{{name}} deve essere markato come presente.",
     "titleMaxLength": "Il titolo deve avere 200 caratteri o meno",
     "titleMinLength": "Il titolo deve avere almeno 3 caratteri",

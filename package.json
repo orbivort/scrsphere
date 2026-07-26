@@ -85,6 +85,7 @@
     "i18n:glossary": "node scripts/i18n/sync-glossary.mjs",
     "i18n:pseudo": "node scripts/i18n/pseudo-localize.mjs",
     "i18n:sort": "node scripts/i18n/sort.mjs",
+    "test:scripts": "vitest run --config scripts/vitest.config.ts",
     "audit": "pnpm audit --registry https://registry.npmjs.org/",
     "outdated": "pnpm outdated",
     "loadtest": "dotenv -e k6/.env.k6 -- node k6/scripts/validate-and-run.js k6/scripts/scenarios/normal-load.js",
@@ -123,7 +124,8 @@
     "stylelint-config-standard": "catalog:",
     "stylelint-no-unsupported-browser-features": "^8.1.1",
     "typescript": "catalog:",
-    "typescript-eslint": "catalog:"
+    "typescript-eslint": "catalog:",
+    "vitest": "catalog:"
   },
   "lint-staged": {
     "*.{ts,tsx}": [

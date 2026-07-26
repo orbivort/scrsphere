@@ -51,7 +51,7 @@
       "review": "Revue",
       "testing": "Tests"
     },
-    "dodInfo": "La Definition of Done est une description formelle de l'état de l'Incrément lorsqu'il répond aux mesures de qualité requises pour le produit. Le travail ne peut pas être considéré comme faisant partie d'un Incrément sauf s'il répond à la Definition of Done.",
+    "dodInfo": "La Definition of Done est une description formelle de l'état de l'Increment lorsqu'il répond aux mesures de qualité requises pour le produit. Le travail ne peut pas être considéré comme faisant partie d'un Increment sauf s'il répond à la Definition of Done.",
     "dorCategories": {
       "acceptance": "Acceptation",
       "clarity": "Clarté",
@@ -312,7 +312,7 @@
       "closePreviewModal": "Fermer la fenêtre d'aperçu",
       "deleteSprint": "Supprimer {{name}}"
     },
-    "backToSprintPlanning": "Retour à la planification de Sprint",
+    "backToSprintPlanning": "Retour à la Sprint Planning",
     "configuredFor": "Configuré pour {{year}}",
     "currentConfiguration": "Configuration actuelle",
     "deleteModal": {

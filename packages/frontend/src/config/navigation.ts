@@ -47,7 +47,7 @@ export const NAV_ITEMS: NavItem[] = [
   { path: '/impediments', icon: AlertTriangleIcon, labelKey: 'nav.impediments' },
   { path: '/increments', icon: PackageIcon, labelKey: 'nav.increments' },
   { path: '/sprint-review', icon: FileTextIcon, labelKey: 'nav.sprintReview' },
-  { path: '/retrospectives', icon: SearchIcon, labelKey: 'nav.retrospective' },
+  { path: '/retrospectives', icon: SearchIcon, labelKey: 'nav.retrospectives' },
   { path: '/reports', icon: TrendingUpIcon, labelKey: 'nav.reports' },
   { path: '/team', icon: UsersIcon, labelKey: 'nav.team' },
 ];

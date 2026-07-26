@@ -110,7 +110,7 @@
     "createReview": "Review erstellen",
     "creating": "Erstellen...",
     "failed": "Sprint Review konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
-    "incrementRequiredWarning": "Ein Inkrement ist erforderlich, bevor ein Sprint Review erstellt werden kann.",
+    "incrementRequiredWarning": "Ein Increment ist erforderlich, bevor ein Sprint Review erstellt werden kann.",
     "reviewDate": "Review-Datum *",
     "summary": "Zusammenfassung (Optional)",
     "summaryPlaceholder": "Geben Sie eine Zusammenfassung des Sprint Reviews ein...",
@@ -155,25 +155,25 @@
     "earlyReleaseDelivery": "Vorzeitige Freigabe",
     "includedPbis": "Enthaltene Product Backlog Items",
     "noDescription": "Keine Beschreibung",
-    "noIncrement": "Kein Inkrement verfügbar",
-    "noIncrementDescription": "Kein geliefertes Inkrement ist für dieses Sprint Review verfügbar.",
-    "noPbis": "Keine PBIs in diesem Inkrement enthalten.",
+    "noIncrement": "Kein Increment verfügbar",
+    "noIncrementDescription": "Kein geliefertes Increment ist für dieses Sprint Review verfügbar.",
+    "noPbis": "Keine PBIs in diesem Increment enthalten.",
     "notDelivered": "Nicht geliefert",
     "sprintReviewDelivery": "Sprint Review",
-    "title": "Präsentiertes Inkrement",
+    "title": "Präsentiertes Increment",
     "totalStoryPoints": "Story Points insgesamt"
   },
   "list": {
     "completedSprint": "Abgeschlossener Sprint",
     "completedSprints": "Abgeschlossene Sprints",
     "completedSprints_plural": "Abgeschlossene Sprints",
-    "createIncrement": "Inkrement erstellen",
+    "createIncrement": "Increment erstellen",
     "goal": "Ziel:",
     "loading": "Sprint Reviews werden geladen...",
     "reviewStatus": {
       "completed": "Review abgeschlossen",
       "inProgress": "Review in Bearbeitung",
-      "incrementRequired": "Inkrement erforderlich",
+      "incrementRequired": "Increment erforderlich",
       "readyForReview": "Bereit für Review"
     },
     "reviewed": "Reviewed",
@@ -183,7 +183,7 @@
       "completed": "Abgeschlossen",
       "planned": "Geplant"
     },
-    "subtitle": "Abgeschlossene Sprints reviewen, Inkremente inspizieren und Stakeholder-Feedback sammeln",
+    "subtitle": "Abgeschlossene Sprints reviewen, Increments inspizieren und Stakeholder-Feedback sammeln",
     "title": "Sprint Reviews",
     "viewDetails": "Details anzeigen",
     "viewReview": "Review anzeigen"
@@ -191,10 +191,10 @@
   "loading": "Sprint Review wird geladen...",
   "noActiveSprint": "Kein aktiver Sprint für dieses Team gefunden.",
   "noReview": {
-    "createIncrement": "Inkrement erstellen",
+    "createIncrement": "Increment erstellen",
     "createSprintReview": "Sprint Review erstellen",
-    "incrementRequired": "Inkrement erforderlich",
-    "incrementRequiredNotice": "Ein geliefertes Inkrement ist erforderlich, bevor ein Sprint Review erstellt werden kann. Bitte erstellen und liefern Sie zuerst ein Inkrement.",
+    "incrementRequired": "Increment erforderlich",
+    "incrementRequiredNotice": "Ein geliefertes Increment ist erforderlich, bevor ein Sprint Review erstellt werden kann. Bitte erstellen und liefern Sie zuerst ein Increment.",
     "message": "Für diesen Sprint wurde noch kein Sprint Review erstellt.",
     "title": "Kein Sprint Review erstellt"
   },
@@ -226,7 +226,7 @@
   "tabs": {
     "backlogAdjustments": "Backlog-Anpassungen",
     "feedback": "Feedback",
-    "increment": "Inkrement",
+    "increment": "Increment",
     "overview": "Übersicht"
   },
   "title": "Sprint Review",

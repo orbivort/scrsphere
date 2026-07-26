@@ -312,7 +312,7 @@
       "closePreviewModal": "Chiudi modale di anteprima",
       "deleteSprint": "Elimina {{name}}"
     },
-    "backToSprintPlanning": "Torna alla Pianificazione Sprint",
+    "backToSprintPlanning": "Torna alla Sprint Planning",
     "configuredFor": "Configurato per {{year}}",
     "currentConfiguration": "Configurazione attuale",
     "deleteModal": {
@@ -402,7 +402,7 @@
       "benefits": {
         "agileCeremonies": "Collabora con cerimonie agile",
         "progressTracking": "Traccia progressi con metriche in tempo reale",
-        "sprintPlanning": "Organizza il lavoro con pianificazione sprint"
+        "sprintPlanning": "Organizza il lavoro con Sprint Planning"
       },
       "clearSearchBrowse": "Cancella ricerca e visualizza tutti i team",
       "createFirstTeam": "Crea Il Tuo Primo Team",

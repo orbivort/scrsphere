@@ -27,8 +27,8 @@
   "attendeesSection": {
     "title": "Participants"
   },
-  "backAriaLabel": "Revenir à la liste des Rétrospectives",
-  "backToRetrospectives": "Retour aux Rétrospectives",
+  "backAriaLabel": "Revenir à la liste des Retrospectives",
+  "backToRetrospectives": "Retour aux Retrospectives",
   "backlogHint": "Cet élément sera présent dans la page Product Backlog pour action.",
   "categories": {
     "didntGoWell": {
@@ -143,7 +143,7 @@
       "planned": "Planifié"
     },
     "subtitle": "Réfléchir aux Sprints terminés, identifier les améliorations et suivre les Action Items",
-    "title": "Rétrospectives de Sprint",
+    "title": "Retrospectives de Sprint",
     "viewRetrospective": "Voir la Retrospective"
   },
   "loading": "Chargement de la Retrospective...",
@@ -218,7 +218,7 @@
     "takeawaysLabel": "Quels étaient les takeaways clés de cette Retrospective?",
     "title": "Résumé de la Retrospective"
   },
-  "title": "Rétrospective",
+  "title": "Retrospective",
   "toast": {
     "actionItemCreateFailed": "Impossible de créer l'Action Item",
     "actionItemCreated": "Action Item créé avec succès",

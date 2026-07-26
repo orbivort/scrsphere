@@ -93,7 +93,7 @@
     "title": "Envio Fallido"
   },
   "sprintGoal": {
-    "addInPlanning": "Agregar uno en Sprint Planning",
+    "addInPlanning": "Agregar uno en Planificación de Sprint",
     "label": "Objetivo Sprint",
     "noGoalDefined": "Sin Objetivo Sprint definido."
   },
@@ -117,7 +117,7 @@
     "meetings": "Reuniones",
     "review": "Revision"
   },
-  "title": "Daily Scrum",
+  "title": "Scrum diario",
   "toast": {
     "allSubmitted": "Todos los miembros del equipo han enviado sus actualizaciones",
     "failedCreateImpediment": "Fallo al crear impedimento. Por favor intenta de nuevo.",

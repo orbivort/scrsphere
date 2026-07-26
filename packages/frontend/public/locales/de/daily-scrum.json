@@ -93,7 +93,7 @@
     "title": "Einreichung fehlgeschlagen"
   },
   "sprintGoal": {
-    "addInPlanning": "In der Sprint-Planung hinzufugen",
+    "addInPlanning": "In der Sprint Planning hinzufugen",
     "label": "Sprint-Ziel",
     "noGoalDefined": "Kein Sprint-Ziel definiert."
   },

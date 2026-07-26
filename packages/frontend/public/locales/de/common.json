@@ -224,13 +224,13 @@
       "title": "Etwas ist schiefgelaufen"
     },
     "noActiveGoal": {
-      "action": "Zu Produktzielen",
+      "action": "Zu Produkt-Zielen",
       "description": "Bitte setzen Sie ein aktives Produktziel, bevor Sie fortfahren.",
       "title": "Kein aktives Ziel"
     },
     "noActiveSprint": {
-      "action": "Zur Sprint-Planung",
-      "description": "Starten Sie einen neuen Sprint aus der Sprint-Planung, um fortzufahren.",
+      "action": "Zum Sprint Planning",
+      "description": "Starten Sie einen neuen Sprint aus dem Sprint Planning, um fortzufahren.",
       "title": "Kein aktiver Sprint"
     },
     "noCompletedSprint": {
@@ -266,8 +266,8 @@
       "createDefinition": "Fehler beim Erstellen der Definition",
       "createGoal": "Fehler beim Erstellen des Ziels",
       "createImpediment": "Fehler beim Erstellen des Hindernisses",
-      "createIncrement": "Fehler beim Erstellen des Inkrements",
-      "createRetrospective": "Fehler beim Erstellen der Retrospektive",
+      "createIncrement": "Fehler beim Erstellen des Increments",
+      "createRetrospective": "Fehler beim Erstellen der Retrospective",
       "createReview": "Fehler beim Erstellen der Überprüfung",
       "createSprint": "Fehler beim Erstellen des Sprints",
       "createTask": "Fehler beim Erstellen der Aufgabe",
@@ -276,8 +276,8 @@
       "deleteDefinition": "Fehler beim Löschen der Definition",
       "deleteGoal": "Fehler beim Löschen des Ziels",
       "deleteImpediment": "Fehler beim Löschen des Hindernisses",
-      "deleteIncrement": "Fehler beim Löschen des Inkrements",
-      "deleteRetrospective": "Fehler beim Löschen der Retrospektive",
+      "deleteIncrement": "Fehler beim Löschen des Increments",
+      "deleteRetrospective": "Fehler beim Löschen der Retrospective",
       "deleteReview": "Fehler beim Löschen der Überprüfung",
       "deleteSprint": "Fehler beim Löschen des Sprints",
       "deleteTask": "Fehler beim Löschen der Aufgabe",
@@ -292,9 +292,9 @@
       "updateDefinition": "Fehler beim Aktualisieren der Definition",
       "updateGoal": "Fehler beim Aktualisieren des Ziels",
       "updateImpediment": "Fehler beim Aktualisieren des Hindernisses",
-      "updateIncrement": "Fehler beim Aktualisieren des Inkrements",
+      "updateIncrement": "Fehler beim Aktualisieren des Increments",
       "updateProfile": "Fehler beim Aktualisieren des Profils",
-      "updateRetrospective": "Fehler beim Aktualisieren der Retrospektive",
+      "updateRetrospective": "Fehler beim Aktualisieren der Retrospective",
       "updateReview": "Fehler beim Aktualisieren der Überprüfung",
       "updateSprint": "Fehler beim Aktualisieren des Sprints",
       "updateTask": "Fehler beim Aktualisieren der Aufgabe",
@@ -366,12 +366,13 @@
     "dailyScrum": "Daily Scrum",
     "dashboard": "Dashboard",
     "impediments": "Hindernisse",
-    "increments": "Inkremente",
+    "increments": "Increments",
     "notifications": "Benachrichtigungen",
     "productBacklog": "Product Backlog",
-    "productGoals": "Produktziele",
+    "productGoals": "Produkt-Ziele",
     "reports": "Berichte",
-    "retrospective": "Retrospektive",
+    "retrospective": "Retrospective",
+    "retrospectives": "Retrospectives",
     "settings": {
       "data": "Daten",
       "privacyData": "Datenschutz & Daten",
@@ -381,7 +382,7 @@
       "teamManagement": "Team-Verwaltung"
     },
     "settingsLabel": "Einstellungen",
-    "sprintPlanning": "Sprint-Planung",
+    "sprintPlanning": "Sprint Planning",
     "sprintReview": "Sprint Review",
     "team": "Team"
   },

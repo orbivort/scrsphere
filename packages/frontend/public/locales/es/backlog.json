@@ -211,7 +211,7 @@
     "unknownItem": "Elemento desconocido",
     "warningText": "Está a punto de eliminar permanentemente este elemento del backlog. Esta acción no se puede deshacer. Todas las tareas, comentarios e historial asociados serán eliminados permanentemente."
   },
-  "description": "Gestione y priorice los elementos de su Product Backlog",
+  "description": "Gestione y priorice los elementos de su Pila del producto",
   "editItem": {
     "acceptanceCriteriaHelp": "Requerido: Liste condiciones claras y medibles que deben cumplirse. Use viñetas o listas numeradas para múltiples criterios.",
     "acceptanceCriteriaLabel": "Criterios de aceptación",
@@ -399,7 +399,7 @@
     "positive": "Positivo",
     "question": "Pregunta",
     "suggestion": "Sugerencia",
-    "title": "Feedback de Revisión de Sprint pendiente",
+    "title": "Feedback de Revisión del Sprint pendiente",
     "updating": "Actualizando..."
   },
   "pendingRetro": {
@@ -579,7 +579,7 @@
     "targetDateTooFar": "La fecha objetivo está a más de 1 año. Considere dividir esto en hitos más pequeños.",
     "targetDescription": "Objetivo",
     "teamIdRequired": "Se requiere ID de equipo. Por favor seleccione un equipo primero.",
-    "title": "Objetivos del Producto",
+    "title": "Objetivos del producto",
     "titleHelpPanelAvoidLabel": "Evitar",
     "titleHelpPanelAvoidText": "Mejoras de la app",
     "titleHelpPanelGoodLabel": "Bueno",
@@ -652,7 +652,7 @@
     "priorityUpdated": "Prioridad actualizada exitosamente",
     "statusUpdated": "Estado actualizado exitosamente"
   },
-  "title": "Product Backlog",
+  "title": "Pila del producto",
   "validation": {
     "acceptanceCriteriaRequired": "Los criterios de aceptación son requeridos. Por favor defina condiciones específicas y testeables para completar.",
     "activeGoalRequired": "Un objetivo activo es requerido. Por favor establezca un objetivo de producto activo primero.",

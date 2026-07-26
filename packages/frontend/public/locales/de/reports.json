@@ -35,7 +35,7 @@
         "title": "Aktuelle Verbesserung"
       },
       "velocity-decline": {
-        "description": "Durchschnittliche Velocity um {{trend}}% gesunken. Sprint-Planung überprüfen.",
+        "description": "Durchschnittliche Velocity um {{trend}}% gesunken. Sprint Planning überprüfen.",
         "title": "Velocity-Rückgang"
       },
       "velocity-improvement": {

@@ -33,7 +33,7 @@
     "remainingHoursGreaterThanZero": "Les heures restantes doivent etre superieures a 0",
     "remainingHoursSetToZero": " (Heures restantes mises a 0)",
     "sprintBoard": "Sprint Board",
-    "sprintCompleted": "Sprint terminé avec succès ! Redirection vers la création d'Incrément...",
+    "sprintCompleted": "Sprint terminé avec succès ! Redirection vers la création d'Increment...",
     "statusBadge": "Statut : {{status}}",
     "statusChangedTo": "Statut de la tache passe a {{status}}",
     "targetStatus": "Statut cible : {{status}}. {{count}} taches actuellement dans cette colonne.{{limitText}}",
@@ -103,7 +103,7 @@
   },
   "completeSprint": {
     "cancel": "Annuler",
-    "cannotCompleteWithImpediments": "Impossible de terminer le sprint avec des empêchements non resolus. Veuillez resoudre ou fermer tous les empêchements d'abord.",
+    "cannotCompleteWithImpediments": "Impossible de terminer le sprint avec des obstacles non resolus. Veuillez resoudre ou fermer tous les obstacles d'abord.",
     "cannotCompleteWithIncomplete": "Impossible de terminer le sprint avec des taches non terminees. Veuillez terminer toutes les taches ou les renvoyer au backlog.",
     "closeModal": "Fermer la fenetre",
     "completeSprintDisabled": "Terminer le Sprint (Desactive)",
@@ -115,11 +115,11 @@
     "incompleteWork": "Travail non termine",
     "incompleteWorkDetails": "Vous avez {{taskCount}} tache(s) non termine(s) sur {{pbiCount}} element(s) du backlog. Veuillez resoudre ces elements avant de terminer le sprint.",
     "manageBacklog": "Gerer le Backlog",
-    "moreImpediments": "+{{count}} autre(s) empêchements",
+    "moreImpediments": "+{{count}} autre(s) obstacles",
     "open": "A faire",
-    "outstandingImpediments": "Empêchements non resolu",
-    "outstandingImpedimentsDetails": "Vous avez {{count}} empêchement(s) non resolu(s) qui doivent etre resolus ou fermes avant de terminer le sprint.",
-    "outstandingImpedimentsList": "Empêchements non resolus",
+    "outstandingImpediments": "Obstacles non resolu",
+    "outstandingImpedimentsDetails": "Vous avez {{count}} obstacle(s) non resolu(s) qui doivent etre resolus ou fermes avant de terminer le sprint.",
+    "outstandingImpedimentsList": "Obstacles non resolus",
     "proceedToDodVerification": "Passer a la verification DoD",
     "proceedToDodVerificationTitle": "Passer a la verification Definition of Done",
     "processing": "Traitement...",
@@ -131,7 +131,7 @@
     "timeboxEnded": "Timebox termine",
     "title": "Terminer le Sprint",
     "totalTasks": "Taches Totales:",
-    "viewImpediments": "Voir les Empêchements"
+    "viewImpediments": "Voir les Obstacles"
   },
   "daysRemaining_one": "{{count}} jour restant",
   "daysRemaining_other": "{{count}} jours restants",
@@ -513,7 +513,7 @@
       "unsavedCapacityMessage": "Vous avez des modifications non sauvegardees de la capacite de l'equipe. Etes-vous sur de vouloir les abandonner ?",
       "unsavedCapacityTitle": "Modifications de Capacite Non Sauvegardees"
     },
-    "title": "Planification de Sprint",
+    "title": "Sprint Planning",
     "toast": {
       "addedToSprint": "\"{{title}}\" ajouté au backlog du sprint{{taskInfo}}",
       "alreadyInSprint": "\"{{title}}\" est déjà dans le backlog du sprint",

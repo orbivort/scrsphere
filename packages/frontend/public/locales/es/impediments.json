@@ -2,7 +2,7 @@
   "allStatus": "Todos los estados",
   "card": {
     "createdFromDailyUpdate": "Creado desde Actualizacion Diaria",
-    "fromDailyScrum": "Del Daily Scrum",
+    "fromDailyScrum": "Del Scrum diario",
     "owner": "Propietario",
     "reportedBy": "Reportado por",
     "resolution": "Resolucion",
@@ -36,7 +36,7 @@
   "detailModal": {
     "cancel": "Cancel",
     "close": "Close",
-    "createdFromDailyScrum": "Creado desde Actualizacion Daily Scrum",
+    "createdFromDailyScrum": "Creado desde Actualizacion Scrum diario",
     "createdLabel": "Creado",
     "deleteLabel": "Eliminar",
     "deleting": "Eliminando...",
