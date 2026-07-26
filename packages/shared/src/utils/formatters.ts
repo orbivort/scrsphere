@@ -1,5 +1,5 @@
 import { format, parse, parseISO, isValid, type Locale as DateFnsLocale } from 'date-fns';
-import { enGB, de, fr, es, it } from 'date-fns/locale';
+import { enGB, de, fr, it, es } from 'date-fns/locale';
 import { DATE_INPUT_FORMATS } from '../constants/index.js';
 import type { Locale } from '../constants/index.js';
 import {
@@ -10,7 +10,7 @@ import {
   getCachedCollator,
 } from './intlCache.js';
 
-const DATE_FNS_LOCALES: Record<Locale, DateFnsLocale> = { en: enGB, de, fr, es, it };
+const DATE_FNS_LOCALES: Record<Locale, DateFnsLocale> = { en: enGB, de, fr, it, es };
 
 function resolveDateFnsLocale(locale: Locale): DateFnsLocale {
   // Locale is a union of all keys in DATE_FNS_LOCALES, so access is always safe

@@ -363,7 +363,7 @@ describe('Cookie-Based Authentication', () => {
       });
 
       it('should set scrumooth_locale cookie with different locales', async () => {
-        const localesToTest: Locale[] = ['en', 'es', 'fr', 'it'];
+        const localesToTest: Locale[] = ['en', 'fr', 'it', 'es'];
 
         for (const locale of localesToTest) {
           const response = await request(app)

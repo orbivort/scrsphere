@@ -40,7 +40,7 @@ export const ERROR_CODES = {
   INTERNAL_ERROR: 'INTERNAL_ERROR',
 } as const;
 
-export const SUPPORTED_LOCALES = ['en', 'de', 'fr', 'es', 'it'] as const;
+export const SUPPORTED_LOCALES = ['en', 'de', 'fr', 'it', 'es'] as const;
 export type Locale = (typeof SUPPORTED_LOCALES)[number];
 export const DEFAULT_LOCALE: Locale = 'en';
 
@@ -56,16 +56,16 @@ export const LOCALE_LABELS: Record<Locale, string> = {
   en: 'English',
   de: 'Deutsch',
   fr: 'Français',
-  es: 'Español',
   it: 'Italiano',
+  es: 'Español',
 };
 
 export const LOCALE_CURRENCIES: Record<Locale, string> = {
   en: 'EUR',
   de: 'EUR',
   fr: 'EUR',
-  es: 'EUR',
   it: 'EUR',
+  es: 'EUR',
 };
 
 /**
@@ -76,8 +76,8 @@ export const DATE_INPUT_FORMATS: Record<Locale, string> = {
   en: 'dd/MM/yyyy', // British format (matches enGB locale)
   de: 'dd.MM.yyyy', // German format with dots
   fr: 'dd/MM/yyyy', // French format
-  es: 'dd/MM/yyyy', // Spanish format
   it: 'dd/MM/yyyy', // Italian format
+  es: 'dd/MM/yyyy', // Spanish format
 };
 
 /**
@@ -88,8 +88,8 @@ export const DATE_FORMAT_EXAMPLES: Record<Locale, string> = {
   en: 'dd/mm/yyyy',
   de: 'tt.mm.jjjj',
   fr: 'jj/mm/aaaa',
-  es: 'dd/mm/aaaa',
   it: 'gg/mm/aaaa',
+  es: 'dd/mm/aaaa',
 };
 
 /**
@@ -99,6 +99,6 @@ export const DATE_SEPARATORS: Record<Locale, string> = {
   en: '/',
   de: '.',
   fr: '/',
-  es: '/',
   it: '/',
+  es: '/',
 };

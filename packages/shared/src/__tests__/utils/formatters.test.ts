@@ -234,7 +234,7 @@ describe('formatters', () => {
     });
 
     it('should create a collator for each supported locale', () => {
-      const locales: Locale[] = ['en', 'de', 'fr', 'es', 'it'];
+      const locales: Locale[] = ['en', 'de', 'fr', 'it', 'es'];
       for (const locale of locales) {
         const collator = createCollator(locale);
         expect(collator).toBeInstanceOf(Intl.Collator);
@@ -426,7 +426,7 @@ describe('formatters', () => {
 
   describe('DATE_INPUT_FORMATS', () => {
     it('should have format for all supported locales', () => {
-      const locales: Locale[] = ['en', 'de', 'fr', 'es', 'it'];
+      const locales: Locale[] = ['en', 'de', 'fr', 'it', 'es'];
       for (const locale of locales) {
         expect(DATE_INPUT_FORMATS[locale]).toBeTruthy();
         expect(typeof DATE_INPUT_FORMATS[locale]).toBe('string');
@@ -444,7 +444,7 @@ describe('formatters', () => {
 
   describe('DATE_FORMAT_EXAMPLES', () => {
     it('should have examples for all supported locales', () => {
-      const locales: Locale[] = ['en', 'de', 'fr', 'es', 'it'];
+      const locales: Locale[] = ['en', 'de', 'fr', 'it', 'es'];
       for (const locale of locales) {
         expect(DATE_FORMAT_EXAMPLES[locale]).toBeTruthy();
         expect(typeof DATE_FORMAT_EXAMPLES[locale]).toBe('string');

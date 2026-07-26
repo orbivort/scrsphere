@@ -30,7 +30,7 @@
 
 ## 1. Executive Summary
 
-Scrumooth supports 5 locales (`en`, `de`, `fr`, `es`, `it`) end-to-end across frontend, backend, and shared packages. The architecture uses **i18next v24+** with `react-i18next`, lazy-loaded namespaced JSON files, native `Intl` APIs for pluralization/formatting, and a per-request locale resolver on the backend via `AsyncLocalStorage`.
+Scrumooth supports 5 locales (`en`, `de`, `fr`, `it`, `es`) end-to-end across frontend, backend, and shared packages. The architecture uses **i18next v24+** with `react-i18next`, lazy-loaded namespaced JSON files, native `Intl` APIs for pluralization/formatting, and a per-request locale resolver on the backend via `AsyncLocalStorage`.
 
 **Key design choices:**
 
@@ -48,8 +48,8 @@ Scrumooth supports 5 locales (`en`, `de`, `fr`, `es`, `it`) end-to-end across fr
 | `en` | English  | `dd/MM/yyyy` | 24-hour | EUR      | `one` / `other` |
 | `de` | Deutsch  | `dd.MM.yyyy` | 24-hour | EUR      | `one` / `other` |
 | `fr` | Français | `dd/MM/yyyy` | 24-hour | EUR      | `one` / `other` |
-| `es` | Español  | `dd/MM/yyyy` | 24-hour | EUR      | `one` / `other` |
 | `it` | Italiano | `dd/MM/yyyy` | 24-hour | EUR      | `one` / `other` |
+| `es` | Español  | `dd/MM/yyyy` | 24-hour | EUR      | `one` / `other` |
 
 - **English uses `enGB`** (not `enUS`) date-fns locale — target organization is European.
 - **DEFAULT_LOCALE** is `en`. All fallback chains terminate at `en`.
@@ -70,7 +70,7 @@ Scrumooth supports 5 locales (`en`, `de`, `fr`, `es`, `it`) end-to-end across fr
 │                                                                     │
 │  Formatters (@scrumooth/shared)                                     │
 │    └─ Intl.NumberFormat / DateTimeFormat / RelativeTimeFormat       │
-│    └─ date-fns with locale imports (enGB, de, fr, es, it)           │
+│    └─ date-fns with locale imports (enGB, de, fr, it, es)           │
 └─────────────────────────────────────────────────────────────────────┘
                               │ HTTPS (Cookie: scrumooth_locale=…)
                               ▼
@@ -125,7 +125,7 @@ Scrumooth supports 5 locales (`en`, `de`, `fr`, `es`, `it`) end-to-end across fr
 ### ADR-006: Pluralization & Cultural Formatting — Native `Intl` + `date-fns`
 
 **Decision:** Use native `Intl.PluralRules` (polyfilled by `intl-pluralrules` for Safari < 14), `Intl.NumberFormat`, `Intl.DateTimeFormat`, `Intl.RelativeTimeFormat`, `Intl.ListFormat`, `Intl.Collator`. Use `date-fns` v4 for date formatting that needs locale-aware tokens (`PP`, `d MMM`, etc.).
-**Date-fns locales:** `{ en: enGB, de, fr, es, it }`. English uses `enGB` (European audience → `DD/MM/YYYY`, 24-hour by default).
+**Date-fns locales:** `{ en: enGB, de, fr, it, es }`. English uses `enGB` (European audience → `DD/MM/YYYY`, 24-hour by default).
 **No `i18next-intlpluralresolver`:** Deprecated since i18next v24 — native `Intl.PluralRules` is used directly.
 **Plural classes:** All five locales use `one`/`other` only (CLDR). No locale in the supported set has a `many` plural category.
 
@@ -375,8 +375,8 @@ When a user changes their locale via the API, the change is logged via the stand
 
 | Export                 | Type                                      | Purpose                                                                 |
 | ---------------------- | ----------------------------------------- | ----------------------------------------------------------------------- |
-| `SUPPORTED_LOCALES`    | `readonly ['en', 'de', 'fr', 'es', 'it']` | Locale list                                                             |
-| `Locale`               | Union type                                | `'en' \| 'de' \| 'fr' \| 'es' \| 'it'`                                  |
+| `SUPPORTED_LOCALES`    | `readonly ['en', 'de', 'fr', 'it', 'es']` | Locale list                                                             |
+| `Locale`               | Union type                                | `'en' \| 'de' \| 'fr' \| 'it' \| 'es'`                                  |
 | `DEFAULT_LOCALE`       | `'en'`                                    | Fallback locale                                                         |
 | `LOCALE_LABELS`        | `Record<Locale, string>`                  | Endonyms for the language switcher (`'English'`, `'Deutsch'`, etc.)     |
 | `LOCALE_CURRENCIES`    | `Record<Locale, string>`                  | All `'EUR'` today                                                       |
@@ -477,8 +477,8 @@ i18next uses native `Intl.PluralRules` (polyfilled by `intl-pluralrules`). No cu
 | `en`   | n = 1    | everything else |
 | `de`   | n = 1    | everything else |
 | `fr`   | n = 0, 1 | everything else |
-| `es`   | n = 1    | everything else |
 | `it`   | n = 1    | everything else |
+| `es`   | n = 1    | everything else |
 
 **Key naming:** `taskCount`, `taskCount_one`, `taskCount_other`. i18next auto-selects the suffix based on `Intl.PluralRules(lng).select(count)`.
 
@@ -491,7 +491,7 @@ i18next uses native `Intl.PluralRules` (polyfilled by `intl-pluralrules`). No cu
 
 ### 9.2 Date & Time Formatting
 
-All date formatting flows through `@scrumooth/shared` formatters (`packages/shared/src/utils/formatters.ts`). Date-fns locale data: `{ en: enGB, de, fr, es, it }` — English uses `enGB` (European audience → day-first dates, 24-hour time).
+All date formatting flows through `@scrumooth/shared` formatters (`packages/shared/src/utils/formatters.ts`). Date-fns locale data: `{ en: enGB, de, fr, it, es }` — English uses `enGB` (European audience → day-first dates, 24-hour time).
 
 **`formatDate(date, locale, fmt)` — date-fns tokens (`PP` = medium, `PPPP` = long):**
 
@@ -500,8 +500,8 @@ All date formatting flows through `@scrumooth/shared` formatters (`packages/shar
 | `en` (enGB) | `18 Jul 2026`   | `Saturday, 18 July 2026`      |
 | `de`        | `18. Juli 2026` | `Samstag, 18. Juli 2026`      |
 | `fr`        | `18 juil. 2026` | `samedi 18 juillet 2026`      |
-| `es`        | `18 jul 2026`   | `sábado, 18 de julio de 2026` |
 | `it`        | `18 lug 2026`   | `sabato 18 luglio 2026`       |
+| `es`        | `18 jul 2026`   | `sábado, 18 de julio de 2026` |
 
 **`formatDateForInput(date, locale)` — input field format via `DATE_INPUT_FORMATS`:**
 
@@ -510,8 +510,8 @@ All date formatting flows through `@scrumooth/shared` formatters (`packages/shar
 | `en`   | `dd/MM/yyyy` | `18/07/2026` | `dd/mm/yyyy`                         |
 | `de`   | `dd.MM.yyyy` | `18.07.2026` | `tt.mm.jjjj`                         |
 | `fr`   | `dd/MM/yyyy` | `18/07/2026` | `jj/mm/aaaa`                         |
-| `es`   | `dd/MM/yyyy` | `18/07/2026` | `dd/mm/aaaa`                         |
 | `it`   | `dd/MM/yyyy` | `18/07/2026` | `gg/mm/aaaa`                         |
+| `es`   | `dd/MM/yyyy` | `18/07/2026` | `dd/mm/aaaa`                         |
 
 **`formatTime(date, locale)` — `Intl.DateTimeFormat` with `hour12: false` (24-hour for all locales):**
 
@@ -524,8 +524,8 @@ All locales produce `HH:MM` 24-hour output (e.g., `14:30`). English uses 24-hour
 | `en`   | `18 Jul`   |
 | `de`   | `18 Juli`  |
 | `fr`   | `18 juil.` |
-| `es`   | `18 jul`   |
 | `it`   | `18 lug`   |
+| `es`   | `18 jul`   |
 
 ### 9.3 Number & Currency
 
@@ -715,7 +715,7 @@ Repeat for backend: `packages/backend/src/locales/pt/{5 namespaces}.json`.
 Add `pt` to all `Record<Locale, …>` constants. TypeScript immediately flags every record missing the new key.
 
 ```typescript
-export const SUPPORTED_LOCALES = ['en', 'de', 'fr', 'es', 'it', 'pt'] as const;
+export const SUPPORTED_LOCALES = ['en', 'de', 'fr', 'it', 'es', 'pt'] as const;
 export const LOCALE_LABELS = { /* ... */ pt: 'Português' }; // endonym
 export const LOCALE_CURRENCIES = { /* ... */ pt: 'EUR' };
 export const DATE_INPUT_FORMATS = { /* ... */ pt: 'dd/MM/yyyy' };
@@ -726,7 +726,7 @@ export const DATE_SEPARATORS = { /* ... */ pt: '/' };
 #### `packages/shared/src/utils/formatters.ts`
 
 ```typescript
-import { enGB, de, fr, es, it, pt } from 'date-fns/locale';
+import { enGB, de, fr, it, es, pt } from 'date-fns/locale';
 const DATE_FNS_LOCALES = { /* ... */ pt };
 ```
 
@@ -841,8 +841,8 @@ Add `pt` entries to `packages/shared/i18n/glossary.json` (sourced from the offic
 
 | Location                             | Locales                  | Namespaces per locale | Total files |
 | ------------------------------------ | ------------------------ | --------------------- | ----------- |
-| `packages/frontend/public/locales/`  | 5 (en, de, fr, es, it)   | 16                    | 80          |
-| `packages/backend/src/locales/`      | 5 (en, de, fr, es, it)   | 5                     | 25          |
+| `packages/frontend/public/locales/`  | 5 (en, de, fr, it, es)   | 16                    | 80          |
+| `packages/backend/src/locales/`      | 5 (en, de, fr, it, es)   | 5                     | 25          |
 | `packages/shared/i18n/glossary.json` | 1 (multi-locale content) | —                     | 1           |
 | **Total i18n resource files**        |                          |                       | **106**     |
 

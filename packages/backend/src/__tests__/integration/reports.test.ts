@@ -459,7 +459,7 @@ describe('Reports Integration Tests', () => {
 
         // Test that numeric values can be formatted using Intl.NumberFormat
         const metrics = response.body.data;
-        const testLocales: Locale[] = ['en', 'de', 'fr', 'es', 'it'];
+        const testLocales: Locale[] = ['en', 'de', 'fr', 'it', 'es'];
 
         for (const locale of testLocales) {
           // Format averageVelocity with locale-specific formatting
@@ -656,7 +656,7 @@ describe('Reports Integration Tests', () => {
         const testValue = 42.5;
 
         // Test decimal separator differences between locales
-        const locales: Locale[] = ['en', 'de', 'fr', 'es', 'it'];
+        const locales: Locale[] = ['en', 'de', 'fr', 'it', 'es'];
         const formattedValues: Record<Locale, string> = {} as Record<Locale, string>;
 
         for (const locale of locales) {
@@ -680,7 +680,7 @@ describe('Reports Integration Tests', () => {
       it('should demonstrate locale-specific percentage formatting differences', async () => {
         const testPercentage = 75;
 
-        const locales: Locale[] = ['en', 'de', 'fr', 'es', 'it'];
+        const locales: Locale[] = ['en', 'de', 'fr', 'it', 'es'];
         const formattedPercentages: Record<Locale, string> = {} as Record<Locale, string>;
 
         for (const locale of locales) {

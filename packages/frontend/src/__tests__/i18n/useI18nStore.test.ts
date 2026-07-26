@@ -36,7 +36,7 @@ describe('useI18nStore', () => {
     });
 
     it('should update locale to each supported locale', () => {
-      const locales: Locale[] = ['en', 'de', 'fr', 'es', 'it'];
+      const locales: Locale[] = ['en', 'de', 'fr', 'it', 'es'];
       for (const locale of locales) {
         act(() => {
           useI18nStore.getState().setLocale(locale);

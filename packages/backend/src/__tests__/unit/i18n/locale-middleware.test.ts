@@ -50,7 +50,7 @@ describe('localeResolver middleware', () => {
     });
 
     it('should use User.locale for each supported locale', () => {
-      const supportedLocales = ['en', 'de', 'fr', 'es', 'it'];
+      const supportedLocales = ['en', 'de', 'fr', 'it', 'es'];
       for (const locale of supportedLocales) {
         vi.clearAllMocks();
         mockReq.user = { locale };

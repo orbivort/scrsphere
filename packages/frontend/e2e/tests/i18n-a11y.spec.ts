@@ -16,7 +16,7 @@ import AxeBuilder from '@axe-core/playwright';
  * Run with: pnpm run test:e2e -- --grep @a11y
  */
 
-const SUPPORTED_LOCALES = ['en', 'de', 'fr', 'es', 'it'] as const;
+const SUPPORTED_LOCALES = ['en', 'de', 'fr', 'it', 'es'] as const;
 
 type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
 

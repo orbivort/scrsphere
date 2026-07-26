@@ -160,7 +160,7 @@ describe('i18n Locale Support', () => {
     });
 
     it('should handle multiple locale headers in audit logs', async () => {
-      const testLocales: Locale[] = ['en', 'es', 'fr', 'it'];
+      const testLocales: Locale[] = ['en', 'fr', 'it', 'es'];
 
       for (const locale of testLocales) {
         const app = express();

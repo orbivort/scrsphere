@@ -13,7 +13,7 @@ import { join } from 'path';
 const LOCALES_DIR = join(process.cwd(), 'packages/backend/src/locales');
 const RECOMMENDED_LIMIT = 78;
 const HARD_LIMIT = 998;
-const LOCALES = ['en', 'de', 'fr', 'es', 'it'];
+const LOCALES = ['en', 'de', 'fr', 'it', 'es'];
 
 if (!existsSync(LOCALES_DIR)) {
   console.log('⏭️  Backend locales directory not found');

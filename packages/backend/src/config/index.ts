@@ -211,7 +211,7 @@ export const config = {
   // i18n
   i18n: {
     defaultLocale: process.env.DEFAULT_LOCALE ?? 'en',
-    supportedLocales: process.env.SUPPORTED_LOCALES?.split(',') ?? ['en', 'de', 'fr', 'es', 'it'],
+    supportedLocales: process.env.SUPPORTED_LOCALES?.split(',') ?? ['en', 'de', 'fr', 'it', 'es'],
   },
 
   // Email Configuration

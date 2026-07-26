@@ -289,3 +289,5 @@ storybook-static/
 # Project Specific
 # -----------------------------------------------------------------------------
 # Add any project-specific ignores below
+
+**/e2e/screenshots/

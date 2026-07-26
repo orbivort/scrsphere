@@ -679,7 +679,7 @@ describe('Cross-Feature Integration Tests', () => {
 
     describe('Cross-locale feature consistency', () => {
       it('should create sprint with consistent behavior across all locales', async () => {
-        const testLocales: Locale[] = ['en', 'de', 'es', 'fr', 'it'];
+        const testLocales: Locale[] = ['en', 'de', 'fr', 'it', 'es'];
 
         for (const locale of testLocales) {
           const email = `sprint-locale-${locale}-${uniqueId()}@example.com`;
