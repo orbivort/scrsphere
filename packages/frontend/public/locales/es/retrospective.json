@@ -143,7 +143,7 @@
       "planned": "Planificado"
     },
     "subtitle": "Reflexionar sobre Sprints completados, identificar mejoras y seguir Action Items",
-    "title": "Retrospectivas de Sprint",
+    "title": "Sprint Retrospectives",
     "viewRetrospective": "Ver Retrospective"
   },
   "loading": "Cargando Retrospective...",
@@ -165,7 +165,7 @@
       "SHOULD_HAVE": "Debería tener",
       "WONT_HAVE": "No tendrá"
     },
-    "productBacklog": "Pila del producto",
+    "productBacklog": "Product Backlog",
     "statusLabels": {
       "DONE": "Hecho",
       "IN_PROGRESS": "En progreso",
@@ -218,7 +218,7 @@
     "takeawaysLabel": "Cuáles fueron los takeaways clave de esta Retrospective?",
     "title": "Resumen de la Retrospective"
   },
-  "title": "Retrospectiva",
+  "title": "Sprint Retrospective",
   "toast": {
     "actionItemCreateFailed": "No se pudo crear el Action Item",
     "actionItemCreated": "Action Item creado exitosamente",

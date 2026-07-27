@@ -90,7 +90,7 @@
     "resolved": "Gelost"
   },
   "subtitle": "{{sprintName}} - Blocker verfolgen und losen, die das Team betreffen",
-  "title": "Hindernisse",
+  "title": "Impediments",
   "toast": {
     "created": "Hindernis erfolgreich erstellt",
     "deleted": "Hindernis erfolgreich geloscht",

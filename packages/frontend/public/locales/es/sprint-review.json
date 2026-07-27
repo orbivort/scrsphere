@@ -159,7 +159,7 @@
     "noIncrementDescription": "No hay Incremento entregado disponible para esta Revisión del Sprint.",
     "noPbis": "No hay PBIs incluidos en este Incremento.",
     "notDelivered": "No entregado",
-    "sprintReviewDelivery": "Revisión del Sprint",
+    "sprintReviewDelivery": "Sprint Review",
     "title": "Incremento presentado",
     "totalStoryPoints": "Story Points totales"
   },
@@ -184,7 +184,7 @@
       "planned": "Planificado"
     },
     "subtitle": "Reviewar Sprints completados, inspeccionar Incrementos y recopilar feedback de Partes interesadas",
-    "title": "Revisiones de Sprint",
+    "title": "Sprint Reviews",
     "viewDetails": "Ver detalles",
     "viewReview": "Ver Review"
   },
@@ -207,7 +207,7 @@
     "notSet": "No establecido",
     "period": "Período",
     "reviewSummary": "Resumen del Review",
-    "sprintGoal": "Objetivo Sprint",
+    "sprintGoal": "Sprint Goal",
     "sprintMetrics": "Métricas del Sprint",
     "storyPointsCommitted": "Story Points comprometidos",
     "storyPointsCompleted": "Story Points completados",
@@ -229,6 +229,6 @@
     "increment": "Increment",
     "overview": "Resumen"
   },
-  "title": "Revisión del Sprint",
+  "title": "Sprint Review",
   "unknownSprint": "Sprint desconocido"
 }

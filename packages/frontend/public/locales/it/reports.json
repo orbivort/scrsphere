@@ -60,7 +60,7 @@
     "impediments": {
       "openCount": "impedimento(i) aperto(i)",
       "resolved": "Risolti",
-      "title": "Impedimento"
+      "title": "Impediments"
     },
     "sprintSuccessRate": {
       "fromLastMonth": "dall'ultimo mese",
@@ -79,7 +79,7 @@
     "empty": "Nessuno storico di Sprint disponibile.",
     "stats": {
       "completed": "Completato",
-      "impediments": "Impedimento",
+      "impediments": "Impediments",
       "planned": "Pianificato",
       "teamMembers": "Membri del team"
     },

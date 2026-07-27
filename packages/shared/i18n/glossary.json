@@ -1,189 +1,39 @@
 {
   "_meta": {
-    "source": "The 2020 Scrum Guide by Ken Schwaber & Jeff Sutherland for official English version, and translators for non-English versions.",
+    "source": "The Scrum Guide by Ken Schwaber & Jeff Sutherland, November 2020",
     "sourceUrl": "https://scrumguides.org/",
     "languages": ["en", "de", "fr", "it", "es"],
     "notes": [
-      "All term translations are from the official Scrum Guide 2020 PDFs in each language.",
       "Core Scrum terms (Sprint, Product Backlog, Sprint Goal, etc.) follow the official",
       "translation guidelines - some terms remain in English per Scrum.org directives."
     ],
-    "files": {
-      "en": "2020-Scrum-Guide-English.pdf",
-      "de": "2020-Scrum-Guide-German.pdf",
-      "fr": "2020-Scrum-Guide-French.pdf",
-      "it": "2020-Scrum-Guide-Italian-2.0.pdf",
-      "es": "2020-Scrum-Guide-Spanish-European.pdf"
-    },
-    "lastUpdated": "2026-07-26",
+    "convention": [
+      "String values are base terms (English) that apply to all locales unless overridden.",
+      "Object values can specify locale-specific translations.",
+      "With locale overrides (object format)",
+      "\"Increment\": { \"_base\": \"Increment\", \"es\": \"Incremento\" }"
+    ],
+    "lastUpdated": "2026-07-27",
     "maintainer": "Scrumooth Team"
   },
-  "Scrum": {
-    "en": "Scrum",
-    "de": "Scrum",
-    "fr": "Scrum",
-    "it": "Scrum",
-    "es": "Scrum"
-  },
-  "Scrum Team": {
-    "en": "Scrum Team",
-    "de": "Scrum Team",
-    "fr": "Scrum Team",
-    "it": "Scrum Team",
-    "es": "Equipo Scrum"
-  },
-  "Scrum Master": {
-    "en": "Scrum Master",
-    "de": "Scrum Master",
-    "fr": "Scrum Master",
-    "it": "Scrum Master",
-    "es": "Scrum Master"
-  },
-  "Product Owner": {
-    "en": "Product Owner",
-    "de": "Product Owner",
-    "fr": "Product Owner",
-    "it": "Product Owner",
-    "es": "Product Owner"
-  },
-  "Developers": {
-    "en": "Developers",
-    "de": "Developer",
-    "fr": "Developers",
-    "it": "Developer",
-    "es": "Desarrolladores"
-  },
-  "Sprint": {
-    "en": "Sprint",
-    "de": "Sprint",
-    "fr": "Sprint",
-    "it": "Sprint",
-    "es": "Sprint"
-  },
-  "Sprint Planning": {
-    "en": "Sprint Planning",
-    "de": "Sprint Planning",
-    "fr": "Sprint Planning",
-    "it": "Sprint Planning",
-    "es": "Planificación de Sprint"
-  },
-  "Daily Scrum": {
-    "en": "Daily Scrum",
-    "de": "Daily Scrum",
-    "fr": "Daily Scrum",
-    "it": "Daily Scrum",
-    "es": "Scrum diario"
-  },
-  "Sprint Review": {
-    "en": "Sprint Review",
-    "de": "Sprint Review",
-    "fr": "Sprint Review",
-    "it": "Sprint Review",
-    "es": "Revisión del Sprint"
-  },
-  "Sprint Retrospective": {
-    "en": "Sprint Retrospective",
-    "de": "Sprint Retrospective",
-    "fr": "Sprint Retrospective",
-    "it": "Sprint Retrospective",
-    "es": "Retrospectiva del Sprint"
-  },
-  "Retrospective": {
-    "en": "Retrospective",
-    "de": "Retrospective",
-    "fr": "Retrospective",
-    "it": "Retrospective",
-    "es": "Retrospectiva"
-  },
-  "Product Backlog": {
-    "en": "Product Backlog",
-    "de": "Product Backlog",
-    "fr": "Product Backlog",
-    "it": "Product Backlog",
-    "es": "Pila del producto"
-  },
-  "Sprint Backlog": {
-    "en": "Sprint Backlog",
-    "de": "Sprint Backlog",
-    "fr": "Sprint Backlog",
-    "it": "Sprint Backlog",
-    "es": "Pila del Sprint"
-  },
-  "Increment": {
-    "en": "Increment",
-    "de": "Increment",
-    "fr": "Increment",
-    "it": "Increment",
-    "es": "Incremento"
-  },
-  "Product Goal": {
-    "en": "Product Goal",
-    "de": "Produkt-Ziel",
-    "fr": "Objectif de Produit",
-    "it": "Product Goal",
-    "es": "Objetivo del Producto"
-  },
-  "Sprint Goal": {
-    "en": "Sprint Goal",
-    "de": "Sprint-Ziel",
-    "fr": "Objectif de Sprint",
-    "it": "Sprint Goal",
-    "es": "Objetivo Sprint"
-  },
-  "Definition of Done": {
-    "en": "Definition of Done",
-    "de": "Definition of Done",
-    "fr": "Definition of Done",
-    "it": "Definition of Done",
-    "es": "Definición de Hecho"
-  },
-  "Burndown Chart": {
-    "en": "Burndown Chart",
-    "de": "Burndown-Diagramm",
-    "fr": "Graphique d'avancement",
-    "it": "Grafico burndown",
-    "es": "Gráfico de burn-down"
-  },
-  "Story Points": {
-    "en": "Story Points",
-    "de": "Story Points",
-    "fr": "Story Points",
-    "it": "Story Points",
-    "es": "Story Points"
-  },
-  "Impediment": {
-    "en": "Impediment",
-    "de": "Hindernis",
-    "fr": "Obstacle",
-    "it": "Impediment",
-    "es": "Impedimento"
-  },
-  "Transparency": {
-    "en": "Transparency",
-    "de": "Transparenz",
-    "fr": "Transparence",
-    "it": "Trasparenza",
-    "es": "Transparencia"
-  },
-  "Inspection": {
-    "en": "Inspection",
-    "de": "Überprüfung",
-    "fr": "Inspection",
-    "it": "Ispezione",
-    "es": "Inspección"
-  },
-  "Adaptation": {
-    "en": "Adaptation",
-    "de": "Anpassung",
-    "fr": "Adaptation",
-    "it": "Adattamento",
-    "es": "Adaptación"
-  },
-  "Artifact": {
-    "en": "Artifact",
-    "de": "Artefakt",
-    "fr": "Artefact",
-    "it": "Artefatto",
-    "es": "Artefacto"
-  }
+  "Scrum": "Scrum",
+  "Scrum Master": "Scrum Master",
+  "Product Owner": "Product Owner",
+  "Developers": "Developers",
+  "Sprint": "Sprint",
+  "Sprint Planning": "Sprint Planning",
+  "Daily Scrum": "Daily Scrum",
+  "Sprint Review": "Sprint Review",
+  "Sprint Reviews": "Sprint Reviews",
+  "Sprint Retrospective": "Sprint Retrospective",
+  "Sprint Retrospectives": "Sprint Retrospectives",
+  "Product Backlog": "Product Backlog",
+  "Sprint Backlog": "Sprint Backlog",
+  "Increment": "Increment",
+  "Increments": "Increments",
+  "Product Goal": "Product Goal",
+  "Product Goals": "Product Goals",
+  "Sprint Goal": "Sprint Goal",
+  "Impediment": "Impediment",
+  "Impediments": "Impediments"
 }

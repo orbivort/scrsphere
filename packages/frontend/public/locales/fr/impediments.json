@@ -90,7 +90,7 @@
     "resolved": "Resolu"
   },
   "subtitle": "{{sprintName}} - Suivre et resoudre les bloquants affectant l'equipe",
-  "title": "Obstacles",
+  "title": "Impediments",
   "toast": {
     "created": "Obstacle cree avec succes",
     "deleted": "Obstacle supprime avec succes",

@@ -112,7 +112,7 @@
   "retryLoadingTeamUpdates": "Riprova caricamento aggiornamenti team",
   "sprintBurndownChart": "Grafico Burndown Sprint",
   "sprintCompletion": "Completamento sprint: {{progress}}%",
-  "sprintGoal": "Obiettivo dello Sprint",
+  "sprintGoal": "Sprint Goal",
   "sprintProgress": "Avanzamento Sprint",
   "sprintStatus": {
     "ACTIVE": "Attivo",

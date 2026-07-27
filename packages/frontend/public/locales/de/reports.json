@@ -58,9 +58,9 @@
       "unit": "Story Points pro Sprint"
     },
     "impediments": {
-      "openCount": "offene Hindernis(se)",
+      "openCount": "offene Impediment(s)",
       "resolved": "Gelöst",
-      "title": "Hindernisse"
+      "title": "Impediments"
     },
     "sprintSuccessRate": {
       "fromLastMonth": "vom letzten Monat",
@@ -79,7 +79,7 @@
     "empty": "Keine Sprint-Historie verfügbar.",
     "stats": {
       "completed": "Abgeschlossen",
-      "impediments": "Hindernisse",
+      "impediments": "Impediments",
       "planned": "Geplant",
       "teamMembers": "Teammitglieder"
     },

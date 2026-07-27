@@ -90,7 +90,7 @@
     "resolved": "Resuelto"
   },
   "subtitle": "{{sprintName}} - Rastrear y resolver bloqueadores que afectan al equipo",
-  "title": "Impedimentos",
+  "title": "Impediments",
   "toast": {
     "created": "Impedimento creado exitosamente",
     "deleted": "Impedimento eliminado exitosamente",

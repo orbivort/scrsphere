@@ -184,7 +184,7 @@
       "planned": "Planifié"
     },
     "subtitle": "Reviewer les Sprints terminés, inspecter les Increments et collecter le feedback des parties prenantes",
-    "title": "Revues de Sprint",
+    "title": "Sprint Reviews",
     "viewDetails": "Voir les détails",
     "viewReview": "Voir le Review"
   },
@@ -207,7 +207,7 @@
     "notSet": "Non défini",
     "period": "Période",
     "reviewSummary": "Résumé du Review",
-    "sprintGoal": "Objectif de Sprint",
+    "sprintGoal": "Sprint Goal",
     "sprintMetrics": "Métriques du Sprint",
     "storyPointsCommitted": "Story Points engagés",
     "storyPointsCompleted": "Story Points terminés",

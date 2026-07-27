@@ -56,10 +56,10 @@
   "hoursAgo": "hace {{count}} hora{{plural}}",
   "idealBurndown": "Burndown ideal",
   "impedimentList": {
-    "ariaLabel": "Lista de impedimentos",
-    "impedimentAriaLabel": "{{title}}, estado: {{status}}. Haz clic para ver el impedimento",
-    "noImpediments": "Sin impedimentos reportados",
-    "title": "Impedimentos"
+    "ariaLabel": "Lista de Impediments",
+    "impedimentAriaLabel": "{{title}}, estado: {{status}}. Haz clic para ver el Impediment",
+    "noImpediments": "Sin Impediments reportados",
+    "title": "Impediments"
   },
   "impedimentStatus": {
     "CLOSED": "Cerrado",
@@ -112,7 +112,7 @@
   "retryLoadingTeamUpdates": "Reintentar carga de actualizaciones",
   "sprintBurndownChart": "Gráfico Burndown del Sprint",
   "sprintCompletion": "Completado del sprint: {{progress}}%",
-  "sprintGoal": "Objetivo del Sprint",
+  "sprintGoal": "Sprint Goal",
   "sprintProgress": "Progreso del Sprint",
   "sprintStatus": {
     "ACTIVE": "Activo",

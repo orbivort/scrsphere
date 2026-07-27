@@ -34,7 +34,7 @@
   "filters": {
     "all": "Tout",
     "directMessages": "Messages directs",
-    "impediments": "Obstacles",
+    "impediments": "Impediments",
     "reminders": "Rappels",
     "taskAssignments": "Attributions de tâches",
     "teamCreated": "Équipe créée",

@@ -523,7 +523,7 @@
     "noGoalsMatchDesc": "Intente ajustar su búsqueda o configuración de filtros para encontrar lo que busca.",
     "noGoalsYet": "Aún no hay objetivos",
     "noGoalsYetDesc": "Cree su primer objetivo de producto para comenzar a rastrear los objetivos de su equipo.",
-    "productGoal": "Objetivo de Producto",
+    "productGoal": "Product Goal",
     "progress": "Progreso",
     "progressBarAriaLabel": "Completado del formulario: {{percentage}}%",
     "pts": "pts",
@@ -579,7 +579,7 @@
     "targetDateTooFar": "La fecha objetivo está a más de 1 año. Considere dividir esto en hitos más pequeños.",
     "targetDescription": "Objetivo",
     "teamIdRequired": "Se requiere ID de equipo. Por favor seleccione un equipo primero.",
-    "title": "Objetivos del producto",
+    "title": "Product Goals",
     "titleHelpPanelAvoidLabel": "Evitar",
     "titleHelpPanelAvoidText": "Mejoras de la app",
     "titleHelpPanelGoodLabel": "Bueno",
@@ -652,7 +652,7 @@
     "priorityUpdated": "Prioridad actualizada exitosamente",
     "statusUpdated": "Estado actualizado exitosamente"
   },
-  "title": "Pila del producto",
+  "title": "Product Backlog",
   "validation": {
     "acceptanceCriteriaRequired": "Los criterios de aceptación son requeridos. Por favor defina condiciones específicas y testeables para completar.",
     "activeGoalRequired": "Un objetivo activo es requerido. Por favor establezca un objetivo de producto activo primero.",

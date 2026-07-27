@@ -143,7 +143,7 @@
       "planned": "Planifié"
     },
     "subtitle": "Réfléchir aux Sprints terminés, identifier les améliorations et suivre les Action Items",
-    "title": "Retrospectives de Sprint",
+    "title": "Sprint Retrospectives",
     "viewRetrospective": "Voir la Retrospective"
   },
   "loading": "Chargement de la Retrospective...",
@@ -218,7 +218,7 @@
     "takeawaysLabel": "Quels étaient les takeaways clés de cette Retrospective?",
     "title": "Résumé de la Retrospective"
   },
-  "title": "Retrospective",
+  "title": "Sprint Retrospective",
   "toast": {
     "actionItemCreateFailed": "Impossible de créer l'Action Item",
     "actionItemCreated": "Action Item créé avec succès",

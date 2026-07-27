@@ -73,7 +73,7 @@
       "createIncrement": "Crear Incremento",
       "deliverIncrement": "Entregar Incremento",
       "sprintCompleted": "Sprint Completado",
-      "sprintReview": "Revisión del Sprint"
+      "sprintReview": "Sprint Review"
     }
   },
   "createIncrement": "Crear Incremento",
@@ -83,7 +83,7 @@
   },
   "deliveryMethod": {
     "earlyRelease": "Liberacion Temprana",
-    "sprintReview": "Revisión del Sprint"
+    "sprintReview": "Sprint Review"
   },
   "detail": {
     "deliverIncrement": "Entregar Incremento",
@@ -103,7 +103,7 @@
       "notesLabel": "Notas (Opcional)",
       "notesPlaceholder": "Agrega notas sobre esta entrega...",
       "sprintReviewDescription": "Presentado en la reunión Revisión del Sprint",
-      "sprintReviewOption": "Revisión del Sprint",
+      "sprintReviewOption": "Sprint Review",
       "title": "Entregar Incremento"
     },
     "dodVerification": {
@@ -157,7 +157,7 @@
       "createIncrement": "Crear Incremento",
       "deliverIncrement": "Entregar Incremento",
       "sprintCompleted": "Sprint Completado",
-      "sprintReview": "Revisión del Sprint"
+      "sprintReview": "Sprint Review"
     }
   },
   "list": {
@@ -199,5 +199,5 @@
     "verified": "Verificado"
   },
   "subtitle": "Gestiona y rastrea tus Incrementos de Producto. Los Incrementos representan funcionalidad util y lista para entrega a las Partes interesadas.",
-  "title": "Incrementos"
+  "title": "Increments"
 }

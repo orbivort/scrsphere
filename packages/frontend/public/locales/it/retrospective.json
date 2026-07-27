@@ -218,7 +218,7 @@
     "takeawaysLabel": "Quali erano i takeaways chiave di questa Retrospective?",
     "title": "Riepilogo della Retrospective"
   },
-  "title": "Retrospective",
+  "title": "Sprint Retrospective",
   "toast": {
     "actionItemCreateFailed": "Impossibile creare Action Item",
     "actionItemCreated": "Action Item creato con successo",

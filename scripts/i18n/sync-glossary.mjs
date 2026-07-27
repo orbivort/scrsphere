@@ -3,8 +3,13 @@
 /**
  * Glossary Compliance Check
  *
- * Verifies that glossary terms are used consistently across locale files.
- * Handles compound terms (e.g., "Product Owner") that should not be partially translated.
+ * Validates that Scrum terminology is used consistently across all locale files.
+ * Enforces Scrum.org directives where core terms must remain in English.
+ *
+ * Supports three glossary formats:
+ * 1. String: "Scrum" - base term applies to all locales
+ * 2. Object with _base: { "_base": "Increment", "es": "Incremento" } - base + locale overrides
+ * 3. Legacy object: { "en": "Sprint", "de": "Sprint" } - backward compatibility
  */
 
 import { readFileSync, readdirSync, existsSync } from 'fs';
@@ -24,65 +29,109 @@ const LOCALES_DIRS = [
 const BASE_LOCALE = 'en';
 const TARGET_LOCALES = ['de', 'fr', 'es', 'it'];
 
-// Compound Scrum terms that contain shorter glossary terms but should stay as-is
-// These are NOT false positives - the compound term is the canonical form
-const COMPOUND_TERMS = [
-  'Product Owner',
-  'Product Backlog',
-  'Product Goal',
-  'Sprint Goal',
-  'Sprint Backlog',
-  'Sprint Planning',
-  'Sprint Review',
-  'Sprint Retrospective',
-  'Daily Scrum',
-  'Definition of Done',
-  'Burndown Chart',
-  'Story Points',
-  'Product Backlog Refinement',
-];
-
 /**
- * Check if a term is part of a compound term that should not trigger a warning.
- * E.g., "Product" is part of "Product Owner" — if "Product Owner" appears in the content,
- * "Product" alone should not be flagged for missing translation.
+ * Normalize glossary term value to handle multiple formats.
  *
- * @param {string} term - The glossary term to check
- * @param {string} content - The locale file content to search within
- * @returns {boolean} True if the term is part of a compound term present in the content
+ * @param {string|object} termValue - The glossary term value
+ * @param {string} locale - The target locale (e.g., 'de', 'fr')
+ * @returns {string|null} The expected translation for the locale
  */
-export function isPartOfCompoundTerm(term, content) {
-  for (const compound of COMPOUND_TERMS) {
-    // If the compound term exists and contains this term as a substring
-    if (compound.includes(term) && compound !== term) {
-      // Check if the compound exists anywhere in the content
-      if (content.includes(compound)) {
-        return true;
-      }
+export function normalizeGlossaryTerm(termValue, locale) {
+  // Format 1: String value (base term applies to all locales)
+  if (typeof termValue === 'string') {
+    return termValue;
+  }
+
+  // Format 2 & 3: Object value
+  if (typeof termValue === 'object' && termValue !== null) {
+    // Check for locale-specific override
+    if (termValue[locale]) {
+      return termValue[locale];
+    }
+
+    // Fall back to _base field (Format 2: { _base: "Increment", es: "Incremento" })
+    if (termValue._base) {
+      return termValue._base;
+    }
+
+    // Fall back to 'en' field (Format 3: legacy { en: "Sprint", de: "Sprint" })
+    if (termValue.en) {
+      return termValue.en;
     }
   }
-  return false;
+
+  // No translation available
+  return null;
 }
 
 /**
- * Check if term appears as a standalone word (with word boundaries and exact case).
- * This prevents false positives from:
- * 1. Substring matches like "Impediment" in "Impedimento"
- * 2. Case mismatches like "Focus" (Scrum Value) vs "focus" (keyboard focus)
+ * Check if a term appears as a standalone word in quoted JSON strings.
+ * Uses word boundaries and exact case matching to prevent false positives.
  *
  * @param {string} term - The glossary term to search for
  * @param {string} content - The locale file content to search within
- * @returns {boolean} True if the term appears as a standalone word in a quoted string
+ * @returns {boolean} True if the term appears as a standalone word
  */
 export function appearsAsStandaloneTerm(term, content) {
-  // Create a regex that matches the term with word boundaries and exact case
   const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const wordBoundaryRegex = new RegExp(`"([^"]*\\b${escapedTerm}\\b[^"]*)"`, 'g');
   return wordBoundaryRegex.test(content);
 }
 
 /**
- * Run the glossary compliance check against the given directories.
+ * Recursively compare JSON objects to find glossary violations.
+ * Checks if values at the same key path match glossary expectations.
+ *
+ * @param {object} enObj - English locale JSON object
+ * @param {object} localeObj - Target locale JSON object
+ * @param {string} locale - Target locale code
+ * @param {object} glossary - Parsed glossary object
+ * @param {string} path - Current JSON key path
+ * @returns {string[]} Array of violation messages
+ */
+function compareJsonValues(enObj, localeObj, locale, glossary, path = '') {
+  const violations = [];
+
+  for (const key in enObj) {
+    const currentPath = path ? `${path}.${key}` : key;
+    const enValue = enObj[key];
+    const localeValue = localeObj[key];
+
+    if (typeof enValue === 'string' && typeof localeValue === 'string') {
+      // Check each glossary term against this value
+      for (const [term, termValue] of Object.entries(glossary)) {
+        if (term.startsWith('_')) continue; // Skip metadata
+
+        const expectedTranslation = normalizeGlossaryTerm(termValue, locale);
+        if (!expectedTranslation) continue;
+
+        // Get base term for comparison
+        const baseTerm = typeof termValue === 'string' ? termValue : (termValue._base || termValue.en);
+        if (!baseTerm) continue;
+
+        // Only check if the English value EXACTLY matches the glossary term
+        // This allows phrase translations (e.g., "No Active Sprint" → "Kein aktiver Sprint")
+        // We only enforce the glossary when the term appears standalone
+        if (enValue === baseTerm || enValue === term) {
+          // Check if locale value differs from expected translation
+          if (localeValue !== expectedTranslation) {
+            violations.push(
+              `${currentPath}: "${localeValue}" → should be "${expectedTranslation}" (EN: "${enValue}")`
+            );
+          }
+        }
+      }
+    } else if (typeof enValue === 'object' && typeof localeValue === 'object' && enValue !== null && localeValue !== null) {
+      // Recursively check nested objects
+      violations.push(...compareJsonValues(enValue, localeValue, locale, glossary, currentPath));
+    }
+  }
+
+  return violations;
+}
+
+/**
+ * Run the glossary compliance check against all locale directories.
  *
  * @param {object} glossary - The parsed glossary object
  * @param {string[]} localesDirs - Directories containing locale subdirectories
@@ -96,36 +145,43 @@ export function checkGlossaryCompliance(glossary, localesDirs, targetLocales) {
   for (const localesDir of localesDirs) {
     if (!existsSync(localesDir)) continue;
 
+    // Check English locale directory exists
+    const enLocaleDir = join(localesDir, BASE_LOCALE);
+    if (!existsSync(enLocaleDir)) continue;
+
     for (const locale of targetLocales) {
       const localeDir = join(localesDir, locale);
       if (!existsSync(localeDir)) continue;
 
       const files = readdirSync(localeDir).filter((f) => f.endsWith('.json'));
+
       for (const file of files) {
-        const content = readFileSync(join(localeDir, file), 'utf-8');
+        const localeFilePath = join(localeDir, file);
+        const enFilePath = join(enLocaleDir, file);
 
-        for (const [term, translations] of Object.entries(glossary)) {
-          // Skip metadata fields (prefixed with _)
-          if (term.startsWith('_')) continue;
+        if (!existsSync(enFilePath)) continue;
 
-          const expectedTranslation = translations[locale];
-          if (!expectedTranslation) continue;
+        try {
+          const localeContent = readFileSync(localeFilePath, 'utf-8');
+          const enContent = readFileSync(enFilePath, 'utf-8');
 
-          // Skip compound term parts - if this term is part of a larger compound that exists,
-          // don't flag it (e.g., "Product" in "Product Owner")
-          if (isPartOfCompoundTerm(term, content)) {
+          const localeJson = JSON.parse(localeContent);
+          const enJson = JSON.parse(enContent);
+
+          // Compare JSON values to find glossary violations
+          const fileViolations = compareJsonValues(enJson, localeJson, locale, glossary);
+
+          for (const violation of fileViolations) {
+            const message = `${locale}/${file}: ${violation}`;
+            details.push(message);
+            violations++;
+          }
+        } catch (parseError) {
+          // Skip JSON parse errors (handled by i18n:check)
+          if (parseError instanceof SyntaxError) {
             continue;
           }
-
-          // Check if the glossary term appears as a standalone word (not just a substring)
-          if (appearsAsStandaloneTerm(term, content)) {
-            // Check if the expected translation also appears
-            if (!content.includes(expectedTranslation)) {
-              const message = `${locale}/${file}: "${term}" — expected "${expectedTranslation}" per glossary`;
-              details.push(message);
-              violations++;
-            }
-          }
+          throw parseError;
         }
       }
     }

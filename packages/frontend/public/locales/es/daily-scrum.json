@@ -94,7 +94,7 @@
   },
   "sprintGoal": {
     "addInPlanning": "Agregar uno en Planificación de Sprint",
-    "label": "Objetivo Sprint",
+    "label": "Sprint Goal",
     "noGoalDefined": "Sin Objetivo Sprint definido."
   },
   "sprintProgress": {
@@ -103,7 +103,7 @@
     "viewSprintBoard": "Ver Sprint Board"
   },
   "stats": {
-    "impediments": "Impedimentos",
+    "impediments": "Impediments",
     "participation": "Participacion",
     "pending": "Pendiente",
     "submitted": "Enviado"
@@ -117,7 +117,7 @@
     "meetings": "Reuniones",
     "review": "Revision"
   },
-  "title": "Scrum diario",
+  "title": "Daily Scrum",
   "toast": {
     "allSubmitted": "Todos los miembros del equipo han enviado sus actualizaciones",
     "failedCreateImpediment": "Fallo al crear impedimento. Por favor intenta de nuevo.",
@@ -144,7 +144,7 @@
   "updateCard": {
     "clickToCollapse": "Clic para colapsar",
     "clickToExpand": "Clic para expandir",
-    "impediment": "Impedimento",
+    "impediment": "Impediment",
     "today": "Hoy",
     "trackAsFormalImpediment": "Rastrear como Impedimento Formal",
     "trackAsImpediment": "Rastrear como Impedimento",

@@ -94,7 +94,7 @@
   },
   "sprintGoal": {
     "addInPlanning": "Ajouter un dans le Sprint Planning",
-    "label": "Objectif de Sprint",
+    "label": "Sprint Goal",
     "noGoalDefined": "Aucun Objectif de Sprint defini."
   },
   "sprintProgress": {
@@ -103,7 +103,7 @@
     "viewSprintBoard": "Voir le sprint board"
   },
   "stats": {
-    "impediments": "Obstacles",
+    "impediments": "Impediments",
     "participation": "Participation",
     "pending": "En attente",
     "submitted": "Soumis"
@@ -144,7 +144,7 @@
   "updateCard": {
     "clickToCollapse": "Cliquer pour reduire",
     "clickToExpand": "Cliquer pour developper",
-    "impediment": "Obstacle",
+    "impediment": "Impediment",
     "today": "Aujourd'hui",
     "trackAsFormalImpediment": "Suivre comme obstacle formel",
     "trackAsImpediment": "Suivre comme obstacle",
