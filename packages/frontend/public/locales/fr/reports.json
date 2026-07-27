@@ -8,7 +8,7 @@
     "items": {
       "active-sprint-impediments": {
         "description": "Le Sprint actuel a {{count}} obstacle(s). Surveillez de près.",
-        "title": "Obstacles du Sprint actif"
+        "title": "Impediments du Sprint actif"
       },
       "consistent-delivery": {
         "description": "L'équipe a maintenu 100% de réalisation des objectifs de Sprint lors des {{count}} derniers Sprints",
@@ -49,16 +49,16 @@
     "insights": "Chargement des insights...",
     "metrics": "Chargement des métriques...",
     "sprintHistory": "Chargement de l'historique des Sprints...",
-    "velocityChart": "Chargement du graphique de velocity..."
+    "velocityChart": "Chargement du graphique de vélocité..."
   },
   "metrics": {
     "avgVelocity": {
       "fromLastSprint": "du dernier Sprint",
-      "title": "Velocity moyenne",
+      "title": "Vélocité moyenne",
       "unit": "Story Points par Sprint"
     },
     "impediments": {
-      "openCount": "Impediment(s) ouvert(s)",
+      "openCount": "Obstacle(s) ouvert(s)",
       "resolved": "Résolus",
       "title": "Impediments"
     },
@@ -95,7 +95,7 @@
   "velocityChart": {
     "completed": "Terminé",
     "planned": "Planifié",
-    "title": "Velocity du Sprint",
+    "title": "Vélocité du Sprint",
     "xAxisLabel": "Sprint",
     "yAxisLabel": "Story Points"
   }

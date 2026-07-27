@@ -16,7 +16,7 @@
     "collapseSidebar": "Contraer barra lateral",
     "expandSidebar": "Expandir barra lateral",
     "listView": "Vista de lista",
-    "loadingNotifications": "Cargando notificaciones",
+    "loadingNotifications": "Cargando notificaciónes",
     "navigateTo": "Navegar a {{page}}",
     "openMenu": "Abrir menú",
     "skipToMainContent": "Ir al contenido principal",
@@ -39,12 +39,12 @@
     "addAttendeesAriaLabel": "Agregar asistentes",
     "attendanceCount": "{{attended}} / {{total}} asistieron",
     "attended": "Asistió",
-    "cancel": "Cancelar",
+    "cancel": "Cancelararar",
     "cannotAddToCompleted": "No se puede agregar a una revisión completada",
     "closeModal": "Cerrar ventana",
-    "editAttendee": "Editar asistente",
+    "editAttendee": "Editararar asistente",
     "editAttendeeSubtitle": "Actualizar la información del asistente para esta revisión",
-    "editAttendeeTitle": "Editar asistente",
+    "editAttendeeTitle": "Editararar asistente",
     "emptyHint": "Marque los miembros del equipo arriba o agregue asistentes manualmente.",
     "emptyMessage": "Aún no se registraron asistentes.",
     "filterAll": "Todos ({{count}})",
@@ -62,7 +62,7 @@
     "markAsAbsent": "Marcar como ausente",
     "markAsAttended": "Marcar como asistió",
     "removeAttendee": "Eliminar asistente",
-    "removeAttendeeConfirm": "Eliminar",
+    "removeAttendeeConfirm": "Remove",
     "removeAttendeeTitle": "Eliminar asistente",
     "roleDeveloper": "Desarrollador",
     "roleProductOwner": "Product Owner",
@@ -77,23 +77,23 @@
   },
   "back": "Volver",
   "by": "por",
-  "cancel": "Cancelar",
+  "cancel": "Cancelararar",
   "characterCounter": {
     "approachingLimit": "Acercándose al límite de caracteres",
     "min": "{{current}}/{{max}} caracteres"
   },
   "chunkError": {
-    "description": "Una parte de la aplicación no se pudo cargar. Puede deberse a un problema de red o a una versión desactualizada.",
+    "description": "Una parte de la aplicación no se pudo cargar.Puede deberse a un problema de red o a una versión desactualizada.",
     "reload": "Recargar",
     "title": "No se puede cargar la página"
   },
   "clear": "Limpiar",
   "close": "Cerrar",
   "collapse": "Colapsar",
-  "confirm": "Confirmar",
+  "confirm": "Confirmararar",
   "confirmDialog": {
-    "defaultMessage": "¿Está seguro de que desea continuar?",
-    "removeMessage": "¿Está seguro de que desea eliminar {{name}}?"
+    "defaultMessage": "¿Está seguro de que ¿desea continuar?",
+    "removeMessage": "¿Está seguro de que ¿desea eliminar {{name}}?"
   },
   "copied": "¡Copiado!",
   "copy": "Copiar",
@@ -106,14 +106,14 @@
   "delete": "Eliminar",
   "deleteAccount": {
     "accountToBeDeleted": "Cuenta a eliminar",
-    "afterDeletionDate": "Después de la fecha de eliminación, puede forzar la eliminación de su cuenta",
+    "afterDeletionDate": "Después de la fecha de eliminación,puede forzar la eliminación de su cuenta",
     "associatedData": "Todos los datos asociados y el historial de actividad",
     "canAssignNewPO": "Puede seguir asignando un nuevo Product Owner",
     "canCancelAnytime": "Puede cancelar esta solicitud en cualquier momento",
-    "cancelDeletion": "Cancelar eliminación",
+    "cancelDeletion": "Cancelararar eliminación",
     "close": "Cerrar",
     "confirmationCheckbox": "Entiendo que esta acción es permanente y no se puede deshacer. Deseo eliminar mi cuenta y todos los datos asociados.",
-    "confirmationHelp": "Esto ayuda a evitar eliminaciones accidentales",
+    "confirmationHelp": "Esto ayuda a evitar eliminaciónes accidentales",
     "confirmationInput": {
       "error": "El texto no coincide. Por favor escriba exactamente:",
       "instructions": "Escriba el texto exactamente como se muestra, sensible a mayúsculas/minúsculas, para activar el botón de eliminar. Presione Enter cuando el texto coincida para enviar.",
@@ -141,7 +141,7 @@
     "deleting": "Eliminando...",
     "deletionRightsNotice": {
       "afterGracePeriod": "Después de 14 días, puede eliminar permanentemente su cuenta independientemente.",
-      "description": "Tiene derecho a eliminar su cuenta. Como es el último Product Owner, le pedimos que programe la eliminación con un período de gracia de 14 días para que sus equipos puedan prepararse.",
+      "description": "Tiene derecho a eliminar su cuenta.Como es el último Product Owner, le pedimos que programe la eliminación con un período de gracia de 14 días para que sus equipos puedan prepararse.",
       "list": {
         "assignNewPO": "Puede asignar un nuevo Product Owner",
         "cancelAnytime": "Puede cancelar la eliminación en cualquier momento",
@@ -150,7 +150,7 @@
       "title": "Su derecho al borrado"
     },
     "forceCheckbox": "Entiendo que los equipos perderán su Product Owner y deseo eliminar permanentemente mi cuenta de todos modos.",
-    "forceConfirmationHelp": "Esta acción no se puede deshacer",
+    "forceConfirmationHelp": "This action cannot be undone",
     "forceDeleteWarning": {
       "description": "El período de gracia de 14 días ha terminado. Ahora puede eliminar permanentemente su cuenta.",
       "impact": {
@@ -160,7 +160,7 @@
         "title": "Esto hará:"
       },
       "teams": {
-        "consequences": "Estos equipos no podrán agregar o eliminar miembros del equipo, gestionar sprints, o acceder a la configuración del equipo.",
+        "consequences": "Estos equipos no podrán agregar o eliminar miembros del equipo, gestionar Sprints, o acceder a la configuración del equipo.",
         "title": "Los siguientes equipos tendrán SIN Product Owner:"
       },
       "title": "Período de gracia completado"
@@ -173,10 +173,10 @@
       "title": "Eliminación programada"
     },
     "profileAndAccount": "Su perfil e información de cuenta",
-    "scheduleCheckbox": "Entiendo que comienza un período de gracia de 14 días, durante el cual se notificará a los miembros del equipo. Puedo cancelar en cualquier momento.",
-    "scheduleConfirmationHelp": "Esto inicia un período de gracia de 14 días",
-    "scheduleConfirmationLabel": "Escriba <strong>{{phrase}}</strong> para programar la eliminación",
-    "scheduleConfirmationPlaceholder": "Escriba {{phrase}}",
+    "scheduleCheckbox": "Entiendo que comience un período de gracia de 14 días, durante el cual se notificará a los miembros del equipo. Puedo cancelar en cualquier momento.",
+    "scheduleConfirmationHelp": "This starts a 14-day grace period",
+    "scheduleConfirmationLabel": "Type <strong>{{phrase}}</strong> to schedule deletion",
+    "scheduleConfirmationPlaceholder": "Type {{phrase}}",
     "scheduleDeletion": "Programar eliminación",
     "scheduling": "Programando...",
     "teamImpact": {
@@ -197,7 +197,7 @@
     "teamsCount": "({{count}} equipos)",
     "title": "Eliminar cuenta",
     "warningTitle": "Esta acción es permanente y no se puede deshacer. Todos sus datos serán eliminados definitivamente.",
-    "whatHappensNext": "Qué sucede después"
+    "whatHappensNext": "What happens next"
   },
   "download": "Descargar",
   "draftRestore": {
@@ -205,7 +205,7 @@
     "daysAgo_other": "{{count}} días",
     "discard": "Descartar",
     "draftFound": "Encontramos un borrador en el que estabas trabajando {{time}}.",
-    "draftSaved": "Borrador guardado",
+    "draftSaved": "borrador saved",
     "hoursAgo": "{{count}} hora",
     "hoursAgo_other": "{{count}} horas",
     "justNow": "justo ahora",
@@ -217,25 +217,25 @@
     "startFresh": "Empezar de nuevo",
     "unsavedDraftFound": "Borrador sin guardar encontrado"
   },
-  "edit": "Editar",
+  "edit": "Editararar",
   "emptyState": {
     "error": {
       "description": "Ocurrió un error al cargar los datos. Inténtelo nuevamente.",
       "title": "Algo salió mal"
     },
     "noActiveGoal": {
-      "action": "Ir a objetivos del producto",
+      "action": "Ir a Product Goals",
       "description": "Establezca un objetivo de producto activo antes de continuar.",
       "title": "Ningún objetivo activo"
     },
     "noActiveSprint": {
-      "action": "Ir a planificación de sprint",
-      "description": "Inicie un nuevo sprint desde la planificación de sprint para continuar.",
-      "title": "Ningún sprint activo"
+      "action": "Ir a Sprint Planning",
+      "description": "Inicie un nuevo Sprint desde la Sprint Planning para continuar.",
+      "title": "Ningún Sprint activo"
     },
     "noCompletedSprint": {
-      "description": "Complete un sprint para comenzar el seguimiento.",
-      "title": "Ningún sprint completado"
+      "description": "Complete un Sprint para comenzar el seguimiento.",
+      "title": "Ningún Sprint completado"
     },
     "noData": {
       "description": "No hay datos para mostrar en este momento.",
@@ -248,7 +248,7 @@
   },
   "error": {
     "boundary": {
-      "description": "Ocurrió un error inesperado. Puede intentar nuevamente o volver al Tablero.",
+      "description": "Ocurrió un error inesperado.Puede intentar nuevamente o volver al Tablero.",
       "goHome": "Ir al Tablero",
       "retry": "Intentar nuevamente",
       "title": "Algo salió mal"
@@ -256,30 +256,30 @@
     "http": {
       "networkOffline": "Está sin conexión. Verifique su conexión a internet.",
       "serverError": "Ocurrió un error del servidor. Nuestro equipo ha sido notificado.",
-      "timeout": "La solicitud tardó demasiado. Inténtelo nuevamente."
+      "timeout": "La solicitud tardó demasiado. Verifique su conexión e intente nuevamente."
     },
     "operations": {
       "addTeamMember": "Error al agregar miembro del equipo",
       "changePassword": "Error al cambiar contraseña",
-      "completeSprint": "Error al completar sprint",
+      "completeSprint": "Error al completar Sprint",
       "createBacklogItem": "Error al crear elemento del backlog",
       "createDefinition": "Error al crear definición",
       "createGoal": "Error al crear objetivo",
-      "createImpediment": "Error al crear impedimento",
-      "createIncrement": "Error al crear incremento",
+      "createImpediment": "Error al crear Impediment",
+      "createIncrement": "Error al crear increment",
       "createRetrospective": "Error al crear retrospectiva",
       "createReview": "Error al crear revisión",
-      "createSprint": "Error al crear sprint",
+      "createSprint": "Error al crear Sprint",
       "createTask": "Error al crear tarea",
       "createTeam": "Error al crear equipo",
       "deleteBacklogItem": "Error al eliminar elemento del backlog",
       "deleteDefinition": "Error al eliminar definición",
       "deleteGoal": "Error al eliminar objetivo",
-      "deleteImpediment": "Error al eliminar impedimento",
-      "deleteIncrement": "Error al eliminar incremento",
+      "deleteImpediment": "Error al eliminar Impediment",
+      "deleteIncrement": "Error al eliminar increment",
       "deleteRetrospective": "Error al eliminar retrospectiva",
       "deleteReview": "Error al eliminar revisión",
-      "deleteSprint": "Error al eliminar sprint",
+      "deleteSprint": "Error al eliminar Sprint",
       "deleteTask": "Error al eliminar tarea",
       "deleteTeam": "Error al eliminar equipo",
       "editBacklogItem": "Error al editar elemento del backlog",
@@ -287,16 +287,16 @@
       "importData": "Error al importar datos",
       "removeTeamMember": "Error al eliminar miembro del equipo",
       "selectTeam": "Error al seleccionar equipo",
-      "startSprint": "Error al iniciar sprint",
+      "startSprint": "Error al iniciar Sprint",
       "updateBacklogItem": "Error al actualizar elemento del backlog",
       "updateDefinition": "Error al actualizar definición",
       "updateGoal": "Error al actualizar objetivo",
-      "updateImpediment": "Error al actualizar impedimento",
-      "updateIncrement": "Error al actualizar incremento",
+      "updateImpediment": "Error al actualizar Impediment",
+      "updateIncrement": "Error al actualizar increment",
       "updateProfile": "Error al actualizar perfil",
       "updateRetrospective": "Error al actualizar retrospectiva",
       "updateReview": "Error al actualizar revisión",
-      "updateSprint": "Error al actualizar sprint",
+      "updateSprint": "Error al actualizar Sprint",
       "updateTask": "Error al actualizar tarea",
       "updateTeam": "Error al actualizar equipo",
       "updateTeamMemberRole": "Error al actualizar rol del miembro"
@@ -315,7 +315,7 @@
     "reloadPage": "Recargar página",
     "runtimeError": "Ocurrió un error inesperado. Por favor intente nuevamente.",
     "serverError": "Ocurrió un error del servidor. Por favor intente más tarde.",
-    "timeoutError": "La solicitud expiró. Por favor intente nuevamente.",
+    "timeoutError": "La solicitud tardó demasiado. Verifique su conexión e intente nuevamente.",
     "title": "Algo salió mal",
     "tryAgain": "Intentar nuevamente",
     "validationError": "Datos inválidos. Por favor verifique su entrada."
@@ -324,7 +324,7 @@
     "dismiss": "Cerrar mensaje de error"
   },
   "expand": "Expandir",
-  "export": "Exportar",
+  "export": "Exportararar",
   "filter": "Filtrar",
   "helpPanel": {
     "avoidExample": "✗ Evitar:",
@@ -341,15 +341,15 @@
   "iconGallery": {
     "categories": "{{count}} categories",
     "matching": "{{count}} matching",
-    "noResults": "No icons found",
-    "noResultsHint": "Try adjusting your search query",
-    "searchAriaLabel": "Search icons",
-    "searchPlaceholder": "Search icons by name or category...",
-    "subtitle": "Browse and copy import statements for all available icons. Click any icon to copy its import statement.",
-    "title": "Icon Gallery",
+    "noResults": "No se encontraron iconos",
+    "noResultsHint": "Intente ajustar su búsqueda",
+    "searchAriaLabel": "Buscar icons",
+    "searchPlaceholder": "Buscar iconos por nombre o categoría...",
+    "subtitle": "Explore y copie declaraciones de importación para los iconos disponibles.",
+    "title": "Galería de iconos",
     "totalIcons": "{{count}} total icons"
   },
-  "import": "Importar",
+  "import": "Importararar",
   "initializing": "Inicializando...",
   "language": "Idioma",
   "loading": "Cargando...",
@@ -367,7 +367,7 @@
     "dashboard": "Tablero",
     "impediments": "Impediment",
     "increments": "Increment",
-    "notifications": "Notificaciones",
+    "notifications": "Notificaciónes",
     "productBacklog": "Product Backlog",
     "productGoals": "Product Goal",
     "reports": "Informes",
@@ -393,16 +393,16 @@
   "none": "Ninguno",
   "notifications": {
     "connectionError": "Error de conexión",
-    "empty": "Aún no hay notificaciones",
-    "loading": "Cargando notificaciones...",
+    "empty": "Aún no hay notificaciónes",
+    "loading": "Cargando notificaciónes...",
     "markAllRead": "Marcar todo como leído",
-    "title": "Notificaciones",
-    "viewAll": "Ver todas las notificaciones"
+    "title": "Notificaciónes",
+    "viewAll": "Ver todas las notificaciónes"
   },
   "optional": "Opcional",
   "pageError": {
     "backToDashboard": "Volver al panel",
-    "description": "Encontramos un error al cargar esta página. Puede deberse a un problema temporal o de conexión.",
+    "description": "Encontramos un error al cargar esta página.Puede deberse a un problema temporal o de conexión.",
     "reloadPage": "Recargar página",
     "technicalDetails": "Detalles técnicos",
     "title": "Error de {{pageName}}"
@@ -417,11 +417,11 @@
   "profile": {
     "changePasswordTitle": "Cambiar contraseña",
     "changing": "Cambiando...",
-    "confirmNewPassword": "Confirmar nueva contraseña",
+    "confirmNewPassword": "Confirmararar nueva contraseña",
     "contactSupportToChangeEmail": "Contacte al soporte para cambiar su dirección de correo electrónico",
     "currentPassword": "Contraseña actual",
     "currentPasswordIncorrect": "La contraseña actual es incorrecta",
-    "editTitle": "Editar perfil",
+    "editTitle": "Editararar perfil",
     "email": "Correo electrónico",
     "firstName": "Nombre",
     "hidePassword": "Ocultar contraseña",
@@ -445,7 +445,7 @@
     "passwordsDoNotMatch": "Las contraseñas no coinciden",
     "passwordsMatch": "Las contraseñas coinciden",
     "placeholder": {
-      "confirmPassword": "Confirme su nueva contraseña",
+      "confirmPassword": "Confirmarare su nueva contraseña",
       "currentPassword": "Ingrese su contraseña actual",
       "firstName": "Ingrese su nombre",
       "lastName": "Ingrese su apellido",
@@ -478,9 +478,9 @@
   "sort": "Ordenar",
   "status": "Estado",
   "statusSelector": {
-    "changeItemStatusHint": "Haz clic para cambiar el estado del elemento",
+    "changeItemStatusHint": "Haga clic para cambiar el estado del elemento",
     "changeStatus": "Cambiar estado",
-    "currentStatusClickable": "Estado actual: {{status}}. Haz clic para cambiar el estado.",
+    "currentStatusClickable": "Estado actual: {{status}}. Haga clic para cambiar el estado.",
     "currentStatusLocked": "Estado actual: {{status}} (bloqueado)",
     "statusOptions": "Opciones de estado"
   },
@@ -504,24 +504,24 @@
     "attentionRequired": "Atención requerida",
     "discard": "Descartar",
     "discardChanges": "Descartar cambios",
-    "discardDescription": "Cerrar sin guardar y perder todas las modificaciones",
+    "discardDescription": "Cerrar sin guardar y perder todas las modificaciónes",
     "goBack": "Volver",
     "goBackDescription": "Continuar editando y guardar los cambios",
-    "message": "Tiene cambios sin guardar. ¿Está seguro de que desea descartarlos?",
+    "message": "Tiene cambios sin guardar. ¿Está seguro de que ¿desea descartarlos?",
     "messages": {
-      "passwordChange": "Tiene cambios sin guardar en el formulario de cambio de contraseña. ¿Está seguro de que desea descartarlos?",
-      "profileEdit": "Tiene cambios sin guardar en el formulario de edición de perfil. ¿Está seguro de que desea descartarlos?"
+      "passwordChange": "Tiene cambios sin guardar en el formulario de cambio de contraseña. ¿Está seguro de que ¿desea descartarlos?",
+      "profileEdit": "Tiene cambios sin guardar en el formulario de edición de perfil. ¿Está seguro de que ¿desea descartarlos?"
     },
     "permanentlyLost": "Sus cambios se perderán permanentemente si los descarta. Esta acción no se puede deshacer.",
     "subtitle": "Por favor, revise antes de continuar",
     "title": "Cambios sin guardar",
-    "unsavedModifications": "Modificaciones sin guardar detectadas",
-    "whatWouldYouDo": "¿Qué desea hacer?"
+    "unsavedModifications": "Modificaciónes sin guardar detectadas",
+    "whatWouldYouDo": "¿Qué ¿desea hacer?"
   },
   "unsavedChangesModal": {
     "discard": "Descartar",
     "keepEditing": "Seguir editando",
-    "message": "Tiene cambios sin guardar. ¿Está seguro de que desea descartarlos?",
+    "message": "Tiene cambios sin guardar. ¿Está seguro de que ¿desea descartarlos?",
     "title": "Cambios sin guardar"
   },
   "update": "Actualizar",
@@ -529,7 +529,7 @@
   "upload": "Cargar",
   "userMenu": {
     "changePassword": "Cambiar contraseña",
-    "editProfile": "Editar perfil",
+    "editProfile": "Editararar perfil",
     "logout": "Cerrar sesión"
   },
   "view": "Ver",

@@ -4,18 +4,18 @@
     "title": "Error al cargar los reportes"
   },
   "insights": {
-    "empty": "Sin insights disponibles aún. Complete más Sprints para generar insights.",
+    "empty": "Sin perspectivas disponibles aún. Complete más Sprints para generar perspectivas.",
     "items": {
       "active-sprint-impediments": {
-        "description": "El Sprint actual tiene {{count}} impedimento(s). Monitoree de cerca.",
-        "title": "Impedimentos del Sprint activo"
+        "description": "El Sprint actual tiene {{count}} Impediment(s). Monitoree de cerca.",
+        "title": "Impediments del Sprint activo"
       },
       "consistent-delivery": {
         "description": "El equipo ha mantenido el 100% de cumplimiento de objetivos en los últimos {{count}} Sprints",
         "title": "Entrega consistente"
       },
       "get-started": {
-        "description": "Complete más Sprints para generar insights de rendimiento del equipo.",
+        "description": "Complete más Sprints para generar perspectivas de rendimiento del equipo.",
         "title": "Comenzando"
       },
       "high-success-rate": {
@@ -23,8 +23,8 @@
         "title": "Alta tasa de éxito"
       },
       "impediment-trend": {
-        "description": "{{count}} impedimento(s) actualmente abiertos. Considere abordarlos proactivamente.",
-        "title": "Tendencia de impedimentos"
+        "description": "{{count}} Impediment(s) actualmente abiertos. Considere abordarlos proactivamente.",
+        "title": "Tendencia de Impediments"
       },
       "low-success-rate": {
         "description": "La tasa de éxito del Sprint es del {{rate}}%. Considere revisar la capacidad y planificación.",
@@ -35,26 +35,26 @@
         "title": "Mejora reciente"
       },
       "velocity-decline": {
-        "description": "La velocity promedio disminuyó un {{trend}}%. Considere revisar la planificación del Sprint.",
-        "title": "Disminución de Velocity"
+        "description": "La velocidad promedio disminuyó un {{trend}}%. Considere revisar la planificación del Sprint.",
+        "title": "Disminución de velocidad"
       },
       "velocity-improvement": {
-        "description": "La velocity promedio aumentó un {{trend}}% en comparación con Sprints anteriores",
-        "title": "Mejora de Velocity"
+        "description": "La velocidad promedio aumentó un {{trend}}% en comparación con Sprints anteriores",
+        "title": "Mejora de velocidad"
       }
     },
-    "title": "Insights clave"
+    "title": "perspectivas clave"
   },
   "loading": {
-    "insights": "Cargando insights...",
+    "insights": "Cargando perspectivas...",
     "metrics": "Cargando métricas...",
     "sprintHistory": "Cargando historial de Sprints...",
-    "velocityChart": "Cargando gráfico de velocity..."
+    "velocityChart": "Cargando gráfico de velocidad..."
   },
   "metrics": {
     "avgVelocity": {
       "fromLastSprint": "del último Sprint",
-      "title": "Velocity promedio",
+      "title": "velocidad promedio",
       "unit": "Story Points por Sprint"
     },
     "impediments": {
@@ -95,7 +95,7 @@
   "velocityChart": {
     "completed": "Completado",
     "planned": "Planificado",
-    "title": "Velocity del Sprint",
+    "title": "velocidad del Sprint",
     "xAxisLabel": "Sprint",
     "yAxisLabel": "Story Points"
   }

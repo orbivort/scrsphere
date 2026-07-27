@@ -1,18 +1,18 @@
 {
-  "accountDeletionCancelled": "Eliminación de cuenta cancelada",
-  "accountDeletionCancelledMessage": "La eliminación de cuenta programada ha sido cancelada.",
+  "accountDeletionCancelled": "Account deletion cancelled",
+  "accountDeletionCancelledMessage": "La eliminación programada de la cuenta ha sido cancelada.",
   "accountDeletionScheduled": "Miembro del equipo programó eliminación de cuenta",
   "accountDeletionScheduledMessage": "Un Product Owner en su equipo ha programado la eliminación de su cuenta. La cuenta se eliminará permanentemente el {{deletionDate}}. Por favor asigne un nuevo Product Owner antes de entonces.",
   "ariaLabels": {
     "dismiss": "Descartar notificación",
-    "filterNotifications": "Filter notifications",
-    "goToNextPage": "Ir a la página siguiente",
-    "goToPreviousPage": "Ir a la página anterior",
+    "filterNotifications": "Filtrar notifications",
+    "goToNextPage": "Go to next page",
+    "goToPreviousPage": "Go to previous page",
     "markAsRead": "Marcar como leído",
     "notificationItem": "Notificación de {{sender}}: {{message}}",
     "pagination": "Pagination"
   },
-  "backlogAdjustmentRequired": "Nueva Ajuste del Backlog Requiere Su Acción",
+  "backlogAdjustmentRequired": "Nueva Ajuste del Volverlog Requiere Su Acción",
   "backlogAdjustmentRequiredMessage": "Se le ha asignado como propietario de un ajuste del backlog: {{action}} - \"{{description}}\"",
   "dateGroups": {
     "older": "Anteriores",
@@ -21,32 +21,32 @@
     "yesterday": "Ayer"
   },
   "empty": {
-    "message": "Verá notificaciones aquí cuando haya actividad",
-    "title": "Aún no hay notificaciones"
+    "message": "Verá notificaciónes aquí cuando haya actividad",
+    "title": "Aún no hay notificaciónes"
   },
   "error": {
-    "message": "Algo salió mal al obtener sus notificaciones.",
-    "title": "Error al cargar notificaciones",
+    "message": "Algo salió mal al obtener sus notificaciónes.",
+    "title": "Error al cargar notificaciónes",
     "tryAgain": "Intentar nuevamente"
   },
-  "feedbackRequired": "Nuevo Feedback Requiere Su Acción",
-  "feedbackRequiredMessage": "Se le ha asignado como propietario de feedback de {{authorName}}: \"{{content}}\"",
+  "feedbackRequired": "New retroalimentación Requires Your Action",
+  "feedbackRequiredMessage": "Se le ha asignado como propietario de la retroalimentación de {{authorName}}: \"{{content}}\". Se requiere su revisión.",
   "filters": {
     "all": "Todos",
     "directMessages": "Mensajes directos",
     "impediments": "Impediments",
     "reminders": "Recordatorios",
-    "taskAssignments": "Asignaciones de tareas",
+    "taskAssignments": "Asignaciónes de tareas",
     "teamCreated": "Equipo creado",
     "teamDeleted": "Equipo eliminado",
     "teamInvitations": "Invitaciones de equipo",
     "teamUpdated": "Equipo actualizado",
     "unread": "No leídos"
   },
-  "impedimentAssigned": "Nuevo impedimento asignado: \"{{impedimentTitle}}\"",
+  "impedimentAssigned": "Nuevo Impediment asignado: \"{{impedimentTitle}}\"",
   "loading": {
-    "ariaLabel": "Cargando notificaciones",
-    "title": "Cargando notificaciones..."
+    "ariaLabel": "Cargando notificaciónes",
+    "title": "Cargando notificaciónes..."
   },
   "markAllAsRead": "Marcar todo como leído",
   "marking": "Marcando...",
@@ -56,7 +56,7 @@
     "previous": "Anterior"
   },
   "skipToMainContent": "Ir al contenido principal",
-  "subtitle": "Manténgase actualizado con las actividades del equipo y actualizaciones importantes",
+  "subtitle": "Manténgase actualizado con las actividades del equipo y actualizaciónes importantes",
   "teamCreated": "Equipo creado: \"{{teamName}}\"",
   "teamCreatedMessage": "Ha creado exitosamente el equipo",
   "teamDeleted": "Equipo eliminado: \"{{teamName}}\"",
@@ -67,5 +67,5 @@
   "teamRemovalMessage": "Eliminado por {{removerName}}",
   "teamUpdated": "Equipo actualizado: \"{{teamName}}\"",
   "teamUpdatedMessage": "Actualizado por {{updaterName}}",
-  "title": "Notificaciones"
+  "title": "Notificaciónes"
 }

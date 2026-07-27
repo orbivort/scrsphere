@@ -106,7 +106,7 @@
   "delete": "Löschen",
   "deleteAccount": {
     "accountToBeDeleted": "Zu löschendes Konto",
-    "afterDeletionDate": "Nach dem Löschungsdatum können Sie Ihr Konto erzwingen-löschen",
+    "afterDeletionDate": "Nach dem Löschungsdatum können Sie die Löschung Ihres Kontos erzwingen",
     "associatedData": "Alle zugehörigen Daten und Aktivitätshistorie",
     "canAssignNewPO": "Sie können weiterhin einen neuen Product Owner zuweisen",
     "canCancelAnytime": "Sie können diese Anfrage jederzeit stornieren",
@@ -116,7 +116,7 @@
     "confirmationHelp": "Dies hilft, versehentliches Löschen zu verhindern",
     "confirmationInput": {
       "error": "Text stimmt nicht überein. Bitte genau tippen:",
-      "instructions": "Tippen Sie den Text genau wie angezeigt, Groß-/Kleinschreibung beachten, um den Löschen-Button zu aktivieren. Drücken Sie Enter wenn der Text übereinstimmt zum Absenden.",
+      "instructions": "Geben Sie den Text genau wie angezeigt ein (Groß-/Kleinschreibung beachten), um die Löschen-Schaltfläche zu aktivieren. Drücken Sie Enter, wenn der Text übereinstimmt.",
       "label": "Zur Bestätigung der Löschung, bitte tippen Sie:",
       "placeholder": "Tippen Sie \"{{phrase}}\" zur Bestätigung",
       "success": "Bestätigungstext stimmt überein"
@@ -224,7 +224,7 @@
       "title": "Etwas ist schiefgelaufen"
     },
     "noActiveGoal": {
-      "action": "Zu Produkt-Zielen",
+      "action": "Zu Product Goalsn",
       "description": "Bitte setzen Sie ein aktives Produktziel, bevor Sie fortfahren.",
       "title": "Kein aktives Ziel"
     },
@@ -265,7 +265,7 @@
       "createBacklogItem": "Fehler beim Erstellen des Backlog-Elements",
       "createDefinition": "Fehler beim Erstellen der Definition",
       "createGoal": "Fehler beim Erstellen des Ziels",
-      "createImpediment": "Fehler beim Erstellen des Hindernisses",
+      "createImpediment": "Fehler beim Erstellen des Impediments",
       "createIncrement": "Fehler beim Erstellen des Increments",
       "createRetrospective": "Fehler beim Erstellen der Retrospective",
       "createReview": "Fehler beim Erstellen der Überprüfung",
@@ -275,7 +275,7 @@
       "deleteBacklogItem": "Fehler beim Löschen des Backlog-Elements",
       "deleteDefinition": "Fehler beim Löschen der Definition",
       "deleteGoal": "Fehler beim Löschen des Ziels",
-      "deleteImpediment": "Fehler beim Löschen des Hindernisses",
+      "deleteImpediment": "Fehler beim Löschen des Impediments",
       "deleteIncrement": "Fehler beim Löschen des Increments",
       "deleteRetrospective": "Fehler beim Löschen der Retrospective",
       "deleteReview": "Fehler beim Löschen der Überprüfung",
@@ -291,7 +291,7 @@
       "updateBacklogItem": "Fehler beim Aktualisieren des Backlog-Elements",
       "updateDefinition": "Fehler beim Aktualisieren der Definition",
       "updateGoal": "Fehler beim Aktualisieren des Ziels",
-      "updateImpediment": "Fehler beim Aktualisieren des Hindernisses",
+      "updateImpediment": "Fehler beim Aktualisieren des Impediments",
       "updateIncrement": "Fehler beim Aktualisieren des Increments",
       "updateProfile": "Fehler beim Aktualisieren des Profils",
       "updateRetrospective": "Fehler beim Aktualisieren der Retrospective",
@@ -339,15 +339,15 @@
     "title": "Initialisierungstimeout"
   },
   "iconGallery": {
-    "categories": "{{count}} categories",
-    "matching": "{{count}} matching",
-    "noResults": "No icons found",
-    "noResultsHint": "Try adjusting your search query",
-    "searchAriaLabel": "Search icons",
-    "searchPlaceholder": "Search icons by name or category...",
-    "subtitle": "Browse and copy import statements for all available icons. Click any icon to copy its import statement.",
-    "title": "Icon Gallery",
-    "totalIcons": "{{count}} total icons"
+    "categories": "{{count}} Kategorien",
+    "matching": "{{count}} passend",
+    "noResults": "Keine Icons gefunden",
+    "noResultsHint": "Passen Sie Ihre Suchanfrage an",
+    "searchAriaLabel": "Icons durchsuchen",
+    "searchPlaceholder": "Icons nach Name oder Kategorie durchsuchen...",
+    "subtitle": "Import-Anweisungen für alle verfügbaren Icons durchsuchen und kopieren. Klicken Sie auf ein Icon, um dessen Import-Anweisung zu kopieren.",
+    "title": "Icon-Galerie",
+    "totalIcons": "{{count}} Icons insgesamt"
   },
   "import": "Importieren",
   "initializing": "Initialisierung...",
@@ -447,8 +447,8 @@
     "placeholder": {
       "confirmPassword": "Bestätigen Sie Ihr neues Passwort",
       "currentPassword": "Geben Sie Ihr aktuelles Passwort ein",
-      "firstName": "Geben Sie Ihren Vorname ein",
-      "lastName": "Geben Sie Ihren Nachname ein",
+      "firstName": "Geben Sie Ihren Vornamen ein",
+      "lastName": "Geben Sie Ihren Nachnamen ein",
       "newPassword": "Geben Sie Ihr neues Passwort ein"
     },
     "profileUpdated": "Profil erfolgreich aktualisiert",
@@ -469,7 +469,7 @@
   "sessionWarning": {
     "extending": "Verlängern...",
     "logOut": "Abmelden",
-    "message": "Ihre Sitzung läuft bald aufgrund Inaktivität ab. Sie werden automatisch abgemeldet in:",
+    "message": "Ihre Sitzung läuft bald aufgrund von Inaktivität ab. Sie werden automatisch abgemeldet in:",
     "stayLoggedIn": "Angemeldet bleiben",
     "title": "Sitzungsablauf-Warnung"
   },

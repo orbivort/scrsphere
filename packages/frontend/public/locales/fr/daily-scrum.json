@@ -1,83 +1,83 @@
 {
   "activeImpediments": {
-    "title": "Obstacles actifs",
+    "title": "Impediments actifs",
     "trackAsImpediment": "Suivre comme obstacle",
     "tracked": "Suivi",
-    "trackedImpediment": "Obstacle suivi",
-    "untrackedImpediment": "Obstacle non suivi",
+    "trackedImpediment": "Impediment suivi",
+    "untrackedImpediment": "Impediment non suivi",
     "viewAllImpediments": "Voir tous les {{count}} obstacles",
-    "viewDetails": "Voir les details"
+    "viewDetails": "Voir les détails"
   },
   "aria": {
-    "clickToCollapse": "Cliquer pour reduire",
-    "clickToExpand": "Cliquer pour developper",
+    "clickToCollapse": "Cliquer pour réduire",
+    "clickToExpand": "Cliquer pour développer",
     "closeDialog": "Fermer le dialogue",
     "closeForm": "Fermer le formulaire",
-    "dailyUpdateAriaLabel": "Mise a jour quotidienne de {{name}}. {{expandAction}}.",
+    "dailyUpdateAriaLabel": "Mise à jour quotidienne de {{name}}. {{expandAction}}.",
     "impedimentStatus": "Statut de l'obstacle : {{status}}",
     "trackedAsFormalImpediment": "Suivi comme obstacle formel",
     "viewMode": "Mode d'affichage"
   },
   "datePicker": {
-    "ariaLabel": "Selectionner la date pour les mises a jour quotidiennes",
-    "label": "Selectionner la date pour les mises a jour quotidiennes"
+    "ariaLabel": "Sélectionner la date pour les mises à jour quotidiennes",
+    "label": "Sélectionner la date pour les mises à jour quotidiennes"
   },
   "draftRestore": {
     "discard": "Supprimer",
-    "prompt": "Voulez-vous restaurer votre brouillon precedent?",
+    "prompt": "Voulez-vous restaurer votre brouillon précédent ?",
     "restoreDraft": "Restaurer le brouillon",
-    "title": "Brouillon non sauvegarde trouve"
+    "title": "Brouillon non sauvegardé trouvé"
   },
-  "draftSaved": "Brouillon sauvegarde {{timeSince}}",
+  "draftSaved": "Brouillon sauvegardé {{timeSince}}",
   "emptyState": {
-    "beFirst": "Soyez le premier a soumettre votre mise a jour quotidienne!",
-    "noUpdates": "Pas encore de mises a jour",
-    "noUpdatesForDate": "Aucune mise a jour d'equipe pour cette date."
+    "beFirst": "Soyez le premier à soumettre votre mise à jour quotidienne !",
+    "noUpdates": "Pas encore de mises à jour",
+    "noUpdatesForDate": "Aucune mise à jour d'équipe pour cette date."
   },
   "form": {
     "cancel": "Annuler",
-    "impedimentHint": "Cet obstacle sera suivi et peut etre promu en enregistrement formel d'obstacle",
-    "impedimentLabel": "Des obstacles? (optionnel)",
-    "impedimentPlaceholder": "Decrivez tous les bloquants ou obstacles...",
+    "impedimentHint": "Cet obstacle sera suivi et peut être promu en enregistrement formel d'obstacle",
+    "impedimentLabel": "Des obstacles ? (optionnel)",
+    "impedimentPlaceholder": "Décrivez tous les bloquants ou obstacles...",
     "submitting": "Soumission...",
-    "todayLabel": "Que ferez-vous aujourd'hui pour aider l'equipe a atteindre l'Objectif de Sprint?",
-    "todayPlaceholder": "Decrivez ce que vous prevoyez de faire aujourd'hui...",
-    "yesterdayLabel": "Qu'avez-vous fait hier pour aider l'equipe a atteindre l'Objectif de Sprint?",
-    "yesterdayPlaceholder": "Decrivez ce que vous avez accompli hier..."
+    "todayLabel": "Que ferez-vous aujourd'hui pour aider l'équipe à atteindre l'Sprint Goal ?",
+    "todayPlaceholder": "Décrivez ce que vous prévoyez de faire aujourd'hui...",
+    "yesterdayLabel": "Qu'avez-vous fait hier pour aider l'équipe à atteindre l'Sprint Goal ?",
+    "yesterdayPlaceholder": "Décrivez ce que vous avez accompli hier..."
   },
   "formatTimeSince": {
     "daysAgo": "{{count}}j",
     "hoursAgo": "{{count}}h",
-    "justNow": "a l'instant",
+    "justNow": "à l'instant",
     "minutesAgo": "{{count}}m"
   },
   "impedimentStatus": {
-    "closed": "Ferme",
+    "closed": "Fermé",
     "inProgress": "En cours",
     "open": "Ouvert",
-    "resolved": "Resolu"
+    "resolved": "Résolu"
   },
   "loading": {
-    "actions": "Loading actions...",
-    "pageHeader": "Loading page header...",
-    "pendingMembers": "Loading pending members...",
-    "sectionHeader": "Loading section header...",
-    "sprintProgress": "Loading sprint progress...",
-    "statistics": "Loading statistics...",
-    "teamUpdates": "Loading team updates..."
+    "actions": "Chargement des actions...",
+    "pageHeader": "Chargement de l'en-tête...",
+    "pendingMembers": "Chargement des membres en attente...",
+    "sectionHeader": "Chargement de l'en-tête de section...",
+    "sprintProgress": "Chargement de la progression du sprint...",
+    "statistics": "Chargement des statistiques...",
+    "teamUpdates": "Chargement des mises à jour de l'équipe..."
   },
   "promoteModal": {
-    "createImpediment": "Creer l'obstacle",
-    "creating": "Creation...",
+    "createImpediment": "Créer l'obstacle",
+    "creating": "Création...",
     "descriptionLabel": "Description",
-    "descriptionPlaceholder": "Description detaillee de l'obstacle",
-    "fromUpdateBy": "De la mise a jour quotidienne de:",
-    "originalImpedimentText": "Texte original de l'obstacle:",
-    "priority": "Priorite",
+    "descriptionPlaceholder": "Description détaillée de l'obstacle",
+    "fromUpdateBy": "De la mise à jour quotidienne de :",
+    "originalImpedimentText": "Texte original de l'obstacle :",
+    "priority": "Priorité",
     "priorityHigh": "Haute",
     "priorityLow": "Basse",
     "priorityMedium": "Moyenne",
-    "title": "Creer un obstacle a partir de la mise a jour quotidienne",
+    "title": "Créer un obstacle à partir de la mise à jour quotidienne",
     "titleLabel": "Titre",
     "titlePlaceholder": "Titre bref pour l'obstacle"
   },
@@ -87,22 +87,22 @@
   },
   "retryPrompt": {
     "dismiss": "Fermer",
-    "message": "Votre mise a jour n'a pas pu etre soumise. Vos donnees ont ete preservees.",
+    "message": "Votre mise à jour n'a pas pu être soumise. Vos données ont été préservées.",
     "retrySubmission": "Retenter la soumission",
     "retrying": "Nouvelle tentative...",
-    "title": "Soumission echouee"
+    "title": "Soumission échouée"
   },
   "sprintGoal": {
     "addInPlanning": "Ajouter un dans le Sprint Planning",
     "label": "Sprint Goal",
-    "noGoalDefined": "Aucun Objectif de Sprint defini.",
-    "progressAriaLabel": "{{percentage}}% d'achevement du sprint ({{completed}} sur {{total}} taches achevees)",
-    "progressTitle": "{{completed}} sur {{total}} taches achevees"
+    "noGoalDefined": "Aucun Sprint Goal défini.",
+    "progressAriaLabel": "{{percentage}} % d'achèvement du sprint ({{completed}} sur {{total}} tâches achevées)",
+    "progressTitle": "{{completed}} sur {{total}} tâches achevées"
   },
   "sprintProgress": {
     "dayOfTotal": "Jour {{current}} sur {{total}}",
     "title": "Progression du sprint",
-    "viewSprintBoard": "Voir le sprint board"
+    "viewSprintBoard": "Voir le tableau de sprint"
   },
   "stats": {
     "impediments": "Impediments",
@@ -110,56 +110,56 @@
     "pending": "En attente",
     "submitted": "Soumis"
   },
-  "submitUpdate": "Soumettre la mise a jour",
+  "submitUpdate": "Soumettre la mise à jour",
   "subtitle": "{{sprintName}} - Jour {{day}}",
-  "teamUpdates": "Mises a jour de l'equipe",
+  "teamUpdates": "Mises à jour de l'équipe",
   "templates": {
-    "featureDevelopment": "Developpement de fonctionnalite",
-    "issueFixing": "Correction de probleme",
-    "meetings": "Reunions",
+    "featureDevelopment": "Développement de fonctionnalité",
+    "issueFixing": "Correction de problème",
+    "meetings": "Réunions",
     "review": "Revue"
   },
   "title": "Daily Scrum",
   "toast": {
     "allSubmitted": "Tous les membres de l'équipe ont soumis leurs mises à jour",
-    "failedCreateImpediment": "Impossible de creer l'obstacle. Veuillez reessayer.",
-    "failedSendReminder": "Impossible d'envoyer le rappel. Veuillez reessayer.",
-    "impedimentCreated": "Obstacle cree avec succes!",
-    "networkError": "Une erreur reseau s'est produite. Verifiez votre connexion et reessayez.",
+    "failedCreateImpediment": "Impossible de créer l'obstacle. Veuillez réessayer.",
+    "failedSendReminder": "Impossible d'envoyer le rappel. Veuillez réessayer.",
+    "impedimentCreated": "Impediment créé avec succès !",
+    "networkError": "Une erreur réseau s'est produite. Vérifiez votre connexion et réessayez.",
     "noPendingUpdates": "Aucune mise à jour en attente",
-    "noPermissionCreateImpediments": "Vous n'avez pas la permission de creer des obstacles.",
+    "noPermissionCreateImpediments": "Vous n'avez pas la permission de créer des obstacles.",
     "noPermissionReminders": "Vous n'avez pas la permission d'envoyer des rappels.",
-    "offline": "Vous semblez etre hors ligne. Verifiez votre connexion internet et reessayez.",
+    "offline": "Vous semblez être hors ligne. Vérifiez votre connexion internet et réessayez.",
     "reminderSent": "Rappel envoyé !",
     "remindersSentOne": "Rappels envoyés à 1 membre de l'équipe",
     "remindersSentPlural": "Rappels envoyés à {{count}} membres de l'équipe",
-    "resourceNotFound": "La ressource demandee n'a pas ete trouvee.",
-    "serverError": "Une erreur serveur s'est produite. Veuillez reessayer plus tard.",
-    "sessionExpired": "Votre session a expire. Veuillez vous reconnecter.",
-    "submitFailed": "Impossible de soumettre la mise a jour. Veuillez reessayer.",
-    "updateSubmitted": "Mise a jour soumise avec succes!"
+    "resourceNotFound": "La ressource demandée n'a pas été trouvée.",
+    "serverError": "Une erreur serveur s'est produite. Veuillez réessayer plus tard.",
+    "sessionExpired": "Votre session a expiré. Veuillez vous reconnecter.",
+    "submitFailed": "Impossible de soumettre la mise à jour. Veuillez réessayer.",
+    "updateSubmitted": "Mise à jour soumise avec succès !"
   },
   "unsavedModal": {
-    "message": "Vous avez des modifications non sauvegardees dans le formulaire d'obstacle. Etes-vous sur de vouloir les supprimer?",
-    "title": "Modifications non sauvegardees"
+    "message": "Vous avez des modifications non sauvegardées dans le formulaire d'obstacle. Êtes-vous sûr de vouloir les supprimer ?",
+    "title": "Modifications non sauvegardées"
   },
   "updateCard": {
-    "clickToCollapse": "Cliquer pour reduire",
-    "clickToExpand": "Cliquer pour developper",
+    "clickToCollapse": "Cliquer pour réduire",
+    "clickToExpand": "Cliquer pour développer",
     "impediment": "Impediment",
     "today": "Aujourd'hui",
     "trackAsFormalImpediment": "Suivre comme obstacle formel",
     "trackAsImpediment": "Suivre comme obstacle",
     "tracked": "(Suivi)",
     "viewImpediment": "Voir l'obstacle",
-    "viewImpedimentDetails": "Voir les details de l'obstacle",
+    "viewImpedimentDetails": "Voir les détails de l'obstacle",
     "yesterday": "Hier"
   },
   "validation": {
     "descriptionRequired": "La description est requise",
-    "descriptionTooShort": "La description doit avoir au moins 10 caracteres",
+    "descriptionTooShort": "La description doit avoir au moins 10 caractères",
     "titleRequired": "Le titre est requis",
-    "titleTooShort": "Le titre doit avoir au moins 3 caracteres"
+    "titleTooShort": "Le titre doit avoir au moins 3 caractères"
   },
   "viewMode": {
     "cards": "Cartes",
@@ -168,7 +168,7 @@
   "waitingForUpdates": {
     "sendReminder": "Envoyer un rappel",
     "sending": "Envoi...",
-    "title": "En attente de mises a jour"
+    "title": "En attente de mises à jour"
   },
-  "yourDailyUpdate": "Votre mise a jour quotidienne"
+  "yourDailyUpdate": "Votre mise à jour quotidienne"
 }

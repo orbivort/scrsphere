@@ -73,7 +73,7 @@
     "complete": "Completa",
     "completeTitle": "Completa Retrospective",
     "completing": "Completando...",
-    "confirmationQuestion": "Sei sicuro di voler markare questa Retrospective come completata? Questa azione non può essere annullata.",
+    "confirmationQuestion": "Sei sicuro di voler contrassegnare questa Retrospective come completata? Questa azione non può essere annullata.",
     "confirmationRequired": "Conferma richiesta",
     "finalStep": "Ultimo passo",
     "lockWarning": "Una volta completata, la Retrospective sarà bloccata e nessuna ulteriore modifica potrà essere fatta.",
@@ -88,7 +88,7 @@
     "descriptionHelper": "Fornisci contesto aggiuntivo per aiutare l'assegnato a capire il task",
     "descriptionPlaceholder": "Aggiungi dettagli su questo Action Item...",
     "dueDate": "Data di scadenza *",
-    "loadingMembers": "Caricando membri del team...",
+    "loadingMembers": "Caricamento membri del team...",
     "noMembers": "Nessun membro del team disponibile",
     "optionalBadge": "opzionale",
     "owner": "Proprietario *",
@@ -98,7 +98,7 @@
     "titleLabel": "Titolo *",
     "titlePlaceholder": "Inserisci titolo dell'Action Item",
     "unableToLoadMembers": "Impossibile caricare membri del team. Per favore aggiornare la pagina.",
-    "unsavedMessage": "Hai modifiche non salvate nel formulario Action Item. Sei sicuro di volerle scartare?",
+    "unsavedMessage": "Hai modifiche non salvate nel modulo Action Item. Sei sicuro di volerle scartare?",
     "unsavedTitle": "Modifiche non salvate"
   },
   "deleteModal": {
@@ -128,7 +128,7 @@
     "creating": "Creando...",
     "goal": "Goal:",
     "items": "elementi",
-    "loading": "Caricando Retrospectives...",
+    "loading": "Caricamento Retrospectives...",
     "retroStatus": {
       "completed": "Retrospective completata",
       "draft": "Bozza Retrospective",
@@ -146,7 +146,7 @@
     "title": "Sprint Retrospectives",
     "viewRetrospective": "Vedi Retrospective"
   },
-  "loading": "Caricando Retrospective...",
+  "loading": "Caricamento Retrospective...",
   "pts": "pts",
   "sprintInfo": {
     "businessDay_one": "{{count}} giorno lavorativo",
@@ -240,7 +240,7 @@
     "voteFailed": "Impossibile votare"
   },
   "validation": {
-    "allTeamMembersAttendance": "Tutti i membri del team devono essere markati come presenti o assenti. Mancanti: {{names}}{{remaining}}.",
+    "allTeamMembersAttendance": "Tutti i membri del team devono essere contrassegnati come presenti o assenti. Mancanti: {{names}}{{remaining}}.",
     "dueDatePast": "La data di scadenza non può essere nel passato",
     "dueDateRequired": "La data di scadenza è richiesta",
     "itemContentMaxLength": "Il contenuto dell'elemento deve essere di 500 caratteri o meno",

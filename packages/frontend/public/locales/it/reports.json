@@ -46,10 +46,10 @@
     "title": "Insights chiave"
   },
   "loading": {
-    "insights": "Caricando insights...",
-    "metrics": "Caricando metriche...",
-    "sprintHistory": "Caricando storico Sprint...",
-    "velocityChart": "Caricando grafico velocity..."
+    "insights": "Caricamento approfondimenti...",
+    "metrics": "Caricamento metriche...",
+    "sprintHistory": "Caricamento storico sprint...",
+    "velocityChart": "Caricamento grafico velocità..."
   },
   "metrics": {
     "avgVelocity": {

@@ -5,9 +5,9 @@
     "deleteAriaLabel": "Eliminar elemento de acción",
     "due": "Vence:",
     "empty": "Aún no hay elementos de acción. Convierta elementos de mejora en tareas accionables.",
-    "inBacklog": "En el Backlog",
+    "inBacklog": "En el Volverlog",
     "status": {
-      "CANCELLED": "Cancelado",
+      "CANCELLED": "Cancelararado",
       "COMPLETED": "Completado",
       "IN_PROGRESS": "En progreso",
       "PENDING": "Pendiente"
@@ -16,7 +16,7 @@
     "unassigned": "Sin asignar"
   },
   "ariaLabels": {
-    "columnsRegion": "Columnas de feedback de la Retrospective",
+    "columnsRegion": "Columnas de retroalimentación de la Retrospective",
     "sprintInfoRegion": "Información del Sprint",
     "summaryAriaLabel": "Resumen de la Retrospective"
   },
@@ -29,30 +29,30 @@
   },
   "backAriaLabel": "Volver a la lista de Retrospectivas",
   "backToRetrospectives": "Volver a Retrospectivas",
-  "backlogHint": "Este elemento estará presente en la página Pila del producto para acción.",
+  "backlogHint": "Este elemento estará presente en la página Product Volverlog para acción.",
   "categories": {
     "didntGoWell": {
-      "placeholder": "Qué desafíos o problemas enfrentó?",
+      "placeholder": "¿Qué desafíos o problemas enfrentó?",
       "title": "Qué no funcionó bien"
     },
     "improvements": {
-      "placeholder": "Qué mejoras podemos hacer para el próximo Sprint?",
+      "placeholder": "¿Qué mejoras podemos hacer para el próximo Sprint?",
       "title": "Qué podemos mejorar"
     },
     "wentWell": {
-      "placeholder": "Qué funcionó bien durante este Sprint?",
-      "title": "Qué funcionó bien"
+      "placeholder": "¿Qué funcionó bien durante este Sprint?",
+      "title": "¿Qué funcionó bien"
     }
   },
   "columnItem": {
     "add": "Agregar",
     "addItem": "+ Agregar Elemento",
     "adding": "Agregando...",
-    "cancel": "Cancelar",
+    "cancel": "Cancelararar",
     "delete": "Eliminar",
     "deleteItem": "Eliminar elemento",
-    "edit": "Editar",
-    "editItem": "Editar elemento",
+    "edit": "Editararar",
+    "editItem": "Editararar elemento",
     "itemsInColumn": "{{count}} elementos en {{title}}",
     "removeVote": "Eliminar voto",
     "save": "Guardar",
@@ -67,43 +67,43 @@
     "description": "Marcar esta Retrospective como completada para finalizar y prevenir más cambios."
   },
   "confirmationModal": {
-    "cancel": "Cancelar",
+    "cancel": "Cancelararar",
     "cannotCompleteTitle": "No se puede completar la Retrospective",
     "cannotUndo": "Esta acción no puede ser revertida",
     "complete": "Completar",
     "completeTitle": "Completar Retrospective",
     "completing": "Completando...",
-    "confirmationQuestion": "Está seguro de que desea marcar esta Retrospective como completada? Esta acción no puede ser revertida.",
-    "confirmationRequired": "Confirmación requerida",
+    "confirmationQuestion": "¿Está seguro de que ¿desea marcar esta Retrospective como completada? Esta acción no puede ser revertida.",
+    "confirmationRequired": "Confirmararación requerida",
     "finalStep": "Último paso",
     "lockWarning": "Una vez completada, la Retrospective será bloqueada y no se podrán hacer más cambios.",
     "ok": "OK",
     "validationIssues": "Por favor resuelva los siguientes problemas"
   },
   "createActionItemModal": {
-    "cancel": "Cancelar",
-    "createActionItem": "Crear Action Item",
+    "cancel": "Cancelararar",
+    "createActionItem": "Crear Action Ítem",
     "creating": "Creando...",
     "description": "Descripción",
     "descriptionHelper": "Proporcionar contexto adicional para ayudar al asignado a entender la tarea",
-    "descriptionPlaceholder": "Agregar detalles sobre este Action Item...",
+    "descriptionPlaceholder": "Agregar detalles sobre este Action Ítem...",
     "dueDate": "Fecha de vencimiento *",
-    "loadingMembers": "Cargando miembros del team...",
-    "noMembers": "No hay miembros del team disponibles",
+    "loadingMembers": "Cargando miembros del equipo...",
+    "noMembers": "No hay miembros del equipo disponibles",
     "optionalBadge": "opcional",
     "owner": "Propietario *",
     "ownerPlaceholder": "Seleccionar propietario...",
-    "subtitle": "Agregar un nuevo Action Item para seguir el progreso",
-    "title": "Crear Action Item",
+    "subtitle": "Agregar un nuevo Action Ítem para seguir el progreso",
+    "title": "Crear Action Ítem",
     "titleLabel": "Título *",
-    "titlePlaceholder": "Ingrese título del Action Item",
-    "unableToLoadMembers": "No se pudieron cargar los miembros del team. Por favor actualice la página.",
-    "unsavedMessage": "Tiene cambios no guardados en el formulario Action Item. Está seguro de que desea descartarlos?",
+    "titlePlaceholder": "Ingrese título del Action Ítem",
+    "unableToLoadMembers": "No se pudieron cargar los miembros del equipo. Por favor actualice la página.",
+    "unsavedMessage": "Tiene cambios no guardados en el formulario Action Ítem. ¿Está seguro de que ¿desea descartarlos?",
     "unsavedTitle": "Cambios no guardados"
   },
   "deleteModal": {
-    "message": "Eliminar Action Item",
-    "title": "Confirmar Eliminación"
+    "message": "Eliminar Action Ítem",
+    "title": "Confirmararar Eliminación"
   },
   "errorState": {
     "backToRetrospectives": "Volver a Retrospectives",
@@ -114,7 +114,7 @@
   "errors": {
     "badRequest": "Solicitud inválida. Por favor verifique su entrada e intente de nuevo.",
     "network": "Error de red. Por favor verifique su conexión a internet.",
-    "notFound": "Recurso no encontrado. Puede haber sido eliminado.",
+    "notFound": "Recurso no encontrado.Puede haber sido eliminado.",
     "notLoaded": "Retrospective no cargada. Por favor espere e intente de nuevo.",
     "serverError": "Error del servidor. Por favor intente más tarde.",
     "unauthorized": "No está autorizado para realizar esta acción."
@@ -126,19 +126,19 @@
     "completedSprints_plural": "Sprints completados",
     "createRetrospective": "Crear Retrospective",
     "creating": "Creando...",
-    "goal": "Objetivo Sprint:",
+    "goal": "Sprint Goal:",
     "items": "elementos",
     "loading": "Cargando Retrospectivas...",
     "retroStatus": {
       "completed": "Retrospective completada",
-      "draft": "Retrospective Draft",
+      "draft": "Retrospective borrador",
       "inProgress": "Retrospective en progreso",
       "ready": "Listo para Retrospective"
     },
     "reviewed": "Reviewed",
     "statusLabels": {
       "active": "Activo",
-      "cancelled": "Cancelado",
+      "cancelled": "Cancelararado",
       "completed": "Completado",
       "planned": "Planificado"
     },
@@ -154,8 +154,8 @@
     "completed": "completadas",
     "completion": "Completación",
     "duration": "Duración",
-    "goal": "Objetivo Sprint:",
-    "includedPbis": "Pila del producto Items incluidos",
+    "goal": "Sprint Goal:",
+    "includedPbis": "Product Volverlog Items incluidos",
     "items": "elementos",
     "itemsCount": "{{count}} elementos",
     "moreItems": "+{{count}} más elementos",
@@ -182,48 +182,48 @@
   },
   "sprintStatus": {
     "ACTIVE": "Activo",
-    "CANCELLED": "Cancelado",
+    "CANCELLED": "Cancelararado",
     "COMPLETED": "Completado",
     "PLANNED": "Planificado"
   },
   "successModal": {
     "close": "Cerrar",
     "closeDialog": "Cerrar diálogo",
-    "message": "Retrospectiva del Sprint completada exitosamente!",
+    "message": "¡Sprint Retrospective completada exitosamente!",
     "title": "Éxito"
   },
   "summary": {
-    "addSubtitle": "Documentar los insights clave, decisiones y Action Items",
+    "addSubtitle": "Documentar los perspectivas clave, decisiones y Action Items",
     "addSummary": "+ Agregar Resumen",
     "addSummaryAriaLabel": "Agregar resumen de la Retrospective",
     "addTitle": "Agregar Resumen de la Retrospective",
     "approachingLimit": "Acercándose al límite de caracteres",
-    "cancel": "Cancelar",
-    "cancelAriaLabel": "Cancelar cambios del resumen",
+    "cancel": "Cancelararar",
+    "cancelAriaLabel": "Cancelararar cambios del resumen",
     "charCounter": "{{count}}/1000 caracteres",
-    "charHelpText": "Ingrese insights clave, decisiones y Action Items de la Retrospective. Mínimo 10 caracteres, máximo 1000 caracteres.",
-    "editAriaLabel": "Editar resumen",
-    "editSubtitle": "Actualizar los insights clave y takeaways de esta Retrospective",
-    "editSummary": "Editar resumen",
-    "editTitle": "Editar Resumen de la Retrospective",
+    "charHelpText": "Ingrese perspectivas clave, decisiones y Action Items de la Retrospective. Mínimo 10 caracteres, máximo 1000 caracteres.",
+    "editAriaLabel": "Editararar resumen",
+    "editSubtitle": "Actualizar los perspectivas clave y conclusiones de esta Retrospective",
+    "editSummary": "Editararar resumen",
+    "editTitle": "Editararar Resumen de la Retrospective",
     "empty": "No se ha agregado resumen aún...",
-    "emptyDescription": "No se ha agregado resumen aún. Agregue un resumen para documentar insights clave y decisiones de esta Retrospective.",
+    "emptyDescription": "No se ha agregado resumen aún. Agregue un resumen para documentar perspectivas clave y decisiones de esta Retrospective.",
     "formAriaLabel": "Formulario de resumen de la Retrospective",
-    "helperText": "Resumir las reflexiones del team y las mejoras acordadas",
-    "placeholder": "Escribe un resumen de los resultados de la Retrospective, takeaways clave y Action Items...",
+    "helperText": "Resumir las reflexiones del equipo y las mejoras acordadas",
+    "placeholder": "Escriba un resumen de los resultados de la Retrospective, conclusiones clave y Action Items...",
     "save": "Guardar",
     "saveAriaLabel": "Guardar resumen",
     "saving": "Guardando...",
     "summaryLabel": "Resumen",
-    "takeawaysLabel": "Cuáles fueron los takeaways clave de esta Retrospective?",
+    "takeawaysLabel": "¿Cuáles fueron las conclusiones clave de esta Retrospective?",
     "title": "Resumen de la Retrospective"
   },
   "title": "Sprint Retrospective",
   "toast": {
-    "actionItemCreateFailed": "No se pudo crear el Action Item",
-    "actionItemCreated": "Action Item creado exitosamente",
-    "actionItemDeleteFailed": "No se pudo eliminar el Action Item",
-    "actionItemDeleted": "Action Item eliminado exitosamente",
+    "actionItemCreateFailed": "No se pudo crear el Action Ítem",
+    "actionItemCreated": "Action Ítem creado exitosamente",
+    "actionItemDeleteFailed": "No se pudo eliminar el Action Ítem",
+    "actionItemDeleted": "Action Ítem eliminado exitosamente",
     "itemAddFailed": "No se pudo agregar el elemento",
     "itemAdded": "Elemento agregado exitosamente",
     "itemDeleteFailed": "No se pudo eliminar el elemento",
@@ -240,7 +240,7 @@
     "voteFailed": "No se pudo votar"
   },
   "validation": {
-    "allTeamMembersAttendance": "Todos los miembros del team deben ser marcados como asistidos o ausentes. Faltantes: {{names}}{{remaining}}.",
+    "allTeamMembersAttendance": "Todos los miembros del equipo deben ser marcados como asistidos o ausentes. Faltantes: {{names}}{{remaining}}.",
     "dueDatePast": "La fecha de vencimiento no puede ser en el pasado",
     "dueDateRequired": "La fecha de vencimiento es requerida",
     "itemContentMaxLength": "El contenido del elemento debe ser de 500 caracteres o menos",

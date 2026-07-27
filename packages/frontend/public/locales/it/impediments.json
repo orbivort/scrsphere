@@ -28,14 +28,14 @@
     "deleting": "Eliminando...",
     "item": "Elemento:",
     "statusLabel": "Stato:",
-    "subtitle": "Questa azione e permanente e non puo essere annullata",
+    "subtitle": "Questa azione è permanente e non può essere annullata",
     "title": "Elimina Impedimento",
     "unknownItem": "Elemento Sconosciuto",
-    "warningText": "Stai per eliminare permanentemente questo impedimento. Questa azione non puo essere annullata. Tutti i dati associati saranno permanentemente eliminati."
+    "warningText": "Stai per eliminare permanentemente questo impedimento. Questa azione non può essere annullata. Tutti i dati associati saranno permanentemente eliminati."
   },
   "detailModal": {
-    "cancel": "Cancel",
-    "close": "Close",
+    "cancel": "Annulla",
+    "close": "Chiudi",
     "createdFromDailyScrum": "Creato da Aggiornamento Daily Scrum",
     "createdLabel": "Creato",
     "deleteLabel": "Elimina",
@@ -62,8 +62,8 @@
     "noImpedimentsForSprint": "Nessun Impedimento per {{sprintName}}"
   },
   "errorState": {
-    "failedImpediments": "Fallimento caricamento Impediments. Riprova.",
-    "failedSprint": "Fallimento caricamento informazioni sprint attivo. Riprova.",
+    "failedImpediments": "Caricamento impedimenti non riuscito. Riprova.",
+    "failedSprint": "Caricamento informazioni sprint attivo non riuscito. Riprova.",
     "retry": "Riprova",
     "title": "Errore Caricamento Dati"
   },
@@ -94,9 +94,9 @@
   "toast": {
     "created": "Impedimento creato con successo",
     "deleted": "Impedimento eliminato con successo",
-    "failedCreate": "Fallimento creazione impedimento. Riprova.",
-    "failedDelete": "Fallimento eliminazione impedimento. Riprova.",
-    "failedUpdate": "Fallimento aggiornamento impedimento. Riprova.",
+    "failedCreate": "Creazione impedimento non riuscita. Riprova.",
+    "failedDelete": "Eliminazione impedimento non riuscita. Riprova.",
+    "failedUpdate": "Aggiornamento impedimento non riuscito. Riprova.",
     "noActiveSprint": "Nessuno sprint attivo trovato. Inizia uno sprint prima.",
     "teamIdRequired": "ID del team e richiesto. Seleziona un team prima.",
     "updated": "Impedimento aggiornato con successo"

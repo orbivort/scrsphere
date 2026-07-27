@@ -339,15 +339,15 @@
     "title": "Timeout di inizializzazione"
   },
   "iconGallery": {
-    "categories": "{{count}} categories",
-    "matching": "{{count}} matching",
-    "noResults": "No icons found",
-    "noResultsHint": "Try adjusting your search query",
-    "searchAriaLabel": "Search icons",
-    "searchPlaceholder": "Search icons by name or category...",
-    "subtitle": "Browse and copy import statements for all available icons. Click any icon to copy its import statement.",
-    "title": "Icon Gallery",
-    "totalIcons": "{{count}} total icons"
+    "categories": "{{count}} categorie",
+    "matching": "{{count}} corrispondenti",
+    "noResults": "Nessuna icona trovata",
+    "noResultsHint": "Prova a modificare la tua ricerca",
+    "searchAriaLabel": "Cerca icone",
+    "searchPlaceholder": "Cerca icone per nome o categoria...",
+    "subtitle": "Sfoglia e copia le istruzioni di importazione per tutte le icone disponibili. Clicca su un'icona per copiare la sua istruzione di importazione.",
+    "title": "Galleria icone",
+    "totalIcons": "{{count}} icone in totale"
   },
   "import": "Importa",
   "initializing": "Inizializzazione...",

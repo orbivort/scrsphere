@@ -160,7 +160,7 @@
         "title": "Cela va:"
       },
       "teams": {
-        "consequences": "Ces équipes ne pourra pas ajouter ou supprimer des membres, gérer des sprints, ou accéder aux paramètres de l'équipe.",
+        "consequences": "Ces équipes ne pourraient pas ajouter ou supprimer des membres, gérer des sprints, ou accéder aux paramètres de l'équipe.",
         "title": "Les équipes suivantes n'auront AUCUN Product Owner:"
       },
       "title": "Période de grâce terminée"
@@ -188,7 +188,7 @@
       "description": "Vous êtes membre de {{count}} équipe",
       "description_plural": "Vous êtes membre de {{count}} équipes",
       "regular": {
-        "message": "Vous seront supprimé de cette équipe."
+        "message": "Vous serez supprimé de cette équipe."
       },
       "title": "Impact sur les équipes"
     },
@@ -265,7 +265,7 @@
       "createBacklogItem": "Erreur lors de la création de l'élément du backlog",
       "createDefinition": "Erreur lors de la création de la définition",
       "createGoal": "Erreur lors de la création de l'objectif",
-      "createImpediment": "Erreur lors de la création de l'obstacle",
+      "createImpediment": "Erreur lors de la création de l'Impediment",
       "createIncrement": "Erreur lors de la création de l'Increment",
       "createRetrospective": "Erreur lors de la création de la Retrospective",
       "createReview": "Erreur lors de la création de la revue",
@@ -275,7 +275,7 @@
       "deleteBacklogItem": "Erreur lors de la suppression de l'élément du backlog",
       "deleteDefinition": "Erreur lors de la suppression de la définition",
       "deleteGoal": "Erreur lors de la suppression de l'objectif",
-      "deleteImpediment": "Erreur lors de la suppression de l'obstacle",
+      "deleteImpediment": "Erreur lors de la suppression de l'Impediment",
       "deleteIncrement": "Erreur lors de la suppression de l'Increment",
       "deleteRetrospective": "Erreur lors de la suppression de la Retrospective",
       "deleteReview": "Erreur lors de la suppression de la revue",
@@ -291,7 +291,7 @@
       "updateBacklogItem": "Erreur lors de la mise à jour de l'élément du backlog",
       "updateDefinition": "Erreur lors de la mise à jour de la définition",
       "updateGoal": "Erreur lors de la mise à jour de l'objectif",
-      "updateImpediment": "Erreur lors de la mise à jour de l'obstacle",
+      "updateImpediment": "Erreur lors de la mise à jour de l'Impediment",
       "updateIncrement": "Erreur lors de la mise à jour de l'Increment",
       "updateProfile": "Erreur lors de la mise à jour du profil",
       "updateRetrospective": "Erreur lors de la mise à jour de la Retrospective",
@@ -339,15 +339,15 @@
     "title": "Délai d'initialisation dépassé"
   },
   "iconGallery": {
-    "categories": "{{count}} categories",
-    "matching": "{{count}} matching",
-    "noResults": "No icons found",
-    "noResultsHint": "Try adjusting your search query",
-    "searchAriaLabel": "Search icons",
-    "searchPlaceholder": "Search icons by name or category...",
-    "subtitle": "Browse and copy import statements for all available icons. Click any icon to copy its import statement.",
-    "title": "Icon Gallery",
-    "totalIcons": "{{count}} total icons"
+    "categories": "{{count}} catégories",
+    "matching": "{{count}} correspondants",
+    "noResults": "Aucune icône trouvée",
+    "noResultsHint": "Essayez d'ajuster votre recherche",
+    "searchAriaLabel": "Rechercher des icônes",
+    "searchPlaceholder": "Rechercher des icônes par nom ou catégorie...",
+    "subtitle": "Parcourez et copiez les instructions d'importation pour toutes les icônes disponibles. Cliquez sur une icône pour copier son instruction d'importation.",
+    "title": "Galerie d'icônes",
+    "totalIcons": "{{count}} icônes au total"
   },
   "import": "Importer",
   "initializing": "Initialisation...",

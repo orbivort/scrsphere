@@ -5,14 +5,14 @@
   "accountDeletionScheduledMessage": "Un Product Owner nel suo team ha programmato l'eliminazione del proprio account. L'account sarà eliminato definitivamente il {{deletionDate}}. Si prega di assegnare un nuovo Product Owner prima di allora.",
   "ariaLabels": {
     "dismiss": "Ignora notifica",
-    "filterNotifications": "Filter notifications",
+    "filterNotifications": "Filtra notifiche",
     "goToNextPage": "Vai alla pagina successiva",
     "goToPreviousPage": "Vai alla pagina precedente",
     "markAsRead": "Segna come letta",
     "notificationItem": "Notifica da {{sender}}: {{message}}",
-    "pagination": "Pagination"
+    "pagination": "Paginazione"
   },
-  "backlogAdjustmentRequired": "Nuova Regolazione del Backlog Richiede la Sua Azione",
+  "backlogAdjustmentRequired": "Nuova regolazione del backlog richiede la sua azione",
   "backlogAdjustmentRequiredMessage": "Le è stato assegnato come proprietario di una regolazione del backlog: {{action}} - \"{{description}}\"",
   "dateGroups": {
     "older": "Più vecchie",
@@ -29,7 +29,7 @@
     "title": "Caricamento notifiche fallito",
     "tryAgain": "Riprova"
   },
-  "feedbackRequired": "Nuovo Feedback Richiede la Sua Azione",
+  "feedbackRequired": "Nuovo feedback richiede la sua azione",
   "feedbackRequiredMessage": "Le è stato assegnato come proprietario del feedback di {{authorName}}: \"{{content}}\"",
   "filters": {
     "all": "Tutte",

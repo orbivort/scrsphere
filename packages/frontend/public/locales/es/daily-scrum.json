@@ -1,85 +1,85 @@
 {
   "activeImpediments": {
-    "title": "Impedimentos Activos",
-    "trackAsImpediment": "Rastrear como Impedimento",
+    "title": "Impediments activos",
+    "trackAsImpediment": "Rastrear como Impediment",
     "tracked": "Rastreado",
-    "trackedImpediment": "Impedimento rastreado",
-    "untrackedImpediment": "Impedimento no rastreado",
-    "viewAllImpediments": "Ver todos los {{count}} impedimentos",
+    "trackedImpediment": "Impediment rastreado",
+    "untrackedImpediment": "Impediment no rastreado",
+    "viewAllImpediments": "Ver todos los {{count}} Impediments",
     "viewDetails": "Ver Detalles"
   },
   "aria": {
     "clickToCollapse": "Clic para colapsar",
     "clickToExpand": "Clic para expandir",
-    "closeDialog": "Cerrar dialogo",
+    "closeDialog": "Cerrar diálogo",
     "closeForm": "Cerrar formulario",
-    "dailyUpdateAriaLabel": "Actualizacion diaria de {{name}}. {{expandAction}}.",
-    "impedimentStatus": "Estado del impedimento: {{status}}",
-    "trackedAsFormalImpediment": "Rastreado como impedimento formal",
+    "dailyUpdateAriaLabel": "Actualización diaria de {{name}}. {{expandAction}}.",
+    "impedimentStatus": "Estado del Impediment: {{status}}",
+    "trackedAsFormalImpediment": "Rastreado como Impediment formal",
     "viewMode": "Modo de vista"
   },
   "datePicker": {
-    "ariaLabel": "Seleccionar fecha para actualizaciones diarias",
-    "label": "Seleccionar fecha para actualizaciones diarias"
+    "ariaLabel": "Seleccionar fecha para actualizaciónes diarias",
+    "label": "Seleccionar fecha para actualizaciónes diarias"
   },
   "draftRestore": {
     "discard": "Descartar",
-    "prompt": "Te gustaria restaurar tu borrador anterior?",
+    "prompt": "¿Le gustaría restaurar su borrador anterior?",
     "restoreDraft": "Restaurar Borrador",
     "title": "Borrador No Guardado Encontrado"
   },
   "draftSaved": "Borrador guardado {{timeSince}}",
   "emptyState": {
-    "beFirst": "Se el primero en enviar tu actualizacion diaria!",
-    "noUpdates": "Sin Actualizaciones Aun",
-    "noUpdatesForDate": "Sin actualizaciones del equipo para esta fecha."
+    "beFirst": "¡Sea el primero en enviar su Actualización diaria!",
+    "noUpdates": "Sin Actualizaciónes Aún",
+    "noUpdatesForDate": "Sin actualizaciónes del equipo para esta fecha."
   },
   "form": {
     "cancel": "Cancelar",
-    "impedimentHint": "Este impedimento sera rastreado y puede ser promovido a un registro formal de impedimento",
-    "impedimentLabel": "Algum impedimento? (opcional)",
-    "impedimentPlaceholder": "Describe algun bloqueador o impedimento...",
+    "impedimentHint": "Este Impediment será rastreado y puede ser promovido a un registro formal de Impediment",
+    "impedimentLabel": "¿Algún Impediment? (opcional)",
+    "impedimentPlaceholder": "Describa algún bloqueador o Impediment...",
     "submitting": "Enviando...",
-    "todayLabel": "Que haras hoy para ayudar al equipo a alcanzar el Objetivo Sprint?",
-    "todayPlaceholder": "Describe lo que planeas trabajar hoy...",
-    "yesterdayLabel": "Que hiciste ayer para ayudar al equipo a alcanzar el Objetivo Sprint?",
-    "yesterdayPlaceholder": "Describe lo que lograste ayer..."
+    "todayLabel": "¿Qué hará hoy para ayudar al equipo a alcanzar el Sprint Goal?",
+    "todayPlaceholder": "Describa lo que planea trabajar hoy...",
+    "yesterdayLabel": "¿Qué hizo ayer para ayudar al equipo a alcanzar el Sprint Goal?",
+    "yesterdayPlaceholder": "Describa lo que logró ayer..."
   },
   "formatTimeSince": {
     "daysAgo": "{{count}}d",
     "hoursAgo": "{{count}}h",
-    "justNow": "recien",
+    "justNow": "recién",
     "minutesAgo": "{{count}}m"
   },
   "impedimentStatus": {
     "closed": "Cerrado",
-    "inProgress": "En Curso",
+    "inProgress": "En curso",
     "open": "Abierto",
     "resolved": "Resuelto"
   },
   "loading": {
-    "actions": "Loading actions...",
-    "pageHeader": "Loading page header...",
-    "pendingMembers": "Loading pending members...",
-    "sectionHeader": "Loading section header...",
-    "sprintProgress": "Loading sprint progress...",
-    "statistics": "Loading statistics...",
-    "teamUpdates": "Loading team updates..."
+    "actions": "Cargando acciones...",
+    "pageHeader": "Cargando encabezado de página...",
+    "pendingMembers": "Cargando miembros pendientes...",
+    "sectionHeader": "Cargando encabezado de sección...",
+    "sprintProgress": "Cargando progreso del Sprint...",
+    "statistics": "Cargando estadísticas...",
+    "teamUpdates": "Cargando actualizaciónes del equipo..."
   },
   "promoteModal": {
-    "createImpediment": "Crear Impedimento",
+    "createImpediment": "Crear Impediment",
     "creating": "Creando...",
-    "descriptionLabel": "Descripcion",
-    "descriptionPlaceholder": "Descripcion detallada del impedimento",
-    "fromUpdateBy": "Desde Actualizacion Diaria de:",
-    "originalImpedimentText": "Texto Original del Impedimento:",
+    "descriptionLabel": "Descripción",
+    "descriptionPlaceholder": "Descripción detallada del Impediment",
+    "fromUpdateBy": "Desde Actualización Diaria de:",
+    "originalImpedimentText": "Texto Original del Impediment:",
     "priority": "Prioridad",
     "priorityHigh": "Alta",
     "priorityLow": "Baja",
     "priorityMedium": "Media",
-    "title": "Crear Impedimento desde Actualizacion Diaria",
-    "titleLabel": "Titulo",
-    "titlePlaceholder": "Titulo breve para el impedimento"
+    "title": "Crear Impediment desde Actualización Diaria",
+    "titleLabel": "Título",
+    "titlePlaceholder": "Título breve para el Impediment"
   },
   "quickDates": {
     "today": "Hoy",
@@ -87,79 +87,79 @@
   },
   "retryPrompt": {
     "dismiss": "Descartar",
-    "message": "Tu actualizacion no pudo ser enviada. Tus datos han sido preservados.",
-    "retrySubmission": "Reintentar Envio",
+    "message": "Su Actualización no pudo ser enviada. Sus datos han sido preservados.",
+    "retrySubmission": "Reintentar Envío",
     "retrying": "Reintentando...",
-    "title": "Envio Fallido"
+    "title": "Envío Fallido"
   },
   "sprintGoal": {
-    "addInPlanning": "Agregar uno en Planificación de Sprint",
+    "addInPlanning": "Agregar uno en Sprint Planning",
     "label": "Sprint Goal",
-    "noGoalDefined": "Sin Objetivo Sprint definido.",
-    "progressAriaLabel": "{{percentage}}% de completitud del sprint ({{completed}} de {{total}} tareas completadas)",
+    "noGoalDefined": "Sin Sprint Goal definido.",
+    "progressAriaLabel": "{{percentage}}% de completitud del Sprint ({{completed}} de {{total}} tareas completadas)",
     "progressTitle": "{{completed}} de {{total}} tareas completadas"
   },
   "sprintProgress": {
-    "dayOfTotal": "Dia {{current}} de {{total}}",
+    "dayOfTotal": "Día {{current}} de {{total}}",
     "title": "Progreso del Sprint",
-    "viewSprintBoard": "Ver Sprint Board"
+    "viewSprintBoard": "View Sprint Board"
   },
   "stats": {
     "impediments": "Impediments",
-    "participation": "Participacion",
+    "participation": "Participación",
     "pending": "Pendiente",
     "submitted": "Enviado"
   },
-  "submitUpdate": "Enviar Actualizacion",
-  "subtitle": "{{sprintName}} - Dia {{day}}",
-  "teamUpdates": "Actualizaciones del Equipo",
+  "submitUpdate": "Enviar Actualización",
+  "subtitle": "{{sprintName}} - Día {{day}}",
+  "teamUpdates": "Actualizaciónes del Equipo",
   "templates": {
     "featureDevelopment": "Desarrollo de Funcionalidad",
-    "issueFixing": "Correccion de Problemas",
+    "issueFixing": "Corrección de Problemas",
     "meetings": "Reuniones",
-    "review": "Revision"
+    "review": "Revisión"
   },
   "title": "Daily Scrum",
   "toast": {
-    "allSubmitted": "Todos los miembros del equipo han enviado sus actualizaciones",
-    "failedCreateImpediment": "Fallo al crear impedimento. Por favor intenta de nuevo.",
-    "failedSendReminder": "Fallo al enviar recordatorio. Por favor intenta de nuevo.",
-    "impedimentCreated": "Impedimento creado exitosamente!",
-    "networkError": "Ocurrio un error de red. Por favor verifica tu conexion e intenta de nuevo.",
-    "noPendingUpdates": "No hay actualizaciones pendientes",
-    "noPermissionCreateImpediments": "No tienes permiso para crear impedimentos.",
-    "noPermissionReminders": "No tienes permiso para enviar recordatorios.",
-    "offline": "Parece que estas offline. Por favor verifica tu conexion a internet e intenta de nuevo.",
-    "reminderSent": "Recordatorio enviado!",
+    "allSubmitted": "Todos los miembros del equipo han enviado sus actualizaciónes",
+    "failedCreateImpediment": "Falló al crear Impediment. Por favor intente de nuevo.",
+    "failedSendReminder": "Falló al enviar recordatorio. Por favor intente de nuevo.",
+    "impedimentCreated": "¡Impediment creado exitosamente!",
+    "networkError": "Ocurrió un error de red. Por favor verifique su conexión e intente de nuevo.",
+    "noPendingUpdates": "No hay actualizaciónes pendientes",
+    "noPermissionCreateImpediments": "No tiene permiso para crear Impediments.",
+    "noPermissionReminders": "No tiene permiso para enviar recordatorios.",
+    "offline": "Parece que está sin conexión. Por favor verifique su conexión a internet e intente de nuevo.",
+    "reminderSent": "¡Recordatorio enviado!",
     "remindersSentOne": "Recordatorios enviados a 1 miembro del equipo",
     "remindersSentPlural": "Recordatorios enviados a {{count}} miembros del equipo",
     "resourceNotFound": "El recurso solicitado no fue encontrado.",
-    "serverError": "Ocurrio un error del servidor. Por favor intenta mas tarde.",
-    "sessionExpired": "Tu sesion ha expirado. Por favor vuelve a iniciar sesion.",
-    "submitFailed": "Fallo al enviar actualizacion. Por favor intenta de nuevo.",
-    "updateSubmitted": "Actualizacion enviada exitosamente!"
+    "serverError": "Ocurrió un error del servidor. Por favor intente más tarde.",
+    "sessionExpired": "Su sesión ha expirado. Por favor vuelva a iniciar sesión.",
+    "submitFailed": "Falló al enviar Actualización. Por favor intente de nuevo.",
+    "updateSubmitted": "¡Actualización enviada exitosamente!"
   },
   "unsavedModal": {
-    "message": "Tienes cambios no guardados en el formulario de impedimento. Seguro que quieres descartarlos?",
-    "title": "Cambios No Guardados"
+    "message": "Tiene cambios no guardados en el formulario de Impediment. ¿Está seguro de que desea descartarlos?",
+    "title": "Cambios no guardados"
   },
   "updateCard": {
     "clickToCollapse": "Clic para colapsar",
     "clickToExpand": "Clic para expandir",
     "impediment": "Impediment",
     "today": "Hoy",
-    "trackAsFormalImpediment": "Rastrear como Impedimento Formal",
-    "trackAsImpediment": "Rastrear como Impedimento",
+    "trackAsFormalImpediment": "Rastrear como Impediment Formal",
+    "trackAsImpediment": "Rastrear como Impediment",
     "tracked": "(Rastreado)",
-    "viewImpediment": "Ver Impedimento",
-    "viewImpedimentDetails": "Ver Detalles del Impedimento",
+    "viewImpediment": "Ver Impediment",
+    "viewImpedimentDetails": "Ver Detalles del Impediment",
     "yesterday": "Ayer"
   },
   "validation": {
-    "descriptionRequired": "La descripcion es requerida",
-    "descriptionTooShort": "La descripcion debe tener al menos 10 caracteres",
-    "titleRequired": "El titulo es requerido",
-    "titleTooShort": "El titulo debe tener al menos 3 caracteres"
+    "descriptionRequired": "La descripción es requerida",
+    "descriptionTooShort": "La descripción debe tener al menos 10 caracteres",
+    "titleRequired": "El título es requerido",
+    "titleTooShort": "El título debe tener al menos 3 caracteres"
   },
   "viewMode": {
     "cards": "Tarjetas",
@@ -168,7 +168,7 @@
   "waitingForUpdates": {
     "sendReminder": "Enviar Recordatorio",
     "sending": "Enviando...",
-    "title": "Esperando Actualizaciones"
+    "title": "Esperando Actualizaciónes"
   },
-  "yourDailyUpdate": "Tu Actualizacion Diaria"
+  "yourDailyUpdate": "Su Actualización Diaria"
 }

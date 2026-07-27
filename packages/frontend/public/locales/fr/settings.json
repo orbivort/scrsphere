@@ -70,17 +70,17 @@
     "unsavedWarning": "Vous avez des modifications non enregistrées"
   },
   "deleteTeamModal": {
-    "awaitingConfirmation": "Awaiting confirmation",
-    "blockedDescription": "This team has one or more product goals associated with it. To delete this team, you must first remove all product goals linked to it.",
+    "awaitingConfirmation": "En attente de confirmation",
+    "blockedDescription": "Cette équipe a un ou plusieurs objectifs de produit associés. Pour supprimer cette équipe, vous devez d'abord supprimer tous les objectifs de produit liés.",
     "blockedSubtitle": "Cette équipe ne peut pas être supprimée en raison d'objectifs de produit actifs",
-    "bodyAriaLabel": "Delete confirmation content",
+    "bodyAriaLabel": "Contenu de confirmation de suppression",
     "cancel": "Annuler",
-    "cancelButton": "Cancel",
-    "cannotBeUndone": "cannot be undone",
-    "cannotDelete": "Impossible de Supprimer",
-    "cannotDeleteButton": "Cannot Delete",
+    "cancelButton": "Annuler",
+    "cannotBeUndone": "ne peut pas être annulé",
+    "cannotDelete": "Impossible de supprimer",
+    "cannotDeleteButton": "Impossible de supprimer",
     "closeModal": "Fermer le modal",
-    "confirmLabel": "Type \"{{teamName}}\" to confirm",
+    "confirmLabel": "Tapez \"{{teamName}}\" pour confirmer",
     "confirmation": {
       "awaitingConfirmation": "En attente de confirmation",
       "label": "Tapez \"{{name}}\" pour confirmer",
@@ -88,28 +88,28 @@
       "placeholder": "Tapez \"{{name}}\" pour confirmer la suppression",
       "srHint": "Tapez le nom de l'équipe exactement comme indiqué pour activer le bouton de suppression, puis appuyez sur Entrée ou cliquez sur Supprimer l'équipe"
     },
-    "consequence1": "All team data will be permanently removed",
-    "consequence2": "Team members will lose access to team resources",
-    "consequence3": "Associated settings and configurations will be deleted",
-    "consequence4": "This action is irreversible",
-    "consequencesTitle": "Consequences of deletion:",
-    "criticalActionWarning": "Critical Action Warning",
-    "deleteButton": "Delete Team",
+    "consequence1": "Toutes les données de l'équipe seront définitivement supprimées",
+    "consequence2": "Les membres de l'équipe perdront l'accès aux ressources de l'équipe",
+    "consequence3": "Les paramètres et configurations associés seront supprimés",
+    "consequence4": "Cette action est irréversible",
+    "consequencesTitle": "Conséquences de la suppression :",
+    "criticalActionWarning": "Avertissement d'action critique",
+    "deleteButton": "Supprimer l'équipe",
     "deleteTeam": "Supprimer l'équipe",
-    "deleteWarning": "You are about to permanently delete this team. This action cannot be undone.",
+    "deleteWarning": "Vous êtes sur le point de supprimer définitivement cette équipe. Cette action ne peut pas être annulée.",
     "deleting": "Suppression...",
-    "deletingButton": "Deleting...",
-    "deletionBlocked": "Deletion Blocked",
-    "matchConfirmed": "Match confirmed",
-    "memberImpact": "{{count}} member(s) will be removed from this team",
+    "deletingButton": "Suppression...",
+    "deletionBlocked": "Suppression bloquée",
+    "matchConfirmed": "Correspondance confirmée",
+    "memberImpact": "{{count}} membre(s) seront supprimés de cette équipe",
     "normalSubtitle": "Cette action est permanente et ne peut pas être annulée",
     "pasteWarning": "Saisie manuelle requise pour la sécurité. Copier-coller est désactivé.",
-    "requiredActions": "Required actions:",
-    "srConfirmHint": "Type the team name exactly as shown to enable the delete button, then press Enter or click Delete Team",
-    "step1": "Navigate to the Product Goals section",
-    "step2": "Delete or reassign all goals for \"{{teamName}}\"",
-    "step3": "Return here to complete team deletion",
-    "teamLabel": "Team:",
+    "requiredActions": "Actions requises :",
+    "srConfirmHint": "Tapez le nom de l'équipe exactement comme indiqué pour activer le bouton de suppression, puis appuyez sur Entrée ou cliquez sur Supprimer l'équipe",
+    "step1": "Naviguer vers la section Objectifs de Produit",
+    "step2": "Supprimer ou réassigner tous les objectifs pour \"{{teamName}}\"",
+    "step3": "Revenir ici pour terminer la suppression de l'équipe",
+    "teamLabel": "Équipe :",
     "title": "Supprimer l'équipe",
     "warningCard": {
       "blockedBadge": "Suppression Bloquée",
@@ -134,11 +134,11 @@
     "editButton": "Éditer DoD",
     "empty": {
       "configureButton": "Configurer DoD",
-      "message": "Configurez les critères de Définition de Done de votre équipe.",
+      "message": "Configurez les critères de Definition of Done de votre équipe.",
       "title": "Aucun élément DoD actif"
     },
     "error": {
-      "message": "Impossible de charger la Définition de Done. Utilisation des éléments par défaut.",
+      "message": "Impossible de charger la Definition of Done. Utilisation des éléments par défaut.",
       "retry": "Réessayer",
       "title": "Erreur de chargement"
     },
@@ -151,16 +151,16 @@
       "unitTests": "Tests unitaires écrits et réussis (minimum 80% de couverture)"
     },
     "lastUpdated": "Dernière mise à jour :",
-    "loading": "Chargement de la Définition de Done...",
+    "loading": "Chargement de la Definition of Done...",
     "noTeam": {
-      "message": "Veuillez sélectionner une équipe pour voir et gérer la Définition de Done.",
+      "message": "Veuillez sélectionner une équipe pour voir et gérer la Definition of Done.",
       "title": "Aucune équipe sélectionnée"
     },
     "shortLabel": "DoD",
-    "title": "Définition de Done",
+    "title": "Definition of Done",
     "toast": {
-      "updateFailed": "Erreur lors de la mise à jour de la Définition de Done",
-      "updatedSuccessfully": "Définition de Done mise à jour avec succès"
+      "updateFailed": "Erreur lors de la mise à jour de la Definition of Done",
+      "updatedSuccessfully": "Definition of Done mise à jour avec succès"
     },
     "uncategorized": "Non catégorisé"
   },
@@ -169,11 +169,11 @@
     "editButton": "Éditer DoR",
     "empty": {
       "configureButton": "Configurer DoR",
-      "description": "La Définition de Ready est une liste de critères qu'une user story doit respecter avant d'être prise dans un sprint.",
-      "message": "Aucune Définition de Ready configurée pour cette équipe.",
+      "description": "La Definition of Ready est une liste de critères qu'une user story doit respecter avant d'être prise dans un sprint.",
+      "message": "Aucune Definition of Ready configurée pour cette équipe.",
       "title": "Définition de Ready"
     },
-    "error": "Erreur lors du chargement de la Définition de Ready",
+    "error": "Erreur lors du chargement de la Definition of Ready",
     "inactive": "{{count}} inactifs",
     "item": {
       "acceptanceCriteria": "Critères d'acceptation définis et acceptés",
@@ -182,20 +182,20 @@
       "clearTitle": "Titre et description clairs fournis",
       "dependencies": "Dépendances identifiées et documentées",
       "dependenciesIdentified": "Dépendances identifiées",
-      "noBlockers": "Aucun blocker ou impediment",
+      "noBlockers": "Aucun blocage ni obstacle",
       "storyPointsEstimated": "Story points estimés par l'équipe",
       "storyPointsEstimatedOld": "Story points estimés",
       "userStoryWritten": "User story clairement écrite"
     },
     "lastUpdated": "Dernière mise à jour :",
-    "loading": "Chargement de la Définition de Ready...",
-    "noTeam": "Veuillez sélectionner une équipe pour voir la Définition de Ready.",
+    "loading": "Chargement de la Definition of Ready...",
+    "noTeam": "Veuillez sélectionner une équipe pour voir la Definition of Ready.",
     "retry": "Réessayer",
     "shortLabel": "DoR",
-    "title": "Définition de Ready",
+    "title": "Definition of Ready",
     "toast": {
-      "updateFailed": "Erreur lors de la mise à jour de la Définition de Ready",
-      "updatedSuccessfully": "Définition de Ready mise à jour avec succès"
+      "updateFailed": "Erreur lors de la mise à jour de la Definition of Ready",
+      "updatedSuccessfully": "Definition of Ready mise à jour avec succès"
     },
     "uncategorized": "Non catégorisé"
   },

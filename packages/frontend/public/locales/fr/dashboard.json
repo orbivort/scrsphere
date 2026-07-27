@@ -42,11 +42,11 @@
     "title": "Mise à jour quotidienne",
     "today": "Aujourd'hui :",
     "todayPlaceholder": "Décrivez ce que vous prévoyez de faire aujourd'hui...",
-    "todayQuestion": "Que allez-vous faire aujourd'hui pour aider l'équipe à atteindre l'Objectif de Sprint ?",
+    "todayQuestion": "Que allez-vous faire aujourd'hui pour aider l'équipe à atteindre l'Sprint Goal ?",
     "unknownUser": "Utilisateur inconnu",
     "yesterday": "Hier :",
     "yesterdayPlaceholder": "Décrivez ce que vous avez accompli hier...",
-    "yesterdayQuestion": "Qu'avez-vous fait hier pour aider l'équipe à atteindre l'Objectif de Sprint ?"
+    "yesterdayQuestion": "Qu'avez-vous fait hier pour aider l'équipe à atteindre l'Sprint Goal ?"
   },
   "dashboardDetails": "Détails du tableau de bord",
   "dataRefreshed": "Données du tableau de bord actualisées avec succès",
@@ -56,9 +56,9 @@
   "hoursAgo": "il y a {{count}} heure{{plural}}",
   "idealBurndown": "Burndown idéal",
   "impedimentList": {
-    "ariaLabel": "Liste des Impediments",
-    "impedimentAriaLabel": "{{title}}, statut : {{status}}. Cliquez pour voir l'Impediment",
-    "noImpediments": "Aucun Impediment signalé",
+    "ariaLabel": "Liste des obstacles",
+    "impedimentAriaLabel": "{{title}}, statut : {{status}}. Cliquez pour voir l'obstacle",
+    "noImpediments": "Aucun obstacle signalé",
     "title": "Impediments"
   },
   "impedimentStatus": {
@@ -86,10 +86,10 @@
   "noActiveSprint": "Aucun sprint actif",
   "noDailyUpdates": "Aucune mise à jour quotidienne pour aujourd'hui.",
   "noOpenImpediments": "Aucun obstacle ouvert. Beau travail !",
-  "noSprintGoal": "Aucun Objectif de Sprint défini.",
+  "noSprintGoal": "Aucun Sprint Goal défini.",
   "noTasksYet": "Aucune tâche ne vous est encore assignée.",
   "notSubmitted": "Non soumis",
-  "openImpediments": "Obstacles ouverts",
+  "openImpediments": "Impediments ouverts",
   "quickActions": {
     "addBacklogItem": "Ajouter un élément au backlog",
     "createIncrement": "Créer un Increment",
@@ -132,7 +132,7 @@
   "taskStatus": {
     "DONE": "Terminé",
     "IN_PROGRESS": "En cours",
-    "TODO": "Todo"
+    "TODO": "À faire"
   },
   "tasksDone": "tâches terminées",
   "tasksDoneLabel": "Tâches terminées",

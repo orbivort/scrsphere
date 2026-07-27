@@ -5,12 +5,12 @@
   "accountDeletionScheduledMessage": "Ein Product Owner in Ihrem Team hat die Löschung seines Kontos geplant. Das Konto wird am {{deletionDate}} endgültig gelöscht. Bitte weisen Sie vorher einen neuen Product Owner zu.",
   "ariaLabels": {
     "dismiss": "Benachrichtigung schließen",
-    "filterNotifications": "Filter notifications",
+    "filterNotifications": "Benachrichtigungen filtern",
     "goToNextPage": "Zur nächsten Seite",
     "goToPreviousPage": "Zur vorherigen Seite",
     "markAsRead": "Als gelesen markieren",
     "notificationItem": "Benachrichtigung von {{sender}}: {{message}}",
-    "pagination": "Pagination"
+    "pagination": "Seitennummerierung"
   },
   "backlogAdjustmentRequired": "Neue Backlog-Anpassung erfordert Ihre Aktion",
   "backlogAdjustmentRequiredMessage": "Ihnen wurde als Eigentümer einer Backlog-Anpassung zugewiesen: {{action}} - \"{{description}}\"",
@@ -43,7 +43,7 @@
     "teamUpdated": "Team aktualisiert",
     "unread": "Ungelesen"
   },
-  "impedimentAssigned": "Neues Hindernis zugewiesen: \"{{impedimentTitle}}\"",
+  "impedimentAssigned": "Neues Impediment zugewiesen: \"{{impedimentTitle}}\"",
   "loading": {
     "ariaLabel": "Benachrichtigungen laden",
     "title": "Benachrichtigungen werden geladen..."

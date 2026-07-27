@@ -16,7 +16,7 @@
     "dailyUpdateAriaLabel": "Aggiornamento giornaliero di {{name}}. {{expandAction}}.",
     "impedimentStatus": "Stato impedimento: {{status}}",
     "trackedAsFormalImpediment": "Tracciato come impedimento formale",
-    "viewMode": "Modalita vista"
+    "viewMode": "Modalità vista"
   },
   "datePicker": {
     "ariaLabel": "Seleziona data per aggiornamenti giornalieri",
@@ -36,14 +36,14 @@
   },
   "form": {
     "cancel": "Annulla",
-    "impedimentHint": "Questo impedimento sara tracciato e puo essere promosso a un registro formale di impedimento",
+    "impedimentHint": "Questo impedimento sarà tracciato e puo essere promosso a un registro formale di impedimento",
     "impedimentLabel": "Qualche impedimento? (opzionale)",
     "impedimentPlaceholder": "Descrivi eventuali blocchi o Impediments...",
     "submitting": "Inviando...",
     "todayLabel": "Cosa farai oggi per aiutare il team a raggiungere lo sprint goal?",
     "todayPlaceholder": "Descrivi cosa prevedi di lavorare oggi...",
     "yesterdayLabel": "Cosa hai fatto ieri per aiutare il team a raggiungere lo sprint goal?",
-    "yesterdayPlaceholder": "Descrivi cio che hai realizzato ieri..."
+    "yesterdayPlaceholder": "Descrivi ciò che hai realizzato ieri..."
   },
   "formatTimeSince": {
     "daysAgo": "{{count}}g",
@@ -58,13 +58,13 @@
     "resolved": "Risolto"
   },
   "loading": {
-    "actions": "Loading actions...",
-    "pageHeader": "Loading page header...",
-    "pendingMembers": "Loading pending members...",
-    "sectionHeader": "Loading section header...",
-    "sprintProgress": "Loading sprint progress...",
-    "statistics": "Loading statistics...",
-    "teamUpdates": "Loading team updates..."
+    "actions": "Caricamento azioni...",
+    "pageHeader": "Caricamento intestazione pagina...",
+    "pendingMembers": "Caricamento membri in attesa...",
+    "sectionHeader": "Caricamento intestazione sezione...",
+    "sprintProgress": "Caricamento progresso sprint...",
+    "statistics": "Caricamento statistiche...",
+    "teamUpdates": "Caricamento aggiornamenti team..."
   },
   "promoteModal": {
     "createImpediment": "Crea Impedimento",
@@ -73,7 +73,7 @@
     "descriptionPlaceholder": "Descrizione dettagliata dell'impedimento",
     "fromUpdateBy": "Da Aggiornamento Giornaliero di:",
     "originalImpedimentText": "Testo Originale Impedimento:",
-    "priority": "Priorita",
+    "priority": "Priorità",
     "priorityHigh": "Alta",
     "priorityLow": "Bassa",
     "priorityMedium": "Media",
@@ -114,7 +114,7 @@
   "subtitle": "{{sprintName}} - Giorno {{day}}",
   "teamUpdates": "Aggiornamenti del Team",
   "templates": {
-    "featureDevelopment": "Sviluppo Funzionalita",
+    "featureDevelopment": "Sviluppo Funzionalità",
     "issueFixing": "Risoluzione Problemi",
     "meetings": "Riunioni",
     "review": "Revisione"
@@ -122,10 +122,10 @@
   "title": "Daily Scrum",
   "toast": {
     "allSubmitted": "Tutti i membri del team hanno inviato i loro aggiornamenti",
-    "failedCreateImpediment": "Fallimento creazione impedimento. Riprova.",
-    "failedSendReminder": "Fallimento invio promemoria. Riprova.",
+    "failedCreateImpediment": "Creazione impedimento non riuscita. Riprova.",
+    "failedSendReminder": "Invio promemoria non riuscito. Riprova.",
     "impedimentCreated": "Impedimento creato con successo!",
-    "networkError": "Si e verificato un errore di rete. Verifica la tua connessione e riprova.",
+    "networkError": "Si è verificato un errore di rete. Verifica la tua connessione e riprova.",
     "noPendingUpdates": "Nessun aggiornamento in sospeso",
     "noPermissionCreateImpediments": "Non hai il permesso di creare Impediments.",
     "noPermissionReminders": "Non hai il permesso di inviare promemoria.",
@@ -133,10 +133,10 @@
     "reminderSent": "Promemoria inviato!",
     "remindersSentOne": "Promemoria inviato a 1 membro del team",
     "remindersSentPlural": "Promemoria inviati a {{count}} membri del team",
-    "resourceNotFound": "La risorsa richiesta non e stata trovata.",
-    "serverError": "Si e verificato un errore del server. Riprova piu tardi.",
-    "sessionExpired": "La tua sessione e scaduta. Accedi di nuovo.",
-    "submitFailed": "Fallimento invio aggiornamento. Riprova.",
+    "resourceNotFound": "La risorsa richiesta non è stata trovata.",
+    "serverError": "Si è verificato un errore del server. Riprova più tardi.",
+    "sessionExpired": "La tua sessione è scaduta. Accedi di nuovo.",
+    "submitFailed": "Invio aggiornamento non riuscito. Riprova.",
     "updateSubmitted": "Aggiornamento inviato con successo!"
   },
   "unsavedModal": {
@@ -156,9 +156,9 @@
     "yesterday": "Ieri"
   },
   "validation": {
-    "descriptionRequired": "La descrizione e richiesta",
+    "descriptionRequired": "La descrizione è richiesta",
     "descriptionTooShort": "La descrizione deve avere almeno 10 caratteri",
-    "titleRequired": "Il titolo e richiesto",
+    "titleRequired": "Il titolo è richiesto",
     "titleTooShort": "Il titolo deve avere almeno 3 caratteri"
   },
   "viewMode": {

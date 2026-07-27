@@ -45,7 +45,7 @@
     "owner": "Proprietario *",
     "ownerPlaceholder": "Seleziona proprietario...",
     "relatedPbi": "PBI correlato (Opzionale)",
-    "requiredFieldsNote": "I campi richiesti sono markati con *",
+    "requiredFieldsNote": "I campi richiesti sono contrassegnati con *",
     "subtitle": "Cattura insights preziosi dagli stakeholders per migliorare il tuo prodotto",
     "title": "Aggiungi Feedback Stakeholder",
     "unsavedMessage": "Hai feedback non salvato. Sei sicuro di volerlo scartare?",
@@ -88,14 +88,14 @@
       "cannotCompleteTitle": "Impossibile completare Sprint Review",
       "closeDialog": "Chiudi dialogo",
       "complete": "Completa",
-      "completeSubtitle": "Rivedi tutti gli elementi e conferma per markare questo Sprint Review come completato",
+      "completeSubtitle": "Rivedi tutti gli elementi e conferma per contrassegnare questo Sprint Review come completato",
       "completeTitle": "Completa Sprint Review",
-      "confirmation": "Sei sicuro di voler markare questo Sprint Review come completato? Questa azione non può essere annullata.",
+      "confirmation": "Sei sicuro di voler contrassegnare questo Sprint Review come completato? Questa azione non può essere annullata.",
       "gotIt": "Capisco",
       "validationAttended": "Almeno un partecipante deve essere markato come presente prima di completare il Sprint Review.",
       "validationAttendees": "Per favore aggiungi almeno un partecipante prima di completare il Sprint Review.",
       "validationSummary": "Un riepilogo del Review è richiesto per completare il Sprint Review.",
-      "validationTeamMembers": "Tutti i membri del team devono essere markati come presenti o assenti. Mancanti: {{names}}{{remaining}}."
+      "validationTeamMembers": "Tutti i membri del team devono essere contrassegnati come presenti o assenti. Mancanti: {{names}}{{remaining}}."
     },
     "defaultSummary": "Sprint Review completato.",
     "failed": "Impossibile completare il Review. Per favore riprova.",
@@ -169,7 +169,7 @@
     "completedSprints_plural": "Sprints completati",
     "createIncrement": "Crea Incremento",
     "goal": "Goal:",
-    "loading": "Caricando Sprint Reviews...",
+    "loading": "Caricamento Sprint Reviews...",
     "reviewStatus": {
       "completed": "Review completato",
       "inProgress": "Review in corso",
@@ -188,7 +188,7 @@
     "viewDetails": "Vedi dettagli",
     "viewReview": "Vedi Review"
   },
-  "loading": "Caricando Sprint Review...",
+  "loading": "Caricamento Sprint Review...",
   "noActiveSprint": "Nessun Sprint attivo trovato per questo team.",
   "noReview": {
     "createIncrement": "Crea Incremento",

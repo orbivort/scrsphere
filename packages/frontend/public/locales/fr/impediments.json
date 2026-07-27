@@ -1,114 +1,114 @@
 {
   "allStatus": "Tous les statuts",
   "card": {
-    "createdFromDailyUpdate": "Cree a partir de la mise a jour quotidienne",
+    "createdFromDailyUpdate": "Créé à partir de la mise à jour quotidienne",
     "fromDailyScrum": "De la Daily Scrum",
-    "owner": "Proprietaire",
-    "reportedBy": "Signale par",
-    "resolution": "Resolution",
+    "owner": "Propriétaire",
+    "reportedBy": "Signalé par",
+    "resolution": "Résolution",
     "sprint": "Sprint",
     "unknown": "Inconnu",
-    "viewDetailsAria": "Voir les details pour l'obstacle : {{title}}. Statut : {{status}}"
+    "viewDetailsAria": "Voir les détails pour l'obstacle : {{title}}. Statut : {{status}}"
   },
   "createModal": {
     "activeSprint": "(Actif)",
-    "createImpediment": "Creer l'obstacle",
-    "creating": "Creation...",
+    "createImpediment": "Créer l'obstacle",
+    "creating": "Création...",
     "descriptionLabel": "Description",
-    "descriptionPlaceholder": "Fournir des details sur l'obstacle",
+    "descriptionPlaceholder": "Fournir des détails sur l'obstacle",
     "sprintLabel": "Sprint",
-    "subtitle": "Documenter les bloquants affectant la progression de votre equipe",
+    "subtitle": "Documenter les bloquants affectant la progression de votre équipe",
     "title": "Signaler un nouvel obstacle",
     "titleLabel": "Titre",
-    "titlePlaceholder": "Description breve de l'obstacle"
+    "titlePlaceholder": "Description brève de l'obstacle"
   },
   "deleteModal": {
     "actionWarning": "Avertissement d'action",
     "deleteImpediment": "Supprimer l'obstacle",
     "deleting": "Suppression...",
-    "item": "Element :",
+    "item": "Élément :",
     "statusLabel": "Statut :",
-    "subtitle": "Cette action est permanente et ne peut pas etre annulee",
+    "subtitle": "Cette action est permanente et ne peut pas être annulée",
     "title": "Supprimer l'obstacle",
-    "unknownItem": "Element inconnu",
-    "warningText": "Vous allez supprimer definitivement cet obstacle. Cette action ne peut pas etre annulee. Toutes les donnees associees seront definitivement supprimees."
+    "unknownItem": "Élément inconnu",
+    "warningText": "Vous allez supprimer définitivement cet obstacle. Cette action ne peut pas être annulée. Toutes les données associées seront définitivement supprimées."
   },
   "detailModal": {
-    "cancel": "Cancel",
-    "close": "Close",
-    "createdFromDailyScrum": "Cree a partir de la mise a jour de la Daily Scrum",
-    "createdLabel": "Cree",
+    "cancel": "Annuler",
+    "close": "Fermer",
+    "createdFromDailyScrum": "Créé à partir de la mise à jour de la Daily Scrum",
+    "createdLabel": "Créé",
     "deleteLabel": "Supprimer",
     "deleting": "Suppression...",
     "descriptionLabel": "Description",
-    "ownerLabel": "Proprietaire",
-    "reportedByLabel": "Signale par",
-    "resolutionLabel": "Resolution",
-    "resolutionPlaceholder": "Decrivez comment cet obstacle a ete resolu...",
-    "saveResolution": "Sauvegarder la resolution",
+    "ownerLabel": "Propriétaire",
+    "reportedByLabel": "Signalé par",
+    "resolutionLabel": "Résolution",
+    "resolutionPlaceholder": "Décrivez comment cet obstacle a été résolu...",
+    "saveResolution": "Sauvegarder la résolution",
     "saving": "Sauvegarde...",
     "sprintLabel": "Sprint",
     "statusLabel": "Statut",
-    "subtitle": "Voir et gerer les informations de l'obstacle",
-    "title": "Details de l'obstacle",
+    "subtitle": "Voir et gérer les informations de l'obstacle",
+    "title": "Détails de l'obstacle",
     "titleLabel": "Titre",
-    "viewDailyUpdate": "Voir la mise a jour quotidienne"
+    "viewDailyUpdate": "Voir la mise à jour quotidienne"
   },
   "emptyState": {
     "clearFilter": "Effacer le filtre",
-    "noFilterImpedimentsDescription": "Il n'y a pas d'obstacles {{status}} dans \"{{sprintName}}\". Essayez de selectionner un autre filtre de statut.",
-    "noImpedimentsDescription": "Super ! Aucun obstacle signale pour le sprint actif \"{{sprintName}}\".",
+    "noFilterImpedimentsDescription": "Il n'y a pas d'obstacles {{status}} dans \"{{sprintName}}\". Essayez de sélectionner un autre filtre de statut.",
+    "noImpedimentsDescription": "Super ! Aucun obstacle signalé pour le sprint actif \"{{sprintName}}\".",
     "noImpedimentsForFilter": "Aucun obstacle {{status}}",
     "noImpedimentsForSprint": "Aucun obstacle pour {{sprintName}}"
   },
   "errorState": {
-    "failedImpediments": "Impossible de charger les obstacles. Veuillez reessayer.",
-    "failedSprint": "Impossible de charger les informations du sprint actif. Veuillez reessayer.",
-    "retry": "Reessayer",
-    "title": "Erreur de chargement des donnees"
+    "failedImpediments": "Impossible de charger les obstacles. Veuillez réessayer.",
+    "failedSprint": "Impossible de charger les informations du sprint actif. Veuillez réessayer.",
+    "retry": "Réessayer",
+    "title": "Erreur de chargement des données"
   },
   "filterByStatus": "Filtrer par statut",
   "reportImpediment": "Signaler un obstacle",
   "stats": {
-    "CLOSED": "Ferme",
+    "CLOSED": "Fermé",
     "IN_PROGRESS": "En cours",
     "OPEN": "Ouvert",
-    "RESOLVED": "Resolu",
-    "closed": "Ferme",
+    "RESOLVED": "Résolu",
+    "closed": "Fermé",
     "inProgress": "En cours",
     "open": "Ouvert",
-    "resolved": "Resolu"
+    "resolved": "Résolu"
   },
   "status": {
-    "CLOSED": "Ferme",
+    "CLOSED": "Fermé",
     "IN_PROGRESS": "En cours",
     "OPEN": "Ouvert",
-    "RESOLVED": "Resolu",
-    "closed": "Ferme",
+    "RESOLVED": "Résolu",
+    "closed": "Fermé",
     "inProgress": "En cours",
     "open": "Ouvert",
-    "resolved": "Resolu"
+    "resolved": "Résolu"
   },
-  "subtitle": "{{sprintName}} - Suivre et resoudre les bloquants affectant l'equipe",
+  "subtitle": "{{sprintName}} - Suivre et résoudre les bloquants affectant l'équipe",
   "title": "Impediments",
   "toast": {
-    "created": "Obstacle cree avec succes",
-    "deleted": "Obstacle supprime avec succes",
-    "failedCreate": "Impossible de creer l'obstacle. Veuillez reessayer.",
-    "failedDelete": "Impossible de supprimer l'obstacle. Veuillez reessayer.",
-    "failedUpdate": "Impossible de mettre a jour l'obstacle. Veuillez reessayer.",
-    "noActiveSprint": "Aucun sprint actif trouve. Veuillez demarrer un sprint d'abord.",
-    "teamIdRequired": "L'ID de l'equipe est requis. Veuillez selectionner une equipe d'abord.",
-    "updated": "Obstacle mis a jour avec succes"
+    "created": "Impediment créé avec succès",
+    "deleted": "Impediment supprimé avec succès",
+    "failedCreate": "Impossible de créer l'obstacle. Veuillez réessayer.",
+    "failedDelete": "Impossible de supprimer l'obstacle. Veuillez réessayer.",
+    "failedUpdate": "Impossible de mettre à jour l'obstacle. Veuillez réessayer.",
+    "noActiveSprint": "Aucun sprint actif trouvé. Veuillez démarrer un sprint d'abord.",
+    "teamIdRequired": "L'ID de l'équipe est requis. Veuillez sélectionner une équipe d'abord.",
+    "updated": "Impediment mis à jour avec succès"
   },
   "unsavedModal": {
-    "message": "Vous avez des modifications non sauvegardees dans le formulaire d'obstacle. Etes-vous sur de vouloir les supprimer?",
-    "title": "Modifications non sauvegardees"
+    "message": "Vous avez des modifications non sauvegardées dans le formulaire d'obstacle. Êtes-vous sûr de vouloir les supprimer ?",
+    "title": "Modifications non sauvegardées"
   },
   "validation": {
     "descriptionRequired": "La description est requise",
-    "descriptionTooShort": "La description doit avoir au moins 10 caracteres",
+    "descriptionTooShort": "La description doit avoir au moins 10 caractères",
     "titleRequired": "Le titre est requis",
-    "titleTooShort": "Le titre doit avoir au moins 3 caracteres"
+    "titleTooShort": "Le titre doit avoir au moins 3 caractères"
   }
 }

@@ -12,8 +12,8 @@
     "backToIncrements": "Torna agli Increments",
     "backToSprintReview": "Torna a Sprint Review",
     "error": {
-      "failedLoadPbis": "Fallimento caricamento PBIs elegibili",
-      "message": "Fallimento caricamento dati. Riprova.",
+      "failedLoadPbis": "Caricamento PBI idonei non riuscito",
+      "message": "Caricamento dati non riuscito. Riprova.",
       "title": "Errore"
     },
     "form": {
@@ -26,12 +26,12 @@
       "sprint": "Sprint",
       "sprintPlaceholder": "Seleziona uno sprint"
     },
-    "loading": "Caricando...",
+    "loading": "Caricamento...",
     "pbis": {
-      "alreadyInIncrement": "Gia in un incremento",
+      "alreadyInIncrement": "Già in un incremento",
       "deselectAll": "Deseleziona Tutti",
-      "mustBeDone": "I PBIs devono essere in stato \"Done\" e non gia in un altro incremento.",
-      "noEligiblePbis": "Nessun PBI elegibile trovato per questo sprint.",
+      "mustBeDone": "I PBIs devono essere in stato \"Done\" e non già in un altro incremento.",
+      "noEligiblePbis": "Nessun PBI idoneo trovato per questo sprint.",
       "selectAll": "Seleziona Tutti",
       "selected": "selezionato(i)",
       "subtitle": "Scegli i PBIs che sono completi e pronti per essere inclusi in questo incremento.",
@@ -50,10 +50,10 @@
     },
     "title": "Crea Incremento",
     "toast": {
-      "createFailed": "Fallimento creazione incremento. Riprova.",
+      "createFailed": "Creazione incremento non riuscita. Riprova.",
       "createdAndDelivering": "Incremento creato! Consegna incremento...",
       "createdSuccess": "Incremento creato con successo!",
-      "deliverFailed": "Fallimento consegna incremento. Puoi consegnarlo manualmente dalla pagina dettaglio incremento.",
+      "deliverFailed": "Consegna incremento non riuscita. Puoi consegnarlo manualmente dalla pagina dettaglio incremento.",
       "deliveredSuccess": "Incremento consegnato! Reindirizzamento a Sprint Review...",
       "validationFailed": "Validazione fallita"
     },
@@ -89,7 +89,7 @@
     "deliverIncrement": "Consegna Incremento",
     "deliverModal": {
       "cancel": "Annulla",
-      "checkboxText": "Capisco che questa azione e irreversibile e l'incremento sara segnato come consegnato agli stakeholder.",
+      "checkboxText": "Capisco che questa azione è irreversibile e l'incremento sara segnato come consegnato agli stakeholder.",
       "closeDialog": "Chiudi dialogo",
       "confirm": "Conferma Consegna",
       "confirmDeliveryAriaLabel": "Conferma azione di consegna",
@@ -99,7 +99,7 @@
       "description": "Segna questo Incremento come consegnato e registra il metodo di consegna.",
       "earlyReleaseDescription": "Consegnato prima della fine dello Sprint",
       "earlyReleaseOption": "Rilascio Anticipato",
-      "modalDescription": "Segna questo Incremento come consegnato agli stakeholder. Questa azione non puo essere annullata.",
+      "modalDescription": "Segna questo Incremento come consegnato agli stakeholder. Questa azione non può essere annullata.",
       "notesLabel": "Note (Opzionale)",
       "notesPlaceholder": "Aggiungi note su questa consegna...",
       "sprintReviewDescription": "Presentato alla riunione Sprint Review",
@@ -118,9 +118,9 @@
     },
     "error": {
       "backToIncrements": "Torna agli Increments",
-      "title": "Fallimento caricamento incremento"
+      "title": "Caricamento incremento non riuscito"
     },
-    "loading": "Caricando incremento...",
+    "loading": "Caricamento incremento...",
     "overview": {
       "created": "Creato",
       "delivered": "Consegnato",
@@ -149,7 +149,7 @@
       "title": "Sequenza Temporale"
     },
     "toast": {
-      "deliverFailed": "Fallimento consegna incremento. Riprova.",
+      "deliverFailed": "Consegna incremento non riuscita. Riprova.",
       "deliveredSuccess": "Incremento consegnato con successo!"
     },
     "workflowStep3Of4": "Passo 3 di 4: Consegna Incremento",
@@ -187,7 +187,7 @@
       "total": "Increments Totali"
     }
   },
-  "loading": "Caricando Increments...",
+  "loading": "Caricamento Increments...",
   "noDescription": "Nessuna descrizione fornita.",
   "pts": "pts",
   "skipToSprintReview": "Salta a Sprint Review",

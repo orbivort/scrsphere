@@ -1,48 +1,48 @@
 {
   "activeImpediments": {
-    "title": "Aktive Hindernisse",
-    "trackAsImpediment": "Als Hindernis verfolgen",
+    "title": "Aktive Impediments",
+    "trackAsImpediment": "Als Impediment verfolgen",
     "tracked": "Verfolgt",
-    "trackedImpediment": "Verfolgtes Hindernis",
-    "untrackedImpediment": "Nicht verfolgtes Hindernis",
-    "viewAllImpediments": "Alle {{count}} Hindernisse anzeigen",
+    "trackedImpediment": "Verfolgtes Impediment",
+    "untrackedImpediment": "Nicht verfolgtes Impediment",
+    "viewAllImpediments": "Alle {{count}} Impediments anzeigen",
     "viewDetails": "Details anzeigen"
   },
   "aria": {
     "clickToCollapse": "Klicken zum Einklappen",
     "clickToExpand": "Klicken zum Ausklappen",
-    "closeDialog": "Dialog schliessen",
-    "closeForm": "Formular schliessen",
-    "dailyUpdateAriaLabel": "Tagliches Update von {{name}}. {{expandAction}}.",
-    "impedimentStatus": "Hindernis-Status: {{status}}",
-    "trackedAsFormalImpediment": "Als formales Hindernis verfolgt",
+    "closeDialog": "Dialog schließen",
+    "closeForm": "Formular schließen",
+    "dailyUpdateAriaLabel": "Tägliches Update von {{name}}. {{expandAction}}.",
+    "impedimentStatus": "Impediment-Status: {{status}}",
+    "trackedAsFormalImpediment": "Als formales Impediment verfolgt",
     "viewMode": "Ansichtsmodus"
   },
   "datePicker": {
-    "ariaLabel": "Datum fur tagliche Updates auswahlen",
-    "label": "Datum fur tagliche Updates auswahlen"
+    "ariaLabel": "Datum für tägliche Updates auswählen",
+    "label": "Datum für tägliche Updates auswählen"
   },
   "draftRestore": {
     "discard": "Verwerfen",
-    "prompt": "Mochten Sie Ihren vorherigen Entwurf wiederherstellen?",
+    "prompt": "Möchten Sie Ihren vorherigen Entwurf wiederherstellen?",
     "restoreDraft": "Entwurf wiederherstellen",
     "title": "Ungespeicherter Entwurf gefunden"
   },
   "draftSaved": "Entwurf gespeichert {{timeSince}}",
   "emptyState": {
-    "beFirst": "Seien Sie der Erste, der sein tagliches Update einreicht!",
+    "beFirst": "Seien Sie der Erste, der sein tägliches Update einreicht!",
     "noUpdates": "Noch keine Updates",
-    "noUpdatesForDate": "Keine Team-Updates fur dieses Datum."
+    "noUpdatesForDate": "Keine Team-Updates für dieses Datum."
   },
   "form": {
     "cancel": "Abbrechen",
-    "impedimentHint": "Dieses Hindernis wird verfolgt und kann zu einem formalen Hindernis-Datensatz befordert werden",
-    "impedimentLabel": "Irgendwelche Hindernisse? (optional)",
-    "impedimentPlaceholder": "Beschreiben Sie alle Blocker oder Hindernisse...",
+    "impedimentHint": "Dieses Impediment wird verfolgt und kann zu einem formalen Impediment-Datensatz befördert werden",
+    "impedimentLabel": "Irgendwelche Impediments? (optional)",
+    "impedimentPlaceholder": "Beschreiben Sie alle Blocker oder Impediments...",
     "submitting": "Einreichen...",
-    "todayLabel": "Was werden Sie heute tun, um das Team beim Erreichen des Sprint-Ziels zu unterstutzen?",
+    "todayLabel": "Was werden Sie heute tun, um das Team beim Erreichen des Sprint Goals zu unterstützen?",
     "todayPlaceholder": "Beschreiben Sie, was Sie heute zu arbeiten planen...",
-    "yesterdayLabel": "Was haben Sie gestern getan, um das Team beim Erreichen des Sprint-Ziels zu unterstutzen?",
+    "yesterdayLabel": "Was haben Sie gestern getan, um das Team beim Erreichen des Sprint Goals zu unterstützen?",
     "yesterdayPlaceholder": "Beschreiben Sie, was Sie gestern erreicht haben..."
   },
   "formatTimeSince": {
@@ -55,47 +55,47 @@
     "closed": "Geschlossen",
     "inProgress": "In Bearbeitung",
     "open": "Offen",
-    "resolved": "Gelost"
+    "resolved": "Gelöst"
   },
   "loading": {
-    "actions": "Loading actions...",
-    "pageHeader": "Loading page header...",
-    "pendingMembers": "Loading pending members...",
-    "sectionHeader": "Loading section header...",
-    "sprintProgress": "Loading sprint progress...",
-    "statistics": "Loading statistics...",
-    "teamUpdates": "Loading team updates..."
+    "actions": "Aktionen werden geladen...",
+    "pageHeader": "Seitenkopf wird geladen...",
+    "pendingMembers": "Ausstehende Mitglieder werden geladen...",
+    "sectionHeader": "Abschnittskopf wird geladen...",
+    "sprintProgress": "Sprint-Fortschritt wird geladen...",
+    "statistics": "Statistiken werden geladen...",
+    "teamUpdates": "Team-Updates werden geladen..."
   },
   "promoteModal": {
-    "createImpediment": "Hindernis erstellen",
+    "createImpediment": "Impediment erstellen",
     "creating": "Erstellen...",
     "descriptionLabel": "Beschreibung",
-    "descriptionPlaceholder": "Detaillierte Beschreibung des Hindernisses",
-    "fromUpdateBy": "Aus taglichem Update von:",
-    "originalImpedimentText": "Ursprunglicher Hindernis-Text:",
-    "priority": "Prioritat",
+    "descriptionPlaceholder": "Detaillierte Beschreibung des Impediments",
+    "fromUpdateBy": "Aus täglichem Update von:",
+    "originalImpedimentText": "Ursprünglicher Impediment-Text:",
+    "priority": "Priorität",
     "priorityHigh": "Hoch",
     "priorityLow": "Niedrig",
     "priorityMedium": "Mittel",
-    "title": "Hindernis aus taglichem Update erstellen",
+    "title": "Impediment aus täglichem Update erstellen",
     "titleLabel": "Titel",
-    "titlePlaceholder": "Kurzer Titel fur das Hindernis"
+    "titlePlaceholder": "Kurzer Titel für das Impediment"
   },
   "quickDates": {
     "today": "Heute",
     "yesterday": "Gestern"
   },
   "retryPrompt": {
-    "dismiss": "Schliessen",
+    "dismiss": "Schließen",
     "message": "Ihr Update konnte nicht eingereicht werden. Ihre Daten wurden gespeichert.",
     "retrySubmission": "Einreichung erneut versuchen",
     "retrying": "Erneut versuchen...",
     "title": "Einreichung fehlgeschlagen"
   },
   "sprintGoal": {
-    "addInPlanning": "In der Sprint Planning hinzufugen",
+    "addInPlanning": "In der Sprint Planning hinzufügen",
     "label": "Sprint Goal",
-    "noGoalDefined": "Kein Sprint-Ziel definiert.",
+    "noGoalDefined": "Kein Sprint Goal definiert.",
     "progressAriaLabel": "{{percentage}}% Sprint-Abschluss ({{completed}} von {{total}} Aufgaben abgeschlossen)",
     "progressTitle": "{{completed}} von {{total}} Aufgaben abgeschlossen"
   },
@@ -117,42 +117,42 @@
     "featureDevelopment": "Feature-Entwicklung",
     "issueFixing": "Problembehebung",
     "meetings": "Meetings",
-    "review": "Uberprufung"
+    "review": "Überprüfung"
   },
   "title": "Daily Scrum",
   "toast": {
     "allSubmitted": "Alle Teammitglieder haben ihre Updates eingereicht",
-    "failedCreateImpediment": "Hindernis konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
+    "failedCreateImpediment": "Impediment konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
     "failedSendReminder": "Erinnerung konnte nicht gesendet werden. Bitte versuchen Sie es erneut.",
-    "impedimentCreated": "Hindernis erfolgreich erstellt!",
-    "networkError": "Ein Netzwerkfehler ist aufgetreten. Bitte uberprufen Sie Ihre Verbindung und versuchen Sie es erneut.",
+    "impedimentCreated": "Impediment erfolgreich erstellt!",
+    "networkError": "Ein Netzwerkfehler ist aufgetreten. Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
     "noPendingUpdates": "Keine ausstehenden Updates",
-    "noPermissionCreateImpediments": "Sie haben keine Berechtigung, Hindernisse zu erstellen.",
+    "noPermissionCreateImpediments": "Sie haben keine Berechtigung, Impediments zu erstellen.",
     "noPermissionReminders": "Sie haben keine Berechtigung, Erinnerungen zu senden.",
-    "offline": "Sie scheinen offline zu sein. Bitte uberprufen Sie Ihre Internetverbindung und versuchen Sie es erneut.",
+    "offline": "Sie scheinen offline zu sein. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.",
     "reminderSent": "Erinnerung gesendet!",
     "remindersSentOne": "Erinnerungen an 1 Teammitglied gesendet",
     "remindersSentPlural": "Erinnerungen an {{count}} Teammitglieder gesendet",
     "resourceNotFound": "Die angeforderte Ressource wurde nicht gefunden.",
-    "serverError": "Ein Serverfehler ist aufgetreten. Bitte versuchen Sie es spater erneut.",
+    "serverError": "Ein Serverfehler ist aufgetreten. Bitte versuchen Sie es später erneut.",
     "sessionExpired": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
     "submitFailed": "Update konnte nicht eingereicht werden. Bitte versuchen Sie es erneut.",
     "updateSubmitted": "Update erfolgreich eingereicht!"
   },
   "unsavedModal": {
-    "message": "Sie haben ungespeicherte Anderungen im Hindernis-Formular. Sind Sie sicher, dass Sie diese verwerfen mochten?",
-    "title": "Ungespeicherte Anderungen"
+    "message": "Sie haben ungespeicherte Änderungen im Impediment-Formular. Sind Sie sicher, dass Sie diese verwerfen möchten?",
+    "title": "Ungespeicherte Änderungen"
   },
   "updateCard": {
     "clickToCollapse": "Klicken zum Einklappen",
     "clickToExpand": "Klicken zum Ausklappen",
     "impediment": "Impediment",
     "today": "Heute",
-    "trackAsFormalImpediment": "Als formales Hindernis verfolgen",
-    "trackAsImpediment": "Als Hindernis verfolgen",
+    "trackAsFormalImpediment": "Als formales Impediment verfolgen",
+    "trackAsImpediment": "Als Impediment verfolgen",
     "tracked": "(Verfolgt)",
-    "viewImpediment": "Hindernis anzeigen",
-    "viewImpedimentDetails": "Hindernis-Details anzeigen",
+    "viewImpediment": "Impediment anzeigen",
+    "viewImpedimentDetails": "Impediment-Details anzeigen",
     "yesterday": "Gestern"
   },
   "validation": {
@@ -170,5 +170,5 @@
     "sending": "Senden...",
     "title": "Warten auf Updates"
   },
-  "yourDailyUpdate": "Ihr tagliches Update"
+  "yourDailyUpdate": "Ihr tägliches Update"
 }

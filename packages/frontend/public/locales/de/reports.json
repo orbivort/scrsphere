@@ -7,11 +7,11 @@
     "empty": "Noch keine Insights verfügbar. Schließen Sie weitere Sprints ab, um Insights zu generieren.",
     "items": {
       "active-sprint-impediments": {
-        "description": "Aktueller Sprint hat {{count}} Hindernis(se). Genau beobachten.",
-        "title": "Aktive Sprint-Hindernisse"
+        "description": "Aktueller Sprint hat {{count}} Impediment(se). Genau beobachten.",
+        "title": "Aktive Sprint-Impediments"
       },
       "consistent-delivery": {
-        "description": "Team hat in den letzten {{count}} Sprints 100% der Sprint-Ziele erreicht",
+        "description": "Team hat in den letzten {{count}} Sprints 100% der Sprint Goale erreicht",
         "title": "Konstante Lieferung"
       },
       "get-started": {
@@ -23,8 +23,8 @@
         "title": "Hohe Erfolgsrate"
       },
       "impediment-trend": {
-        "description": "{{count}} Hindernis(se) derzeit offen. Proaktiv angehen.",
-        "title": "Hindernis-Trend"
+        "description": "{{count}} Impediment(se) derzeit offen. Proaktiv angehen.",
+        "title": "Impediment-Trend"
       },
       "low-success-rate": {
         "description": "Sprint-Erfolgsrate beträgt {{rate}}%. Sprint-Kapazität und -Planung überprüfen.",
@@ -65,7 +65,7 @@
     "sprintSuccessRate": {
       "fromLastMonth": "vom letzten Monat",
       "title": "Sprint-Erfolgsrate",
-      "unit": "Sprint-Ziele erreicht"
+      "unit": "Sprint Goale erreicht"
     },
     "teamSatisfaction": {
       "fromLastSprint": "vom letzten Sprint",

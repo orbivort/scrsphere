@@ -5,7 +5,7 @@
   "accountDeletionScheduledMessage": "Un Product Owner de votre équipe a programmé la suppression de son compte. Le compte sera définitivement supprimé le {{deletionDate}}. Veuillez assigner un nouveau Product Owner avant cette date.",
   "ariaLabels": {
     "dismiss": "Ignorer la notification",
-    "filterNotifications": "Filter notifications",
+    "filterNotifications": "Filtrer les notifications",
     "goToNextPage": "Aller à la page suivante",
     "goToPreviousPage": "Aller à la page précédente",
     "markAsRead": "Marquer comme lu",
