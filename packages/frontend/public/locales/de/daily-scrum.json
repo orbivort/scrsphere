@@ -95,7 +95,9 @@
   "sprintGoal": {
     "addInPlanning": "In der Sprint Planning hinzufugen",
     "label": "Sprint Goal",
-    "noGoalDefined": "Kein Sprint-Ziel definiert."
+    "noGoalDefined": "Kein Sprint-Ziel definiert.",
+    "progressAriaLabel": "{{percentage}}% Sprint-Abschluss ({{completed}} von {{total}} Aufgaben abgeschlossen)",
+    "progressTitle": "{{completed}} von {{total}} Aufgaben abgeschlossen"
   },
   "sprintProgress": {
     "dayOfTotal": "Tag {{current}} von {{total}}",

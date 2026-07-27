@@ -29,32 +29,24 @@ describe('notificationTranslation', () => {
   });
 
   describe('getNotificationTitle', () => {
-    it('should return translated title when messageKey and params are present', () => {
+    it('should return translated title when titleKey and titleParams are present in params', () => {
       const notification = {
         id: '1',
         title: 'Stored Title',
         message: 'Stored Message',
-        messageKey: 'sprintStarted',
-        params: { sprintName: 'Sprint 1' },
+        messageKey: 'sprintStartedMessage',
+        params: {
+          titleKey: 'sprintStarted',
+          titleParams: { sprintName: 'Sprint 1' },
+          messageKey: 'sprintStartedMessage',
+          messageParams: { sprintName: 'Sprint 1' },
+        },
       } as Notification;
 
       const result = getNotificationTitle(notification, mockT);
 
       expect(mockT).toHaveBeenCalledWith('sprintStarted', { sprintName: 'Sprint 1' });
       expect(result).toBe('Sprint Sprint 1 started');
-    });
-
-    it('should return stored title when messageKey is missing', () => {
-      const notification = {
-        id: '1',
-        title: 'Stored Title',
-        message: 'Stored Message',
-      } as Notification;
-
-      const result = getNotificationTitle(notification, mockT);
-
-      expect(mockT).not.toHaveBeenCalled();
-      expect(result).toBe('Stored Title');
     });
 
     it('should return stored title when params is missing', () => {
@@ -71,12 +63,30 @@ describe('notificationTranslation', () => {
       expect(result).toBe('Stored Title');
     });
 
-    it('should return stored title when both messageKey and params are undefined', () => {
+    it('should return stored title when titleKey is missing in params', () => {
       const notification = {
         id: '1',
         title: 'Stored Title',
         message: 'Stored Message',
-        messageKey: undefined,
+        messageKey: 'sprintStartedMessage',
+        params: {
+          messageKey: 'sprintStartedMessage',
+          messageParams: { sprintName: 'Sprint 1' },
+        },
+      } as Notification;
+
+      const result = getNotificationTitle(notification, mockT);
+
+      expect(mockT).not.toHaveBeenCalled();
+      expect(result).toBe('Stored Title');
+    });
+
+    it('should return stored title when params is undefined', () => {
+      const notification = {
+        id: '1',
+        title: 'Stored Title',
+        message: 'Stored Message',
+        messageKey: 'sprintStarted',
         params: undefined,
       } as Notification;
 
@@ -85,35 +95,47 @@ describe('notificationTranslation', () => {
       expect(mockT).not.toHaveBeenCalled();
       expect(result).toBe('Stored Title');
     });
-  });
 
-  describe('getNotificationMessage', () => {
-    it('should return translated message when messageKey exists and message key is found', () => {
+    it('should handle empty titleParams', () => {
       const notification = {
         id: '1',
         title: 'Stored Title',
         message: 'Stored Message',
-        messageKey: 'sprintStarted',
-        params: { sprintName: 'Sprint 1' },
+        messageKey: 'sprintStartedMessage',
+        params: {
+          titleKey: 'sprintStarted',
+          titleParams: {},
+          messageKey: 'sprintStartedMessage',
+          messageParams: { sprintName: 'Sprint 1' },
+        },
+      } as Notification;
+
+      const result = getNotificationTitle(notification, mockT);
+
+      expect(mockT).toHaveBeenCalledWith('sprintStarted', {});
+      expect(result).toBe('Sprint Unknown started');
+    });
+  });
+
+  describe('getNotificationMessage', () => {
+    it('should return translated message when messageKey and messageParams are present in params', () => {
+      const notification = {
+        id: '1',
+        title: 'Stored Title',
+        message: 'Stored Message',
+        messageKey: 'sprintStartedMessage',
+        params: {
+          titleKey: 'sprintStarted',
+          titleParams: { sprintName: 'Sprint 1' },
+          messageKey: 'sprintStartedMessage',
+          messageParams: { sprintName: 'Sprint 1' },
+        },
       } as Notification;
 
       const result = getNotificationMessage(notification, mockT);
 
       expect(mockT).toHaveBeenCalledWith('sprintStartedMessage', { sprintName: 'Sprint 1' });
       expect(result).toBe('Sprint Sprint 1 has started successfully');
-    });
-
-    it('should return stored message when messageKey is missing', () => {
-      const notification = {
-        id: '1',
-        title: 'Stored Title',
-        message: 'Stored Message',
-      } as Notification;
-
-      const result = getNotificationMessage(notification, mockT);
-
-      expect(mockT).not.toHaveBeenCalled();
-      expect(result).toBe('Stored Message');
     });
 
     it('should return stored message when params is missing', () => {
@@ -130,13 +152,36 @@ describe('notificationTranslation', () => {
       expect(result).toBe('Stored Message');
     });
 
+    it('should return stored message when messageKey is missing in params', () => {
+      const notification = {
+        id: '1',
+        title: 'Stored Title',
+        message: 'Stored Message',
+        messageKey: 'sprintStartedMessage',
+        params: {
+          titleKey: 'sprintStarted',
+          titleParams: { sprintName: 'Sprint 1' },
+        },
+      } as Notification;
+
+      const result = getNotificationMessage(notification, mockT);
+
+      expect(mockT).not.toHaveBeenCalled();
+      expect(result).toBe('Stored Message');
+    });
+
     it('should return stored message when message key translation does not exist', () => {
       const notification = {
         id: '1',
         title: 'Stored Title',
         message: 'Stored Message',
-        messageKey: 'nonExistentKey',
-        params: { someParam: 'value' },
+        messageKey: 'nonExistentKeyMessage',
+        params: {
+          titleKey: 'nonExistentKey',
+          titleParams: { someParam: 'value' },
+          messageKey: 'nonExistentKeyMessage',
+          messageParams: { someParam: 'value' },
+        },
       } as Notification;
 
       const result = getNotificationMessage(notification, mockT);
@@ -146,12 +191,12 @@ describe('notificationTranslation', () => {
       expect(result).toBe('Stored Message');
     });
 
-    it('should return stored message when both messageKey and params are undefined', () => {
+    it('should return stored message when params is undefined', () => {
       const notification = {
         id: '1',
         title: 'Stored Title',
         message: 'Stored Message',
-        messageKey: undefined,
+        messageKey: 'sprintStarted',
         params: undefined,
       } as Notification;
 
@@ -173,13 +218,18 @@ describe('notificationTranslation', () => {
       expect(result).toBeUndefined();
     });
 
-    it('should handle empty params object', () => {
+    it('should handle empty messageParams', () => {
       const notification = {
         id: '1',
         title: 'Stored Title',
         message: 'Stored Message',
-        messageKey: 'sprintStarted',
-        params: {},
+        messageKey: 'sprintStartedMessage',
+        params: {
+          titleKey: 'sprintStarted',
+          titleParams: {},
+          messageKey: 'sprintStartedMessage',
+          messageParams: {},
+        },
       } as Notification;
 
       const result = getNotificationMessage(notification, mockT);

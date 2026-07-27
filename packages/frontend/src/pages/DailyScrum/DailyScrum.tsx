@@ -7,6 +7,7 @@ import { formatLocaleDate, formatDateRange, formatTime } from '@scrumooth/shared
 import { apiService } from '../../services';
 import { useTeamStore, useAuthStore } from '../../store';
 import type { DailyUpdate, ApiResponse } from '../../types';
+import { TaskStatus } from '../../types';
 import { TeamMemberSelect } from '../../components/TeamMemberSelect/TeamMemberSelect';
 import { LoadingState } from '../../components/common/Loading';
 import { useModalFocus } from '../../hooks/useModalFocus';
@@ -561,6 +562,20 @@ export const DailyScrum: React.FC = () => {
     return { totalMembers, submitted, impediments, participation };
   }, [updates, currentTeam?.members?.length]);
 
+  // Calculate sprint completion based on completed tasks
+  const sprintCompletion = useMemo(() => {
+    const tasks = sprint?.tasks ?? [];
+    if (tasks.length === 0) {
+      return { percentage: 0, completedTasks: 0, totalTasks: 0 };
+    }
+
+    const totalTasks = tasks.length;
+    const completedTasks = tasks.filter((task) => task.status === TaskStatus.DONE).length;
+    const percentage = Math.round((completedTasks / totalTasks) * 100);
+
+    return { percentage, completedTasks, totalTasks };
+  }, [sprint?.tasks]);
+
   const handleToggleExpand = useCallback((updateId: string) => {
     setExpandedUpdate((prev) => (prev === updateId ? null : updateId));
   }, []);
@@ -753,9 +768,15 @@ export const DailyScrum: React.FC = () => {
               )}
             </div>
             <div className={styles['daily-scrum-sprint-goal-progress']}>
-              <div className={styles['daily-scrum-progress-ring']}>
+              <div
+                className={styles['daily-scrum-progress-ring']}
+                title={t('sprintGoal.progressTitle', {
+                  completed: sprintCompletion.completedTasks,
+                  total: sprintCompletion.totalTasks,
+                })}
+              >
                 {/* eslint-disable-next-line icon-rules/no-inline-svg -- Progress ring visualization, not an icon */}
-                <svg viewBox="0 0 36 36">
+                <svg viewBox="0 0 36 36" aria-hidden="true">
                   <path
                     className={styles['daily-scrum-progress-ring-bg']}
                     d="M18 2.0845
@@ -764,14 +785,21 @@ export const DailyScrum: React.FC = () => {
                   />
                   <path
                     className={styles['daily-scrum-progress-ring-fill']}
-                    strokeDasharray={`${(getSprintDay(sprint) / getTotalSprintDays(sprint)) * 100}, 100`}
+                    strokeDasharray={`${sprintCompletion.percentage}, 100`}
                     d="M18 2.0845
                     a 15.9155 15.9155 0 0 1 0 31.831
                     a 15.9155 15.9155 0 0 1 0 -31.831"
                   />
                 </svg>
-                <span className={styles['daily-scrum-progress-text']}>
-                  {Math.round((getSprintDay(sprint) / getTotalSprintDays(sprint)) * 100)}%
+                <span
+                  className={styles['daily-scrum-progress-text']}
+                  aria-label={t('sprintGoal.progressAriaLabel', {
+                    percentage: sprintCompletion.percentage,
+                    completed: sprintCompletion.completedTasks,
+                    total: sprintCompletion.totalTasks,
+                  })}
+                >
+                  {sprintCompletion.percentage}%
                 </span>
               </div>
             </div>

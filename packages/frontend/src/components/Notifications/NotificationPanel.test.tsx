@@ -138,6 +138,40 @@ describe('NotificationPanel Component', () => {
       expect(screen.getByText('Second Notification')).toBeInTheDocument();
     });
 
+    it('should display team invitation with inviter name from params', () => {
+      const notification = createMockNotification({
+        id: 'notif-invite-1',
+        type: NotificationType.TEAM_INVITATION,
+        title: 'You\'ve been invited to join team "Development Team"',
+        message: 'Invited by John Doe',
+        messageKey: 'teamInvitationMessage',
+        params: {
+          titleKey: 'teamInvitation',
+          titleParams: { teamName: 'Development Team' },
+          messageKey: 'teamInvitationMessage',
+          messageParams: { teamName: 'Development Team', inviterName: 'John Doe' },
+        },
+      });
+
+      vi.spyOn(useNotificationsModule, 'useNotifications').mockReturnValue({
+        data: {
+          notifications: [notification],
+          pagination: { page: 1, limit: 10, total: 1, totalPages: 1 },
+          unreadCount: 1,
+        },
+        isLoading: false,
+        error: null,
+      } as any);
+
+      renderWithProviders(<NotificationPanel isOpen onClose={mockOnClose} />);
+
+      // Verify that the notification title and message are displayed
+      expect(
+        screen.getByText('You\'ve been invited to join team "Development Team"')
+      ).toBeInTheDocument();
+      expect(screen.getByText('Invited by John Doe')).toBeInTheDocument();
+    });
+
     it('should render View all notifications button', () => {
       renderWithProviders(<NotificationPanel isOpen onClose={mockOnClose} />);
 
