@@ -18,7 +18,7 @@
 
 [![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-GitHub_Pages-success?style=for-the-badge)](https://orbivort.github.io/scrumooth/)
 
-Scrumooth est une application web auto-hébergée pour la gestion des processus Scrum Agile, conçue pour suivre fidèlement le Guide Scrum avec des technologies modernes et des normes de qualité rigoureuses. Elle fournit une solution complète qui guide les équipes à travers tout le cycle de vie Scrum — des Objectifs de Produit et des backlogs jusqu'aux Sprint Reviews et Retrospectives — le tout déployable sur votre propre infrastructure sans frais par utilisateur.
+Scrumooth est une application web auto-hébergée pour la gestion des processus Scrum Agile, conçue pour suivre fidèlement le Guide Scrum avec des technologies modernes et des normes de qualité rigoureuses. Elle fournit une solution complète qui guide les équipes à travers tout le cycle de vie Scrum — des Product Goals et du Product Backlog jusqu'aux Sprint Reviews et Sprint Retrospectives — le tout déployable sur votre propre infrastructure sans frais par utilisateur.
 
 ## 🚀 Démo en ligne
 
@@ -36,13 +36,13 @@ Essayez Scrumooth instantanément dans votre navigateur — aucune installation 
 
 ### Fonctionnalités Scrum principales
 
-- **Objectifs de Produit** — Alignement stratégique et suivi des objectifs
+- **Product Goals** — Alignement stratégique et suivi des objectifs
 - **Product Backlog** — Priorisation MoSCoW (Must, Should, Could, Won't)
 - **Sprint Planning** — Durées de Sprint configurables et planification de capacité
 - **Exécution du Sprint** — Tableau Kanban interactif avec glisser-déposer
 - **Daily Scrum** — Suivi du standup quotidien et mises à jour
-- **Obstacles** — Identification des bloqueurs et suivi de résolution
-- **Livraison incrémentale** — Gestion des Increments de produit
+- **Impediments** — Identification des bloqueurs et suivi de résolution
+- **Livraison incrémentale** — Gestion des Increments
 - **Sprint Reviews** — Gestion et documentation des réunions de revue
 - **Retrospectives** — Réflexion d'équipe et amélioration continue
 
@@ -395,7 +395,7 @@ pnpm run db:validate
 
 ## 🐳 Support Docker
 
-Le projet inclut une configuration Docker pour le déploiement en développement et en production.
+Le projet inclut une configuration Docker pour le développement et le déploiement en production.
 
 ### Utiliser Docker Compose
 

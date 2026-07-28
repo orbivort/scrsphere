@@ -1,6 +1,6 @@
 # Scrumooth
 
-**Sistema de gestión del ciclo de vida de Scrum ágil**
+**Sistema ágil de gestión del ciclo de vida de Scrum**
 
 > **Idiomas:** [English](README.md) | [Deutsch](README.de.md) | [Español](README.es.md) | [Français](README.fr.md) | [Italiano](README.it.md)
 
@@ -18,11 +18,11 @@
 
 [![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-GitHub_Pages-success?style=for-the-badge)](https://orbivort.github.io/scrumooth/)
 
-Scrumooth es una aplicación web autohospedada para gestionar procesos ágiles de Scrum, construida para seguir fielmente la Guía de Scrum con tecnologías modernas y rigurosos estándares de calidad. Proporciona una solución completa que guía a los equipos a través de todo el ciclo de vida de Scrum — desde los Objetivos del Producto y los backlogs hasta las Revisiones del Sprint y las Retrospectivas — todo desplegable en su propia infraestructura sin costos por usuario.
+Scrumooth es una aplicación web autohospedada para gestionar procesos ágiles de Scrum, construida para seguir fielmente la Guía de Scrum con tecnologías modernas y rigurosos estándares de calidad. Proporciona una solución completa que guía a los equipos a través de todo el ciclo de vida de Scrum — desde los Product Goals y backlogs hasta las Sprint Reviews y Sprint Retrospectives — todo desplegable en su propia infraestructura sin coste por usuario.
 
 ## 🚀 Demo en vivo
 
-Pruebe Scrumooth instantáneamente en su navegador — no se requiere instalación. La demo se ejecuta con datos simulados (no se necesita backend), por lo que puede explorar el ciclo de vida completo de Scrum de inmediato.
+Pruebe Scrumooth al instante en su navegador — sin necesidad de instalación. La demo se ejecuta con datos simulados (no se necesita backend), por lo que puede explorar el ciclo de vida completo de Scrum de inmediato.
 
 <p align="center">
   <a href="https://orbivort.github.io/scrumooth/" target="_blank" rel="noopener noreferrer">
@@ -30,25 +30,25 @@ Pruebe Scrumooth instantáneamente en su navegador — no se requiere instalaci�
   </a>
 </p>
 
-> **Nota:** La demo utiliza datos simulados en memoria — cualquier cambio que realice es local a su sesión del navegador y se reinicia al actualizar. Para datos persistentes y colaboración multiusuario, siga la guía de [Instalación](#-installation) para autohospedar su propia instancia.
+> **Nota:** La demo utiliza datos simulados en memoria — cualquier cambio que realice permanece únicamente en su sesión del navegador y se pierde al actualizar. Para datos persistentes y colaboración multiusuario, siga la guía de [Instalación](#-installation) para autohospedar su propia instancia.
 
 ## ✨ Características
 
-### Características principales de Scrum
+### Funcionalidades principales de Scrum
 
-- **Objetivos del Producto** — Alineación estratégica y seguimiento de objetivos
-- **Pila del producto** — Priorización MoSCoW (Must, Should, Could, Won't)
-- **Planificación de Sprint** — Duraciones de Sprint configurables y planificación de capacidad
-- **Ejecución del Sprint** — Tablero Kanban interactivo con arrastrar y soltar
-- **Scrum diario** — Seguimiento del standup diario y actualizaciones
-- **Impedimentos** — Identificación de bloqueadores y seguimiento de resolución
-- **Entrega incremental** — Gestión de Incrementos de producto
-- **Revisiones del Sprint** — Gestión y documentación de reuniones de revisión
-- **Retrospectivas** — Reflexión del equipo y mejora continua
+- **Product Goals** — Alineación estratégica y seguimiento de objetivos
+- **Product Backlog** — Priorización MoSCoW (Must, Should, Could, Won't)
+- **Sprint Planning** — Duraciones de Sprint configurables y planificación de capacidad
+- **Sprint Execution** — Tablero Kanban interactivo con arrastrar y soltar
+- **Daily Scrum** — Seguimiento del Daily Scrum y actualizaciones
+- **Impediments** — Identificación de bloqueadores y seguimiento de resolución
+- **Incremental Delivery** — Gestión de Increments de producto
+- **Sprint Reviews** — Gestión y documentación de reuniones de revisión
+- **Sprint Retrospectives** — Reflexión del equipo y mejora continua
 
-### Características avanzadas
+### Funcionalidades avanzadas
 
-- **Panel e informes** — Métricas y visualizaciones en tiempo real
+- **Dashboard e informes** — Métricas y visualizaciones en tiempo real
 - **Motor de flujo de trabajo** — Permisos basados en roles y transiciones de estado
 - **Definición de Hecho/Listo** — Listas de verificación personalizables
 - **Comunicación del equipo** — Notificaciones y mensajería integradas
@@ -66,7 +66,7 @@ Pruebe Scrumooth instantáneamente en su navegador — no se requiere instalaci�
 - **Validación:** Zod
 - **Jobs programados:** node-cron
 - **Correo electrónico:** Nodemailer (proveedores SMTP, SendGrid, AWS SES)
-- **Registro:** Winston con transports de archivo rotativo
+- **Registro:** Winston con archivos de registro rotativos
 
 ### Frontend
 
@@ -88,7 +88,7 @@ Pruebe Scrumooth instantáneamente en su navegador — no se requiere instalaci�
 
 - **Unitarias/Integración:** Vitest
 - **End-to-End:** Playwright (frontend) + Vitest (backend)
-- **Pruebas de carga:** k6 (10 escenarios preconstruidos)
+- **Pruebas de carga:** k6 (10 escenarios predefinidos)
 - **Linting:** ESLint + Stylelint
 - **Formateo:** Prettier
 - **Git Hooks:** Husky + lint-staged
@@ -127,7 +127,7 @@ scrumooth/
 │   ├── deployment/           # Guías de despliegue
 │   └── user-guide/           # Documentación y guías de usuario
 ├── k6/                       # Escenarios de pruebas de carga (k6)
-│   └── scripts/scenarios/    # escenarios de pruebas de carga preconstruidos
+│   └── scripts/scenarios/    # escenarios de pruebas de carga predefinidos
 ├── scripts/                  # Scripts de build y utilidades
 ├── .github/workflows/        # CI, Release y despliegue en GitHub Pages
 ├── docker-compose.yml        # Docker Compose de producción
@@ -155,7 +155,7 @@ cd scrumooth
 
 ### 2. Instalar dependencias
 
-Este proyecto utiliza pnpm como gestor de paquetes. El proyecto fuerza el uso de pnpm mediante scripts de preinstalación.
+Este proyecto utiliza pnpm como gestor de paquetes. El proyecto exige el uso de pnpm mediante scripts de preinstalación.
 
 ```bash
 pnpm install
@@ -163,7 +163,7 @@ pnpm install
 
 ### 3. Configuración del entorno
 
-Copie los archivos de entorno de ejemplo y configure sus ajustes:
+Copie los archivos de entorno de ejemplo y configure los parámetros:
 
 ```bash
 # Configuración del backend
@@ -200,7 +200,7 @@ VITE_USE_MOCK_API=false
 
 ### 4. Configuración de la base de datos
 
-Genere el cliente de Prisma y luego cree su esquema de base de datos. Para desarrollo local puede usar cualquiera de los dos enfoques:
+Genere el cliente de Prisma y luego cree el esquema de la base de datos. Para desarrollo local puede usar cualquiera de los dos enfoques:
 
 ```bash
 # Generar cliente Prisma (siempre requerido)
@@ -213,7 +213,7 @@ pnpm run db:push
 pnpm run db:migrate
 ```
 
-Para despliegues de producción use `pnpm run db:migrate:prod` para aplicar migraciones existentes sin prompts interactivos.
+Para despliegues en producción, use `pnpm run db:migrate:prod` para aplicar migraciones existentes sin prompts interactivos.
 
 ### 5. Iniciar el servidor de desarrollo
 
@@ -289,16 +289,16 @@ Umbrales de cobertura obligatorios: **80% líneas, funciones, sentencias** y **7
 
 ### Pruebas de carga (k6)
 
-Diez escenarios de prueba de carga preconstruidos se encuentran en [`k6/scripts/scenarios/`](k6/scripts/scenarios). Antes de ejecutar, copie [`k6/.env.k6.example`](k6/.env.k6.example) a `k6/.env.k6` y configure su destino.
+Diez escenarios de pruebas de carga predefinidos se encuentran en [`k6/scripts/scenarios/`](k6/scripts/scenarios). Antes de ejecutar, copie [`k6/.env.k6.example`](k6/.env.k6.example) a `k6/.env.k6` y configure su destino.
 
 ```bash
 # Carga cotidiana realista
 pnpm run loadtest:normal
 
-# Rush de Sprint Planning (concurrencia en el peor caso)
+# Pico de Sprint Planning (concurrencia en el peor caso)
 pnpm run loadtest:peak
 
-# Llevar al sistema hasta el punto de ruptura
+# Llevar el sistema hasta el punto de ruptura
 pnpm run loadtest:stress
 
 # Simulación de jornada laboral sostenida de 8 horas
@@ -324,13 +324,13 @@ pnpm run loadtest:generate-data
 # Ejecutar ESLint en archivos TypeScript/JavaScript
 pnpm run lint
 
-# Auto-corregir problemas de ESLint
+# Autocorregir problemas de ESLint
 pnpm run lint:fix
 
 # Ejecutar Stylelint en archivos CSS
 pnpm run lint:css
 
-# Auto-corregir problemas de Stylelint
+# Autocorregir problemas de Stylelint
 pnpm run lint:css:fix
 ```
 
@@ -340,7 +340,7 @@ pnpm run lint:css:fix
 # Formatear todos los archivos fuente con Prettier
 pnpm run format
 
-# Verificar formateo sin escribir cambios
+# Verificar el formato sin aplicar cambios
 pnpm run format:check
 
 # Formateo específico de CSS
@@ -406,7 +406,7 @@ docker compose -f docker-compose.dev.yml up
 # Entorno de producción (detached)
 docker compose up -d
 
-# Desmontar
+# Detener y eliminar
 docker compose down
 ```
 
@@ -426,7 +426,7 @@ docker build -f ./packages/frontend/Dockerfile.dev -t scrumooth-frontend:dev ./p
 
 ### Producción autohospedada
 
-Consulte [`docs/deployment/DEPLOYMENT.md`](docs/deployment/DEPLOYMENT.md) para la guía completa de despliegue en producción, que cubre configuración de entorno, migración de base de datos, configuración de proxy inverso y mejores prácticas operativas.
+Consulte [`docs/deployment/DEPLOYMENT.md`](docs/deployment/DEPLOYMENT.md) para la guía completa de despliegue en producción, que cubre configuración de entorno, migración de base de datos, configuración de proxy inverso y buenas prácticas operativas.
 
 ### Despliegue de demo en GitHub Pages
 
@@ -452,17 +452,17 @@ Demo en vivo: <https://orbivort.github.io/scrumooth/>
 
 ### `Cannot find module @scrumooth/shared`
 
-El paquete compartido debe construirse antes de que el backend/frontend pueda resolver las importaciones.
+El paquete compartido debe compilarse antes de que el backend o frontend pueda resolver las importaciones.
 
 ```bash
 pnpm --filter=@scrumooth/shared run build
 ```
 
-Esto se maneja normalmente de forma automática por `pnpm install` y los scripts de desarrollo, pero es necesario tras un `pnpm run clean` manual.
+Esto se gestiona automáticamente mediante `pnpm install` y los scripts de desarrollo, pero es necesario tras un `pnpm run clean` manual.
 
 ### `pnpm install` falla con "Use pnpm instead"
 
-El repositorio fuerza el uso de pnpm mediante un script `preinstall`. Instale pnpm globalmente:
+El repositorio exige el uso de pnpm mediante un script `preinstall`. Instale pnpm globalmente:
 
 ```bash
 npm install -g pnpm@11.5.0
@@ -474,12 +474,12 @@ Verifique que su `DATABASE_URL` en `packages/backend/.env` apunte a una instanci
 
 ### Puerto ya en uso (5001 o 5173)
 
-Los puertos por defecto se pueden sobrescribir mediante variables de entorno:
+Los puertos predeterminados se pueden cambiar mediante variables de entorno:
 
 - Backend: `PORT` en `packages/backend/.env`
 - Frontend: `VITE_DEV_PORT` en `packages/frontend/.env`
 
-### El frontend no puede alcanzar al backend
+### El frontend no puede conectarse al backend
 
 Compruebe que `VITE_API_URL` en `packages/frontend/.env` coincida con la dirección real del backend y que `CORS_ORIGIN` en `packages/backend/.env` permita el origen del frontend.
 
@@ -489,7 +489,7 @@ Establezca `VITE_USE_MOCK_API=true` en `packages/frontend/.env` para usar la mis
 
 ## 📝 Licencia
 
-Este proyecto está licenciado bajo la Apache License 2.0 — consulte el archivo [LICENSE](LICENSE) para más detalles.
+Este proyecto está licenciado bajo la Licencia Apache 2.0 — consulte el archivo [LICENSE](LICENSE) para más detalles.
 
 ```
 Copyright 2026 Orbivort

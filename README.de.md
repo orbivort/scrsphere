@@ -1,6 +1,6 @@
 # Scrumooth
 
-**Agile-Scrum-Lebenszyklus-Verwaltungssystem**
+**Agiles Scrum-Lebenszyklus-Managementsystem**
 
 > **Sprachen:** [English](README.md) | [Deutsch](README.de.md) | [Español](README.es.md) | [Français](README.fr.md) | [Italiano](README.it.md)
 
@@ -18,7 +18,7 @@
 
 [![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-GitHub_Pages-success?style=for-the-badge)](https://orbivort.github.io/scrumooth/)
 
-Scrumooth ist eine selbst hostende Webanwendung zur Verwaltung agiler Scrum-Prozesse. Sie wurde entwickelt, um den Scrum Guide treu zu befolgen, und nutzt moderne Technologien sowie strenge Qualitätsstandards. Sie bietet eine vollständige Lösung, die Teams durch den gesamten Scrum-Lebenszyklus führt — von Produkt-Zielen und Backlogs bis hin zu Sprint Reviews und Retrospectives — und lässt sich auf der eigenen Infrastruktur bereitstellen, und zwar ohne pro-Benutzer-Kosten.
+Scrumooth ist eine selbst gehostete Webanwendung zur Verwaltung agiler Scrum-Prozesse. Sie wurde entwickelt, um den Scrum Guide getreu umzusetzen, und nutzt moderne Technologien sowie strenge Qualitätsstandards. Sie bietet eine vollständige Lösung, die Teams durch den gesamten Scrum-Lebenszyklus führt — von Product Goals und Backlogs bis hin zu Sprint Reviews und Sprint Retrospectives — und lässt sich auf der eigenen Infrastruktur ohne Kosten pro Benutzer bereitstellen.
 
 ## 🚀 Live-Demo
 
@@ -36,15 +36,15 @@ Probieren Sie Scrumooth sofort in Ihrem Browser aus — keine Installation erfor
 
 ### Kernfunktionen von Scrum
 
-- **Produkt-Ziele** — Strategische Ausrichtung und Zielverfolgung
+- **Product Goals** — Strategische Ausrichtung und Zielverfolgung
 - **Product Backlog** — MoSCoW-Priorisierung (Must, Should, Could, Won't)
-- **Sprint Planning** — Konfigurierbare Sprintdauern und Kapazitätsplanung
-- **Sprint-Umsetzung** — Interaktives Kanban-Board mit Drag-and-Drop
-- **Daily Scrum** — tägliche Standup-Verfolgung und Aktualisierungen
-- **Hindernisse** — Identifikation von Blockern und Verfolgung der Behebung
-- **Inkrementelle Lieferung** — Verwaltung von Produkt-Increments
-- **Sprint Reviews** — Verwaltung von Review-Terminen und Dokumentation
-- **Retrospectives** — Teamreflexion und kontinuierliche Verbesserung
+- **Sprint Planning** — Konfigurierbare Sprint-Dauern und Kapazitätsplanung
+- **Sprint Execution** — Interaktives Kanban-Board mit Drag-and-Drop
+- **Daily Scrum** — Tägliches Standup-Tracking und Aktualisierungen
+- **Impediments** — Erkennung und Behebung von Blockern
+- **Incremental Delivery** — Verwaltung von Product Increments
+- **Sprint Reviews** — Verwaltung von Review-Meetings und Dokumentation
+- **Sprint Retrospectives** — Teamreflexion und kontinuierliche Verbesserung
 
 ### Erweiterte Funktionen
 
@@ -66,7 +66,7 @@ Probieren Sie Scrumooth sofort in Ihrem Browser aus — keine Installation erfor
 - **Validierung:** Zod
 - **Geplante Jobs:** node-cron
 - **E-Mail:** Nodemailer (SMTP-, SendGrid-, AWS-SES-Anbieter)
-- **Protokollierung:** Winston mit rotierenden Datei-Transports
+- **Protokollierung:** Winston mit rotierenden Logdateien
 
 ### Frontend
 
@@ -86,7 +86,7 @@ Probieren Sie Scrumooth sofort in Ihrem Browser aus — keine Installation erfor
 
 ### Tests & Qualität
 
-- **Unit-/Integrationstests:** Vitest
+- **Unit- / Integrationstests:** Vitest
 - **End-to-End:** Playwright (Frontend) + Vitest (Backend)
 - **Lasttests:** k6 (10 vorgefertigte Szenarien)
 - **Linting:** ESLint + Stylelint
@@ -100,7 +100,7 @@ scrumooth/
 ├── packages/
 │   ├── backend/              # Express.js REST-API
 │   │   ├── src/
-│   │   │   ├── controllers/  # API-Route-Handler
+│   │   │   ├── controllers/  # API-Routen-Handler
 │   │   │   ├── services/     # Geschäftslogikschicht
 │   │   │   ├── middleware/   # Express-Middleware
 │   │   │   ├── routes/       # API-Routendefinitionen
@@ -112,7 +112,7 @@ scrumooth/
 │   ├── frontend/             # React + Vite Frontend
 │   │   ├── src/
 │   │   │   ├── components/   # React-Komponenten
-│   │   │   ├── pages/        # Routen-ebene Seiten
+│   │   │   ├── pages/        # Routenbasierte Seiten
 │   │   │   ├── hooks/        # Custom React Hooks
 │   │   │   ├── services/     # API-Client-Dienste
 │   │   │   ├── stores/       # Zustand-Stores
@@ -120,11 +120,11 @@ scrumooth/
 │   │   ├── e2e/              # Playwright-End-to-End-Tests
 │   │   ├── Dockerfile        # Produktions-Image
 │   │   └── Dockerfile.dev    # Entwicklungs-Image
-│   └── shared/               # Geteilte Typen, Konstanten, Hilfsfunktionen
+│   └── shared/               # Gemeinsame Typen, Konstanten, Hilfsfunktionen
 ├── docs/
 │   ├── api/                  # REST-API-Referenz
 │   ├── architecture/         # Systemdesign, Datenmodell, Sicherheit
-│   ├── deployment/           # Bereitstellungshandbücher
+│   ├── deployment/           # Deployment-Anleitungen
 │   └── user-guide/           # Benutzerdokumentation und Anleitungen
 ├── k6/                       # Lasttestszenarien (k6)
 │   └── scripts/scenarios/    # vorgefertigte Lasttestszenarien
@@ -133,8 +133,8 @@ scrumooth/
 ├── docker-compose.yml        # Produktions-Docker-Compose
 ├── docker-compose.dev.yml    # Entwicklungs-Docker-Compose
 ├── CHANGELOG.md              # Versionshistorie
-├── SECURITY.md               # Sicherheitsrichtlinie und Meldung
-└── THIRD-PARTY-NOTICES.md    # Hinweise zu Drittanbieter-Lizenzen
+├── SECURITY.md               # Sicherheitsrichtlinie und Meldeverfahren
+└── THIRD-PARTY-NOTICES.md    # Drittanbieter-Lizenzhinweise
 ```
 
 ## 📋 Voraussetzungen
@@ -285,7 +285,7 @@ pnpm run test:e2e:frontend
 pnpm run test:watch
 ```
 
-Abdeckungsgrenzen werden erzwungen: **80% Zeilen, Funktionen, Anweisungen** und **70% Zweige**.
+Es gelten folgende Abdeckungsschwellenwerte: **80 % Zeilen, Funktionen, Anweisungen** und **70 % Zweige**.
 
 ### Lasttests (k6)
 
@@ -301,7 +301,7 @@ pnpm run loadtest:peak
 # System bis zum Versagen belasten
 pnpm run loadtest:stress
 
-# Simulierte 8-Stunden-Arbeitstag
+# Simulierter 8-Stunden-Arbeitstag
 pnpm run loadtest:endurance
 
 # Weitere Szenarien
@@ -348,10 +348,10 @@ pnpm run format:css
 pnpm run format:css:check
 ```
 
-### Typ-Prüfung
+### Typprüfung
 
 ```bash
-# TypeScript-Typ-Prüfung über alle Pakete ausführen
+# TypeScript-Typprüfung über alle Pakete ausführen
 pnpm run typecheck
 ```
 
@@ -395,7 +395,7 @@ pnpm run db:validate
 
 ## 🐳 Docker-Unterstützung
 
-Das Projekt enthält Docker-Konfiguration für sowohl Entwicklungs- als auch Produktionsbereitstellung.
+Das Projekt enthält Docker-Konfiguration sowohl für die Entwicklung als auch für den Produktionsbetrieb.
 
 ### Docker Compose verwenden
 
@@ -426,7 +426,7 @@ docker build -f ./packages/frontend/Dockerfile.dev -t scrumooth-frontend:dev ./p
 
 ### Selbst gehostete Produktion
 
-Siehe [`docs/deployment/DEPLOYMENT.md`](docs/deployment/DEPLOYMENT.md) für die vollständige Produktions-Bereitstellungsanleitung mit Umgebungskonfiguration, Datenbankmigration, Reverse-Proxy-Setup und operativen Best Practices.
+Siehe [`docs/deployment/DEPLOYMENT.md`](docs/deployment/DEPLOYMENT.md) für eine vollständige Anleitung zur Produktionsbereitstellung mit Umgebungskonfiguration, Datenbankmigration, Reverse-Proxy-Einrichtung und operativen Best Practices.
 
 ### Demo-Bereitstellung auf GitHub Pages
 
@@ -438,21 +438,21 @@ Live-Demo: <https://orbivort.github.io/scrumooth/>
 
 ## 📚 Dokumentation
 
-| Bereich                     | Ort                                                                                                               |
-| --------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| **Benutzerhandbuch**        | [`docs/user-guide/`](docs/user-guide) — Erste Schritte, Kernfunktionen, Scrum-Workflows                           |
-| **REST-API-Referenz**       | [`docs/api/`](docs/api) — 19 Endpunktgruppen (Authentifizierung, Sprints, Backlog, Berichte, etc.)                |
-| **Systemarchitektur**       | [`docs/architecture/`](docs/architecture) — Systemdesign, Datenmodell, Komponenten-Design, Sicherheitsarchitektur |
-| **Bereitstellungshandbuch** | [`docs/deployment/DEPLOYMENT.md`](docs/deployment/DEPLOYMENT.md)                                                  |
-| **Sicherheitsrichtlinie**   | [`SECURITY.md`](SECURITY.md) — Meldung von Schwachstellen                                                         |
-| **Release-Historie**        | [`CHANGELOG.md`](CHANGELOG.md)                                                                                    |
-| **Drittanbieter-Hinweise**  | [`THIRD-PARTY-NOTICES.md`](THIRD-PARTY-NOTICES.md)                                                                |
+| Bereich                    | Ort                                                                                                               |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| **Benutzerhandbuch**       | [`docs/user-guide/`](docs/user-guide) — Erste Schritte, Kernfunktionen, Scrum-Workflows                           |
+| **REST-API-Referenz**      | [`docs/api/`](docs/api) — 19 Endpunktgruppen (Authentifizierung, Sprints, Backlog, Berichte, etc.)                |
+| **Systemarchitektur**      | [`docs/architecture/`](docs/architecture) — Systemdesign, Datenmodell, Komponenten-Design, Sicherheitsarchitektur |
+| **Deployment-Anleitung**   | [`docs/deployment/DEPLOYMENT.md`](docs/deployment/DEPLOYMENT.md)                                                  |
+| **Sicherheitsrichtlinie**  | [`SECURITY.md`](SECURITY.md) — Meldung von Schwachstellen                                                         |
+| **Release-Historie**       | [`CHANGELOG.md`](CHANGELOG.md)                                                                                    |
+| **Drittanbieter-Hinweise** | [`THIRD-PARTY-NOTICES.md`](THIRD-PARTY-NOTICES.md)                                                                |
 
 ## 🛟 Fehlerbehebung
 
 ### `Cannot find module @scrumooth/shared`
 
-Das Shared-Paket muss gebaut werden, bevor Backend/Frontend Imports auflösen können.
+Das Shared-Paket muss kompiliert werden, bevor Backend/Frontend Imports auflösen können.
 
 ```bash
 pnpm --filter=@scrumooth/shared run build
@@ -470,7 +470,7 @@ npm install -g pnpm@11.5.0
 
 ### Datenbankverbindungsfehler beim Start
 
-Überprüfen Sie, ob Ihre `DATABASE_URL` in `packages/backend/.env` auf eine laufende PostgreSQL-18+-Instanz zeigt und die Datenbank existiert. Führen Sie `pnpm run db:validate` aus, um das Prisma-Schema gegen die Verbindung zu validieren.
+Überprüfen Sie, ob Ihre `DATABASE_URL` in `packages/backend/.env` auf eine laufende PostgreSQL-Instanz (Version 18 oder höher) zeigt und die Datenbank existiert. Führen Sie `pnpm run db:validate` aus, um das Prisma-Schema gegen die Verbindung zu validieren.
 
 ### Port bereits belegt (5001 oder 5173)
 

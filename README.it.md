@@ -18,7 +18,7 @@
 
 [![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-GitHub_Pages-success?style=for-the-badge)](https://orbivort.github.io/scrumooth/)
 
-Scrumooth è un'applicazione web self-hosted per la gestione dei processi Scrum Agile, costruita per seguire fedelmente la Guida Scrum con tecnologie moderne e standard di qualità rigorosi. Fornisce una soluzione completa che guida i team attraverso l'intero ciclo di vita Scrum — dai Product Goal e dai backlog fino alle Sprint Review e alle Retrospectives — il tutto distribuibile sulla propria infrastruttura senza costi per utente.
+Scrumooth è un'applicazione web auto-ospitata per la gestione dei processi Scrum Agile, costruita per seguire fedelmente la Guida Scrum con tecnologie moderne e standard di qualità rigorosi. Fornisce una soluzione completa che guida i team attraverso l'intero ciclo di vita Scrum — dai Product Goals e dal Product Backlog fino alle Sprint Reviews e alle Sprint Retrospectives — il tutto distribuibile sulla propria infrastruttura, senza tariffe per singolo utente.
 
 ## 🚀 Demo dal vivo
 
@@ -30,7 +30,7 @@ Provi Scrumooth istantaneamente nel suo browser — non è richiesta alcuna inst
   </a>
 </p>
 
-> **Nota:** La demo utilizza dati simulati in memoria — qualsiasi modifica apportata è locale alla sessione del browser e viene ripristinata al refresh. Per dati persistenti e collaborazione multiutente, segua la guida di [Installazione](#-installation) per self-hostare la propria istanza.
+> **Nota:** La demo utilizza dati simulati in memoria — qualsiasi modifica apportata è locale alla sessione del browser e viene ripristinata al refresh. Per dati persistenti e collaborazione multiutente, segua la guida all'[Installazione](#-installazione) per ospitare autonomamente la propria istanza.
 
 ## ✨ Funzionalità
 
@@ -41,7 +41,7 @@ Provi Scrumooth istantaneamente nel suo browser — non è richiesta alcuna inst
 - **Sprint Planning** — Durate configurabili degli Sprint e pianificazione della capacità
 - **Esecuzione dello Sprint** — Board Kanban interattiva con drag-and-drop
 - **Daily Scrum** — Tracciamento dello standup giornaliero e aggiornamenti
-- **Impediments** — Identificazione dei blocker e tracciamento della risoluzione
+- **Impediments** — Identificazione dei bloccanti e tracciamento della risoluzione
 - **Consegna incrementale** — Gestione degli Increments di prodotto
 - **Sprint Review** — Gestione della riunione di review e documentazione
 - **Retrospectives** — Riflessione del team e miglioramento continuo
@@ -314,7 +314,7 @@ pnpm run loadtest:db
 pnpm run loadtest:generate-data
 ```
 
-> **Prerequisito:** Installi [k6](https://k6.io/docs/get-started/installation/) e si assicuri che il backend target sia in esecuzione.
+> **Prerequisito:** installi [k6](https://k6.io/docs/get-started/installation/) e si assicuri che il backend target sia in esecuzione.
 
 ## 🔍 Qualità del codice
 
@@ -337,7 +337,7 @@ pnpm run lint:css:fix
 ### Formattazione
 
 ```bash
-# Formattare tutti i file sorgente con Prettier
+# Formattare tutti i file sorgenti con Prettier
 pnpm run format
 
 # Verificare la formattazione senza scrivere modifiche
@@ -438,15 +438,15 @@ Demo dal vivo: <https://orbivort.github.io/scrumooth/>
 
 ## 📚 Documentazione
 
-| Area                        | Posizione                                                                                                                                    |
-| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Guida utente**            | [`docs/user-guide/`](docs/user-guide) — primi passi, funzionalità principali, flussi di lavoro Scrum                                         |
-| **Riferimento API REST**    | [`docs/api/`](docs/api) — 19 gruppi di endpoint (autenticazione, sprint, backlog, report, ecc.)                                              |
-| **Architettura di sistema** | [`docs/architecture/`](docs/architecture) — progettazione del sistema, modello dati, progettazione dei componenti, architettura di sicurezza |
-| **Guida al deployment**     | [`docs/deployment/DEPLOYMENT.md`](docs/deployment/DEPLOYMENT.md)                                                                             |
-| **Politica di sicurezza**   | [`SECURITY.md`](SECURITY.md) — procedura di segnalazione delle vulnerabilità                                                                 |
-| **Cronologia dei release**  | [`CHANGELOG.md`](CHANGELOG.md)                                                                                                               |
-| **Avvisi di terze parti**   | [`THIRD-PARTY-NOTICES.md`](THIRD-PARTY-NOTICES.md)                                                                                           |
+| Area                            | Posizione                                                                                                                                    |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Guida utente**                | [`docs/user-guide/`](docs/user-guide) — primi passi, funzionalità principali, flussi di lavoro Scrum                                         |
+| **Riferimento API REST**        | [`docs/api/`](docs/api) — 19 gruppi di endpoint (autenticazione, sprint, backlog, report, ecc.)                                              |
+| **Architettura di sistema**     | [`docs/architecture/`](docs/architecture) — progettazione del sistema, modello dati, progettazione dei componenti, architettura di sicurezza |
+| **Guida al deployment**         | [`docs/deployment/DEPLOYMENT.md`](docs/deployment/DEPLOYMENT.md)                                                                             |
+| **Politica di sicurezza**       | [`SECURITY.md`](SECURITY.md) — procedura di segnalazione delle vulnerabilità                                                                 |
+| **Cronologia dei release**      | [`CHANGELOG.md`](CHANGELOG.md)                                                                                                               |
+| **Attribuzioni di terze parti** | [`THIRD-PARTY-NOTICES.md`](THIRD-PARTY-NOTICES.md)                                                                                           |
 
 ## 🛟 Risoluzione dei problemi
 
@@ -462,7 +462,7 @@ Questo viene normalmente gestito automaticamente da `pnpm install` e dagli scrip
 
 ### `pnpm install` fallisce con "Use pnpm instead"
 
-Il repository impone pnpm tramite uno script `preinstall`. Installi pnpm globalmente:
+Il repository impone pnpm tramite uno script `preinstall`. installi pnpm globalmente:
 
 ```bash
 npm install -g pnpm@11.5.0
