@@ -82,7 +82,7 @@
     "delivered": "Geliefert"
   },
   "deliveryMethod": {
-    "earlyRelease": "Frühzeitige Freigabe",
+    "earlyRelease": "Vorzeitige Auslieferung",
     "sprintReview": "Sprint Review"
   },
   "detail": {
@@ -98,7 +98,7 @@
       "deliveryMethodLabel": "Liefermethode",
       "description": "Markieren Sie dieses Increment als geliefert und erfassen Sie die Liefermethode.",
       "earlyReleaseDescription": "Vor Ende des Sprints geliefert",
-      "earlyReleaseOption": "Frühzeitige Freigabe",
+      "earlyReleaseOption": "Vorzeitige Auslieferung",
       "modalDescription": "Markieren Sie dieses Increment als an Stakeholder geliefert. Diese Aktion kann nicht rückgängig gemacht werden.",
       "notesLabel": "Notizen (optional)",
       "notesPlaceholder": "Fügen Sie Notizen zu dieser Lieferung hinzu...",
@@ -143,7 +143,7 @@
     },
     "sprintCompletionWorkflow": "Sprint-Abschluss-Workflow",
     "timeline": {
-      "deliveredViaEarlyRelease": "Geliefert über frühzeitige Freigabe",
+      "deliveredViaEarlyRelease": "Geliefert über vorzeitige Auslieferung",
       "deliveredViaSprintReview": "Geliefert über Sprint Review",
       "incrementCreated": "Increment erstellt",
       "title": "Zeitleiste"
@@ -198,6 +198,6 @@
     "draft": "Entwurf",
     "verified": "Überprüft"
   },
-  "subtitle": "Verwalten und verfolgen Sie Ihre Produkt-Increments. Increments repräsentieren funktionierende, nutzbare Funktionalität, die für die Lieferung an Stakeholder bereit ist.",
+  "subtitle": "Verwalten und verfolgen Sie Ihre Produkt-Increments. Increments repräsentieren lauffähige, auslieferbare Funktionalität, die für die Lieferung an Stakeholder bereit ist.",
   "title": "Increments"
 }

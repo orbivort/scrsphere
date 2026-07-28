@@ -76,7 +76,7 @@
     "confirmationQuestion": "Sind Sie sicher, dass Sie diese Retrospective als abgeschlossen markieren möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
     "confirmationRequired": "Bestätigung erforderlich",
     "finalStep": "Letzter Schritt",
-    "lockWarning": "Nach Abschluss wird die Retrospective gesperrt und und es können keine weiteren Änderungen vorgenommen werden.",
+    "lockWarning": "Nach Abschluss wird die Retrospective gesperrt und es können keine weiteren Änderungen vorgenommen werden.",
     "ok": "OK",
     "validationIssues": "Bitte beheben Sie die folgenden Probleme"
   },

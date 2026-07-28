@@ -30,13 +30,13 @@
   },
   "draftSaved": "Entwurf gespeichert {{timeSince}}",
   "emptyState": {
-    "beFirst": "Seien Sie der Erste, der sein tägliches Update einreicht!",
+    "beFirst": "Seien Sie die erste Person, die ihr tägliches Update einreicht!",
     "noUpdates": "Noch keine Updates",
     "noUpdatesForDate": "Keine Team-Updates für dieses Datum."
   },
   "form": {
     "cancel": "Abbrechen",
-    "impedimentHint": "Dieses Impediment wird verfolgt und kann zu einem formalen Impediment-Datensatz befördert werden",
+    "impedimentHint": "Dieses Impediment wird verfolgt und kann in einen formalen Impediment-Datensatz umgewandelt werden",
     "impedimentLabel": "Irgendwelche Impediments? (optional)",
     "impedimentPlaceholder": "Beschreiben Sie alle Blocker oder Impediments...",
     "submitting": "Einreichen...",

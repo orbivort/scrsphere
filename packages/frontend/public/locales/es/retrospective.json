@@ -86,7 +86,7 @@
     "creating": "Creando...",
     "description": "Descripción",
     "descriptionHelper": "Proporcionar contexto adicional para ayudar al asignado a entender la tarea",
-    "descriptionPlaceholder": "Agregar detalles sobre este Action Ítem...",
+    "descriptionPlaceholder": "Agregar detalles sobre este Action Item...",
     "dueDate": "Fecha de vencimiento *",
     "loadingMembers": "Cargando miembros del equipo...",
     "noMembers": "No hay miembros del equipo disponibles",
@@ -94,11 +94,11 @@
     "owner": "Propietario *",
     "ownerPlaceholder": "Seleccionar propietario...",
     "subtitle": "Agregar un nuevo elemento de acción para seguir el progreso",
-    "title": "Crear Action Ítem",
+    "title": "Crear Action Item",
     "titleLabel": "Título *",
     "titlePlaceholder": "Ingrese título del elemento de acción",
     "unableToLoadMembers": "No se pudieron cargar los miembros del equipo. Por favor actualice la página.",
-    "unsavedMessage": "Tiene cambios no guardados en el formulario Action Ítem. ¿Está seguro de que desea descartarlos?",
+    "unsavedMessage": "Tiene cambios no guardados en el formulario Action Item. ¿Está seguro de que desea descartarlos?",
     "unsavedTitle": "Cambios no guardados"
   },
   "deleteModal": {
@@ -114,7 +114,7 @@
   "errors": {
     "badRequest": "Solicitud inválida. Por favor verifique su entrada e intente de nuevo.",
     "network": "Error de red. Por favor verifique su conexión a internet.",
-    "notFound": "Recurso no encontrado.Puede haber sido eliminado.",
+    "notFound": "Recurso no encontrado. Puede haber sido eliminado.",
     "notLoaded": "Retrospective no cargada. Por favor espere e intente de nuevo.",
     "serverError": "Error del servidor. Por favor intente más tarde.",
     "unauthorized": "No está autorizado para realizar esta acción."
@@ -135,7 +135,7 @@
       "inProgress": "Retrospective en progreso",
       "ready": "Listo para Retrospective"
     },
-    "reviewed": "Reviewed",
+    "reviewed": "Revisado",
     "statusLabels": {
       "active": "Activo",
       "cancelled": "Cancelado",
@@ -152,7 +152,7 @@
     "businessDay_one": "{{count}} día de trabajo",
     "businessDay_other": "{{count}} días de trabajo",
     "completed": "completadas",
-    "completion": "Completación",
+    "completion": "Finalización",
     "duration": "Duración",
     "goal": "Sprint Goal:",
     "includedPbis": "Product Backlog Items incluidos",

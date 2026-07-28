@@ -7,8 +7,8 @@
     "empty": "Aucun enseignement disponible encore. Terminez plus de Sprints pour générer des enseignements.",
     "items": {
       "active-sprint-impediments": {
-        "description": "Le Sprint actuel a {{count}} obstacle(s). Surveillez de près.",
-        "title": "Obstacles du Sprint actif"
+        "description": "Le Sprint actuel a {{count}} Impediment(s). Surveillez de près.",
+        "title": "Impediments du Sprint actif"
       },
       "consistent-delivery": {
         "description": "L'équipe a maintenu 100% de réalisation des objectifs de Sprint lors des {{count}} derniers Sprints",
@@ -23,8 +23,8 @@
         "title": "Taux de réussite élevé"
       },
       "impediment-trend": {
-        "description": "{{count}} obstacle(s) actuellement ouverts. Envisagez de les traiter proactivement.",
-        "title": "Tendance des obstacles"
+        "description": "{{count}} Impediment(s) actuellement ouverts. Envisagez de les traiter proactivement.",
+        "title": "Tendance des Impediments"
       },
       "low-success-rate": {
         "description": "Le taux de réussite des Sprints est de {{rate}}%. Envisagez de revoir la capacité et la planification.",
@@ -58,9 +58,9 @@
       "unit": "Story Points par Sprint"
     },
     "impediments": {
-      "openCount": "Obstacle(s) ouvert(s)",
+      "openCount": "Impediment(s) ouvert(s)",
       "resolved": "Résolus",
-      "title": "Obstacles"
+      "title": "Impediments"
     },
     "sprintSuccessRate": {
       "fromLastMonth": "du dernier mois",
@@ -79,7 +79,7 @@
     "empty": "Aucun historique de Sprint disponible.",
     "stats": {
       "completed": "Terminé",
-      "impediments": "Obstacles",
+      "impediments": "Impediments",
       "planned": "Planifié",
       "teamMembers": "Membres de l'équipe"
     },

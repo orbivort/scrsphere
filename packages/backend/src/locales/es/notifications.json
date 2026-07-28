@@ -6,7 +6,7 @@
   "accountDeletionScheduled": "Miembro del equipo programó eliminación de cuenta",
   "accountDeletionScheduledMessage": "Un Product Owner en su equipo ha programado la eliminación de su cuenta. La cuenta se eliminará permanentemente el {{deletionDate}}. Por favor asigne un nuevo Product Owner antes de entonces.",
   "allSubmitted": "Todos los miembros del equipo han enviado sus actualizaciones",
-  "backlogAdjustmentRequired": "Nueva Ajuste del Backlog Requiere Su Acción",
+  "backlogAdjustmentRequired": "Nuevo Ajuste del Backlog Requiere Su Acción",
   "backlogAdjustmentRequiredMessage": "Se le ha asignado como propietario de un ajuste del backlog: {{action}} - \"{{description}}\"",
   "dailyUpdateDeleted": "Actualización diaria eliminada exitosamente",
   "dailyUpdateReminderDefault": "¡No olvide enviar su actualización diaria!",

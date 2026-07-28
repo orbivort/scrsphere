@@ -12,7 +12,7 @@
     "passwordNeedsSpecialChar": "Das Passwort muss ein Sonderzeichen enthalten",
     "passwordNeedsUppercase": "Das Passwort muss einen Großbuchstaben enthalten",
     "passwordRequired": "Passwort ist erforderlich",
-    "passwordTooShort": "Das Passwort erfüllt nicht die Mindestlängenforderung",
+    "passwordTooShort": "Das Passwort erfüllt nicht die Mindestlängenanforderung",
     "passwordsDoNotMatch": "Passwörter stimmen nicht überein",
     "refreshTokenRequired": "Refresh-Token ist erforderlich",
     "resetTokenRequired": "Reset-Token ist erforderlich",

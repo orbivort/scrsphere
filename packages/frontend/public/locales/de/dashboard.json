@@ -85,7 +85,7 @@
   "minutesAgo": "vor {{count}} Minute{{plural}}",
   "noActiveSprint": "Kein aktiver Sprint",
   "noDailyUpdates": "Noch keine täglichen Updates für heute.",
-  "noOpenImpediments": "Keine offenen Impediments. Gut gemacht!",
+  "noOpenImpediments": "Keine offenen Impediments. Hervorragend!",
   "noSprintGoal": "Noch kein Sprint Goal definiert.",
   "noTasksYet": "Ihnen sind noch keine Aufgaben zugewiesen.",
   "notSubmitted": "Nicht eingereicht",
@@ -153,5 +153,5 @@
   "viewOrUpdateDailyScrum": "Daily Scrum anzeigen oder aktualisieren",
   "viewSprintBoard": "Sprint-Board anzeigen",
   "welcome": "Willkommen, {{name}}",
-  "welcomeBack": "Willkommen zurück! Hier ist eine Übersicht über Ihren aktiven Sprint."
+  "welcomeBack": "Willkommen zurück! Hier sehen Sie eine Übersicht über Ihren aktiven Sprint."
 }

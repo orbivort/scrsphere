@@ -392,14 +392,14 @@
     "createItem": "Crear Elemento",
     "from": "De:",
     "fromSprint": "Del Sprint:",
-    "headerTitle": "Comentarios Pendientes",
-    "loadingFeedback": "Cargando comentarios",
+    "headerTitle": "Feedback Pendiente",
+    "loadingFeedback": "Cargando Feedback",
     "markAddressed": "Marcar Atendido",
     "negative": "Negativo",
     "positive": "Positivo",
     "question": "Pregunta",
     "suggestion": "Sugerencia",
-    "title": "Comentarios Pendientes de Sprint Review",
+    "title": "Feedback Pendiente de Sprint Review",
     "updating": "Actualizando..."
   },
   "pendingRetro": {

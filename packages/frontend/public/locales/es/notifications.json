@@ -29,8 +29,8 @@
     "title": "Error al cargar notificaciones",
     "tryAgain": "Intentar nuevamente"
   },
-  "feedbackRequired": "Nuevos Comentarios Requieren Su Acción",
-  "feedbackRequiredMessage": "Se le ha asignado como propietario de la retroalimentación de {{authorName}}: \"{{content}}\". Se requiere su revisión.",
+  "feedbackRequired": "Nuevo Feedback Requiere Su Acción",
+  "feedbackRequiredMessage": "Se le ha asignado como propietario del Feedback de {{authorName}}: \"{{content}}\". Se requiere su revisión.",
   "filters": {
     "all": "Todos",
     "directMessages": "Mensajes directos",

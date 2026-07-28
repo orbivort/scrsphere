@@ -91,7 +91,7 @@
     "min": "{{current}}/{{max}} caracteres"
   },
   "chunkError": {
-    "description": "Una parte de la aplicación no se pudo cargar.Puede deberse a un problema de red o a una versión desactualizada.",
+    "description": "Una parte de la aplicación no se pudo cargar. Puede deberse a un problema de red o a una versión desactualizada.",
     "reload": "Recargar",
     "title": "No se puede cargar la página"
   },
@@ -114,7 +114,7 @@
   "delete": "Eliminar",
   "deleteAccount": {
     "accountToBeDeleted": "Cuenta a eliminar",
-    "afterDeletionDate": "Después de la fecha de eliminación,puede forzar la eliminación de su cuenta",
+    "afterDeletionDate": "Después de la fecha de eliminación, puede forzar la eliminación de su cuenta",
     "associatedData": "Todos los datos asociados y el historial de actividad",
     "canAssignNewPO": "Puede seguir asignando un nuevo Product Owner",
     "canCancelAnytime": "Puede cancelar esta solicitud en cualquier momento",
@@ -149,7 +149,7 @@
     "deleting": "Eliminando...",
     "deletionRightsNotice": {
       "afterGracePeriod": "Después de 14 días, puede eliminar permanentemente su cuenta independientemente.",
-      "description": "Tiene derecho a eliminar su cuenta.Como es el último Product Owner, le pedimos que programe la eliminación con un período de gracia de 14 días para que sus equipos puedan prepararse.",
+      "description": "Tiene derecho a eliminar su cuenta. Como es el último Product Owner, le pedimos que programe la eliminación con un período de gracia de 14 días para que sus equipos puedan prepararse.",
       "list": {
         "assignNewPO": "Puede asignar un nuevo Product Owner",
         "cancelAnytime": "Puede cancelar la eliminación en cualquier momento",
@@ -205,15 +205,15 @@
     "teamsCount": "({{count}} equipos)",
     "title": "Eliminar cuenta",
     "warningTitle": "Esta acción es permanente y no se puede deshacer. Todos sus datos serán eliminados definitivamente.",
-    "whatHappensNext": "What happens next"
+    "whatHappensNext": "Qué sucede después"
   },
   "download": "Descargar",
   "draftRestore": {
     "daysAgo": "{{count}} día",
     "daysAgo_other": "{{count}} días",
     "discard": "Descartar",
-    "draftFound": "Encontramos un borrador en el que estabas trabajando {{time}}.",
-    "draftSaved": "borrador saved",
+    "draftFound": "Encontramos un borrador en el que estaba trabajando {{time}}.",
+    "draftSaved": "borrador guardado",
     "hoursAgo": "{{count}} hora",
     "hoursAgo_other": "{{count}} horas",
     "justNow": "justo ahora",
@@ -256,7 +256,7 @@
   },
   "error": {
     "boundary": {
-      "description": "Ocurrió un error inesperado.Puede intentar nuevamente o volver al Tablero.",
+      "description": "Ocurrió un error inesperado. Puede intentar nuevamente o volver al Tablero.",
       "goHome": "Ir al Tablero",
       "retry": "Intentar nuevamente",
       "title": "Algo salió mal"
@@ -347,11 +347,11 @@
     "title": "Tiempo de espera de inicialización"
   },
   "iconGallery": {
-    "categories": "{{count}} categories",
-    "matching": "{{count}} matching",
+    "categories": "{{count}} categorías",
+    "matching": "{{count}} coincidencias",
     "noResults": "No se encontraron iconos",
     "noResultsHint": "Intente ajustar su búsqueda",
-    "searchAriaLabel": "Buscar icons",
+    "searchAriaLabel": "Buscar iconos",
     "searchPlaceholder": "Buscar iconos por nombre o categoría...",
     "subtitle": "Explore y copie declaraciones de importación para los iconos disponibles.",
     "title": "Galería de iconos",
@@ -414,7 +414,7 @@
   "optional": "Opcional",
   "pageError": {
     "backToDashboard": "Volver al panel",
-    "description": "Encontramos un error al cargar esta página.Puede deberse a un problema temporal o de conexión.",
+    "description": "Encontramos un error al cargar esta página. Puede deberse a un problema temporal o de conexión.",
     "reloadPage": "Recargar página",
     "technicalDetails": "Detalles técnicos",
     "title": "Error de {{pageName}}"

@@ -212,7 +212,7 @@
     "daysAgo": "{{count}} Tag her",
     "daysAgo_other": "{{count}} Tage her",
     "discard": "Verwerfen",
-    "draftFound": "Wir haben einen Entwurf gefunden, an dem Sie gearbeitet haben {{time}}.",
+    "draftFound": "Ein ungespeicherter Entwurf von {{time}} wurde wiederhergestellt.",
     "draftSaved": "Entwurf gespeichert",
     "hoursAgo": "{{count}} Stunde her",
     "hoursAgo_other": "{{count}} Stunden her",

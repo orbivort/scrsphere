@@ -20,36 +20,36 @@
     "reason": "Razón *",
     "reasonPlaceholder": "¿Por qué es necesario este ajuste?",
     "relatedPbi": "PBI relacionado (Opcional)",
-    "subtitle": "Registrar cambios al Product Backlog basados en retroalimentación de la Sprint Review",
+    "subtitle": "Registrar cambios al Product Backlog basados en Feedback de la Sprint Review",
     "title": "Agregar ajuste del Backlog",
     "unsavedMessage": "Tiene un ajuste del backlog no guardado. ¿Está seguro de que desea descartarlo?",
     "unsavedTitle": "Cambios de ajuste del Backlog no guardados"
   },
   "addFeedbackModal": {
     "actionRequired": "Acción Requerida",
-    "addFeedback": "Agregar Comentarios",
+    "addFeedback": "Agregar Feedback",
     "adding": "Agregando...",
     "authorName": "Nombre del Autor *",
     "authorNamePlaceholder": "Ingrese el nombre de la parte interesada",
     "cancel": "Cancelar",
     "category": "Categoría",
     "categoryOptions": {
-      "negative": "Comentarios Negativos",
-      "positive": "Comentarios Positivos",
+      "negative": "Feedback Negativo",
+      "positive": "Feedback Positivo",
       "question": "Pregunta",
       "suggestion": "Sugerencia"
     },
-    "feedback": "Comentarios *",
-    "feedbackPlaceholder": "Ingrese los comentarios de la parte interesada...",
+    "feedback": "Feedback *",
+    "feedbackPlaceholder": "Ingrese el Feedback del stakeholder...",
     "none": "Ninguno",
     "owner": "Propietario *",
     "ownerPlaceholder": "Seleccionar propietario...",
     "relatedPbi": "PBI Relacionado (Opcional)",
     "requiredFieldsNote": "Los campos requeridos están marcados con *",
     "subtitle": "Capture información valiosa de las partes interesadas para mejorar su producto",
-    "title": "Agregar Comentarios de Parte Interesada",
-    "unsavedMessage": "Tiene comentarios sin guardar. ¿Está seguro de que desea descartarlos?",
-    "unsavedTitle": "Cambios de Comentarios Sin Guardar"
+    "title": "Agregar Feedback de Stakeholder",
+    "unsavedMessage": "Tiene Feedback sin guardar. ¿Está seguro de que desea descartarlo?",
+    "unsavedTitle": "Cambios de Feedback Sin Guardar"
   },
   "adjustments": {
     "actionTypes": {
@@ -63,7 +63,7 @@
     "addAdjustmentDisabled": "Agregar ajuste - deshabilitado",
     "backlogHint": "Este elemento estará presente en la página Product Backlog para acción.",
     "cannotAddAdjustmentTitle": "No se puede agregar ajuste a un Review completado",
-    "description": "Cambios al Product Backlog basados en retroalimentación de la Sprint Review.",
+    "description": "Cambios al Product Backlog basados en Feedback de la Sprint Review.",
     "empty": "Sin ajustes del backlog realizados durante este Review.",
     "owner": "Propietario:",
     "reason": "Razón:",
@@ -88,9 +88,9 @@
       "cannotCompleteTitle": "No se puede completar la Sprint Review",
       "closeDialog": "Cerrar diálogo",
       "complete": "Completar",
-      "completeSubtitle": "Revise todos los elementos y confirme para marcar esta Sprint Review como completado",
+      "completeSubtitle": "Revise todos los elementos y confirme para marcar esta Sprint Review como completada",
       "completeTitle": "Completar Sprint Review",
-      "confirmation": "¿Está seguro de que desea marcar esta Sprint Review como completado? Esta acción no puede ser revertida.",
+      "confirmation": "¿Está seguro de que desea marcar esta Sprint Review como completada? Esta acción no puede ser revertida.",
       "gotIt": "Entendido",
       "validationAttended": "Al menos un asistente debe estar marcado como atendido antes de completar la Sprint Review.",
       "validationAttendees": "Por favor agregue al menos un asistente antes de completar la Sprint Review.",
@@ -101,7 +101,7 @@
     "failed": "No se pudo completar el Review. Por favor intente nuevamente.",
     "successModal": {
       "close": "Cerrar",
-      "message": "¡Sprint Review completado exitosamente!",
+      "message": "¡Sprint Review completada exitosamente!",
       "title": "Éxito"
     }
   },
@@ -133,17 +133,17 @@
   "feedback": {
     "actionRequired": "Acción requerida",
     "actionTaken": "Acción realizada",
-    "addFeedback": "Add retroalimentación",
-    "backlogHint": "Use la pestaña \"Ajustes del Backlog\" para realizar cambios basados en esta retroalimentación.",
+    "addFeedback": "Agregar Feedback",
+    "backlogHint": "Use la pestaña \"Ajustes del Backlog\" para realizar cambios basados en este Feedback.",
     "categories": {
-      "negative": "retroalimentación negativa",
-      "positive": "retroalimentación positiva",
+      "negative": "Feedback Negativo",
+      "positive": "Feedback Positivo",
       "question": "Pregunta",
       "suggestion": "Sugerencia"
     },
-    "empty": "Sin retroalimentación recopilada. Haga clic en \"Agregar retroalimentación\" para añadir retroalimentación de Partes interesadas.",
+    "empty": "Sin Feedback recopilado. Haga clic en \"Agregar Feedback\" para añadir Feedback de Stakeholders.",
     "owner": "Propietario:",
-    "title": "retroalimentación de Partes interesadas"
+    "title": "Feedback de Stakeholders"
   },
   "findingActiveSprint": "Buscando Sprint activo...",
   "increment": {
@@ -176,14 +176,14 @@
       "incrementRequired": "Increment requerido",
       "readyForReview": "Listo para Review"
     },
-    "reviewed": "Reviewed",
+    "reviewed": "Revisado",
     "statusLabels": {
       "active": "Activo",
       "cancelled": "Cancelado",
       "completed": "Completado",
       "planned": "Planificado"
     },
-    "subtitle": "Revisar Sprints completados, inspeccionar Increments y recopilar retroalimentación de Partes interesadas",
+    "subtitle": "Revisar Sprints completados, inspeccionar Increments y recopilar Feedback de Stakeholders",
     "title": "Sprint Reviews",
     "viewDetails": "Ver detalles",
     "viewReview": "Ver Review"
@@ -196,11 +196,11 @@
     "incrementRequired": "Increment requerido",
     "incrementRequiredNotice": "Un Increment entregado es requerido antes de crear una Sprint Review. Por favor cree y entregue un Increment primero.",
     "message": "No se ha creado una Sprint Review para este Sprint.",
-    "title": "Sin Sprint Review creado"
+    "title": "Sin Sprint Review creada"
   },
   "overview": {
     "attendees": "Asistentes",
-    "completionRate": "Tasa de completación",
+    "completionRate": "Tasa de finalización",
     "duration": "Duración",
     "noSprintGoal": "Sin Sprint Goal definido.",
     "noSummary": "Sin resumen proporcionado.",
@@ -225,7 +225,7 @@
   },
   "tabs": {
     "backlogAdjustments": "Ajustes del Backlog",
-    "feedback": "retroalimentación",
+    "feedback": "Feedback",
     "increment": "Increment",
     "overview": "Resumen"
   },

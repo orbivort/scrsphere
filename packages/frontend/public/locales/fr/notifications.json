@@ -34,7 +34,7 @@
   "filters": {
     "all": "Tout",
     "directMessages": "Messages directs",
-    "impediments": "Obstacles",
+    "impediments": "Impediments",
     "reminders": "Rappels",
     "taskAssignments": "Attributions de tâches",
     "teamCreated": "Équipe créée",
@@ -43,7 +43,7 @@
     "teamUpdated": "Équipe mise à jour",
     "unread": "Non lu"
   },
-  "impedimentAssigned": "Nouvel obstacle assigné : « {{impedimentTitle}} »",
+  "impedimentAssigned": "Nouvel Impediment assigné : « {{impedimentTitle}} »",
   "loading": {
     "ariaLabel": "Chargement des notifications",
     "title": "Chargement des notifications..."

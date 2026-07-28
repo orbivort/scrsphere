@@ -129,7 +129,7 @@
     "title": "Fehler",
     "unknown": "Unbekannter Fehler"
   },
-  "errorPrefix": "Error: {{message}}",
+  "errorPrefix": "Fehler: {{message}}",
   "feedback": {
     "actionRequired": "Aktion erforderlich",
     "actionTaken": "Aktion durchgeführt",
@@ -152,7 +152,7 @@
     "dodAllVerified": "Alle DoD-Kriterien für die enthaltenen Elemente wurden verifiziert",
     "dodVerification": "Definition of Done-Überprüfung",
     "done": "Abgeschlossen",
-    "earlyReleaseDelivery": "Vorzeitige Freigabe",
+    "earlyReleaseDelivery": "Vorzeitige Auslieferung",
     "includedPbis": "Enthaltene Product Backlog Items",
     "noDescription": "Keine Beschreibung",
     "noIncrement": "Kein Increment verfügbar",

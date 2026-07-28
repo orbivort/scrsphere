@@ -52,8 +52,8 @@
   "summaryMaxLength": "Zusammenfassung muss {{max}} Zeichen oder weniger haben",
   "summaryMinLength": "Zusammenfassung muss mindestens {{min}} Zeichen haben",
   "summaryRequired": "Zusammenfassung ist erforderlich",
-  "teamNameMaxLength": "Teamname muss weniger als {{max}} Zeichen haben",
-  "teamNameRequired": "Teamname ist erforderlich",
+  "teamNameMaxLength": "Team-Name muss weniger als {{max}} Zeichen haben",
+  "teamNameRequired": "Team-Name ist erforderlich",
   "titleMaxLength": "Titel muss {{max}} Zeichen oder weniger haben",
   "titleMinLength": "Titel muss mindestens {{min}} Zeichen haben",
   "titleRequired": "Titel ist erforderlich"

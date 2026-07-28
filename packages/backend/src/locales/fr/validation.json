@@ -30,8 +30,8 @@
     "authenticationRequired": "Authentification utilisateur requise pour cette transition",
     "initialStatusMustBe": "L'état initial doit être {{defaultStatus}}",
     "noWorkflow": "Aucun workflow configuré pour le type d'entité {{entityType}}",
-    "permissionDenied": "Vous n'avez pas la permission d'effectuer cette transition",
-    "permissionDeniedRoles": "Vous n'avez pas la permission d'effectuer cette transition. Rôles requis : {{roles}}",
+    "permissionDenied": "Vous n'avez pas l'autorisation d'effectuer cette transition",
+    "permissionDeniedRoles": "Vous n'avez pas l'autorisation d'effectuer cette transition. Rôles requis : {{roles}}",
     "targetStateNotFound": "L'état cible {{toStatus}} n'existe pas dans le workflow",
     "transitionDisabled": "Cette transition est actuellement désactivée",
     "transitionNotAllowed": "La transition de {{fromStatus}} vers {{toStatus}} n'est pas autorisée"

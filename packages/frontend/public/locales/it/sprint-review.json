@@ -92,7 +92,7 @@
       "completeTitle": "Completa Sprint Review",
       "confirmation": "Sei sicuro di voler contrassegnare questo Sprint Review come completato? Questa azione non può essere annullata.",
       "gotIt": "Capisco",
-      "validationAttended": "Almeno un partecipante deve essere markato come presente prima di completare il Sprint Review.",
+      "validationAttended": "Almeno un partecipante deve essere contrassegnato come presente prima di completare il Sprint Review.",
       "validationAttendees": "Per favore aggiungi almeno un partecipante prima di completare il Sprint Review.",
       "validationSummary": "Un riepilogo del Review è richiesto per completare il Sprint Review.",
       "validationTeamMembers": "Tutti i membri del team devono essere contrassegnati come presenti o assenti. Mancanti: {{names}}{{remaining}}."
@@ -129,7 +129,7 @@
     "title": "Errore",
     "unknown": "Errore sconosciuto"
   },
-  "errorPrefix": "Error: {{message}}",
+  "errorPrefix": "Errore: {{message}}",
   "feedback": {
     "actionRequired": "Azione richiesta",
     "actionTaken": "Azione intrapresa",

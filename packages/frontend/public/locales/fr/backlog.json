@@ -125,7 +125,7 @@
           "acceptanceCriteria": "1. Email envoyé au début du sprint\n2. Email envoyé à la fin du sprint\n3. Email envoyé pour les obstacles critiques\n4. Les utilisateurs peuvent se désabonner"
         }
       ],
-      "filename": "modele-import-backlog.csv",
+      "filename": "modèle-import-backlog.csv",
       "headers": {
         "acceptanceCriteria": "Critères d'acceptation",
         "businessValue": "Valeur Métier",
@@ -138,7 +138,7 @@
     },
     "title": "Import en masse"
   },
-  "businessValue": "Valeur métier",
+  "businessValue": "Valeur Métier",
   "businessValueOptions": {
     "1": "Valeur minimale",
     "2": "Faible valeur",
@@ -278,7 +278,7 @@
     "3": "Faible effort",
     "5": "Effort moyen",
     "8": "Effort important",
-    "13": "Très important effort"
+    "13": "Très grand effort"
   },
   "filter": {
     "all": "TOUS",
@@ -477,7 +477,7 @@
     "deleteWarningText": "Vous êtes sur le point de supprimer définitivement cet objectif de Produit. Cette action ne peut pas être annulée.",
     "deleting": "Suppression...",
     "descriptionHelpPanelAvoidLabel": "À éviter",
-    "descriptionHelpPanelAvoidText": "Nous devons améliorer l'app.",
+    "descriptionHelpPanelAvoidText": "Nous devons améliorer l'application.",
     "descriptionHelpPanelGoodLabel": "Bon",
     "descriptionHelpPanelGoodText": "Nos utilisateurs ont des difficultés à accéder aux données hors ligne. Cet objectif y remédie en implémentant la synchronisation du stockage local, améliorant la productivité des utilisateurs de 40% dans les environnements à faible connectivité.",
     "descriptionHelpPanelTip1": "Expliquez le problème que vous résolvez ou l'opportunité que vous adressez",
@@ -555,14 +555,14 @@
     "successMetricsHelpPanelAvoidLabel": "À éviter",
     "successMetricsHelpPanelAvoidText": "Rendre les utilisateurs heureux et améliorer la performance",
     "successMetricsHelpPanelGoodLabel": "Bon",
-    "successMetricsHelpPanelGoodText": "Atteindre 25% d'augmentation des utilisateurs actifs quotidiens de l'app mobile; réduire le temps de sync des données hors ligne à moins de 5 secondes; maintenir une note App Store de 4.5+",
+    "successMetricsHelpPanelGoodText": "Atteindre 25% d'augmentation des utilisateurs actifs quotidiens de l'application mobile; réduire le temps de synchronisation des données hors ligne à moins de 5 secondes; maintenir une note App Store de 4.5+",
     "successMetricsHelpPanelTip1": "Utilisez des critères spécifiques et mesurables (objectifs SMART)",
     "successMetricsHelpPanelTip2": "Incluez des mesures quantitatives et qualitatives si applicable",
     "successMetricsHelpPanelTip3": "Définissez des métriques qui indiquent directement l'atteinte de l'objectif",
     "successMetricsHelpPanelTip4": "Fixez des cibles réalistes mais ambitieuses",
     "successMetricsHelpPanelTitle": "Définir les métriques de succès",
     "successMetricsLabel": "Métriques de succès",
-    "successMetricsPlaceholder": "Définissez des critères de succès mesurables... ex., 25% d'augmentation des DAU, note app 4.5+, temps de sync <5s",
+    "successMetricsPlaceholder": "Définissez des critères de succès mesurables... ex., 25% d'augmentation des DAU, note de l'application 4.5+, temps de synchronisation <5s",
     "successMetricsRequired": "Les métriques de succès sont requises pour mesurer l'atteinte de l'objectif.",
     "successMetricsTooLong": "Les métriques de succès ne doivent pas dépasser 500 caractères (actuellement {{length}}).",
     "successMetricsTooShort": "Les métriques de succès sont trop courtes ({{length}}/5 caractères). Veuillez définir des critères mesurables.",
@@ -581,16 +581,16 @@
     "teamIdRequired": "L'ID d'équipe est requis. Veuillez sélectionner une équipe d'abord.",
     "title": "Product Goals",
     "titleHelpPanelAvoidLabel": "À éviter",
-    "titleHelpPanelAvoidText": "Améliorations de l'app",
+    "titleHelpPanelAvoidText": "Améliorations de l'application",
     "titleHelpPanelGoodLabel": "Bon",
-    "titleHelpPanelGoodText": "Lancer l'app mobile v2.0 avec capacité de sync hors-ligne",
+    "titleHelpPanelGoodText": "Lancer l'application mobile v2.0 avec capacité de synchronisation hors ligne",
     "titleHelpPanelTip1": "Soyez spécifique sur ce que vous voulez accomplir",
     "titleHelpPanelTip2": "Commencez par un verbe si possible (ex., \"Lancer\", \"Améliorer\", \"Réduire\")",
     "titleHelpPanelTip3": "Gardez-le concis pour un balayage et une référence rapides",
     "titleHelpPanelTip4": "Évitez les termes vagues comme \"meilleur\" ou \"plus\" - utilisez des résultats spécifiques",
     "titleHelpPanelTitle": "Écrire des titres d'objectifs",
     "titleLabel": "Titre",
-    "titlePlaceholder": "ex., Lancer l'app mobile v2.0 avec capacité de sync hors-ligne",
+    "titlePlaceholder": "ex., Lancer l'application mobile v2.0 avec capacité de synchronisation hors ligne",
     "titleRequired": "Veuillez entrer un titre d'objectif. Cela aide votre équipe à identifier rapidement l'objectif.",
     "titleTooLong": "Le titre est trop long ({{length}}/100 caractères). Envisagez de le rendre plus concis pour une meilleure lisibilité.",
     "titleTooShort": "Le titre est trop court ({{length}}/3 caractères). Essayez d'être plus spécifique sur ce que vous voulez accomplir.",
@@ -693,11 +693,11 @@
     "dorItems": {
       "acceptanceCriteriaDefined": "Critères d'acceptation définis",
       "acceptanceCriteriaDefinedAndAgreed": "Critères d'acceptation définis et convenus",
-      "businessValueAssigned": "Valeur métier assignée",
+      "businessValueAssigned": "Valeur Métier assignée",
       "clearTitleAndDescription": "Titre et description clairs fournis",
       "dependenciesIdentified": "Dépendances identifiées",
       "dependenciesIdentifiedAndDocumented": "Dépendances identifiées et documentées",
-      "noBlockersOrImpediments": "Aucun blocage ni obstacle",
+      "noBlockersOrImpediments": "Aucun blocage ni Impediment",
       "storyPointsEstimated": "Story points estimés",
       "storyPointsEstimatedByTeam": "Story points estimés par l'équipe",
       "userStoryClearlyWritten": "User story clairement écrite"

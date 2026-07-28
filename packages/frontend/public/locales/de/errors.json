@@ -17,7 +17,7 @@
     "internalServerError": "Serverfehler. Bitte versuchen Sie es später erneut.",
     "notFound": "Ressource nicht gefunden. Sie wurde möglicherweise gelöscht.",
     "serviceUnavailable": "Dienst vorübergehend nicht verfügbar. Bitte versuchen Sie es später erneut.",
-    "unauthorized": "Sie sind nicht berechtigt, diese Aktion auszuführen.",
+    "unauthorized": "Authentifizierung erforderlich. Bitte melden Sie sich an.",
     "validationFailed": "Validierung fehlgeschlagen. Bitte überprüfen Sie Ihre Eingabe."
   },
   "network": {
@@ -29,7 +29,7 @@
     "accessDenied": "Zugriff verweigert.",
     "loginRequired": "Bitte melden Sie sich an, um fortzufahren.",
     "noPermission": "Sie haben keine Berechtigung, diese Aktion auszuführen.",
-    "notAuthorized": "Sie sind nicht berechtigt, diese Aktion auszuführen."
+    "notAuthorized": "Sie haben keine ausreichenden Berechtigungen für diese Aktion."
   },
   "session": {
     "absoluteTimeout": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",

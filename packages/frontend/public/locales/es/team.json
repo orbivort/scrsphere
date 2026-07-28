@@ -47,7 +47,7 @@
     "genericInviteError": "No se pudo agregar el miembro. Por favor intente más tarde.",
     "genericRemoveError": "No se pudo eliminar el miembro. Por favor intente más tarde.",
     "memberAlreadyExists": "Este usuario ya es miembro del equipo.",
-    "memberNotFound": "Miembro no encontrado.Puede haber sido eliminado.",
+    "memberNotFound": "Miembro no encontrado. Puede haber sido eliminado.",
     "memberRemoved": "El miembro ha sido eliminado exitosamente.",
     "networkError": "Error de red. Por favor verifique su conexión e intente de nuevo.",
     "noPermissionToAddMembers": "No tiene permiso para agregar miembros al equipo. Solo los Product Owners y Scrum Masters pueden invitar miembros.",
@@ -83,7 +83,7 @@
   "leadership": {
     "badge": "Liderazgo",
     "createTeam": "Crear Nuevo equipo",
-    "description": "Como líder agile,tiene la autoridad para crear y gestionar equipos. Hágase cargo del éxito de su proyecto estableciendo su espacio de trabajo del equipo.",
+    "description": "Como líder ágil, tiene la autoridad para crear y gestionar equipos. Hágase cargo del éxito de su proyecto estableciendo su espacio de trabajo del equipo.",
     "quickStart": {
       "step1": "Crear equipo",
       "step2": "Invitar miembros",
@@ -131,7 +131,7 @@
     },
     "filterResults": "Mostrando {{shown}} de {{total}} miembro(s)",
     "inviteMember": "Invitar Miembro",
-    "noMatchSearch": "Ningún miembro coincide con tus criterios de búsqueda.",
+    "noMatchSearch": "Ningún miembro coincide con sus criterios de búsqueda.",
     "searchAriaLabel": "Buscar por nombre o correo electrónico",
     "searchPlaceholder": "Buscar por nombre o correo electrónico...",
     "sortByAriaLabel": "Ordenar miembros por",
@@ -159,7 +159,7 @@
     },
     "messageLabel": "Mensaje",
     "messagePlaceholder": "Escriba su mensaje aquí...",
-    "requiredAriaLabel": "required",
+    "requiredAriaLabel": "obligatorio",
     "send": "Enviar Mensaje",
     "sending": "Enviando...",
     "subtitle": "A: {{name}} ({{email}})",
@@ -193,5 +193,5 @@
     "subtitle": "Su viaje ágil comienza aquí...",
     "title": "¡Le damos la bienvenida a Scrumooth, {{name}}!"
   },
-  "yourTeams": "Tus equipos"
+  "yourTeams": "Sus equipos"
 }

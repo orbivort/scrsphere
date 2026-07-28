@@ -46,7 +46,7 @@
     "yesterdayPlaceholder": "Descrivi ciò che hai realizzato ieri..."
   },
   "formatTimeSince": {
-    "daysAgo": "{{count}}g",
+    "daysAgo": "{{count}}gg",
     "hoursAgo": "{{count}}h",
     "justNow": "adesso",
     "minutesAgo": "{{count}}m"

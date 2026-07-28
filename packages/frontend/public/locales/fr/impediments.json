@@ -8,30 +8,30 @@
     "resolution": "Résolution",
     "sprint": "Sprint",
     "unknown": "Inconnu",
-    "viewDetailsAria": "Voir les détails pour l'obstacle : {{title}}. Statut : {{status}}"
+    "viewDetailsAria": "Voir les détails pour l'Impediment : {{title}}. Statut : {{status}}"
   },
   "createModal": {
     "activeSprint": "(Actif)",
-    "createImpediment": "Créer l'obstacle",
+    "createImpediment": "Créer l'Impediment",
     "creating": "Création...",
     "descriptionLabel": "Description",
-    "descriptionPlaceholder": "Fournir des détails sur l'obstacle",
+    "descriptionPlaceholder": "Fournir des détails sur l'Impediment",
     "sprintLabel": "Sprint",
     "subtitle": "Documenter les bloquants affectant la progression de votre équipe",
-    "title": "Signaler un nouvel obstacle",
+    "title": "Signaler un nouvel Impediment",
     "titleLabel": "Titre",
-    "titlePlaceholder": "Description brève de l'obstacle"
+    "titlePlaceholder": "Description brève de l'Impediment"
   },
   "deleteModal": {
     "actionWarning": "Avertissement d'action",
-    "deleteImpediment": "Supprimer l'obstacle",
+    "deleteImpediment": "Supprimer l'Impediment",
     "deleting": "Suppression...",
     "item": "Élément :",
     "statusLabel": "Statut :",
     "subtitle": "Cette action est permanente et ne peut pas être annulée",
-    "title": "Supprimer l'obstacle",
+    "title": "Supprimer l'Impediment",
     "unknownItem": "Élément inconnu",
-    "warningText": "Vous allez supprimer définitivement cet obstacle. Cette action ne peut pas être annulée. Toutes les données associées seront définitivement supprimées."
+    "warningText": "Vous allez supprimer définitivement cet Impediment. Cette action ne peut pas être annulée. Toutes les données associées seront définitivement supprimées."
   },
   "detailModal": {
     "cancel": "Annuler",
@@ -44,31 +44,31 @@
     "ownerLabel": "Propriétaire",
     "reportedByLabel": "Signalé par",
     "resolutionLabel": "Résolution",
-    "resolutionPlaceholder": "Décrivez comment cet obstacle a été résolu...",
+    "resolutionPlaceholder": "Décrivez comment cet Impediment a été résolu...",
     "saveResolution": "Sauvegarder la résolution",
     "saving": "Sauvegarde...",
     "sprintLabel": "Sprint",
     "statusLabel": "Statut",
-    "subtitle": "Voir et gérer les informations de l'obstacle",
-    "title": "Détails de l'obstacle",
+    "subtitle": "Voir et gérer les informations de l'Impediment",
+    "title": "Détails de l'Impediment",
     "titleLabel": "Titre",
     "viewDailyUpdate": "Voir la mise à jour quotidienne"
   },
   "emptyState": {
     "clearFilter": "Effacer le filtre",
-    "noFilterImpedimentsDescription": "Il n'y a pas d'obstacles {{status}} dans \"{{sprintName}}\". Essayez de sélectionner un autre filtre de statut.",
-    "noImpedimentsDescription": "Super ! Aucun obstacle signalé pour le sprint actif \"{{sprintName}}\".",
-    "noImpedimentsForFilter": "Aucun obstacle {{status}}",
-    "noImpedimentsForSprint": "Aucun obstacle pour {{sprintName}}"
+    "noFilterImpedimentsDescription": "Il n'y a pas d'Impediments {{status}} dans \"{{sprintName}}\". Essayez de sélectionner un autre filtre de statut.",
+    "noImpedimentsDescription": "Super ! Aucun Impediment signalé pour le sprint actif \"{{sprintName}}\".",
+    "noImpedimentsForFilter": "Aucun Impediment {{status}}",
+    "noImpedimentsForSprint": "Aucun Impediment pour {{sprintName}}"
   },
   "errorState": {
-    "failedImpediments": "Impossible de charger les obstacles. Veuillez réessayer.",
+    "failedImpediments": "Impossible de charger les Impediments. Veuillez réessayer.",
     "failedSprint": "Impossible de charger les informations du sprint actif. Veuillez réessayer.",
     "retry": "Réessayer",
     "title": "Erreur de chargement des données"
   },
   "filterByStatus": "Filtrer par statut",
-  "reportImpediment": "Signaler un obstacle",
+  "reportImpediment": "Signaler un Impediment",
   "stats": {
     "CLOSED": "Fermé",
     "IN_PROGRESS": "En cours",
@@ -90,19 +90,19 @@
     "resolved": "Résolu"
   },
   "subtitle": "{{sprintName}} - Suivre et résoudre les bloquants affectant l'équipe",
-  "title": "Obstacles",
+  "title": "Impediments",
   "toast": {
-    "created": "Obstacle créé avec succès",
-    "deleted": "Obstacle supprimé avec succès",
-    "failedCreate": "Impossible de créer l'obstacle. Veuillez réessayer.",
-    "failedDelete": "Impossible de supprimer l'obstacle. Veuillez réessayer.",
-    "failedUpdate": "Impossible de mettre à jour l'obstacle. Veuillez réessayer.",
+    "created": "Impediment créé avec succès",
+    "deleted": "Impediment supprimé avec succès",
+    "failedCreate": "Impossible de créer l'Impediment. Veuillez réessayer.",
+    "failedDelete": "Impossible de supprimer l'Impediment. Veuillez réessayer.",
+    "failedUpdate": "Impossible de mettre à jour l'Impediment. Veuillez réessayer.",
     "noActiveSprint": "Aucun sprint actif trouvé. Veuillez démarrer un sprint d'abord.",
     "teamIdRequired": "L'ID de l'équipe est requis. Veuillez sélectionner une équipe d'abord.",
-    "updated": "Obstacle mis à jour avec succès"
+    "updated": "Impediment mis à jour avec succès"
   },
   "unsavedModal": {
-    "message": "Vous avez des modifications non sauvegardées dans le formulaire d'obstacle. Êtes-vous sûr de vouloir les supprimer ?",
+    "message": "Vous avez des modifications non sauvegardées dans le formulaire d'Impediment. Êtes-vous sûr de vouloir les supprimer ?",
     "title": "Modifications non sauvegardées"
   },
   "validation": {
