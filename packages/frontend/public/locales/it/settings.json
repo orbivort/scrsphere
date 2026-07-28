@@ -2,11 +2,11 @@
   "createTeamModal": {
     "beforeUnload": "Hai modifiche non salvate nel form di creazione team. Sei sicuro di voler uscire?",
     "cancel": "Annulla",
-    "closeModal": "Chiudi modal",
+    "closeModal": "Chiudi modale",
     "createTeam": "Crea Team",
     "creating": "Creazione...",
     "description": "Descrizione",
-    "descriptionPlaceholder": "Descrivi il purpose, obiettivi o stile di lavoro del tuo team...",
+    "descriptionPlaceholder": "Descrivi lo scopo, obiettivi o stile di lavoro del tuo team...",
     "optionalBadge": "Opzionale",
     "requiredFields": "Campi obbligatori",
     "requiredFieldsAria": "Tutti i campi contrassegnati con asterisco sono obbligatori",
@@ -45,13 +45,13 @@
       "title": "Scartare le modifiche?"
     },
     "dodCategories": {
-      "deployment": "Deploy",
+      "deployment": "Rilascio",
       "documentation": "Documentazione",
       "quality": "Qualità",
       "review": "Revisione",
       "testing": "Test"
     },
-    "dodInfo": "La Definizione di Done è una descrizione formale dello stato dell'Incremento quando soddisfa le misure di qualità richieste per il prodotto. Il lavoro non può essere considerato parte di un Incremento a meno che non soddisfi la Definizione di Done.",
+    "dodInfo": "La Definizione di Done è una descrizione formale dello stato dell'Increment quando soddisfa le misure di qualità richieste per il prodotto. Il lavoro non può essere considerato parte di un Increment a meno che non soddisfi la Definizione di Done.",
     "dorCategories": {
       "acceptance": "Accettazione",
       "clarity": "Chiarezza",
@@ -71,15 +71,15 @@
   },
   "deleteTeamModal": {
     "awaitingConfirmation": "In attesa di conferma",
-    "blockedDescription": "Questo team ha uno o più obiettivi di prodotto associati. Per eliminare questo team, devi prima rimuovere tutti gli obiettivi di prodotto collegati.",
-    "blockedSubtitle": "Questo team non può essere eliminato per obiettivi di prodotto attivi",
+    "blockedDescription": "Questo team ha uno o più Product Goals associati. Per eliminare questo team, devi prima rimuovere tutti i Product Goals collegati.",
+    "blockedSubtitle": "Questo team non può essere eliminato per Product Goals attivi",
     "bodyAriaLabel": "Contenuto di conferma eliminazione",
     "cancel": "Annulla",
-    "cancelButton": "Cancel",
+    "cancelButton": "Annulla",
     "cannotBeUndone": "non può essere annullata",
     "cannotDelete": "Impossibile Eliminare",
-    "cannotDeleteButton": "Cannot Delete",
-    "closeModal": "Chiudi modal",
+    "cannotDeleteButton": "Impossibile eliminare",
+    "closeModal": "Chiudi modale",
     "confirmLabel": "Digita \"{{teamName}}\" per confermare",
     "confirmation": {
       "awaitingConfirmation": "In attesa di conferma",
@@ -90,18 +90,18 @@
     },
     "consequence1": "Tutti i dati del team saranno rimossi permanentemente",
     "consequence2": "I membri del team perderanno l'accesso alle risorse del team",
-    "consequence3": "Associated settings and configurations will be deleted",
-    "consequence4": "This action is irreversible",
+    "consequence3": "Le impostazioni e configurazioni associate saranno eliminate",
+    "consequence4": "Questa azione è irreversibile",
     "consequencesTitle": "Conseguenze dell'eliminazione:",
-    "criticalActionWarning": "Critical Action Warning",
-    "deleteButton": "Delete Team",
+    "criticalActionWarning": "Avviso azione critica",
+    "deleteButton": "Elimina Team",
     "deleteTeam": "Elimina Team",
     "deleteWarning": "Stai per eliminare permanentemente questo team. Questa azione non può essere annullata.",
     "deleting": "Eliminazione...",
     "deletingButton": "Eliminazione in corso...",
     "deletionBlocked": "Eliminazione bloccata",
     "matchConfirmed": "Corrispondenza confermata",
-    "memberImpact": "{{count}} membro(i) saranno rimossi da questo team",
+    "memberImpact": "{{count}} membri saranno rimossi da questo team",
     "normalSubtitle": "Questa azione è permanente e non può essere annullata",
     "pasteWarning": "Digitazione manuale richiesta per sicurezza. Copia-incolla è disabilitato.",
     "requiredActions": "Azioni richieste:",
@@ -113,14 +113,14 @@
     "title": "Elimina Team",
     "warningCard": {
       "blockedBadge": "Eliminazione Bloccata",
-      "blockedMessage": "Questo team ha uno o più obiettivi di prodotto associati. Per eliminare questo team, devi prima rimuovere tutti gli obiettivi di prodotto collegati.",
+      "blockedMessage": "Questo team ha uno o più Product Goals associati. Per eliminare questo team, devi prima rimuovere tutti i Product Goals collegati.",
       "consequence1": "Tutti i dati del team saranno permanentemente rimossi",
       "consequence2": "I membri del team perderanno accesso alle risorse del team",
       "consequence3": "Le impostazioni e configurazioni associate saranno eliminate",
       "consequence4": "Questa azione è irreversibile",
       "consequencesTitle": "Conseguenze dell'eliminazione:",
       "deleteWarning": "Stai per eliminare permanentemente questo team. Questa azione non può essere annullata.",
-      "impactMembers": "{{count}} membro(s) saranno rimossi da questo team",
+      "impactMembers": "{{count}} membri saranno rimossi da questo team",
       "requiredActions": "Azioni richieste:",
       "step1": "Naviga alla sezione Obiettivi di Prodotto",
       "step2": "Elimina o riassegna tutti gli obiettivi per \"{{name}}\"",
@@ -144,8 +144,8 @@
     },
     "inactive": "{{count}} inattivi",
     "item": {
-      "codeReviewed": "Code revisionato e approvato dai peer",
-      "documentation": "Code documentato correttamente",
+      "codeReviewed": "Codice revisionato e approvato dai pari",
+      "documentation": "Codice documentato correttamente",
       "integrationTests": "Test di integrazione superati",
       "noCriticalBugs": "Nessun bug critico o di alta severità",
       "unitTests": "Test unitari scritti e superati (minimo 80% copertura)"
@@ -182,7 +182,7 @@
       "clearTitle": "Titolo e descrizione chiari forniti",
       "dependencies": "Dipendenze identificate e documentate",
       "dependenciesIdentified": "Dipendenze identificate",
-      "noBlockers": "Nessun blocker o impedimento",
+      "noBlockers": "Nessun blocco o Impediment",
       "storyPointsEstimated": "Story points stimati dal team",
       "storyPointsEstimatedOld": "Story points stimati",
       "userStoryWritten": "User story scritta chiaramente"
@@ -202,9 +202,9 @@
   "editTeamModal": {
     "beforeUnload": "Hai modifiche non salvate nel form di modifica team. Sei sicuro di voler uscire?",
     "cancel": "Annulla",
-    "closeModal": "Chiudi modal",
+    "closeModal": "Chiudi modale",
     "description": "Descrizione",
-    "descriptionPlaceholder": "Descrivi il purpose, obiettivi o stile di lavoro del tuo team...",
+    "descriptionPlaceholder": "Descrivi lo scopo, obiettivi o stile di lavoro del tuo team...",
     "optionalBadge": "Opzionale",
     "requiredFields": "Campi obbligatori",
     "requiredFieldsAria": "Tutti i campi contrassegnati con asterisco sono obbligatori",
@@ -224,7 +224,7 @@
   "privacyData": {
     "activeSessions": {
       "current": "Corrente",
-      "description": "Gestisci le tue sessioni di login attive",
+      "description": "Gestisci le tue sessioni di accesso attive",
       "devices": {
         "chrome": "Browser Chrome",
         "edge": "Browser Edge",
@@ -244,7 +244,7 @@
       "note": "Ti disconnetterà da tutti gli altri dispositivi, eccetto questo.",
       "revoke": "Revoca",
       "revokeSession": "Revoca questa sessione",
-      "revoking": "Revocando...",
+      "revoking": "Revoca in corso...",
       "signOutAll": "Disconnetti tutte le altre sessioni",
       "signingOut": "Disconnessione...",
       "title": "Sessioni attive"
@@ -255,44 +255,44 @@
     },
     "dataExport": {
       "ariaLabel": "Esporta i tuoi dati personali",
-      "dataIncluded": "Dati inclusi nell'export:",
+      "dataIncluded": "Dati inclusi nell'esportazione:",
       "description": "Scarica una copia dei tuoi dati personali",
-      "downloadExport": "Scarica export",
+      "downloadExport": "Scarica esportazione",
       "exportButton": "Esporta i miei dati",
-      "exporting": "Esportando...",
+      "exporting": "Esportazione in corso...",
       "formatLabel": "Formato:",
       "formatValue": "JSON (leggibile dalla macchina)",
       "portabilityDescription": "Hai il diritto di ricevere i tuoi dati personali in un formato strutturato, comunemente usato e leggibile dalla macchina.",
       "profileDescription": "Nome, email, avatar, preferenze",
       "profileInformation": "Informazioni profilo",
       "rightToPortability": "Diritto alla portabilità dei dati",
-      "sessionDescription": "Sessioni attive e storico login",
+      "sessionDescription": "Sessioni attive e storico accessi",
       "sessionInformation": "Informazioni sessione",
-      "teamDescription": "Teams a cui appartieni e tuoi ruoli",
-      "teamMemberships": "Membresie team",
+      "teamDescription": "Team a cui appartieni e tuoi ruoli",
+      "teamMemberships": "Appartenenze ai team",
       "title": "Esporta i tuoi dati"
     },
     "dataExportModal": {
-      "cancelExport": "Annulla export",
+      "cancelExport": "Annulla esportazione",
       "close": "Chiudi",
-      "closeModal": "Chiudi modal",
+      "closeModal": "Chiudi modale",
       "downloadJson": "Scarica file JSON",
-      "exportProgress": "Progresso export",
+      "exportProgress": "Progresso esportazione",
       "infoText": "I tuoi dati sono esportati in formato JSON, che è strutturato, comunemente usato e leggibile dalla macchina.",
       "jobId": "ID job:",
       "statusMessages": {
-        "completed": "Il tuo export dati è pronto!",
-        "expired": "Questo export è scaduto. Per favore crea un nuovo.",
-        "failed": "Export fallito. Per favore riprova.",
-        "initializing": "Inizializzazione export...",
-        "pending": "Preparazione del tuo export dati...",
+        "completed": "La tua esportazione dati è pronta!",
+        "expired": "Questa esportazione è scaduta. Per favore crea una nuova esportazione.",
+        "failed": "Esportazione fallita. Per favore riprova.",
+        "initializing": "Inizializzazione esportazione...",
+        "pending": "Preparazione della tua esportazione dati...",
         "processing": "Raccolta e formattazione dei tuoi dati..."
       },
-      "title": "Export dati"
+      "title": "Esportazione dati"
     },
     "dataRights": {
       "rightToAccess": "Diritto di accesso",
-      "rightToAccessDescription": "Puoi richiedere una copia di tutti i dati personali che abbiamo su te.",
+      "rightToAccessDescription": "Puoi richiedere una copia di tutti i dati personali che abbiamo su di te.",
       "rightToErasure": "Diritto alla cancellazione",
       "rightToErasureDescription": "Puoi richiedere la cancellazione dei tuoi dati personali quando non sono più necessari.",
       "rightToPortability": "Diritto alla portabilità",
@@ -385,7 +385,7 @@
     "title": "Definizioni team"
   },
   "teamList": {
-    "ariaLabel": "Teams",
+    "ariaLabel": "Team",
     "card": {
       "cardAriaLabel": "{{name}}, {{count}} membri. Usa le frecce per navigare tra le schede, Invio o Spazio per accedere alle azioni.",
       "createdBy": "Creato da {{firstName}} {{lastName}}",
@@ -400,7 +400,7 @@
     },
     "empty": {
       "benefits": {
-        "agileCeremonies": "Collabora con cerimonie agile",
+        "agileCeremonies": "Collabora con cerimonie agili",
         "progressTracking": "Traccia progressi con metriche in tempo reale",
         "sprintPlanning": "Organizza il lavoro con Sprint Planning"
       },
@@ -419,7 +419,7 @@
   "teamManagement": {
     "createTeam": "Crea Team",
     "pagination": {
-      "ariaLabel": "Pagination",
+      "ariaLabel": "Navigazione pagine",
       "goToNext": "Vai alla pagina successiva",
       "goToPrevious": "Vai alla pagina precedente",
       "next": "Successivo",
@@ -434,10 +434,10 @@
       "editTeam": "Non hai i permessi per modificare questo team."
     },
     "subtitle": "Crea e gestisci team nell'organizzazione",
-    "teamCount": "{{count}} team(s)",
+    "teamCount": "{{count}} team",
     "title": "Gestione Team",
     "toast": {
-      "cannotDeleteWithGoals": "Impossibile eliminare team con obiettivi di prodotto esistenti",
+      "cannotDeleteWithGoals": "Impossibile eliminare team con Product Goals esistenti",
       "teamCreateFailed": "Fallita creazione del team",
       "teamCreated": "Team creato con successo",
       "teamCreatedRefreshFailed": "Team creato, ma fallito aggiornamento lista. Per favore ricaricare la pagina se necessario.",

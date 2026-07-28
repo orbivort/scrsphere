@@ -77,7 +77,7 @@
     "cancel": "Abbrechen",
     "cancelButton": "Abbrechen",
     "cannotBeUndone": "kann nicht rückgängig gemacht werden",
-    "cannotDelete": "Kann nicht löschen",
+    "cannotDelete": "Löschen nicht möglich",
     "cannotDeleteButton": "Löschen nicht möglich",
     "closeModal": "Modal schließen",
     "confirmLabel": "Geben Sie \"{{teamName}}\" zur Bestätigung ein",
@@ -86,7 +86,7 @@
       "label": "Geben Sie \"{{name}}\" zur Bestätigung ein",
       "matchConfirmed": "Übereinstimmung bestätigt",
       "placeholder": "Geben Sie \"{{name}}\" ein, um das Löschen zu bestätigen",
-      "srHint": "Geben Sie den Team-Namen genau wie angezeigt ein, um die Löschen-Schaltfläche zu aktivieren, dann drücken Sie Enter oder klicken Sie Team löschen"
+      "srHint": "Geben Sie den Team-Namen genau wie angezeigt ein, um die Löschen-Schaltfläche zu aktivieren, dann drücken Sie Enter oder klicken Sie auf „Team löschen“"
     },
     "consequence1": "Alle Team-Daten werden dauerhaft entfernt",
     "consequence2": "Teammitglieder verlieren den Zugriff auf Team-Ressourcen",
@@ -105,7 +105,7 @@
     "normalSubtitle": "Diese Aktion ist dauerhaft und kann nicht rückgängig gemacht werden",
     "pasteWarning": "Manuelle Eingabe aus Sicherheitsgründen erforderlich. Kopieren und Einfügen ist deaktiviert.",
     "requiredActions": "Erforderliche Aktionen:",
-    "srConfirmHint": "Geben Sie den Team-Namen genau wie angezeigt ein, um die Löschen-Schaltfläche zu aktivieren, dann drücken Sie Enter oder klicken Sie Team löschen",
+    "srConfirmHint": "Geben Sie den Team-Namen genau wie angezeigt ein, um die Löschen-Schaltfläche zu aktivieren, dann drücken Sie Enter oder klicken Sie auf „Team löschen“",
     "step1": "Navigieren Sie zum Product Goals-Bereich",
     "step2": "Löschen oder ordnen Sie alle Goals für \"{{teamName}}\" neu zu",
     "step3": "Kehren Sie hierher zurück, um das Löschen des Teams abzuschließen",
@@ -144,11 +144,11 @@
     },
     "inactive": "{{count}} inaktiv",
     "item": {
-      "codeReviewed": "Code wurde peer-reviewed und genehmigt",
+      "codeReviewed": "Code wurde geprüft und genehmigt",
       "documentation": "Code ist ordnungsgemäß dokumentiert",
-      "integrationTests": "Integration-Tests erfolgreich",
-      "noCriticalBugs": "Keine kritischen oder hochgradigen Bugs",
-      "unitTests": "Unit-Tests geschrieben und erfolgreich (mindestens 80% Coverage)"
+      "integrationTests": "Integrationstests bestanden",
+      "noCriticalBugs": "Keine kritischen oder schwerwiegenden Fehler",
+      "unitTests": "Unit-Tests geschrieben und bestanden (mindestens 80% Abdeckung)"
     },
     "lastUpdated": "Zuletzt aktualisiert:",
     "loading": "Definition of Done wird geladen...",
@@ -183,8 +183,8 @@
       "dependencies": "Abhängigkeiten identifiziert und dokumentiert",
       "dependenciesIdentified": "Abhängigkeiten identifiziert",
       "noBlockers": "Keine Blocker oder Impediments",
-      "storyPointsEstimated": "Story-Punkte vom Team geschätzt",
-      "storyPointsEstimatedOld": "Story-Punkte geschätzt",
+      "storyPointsEstimated": "Story-Points vom Team geschätzt",
+      "storyPointsEstimatedOld": "Story-Points geschätzt",
       "userStoryWritten": "User Story klar geschrieben"
     },
     "lastUpdated": "Zuletzt aktualisiert:",
@@ -408,7 +408,7 @@
       "createFirstTeam": "Erstes Team erstellen",
       "createNewTeam": "Neues Team erstellen",
       "defaultDescription": "Teams sind die Grundlage effektiver Zusammenarbeit. Erstellen Sie Ihr erstes Team, um mit Sprint Planning, Fortschrittsverfolgung und Zielerreichung zu beginnen.",
-      "defaultTitle": "Bauen Sie Ihr Dream-Team",
+      "defaultTitle": "Bauen Sie Ihr Wunschteam",
       "searchDescription": "Versuchen Sie, Ihre Suchbegriffe anzupassen oder erstellen Sie ein neues Team.",
       "searchNoResults": "Keine Teams gefunden für \"{{search}}\""
     },
@@ -437,7 +437,7 @@
     "teamCount": "{{count}} Team(s)",
     "title": "Team-Verwaltung",
     "toast": {
-      "cannotDeleteWithGoals": "Team mit bestehenden Product Goalsn kann nicht gelöscht werden",
+      "cannotDeleteWithGoals": "Ein Team mit bestehenden Product Goals kann nicht gelöscht werden",
       "teamCreateFailed": "Team konnte nicht erstellt werden",
       "teamCreated": "Team erfolgreich erstellt",
       "teamCreatedRefreshFailed": "Team erstellt, aber Team-Liste konnte nicht aktualisiert werden. Bitte laden Sie die Seite neu falls nötig.",

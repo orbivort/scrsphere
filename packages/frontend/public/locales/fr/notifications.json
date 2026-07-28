@@ -12,7 +12,7 @@
     "notificationItem": "Notification de {{sender}} : {{message}}",
     "pagination": "Pagination"
   },
-  "backlogAdjustmentRequired": "Nouvel Ajustement du Backlog Requiert Votre Action",
+  "backlogAdjustmentRequired": "Nouvel ajustement du backlog requiert votre action",
   "backlogAdjustmentRequiredMessage": "Vous avez été assigné comme propriétaire d'un ajustement du backlog : {{action}} - « {{description}} »",
   "dateGroups": {
     "older": "Plus ancien",
@@ -29,12 +29,12 @@
     "title": "Échec du chargement des notifications",
     "tryAgain": "Réessayer"
   },
-  "feedbackRequired": "Nouveau Feedback Requiert Votre Action",
-  "feedbackRequiredMessage": "Vous avez été assigné comme propriétaire du feedback de {{authorName}} : « {{content}} »",
+  "feedbackRequired": "Nouveau retour requiert votre action",
+  "feedbackRequiredMessage": "Vous avez été assigné comme propriétaire du retour de {{authorName}} : « {{content}} »",
   "filters": {
     "all": "Tout",
     "directMessages": "Messages directs",
-    "impediments": "Impediments",
+    "impediments": "Obstacles",
     "reminders": "Rappels",
     "taskAssignments": "Attributions de tâches",
     "teamCreated": "Équipe créée",

@@ -19,8 +19,8 @@
     "viewMode": "Modo de vista"
   },
   "datePicker": {
-    "ariaLabel": "Seleccionar fecha para actualizaciónes diarias",
-    "label": "Seleccionar fecha para actualizaciónes diarias"
+    "ariaLabel": "Seleccionar fecha para actualizaciones diarias",
+    "label": "Seleccionar fecha para actualizaciones diarias"
   },
   "draftRestore": {
     "discard": "Descartar",
@@ -31,8 +31,8 @@
   "draftSaved": "Borrador guardado {{timeSince}}",
   "emptyState": {
     "beFirst": "¡Sea el primero en enviar su Actualización diaria!",
-    "noUpdates": "Sin Actualizaciónes Aún",
-    "noUpdatesForDate": "Sin actualizaciónes del equipo para esta fecha."
+    "noUpdates": "Sin Actualizaciones Aún",
+    "noUpdatesForDate": "Sin actualizaciones del equipo para esta fecha."
   },
   "form": {
     "cancel": "Cancelar",
@@ -64,7 +64,7 @@
     "sectionHeader": "Cargando encabezado de sección...",
     "sprintProgress": "Cargando progreso del Sprint...",
     "statistics": "Cargando estadísticas...",
-    "teamUpdates": "Cargando actualizaciónes del equipo..."
+    "teamUpdates": "Cargando actualizaciones del equipo..."
   },
   "promoteModal": {
     "createImpediment": "Crear Impediment",
@@ -112,7 +112,7 @@
   },
   "submitUpdate": "Enviar Actualización",
   "subtitle": "{{sprintName}} - Día {{day}}",
-  "teamUpdates": "Actualizaciónes del Equipo",
+  "teamUpdates": "Actualizaciones del Equipo",
   "templates": {
     "featureDevelopment": "Desarrollo de Funcionalidad",
     "issueFixing": "Corrección de Problemas",
@@ -121,12 +121,12 @@
   },
   "title": "Daily Scrum",
   "toast": {
-    "allSubmitted": "Todos los miembros del equipo han enviado sus actualizaciónes",
+    "allSubmitted": "Todos los miembros del equipo han enviado sus actualizaciones",
     "failedCreateImpediment": "Falló al crear Impediment. Por favor intente de nuevo.",
     "failedSendReminder": "Falló al enviar recordatorio. Por favor intente de nuevo.",
     "impedimentCreated": "¡Impediment creado exitosamente!",
     "networkError": "Ocurrió un error de red. Por favor verifique su conexión e intente de nuevo.",
-    "noPendingUpdates": "No hay actualizaciónes pendientes",
+    "noPendingUpdates": "No hay actualizaciones pendientes",
     "noPermissionCreateImpediments": "No tiene permiso para crear Impediments.",
     "noPermissionReminders": "No tiene permiso para enviar recordatorios.",
     "offline": "Parece que está sin conexión. Por favor verifique su conexión a internet e intente de nuevo.",
@@ -168,7 +168,7 @@
   "waitingForUpdates": {
     "sendReminder": "Enviar Recordatorio",
     "sending": "Enviando...",
-    "title": "Esperando Actualizaciónes"
+    "title": "Esperando Actualizaciones"
   },
   "yourDailyUpdate": "Su Actualización Diaria"
 }

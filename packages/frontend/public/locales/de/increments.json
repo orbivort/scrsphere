@@ -30,7 +30,7 @@
     "pbis": {
       "alreadyInIncrement": "Bereits in einem Increment",
       "deselectAll": "Alle abwählen",
-      "mustBeDone": "PBIs müssen im \"Done\"-Status sein und nicht bereits in einem anderen Increment.",
+      "mustBeDone": "PBIs müssen im \"Erledigt\"-Status sein und nicht bereits in einem anderen Increment.",
       "noEligiblePbis": "Keine berechtigten PBIs für diesen Sprint gefunden.",
       "selectAll": "Alle auswählen",
       "selected": "ausgewählt",
@@ -89,7 +89,7 @@
     "deliverIncrement": "Increment liefern",
     "deliverModal": {
       "cancel": "Abbrechen",
-      "checkboxText": "Ich verstehe, dass diese Aktion irreversibel ist und das Increment als an Stakeholder geliefert markiert wird.",
+      "checkboxText": "Mir ist bewusst, dass diese Aktion irreversibel ist und das Increment als an Stakeholder geliefert markiert wird.",
       "closeDialog": "Dialog schließen",
       "confirm": "Lieferung bestätigen",
       "confirmDeliveryAriaLabel": "Lieferungsaktion bestätigen",
@@ -107,14 +107,14 @@
       "title": "Increment liefern"
     },
     "dodVerification": {
-      "byCategory": "Verifizierung nach Kategorie",
-      "byPbi": "Verifizierung nach PBI",
-      "noVerifications": "Keine DoD-Verifizierungen für dieses Increment erfasst.",
-      "noVerificationsForPbi": "Keine Verifizierungen für diesen PBI.",
-      "noVerificationsHint": "Verifizierungen werden beim Abschließen eines Sprints erfasst.",
-      "title": "Definition of Done Verifizierung",
-      "totalVerifications": "Verifizierungen gesamt",
-      "verified": "Verifiziert"
+      "byCategory": "Überprüfung nach Kategorie",
+      "byPbi": "Überprüfung nach PBI",
+      "noVerifications": "Keine DoD-Überprüfungen für dieses Increment erfasst.",
+      "noVerificationsForPbi": "Keine Überprüfungen für diesen PBI.",
+      "noVerificationsHint": "Überprüfungen werden beim Abschließen eines Sprints erfasst.",
+      "title": "Definition of Done-Überprüfung",
+      "totalVerifications": "Überprüfungen gesamt",
+      "verified": "Überprüft"
     },
     "error": {
       "backToIncrements": "Zurück zu Increments",
@@ -196,7 +196,7 @@
     "archived": "Archiviert",
     "delivered": "Geliefert",
     "draft": "Entwurf",
-    "verified": "Verifiziert"
+    "verified": "Überprüft"
   },
   "subtitle": "Verwalten und verfolgen Sie Ihre Produkt-Increments. Increments repräsentieren funktionierende, nutzbare Funktionalität, die für die Lieferung an Stakeholder bereit ist.",
   "title": "Increments"

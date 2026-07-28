@@ -11,7 +11,7 @@
     },
     "addAdjustment": "Agregar ajuste",
     "adding": "Agregando...",
-    "cancel": "Cancelararar",
+    "cancel": "Cancelar",
     "description": "Descripción *",
     "descriptionPlaceholder": "Describa el ajuste...",
     "none": "Ninguno",
@@ -20,36 +20,36 @@
     "reason": "Razón *",
     "reasonPlaceholder": "¿Por qué es necesario este ajuste?",
     "relatedPbi": "PBI relacionado (Opcional)",
-    "subtitle": "Registrar cambios al Product Volverlog basados en retroalimentación de la Sprint Review",
-    "title": "Agregar ajuste del Volverlog",
-    "unsavedMessage": "¿Tiene un ajuste del backlog no guardado. ¿Está seguro de que ¿desea descartarlo?",
-    "unsavedTitle": "Cambios de ajuste del Volverlog no guardados"
+    "subtitle": "Registrar cambios al Product Backlog basados en retroalimentación de la Sprint Review",
+    "title": "Agregar ajuste del Backlog",
+    "unsavedMessage": "Tiene un ajuste del backlog no guardado. ¿Está seguro de que desea descartarlo?",
+    "unsavedTitle": "Cambios de ajuste del Backlog no guardados"
   },
   "addFeedbackModal": {
-    "actionRequired": "Action Required",
-    "addFeedback": "Add retroalimentación",
-    "adding": "Adding...",
-    "authorName": "Author Name *",
+    "actionRequired": "Acción Requerida",
+    "addFeedback": "Agregar Comentarios",
+    "adding": "Agregando...",
+    "authorName": "Nombre del Autor *",
     "authorNamePlaceholder": "Ingrese el nombre de la parte interesada",
-    "cancel": "Cancel",
-    "category": "Category",
+    "cancel": "Cancelar",
+    "category": "Categoría",
     "categoryOptions": {
-      "negative": "Negative retroalimentación",
-      "positive": "Positive retroalimentación",
-      "question": "Question",
-      "suggestion": "Suggestión"
+      "negative": "Comentarios Negativos",
+      "positive": "Comentarios Positivos",
+      "question": "Pregunta",
+      "suggestion": "Sugerencia"
     },
-    "feedback": "retroalimentación *",
-    "feedbackPlaceholder": "Enter stakeholder retroalimentación...",
-    "none": "None",
-    "owner": "Owner *",
-    "ownerPlaceholder": "Select owner...",
-    "relatedPbi": "Related PBI (Optional)",
-    "requiredFieldsNote": "Required fields are marked with *",
-    "subtitle": "Capture retroalimentación valiosa de las partes interesadas para mejorar su producto",
-    "title": "Add Stakeholder retroalimentación",
-    "unsavedMessage": "You have unsaved retroalimentación. Are you sure you want to discard it?",
-    "unsavedTitle": "Unsaved retroalimentación Changes"
+    "feedback": "Comentarios *",
+    "feedbackPlaceholder": "Ingrese los comentarios de la parte interesada...",
+    "none": "Ninguno",
+    "owner": "Propietario *",
+    "ownerPlaceholder": "Seleccionar propietario...",
+    "relatedPbi": "PBI Relacionado (Opcional)",
+    "requiredFieldsNote": "Los campos requeridos están marcados con *",
+    "subtitle": "Capture información valiosa de las partes interesadas para mejorar su producto",
+    "title": "Agregar Comentarios de Parte Interesada",
+    "unsavedMessage": "Tiene comentarios sin guardar. ¿Está seguro de que desea descartarlos?",
+    "unsavedTitle": "Cambios de Comentarios Sin Guardar"
   },
   "adjustments": {
     "actionTypes": {
@@ -61,9 +61,9 @@
     },
     "addAdjustment": "Agregar ajuste",
     "addAdjustmentDisabled": "Agregar ajuste - deshabilitado",
-    "backlogHint": "Este elemento estará presente en la página Product Volverlog para acción.",
+    "backlogHint": "Este elemento estará presente en la página Product Backlog para acción.",
     "cannotAddAdjustmentTitle": "No se puede agregar ajuste a un Review completado",
-    "description": "Cambios al Product Volverlog basados en retroalimentación de la Sprint Review.",
+    "description": "Cambios al Product Backlog basados en retroalimentación de la Sprint Review.",
     "empty": "Sin ajustes del backlog realizados durante este Review.",
     "owner": "Propietario:",
     "reason": "Razón:",
@@ -71,26 +71,26 @@
       "implemented": "Implementado",
       "pending": "Pendiente"
     },
-    "title": "Ajustes del Product Volverlog"
+    "title": "Ajustes del Product Backlog"
   },
   "ariaLabels": {
     "sections": "Secciones del Sprint Review"
   },
   "availableSprints": "Sprints disponibles:",
-  "backToReviews": "Volver a Reviews",
+  "backToReviews": "Volver a Sprint Reviews",
   "completeReview": {
     "badge": "Sprint Review completado",
     "button": "Completar Sprint Review",
     "completing": "Completando...",
     "confirmationModal": {
-      "cancel": "Cancelararar",
+      "cancel": "Cancelar",
       "cannotCompleteSubtitle": "Por favor resuelva los siguientes problemas antes de completar esta Sprint Review",
       "cannotCompleteTitle": "No se puede completar la Sprint Review",
       "closeDialog": "Cerrar diálogo",
       "complete": "Completar",
       "completeSubtitle": "Revise todos los elementos y confirme para marcar esta Sprint Review como completado",
       "completeTitle": "Completar Sprint Review",
-      "confirmation": "¿Está seguro de que ¿desea marcar esta Sprint Review como completado? Esta acción no puede ser revertida.",
+      "confirmation": "¿Está seguro de que desea marcar esta Sprint Review como completado? Esta acción no puede ser revertida.",
       "gotIt": "Entendido",
       "validationAttended": "Al menos un asistente debe estar marcado como atendido antes de completar la Sprint Review.",
       "validationAttendees": "Por favor agregue al menos un asistente antes de completar la Sprint Review.",
@@ -106,7 +106,7 @@
     }
   },
   "createModal": {
-    "cancel": "Cancelararar",
+    "cancel": "Cancelar",
     "createReview": "Crear Review",
     "creating": "Creando...",
     "failed": "No se pudo crear la Sprint Review. Por favor intente nuevamente.",
@@ -134,14 +134,14 @@
     "actionRequired": "Acción requerida",
     "actionTaken": "Acción realizada",
     "addFeedback": "Add retroalimentación",
-    "backlogHint": "Use la pestaña \"Ajustes del Volverlog\" para realizar cambios basados en este retroalimentación.",
+    "backlogHint": "Use la pestaña \"Ajustes del Backlog\" para realizar cambios basados en esta retroalimentación.",
     "categories": {
-      "negative": "retroalimentación negativo",
-      "positive": "retroalimentación positivo",
+      "negative": "retroalimentación negativa",
+      "positive": "retroalimentación positiva",
       "question": "Pregunta",
       "suggestion": "Sugerencia"
     },
-    "empty": "Sin retroalimentación recopilado. Haga clic en \"Agregar retroalimentación\" para añadir retroalimentación de Partes interesadas.",
+    "empty": "Sin retroalimentación recopilada. Haga clic en \"Agregar retroalimentación\" para añadir retroalimentación de Partes interesadas.",
     "owner": "Propietario:",
     "title": "retroalimentación de Partes interesadas"
   },
@@ -153,7 +153,7 @@
     "dodVerification": "Verificación de Definition of Done",
     "done": "Completado",
     "earlyReleaseDelivery": "Entrega anticipada",
-    "includedPbis": "Product Volverlog Items incluidos",
+    "includedPbis": "Product Backlog Items incluidos",
     "noDescription": "Sin descripción",
     "noIncrement": "Sin Increment disponible",
     "noIncrementDescription": "No hay Increment entregado disponible para esta Sprint Review.",
@@ -169,7 +169,7 @@
     "completedSprints_plural": "Sprints completados",
     "createIncrement": "Crear Increment",
     "goal": "Goal:",
-    "loading": "Cargando Revisiones de Sprint...",
+    "loading": "Cargando Sprint Reviews...",
     "reviewStatus": {
       "completed": "Review completado",
       "inProgress": "Review en progreso",
@@ -179,11 +179,11 @@
     "reviewed": "Reviewed",
     "statusLabels": {
       "active": "Activo",
-      "cancelled": "Cancelararado",
+      "cancelled": "Cancelado",
       "completed": "Completado",
       "planned": "Planificado"
     },
-    "subtitle": "Reviewar Sprints completados, inspeccionar Increments y recopilar retroalimentación de Partes interesadas",
+    "subtitle": "Revisar Sprints completados, inspeccionar Increments y recopilar retroalimentación de Partes interesadas",
     "title": "Sprint Reviews",
     "viewDetails": "Ver detalles",
     "viewReview": "Ver Review"
@@ -214,17 +214,17 @@
     "workingDays": "días de trabajo"
   },
   "pts": "pts",
-  "reviewThisSprint": "Reviewar este Sprint",
+  "reviewThisSprint": "Revisar este Sprint",
   "select": "Seleccionar",
   "selectSprint": "Seleccionar Sprint para Review",
   "sprintStatus": {
     "ACTIVE": "Activo",
-    "CANCELLED": "Cancelararado",
+    "CANCELLED": "Cancelado",
     "COMPLETED": "Completado",
     "PLANNED": "Planificado"
   },
   "tabs": {
-    "backlogAdjustments": "Ajustes del Volverlog",
+    "backlogAdjustments": "Ajustes del Backlog",
     "feedback": "retroalimentación",
     "increment": "Increment",
     "overview": "Resumen"

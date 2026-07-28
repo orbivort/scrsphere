@@ -4,7 +4,7 @@
     "greeting": "Hallo",
     "needHelp": "Brauchen Sie Hilfe? Kontaktieren Sie uns unter",
     "thankYouForUsing": "Vielen Dank, dass Sie",
-    "visitApp": "Besuchen"
+    "visitApp": "App besuchen"
   },
   "passwordReset": {
     "bodyIntro": "Wir haben eine Anfrage erhalten, das Passwort für {{email}} zurückzusetzen.",
@@ -19,7 +19,7 @@
   },
   "welcome": {
     "bodyIntro": "Ihr Konto wurde erfolgreich erstellt.",
-    "closing": "Wir freuen uns, Sie an Bord zu haben.",
+    "closing": "Wir freuen uns, Sie in unserem Team begrüßen zu dürfen.",
     "cta": "Loslegen",
     "heading": "Willkommen, {{name}}!",
     "subject": "Willkommen bei Scrumooth"

@@ -7,8 +7,8 @@
     "target": "Cible"
   },
   "aria": {
-    "backlogItem": "Élément du backlog: {{title}}. Priorité: {{priority}}.",
-    "draggingItem": "Glissement de {{title}}. Actuel: {{current}}. Cible: {{target}}.",
+    "backlogItem": "Élément du backlog : {{title}}. Priorité : {{priority}}.",
+    "draggingItem": "Glissement de {{title}}. Actuel : {{current}}. Cible : {{target}}.",
     "priorityBoard": "Tableau de priorité MoSCoW"
   },
   "boardView": {
@@ -117,12 +117,12 @@
         },
         {
           "title": "Notifications par email",
-          "description": "Configurer les notifications par email pour le début du sprint, la fin du sprint et les impediments critiques",
+          "description": "Configurer les notifications par email pour le début du sprint, la fin du sprint et les obstacles critiques",
           "storyPoints": 3,
           "businessValue": 5,
           "priority": "Pourrait avoir",
           "labels": "notifications, email, backend",
-          "acceptanceCriteria": "1. Email envoyé au début du sprint\n2. Email envoyé à la fin du sprint\n3. Email envoyé pour les impediments critiques\n4. Les utilisateurs peuvent se désabonner"
+          "acceptanceCriteria": "1. Email envoyé au début du sprint\n2. Email envoyé à la fin du sprint\n3. Email envoyé pour les obstacles critiques\n4. Les utilisateurs peuvent se désabonner"
         }
       ],
       "filename": "modele-import-backlog.csv",
@@ -138,7 +138,7 @@
     },
     "title": "Import en masse"
   },
-  "businessValue": "Valeur Métier",
+  "businessValue": "Valeur métier",
   "businessValueOptions": {
     "1": "Valeur minimale",
     "2": "Faible valeur",
@@ -177,7 +177,7 @@
     "labelsPlaceholderMore": "Ajouter plus d'étiquettes...",
     "moreInformation": "Plus d'informations",
     "moscowAriaLabel": "Sélectionner la priorité MoSCoW",
-    "moscowHelp": "Must Have = Critique pour le succès | Should Have = Important mais pas vital | Could Have = Nice to have | Won't Have = Considération future",
+    "moscowHelp": "Doit avoir = Critique pour le succès | Devrait avoir = Important mais pas vital | Pourrait avoir = Nice to have | N'aura pas = Considération future",
     "moscowLabel": "Priorité MoSCoW",
     "planning": "Planification",
     "priorityAndValue": "Priorité et Valeur",
@@ -201,9 +201,9 @@
     "closeModal": "Fermer la fenêtre",
     "deleteItem": "Supprimer l'élément",
     "deleting": "Suppression...",
-    "itemLabel": "Élément:",
+    "itemLabel": "Élément :",
     "statusAtDeletion": "Statut à la suppression",
-    "statusLabel": "Statut:",
+    "statusLabel": "Statut :",
     "storyPoint": "Story Point",
     "storyPoints": "Story Points",
     "subtitle": "Cette action est permanente et ne peut pas être annulée",
@@ -248,7 +248,7 @@
     "labelsPlaceholderMore": "Ajouter plus d'étiquettes...",
     "moreInformation": "Plus d'informations",
     "moscowAriaLabel": "Sélectionner la priorité MoSCoW",
-    "moscowHelp": "Requis: Sélectionnez un niveau de priorité. Must Have = Critique pour le succès | Should Have = Important mais pas vital | Could Have = Nice to have | Won't Have = Considération future",
+    "moscowHelp": "Requis: Sélectionnez un niveau de priorité. Doit avoir = Critique pour le succès | Devrait avoir = Important mais pas vital | Pourrait avoir = Nice to have | N'aura pas = Considération future",
     "moscowLabel": "Priorité MoSCoW",
     "priorityAndValue": "Priorité et Valeur",
     "removeLabel": "Supprimer l'étiquette {{label}}",
@@ -374,12 +374,12 @@
     "add": "Ajouter",
     "all": "Tous",
     "createItem": "Créer un élément",
-    "fromSprint": "Du Sprint:",
+    "fromSprint": "Du Sprint :",
     "headerTitle": "Ajustements en attente",
     "loadingAdjustments": "Chargement des ajustements",
     "markDone": "Marquer comme fait",
     "modify": "Modifier",
-    "reason": "Raison:",
+    "reason": "Raison :",
     "remove": "Supprimer",
     "reorder": "Réorganiser",
     "split": "Diviser",
@@ -390,8 +390,8 @@
     "all": "Tous",
     "category": "Catégorie",
     "createItem": "Créer un élément",
-    "from": "De:",
-    "fromSprint": "Du Sprint:",
+    "from": "De :",
+    "fromSprint": "Du Sprint :",
     "headerTitle": "Feedback en attente",
     "loadingFeedback": "Chargement du feedback",
     "markAddressed": "Marquer comme traité",
@@ -407,15 +407,15 @@
     "cancelled": "Annulé",
     "completed": "Terminé",
     "createItem": "Créer un élément",
-    "due": "Échéance:",
-    "fromSprint": "Du Sprint:",
+    "due": "Échéance :",
+    "fromSprint": "Du Sprint :",
     "headerTitle": "Action en attente de la Retrospective",
     "inBacklog": "Dans le backlog",
     "inProgress": "En cours",
     "loadingActionItems": "Chargement des actions",
     "markAdded": "Marquer comme ajouté",
     "notInBacklog": "Pas dans le backlog",
-    "owner": "Propriétaire:",
+    "owner": "Propriétaire :",
     "pending": "En attente",
     "title": "Actions de rétrospective en attente",
     "updating": "Mise à jour..."
@@ -507,7 +507,7 @@
     "formLegendAriaLabel": "Tous les champs marqués d'un astérisque sont requis",
     "goalCreatedSuccess": "Product Goal créé avec succès !",
     "goalDeletedSuccess": "Product Goal supprimé avec succès !",
-    "goalLabel": "Objectif:",
+    "goalLabel": "Objectif :",
     "goalUpdatedSuccess": "Product Goal mis à jour avec succès !",
     "goalsCount": "{{count}} objectifs",
     "grid": "Grille",
@@ -538,7 +538,7 @@
     "statusActiveDesc": "L'objectif est actuellement en cours de réalisation",
     "statusCompletedDesc": "L'objectif a été atteint avec succès",
     "statusHistory": "Historique des statuts",
-    "statusLabel": "Statut:",
+    "statusLabel": "Statut :",
     "statusNewDesc": "L'objectif est nouvellement créé et pas encore commencé",
     "statusOptions": "Options de statut",
     "statusUpdatedSuccess": "Statut mis à jour avec succès !",
@@ -617,7 +617,7 @@
     "newDesc": "Élément nouvellement créé",
     "ready": "Prêt",
     "readyDesc": "Prêt pour le sprint",
-    "refined": "Raffiné",
+    "refined": "Affiné",
     "refinedDesc": "Exigences clarifiées"
   },
   "statusHistory": {
@@ -658,10 +658,10 @@
     "activeGoalRequired": "Un objectif actif est requis. Veuillez définir un objectif de Produit actif d'abord.",
     "allMustBeVerified": "Tous les critères doivent être vérifiés avant de continuer",
     "allVerified": "Tous les critères vérifiés",
-    "businessValueMinimum": "La valeur business doit être au minimum 1 point. Veuillez sélectionner une valeur valide.",
-    "businessValueMinimumOptional": "La valeur business doit être au minimum 1 point. Veuillez sélectionner une valeur reflétant l'importance relative de cet élément.",
-    "businessValueRequired": "La valeur business est requise. Veuillez sélectionner une valeur reflétant l'importance de cet élément.",
-    "businessValueTooLarge": "La valeur business ({{value}}) dépasse le maximum de 100 points. Veuillez sélectionner une valeur dans la plage standard.",
+    "businessValueMinimum": "La valeur métier doit être au minimum 1 point. Veuillez sélectionner une valeur valide.",
+    "businessValueMinimumOptional": "La valeur métier doit être au minimum 1 point. Veuillez sélectionner une valeur reflétant l'importance relative de cet élément.",
+    "businessValueRequired": "La valeur métier est requise. Veuillez sélectionner une valeur reflétant l'importance de cet élément.",
+    "businessValueTooLarge": "La valeur métier ({{value}}) dépasse le maximum de 100 points. Veuillez sélectionner une valeur dans la plage standard.",
     "cancel": "Annuler",
     "cannotChangeStatus": "Impossible de changer le statut en \"{{status}}\". Les champs obligatoires suivants doivent être complétés en premier : {{fields}}. Veuillez cliquer sur \"Modifier l'élément\" pour mettre à jour cet élément du backlog.",
     "categories": {
@@ -748,8 +748,8 @@
   "workflowTransitions": {
     "doneDescription": "Les éléments terminés ne peuvent pas être transitionnés",
     "inProgressDescription": "Les éléments en cours peuvent être terminés ou renvoyés à prêt",
-    "newDescription": "Les nouveaux éléments doivent être raffinés d'abord",
-    "readyDescription": "Les éléments prêts peuvent être démarrés ou renvoyés à raffiné",
-    "refinedDescription": "Les éléments raffinés peuvent être marqués prêts ou renvoyés à nouveau"
+    "newDescription": "Les nouveaux éléments doivent être affinés d'abord",
+    "readyDescription": "Les éléments prêts peuvent être démarrés ou renvoyés à affiné",
+    "refinedDescription": "Les éléments affinés peuvent être marqués prêts ou renvoyés à nouveau"
   }
 }

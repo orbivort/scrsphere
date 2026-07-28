@@ -56,14 +56,14 @@
     "itemsInColumn": "{{count}} elementi in {{title}}",
     "removeVote": "Rimuovi voto",
     "save": "Salva",
-    "saving": "Salvando...",
+    "saving": "Salvataggio in corso...",
     "vote": "Vota",
     "voteAriaLabel": "{{action}} per questo elemento ({{count}} voti)"
   },
   "completeRetro": {
     "ariaLabel": "Marca Retrospective come completata",
     "button": "Completa Retrospective",
-    "completing": "Completando...",
+    "completing": "Completamento in corso...",
     "description": "Marca questa Retrospective come completata per finalizzarla e prevenire ulteriori modifiche."
   },
   "confirmationModal": {
@@ -72,7 +72,7 @@
     "cannotUndo": "Questa azione non può essere annullata",
     "complete": "Completa",
     "completeTitle": "Completa Retrospective",
-    "completing": "Completando...",
+    "completing": "Completamento in corso...",
     "confirmationQuestion": "Sei sicuro di voler contrassegnare questa Retrospective come completata? Questa azione non può essere annullata.",
     "confirmationRequired": "Conferma richiesta",
     "finalStep": "Ultimo passo",
@@ -83,7 +83,7 @@
   "createActionItemModal": {
     "cancel": "Annulla",
     "createActionItem": "Crea Action Item",
-    "creating": "Creando...",
+    "creating": "Creazione in corso...",
     "description": "Descrizione",
     "descriptionHelper": "Fornisci contesto aggiuntivo per aiutare l'assegnato a capire il task",
     "descriptionPlaceholder": "Aggiungi dettagli su questo Action Item...",
@@ -112,7 +112,7 @@
     "title": "Retrospective non trovata"
   },
   "errors": {
-    "badRequest": "Richiesta invalida. Per favore verifica il tuo input e riprova.",
+    "badRequest": "Richiesta non valida. Per favore verifica il tuo input e riprova.",
     "network": "Errore di rete. Per favore verifica la tua connessione internet.",
     "notFound": "Risorsa non trovata. Potrebbe essere stata eliminata.",
     "notLoaded": "Retrospective non caricata. Per favore aspetta e riprova.",
@@ -125,7 +125,7 @@
     "completedSprints": "Sprints completati",
     "completedSprints_plural": "Sprints completati",
     "createRetrospective": "Crea Retrospective",
-    "creating": "Creando...",
+    "creating": "Creazione in corso...",
     "goal": "Goal:",
     "items": "elementi",
     "loading": "Caricamento Retrospectives...",
@@ -135,7 +135,7 @@
       "inProgress": "Retrospective in corso",
       "ready": "Pronto per Retrospective"
     },
-    "reviewed": "Reviewed",
+    "reviewed": "Revisionato",
     "statusLabels": {
       "active": "Attivo",
       "cancelled": "Annullato",
@@ -213,7 +213,7 @@
     "placeholder": "Scrivi un riepilogo dei risultati della Retrospective, takeaways chiave e Action Items...",
     "save": "Salva",
     "saveAriaLabel": "Salva riepilogo",
-    "saving": "Salvando...",
+    "saving": "Salvataggio in corso...",
     "summaryLabel": "Riepilogo",
     "takeawaysLabel": "Quali erano i takeaways chiave di questa Retrospective?",
     "title": "Riepilogo della Retrospective"

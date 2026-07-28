@@ -30,8 +30,8 @@
     "howToJoin": {
       "checkNotifications": "Überprüfen Sie Ihre Benachrichtigungen: Suchen Sie nach ausstehenden Team-Einladungen",
       "contactLeadership": "Kontaktieren Sie Ihre Führung: Wenden Sie sich an Ihren Scrum Master oder Product Owner",
-      "invitationsSentBy": "Team-Einladungen werden gesendet von: Scrum Mastern oder Product Ownern nur",
-      "title": "Wie man einem Team beitritt"
+      "invitationsSentBy": "Team-Einladungen werden gesendet von: Scrum Mastern oder ausschließlich von Product Ownern",
+      "title": "Wie Sie einem Team beitreten"
     },
     "title": "Developers"
   },
@@ -104,7 +104,7 @@
     "memberSince": "Mitglied seit",
     "roleNames": {
       "administrator": "Administrator",
-      "developer": "Developers",
+      "developer": "Developer",
       "productOwner": "Product Owner",
       "scrumMaster": "Scrum Master"
     },
@@ -182,7 +182,7 @@
     "unavailable": "Team-Informationen nicht verfügbar"
   },
   "teamStats": {
-    "avgVelocity": "Durchschnittl. Velocity",
+    "avgVelocity": "Durchschnittliche Velocity",
     "completedSprints": "Abgeschlossene Sprints",
     "sprintSuccessRate": "Sprint-Erfolgsrate",
     "storyPointsCompleted": "Abgeschlossene Story Points"

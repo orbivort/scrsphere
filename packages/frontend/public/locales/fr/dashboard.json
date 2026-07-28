@@ -3,16 +3,16 @@
   "actualProgress": "Progression réelle",
   "burndown": {
     "actual": "Réel",
-    "ariaLabel": "Graphique burndown du sprint montrant la progression dans le temps",
+    "ariaLabel": "Graphique d'avancement du sprint montrant la progression dans le temps",
     "daysAxis": "Jour",
     "estimatedHoursAxis": "Heures estimées",
     "ideal": "Idéal",
-    "noData": "Aucune donnée burndown disponible.",
+    "noData": "Aucune donnée de graphique d'avancement disponible.",
     "noDataText": "aucune donnée",
     "points": "{{count}} points",
     "storyPointsAxis": "Story Points",
-    "summary": "Graphique burndown du sprint : {{totalDays}} jours suivis. Jour actuel : {{currentDay}}. Story points de départ : {{startPoints}}. Idéal restant : {{idealRemaining}} points. Réel restant : {{actualText}}.",
-    "title": "Graphique Burndown du Sprint"
+    "summary": "Graphique d'avancement du sprint : {{totalDays}} jours suivis. Jour actuel : {{currentDay}}. Story points de départ : {{startPoints}}. Idéal restant : {{idealRemaining}} points. Réel restant : {{actualText}}.",
+    "title": "Graphique d'avancement du Sprint"
   },
   "burndownInsight": {
     "ahead": "En avance sur le planning",
@@ -42,11 +42,11 @@
     "title": "Mise à jour quotidienne",
     "today": "Aujourd'hui :",
     "todayPlaceholder": "Décrivez ce que vous prévoyez de faire aujourd'hui...",
-    "todayQuestion": "Que allez-vous faire aujourd'hui pour aider l'équipe à atteindre l'Sprint Goal ?",
+    "todayQuestion": "Que allez-vous faire aujourd'hui pour aider l'équipe à atteindre le Sprint Goal ?",
     "unknownUser": "Utilisateur inconnu",
     "yesterday": "Hier :",
     "yesterdayPlaceholder": "Décrivez ce que vous avez accompli hier...",
-    "yesterdayQuestion": "Qu'avez-vous fait hier pour aider l'équipe à atteindre l'Sprint Goal ?"
+    "yesterdayQuestion": "Qu'avez-vous fait hier pour aider l'équipe à atteindre le Sprint Goal ?"
   },
   "dashboardDetails": "Détails du tableau de bord",
   "dataRefreshed": "Données du tableau de bord actualisées avec succès",
@@ -54,12 +54,12 @@
   "daysRemainingLabel": "Jours restants",
   "failedToLoad": "Échec du chargement du tableau de bord",
   "hoursAgo": "il y a {{count}} heure{{plural}}",
-  "idealBurndown": "Burndown idéal",
+  "idealBurndown": "Graphique d'avancement idéal",
   "impedimentList": {
     "ariaLabel": "Liste des obstacles",
     "impedimentAriaLabel": "{{title}}, statut : {{status}}. Cliquez pour voir l'obstacle",
     "noImpediments": "Aucun obstacle signalé",
-    "title": "Impediments"
+    "title": "Obstacles"
   },
   "impedimentStatus": {
     "CLOSED": "Fermé",
@@ -69,7 +69,7 @@
   },
   "justNow": "à l'instant",
   "lastUpdated": "Dernière mise à jour",
-  "loadingBurndownChart": "Chargement du graphique burndown",
+  "loadingBurndownChart": "Chargement du graphique d'avancement",
   "loadingDashboard": "Chargement du tableau de bord...",
   "loadingImpediments": "Chargement des obstacles",
   "loadingTeamUpdates": "Chargement des mises à jour de l'équipe",
@@ -89,7 +89,7 @@
   "noSprintGoal": "Aucun Sprint Goal défini.",
   "noTasksYet": "Aucune tâche ne vous est encore assignée.",
   "notSubmitted": "Non soumis",
-  "openImpediments": "Impediments ouverts",
+  "openImpediments": "Obstacles ouverts",
   "quickActions": {
     "addBacklogItem": "Ajouter un élément au backlog",
     "createIncrement": "Créer un Increment",
@@ -110,7 +110,7 @@
   "retryLoadingDashboard": "Réessayer le chargement du tableau de bord",
   "retryLoadingImpediments": "Réessayer le chargement des obstacles",
   "retryLoadingTeamUpdates": "Réessayer le chargement des mises à jour",
-  "sprintBurndownChart": "Graphique Burndown du Sprint",
+  "sprintBurndownChart": "Graphique d'avancement du Sprint",
   "sprintCompletion": "Achèvement du sprint : {{progress}}%",
   "sprintGoal": "Sprint Goal",
   "sprintProgress": "Progression du Sprint",
@@ -140,7 +140,7 @@
   "teamMembers": "Membres de l'équipe",
   "teamUpdates": "Mises à jour de l'équipe",
   "title": "Tableau de bord",
-  "unableToLoadBurndown": "Impossible de charger le graphique burndown.",
+  "unableToLoadBurndown": "Impossible de charger le graphique d'avancement.",
   "unableToLoadImpediments": "Impossible de charger les obstacles.",
   "unableToLoadSprint": "Impossible de charger les données du sprint. Veuillez réessayer.",
   "unableToLoadUpdates": "Impossible de charger les mises à jour.",

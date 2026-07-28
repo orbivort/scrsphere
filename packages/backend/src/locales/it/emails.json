@@ -21,7 +21,7 @@
     "bodyIntro": "Il Suo account è stato creato con successo.",
     "closing": "Siamo felici di averLa con noi.",
     "cta": "Iniziare",
-    "heading": "Benvenuto, {{name}}!",
-    "subject": "Benvenuto in Scrumooth"
+    "heading": "Benvenuto/a, {{name}}!",
+    "subject": "Benvenuto/a in Scrumooth"
   }
 }

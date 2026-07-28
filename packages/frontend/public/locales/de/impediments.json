@@ -3,7 +3,7 @@
   "card": {
     "createdFromDailyUpdate": "Erstellt aus täglichem Update",
     "fromDailyScrum": "Aus Daily Scrum",
-    "owner": "Eigentümer",
+    "owner": "Verantwortlicher",
     "reportedBy": "Gemeldet von",
     "resolution": "Lösung",
     "sprint": "Sprint",
@@ -57,7 +57,7 @@
   "emptyState": {
     "clearFilter": "Filter löschen",
     "noFilterImpedimentsDescription": "Es gibt keine {{status}} Impediments in \"{{sprintName}}\". Versuchen Sie einen anderen Status-Filter.",
-    "noImpedimentsDescription": "Super! Keine Impediments für den aktiven Sprint \"{{sprintName}}\" gemeldet.",
+    "noImpedimentsDescription": "Sehr gut! Keine Impediments für den aktiven Sprint \"{{sprintName}}\" gemeldet.",
     "noImpedimentsForFilter": "Keine {{status}} Impediments",
     "noImpedimentsForSprint": "Keine Impediments für {{sprintName}}"
   },

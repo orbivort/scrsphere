@@ -33,17 +33,17 @@
   "attendeesSection": {
     "absent": "Absent",
     "addAttendee": "Ajouter un participant",
-    "addAttendeeSubtitle": "Ajouter un nouveau participant à cette session de review",
+    "addAttendeeSubtitle": "Ajouter un nouveau participant à cette session de Sprint Review",
     "addAttendeeTitle": "Ajouter un participant",
     "addAttendees": "Ajouter des participants",
     "addAttendeesAriaLabel": "Ajouter des participants",
     "attendanceCount": "{{attended}} / {{total}} présents",
     "attended": "Présent",
     "cancel": "Annuler",
-    "cannotAddToCompleted": "Impossible d'ajouter à un review terminé",
+    "cannotAddToCompleted": "Impossible d'ajouter à une revue terminée",
     "closeModal": "Fermer la fenêtre",
     "editAttendee": "Modifier le participant",
-    "editAttendeeSubtitle": "Mettre à jour les informations du participant pour ce review",
+    "editAttendeeSubtitle": "Mettre à jour les informations du participant pour cette Sprint Review",
     "editAttendeeTitle": "Modifier le participant",
     "emptyHint": "Marquez les membres de l'équipe ci-dessus ou ajoutez manuellement des participants.",
     "emptyMessage": "Aucun participant enregistré pour le moment.",
@@ -64,7 +64,7 @@
     "removeAttendee": "Supprimer le participant",
     "removeAttendeeConfirm": "Supprimer",
     "removeAttendeeTitle": "Supprimer le participant",
-    "roleDeveloper": "Développeur",
+    "roleDeveloper": "Developer",
     "roleProductOwner": "Product Owner",
     "roleScrumMaster": "Scrum Master",
     "roleStakeholder": "Partie prenante",
@@ -92,8 +92,8 @@
   "collapse": "Réduire",
   "confirm": "Confirmer",
   "confirmDialog": {
-    "defaultMessage": "Êtes-vous sûr de vouloir continuer?",
-    "removeMessage": "Êtes-vous sûr de vouloir supprimer {{name}}?"
+    "defaultMessage": "Êtes-vous sûr de vouloir continuer ?",
+    "removeMessage": "Êtes-vous sûr de vouloir supprimer {{name}} ?"
   },
   "copied": "Copié !",
   "copy": "Copier",
@@ -115,9 +115,9 @@
     "confirmationCheckbox": "Je comprends que cette action est définitive et ne peut pas être annulée. Je souhaite supprimer mon compte et toutes les données associées.",
     "confirmationHelp": "Cela permet d'éviter les suppressions accidentelles",
     "confirmationInput": {
-      "error": "Le texte ne correspond pas. Veuillez taper exactement:",
+      "error": "Le texte ne correspond pas. Veuillez taper exactement :",
       "instructions": "Tapez le texte exactement comme indiqué, sensible à la casse, pour activer le bouton de suppression. Appuyez sur Entrée lorsque le texte correspond pour envoyer.",
-      "label": "Pour confirmer la suppression, veuillez taper:",
+      "label": "Pour confirmer la suppression, veuillez taper :",
       "placeholder": "Tapez \"{{phrase}}\" pour confirmer",
       "success": "Le texte de confirmation correspond"
     },
@@ -265,7 +265,7 @@
       "createBacklogItem": "Erreur lors de la création de l'élément du backlog",
       "createDefinition": "Erreur lors de la création de la définition",
       "createGoal": "Erreur lors de la création de l'objectif",
-      "createImpediment": "Erreur lors de la création de l'Impediment",
+      "createImpediment": "Erreur lors de la création de l'obstacle",
       "createIncrement": "Erreur lors de la création de l'Increment",
       "createRetrospective": "Erreur lors de la création de la Retrospective",
       "createReview": "Erreur lors de la création de la revue",
@@ -275,7 +275,7 @@
       "deleteBacklogItem": "Erreur lors de la suppression de l'élément du backlog",
       "deleteDefinition": "Erreur lors de la suppression de la définition",
       "deleteGoal": "Erreur lors de la suppression de l'objectif",
-      "deleteImpediment": "Erreur lors de la suppression de l'Impediment",
+      "deleteImpediment": "Erreur lors de la suppression de l'obstacle",
       "deleteIncrement": "Erreur lors de la suppression de l'Increment",
       "deleteRetrospective": "Erreur lors de la suppression de la Retrospective",
       "deleteReview": "Erreur lors de la suppression de la revue",
@@ -291,7 +291,7 @@
       "updateBacklogItem": "Erreur lors de la mise à jour de l'élément du backlog",
       "updateDefinition": "Erreur lors de la mise à jour de la définition",
       "updateGoal": "Erreur lors de la mise à jour de l'objectif",
-      "updateImpediment": "Erreur lors de la mise à jour de l'Impediment",
+      "updateImpediment": "Erreur lors de la mise à jour de l'obstacle",
       "updateIncrement": "Erreur lors de la mise à jour de l'Increment",
       "updateProfile": "Erreur lors de la mise à jour du profil",
       "updateRetrospective": "Erreur lors de la mise à jour de la Retrospective",
@@ -365,7 +365,7 @@
     "activeSprint": "Sprint actif",
     "dailyScrum": "Daily Scrum",
     "dashboard": "Tableau de bord",
-    "impediments": "Impediment",
+    "impediments": "Obstacles",
     "increments": "Increment",
     "notifications": "Notifications",
     "productBacklog": "Product Backlog",
@@ -409,7 +409,7 @@
   },
   "permission": {
     "actionError": "Vous n'avez pas la permission d'effectuer cette action.",
-    "insufficientRoles": "Permissions insuffisantes. Rôles requis: {{roles}}",
+    "insufficientRoles": "Permissions insuffisantes. Rôles requis : {{roles}}",
     "transitionError": "Vous n'avez pas la permission d'effectuer cette transition."
   },
   "previous": "Précédent",
@@ -480,8 +480,8 @@
   "statusSelector": {
     "changeItemStatusHint": "Cliquez pour changer le statut de l'élément",
     "changeStatus": "Changer le statut",
-    "currentStatusClickable": "Statut actuel: {{status}}. Cliquez pour changer le statut.",
-    "currentStatusLocked": "Statut actuel: {{status}} (verrouillé)",
+    "currentStatusClickable": "Statut actuel : {{status}}. Cliquez pour changer le statut.",
+    "currentStatusLocked": "Statut actuel : {{status}} (verrouillé)",
     "statusOptions": "Options de statut"
   },
   "submit": "Soumettre",
@@ -490,7 +490,7 @@
     "goToTeamPage": "Aller à la page Équipe",
     "loading": "Chargement des équipes...",
     "roles": {
-      "developer": "Développeur",
+      "developer": "Developer",
       "productOwner": "Product Owner",
       "scrumMaster": "Scrum Master"
     },
@@ -507,21 +507,21 @@
     "discardDescription": "Fermer sans enregistrer et perdre toutes les modifications",
     "goBack": "Retour",
     "goBackDescription": "Continuer la modification et enregistrer vos modifications",
-    "message": "Vous avez des modifications non enregistrées. Êtes-vous sûr de vouloir les ignorer?",
+    "message": "Vous avez des modifications non enregistrées. Êtes-vous sûr de vouloir les ignorer ?",
     "messages": {
-      "passwordChange": "Vous avez des modifications non enregistrées dans le formulaire de changement de mot de passe. Êtes-vous sûr de vouloir les ignorer?",
-      "profileEdit": "Vous avez des modifications non enregistrées dans le formulaire de modification du profil. Êtes-vous sûr de vouloir les ignorer?"
+      "passwordChange": "Vous avez des modifications non enregistrées dans le formulaire de changement de mot de passe. Êtes-vous sûr de vouloir les ignorer ?",
+      "profileEdit": "Vous avez des modifications non enregistrées dans le formulaire de modification du profil. Êtes-vous sûr de vouloir les ignorer ?"
     },
     "permanentlyLost": "Vos modifications seront définitivement perdues si vous les ignorez. Cette action ne peut pas être annulée.",
     "subtitle": "Veuillez vérifier avant de continuer",
     "title": "Modifications non enregistrées",
     "unsavedModifications": "Modifications non enregistrées détectées",
-    "whatWouldYouDo": "Que souhaitez-vous faire?"
+    "whatWouldYouDo": "Que souhaitez-vous faire ?"
   },
   "unsavedChangesModal": {
     "discard": "Ignorer",
     "keepEditing": "Continuer la modification",
-    "message": "Vous avez des modifications non enregistrées. Êtes-vous sûr de vouloir les ignorer?",
+    "message": "Vous avez des modifications non enregistrées. Êtes-vous sûr de vouloir les ignorer ?",
     "title": "Modifications non enregistrées"
   },
   "update": "Mettre à jour",

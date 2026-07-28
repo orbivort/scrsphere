@@ -1,10 +1,10 @@
 {
   "activeImpediments": {
-    "title": "Impediments actifs",
+    "title": "Obstacles actifs",
     "trackAsImpediment": "Suivre comme obstacle",
     "tracked": "Suivi",
-    "trackedImpediment": "Impediment suivi",
-    "untrackedImpediment": "Impediment non suivi",
+    "trackedImpediment": "Obstacle suivi",
+    "untrackedImpediment": "Obstacle non suivi",
     "viewAllImpediments": "Voir tous les {{count}} obstacles",
     "viewDetails": "Voir les détails"
   },
@@ -40,9 +40,9 @@
     "impedimentLabel": "Des obstacles ? (optionnel)",
     "impedimentPlaceholder": "Décrivez tous les bloquants ou obstacles...",
     "submitting": "Soumission...",
-    "todayLabel": "Que ferez-vous aujourd'hui pour aider l'équipe à atteindre l'Sprint Goal ?",
+    "todayLabel": "Que ferez-vous aujourd'hui pour aider l'équipe à atteindre le Sprint Goal ?",
     "todayPlaceholder": "Décrivez ce que vous prévoyez de faire aujourd'hui...",
-    "yesterdayLabel": "Qu'avez-vous fait hier pour aider l'équipe à atteindre l'Sprint Goal ?",
+    "yesterdayLabel": "Qu'avez-vous fait hier pour aider l'équipe à atteindre le Sprint Goal ?",
     "yesterdayPlaceholder": "Décrivez ce que vous avez accompli hier..."
   },
   "formatTimeSince": {
@@ -105,7 +105,7 @@
     "viewSprintBoard": "Voir le tableau de sprint"
   },
   "stats": {
-    "impediments": "Impediments",
+    "impediments": "Obstacles",
     "participation": "Participation",
     "pending": "En attente",
     "submitted": "Soumis"
@@ -124,7 +124,7 @@
     "allSubmitted": "Tous les membres de l'équipe ont soumis leurs mises à jour",
     "failedCreateImpediment": "Impossible de créer l'obstacle. Veuillez réessayer.",
     "failedSendReminder": "Impossible d'envoyer le rappel. Veuillez réessayer.",
-    "impedimentCreated": "Impediment créé avec succès !",
+    "impedimentCreated": "Obstacle créé avec succès !",
     "networkError": "Une erreur réseau s'est produite. Vérifiez votre connexion et réessayez.",
     "noPendingUpdates": "Aucune mise à jour en attente",
     "noPermissionCreateImpediments": "Vous n'avez pas la permission de créer des obstacles.",
@@ -146,7 +146,7 @@
   "updateCard": {
     "clickToCollapse": "Cliquer pour réduire",
     "clickToExpand": "Cliquer pour développer",
-    "impediment": "Impediment",
+    "impediment": "Obstacle",
     "today": "Aujourd'hui",
     "trackAsFormalImpediment": "Suivre comme obstacle formel",
     "trackAsImpediment": "Suivre comme obstacle",

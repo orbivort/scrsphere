@@ -90,16 +90,16 @@
     "resolved": "Résolu"
   },
   "subtitle": "{{sprintName}} - Suivre et résoudre les bloquants affectant l'équipe",
-  "title": "Impediments",
+  "title": "Obstacles",
   "toast": {
-    "created": "Impediment créé avec succès",
-    "deleted": "Impediment supprimé avec succès",
+    "created": "Obstacle créé avec succès",
+    "deleted": "Obstacle supprimé avec succès",
     "failedCreate": "Impossible de créer l'obstacle. Veuillez réessayer.",
     "failedDelete": "Impossible de supprimer l'obstacle. Veuillez réessayer.",
     "failedUpdate": "Impossible de mettre à jour l'obstacle. Veuillez réessayer.",
     "noActiveSprint": "Aucun sprint actif trouvé. Veuillez démarrer un sprint d'abord.",
     "teamIdRequired": "L'ID de l'équipe est requis. Veuillez sélectionner une équipe d'abord.",
-    "updated": "Impediment mis à jour avec succès"
+    "updated": "Obstacle mis à jour avec succès"
   },
   "unsavedModal": {
     "message": "Vous avez des modifications non sauvegardées dans le formulaire d'obstacle. Êtes-vous sûr de vouloir les supprimer ?",

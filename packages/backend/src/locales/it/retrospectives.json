@@ -1,7 +1,7 @@
 {
-  "actionItemCreated": "Elemento di azione \"{{title}}\" creato con successo",
-  "actionItemDeleted": "Elemento di azione eliminato con successo",
-  "actionItemUpdated": "Elemento di azione \"{{title}}\" aggiornato con successo",
+  "actionItemCreated": "Azione \"{{title}}\" creata con successo",
+  "actionItemDeleted": "Azione eliminata con successo",
+  "actionItemUpdated": "Azione \"{{title}}\" aggiornata con successo",
   "attendeeAdded": "Partecipante aggiunto con successo",
   "attendeeRemoved": "Partecipante rimosso con successo",
   "categoryDidntGoWell": "Cosa non ha funzionato bene",

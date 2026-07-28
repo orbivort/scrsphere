@@ -48,7 +48,7 @@
   "passwordSpecial": "Au moins un caractère spécial",
   "passwordUppercase": "Au moins une majuscule",
   "required": "{{field}} est requis",
-  "sprintRequired": "Veuillez sélectionner un sprint",
+  "sprintRequired": "Veuillez sélectionner un Sprint",
   "summaryMaxLength": "Le résumé doit contenir {{max}} caractères ou moins",
   "summaryMinLength": "Le résumé doit contenir au moins {{min}} caractères",
   "summaryRequired": "Le résumé est requis",

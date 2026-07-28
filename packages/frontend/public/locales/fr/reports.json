@@ -4,18 +4,18 @@
     "title": "Erreur lors du chargement des rapports"
   },
   "insights": {
-    "empty": "Aucun insight disponible encore. Terminez plus de Sprints pour générer des insights.",
+    "empty": "Aucun enseignement disponible encore. Terminez plus de Sprints pour générer des enseignements.",
     "items": {
       "active-sprint-impediments": {
         "description": "Le Sprint actuel a {{count}} obstacle(s). Surveillez de près.",
-        "title": "Impediments du Sprint actif"
+        "title": "Obstacles du Sprint actif"
       },
       "consistent-delivery": {
         "description": "L'équipe a maintenu 100% de réalisation des objectifs de Sprint lors des {{count}} derniers Sprints",
         "title": "Livraison cohérente"
       },
       "get-started": {
-        "description": "Terminez plus de Sprints pour générer des insights sur les performances de l'équipe.",
+        "description": "Terminez plus de Sprints pour générer des enseignements sur les performances de l'équipe.",
         "title": "Pour commencer"
       },
       "high-success-rate": {
@@ -43,10 +43,10 @@
         "title": "Amélioration de la vélocité"
       }
     },
-    "title": "Insights clés"
+    "title": "Enseignements clés"
   },
   "loading": {
-    "insights": "Chargement des insights...",
+    "insights": "Chargement des enseignements...",
     "metrics": "Chargement des métriques...",
     "sprintHistory": "Chargement de l'historique des Sprints...",
     "velocityChart": "Chargement du graphique de vélocité..."
@@ -60,11 +60,11 @@
     "impediments": {
       "openCount": "Obstacle(s) ouvert(s)",
       "resolved": "Résolus",
-      "title": "Impediments"
+      "title": "Obstacles"
     },
     "sprintSuccessRate": {
       "fromLastMonth": "du dernier mois",
-      "title": "Taux de succès du Sprint",
+      "title": "Taux de réussite du Sprint",
       "unit": "Objectifs de Sprint atteints"
     },
     "teamSatisfaction": {
@@ -79,7 +79,7 @@
     "empty": "Aucun historique de Sprint disponible.",
     "stats": {
       "completed": "Terminé",
-      "impediments": "Impediments",
+      "impediments": "Obstacles",
       "planned": "Planifié",
       "teamMembers": "Membres de l'équipe"
     },

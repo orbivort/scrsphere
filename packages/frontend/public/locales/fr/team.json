@@ -4,15 +4,15 @@
     "teamStatistics": "Statistiques de l'équipe"
   },
   "capabilities": {
-    "agileCeremonies": "Cérémonies Agile",
-    "agileCeremoniesDesc": "Faciliter les Daily Scrums, Revues et Rétrospectives",
+    "agileCeremonies": "Cérémonies agiles",
+    "agileCeremoniesDesc": "Faciliter les Daily Scrums, Sprint Reviews et Sprint Retrospectives",
     "progressTracking": "Suivi du progrès",
     "progressTrackingDesc": "Suivre le progrès avec des tableaux de bord et des rapports en temps réel",
     "sprintPlanning": "Sprint Planning",
     "sprintPlanningDesc": "Planifier et gérer les Sprints avec votre équipe",
     "teamCollaboration": "Collaboration de l'équipe",
     "teamCollaborationDesc": "Travailler ensemble efficacement avec des objectifs partagés et de la visibilité",
-    "title": "Capacités de la Plateforme"
+    "title": "Capacités de la plateforme"
   },
   "deleteModal": {
     "cancel": "Annuler",
@@ -29,7 +29,7 @@
     "description": "Rejoindre une équipe Scrum existante...",
     "howToJoin": {
       "checkNotifications": "Vérifiez vos notifications : Recherchez les invitations d'équipe en attente",
-      "contactLeadership": "Contactez votre leadership : Contactez votre Scrum Master ou Product Owner",
+      "contactLeadership": "Contactez votre direction : Contactez votre Scrum Master ou Product Owner",
       "invitationsSentBy": "Les invitations d'équipe sont envoyées par : Scrum Masters ou Product Owners uniquement",
       "title": "Comment rejoindre une équipe"
     },
@@ -60,20 +60,20 @@
   "initializing": "Initialisation du contexte d'équipe...",
   "inviteErrors": {
     "alreadyMember": "Cet utilisateur est déjà membre de l'équipe.",
-    "emailRequired": "L'adresse email est requise.",
-    "emailTooLong": "L'adresse email est trop longue. La longueur maximale est de 254 caractères.",
+    "emailRequired": "L'adresse e-mail est requise.",
+    "emailTooLong": "L'adresse e-mail est trop longue. La longueur maximale est de 254 caractères.",
     "genericError": "Impossible d'ajouter le membre à l'équipe. Veuillez réessayer plus tard.",
-    "invalidEmail": "Veuillez entrer une adresse email valide.",
+    "invalidEmail": "Veuillez entrer une adresse e-mail valide.",
     "networkError": "Erreur réseau. Veuillez vérifier votre connexion et réessayer.",
     "noPermission": "Vous n'avez pas la permission d'ajouter des membres à l'équipe.",
-    "userNotFound": "Aucun utilisateur trouvé avec cette adresse email. L'utilisateur doit s'inscrire d'abord avant de pouvoir être invité à une équipe."
+    "userNotFound": "Aucun utilisateur trouvé avec cette adresse e-mail. L'utilisateur doit s'inscrire d'abord avant de pouvoir être invité à une équipe."
   },
   "inviteModal": {
     "addedSuccess": "{{name}} a été ajouté à l'équipe comme {{role}}.",
     "adding": "Ajout...",
     "cancel": "Annuler",
-    "emailLabel": "Adresse email",
-    "emailPlaceholder": "Entrez l'adresse email",
+    "emailLabel": "Adresse e-mail",
+    "emailPlaceholder": "Entrez l'adresse e-mail",
     "role": "Rôle",
     "sendInvite": "Envoyer l'invitation",
     "title": "Inviter un membre de l'équipe",
@@ -86,7 +86,7 @@
     "description": "En tant que leader agile, vous avez l'autorité de créer et gérer des équipes. Prenez en charge le succès de votre projet en établissant votre espace de travail d'équipe.",
     "quickStart": {
       "step1": "Créer l'équipe",
-      "step2": "Inviter membres",
+      "step2": "Inviter des membres",
       "step3": "Démarrer Sprint"
     },
     "quickStartTitle": "Processus de démarrage rapide :",
@@ -132,8 +132,8 @@
     "filterResults": "Affichage de {{shown}} sur {{total}} membre(s)",
     "inviteMember": "Inviter un membre",
     "noMatchSearch": "Aucun membre ne correspond à vos critères de recherche.",
-    "searchAriaLabel": "Rechercher par nom ou email",
-    "searchPlaceholder": "Rechercher par nom ou email...",
+    "searchAriaLabel": "Rechercher par nom ou e-mail",
+    "searchPlaceholder": "Rechercher par nom ou e-mail...",
     "sortByAriaLabel": "Trier les membres par",
     "sortOptions": {
       "byJoined": "Trier par date d'adhésion",

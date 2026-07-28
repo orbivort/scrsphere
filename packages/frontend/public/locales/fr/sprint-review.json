@@ -4,7 +4,7 @@
     "actionType": "Type d'action",
     "actionTypeOptions": {
       "add": "Ajouter un nouvel élément",
-      "modify": "Modifier existant",
+      "modify": "Modifier un élément existant",
       "remove": "Supprimer",
       "reorder": "Réorganiser",
       "split": "Diviser"
@@ -20,36 +20,36 @@
     "reason": "Raison *",
     "reasonPlaceholder": "Pourquoi cet ajustement est nécessaire ?",
     "relatedPbi": "PBI associé (Optionnel)",
-    "subtitle": "Enregistrer les changements au Product Backlog basés sur le feedback de la Sprint Review",
+    "subtitle": "Enregistrer les changements au Product Backlog basés sur le retour de la Sprint Review",
     "title": "Ajouter un ajustement du Backlog",
     "unsavedMessage": "Vous avez un ajustement du backlog non sauvegardé. Êtes-vous sûr de vouloir le supprimer ?",
     "unsavedTitle": "Changements d'ajustement du Backlog non sauvegardés"
   },
   "addFeedbackModal": {
     "actionRequired": "Action requise",
-    "addFeedback": "Ajouter le Feedback",
+    "addFeedback": "Ajouter le retour",
     "adding": "Ajout...",
     "authorName": "Nom de l'auteur *",
-    "authorNamePlaceholder": "Entrez le nom du stakeholder",
+    "authorNamePlaceholder": "Entrez le nom de la partie prenante",
     "cancel": "Annuler",
     "category": "Catégorie",
     "categoryOptions": {
-      "negative": "Feedback négatif",
-      "positive": "Feedback positif",
+      "negative": "Retour négatif",
+      "positive": "Retour positif",
       "question": "Question",
       "suggestion": "Suggestion"
     },
-    "feedback": "Feedback *",
-    "feedbackPlaceholder": "Entrez le feedback du stakeholder...",
+    "feedback": "Retour *",
+    "feedbackPlaceholder": "Entrez le retour de la partie prenante...",
     "none": "Aucun",
     "owner": "Propriétaire *",
     "ownerPlaceholder": "Sélectionner le propriétaire...",
     "relatedPbi": "PBI associé (Optionnel)",
     "requiredFieldsNote": "Les champs requis sont marqués avec *",
-    "subtitle": "Capturer des insights précieux des parties prenantes pour améliorer votre produit",
-    "title": "Ajouter un Feedback Partie prenante",
-    "unsavedMessage": "Vous avez un feedback non sauvegardé. Êtes-vous sûr de vouloir le supprimer ?",
-    "unsavedTitle": "Changements de Feedback non sauvegardés"
+    "subtitle": "Capturer des enseignements précieux des parties prenantes pour améliorer votre produit",
+    "title": "Ajouter un retour Partie prenante",
+    "unsavedMessage": "Vous avez un retour non sauvegardé. Êtes-vous sûr de vouloir le supprimer ?",
+    "unsavedTitle": "Changements de retour non sauvegardés"
   },
   "adjustments": {
     "actionTypes": {
@@ -63,7 +63,7 @@
     "addAdjustmentDisabled": "Ajouter un ajustement - désactivé",
     "backlogHint": "Cet élément sera présent dans la page Product Backlog pour action.",
     "cannotAddAdjustmentTitle": "Impossible d'ajouter un ajustement à une Review terminée",
-    "description": "Changements au Product Backlog basés sur le feedback de la Sprint Review.",
+    "description": "Changements au Product Backlog basés sur le retour de la Sprint Review.",
     "empty": "Aucun ajustement du backlog effectué pendant ce Review.",
     "owner": "Propriétaire :",
     "reason": "Raison :",
@@ -133,17 +133,17 @@
   "feedback": {
     "actionRequired": "Action requise",
     "actionTaken": "Action effectuée",
-    "addFeedback": "Ajouter un Feedback",
-    "backlogHint": "Utilisez l'onglet \"Ajustements du Backlog\" pour effectuer des changements basés sur ce feedback.",
+    "addFeedback": "Ajouter un retour",
+    "backlogHint": "Utilisez l'onglet \"Ajustements du Backlog\" pour effectuer des changements basés sur ce retour.",
     "categories": {
-      "negative": "Feedback négatif",
-      "positive": "Feedback positif",
+      "negative": "Retour négatif",
+      "positive": "Retour positif",
       "question": "Question",
       "suggestion": "Suggestion"
     },
-    "empty": "Aucun feedback collecté. Cliquez sur \"Ajouter un Feedback\" pour ajouter le feedback des parties prenantes.",
+    "empty": "Aucun retour collecté. Cliquez sur \"Ajouter un retour\" pour ajouter le retour des parties prenantes.",
     "owner": "Propriétaire :",
-    "title": "Feedback des Parties prenantes"
+    "title": "Retour des Parties prenantes"
   },
   "findingActiveSprint": "Recherche du Sprint actif...",
   "increment": {
@@ -169,7 +169,7 @@
     "completedSprints_plural": "Sprints terminés",
     "createIncrement": "Créer un Increment",
     "goal": "Objectif :",
-    "loading": "Chargement des Revues de Sprint...",
+    "loading": "Chargement des Sprint Reviews...",
     "reviewStatus": {
       "completed": "Review terminée",
       "inProgress": "Review en cours",
@@ -183,7 +183,7 @@
       "completed": "Terminé",
       "planned": "Planifié"
     },
-    "subtitle": "Examiner les Sprints terminés, inspecter les Increments et collecter le feedback des parties prenantes",
+    "subtitle": "Examiner les Sprints terminés, inspecter les Increments et collecter le retour des parties prenantes",
     "title": "Sprint Reviews",
     "viewDetails": "Voir les détails",
     "viewReview": "Voir le Review"
@@ -200,7 +200,7 @@
   },
   "overview": {
     "attendees": "Participants",
-    "completionRate": "Taux de complétion",
+    "completionRate": "Taux d'achèvement",
     "duration": "Durée",
     "noSprintGoal": "Aucun Sprint Goal défini.",
     "noSummary": "Aucun résumé fourni.",
@@ -225,7 +225,7 @@
   },
   "tabs": {
     "backlogAdjustments": "Ajustements du Backlog",
-    "feedback": "Feedback",
+    "feedback": "Retour",
     "increment": "Increment",
     "overview": "Vue d'ensemble"
   },

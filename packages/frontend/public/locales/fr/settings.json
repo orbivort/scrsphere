@@ -1,6 +1,6 @@
 {
   "createTeamModal": {
-    "beforeUnload": "Vous avez des modifications non sauvegardées dans le formulaire de création d'équipe. êtes-vous sûr de vouloir quitter?",
+    "beforeUnload": "Vous avez des modifications non sauvegardées dans le formulaire de création d'équipe. Êtes-vous sûr de vouloir quitter?",
     "cancel": "Annuler",
     "closeModal": "Fermer le modal",
     "createTeam": "Créer l'équipe",
@@ -13,7 +13,7 @@
     "subtitle": "Construisez un espace de travail collaboratif pour votre équipe agile",
     "teamName": "Nom de l'équipe",
     "teamNamePlaceholder": "ex., Alpha Squad, Product Team A",
-    "title": "Créer une Nouvelle équipe",
+    "title": "Créer une nouvelle équipe",
     "validation": {
       "descriptionMaxLength": "La description doit avoir moins de 1000 caractères",
       "nameMaxLength": "Le nom de l'équipe doit avoir moins de 100 caractères",
@@ -118,20 +118,20 @@
       "consequence2": "Les membres de l'équipe perdent l'accès aux ressources de l'équipe",
       "consequence3": "Les paramètres et configurations associés seront supprimés",
       "consequence4": "Cette action est irréversible",
-      "consequencesTitle": "Conséquences de la suppression:",
+      "consequencesTitle": "Conséquences de la suppression :",
       "deleteWarning": "Vous êtes sur le point de supprimer définitivement cette équipe. Cette action ne peut pas être annulée.",
       "impactMembers": "{{count}} membre(s) seront supprimés de cette équipe",
-      "requiredActions": "Actions requises:",
+      "requiredActions": "Actions requises :",
       "step1": "Naviguer vers la section Objectifs de Produit",
       "step2": "Supprimer ou réassigner tous les objectifs pour \"{{name}}\"",
       "step3": "Revenir ici pour terminer la suppression de l'équipe",
-      "teamLabel": "équipe:",
-      "title": "Avertissement d'Action Critique"
+      "teamLabel": "équipe :",
+      "title": "Avertissement d'action critique"
     }
   },
   "dodPanel": {
     "activeItems": "{{count}} éléments actifs",
-    "editButton": "Éditer DoD",
+    "editButton": "Modifier DoD",
     "empty": {
       "configureButton": "Configurer DoD",
       "message": "Configurez les critères de Definition of Done de votre équipe.",
@@ -166,7 +166,7 @@
   },
   "dorPanel": {
     "activeItems": "{{count}} éléments actifs",
-    "editButton": "Éditer DoR",
+    "editButton": "Modifier DoR",
     "empty": {
       "configureButton": "Configurer DoR",
       "description": "La Definition of Ready est une liste de critères qu'une user story doit respecter avant d'être prise dans un sprint.",
@@ -178,7 +178,7 @@
     "item": {
       "acceptanceCriteria": "Critères d'acceptation définis et acceptés",
       "acceptanceCriteriaDefined": "Critères d'acceptation définis",
-      "businessValue": "Valeur business attribuée",
+      "businessValue": "Valeur métier attribuée",
       "clearTitle": "Titre et description clairs fournis",
       "dependencies": "Dépendances identifiées et documentées",
       "dependenciesIdentified": "Dépendances identifiées",
@@ -238,8 +238,8 @@
         "revokeFailed": "Échec de la révocation de la session",
         "signOutFailed": "Échec de la déconnexion des autres sessions"
       },
-      "ip": "IP:",
-      "lastActive": "Dernière activité:",
+      "ip": "IP :",
+      "lastActive": "Dernière activité :",
       "loading": "Chargement des sessions...",
       "note": "Cela vous déconnectera de tous les autres appareils, à l'exception de celui-ci.",
       "revoke": "Révoquer",
@@ -251,16 +251,16 @@
     },
     "contactSection": {
       "message": "Contactez votre équipe RH de protection des données ou le responsable de la protection des données de l'entreprise.",
-      "title": "Des questions sur vos données?"
+      "title": "Des questions sur vos données ?"
     },
     "dataExport": {
       "ariaLabel": "Exporter vos données personnelles",
-      "dataIncluded": "Données incluses dans l'export:",
+      "dataIncluded": "Données incluses dans l'export :",
       "description": "Télécharger une copie de vos données personnelles",
       "downloadExport": "Télécharger l'export",
       "exportButton": "Exporter mes données",
       "exporting": "Exportation...",
-      "formatLabel": "Format:",
+      "formatLabel": "Format :",
       "formatValue": "JSON (lisible par machine)",
       "portabilityDescription": "Vous avez le droit de recevoir vos données personnelles dans un format structuré, couramment utilisé et lisible par machine.",
       "profileDescription": "Nom, email, avatar, préférences",
@@ -279,9 +279,9 @@
       "downloadJson": "Télécharger le fichier JSON",
       "exportProgress": "Progression de l'export",
       "infoText": "Vos données sont exportées au format JSON, qui est structuré, couramment utilisé et lisible par machine.",
-      "jobId": "ID du job:",
+      "jobId": "ID du job :",
       "statusMessages": {
-        "completed": "Votre export de données est prêt!",
+        "completed": "Votre export de données est prêt !",
         "expired": "Cet export a expiré. Veuillez créer un nouveau.",
         "failed": "Échec de l'export. Veuillez réessayer.",
         "initializing": "Initialisation de l'export...",
@@ -312,13 +312,13 @@
       "closePreviewModal": "Fermer la fenêtre d'aperçu",
       "deleteSprint": "Supprimer {{name}}"
     },
-    "backToSprintPlanning": "Retour à la Sprint Planning",
+    "backToSprintPlanning": "Retour au Sprint Planning",
     "configuredFor": "Configuré pour {{year}}",
     "currentConfiguration": "Configuration actuelle",
     "deleteModal": {
       "cancel": "Annuler",
       "cannotUndo": "Cette action ne peut pas être annulée.",
-      "confirmation": "Êtes-vous sûr de vouloir supprimer ce sprint?",
+      "confirmation": "Êtes-vous sûr de vouloir supprimer ce sprint ?",
       "deleteSprint": "Supprimer le Sprint",
       "deleting": "Suppression...",
       "sprintToDelete": "Sprint à supprimer :",
@@ -400,15 +400,15 @@
     },
     "empty": {
       "benefits": {
-        "agileCeremonies": "Collaborer avec les cérémonies agile",
+        "agileCeremonies": "Collaborer avec les cérémonies agiles",
         "progressTracking": "Suivre les progrès avec des métriques en temps réel",
         "sprintPlanning": "Organiser le travail avec la planification des sprints"
       },
       "clearSearchBrowse": "Effacer la recherche et parcourir toutes les équipes",
-      "createFirstTeam": "Créer Votre Première équipe",
-      "createNewTeam": "Créer une Nouvelle équipe",
+      "createFirstTeam": "Créer votre première équipe",
+      "createNewTeam": "Créer une nouvelle équipe",
       "defaultDescription": "Les équipes sont la base d'une collaboration efficace. Créez votre première équipe pour commencer à planifier des sprints, suivre les progrès et atteindre vos objectifs ensemble.",
-      "defaultTitle": "Construisez Votre équipe Idéale",
+      "defaultTitle": "Construisez votre équipe idéale",
       "searchDescription": "Essayez d'ajuster vos termes de recherche ou créez une nouvelle équipe pour commencer.",
       "searchNoResults": "Aucune équipe trouvée correspondant à \"{{search}}\""
     },

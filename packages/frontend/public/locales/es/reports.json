@@ -1,7 +1,7 @@
 {
   "error": {
-    "message": "No se pudieron cargar los datos del reporte. Por favor intente más tarde.",
-    "title": "Error al cargar los reportes"
+    "message": "No se pudieron cargar los datos del informe. Por favor intente más tarde.",
+    "title": "Error al cargar los informes"
   },
   "insights": {
     "empty": "Sin perspectivas disponibles aún. Complete más Sprints para generar perspectivas.",
@@ -35,15 +35,15 @@
         "title": "Mejora reciente"
       },
       "velocity-decline": {
-        "description": "La velocidad promedio disminuyó un {{trend}}%. Considere revisar la planificación del Sprint.",
+        "description": "La velocidad media disminuyó un {{trend}}%. Considere revisar la planificación del Sprint.",
         "title": "Disminución de velocidad"
       },
       "velocity-improvement": {
-        "description": "La velocidad promedio aumentó un {{trend}}% en comparación con Sprints anteriores",
+        "description": "La velocidad media aumentó un {{trend}}% en comparación con Sprints anteriores",
         "title": "Mejora de velocidad"
       }
     },
-    "title": "perspectivas clave"
+    "title": "Perspectivas clave"
   },
   "loading": {
     "insights": "Cargando perspectivas...",
@@ -54,7 +54,7 @@
   "metrics": {
     "avgVelocity": {
       "fromLastSprint": "del último Sprint",
-      "title": "velocidad promedio",
+      "title": "velocidad media",
       "unit": "Story Points por Sprint"
     },
     "impediments": {
@@ -70,7 +70,7 @@
     "teamSatisfaction": {
       "fromLastSprint": "del último Sprint",
       "title": "Satisfacción del equipo",
-      "unit": "Calificación promedio"
+      "unit": "Calificación media"
     }
   },
   "pts": "pts",

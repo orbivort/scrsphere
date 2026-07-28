@@ -34,7 +34,7 @@
     "warningText": "Está a punto de eliminar permanentemente este Impediment. Esta acción no puede revertirse. Todos los datos asociados serán permanentemente eliminados."
   },
   "detailModal": {
-    "cancel": "Cancelararar",
+    "cancel": "Cancelar",
     "close": "Cerrar",
     "createdFromDailyScrum": "Creado desde Actualización Daily Scrum",
     "createdLabel": "Creado",
@@ -102,7 +102,7 @@
     "updated": "Impediment actualizado exitosamente"
   },
   "unsavedModal": {
-    "message": "Tiene cambios no guardados en el formulario de Impediment. ¿Está seguro de que ¿desea descartarlos?",
+    "message": "Tiene cambios no guardados en el formulario de Impediment. ¿Está seguro de que desea descartarlos?",
     "title": "Cambios no guardados"
   },
   "validation": {

@@ -7,11 +7,11 @@
     "empty": "Noch keine Insights verfügbar. Schließen Sie weitere Sprints ab, um Insights zu generieren.",
     "items": {
       "active-sprint-impediments": {
-        "description": "Aktueller Sprint hat {{count}} Impediment(se). Genau beobachten.",
+        "description": "Aktueller Sprint hat {{count}} Impediment(se). Sollten genau beobachtet werden.",
         "title": "Aktive Sprint-Impediments"
       },
       "consistent-delivery": {
-        "description": "Team hat in den letzten {{count}} Sprints 100% der Sprint Goale erreicht",
+        "description": "Team hat in den letzten {{count}} Sprints 100% der Sprint Goals erreicht",
         "title": "Konstante Lieferung"
       },
       "get-started": {
@@ -58,14 +58,14 @@
       "unit": "Story Points pro Sprint"
     },
     "impediments": {
-      "openCount": "offene Impediment(s)",
+      "openCount": "offene Impediments",
       "resolved": "Gelöst",
       "title": "Impediments"
     },
     "sprintSuccessRate": {
       "fromLastMonth": "vom letzten Monat",
       "title": "Sprint-Erfolgsrate",
-      "unit": "Sprint Goale erreicht"
+      "unit": "Sprint Goals erreicht"
     },
     "teamSatisfaction": {
       "fromLastSprint": "vom letzten Sprint",

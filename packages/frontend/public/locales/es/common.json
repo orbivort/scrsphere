@@ -16,7 +16,7 @@
     "collapseSidebar": "Contraer barra lateral",
     "expandSidebar": "Expandir barra lateral",
     "listView": "Vista de lista",
-    "loadingNotifications": "Cargando notificaciónes",
+    "loadingNotifications": "Cargando notificaciones",
     "navigateTo": "Navegar a {{page}}",
     "openMenu": "Abrir menú",
     "skipToMainContent": "Ir al contenido principal",
@@ -39,12 +39,12 @@
     "addAttendeesAriaLabel": "Agregar asistentes",
     "attendanceCount": "{{attended}} / {{total}} asistieron",
     "attended": "Asistió",
-    "cancel": "Cancelararar",
+    "cancel": "Cancelar",
     "cannotAddToCompleted": "No se puede agregar a una revisión completada",
     "closeModal": "Cerrar ventana",
-    "editAttendee": "Editararar asistente",
+    "editAttendee": "Editar asistente",
     "editAttendeeSubtitle": "Actualizar la información del asistente para esta revisión",
-    "editAttendeeTitle": "Editararar asistente",
+    "editAttendeeTitle": "Editar asistente",
     "emptyHint": "Marque los miembros del equipo arriba o agregue asistentes manualmente.",
     "emptyMessage": "Aún no se registraron asistentes.",
     "filterAll": "Todos ({{count}})",
@@ -77,7 +77,7 @@
   },
   "back": "Volver",
   "by": "por",
-  "cancel": "Cancelararar",
+  "cancel": "Cancelar",
   "characterCounter": {
     "approachingLimit": "Acercándose al límite de caracteres",
     "min": "{{current}}/{{max}} caracteres"
@@ -90,10 +90,10 @@
   "clear": "Limpiar",
   "close": "Cerrar",
   "collapse": "Colapsar",
-  "confirm": "Confirmararar",
+  "confirm": "Confirmar",
   "confirmDialog": {
-    "defaultMessage": "¿Está seguro de que ¿desea continuar?",
-    "removeMessage": "¿Está seguro de que ¿desea eliminar {{name}}?"
+    "defaultMessage": "¿Está seguro de que desea continuar?",
+    "removeMessage": "¿Está seguro de que desea eliminar {{name}}?"
   },
   "copied": "¡Copiado!",
   "copy": "Copiar",
@@ -110,10 +110,10 @@
     "associatedData": "Todos los datos asociados y el historial de actividad",
     "canAssignNewPO": "Puede seguir asignando un nuevo Product Owner",
     "canCancelAnytime": "Puede cancelar esta solicitud en cualquier momento",
-    "cancelDeletion": "Cancelararar eliminación",
+    "cancelDeletion": "Cancelar eliminación",
     "close": "Cerrar",
     "confirmationCheckbox": "Entiendo que esta acción es permanente y no se puede deshacer. Deseo eliminar mi cuenta y todos los datos asociados.",
-    "confirmationHelp": "Esto ayuda a evitar eliminaciónes accidentales",
+    "confirmationHelp": "Esto ayuda a evitar eliminaciones accidentales",
     "confirmationInput": {
       "error": "El texto no coincide. Por favor escriba exactamente:",
       "instructions": "Escriba el texto exactamente como se muestra, sensible a mayúsculas/minúsculas, para activar el botón de eliminar. Presione Enter cuando el texto coincida para enviar.",
@@ -217,7 +217,7 @@
     "startFresh": "Empezar de nuevo",
     "unsavedDraftFound": "Borrador sin guardar encontrado"
   },
-  "edit": "Editararar",
+  "edit": "Editar",
   "emptyState": {
     "error": {
       "description": "Ocurrió un error al cargar los datos. Inténtelo nuevamente.",
@@ -262,7 +262,7 @@
       "addTeamMember": "Error al agregar miembro del equipo",
       "changePassword": "Error al cambiar contraseña",
       "completeSprint": "Error al completar Sprint",
-      "createBacklogItem": "Error al crear elemento del backlog",
+      "createBacklogItem": "Error al crear elemento del Backlog",
       "createDefinition": "Error al crear definición",
       "createGoal": "Error al crear objetivo",
       "createImpediment": "Error al crear Impediment",
@@ -272,7 +272,7 @@
       "createSprint": "Error al crear Sprint",
       "createTask": "Error al crear tarea",
       "createTeam": "Error al crear equipo",
-      "deleteBacklogItem": "Error al eliminar elemento del backlog",
+      "deleteBacklogItem": "Error al eliminar elemento del Backlog",
       "deleteDefinition": "Error al eliminar definición",
       "deleteGoal": "Error al eliminar objetivo",
       "deleteImpediment": "Error al eliminar Impediment",
@@ -282,13 +282,13 @@
       "deleteSprint": "Error al eliminar Sprint",
       "deleteTask": "Error al eliminar tarea",
       "deleteTeam": "Error al eliminar equipo",
-      "editBacklogItem": "Error al editar elemento del backlog",
+      "editBacklogItem": "Error al editar elemento del Backlog",
       "exportData": "Error al exportar datos",
       "importData": "Error al importar datos",
       "removeTeamMember": "Error al eliminar miembro del equipo",
       "selectTeam": "Error al seleccionar equipo",
       "startSprint": "Error al iniciar Sprint",
-      "updateBacklogItem": "Error al actualizar elemento del backlog",
+      "updateBacklogItem": "Error al actualizar elemento del Backlog",
       "updateDefinition": "Error al actualizar definición",
       "updateGoal": "Error al actualizar objetivo",
       "updateImpediment": "Error al actualizar Impediment",
@@ -324,7 +324,7 @@
     "dismiss": "Cerrar mensaje de error"
   },
   "expand": "Expandir",
-  "export": "Exportararar",
+  "export": "Exportar",
   "filter": "Filtrar",
   "helpPanel": {
     "avoidExample": "✗ Evitar:",
@@ -349,7 +349,7 @@
     "title": "Galería de iconos",
     "totalIcons": "{{count}} total icons"
   },
-  "import": "Importararar",
+  "import": "Importar",
   "initializing": "Inicializando...",
   "language": "Idioma",
   "loading": "Cargando...",
@@ -365,14 +365,14 @@
     "activeSprint": "Sprint activo",
     "dailyScrum": "Daily Scrum",
     "dashboard": "Tablero",
-    "impediments": "Impediment",
-    "increments": "Increment",
-    "notifications": "Notificaciónes",
+    "impediments": "Impediments",
+    "increments": "Increments",
+    "notifications": "Notificaciones",
     "productBacklog": "Product Backlog",
-    "productGoals": "Product Goal",
+    "productGoals": "Product Goals",
     "reports": "Informes",
     "retrospective": "Sprint Retrospective",
-    "retrospectives": "Sprint Retrospective",
+    "retrospectives": "Sprint Retrospectives",
     "settings": {
       "data": "Datos",
       "privacyData": "Privacidad y datos",
@@ -393,11 +393,11 @@
   "none": "Ninguno",
   "notifications": {
     "connectionError": "Error de conexión",
-    "empty": "Aún no hay notificaciónes",
-    "loading": "Cargando notificaciónes...",
+    "empty": "Aún no hay notificaciones",
+    "loading": "Cargando notificaciones...",
     "markAllRead": "Marcar todo como leído",
-    "title": "Notificaciónes",
-    "viewAll": "Ver todas las notificaciónes"
+    "title": "Notificaciones",
+    "viewAll": "Ver todas las notificaciones"
   },
   "optional": "Opcional",
   "pageError": {
@@ -417,11 +417,11 @@
   "profile": {
     "changePasswordTitle": "Cambiar contraseña",
     "changing": "Cambiando...",
-    "confirmNewPassword": "Confirmararar nueva contraseña",
+    "confirmNewPassword": "Confirmar nueva contraseña",
     "contactSupportToChangeEmail": "Contacte al soporte para cambiar su dirección de correo electrónico",
     "currentPassword": "Contraseña actual",
     "currentPasswordIncorrect": "La contraseña actual es incorrecta",
-    "editTitle": "Editararar perfil",
+    "editTitle": "Editar perfil",
     "email": "Correo electrónico",
     "firstName": "Nombre",
     "hidePassword": "Ocultar contraseña",
@@ -445,7 +445,7 @@
     "passwordsDoNotMatch": "Las contraseñas no coinciden",
     "passwordsMatch": "Las contraseñas coinciden",
     "placeholder": {
-      "confirmPassword": "Confirmarare su nueva contraseña",
+      "confirmPassword": "Confirme su nueva contraseña",
       "currentPassword": "Ingrese su contraseña actual",
       "firstName": "Ingrese su nombre",
       "lastName": "Ingrese su apellido",
@@ -504,24 +504,24 @@
     "attentionRequired": "Atención requerida",
     "discard": "Descartar",
     "discardChanges": "Descartar cambios",
-    "discardDescription": "Cerrar sin guardar y perder todas las modificaciónes",
+    "discardDescription": "Cerrar sin guardar y perder todas las modificaciones",
     "goBack": "Volver",
     "goBackDescription": "Continuar editando y guardar los cambios",
-    "message": "Tiene cambios sin guardar. ¿Está seguro de que ¿desea descartarlos?",
+    "message": "Tiene cambios sin guardar. ¿Está seguro de que desea descartarlos?",
     "messages": {
-      "passwordChange": "Tiene cambios sin guardar en el formulario de cambio de contraseña. ¿Está seguro de que ¿desea descartarlos?",
-      "profileEdit": "Tiene cambios sin guardar en el formulario de edición de perfil. ¿Está seguro de que ¿desea descartarlos?"
+      "passwordChange": "Tiene cambios sin guardar en el formulario de cambio de contraseña. ¿Está seguro de que desea descartarlos?",
+      "profileEdit": "Tiene cambios sin guardar en el formulario de edición de perfil. ¿Está seguro de que desea descartarlos?"
     },
     "permanentlyLost": "Sus cambios se perderán permanentemente si los descarta. Esta acción no se puede deshacer.",
     "subtitle": "Por favor, revise antes de continuar",
     "title": "Cambios sin guardar",
-    "unsavedModifications": "Modificaciónes sin guardar detectadas",
-    "whatWouldYouDo": "¿Qué ¿desea hacer?"
+    "unsavedModifications": "Modificaciones sin guardar detectadas",
+    "whatWouldYouDo": "¿Qué desea hacer?"
   },
   "unsavedChangesModal": {
     "discard": "Descartar",
     "keepEditing": "Seguir editando",
-    "message": "Tiene cambios sin guardar. ¿Está seguro de que ¿desea descartarlos?",
+    "message": "Tiene cambios sin guardar. ¿Está seguro de que desea descartarlos?",
     "title": "Cambios sin guardar"
   },
   "update": "Actualizar",
@@ -529,7 +529,7 @@
   "upload": "Cargar",
   "userMenu": {
     "changePassword": "Cambiar contraseña",
-    "editProfile": "Editararar perfil",
+    "editProfile": "Editar perfil",
     "logout": "Cerrar sesión"
   },
   "view": "Ver",

@@ -128,7 +128,7 @@
       "delete": "Löschen",
       "deleteAccount": {
         "ariaLabel": "Ihr Konto permanent löschen",
-        "description": "Ihr Konto und alle zugehörigen Daten permanent entfernen",
+        "description": "Ihr Konto und alle zugehörigen Daten dauerhaft entfernen",
         "title": "Konto löschen"
       },
       "expand": "Gefahrenzone erweitern",
@@ -137,11 +137,11 @@
     },
     "dataWillBeDeleted": "Daten, die gelöscht werden",
     "deleteAccount": "Konto löschen",
-    "deleteAnyway": " trotzdem löschen",
+    "deleteAnyway": "Trotzdem löschen",
     "deleting": "Löschen...",
     "deletionRightsNotice": {
       "afterGracePeriod": "Nach 14 Tagen können Sie Ihr Konto unabhängig davon permanent löschen.",
-      "description": "Sie haben das Recht, Ihr Konto zu löschen. Da Sie der letzte Product Owner sind, bitten wir Sie, die Löschung mit einer 14-tägigen Gnadenfrist zu planen, damit Ihre Teams sich darauf vorbereiten können.",
+      "description": "Sie haben das Recht, Ihr Konto zu löschen. Da Sie der letzte Product Owner sind, bitten wir Sie, die Löschung mit einer 14-tägigen Kulanzfrist zu planen, damit Ihre Teams sich darauf vorbereiten können.",
       "list": {
         "assignNewPO": "Sie können einen neuen Product Owner zuweisen",
         "cancelAnytime": "Sie können die Löschung jederzeit stornieren",
@@ -152,7 +152,7 @@
     "forceCheckbox": "Ich verstehe, dass Teams ihren Product Owner verlieren und ich mein Konto trotzdem permanent löschen möchte.",
     "forceConfirmationHelp": "Diese Aktion kann nicht rückgängig gemacht werden",
     "forceDeleteWarning": {
-      "description": "Die 14-tägige Gnadenfrist ist beendet. Sie können Ihr Konto jetzt permanent löschen.",
+      "description": "Die 14-tägige Kulanzfrist ist beendet. Sie können Ihr Konto jetzt permanent löschen.",
       "impact": {
         "cannotUndo": "Diese Aktion KANN NICHT rückgängig gemacht werden",
         "deleteAllData": "Alle Ihre Daten permanent löschen",
@@ -163,18 +163,18 @@
         "consequences": "Diese Teams können keine Teammitglieder hinzufügen oder entfernen, Sprints verwalten oder auf Team-Einstellungen zugreifen.",
         "title": "Die folgenden Teams haben KEINEN Product Owner:"
       },
-      "title": "Gnadenfrist abgeschlossen"
+      "title": "Kulanzfrist abgeschlossen"
     },
     "gracePeriodProgress": {
-      "daysRemaining": "Tage übrig",
+      "daysRemaining": "Tage verbleibend",
       "deletionDate": "Löschungsdatum",
-      "progressAriaLabel": "{{percent}}% der Gnadenfrist vergangen",
+      "progressAriaLabel": "{{percent}}% der Kulanzfrist vergangen",
       "requested": "Angefragt",
       "title": "Löschung geplant"
     },
     "profileAndAccount": "Ihr Profil und Kontoinformationen",
-    "scheduleCheckbox": "Ich verstehe, dass eine 14-tägige Gnadenfrist beginnt, während der Teammitglieder benachrichtigt werden. Ich kann jederzeit stornieren.",
-    "scheduleConfirmationHelp": "Dies startet eine 14-tägige Gnadenfrist",
+    "scheduleCheckbox": "Ich verstehe, dass eine 14-tägige Kulanzfrist beginnt, während der Teammitglieder benachrichtigt werden. Ich kann jederzeit stornieren.",
+    "scheduleConfirmationHelp": "Dies startet eine 14-tägige Kulanzfrist",
     "scheduleConfirmationLabel": "Tippen Sie <strong>{{phrase}}</strong>, um die Löschung zu planen",
     "scheduleConfirmationPlaceholder": "Tippen Sie {{phrase}}",
     "scheduleDeletion": "Löschung planen",
@@ -182,8 +182,8 @@
     "teamImpact": {
       "blocked": {
         "goToSettings": "Zu Team-Einstellungen",
-        "goToSettingsAria": "Zu {{teamName}} Einstellungen gehen, um einen neuen Product Owner zu zuweisen",
-        "warning": "Sie sind der einzige Product Owner. Wenn Sie Ihr Konto löschen, hat dieses Team keinen Product Owner. Sie können die Löschung mit einer 14-tägigen Gnadenfrist planen."
+        "goToSettingsAria": "Zu {{teamName}} Einstellungen gehen, um einen neuen Product Owner zuzuweisen",
+        "warning": "Sie sind der einzige Product Owner. Wenn Sie Ihr Konto löschen, hat dieses Team keinen Product Owner. Sie können die Löschung mit einer 14-tägigen Kulanzfrist planen."
       },
       "description": "Sie sind Mitglied in {{count}} Team",
       "description_plural": "Sie sind Mitglied in {{count}} Teams",
@@ -224,7 +224,7 @@
       "title": "Etwas ist schiefgelaufen"
     },
     "noActiveGoal": {
-      "action": "Zu Product Goalsn",
+      "action": "Zu den Product Goals",
       "description": "Bitte setzen Sie ein aktives Produktziel, bevor Sie fortfahren.",
       "title": "Kein aktives Ziel"
     },
@@ -469,7 +469,7 @@
   "sessionWarning": {
     "extending": "Verlängern...",
     "logOut": "Abmelden",
-    "message": "Ihre Sitzung läuft bald aufgrund von Inaktivität ab. Sie werden automatisch abgemeldet in:",
+    "message": "Ihre Sitzung läuft bald aufgrund von Inaktivität ab. Sie werden automatisch in folgender Zeit abgemeldet:",
     "stayLoggedIn": "Angemeldet bleiben",
     "title": "Sitzungsablauf-Warnung"
   },
@@ -505,7 +505,7 @@
     "discard": "Verwerfen",
     "discardChanges": "Änderungen verwerfen",
     "discardDescription": "Schließen ohne Speichern und alle Änderungen verlieren",
-    "goBack": "Zurück gehen",
+    "goBack": "Zurück",
     "goBackDescription": "Bearbeitung fortsetzen und Änderungen speichern",
     "message": "Sie haben ungespeicherte Änderungen. Sind Sie sicher, dass Sie sie verwerfen möchten?",
     "messages": {

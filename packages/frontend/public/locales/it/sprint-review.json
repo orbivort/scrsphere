@@ -10,7 +10,7 @@
       "split": "Dividi"
     },
     "addAdjustment": "Aggiungi adattamento",
-    "adding": "Aggiungendo...",
+    "adding": "Aggiunta in corso...",
     "cancel": "Annulla",
     "description": "Descrizione *",
     "descriptionPlaceholder": "Descrivi l'adattamento...",
@@ -28,7 +28,7 @@
   "addFeedbackModal": {
     "actionRequired": "Azione richiesta",
     "addFeedback": "Aggiungi Feedback",
-    "adding": "Aggiungendo...",
+    "adding": "Aggiunta in corso...",
     "authorName": "Nome autore *",
     "authorNamePlaceholder": "Inserisci nome stakeholder",
     "cancel": "Annulla",
@@ -81,7 +81,7 @@
   "completeReview": {
     "badge": "Sprint Review completato",
     "button": "Completa Sprint Review",
-    "completing": "Completando...",
+    "completing": "Completamento in corso...",
     "confirmationModal": {
       "cancel": "Annulla",
       "cannotCompleteSubtitle": "Per favore risolvi i seguenti problemi prima di completare questo Sprint Review",
@@ -108,9 +108,9 @@
   "createModal": {
     "cancel": "Annulla",
     "createReview": "Crea Review",
-    "creating": "Creando...",
+    "creating": "Creazione in corso...",
     "failed": "Impossibile creare Sprint Review. Per favore riprova.",
-    "incrementRequiredWarning": "Un Incremento è richiesto prima di creare un Sprint Review.",
+    "incrementRequiredWarning": "Un Increment è richiesto prima di creare un Sprint Review.",
     "reviewDate": "Data del Review *",
     "summary": "Riepilogo (Opzionale)",
     "summaryPlaceholder": "Inserisci un riepilogo del Sprint Review...",
@@ -145,7 +145,7 @@
     "owner": "Proprietario:",
     "title": "Feedback degli Stakeholders"
   },
-  "findingActiveSprint": "Cercando Sprint attivo...",
+  "findingActiveSprint": "Ricerca Sprint attivo in corso...",
   "increment": {
     "deliveredAt": "Consegnato il",
     "deliveryMethod": "Metodo di consegna",
@@ -155,25 +155,25 @@
     "earlyReleaseDelivery": "Consegna anticipata",
     "includedPbis": "Product Backlog Items inclusi",
     "noDescription": "Nessuna descrizione",
-    "noIncrement": "Nessun Incremento disponibile",
-    "noIncrementDescription": "Nessun Incremento consegnato è disponibile per questo Sprint Review.",
-    "noPbis": "Nessun PBI incluso in questo Incremento.",
+    "noIncrement": "Nessun Increment disponibile",
+    "noIncrementDescription": "Nessun Increment consegnato è disponibile per questo Sprint Review.",
+    "noPbis": "Nessun PBI incluso in questo Increment.",
     "notDelivered": "Non consegnato",
     "sprintReviewDelivery": "Sprint Review",
-    "title": "Incremento presentato",
+    "title": "Increment presentato",
     "totalStoryPoints": "Story Points totali"
   },
   "list": {
     "completedSprint": "Sprint completato",
     "completedSprints": "Sprints completati",
     "completedSprints_plural": "Sprints completati",
-    "createIncrement": "Crea Incremento",
+    "createIncrement": "Crea Increment",
     "goal": "Goal:",
     "loading": "Caricamento Sprint Reviews...",
     "reviewStatus": {
       "completed": "Review completato",
       "inProgress": "Review in corso",
-      "incrementRequired": "Incremento richiesto",
+      "incrementRequired": "Increment richiesto",
       "readyForReview": "Pronto per Review"
     },
     "reviewed": "Reviewed",
@@ -191,10 +191,10 @@
   "loading": "Caricamento Sprint Review...",
   "noActiveSprint": "Nessun Sprint attivo trovato per questo team.",
   "noReview": {
-    "createIncrement": "Crea Incremento",
+    "createIncrement": "Crea Increment",
     "createSprintReview": "Crea Sprint Review",
-    "incrementRequired": "Incremento richiesto",
-    "incrementRequiredNotice": "Un Incremento consegnato è richiesto prima di creare un Sprint Review. Per favore crea e consegna un Incremento prima.",
+    "incrementRequired": "Increment richiesto",
+    "incrementRequiredNotice": "Un Increment consegnato è richiesto prima di creare un Sprint Review. Per favore crea e consegna un Increment prima.",
     "message": "Non è stato creato un Sprint Review per questo Sprint.",
     "title": "Nessun Sprint Review creato"
   },

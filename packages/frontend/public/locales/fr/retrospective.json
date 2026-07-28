@@ -16,7 +16,7 @@
     "unassigned": "Non assigné"
   },
   "ariaLabels": {
-    "columnsRegion": "Colonnes de feedback de la Retrospective",
+    "columnsRegion": "Colonnes de retour de la Retrospective",
     "sprintInfoRegion": "Informations du Sprint",
     "summaryAriaLabel": "Résumé de la Retrospective"
   },
@@ -63,7 +63,7 @@
   "completeRetro": {
     "ariaLabel": "Marquer la Retrospective comme terminée",
     "button": "Terminer la Retrospective",
-    "completing": "Terminaison...",
+    "completing": "Finalisation...",
     "description": "Marquer cette Retrospective comme terminée pour la finaliser et empêcher les modifications ultérieures."
   },
   "confirmationModal": {
@@ -152,7 +152,7 @@
     "businessDay_one": "{{count}} jour de travail",
     "businessDay_other": "{{count}} jours de travail",
     "completed": "terminées",
-    "completion": "Complétion",
+    "completion": "Achèvement",
     "duration": "Durée",
     "goal": "Objectif :",
     "includedPbis": "Product Backlog Items inclus",
@@ -160,10 +160,10 @@
     "itemsCount": "{{count}} éléments",
     "moreItems": "+{{count}} autres éléments",
     "priorityLabels": {
-      "COULD_HAVE": "Optionnel",
-      "MUST_HAVE": "Indispensable",
-      "SHOULD_HAVE": "Souhaitable",
-      "WONT_HAVE": "Pas pour cette version"
+      "COULD_HAVE": "Pourrait avoir",
+      "MUST_HAVE": "Doit avoir",
+      "SHOULD_HAVE": "Devrait avoir",
+      "WONT_HAVE": "N'aura pas"
     },
     "productBacklog": "Product Backlog",
     "statusLabels": {
@@ -193,7 +193,7 @@
     "title": "Succès"
   },
   "summary": {
-    "addSubtitle": "Documenter les insights clés, les décisions et les points d'action",
+    "addSubtitle": "Documenter les enseignements clés, les décisions et les points d'action",
     "addSummary": "+ Ajouter un résumé",
     "addSummaryAriaLabel": "Ajouter un résumé de la Retrospective",
     "addTitle": "Ajouter un résumé de la Retrospective",
@@ -201,13 +201,13 @@
     "cancel": "Annuler",
     "cancelAriaLabel": "Annuler les modifications du résumé",
     "charCounter": "{{count}}/1000 caractères",
-    "charHelpText": "Entrez les insights clés, les décisions et les points d'action de la Retrospective. Minimum 10 caractères, maximum 1000 caractères.",
+    "charHelpText": "Entrez les enseignements clés, les décisions et les points d'action de la Retrospective. Minimum 10 caractères, maximum 1000 caractères.",
     "editAriaLabel": "Modifier le résumé",
-    "editSubtitle": "Mettre à jour les insights clés et les conclusions de cette Retrospective",
+    "editSubtitle": "Mettre à jour les enseignements clés et les conclusions de cette Retrospective",
     "editSummary": "Modifier le résumé",
     "editTitle": "Modifier le résumé de la Retrospective",
     "empty": "Aucun résumé n'a été ajouté...",
-    "emptyDescription": "Aucun résumé n'a été ajouté. Ajoutez un résumé pour documenter les insights clés et les décisions de cette Retrospective.",
+    "emptyDescription": "Aucun résumé n'a été ajouté. Ajoutez un résumé pour documenter les enseignements clés et les décisions de cette Retrospective.",
     "formAriaLabel": "Formulaire de résumé de la Retrospective",
     "helperText": "Résumer les réflexions de l'équipe et les améliorations convenues",
     "placeholder": "Écrivez un résumé des résultats de la Retrospective, des conclusions clés et des points d'action...",
@@ -245,7 +245,7 @@
     "dueDateRequired": "La date d'échéance est requise",
     "itemContentMaxLength": "Le contenu de l'élément doit être de 500 caractères ou moins",
     "itemContentRequired": "Veuillez entrer le contenu de l'élément",
-    "noHtmlTags": "Les tags HTML ne sont pas autorisés",
+    "noHtmlTags": "Les balises HTML ne sont pas autorisées",
     "ownerRequired": "Le propriétaire est requis",
     "participantAttendanceRequired": "Au moins un participant doit être marqué comme ayant participé.",
     "participantRequired": "Au moins un participant doit être ajouté avant de terminer la Retrospective.",

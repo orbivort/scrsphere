@@ -87,7 +87,7 @@
   "noDailyUpdates": "Noch keine täglichen Updates für heute.",
   "noOpenImpediments": "Keine offenen Impediments. Gut gemacht!",
   "noSprintGoal": "Noch kein Sprint Goal definiert.",
-  "noTasksYet": "Noch keine Aufgaben Ihnen zugewiesen.",
+  "noTasksYet": "Ihnen sind noch keine Aufgaben zugewiesen.",
   "notSubmitted": "Nicht eingereicht",
   "openImpediments": "Offene Impediments",
   "quickActions": {
@@ -125,7 +125,7 @@
   "submitted": "Eingereicht",
   "taskList": {
     "ariaLabel": "Aufgabenliste",
-    "noTasks": "Keine Aufgaben Ihnen zugewiesen",
+    "noTasks": "Ihnen sind keine Aufgaben zugewiesen.",
     "taskAriaLabel": "{{title}}, Status: {{status}}. Klicken zum Anzeigen der Aufgabe",
     "title": "Meine Aufgaben"
   },
@@ -144,7 +144,7 @@
   "unableToLoadImpediments": "Impediments konnten nicht geladen werden.",
   "unableToLoadSprint": "Sprint-Daten konnten nicht geladen werden. Bitte versuchen Sie es erneut.",
   "unableToLoadUpdates": "Updates konnten nicht geladen werden.",
-  "upcomingDeadlines": "Kommende Fristen",
+  "upcomingDeadlines": "Anstehende Fristen",
   "updateDailyScrum": "Daily Scrum aktualisieren",
   "viewAll": "Alle anzeigen",
   "viewAllMyTasks": "Alle meine Aufgaben anzeigen",
@@ -153,5 +153,5 @@
   "viewOrUpdateDailyScrum": "Daily Scrum anzeigen oder aktualisieren",
   "viewSprintBoard": "Sprint-Board anzeigen",
   "welcome": "Willkommen, {{name}}",
-  "welcomeBack": "Willkommen zurück! Hier ist eine Übersicht Ihres aktiven Sprints."
+  "welcomeBack": "Willkommen zurück! Hier ist eine Übersicht über Ihren aktiven Sprint."
 }

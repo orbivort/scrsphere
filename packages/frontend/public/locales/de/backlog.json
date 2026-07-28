@@ -9,7 +9,7 @@
   "aria": {
     "backlogItem": "Backlog-Element: {{title}}. Priorität: {{priority}}.",
     "draggingItem": "Ziehe {{title}}. Aktuell: {{current}}. Ziel: {{target}}.",
-    "priorityBoard": "MoSCoW-Prioritätsboard"
+    "priorityBoard": "MoSCoW-Prioritätstafel"
   },
   "boardView": {
     "dropItemsHere": "Einträge hier ablegen",
@@ -23,7 +23,7 @@
     "cancel": "Abbrechen",
     "closeModal": "Modal schließen",
     "dropzone": {
-      "clickToChange": "Klicken zum Ändern oder ziehen eine neue Datei",
+      "clickToChange": "Zum Ändern klicken oder eine neue Datei hineinziehen",
       "downloadTemplate": "CSV-Vorlage herunterladen",
       "dropCsvHere": "CSV-Datei hier ablegen",
       "fileReady": "Datei bereit",
@@ -66,7 +66,7 @@
       "cancelImport": "Import abbrechen",
       "cancelling": "Abbrechen...",
       "cancellingMessage": "Bitte warten, während wir den Import-Prozess stoppen...",
-      "complete": "Komplett",
+      "complete": "Abgeschlossen",
       "creatingItem": "Erstellen: \"{{item}}\"",
       "importingBacklogItems": "Backlog-Einträge importieren",
       "processed": "Verarbeitet",
@@ -81,7 +81,7 @@
       "errors": "Fehler ({{count}})",
       "failed": "{{count}} Zeilen fehlgeschlagen",
       "failedLabel": "Fehlgeschlagen",
-      "importComplete": "Import komplett!",
+      "importComplete": "Import abgeschlossen!",
       "importCompletedWithErrors": "Import mit Fehler abgeschlossen",
       "importFailed": "Import fehlgeschlagen",
       "imported": "Importiert",
@@ -102,7 +102,7 @@
           "description": "Implementierung von OAuth2-Login mit Google und GitHub-Anbietern für sichere Benutzer-Authentifizierung",
           "storyPoints": 8,
           "businessValue": 13,
-          "priority": "Muss haben",
+          "priority": "Must Have",
           "labels": "auth, sicherheit, backend",
           "acceptanceCriteria": "1. Benutzer können sich mit Google anmelden\n2. Benutzer können sich mit GitHub anmelden\n3. Sitzung läuft nach 30 Minuten ab\n4. Ungültige Anmeldung zeigt Fehlermeldung"
         },
@@ -111,7 +111,7 @@
           "description": "Hinzufügen von interaktiven Diagrammen zum Dashboard für Sprint-Fortschritt und Team-Geschwindigkeit",
           "storyPoints": 5,
           "businessValue": 8,
-          "priority": "Sollte haben",
+          "priority": "Should Have",
           "labels": "frontend, diagramme, dashboard",
           "acceptanceCriteria": "1. Sprint-Fortschrittsdiagramm wird korrekt angezeigt\n2. Team-Geschwindigkeitsdiagramm zeigt die letzten 6 Sprints\n3. Diagramme sind auf Mobilgeräten responsive"
         },
@@ -120,7 +120,7 @@
           "description": "Konfiguration von E-Mail-Benachrichtigungen für Sprint-Start, Sprint-Ende und kritische Impediments",
           "storyPoints": 3,
           "businessValue": 5,
-          "priority": "Könnte haben",
+          "priority": "Could Have",
           "labels": "benachrichtigungen, email, backend",
           "acceptanceCriteria": "1. E-Mail wird gesendet, wenn Sprint beginnt\n2. E-Mail wird gesendet, wenn Sprint endet\n3. E-Mail wird für kritische Impediments gesendet\n4. Benutzer können sich abmelden"
         }
@@ -165,7 +165,7 @@
     "createNewBacklogItem": "Neuen Backlog-Eintrag erstellen",
     "creating": "Erstellen...",
     "creatingBacklogItem": "Backlog-Eintrag wird erstellt...",
-    "descriptionHelp": "Erklären Sie den Kontext, Zweck und Hintergrundinformationen. Fügen Sie User Stories hinzu, falls applicable (z.B., \"Als ein Benutzer möchte ich...\")",
+    "descriptionHelp": "Erklären Sie den Kontext, Zweck und Hintergrundinformationen. Fügen Sie User Stories hinzu, ggf. (z.B., \"Als ein Benutzer möchte ich...\")",
     "descriptionLabel": "Beschreibung",
     "descriptionPlaceholder": "Beschreiben Sie den Eintrag im Detail...",
     "details": "Details",
@@ -322,7 +322,7 @@
     "notEstimated": "Nicht geschätzt",
     "status": "Status",
     "updated": "Aktualisiert",
-    "viewOnly": "Nur anzeigen",
+    "viewOnly": "Schreibgeschützt",
     "viewStatusHistory": "Status-Historie anzeigen"
   },
   "listView": {
@@ -340,22 +340,22 @@
     "loading": "Weitere Einträge werden geladen...",
     "remaining": "{{count}} weitere Einträge",
     "remainingCount": "{{count}} verbleibend",
-    "showing": "Anzeige {{shown}} von {{total}}",
+    "showing": "Angezeigt werden {{shown}} von {{total}}",
     "showingItems": "Anzeige {{shown}} von {{total}} Einträgen"
   },
   "moscow": {
-    "couldHave": "Könnte haben",
+    "couldHave": "Could Have",
     "couldHaveDesc": "Wünschenswert wenn möglich - Nice to have",
-    "couldShort": "Könnte",
-    "mustHave": "Muss haben",
+    "couldShort": "Could",
+    "mustHave": "Must Have",
     "mustHaveDesc": "Kritisch für die Lieferung - Nicht verhandelbar",
-    "mustShort": "Muss",
-    "shouldHave": "Sollte haben",
+    "mustShort": "Must",
+    "shouldHave": "Should Have",
     "shouldHaveDesc": "Wichtig, aber nicht vital - Hohe Priorität",
-    "shouldShort": "Sollte",
-    "wontHave": "Wird nicht haben",
+    "shouldShort": "Should",
+    "wontHave": "Won't Have",
     "wontHaveDesc": "Nicht in diesem Release - Außerhalb des Rahmens",
-    "wontShort": "Nicht"
+    "wontShort": "Won't"
   },
   "moscowDescriptions": {
     "COULD_HAVE": "Erwünscht, wenn möglich - Nice to have",
@@ -364,10 +364,10 @@
     "WONT_HAVE": "Nicht in diesem Release - Außerhalb des Scope"
   },
   "moscowLabels": {
-    "COULD_HAVE": "Könnte haben",
-    "MUST_HAVE": "Muss haben",
-    "SHOULD_HAVE": "Sollte haben",
-    "WONT_HAVE": "Wird nicht haben"
+    "COULD_HAVE": "Could Have",
+    "MUST_HAVE": "Must Have",
+    "SHOULD_HAVE": "Should Have",
+    "WONT_HAVE": "Won't Have"
   },
   "newItem": "Neuer Eintrag",
   "pendingAdjustments": {
@@ -399,7 +399,7 @@
     "positive": "Positiv",
     "question": "Frage",
     "suggestion": "Vorschlag",
-    "title": "Offene Sprint Review Feedback",
+    "title": "Offenes Sprint-Review-Feedback",
     "updating": "Aktualisieren..."
   },
   "pendingRetro": {
@@ -421,15 +421,15 @@
     "updating": "Aktualisieren..."
   },
   "productGoalStatus": {
-    "ABANDONED": "Abgebrochen",
+    "ABANDONED": "Aufgegeben",
     "ACTIVE": "Aktiv",
     "COMPLETED": "Erledigt",
     "NEW": "Neu"
   },
   "productGoals": {
-    "abandonWarning": "Hinweis: Dieses Ziel hat {{count}} zugehörige Backlog-Einträge{{plural}}. Abbrechen dieses Ziels wird diese Einträge nicht beeinflussen.",
-    "abandoned": "Abgebrochen",
-    "abandonedFilter": "ABGEBROCHEN",
+    "abandonWarning": "Hinweis: Dieses Ziel hat {{count}} zugehörige Backlog-Einträge{{plural}}. Ziel aufgeben wird diese Einträge nicht beeinflussen.",
+    "abandoned": "Aufgegeben",
+    "abandonedFilter": "AUFGEGEBENE",
     "achieved": "Erreicht",
     "actionWarning": "Aktionswarnung",
     "active": "Aktiv",
@@ -443,13 +443,13 @@
     "cannotCompleteGoalNoItems": "Kann Ziel nicht als Erledigt markieren: Keine Backlog-Einträge sind mit diesem Ziel verknüpft.",
     "cannotDeleteActiveCompleted": "Kann aktive oder erledigte Ziele nicht löschen",
     "cannotDeleteGoalAriaLabel": "Kann {{title}} nicht löschen: {{status}} Ziele können nicht gelöscht werden",
-    "cannotDeleteGoalHasItems": "Kann Produktziel \"{{title}}\" nicht löschen, weil es {{count}} zugehörige Backlog-Einträge{{plural}} hat. Bitte entfernen oder reassignieren Sie die Backlog-Einträge vor Löschen dieses Ziels.",
+    "cannotDeleteGoalHasItems": "Kann Produktziel \"{{title}}\" nicht löschen, weil es {{count}} zugehörige Backlog-Einträge{{plural}} hat. Bitte weisen Sie diese neu zu oder löschen Sie sie zuerst.",
     "cannotDeleteGoalStatus": "Kann Produktziel mit Status \"{{status}}\" nicht löschen. Nur Ziele mit \"neu\" oder \"abgebrochen\" Status können gelöscht werden.",
     "cannotDeleteHasItems": "Kann nicht löschen: hat zugehörige Backlog-Einträge",
     "cannotDeleteHasItemsAriaLabel": "Kann {{title}} nicht löschen: hat zugehörige Backlog-Einträge",
-    "cannotEditCompletedAbandoned": "Kann erledigte oder abgebrochene Ziele nicht bearbeiten",
+    "cannotEditCompletedAbandoned": "Kann erledigte oder aufgegebene Ziele nicht bearbeiten",
     "cannotEditGoalAriaLabel": "Kann {{title}} nicht bearbeiten: {{status}} Ziele können nicht bearbeitet werden",
-    "cannotEditGoalStatus": "Kann Produktziel mit Status \"{{status}}\" nicht bearbeiten. Erledigte und abgebrochene Ziele können nicht bearbeitet werden.",
+    "cannotEditGoalStatus": "Kann Produktziel mit Status \"{{status}}\" nicht bearbeiten. Erledigte und aufgegebene Ziele können nicht bearbeitet werden.",
     "cannotEditStatus": "Kann {{title}} nicht bearbeiten: {{status}} Ziele können nicht bearbeitet werden",
     "changeStatus": "Status ändern",
     "changeStatusForGoal": "Status ändern für Ziel: {{title}}",
@@ -479,7 +479,7 @@
     "descriptionHelpPanelAvoidLabel": "Vermeiden",
     "descriptionHelpPanelAvoidText": "Wir müssen die App besser machen.",
     "descriptionHelpPanelGoodLabel": "Gut",
-    "descriptionHelpPanelGoodText": "Unsere Benutzer haben Probleme beim Zugriff auf Daten offline. Dieses Ziel adressiert dies durch Implementierung von lokalem Storage-Sync, verbessert Benutzer-Produktivität um 40% in Low-Connectivity-Umgebungen.",
+    "descriptionHelpPanelGoodText": "Unsere Benutzer haben Probleme beim Zugriff auf Daten offline. Dieses Ziel adressiert dies durch Implementierung von lokaler Speicher-Synchronisierung und verbessert die Benutzerproduktivität um 40% in Umgebungen mit schlechter Verbindung.",
     "descriptionHelpPanelTip1": "Erklären Sie das Problem, das Sie lösen oder die Chance, die Sie adressieren",
     "descriptionHelpPanelTip2": "Beschreiben Sie, wer von diesem Ziel profitiert und wie",
     "descriptionHelpPanelTip3": "Fügen Sie Kontext hinzu, warum dieses Ziel jetzt wichtig ist",
@@ -553,11 +553,11 @@
     "subtitle": "Definieren und verfolgen Sie Ziele zur Steuerung der Produktentwicklung",
     "successMetrics": "Erfolgsmetriken",
     "successMetricsHelpPanelAvoidLabel": "Vermeiden",
-    "successMetricsHelpPanelAvoidText": "Mache Benutzer glücklich und verbessere Performance",
+    "successMetricsHelpPanelAvoidText": "Steigern Sie die Benutzerzufriedenheit und verbessern Sie die Leistung",
     "successMetricsHelpPanelGoodLabel": "Gut",
-    "successMetricsHelpPanelGoodText": "Erreichen 25% Erhöhung der Mobile App Daily Active Users; reduziere Offline Data Sync-Zeit auf unter 5 Sekunden; maintainiere 4.5+ Stern App Store Bewertung",
+    "successMetricsHelpPanelGoodText": "Erreichen Sie eine 25%ige Steigerung der täglichen aktiven Benutzer der mobilen App; reduzieren Sie die Zeit zur Offline-Daten-Synchronisierung auf unter 5 Sekunden; halten Sie eine App-Store-Bewertung von 4,5+ Sternen aufrecht",
     "successMetricsHelpPanelTip1": "Verwenden Sie spezifische, messbare Kriterien (SMART Goals)",
-    "successMetricsHelpPanelTip2": "Fügen Sie sowohl quantitative als auch qualitative Maße hinzu, wenn applicable",
+    "successMetricsHelpPanelTip2": "Fügen Sie sowohl quantitative als auch qualitative Maße hinzu, falls zutreffend",
     "successMetricsHelpPanelTip3": "Definieren Sie Metriken, die direkt Ziel-Erreichung anzeigen",
     "successMetricsHelpPanelTip4": "Setzen Sie realistische aber anspruchsvolle Ziele",
     "successMetricsHelpPanelTitle": "Erfolgsmetriken definieren",
@@ -576,7 +576,7 @@
     "targetDate": "Zieldatum",
     "targetDateLabel": "Zieldatum",
     "targetDateRequired": "Zieldatum ist erforderlich, um Ziel-Fortschritt und Zeitplan zu verfolgen.",
-    "targetDateTooFar": "Zieldatum ist mehr als 1 Jahr entfernt. Erwägen Sie, dies in kleinere Meilensteine zu brechen.",
+    "targetDateTooFar": "Zieldatum ist mehr als 1 Jahr entfernt. Erwägen Sie, dies in kleinere Meilensteine aufzuteilen.",
     "targetDescription": "Ziel",
     "teamIdRequired": "Team-ID ist erforderlich. Bitte wählen Sie zuerst ein Team.",
     "title": "Product Goals",
@@ -586,7 +586,7 @@
     "titleHelpPanelGoodText": "Mobile App v2.0 mit Offline-Sync-Fähigkeit starten",
     "titleHelpPanelTip1": "Seien Sie spezifisch über das, was Sie erreichen wollen",
     "titleHelpPanelTip2": "Starten Sie mit einem Verb wenn möglich (z.B., \"Starten\", \"Verbessern\", \"Reduzieren\")",
-    "titleHelpPanelTip3": "Halten es prägnant für schnelles Scannen und Referenz",
+    "titleHelpPanelTip3": "Halten Sie es prägnant für schnelles Scannen und Referenz",
     "titleHelpPanelTip4": "Vermeiden Sie vage Begriffe wie \"besser\" oder \"mehr\" - verwenden Sie spezifische Ergebnisse",
     "titleHelpPanelTitle": "Ziel-Titel schreiben",
     "titleLabel": "Titel",
@@ -682,10 +682,10 @@
     "criteriaMet": "{{met}} von {{total}} Kriterien erfüllt",
     "descriptionRequired": "Beschreibung ist erforderlich. Bitte geben Sie detaillierte Informationen zu diesem Backlog-Element.",
     "dodItems": {
-      "codePeerReviewed": "Code ist Peer-reviewed und genehmigt",
+      "codePeerReviewed": "Code ist geprüft und genehmigt",
       "codeProperlyDocumented": "Code ist richtig dokumentiert",
       "integrationTestsPassing": "Integrationstests bestanden",
-      "noCriticalBugs": "Keine kritischen oder hochgradigen Bugs",
+      "noCriticalBugs": "Keine kritischen oder schwerwiegenden Fehler",
       "unitTestsWritten": "Unit-Tests geschrieben und bestanden (mindestens 80% Abdeckung)"
     },
     "dodShort": "Definition of Done",

@@ -19,7 +19,7 @@
     "close": "Chiudi",
     "confirmation": "Sei sicuro di voler rimuovere {{name}} dal team?",
     "removeMember": "Rimuovi Membro",
-    "removing": "Rimuovendo...",
+    "removing": "Rimozione in corso...",
     "title": "Rimuovi Membro del Team",
     "warning": "Questa azione non può essere annullata. L'utente perderà l'accesso a tutte le risorse del team."
   },
@@ -83,7 +83,7 @@
   "leadership": {
     "badge": "Leadership",
     "createTeam": "Crea Nuovo Team",
-    "description": "Come leader agile, hai l'autorità di creare e gestire teams. Assumi la responsabilità del successo del tuo progetto stabilendo il tuo workspace del team.",
+    "description": "Come leader agile, hai l'autorità di creare e gestire team. Assumi la responsabilità del successo del tuo progetto stabilendo il tuo workspace del team.",
     "quickStart": {
       "step1": "Crea team",
       "step2": "Invita membri",
@@ -129,7 +129,7 @@
       "productOwner": "Product Owner",
       "scrumMaster": "Scrum Master"
     },
-    "filterResults": "Mostrando {{shown}} di {{total}} membro(i)",
+    "filterResults": "Mostrando {{shown}} di {{total}} membri",
     "inviteMember": "Invita Membro",
     "noMatchSearch": "Nessun membro corrisponde ai tuoi criteri di ricerca.",
     "searchAriaLabel": "Cerca per nome o email",
@@ -161,7 +161,7 @@
     "messagePlaceholder": "Scrivi il tuo messaggio qui...",
     "requiredAriaLabel": "required",
     "send": "Invia Messaggio",
-    "sending": "Inviando...",
+    "sending": "Invio in corso...",
     "subtitle": "A: {{name}} ({{email}})",
     "success": "Messaggio inviato con successo!",
     "title": "Invia Messaggio",

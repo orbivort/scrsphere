@@ -64,7 +64,7 @@
     "removeAttendee": "Rimuovi partecipante",
     "removeAttendeeConfirm": "Rimuovi",
     "removeAttendeeTitle": "Rimuovi partecipante",
-    "roleDeveloper": "Sviluppatore",
+    "roleDeveloper": "Developer",
     "roleProductOwner": "Product Owner",
     "roleScrumMaster": "Scrum Master",
     "roleStakeholder": "Stakeholder",
@@ -79,7 +79,7 @@
   "by": "da",
   "cancel": "Annulla",
   "characterCounter": {
-    "approachingLimit": "Avvicinandosi al limite di caratteri",
+    "approachingLimit": "Limite di caratteri quasi raggiunto",
     "min": "{{current}}/{{max}} caratteri"
   },
   "chunkError": {
@@ -137,7 +137,7 @@
     },
     "dataWillBeDeleted": "Dati che saranno eliminati",
     "deleteAccount": "Elimina account",
-    "deleteAnyway": " elimina comunque",
+    "deleteAnyway": "Elimina comunque",
     "deleting": "Eliminazione...",
     "deletionRightsNotice": {
       "afterGracePeriod": "Dopo 14 giorni, puoi eliminare permanentemente il tuo account indipendentemente.",
@@ -157,11 +157,11 @@
         "cannotUndo": "Questa azione NON PUÒ essere annullata",
         "deleteAllData": "Eliminerà permanentemente tutti i tuoi dati",
         "removePO": "Ti rimuoverà come Product Owner dai team senza sostituto assegnato",
-        "title": "Questo farà:"
+        "title": "Questo comporterà:"
       },
       "teams": {
         "consequences": "Questi team non potranno aggiungere o rimuovere membri del team, gestire sprints, o accedere alle impostazioni del team.",
-        "title": "I seguenti team avranno SENZA Product Owner:"
+        "title": "I seguenti team non avranno alcun Product Owner:"
       },
       "title": "Periodo di grazia completato"
     },
@@ -186,7 +186,7 @@
         "warning": "Sei il solo Product Owner. Se elimini il tuo account, questo team non avrà Product Owner. Puoi programmare l'eliminazione con un periodo di grazia di 14 giorni."
       },
       "description": "Sei membro di {{count}} team",
-      "description_plural": "Sei membro di {{count}} teams",
+      "description_plural": "Sei membro di {{count}} team",
       "regular": {
         "message": "Sarai rimosso da questo team."
       },
@@ -220,21 +220,21 @@
   "edit": "Modifica",
   "emptyState": {
     "error": {
-      "description": "Si è verificato un errore durante il caricamento dei dati. Riprovi.",
+      "description": "Si è verificato un errore durante il caricamento dei dati. Riprova.",
       "title": "Si è verificato un errore"
     },
     "noActiveGoal": {
       "action": "Vai ai Product Goals",
-      "description": "Imposti un obiettivo prodotto attivo prima di continuare.",
+      "description": "Imposta un Product Goal attivo prima di continuare.",
       "title": "Nessun obiettivo attivo"
     },
     "noActiveSprint": {
       "action": "Vai al Sprint Planning",
-      "description": "Avvii un nuovo Sprint dal Sprint Planning per continuare.",
+      "description": "Avvia un nuovo Sprint dal Sprint Planning per continuare.",
       "title": "Nessun sprint attivo"
     },
     "noCompletedSprint": {
-      "description": "Completi uno sprint per iniziare il monitoraggio.",
+      "description": "Completa uno Sprint per iniziare il monitoraggio.",
       "title": "Nessun sprint completato"
     },
     "noData": {
@@ -242,7 +242,7 @@
       "title": "Nessun dato disponibile"
     },
     "noTeam": {
-      "description": "Selezioni un team per continuare.",
+      "description": "Seleziona un team per continuare.",
       "title": "Nessun team selezionato"
     }
   },
@@ -265,8 +265,8 @@
       "createBacklogItem": "Errore durante la creazione dell'elemento del backlog",
       "createDefinition": "Errore durante la creazione della definizione",
       "createGoal": "Errore durante la creazione dell'obiettivo",
-      "createImpediment": "Errore durante la creazione dell'impedimento",
-      "createIncrement": "Errore durante la creazione dell'incremento",
+      "createImpediment": "Errore durante la creazione dell'Impediment",
+      "createIncrement": "Errore durante la creazione dell'Increment",
       "createRetrospective": "Errore durante la creazione della retrospettiva",
       "createReview": "Errore durante la creazione della revisione",
       "createSprint": "Errore durante la creazione dello sprint",
@@ -275,8 +275,8 @@
       "deleteBacklogItem": "Errore durante l'eliminazione dell'elemento del backlog",
       "deleteDefinition": "Errore durante l'eliminazione della definizione",
       "deleteGoal": "Errore durante l'eliminazione dell'obiettivo",
-      "deleteImpediment": "Errore durante l'eliminazione dell'impedimento",
-      "deleteIncrement": "Errore durante l'eliminazione dell'incremento",
+      "deleteImpediment": "Errore durante l'eliminazione dell'Impediment",
+      "deleteIncrement": "Errore durante l'eliminazione dell'Increment",
       "deleteRetrospective": "Errore durante l'eliminazione della retrospettiva",
       "deleteReview": "Errore durante l'eliminazione della revisione",
       "deleteSprint": "Errore durante l'eliminazione dello sprint",
@@ -291,8 +291,8 @@
       "updateBacklogItem": "Errore durante l'aggiornamento dell'elemento del backlog",
       "updateDefinition": "Errore durante l'aggiornamento della definizione",
       "updateGoal": "Errore durante l'aggiornamento dell'obiettivo",
-      "updateImpediment": "Errore durante l'aggiornamento dell'impedimento",
-      "updateIncrement": "Errore durante l'aggiornamento dell'incremento",
+      "updateImpediment": "Errore durante l'aggiornamento dell'Impediment",
+      "updateIncrement": "Errore durante l'aggiornamento dell'Increment",
       "updateProfile": "Errore durante l'aggiornamento del profilo",
       "updateRetrospective": "Errore durante l'aggiornamento della retrospettiva",
       "updateReview": "Errore durante l'aggiornamento della revisione",
@@ -430,7 +430,7 @@
     "passwordChanged": "Password cambiata con successo",
     "passwordRequirements": "La password deve contenere almeno 8 caratteri, incluse maiuscole, minuscole, numeri e caratteri speciali",
     "passwordStrength": {
-      "lowercase": "Una minuscola (a-z)",
+      "lowercase": "Una lettera minuscola (a-z)",
       "minLength": "Almeno 12 caratteri",
       "number": "Un numero (0-9)",
       "requirementsTitle": "Requisiti della password:",
@@ -440,7 +440,7 @@
         "strong": "Forte",
         "weak": "Debole"
       },
-      "uppercase": "Una maiuscola (A-Z)"
+      "uppercase": "Una lettera maiuscola (A-Z)"
     },
     "passwordsDoNotMatch": "Le password non corrispondono",
     "passwordsMatch": "Le password corrispondono",
@@ -457,7 +457,7 @@
     "saving": "Salvataggio...",
     "showPassword": "Mostra password"
   },
-  "redo": "Ripristina",
+  "redo": "Ripeti",
   "refresh": "Aggiorna",
   "remove": "Rimuovi",
   "required": "Obbligatorio",
@@ -490,11 +490,11 @@
     "goToTeamPage": "Vai alla pagina Team",
     "loading": "Caricamento team...",
     "roles": {
-      "developer": "Sviluppatore",
+      "developer": "Developer",
       "productOwner": "Product Owner",
       "scrumMaster": "Scrum Master"
     },
-    "switching": "Cambiando...",
+    "switching": "Cambio in corso...",
     "title": "Seleziona un team"
   },
   "translationPending": "Traduzione in corso",

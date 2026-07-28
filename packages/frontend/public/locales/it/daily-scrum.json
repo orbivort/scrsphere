@@ -1,10 +1,10 @@
 {
   "activeImpediments": {
     "title": "Impediments Attivi",
-    "trackAsImpediment": "Traccia come Impedimento",
+    "trackAsImpediment": "Traccia come Impediment",
     "tracked": "Tracciato",
-    "trackedImpediment": "Impedimento tracciato",
-    "untrackedImpediment": "Impedimento non tracciato",
+    "trackedImpediment": "Impediment tracciato",
+    "untrackedImpediment": "Impediment non tracciato",
     "viewAllImpediments": "Vedi tutti i {{count}} Impediments",
     "viewDetails": "Vedi Dettagli"
   },
@@ -14,8 +14,8 @@
     "closeDialog": "Chiudi dialogo",
     "closeForm": "Chiudi modulo",
     "dailyUpdateAriaLabel": "Aggiornamento giornaliero di {{name}}. {{expandAction}}.",
-    "impedimentStatus": "Stato impedimento: {{status}}",
-    "trackedAsFormalImpediment": "Tracciato come impedimento formale",
+    "impedimentStatus": "Stato Impediment: {{status}}",
+    "trackedAsFormalImpediment": "Tracciato come Impediment formale",
     "viewMode": "Modalità vista"
   },
   "datePicker": {
@@ -36,13 +36,13 @@
   },
   "form": {
     "cancel": "Annulla",
-    "impedimentHint": "Questo impedimento sarà tracciato e puo essere promosso a un registro formale di impedimento",
-    "impedimentLabel": "Qualche impedimento? (opzionale)",
+    "impedimentHint": "Questo Impediment sarà tracciato e può essere promosso a un registro formale di Impediment",
+    "impedimentLabel": "Qualche Impediment? (opzionale)",
     "impedimentPlaceholder": "Descrivi eventuali blocchi o Impediments...",
-    "submitting": "Inviando...",
-    "todayLabel": "Cosa farai oggi per aiutare il team a raggiungere lo sprint goal?",
+    "submitting": "Invio in corso...",
+    "todayLabel": "Cosa farai oggi per aiutare il team a raggiungere lo Sprint Goal?",
     "todayPlaceholder": "Descrivi cosa prevedi di lavorare oggi...",
-    "yesterdayLabel": "Cosa hai fatto ieri per aiutare il team a raggiungere lo sprint goal?",
+    "yesterdayLabel": "Cosa hai fatto ieri per aiutare il team a raggiungere lo Sprint Goal?",
     "yesterdayPlaceholder": "Descrivi ciò che hai realizzato ieri..."
   },
   "formatTimeSince": {
@@ -67,19 +67,19 @@
     "teamUpdates": "Caricamento aggiornamenti team..."
   },
   "promoteModal": {
-    "createImpediment": "Crea Impedimento",
-    "creating": "Creando...",
+    "createImpediment": "Crea Impediment",
+    "creating": "Creazione in corso...",
     "descriptionLabel": "Descrizione",
-    "descriptionPlaceholder": "Descrizione dettagliata dell'impedimento",
+    "descriptionPlaceholder": "Descrizione dettagliata dell'Impediment",
     "fromUpdateBy": "Da Aggiornamento Giornaliero di:",
-    "originalImpedimentText": "Testo Originale Impedimento:",
+    "originalImpedimentText": "Testo Originale Impediment:",
     "priority": "Priorità",
     "priorityHigh": "Alta",
     "priorityLow": "Bassa",
     "priorityMedium": "Media",
-    "title": "Crea Impedimento da Aggiornamento Giornaliero",
+    "title": "Crea Impediment da Aggiornamento Giornaliero",
     "titleLabel": "Titolo",
-    "titlePlaceholder": "Titolo breve per l'impedimento"
+    "titlePlaceholder": "Titolo breve per l'Impediment"
   },
   "quickDates": {
     "today": "Oggi",
@@ -89,13 +89,13 @@
     "dismiss": "Chiudi",
     "message": "Il tuo aggiornamento non ha potuto essere inviato. I tuoi dati sono stati preservati.",
     "retrySubmission": "Riprova Invio",
-    "retrying": "Ritentando...",
+    "retrying": "Nuovo tentativo in corso...",
     "title": "Invio Fallito"
   },
   "sprintGoal": {
     "addInPlanning": "Aggiungi uno in Sprint Planning",
     "label": "Sprint Goal",
-    "noGoalDefined": "Nessuno sprint goal definito.",
+    "noGoalDefined": "Nessun Sprint Goal definito.",
     "progressAriaLabel": "{{percentage}}% di completamento sprint ({{completed}} di {{total}} task completati)",
     "progressTitle": "{{completed}} di {{total}} task completati"
   },
@@ -122,9 +122,9 @@
   "title": "Daily Scrum",
   "toast": {
     "allSubmitted": "Tutti i membri del team hanno inviato i loro aggiornamenti",
-    "failedCreateImpediment": "Creazione impedimento non riuscita. Riprova.",
+    "failedCreateImpediment": "Creazione Impediment non riuscita. Riprova.",
     "failedSendReminder": "Invio promemoria non riuscito. Riprova.",
-    "impedimentCreated": "Impedimento creato con successo!",
+    "impedimentCreated": "Impediment creato con successo!",
     "networkError": "Si è verificato un errore di rete. Verifica la tua connessione e riprova.",
     "noPendingUpdates": "Nessun aggiornamento in sospeso",
     "noPermissionCreateImpediments": "Non hai il permesso di creare Impediments.",
@@ -140,7 +140,7 @@
     "updateSubmitted": "Aggiornamento inviato con successo!"
   },
   "unsavedModal": {
-    "message": "Hai modifiche non salvate nel modulo impedimento. Sei sicuro di volerle scartare?",
+    "message": "Hai modifiche non salvate nel modulo Impediment. Sei sicuro di volerle scartare?",
     "title": "Modifiche Non Salvate"
   },
   "updateCard": {
@@ -148,11 +148,11 @@
     "clickToExpand": "Clicca per espandere",
     "impediment": "Impediment",
     "today": "Oggi",
-    "trackAsFormalImpediment": "Traccia come Impedimento Formale",
-    "trackAsImpediment": "Traccia come Impedimento",
+    "trackAsFormalImpediment": "Traccia come Impediment Formale",
+    "trackAsImpediment": "Traccia come Impediment",
     "tracked": "(Tracciato)",
-    "viewImpediment": "Vedi Impedimento",
-    "viewImpedimentDetails": "Vedi Dettagli Impedimento",
+    "viewImpediment": "Vedi Impediment",
+    "viewImpedimentDetails": "Vedi Dettagli Impediment",
     "yesterday": "Ieri"
   },
   "validation": {
@@ -167,7 +167,7 @@
   },
   "waitingForUpdates": {
     "sendReminder": "Invia Promemoria",
-    "sending": "Inviando...",
+    "sending": "Invio in corso...",
     "title": "In attesa di Aggiornamenti"
   },
   "yourDailyUpdate": "Il Tuo Aggiornamento Giornaliero"

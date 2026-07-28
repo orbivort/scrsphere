@@ -7,8 +7,8 @@
     "empty": "Nessun insight disponibile ancora. Completa più Sprint per generare insights.",
     "items": {
       "active-sprint-impediments": {
-        "description": "Lo Sprint attuale ha {{count}} impedimento(i). Monitora attentamente.",
-        "title": "Impedimento dello Sprint attivo"
+        "description": "Lo Sprint attuale ha {{count}} Impediments. Monitora attentamente.",
+        "title": "Impediment dello Sprint attivo"
       },
       "consistent-delivery": {
         "description": "Il team ha mantenuto il 100% del raggiungimento degli obiettivi negli ultimi {{count}} Sprint",
@@ -23,8 +23,8 @@
         "title": "Alto tasso di successo"
       },
       "impediment-trend": {
-        "description": "{{count}} impedimento(i) attualmente aperto(i). Considera di affrontarli proattivamente.",
-        "title": "Andamento impedimento"
+        "description": "{{count}} Impediments attualmente aperti. Considera di affrontarli proattivamente.",
+        "title": "Andamento Impediment"
       },
       "low-success-rate": {
         "description": "Il tasso di successo degli Sprint è {{rate}}%. Considera di rivedere capacità e pianificazione.",
@@ -58,7 +58,7 @@
       "unit": "Story Points per Sprint"
     },
     "impediments": {
-      "openCount": "impedimento(i) aperto(i)",
+      "openCount": "Impediments aperti",
       "resolved": "Risolti",
       "title": "Impediments"
     },

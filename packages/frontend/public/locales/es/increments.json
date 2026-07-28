@@ -2,7 +2,7 @@
   "backToIncrements": "Volver a Increments",
   "create": {
     "actions": {
-      "cancel": "Cancelararar",
+      "cancel": "Cancelar",
       "createAndContinue": "Crear & Continuar",
       "createIncrement": "Crear Increment",
       "creating": "Creando...",
@@ -20,7 +20,7 @@
       "description": "Descripción",
       "descriptionPlaceholder": "Describa qué incluye este increment...",
       "incrementDetails": "Detalles del Increment",
-      "incrementDetailsSubtitle": "Proporcione un nombre y descripción opcional para este increment.",
+      "incrementDetailsSubtitle": "Proporcione un nombre y descripción opcional para este Increment.",
       "name": "Nombre",
       "namePlaceholder": "ej. Increment Sprint 5",
       "sprint": "Sprint",
@@ -28,14 +28,14 @@
     },
     "loading": "Cargando...",
     "pbis": {
-      "alreadyInIncrement": "Ya en un increment",
+      "alreadyInIncrement": "Ya en un Increment",
       "deselectAll": "Deseleccionar Todos",
-      "mustBeDone": "Los PBIs deben estar en estado \"Done\" y no estar ya en otro increment.",
+      "mustBeDone": "Los PBIs deben estar en estado \"Done\" y no estar ya en otro Increment.",
       "noEligiblePbis": "Ningún PBI elegible encontrado para este Sprint.",
       "selectAll": "Seleccionar Todos",
       "selected": "seleccionados",
-      "subtitle": "Elija los PBIs que están completos y listos para incluirse en este increment.",
-      "title": "Seleccionar Product Volverlog Items"
+      "subtitle": "Elija los PBIs que están completos y listos para incluirse en este Increment.",
+      "title": "Seleccionar Product Backlog Items"
     },
     "progressSteps": {
       "creatingIncrement": "Creando Increment...",
@@ -44,16 +44,16 @@
     },
     "summary": {
       "pbisSelected": "PBIs Seleccionados",
-      "subtitle": "Revise su increment antes de crear.",
+      "subtitle": "Revise su Increment antes de crear.",
       "title": "Resumen",
       "totalStoryPoints": "Total Story Points"
     },
     "title": "Crear Increment",
     "toast": {
-      "createFailed": "Falló al crear increment. Por favor intente de nuevo.",
-      "createdAndDelivering": "¡Increment creado! Entregando increment...",
+      "createFailed": "Falló al crear Increment. Por favor intente de nuevo.",
+      "createdAndDelivering": "¡Increment creado! Entregando Increment...",
       "createdSuccess": "¡Increment creado",
-      "deliverFailed": "Falló al entregar increment. Puede entregarlo manualmente desde la página de detalle del increment.",
+      "deliverFailed": "Falló al entregar Increment. Puede entregarlo manualmente desde la página de detalle del Increment.",
       "deliveredSuccess": "¡Increment entregado! Redirigiendo a Sprint Review...",
       "validationFailed": "Validación fallida"
     },
@@ -88,12 +88,12 @@
   "detail": {
     "deliverIncrement": "Entregar Increment",
     "deliverModal": {
-      "cancel": "Cancelararar",
+      "cancel": "Cancelar",
       "checkboxText": "Entiendo que esta acción es irreversible y el increment será marcado como entregado a las Partes interesadas.",
       "closeDialog": "Cerrar diálogo",
-      "confirm": "Confirmararar Entrega",
-      "confirmDeliveryAriaLabel": "Confirmararar acción de entrega",
-      "confirmText": "Confirmararo que este Increment cumple con la Definition of Done y está listo para entrega",
+      "confirm": "Confirmar Entrega",
+      "confirmDeliveryAriaLabel": "Confirmar acción de entrega",
+      "confirmText": "Confirme que este Increment cumple con la Definition of Done y está listo para entrega",
       "delivering": "Entregando...",
       "deliveryMethodLabel": "Método de Entrega",
       "description": "Marcar este Increment como entregado y registrar el método de entrega.",
@@ -109,18 +109,18 @@
     "dodVerification": {
       "byCategory": "Verificación por Categoría",
       "byPbi": "Verificación por PBI",
-      "noVerifications": "Sin verificaciones DoD registradas para este increment.",
+      "noVerifications": "Sin verificaciones DoD registradas para este Increment.",
       "noVerificationsForPbi": "Sin verificaciones para este PBI.",
       "noVerificationsHint": "Las verificaciones se capturan al completar un Sprint.",
       "title": "Verificación Definition of Done",
-      "totalVerifications": "Verificaciónes Totales",
+      "totalVerifications": "Verificaciones Totales",
       "verified": "Verificado"
     },
     "error": {
       "backToIncrements": "Volver a Increments",
-      "title": "Falló al cargar increment"
+      "title": "Falló al cargar Increment"
     },
-    "loading": "Cargando increment...",
+    "loading": "Cargando Increment...",
     "overview": {
       "created": "Creado",
       "delivered": "Entregado",
@@ -133,8 +133,8 @@
       "title": "Vista General"
     },
     "pbis": {
-      "empty": "Ningún PBI incluido en este increment.",
-      "title": "Product Volverlog Items incluidos"
+      "empty": "Ningún PBI incluido en este Increment.",
+      "title": "Product Backlog Items incluidos"
     },
     "progressSteps": {
       "completed": "Completado",
@@ -169,8 +169,8 @@
     },
     "clearSearch": "Limpiar búsqueda",
     "empty": {
-      "noIncrements": "Ningún increment ha sido creado aún. Cree su primer increment para empezar a rastrear entregables.",
-      "noSearchResults": "Ningún increment coincide con su búsqueda. Intente ajustar sus filtros.",
+      "noIncrements": "Ningún Increment ha sido creado aún. Cree su primer Increment para empezar a rastrear entregables.",
+      "noSearchResults": "Ningún Increment coincide con su búsqueda. Intente ajustar sus filtros.",
       "title": "Sin Increments encontrados"
     },
     "filters": {
@@ -179,7 +179,7 @@
       "archived": "Archivados",
       "delivered": "Entregados"
     },
-    "searchPlaceholder": "Buscar increments...",
+    "searchPlaceholder": "Buscar Increments...",
     "stats": {
       "active": "Activos",
       "delivered": "Entregados",
@@ -187,7 +187,7 @@
       "total": "Increments totales"
     }
   },
-  "loading": "Cargando increments...",
+  "loading": "Cargando Increments...",
   "noDescription": "Sin descripción.",
   "pts": "pts",
   "skipToSprintReview": "Ir a Sprint Review",

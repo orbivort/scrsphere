@@ -14,8 +14,8 @@
     "passwordRequired": "Passwort ist erforderlich",
     "passwordTooShort": "Das Passwort erfüllt nicht die Mindestlängenforderung",
     "passwordsDoNotMatch": "Passwörter stimmen nicht überein",
-    "refreshTokenRequired": "Aktualisierungstoken ist erforderlich",
-    "resetTokenRequired": "Zurücksetzen-Token ist erforderlich",
+    "refreshTokenRequired": "Refresh-Token ist erforderlich",
+    "resetTokenRequired": "Reset-Token ist erforderlich",
     "scheduleDeletionConfirmation": "Die Bestätigung muss genau \"SCHEDULE DELETION\" lauten",
     "termsRequired": "Sie müssen die Nutzungsbedingungen akzeptieren"
   },
