@@ -1,4 +1,12 @@
 {
+  "accountDeletion": {
+    "cancelFailed": "Annullamento dell'eliminazione non riuscito. Riprova.",
+    "deleteFailed": "Eliminazione dell'account non riuscita. Riprova.",
+    "networkError": "Errore di rete. Verifica la tua connessione e riprova.",
+    "scheduleFailed": "Programmazione dell'eliminazione non riuscita. Riprova.",
+    "success": "Il tuo account è stato eliminato con successo.",
+    "timeoutError": "La richiesta è scaduta. Riprova."
+  },
   "actions": "Azioni",
   "add": "Aggiungi",
   "all": "Tutti",
@@ -385,6 +393,10 @@
     "sprintPlanning": "Sprint Planning",
     "sprintReview": "Sprint Review",
     "team": "Team"
+  },
+  "networkErrors": {
+    "networkError": "Errore di rete. Verifica la tua connessione e riprova.",
+    "timeout": "La richiesta è scaduta. Riprova."
   },
   "next": "Avanti",
   "no": "No",

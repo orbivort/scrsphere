@@ -1,4 +1,12 @@
 {
+  "accountDeletion": {
+    "cancelFailed": "Error al cancelar la eliminación. Por favor intente de nuevo.",
+    "deleteFailed": "Error al eliminar la cuenta. Por favor intente de nuevo.",
+    "networkError": "Error de red. Por favor verifique su conexión e intente de nuevo.",
+    "scheduleFailed": "Error al programar la eliminación. Por favor intente de nuevo.",
+    "success": "Su cuenta ha sido eliminada exitosamente.",
+    "timeoutError": "La solicitud tardó demasiado. Por favor intente de nuevo."
+  },
   "actions": "Acciones",
   "add": "Añadir",
   "all": "Todos",
@@ -385,6 +393,10 @@
     "sprintPlanning": "Sprint Planning",
     "sprintReview": "Sprint Review",
     "team": "Equipo"
+  },
+  "networkErrors": {
+    "networkError": "Error de red. Por favor verifique su conexión e intente de nuevo.",
+    "timeout": "La solicitud tardó demasiado. Por favor intente de nuevo."
   },
   "next": "Siguiente",
   "no": "No",

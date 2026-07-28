@@ -1,4 +1,12 @@
 {
+  "accountDeletion": {
+    "cancelFailed": "Löschung konnte nicht storniert werden. Bitte versuchen Sie es erneut.",
+    "deleteFailed": "Konto konnte nicht gelöscht werden. Bitte versuchen Sie es erneut.",
+    "networkError": "Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
+    "scheduleFailed": "Löschung konnte nicht geplant werden. Bitte versuchen Sie es erneut.",
+    "success": "Ihr Konto wurde erfolgreich gelöscht.",
+    "timeoutError": "Anfrage hat zu lange gedauert. Bitte versuchen Sie es erneut."
+  },
   "actions": "Aktionen",
   "add": "Hinzufügen",
   "all": "Alle",
@@ -385,6 +393,10 @@
     "sprintPlanning": "Sprint Planning",
     "sprintReview": "Sprint Review",
     "team": "Team"
+  },
+  "networkErrors": {
+    "networkError": "Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
+    "timeout": "Anfrage hat zu lange gedauert. Bitte versuchen Sie es erneut."
   },
   "next": "Weiter",
   "no": "Nein",

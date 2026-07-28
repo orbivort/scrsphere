@@ -8,6 +8,7 @@ import type { DeletionEligibilityResult, ApiResponse } from '../types';
 const mockLogout = vi.fn();
 const mockNavigate = vi.fn();
 const mockOnUserMenuClose = vi.fn();
+const mockT = vi.fn();
 
 const mockCheckDeletionEligibility = vi.fn();
 const mockDeleteAccount = vi.fn();
@@ -42,6 +43,12 @@ vi.mock('../utils/logger', () => ({
   setStoreProvider: vi.fn(),
 }));
 
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: mockT,
+  }),
+}));
+
 describe('useAccountDeletion', () => {
   const mockEligibility: DeletionEligibilityResult = {
     canDelete: true,
@@ -54,6 +61,8 @@ describe('useAccountDeletion', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    // Default mock implementation returns the fallback value for i18n
+    mockT.mockImplementation((_key: string, fallback: string) => fallback);
   });
 
   describe('initial state', () => {
@@ -529,6 +538,262 @@ describe('useAccountDeletion', () => {
       });
 
       expect(result.current.deleteError).toBeNull();
+    });
+  });
+
+  describe('i18n fallback resilience', () => {
+    beforeEach(() => {
+      vi.clearAllMocks();
+      // Default mock implementation returns the fallback value
+      mockT.mockImplementation((_key: string, fallback: string) => fallback);
+    });
+
+    describe('getFriendlyErrorMessage i18n fallback', () => {
+      it('should use translated message when available', async () => {
+        // Arrange
+        mockT.mockImplementation((key: string) => {
+          if (key === 'accountDeletion.deleteFailed') {
+            return 'Translated: Failed to delete account';
+          }
+          return key;
+        });
+        mockDeleteAccount.mockResolvedValue({
+          success: false,
+          error: { message: 'Deletion failed' },
+        });
+
+        const { result } = renderHook(() => useAccountDeletion(false));
+
+        // Act
+        await act(async () => {
+          await result.current.handleDeleteAccount('DELETE');
+        });
+
+        // Assert
+        expect(result.current.deleteError).toBe('Deletion failed');
+      });
+
+      it('should handle network error with translated message', async () => {
+        // Arrange
+        mockT.mockImplementation((key: string, fallback: string) => {
+          if (key === 'accountDeletion.networkError') {
+            return 'Translated: Network error message';
+          }
+          return fallback;
+        });
+        mockDeleteAccount.mockRejectedValue(new Error('Network error'));
+
+        const { result } = renderHook(() => useAccountDeletion(false));
+
+        // Act
+        await act(async () => {
+          await result.current.handleDeleteAccount('DELETE');
+        });
+
+        // Assert
+        expect(mockT).toHaveBeenCalledWith(
+          'accountDeletion.networkError',
+          'Network error. Please check your connection and try again.'
+        );
+        expect(result.current.deleteError).toBe('Translated: Network error message');
+      });
+
+      it('should handle timeout error with translated message', async () => {
+        // Arrange
+        mockT.mockImplementation((key: string, fallback: string) => {
+          if (key === 'accountDeletion.timeoutError') {
+            return 'Translated: Timeout error message';
+          }
+          return fallback;
+        });
+        mockDeleteAccount.mockRejectedValue(new Error('Request timeout'));
+
+        const { result } = renderHook(() => useAccountDeletion(false));
+
+        // Act
+        await act(async () => {
+          await result.current.handleDeleteAccount('DELETE');
+        });
+
+        // Assert
+        expect(mockT).toHaveBeenCalledWith(
+          'accountDeletion.timeoutError',
+          'Request timed out. Please try again.'
+        );
+        expect(result.current.deleteError).toBe('Translated: Timeout error message');
+      });
+
+      it('should use fallback value when network error translation key is missing', async () => {
+        // Arrange
+        mockT.mockImplementation((_key: string, fallback: string) => fallback);
+        mockDeleteAccount.mockRejectedValue(new Error('Network connection failed'));
+
+        const { result } = renderHook(() => useAccountDeletion(false));
+
+        // Act
+        await act(async () => {
+          await result.current.handleDeleteAccount('DELETE');
+        });
+
+        // Assert - Should use fallback value
+        expect(result.current.deleteError).toBe(
+          'Network error. Please check your connection and try again.'
+        );
+      });
+
+      it('should use fallback value when timeout error translation key is missing', async () => {
+        // Arrange
+        mockT.mockImplementation((_key: string, fallback: string) => fallback);
+        mockDeleteAccount.mockRejectedValue(new Error('Request timeout'));
+
+        const { result } = renderHook(() => useAccountDeletion(false));
+
+        // Act
+        await act(async () => {
+          await result.current.handleDeleteAccount('DELETE');
+        });
+
+        // Assert - Should use fallback value
+        expect(result.current.deleteError).toBe('Request timed out. Please try again.');
+      });
+    });
+
+    describe('schedule deletion i18n fallback', () => {
+      it('should handle schedule deletion error with translated message', async () => {
+        // Arrange
+        mockT.mockImplementation((key: string, fallback: string) => {
+          if (key === 'accountDeletion.scheduleFailed') {
+            return 'Translated: Schedule failed';
+          }
+          return fallback;
+        });
+        mockScheduleDeletion.mockResolvedValue({
+          success: false,
+          error: { message: 'Cannot schedule' },
+        });
+
+        const { result } = renderHook(() => useAccountDeletion(false));
+
+        // Act
+        await act(async () => {
+          await result.current.handleScheduleDeletion('SCHEDULE');
+        });
+
+        // Assert
+        expect(result.current.deleteError).toBe('Cannot schedule');
+      });
+
+      it('should use fallback for schedule deletion network error', async () => {
+        // Arrange
+        mockT.mockImplementation((key: string, fallback: string) => fallback);
+        mockScheduleDeletion.mockRejectedValue(new Error('Network error'));
+
+        const { result } = renderHook(() => useAccountDeletion(false));
+
+        // Act
+        await act(async () => {
+          await result.current.handleScheduleDeletion('SCHEDULE');
+        });
+
+        // Assert
+        expect(mockT).toHaveBeenCalledWith('accountDeletion.networkError', expect.any(String));
+      });
+    });
+
+    describe('cancel deletion i18n fallback', () => {
+      it('should handle cancel deletion error with translated message', async () => {
+        // Arrange
+        mockT.mockImplementation((key: string, fallback: string) => {
+          if (key === 'accountDeletion.cancelFailed') {
+            return 'Translated: Cancel failed';
+          }
+          return fallback;
+        });
+        mockCancelScheduledDeletion.mockResolvedValue({
+          success: false,
+          error: { message: 'Cannot cancel' },
+        });
+
+        const { result } = renderHook(() => useAccountDeletion(false));
+
+        // Act
+        await act(async () => {
+          await result.current.handleCancelDeletion();
+        });
+
+        // Assert
+        expect(result.current.deleteError).toBe('Cannot cancel');
+      });
+    });
+
+    describe('force delete i18n fallback', () => {
+      it('should handle force delete error with translated message', async () => {
+        // Arrange
+        mockT.mockImplementation((key: string, fallback: string) => {
+          if (key === 'accountDeletion.deleteFailed') {
+            return 'Translated: Force delete failed';
+          }
+          return fallback;
+        });
+        mockForceDeleteAccount.mockResolvedValue({
+          success: false,
+          error: { message: 'Force delete error' },
+        });
+
+        const { result } = renderHook(() => useAccountDeletion(false));
+
+        // Act
+        await act(async () => {
+          await result.current.handleForceDelete('FORCE DELETE');
+        });
+
+        // Assert
+        expect(result.current.deleteError).toBe('Force delete error');
+      });
+
+      it('should handle force delete network error with fallback', async () => {
+        // Arrange
+        mockT.mockImplementation((_key: string, fallback: string) => fallback);
+        mockForceDeleteAccount.mockRejectedValue(new Error('Network failure'));
+
+        const { result } = renderHook(() => useAccountDeletion(false));
+
+        // Act
+        await act(async () => {
+          await result.current.handleForceDelete('FORCE DELETE');
+        });
+
+        // Assert
+        expect(mockT).toHaveBeenCalledWith('accountDeletion.networkError', expect.any(String));
+      });
+    });
+
+    describe('success message translation', () => {
+      it('should use translated success message on delete', async () => {
+        // Arrange
+        mockT.mockImplementation((key: string, fallback: string) => {
+          if (key === 'accountDeletion.success') {
+            return 'Translated: Account deleted successfully';
+          }
+          return fallback;
+        });
+        mockDeleteAccount.mockResolvedValue({ success: true });
+
+        const { result } = renderHook(() => useAccountDeletion(false, mockOnUserMenuClose));
+
+        // Act
+        await act(async () => {
+          await result.current.handleDeleteAccount('DELETE');
+        });
+
+        // Assert
+        expect(mockNavigate).toHaveBeenCalledWith('/login', {
+          replace: true,
+          state: {
+            message: 'Translated: Account deleted successfully',
+          },
+        });
+      });
     });
   });
 });

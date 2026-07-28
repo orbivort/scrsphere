@@ -1,4 +1,12 @@
 {
+  "accountDeletion": {
+    "cancelFailed": "Échec de l'annulation de la suppression. Veuillez réessayer.",
+    "deleteFailed": "Échec de la suppression du compte. Veuillez réessayer.",
+    "networkError": "Erreur réseau. Veuillez vérifier votre connexion et réessayer.",
+    "scheduleFailed": "Échec de la planification de la suppression. Veuillez réessayer.",
+    "success": "Votre compte a été supprimé avec succès.",
+    "timeoutError": "La requête a expiré. Veuillez réessayer."
+  },
   "actions": "Actions",
   "add": "Ajouter",
   "all": "Tout",
@@ -385,6 +393,10 @@
     "sprintPlanning": "Sprint Planning",
     "sprintReview": "Sprint Review",
     "team": "Équipe"
+  },
+  "networkErrors": {
+    "networkError": "Erreur réseau. Veuillez vérifier votre connexion et réessayer.",
+    "timeout": "La requête a expiré. Veuillez réessayer."
   },
   "next": "Suivant",
   "no": "Non",

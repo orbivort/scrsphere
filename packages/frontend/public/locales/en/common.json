@@ -1,4 +1,12 @@
 {
+  "accountDeletion": {
+    "cancelFailed": "Failed to cancel deletion. Please try again.",
+    "deleteFailed": "Failed to delete account. Please try again.",
+    "networkError": "Network error. Please check your connection and try again.",
+    "scheduleFailed": "Failed to schedule deletion. Please try again.",
+    "success": "Your account has been successfully deleted.",
+    "timeoutError": "Request timed out. Please try again."
+  },
   "actions": "Actions",
   "add": "Add",
   "all": "All",
@@ -385,6 +393,10 @@
     "sprintPlanning": "Sprint Planning",
     "sprintReview": "Sprint Review",
     "team": "Team"
+  },
+  "networkErrors": {
+    "networkError": "Network error. Please check your connection and try again.",
+    "timeout": "Request timed out. Please try again."
   },
   "next": "Next",
   "no": "No",
