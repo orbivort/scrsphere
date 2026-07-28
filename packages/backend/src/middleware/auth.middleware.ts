@@ -2,6 +2,7 @@
 import { type Request, type Response, type NextFunction } from 'express';
 import { authService } from '../services/auth.service';
 import { UnauthorizedError, ForbiddenError } from '../utils/errors';
+import { type UserRole } from '@scrumooth/shared';
 import { logger } from '../utils/logger';
 import prisma from '../utils/prisma';
 import { COOKIE_NAMES } from '../utils/cookieConfig';
@@ -123,7 +124,7 @@ export const optionalAuth = async (
 /**
  * Role-based authorization middleware
  */
-export const requireRoles = (...roles: string[]) => {
+export const requireRoles = (...roles: UserRole[]) => {
   return async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
     try {
       if (!req.user) {
@@ -144,7 +145,7 @@ export const requireRoles = (...roles: string[]) => {
           },
         });
 
-        if (!teamMember || !roles.includes(teamMember.role)) {
+        if (!teamMember || !roles.includes(teamMember.role as UserRole)) {
           throw new ForbiddenError('Insufficient permissions');
         }
       } else {
