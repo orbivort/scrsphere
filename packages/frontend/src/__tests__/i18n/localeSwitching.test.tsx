@@ -136,10 +136,9 @@ describe('Dynamic Locale Switching', () => {
     );
 
     // Verify Spanish action button
+    // Note: "Sprint Planning" is kept in English as per Scrum glossary standards
     await waitFor(() => {
-      expect(
-        screen.getByRole('button', { name: 'Ir a planificación de sprint' })
-      ).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Ir a Sprint Planning' })).toBeInTheDocument();
     });
   });
 

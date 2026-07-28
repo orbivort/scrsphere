@@ -13,6 +13,11 @@ import { getTestI18nInstance } from '../../i18n/testConfig';
 
 import { Dashboard } from './Dashboard';
 
+// Hoisted mock for react-chartjs-2 Line component
+const { mockLine } = vi.hoisted(() => ({
+  mockLine: vi.fn(() => <div data-testid="mock-line-chart" />),
+}));
+
 vi.mock('../../store', () => ({
   useTeamStore: vi.fn(),
   useAuthStore: vi.fn(),
@@ -35,7 +40,7 @@ vi.mock('../../hooks', () => ({
 }));
 
 vi.mock('react-chartjs-2', () => ({
-  Line: vi.fn(() => <div data-testid="mock-line-chart" />),
+  Line: mockLine,
 }));
 
 const createTestQueryClient = () =>

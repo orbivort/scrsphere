@@ -770,22 +770,21 @@ describe('Impediments Integration Tests', () => {
           impedimentResolved: expectAllLocalesHaveTranslation('notifications:impedimentResolved'),
         };
 
-        // Verify German translation
-        expect(translations.impedimentCreated.de).toContain('Hindernis');
-        expect(translations.impedimentResolved.de).toContain('Hindernis');
+        // Verify German translation (uses English "Impediment" per Scrum.org glossary)
+        expect(translations.impedimentCreated.de).toContain('Impediment');
+        expect(translations.impedimentResolved.de).toContain('Impediment');
 
-        // Verify French translation (uses "empêchement" in actual translations)
-        // Note: Check case-insensitively since the word starts with capital E
-        expect(translations.impedimentCreated.fr.toLowerCase()).toContain('empêchement');
-        expect(translations.impedimentResolved.fr.toLowerCase()).toContain('empêchement');
+        // Verify French translation (uses English "Impediment" per Scrum.org glossary)
+        expect(translations.impedimentCreated.fr).toContain('Impediment');
+        expect(translations.impedimentResolved.fr).toContain('Impediment');
 
-        // Verify Spanish translation (uses "Impedimento" with capital I)
-        expect(translations.impedimentCreated.es.toLowerCase()).toContain('impedimento');
-        expect(translations.impedimentResolved.es.toLowerCase()).toContain('impedimento');
+        // Verify Spanish translation (uses English "Impediment" per Scrum.org glossary)
+        expect(translations.impedimentCreated.es).toContain('Impediment');
+        expect(translations.impedimentResolved.es).toContain('Impediment');
 
-        // Verify Italian translation (uses "Impedimento" with capital I)
-        expect(translations.impedimentCreated.it.toLowerCase()).toContain('impedimento');
-        expect(translations.impedimentResolved.it.toLowerCase()).toContain('impedimento');
+        // Verify Italian translation (uses English "Impediment" per Scrum.org glossary)
+        expect(translations.impedimentCreated.it).toContain('Impediment');
+        expect(translations.impedimentResolved.it).toContain('Impediment');
       });
     });
   });

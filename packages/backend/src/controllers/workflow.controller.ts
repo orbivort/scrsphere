@@ -3,6 +3,7 @@ import { type Request, type Response } from 'express';
 import { workflowService } from '../services/workflow.service';
 import { logger } from '../utils/logger';
 import { getParamValue } from '../utils/validation';
+import { NotFoundError } from '../utils/errors';
 
 /**
  * Get workflow configuration for an entity type
@@ -60,6 +61,13 @@ export const getWorkflowStates = async (req: Request, res: Response): Promise<vo
       data: states,
     });
   } catch (error) {
+    if (error instanceof NotFoundError) {
+      res.status(404).json({
+        success: false,
+        error: error.message,
+      });
+      return;
+    }
     logger.error('Error fetching workflow states', { error });
     res.status(500).json({
       success: false,

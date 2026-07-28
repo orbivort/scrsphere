@@ -1,7 +1,7 @@
 // Authentication Middleware
 import { type Request, type Response, type NextFunction } from 'express';
 import { authService } from '../services/auth.service';
-import { UnauthorizedError } from '../utils/errors';
+import { UnauthorizedError, ForbiddenError } from '../utils/errors';
 import { logger } from '../utils/logger';
 import prisma from '../utils/prisma';
 import { COOKIE_NAMES } from '../utils/cookieConfig';
@@ -130,10 +130,11 @@ export const requireRoles = (...roles: string[]) => {
         throw new UnauthorizedError('Authentication required');
       }
 
-      // Get user's role in the team (if teamId is in params)
+      // Get user's role in the team (if teamId is in params or body)
       const teamId = req.params.teamId ?? req.body.teamId;
 
       if (teamId) {
+        // Check role in specific team
         const teamMember = await req.prisma?.teamMember.findUnique({
           where: {
             teamId_userId: {
@@ -144,7 +145,19 @@ export const requireRoles = (...roles: string[]) => {
         });
 
         if (!teamMember || !roles.includes(teamMember.role)) {
-          throw new UnauthorizedError('Insufficient permissions');
+          throw new ForbiddenError('Insufficient permissions');
+        }
+      } else {
+        // Check if user has required role in any team
+        const teamMembership = await req.prisma?.teamMember.findFirst({
+          where: {
+            userId: req.user.id,
+            role: { in: roles },
+          },
+        });
+
+        if (!teamMembership) {
+          throw new ForbiddenError('Insufficient permissions');
         }
       }
 

@@ -307,7 +307,7 @@ describe('Layout Component', () => {
         'nav.impediments',
         'nav.increments',
         'nav.sprintReview',
-        'nav.retrospective',
+        'nav.retrospectives',
         'nav.reports',
       ] as const;
 
