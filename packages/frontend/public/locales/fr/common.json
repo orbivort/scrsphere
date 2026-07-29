@@ -92,7 +92,7 @@
     "update": "Mettre à jour"
   },
   "back": "Retour",
-  "backlogHint": "This item will be present in the Product Backlog page for action.",
+  "backlogHint": "Cet élément sera présent sur la page du Product Backlog pour action.",
   "by": "par",
   "cancel": "Annuler",
   "characterCounter": {
@@ -109,8 +109,8 @@
   "collapse": "Réduire",
   "confirm": "Confirmer",
   "confirmDialog": {
-    "defaultMessage": "Êtes-vous sûr de vouloir continuer ?",
-    "removeMessage": "Êtes-vous sûr de vouloir supprimer {{name}} ?"
+    "defaultMessage": "Êtes-vous sûr de vouloir continuer ?",
+    "removeMessage": "Êtes-vous sûr de vouloir supprimer {{name}} ?"
   },
   "copied": "Copié !",
   "copy": "Copier",
@@ -132,9 +132,9 @@
     "confirmationCheckbox": "Je comprends que cette action est définitive et ne peut pas être annulée. Je souhaite supprimer mon compte et toutes les données associées.",
     "confirmationHelp": "Cela permet d'éviter les suppressions accidentelles",
     "confirmationInput": {
-      "error": "Le texte ne correspond pas. Veuillez taper exactement :",
+      "error": "Le texte ne correspond pas. Veuillez taper exactement :",
       "instructions": "Tapez le texte exactement comme indiqué, sensible à la casse, pour activer le bouton de suppression. Appuyez sur Entrée lorsque le texte correspond pour envoyer.",
-      "label": "Pour confirmer la suppression, veuillez taper :",
+      "label": "Pour confirmer la suppression, veuillez taper :",
       "placeholder": "Tapez \"{{phrase}}\" pour confirmer",
       "success": "Le texte de confirmation correspond"
     },
@@ -154,7 +154,7 @@
     },
     "dataWillBeDeleted": "Données qui seront supprimées",
     "deleteAccount": "Supprimer le compte",
-    "deleteAnyway": " supprimer quand même",
+    "deleteAnyway": "Supprimer quand même",
     "deleting": "Suppression...",
     "deletionRightsNotice": {
       "afterGracePeriod": "Après 14 jours, vous pouvez supprimer définitivement votre compte indépendamment.",
@@ -174,11 +174,11 @@
         "cannotUndo": "Cette action NE PEUT PAS être annulée",
         "deleteAllData": "Supprimer définitivement toutes vos données",
         "removePO": "Vous supprimer comme Product Owner des équipes sans remplaçant désigné",
-        "title": "Cela va:"
+        "title": "Cela va :"
       },
       "teams": {
-        "consequences": "Ces équipes ne pourraient pas ajouter ou supprimer des membres, gérer des sprints, ou accéder aux paramètres de l'équipe.",
-        "title": "Les équipes suivantes n'auront AUCUN Product Owner:"
+        "consequences": "Ces équipes ne pourront pas ajouter ou supprimer des membres, gérer des sprints, ou accéder aux paramètres de l'équipe.",
+        "title": "Les équipes suivantes n'auront AUCUN Product Owner :"
       },
       "title": "Période de grâce terminée"
     },
@@ -348,32 +348,32 @@
     "dismiss": "Fermer le message d'erreur"
   },
   "errorStates": {
-    "accessDenied": "Access denied",
-    "accessDeniedDetails": "You do not have permission to access this page or resource.",
-    "notInvited": "Not invited",
-    "notInvitedDetails": "You have not been invited to this team yet.",
-    "teamAccessRequired": "Team access required",
-    "teamAccessRequiredDetails": "Please select or create a team to continue.",
-    "teamNotFound": "Team not found",
-    "teamNotFoundDetails": "The team you are looking for could not be found.",
-    "unableToLoad": "Unable to load",
-    "unableToLoadDetails": "Unable to load the requested content. Please try again.",
-    "unexpectedError": "Unexpected error"
+    "accessDenied": "Accès refusé",
+    "accessDeniedDetails": "Vous n'avez pas l'autorisation d'accéder à cette page ou ressource.",
+    "notInvited": "Non invité",
+    "notInvitedDetails": "Vous n'avez pas encore été invité à cette équipe.",
+    "teamAccessRequired": "Accès à l'équipe requis",
+    "teamAccessRequiredDetails": "Veuillez sélectionner ou créer une équipe pour continuer.",
+    "teamNotFound": "Équipe non trouvée",
+    "teamNotFoundDetails": "L'équipe que vous recherchez n'a pas pu être trouvée.",
+    "unableToLoad": "Impossible de charger",
+    "unableToLoadDetails": "Impossible de charger le contenu demandé. Veuillez réessayer.",
+    "unexpectedError": "Erreur inattendue"
   },
   "expand": "Développer",
   "export": "Exporter",
   "filter": "Filtrer",
   "filters": {
-    "all": "All",
-    "directMessages": "Direct Messages",
+    "all": "Tous",
+    "directMessages": "Messages directs",
     "impediments": "Impediments",
-    "reminders": "Reminders",
-    "taskAssignments": "Task Assignments",
-    "teamCreated": "Team Created",
-    "teamDeleted": "Team Deleted",
-    "teamInvitations": "Team Invitations",
-    "teamUpdated": "Team Updated",
-    "unread": "Unread"
+    "reminders": "Rappels",
+    "taskAssignments": "Attributions de tâches",
+    "teamCreated": "Équipe créée",
+    "teamDeleted": "Équipe supprimée",
+    "teamInvitations": "Invitations d'équipe",
+    "teamUpdated": "Équipe mise à jour",
+    "unread": "Non lu"
   },
   "helpPanel": {
     "avoidExample": "✗ À éviter :",
@@ -409,19 +409,19 @@
   "language": "Langue",
   "list": {
     "reviewStatus": {
-      "completed": "Completed",
-      "inProgress": "In Progress",
-      "incrementRequired": "Increment Required",
-      "readyForReview": "Ready for Review"
+      "completed": "Terminé",
+      "inProgress": "En cours",
+      "incrementRequired": "Increment requis",
+      "readyForReview": "Prêt pour la revue"
     },
     "statusLabels": {
-      "active": "Active",
-      "cancelled": "Cancelled",
-      "completed": "Completed",
-      "planned": "Planned"
+      "active": "Actif",
+      "cancelled": "Annulé",
+      "completed": "Terminé",
+      "planned": "Planifié"
     }
   },
-  "loading": "Chargement…",
+  "loading": "Chargement...",
   "loadingStates": {
     "loadingCardContent": "Chargement du contenu de la carte",
     "loadingChart": "Chargement du graphique",
@@ -431,14 +431,14 @@
   "localeSyncFailed": "Échec de la synchronisation de la préférence de langue. La synchronisation aura lieu lors de la prochaine connexion.",
   "minLabel": "min {{min}}",
   "moscow": {
-    "couldHave": "Could Have",
-    "couldHaveDesc": "Desirable if possible - Nice to have",
-    "mustHave": "Must Have",
-    "mustHaveDesc": "Critical for delivery - Non-negotiable",
-    "shouldHave": "Should Have",
-    "shouldHaveDesc": "Important but not vital - High priority",
-    "wontHave": "Won't Have",
-    "wontHaveDesc": "Not in this release - Out of scope"
+    "couldHave": "Pourrait",
+    "couldHaveDesc": "Souhaitable si possible — Optionnel",
+    "mustHave": "Doit avoir",
+    "mustHaveDesc": "Critique pour la livraison – Non négociable",
+    "shouldHave": "Devrait avoir",
+    "shouldHaveDesc": "Important mais pas vital – Haute priorité",
+    "wontHave": "Ne sera pas",
+    "wontHaveDesc": "Pas dans cette version – Hors périmètre"
   },
   "nav": {
     "activeSprint": "Sprint actif",
@@ -492,7 +492,7 @@
   },
   "permission": {
     "actionError": "Vous n'avez pas la permission d'effectuer cette action.",
-    "insufficientRoles": "Permissions insuffisantes. Rôles requis : {{roles}}",
+    "insufficientRoles": "Permissions insuffisantes. Rôles requis : {{roles}}",
     "transitionError": "Vous n'avez pas la permission d'effectuer cette transition."
   },
   "previous": "Précédent",
@@ -508,7 +508,7 @@
     "email": "E-mail",
     "firstName": "Prénom",
     "hidePassword": "Masquer le mot de passe",
-    "lastName": "Nom",
+    "lastName": "Nom de famille",
     "newPassword": "Nouveau mot de passe",
     "passwordChanged": "Mot de passe modifié avec succès",
     "passwordRequirements": "Le mot de passe doit contenir au moins 8 caractères, incluant des majuscules, minuscules, chiffres et caractères spéciaux",
@@ -519,8 +519,8 @@
       "requirementsTitle": "Exigences du mot de passe :",
       "special": "Un caractère spécial (!@#$%^&*)",
       "strengthLabels": {
-        "fair": "Fair",
-        "good": "Good",
+        "fair": "Passable",
+        "good": "Bon",
         "medium": "Moyen",
         "strong": "Fort",
         "weak": "Faible"
@@ -533,7 +533,7 @@
       "confirmPassword": "Confirmez votre nouveau mot de passe",
       "currentPassword": "Entrez votre mot de passe actuel",
       "firstName": "Entrez votre prénom",
-      "lastName": "Entrez votre nom",
+      "lastName": "Entrez votre nom de famille",
       "newPassword": "Entrez votre nouveau mot de passe"
     },
     "profileUpdated": "Profil mis à jour avec succès",
@@ -562,70 +562,70 @@
   "showMore": "Afficher plus",
   "sort": "Trier",
   "sprintPlanning": {
-    "activeCategory": "[Active]",
-    "doneCategory": "[Done]",
+    "activeCategory": "[Actif]",
+    "doneCategory": "[Terminé]",
     "moscow": {
-      "could": "Could",
-      "couldHave": "Could Have",
-      "must": "Must",
-      "mustHave": "Must Have",
-      "should": "Should",
-      "shouldHave": "Should Have",
-      "wont": "Won't",
-      "wontHave": "Won't Have"
+      "could": "Pourrait",
+      "couldHave": "Pourrait avoir",
+      "must": "Doit",
+      "mustHave": "Doit avoir",
+      "should": "Devrait",
+      "shouldHave": "Devrait avoir",
+      "wont": "N'aura pas",
+      "wontHave": "N'aura pas"
     },
     "readyChecklist": {
-      "dependenciesIdentified": "Dependencies identified",
-      "estimatedByTeam": "Estimated by team",
-      "hasClearAcceptanceCriteria": "Has clear acceptance criteria",
-      "understandableByTeam": "Understandable by team"
+      "dependenciesIdentified": "Dépendances identifiées",
+      "estimatedByTeam": "Estimé par l'équipe",
+      "hasClearAcceptanceCriteria": "A des critères d'acceptation clairs",
+      "understandableByTeam": "Compréhensible par l'équipe"
     },
     "startSprintModal": {
       "error": {
-        "activeSprintExists": "Active Sprint Exists",
-        "anotherSprintActive": "Another sprint is already active. Please complete the current sprint before starting a new one.",
-        "invalidRequest": "Invalid Request",
-        "invalidRequestMessage": "Please check your sprint data and try again. Make sure all required fields are filled correctly.",
-        "invalidSprintBacklog": "Invalid Sprint Backlog",
-        "invalidSprintBacklogMessage": "There is an issue with the sprint backlog items. Please remove and re-add the items, then try again.",
-        "invalidTaskAssignment": "Invalid Task Assignment",
-        "invalidTaskAssignmentMessage": "One or more tasks are assigned to invalid team members. Please review task assignments and ensure all assignees are current team members.",
-        "networkError": "Network Error",
-        "networkErrorMessage": "Unable to connect to the server. Please check your internet connection and try again.",
-        "permissionDenied": "You do not have permission to start sprints.",
-        "sessionExpired": "Session Expired",
-        "sessionExpiredMessage": "Your session has expired. Please log in again and retry.",
-        "sprintConflict": "Sprint Conflict",
-        "sprintConflictMessage": "This sprint is being modified by another user. Please wait a moment and try again.",
-        "sprintGoalRequired": "Sprint Goal Required",
-        "sprintGoalRequiredMessage": "Please define a sprint goal before starting the sprint.",
-        "sprintNotFound": "Sprint Not Found",
-        "sprintNotFoundMessage": "The selected sprint no longer exists. It may have been deleted. Please refresh and select a different sprint.",
-        "timeout": "Request Timeout",
-        "timeoutMessage": "The request took too long to complete. Please try again.",
-        "unableToStart": "Unable to Start Sprint",
-        "unauthorized": "Unauthorized"
+        "activeSprintExists": "Un Sprint actif existe",
+        "anotherSprintActive": "Un autre sprint est déjà actif. Veuillez terminer le sprint en cours avant d'en démarrer un nouveau.",
+        "invalidRequest": "Demande invalide",
+        "invalidRequestMessage": "Veuillez vérifier vos données de sprint et réessayer. Assurez-vous que tous les champs obligatoires sont correctement remplis.",
+        "invalidSprintBacklog": "Sprint Backlog invalide",
+        "invalidSprintBacklogMessage": "Un problème est survenu avec les éléments du Sprint Backlog. Veuillez supprimer et rajouter les éléments, puis réessayer.",
+        "invalidTaskAssignment": "Attribution de tâche invalide",
+        "invalidTaskAssignmentMessage": "Une ou plusieurs tâches sont attribuées à des membres d'équipe invalides. Veuillez vérifier les attributions de tâches et vous assurer que tous les destinataires sont des membres actuels de l'équipe.",
+        "networkError": "Erreur réseau",
+        "networkErrorMessage": "Impossible de se connecter au serveur. Veuillez vérifier votre connexion internet et réessayer.",
+        "permissionDenied": "Vous n'avez pas l'autorisation de démarrer des sprints.",
+        "sessionExpired": "Session expirée",
+        "sessionExpiredMessage": "Votre session a expiré. Veuillez vous reconnecter et réessayer.",
+        "sprintConflict": "Conflit de sprint",
+        "sprintConflictMessage": "Ce sprint est en cours de modification par un autre utilisateur. Veuillez patienter un moment et réessayer.",
+        "sprintGoalRequired": "Objectif de sprint requis",
+        "sprintGoalRequiredMessage": "Veuillez définir un objectif de sprint avant de démarrer le sprint.",
+        "sprintNotFound": "Sprint non trouvé",
+        "sprintNotFoundMessage": "Le sprint sélectionné n'existe plus. Il a peut-être été supprimé. Veuillez actualiser et sélectionner un autre sprint.",
+        "timeout": "Délai d'attente dépassé",
+        "timeoutMessage": "La requête a pris trop de temps. Veuillez réessayer.",
+        "unableToStart": "Impossible de démarrer le sprint",
+        "unauthorized": "Non autorisé"
       }
     },
-    "upcomingCategory": "[Upcoming]"
+    "upcomingCategory": "[À venir]"
   },
   "status": {
-    "done": "Done",
-    "doneDesc": "Completed",
-    "inProgress": "In Progress",
-    "inProgressDesc": "Currently being worked on",
-    "new": "New",
-    "newDesc": "Newly created item",
-    "ready": "Ready",
-    "readyDesc": "Ready for sprint",
-    "refined": "Refined",
-    "refinedDesc": "Requirements clarified"
+    "done": "Terminé",
+    "doneDesc": "Achevé",
+    "inProgress": "En cours",
+    "inProgressDesc": "Actuellement en cours de traitement",
+    "new": "Nouveau",
+    "newDesc": "Élément nouvellement créé",
+    "ready": "Prêt",
+    "readyDesc": "Prêt pour le sprint",
+    "refined": "Affiné",
+    "refinedDesc": "Exigences clarifiées"
   },
   "statusSelector": {
     "changeItemStatusHint": "Cliquez pour changer le statut de l'élément",
     "changeStatus": "Changer le statut",
-    "currentStatusClickable": "Statut actuel : {{status}}. Cliquez pour changer le statut.",
-    "currentStatusLocked": "Statut actuel : {{status}} (verrouillé)",
+    "currentStatusClickable": "Statut actuel : {{status}}. Cliquez pour changer le statut.",
+    "currentStatusLocked": "Statut actuel : {{status}} (verrouillé)",
     "statusOptions": "Options de statut"
   },
   "submit": "Soumettre",
@@ -641,7 +641,7 @@
     "switching": "Changement...",
     "title": "Sélectionner une équipe"
   },
-  "translationPending": "Traduction en cours",
+  "translationPending": "Traduction en attente",
   "unassigned": "Non assigné",
   "undo": "Annuler",
   "unsavedChanges": {
@@ -651,21 +651,21 @@
     "discardDescription": "Fermer sans enregistrer et perdre toutes les modifications",
     "goBack": "Retour",
     "goBackDescription": "Continuer la modification et enregistrer vos modifications",
-    "message": "Vous avez des modifications non enregistrées. Êtes-vous sûr de vouloir les ignorer ?",
+    "message": "Vous avez des modifications non enregistrées. Êtes-vous sûr de vouloir les ignorer ?",
     "messages": {
-      "passwordChange": "Vous avez des modifications non enregistrées dans le formulaire de changement de mot de passe. Êtes-vous sûr de vouloir les ignorer ?",
-      "profileEdit": "Vous avez des modifications non enregistrées dans le formulaire de modification du profil. Êtes-vous sûr de vouloir les ignorer ?"
+      "passwordChange": "Vous avez des modifications non enregistrées dans le formulaire de changement de mot de passe. Êtes-vous sûr de vouloir les ignorer ?",
+      "profileEdit": "Vous avez des modifications non enregistrées dans le formulaire de modification du profil. Êtes-vous sûr de vouloir les ignorer ?"
     },
     "permanentlyLost": "Vos modifications seront définitivement perdues si vous les ignorez. Cette action ne peut pas être annulée.",
     "subtitle": "Veuillez vérifier avant de continuer",
     "title": "Modifications non enregistrées",
     "unsavedModifications": "Modifications non enregistrées détectées",
-    "whatWouldYouDo": "Que souhaitez-vous faire ?"
+    "whatWouldYouDo": "Que souhaitez-vous faire ?"
   },
   "unsavedChangesModal": {
     "discard": "Ignorer",
     "keepEditing": "Continuer la modification",
-    "message": "Vous avez des modifications non enregistrées. Êtes-vous sûr de vouloir les ignorer ?",
+    "message": "Vous avez des modifications non enregistrées. Êtes-vous sûr de vouloir les ignorer ?",
     "title": "Modifications non enregistrées"
   },
   "update": "Mettre à jour",
@@ -677,35 +677,35 @@
     "logout": "Déconnexion"
   },
   "validation": {
-    "acceptanceCriteriaRequired": "Acceptance Criteria is required. Please define specific, testable conditions for completion.",
-    "activeGoalRequired": "An active goal is required. Please set an active product goal first.",
-    "businessValueMinimum": "Business Value must be at least 1 point. Please select a valid value.",
-    "businessValueMinimumOptional": "Business Value must be at least 1 point. Please select a value that reflects the relative importance of this item.",
-    "businessValueRequired": "Business Value is required. Please select a value that reflects the importance of this item.",
-    "businessValueTooLarge": "Business Value ({{value}}) exceeds maximum of 100 points. Please select a value that fits within the standard range.",
-    "cannotChangeStatus": "Cannot change status to \"{{status}}\". The following mandatory fields must be completed first: {{fields}}. Please click \"Edit Item\" to update this backlog item.",
-    "descriptionRequired": "Description is required. Please provide detailed information about this backlog item.",
-    "estimateMinimum": "Estimate must be at least 1 story point. Please select a valid value.",
-    "estimateMinimumOptional": "Estimate must be at least 1 story point. Please select a value from the dropdown or leave empty if not ready to estimate.",
-    "estimateRequired": "Estimate is required. Please select a story point value from the dropdown.",
-    "estimateTooLarge": "Estimate ({{estimate}}) exceeds maximum of 100 story points. For larger work items, consider breaking this into smaller, more manageable backlog items.",
-    "fieldAcceptanceCriteria": "Acceptance Criteria",
-    "fieldBusinessValue": "Business Value",
+    "acceptanceCriteriaRequired": "Les critères d'acceptation sont requis. Veuillez définir des conditions spécifiques et testables pour l'achèvement.",
+    "activeGoalRequired": "Un objectif actif est requis. Veuillez d'abord définir un objectif de produit actif.",
+    "businessValueMinimum": "La valeur métier doit être d'au moins 1 point. Veuillez sélectionner une valeur valide.",
+    "businessValueMinimumOptional": "La valeur métier doit être d'au moins 1 point. Veuillez sélectionner une valeur qui reflète l'importance relative de cet élément.",
+    "businessValueRequired": "La valeur métier est requise. Veuillez sélectionner une valeur qui reflète l'importance de cet élément.",
+    "businessValueTooLarge": "La valeur métier ({{value}}) dépasse le maximum de 100 points. Veuillez sélectionner une valeur dans la plage standard.",
+    "cannotChangeStatus": "Impossible de changer le statut en \"{{status}}\". Les champs obligatoires suivants doivent d'abord être remplis : {{fields}}. Veuillez cliquer sur \"Modifier l'élément\" pour mettre à jour cet élément du backlog.",
+    "descriptionRequired": "La description est requise. Veuillez fournir des informations détaillées sur cet élément du backlog.",
+    "estimateMinimum": "L'estimation doit être d'au moins 1 story point. Veuillez sélectionner une valeur valide.",
+    "estimateMinimumOptional": "L'estimation doit être d'au moins 1 story point. Veuillez sélectionner une valeur dans la liste déroulante ou laissez vide si vous n'êtes pas prêt à estimer.",
+    "estimateRequired": "Une estimation est requise. Veuillez sélectionner une valeur en story points dans la liste déroulante.",
+    "estimateTooLarge": "L'estimation ({{estimate}}) dépasse le maximum de 100 story points. Pour les éléments de travail plus importants, envisagez de les diviser en éléments de backlog plus petits et plus gérables.",
+    "fieldAcceptanceCriteria": "Critères d'acceptation",
+    "fieldBusinessValue": "Valeur métier",
     "fieldDescription": "Description",
-    "fieldEstimate": "Estimate (Story Points)",
-    "fieldLabels": "Labels (at least one)",
-    "fieldMoscowPriority": "MoSCoW Priority",
-    "fieldTitle": "Title (minimum 5 characters)",
-    "invalidTransition": "Transition from {{current}} to {{target}} is not allowed. Allowed transitions: {{allowed}}",
-    "labelsRequired": "At least one label is required. Please add a label to categorize this item.",
-    "moscowPriorityRequired": "MoSCoW Priority is required. Please select one of the four priority levels.",
-    "none": "None",
-    "statusAlreadySet": "Item is already in this status",
-    "statusRequired": "Status is required.",
-    "teamIdRequired": "Team ID is required. Please select a team first.",
-    "titleRequired": "Title is required. Please enter a descriptive title for this backlog item.",
-    "titleTooLong": "Title exceeds maximum length by {{overBy}} character{{plural}}. Current: {{current}}/200 characters. Please shorten your title.",
-    "titleTooShort": "Title is too short ({{length}} characters). Please use at least 5 characters to provide a clear description."
+    "fieldEstimate": "Estimation (Story Points)",
+    "fieldLabels": "Étiquettes (au moins une)",
+    "fieldMoscowPriority": "Priorité MoSCoW",
+    "fieldTitle": "Titre (minimum 5 caractères)",
+    "invalidTransition": "La transition de {{current}} vers {{target}} n'est pas autorisée. Transitions autorisées : {{allowed}}",
+    "labelsRequired": "Au moins une étiquette est requise. Veuillez ajouter une étiquette pour catégoriser cet élément.",
+    "moscowPriorityRequired": "La priorité MoSCoW est requise. Veuillez sélectionner l'un des quatre niveaux de priorité.",
+    "none": "Aucun",
+    "statusAlreadySet": "L'élément est déjà dans ce statut",
+    "statusRequired": "Le statut est requis.",
+    "teamIdRequired": "L'ID de l'équipe est requis. Veuillez d'abord sélectionner une équipe.",
+    "titleRequired": "Le titre est requis. Veuillez saisir un titre descriptif pour cet élément du backlog.",
+    "titleTooLong": "Le titre dépasse la longueur maximale de {{overBy}} caractère{{plural}}. Actuel : {{current}}/200 caractères. Veuillez raccourcir votre titre.",
+    "titleTooShort": "Le titre est trop court ({{length}} caractères). Veuillez utiliser au moins 5 caractères pour fournir une description claire."
   },
   "view": "Afficher",
   "widgetError": {
