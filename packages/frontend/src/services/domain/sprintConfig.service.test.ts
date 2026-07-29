@@ -140,7 +140,7 @@ describe('SprintConfigService', () => {
               {
                 id: 'sprint-1',
                 teamId: 'team-1',
-                name: 'Sprint-2401 (2024/1/1-2024/1/14)',
+                name: 'Sprint-2w-2401 (2024-01-01 – 2024-01-12)',
                 sprintNumber: 1,
                 year: 2024,
                 startDate: '2024-01-01T00:00:00Z',
@@ -189,7 +189,7 @@ describe('SprintConfigService', () => {
             {
               id: 'sprint-2',
               teamId: 'team-1',
-              name: 'Sprint-2402 (2024/1/15-2024/1/28)',
+              name: 'Sprint-2w-2402 (2024-01-15 – 2024-01-26)',
               sprintNumber: 2,
               year: 2024,
               startDate: '2024-01-15T00:00:00Z',
@@ -255,7 +255,7 @@ describe('SprintConfigService', () => {
           data: {
             id: 'sprint-1',
             teamId: 'team-1',
-            name: 'Sprint-2401 (2024/1/1-2024/1/14)',
+            name: 'Sprint-2w-2401 (2024-01-01 – 2024-01-12)',
             sprintNumber: 1,
             year: 2024,
             startDate: '2024-01-01T00:00:00Z',

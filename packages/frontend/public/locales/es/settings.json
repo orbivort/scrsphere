@@ -460,9 +460,9 @@
       "editTeam": "No tiene permiso para editar este equipo."
     },
     "subtitle": "Crear y gestionar equipos en la organización",
-    "teamCount": "{{count}} equipo(s)",
-    "teamCount_one": "{{count}} equipo(s)",
-    "teamCount_other": "{{count}} equipo(s)",
+    "teamCount": "{{count}} equipo",
+    "teamCount_one": "{{count}} equipo",
+    "teamCount_other": "{{count}} equipos",
     "title": "Gestión de Equipos",
     "toast": {
       "cannotDeleteWithGoals": "No se puede eliminar equipo con Product Goals existentes",

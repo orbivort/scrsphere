@@ -460,9 +460,9 @@
       "editTeam": "Sie haben keine Berechtigung, dieses Team zu bearbeiten."
     },
     "subtitle": "Teams in der Organisation erstellen und verwalten",
-    "teamCount": "{{count}} Team(s)",
-    "teamCount_one": "{{count}} Team(s)",
-    "teamCount_other": "{{count}} Team(s)",
+    "teamCount": "{{count}} Team",
+    "teamCount_one": "{{count}} Team",
+    "teamCount_other": "{{count}} Teams",
     "title": "Team-Verwaltung",
     "toast": {
       "cannotDeleteWithGoals": "Ein Team mit bestehenden Product Goals kann nicht gelöscht werden",

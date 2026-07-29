@@ -460,9 +460,9 @@
       "editTeam": "You do not have permission to edit this team."
     },
     "subtitle": "Create and manage teams across the organization",
-    "teamCount": "{{count}} team(s)",
-    "teamCount_one": "{{count}} team(s)",
-    "teamCount_other": "{{count}} team(s)",
+    "teamCount": "{{count}} team",
+    "teamCount_one": "{{count}} team",
+    "teamCount_other": "{{count}} teams",
     "title": "Team Management",
     "toast": {
       "cannotDeleteWithGoals": "Cannot delete team with existing product goals",

@@ -407,7 +407,7 @@
       "editTeam": "[Yóú dó nót hàvé pérmíssíón tó édít thís téàmmmmmmmmmmmmmmm.]"
     },
     "subtitle": "[Créàté ànd mànàgé téàms àcróss thé órgànízàtíónnnnnnnnnnnnnnnn]",
-    "teamCount": "[{{count}} ttééààmm(s)]",
+    "teamCount": "[{{count}} ttééààmm]",
     "title": "[Téàm Mànàgéméntttttt]",
     "toast": {
       "cannotDeleteWithGoals": "[Cànnót délété téàm wíth éxístíng pródúct góàlsssssssssssssss]",

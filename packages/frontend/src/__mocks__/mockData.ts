@@ -366,10 +366,21 @@ export const createMockGeneratedSprint = (
   const endDate = new Date(startDate);
   endDate.setDate(startDate.getDate() + 13);
 
+  const shortYear = now.getFullYear().toString().slice(-2);
+  const formattedSprintNum = String(idCounter).padStart(2, '0');
+
+  const fmtDate = (d: Date): string => {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  };
+  const dateRange = `${fmtDate(startDate)} – ${fmtDate(endDate)}`;
+
   return {
     id: generateId('gen-sprint'),
     teamId: 'team-1',
-    name: `Sprint-${now.getFullYear()}${String(idCounter).padStart(2, '0')}`,
+    name: `Sprint-2w-${shortYear}${formattedSprintNum} (${dateRange})`,
     sprintNumber: idCounter,
     year: now.getFullYear(),
     startDate: startDate.toISOString(),

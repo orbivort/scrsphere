@@ -460,9 +460,9 @@
       "editTeam": "Vous n'avez pas les permissions pour modifier cette équipe."
     },
     "subtitle": "Créer et gérer des équipes dans l'organisation",
-    "teamCount": "{{count}} équipe(s)",
-    "teamCount_one": "{{count}} équipe(s)",
-    "teamCount_other": "{{count}} équipe(s)",
+    "teamCount": "{{count}} équipe",
+    "teamCount_one": "{{count}} équipe",
+    "teamCount_other": "{{count}} équipes",
     "title": "Gestion des équipes",
     "toast": {
       "cannotDeleteWithGoals": "Impossible de supprimer une équipe avec des objectifs de produit existants",

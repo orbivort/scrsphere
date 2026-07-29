@@ -1314,8 +1314,14 @@ class MockApiService {
       if (startDate.getFullYear() > year) break;
 
       const formattedSprintNum = sprintNumber.toString().padStart(2, '0');
-      const formatDateSimple = (d: Date) => `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`;
-      const dateRange = `${formatDateSimple(startDate)}-${formatDateSimple(endDate)}`;
+      const formatDateSimple = (d: Date) => {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+      };
+      // Use en-dash (U+2013) as typographically correct range separator
+      const dateRange = `${formatDateSimple(startDate)} – ${formatDateSimple(endDate)}`;
       const name = `Sprint-${config.label}-${shortYear}${formattedSprintNum} (${dateRange})`;
 
       sprints.push({

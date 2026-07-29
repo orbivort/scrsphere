@@ -817,7 +817,7 @@ export const mockSprints: Sprint[] = [
   {
     id: 'sprint-1',
     teamId: UUIDS.teams.alpha,
-    name: 'Sprint-2601 (2026/01/05-2026/01/16)',
+    name: 'Sprint-2w-2601 (2026-01-05 – 2026-01-16)',
     startDate: '2026-01-05T00:00:00Z',
     endDate: '2026-01-18T00:00:00Z',
     sprintGoal: 'Set up project infrastructure and core UI components',
@@ -830,7 +830,7 @@ export const mockSprints: Sprint[] = [
   {
     id: 'sprint-2',
     teamId: UUIDS.teams.alpha,
-    name: 'Sprint-2602 (2026/01/19-2026/01/30)',
+    name: 'Sprint-2w-2602 (2026-01-19 – 2026-01-30)',
     startDate: '2026-01-19T00:00:00Z',
     endDate: '2026-02-01T00:00:00Z',
     sprintGoal: 'Deliver sprint board and dashboard functionality',
@@ -847,7 +847,7 @@ export const mockSprints: Sprint[] = [
   {
     id: 'sprint-3',
     teamId: UUIDS.teams.alpha,
-    name: 'Sprint-2603 (2026/02/02-2026/02/13)',
+    name: 'Sprint-2w-2603 (2026-02-02 – 2026-02-13)',
     startDate: '2026-02-02T00:00:00Z',
     endDate: '2026-02-15T00:00:00Z',
     sprintGoal:
@@ -1495,17 +1495,22 @@ export const mockBurndownData: BurndownData[] = [
 export const mockVelocityData: VelocityData[] = [
   {
     sprintNumber: 1,
-    sprintName: 'Sprint-2601 (2026/01/05-2026/01/16)',
+    sprintName: 'Sprint-2w-2601 (2026-01-05 – 2026-01-16)',
     planned: 13,
     completed: 13,
   },
   {
     sprintNumber: 2,
-    sprintName: 'Sprint-2602 (2026/01/19-2026/01/30)',
+    sprintName: 'Sprint-2w-2602 (2026-01-19 – 2026-01-30)',
     planned: 18,
     completed: 18,
   },
-  { sprintNumber: 3, sprintName: 'Sprint-2603 (2026/02/02-2026/02/13)', planned: 13, completed: 0 },
+  {
+    sprintNumber: 3,
+    sprintName: 'Sprint-2w-2603 (2026-02-02 – 2026-02-13)',
+    planned: 13,
+    completed: 0,
+  },
 ];
 
 // Helper function to get current user

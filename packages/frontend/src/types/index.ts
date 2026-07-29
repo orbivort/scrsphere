@@ -623,7 +623,7 @@ export interface SprintConfiguration {
 export interface GeneratedSprint {
   id: string;
   teamId: string;
-  name: string; // e.g., "Sprint-2601 (2026/1/5-2026/1/16)"
+  name: string; // e.g., "Sprint-2w-2601 (2026-01-05 – 2026-01-16)"
   sprintNumber: number; // 01, 02, etc.
   year: number;
   startDate: string;
