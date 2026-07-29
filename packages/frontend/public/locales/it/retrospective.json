@@ -168,10 +168,10 @@
     "moreItems_one": "+{{count}} altri elemento",
     "moreItems_other": "+{{count}} altri elementi",
     "priorityLabels": {
-      "COULD_HAVE": "Opzionale",
-      "MUST_HAVE": "Essenziale",
-      "SHOULD_HAVE": "Importante",
-      "WONT_HAVE": "Non incluso"
+      "COULD_HAVE": "Potrebbe avere",
+      "MUST_HAVE": "Deve avere",
+      "SHOULD_HAVE": "Dovrebbe avere",
+      "WONT_HAVE": "Non avrà"
     },
     "productBacklog": "Product Backlog",
     "statusLabels": {

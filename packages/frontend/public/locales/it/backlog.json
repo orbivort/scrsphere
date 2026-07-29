@@ -3,7 +3,7 @@
     "done": "Completato",
     "items": "Elementi",
     "label": "Obiettivo attivo",
-    "mustHave": "Must Have",
+    "mustHave": "Deve avere",
     "target": "Target"
   },
   "aria": {
@@ -360,18 +360,18 @@
     "showingItems": "Visualizzazione {{shown}} di {{total}} elementi"
   },
   "moscow": {
-    "couldHave": "Could Have",
+    "couldHave": "Potrebbe avere",
     "couldHaveDesc": "Desiderabile se possibile - Nice to have",
-    "couldShort": "Could",
-    "mustHave": "Must Have",
+    "couldShort": "Potrebbe",
+    "mustHave": "Deve avere",
     "mustHaveDesc": "Critico per la consegna - Non negoziabile",
-    "mustShort": "Must",
-    "shouldHave": "Should Have",
+    "mustShort": "Deve",
+    "shouldHave": "Dovrebbe avere",
     "shouldHaveDesc": "Importante ma non vitale - Alta priorità",
-    "shouldShort": "Should",
-    "wontHave": "Won't Have",
+    "shouldShort": "Dovrebbe",
+    "wontHave": "Non avrà",
     "wontHaveDesc": "Non in questa versione - Fuori dall'ambito",
-    "wontShort": "Won't"
+    "wontShort": "Non avrà"
   },
   "moscowDescriptions": {
     "COULD_HAVE": "Desiderabile se possibile - Nice to have",
@@ -380,10 +380,10 @@
     "WONT_HAVE": "Non in questa versione - Fuori dall'ambito"
   },
   "moscowLabels": {
-    "COULD_HAVE": "Could Have",
-    "MUST_HAVE": "Must Have",
-    "SHOULD_HAVE": "Should Have",
-    "WONT_HAVE": "Won't Have"
+    "COULD_HAVE": "Potrebbe avere",
+    "MUST_HAVE": "Deve avere",
+    "SHOULD_HAVE": "Dovrebbe avere",
+    "WONT_HAVE": "Non avrà"
   },
   "newItem": "Nuovo elemento",
   "pendingAdjustments": {

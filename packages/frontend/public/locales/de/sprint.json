@@ -391,14 +391,14 @@
     "items": "Elemente",
     "loadingSprintPlanning": "Sprint Planning wird geladen...",
     "moscow": {
-      "could": "Could",
-      "couldHave": "Could Have",
-      "must": "Must",
-      "mustHave": "Must Have",
-      "should": "Should",
-      "shouldHave": "Should Have",
-      "wont": "Won't",
-      "wontHave": "Won't Have"
+      "could": "Könnte",
+      "couldHave": "Könnte haben",
+      "must": "Muss",
+      "mustHave": "Muss haben",
+      "should": "Sollte",
+      "shouldHave": "Sollte haben",
+      "wont": "Wird nicht",
+      "wontHave": "Wird nicht haben"
     },
     "nearLimit": "Nahe am Limit",
     "needsRefinement": "benötigt Refinement",

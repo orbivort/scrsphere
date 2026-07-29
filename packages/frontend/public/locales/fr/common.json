@@ -431,13 +431,13 @@
   "localeSyncFailed": "Échec de la synchronisation de la préférence de langue. La synchronisation aura lieu lors de la prochaine connexion.",
   "minLabel": "min {{min}}",
   "moscow": {
-    "couldHave": "Pourrait",
+    "couldHave": "Pourrait avoir",
     "couldHaveDesc": "Souhaitable si possible — Optionnel",
     "mustHave": "Doit avoir",
     "mustHaveDesc": "Critique pour la livraison – Non négociable",
     "shouldHave": "Devrait avoir",
     "shouldHaveDesc": "Important mais pas vital – Haute priorité",
-    "wontHave": "Ne sera pas",
+    "wontHave": "N'aura pas",
     "wontHaveDesc": "Pas dans cette version – Hors périmètre"
   },
   "nav": {

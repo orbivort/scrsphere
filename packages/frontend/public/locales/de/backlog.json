@@ -3,7 +3,7 @@
     "done": "Erledigt",
     "items": "Einträge",
     "label": "Aktives Ziel",
-    "mustHave": "Must Have",
+    "mustHave": "Muss haben",
     "target": "Ziel"
   },
   "aria": {
@@ -360,18 +360,18 @@
     "showingItems": "Anzeige {{shown}} von {{total}} Einträgen"
   },
   "moscow": {
-    "couldHave": "Could Have",
+    "couldHave": "Könnte haben",
     "couldHaveDesc": "Wünschenswert wenn möglich - Nice to have",
-    "couldShort": "Could",
-    "mustHave": "Must Have",
+    "couldShort": "Könnte",
+    "mustHave": "Muss haben",
     "mustHaveDesc": "Kritisch für die Lieferung - Nicht verhandelbar",
-    "mustShort": "Must",
-    "shouldHave": "Should Have",
+    "mustShort": "Muss",
+    "shouldHave": "Sollte haben",
     "shouldHaveDesc": "Wichtig, aber nicht vital - Hohe Priorität",
-    "shouldShort": "Should",
-    "wontHave": "Won't Have",
+    "shouldShort": "Sollte",
+    "wontHave": "Wird nicht haben",
     "wontHaveDesc": "Nicht in diesem Release - Außerhalb des Rahmens",
-    "wontShort": "Won't"
+    "wontShort": "Wird nicht"
   },
   "moscowDescriptions": {
     "COULD_HAVE": "Erwünscht, wenn möglich - Nice to have",
@@ -380,10 +380,10 @@
     "WONT_HAVE": "Nicht in diesem Release - Außerhalb des Scope"
   },
   "moscowLabels": {
-    "COULD_HAVE": "Could Have",
-    "MUST_HAVE": "Must Have",
-    "SHOULD_HAVE": "Should Have",
-    "WONT_HAVE": "Won't Have"
+    "COULD_HAVE": "Könnte haben",
+    "MUST_HAVE": "Muss haben",
+    "SHOULD_HAVE": "Sollte haben",
+    "WONT_HAVE": "Wird nicht haben"
   },
   "newItem": "Neuer Eintrag",
   "pendingAdjustments": {
