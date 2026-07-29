@@ -58,6 +58,8 @@ overrides:
   qs: ^6.15.2
   https-proxy-agent: ^7.0.6
   undici: ^7.28.0
+  postcss: ^8.5.18 # Fixed: GHSA-r28c-9q8g-f849 high severity path traversal vulnerability
+  valibot: ^1.4.2 # Fixed: GHSA-5qjj-4xww-7phc moderate severity record() issue vulnerability
 
 # Peer dependency rules (migrated from package.json)
 peerDependencyRules:

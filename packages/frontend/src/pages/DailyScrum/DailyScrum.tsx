@@ -1,6 +1,6 @@
-import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+﻿import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 import { apiService } from '../../services';
 import { useTeamStore, useAuthStore } from '../../store';

@@ -1,6 +1,6 @@
-import React, { useMemo, useCallback } from 'react';
+﻿import React, { useMemo, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 import { apiService } from '../../services';
 import { useTeamStore } from '../../store';

@@ -1,4 +1,4 @@
-import { renderHook, waitFor } from '@testing-library/react';
+﻿import { renderHook, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { useRequireTeam, useTeamRole } from './useTeamContext';
@@ -8,7 +8,7 @@ vi.mock('../contexts/TeamContext', () => ({
   useTeamContext: vi.fn(),
 }));
 
-vi.mock('react-router-dom', () => ({
+vi.mock('react-router', () => ({
   useNavigate: () => vi.fn(),
 }));
 

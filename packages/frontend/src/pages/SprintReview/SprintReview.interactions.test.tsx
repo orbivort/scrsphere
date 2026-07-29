@@ -1,8 +1,8 @@
-import React from 'react';
+﻿import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
-import type * as ReactRouter from 'react-router-dom';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import type * as ReactRouter from 'react-router';
+import { MemoryRouter, Route, Routes } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { SprintReview } from './SprintReview';
@@ -13,7 +13,7 @@ import * as useMutationErrorHandlerModule from '../../hooks/useMutationErrorHand
 
 const mockNavigate = vi.fn();
 
-vi.mock('react-router-dom', async (importOriginal) => {
+vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal<typeof ReactRouter>();
   return {
     ...actual,

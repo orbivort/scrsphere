@@ -1,4 +1,4 @@
-/**
+﻿/**
  * EmptyState Component
  *
  * A reusable empty state component for displaying various empty state scenarios
@@ -19,7 +19,7 @@
  */
 
 import React, { memo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 import type { EmptyStateProps, EmptyStateType } from './types';
 import {

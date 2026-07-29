@@ -1,7 +1,7 @@
-/* eslint-disable react-refresh/only-export-components -- Context, provider, and hooks are co-located */
+﻿/* eslint-disable react-refresh/only-export-components -- Context, provider, and hooks are co-located */
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 import { useAuthStore } from '../store';
 import { useTeamState } from '../hooks';

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * IncrementList Component Tests
  *
  * Test Coverage:
@@ -17,7 +17,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router';
 import { vi } from 'vitest';
 import { IncrementList } from './IncrementList';
 import { apiService } from '../../services';
@@ -29,8 +29,8 @@ vi.mock('../../services');
 vi.mock('../../contexts/TeamContext');
 
 const mockNavigate = vi.fn();
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
+vi.mock('react-router', async () => {
+  const actual = await vi.importActual('react-router');
   return {
     ...actual,
     useNavigate: () => mockNavigate,

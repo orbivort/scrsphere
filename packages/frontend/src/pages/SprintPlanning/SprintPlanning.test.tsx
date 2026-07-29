@@ -1,8 +1,8 @@
-import React from 'react';
+﻿import React from 'react';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router';
 import userEvent from '@testing-library/user-event';
 
 import { SprintPlanning } from './SprintPlanning';
@@ -234,8 +234,8 @@ vi.mock('../../types', () => ({
   },
 }));
 
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
+vi.mock('react-router', async () => {
+  const actual = await vi.importActual('react-router');
   return {
     ...actual,
     useNavigate: () => vi.fn(),

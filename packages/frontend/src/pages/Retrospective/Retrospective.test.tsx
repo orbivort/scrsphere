@@ -1,7 +1,7 @@
-import React from 'react';
+﻿import React from 'react';
 import { render, screen, waitFor, fireEvent, within } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router';
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 
 import { useTeamStore, useAuthStore } from '../../store';
@@ -38,8 +38,8 @@ vi.mock('../../services', () => ({
 }));
 
 const mockNavigate = vi.fn();
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
+vi.mock('react-router', async () => {
+  const actual = await vi.importActual('react-router');
   return {
     ...actual,
     useNavigate: () => mockNavigate,

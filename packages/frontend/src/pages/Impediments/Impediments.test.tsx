@@ -1,7 +1,7 @@
-import React from 'react';
+﻿import React from 'react';
 import { render, screen, fireEvent, cleanup, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router';
 import { vi } from 'vitest';
 
 import { useTeamStore } from '../../store';

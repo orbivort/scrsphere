@@ -1,5 +1,5 @@
-import React, { useState, useReducer, useCallback, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+﻿import React, { useState, useReducer, useCallback, useRef } from 'react';
+import { useNavigate } from 'react-router';
 
 import { definitionService } from '../../services';
 import { useTeamStore } from '../../store';

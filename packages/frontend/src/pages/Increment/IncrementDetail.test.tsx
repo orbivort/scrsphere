@@ -1,4 +1,4 @@
-/**
+﻿/**
  * IncrementDetail Component Tests
  *
  * Test Coverage:
@@ -16,7 +16,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router';
 import { vi } from 'vitest';
 import { IncrementDetail } from './IncrementDetail';
 import { apiService } from '../../services';
@@ -37,8 +37,8 @@ const mockNavigate = vi.fn();
 const mockUseParams = vi.fn();
 const mockUseSearchParams = vi.fn();
 
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
+vi.mock('react-router', async () => {
+  const actual = await vi.importActual('react-router');
   return {
     ...actual,
     useNavigate: () => mockNavigate,

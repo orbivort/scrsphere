@@ -1,5 +1,5 @@
-import React, { useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+﻿import React, { useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router';
 import { formatDistanceToNow } from 'date-fns';
 
 import { useNotifications, useMarkAsRead, useMarkAllAsRead } from '../../hooks/useNotifications';

@@ -1,7 +1,7 @@
-// Main Layout Component
+﻿// Main Layout Component
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router';
 
 import { useAuthStore, useUIStore } from '../../store';
 import { useTeamContext } from '../../contexts/TeamContext';

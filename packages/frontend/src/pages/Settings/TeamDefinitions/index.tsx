@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+﻿import { useState } from 'react';
+import { useSearchParams } from 'react-router';
 
 import { useTeamStore } from '../../../store';
 import { EmptyState } from '../../../components/EmptyState';

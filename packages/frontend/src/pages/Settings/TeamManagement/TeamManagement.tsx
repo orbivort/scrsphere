@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+﻿import React, { useState, useCallback, useMemo } from 'react';
+import { useSearchParams } from 'react-router';
 
 import { TeamList } from './components/TeamList';
 import { TeamSearchBar } from './components/TeamSearchBar';
