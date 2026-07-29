@@ -411,11 +411,11 @@
     "fromSprint": "Von Sprint:",
     "headerTitle": "Offene Aktion aus Retrospective",
     "inBacklog": "In Backlog",
-    "inProgress": "In Arbeit",
+    "inProgress": "In Bearbeitung",
     "loadingActionItems": "Aktionen werden geladen",
     "markAdded": "Als hinzugefügt markieren",
     "notInBacklog": "Nicht in Backlog",
-    "owner": "Besitzer:",
+    "owner": "Eigentümer:",
     "pending": "Offen",
     "title": "Offene Retro-Aktionen",
     "updating": "Aktualisieren..."

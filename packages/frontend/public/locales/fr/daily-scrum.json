@@ -93,7 +93,7 @@
     "title": "Soumission échouée"
   },
   "sprintGoal": {
-    "addInPlanning": "Ajouter un dans le Sprint Planning",
+    "addInPlanning": "Ajouter un objectif de sprint dans le Sprint Planning",
     "label": "Sprint Goal",
     "noGoalDefined": "Aucun Sprint Goal défini.",
     "progressAriaLabel": "{{percentage}} % d'achèvement du sprint ({{completed}} sur {{total}} tâches achevées)",

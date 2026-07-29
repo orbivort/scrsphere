@@ -462,7 +462,7 @@ Questo viene normalmente gestito automaticamente da `pnpm install` e dagli scrip
 
 ### `pnpm install` fallisce con "Use pnpm instead"
 
-Il repository impone pnpm tramite uno script `preinstall`. installi pnpm globalmente:
+Il repository impone pnpm tramite uno script `preinstall`. Installi pnpm globalmente:
 
 ```bash
 npm install -g pnpm@11.5.0

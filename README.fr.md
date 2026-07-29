@@ -295,7 +295,7 @@ Dix scénarios de tests de charge préconstruits se trouvent dans [`k6/scripts/s
 # Charge quotidienne réaliste
 pnpm run loadtest:normal
 
-# Rush de Sprint Planning (concurrence au pire cas)
+# Rush de Sprint Planning (concurrence dans le pire des cas)
 pnpm run loadtest:peak
 
 # Pousser le système jusqu'à la rupture

@@ -295,7 +295,7 @@ Zehn vorgefertigte Lasttestszenarien befinden sich unter [`k6/scripts/scenarios/
 # Realistische Alltagslast
 pnpm run loadtest:normal
 
-# Sprint-Planning-Rush (Worst-Case-Concurrency)
+# Sprint-Planning-Rush (Worst-Case-Nebenläufigkeit)
 pnpm run loadtest:peak
 
 # System bis zum Versagen belasten

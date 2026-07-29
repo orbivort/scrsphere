@@ -11,7 +11,7 @@
       "String values are base terms (English) that apply to all locales unless overridden.",
       "Object values can specify locale-specific translations.",
       "With locale overrides (object format)",
-      "\"Increment\": { \"_base\": \"Increment\", \"es\": \"Incremento\" }"
+      "\"Abc\": { \"_base\": \"Abc\", \"es\": \"Def\" }"
     ],
     "lastUpdated": "2026-07-27",
     "maintainer": "Scrumooth Team"

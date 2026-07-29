@@ -125,7 +125,7 @@
       "step1": "Naviguer vers la section Objectifs de Produit",
       "step2": "Supprimer ou réassigner tous les objectifs pour \"{{name}}\"",
       "step3": "Revenir ici pour terminer la suppression de l'équipe",
-      "teamLabel": "équipe :",
+      "teamLabel": "Équipe :",
       "title": "Avertissement d'action critique"
     }
   },
@@ -200,7 +200,7 @@
     "uncategorized": "Non catégorisé"
   },
   "editTeamModal": {
-    "beforeUnload": "Vous avez des modifications non sauvegardées dans le formulaire de modification d'équipe. êtes-vous sûr de vouloir quitter?",
+    "beforeUnload": "Vous avez des modifications non sauvegardées dans le formulaire de modification d'équipe. Êtes-vous sûr de vouloir quitter ?",
     "cancel": "Annuler",
     "closeModal": "Fermer le modal",
     "description": "Description",

@@ -33,7 +33,7 @@
       "invitationsSentBy": "Team-Einladungen werden gesendet von: Scrum Mastern oder ausschließlich von Product Ownern",
       "title": "Wie Sie einem Team beitreten"
     },
-    "title": "Developers"
+    "title": "Developer"
   },
   "errorStates": {
     "accessDenied": "Zugang verweigert",
@@ -125,7 +125,7 @@
     "filterByRoleAriaLabel": "Mitglieder nach Rolle filtern",
     "filterOptions": {
       "allRoles": "Alle Rollen",
-      "developer": "Developers",
+      "developer": "Developer",
       "productOwner": "Product Owner",
       "scrumMaster": "Scrum Master"
     },

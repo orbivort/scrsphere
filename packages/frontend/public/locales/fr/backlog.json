@@ -439,7 +439,7 @@
     "andMore": " et {{count}} autres",
     "backlogItem": "Élément du backlog",
     "cancel": "Annuler",
-    "cannotCompleteGoalIncomplete": "Impossible de marquer l'objectif comme Terminé. Les éléments de backlog suivants ne sont pas terminés: {{items}}{{more}}. Tous les éléments du backlog doivent avoir le statut \"TERMINÉ\" avant de terminer l'objectif.",
+    "cannotCompleteGoalIncomplete": "Impossible de marquer l'objectif comme Terminé. Les éléments de backlog suivants ne sont pas terminés: {{items}}{{more}}. Tous les éléments du backlog doivent avoir le statut \"DONE\" avant de terminer l'objectif.",
     "cannotCompleteGoalNoItems": "Impossible de marquer l'objectif comme Terminé: Aucun élément de backlog n'est associé à cet objectif.",
     "cannotDeleteActiveCompleted": "Impossible de supprimer les objectifs actifs ou terminés",
     "cannotDeleteGoalAriaLabel": "Impossible de supprimer {{title}}: les objectifs {{status}} ne peuvent pas être supprimés",

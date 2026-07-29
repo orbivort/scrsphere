@@ -30,7 +30,7 @@ Pruebe Scrumooth al instante en su navegador — sin necesidad de instalación. 
   </a>
 </p>
 
-> **Nota:** La demo utiliza datos simulados en memoria — cualquier cambio que realice permanece únicamente en su sesión del navegador y se pierde al actualizar. Para datos persistentes y colaboración multiusuario, siga la guía de [Instalación](#-installation) para autohospedar su propia instancia.
+> **Nota:** La demo utiliza datos simulados en memoria — cualquier cambio que realice permanece únicamente en su sesión del navegador y se pierde al actualizar. Para datos persistentes y colaboración multiusuario, siga la guía de [Instalación](#-instalación) para autohospedar su propia instancia.
 
 ## ✨ Características
 
@@ -40,7 +40,7 @@ Pruebe Scrumooth al instante en su navegador — sin necesidad de instalación. 
 - **Product Backlog** — Priorización MoSCoW (Must, Should, Could, Won't)
 - **Sprint Planning** — Duraciones de Sprint configurables y planificación de capacidad
 - **Sprint Execution** — Tablero Kanban interactivo con arrastrar y soltar
-- **Daily Scrum** — Seguimiento del Daily Scrum y actualizaciones
+- **Daily Scrum** — Seguimiento del standup diario y actualizaciones
 - **Impediments** — Identificación de bloqueadores y seguimiento de resolución
 - **Incremental Delivery** — Gestión de Increments de producto
 - **Sprint Reviews** — Gestión y documentación de reuniones de revisión
@@ -50,7 +50,7 @@ Pruebe Scrumooth al instante en su navegador — sin necesidad de instalación. 
 
 - **Dashboard e informes** — Métricas y visualizaciones en tiempo real
 - **Motor de flujo de trabajo** — Permisos basados en roles y transiciones de estado
-- **Definición de Hecho/Listo** — Listas de verificación personalizables
+- **Definition of Done/Ready** — Listas de verificación personalizables
 - **Comunicación del equipo** — Notificaciones y mensajería integradas
 - **Registro de auditoría** — Seguimiento exhaustivo de acciones
 
