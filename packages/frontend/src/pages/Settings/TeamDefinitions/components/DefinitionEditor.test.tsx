@@ -548,7 +548,7 @@ describe('DefinitionEditor', () => {
         />
       );
 
-      expect(screen.getByText('1 active items')).toBeInTheDocument();
+      expect(screen.getByText('1 active item')).toBeInTheDocument();
       expect(screen.getByText('1 inactive')).toBeInTheDocument();
     });
   });

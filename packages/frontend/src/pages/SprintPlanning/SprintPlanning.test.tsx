@@ -413,8 +413,8 @@ describe('SprintPlanning Integration Tests', () => {
         expect(sprintSelect).toBeInTheDocument();
       });
 
-      expect(screen.getByText(new RegExp(mockSprint1.name))).toBeInTheDocument();
-      expect(screen.getByText(new RegExp(mockSprint2.name))).toBeInTheDocument();
+      expect(screen.getByText((content) => content.includes(mockSprint1.name))).toBeInTheDocument();
+      expect(screen.getByText((content) => content.includes(mockSprint2.name))).toBeInTheDocument();
     });
   });
 
@@ -502,7 +502,7 @@ describe('SprintPlanning Integration Tests', () => {
       });
 
       // The sprint name should appear in the dropdown (formatted with emoji and status)
-      expect(screen.getByText(new RegExp(mockSprint.name))).toBeInTheDocument();
+      expect(screen.getByText((content) => content.includes(mockSprint.name))).toBeInTheDocument();
     });
 
     it('should show no sprint selected message initially', async () => {
@@ -1453,11 +1453,15 @@ describe('SprintPlanning Integration Tests', () => {
       renderWithProviders(<SprintPlanning />);
 
       await waitFor(() => {
-        expect(screen.getByText(new RegExp(futureSprint.name))).toBeInTheDocument();
+        expect(
+          screen.getByText((content) => content.includes(futureSprint.name))
+        ).toBeInTheDocument();
       });
 
       // Past sprint should not be visible
-      expect(screen.queryByText(new RegExp(pastSprint.name))).not.toBeInTheDocument();
+      expect(
+        screen.queryByText((content) => content.includes(pastSprint.name))
+      ).not.toBeInTheDocument();
     });
   });
 
@@ -1480,7 +1484,9 @@ describe('SprintPlanning Integration Tests', () => {
       renderWithProviders(<SprintPlanning />);
 
       await waitFor(() => {
-        expect(screen.getByText(new RegExp(currentSprint.name))).toBeInTheDocument();
+        expect(
+          screen.getByText((content) => content.includes(currentSprint.name))
+        ).toBeInTheDocument();
       });
     });
   });
@@ -2210,7 +2216,9 @@ describe('SprintPlanning Integration Tests', () => {
       renderWithProviders(<SprintPlanning />);
 
       await waitFor(() => {
-        expect(screen.getByText(new RegExp(currentSprint.name))).toBeInTheDocument();
+        expect(
+          screen.getByText((content) => content.includes(currentSprint.name))
+        ).toBeInTheDocument();
       });
     });
 
@@ -2232,7 +2240,9 @@ describe('SprintPlanning Integration Tests', () => {
       renderWithProviders(<SprintPlanning />);
 
       await waitFor(() => {
-        expect(screen.getByText(new RegExp(futureSprint.name))).toBeInTheDocument();
+        expect(
+          screen.getByText((content) => content.includes(futureSprint.name))
+        ).toBeInTheDocument();
       });
     });
 
@@ -2252,7 +2262,9 @@ describe('SprintPlanning Integration Tests', () => {
 
       await waitFor(() => {
         // Past sprint should not be visible
-        expect(screen.queryByText(new RegExp(pastSprint.name))).not.toBeInTheDocument();
+        expect(
+          screen.queryByText((content) => content.includes(pastSprint.name))
+        ).not.toBeInTheDocument();
       });
     });
   });
@@ -2269,7 +2281,9 @@ describe('SprintPlanning Integration Tests', () => {
       renderWithProviders(<SprintPlanning />);
 
       await waitFor(() => {
-        expect(screen.getByText(new RegExp(mockSprint.name))).toBeInTheDocument();
+        expect(
+          screen.getByText((content) => content.includes(mockSprint.name))
+        ).toBeInTheDocument();
       });
     });
   });
@@ -2454,8 +2468,12 @@ describe('SprintPlanning Integration Tests', () => {
       renderWithProviders(<SprintPlanning />);
 
       await waitFor(() => {
-        expect(screen.getByText(new RegExp(currentSprint.name))).toBeInTheDocument();
-        expect(screen.getByText(new RegExp(futureSprint.name))).toBeInTheDocument();
+        expect(
+          screen.getByText((content) => content.includes(currentSprint.name))
+        ).toBeInTheDocument();
+        expect(
+          screen.getByText((content) => content.includes(futureSprint.name))
+        ).toBeInTheDocument();
       });
     });
   });
@@ -3505,7 +3523,9 @@ describe('SprintPlanning Integration Tests', () => {
       renderWithProviders(<SprintPlanning />);
 
       await waitFor(() => {
-        expect(screen.getByText(new RegExp(currentSprint.name))).toBeInTheDocument();
+        expect(
+          screen.getByText((content) => content.includes(currentSprint.name))
+        ).toBeInTheDocument();
       });
     });
   });
@@ -3529,7 +3549,9 @@ describe('SprintPlanning Integration Tests', () => {
       renderWithProviders(<SprintPlanning />);
 
       await waitFor(() => {
-        expect(screen.getByText(new RegExp(currentSprint.name))).toBeInTheDocument();
+        expect(
+          screen.getByText((content) => content.includes(currentSprint.name))
+        ).toBeInTheDocument();
       });
     });
 
@@ -3551,7 +3573,9 @@ describe('SprintPlanning Integration Tests', () => {
       renderWithProviders(<SprintPlanning />);
 
       await waitFor(() => {
-        expect(screen.getByText(new RegExp(futureSprint.name))).toBeInTheDocument();
+        expect(
+          screen.getByText((content) => content.includes(futureSprint.name))
+        ).toBeInTheDocument();
       });
     });
 
@@ -3571,7 +3595,9 @@ describe('SprintPlanning Integration Tests', () => {
 
       await waitFor(() => {
         // Past sprint should not be visible
-        expect(screen.queryByText(new RegExp(pastSprint.name))).not.toBeInTheDocument();
+        expect(
+          screen.queryByText((content) => content.includes(pastSprint.name))
+        ).not.toBeInTheDocument();
       });
     });
   });
@@ -3746,9 +3772,15 @@ describe('SprintPlanning Integration Tests', () => {
       renderWithProviders(<SprintPlanning />);
 
       await waitFor(() => {
-        expect(screen.getByText(new RegExp(mockSprint1.name))).toBeInTheDocument();
-        expect(screen.getByText(new RegExp(mockSprint2.name))).toBeInTheDocument();
-        expect(screen.getByText(new RegExp(mockSprint3.name))).toBeInTheDocument();
+        expect(
+          screen.getByText((content) => content.includes(mockSprint1.name))
+        ).toBeInTheDocument();
+        expect(
+          screen.getByText((content) => content.includes(mockSprint2.name))
+        ).toBeInTheDocument();
+        expect(
+          screen.getByText((content) => content.includes(mockSprint3.name))
+        ).toBeInTheDocument();
       });
     });
 

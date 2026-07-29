@@ -43,7 +43,7 @@ describe('BacklogHeader', () => {
     it('should render singular item count', () => {
       renderWithProviders(<BacklogHeader {...defaultProps} itemCount={1} />);
 
-      expect(screen.getByText('1 items')).toBeInTheDocument();
+      expect(screen.getByText('1 item')).toBeInTheDocument();
     });
 
     it('should render page subtitle', () => {

@@ -512,7 +512,7 @@ describe('DeleteTeamModal', () => {
       );
 
       // Translation: "{{count}} member(s) will be removed from this team"
-      expect(screen.getByText(/5 member\(s\)/i)).toBeInTheDocument();
+      expect(screen.getByText(/5 member\(s\) will be removed from this team/i)).toBeInTheDocument();
       expect(screen.getByText(/will be removed from this team/i)).toBeInTheDocument();
     });
 
@@ -530,7 +530,7 @@ describe('DeleteTeamModal', () => {
       );
 
       // Translation: "{{count}} member(s) will be removed from this team"
-      expect(screen.getByText(/1 member\(s\)/i)).toBeInTheDocument();
+      expect(screen.getByText('1 member will be removed from this team')).toBeInTheDocument();
     });
   });
 
