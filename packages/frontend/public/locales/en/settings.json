@@ -22,6 +22,8 @@
   },
   "definitionEditor": {
     "activeItems": "{{count}} active items",
+    "activeItems_one": "{{count}} active item",
+    "activeItems_other": "{{count}} active items",
     "addItem": "Add Item",
     "ariaLabels": {
       "activate": "Activate",
@@ -64,6 +66,8 @@
     "editTitle": "Edit {{label}}",
     "empty": "No {{shortLabel}} items yet. Add your first criterion above.",
     "inactive": "{{count}} inactive",
+    "inactive_one": "{{count}} inactive",
+    "inactive_other": "{{count}} inactive",
     "newItemPlaceholder": "Enter new {{shortLabel}} criterion...",
     "saveChanges": "Save Changes",
     "saving": "Saving...",
@@ -102,6 +106,8 @@
     "deletionBlocked": "Deletion Blocked",
     "matchConfirmed": "Match confirmed",
     "memberImpact": "{{count}} member(s) will be removed from this team",
+    "memberImpact_one": "{{count}} member will be removed from this team",
+    "memberImpact_other": "{{count}} member(s) will be removed from this team",
     "normalSubtitle": "This action is permanent and cannot be undone",
     "pasteWarning": "Manual typing required for security. Copy-paste is disabled.",
     "requiredActions": "Required actions:",
@@ -131,6 +137,8 @@
   },
   "dodPanel": {
     "activeItems": "{{count}} active items",
+    "activeItems_one": "{{count}} active items",
+    "activeItems_other": "{{count}} active items",
     "editButton": "Edit DoD",
     "empty": {
       "configureButton": "Configure DoD",
@@ -143,6 +151,8 @@
       "title": "Failed to Load"
     },
     "inactive": "{{count}} inactive",
+    "inactive_one": "{{count}} inactive",
+    "inactive_other": "{{count}} inactive",
     "item": {
       "codeReviewed": "Code is peer-reviewed and approved",
       "documentation": "Code is properly documented",
@@ -166,6 +176,8 @@
   },
   "dorPanel": {
     "activeItems": "{{count}} active items",
+    "activeItems_one": "{{count}} active items",
+    "activeItems_other": "{{count}} active items",
     "editButton": "Edit DoR",
     "empty": {
       "configureButton": "Configure DoR",
@@ -175,6 +187,8 @@
     },
     "error": "Failed to load Definition of Ready",
     "inactive": "{{count}} inactive",
+    "inactive_one": "{{count}} inactive",
+    "inactive_other": "{{count}} inactive",
     "item": {
       "acceptanceCriteria": "Acceptance criteria defined and agreed",
       "acceptanceCriteriaDefined": "Acceptance criteria defined",
@@ -351,17 +365,25 @@
       "cancel": "Cancel",
       "duration": "Duration:",
       "generateButton": "Generate {{count}} Sprints",
+      "generateButton_one": "Generate {{count}} Sprints",
+      "generateButton_other": "Generate {{count}} Sprints",
       "generatedSprints": "Generated Sprints",
       "generating": "Generating...",
       "moreSprints": "... and {{count}} more sprints",
+      "moreSprints_one": "... and {{count}} more sprints",
+      "moreSprints_other": "... and {{count}} more sprints",
       "sprintsToGenerate": "Sprints to Generate:",
       "title": "Sprint Generation Preview",
       "warning": "This will generate {{count}} sprints for {{year}}. Existing sprints for this year may be affected.",
+      "warning_one": "This will generate {{count}} sprints for {{year}}. Existing sprints for this year may be affected.",
+      "warning_other": "This will generate {{count}} sprints for {{year}}. Existing sprints for this year may be affected.",
       "year": "Year:"
     },
     "saveConfiguration": "Save Configuration",
     "saving": "Saving...",
     "sprintCount": "{{count}} sprints",
+    "sprintCount_one": "{{count}} sprint",
+    "sprintCount_other": "{{count}} sprints",
     "sprintDuration": "Sprint Duration",
     "subtitle": "Configure sprint duration and automatically generate sprint plans for the year",
     "title": "Sprint Configuration",
@@ -388,6 +410,8 @@
     "ariaLabel": "Teams",
     "card": {
       "cardAriaLabel": "{{name}}, {{count}} members. Use arrow keys to navigate between cards, Enter or Space to access actions.",
+      "cardAriaLabel_one": "{{name}}, {{count}} members. Use arrow keys to navigate between cards, Enter or Space to access actions.",
+      "cardAriaLabel_other": "{{name}}, {{count}} members. Use arrow keys to navigate between cards, Enter or Space to access actions.",
       "createdBy": "Created by {{firstName}} {{lastName}}",
       "delete": "Delete",
       "deleteTeam": "Delete {{name}}",
@@ -396,6 +420,8 @@
       "editTeam": "Edit {{name}}",
       "loading": "Loading...",
       "memberCount": "{{count}} member",
+      "memberCount_one": "{{count}} member",
+      "memberCount_other": "{{count}} member",
       "memberCount_plural": "{{count}} members"
     },
     "empty": {
@@ -435,6 +461,8 @@
     },
     "subtitle": "Create and manage teams across the organization",
     "teamCount": "{{count}} team(s)",
+    "teamCount_one": "{{count}} team(s)",
+    "teamCount_other": "{{count}} team(s)",
     "title": "Team Management",
     "toast": {
       "cannotDeleteWithGoals": "Cannot delete team with existing product goals",

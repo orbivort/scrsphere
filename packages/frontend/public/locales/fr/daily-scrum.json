@@ -6,6 +6,8 @@
     "trackedImpediment": "Impediment suivi",
     "untrackedImpediment": "Impediment non suivi",
     "viewAllImpediments": "Voir tous les {{count}} Impediments",
+    "viewAllImpediments_one": "Voir tous les {{count}} Impediment",
+    "viewAllImpediments_other": "Voir tous les {{count}} Impediments",
     "viewDetails": "Voir les détails"
   },
   "aria": {
@@ -47,9 +49,15 @@
   },
   "formatTimeSince": {
     "daysAgo": "{{count}}j",
+    "daysAgo_one": "{{count}}j",
+    "daysAgo_other": "{{count}}j",
     "hoursAgo": "{{count}}h",
+    "hoursAgo_one": "{{count}}h",
+    "hoursAgo_other": "{{count}}h",
     "justNow": "à l'instant",
-    "minutesAgo": "{{count}}m"
+    "minutesAgo": "{{count}}m",
+    "minutesAgo_one": "{{count}}m",
+    "minutesAgo_other": "{{count}}m"
   },
   "impedimentStatus": {
     "closed": "Fermé",
@@ -133,6 +141,8 @@
     "reminderSent": "Rappel envoyé !",
     "remindersSentOne": "Rappels envoyés à 1 membre de l'équipe",
     "remindersSentPlural": "Rappels envoyés à {{count}} membres de l'équipe",
+    "remindersSentPlural_one": "Rappels envoyés à {{count}} membre de l'équipe",
+    "remindersSentPlural_other": "Rappels envoyés à {{count}} membres de l'équipe",
     "resourceNotFound": "La ressource demandée n'a pas été trouvée.",
     "serverError": "Une erreur serveur s'est produite. Veuillez réessayer plus tard.",
     "sessionExpired": "Votre session a expiré. Veuillez vous reconnecter.",

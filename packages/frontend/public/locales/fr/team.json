@@ -177,6 +177,8 @@
     "created": "Créé : {{date}}",
     "lastUpdated": "Dernière mise à jour : {{date}}",
     "memberCount": "{{count}} membres",
+    "memberCount_one": "{{count}} membre",
+    "memberCount_other": "{{count}} membres",
     "teamId": "ID de l'équipe : {{id}}",
     "unableToLoad": "Impossible de charger les détails de l'équipe. Veuillez actualiser la page.",
     "unavailable": "Informations de l'équipe non disponibles"

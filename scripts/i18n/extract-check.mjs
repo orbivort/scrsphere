@@ -128,8 +128,23 @@ for (const file of extractedFiles) {
 
   const checkedInKeys = new Set(getKeys(checkedInData));
 
+  // Build a set of all parent prefixes from checked-in keys
+  // e.g. if checked-in has bulkUpload.template.headers.title, we add
+  // bulkUpload.template.headers as a parent prefix
+  const checkedInPrefixes = new Set();
+  for (const key of checkedInKeys) {
+    const parts = key.split('.');
+    for (let i = 1; i < parts.length; i++) {
+      checkedInPrefixes.add(parts.slice(0, i).join('.'));
+    }
+  }
+
   // Find keys in extracted but not in checked-in
-  const missing = [...extractedKeys].filter((k) => !checkedInKeys.has(k));
+  // A key is considered present if it exists as a leaf key OR as a parent prefix
+  // (i.e., it's an object key used with returnObjects: true)
+  const missing = [...extractedKeys].filter(
+    (k) => !checkedInKeys.has(k) && !checkedInPrefixes.has(k),
+  );
   if (missing.length > 0) {
     totalMissing += missing.length;
     missingDetails.push({ ns, missing, reason: 'keys missing from locale file' });

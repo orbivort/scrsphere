@@ -22,6 +22,8 @@
   },
   "definitionEditor": {
     "activeItems": "{{count}} aktive Elemente",
+    "activeItems_one": "{{count}} aktive Element",
+    "activeItems_other": "{{count}} aktive Elemente",
     "addItem": "Element hinzufügen",
     "ariaLabels": {
       "activate": "Aktivieren",
@@ -64,6 +66,8 @@
     "editTitle": "{{label}} bearbeiten",
     "empty": "Noch keine {{shortLabel}}-Elemente. Fügen Sie oben Ihr erstes Kriterium hinzu.",
     "inactive": "{{count}} inaktiv",
+    "inactive_one": "{{count}} inaktiv",
+    "inactive_other": "{{count}} inaktiv",
     "newItemPlaceholder": "Neues {{shortLabel}}-Kriterium eingeben...",
     "saveChanges": "Änderungen speichern",
     "saving": "Speichern...",
@@ -102,6 +106,8 @@
     "deletionBlocked": "Löschen blockiert",
     "matchConfirmed": "Übereinstimmung bestätigt",
     "memberImpact": "{{count}} Mitglied(er) werden aus diesem Team entfernt",
+    "memberImpact_one": "{{count}} Mitglied(er) wird aus diesem Team entfernt",
+    "memberImpact_other": "{{count}} Mitglied(er) werden aus diesem Team entfernt",
     "normalSubtitle": "Diese Aktion ist dauerhaft und kann nicht rückgängig gemacht werden",
     "pasteWarning": "Manuelle Eingabe aus Sicherheitsgründen erforderlich. Kopieren und Einfügen ist deaktiviert.",
     "requiredActions": "Erforderliche Aktionen:",
@@ -131,6 +137,8 @@
   },
   "dodPanel": {
     "activeItems": "{{count}} aktive Elemente",
+    "activeItems_one": "{{count}} aktive Element",
+    "activeItems_other": "{{count}} aktive Elemente",
     "editButton": "DoD bearbeiten",
     "empty": {
       "configureButton": "DoD konfigurieren",
@@ -143,6 +151,8 @@
       "title": "Laden fehlgeschlagen"
     },
     "inactive": "{{count}} inaktiv",
+    "inactive_one": "{{count}} inaktiv",
+    "inactive_other": "{{count}} inaktiv",
     "item": {
       "codeReviewed": "Code wurde geprüft und genehmigt",
       "documentation": "Code ist ordnungsgemäß dokumentiert",
@@ -166,6 +176,8 @@
   },
   "dorPanel": {
     "activeItems": "{{count}} aktive Elemente",
+    "activeItems_one": "{{count}} aktive Element",
+    "activeItems_other": "{{count}} aktive Elemente",
     "editButton": "DoR bearbeiten",
     "empty": {
       "configureButton": "DoR konfigurieren",
@@ -175,6 +187,8 @@
     },
     "error": "Definition of Ready konnte nicht geladen werden",
     "inactive": "{{count}} inaktiv",
+    "inactive_one": "{{count}} inaktiv",
+    "inactive_other": "{{count}} inaktiv",
     "item": {
       "acceptanceCriteria": "Akzeptanzkriterien definiert und vereinbart",
       "acceptanceCriteriaDefined": "Akzeptanzkriterien definiert",
@@ -351,17 +365,25 @@
       "cancel": "Abbrechen",
       "duration": "Dauer:",
       "generateButton": "{{count}} Sprints generieren",
+      "generateButton_one": "{{count}} Sprint generieren",
+      "generateButton_other": "{{count}} Sprints generieren",
       "generatedSprints": "Generierte Sprints",
       "generating": "Generieren...",
       "moreSprints": "... und {{count}} weitere Sprints",
+      "moreSprints_one": "... und {{count}} weitere Sprint",
+      "moreSprints_other": "... und {{count}} weitere Sprints",
       "sprintsToGenerate": "Zu generierende Sprints:",
       "title": "Sprint-Generierungsvorschau",
       "warning": "Dies wird {{count}} Sprints für {{year}} generieren. Bestehende Sprints für dieses Jahr können betroffen sein.",
+      "warning_one": "Dies wird {{count}} Sprint für {{year}} generieren. Bestehende Sprint für dieses Jahr können betroffen sein.",
+      "warning_other": "Dies wird {{count}} Sprints für {{year}} generieren. Bestehende Sprints für dieses Jahr können betroffen sein.",
       "year": "Jahr:"
     },
     "saveConfiguration": "Konfiguration speichern",
     "saving": "Speichern...",
     "sprintCount": "{{count}} Sprints",
+    "sprintCount_one": "{{count}} Sprint",
+    "sprintCount_other": "{{count}} Sprints",
     "sprintDuration": "Sprint-Dauer",
     "subtitle": "Konfigurieren Sie die Sprint-Dauer und generieren Sie automatisch Sprint-Pläne für das Jahr",
     "title": "Sprint-Konfiguration",
@@ -388,6 +410,8 @@
     "ariaLabel": "Teams",
     "card": {
       "cardAriaLabel": "{{name}}, {{count}} Mitglieder. Verwenden Sie die Pfeiltasten zum Navigieren zwischen Karten, Enter oder Leertaste für Aktionen.",
+      "cardAriaLabel_one": "{{name}}, {{count}} Mitglied. Verwenden Sie die Pfeiltasten zum Navigieren zwischen Karten, Enter oder Leertaste für Aktionen.",
+      "cardAriaLabel_other": "{{name}}, {{count}} Mitglieder. Verwenden Sie die Pfeiltasten zum Navigieren zwischen Karten, Enter oder Leertaste für Aktionen.",
       "createdBy": "Erstellt von {{firstName}} {{lastName}}",
       "delete": "Löschen",
       "deleteTeam": "{{name}} löschen",
@@ -396,6 +420,8 @@
       "editTeam": "{{name}} bearbeiten",
       "loading": "Laden...",
       "memberCount": "{{count}} Mitglied",
+      "memberCount_one": "{{count}} Mitglied",
+      "memberCount_other": "{{count}} Mitglieder",
       "memberCount_plural": "{{count}} Mitglieder"
     },
     "empty": {
@@ -435,6 +461,8 @@
     },
     "subtitle": "Teams in der Organisation erstellen und verwalten",
     "teamCount": "{{count}} Team(s)",
+    "teamCount_one": "{{count}} Team(s)",
+    "teamCount_other": "{{count}} Team(s)",
     "title": "Team-Verwaltung",
     "toast": {
       "cannotDeleteWithGoals": "Ein Team mit bestehenden Product Goals kann nicht gelöscht werden",

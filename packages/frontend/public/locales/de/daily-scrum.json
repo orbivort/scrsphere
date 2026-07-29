@@ -6,6 +6,8 @@
     "trackedImpediment": "Verfolgtes Impediment",
     "untrackedImpediment": "Nicht verfolgtes Impediment",
     "viewAllImpediments": "Alle {{count}} Impediments anzeigen",
+    "viewAllImpediments_one": "Alle {{count}} Impediment anzeigen",
+    "viewAllImpediments_other": "Alle {{count}} Impediments anzeigen",
     "viewDetails": "Details anzeigen"
   },
   "aria": {
@@ -47,9 +49,15 @@
   },
   "formatTimeSince": {
     "daysAgo": "{{count}} T.",
+    "daysAgo_one": "{{count}} T.",
+    "daysAgo_other": "{{count}} T.",
     "hoursAgo": "{{count}} Std.",
+    "hoursAgo_one": "{{count}} Std.",
+    "hoursAgo_other": "{{count}} Std.",
     "justNow": "gerade eben",
-    "minutesAgo": "{{count}} Min."
+    "minutesAgo": "{{count}} Min.",
+    "minutesAgo_one": "{{count}} Min.",
+    "minutesAgo_other": "{{count}} Min."
   },
   "impedimentStatus": {
     "closed": "Geschlossen",
@@ -133,6 +141,8 @@
     "reminderSent": "Erinnerung gesendet!",
     "remindersSentOne": "Erinnerungen an 1 Teammitglied gesendet",
     "remindersSentPlural": "Erinnerungen an {{count}} Teammitglieder gesendet",
+    "remindersSentPlural_one": "Erinnerungen an {{count}} Teammitglieder gesendet",
+    "remindersSentPlural_other": "Erinnerungen an {{count}} Teammitglieder gesendet",
     "resourceNotFound": "Die angeforderte Ressource wurde nicht gefunden.",
     "serverError": "Ein Serverfehler ist aufgetreten. Bitte versuchen Sie es später erneut.",
     "sessionExpired": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",

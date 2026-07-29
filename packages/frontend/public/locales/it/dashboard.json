@@ -10,6 +10,8 @@
     "noData": "Nessun dato burndown disponibile.",
     "noDataText": "nessun dato",
     "points": "{{count}} punti",
+    "points_one": "{{count}} punto",
+    "points_other": "{{count}} punti",
     "storyPointsAxis": "Story Points",
     "summary": "Grafico burndown sprint: {{totalDays}} giorni tracciati. Giorno attuale: {{currentDay}}. Story points iniziali: {{startPoints}}. Ideale rimanente: {{idealRemaining}} punti. Effettivo rimanente: {{actualText}}.",
     "title": "Grafico Burndown Sprint"
@@ -54,6 +56,8 @@
   "daysRemainingLabel": "Giorni rimanenti",
   "failedToLoad": "Impossibile caricare la Dashboard",
   "hoursAgo": "{{count}} or{{plural}} fa",
+  "hoursAgo_one": "{{count}} or{{plural}} fa",
+  "hoursAgo_other": "{{count}} or{{plural}} fa",
   "idealBurndown": "Burndown ideale",
   "impedimentList": {
     "ariaLabel": "Lista Impediments",
@@ -83,6 +87,8 @@
     "totalTasks": "Compiti totali"
   },
   "minutesAgo": "{{count}} minut{{plural}} fa",
+  "minutesAgo_one": "{{count}} minut{{plural}} fa",
+  "minutesAgo_other": "{{count}} minut{{plural}} fa",
   "noActiveSprint": "Nessuno sprint attivo",
   "noDailyUpdates": "Ancora nessun aggiornamento quotidiano per oggi.",
   "noOpenImpediments": "Nessun Impediment aperto. Ottimo lavoro!",

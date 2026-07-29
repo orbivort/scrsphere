@@ -10,6 +10,8 @@
     "noData": "Sin datos burndown disponibles.",
     "noDataText": "sin datos",
     "points": "{{count}} puntos",
+    "points_one": "{{count}} punto",
+    "points_other": "{{count}} puntos",
     "storyPointsAxis": "Story Points",
     "summary": "Gráfico burndown del Sprint: {{totalDays}} días rastreados. Día actual: {{currentDay}}. Story Points iniciales: {{startPoints}}. Ideal restante: {{idealRemaining}} puntos. Real restante: {{actualText}}.",
     "title": "Gráfico Burndown del Sprint"
@@ -54,6 +56,8 @@
   "daysRemainingLabel": "Días restantes",
   "failedToLoad": "Error al cargar el panel",
   "hoursAgo": "hace {{count}} hora{{plural}}",
+  "hoursAgo_one": "hace {{count}} hora{{plural}}",
+  "hoursAgo_other": "hace {{count}} hora{{plural}}",
   "idealBurndown": "Burndown ideal",
   "impedimentList": {
     "ariaLabel": "Lista de Impediments",
@@ -83,6 +87,8 @@
     "totalTasks": "Tareas totales"
   },
   "minutesAgo": "hace {{count}} minuto{{plural}}",
+  "minutesAgo_one": "hace {{count}} minuto{{plural}}",
+  "minutesAgo_other": "hace {{count}} minuto{{plural}}",
   "noActiveSprint": "Ningún Sprint activo",
   "noDailyUpdates": "Aún no hay actualizaciones diarias para hoy.",
   "noOpenImpediments": "Sin Impediments abiertos. ¡Excelente trabajo!",

@@ -56,9 +56,15 @@
     "emptyHint": "Mark team members above or add attendees manually.",
     "emptyMessage": "No attendees recorded yet.",
     "filterAll": "All ({{count}})",
+    "filterAll_one": "All ({{count}})",
+    "filterAll_other": "All ({{count}})",
     "filterAriaLabel": "Filter attendees by type",
     "filterGuests": "Guests ({{count}})",
+    "filterGuests_one": "Guest ({{count}})",
+    "filterGuests_other": "Guests ({{count}})",
     "filterTeam": "Team ({{count}})",
+    "filterTeam_one": "Team ({{count}})",
+    "filterTeam_other": "Team ({{count}})",
     "formAttendedLabel": "Attended",
     "formEmailLabel": "Email",
     "formEmailPlaceholder": "Enter email address (optional)",
@@ -81,9 +87,12 @@
     "teamMemberCannotEdit": "Team members cannot be edited",
     "title": "Attendees",
     "unmarkedTitle": "Team members not yet marked ({{count}})",
+    "unmarkedTitle_one": "Team member not yet marked ({{count}})",
+    "unmarkedTitle_other": "Team members not yet marked ({{count}})",
     "update": "Update"
   },
   "back": "Back",
+  "backlogHint": "This item will be present in the Product Backlog page for action.",
   "by": "by",
   "cancel": "Cancel",
   "characterCounter": {
@@ -194,6 +203,8 @@
         "warning": "You are the only Product Owner. If you delete your account, this team will have no Product Owner. You can schedule deletion with a 14-day grace period."
       },
       "description": "You are a member of {{count}} team",
+      "description_one": "You are a member of {{count}} team",
+      "description_other": "You are a member of {{count}} team",
       "description_plural": "You are a member of {{count}} teams",
       "regular": {
         "message": "You will be removed from this team."
@@ -203,6 +214,8 @@
     "teamMembersNotified": "Team members have been notified",
     "teamMemberships": "Team memberships and roles",
     "teamsCount": "({{count}} teams)",
+    "teamsCount_one": "({{count}} teams)",
+    "teamsCount_other": "({{count}} teams)",
     "title": "Delete Account",
     "warningTitle": "This action is permanent and cannot be undone. All your data will be permanently deleted.",
     "whatHappensNext": "What happens next"
@@ -210,14 +223,17 @@
   "download": "Download",
   "draftRestore": {
     "daysAgo": "{{count}} day ago",
+    "daysAgo_one": "{{count}} day ago",
     "daysAgo_other": "{{count}} days ago",
     "discard": "Discard",
     "draftFound": "We found a draft you were working on {{time}}.",
     "draftSaved": "Draft saved",
     "hoursAgo": "{{count}} hour ago",
+    "hoursAgo_one": "{{count}} hour ago",
     "hoursAgo_other": "{{count}} hours ago",
     "justNow": "just now",
     "minutesAgo": "{{count}} minute ago",
+    "minutesAgo_one": "{{count}} minute ago",
     "minutesAgo_other": "{{count}} minutes ago",
     "recently": "recently",
     "restoreDraft": "Restore Draft",
@@ -331,9 +347,34 @@
   "errorMessage": {
     "dismiss": "Dismiss error message"
   },
+  "errorStates": {
+    "accessDenied": "Access denied",
+    "accessDeniedDetails": "You do not have permission to access this page or resource.",
+    "notInvited": "Not invited",
+    "notInvitedDetails": "You have not been invited to this team yet.",
+    "teamAccessRequired": "Team access required",
+    "teamAccessRequiredDetails": "Please select or create a team to continue.",
+    "teamNotFound": "Team not found",
+    "teamNotFoundDetails": "The team you are looking for could not be found.",
+    "unableToLoad": "Unable to load",
+    "unableToLoadDetails": "Unable to load the requested content. Please try again.",
+    "unexpectedError": "Unexpected error"
+  },
   "expand": "Expand",
   "export": "Export",
   "filter": "Filter",
+  "filters": {
+    "all": "All",
+    "directMessages": "Direct Messages",
+    "impediments": "Impediments",
+    "reminders": "Reminders",
+    "taskAssignments": "Task Assignments",
+    "teamCreated": "Team Created",
+    "teamDeleted": "Team Deleted",
+    "teamInvitations": "Team Invitations",
+    "teamUpdated": "Team Updated",
+    "unread": "Unread"
+  },
   "helpPanel": {
     "avoidExample": "✗ Avoid:",
     "goodExample": "✓ Good example:",
@@ -348,18 +389,38 @@
   },
   "iconGallery": {
     "categories": "{{count}} categories",
+    "categories_one": "{{count}} category",
+    "categories_other": "{{count}} categories",
     "matching": "{{count}} matching",
+    "matching_one": "{{count}} matching",
+    "matching_other": "{{count}} matching",
     "noResults": "No icons found",
     "noResultsHint": "Try adjusting your search query",
     "searchAriaLabel": "Search icons",
     "searchPlaceholder": "Search icons by name or category...",
     "subtitle": "Browse and copy import statements for all available icons. Click any icon to copy its import statement.",
     "title": "Icon Gallery",
-    "totalIcons": "{{count}} total icons"
+    "totalIcons": "{{count}} total icons",
+    "totalIcons_one": "{{count}} total icon",
+    "totalIcons_other": "{{count}} total icons"
   },
   "import": "Import",
   "initializing": "Initializing...",
   "language": "Language",
+  "list": {
+    "reviewStatus": {
+      "completed": "Completed",
+      "inProgress": "In Progress",
+      "incrementRequired": "Increment Required",
+      "readyForReview": "Ready for Review"
+    },
+    "statusLabels": {
+      "active": "Active",
+      "cancelled": "Cancelled",
+      "completed": "Completed",
+      "planned": "Planned"
+    }
+  },
   "loading": "Loading...",
   "loadingStates": {
     "loadingCardContent": "Loading card content",
@@ -369,6 +430,16 @@
   },
   "localeSyncFailed": "Failed to sync language preference. It will sync on next login.",
   "minLabel": "min {{min}}",
+  "moscow": {
+    "couldHave": "Could Have",
+    "couldHaveDesc": "Desirable if possible - Nice to have",
+    "mustHave": "Must Have",
+    "mustHaveDesc": "Critical for delivery - Non-negotiable",
+    "shouldHave": "Should Have",
+    "shouldHaveDesc": "Important but not vital - High priority",
+    "wontHave": "Won't Have",
+    "wontHaveDesc": "Not in this release - Out of scope"
+  },
   "nav": {
     "activeSprint": "Active Sprint",
     "dailyScrum": "Daily Scrum",
@@ -448,6 +519,8 @@
       "requirementsTitle": "Password Requirements:",
       "special": "One special character (!@#$%^&*)",
       "strengthLabels": {
+        "fair": "Fair",
+        "good": "Good",
         "medium": "Medium",
         "strong": "Strong",
         "weak": "Weak"
@@ -488,7 +561,66 @@
   "showLess": "Show less",
   "showMore": "Show more",
   "sort": "Sort",
-  "status": "Status",
+  "sprintPlanning": {
+    "activeCategory": "[Active]",
+    "doneCategory": "[Done]",
+    "moscow": {
+      "could": "Could",
+      "couldHave": "Could Have",
+      "must": "Must",
+      "mustHave": "Must Have",
+      "should": "Should",
+      "shouldHave": "Should Have",
+      "wont": "Won't",
+      "wontHave": "Won't Have"
+    },
+    "readyChecklist": {
+      "dependenciesIdentified": "Dependencies identified",
+      "estimatedByTeam": "Estimated by team",
+      "hasClearAcceptanceCriteria": "Has clear acceptance criteria",
+      "understandableByTeam": "Understandable by team"
+    },
+    "startSprintModal": {
+      "error": {
+        "activeSprintExists": "Active Sprint Exists",
+        "anotherSprintActive": "Another sprint is already active. Please complete the current sprint before starting a new one.",
+        "invalidRequest": "Invalid Request",
+        "invalidRequestMessage": "Please check your sprint data and try again. Make sure all required fields are filled correctly.",
+        "invalidSprintBacklog": "Invalid Sprint Backlog",
+        "invalidSprintBacklogMessage": "There is an issue with the sprint backlog items. Please remove and re-add the items, then try again.",
+        "invalidTaskAssignment": "Invalid Task Assignment",
+        "invalidTaskAssignmentMessage": "One or more tasks are assigned to invalid team members. Please review task assignments and ensure all assignees are current team members.",
+        "networkError": "Network Error",
+        "networkErrorMessage": "Unable to connect to the server. Please check your internet connection and try again.",
+        "permissionDenied": "You do not have permission to start sprints.",
+        "sessionExpired": "Session Expired",
+        "sessionExpiredMessage": "Your session has expired. Please log in again and retry.",
+        "sprintConflict": "Sprint Conflict",
+        "sprintConflictMessage": "This sprint is being modified by another user. Please wait a moment and try again.",
+        "sprintGoalRequired": "Sprint Goal Required",
+        "sprintGoalRequiredMessage": "Please define a sprint goal before starting the sprint.",
+        "sprintNotFound": "Sprint Not Found",
+        "sprintNotFoundMessage": "The selected sprint no longer exists. It may have been deleted. Please refresh and select a different sprint.",
+        "timeout": "Request Timeout",
+        "timeoutMessage": "The request took too long to complete. Please try again.",
+        "unableToStart": "Unable to Start Sprint",
+        "unauthorized": "Unauthorized"
+      }
+    },
+    "upcomingCategory": "[Upcoming]"
+  },
+  "status": {
+    "done": "Done",
+    "doneDesc": "Completed",
+    "inProgress": "In Progress",
+    "inProgressDesc": "Currently being worked on",
+    "new": "New",
+    "newDesc": "Newly created item",
+    "ready": "Ready",
+    "readyDesc": "Ready for sprint",
+    "refined": "Refined",
+    "refinedDesc": "Requirements clarified"
+  },
   "statusSelector": {
     "changeItemStatusHint": "Click to change item status",
     "changeStatus": "Change Status",
@@ -543,6 +675,37 @@
     "changePassword": "Change Password",
     "editProfile": "Edit Profile",
     "logout": "Logout"
+  },
+  "validation": {
+    "acceptanceCriteriaRequired": "Acceptance Criteria is required. Please define specific, testable conditions for completion.",
+    "activeGoalRequired": "An active goal is required. Please set an active product goal first.",
+    "businessValueMinimum": "Business Value must be at least 1 point. Please select a valid value.",
+    "businessValueMinimumOptional": "Business Value must be at least 1 point. Please select a value that reflects the relative importance of this item.",
+    "businessValueRequired": "Business Value is required. Please select a value that reflects the importance of this item.",
+    "businessValueTooLarge": "Business Value ({{value}}) exceeds maximum of 100 points. Please select a value that fits within the standard range.",
+    "cannotChangeStatus": "Cannot change status to \"{{status}}\". The following mandatory fields must be completed first: {{fields}}. Please click \"Edit Item\" to update this backlog item.",
+    "descriptionRequired": "Description is required. Please provide detailed information about this backlog item.",
+    "estimateMinimum": "Estimate must be at least 1 story point. Please select a valid value.",
+    "estimateMinimumOptional": "Estimate must be at least 1 story point. Please select a value from the dropdown or leave empty if not ready to estimate.",
+    "estimateRequired": "Estimate is required. Please select a story point value from the dropdown.",
+    "estimateTooLarge": "Estimate ({{estimate}}) exceeds maximum of 100 story points. For larger work items, consider breaking this into smaller, more manageable backlog items.",
+    "fieldAcceptanceCriteria": "Acceptance Criteria",
+    "fieldBusinessValue": "Business Value",
+    "fieldDescription": "Description",
+    "fieldEstimate": "Estimate (Story Points)",
+    "fieldLabels": "Labels (at least one)",
+    "fieldMoscowPriority": "MoSCoW Priority",
+    "fieldTitle": "Title (minimum 5 characters)",
+    "invalidTransition": "Transition from {{current}} to {{target}} is not allowed. Allowed transitions: {{allowed}}",
+    "labelsRequired": "At least one label is required. Please add a label to categorize this item.",
+    "moscowPriorityRequired": "MoSCoW Priority is required. Please select one of the four priority levels.",
+    "none": "None",
+    "statusAlreadySet": "Item is already in this status",
+    "statusRequired": "Status is required.",
+    "teamIdRequired": "Team ID is required. Please select a team first.",
+    "titleRequired": "Title is required. Please enter a descriptive title for this backlog item.",
+    "titleTooLong": "Title exceeds maximum length by {{overBy}} character{{plural}}. Current: {{current}}/200 characters. Please shorten your title.",
+    "titleTooShort": "Title is too short ({{length}} characters). Please use at least 5 characters to provide a clear description."
   },
   "view": "View",
   "widgetError": {

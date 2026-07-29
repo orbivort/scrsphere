@@ -6,6 +6,8 @@
     "trackedImpediment": "Impediment tracciato",
     "untrackedImpediment": "Impediment non tracciato",
     "viewAllImpediments": "Vedi tutti i {{count}} Impediments",
+    "viewAllImpediments_one": "Vedi tutti i {{count}} Impediment",
+    "viewAllImpediments_other": "Vedi tutti i {{count}} Impediments",
     "viewDetails": "Vedi Dettagli"
   },
   "aria": {
@@ -47,9 +49,15 @@
   },
   "formatTimeSince": {
     "daysAgo": "{{count}}gg",
+    "daysAgo_one": "{{count}}gg",
+    "daysAgo_other": "{{count}}gg",
     "hoursAgo": "{{count}}h",
+    "hoursAgo_one": "{{count}}h",
+    "hoursAgo_other": "{{count}}h",
     "justNow": "adesso",
-    "minutesAgo": "{{count}}m"
+    "minutesAgo": "{{count}}m",
+    "minutesAgo_one": "{{count}}m",
+    "minutesAgo_other": "{{count}}m"
   },
   "impedimentStatus": {
     "closed": "Chiuso",
@@ -133,6 +141,8 @@
     "reminderSent": "Promemoria inviato!",
     "remindersSentOne": "Promemoria inviato a 1 membro del team",
     "remindersSentPlural": "Promemoria inviati a {{count}} membri del team",
+    "remindersSentPlural_one": "Promemoria inviati a {{count}} membro del team",
+    "remindersSentPlural_other": "Promemoria inviati a {{count}} membri del team",
     "resourceNotFound": "La risorsa richiesta non è stata trovata.",
     "serverError": "Si è verificato un errore del server. Riprova più tardi.",
     "sessionExpired": "La tua sessione è scaduta. Accedi di nuovo.",

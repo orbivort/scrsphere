@@ -6,6 +6,8 @@
     "trackedImpediment": "Tracked impediment",
     "untrackedImpediment": "Untracked impediment",
     "viewAllImpediments": "View all {{count}} impediments",
+    "viewAllImpediments_one": "View all {{count}} impediment",
+    "viewAllImpediments_other": "View all {{count}} impediments",
     "viewDetails": "View Details"
   },
   "aria": {
@@ -47,9 +49,15 @@
   },
   "formatTimeSince": {
     "daysAgo": "{{count}}d ago",
+    "daysAgo_one": "{{count}}d ago",
+    "daysAgo_other": "{{count}}d ago",
     "hoursAgo": "{{count}}h ago",
+    "hoursAgo_one": "{{count}}h ago",
+    "hoursAgo_other": "{{count}}h ago",
     "justNow": "just now",
-    "minutesAgo": "{{count}}m ago"
+    "minutesAgo": "{{count}}m ago",
+    "minutesAgo_one": "{{count}}m ago",
+    "minutesAgo_other": "{{count}}m ago"
   },
   "impedimentStatus": {
     "closed": "Closed",
@@ -133,6 +141,8 @@
     "reminderSent": "Reminder sent!",
     "remindersSentOne": "Reminders sent to 1 team member",
     "remindersSentPlural": "Reminders sent to {{count}} team members",
+    "remindersSentPlural_one": "Reminders sent to {{count}} team member",
+    "remindersSentPlural_other": "Reminders sent to {{count}} team members",
     "resourceNotFound": "The requested resource was not found.",
     "serverError": "A server error occurred. Please try again later.",
     "sessionExpired": "Your session has expired. Please log in again.",

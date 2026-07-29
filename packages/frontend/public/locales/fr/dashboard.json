@@ -10,6 +10,8 @@
     "noData": "Aucune donnée de graphique d'avancement disponible.",
     "noDataText": "aucune donnée",
     "points": "{{count}} points",
+    "points_one": "{{count}} point",
+    "points_other": "{{count}} points",
     "storyPointsAxis": "Story Points",
     "summary": "Graphique d'avancement du sprint : {{totalDays}} jours suivis. Jour actuel : {{currentDay}}. Story points de départ : {{startPoints}}. Idéal restant : {{idealRemaining}} points. Réel restant : {{actualText}}.",
     "title": "Graphique d'avancement du Sprint"
@@ -54,6 +56,8 @@
   "daysRemainingLabel": "Jours restants",
   "failedToLoad": "Échec du chargement du tableau de bord",
   "hoursAgo": "il y a {{count}} heure{{plural}}",
+  "hoursAgo_one": "il y a {{count}} heure{{plural}}",
+  "hoursAgo_other": "il y a {{count}} heure{{plural}}",
   "idealBurndown": "Graphique d'avancement idéal",
   "impedimentList": {
     "ariaLabel": "Liste des Impediments",
@@ -83,6 +87,8 @@
     "totalTasks": "Tâches totales"
   },
   "minutesAgo": "il y a {{count}} minute{{plural}}",
+  "minutesAgo_one": "il y a {{count}} minute{{plural}}",
+  "minutesAgo_other": "il y a {{count}} minute{{plural}}",
   "noActiveSprint": "Aucun sprint actif",
   "noDailyUpdates": "Aucune mise à jour quotidienne pour aujourd'hui.",
   "noOpenImpediments": "Aucun Impediment ouvert. Beau travail !",

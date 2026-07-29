@@ -22,6 +22,8 @@
   },
   "definitionEditor": {
     "activeItems": "{{count}} elementi attivi",
+    "activeItems_one": "{{count}} elemento attivo",
+    "activeItems_other": "{{count}} elementi attivi",
     "addItem": "Aggiungi elemento",
     "ariaLabels": {
       "activate": "Attiva",
@@ -64,6 +66,8 @@
     "editTitle": "Modifica {{label}}",
     "empty": "Nessun elemento {{shortLabel}} ancora. Aggiungi il tuo primo criterio sopra.",
     "inactive": "{{count}} inattivi",
+    "inactive_one": "{{count}} inattivo",
+    "inactive_other": "{{count}} inattivi",
     "newItemPlaceholder": "Inserisci nuovo criterio {{shortLabel}}...",
     "saveChanges": "Salva modifiche",
     "saving": "Salvataggio...",
@@ -102,6 +106,8 @@
     "deletionBlocked": "Eliminazione bloccata",
     "matchConfirmed": "Corrispondenza confermata",
     "memberImpact": "{{count}} membri saranno rimossi da questo team",
+    "memberImpact_one": "{{count}} membro sarà rimosso da questo team",
+    "memberImpact_other": "{{count}} membri saranno rimossi da questo team",
     "normalSubtitle": "Questa azione è permanente e non può essere annullata",
     "pasteWarning": "Digitazione manuale richiesta per sicurezza. Copia-incolla è disabilitato.",
     "requiredActions": "Azioni richieste:",
@@ -131,6 +137,8 @@
   },
   "dodPanel": {
     "activeItems": "{{count}} elementi attivi",
+    "activeItems_one": "{{count}} elemento attivo",
+    "activeItems_other": "{{count}} elementi attivi",
     "editButton": "Modifica DoD",
     "empty": {
       "configureButton": "Configura DoD",
@@ -143,6 +151,8 @@
       "title": "Errore di caricamento"
     },
     "inactive": "{{count}} inattivi",
+    "inactive_one": "{{count}} inattivo",
+    "inactive_other": "{{count}} inattivi",
     "item": {
       "codeReviewed": "Codice revisionato e approvato dai pari",
       "documentation": "Codice documentato correttamente",
@@ -166,6 +176,8 @@
   },
   "dorPanel": {
     "activeItems": "{{count}} elementi attivi",
+    "activeItems_one": "{{count}} elemento attivo",
+    "activeItems_other": "{{count}} elementi attivi",
     "editButton": "Modifica DoR",
     "empty": {
       "configureButton": "Configura DoR",
@@ -175,6 +187,8 @@
     },
     "error": "Errore nel caricamento della Definizione di Ready",
     "inactive": "{{count}} inattivi",
+    "inactive_one": "{{count}} inattivo",
+    "inactive_other": "{{count}} inattivi",
     "item": {
       "acceptanceCriteria": "Criteri di accettazione definiti e concordati",
       "acceptanceCriteriaDefined": "Criteri di accettazione definiti",
@@ -351,17 +365,25 @@
       "cancel": "Annulla",
       "duration": "Durata:",
       "generateButton": "Genera {{count}} Sprint",
+      "generateButton_one": "Genera {{count}} Sprint",
+      "generateButton_other": "Genera {{count}} Sprint",
       "generatedSprints": "Sprint generati",
       "generating": "Generazione...",
       "moreSprints": "... e altri {{count}} sprint",
+      "moreSprints_one": "... e altri {{count}} sprint",
+      "moreSprints_other": "... e altri {{count}} sprint",
       "sprintsToGenerate": "Sprint da generare:",
       "title": "Anteprima generazione Sprint",
       "warning": "Verranno generati {{count}} sprint per {{year}}. Gli sprint esistenti per questo anno potrebbero essere interessati.",
+      "warning_one": "Verranno generati {{count}} sprint per {{year}}. Gli sprint esistenti per questo anno potrebbero essere interessati.",
+      "warning_other": "Verranno generati {{count}} sprint per {{year}}. Gli sprint esistenti per questo anno potrebbero essere interessati.",
       "year": "Anno:"
     },
     "saveConfiguration": "Salva configurazione",
     "saving": "Salvataggio...",
     "sprintCount": "{{count}} sprint",
+    "sprintCount_one": "{{count}} sprint",
+    "sprintCount_other": "{{count}} sprint",
     "sprintDuration": "Durata Sprint",
     "subtitle": "Configura la durata dello sprint e genera automaticamente piani sprint per l'anno",
     "title": "Configurazione Sprint",
@@ -388,6 +410,8 @@
     "ariaLabel": "Team",
     "card": {
       "cardAriaLabel": "{{name}}, {{count}} membri. Usa le frecce per navigare tra le schede, Invio o Spazio per accedere alle azioni.",
+      "cardAriaLabel_one": "{{name}}, {{count}} membro. Usa le frecce per navigare tra le schede, Invio o Spazio per accedere alle azioni.",
+      "cardAriaLabel_other": "{{name}}, {{count}} membri. Usa le frecce per navigare tra le schede, Invio o Spazio per accedere alle azioni.",
       "createdBy": "Creato da {{firstName}} {{lastName}}",
       "delete": "Elimina",
       "deleteTeam": "Elimina {{name}}",
@@ -396,6 +420,8 @@
       "editTeam": "Modifica {{name}}",
       "loading": "Caricamento...",
       "memberCount": "{{count}} membro",
+      "memberCount_one": "{{count}} membro",
+      "memberCount_other": "{{count}} membro",
       "memberCount_plural": "{{count}} membri"
     },
     "empty": {
@@ -435,6 +461,8 @@
     },
     "subtitle": "Crea e gestisci team nell'organizzazione",
     "teamCount": "{{count}} team",
+    "teamCount_one": "{{count}} team",
+    "teamCount_other": "{{count}} team",
     "title": "Gestione Team",
     "toast": {
       "cannotDeleteWithGoals": "Impossibile eliminare team con Product Goals esistenti",

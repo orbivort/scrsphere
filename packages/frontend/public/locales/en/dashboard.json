@@ -10,6 +10,8 @@
     "noData": "No burndown data available.",
     "noDataText": "no data",
     "points": "{{count}} points",
+    "points_one": "{{count}} point",
+    "points_other": "{{count}} points",
     "storyPointsAxis": "Story Points",
     "summary": "Sprint burndown chart: {{totalDays}} days tracked. Current day: {{currentDay}}. Starting story points: {{startPoints}}. Ideal remaining: {{idealRemaining}} points. Actual remaining: {{actualText}}.",
     "title": "Sprint Burndown Chart"
@@ -54,6 +56,8 @@
   "daysRemainingLabel": "Days Remaining",
   "failedToLoad": "Failed to Load Dashboard",
   "hoursAgo": "{{count}} hour{{plural}} ago",
+  "hoursAgo_one": "{{count}} hour{{plural}} ago",
+  "hoursAgo_other": "{{count}} hour{{plural}} ago",
   "idealBurndown": "Ideal Burndown",
   "impedimentList": {
     "ariaLabel": "Impediments list",
@@ -83,6 +87,8 @@
     "totalTasks": "Total Tasks"
   },
   "minutesAgo": "{{count}} minute{{plural}} ago",
+  "minutesAgo_one": "{{count}} minute{{plural}} ago",
+  "minutesAgo_other": "{{count}} minute{{plural}} ago",
   "noActiveSprint": "No active sprint",
   "noDailyUpdates": "No daily updates for today yet.",
   "noOpenImpediments": "No open impediments. Great job!",

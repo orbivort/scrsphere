@@ -6,6 +6,8 @@
     "trackedImpediment": "Impediment rastreado",
     "untrackedImpediment": "Impediment no rastreado",
     "viewAllImpediments": "Ver todos los {{count}} Impediments",
+    "viewAllImpediments_one": "Ver todos los {{count}} Impediment",
+    "viewAllImpediments_other": "Ver todos los {{count}} Impediments",
     "viewDetails": "Ver Detalles"
   },
   "aria": {
@@ -47,9 +49,15 @@
   },
   "formatTimeSince": {
     "daysAgo": "{{count}}d",
+    "daysAgo_one": "{{count}}d",
+    "daysAgo_other": "{{count}}d",
     "hoursAgo": "{{count}}h",
+    "hoursAgo_one": "{{count}}h",
+    "hoursAgo_other": "{{count}}h",
     "justNow": "recién",
-    "minutesAgo": "{{count}}m"
+    "minutesAgo": "{{count}}m",
+    "minutesAgo_one": "{{count}}m",
+    "minutesAgo_other": "{{count}}m"
   },
   "impedimentStatus": {
     "closed": "Cerrado",
@@ -133,6 +141,8 @@
     "reminderSent": "¡Recordatorio enviado!",
     "remindersSentOne": "Recordatorios enviados a 1 miembro del equipo",
     "remindersSentPlural": "Recordatorios enviados a {{count}} miembros del equipo",
+    "remindersSentPlural_one": "Recordatorios enviados a {{count}} miembro del equipo",
+    "remindersSentPlural_other": "Recordatorios enviados a {{count}} miembros del equipo",
     "resourceNotFound": "El recurso solicitado no fue encontrado.",
     "serverError": "Ocurrió un error del servidor. Por favor intente más tarde.",
     "sessionExpired": "Su sesión ha expirado. Por favor vuelva a iniciar sesión.",

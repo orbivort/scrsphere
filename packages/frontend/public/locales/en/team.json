@@ -177,6 +177,8 @@
     "created": "Created: {{date}}",
     "lastUpdated": "Last updated: {{date}}",
     "memberCount": "{{count}} members",
+    "memberCount_one": "{{count}} member",
+    "memberCount_other": "{{count}} members",
     "teamId": "Team ID: {{id}}",
     "unableToLoad": "Unable to load team details. Please try refreshing the page.",
     "unavailable": "Team Information Unavailable"
