@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.0.5] - 2026-07-29
 
+### Security
+
+- **react-router**: fix high CSRF bypass vulnerability - migrate from react-router-dom to react-router v8.3.0
+  - GHSA-qwww-vcr4-c8h2: RSC Mode CSRF Bypass allows action execution before 400 response
+- **postcss**: fix high path traversal vulnerability - override to ^8.5.18
+  - GHSA-r28c-9q8g-f849: Path traversal in source map auto-loading (sourceMappingURL) leads to arbitrary .map file disclosure
+- **valibot**: fix moderate record() issue vulnerability - override to ^1.4.2
+  - GHSA-5qjj-4xww-7phc: record() issue paths can make flatten() throw for inherited Object property names
+
 ## [2.0.4] - 2026-07-24
 
 ### Security
