@@ -1,4 +1,4 @@
-/* eslint-disable react-refresh/only-export-components --
+﻿/* eslint-disable react-refresh/only-export-components --
    This is a test utility file that intentionally exports both React components
    (AllProviders) and helper functions (createTestQueryClient, renderWithProviders,
    createMockUser, etc.) for use in tests. Separating these would reduce cohesion
@@ -6,7 +6,7 @@
 import React from 'react';
 import { render, type RenderOptions, type RenderResult } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router';
 
 import {
   SprintStatus,

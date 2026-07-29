@@ -1,5 +1,5 @@
-import React, { memo } from 'react';
-import { Link } from 'react-router-dom';
+﻿import React, { memo } from 'react';
+import { Link } from 'react-router';
 
 import type { DailyUpdate } from '../../../types';
 import buttonStyles from '../../../components/common/Button/Button.module.css';

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * CreateActionItemModal Component Tests
  *
  * Test Coverage:
@@ -13,7 +13,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router';
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 
 import { CreateActionItemModal } from './CreateActionItemModal';

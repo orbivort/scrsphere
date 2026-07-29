@@ -1,4 +1,4 @@
-/**
+﻿/**
  * useEmptyStateValidation Hook
  *
  * Provides validation logic for empty states across different pages.
@@ -13,7 +13,7 @@
  */
 
 import { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 import type {
   AppPage,

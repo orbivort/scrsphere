@@ -1,7 +1,7 @@
-import React from 'react';
+﻿import React from 'react';
 import { render, screen, within } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { MemoryRouter, Routes, Route } from 'react-router';
 import { vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * IncrementList Page Loading State Tests
  *
  * Test Coverage:
@@ -13,7 +13,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor, act } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router';
 
 import { IncrementList } from './IncrementList';
 import { useTeamContext } from '../../contexts/TeamContext';

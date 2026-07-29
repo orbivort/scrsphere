@@ -4,7 +4,7 @@ This document contains the license information for third-party packages used in 
 
 **Project:** Scrumooth - Agile Scrum Lifecycle Management System
 **License:** Apache-2.0
-**Last Updated:** July 24, 2026
+**Last Updated:** July 29, 2026
 
 ---
 
@@ -92,7 +92,7 @@ This document contains the license information for third-party packages used in 
 | react-chartjs-2         | 5.3.1   | MIT          | Jeremy Ayerst          | https://github.com/reactchartjs/react-chartjs-2 |
 | react-dom               | 19.2.7  | MIT          | Meta Platforms, Inc.   | https://github.com/facebook/react               |
 | react-markdown          | 10.1.0  | MIT          | Titus Wormer           | https://github.com/remarkjs/react-markdown      |
-| react-router-dom        | 7.18.0  | MIT          | Remix Software, Inc.   | https://github.com/remix-run/react-router       |
+| react-router            | 8.3.0   | MIT          | Remix Software, Inc.   | https://github.com/remix-run/react-router       |
 | rehype-sanitize         | 6.0.0   | MIT          | Titus Wormer           | https://github.com/rehypejs/rehype-sanitize     |
 | remark-gfm              | 4.0.1   | MIT          | Titus Wormer           | https://github.com/remarkjs/remark-gfm          |
 | zustand                 | 5.0.14  | MIT          | Paul Henschel          | https://github.com/pmndrs/zustand               |
@@ -304,5 +304,5 @@ This document should be updated whenever:
 
 ---
 
-**Document Version:** 1.10
-**Generated:** July 24, 2026
+**Document Version:** 1.11
+**Generated:** July 29, 2026

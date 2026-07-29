@@ -1,7 +1,7 @@
-import React from 'react';
+﻿import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { SprintReviewList } from './SprintReviewList';
@@ -9,7 +9,7 @@ import { SprintStatus, IncrementStatus } from '../../types';
 import * as apiServiceModule from '../../services';
 import * as teamStoreModule from '../../store';
 
-vi.mock('react-router-dom', async (importOriginal) => {
+vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal();
   return {
     ...(actual as any),
