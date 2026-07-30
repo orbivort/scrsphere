@@ -8,6 +8,10 @@ on:
         required: true
         type: string
 
+env:
+  NODE_VERSION: '24.14.1'
+  PNPM_VERSION: '11.5.0'
+
 concurrency:
   group: prepare-release-${{ inputs.version }}
   cancel-in-progress: false
@@ -110,6 +114,33 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v5
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+        id: pnpm-cache
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v5
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Generate changelog entry
         id: changelog
