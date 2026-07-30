@@ -43,13 +43,13 @@ class DefinitionOfReadyService {
     const defaultItems: DoRItemInput[] = [
       {
         description: 'Clear title and description provided',
-        category: 'documentation',
+        category: 'acceptance',
         isActive: true,
         order: 0,
       },
       {
         description: 'Acceptance criteria defined and agreed',
-        category: 'documentation',
+        category: 'acceptance',
         isActive: true,
         order: 1,
       },

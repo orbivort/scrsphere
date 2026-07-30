@@ -44,14 +44,14 @@ describe('DefinitionOfReadyService', () => {
           {
             id: 'item-1',
             description: 'Clear title and description',
-            category: 'documentation',
+            category: 'acceptance',
             isActive: true,
             order: 0,
           },
           {
             id: 'item-2',
             description: 'Acceptance criteria defined',
-            category: 'documentation',
+            category: 'acceptance',
             isActive: true,
             order: 1,
           },
@@ -93,14 +93,14 @@ describe('DefinitionOfReadyService', () => {
           {
             id: 'item-1',
             description: 'Clear title and description provided',
-            category: 'documentation',
+            category: 'acceptance',
             isActive: true,
             order: 0,
           },
           {
             id: 'item-2',
             description: 'Acceptance criteria defined and agreed',
-            category: 'documentation',
+            category: 'acceptance',
             isActive: true,
             order: 1,
           },
@@ -153,7 +153,7 @@ describe('DefinitionOfReadyService', () => {
               {
                 id: 'mock-uuid-v7',
                 description: 'Clear title and description provided',
-                category: 'documentation',
+                category: 'acceptance',
                 isActive: true,
                 order: 0,
                 createdBy: 'user-1',
@@ -161,7 +161,7 @@ describe('DefinitionOfReadyService', () => {
               {
                 id: 'mock-uuid-v7',
                 description: 'Acceptance criteria defined and agreed',
-                category: 'documentation',
+                category: 'acceptance',
                 isActive: true,
                 order: 1,
                 createdBy: 'user-1',

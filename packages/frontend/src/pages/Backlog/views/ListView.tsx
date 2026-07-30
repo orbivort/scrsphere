@@ -246,6 +246,15 @@ export const ListView = memo<ListViewProps>(({ items, onItemClick }) => {
         </div>
       ) : (
         <table className={styles['backlog-table']}>
+          <colgroup>
+            <col style={{ width: '80px' }} />
+            <col />
+            <col style={{ width: '140px' }} />
+            <col style={{ width: '140px' }} />
+            <col style={{ width: '120px' }} />
+            <col style={{ width: '100px' }} />
+            <col style={{ width: '200px' }} />
+          </colgroup>
           <thead>
             <tr>
               <th>{t('listView.id') as string}</th>
@@ -286,6 +295,15 @@ export const ListView = memo<ListViewProps>(({ items, onItemClick }) => {
           </div>
         ) : (
           <table className={styles['backlog-table']}>
+            <colgroup>
+              <col style={{ width: '80px' }} />
+              <col />
+              <col style={{ width: '140px' }} />
+              <col style={{ width: '140px' }} />
+              <col style={{ width: '120px' }} />
+              <col style={{ width: '100px' }} />
+              <col style={{ width: '200px' }} />
+            </colgroup>
             <tbody>
               {items.map((item) => (
                 <TableRow key={item.id} item={item} onItemClick={onItemClick} />

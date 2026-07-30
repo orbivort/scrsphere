@@ -536,7 +536,7 @@
     "goalLabel": "Objectif :",
     "goalUpdatedSuccess": "Product Goal mis à jour avec succès !",
     "goalsCount": "{{count}} objectifs",
-    "goalsCount_one": "{{count}} objectifs",
+    "goalsCount_one": "{{count}} objectif",
     "goalsCount_other": "{{count}} objectifs",
     "grid": "Grille",
     "invalidTransition": "Cette transition de statut n'est pas autorisée. Veuillez vérifier les transitions de statut autorisées.",
