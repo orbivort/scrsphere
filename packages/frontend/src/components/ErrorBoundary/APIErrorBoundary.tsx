@@ -10,8 +10,6 @@ import { errorReporter } from '@/utils/errorReporter';
 interface State {
   hasError: boolean;
   error: Error | null;
-  errorInfo: ErrorInfo | null;
-  retryCount: number;
 }
 
 interface APIErrorBoundaryProps extends WithTranslation {
@@ -25,8 +23,6 @@ class APIErrorBoundaryClass extends Component<APIErrorBoundaryProps, State> {
     this.state = {
       hasError: false,
       error: null,
-      errorInfo: null,
-      retryCount: 0,
     };
   }
 
@@ -48,8 +44,6 @@ class APIErrorBoundaryClass extends Component<APIErrorBoundaryProps, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    this.setState({ errorInfo });
-
     // Log to structured logger
     logger.error('API Error caught', undefined, {
       error,
@@ -67,7 +61,6 @@ class APIErrorBoundaryClass extends Component<APIErrorBoundaryProps, State> {
     this.setState({
       hasError: false,
       error: null,
-      errorInfo: null,
     });
     this.props.onRetry?.();
   };

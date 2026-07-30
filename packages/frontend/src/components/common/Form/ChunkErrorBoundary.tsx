@@ -34,13 +34,12 @@ interface Props extends WithTranslation {
 
 interface State {
   hasError: boolean;
-  error: Error | null;
 }
 
 class ChunkErrorBoundaryClass extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { hasError: false, error: null };
+    this.state = { hasError: false };
   }
 
   static getDerivedStateFromError(error: Error): State {
@@ -54,7 +53,6 @@ class ChunkErrorBoundaryClass extends Component<Props, State> {
 
     return {
       hasError: isChunkOrI18nError,
-      error: isChunkOrI18nError ? error : null,
     };
   }
 

@@ -14,7 +14,6 @@ interface Props extends WithTranslation {
 
 interface State {
   hasError: boolean;
-  error: Error | null;
 }
 
 class WidgetErrorBoundaryClass extends Component<Props, State> {
@@ -22,12 +21,11 @@ class WidgetErrorBoundaryClass extends Component<Props, State> {
     super(props);
     this.state = {
       hasError: false,
-      error: null,
     };
   }
 
-  static getDerivedStateFromError(error: Error): Partial<State> {
-    return { hasError: true, error };
+  static getDerivedStateFromError(_error: Error): Partial<State> {
+    return { hasError: true };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
@@ -46,7 +44,6 @@ class WidgetErrorBoundaryClass extends Component<Props, State> {
   handleRetry = (): void => {
     this.setState({
       hasError: false,
-      error: null,
     });
     this.props.onRetry?.();
   };

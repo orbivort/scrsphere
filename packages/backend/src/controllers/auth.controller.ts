@@ -34,7 +34,7 @@ import type {
   ForgotPasswordInput,
   ResetPasswordInput,
 } from '../validations/auth.validation';
-import { DEFAULT_LOCALE } from '@scrumooth/shared';
+import { DEFAULT_LOCALE, isSupportedLocale } from '@scrumooth/shared';
 import prisma from '../utils/prisma';
 
 interface SessionInfo {
@@ -85,10 +85,10 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     getRefreshTokenCookieOptions()
   );
 
-  // Set locale cookie for SSR/refresh
+  // Set locale cookie for SSR/refresh (validated against supported locales)
   res.cookie(
     COOKIE_NAMES.LOCALE,
-    result.user.locale,
+    isSupportedLocale(result.user.locale) ? result.user.locale : DEFAULT_LOCALE,
     getLocaleCookieOptions('node', config.nodeEnv === 'production')
   );
 
@@ -124,10 +124,10 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
       getRefreshTokenCookieOptions()
     );
 
-    // Set locale cookie for SSR/refresh
+    // Set locale cookie for SSR/refresh (validated against supported locales)
     res.cookie(
       COOKIE_NAMES.LOCALE,
-      result.user.locale,
+      isSupportedLocale(result.user.locale) ? result.user.locale : DEFAULT_LOCALE,
       getLocaleCookieOptions('node', config.nodeEnv === 'production')
     );
 
@@ -397,10 +397,10 @@ export const updateProfile = asyncHandler(async (req: Request, res: Response) =>
     );
   }
 
-  // Keep the locale cookie in sync for SSR/refresh
+  // Keep the locale cookie in sync for SSR/refresh (validated against supported locales)
   res.cookie(
     COOKIE_NAMES.LOCALE,
-    user.locale,
+    isSupportedLocale(user.locale) ? user.locale : DEFAULT_LOCALE,
     getLocaleCookieOptions('node', config.nodeEnv === 'production')
   );
 
