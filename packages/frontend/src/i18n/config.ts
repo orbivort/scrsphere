@@ -48,10 +48,15 @@ export const i18nInstance = i18n
   .use(pendingGuardPostProcessor);
 
 export function initI18n(): Promise<TFunction> {
+  // Derive the locale path prefix from VITE_BASE_PATH so that locale JSON
+  // files are fetched from the correct sub-path when deployed (e.g. GitHub
+  // Pages under /scrumooth/). Strip trailing slash to avoid double slashes.
+  const localeBasePath = (import.meta.env.VITE_BASE_PATH ?? '/').replace(/\/+$/, '');
+
   return i18nInstance.init({
     // All locales fetched on demand from public/locales/{lng}/{ns}.json
     backend: {
-      loadPath: '/locales/{{lng}}/{{ns}}.json',
+      loadPath: `${localeBasePath}/locales/{{lng}}/{{ns}}.json`,
     },
 
     // Auto-detect language: cookie → navigator → default
