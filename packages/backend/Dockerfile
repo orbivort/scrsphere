@@ -124,9 +124,10 @@ COPY --from=builder --chown=node:node /app/packages/backend/package.json ./packa
 # This avoids pnpm's symlink-based node_modules structure which breaks in Docker COPY
 # Remove workspace dependency and catalog: protocol entries (pnpm-specific) first
 RUN apt-get update && apt-get install -y --no-install-recommends jq && rm -rf /var/lib/apt/lists/* && \
-    jq 'del(.dependencies["@scrumooth/shared"]) | .devDependencies |= with_entries(select(.value | startswith("catalog:") | not))' package.json > package.json.tmp && \
+    jq 'del(.dependencies["@scrumooth/shared"]) | .dependencies |= with_entries(select(.value | startswith("catalog:") | not)) | .devDependencies |= with_entries(select(.value | startswith("catalog:") | not))' package.json > package.json.tmp && \
     mv package.json.tmp package.json && \
-    npm install --omit=dev
+    npm install --omit=dev && \
+    npm install --no-save i18next@^26.0.0 intl-pluralrules@^2.0.1
 
 # Copy shared package build output into node_modules
 COPY --from=builder --chown=node:node /app/packages/shared/dist ./node_modules/@scrumooth/shared/dist
