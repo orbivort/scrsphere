@@ -127,7 +127,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends jq && rm -rf /v
     jq 'del(.dependencies["@scrumooth/shared"]) | .dependencies |= with_entries(select(.value | startswith("catalog:") | not)) | .devDependencies |= with_entries(select(.value | startswith("catalog:") | not))' package.json > package.json.tmp && \
     mv package.json.tmp package.json && \
     npm install --omit=dev && \
-    npm install --no-save i18next@^26.0.0 intl-pluralrules@^2.0.1
+    npm install --no-save i18next@^26.0.0 intl-pluralrules@^2.0.1 date-fns@^4.4.0
 
 # Copy shared package build output into node_modules
 COPY --from=builder --chown=node:node /app/packages/shared/dist ./node_modules/@scrumooth/shared/dist
