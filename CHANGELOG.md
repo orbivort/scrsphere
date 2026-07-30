@@ -9,42 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- add account deletion and network error translations, add i18n support to error handling
-- add sprint task progress tracking and improve notification i18n
-- add locale support for user registration and profile
-- add locale-aware date input component and improve date formatting
-- standardize date formatting and add shared utilities
-- standardize scrum glossary across all locales
-- implement full i18n support across app and cleanup notifications
-- add full internationalization support across app
-- add i18n strings, improve translations, add i18n check script
-- improve frontend locale independence and i18n error handling
-- add proper locales keys for i18n translations
-- migrate frontend locales to public dir and add lazy loading
-- add professional translations for de, fr, es, it locales
-- integrate LanguageSwitcher into user dropdown menu
-- add locale support and persistent store migrations
-- add multi-language support infrastructure
-
-### Changed
-
-- clean up unused state and params in error boundaries
-- sort display locales properly in dropdown
-- update DoR categories, table column widths and i18n strings
-- align terminology and fix test/API implementations
-- improve data export component stability and fix circular dependency
-- complete i18n overhaul and polish app workflows
-- reorder locales and update position in all supported locale lists
-- remove old static locale files and migrate to dynamic import setup
-
-### Fixed
-
-- use base path for i18n locale file loading
-- resolve typecheck and tests issues
-- improve translation accuracy and grammar
-- prevent default locale overriding browser detected language
-- prevent default locale overriding browser detected language
-- wire sidebar navigation to i18n so language switch updates UI
+- **i18n**: add i18n multi language support
+- **i18n**: support English, Deutsch, Español, Français, Italiano
 
 ## [2.0.5] - 2026-07-29
 
