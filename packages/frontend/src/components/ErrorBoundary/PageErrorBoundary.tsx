@@ -1,4 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
+import { withTranslation, type WithTranslation } from 'react-i18next';
 
 import { logger } from '../../utils/logger';
 import { errorReporter } from '../../utils/errorReporter';
@@ -6,7 +7,39 @@ import { navigateTo } from '../../utils/navigation';
 
 import styles from './ErrorBoundary.module.css';
 
-interface Props {
+/**
+ * Hardcoded English fallbacks for page error text.
+ * Used when `t()` is unavailable or throws.
+ */
+const FALLBACK_TEXT = {
+  title: 'Error on {pageName} page',
+  description: 'An error occurred while loading this page. Please try again or navigate back.',
+  reloadPage: 'Try Again',
+  backToDashboard: 'Back to Dashboard',
+  technicalDetails: 'Technical Details',
+} as const;
+
+function safeT(
+  t: WithTranslation['t'],
+  key: keyof typeof FALLBACK_TEXT,
+  options?: Record<string, string>
+): string {
+  try {
+    const i18nKey = `pageError.${key}`;
+    // Cast t to a loose signature to bypass i18next's strict key types.
+    const result = (t as (key: string, options?: Record<string, string>) => string)(
+      i18nKey,
+      options
+    );
+    return result === i18nKey
+      ? FALLBACK_TEXT[key].replace(/\{(\w+)\}/g, (_, k) => options?.[k] ?? k)
+      : result;
+  } catch {
+    return FALLBACK_TEXT[key].replace(/\{(\w+)\}/g, (_, k) => options?.[k] ?? k);
+  }
+}
+
+interface Props extends WithTranslation {
   children: ReactNode;
   pageName: string;
   onRetry?: () => void;
@@ -18,7 +51,7 @@ interface State {
   errorInfo: ErrorInfo | null;
 }
 
-export class PageErrorBoundary extends Component<Props, State> {
+class PageErrorBoundaryClass extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -62,18 +95,15 @@ export class PageErrorBoundary extends Component<Props, State> {
 
   render(): ReactNode {
     const { hasError, error, errorInfo } = this.state;
-    const { children, pageName } = this.props;
+    const { children, pageName, t } = this.props;
 
     if (hasError) {
       return (
         <div className={styles['page-error']} role="alert" aria-live="assertive">
           <div className={styles['page-error-content']}>
-            <h1 className={styles['page-error-title']}>{pageName} Error</h1>
+            <h1 className={styles['page-error-title']}>{safeT(t, 'title', { pageName })}</h1>
 
-            <p className={styles['page-error-message']}>
-              We encountered an error while loading this page. This might be due to a temporary
-              issue or a problem with your connection.
-            </p>
+            <p className={styles['page-error-message']}>{safeT(t, 'description')}</p>
 
             <div className={styles['page-error-actions']}>
               <button
@@ -81,7 +111,7 @@ export class PageErrorBoundary extends Component<Props, State> {
                 className={`${styles['error-button']} ${styles['error-button.primary']}`}
                 type="button"
               >
-                Reload Page
+                {safeT(t, 'reloadPage')}
               </button>
 
               <button
@@ -89,13 +119,13 @@ export class PageErrorBoundary extends Component<Props, State> {
                 className={`${styles['error-button']} ${styles['error-button.secondary']}`}
                 type="button"
               >
-                Back to Dashboard
+                {safeT(t, 'backToDashboard')}
               </button>
             </div>
 
             {import.meta.env.DEV && error && (
               <details className={styles['error-details']}>
-                <summary>Technical Details</summary>
+                <summary>{safeT(t, 'technicalDetails')}</summary>
                 <pre>{error.message}</pre>
                 {errorInfo?.componentStack && <pre>{errorInfo.componentStack}</pre>}
               </details>
@@ -108,3 +138,9 @@ export class PageErrorBoundary extends Component<Props, State> {
     return children;
   }
 }
+
+export const PageErrorBoundary: React.ComponentType<{
+  children: ReactNode;
+  pageName: string;
+  onRetry?: () => void;
+}> = withTranslation('common')(PageErrorBoundaryClass);

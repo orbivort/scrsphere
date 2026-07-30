@@ -326,7 +326,6 @@ For distributed teams across time zones, Scrumooth supports async updates.
 ### Async Update Format
 
 ```
-📍 Timezone: PST
 📅 Date: January 15, 2026
 
 ✅ Yesterday:

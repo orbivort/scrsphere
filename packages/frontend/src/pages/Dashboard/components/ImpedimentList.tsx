@@ -1,4 +1,5 @@
 import React, { memo, useCallback, useEffect, useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import type { Impediment } from '../../../types';
 
@@ -12,6 +13,7 @@ interface ImpedimentListProps {
 
 const ImpedimentList: React.FC<ImpedimentListProps> = memo(
   ({ impediments, emptyMessage, onImpedimentClick }) => {
+    const { t } = useTranslation('dashboard');
     const [focusedIndex, setFocusedIndex] = useState(0);
     const listRef = useRef<HTMLUListElement>(null);
 
@@ -66,7 +68,7 @@ const ImpedimentList: React.FC<ImpedimentListProps> = memo(
         ref={listRef}
         className={styles['impediment-list']}
         role="list"
-        aria-label="Impediments list"
+        aria-label={t('impedimentList.ariaLabel')}
         aria-activedescendant={onImpedimentClick ? `impediment-item-${focusedIndex}` : undefined}
       >
         {impediments.map((impediment, index) => (
@@ -82,7 +84,10 @@ const ImpedimentList: React.FC<ImpedimentListProps> = memo(
             }
             aria-label={
               onImpedimentClick
-                ? `${impediment.title}, status: ${impediment.status.replace('_', ' ')}. Click to view impediment`
+                ? t('impedimentList.impedimentAriaLabel', {
+                    title: impediment.title,
+                    status: t(`impedimentStatus.${impediment.status}`),
+                  })
                 : undefined
             }
           >
@@ -93,7 +98,7 @@ const ImpedimentList: React.FC<ImpedimentListProps> = memo(
                 className={`${styles['impediment-status-badge']} ${styles[impediment.status.toLowerCase()]}`}
                 aria-hidden={onImpedimentClick ? true : undefined}
               >
-                {impediment.status.replace('_', ' ')}
+                {t(`impedimentStatus.${impediment.status}`)}
               </span>
             </div>
           </li>

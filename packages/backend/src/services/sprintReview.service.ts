@@ -387,11 +387,18 @@ export const sprintReviewService = {
           // Send notification to owner if assigned
           if (adj.ownerId && !adj.implemented) {
             try {
-              await notificationService.create({
+              await notificationService.createLocalized({
                 userId: adj.ownerId,
                 type: NotificationType.TASK_ASSIGNMENT,
-                title: 'New Backlog Adjustment Requires Your Action',
-                message: `You have been assigned as the owner of a backlog adjustment: ${adj.action.toUpperCase()} - "${adj.description.substring(0, 100)}${adj.description.length > 100 ? '...' : ''}"`,
+                titleKey: 'backlogAdjustmentRequired',
+                messageKey: 'backlogAdjustmentRequiredMessage',
+                messageParams: {
+                  action: adj.action.toUpperCase(),
+                  description:
+                    adj.description.length > 100
+                      ? `${adj.description.substring(0, 100)}...`
+                      : adj.description,
+                },
                 data: {
                   adjustmentId: adjustment.id,
                   reviewId: id,
@@ -457,11 +464,16 @@ export const sprintReviewService = {
     if (data.ownerId && data.actionRequired) {
       try {
         const notificationService = new NotificationService();
-        await notificationService.create({
+        await notificationService.createLocalized({
           userId: data.ownerId,
           type: NotificationType.TASK_ASSIGNMENT,
-          title: 'New Feedback Requires Your Action',
-          message: `You have been assigned as the owner of feedback from ${data.authorName}: "${data.content.substring(0, 100)}${data.content.length > 100 ? '...' : ''}"`,
+          titleKey: 'feedbackRequired',
+          messageKey: 'feedbackRequiredMessage',
+          messageParams: {
+            authorName: data.authorName,
+            content:
+              data.content.length > 100 ? `${data.content.substring(0, 100)}...` : data.content,
+          },
           data: {
             feedbackId: feedback.id,
             reviewId: id,

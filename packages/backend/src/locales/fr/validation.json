@@ -1,0 +1,39 @@
+{
+  "auth": {
+    "confirmPasswordRequired": "La confirmation du mot de passe est requise",
+    "currentPasswordRequired": "Le mot de passe actuel est requis",
+    "deleteConfirmation": "La confirmation doit être exactement \"DELETE MY ACCOUNT\"",
+    "emailRequired": "L'adresse e-mail est requise",
+    "invalidEmail": "Veuillez entrer une adresse e-mail valide",
+    "invalidPassword": "Le mot de passe est invalide",
+    "newPasswordRequired": "Le nouveau mot de passe est requis",
+    "passwordNeedsLowercase": "Le mot de passe doit contenir une lettre minuscule",
+    "passwordNeedsNumber": "Le mot de passe doit contenir un chiffre",
+    "passwordNeedsSpecialChar": "Le mot de passe doit contenir un caractère spécial",
+    "passwordNeedsUppercase": "Le mot de passe doit contenir une lettre majuscule",
+    "passwordRequired": "Le mot de passe est requis",
+    "passwordTooShort": "Le mot de passe ne respecte pas la longueur minimale requise",
+    "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
+    "refreshTokenRequired": "Le jeton d'actualisation est requis",
+    "resetTokenRequired": "Le jeton de réinitialisation est requis",
+    "scheduleDeletionConfirmation": "La confirmation doit être exactement \"SCHEDULE DELETION\"",
+    "termsRequired": "Vous devez accepter les conditions d'utilisation"
+  },
+  "fieldRequired": "Ce champ est requis",
+  "fieldTooLong": "Ce champ est trop long",
+  "firstName": "Prénom",
+  "invalidEmail": "Veuillez entrer une adresse e-mail valide",
+  "lastName": "Nom",
+  "passwordTooShort": "Le mot de passe doit contenir au moins {{min}} caractères",
+  "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
+  "workflow": {
+    "authenticationRequired": "Authentification utilisateur requise pour cette transition",
+    "initialStatusMustBe": "L'état initial doit être {{defaultStatus}}",
+    "noWorkflow": "Aucun workflow configuré pour le type d'entité {{entityType}}",
+    "permissionDenied": "Vous n'avez pas l'autorisation d'effectuer cette transition",
+    "permissionDeniedRoles": "Vous n'avez pas l'autorisation d'effectuer cette transition. Rôles requis : {{roles}}",
+    "targetStateNotFound": "L'état cible {{toStatus}} n'existe pas dans le workflow",
+    "transitionDisabled": "Cette transition est actuellement désactivée",
+    "transitionNotAllowed": "La transition de {{fromStatus}} vers {{toStatus}} n'est pas autorisée"
+  }
+}

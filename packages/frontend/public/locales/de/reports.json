@@ -1,0 +1,102 @@
+{
+  "error": {
+    "message": "Berichtsdaten konnten nicht geladen werden. Bitte versuchen Sie es später erneut.",
+    "title": "Fehler beim Laden der Berichte"
+  },
+  "insights": {
+    "empty": "Noch keine Insights verfügbar. Schließen Sie weitere Sprints ab, um Insights zu generieren.",
+    "items": {
+      "active-sprint-impediments": {
+        "description": "Aktueller Sprint hat {{count}} Impediment(se). Sollten genau beobachtet werden.",
+        "title": "Aktive Sprint-Impediments"
+      },
+      "consistent-delivery": {
+        "description": "Team hat in den letzten {{count}} Sprints 100% der Sprint Goals erreicht",
+        "title": "Konstante Lieferung"
+      },
+      "get-started": {
+        "description": "Schließen Sie weitere Sprints ab, um Team-Leistungs-Insights zu generieren.",
+        "title": "Erste Schritte"
+      },
+      "high-success-rate": {
+        "description": "Team hat {{rate}}% Sprint-Erfolgsrate erreicht. Großartige Arbeit!",
+        "title": "Hohe Erfolgsrate"
+      },
+      "impediment-trend": {
+        "description": "{{count}} Impediment(se) derzeit offen. Proaktiv angehen.",
+        "title": "Impediment-Trend"
+      },
+      "low-success-rate": {
+        "description": "Sprint-Erfolgsrate beträgt {{rate}}%. Sprint-Kapazität und -Planung überprüfen.",
+        "title": "Erfolgsrate beachten"
+      },
+      "recent-improvement": {
+        "description": "Letzter Sprint zeigte {{improvement}}% Verbesserung bei abgeschlossenen Story Points.",
+        "title": "Aktuelle Verbesserung"
+      },
+      "velocity-decline": {
+        "description": "Durchschnittliche Velocity um {{trend}}% gesunken. Sprint Planning überprüfen.",
+        "title": "Velocity-Rückgang"
+      },
+      "velocity-improvement": {
+        "description": "Durchschnittliche Velocity um {{trend}}% im Vergleich zu vorherigen Sprints gestiegen",
+        "title": "Velocity-Verbesserung"
+      }
+    },
+    "title": "Wichtige Insights"
+  },
+  "loading": {
+    "insights": "Insights werden geladen...",
+    "metrics": "Metriken werden geladen...",
+    "sprintHistory": "Sprint-Historie wird geladen...",
+    "velocityChart": "Velocity-Chart wird geladen..."
+  },
+  "metrics": {
+    "avgVelocity": {
+      "fromLastSprint": "vom letzten Sprint",
+      "title": "Durchschnittliche Velocity",
+      "unit": "Story Points pro Sprint"
+    },
+    "impediments": {
+      "openCount": "offene Impediments",
+      "resolved": "Gelöst",
+      "title": "Impediments"
+    },
+    "sprintSuccessRate": {
+      "fromLastMonth": "vom letzten Monat",
+      "title": "Sprint-Erfolgsrate",
+      "unit": "Sprint Goals erreicht"
+    },
+    "teamSatisfaction": {
+      "fromLastSprint": "vom letzten Sprint",
+      "title": "Team-Zufriedenheit",
+      "unit": "Durchschnittliche Bewertung"
+    }
+  },
+  "pts": "pts",
+  "skipToMainContent": "Zum Hauptinhalt springen",
+  "sprintHistory": {
+    "empty": "Keine Sprint-Historie verfügbar.",
+    "stats": {
+      "completed": "Abgeschlossen",
+      "impediments": "Impediments",
+      "planned": "Geplant",
+      "teamMembers": "Teammitglieder"
+    },
+    "title": "Sprint-Historie"
+  },
+  "sprintStatusLabels": {
+    "ACTIVE": "Aktiv",
+    "COMPLETED": "Abgeschlossen",
+    "PLANNED": "Geplant"
+  },
+  "subtitle": "Team-Performance und Sprint-Metriken verfolgen",
+  "title": "Berichte",
+  "velocityChart": {
+    "completed": "Abgeschlossen",
+    "planned": "Geplant",
+    "title": "Sprint-Velocity",
+    "xAxisLabel": "Sprint",
+    "yAxisLabel": "Story Points"
+  }
+}

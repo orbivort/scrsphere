@@ -1,0 +1,234 @@
+{
+  "activeSprint": "Sprint actif",
+  "addAdjustmentModal": {
+    "actionType": "Type d'action",
+    "actionTypeOptions": {
+      "add": "Ajouter un nouvel élément",
+      "modify": "Modifier un élément existant",
+      "remove": "Supprimer",
+      "reorder": "Réorganiser",
+      "split": "Diviser"
+    },
+    "addAdjustment": "Ajouter l'ajustement",
+    "adding": "Ajout...",
+    "cancel": "Annuler",
+    "description": "Description *",
+    "descriptionPlaceholder": "Décrivez l'ajustement...",
+    "none": "Aucun",
+    "owner": "Propriétaire *",
+    "ownerPlaceholder": "Sélectionner le propriétaire...",
+    "reason": "Raison *",
+    "reasonPlaceholder": "Pourquoi cet ajustement est nécessaire ?",
+    "relatedPbi": "PBI associé (Optionnel)",
+    "subtitle": "Enregistrer les changements au Product Backlog basés sur le retour de la Sprint Review",
+    "title": "Ajouter un ajustement du Backlog",
+    "unsavedMessage": "Vous avez un ajustement du backlog non sauvegardé. Êtes-vous sûr de vouloir le supprimer ?",
+    "unsavedTitle": "Changements d'ajustement du Backlog non sauvegardés"
+  },
+  "addFeedbackModal": {
+    "actionRequired": "Action requise",
+    "addFeedback": "Ajouter le retour",
+    "adding": "Ajout...",
+    "authorName": "Nom de l'auteur *",
+    "authorNamePlaceholder": "Entrez le nom de la partie prenante",
+    "cancel": "Annuler",
+    "category": "Catégorie",
+    "categoryOptions": {
+      "negative": "Retour négatif",
+      "positive": "Retour positif",
+      "question": "Question",
+      "suggestion": "Suggestion"
+    },
+    "feedback": "Retour *",
+    "feedbackPlaceholder": "Entrez le retour de la partie prenante...",
+    "none": "Aucun",
+    "owner": "Propriétaire *",
+    "ownerPlaceholder": "Sélectionner le propriétaire...",
+    "relatedPbi": "PBI associé (Optionnel)",
+    "requiredFieldsNote": "Les champs requis sont marqués avec *",
+    "subtitle": "Capturer des enseignements précieux des parties prenantes pour améliorer votre produit",
+    "title": "Ajouter un retour Partie prenante",
+    "unsavedMessage": "Vous avez un retour non sauvegardé. Êtes-vous sûr de vouloir le supprimer ?",
+    "unsavedTitle": "Changements de retour non sauvegardés"
+  },
+  "adjustments": {
+    "actionTypes": {
+      "add": "Ajouter",
+      "modify": "Modifier",
+      "remove": "Supprimer",
+      "reorder": "Réorganiser",
+      "split": "Diviser"
+    },
+    "addAdjustment": "Ajouter un ajustement",
+    "addAdjustmentDisabled": "Ajouter un ajustement - désactivé",
+    "backlogHint": "Cet élément sera présent dans la page Product Backlog pour action.",
+    "cannotAddAdjustmentTitle": "Impossible d'ajouter un ajustement à une Review terminée",
+    "description": "Changements au Product Backlog basés sur le retour de la Sprint Review.",
+    "empty": "Aucun ajustement du backlog effectué pendant cette revue.",
+    "owner": "Propriétaire :",
+    "reason": "Raison :",
+    "status": {
+      "implemented": "Implémenté",
+      "pending": "En attente"
+    },
+    "title": "Ajustements du Product Backlog"
+  },
+  "ariaLabels": {
+    "sections": "Sections de la Sprint Review"
+  },
+  "availableSprints": "Sprints disponibles :",
+  "backToReviews": "Retour aux revues",
+  "completeReview": {
+    "badge": "Sprint Review terminée",
+    "button": "Terminer la Sprint Review",
+    "completing": "Terminer...",
+    "confirmationModal": {
+      "cancel": "Annuler",
+      "cannotCompleteSubtitle": "Veuillez résoudre les problèmes suivants avant de terminer cette Sprint Review",
+      "cannotCompleteTitle": "Impossible de terminer la Sprint Review",
+      "closeDialog": "Fermer le dialogue",
+      "complete": "Terminer",
+      "completeSubtitle": "Vérifiez tous les éléments et confirmez pour marquer cette Sprint Review comme terminée",
+      "completeTitle": "Terminer la Sprint Review",
+      "confirmation": "Êtes-vous sûr de vouloir marquer cette Sprint Review comme terminée ? Cette action ne peut pas être annulée.",
+      "gotIt": "Compris",
+      "validationAttended": "Au moins un participant doit être marqué comme ayant assisté avant de terminer la Sprint Review.",
+      "validationAttendees": "Veuillez ajouter au moins un participant avant de terminer la Sprint Review.",
+      "validationSummary": "Un résumé de la revue est requis pour terminer la Sprint Review.",
+      "validationTeamMembers": "Tous les membres de l'équipe doivent être marqués comme ayant assisté ou absents. Manquants : {{names}}{{remaining}}."
+    },
+    "defaultSummary": "Sprint Review terminée.",
+    "failed": "Impossible de terminer le Review. Veuillez réessayer.",
+    "successModal": {
+      "close": "Fermer",
+      "message": "Sprint Review terminée avec succès !",
+      "title": "Succès"
+    }
+  },
+  "createModal": {
+    "cancel": "Annuler",
+    "createReview": "Créer la Sprint Review",
+    "creating": "Création...",
+    "failed": "Impossible de créer la Sprint Review. Veuillez réessayer.",
+    "incrementRequiredWarning": "Un Increment est requis avant de créer une Sprint Review.",
+    "reviewDate": "Date de la revue *",
+    "summary": "Résumé (Optionnel)",
+    "summaryPlaceholder": "Entrez un résumé de la Sprint Review...",
+    "title": "Créer une Sprint Review"
+  },
+  "detailLabels": {
+    "endDate": "Date de fin :",
+    "sprintGoal": "Sprint Goal :",
+    "startDate": "Date de début :",
+    "status": "Statut :"
+  },
+  "error": {
+    "failedToLoad": "Impossible de charger la Sprint Review",
+    "message": "Impossible de charger les données de la Sprint Review. Veuillez réessayer.",
+    "retry": "Réessayer",
+    "title": "Erreur",
+    "unknown": "Erreur inconnue"
+  },
+  "errorPrefix": "Erreur : {{message}}",
+  "feedback": {
+    "actionRequired": "Action requise",
+    "actionTaken": "Action effectuée",
+    "addFeedback": "Ajouter un retour",
+    "backlogHint": "Utilisez l'onglet \"Ajustements du Backlog\" pour effectuer des changements basés sur ce retour.",
+    "categories": {
+      "negative": "Retour négatif",
+      "positive": "Retour positif",
+      "question": "Question",
+      "suggestion": "Suggestion"
+    },
+    "empty": "Aucun retour collecté. Cliquez sur \"Ajouter un retour\" pour ajouter le retour des parties prenantes.",
+    "owner": "Propriétaire :",
+    "title": "Retour des Parties prenantes"
+  },
+  "findingActiveSprint": "Recherche du Sprint actif...",
+  "increment": {
+    "deliveredAt": "Livré le",
+    "deliveryMethod": "Méthode de livraison",
+    "dodAllVerified": "Tous les critères DoD vérifiés pour les éléments inclus",
+    "dodVerification": "Vérification de la Definition of Done",
+    "done": "Terminé",
+    "earlyReleaseDelivery": "Livraison anticipée",
+    "includedPbis": "Product Backlog Items inclus",
+    "noDescription": "Aucune description",
+    "noIncrement": "Aucun Increment disponible",
+    "noIncrementDescription": "Aucun Increment livré n'est disponible pour cette Sprint Review.",
+    "noPbis": "Aucun PBI inclus dans cet Increment.",
+    "notDelivered": "Non livré",
+    "sprintReviewDelivery": "Sprint Review",
+    "title": "Increment présenté",
+    "totalStoryPoints": "Total des Story Points"
+  },
+  "list": {
+    "completedSprint": "Sprint terminé",
+    "completedSprints": "Sprints terminés",
+    "completedSprints_plural": "Sprints terminés",
+    "createIncrement": "Créer un Increment",
+    "goal": "Objectif :",
+    "loading": "Chargement des Sprint Reviews...",
+    "reviewStatus": {
+      "completed": "Revue terminée",
+      "inProgress": "Revue en cours",
+      "incrementRequired": "Increment requis",
+      "readyForReview": "Prêt pour Review"
+    },
+    "reviewed": "Examiné",
+    "statusLabels": {
+      "active": "Actif",
+      "cancelled": "Annulé",
+      "completed": "Terminé",
+      "planned": "Planifié"
+    },
+    "subtitle": "Examiner les Sprints terminés, inspecter les Increments et collecter le retour des parties prenantes",
+    "title": "Sprint Reviews",
+    "viewDetails": "Voir les détails",
+    "viewReview": "Voir la revue"
+  },
+  "loading": "Chargement de la Sprint Review...",
+  "noActiveSprint": "Aucun Sprint actif trouvé pour cette équipe.",
+  "noReview": {
+    "createIncrement": "Créer un Increment",
+    "createSprintReview": "Créer une Sprint Review",
+    "incrementRequired": "Increment requis",
+    "incrementRequiredNotice": "Un Increment livré est requis avant de créer une Sprint Review. Veuillez créer et livrer un Increment d'abord.",
+    "message": "Aucune Sprint Review n'a été créée pour ce Sprint.",
+    "title": "Aucune Sprint Review créée"
+  },
+  "overview": {
+    "attendees": "Participants",
+    "completionRate": "Taux d'achèvement",
+    "duration": "Durée",
+    "noSprintGoal": "Aucun Sprint Goal défini.",
+    "noSummary": "Aucun résumé fourni.",
+    "notSet": "Non défini",
+    "period": "Période",
+    "reviewSummary": "Résumé de la revue",
+    "sprintGoal": "Sprint Goal",
+    "sprintMetrics": "Métriques du Sprint",
+    "storyPointsCommitted": "Story Points engagés",
+    "storyPointsCompleted": "Story Points terminés",
+    "workingDays": "jours de travail"
+  },
+  "pts": "pts",
+  "reviewThisSprint": "Examiner ce Sprint",
+  "select": "Sélectionner",
+  "selectSprint": "Sélectionner le Sprint pour le Review",
+  "sprintStatus": {
+    "ACTIVE": "Actif",
+    "CANCELLED": "Annulé",
+    "COMPLETED": "Terminé",
+    "PLANNED": "Planifié"
+  },
+  "tabs": {
+    "backlogAdjustments": "Ajustements du Backlog",
+    "feedback": "Retour",
+    "increment": "Increment",
+    "overview": "Vue d'ensemble"
+  },
+  "title": "Sprint Review",
+  "unknownSprint": "Sprint inconnu"
+}

@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
+import { screen, renderWithProviders, fireEvent, initTestI18n } from '../../test-utils';
 
 import { WidgetErrorBoundary } from './WidgetErrorBoundary';
 
@@ -23,6 +23,10 @@ vi.mock('./ErrorBoundary.module.css', () => ({
 }));
 
 describe('WidgetErrorBoundary Component', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     console.error = vi.fn();
   });
@@ -34,7 +38,7 @@ describe('WidgetErrorBoundary Component', () => {
 
   describe('Component Rendering Tests', () => {
     it('should render children when no error occurs', () => {
-      render(
+      renderWithProviders(
         <WidgetErrorBoundary widgetName="Chart Widget">
           <div>Widget content</div>
         </WidgetErrorBoundary>
@@ -44,7 +48,7 @@ describe('WidgetErrorBoundary Component', () => {
     });
 
     it('should render error UI when an error is thrown', () => {
-      render(
+      renderWithProviders(
         <WidgetErrorBoundary widgetName="Chart Widget">
           <ThrowError error={new Error('Widget error')} />
         </WidgetErrorBoundary>
@@ -54,7 +58,7 @@ describe('WidgetErrorBoundary Component', () => {
     });
 
     it('should display widget name in error message', () => {
-      render(
+      renderWithProviders(
         <WidgetErrorBoundary widgetName="Statistics Panel">
           <ThrowError error={new Error('Widget error')} />
         </WidgetErrorBoundary>
@@ -64,7 +68,7 @@ describe('WidgetErrorBoundary Component', () => {
     });
 
     it('should display warning icon', () => {
-      render(
+      renderWithProviders(
         <WidgetErrorBoundary widgetName="Chart Widget">
           <ThrowError error={new Error('Widget error')} />
         </WidgetErrorBoundary>
@@ -74,7 +78,7 @@ describe('WidgetErrorBoundary Component', () => {
     });
 
     it('should have proper ARIA attributes', () => {
-      render(
+      renderWithProviders(
         <WidgetErrorBoundary widgetName="Chart Widget">
           <ThrowError error={new Error('Widget error')} />
         </WidgetErrorBoundary>
@@ -85,7 +89,7 @@ describe('WidgetErrorBoundary Component', () => {
     });
 
     it('should have aria-label on retry button', () => {
-      render(
+      renderWithProviders(
         <WidgetErrorBoundary widgetName="Chart Widget">
           <ThrowError error={new Error('Widget error')} />
         </WidgetErrorBoundary>
@@ -98,7 +102,7 @@ describe('WidgetErrorBoundary Component', () => {
 
   describe('User Interaction Tests', () => {
     it('should call handleRetry when Retry button is clicked', () => {
-      const { container, rerender } = render(
+      const { container, rerender } = renderWithProviders(
         <WidgetErrorBoundary widgetName="Chart Widget">
           <ThrowError error={new Error('Widget error')} />
         </WidgetErrorBoundary>
@@ -126,7 +130,7 @@ describe('WidgetErrorBoundary Component', () => {
     it('should call onRetry callback when provided and Retry is clicked', () => {
       const onRetry = vi.fn();
 
-      render(
+      renderWithProviders(
         <WidgetErrorBoundary widgetName="Chart Widget" onRetry={onRetry}>
           <ThrowError error={new Error('Widget error')} />
         </WidgetErrorBoundary>
@@ -141,7 +145,7 @@ describe('WidgetErrorBoundary Component', () => {
 
   describe('Error State Management Tests', () => {
     it('should reset error state when retry is triggered', async () => {
-      const { container, rerender } = render(
+      const { container, rerender } = renderWithProviders(
         <WidgetErrorBoundary widgetName="Chart Widget">
           <ThrowError error={new Error('Widget error')} />
         </WidgetErrorBoundary>
@@ -171,7 +175,7 @@ describe('WidgetErrorBoundary Component', () => {
 
   describe('Edge Case Tests', () => {
     it('should handle errors with empty widget name', () => {
-      render(
+      renderWithProviders(
         <WidgetErrorBoundary widgetName="">
           <ThrowError error={new Error('Widget error')} />
         </WidgetErrorBoundary>
@@ -181,7 +185,7 @@ describe('WidgetErrorBoundary Component', () => {
     });
 
     it('should handle errors with special characters in widget name', () => {
-      render(
+      renderWithProviders(
         <WidgetErrorBoundary widgetName="User's Stats & Metrics">
           <ThrowError error={new Error('Widget error')} />
         </WidgetErrorBoundary>
@@ -192,7 +196,7 @@ describe('WidgetErrorBoundary Component', () => {
 
     it('should handle long widget names', () => {
       const longName = 'Very Long Widget Name That Should Still Display Correctly';
-      render(
+      renderWithProviders(
         <WidgetErrorBoundary widgetName={longName}>
           <ThrowError error={new Error('Widget error')} />
         </WidgetErrorBoundary>
@@ -204,7 +208,7 @@ describe('WidgetErrorBoundary Component', () => {
 
   describe('Accessibility Tests', () => {
     it('should have warning icon with aria-hidden', () => {
-      render(
+      renderWithProviders(
         <WidgetErrorBoundary widgetName="Chart Widget">
           <ThrowError error={new Error('Widget error')} />
         </WidgetErrorBoundary>
@@ -215,7 +219,7 @@ describe('WidgetErrorBoundary Component', () => {
     });
 
     it('should have button type attribute', () => {
-      render(
+      renderWithProviders(
         <WidgetErrorBoundary widgetName="Chart Widget">
           <ThrowError error={new Error('Widget error')} />
         </WidgetErrorBoundary>

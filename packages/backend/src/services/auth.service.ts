@@ -18,6 +18,10 @@ import {
 } from '../utils/errors';
 import { generateUUIDv7 } from '../utils/uuid';
 import { logger } from '../utils/logger';
+import { getRequestLocale } from '../utils/requestContext.js';
+import { NotificationService } from './notification.service';
+
+const notificationService = new NotificationService();
 import { emailService } from './email/index.js';
 import {
   PasswordResetTemplate,
@@ -26,6 +30,7 @@ import {
 } from './email/templates/index.js';
 import type { User, RefreshToken } from '../generated/prisma/client';
 import type { DeletionEligibilityResult, ScheduledDeletion } from '../types/user.types';
+import type { Locale } from '@scrumooth/shared';
 
 interface TokenPayload {
   sub: string;
@@ -40,7 +45,7 @@ interface SessionInfo {
 }
 
 export interface LoginResponse {
-  user: Pick<User, 'id' | 'email' | 'firstName' | 'lastName' | 'avatarUrl'>;
+  user: Pick<User, 'id' | 'email' | 'firstName' | 'lastName' | 'avatarUrl' | 'locale'>;
   tokens: {
     accessToken: string;
     refreshToken: string;
@@ -60,6 +65,7 @@ export interface RegisterData {
   lastName: string;
   termsAccepted: true;
   marketingOptIn: boolean;
+  locale?: Locale;
 }
 
 interface SessionValidationResult {
@@ -111,6 +117,7 @@ class AuthService {
         termsAcceptedAt: now,
         marketingOptIn: data.marketingOptIn,
         marketingOptInAt: data.marketingOptIn ? now : null,
+        locale: data.locale ?? getRequestLocale(),
       },
     });
 
@@ -171,6 +178,7 @@ class AuthService {
         firstName: true,
         lastName: true,
         avatarUrl: true,
+        locale: true,
       },
     });
 
@@ -345,6 +353,7 @@ class AuthService {
         firstName: true,
         lastName: true,
         avatarUrl: true,
+        locale: true,
         createdAt: true,
         createdBy: true,
         updatedAt: true,
@@ -657,14 +666,17 @@ class AuthService {
       });
 
       for (const member of members) {
-        await prisma.notification.create({
-          data: {
-            id: crypto.randomUUID(),
-            userId: member.userId,
-            type: 'ACCOUNT_DELETION_SCHEDULED',
-            title: 'Team member scheduled account deletion',
-            message: `A Product Owner in your team has scheduled their account deletion. The account will be permanently deleted on ${scheduledDeletionAt.toLocaleDateString()}. Please assign a new Product Owner before then.`,
+        await notificationService.createLocalized({
+          userId: member.userId,
+          type: 'ACCOUNT_DELETION_SCHEDULED',
+          titleKey: 'accountDeletionScheduled',
+          messageKey: 'accountDeletionScheduledMessage',
+          messageParams: {
+            deletionDate: new Intl.DateTimeFormat('en', { dateStyle: 'long' }).format(
+              scheduledDeletionAt
+            ),
           },
+          createdBy: userId,
         });
       }
     }
@@ -681,14 +693,12 @@ class AuthService {
       });
 
       for (const member of members) {
-        await prisma.notification.create({
-          data: {
-            id: crypto.randomUUID(),
-            userId: member.userId,
-            type: 'ACCOUNT_DELETION_CANCELLED',
-            title: 'Account deletion cancelled',
-            message: 'A team member has cancelled their scheduled account deletion.',
-          },
+        await notificationService.createLocalized({
+          userId: member.userId,
+          type: 'ACCOUNT_DELETION_CANCELLED',
+          titleKey: 'accountDeletionCancelled',
+          messageKey: 'accountDeletionCancelledMessage',
+          createdBy: userId,
         });
       }
     }
@@ -733,15 +743,21 @@ class AuthService {
 
   async updateProfile(
     userId: string,
-    data: { firstName: string; lastName: string }
+    data: { firstName: string; lastName: string; locale?: string }
   ): Promise<Omit<User, 'password'>> {
+    const updateData: Record<string, unknown> = {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      updatedBy: userId,
+    };
+
+    if (data.locale !== undefined) {
+      updateData.locale = data.locale;
+    }
+
     const user = await prisma.user.update({
       where: { id: userId },
-      data: {
-        firstName: data.firstName,
-        lastName: data.lastName,
-        updatedBy: userId,
-      },
+      data: updateData,
     });
 
     logger.info('User profile updated', { userId });
@@ -794,7 +810,9 @@ class AuthService {
       const rendered = template.render({
         firstName: user.firstName,
         email: user.email,
-        changedAt: new Date().toLocaleString(),
+        changedAt: new Intl.DateTimeFormat('en', { dateStyle: 'long', timeStyle: 'short' }).format(
+          new Date()
+        ),
         ipAddress: sessionInfo?.ipAddress,
         userAgent: sessionInfo?.userAgent,
         subject: 'Your Password Has Been Changed',
@@ -856,6 +874,7 @@ class AuthService {
         id: true,
         email: true,
         firstName: true,
+        locale: true,
       },
     });
 
@@ -898,6 +917,7 @@ class AuthService {
         email: user.email,
         resetUrl,
         expiresIn: '1 hour',
+        locale: user.locale as Locale,
         subject: 'Reset Your Password',
         appName: 'Scrumooth',
         appUrl: config.email.frontendUrl,
@@ -1056,7 +1076,9 @@ class AuthService {
       const rendered = template.render({
         firstName: user.firstName,
         email: user.email,
-        changedAt: new Date().toLocaleString(),
+        changedAt: new Intl.DateTimeFormat('en', { dateStyle: 'long', timeStyle: 'short' }).format(
+          new Date()
+        ),
         ipAddress: sessionInfo?.ipAddress,
         userAgent: sessionInfo?.userAgent,
         subject: 'Your Password Has Been Changed',
@@ -1349,7 +1371,7 @@ class AuthService {
   }
 
   private async sendWelcomeEmail(
-    user: { id: string; email: string; firstName: string },
+    user: { id: string; email: string; firstName: string; locale: string },
     _sessionInfo?: SessionInfo
   ): Promise<void> {
     try {
@@ -1357,6 +1379,7 @@ class AuthService {
       const rendered = template.render({
         firstName: user.firstName,
         email: user.email,
+        locale: user.locale as Locale,
         subject: `Welcome to ${config.email.defaults.fromName || 'Scrumooth'}`,
         appName: config.email.defaults.fromName || 'Scrumooth',
         appUrl: config.email.frontendUrl,

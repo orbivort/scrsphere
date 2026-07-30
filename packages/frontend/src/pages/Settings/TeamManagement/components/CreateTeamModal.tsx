@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useRef, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import styles from './CreateTeamModal.module.css';
 
@@ -29,6 +30,7 @@ export const CreateTeamModal: React.FC<CreateTeamModalProps> = ({
   const [isDirty, setIsDirty] = useState(!!defaultName);
   const [showUnsavedChanges, setShowUnsavedChanges] = useState(false);
   const nameInputRef = useRef<HTMLInputElement>(null);
+  const { t } = useTranslation('settings');
 
   // Reset form when modal opens with new defaultName
   React.useEffect(() => {
@@ -41,10 +43,7 @@ export const CreateTeamModal: React.FC<CreateTeamModalProps> = ({
   }, [isOpen, defaultName]);
 
   // Protect against accidental browser tab closure when form has unsaved changes
-  useBeforeUnload(
-    isDirty,
-    'You have unsaved changes in the team creation form. Are you sure you want to leave?'
-  );
+  useBeforeUnload(isDirty, t('createTeamModal.beforeUnload'));
 
   const { modalRef } = useModalFocus({
     isOpen,
@@ -102,13 +101,13 @@ export const CreateTeamModal: React.FC<CreateTeamModalProps> = ({
     const newErrors: { name?: string; description?: string } = {};
 
     if (!name.trim()) {
-      newErrors.name = 'Team name is required';
+      newErrors.name = t('createTeamModal.validation.nameRequired');
     } else if (name.length > 100) {
-      newErrors.name = 'Team name must be less than 100 characters';
+      newErrors.name = t('createTeamModal.validation.nameMaxLength');
     }
 
     if (description && description.length > 1000) {
-      newErrors.description = 'Description must be less than 1000 characters';
+      newErrors.description = t('createTeamModal.validation.descriptionMaxLength');
     }
 
     setErrors(newErrors);
@@ -152,14 +151,14 @@ export const CreateTeamModal: React.FC<CreateTeamModalProps> = ({
                 <UsersIcon size={24} />
               </div>
               <h2 id="create-team-title" className={styles.title}>
-                Create New Team
+                {t('createTeamModal.title')}
               </h2>
-              <p className={styles.subtitle}>Build a collaborative workspace for your agile team</p>
+              <p className={styles.subtitle}>{t('createTeamModal.subtitle')}</p>
             </div>
             <button
               className={styles['close-button']}
               onClick={handleClose}
-              aria-label="Close modal"
+              aria-label={t('createTeamModal.closeModal')}
               type="button"
             >
               <XIcon size={18} />
@@ -175,18 +174,18 @@ export const CreateTeamModal: React.FC<CreateTeamModalProps> = ({
           <form className={styles.body} onSubmit={handleSubmit} noValidate>
             <p
               className={styles['form-legend']}
-              aria-label="All fields marked with asterisk are required"
+              aria-label={t('createTeamModal.requiredFieldsAria')}
             >
               <span className={styles.required} aria-hidden="true">
                 *
               </span>
-              <span>Required fields</span>
+              <span>{t('createTeamModal.requiredFields')}</span>
             </p>
 
             {/* Team Name Field */}
             <div className={styles['form-group']}>
               <label htmlFor="team-name" className={styles['form-label']}>
-                Team Name
+                {t('createTeamModal.teamName')}
                 <span className={styles.required}>*</span>
               </label>
               <div className={styles['input-wrapper']}>
@@ -197,7 +196,7 @@ export const CreateTeamModal: React.FC<CreateTeamModalProps> = ({
                   className={styles['form-input']}
                   value={name}
                   onChange={handleNameChange}
-                  placeholder="e.g., Alpha Squad, Product Team A"
+                  placeholder={t('createTeamModal.teamNamePlaceholder')}
                   aria-invalid={!!errors.name}
                   aria-describedby={
                     errors.name ? 'team-name-error team-name-counter' : 'team-name-counter'
@@ -224,8 +223,10 @@ export const CreateTeamModal: React.FC<CreateTeamModalProps> = ({
             {/* Description Field */}
             <div className={styles['form-group']}>
               <label htmlFor="team-description" className={styles['form-label']}>
-                Description
-                <span className={styles['optional-badge']}>Optional</span>
+                {t('createTeamModal.description')}
+                <span className={styles['optional-badge']}>
+                  {t('createTeamModal.optionalBadge')}
+                </span>
               </label>
               <div className={styles['input-wrapper']}>
                 <textarea
@@ -233,7 +234,7 @@ export const CreateTeamModal: React.FC<CreateTeamModalProps> = ({
                   className={styles['form-textarea']}
                   value={description}
                   onChange={handleDescriptionChange}
-                  placeholder="Describe your team's purpose, goals, or working style..."
+                  placeholder={t('createTeamModal.descriptionPlaceholder')}
                   rows={4}
                   maxLength={1000}
                   aria-invalid={!!errors.description}
@@ -267,7 +268,7 @@ export const CreateTeamModal: React.FC<CreateTeamModalProps> = ({
                 onClick={handleClose}
                 disabled={isSubmitting}
               >
-                Cancel
+                {t('createTeamModal.cancel')}
               </button>
               <button
                 type="submit"
@@ -280,10 +281,10 @@ export const CreateTeamModal: React.FC<CreateTeamModalProps> = ({
                 {!isSubmitting && (
                   <>
                     <PlusIcon size={16} />
-                    <span>Create Team</span>
+                    <span>{t('createTeamModal.createTeam')}</span>
                   </>
                 )}
-                {isSubmitting && <span>Creating...</span>}
+                {isSubmitting && <span>{t('createTeamModal.creating')}</span>}
               </button>
             </div>
           </form>

@@ -1,5 +1,6 @@
-﻿import React, { useState, useReducer, useCallback, useRef } from 'react';
+import React, { useState, useReducer, useCallback, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 
 import { definitionService } from '../../services';
 import { useTeamStore } from '../../store';
@@ -14,10 +15,26 @@ import {
 } from '../../types';
 import { EmptyState } from '../../components/EmptyState';
 import { LoadingState } from '../../components/common/Loading';
+import { i18nInstance } from '../../i18n/config';
+
+/**
+ * Helper function to detect permission-related error messages and translate them
+ */
+function getTranslatedPermissionError(message: string): string {
+  const isPermissionMessage =
+    message.includes('You do not have permission') ||
+    message.includes('Required roles') ||
+    message.includes('Insufficient permissions');
+
+  if (isPermissionMessage) {
+    return i18nInstance.t('common:permission.transitionError');
+  }
+  return message;
+}
 
 import { DoDVerificationModal } from './components/DoDVerificationModal';
 import type { ViewMode, SwimlaneGroup } from './SprintBoard.types';
-import { TASK_STATUS_CONFIG } from './SprintBoard.constants';
+import { TASK_STATUS_CONFIG_BASE } from './SprintBoard.constants';
 import {
   initialModalState,
   modalReducer,
@@ -56,7 +73,30 @@ import styles from './SprintBoard.module.css';
 export const SprintBoard: React.FC = () => {
   const { currentTeam } = useTeamStore();
   const navigate = useNavigate();
+  const { t } = useTranslation('sprint');
   const teamId = currentTeam?.id;
+
+  // Build TASK_STATUS_CONFIG with i18n labels
+  const TASK_STATUS_CONFIG: Record<
+    TaskStatus,
+    { label: string; color: string; bgColor: string; borderColor: string; icon: string }
+  > = useMemo(
+    () => ({
+      [TaskStatusEnum.TODO]: {
+        ...TASK_STATUS_CONFIG_BASE[TaskStatusEnum.TODO],
+        label: t('taskStatus.todo'),
+      },
+      [TaskStatusEnum.IN_PROGRESS]: {
+        ...TASK_STATUS_CONFIG_BASE[TaskStatusEnum.IN_PROGRESS],
+        label: t('taskStatus.inProgress'),
+      },
+      [TaskStatusEnum.DONE]: {
+        ...TASK_STATUS_CONFIG_BASE[TaskStatusEnum.DONE],
+        label: t('taskStatus.done'),
+      },
+    }),
+    [t]
+  );
 
   const [modalState, modalDispatch] = useReducer(modalReducer, initialModalState);
   const {
@@ -311,7 +351,7 @@ export const SprintBoard: React.FC = () => {
       id: task.id,
       title: task.title,
       status: task.status,
-      pbiTitle: task.pbi?.title ?? 'Unknown PBI',
+      pbiTitle: task.pbi?.title ?? t('taskDetail.unknown'),
       assigneeId: task.assigneeId,
     }));
 
@@ -351,10 +391,10 @@ export const SprintBoard: React.FC = () => {
         mutations.completeSprintMutation.mutate();
       } catch (error) {
         logger.error('Failed to save DoD verifications', undefined, { error });
-        toastError('Failed to save DoD verifications. Please try again.');
+        toastError(t('board.failedToSaveDodVerifications'));
       }
     },
-    [mutations.completeSprintMutation, toastError]
+    [mutations.completeSprintMutation, toastError, t]
   );
 
   const handleDodVerificationCancel = useCallback(() => {
@@ -376,26 +416,26 @@ export const SprintBoard: React.FC = () => {
       if (!result.valid) {
         modalDispatch({
           type: 'SET_WORKFLOW_ERROR',
-          payload: result.error ?? 'Transition validation failed',
+          payload: result.error ?? t('board.transitionValidationFailed'),
         });
-        toastError(result.error ?? 'Transition validation failed');
+        toastError(result.error ?? t('board.transitionValidationFailed'));
         return;
       }
 
       if (newStatus === TaskStatusEnum.IN_PROGRESS) {
         const formErrors: string[] = [];
         if (!formData.assigneeId) {
-          formErrors.push('Assignee is required');
+          formErrors.push(t('board.assigneeRequired'));
         }
         if (!formData.estimatedHours || formData.estimatedHours <= 0) {
-          formErrors.push('Estimated hours must be greater than 0');
+          formErrors.push(t('board.estimatedHoursGreaterThanZero'));
         }
         if (formData.remainingHours <= 0) {
-          formErrors.push('Remaining hours must be greater than 0');
+          formErrors.push(t('board.remainingHoursGreaterThanZero'));
         }
 
         if (formErrors.length > 0) {
-          const errorMessage = `Cannot move to In Progress: ${formErrors.join(', ')}`;
+          const errorMessage = t('board.cannotMoveToInProgress', { errors: formErrors.join(', ') });
           modalDispatch({ type: 'SET_WORKFLOW_ERROR', payload: errorMessage });
           toastError(errorMessage);
           return;
@@ -424,7 +464,8 @@ export const SprintBoard: React.FC = () => {
               },
             });
             toastSuccess(
-              `Task status changed to ${TASK_STATUS_CONFIG[newStatus].label}${newStatus === TaskStatusEnum.DONE ? ' (Remaining hours set to 0)' : ''}`
+              t('board.statusChangedTo', { status: TASK_STATUS_CONFIG[newStatus].label }) +
+                (newStatus === TaskStatusEnum.DONE ? t('board.remainingHoursSetToZero') : '')
             );
           },
           onError: (error: unknown) => {
@@ -432,8 +473,12 @@ export const SprintBoard: React.FC = () => {
               response?: { data?: { error?: { message?: string } } };
               message?: string;
             };
-            const errorMessage =
-              err.response?.data?.error?.message ?? err.message ?? 'Failed to update task status';
+            const rawMessage =
+              err.response?.data?.error?.message ??
+              err.message ??
+              t('board.failedToUpdateTaskStatus');
+            // Translate permission-related error messages
+            const errorMessage = getTranslatedPermissionError(rawMessage);
             modalDispatch({ type: 'SET_WORKFLOW_ERROR', payload: errorMessage });
           },
         }
@@ -448,6 +493,8 @@ export const SprintBoard: React.FC = () => {
       mutations.updateTaskMutation,
       toastError,
       toastSuccess,
+      t,
+      TASK_STATUS_CONFIG,
     ]
   );
 
@@ -462,7 +509,7 @@ export const SprintBoard: React.FC = () => {
       const task = tasks.find((t) => t.id === taskId);
 
       if (!task) {
-        toastError('Task not found');
+        toastError(t('board.taskNotFound'));
         return;
       }
 
@@ -478,7 +525,7 @@ export const SprintBoard: React.FC = () => {
       });
 
       if (!result.valid) {
-        toastError(result.error ?? 'Transition validation failed');
+        toastError(result.error ?? t('board.transitionValidationFailed'));
         return;
       }
 
@@ -491,11 +538,12 @@ export const SprintBoard: React.FC = () => {
       tasksByStatus,
       mutations.updateTaskMutation,
       toastError,
+      t,
     ]
   );
 
   if (sprintLoading || tasksLoading) {
-    return <LoadingState variant="page" label="Loading sprint board..." />;
+    return <LoadingState variant="page" label={t('board.loadingBoard')} />;
   }
 
   if (!teamId) {
@@ -510,7 +558,7 @@ export const SprintBoard: React.FC = () => {
     <div
       className={styles['sprint-board']}
       role="main"
-      aria-label="Sprint Board"
+      aria-label={t('board.sprintBoard')}
       data-testid="sprint-board"
     >
       <ToastContainer toasts={toasts} onClose={removeToast} />
@@ -576,14 +624,14 @@ export const SprintBoard: React.FC = () => {
         id="kanban-board"
         className={`${styles['kanban-board']} ${viewMode === 'swimlanes' ? styles['swimlanes-view'] : ''}`}
         role="list"
-        aria-label="Task board"
+        aria-label={t('board.taskBoard')}
         tabIndex={-1}
       >
         {viewMode === 'kanban' ? (
           <>
             <KanbanColumn
               status={TaskStatusEnum.TODO}
-              title="TO DO"
+              title={t('taskStatus.todo')}
               tasks={tasksByStatus.todo}
               wipLimit={wipLimits.todo}
               allTasksByStatus={tasksByStatus}
@@ -607,7 +655,7 @@ export const SprintBoard: React.FC = () => {
 
             <KanbanColumn
               status={TaskStatusEnum.IN_PROGRESS}
-              title="IN PROGRESS"
+              title={t('taskStatus.inProgress')}
               tasks={tasksByStatus.in_progress}
               wipLimit={wipLimits.in_progress}
               allTasksByStatus={tasksByStatus}
@@ -631,7 +679,7 @@ export const SprintBoard: React.FC = () => {
 
             <KanbanColumn
               status={TaskStatusEnum.DONE}
-              title="DONE"
+              title={t('taskStatus.done')}
               tasks={tasksByStatus.done}
               wipLimit={wipLimits.done}
               allTasksByStatus={tasksByStatus}

@@ -6,6 +6,97 @@ import { MemoryRouter } from 'react-router';
 import { DeleteAccountModal } from './DeleteAccountModal';
 import type { TeamMembership } from '../../types/auth.types';
 
+// Mock react-i18next for tests
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string, options?: Record<string, string>) => {
+      const map: Record<string, string> = {
+        'deleteAccount.title': 'Delete Account',
+        'deleteAccount.close': 'Close',
+        'deleteAccount.warningTitle':
+          'This action is permanent and cannot be undone. All your data will be permanently deleted.',
+        'deleteAccount.accountToBeDeleted': 'Account to be deleted',
+        'deleteAccount.dataWillBeDeleted': 'Data that will be deleted',
+        'deleteAccount.profileAndAccount': 'Your profile and account information',
+        'deleteAccount.teamMemberships': 'Team memberships and roles',
+        'deleteAccount.teamsCount': `(${options?.count ?? 0} teams)`,
+        'deleteAccount.associatedData': 'All associated data and activity history',
+        'deleteAccount.confirmationHelp': 'Type the phrase exactly as shown',
+        'deleteAccount.confirmationCheckbox':
+          'I understand that this action is permanent and cannot be undone. I want to delete my account and all associated data.',
+        'deleteAccount.confirmationPlaceholder': `Type ${options?.phrase ?? 'DELETE MY ACCOUNT'}`,
+        'deleteAccount.deleteAccount': 'Delete My Account',
+        'deleteAccount.deleting': 'Deleting...',
+        cancel: 'Cancel',
+        'deleteAccount.scheduleConfirmationPlaceholder': `Type ${options?.phrase ?? 'SCHEDULE DELETION'}`,
+        'deleteAccount.scheduleConfirmationHelp': 'Type the phrase exactly as shown',
+        'deleteAccount.scheduleCheckbox': 'I understand this will schedule deletion',
+        'deleteAccount.scheduleDeletion': 'Schedule Deletion',
+        'deleteAccount.scheduling': 'Scheduling...',
+        'deleteAccount.whatHappensNext': 'What happens next',
+        'deleteAccount.teamMembersNotified': 'Team members will be notified',
+        'deleteAccount.canAssignNewPO': 'You can assign a new Product Owner',
+        'deleteAccount.afterDeletionDate':
+          'After the deletion date, your account will be permanently removed',
+        'deleteAccount.canCancelAnytime': 'You can cancel anytime before deletion',
+        'deleteAccount.cancelDeletion': 'Cancel Deletion',
+        'deleteAccount.forceConfirmationHelp': 'Type the phrase exactly as shown',
+        'deleteAccount.forceCheckbox':
+          'I understand that teams will lose their Product Owner and I want to permanently delete my account anyway.',
+        'deleteAccount.deleteAnyway': 'Delete Anyway',
+        'deleteAccount.forceDeleteWarning.title': 'Grace Period Complete',
+        'deleteAccount.forceDeleteWarning.description':
+          'The 14-day grace period has ended. You can now permanently delete your account.',
+        'deleteAccount.forceDeleteWarning.impact.title': 'This will:',
+        'deleteAccount.forceDeleteWarning.impact.removePO':
+          'Remove you as Product Owner from teams with no replacement assigned',
+        'deleteAccount.forceDeleteWarning.impact.deleteAllData': 'Delete all your data permanently',
+        'deleteAccount.forceDeleteWarning.impact.cannotUndo': 'This action CANNOT be undone',
+        'deleteAccount.forceDeleteWarning.teams.title':
+          'The following teams will have NO Product Owner:',
+        'deleteAccount.forceDeleteWarning.teams.consequences':
+          'These teams will not be able to add or remove team members, manage sprints, or access team settings.',
+        'deleteAccount.gracePeriodProgress.title': 'Deletion Scheduled',
+        'deleteAccount.gracePeriodProgress.requested': 'Requested',
+        'deleteAccount.gracePeriodProgress.deletionDate': 'Deletion date',
+        'deleteAccount.gracePeriodProgress.daysRemaining': 'Days remaining',
+        'deleteAccount.deletionRightsNotice.title': 'Your Right to Erasure',
+        'deleteAccount.deletionRightsNotice.description':
+          'You have the right to delete your account. Since you are the last Product Owner, we ask that you schedule deletion with a 14-day grace period so your teams can prepare.',
+        'deleteAccount.deletionRightsNotice.list.teamMembersNotified':
+          'Team members will be notified',
+        'deleteAccount.deletionRightsNotice.list.assignNewPO':
+          'You can assign a new Product Owner before deletion',
+        'deleteAccount.deletionRightsNotice.list.cancelAnytime':
+          'You can cancel the deletion at any time',
+        'deleteAccount.deletionRightsNotice.afterGracePeriod':
+          'After 14 days, you can permanently delete your account regardless.',
+      };
+      return map[key] ?? key;
+    },
+    i18n: { changeLanguage: vi.fn() },
+  }),
+  Trans: ({ i18nKey, values }: { i18nKey: string; values?: Record<string, string> }) => {
+    // Mock Trans component to render HTML properly
+    const phrase = values?.phrase ?? 'DELETE MY ACCOUNT';
+    if (i18nKey === 'deleteAccount.confirmationLabel') {
+      return (
+        <span>
+          Type <strong>{phrase}</strong> to confirm
+        </span>
+      );
+    }
+    if (i18nKey === 'deleteAccount.scheduleConfirmationLabel') {
+      return (
+        <span>
+          Type <strong>{phrase}</strong> to schedule deletion
+        </span>
+      );
+    }
+    return <span>{i18nKey}</span>;
+  },
+}));
+
 vi.mock('./DeleteAccountModal.module.css', () => ({
   default: {
     'modal-overlay': 'modal-overlay',
@@ -196,7 +287,7 @@ describe('DeleteAccountModal Component', () => {
     it('should show Delete button', () => {
       renderWithRouter(<DeleteAccountModal {...defaultProps} />);
 
-      expect(screen.getByRole('button', { name: 'Delete Account' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Delete My Account' })).toBeInTheDocument();
     });
   });
 
@@ -204,7 +295,7 @@ describe('DeleteAccountModal Component', () => {
     it('should have delete button disabled by default', () => {
       renderWithRouter(<DeleteAccountModal {...defaultProps} />);
 
-      const deleteButton = screen.getByRole('button', { name: 'Delete Account' });
+      const deleteButton = screen.getByRole('button', { name: 'Delete My Account' });
       expect(deleteButton).toBeDisabled();
     });
 
@@ -217,7 +308,7 @@ describe('DeleteAccountModal Component', () => {
       await user.type(input, 'WRONG');
 
       // Button should be disabled since confirmation doesn't match
-      const deleteButton = screen.getByRole('button', { name: 'Delete Account' });
+      const deleteButton = screen.getByRole('button', { name: 'Delete My Account' });
       expect(deleteButton).toBeDisabled();
     });
 
@@ -225,7 +316,7 @@ describe('DeleteAccountModal Component', () => {
       renderWithRouter(<DeleteAccountModal {...defaultProps} />);
 
       // Don't type anything - button should be disabled
-      const deleteButton = screen.getByRole('button', { name: 'Delete Account' });
+      const deleteButton = screen.getByRole('button', { name: 'Delete My Account' });
       expect(deleteButton).toBeDisabled();
     });
 
@@ -238,7 +329,7 @@ describe('DeleteAccountModal Component', () => {
       await user.type(input, requiredPhrase);
 
       // Confirmation matches - button should be enabled (checkbox auto-checks)
-      const deleteButton = screen.getByRole('button', { name: 'Delete Account' });
+      const deleteButton = screen.getByRole('button', { name: 'Delete My Account' });
       expect(deleteButton).not.toBeDisabled();
 
       // Verify checkbox is checked
@@ -252,7 +343,7 @@ describe('DeleteAccountModal Component', () => {
       renderWithRouter(<DeleteAccountModal {...defaultProps} teams={teams} isBlocked />);
 
       // Delete button should not be visible when blocked
-      expect(screen.queryByRole('button', { name: 'Delete Account' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'Delete My Account' })).not.toBeInTheDocument();
     });
   });
 
@@ -266,7 +357,7 @@ describe('DeleteAccountModal Component', () => {
       await user.type(input, requiredPhrase);
 
       // Click delete button
-      const deleteButton = screen.getByRole('button', { name: 'Delete Account' });
+      const deleteButton = screen.getByRole('button', { name: 'Delete My Account' });
       await user.click(deleteButton);
 
       // Wait for async operation
@@ -279,7 +370,7 @@ describe('DeleteAccountModal Component', () => {
       const user = userEvent.setup();
       renderWithRouter(<DeleteAccountModal {...defaultProps} />);
 
-      const deleteButton = screen.getByRole('button', { name: 'Delete Account' });
+      const deleteButton = screen.getByRole('button', { name: 'Delete My Account' });
       await user.click(deleteButton);
 
       expect(mockOnDelete).not.toHaveBeenCalled();
@@ -431,7 +522,7 @@ describe('DeleteAccountModal Component', () => {
         <DeleteAccountModal {...defaultProps} teams={teams} isBlocked pendingDeletion={null} />
       );
 
-      expect(screen.queryByRole('button', { name: 'Delete Account' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'Delete My Account' })).not.toBeInTheDocument();
     });
   });
 
@@ -509,7 +600,7 @@ describe('DeleteAccountModal Component', () => {
         />
       );
 
-      expect(screen.queryByRole('button', { name: 'Delete Account' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'Delete My Account' })).not.toBeInTheDocument();
     });
   });
 
@@ -925,7 +1016,7 @@ describe('DeleteAccountModal Component', () => {
       expect(screen.getByRole('textbox')).toBeInTheDocument();
       expect(screen.getByRole('checkbox')).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'Delete Account' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Delete My Account' })).toBeInTheDocument();
     });
   });
 });

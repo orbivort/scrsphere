@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
+import { useTranslation } from 'react-i18next';
 
 import { apiService } from '../../../services';
 import { logger } from '../../../utils/logger';
@@ -53,6 +54,7 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
   const queryClient = useQueryClient();
   const abortControllerRef = useRef<AbortController | null>(null);
   const { validateBulkImport } = useBacklogCapacityValidation();
+  const { t } = useTranslation('backlog');
 
   const resetState = useCallback(() => {
     setStep('upload');
@@ -277,12 +279,12 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
         onClick={(e) => e.stopPropagation()}
       >
         <div className={styles['modal-header']}>
-          <h2>Bulk Import Backlog Items</h2>
+          <h2>{t('bulkUpload.modalTitle') as string}</h2>
           <button
             className={styles['modal-close']}
             onClick={handleClose}
             disabled={isUploading && !isCancelling}
-            aria-label="Close modal"
+            aria-label={t('bulkUpload.closeModal') as string}
           >
             <XIcon width="16" height="16" />
           </button>
@@ -350,7 +352,7 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
                   onClick={handleBack}
                 >
                   <ArrowLeftIcon width="16" height="16" />
-                  Back
+                  {t('bulkUpload.back') as string}
                 </button>
               )}
             </div>
@@ -361,7 +363,7 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
                 onClick={handleClose}
                 disabled={isUploading}
               >
-                Cancel
+                {t('bulkUpload.cancel') as string}
               </button>
               {step === 'preview' && (
                 <button
@@ -371,7 +373,12 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
                   disabled={!canImport || isUploading}
                 >
                   <UploadIcon width="16" height="16" />
-                  Import {validItems.length} Item{validItems.length !== 1 ? 's' : ''}
+                  {
+                    t('bulkUpload.importItems', {
+                      count: validItems.length,
+                      plural: validItems.length !== 1 ? 's' : '',
+                    }) as string
+                  }
                 </button>
               )}
             </div>

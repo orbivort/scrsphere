@@ -1,15 +1,9 @@
 // Auth Validation Schemas
 import { z } from 'zod';
 import { sanitizeString } from '../utils/sanitization';
-import { VALIDATION, PASSWORD_REGEX } from '@scrumooth/shared';
+import { VALIDATION, PASSWORD_REGEX, SUPPORTED_LOCALES } from '@scrumooth/shared';
 
-const passwordRequirements = {
-  minLength: VALIDATION.PASSWORD.MIN_LENGTH,
-  requireUppercase: VALIDATION.PASSWORD.REQUIRE_UPPERCASE,
-  requireLowercase: VALIDATION.PASSWORD.REQUIRE_LOWERCASE,
-  requireNumber: VALIDATION.PASSWORD.REQUIRE_NUMBER,
-  requireSpecialChar: VALIDATION.PASSWORD.REQUIRE_SPECIAL_CHAR,
-};
+const passwordMinLength = VALIDATION.PASSWORD.MIN_LENGTH;
 
 const passwordRegex = {
   uppercase: PASSWORD_REGEX.UPPERCASE,
@@ -18,126 +12,123 @@ const passwordRegex = {
   specialChar: PASSWORD_REGEX.SPECIAL_CHAR,
 };
 
+/**
+ * Returns the translation key for the first failing password requirement,
+ * or null if the password meets all requirements.
+ */
 const getPasswordValidationError = (password: string): string | null => {
-  const errors: string[] = [];
-
-  if (password.length < passwordRequirements.minLength) {
-    errors.push(`at least ${passwordRequirements.minLength} characters`);
+  if (password.length < passwordMinLength) {
+    return 'validation:auth.passwordTooShort';
   }
   if (!passwordRegex.uppercase.test(password)) {
-    errors.push('an uppercase letter');
+    return 'validation:auth.passwordNeedsUppercase';
   }
   if (!passwordRegex.lowercase.test(password)) {
-    errors.push('a lowercase letter');
+    return 'validation:auth.passwordNeedsLowercase';
   }
   if (!passwordRegex.number.test(password)) {
-    errors.push('a number');
+    return 'validation:auth.passwordNeedsNumber';
   }
   if (!passwordRegex.specialChar.test(password)) {
-    errors.push('a special character (!@#$%^&* etc.)');
+    return 'validation:auth.passwordNeedsSpecialChar';
   }
-
-  return errors.length > 0 ? `Password must contain ${errors.join(', ')}` : null;
+  return null;
 };
 
-const sanitizedString = (fieldName: string, maxLength: number = 100) =>
+const sanitizedString = (maxLength: number = 100) =>
   z
     .string()
-    .min(1, `${fieldName} is required`)
-    .max(maxLength, `${fieldName} must be less than ${maxLength} characters`)
+    .min(1, 'validation:fieldRequired')
+    .max(maxLength, 'validation:fieldTooLong')
     .transform((val) => sanitizeString(val));
 
 export const registerSchema = z.object({
-  email: z.string().email('Invalid email address').toLowerCase(),
+  email: z.string().email('validation:auth.invalidEmail').toLowerCase(),
   password: z
     .string()
-    .min(
-      passwordRequirements.minLength,
-      `Password must be at least ${passwordRequirements.minLength} characters`
-    )
-    .max(100, 'Password must be less than 100 characters')
+    .min(passwordMinLength, 'validation:auth.passwordTooShort')
+    .max(100, 'validation:fieldTooLong')
     .refine((val) => getPasswordValidationError(val) === null, {
-      error: (ctx) => getPasswordValidationError(ctx.input as string) ?? 'Invalid password',
+      error: (ctx) =>
+        getPasswordValidationError(ctx.input as string) ?? 'validation:auth.invalidPassword',
     }),
-  firstName: sanitizedString('First name', 50),
-  lastName: sanitizedString('Last name', 50),
+  firstName: sanitizedString(50),
+  lastName: sanitizedString(50),
   termsAccepted: z.literal(true, {
-    error: 'You must accept the terms of service',
+    error: 'validation:auth.termsRequired',
   }),
   marketingOptIn: z.boolean().default(false),
+  locale: z.enum(SUPPORTED_LOCALES as unknown as ['en', 'de', 'fr', 'it', 'es']).optional(),
 });
 
 export const loginSchema = z.object({
-  email: z.string().email('Invalid email address').toLowerCase(),
-  password: z.string().min(1, 'Password is required'),
+  email: z.string().email('validation:auth.invalidEmail').toLowerCase(),
+  password: z.string().min(1, 'validation:auth.passwordRequired'),
 });
 
 export const refreshTokenSchema = z.object({
-  refreshToken: z.string().min(1, 'Refresh token is required'),
+  refreshToken: z.string().min(1, 'validation:auth.refreshTokenRequired'),
 });
 
 export const deleteAccountSchema = z.object({
   confirmation: z.literal('DELETE MY ACCOUNT', {
-    error: 'Confirmation must be exactly "DELETE MY ACCOUNT"',
+    error: 'validation:auth.deleteConfirmation',
   }),
 });
 
 export const scheduleDeletionSchema = z.object({
   confirmation: z.literal('SCHEDULE DELETION', {
-    error: 'Confirmation must be exactly "SCHEDULE DELETION"',
+    error: 'validation:auth.scheduleDeletionConfirmation',
   }),
 });
 
 export const forceDeleteSchema = z.object({
   confirmation: z.literal('DELETE MY ACCOUNT', {
-    error: 'Confirmation must be exactly "DELETE MY ACCOUNT"',
+    error: 'validation:auth.deleteConfirmation',
   }),
 });
 
 export const updateProfileSchema = z.object({
-  firstName: sanitizedString('First name', 100),
-  lastName: sanitizedString('Last name', 100),
+  firstName: sanitizedString(100),
+  lastName: sanitizedString(100),
+  locale: z.enum(SUPPORTED_LOCALES as unknown as ['en', 'de', 'fr', 'it', 'es']).optional(),
 });
 
 export const changePasswordSchema = z.object({
-  currentPassword: z.string().min(1, 'Current password is required'),
+  currentPassword: z.string().min(1, 'validation:auth.currentPasswordRequired'),
   newPassword: z
     .string()
-    .min(
-      passwordRequirements.minLength,
-      `Password must be at least ${passwordRequirements.minLength} characters`
-    )
-    .max(128, 'Password must be less than 128 characters')
+    .min(passwordMinLength, 'validation:auth.passwordTooShort')
+    .max(128, 'validation:fieldTooLong')
     .refine((val) => getPasswordValidationError(val) === null, {
-      error: (ctx) => getPasswordValidationError(ctx.input as string) ?? 'Invalid password',
+      error: (ctx) =>
+        getPasswordValidationError(ctx.input as string) ?? 'validation:auth.invalidPassword',
     }),
 });
 
 export const forgotPasswordSchema = z.object({
-  email: z.string().email('Invalid email address').toLowerCase(),
+  email: z.string().email('validation:auth.invalidEmail').toLowerCase(),
 });
 
 export const validateResetTokenSchema = z.object({
-  token: z.string().min(1, 'Reset token is required'),
+  token: z.string().min(1, 'validation:auth.resetTokenRequired'),
 });
 
 export const resetPasswordSchema = z
   .object({
-    token: z.string().min(1, 'Reset token is required'),
+    token: z.string().min(1, 'validation:auth.resetTokenRequired'),
     newPassword: z
       .string()
-      .min(
-        passwordRequirements.minLength,
-        `Password must be at least ${passwordRequirements.minLength} characters`
-      )
-      .max(128, 'Password must be less than 128 characters')
+      .min(passwordMinLength, 'validation:auth.passwordTooShort')
+      .max(128, 'validation:fieldTooLong')
       .refine((val) => getPasswordValidationError(val) === null, {
-        error: (ctx) => getPasswordValidationError(ctx.input as string) ?? 'Invalid password',
+        error: (ctx) =>
+          getPasswordValidationError(ctx.input as string) ?? 'validation:auth.invalidPassword',
       }),
-    confirmPassword: z.string().min(1, 'Password confirmation is required'),
+    confirmPassword: z.string().min(1, 'validation:auth.confirmPasswordRequired'),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
-    message: 'Passwords do not match',
+    message: 'validation:auth.passwordsDoNotMatch',
     path: ['confirmPassword'],
   });
 

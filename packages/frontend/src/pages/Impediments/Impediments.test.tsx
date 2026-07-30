@@ -1,14 +1,32 @@
-﻿import React from 'react';
-import { render, screen, fireEvent, cleanup, waitFor } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { BrowserRouter } from 'react-router';
-import { vi } from 'vitest';
+import React from 'react';
+import {
+  screen,
+  fireEvent,
+  cleanup,
+  waitFor,
+  renderWithProviders,
+  initTestI18n,
+  i18nT,
+} from '../../test-utils';
+import { vi, beforeAll } from 'vitest';
+import { useSearchParams } from 'react-router';
 
 import { useTeamStore } from '../../store';
 import { apiService } from '../../services';
 import { SprintStatus, ImpedimentStatus } from '../../types';
 
 import { Impediments } from './Impediments';
+
+// Wrapper component to capture search params for URL tests
+const SearchParamsCapture: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [searchParams] = useSearchParams();
+  return (
+    <>
+      <span data-testid="search-params">{searchParams.toString()}</span>
+      {children}
+    </>
+  );
+};
 
 // Mock the store and services
 vi.mock('../../store', () => ({
@@ -28,31 +46,6 @@ vi.mock('../../services', () => ({
 
 // Mock console.error to reduce noise in tests
 const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
-
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        gcTime: 0,
-        staleTime: 0,
-      },
-      mutations: {
-        retry: false,
-      },
-    },
-  });
-
-const renderWithProviders = (ui: React.ReactElement, { route = '/' } = {}) => {
-  // Set the initial URL
-  window.history.pushState({}, '', route);
-  const testQueryClient = createTestQueryClient();
-  return render(
-    <QueryClientProvider client={testQueryClient}>
-      <BrowserRouter>{ui}</BrowserRouter>
-    </QueryClientProvider>
-  );
-};
 
 // Cleanup after each test
 afterEach(() => {
@@ -204,6 +197,10 @@ const mockImpediments = [
 ];
 
 describe('Impediments Component', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
     // Reset window.location to root before each test
@@ -282,8 +279,9 @@ describe('Impediments Component', () => {
 
       // The component shows loading state when isLoading is true
       // LoadingState renders label in both visually-hidden span and visible p tag
+      // The label is the page title from i18n: "Impediments"
       await waitFor(() => {
-        expect(screen.getAllByText('Loading impediments...').length).toBeGreaterThan(0);
+        expect(screen.getAllByText(i18nT('impediments:title')).length).toBeGreaterThan(0);
       });
 
       // Clean up by resolving the promise
@@ -414,12 +412,14 @@ describe('Impediments Component', () => {
       renderWithProviders(<Impediments />);
 
       // Wait for the component to finish loading (or error handling)
+      // When sprint fetch fails, component shows loading state with "Impediments" text
+      // until the error is properly handled and displays appropriate error state
       await waitFor(() => {
         const content = document.body.textContent || '';
         expect(
-          content.includes('No Active Sprint') ||
-            content.includes('Error Loading Data') ||
-            content.includes('Loading impediments')
+          content.includes(i18nT('common:emptyState.noActiveSprint.title')) ||
+            content.includes(i18nT('impediments:errorState.title')) ||
+            content.includes(i18nT('impediments:title'))
         ).toBe(true);
       });
     });
@@ -509,8 +509,11 @@ describe('Impediments Component', () => {
 
       await waitFor(() => {
         // Check for date formatting (locale-specific) - dates can be in various formats
-        // The component shows dates like "2026/2/5" or "2/5/2026" depending on locale
-        const datePattern = /\d{4}[/-]\d{1,2}[/-]\d{1,2}|\d{1,2}[/-]\d{1,2}[/-]\d{4}/;
+        // The component uses date-fns 'PP' format which produces:
+        // English: "Feb 5, 2026", German: "05.02.2026", etc.
+        // Match any date-like pattern including month names, dots, slashes
+        const datePattern =
+          /\d{1,2}[./]\d{1,2}[./]\d{4}|\d{4}[./-]\d{1,2}[./-]\d{1,2}|[A-Za-z]{3,}\.?\s*\d{1,2},?\s*\d{4}|\d{1,2}\s+[A-Za-z]{3,}\.?\s+\d{4}/;
         const pageContent = document.body.textContent || '';
         expect(datePattern.test(pageContent)).toBe(true);
       });
@@ -1893,7 +1896,11 @@ describe('Impediments Component', () => {
         data: mockImpediments,
       });
 
-      renderWithProviders(<Impediments />);
+      renderWithProviders(
+        <SearchParamsCapture>
+          <Impediments />
+        </SearchParamsCapture>
+      );
 
       await waitFor(() => {
         expect(screen.getByText('API downtime')).toBeInTheDocument();
@@ -1905,8 +1912,12 @@ describe('Impediments Component', () => {
         expect(screen.getByText('Impediment Details')).toBeInTheDocument();
       });
 
-      // URL should be updated (checked via search params in the component)
-      expect(window.location.search).toContain('id=imp-1');
+      // URL should be updated - check via SearchParamsCapture wrapper
+      // which captures the router's internal search params state
+      await waitFor(() => {
+        const searchParamsElement = screen.getByTestId('search-params');
+        expect(searchParamsElement.textContent).toContain('id=imp-1');
+      });
     });
   });
 });

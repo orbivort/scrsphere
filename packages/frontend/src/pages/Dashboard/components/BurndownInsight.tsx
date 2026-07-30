@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { ArrowUpIcon, ArrowDownIcon } from '../../../components/common/Icons';
 
@@ -28,6 +29,8 @@ export const BurndownInsight: React.FC<BurndownInsightProps> = ({
   message,
   size = 'default',
 }) => {
+  const { t } = useTranslation('dashboard');
+
   const isAhead = percentage > 0;
   const isOnTrack = percentage === 0;
   const absPercentage = Math.abs(percentage);
@@ -35,19 +38,21 @@ export const BurndownInsight: React.FC<BurndownInsightProps> = ({
   const getStatusText = (): string => {
     switch (status) {
       case 'ahead':
-        return 'Ahead of schedule';
+        return t('burndownInsight.ahead');
       case 'on-track':
-        return 'On track';
+        return t('burndownInsight.onTrack');
       case 'behind':
-        return 'Behind schedule';
+        return t('burndownInsight.behind');
       default:
-        return 'Unknown status';
+        return t('burndownInsight.unknownStatus');
     }
   };
 
   const getTrendText = (): string => {
-    if (isOnTrack) return 'On target';
-    return isAhead ? `${absPercentage}% ahead` : `${absPercentage}% behind`;
+    if (isOnTrack) return t('burndownInsight.onTarget');
+    return isAhead
+      ? t('burndownInsight.percentAhead', { percentage: absPercentage })
+      : t('burndownInsight.percentBehind', { percentage: absPercentage });
   };
 
   return (
@@ -55,7 +60,10 @@ export const BurndownInsight: React.FC<BurndownInsightProps> = ({
       className={`${styles['insight-container']} ${styles[status]} ${styles[size]}`}
       role="status"
       aria-live="polite"
-      aria-label={`Burndown status: ${getStatusText()}. ${getTrendText()}`}
+      aria-label={t('burndownInsight.ariaLabel', {
+        status: getStatusText(),
+        trend: getTrendText(),
+      })}
       tabIndex={0}
     >
       <div className={styles['insight-content']}>

@@ -1,0 +1,18 @@
+{
+  "databaseError": "Ein Datenbankfehler ist aufgetreten",
+  "emailAlreadyExists": "Ein Konto mit der E-Mail {{email}} existiert bereits",
+  "entityNotFound": "{{entity}} nicht gefunden",
+  "fieldAlreadyExists": "{{field}} existiert bereits",
+  "fieldAlreadyTaken": "{{field}} ist bereits vergeben",
+  "forbidden": "Sie haben keine Berechtigung, diese Aktion auszuführen",
+  "invalidCredentials": "Ungültige E-Mail oder Passwort",
+  "invalidReference": "Ungültige Referenz",
+  "invalidRelation": "Ungültige Relation",
+  "invalidToken": "Ungültiges Token",
+  "pleaseLoginAgain": "Bitte melden Sie sich erneut an, um fortzufahren",
+  "recordNotFound": "Datensatz nicht gefunden",
+  "routeNotFound": "{{method}} {{path}} nicht gefunden",
+  "tokenExpired": "Token ist abgelaufen",
+  "unauthorized": "Authentifizierung erforderlich",
+  "unexpectedError": "Ein unerwarteter Fehler ist aufgetreten"
+}

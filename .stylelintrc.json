@@ -26,8 +26,12 @@
     "function-disallowed-list": ["rgba", "hsla"],
     "declaration-property-value-disallowed-list": {
       "transition": ["all"],
-      "/^transition-/": ["all"]
+      "/^transition-/": ["all"],
+      "/^margin|padding$/": ["left", "right"],
+      "/^text-align$/": ["left", "right"],
+      "float": ["left", "right"]
     },
+    "property-disallowed-list": ["float"],
     "media-feature-name-value-no-unknown": null
   },
   "overrides": [

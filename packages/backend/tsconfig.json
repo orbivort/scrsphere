@@ -23,6 +23,6 @@
     "types": ["node"]
   },
   "references": [{ "path": "../shared" }],
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "src/**/*.json"],
   "exclude": ["node_modules", "dist", "coverage", "vitest.config.ts"]
 }

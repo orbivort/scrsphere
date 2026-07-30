@@ -1,0 +1,112 @@
+{
+  "allStatus": "All Status",
+  "card": {
+    "createdFromDailyUpdate": "Created from Daily Update",
+    "fromDailyScrum": "From Daily Scrum",
+    "owner": "Owner",
+    "reportedBy": "Reported by",
+    "resolution": "Resolution",
+    "sprint": "Sprint",
+    "unknown": "Unknown",
+    "viewDetailsAria": "View details for impediment: {{title}}. Status: {{status}}"
+  },
+  "createModal": {
+    "activeSprint": "(Active)",
+    "createImpediment": "Create Impediment",
+    "creating": "Creating...",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Provide details about the impediment",
+    "sprintLabel": "Sprint",
+    "subtitle": "Document blockers affecting your team's progress",
+    "title": "Report New Impediment",
+    "titleLabel": "Title",
+    "titlePlaceholder": "Brief description of the impediment"
+  },
+  "deleteModal": {
+    "actionWarning": "Action Warning",
+    "deleteImpediment": "Delete Impediment",
+    "deleting": "Deleting...",
+    "item": "Item:",
+    "statusLabel": "Status:",
+    "subtitle": "This action is permanent and cannot be undone",
+    "title": "Delete Impediment",
+    "unknownItem": "Unknown Item",
+    "warningText": "You are about to permanently delete this impediment. This action cannot be undone. All associated data will be permanently removed."
+  },
+  "detailModal": {
+    "createdFromDailyScrum": "Created from Daily Scrum Update",
+    "createdLabel": "Created",
+    "deleteLabel": "Delete",
+    "deleting": "Deleting...",
+    "descriptionLabel": "Description",
+    "ownerLabel": "Owner",
+    "reportedByLabel": "Reported by",
+    "resolutionLabel": "Resolution",
+    "resolutionPlaceholder": "Describe how this impediment was resolved...",
+    "saveResolution": "Save Resolution",
+    "saving": "Saving...",
+    "sprintLabel": "Sprint",
+    "statusLabel": "Status",
+    "subtitle": "View and manage impediment information",
+    "title": "Impediment Details",
+    "titleLabel": "Title",
+    "viewDailyUpdate": "View Daily Update"
+  },
+  "emptyState": {
+    "clearFilter": "Clear Filter",
+    "noFilterImpedimentsDescription": "There are no {{status}} impediments in \"{{sprintName}}\". Try selecting a different status filter.",
+    "noImpedimentsDescription": "Great! No impediments reported for the current active sprint \"{{sprintName}}\".",
+    "noImpedimentsForFilter": "No {{status}} Impediments",
+    "noImpedimentsForSprint": "No Impediments for {{sprintName}}"
+  },
+  "errorState": {
+    "failedImpediments": "Failed to load impediments. Please try again.",
+    "failedSprint": "Failed to load active sprint information. Please try again.",
+    "retry": "Retry",
+    "title": "Error Loading Data"
+  },
+  "filterByStatus": "Filter by status",
+  "reportImpediment": "Report Impediment",
+  "stats": {
+    "CLOSED": "Closed",
+    "IN_PROGRESS": "In Progress",
+    "OPEN": "Open",
+    "RESOLVED": "Resolved",
+    "closed": "Closed",
+    "inProgress": "In Progress",
+    "open": "Open",
+    "resolved": "Resolved"
+  },
+  "status": {
+    "CLOSED": "Closed",
+    "IN_PROGRESS": "In Progress",
+    "OPEN": "Open",
+    "RESOLVED": "Resolved",
+    "closed": "Closed",
+    "inProgress": "In Progress",
+    "open": "Open",
+    "resolved": "Resolved"
+  },
+  "subtitle": "{{sprintName}} - Track and resolve blockers affecting the team",
+  "title": "Impediments",
+  "toast": {
+    "created": "Impediment created successfully",
+    "deleted": "Impediment deleted successfully",
+    "failedCreate": "Failed to create impediment. Please try again.",
+    "failedDelete": "Failed to delete impediment. Please try again.",
+    "failedUpdate": "Failed to update impediment. Please try again.",
+    "noActiveSprint": "No active sprint found. Please start a sprint first.",
+    "teamIdRequired": "Team ID is required. Please select a team first.",
+    "updated": "Impediment updated successfully"
+  },
+  "unsavedModal": {
+    "message": "You have unsaved changes in the impediment form. Are you sure you want to discard them?",
+    "title": "Unsaved Changes"
+  },
+  "validation": {
+    "descriptionRequired": "Description is required",
+    "descriptionTooShort": "Description must be at least 10 characters",
+    "titleRequired": "Title is required",
+    "titleTooShort": "Title must be at least 3 characters"
+  }
+}

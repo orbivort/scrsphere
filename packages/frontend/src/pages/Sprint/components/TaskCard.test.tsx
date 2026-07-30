@@ -8,11 +8,14 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
+import { I18nextProvider } from 'react-i18next';
 
 import { TaskCard, type TaskCardProps } from './TaskCard';
 import { AnnouncerProvider } from '../../../components/LiveAnnouncer';
 import { TaskStatus, type Task } from '../../../types';
+import { initTestI18n, i18nT } from '../../../test-utils';
+import { getTestI18nInstance } from '../../../i18n/testConfig';
 
 // Mock task data
 const createMockTask = (overrides?: Partial<Task>): Task => ({
@@ -51,12 +54,18 @@ const defaultProps: TaskCardProps = {
   onBlur: vi.fn(),
 };
 
-// Test wrapper with AnnouncerProvider
+// Test wrapper with AnnouncerProvider and I18nextProvider
 const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <AnnouncerProvider>{children}</AnnouncerProvider>
+  <I18nextProvider i18n={getTestI18nInstance()}>
+    <AnnouncerProvider>{children}</AnnouncerProvider>
+  </I18nextProvider>
 );
 
 describe('TaskCard', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -88,7 +97,7 @@ describe('TaskCard', () => {
         </TestWrapper>
       );
 
-      expect(screen.getByText('TODO')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('sprint:taskStatus.todo'))).toBeInTheDocument();
     });
 
     it('should render PBI information when present', () => {

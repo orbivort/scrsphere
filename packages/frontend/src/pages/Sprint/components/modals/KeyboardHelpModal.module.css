@@ -124,7 +124,7 @@
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
   margin: 0;
-  text-align: right;
+  text-align: end;
   font-weight: var(--font-weight-medium);
   line-height: var(--line-height-normal);
 }
@@ -182,7 +182,7 @@
   }
 
   .shortcut-item dd {
-    text-align: left;
+    text-align: start;
     font-size: var(--font-size-xs);
   }
 

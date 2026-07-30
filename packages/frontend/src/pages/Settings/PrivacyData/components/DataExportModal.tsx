@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useTranslation } from 'react-i18next';
 
 import type { ExportStatus } from '../../../../types/dataExport.types';
 
@@ -33,6 +34,7 @@ export const DataExportModal: React.FC<DataExportModalProps> = ({
   onDownload,
   isPolling,
 }) => {
+  const { t } = useTranslation('settings');
   const [portalContainer, setPortalContainer] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -70,17 +72,17 @@ export const DataExportModal: React.FC<DataExportModalProps> = ({
   const getStatusMessage = (): string => {
     switch (status) {
       case 'pending':
-        return 'Preparing your data export...';
+        return t('privacyData.dataExportModal.statusMessages.pending');
       case 'processing':
-        return 'Collecting and formatting your data...';
+        return t('privacyData.dataExportModal.statusMessages.processing');
       case 'completed':
-        return 'Your data export is ready!';
+        return t('privacyData.dataExportModal.statusMessages.completed');
       case 'failed':
-        return 'Export failed. Please try again.';
+        return t('privacyData.dataExportModal.statusMessages.failed');
       case 'expired':
-        return 'This export has expired. Please create a new one.';
+        return t('privacyData.dataExportModal.statusMessages.expired');
       default:
-        return 'Initializing export...';
+        return t('privacyData.dataExportModal.statusMessages.initializing');
     }
   };
 
@@ -108,13 +110,13 @@ export const DataExportModal: React.FC<DataExportModalProps> = ({
       <div className={styles['modal-content']} onClick={(e) => e.stopPropagation()}>
         <div className={styles['modal-header']}>
           <h2 id="export-modal-title" className={styles['modal-title']}>
-            Data Export
+            {t('privacyData.dataExportModal.title')}
           </h2>
           <button
             type="button"
             onClick={onClose}
             className={styles['close-button']}
-            aria-label="Close modal"
+            aria-label={t('privacyData.dataExportModal.closeModal')}
           >
             ×
           </button>
@@ -143,7 +145,7 @@ export const DataExportModal: React.FC<DataExportModalProps> = ({
                 aria-valuenow={progress}
                 aria-valuemin={0}
                 aria-valuemax={100}
-                aria-label="Export progress"
+                aria-label={t('privacyData.dataExportModal.exportProgress')}
               >
                 <div className={styles['progress-fill']} style={{ width: `${progress}%` }} />
               </div>
@@ -154,7 +156,9 @@ export const DataExportModal: React.FC<DataExportModalProps> = ({
           {/* Job ID */}
           {jobId && (
             <div className={styles['job-id-container']}>
-              <span className={styles['job-id-label']}>Job ID:</span>
+              <span className={styles['job-id-label']}>
+                {t('privacyData.dataExportModal.jobId')}
+              </span>
               <code className={styles['job-id']}>{jobId.slice(0, 8)}...</code>
             </div>
           )}
@@ -171,10 +175,7 @@ export const DataExportModal: React.FC<DataExportModalProps> = ({
 
           {/* Info Text */}
           <div className={styles['info-container']}>
-            <p className={styles['info-text']}>
-              Your data is exported in JSON format, which is structured, commonly used, and
-              machine-readable.
-            </p>
+            <p className={styles['info-text']}>{t('privacyData.dataExportModal.infoText')}</p>
             {/* {status === 'completed' && (
               <p className={styles['info-text']}>
                 The export file will be available for download for 7 days.
@@ -192,7 +193,7 @@ export const DataExportModal: React.FC<DataExportModalProps> = ({
               className={`${styles.button} ${styles['button-primary']}`}
             >
               <span aria-hidden="true">↓</span>
-              Download JSON File
+              {t('privacyData.dataExportModal.downloadJson')}
             </button>
           )}
 
@@ -203,8 +204,8 @@ export const DataExportModal: React.FC<DataExportModalProps> = ({
             className={`${styles.button} ${styles['button-secondary']}`}
           >
             {status === 'pending' || status === 'processing' || isPolling
-              ? 'Cancel Export'
-              : 'Close'}
+              ? t('privacyData.dataExportModal.cancelExport')
+              : t('privacyData.dataExportModal.close')}
           </button>
         </div>
       </div>

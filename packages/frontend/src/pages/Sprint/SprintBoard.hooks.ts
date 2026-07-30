@@ -5,6 +5,7 @@ import {
   useQueryClient,
   type UseMutationResult,
 } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { TIME } from '@scrumooth/shared';
 
 import { apiService, definitionService } from '../../services';
@@ -33,7 +34,7 @@ import type {
   TransitionOptions,
   UseDragAndDropReturn,
 } from './SprintBoard.types';
-import { calculateWIPLimit, TASK_STATUS_CONFIG } from './SprintBoard.constants';
+import { calculateWIPLimit } from './SprintBoard.constants';
 
 // ============================================
 // Interfaces
@@ -576,6 +577,19 @@ export const useKeyboardNavigation = (
   // Screen reader announcement hook
   const announce = useAnnounce();
 
+  // i18n for status labels
+  const { t } = useTranslation('sprint');
+
+  // Build status labels for announcements
+  const TASK_STATUS_LABELS: Record<TaskStatus, string> = useMemo(
+    () => ({
+      [TaskStatusEnum.TODO]: t('taskStatus.todo'),
+      [TaskStatusEnum.IN_PROGRESS]: t('taskStatus.inProgress'),
+      [TaskStatusEnum.DONE]: t('taskStatus.done'),
+    }),
+    [t]
+  );
+
   // ============================================
   // State
   // ============================================
@@ -646,13 +660,13 @@ export const useKeyboardNavigation = (
    */
   const announceGrabbed = useCallback(
     (task: Task) => {
-      const statusLabel = TASK_STATUS_CONFIG[task.status].label;
+      const statusLabel = TASK_STATUS_LABELS[task.status];
       announce(
         `Task ${task.title} grabbed. Current status: ${statusLabel}. Use ArrowLeft or ArrowRight to change status. Escape to cancel, Enter to drop.`,
         'assertive'
       );
     },
-    [announce]
+    [announce, TASK_STATUS_LABELS]
   );
 
   /**
@@ -660,10 +674,10 @@ export const useKeyboardNavigation = (
    */
   const announceDropped = useCallback(
     (task: Task, newStatus: TaskStatus) => {
-      const statusLabel = TASK_STATUS_CONFIG[newStatus].label;
+      const statusLabel = TASK_STATUS_LABELS[newStatus];
       announce(`Task ${task.title} moved to ${statusLabel}.`, 'polite');
     },
-    [announce]
+    [announce, TASK_STATUS_LABELS]
   );
 
   /**
@@ -671,10 +685,10 @@ export const useKeyboardNavigation = (
    */
   const announceCancelled = useCallback(
     (task: Task) => {
-      const statusLabel = TASK_STATUS_CONFIG[task.status].label;
+      const statusLabel = TASK_STATUS_LABELS[task.status];
       announce(`Drag cancelled. Task remains in ${statusLabel}.`, 'polite');
     },
-    [announce]
+    [announce, TASK_STATUS_LABELS]
   );
 
   /**
@@ -692,7 +706,7 @@ export const useKeyboardNavigation = (
    */
   const announceMoving = useCallback(
     (_task: Task, targetStatus: TaskStatus) => {
-      const statusLabel = TASK_STATUS_CONFIG[targetStatus].label;
+      const statusLabel = TASK_STATUS_LABELS[targetStatus];
       const taskCount = getTasksInStatus(targetStatus).length;
       const wipLimit = getWIPLimitForStatus(targetStatus);
       const wipInfo = wipLimit < Infinity ? ` WIP limit: ${wipLimit}.` : '';
@@ -701,7 +715,7 @@ export const useKeyboardNavigation = (
         'polite'
       );
     },
-    [announce, getTasksInStatus, getWIPLimitForStatus]
+    [announce, getTasksInStatus, getWIPLimitForStatus, TASK_STATUS_LABELS]
   );
 
   // ============================================
@@ -788,8 +802,9 @@ export const useKeyboardNavigation = (
               });
 
               if (!result.valid || !result.updates) {
-                showToast('error', result.error ?? 'Invalid transition');
-                announceWipError(result.error ?? 'Invalid transition');
+                const errorMsg = result.error ?? t('board.invalidTransition');
+                showToast('error', errorMsg);
+                announceWipError(errorMsg);
                 return;
               }
 
@@ -871,8 +886,9 @@ export const useKeyboardNavigation = (
                 onMoveTask(task.id, result.updates);
                 announceDropped(task, targetStatus);
               } else {
-                showToast('error', result.error ?? 'Invalid transition');
-                announceWipError(result.error ?? 'Invalid transition');
+                const errorMsg = result.error ?? t('board.invalidTransition');
+                showToast('error', errorMsg);
+                announceWipError(errorMsg);
               }
             }
           } else {
@@ -889,16 +905,16 @@ export const useKeyboardNavigation = (
               if (result.valid && result.updates) {
                 onMoveTask(task.id, result.updates);
               } else {
-                showToast('error', result.error ?? 'Invalid transition');
+                showToast('error', result.error ?? t('board.invalidTransition'));
               }
             } else if (task.status === TaskStatusEnum.IN_PROGRESS) {
               const result = validateAndPrepareTransition(task, TaskStatusEnum.DONE);
 
               if (result.valid && result.updates) {
                 onMoveTask(task.id, result.updates);
-                showToast('success', 'Task moved to Done (Remaining hours set to 0)');
+                showToast('success', t('board.taskMovedToDone'));
               } else {
-                showToast('error', result.error ?? 'Invalid transition');
+                showToast('error', result.error ?? t('board.invalidTransition'));
               }
             }
           }
@@ -920,8 +936,9 @@ export const useKeyboardNavigation = (
                 onMoveTask(task.id, result.updates);
                 announceDropped(task, targetStatus);
               } else {
-                showToast('error', result.error ?? 'Invalid transition');
-                announceWipError(result.error ?? 'Invalid transition');
+                const errorMsg = result.error ?? t('board.invalidTransition');
+                showToast('error', errorMsg);
+                announceWipError(errorMsg);
               }
             }
           } else {
@@ -933,7 +950,7 @@ export const useKeyboardNavigation = (
               if (result.valid && result.updates) {
                 onMoveTask(task.id, result.updates);
               } else {
-                showToast('error', result.error ?? 'Invalid transition');
+                showToast('error', result.error ?? t('board.invalidTransition'));
               }
             } else if (task.status === TaskStatusEnum.IN_PROGRESS) {
               const result = validateAndPrepareTransition(task, TaskStatusEnum.TODO);
@@ -941,7 +958,7 @@ export const useKeyboardNavigation = (
               if (result.valid && result.updates) {
                 onMoveTask(task.id, result.updates);
               } else {
-                showToast('error', result.error ?? 'Invalid transition');
+                showToast('error', result.error ?? t('board.invalidTransition'));
               }
             }
           }
@@ -983,6 +1000,7 @@ export const useKeyboardNavigation = (
       announceCancelled,
       announceGrabbed,
       onOpenDetail,
+      t,
     ]
   );
 
@@ -1033,6 +1051,7 @@ export const useTaskMutations = (options: UseTaskMutationsOptions): UseTaskMutat
     showToast,
   } = options;
 
+  const { t } = useTranslation('sprint');
   const queryClient = useQueryClient();
   const { handleMutationError } = useMutationErrorHandler();
 
@@ -1052,7 +1071,7 @@ export const useTaskMutations = (options: UseTaskMutationsOptions): UseTaskMutat
       void queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
       void queryClient.invalidateQueries({ queryKey: queryKeys.burndown.all });
       onCloseModal();
-      showToast('success', 'Task created successfully');
+      showToast('success', t('board.taskCreated'));
     },
     onError: (error: unknown) => {
       handleMutationError(error, {
@@ -1079,7 +1098,7 @@ export const useTaskMutations = (options: UseTaskMutationsOptions): UseTaskMutat
       void queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
       void queryClient.invalidateQueries({ queryKey: queryKeys.burndown.all });
       onCloseModal();
-      showToast('success', 'Task updated successfully');
+      showToast('success', t('board.taskUpdated'));
     },
     onError: (error: unknown) => {
       handleMutationError(error, {
@@ -1105,7 +1124,7 @@ export const useTaskMutations = (options: UseTaskMutationsOptions): UseTaskMutat
       void queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
       void queryClient.invalidateQueries({ queryKey: queryKeys.burndown.all });
       onCloseModal();
-      showToast('success', 'Task deleted successfully');
+      showToast('success', t('board.taskDeleted'));
     },
     onError: (error: unknown) => {
       const message = handleMutationError(error, {
@@ -1126,7 +1145,7 @@ export const useTaskMutations = (options: UseTaskMutationsOptions): UseTaskMutat
       void queryClient.invalidateQueries({ queryKey: queryKeys.productBacklog.all });
       void queryClient.invalidateQueries({ queryKey: queryKeys.sprintTasks.all });
       onCloseCompleteSprintModal();
-      showToast('success', 'Sprint completed successfully! Redirecting to create Increment...');
+      showToast('success', t('board.sprintCompleted'));
       setTimeout(() => {
         if (sprintId) {
           onNavigateToIncrement(sprintId);
@@ -1183,6 +1202,8 @@ export const useDragAndDrop = (options: UseDragAndDropOptions): UseDragAndDropRe
     onSetWorkflowError,
   } = options;
 
+  const { t } = useTranslation('sprint');
+
   // Drag state
   const [draggedTaskId, setDraggedTaskId] = useState<string | null>(null);
   const [dropTargetColumn, setDropTargetColumn] = useState<TaskStatus | null>(null);
@@ -1212,7 +1233,7 @@ export const useDragAndDrop = (options: UseDragAndDropOptions): UseDragAndDropRe
       setDropTargetColumn(null);
 
       if (!teamId) {
-        showToast('error', 'Team ID is required. Please select a team first.');
+        showToast('error', t('board.teamIdRequired'));
         return;
       }
 
@@ -1229,8 +1250,9 @@ export const useDragAndDrop = (options: UseDragAndDropOptions): UseDragAndDropRe
         });
 
         if (!result.valid || !result.updates) {
-          showToast('error', result.error ?? 'Invalid transition');
-          onSetWorkflowError(result.error ?? 'Invalid transition');
+          const errorMsg = result.error ?? t('board.invalidTransition');
+          showToast('error', errorMsg);
+          onSetWorkflowError(errorMsg);
           setTimeout(() => onSetWorkflowError(null), 5000);
           return;
         }
@@ -1248,6 +1270,7 @@ export const useDragAndDrop = (options: UseDragAndDropOptions): UseDragAndDropRe
       teamId,
       validateAndPrepareTransition,
       onSetWorkflowError,
+      t,
     ]
   );
 
@@ -1321,6 +1344,17 @@ export const useTaskFormValidation = (
   options: UseTaskFormValidationOptions
 ): UseTaskFormValidationReturn => {
   const { formData, selectedTask, onSetFormErrors } = options;
+  const { t } = useTranslation('sprint');
+
+  // Build TASK_STATUS_LABELS for i18n
+  const TASK_STATUS_LABELS: Record<TaskStatus, string> = useMemo(
+    () => ({
+      [TaskStatusEnum.TODO]: t('taskStatus.todo'),
+      [TaskStatusEnum.IN_PROGRESS]: t('taskStatus.inProgress'),
+      [TaskStatusEnum.DONE]: t('taskStatus.done'),
+    }),
+    [t]
+  );
 
   // ============================================
   // Status Transition Validation
@@ -1335,22 +1369,26 @@ export const useTaskFormValidation = (
       };
 
       if (currentStatus === newStatus) {
-        return { valid: false, message: 'Task is already in this status' };
+        return { valid: false, message: t('validation.taskAlreadyInStatus') };
       }
 
       if (!validTransitions[currentStatus].includes(newStatus)) {
         const allowedStatuses = validTransitions[currentStatus]
-          .map((s) => TASK_STATUS_CONFIG[s].label)
+          .map((s) => TASK_STATUS_LABELS[s])
           .join(', ');
         return {
           valid: false,
-          message: `Transition from ${TASK_STATUS_CONFIG[currentStatus].label} to ${TASK_STATUS_CONFIG[newStatus].label} is not allowed. Allowed transitions: ${allowedStatuses || 'None'}`,
+          message: t('validation.invalidTaskTransition', {
+            current: TASK_STATUS_LABELS[currentStatus],
+            target: TASK_STATUS_LABELS[newStatus],
+            allowed: allowedStatuses || t('validation.none'),
+          }),
         };
       }
 
       return { valid: true };
     },
-    []
+    [t, TASK_STATUS_LABELS]
   );
 
   const getAvailableTransitions = useCallback((currentStatus: TaskStatus): TaskStatus[] => {
@@ -1375,7 +1413,10 @@ export const useTaskFormValidation = (
       // Step 1: Validate status transition
       const validationResult = validateTaskStatusTransition(task.status, newStatus);
       if (!validationResult.valid) {
-        return { valid: false, error: validationResult.message ?? 'Invalid status transition' };
+        return {
+          valid: false,
+          error: validationResult.message ?? t('validation.invalidTransition'),
+        };
       }
 
       // Step 2: Check WIP limits for IN_PROGRESS
@@ -1385,7 +1426,7 @@ export const useTaskFormValidation = (
         if (currentCount >= wipLimit) {
           return {
             valid: false,
-            error: `WIP limit reached for In Progress (${wipLimit} tasks max)`,
+            error: t('validation.wipLimitReached', { limit: wipLimit }),
           };
         }
       }
@@ -1394,16 +1435,16 @@ export const useTaskFormValidation = (
       if (newStatus === TaskStatusEnum.IN_PROGRESS && options?.checkRequiredFields) {
         const missingFields: string[] = [];
         if (!task.assigneeId) {
-          missingFields.push('Assignee');
+          missingFields.push(t('validation.fieldAssignee'));
         }
         if (!task.estimatedHours || task.estimatedHours <= 0) {
-          missingFields.push('Estimated Hours');
+          missingFields.push(t('validation.fieldEstimatedHours'));
         }
 
         if (missingFields.length > 0) {
           return {
             valid: false,
-            error: `Cannot move to In Progress. Please set: ${missingFields.join(', ')}`,
+            error: t('validation.missingFieldsForInProgress', { fields: missingFields.join(', ') }),
           };
         }
       }
@@ -1416,7 +1457,7 @@ export const useTaskFormValidation = (
 
       return { valid: true, updates };
     },
-    [validateTaskStatusTransition]
+    [validateTaskStatusTransition, t]
   );
 
   // ============================================
@@ -1428,44 +1469,44 @@ export const useTaskFormValidation = (
 
     // Title validation (required for both create and edit)
     if (!formData.title.trim()) {
-      errors.title = 'Task title is required';
+      errors.title = t('validation.titleRequired');
     } else if (formData.title.length > 100) {
-      errors.title = 'Title must be 100 characters or less';
+      errors.title = t('validation.titleTooLong');
     }
 
     // Description validation (required for both create and edit)
     if (!formData.description.trim()) {
-      errors.description = 'Description is required';
+      errors.description = t('validation.descriptionRequired');
     }
 
     // Parent Backlog Item validation (required for create only)
     if (!selectedTask && !formData.pbiId) {
-      errors.pbiId = 'Please select a parent backlog item';
+      errors.pbiId = t('validation.selectParentPbi');
     }
 
     // Assignee validation (required for both create and edit)
     if (!formData.assigneeId) {
-      errors.assigneeId = 'Assignee is required';
+      errors.assigneeId = t('validation.assigneeRequired');
     }
 
     // Estimated hours validation (required for both create and edit)
     if (!formData.estimatedHours || formData.estimatedHours <= 0) {
-      errors.estimatedHours = 'Estimated hours must be greater than 0';
+      errors.estimatedHours = t('validation.estimatedHoursPositive');
     }
 
     // Remaining hours validation (required for both create and edit)
     if (formData.remainingHours <= 0) {
-      errors.remainingHours = 'Remaining hours must be greater than 0';
+      errors.remainingHours = t('validation.remainingHoursPositive');
     }
 
     // Cross-field validation: remaining hours cannot exceed estimated hours
     if (formData.remainingHours > formData.estimatedHours && formData.estimatedHours > 0) {
-      errors.remainingHours = 'Remaining hours cannot exceed estimated hours';
+      errors.remainingHours = t('validation.remainingHoursExceed');
     }
 
     onSetFormErrors(errors);
     return Object.keys(errors).length === 0;
-  }, [formData, selectedTask, onSetFormErrors]);
+  }, [formData, selectedTask, onSetFormErrors, t]);
 
   return {
     validateForm,

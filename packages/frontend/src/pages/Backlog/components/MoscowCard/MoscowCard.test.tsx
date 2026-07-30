@@ -7,12 +7,15 @@
 
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
+import { I18nextProvider } from 'react-i18next';
 
 import { ItemStatus, MoSCoWPriority } from '../../../../types';
 import { MoscowCard } from './MoscowCard';
 import styles from './MoscowCard.module.css';
 import { AnnouncerProvider } from '../../../../components/LiveAnnouncer';
+import { initTestI18n, i18nT } from '../../../../test-utils';
+import { getTestI18nInstance } from '../../../../i18n/testConfig';
 
 /**
  * Mock product backlog item for testing
@@ -43,11 +46,20 @@ const mockItemsCountByPriority: Record<MoSCoWPriority, number> = {
 };
 
 /**
- * Helper to render component with AnnouncerProvider
+ * Helper to render component with AnnouncerProvider and I18nextProvider
  */
 const renderWithAnnouncer = (ui: React.ReactElement) => {
-  return render(<AnnouncerProvider>{ui}</AnnouncerProvider>);
+  return render(
+    <I18nextProvider i18n={getTestI18nInstance()}>
+      <AnnouncerProvider>{ui}</AnnouncerProvider>
+    </I18nextProvider>
+  );
 };
+
+// Initialize i18n before all tests
+beforeAll(async () => {
+  await initTestI18n();
+});
 
 describe('MoscowCard', () => {
   const mockOnDragStart = vi.fn();
@@ -87,7 +99,7 @@ describe('MoscowCard', () => {
         />
       );
 
-      expect(screen.getByText('New')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('backlog:status.new'))).toBeInTheDocument();
     });
 
     it('should display value and effort indicators', () => {
@@ -269,9 +281,11 @@ describe('MoscowCard', () => {
       );
 
       const card = screen.getByRole('listitem');
+      const mustHaveLabel = i18nT('backlog:moscow.mustHave');
+      // The i18n key 'aria.backlogItem' includes a trailing period
       expect(card).toHaveAttribute(
         'aria-label',
-        'Backlog item: Test Backlog Item. Priority: Must Have'
+        `Backlog item: Test Backlog Item. Priority: ${mustHaveLabel}.`
       );
     });
 
@@ -435,7 +449,9 @@ describe('MoscowCard', () => {
       fireEvent.keyDown(card, { key: 'ArrowRight' });
 
       await waitFor(() => {
-        expect(screen.getByText('Moving to Should Have')).toBeInTheDocument();
+        expect(
+          screen.getByText(`Moving to ${i18nT('backlog:moscow.shouldHave')}`)
+        ).toBeInTheDocument();
       });
     });
 
@@ -463,7 +479,9 @@ describe('MoscowCard', () => {
       fireEvent.keyDown(card, { key: 'ArrowLeft' });
 
       await waitFor(() => {
-        expect(screen.getByText('Moving to Must Have')).toBeInTheDocument();
+        expect(
+          screen.getByText(`Moving to ${i18nT('backlog:moscow.mustHave')}`)
+        ).toBeInTheDocument();
       });
     });
 
@@ -624,10 +642,12 @@ describe('MoscowCard', () => {
       // Grab the card
       fireEvent.keyDown(card, { key: ' ' });
 
+      const mustHaveLabel = i18nT('backlog:moscow.mustHave');
       await waitFor(() => {
+        // The i18n key 'aria.draggingItem' includes a trailing period
         expect(card).toHaveAttribute(
           'aria-label',
-          'Dragging Test Backlog Item. Current: Must Have. Target: Must Have'
+          `Dragging Test Backlog Item. Current: ${mustHaveLabel}. Target: ${mustHaveLabel}.`
         );
       });
     });

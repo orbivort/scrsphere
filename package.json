@@ -76,6 +76,16 @@
     "db:studio": "pnpm --filter=@scrumooth/backend run db:studio",
     "db:reset": "pnpm --filter=@scrumooth/backend run db:reset",
     "db:validate": "pnpm --filter=@scrumooth/backend run db:validate",
+    "i18n:check": "node scripts/i18n/validate.mjs",
+    "i18n:check:strict": "node scripts/i18n/validate.mjs --strict",
+    "i18n:extract": "node scripts/i18n/extract.mjs",
+    "i18n:extract:check": "node scripts/i18n/extract-check.mjs",
+    "i18n:completeness": "node scripts/i18n/completeness-report.mjs",
+    "i18n:completeness:strict": "node scripts/i18n/completeness-report.mjs --min-coverage 80",
+    "i18n:glossary": "node scripts/i18n/sync-glossary.mjs",
+    "i18n:pseudo": "node scripts/i18n/pseudo-localize.mjs",
+    "i18n:sort": "node scripts/i18n/sort.mjs",
+    "test:scripts": "vitest run --config scripts/vitest.config.ts",
     "audit": "pnpm audit --registry https://registry.npmjs.org/",
     "outdated": "pnpm outdated",
     "loadtest": "dotenv -e k6/.env.k6 -- node k6/scripts/validate-and-run.js k6/scripts/scenarios/normal-load.js",
@@ -97,10 +107,12 @@
     "@typescript-eslint/parser": "catalog:",
     "concurrently": "^10.0.3",
     "dotenv-cli": "^11.0.0",
+    "entities": "catalog:",
     "eslint": "catalog:",
     "eslint-config-prettier": "catalog:",
+    "eslint-plugin-formatjs": "^6.4.19",
     "eslint-plugin-import-x": "^4.16.2",
-    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react": "catalog:",
     "eslint-plugin-react-hooks": "catalog:",
     "eslint-plugin-react-refresh": "catalog:",
     "globals": "catalog:",
@@ -112,7 +124,8 @@
     "stylelint-config-standard": "catalog:",
     "stylelint-no-unsupported-browser-features": "^8.1.1",
     "typescript": "catalog:",
-    "typescript-eslint": "catalog:"
+    "typescript-eslint": "catalog:",
+    "vitest": "catalog:"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
@@ -125,6 +138,14 @@
     "*.css": [
       "stylelint --fix --allow-empty-input",
       "prettier --write"
+    ],
+    "packages/frontend/public/locales/**/*.json": [
+      "node scripts/i18n/sort.mjs",
+      "node scripts/i18n/validate.mjs"
+    ],
+    "packages/backend/src/locales/**/*.json": [
+      "node scripts/i18n/sort.mjs",
+      "node scripts/i18n/validate.mjs"
     ]
   },
   "engines": {

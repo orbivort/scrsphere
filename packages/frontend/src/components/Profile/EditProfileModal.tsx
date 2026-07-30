@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useAuthStore, useToastStore } from '../../store';
 import { validateProfileUpdate, type ValidationErrors } from '../../utils/validation';
@@ -20,6 +21,8 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
 }) => {
   const { user, updateProfile, isUpdatingProfile, profileUpdateError, clearProfileErrors } =
     useAuthStore();
+  const { t } = useTranslation('common');
+  const success = useToastStore((state) => state.success);
 
   const [formData, setFormData] = useState({
     firstName: user?.firstName ?? '',
@@ -32,7 +35,6 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
   });
 
   const [errors, setErrors] = useState<ValidationErrors>({});
-  const success = useToastStore((state) => state.success);
 
   const firstNameInputRef = useRef<HTMLInputElement>(null);
 
@@ -66,17 +68,25 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
 
-    const validationErrors = validateProfileUpdate({
-      ...formData,
-      [field]: value,
-    });
+    const validationErrors = validateProfileUpdate(
+      {
+        ...formData,
+        [field]: value,
+      },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Dynamic validation key
+      (key, options) => (t as any)(key, options) as string
+    );
     setErrors(validationErrors);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const validationErrors = validateProfileUpdate(formData);
+    const validationErrors = validateProfileUpdate(
+      formData,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Dynamic validation key
+      (key, options) => (t as any)(key, options) as string
+    );
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
@@ -85,7 +95,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
     const updateSuccess = await updateProfile(formData);
 
     if (updateSuccess) {
-      success('Profile updated successfully');
+      success(t('profile.profileUpdated'));
       setOriginalData(formData);
       onDirtyChange?.(false);
       onClose();
@@ -111,12 +121,12 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
             <span className={styles['header-icon']}>
               <UserIcon size={24} />
             </span>
-            Edit Profile
+            {t('profile.editTitle')}
           </h2>
           <button
             onClick={onClose}
             className={styles['close-button']}
-            aria-label="Close"
+            aria-label={t('close')}
             type="button"
           >
             <CloseIcon size={18} />
@@ -135,7 +145,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
           <div className={styles['form-group']}>
             <label htmlFor="firstName" className={styles['form-label']}>
-              First Name
+              {t('profile.firstName')}
               <span className={styles.required}>*</span>
             </label>
             <div className={styles['input-wrapper']}>
@@ -149,7 +159,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
                 aria-describedby={errors.firstName ? 'firstName-error' : undefined}
                 disabled={isUpdatingProfile}
                 maxLength={100}
-                placeholder="Enter your first name"
+                placeholder={t('profile.placeholder.firstName')}
               />
               <span className={styles['char-counter']}>{formData.firstName.length} / 100</span>
             </div>
@@ -162,7 +172,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
           <div className={styles['form-group']}>
             <label htmlFor="lastName" className={styles['form-label']}>
-              Last Name
+              {t('profile.lastName')}
               <span className={styles.required}>*</span>
             </label>
             <div className={styles['input-wrapper']}>
@@ -175,7 +185,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
                 aria-describedby={errors.lastName ? 'lastName-error' : undefined}
                 disabled={isUpdatingProfile}
                 maxLength={100}
-                placeholder="Enter your last name"
+                placeholder={t('profile.placeholder.lastName')}
               />
               <span className={styles['char-counter']}>{formData.lastName.length} / 100</span>
             </div>
@@ -188,8 +198,8 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
           <div className={styles['form-group']}>
             <label className={styles['form-label']}>
-              Email
-              <span className={styles['optional-badge']}>Read-only</span>
+              {t('profile.email')}
+              <span className={styles['optional-badge']}>{t('profile.readOnly')}</span>
             </label>
             <input
               type="email"
@@ -199,7 +209,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
               aria-describedby="email-help"
             />
             <span id="email-help" className={styles['helper-text']}>
-              Contact support to change your email address
+              {t('profile.contactSupportToChangeEmail')}
             </span>
           </div>
 
@@ -210,7 +220,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
               className={`${styles.button} ${styles['button-secondary']}`}
               disabled={isUpdatingProfile}
             >
-              Cancel
+              {t('cancel')}
             </button>
             <button
               type="submit"
@@ -220,10 +230,10 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
               {!isUpdatingProfile && (
                 <>
                   <SaveIcon size={16} />
-                  Save Changes
+                  {t('profile.saveChanges')}
                 </>
               )}
-              {isUpdatingProfile && 'Saving...'}
+              {isUpdatingProfile && t('profile.saving')}
             </button>
           </div>
         </form>

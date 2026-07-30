@@ -1,8 +1,13 @@
-import { screen, render } from '@testing-library/react';
-import { describe, it, expect, beforeEach } from 'vitest';
+import { screen } from '@testing-library/react';
+import { describe, it, expect, beforeEach, beforeAll } from 'vitest';
 
+import {
+  renderWithProviders,
+  initTestI18n,
+  createMockProductGoal,
+  createMockBacklogItem,
+} from '../../../test-utils';
 import { MoSCoWPriority } from '../../../types';
-import { createMockProductGoal, createMockBacklogItem } from '../../../test-utils';
 
 import { ActiveGoalBanner } from './ActiveGoalBanner';
 
@@ -42,13 +47,17 @@ const mockItemsByMoscow = {
 };
 
 describe('ActiveGoalBanner', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   describe('Rendering', () => {
     it('should render the goal title', () => {
-      render(
+      renderWithProviders(
         <ActiveGoalBanner
           goal={mockGoal}
           backlogItems={mockBacklogItems}
@@ -63,7 +72,7 @@ describe('ActiveGoalBanner', () => {
     });
 
     it('should render the target date when provided', () => {
-      render(
+      renderWithProviders(
         <ActiveGoalBanner
           goal={mockGoal}
           backlogItems={mockBacklogItems}
@@ -78,7 +87,7 @@ describe('ActiveGoalBanner', () => {
 
     it('should not render target date when not provided', () => {
       const goalWithoutDate = { ...mockGoal, targetDate: undefined };
-      render(
+      renderWithProviders(
         <ActiveGoalBanner
           goal={goalWithoutDate}
           backlogItems={mockBacklogItems}
@@ -92,7 +101,7 @@ describe('ActiveGoalBanner', () => {
     });
 
     it('should display total item count', () => {
-      render(
+      renderWithProviders(
         <ActiveGoalBanner
           goal={mockGoal}
           backlogItems={mockBacklogItems}
@@ -107,7 +116,7 @@ describe('ActiveGoalBanner', () => {
     });
 
     it('should display Must Have count', () => {
-      render(
+      renderWithProviders(
         <ActiveGoalBanner
           goal={mockGoal}
           backlogItems={mockBacklogItems}
@@ -121,7 +130,7 @@ describe('ActiveGoalBanner', () => {
     });
 
     it('should display Done count', () => {
-      render(
+      renderWithProviders(
         <ActiveGoalBanner
           goal={mockGoal}
           backlogItems={mockBacklogItems}
@@ -137,7 +146,7 @@ describe('ActiveGoalBanner', () => {
 
   describe('Statistics', () => {
     it('should display correct statistics for items', () => {
-      render(
+      renderWithProviders(
         <ActiveGoalBanner
           goal={mockGoal}
           backlogItems={mockBacklogItems}
@@ -152,7 +161,7 @@ describe('ActiveGoalBanner', () => {
     });
 
     it('should display zero counts correctly', () => {
-      render(
+      renderWithProviders(
         <ActiveGoalBanner
           goal={mockGoal}
           backlogItems={[]}

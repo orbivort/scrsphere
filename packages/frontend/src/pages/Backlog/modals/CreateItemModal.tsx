@@ -1,4 +1,5 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { MoSCoWPriority } from '../../../types';
 import { useBacklogContext } from '../context/BacklogContext';
@@ -43,6 +44,7 @@ export const CreateItemModal: React.FC<CreateItemModalProps> = ({
     maxLimit: number;
     availableSlots: number;
   } | null>(null);
+  const { t } = useTranslation('backlog');
 
   const {
     formData,
@@ -176,14 +178,14 @@ export const CreateItemModal: React.FC<CreateItemModalProps> = ({
                 <PlusIcon width="28" height="28" />
               </div>
               <h2 id="create-modal-title" className={styles['modal-title']}>
-                Create New Backlog Item
+                {t('createItem.createNewBacklogItem') as string}
               </h2>
             </div>
             <button
               className={styles['close-button']}
               onClick={handleCloseAttempt}
               data-modal-close
-              aria-label="Close modal"
+              aria-label={t('createItem.closeModal') as string}
             >
               <XIcon width="20" height="20" />
             </button>
@@ -199,7 +201,7 @@ export const CreateItemModal: React.FC<CreateItemModalProps> = ({
                   <button
                     className={styles['modal-error-close']}
                     onClick={() => setWorkflowError(null)}
-                    aria-label="Close error message"
+                    aria-label={t('createItem.closeError') as string}
                   >
                     <XCircleIcon width="14" height="14" />
                   </button>
@@ -216,7 +218,7 @@ export const CreateItemModal: React.FC<CreateItemModalProps> = ({
                   <button
                     className={styles['modal-error-close']}
                     onClick={() => setCapacityError(null)}
-                    aria-label="Close capacity error message"
+                    aria-label={t('createItem.closeCapacityError') as string}
                   >
                     <XCircleIcon width="14" height="14" />
                   </button>
@@ -233,28 +235,38 @@ export const CreateItemModal: React.FC<CreateItemModalProps> = ({
                 </span>
                 <span className={styles['capacity-info-text']}>
                   {capacityInfo.availableSlots === 0
-                    ? `This goal has reached its maximum capacity of ${capacityInfo.maxLimit} items.`
-                    : `This goal has ${capacityInfo.currentCount} of ${capacityInfo.maxLimit} items (${capacityInfo.availableSlots} slot${capacityInfo.availableSlots !== 1 ? 's' : ''} available).`}
+                    ? (t('createItem.capacityReached', {
+                        maxLimit: capacityInfo.maxLimit,
+                      }) as string)
+                    : (t('createItem.capacityAvailable', {
+                        currentCount: capacityInfo.currentCount,
+                        maxLimit: capacityInfo.maxLimit,
+                        availableSlots: capacityInfo.availableSlots,
+                        plural: capacityInfo.availableSlots !== 1 ? 's' : '',
+                      }) as string)}
                 </span>
               </div>
             )}
             <form className={styles['item-form']}>
               <div className={styles['form-legend']}>
                 <span className={styles['required-indicator']}>*</span>
-                <span className={styles['legend-text']}>Indicates required fields</span>
+                <span className={styles['legend-text']}>
+                  {t('createItem.requiredFields') as string}
+                </span>
               </div>
 
               <div className={styles['form-section']}>
-                <h3 className={styles['section-title']}>Basic Information</h3>
+                <h3 className={styles['section-title']}>{t('createItem.basicInfo') as string}</h3>
 
                 <div className={styles['form-group']}>
                   <label htmlFor="item-title">
-                    Title <span className={styles['required-indicator']}>*</span>
+                    {t('createItem.titleLabel') as string}{' '}
+                    <span className={styles['required-indicator']}>*</span>
                   </label>
                   <input
                     id="item-title"
                     type="text"
-                    placeholder="Enter a clear, concise title for this backlog item"
+                    placeholder={t('createItem.titlePlaceholder') as string}
                     value={formData.title}
                     onChange={(e) => handleFormChange('title', e.target.value)}
                     className={formErrors.title ? styles['input-error'] : ''}
@@ -263,8 +275,7 @@ export const CreateItemModal: React.FC<CreateItemModalProps> = ({
                     maxLength={200}
                   />
                   <span id="title-help" className={styles['field-help']}>
-                    Provide a brief, descriptive title that summarizes what needs to be done.
-                    Example: "Implement user authentication with JWT tokens"
+                    {t('createItem.titleHelp') as string}
                   </span>
                   {formErrors.title && (
                     <span id="title-error" className={styles['error-text']} role="alert">
@@ -274,33 +285,37 @@ export const CreateItemModal: React.FC<CreateItemModalProps> = ({
                 </div>
 
                 <div className={styles['form-group']}>
-                  <label htmlFor="item-description">Description</label>
+                  <label htmlFor="item-description">
+                    {t('createItem.descriptionLabel') as string}
+                  </label>
                   <textarea
                     id="item-description"
                     rows={4}
-                    placeholder="Describe the item in detail..."
+                    placeholder={t('createItem.descriptionPlaceholder') as string}
                     value={formData.description}
                     onChange={(e) => handleFormChange('description', e.target.value)}
                     aria-describedby="description-help"
                   />
                   <span id="description-help" className={styles['field-help']}>
-                    Explain the context, purpose, and any background information. Include user
-                    stories if applicable (e.g., "As a user, I want...")
+                    {t('createItem.descriptionHelp') as string}
                   </span>
                 </div>
               </div>
 
               <div className={styles['form-section']}>
-                <h3 className={styles['section-title']}>Priority & Value</h3>
+                <h3 className={styles['section-title']}>
+                  {t('createItem.priorityAndValue') as string}
+                </h3>
 
                 <div className={styles['form-group']}>
                   <label>
-                    MoSCoW Priority <span className={styles['required-indicator']}>*</span>
+                    {t('createItem.moscowLabel') as string}{' '}
+                    <span className={styles['required-indicator']}>*</span>
                   </label>
                   <div
                     className={styles['moscow-selector']}
                     role="radiogroup"
-                    aria-label="Select MoSCoW Priority"
+                    aria-label={t('createItem.selectMoscowPriority') as string}
                   >
                     {Object.values(MoSCoWPriority).map((priority, index) => {
                       const config = MOSCOW_CONFIG[priority];
@@ -327,8 +342,12 @@ export const CreateItemModal: React.FC<CreateItemModalProps> = ({
                             <PathIcon path={config.icon} size={20} />
                           </span>
                           <span className={styles['moscow-content']}>
-                            <span className={styles['moscow-label']}>{config.label}</span>
-                            <span className={styles['moscow-desc']}>{config.description}</span>
+                            <span className={styles['moscow-label']}>
+                              {t(`moscowLabels.${priority}` as const)}
+                            </span>
+                            <span className={styles['moscow-desc']}>
+                              {t(`moscowDescriptions.${priority}` as const)}
+                            </span>
                           </span>
                           {isSelected && (
                             <span className={styles['moscow-check']} aria-hidden="true">
@@ -340,8 +359,7 @@ export const CreateItemModal: React.FC<CreateItemModalProps> = ({
                     })}
                   </div>
                   <span className={styles['field-help']}>
-                    Must Have = Critical for success | Should Have = Important but not vital | Could
-                    Have = Nice to have | Won't Have = Future consideration
+                    {t('createItem.moscowHelp') as string}
                   </span>
                   {formErrors.moscowPriority && (
                     <span className={styles['error-text']} role="alert">
@@ -351,7 +369,9 @@ export const CreateItemModal: React.FC<CreateItemModalProps> = ({
                 </div>
 
                 <div className={styles['form-group']}>
-                  <label htmlFor="business-value">Business Value (Points)</label>
+                  <label htmlFor="business-value">
+                    {t('createItem.businessValueLabel') as string}
+                  </label>
                   <select
                     id="business-value"
                     value={formData.businessValue ?? ''}
@@ -363,22 +383,21 @@ export const CreateItemModal: React.FC<CreateItemModalProps> = ({
                     }
                     aria-describedby="business-value-help"
                   >
-                    <option value="">Select value...</option>
-                    <option value={1}>1 - Minimal value</option>
-                    <option value={2}>2 - Low value</option>
-                    <option value={3}>3 - Moderate value</option>
-                    <option value={5}>5 - High value</option>
-                    <option value={8}>8 - Very high value</option>
-                    <option value={13}>13 - Critical value</option>
+                    <option value="">{t('createItem.businessValuePlaceholder') as string}</option>
+                    <option value={1}>1 - {t('businessValueOptions.1') as string}</option>
+                    <option value={2}>2 - {t('businessValueOptions.2') as string}</option>
+                    <option value={3}>3 - {t('businessValueOptions.3') as string}</option>
+                    <option value={5}>5 - {t('businessValueOptions.5') as string}</option>
+                    <option value={8}>8 - {t('businessValueOptions.8') as string}</option>
+                    <option value={13}>13 - {t('businessValueOptions.13') as string}</option>
                   </select>
                   <span id="business-value-help" className={styles['field-help']}>
-                    Quantify the business impact. Higher numbers indicate greater strategic
-                    importance and ROI potential.
+                    {t('createItem.businessValueHelp') as string}
                   </span>
                 </div>
 
                 <div className={styles['form-group']}>
-                  <label htmlFor="estimate">Estimate (Story Points)</label>
+                  <label htmlFor="estimate">{t('createItem.storyPointsLabel') as string}</label>
                   <select
                     id="estimate"
                     value={formData.estimate ?? ''}
@@ -390,26 +409,27 @@ export const CreateItemModal: React.FC<CreateItemModalProps> = ({
                     }
                     aria-describedby="estimate-help"
                   >
-                    <option value="">Select estimate...</option>
-                    <option value={1}>1 - Trivial effort</option>
-                    <option value={2}>2 - Very small effort</option>
-                    <option value={3}>3 - Small effort</option>
-                    <option value={5}>5 - Medium effort</option>
-                    <option value={8}>8 - Large effort</option>
-                    <option value={13}>13 - Very large effort</option>
+                    <option value="">{t('createItem.storyPointsPlaceholder') as string}</option>
+                    <option value={1}>1 - {t('estimateOptions.1') as string}</option>
+                    <option value={2}>2 - {t('estimateOptions.2') as string}</option>
+                    <option value={3}>3 - {t('estimateOptions.3') as string}</option>
+                    <option value={5}>5 - {t('estimateOptions.5') as string}</option>
+                    <option value={8}>8 - {t('estimateOptions.8') as string}</option>
+                    <option value={13}>13 - {t('estimateOptions.13') as string}</option>
                   </select>
                   <span id="estimate-help" className={styles['field-help']}>
-                    Estimate the relative effort using Fibonacci sequence. Consider complexity,
-                    uncertainty, and risk. Leave empty if not ready to estimate.
+                    {t('createItem.storyPointsHelp') as string}
                   </span>
                 </div>
               </div>
 
               <div className={styles['form-section']}>
-                <h3 className={styles['section-title']}>More Information</h3>
+                <h3 className={styles['section-title']}>
+                  {t('createItem.moreInformation') as string}
+                </h3>
 
                 <div className={styles['form-group']}>
-                  <label htmlFor="item-labels">Labels</label>
+                  <label htmlFor="item-labels">{t('createItem.labelsLabel') as string}</label>
                   <div
                     className={`${styles['tag-input-container']} ${formErrors.labels ? styles['input-error'] : ''}`}
                     onClick={() => document.getElementById('item-labels')?.focus()}
@@ -424,7 +444,7 @@ export const CreateItemModal: React.FC<CreateItemModalProps> = ({
                             e.stopPropagation();
                             removeLabelTag(tag);
                           }}
-                          aria-label={`Remove label ${tag}`}
+                          aria-label={t('createItem.removeLabel', { label: tag }) as string}
                         >
                           <XIcon width="12" height="12" />
                         </button>
@@ -435,8 +455,8 @@ export const CreateItemModal: React.FC<CreateItemModalProps> = ({
                       type="text"
                       placeholder={
                         labelTags.length === 0
-                          ? 'Type and press Enter to add labels...'
-                          : 'Add more labels...'
+                          ? (t('createItem.labelsPlaceholderEmpty') as string)
+                          : (t('createItem.labelsPlaceholderMore') as string)
                       }
                       value={labelInputValue}
                       onChange={(e) => handleLabelInputChange(e.target.value)}
@@ -448,7 +468,7 @@ export const CreateItemModal: React.FC<CreateItemModalProps> = ({
                   </div>
                   {labelTags.length >= 10 && (
                     <span className={`${styles['field-help']} ${styles['field-help-warning']}`}>
-                      Maximum 10 labels reached. Remove a label to add more.
+                      {t('createItem.labelsMaxReached') as string}
                     </span>
                   )}
                   {formErrors.labels && (
@@ -457,25 +477,24 @@ export const CreateItemModal: React.FC<CreateItemModalProps> = ({
                     </span>
                   )}
                   <span id="labels-help" className={styles['field-help']}>
-                    Press Enter to add a label. Use letters, numbers, hyphens, and underscores only.
-                    Maximum 10 labels, 30 characters each.
+                    {t('createItem.labelsHelp') as string}
                   </span>
                 </div>
 
                 <div className={styles['form-group']}>
-                  <label htmlFor="acceptance-criteria">Acceptance Criteria</label>
+                  <label htmlFor="acceptance-criteria">
+                    {t('createItem.acceptanceCriteriaLabel') as string}
+                  </label>
                   <textarea
                     id="acceptance-criteria"
                     rows={4}
-                    placeholder="Define specific, testable conditions for completion..."
+                    placeholder={t('createItem.acceptanceCriteriaPlaceholder') as string}
                     value={formData.acceptanceCriteria}
                     onChange={(e) => handleFormChange('acceptanceCriteria', e.target.value)}
                     aria-describedby="criteria-help"
                   />
                   <span id="criteria-help" className={styles['field-help']}>
-                    List clear, measurable conditions that must be met. Use bullet points or
-                    numbered lists. Example: "1. User can log in with valid credentials 2. Invalid
-                    login shows error message 3. Session expires after 30 minutes"
+                    {t('createItem.acceptanceCriteriaHelp') as string}
                   </span>
                 </div>
               </div>
@@ -487,7 +506,7 @@ export const CreateItemModal: React.FC<CreateItemModalProps> = ({
               onClick={handleCloseAttempt}
               disabled={isSubmitting}
             >
-              Cancel
+              {t('createItem.cancel') as string}
             </button>
             <button
               className={`${styles.button} ${styles['button-primary']}`}
@@ -497,12 +516,12 @@ export const CreateItemModal: React.FC<CreateItemModalProps> = ({
               {isSubmitting ? (
                 <>
                   <span className={styles['button-spinner']} />
-                  Creating...
+                  {t('createItem.creating') as string}
                 </>
               ) : (
                 <>
                   <PlusIcon width="18" height="18" />
-                  Create Item
+                  {t('createItem.createItem') as string}
                 </>
               )}
             </button>
@@ -513,7 +532,7 @@ export const CreateItemModal: React.FC<CreateItemModalProps> = ({
           <div className={styles['loading-overlay']}>
             <div className={styles['loading-content']}>
               <div className={styles['spinner-ring']} />
-              <p>Creating backlog item...</p>
+              <p>{t('createItem.creatingBacklogItem') as string}</p>
             </div>
           </div>
         )}
@@ -523,8 +542,8 @@ export const CreateItemModal: React.FC<CreateItemModalProps> = ({
         isOpen={showUnsavedModal}
         onConfirm={handleUnsavedConfirm}
         onCancel={handleUnsavedCancel}
-        title="Unsaved Changes"
-        message="You have unsaved changes. Are you sure you want to discard them?"
+        title={t('createItem.unsavedTitle') as string}
+        message={t('createItem.unsavedMessage') as string}
       />
     </>
   );

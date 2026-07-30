@@ -113,7 +113,12 @@ export interface DataExportModalProps {
   isOpen: boolean;
   onClose: () => void;
   jobId: string | null;
-  onDownload?: () => void;
+  status: ExportStatus | null;
+  progress: number;
+  error: string | null;
+  canDownload: boolean;
+  onDownload: () => void;
+  isPolling: boolean;
 }
 
 export interface DataExportProgressProps {

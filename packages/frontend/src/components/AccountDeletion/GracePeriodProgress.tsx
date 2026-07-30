@@ -1,14 +1,21 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { formatLocaleDate } from '@scrumooth/shared';
 
 import type { PendingDeletion } from '../../types/auth.types';
 
 import styles from './GracePeriodProgress.module.css';
+
+import { useI18nStore } from '@/i18n/useI18nStore';
 
 interface GracePeriodProgressProps {
   pendingDeletion: PendingDeletion;
 }
 
 export const GracePeriodProgress: React.FC<GracePeriodProgressProps> = ({ pendingDeletion }) => {
+  const { t } = useTranslation('common');
+  const { locale } = useI18nStore();
+
   const requestedDate = new Date(pendingDeletion.requestedAt);
   const scheduledDate = new Date(pendingDeletion.scheduledDeletionAt);
   const now = new Date();
@@ -22,9 +29,6 @@ export const GracePeriodProgress: React.FC<GracePeriodProgressProps> = ({ pendin
     Math.ceil((scheduledDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
   );
 
-  const formatDate = (date: Date): string =>
-    date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
-
   return (
     <div
       className={styles['grace-period-progress']}
@@ -32,20 +36,30 @@ export const GracePeriodProgress: React.FC<GracePeriodProgressProps> = ({ pendin
       aria-labelledby="grace-period-title"
     >
       <h4 id="grace-period-title" className={styles['grace-period-title']}>
-        Deletion Scheduled
+        {t('deleteAccount.gracePeriodProgress.title')}
       </h4>
 
       <div className={styles['grace-period-dates']}>
         <div className={styles['grace-period-date-item']}>
-          <span className={styles['grace-period-date-label']}>Requested</span>
-          <span className={styles['grace-period-date-value']}>{formatDate(requestedDate)}</span>
+          <span className={styles['grace-period-date-label']}>
+            {t('deleteAccount.gracePeriodProgress.requested')}
+          </span>
+          <span className={styles['grace-period-date-value']}>
+            {formatLocaleDate(requestedDate, locale, 'PPPP')}
+          </span>
         </div>
         <div className={styles['grace-period-date-item']}>
-          <span className={styles['grace-period-date-label']}>Deletion date</span>
-          <span className={styles['grace-period-date-value']}>{formatDate(scheduledDate)}</span>
+          <span className={styles['grace-period-date-label']}>
+            {t('deleteAccount.gracePeriodProgress.deletionDate')}
+          </span>
+          <span className={styles['grace-period-date-value']}>
+            {formatLocaleDate(scheduledDate, locale, 'PPPP')}
+          </span>
         </div>
         <div className={styles['grace-period-date-item']}>
-          <span className={styles['grace-period-date-label']}>Days remaining</span>
+          <span className={styles['grace-period-date-label']}>
+            {t('deleteAccount.gracePeriodProgress.daysRemaining')}
+          </span>
           <span className={styles['grace-period-date-value']}>{daysRemaining}</span>
         </div>
       </div>
@@ -57,7 +71,9 @@ export const GracePeriodProgress: React.FC<GracePeriodProgressProps> = ({ pendin
           aria-valuenow={Math.round(progressPercent)}
           aria-valuemin={0}
           aria-valuemax={100}
-          aria-label={`${Math.round(progressPercent)}% of grace period elapsed`}
+          aria-label={t('deleteAccount.gracePeriodProgress.progressAriaLabel', {
+            percent: Math.round(progressPercent),
+          })}
           style={{ width: `${progressPercent}%` }}
         />
       </div>

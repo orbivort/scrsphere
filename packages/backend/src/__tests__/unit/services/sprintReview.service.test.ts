@@ -61,9 +61,14 @@ const mockNotificationCreate = vi.hoisted(() =>
   vi.fn().mockResolvedValue({ id: 'notification-id' })
 );
 
+const mockNotificationCreateLocalized = vi.hoisted(() =>
+  vi.fn().mockResolvedValue({ id: 'notification-id' })
+);
+
 vi.mock('../../../services/notification.service', () => ({
   NotificationService: class {
     create = mockNotificationCreate;
+    createLocalized = mockNotificationCreateLocalized;
   },
 }));
 
@@ -554,7 +559,7 @@ describe('SprintReviewService', () => {
         createdBy: userId,
       };
 
-      mockNotificationCreate.mockClear();
+      mockNotificationCreateLocalized.mockClear();
 
       vi.mocked(prisma.sprintReview.findUnique).mockResolvedValue(existingReview as any);
       vi.mocked(prisma.sprintReview.update).mockResolvedValue({} as any);
@@ -577,18 +582,20 @@ describe('SprintReviewService', () => {
       });
 
       expect(prisma.backlogAdjustment.create).toHaveBeenCalled();
-      expect(mockNotificationCreate).toHaveBeenCalledWith({
-        userId: 'owner-1',
-        type: 'TASK_ASSIGNMENT',
-        title: 'New Backlog Adjustment Requires Your Action',
-        message: expect.stringContaining('ADD'),
-        data: {
-          adjustmentId: 'test-uuid',
-          reviewId,
-          action: 'ADD',
-        },
-        createdBy: userId,
-      });
+      expect(mockNotificationCreateLocalized).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: 'owner-1',
+          type: 'TASK_ASSIGNMENT',
+          titleKey: 'backlogAdjustmentRequired',
+          messageKey: 'backlogAdjustmentRequiredMessage',
+          data: {
+            adjustmentId: 'test-uuid',
+            reviewId,
+            action: 'ADD',
+          },
+          createdBy: userId,
+        })
+      );
 
       mockGetById.mockRestore();
     });
@@ -615,7 +622,7 @@ describe('SprintReviewService', () => {
         createdBy: userId,
       };
 
-      mockNotificationCreate.mockClear();
+      mockNotificationCreateLocalized.mockClear();
 
       vi.mocked(prisma.sprintReview.findUnique).mockResolvedValue(existingReview as any);
       vi.mocked(prisma.sprintReview.update).mockResolvedValue({} as any);
@@ -637,14 +644,16 @@ describe('SprintReviewService', () => {
         ],
       });
 
-      expect(mockNotificationCreate).toHaveBeenCalledWith(
+      expect(mockNotificationCreateLocalized).toHaveBeenCalledWith(
         expect.objectContaining({
-          message: expect.stringContaining('...'),
+          messageParams: expect.objectContaining({
+            description: expect.stringContaining('...'),
+          }),
         })
       );
-      const callArg = mockNotificationCreate.mock.calls[0]![0];
-      const expectedMessage = `You have been assigned as the owner of a backlog adjustment: ADD - "${longDescription.substring(0, 100)}..."`;
-      expect(callArg.message).toBe(expectedMessage);
+      const callArg = mockNotificationCreateLocalized.mock.calls[0]![0];
+      const expectedTruncated = `${longDescription.substring(0, 100)}...`;
+      expect(callArg.messageParams.description).toBe(expectedTruncated);
 
       mockGetById.mockRestore();
     });
@@ -744,7 +753,7 @@ describe('SprintReviewService', () => {
         },
       };
 
-      mockNotificationCreate.mockClear();
+      mockNotificationCreateLocalized.mockClear();
 
       vi.mocked(prisma.sprintReview.findUnique).mockResolvedValue(mockReview as any);
       vi.mocked(prisma.stakeholderFeedback.create).mockResolvedValue(mockFeedback as any);
@@ -758,18 +767,20 @@ describe('SprintReviewService', () => {
       });
 
       expect(result.category).toBe('negative');
-      expect(mockNotificationCreate).toHaveBeenCalledWith({
-        userId: 'owner-1',
-        type: 'TASK_ASSIGNMENT',
-        title: 'New Feedback Requires Your Action',
-        message: expect.stringContaining('Please fix this issue'),
-        data: {
-          feedbackId: 'test-uuid',
-          reviewId,
-          category: 'negative',
-        },
-        createdBy: userId,
-      });
+      expect(mockNotificationCreateLocalized).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: 'owner-1',
+          type: 'TASK_ASSIGNMENT',
+          titleKey: 'feedbackRequired',
+          messageKey: 'feedbackRequiredMessage',
+          data: {
+            feedbackId: 'test-uuid',
+            reviewId,
+            category: 'negative',
+          },
+          createdBy: userId,
+        })
+      );
     });
 
     it('should truncate long feedback content in notification', async () => {
@@ -793,7 +804,7 @@ describe('SprintReviewService', () => {
         },
       };
 
-      mockNotificationCreate.mockClear();
+      mockNotificationCreateLocalized.mockClear();
 
       vi.mocked(prisma.sprintReview.findUnique).mockResolvedValue(mockReview as any);
       vi.mocked(prisma.stakeholderFeedback.create).mockResolvedValue(mockFeedback as any);
@@ -806,16 +817,16 @@ describe('SprintReviewService', () => {
         ownerId: 'owner-1',
       });
 
-      expect(mockNotificationCreate).toHaveBeenCalledWith(
+      expect(mockNotificationCreateLocalized).toHaveBeenCalledWith(
         expect.objectContaining({
-          message: expect.stringContaining('...'),
+          messageParams: expect.objectContaining({
+            content: expect.stringContaining('...'),
+          }),
         })
       );
-      const callArg = mockNotificationCreate.mock.calls[0]![0];
-      const prefix = 'You have been assigned as the owner of feedback from John Doe: "';
-      const suffix = '"';
-      const expectedTruncated = longContent.substring(0, 100);
-      expect(callArg.message).toBe(`${prefix}${expectedTruncated}...${suffix}`);
+      const callArg = mockNotificationCreateLocalized.mock.calls[0]![0];
+      const expectedTruncated = `${longContent.substring(0, 100)}...`;
+      expect(callArg.messageParams.content).toBe(expectedTruncated);
     });
 
     it('should throw NotFoundError when review does not exist', async () => {

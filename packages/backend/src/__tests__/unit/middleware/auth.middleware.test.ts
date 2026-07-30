@@ -1,7 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { authenticate, optionalAuth, requireRoles } from '../../../middleware/auth.middleware';
 import { authService } from '../../../services/auth.service';
-import { UnauthorizedError } from '../../../utils/errors';
+import { UnauthorizedError, ForbiddenError } from '../../../utils/errors';
+import { UserRole } from '@scrumooth/shared';
 import { createMockRequest, createMockResponse, createMockNext } from '../../setup/testSetup';
 
 vi.mock('../../../services/auth.service', () => ({
@@ -16,6 +17,7 @@ vi.mock('../../../utils/prisma', () => ({
   default: {
     teamMember: {
       findUnique: vi.fn(),
+      findFirst: vi.fn(),
     },
   },
 }));
@@ -49,6 +51,7 @@ describe('Auth Middleware', () => {
     marketingOptInAt: null,
     createdBy: null,
     updatedBy: null,
+    locale: 'en',
   };
 
   const mockTokenPayload = {
@@ -207,34 +210,45 @@ describe('Auth Middleware', () => {
     it('should throw UnauthorizedError if user not authenticated', async () => {
       mockReq.user = undefined;
 
-      const middleware = requireRoles('ADMIN');
+      const middleware = requireRoles(UserRole.DEVELOPER);
       await middleware(mockReq as any, mockRes as any, mockNext);
 
       expect(mockNext).toHaveBeenCalledWith(expect.any(UnauthorizedError));
     });
 
-    it('should throw UnauthorizedError if not a team member', async () => {
+    it('should throw ForbiddenError if not a team member', async () => {
       mockReq.user = mockUser;
       mockReq.params = { teamId: 'team-id' };
       vi.mocked(prisma.teamMember.findUnique).mockResolvedValue(null);
 
-      const middleware = requireRoles('ADMIN');
+      const middleware = requireRoles(UserRole.DEVELOPER);
       await middleware(mockReq as any, mockRes as any, mockNext);
 
-      expect(mockNext).toHaveBeenCalledWith(expect.any(UnauthorizedError));
+      expect(mockNext).toHaveBeenCalledWith(expect.any(ForbiddenError));
     });
 
-    it('should pass if no teamId in params', async () => {
+    it('should pass if no teamId in params and user has required role in another team', async () => {
       mockReq.user = mockUser;
       mockReq.params = {};
+      mockReq.prisma = prisma;
+      vi.mocked(prisma.teamMember.findFirst).mockResolvedValue({
+        teamId: 'any-team-id',
+        userId: mockUser.id,
+        role: UserRole.DEVELOPER,
+        joinedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: null,
+        updatedBy: null,
+      } as any);
 
-      const middleware = requireRoles('ADMIN');
+      const middleware = requireRoles(UserRole.DEVELOPER);
       await middleware(mockReq as any, mockRes as any, mockNext);
 
       expect(mockNext).toHaveBeenCalledWith();
     });
 
-    it('should throw UnauthorizedError for insufficient role', async () => {
+    it('should throw ForbiddenError for insufficient role', async () => {
       mockReq.user = mockUser;
       mockReq.params = { teamId: 'team-id' };
       vi.mocked(prisma.teamMember.findUnique).mockResolvedValue({
@@ -248,10 +262,10 @@ describe('Auth Middleware', () => {
         updatedBy: null,
       } as any);
 
-      const middleware = requireRoles('ADMIN');
+      const middleware = requireRoles(UserRole.DEVELOPER);
       await middleware(mockReq as any, mockRes as any, mockNext);
 
-      expect(mockNext).toHaveBeenCalledWith(expect.any(UnauthorizedError));
+      expect(mockNext).toHaveBeenCalledWith(expect.any(ForbiddenError));
     });
   });
 });

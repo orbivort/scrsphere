@@ -1,6 +1,7 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
+import { screen, fireEvent, renderWithProviders } from '@/test-utils';
 
+import { initTestI18n } from '@/test-utils';
 import { TeamMemberSelect } from './TeamMemberSelect';
 import type { TeamMember, User } from '../../types';
 
@@ -33,6 +34,10 @@ const createMockTeamMember = (overrides: Partial<TeamMember> = {}): TeamMember =
 describe('TeamMemberSelect Component', () => {
   const mockOnChange = vi.fn();
 
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -40,21 +45,25 @@ describe('TeamMemberSelect Component', () => {
   describe('Component Rendering Tests', () => {
     it('should render select element', () => {
       const teamMembers = [createMockTeamMember()];
-      render(<TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />);
+      renderWithProviders(
+        <TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />
+      );
 
       expect(screen.getByRole('combobox')).toBeInTheDocument();
     });
 
     it('should render default label', () => {
       const teamMembers = [createMockTeamMember()];
-      render(<TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />);
+      renderWithProviders(
+        <TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />
+      );
 
       expect(screen.getByText('Assign to')).toBeInTheDocument();
     });
 
     it('should render custom label', () => {
       const teamMembers = [createMockTeamMember()];
-      render(
+      renderWithProviders(
         <TeamMemberSelect
           value=""
           onChange={mockOnChange}
@@ -68,7 +77,9 @@ describe('TeamMemberSelect Component', () => {
 
     it('should render Unassigned option', () => {
       const teamMembers = [createMockTeamMember()];
-      render(<TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />);
+      renderWithProviders(
+        <TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />
+      );
 
       expect(screen.getByText('Unassigned')).toBeInTheDocument();
     });
@@ -86,7 +97,9 @@ describe('TeamMemberSelect Component', () => {
           user: createMockUser({ id: 'user-2', firstName: 'Jane', lastName: 'Smith' }),
         }),
       ];
-      render(<TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />);
+      renderWithProviders(
+        <TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />
+      );
 
       expect(screen.getByText('John Doe (Developer)')).toBeInTheDocument();
       expect(screen.getByText('Jane Smith (Developer)')).toBeInTheDocument();
@@ -96,28 +109,36 @@ describe('TeamMemberSelect Component', () => {
   describe('Role Label Tests', () => {
     it('should display Product Owner role correctly', () => {
       const teamMembers = [createMockTeamMember({ role: 'product_owner' })];
-      render(<TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />);
+      renderWithProviders(
+        <TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />
+      );
 
       expect(screen.getByText('John Doe (Product Owner)')).toBeInTheDocument();
     });
 
     it('should display Scrum Master role correctly', () => {
       const teamMembers = [createMockTeamMember({ role: 'scrum_master' })];
-      render(<TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />);
+      renderWithProviders(
+        <TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />
+      );
 
       expect(screen.getByText('John Doe (Scrum Master)')).toBeInTheDocument();
     });
 
     it('should display Developer role correctly', () => {
       const teamMembers = [createMockTeamMember({ role: 'developer' })];
-      render(<TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />);
+      renderWithProviders(
+        <TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />
+      );
 
       expect(screen.getByText('John Doe (Developer)')).toBeInTheDocument();
     });
 
     it('should display unknown role as-is', () => {
       const teamMembers = [createMockTeamMember({ role: 'custom_role' as any })];
-      render(<TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />);
+      renderWithProviders(
+        <TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />
+      );
 
       expect(screen.getByText('John Doe (custom_role)')).toBeInTheDocument();
     });
@@ -130,7 +151,9 @@ describe('TeamMemberSelect Component', () => {
           user: createMockUser({ firstName: 'John', lastName: 'Doe' }),
         }),
       ];
-      render(<TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />);
+      renderWithProviders(
+        <TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />
+      );
 
       expect(screen.getByText('John Doe (Developer)')).toBeInTheDocument();
     });
@@ -141,7 +164,9 @@ describe('TeamMemberSelect Component', () => {
           user: createMockUser({ firstName: '', lastName: '', email: 'test@example.com' }),
         }),
       ];
-      render(<TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />);
+      renderWithProviders(
+        <TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />
+      );
 
       expect(screen.getByText('test@example.com (Developer)')).toBeInTheDocument();
     });
@@ -152,7 +177,9 @@ describe('TeamMemberSelect Component', () => {
           user: undefined as any,
         }),
       ];
-      render(<TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />);
+      renderWithProviders(
+        <TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />
+      );
 
       expect(screen.getByText('Unknown User (Developer)')).toBeInTheDocument();
     });
@@ -163,7 +190,9 @@ describe('TeamMemberSelect Component', () => {
           user: createMockUser({ firstName: 'John', lastName: '', email: 'john@example.com' }),
         }),
       ];
-      render(<TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />);
+      renderWithProviders(
+        <TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />
+      );
 
       expect(screen.getByText('john@example.com (Developer)')).toBeInTheDocument();
     });
@@ -179,7 +208,9 @@ describe('TeamMemberSelect Component', () => {
           user: createMockUser({ id: 'user-2' }),
         }),
       ];
-      render(<TeamMemberSelect value="user-2" onChange={mockOnChange} teamMembers={teamMembers} />);
+      renderWithProviders(
+        <TeamMemberSelect value="user-2" onChange={mockOnChange} teamMembers={teamMembers} />
+      );
 
       const select = screen.getByRole('combobox');
       expect(select).toHaveValue('user-2');
@@ -187,7 +218,9 @@ describe('TeamMemberSelect Component', () => {
 
     it('should have empty value when no selection', () => {
       const teamMembers = [createMockTeamMember()];
-      render(<TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />);
+      renderWithProviders(
+        <TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />
+      );
 
       const select = screen.getByRole('combobox');
       expect(select).toHaveValue('');
@@ -204,7 +237,9 @@ describe('TeamMemberSelect Component', () => {
           user: createMockUser({ id: 'user-2' }),
         }),
       ];
-      render(<TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />);
+      renderWithProviders(
+        <TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />
+      );
 
       const select = screen.getByRole('combobox');
       fireEvent.change(select, { target: { value: 'user-2' } });
@@ -214,7 +249,9 @@ describe('TeamMemberSelect Component', () => {
 
     it('should call onChange with empty string when Unassigned is selected', () => {
       const teamMembers = [createMockTeamMember()];
-      render(<TeamMemberSelect value="user-1" onChange={mockOnChange} teamMembers={teamMembers} />);
+      renderWithProviders(
+        <TeamMemberSelect value="user-1" onChange={mockOnChange} teamMembers={teamMembers} />
+      );
 
       const select = screen.getByRole('combobox');
       fireEvent.change(select, { target: { value: '' } });
@@ -226,7 +263,9 @@ describe('TeamMemberSelect Component', () => {
   describe('Disabled State Tests', () => {
     it('should not be disabled by default', () => {
       const teamMembers = [createMockTeamMember()];
-      render(<TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />);
+      renderWithProviders(
+        <TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />
+      );
 
       const select = screen.getByRole('combobox');
       expect(select).not.toBeDisabled();
@@ -234,7 +273,7 @@ describe('TeamMemberSelect Component', () => {
 
     it('should be disabled when disabled prop is true', () => {
       const teamMembers = [createMockTeamMember()];
-      render(
+      renderWithProviders(
         <TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} disabled />
       );
 
@@ -244,7 +283,7 @@ describe('TeamMemberSelect Component', () => {
 
     it('should not call onChange when disabled', () => {
       const teamMembers = [createMockTeamMember()];
-      render(
+      renderWithProviders(
         <TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} disabled />
       );
 
@@ -258,7 +297,7 @@ describe('TeamMemberSelect Component', () => {
   describe('Accessibility Tests', () => {
     it('should have aria-label attribute', () => {
       const teamMembers = [createMockTeamMember()];
-      render(
+      renderWithProviders(
         <TeamMemberSelect
           value=""
           onChange={mockOnChange}
@@ -273,7 +312,9 @@ describe('TeamMemberSelect Component', () => {
 
     it('should have default aria-label', () => {
       const teamMembers = [createMockTeamMember()];
-      render(<TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />);
+      renderWithProviders(
+        <TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />
+      );
 
       const select = screen.getByRole('combobox');
       expect(select).toHaveAttribute('aria-label', 'Assign to');
@@ -282,7 +323,7 @@ describe('TeamMemberSelect Component', () => {
 
   describe('Edge Case Tests', () => {
     it('should handle empty team members array', () => {
-      render(<TeamMemberSelect value="" onChange={mockOnChange} teamMembers={[]} />);
+      renderWithProviders(<TeamMemberSelect value="" onChange={mockOnChange} teamMembers={[]} />);
 
       expect(screen.getByText('Unassigned')).toBeInTheDocument();
     });
@@ -293,7 +334,9 @@ describe('TeamMemberSelect Component', () => {
           user: { id: 'user-1', email: 'partial@example.com' } as any,
         }),
       ];
-      render(<TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />);
+      renderWithProviders(
+        <TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />
+      );
 
       expect(screen.getByText('partial@example.com (Developer)')).toBeInTheDocument();
     });
@@ -306,7 +349,9 @@ describe('TeamMemberSelect Component', () => {
           user: createMockUser({ id: `user-${i}`, firstName: `User${i}`, lastName: 'Test' }),
         })
       );
-      render(<TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />);
+      renderWithProviders(
+        <TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />
+      );
 
       teamMembers.forEach((member) => {
         expect(

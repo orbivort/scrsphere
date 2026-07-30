@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { renderWithProviders, screen, waitFor, initTestI18n, i18nT } from '../../../test-utils';
+import { vi, describe, it, expect, beforeEach, beforeAll } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { TaskList, type TaskListProps } from './TaskList';
 import { TaskStatus } from '../../../types';
@@ -53,13 +53,17 @@ describe('TaskList Component', () => {
     emptyMessage: 'No tasks assigned to you yet.',
   };
 
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   describe('Rendering', () => {
     it('should render task list with tasks', () => {
-      render(<TaskList {...defaultProps} />);
+      renderWithProviders(<TaskList {...defaultProps} />);
 
       expect(screen.getByText('Implement login')).toBeInTheDocument();
       expect(screen.getByText('Implement logout')).toBeInTheDocument();
@@ -67,16 +71,16 @@ describe('TaskList Component', () => {
     });
 
     it('should display task status badges', () => {
-      render(<TaskList {...defaultProps} />);
+      renderWithProviders(<TaskList {...defaultProps} />);
 
-      const doneBadges = screen.getAllByText('DONE');
-      const inProgressBadges = screen.getAllByText('IN PROGRESS');
+      const doneBadges = screen.getAllByText(i18nT('dashboard:taskStatus.DONE'));
+      const inProgressBadges = screen.getAllByText(i18nT('dashboard:taskStatus.IN_PROGRESS'));
       expect(doneBadges.length).toBeGreaterThan(0);
       expect(inProgressBadges.length).toBeGreaterThan(0);
     });
 
     it('should render all tasks with correct structure', () => {
-      render(<TaskList {...defaultProps} />);
+      renderWithProviders(<TaskList {...defaultProps} />);
 
       expect(screen.getByText('Implement login')).toBeInTheDocument();
       expect(screen.getByText('Implement logout')).toBeInTheDocument();
@@ -85,13 +89,13 @@ describe('TaskList Component', () => {
     });
 
     it('should render empty message when no tasks', () => {
-      render(<TaskList {...defaultProps} tasks={[]} />);
+      renderWithProviders(<TaskList {...defaultProps} tasks={[]} />);
 
       expect(screen.getByText('No tasks assigned to you yet.')).toBeInTheDocument();
     });
 
     it('should have proper ARIA attributes', () => {
-      render(<TaskList {...defaultProps} />);
+      renderWithProviders(<TaskList {...defaultProps} />);
 
       const list = screen.getByRole('list', { name: 'Task list' });
       expect(list).toBeInTheDocument();
@@ -101,7 +105,7 @@ describe('TaskList Component', () => {
   describe('Task Click Handler', () => {
     it('should call onTaskClick when task is clicked', async () => {
       const mockOnTaskClick = vi.fn();
-      render(<TaskList {...defaultProps} onTaskClick={mockOnTaskClick} />);
+      renderWithProviders(<TaskList {...defaultProps} onTaskClick={mockOnTaskClick} />);
 
       const taskItem = screen.getByText('Implement login').closest('[role="button"]');
       if (taskItem) {
@@ -114,7 +118,7 @@ describe('TaskList Component', () => {
     });
 
     it('should not make tasks clickable when onTaskClick is not provided', () => {
-      render(<TaskList {...defaultProps} />);
+      renderWithProviders(<TaskList {...defaultProps} />);
 
       const taskItem = screen.getByText('Implement login').closest('li');
       expect(taskItem).not.toHaveAttribute('role', 'button');
@@ -123,7 +127,7 @@ describe('TaskList Component', () => {
 
   describe('Keyboard Navigation', () => {
     it('should not have keyboard navigation when onTaskClick is not provided', () => {
-      render(<TaskList {...defaultProps} />);
+      renderWithProviders(<TaskList {...defaultProps} />);
 
       const list = screen.getByRole('list', { name: 'Task list' });
       expect(list).not.toHaveAttribute('aria-activedescendant');
@@ -131,7 +135,7 @@ describe('TaskList Component', () => {
 
     it('should have aria-activedescendant when onTaskClick is provided', () => {
       const mockOnTaskClick = vi.fn();
-      render(<TaskList {...defaultProps} onTaskClick={mockOnTaskClick} />);
+      renderWithProviders(<TaskList {...defaultProps} onTaskClick={mockOnTaskClick} />);
 
       const list = screen.getByRole('list', { name: 'Task list' });
       expect(list).toHaveAttribute('aria-activedescendant');
@@ -140,7 +144,7 @@ describe('TaskList Component', () => {
     it('should navigate down with ArrowDown key and loop around', async () => {
       const user = userEvent.setup();
       const mockOnTaskClick = vi.fn();
-      render(<TaskList {...defaultProps} onTaskClick={mockOnTaskClick} />);
+      renderWithProviders(<TaskList {...defaultProps} onTaskClick={mockOnTaskClick} />);
 
       const list = screen.getByRole('list', { name: 'Task list' });
       const firstItem = screen
@@ -160,7 +164,7 @@ describe('TaskList Component', () => {
     it('should navigate up with ArrowUp key and loop around', async () => {
       const user = userEvent.setup();
       const mockOnTaskClick = vi.fn();
-      render(<TaskList {...defaultProps} onTaskClick={mockOnTaskClick} />);
+      renderWithProviders(<TaskList {...defaultProps} onTaskClick={mockOnTaskClick} />);
 
       const firstItem = screen
         .getByText('Implement login')
@@ -176,7 +180,7 @@ describe('TaskList Component', () => {
     it('should jump to first item with Home key', async () => {
       const user = userEvent.setup();
       const mockOnTaskClick = vi.fn();
-      render(<TaskList {...defaultProps} onTaskClick={mockOnTaskClick} />);
+      renderWithProviders(<TaskList {...defaultProps} onTaskClick={mockOnTaskClick} />);
 
       const list = screen.getByRole('list', { name: 'Task list' });
 
@@ -188,7 +192,7 @@ describe('TaskList Component', () => {
     it('should jump to last item with End key', async () => {
       const user = userEvent.setup();
       const mockOnTaskClick = vi.fn();
-      render(<TaskList {...defaultProps} onTaskClick={mockOnTaskClick} />);
+      renderWithProviders(<TaskList {...defaultProps} onTaskClick={mockOnTaskClick} />);
 
       const list = screen.getByRole('list', { name: 'Task list' });
       await user.keyboard('{End}');
@@ -198,7 +202,7 @@ describe('TaskList Component', () => {
     it('should trigger click action with Enter key', async () => {
       const user = userEvent.setup();
       const mockOnTaskClick = vi.fn();
-      render(<TaskList {...defaultProps} onTaskClick={mockOnTaskClick} />);
+      renderWithProviders(<TaskList {...defaultProps} onTaskClick={mockOnTaskClick} />);
 
       const firstItem = screen
         .getByText('Implement login')
@@ -212,7 +216,7 @@ describe('TaskList Component', () => {
     it('should trigger click action with Space key', async () => {
       const user = userEvent.setup();
       const mockOnTaskClick = vi.fn();
-      render(<TaskList {...defaultProps} onTaskClick={mockOnTaskClick} />);
+      renderWithProviders(<TaskList {...defaultProps} onTaskClick={mockOnTaskClick} />);
 
       const firstItem = screen
         .getByText('Implement login')
@@ -226,7 +230,7 @@ describe('TaskList Component', () => {
     it('should blur list with Escape key', async () => {
       const user = userEvent.setup();
       const mockOnTaskClick = vi.fn();
-      render(<TaskList {...defaultProps} onTaskClick={mockOnTaskClick} />);
+      renderWithProviders(<TaskList {...defaultProps} onTaskClick={mockOnTaskClick} />);
 
       const firstItem = screen
         .getByText('Implement login')
@@ -242,7 +246,7 @@ describe('TaskList Component', () => {
   describe('Task Filtering', () => {
     it('should only display tasks that match filter criteria', () => {
       const filteredTasks = mockTasks.filter((task) => task.assigneeId === 'user-1');
-      render(<TaskList {...defaultProps} tasks={filteredTasks} />);
+      renderWithProviders(<TaskList {...defaultProps} tasks={filteredTasks} />);
 
       expect(screen.getByText('Implement login')).toBeInTheDocument();
       expect(screen.getByText('Implement logout')).toBeInTheDocument();

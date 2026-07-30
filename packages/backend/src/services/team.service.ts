@@ -9,7 +9,6 @@ import {
   type TeamMember,
   type User,
   type UserRole,
-  type Prisma,
 } from '../generated/prisma/client';
 import { logger } from '../utils/logger';
 
@@ -120,6 +119,7 @@ class TeamService {
                   firstName: true,
                   lastName: true,
                   avatarUrl: true,
+                  locale: true,
                 },
               },
             },
@@ -188,6 +188,7 @@ class TeamService {
                 firstName: true,
                 lastName: true,
                 avatarUrl: true,
+                locale: true,
               },
             },
           },
@@ -257,6 +258,7 @@ class TeamService {
                 firstName: true,
                 lastName: true,
                 avatarUrl: true,
+                locale: true,
               },
             },
           },
@@ -271,19 +273,15 @@ class TeamService {
     });
     if (creator) {
       try {
-        await prisma.notification.create({
-          data: {
-            id: generateUUIDv7(),
-            userId,
-            type: NotificationType.TEAM_CREATED,
-            title: `Team created: "${team.name}"`,
-            message: `You have successfully created the team`,
-            data: {
-              teamId: team.id,
-              teamName: team.name,
-            } as Prisma.InputJsonValue,
-            createdBy: userId,
-          },
+        await notificationService.createLocalized({
+          userId,
+          type: NotificationType.TEAM_CREATED,
+          titleKey: 'teamCreated',
+          titleParams: { teamName: team.name },
+          messageKey: 'teamCreatedMessage',
+          messageParams: { teamName: team.name },
+          data: { teamId: team.id, teamName: team.name },
+          createdBy: userId,
         });
       } catch (error) {
         logger.error('Failed to create team creation notification', { error });
@@ -331,6 +329,7 @@ class TeamService {
                 firstName: true,
                 lastName: true,
                 avatarUrl: true,
+                locale: true,
               },
             },
           },
@@ -347,21 +346,24 @@ class TeamService {
       const membersToNotify = team.members.filter((member) => member.userId !== userId);
 
       if (membersToNotify.length > 0) {
-        const notificationData = membersToNotify.map((member) => ({
-          id: generateUUIDv7(),
-          userId: member.userId,
-          type: NotificationType.TEAM_UPDATED,
-          title: `Team updated: "${team.name}"`,
-          message: `Updated by ${updater.firstName} ${updater.lastName}`,
-          data: {
-            teamId: team.id,
-            teamName: team.name,
-          } as Prisma.InputJsonValue,
-          createdBy: userId,
-        }));
+        const notificationPromises = membersToNotify.map((member) =>
+          notificationService.createLocalized({
+            userId: member.userId,
+            type: NotificationType.TEAM_UPDATED,
+            titleKey: 'teamUpdated',
+            titleParams: { teamName: team.name },
+            messageKey: 'teamUpdatedMessage',
+            messageParams: {
+              teamName: team.name,
+              updaterName: `${updater.firstName} ${updater.lastName}`,
+            },
+            data: { teamId: team.id, teamName: team.name },
+            createdBy: userId,
+          })
+        );
 
         try {
-          await prisma.notification.createMany({ data: notificationData });
+          await Promise.all(notificationPromises);
         } catch (error) {
           logger.error('Failed to create team update notifications', { error });
         }
@@ -408,21 +410,24 @@ class TeamService {
       const membersToNotify = team.members.filter((member: TeamMember) => member.userId !== userId);
 
       if (membersToNotify.length > 0) {
-        const notificationData = membersToNotify.map((member: TeamMember) => ({
-          id: generateUUIDv7(),
-          userId: member.userId,
-          type: NotificationType.TEAM_DELETED,
-          title: `Team deleted: "${team.name}"`,
-          message: `Deleted by ${deleter.firstName} ${deleter.lastName}`,
-          data: {
-            teamId: team.id,
-            teamName: team.name,
-          } as Prisma.InputJsonValue,
-          createdBy: userId,
-        }));
+        const notificationPromises = membersToNotify.map((member: TeamMember) =>
+          notificationService.createLocalized({
+            userId: member.userId,
+            type: NotificationType.TEAM_DELETED,
+            titleKey: 'teamDeleted',
+            titleParams: { teamName: team.name },
+            messageKey: 'teamDeletedMessage',
+            messageParams: {
+              teamName: team.name,
+              deleterName: `${deleter.firstName} ${deleter.lastName}`,
+            },
+            data: { teamId: team.id, teamName: team.name },
+            createdBy: userId,
+          })
+        );
 
         try {
-          await prisma.notification.createMany({ data: notificationData });
+          await Promise.all(notificationPromises);
         } catch (error) {
           logger.error('Failed to create team deletion notifications', { error });
         }
@@ -489,11 +494,16 @@ class TeamService {
     const inviter = await prisma.user.findUnique({ where: { id: userId } });
 
     if (team && inviter) {
-      await notificationService.create({
+      await notificationService.createLocalized({
         userId: userToAdd.id,
         type: NotificationType.TEAM_INVITATION,
-        title: `You've been invited to join team "${team.name}"`,
-        message: `Invited by ${inviter.firstName} ${inviter.lastName}`,
+        titleKey: 'teamInvitation',
+        titleParams: { teamName: team.name },
+        messageKey: 'teamInvitationMessage',
+        messageParams: {
+          teamName: team.name,
+          inviterName: `${inviter.firstName} ${inviter.lastName}`,
+        },
         data: { teamId: team.id, teamName: team.name },
         createdBy: userId,
       });
@@ -547,11 +557,16 @@ class TeamService {
 
     // Create notification for the removed user
     if (team && remover) {
-      await notificationService.create({
+      await notificationService.createLocalized({
         userId: removedUserId,
         type: NotificationType.TEAM_REMOVAL,
-        title: `You've been removed from team "${team.name}"`,
-        message: `Removed by ${remover.firstName} ${remover.lastName}`,
+        titleKey: 'teamRemoval',
+        titleParams: { teamName: team.name },
+        messageKey: 'teamRemovalMessage',
+        messageParams: {
+          teamName: team.name,
+          removerName: `${remover.firstName} ${remover.lastName}`,
+        },
         data: { teamId: team.id, teamName: team.name },
         createdBy: userId,
       });

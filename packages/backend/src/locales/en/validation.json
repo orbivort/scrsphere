@@ -1,0 +1,39 @@
+{
+  "auth": {
+    "confirmPasswordRequired": "Password confirmation is required",
+    "currentPasswordRequired": "Current password is required",
+    "deleteConfirmation": "Confirmation must be exactly \"DELETE MY ACCOUNT\"",
+    "emailRequired": "Email is required",
+    "invalidEmail": "Please enter a valid email address",
+    "invalidPassword": "Password is invalid",
+    "newPasswordRequired": "New password is required",
+    "passwordNeedsLowercase": "Password must contain a lowercase letter",
+    "passwordNeedsNumber": "Password must contain a number",
+    "passwordNeedsSpecialChar": "Password must contain a special character",
+    "passwordNeedsUppercase": "Password must contain an uppercase letter",
+    "passwordRequired": "Password is required",
+    "passwordTooShort": "Password does not meet the minimum length requirement",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "refreshTokenRequired": "Refresh token is required",
+    "resetTokenRequired": "Reset token is required",
+    "scheduleDeletionConfirmation": "Confirmation must be exactly \"SCHEDULE DELETION\"",
+    "termsRequired": "You must accept the terms of service"
+  },
+  "fieldRequired": "This field is required",
+  "fieldTooLong": "This field is too long",
+  "firstName": "First name",
+  "invalidEmail": "Please enter a valid email address",
+  "lastName": "Last name",
+  "passwordTooShort": "Password must be at least {{min}} characters",
+  "passwordsDoNotMatch": "Passwords do not match",
+  "workflow": {
+    "authenticationRequired": "User authentication required for this transition",
+    "initialStatusMustBe": "Initial status must be {{defaultStatus}}",
+    "noWorkflow": "No workflow configured for entity type {{entityType}}",
+    "permissionDenied": "You do not have permission to perform this transition",
+    "permissionDeniedRoles": "You do not have permission to perform this transition. Required roles: {{roles}}",
+    "targetStateNotFound": "Target state {{toStatus}} does not exist in workflow",
+    "transitionDisabled": "This transition is currently disabled",
+    "transitionNotAllowed": "Transition from {{fromStatus}} to {{toStatus}} is not allowed"
+  }
+}

@@ -9,11 +9,14 @@
 
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
+import { formatLocaleDate } from '@scrumooth/shared';
 
 import { apiService } from '../../../services';
 
 import styles from './StatusChangeHistoryTimeline.module.css';
 
+import { useI18nStore } from '@/i18n/useI18nStore';
 import {
   ClockIcon,
   ChevronDownIcon,
@@ -94,6 +97,8 @@ export const StatusChangeHistoryTimeline: React.FC<StatusChangeHistoryTimelinePr
   entityId,
   entityType,
 }) => {
+  const { t } = useTranslation('backlog');
+  const { locale } = useI18nStore();
   const [isExpanded, setIsExpanded] = useState(false);
 
   const {
@@ -125,7 +130,7 @@ export const StatusChangeHistoryTimeline: React.FC<StatusChangeHistoryTimelinePr
     if (diffMins < 60) return `${diffMins}m ago`;
     if (diffHours < 24) return `${diffHours}h ago`;
     if (diffDays < 7) return `${diffDays}d ago`;
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    return formatLocaleDate(date, locale);
   };
 
   /**
@@ -166,7 +171,7 @@ export const StatusChangeHistoryTimeline: React.FC<StatusChangeHistoryTimelinePr
       >
         <div className={styles['history-toggle-left']}>
           <ClockIcon size={16} />
-          <h3 className={styles['section-heading']}>Status History</h3>
+          <h3 className={styles['section-heading']}>{t('statusHistory.title') as string}</h3>
         </div>
         <ChevronDownIcon
           size={16}
@@ -181,21 +186,21 @@ export const StatusChangeHistoryTimeline: React.FC<StatusChangeHistoryTimelinePr
               <div className={styles['loading-spinner']}>
                 <div className={styles['spinner-ring']} />
               </div>
-              <span>Loading history...</span>
+              <span>{t('statusHistory.loadingHistory') as string}</span>
             </div>
           )}
 
           {error && (
             <div className={styles['history-error']}>
               <InfoIcon size={16} />
-              <span>Failed to load history</span>
+              <span>{t('statusHistory.failedToLoadHistory') as string}</span>
             </div>
           )}
 
           {!isLoading && !error && history.length === 0 && (
             <div className={styles['history-empty']}>
               <ClockIcon size={32} />
-              <span>No status changes recorded yet</span>
+              <span>{t('statusHistory.noStatusChangesYet') as string}</span>
             </div>
           )}
 

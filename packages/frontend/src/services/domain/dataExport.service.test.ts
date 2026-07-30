@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { dataExportService } from './dataExport.service';
 import { apiService } from '../index';
+import { coreApiService } from '../core/api.core';
 
 vi.mock('../index', () => ({
   apiService: {
@@ -9,6 +10,15 @@ vi.mock('../index', () => ({
     delete: vi.fn(),
     downloadExport: vi.fn(),
     cancelExport: vi.fn(),
+  },
+}));
+
+vi.mock('../core/api.core', () => ({
+  coreApiService: {
+    axiosInstance: {
+      get: vi.fn(),
+      delete: vi.fn(),
+    },
   },
 }));
 
@@ -149,16 +159,19 @@ describe('DataExportService', () => {
   describe('downloadExport', () => {
     it('should download export file as blob', async () => {
       const mockBlob = new Blob(['export data'], { type: 'application/json' });
-      vi.mocked(apiService.downloadExport).mockResolvedValue(mockBlob);
+      vi.mocked(coreApiService.axiosInstance.get).mockResolvedValue({ data: mockBlob });
 
       const result = await dataExportService.downloadExport('export-123');
 
-      expect(apiService.downloadExport).toHaveBeenCalledWith('export-123');
+      expect(coreApiService.axiosInstance.get).toHaveBeenCalledWith(
+        '/user/export-data/download/export-123',
+        { responseType: 'blob' }
+      );
       expect(result).toBe(mockBlob);
     });
 
     it('should handle download errors', async () => {
-      vi.mocked(apiService.downloadExport).mockRejectedValue(new Error('File not found'));
+      vi.mocked(coreApiService.axiosInstance.get).mockRejectedValue(new Error('File not found'));
 
       await expect(dataExportService.downloadExport('invalid-id')).rejects.toThrow(
         'File not found'
@@ -168,15 +181,19 @@ describe('DataExportService', () => {
 
   describe('cancelExport', () => {
     it('should cancel an active export', async () => {
-      vi.mocked(apiService.cancelExport).mockResolvedValue(undefined);
+      vi.mocked(coreApiService.axiosInstance.delete).mockResolvedValue(undefined);
 
       await dataExportService.cancelExport('export-123');
 
-      expect(apiService.cancelExport).toHaveBeenCalledWith('export-123');
+      expect(coreApiService.axiosInstance.delete).toHaveBeenCalledWith(
+        '/user/export-data/export-123'
+      );
     });
 
     it('should handle cancel errors', async () => {
-      vi.mocked(apiService.cancelExport).mockRejectedValue(new Error('Export already completed'));
+      vi.mocked(coreApiService.axiosInstance.delete).mockRejectedValue(
+        new Error('Export already completed')
+      );
 
       await expect(dataExportService.cancelExport('export-123')).rejects.toThrow(
         'Export already completed'

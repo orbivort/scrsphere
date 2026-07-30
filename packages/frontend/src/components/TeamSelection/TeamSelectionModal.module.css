@@ -142,7 +142,7 @@
     border-color var(--transition-normal),
     box-shadow var(--transition-normal),
     transform var(--transition-normal);
-  text-align: left;
+  text-align: start;
   position: relative;
   overflow: hidden;
 }

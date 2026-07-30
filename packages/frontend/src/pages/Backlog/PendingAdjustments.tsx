@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
+import { formatLocaleDate } from '@scrumooth/shared';
 
 import { LoadingState } from '../../components/common/Loading';
 import { apiService } from '../../services';
@@ -19,6 +21,8 @@ import {
 
 import styles from './PendingAdjustments.module.css';
 
+import { useI18nStore } from '@/i18n/useI18nStore';
+
 interface BacklogAdjustmentWithSprint extends BacklogAdjustment {
   sprint?: {
     name: string;
@@ -31,6 +35,8 @@ interface PendingAdjustmentsProps {
 
 export const PendingAdjustments: React.FC<PendingAdjustmentsProps> = ({ onImplementAdd }) => {
   const { currentTeam } = useTeamStore();
+  const { t } = useTranslation('backlog');
+  const { locale } = useI18nStore();
   const teamId = currentTeam?.id;
   const queryClient = useQueryClient();
   const [isExpanded, setIsExpanded] = useState(true);
@@ -59,33 +65,33 @@ export const PendingAdjustments: React.FC<PendingAdjustmentsProps> = ({ onImplem
       : adjustments.filter((a: BacklogAdjustmentWithSprint) => a.action === filter);
 
   const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
+    return formatLocaleDate(dateStr, locale);
   };
 
   const getActionConfig = (action: string) => {
     const configs: Record<string, { label: string; icon: React.ReactNode; className: string }> = {
-      add: { label: 'Add', icon: <AddIcon size={12} />, className: styles['action-add'] ?? '' },
+      add: {
+        label: t('pendingAdjustments.add') as string,
+        icon: <AddIcon size={12} />,
+        className: styles['action-add'] ?? '',
+      },
       modify: {
-        label: 'Modify',
+        label: t('pendingAdjustments.modify') as string,
         icon: <ModifyIcon size={12} />,
         className: styles['action-modify'] ?? '',
       },
       remove: {
-        label: 'Remove',
+        label: t('pendingAdjustments.remove') as string,
         icon: <RemoveIcon size={12} />,
         className: styles['action-remove'] ?? '',
       },
       reorder: {
-        label: 'Reorder',
+        label: t('pendingAdjustments.reorder') as string,
         icon: <ReorderIcon size={12} />,
         className: styles['action-reorder'] ?? '',
       },
       split: {
-        label: 'Split',
+        label: t('pendingAdjustments.split') as string,
         icon: <ScissorsIcon size={12} />,
         className: styles['action-split'] ?? '',
       },
@@ -119,7 +125,7 @@ export const PendingAdjustments: React.FC<PendingAdjustmentsProps> = ({ onImplem
           <span className={styles.icon}>
             <BellRingIcon size={20} aria-hidden="true" />
           </span>
-          <h3 className={styles.title}>Pending Adjustments</h3>
+          <h3 className={styles.title}>{t('pendingAdjustments.headerTitle') as string}</h3>
           <span className={styles.count}>{adjustments.length}</span>
         </div>
         <button className={styles['toggle-button']}>
@@ -134,7 +140,7 @@ export const PendingAdjustments: React.FC<PendingAdjustmentsProps> = ({ onImplem
               className={`${styles['filter-button']} ${filter === 'all' ? styles.active : ''}`}
               onClick={() => setFilter('all')}
             >
-              All ({adjustments.length})
+              {t('pendingAdjustments.all') as string} ({adjustments.length})
             </button>
             {['add', 'modify', 'remove', 'reorder', 'split'].map((action) => {
               const count = adjustments.filter(
@@ -155,7 +161,11 @@ export const PendingAdjustments: React.FC<PendingAdjustmentsProps> = ({ onImplem
           </div>
 
           {isLoading ? (
-            <LoadingState variant="skeleton-list" itemCount={5} label="Loading adjustments" />
+            <LoadingState
+              variant="skeleton-list"
+              itemCount={5}
+              label={t('pendingAdjustments.loadingAdjustments') as string}
+            />
           ) : (
             <div className={styles['adjustments-list']}>
               {filteredAdjustments.map((adjustment: BacklogAdjustmentWithSprint) => {
@@ -172,12 +182,15 @@ export const PendingAdjustments: React.FC<PendingAdjustmentsProps> = ({ onImplem
                     <p className={styles.description}>{adjustment.description}</p>
 
                     <div className={styles.reason}>
-                      <strong>Reason:</strong> {adjustment.reason}
+                      <strong>{t('pendingAdjustments.reason') as string}</strong>{' '}
+                      {adjustment.reason}
                     </div>
 
                     {adjustment.sprint && (
                       <div className={styles['sprint-info']}>
-                        <span className={styles['sprint-label']}>From Sprint:</span>
+                        <span className={styles['sprint-label']}>
+                          {t('pendingAdjustments.fromSprint') as string}
+                        </span>
                         <span className={styles['sprint-name']}>{adjustment.sprint.name}</span>
                       </div>
                     )}
@@ -188,7 +201,7 @@ export const PendingAdjustments: React.FC<PendingAdjustmentsProps> = ({ onImplem
                           className={styles['implement-button']}
                           onClick={() => handleImplement(adjustment)}
                         >
-                          Create Item
+                          {t('pendingAdjustments.createItem') as string}
                         </button>
                       )}
                       <button
@@ -196,7 +209,9 @@ export const PendingAdjustments: React.FC<PendingAdjustmentsProps> = ({ onImplem
                         onClick={() => handleMarkImplemented(adjustment.id)}
                         disabled={implementMutation.isPending}
                       >
-                        {implementMutation.isPending ? 'Updating...' : 'Mark Done'}
+                        {implementMutation.isPending
+                          ? (t('pendingAdjustments.updating') as string)
+                          : (t('pendingAdjustments.markDone') as string)}
                       </button>
                     </div>
                   </div>

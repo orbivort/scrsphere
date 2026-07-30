@@ -39,3 +39,82 @@ export const ERROR_CODES = {
   CONFLICT: 'CONFLICT',
   INTERNAL_ERROR: 'INTERNAL_ERROR',
 } as const;
+
+export const SUPPORTED_LOCALES = ['en', 'de', 'fr', 'it', 'es'] as const;
+export type Locale = (typeof SUPPORTED_LOCALES)[number];
+export const DEFAULT_LOCALE: Locale = 'en';
+
+/**
+ * Development-only locale list that includes the pseudo-localization locale.
+ * Use this in dev builds to allow switching to the "pseudo" locale for
+ * visual testing of i18n string expansion and accent folding.
+ */
+export const SUPPORTED_LOCALES_DEV = [...SUPPORTED_LOCALES, 'pseudo', 'pseudo-rtl'] as const;
+export type LocaleDev = (typeof SUPPORTED_LOCALES_DEV)[number];
+
+export const LOCALE_LABELS: Record<Locale, string> = {
+  en: 'English',
+  de: 'Deutsch',
+  fr: 'Français',
+  it: 'Italiano',
+  es: 'Español',
+};
+
+export const LOCALE_CURRENCIES: Record<Locale, string> = {
+  en: 'EUR',
+  de: 'EUR',
+  fr: 'EUR',
+  it: 'EUR',
+  es: 'EUR',
+};
+
+/**
+ * Locale-specific date format patterns for input fields
+ * These formats match user expectations in each language/region
+ */
+export const DATE_INPUT_FORMATS: Record<Locale, string> = {
+  en: 'dd/MM/yyyy', // British format (matches enGB locale)
+  de: 'dd.MM.yyyy', // German format with dots
+  fr: 'dd/MM/yyyy', // French format
+  it: 'dd/MM/yyyy', // Italian format
+  es: 'dd/MM/yyyy', // Spanish format
+};
+
+/**
+ * Human-readable date format examples for each locale
+ * Used in placeholders and help text
+ */
+export const DATE_FORMAT_EXAMPLES: Record<Locale, string> = {
+  en: 'dd/mm/yyyy',
+  de: 'tt.mm.jjjj',
+  fr: 'jj/mm/aaaa',
+  it: 'gg/mm/aaaa',
+  es: 'dd/mm/aaaa',
+};
+
+/**
+ * Locale-specific date separators
+ */
+export const DATE_SEPARATORS: Record<Locale, string> = {
+  en: '/',
+  de: '.',
+  fr: '/',
+  it: '/',
+  es: '/',
+};
+
+/**
+ * BCP47 locale mapping for each supported locale.
+ * Used by Accept-Language resolution (resolve-accept-language).
+ * When adding a new locale, TypeScript will flag this as incomplete.
+ */
+export const LOCALE_BCP47_MAP: Record<Locale, string> = {
+  en: 'en-US',
+  de: 'de-DE',
+  fr: 'fr-FR',
+  es: 'es-ES',
+  it: 'it-IT',
+};
+
+/** Default BCP47 locale for Accept-Language fallback */
+export const BCP47_DEFAULT = 'en-US' as const;

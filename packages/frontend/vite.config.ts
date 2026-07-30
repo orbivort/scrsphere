@@ -111,6 +111,7 @@ export default defineConfig(({ mode }) => {
     test: {
       globals: true,
       environment: 'jsdom',
+      globalSetup: ['./src/globalSetup.ts'],
       setupFiles: ['./src/setupTests.ts'],
       env: {
         VITE_LOG_LEVEL: 'debug',

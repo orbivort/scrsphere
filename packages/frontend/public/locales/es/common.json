@@ -1,0 +1,716 @@
+{
+  "accountDeletion": {
+    "cancelFailed": "Error al cancelar la eliminación. Por favor intente de nuevo.",
+    "deleteFailed": "Error al eliminar la cuenta. Por favor intente de nuevo.",
+    "networkError": "Error de red. Por favor verifique su conexión e intente de nuevo.",
+    "scheduleFailed": "Error al programar la eliminación. Por favor intente de nuevo.",
+    "success": "Su cuenta ha sido eliminada exitosamente.",
+    "timeoutError": "La solicitud tardó demasiado. Por favor intente de nuevo."
+  },
+  "actions": "Acciones",
+  "add": "Añadir",
+  "all": "Todos",
+  "appName": "Scrumooth",
+  "apply": "Aplicar",
+  "aria": {
+    "cardView": "Vista de tarjetas",
+    "clearSearch": "Limpiar búsqueda",
+    "closeDialog": "Cerrar diálogo",
+    "closeErrorMessage": "Cerrar mensaje de error",
+    "closeForm": "Cerrar formulario",
+    "closeMenu": "Cerrar menú",
+    "closeModal": "Cerrar modal",
+    "closeNotification": "Cerrar notificación",
+    "collapseSidebar": "Contraer barra lateral",
+    "expandSidebar": "Expandir barra lateral",
+    "listView": "Vista de lista",
+    "loadingNotifications": "Cargando notificaciones",
+    "navigateTo": "Navegar a {{page}}",
+    "openMenu": "Abrir menú",
+    "skipToMainContent": "Ir al contenido principal",
+    "switchTeam": "Cambiar equipo",
+    "toggleSidebar": "Alternar barra lateral",
+    "viewMode": "Modo de vista"
+  },
+  "attendeeForm": {
+    "emailInvalid": "Por favor ingrese una dirección de correo electrónico válida",
+    "nameMaxLength": "El nombre debe tener 100 caracteres o menos",
+    "nameRequired": "El nombre es requerido",
+    "roleRequired": "El rol es requerido"
+  },
+  "attendeesSection": {
+    "absent": "Ausente",
+    "addAttendee": "Agregar asistente",
+    "addAttendeeSubtitle": "Agregar un nuevo asistente a esta sesión de revisión",
+    "addAttendeeTitle": "Agregar asistente",
+    "addAttendees": "Agregar asistentes",
+    "addAttendeesAriaLabel": "Agregar asistentes",
+    "attendanceCount": "{{attended}} / {{total}} asistieron",
+    "attended": "Asistió",
+    "cancel": "Cancelar",
+    "cannotAddToCompleted": "No se puede agregar a una revisión completada",
+    "closeModal": "Cerrar ventana",
+    "editAttendee": "Editar asistente",
+    "editAttendeeSubtitle": "Actualizar la información del asistente para esta revisión",
+    "editAttendeeTitle": "Editar asistente",
+    "emptyHint": "Marque los miembros del equipo arriba o agregue asistentes manualmente.",
+    "emptyMessage": "Aún no se registraron asistentes.",
+    "filterAll": "Todos ({{count}})",
+    "filterAll_one": "Todos ({{count}})",
+    "filterAll_other": "Todos ({{count}})",
+    "filterAriaLabel": "Filtrar asistentes por tipo",
+    "filterGuests": "Invitados ({{count}})",
+    "filterGuests_one": "Invitado ({{count}})",
+    "filterGuests_other": "Invitados ({{count}})",
+    "filterTeam": "Equipo ({{count}})",
+    "filterTeam_one": "Equipo ({{count}})",
+    "filterTeam_other": "Equipo ({{count}})",
+    "formAttendedLabel": "Asistió",
+    "formEmailLabel": "Correo electrónico",
+    "formEmailPlaceholder": "Ingrese la dirección de correo electrónico (opcional)",
+    "formNameLabel": "Nombre",
+    "formNamePlaceholder": "Ingrese el nombre del asistente",
+    "formNameRequired": "*",
+    "formRoleLabel": "Rol",
+    "formRoleRequired": "*",
+    "markAsAbsent": "Marcar como ausente",
+    "markAsAttended": "Marcar como asistió",
+    "removeAttendee": "Eliminar asistente",
+    "removeAttendeeConfirm": "Eliminar",
+    "removeAttendeeTitle": "Eliminar asistente",
+    "roleDeveloper": "Developer",
+    "roleProductOwner": "Product Owner",
+    "roleScrumMaster": "Scrum Master",
+    "roleStakeholder": "Interesado",
+    "saveError": "Error al guardar el asistente. Por favor intente de nuevo.",
+    "saving": "Guardando...",
+    "teamMemberCannotEdit": "Los miembros del equipo no pueden ser editados",
+    "title": "Asistentes",
+    "unmarkedTitle": "Miembros del equipo aún no marcados ({{count}})",
+    "unmarkedTitle_one": "Miembro del equipo aún no marcado ({{count}})",
+    "unmarkedTitle_other": "Miembros del equipo aún no marcados ({{count}})",
+    "update": "Actualizar"
+  },
+  "back": "Volver",
+  "backlogHint": "Este elemento estará presente en la página del Product Backlog para su acción.",
+  "by": "por",
+  "cancel": "Cancelar",
+  "characterCounter": {
+    "approachingLimit": "Acercándose al límite de caracteres",
+    "min": "{{current}}/{{max}} caracteres"
+  },
+  "chunkError": {
+    "description": "Una parte de la aplicación no se pudo cargar. Puede deberse a un problema de red o a una versión desactualizada.",
+    "reload": "Recargar",
+    "title": "No se puede cargar la página"
+  },
+  "clear": "Limpiar",
+  "close": "Cerrar",
+  "collapse": "Colapsar",
+  "confirm": "Confirmar",
+  "confirmDialog": {
+    "defaultMessage": "¿Está seguro de que desea continuar?",
+    "removeMessage": "¿Está seguro de que desea eliminar {{name}}?"
+  },
+  "copied": "¡Copiado!",
+  "copy": "Copiar",
+  "create": "Crear",
+  "created": "Creado",
+  "dateInput": {
+    "clearDate": "Borrar fecha",
+    "openCalendar": "Abrir calendario"
+  },
+  "delete": "Eliminar",
+  "deleteAccount": {
+    "accountToBeDeleted": "Cuenta a eliminar",
+    "afterDeletionDate": "Después de la fecha de eliminación, puede forzar la eliminación de su cuenta",
+    "associatedData": "Todos los datos asociados y el historial de actividad",
+    "canAssignNewPO": "Puede seguir asignando un nuevo Product Owner",
+    "canCancelAnytime": "Puede cancelar esta solicitud en cualquier momento",
+    "cancelDeletion": "Cancelar eliminación",
+    "close": "Cerrar",
+    "confirmationCheckbox": "Entiendo que esta acción es permanente y no se puede deshacer. Deseo eliminar mi cuenta y todos los datos asociados.",
+    "confirmationHelp": "Esto ayuda a evitar eliminaciones accidentales",
+    "confirmationInput": {
+      "error": "El texto no coincide. Por favor escriba exactamente:",
+      "instructions": "Escriba el texto exactamente como se muestra, sensible a mayúsculas/minúsculas, para activar el botón de eliminar. Presione Enter cuando el texto coincida para enviar.",
+      "label": "Para confirmar la eliminación, por favor escriba:",
+      "placeholder": "Escriba \"{{phrase}}\" para confirmar",
+      "success": "El texto de confirmación coincide"
+    },
+    "confirmationLabel": "Escriba <strong>{{phrase}}</strong> para confirmar",
+    "confirmationPlaceholder": "Escriba {{phrase}}",
+    "dangerZone": {
+      "collapse": "Colapsar zona de peligro",
+      "delete": "Eliminar",
+      "deleteAccount": {
+        "ariaLabel": "Eliminar permanentemente su cuenta",
+        "description": "Eliminar permanentemente su cuenta y todos los datos asociados",
+        "title": "Eliminar cuenta"
+      },
+      "expand": "Expandir zona de peligro",
+      "subtitle": "Irreversible y destructivo",
+      "title": "Zona de peligro"
+    },
+    "dataWillBeDeleted": "Datos que serán eliminados",
+    "deleteAccount": "Eliminar cuenta",
+    "deleteAnyway": "Eliminar de todos modos",
+    "deleting": "Eliminando...",
+    "deletionRightsNotice": {
+      "afterGracePeriod": "Después de 14 días, puede eliminar permanentemente su cuenta independientemente.",
+      "description": "Tiene derecho a eliminar su cuenta. Como es el último Product Owner, le pedimos que programe la eliminación con un período de gracia de 14 días para que sus equipos puedan prepararse.",
+      "list": {
+        "assignNewPO": "Puede asignar un nuevo Product Owner",
+        "cancelAnytime": "Puede cancelar la eliminación en cualquier momento",
+        "teamMembersNotified": "Los miembros del equipo serán notificados"
+      },
+      "title": "Su derecho al borrado"
+    },
+    "forceCheckbox": "Entiendo que los equipos perderán su Product Owner y deseo eliminar permanentemente mi cuenta de todos modos.",
+    "forceConfirmationHelp": "Esta acción no se puede deshacer",
+    "forceDeleteWarning": {
+      "description": "El período de gracia de 14 días ha terminado. Ahora puede eliminar permanentemente su cuenta.",
+      "impact": {
+        "cannotUndo": "Esta acción NO SE PUEDE deshacer",
+        "deleteAllData": "Eliminar permanentemente todos sus datos",
+        "removePO": "Eliminarle como Product Owner de equipos sin reemplazo asignado",
+        "title": "Esto hará:"
+      },
+      "teams": {
+        "consequences": "Estos equipos no podrán agregar o eliminar miembros del equipo, gestionar Sprints o acceder a la configuración del equipo.",
+        "title": "Los siguientes equipos tendrán SIN Product Owner:"
+      },
+      "title": "Período de gracia completado"
+    },
+    "gracePeriodProgress": {
+      "daysRemaining": "Días restantes",
+      "deletionDate": "Fecha de eliminación",
+      "progressAriaLabel": "{{percent}}% del período de gracia transcurrido",
+      "requested": "Solicitada",
+      "title": "Eliminación programada"
+    },
+    "profileAndAccount": "Su perfil e información de cuenta",
+    "scheduleCheckbox": "Entiendo que comience un período de gracia de 14 días, durante el cual se notificará a los miembros del equipo. Puedo cancelar en cualquier momento.",
+    "scheduleConfirmationHelp": "Esto inicia un período de gracia de 14 días",
+    "scheduleConfirmationLabel": "Escriba <strong>{{phrase}}</strong> para programar la eliminación",
+    "scheduleConfirmationPlaceholder": "Escriba {{phrase}}",
+    "scheduleDeletion": "Programar eliminación",
+    "scheduling": "Programando...",
+    "teamImpact": {
+      "blocked": {
+        "goToSettings": "Ir a configuración del equipo",
+        "goToSettingsAria": "Ir a configuración de {{teamName}} para asignar un nuevo Product Owner",
+        "warning": "Es el único Product Owner. Si elimina su cuenta, este equipo no tendrá Product Owner. Puede programar la eliminación con un período de gracia de 14 días."
+      },
+      "description": "Es miembro de {{count}} equipo",
+      "description_one": "Es miembro de {{count}} equipo",
+      "description_other": "Es miembro de {{count}} equipo",
+      "description_plural": "Es miembro de {{count}} equipos",
+      "regular": {
+        "message": "Será eliminado de este equipo."
+      },
+      "title": "Impacto en equipos"
+    },
+    "teamMembersNotified": "Los miembros del equipo han sido notificados",
+    "teamMemberships": "Membresías de equipos y roles",
+    "teamsCount": "({{count}} equipos)",
+    "teamsCount_one": "({{count}} equipo)",
+    "teamsCount_other": "({{count}} equipos)",
+    "title": "Eliminar cuenta",
+    "warningTitle": "Esta acción es permanente y no se puede deshacer. Todos sus datos serán eliminados definitivamente.",
+    "whatHappensNext": "Qué sucede después"
+  },
+  "download": "Descargar",
+  "draftRestore": {
+    "daysAgo": "hace {{count}} día",
+    "daysAgo_one": "hace {{count}} día",
+    "daysAgo_other": "hace {{count}} días",
+    "discard": "Descartar",
+    "draftFound": "Encontramos un borrador en el que estaba trabajando {{time}}.",
+    "draftSaved": "Borrador guardado",
+    "hoursAgo": "hace {{count}} hora",
+    "hoursAgo_one": "hace {{count}} hora",
+    "hoursAgo_other": "hace {{count}} horas",
+    "justNow": "justo ahora",
+    "minutesAgo": "hace {{count}} minuto",
+    "minutesAgo_one": "hace {{count}} minuto",
+    "minutesAgo_other": "hace {{count}} minutos",
+    "recently": "recientemente",
+    "restoreDraft": "Restaurar borrador",
+    "restorePrompt": "¿Restaurar el progreso no guardado?",
+    "startFresh": "Empezar de nuevo",
+    "unsavedDraftFound": "Borrador sin guardar encontrado"
+  },
+  "edit": "Editar",
+  "emptyState": {
+    "error": {
+      "description": "Ocurrió un error al cargar los datos. Inténtelo nuevamente.",
+      "title": "Algo salió mal"
+    },
+    "noActiveGoal": {
+      "action": "Ir a Product Goals",
+      "description": "Establezca un objetivo de producto activo antes de continuar.",
+      "title": "Ningún objetivo activo"
+    },
+    "noActiveSprint": {
+      "action": "Ir a Sprint Planning",
+      "description": "Inicie un nuevo Sprint desde la Sprint Planning para continuar.",
+      "title": "Ningún Sprint activo"
+    },
+    "noCompletedSprint": {
+      "description": "Complete un Sprint para comenzar el seguimiento.",
+      "title": "Ningún Sprint completado"
+    },
+    "noData": {
+      "description": "No hay datos para mostrar en este momento.",
+      "title": "Sin datos disponibles"
+    },
+    "noTeam": {
+      "description": "Seleccione un equipo para continuar.",
+      "title": "Ningún equipo seleccionado"
+    }
+  },
+  "error": {
+    "boundary": {
+      "description": "Ocurrió un error inesperado. Puede intentar nuevamente o volver al Tablero.",
+      "goHome": "Ir al Tablero",
+      "retry": "Intentar nuevamente",
+      "title": "Algo salió mal"
+    },
+    "http": {
+      "networkOffline": "Está sin conexión. Verifique su conexión a internet.",
+      "serverError": "Ocurrió un error del servidor. Nuestro equipo ha sido notificado.",
+      "timeout": "La solicitud tardó demasiado. Verifique su conexión e intente nuevamente."
+    },
+    "operations": {
+      "addTeamMember": "Error al agregar miembro del equipo",
+      "changePassword": "Error al cambiar contraseña",
+      "completeSprint": "Error al completar Sprint",
+      "createBacklogItem": "Error al crear elemento del Backlog",
+      "createDefinition": "Error al crear definición",
+      "createGoal": "Error al crear objetivo",
+      "createImpediment": "Error al crear Impediment",
+      "createIncrement": "Error al crear increment",
+      "createRetrospective": "Error al crear retrospectiva",
+      "createReview": "Error al crear revisión",
+      "createSprint": "Error al crear Sprint",
+      "createTask": "Error al crear tarea",
+      "createTeam": "Error al crear equipo",
+      "deleteBacklogItem": "Error al eliminar elemento del Backlog",
+      "deleteDefinition": "Error al eliminar definición",
+      "deleteGoal": "Error al eliminar objetivo",
+      "deleteImpediment": "Error al eliminar Impediment",
+      "deleteIncrement": "Error al eliminar increment",
+      "deleteRetrospective": "Error al eliminar retrospectiva",
+      "deleteReview": "Error al eliminar revisión",
+      "deleteSprint": "Error al eliminar Sprint",
+      "deleteTask": "Error al eliminar tarea",
+      "deleteTeam": "Error al eliminar equipo",
+      "editBacklogItem": "Error al editar elemento del Backlog",
+      "exportData": "Error al exportar datos",
+      "importData": "Error al importar datos",
+      "removeTeamMember": "Error al eliminar miembro del equipo",
+      "selectTeam": "Error al seleccionar equipo",
+      "startSprint": "Error al iniciar Sprint",
+      "updateBacklogItem": "Error al actualizar elemento del Backlog",
+      "updateDefinition": "Error al actualizar definición",
+      "updateGoal": "Error al actualizar objetivo",
+      "updateImpediment": "Error al actualizar Impediment",
+      "updateIncrement": "Error al actualizar increment",
+      "updateProfile": "Error al actualizar perfil",
+      "updateRetrospective": "Error al actualizar retrospectiva",
+      "updateReview": "Error al actualizar revisión",
+      "updateSprint": "Error al actualizar Sprint",
+      "updateTask": "Error al actualizar tarea",
+      "updateTeam": "Error al actualizar equipo",
+      "updateTeamMemberRole": "Error al actualizar rol del miembro"
+    }
+  },
+  "errorBoundary": {
+    "apiError": "Ocurrió un error al comunicarse con el servidor.",
+    "authError": "Su sesión ha expirado. Por favor inicie sesión nuevamente.",
+    "connectionError": "Error de conexión",
+    "defaultError": "Ocurrió un error. Por favor intente más tarde.",
+    "devDetails": "Detalles del error (Solo desarrollo)",
+    "forbiddenError": "No tiene permiso para realizar esta acción.",
+    "i18nError": "No se pudieron cargar los recursos de idioma. Por favor recargue la página.",
+    "networkError": "No se puede conectar al servidor. Verifique su conexión a internet.",
+    "notFoundError": "El recurso solicitado no fue encontrado.",
+    "reloadPage": "Recargar página",
+    "runtimeError": "Ocurrió un error inesperado. Por favor intente nuevamente.",
+    "serverError": "Ocurrió un error del servidor. Por favor intente más tarde.",
+    "timeoutError": "La solicitud tardó demasiado. Verifique su conexión e intente nuevamente.",
+    "title": "Algo salió mal",
+    "tryAgain": "Intentar nuevamente",
+    "validationError": "Datos inválidos. Por favor verifique su entrada."
+  },
+  "errorMessage": {
+    "dismiss": "Cerrar mensaje de error"
+  },
+  "errorStates": {
+    "accessDenied": "Acceso denegado",
+    "accessDeniedDetails": "No tiene permiso para acceder a esta página o recurso.",
+    "notInvited": "No invitado",
+    "notInvitedDetails": "Aún no ha sido invitado a este equipo.",
+    "teamAccessRequired": "Acceso al equipo requerido",
+    "teamAccessRequiredDetails": "Seleccione o cree un equipo para continuar.",
+    "teamNotFound": "Equipo no encontrado",
+    "teamNotFoundDetails": "El equipo que busca no se pudo encontrar.",
+    "unableToLoad": "No se puede cargar",
+    "unableToLoadDetails": "No se puede cargar el contenido solicitado. Por favor intente de nuevo.",
+    "unexpectedError": "Error inesperado"
+  },
+  "expand": "Expandir",
+  "export": "Exportar",
+  "filter": "Filtrar",
+  "filters": {
+    "all": "Todos",
+    "directMessages": "Mensajes directos",
+    "impediments": "Impediments",
+    "reminders": "Recordatorios",
+    "taskAssignments": "Asignaciones de tareas",
+    "teamCreated": "Equipo creado",
+    "teamDeleted": "Equipo eliminado",
+    "teamInvitations": "Invitaciones de equipo",
+    "teamUpdated": "Equipo actualizado",
+    "unread": "No leído"
+  },
+  "helpPanel": {
+    "avoidExample": "✗ Evitar:",
+    "goodExample": "✓ Buen ejemplo:",
+    "tipsFor": "Consejos para {{title}}",
+    "title": "Consejos"
+  },
+  "i18nInitError": {
+    "debugInfo": "Información de depuración",
+    "message": "No se pudieron cargar las traducciones en {{timeout}}s.",
+    "retry": "Reintentar",
+    "title": "Tiempo de espera de inicialización"
+  },
+  "iconGallery": {
+    "categories": "{{count}} categorías",
+    "categories_one": "{{count}} categoría",
+    "categories_other": "{{count}} categorías",
+    "matching": "{{count}} coincidencias",
+    "matching_one": "{{count}} coincidencia",
+    "matching_other": "{{count}} coincidencias",
+    "noResults": "No se encontraron iconos",
+    "noResultsHint": "Intente ajustar su búsqueda",
+    "searchAriaLabel": "Buscar iconos",
+    "searchPlaceholder": "Buscar iconos por nombre o categoría...",
+    "subtitle": "Explore y copie declaraciones de importación para los iconos disponibles. Haga clic en cualquier icono para copiar su declaración de importación.",
+    "title": "Galería de iconos",
+    "totalIcons": "{{count}} iconos en total",
+    "totalIcons_one": "{{count}} icono en total",
+    "totalIcons_other": "{{count}} iconos en total"
+  },
+  "import": "Importar",
+  "initializing": "Inicializando...",
+  "language": "Idioma",
+  "list": {
+    "reviewStatus": {
+      "completed": "Completado",
+      "inProgress": "En progreso",
+      "incrementRequired": "Incremento requerido",
+      "readyForReview": "Listo para revisión"
+    },
+    "statusLabels": {
+      "active": "Activo",
+      "cancelled": "Cancelado",
+      "completed": "Completado",
+      "planned": "Planificado"
+    }
+  },
+  "loading": "Cargando...",
+  "loadingStates": {
+    "loadingCardContent": "Cargando contenido de tarjeta",
+    "loadingChart": "Cargando gráfico",
+    "loadingContent": "Cargando contenido",
+    "loadingListItems": "Cargando elementos de lista"
+  },
+  "localeSyncFailed": "No se pudo sincronizar la preferencia de idioma. Se sincronizará en el próximo inicio de sesión.",
+  "minLabel": "min {{min}}",
+  "moscow": {
+    "couldHave": "Podría tener",
+    "couldHaveDesc": "Deseable si es posible — Sería deseable tenerlo",
+    "mustHave": "Debe tener",
+    "mustHaveDesc": "Crítico para la entrega – No negociable",
+    "shouldHave": "Debería tener",
+    "shouldHaveDesc": "Importante pero no vital – Alta prioridad",
+    "wontHave": "No tendrá",
+    "wontHaveDesc": "No en esta versión – Fuera del alcance"
+  },
+  "nav": {
+    "activeSprint": "Sprint activo",
+    "dailyScrum": "Daily Scrum",
+    "dashboard": "Tablero",
+    "impediments": "Impediment",
+    "increments": "Increment",
+    "notifications": "Notificaciones",
+    "productBacklog": "Product Backlog",
+    "productGoals": "Product Goal",
+    "reports": "Informes",
+    "retrospective": "Sprint Retrospective",
+    "retrospectives": "Sprint Retrospective",
+    "settings": {
+      "data": "Datos",
+      "privacyData": "Privacidad y datos",
+      "sprintConfiguration": "Configuración de Sprint",
+      "team": "Equipo",
+      "teamDefinitions": "Definiciones de equipo",
+      "teamManagement": "Gestión de equipo"
+    },
+    "settingsLabel": "Configuración",
+    "sprintPlanning": "Sprint Planning",
+    "sprintReview": "Sprint Review",
+    "team": "Equipo"
+  },
+  "networkErrors": {
+    "networkError": "Error de red. Por favor verifique su conexión e intente de nuevo.",
+    "timeout": "La solicitud tardó demasiado. Por favor intente de nuevo."
+  },
+  "next": "Siguiente",
+  "no": "No",
+  "noResults": "No se encontraron resultados",
+  "noTeamSelected": "Ningún equipo seleccionado",
+  "none": "Ninguno",
+  "notifications": {
+    "connectionError": "Error de conexión",
+    "empty": "Aún no hay notificaciones",
+    "loading": "Cargando notificaciones...",
+    "markAllRead": "Marcar todo como leído",
+    "title": "Notificaciones",
+    "viewAll": "Ver todas las notificaciones"
+  },
+  "optional": "Opcional",
+  "pageError": {
+    "backToDashboard": "Volver al panel",
+    "description": "Encontramos un error al cargar esta página. Puede deberse a un problema temporal o de conexión.",
+    "reloadPage": "Recargar página",
+    "technicalDetails": "Detalles técnicos",
+    "title": "Error de {{pageName}}"
+  },
+  "permission": {
+    "actionError": "No tiene permiso para realizar esta acción.",
+    "insufficientRoles": "Permisos insuficientes. Roles requeridos: {{roles}}",
+    "transitionError": "No tiene permiso para realizar esta transición."
+  },
+  "previous": "Anterior",
+  "print": "Imprimir",
+  "profile": {
+    "changePasswordTitle": "Cambiar contraseña",
+    "changing": "Cambiando...",
+    "confirmNewPassword": "Confirmar nueva contraseña",
+    "contactSupportToChangeEmail": "Contacte al soporte para cambiar su dirección de correo electrónico",
+    "currentPassword": "Contraseña actual",
+    "currentPasswordIncorrect": "La contraseña actual es incorrecta",
+    "editTitle": "Editar perfil",
+    "email": "Correo electrónico",
+    "firstName": "Nombre",
+    "hidePassword": "Ocultar contraseña",
+    "lastName": "Apellido",
+    "newPassword": "Nueva contraseña",
+    "passwordChanged": "Contraseña cambiada correctamente",
+    "passwordRequirements": "La contraseña debe tener al menos 8 caracteres e incluir mayúsculas, minúsculas, números y caracteres especiales",
+    "passwordStrength": {
+      "lowercase": "Una minúscula (a-z)",
+      "minLength": "Al menos 12 caracteres",
+      "number": "Un número (0-9)",
+      "requirementsTitle": "Requisitos de la contraseña:",
+      "special": "Un carácter especial (!@#$%^&*)",
+      "strengthLabels": {
+        "fair": "Aceptable",
+        "good": "Bueno",
+        "medium": "Medio",
+        "strong": "Fuerte",
+        "weak": "Débil"
+      },
+      "uppercase": "Una mayúscula (A-Z)"
+    },
+    "passwordsDoNotMatch": "Las contraseñas no coinciden",
+    "passwordsMatch": "Las contraseñas coinciden",
+    "placeholder": {
+      "confirmPassword": "Confirme su nueva contraseña",
+      "currentPassword": "Ingrese su contraseña actual",
+      "firstName": "Ingrese su nombre",
+      "lastName": "Ingrese su apellido",
+      "newPassword": "Ingrese su nueva contraseña"
+    },
+    "profileUpdated": "Perfil actualizado correctamente",
+    "readOnly": "Solo lectura",
+    "saveChanges": "Guardar cambios",
+    "saving": "Guardando...",
+    "showPassword": "Mostrar contraseña"
+  },
+  "redo": "Rehacer",
+  "refresh": "Actualizar",
+  "remove": "Quitar",
+  "required": "Obligatorio",
+  "reset": "Restablecer",
+  "retry": "Reintentar",
+  "save": "Guardar",
+  "search": "Buscar",
+  "selectLanguage": "Seleccionar idioma",
+  "sessionWarning": {
+    "extending": "Extendiendo...",
+    "logOut": "Cerrar sesión",
+    "message": "Su sesión expirará pronto por inactividad. Será desconectado automáticamente en:",
+    "stayLoggedIn": "Mantener sesión",
+    "title": "Advertencia de tiempo de sesión"
+  },
+  "showLess": "Mostrar menos",
+  "showMore": "Mostrar más",
+  "sort": "Ordenar",
+  "sprintPlanning": {
+    "activeCategory": "[Activo]",
+    "doneCategory": "[Completado]",
+    "moscow": {
+      "could": "Podría",
+      "couldHave": "Podría tener",
+      "must": "Debe",
+      "mustHave": "Debe tener",
+      "should": "Debería",
+      "shouldHave": "Debería tener",
+      "wont": "No tendrá",
+      "wontHave": "No tendrá"
+    },
+    "readyChecklist": {
+      "dependenciesIdentified": "Dependencias identificadas",
+      "estimatedByTeam": "Estimado por el equipo",
+      "hasClearAcceptanceCriteria": "Tiene criterios de aceptación claros",
+      "understandableByTeam": "Comprensible por el equipo"
+    },
+    "startSprintModal": {
+      "error": {
+        "activeSprintExists": "Sprint activo existente",
+        "anotherSprintActive": "Otro sprint ya está activo. Complete el sprint actual antes de iniciar uno nuevo.",
+        "invalidRequest": "Solicitud no válida",
+        "invalidRequestMessage": "Verifique los datos del sprint e intente de nuevo. Asegúrese de que todos los campos obligatorios estén completados correctamente.",
+        "invalidSprintBacklog": "Sprint Backlog no válido",
+        "invalidSprintBacklogMessage": "Hay un problema con los elementos del Sprint Backlog. Elimine y vuelva a añadir los elementos, luego intente de nuevo.",
+        "invalidTaskAssignment": "Asignación de tarea no válida",
+        "invalidTaskAssignmentMessage": "Una o más tareas están asignadas a miembros del equipo no válidos. Revise las asignaciones y asegúrese de que todos los asignados sean miembros actuales del equipo.",
+        "networkError": "Error de red",
+        "networkErrorMessage": "No se puede conectar al servidor. Verifique su conexión a internet e intente de nuevo.",
+        "permissionDenied": "No tiene permiso para iniciar sprints.",
+        "sessionExpired": "Sesión expirada",
+        "sessionExpiredMessage": "Su sesión ha expirado. Inicie sesión de nuevo y reintente.",
+        "sprintConflict": "Conflicto de sprint",
+        "sprintConflictMessage": "Este sprint está siendo modificado por otro usuario. Espere un momento e intente de nuevo.",
+        "sprintGoalRequired": "Sprint Goal requerido",
+        "sprintGoalRequiredMessage": "Defina un Sprint Goal antes de iniciar el sprint.",
+        "sprintNotFound": "Sprint no encontrado",
+        "sprintNotFoundMessage": "El sprint seleccionado ya no existe. Puede haber sido eliminado. Actualice y seleccione un sprint diferente.",
+        "timeout": "Tiempo de espera agotado",
+        "timeoutMessage": "La solicitud tardó demasiado en completarse. Intente de nuevo.",
+        "unableToStart": "No se puede iniciar el sprint",
+        "unauthorized": "No autorizado"
+      }
+    },
+    "upcomingCategory": "[Próximo]"
+  },
+  "status": {
+    "done": "Hecho",
+    "doneDesc": "Completado",
+    "inProgress": "En progreso",
+    "inProgressDesc": "Actualmente en proceso",
+    "new": "Nuevo",
+    "newDesc": "Elemento recién creado",
+    "ready": "Listo",
+    "readyDesc": "Listo para el sprint",
+    "refined": "Refinado",
+    "refinedDesc": "Requisitos aclarados"
+  },
+  "statusSelector": {
+    "changeItemStatusHint": "Haga clic para cambiar el estado del elemento",
+    "changeStatus": "Cambiar estado",
+    "currentStatusClickable": "Estado actual: {{status}}. Haga clic para cambiar el estado.",
+    "currentStatusLocked": "Estado actual: {{status}} (bloqueado)",
+    "statusOptions": "Opciones de estado"
+  },
+  "submit": "Enviar",
+  "teamSelection": {
+    "empty": "Aún no tiene equipos.",
+    "goToTeamPage": "Ir a página de equipo",
+    "loading": "Cargando equipos...",
+    "roles": {
+      "developer": "Developer",
+      "productOwner": "Product Owner",
+      "scrumMaster": "Scrum Master"
+    },
+    "switching": "Cambiando...",
+    "title": "Seleccionar un equipo"
+  },
+  "translationPending": "Traducción pendiente",
+  "unassigned": "Sin asignar",
+  "undo": "Deshacer",
+  "unsavedChanges": {
+    "attentionRequired": "Atención requerida",
+    "discard": "Descartar",
+    "discardChanges": "Descartar cambios",
+    "discardDescription": "Cerrar sin guardar y perder todas las modificaciones",
+    "goBack": "Volver",
+    "goBackDescription": "Continuar editando y guardar los cambios",
+    "message": "Tiene cambios sin guardar. ¿Está seguro de que desea descartarlos?",
+    "messages": {
+      "passwordChange": "Tiene cambios sin guardar en el formulario de cambio de contraseña. ¿Está seguro de que desea descartarlos?",
+      "profileEdit": "Tiene cambios sin guardar en el formulario de edición de perfil. ¿Está seguro de que desea descartarlos?"
+    },
+    "permanentlyLost": "Sus cambios se perderán permanentemente si los descarta. Esta acción no se puede deshacer.",
+    "subtitle": "Por favor, revise antes de continuar",
+    "title": "Cambios sin guardar",
+    "unsavedModifications": "Modificaciones sin guardar detectadas",
+    "whatWouldYouDo": "¿Qué desea hacer?"
+  },
+  "unsavedChangesModal": {
+    "discard": "Descartar",
+    "keepEditing": "Seguir editando",
+    "message": "Tiene cambios sin guardar. ¿Está seguro de que desea descartarlos?",
+    "title": "Cambios sin guardar"
+  },
+  "update": "Actualizar",
+  "updated": "Actualizado",
+  "upload": "Cargar",
+  "userMenu": {
+    "changePassword": "Cambiar contraseña",
+    "editProfile": "Editar perfil",
+    "logout": "Cerrar sesión"
+  },
+  "validation": {
+    "acceptanceCriteriaRequired": "Los criterios de aceptación son obligatorios. Por favor, defina condiciones específicas y comprobables para su finalización.",
+    "activeGoalRequired": "Se requiere un objetivo activo. Por favor, establezca primero un Product Goal activo.",
+    "businessValueMinimum": "El Business Value debe ser al menos 1 punto. Por favor, seleccione un valor válido.",
+    "businessValueMinimumOptional": "El Business Value debe ser al menos 1 punto. Por favor, seleccione un valor que refleje la importancia relativa de este elemento.",
+    "businessValueRequired": "El Business Value es obligatorio. Por favor, seleccione un valor que refleje la importancia de este elemento.",
+    "businessValueTooLarge": "El Business Value ({{value}}) supera el máximo de 100 puntos. Por favor, seleccione un valor dentro del rango estándar.",
+    "cannotChangeStatus": "No se puede cambiar el estado a \"{{status}}\". Los siguientes campos obligatorios deben completarse primero: {{fields}}. Por favor, haga clic en \"Editar elemento\" para actualizar este elemento del backlog.",
+    "descriptionRequired": "La descripción es obligatoria. Por favor, proporcione información detallada sobre este elemento del backlog.",
+    "estimateMinimum": "La estimación debe ser al menos 1 story point. Por favor, seleccione un valor válido.",
+    "estimateMinimumOptional": "La estimación debe ser al menos 1 story point. Por favor, seleccione un valor del menú desplegable o déjelo vacío si no está listo para estimar.",
+    "estimateRequired": "Se requiere una estimación. Por favor, seleccione un valor en story points del menú desplegable.",
+    "estimateTooLarge": "La estimación ({{estimate}}) supera el máximo de 100 story points. Para elementos de trabajo más grandes, considere dividirlos en elementos de backlog más pequeños y manejables.",
+    "fieldAcceptanceCriteria": "Criterios de aceptación",
+    "fieldBusinessValue": "Business Value",
+    "fieldDescription": "Descripción",
+    "fieldEstimate": "Estimación (Story Points)",
+    "fieldLabels": "Etiquetas (al menos una)",
+    "fieldMoscowPriority": "Prioridad MoSCoW",
+    "fieldTitle": "Título (mínimo 5 caracteres)",
+    "invalidTransition": "La transición de {{current}} a {{target}} no está permitida. Transiciones permitidas: {{allowed}}",
+    "labelsRequired": "Se requiere al menos una etiqueta. Por favor, añada una etiqueta para categorizar este elemento.",
+    "moscowPriorityRequired": "Se requiere la prioridad MoSCoW. Por favor, seleccione uno de los cuatro niveles de prioridad.",
+    "none": "Ninguno",
+    "statusAlreadySet": "El elemento ya está en este estado",
+    "statusRequired": "El estado es obligatorio.",
+    "teamIdRequired": "Se requiere el ID del equipo. Por favor, seleccione primero un equipo.",
+    "titleRequired": "El título es obligatorio. Por favor, ingrese un título descriptivo para este elemento del backlog.",
+    "titleTooLong": "El título supera la longitud máxima en {{overBy}} carácter{{plural}}. Actual: {{current}}/200 caracteres. Por favor, acorte su título.",
+    "titleTooShort": "El título es demasiado corto ({{length}} caracteres). Por favor, use al menos 5 caracteres para proporcionar una descripción clara."
+  },
+  "view": "Ver",
+  "widgetError": {
+    "failedToLoad": "{{widgetName}} no pudo cargarse",
+    "retryAria": "Reintentar cargar {{widgetName}}"
+  },
+  "yes": "Sí"
+}

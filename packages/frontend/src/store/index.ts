@@ -3,6 +3,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { QueryClient } from '@tanstack/react-query';
+import type { Locale } from '@scrumooth/shared';
 
 import type { User, Team, Notification } from '../types';
 import type { DeletionEligibilityResult } from '../types/auth.types';
@@ -11,6 +12,7 @@ import type { SessionConfig } from '../services/sessionManager';
 import { logger, setStoreProvider } from '../utils/logger';
 import { TOAST_DURATION } from '../utils/constants';
 import { navigateTo } from '../utils/navigation';
+import { syncLocaleFromUser } from '../i18n/useI18nStore';
 
 let queryClient: QueryClient | null = null;
 
@@ -103,7 +105,11 @@ interface AuthState {
   checkDeletionEligibility: () => Promise<void>;
   deleteAccount: (confirmation: string) => Promise<void>;
   clearDeletionError: () => void;
-  updateProfile: (data: { firstName: string; lastName: string }) => Promise<boolean>;
+  updateProfile: (data: {
+    firstName: string;
+    lastName: string;
+    locale?: Locale;
+  }) => Promise<boolean>;
   changePassword: (data: { currentPassword: string; newPassword: string }) => Promise<boolean>;
   clearProfileErrors: () => void;
 }
@@ -174,6 +180,9 @@ export const useAuthStore = create<AuthState>()(
               isAuthenticated: true,
               isLoading: false,
             });
+            if (response.data.locale) {
+              syncLocaleFromUser(response.data.locale);
+            }
           } else {
             set({
               user: null,
@@ -236,7 +245,7 @@ export const useAuthStore = create<AuthState>()(
 
       clearDeletionError: () => set({ deletionError: null }),
 
-      updateProfile: async (data: { firstName: string; lastName: string }) => {
+      updateProfile: async (data: { firstName: string; lastName: string; locale?: Locale }) => {
         set({ isUpdatingProfile: true, profileUpdateError: null });
         try {
           const response = await apiService.updateProfile(data);
@@ -301,6 +310,8 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'auth-storage',
+      version: 0,
+      migrate: (persistedState) => persistedState as AuthState,
       partialize: (state) => ({
         user: state.user,
         isAuthenticated: state.isAuthenticated,
@@ -326,6 +337,8 @@ export const useUIStore = create<UIState>()(
     }),
     {
       name: 'ui-storage',
+      version: 0,
+      migrate: (persistedState) => persistedState as UIState,
     }
   )
 );
@@ -449,6 +462,8 @@ export const useTeamStore = create<TeamState>()(
     }),
     {
       name: 'team-storage',
+      version: 0,
+      migrate: (persistedState) => persistedState as TeamState,
       partialize: (state) => ({
         // Only persist client state
         currentTeamId: state.currentTeamId,

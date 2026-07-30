@@ -1,0 +1,18 @@
+{
+  "databaseError": "Ocurrió un error de base de datos",
+  "emailAlreadyExists": "Ya existe una cuenta con el correo electrónico {{email}}",
+  "entityNotFound": "{{entity}} no encontrado",
+  "fieldAlreadyExists": "{{field}} ya existe",
+  "fieldAlreadyTaken": "{{field}} ya está en uso",
+  "forbidden": "No tiene permiso para realizar esta acción",
+  "invalidCredentials": "Correo electrónico o contraseña inválidos",
+  "invalidReference": "Referencia inválida",
+  "invalidRelation": "Relación inválida",
+  "invalidToken": "Token inválido",
+  "pleaseLoginAgain": "Inicie sesión nuevamente para continuar",
+  "recordNotFound": "Registro no encontrado",
+  "routeNotFound": "{{method}} {{path}} no encontrado",
+  "tokenExpired": "El token ha expirado",
+  "unauthorized": "Se requiere autenticación",
+  "unexpectedError": "Ocurrió un error inesperado"
+}

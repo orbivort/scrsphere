@@ -1,4 +1,5 @@
 import React, { memo, useCallback, useEffect, useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import type { Task } from '../../../types';
 
@@ -11,6 +12,7 @@ interface TaskListProps {
 }
 
 const TaskList: React.FC<TaskListProps> = memo(({ tasks, emptyMessage, onTaskClick }) => {
+  const { t } = useTranslation('dashboard');
   const [focusedIndex, setFocusedIndex] = useState(0);
   const listRef = useRef<HTMLUListElement>(null);
 
@@ -65,7 +67,7 @@ const TaskList: React.FC<TaskListProps> = memo(({ tasks, emptyMessage, onTaskCli
       ref={listRef}
       className={styles['task-list']}
       role="list"
-      aria-label="Task list"
+      aria-label={t('taskList.ariaLabel')}
       aria-activedescendant={onTaskClick ? `task-item-${focusedIndex}` : undefined}
     >
       {tasks.map((task, index) => (
@@ -79,7 +81,10 @@ const TaskList: React.FC<TaskListProps> = memo(({ tasks, emptyMessage, onTaskCli
           onKeyDown={onTaskClick ? (e) => handleKeyDown(e, task.id, index) : undefined}
           aria-label={
             onTaskClick
-              ? `${task.title}, status: ${task.status.replace('_', ' ')}. Click to view task`
+              ? t('taskList.taskAriaLabel', {
+                  title: task.title,
+                  status: task.status.replace('_', ' '),
+                })
               : undefined
           }
         >
@@ -89,7 +94,12 @@ const TaskList: React.FC<TaskListProps> = memo(({ tasks, emptyMessage, onTaskCli
             className={`${styles['task-status-badge']} ${styles[task.status.toLowerCase()]}`}
             aria-hidden={onTaskClick ? true : undefined}
           >
-            {task.status.replace('_', ' ')}
+            {t(
+              `taskStatus.${task.status.toUpperCase()}` as
+                | 'taskStatus.TODO'
+                | 'taskStatus.IN_PROGRESS'
+                | 'taskStatus.DONE'
+            )}
           </span>
         </li>
       ))}

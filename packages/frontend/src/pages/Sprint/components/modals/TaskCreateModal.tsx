@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import type { ProductBacklogItem, TeamMember, User } from '../../../../types';
 import type { FormErrors, TaskFormData } from '../../SprintBoard.types';
@@ -33,6 +34,7 @@ export const TaskCreateModal: React.FC<TaskCreateModalProps> = ({
   isCreating,
   modalRef,
 }) => {
+  const { t } = useTranslation('sprint');
   const [showUnsavedChangesModal, setShowUnsavedChangesModal] = useState(false);
   const [pendingClose, setPendingClose] = useState(false);
 
@@ -107,15 +109,15 @@ export const TaskCreateModal: React.FC<TaskCreateModalProps> = ({
               </div>
               <div className={styles['modal-title-group']}>
                 <h2 id="task-modal-title" className={styles['modal-title']}>
-                  Create New Task
+                  {t('taskCreate.title')}
                 </h2>
-                <p className={styles['modal-subtitle']}>Add a new task to your sprint</p>
+                <p className={styles['modal-subtitle']}>{t('taskCreate.subtitle')}</p>
               </div>
             </div>
             <button
               className={styles['modal-close']}
               onClick={handleCloseAttempt}
-              aria-label="Close modal"
+              aria-label={t('taskCreate.closeModal')}
               data-modal-close
               type="button"
             >
@@ -135,7 +137,7 @@ export const TaskCreateModal: React.FC<TaskCreateModalProps> = ({
                     <button
                       className={styles['modal-error-close']}
                       onClick={() => {}}
-                      aria-label="Close error message"
+                      aria-label={t('taskCreate.closeErrorMessage')}
                       type="button"
                     >
                       <CloseIcon size={12} aria-hidden="true" />
@@ -146,12 +148,12 @@ export const TaskCreateModal: React.FC<TaskCreateModalProps> = ({
 
               <div className={styles['form-legend']}>
                 <span className={styles['required-indicator']}>*</span>
-                <span>Required fields</span>
+                <span>{t('taskCreate.requiredFields')}</span>
               </div>
 
               <div className={styles['form-group']}>
                 <label htmlFor="task-pbi">
-                  Parent Backlog Item
+                  {t('taskCreate.parentBacklogItem')}
                   <RequiredIndicator />
                 </label>
                 <select
@@ -162,10 +164,10 @@ export const TaskCreateModal: React.FC<TaskCreateModalProps> = ({
                   aria-invalid={!!formErrors.pbiId}
                   aria-describedby={formErrors.pbiId ? 'task-pbi-error' : undefined}
                 >
-                  <option value="">Select a backlog item...</option>
+                  <option value="">{t('taskCreate.selectBacklogItem')}</option>
                   {sprintItems.map((item) => (
                     <option key={item.id} value={item.id}>
-                      {item.title} ({item.storyPoints ?? 0} pts)
+                      {item.title} ({item.storyPoints ?? 0} {t('pts' as never)})
                     </option>
                   ))}
                 </select>
@@ -178,13 +180,13 @@ export const TaskCreateModal: React.FC<TaskCreateModalProps> = ({
 
               <div className={styles['form-group']}>
                 <label htmlFor="task-title">
-                  Title
+                  {t('taskCreate.titleLabel')}
                   <RequiredIndicator />
                 </label>
                 <input
                   id="task-title"
                   type="text"
-                  placeholder="Enter task title"
+                  placeholder={t('taskCreate.titlePlaceholder')}
                   value={formData.title}
                   onChange={(e) => onFormDataChange({ title: e.target.value })}
                   maxLength={100}
@@ -202,13 +204,13 @@ export const TaskCreateModal: React.FC<TaskCreateModalProps> = ({
 
               <div className={styles['form-group']}>
                 <label htmlFor="task-desc">
-                  Description
+                  {t('taskCreate.descriptionLabel')}
                   <RequiredIndicator />
                 </label>
                 <textarea
                   id="task-desc"
                   rows={3}
-                  placeholder="Enter task description"
+                  placeholder={t('taskCreate.descriptionPlaceholder')}
                   value={formData.description}
                   onChange={(e) => onFormDataChange({ description: e.target.value })}
                   className={formErrors.description ? styles.error : ''}
@@ -223,11 +225,11 @@ export const TaskCreateModal: React.FC<TaskCreateModalProps> = ({
               </div>
 
               <div className={styles['form-section-divider']} />
-              <h3 className={styles['form-section-title']}>Assignment</h3>
+              <h3 className={styles['form-section-title']}>{t('taskCreate.assignment')}</h3>
 
               <div className={styles['form-group']}>
                 <label htmlFor="task-assignee">
-                  Assignee
+                  {t('taskCreate.assigneeLabel')}
                   <RequiredIndicator />
                 </label>
                 <select
@@ -238,7 +240,7 @@ export const TaskCreateModal: React.FC<TaskCreateModalProps> = ({
                   aria-invalid={!!formErrors.assigneeId}
                   aria-describedby={formErrors.assigneeId ? 'task-assignee-error' : undefined}
                 >
-                  <option value="">Unassigned</option>
+                  <option value="">{t('taskCreate.unassigned')}</option>
                   {teamMembers.map((member) => (
                     <option key={member.id} value={member.userId}>
                       {member.user?.firstName} {member.user?.lastName}
@@ -253,12 +255,12 @@ export const TaskCreateModal: React.FC<TaskCreateModalProps> = ({
               </div>
 
               <div className={styles['form-section-divider']} />
-              <h3 className={styles['form-section-title']}>Time Tracking</h3>
+              <h3 className={styles['form-section-title']}>{t('taskCreate.timeTracking')}</h3>
 
               <div className={styles['form-row']}>
                 <div className={styles['form-group']}>
                   <label htmlFor="task-estimated">
-                    Estimated Hours
+                    {t('taskCreate.estimatedHours')}
                     <RequiredIndicator />
                   </label>
                   <input
@@ -287,14 +289,14 @@ export const TaskCreateModal: React.FC<TaskCreateModalProps> = ({
                     </span>
                   ) : (
                     <span id="task-estimated-hint" className={styles['form-hint']}>
-                      Remaining hours will default to estimated hours
+                      {t('taskCreate.remainingHoursHint')}
                     </span>
                   )}
                 </div>
 
                 <div className={styles['form-group']}>
                   <label htmlFor="task-remaining">
-                    Remaining Hours
+                    {t('taskCreate.remainingHours')}
                     <RequiredIndicator />
                   </label>
                   <input
@@ -319,7 +321,7 @@ export const TaskCreateModal: React.FC<TaskCreateModalProps> = ({
                     </span>
                   ) : (
                     <span id="task-remaining-hint" className={styles['form-hint']}>
-                      Update daily for accurate burndown
+                      {t('taskCreate.remainingHoursDailyHint')}
                     </span>
                   )}
                 </div>
@@ -335,7 +337,7 @@ export const TaskCreateModal: React.FC<TaskCreateModalProps> = ({
                   onClick={handleCloseAttempt}
                   disabled={isCreating}
                 >
-                  Cancel
+                  {t('taskCreate.cancel')}
                 </button>
                 <button
                   type="submit"
@@ -344,7 +346,7 @@ export const TaskCreateModal: React.FC<TaskCreateModalProps> = ({
                   aria-busy={isCreating}
                 >
                   {!isCreating && <PlusIcon size={16} />}
-                  {isCreating ? 'Creating...' : 'Create Task'}
+                  {isCreating ? t('taskCreate.creating') : t('taskCreate.createTask')}
                 </button>
               </div>
             </div>
@@ -356,8 +358,8 @@ export const TaskCreateModal: React.FC<TaskCreateModalProps> = ({
         isOpen={showUnsavedChangesModal}
         onConfirm={handleConfirmDiscard}
         onCancel={handleCancelDiscard}
-        title="Discard New Task?"
-        message="You have unsaved changes in the new task form. Are you sure you want to discard them?"
+        title={t('taskCreate.discardTitle')}
+        message={t('taskCreate.discardMessage')}
       />
     </>
   );

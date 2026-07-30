@@ -1,5 +1,6 @@
-﻿import React from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 
 import type { TeamMembership } from '../../types/auth.types';
 
@@ -20,6 +21,7 @@ interface TeamImpactWarningProps {
  * @param isBlocked - Whether deletion is blocked due to being last PO
  */
 export const TeamImpactWarning: React.FC<TeamImpactWarningProps> = ({ teams, isBlocked }) => {
+  const { t } = useTranslation('common');
   const navigate = useNavigate();
 
   // Handle empty teams array
@@ -41,11 +43,11 @@ export const TeamImpactWarning: React.FC<TeamImpactWarningProps> = ({ teams, isB
       aria-labelledby="team-impact-title"
     >
       <h3 id="team-impact-title" className={styles['team-impact-title']}>
-        Team Impact
+        {t('deleteAccount.teamImpact.title')}
       </h3>
 
       <p className={styles['team-impact-description']}>
-        You are a member of {teams.length} team{teams.length !== 1 ? 's' : ''}:
+        {t('deleteAccount.teamImpact.description', { count: teams.length })}
       </p>
 
       {/* Blocked teams - user is the last Product Owner */}
@@ -63,17 +65,17 @@ export const TeamImpactWarning: React.FC<TeamImpactWarningProps> = ({ teams, isB
                 </span>
                 <div className={styles['warning-content']}>
                   <p className={styles['warning-text']}>
-                    <strong>You are the only Product Owner.</strong> If you delete your account,
-                    this team will have no Product Owner. You can schedule deletion with a 14-day
-                    grace period.
+                    <strong>{t('deleteAccount.teamImpact.blocked.warning')}</strong>
                   </p>
                   <button
                     type="button"
                     className={styles['team-settings-link']}
                     onClick={() => handleGoToTeamSettings()}
-                    aria-label={`Go to ${team.name} settings to assign a new Product Owner`}
+                    aria-label={t('deleteAccount.teamImpact.blocked.goToSettingsAria', {
+                      teamName: team.name,
+                    })}
                   >
-                    Go to Team Settings
+                    {t('deleteAccount.teamImpact.blocked.goToSettings')}
                     <ArrowRightIcon size={16} />
                   </button>
                 </div>
@@ -92,7 +94,9 @@ export const TeamImpactWarning: React.FC<TeamImpactWarningProps> = ({ teams, isB
                 <span className={styles['team-item-name']}>{team.name}</span>
                 <span className={styles['team-item-role']}>{team.role}</span>
               </div>
-              <p className={styles['team-item-message']}>You will be removed from this team.</p>
+              <p className={styles['team-item-message']}>
+                {t('deleteAccount.teamImpact.regular.message')}
+              </p>
             </div>
           ))}
         </div>

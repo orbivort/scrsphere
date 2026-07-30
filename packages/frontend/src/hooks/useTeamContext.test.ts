@@ -13,6 +13,21 @@ vi.mock('../contexts/TeamContext', () => ({
   useTeamContext: () => mockUseTeamContext(),
 }));
 
+// Mock i18n config - i18nInstance.t returns fallback messages with interpolation
+vi.mock('../i18n/config', () => ({
+  i18nInstance: {
+    t: (key: string, fallback: string, options?: Record<string, unknown>) => {
+      if (options) {
+        return Object.entries(options).reduce(
+          (result, [k, v]) => result.replace(`{{${k}}}`, String(v)),
+          fallback
+        );
+      }
+      return fallback;
+    },
+  },
+}));
+
 import { useRequireTeam, useTeamRole } from './useTeamContext';
 
 describe('useRequireTeam', () => {

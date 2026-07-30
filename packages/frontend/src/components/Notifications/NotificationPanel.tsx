@@ -1,10 +1,13 @@
-﻿import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { formatDistanceToNow } from 'date-fns';
+import { useTranslation } from 'react-i18next';
+import { formatRelativeTime } from '@scrumooth/shared';
 
 import { useNotifications, useMarkAsRead, useMarkAllAsRead } from '../../hooks/useNotifications';
 import type { Notification, NotificationType } from '../../types/notification.types';
 import { ChevronRightIcon } from '../common/Icons';
+import { useI18nStore } from '../../i18n/useI18nStore';
+import { getNotificationTitle, getNotificationMessage } from '../../utils/notificationTranslation';
 
 import styles from './NotificationPanel.module.css';
 
@@ -48,10 +51,13 @@ interface NotificationPanelProps {
 }
 
 export const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, onClose }) => {
+  const { t } = useTranslation('common');
+  const { t: tNotifications } = useTranslation('notifications');
   const navigate = useNavigate();
   const panelRef = useRef<HTMLDivElement>(null);
   const { data, isLoading } = useNotifications({ limit: 10 });
   const markAsRead = useMarkAsRead();
+  const { locale } = useI18nStore();
   const markAllAsRead = useMarkAllAsRead();
 
   useEffect(() => {
@@ -98,23 +104,23 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, on
   return (
     <div ref={panelRef} className={styles['notification-panel']}>
       <div className={styles['panel-header']}>
-        <h3>Notifications</h3>
+        <h3>{t('notifications.title')}</h3>
         {unreadCount > 0 && (
           <button
             onClick={handleMarkAllRead}
             className={styles['mark-all-read']}
             disabled={markAllAsRead.isPending}
           >
-            Mark all as read
+            {t('notifications.markAllRead')}
           </button>
         )}
       </div>
 
       <div className={styles['panel-content']}>
         {isLoading ? (
-          <div className={styles.loading}>Loading notifications...</div>
+          <div className={styles.loading}>{t('notifications.loading')}</div>
         ) : notifications.length === 0 ? (
-          <div className={styles.empty}>No notifications yet</div>
+          <div className={styles.empty}>{t('notifications.empty')}</div>
         ) : (
           notifications.map((notification: Notification) => (
             <div
@@ -135,14 +141,16 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, on
                 {getNotificationIcon(notification.type)}
               </span>
               <div className={styles['notification-content']}>
-                <div className={styles['notification-title']}>{notification.title}</div>
-                {notification.message && (
-                  <div className={styles['notification-message']}>{notification.message}</div>
+                <div className={styles['notification-title']}>
+                  {getNotificationTitle(notification, tNotifications)}
+                </div>
+                {getNotificationMessage(notification, tNotifications) && (
+                  <div className={styles['notification-message']}>
+                    {getNotificationMessage(notification, tNotifications)}
+                  </div>
                 )}
                 <div className={styles['notification-time']}>
-                  {formatDistanceToNow(new Date(notification.createdAt), {
-                    addSuffix: true,
-                  })}
+                  {formatRelativeTime(notification.createdAt, locale)}
                 </div>
               </div>
             </div>
@@ -158,7 +166,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, on
           }}
           className={styles['view-all']}
         >
-          View all notifications
+          {t('notifications.viewAll')}
           <ChevronRightIcon size={14} />
         </button>
       </div>

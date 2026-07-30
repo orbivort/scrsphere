@@ -1,5 +1,6 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 
 import { useTeamContext } from '../../contexts/TeamContext';
 import { logger } from '../../utils/logger';
@@ -12,6 +13,7 @@ interface TeamSelectionModalProps {
 }
 
 export const TeamSelectionModal: React.FC<TeamSelectionModalProps> = ({ isOpen, onClose }) => {
+  const { t } = useTranslation('common');
   const { userTeams, switchTeam, isLoading } = useTeamContext();
   const [switching, setSwitching] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -48,11 +50,11 @@ export const TeamSelectionModal: React.FC<TeamSelectionModalProps> = ({ isOpen, 
   const getRoleLabel = (role: string): string => {
     switch (role) {
       case 'PRODUCT_OWNER':
-        return 'Product Owner';
+        return t('teamSelection.roles.productOwner');
       case 'SCRUM_MASTER':
-        return 'Scrum Master';
+        return t('teamSelection.roles.scrumMaster');
       case 'DEVELOPER':
-        return 'Developer';
+        return t('teamSelection.roles.developer');
       default:
         return role;
     }
@@ -62,8 +64,8 @@ export const TeamSelectionModal: React.FC<TeamSelectionModalProps> = ({ isOpen, 
     <div className={styles['team-selection-overlay']}>
       <div className={styles['team-selection-modal']}>
         <div className={styles['team-selection-header']}>
-          <h2>Select a Team</h2>
-          <button className={styles['close-button']} onClick={onClose} aria-label="Close">
+          <h2>{t('teamSelection.title')}</h2>
+          <button className={styles['close-button']} onClick={onClose} aria-label={t('close')}>
             ×
           </button>
         </div>
@@ -72,13 +74,13 @@ export const TeamSelectionModal: React.FC<TeamSelectionModalProps> = ({ isOpen, 
           {isLoading ? (
             <div className={styles['loading-state']}>
               <div className={styles.spinner} />
-              <p>Loading teams...</p>
+              <p>{t('teamSelection.loading')}</p>
             </div>
           ) : userTeams.length === 0 ? (
             <div className={styles['empty-state']}>
-              <p>You don't have any teams yet.</p>
+              <p>{t('teamSelection.empty')}</p>
               <button className="button button-primary" onClick={onClose}>
-                Go to Team Page
+                {t('teamSelection.goToTeamPage')}
               </button>
             </div>
           ) : (
@@ -104,7 +106,7 @@ export const TeamSelectionModal: React.FC<TeamSelectionModalProps> = ({ isOpen, 
                   {switching === team.id && (
                     <div className={styles['switching-indicator']}>
                       <div className={styles['spinner-small']} />
-                      <span>Switching...</span>
+                      <span>{t('teamSelection.switching')}</span>
                     </div>
                   )}
                 </button>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import styles from './Skeleton.module.css';
 
@@ -29,15 +30,18 @@ export const SkeletonCard: React.FC<SkeletonCardProps> = ({
   itemCount = 3,
   variant = 'default',
   className = '',
-  label = 'Loading card content',
+  label,
 }) => {
+  const { t } = useTranslation('common');
+  const displayLabel = label ?? t('loadingStates.loadingCardContent');
+
   return (
     <div
       className={`${styles['skeleton-card']} ${styles[variant]} ${className}`}
       role="status"
       aria-live="polite"
       aria-busy="true"
-      aria-label={label}
+      aria-label={displayLabel}
     >
       <div className={styles['skeleton-card-header']}>
         <div className={styles['skeleton-title']} />
@@ -67,7 +71,7 @@ export const SkeletonCard: React.FC<SkeletonCardProps> = ({
           ))
         )}
       </div>
-      <span className="visually-hidden">{label}</span>
+      <span className="visually-hidden">{displayLabel}</span>
     </div>
   );
 };

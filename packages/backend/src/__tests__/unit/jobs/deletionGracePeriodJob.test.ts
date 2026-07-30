@@ -557,6 +557,9 @@ describe('deletionGracePeriodJob', () => {
             findFirst: vi.fn().mockResolvedValue(null),
             create: mockCreate,
           },
+          user: {
+            findUnique: vi.fn().mockResolvedValue({ id: 'admin-1', locale: 'en' }),
+          },
           teamMember: {
             findMany: vi.fn().mockResolvedValue([
               { userId: 'admin-1', role: 'ADMIN' },
@@ -620,6 +623,9 @@ describe('deletionGracePeriodJob', () => {
           notification: {
             findFirst: vi.fn().mockResolvedValue(null),
             create: vi.fn().mockResolvedValue({}),
+          },
+          user: {
+            findUnique: vi.fn().mockResolvedValue({ id: 'admin-1', locale: 'en' }),
           },
           teamMember: {
             findMany: vi.fn().mockResolvedValue([{ userId: 'admin-1', role: 'ADMIN' }]),
@@ -864,6 +870,9 @@ describe('deletionGracePeriodJob', () => {
             findFirst: vi.fn().mockResolvedValue(null),
             create: vi.fn().mockRejectedValue(new Error('Create failed')),
           },
+          user: {
+            findUnique: vi.fn().mockResolvedValue({ id: 'admin-1', locale: 'en' }),
+          },
           teamMember: {
             findMany: vi.fn().mockResolvedValue([{ userId: 'admin-1', role: 'ADMIN' }]),
           },
@@ -982,6 +991,9 @@ describe('deletionGracePeriodJob', () => {
           notification: {
             findFirst: vi.fn().mockResolvedValue(null),
             create: vi.fn().mockRejectedValue(new Error('Permission denied')),
+          },
+          user: {
+            findUnique: vi.fn().mockResolvedValue({ id: 'admin-1', locale: 'en' }),
           },
           teamMember: {
             findMany: vi.fn().mockResolvedValue([{ userId: 'admin-1', role: 'ADMIN' }]),

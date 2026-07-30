@@ -1,6 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
+import { screen, renderWithProviders, initTestI18n } from '../../test-utils';
 
 import { NotificationBadge } from './NotificationBadge';
 import * as useNotificationsModule from '../../hooks/useNotifications';
@@ -13,23 +12,11 @@ vi.mock('./NotificationBadge.module.css', () => ({
   },
 }));
 
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        gcTime: 0,
-        staleTime: 0,
-      },
-    },
+describe('NotificationBadge Component', () => {
+  beforeAll(async () => {
+    await initTestI18n();
   });
 
-const renderWithQueryClient = (ui: React.ReactElement) => {
-  const queryClient = createTestQueryClient();
-  return render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>);
-};
-
-describe('NotificationBadge Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -40,7 +27,7 @@ describe('NotificationBadge Component', () => {
         createMockQueryResult({ isLoading: true })
       );
 
-      const { container } = renderWithQueryClient(<NotificationBadge />);
+      const { container } = renderWithProviders(<NotificationBadge />);
 
       expect(container.firstChild).toBeNull();
     });
@@ -50,7 +37,7 @@ describe('NotificationBadge Component', () => {
         createMockQueryResult({ data: { count: 0, lastCheckedAt: '2024-01-01T00:00:00Z' } })
       );
 
-      const { container } = renderWithQueryClient(<NotificationBadge />);
+      const { container } = renderWithProviders(<NotificationBadge />);
 
       expect(container.firstChild).toBeNull();
     });
@@ -60,7 +47,7 @@ describe('NotificationBadge Component', () => {
         createMockQueryResult({ data: { count: 5, lastCheckedAt: '2024-01-01T00:00:00Z' } })
       );
 
-      renderWithQueryClient(<NotificationBadge />);
+      renderWithProviders(<NotificationBadge />);
 
       expect(screen.getByText('5')).toBeInTheDocument();
     });
@@ -70,7 +57,7 @@ describe('NotificationBadge Component', () => {
         createMockQueryResult({ error: new Error('Connection error') })
       );
 
-      renderWithQueryClient(<NotificationBadge />);
+      renderWithProviders(<NotificationBadge />);
 
       const errorContainer = screen.getByTitle('Connection error');
       expect(errorContainer).toBeInTheDocument();
@@ -82,7 +69,7 @@ describe('NotificationBadge Component', () => {
         createMockQueryResult({ error: new Error('Connection error') })
       );
 
-      renderWithQueryClient(<NotificationBadge />);
+      renderWithProviders(<NotificationBadge />);
 
       const errorElement = screen.getByTitle('Connection error');
       expect(errorElement).toHaveAttribute('title', 'Connection error');
@@ -95,7 +82,7 @@ describe('NotificationBadge Component', () => {
         createMockQueryResult({ data: { count: 3, lastCheckedAt: '2024-01-01T00:00:00Z' } })
       );
 
-      renderWithQueryClient(<NotificationBadge />);
+      renderWithProviders(<NotificationBadge />);
 
       expect(screen.getByText('3')).toBeInTheDocument();
     });
@@ -105,7 +92,7 @@ describe('NotificationBadge Component', () => {
         createMockQueryResult({ data: { count: 42, lastCheckedAt: '2024-01-01T00:00:00Z' } })
       );
 
-      renderWithQueryClient(<NotificationBadge />);
+      renderWithProviders(<NotificationBadge />);
 
       expect(screen.getByText('42')).toBeInTheDocument();
     });
@@ -115,7 +102,7 @@ describe('NotificationBadge Component', () => {
         createMockQueryResult({ data: { count: 100, lastCheckedAt: '2024-01-01T00:00:00Z' } })
       );
 
-      renderWithQueryClient(<NotificationBadge />);
+      renderWithProviders(<NotificationBadge />);
 
       expect(screen.getByText('99+')).toBeInTheDocument();
     });
@@ -125,7 +112,7 @@ describe('NotificationBadge Component', () => {
         createMockQueryResult({ data: { count: 9999, lastCheckedAt: '2024-01-01T00:00:00Z' } })
       );
 
-      renderWithQueryClient(<NotificationBadge />);
+      renderWithProviders(<NotificationBadge />);
 
       expect(screen.getByText('99+')).toBeInTheDocument();
     });
@@ -135,7 +122,7 @@ describe('NotificationBadge Component', () => {
         createMockQueryResult({ data: { count: 99, lastCheckedAt: '2024-01-01T00:00:00Z' } })
       );
 
-      renderWithQueryClient(<NotificationBadge />);
+      renderWithProviders(<NotificationBadge />);
 
       expect(screen.getByText('99')).toBeInTheDocument();
     });
@@ -147,7 +134,7 @@ describe('NotificationBadge Component', () => {
         createMockQueryResult({ data: undefined })
       );
 
-      const { container } = renderWithQueryClient(<NotificationBadge />);
+      const { container } = renderWithProviders(<NotificationBadge />);
 
       expect(container.firstChild).toBeNull();
     });
@@ -157,7 +144,7 @@ describe('NotificationBadge Component', () => {
         createMockQueryResult({ data: null as unknown as { count: number; lastCheckedAt: string } })
       );
 
-      const { container } = renderWithQueryClient(<NotificationBadge />);
+      const { container } = renderWithProviders(<NotificationBadge />);
 
       expect(container.firstChild).toBeNull();
     });
@@ -167,7 +154,7 @@ describe('NotificationBadge Component', () => {
         createMockQueryResult({ data: {} as { count: number; lastCheckedAt: string } })
       );
 
-      const { container } = renderWithQueryClient(<NotificationBadge />);
+      const { container } = renderWithProviders(<NotificationBadge />);
 
       expect(container.firstChild).toBeNull();
     });
@@ -179,7 +166,7 @@ describe('NotificationBadge Component', () => {
         createMockQueryResult({ data: { count: 5, lastCheckedAt: '2024-01-01T00:00:00Z' } })
       );
 
-      renderWithQueryClient(<NotificationBadge />);
+      renderWithProviders(<NotificationBadge />);
 
       const badge = screen.getByText('5');
       expect(badge).toHaveClass('badge-count');
@@ -190,7 +177,7 @@ describe('NotificationBadge Component', () => {
         createMockQueryResult({ error: new Error('Connection error') })
       );
 
-      renderWithQueryClient(<NotificationBadge />);
+      renderWithProviders(<NotificationBadge />);
 
       const errorElement = screen.getByTitle('Connection error');
       expect(errorElement).toHaveClass('notification-badge-error');

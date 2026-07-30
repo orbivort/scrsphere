@@ -1,7 +1,9 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useModalFocus } from '../../hooks/useModalFocus';
 import { XIcon, AlertTriangleIcon, CheckIcon, FileTextIcon } from '../../components/common/Icons';
+import { LocaleDateInput } from '../../components/common/Form/LocaleDateInput';
 
 import styles from './CreateSprintReviewModal.module.css';
 
@@ -40,6 +42,7 @@ export const CreateSprintReviewModal: React.FC<CreateSprintReviewModalProps> = (
   error,
   hasIncrement,
 }) => {
+  const { t } = useTranslation('sprint-review');
   const modalFocus = useModalFocus({
     isOpen,
     onClose,
@@ -59,12 +62,12 @@ export const CreateSprintReviewModal: React.FC<CreateSprintReviewModalProps> = (
         <div className={styles['modal-header']}>
           <h3 id="create-review-title">
             <FileTextIcon size={20} />
-            Create Sprint Review
+            {t('createModal.title')}
           </h3>
           <button
             className={styles['close-button']}
             onClick={onClose}
-            aria-label="Close dialog"
+            aria-label={t('createModal.cancel')}
             type="button"
           >
             <XIcon size={24} />
@@ -72,18 +75,14 @@ export const CreateSprintReviewModal: React.FC<CreateSprintReviewModalProps> = (
         </div>
         <div className={styles['modal-content']}>
           <div className={styles['form-group']}>
-            <label htmlFor="review-date">Review Date *</label>
-            <input
+            <label htmlFor="review-date">{t('createModal.reviewDate')}</label>
+            <LocaleDateInput
               id="review-date"
-              type="date"
-              value={createReviewData.reviewDate}
-              onChange={(e) =>
-                setCreateReviewData({ ...createReviewData, reviewDate: e.target.value })
-              }
-              className={formErrors.reviewDate ? styles.error : ''}
-              aria-required="true"
-              aria-invalid={!!formErrors.reviewDate}
-              aria-describedby={formErrors.reviewDate ? 'review-date-error' : undefined}
+              value={createReviewData.reviewDate ?? ''}
+              onChange={(value) => setCreateReviewData({ ...createReviewData, reviewDate: value })}
+              hasError={!!formErrors.reviewDate}
+              errorId="review-date-error"
+              required
             />
             {formErrors.reviewDate && (
               <span id="review-date-error" className={styles['error-message']} role="alert">
@@ -92,14 +91,14 @@ export const CreateSprintReviewModal: React.FC<CreateSprintReviewModalProps> = (
             )}
           </div>
           <div className={styles['form-group']}>
-            <label htmlFor="review-summary">Summary (Optional)</label>
+            <label htmlFor="review-summary">{t('createModal.summary')}</label>
             <textarea
               id="review-summary"
               value={createReviewData.summary}
               onChange={(e) =>
                 setCreateReviewData({ ...createReviewData, summary: e.target.value })
               }
-              placeholder="Enter a summary of the sprint review..."
+              placeholder={t('createModal.summaryPlaceholder')}
               rows={4}
             />
           </div>
@@ -120,7 +119,7 @@ export const CreateSprintReviewModal: React.FC<CreateSprintReviewModalProps> = (
               setFormErrors({});
             }}
           >
-            Cancel
+            {t('createModal.cancel')}
           </button>
           <button
             className={`${styles.button} ${styles['button-primary']}`}
@@ -128,19 +127,17 @@ export const CreateSprintReviewModal: React.FC<CreateSprintReviewModalProps> = (
             disabled={isPending || !hasIncrement}
           >
             {isPending ? (
-              'Creating...'
+              t('createModal.creating')
             ) : (
               <>
-                <CheckIcon size={16} /> Create Review
+                <CheckIcon size={16} /> {t('createModal.createReview')}
               </>
             )}
           </button>
         </div>
         {isError && (
           <div className={styles['modal-error']}>
-            {error instanceof Error
-              ? error.message
-              : 'Failed to create sprint review. Please try again.'}
+            {error instanceof Error ? error.message : t('createModal.failed')}
           </div>
         )}
       </div>

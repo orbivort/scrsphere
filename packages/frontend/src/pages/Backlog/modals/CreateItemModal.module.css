@@ -578,7 +578,7 @@
     background-color var(--transition-fast),
     transform var(--transition-fast),
     box-shadow var(--transition-fast);
-  text-align: left;
+  text-align: start;
   position: relative;
   overflow: hidden;
 }

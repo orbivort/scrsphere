@@ -1,7 +1,9 @@
-﻿import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useSearchParams } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import axios, { type AxiosError } from 'axios';
+import { formatDateRange } from '@scrumooth/shared';
 
 import { apiService } from '../../services';
 import { useToast } from '../../hooks/useToast';
@@ -21,6 +23,8 @@ import {
 } from '../../components/common/Icons';
 
 import styles from './IncrementCreate.module.css';
+
+import { useI18nStore } from '@/i18n/useI18nStore';
 
 /**
  * IncrementCreate Component
@@ -45,12 +49,14 @@ import styles from './IncrementCreate.module.css';
 // Icons imported from shared library
 
 export const IncrementCreate: React.FC = () => {
+  const { t } = useTranslation('increments');
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
   const { toasts, success, error: showError, removeToast } = useToast();
   const { currentTeam } = useTeamContext();
   const { user } = useAuthStore();
+  const { locale } = useI18nStore();
 
   const fromSprintComplete = searchParams.get('fromSprintComplete') === 'true';
   const urlSprintId = searchParams.get('sprintId') ?? '';
@@ -127,10 +133,10 @@ export const IncrementCreate: React.FC = () => {
     if (sprint && fromSprintComplete) {
       setName(`${sprint.name} Increment`);
       setDescription(
-        `Increment created from ${sprint.name} (${new Date(sprint.startDate).toLocaleDateString()} - ${new Date(sprint.endDate).toLocaleDateString()})`
+        `Increment created from ${sprint.name} (${formatDateRange(sprint.startDate, sprint.endDate, locale)})`
       );
     }
-  }, [sprint, fromSprintComplete]);
+  }, [sprint, fromSprintComplete, locale]);
 
   // Effect: Auto-select eligible PBIs that are not already in increments
   React.useEffect(() => {
@@ -158,21 +164,19 @@ export const IncrementCreate: React.FC = () => {
 
       if (fromSprintComplete && response.data?.id) {
         setWorkflowStep('delivering');
-        success('Increment created! Delivering increment...');
+        success(t('create.toast.createdAndDelivering'));
 
         try {
           await deliverMutation.mutateAsync(response.data.id);
           setWorkflowStep('redirecting');
-          success('Increment delivered! Redirecting to Sprint Review...');
+          success(t('create.toast.deliveredSuccess'));
 
           setTimeout(() => {
             void navigate(`/sprint-review/${selectedSprintId}`);
           }, 1500);
         } catch (_error) {
           setWorkflowStep(null);
-          showError(
-            'Failed to deliver increment. You can deliver it manually from the increment details page.'
-          );
+          showError(t('create.toast.deliverFailed'));
           if (response.data.id) {
             void navigate(
               `/increment/${response.data.id}?fromSprintComplete=true&sprintId=${selectedSprintId}`
@@ -182,7 +186,7 @@ export const IncrementCreate: React.FC = () => {
           }
         }
       } else {
-        success('Increment created successfully!');
+        success(t('create.toast.createdSuccess'));
         if (response.data) {
           void navigate(`/increment/${response.data.id}`);
         } else {
@@ -192,7 +196,7 @@ export const IncrementCreate: React.FC = () => {
     },
     onError: (error: Error | AxiosError<ApiResponse<never>>) => {
       setWorkflowStep(null);
-      let errorMessage = 'Failed to create increment. Please try again.';
+      let errorMessage = t('create.toast.createFailed');
 
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError<ApiResponse<never>>;
@@ -205,7 +209,7 @@ export const IncrementCreate: React.FC = () => {
             const fieldErrors = apiError.details.map(
               (detail) => `${detail.field}: ${detail.message}`
             );
-            errorMessage = `Validation failed: ${fieldErrors.join('; ')}`;
+            errorMessage = `${t('create.toast.validationFailed')}: ${fieldErrors.join('; ')}`;
 
             // Also update form errors for specific fields
             const newFormErrors: Record<string, string> = {};
@@ -243,7 +247,7 @@ export const IncrementCreate: React.FC = () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.increment.all });
     },
     onError: (error: Error | AxiosError<ApiResponse<never>>) => {
-      let errorMessage = 'Failed to deliver increment. Please try again.';
+      let errorMessage = t('detail.toast.deliverFailed');
 
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError<ApiResponse<never>>;
@@ -264,19 +268,19 @@ export const IncrementCreate: React.FC = () => {
     const newErrors: Record<string, string> = {};
 
     if (!teamId) {
-      newErrors.teamId = 'No team selected. Please select a team first.';
+      newErrors.teamId = t('create.validation.noTeamSelected');
     }
 
     if (!name.trim()) {
-      newErrors.name = 'Name is required';
+      newErrors.name = t('create.validation.nameRequired');
     }
 
     if (!selectedSprintId) {
-      newErrors.sprintId = 'Please select a sprint';
+      newErrors.sprintId = t('create.validation.sprintRequired');
     }
 
     if (selectedPBIs.length === 0) {
-      newErrors.pbis = 'At least one PBI must be selected';
+      newErrors.pbis = t('create.validation.atLeastOnePbi');
     }
 
     setErrors(newErrors);
@@ -362,7 +366,7 @@ export const IncrementCreate: React.FC = () => {
 
   // Loading state
   if (isLoadingSprint || isLoadingPBIs || isLoadingSprints) {
-    return <LoadingState variant="page" label="Loading..." />;
+    return <LoadingState variant="page" label={t('create.loading')} />;
   }
 
   // Error state
@@ -370,13 +374,13 @@ export const IncrementCreate: React.FC = () => {
     return (
       <div className={styles['increment-loading']}>
         <AlertCircleIcon size={48} className={styles['error-icon']} />
-        <p>Failed to load eligible PBIs</p>
+        <p>{t('create.error.failedLoadPbis')}</p>
         <button
           className={`${styles.button} ${styles['button-primary']}`}
           onClick={() => navigate('/increments')}
           style={{ marginTop: '16px' }}
         >
-          Back to Increments
+          {t('create.backToIncrements')}
         </button>
       </div>
     );
@@ -389,7 +393,9 @@ export const IncrementCreate: React.FC = () => {
         <div className={styles['detail-header']}>
           <button className={styles['back-button']} onClick={handleBack}>
             <ArrowLeftIcon size={20} />
-            <span>{fromSprintComplete ? 'Back to Sprint Review' : 'Back to Increments'}</span>
+            <span>
+              {fromSprintComplete ? t('create.backToSprintReview') : t('create.backToIncrements')}
+            </span>
           </button>
           <div className={styles['header-content']}>
             <div className={styles['header-left']}>
@@ -397,20 +403,22 @@ export const IncrementCreate: React.FC = () => {
                 <span className={styles['page-title-icon']}>
                   <PackageIcon size={28} aria-hidden="true" />
                 </span>
-                Create Increment
+                {t('create.title')}
               </h1>
             </div>
             {fromSprintComplete && (
               <div className={styles['workflow-indicator']}>
-                <span className={styles['workflow-badge']}>Sprint Completion Workflow</span>
+                <span className={styles['workflow-badge']}>
+                  {t('create.workflowIndicator.title')}
+                </span>
                 <span className={styles['workflow-step']}>
                   {workflowStep === 'creating'
-                    ? 'Step 2 of 4: Create Increment'
+                    ? t('create.workflowIndicator.step2Of4')
                     : workflowStep === 'delivering'
-                      ? 'Step 3 of 4: Deliver Increment'
+                      ? t('create.workflowIndicator.step3Of4')
                       : workflowStep === 'redirecting'
-                        ? 'Step 4 of 4: Sprint Review'
-                        : 'Step 2 of 4: Create Increment'}
+                        ? t('create.workflowIndicator.step4Of4')
+                        : t('create.workflowIndicator.step2Of4')}
                 </span>
               </div>
             )}
@@ -424,7 +432,9 @@ export const IncrementCreate: React.FC = () => {
                 <span className={styles['step-number']}>
                   <CheckIcon size={12} strokeWidth={3} />
                 </span>
-                <span className={styles['step-label']}>Sprint Completed</span>
+                <span className={styles['step-label']}>
+                  {t('create.workflowSteps.sprintCompleted')}
+                </span>
               </div>
               <div
                 className={`${styles['progress-step']} ${
@@ -443,7 +453,9 @@ export const IncrementCreate: React.FC = () => {
                   )}
                 </span>
                 <span className={styles['step-label']}>
-                  {workflowStep === 'creating' ? 'Creating Increment...' : 'Create Increment'}
+                  {workflowStep === 'creating'
+                    ? t('create.progressSteps.creatingIncrement')
+                    : t('create.workflowSteps.createIncrement')}
                 </span>
               </div>
               <div
@@ -466,10 +478,10 @@ export const IncrementCreate: React.FC = () => {
                 </span>
                 <span className={styles['step-label']}>
                   {workflowStep === 'delivering'
-                    ? 'Delivering Increment...'
+                    ? t('create.progressSteps.deliveringIncrement')
                     : workflowStep === 'redirecting'
-                      ? 'Redirecting...'
-                      : 'Deliver Increment'}
+                      ? t('create.progressSteps.redirecting')
+                      : t('create.workflowSteps.deliverIncrement')}
                 </span>
               </div>
               <div
@@ -480,7 +492,9 @@ export const IncrementCreate: React.FC = () => {
                 <span className={styles['step-number']}>
                   {workflowStep === 'redirecting' ? <ClockIcon size={12} /> : '4'}
                 </span>
-                <span className={styles['step-label']}>Sprint Review</span>
+                <span className={styles['step-label']}>
+                  {t('create.workflowSteps.sprintReview')}
+                </span>
               </div>
             </div>
           </div>
@@ -490,14 +504,14 @@ export const IncrementCreate: React.FC = () => {
           <div className={styles['form-grid']}>
             <div className={styles['left-column']}>
               <div className={styles['detail-card']}>
-                <h3>Increment Details</h3>
+                <h3>{t('create.form.incrementDetails')}</h3>
                 <p className={styles['card-subtitle']}>
-                  Provide a name and optional description for this increment.
+                  {t('create.form.incrementDetailsSubtitle')}
                 </p>
 
                 <div className={styles['form-group']}>
                   <label htmlFor="name">
-                    Name <span className={styles['required-mark']}>*</span>
+                    {t('create.form.name')} <span className={styles['required-mark']}>*</span>
                   </label>
                   <input
                     type="text"
@@ -509,7 +523,7 @@ export const IncrementCreate: React.FC = () => {
                         setErrors((prev) => ({ ...prev, name: '' }));
                       }
                     }}
-                    placeholder="e.g., Sprint 5 Increment"
+                    placeholder={t('create.form.namePlaceholder')}
                     className={errors.name ? styles.error : ''}
                     disabled={createMutation.isPending || deliverMutation.isPending}
                   />
@@ -519,7 +533,7 @@ export const IncrementCreate: React.FC = () => {
                 {!fromSprintComplete && (
                   <div className={styles['form-group']}>
                     <label htmlFor="sprintId">
-                      Sprint <span className={styles['required-mark']}>*</span>
+                      {t('create.form.sprint')} <span className={styles['required-mark']}>*</span>
                     </label>
                     <select
                       id="sprintId"
@@ -528,7 +542,7 @@ export const IncrementCreate: React.FC = () => {
                       className={errors.sprintId ? styles.error : ''}
                       disabled={createMutation.isPending || deliverMutation.isPending}
                     >
-                      <option value="">Select a sprint</option>
+                      <option value="">{t('create.form.sprintPlaceholder')}</option>
                       {availableSprints.map((sprint) => (
                         <option key={sprint.id} value={sprint.id}>
                           {sprint.name} ({sprint.status})
@@ -542,12 +556,12 @@ export const IncrementCreate: React.FC = () => {
                 )}
 
                 <div className={styles['form-group']}>
-                  <label htmlFor="description">Description</label>
+                  <label htmlFor="description">{t('create.form.description')}</label>
                   <textarea
                     id="description"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Describe what this increment includes..."
+                    placeholder={t('create.form.descriptionPlaceholder')}
                     rows={4}
                     disabled={createMutation.isPending || deliverMutation.isPending}
                   />
@@ -557,10 +571,12 @@ export const IncrementCreate: React.FC = () => {
               <div className={styles['detail-card']}>
                 <div className={styles['card-header-row']}>
                   <h3>
-                    Select Product Backlog Items <span className={styles['required-mark']}>*</span>
+                    {t('create.pbis.title')} <span className={styles['required-mark']}>*</span>
                   </h3>
                   <div className={styles['header-actions']}>
-                    <span className={styles['status-badge']}>{summary.count} selected</span>
+                    <span className={styles['status-badge']}>
+                      {summary.count} {t('create.pbis.selected')}
+                    </span>
                     <button
                       type="button"
                       className={`${styles.button} ${styles['button-secondary']} ${styles['button-small']}`}
@@ -574,21 +590,17 @@ export const IncrementCreate: React.FC = () => {
                     >
                       {selectedPBIs.length ===
                       eligiblePBIs.filter((pbi) => !pbiIdsInIncrements.has(pbi.id)).length
-                        ? 'Deselect All'
-                        : 'Select All'}
+                        ? t('create.pbis.deselectAll')
+                        : t('create.pbis.selectAll')}
                     </button>
                   </div>
                 </div>
-                <p className={styles['card-subtitle']}>
-                  Choose the PBIs that are complete and ready to be included in this increment.
-                </p>
+                <p className={styles['card-subtitle']}>{t('create.pbis.subtitle')}</p>
 
                 {eligiblePBIs.length === 0 ? (
                   <div className={styles['empty-pbis']}>
-                    <p>No eligible PBIs found for this sprint.</p>
-                    <p>
-                      PBIs must be in &quot;Done&quot; status and not already in another increment.
-                    </p>
+                    <p>{t('create.pbis.noEligiblePbis')}</p>
+                    <p>{t('create.pbis.mustBeDone')}</p>
                   </div>
                 ) : (
                   <div className={styles['pbi-selection-list']}>
@@ -616,12 +628,12 @@ export const IncrementCreate: React.FC = () => {
                             <div className={styles['pbi-selection-header']}>
                               <span className={styles['pbi-title']}>{pbi.title}</span>
                               <span className={styles['pbi-points']}>
-                                {pbi.storyPoints ?? 0} pts
+                                {pbi.storyPoints ?? 0} {t('pts')}
                               </span>
                             </div>
                             {isAlreadyInIncrement && (
                               <span className={styles['already-in-increment']}>
-                                Already in an increment
+                                {t('create.pbis.alreadyInIncrement')}
                               </span>
                             )}
                           </div>
@@ -642,16 +654,20 @@ export const IncrementCreate: React.FC = () => {
 
             <div className={styles['right-column']}>
               <div className={`${styles['detail-card']} ${styles['summary-card']}`}>
-                <h3>Summary</h3>
-                <p className={styles['card-subtitle']}>Review your increment before creating.</p>
+                <h3>{t('create.summary.title')}</h3>
+                <p className={styles['card-subtitle']}>{t('create.summary.subtitle')}</p>
 
                 <div className={styles['summary-stats']}>
                   <div className={styles['summary-stat']}>
-                    <span className={styles['summary-label']}>PBIs Selected</span>
+                    <span className={styles['summary-label']}>
+                      {t('create.summary.pbisSelected')}
+                    </span>
                     <span className={styles['summary-value']}>{summary.count}</span>
                   </div>
                   <div className={styles['summary-stat']}>
-                    <span className={styles['summary-label']}>Total Story Points</span>
+                    <span className={styles['summary-label']}>
+                      {t('create.summary.totalStoryPoints')}
+                    </span>
                     <span className={styles['summary-value']}>{summary.storyPoints}</span>
                   </div>
                 </div>
@@ -663,7 +679,9 @@ export const IncrementCreate: React.FC = () => {
                     onClick={handleBack}
                     disabled={createMutation.isPending || deliverMutation.isPending}
                   >
-                    {fromSprintComplete ? 'Skip to Sprint Review' : 'Cancel'}
+                    {fromSprintComplete
+                      ? t('create.actions.skipToSprintReview')
+                      : t('create.actions.cancel')}
                   </button>
                   <button
                     type="submit"
@@ -672,23 +690,31 @@ export const IncrementCreate: React.FC = () => {
                   >
                     {createMutation.isPending ? (
                       <>
-                        <LoadingState variant="spinner" size="sm" label="Creating increment" />
-                        <span>Creating...</span>
+                        <LoadingState
+                          variant="spinner"
+                          size="sm"
+                          label={t('create.actions.creating')}
+                        />
+                        <span>{t('create.actions.creating')}</span>
                       </>
                     ) : deliverMutation.isPending ? (
                       <>
-                        <LoadingState variant="spinner" size="sm" label="Delivering increment" />
-                        <span>Delivering...</span>
+                        <LoadingState
+                          variant="spinner"
+                          size="sm"
+                          label={t('create.actions.delivering')}
+                        />
+                        <span>{t('create.actions.delivering')}</span>
                       </>
                     ) : fromSprintComplete ? (
                       <>
                         <PlusIcon size={16} />
-                        <span>Create & Continue</span>
+                        <span>{t('create.actions.createAndContinue')}</span>
                       </>
                     ) : (
                       <>
                         <PlusIcon size={16} />
-                        <span>Create Increment</span>
+                        <span>{t('create.actions.createIncrement')}</span>
                       </>
                     )}
                   </button>
@@ -701,7 +727,7 @@ export const IncrementCreate: React.FC = () => {
                       {(createMutation.error as AxiosError<ApiResponse<never>>).response?.data.error
                         ?.details ? (
                         <>
-                          <strong>Validation failed. Please correct the following errors:</strong>
+                          <strong>{t('create.toast.validationFailed')}</strong>
                           <ul className={styles['error-list']}>
                             {(
                               (createMutation.error as AxiosError<ApiResponse<never>>).response
@@ -719,7 +745,7 @@ export const IncrementCreate: React.FC = () => {
                             .error?.message ??
                             (createMutation.error instanceof Error
                               ? createMutation.error.message
-                              : 'Failed to create increment. Please try again.')}
+                              : t('create.toast.createFailed'))}
                         </span>
                       )}
                     </div>
@@ -729,10 +755,7 @@ export const IncrementCreate: React.FC = () => {
                 {deliverMutation.isError && (
                   <div className={styles['form-error']}>
                     <AlertCircleIcon size={16} />
-                    <span>
-                      Failed to deliver increment. You can deliver it manually from the increment
-                      details page.
-                    </span>
+                    <span>{t('create.toast.deliverFailed')}</span>
                   </div>
                 )}
               </div>

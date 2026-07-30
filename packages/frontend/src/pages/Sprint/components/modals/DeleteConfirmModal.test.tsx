@@ -1,7 +1,7 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { renderWithProviders, screen, initTestI18n } from '../../../../test-utils';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeAll } from 'vitest';
 
 import { DeleteConfirmModal, type DeleteConfirmModalProps } from './DeleteConfirmModal';
 import { TaskStatus, type Task } from '../../../../types';
@@ -30,15 +30,19 @@ const defaultProps: DeleteConfirmModalProps = {
 };
 
 describe('DeleteConfirmModal', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   describe('Rendering', () => {
     it('should render modal with alertdialog role', () => {
-      render(<DeleteConfirmModal {...defaultProps} />);
+      renderWithProviders(<DeleteConfirmModal {...defaultProps} />);
 
       expect(screen.getByRole('alertdialog')).toBeInTheDocument();
     });
 
     it('should render modal title', () => {
-      render(<DeleteConfirmModal {...defaultProps} />);
+      renderWithProviders(<DeleteConfirmModal {...defaultProps} />);
 
       // "Delete Task" appears multiple times (title, button, warning)
       const titleElements = screen.getAllByText('Delete Task');
@@ -46,13 +50,13 @@ describe('DeleteConfirmModal', () => {
     });
 
     it('should render warning message', () => {
-      render(<DeleteConfirmModal {...defaultProps} />);
+      renderWithProviders(<DeleteConfirmModal {...defaultProps} />);
 
       expect(screen.getByText(/This action is permanent and cannot be undone/)).toBeInTheDocument();
     });
 
     it('should render action buttons', () => {
-      render(<DeleteConfirmModal {...defaultProps} />);
+      renderWithProviders(<DeleteConfirmModal {...defaultProps} />);
 
       expect(screen.getByText('Cancel')).toBeInTheDocument();
       // "Delete Task" appears in both the button and the warning subtitle
@@ -61,7 +65,7 @@ describe('DeleteConfirmModal', () => {
     });
 
     it('should render task title in warning', () => {
-      render(<DeleteConfirmModal {...defaultProps} />);
+      renderWithProviders(<DeleteConfirmModal {...defaultProps} />);
 
       expect(screen.getByText(/Test Task/)).toBeInTheDocument();
     });
@@ -72,7 +76,7 @@ describe('DeleteConfirmModal', () => {
       const onConfirm = vi.fn();
       const user = userEvent.setup();
 
-      render(<DeleteConfirmModal {...defaultProps} onConfirm={onConfirm} />);
+      renderWithProviders(<DeleteConfirmModal {...defaultProps} onConfirm={onConfirm} />);
 
       // Find the delete button by its class (it has button-danger class)
       const deleteButton = document.querySelector('button[class*="danger"]');
@@ -87,20 +91,20 @@ describe('DeleteConfirmModal', () => {
 
   describe('Loading State', () => {
     it('should show loading text when deleting', () => {
-      render(<DeleteConfirmModal {...defaultProps} isDeleting={true} />);
+      renderWithProviders(<DeleteConfirmModal {...defaultProps} isDeleting={true} />);
 
       expect(screen.getByText('Deleting...')).toBeInTheDocument();
     });
 
     it('should disable delete button when deleting', () => {
-      render(<DeleteConfirmModal {...defaultProps} isDeleting={true} />);
+      renderWithProviders(<DeleteConfirmModal {...defaultProps} isDeleting={true} />);
 
       const deleteButton = document.querySelector('button[class*="danger"]');
       expect(deleteButton).toBeDisabled();
     });
 
     it('should disable cancel button when deleting', () => {
-      render(<DeleteConfirmModal {...defaultProps} isDeleting={true} />);
+      renderWithProviders(<DeleteConfirmModal {...defaultProps} isDeleting={true} />);
 
       const cancelButton = screen.getByText('Cancel');
       expect(cancelButton).toBeDisabled();
@@ -109,35 +113,35 @@ describe('DeleteConfirmModal', () => {
 
   describe('Accessibility', () => {
     it('should have correct alertdialog role', () => {
-      render(<DeleteConfirmModal {...defaultProps} />);
+      renderWithProviders(<DeleteConfirmModal {...defaultProps} />);
 
       const dialog = screen.getByRole('alertdialog');
       expect(dialog).toHaveAttribute('aria-modal', 'true');
     });
 
     it('should have aria-labelledby pointing to title', () => {
-      render(<DeleteConfirmModal {...defaultProps} />);
+      renderWithProviders(<DeleteConfirmModal {...defaultProps} />);
 
       const dialog = screen.getByRole('alertdialog');
       expect(dialog).toHaveAttribute('aria-labelledby', 'delete-modal-title');
     });
 
     it('should have aria-describedby pointing to description', () => {
-      render(<DeleteConfirmModal {...defaultProps} />);
+      renderWithProviders(<DeleteConfirmModal {...defaultProps} />);
 
       const dialog = screen.getByRole('alertdialog');
       expect(dialog).toHaveAttribute('aria-describedby', 'delete-modal-desc');
     });
 
     it('should have aria-hidden on decorative icons', () => {
-      const { container } = render(<DeleteConfirmModal {...defaultProps} />);
+      const { container } = renderWithProviders(<DeleteConfirmModal {...defaultProps} />);
 
       const hiddenElements = container.querySelectorAll('[aria-hidden="true"]');
       expect(hiddenElements.length).toBeGreaterThan(0);
     });
 
     it('should have aria-label on close button', () => {
-      render(<DeleteConfirmModal {...defaultProps} />);
+      renderWithProviders(<DeleteConfirmModal {...defaultProps} />);
 
       const closeButton = screen.getByLabelText('Close modal');
       expect(closeButton).toBeInTheDocument();
@@ -147,13 +151,17 @@ describe('DeleteConfirmModal', () => {
   describe('Edge Cases', () => {
     it('should handle long task titles', () => {
       const longTitle = 'A'.repeat(100);
-      render(<DeleteConfirmModal {...defaultProps} task={createMockTask({ title: longTitle })} />);
+      renderWithProviders(
+        <DeleteConfirmModal {...defaultProps} task={createMockTask({ title: longTitle })} />
+      );
 
       expect(screen.getByText(new RegExp(longTitle))).toBeInTheDocument();
     });
 
     it('should handle empty task title', () => {
-      render(<DeleteConfirmModal {...defaultProps} task={createMockTask({ title: '' })} />);
+      renderWithProviders(
+        <DeleteConfirmModal {...defaultProps} task={createMockTask({ title: '' })} />
+      );
 
       expect(screen.getByText(/Unknown Task/)).toBeInTheDocument();
     });

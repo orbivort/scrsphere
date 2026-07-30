@@ -102,7 +102,7 @@ describe('Auth Validation', () => {
         });
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0]?.message).toBe('Invalid email address');
+          expect(result.error.issues[0]?.message).toBe('validation:auth.invalidEmail');
         }
       });
 
@@ -151,7 +151,7 @@ describe('Auth Validation', () => {
         });
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0]?.message).toContain('at least 12 characters');
+          expect(result.error.issues[0]?.message).toBe('validation:auth.passwordTooShort');
         }
       });
 
@@ -165,7 +165,7 @@ describe('Auth Validation', () => {
         });
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0]?.message).toContain('less than 100 characters');
+          expect(result.error.issues[0]?.message).toBe('validation:fieldTooLong');
         }
       });
 
@@ -179,7 +179,7 @@ describe('Auth Validation', () => {
         });
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0]?.message).toContain('uppercase letter');
+          expect(result.error.issues[0]?.message).toBe('validation:auth.passwordNeedsUppercase');
         }
       });
 
@@ -193,7 +193,7 @@ describe('Auth Validation', () => {
         });
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0]?.message).toContain('lowercase letter');
+          expect(result.error.issues[0]?.message).toBe('validation:auth.passwordNeedsLowercase');
         }
       });
 
@@ -207,7 +207,7 @@ describe('Auth Validation', () => {
         });
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0]?.message).toContain('number');
+          expect(result.error.issues[0]?.message).toBe('validation:auth.passwordNeedsNumber');
         }
       });
 
@@ -221,7 +221,7 @@ describe('Auth Validation', () => {
         });
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0]?.message).toContain('special character');
+          expect(result.error.issues[0]?.message).toBe('validation:auth.passwordNeedsSpecialChar');
         }
       });
 
@@ -247,7 +247,7 @@ describe('Auth Validation', () => {
         expect(result.success).toBe(false);
         if (!result.success) {
           const message = result.error.issues[0]?.message;
-          expect(message).toContain('at least 12 characters');
+          expect(message).toBe('validation:auth.passwordTooShort');
         }
       });
     });
@@ -263,7 +263,7 @@ describe('Auth Validation', () => {
         });
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0]?.message).toContain('First name is required');
+          expect(result.error.issues[0]?.message).toBe('validation:fieldRequired');
         }
       });
 
@@ -277,7 +277,7 @@ describe('Auth Validation', () => {
         });
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0]?.message).toContain('less than 50 characters');
+          expect(result.error.issues[0]?.message).toBe('validation:fieldTooLong');
         }
       });
 
@@ -314,7 +314,7 @@ describe('Auth Validation', () => {
         });
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0]?.message).toContain('Last name is required');
+          expect(result.error.issues[0]?.message).toBe('validation:fieldRequired');
         }
       });
 
@@ -328,7 +328,7 @@ describe('Auth Validation', () => {
         });
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0]?.message).toContain('less than 50 characters');
+          expect(result.error.issues[0]?.message).toBe('validation:fieldTooLong');
         }
       });
 
@@ -365,7 +365,7 @@ describe('Auth Validation', () => {
         });
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0]?.message).toContain('accept the terms');
+          expect(result.error.issues[0]?.message).toBe('validation:auth.termsRequired');
         }
       });
 
@@ -422,7 +422,7 @@ describe('Auth Validation', () => {
         });
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0]?.message).toBe('Invalid email address');
+          expect(result.error.issues[0]?.message).toBe('validation:auth.invalidEmail');
         }
       });
 
@@ -450,7 +450,7 @@ describe('Auth Validation', () => {
         });
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0]?.message).toBe('Password is required');
+          expect(result.error.issues[0]?.message).toBe('validation:auth.passwordRequired');
         }
       });
 
@@ -495,7 +495,7 @@ describe('Auth Validation', () => {
         });
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0]?.message).toBe('Refresh token is required');
+          expect(result.error.issues[0]?.message).toBe('validation:auth.refreshTokenRequired');
         }
       });
 
@@ -533,7 +533,7 @@ describe('Auth Validation', () => {
         });
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0]?.message).toContain('DELETE MY ACCOUNT');
+          expect(result.error.issues[0]?.message).toBe('validation:auth.deleteConfirmation');
         }
       });
 
@@ -589,7 +589,9 @@ describe('Auth Validation', () => {
         });
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0]?.message).toContain('SCHEDULE DELETION');
+          expect(result.error.issues[0]?.message).toBe(
+            'validation:auth.scheduleDeletionConfirmation'
+          );
         }
       });
 
@@ -638,7 +640,7 @@ describe('Auth Validation', () => {
         });
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0]?.message).toContain('DELETE MY ACCOUNT');
+          expect(result.error.issues[0]?.message).toBe('validation:auth.deleteConfirmation');
         }
       });
 
@@ -716,7 +718,7 @@ describe('Auth Validation', () => {
         });
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0]?.message).toContain('First name is required');
+          expect(result.error.issues[0]?.message).toBe('validation:fieldRequired');
         }
       });
 
@@ -727,7 +729,7 @@ describe('Auth Validation', () => {
         });
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0]?.message).toContain('Last name is required');
+          expect(result.error.issues[0]?.message).toBe('validation:fieldRequired');
         }
       });
 
@@ -738,7 +740,7 @@ describe('Auth Validation', () => {
         });
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0]?.message).toContain('less than 100 characters');
+          expect(result.error.issues[0]?.message).toBe('validation:fieldTooLong');
         }
       });
 
@@ -749,7 +751,7 @@ describe('Auth Validation', () => {
         });
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0]?.message).toContain('less than 100 characters');
+          expect(result.error.issues[0]?.message).toBe('validation:fieldTooLong');
         }
       });
 
@@ -795,7 +797,7 @@ describe('Auth Validation', () => {
         });
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0]?.message).toBe('Current password is required');
+          expect(result.error.issues[0]?.message).toBe('validation:auth.currentPasswordRequired');
         }
       });
 
@@ -815,7 +817,7 @@ describe('Auth Validation', () => {
         });
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0]?.message).toContain('at least 12 characters');
+          expect(result.error.issues[0]?.message).toBe('validation:auth.passwordTooShort');
         }
       });
 
@@ -826,7 +828,7 @@ describe('Auth Validation', () => {
         });
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0]?.message).toContain('less than 128 characters');
+          expect(result.error.issues[0]?.message).toBe('validation:fieldTooLong');
         }
       });
 
@@ -837,7 +839,7 @@ describe('Auth Validation', () => {
         });
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0]?.message).toContain('uppercase letter');
+          expect(result.error.issues[0]?.message).toBe('validation:auth.passwordNeedsUppercase');
         }
       });
 
@@ -848,7 +850,7 @@ describe('Auth Validation', () => {
         });
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0]?.message).toContain('lowercase letter');
+          expect(result.error.issues[0]?.message).toBe('validation:auth.passwordNeedsLowercase');
         }
       });
 
@@ -859,7 +861,7 @@ describe('Auth Validation', () => {
         });
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0]?.message).toContain('number');
+          expect(result.error.issues[0]?.message).toBe('validation:auth.passwordNeedsNumber');
         }
       });
 
@@ -870,7 +872,7 @@ describe('Auth Validation', () => {
         });
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0]?.message).toContain('special character');
+          expect(result.error.issues[0]?.message).toBe('validation:auth.passwordNeedsSpecialChar');
         }
       });
 

@@ -1,5 +1,6 @@
-﻿import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 
 import { ConfirmDialog } from '../ConfirmDialog/ConfirmDialog';
 
@@ -17,6 +18,8 @@ import {
   TrashIcon,
   InboxIcon,
 } from '@/components/common/Icons';
+
+const NS = 'common' as const;
 
 // ============================================
 // Type Definitions
@@ -93,11 +96,11 @@ export interface AttendeesSectionProps {
 // ============================================
 
 const ROLE_OPTIONS = [
-  { value: 'product_owner', label: 'Product Owner' },
-  { value: 'scrum_master', label: 'Scrum Master' },
-  { value: 'developer', label: 'Developer' },
-  { value: 'stakeholder', label: 'Stakeholder' },
-];
+  { value: 'product_owner', labelKey: 'attendeesSection.roleProductOwner' },
+  { value: 'scrum_master', labelKey: 'attendeesSection.roleScrumMaster' },
+  { value: 'developer', labelKey: 'attendeesSection.roleDeveloper' },
+  { value: 'stakeholder', labelKey: 'attendeesSection.roleStakeholder' },
+] as const;
 
 // ============================================
 // Utility Functions
@@ -132,14 +135,19 @@ interface FilterTabsProps {
 }
 
 const FilterTabs: React.FC<FilterTabsProps> = ({ filter, onFilterChange, counts }) => {
+  const { t } = useTranslation(NS);
   const filters: { key: AttendeeFilter; label: string }[] = [
-    { key: 'all', label: `All (${counts.all})` },
-    { key: 'team', label: `Team (${counts.team})` },
-    { key: 'guests', label: `Guests (${counts.guests})` },
+    { key: 'all', label: t('attendeesSection.filterAll', { count: counts.all }) },
+    { key: 'team', label: t('attendeesSection.filterTeam', { count: counts.team }) },
+    { key: 'guests', label: t('attendeesSection.filterGuests', { count: counts.guests }) },
   ];
 
   return (
-    <div className={styles['filter-tabs']} role="radiogroup" aria-label="Filter attendees by type">
+    <div
+      className={styles['filter-tabs']}
+      role="radiogroup"
+      aria-label={t('attendeesSection.filterAriaLabel')}
+    >
       {filters.map(({ key, label }) => (
         <button
           key={key}
@@ -168,6 +176,8 @@ const UnmarkedSection: React.FC<UnmarkedSectionProps> = ({
   isCompleted,
   onAddMember,
 }) => {
+  const { t } = useTranslation(NS);
+
   if (members.length === 0 || isCompleted) return null;
 
   return (
@@ -175,7 +185,7 @@ const UnmarkedSection: React.FC<UnmarkedSectionProps> = ({
       <div className={styles['unmarked-header']}>
         <ClipboardListIcon className={styles['unmarked-icon']} />
         <span className={styles['unmarked-title']}>
-          Team members not yet marked ({members.length})
+          {t('attendeesSection.unmarkedTitle', { count: members.length })}
         </span>
       </div>
       <div className={styles['unmarked-list']}>
@@ -195,19 +205,19 @@ const UnmarkedSection: React.FC<UnmarkedSectionProps> = ({
                   className={`${styles['quick-btn']} ${styles.attended}`}
                   onClick={() => onAddMember(member, true)}
                   disabled={isAdding}
-                  title="Mark as attended"
+                  title={t('attendeesSection.markAsAttended')}
                 >
                   <CheckIcon className={styles['quick-btn-icon']} />
-                  Attended
+                  {t('attendeesSection.attended')}
                 </button>
                 <button
                   className={`${styles['quick-btn']} ${styles.absent}`}
                   onClick={() => onAddMember(member, false)}
                   disabled={isAdding}
-                  title="Mark as absent"
+                  title={t('attendeesSection.markAsAbsent')}
                 >
                   <XIcon className={styles['quick-btn-icon']} />
-                  Absent
+                  {t('attendeesSection.absent')}
                 </button>
               </div>
             </div>
@@ -239,6 +249,7 @@ const AttendeeCard: React.FC<AttendeeCardProps> = ({
   onEdit,
   onDelete,
 }) => {
+  const { t } = useTranslation(NS);
   const status: AttendanceStatus = attendee.attended ? 'attended' : 'absent';
 
   const handleToggleAttendance = useCallback(
@@ -264,7 +275,7 @@ const AttendeeCard: React.FC<AttendeeCardProps> = ({
           className={`${styles['status-btn']} ${styles.attended} ${status === 'attended' ? styles.selected : ''}`}
           onClick={() => handleToggleAttendance(true)}
           disabled={isCompleted || isUpdating}
-          title="Mark as attended"
+          title={t('attendeesSection.markAsAttended')}
           aria-pressed={status === 'attended'}
         >
           <CheckIcon className={styles['status-btn-icon']} />
@@ -273,7 +284,7 @@ const AttendeeCard: React.FC<AttendeeCardProps> = ({
           className={`${styles['status-btn']} ${styles.absent} ${status === 'absent' ? styles.selected : ''}`}
           onClick={() => handleToggleAttendance(false)}
           disabled={isCompleted || isUpdating}
-          title="Mark as absent"
+          title={t('attendeesSection.markAsAbsent')}
           aria-pressed={status === 'absent'}
         >
           <XIcon className={styles['status-btn-icon']} />
@@ -285,7 +296,11 @@ const AttendeeCard: React.FC<AttendeeCardProps> = ({
           <button
             className={`${styles['edit-btn']} ${isTeamMember ? styles['read-only'] : ''}`}
             onClick={() => onEdit(attendee)}
-            title={isTeamMember ? 'Team members cannot be edited' : 'Edit attendee'}
+            title={
+              isTeamMember
+                ? t('attendeesSection.teamMemberCannotEdit')
+                : t('attendeesSection.editAttendee')
+            }
             disabled={isTeamMember}
             aria-disabled={isTeamMember}
           >
@@ -296,7 +311,7 @@ const AttendeeCard: React.FC<AttendeeCardProps> = ({
             className={`${styles['delete-btn']} ${styles.danger}`}
             onClick={() => onDelete(attendee)}
             disabled={isDeleting}
-            title="Remove attendee"
+            title={t('attendeesSection.removeAttendee')}
           >
             <TrashIcon className={styles['delete-btn-icon']} />
           </button>
@@ -311,16 +326,16 @@ interface EmptyStateProps {
   hint?: string;
 }
 
-const EmptyState: React.FC<EmptyStateProps> = ({
-  message = 'No attendees recorded yet.',
-  hint = 'Mark team members above or add attendees manually.',
-}) => (
-  <div className={styles['empty-state']}>
-    <InboxIcon className={styles['empty-icon']} />
-    <p>{message}</p>
-    <p className={styles['empty-hint']}>{hint}</p>
-  </div>
-);
+const EmptyState: React.FC<EmptyStateProps> = ({ message, hint }) => {
+  const { t } = useTranslation(NS);
+  return (
+    <div className={styles['empty-state']}>
+      <InboxIcon className={styles['empty-icon']} />
+      <p>{message ?? t('attendeesSection.emptyMessage')}</p>
+      <p className={styles['empty-hint']}>{hint ?? t('attendeesSection.emptyHint')}</p>
+    </div>
+  );
+};
 
 // ============================================
 // Attendee Form Modal Component
@@ -345,6 +360,7 @@ const AttendeeForm: React.FC<AttendeeFormProps> = ({
   queryKey,
   defaultRole,
 }) => {
+  const { t } = useTranslation(NS);
   const queryClient = useQueryClient();
   const firstInputRef = useRef<HTMLInputElement>(null);
   const isEditing = !!attendee;
@@ -414,25 +430,25 @@ const AttendeeForm: React.FC<AttendeeFormProps> = ({
     const errors: { name?: string; email?: string; role?: string } = {};
 
     if (!formData.name.trim()) {
-      errors.name = 'Name is required';
+      errors.name = t('attendeeForm.nameRequired');
     } else if (formData.name.length > 100) {
-      errors.name = 'Name must be 100 characters or less';
+      errors.name = t('attendeeForm.nameMaxLength');
     }
 
     if (formData.email?.trim()) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(formData.email)) {
-        errors.email = 'Please enter a valid email address';
+        errors.email = t('attendeeForm.emailInvalid');
       }
     }
 
     if (!formData.role) {
-      errors.role = 'Role is required';
+      errors.role = t('attendeeForm.roleRequired');
     }
 
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
-  }, [formData.name, formData.email, formData.role]);
+  }, [formData.name, formData.email, formData.role, t]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -469,17 +485,21 @@ const AttendeeForm: React.FC<AttendeeFormProps> = ({
             <div className={styles['modal-icon-wrapper']}>
               {isEditing ? <UserEditIcon /> : <UserPlusIcon />}
             </div>
-            <h3 id="attendee-form-title">{isEditing ? 'Edit Attendee' : 'Add Attendee'}</h3>
+            <h3 id="attendee-form-title">
+              {isEditing
+                ? t('attendeesSection.editAttendeeTitle')
+                : t('attendeesSection.addAttendeeTitle')}
+            </h3>
             <p className={styles['modal-subtitle']}>
               {isEditing
-                ? 'Update attendee information for this review'
-                : 'Add a new attendee to this review session'}
+                ? t('attendeesSection.editAttendeeSubtitle')
+                : t('attendeesSection.addAttendeeSubtitle')}
             </p>
           </div>
           <button
             className={styles['close-button']}
             onClick={onClose}
-            aria-label="Close modal"
+            aria-label={t('attendeesSection.closeModal')}
             type="button"
           >
             <XIcon />
@@ -489,7 +509,8 @@ const AttendeeForm: React.FC<AttendeeFormProps> = ({
         <form onSubmit={handleSubmit} noValidate>
           <div className={styles['form-group']}>
             <label htmlFor="attendee-name">
-              Name <span className={styles.required}>*</span>
+              {t('attendeesSection.formNameLabel')}{' '}
+              <span className={styles.required}>{t('attendeesSection.formNameRequired')}</span>
             </label>
             <input
               ref={firstInputRef}
@@ -497,7 +518,7 @@ const AttendeeForm: React.FC<AttendeeFormProps> = ({
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Enter attendee name"
+              placeholder={t('attendeesSection.formNamePlaceholder')}
               aria-invalid={!!formErrors.name}
               aria-describedby={formErrors.name ? 'name-error' : undefined}
               disabled={isLoading}
@@ -510,13 +531,13 @@ const AttendeeForm: React.FC<AttendeeFormProps> = ({
           </div>
 
           <div className={styles['form-group']}>
-            <label htmlFor="attendee-email">Email</label>
+            <label htmlFor="attendee-email">{t('attendeesSection.formEmailLabel')}</label>
             <input
               id="attendee-email"
               type="email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              placeholder="Enter email address (optional)"
+              placeholder={t('attendeesSection.formEmailPlaceholder')}
               aria-invalid={!!formErrors.email}
               aria-describedby={formErrors.email ? 'email-error' : undefined}
               disabled={isLoading}
@@ -530,7 +551,8 @@ const AttendeeForm: React.FC<AttendeeFormProps> = ({
 
           <div className={styles['form-group']}>
             <label htmlFor="attendee-role">
-              Role <span className={styles.required}>*</span>
+              {t('attendeesSection.formRoleLabel')}{' '}
+              <span className={styles.required}>{t('attendeesSection.formRoleRequired')}</span>
             </label>
             <select
               id="attendee-role"
@@ -542,7 +564,7 @@ const AttendeeForm: React.FC<AttendeeFormProps> = ({
             >
               {ROLE_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>
-                  {option.label}
+                  {t(option.labelKey)}
                 </option>
               ))}
             </select>
@@ -561,13 +583,13 @@ const AttendeeForm: React.FC<AttendeeFormProps> = ({
                 onChange={(e) => setFormData({ ...formData, attended: e.target.checked })}
                 disabled={isLoading}
               />
-              Attended
+              {t('attendeesSection.formAttendedLabel')}
             </label>
           </div>
 
           {error && (
             <div className={styles['api-error']} role="alert">
-              Failed to save attendee. Please try again.
+              {t('attendeesSection.saveError')}
             </div>
           )}
 
@@ -578,7 +600,7 @@ const AttendeeForm: React.FC<AttendeeFormProps> = ({
               onClick={onClose}
               disabled={isLoading}
             >
-              Cancel
+              {t('attendeesSection.cancel')}
             </button>
             <button
               type="submit"
@@ -586,14 +608,14 @@ const AttendeeForm: React.FC<AttendeeFormProps> = ({
               disabled={isLoading}
             >
               {isLoading ? (
-                'Saving...'
+                t('attendeesSection.saving')
               ) : isEditing ? (
                 <>
-                  <CheckIcon /> Update
+                  <CheckIcon /> {t('attendeesSection.update')}
                 </>
               ) : (
                 <>
-                  <PlusIcon /> Add Attendee
+                  <PlusIcon /> {t('attendeesSection.addAttendee')}
                 </>
               )}
             </button>
@@ -623,6 +645,7 @@ export const AttendeesSection: React.FC<AttendeesSectionProps> = ({
   isUpdating = false,
   className,
 }) => {
+  const { t } = useTranslation(NS);
   const [filter, setFilter] = useState<AttendeeFilter>('all');
   const [showForm, setShowForm] = useState(false);
   const [editingAttendee, setEditingAttendee] = useState<Attendee | null>(null);
@@ -771,10 +794,10 @@ export const AttendeesSection: React.FC<AttendeesSectionProps> = ({
         <div className={styles['header-left']}>
           <h3 className={styles['section-title']}>
             <UsersIcon className={styles['section-icon']} />
-            Attendees
+            {t('attendeesSection.title')}
           </h3>
           <span className={styles['attendance-count']}>
-            {attendedCount} / {totalCount} attended
+            {t('attendeesSection.attendanceCount', { attended: attendedCount, total: totalCount })}
           </span>
         </div>
         <button
@@ -782,11 +805,11 @@ export const AttendeesSection: React.FC<AttendeesSectionProps> = ({
           onClick={handleAddAttendee}
           disabled={isCompleted}
           aria-disabled={isCompleted}
-          aria-label="Add Attendees"
-          title={isCompleted ? 'Cannot add to a completed review' : ''}
+          aria-label={t('attendeesSection.addAttendeesAriaLabel')}
+          title={isCompleted ? t('attendeesSection.cannotAddToCompleted') : ''}
         >
           <PlusIcon className={styles['add-attendee-button-icon']} />
-          Add Attendees
+          {t('attendeesSection.addAttendees')}
         </button>
       </div>
 
@@ -843,10 +866,10 @@ export const AttendeesSection: React.FC<AttendeesSectionProps> = ({
 
       <ConfirmDialog
         isOpen={!!deleteConfirmAttendee}
-        title="Remove Attendee"
+        title={t('attendeesSection.removeAttendeeTitle')}
         name={deleteConfirmAttendee?.name}
-        confirmLabel="Remove"
-        cancelLabel="Cancel"
+        confirmLabel={t('attendeesSection.removeAttendeeConfirm')}
+        cancelLabel={t('attendeesSection.cancel')}
         onConfirm={() => {
           if (deleteConfirmAttendee) {
             deleteAttendeeMutation.mutate(deleteConfirmAttendee.id);

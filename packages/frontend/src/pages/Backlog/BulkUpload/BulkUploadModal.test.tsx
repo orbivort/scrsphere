@@ -1,7 +1,6 @@
-import { screen, render, waitFor, fireEvent } from '@testing-library/react';
+import { screen, renderWithProviders, waitFor, fireEvent, initTestI18n } from '../../../test-utils';
 import userEvent from '@testing-library/user-event';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi, afterEach, beforeAll } from 'vitest';
 
 import { BulkUploadModal } from './BulkUploadModal';
 import { apiService } from '../../../services';
@@ -29,31 +28,19 @@ vi.mock('./bulkUploadUtils', () => ({
   generateCSVTemplate: vi.fn(() => 'title\ndownload'),
 }));
 
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-    },
-  });
-
 const renderBulkUploadModal = (props = {}) => {
-  const queryClient = createTestQueryClient();
-  return render(
-    <QueryClientProvider client={queryClient}>
-      <BacklogProvider>
-        <BulkUploadModal
-          isOpen={true}
-          onClose={vi.fn()}
-          onUploadComplete={vi.fn()}
-          teamId="team-1"
-          goalId="goal-1"
-          existingItems={[]}
-          {...props}
-        />
-      </BacklogProvider>
-    </QueryClientProvider>
+  return renderWithProviders(
+    <BacklogProvider>
+      <BulkUploadModal
+        isOpen={true}
+        onClose={vi.fn()}
+        onUploadComplete={vi.fn()}
+        teamId="team-1"
+        goalId="goal-1"
+        existingItems={[]}
+        {...props}
+      />
+    </BacklogProvider>
   );
 };
 
@@ -68,6 +55,10 @@ const createMockFile = (name: string, content: string, type: string = 'text/csv'
 describe('BulkUploadModal', () => {
   const mockOnClose = vi.fn();
   const mockOnUploadComplete = vi.fn();
+
+  beforeAll(async () => {
+    await initTestI18n();
+  });
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -453,35 +444,31 @@ describe('BulkUploadModal', () => {
       });
 
       rerender(
-        <QueryClientProvider client={createTestQueryClient()}>
-          <BacklogProvider>
-            <BulkUploadModal
-              isOpen={false}
-              onClose={mockOnClose}
-              onUploadComplete={mockOnUploadComplete}
-              teamId="team-1"
-              goalId="goal-1"
-              existingItems={[]}
-            />
-          </BacklogProvider>
-        </QueryClientProvider>
+        <BacklogProvider>
+          <BulkUploadModal
+            isOpen={false}
+            onClose={mockOnClose}
+            onUploadComplete={mockOnUploadComplete}
+            teamId="team-1"
+            goalId="goal-1"
+            existingItems={[]}
+          />
+        </BacklogProvider>
       );
 
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
 
       rerender(
-        <QueryClientProvider client={createTestQueryClient()}>
-          <BacklogProvider>
-            <BulkUploadModal
-              isOpen={true}
-              onClose={mockOnClose}
-              onUploadComplete={mockOnUploadComplete}
-              teamId="team-1"
-              goalId="goal-1"
-              existingItems={[]}
-            />
-          </BacklogProvider>
-        </QueryClientProvider>
+        <BacklogProvider>
+          <BulkUploadModal
+            isOpen={true}
+            onClose={mockOnClose}
+            onUploadComplete={mockOnUploadComplete}
+            teamId="team-1"
+            goalId="goal-1"
+            existingItems={[]}
+          />
+        </BacklogProvider>
       );
 
       await waitFor(() => {

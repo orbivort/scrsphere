@@ -1,0 +1,27 @@
+{
+  "common": {
+    "allRightsReserved": "Todos los derechos reservados.",
+    "greeting": "Hola",
+    "needHelp": "¿Necesita ayuda? Contáctenos en",
+    "thankYouForUsing": "Gracias por usar",
+    "visitApp": "Visitar"
+  },
+  "passwordReset": {
+    "bodyIntro": "Recibimos una solicitud para restablecer la contraseña de {{email}}.",
+    "buttonHint": "Haga clic en el botón de abajo para crear una nueva contraseña:",
+    "cta": "Restablecer contraseña",
+    "expiresIn": "Este enlace expira en {{duration}}.",
+    "fallbackLinkHint": "Si el botón de arriba no funciona, copie y pegue el siguiente enlace en su navegador:",
+    "heading": "Hola, {{name}}:",
+    "ignoreIfNotRequested": "Si no solicitó esto, puede ignorar este correo electrónico con seguridad.",
+    "subject": "Restablezca su contraseña de Scrumooth",
+    "supportContact": "Si tiene alguna pregunta o necesita asistencia, por favor contacte a nuestro equipo de soporte."
+  },
+  "welcome": {
+    "bodyIntro": "Su cuenta se creó correctamente.",
+    "closing": "Estamos entusiasmados de tenerlo a bordo.",
+    "cta": "Comenzar",
+    "heading": "¡Bienvenido, {{name}}!",
+    "subject": "Bienvenido a Scrumooth"
+  }
+}

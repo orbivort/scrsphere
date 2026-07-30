@@ -2,6 +2,7 @@
 import { Router, type Router as RouterType } from 'express';
 import * as workflowController from '../controllers/workflow.controller';
 import { authenticate, requireRoles } from '../middleware/auth.middleware';
+import { UserRole } from '@scrumooth/shared';
 
 const router: RouterType = Router();
 
@@ -13,11 +14,19 @@ router.post('/validate', workflowController.validateTransition);
 router.post('/status-change', workflowController.executeStatusChange);
 
 // Admin endpoints - require Product Owner role
-router.post('/admin/create', requireRoles('PRODUCT_OWNER'), workflowController.createWorkflow);
-router.post('/admin/states', requireRoles('PRODUCT_OWNER'), workflowController.addWorkflowState);
+router.post(
+  '/admin/create',
+  requireRoles(UserRole.PRODUCT_OWNER),
+  workflowController.createWorkflow
+);
+router.post(
+  '/admin/states',
+  requireRoles(UserRole.PRODUCT_OWNER),
+  workflowController.addWorkflowState
+);
 router.post(
   '/admin/transitions',
-  requireRoles('PRODUCT_OWNER'),
+  requireRoles(UserRole.PRODUCT_OWNER),
   workflowController.addWorkflowTransition
 );
 

@@ -1,4 +1,4 @@
-﻿/* eslint-disable react-refresh/only-export-components --
+/* eslint-disable react-refresh/only-export-components --
    This is a test utility file that intentionally exports both React components
    (AllProviders) and helper functions (createTestQueryClient, renderWithProviders,
    createMockUser, etc.) for use in tests. Separating these would reduce cohesion
@@ -6,7 +6,9 @@
 import React from 'react';
 import { render, type RenderOptions, type RenderResult } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter } from 'react-router';
+import { DEFAULT_LOCALE, type Locale } from '@scrumooth/shared';
 
 import {
   SprintStatus,
@@ -20,6 +22,7 @@ import {
   type ProductBacklogItem,
   type ProductGoal,
 } from './types';
+import { getTestI18nInstance } from './i18n/testConfig';
 
 export const createTestQueryClient = () =>
   new QueryClient({
@@ -39,34 +42,53 @@ interface AllProvidersProps {
   children: React.ReactNode;
   queryClient?: QueryClient;
   initialRoute?: string;
+  locale?: Locale;
 }
 
 export const AllProviders: React.FC<AllProvidersProps> = ({
   children,
   queryClient = createTestQueryClient(),
   initialRoute = '/',
+  locale: _locale = DEFAULT_LOCALE,
 }) => {
-  return (
+  // Try to get the test i18n instance; if not yet initialized,
+  // render without I18nextProvider (tests that mock react-i18next
+  // at the module level don't need the real provider).
+  let i18nInstance: ReturnType<typeof getTestI18nInstance> | null = null;
+  try {
+    i18nInstance = getTestI18nInstance();
+  } catch {
+    // i18n not initialized — component test likely mocks react-i18next itself
+  }
+
+  const content = (
     <QueryClientProvider client={queryClient}>
       <MemoryRouter initialEntries={[initialRoute]}>{children}</MemoryRouter>
     </QueryClientProvider>
   );
+
+  if (i18nInstance) {
+    return <I18nextProvider i18n={i18nInstance}>{content}</I18nextProvider>;
+  }
+
+  return content;
 };
 
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   queryClient?: QueryClient;
   initialRoute?: string;
+  locale?: Locale;
 }
 
 export const renderWithProviders = (
   ui: React.ReactElement,
   options: CustomRenderOptions = {}
 ): RenderResult => {
-  const { queryClient, initialRoute, ...renderOptions } = options;
+  const { queryClient, initialRoute, locale, ...renderOptions } = options;
 
   return render(ui, {
     wrapper: ({ children }) => (
-      <AllProviders queryClient={queryClient} initialRoute={initialRoute}>
+      <AllProviders queryClient={queryClient} initialRoute={initialRoute} locale={locale}>
         {children}
       </AllProviders>
     ),
@@ -153,3 +175,23 @@ export const createMockProductGoal = (overrides: Partial<ProductGoal> = {}): Pro
 });
 
 export * from '@testing-library/react';
+export {
+  initTestI18n,
+  changeTestLanguage,
+  getTranslationForKey,
+  getSupportedLocalesForTest,
+} from './i18n/testConfig';
+export {
+  t as i18nT,
+  tInLocale,
+  i18nMatcher,
+  i18nMatchersForAllLocales,
+  getByI18nText,
+  getAllByI18nText,
+  queryByI18nText,
+  getByI18nRole,
+  getByI18nLabelText,
+  getByI18nPlaceholderText,
+  createLocaleTestHelper,
+  type LocaleTestHelper,
+} from './test-utils/i18nHelpers';

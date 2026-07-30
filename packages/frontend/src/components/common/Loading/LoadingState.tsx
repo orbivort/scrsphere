@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { LoadingSpinner } from '../Page/LoadingSpinner';
 
@@ -67,7 +68,6 @@ export interface LoadingStateProps {
  */
 const defaultProps = {
   size: 'md' as LoadingSize,
-  label: 'Loading...',
   lines: 3,
   lastLineWidth: '100%',
   itemCount: 3,
@@ -113,7 +113,7 @@ const defaultProps = {
 export const LoadingState: React.FC<LoadingStateProps> = ({
   variant,
   size = defaultProps.size,
-  label = defaultProps.label,
+  label,
   className = '',
   lines = defaultProps.lines,
   lastLineWidth = defaultProps.lastLineWidth,
@@ -121,6 +121,9 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
   cardVariant = defaultProps.cardVariant,
   fullScreen = defaultProps.fullScreen,
 }) => {
+  const { t } = useTranslation('common');
+  const displayLabel = label ?? t('loading');
+
   // Page variant with optional full-screen overlay
   if (variant === 'page') {
     const pageLoaderClasses = [
@@ -137,10 +140,10 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
         role="status"
         aria-live="polite"
         aria-busy="true"
-        aria-label={label}
+        aria-label={displayLabel}
       >
-        <LoadingSpinner size={SPINNER_SIZE_MAP[size]} label={label} />
-        <p className={styles['page-loader-text']}>{label}</p>
+        <LoadingSpinner size={SPINNER_SIZE_MAP[size]} label={displayLabel} />
+        <p className={styles['page-loader-text']}>{displayLabel}</p>
       </div>
     );
   }
@@ -157,11 +160,11 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
         role="status"
         aria-live="polite"
         aria-busy="true"
-        aria-label={label}
+        aria-label={displayLabel}
         data-variant={variant}
         data-size={size}
       >
-        <LoadingSpinner size={SPINNER_SIZE_MAP[size]} label={label} />
+        <LoadingSpinner size={SPINNER_SIZE_MAP[size]} label={displayLabel} />
       </div>
     );
   }
@@ -178,11 +181,11 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
         role="status"
         aria-live="polite"
         aria-busy="true"
-        aria-label={label}
+        aria-label={displayLabel}
         data-variant={variant}
         data-lines={lines}
       >
-        <SkeletonText lines={lines} lastLineWidth={lastLineWidth} label={label} />
+        <SkeletonText lines={lines} lastLineWidth={lastLineWidth} label={displayLabel} />
       </div>
     );
   }
@@ -199,12 +202,12 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
         role="status"
         aria-live="polite"
         aria-busy="true"
-        aria-label={label}
+        aria-label={displayLabel}
         data-variant={variant}
         data-item-count={itemCount}
         data-card-variant={cardVariant}
       >
-        <SkeletonCard itemCount={itemCount} variant={cardVariant} label={label} />
+        <SkeletonCard itemCount={itemCount} variant={cardVariant} label={displayLabel} />
       </div>
     );
   }
@@ -221,11 +224,11 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
         role="status"
         aria-live="polite"
         aria-busy="true"
-        aria-label={label}
+        aria-label={displayLabel}
         data-variant={variant}
         data-item-count={itemCount}
       >
-        <SkeletonList itemCount={itemCount} label={label} />
+        <SkeletonList itemCount={itemCount} label={displayLabel} />
       </div>
     );
   }
@@ -241,10 +244,10 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
       role="status"
       aria-live="polite"
       aria-busy="true"
-      aria-label={label}
+      aria-label={displayLabel}
       data-variant={variant}
     >
-      <SkeletonChart label={label} />
+      <SkeletonChart label={displayLabel} />
     </div>
   );
 };

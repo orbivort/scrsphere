@@ -1,5 +1,11 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import {
+  screen,
+  fireEvent,
+  waitFor,
+  renderWithProviders,
+  initTestI18n,
+} from '../../../../test-utils';
 import { vi } from 'vitest';
 
 import { CreateTeamModal } from './CreateTeamModal';
@@ -8,13 +14,17 @@ describe('CreateTeamModal', () => {
   const mockOnClose = vi.fn();
   const mockOnSubmit = vi.fn();
 
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   describe('Rendering', () => {
     it('should render modal when isOpen is true', () => {
-      render(
+      renderWithProviders(
         <CreateTeamModal
           isOpen={true}
           onClose={mockOnClose}
@@ -28,7 +38,7 @@ describe('CreateTeamModal', () => {
     });
 
     it('should NOT render modal when isOpen is false', () => {
-      render(
+      renderWithProviders(
         <CreateTeamModal
           isOpen={false}
           onClose={mockOnClose}
@@ -41,7 +51,7 @@ describe('CreateTeamModal', () => {
     });
 
     it('should render form fields', () => {
-      render(
+      renderWithProviders(
         <CreateTeamModal
           isOpen={true}
           onClose={mockOnClose}
@@ -55,7 +65,7 @@ describe('CreateTeamModal', () => {
     });
 
     it('should render action buttons', () => {
-      render(
+      renderWithProviders(
         <CreateTeamModal
           isOpen={true}
           onClose={mockOnClose}
@@ -69,7 +79,7 @@ describe('CreateTeamModal', () => {
     });
 
     it('should pre-fill name field when defaultName is provided', () => {
-      render(
+      renderWithProviders(
         <CreateTeamModal
           isOpen={true}
           onClose={mockOnClose}
@@ -85,7 +95,7 @@ describe('CreateTeamModal', () => {
 
   describe('Form validation', () => {
     it('should disable submit button when team name is empty', () => {
-      render(
+      renderWithProviders(
         <CreateTeamModal
           isOpen={true}
           onClose={mockOnClose}
@@ -99,7 +109,7 @@ describe('CreateTeamModal', () => {
     });
 
     it('should enable submit button when team name is provided', () => {
-      render(
+      renderWithProviders(
         <CreateTeamModal
           isOpen={true}
           onClose={mockOnClose}
@@ -116,7 +126,7 @@ describe('CreateTeamModal', () => {
     });
 
     it('should show error when team name exceeds 100 characters', async () => {
-      render(
+      renderWithProviders(
         <CreateTeamModal
           isOpen={true}
           onClose={mockOnClose}
@@ -139,7 +149,7 @@ describe('CreateTeamModal', () => {
     });
 
     it('should show error when description exceeds 1000 characters', async () => {
-      render(
+      renderWithProviders(
         <CreateTeamModal
           isOpen={true}
           onClose={mockOnClose}
@@ -167,7 +177,7 @@ describe('CreateTeamModal', () => {
 
   describe('Form submission', () => {
     it('should call onSubmit with form data when valid', () => {
-      render(
+      renderWithProviders(
         <CreateTeamModal
           isOpen={true}
           onClose={mockOnClose}
@@ -192,7 +202,7 @@ describe('CreateTeamModal', () => {
     });
 
     it('should trim whitespace from name and description', () => {
-      render(
+      renderWithProviders(
         <CreateTeamModal
           isOpen={true}
           onClose={mockOnClose}
@@ -217,7 +227,7 @@ describe('CreateTeamModal', () => {
     });
 
     it('should allow submission without description', () => {
-      render(
+      renderWithProviders(
         <CreateTeamModal
           isOpen={true}
           onClose={mockOnClose}
@@ -239,7 +249,7 @@ describe('CreateTeamModal', () => {
     });
 
     it('should disable submit button when isSubmitting is true', () => {
-      render(
+      renderWithProviders(
         <CreateTeamModal
           isOpen={true}
           onClose={mockOnClose}
@@ -256,7 +266,7 @@ describe('CreateTeamModal', () => {
     });
 
     it('should show loading state when submitting', () => {
-      render(
+      renderWithProviders(
         <CreateTeamModal
           isOpen={true}
           onClose={mockOnClose}
@@ -271,7 +281,7 @@ describe('CreateTeamModal', () => {
 
   describe('Modal actions', () => {
     it('should call onClose when cancel button is clicked', () => {
-      render(
+      renderWithProviders(
         <CreateTeamModal
           isOpen={true}
           onClose={mockOnClose}
@@ -287,7 +297,7 @@ describe('CreateTeamModal', () => {
     });
 
     it('should call onClose when close button is clicked', () => {
-      render(
+      renderWithProviders(
         <CreateTeamModal
           isOpen={true}
           onClose={mockOnClose}
@@ -303,7 +313,7 @@ describe('CreateTeamModal', () => {
     });
 
     it('should disable cancel button when submitting', () => {
-      render(
+      renderWithProviders(
         <CreateTeamModal
           isOpen={true}
           onClose={mockOnClose}
@@ -319,7 +329,7 @@ describe('CreateTeamModal', () => {
 
   describe('Character counters', () => {
     it('should display character count for name field', () => {
-      render(
+      renderWithProviders(
         <CreateTeamModal
           isOpen={true}
           onClose={mockOnClose}
@@ -335,7 +345,7 @@ describe('CreateTeamModal', () => {
     });
 
     it('should display character count for description field', () => {
-      render(
+      renderWithProviders(
         <CreateTeamModal
           isOpen={true}
           onClose={mockOnClose}
@@ -351,7 +361,7 @@ describe('CreateTeamModal', () => {
     });
 
     it('should show warning class when name is 80-99 characters', () => {
-      render(
+      renderWithProviders(
         <CreateTeamModal
           isOpen={true}
           onClose={mockOnClose}
@@ -368,7 +378,7 @@ describe('CreateTeamModal', () => {
     });
 
     it('should show error class when name is 100 characters', () => {
-      render(
+      renderWithProviders(
         <CreateTeamModal
           isOpen={true}
           onClose={mockOnClose}
@@ -385,7 +395,7 @@ describe('CreateTeamModal', () => {
     });
 
     it('should show warning class when description is 800-999 characters', () => {
-      render(
+      renderWithProviders(
         <CreateTeamModal
           isOpen={true}
           onClose={mockOnClose}
@@ -402,7 +412,7 @@ describe('CreateTeamModal', () => {
     });
 
     it('should show error class when description is 1000 characters', () => {
-      render(
+      renderWithProviders(
         <CreateTeamModal
           isOpen={true}
           onClose={mockOnClose}
@@ -421,7 +431,7 @@ describe('CreateTeamModal', () => {
 
   describe('Form interactions and states', () => {
     it('should disable inputs when submitting', () => {
-      render(
+      renderWithProviders(
         <CreateTeamModal
           isOpen={true}
           onClose={mockOnClose}
@@ -438,7 +448,7 @@ describe('CreateTeamModal', () => {
     });
 
     it('should show form legend with required fields indicator', () => {
-      render(
+      renderWithProviders(
         <CreateTeamModal
           isOpen={true}
           onClose={mockOnClose}
@@ -451,7 +461,7 @@ describe('CreateTeamModal', () => {
     });
 
     it('should clear errors when valid input is provided', () => {
-      render(
+      renderWithProviders(
         <CreateTeamModal
           isOpen={true}
           onClose={mockOnClose}
@@ -475,7 +485,7 @@ describe('CreateTeamModal', () => {
     });
 
     it('should close modal when clicking overlay with no unsaved changes', () => {
-      render(
+      renderWithProviders(
         <CreateTeamModal
           isOpen={true}
           onClose={mockOnClose}
@@ -494,7 +504,7 @@ describe('CreateTeamModal', () => {
 
   describe('Progress bar', () => {
     it('should show 0% progress when form is empty', () => {
-      render(
+      renderWithProviders(
         <CreateTeamModal
           isOpen={true}
           onClose={mockOnClose}
@@ -508,7 +518,7 @@ describe('CreateTeamModal', () => {
     });
 
     it('should show 50% progress when only name is filled', () => {
-      render(
+      renderWithProviders(
         <CreateTeamModal
           isOpen={true}
           onClose={mockOnClose}
@@ -525,7 +535,7 @@ describe('CreateTeamModal', () => {
     });
 
     it('should show 100% progress when both fields are filled', () => {
-      render(
+      renderWithProviders(
         <CreateTeamModal
           isOpen={true}
           onClose={mockOnClose}
@@ -547,7 +557,7 @@ describe('CreateTeamModal', () => {
 
   describe('Unsaved changes dialog', () => {
     it('should show unsaved changes dialog when closing dirty form', () => {
-      render(
+      renderWithProviders(
         <CreateTeamModal
           isOpen={true}
           onClose={mockOnClose}
@@ -566,7 +576,7 @@ describe('CreateTeamModal', () => {
     });
 
     it('should close modal when discarding changes', () => {
-      render(
+      renderWithProviders(
         <CreateTeamModal
           isOpen={true}
           onClose={mockOnClose}
@@ -588,7 +598,7 @@ describe('CreateTeamModal', () => {
     });
 
     it('should keep modal open when canceling discard', () => {
-      render(
+      renderWithProviders(
         <CreateTeamModal
           isOpen={true}
           onClose={mockOnClose}

@@ -1,5 +1,5 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { vi } from 'vitest';
+import { screen, fireEvent, renderWithProviders, initTestI18n } from '../../../test-utils';
+import { vi, beforeAll } from 'vitest';
 
 import { DraftRestorePrompt } from './DraftRestorePrompt';
 
@@ -7,12 +7,16 @@ describe('DraftRestorePrompt', () => {
   const mockOnRestore = vi.fn();
   const mockOnDiscard = vi.fn();
 
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it('should render restore prompt with correct title', () => {
-    render(
+    renderWithProviders(
       <DraftRestorePrompt
         lastSavedAt={new Date()}
         onRestore={mockOnRestore}
@@ -24,7 +28,7 @@ describe('DraftRestorePrompt', () => {
   });
 
   it('should render both action buttons', () => {
-    render(
+    renderWithProviders(
       <DraftRestorePrompt
         lastSavedAt={new Date()}
         onRestore={mockOnRestore}
@@ -37,7 +41,7 @@ describe('DraftRestorePrompt', () => {
   });
 
   it('should call onRestore when restore button is clicked', () => {
-    render(
+    renderWithProviders(
       <DraftRestorePrompt
         lastSavedAt={new Date()}
         onRestore={mockOnRestore}
@@ -50,7 +54,7 @@ describe('DraftRestorePrompt', () => {
   });
 
   it('should call onDiscard when discard button is clicked', () => {
-    render(
+    renderWithProviders(
       <DraftRestorePrompt
         lastSavedAt={new Date()}
         onRestore={mockOnRestore}
@@ -64,7 +68,7 @@ describe('DraftRestorePrompt', () => {
 
   it('should format time as "just now" for recent drafts', () => {
     const justNow = new Date();
-    render(
+    renderWithProviders(
       <DraftRestorePrompt
         lastSavedAt={justNow}
         onRestore={mockOnRestore}
@@ -77,7 +81,7 @@ describe('DraftRestorePrompt', () => {
 
   it('should format time as minutes ago', () => {
     const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
-    render(
+    renderWithProviders(
       <DraftRestorePrompt
         lastSavedAt={fiveMinutesAgo}
         onRestore={mockOnRestore}
@@ -90,7 +94,7 @@ describe('DraftRestorePrompt', () => {
 
   it('should format time as hours ago', () => {
     const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
-    render(
+    renderWithProviders(
       <DraftRestorePrompt
         lastSavedAt={twoHoursAgo}
         onRestore={mockOnRestore}
@@ -103,7 +107,7 @@ describe('DraftRestorePrompt', () => {
 
   it('should format time as days ago', () => {
     const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
-    render(
+    renderWithProviders(
       <DraftRestorePrompt
         lastSavedAt={threeDaysAgo}
         onRestore={mockOnRestore}
@@ -115,7 +119,7 @@ describe('DraftRestorePrompt', () => {
   });
 
   it('should show "recently" when lastSavedAt is null', () => {
-    render(
+    renderWithProviders(
       <DraftRestorePrompt lastSavedAt={null} onRestore={mockOnRestore} onDiscard={mockOnDiscard} />
     );
 
@@ -123,7 +127,7 @@ describe('DraftRestorePrompt', () => {
   });
 
   it('should have correct ARIA attributes', () => {
-    render(
+    renderWithProviders(
       <DraftRestorePrompt
         lastSavedAt={new Date()}
         onRestore={mockOnRestore}

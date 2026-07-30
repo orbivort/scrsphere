@@ -1,8 +1,15 @@
 import React from 'react';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
-import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { screen, waitFor, fireEvent } from '@testing-library/react';
+import { vi, describe, it, expect, beforeEach, afterEach, beforeAll } from 'vitest';
+
+import { renderWithProviders, initTestI18n, i18nT } from '../../../test-utils';
 
 import { AddTaskModal } from './AddTaskModal';
+
+// Initialize i18n before all tests
+beforeAll(async () => {
+  await initTestI18n();
+});
 
 // Mock CSS modules
 vi.mock('./AddTaskModal.module.css', () => ({
@@ -90,47 +97,73 @@ describe('AddTaskModal', () => {
 
   describe('Rendering', () => {
     it('should render modal when isOpen is true', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
       expect(document.getElementById('add-task-form')).toBeInTheDocument();
-      expect(screen.getByRole('heading', { name: /Add New Task/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('heading', {
+          name: i18nT('sprint:sprintPlanning.addTaskModal.addNewTask'),
+        })
+      ).toBeInTheDocument();
     });
 
     it('should not render modal when isOpen is false', () => {
-      render(<AddTaskModal {...defaultProps} isOpen={false} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} isOpen={false} />);
 
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
 
     it('should display item title in subtitle when provided', () => {
-      render(<AddTaskModal {...defaultProps} itemTitle="My Backlog Item" />);
+      renderWithProviders(<AddTaskModal {...defaultProps} itemTitle="My Backlog Item" />);
 
       expect(screen.getByText(/My Backlog Item/)).toBeInTheDocument();
     });
 
     it('should render without subtitle when itemTitle is not provided', () => {
-      render(<AddTaskModal {...defaultProps} itemTitle={undefined} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} itemTitle={undefined} />);
 
-      expect(screen.getByRole('heading', { name: /Add New Task/i })).toBeInTheDocument();
-      expect(screen.queryByText(/Adding task to/)).not.toBeInTheDocument();
+      expect(
+        screen.getByRole('heading', {
+          name: i18nT('sprint:sprintPlanning.addTaskModal.addNewTask'),
+        })
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByText(i18nT('sprint:sprintPlanning.addTaskModal.addingTaskTo'))
+      ).not.toBeInTheDocument();
     });
 
     it('should render all form fields', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
-      expect(screen.getByLabelText(/Task Title/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/Estimated Hours/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/Assignee/i)).toBeInTheDocument();
+      expect(
+        screen.getByLabelText(
+          new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.titleLabel')}`)
+        )
+      ).toBeInTheDocument();
+      expect(
+        screen.getByLabelText(
+          new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.estimatedHoursLabel')}`)
+        )
+      ).toBeInTheDocument();
+      expect(
+        screen.getByLabelText(
+          new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.assigneeLabel')}`)
+        )
+      ).toBeInTheDocument();
     });
 
     it('should render team members in assignee dropdown', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
-      const assigneeSelect = screen.getByLabelText(/Assignee/i);
+      const assigneeSelect = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.assigneeLabel')}`)
+      );
       expect(assigneeSelect).toBeInTheDocument();
 
       // Check for "Unassigned" option
-      expect(screen.getByText('Unassigned')).toBeInTheDocument();
+      expect(
+        screen.getByText(i18nT('sprint:sprintPlanning.addTaskModal.unassigned'))
+      ).toBeInTheDocument();
 
       // Check for team members
       expect(screen.getByText('John Doe')).toBeInTheDocument();
@@ -138,46 +171,64 @@ describe('AddTaskModal', () => {
     });
 
     it('should render action buttons', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
-      expect(screen.getByRole('button', { name: /Cancel/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /Add Task$/i })).toBeInTheDocument();
+      expect(
+        screen.getAllByRole('button', {
+          name: i18nT('sprint:sprintPlanning.addTaskModal.cancel'),
+        })[1]
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: i18nT('sprint:sprintPlanning.addTaskModal.addTask') })
+      ).toBeInTheDocument();
     });
   });
 
   describe('Form Validation', () => {
     it('should disable submit button when title is empty', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
-      const submitButton = screen.getByRole('button', { name: /Add Task$/i });
+      const submitButton = screen.getByRole('button', {
+        name: i18nT('sprint:sprintPlanning.addTaskModal.addTask'),
+      });
       expect(submitButton).toBeDisabled();
     });
 
     it('should disable submit button when estimated hours is 0', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
-      const titleInput = screen.getByLabelText(/Task Title/i);
+      const titleInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.titleLabel')}`)
+      );
       fireEvent.change(titleInput, { target: { value: 'Test Task' } });
 
-      const submitButton = screen.getByRole('button', { name: /Add Task$/i });
+      const submitButton = screen.getByRole('button', {
+        name: i18nT('sprint:sprintPlanning.addTaskModal.addTask'),
+      });
       expect(submitButton).toBeDisabled();
     });
 
     it('should enable submit button when form is valid', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
-      const titleInput = screen.getByLabelText(/Task Title/i);
+      const titleInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.titleLabel')}`)
+      );
       fireEvent.change(titleInput, { target: { value: 'Test Task' } });
 
-      const hoursInput = screen.getByLabelText(/Estimated Hours/i);
+      const hoursInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.estimatedHoursLabel')}`)
+      );
       fireEvent.change(hoursInput, { target: { value: '4' } });
 
-      const submitButton = screen.getByRole('button', { name: /Add Task$/i });
+      const submitButton = screen.getByRole('button', {
+        name: i18nT('sprint:sprintPlanning.addTaskModal.addTask'),
+      });
       expect(submitButton).not.toBeDisabled();
     });
 
     it('should show error when submitting with empty title', async () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
       const form = document.getElementById('add-task-form');
 
@@ -185,58 +236,80 @@ describe('AddTaskModal', () => {
       fireEvent.submit(form);
 
       await waitFor(() => {
-        expect(screen.getByText(/Task title is required/i)).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('sprint:sprintPlanning.addTaskModal.taskTitleRequired'))
+        ).toBeInTheDocument();
       });
     });
 
     it('should show error when estimated hours is invalid', async () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
-      const titleInput = screen.getByLabelText(/Task Title/i);
+      const titleInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.titleLabel')}`)
+      );
       fireEvent.change(titleInput, { target: { value: 'Test Task' } });
 
-      const hoursInput = screen.getByLabelText(/Estimated Hours/i);
+      const hoursInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.estimatedHoursLabel')}`)
+      );
       fireEvent.change(hoursInput, { target: { value: '-1' } });
 
       const form = document.getElementById('add-task-form');
       fireEvent.submit(form);
 
       await waitFor(() => {
-        expect(screen.getByText(/Estimated hours must be greater than 0/i)).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('sprint:sprintPlanning.addTaskModal.hoursGreaterThanZero'))
+        ).toBeInTheDocument();
       });
     });
 
     it('should clear error when user starts typing in title field', async () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
       const form = document.getElementById('add-task-form');
       fireEvent.submit(form);
 
       await waitFor(() => {
-        expect(screen.getByText(/Task title is required/i)).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('sprint:sprintPlanning.addTaskModal.taskTitleRequired'))
+        ).toBeInTheDocument();
       });
 
-      const titleInput = screen.getByLabelText(/Task Title/i);
+      const titleInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.titleLabel')}`)
+      );
       fireEvent.change(titleInput, { target: { value: 'T' } });
 
-      expect(screen.queryByText(/Task title is required/i)).not.toBeInTheDocument();
+      expect(
+        screen.queryByText(i18nT('sprint:sprintPlanning.addTaskModal.taskTitleRequired'))
+      ).not.toBeInTheDocument();
     });
   });
 
   describe('Form Submission', () => {
     it('should call onSubmit with correct data when form is valid', async () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
-      const titleInput = screen.getByLabelText(/Task Title/i);
+      const titleInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.titleLabel')}`)
+      );
       fireEvent.change(titleInput, { target: { value: 'Implement Feature' } });
 
-      const hoursInput = screen.getByLabelText(/Estimated Hours/i);
+      const hoursInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.estimatedHoursLabel')}`)
+      );
       fireEvent.change(hoursInput, { target: { value: '8' } });
 
-      const assigneeSelect = screen.getByLabelText(/Assignee/i);
+      const assigneeSelect = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.assigneeLabel')}`)
+      );
       fireEvent.change(assigneeSelect, { target: { value: 'user-1' } });
 
-      const submitButton = screen.getByRole('button', { name: /Add Task$/i });
+      const submitButton = screen.getByRole('button', {
+        name: i18nT('sprint:sprintPlanning.addTaskModal.addTask'),
+      });
       fireEvent.click(submitButton);
 
       await waitFor(() => {
@@ -249,16 +322,22 @@ describe('AddTaskModal', () => {
     });
 
     it('should allow submitting without assignee', async () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
-      const titleInput = screen.getByLabelText(/Task Title/i);
+      const titleInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.titleLabel')}`)
+      );
       fireEvent.change(titleInput, { target: { value: 'Unassigned Task' } });
 
-      const hoursInput = screen.getByLabelText(/Estimated Hours/i);
+      const hoursInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.estimatedHoursLabel')}`)
+      );
       fireEvent.change(hoursInput, { target: { value: '4' } });
 
       // Keep assignee as "Unassigned" (empty string)
-      const submitButton = screen.getByRole('button', { name: /Add Task$/i });
+      const submitButton = screen.getByRole('button', {
+        name: i18nT('sprint:sprintPlanning.addTaskModal.addTask'),
+      });
       fireEvent.click(submitButton);
 
       await waitFor(() => {
@@ -271,15 +350,21 @@ describe('AddTaskModal', () => {
     });
 
     it('should trim whitespace from title', async () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
-      const titleInput = screen.getByLabelText(/Task Title/i);
+      const titleInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.titleLabel')}`)
+      );
       fireEvent.change(titleInput, { target: { value: '  Task with spaces  ' } });
 
-      const hoursInput = screen.getByLabelText(/Estimated Hours/i);
+      const hoursInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.estimatedHoursLabel')}`)
+      );
       fireEvent.change(hoursInput, { target: { value: '4' } });
 
-      const submitButton = screen.getByRole('button', { name: /Add Task$/i });
+      const submitButton = screen.getByRole('button', {
+        name: i18nT('sprint:sprintPlanning.addTaskModal.addTask'),
+      });
       fireEvent.click(submitButton);
 
       await waitFor(() => {
@@ -294,16 +379,18 @@ describe('AddTaskModal', () => {
 
   describe('Modal Close Behavior', () => {
     it('should call onClose when clicking cancel button', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
-      const cancelButton = screen.getByRole('button', { name: /Cancel/i });
+      const cancelButton = screen.getAllByRole('button', {
+        name: i18nT('sprint:sprintPlanning.addTaskModal.cancel'),
+      })[1];
       fireEvent.click(cancelButton);
 
       expect(defaultProps.onClose).toHaveBeenCalled();
     });
 
     it('should call onClose when clicking overlay', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
       const overlay = screen.getByRole('presentation');
       fireEvent.click(overlay);
@@ -312,7 +399,7 @@ describe('AddTaskModal', () => {
     });
 
     it('should not close when clicking modal content', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
       const modal = document.getElementById('add-task-form');
       fireEvent.click(modal);
@@ -321,14 +408,18 @@ describe('AddTaskModal', () => {
     });
 
     it('should show unsaved changes modal when closing with changes', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
       // Make a change
-      const titleInput = screen.getByLabelText(/Task Title/i);
+      const titleInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.titleLabel')}`)
+      );
       fireEvent.change(titleInput, { target: { value: 'Some Task' } });
 
       // Try to close
-      const cancelButton = screen.getByRole('button', { name: /Cancel/i });
+      const cancelButton = screen.getAllByRole('button', {
+        name: i18nT('sprint:sprintPlanning.addTaskModal.cancel'),
+      })[1];
       fireEvent.click(cancelButton);
 
       // Should show unsaved changes modal instead of closing
@@ -337,14 +428,18 @@ describe('AddTaskModal', () => {
     });
 
     it('should close when confirming discard of unsaved changes', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
       // Make a change
-      const titleInput = screen.getByLabelText(/Task Title/i);
+      const titleInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.titleLabel')}`)
+      );
       fireEvent.change(titleInput, { target: { value: 'Some Task' } });
 
       // Try to close
-      const cancelButton = screen.getByRole('button', { name: /Cancel/i });
+      const cancelButton = screen.getAllByRole('button', {
+        name: i18nT('sprint:sprintPlanning.addTaskModal.cancel'),
+      })[1];
       fireEvent.click(cancelButton);
 
       // Confirm discard
@@ -355,14 +450,18 @@ describe('AddTaskModal', () => {
     });
 
     it('should stay open when canceling discard of unsaved changes', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
       // Make a change
-      const titleInput = screen.getByLabelText(/Task Title/i);
+      const titleInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.titleLabel')}`)
+      );
       fireEvent.change(titleInput, { target: { value: 'Some Task' } });
 
       // Try to close
-      const cancelButton = screen.getByRole('button', { name: /Cancel/i });
+      const cancelButton = screen.getAllByRole('button', {
+        name: i18nT('sprint:sprintPlanning.addTaskModal.cancel'),
+      })[1];
       fireEvent.click(cancelButton);
 
       // Cancel discard
@@ -375,9 +474,11 @@ describe('AddTaskModal', () => {
     });
 
     it('should close directly when no changes made', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
-      const cancelButton = screen.getByRole('button', { name: /Cancel/i });
+      const cancelButton = screen.getAllByRole('button', {
+        name: i18nT('sprint:sprintPlanning.addTaskModal.cancel'),
+      })[1];
       fireEvent.click(cancelButton);
 
       expect(screen.queryByTestId('unsaved-changes-modal')).not.toBeInTheDocument();
@@ -387,7 +488,7 @@ describe('AddTaskModal', () => {
 
   describe('Accessibility', () => {
     it('should have correct ARIA attributes on dialog', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
       const dialog = screen.getByRole('dialog');
       expect(dialog).toHaveAttribute('aria-modal', 'true');
@@ -395,19 +496,25 @@ describe('AddTaskModal', () => {
     });
 
     it('should have required indicators on required fields', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
-      const titleInput = screen.getByLabelText(/Task Title/i);
+      const titleInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.titleLabel')}`)
+      );
       expect(titleInput).toHaveAttribute('aria-required', 'true');
 
-      const hoursInput = screen.getByLabelText(/Estimated Hours/i);
+      const hoursInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.estimatedHoursLabel')}`)
+      );
       expect(hoursInput).toHaveAttribute('aria-required', 'true');
     });
 
     it('should update aria-invalid when validation fails', async () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
-      const titleInput = screen.getByLabelText(/Task Title/i);
+      const titleInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.titleLabel')}`)
+      );
       expect(titleInput).toHaveAttribute('aria-invalid', 'false');
 
       const form = document.getElementById('add-task-form');
@@ -419,13 +526,15 @@ describe('AddTaskModal', () => {
     });
 
     it('should have aria-describedby for error messages when invalid', async () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
       const form = document.getElementById('add-task-form');
       fireEvent.submit(form);
 
       await waitFor(() => {
-        const titleInput = screen.getByLabelText(/Task Title/i);
+        const titleInput = screen.getByLabelText(
+          new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.titleLabel')}`)
+        );
         expect(titleInput).toHaveAttribute('aria-describedby', 'title-error');
       });
     });
@@ -433,23 +542,35 @@ describe('AddTaskModal', () => {
 
   describe('Keyboard Navigation', () => {
     it('should focus title input when modal opens', async () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
       // The input should be focused after a short delay (setTimeout in component)
       await waitFor(() => {
-        const titleInput = screen.getByLabelText(/Task Title/i);
+        const titleInput = screen.getByLabelText(
+          new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.titleLabel')}`)
+        );
         expect(titleInput).toHaveFocus();
       });
     });
 
     it('should support tab navigation through form fields', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
-      const titleInput = screen.getByLabelText(/Task Title/i);
-      const hoursInput = screen.getByLabelText(/Estimated Hours/i);
-      const assigneeSelect = screen.getByLabelText(/Assignee/i);
-      const cancelButton = screen.getByRole('button', { name: /Cancel/i });
-      const submitButton = screen.getByRole('button', { name: /Add Task$/i });
+      const titleInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.titleLabel')}`)
+      );
+      const hoursInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.estimatedHoursLabel')}`)
+      );
+      const assigneeSelect = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.assigneeLabel')}`)
+      );
+      const cancelButton = screen.getAllByRole('button', {
+        name: i18nT('sprint:sprintPlanning.addTaskModal.cancel'),
+      })[1];
+      const submitButton = screen.getByRole('button', {
+        name: i18nT('sprint:sprintPlanning.addTaskModal.addTask'),
+      });
 
       // Tab order should follow DOM order
       expect(titleInput).toBeInTheDocument();
@@ -460,7 +581,7 @@ describe('AddTaskModal', () => {
     });
 
     it('should close modal on Escape key when no unsaved changes', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
       fireEvent.keyDown(document, { key: 'Escape' });
 
@@ -468,9 +589,11 @@ describe('AddTaskModal', () => {
     });
 
     it('should show unsaved changes modal on Escape key when changes exist', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
-      const titleInput = screen.getByLabelText(/Task Title/i);
+      const titleInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.titleLabel')}`)
+      );
       fireEvent.change(titleInput, { target: { value: 'Some Task' } });
 
       fireEvent.keyDown(document, { key: 'Escape' });
@@ -480,109 +603,151 @@ describe('AddTaskModal', () => {
     });
 
     it('should trap focus: Tab from last enabled element wraps to first', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
       // Fill in title and hours so Add Task button is enabled as last focusable
-      const titleInput = screen.getByLabelText(/Task Title/i);
+      const titleInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.titleLabel')}`)
+      );
       fireEvent.change(titleInput, { target: { value: 'Test Task' } });
-      const hoursInput = screen.getByLabelText(/Estimated Hours/i);
+      const hoursInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.estimatedHoursLabel')}`)
+      );
       fireEvent.change(hoursInput, { target: { value: '4' } });
 
-      const submitButton = screen.getByRole('button', { name: /Add Task$/i });
+      const submitButton = screen.getByRole('button', {
+        name: i18nT('sprint:sprintPlanning.addTaskModal.addTask'),
+      });
       submitButton.focus();
 
       fireEvent.keyDown(document, { key: 'Tab', shiftKey: false });
 
-      const closeButton = screen.getByLabelText('Close modal');
+      const closeButton = screen.getByLabelText(i18nT('sprint:sprintPlanning.addTaskModal.cancel'));
       expect(closeButton).toHaveFocus();
     });
 
     it('should trap focus: Shift+Tab from first element wraps to last enabled element', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
-      const closeButton = screen.getByLabelText('Close modal');
+      const closeButton = screen.getByLabelText(i18nT('sprint:sprintPlanning.addTaskModal.cancel'));
       closeButton.focus();
 
       fireEvent.keyDown(document, { key: 'Tab', shiftKey: true });
 
       // Add Task button is disabled initially, so Cancel is the last enabled element
-      const cancelButton = screen.getByRole('button', { name: /Cancel/i });
-      expect(cancelButton).toHaveFocus();
+      // There are two buttons with "Cancel": close button (X) and footer Cancel button
+      const cancelButtons = screen.getAllByRole('button', {
+        name: i18nT('sprint:sprintPlanning.addTaskModal.cancel'),
+      });
+      // The footer Cancel button is the second one (index 1)
+      expect(cancelButtons[1]).toHaveFocus();
     });
   });
 
   describe('Form Reset', () => {
     it('should reset form when modal reopens', () => {
-      const { rerender } = render(<AddTaskModal {...defaultProps} isOpen={false} />);
+      const { rerender } = renderWithProviders(<AddTaskModal {...defaultProps} isOpen={false} />);
 
       rerender(<AddTaskModal {...defaultProps} isOpen={true} />);
 
-      const titleInput = screen.getByLabelText(/Task Title/i);
+      const titleInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.titleLabel')}`)
+      );
       fireEvent.change(titleInput, { target: { value: 'Test Task' } });
 
-      const hoursInput = screen.getByLabelText(/Estimated Hours/i);
+      const hoursInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.estimatedHoursLabel')}`)
+      );
       fireEvent.change(hoursInput, { target: { value: '5' } });
 
       rerender(<AddTaskModal {...defaultProps} isOpen={false} />);
       rerender(<AddTaskModal {...defaultProps} isOpen={true} />);
 
-      expect(screen.getByLabelText(/Task Title/i)).toHaveValue('');
-      const resetHoursInput = screen.getByLabelText(/Estimated Hours/i);
+      expect(
+        screen.getByLabelText(
+          new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.titleLabel')}`)
+        )
+      ).toHaveValue('');
+      const resetHoursInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.estimatedHoursLabel')}`)
+      );
       expect(resetHoursInput.value === '' || resetHoursInput.value === null).toBe(true);
     });
 
     it('should reset form fields on modal close and reopen', () => {
-      const { rerender } = render(<AddTaskModal {...defaultProps} isOpen={true} />);
+      const { rerender } = renderWithProviders(<AddTaskModal {...defaultProps} isOpen={true} />);
 
-      const titleInput = screen.getByLabelText(/Task Title/i);
+      const titleInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.titleLabel')}`)
+      );
       fireEvent.change(titleInput, { target: { value: 'My Task' } });
 
-      const hoursInput = screen.getByLabelText(/Estimated Hours/i);
+      const hoursInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.estimatedHoursLabel')}`)
+      );
       fireEvent.change(hoursInput, { target: { value: '8' } });
 
-      const assigneeSelect = screen.getByLabelText(/Assignee/i);
+      const assigneeSelect = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.assigneeLabel')}`)
+      );
       fireEvent.change(assigneeSelect, { target: { value: 'user-1' } });
 
       rerender(<AddTaskModal {...defaultProps} isOpen={false} />);
       rerender(<AddTaskModal {...defaultProps} isOpen={true} />);
 
-      expect(screen.getByLabelText(/Task Title/i)).toHaveValue('');
-      expect(screen.getByLabelText(/Assignee/i)).toHaveValue('');
+      expect(
+        screen.getByLabelText(
+          new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.titleLabel')}`)
+        )
+      ).toHaveValue('');
+      expect(
+        screen.getByLabelText(
+          new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.assigneeLabel')}`)
+        )
+      ).toHaveValue('');
     });
   });
 
   describe('Form Input Interactions', () => {
     it('should allow typing in title field', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
-      const titleInput = screen.getByLabelText(/Task Title/i);
+      const titleInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.titleLabel')}`)
+      );
       fireEvent.change(titleInput, { target: { value: 'New task title' } });
 
       expect(titleInput).toHaveValue('New task title');
     });
 
     it('should allow typing decimal hours', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
-      const hoursInput = screen.getByLabelText(/Estimated Hours/i);
+      const hoursInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.estimatedHoursLabel')}`)
+      );
       fireEvent.change(hoursInput, { target: { value: '4.5' } });
 
       expect(hoursInput).toHaveValue(4.5);
     });
 
     it('should handle selecting assignee', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
-      const assigneeSelect = screen.getByLabelText(/Assignee/i);
+      const assigneeSelect = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.assigneeLabel')}`)
+      );
       fireEvent.change(assigneeSelect, { target: { value: 'user-1' } });
 
       expect(assigneeSelect).toHaveValue('user-1');
     });
 
     it('should handle deselecting assignee (Unassigned)', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
-      const assigneeSelect = screen.getByLabelText(/Assignee/i);
+      const assigneeSelect = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.assigneeLabel')}`)
+      );
       fireEvent.change(assigneeSelect, { target: { value: 'user-1' } });
       expect(assigneeSelect).toHaveValue('user-1');
 
@@ -593,58 +758,73 @@ describe('AddTaskModal', () => {
 
   describe('Input Hints and Placeholders', () => {
     it('should display placeholder for title input', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
-      const titleInput = screen.getByLabelText(/Task Title/i);
-      expect(titleInput).toHaveAttribute('placeholder', 'e.g., Implement user authentication');
+      const titleInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.titleLabel')}`)
+      );
+      expect(titleInput).toHaveAttribute(
+        'placeholder',
+        i18nT('sprint:sprintPlanning.addTaskModal.titlePlaceholder')
+      );
     });
 
     it('should display placeholder for hours input', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
-      const hoursInput = screen.getByLabelText(/Estimated Hours/i);
+      const hoursInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.estimatedHoursLabel')}`)
+      );
       expect(hoursInput).toHaveAttribute('placeholder', '4');
     });
 
     it('should display hint for title field', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
       expect(
-        screen.getByText(/Describe what needs to be done clearly and concisely/i)
+        screen.getByText(i18nT('sprint:sprintPlanning.addTaskModal.describeTaskHint'))
       ).toBeInTheDocument();
     });
 
     it('should display hint for hours field', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
-      expect(screen.getByText(/Hours needed to complete/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(i18nT('sprint:sprintPlanning.addTaskModal.hoursNeededHint'))
+      ).toBeInTheDocument();
     });
 
     it('should display hint for assignee field', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
-      expect(screen.getByText(/Who will work on this\?/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(i18nT('sprint:sprintPlanning.addTaskModal.whoWillWorkHint'))
+      ).toBeInTheDocument();
     });
   });
 
   describe('Team Members Display', () => {
     it('should display all team members in dropdown', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
       expect(screen.getByText('John Doe')).toBeInTheDocument();
       expect(screen.getByText('Jane Smith')).toBeInTheDocument();
     });
 
     it('should handle empty team members list', () => {
-      render(<AddTaskModal {...defaultProps} teamMembers={[]} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} teamMembers={[]} />);
 
-      const assigneeSelect = screen.getByLabelText(/Assignee/i);
+      const assigneeSelect = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.assigneeLabel')}`)
+      );
       expect(assigneeSelect).toHaveValue('');
-      expect(screen.getByText('Unassigned')).toBeInTheDocument();
+      expect(
+        screen.getByText(i18nT('sprint:sprintPlanning.addTaskModal.unassigned'))
+      ).toBeInTheDocument();
     });
 
     it('should handle single team member', () => {
-      render(
+      renderWithProviders(
         <AddTaskModal
           {...defaultProps}
           teamMembers={[{ memberId: 'member-1', userId: 'user-1', memberName: 'Solo Developer' }]}
@@ -661,7 +841,7 @@ describe('AddTaskModal', () => {
         memberName: `Developer ${i}`,
       }));
 
-      render(<AddTaskModal {...defaultProps} teamMembers={manyMembers} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} teamMembers={manyMembers} />);
 
       for (let i = 0; i < 10; i++) {
         expect(screen.getByText(`Developer ${i}`)).toBeInTheDocument();
@@ -671,14 +851,14 @@ describe('AddTaskModal', () => {
 
   describe('Close Button and Overlay', () => {
     it('should have proper aria-label on close button', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
-      const closeButton = screen.getByLabelText(/Close modal/i);
+      const closeButton = screen.getByLabelText(i18nT('sprint:sprintPlanning.addTaskModal.cancel'));
       expect(closeButton).toBeInTheDocument();
     });
 
     it('should close on overlay click without changes', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
       const overlay = screen.getByRole('presentation');
       fireEvent.click(overlay);
@@ -687,7 +867,7 @@ describe('AddTaskModal', () => {
     });
 
     it('should not close when clicking inside modal content', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
       const form = document.getElementById('add-task-form');
       fireEvent.click(form);
@@ -698,31 +878,39 @@ describe('AddTaskModal', () => {
 
   describe('Item Title Display', () => {
     it('should show itemTitle when provided', () => {
-      render(<AddTaskModal {...defaultProps} itemTitle="Backlog Item #123" />);
+      renderWithProviders(<AddTaskModal {...defaultProps} itemTitle="Backlog Item #123" />);
 
-      expect(screen.getByText(/Adding task to/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          new RegExp(i18nT('sprint:sprintPlanning.addTaskModal.addingTaskTo').trim())
+        )
+      ).toBeInTheDocument();
       expect(screen.getByText(/Backlog Item #123/i)).toBeInTheDocument();
     });
 
     it('should not show subtitle when itemTitle is undefined', () => {
-      render(<AddTaskModal {...defaultProps} itemTitle={undefined} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} itemTitle={undefined} />);
 
-      expect(screen.queryByText(/Adding task to/)).not.toBeInTheDocument();
+      expect(
+        screen.queryByText(i18nT('sprint:sprintPlanning.addTaskModal.addingTaskTo'))
+      ).not.toBeInTheDocument();
     });
   });
 
   describe('Progress Bar', () => {
     it('should show progress bar', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
       const progressBar = document.querySelector('.progress-bar');
       expect(progressBar).toBeInTheDocument();
     });
 
     it('should update progress based on title filled', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
-      const titleInput = screen.getByLabelText(/Task Title/i);
+      const titleInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.titleLabel')}`)
+      );
       const progressFill = document.querySelector('.progress-fill');
 
       expect(progressFill).toBeInTheDocument();
@@ -733,57 +921,75 @@ describe('AddTaskModal', () => {
 
   describe('Error Message Display', () => {
     it('should show error with role alert', async () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
       const form = document.getElementById('add-task-form');
       fireEvent.submit(form);
 
       await waitFor(() => {
-        const errorMessage = screen.getByText(/Task title is required/i);
+        const errorMessage = screen.getByText(
+          i18nT('sprint:sprintPlanning.addTaskModal.taskTitleRequired')
+        );
         expect(errorMessage).toHaveAttribute('role', 'alert');
       });
     });
 
     it('should show both errors when both fields are invalid', async () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
       const form = document.getElementById('add-task-form');
       fireEvent.submit(form);
 
       await waitFor(() => {
-        expect(screen.getByText(/Task title is required/i)).toBeInTheDocument();
-        expect(screen.getByText(/Estimated hours must be greater than 0/i)).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('sprint:sprintPlanning.addTaskModal.taskTitleRequired'))
+        ).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('sprint:sprintPlanning.addTaskModal.hoursGreaterThanZero'))
+        ).toBeInTheDocument();
       });
     });
 
     it('should clear hours error when hours become valid', async () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
       const form = document.getElementById('add-task-form');
       fireEvent.submit(form);
 
       await waitFor(() => {
-        expect(screen.getByText(/Estimated hours must be greater than 0/i)).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('sprint:sprintPlanning.addTaskModal.hoursGreaterThanZero'))
+        ).toBeInTheDocument();
       });
 
-      const hoursInput = screen.getByLabelText(/Estimated Hours/i);
+      const hoursInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.estimatedHoursLabel')}`)
+      );
       fireEvent.change(hoursInput, { target: { value: '4' } });
 
-      expect(screen.queryByText(/Estimated hours must be greater than 0/i)).not.toBeInTheDocument();
+      expect(
+        screen.queryByText(i18nT('sprint:sprintPlanning.addTaskModal.hoursGreaterThanZero'))
+      ).not.toBeInTheDocument();
     });
   });
 
   describe('Form Submission Edge Cases', () => {
     it('should submit with valid form data', async () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
-      const titleInput = screen.getByLabelText(/Task Title/i);
+      const titleInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.titleLabel')}`)
+      );
       fireEvent.change(titleInput, { target: { value: 'Complete task' } });
 
-      const hoursInput = screen.getByLabelText(/Estimated Hours/i);
+      const hoursInput = screen.getByLabelText(
+        new RegExp(`^${i18nT('sprint:sprintPlanning.addTaskModal.estimatedHoursLabel')}`)
+      );
       fireEvent.change(hoursInput, { target: { value: '8' } });
 
-      const submitButton = screen.getByRole('button', { name: /Add Task$/i });
+      const submitButton = screen.getByRole('button', {
+        name: i18nT('sprint:sprintPlanning.addTaskModal.addTask'),
+      });
       fireEvent.click(submitButton);
 
       await waitFor(() => {
@@ -796,7 +1002,7 @@ describe('AddTaskModal', () => {
     });
 
     it('should not submit when form is invalid', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
       const form = document.getElementById('add-task-form');
       fireEvent.submit(form);
@@ -807,24 +1013,30 @@ describe('AddTaskModal', () => {
 
   describe('Required Field Indicators', () => {
     it('should show required asterisk for title', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
-      const titleLabel = screen.getByText(/Task Title/);
+      const titleLabel = screen.getByText(i18nT('sprint:sprintPlanning.addTaskModal.titleLabel'));
       expect(titleLabel.parentElement?.textContent).toContain('*');
     });
 
     it('should show required asterisk for hours', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
-      const hoursLabel = screen.getByText(/Estimated Hours/);
+      const hoursLabel = screen.getByText(
+        i18nT('sprint:sprintPlanning.addTaskModal.estimatedHoursLabel')
+      );
       expect(hoursLabel.parentElement?.textContent).toContain('*');
     });
 
     it('should show Optional text for assignee', () => {
-      render(<AddTaskModal {...defaultProps} />);
+      renderWithProviders(<AddTaskModal {...defaultProps} />);
 
-      const assigneeLabel = screen.getByText(/Assignee/);
-      expect(assigneeLabel.parentElement?.textContent).toContain('Optional');
+      const assigneeLabel = screen.getByText(
+        i18nT('sprint:sprintPlanning.addTaskModal.assigneeLabel')
+      );
+      expect(assigneeLabel.parentElement?.textContent).toContain(
+        i18nT('sprint:sprintPlanning.addTaskModal.optional')
+      );
     });
   });
 });

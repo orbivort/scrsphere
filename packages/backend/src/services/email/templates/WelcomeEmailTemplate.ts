@@ -10,6 +10,8 @@ import {
   type BaseTemplateData,
   type RenderedEmail,
 } from './BaseEmailTemplate.js';
+import type { Locale } from '@scrumooth/shared';
+import { i18nInstance } from '../../../i18n/config.js';
 
 /**
  * Data required for the welcome email
@@ -19,6 +21,8 @@ export interface WelcomeEmailTemplateData extends BaseTemplateData {
   firstName: string;
   /** Recipient's email address */
   email: string;
+  /** Recipient's preferred locale */
+  locale: Locale;
 }
 
 /**
@@ -43,8 +47,11 @@ export class WelcomeEmailTemplate extends BaseEmailTemplate<WelcomeEmailTemplate
    * @returns Object containing html and text versions
    */
   render(data: WelcomeEmailTemplateData): RenderedEmail {
-    const html = this.renderHtml(this.getHtmlTemplate(data), data);
-    const text = this.renderText(this.getTextTemplate(data), data);
+    const t = i18nInstance.getFixedT(data.locale, 'emails');
+    const localizedSubject = t('welcome.subject');
+    const localizedData = { ...data, subject: localizedSubject };
+    const html = this.renderHtml(this.getHtmlTemplate(localizedData, t), localizedData);
+    const text = this.renderText(this.getTextTemplate(localizedData, t), localizedData);
     return { html, text };
   }
 
@@ -53,7 +60,10 @@ export class WelcomeEmailTemplate extends BaseEmailTemplate<WelcomeEmailTemplate
    *
    * @returns The HTML template string
    */
-  private getHtmlTemplate(data: WelcomeEmailTemplateData): string {
+  private getHtmlTemplate(
+    data: WelcomeEmailTemplateData,
+    t: ReturnType<typeof i18nInstance.getFixedT>
+  ): string {
     const supportSection = data.supportEmail
       ? `<p style="margin: 0 0 8px 0; color: #6b7280; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-size: 14px;">Need help? Contact us at <a href="mailto:{{supportEmail}}" style="color: #6b7280; text-decoration: underline;">{{supportEmail}}</a></p>`
       : '';
@@ -128,7 +138,7 @@ export class WelcomeEmailTemplate extends BaseEmailTemplate<WelcomeEmailTemplate
                 </tr>
                 <tr>
                   <td align="center">
-                    <p style="color: #7c3aed; font-size: 18px; font-weight: 600; margin: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">Welcome to {{appName}}!</p>
+                    <p style="color: #7c3aed; font-size: 18px; font-weight: 600; margin: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">${t('welcome.heading', { name: data.firstName })}</p>
                   </td>
                 </tr>
               </table>
@@ -136,9 +146,9 @@ export class WelcomeEmailTemplate extends BaseEmailTemplate<WelcomeEmailTemplate
               <!-- Greeting -->
               <p style="margin: 0 0 16px 0; color: #374151; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-size: 16px; line-height: 1.6;">Hello <strong>{{firstName}}</strong>,</p>
 
-              <p style="margin: 0 0 16px 0; color: #374151; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-size: 16px; line-height: 1.6;">Thank you for creating your account! We're excited to have you on board.</p>
+              <p style="margin: 0 0 16px 0; color: #374151; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-size: 16px; line-height: 1.6;">${t('welcome.bodyIntro')}</p>
 
-              <p style="margin: 0 0 24px 0; color: #374151; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-size: 16px; line-height: 1.6;">Your account is ready. You can now start managing your Agile Scrum lifecycle with our powerful tools.</p>
+              <p style="margin: 0 0 24px 0; color: #374151; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-size: 16px; line-height: 1.6;">${t('welcome.closing')}</p>
 
               <!-- Getting Started Section -->
               <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f0fdf4; border-left: 4px solid #22c55e; margin: 20px 0;">
@@ -177,12 +187,12 @@ export class WelcomeEmailTemplate extends BaseEmailTemplate<WelcomeEmailTemplate
                     <!--[if mso]>
                     <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{appUrl}}" style="height:48px;v-text-anchor:middle;width:200px;" arcsize="12%" strokecolor="#667eea" fillcolor="#667eea">
                       <w:anchorlock/>
-                      <center style="color:#ffffff;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;font-weight:600;">Go to Dashboard</center>
+                      <center style="color:#ffffff;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;font-weight:600;">${t('welcome.cta')}</center>
                     </v:roundrect>
                     <![endif]-->
                     <!--[if !mso]><!-->
                     <a href="{{appUrl}}" style="display: inline-block; padding: 12px 24px; background-color: #667eea; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff !important; text-decoration: none !important; border-radius: 6px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-size: 16px; font-weight: 600; text-align: center; border: 1px solid #667eea;">
-                      Go to Dashboard
+                      ${t('welcome.cta')}
                     </a>
                     <!--<![endif]-->
                   </td>
@@ -228,21 +238,23 @@ export class WelcomeEmailTemplate extends BaseEmailTemplate<WelcomeEmailTemplate
    *
    * @returns The plain text template string
    */
-  private getTextTemplate(data: WelcomeEmailTemplateData): string {
+  private getTextTemplate(
+    data: WelcomeEmailTemplateData,
+    t: ReturnType<typeof i18nInstance.getFixedT>
+  ): string {
     const supportSection = data.supportEmail
       ? `\n\nNeed help? Contact us at ${data.supportEmail}`
       : '';
 
     return `================================================================================
-                              Welcome to {{appName}}!
+                              ${t('welcome.heading', { name: '{{appName}}' })}
 ================================================================================
 
 Hello {{firstName}},
 
-Thank you for creating your account! We're excited to have you on board.
+${t('welcome.bodyIntro')}
 
-Your account is ready. You can now start managing your Agile Scrum lifecycle
-with our powerful tools.
+${t('welcome.closing')}
 
 YOUR AGILE JOURNEY STARTS HERE
 --------------------------------------------------------------------------------
@@ -263,7 +275,7 @@ PLATFORM CAPABILITIES
   &#8226; Progress Tracking - Monitor velocity and burndown charts
   &#8226; Agile Ceremonies - Run daily scrums and retrospectives
 
-Go to Dashboard: {{appUrl}}
+${t('welcome.cta')}: {{appUrl}}
 
 --------------------------------------------------------------------------------
 

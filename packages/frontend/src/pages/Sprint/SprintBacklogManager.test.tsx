@@ -1,28 +1,18 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, renderWithProviders, waitFor, initTestI18n, i18nT } from '../../test-utils';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
 
 import { apiService } from '../../services';
 import { useTeamStore } from '../../store';
 import { SprintBacklogManager, type SprintBacklogManagerProps } from './SprintBacklogManager';
 
-const createQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-    },
-  });
+beforeAll(async () => {
+  await initTestI18n();
+});
 
 vi.mock('../../services');
 vi.mock('../../store');
-
-const renderWithQueryClient = (ui: React.ReactElement, queryClient = createQueryClient()) => {
-  return render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>);
-};
 
 const defaultProps: SprintBacklogManagerProps = {
   sprintId: 'sprint-1',
@@ -58,11 +48,8 @@ const mockChanges = [
 ];
 
 describe('SprintBacklogManager', () => {
-  let queryClient: QueryClient;
-
   beforeEach(() => {
     vi.clearAllMocks();
-    queryClient = createQueryClient();
 
     (useTeamStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
       currentTeam: { id: 'team-1' },
@@ -85,13 +72,9 @@ describe('SprintBacklogManager', () => {
     (apiService.createTask as ReturnType<typeof vi.fn>).mockResolvedValue({ data: {} });
   });
 
-  afterEach(() => {
-    queryClient.clear();
-  });
-
   describe('Rendering', () => {
     it('should render modal with sprint name', async () => {
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText(/Sprint Backlog Manager/)).toBeInTheDocument();
@@ -100,7 +83,7 @@ describe('SprintBacklogManager', () => {
     });
 
     it('should render sprint goal when provided', async () => {
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText(/Complete authentication/)).toBeInTheDocument();
@@ -108,15 +91,17 @@ describe('SprintBacklogManager', () => {
     });
 
     it('should render close button', async () => {
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
-        expect(screen.getByLabelText('Close')).toBeInTheDocument();
+        expect(
+          screen.getByLabelText(i18nT('sprint:sprintBacklogManager.cancel'))
+        ).toBeInTheDocument();
       });
     });
 
     it('should render stats section', async () => {
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText('Items')).toBeInTheDocument();
@@ -127,7 +112,7 @@ describe('SprintBacklogManager', () => {
     });
 
     it('should render current sprint backlog section', async () => {
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText('Current Sprint Backlog')).toBeInTheDocument();
@@ -135,7 +120,7 @@ describe('SprintBacklogManager', () => {
     });
 
     it('should render add item button', async () => {
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText('+ Add Item')).toBeInTheDocument();
@@ -143,7 +128,7 @@ describe('SprintBacklogManager', () => {
     });
 
     it('should render recent changes section', async () => {
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText('Recent Changes')).toBeInTheDocument();
@@ -153,7 +138,7 @@ describe('SprintBacklogManager', () => {
 
   describe('Sprint backlog items', () => {
     it('should render sprint backlog items when available', async () => {
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText(/Implement login/)).toBeInTheDocument();
@@ -168,7 +153,7 @@ describe('SprintBacklogManager', () => {
         data: { items: [] },
       });
 
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText(/No items in sprint backlog/)).toBeInTheDocument();
@@ -180,7 +165,7 @@ describe('SprintBacklogManager', () => {
         data: [],
       });
 
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText('Implement login')).toBeInTheDocument();
@@ -196,13 +181,15 @@ describe('SprintBacklogManager', () => {
       const onClose = vi.fn();
       const user = userEvent.setup();
 
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} onClose={onClose} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} onClose={onClose} />);
 
       await waitFor(() => {
-        expect(screen.getByLabelText('Close')).toBeInTheDocument();
+        expect(
+          screen.getByLabelText(i18nT('sprint:sprintBacklogManager.cancel'))
+        ).toBeInTheDocument();
       });
 
-      const closeButton = screen.getByLabelText('Close');
+      const closeButton = screen.getByLabelText(i18nT('sprint:sprintBacklogManager.cancel'));
       await user.click(closeButton);
 
       expect(onClose).toHaveBeenCalledTimes(1);
@@ -211,10 +198,10 @@ describe('SprintBacklogManager', () => {
 
   describe('Accessibility', () => {
     it('should have aria-label on close button', async () => {
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
-        const closeButton = screen.getByLabelText('Close');
+        const closeButton = screen.getByLabelText(i18nT('sprint:sprintBacklogManager.cancel'));
         expect(closeButton).toBeInTheDocument();
       });
     });
@@ -238,7 +225,7 @@ describe('SprintBacklogManager', () => {
         ],
       });
 
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText('Items')).toBeInTheDocument();
@@ -253,7 +240,7 @@ describe('SprintBacklogManager', () => {
     it('should open add modal when clicking add button', async () => {
       const user = userEvent.setup();
 
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText('+ Add Item')).toBeInTheDocument();
@@ -269,7 +256,7 @@ describe('SprintBacklogManager', () => {
     it('should display available PBIs in add modal', async () => {
       const user = userEvent.setup();
 
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText('+ Add Item')).toBeInTheDocument();
@@ -286,7 +273,7 @@ describe('SprintBacklogManager', () => {
     it('should search available PBIs', async () => {
       const user = userEvent.setup();
 
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText('+ Add Item')).toBeInTheDocument();
@@ -310,7 +297,7 @@ describe('SprintBacklogManager', () => {
     it('should add PBI to sprint', async () => {
       const user = userEvent.setup();
 
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText('+ Add Item')).toBeInTheDocument();
@@ -333,7 +320,7 @@ describe('SprintBacklogManager', () => {
     it('should close add modal', async () => {
       const user = userEvent.setup();
 
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText('+ Add Item')).toBeInTheDocument();
@@ -358,7 +345,7 @@ describe('SprintBacklogManager', () => {
     it('should open remove modal when clicking remove button', async () => {
       const user = userEvent.setup();
 
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText('Implement login')).toBeInTheDocument();
@@ -376,7 +363,7 @@ describe('SprintBacklogManager', () => {
     it('should display PBI info in remove modal', async () => {
       const user = userEvent.setup();
 
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText('Implement login')).toBeInTheDocument();
@@ -394,7 +381,7 @@ describe('SprintBacklogManager', () => {
     it('should remove PBI from sprint', async () => {
       const user = userEvent.setup();
 
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText('Implement login')).toBeInTheDocument();
@@ -423,7 +410,7 @@ describe('SprintBacklogManager', () => {
     it('should close remove modal on cancel', async () => {
       const user = userEvent.setup();
 
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText('Implement login')).toBeInTheDocument();
@@ -447,7 +434,7 @@ describe('SprintBacklogManager', () => {
 
   describe('Recent Changes', () => {
     it('should display recent changes', async () => {
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText('Implement login')).toBeInTheDocument();
@@ -475,7 +462,7 @@ describe('SprintBacklogManager', () => {
         ],
       });
 
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText(/5 mins ago/)).toBeInTheDocument();
@@ -496,7 +483,7 @@ describe('SprintBacklogManager', () => {
         ],
       });
 
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText(/1 min ago/)).toBeInTheDocument();
@@ -517,7 +504,7 @@ describe('SprintBacklogManager', () => {
         ],
       });
 
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText(/1 hour ago/)).toBeInTheDocument();
@@ -538,7 +525,7 @@ describe('SprintBacklogManager', () => {
         ],
       });
 
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText(/2 hours ago/)).toBeInTheDocument();
@@ -559,7 +546,7 @@ describe('SprintBacklogManager', () => {
         ],
       });
 
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText(/1 day ago/)).toBeInTheDocument();
@@ -580,7 +567,7 @@ describe('SprintBacklogManager', () => {
         ],
       });
 
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText(/2 days ago/)).toBeInTheDocument();
@@ -595,7 +582,7 @@ describe('SprintBacklogManager', () => {
         response: { data: { error: { message: 'Failed to add' } } },
       });
 
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText('+ Add Item')).toBeInTheDocument();
@@ -617,7 +604,7 @@ describe('SprintBacklogManager', () => {
         new Error('Network error')
       );
 
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText('+ Add Item')).toBeInTheDocument();
@@ -639,7 +626,7 @@ describe('SprintBacklogManager', () => {
         response: { data: { error: { message: 'Failed to remove' } } },
       });
 
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText('Implement login')).toBeInTheDocument();
@@ -670,7 +657,7 @@ describe('SprintBacklogManager', () => {
         new Error('Network error')
       );
 
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         const managerElement = screen.queryByText('Sprint Backlog Manager');
@@ -683,7 +670,7 @@ describe('SprintBacklogManager', () => {
 
   describe('Loading States', () => {
     it('should show loading state initially', () => {
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       expect(screen.getByText('Loading sprint backlog...')).toBeInTheDocument();
     });
@@ -694,7 +681,7 @@ describe('SprintBacklogManager', () => {
         () => new Promise(() => {})
       );
 
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText('+ Add Item')).toBeInTheDocument();
@@ -710,18 +697,18 @@ describe('SprintBacklogManager', () => {
 
   describe('Priority Display', () => {
     it('should display priority badges correctly', async () => {
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
-        expect(screen.getByText('MUST')).toBeInTheDocument();
-        expect(screen.getByText('SHOULD')).toBeInTheDocument();
+        expect(screen.getByText(i18nT('sprint:sprintPlanning.moscow.must'))).toBeInTheDocument();
+        expect(screen.getByText(i18nT('sprint:sprintPlanning.moscow.should'))).toBeInTheDocument();
       });
     });
   });
 
   describe('Task Preview', () => {
     it('should display task count for items with tasks', async () => {
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText(/2 tasks/)).toBeInTheDocument();
@@ -729,7 +716,7 @@ describe('SprintBacklogManager', () => {
     });
 
     it('should display task progress', async () => {
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText(/1\/2 done/)).toBeInTheDocument();
@@ -739,7 +726,7 @@ describe('SprintBacklogManager', () => {
 
   describe('Sprint Goal Display', () => {
     it('should display sprint goal when provided', async () => {
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText('Complete authentication')).toBeInTheDocument();
@@ -747,7 +734,7 @@ describe('SprintBacklogManager', () => {
     });
 
     it('should not display sprint goal when not provided', async () => {
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} sprintGoal={undefined} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} sprintGoal={undefined} />);
 
       await waitFor(() => {
         expect(screen.getByText('Implement login')).toBeInTheDocument();
@@ -765,7 +752,7 @@ describe('SprintBacklogManager', () => {
         data: [],
       });
 
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText('+ Add Item')).toBeInTheDocument();
@@ -783,7 +770,7 @@ describe('SprintBacklogManager', () => {
     it('should allow entering reason when adding PBI', async () => {
       const user = userEvent.setup();
 
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText('+ Add Item')).toBeInTheDocument();
@@ -804,7 +791,7 @@ describe('SprintBacklogManager', () => {
     it('should allow entering reason when removing PBI', async () => {
       const user = userEvent.setup();
 
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText('Implement login')).toBeInTheDocument();
@@ -836,7 +823,7 @@ describe('SprintBacklogManager', () => {
         ],
       });
 
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText(/\+2 more/)).toBeInTheDocument();
@@ -859,7 +846,7 @@ describe('SprintBacklogManager', () => {
         ],
       });
 
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature B')).toBeInTheDocument();
@@ -880,7 +867,7 @@ describe('SprintBacklogManager', () => {
         ],
       });
 
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature C')).toBeInTheDocument();
@@ -896,7 +883,7 @@ describe('SprintBacklogManager', () => {
         data: [{ id: 'task-1', pbiId: 'pbi-1', title: 'Task 1', status: 'TODO' }],
       });
 
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText('Implement login')).toBeInTheDocument();
@@ -913,7 +900,7 @@ describe('SprintBacklogManager', () => {
     it('should show "0 tasks" for item with no tasks', async () => {
       const user = userEvent.setup();
 
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText('Implement logout')).toBeInTheDocument();
@@ -951,7 +938,7 @@ describe('SprintBacklogManager', () => {
         ],
       });
 
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText('+ Add Item')).toBeInTheDocument();
@@ -975,7 +962,7 @@ describe('SprintBacklogManager', () => {
     it('should show no items when search yields no results', async () => {
       const user = userEvent.setup();
 
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText('+ Add Item')).toBeInTheDocument();
@@ -1000,7 +987,7 @@ describe('SprintBacklogManager', () => {
     it('should add PBI to sprint and close add modal on success', async () => {
       const user = userEvent.setup();
 
-      renderWithQueryClient(<SprintBacklogManager {...defaultProps} />);
+      renderWithProviders(<SprintBacklogManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText('+ Add Item')).toBeInTheDocument();

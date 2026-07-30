@@ -10,6 +10,13 @@ import bcrypt from 'bcrypt';
 import { CSRF_CONSTANTS } from '../../middleware/csrf.middleware';
 import { getCsrfToken, extractCsrfFromCookies } from '../helpers/test-helpers';
 import {
+  setLocaleHeader,
+  createI18nTestUser,
+  expectLocaleCookie,
+  SUPPORTED_LOCALES,
+} from '../helpers/i18n-helpers';
+import type { Locale } from '@scrumooth/shared';
+import {
   ItemStatus,
   MoSCoWPriority,
   SprintStatus,
@@ -657,5 +664,316 @@ describe('Cross-Feature Integration Tests', () => {
       expect(validateResponse.body.success).toBe(true);
       expect(validateResponse.body.data.isValid).toBe(true);
     });
+  });
+
+  describe('i18n Locale Support', () => {
+    const testEmails: string[] = [];
+    const testTeams: string[] = [];
+
+    afterEach(async () => {
+      await cleanupTeams(testTeams);
+      await cleanupTestData(testEmails);
+      testEmails.length = 0;
+      testTeams.length = 0;
+    });
+
+    describe('Cross-locale feature consistency', () => {
+      it('should create sprint with consistent behavior across all locales', async () => {
+        const testLocales: Locale[] = ['en', 'de', 'fr', 'it', 'es'];
+
+        for (const locale of testLocales) {
+          const email = `sprint-locale-${locale}-${uniqueId()}@example.com`;
+          testEmails.push(email);
+
+          await createI18nTestUser(email, locale, prisma);
+          const cookies = await loginAndGetCookies(email);
+          const { csrfToken } = extractCsrfFromCookies(cookies);
+
+          const teamName = `Locale Team ${locale} ${uniqueId()}`;
+          testTeams.push(teamName);
+
+          const team = await createTestTeam(teamName);
+          await addTeamMember(team.id, await getUserIdFromEmail(email), 'SCRUM_MASTER');
+
+          const response = await request(app)
+            .post('/api/v1/sprints')
+            .set('Cookie', cookies)
+            .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+            .set(setLocaleHeader(locale))
+            .send({
+              teamId: team.id,
+              name: `Sprint ${locale}`,
+              startDate: new Date().toISOString(),
+              endDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
+              sprintGoal: `Goal for locale ${locale}`,
+            });
+
+          // All locales should have consistent success response
+          expect(response.status).toBe(201);
+          expect(response.body.success).toBe(true);
+          expectLocaleCookie(response, locale);
+        }
+      });
+
+      it('should create PBI with consistent validation across locales', async () => {
+        const email = `pbi-consistency-${uniqueId()}@example.com`;
+        testEmails.push(email);
+
+        await createI18nTestUser(email, 'de', prisma);
+        const cookies = await loginAndGetCookies(email);
+
+        const teamName = `PBI Consistency Team ${uniqueId()}`;
+        testTeams.push(teamName);
+
+        const team = await createTestTeam(teamName);
+        await addTeamMember(team.id, await getUserIdFromEmail(email), 'PRODUCT_OWNER');
+
+        // Test with each locale header - validation should be consistent
+        for (const locale of SUPPORTED_LOCALES) {
+          const { csrfToken } = extractCsrfFromCookies(cookies);
+
+          const response = await request(app)
+            .post('/api/v1/product-backlog')
+            .set('Cookie', cookies)
+            .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+            .set(setLocaleHeader(locale))
+            .send({
+              teamId: team.id,
+              title: `Test PBI ${locale}`,
+              description: 'Test description',
+              priority: 'MUST_HAVE',
+              storyPoints: 5,
+            })
+            .expect(201);
+
+          expect(response.body.success).toBe(true);
+          expect(response.body.data.title).toBe(`Test PBI ${locale}`);
+        }
+      });
+
+      it('should handle notification creation consistently across locales', async () => {
+        const email = `notification-consistency-${uniqueId()}@example.com`;
+        testEmails.push(email);
+
+        await createI18nTestUser(email, 'fr', prisma);
+        const cookies = await loginAndGetCookies(email);
+
+        const teamName = `Notification Locale Team ${uniqueId()}`;
+        testTeams.push(teamName);
+
+        const team = await createTestTeam(teamName);
+        await addTeamMember(team.id, await getUserIdFromEmail(email), 'SCRUM_MASTER');
+
+        // Create notifications and verify consistent response structure
+        const userId = await getUserIdFromEmail(email);
+
+        await prisma.notification.create({
+          data: {
+            id: generateUUIDv7(),
+            userId,
+            type: NotificationType.TASK_ASSIGNMENT,
+            title: 'Task Assigned',
+            message: 'A new task has been assigned to you',
+          },
+        });
+
+        // Verify notifications are returned consistently with locale headers
+        for (const locale of SUPPORTED_LOCALES) {
+          const response = await request(app)
+            .get('/api/v1/notifications')
+            .set('Cookie', cookies)
+            .set(setLocaleHeader(locale))
+            .expect(200);
+
+          expect(response.body.success).toBe(true);
+          expect(response.body.data.notifications.length).toBeGreaterThan(0);
+        }
+      });
+    });
+
+    describe('Locale persistence across features', () => {
+      it('should maintain locale preference across sprint and backlog operations', async () => {
+        const email = `locale-persistence-${uniqueId()}@example.com`;
+        testEmails.push(email);
+
+        // Create user with Italian locale
+        await createI18nTestUser(email, 'it', prisma);
+        const cookies = await loginAndGetCookies(email);
+
+        const teamName = `Locale Persistence Team ${uniqueId()}`;
+        testTeams.push(teamName);
+
+        const team = await createTestTeam(teamName);
+        await addTeamMember(team.id, await getUserIdFromEmail(email), 'SCRUM_MASTER');
+
+        // Create sprint with Italian locale
+        const { csrfToken } = extractCsrfFromCookies(cookies);
+
+        const sprintResponse = await request(app)
+          .post('/api/v1/sprints')
+          .set('Cookie', cookies)
+          .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+          .set(setLocaleHeader('it'))
+          .send({
+            teamId: team.id,
+            name: 'Italian Sprint',
+            startDate: new Date().toISOString(),
+            endDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
+            sprintGoal: 'Italian sprint goal',
+          })
+          .expect(201);
+
+        expectLocaleCookie(sprintResponse, 'it');
+
+        // Create PBI - locale cookie should persist
+        const pbiResponse = await request(app)
+          .post('/api/v1/product-backlog')
+          .set('Cookie', cookies)
+          .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+          .set(setLocaleHeader('it'))
+          .send({
+            teamId: team.id,
+            title: 'Italian PBI',
+            priority: 'MUST_HAVE',
+            storyPoints: 5,
+          })
+          .expect(201);
+
+        expectLocaleCookie(pbiResponse, 'it');
+
+        // Get team info - locale should still be Italian
+        const teamResponse = await request(app)
+          .get(`/api/v1/teams/${team.id}`)
+          .set('Cookie', cookies)
+          .set(setLocaleHeader('it'))
+          .expect(200);
+
+        expectLocaleCookie(teamResponse, 'it');
+      });
+
+      it('should preserve locale through daily update and impediment workflow', async () => {
+        const email = `workflow-locale-${uniqueId()}@example.com`;
+        testEmails.push(email);
+
+        // Create user with Spanish locale
+        await createI18nTestUser(email, 'es', prisma);
+        const cookies = await loginAndGetCookies(email);
+
+        const teamName = `Workflow Locale Team ${uniqueId()}`;
+        testTeams.push(teamName);
+
+        const team = await createTestTeam(teamName);
+        await addTeamMember(team.id, await getUserIdFromEmail(email), 'DEVELOPER');
+        const sprint = await createTestSprint(team.id, 'Spanish Sprint');
+
+        // Create daily update with Spanish locale
+        const { csrfToken } = extractCsrfFromCookies(cookies);
+
+        const userId = await getUserIdFromEmail(email);
+
+        const dailyUpdate = await prisma.dailyUpdate.create({
+          data: {
+            id: generateUUIDv7(),
+            sprintId: sprint.id,
+            userId,
+            updateDate: new Date(),
+            yesterdayWork: 'Worked on feature',
+            todayWork: 'Continuing feature',
+            impediment: 'Blocked by API issue',
+          },
+        });
+
+        // Promote impediment - locale should persist
+        const impedimentResponse = await request(app)
+          .post(`/api/v1/daily-updates/${dailyUpdate.id}/promote-impediment`)
+          .set('Cookie', cookies)
+          .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+          .set(setLocaleHeader('es'))
+          .send({
+            title: 'API Blocking Issue',
+            description: 'API issue blocking progress',
+            teamId: team.id,
+            sprintId: sprint.id,
+          })
+          .expect(201);
+
+        expectLocaleCookie(impedimentResponse, 'es');
+      });
+
+      it('should switch locale and maintain consistency in subsequent operations', async () => {
+        const email = `switch-locale-${uniqueId()}@example.com`;
+        testEmails.push(email);
+
+        await createI18nTestUser(email, 'en', prisma);
+        const cookies = await loginAndGetCookies(email);
+
+        const teamName = `Switch Locale Team ${uniqueId()}`;
+        testTeams.push(teamName);
+
+        const team = await createTestTeam(teamName);
+        await addTeamMember(team.id, await getUserIdFromEmail(email), 'PRODUCT_OWNER');
+
+        // First operation with English
+        const { csrfToken } = extractCsrfFromCookies(cookies);
+
+        const pbi1Response = await request(app)
+          .post('/api/v1/product-backlog')
+          .set('Cookie', cookies)
+          .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+          .set(setLocaleHeader('en'))
+          .send({
+            teamId: team.id,
+            title: 'English PBI',
+            priority: 'MUST_HAVE',
+            storyPoints: 3,
+          })
+          .expect(201);
+
+        expectLocaleCookie(pbi1Response, 'en');
+
+        // Second operation with German - locale should switch
+        const pbi2Response = await request(app)
+          .post('/api/v1/product-backlog')
+          .set('Cookie', cookies)
+          .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+          .set(setLocaleHeader('de'))
+          .send({
+            teamId: team.id,
+            title: 'German PBI',
+            priority: 'COULD_HAVE',
+            storyPoints: 5,
+          })
+          .expect(201);
+
+        expectLocaleCookie(pbi2Response, 'de');
+
+        // Third operation with French - locale should switch again
+        const pbi3Response = await request(app)
+          .post('/api/v1/product-backlog')
+          .set('Cookie', cookies)
+          .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+          .set(setLocaleHeader('fr'))
+          .send({
+            teamId: team.id,
+            title: 'French PBI',
+            priority: 'SHOULD_HAVE',
+            storyPoints: 8,
+          })
+          .expect(201);
+
+        expectLocaleCookie(pbi3Response, 'fr');
+      });
+    });
+
+    // Helper function to get user ID from email
+    async function getUserIdFromEmail(email: string): Promise<string> {
+      const user = await prisma.user.findUnique({
+        where: { email: email.toLowerCase() },
+      });
+      if (!user) {
+        throw new Error(`User not found for email: ${email}`);
+      }
+      return user.id;
+    }
   });
 });

@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
+import { formatLocaleDate } from '@scrumooth/shared';
 
 import { LoadingState } from '../../../../components/common/Loading';
 import { ToastContainer } from '../../../../components/common/ToastContainer';
@@ -14,9 +17,31 @@ import { DefinitionEditor } from './DefinitionEditor';
 import { DOD_CATEGORIES, getCategoryColor } from './categories';
 import styles from './DefinitionOfDonePanel.module.css';
 
+import { useI18nStore } from '@/i18n/useI18nStore';
 import { EditIcon, PlusIcon, RefreshCwIcon } from '@/components/common/Icons';
 
+/**
+ * Maps default DoD descriptions to translation keys
+ */
+const DOD_DESCRIPTION_MAP: Record<string, string> = {
+  'Code is peer-reviewed and approved': 'dodPanel.item.codeReviewed',
+  'Unit tests written and passing (minimum 80% coverage)': 'dodPanel.item.unitTests',
+  'Integration tests passing': 'dodPanel.item.integrationTests',
+  'Code is properly documented': 'dodPanel.item.documentation',
+  'No critical or high-severity bugs': 'dodPanel.item.noCriticalBugs',
+};
+
+/**
+ * Translates a DoD item description if it matches a known default
+ */
+function getTranslatedDescription(item: DoDItem, t: TFunction<'settings'>): string {
+  const translationKey = DOD_DESCRIPTION_MAP[item.description];
+  return translationKey ? t(translationKey as never) : item.description;
+}
+
 export function DefinitionOfDonePanel(): React.ReactElement {
+  const { t } = useTranslation('settings');
+  const { locale } = useI18nStore();
   const [isEditMode, setIsEditMode] = useState(false);
   const queryClient = useQueryClient();
   const { currentTeam } = useTeamStore();
@@ -48,11 +73,10 @@ export function DefinitionOfDonePanel(): React.ReactElement {
         queryKey: queryKeys.definitionOfDone.byTeam(teamId ?? ''),
       });
       setIsEditMode(false);
-      success('Definition of Done updated successfully');
+      success(t('dodPanel.toast.updatedSuccessfully'));
     },
     onError: (error: unknown) => {
-      const message =
-        error instanceof Error ? error.message : 'Failed to update Definition of Done';
+      const message = error instanceof Error ? error.message : t('dodPanel.toast.updateFailed');
       showError(message);
     },
   });
@@ -70,10 +94,8 @@ export function DefinitionOfDonePanel(): React.ReactElement {
       <div className={styles.container}>
         <div className={styles['no-team']}>
           <div className={styles['no-team-icon']}>📋</div>
-          <h2 className={styles['no-team-title']}>No Team Selected</h2>
-          <p className={styles['no-team-text']}>
-            Please select a team to view and manage the Definition of Done.
-          </p>
+          <h2 className={styles['no-team-title']}>{t('dodPanel.noTeam.title')}</h2>
+          <p className={styles['no-team-text']}>{t('dodPanel.noTeam.message')}</p>
         </div>
       </div>
     );
@@ -82,7 +104,7 @@ export function DefinitionOfDonePanel(): React.ReactElement {
   if (isLoading) {
     return (
       <div className={styles.container}>
-        <LoadingState variant="spinner" size="md" label="Loading Definition of Done..." />
+        <LoadingState variant="spinner" size="md" label={t('dodPanel.loading')} />
       </div>
     );
   }
@@ -92,14 +114,14 @@ export function DefinitionOfDonePanel(): React.ReactElement {
       <div className={styles.container}>
         <div className={styles.error}>
           <div className={styles['error-icon']}>⚠️</div>
-          <h2 className={styles['error-title']}>Failed to Load</h2>
-          <p>Unable to load Definition of Done. Using default items instead.</p>
+          <h2 className={styles['error-title']}>{t('dodPanel.error.title')}</h2>
+          <p>{t('dodPanel.error.message')}</p>
           <button
             className={`${styles.button} ${styles['button-secondary']}`}
             onClick={() => refetch()}
           >
             <RefreshCwIcon size={16} />
-            Retry
+            {t('dodPanel.error.retry')}
           </button>
         </div>
       </div>
@@ -140,27 +162,19 @@ export function DefinitionOfDonePanel(): React.ReactElement {
       <div className={styles.container}>
         <div className={styles.empty}>
           <div className={styles['empty-icon']}>📋</div>
-          <h2 className={styles['empty-title']}>No Active DoD Items</h2>
-          <p className={styles['empty-text']}>Configure your team's Definition of Done criteria.</p>
+          <h2 className={styles['empty-title']}>{t('dodPanel.empty.title')}</h2>
+          <p className={styles['empty-text']}>{t('dodPanel.empty.message')}</p>
           <button
             className={`${styles.button} ${styles['button-primary']}`}
             onClick={() => setIsEditMode(true)}
           >
             <PlusIcon size={16} />
-            Configure DoD
+            {t('dodPanel.empty.configureButton')}
           </button>
         </div>
       </div>
     );
   }
-
-  const formatDate = (dateString: string): string => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
-  };
 
   return (
     <>
@@ -168,11 +182,11 @@ export function DefinitionOfDonePanel(): React.ReactElement {
       <div className={styles.container}>
         <div className={styles.header}>
           <div className={styles['header-left']}>
-            <h3 className={styles['header-title']}>Definition of Done</h3>
+            <h3 className={styles['header-title']}>{t('dodPanel.title')}</h3>
             <div className={styles['version-info']}>
               <span className={styles['version-badge']}>v{definition.version}</span>
               <span className={styles['updated-info']}>
-                Last updated: {formatDate(definition.updatedAt)}
+                {t('dodPanel.lastUpdated')} {formatLocaleDate(definition.updatedAt, locale)}
               </span>
             </div>
           </div>
@@ -182,7 +196,7 @@ export function DefinitionOfDonePanel(): React.ReactElement {
               onClick={() => setIsEditMode(true)}
             >
               <EditIcon size={16} />
-              Edit DoD
+              {t('dodPanel.editButton')}
             </button>
           </div>
         </div>
@@ -198,11 +212,15 @@ export function DefinitionOfDonePanel(): React.ReactElement {
                 <div
                   className={styles['item-category']}
                   style={categoryStyle}
-                  title={category?.label ?? 'Uncategorized'}
+                  title={
+                    category
+                      ? t(`definitionEditor.dodCategories.${category.value}` as never)
+                      : t('dodPanel.uncategorized')
+                  }
                 >
                   {category?.icon ?? '📌'}
                 </div>
-                <div className={styles['item-text']}>{item.description}</div>
+                <div className={styles['item-text']}>{getTranslatedDescription(item, t)}</div>
               </div>
             );
           })}
@@ -210,9 +228,13 @@ export function DefinitionOfDonePanel(): React.ReactElement {
 
         <div className={styles.footer}>
           <div className={styles.counts}>
-            <span className={styles['active-count']}>{activeItems.length} active items</span>
+            <span className={styles['active-count']}>
+              {t('dodPanel.activeItems', { count: activeItems.length })}
+            </span>
             {inactiveCount > 0 && (
-              <span className={styles['inactive-count']}>{inactiveCount} inactive</span>
+              <span className={styles['inactive-count']}>
+                {t('dodPanel.inactive', { count: inactiveCount })}
+              </span>
             )}
           </div>
         </div>

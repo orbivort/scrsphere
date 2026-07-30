@@ -1,5 +1,5 @@
-﻿import { renderHook, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { renderHook, waitFor, initTestI18n, AllProviders } from '../test-utils';
+import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
 
 import { useRequireTeam, useTeamRole } from './useTeamContext';
 import { useTeamContext } from '../contexts/TeamContext';
@@ -8,8 +8,29 @@ vi.mock('../contexts/TeamContext', () => ({
   useTeamContext: vi.fn(),
 }));
 
-vi.mock('react-router', () => ({
-  useNavigate: () => vi.fn(),
+import type * as ReactRouter from 'react-router';
+
+vi.mock('react-router', async (importOriginal) => {
+  const actual: typeof ReactRouter = await importOriginal();
+  return {
+    ...actual,
+    useNavigate: () => vi.fn(),
+  };
+});
+
+// Mock i18n config with a simple mock that returns fallback messages
+vi.mock('../i18n/config', () => ({
+  i18nInstance: {
+    t: (key: string, fallback: string, options?: Record<string, unknown>) => {
+      if (options) {
+        return Object.entries(options).reduce(
+          (result, [k, v]) => result.replace(`{{${k}}}`, String(v)),
+          fallback
+        );
+      }
+      return fallback;
+    },
+  },
 }));
 
 const mockTeam = {
@@ -22,6 +43,10 @@ const mockTeam = {
 };
 
 describe('useRequireTeam', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
 
@@ -43,7 +68,7 @@ describe('useRequireTeam', () => {
       refreshTeams: vi.fn(),
     } as any);
 
-    const { result } = renderHook(() => useRequireTeam());
+    const { result } = renderHook(() => useRequireTeam(), { wrapper: AllProviders });
 
     await waitFor(() => {
       expect(result.current.currentTeam).toEqual(mockTeam);
@@ -59,7 +84,7 @@ describe('useRequireTeam', () => {
       refreshTeams: vi.fn(),
     } as any);
 
-    const { result } = renderHook(() => useRequireTeam());
+    const { result } = renderHook(() => useRequireTeam(), { wrapper: AllProviders });
 
     await waitFor(() => {
       expect(result.current.hasAccess).toBe(true);
@@ -76,8 +101,9 @@ describe('useRequireTeam', () => {
       refreshTeams: vi.fn(),
     } as any);
 
-    const { result } = renderHook(() =>
-      useRequireTeam({ requireRoles: ['PRODUCT_OWNER', 'SCRUM_MASTER'] })
+    const { result } = renderHook(
+      () => useRequireTeam({ requireRoles: ['PRODUCT_OWNER', 'SCRUM_MASTER'] }),
+      { wrapper: AllProviders }
     );
 
     await waitFor(() => {
@@ -95,8 +121,9 @@ describe('useRequireTeam', () => {
       refreshTeams: vi.fn(),
     } as any);
 
-    const { result } = renderHook(() =>
-      useRequireTeam({ requireRoles: ['PRODUCT_OWNER', 'SCRUM_MASTER'] })
+    const { result } = renderHook(
+      () => useRequireTeam({ requireRoles: ['PRODUCT_OWNER', 'SCRUM_MASTER'] }),
+      { wrapper: AllProviders }
     );
 
     await waitFor(() => {
@@ -114,7 +141,9 @@ describe('useRequireTeam', () => {
       refreshTeams: vi.fn(),
     } as any);
 
-    const { result } = renderHook(() => useRequireTeam({ requireTeam: false }));
+    const { result } = renderHook(() => useRequireTeam({ requireTeam: false }), {
+      wrapper: AllProviders,
+    });
 
     await waitFor(() => {
       expect(result.current.currentTeam).toBeNull();
@@ -137,7 +166,9 @@ describe('useTeamRole', () => {
       refreshTeams: vi.fn(),
     } as any);
 
-    const { result } = renderHook(() => useTeamRole(['PRODUCT_OWNER', 'SCRUM_MASTER']));
+    const { result } = renderHook(() => useTeamRole(['PRODUCT_OWNER', 'SCRUM_MASTER']), {
+      wrapper: AllProviders,
+    });
 
     expect(result.current.hasRequiredRole).toBe(true);
     expect(result.current.canAccess).toBe(true);
@@ -153,7 +184,9 @@ describe('useTeamRole', () => {
       refreshTeams: vi.fn(),
     } as any);
 
-    const { result } = renderHook(() => useTeamRole(['PRODUCT_OWNER', 'SCRUM_MASTER']));
+    const { result } = renderHook(() => useTeamRole(['PRODUCT_OWNER', 'SCRUM_MASTER']), {
+      wrapper: AllProviders,
+    });
 
     expect(result.current.hasRequiredRole).toBe(false);
     expect(result.current.canAccess).toBe(false);
@@ -169,7 +202,7 @@ describe('useTeamRole', () => {
       refreshTeams: vi.fn(),
     } as any);
 
-    const { result } = renderHook(() => useTeamRole(['PRODUCT_OWNER']));
+    const { result } = renderHook(() => useTeamRole(['PRODUCT_OWNER']), { wrapper: AllProviders });
 
     expect(result.current.hasRequiredRole).toBe(false);
     expect(result.current.canAccess).toBe(false);

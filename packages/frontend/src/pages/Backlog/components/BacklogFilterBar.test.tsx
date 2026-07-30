@@ -1,7 +1,8 @@
-import { screen, render } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, beforeAll, vi } from 'vitest';
 
+import { renderWithProviders, initTestI18n } from '../../../test-utils';
 import { ItemStatus } from '../../../types';
 import type { FilterState } from '../types/backlog.types';
 
@@ -15,19 +16,27 @@ const defaultFilters: FilterState = {
 describe('BacklogFilterBar', () => {
   const mockOnFiltersChange = vi.fn();
 
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   describe('Rendering', () => {
     it('should render search input', () => {
-      render(<BacklogFilterBar filters={defaultFilters} onFiltersChange={mockOnFiltersChange} />);
+      renderWithProviders(
+        <BacklogFilterBar filters={defaultFilters} onFiltersChange={mockOnFiltersChange} />
+      );
 
       expect(screen.getByPlaceholderText(/search items/i)).toBeInTheDocument();
     });
 
     it('should render status filter chips', () => {
-      render(<BacklogFilterBar filters={defaultFilters} onFiltersChange={mockOnFiltersChange} />);
+      renderWithProviders(
+        <BacklogFilterBar filters={defaultFilters} onFiltersChange={mockOnFiltersChange} />
+      );
 
       expect(screen.getByRole('button', { name: /all/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /^new$/i })).toBeInTheDocument();
@@ -36,14 +45,18 @@ describe('BacklogFilterBar', () => {
     });
 
     it('should show active state for selected status chips', () => {
-      render(<BacklogFilterBar filters={defaultFilters} onFiltersChange={mockOnFiltersChange} />);
+      renderWithProviders(
+        <BacklogFilterBar filters={defaultFilters} onFiltersChange={mockOnFiltersChange} />
+      );
 
       const newChip = screen.getByRole('button', { name: /^new$/i });
       expect(newChip.className).toMatch(/active/);
     });
 
     it('should not show clear button when search is empty', () => {
-      render(<BacklogFilterBar filters={defaultFilters} onFiltersChange={mockOnFiltersChange} />);
+      renderWithProviders(
+        <BacklogFilterBar filters={defaultFilters} onFiltersChange={mockOnFiltersChange} />
+      );
 
       expect(screen.queryByRole('button', { name: /clear search/i })).not.toBeInTheDocument();
     });
@@ -54,7 +67,7 @@ describe('BacklogFilterBar', () => {
         search: 'test search',
       };
 
-      render(
+      renderWithProviders(
         <BacklogFilterBar filters={filtersWithSearch} onFiltersChange={mockOnFiltersChange} />
       );
 
@@ -64,7 +77,9 @@ describe('BacklogFilterBar', () => {
 
   describe('Search Functionality', () => {
     it('should update search value on input', async () => {
-      render(<BacklogFilterBar filters={defaultFilters} onFiltersChange={mockOnFiltersChange} />);
+      renderWithProviders(
+        <BacklogFilterBar filters={defaultFilters} onFiltersChange={mockOnFiltersChange} />
+      );
 
       const searchInput = screen.getByPlaceholderText(/search items/i);
       await userEvent.type(searchInput, 'Feature A');
@@ -78,7 +93,7 @@ describe('BacklogFilterBar', () => {
         search: 'test search',
       };
 
-      render(
+      renderWithProviders(
         <BacklogFilterBar filters={filtersWithSearch} onFiltersChange={mockOnFiltersChange} />
       );
 
@@ -94,7 +109,9 @@ describe('BacklogFilterBar', () => {
 
   describe('Status Filtering', () => {
     it('should toggle status chip on click', async () => {
-      render(<BacklogFilterBar filters={defaultFilters} onFiltersChange={mockOnFiltersChange} />);
+      renderWithProviders(
+        <BacklogFilterBar filters={defaultFilters} onFiltersChange={mockOnFiltersChange} />
+      );
 
       const newStatusChip = screen.getByRole('button', { name: /^new$/i });
       await userEvent.click(newStatusChip);
@@ -111,7 +128,7 @@ describe('BacklogFilterBar', () => {
         status: [ItemStatus.REFINED, ItemStatus.READY],
       };
 
-      render(
+      renderWithProviders(
         <BacklogFilterBar filters={filtersWithoutNew} onFiltersChange={mockOnFiltersChange} />
       );
 
@@ -125,7 +142,9 @@ describe('BacklogFilterBar', () => {
     });
 
     it('should clear all status filters when clicking ALL', async () => {
-      render(<BacklogFilterBar filters={defaultFilters} onFiltersChange={mockOnFiltersChange} />);
+      renderWithProviders(
+        <BacklogFilterBar filters={defaultFilters} onFiltersChange={mockOnFiltersChange} />
+      );
 
       const allChip = screen.getByRole('button', { name: /all/i });
       await userEvent.click(allChip);

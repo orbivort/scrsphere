@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import styles from './SprintOverview.module.css';
 
@@ -32,16 +33,18 @@ export const SprintOverview: React.FC<SprintOverviewProps> = ({
   totalStoryPoints,
   completedStoryPoints,
 }) => {
+  const { t } = useTranslation('sprint');
+
   // Calculate progress ring circumference
   const radius = 20;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (progressPercentage / 100) * circumference;
 
   // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- empty string should show No sprint goal set
-  const goalText = sprintGoal || 'No sprint goal set';
+  const goalText = sprintGoal || t('sprintOverview.noGoalDefined');
 
   return (
-    <section className={styles['sprint-overview']} aria-label="Sprint Overview">
+    <section className={styles['sprint-overview']} aria-label={t('aria.sprintOverview')}>
       <div className={styles['overview-main']}>
         {/* Goal Section */}
         <div className={styles['goal-section']}>
@@ -49,7 +52,7 @@ export const SprintOverview: React.FC<SprintOverviewProps> = ({
             <TargetIcon size={18} />
           </div>
           <div className={styles['goal-content']}>
-            <span className={styles['goal-label']}>Sprint Goal</span>
+            <span className={styles['goal-label']}>{t('sprintOverview.sprintGoal')}</span>
             <p className={styles['goal-text']} title={goalText}>
               {goalText}
             </p>
@@ -86,7 +89,7 @@ export const SprintOverview: React.FC<SprintOverviewProps> = ({
             </svg>
             <span className={styles['progress-percentage']}>{progressPercentage}%</span>
           </div>
-          <span className={styles['progress-label']}>Complete</span>
+          <span className={styles['progress-label']}>{t('sprintOverview.complete')}</span>
         </div>
       </div>
 
@@ -99,7 +102,7 @@ export const SprintOverview: React.FC<SprintOverviewProps> = ({
           </div>
           <div className={styles['stat-content']}>
             <span className={styles['stat-label']} id="tasks-label">
-              Tasks
+              {t('sprintOverview.tasks')}
             </span>
             <span className={styles['stat-value']}>{totalTasks}</span>
           </div>
@@ -115,7 +118,7 @@ export const SprintOverview: React.FC<SprintOverviewProps> = ({
           </div>
           <div className={styles['stat-content']}>
             <span className={styles['stat-label']} id="hours-label">
-              Remaining Hours
+              {t('sprintOverview.remainingHours')}
             </span>
             <span className={styles['stat-value']}>{totalRemainingHours}h</span>
           </div>
@@ -138,14 +141,14 @@ export const SprintOverview: React.FC<SprintOverviewProps> = ({
           </div>
           <div className={styles['stat-content']}>
             <span className={styles['stat-label']} id="pbis-label">
-              PBIs
+              {t('sprintOverview.pbis')}
             </span>
             <span className={styles['stat-value']}>
               {completedPbis}/{totalPbis}
             </span>
           </div>
           <span className={styles['stat-breakdown']}>
-            {completedStoryPoints}/{totalStoryPoints} pts
+            {completedStoryPoints}/{totalStoryPoints} {t('sprintOverview.storyPointsShort')}
           </span>
         </div>
       </div>

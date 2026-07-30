@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import styles from './IconGallery.module.css';
 
@@ -101,6 +102,7 @@ interface IconCardProps {
 }
 
 const IconCard: React.FC<IconCardProps> = ({ name, icon: IconComponent }) => {
+  const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
 
   const handleClick = useCallback(async () => {
@@ -120,7 +122,7 @@ const IconCard: React.FC<IconCardProps> = ({ name, icon: IconComponent }) => {
       title={`Click to copy import for ${name}`}
       type="button"
     >
-      <span className={styles['copy-indicator']}>Copied!</span>
+      <span className={styles['copy-indicator']}>{t('copied')}</span>
       <span className={styles['icon-preview']}>
         <IconComponent size={24} />
       </span>
@@ -137,6 +139,7 @@ interface IconData {
 
 export const IconGallery: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const { t } = useTranslation();
 
   // Get all icons from the Icons module
   const allIcons = useMemo(() => {
@@ -206,22 +209,21 @@ export const IconGallery: React.FC = () => {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <h1 className={styles.title}>Icon Gallery</h1>
-        <p className={styles.subtitle}>
-          Browse and copy import statements for all available icons. Click any icon to copy its
-          import statement.
-        </p>
+        <h1 className={styles.title}>{t('iconGallery.title')}</h1>
+        <p className={styles.subtitle}>{t('iconGallery.subtitle')}</p>
         <div className={styles.stats}>
           <span className={styles.stat}>
-            <span className={styles['stat-value']}>{allIcons.length}</span> total icons
+            <span className={styles['stat-value']}>{allIcons.length}</span>{' '}
+            {t('iconGallery.totalIcons', { count: allIcons.length })}
           </span>
           <span className={styles.stat}>
             <span className={styles['stat-value']}>{Object.keys(groupedIcons).length}</span>{' '}
-            categories
+            {t('iconGallery.categories', { count: Object.keys(groupedIcons).length })}
           </span>
           {searchQuery && (
             <span className={styles.stat}>
-              <span className={styles['stat-value']}>{filteredIcons.length}</span> matching
+              <span className={styles['stat-value']}>{filteredIcons.length}</span>{' '}
+              {t('iconGallery.matching', { count: filteredIcons.length })}
             </span>
           )}
         </div>
@@ -231,17 +233,17 @@ export const IconGallery: React.FC = () => {
         <input
           type="search"
           className={styles['search-input']}
-          placeholder="Search icons by name or category..."
+          placeholder={t('iconGallery.searchPlaceholder')}
           value={searchQuery}
           onChange={handleSearchChange}
-          aria-label="Search icons"
+          aria-label={t('iconGallery.searchAriaLabel')}
         />
       </div>
 
       {filteredIcons.length === 0 ? (
         <div className={styles['no-results']}>
-          <p className={styles['no-results-title']}>No icons found</p>
-          <p className={styles['no-results-text']}>Try adjusting your search query</p>
+          <p className={styles['no-results-title']}>{t('iconGallery.noResults')}</p>
+          <p className={styles['no-results-text']}>{t('iconGallery.noResultsHint')}</p>
         </div>
       ) : (
         Object.entries(groupedIcons).map(([category, icons]) => (

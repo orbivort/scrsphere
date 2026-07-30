@@ -1,5 +1,7 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeAll } from 'vitest';
 import { render, screen } from '@testing-library/react';
+
+import { initTestI18n, i18nT } from '@/test-utils';
 
 import { LoadingSpinner } from './LoadingSpinner';
 
@@ -14,6 +16,10 @@ vi.mock('./LoadingSpinner.module.css', () => ({
 }));
 
 describe('LoadingSpinner Component', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   describe('Component Rendering Tests', () => {
     it('renders with default props', () => {
       render(<LoadingSpinner />);
@@ -97,7 +103,7 @@ describe('LoadingSpinner Component', () => {
       render(<LoadingSpinner />);
 
       const spinner = screen.getByRole('progressbar');
-      expect(spinner).toHaveAttribute('aria-label', 'Loading');
+      expect(spinner).toHaveAttribute('aria-label', i18nT('common:loading'));
     });
 
     it('has custom aria-label when provided', () => {
@@ -119,7 +125,7 @@ describe('LoadingSpinner Component', () => {
     it('has visually hidden text for screen readers', () => {
       render(<LoadingSpinner />);
 
-      const hiddenText = screen.getByText('Loading');
+      const hiddenText = screen.getByText(i18nT('loading'));
       expect(hiddenText).toHaveClass('visually-hidden');
     });
 

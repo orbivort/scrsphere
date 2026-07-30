@@ -1,9 +1,9 @@
-import { screen, render } from '@testing-library/react';
+import { screen, renderWithProviders } from '../../../test-utils';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, beforeAll, vi } from 'vitest';
 
 import { MoSCoWPriority, ItemStatus } from '../../../types';
-import { createMockBacklogItem } from '../../../test-utils';
+import { createMockBacklogItem, initTestI18n, i18nT } from '../../../test-utils';
 
 import { ListView } from './ListView';
 
@@ -40,25 +40,29 @@ const mockItems = [
 describe('ListView', () => {
   const mockOnItemClick = vi.fn();
 
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   describe('Rendering', () => {
     it('should render table headers', () => {
-      render(<ListView items={mockItems} onItemClick={mockOnItemClick} />);
+      renderWithProviders(<ListView items={mockItems} onItemClick={mockOnItemClick} />);
 
-      expect(screen.getByText('ID')).toBeInTheDocument();
-      expect(screen.getByText('Title')).toBeInTheDocument();
-      expect(screen.getByText('MoSCoW')).toBeInTheDocument();
-      expect(screen.getByText('Status')).toBeInTheDocument();
-      expect(screen.getByText('Business Value')).toBeInTheDocument();
-      expect(screen.getByText('Estimate')).toBeInTheDocument();
-      expect(screen.getByText('Labels')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('backlog:listView.id'))).toBeInTheDocument();
+      expect(screen.getByText(i18nT('backlog:listView.title'))).toBeInTheDocument();
+      expect(screen.getByText(i18nT('backlog:listView.moscow'))).toBeInTheDocument();
+      expect(screen.getByText(i18nT('backlog:listView.status'))).toBeInTheDocument();
+      expect(screen.getByText(i18nT('backlog:listView.businessValue'))).toBeInTheDocument();
+      expect(screen.getByText(i18nT('backlog:listView.estimate'))).toBeInTheDocument();
+      expect(screen.getByText(i18nT('backlog:listView.labels'))).toBeInTheDocument();
     });
 
     it('should render all items', () => {
-      render(<ListView items={mockItems} onItemClick={mockOnItemClick} />);
+      renderWithProviders(<ListView items={mockItems} onItemClick={mockOnItemClick} />);
 
       expect(screen.getByText('Feature A')).toBeInTheDocument();
       expect(screen.getByText('Feature B')).toBeInTheDocument();
@@ -66,44 +70,44 @@ describe('ListView', () => {
     });
 
     it('should display truncated IDs', () => {
-      render(<ListView items={mockItems} onItemClick={mockOnItemClick} />);
+      renderWithProviders(<ListView items={mockItems} onItemClick={mockOnItemClick} />);
 
       const idElements = screen.getAllByText(/#bi-/);
       expect(idElements.length).toBeGreaterThan(0);
     });
 
     it('should display story points', () => {
-      render(<ListView items={mockItems} onItemClick={mockOnItemClick} />);
+      renderWithProviders(<ListView items={mockItems} onItemClick={mockOnItemClick} />);
 
       const ptsElements = screen.getAllByText(/pts/);
       expect(ptsElements.length).toBeGreaterThan(0);
     });
 
     it('should display business value', () => {
-      render(<ListView items={mockItems} onItemClick={mockOnItemClick} />);
+      renderWithProviders(<ListView items={mockItems} onItemClick={mockOnItemClick} />);
 
       expect(screen.getByText('13 pts')).toBeInTheDocument();
     });
 
     it('should display status badges', () => {
-      render(<ListView items={mockItems} onItemClick={mockOnItemClick} />);
+      renderWithProviders(<ListView items={mockItems} onItemClick={mockOnItemClick} />);
 
-      expect(screen.getByText('NEW')).toBeInTheDocument();
-      expect(screen.getByText('REFINED')).toBeInTheDocument();
-      expect(screen.getByText('READY')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('backlog:status.new'))).toBeInTheDocument();
+      expect(screen.getByText(i18nT('backlog:status.refined'))).toBeInTheDocument();
+      expect(screen.getByText(i18nT('backlog:status.ready'))).toBeInTheDocument();
     });
   });
 
   describe('Labels Display', () => {
     it('should display up to 2 labels', () => {
-      render(<ListView items={mockItems} onItemClick={mockOnItemClick} />);
+      renderWithProviders(<ListView items={mockItems} onItemClick={mockOnItemClick} />);
 
       expect(screen.getByText('frontend')).toBeInTheDocument();
       expect(screen.getByText('urgent')).toBeInTheDocument();
     });
 
     it('should show overflow indicator for more than 2 labels', () => {
-      render(<ListView items={mockItems} onItemClick={mockOnItemClick} />);
+      renderWithProviders(<ListView items={mockItems} onItemClick={mockOnItemClick} />);
 
       expect(screen.getByText('+2')).toBeInTheDocument();
     });
@@ -119,7 +123,7 @@ describe('ListView', () => {
         }),
       ];
 
-      render(<ListView items={itemsWithoutLabels} onItemClick={mockOnItemClick} />);
+      renderWithProviders(<ListView items={itemsWithoutLabels} onItemClick={mockOnItemClick} />);
 
       expect(screen.getByText('No Labels Feature')).toBeInTheDocument();
     });
@@ -127,7 +131,7 @@ describe('ListView', () => {
 
   describe('Item Interaction', () => {
     it('should call onItemClick when clicking a row', async () => {
-      render(<ListView items={mockItems} onItemClick={mockOnItemClick} />);
+      renderWithProviders(<ListView items={mockItems} onItemClick={mockOnItemClick} />);
 
       await userEvent.click(screen.getByText('Feature A'));
 
@@ -139,9 +143,9 @@ describe('ListView', () => {
 
   describe('Empty State', () => {
     it('should render empty table when no items', () => {
-      render(<ListView items={[]} onItemClick={mockOnItemClick} />);
+      renderWithProviders(<ListView items={[]} onItemClick={mockOnItemClick} />);
 
-      expect(screen.getByText('ID')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('backlog:listView.id'))).toBeInTheDocument();
       expect(screen.queryByText('Feature A')).not.toBeInTheDocument();
     });
   });
@@ -158,7 +162,7 @@ describe('ListView', () => {
         }),
       ];
 
-      render(<ListView items={itemsWithoutEstimate} onItemClick={mockOnItemClick} />);
+      renderWithProviders(<ListView items={itemsWithoutEstimate} onItemClick={mockOnItemClick} />);
 
       expect(screen.getByText('-')).toBeInTheDocument();
     });
@@ -174,7 +178,7 @@ describe('ListView', () => {
         }),
       ];
 
-      render(<ListView items={itemsWithoutValue} onItemClick={mockOnItemClick} />);
+      renderWithProviders(<ListView items={itemsWithoutValue} onItemClick={mockOnItemClick} />);
 
       expect(screen.getByText('-')).toBeInTheDocument();
     });
@@ -193,7 +197,7 @@ describe('ListView', () => {
           })
         );
 
-      render(<ListView items={manyItems} onItemClick={mockOnItemClick} />);
+      renderWithProviders(<ListView items={manyItems} onItemClick={mockOnItemClick} />);
 
       // All items should be rendered (no virtualization)
       expect(screen.getByText('Feature 0')).toBeInTheDocument();
@@ -212,12 +216,12 @@ describe('ListView', () => {
           })
         );
 
-      render(<ListView items={manyItems} onItemClick={mockOnItemClick} />);
+      renderWithProviders(<ListView items={manyItems} onItemClick={mockOnItemClick} />);
 
       // Table headers should still be present
-      expect(screen.getByText('ID')).toBeInTheDocument();
-      expect(screen.getByText('Title')).toBeInTheDocument();
-      expect(screen.getByText('MoSCoW')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('backlog:listView.id'))).toBeInTheDocument();
+      expect(screen.getByText(i18nT('backlog:listView.title'))).toBeInTheDocument();
+      expect(screen.getByText(i18nT('backlog:listView.moscow'))).toBeInTheDocument();
     });
 
     it('should maintain row click functionality with virtual scrolling', async () => {
@@ -233,7 +237,7 @@ describe('ListView', () => {
           })
         );
 
-      render(<ListView items={fewItems} onItemClick={mockOnItemClick} />);
+      renderWithProviders(<ListView items={fewItems} onItemClick={mockOnItemClick} />);
 
       // Should be able to click on items
       await userEvent.click(screen.getByText('Feature 0'));
@@ -252,7 +256,9 @@ describe('ListView', () => {
           })
         );
 
-      const { container } = render(<ListView items={manyItems} onItemClick={mockOnItemClick} />);
+      const { container } = renderWithProviders(
+        <ListView items={manyItems} onItemClick={mockOnItemClick} />
+      );
 
       // Should have virtualized CSS class on the list-view container
       const listViewElement = container.querySelector('[class*="list-view"]');
@@ -272,7 +278,9 @@ describe('ListView', () => {
           })
         );
 
-      const { container } = render(<ListView items={fewItems} onItemClick={mockOnItemClick} />);
+      const { container } = renderWithProviders(
+        <ListView items={fewItems} onItemClick={mockOnItemClick} />
+      );
 
       // Should not have virtualized CSS class
       const listViewElement = container.querySelector('[class*="list-view"]');
@@ -281,11 +289,11 @@ describe('ListView', () => {
     });
 
     it('should handle empty list with virtual scrolling enabled', () => {
-      render(<ListView items={[]} onItemClick={mockOnItemClick} />);
+      renderWithProviders(<ListView items={[]} onItemClick={mockOnItemClick} />);
 
       // Table headers should still be present
-      expect(screen.getByText('ID')).toBeInTheDocument();
-      expect(screen.getByText('Title')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('backlog:listView.id'))).toBeInTheDocument();
+      expect(screen.getByText(i18nT('backlog:listView.title'))).toBeInTheDocument();
     });
 
     it('should maintain MoSCoW badge display without virtualization', () => {
@@ -300,10 +308,10 @@ describe('ListView', () => {
           })
         );
 
-      render(<ListView items={fewItems} onItemClick={mockOnItemClick} />);
+      renderWithProviders(<ListView items={fewItems} onItemClick={mockOnItemClick} />);
 
       // Should still show MoSCoW badges
-      const moscowBadges = screen.getAllByText('Should Have');
+      const moscowBadges = screen.getAllByText(i18nT('backlog:moscowLabels.SHOULD_HAVE'));
       expect(moscowBadges.length).toBeGreaterThan(0);
     });
   });

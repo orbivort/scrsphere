@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import type { TeamMembership } from '../../types/auth.types';
 
@@ -9,29 +10,39 @@ interface ForceDeleteWarningProps {
 }
 
 export const ForceDeleteWarning: React.FC<ForceDeleteWarningProps> = ({ blockedTeams }) => {
+  const { t } = useTranslation('common');
+
   return (
     <div className={styles['force-delete-warning']} role="alert">
-      <h4 className={styles['force-delete-warning-title']}>Grace Period Complete</h4>
+      <h4 className={styles['force-delete-warning-title']}>
+        {t('deleteAccount.forceDeleteWarning.title')}
+      </h4>
 
       <p className={styles['force-delete-warning-text']}>
-        The 14-day grace period has ended. You can now permanently delete your account.
+        {t('deleteAccount.forceDeleteWarning.description')}
       </p>
 
       <div className={styles['force-delete-impact']}>
-        <p className={styles['force-delete-impact-title']}>This will:</p>
+        <p className={styles['force-delete-impact-title']}>
+          {t('deleteAccount.forceDeleteWarning.impact.title')}
+        </p>
         <ul className={styles['force-delete-impact-list']}>
           <li className={styles['force-delete-impact-item']}>
-            Remove you as Product Owner from teams with no replacement assigned
+            {t('deleteAccount.forceDeleteWarning.impact.removePO')}
           </li>
-          <li className={styles['force-delete-impact-item']}>Delete all your data permanently</li>
-          <li className={styles['force-delete-impact-item']}>This action CANNOT be undone</li>
+          <li className={styles['force-delete-impact-item']}>
+            {t('deleteAccount.forceDeleteWarning.impact.deleteAllData')}
+          </li>
+          <li className={styles['force-delete-impact-item']}>
+            {t('deleteAccount.forceDeleteWarning.impact.cannotUndo')}
+          </li>
         </ul>
       </div>
 
       {blockedTeams.length > 0 && (
         <div className={styles['force-delete-teams']}>
           <p className={styles['force-delete-teams-title']}>
-            The following teams will have NO Product Owner:
+            {t('deleteAccount.forceDeleteWarning.teams.title')}
           </p>
           <ul className={styles['force-delete-teams-list']}>
             {blockedTeams.map((team) => (
@@ -41,8 +52,7 @@ export const ForceDeleteWarning: React.FC<ForceDeleteWarningProps> = ({ blockedT
             ))}
           </ul>
           <p className={styles['force-delete-teams-consequences']}>
-            These teams will not be able to add or remove team members, manage sprints, or access
-            team settings.
+            {t('deleteAccount.forceDeleteWarning.teams.consequences')}
           </p>
         </div>
       )}

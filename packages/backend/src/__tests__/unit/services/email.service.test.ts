@@ -653,6 +653,7 @@ describe('Email Templates', () => {
         appName: 'Scrumooth',
         appUrl: 'https://example.com',
         supportEmail: 'support@example.com',
+        locale: 'en' as const,
         currentYear: 2024,
       };
 
@@ -660,7 +661,7 @@ describe('Email Templates', () => {
 
       expect(result.html).toBeDefined();
       expect(result.text).toBeDefined();
-      expect(result.html).toContain('Reset Your Password');
+      expect(result.html).toContain('Hi John');
       expect(result.html).toContain('John');
       expect(result.html).toContain('john@example.com');
       expect(result.html).toContain('https://example.com/reset?token=abc123');
@@ -677,18 +678,19 @@ describe('Email Templates', () => {
         expiresIn: '30 minutes',
         appName: 'Scrumooth',
         appUrl: 'https://example.com',
+        locale: 'en' as const,
         currentYear: 2024,
       };
 
       const result = template.render(data);
 
-      expect(result.text).toContain('RESET YOUR PASSWORD');
+      expect(result.text).toContain('HI JANE');
       expect(result.text).toContain('jane@example.com');
       expect(result.text).toContain('https://example.com/reset?token=xyz789');
       expect(result.text).toContain('30 minutes');
     });
 
-    it('should include security notice in both versions', () => {
+    it('should include ignore notice in both versions', () => {
       const data = {
         subject: 'Reset Your Password',
         firstName: 'User',
@@ -697,13 +699,16 @@ describe('Email Templates', () => {
         expiresIn: '1 hour',
         appName: 'Scrumooth',
         appUrl: 'https://example.com',
+        locale: 'en' as const,
         currentYear: 2024,
       };
 
       const result = template.render(data);
 
-      expect(result.html).toContain('Security Notice');
-      expect(result.text).toContain('SECURITY NOTICE');
+      // HTML escapes apostrophes as &#x27;
+      expect(result.html).toContain('didn&#x27;t request this');
+      // Text version is uppercase (no HTML escaping)
+      expect(result.text).toContain("DIDN'T REQUEST THIS");
     });
 
     it('should handle template variable substitution', () => {
@@ -716,6 +721,7 @@ describe('Email Templates', () => {
         appName: 'TestApp',
         appUrl: 'https://app.test.com',
         supportEmail: 'help@test.com',
+        locale: 'en' as const,
         currentYear: 2025,
       };
 
@@ -752,6 +758,7 @@ describe('Email Templates', () => {
         appName: 'Scrumooth',
         appUrl: 'https://example.com',
         supportEmail: 'support@example.com',
+        locale: 'en' as const,
         currentYear: 2024,
       };
 
@@ -773,6 +780,7 @@ describe('Email Templates', () => {
         changedAt: '2024-02-20 14:45:00 UTC',
         appName: 'Scrumooth',
         appUrl: 'https://example.com',
+        locale: 'en' as const,
         currentYear: 2024,
       };
 
@@ -795,6 +803,7 @@ describe('Email Templates', () => {
         userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
         appName: 'Scrumooth',
         appUrl: 'https://example.com',
+        locale: 'en' as const,
         currentYear: 2024,
       };
 
@@ -814,6 +823,7 @@ describe('Email Templates', () => {
         changedAt: '2024-01-01 00:00:00 UTC',
         appName: 'Scrumooth',
         appUrl: 'https://example.com',
+        locale: 'en' as const,
         currentYear: 2024,
       };
 
@@ -832,6 +842,7 @@ describe('Email Templates', () => {
         appName: 'SecureApp',
         appUrl: 'https://secure.app.org',
         supportEmail: 'help@secure.app.org',
+        locale: 'en' as const,
         currentYear: 2025,
       };
 
@@ -863,6 +874,7 @@ describe('Email Templates', () => {
         appName: 'Scrumooth',
         appUrl: 'https://example.com',
         supportEmail: 'support@example.com',
+        locale: 'en' as const,
         currentYear: 2024,
       };
 
@@ -870,7 +882,7 @@ describe('Email Templates', () => {
 
       expect(result.html).toBeDefined();
       expect(result.text).toBeDefined();
-      expect(result.html).toContain('Welcome to Scrumooth!');
+      expect(result.html).toContain('Welcome, John!');
       expect(result.html).toContain('John');
       expect(result.html).toContain('john@example.com');
     });
@@ -882,6 +894,7 @@ describe('Email Templates', () => {
         email: 'jane@example.com',
         appName: 'Scrumooth',
         appUrl: 'https://example.com',
+        locale: 'en' as const,
         currentYear: 2024,
       };
 
@@ -899,6 +912,7 @@ describe('Email Templates', () => {
         email: 'user@example.com',
         appName: 'Scrumooth',
         appUrl: 'https://example.com',
+        locale: 'en' as const,
         currentYear: 2024,
       };
 
@@ -919,6 +933,7 @@ describe('Email Templates', () => {
         email: 'user@example.com',
         appName: 'Scrumooth',
         appUrl: 'https://example.com',
+        locale: 'en' as const,
         currentYear: 2024,
       };
 
@@ -938,6 +953,7 @@ describe('Email Templates', () => {
         email: 'user@example.com',
         appName: 'Scrumooth',
         appUrl: 'https://example.com',
+        locale: 'en' as const,
         currentYear: 2024,
       };
 
@@ -955,6 +971,7 @@ describe('Email Templates', () => {
         appName: 'SecureApp',
         appUrl: 'https://secure.app.org',
         supportEmail: 'help@secure.app.org',
+        locale: 'en' as const,
         currentYear: 2025,
       };
 
@@ -977,12 +994,13 @@ describe('Email Templates', () => {
         email: 'user@example.com',
         appName: 'Scrumooth',
         appUrl: 'https://example.com',
+        locale: 'en' as const,
         currentYear: 2024,
       };
 
       const result = template.render(data);
 
-      expect(result.html).toContain('Go to Dashboard');
+      expect(result.html).toContain('Get started');
       expect(result.html).toContain('https://example.com');
     });
   });

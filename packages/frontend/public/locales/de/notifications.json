@@ -1,0 +1,71 @@
+{
+  "accountDeletionCancelled": "Kontolöschung abgebrochen",
+  "accountDeletionCancelledMessage": "Die geplante Kontolöschung wurde abgebrochen.",
+  "accountDeletionScheduled": "Teammitglied hat Kontolöschung geplant",
+  "accountDeletionScheduledMessage": "Ein Product Owner in Ihrem Team hat die Löschung seines Kontos geplant. Das Konto wird am {{deletionDate}} endgültig gelöscht. Bitte weisen Sie vorher einen neuen Product Owner zu.",
+  "ariaLabels": {
+    "dismiss": "Benachrichtigung schließen",
+    "filterNotifications": "Benachrichtigungen filtern",
+    "goToNextPage": "Zur nächsten Seite",
+    "goToPreviousPage": "Zur vorherigen Seite",
+    "markAsRead": "Als gelesen markieren",
+    "notificationItem": "Benachrichtigung von {{sender}}: {{message}}",
+    "pagination": "Seitennummerierung"
+  },
+  "backlogAdjustmentRequired": "Neue Backlog-Anpassung erfordert Ihre Aktion",
+  "backlogAdjustmentRequiredMessage": "Ihnen wurde als Eigentümer einer Backlog-Anpassung zugewiesen: {{action}} - \"{{description}}\"",
+  "dateGroups": {
+    "older": "Älter",
+    "thisWeek": "Diese Woche",
+    "today": "Heute",
+    "yesterday": "Gestern"
+  },
+  "empty": {
+    "message": "Sie sehen hier Benachrichtigungen, wenn Aktivitäten stattfinden",
+    "title": "Noch keine Benachrichtigungen"
+  },
+  "error": {
+    "message": "Etwas ist beim Abrufen Ihrer Benachrichtigungen schiefgegangen.",
+    "title": "Benachrichtigungen konnten nicht geladen werden",
+    "tryAgain": "Erneut versuchen"
+  },
+  "feedbackRequired": "Neues Feedback erfordert Ihre Aktion",
+  "feedbackRequiredMessage": "Ihnen wurde als Eigentümer von Feedback von {{authorName}} zugewiesen: \"{{content}}\"",
+  "filters": {
+    "all": "Alle",
+    "directMessages": "Direktnachrichten",
+    "impediments": "Impediments",
+    "reminders": "Erinnerungen",
+    "taskAssignments": "Aufgaben-Zuweisungen",
+    "teamCreated": "Team erstellt",
+    "teamDeleted": "Team gelöscht",
+    "teamInvitations": "Team-Einladungen",
+    "teamUpdated": "Team aktualisiert",
+    "unread": "Ungelesen"
+  },
+  "impedimentAssigned": "Neues Impediment zugewiesen: \"{{impedimentTitle}}\"",
+  "loading": {
+    "ariaLabel": "Benachrichtigungen laden",
+    "title": "Benachrichtigungen werden geladen..."
+  },
+  "markAllAsRead": "Alle als gelesen markieren",
+  "marking": "Markieren...",
+  "pagination": {
+    "next": "Nächste",
+    "pageInfo": "Seite {{current}} von {{total}}",
+    "previous": "Vorherige"
+  },
+  "skipToMainContent": "Zum Hauptinhalt springen",
+  "subtitle": "Bleiben Sie über Team-Aktivitäten und wichtige Updates informiert",
+  "teamCreated": "Team erstellt: \"{{teamName}}\"",
+  "teamCreatedMessage": "Sie haben das Team erfolgreich erstellt",
+  "teamDeleted": "Team gelöscht: \"{{teamName}}\"",
+  "teamDeletedMessage": "Gelöscht von {{deleterName}}",
+  "teamInvitation": "Sie wurden eingeladen, dem Team \"{{teamName}}\" beizutreten",
+  "teamInvitationMessage": "Eingeladen von {{inviterName}}",
+  "teamRemoval": "Sie wurden aus dem Team \"{{teamName}}\" entfernt",
+  "teamRemovalMessage": "Entfernt von {{removerName}}",
+  "teamUpdated": "Team aktualisiert: \"{{teamName}}\"",
+  "teamUpdatedMessage": "Aktualisiert von {{updaterName}}",
+  "title": "Benachrichtigungen"
+}

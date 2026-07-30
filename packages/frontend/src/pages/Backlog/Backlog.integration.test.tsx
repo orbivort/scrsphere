@@ -1,12 +1,15 @@
-﻿import { screen, render, waitFor } from '@testing-library/react';
+import { screen, renderWithProviders, waitFor } from '../../test-utils';
 import userEvent from '@testing-library/user-event';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MemoryRouter } from 'react-router';
-import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { vi, describe, it, expect, beforeEach, beforeAll, afterEach } from 'vitest';
 
 import { useTeamStore } from '../../store';
 import { apiService } from '../../services';
-import { createMockBacklogItem, createMockTeam, createMockProductGoal } from '../../test-utils';
+import {
+  createMockBacklogItem,
+  createMockTeam,
+  createMockProductGoal,
+  initTestI18n,
+} from '../../test-utils';
 import { ItemStatus, MoSCoWPriority, TaskStatus } from '../../types';
 
 import { ProductBacklog } from './Backlog';
@@ -53,30 +56,6 @@ Object.assign(navigator, {
 });
 
 const mockTeamStore = useTeamStore as ReturnType<typeof vi.fn>;
-
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        gcTime: 0,
-        staleTime: 0,
-      },
-      mutations: {
-        retry: false,
-      },
-    },
-  });
-
-const renderBacklog = (queryClient = createTestQueryClient()) => {
-  return render(
-    <QueryClientProvider client={queryClient}>
-      <MemoryRouter>
-        <ProductBacklog />
-      </MemoryRouter>
-    </QueryClientProvider>
-  );
-};
 
 const mockTeam = createMockTeam({ id: 'team-1', name: 'Test Team' });
 
@@ -188,11 +167,12 @@ const setupApiMocks = (overrides = {}) => {
 };
 
 describe('Backlog Integration Tests', () => {
-  let queryClient: QueryClient;
+  beforeAll(async () => {
+    await initTestI18n();
+  });
 
   beforeEach(() => {
     vi.clearAllMocks();
-    queryClient = createTestQueryClient();
 
     mockTeamStore.mockReturnValue({
       currentTeam: mockTeam,
@@ -214,12 +194,12 @@ describe('Backlog Integration Tests', () => {
   });
 
   afterEach(() => {
-    queryClient.clear();
+    vi.clearAllMocks();
   });
 
   describe('Backlog Rendering', () => {
     it('should render backlog after loading', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
@@ -227,7 +207,7 @@ describe('Backlog Integration Tests', () => {
     });
 
     it('should display backlog items', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -237,7 +217,7 @@ describe('Backlog Integration Tests', () => {
     });
 
     it('should display MoSCoW priority sections', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         const mustHaveElements = screen.getAllByText(/must have/i);
@@ -246,7 +226,7 @@ describe('Backlog Integration Tests', () => {
     });
 
     it('should display active goal information', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
@@ -256,7 +236,7 @@ describe('Backlog Integration Tests', () => {
 
   describe('View Mode Switching', () => {
     it('should toggle between board and list view', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
@@ -271,7 +251,7 @@ describe('Backlog Integration Tests', () => {
 
   describe('Item Creation', () => {
     it('should open create item modal', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
@@ -290,7 +270,7 @@ describe('Backlog Integration Tests', () => {
 
   describe('Item Editing', () => {
     it('should open item detail modal on item click', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -306,7 +286,7 @@ describe('Backlog Integration Tests', () => {
 
   describe('Filters', () => {
     it('should filter items by search', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
@@ -319,7 +299,7 @@ describe('Backlog Integration Tests', () => {
     });
 
     it('should filter items by status', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
@@ -334,7 +314,7 @@ describe('Backlog Integration Tests', () => {
 
   describe('Bulk Operations', () => {
     it('should open bulk import modal', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
@@ -371,7 +351,7 @@ describe('Backlog Integration Tests', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         const loadingElements = screen.queryAllByText(/loading/i);
@@ -394,7 +374,7 @@ describe('Backlog Integration Tests', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
@@ -411,7 +391,7 @@ describe('Backlog Integration Tests', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         const backlogElement = screen.queryByTestId('product-backlog');
@@ -423,7 +403,7 @@ describe('Backlog Integration Tests', () => {
 
   describe('Statistics Display', () => {
     it('should display backlog statistics', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
@@ -431,7 +411,7 @@ describe('Backlog Integration Tests', () => {
     });
 
     it('should display total items count', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
@@ -439,7 +419,7 @@ describe('Backlog Integration Tests', () => {
     });
 
     it('should display done items count', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
@@ -449,7 +429,7 @@ describe('Backlog Integration Tests', () => {
 
   describe('Priority Grouping', () => {
     it('should group items by MoSCoW priority', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
@@ -483,7 +463,7 @@ describe('Backlog Integration Tests', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
@@ -493,7 +473,7 @@ describe('Backlog Integration Tests', () => {
 
   describe('Status Display', () => {
     it('should display item status badges', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
@@ -503,7 +483,7 @@ describe('Backlog Integration Tests', () => {
 
   describe('Story Points Display', () => {
     it('should display story points for items', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
@@ -513,7 +493,7 @@ describe('Backlog Integration Tests', () => {
 
   describe('Business Value Display', () => {
     it('should display business value for items', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
@@ -540,7 +520,7 @@ describe('Backlog Integration Tests', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
@@ -567,7 +547,7 @@ describe('Backlog Integration Tests', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
@@ -593,7 +573,7 @@ describe('Backlog Integration Tests', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
@@ -603,7 +583,7 @@ describe('Backlog Integration Tests', () => {
 
   describe('Goal Progress', () => {
     it('should display goal progress metrics', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
@@ -613,7 +593,7 @@ describe('Backlog Integration Tests', () => {
 
   describe('Item Actions', () => {
     it('should have edit action for items', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -627,7 +607,7 @@ describe('Backlog Integration Tests', () => {
     });
 
     it('should have delete action for items', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -643,7 +623,7 @@ describe('Backlog Integration Tests', () => {
 
   describe('Status Transitions', () => {
     it('should show available status transitions', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -659,7 +639,7 @@ describe('Backlog Integration Tests', () => {
 
   describe('DoD/DoR Verification', () => {
     it('should show DoD verification for status change to DONE', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
@@ -667,7 +647,7 @@ describe('Backlog Integration Tests', () => {
     });
 
     it('should show DoR verification for status change to READY', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
@@ -690,7 +670,7 @@ describe('Backlog Integration Tests', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
@@ -718,7 +698,7 @@ describe('Backlog Integration Tests', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
@@ -739,7 +719,7 @@ describe('Backlog Integration Tests', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByTestId('product-backlog')).toBeInTheDocument();

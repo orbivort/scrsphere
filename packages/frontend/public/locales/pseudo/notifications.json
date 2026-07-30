@@ -1,0 +1,69 @@
+{
+  "accountDeletionCancelled": "[Àccóúnt délétíón càncélléddddddddd]",
+  "accountDeletionCancelledMessage": "[Thé schédúléd àccóúnt délétíón hàs béén càncéllédddddddddddddddd.]",
+  "accountDeletionScheduled": "[Téàm mémbér schédúléd àccóúnt délétíónnnnnnnnnnnnn]",
+  "accountDeletionScheduledMessage": "[À Pródúct Ównér ín yóúr téàm hàs schédúléd théír àccóúnt délétíón. Thé àccóúnt wíll bé pérmànéntly délétéd ónnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn {{deletionDate}}. Pléàsé àssígn à néw Pródúct Ównér béfóré thénnnnnnnnnnnnnnnn.]",
+  "ariaLabels": {
+    "dismiss": "[Dísmíss nótífícàtíónnnnnnn]",
+    "goToNextPage": "[Gó tó néxt pàgéééééé]",
+    "goToPreviousPage": "[Gó tó prévíóús pàgééééééé]",
+    "markAsRead": "[Màrk às réàddddd]",
+    "notificationItem": "[Nótífícàtíón frómmmmmmm {{sender}}: {{message}}]"
+  },
+  "backlogAdjustmentRequired": "[Néw Bàcklóg Àdjústmént Réqúírés Yóúr Àctíónnnnnnnnnnnnnn]",
+  "backlogAdjustmentRequiredMessage": "[Yóú hàvé béén àssígnéd às thé ównér óf à bàcklóg àdjústméntttttttttttttttttttt: {{action}} - \"{{description}}\"]",
+  "dateGroups": {
+    "older": "[Óldérrr]",
+    "thisWeek": "[Thís Wéékkkk]",
+    "today": "[Tódàyyy]",
+    "yesterday": "[Yéstérdàyyyy]"
+  },
+  "empty": {
+    "message": "[Yóú wíll séé nótífícàtíóns héré whén théré ís àctívítyyyyyyyyyyyyyyyyyy]",
+    "title": "[Nó nótífícàtíóns yéttttttt]"
+  },
+  "error": {
+    "message": "[Sóméthíng wént wróng whílé fétchíng yóúr nótífícàtíónssssssssssssssssss.]",
+    "title": "[Fàíléd tó lóàd nótífícàtíónssssssssss]",
+    "tryAgain": "[Try Àgàínnnn]"
+  },
+  "feedbackRequired": "[Néw Féédbàck Réqúírés Yóúr Àctíónnnnnnnnnnn]",
+  "feedbackRequiredMessage": "[Yóú hàvé béén àssígnéd às thé ównér óf féédbàck frómmmmmmmmmmmmmmmmm {{authorName}}: \"{{content}}\"]",
+  "filters": {
+    "all": "[Àlll]",
+    "directMessages": "[Díréct Méssàgéssssss]",
+    "impediments": "[Ímpédíméntsssss]",
+    "reminders": "[Rémíndérssss]",
+    "taskAssignments": "[Tàsk Àssígnméntssssss]",
+    "teamCreated": "[Téàm Créàtéddddd]",
+    "teamDeleted": "[Téàm Délétéddddd]",
+    "teamInvitations": "[Téàm Ínvítàtíónssssss]",
+    "teamUpdated": "[Téàm Úpdàtéddddd]",
+    "unread": "[Únréàddd]"
+  },
+  "impedimentAssigned": "[Néw ímpédímént àssígnéddddddddd: \"{{impedimentTitle}}\"]",
+  "loading": {
+    "ariaLabel": "[Lóàdíng nótífícàtíónssssssss]",
+    "title": "[Lóàdíng nótífícàtíónsssssssss...]"
+  },
+  "markAllAsRead": "[Màrk Àll às Réàdddddd]",
+  "marking": "[Màrkíngggg...]",
+  "pagination": {
+    "next": "[NNééxxt]",
+    "pageInfo": "[PPààggé {{current}} óóff {{total}}]",
+    "previous": "[Prévíóússss]"
+  },
+  "skipToMainContent": "[Skíp tó màín cónténttttttt]",
+  "subtitle": "[Stày úpdàtéd wíth téàm àctívítíés ànd ímpórtànt úpdàtéssssssssssssssssss]",
+  "teamCreated": "[Téàm créàtédddddd: \"{{teamName}}\"]",
+  "teamCreatedMessage": "[Yóú hàvé súccéssfúlly créàtéd thé téàmmmmmmmmmmmmm]",
+  "teamDeleted": "[Téàm délétédddddd: \"{{teamName}}\"]",
+  "teamDeletedMessage": "[Délétéd byyyyy {{deleterName}}]",
+  "teamInvitation": "[Yóú'vé béén ínvítéd tó jóín téàmmmmmmmmmmmm \"{{teamName}}\"]",
+  "teamInvitationMessage": "[Ínvítéd byyyyy {{inviterName}}]",
+  "teamRemoval": "[Yóú'vé béén rémóvéd fróm téàmmmmmmmmmmm \"{{teamName}}\"]",
+  "teamRemovalMessage": "[Rémóvéd byyyyy {{removerName}}]",
+  "teamUpdated": "[Téàm úpdàtédddddd: \"{{teamName}}\"]",
+  "teamUpdatedMessage": "[Úpdàtéd byyyyy {{updaterName}}]",
+  "title": "[Nótífícàtíónsssss]"
+}

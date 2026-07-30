@@ -76,6 +76,16 @@ describe('roleUtils', () => {
       expect(getRoleBadgeClass('PRODUCT_OWNER', partialStyles)).toBe('po-class');
       expect(getRoleBadgeClass('DEVELOPER', partialStyles)).toBe('');
     });
+
+    it('should return empty string for SCRUM_MASTER when badge-sm style is missing', () => {
+      const partialStyles = { 'badge-po': 'po-class' };
+      expect(getRoleBadgeClass('SCRUM_MASTER', partialStyles)).toBe('');
+    });
+
+    it('should return empty string for default when badge-default style is missing', () => {
+      const partialStyles = { 'badge-po': 'po-class' };
+      expect(getRoleBadgeClass(null, partialStyles)).toBe('');
+    });
   });
 
   describe('getRoleBadgeColor', () => {

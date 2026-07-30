@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+import { renderWithProviders, screen, initTestI18n, i18nT } from '../../../test-utils';
+import { describe, it, expect, beforeAll } from 'vitest';
 
 import { SprintOverview, type SprintOverviewProps } from './SprintOverview';
 
@@ -20,40 +20,44 @@ const defaultProps: SprintOverviewProps = {
 };
 
 describe('SprintOverview', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   describe('Rendering', () => {
     it('should render sprint goal correctly', () => {
-      render(<SprintOverview {...defaultProps} />);
+      renderWithProviders(<SprintOverview {...defaultProps} />);
 
       expect(screen.getByText('Sprint Goal')).toBeInTheDocument();
       expect(screen.getByText('Complete user authentication feature')).toBeInTheDocument();
     });
 
     it('should render fallback text when no sprint goal', () => {
-      render(<SprintOverview {...defaultProps} sprintGoal={undefined} />);
+      renderWithProviders(<SprintOverview {...defaultProps} sprintGoal={undefined} />);
 
-      expect(screen.getByText('No sprint goal set')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('sprint:sprintOverview.noGoalDefined'))).toBeInTheDocument();
     });
 
     it('should render progress percentage', () => {
-      render(<SprintOverview {...defaultProps} />);
+      renderWithProviders(<SprintOverview {...defaultProps} />);
 
       expect(screen.getByText('50%')).toBeInTheDocument();
     });
 
     it('should render tasks statistics', () => {
-      render(<SprintOverview {...defaultProps} />);
+      renderWithProviders(<SprintOverview {...defaultProps} />);
 
       expect(screen.getByText('10')).toBeInTheDocument();
     });
 
     it('should render remaining hours', () => {
-      render(<SprintOverview {...defaultProps} />);
+      renderWithProviders(<SprintOverview {...defaultProps} />);
 
       expect(screen.getByText('40h')).toBeInTheDocument();
     });
 
     it('should render PBI statistics', () => {
-      render(<SprintOverview {...defaultProps} />);
+      renderWithProviders(<SprintOverview {...defaultProps} />);
 
       // PBI stats show as "2/5" for completed/total (without spaces)
       expect(
@@ -64,7 +68,7 @@ describe('SprintOverview', () => {
 
   describe('Accessibility', () => {
     it('should have correct aria-label on section', () => {
-      render(<SprintOverview {...defaultProps} />);
+      renderWithProviders(<SprintOverview {...defaultProps} />);
 
       const section = screen.getByLabelText('Sprint Overview');
       expect(section).toBeInTheDocument();
@@ -73,7 +77,7 @@ describe('SprintOverview', () => {
 
   describe('Edge Cases', () => {
     it('should handle zero values correctly', () => {
-      render(
+      renderWithProviders(
         <SprintOverview
           {...defaultProps}
           totalTasks={0}
@@ -88,7 +92,7 @@ describe('SprintOverview', () => {
     });
 
     it('should handle large numbers correctly', () => {
-      render(
+      renderWithProviders(
         <SprintOverview
           {...defaultProps}
           totalTasks={999}
@@ -102,13 +106,13 @@ describe('SprintOverview', () => {
     });
 
     it('should handle empty sprint goal', () => {
-      render(<SprintOverview {...defaultProps} sprintGoal="" />);
+      renderWithProviders(<SprintOverview {...defaultProps} sprintGoal="" />);
 
-      expect(screen.getByText('No sprint goal set')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('sprint:sprintOverview.noGoalDefined'))).toBeInTheDocument();
     });
 
     it('should handle all tasks completed', () => {
-      render(
+      renderWithProviders(
         <SprintOverview
           {...defaultProps}
           todoTasks={0}

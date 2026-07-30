@@ -1,0 +1,18 @@
+{
+  "databaseError": "Si è verificato un errore del database",
+  "emailAlreadyExists": "Un account con l'email {{email}} esiste già",
+  "entityNotFound": "{{entity}} non trovato",
+  "fieldAlreadyExists": "{{field}} esiste già",
+  "fieldAlreadyTaken": "{{field}} è già utilizzato",
+  "forbidden": "Non hai il permesso di eseguire questa azione",
+  "invalidCredentials": "Email o password non corrette",
+  "invalidReference": "Riferimento non valido",
+  "invalidRelation": "Relazione non valida",
+  "invalidToken": "Token non valido",
+  "pleaseLoginAgain": "Accedi di nuovo per continuare",
+  "recordNotFound": "Record non trovato",
+  "routeNotFound": "{{method}} {{path}} non trovato",
+  "tokenExpired": "Il token è scaduto",
+  "unauthorized": "Autenticazione richiesta",
+  "unexpectedError": "Si è verificato un errore imprevisto"
+}

@@ -1,9 +1,21 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import {
+  screen,
+  fireEvent,
+  waitFor,
+  renderWithProviders,
+  initTestI18n,
+  i18nT,
+} from '../../test-utils';
+import { vi, describe, it, expect, beforeEach, beforeAll } from 'vitest';
 
 import { AddBacklogAdjustmentModal } from './AddBacklogAdjustmentModal';
 import type { ApiResponse, ProductBacklogItem, TeamMember, User } from '../../types';
+
+// Initialize i18n before all tests
+beforeAll(async () => {
+  await initTestI18n();
+});
 
 vi.mock('./AddBacklogAdjustmentModal.module.css', () => ({
   default: {
@@ -126,55 +138,106 @@ describe('AddBacklogAdjustmentModal', () => {
 
   describe('Rendering', () => {
     it('should render modal when isOpen is true', () => {
-      render(<AddBacklogAdjustmentModal {...defaultProps} />);
+      renderWithProviders(<AddBacklogAdjustmentModal {...defaultProps} />);
 
       expect(screen.getByRole('dialog')).toBeInTheDocument();
       expect(screen.getByRole('dialog')).toHaveAttribute('aria-modal', 'true');
-      expect(screen.getByRole('heading', { name: /Add Backlog Adjustment/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('heading', { name: i18nT('sprint-review:addAdjustmentModal.title') })
+      ).toBeInTheDocument();
     });
 
     it('should not render modal when isOpen is false', () => {
-      render(<AddBacklogAdjustmentModal {...defaultProps} isOpen={false} />);
+      renderWithProviders(<AddBacklogAdjustmentModal {...defaultProps} isOpen={false} />);
 
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
 
     it('should render all form fields', () => {
-      render(<AddBacklogAdjustmentModal {...defaultProps} />);
+      renderWithProviders(<AddBacklogAdjustmentModal {...defaultProps} />);
 
-      expect(screen.getByLabelText(/Action Type/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/Description/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/Reason/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/Related PBI/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/Owner/i)).toBeInTheDocument();
+      expect(
+        screen.getByLabelText(i18nT('sprint-review:addAdjustmentModal.actionType'))
+      ).toBeInTheDocument();
+      expect(
+        screen.getByLabelText(
+          new RegExp(
+            i18nT('sprint-review:addAdjustmentModal.description')
+              .replace(/\s*\*\s*/g, '')
+              .trim()
+          )
+        )
+      ).toBeInTheDocument();
+      expect(
+        screen.getByLabelText(
+          new RegExp(
+            i18nT('sprint-review:addAdjustmentModal.reason')
+              .replace(/\s*\*\s*/g, '')
+              .trim()
+          )
+        )
+      ).toBeInTheDocument();
+      expect(
+        screen.getByLabelText(i18nT('sprint-review:addAdjustmentModal.relatedPbi'))
+      ).toBeInTheDocument();
+      expect(
+        screen.getByLabelText(
+          new RegExp(
+            i18nT('sprint-review:addAdjustmentModal.owner')
+              .replace(/\s*\*\s*/g, '')
+              .trim()
+          )
+        )
+      ).toBeInTheDocument();
     });
 
     it('should render close button', () => {
-      render(<AddBacklogAdjustmentModal {...defaultProps} />);
+      renderWithProviders(<AddBacklogAdjustmentModal {...defaultProps} />);
 
-      expect(screen.getByRole('button', { name: /Close dialog/i })).toBeInTheDocument();
+      // The close button (X icon) has aria-label="Cancel" and class adjustment-form-close
+      const closeButton = screen
+        .getAllByRole('button', { name: i18nT('sprint-review:addAdjustmentModal.cancel') })
+        .find((btn) => btn.classList.contains('adjustment-form-close'));
+      expect(closeButton).toBeInTheDocument();
+      expect(closeButton).toHaveClass('adjustment-form-close');
     });
 
     it('should render action buttons', () => {
-      render(<AddBacklogAdjustmentModal {...defaultProps} />);
+      renderWithProviders(<AddBacklogAdjustmentModal {...defaultProps} />);
 
-      expect(screen.getByRole('button', { name: /Cancel/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /Add Adjustment/i })).toBeInTheDocument();
+      // Footer cancel button has class "button-secondary"
+      const cancelButton = screen
+        .getAllByRole('button', { name: i18nT('sprint-review:addAdjustmentModal.cancel') })
+        .find((btn) => btn.classList.contains('button-secondary'));
+      expect(cancelButton).toBeInTheDocument();
+      expect(cancelButton).toHaveClass('button-secondary');
+
+      expect(
+        screen.getByRole('button', {
+          name: i18nT('sprint-review:addAdjustmentModal.addAdjustment'),
+        })
+      ).toBeInTheDocument();
     });
 
     it('should display subtitle', () => {
-      render(<AddBacklogAdjustmentModal {...defaultProps} />);
+      renderWithProviders(<AddBacklogAdjustmentModal {...defaultProps} />);
 
-      expect(screen.getByText(/Record changes to the Product Backlog/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(i18nT('sprint-review:addAdjustmentModal.subtitle'))
+      ).toBeInTheDocument();
     });
   });
 
   describe('Form Interactions', () => {
     it('should call setAdjustmentForm when action type changes', () => {
       const setAdjustmentForm = vi.fn();
-      render(<AddBacklogAdjustmentModal {...defaultProps} setAdjustmentForm={setAdjustmentForm} />);
+      renderWithProviders(
+        <AddBacklogAdjustmentModal {...defaultProps} setAdjustmentForm={setAdjustmentForm} />
+      );
 
-      const actionSelect = screen.getByLabelText(/Action Type/i);
+      const actionSelect = screen.getByLabelText(
+        i18nT('sprint-review:addAdjustmentModal.actionType')
+      );
       fireEvent.change(actionSelect, { target: { value: 'modify' } });
 
       expect(setAdjustmentForm).toHaveBeenCalledWith(expect.objectContaining({ action: 'modify' }));
@@ -182,9 +245,17 @@ describe('AddBacklogAdjustmentModal', () => {
 
     it('should call setAdjustmentForm when description changes', () => {
       const setAdjustmentForm = vi.fn();
-      render(<AddBacklogAdjustmentModal {...defaultProps} setAdjustmentForm={setAdjustmentForm} />);
+      renderWithProviders(
+        <AddBacklogAdjustmentModal {...defaultProps} setAdjustmentForm={setAdjustmentForm} />
+      );
 
-      const descriptionTextarea = screen.getByLabelText(/Description/i);
+      const descriptionTextarea = screen.getByLabelText(
+        new RegExp(
+          i18nT('sprint-review:addAdjustmentModal.description')
+            .replace(/\s*\*\s*/g, '')
+            .trim()
+        )
+      );
       fireEvent.change(descriptionTextarea, { target: { value: 'New description' } });
 
       expect(setAdjustmentForm).toHaveBeenCalledWith(
@@ -194,9 +265,17 @@ describe('AddBacklogAdjustmentModal', () => {
 
     it('should call setAdjustmentForm when reason changes', () => {
       const setAdjustmentForm = vi.fn();
-      render(<AddBacklogAdjustmentModal {...defaultProps} setAdjustmentForm={setAdjustmentForm} />);
+      renderWithProviders(
+        <AddBacklogAdjustmentModal {...defaultProps} setAdjustmentForm={setAdjustmentForm} />
+      );
 
-      const reasonTextarea = screen.getByLabelText(/Reason/i);
+      const reasonTextarea = screen.getByLabelText(
+        new RegExp(
+          i18nT('sprint-review:addAdjustmentModal.reason')
+            .replace(/\s*\*\s*/g, '')
+            .trim()
+        )
+      );
       fireEvent.change(reasonTextarea, { target: { value: 'New reason' } });
 
       expect(setAdjustmentForm).toHaveBeenCalledWith(
@@ -206,9 +285,11 @@ describe('AddBacklogAdjustmentModal', () => {
 
     it('should call setAdjustmentForm when related PBI changes', () => {
       const setAdjustmentForm = vi.fn();
-      render(<AddBacklogAdjustmentModal {...defaultProps} setAdjustmentForm={setAdjustmentForm} />);
+      renderWithProviders(
+        <AddBacklogAdjustmentModal {...defaultProps} setAdjustmentForm={setAdjustmentForm} />
+      );
 
-      const pbiSelect = screen.getByLabelText(/Related PBI/i);
+      const pbiSelect = screen.getByLabelText(i18nT('sprint-review:addAdjustmentModal.relatedPbi'));
       fireEvent.change(pbiSelect, { target: { value: 'pbi-1' } });
 
       expect(setAdjustmentForm).toHaveBeenCalledWith(expect.objectContaining({ pbiId: 'pbi-1' }));
@@ -216,9 +297,17 @@ describe('AddBacklogAdjustmentModal', () => {
 
     it('should call setAdjustmentForm when owner changes', () => {
       const setAdjustmentForm = vi.fn();
-      render(<AddBacklogAdjustmentModal {...defaultProps} setAdjustmentForm={setAdjustmentForm} />);
+      renderWithProviders(
+        <AddBacklogAdjustmentModal {...defaultProps} setAdjustmentForm={setAdjustmentForm} />
+      );
 
-      const ownerSelect = screen.getByLabelText(/Owner/i);
+      const ownerSelect = screen.getByLabelText(
+        new RegExp(
+          i18nT('sprint-review:addAdjustmentModal.owner')
+            .replace(/\s*\*\s*/g, '')
+            .trim()
+        )
+      );
       fireEvent.change(ownerSelect, { target: { value: 'user-1' } });
 
       expect(setAdjustmentForm).toHaveBeenCalledWith(
@@ -228,7 +317,7 @@ describe('AddBacklogAdjustmentModal', () => {
 
     it('should clear related PBI when selecting None option', () => {
       const setAdjustmentForm = vi.fn();
-      render(
+      renderWithProviders(
         <AddBacklogAdjustmentModal
           {...defaultProps}
           adjustmentForm={{ ...defaultAdjustmentForm, pbiId: 'pbi-1' }}
@@ -236,7 +325,7 @@ describe('AddBacklogAdjustmentModal', () => {
         />
       );
 
-      const pbiSelect = screen.getByLabelText(/Related PBI/i);
+      const pbiSelect = screen.getByLabelText(i18nT('sprint-review:addAdjustmentModal.relatedPbi'));
       fireEvent.change(pbiSelect, { target: { value: '' } });
 
       expect(setAdjustmentForm).toHaveBeenCalled();
@@ -247,7 +336,7 @@ describe('AddBacklogAdjustmentModal', () => {
 
   describe('Action Type Icons', () => {
     it('should display correct icon for add action', () => {
-      render(
+      renderWithProviders(
         <AddBacklogAdjustmentModal
           {...defaultProps}
           adjustmentForm={{ ...defaultAdjustmentForm, action: 'add' }}
@@ -258,7 +347,7 @@ describe('AddBacklogAdjustmentModal', () => {
     });
 
     it('should display correct icon for modify action', () => {
-      render(
+      renderWithProviders(
         <AddBacklogAdjustmentModal
           {...defaultProps}
           adjustmentForm={{ ...defaultAdjustmentForm, action: 'modify' }}
@@ -269,7 +358,7 @@ describe('AddBacklogAdjustmentModal', () => {
     });
 
     it('should display correct icon for remove action', () => {
-      render(
+      renderWithProviders(
         <AddBacklogAdjustmentModal
           {...defaultProps}
           adjustmentForm={{ ...defaultAdjustmentForm, action: 'remove' }}
@@ -280,7 +369,7 @@ describe('AddBacklogAdjustmentModal', () => {
     });
 
     it('should display correct icon for reorder action', () => {
-      render(
+      renderWithProviders(
         <AddBacklogAdjustmentModal
           {...defaultProps}
           adjustmentForm={{ ...defaultAdjustmentForm, action: 'reorder' }}
@@ -291,7 +380,7 @@ describe('AddBacklogAdjustmentModal', () => {
     });
 
     it('should display correct icon for split action', () => {
-      render(
+      renderWithProviders(
         <AddBacklogAdjustmentModal
           {...defaultProps}
           adjustmentForm={{ ...defaultAdjustmentForm, action: 'split' }}
@@ -302,7 +391,7 @@ describe('AddBacklogAdjustmentModal', () => {
     });
 
     it('should display default icon for unknown action', () => {
-      render(
+      renderWithProviders(
         <AddBacklogAdjustmentModal
           {...defaultProps}
           adjustmentForm={{
@@ -318,7 +407,7 @@ describe('AddBacklogAdjustmentModal', () => {
 
   describe('Character Counters', () => {
     it('should display character count for description', () => {
-      render(
+      renderWithProviders(
         <AddBacklogAdjustmentModal
           {...defaultProps}
           adjustmentForm={{ ...defaultAdjustmentForm, description: 'Test' }}
@@ -329,7 +418,7 @@ describe('AddBacklogAdjustmentModal', () => {
     });
 
     it('should display character count for reason', () => {
-      render(
+      renderWithProviders(
         <AddBacklogAdjustmentModal
           {...defaultProps}
           adjustmentForm={{ ...defaultAdjustmentForm, reason: 'Because' }}
@@ -341,7 +430,7 @@ describe('AddBacklogAdjustmentModal', () => {
 
     it('should show warning style when description approaches limit', () => {
       const longDesc = 'A'.repeat(450);
-      render(
+      renderWithProviders(
         <AddBacklogAdjustmentModal
           {...defaultProps}
           adjustmentForm={{ ...defaultAdjustmentForm, description: longDesc }}
@@ -353,7 +442,7 @@ describe('AddBacklogAdjustmentModal', () => {
 
     it('should show warning style when reason approaches limit', () => {
       const longReason = 'A'.repeat(250);
-      render(
+      renderWithProviders(
         <AddBacklogAdjustmentModal
           {...defaultProps}
           adjustmentForm={{ ...defaultAdjustmentForm, reason: longReason }}
@@ -366,7 +455,7 @@ describe('AddBacklogAdjustmentModal', () => {
 
   describe('Form Validation and Errors', () => {
     it('should display description error when formErrors.description exists', () => {
-      render(
+      renderWithProviders(
         <AddBacklogAdjustmentModal
           {...defaultProps}
           formErrors={{ description: 'Description is required' }}
@@ -378,7 +467,7 @@ describe('AddBacklogAdjustmentModal', () => {
     });
 
     it('should display reason error when formErrors.reason exists', () => {
-      render(
+      renderWithProviders(
         <AddBacklogAdjustmentModal
           {...defaultProps}
           formErrors={{ reason: 'Reason is required' }}
@@ -390,7 +479,7 @@ describe('AddBacklogAdjustmentModal', () => {
     });
 
     it('should display owner error when formErrors.ownerId exists', () => {
-      render(
+      renderWithProviders(
         <AddBacklogAdjustmentModal
           {...defaultProps}
           formErrors={{ ownerId: 'Owner is required' }}
@@ -402,7 +491,7 @@ describe('AddBacklogAdjustmentModal', () => {
     });
 
     it('should mark description textarea as invalid when error exists', () => {
-      render(
+      renderWithProviders(
         <AddBacklogAdjustmentModal {...defaultProps} formErrors={{ description: 'Required' }} />
       );
 
@@ -410,13 +499,17 @@ describe('AddBacklogAdjustmentModal', () => {
     });
 
     it('should mark reason textarea as invalid when error exists', () => {
-      render(<AddBacklogAdjustmentModal {...defaultProps} formErrors={{ reason: 'Required' }} />);
+      renderWithProviders(
+        <AddBacklogAdjustmentModal {...defaultProps} formErrors={{ reason: 'Required' }} />
+      );
 
       expect(screen.getByLabelText(/Reason/i)).toHaveAttribute('aria-invalid', 'true');
     });
 
     it('should mark owner select as invalid when error exists', () => {
-      render(<AddBacklogAdjustmentModal {...defaultProps} formErrors={{ ownerId: 'Required' }} />);
+      renderWithProviders(
+        <AddBacklogAdjustmentModal {...defaultProps} formErrors={{ ownerId: 'Required' }} />
+      );
 
       expect(screen.getByLabelText(/Owner/i)).toHaveAttribute('aria-invalid', 'true');
     });
@@ -424,14 +517,17 @@ describe('AddBacklogAdjustmentModal', () => {
 
   describe('Unsaved Changes', () => {
     it('should show unsaved changes modal when closing with unsaved changes', async () => {
-      render(
+      renderWithProviders(
         <AddBacklogAdjustmentModal
           {...defaultProps}
           adjustmentForm={{ ...defaultAdjustmentForm, description: 'Some change' }}
         />
       );
 
-      fireEvent.click(screen.getByRole('button', { name: /Close dialog/i }));
+      const closeButton = screen
+        .getAllByRole('button', { name: i18nT('sprint-review:addAdjustmentModal.cancel') })
+        .find((btn) => btn.classList.contains('adjustment-form-close'));
+      fireEvent.click(closeButton!);
 
       await waitFor(() => {
         expect(screen.getByTestId('unsaved-changes-modal')).toBeInTheDocument();
@@ -439,18 +535,21 @@ describe('AddBacklogAdjustmentModal', () => {
     });
 
     it('should not show unsaved changes modal when closing with empty form', () => {
-      render(
+      renderWithProviders(
         <AddBacklogAdjustmentModal {...defaultProps} adjustmentForm={defaultAdjustmentForm} />
       );
 
-      fireEvent.click(screen.getByRole('button', { name: /Close dialog/i }));
+      const closeButton = screen
+        .getAllByRole('button', { name: i18nT('sprint-review:addAdjustmentModal.cancel') })
+        .find((btn) => btn.classList.contains('adjustment-form-close'));
+      fireEvent.click(closeButton!);
 
       expect(screen.queryByTestId('unsaved-changes-modal')).not.toBeInTheDocument();
     });
 
     it('should close modal when discarding changes', async () => {
       const onClose = vi.fn();
-      render(
+      renderWithProviders(
         <AddBacklogAdjustmentModal
           {...defaultProps}
           onClose={onClose}
@@ -458,7 +557,10 @@ describe('AddBacklogAdjustmentModal', () => {
         />
       );
 
-      fireEvent.click(screen.getByRole('button', { name: /Close dialog/i }));
+      const closeButton = screen
+        .getAllByRole('button', { name: i18nT('sprint-review:addAdjustmentModal.cancel') })
+        .find((btn) => btn.classList.contains('adjustment-form-close'));
+      fireEvent.click(closeButton!);
 
       await waitFor(() => {
         expect(screen.getByTestId('unsaved-changes-modal')).toBeInTheDocument();
@@ -470,14 +572,17 @@ describe('AddBacklogAdjustmentModal', () => {
     });
 
     it('should keep modal open when cancelling discard', async () => {
-      render(
+      renderWithProviders(
         <AddBacklogAdjustmentModal
           {...defaultProps}
           adjustmentForm={{ ...defaultAdjustmentForm, description: 'Test' }}
         />
       );
 
-      fireEvent.click(screen.getByRole('button', { name: /Close dialog/i }));
+      const closeButton = screen
+        .getAllByRole('button', { name: i18nT('sprint-review:addAdjustmentModal.cancel') })
+        .find((btn) => btn.classList.contains('adjustment-form-close'));
+      fireEvent.click(closeButton!);
 
       await waitFor(() => {
         expect(screen.getByTestId('unsaved-changes-modal')).toBeInTheDocument();
@@ -491,53 +596,65 @@ describe('AddBacklogAdjustmentModal', () => {
     });
 
     it('should detect unsaved changes when reason is filled', () => {
-      render(
+      renderWithProviders(
         <AddBacklogAdjustmentModal
           {...defaultProps}
           adjustmentForm={{ ...defaultAdjustmentForm, reason: 'Some reason' }}
         />
       );
 
-      fireEvent.click(screen.getByRole('button', { name: /Close dialog/i }));
+      const closeButton = screen
+        .getAllByRole('button', { name: i18nT('sprint-review:addAdjustmentModal.cancel') })
+        .find((btn) => btn.classList.contains('adjustment-form-close'));
+      fireEvent.click(closeButton!);
 
       expect(screen.getByTestId('unsaved-changes-modal')).toBeInTheDocument();
     });
 
     it('should detect unsaved changes when pbiId is set', () => {
-      render(
+      renderWithProviders(
         <AddBacklogAdjustmentModal
           {...defaultProps}
           adjustmentForm={{ ...defaultAdjustmentForm, pbiId: 'pbi-1' }}
         />
       );
 
-      fireEvent.click(screen.getByRole('button', { name: /Close dialog/i }));
+      const closeButton = screen
+        .getAllByRole('button', { name: i18nT('sprint-review:addAdjustmentModal.cancel') })
+        .find((btn) => btn.classList.contains('adjustment-form-close'));
+      fireEvent.click(closeButton!);
 
       expect(screen.getByTestId('unsaved-changes-modal')).toBeInTheDocument();
     });
 
     it('should detect unsaved changes when ownerId is set', () => {
-      render(
+      renderWithProviders(
         <AddBacklogAdjustmentModal
           {...defaultProps}
           adjustmentForm={{ ...defaultAdjustmentForm, ownerId: 'user-1' }}
         />
       );
 
-      fireEvent.click(screen.getByRole('button', { name: /Close dialog/i }));
+      const closeButton = screen
+        .getAllByRole('button', { name: i18nT('sprint-review:addAdjustmentModal.cancel') })
+        .find((btn) => btn.classList.contains('adjustment-form-close'));
+      fireEvent.click(closeButton!);
 
       expect(screen.getByTestId('unsaved-changes-modal')).toBeInTheDocument();
     });
 
     it('should detect unsaved changes when action is not add', () => {
-      render(
+      renderWithProviders(
         <AddBacklogAdjustmentModal
           {...defaultProps}
           adjustmentForm={{ ...defaultAdjustmentForm, action: 'modify' }}
         />
       );
 
-      fireEvent.click(screen.getByRole('button', { name: /Close dialog/i }));
+      const closeButton = screen
+        .getAllByRole('button', { name: i18nT('sprint-review:addAdjustmentModal.cancel') })
+        .find((btn) => btn.classList.contains('adjustment-form-close'));
+      fireEvent.click(closeButton!);
 
       expect(screen.getByTestId('unsaved-changes-modal')).toBeInTheDocument();
     });
@@ -546,30 +663,44 @@ describe('AddBacklogAdjustmentModal', () => {
   describe('Submission', () => {
     it('should call onSubmit when Add Adjustment button is clicked', () => {
       const onSubmit = vi.fn();
-      render(<AddBacklogAdjustmentModal {...defaultProps} onSubmit={onSubmit} />);
+      renderWithProviders(<AddBacklogAdjustmentModal {...defaultProps} onSubmit={onSubmit} />);
 
-      fireEvent.click(screen.getByRole('button', { name: /Add Adjustment/i }));
+      fireEvent.click(
+        screen.getByRole('button', {
+          name: i18nT('sprint-review:addAdjustmentModal.addAdjustment'),
+        })
+      );
 
       expect(onSubmit).toHaveBeenCalled();
     });
 
     it('should disable Add Adjustment button when isPending is true', () => {
-      render(<AddBacklogAdjustmentModal {...defaultProps} isPending={true} />);
+      renderWithProviders(<AddBacklogAdjustmentModal {...defaultProps} isPending={true} />);
 
-      expect(screen.getByRole('button', { name: /Adding/i })).toBeDisabled();
+      expect(
+        screen.getByRole('button', { name: i18nT('sprint-review:addAdjustmentModal.adding') })
+      ).toBeDisabled();
     });
 
     it('should show "Adding..." text when isPending is true', () => {
-      render(<AddBacklogAdjustmentModal {...defaultProps} isPending={true} />);
+      renderWithProviders(<AddBacklogAdjustmentModal {...defaultProps} isPending={true} />);
 
-      expect(screen.getByText('Adding...')).toBeInTheDocument();
+      expect(
+        screen.getByText(i18nT('sprint-review:addAdjustmentModal.adding'))
+      ).toBeInTheDocument();
     });
 
     it('should clear form errors when Cancel button is clicked', () => {
       const setFormErrors = vi.fn();
-      render(<AddBacklogAdjustmentModal {...defaultProps} setFormErrors={setFormErrors} />);
+      renderWithProviders(
+        <AddBacklogAdjustmentModal {...defaultProps} setFormErrors={setFormErrors} />
+      );
 
-      fireEvent.click(screen.getByRole('button', { name: /Cancel/i }));
+      // Click the footer Cancel button (not the close X button)
+      const cancelButton = screen
+        .getAllByRole('button', { name: i18nT('sprint-review:addAdjustmentModal.cancel') })
+        .find((btn) => btn.classList.contains('button-secondary'));
+      fireEvent.click(cancelButton!);
 
       expect(setFormErrors).toHaveBeenCalledWith({});
     });
@@ -577,7 +708,7 @@ describe('AddBacklogAdjustmentModal', () => {
 
   describe('Accessibility', () => {
     it('should have proper ARIA attributes on dialog', () => {
-      render(<AddBacklogAdjustmentModal {...defaultProps} />);
+      renderWithProviders(<AddBacklogAdjustmentModal {...defaultProps} />);
 
       const dialog = screen.getByRole('dialog');
       expect(dialog).toHaveAttribute('aria-modal', 'true');
@@ -585,26 +716,55 @@ describe('AddBacklogAdjustmentModal', () => {
     });
 
     it('should have aria-required on required fields', () => {
-      render(<AddBacklogAdjustmentModal {...defaultProps} />);
+      renderWithProviders(<AddBacklogAdjustmentModal {...defaultProps} />);
 
-      expect(screen.getByLabelText(/Description/i)).toHaveAttribute('aria-required', 'true');
-      expect(screen.getByLabelText(/Reason/i)).toHaveAttribute('aria-required', 'true');
-      expect(screen.getByLabelText(/Owner/i)).toHaveAttribute('aria-required', 'true');
+      expect(
+        screen.getByLabelText(
+          new RegExp(
+            i18nT('sprint-review:addAdjustmentModal.description')
+              .replace(/\s*\*\s*/g, '')
+              .trim()
+          )
+        )
+      ).toHaveAttribute('aria-required', 'true');
+      expect(
+        screen.getByLabelText(
+          new RegExp(
+            i18nT('sprint-review:addAdjustmentModal.reason')
+              .replace(/\s*\*\s*/g, '')
+              .trim()
+          )
+        )
+      ).toHaveAttribute('aria-required', 'true');
+      expect(
+        screen.getByLabelText(
+          new RegExp(
+            i18nT('sprint-review:addAdjustmentModal.owner')
+              .replace(/\s*\*\s*/g, '')
+              .trim()
+          )
+        )
+      ).toHaveAttribute('aria-required', 'true');
     });
 
     it('should have aria-describedby on inputs when errors exist', () => {
-      render(
+      renderWithProviders(
         <AddBacklogAdjustmentModal {...defaultProps} formErrors={{ description: 'Required' }} />
       );
 
-      expect(screen.getByLabelText(/Description/i)).toHaveAttribute(
-        'aria-describedby',
-        'adjustment-description-error'
-      );
+      expect(
+        screen.getByLabelText(
+          new RegExp(
+            i18nT('sprint-review:addAdjustmentModal.description')
+              .replace(/\s*\*\s*/g, '')
+              .trim()
+          )
+        )
+      ).toHaveAttribute('aria-describedby', 'adjustment-description-error');
     });
 
     it('should have error IDs for each field', () => {
-      render(
+      renderWithProviders(
         <AddBacklogAdjustmentModal
           {...defaultProps}
           formErrors={{ description: 'D', reason: 'R', ownerId: 'O' }}
@@ -619,60 +779,98 @@ describe('AddBacklogAdjustmentModal', () => {
 
   describe('Negative Test Cases', () => {
     it('should handle empty teamMembers array', () => {
-      render(<AddBacklogAdjustmentModal {...defaultProps} teamMembers={[]} />);
+      renderWithProviders(<AddBacklogAdjustmentModal {...defaultProps} teamMembers={[]} />);
 
-      expect(screen.getByLabelText(/Owner/i)).toBeInTheDocument();
+      expect(
+        screen.getByLabelText(
+          new RegExp(
+            i18nT('sprint-review:addAdjustmentModal.owner')
+              .replace(/\s*\*\s*/g, '')
+              .trim()
+          )
+        )
+      ).toBeInTheDocument();
     });
 
     it('should handle undefined teamMembers', () => {
-      render(<AddBacklogAdjustmentModal {...defaultProps} teamMembers={undefined} />);
+      renderWithProviders(<AddBacklogAdjustmentModal {...defaultProps} teamMembers={undefined} />);
 
-      expect(screen.getByLabelText(/Owner/i)).toBeInTheDocument();
+      expect(
+        screen.getByLabelText(
+          new RegExp(
+            i18nT('sprint-review:addAdjustmentModal.owner')
+              .replace(/\s*\*\s*/g, '')
+              .trim()
+          )
+        )
+      ).toBeInTheDocument();
     });
 
     it('should handle empty sprintBacklogItems', () => {
-      render(
+      renderWithProviders(
         <AddBacklogAdjustmentModal
           {...defaultProps}
           sprintBacklogItems={{ success: true, data: [] }}
         />
       );
 
-      expect(screen.getByLabelText(/Related PBI/i)).toBeInTheDocument();
+      expect(
+        screen.getByLabelText(i18nT('sprint-review:addAdjustmentModal.relatedPbi'))
+      ).toBeInTheDocument();
     });
 
     it('should handle undefined sprintBacklogItems', () => {
-      render(<AddBacklogAdjustmentModal {...defaultProps} sprintBacklogItems={undefined} />);
+      renderWithProviders(
+        <AddBacklogAdjustmentModal {...defaultProps} sprintBacklogItems={undefined} />
+      );
 
-      expect(screen.getByLabelText(/Related PBI/i)).toBeInTheDocument();
+      expect(
+        screen.getByLabelText(i18nT('sprint-review:addAdjustmentModal.relatedPbi'))
+      ).toBeInTheDocument();
     });
 
     it('should handle long description text', () => {
       const longDesc = 'A'.repeat(500);
-      render(
+      renderWithProviders(
         <AddBacklogAdjustmentModal
           {...defaultProps}
           adjustmentForm={{ ...defaultAdjustmentForm, description: longDesc }}
         />
       );
 
-      expect(screen.getByLabelText(/Description/i)).toHaveValue(longDesc);
+      expect(
+        screen.getByLabelText(
+          new RegExp(
+            i18nT('sprint-review:addAdjustmentModal.description')
+              .replace(/\s*\*\s*/g, '')
+              .trim()
+          )
+        )
+      ).toHaveValue(longDesc);
     });
 
     it('should handle long reason text', () => {
       const longReason = 'A'.repeat(300);
-      render(
+      renderWithProviders(
         <AddBacklogAdjustmentModal
           {...defaultProps}
           adjustmentForm={{ ...defaultAdjustmentForm, reason: longReason }}
         />
       );
 
-      expect(screen.getByLabelText(/Reason/i)).toHaveValue(longReason);
+      expect(
+        screen.getByLabelText(
+          new RegExp(
+            i18nT('sprint-review:addAdjustmentModal.reason')
+              .replace(/\s*\*\s*/g, '')
+              .trim()
+          )
+        )
+      ).toHaveValue(longReason);
     });
 
     it('should handle multiple errors simultaneously', () => {
-      render(
+      renderWithProviders(
         <AddBacklogAdjustmentModal
           {...defaultProps}
           formErrors={{

@@ -22,6 +22,7 @@ import {
 } from '../generated/prisma/client';
 import { logger } from '../utils/logger';
 import { processBatch } from '../utils/batch';
+import { notificationService } from './notification.service';
 
 // Sprint with relations (optimized for API responses)
 export type SprintWithRelations = Omit<Sprint, 'createdBy' | 'updatedBy'> & {
@@ -961,29 +962,25 @@ class SprintService {
 
     // Create notification if assignee is set and not the creator
     if (data.assigneeId && data.assigneeId !== userId) {
-      const assigner = await prisma.user.findUnique({ where: { id: userId } });
-      if (assigner) {
-        try {
-          await prisma.notification.create({
-            data: {
-              id: generateUUIDv7(),
-              userId: data.assigneeId,
-              type: NotificationType.TASK_ASSIGNMENT,
-              title: `New task assigned: "${task.title}"`,
-              message: `In sprint "${task.sprint.name}"`,
-              data: {
-                taskId: task.id,
-                sprintId: task.sprintId,
-                pbiId: task.pbiId,
-              } as Prisma.InputJsonValue,
-              createdBy: userId,
-            },
-          });
-        } catch (error) {
-          logger.error('Failed to create task assignment notification', {
-            error,
-          });
-        }
+      try {
+        await notificationService.createLocalized({
+          userId: data.assigneeId,
+          type: NotificationType.TASK_ASSIGNMENT,
+          titleKey: 'newTaskAssignedTitle',
+          titleParams: { taskTitle: task.title },
+          messageKey: 'newTaskAssignedMessage',
+          messageParams: { taskTitle: task.title, sprintName: task.sprint.name },
+          data: {
+            taskId: task.id,
+            sprintId: task.sprintId,
+            pbiId: task.pbiId,
+          },
+          createdBy: userId,
+        });
+      } catch (error) {
+        logger.error('Failed to create task assignment notification', {
+          error,
+        });
       }
     }
 
@@ -1094,23 +1091,21 @@ class SprintService {
 
     // Create notification if assignee changed
     if (data.assigneeId && data.assigneeId !== task.assigneeId && userId) {
-      const assigner = await prisma.user.findUnique({ where: { id: userId } });
-      if (assigner && data.assigneeId !== userId) {
+      if (data.assigneeId !== userId) {
         try {
-          await prisma.notification.create({
+          await notificationService.createLocalized({
+            userId: data.assigneeId,
+            type: NotificationType.TASK_ASSIGNMENT,
+            titleKey: 'taskReassignedTitle',
+            titleParams: { taskTitle: task.title },
+            messageKey: 'taskReassignedMessage',
+            messageParams: { taskTitle: task.title, sprintName: task.sprint.name },
             data: {
-              id: generateUUIDv7(),
-              userId: data.assigneeId,
-              type: NotificationType.TASK_ASSIGNMENT,
-              title: `Task reassigned to you: "${task.title}"`,
-              message: `In sprint "${task.sprint.name}"`,
-              data: {
-                taskId: task.id,
-                sprintId: task.sprintId,
-                pbiId: task.pbiId,
-              } as Prisma.InputJsonValue,
-              createdBy: userId,
+              taskId: task.id,
+              sprintId: task.sprintId,
+              pbiId: task.pbiId,
             },
+            createdBy: userId,
           });
         } catch (error) {
           logger.error('Failed to create task reassignment notification', {

@@ -1,3 +1,6 @@
+import i18next from 'i18next';
+import type { Locale } from '@scrumooth/shared';
+
 import { MoSCoWPriority, type ProductBacklogItem } from '../../../types';
 
 export interface BulkUploadItem {
@@ -37,6 +40,7 @@ export interface ParsedData {
 }
 
 const HEADER_MAPPINGS: Record<string, string> = {
+  // English headers
   title: 'title',
   name: 'title',
   item: 'title',
@@ -56,9 +60,44 @@ const HEADER_MAPPINGS: Record<string, string> = {
   acceptancecriteria: 'acceptanceCriteria',
   criteria: 'acceptanceCriteria',
   ac: 'acceptanceCriteria',
+
+  // German headers
+  titel: 'title',
+  beschreibung: 'description',
+  storypunkte: 'storyPoints',
+  businesswert: 'businessValue',
+  priorität: 'priority',
+  akzeptanzkriterien: 'acceptanceCriteria',
+
+  // Spanish headers
+  título: 'title',
+  descripción: 'description',
+  puntosdehistoria: 'storyPoints',
+  valordenegocio: 'businessValue',
+  prioridad: 'priority',
+  etiquetas: 'labels',
+  criteriosdeaceptación: 'acceptanceCriteria',
+
+  // French headers
+  titre: 'title',
+  pointsdhistoire: 'storyPoints',
+  valeurdaffaires: 'businessValue',
+  valeurmétier: 'businessValue',
+  priorité: 'priority',
+  étiquettes: 'labels',
+  critèresdacceptation: 'acceptanceCriteria',
+
+  // Italian headers
+  titolo: 'title',
+  descrizione: 'description',
+  puntistoria: 'storyPoints',
+  valorebusiness: 'businessValue',
+  priorità: 'priority',
+  criteridiaccettazione: 'acceptanceCriteria',
 };
 
 const PRIORITY_MAPPINGS: Record<string, MoSCoWPriority> = {
+  // English
   'must have': MoSCoWPriority.MUST_HAVE,
   must: MoSCoWPriority.MUST_HAVE,
   m: MoSCoWPriority.MUST_HAVE,
@@ -72,6 +111,60 @@ const PRIORITY_MAPPINGS: Record<string, MoSCoWPriority> = {
   wont: MoSCoWPriority.WONT_HAVE,
   w: MoSCoWPriority.WONT_HAVE,
   'will not have': MoSCoWPriority.WONT_HAVE,
+
+  // German
+  'muss haben': MoSCoWPriority.MUST_HAVE,
+  musshaben: MoSCoWPriority.MUST_HAVE,
+  muss: MoSCoWPriority.MUST_HAVE,
+  'sollte haben': MoSCoWPriority.SHOULD_HAVE,
+  solltehaben: MoSCoWPriority.SHOULD_HAVE,
+  sollte: MoSCoWPriority.SHOULD_HAVE,
+  'könnte haben': MoSCoWPriority.COULD_HAVE,
+  könnte: MoSCoWPriority.COULD_HAVE,
+  könntehaben: MoSCoWPriority.COULD_HAVE,
+  'wird nicht haben': MoSCoWPriority.WONT_HAVE,
+  wirdnichthaben: MoSCoWPriority.WONT_HAVE,
+  'wird nicht': MoSCoWPriority.WONT_HAVE,
+  wird: MoSCoWPriority.WONT_HAVE,
+
+  // Spanish
+  'debe tener': MoSCoWPriority.MUST_HAVE,
+  debetener: MoSCoWPriority.MUST_HAVE,
+  debe: MoSCoWPriority.MUST_HAVE,
+  'debería tener': MoSCoWPriority.SHOULD_HAVE,
+  debería: MoSCoWPriority.SHOULD_HAVE,
+  deberíatener: MoSCoWPriority.SHOULD_HAVE,
+  'podría tener': MoSCoWPriority.COULD_HAVE,
+  podría: MoSCoWPriority.COULD_HAVE,
+  podríatener: MoSCoWPriority.COULD_HAVE,
+  'no tendrá': MoSCoWPriority.WONT_HAVE,
+  notendrá: MoSCoWPriority.WONT_HAVE,
+
+  // French
+  'doit avoir': MoSCoWPriority.MUST_HAVE,
+  doitavoir: MoSCoWPriority.MUST_HAVE,
+  doit: MoSCoWPriority.MUST_HAVE,
+  'devrait avoir': MoSCoWPriority.SHOULD_HAVE,
+  devraitavoir: MoSCoWPriority.SHOULD_HAVE,
+  devrait: MoSCoWPriority.SHOULD_HAVE,
+  'pourrait avoir': MoSCoWPriority.COULD_HAVE,
+  pourraitavoir: MoSCoWPriority.COULD_HAVE,
+  pourrait: MoSCoWPriority.COULD_HAVE,
+  "n'aura pas": MoSCoWPriority.WONT_HAVE,
+  naurapas: MoSCoWPriority.WONT_HAVE,
+
+  // Italian
+  'deve avere': MoSCoWPriority.MUST_HAVE,
+  deveavere: MoSCoWPriority.MUST_HAVE,
+  deve: MoSCoWPriority.MUST_HAVE,
+  'dovrebbe avere': MoSCoWPriority.SHOULD_HAVE,
+  dovrebbeavere: MoSCoWPriority.SHOULD_HAVE,
+  dovrebbe: MoSCoWPriority.SHOULD_HAVE,
+  'potrebbe avere': MoSCoWPriority.COULD_HAVE,
+  potrebbeavere: MoSCoWPriority.COULD_HAVE,
+  potrebbe: MoSCoWPriority.COULD_HAVE,
+  'non avrà': MoSCoWPriority.WONT_HAVE,
+  nonavrà: MoSCoWPriority.WONT_HAVE,
 };
 
 function normalizeHeader(header: string): string {
@@ -358,68 +451,90 @@ export function getAllErrors(items: BulkUploadItem[]): ValidationError[] {
   return items.flatMap((item) => item._errors ?? []);
 }
 
-export function generateCSVTemplate(): string {
+interface TemplateHeaders {
+  title: string;
+  description: string;
+  storyPoints: string;
+  businessValue: string;
+  priority: string;
+  labels: string;
+  acceptanceCriteria: string;
+}
+
+interface TemplateExample {
+  title: string;
+  description: string;
+  storyPoints: number;
+  businessValue: number;
+  priority: string;
+  labels: string;
+  acceptanceCriteria: string;
+}
+
+/**
+ * Escapes a CSV cell value by wrapping in quotes if it contains commas or quotes.
+ * Existing quotes are doubled.
+ */
+function escapeCSVCell(value: string): string {
+  if (value.includes(',') || value.includes('"')) {
+    return `"${value.replace(/"/g, '""')}"`;
+  }
+  return value;
+}
+
+/**
+ * Generates a localized CSV template for backlog item import.
+ * @param locale - The locale to use for translations (e.g., 'en', 'de', 'es', 'fr', 'it')
+ * @returns CSV string with localized headers and example rows
+ */
+export function generateCSVTemplate(locale: Locale): string {
+  const t = i18next.getFixedT(locale, 'backlog');
+
+  // Get localized headers as an object
+  const headersObj = t('bulkUpload.template.headers', { returnObjects: true }) as TemplateHeaders;
   const headers = [
-    'title',
-    'description',
-    'storyPoints',
-    'businessValue',
-    'priority',
-    'labels',
-    'acceptanceCriteria',
+    headersObj.title,
+    headersObj.description,
+    headersObj.storyPoints,
+    headersObj.businessValue,
+    headersObj.priority,
+    headersObj.labels,
+    headersObj.acceptanceCriteria,
   ];
 
-  const exampleRows = [
-    [
-      'User Authentication',
-      'Implement OAuth2 login with Google and GitHub providers',
-      '8',
-      '13',
-      'Must Have',
-      'auth,security,backend',
-      'User can log in with Google; User can log in with GitHub; Session persists for 30 days',
-    ],
-    [
-      'Dashboard Analytics Widget',
-      'Add real-time analytics widget to main dashboard',
-      '5',
-      '5',
-      'Should Have',
-      'dashboard,analytics',
-      'Widget displays real-time data; Widget refreshes every 30 seconds',
-    ],
-    [
-      'Dark Mode Support',
-      'Implement dark mode theme across the application',
-      '3',
-      '3',
-      'Could Have',
-      'ui,theme',
-      'User can toggle dark mode; Preference is saved',
-    ],
-  ];
+  // Get localized examples as an array of objects
+  const examples = t('bulkUpload.template.examples', { returnObjects: true }) as TemplateExample[];
 
-  const csvLines = [
-    headers.join(','),
-    ...exampleRows.map((row) =>
-      row
-        .map((cell) =>
-          cell.includes(',') || cell.includes('"') ? `"${cell.replace(/"/g, '""')}"` : cell
-        )
-        .join(',')
-    ),
-  ];
+  // Format example rows with proper CSV escaping
+  const exampleRows = examples.map((example) => [
+    escapeCSVCell(example.title),
+    escapeCSVCell(example.description),
+    String(example.storyPoints),
+    String(example.businessValue),
+    escapeCSVCell(example.priority),
+    escapeCSVCell(example.labels),
+    escapeCSVCell(example.acceptanceCriteria),
+  ]);
+
+  const csvLines = [headers.join(','), ...exampleRows.map((row) => row.join(','))];
 
   return csvLines.join('\n');
 }
 
-export function downloadTemplate(): void {
-  const template = generateCSVTemplate();
+/**
+ * Downloads a localized CSV template file for backlog item import.
+ * @param locale - The locale to use for translations and filename
+ */
+export function downloadTemplate(locale: Locale): void {
+  const t = i18next.getFixedT(locale, 'backlog');
+  const template = generateCSVTemplate(locale);
+  const filename = t('bulkUpload.template.filename');
+
   const blob = new Blob([template], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  link.download = 'backlog-import-template.csv';
+  link.download = filename;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);

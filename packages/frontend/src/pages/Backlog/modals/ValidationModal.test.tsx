@@ -1,14 +1,59 @@
 import React from 'react';
-import { screen, render, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 import { BacklogProvider, useBacklogContext } from '../context/BacklogContext';
-import { createMockBacklogItem } from '../../../test-utils';
+import { renderWithProviders, createMockBacklogItem } from '../../../test-utils';
 import { ItemStatus, MoSCoWPriority } from '../../../types';
 
 import { ValidationModal } from './ValidationModal';
+
+// Mock services - required because useDefinitionOfReadyDone imports definitionService
+vi.mock('../../../services', () => ({
+  definitionService: {
+    getDefinitionOfReady: vi.fn(),
+    getDefinitionOfDone: vi.fn(),
+    verifyDoRForPBI: vi.fn(),
+    verifyDoDForPBI: vi.fn(),
+  },
+}));
+
+// Mock react-i18next to provide translations for tests
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string, options?: Record<string, unknown>) => {
+      const translations: Record<string, string> = {
+        'validation.dorShort': 'Definition of Ready',
+        'validation.dodShort': 'Definition of Done',
+        'validation.verifyAllCriteria': 'Verify all criteria before marking as {{status}}',
+        'validation.criteriaMet': '{{met}} of {{total}} criteria met',
+        'validation.allMustBeVerified': 'All criteria must be verified before proceeding',
+        'validation.cancel': 'Cancel',
+        'validation.confirmStatusChange': 'Confirm Status Change',
+        'validation.updating': 'Updating...',
+        'status.ready': 'Ready',
+        'status.done': 'Done',
+      };
+      let result = translations[key] || key;
+      if (options) {
+        Object.entries(options).forEach(([k, v]) => {
+          result = result.replace(new RegExp(`{{${k}}}`, 'g'), String(v));
+        });
+      }
+      return result;
+    },
+    i18n: {
+      language: 'en',
+      changeLanguage: vi.fn(),
+    },
+  }),
+  Trans: ({ children }: { children: React.ReactNode }) => children,
+  initReactI18next: {
+    type: '3rdParty',
+    init: vi.fn(),
+  },
+}));
 
 const mockItem = createMockBacklogItem({
   id: 'pbi-1',
@@ -39,35 +84,23 @@ const mockDodItems = [
   { id: 'dod-2', label: 'Tests passed', description: 'All tests pass' },
 ];
 
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-    },
-  });
-
 const renderValidationModal = (props = {}) => {
-  const queryClient = createTestQueryClient();
-  return render(
-    <QueryClientProvider client={queryClient}>
-      <BacklogProvider>
-        <SetSelectedItem />
-        <ValidationModal
-          isOpen={true}
-          validationType="ready"
-          dorItems={mockDorItems}
-          dodItems={mockDodItems}
-          validationChecks={{}}
-          onCheckChange={vi.fn()}
-          onConfirm={vi.fn()}
-          onCancel={vi.fn()}
-          isUpdating={false}
-          {...props}
-        />
-      </BacklogProvider>
-    </QueryClientProvider>
+  return renderWithProviders(
+    <BacklogProvider>
+      <SetSelectedItem />
+      <ValidationModal
+        isOpen={true}
+        validationType="ready"
+        dorItems={mockDorItems}
+        dodItems={mockDodItems}
+        validationChecks={{}}
+        onCheckChange={vi.fn()}
+        onConfirm={vi.fn()}
+        onCancel={vi.fn()}
+        isUpdating={false}
+        {...props}
+      />
+    </BacklogProvider>
   );
 };
 

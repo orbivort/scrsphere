@@ -1,0 +1,486 @@
+{
+  "createTeamModal": {
+    "beforeUnload": "Sie haben ungespeicherte Änderungen im Team-Erstellungsformular. Sind Sie sicher, dass Sie die Seite verlassen möchten?",
+    "cancel": "Abbrechen",
+    "closeModal": "Modal schließen",
+    "createTeam": "Team erstellen",
+    "creating": "Erstellen...",
+    "description": "Beschreibung",
+    "descriptionPlaceholder": "Beschreiben Sie den Zweck, die Ziele oder den Arbeitsstil Ihres Teams...",
+    "optionalBadge": "Optional",
+    "requiredFields": "Pflichtfelder",
+    "requiredFieldsAria": "Alle mit Sternchen markierten Felder sind Pflichtfelder",
+    "subtitle": "Erstellen Sie einen kollaborativen Arbeitsbereich für Ihr Agile-Team",
+    "teamName": "Team-Name",
+    "teamNamePlaceholder": "z.B., Alpha Squad, Product Team A",
+    "title": "Neues Team erstellen",
+    "validation": {
+      "descriptionMaxLength": "Beschreibung muss weniger als 1000 Zeichen haben",
+      "nameMaxLength": "Team-Name muss weniger als 100 Zeichen haben",
+      "nameRequired": "Team-Name ist erforderlich"
+    }
+  },
+  "definitionEditor": {
+    "activeItems": "{{count}} aktive Elemente",
+    "activeItems_one": "{{count}} aktive Element",
+    "activeItems_other": "{{count}} aktive Elemente",
+    "addItem": "Element hinzufügen",
+    "ariaLabels": {
+      "activate": "Aktivieren",
+      "activateItem": "Element aktivieren",
+      "addNewItem": "Neues Element hinzufügen",
+      "deactivate": "Deaktivieren",
+      "deactivateItem": "Element deaktivieren",
+      "itemDescription": "Element-Beschreibung",
+      "moveDown": "Nach unten verschieben",
+      "moveItemDown": "Element nach unten verschieben",
+      "moveItemUp": "Element nach oben verschieben",
+      "moveUp": "Nach oben verschieben",
+      "remove": "Entfernen",
+      "removeItem": "Element entfernen"
+    },
+    "cancel": "Abbrechen",
+    "discardDialog": {
+      "discardChanges": "Änderungen verwerfen",
+      "keepEditing": "Weiter bearbeiten",
+      "message": "Sie haben ungespeicherte Änderungen. Sind Sie sicher, dass Sie abbrechen möchten?",
+      "title": "Änderungen verwerfen?"
+    },
+    "dodCategories": {
+      "deployment": "Deployment",
+      "documentation": "Dokumentation",
+      "quality": "Qualität",
+      "review": "Review",
+      "testing": "Testing"
+    },
+    "dodInfo": "Die Definition of Done ist eine formale Beschreibung des Zustands des Increments, wenn es die für das Produkt erforderlichen Qualitätsmaßnahmen erfüllt. Arbeit kann nicht als Teil eines Increments betrachtet werden, es sei denn, sie erfüllt die Definition of Done.",
+    "dorCategories": {
+      "acceptance": "Akzeptanz",
+      "clarity": "Klarheit",
+      "dependencies": "Abhängigkeiten",
+      "estimation": "Schätzung",
+      "technical": "Technisch",
+      "value": "Wert"
+    },
+    "dorInfo": "Die Definition of Ready ist eine Checkliste von Kriterien, die eine User Story erfüllen muss, bevor sie in einen Sprint aufgenommen werden kann. Sie stellt sicher, dass das Team genügend Informationen hat, um die Arbeit erfolgreich abzuschließen.",
+    "editTitle": "{{label}} bearbeiten",
+    "empty": "Noch keine {{shortLabel}}-Elemente. Fügen Sie oben Ihr erstes Kriterium hinzu.",
+    "inactive": "{{count}} inaktiv",
+    "inactive_one": "{{count}} inaktiv",
+    "inactive_other": "{{count}} inaktiv",
+    "newItemPlaceholder": "Neues {{shortLabel}}-Kriterium eingeben...",
+    "saveChanges": "Änderungen speichern",
+    "saving": "Speichern...",
+    "unsavedWarning": "Sie haben ungespeicherte Änderungen"
+  },
+  "deleteTeamModal": {
+    "awaitingConfirmation": "Warte auf Bestätigung",
+    "blockedDescription": "Dieses Team hat ein oder mehrere Product Goals zugeordnet. Um dieses Team zu löschen, müssen Sie zuerst alle verknüpften Product Goals entfernen.",
+    "blockedSubtitle": "Dieses Team kann aufgrund aktiver Product Goals nicht gelöscht werden",
+    "bodyAriaLabel": "Inhalt der Löschbestätigung",
+    "cancel": "Abbrechen",
+    "cancelButton": "Abbrechen",
+    "cannotBeUndone": "kann nicht rückgängig gemacht werden",
+    "cannotDelete": "Löschen nicht möglich",
+    "cannotDeleteButton": "Löschen nicht möglich",
+    "closeModal": "Modal schließen",
+    "confirmLabel": "Geben Sie \"{{teamName}}\" zur Bestätigung ein",
+    "confirmation": {
+      "awaitingConfirmation": "Warte auf Bestätigung",
+      "label": "Geben Sie \"{{name}}\" zur Bestätigung ein",
+      "matchConfirmed": "Übereinstimmung bestätigt",
+      "placeholder": "Geben Sie \"{{name}}\" ein, um das Löschen zu bestätigen",
+      "srHint": "Geben Sie den Team-Namen genau wie angezeigt ein, um die Löschen-Schaltfläche zu aktivieren, dann drücken Sie Enter oder klicken Sie auf „Team löschen“"
+    },
+    "consequence1": "Alle Team-Daten werden dauerhaft entfernt",
+    "consequence2": "Teammitglieder verlieren den Zugriff auf Team-Ressourcen",
+    "consequence3": "Zugehörige Einstellungen und Konfigurationen werden gelöscht",
+    "consequence4": "Diese Aktion ist irreversibel",
+    "consequencesTitle": "Konsequenzen des Löschens:",
+    "criticalActionWarning": "Kritische Aktionswarnung",
+    "deleteButton": "Team löschen",
+    "deleteTeam": "Team löschen",
+    "deleteWarning": "Sie sind dabei, dieses Team dauerhaft zu löschen. Diese Aktion kann nicht rückgängig gemacht werden.",
+    "deleting": "Löschen...",
+    "deletingButton": "Löschen...",
+    "deletionBlocked": "Löschen blockiert",
+    "matchConfirmed": "Übereinstimmung bestätigt",
+    "memberImpact": "{{count}} Mitglied(er) werden aus diesem Team entfernt",
+    "memberImpact_one": "{{count}} Mitglied(er) wird aus diesem Team entfernt",
+    "memberImpact_other": "{{count}} Mitglied(er) werden aus diesem Team entfernt",
+    "normalSubtitle": "Diese Aktion ist dauerhaft und kann nicht rückgängig gemacht werden",
+    "pasteWarning": "Manuelle Eingabe aus Sicherheitsgründen erforderlich. Kopieren und Einfügen ist deaktiviert.",
+    "requiredActions": "Erforderliche Aktionen:",
+    "srConfirmHint": "Geben Sie den Team-Namen genau wie angezeigt ein, um die Löschen-Schaltfläche zu aktivieren, dann drücken Sie Enter oder klicken Sie auf „Team löschen“",
+    "step1": "Navigieren Sie zum Product Goals-Bereich",
+    "step2": "Löschen oder ordnen Sie alle Goals für \"{{teamName}}\" neu zu",
+    "step3": "Kehren Sie hierher zurück, um das Löschen des Teams abzuschließen",
+    "teamLabel": "Team:",
+    "title": "Team löschen",
+    "warningCard": {
+      "blockedBadge": "Löschen blockiert",
+      "blockedMessage": "Dieses Team hat ein oder mehrere Product Goals zugeordnet. Um dieses Team zu löschen, müssen Sie zuerst alle verknüpften Product Goals entfernen.",
+      "consequence1": "Alle Team-Daten werden dauerhaft entfernt",
+      "consequence2": "Teammitglieder verlieren den Zugriff auf Team-Ressourcen",
+      "consequence3": "Zugehörige Einstellungen und Konfigurationen werden gelöscht",
+      "consequence4": "Diese Aktion ist irreversibel",
+      "consequencesTitle": "Konsequenzen des Löschens:",
+      "deleteWarning": "Sie sind dabei, dieses Team dauerhaft zu löschen. Diese Aktion kann nicht rückgängig gemacht werden.",
+      "impactMembers": "{{count}} Mitglied(er) werden aus diesem Team entfernt",
+      "requiredActions": "Erforderliche Aktionen:",
+      "step1": "Navigieren Sie zum Product Goals-Bereich",
+      "step2": "Löschen oder ordnen Sie alle Goals für \"{{name}}\" neu zu",
+      "step3": "Kehren Sie hierher zurück, um das Löschen des Teams abzuschließen",
+      "teamLabel": "Team:",
+      "title": "Kritische Aktionswarnung"
+    }
+  },
+  "dodPanel": {
+    "activeItems": "{{count}} aktive Elemente",
+    "activeItems_one": "{{count}} aktive Element",
+    "activeItems_other": "{{count}} aktive Elemente",
+    "editButton": "DoD bearbeiten",
+    "empty": {
+      "configureButton": "DoD konfigurieren",
+      "message": "Konfigurieren Sie die Definition of Done Kriterien Ihres Teams.",
+      "title": "Keine aktiven DoD-Elemente"
+    },
+    "error": {
+      "message": "Definition of Done konnte nicht geladen werden. Standard-Elemente werden verwendet.",
+      "retry": "Erneut versuchen",
+      "title": "Laden fehlgeschlagen"
+    },
+    "inactive": "{{count}} inaktiv",
+    "inactive_one": "{{count}} inaktiv",
+    "inactive_other": "{{count}} inaktiv",
+    "item": {
+      "codeReviewed": "Code wurde geprüft und genehmigt",
+      "documentation": "Code ist ordnungsgemäß dokumentiert",
+      "integrationTests": "Integrationstests bestanden",
+      "noCriticalBugs": "Keine kritischen oder schwerwiegenden Fehler",
+      "unitTests": "Unit-Tests geschrieben und bestanden (mindestens 80% Abdeckung)"
+    },
+    "lastUpdated": "Zuletzt aktualisiert:",
+    "loading": "Definition of Done wird geladen...",
+    "noTeam": {
+      "message": "Bitte wählen Sie ein Team aus, um die Definition of Done anzuzeigen und zu verwalten.",
+      "title": "Kein Team ausgewählt"
+    },
+    "shortLabel": "DoD",
+    "title": "Definition of Done",
+    "toast": {
+      "updateFailed": "Definition of Done konnte nicht aktualisiert werden",
+      "updatedSuccessfully": "Definition of Done erfolgreich aktualisiert"
+    },
+    "uncategorized": "Nicht kategorisiert"
+  },
+  "dorPanel": {
+    "activeItems": "{{count}} aktive Elemente",
+    "activeItems_one": "{{count}} aktive Element",
+    "activeItems_other": "{{count}} aktive Elemente",
+    "editButton": "DoR bearbeiten",
+    "empty": {
+      "configureButton": "DoR konfigurieren",
+      "description": "Die Definition of Ready ist eine Checkliste von Kriterien, die eine User Story erfüllen muss, bevor sie in einen Sprint aufgenommen werden kann.",
+      "message": "Noch keine Definition of Ready für dieses Team konfiguriert.",
+      "title": "Definition of Ready"
+    },
+    "error": "Definition of Ready konnte nicht geladen werden",
+    "inactive": "{{count}} inaktiv",
+    "inactive_one": "{{count}} inaktiv",
+    "inactive_other": "{{count}} inaktiv",
+    "item": {
+      "acceptanceCriteria": "Akzeptanzkriterien definiert und vereinbart",
+      "acceptanceCriteriaDefined": "Akzeptanzkriterien definiert",
+      "businessValue": "Business-Wert zugewiesen",
+      "clearTitle": "Klarer Titel und Beschreibung bereitgestellt",
+      "dependencies": "Abhängigkeiten identifiziert und dokumentiert",
+      "dependenciesIdentified": "Abhängigkeiten identifiziert",
+      "noBlockers": "Keine Blocker oder Impediments",
+      "storyPointsEstimated": "Story-Points vom Team geschätzt",
+      "storyPointsEstimatedOld": "Story-Points geschätzt",
+      "userStoryWritten": "User Story klar geschrieben"
+    },
+    "lastUpdated": "Zuletzt aktualisiert:",
+    "loading": "Definition of Ready wird geladen...",
+    "noTeam": "Bitte wählen Sie ein Team aus, um die Definition of Ready anzuzeigen.",
+    "retry": "Erneut versuchen",
+    "shortLabel": "DoR",
+    "title": "Definition of Ready",
+    "toast": {
+      "updateFailed": "Definition of Ready konnte nicht aktualisiert werden",
+      "updatedSuccessfully": "Definition of Ready erfolgreich aktualisiert"
+    },
+    "uncategorized": "Nicht kategorisiert"
+  },
+  "editTeamModal": {
+    "beforeUnload": "Sie haben ungespeicherte Änderungen im Team-Bearbeitungsformular. Sind Sie sicher, dass Sie die Seite verlassen möchten?",
+    "cancel": "Abbrechen",
+    "closeModal": "Modal schließen",
+    "description": "Beschreibung",
+    "descriptionPlaceholder": "Beschreiben Sie den Zweck, die Ziele oder den Arbeitsstil Ihres Teams...",
+    "optionalBadge": "Optional",
+    "requiredFields": "Pflichtfelder",
+    "requiredFieldsAria": "Alle mit Sternchen markierten Felder sind Pflichtfelder",
+    "saveChanges": "Änderungen speichern",
+    "saving": "Speichern...",
+    "subtitle": "Aktualisieren Sie die Informationen und Einstellungen Ihres Teams",
+    "teamName": "Team-Name",
+    "teamNamePlaceholder": "Team-Namen eingeben",
+    "title": "Team bearbeiten",
+    "unsavedChanges": "Sie haben ungespeicherte Änderungen",
+    "validation": {
+      "descriptionMaxLength": "Beschreibung muss weniger als 1000 Zeichen haben",
+      "nameMaxLength": "Team-Name muss weniger als 100 Zeichen haben",
+      "nameRequired": "Team-Name ist erforderlich"
+    }
+  },
+  "privacyData": {
+    "activeSessions": {
+      "current": "Aktuell",
+      "description": "Verwalten Sie Ihre aktiven Login-Sitzungen",
+      "devices": {
+        "chrome": "Chrome Browser",
+        "edge": "Edge Browser",
+        "firefox": "Firefox Browser",
+        "safari": "Safari Browser",
+        "unknown": "Unbekanntes Gerät"
+      },
+      "empty": "Keine aktiven Sitzungen gefunden",
+      "errors": {
+        "loadFailed": "Sitzungen konnten nicht geladen werden",
+        "revokeFailed": "Sitzung konnte nicht widerrufen werden",
+        "signOutFailed": "Andere Sitzungen konnten nicht abgemeldet werden"
+      },
+      "ip": "IP:",
+      "lastActive": "Zuletzt aktiv:",
+      "loading": "Sitzungen werden geladen...",
+      "note": "Dies meldet Sie von allen anderen Geräten außer diesem ab.",
+      "revoke": "Widerrufen",
+      "revokeSession": "Diese Sitzung widerrufen",
+      "revoking": "Widerrufen...",
+      "signOutAll": "Alle anderen Sitzungen abmelden",
+      "signingOut": "Abmelden...",
+      "title": "Aktive Sitzungen"
+    },
+    "contactSection": {
+      "message": "Kontaktieren Sie Ihr HR-Datenschutzteam oder den Corporate Datenschutzbeauftragten.",
+      "title": "Fragen zu Ihren Daten?"
+    },
+    "dataExport": {
+      "ariaLabel": "Persönliche Daten exportieren",
+      "dataIncluded": "Im Export enthaltene Daten:",
+      "description": "Laden Sie eine Kopie Ihrer persönlichen Daten herunter",
+      "downloadExport": "Export herunterladen",
+      "exportButton": "Meine Daten exportieren",
+      "exporting": "Exportieren...",
+      "formatLabel": "Format:",
+      "formatValue": "JSON (maschinenlesbar)",
+      "portabilityDescription": "Sie haben das Recht, Ihre persönlichen Daten in einem strukturierten, gängigen und maschinenlesbaren Format zu erhalten.",
+      "profileDescription": "Name, E-Mail, Avatar, Präferenzen",
+      "profileInformation": "Profilinformationen",
+      "rightToPortability": "Recht auf Datenübertragbarkeit",
+      "sessionDescription": "Aktive Sitzungen und Login-Historie",
+      "sessionInformation": "Sitzungsinformationen",
+      "teamDescription": "Teams, denen Sie angehören, und Ihre Rollen",
+      "teamMemberships": "Team-Mitgliedschaften",
+      "title": "Daten exportieren"
+    },
+    "dataExportModal": {
+      "cancelExport": "Export abbrechen",
+      "close": "Schließen",
+      "closeModal": "Modal schließen",
+      "downloadJson": "JSON-Datei herunterladen",
+      "exportProgress": "Export-Fortschritt",
+      "infoText": "Ihre Daten werden im JSON-Format exportiert, das strukturiert, gängig und maschinenlesbar ist.",
+      "jobId": "Job-ID:",
+      "statusMessages": {
+        "completed": "Datenexport ist bereit!",
+        "expired": "Dieser Export ist abgelaufen. Bitte erstellen Sie einen neuen.",
+        "failed": "Export fehlgeschlagen. Bitte versuchen Sie es erneut.",
+        "initializing": "Export wird initialisiert...",
+        "pending": "Datenexport wird vorbereitet...",
+        "processing": "Daten werden gesammelt und formatiert..."
+      },
+      "title": "Datenexport"
+    },
+    "dataRights": {
+      "rightToAccess": "Recht auf Auskunft",
+      "rightToAccessDescription": "Sie können eine Kopie aller personenbezogenen Daten anfordern, die wir über Sie speichern.",
+      "rightToErasure": "Recht auf Löschung",
+      "rightToErasureDescription": "Sie können die Löschung Ihrer personenbezogenen Daten anfordern, wenn sie nicht mehr benötigt werden.",
+      "rightToPortability": "Recht auf Übertragbarkeit",
+      "rightToPortabilityDescription": "Sie können Ihre Daten in einem strukturierten, maschinenlesbaren Format erhalten.",
+      "rightToRectification": "Recht auf Berichtigung",
+      "rightToRectificationDescription": "Sie können unrichtige oder unvollständige personenbezogene Daten korrigieren.",
+      "subtitle": "Ihre Rechte bezüglich persönlicher Daten",
+      "title": "Ihre Datenrechte"
+    },
+    "subtitle": "Verwalten Sie Ihre persönlichen Daten und Datenschutzeinstellungen",
+    "title": "Datenschutz & Daten"
+  },
+  "skipToMainContent": "Zum Hauptinhalt springen",
+  "sprintConfiguration": {
+    "ariaLabels": {
+      "closeDeleteModal": "Löschen-Modal schließen",
+      "closePreviewModal": "Vorschau-Modal schließen",
+      "deleteSprint": "{{name}} löschen"
+    },
+    "backToSprintPlanning": "Zurück zum Sprint Planning",
+    "configuredFor": "Konfiguriert für {{year}}",
+    "currentConfiguration": "Aktuelle Konfiguration",
+    "deleteModal": {
+      "cancel": "Abbrechen",
+      "cannotUndo": "Diese Aktion kann nicht rückgängig gemacht werden.",
+      "confirmation": "Sind Sie sicher, dass Sie diesen Sprint löschen möchten?",
+      "deleteSprint": "Sprint löschen",
+      "deleting": "Löschen...",
+      "sprintToDelete": "Zu löschender Sprint:",
+      "title": "Sprint löschen"
+    },
+    "deleteSprintTitle": "Sprint löschen",
+    "dismissNotification": "Benachrichtigung schließen",
+    "durationOptions": {
+      "fourWeeks": "4 Wochen",
+      "fourWeeksDescription": "Erweiterter 4-Wochen-Sprint-Zyklus",
+      "oneWeek": "1 Woche",
+      "oneWeekDescription": "Schneller 1-Wochen-Sprint-Zyklus",
+      "threeWeeks": "3 Wochen",
+      "threeWeeksDescription": "Ausgewogener 3-Wochen-Sprint-Zyklus",
+      "twoWeeks": "2 Wochen",
+      "twoWeeksDescription": "Standard 2-Wochen-Sprint-Zyklus"
+    },
+    "generatedSprints": "Generierte Sprints",
+    "loading": "Konfiguration wird geladen...",
+    "notifications": {
+      "configurationSaveFailed": "Konfiguration konnte nicht gespeichert werden: {{message}}",
+      "configurationSaved": "Konfiguration erfolgreich gespeichert!",
+      "sprintDeleteFailed": "Sprint konnte nicht gelöscht werden: {{message}}",
+      "sprintDeleted": "Sprint erfolgreich gelöscht!",
+      "sprintsGenerateFailed": "Sprints konnten nicht generiert werden: {{message}}",
+      "sprintsGenerated": "Sprints erfolgreich generiert!"
+    },
+    "previewAndGenerate": "Vorschau & Sprints generieren",
+    "previewModal": {
+      "cancel": "Abbrechen",
+      "duration": "Dauer:",
+      "generateButton": "{{count}} Sprints generieren",
+      "generateButton_one": "{{count}} Sprint generieren",
+      "generateButton_other": "{{count}} Sprints generieren",
+      "generatedSprints": "Generierte Sprints",
+      "generating": "Generieren...",
+      "moreSprints": "... und {{count}} weitere Sprints",
+      "moreSprints_one": "... und {{count}} weitere Sprint",
+      "moreSprints_other": "... und {{count}} weitere Sprints",
+      "sprintsToGenerate": "Zu generierende Sprints:",
+      "title": "Sprint-Generierungsvorschau",
+      "warning": "Dies wird {{count}} Sprints für {{year}} generieren. Bestehende Sprints für dieses Jahr können betroffen sein.",
+      "warning_one": "Dies wird {{count}} Sprint für {{year}} generieren. Bestehende Sprint für dieses Jahr können betroffen sein.",
+      "warning_other": "Dies wird {{count}} Sprints für {{year}} generieren. Bestehende Sprints für dieses Jahr können betroffen sein.",
+      "year": "Jahr:"
+    },
+    "saveConfiguration": "Konfiguration speichern",
+    "saving": "Speichern...",
+    "sprintCount": "{{count}} Sprints",
+    "sprintCount_one": "{{count}} Sprint",
+    "sprintCount_other": "{{count}} Sprints",
+    "sprintDuration": "Sprint-Dauer",
+    "subtitle": "Konfigurieren Sie die Sprint-Dauer und generieren Sie automatisch Sprint-Pläne für das Jahr",
+    "title": "Sprint-Konfiguration",
+    "year": "Jahr"
+  },
+  "sprintStatus": {
+    "ACTIVE": "Aktiv",
+    "CANCELLED": "Abgebrochen",
+    "COMPLETED": "Abgeschlossen",
+    "PLANNED": "Geplant"
+  },
+  "teamDefinitions": {
+    "ariaLabels": {
+      "definitionTabs": "Definitions-Tabs"
+    },
+    "subtitle": "Konfigurieren Sie die Definition of Ready und Definition of Done Kriterien Ihres Teams",
+    "tabs": {
+      "definitionOfDone": "Definition of Done",
+      "definitionOfReady": "Definition of Ready"
+    },
+    "title": "Team-Definitionen"
+  },
+  "teamList": {
+    "ariaLabel": "Teams",
+    "card": {
+      "cardAriaLabel": "{{name}}, {{count}} Mitglieder. Verwenden Sie die Pfeiltasten zum Navigieren zwischen Karten, Enter oder Leertaste für Aktionen.",
+      "cardAriaLabel_one": "{{name}}, {{count}} Mitglied. Verwenden Sie die Pfeiltasten zum Navigieren zwischen Karten, Enter oder Leertaste für Aktionen.",
+      "cardAriaLabel_other": "{{name}}, {{count}} Mitglieder. Verwenden Sie die Pfeiltasten zum Navigieren zwischen Karten, Enter oder Leertaste für Aktionen.",
+      "createdBy": "Erstellt von {{firstName}} {{lastName}}",
+      "delete": "Löschen",
+      "deleteTeam": "{{name}} löschen",
+      "deleting": "Löschen...",
+      "edit": "Bearbeiten",
+      "editTeam": "{{name}} bearbeiten",
+      "loading": "Laden...",
+      "memberCount": "{{count}} Mitglied",
+      "memberCount_one": "{{count}} Mitglied",
+      "memberCount_other": "{{count}} Mitglieder",
+      "memberCount_plural": "{{count}} Mitglieder"
+    },
+    "empty": {
+      "benefits": {
+        "agileCeremonies": "Mit Agile-Zeremonien zusammenarbeiten",
+        "progressTracking": "Fortschritt mit Echtzeit-Metriken verfolgen",
+        "sprintPlanning": "Arbeit mit Sprint Planning organisieren"
+      },
+      "clearSearchBrowse": "Suche löschen und alle Teams durchsuchen",
+      "createFirstTeam": "Erstes Team erstellen",
+      "createNewTeam": "Neues Team erstellen",
+      "defaultDescription": "Teams sind die Grundlage effektiver Zusammenarbeit. Erstellen Sie Ihr erstes Team, um mit Sprint Planning, Fortschrittsverfolgung und Zielerreichung zu beginnen.",
+      "defaultTitle": "Bauen Sie Ihr Wunschteam",
+      "searchDescription": "Versuchen Sie, Ihre Suchbegriffe anzupassen oder erstellen Sie ein neues Team.",
+      "searchNoResults": "Keine Teams gefunden für \"{{search}}\""
+    },
+    "error": "Teams konnten nicht geladen werden. Bitte versuchen Sie es erneut.",
+    "loading": "Teams werden geladen...",
+    "retry": "Erneut versuchen"
+  },
+  "teamManagement": {
+    "createTeam": "Team erstellen",
+    "pagination": {
+      "ariaLabel": "Pagination",
+      "goToNext": "Zur nächsten Seite gehen",
+      "goToPrevious": "Zur vorherigen Seite gehen",
+      "next": "Nächste",
+      "pageInfo": "Seite {{current}} von {{total}}",
+      "previous": "Vorherige"
+    },
+    "permissionBanner": {
+      "dismissError": "Fehler schließen"
+    },
+    "permissionErrors": {
+      "deleteTeam": "Sie haben keine Berechtigung, dieses Team zu löschen.",
+      "editTeam": "Sie haben keine Berechtigung, dieses Team zu bearbeiten."
+    },
+    "subtitle": "Teams in der Organisation erstellen und verwalten",
+    "teamCount": "{{count}} Team",
+    "teamCount_one": "{{count}} Team",
+    "teamCount_other": "{{count}} Teams",
+    "title": "Team-Verwaltung",
+    "toast": {
+      "cannotDeleteWithGoals": "Ein Team mit bestehenden Product Goals kann nicht gelöscht werden",
+      "teamCreateFailed": "Team konnte nicht erstellt werden",
+      "teamCreated": "Team erfolgreich erstellt",
+      "teamCreatedRefreshFailed": "Team erstellt, aber Team-Liste konnte nicht aktualisiert werden. Bitte laden Sie die Seite neu falls nötig.",
+      "teamDeleteFailed": "Team konnte nicht gelöscht werden",
+      "teamDeleted": "Team erfolgreich gelöscht",
+      "teamDeletedRefreshFailed": "Team gelöscht, aber Team-Liste konnte nicht aktualisiert werden. Bitte laden Sie die Seite neu falls nötig.",
+      "teamUpdateFailed": "Team konnte nicht aktualisiert werden",
+      "teamUpdated": "Team erfolgreich aktualisiert",
+      "teamUpdatedRefreshFailed": "Team aktualisiert, aber Team-Liste konnte nicht aktualisiert werden. Bitte laden Sie die Seite neu falls nötig."
+    }
+  },
+  "teamSearchBar": {
+    "ariaLabel": "Teams suchen",
+    "clearSearch": "Suche löschen",
+    "placeholder": "Teams nach Namen suchen..."
+  },
+  "title": "Einstellungen"
+}

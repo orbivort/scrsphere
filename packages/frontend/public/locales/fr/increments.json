@@ -1,0 +1,203 @@
+{
+  "backToIncrements": "Retour aux Increments",
+  "create": {
+    "actions": {
+      "cancel": "Annuler",
+      "createAndContinue": "Créer & Continuer",
+      "createIncrement": "Créer l'Increment",
+      "creating": "Création...",
+      "delivering": "Livraison...",
+      "skipToSprintReview": "Passer à la Sprint Review"
+    },
+    "backToIncrements": "Retour aux Increments",
+    "backToSprintReview": "Retour à la Sprint Review",
+    "error": {
+      "failedLoadPbis": "Impossible de charger les PBIs éligibles",
+      "message": "Impossible de charger les données. Veuillez réessayer.",
+      "title": "Erreur"
+    },
+    "form": {
+      "description": "Description",
+      "descriptionPlaceholder": "Décrivez ce que cet Increment contient...",
+      "incrementDetails": "Détails de l'Increment",
+      "incrementDetailsSubtitle": "Fournissez un nom et une description optionnelle pour cet Increment.",
+      "name": "Nom",
+      "namePlaceholder": "ex. Increment Sprint 5",
+      "sprint": "Sprint",
+      "sprintPlaceholder": "Sélectionnez un sprint"
+    },
+    "loading": "Chargement...",
+    "pbis": {
+      "alreadyInIncrement": "Déjà dans un Increment",
+      "deselectAll": "Désélectionner tout",
+      "mustBeDone": "Les PBIs doivent être en statut \"Done\" et pas déjà dans un autre Increment.",
+      "noEligiblePbis": "Aucun PBI éligible trouvé pour ce sprint.",
+      "selectAll": "Sélectionner tout",
+      "selected": "sélectionné(s)",
+      "subtitle": "Choisissez les PBIs qui sont terminés et prêts à être inclus dans cet Increment.",
+      "title": "Sélectionner les Product Backlog Items"
+    },
+    "progressSteps": {
+      "creatingIncrement": "Création de l'Increment...",
+      "deliveringIncrement": "Livraison de l'Increment...",
+      "redirecting": "Redirection..."
+    },
+    "summary": {
+      "pbisSelected": "PBIs sélectionnés",
+      "subtitle": "Vérifiez votre Increment avant la création.",
+      "title": "Résumé",
+      "totalStoryPoints": "Total Story Points"
+    },
+    "title": "Créer un Increment",
+    "toast": {
+      "createFailed": "Impossible de créer l'Increment. Veuillez réessayer.",
+      "createdAndDelivering": "Increment créé ! Livraison de l'Increment...",
+      "createdSuccess": "Increment créé avec succès !",
+      "deliverFailed": "Impossible de livrer l'Increment. Vous pouvez le livrer manuellement depuis la page de détail de l'Increment.",
+      "deliveredSuccess": "Increment livré ! Redirection vers la Sprint Review...",
+      "validationFailed": "Validation échouée"
+    },
+    "validation": {
+      "atLeastOnePbi": "Au moins un PBI doit être sélectionné",
+      "nameRequired": "Le nom est requis",
+      "noTeamSelected": "Aucune équipe sélectionnée. Veuillez sélectionner une équipe d'abord.",
+      "sprintRequired": "Veuillez sélectionner un sprint"
+    },
+    "workflowIndicator": {
+      "step2Of4": "Étape 2 sur 4 : Créer un Increment",
+      "step3Of4": "Étape 3 sur 4 : Livrer l'Increment",
+      "step4Of4": "Étape 4 sur 4 : Sprint Review",
+      "title": "Workflow de complétion du sprint"
+    },
+    "workflowSteps": {
+      "createIncrement": "Créer un Increment",
+      "deliverIncrement": "Livrer l'Increment",
+      "sprintCompleted": "Sprint terminé",
+      "sprintReview": "Sprint Review"
+    }
+  },
+  "createIncrement": "Créer un Increment",
+  "dates": {
+    "created": "Créé",
+    "delivered": "Livré"
+  },
+  "deliveryMethod": {
+    "earlyRelease": "Version anticipée",
+    "sprintReview": "Sprint Review"
+  },
+  "detail": {
+    "deliverIncrement": "Livrer l'Increment",
+    "deliverModal": {
+      "cancel": "Annuler",
+      "checkboxText": "Je comprends que cette action est irréversible et que l'Increment sera marqué comme livré aux parties prenantes.",
+      "closeDialog": "Fermer le dialogue",
+      "confirm": "Confirmer la livraison",
+      "confirmDeliveryAriaLabel": "Confirmer l'action de livraison",
+      "confirmText": "Je confirme que cet Increment respecte le Definition of Done et est prêt pour la livraison",
+      "delivering": "Livraison...",
+      "deliveryMethodLabel": "Méthode de livraison",
+      "description": "Marquer cet Increment comme livré et enregistrer la méthode de livraison.",
+      "earlyReleaseDescription": "Livré avant la fin du Sprint",
+      "earlyReleaseOption": "Version anticipée",
+      "modalDescription": "Marquer cet Increment comme livré aux parties prenantes. Cette action ne peut pas être annulée.",
+      "notesLabel": "Notes (optionnel)",
+      "notesPlaceholder": "Ajoutez des notes sur cette livraison...",
+      "sprintReviewDescription": "Présenté lors de la réunion Sprint Review",
+      "sprintReviewOption": "Sprint Review",
+      "title": "Livrer l'Increment"
+    },
+    "dodVerification": {
+      "byCategory": "Vérification par catégorie",
+      "byPbi": "Vérification par PBI",
+      "noVerifications": "Aucune vérification DoD enregistrée pour cet Increment.",
+      "noVerificationsForPbi": "Aucune vérification pour ce PBI.",
+      "noVerificationsHint": "Les vérifications sont capturées lors de l'achèvement d'un sprint.",
+      "title": "Vérification Definition of Done",
+      "totalVerifications": "Vérifications totales",
+      "verified": "Vérifié"
+    },
+    "error": {
+      "backToIncrements": "Retour aux Increments",
+      "title": "Impossible de charger l'Increment"
+    },
+    "loading": "Chargement de l'Increment...",
+    "overview": {
+      "created": "Créé",
+      "delivered": "Livré",
+      "deliveryMethod": "Méthode de livraison",
+      "description": "Description",
+      "noDescription": "Aucune description",
+      "pbisIncluded": "PBIs inclus",
+      "sprint": "Sprint",
+      "storyPoints": "Story Points",
+      "title": "Aperçu"
+    },
+    "pbis": {
+      "empty": "Aucun PBI inclus dans cet Increment.",
+      "title": "Product Backlog Items inclus"
+    },
+    "progressSteps": {
+      "completed": "Terminé",
+      "current": "Actuel",
+      "upcoming": "À venir"
+    },
+    "sprintCompletionWorkflow": "Workflow de complétion du sprint",
+    "timeline": {
+      "deliveredViaEarlyRelease": "Livré via version anticipée",
+      "deliveredViaSprintReview": "Livré via Sprint Review",
+      "incrementCreated": "Increment créé",
+      "title": "Chronologie"
+    },
+    "toast": {
+      "deliverFailed": "Impossible de livrer l'Increment. Veuillez réessayer.",
+      "deliveredSuccess": "Increment livré avec succès !"
+    },
+    "workflowStep3Of4": "Étape 3 sur 4 : Livrer l'Increment",
+    "workflowSteps": {
+      "createIncrement": "Créer un Increment",
+      "deliverIncrement": "Livrer l'Increment",
+      "sprintCompleted": "Sprint terminé",
+      "sprintReview": "Sprint Review"
+    }
+  },
+  "list": {
+    "ariaLabelFilter": "Filtrer les Increments par statut",
+    "ariaLabelSearch": "Rechercher des Increments",
+    "cardStats": {
+      "pbis": "PBIs",
+      "points": "Points"
+    },
+    "clearSearch": "Effacer la recherche",
+    "empty": {
+      "noIncrements": "Aucun Increment n'a encore été créé. Créez votre premier Increment pour commencer à suivre les livrables.",
+      "noSearchResults": "Aucun Increment ne correspond à votre recherche. Essayez d'ajuster vos filtres.",
+      "title": "Aucun Increment trouvé"
+    },
+    "filters": {
+      "active": "Actifs",
+      "all": "Tous",
+      "archived": "Archivés",
+      "delivered": "Livrés"
+    },
+    "searchPlaceholder": "Rechercher des Increments...",
+    "stats": {
+      "active": "Actifs",
+      "delivered": "Livrés",
+      "storyPoints": "Story Points",
+      "total": "Increments totaux"
+    }
+  },
+  "loading": "Chargement des Increments...",
+  "noDescription": "Aucune description fournie.",
+  "pts": "pts",
+  "skipToSprintReview": "Passer à la Sprint Review",
+  "sprintPrefix": "SPRINT {{sprintId}}",
+  "status": {
+    "archived": "Archivé",
+    "delivered": "Livré",
+    "draft": "Brouillon",
+    "verified": "Vérifié"
+  },
+  "subtitle": "Gérer et suivre vos Increments produit. Les Increments représentent une fonctionnalité exploitable, prête pour la livraison aux parties prenantes.",
+  "title": "Increments"
+}

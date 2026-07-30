@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import baseStyles from './base/ModalBase.module.css';
 import styles from './KeyboardHelpModal.module.css';
@@ -10,6 +11,8 @@ export interface KeyboardHelpModalProps {
 }
 
 export const KeyboardHelpModal: React.FC<KeyboardHelpModalProps> = ({ onClose }) => {
+  const { t } = useTranslation('sprint');
+
   return (
     <div
       className={baseStyles['modal-overlay']}
@@ -24,12 +27,12 @@ export const KeyboardHelpModal: React.FC<KeyboardHelpModalProps> = ({ onClose })
       >
         <div className={baseStyles['modal-header']}>
           <h2 id="keyboard-help-title" className={baseStyles['modal-title']}>
-            <KeyboardIcon size={24} aria-hidden="true" /> Keyboard Shortcuts
+            <KeyboardIcon size={24} aria-hidden="true" /> {t('keyboardHelp.title')}
           </h2>
           <button
             className={baseStyles['modal-close']}
             onClick={onClose}
-            aria-label="Close keyboard shortcuts help"
+            aria-label={t('keyboardHelp.closeShortcutsHelp')}
             data-modal-close
           >
             <CloseIcon size={14} aria-hidden="true" />
@@ -37,108 +40,107 @@ export const KeyboardHelpModal: React.FC<KeyboardHelpModalProps> = ({ onClose })
         </div>
         <div className={baseStyles['modal-body']}>
           <div className={styles['keyboard-shortcuts-grid']}>
+            {/* eslint-disable no-literal-jsx-string/no-literal-jsx-string -- Keyboard key names should not be translated */}
             <section className={styles['shortcut-section']}>
-              <h3 className={styles['shortcut-section-title']}>Navigation</h3>
+              <h3 className={styles['shortcut-section-title']}>{t('keyboardHelp.navigation')}</h3>
               <dl className={styles['shortcut-list']}>
                 <div className={styles['shortcut-item']}>
                   <dt>
                     <kbd>Tab</kbd>
                   </dt>
-                  <dd>Move focus to next element</dd>
+                  <dd>{t('keyboardHelp.moveFocusNext')}</dd>
                 </div>
                 <div className={styles['shortcut-item']}>
                   <dt>
                     <kbd>Shift</kbd> + <kbd>Tab</kbd>
                   </dt>
-                  <dd>Move focus to previous element</dd>
+                  <dd>{t('keyboardHelp.moveFocusPrevious')}</dd>
                 </div>
                 <div className={styles['shortcut-item']}>
                   <dt>
                     <kbd>Enter</kbd>
                   </dt>
-                  <dd>Open selected task or activate button</dd>
+                  <dd>{t('keyboardHelp.openOrActivate')}</dd>
                 </div>
                 <div className={styles['shortcut-item']}>
                   <dt>
                     <kbd>Escape</kbd>
                   </dt>
-                  <dd>Close modal or cancel action</dd>
+                  <dd>{t('keyboardHelp.closeOrCancel')}</dd>
                 </div>
               </dl>
             </section>
 
             <section className={styles['shortcut-section']}>
-              <h3 className={styles['shortcut-section-title']}>Task Actions</h3>
+              <h3 className={styles['shortcut-section-title']}>{t('keyboardHelp.taskActions')}</h3>
               <dl className={styles['shortcut-list']}>
                 <div className={styles['shortcut-item']}>
                   <dt>
-                    <kbd>→</kbd> (Right Arrow)
+                    <kbd>→</kbd> {t('keyboardHelp.rightArrowLabel')}
                   </dt>
-                  <dd>Move task to next column</dd>
+                  <dd>{t('keyboardHelp.moveNextColumn')}</dd>
                 </div>
                 <div className={styles['shortcut-item']}>
                   <dt>
-                    <kbd>←</kbd> (Left Arrow)
+                    <kbd>←</kbd> {t('keyboardHelp.leftArrowLabel')}
                   </dt>
-                  <dd>Move task to previous column</dd>
+                  <dd>{t('keyboardHelp.movePreviousColumn')}</dd>
                 </div>
                 <div className={styles['shortcut-item']}>
                   <dt>
                     <kbd>Space</kbd>
                   </dt>
-                  <dd>Start dragging task (use arrows to move)</dd>
+                  <dd>{t('keyboardHelp.startDragging')}</dd>
                 </div>
                 <div className={styles['shortcut-item']}>
                   <dt>
                     <kbd>e</kbd>
                   </dt>
-                  <dd>Edit selected task</dd>
+                  <dd>{t('keyboardHelp.editTask')}</dd>
                 </div>
                 <div className={styles['shortcut-item']}>
                   <dt>
                     <kbd>d</kbd>
                   </dt>
-                  <dd>Delete selected task</dd>
+                  <dd>{t('keyboardHelp.deleteTask')}</dd>
                 </div>
               </dl>
             </section>
 
             <section className={styles['shortcut-section']}>
-              <h3 className={styles['shortcut-section-title']}>Board Actions</h3>
+              <h3 className={styles['shortcut-section-title']}>{t('keyboardHelp.boardActions')}</h3>
               <dl className={styles['shortcut-list']}>
                 <div className={styles['shortcut-item']}>
                   <dt>
                     <kbd>n</kbd>
                   </dt>
-                  <dd>Create new task</dd>
+                  <dd>{t('keyboardHelp.createTask')}</dd>
                 </div>
                 <div className={styles['shortcut-item']}>
                   <dt>
                     <kbd>b</kbd>
                   </dt>
-                  <dd>Toggle burndown chart</dd>
+                  <dd>{t('keyboardHelp.toggleBurndown')}</dd>
                 </div>
                 <div className={styles['shortcut-item']}>
                   <dt>
                     <kbd>s</kbd>
                   </dt>
-                  <dd>Focus search box</dd>
+                  <dd>{t('keyboardHelp.focusSearch')}</dd>
                 </div>
                 <div className={styles['shortcut-item']}>
                   <dt>
                     <kbd>?</kbd>
                   </dt>
-                  <dd>Show this help dialog</dd>
+                  <dd>{t('keyboardHelp.showHelp')}</dd>
                 </div>
               </dl>
             </section>
           </div>
+          {/* eslint-enable no-literal-jsx-string/no-literal-jsx-string */}
 
           <div className={styles['keyboard-help-tip']}>
-            <p>
-              <strong>Tip:</strong> Use the skip link (first tab stop) to bypass navigation and go
-              directly to the task board.
-            </p>
+            <p>{t('keyboardHelp.tip')}</p>
           </div>
         </div>
         <div className={baseStyles['modal-footer']}>
@@ -146,7 +148,7 @@ export const KeyboardHelpModal: React.FC<KeyboardHelpModalProps> = ({ onClose })
             className={`${baseStyles.button} ${baseStyles['button-secondary']}`}
             onClick={onClose}
           >
-            Close
+            {t('keyboardHelp.close')}
           </button>
         </div>
       </div>

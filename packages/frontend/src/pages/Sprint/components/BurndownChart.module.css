@@ -93,7 +93,7 @@
   color: var(--color-text-secondary);
   padding: var(--space-2) 0;
   min-width: 40px;
-  text-align: right;
+  text-align: end;
   font-weight: var(--font-weight-medium);
 }
 
@@ -200,7 +200,7 @@
 }
 
 .data-table th {
-  text-align: left;
+  text-align: start;
   padding: var(--space-3);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-secondary);
@@ -239,7 +239,7 @@
     flex-direction: row;
     justify-content: space-between;
     padding: 0;
-    text-align: left;
+    text-align: start;
   }
 }
 

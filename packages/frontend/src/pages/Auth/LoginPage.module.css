@@ -169,7 +169,7 @@
 
 /* --- Forgot Password Link --- */
 .forgot-password-link {
-  text-align: right;
+  text-align: end;
   margin-top: calc(var(--space-1) * -1);
 }
 

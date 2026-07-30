@@ -1,6 +1,6 @@
-import { screen, render } from '@testing-library/react';
+import { screen, renderWithProviders, initTestI18n } from '../../../test-utils';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, vi, beforeAll } from 'vitest';
 
 import { UploadSummary } from './UploadSummary';
 import type { UploadResult } from './bulkUploadUtils';
@@ -43,6 +43,10 @@ describe('UploadSummary', () => {
     onViewItems: mockOnViewItems,
   };
 
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -58,26 +62,26 @@ describe('UploadSummary', () => {
     };
 
     it('should render success title', () => {
-      render(<UploadSummary {...defaultProps} result={successResult} />);
+      renderWithProviders(<UploadSummary {...defaultProps} result={successResult} />);
 
       expect(screen.getByText('Import Complete!')).toBeInTheDocument();
     });
 
     it('should render success subtitle', () => {
-      render(<UploadSummary {...defaultProps} result={successResult} />);
+      renderWithProviders(<UploadSummary {...defaultProps} result={successResult} />);
 
       expect(screen.getByText(/Successfully imported 5 backlog items/)).toBeInTheDocument();
     });
 
     it('should display total and imported labels', () => {
-      render(<UploadSummary {...defaultProps} result={successResult} />);
+      renderWithProviders(<UploadSummary {...defaultProps} result={successResult} />);
 
       expect(screen.getByText('Total')).toBeInTheDocument();
       expect(screen.getByText('Imported')).toBeInTheDocument();
     });
 
     it('should render View Imported Items button', () => {
-      render(<UploadSummary {...defaultProps} result={successResult} />);
+      renderWithProviders(<UploadSummary {...defaultProps} result={successResult} />);
 
       expect(screen.getByRole('button', { name: /view imported items/i })).toBeInTheDocument();
     });
@@ -97,19 +101,19 @@ describe('UploadSummary', () => {
     };
 
     it('should render partial success title', () => {
-      render(<UploadSummary {...defaultProps} result={partialResult} />);
+      renderWithProviders(<UploadSummary {...defaultProps} result={partialResult} />);
 
       expect(screen.getByText('Import Completed with Errors')).toBeInTheDocument();
     });
 
     it('should render partial success subtitle', () => {
-      render(<UploadSummary {...defaultProps} result={partialResult} />);
+      renderWithProviders(<UploadSummary {...defaultProps} result={partialResult} />);
 
       expect(screen.getByText(/3 items imported, 2 failed/)).toBeInTheDocument();
     });
 
     it('should display error list', () => {
-      render(<UploadSummary {...defaultProps} result={partialResult} />);
+      renderWithProviders(<UploadSummary {...defaultProps} result={partialResult} />);
 
       expect(screen.getByText('Errors (2)')).toBeInTheDocument();
     });
@@ -129,13 +133,13 @@ describe('UploadSummary', () => {
     };
 
     it('should render failure title', () => {
-      render(<UploadSummary {...defaultProps} result={failureResult} />);
+      renderWithProviders(<UploadSummary {...defaultProps} result={failureResult} />);
 
       expect(screen.getByText('Import Failed')).toBeInTheDocument();
     });
 
     it('should render failure subtitle', () => {
-      render(<UploadSummary {...defaultProps} result={failureResult} />);
+      renderWithProviders(<UploadSummary {...defaultProps} result={failureResult} />);
 
       expect(screen.getByText('No items were imported due to errors.')).toBeInTheDocument();
     });
@@ -156,14 +160,14 @@ describe('UploadSummary', () => {
     };
 
     it('should show only first 5 errors', () => {
-      render(<UploadSummary {...defaultProps} result={manyErrorsResult} />);
+      renderWithProviders(<UploadSummary {...defaultProps} result={manyErrorsResult} />);
 
       expect(screen.getByText('Row 1:')).toBeInTheDocument();
       expect(screen.getByText('Row 5:')).toBeInTheDocument();
     });
 
     it('should show "more errors" message', () => {
-      render(<UploadSummary {...defaultProps} result={manyErrorsResult} />);
+      renderWithProviders(<UploadSummary {...defaultProps} result={manyErrorsResult} />);
 
       expect(screen.getByText(/and 5 more errors/)).toBeInTheDocument();
     });
@@ -180,7 +184,7 @@ describe('UploadSummary', () => {
     };
 
     it('should call onClose when clicking close button', async () => {
-      render(<UploadSummary {...defaultProps} result={successResult} />);
+      renderWithProviders(<UploadSummary {...defaultProps} result={successResult} />);
 
       await userEvent.click(screen.getByRole('button', { name: /close/i }));
 
@@ -188,7 +192,7 @@ describe('UploadSummary', () => {
     });
 
     it('should call onViewItems when clicking view items button', async () => {
-      render(<UploadSummary {...defaultProps} result={successResult} />);
+      renderWithProviders(<UploadSummary {...defaultProps} result={successResult} />);
 
       await userEvent.click(screen.getByRole('button', { name: /view imported items/i }));
 
@@ -207,7 +211,7 @@ describe('UploadSummary', () => {
         createdItems: [],
       };
 
-      render(<UploadSummary {...defaultProps} result={singleResult} />);
+      renderWithProviders(<UploadSummary {...defaultProps} result={singleResult} />);
 
       expect(screen.getByText(/Successfully imported 1 backlog item\./)).toBeInTheDocument();
     });
@@ -222,7 +226,7 @@ describe('UploadSummary', () => {
         createdItems: [],
       };
 
-      render(<UploadSummary {...defaultProps} result={multipleResult} />);
+      renderWithProviders(<UploadSummary {...defaultProps} result={multipleResult} />);
 
       expect(screen.getByText(/Successfully imported 2 backlog items\./)).toBeInTheDocument();
     });

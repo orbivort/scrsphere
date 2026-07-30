@@ -1,0 +1,39 @@
+{
+  "auth": {
+    "confirmPasswordRequired": "La confirmación de contraseña es obligatoria",
+    "currentPasswordRequired": "La contraseña actual es obligatoria",
+    "deleteConfirmation": "La confirmación debe ser exactamente \"DELETE MY ACCOUNT\"",
+    "emailRequired": "El correo electrónico es obligatorio",
+    "invalidEmail": "Ingrese una dirección de correo electrónico válida",
+    "invalidPassword": "La contraseña es inválida",
+    "newPasswordRequired": "La nueva contraseña es obligatoria",
+    "passwordNeedsLowercase": "La contraseña debe contener una letra minúscula",
+    "passwordNeedsNumber": "La contraseña debe contener un número",
+    "passwordNeedsSpecialChar": "La contraseña debe contener un carácter especial",
+    "passwordNeedsUppercase": "La contraseña debe contener una letra mayúscula",
+    "passwordRequired": "La contraseña es obligatoria",
+    "passwordTooShort": "La contraseña no cumple con el requisito de longitud mínima",
+    "passwordsDoNotMatch": "Las contraseñas no coinciden",
+    "refreshTokenRequired": "El token de actualización es obligatorio",
+    "resetTokenRequired": "El token de restablecimiento es obligatorio",
+    "scheduleDeletionConfirmation": "La confirmación debe ser exactamente \"SCHEDULE DELETION\"",
+    "termsRequired": "Debe aceptar los términos de servicio"
+  },
+  "fieldRequired": "Este campo es obligatorio",
+  "fieldTooLong": "Este campo es demasiado largo",
+  "firstName": "Nombre",
+  "invalidEmail": "Ingrese una dirección de correo electrónico válida",
+  "lastName": "Apellido",
+  "passwordTooShort": "La contraseña debe tener al menos {{min}} caracteres",
+  "passwordsDoNotMatch": "Las contraseñas no coinciden",
+  "workflow": {
+    "authenticationRequired": "Se requiere autenticación de usuario para esta transición",
+    "initialStatusMustBe": "El estado inicial debe ser {{defaultStatus}}",
+    "noWorkflow": "No hay flujo de trabajo configurado para el tipo de entidad {{entityType}}",
+    "permissionDenied": "No tiene permiso para realizar esta transición",
+    "permissionDeniedRoles": "No tiene permiso para realizar esta transición. Roles requeridos: {{roles}}",
+    "targetStateNotFound": "El estado objetivo {{toStatus}} no existe en el flujo de trabajo",
+    "transitionDisabled": "Esta transición está actualmente deshabilitada",
+    "transitionNotAllowed": "La transición de {{fromStatus}} a {{toStatus}} no está permitida"
+  }
+}

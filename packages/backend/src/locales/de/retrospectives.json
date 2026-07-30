@@ -1,0 +1,21 @@
+{
+  "actionItemCreated": "Aktionspunkt \"{{title}}\" erfolgreich erstellt",
+  "actionItemDeleted": "Aktionspunkt erfolgreich gelöscht",
+  "actionItemUpdated": "Aktionspunkt \"{{title}}\" erfolgreich aktualisiert",
+  "attendeeAdded": "Teilnehmer erfolgreich hinzugefügt",
+  "attendeeRemoved": "Teilnehmer erfolgreich entfernt",
+  "categoryDidntGoWell": "Was nicht gut lief",
+  "categoryImprovement": "Verbesserungen",
+  "categoryWentWell": "Was gut lief",
+  "itemCreated": "Retrospective-Element erfolgreich erstellt",
+  "itemDeleted": "Retrospective-Element erfolgreich gelöscht",
+  "itemUpdated": "Retrospective-Element erfolgreich aktualisiert",
+  "retrospectiveCreated": "Retrospective erfolgreich erstellt",
+  "retrospectiveUpdated": "Retrospective erfolgreich aktualisiert",
+  "statusCancelled": "Abgebrochen",
+  "statusCompleted": "Abgeschlossen",
+  "statusInProgress": "In Bearbeitung",
+  "statusPending": "Ausstehend",
+  "voteAdded": "Abstimmung erfolgreich hinzugefügt",
+  "voteRemoved": "Abstimmung erfolgreich entfernt"
+}

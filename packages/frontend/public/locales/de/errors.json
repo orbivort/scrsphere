@@ -1,0 +1,53 @@
+{
+  "chunk": {
+    "loadFailed": "Anwendungsressourcen konnten nicht geladen werden.",
+    "refreshRequired": "Eine neue Version ist verfügbar. Bitte laden Sie die Seite neu."
+  },
+  "generic": {
+    "contactSupport": "Wenn das Problem weiterhin besteht, kontaktieren Sie bitte den Support.",
+    "goBack": "Zurück",
+    "retry": "Erneut versuchen",
+    "tryAgain": "Bitte versuchen Sie es erneut.",
+    "unexpectedError": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
+  },
+  "http": {
+    "badRequest": "Ungültige Anfrage. Bitte überprüfen Sie Ihre Eingabe und versuchen Sie es erneut.",
+    "conflict": "Ein Konflikt ist aufgetreten. Die Ressource wurde möglicherweise von einem anderen Benutzer geändert.",
+    "forbidden": "Zugriff verweigert. Sie haben keine Berechtigung für diese Ressource.",
+    "internalServerError": "Serverfehler. Bitte versuchen Sie es später erneut.",
+    "notFound": "Ressource nicht gefunden. Sie wurde möglicherweise gelöscht.",
+    "serviceUnavailable": "Dienst vorübergehend nicht verfügbar. Bitte versuchen Sie es später erneut.",
+    "unauthorized": "Authentifizierung erforderlich. Bitte melden Sie sich an.",
+    "validationFailed": "Validierung fehlgeschlagen. Bitte überprüfen Sie Ihre Eingabe."
+  },
+  "network": {
+    "connectionLost": "Netzwerkfehler. Bitte überprüfen Sie Ihre Internetverbindung.",
+    "serverUnreachable": "Server kann nicht erreicht werden. Bitte überprüfen Sie Ihre Verbindung.",
+    "timeout": "Anfrage hat das Zeitlimit überschritten. Bitte versuchen Sie es erneut."
+  },
+  "permission": {
+    "accessDenied": "Zugriff verweigert.",
+    "loginRequired": "Bitte melden Sie sich an, um fortzufahren.",
+    "noPermission": "Sie haben keine Berechtigung, diese Aktion auszuführen.",
+    "notAuthorized": "Sie haben keine ausreichenden Berechtigungen für diese Aktion."
+  },
+  "session": {
+    "absoluteTimeout": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
+    "concurrentSession": "Ihre Sitzung wurde beendet, da Sie sich von einem anderen Gerät angemeldet haben.",
+    "expired": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
+    "idleTimeout": "Ihre Sitzung wurde aufgrund von Inaktivität beendet."
+  },
+  "title": "Fehler",
+  "workflow": {
+    "alreadyExists": "{{resource}} existiert bereits.",
+    "cannotDelete": "{{resource}} kann nicht gelöscht werden.",
+    "cannotModify": "{{resource}} kann im aktuellen Zustand nicht geändert werden.",
+    "createFailed": "{{resource}} konnte nicht erstellt werden.",
+    "deleteFailed": "{{resource}} konnte nicht gelöscht werden.",
+    "loadFailed": "{{resource}} konnte nicht geladen werden.",
+    "notFound": "{{resource}} nicht gefunden.",
+    "operationFailed": "{{operation}} fehlgeschlagen. Bitte versuchen Sie es erneut.",
+    "saveFailed": "{{resource}} konnte nicht gespeichert werden.",
+    "updateFailed": "{{resource}} konnte nicht aktualisiert werden."
+  }
+}

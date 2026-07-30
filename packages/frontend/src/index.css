@@ -171,11 +171,11 @@ select:focus {
 }
 
 .text-left {
-  text-align: left;
+  text-align: start;
 }
 
 .text-right {
-  text-align: right;
+  text-align: end;
 }
 
 /* ========================================

@@ -1,6 +1,5 @@
-﻿import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { MemoryRouter } from 'react-router';
+import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
+import { screen, fireEvent, renderWithProviders, initTestI18n, i18nT } from '../../test-utils';
 
 import { TeamImpactWarning } from './TeamImpactWarning';
 import type { TeamMembership } from '../../types/auth.types';
@@ -27,9 +26,9 @@ vi.mock('./TeamImpactWarning.module.css', () => ({
   },
 }));
 
-const renderWithRouter = (component: React.ReactElement) => {
-  return render(<MemoryRouter>{component}</MemoryRouter>);
-};
+beforeAll(async () => {
+  await initTestI18n();
+});
 
 const createMockTeam = (overrides: Partial<TeamMembership> = {}): TeamMembership => ({
   id: 'team-1',
@@ -51,7 +50,7 @@ describe('TeamImpactWarning Component', () => {
         createMockTeam({ id: 'team-2', name: 'Beta Team', role: 'DEVELOPER' }),
       ];
 
-      renderWithRouter(<TeamImpactWarning teams={teams} isBlocked={false} />);
+      renderWithProviders(<TeamImpactWarning teams={teams} isBlocked={false} />);
 
       expect(screen.getByText('Alpha Team')).toBeInTheDocument();
       expect(screen.getByText('PRODUCT_OWNER')).toBeInTheDocument();
@@ -66,25 +65,29 @@ describe('TeamImpactWarning Component', () => {
         createMockTeam({ id: 'team-3' }),
       ];
 
-      renderWithRouter(<TeamImpactWarning teams={teams} isBlocked={false} />);
+      renderWithProviders(<TeamImpactWarning teams={teams} isBlocked={false} />);
 
-      expect(screen.getByText('You are a member of 3 teams:')).toBeInTheDocument();
+      expect(
+        screen.getByText(i18nT('deleteAccount.teamImpact.description', { count: 3 }))
+      ).toBeInTheDocument();
     });
 
     it('should display singular "team" for single membership', () => {
       const teams: TeamMembership[] = [createMockTeam()];
 
-      renderWithRouter(<TeamImpactWarning teams={teams} isBlocked={false} />);
+      renderWithProviders(<TeamImpactWarning teams={teams} isBlocked={false} />);
 
-      expect(screen.getByText('You are a member of 1 team:')).toBeInTheDocument();
+      expect(
+        screen.getByText(i18nT('deleteAccount.teamImpact.description', { count: 1 }))
+      ).toBeInTheDocument();
     });
 
     it('should display section title', () => {
       const teams: TeamMembership[] = [createMockTeam()];
 
-      renderWithRouter(<TeamImpactWarning teams={teams} isBlocked={false} />);
+      renderWithProviders(<TeamImpactWarning teams={teams} isBlocked={false} />);
 
-      expect(screen.getByText('Team Impact')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('deleteAccount.teamImpact.title'))).toBeInTheDocument();
     });
 
     it('should display removal message for regular teams', () => {
@@ -92,9 +95,11 @@ describe('TeamImpactWarning Component', () => {
         createMockTeam({ id: 'team-1', name: 'Regular Team', isLastPO: false }),
       ];
 
-      renderWithRouter(<TeamImpactWarning teams={teams} isBlocked={false} />);
+      renderWithProviders(<TeamImpactWarning teams={teams} isBlocked={false} />);
 
-      expect(screen.getByText('You will be removed from this team.')).toBeInTheDocument();
+      expect(
+        screen.getByText(i18nT('deleteAccount.teamImpact.regular.message'))
+      ).toBeInTheDocument();
     });
   });
 
@@ -109,7 +114,7 @@ describe('TeamImpactWarning Component', () => {
         }),
       ];
 
-      const { container } = renderWithRouter(<TeamImpactWarning teams={teams} isBlocked />);
+      const { container } = renderWithProviders(<TeamImpactWarning teams={teams} isBlocked />);
 
       expect(container.querySelector('.team-impact-section-blocked')).toBeInTheDocument();
     });
@@ -119,13 +124,10 @@ describe('TeamImpactWarning Component', () => {
         createMockTeam({ id: 'team-1', name: 'Blocked Team', isLastPO: true }),
       ];
 
-      renderWithRouter(<TeamImpactWarning teams={teams} isBlocked />);
+      renderWithProviders(<TeamImpactWarning teams={teams} isBlocked />);
 
-      expect(screen.getByText(/You are the only Product Owner/)).toBeInTheDocument();
       expect(
-        screen.getByText(
-          /If you delete your account, this team will have no Product Owner. You can schedule deletion with a 14-day grace period./
-        )
+        screen.getByText(i18nT('deleteAccount.teamImpact.blocked.warning'))
       ).toBeInTheDocument();
     });
 
@@ -134,18 +136,26 @@ describe('TeamImpactWarning Component', () => {
         createMockTeam({ id: 'team-1', name: 'Blocked Team', isLastPO: true }),
       ];
 
-      renderWithRouter(<TeamImpactWarning teams={teams} isBlocked />);
+      renderWithProviders(<TeamImpactWarning teams={teams} isBlocked />);
 
       expect(
-        screen.getByRole('button', { name: /Go to Blocked Team settings/ })
+        screen.getByRole('button', {
+          name: i18nT('deleteAccount.teamImpact.blocked.goToSettingsAria', {
+            teamName: 'Blocked Team',
+          }),
+        })
       ).toBeInTheDocument();
-      expect(screen.getByText(/Go to Team Settings/)).toBeInTheDocument();
+      expect(
+        screen.getByText(i18nT('deleteAccount.teamImpact.blocked.goToSettings'))
+      ).toBeInTheDocument();
     });
 
     it('should not show blocked state when isBlocked is false', () => {
       const teams: TeamMembership[] = [createMockTeam({ id: 'team-1', isLastPO: false })];
 
-      const { container } = renderWithRouter(<TeamImpactWarning teams={teams} isBlocked={false} />);
+      const { container } = renderWithProviders(
+        <TeamImpactWarning teams={teams} isBlocked={false} />
+      );
 
       expect(container.querySelector('.team-impact-section-blocked')).not.toBeInTheDocument();
     });
@@ -156,15 +166,19 @@ describe('TeamImpactWarning Component', () => {
         createMockTeam({ id: 'team-2', name: 'Regular Team', isLastPO: false }),
       ];
 
-      renderWithRouter(<TeamImpactWarning teams={teams} isBlocked />);
+      renderWithProviders(<TeamImpactWarning teams={teams} isBlocked />);
 
       // Blocked team should show warning
       expect(screen.getByText('Blocked Team')).toBeInTheDocument();
-      expect(screen.getByText(/You are the only Product Owner/)).toBeInTheDocument();
+      expect(
+        screen.getByText(i18nT('deleteAccount.teamImpact.blocked.warning'))
+      ).toBeInTheDocument();
 
       // Regular team should show removal message
       expect(screen.getByText('Regular Team')).toBeInTheDocument();
-      expect(screen.getByText('You will be removed from this team.')).toBeInTheDocument();
+      expect(
+        screen.getByText(i18nT('deleteAccount.teamImpact.regular.message'))
+      ).toBeInTheDocument();
     });
   });
 
@@ -174,9 +188,11 @@ describe('TeamImpactWarning Component', () => {
         createMockTeam({ id: 'team-123', name: 'Test Team', isLastPO: true }),
       ];
 
-      renderWithRouter(<TeamImpactWarning teams={teams} isBlocked />);
+      renderWithProviders(<TeamImpactWarning teams={teams} isBlocked />);
 
-      const settingsLink = screen.getByRole('button', { name: /Go to Test Team settings/ });
+      const settingsLink = screen.getByRole('button', {
+        name: i18nT('deleteAccount.teamImpact.blocked.goToSettingsAria', { teamName: 'Test Team' }),
+      });
       fireEvent.click(settingsLink);
 
       // The navigation is handled by react-router, we just verify the button exists and is clickable
@@ -186,7 +202,7 @@ describe('TeamImpactWarning Component', () => {
 
   describe('Empty Teams Tests', () => {
     it('should return null when teams array is empty', () => {
-      const { container } = renderWithRouter(<TeamImpactWarning teams={[]} isBlocked={false} />);
+      const { container } = renderWithProviders(<TeamImpactWarning teams={[]} isBlocked={false} />);
 
       expect(container.firstChild).toBeNull();
     });
@@ -195,7 +211,7 @@ describe('TeamImpactWarning Component', () => {
       // Component doesn't handle undefined teams - it expects TeamMembership[]
       // This test documents the current behavior
       expect(() => {
-        renderWithRouter(
+        renderWithProviders(
           <TeamImpactWarning teams={undefined as unknown as TeamMembership[]} isBlocked={false} />
         );
       }).toThrow();
@@ -206,7 +222,7 @@ describe('TeamImpactWarning Component', () => {
     it('should have role="region" on the section', () => {
       const teams: TeamMembership[] = [createMockTeam()];
 
-      renderWithRouter(<TeamImpactWarning teams={teams} isBlocked={false} />);
+      renderWithProviders(<TeamImpactWarning teams={teams} isBlocked={false} />);
 
       expect(screen.getByRole('region')).toBeInTheDocument();
     });
@@ -214,7 +230,7 @@ describe('TeamImpactWarning Component', () => {
     it('should have aria-labelledby pointing to title', () => {
       const teams: TeamMembership[] = [createMockTeam()];
 
-      renderWithRouter(<TeamImpactWarning teams={teams} isBlocked={false} />);
+      renderWithProviders(<TeamImpactWarning teams={teams} isBlocked={false} />);
 
       const region = screen.getByRole('region');
       expect(region).toHaveAttribute('aria-labelledby', 'team-impact-title');
@@ -223,7 +239,7 @@ describe('TeamImpactWarning Component', () => {
     it('should have role="alert" on warning messages', () => {
       const teams: TeamMembership[] = [createMockTeam({ id: 'team-1', isLastPO: true })];
 
-      renderWithRouter(<TeamImpactWarning teams={teams} isBlocked />);
+      renderWithProviders(<TeamImpactWarning teams={teams} isBlocked />);
 
       const alert = screen.getByRole('alert');
       expect(alert).toBeInTheDocument();
@@ -234,10 +250,10 @@ describe('TeamImpactWarning Component', () => {
         createMockTeam({ id: 'team-1', name: 'My Team', isLastPO: true }),
       ];
 
-      renderWithRouter(<TeamImpactWarning teams={teams} isBlocked />);
+      renderWithProviders(<TeamImpactWarning teams={teams} isBlocked />);
 
       const button = screen.getByRole('button', {
-        name: /Go to My Team settings to assign a new Product Owner/,
+        name: i18nT('deleteAccount.teamImpact.blocked.goToSettingsAria', { teamName: 'My Team' }),
       });
       expect(button).toBeInTheDocument();
     });
@@ -250,7 +266,7 @@ describe('TeamImpactWarning Component', () => {
         createMockTeam({ id: 'team-2', name: 'Blocked Team 2', isLastPO: true }),
       ];
 
-      renderWithRouter(<TeamImpactWarning teams={teams} isBlocked />);
+      renderWithProviders(<TeamImpactWarning teams={teams} isBlocked />);
 
       expect(screen.getByText('Blocked Team 1')).toBeInTheDocument();
       expect(screen.getByText('Blocked Team 2')).toBeInTheDocument();
@@ -264,7 +280,7 @@ describe('TeamImpactWarning Component', () => {
         createMockTeam({ id: 'team-3', name: 'Team 3' }),
       ];
 
-      renderWithRouter(<TeamImpactWarning teams={teams} isBlocked={false} />);
+      renderWithProviders(<TeamImpactWarning teams={teams} isBlocked={false} />);
 
       expect(screen.getByText('Team 1')).toBeInTheDocument();
       expect(screen.getByText('Team 2')).toBeInTheDocument();
@@ -275,7 +291,7 @@ describe('TeamImpactWarning Component', () => {
       const longName = 'This is a very long team name that should still be displayed correctly';
       const teams: TeamMembership[] = [createMockTeam({ id: 'team-1', name: longName })];
 
-      renderWithRouter(<TeamImpactWarning teams={teams} isBlocked={false} />);
+      renderWithProviders(<TeamImpactWarning teams={teams} isBlocked={false} />);
 
       expect(screen.getByText(longName)).toBeInTheDocument();
     });
@@ -284,7 +300,7 @@ describe('TeamImpactWarning Component', () => {
       const specialName = 'Team <Alpha> & "Beta" \'Gamma\'';
       const teams: TeamMembership[] = [createMockTeam({ id: 'team-1', name: specialName })];
 
-      renderWithRouter(<TeamImpactWarning teams={teams} isBlocked={false} />);
+      renderWithProviders(<TeamImpactWarning teams={teams} isBlocked={false} />);
 
       expect(screen.getByText(specialName)).toBeInTheDocument();
     });

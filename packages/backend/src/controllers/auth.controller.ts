@@ -12,9 +12,17 @@ import {
   getAccessTokenCookieOptions,
   getRefreshTokenCookieOptions,
   getClearCookieOptions,
+  getLocaleCookieOptions,
   COOKIE_NAMES,
 } from '../utils/cookieConfig';
-import { auditAuthEvent } from '../utils/auditLogger';
+import config from '../config/index.js';
+import {
+  auditAuthEvent,
+  auditResourceEvent,
+  AuditEventTypes,
+  AuditActions,
+  AuditResults,
+} from '../utils/auditLogger';
 import type {
   RegisterInput,
   LoginInput,
@@ -26,6 +34,8 @@ import type {
   ForgotPasswordInput,
   ResetPasswordInput,
 } from '../validations/auth.validation';
+import { DEFAULT_LOCALE, isSupportedLocale } from '@scrumooth/shared';
+import prisma from '../utils/prisma';
 
 interface SessionInfo {
   userAgent?: string;
@@ -75,6 +85,13 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     getRefreshTokenCookieOptions()
   );
 
+  // Set locale cookie for SSR/refresh (validated against supported locales)
+  res.cookie(
+    COOKIE_NAMES.LOCALE,
+    isSupportedLocale(result.user.locale) ? result.user.locale : DEFAULT_LOCALE,
+    getLocaleCookieOptions('node', config.nodeEnv === 'production')
+  );
+
   // Return user and session info, but NOT tokens
   res.status(201).json(
     createSuccessResponse({
@@ -105,6 +122,13 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
       COOKIE_NAMES.REFRESH_TOKEN,
       result.tokens.refreshToken,
       getRefreshTokenCookieOptions()
+    );
+
+    // Set locale cookie for SSR/refresh (validated against supported locales)
+    res.cookie(
+      COOKIE_NAMES.LOCALE,
+      isSupportedLocale(result.user.locale) ? result.user.locale : DEFAULT_LOCALE,
+      getLocaleCookieOptions('node', config.nodeEnv === 'production')
     );
 
     // Return user and session info, but NOT tokens
@@ -353,7 +377,33 @@ export const updateProfile = asyncHandler(async (req: Request, res: Response) =>
   if (!userId) {
     throw new UnauthorizedError('User not authenticated');
   }
+
+  // Fetch previous locale before the update for audit comparison
+  const previous = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { locale: true },
+  });
+
   const user = await authService.updateProfile(userId, data);
+
+  // Audit-log locale change if it changed
+  if (data.locale && data.locale !== previous?.locale) {
+    auditResourceEvent(
+      AuditEventTypes.USER,
+      AuditActions.UPDATE,
+      AuditResults.SUCCESS,
+      { type: 'user', id: userId, name: user.email },
+      { field: 'locale', from: previous?.locale ?? DEFAULT_LOCALE, to: data.locale }
+    );
+  }
+
+  // Keep the locale cookie in sync for SSR/refresh (validated against supported locales)
+  res.cookie(
+    COOKIE_NAMES.LOCALE,
+    isSupportedLocale(user.locale) ? user.locale : DEFAULT_LOCALE,
+    getLocaleCookieOptions('node', config.nodeEnv === 'production')
+  );
+
   res.json(createSuccessResponse(user));
 });
 

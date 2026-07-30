@@ -1,6 +1,8 @@
 // Mock API Service for Prototype Demo
 // This service returns mock data instead of making real API calls
 
+import i18n from 'i18next';
+
 import {
   RetrospectiveCategory,
   IncrementStatus,
@@ -146,6 +148,7 @@ class MockApiService {
       email: userData.email,
       firstName: userData.firstName,
       lastName: userData.lastName,
+      locale: userData.locale ?? 'en',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -947,15 +950,21 @@ class MockApiService {
     const submittedUserIds = new Set(todayUpdates.map((u) => u.userId));
     const pendingMembers = (team.members ?? []).filter((m) => !submittedUserIds.has(m.userId));
 
+    // Note: Mock API doesn't do i18n - this matches the backend response pattern
+    // In real API, backend handles translation via request locale
+    const message =
+      pendingMembers.length > 0
+        ? pendingMembers.length === 1
+          ? 'Reminders sent to 1 team member'
+          : `Reminders sent to ${pendingMembers.length} team members`
+        : 'All team members have submitted their updates';
+
     return {
       success: true,
       data: {
         sentCount: pendingMembers.length,
         totalPending: pendingMembers.length,
-        message:
-          pendingMembers.length > 0
-            ? `Reminder sent to ${pendingMembers.length} team member(s)`
-            : 'All team members have already submitted their updates',
+        message,
       },
     };
   }
@@ -1305,8 +1314,14 @@ class MockApiService {
       if (startDate.getFullYear() > year) break;
 
       const formattedSprintNum = sprintNumber.toString().padStart(2, '0');
-      const formatDateSimple = (d: Date) => `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`;
-      const dateRange = `${formatDateSimple(startDate)}-${formatDateSimple(endDate)}`;
+      const formatDateSimple = (d: Date) => {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+      };
+      // Use en-dash (U+2013) as typographically correct range separator
+      const dateRange = `${formatDateSimple(startDate)} – ${formatDateSimple(endDate)}`;
       const name = `Sprint-${config.label}-${shortYear}${formattedSprintNum} (${dateRange})`;
 
       sprints.push({
@@ -1536,42 +1551,42 @@ class MockApiService {
         {
           id: 'dor-1',
           description: 'Clear title and description',
-          category: 'Documentation',
+          category: 'acceptance',
           isActive: true,
           order: 1,
         },
         {
           id: 'dor-2',
           description: 'Acceptance criteria defined',
-          category: 'Documentation',
+          category: 'acceptance',
           isActive: true,
           order: 2,
         },
         {
           id: 'dor-3',
           description: 'Story points estimated',
-          category: 'Estimation',
+          category: 'estimation',
           isActive: true,
           order: 3,
         },
         {
           id: 'dor-4',
           description: 'Business value assigned',
-          category: 'Estimation',
+          category: 'value',
           isActive: true,
           order: 4,
         },
         {
           id: 'dor-5',
           description: 'Dependencies identified',
-          category: 'Dependencies',
+          category: 'dependencies',
           isActive: true,
           order: 5,
         },
         {
           id: 'dor-6',
           description: 'No blockers',
-          category: 'Dependencies',
+          category: 'dependencies',
           isActive: true,
           order: 6,
         },
@@ -1586,56 +1601,56 @@ class MockApiService {
         {
           id: 'dor-alpha-1',
           description: 'User story has a clear title and detailed description',
-          category: 'Documentation',
+          category: 'acceptance',
           isActive: true,
           order: 1,
         },
         {
           id: 'dor-alpha-2',
           description: 'Acceptance criteria are defined and testable',
-          category: 'Documentation',
+          category: 'acceptance',
           isActive: true,
           order: 2,
         },
         {
           id: 'dor-alpha-3',
           description: 'Story points estimated by the team',
-          category: 'Estimation',
+          category: 'estimation',
           isActive: true,
           order: 3,
         },
         {
           id: 'dor-alpha-4',
           description: 'Business value and priority assigned by Product Owner',
-          category: 'Estimation',
+          category: 'value',
           isActive: true,
           order: 4,
         },
         {
           id: 'dor-alpha-5',
           description: 'Dependencies identified and documented',
-          category: 'Dependencies',
+          category: 'dependencies',
           isActive: true,
           order: 5,
         },
         {
           id: 'dor-alpha-6',
           description: 'No external blockers preventing sprint inclusion',
-          category: 'Dependencies',
+          category: 'dependencies',
           isActive: true,
           order: 6,
         },
         {
           id: 'dor-alpha-7',
           description: 'Technical approach discussed and agreed upon',
-          category: 'Technical',
+          category: 'technical',
           isActive: true,
           order: 7,
         },
         {
           id: 'dor-alpha-8',
           description: 'UI/UX designs reviewed (if applicable)',
-          category: 'Design',
+          category: 'clarity',
           isActive: true,
           order: 8,
         },
@@ -2692,26 +2707,26 @@ class MockApiService {
         },
       ],
       actionItems: [
-        {
-          id: 'action-2-1',
-          retrospectiveId: 'retro-2',
-          title: 'Create time-boxing guidelines for ceremonies',
-          description: 'Define time limits for each ceremony with pre-read requirements',
-          ownerId: UUIDS.users.scrumMaster,
-          status: 'IN_PROGRESS',
-          addedToSprintBacklog: true,
-          createdAt: '2026-02-01T18:45:00Z',
-        },
-        {
-          id: 'action-2-2',
-          retrospectiveId: 'retro-2',
-          title: 'Update DoD with mobile testing requirement',
-          description: 'Add mobile responsiveness testing to Definition of Done checklist',
-          ownerId: UUIDS.users.developer2,
-          status: 'PENDING',
-          addedToSprintBacklog: false,
-          createdAt: '2026-02-01T18:50:00Z',
-        },
+        // {
+        //   id: 'action-2-1',
+        //   retrospectiveId: 'retro-2',
+        //   title: 'Create time-boxing guidelines for ceremonies',
+        //   description: 'Define time limits for each ceremony with pre-read requirements',
+        //   ownerId: UUIDS.users.scrumMaster,
+        //   status: 'IN_PROGRESS',
+        //   addedToSprintBacklog: true,
+        //   createdAt: '2026-02-01T18:45:00Z',
+        // },
+        // {
+        //   id: 'action-2-2',
+        //   retrospectiveId: 'retro-2',
+        //   title: 'Update DoD with mobile testing requirement',
+        //   description: 'Add mobile responsiveness testing to Definition of Done checklist',
+        //   ownerId: UUIDS.users.developer2,
+        //   status: 'PENDING',
+        //   addedToSprintBacklog: false,
+        //   createdAt: '2026-02-01T18:50:00Z',
+        // },
       ],
       summary:
         'Sprint 2 was highly productive with successful Kanban and dashboard implementations. Key issues: sprint planning duration and mobile testing timing. Action items include time-boxing guidelines and updating DoD for mobile testing. All 6 attendees participated including stakeholder David Chen.',
@@ -3854,7 +3869,10 @@ class MockApiService {
     }
     return mockSuccess({
       valid: false,
-      message: `Transition from ${fromStatus} to ${toStatus} is not allowed for ${entityType}`,
+      message: i18n.t('validation.workflow.transitionNotAllowed' as never, {
+        fromStatus,
+        toStatus,
+      }) as string,
     });
   }
 

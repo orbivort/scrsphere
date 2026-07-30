@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Backlog Page Loading State Tests
  *
  * Test Coverage:
@@ -10,15 +10,14 @@
  * - Accessibility during loading (ARIA attributes)
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor, act } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MemoryRouter } from 'react-router';
+import { describe, it, expect, vi, beforeEach, beforeAll, afterEach } from 'vitest';
+import { renderWithProviders, screen, waitFor, act } from '../../test-utils';
 
 import { ProductBacklog } from './Backlog';
 import { useTeamStore } from '../../store';
 import { apiService, definitionService } from '../../services';
 import { ItemStatus, MoSCoWPriority } from '../../types';
+import { initTestI18n } from '../../test-utils';
 
 // Mock stores
 vi.mock('../../store', () => ({
@@ -116,28 +115,6 @@ vi.mock('./modals', () => ({
   UnsavedChangesModal: () => <div data-testid="unsaved-changes-modal" />,
 }));
 
-// Test utilities
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        staleTime: 0,
-      },
-    },
-  });
-
-const renderBacklog = (queryClient?: QueryClient) => {
-  const testQueryClient = queryClient || createTestQueryClient();
-  return render(
-    <QueryClientProvider client={testQueryClient}>
-      <MemoryRouter>
-        <ProductBacklog />
-      </MemoryRouter>
-    </QueryClientProvider>
-  );
-};
-
 // Mock data
 const mockTeam = {
   id: 'team-1',
@@ -177,6 +154,10 @@ describe('Backlog - Loading State Tests', () => {
   let mockApiService: typeof apiService;
   let mockDefinitionService: typeof definitionService;
 
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.useFakeTimers();
     mockUseTeamStore = vi.mocked(useTeamStore);
@@ -198,16 +179,16 @@ describe('Backlog - Loading State Tests', () => {
       mockApiService.getProductBacklog.mockImplementation(() => new Promise(() => {}));
       mockApiService.getProductGoals.mockImplementation(() => new Promise(() => {}));
 
-      renderBacklog();
+      renderWithProviders(<ProductBacklog />);
 
-      expect(screen.getAllByText(/Loading Product Backlog/i)[0]).toBeInTheDocument();
+      expect(screen.getAllByText(/Product Backlog/i)[0]).toBeInTheDocument();
     });
 
     it('should show loading spinner during initial load', () => {
       mockApiService.getProductBacklog.mockImplementation(() => new Promise(() => {}));
       mockApiService.getProductGoals.mockImplementation(() => new Promise(() => {}));
 
-      renderBacklog();
+      renderWithProviders(<ProductBacklog />);
 
       // The loading container should exist with LoadingState component
       expect(screen.getByRole('status')).toBeInTheDocument();
@@ -218,7 +199,7 @@ describe('Backlog - Loading State Tests', () => {
         currentTeam: null,
       });
 
-      renderBacklog();
+      renderWithProviders(<ProductBacklog />);
 
       expect(screen.getByTestId('empty-state-no-team')).toBeInTheDocument();
     });
@@ -231,7 +212,7 @@ describe('Backlog - Loading State Tests', () => {
       });
       mockApiService.getProductGoals.mockResolvedValue({ data: [] });
 
-      renderBacklog();
+      renderWithProviders(<ProductBacklog />);
 
       await act(async () => {
         vi.runAllTimersAsync();
@@ -254,16 +235,16 @@ describe('Backlog - Loading State Tests', () => {
       mockDefinitionService.getDefinitionOfReady.mockResolvedValue({ data: { items: [] } });
       mockDefinitionService.getDefinitionOfDone.mockResolvedValue({ data: { items: [] } });
 
-      renderBacklog();
+      renderWithProviders(<ProductBacklog />);
 
-      expect(screen.getAllByText(/Loading Product Backlog/i)[0]).toBeInTheDocument();
+      expect(screen.getAllByText(/Product Backlog/i)[0]).toBeInTheDocument();
 
       await act(async () => {
         vi.runAllTimersAsync();
       });
 
       await waitFor(() => {
-        expect(screen.queryByText(/Loading Product Backlog/i)).not.toBeInTheDocument();
+        expect(screen.queryByText(/Product Backlog/i)).not.toBeInTheDocument();
       });
 
       expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
@@ -279,9 +260,9 @@ describe('Backlog - Loading State Tests', () => {
       );
       mockApiService.getProductGoals.mockImplementation(() => new Promise(() => {}));
 
-      renderBacklog();
+      renderWithProviders(<ProductBacklog />);
 
-      expect(screen.getAllByText(/Loading Product Backlog/i)[0]).toBeInTheDocument();
+      expect(screen.getAllByText(/Product Backlog/i)[0]).toBeInTheDocument();
 
       await act(async () => {
         resolveBacklog!({
@@ -303,9 +284,9 @@ describe('Backlog - Loading State Tests', () => {
           })
       );
 
-      renderBacklog();
+      renderWithProviders(<ProductBacklog />);
 
-      expect(screen.getAllByText(/Loading Product Backlog/i)[0]).toBeInTheDocument();
+      expect(screen.getAllByText(/Product Backlog/i)[0]).toBeInTheDocument();
 
       await act(async () => {
         resolveGoals!({ data: [mockActiveGoal] });
@@ -319,21 +300,21 @@ describe('Backlog - Loading State Tests', () => {
       mockApiService.getProductBacklog.mockImplementation(() => new Promise(() => {}));
       mockApiService.getProductGoals.mockImplementation(() => new Promise(() => {}));
 
-      renderBacklog();
+      renderWithProviders(<ProductBacklog />);
 
-      expect(screen.getAllByText(/Loading Product Backlog/i)[0]).toBeInTheDocument();
+      expect(screen.getAllByText(/Product Backlog/i)[0]).toBeInTheDocument();
 
       act(() => {
         vi.advanceTimersByTime(2000);
       });
 
-      expect(screen.getAllByText(/Loading Product Backlog/i)[0]).toBeInTheDocument();
+      expect(screen.getAllByText(/Product Backlog/i)[0]).toBeInTheDocument();
 
       act(() => {
         vi.advanceTimersByTime(3000);
       });
 
-      expect(screen.getAllByText(/Loading Product Backlog/i)[0]).toBeInTheDocument();
+      expect(screen.getAllByText(/Product Backlog/i)[0]).toBeInTheDocument();
     });
 
     it('should persist loading state until all data is loaded', async () => {
@@ -347,10 +328,10 @@ describe('Backlog - Loading State Tests', () => {
       mockDefinitionService.getDefinitionOfDone.mockResolvedValue({ data: { items: [] } });
 
       vi.useRealTimers();
-      renderBacklog();
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
-        expect(screen.queryByText(/Loading Product Backlog/i)).not.toBeInTheDocument();
+        expect(screen.queryByText(/Product Backlog/i)).not.toBeInTheDocument();
       });
 
       expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
@@ -362,14 +343,14 @@ describe('Backlog - Loading State Tests', () => {
       mockApiService.getProductBacklog.mockRejectedValue(new Error('Network error'));
       mockApiService.getProductGoals.mockResolvedValue({ data: [mockActiveGoal] });
 
-      renderBacklog();
+      renderWithProviders(<ProductBacklog />);
 
       await act(async () => {
         vi.runAllTimersAsync();
       });
 
       await waitFor(() => {
-        expect(screen.queryByText(/Loading Product Backlog/i)).not.toBeInTheDocument();
+        expect(screen.queryByText(/Product Backlog/i)).not.toBeInTheDocument();
       });
     });
 
@@ -381,14 +362,14 @@ describe('Backlog - Loading State Tests', () => {
       });
       mockApiService.getProductGoals.mockRejectedValue(new Error('Goals error'));
 
-      renderBacklog();
+      renderWithProviders(<ProductBacklog />);
 
       await act(async () => {
         vi.runAllTimersAsync();
       });
 
       await waitFor(() => {
-        expect(screen.queryByText(/Loading Product Backlog/i)).not.toBeInTheDocument();
+        expect(screen.queryByText(/Product Backlog/i)).not.toBeInTheDocument();
       });
     });
 
@@ -400,14 +381,14 @@ describe('Backlog - Loading State Tests', () => {
       });
       mockApiService.getProductGoals.mockRejectedValue(new Error('Goals error'));
 
-      renderBacklog();
+      renderWithProviders(<ProductBacklog />);
 
       await act(async () => {
         vi.runAllTimersAsync();
       });
 
       await waitFor(() => {
-        expect(screen.queryByText(/Loading Product Backlog/i)).not.toBeInTheDocument();
+        expect(screen.queryByText(/Product Backlog/i)).not.toBeInTheDocument();
       });
     });
   });
@@ -430,15 +411,15 @@ describe('Backlog - Loading State Tests', () => {
       );
       mockApiService.getProductGoals.mockImplementation(() => new Promise(() => {}));
 
-      renderBacklog();
+      renderWithProviders(<ProductBacklog />);
 
-      expect(screen.getAllByText(/Loading Product Backlog/i)[0]).toBeInTheDocument();
+      expect(screen.getAllByText(/Product Backlog/i)[0]).toBeInTheDocument();
 
       act(() => {
         vi.advanceTimersByTime(5000);
       });
 
-      expect(screen.getAllByText(/Loading Product Backlog/i)[0]).toBeInTheDocument();
+      expect(screen.getAllByText(/Product Backlog/i)[0]).toBeInTheDocument();
     });
 
     it('should eventually complete after slow network delay', async () => {
@@ -465,7 +446,7 @@ describe('Backlog - Loading State Tests', () => {
       mockDefinitionService.getDefinitionOfReady.mockResolvedValue({ data: { items: [] } });
       mockDefinitionService.getDefinitionOfDone.mockResolvedValue({ data: { items: [] } });
 
-      renderBacklog();
+      renderWithProviders(<ProductBacklog />);
 
       act(() => {
         vi.advanceTimersByTime(3000);
@@ -476,7 +457,7 @@ describe('Backlog - Loading State Tests', () => {
       });
 
       await waitFor(() => {
-        expect(screen.queryByText(/Loading Product Backlog/i)).not.toBeInTheDocument();
+        expect(screen.queryByText(/Product Backlog/i)).not.toBeInTheDocument();
       });
     });
   });
@@ -493,10 +474,10 @@ describe('Backlog - Loading State Tests', () => {
       mockDefinitionService.getDefinitionOfDone.mockResolvedValue({ data: { items: [] } });
 
       vi.useRealTimers();
-      renderBacklog();
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
-        expect(screen.queryByText(/Loading Product Backlog/i)).not.toBeInTheDocument();
+        expect(screen.queryByText(/Product Backlog/i)).not.toBeInTheDocument();
       });
 
       expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
@@ -519,9 +500,9 @@ describe('Backlog - Loading State Tests', () => {
           })
       );
 
-      renderBacklog();
+      renderWithProviders(<ProductBacklog />);
 
-      expect(screen.getAllByText(/Loading Product Backlog/i)[0]).toBeInTheDocument();
+      expect(screen.getAllByText(/Product Backlog/i)[0]).toBeInTheDocument();
 
       // Resolve both concurrently
       await act(async () => {
@@ -535,7 +516,7 @@ describe('Backlog - Loading State Tests', () => {
       });
 
       await waitFor(() => {
-        expect(screen.queryByText(/Loading Product Backlog/i)).not.toBeInTheDocument();
+        expect(screen.queryByText(/Product Backlog/i)).not.toBeInTheDocument();
       });
     });
   });
@@ -545,10 +526,10 @@ describe('Backlog - Loading State Tests', () => {
       mockApiService.getProductBacklog.mockImplementation(() => new Promise(() => {}));
       mockApiService.getProductGoals.mockImplementation(() => new Promise(() => {}));
 
-      const { container: _container } = renderBacklog();
+      const { container: _container } = renderWithProviders(<ProductBacklog />);
 
       // Check that loading text is accessible
-      const loadingText = screen.getAllByText(/Loading Product Backlog/i)[0];
+      const loadingText = screen.getAllByText(/Product Backlog/i)[0];
       expect(loadingText).toBeInTheDocument();
       expect(loadingText.closest('[class*="page-loader"]')).toBeInTheDocument();
     });
@@ -557,16 +538,16 @@ describe('Backlog - Loading State Tests', () => {
       mockApiService.getProductBacklog.mockImplementation(() => new Promise(() => {}));
       mockApiService.getProductGoals.mockImplementation(() => new Promise(() => {}));
 
-      renderBacklog();
+      renderWithProviders(<ProductBacklog />);
 
-      expect(screen.getAllByText(/Loading Product Backlog/i)[0]).toBeInTheDocument();
+      expect(screen.getAllByText(/Product Backlog/i)[0]).toBeInTheDocument();
     });
 
     it('should render loading spinner', () => {
       mockApiService.getProductBacklog.mockImplementation(() => new Promise(() => {}));
       mockApiService.getProductGoals.mockImplementation(() => new Promise(() => {}));
 
-      const { container } = renderBacklog();
+      const { container } = renderWithProviders(<ProductBacklog />);
 
       // The LoadingState component should be rendered with spinner
       const loadingState = container.querySelector('[class*="page-loader"]');
@@ -579,13 +560,13 @@ describe('Backlog - Loading State Tests', () => {
       mockApiService.getProductBacklog.mockImplementation(() => new Promise(() => {}));
       mockApiService.getProductGoals.mockImplementation(() => new Promise(() => {}));
 
-      const { unmount } = renderBacklog();
+      const { unmount } = renderWithProviders(<ProductBacklog />);
 
-      expect(screen.getAllByText(/Loading Product Backlog/i)[0]).toBeInTheDocument();
+      expect(screen.getAllByText(/Product Backlog/i)[0]).toBeInTheDocument();
 
       unmount();
 
-      expect(screen.queryByText(/Loading Product Backlog/i)).not.toBeInTheDocument();
+      expect(screen.queryByText(/Product Backlog/i)).not.toBeInTheDocument();
     });
 
     it('should not cause memory leaks with pending promises', async () => {
@@ -598,7 +579,7 @@ describe('Backlog - Loading State Tests', () => {
       );
       mockApiService.getProductGoals.mockImplementation(() => new Promise(() => {}));
 
-      const { unmount } = renderBacklog();
+      const { unmount } = renderWithProviders(<ProductBacklog />);
 
       unmount();
 
@@ -611,21 +592,21 @@ describe('Backlog - Loading State Tests', () => {
         vi.runAllTimersAsync();
       });
 
-      expect(screen.queryByText(/Loading Product Backlog/i)).not.toBeInTheDocument();
+      expect(screen.queryByText(/Product Backlog/i)).not.toBeInTheDocument();
     });
 
     it('should clean up loading state after error', async () => {
       mockApiService.getProductBacklog.mockRejectedValue(new Error('Network error'));
       mockApiService.getProductGoals.mockRejectedValue(new Error('Network error'));
 
-      renderBacklog();
+      renderWithProviders(<ProductBacklog />);
 
       await act(async () => {
         vi.runAllTimersAsync();
       });
 
       await waitFor(() => {
-        expect(screen.queryByText(/Loading Product Backlog/i)).not.toBeInTheDocument();
+        expect(screen.queryByText(/Product Backlog/i)).not.toBeInTheDocument();
       });
     });
   });
@@ -641,14 +622,14 @@ describe('Backlog - Loading State Tests', () => {
       mockDefinitionService.getDefinitionOfReady.mockResolvedValue({ data: { items: [] } });
       mockDefinitionService.getDefinitionOfDone.mockResolvedValue({ data: { items: [] } });
 
-      renderBacklog();
+      renderWithProviders(<ProductBacklog />);
 
       await act(async () => {
         vi.runAllTimersAsync();
       });
 
       await waitFor(() => {
-        expect(screen.queryByText(/Loading Product Backlog/i)).not.toBeInTheDocument();
+        expect(screen.queryByText(/Product Backlog/i)).not.toBeInTheDocument();
       });
 
       expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
@@ -664,9 +645,9 @@ describe('Backlog - Loading State Tests', () => {
       );
       mockApiService.getProductGoals.mockResolvedValue({ data: [mockActiveGoal] });
 
-      renderBacklog();
+      renderWithProviders(<ProductBacklog />);
 
-      expect(screen.getAllByText(/Loading Product Backlog/i)[0]).toBeInTheDocument();
+      expect(screen.getAllByText(/Product Backlog/i)[0]).toBeInTheDocument();
 
       await act(async () => {
         resolveBacklog!({
@@ -678,7 +659,7 @@ describe('Backlog - Loading State Tests', () => {
       });
 
       await waitFor(() => {
-        expect(screen.queryByText(/Loading Product Backlog/i)).not.toBeInTheDocument();
+        expect(screen.queryByText(/Product Backlog/i)).not.toBeInTheDocument();
       });
     });
   });

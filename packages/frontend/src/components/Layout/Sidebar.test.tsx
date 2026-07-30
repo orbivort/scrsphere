@@ -1,9 +1,12 @@
-﻿import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
 import { MemoryRouter } from 'react-router';
+import { I18nextProvider } from 'react-i18next';
 import { act } from 'react';
 import type * as Services from '../../services';
+import { initTestI18n, i18nT } from '@/test-utils';
+import { getTestI18nInstance } from '../../i18n/testConfig';
 
 import { Layout } from './Sidebar';
 import * as storeModule from '../../store';
@@ -249,7 +252,11 @@ const renderWithProviders = (
   vi.spyOn(teamContextModule, 'useTeamContext').mockReturnValue(teamContext as any);
 
   return {
-    ...render(<MemoryRouter initialEntries={[initialRoute]}>{ui}</MemoryRouter>),
+    ...render(
+      <I18nextProvider i18n={getTestI18nInstance()}>
+        <MemoryRouter initialEntries={[initialRoute]}>{ui}</MemoryRouter>
+      </I18nextProvider>
+    ),
     authStore,
     uiStore,
     teamContext,
@@ -257,6 +264,10 @@ const renderWithProviders = (
 };
 
 describe('Layout Component', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
     Object.defineProperty(window, 'innerWidth', {
@@ -286,26 +297,26 @@ describe('Layout Component', () => {
     it('renders navigation items correctly', () => {
       renderWithProviders(<Layout>Content</Layout>);
 
-      const navItems = [
-        'Dashboard',
-        'Product Goals',
-        'Product Backlog',
-        'Sprint Planning',
-        'Active Sprint',
-        'Daily Scrum',
-        'Impediments',
-        'Increments',
-        'Sprint Review',
-        'Retrospective',
-        'Reports',
-      ];
+      const navItemKeys = [
+        'nav.dashboard',
+        'nav.productGoals',
+        'nav.productBacklog',
+        'nav.sprintPlanning',
+        'nav.activeSprint',
+        'nav.dailyScrum',
+        'nav.impediments',
+        'nav.increments',
+        'nav.sprintReview',
+        'nav.retrospectives',
+        'nav.reports',
+      ] as const;
 
-      navItems.forEach((item) => {
-        expect(screen.getByText(item)).toBeInTheDocument();
+      navItemKeys.forEach((key) => {
+        expect(screen.getByText(i18nT(key))).toBeInTheDocument();
       });
 
       const teamNavItem = screen
-        .getAllByText('Team')
+        .getAllByText(i18nT('nav.team'))
         .find((el) => el.classList.contains('nav-label'));
       expect(teamNavItem).toBeInTheDocument();
     });
@@ -329,7 +340,7 @@ describe('Layout Component', () => {
         teamContext: createMockTeamContext({ currentTeam: null }),
       });
 
-      expect(screen.getByText('No team selected')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('noTeamSelected'))).toBeInTheDocument();
     });
 
     it('renders skip link for accessibility', () => {
@@ -347,7 +358,7 @@ describe('Layout Component', () => {
         uiStore: createMockUIStore({ sidebarCollapsed: false, toggleSidebar }),
       });
 
-      const toggleButton = screen.getByLabelText('Collapse sidebar');
+      const toggleButton = screen.getByLabelText(i18nT('aria.collapseSidebar'));
       fireEvent.click(toggleButton);
 
       expect(toggleSidebar).toHaveBeenCalled();
@@ -358,7 +369,7 @@ describe('Layout Component', () => {
         uiStore: createMockUIStore({ sidebarCollapsed: true }),
       });
 
-      expect(screen.getByLabelText('Expand sidebar')).toBeInTheDocument();
+      expect(screen.getByLabelText(i18nT('aria.expandSidebar'))).toBeInTheDocument();
     });
 
     it('hides nav labels when sidebar is collapsed', () => {
@@ -382,7 +393,7 @@ describe('Layout Component', () => {
 
       renderWithProviders(<Layout>Content</Layout>);
 
-      expect(screen.getByLabelText('Open menu')).toBeInTheDocument();
+      expect(screen.getByLabelText(i18nT('aria.openMenu'))).toBeInTheDocument();
     });
 
     it('toggles mobile sidebar when menu button is clicked', () => {
@@ -394,10 +405,10 @@ describe('Layout Component', () => {
 
       renderWithProviders(<Layout>Content</Layout>);
 
-      const menuButton = screen.getByLabelText('Open menu');
+      const menuButton = screen.getByLabelText(i18nT('aria.openMenu'));
       fireEvent.click(menuButton);
 
-      expect(screen.getByLabelText('Close menu')).toBeInTheDocument();
+      expect(screen.getByLabelText(i18nT('aria.closeMenu'))).toBeInTheDocument();
     });
 
     it('closes mobile sidebar when clicking outside', () => {
@@ -409,14 +420,14 @@ describe('Layout Component', () => {
 
       renderWithProviders(<Layout>Content</Layout>);
 
-      const menuButton = screen.getByLabelText('Open menu');
+      const menuButton = screen.getByLabelText(i18nT('aria.openMenu'));
       fireEvent.click(menuButton);
 
-      expect(screen.getByLabelText('Close menu')).toBeInTheDocument();
+      expect(screen.getByLabelText(i18nT('aria.closeMenu'))).toBeInTheDocument();
 
       fireEvent.mouseDown(document.body);
 
-      expect(screen.queryByLabelText('Close menu')).not.toBeInTheDocument();
+      expect(screen.queryByLabelText(i18nT('aria.closeMenu'))).not.toBeInTheDocument();
     });
   });
 
@@ -426,7 +437,7 @@ describe('Layout Component', () => {
         initialRoute: '/dashboard',
       });
 
-      const dashboardLink = screen.getByText('Dashboard').closest('a');
+      const dashboardLink = screen.getByText(i18nT('nav.dashboard')).closest('a');
       expect(dashboardLink).toHaveClass('active');
     });
 
@@ -439,14 +450,14 @@ describe('Layout Component', () => {
 
       renderWithProviders(<Layout>Content</Layout>);
 
-      fireEvent.click(screen.getByLabelText('Open menu'));
+      fireEvent.click(screen.getByLabelText(i18nT('aria.openMenu')));
 
-      const dashboardLink = screen.getByText('Dashboard').closest('a');
+      const dashboardLink = screen.getByText(i18nT('nav.dashboard')).closest('a');
       if (dashboardLink) {
         fireEvent.click(dashboardLink);
       }
 
-      expect(screen.queryByLabelText('Close menu')).not.toBeInTheDocument();
+      expect(screen.queryByLabelText(i18nT('aria.closeMenu'))).not.toBeInTheDocument();
     });
   });
 
@@ -458,9 +469,9 @@ describe('Layout Component', () => {
       await userEvent.click(userMenuButton);
 
       expect(screen.getByText('test@example.com')).toBeInTheDocument();
-      expect(screen.getByText('Edit Profile')).toBeInTheDocument();
-      expect(screen.getByText('Change Password')).toBeInTheDocument();
-      expect(screen.getByText('Logout')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('userMenu.editProfile'))).toBeInTheDocument();
+      expect(screen.getByText(i18nT('userMenu.changePassword'))).toBeInTheDocument();
+      expect(screen.getByText(i18nT('userMenu.logout'))).toBeInTheDocument();
     });
 
     it('closes user menu when clicking outside', async () => {
@@ -480,7 +491,7 @@ describe('Layout Component', () => {
       renderWithProviders(<Layout>Content</Layout>);
 
       await userEvent.click(screen.getByText('John Doe'));
-      await userEvent.click(screen.getByText('Edit Profile'));
+      await userEvent.click(screen.getByText(i18nT('userMenu.editProfile')));
 
       expect(screen.getByTestId('edit-profile-modal')).toBeInTheDocument();
     });
@@ -489,7 +500,7 @@ describe('Layout Component', () => {
       renderWithProviders(<Layout>Content</Layout>);
 
       await userEvent.click(screen.getByText('John Doe'));
-      await userEvent.click(screen.getByText('Change Password'));
+      await userEvent.click(screen.getByText(i18nT('userMenu.changePassword')));
 
       expect(screen.getByTestId('change-password-modal')).toBeInTheDocument();
     });
@@ -501,7 +512,7 @@ describe('Layout Component', () => {
       });
 
       await userEvent.click(screen.getByText('John Doe'));
-      await userEvent.click(screen.getByText('Logout'));
+      await userEvent.click(screen.getByText(i18nT('userMenu.logout')));
 
       expect(logout).toHaveBeenCalled();
     });
@@ -567,7 +578,7 @@ describe('Layout Component', () => {
     it('toggles notification panel when bell icon is clicked', async () => {
       renderWithProviders(<Layout>Content</Layout>);
 
-      const notificationButton = screen.getByLabelText('Notifications');
+      const notificationButton = screen.getByLabelText(i18nT('nav.notifications'));
       await userEvent.click(notificationButton);
 
       expect(screen.getByTestId('notification-panel')).toBeInTheDocument();
@@ -576,7 +587,7 @@ describe('Layout Component', () => {
     it('closes notification panel when close button is clicked', async () => {
       renderWithProviders(<Layout>Content</Layout>);
 
-      await userEvent.click(screen.getByLabelText('Notifications'));
+      await userEvent.click(screen.getByLabelText(i18nT('nav.notifications')));
       expect(screen.getByTestId('notification-panel')).toBeInTheDocument();
 
       await userEvent.click(screen.getByText('Close'));
@@ -752,9 +763,9 @@ describe('Layout Component', () => {
     it('renders settings groups', () => {
       renderWithProviders(<Layout>Content</Layout>);
 
-      expect(screen.getByText('Settings')).toBeInTheDocument();
-      expect(screen.getByText('Data')).toBeInTheDocument();
-      const teamLabels = screen.getAllByText('Team');
+      expect(screen.getByText(i18nT('nav.settingsLabel'))).toBeInTheDocument();
+      expect(screen.getByText(i18nT('nav.settings.data'))).toBeInTheDocument();
+      const teamLabels = screen.getAllByText(i18nT('nav.settings.team'));
       expect(teamLabels.length).toBeGreaterThan(0);
     });
 
@@ -763,7 +774,7 @@ describe('Layout Component', () => {
         teamContext: createMockTeamContext({ userRole: 'DEVELOPER' }),
       });
 
-      expect(screen.queryByText('Sprint Configuration')).not.toBeInTheDocument();
+      expect(screen.queryByText(i18nT('nav.settings.sprintConfiguration'))).not.toBeInTheDocument();
     });
 
     it('shows role-specific settings for Product Owner', () => {
@@ -771,8 +782,8 @@ describe('Layout Component', () => {
         teamContext: createMockTeamContext({ userRole: 'PRODUCT_OWNER' }),
       });
 
-      expect(screen.getByText('Sprint Configuration')).toBeInTheDocument();
-      expect(screen.getByText('Team Definitions')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('nav.settings.sprintConfiguration'))).toBeInTheDocument();
+      expect(screen.getByText(i18nT('nav.settings.teamDefinitions'))).toBeInTheDocument();
     });
 
     it('shows role-specific settings for Scrum Master', () => {
@@ -780,8 +791,8 @@ describe('Layout Component', () => {
         teamContext: createMockTeamContext({ userRole: 'SCRUM_MASTER' }),
       });
 
-      expect(screen.getByText('Sprint Configuration')).toBeInTheDocument();
-      expect(screen.getByText('Team Definitions')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('nav.settings.sprintConfiguration'))).toBeInTheDocument();
+      expect(screen.getByText(i18nT('nav.settings.teamDefinitions'))).toBeInTheDocument();
     });
   });
 
@@ -832,21 +843,21 @@ describe('Layout Component', () => {
       renderWithProviders(<Layout>Content</Layout>);
 
       await userEvent.click(screen.getByText('John Doe'));
-      await userEvent.click(screen.getByText('Edit Profile'));
+      await userEvent.click(screen.getByText(i18nT('userMenu.editProfile')));
 
       await userEvent.click(screen.getByText('Make Dirty'));
 
       await userEvent.click(screen.getByText('Close'));
 
       expect(screen.getByTestId('unsaved-changes-modal')).toBeInTheDocument();
-      expect(screen.getByText('Unsaved Changes')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('unsavedChanges.title'))).toBeInTheDocument();
     });
 
     it('shows unsaved changes modal when closing dirty change password modal', async () => {
       renderWithProviders(<Layout>Content</Layout>);
 
       await userEvent.click(screen.getByText('John Doe'));
-      await userEvent.click(screen.getByText('Change Password'));
+      await userEvent.click(screen.getByText(i18nT('userMenu.changePassword')));
 
       await userEvent.click(screen.getByText('Make Dirty'));
 
@@ -859,7 +870,7 @@ describe('Layout Component', () => {
       renderWithProviders(<Layout>Content</Layout>);
 
       await userEvent.click(screen.getByText('John Doe'));
-      await userEvent.click(screen.getByText('Edit Profile'));
+      await userEvent.click(screen.getByText(i18nT('userMenu.editProfile')));
 
       await userEvent.click(screen.getByText('Make Dirty'));
 
@@ -877,7 +888,7 @@ describe('Layout Component', () => {
       renderWithProviders(<Layout>Content</Layout>);
 
       await userEvent.click(screen.getByText('John Doe'));
-      await userEvent.click(screen.getByText('Edit Profile'));
+      await userEvent.click(screen.getByText(i18nT('userMenu.editProfile')));
 
       await userEvent.click(screen.getByText('Make Dirty'));
 
@@ -906,7 +917,7 @@ describe('Layout Component', () => {
         window.dispatchEvent(new Event('resize'));
       });
 
-      expect(screen.getByLabelText('Open menu')).toBeInTheDocument();
+      expect(screen.getByLabelText(i18nT('aria.openMenu'))).toBeInTheDocument();
     });
 
     it('closes mobile sidebar when resizing to desktop', () => {
@@ -918,7 +929,7 @@ describe('Layout Component', () => {
 
       renderWithProviders(<Layout>Content</Layout>);
 
-      fireEvent.click(screen.getByLabelText('Open menu'));
+      fireEvent.click(screen.getByLabelText(i18nT('aria.openMenu')));
 
       act(() => {
         Object.defineProperty(window, 'innerWidth', {
@@ -929,7 +940,7 @@ describe('Layout Component', () => {
         window.dispatchEvent(new Event('resize'));
       });
 
-      expect(screen.queryByLabelText('Close menu')).not.toBeInTheDocument();
+      expect(screen.queryByLabelText(i18nT('aria.closeMenu'))).not.toBeInTheDocument();
     });
   });
 
@@ -1113,7 +1124,10 @@ describe('Layout Component', () => {
     it('has correct ARIA labels for navigation', () => {
       renderWithProviders(<Layout>Content</Layout>);
 
-      expect(screen.getByLabelText('Collapse sidebar')).toHaveAttribute('aria-expanded', 'true');
+      expect(screen.getByLabelText(i18nT('aria.collapseSidebar'))).toHaveAttribute(
+        'aria-expanded',
+        'true'
+      );
     });
 
     it('has correct ARIA labels for collapsed sidebar', () => {
@@ -1121,16 +1135,19 @@ describe('Layout Component', () => {
         uiStore: createMockUIStore({ sidebarCollapsed: true }),
       });
 
-      expect(screen.getByLabelText('Expand sidebar')).toHaveAttribute('aria-expanded', 'false');
+      expect(screen.getByLabelText(i18nT('aria.expandSidebar'))).toHaveAttribute(
+        'aria-expanded',
+        'false'
+      );
     });
 
     it('groups settings with correct ARIA attributes', () => {
       renderWithProviders(<Layout>Content</Layout>);
 
-      const teamGroups = screen.getAllByText('Team');
+      const teamGroups = screen.getAllByText(i18nT('nav.settings.team'));
       const settingsGroupLabel = teamGroups.find((el) => el.classList.contains('nav-group-label'));
       const teamGroup = settingsGroupLabel?.closest('[role="group"]');
-      expect(teamGroup).toHaveAttribute('aria-label', 'Team settings');
+      expect(teamGroup).toHaveAttribute('aria-label', i18nT('nav.settings.team'));
     });
   });
 });

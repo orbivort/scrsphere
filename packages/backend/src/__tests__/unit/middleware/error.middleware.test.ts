@@ -291,7 +291,7 @@ describe('Error Middleware', () => {
         error: {
           code: 'CONFLICT',
           message: 'email already exists',
-          details: [{ field: 'email', message: 'This email is already taken' }],
+          details: [{ field: 'email', message: 'email is already taken' }],
         },
       });
     });
@@ -328,7 +328,7 @@ describe('Error Middleware', () => {
         success: false,
         error: {
           code: 'INVALID_REFERENCE',
-          message: 'Referenced record does not exist',
+          message: 'Invalid reference',
           details: undefined,
         },
       });
@@ -565,7 +565,7 @@ describe('Error Middleware', () => {
         success: false,
         error: {
           code: 'NOT_FOUND',
-          message: 'Route GET /api/nonexistent not found',
+          message: 'GET /api/nonexistent not found',
           details: undefined,
         },
       });
@@ -582,7 +582,7 @@ describe('Error Middleware', () => {
         success: false,
         error: {
           code: 'NOT_FOUND',
-          message: 'Route POST /api/users not found',
+          message: 'POST /api/users not found',
           details: undefined,
         },
       });

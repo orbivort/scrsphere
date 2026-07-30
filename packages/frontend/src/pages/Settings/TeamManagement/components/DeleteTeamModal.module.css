@@ -442,7 +442,7 @@
   border: var(--border-width-1) solid var(--color-warning-300);
   border-radius: var(--radius-lg);
   padding: var(--space-4);
-  text-align: left;
+  text-align: start;
 }
 
 .steps-title {

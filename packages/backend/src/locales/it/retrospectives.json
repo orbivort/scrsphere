@@ -1,0 +1,21 @@
+{
+  "actionItemCreated": "Azione \"{{title}}\" creata con successo",
+  "actionItemDeleted": "Azione eliminata con successo",
+  "actionItemUpdated": "Azione \"{{title}}\" aggiornata con successo",
+  "attendeeAdded": "Partecipante aggiunto con successo",
+  "attendeeRemoved": "Partecipante rimosso con successo",
+  "categoryDidntGoWell": "Cosa non ha funzionato bene",
+  "categoryImprovement": "Miglioramenti",
+  "categoryWentWell": "Cosa ha funzionato bene",
+  "itemCreated": "Elemento di retrospettiva creato con successo",
+  "itemDeleted": "Elemento di retrospettiva eliminato con successo",
+  "itemUpdated": "Elemento di retrospettiva aggiornato con successo",
+  "retrospectiveCreated": "Retrospettiva creata con successo",
+  "retrospectiveUpdated": "Retrospettiva aggiornata con successo",
+  "statusCancelled": "Annullato",
+  "statusCompleted": "Completato",
+  "statusInProgress": "In corso",
+  "statusPending": "In sospeso",
+  "voteAdded": "Voto aggiunto con successo",
+  "voteRemoved": "Voto rimosso con successo"
+}

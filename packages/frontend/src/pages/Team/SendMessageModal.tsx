@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 
 import { notificationApi } from '../../services/notificationApi';
 import { logger } from '../../utils/logger';
@@ -32,6 +33,7 @@ export const SendMessageModal: React.FC<SendMessageModalProps> = ({
   recipientName,
   recipientEmail,
 }) => {
+  const { t } = useTranslation('team');
   const [message, setMessage] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -68,13 +70,13 @@ export const SendMessageModal: React.FC<SendMessageModalProps> = ({
       const errorMessage = err.message.toLowerCase();
 
       if (errorMessage.includes('404') || errorMessage.includes('not found')) {
-        setError('Recipient not found. The user may have been removed.');
+        setError(t('sendMessageModal.errors.recipientNotFound'));
       } else if (errorMessage.includes('403') || errorMessage.includes('forbidden')) {
-        setError('You do not have permission to send messages to this user.');
+        setError(t('sendMessageModal.errors.noPermission'));
       } else if (errorMessage.includes('network') || errorMessage.includes('connection')) {
-        setError('Network error. Please check your connection and try again.');
+        setError(t('sendMessageModal.errors.networkError'));
       } else {
-        setError('Failed to send message. Please try again later.');
+        setError(t('sendMessageModal.errors.genericError'));
       }
     },
   });
@@ -84,12 +86,12 @@ export const SendMessageModal: React.FC<SendMessageModalProps> = ({
     setError(null);
 
     if (!message.trim()) {
-      setError('Please enter a message.');
+      setError(t('sendMessageModal.validation.emptyMessage'));
       return;
     }
 
     if (message.length > MAX_MESSAGE_LENGTH) {
-      setError(`Message must be less than ${MAX_MESSAGE_LENGTH} characters.`);
+      setError(t('sendMessageModal.validation.maxLength', { limit: MAX_MESSAGE_LENGTH }));
       return;
     }
 
@@ -156,10 +158,10 @@ export const SendMessageModal: React.FC<SendMessageModalProps> = ({
               </div>
               <div className={styles['header-text']}>
                 <h2 id="send-message-title" className={styles['modal-title']}>
-                  Send Message
+                  {t('sendMessageModal.title')}
                 </h2>
                 <p className={styles['modal-subtitle']}>
-                  To: {recipientName} ({recipientEmail})
+                  {t('sendMessageModal.subtitle', { name: recipientName, email: recipientEmail })}
                 </p>
               </div>
             </div>
@@ -168,7 +170,7 @@ export const SendMessageModal: React.FC<SendMessageModalProps> = ({
               className={styles['close-button']}
               onClick={handleClose}
               disabled={sendMessageMutation.isPending}
-              aria-label="Close modal"
+              aria-label={t('aria.closeModal')}
             >
               <CloseIcon size={18} />
             </button>
@@ -180,7 +182,7 @@ export const SendMessageModal: React.FC<SendMessageModalProps> = ({
                 <span className={styles['success-icon']} aria-hidden="true">
                   <CheckCircleIcon />
                 </span>
-                <span>Message sent successfully!</span>
+                <span>{t('sendMessageModal.success')}</span>
               </div>
             )}
 
@@ -196,15 +198,18 @@ export const SendMessageModal: React.FC<SendMessageModalProps> = ({
             <form onSubmit={handleSubmit} id="send-message-form">
               <div className={styles['form-group']}>
                 <label htmlFor="message-content" className={styles['form-label']}>
-                  Message
-                  <span className={styles['required-indicator']} aria-label="required">
+                  {t('sendMessageModal.messageLabel')}
+                  <span
+                    className={styles['required-indicator']}
+                    aria-label={t('sendMessageModal.requiredAriaLabel')}
+                  >
                     *
                   </span>
                 </label>
                 <textarea
                   ref={messageInputRef}
                   id="message-content"
-                  placeholder="Type your message here..."
+                  placeholder={t('sendMessageModal.messagePlaceholder')}
                   value={message}
                   onChange={(e) => {
                     setMessage(e.target.value);
@@ -232,7 +237,7 @@ export const SendMessageModal: React.FC<SendMessageModalProps> = ({
               onClick={handleClose}
               disabled={sendMessageMutation.isPending || success}
             >
-              Cancel
+              {t('sendMessageModal.cancel')}
             </button>
             <button
               type="submit"
@@ -243,12 +248,12 @@ export const SendMessageModal: React.FC<SendMessageModalProps> = ({
               {sendMessageMutation.isPending ? (
                 <>
                   <span className={styles['loading-spinner']} aria-hidden="true" />
-                  Sending...
+                  {t('sendMessageModal.sending')}
                 </>
               ) : (
                 <>
                   <SendIcon />
-                  Send Message
+                  {t('sendMessageModal.send')}
                 </>
               )}
             </button>
@@ -260,8 +265,8 @@ export const SendMessageModal: React.FC<SendMessageModalProps> = ({
         isOpen={showUnsavedWarning}
         onConfirm={handleUnsavedConfirm}
         onCancel={handleUnsavedCancel}
-        title="Unsent Message"
-        message="You have an unsent message. Are you sure you want to discard it?"
+        title={t('sendMessageModal.unsavedTitle')}
+        message={t('sendMessageModal.unsavedMessage')}
       />
     </>
   );

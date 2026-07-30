@@ -1,0 +1,53 @@
+{
+  "chunk": {
+    "loadFailed": "Caricamento delle risorse dell'applicazione fallito.",
+    "refreshRequired": "Una nuova versione è disponibile. Per favore aggiorna la pagina."
+  },
+  "generic": {
+    "contactSupport": "Se il problema persiste, contatta il supporto.",
+    "goBack": "Torna indietro",
+    "retry": "Riprova",
+    "tryAgain": "Per favore riprova.",
+    "unexpectedError": "Si è verificato un errore imprevisto. Per favore riprova."
+  },
+  "http": {
+    "badRequest": "Richiesta non valida. Verifica i dati inseriti e riprova.",
+    "conflict": "Si è verificato un conflitto. La risorsa potrebbe essere stata modificata da un altro utente.",
+    "forbidden": "Accesso negato. Non hai i permessi per questa risorsa.",
+    "internalServerError": "Errore del server. Per favore riprova più tardi.",
+    "notFound": "Risorsa non trovata. Potrebbe essere stata eliminata.",
+    "serviceUnavailable": "Servizio temporaneamente non disponibile. Per favore riprova più tardi.",
+    "unauthorized": "Non sei autorizzato a eseguire questa azione.",
+    "validationFailed": "Validazione fallita. Verifica i dati inseriti."
+  },
+  "network": {
+    "connectionLost": "Errore di rete. Verifica la tua connessione internet.",
+    "serverUnreachable": "Impossibile raggiungere il server. Verifica la tua connessione.",
+    "timeout": "Richiesta scaduta. Per favore riprova."
+  },
+  "permission": {
+    "accessDenied": "Accesso negato.",
+    "loginRequired": "Per favore effettua l'accesso per continuare.",
+    "noPermission": "Non hai i permessi per eseguire questa azione.",
+    "notAuthorized": "Non sei autorizzato a eseguire questa azione."
+  },
+  "session": {
+    "absoluteTimeout": "La tua sessione è scaduta. Per favore effettua nuovamente l'accesso.",
+    "concurrentSession": "La tua sessione è stata terminata perché hai effettuato l'accesso da un altro dispositivo.",
+    "expired": "La tua sessione è scaduta. Per favore effettua nuovamente l'accesso.",
+    "idleTimeout": "La tua sessione è scaduta per inattività."
+  },
+  "title": "Errore",
+  "workflow": {
+    "alreadyExists": "{{resource}} esiste già.",
+    "cannotDelete": "Impossibile eliminare {{resource}}.",
+    "cannotModify": "Impossibile modificare {{resource}} nel suo stato attuale.",
+    "createFailed": "Creazione di {{resource}} fallita.",
+    "deleteFailed": "Eliminazione di {{resource}} fallita.",
+    "loadFailed": "Caricamento di {{resource}} fallito.",
+    "notFound": "{{resource}} non trovato.",
+    "operationFailed": "Impossibile {{operation}}. Per favore riprova.",
+    "saveFailed": "Salvataggio di {{resource}} fallito.",
+    "updateFailed": "Aggiornamento di {{resource}} fallito."
+  }
+}

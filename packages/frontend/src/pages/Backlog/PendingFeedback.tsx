@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
+import { formatLocaleDate } from '@scrumooth/shared';
 
 import { LoadingState } from '../../components/common/Loading';
 import { apiService } from '../../services';
@@ -18,6 +20,8 @@ import {
 
 import styles from './PendingFeedback.module.css';
 
+import { useI18nStore } from '@/i18n/useI18nStore';
+
 interface StakeholderFeedbackWithSprint extends StakeholderFeedback {
   sprint?: {
     name: string;
@@ -30,6 +34,8 @@ interface PendingFeedbackProps {
 
 export const PendingFeedback: React.FC<PendingFeedbackProps> = ({ onCreateWorkItem }) => {
   const { currentTeam } = useTeamStore();
+  const { t } = useTranslation('backlog');
+  const { locale } = useI18nStore();
   const teamId = currentTeam?.id;
   const queryClient = useQueryClient();
   const [isExpanded, setIsExpanded] = useState(true);
@@ -59,11 +65,7 @@ export const PendingFeedback: React.FC<PendingFeedbackProps> = ({ onCreateWorkIt
       : feedback.filter((f: StakeholderFeedbackWithSprint) => f.category === filter);
 
   const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
+    return formatLocaleDate(dateStr, locale);
   };
 
   const getCategoryConfig = (
@@ -71,22 +73,22 @@ export const PendingFeedback: React.FC<PendingFeedbackProps> = ({ onCreateWorkIt
   ): { label: string; icon: React.ReactNode; className: string } => {
     const configs: Record<string, { label: string; icon: React.ReactNode; className: string }> = {
       positive: {
-        label: 'Positive',
+        label: t('pendingFeedback.positive') as string,
         icon: <ThumbsUpIcon size={12} />,
         className: styles['category-positive'] ?? '',
       },
       negative: {
-        label: 'Negative',
+        label: t('pendingFeedback.negative') as string,
         icon: <ThumbsDownIcon size={12} />,
         className: styles['category-negative'] ?? '',
       },
       suggestion: {
-        label: 'Suggestion',
+        label: t('pendingFeedback.suggestion') as string,
         icon: <LightbulbIcon size={12} />,
         className: styles['category-suggestion'] ?? '',
       },
       question: {
-        label: 'Question',
+        label: t('pendingFeedback.question') as string,
         icon: <HelpCircleIcon size={12} />,
         className: styles['category-question'] ?? '',
       },
@@ -118,7 +120,7 @@ export const PendingFeedback: React.FC<PendingFeedbackProps> = ({ onCreateWorkIt
           <span className={styles['icon']}>
             <MessageCircleIcon size={20} aria-hidden="true" />
           </span>
-          <h3 className={styles['title']}>Pending Feedback</h3>
+          <h3 className={styles['title']}>{t('pendingFeedback.headerTitle') as string}</h3>
           <span className={styles['count']}>{feedback.length}</span>
         </div>
         <button className={styles['toggle-button']}>
@@ -133,7 +135,7 @@ export const PendingFeedback: React.FC<PendingFeedbackProps> = ({ onCreateWorkIt
               className={`${styles['filter-button']} ${filter === 'all' ? styles['active'] : ''}`}
               onClick={() => setFilter('all')}
             >
-              All ({feedback.length})
+              {t('pendingFeedback.all') as string} ({feedback.length})
             </button>
             {['positive', 'negative', 'suggestion', 'question'].map((category) => {
               const count = feedback.filter(
@@ -154,7 +156,11 @@ export const PendingFeedback: React.FC<PendingFeedbackProps> = ({ onCreateWorkIt
           </div>
 
           {isLoading ? (
-            <LoadingState variant="skeleton-list" itemCount={5} label="Loading feedback" />
+            <LoadingState
+              variant="skeleton-list"
+              itemCount={5}
+              label={t('pendingFeedback.loadingFeedback') as string}
+            />
           ) : (
             <div className={styles['feedback-list']}>
               {filteredFeedback.map((item: StakeholderFeedbackWithSprint) => {
@@ -171,12 +177,14 @@ export const PendingFeedback: React.FC<PendingFeedbackProps> = ({ onCreateWorkIt
                     <p className={styles['feedback-content']}>{item.content}</p>
 
                     <div className={styles['author']}>
-                      <strong>From:</strong> {item.authorName}
+                      <strong>{t('pendingFeedback.from') as string}</strong> {item.authorName}
                     </div>
 
                     {item.sprint && (
                       <div className={styles['sprint-info']}>
-                        <span className={styles['sprint-label']}>From Sprint:</span>
+                        <span className={styles['sprint-label']}>
+                          {t('pendingFeedback.fromSprint') as string}
+                        </span>
                         <span className={styles['sprint-name']}>{item.sprint.name}</span>
                       </div>
                     )}
@@ -186,14 +194,16 @@ export const PendingFeedback: React.FC<PendingFeedbackProps> = ({ onCreateWorkIt
                         className={styles['create-item-button']}
                         onClick={() => handleCreateItem(item)}
                       >
-                        Create Item
+                        {t('pendingFeedback.createItem') as string}
                       </button>
                       <button
                         className={styles['mark-addressed-button']}
                         onClick={() => handleMarkAddressed(item.id)}
                         disabled={addressMutation.isPending}
                       >
-                        {addressMutation.isPending ? 'Updating...' : 'Mark Addressed'}
+                        {addressMutation.isPending
+                          ? (t('pendingFeedback.updating') as string)
+                          : (t('pendingFeedback.markAddressed') as string)}
                       </button>
                     </div>
                   </div>

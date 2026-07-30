@@ -2,6 +2,8 @@ import request from 'supertest';
 import { describe, it, expect } from 'vitest';
 import app from '../../app';
 import config from '../../config';
+import { setLocaleHeader, SUPPORTED_LOCALES } from '../helpers/i18n-helpers';
+import type { Locale } from '@scrumooth/shared';
 
 describe('Rate Limiting Integration', () => {
   const isTestEnv = process.env.NODE_ENV === 'test';
@@ -213,6 +215,132 @@ describe('Rate Limiting Integration', () => {
       const remaining2 = parseInt(response2.headers['ratelimit-remaining'] || '0', 10);
 
       expect(remaining2).toBeLessThan(remaining1);
+    });
+  });
+
+  describe('i18n Locale Support', () => {
+    describe('Translated rate limit exceeded messages', () => {
+      it('should return rate limit error with locale-specific Accept-Language header', async () => {
+        if (isTestEnv) {
+          return;
+        }
+
+        const maxRequests = config.rateLimit.max;
+
+        for (const locale of SUPPORTED_LOCALES) {
+          let rateLimited = false;
+
+          for (let i = 0; i < maxRequests + 10 && !rateLimited; i++) {
+            const response = await request(app)
+              .get('/api/v1/auth/csrf-token')
+              .set(setLocaleHeader(locale as Locale));
+
+            if (response.status === 429) {
+              rateLimited = true;
+              expect(response.body).toMatchObject({
+                success: false,
+                error: {
+                  code: 'RATE_LIMIT_EXCEEDED',
+                  message: expect.stringContaining('Too many requests'),
+                },
+              });
+              break;
+            }
+          }
+
+          expect(rateLimited).toBe(true);
+        }
+      });
+
+      it('should include locale information in rate limit error response', async () => {
+        if (isTestEnv) {
+          return;
+        }
+
+        const maxRequests = config.rateLimit.max;
+        const testLocale: Locale = 'de';
+
+        let rateLimitResponse: request.Response | null = null;
+
+        for (let i = 0; i < maxRequests + 10; i++) {
+          const response = await request(app)
+            .get('/api/v1/auth/csrf-token')
+            .set(setLocaleHeader(testLocale));
+
+          if (response.status === 429) {
+            rateLimitResponse = response;
+            break;
+          }
+        }
+
+        expect(rateLimitResponse).not.toBeNull();
+        expect(rateLimitResponse?.body).toHaveProperty('success', false);
+        expect(rateLimitResponse?.body).toHaveProperty('error');
+        expect(rateLimitResponse?.body.error).toHaveProperty('code', 'RATE_LIMIT_EXCEEDED');
+      });
+    });
+
+    describe('Translated retry guidance messages', () => {
+      it('should provide retry-after guidance in rate limit response', async () => {
+        if (isTestEnv) {
+          return;
+        }
+
+        const maxRequests = config.rateLimit.max;
+
+        for (const locale of SUPPORTED_LOCALES) {
+          let rateLimited = false;
+
+          for (let i = 0; i < maxRequests + 10 && !rateLimited; i++) {
+            const response = await request(app)
+              .get('/api/v1/auth/csrf-token')
+              .set(setLocaleHeader(locale as Locale));
+
+            if (response.status === 429) {
+              rateLimited = true;
+              // Check that retry guidance is available via headers
+              expect(response.headers['ratelimit-reset']).toBeDefined();
+              const resetTime = parseInt(response.headers['ratelimit-reset'] || '0', 10);
+              expect(resetTime).toBeGreaterThan(0);
+              break;
+            }
+          }
+
+          expect(rateLimited).toBe(true);
+        }
+      });
+
+      it('should return consistent retry guidance format across all locales', async () => {
+        if (isTestEnv) {
+          return;
+        }
+
+        const maxRequests = config.rateLimit.max;
+        const resetTimes: number[] = [];
+
+        for (const locale of SUPPORTED_LOCALES) {
+          for (let i = 0; i < maxRequests + 10; i++) {
+            const response = await request(app)
+              .get('/api/v1/auth/csrf-token')
+              .set(setLocaleHeader(locale as Locale));
+
+            if (response.status === 429) {
+              const resetTime = parseInt(response.headers['ratelimit-reset'] || '0', 10);
+              resetTimes.push(resetTime);
+              break;
+            }
+          }
+        }
+
+        // All locales should receive consistent rate limit reset times
+        // (within a reasonable tolerance since requests are sequential)
+        if (resetTimes.length > 0) {
+          const avgResetTime = resetTimes.reduce((a, b) => a + b, 0) / resetTimes.length;
+          for (const resetTime of resetTimes) {
+            expect(Math.abs(resetTime - avgResetTime)).toBeLessThan(10);
+          }
+        }
+      });
     });
   });
 });

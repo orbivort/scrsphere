@@ -1,4 +1,5 @@
 import React, { useCallback, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import styles from './ConfirmationInput.module.css';
 
@@ -35,6 +36,7 @@ export const ConfirmationInput: React.FC<ConfirmationInputProps> = ({
   onSubmit,
   id = 'deletion-confirmation',
 }) => {
+  const { t } = useTranslation('common');
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Determine the visual state of the input
@@ -86,7 +88,7 @@ export const ConfirmationInput: React.FC<ConfirmationInputProps> = ({
   return (
     <div className={styles['confirmation-section']}>
       <label htmlFor={id} className={styles['confirmation-label']}>
-        To confirm deletion, please type:{' '}
+        {t('deleteAccount.confirmationInput.label')}{' '}
         <span className={styles['confirmation-phrase']}>{requiredPhrase}</span>
       </label>
 
@@ -98,7 +100,7 @@ export const ConfirmationInput: React.FC<ConfirmationInputProps> = ({
         value={value}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
-        placeholder={`Type "${requiredPhrase}" to confirm`}
+        placeholder={t('deleteAccount.confirmationInput.placeholder', { phrase: requiredPhrase })}
         disabled={disabled}
         autoComplete="off"
         autoCorrect="off"
@@ -111,8 +113,7 @@ export const ConfirmationInput: React.FC<ConfirmationInputProps> = ({
 
       {/* Screen reader instructions */}
       <span id={`${id}-instructions`} className="sr-only">
-        Type the phrase exactly as shown, case-sensitive, to enable the delete button. Press Enter
-        when the phrase matches to submit.
+        {t('deleteAccount.confirmationInput.instructions')}
       </span>
 
       {/* Error message for invalid state */}
@@ -127,7 +128,7 @@ export const ConfirmationInput: React.FC<ConfirmationInputProps> = ({
             <XCircleIcon size={16} />
           </span>
           <span className={styles['confirmation-error-text']}>
-            Phrase does not match. Please type exactly: {requiredPhrase}
+            {t('deleteAccount.confirmationInput.error')} {requiredPhrase}
           </span>
         </div>
       )}
@@ -143,7 +144,9 @@ export const ConfirmationInput: React.FC<ConfirmationInputProps> = ({
           <span className={styles['confirmation-success-icon']} aria-hidden="true">
             <CheckCircleIcon size={16} />
           </span>
-          <span className={styles['confirmation-success-text']}>Confirmation phrase matches</span>
+          <span className={styles['confirmation-success-text']}>
+            {t('deleteAccount.confirmationInput.success')}
+          </span>
         </div>
       )}
     </div>

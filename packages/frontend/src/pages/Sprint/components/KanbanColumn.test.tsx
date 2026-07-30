@@ -1,6 +1,6 @@
-import { screen, render } from '@testing-library/react';
+import { screen, renderWithProviders, initTestI18n } from '../../../test-utils';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, beforeAll, vi } from 'vitest';
 
 import { TaskStatus } from '../../../types';
 import { createMockTask } from '../../../test-utils';
@@ -77,25 +77,30 @@ describe('KanbanColumn', () => {
     onMoveStatus: mockOnMoveStatus,
   };
 
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   describe('Rendering', () => {
     it('should render column title', () => {
-      render(<KanbanColumn {...defaultProps} />);
+      renderWithProviders(<KanbanColumn {...defaultProps} />);
 
-      expect(screen.getByText('To Do')).toBeInTheDocument();
+      // Use getByRole to specifically target the h3 column title heading
+      expect(screen.getByRole('heading', { level: 3, name: /To Do/ })).toBeInTheDocument();
     });
 
     it('should render task count', () => {
-      render(<KanbanColumn {...defaultProps} />);
+      renderWithProviders(<KanbanColumn {...defaultProps} />);
 
       expect(screen.getByText('3')).toBeInTheDocument();
     });
 
     it('should render all tasks', () => {
-      render(<KanbanColumn {...defaultProps} />);
+      renderWithProviders(<KanbanColumn {...defaultProps} />);
 
       expect(screen.getByText('Task One')).toBeInTheDocument();
       expect(screen.getByText('Task Two')).toBeInTheDocument();
@@ -103,13 +108,13 @@ describe('KanbanColumn', () => {
     });
 
     it('should render empty state when no tasks', () => {
-      render(<KanbanColumn {...defaultProps} tasks={[]} />);
+      renderWithProviders(<KanbanColumn {...defaultProps} tasks={[]} />);
 
       expect(screen.getByText('No tasks to do')).toBeInTheDocument();
     });
 
     it('should render WIP limit when applicable', () => {
-      render(
+      renderWithProviders(
         <KanbanColumn
           {...defaultProps}
           status={TaskStatus.IN_PROGRESS}
@@ -134,7 +139,7 @@ describe('KanbanColumn', () => {
           })
         );
 
-      render(
+      renderWithProviders(
         <KanbanColumn
           {...defaultProps}
           status={TaskStatus.IN_PROGRESS}
@@ -159,7 +164,7 @@ describe('KanbanColumn', () => {
           })
         );
 
-      render(
+      renderWithProviders(
         <KanbanColumn
           {...defaultProps}
           status={TaskStatus.IN_PROGRESS}
@@ -178,14 +183,14 @@ describe('KanbanColumn', () => {
 
   describe('Drag and Drop', () => {
     it('should render draggable task cards', () => {
-      render(<KanbanColumn {...defaultProps} />);
+      renderWithProviders(<KanbanColumn {...defaultProps} />);
 
       const cards = document.querySelectorAll('[draggable="true"]');
       expect(cards.length).toBe(3);
     });
 
     it('should highlight as drop target when dragged over', () => {
-      render(<KanbanColumn {...defaultProps} dropTargetColumn={TaskStatus.TODO} />);
+      renderWithProviders(<KanbanColumn {...defaultProps} dropTargetColumn={TaskStatus.TODO} />);
 
       const column = document.querySelector(`.${styles['drop-target']}`);
       expect(column).toBeInTheDocument();
@@ -194,7 +199,7 @@ describe('KanbanColumn', () => {
 
   describe('Keyboard Navigation', () => {
     it('should indicate drop target during keyboard drag', () => {
-      render(
+      renderWithProviders(
         <KanbanColumn
           {...defaultProps}
           keyboardGrabState="grabbed"
@@ -207,7 +212,7 @@ describe('KanbanColumn', () => {
     });
 
     it('should have aria-dropeffect during keyboard drag', () => {
-      render(
+      renderWithProviders(
         <KanbanColumn
           {...defaultProps}
           keyboardGrabState="grabbed"
@@ -223,7 +228,7 @@ describe('KanbanColumn', () => {
 
   describe('Task Interaction', () => {
     it('should call onTaskClick when clicking a task', async () => {
-      render(<KanbanColumn {...defaultProps} />);
+      renderWithProviders(<KanbanColumn {...defaultProps} />);
 
       await userEvent.click(screen.getByText('Task One'));
 
@@ -245,7 +250,7 @@ describe('KanbanColumn', () => {
           })
         );
 
-      render(<KanbanColumn {...defaultProps} tasks={fewTasks} />);
+      renderWithProviders(<KanbanColumn {...defaultProps} tasks={fewTasks} />);
 
       // All tasks should be rendered
       for (let i = 0; i < 10; i++) {
@@ -264,7 +269,7 @@ describe('KanbanColumn', () => {
           })
         );
 
-      render(<KanbanColumn {...defaultProps} tasks={manyTasks} />);
+      renderWithProviders(<KanbanColumn {...defaultProps} tasks={manyTasks} />);
 
       // Column should show correct count
       expect(screen.getByText('60')).toBeInTheDocument();
@@ -282,7 +287,7 @@ describe('KanbanColumn', () => {
           })
         );
 
-      render(<KanbanColumn {...defaultProps} tasks={fewTasks} />);
+      renderWithProviders(<KanbanColumn {...defaultProps} tasks={fewTasks} />);
 
       // Should still have draggable cards
       const cards = document.querySelectorAll('[draggable="true"]');
@@ -300,7 +305,7 @@ describe('KanbanColumn', () => {
           })
         );
 
-      const { container } = render(
+      const { container } = renderWithProviders(
         <KanbanColumn
           {...defaultProps}
           tasks={manyTasks}
@@ -325,7 +330,9 @@ describe('KanbanColumn', () => {
           })
         );
 
-      const { container } = render(<KanbanColumn {...defaultProps} tasks={manyTasks} />);
+      const { container } = renderWithProviders(
+        <KanbanColumn {...defaultProps} tasks={manyTasks} />
+      );
 
       // Should have virtualized styles (overflow auto on column body)
       const columnBody = container.querySelector('[style*="overflow: auto"]');
@@ -333,7 +340,7 @@ describe('KanbanColumn', () => {
     });
 
     it('should handle empty column with virtual scrolling', () => {
-      render(<KanbanColumn {...defaultProps} tasks={[]} />);
+      renderWithProviders(<KanbanColumn {...defaultProps} tasks={[]} />);
 
       // Should show empty state
       expect(screen.getByText('No tasks to do')).toBeInTheDocument();
@@ -350,7 +357,7 @@ describe('KanbanColumn', () => {
           })
         );
 
-      render(<KanbanColumn {...defaultProps} tasks={manyTasks} />);
+      renderWithProviders(<KanbanColumn {...defaultProps} tasks={manyTasks} />);
 
       // Should have aria-label indicating task count
       const column = screen.getByRole('listitem', { name: /To Do column, 60 tasks/i });

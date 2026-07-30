@@ -1,7 +1,8 @@
-﻿import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { BrowserRouter } from 'react-router';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import React from 'react';
+import { screen, renderWithProviders } from '@/test-utils';
+import { vi, describe, it, expect, beforeEach, beforeAll } from 'vitest';
+
+import { initTestI18n } from '@/test-utils';
 import { DailyUpdateList, type DailyUpdateListProps } from './DailyUpdateList';
 
 const mockUser1 = {
@@ -47,15 +48,15 @@ const mockUpdates = [
   },
 ];
 
-const renderWithRouter = (ui: React.ReactElement) => {
-  return render(<BrowserRouter>{ui}</BrowserRouter>);
-};
-
 describe('DailyUpdateList Component', () => {
   const defaultProps: DailyUpdateListProps = {
     updates: mockUpdates,
     emptyMessage: 'No daily updates for today yet.',
   };
+
+  beforeAll(async () => {
+    await initTestI18n();
+  });
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -63,47 +64,48 @@ describe('DailyUpdateList Component', () => {
 
   describe('Rendering', () => {
     it('should render daily updates when available', () => {
-      renderWithRouter(<DailyUpdateList {...defaultProps} />);
+      renderWithProviders(<DailyUpdateList {...defaultProps} />);
 
       expect(screen.getByText('John Doe')).toBeInTheDocument();
       expect(screen.getByText('Jane Smith')).toBeInTheDocument();
     });
 
     it('should display yesterday work', () => {
-      renderWithRouter(<DailyUpdateList {...defaultProps} />);
+      renderWithProviders(<DailyUpdateList {...defaultProps} />);
 
       expect(screen.getByText('Completed login feature')).toBeInTheDocument();
       expect(screen.getByText('Code review')).toBeInTheDocument();
     });
 
     it('should display today work', () => {
-      renderWithRouter(<DailyUpdateList {...defaultProps} />);
+      renderWithProviders(<DailyUpdateList {...defaultProps} />);
 
       expect(screen.getByText('Working on logout')).toBeInTheDocument();
       expect(screen.getByText('Testing')).toBeInTheDocument();
     });
 
     it('should display impediment when present', () => {
-      renderWithRouter(<DailyUpdateList {...defaultProps} />);
+      renderWithProviders(<DailyUpdateList {...defaultProps} />);
 
       expect(screen.getByText('Waiting for API response')).toBeInTheDocument();
     });
 
     it('should not display impediment section when null', () => {
-      renderWithRouter(<DailyUpdateList {...defaultProps} />);
+      renderWithProviders(<DailyUpdateList {...defaultProps} />);
 
-      const impedimentSections = screen.queryAllByText(/🚧 Impediment:/);
+      // Only one item has an impediment (update-2), so we expect exactly 1 impediment section
+      const impedimentSections = screen.queryAllByText(/Impediment:/);
       expect(impedimentSections.length).toBe(1);
     });
 
     it('should render empty message when no updates', () => {
-      renderWithRouter(<DailyUpdateList {...defaultProps} updates={[]} />);
+      renderWithProviders(<DailyUpdateList {...defaultProps} updates={[]} />);
 
       expect(screen.getByText('No daily updates for today yet.')).toBeInTheDocument();
     });
 
     it('should have proper ARIA attributes', () => {
-      renderWithRouter(<DailyUpdateList {...defaultProps} />);
+      renderWithProviders(<DailyUpdateList {...defaultProps} />);
 
       const list = screen.getByRole('list', { name: 'Daily updates list' });
       expect(list).toBeInTheDocument();
@@ -112,13 +114,15 @@ describe('DailyUpdateList Component', () => {
 
   describe('Submit Button', () => {
     it('should not show submit button by default', () => {
-      renderWithRouter(<DailyUpdateList {...defaultProps} />);
+      renderWithProviders(<DailyUpdateList {...defaultProps} />);
 
       expect(screen.queryByLabelText('Submit your daily scrum update')).not.toBeInTheDocument();
     });
 
     it('should show submit button when showSubmitButton is true and no updates', () => {
-      renderWithRouter(<DailyUpdateList {...defaultProps} updates={[]} showSubmitButton={true} />);
+      renderWithProviders(
+        <DailyUpdateList {...defaultProps} updates={[]} showSubmitButton={true} />
+      );
 
       const submitButton = screen.getByLabelText('Submit your daily scrum update');
       expect(submitButton).toBeInTheDocument();
@@ -126,7 +130,9 @@ describe('DailyUpdateList Component', () => {
     });
 
     it('should show submit button when showSubmitButton is true even with empty updates', () => {
-      renderWithRouter(<DailyUpdateList {...defaultProps} updates={[]} showSubmitButton={true} />);
+      renderWithProviders(
+        <DailyUpdateList {...defaultProps} updates={[]} showSubmitButton={true} />
+      );
 
       const submitButton = screen.getByLabelText('Submit your daily scrum update');
       expect(submitButton).toBeInTheDocument();
@@ -135,7 +141,7 @@ describe('DailyUpdateList Component', () => {
 
   describe('Date Formatting', () => {
     it('should format update date correctly', () => {
-      renderWithRouter(<DailyUpdateList {...defaultProps} />);
+      renderWithProviders(<DailyUpdateList {...defaultProps} />);
 
       const dates = screen.getAllByText(/2026/);
       expect(dates.length).toBeGreaterThan(0);
@@ -151,13 +157,13 @@ describe('DailyUpdateList Component', () => {
         },
       ];
 
-      renderWithRouter(<DailyUpdateList {...defaultProps} updates={updatesWithNullUser} />);
+      renderWithProviders(<DailyUpdateList {...defaultProps} updates={updatesWithNullUser} />);
 
       expect(screen.getByText('Unknown User')).toBeInTheDocument();
     });
 
     it('should display full user name when user exists', () => {
-      renderWithRouter(<DailyUpdateList {...defaultProps} />);
+      renderWithProviders(<DailyUpdateList {...defaultProps} />);
 
       expect(screen.getByText('John Doe')).toBeInTheDocument();
       expect(screen.getByText('Jane Smith')).toBeInTheDocument();

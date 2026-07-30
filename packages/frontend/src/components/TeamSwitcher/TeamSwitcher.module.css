@@ -269,7 +269,7 @@
   transition:
     background-color var(--transition-fast),
     box-shadow var(--transition-fast);
-  text-align: left;
+  text-align: start;
   font-family: inherit;
 }
 

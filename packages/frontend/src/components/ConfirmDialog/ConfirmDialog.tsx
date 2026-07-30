@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Button } from '../common/Button/Button';
 import { AlertTriangleIcon, TrashIcon } from '../common/Icons';
@@ -32,8 +33,8 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   title,
   message,
   name,
-  confirmLabel = 'Confirm',
-  cancelLabel = 'Cancel',
+  confirmLabel,
+  cancelLabel,
   onConfirm,
   onCancel,
   isLoading = false,
@@ -41,8 +42,13 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   warningMessage,
   showTrashIcon = true,
 }) => {
+  const { t } = useTranslation('common');
   const dialogRef = useRef<HTMLDivElement>(null);
   const confirmButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Use translated defaults if labels not provided
+  const confirmText = confirmLabel ?? t('confirm');
+  const cancelText = cancelLabel ?? t('cancel');
 
   useEffect(() => {
     if (isOpen) {
@@ -96,17 +102,15 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
           {warningMessage && <p className={styles['warning-text']}>{warningMessage}</p>}
           <p>
             {name ? (
-              <>
-                Are you sure you want to remove <strong>{name}</strong>?
-              </>
+              <>{t('confirmDialog.removeMessage', { name })}</>
             ) : (
-              message
+              (message ?? t('confirmDialog.defaultMessage'))
             )}
           </p>
         </div>
         <div className={styles['dialog-actions']}>
           <Button variant="secondary" onClick={onCancel} disabled={isLoading}>
-            {cancelLabel}
+            {cancelText}
           </Button>
           <Button
             ref={confirmButtonRef}
@@ -116,7 +120,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
             disabled={isLoading}
           >
             {getButtonIcon()}
-            {confirmLabel}
+            {confirmText}
           </Button>
         </div>
       </div>

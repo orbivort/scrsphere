@@ -1,8 +1,6 @@
-﻿import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { screen, render, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
+import { screen, renderWithProviders, waitFor, initTestI18n, i18nT } from '../../test-utils';
 import userEvent from '@testing-library/user-event';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MemoryRouter } from 'react-router';
 
 import { useTeamStore } from '../../store';
 import {
@@ -17,6 +15,10 @@ import {
 import { TaskStatus, type Task, type Sprint, ImpedimentStatus } from '../../types';
 
 import { SprintBoard } from './SprintBoard';
+
+beforeAll(async () => {
+  await initTestI18n();
+});
 
 vi.mock('../../store', () => ({
   useTeamStore: vi.fn(),
@@ -97,20 +99,6 @@ const mockImpediments = [createMockImpediment({ id: 'imp-1', status: ImpedimentS
 
 const mockTeamStore = useTeamStore as ReturnType<typeof vi.fn>;
 
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        gcTime: 0,
-        staleTime: 0,
-      },
-      mutations: {
-        retry: false,
-      },
-    },
-  });
-
 const getDefaultMockData = () => ({
   sprint: mockSprint,
   tasks: mockTasks,
@@ -182,18 +170,7 @@ const getDefaultMutations = () => {
   };
 };
 
-const renderSprintBoard = (queryClient = createTestQueryClient()) => {
-  return render(
-    <QueryClientProvider client={queryClient}>
-      <MemoryRouter>
-        <SprintBoard />
-      </MemoryRouter>
-    </QueryClientProvider>
-  );
-};
-
 describe('SprintBoard Integration Tests', () => {
-  let queryClient: QueryClient;
   let useSprintBoardData: ReturnType<typeof vi.fn>;
   let useTaskMutations: ReturnType<typeof vi.fn>;
   let useTaskFormValidation: ReturnType<typeof vi.fn>;
@@ -204,7 +181,6 @@ describe('SprintBoard Integration Tests', () => {
 
   beforeEach(async () => {
     vi.clearAllMocks();
-    queryClient = createTestQueryClient();
 
     const hooks = await import('./SprintBoard.hooks');
     const modalHandlers = await import('./SprintBoard.modalHandlers');
@@ -267,13 +243,9 @@ describe('SprintBoard Integration Tests', () => {
     });
   });
 
-  afterEach(() => {
-    queryClient.clear();
-  });
-
   describe('Sprint Board Rendering', () => {
     it('should render sprint board after loading', async () => {
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -281,7 +253,7 @@ describe('SprintBoard Integration Tests', () => {
     });
 
     it('should display sprint name', async () => {
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByText('Sprint 1')).toBeInTheDocument();
@@ -289,7 +261,7 @@ describe('SprintBoard Integration Tests', () => {
     });
 
     it('should display sprint goal', async () => {
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByText(/Complete authentication feature/i)).toBeInTheDocument();
@@ -297,17 +269,23 @@ describe('SprintBoard Integration Tests', () => {
     });
 
     it('should render kanban columns', async () => {
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
-        expect(screen.getByText(/to do/i)).toBeInTheDocument();
-        expect(screen.getAllByText(/in progress/i).length).toBeGreaterThan(0);
-        expect(screen.getAllByText(/done/i).length).toBeGreaterThan(0);
+        expect(
+          screen.getByRole('heading', { name: i18nT('sprint:taskStatus.todo') })
+        ).toBeInTheDocument();
+        expect(
+          screen.getByRole('heading', { name: i18nT('sprint:taskStatus.inProgress') })
+        ).toBeInTheDocument();
+        expect(
+          screen.getByRole('heading', { name: i18nT('sprint:taskStatus.done') })
+        ).toBeInTheDocument();
       });
     });
 
     it('should display task cards in correct columns', async () => {
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByText('Task 1')).toBeInTheDocument();
@@ -319,7 +297,7 @@ describe('SprintBoard Integration Tests', () => {
 
   describe('Task Statistics', () => {
     it('should display correct task counts', async () => {
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -327,7 +305,7 @@ describe('SprintBoard Integration Tests', () => {
     });
 
     it('should calculate progress percentage', async () => {
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -337,7 +315,7 @@ describe('SprintBoard Integration Tests', () => {
 
   describe('View Mode Toggle', () => {
     it('should toggle between kanban and swimlanes view', async () => {
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -352,7 +330,7 @@ describe('SprintBoard Integration Tests', () => {
 
   describe('Burndown Chart Toggle', () => {
     it('should toggle burndown chart visibility', async () => {
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -367,26 +345,28 @@ describe('SprintBoard Integration Tests', () => {
 
   describe('Task Creation', () => {
     it('should open create task modal', async () => {
-      renderSprintBoard(queryClient);
+      // Use actual modal handlers for this test so modal state works
+      const actualModalHandlers = await vi.importActual('./SprintBoard.modalHandlers');
+      useModalHandlers.mockImplementation(actualModalHandlers.useModalHandlers);
+
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
       });
 
-      const createButton = screen.queryByRole('button', { name: /add task/i });
-      if (createButton) {
-        await userEvent.click(createButton);
+      const createButton = screen.getByRole('button', { name: /add task/i });
+      await userEvent.click(createButton);
 
-        await waitFor(() => {
-          expect(screen.getByRole('dialog')).toBeInTheDocument();
-        });
-      }
+      await waitFor(() => {
+        expect(screen.getByRole('dialog')).toBeInTheDocument();
+      });
     });
   });
 
   describe('Task Editing', () => {
     it('should open task detail modal on task click', async () => {
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByText('Task 1')).toBeInTheDocument();
@@ -402,7 +382,7 @@ describe('SprintBoard Integration Tests', () => {
 
   describe('Complete Sprint', () => {
     it('should show incomplete tasks warning', async () => {
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -410,7 +390,7 @@ describe('SprintBoard Integration Tests', () => {
     });
 
     it('should show outstanding impediments warning', async () => {
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -420,7 +400,7 @@ describe('SprintBoard Integration Tests', () => {
 
   describe('Filters', () => {
     it('should filter tasks by assignee', async () => {
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -433,7 +413,7 @@ describe('SprintBoard Integration Tests', () => {
     });
 
     it('should search tasks by title', async () => {
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -453,7 +433,7 @@ describe('SprintBoard Integration Tests', () => {
         wipWarnings: [{ column: TaskStatus.TODO, current: 10, limit: 5 }],
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -463,7 +443,7 @@ describe('SprintBoard Integration Tests', () => {
 
   describe('Impediments Display', () => {
     it('should show impediments count', async () => {
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -480,7 +460,7 @@ describe('SprintBoard Integration Tests', () => {
         tasksLoading: false,
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         const sprintBoard = screen.queryByTestId('sprint-board');
@@ -492,7 +472,7 @@ describe('SprintBoard Integration Tests', () => {
 
   describe('Keyboard Navigation', () => {
     it('should handle keyboard shortcuts', async () => {
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -502,7 +482,7 @@ describe('SprintBoard Integration Tests', () => {
 
   describe('Days Remaining', () => {
     it('should display days remaining in sprint', async () => {
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -515,7 +495,7 @@ describe('SprintBoard Integration Tests', () => {
         daysRemaining: 0,
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -528,7 +508,7 @@ describe('SprintBoard Integration Tests', () => {
         daysRemaining: -2,
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -538,7 +518,7 @@ describe('SprintBoard Integration Tests', () => {
 
   describe('Sprint Duration', () => {
     it('should display sprint duration', async () => {
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -548,7 +528,7 @@ describe('SprintBoard Integration Tests', () => {
 
   describe('Team Members Display', () => {
     it('should show team members', async () => {
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -558,7 +538,7 @@ describe('SprintBoard Integration Tests', () => {
 
   describe('PBI Items Display', () => {
     it('should show PBI items', async () => {
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -573,10 +553,10 @@ describe('SprintBoard Integration Tests', () => {
         sprintLoading: true,
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
-        expect(screen.getAllByText(/loading/i).length).toBeGreaterThan(0);
+        expect(screen.getAllByText(i18nT('sprint:board.loadingBoard')).length).toBeGreaterThan(0);
       });
     });
 
@@ -586,10 +566,10 @@ describe('SprintBoard Integration Tests', () => {
         tasksLoading: true,
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
-        expect(screen.getAllByText(/loading/i).length).toBeGreaterThan(0);
+        expect(screen.getAllByText(i18nT('sprint:board.loadingBoard')).length).toBeGreaterThan(0);
       });
     });
   });
@@ -607,7 +587,7 @@ describe('SprintBoard Integration Tests', () => {
         },
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -620,7 +600,7 @@ describe('SprintBoard Integration Tests', () => {
         sprint: null,
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         const sprintBoard = screen.queryByTestId('sprint-board');
@@ -661,7 +641,7 @@ describe('SprintBoard Integration Tests', () => {
         },
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -686,7 +666,7 @@ describe('SprintBoard Integration Tests', () => {
         },
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -701,7 +681,7 @@ describe('SprintBoard Integration Tests', () => {
         impediments: [],
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -714,7 +694,7 @@ describe('SprintBoard Integration Tests', () => {
         impediments: [createMockImpediment({ id: 'imp-1', status: ImpedimentStatus.RESOLVED })],
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();

@@ -1,8 +1,12 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { formatChartDate } from '@scrumooth/shared';
 
 import type { BurndownDataPoint } from '../SprintBoard.types';
 
 import styles from './BurndownChart.module.css';
+
+import { useI18nStore } from '@/i18n/useI18nStore';
 
 export interface BurndownChartProps {
   sprintName: string;
@@ -29,15 +33,18 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({
   onToggleDataTable,
   onClose,
 }) => {
+  const { t } = useTranslation('sprint');
+  const { locale } = useI18nStore();
+
   return (
     <div
       id="burndown-panel"
       className={styles['burndown-panel']}
       role="region"
-      aria-label="Sprint Burndown Chart"
+      aria-label={t('burndownChart.sprintBurndownChart')}
     >
       <div className={styles['burndown-header']}>
-        <h3>Sprint Burndown</h3>
+        <h3>{t('burndownChart.sprintBurndown')}</h3>
         <div className={styles['burndown-controls']}>
           <button
             className={`${styles.button} ${styles['button-secondary']}`}
@@ -45,12 +52,12 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({
             aria-expanded={showDataTable}
             aria-controls="burndown-data-table"
           >
-            {showDataTable ? 'Hide Data Table' : 'View Data Table'}
+            {showDataTable ? t('burndownChart.hideDataTable') : t('burndownChart.viewDataTable')}
           </button>
           <button
             className={styles['burndown-close']}
             onClick={onClose}
-            aria-label="Close burndown chart"
+            aria-label={t('burndownChart.closeBurndownChart')}
           >
             ×
           </button>
@@ -62,17 +69,17 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({
           id="burndown-data-table"
           className={styles['burndown-data-table']}
           role="region"
-          aria-label="Burndown data table"
+          aria-label={t('burndownChart.sprintBurndownChart')}
         >
           <table className={styles['data-table']}>
-            <caption>Burndown Chart Data - {sprintName}</caption>
+            <caption>{t('burndownChart.dataTableCaption', { sprintName })}</caption>
             <thead>
               <tr>
-                <th scope="col">Day</th>
-                <th scope="col">Date</th>
-                <th scope="col">Ideal Hours</th>
-                <th scope="col">Actual Hours</th>
-                <th scope="col">Variance</th>
+                <th scope="col">{t('burndownChart.day')}</th>
+                <th scope="col">{t('burndownChart.date')}</th>
+                <th scope="col">{t('burndownChart.idealHours')}</th>
+                <th scope="col">{t('burndownChart.actualHours')}</th>
+                <th scope="col">{t('burndownChart.variance')}</th>
               </tr>
             </thead>
             <tbody>
@@ -85,9 +92,9 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({
                 return (
                   <tr key={index}>
                     <td>{point.day + 1}</td>
-                    <td>{point.date}</td>
+                    <td>{formatChartDate(point.date, locale)}</td>
                     <td>{idealHours}h</td>
-                    <td>{point.actual !== null ? `${actualHours}h` : 'No data'}</td>
+                    <td>{point.actual !== null ? `${actualHours}h` : t('burndownChart.noData')}</td>
                     <td>
                       {variance !== null ? (
                         <span
@@ -95,7 +102,9 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({
                             variance > 0 ? styles['variance-behind'] : styles['variance-ahead']
                           }
                         >
-                          {variance > 0 ? `+${variance}h behind` : `${Math.abs(variance)}h ahead`}
+                          {variance > 0
+                            ? t('burndownChart.behind', { hours: variance })
+                            : t('burndownChart.ahead', { hours: Math.abs(variance) })}
                         </span>
                       ) : (
                         '—'
@@ -122,7 +131,11 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({
             className={styles['burndown-svg']}
             preserveAspectRatio="xMidYMid meet"
             role="img"
-            aria-label={`Sprint burndown chart. Total estimated hours: ${totalEstimatedHours}h. Current remaining: ${totalRemainingHours}h. Progress: ${progressPercentage}% complete. Ideal burndown shown as dashed gray line. Actual progress shown as solid blue line.`}
+            aria-label={t('burndownChart.ariaLabel', {
+              total: totalEstimatedHours,
+              remaining: totalRemainingHours,
+              progress: progressPercentage,
+            })}
           >
             <defs>
               <linearGradient id="idealGradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -233,18 +246,18 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({
           <div className={styles['chart-legend']}>
             <span className={`${styles['legend-item']} ${styles.ideal}`}>
               <span className={`${styles['legend-line']} ${styles.ideal}`} />
-              Ideal Burndown
+              {t('burndownChart.idealBurndown')}
             </span>
             <span className={`${styles['legend-item']} ${styles.actual}`}>
               <span className={`${styles['legend-line']} ${styles.actual}`} />
-              Actual ({totalRemainingHours}h remaining)
+              {t('burndownChart.actualRemaining', { hours: totalRemainingHours })}
             </span>
           </div>
         </div>
         <div className={styles['chart-x-axis']}>
-          <span>Day 1</span>
-          <span>Day {Math.round(sprintDuration / 2)}</span>
-          <span>Day {sprintDuration}</span>
+          <span>{t('burndownChart.dayLabel', { day: 1 })}</span>
+          <span>{t('burndownChart.dayLabel', { day: Math.round(sprintDuration / 2) })}</span>
+          <span>{t('burndownChart.dayLabel', { day: sprintDuration })}</span>
         </div>
       </div>
     </div>

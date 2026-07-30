@@ -1,5 +1,6 @@
 /* eslint-disable icon-rules/no-inline-svg -- Loading spinner animation, not a static icon */
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import styles from './LoadingSpinner.module.css';
 
@@ -23,8 +24,11 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   size = 48,
   color = '#1a66ff',
   className = '',
-  label = 'Loading',
+  label,
 }) => {
+  const { t } = useTranslation('common');
+  const displayLabel = label ?? t('loading');
+
   const strokeWidth = Math.max(2, size / 12);
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
@@ -35,8 +39,8 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
       className={`${styles['spinner-container']} ${className}`}
       role="progressbar"
       aria-busy="true"
-      aria-label={label}
-      aria-valuetext={label}
+      aria-label={displayLabel}
+      aria-valuetext={displayLabel}
     >
       <svg
         className={styles.spinner}
@@ -68,7 +72,7 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
           strokeDashoffset={dashOffset}
         />
       </svg>
-      <span className="visually-hidden">{label}</span>
+      <span className="visually-hidden">{displayLabel}</span>
     </div>
   );
 };

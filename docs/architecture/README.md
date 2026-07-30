@@ -205,6 +205,15 @@ Security considerations and implementation:
 - Data protection
 - Security best practices
 
+### 7. [i18n Architecture](./i18n-architecture.md)
+
+Internationalization architecture and implementation:
+
+- Library selection (`i18next` + `react-i18next`) and locale detection strategy
+- Frontend / backend / shared-package integration patterns
+- Translation file organization, pluralization, and cultural formatting
+- New-language onboarding playbook and modern best-practices alignment (2026)
+
 ## Quick Navigation
 
 ### For Developers
@@ -212,6 +221,7 @@ Security considerations and implementation:
 - **Getting Started**: [README.md](../../README.md)
 - **API Documentation**: [API Docs](../api/README.md)
 - **Development Guide**: [AGENTS.md](../../AGENTS.md)
+- **Internationalization**: [i18n Architecture](./i18n-architecture.md)
 
 ### For Architects
 
@@ -365,6 +375,6 @@ Key architectural decisions documented in this section:
 
 ---
 
-**Last Updated**: 2026-05-10  
-**Version**: 1.0.0  
+**Last Updated**: 2026-07-18  
+**Version**: 1.1.0  
 **Maintainers**: Scrumooth Team

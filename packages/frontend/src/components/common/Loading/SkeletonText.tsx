@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import styles from './Skeleton.module.css';
 
@@ -29,15 +30,18 @@ export const SkeletonText: React.FC<SkeletonTextProps> = ({
   lines = 1,
   lastLineWidth = '100%',
   className = '',
-  label = 'Loading content',
+  label,
 }) => {
+  const { t } = useTranslation('common');
+  const displayLabel = label ?? t('loadingStates.loadingContent');
+
   return (
     <div
       className={`${styles['skeleton-text']} ${className}`}
       role="status"
       aria-live="polite"
       aria-busy="true"
-      aria-label={label}
+      aria-label={displayLabel}
     >
       {Array.from({ length: lines }).map((_, index) => (
         <div
@@ -48,7 +52,7 @@ export const SkeletonText: React.FC<SkeletonTextProps> = ({
           }}
         />
       ))}
-      <span className="visually-hidden">{label}</span>
+      <span className="visually-hidden">{displayLabel}</span>
     </div>
   );
 };

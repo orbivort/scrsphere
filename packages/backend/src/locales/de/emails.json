@@ -1,0 +1,27 @@
+{
+  "common": {
+    "allRightsReserved": "Alle Rechte vorbehalten.",
+    "greeting": "Hallo",
+    "needHelp": "Brauchen Sie Hilfe? Kontaktieren Sie uns unter",
+    "thankYouForUsing": "Vielen Dank, dass Sie",
+    "visitApp": "App besuchen"
+  },
+  "passwordReset": {
+    "bodyIntro": "Wir haben eine Anfrage erhalten, das Passwort für {{email}} zurückzusetzen.",
+    "buttonHint": "Klicken Sie auf die Schaltfläche unten, um ein neues Passwort zu erstellen:",
+    "cta": "Passwort zurücksetzen",
+    "expiresIn": "Dieser Link läuft in {{duration}} ab.",
+    "fallbackLinkHint": "Wenn die Schaltfläche oben nicht funktioniert, kopieren Sie den folgenden Link in Ihren Browser:",
+    "heading": "Hallo {{name}},",
+    "ignoreIfNotRequested": "Falls Sie dies nicht angefordert haben, können Sie diese E-Mail ignorieren.",
+    "subject": "Setzen Sie Ihr Scrumooth-Passwort zurück",
+    "supportContact": "Wenn Sie Fragen haben oder Hilfe benötigen, wenden Sie sich bitte an unser Support-Team."
+  },
+  "welcome": {
+    "bodyIntro": "Ihr Konto wurde erfolgreich erstellt.",
+    "closing": "Wir freuen uns, Sie in unserem Team begrüßen zu dürfen.",
+    "cta": "Loslegen",
+    "heading": "Willkommen, {{name}}!",
+    "subject": "Willkommen bei Scrumooth"
+  }
+}

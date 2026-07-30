@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Retrospective Page Loading State Tests
  *
  * Test Coverage:
@@ -10,15 +10,17 @@
  * - Accessibility during loading (ARIA attributes)
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor, act } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MemoryRouter } from 'react-router';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
+import { screen, waitFor, act, renderWithProviders, initTestI18n } from '../../test-utils';
 
 import { SprintRetrospective } from './Retrospective';
 import { useTeamStore, useAuthStore } from '../../store';
 import { apiService } from '../../services';
 import { RetrospectiveCategory, RetrospectiveStatus } from '../../types';
+
+beforeAll(async () => {
+  await initTestI18n();
+});
 
 // Mock stores
 vi.mock('../../store', () => ({
@@ -56,28 +58,6 @@ vi.mock('react-router', async () => {
     useParams: () => ({ sprintId: 'sprint-1' }),
   };
 });
-
-// Test utilities
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        staleTime: 0,
-      },
-    },
-  });
-
-const renderRetrospective = (queryClient?: QueryClient) => {
-  const testQueryClient = queryClient || createTestQueryClient();
-  return render(
-    <QueryClientProvider client={testQueryClient}>
-      <MemoryRouter>
-        <SprintRetrospective />
-      </MemoryRouter>
-    </QueryClientProvider>
-  );
-};
 
 // Mock data
 const mockTeam = {
@@ -194,7 +174,7 @@ describe('Retrospective - Loading State Tests', () => {
     it('should show loading state when page is loading', () => {
       mockApiService.getRetrospectiveBySprintId.mockImplementation(() => new Promise(() => {}));
 
-      renderRetrospective();
+      renderWithProviders(<SprintRetrospective />);
 
       expect(screen.getByRole('status')).toBeInTheDocument();
     });
@@ -202,7 +182,7 @@ describe('Retrospective - Loading State Tests', () => {
     it('should show loading state with correct label', () => {
       mockApiService.getRetrospectiveBySprintId.mockImplementation(() => new Promise(() => {}));
 
-      renderRetrospective();
+      renderWithProviders(<SprintRetrospective />);
 
       const loader = screen.getByRole('status');
       expect(loader).toHaveAttribute('aria-label', 'Loading Retrospective...');
@@ -221,7 +201,7 @@ describe('Retrospective - Loading State Tests', () => {
         data: mockRetrospective,
       });
 
-      renderRetrospective();
+      renderWithProviders(<SprintRetrospective />);
 
       // Should show loading state when team is not available
       expect(screen.getByRole('status')).toBeInTheDocument();
@@ -236,7 +216,7 @@ describe('Retrospective - Loading State Tests', () => {
           })
       );
 
-      renderRetrospective();
+      renderWithProviders(<SprintRetrospective />);
 
       expect(screen.getByRole('status')).toBeInTheDocument();
       expect(screen.getByRole('status')).toHaveAttribute('aria-label', 'Loading Retrospective...');
@@ -245,7 +225,7 @@ describe('Retrospective - Loading State Tests', () => {
     it('should render LoadingState component with page variant', () => {
       mockApiService.getRetrospectiveBySprintId.mockImplementation(() => new Promise(() => {}));
 
-      renderRetrospective();
+      renderWithProviders(<SprintRetrospective />);
 
       const loader = screen.getByRole('status');
       expect(loader).toBeInTheDocument();
@@ -261,7 +241,7 @@ describe('Retrospective - Loading State Tests', () => {
         data: mockRetrospective,
       });
 
-      renderRetrospective();
+      renderWithProviders(<SprintRetrospective />);
 
       await act(async () => {
         vi.runAllTimersAsync();
@@ -287,7 +267,7 @@ describe('Retrospective - Loading State Tests', () => {
         data: mockRetrospective,
       });
 
-      renderRetrospective();
+      renderWithProviders(<SprintRetrospective />);
 
       // Initially shows loading for retrospective
       expect(screen.getByRole('status')).toBeInTheDocument();
@@ -315,7 +295,7 @@ describe('Retrospective - Loading State Tests', () => {
         data: mockRetrospective,
       });
 
-      renderRetrospective();
+      renderWithProviders(<SprintRetrospective />);
 
       expect(screen.getByRole('status')).toBeInTheDocument();
 
@@ -338,7 +318,7 @@ describe('Retrospective - Loading State Tests', () => {
       mockApiService.getTeam.mockResolvedValue({ success: true, data: mockTeam });
       mockApiService.getSprint.mockResolvedValue({ success: true, data: mockSprint });
 
-      renderRetrospective();
+      renderWithProviders(<SprintRetrospective />);
 
       expect(screen.getByRole('status')).toBeInTheDocument();
 
@@ -362,7 +342,7 @@ describe('Retrospective - Loading State Tests', () => {
           })
       );
 
-      renderRetrospective();
+      renderWithProviders(<SprintRetrospective />);
 
       expect(screen.getByRole('status')).toBeInTheDocument();
 
@@ -389,7 +369,7 @@ describe('Retrospective - Loading State Tests', () => {
           })
       );
 
-      renderRetrospective();
+      renderWithProviders(<SprintRetrospective />);
 
       expect(screen.getByRole('status')).toBeInTheDocument();
 
@@ -414,7 +394,7 @@ describe('Retrospective - Loading State Tests', () => {
           })
       );
 
-      renderRetrospective();
+      renderWithProviders(<SprintRetrospective />);
 
       // At 0 seconds
       expect(screen.getByRole('status')).toBeInTheDocument();
@@ -438,7 +418,7 @@ describe('Retrospective - Loading State Tests', () => {
       // React Query will show loading state and then handle the error
       mockApiService.getRetrospectiveBySprintId.mockRejectedValue(new Error('Network error'));
 
-      renderRetrospective();
+      renderWithProviders(<SprintRetrospective />);
 
       // Initially shows loading
       expect(screen.getByRole('status')).toBeInTheDocument();
@@ -460,7 +440,7 @@ describe('Retrospective - Loading State Tests', () => {
         data: null,
       });
 
-      renderRetrospective();
+      renderWithProviders(<SprintRetrospective />);
 
       await act(async () => {
         vi.runAllTimersAsync();
@@ -478,7 +458,7 @@ describe('Retrospective - Loading State Tests', () => {
         data: mockRetrospective,
       });
 
-      renderRetrospective();
+      renderWithProviders(<SprintRetrospective />);
 
       await act(async () => {
         vi.runAllTimersAsync();
@@ -497,7 +477,7 @@ describe('Retrospective - Loading State Tests', () => {
         data: mockRetrospective,
       });
 
-      renderRetrospective();
+      renderWithProviders(<SprintRetrospective />);
 
       await act(async () => {
         vi.runAllTimersAsync();
@@ -515,7 +495,7 @@ describe('Retrospective - Loading State Tests', () => {
         data: null,
       });
 
-      renderRetrospective();
+      renderWithProviders(<SprintRetrospective />);
 
       await act(async () => {
         vi.runAllTimersAsync();
@@ -532,7 +512,7 @@ describe('Retrospective - Loading State Tests', () => {
         .mockResolvedValueOnce({ success: true, data: null })
         .mockResolvedValueOnce({ success: true, data: mockRetrospective });
 
-      renderRetrospective();
+      renderWithProviders(<SprintRetrospective />);
 
       await act(async () => {
         vi.runAllTimersAsync();
@@ -566,7 +546,7 @@ describe('Retrospective - Loading State Tests', () => {
           })
       );
 
-      renderRetrospective();
+      renderWithProviders(<SprintRetrospective />);
 
       expect(screen.getByRole('status')).toBeInTheDocument();
 
@@ -587,7 +567,7 @@ describe('Retrospective - Loading State Tests', () => {
           })
       );
 
-      renderRetrospective();
+      renderWithProviders(<SprintRetrospective />);
 
       act(() => {
         vi.advanceTimersByTime(3000);
@@ -612,7 +592,7 @@ describe('Retrospective - Loading State Tests', () => {
           })
       );
 
-      renderRetrospective();
+      renderWithProviders(<SprintRetrospective />);
 
       // Loading state should be shown initially
       expect(screen.getByRole('status')).toBeInTheDocument();
@@ -642,7 +622,7 @@ describe('Retrospective - Loading State Tests', () => {
           })
       );
 
-      renderRetrospective();
+      renderWithProviders(<SprintRetrospective />);
 
       // Loading should be shown
       expect(screen.getByRole('status')).toBeInTheDocument();
@@ -679,7 +659,7 @@ describe('Retrospective - Loading State Tests', () => {
       mockApiService.getTeam.mockResolvedValue({ success: true, data: mockTeam });
       mockApiService.getSprint.mockResolvedValue({ success: true, data: mockSprint });
 
-      renderRetrospective();
+      renderWithProviders(<SprintRetrospective />);
 
       expect(screen.getByRole('status')).toBeInTheDocument();
 
@@ -700,7 +680,7 @@ describe('Retrospective - Loading State Tests', () => {
       mockApiService.getTeam.mockRejectedValue(new Error('Team error'));
       mockApiService.getSprint.mockResolvedValue({ success: true, data: mockSprint });
 
-      renderRetrospective();
+      renderWithProviders(<SprintRetrospective />);
 
       await act(async () => {
         vi.runAllTimersAsync();
@@ -717,7 +697,7 @@ describe('Retrospective - Loading State Tests', () => {
     it('should have proper ARIA attributes during loading', () => {
       mockApiService.getRetrospectiveBySprintId.mockImplementation(() => new Promise(() => {}));
 
-      renderRetrospective();
+      renderWithProviders(<SprintRetrospective />);
 
       const loader = screen.getByRole('status');
       expect(loader).toHaveAttribute('aria-live', 'polite');
@@ -727,7 +707,7 @@ describe('Retrospective - Loading State Tests', () => {
     it('should announce loading state to screen readers', () => {
       mockApiService.getRetrospectiveBySprintId.mockImplementation(() => new Promise(() => {}));
 
-      renderRetrospective();
+      renderWithProviders(<SprintRetrospective />);
 
       const loader = screen.getByRole('status');
       expect(loader).toHaveAttribute('aria-label', 'Loading Retrospective...');
@@ -736,7 +716,7 @@ describe('Retrospective - Loading State Tests', () => {
     it('should have role="status" for loading indicator', () => {
       mockApiService.getRetrospectiveBySprintId.mockImplementation(() => new Promise(() => {}));
 
-      renderRetrospective();
+      renderWithProviders(<SprintRetrospective />);
 
       const loader = screen.getByRole('status');
       expect(loader).toBeInTheDocument();
@@ -745,7 +725,7 @@ describe('Retrospective - Loading State Tests', () => {
     it('should have aria-live="polite" for non-intrusive announcements', () => {
       mockApiService.getRetrospectiveBySprintId.mockImplementation(() => new Promise(() => {}));
 
-      renderRetrospective();
+      renderWithProviders(<SprintRetrospective />);
 
       const loader = screen.getByRole('status');
       expect(loader).toHaveAttribute('aria-live', 'polite');
@@ -754,7 +734,7 @@ describe('Retrospective - Loading State Tests', () => {
     it('should have aria-busy="true" during loading', () => {
       mockApiService.getRetrospectiveBySprintId.mockImplementation(() => new Promise(() => {}));
 
-      renderRetrospective();
+      renderWithProviders(<SprintRetrospective />);
 
       const loader = screen.getByRole('status');
       expect(loader).toHaveAttribute('aria-busy', 'true');
@@ -766,7 +746,7 @@ describe('Retrospective - Loading State Tests', () => {
         data: mockRetrospective,
       });
 
-      renderRetrospective();
+      renderWithProviders(<SprintRetrospective />);
 
       await act(async () => {
         vi.runAllTimersAsync();
@@ -782,7 +762,7 @@ describe('Retrospective - Loading State Tests', () => {
     it('should remove loading state when component unmounts', async () => {
       mockApiService.getRetrospectiveBySprintId.mockImplementation(() => new Promise(() => {}));
 
-      const { unmount } = renderRetrospective();
+      const { unmount } = renderWithProviders(<SprintRetrospective />);
 
       expect(screen.getByRole('status')).toBeInTheDocument();
 
@@ -800,7 +780,7 @@ describe('Retrospective - Loading State Tests', () => {
           })
       );
 
-      const { unmount } = renderRetrospective();
+      const { unmount } = renderWithProviders(<SprintRetrospective />);
 
       unmount();
 
@@ -817,7 +797,7 @@ describe('Retrospective - Loading State Tests', () => {
     it('should clean up timers on unmount', async () => {
       mockApiService.getRetrospectiveBySprintId.mockImplementation(() => new Promise(() => {}));
 
-      const { unmount } = renderRetrospective();
+      const { unmount } = renderWithProviders(<SprintRetrospective />);
 
       unmount();
 
@@ -840,7 +820,7 @@ describe('Retrospective - Loading State Tests', () => {
         fetchTeams: vi.fn(),
       });
 
-      renderRetrospective();
+      renderWithProviders(<SprintRetrospective />);
 
       // When teamId is null, the isLoading check happens first
       // The component shows loading state because the query is running
@@ -858,7 +838,7 @@ describe('Retrospective - Loading State Tests', () => {
         data: { ...mockRetrospective, items: [] },
       });
 
-      renderRetrospective();
+      renderWithProviders(<SprintRetrospective />);
 
       await act(async () => {
         vi.runAllTimersAsync();
@@ -878,7 +858,7 @@ describe('Retrospective - Loading State Tests', () => {
         data: { ...mockRetrospective, actionItems: [] },
       });
 
-      renderRetrospective();
+      renderWithProviders(<SprintRetrospective />);
 
       await act(async () => {
         vi.runAllTimersAsync();
@@ -898,7 +878,7 @@ describe('Retrospective - Loading State Tests', () => {
         data: { ...mockRetrospective, attendees: [] },
       });
 
-      renderRetrospective();
+      renderWithProviders(<SprintRetrospective />);
 
       await act(async () => {
         vi.runAllTimersAsync();
@@ -915,7 +895,7 @@ describe('Retrospective - Loading State Tests', () => {
         data: { ...mockRetrospective, status: RetrospectiveStatus.COMPLETED },
       });
 
-      renderRetrospective();
+      renderWithProviders(<SprintRetrospective />);
 
       await act(async () => {
         vi.runAllTimersAsync();

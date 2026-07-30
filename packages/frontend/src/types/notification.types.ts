@@ -16,6 +16,8 @@ export interface Notification {
   type: NotificationType;
   title: string;
   message?: string;
+  messageKey?: string;
+  params?: Record<string, unknown>;
   data?: Record<string, unknown>;
   isRead: boolean;
   readAt?: string;

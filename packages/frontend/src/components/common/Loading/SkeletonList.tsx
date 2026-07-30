@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import styles from './Skeleton.module.css';
 
@@ -26,15 +27,18 @@ export interface SkeletonListProps {
 export const SkeletonList: React.FC<SkeletonListProps> = ({
   itemCount = 3,
   className = '',
-  label = 'Loading list items',
+  label,
 }) => {
+  const { t } = useTranslation('common');
+  const displayLabel = label ?? t('loadingStates.loadingListItems');
+
   return (
     <div
       className={`${styles['skeleton-list']} ${className}`}
       role="status"
       aria-live="polite"
       aria-busy="true"
-      aria-label={label}
+      aria-label={displayLabel}
     >
       {Array.from({ length: itemCount }).map((_, index) => (
         <div key={index} className={styles['skeleton-list-item']}>
@@ -43,7 +47,7 @@ export const SkeletonList: React.FC<SkeletonListProps> = ({
           <div className={styles['skeleton-badge']} />
         </div>
       ))}
-      <span className="visually-hidden">{label}</span>
+      <span className="visually-hidden">{displayLabel}</span>
     </div>
   );
 };

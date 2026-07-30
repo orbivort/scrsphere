@@ -9,6 +9,7 @@
  */
 
 import { memo, useCallback, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { type ProductBacklogItem } from '../../../types';
 import { MoscowBadge } from '../components/MoscowBadge';
@@ -42,6 +43,20 @@ const OVERSCAN_COUNT = 5;
 const VIRTUALIZATION_THRESHOLD = 50;
 
 /**
+ * Helper function to get translated status label
+ */
+const getStatusLabel = (status: string, t: (key: string) => string): string => {
+  const statusMap: Record<string, string> = {
+    NEW: 'status.new',
+    REFINED: 'status.refined',
+    READY: 'status.ready',
+    IN_PROGRESS: 'status.inProgress',
+    DONE: 'status.done',
+  };
+  return t(statusMap[status] ?? status);
+};
+
+/**
  * TableRow Component
  *
  * Renders a single table row for a backlog item (non-virtualized mode).
@@ -52,6 +67,7 @@ interface TableRowProps {
 }
 
 const TableRow: React.FC<TableRowProps> = ({ item, onItemClick }) => {
+  const { t } = useTranslation('backlog');
   const handleClick = useCallback(() => {
     onItemClick(item);
   }, [item, onItemClick]);
@@ -65,7 +81,7 @@ const TableRow: React.FC<TableRowProps> = ({ item, onItemClick }) => {
       </td>
       <td>
         <span className={`${styles['status-badge']} ${styles[item.status]}`}>
-          {item.status.replace('_', ' ')}
+          {getStatusLabel(item.status, t as (key: string) => string)}
         </span>
       </td>
       <td>{item.businessValue ? `${item.businessValue} pts` : '-'}</td>
@@ -109,6 +125,7 @@ const VirtualizedRow: React.FC<VirtualizedRowProps> = ({
   style,
   measureRef,
 }) => {
+  const { t } = useTranslation('backlog');
   const handleClick = useCallback(() => {
     onItemClick(item);
   }, [item, onItemClick]);
@@ -133,7 +150,7 @@ const VirtualizedRow: React.FC<VirtualizedRowProps> = ({
       </div>
       <div className={styles['virtualized-cell']} role="cell">
         <span className={`${styles['status-badge']} ${styles[item.status]}`}>
-          {item.status.replace('_', ' ')}
+          {getStatusLabel(item.status, t as (key: string) => string)}
         </span>
       </div>
       <div className={styles['virtualized-cell']} role="cell">
@@ -189,6 +206,7 @@ const VirtualizedRow: React.FC<VirtualizedRowProps> = ({
  * ```
  */
 export const ListView = memo<ListViewProps>(({ items, onItemClick }) => {
+  const { t } = useTranslation('backlog');
   const enableVirtualization = shouldEnableVirtualization(items.length, VIRTUALIZATION_THRESHOLD);
   const headerRef = useRef<HTMLDivElement>(null);
 
@@ -205,38 +223,47 @@ export const ListView = memo<ListViewProps>(({ items, onItemClick }) => {
       {enableVirtualization ? (
         <div ref={headerRef} className={styles['virtualized-header']} role="row">
           <div className={styles['virtualized-header-cell']} role="columnheader">
-            ID
+            {t('listView.id') as string}
           </div>
           <div className={styles['virtualized-header-cell']} role="columnheader">
-            Title
+            {t('listView.title') as string}
           </div>
           <div className={styles['virtualized-header-cell']} role="columnheader">
-            MoSCoW
+            {t('listView.moscow') as string}
           </div>
           <div className={styles['virtualized-header-cell']} role="columnheader">
-            Status
+            {t('listView.status') as string}
           </div>
           <div className={styles['virtualized-header-cell']} role="columnheader">
-            Business Value
+            {t('listView.businessValue') as string}
           </div>
           <div className={styles['virtualized-header-cell']} role="columnheader">
-            Estimate
+            {t('listView.estimate') as string}
           </div>
           <div className={styles['virtualized-header-cell']} role="columnheader">
-            Labels
+            {t('listView.labels') as string}
           </div>
         </div>
       ) : (
         <table className={styles['backlog-table']}>
+          <colgroup>
+            <col style={{ width: '80px' }} />
+            <col />
+            <col style={{ width: '140px' }} />
+            <col style={{ width: '140px' }} />
+            <col style={{ width: '120px' }} />
+            <col style={{ width: '100px' }} />
+            <col style={{ width: '200px' }} />
+          </colgroup>
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Title</th>
-              <th>MoSCoW</th>
-              <th>Status</th>
-              <th>Business Value</th>
-              <th>Estimate</th>
-              <th>Labels</th>
+              <th>{t('listView.id') as string}</th>
+              <th>{t('listView.title') as string}</th>
+              <th>{t('listView.moscow') as string}</th>
+              <th>{t('listView.status') as string}</th>
+              <th>{t('listView.businessValue') as string}</th>
+              <th>{t('listView.estimate') as string}</th>
+              <th>{t('listView.labels') as string}</th>
             </tr>
           </thead>
         </table>
@@ -268,6 +295,15 @@ export const ListView = memo<ListViewProps>(({ items, onItemClick }) => {
           </div>
         ) : (
           <table className={styles['backlog-table']}>
+            <colgroup>
+              <col style={{ width: '80px' }} />
+              <col />
+              <col style={{ width: '140px' }} />
+              <col style={{ width: '140px' }} />
+              <col style={{ width: '120px' }} />
+              <col style={{ width: '100px' }} />
+              <col style={{ width: '200px' }} />
+            </colgroup>
             <tbody>
               {items.map((item) => (
                 <TableRow key={item.id} item={item} onItemClick={onItemClick} />

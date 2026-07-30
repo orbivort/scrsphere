@@ -4,7 +4,7 @@ This document contains the license information for third-party packages used in 
 
 **Project:** Scrumooth - Agile Scrum Lifecycle Management System
 **License:** Apache-2.0
-**Last Updated:** July 29, 2026
+**Last Updated:** July 30, 2026
 
 ---
 
@@ -21,26 +21,29 @@ This document contains the license information for third-party packages used in 
 
 ## Backend Production Dependencies
 
-| Dependency Name           | Version | License Type | Copyright Holder              | Source/Repository URL                                    |
-| ------------------------- | ------- | ------------ | ----------------------------- | -------------------------------------------------------- |
-| @prisma/adapter-pg        | 7.8.0   | Apache-2.0   | Prisma Data, Inc.             | https://github.com/prisma/prisma                         |
-| @prisma/client            | 7.8.0   | Apache-2.0   | Prisma Data, Inc.             | https://github.com/prisma/prisma                         |
-| bcrypt                    | 6.0.0   | MIT          | Nick Campbell                 | https://github.com/kelektiv/node.bcrypt.js               |
-| compression               | 1.8.0   | MIT          | Jonathan Ong                  | https://github.com/expressjs/compression                 |
-| cookie-parser             | 1.4.7   | MIT          | TJ Holowaychuk                | https://github.com/expressjs/cookie-parser               |
-| cors                      | 2.8.5   | MIT          | Troy Goode                    | https://github.com/expressjs/cors                        |
-| dotenv                    | 17.4.2  | BSD-2-Clause | Scott Motte                   | https://github.com/motdotla/dotenv                       |
-| express                   | 5.2.1   | MIT          | TJ Holowaychuk                | https://github.com/expressjs/express                     |
-| express-rate-limit        | 8.5.1   | MIT          | Nathan Friedly                | https://github.com/express-rate-limit/express-rate-limit |
-| helmet                    | 8.1.0   | MIT          | Evan Hahn                     | https://github.com/helmetjs/helmet                       |
-| jsonwebtoken              | 9.0.3   | MIT          | Auth0, Inc.                   | https://github.com/auth0/node-jsonwebtoken               |
-| node-cron                 | 4.2.1   | MIT          | Lucas Merencia                | https://github.com/merencia/node-cron                    |
-| nodemailer                | 9.0.1   | MIT          | Andris Reinman                | https://github.com/nodemailer/nodemailer                 |
-| sanitize-html             | 2.17.4  | MIT          | Apostrophe Technologies, Inc. | https://github.com/apostrophecms/sanitize-html           |
-| uuid                      | 14.0.0  | MIT          | uuidjs                        | https://github.com/uuidjs/uuid                           |
-| winston                   | 3.19.0  | MIT          | Charlie Robbins               | https://github.com/winstonjs/winston                     |
-| winston-daily-rotate-file | 5.0.0   | MIT          | Matt Hamann                   | https://github.com/winstonjs/winston-daily-rotate-file   |
-| zod                       | 4.4.3   | MIT          | Colin McDonnell               | https://github.com/colinhacks/zod                        |
+| Dependency Name           | Version | License Type | Copyright Holder              | Source/Repository URL                                              |
+| ------------------------- | ------- | ------------ | ----------------------------- | ------------------------------------------------------------------ |
+| @prisma/adapter-pg        | 7.8.0   | Apache-2.0   | Prisma Data, Inc.             | https://github.com/prisma/prisma                                   |
+| @prisma/client            | 7.8.0   | Apache-2.0   | Prisma Data, Inc.             | https://github.com/prisma/prisma                                   |
+| bcrypt                    | 6.0.0   | MIT          | Nick Campbell                 | https://github.com/kelektiv/node.bcrypt.js                         |
+| compression               | 1.8.1   | MIT          | Jonathan Ong                  | https://github.com/expressjs/compression                           |
+| cookie-parser             | 1.4.7   | MIT          | TJ Holowaychuk                | https://github.com/expressjs/cookie-parser                         |
+| cors                      | 2.8.6   | MIT          | Troy Goode                    | https://github.com/expressjs/cors                                  |
+| dotenv                    | 17.4.2  | BSD-2-Clause | Scott Motte                   | https://github.com/motdotla/dotenv                                 |
+| express                   | 5.2.1   | MIT          | TJ Holowaychuk                | https://github.com/expressjs/express                               |
+| express-rate-limit        | 8.5.2   | MIT          | Nathan Friedly                | https://github.com/express-rate-limit/express-rate-limit           |
+| helmet                    | 8.2.0   | MIT          | Evan Hahn                     | https://github.com/helmetjs/helmet                                 |
+| i18next                   | 26.3.6  | MIT          | i18next                       | https://github.com/i18next/i18next                                 |
+| intl-pluralrules          | 2.0.1   | ISC          | Eemeli Aro                    | https://github.com/eemeli/intl-pluralrules                         |
+| jsonwebtoken              | 9.0.3   | MIT          | Auth0, Inc.                   | https://github.com/auth0/node-jsonwebtoken                         |
+| node-cron                 | 4.2.1   | MIT          | Lucas Merencia                | https://github.com/merencia/node-cron                              |
+| nodemailer                | 9.0.1   | MIT          | Andris Reinman                | https://github.com/nodemailer/nodemailer                           |
+| resolve-accept-language   | 3.2.2   | MIT          | Nicolas Bouvrette             | https://github.com/resolve-accept-language/resolve-accept-language |
+| sanitize-html             | 2.17.4  | MIT          | Apostrophe Technologies, Inc. | https://github.com/apostrophecms/sanitize-html                     |
+| uuid                      | 14.0.0  | MIT          | uuidjs                        | https://github.com/uuidjs/uuid                                     |
+| winston                   | 3.19.0  | MIT          | Charlie Robbins               | https://github.com/winstonjs/winston                               |
+| winston-daily-rotate-file | 5.0.0   | MIT          | Matt Hamann                   | https://github.com/winstonjs/winston-daily-rotate-file             |
+| zod                       | 4.4.3   | MIT          | Colin McDonnell               | https://github.com/colinhacks/zod                                  |
 
 ---
 
@@ -81,21 +84,26 @@ This document contains the license information for third-party packages used in 
 
 ## Frontend Production Dependencies
 
-| Dependency Name         | Version | License Type | Copyright Holder       | Source/Repository URL                           |
-| ----------------------- | ------- | ------------ | ---------------------- | ----------------------------------------------- |
-| @tanstack/react-query   | 5.101.0 | MIT          | Tanner Linsley         | https://github.com/TanStack/query               |
-| @tanstack/react-virtual | 3.14.2  | MIT          | Tanner Linsley         | https://github.com/TanStack/virtual             |
-| axios                   | 1.18.0  | MIT          | Matt Zabriskie         | https://github.com/axios/axios                  |
-| chart.js                | 4.5.1   | MIT          | Chart.js Contributors  | https://github.com/chartjs/Chart.js             |
-| date-fns                | 4.4.0   | MIT          | Sasha Koss, Lesha Koss | https://github.com/date-fns/date-fns            |
-| react                   | 19.2.7  | MIT          | Meta Platforms, Inc.   | https://github.com/facebook/react               |
-| react-chartjs-2         | 5.3.1   | MIT          | Jeremy Ayerst          | https://github.com/reactchartjs/react-chartjs-2 |
-| react-dom               | 19.2.7  | MIT          | Meta Platforms, Inc.   | https://github.com/facebook/react               |
-| react-markdown          | 10.1.0  | MIT          | Titus Wormer           | https://github.com/remarkjs/react-markdown      |
-| react-router            | 8.3.0   | MIT          | Remix Software, Inc.   | https://github.com/remix-run/react-router       |
-| rehype-sanitize         | 6.0.0   | MIT          | Titus Wormer           | https://github.com/rehypejs/rehype-sanitize     |
-| remark-gfm              | 4.0.1   | MIT          | Titus Wormer           | https://github.com/remarkjs/remark-gfm          |
-| zustand                 | 5.0.14  | MIT          | Paul Henschel          | https://github.com/pmndrs/zustand               |
+| Dependency Name                  | Version | License Type | Copyright Holder       | Source/Repository URL                                       |
+| -------------------------------- | ------- | ------------ | ---------------------- | ----------------------------------------------------------- |
+| @tanstack/react-query            | 5.101.0 | MIT          | Tanner Linsley         | https://github.com/TanStack/query                           |
+| @tanstack/react-virtual          | 3.14.2  | MIT          | Tanner Linsley         | https://github.com/TanStack/virtual                         |
+| axios                            | 1.18.1  | MIT          | Matt Zabriskie         | https://github.com/axios/axios                              |
+| chart.js                         | 4.5.1   | MIT          | Chart.js Contributors  | https://github.com/chartjs/Chart.js                         |
+| date-fns                         | 4.4.0   | MIT          | Sasha Koss, Lesha Koss | https://github.com/date-fns/date-fns                        |
+| i18next                          | 26.3.6  | MIT          | i18next                | https://github.com/i18next/i18next                          |
+| i18next-browser-languagedetector | 8.2.1   | MIT          | i18next                | https://github.com/i18next/i18next-browser-languageDetector |
+| i18next-http-backend             | 3.0.6   | MIT          | i18next                | https://github.com/i18next/i18next-http-backend             |
+| intl-pluralrules                 | 2.0.1   | ISC          | Eemeli Aro             | https://github.com/eemeli/intl-pluralrules                  |
+| react                            | 19.2.7  | MIT          | Meta Platforms, Inc.   | https://github.com/facebook/react                           |
+| react-chartjs-2                  | 5.3.1   | MIT          | Jeremy Ayerst          | https://github.com/reactchartjs/react-chartjs-2             |
+| react-dom                        | 19.2.7  | MIT          | Meta Platforms, Inc.   | https://github.com/facebook/react                           |
+| react-i18next                    | 15.7.0  | MIT          | i18next                | https://github.com/i18next/react-i18next                    |
+| react-markdown                   | 10.1.0  | MIT          | Titus Wormer           | https://github.com/remarkjs/react-markdown                  |
+| react-router                     | 8.3.0   | MIT          | Remix Software, Inc.   | https://github.com/remix-run/react-router                   |
+| rehype-sanitize                  | 6.0.0   | MIT          | Titus Wormer           | https://github.com/rehypejs/rehype-sanitize                 |
+| remark-gfm                       | 4.0.1   | MIT          | Titus Wormer           | https://github.com/remarkjs/remark-gfm                      |
+| zustand                          | 5.0.14  | MIT          | Paul Henschel          | https://github.com/pmndrs/zustand                           |
 
 ---
 
@@ -105,7 +113,7 @@ This document contains the license information for third-party packages used in 
 | --------------------------- | ------- | ------------ | -------------------------- | -------------------------------------------------------- |
 | @eslint/js                  | 10.0.1  | MIT          | OpenJS Foundation          | https://github.com/eslint/eslint                         |
 | @playwright/test            | 1.60.0  | Apache-2.0   | Microsoft Corporation      | https://github.com/microsoft/playwright                  |
-| @testing-library/jest-dom   | 6.9.1   | MIT          | Testing Library            | https://github.com/testing-library/jest-dom              |
+| @testing-library/jest-dom   | 6.10.0  | MIT          | Testing Library            | https://github.com/testing-library/jest-dom              |
 | @testing-library/react      | 16.3.2  | MIT          | Testing Library            | https://github.com/testing-library/react-testing-library |
 | @testing-library/user-event | 14.6.1  | MIT          | Testing Library            | https://github.com/testing-library/user-event            |
 | @types/node                 | 24.13.1 | MIT          | DefinitelyTyped            | https://github.com/DefinitelyTyped/DefinitelyTyped       |
@@ -119,6 +127,7 @@ This document contains the license information for third-party packages used in 
 | eslint-config-prettier      | 10.1.8  | MIT          | Simon Lydell               | https://github.com/prettier/eslint-config-prettier       |
 | eslint-plugin-react         | 7.37.5  | MIT          | Yannick Croissant          | https://github.com/jsx-eslint/eslint-plugin-react        |
 | globals                     | 17.6.0  | MIT          | Sindre Sorhus              | https://github.com/sindresorhus/globals                  |
+| i18next-cli                 | 1.67.3  | MIT          | i18next                    | https://github.com/i18next/i18next-cli                   |
 | jsdom                       | 29.1.1  | MIT          | Elijah Insua               | https://github.com/jsdom/jsdom                           |
 | prettier                    | 3.8.3   | MIT          | Prettier                   | https://github.com/prettier/prettier                     |
 | rimraf                      | 6.1.3   | MIT          | Isaac Z. Schlueter         | https://github.com/isaacs/rimraf                         |
@@ -144,9 +153,11 @@ This document contains the license information for third-party packages used in 
 | @typescript-eslint/parser                 | 8.60.1  | MIT          | TypeScript ESLint      | https://github.com/typescript-eslint/typescript-eslint                |
 | concurrently                              | 10.0.3  | MIT          | Kimmo Brunfeldt        | https://github.com/open-cli-tools/concurrently                        |
 | dotenv-cli                                | 11.0.0  | MIT          | Scott Donaldson        | https://github.com/entropitor/dotenv-cli                              |
+| entities                                  | 8.0.0   | MIT          | Felix Böhm             | https://github.com/fb55/entities                                      |
 | eslint                                    | 10.4.1  | MIT          | OpenJS Foundation      | https://github.com/eslint/eslint                                      |
 | eslint-config-prettier                    | 10.1.8  | MIT          | Simon Lydell           | https://github.com/prettier/eslint-config-prettier                    |
 | eslint-plugin-import-x                    | 4.16.2  | MIT          | un-ts                  | https://github.com/un-ts/eslint-plugin-import-x                       |
+| eslint-plugin-formatjs                    | 6.4.19  | MIT          | FormatJS               | https://github.com/formatjs/formatjs                                  |
 | eslint-plugin-react                       | 7.37.5  | MIT          | Yannick Croissant      | https://github.com/jsx-eslint/eslint-plugin-react                     |
 | eslint-plugin-react-hooks                 | 7.1.1   | MIT          | Meta Platforms, Inc.   | https://github.com/facebook/react                                     |
 | eslint-plugin-react-refresh               | 0.5.2   | MIT          | Arnaud Barré           | https://github.com/ArnaudBarre/eslint-plugin-react-refresh            |
@@ -160,21 +171,25 @@ This document contains the license information for third-party packages used in 
 | stylelint-no-unsupported-browser-features | 8.1.1   | MIT          | Cédric Delpoux         | https://github.com/RJWadley/stylelint-no-unsupported-browser-features |
 | typescript                                | 6.0.3   | Apache-2.0   | Microsoft Corporation  | https://github.com/microsoft/TypeScript                               |
 | typescript-eslint                         | 8.60.1  | MIT          | TypeScript ESLint      | https://github.com/typescript-eslint/typescript-eslint                |
+| vitest                                    | 4.1.8   | MIT          | Vladimir Sheremet      | https://github.com/vitest-dev/vitest                                  |
 
 ---
 
 ## Shared Dependencies (@scrumooth/shared)
 
-| Dependency Name        | Version | License Type | Copyright Holder      | Source/Repository URL                              |
-| ---------------------- | ------- | ------------ | --------------------- | -------------------------------------------------- |
-| @eslint/js             | 10.0.1  | MIT          | OpenJS Foundation     | https://github.com/eslint/eslint                   |
-| @types/node            | 24.13.1 | MIT          | DefinitelyTyped       | https://github.com/DefinitelyTyped/DefinitelyTyped |
-| eslint                 | 10.4.1  | MIT          | OpenJS Foundation     | https://github.com/eslint/eslint                   |
-| eslint-config-prettier | 10.1.8  | MIT          | Simon Lydell          | https://github.com/prettier/eslint-config-prettier |
-| globals                | 17.6.0  | MIT          | Sindre Sorhus         | https://github.com/sindresorhus/globals            |
-| prettier               | 3.8.3   | MIT          | Prettier              | https://github.com/prettier/prettier               |
-| rimraf                 | 6.1.3   | MIT          | Isaac Z. Schlueter    | https://github.com/isaacs/rimraf                   |
-| typescript             | 6.0.3   | Apache-2.0   | Microsoft Corporation | https://github.com/microsoft/TypeScript            |
+| Dependency Name        | Version | License Type | Copyright Holder       | Source/Repository URL                              |
+| ---------------------- | ------- | ------------ | ---------------------- | -------------------------------------------------- |
+| @eslint/js             | 10.0.1  | MIT          | OpenJS Foundation      | https://github.com/eslint/eslint                   |
+| @types/node            | 24.13.1 | MIT          | DefinitelyTyped        | https://github.com/DefinitelyTyped/DefinitelyTyped |
+| @vitest/coverage-v8    | 4.1.8   | MIT          | Vladimir Sheremet      | https://github.com/vitest-dev/vitest               |
+| date-fns               | 4.4.0   | MIT          | Sasha Koss, Lesha Koss | https://github.com/date-fns/date-fns               |
+| eslint                 | 10.4.1  | MIT          | OpenJS Foundation      | https://github.com/eslint/eslint                   |
+| eslint-config-prettier | 10.1.8  | MIT          | Simon Lydell           | https://github.com/prettier/eslint-config-prettier |
+| globals                | 17.6.0  | MIT          | Sindre Sorhus          | https://github.com/sindresorhus/globals            |
+| prettier               | 3.8.3   | MIT          | Prettier               | https://github.com/prettier/prettier               |
+| rimraf                 | 6.1.3   | MIT          | Isaac Z. Schlueter     | https://github.com/isaacs/rimraf                   |
+| typescript             | 6.0.3   | Apache-2.0   | Microsoft Corporation  | https://github.com/microsoft/TypeScript            |
+| vitest                 | 4.1.8   | MIT          | Vladimir Sheremet      | https://github.com/vitest-dev/vitest               |
 
 ---
 
@@ -275,10 +290,10 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 | License Type | Package Count | Percentage |
 | ------------ | ------------- | ---------- |
-| MIT          | 72            | 87.8%      |
-| Apache-2.0   | 7             | 8.5%       |
-| BSD-2-Clause | 3             | 3.7%       |
-| ISC          | 0             | 0.0%       |
+| MIT          | 121           | 91.7%      |
+| Apache-2.0   | 8             | 6.1%       |
+| ISC          | 2             | 1.5%       |
+| BSD-2-Clause | 1             | 0.8%       |
 
 ---
 
@@ -304,5 +319,5 @@ This document should be updated whenever:
 
 ---
 
-**Document Version:** 1.11
-**Generated:** July 29, 2026
+**Document Version:** 2.0  
+**Generated:** July 30, 2026

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { MoSCoWPriority } from '../../../types';
 
@@ -11,22 +12,35 @@ interface DataPreviewProps {
   items: BulkUploadItem[];
 }
 
-const PRIORITY_LABELS: Record<MoSCoWPriority, { label: string; className: string }> = {
-  [MoSCoWPriority.MUST_HAVE]: { label: 'Must', className: styles['must-have'] ?? '' },
-  [MoSCoWPriority.SHOULD_HAVE]: { label: 'Should', className: styles['should-have'] ?? '' },
-  [MoSCoWPriority.COULD_HAVE]: { label: 'Could', className: styles['could-have'] ?? '' },
-  [MoSCoWPriority.WONT_HAVE]: { label: "Won't", className: styles['wont-have'] ?? '' },
-};
-
 export const DataPreview: React.FC<DataPreviewProps> = ({ items }) => {
+  const { t } = useTranslation('backlog');
   const validCount = items.filter((item) => item._isValid).length;
   const invalidCount = items.filter((item) => !item._isValid).length;
+
+  const PRIORITY_LABELS: Record<MoSCoWPriority, { label: string; className: string }> = {
+    [MoSCoWPriority.MUST_HAVE]: {
+      label: t('moscow.mustShort') as string,
+      className: styles['must-have'] ?? '',
+    },
+    [MoSCoWPriority.SHOULD_HAVE]: {
+      label: t('moscow.shouldShort') as string,
+      className: styles['should-have'] ?? '',
+    },
+    [MoSCoWPriority.COULD_HAVE]: {
+      label: t('moscow.couldShort') as string,
+      className: styles['could-have'] ?? '',
+    },
+    [MoSCoWPriority.WONT_HAVE]: {
+      label: t('moscow.wontShort') as string,
+      className: styles['wont-have'] ?? '',
+    },
+  };
 
   if (items.length === 0) {
     return (
       <div className={styles['empty-state']}>
         <FileTextIcon width="48" height="48" strokeWidth="1.5" />
-        <p>No data to preview</p>
+        <p>{t('bulkUpload.preview.noData') as string}</p>
       </div>
     );
   }
@@ -34,20 +48,20 @@ export const DataPreview: React.FC<DataPreviewProps> = ({ items }) => {
   return (
     <div>
       <div className={styles['preview-header']}>
-        <h3 className={styles['preview-title']}>Data Preview</h3>
+        <h3 className={styles['preview-title']}>{t('bulkUpload.preview.title') as string}</h3>
         <div className={styles['preview-stats']}>
           <div className={`${styles['preview-stat']} ${styles.valid}`}>
             <span className={styles['preview-stat-icon']}>
               <CheckIcon width="12" height="12" strokeWidth="3" />
             </span>
-            <span>{validCount} valid</span>
+            <span>{t('bulkUpload.preview.validCount', { count: validCount }) as string}</span>
           </div>
           {invalidCount > 0 && (
             <div className={`${styles['preview-stat']} ${styles.invalid}`}>
               <span className={styles['preview-stat-icon']}>
                 <XIcon width="12" height="12" strokeWidth="3" />
               </span>
-              <span>{invalidCount} with errors</span>
+              <span>{t('bulkUpload.preview.withErrors', { count: invalidCount }) as string}</span>
             </div>
           )}
         </div>
@@ -57,14 +71,30 @@ export const DataPreview: React.FC<DataPreviewProps> = ({ items }) => {
         <table className={styles['preview-table']}>
           <thead>
             <tr>
-              <th className={styles['row-number']}>#</th>
-              <th className={styles['status-cell']}>Status</th>
-              <th className={styles['title-cell']}>Title</th>
-              <th className={styles['priority-cell']}>Priority</th>
-              <th className={styles['points-cell']}>Points</th>
-              <th className={styles['points-cell']}>Value</th>
-              <th className={styles['labels-cell']}>Labels</th>
-              <th className={styles['error-cell']}>Issues</th>
+              <th className={styles['row-number']}>
+                {t('bulkUpload.preview.rowHeader') as string}
+              </th>
+              <th className={styles['status-cell']}>
+                {t('bulkUpload.preview.statusHeader') as string}
+              </th>
+              <th className={styles['title-cell']}>
+                {t('bulkUpload.preview.titleHeader') as string}
+              </th>
+              <th className={styles['priority-cell']}>
+                {t('bulkUpload.preview.priorityHeader') as string}
+              </th>
+              <th className={styles['points-cell']}>
+                {t('bulkUpload.preview.pointsHeader') as string}
+              </th>
+              <th className={styles['points-cell']}>
+                {t('bulkUpload.preview.valueHeader') as string}
+              </th>
+              <th className={styles['labels-cell']}>
+                {t('bulkUpload.preview.labelsHeader') as string}
+              </th>
+              <th className={styles['error-cell']}>
+                {t('bulkUpload.preview.issuesHeader') as string}
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -79,7 +109,11 @@ export const DataPreview: React.FC<DataPreviewProps> = ({ items }) => {
                     className={`${styles['status-indicator']} ${
                       item._isValid ? styles.valid : styles.invalid
                     }`}
-                    title={item._isValid ? 'Valid' : 'Has errors'}
+                    title={
+                      item._isValid
+                        ? (t('bulkUpload.preview.validTitle') as string)
+                        : (t('bulkUpload.preview.hasErrorsTitle') as string)
+                    }
                   >
                     {item._isValid ? (
                       <CheckIcon width="14" height="14" strokeWidth="3" />
@@ -90,7 +124,11 @@ export const DataPreview: React.FC<DataPreviewProps> = ({ items }) => {
                 </td>
                 <td className={styles['title-cell']} title={item.title}>
                   {/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- empty string should show Missing title */}
-                  {item.title || <span className={styles['missing-title']}>Missing title</span>}
+                  {item.title || (
+                    <span className={styles['missing-title']}>
+                      {t('bulkUpload.preview.missingTitle') as string}
+                    </span>
+                  )}
                 </td>
                 <td className={styles['priority-cell']}>
                   {item.priority && Object.values(MoSCoWPriority).includes(item.priority) ? (
@@ -136,7 +174,9 @@ export const DataPreview: React.FC<DataPreviewProps> = ({ items }) => {
                       ))}
                     </div>
                   ) : (
-                    <span className={styles['text-success']}>OK</span>
+                    <span className={styles['text-success']}>
+                      {t('bulkUpload.preview.ok') as string}
+                    </span>
                   )}
                 </td>
               </tr>

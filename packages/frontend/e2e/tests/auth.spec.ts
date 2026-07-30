@@ -238,7 +238,7 @@ test.describe('Authentication Flow', () => {
       await userMenuButton.waitFor({ state: 'visible', timeout: 10000 });
       await userMenuButton.click();
 
-      const logoutButton = page.locator('button:has-text("Logout")');
+      const logoutButton = page.locator('[data-testid="logout-button"]');
       await logoutButton.waitFor({ state: 'visible', timeout: 5000 });
       await logoutButton.click();
     });

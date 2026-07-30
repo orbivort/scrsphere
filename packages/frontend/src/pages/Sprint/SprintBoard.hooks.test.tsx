@@ -1,7 +1,9 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
+
+import { initTestI18n } from '../../test-utils';
 
 import {
   useSprintBoardData,
@@ -13,6 +15,10 @@ import {
 } from './SprintBoard.hooks';
 import { TaskStatus, type Task } from '../../types';
 import { apiService, definitionService } from '../../services';
+
+beforeAll(async () => {
+  await initTestI18n();
+});
 
 vi.mock('../../services', () => ({
   apiService: {

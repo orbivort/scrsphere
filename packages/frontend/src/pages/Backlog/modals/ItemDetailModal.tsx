@@ -1,13 +1,16 @@
 import React, { useRef, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+import { formatLocaleDate } from '@scrumooth/shared';
 
 import { ItemStatus } from '../../../types';
 import { useBacklogContext } from '../context/BacklogContext';
 import { useFocusTrap } from '../hooks/useFocusTrap';
-import { STATUS_CONFIG } from '../config/status.config';
+import { getStatusConfig } from '../config/status.config';
 import { MoscowBadge } from '../components/MoscowBadge';
 
 import styles from './ItemDetailModal.module.css';
 
+import { useI18nStore } from '@/i18n/useI18nStore';
 import { StatusSelector } from '@/components/StatusSelector';
 import { StatusHistorySection } from '@/components/StatusHistorySection';
 import {
@@ -48,6 +51,10 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
   isLoadingChildTasks,
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation('backlog');
+  const { locale } = useI18nStore();
+
+  const STATUS_CONFIG = getStatusConfig(t as (key: string) => string);
 
   const { selectedItem, workflowError, setWorkflowError } = useBacklogContext();
 
@@ -94,8 +101,8 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
                   onClick={() => {
                     void navigator.clipboard.writeText(selectedItem.id);
                   }}
-                  title="Copy full ID"
-                  aria-label="Copy item ID to clipboard"
+                  title={t('itemDetail.copyId') as string}
+                  aria-label={t('itemDetail.copyIdAriaLabel') as string}
                 >
                   <CopyIcon size={14} />
                 </button>
@@ -109,7 +116,7 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
             className={styles['close-button']}
             onClick={onClose}
             data-modal-close
-            aria-label="Close modal"
+            aria-label={t('itemDetail.closeModal') as string}
           >
             <CloseIcon size={20} />
           </button>
@@ -126,7 +133,7 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
                 <button
                   className={styles['error-close']}
                   onClick={() => setWorkflowError(null)}
-                  aria-label="Close error message"
+                  aria-label={t('itemDetail.closeError') as string}
                 >
                   <CloseIcon size={20} />
                 </button>
@@ -138,9 +145,7 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
           {isDone && (
             <div className={styles['done-notice']}>
               <ShieldIcon size={20} />
-              <span>
-                This item is completed and locked. Status and content changes are not permitted.
-              </span>
+              <span>{t('itemDetail.doneNotice') as string}</span>
             </div>
           )}
 
@@ -149,7 +154,7 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
             <div className={styles['info-card']}>
               <div className={styles['info-label']}>
                 <CheckCircleIcon size={16} />
-                Status
+                {t('itemDetail.status') as string}
               </div>
               <div className={styles['status-container']}>
                 <StatusSelector
@@ -166,7 +171,7 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
             <div className={styles['info-card']}>
               <div className={styles['info-label']}>
                 <StarIcon size={16} />
-                MoSCoW Priority
+                {t('itemDetail.moscowPriority') as string}
               </div>
               <div className={styles['info-value']}>
                 <MoscowBadge priority={selectedItem.priority} />
@@ -176,24 +181,28 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
             <div className={styles['info-card']}>
               <div className={styles['info-label']}>
                 <DollarSignIcon size={16} />
-                Business Value
+                {t('itemDetail.businessValue') as string}
               </div>
               <div
                 className={`${styles['info-value']} ${!selectedItem.businessValue ? styles['info-value-muted'] : ''}`}
               >
-                {selectedItem.businessValue ? `${selectedItem.businessValue} pts` : 'Not estimated'}
+                {selectedItem.businessValue
+                  ? `${selectedItem.businessValue} pts`
+                  : (t('itemDetail.notEstimated') as string)}
               </div>
             </div>
 
             <div className={styles['info-card']}>
               <div className={styles['info-label']}>
                 <ClockIcon size={16} />
-                Estimate
+                {t('itemDetail.estimate') as string}
               </div>
               <div
                 className={`${styles['info-value']} ${!selectedItem.storyPoints ? styles['info-value-muted'] : ''}`}
               >
-                {selectedItem.storyPoints ? `${selectedItem.storyPoints} pts` : 'Not estimated'}
+                {selectedItem.storyPoints
+                  ? `${selectedItem.storyPoints} pts`
+                  : (t('itemDetail.notEstimated') as string)}
               </div>
             </div>
           </div>
@@ -202,14 +211,14 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
           <div className={styles['section-card']}>
             <div className={styles['section-header']}>
               <FileTextIcon size={20} className={styles['section-icon']} />
-              <h3 className={styles['section-title']}>Description</h3>
+              <h3 className={styles['section-title']}>{t('itemDetail.description') as string}</h3>
             </div>
             {selectedItem.description ? (
               <p className={styles['section-content']}>{selectedItem.description}</p>
             ) : (
               <div className={styles['empty-state']}>
                 <FileTextIcon size={20} />
-                <span>No description provided</span>
+                <span>{t('itemDetail.noDescription') as string}</span>
               </div>
             )}
           </div>
@@ -218,7 +227,7 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
           <div className={styles['section-card']}>
             <div className={styles['section-header']}>
               <TagIcon size={20} className={styles['section-icon']} />
-              <h3 className={styles['section-title']}>Labels</h3>
+              <h3 className={styles['section-title']}>{t('itemDetail.labels') as string}</h3>
             </div>
             {selectedItem.labels.length > 0 ? (
               <div className={styles['labels-container']}>
@@ -231,7 +240,7 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
             ) : (
               <div className={styles['empty-state']}>
                 <TagIcon size={20} />
-                <span>No labels assigned</span>
+                <span>{t('itemDetail.noLabels') as string}</span>
               </div>
             )}
           </div>
@@ -240,14 +249,16 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
           <div className={styles['section-card']}>
             <div className={styles['section-header']}>
               <CheckSquareIcon size={20} className={styles['section-icon']} />
-              <h3 className={styles['section-title']}>Acceptance Criteria</h3>
+              <h3 className={styles['section-title']}>
+                {t('itemDetail.acceptanceCriteria') as string}
+              </h3>
             </div>
             {selectedItem.acceptanceCriteria ? (
               <p className={styles['section-content']}>{selectedItem.acceptanceCriteria}</p>
             ) : (
               <div className={styles['empty-state']}>
                 <CheckSquareIcon size={20} />
-                <span>No acceptance criteria defined</span>
+                <span>{t('itemDetail.noAcceptanceCriteria') as string}</span>
               </div>
             )}
           </div>
@@ -256,24 +267,28 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
           <div className={styles['section-card']}>
             <div className={styles['section-header']}>
               <CalendarIcon size={16} className={styles['section-icon']} />
-              <h3 className={styles['section-title']}>Metadata</h3>
+              <h3 className={styles['section-title']}>{t('itemDetail.metadata') as string}</h3>
             </div>
             <div className={styles['metadata-grid']}>
               <div className={styles['metadata-item']}>
                 <CalendarIcon size={16} className={styles['metadata-icon']} />
                 <div className={styles['metadata-content']}>
-                  <span className={styles['metadata-label']}>Created</span>
+                  <span className={styles['metadata-label']}>
+                    {t('itemDetail.created') as string}
+                  </span>
                   <span className={styles['metadata-value']}>
-                    {new Date(selectedItem.createdAt).toLocaleDateString()}
+                    {formatLocaleDate(selectedItem.createdAt, locale)}
                   </span>
                 </div>
               </div>
               <div className={styles['metadata-item']}>
                 <ClockIcon size={16} className={styles['metadata-icon']} />
                 <div className={styles['metadata-content']}>
-                  <span className={styles['metadata-label']}>Updated</span>
+                  <span className={styles['metadata-label']}>
+                    {t('itemDetail.updated') as string}
+                  </span>
                   <span className={styles['metadata-value']}>
-                    {new Date(selectedItem.updatedAt).toLocaleDateString()}
+                    {formatLocaleDate(selectedItem.updatedAt, locale)}
                   </span>
                 </div>
               </div>
@@ -290,27 +305,31 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
             className={`${styles.button} ${styles['button-danger']}`}
             onClick={onDelete}
             disabled={isDone || isInProgress}
-            aria-label="Delete item"
+            aria-label={t('itemDetail.deleteItemAriaLabel') as string}
           >
             <TrashIcon size={16} />
-            Delete Item
+            {t('itemDetail.deleteItem') as string}
           </button>
           <div className={styles['footer-actions']}>
             <button
               className={`${styles.button} ${styles['button-secondary']}`}
               onClick={onClose}
-              aria-label="Close modal"
+              aria-label={t('itemDetail.closeModal') as string}
             >
-              Close
+              {t('itemDetail.close') as string}
             </button>
             <button
               className={`${styles.button} ${styles['button-primary']}`}
               onClick={onEdit}
               disabled={isDone}
-              aria-label={isDone ? 'Item is view only' : 'Edit item'}
+              aria-label={
+                isDone
+                  ? (t('itemDetail.itemViewOnly') as string)
+                  : (t('itemDetail.editItemAriaLabel') as string)
+              }
             >
               <EditIcon size={16} />
-              {isDone ? 'View Only' : 'Edit Item'}
+              {isDone ? (t('itemDetail.viewOnly') as string) : (t('itemDetail.editItem') as string)}
             </button>
           </div>
         </div>

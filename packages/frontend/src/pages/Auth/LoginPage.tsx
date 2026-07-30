@@ -1,5 +1,6 @@
-﻿import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router';
+import { useTranslation } from 'react-i18next';
 
 import styles from './LoginPage.module.css';
 
@@ -12,6 +13,7 @@ import { logger } from '@/utils/logger';
 import { getCurrentPath } from '@/utils/navigation';
 import type { LoginCredentials } from '@/types';
 import { getUserFriendlyErrorMessage, type ErrorDetails } from '@/utils/authErrors';
+import { syncLocaleFromUser, useI18nStore } from '@/i18n/useI18nStore';
 
 type PasswordStrength = 'weak' | 'fair' | 'good' | 'strong';
 
@@ -31,15 +33,9 @@ function getPasswordStrength(password: string): PasswordStrength {
   return 'strong';
 }
 
-const STRENGTH_LABELS: Record<PasswordStrength, string> = {
-  weak: 'Weak',
-  fair: 'Fair',
-  good: 'Good',
-  strong: 'Strong',
-};
-
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation('auth');
   const { setUser, isAuthenticated } = useAuthStore();
   const { setCurrentTeam, setUserRoleInCurrentTeam, setUserTeamsWithRoles } = useTeamStore();
   const { initializeSession } = useSessionStore();
@@ -94,6 +90,9 @@ export const LoginPage: React.FC = () => {
           const { user, sessionInfo } = response.data;
 
           setUser(user);
+          if (user.locale) {
+            syncLocaleFromUser(user.locale);
+          }
 
           initializeSession({
             expiresAt: new Date(sessionInfo.expiresAt),
@@ -161,7 +160,7 @@ export const LoginPage: React.FC = () => {
           );
           setError(userFriendlyMessage);
         } else {
-          const errorMessage = handleError(err, 'Login failed. Please check your credentials.');
+          const errorMessage = handleError(err, t('login.loginFailed') as string);
           setError(errorMessage);
         }
         setErrorType('error');
@@ -179,6 +178,7 @@ export const LoginPage: React.FC = () => {
       setUserRoleInCurrentTeam,
       setUserTeamsWithRoles,
       handleError,
+      t,
     ]
   );
 
@@ -196,12 +196,16 @@ export const LoginPage: React.FC = () => {
           firstName,
           lastName,
           termsAccepted: true as const,
+          locale: useI18nStore.getState().locale,
         });
 
         if (response.success && response.data) {
           const { user, sessionInfo } = response.data;
 
           setUser(user);
+          if (user.locale) {
+            syncLocaleFromUser(user.locale);
+          }
 
           initializeSession({
             expiresAt: new Date(sessionInfo.expiresAt),
@@ -253,7 +257,7 @@ export const LoginPage: React.FC = () => {
           );
           setError(userFriendlyMessage);
         } else {
-          const errorMessage = handleError(err, 'Registration failed. Please try again.');
+          const errorMessage = handleError(err, t('login.registerFailed') as string);
           setError(errorMessage);
         }
         setErrorType('error');
@@ -271,6 +275,7 @@ export const LoginPage: React.FC = () => {
       initializeSession,
       setCurrentTeam,
       handleError,
+      t,
     ]
   );
 
@@ -296,10 +301,10 @@ export const LoginPage: React.FC = () => {
             <ScrumoothIcon size={100} className={styles['auth-logo-icon']} />
           </div>
           <h1 className={styles['auth-title']}>
-            {isRegisterMode ? 'Create your account' : 'Welcome back'}
+            {isRegisterMode ? t('login.createYourAccount') : t('welcomeBack')}
           </h1>
           <p className={styles['auth-subtitle']}>
-            {isRegisterMode ? 'Start managing your Agile Scrum lifecycle' : 'Sign in to Scrumooth'}
+            {isRegisterMode ? t('login.startManaging') : t('login.signInTo', { app: 'Scrumooth' })}
           </p>
         </div>
 
@@ -308,7 +313,7 @@ export const LoginPage: React.FC = () => {
           <div className={styles['error-message']}>
             <ErrorMessage
               message={error}
-              title={isRegisterMode ? 'Registration Error' : 'Login Error'}
+              title={isRegisterMode ? t('login.registrationError') : t('login.loginError')}
               type={errorType}
               onDismiss={clearError}
             />
@@ -333,7 +338,7 @@ export const LoginPage: React.FC = () => {
             <div className={styles['form-row']}>
               <div className={styles['form-group']}>
                 <label className={styles['form-label']} htmlFor="firstName">
-                  First name
+                  {t('firstName')}
                   <span className={styles['form-label-required']} aria-hidden="true">
                     *
                   </span>
@@ -342,7 +347,7 @@ export const LoginPage: React.FC = () => {
                   id="firstName"
                   type="text"
                   className={styles['input-field']}
-                  placeholder="John"
+                  placeholder={t('login.placeholder.firstName')}
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   required
@@ -351,7 +356,7 @@ export const LoginPage: React.FC = () => {
               </div>
               <div className={styles['form-group']}>
                 <label className={styles['form-label']} htmlFor="lastName">
-                  Last name
+                  {t('lastName')}
                   <span className={styles['form-label-required']} aria-hidden="true">
                     *
                   </span>
@@ -360,7 +365,7 @@ export const LoginPage: React.FC = () => {
                   id="lastName"
                   type="text"
                   className={styles['input-field']}
-                  placeholder="Doe"
+                  placeholder={t('login.placeholder.lastName')}
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                   required
@@ -373,7 +378,7 @@ export const LoginPage: React.FC = () => {
           {/* Email */}
           <div className={styles['form-group']}>
             <label className={styles['form-label']} htmlFor="email">
-              Email
+              {t('email')}
               <span className={styles['form-label-required']} aria-hidden="true">
                 *
               </span>
@@ -382,7 +387,7 @@ export const LoginPage: React.FC = () => {
               id="email"
               type="email"
               className={styles['input-field']}
-              placeholder="you@company.com"
+              placeholder={t('placeholder.email')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -393,7 +398,7 @@ export const LoginPage: React.FC = () => {
           {/* Password */}
           <div className={styles['form-group']}>
             <label className={styles['form-label']} htmlFor="password">
-              Password
+              {t('password')}
               <span className={styles['form-label-required']} aria-hidden="true">
                 *
               </span>
@@ -403,7 +408,9 @@ export const LoginPage: React.FC = () => {
                 id="password"
                 type={showPassword ? 'text' : 'password'}
                 className={`${styles['input-field']} ${styles['input-field-has-trailing']}`}
-                placeholder={isRegisterMode ? 'Create a strong password' : 'Enter your password'}
+                placeholder={
+                  isRegisterMode ? t('login.placeholder.createPassword') : t('placeholder.password')
+                }
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -413,7 +420,7 @@ export const LoginPage: React.FC = () => {
                 type="button"
                 className={styles['password-toggle']}
                 onClick={() => setShowPassword(!showPassword)}
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                aria-label={showPassword ? t('login.hidePassword') : t('login.showPassword')}
                 tabIndex={0}
               >
                 {showPassword ? <EyeOffIcon size={18} /> : <EyeIcon size={18} />}
@@ -456,7 +463,7 @@ export const LoginPage: React.FC = () => {
                           : styles['strength-label-strong']
                   }`}
                 >
-                  {STRENGTH_LABELS[passwordStrength ?? 'weak']}
+                  {t(`login.passwordStrength.${passwordStrength ?? 'weak'}` as never)}
                 </span>
               </div>
             )}
@@ -465,7 +472,7 @@ export const LoginPage: React.FC = () => {
           {/* Forgot Password Link (Login only) */}
           {!isRegisterMode && (
             <div className={styles['forgot-password-link']}>
-              <Link to="/forgot-password">Forgot password?</Link>
+              <Link to="/forgot-password">{t('login.forgotPassword')}</Link>
             </div>
           )}
 
@@ -480,9 +487,7 @@ export const LoginPage: React.FC = () => {
                   required
                   className={styles['consent-checkbox']}
                 />
-                <span className={styles['consent-text']}>
-                  I accept the Corporate IT Acceptable Use Policy and Data Protection Policy
-                </span>
+                <span className={styles['consent-text']}>{t('login.consentText')}</span>
               </label>
             </div>
           )}
@@ -492,20 +497,25 @@ export const LoginPage: React.FC = () => {
             {isLoading ? (
               <span className={styles['button-loading']}>
                 <LoaderIcon size={16} className={styles['spinner-icon']} />
-                {isRegisterMode ? 'Creating account...' : 'Signing in...'}
+                {isRegisterMode ? t('login.creatingAccount') : t('login.signingIn')}
               </span>
             ) : isRegisterMode ? (
-              'Create account'
+              t('login.createAccount')
             ) : (
-              'Sign in'
+              t('signIn')
             )}
           </button>
         </form>
 
         {/* Footer */}
         <div className={styles['auth-footer']}>
-          <button type="button" className={styles['mode-toggle']} onClick={toggleMode}>
-            {isRegisterMode ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
+          <button
+            type="button"
+            className={styles['mode-toggle']}
+            onClick={toggleMode}
+            data-testid="mode-toggle"
+          >
+            {isRegisterMode ? t('login.alreadyHaveAccount') : t('login.noAccountYet')}
           </button>
         </div>
       </div>

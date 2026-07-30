@@ -1,0 +1,260 @@
+{
+  "actionItems": {
+    "createActionItem": "[+ Créàté Àctíón Ítémmmmmmm]",
+    "deleteActionItem": "[Délété Àctíón Ítémmmmmmm]",
+    "deleteAriaLabel": "[Délété àctíón ítémmmmmmm]",
+    "due": "[DDúúé:]",
+    "empty": "[Nó àctíón ítéms yét. Cónvért ímpróvémént ítéms íntó àctíónàblé tàskssssssssssssssssssssss.]",
+    "inBacklog": "[Ín Bàcklógggg]",
+    "status": {
+      "CANCELLED": "[Càncéllédddd]",
+      "COMPLETED": "[Cómplétédddd]",
+      "IN_PROGRESS": "[Ín Prógréssssss]",
+      "PENDING": "[Péndíngggg]"
+    },
+    "title": "[Àctíón Ítémsssss]",
+    "unassigned": "[Únàssígnédddd]"
+  },
+  "ariaLabels": {
+    "columnsRegion": "[Rétróspéctívé féédbàck cólúmnssssssssss]",
+    "sprintInfoRegion": "[Sprínt Ínfórmàtíónnnnnnn]",
+    "summaryAriaLabel": "[Rétróspéctívé súmmàryyyyyyyy]"
+  },
+  "attendees": "[àtténdééssss]",
+  "attendeesAriaLabel": "[{{attended}} óóff {{total}} àtténdéés àtténdéddddddd]",
+  "attendeesCount": "[{{attended}} / {{total}} {{label}}]",
+  "attendeesLabel": "[Àtténdééssss]",
+  "attendeesSection": {
+    "title": "[Àtténdééssss]"
+  },
+  "backAriaLabel": "[Gó bàck tó Rétróspéctívés lístttttttttt]",
+  "backToRetrospectives": "[Bàck tó Rétróspéctívéssssssss]",
+  "backlogHint": "[Thís ítém wíll bé présént ín thé Pródúct Bàcklóg pàgé fór àctíónnnnnnnnnnnnnnnnnnnnn.]",
+  "categories": {
+    "didntGoWell": {
+      "placeholder": "[Whàt chàlléngés ór íssúés díd yóú fàcééééééééééééé?]",
+      "title": "[Whàt dídn't gó wéllllllll]"
+    },
+    "improvements": {
+      "placeholder": "[Whàt ímpróvéménts càn wé màké fór néxt Sprínttttttttttttttt?]",
+      "title": "[Whàt càn wé ímpróvééééééé]"
+    },
+    "wentWell": {
+      "placeholder": "[Whàt wént wéll dúríng thís Spríntttttttttttt?]",
+      "title": "[Whàt wént wélllllll]"
+    }
+  },
+  "columnItem": {
+    "add": "[Àddd]",
+    "addItem": "[+ Àdd Ítémmmm]",
+    "adding": "[ÀÀddddíínng...]",
+    "cancel": "[Càncélll]",
+    "delete": "[Délétééé]",
+    "deleteItem": "[Délété ítémmmmm]",
+    "edit": "[ÉÉddíít]",
+    "editItem": "[Édít ítémmmm]",
+    "itemsInColumn": "[{{count}} ítéms ínnnn {{title}}]",
+    "removeVote": "[Rémóvé vótééééé]",
+    "save": "[SSààvvé]",
+    "saving": "[SSààvvíínng...]",
+    "vote": "[VVóótté]",
+    "voteAriaLabel": "[{{action}} fór thís ítémmmmmm ({{count}} vvóóttéés)]"
+  },
+  "completeRetro": {
+    "ariaLabel": "[Màrk rétróspéctívé às cómplétéddddddddddd]",
+    "button": "[Cómplété Rétróspéctívéééééééé]",
+    "completing": "[Cómplétínggggg...]",
+    "description": "[Màrk thís rétróspéctívé às cómplétéd tó fínàlízé ít ànd prévént fúrthér édítsssssssssssssssssssssssss.]"
+  },
+  "confirmationModal": {
+    "cancel": "[Càncélll]",
+    "cannotCompleteTitle": "[Cànnót Cómplété Rétróspéctívéééééééééé]",
+    "cannotUndo": "[Thís àctíón cànnót bé úndónéééééééééé]",
+    "complete": "[Cómplétéééé]",
+    "completeTitle": "[Cómplété Rétróspéctívéééééééé]",
+    "completing": "[Cómplétínggggg...]",
+    "confirmationQuestion": "[Àré yóú súré yóú wànt tó màrk thís rétróspéctívé às cómplétéd? Thís àctíón cànnót bé úndónééééééééééééééééééééééééééééé.]",
+    "confirmationRequired": "[Cónfírmàtíón Réqúírédddddddd]",
+    "finalStep": "[Fínàl stépppp]",
+    "lockWarning": "[Óncé cómplétéd, thé rétróspéctívé wíll bé lóckéd ànd nó fúrthér chàngés càn bé màdééééééééééééééééééééééééééé.]",
+    "ok": "[ÓÓK]",
+    "validationIssues": "[Pléàsé àddréss thé fóllówíng íssúéssssssssssss]"
+  },
+  "createActionItemModal": {
+    "cancel": "[Càncélll]",
+    "createActionItem": "[Créàté Àctíón Ítémmmmmmm]",
+    "creating": "[CCrrééààttíínng...]",
+    "description": "[Déscríptíónnnnn]",
+    "descriptionHelper": "[Próvídé àddítíónàl cóntéxt tó hélp thé àssígnéé úndérstànd thé tàskkkkkkkkkkkkkkkkkkkkkk]",
+    "descriptionPlaceholder": "[Àdd détàíls àbóút thís àctíón ítémmmmmmmmmmmmm...]",
+    "dueDate": "[Dúé Dàtéééé *]",
+    "loadingMembers": "[Lóàdíng téàm mémbérssssssss...]",
+    "noMembers": "[Nó téàm mémbérs àvàílàblééééééééé]",
+    "optionalBadge": "[óptíónàllll]",
+    "owner": "[ÓÓwwnnéér *]",
+    "ownerPlaceholder": "[Séléct ównérrrrrr...]",
+    "subtitle": "[Àdd à néw àctíón ítém tó tràck prógréssssssssssssss]",
+    "title": "[Créàté Àctíón Ítémmmmmmm]",
+    "titleLabel": "[TTííttllé *]",
+    "titlePlaceholder": "[Éntér àctíón ítém títléééééééé]",
+    "unableToLoadMembers": "[Únàblé tó lóàd téàm mémbérs. Pléàsé réfrésh thé pàgééééééééééééééééé.]",
+    "unsavedMessage": "[Yóú hàvé únsàvéd chàngés ín thé àctíón ítém fórm. Àré yóú súré yóú wànt tó díscàrd thémmmmmmmmmmmmmmmmmmmmmmmmmmmm?]",
+    "unsavedTitle": "[Únsàvéd Chàngéssssss]"
+  },
+  "deleteModal": {
+    "message": "[Délété Àctíón Ítémmmmmmm]",
+    "title": "[Cónfírm Délétíónnnnnn]"
+  },
+  "errorState": {
+    "backToRetrospectives": "[Bàck tó Rétróspéctívéssssssss]",
+    "message": "[Thé rétróspéctívé fór thís sprínt cóúld nót bé lóàdédddddddddddddddddd.]",
+    "retry": "[Rétryyy]",
+    "title": "[Rétróspéctívé nót fóúndddddddd]"
+  },
+  "errors": {
+    "badRequest": "[Ínvàlíd réqúést. Pléàsé chéck yóúr ínpút ànd try àgàínnnnnnnnnnnnnnnnnn.]",
+    "network": "[Nétwórk érrór. Pléàsé chéck yóúr íntérnét cónnéctíónnnnnnnnnnnnnnnnn.]",
+    "notFound": "[Résóúrcé nót fóúnd. Ít mày hàvé béén délétéddddddddddddddd.]",
+    "notLoaded": "[Rétróspéctívé nót lóàdéd. Pléàsé wàít ànd try àgàínnnnnnnnnnnnnnnnn.]",
+    "serverError": "[Sérvér érrór. Pléàsé try àgàín làtérrrrrrrrrrrrr.]",
+    "unauthorized": "[Yóú àré nót àúthórízéd tó pérfórm thís àctíónnnnnnnnnnnnnnn.]"
+  },
+  "list": {
+    "actions": "[àctíónssss]",
+    "completedSprint": "[Cómplétéd Spríntttttt]",
+    "completedSprints": "[Cómplétéd Spríntsssssss]",
+    "completedSprints_plural": "[Cómplétéd Spríntsssssss]",
+    "createRetrospective": "[Créàté Rétróspéctívééééééé]",
+    "creating": "[CCrrééààttíínng...]",
+    "goal": "[GGóóààl:]",
+    "items": "[ítémsss]",
+    "loading": "[Lóàdíng rétróspéctívésssssssss...]",
+    "retroStatus": {
+      "completed": "[Rétróspéctívé Cómplétédddddddd]",
+      "draft": "[Rétróspéctívé Dràfttttttt]",
+      "inProgress": "[Rétróspéctívé Ín Prógréssssssssss]",
+      "ready": "[Réàdy fór Rétróspéctívéééééééé]"
+    },
+    "reviewed": "[Révíéwédddd]",
+    "statusLabels": {
+      "active": "[Àctívééé]",
+      "cancelled": "[Càncéllédddd]",
+      "completed": "[Cómplétédddd]",
+      "planned": "[Plànnédddd]"
+    },
+    "subtitle": "[Réfléct ón cómplétéd sprínts, ídéntífy ímpróvéménts, ànd tràck àctíón ítémssssssssssssssssssssssss]",
+    "title": "[Sprínt Rétróspéctívéssssssss]",
+    "viewRetrospective": "[Víéw Rétróspéctívééééééé]"
+  },
+  "loading": "[Lóàdíng Rétróspéctívééééééééé...]",
+  "sprintInfo": {
+    "businessDay_one": "[{{count}} búsínéss dàyyyyy]",
+    "businessDay_other": "[{{count}} búsínéss dàyssssss]",
+    "completed": "[cómplétédddd]",
+    "completion": "[Cómplétíónnnn]",
+    "duration": "[Dúràtíónnnn]",
+    "goal": "[GGóóààl:]",
+    "includedPbis": "[Ínclúdéd Pródúct Bàcklóg Ítémssssssssss]",
+    "items": "[ítémsss]",
+    "itemsCount": "[{{count}} ítémsss]",
+    "moreItems": "[+{{count}} móré ítémsssss]",
+    "priorityLabels": {
+      "COULD_HAVE": "[Cóúld Hàvéééé]",
+      "MUST_HAVE": "[Múst Hàvéééé]",
+      "SHOULD_HAVE": "[Shóúld Hàvééééé]",
+      "WONT_HAVE": "[Wón't Hàvéééé]"
+    },
+    "productBacklog": "[Pródúct Bàcklógggggg]",
+    "statusLabels": {
+      "DONE": "[DDóónné]",
+      "IN_PROGRESS": "[Ín Prógréssssss]",
+      "NEW": "[Néww]",
+      "READY": "[Réàdyyy]",
+      "REFINED": "[Réfínédddd]"
+    },
+    "storyPoints": "[stóry póíntsssss]",
+    "storyPointsCount": "[{{count}} stóry póíntsssss]",
+    "taskCompletion": "[{{completed}}/{{total}} cómplétédddd]",
+    "taskCount": "[{{count}} tàsksss]",
+    "tasks": "[Tàsksss]",
+    "tasksCount": "[tàsksss]"
+  },
+  "sprintStatus": {
+    "ACTIVE": "[Àctívééé]",
+    "CANCELLED": "[Càncéllédddd]",
+    "COMPLETED": "[Cómplétédddd]",
+    "PLANNED": "[Plànnédddd]"
+  },
+  "successModal": {
+    "close": "[Clósééé]",
+    "closeDialog": "[Clósé díàlóggggg]",
+    "message": "[Sprínt Rétróspéctívé cómplétéd súccéssfúllyyyyyyyyyyyyyyy!]",
+    "title": "[Súccésssss]"
+  },
+  "summary": {
+    "addSubtitle": "[Dócúmént thé kéy ínsíghts, décísíóns, ànd àctíón ítémssssssssssssssssss]",
+    "addSummary": "[+ Àdd Súmmàryyyyy]",
+    "addSummaryAriaLabel": "[Àdd rétróspéctívé súmmàryyyyyyyyy]",
+    "addTitle": "[Àdd Rétróspéctívé Súmmàryyyyyyyyy]",
+    "approachingLimit": "[Àppróàchíng chàràctér límítttttttttt]",
+    "cancel": "[Càncélll]",
+    "cancelAriaLabel": "[Càncél súmmàry chàngéssssssss]",
+    "charCounter": "[{{count}}/1000 cchhààrrààccttéérrs]",
+    "charHelpText": "[Éntér kéy ínsíghts, décísíóns, ànd àctíón ítéms fróm thé rétróspéctívé. Mínímúm 10 chàràctérs, màxímúm 1000 chàràctérsssssssssssssssssssssssssssssssssssss.]",
+    "editAriaLabel": "[Édít súmmàryyyyy]",
+    "editSubtitle": "[Úpdàté thé kéy ínsíghts ànd tàkéàwàys fróm thís rétróspéctívéééééééééééééééééééé]",
+    "editSummary": "[Édít súmmàryyyyy]",
+    "editTitle": "[Édít Rétróspéctívé Súmmàryyyyyyyyy]",
+    "empty": "[Nó súmmàry hàs béén àddéd yéttttttttttt...]",
+    "emptyDescription": "[Nó súmmàry hàs béén àddéd yét. Àdd à súmmàry tó dócúmént kéy ínsíghts ànd décísíóns fróm thís rétróspéctívéééééééééééééééééééééééééééééééééé.]",
+    "formAriaLabel": "[Rétróspéctívé súmmàry fórmmmmmmmmm]",
+    "helperText": "[Súmmàrízé thé téàm's réfléctíóns ànd àgrééd-úpón ímpróvéméntssssssssssssssssssss]",
+    "placeholder": "[Wríté à súmmàry óf thé rétróspéctívé óútcómés, kéy tàkéàwàys, ànd àctíón ítémssssssssssssssssssssssssss...]",
+    "save": "[SSààvvé]",
+    "saveAriaLabel": "[Sàvé súmmàryyyyy]",
+    "saving": "[SSààvvíínng...]",
+    "summaryLabel": "[Súmmàryyyy]",
+    "takeawaysLabel": "[Whàt wéré thé kéy tàkéàwàys fróm thís rétróspéctívééééééééééééééééé?]",
+    "title": "[Rétróspéctívé Súmmàryyyyyyyy]"
+  },
+  "title": "[Sprínt Rétróspéctívééééééé]",
+  "toast": {
+    "actionItemCreateFailed": "[Fàíléd tó créàté àctíón ítémmmmmmmmmm]",
+    "actionItemCreated": "[Àctíón ítém créàtéd súccéssfúllyyyyyyyyyyy]",
+    "actionItemDeleteFailed": "[Fàíléd tó délété àctíón ítémmmmmmmmmm]",
+    "actionItemDeleted": "[Àctíón ítém délétéd súccéssfúllyyyyyyyyyyy]",
+    "itemAddFailed": "[Fàíléd tó àdd ítémmmmmmm]",
+    "itemAdded": "[Ítém àddéd súccéssfúllyyyyyyyy]",
+    "itemDeleteFailed": "[Fàíléd tó délété ítémmmmmmmm]",
+    "itemDeleted": "[Ítém délétéd súccéssfúllyyyyyyyyy]",
+    "itemUpdateFailed": "[Fàíléd tó úpdàté ítémmmmmmmm]",
+    "itemUpdated": "[Ítém úpdàtéd súccéssfúllyyyyyyyyy]",
+    "participantAddFailed": "[Fàíléd tó àdd pàrtícípànttttttttt]",
+    "participantUpdateFailed": "[Fàíléd tó úpdàté pàrtícípàntttttttttt]",
+    "removeVoteFailed": "[Fàíléd tó rémóvé vótéééééééé]",
+    "statusUpdateFailed": "[Fàíléd tó úpdàté rétróspéctívé stàtússsssssssssss]",
+    "statusUpdated": "[Rétróspéctívé stàtús úpdàtéd súccéssfúllyyyyyyyyyyyyyy]",
+    "summaryUpdateFailed": "[Fàíléd tó úpdàté súmmàryyyyyyyyy]",
+    "summaryUpdated": "[Súmmàry úpdàtéd súccéssfúllyyyyyyyyyy]",
+    "voteFailed": "[Fàíléd tó vótéééééé]"
+  },
+  "validation": {
+    "allTeamMembersAttendance": "[Àll téàm mémbérs múst bé màrkéd às àtténdéd ór àbsént. Míssínggggggggggggggggggggg: {{names}}{{remaining}}.]",
+    "dueDatePast": "[Dúé dàté cànnót bé ín thé pàstttttttttt]",
+    "dueDateRequired": "[Dúé dàté ís réqúíréddddddd]",
+    "itemContentMaxLength": "[Ítém cóntént múst bé 500 chàràctérs ór lésssssssssssssss]",
+    "itemContentRequired": "[Pléàsé éntér cóntént fór thé ítémmmmmmmmmmm]",
+    "noHtmlTags": "[HTML tàgs àré nót àllówéddddddddd]",
+    "ownerRequired": "[Ównér ís réqúíréddddddd]",
+    "participantAttendanceRequired": "[Àt léàst óné pàrtícípànt múst bé màrkéd às àtténdéddddddddddddddddd.]",
+    "participantRequired": "[Àt léàst óné pàrtícípànt múst bé àddéd béfóré cómplétíng thé rétróspéctívéééééééééééééééééééééééé.]",
+    "summaryMaxLength": "[Súmmàry múst bé 1000 chàràctérs ór léssssssssssssss]",
+    "summaryMinLength": "[Súmmàry múst bé àt léàst 10 chàràctérsssssssssssss]",
+    "summaryRequired": "[Súmmàry ís réqúíréddddddd]",
+    "summaryRequiredBeforeComplete": "[Rétróspéctívé Súmmàry múst bé fílléd ín béfóré cómplétínggggggggggggggggggg.]",
+    "teamMemberAttendance": "[{{name}} múst bé màrkéd às àtténdédddddddddd.]",
+    "titleMaxLength": "[Títlé múst bé 200 chàràctérs ór lésssssssssssss]",
+    "titleMinLength": "[Títlé múst bé àt léàst 3 chàràctérssssssssssss]",
+    "titleRequired": "[Títlé ís réqúíréddddddd]"
+  }
+}

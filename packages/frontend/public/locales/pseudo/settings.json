@@ -1,0 +1,431 @@
+{
+  "createTeamModal": {
+    "beforeUnload": "[Yóú hàvé únsàvéd chàngés ín thé téàm créàtíón fórm. Àré yóú súré yóú wànt tó léàvéééééééééééééééééééééééééé?]",
+    "cancel": "[Càncélll]",
+    "closeModal": "[Clósé módàlllll]",
+    "createTeam": "[Créàté Téàmmmmm]",
+    "creating": "[CCrrééààttíínng...]",
+    "description": "[Déscríptíónnnnn]",
+    "descriptionPlaceholder": "[Déscríbé yóúr téàm's púrpósé, góàls, ór wórkíng styléééééééééééééééééé...]",
+    "optionalBadge": "[Óptíónàllll]",
+    "requiredFields": "[Réqúíréd fíéldssssss]",
+    "requiredFieldsAria": "[Àll fíélds màrkéd wíth àstérísk àré réqúíréddddddddddddddd]",
+    "subtitle": "[Búíld à cóllàbóràtívé wórkspàcé fór yóúr àgílé téàmmmmmmmmmmmmmmmmm]",
+    "teamName": "[Téàm Nàméééé]",
+    "teamNamePlaceholder": "[é.g., Àlphà Sqúàd, Pródúct Téàm ÀÀÀÀÀÀÀÀÀÀÀ]",
+    "title": "[Créàté Néw Téàmmmmmm]",
+    "validation": {
+      "descriptionMaxLength": "[Déscríptíón múst bé léss thàn 1000 chàràctérsssssssssssssss]",
+      "nameMaxLength": "[Téàm nàmé múst bé léss thàn 100 chàràctérssssssssssssss]",
+      "nameRequired": "[Téàm nàmé ís réqúírédddddddd]"
+    }
+  },
+  "definitionEditor": {
+    "activeItems": "[{{count}} àctívé ítémsssss]",
+    "addItem": "[Àdd Ítémmmm]",
+    "ariaLabels": {
+      "activate": "[Àctívàtéééé]",
+      "activateItem": "[Àctívàté ítémmmmm]",
+      "addNewItem": "[Àdd néw ítémmmmm]",
+      "deactivate": "[Déàctívàtéééé]",
+      "deactivateItem": "[Déàctívàté ítémmmmmm]",
+      "itemDescription": "[Ítém déscríptíónnnnnn]",
+      "moveDown": "[Móvé dównnnn]",
+      "moveItemDown": "[Móvé ítém dównnnnnn]",
+      "moveItemUp": "[Móvé ítém úppppp]",
+      "moveUp": "[MMóóvvéé úúp]",
+      "remove": "[Rémóvééé]",
+      "removeItem": "[Rémóvé ítémmmmm]"
+    },
+    "cancel": "[Càncélll]",
+    "discardDialog": {
+      "discardChanges": "[Díscàrd Chàngéssssss]",
+      "keepEditing": "[Kéép Édítínggggg]",
+      "message": "[Yóú hàvé únsàvéd chàngés. Àré yóú súré yóú wànt tó càncélllllllllllllllllll?]",
+      "title": "[Díscàrd Chàngéssssss?]"
+    },
+    "dodCategories": {
+      "deployment": "[Déplóyméntttt]",
+      "documentation": "[Dócúméntàtíónnnnn]",
+      "quality": "[Qúàlítyyyy]",
+      "review": "[Révíéwww]",
+      "testing": "[Téstíngggg]"
+    },
+    "dodInfo": "[Thé Défínítíón óf Dóné ís à fórmàl déscríptíón óf thé stàté óf thé Íncrémént whén ít mééts thé qúàlíty méàsúrés réqúíréd fór thé pródúct. Wórk cànnót bé cónsídéréd pàrt óf àn Íncrémént únléss ít mééts thé Défínítíón óf Dónééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé.]",
+    "dorCategories": {
+      "acceptance": "[Àccéptàncéééé]",
+      "clarity": "[Clàrítyyyy]",
+      "dependencies": "[Dépéndéncíésssss]",
+      "estimation": "[Éstímàtíónnnn]",
+      "technical": "[Téchnícàllll]",
+      "value": "[Vàlúééé]"
+    },
+    "dorInfo": "[Thé Défínítíón óf Réàdy ís à chécklíst óf crítéríà thàt à úsér stóry múst méét béfóré ít càn bé tàkén íntó à sprínt. Ít énsúrés thàt thé téàm hàs énóúgh ínfórmàtíón tó cómplété thé wórk súccéssfúllyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy.]",
+    "editTitle": "[ÉÉddíít {{label}}]",
+    "empty": "[NNó {{shortLabel}} ítéms yét. Àdd yóúr fírst crítéríón àbóvéééééééééééééé.]",
+    "inactive": "[{{count}} ínàctívéééé]",
+    "newItemPlaceholder": "[Éntér néwwww {{shortLabel}} crítéríónnnnn...]",
+    "saveChanges": "[Sàvé Chàngésssss]",
+    "saving": "[SSààvvíínng...]",
+    "unsavedWarning": "[Yóú hàvé únsàvéd chàngésssssssss]"
+  },
+  "deleteTeamModal": {
+    "blockedSubtitle": "[Thís téàm cànnót bé délétéd dúé tó àctívé pródúct góàlssssssssssssssssss]",
+    "cancel": "[Càncélll]",
+    "cannotDelete": "[Cànnót Délétééééé]",
+    "closeModal": "[Clósé módàlllll]",
+    "confirmation": {
+      "awaitingConfirmation": "[Àwàítíng cónfírmàtíónnnnnnnn]",
+      "label": "[TTyyppé \"{{name}}\" tó cónfírmmmmm]",
+      "matchConfirmed": "[Màtch cónfírmédddddd]",
+      "placeholder": "[TTyyppé \"{{name}}\" tó cónfírm délétíónnnnnnnn]",
+      "srHint": "[Typé thé téàm nàmé éxàctly às shówn tó énàblé thé délété búttón, thén préss Éntér ór clíck Délété Téàmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm]"
+    },
+    "deleteTeam": "[Délété Téàmmmmm]",
+    "deleting": "[DDééllééttíínng...]",
+    "normalSubtitle": "[Thís àctíón ís pérmànént ànd cànnót bé úndónééééééééééééééé]",
+    "pasteWarning": "[Mànúàl typíng réqúíréd fór sécúríty. Cópy-pàsté ís dísàbléddddddddddddddddddd.]",
+    "title": "[Délété Téàmmmmm]",
+    "warningCard": {
+      "blockedBadge": "[Délétíón Blóckédddddd]",
+      "blockedMessage": "[Thís téàm hàs óné ór móré pródúct góàls àssócíàtéd wíth ít. Tó délété thís téàm, yóú múst fírst rémóvé àll pródúct góàls línkéd tó ítttttttttttttttttttttttttttttttttttttttttt.]",
+      "consequence1": "[Àll téàm dàtà wíll bé pérmànéntly rémóvédddddddddddddd]",
+      "consequence2": "[Téàm mémbérs wíll lósé àccéss tó téàm résóúrcéssssssssssssssss]",
+      "consequence3": "[Àssócíàtéd séttíngs ànd cónfígúràtíóns wíll bé délétédddddddddddddddddd]",
+      "consequence4": "[Thís àctíón ís írrévérsíbléééééééééé]",
+      "consequencesTitle": "[Cónséqúéncés óf délétíónnnnnnnnn:]",
+      "deleteWarning": "[Yóú àré àbóút tó pérmànéntly délété thís téàm. Thís àctíón cànnót bé úndónéééééééééééééééééééééééé.]",
+      "impactMembers": "[{{count}} mémbér(s) wíll bé rémóvéd fróm thís téàmmmmmmmmmmmmmm]",
+      "requiredActions": "[Réqúíréd àctíónsssssss:]",
+      "step1": "[Nàvígàté tó thé Pródúct Góàls séctíónnnnnnnnnnnnn]",
+      "step2": "[Délété ór réàssígn àll góàls fórrrrrrrrrrrr \"{{name}}\"]",
+      "step3": "[Rétúrn héré tó cómplété téàm délétíónnnnnnnnnnnnn]",
+      "teamLabel": "[TTééààm:]",
+      "title": "[Crítícàl Àctíón Wàrníngggggggg]"
+    }
+  },
+  "dodPanel": {
+    "activeItems": "[{{count}} àctívé ítémsssss]",
+    "editButton": "[Édít DóDDDD]",
+    "empty": {
+      "configureButton": "[Cónfígúré DóDDDDD]",
+      "message": "[Cónfígúré yóúr téàm's Défínítíón óf Dóné crítéríàààààààààààààààà.]",
+      "title": "[Nó Àctívé DóD Ítémsssssss]"
+    },
+    "error": {
+      "message": "[Únàblé tó lóàd Défínítíón óf Dóné. Úsíng défàúlt ítéms ínstéàdddddddddddddddddddd.]",
+      "retry": "[Rétryyy]",
+      "title": "[Fàíléd tó Lóàdddddd]"
+    },
+    "inactive": "[{{count}} ínàctívéééé]",
+    "item": {
+      "codeReviewed": "[Códé ís péér-révíéwéd ànd àppróvédddddddddddd]",
+      "documentation": "[Códé ís própérly dócúméntédddddddddd]",
+      "integrationTests": "[Íntégràtíón tésts pàssínggggggggg]",
+      "noCriticalBugs": "[Nó crítícàl ór hígh-sévéríty búgsssssssssss]",
+      "unitTests": "[Únít tésts wríttén ànd pàssíng (mínímúm 80% cóvéràgééééééééééééééééé)]"
+    },
+    "lastUpdated": "[Làst úpdàtéddddd:]",
+    "loading": "[Lóàdíng Défínítíón óf Dónéééééééééé...]",
+    "noTeam": {
+      "message": "[Pléàsé séléct à téàm tó víéw ànd mànàgé thé Défínítíón óf Dónéééééééééééééééééééé.]",
+      "title": "[Nó Téàm Séléctédddddd]"
+    },
+    "shortLabel": "[DóDD]",
+    "title": "[Défínítíón óf Dónééééééé]",
+    "toast": {
+      "updateFailed": "[Fàíléd tó úpdàté Défínítíón óf Dónéééééééééééé]",
+      "updatedSuccessfully": "[Défínítíón óf Dóné úpdàtéd súccéssfúllyyyyyyyyyyyyy]"
+    },
+    "uncategorized": "[Úncàtégórízéddddd]"
+  },
+  "dorPanel": {
+    "activeItems": "[{{count}} àctívé ítémsssss]",
+    "editButton": "[Édít DóRRRR]",
+    "empty": {
+      "configureButton": "[Cónfígúré DóRRRRR]",
+      "description": "[Thé Défínítíón óf Réàdy ís à chécklíst óf crítéríà thàt à úsér stóry múst méét béfóré ít càn bé tàkén íntó à spríntttttttttttttttttttttttttttttttttttt.]",
+      "message": "[Nó Défínítíón óf Réàdy cónfígúréd fór thís téàm yéttttttttttttttttt.]",
+      "title": "[Défínítíón óf Réàdyyyyyyy]"
+    },
+    "error": "[Fàíléd tó lóàd Défínítíón óf Réàdyyyyyyyyyyyy]",
+    "inactive": "[{{count}} ínàctívéééé]",
+    "item": {
+      "acceptanceCriteria": "[Àccéptàncé crítéríà défínéd ànd àgrééddddddddddddd]",
+      "acceptanceCriteriaDefined": "[Àccéptàncé crítéríà défínédddddddddd]",
+      "businessValue": "[Búsínéss vàlúé àssígnédddddddd]",
+      "clearTitle": "[Cléàr títlé ànd déscríptíón próvídédddddddddddd]",
+      "dependencies": "[Dépéndéncíés ídéntífíéd ànd dócúméntéddddddddddddd]",
+      "dependenciesIdentified": "[Dépéndéncíés ídéntífíédddddddd]",
+      "noBlockers": "[Nó blóckérs ór ímpédíméntsssssssss]",
+      "storyPointsEstimated": "[Stóry póínts éstímàtéd by thé téàmmmmmmmmmmmm]",
+      "storyPointsEstimatedOld": "[Stóry póínts éstímàtédddddddd]",
+      "userStoryWritten": "[Úsér stóry cléàrly wrítténnnnnnnnn]"
+    },
+    "lastUpdated": "[Làst úpdàtéddddd:]",
+    "loading": "[Lóàdíng Défínítíón óf Réàdyyyyyyyyyy...]",
+    "noTeam": "[Pléàsé séléct à téàm tó víéw Défínítíón óf Réàdyyyyyyyyyyyyyyyy.]",
+    "retry": "[Rétryyy]",
+    "shortLabel": "[DóRR]",
+    "title": "[Défínítíón óf Réàdyyyyyyy]",
+    "toast": {
+      "updateFailed": "[Fàíléd tó úpdàté Défínítíón óf Réàdyyyyyyyyyyyy]",
+      "updatedSuccessfully": "[Défínítíón óf Réàdy úpdàtéd súccéssfúllyyyyyyyyyyyyy]"
+    }
+  },
+  "editTeamModal": {
+    "beforeUnload": "[Yóú hàvé únsàvéd chàngés ín thé téàm édít fórm. Àré yóú súré yóú wànt tó léàvééééééééééééééééééééééééé?]",
+    "cancel": "[Càncélll]",
+    "closeModal": "[Clósé módàlllll]",
+    "description": "[Déscríptíónnnnn]",
+    "descriptionPlaceholder": "[Déscríbé yóúr téàm's púrpósé, góàls, ór wórkíng styléééééééééééééééééé...]",
+    "optionalBadge": "[Óptíónàllll]",
+    "requiredFields": "[Réqúíréd fíéldssssss]",
+    "requiredFieldsAria": "[Àll fíélds màrkéd wíth àstérísk àré réqúíréddddddddddddddd]",
+    "saveChanges": "[Sàvé Chàngésssss]",
+    "saving": "[SSààvvíínng...]",
+    "subtitle": "[Úpdàté yóúr téàm's ínfórmàtíón ànd séttíngssssssssssssss]",
+    "teamName": "[Téàm Nàméééé]",
+    "teamNamePlaceholder": "[Éntér téàm nàméééééé]",
+    "title": "[Édít Téàmmmm]",
+    "unsavedChanges": "[Yóú hàvé únsàvéd chàngésssssssss]",
+    "validation": {
+      "descriptionMaxLength": "[Déscríptíón múst bé léss thàn 1000 chàràctérsssssssssssssss]",
+      "nameMaxLength": "[Téàm nàmé múst bé léss thàn 100 chàràctérssssssssssssss]",
+      "nameRequired": "[Téàm nàmé ís réqúírédddddddd]"
+    }
+  },
+  "privacyData": {
+    "activeSessions": {
+      "current": "[Cúrréntttt]",
+      "description": "[Mànàgé yóúr àctívé lógín séssíónsssssssssss]",
+      "devices": {
+        "chrome": "[Chrómé Brówsérrrrrr]",
+        "edge": "[Édgé Brówsérrrrr]",
+        "firefox": "[Fíréfóx Brówsérrrrrr]",
+        "safari": "[Sàfàrí Brówsérrrrrr]",
+        "unknown": "[Únknówn dévícéééééé]"
+      },
+      "empty": "[Nó àctívé séssíóns fóúnddddddddd]",
+      "errors": {
+        "loadFailed": "[Fàíléd tó lóàd séssíónssssssss]",
+        "revokeFailed": "[Fàíléd tó révóké séssíónnnnnnnnn]",
+        "signOutFailed": "[Fàíléd tó sígn óút óthér séssíónsssssssssss]"
+      },
+      "ip": "[ÍÍP:]",
+      "lastActive": "[Làst àctívééééé:]",
+      "loading": "[Lóàdíng séssíónsssssss...]",
+      "note": "[Thís wíll sígn yóú óút óf àll óthér dévícés éxcépt thís ónééééééééééééééééééé.]",
+      "revoke": "[Révókééé]",
+      "revokeSession": "[Révóké thís séssíónnnnnnn]",
+      "revoking": "[RRéévvóókkíínng...]",
+      "signOutAll": "[Sígn óút àll óthér séssíónssssssssss]",
+      "signingOut": "[SSííggnníínngg óóúút...]",
+      "title": "[Àctívé Séssíónssssss]"
+    },
+    "contactSection": {
+      "message": "[Cóntàct yóúr HR Dàtà Prótéctíón Téàm ór thé Córpóràté Dàtà Prótéctíón Óffícérrrrrrrrrrrrrrrrrrrrrrrrr.]",
+      "title": "[Qúéstíóns àbóút yóúr dàtààààààààà?]"
+    },
+    "dataExport": {
+      "ariaLabel": "[Éxpórt yóúr pérsónàl dàtààààààààà]",
+      "dataIncluded": "[Dàtà ínclúdéd ín thé éxpórtttttttttt:]",
+      "description": "[Dównlóàd à cópy óf yóúr pérsónàl dàtààààààààààààà]",
+      "downloadExport": "[Dównlóàd Éxpórtttttt]",
+      "exportButton": "[Éxpórt My Dàtàààààà]",
+      "exporting": "[Éxpórtínggggg...]",
+      "formatLabel": "[FFóórrmmààt:]",
+      "formatValue": "[JSÓN (màchíné-réàdàbléééééééé)]",
+      "portabilityDescription": "[Yóú hàvé thé ríght tó récéívé yóúr pérsónàl dàtà ín à strúctúréd, cómmónly úséd, ànd màchíné-réàdàblé fórmàtttttttttttttttttttttttttttttttttt.]",
+      "profileDescription": "[Nàmé, émàíl, àvàtàr, préféréncésssssssssss]",
+      "profileInformation": "[Prófílé Ínfórmàtíónnnnnnn]",
+      "rightToPortability": "[Ríght tó Dàtà Pórtàbílítyyyyyyyyy]",
+      "sessionDescription": "[Àctívé séssíóns ànd lógín hístóryyyyyyyyyyy]",
+      "sessionInformation": "[Séssíón Ínfórmàtíónnnnnnn]",
+      "teamDescription": "[Téàms yóú bélóng tó ànd yóúr róléssssssssssss]",
+      "teamMemberships": "[Téàm Mémbérshípssssss]",
+      "title": "[Éxpórt Yóúr Dàtàààààà]"
+    },
+    "dataExportModal": {
+      "cancelExport": "[Càncél Éxpórttttt]",
+      "close": "[Clósééé]",
+      "closeModal": "[Clósé módàlllll]",
+      "downloadJson": "[Dównlóàd JSÓN Fílééééééé]",
+      "exportProgress": "[Éxpórt prógrésssssss]",
+      "infoText": "[Yóúr dàtà ís éxpórtéd ín JSÓN fórmàt, whích ís strúctúréd, cómmónly úséd, ànd màchíné-réàdàbléééééééééééééééééééééééééééééé.]",
+      "jobId": "[JJóóbb ÍÍD:]",
+      "statusMessages": {
+        "completed": "[Yóúr dàtà éxpórt ís réàdyyyyyyyyy!]",
+        "expired": "[Thís éxpórt hàs éxpíréd. Pléàsé créàté à néw ónéééééééééééééééé.]",
+        "failed": "[Éxpórt fàíléd. Pléàsé try àgàínnnnnnnnnnn.]",
+        "initializing": "[Ínítíàlízíng éxpórtttttttt...]",
+        "pending": "[Prépàríng yóúr dàtà éxpórtttttttttt...]",
+        "processing": "[Cólléctíng ànd fórmàttíng yóúr dàtààààààààààààà...]"
+      },
+      "title": "[Dàtà Éxpórttttt]"
+    },
+    "dataRights": {
+      "rightToAccess": "[Ríght tó Àccésssssss]",
+      "rightToAccessDescription": "[Yóú càn réqúést à cópy óf àll pérsónàl dàtà wé hóld àbóút yóúúúúúúúúúúúúúúúúúúúú.]",
+      "rightToErasure": "[Ríght tó Éràsúréééééé]",
+      "rightToErasureDescription": "[Yóú càn réqúést délétíón óf yóúr pérsónàl dàtà whén nó lóngér néédédddddddddddddddddddddd.]",
+      "rightToPortability": "[Ríght tó Pórtàbílítyyyyyyy]",
+      "rightToPortabilityDescription": "[Yóú càn récéívé yóúr dàtà ín à strúctúréd, màchíné-réàdàblé fórmàtttttttttttttttttttttt.]",
+      "rightToRectification": "[Ríght tó Réctífícàtíónnnnnnnn]",
+      "rightToRectificationDescription": "[Yóú càn córréct ínàccúràté ór íncómplété pérsónàl dàtàààààààààààààààààà.]",
+      "subtitle": "[Yóúr ríghts régàrdíng pérsónàl dàtàààààààààààà]",
+      "title": "[Yóúr Dàtà Ríghtssssss]"
+    },
+    "subtitle": "[Mànàgé yóúr pérsónàl dàtà ànd prívàcy séttíngsssssssssssssss]",
+    "title": "[Prívàcy & Dàtàààààà]"
+  },
+  "skipToMainContent": "[Skíp tó màín cónténttttttt]",
+  "sprintConfiguration": {
+    "ariaLabels": {
+      "closeDeleteModal": "[Clósé délété módàlllllll]",
+      "closePreviewModal": "[Clósé prévíéw módàlllllll]",
+      "deleteSprint": "[DDéélléétté {{name}}]"
+    },
+    "backToSprintPlanning": "[Bàck tó Sprínt Plànníngggggggg]",
+    "configuredFor": "[Cónfígúréd fórrrrrr {{year}}]",
+    "currentConfiguration": "[Cúrrént Cónfígúràtíónnnnnnnn]",
+    "deleteModal": {
+      "cancel": "[Càncélll]",
+      "cannotUndo": "[Thís àctíón cànnót bé úndónéééééééééé.]",
+      "confirmation": "[Àré yóú súré yóú wànt tó délété thís sprínttttttttttttttt?]",
+      "deleteSprint": "[Délété Sprínttttt]",
+      "deleting": "[DDééllééttíínng...]",
+      "sprintToDelete": "[Sprínt tó délétééééééé:]",
+      "title": "[Délété Sprínttttt]"
+    },
+    "deleteSprintTitle": "[Délété sprínttttt]",
+    "dismissNotification": "[Dísmíss nótífícàtíónnnnnnn]",
+    "durationOptions": {
+      "fourWeeks": "[4 WWéééékks]",
+      "fourWeeksDescription": "[Éxténdéd 4-wéék sprínt cycléééééééééé]",
+      "oneWeek": "[1 WWéééék]",
+      "oneWeekDescription": "[Ràpíd 1-wéék sprínt cyclééééééééé]",
+      "threeWeeks": "[3 WWéééékks]",
+      "threeWeeksDescription": "[Bàlàncéd 3-wéék sprínt cycléééééééééé]",
+      "twoWeeks": "[2 WWéééékks]",
+      "twoWeeksDescription": "[Stàndàrd 2-wéék sprínt cycléééééééééé]"
+    },
+    "generatedSprints": "[Généràtéd Spríntsssssss]",
+    "loading": "[Lóàdíng cónfígúràtíónnnnnnnnn...]",
+    "notifications": {
+      "configurationSaveFailed": "[Fàíléd tó sàvé cónfígúràtíónnnnnnnnnn: {{message}}]",
+      "configurationSaved": "[Cónfígúràtíón sàvéd súccéssfúllyyyyyyyyyyy!]",
+      "sprintDeleteFailed": "[Fàíléd tó délété sprínttttttttt: {{message}}]",
+      "sprintDeleted": "[Sprínt délétéd súccéssfúllyyyyyyyyyy!]",
+      "sprintsGenerateFailed": "[Fàíléd tó généràté spríntssssssssss: {{message}}]",
+      "sprintsGenerated": "[Sprínts généràtéd súccéssfúllyyyyyyyyyyy!]"
+    },
+    "previewAndGenerate": "[Prévíéw & Généràté Spríntsssssssss]",
+    "previewModal": {
+      "cancel": "[Càncélll]",
+      "duration": "[Dúràtíónnnn:]",
+      "generateButton": "[Généràtéééé {{count}} Spríntssss]",
+      "generatedSprints": "[Généràtéd Spríntsssssss]",
+      "generating": "[Généràtínggggg...]",
+      "moreSprints": "[... àànndd {{count}} móré spríntsssss]",
+      "sprintsToGenerate": "[Sprínts tó Généràtééééééé:]",
+      "title": "[Sprínt Généràtíón Prévíéwwwwwwwww]",
+      "warning": "[Thís wíll généràtééééééé {{count}} sprínts fórrrrr {{year}}. Éxístíng sprínts fór thís yéàr mày bé àfféctédddddddddddddddd.]",
+      "year": "[YYééààr:]"
+    },
+    "saveConfiguration": "[Sàvé Cónfígúràtíónnnnnnn]",
+    "saving": "[SSààvvíínng...]",
+    "sprintCount": "[{{count}} spríntssss]",
+    "sprintDuration": "[Sprínt Dúràtíónnnnnn]",
+    "subtitle": "[Cónfígúré sprínt dúràtíón ànd àútómàtícàlly généràté sprínt plàns fór thé yéàrrrrrrrrrrrrrrrrrrrrrrrrr]",
+    "title": "[Sprínt Cónfígúràtíónnnnnnn]",
+    "year": "[YYééààr]"
+  },
+  "sprintStatus": {
+    "ACTIVE": "[Àctívééé]",
+    "CANCELLED": "[Càncéllédddd]",
+    "COMPLETED": "[Cómplétédddd]",
+    "PLANNED": "[Plànnédddd]"
+  },
+  "teamDefinitions": {
+    "ariaLabels": {
+      "definitionTabs": "[Défínítíón tàbssssss]"
+    },
+    "subtitle": "[Cónfígúré yóúr téàm's Défínítíón óf Réàdy ànd Défínítíón óf Dóné crítéríààààààààààààààààààààààà]",
+    "tabs": {
+      "definitionOfDone": "[Défínítíón óf Dónééééééé]",
+      "definitionOfReady": "[Défínítíón óf Réàdyyyyyyy]"
+    },
+    "title": "[Téàm Défínítíónssssss]"
+  },
+  "teamList": {
+    "ariaLabel": "[Téàmsss]",
+    "card": {
+      "cardAriaLabel": "[{{name}}, {{count}} mémbérs. Úsé àrrów kéys tó nàvígàté bétwéén càrds, Éntér ór Spàcé tó àccéss àctíónsssssssssssssssssssssssssss.]",
+      "createdBy": "[Créàtéd byyyyy {{firstName}} {{lastName}}]",
+      "delete": "[Délétééé]",
+      "deleteTeam": "[DDéélléétté {{name}}]",
+      "deleting": "[DDééllééttíínng...]",
+      "edit": "[ÉÉddíít]",
+      "editTeam": "[ÉÉddíít {{name}}]",
+      "loading": "[Lóàdíngggg...]",
+      "memberCount": "[{{count}} mméémmbbéér]",
+      "memberCount_plural": "[{{count}} mémbérssss]"
+    },
+    "empty": {
+      "benefits": {
+        "agileCeremonies": "[Cóllàbóràté wíth àgílé cérémóníésssssssssss]",
+        "progressTracking": "[Tràck prógréss wíth réàl-tímé métrícsssssssssssss]",
+        "sprintPlanning": "[Órgànízé wórk wíth sprínt plànníngggggggggggg]"
+      },
+      "clearSearchBrowse": "[Cléàr séàrch ànd brówsé àll téàmsssssssssss]",
+      "createFirstTeam": "[Créàté Yóúr Fírst Téàmmmmmmmm]",
+      "createNewTeam": "[Créàté Néw Téàmmmmmm]",
+      "defaultDescription": "[Téàms àré thé fóúndàtíón óf éfféctívé cóllàbóràtíón. Créàté yóúr fírst téàm tó stàrt plànníng sprínts, tràckíng prógréss, ànd àchíévíng yóúr góàls tógéthérrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr.]",
+      "defaultTitle": "[Búíld Yóúr Dréàm Téàmmmmmmmm]",
+      "searchDescription": "[Try àdjústíng yóúr séàrch térms ór créàté à néw téàm tó gét stàrtédddddddddddddddddddddd.]",
+      "searchNoResults": "[Nó téàms fóúnd màtchínggggggggg \"{{search}}\"]"
+    },
+    "error": "[Fàíléd tó lóàd téàms. Pléàsé try àgàínnnnnnnnnnnnn.]",
+    "loading": "[Lóàdíng téàmssssss...]",
+    "retry": "[Rétryyy]"
+  },
+  "teamManagement": {
+    "createTeam": "[Créàté Téàmmmmm]",
+    "pagination": {
+      "goToNext": "[Gó tó néxt pàgéééééé]",
+      "goToPrevious": "[Gó tó prévíóús pàgééééééé]",
+      "next": "[NNééxxt]",
+      "pageInfo": "[PPààggé {{current}} óóff {{total}}]",
+      "previous": "[Prévíóússss]"
+    },
+    "permissionBanner": {
+      "dismissError": "[Dísmíss érrórrrrr]"
+    },
+    "permissionErrors": {
+      "deleteTeam": "[Yóú dó nót hàvé pérmíssíón tó délété thís téàmmmmmmmmmmmmmmmm.]",
+      "editTeam": "[Yóú dó nót hàvé pérmíssíón tó édít thís téàmmmmmmmmmmmmmmm.]"
+    },
+    "subtitle": "[Créàté ànd mànàgé téàms àcróss thé órgànízàtíónnnnnnnnnnnnnnnn]",
+    "teamCount": "[{{count}} ttééààmm]",
+    "title": "[Téàm Mànàgéméntttttt]",
+    "toast": {
+      "cannotDeleteWithGoals": "[Cànnót délété téàm wíth éxístíng pródúct góàlsssssssssssssss]",
+      "teamCreateFailed": "[Fàíléd tó créàté téàmmmmmmmm]",
+      "teamCreated": "[Téàm créàtéd súccéssfúllyyyyyyyyy]",
+      "teamCreatedRefreshFailed": "[Téàm créàtéd, bút fàíléd tó réfrésh téàm líst. Pléàsé rélóàd thé pàgé íf néédéddddddddddddddddddddddddd.]",
+      "teamDeleteFailed": "[Fàíléd tó délété téàmmmmmmmm]",
+      "teamDeleted": "[Téàm délétéd súccéssfúllyyyyyyyyy]",
+      "teamDeletedRefreshFailed": "[Téàm délétéd, bút fàíléd tó réfrésh téàm líst. Pléàsé rélóàd thé pàgé íf néédéddddddddddddddddddddddddd.]",
+      "teamUpdateFailed": "[Fàíléd tó úpdàté téàmmmmmmmm]",
+      "teamUpdated": "[Téàm úpdàtéd súccéssfúllyyyyyyyyy]",
+      "teamUpdatedRefreshFailed": "[Téàm úpdàtéd, bút fàíléd tó réfrésh téàm líst. Pléàsé rélóàd thé pàgé íf néédéddddddddddddddddddddddddd.]"
+    }
+  },
+  "teamSearchBar": {
+    "ariaLabel": "[Séàrch téàmsssss]",
+    "clearSearch": "[Cléàr séàrchhhhh]",
+    "placeholder": "[Séàrch téàms by nàméééééééé...]"
+  },
+  "title": "[Séttíngssss]"
+}

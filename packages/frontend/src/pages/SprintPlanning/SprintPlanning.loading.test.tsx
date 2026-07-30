@@ -1,4 +1,4 @@
-﻿/**
+/**
  * SprintPlanning Page Loading State Tests
  *
  * Test Coverage:
@@ -10,15 +10,20 @@
  * - Accessibility during loading (ARIA attributes)
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor, act } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MemoryRouter } from 'react-router';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
+import { screen, waitFor, act } from '@testing-library/react';
+
+import { renderWithProviders, initTestI18n } from '../../test-utils';
 
 import { SprintPlanning } from './SprintPlanning';
 import { useTeamStore } from '../../store';
 import { apiService } from '../../services';
 import { ItemStatus, SprintStatus } from '../../types';
+
+// Initialize i18n before all tests
+beforeAll(async () => {
+  await initTestI18n();
+});
 
 // Mock stores
 vi.mock('../../store', () => ({
@@ -61,28 +66,6 @@ vi.mock('../../components/EmptyState', () => ({
     <div data-testid={`empty-state-${type}`}>Empty State: {type}</div>
   ),
 }));
-
-// Test utilities
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        staleTime: 0,
-      },
-    },
-  });
-
-const renderSprintPlanning = (queryClient?: QueryClient) => {
-  const testQueryClient = queryClient || createTestQueryClient();
-  return render(
-    <QueryClientProvider client={testQueryClient}>
-      <MemoryRouter>
-        <SprintPlanning />
-      </MemoryRouter>
-    </QueryClientProvider>
-  );
-};
 
 // Mock data
 const mockTeam = {
@@ -175,7 +158,7 @@ describe('SprintPlanning - Loading State Tests', () => {
       mockApiService.getProductBacklog.mockImplementation(() => new Promise(() => {}));
       mockApiService.getProductGoals.mockImplementation(() => new Promise(() => {}));
 
-      renderSprintPlanning();
+      renderWithProviders(<SprintPlanning />);
 
       expect(screen.getAllByText(/Loading Sprint Planning/i)[0]).toBeInTheDocument();
     });
@@ -185,7 +168,7 @@ describe('SprintPlanning - Loading State Tests', () => {
       mockApiService.getProductBacklog.mockImplementation(() => new Promise(() => {}));
       mockApiService.getProductGoals.mockImplementation(() => new Promise(() => {}));
 
-      const { container } = renderSprintPlanning();
+      const { container } = renderWithProviders(<SprintPlanning />);
 
       expect(container.querySelector('[role="status"]')).toBeInTheDocument();
     });
@@ -195,7 +178,7 @@ describe('SprintPlanning - Loading State Tests', () => {
       mockApiService.getProductBacklog.mockImplementation(() => new Promise(() => {}));
       mockApiService.getProductGoals.mockImplementation(() => new Promise(() => {}));
 
-      const { container } = renderSprintPlanning();
+      const { container } = renderWithProviders(<SprintPlanning />);
 
       expect(container.querySelector('[class*="page-loader"]')).toBeInTheDocument();
     });
@@ -205,7 +188,7 @@ describe('SprintPlanning - Loading State Tests', () => {
         currentTeam: null,
       });
 
-      renderSprintPlanning();
+      renderWithProviders(<SprintPlanning />);
 
       expect(screen.getByTestId('empty-state-no-team')).toBeInTheDocument();
     });
@@ -216,7 +199,7 @@ describe('SprintPlanning - Loading State Tests', () => {
       mockApiService.getProductGoals.mockResolvedValue({ data: [] });
       mockApiService.getTeam.mockResolvedValue({ data: mockTeamData });
 
-      renderSprintPlanning();
+      renderWithProviders(<SprintPlanning />);
 
       await act(async () => {
         vi.runAllTimersAsync();
@@ -235,7 +218,7 @@ describe('SprintPlanning - Loading State Tests', () => {
       mockApiService.getProductGoals.mockResolvedValue({ data: [mockActiveGoal] });
       mockApiService.getTeam.mockResolvedValue({ data: mockTeamData });
 
-      const { container } = renderSprintPlanning();
+      const { container } = renderWithProviders(<SprintPlanning />);
 
       expect(screen.getAllByText(/Loading Sprint Planning/i)[0]).toBeInTheDocument();
 
@@ -261,7 +244,7 @@ describe('SprintPlanning - Loading State Tests', () => {
       mockApiService.getProductBacklog.mockImplementation(() => new Promise(() => {}));
       mockApiService.getProductGoals.mockImplementation(() => new Promise(() => {}));
 
-      renderSprintPlanning();
+      renderWithProviders(<SprintPlanning />);
 
       expect(screen.getAllByText(/Loading Sprint Planning/i)[0]).toBeInTheDocument();
 
@@ -282,7 +265,7 @@ describe('SprintPlanning - Loading State Tests', () => {
       );
       mockApiService.getProductGoals.mockImplementation(() => new Promise(() => {}));
 
-      renderSprintPlanning();
+      renderWithProviders(<SprintPlanning />);
 
       expect(screen.getAllByText(/Loading Sprint Planning/i)[0]).toBeInTheDocument();
 
@@ -303,7 +286,7 @@ describe('SprintPlanning - Loading State Tests', () => {
           })
       );
 
-      renderSprintPlanning();
+      renderWithProviders(<SprintPlanning />);
 
       expect(screen.getAllByText(/Loading Sprint Planning/i)[0]).toBeInTheDocument();
 
@@ -320,7 +303,7 @@ describe('SprintPlanning - Loading State Tests', () => {
       mockApiService.getProductBacklog.mockImplementation(() => new Promise(() => {}));
       mockApiService.getProductGoals.mockImplementation(() => new Promise(() => {}));
 
-      renderSprintPlanning();
+      renderWithProviders(<SprintPlanning />);
 
       expect(screen.getAllByText(/Loading Sprint Planning/i)[0]).toBeInTheDocument();
 
@@ -361,7 +344,7 @@ describe('SprintPlanning - Loading State Tests', () => {
           })
       );
 
-      const { container } = renderSprintPlanning();
+      const { container } = renderWithProviders(<SprintPlanning />);
 
       expect(screen.getAllByText(/Loading Sprint Planning/i)[0]).toBeInTheDocument();
 
@@ -398,7 +381,7 @@ describe('SprintPlanning - Loading State Tests', () => {
       mockApiService.getProductBacklog.mockResolvedValue({ data: mockBacklogItems });
       mockApiService.getProductGoals.mockResolvedValue({ data: [mockActiveGoal] });
 
-      const { container } = renderSprintPlanning();
+      const { container } = renderWithProviders(<SprintPlanning />);
 
       await act(async () => {
         vi.runAllTimersAsync();
@@ -414,7 +397,7 @@ describe('SprintPlanning - Loading State Tests', () => {
       mockApiService.getProductBacklog.mockRejectedValue(new Error('Backlog error'));
       mockApiService.getProductGoals.mockResolvedValue({ data: [mockActiveGoal] });
 
-      const { container } = renderSprintPlanning();
+      const { container } = renderWithProviders(<SprintPlanning />);
 
       await act(async () => {
         vi.runAllTimersAsync();
@@ -430,7 +413,7 @@ describe('SprintPlanning - Loading State Tests', () => {
       mockApiService.getProductBacklog.mockResolvedValue({ data: mockBacklogItems });
       mockApiService.getProductGoals.mockRejectedValue(new Error('Goals error'));
 
-      const { container } = renderSprintPlanning();
+      const { container } = renderWithProviders(<SprintPlanning />);
 
       await act(async () => {
         vi.runAllTimersAsync();
@@ -446,7 +429,7 @@ describe('SprintPlanning - Loading State Tests', () => {
       mockApiService.getProductBacklog.mockResolvedValue({ data: mockBacklogItems });
       mockApiService.getProductGoals.mockRejectedValue(new Error('Goals error'));
 
-      const { container } = renderSprintPlanning();
+      const { container } = renderWithProviders(<SprintPlanning />);
 
       await act(async () => {
         vi.runAllTimersAsync();
@@ -469,7 +452,7 @@ describe('SprintPlanning - Loading State Tests', () => {
       mockApiService.getProductBacklog.mockImplementation(() => new Promise(() => {}));
       mockApiService.getProductGoals.mockImplementation(() => new Promise(() => {}));
 
-      renderSprintPlanning();
+      renderWithProviders(<SprintPlanning />);
 
       expect(screen.getAllByText(/Loading Sprint Planning/i)[0]).toBeInTheDocument();
 
@@ -487,7 +470,7 @@ describe('SprintPlanning - Loading State Tests', () => {
       mockApiService.getProductGoals.mockResolvedValue({ data: [mockActiveGoal] });
       mockApiService.getTeam.mockResolvedValue({ data: mockTeamData });
 
-      const { container } = renderSprintPlanning();
+      const { container } = renderWithProviders(<SprintPlanning />);
 
       await act(async () => {
         vi.runAllTimersAsync();
@@ -524,7 +507,7 @@ describe('SprintPlanning - Loading State Tests', () => {
           })
       );
 
-      const { container } = renderSprintPlanning();
+      const { container } = renderWithProviders(<SprintPlanning />);
 
       expect(screen.getAllByText(/Loading Sprint Planning/i)[0]).toBeInTheDocument();
 
@@ -558,7 +541,7 @@ describe('SprintPlanning - Loading State Tests', () => {
       mockApiService.getProductGoals.mockResolvedValue({ data: [mockActiveGoal] });
       mockApiService.getTeam.mockResolvedValue({ data: mockTeamData });
 
-      const { container } = renderSprintPlanning();
+      const { container } = renderWithProviders(<SprintPlanning />);
 
       await act(async () => {
         vi.runAllTimersAsync();
@@ -578,7 +561,7 @@ describe('SprintPlanning - Loading State Tests', () => {
       mockApiService.getProductBacklog.mockImplementation(() => new Promise(() => {}));
       mockApiService.getProductGoals.mockImplementation(() => new Promise(() => {}));
 
-      const { container } = renderSprintPlanning();
+      const { container } = renderWithProviders(<SprintPlanning />);
 
       const loadingContainer = container.querySelector('[role="status"]');
       expect(loadingContainer).toBeInTheDocument();
@@ -590,7 +573,7 @@ describe('SprintPlanning - Loading State Tests', () => {
       mockApiService.getProductBacklog.mockImplementation(() => new Promise(() => {}));
       mockApiService.getProductGoals.mockImplementation(() => new Promise(() => {}));
 
-      renderSprintPlanning();
+      renderWithProviders(<SprintPlanning />);
 
       expect(screen.getAllByText(/Loading Sprint Planning/i)[0]).toBeInTheDocument();
     });
@@ -600,7 +583,7 @@ describe('SprintPlanning - Loading State Tests', () => {
       mockApiService.getProductBacklog.mockImplementation(() => new Promise(() => {}));
       mockApiService.getProductGoals.mockImplementation(() => new Promise(() => {}));
 
-      const { container } = renderSprintPlanning();
+      const { container } = renderWithProviders(<SprintPlanning />);
 
       const spinner = container.querySelector('[role="progressbar"]');
       expect(spinner).toBeInTheDocument();
@@ -613,7 +596,7 @@ describe('SprintPlanning - Loading State Tests', () => {
       mockApiService.getProductBacklog.mockImplementation(() => new Promise(() => {}));
       mockApiService.getProductGoals.mockImplementation(() => new Promise(() => {}));
 
-      const { unmount, container } = renderSprintPlanning();
+      const { unmount, container } = renderWithProviders(<SprintPlanning />);
 
       expect(container.querySelector('[class*="page-loader"]')).toBeInTheDocument();
 
@@ -633,7 +616,7 @@ describe('SprintPlanning - Loading State Tests', () => {
       mockApiService.getProductBacklog.mockImplementation(() => new Promise(() => {}));
       mockApiService.getProductGoals.mockImplementation(() => new Promise(() => {}));
 
-      const { unmount, container } = renderSprintPlanning();
+      const { unmount, container } = renderWithProviders(<SprintPlanning />);
 
       unmount();
 
@@ -650,7 +633,7 @@ describe('SprintPlanning - Loading State Tests', () => {
       mockApiService.getProductBacklog.mockRejectedValue(new Error('Network error'));
       mockApiService.getProductGoals.mockRejectedValue(new Error('Network error'));
 
-      const { container } = renderSprintPlanning();
+      const { container } = renderWithProviders(<SprintPlanning />);
 
       await act(async () => {
         vi.runAllTimersAsync();
@@ -669,7 +652,7 @@ describe('SprintPlanning - Loading State Tests', () => {
       mockApiService.getProductGoals.mockResolvedValue({ data: [mockActiveGoal] });
       mockApiService.getTeam.mockResolvedValue({ data: mockTeamData });
 
-      const { container } = renderSprintPlanning();
+      const { container } = renderWithProviders(<SprintPlanning />);
 
       await act(async () => {
         vi.runAllTimersAsync();
@@ -688,7 +671,7 @@ describe('SprintPlanning - Loading State Tests', () => {
       mockApiService.getProductGoals.mockResolvedValue({ data: [mockActiveGoal] });
       mockApiService.getTeam.mockResolvedValue({ data: mockTeamData });
 
-      const { container } = renderSprintPlanning();
+      const { container } = renderWithProviders(<SprintPlanning />);
 
       await act(async () => {
         vi.runAllTimersAsync();
@@ -712,7 +695,7 @@ describe('SprintPlanning - Loading State Tests', () => {
       );
       mockApiService.getProductGoals.mockResolvedValue({ data: [mockActiveGoal] });
 
-      const { container } = renderSprintPlanning();
+      const { container } = renderWithProviders(<SprintPlanning />);
 
       expect(screen.getAllByText(/Loading Sprint Planning/i)[0]).toBeInTheDocument();
 

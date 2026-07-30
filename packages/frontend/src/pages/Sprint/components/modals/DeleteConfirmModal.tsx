@@ -1,6 +1,7 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
-import type { Task } from '../../../../types';
+import { TaskStatus as TaskStatusEnum, type Task, type TaskStatus } from '../../../../types';
 import {
   AlertTriangleIcon,
   CloseIcon,
@@ -9,6 +10,13 @@ import {
 } from '../../../../components/common/Icons';
 
 import styles from './DeleteConfirmModal.module.css';
+
+// Status label i18n key mapping
+const STATUS_LABEL_KEYS: Record<TaskStatus, string> = {
+  [TaskStatusEnum.TODO]: 'taskStatus.todo',
+  [TaskStatusEnum.IN_PROGRESS]: 'taskStatus.inProgress',
+  [TaskStatusEnum.DONE]: 'taskStatus.done',
+};
 
 export interface DeleteConfirmModalProps {
   task: Task;
@@ -25,6 +33,7 @@ export const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
   isDeleting,
   modalRef,
 }) => {
+  const { t } = useTranslation('sprint');
   const statusClass = task.status.toLowerCase() || 'todo';
 
   return (
@@ -44,16 +53,14 @@ export const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
               <AlertTriangleIcon size={24} />
             </div>
             <h2 id="delete-modal-title" className={styles['modal-title']}>
-              Delete Task
+              {t('deleteConfirm.title')}
             </h2>
-            <p className={styles['modal-subtitle']}>
-              This action is permanent and cannot be undone
-            </p>
+            <p className={styles['modal-subtitle']}>{t('deleteConfirm.subtitle')}</p>
           </div>
           <button
             className={styles['modal-close']}
             onClick={onClose}
-            aria-label="Close modal"
+            aria-label={t('deleteConfirm.closeModal')}
             type="button"
           >
             <CloseIcon size={18} />
@@ -67,18 +74,17 @@ export const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
                 <AlertTriangleIcon size={24} />
               </span>
               <div className={styles['warning-title-group']}>
-                <h3 className={styles['warning-title']}>Action Warning</h3>
+                <h3 className={styles['warning-title']}>{t('deleteConfirm.actionWarning')}</h3>
                 <p className={styles['warning-subtitle']}>
-                  Task: <strong>&ldquo;{task.title || 'Unknown Task'}&rdquo;</strong>
+                  {t('deleteConfirm.taskLabel')}{' '}
+                  <strong>&ldquo;{task.title || t('deleteConfirm.unknownTask')}&rdquo;</strong>
                 </p>
               </div>
             </div>
 
             <div className={styles['warning-content']}>
               <p className={styles['delete-warning-text']}>
-                You are about to permanently delete this task. This action{' '}
-                <strong>cannot be undone</strong>. All associated data, including time tracking and
-                history, will be permanently removed.
+                {t('deleteConfirm.deleteWarningText')}
               </p>
 
               <div className={styles['impact-alert']}>
@@ -86,15 +92,12 @@ export const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
                   <FileCheckIcon size={18} />
                 </span>
                 <span className={styles['impact-text']}>
-                  Status:{' '}
+                  {t('deleteConfirm.statusLabel')}{' '}
                   <strong className={`${styles['status-badge']} ${styles[statusClass]}`}>
-                    {task.status}
+                    {t(STATUS_LABEL_KEYS[task.status] as never)}
                   </strong>
                   {task.remainingHours !== undefined && task.remainingHours > 0 && (
-                    <>
-                      {' '}
-                      • {task.remainingHours} hour{task.remainingHours !== 1 ? 's' : ''} remaining
-                    </>
+                    <> • {t('deleteConfirm.hoursRemaining', { count: task.remainingHours })}</>
                   )}
                 </span>
               </div>
@@ -109,7 +112,7 @@ export const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
             onClick={onClose}
             disabled={isDeleting}
           >
-            Cancel
+            {t('deleteConfirm.cancel')}
           </button>
           <button
             type="button"
@@ -121,12 +124,12 @@ export const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
             {isDeleting ? (
               <>
                 <span className={styles['button-spinner']} aria-hidden="true" />
-                Deleting...
+                {t('deleteConfirm.deleting')}
               </>
             ) : (
               <>
                 <TrashIcon size={16} />
-                Delete Task
+                {t('deleteConfirm.deleteTask')}
               </>
             )}
           </button>

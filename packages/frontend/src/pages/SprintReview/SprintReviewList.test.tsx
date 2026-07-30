@@ -1,8 +1,13 @@
-﻿import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
-import { MemoryRouter } from 'react-router';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import React from 'react';
+import {
+  screen,
+  fireEvent,
+  waitFor,
+  renderWithProviders,
+  initTestI18n,
+  i18nT,
+} from '../../test-utils';
+import { vi, describe, it, expect, beforeEach, beforeAll } from 'vitest';
 
 import { SprintReviewList } from './SprintReviewList';
 import { SprintStatus, IncrementStatus } from '../../types';
@@ -18,14 +23,6 @@ vi.mock('react-router', async (importOriginal) => {
 });
 
 const mockNavigate = vi.fn();
-
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: { retry: false, gcTime: 0, staleTime: 0 },
-      mutations: { retry: false },
-    },
-  });
 
 const mockTeam = {
   id: 'team-1',
@@ -105,18 +102,14 @@ function renderComponent(overrides: { currentTeam?: typeof mockTeam | null } = {
     loadTeam: vi.fn(),
   } as any);
 
-  const queryClient = createTestQueryClient();
-
-  return render(
-    <QueryClientProvider client={queryClient}>
-      <MemoryRouter>
-        <SprintReviewList />
-      </MemoryRouter>
-    </QueryClientProvider>
-  );
+  return renderWithProviders(<SprintReviewList />);
 }
 
 describe('SprintReviewList', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
     mockNavigate.mockClear();
@@ -145,13 +138,13 @@ describe('SprintReviewList', () => {
 
       renderComponent();
 
-      expect(screen.getAllByText('Loading sprint reviews...').length).toBeGreaterThan(0);
+      expect(screen.getAllByText(i18nT('sprint-review:list.loading')).length).toBeGreaterThan(0);
     });
 
     it('should render empty state when no team is selected', () => {
       renderComponent({ currentTeam: null });
 
-      expect(screen.getByText('No Team Selected')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('common:emptyState.noTeam.title'))).toBeInTheDocument();
     });
   });
 
@@ -160,21 +153,19 @@ describe('SprintReviewList', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('Sprint Reviews')).toBeInTheDocument();
+        expect(screen.getByText(i18nT('sprint-review:list.title'))).toBeInTheDocument();
       });
 
-      expect(
-        screen.getByText(
-          'Review completed sprints, inspect increments, and gather stakeholder feedback'
-        )
-      ).toBeInTheDocument();
+      expect(screen.getByText(i18nT('sprint-review:list.subtitle'))).toBeInTheDocument();
     });
 
     it('should display stats showing completed sprint count', async () => {
       renderComponent();
 
       await waitFor(() => {
-        const completedSprintsText = screen.getAllByText('Completed Sprints');
+        const completedSprintsText = screen.getAllByText(
+          i18nT('sprint-review:list.completedSprints')
+        );
         expect(completedSprintsText.length).toBeGreaterThan(0);
       });
     });
@@ -183,18 +174,18 @@ describe('SprintReviewList', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('Sprint 1')).toBeInTheDocument();
+        expect(screen.getByText(/Sprint 1/)).toBeInTheDocument();
       });
 
-      expect(screen.queryByText('Sprint 2')).not.toBeInTheDocument();
-      expect(screen.queryByText('Sprint 3')).not.toBeInTheDocument();
+      expect(screen.queryByText(/Sprint 2/)).not.toBeInTheDocument();
+      expect(screen.queryByText(/Sprint 3/)).not.toBeInTheDocument();
     });
 
     it('should display sprint goal when available', async () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('Goal:')).toBeInTheDocument();
+        expect(screen.getByText(i18nT('sprint-review:list.goal'))).toBeInTheDocument();
       });
     });
 
@@ -202,7 +193,9 @@ describe('SprintReviewList', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('Completed')).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('sprint-review:list.statusLabels.completed'))
+        ).toBeInTheDocument();
       });
     });
 
@@ -210,7 +203,7 @@ describe('SprintReviewList', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText(/Jan 1/)).toBeInTheDocument();
+        expect(screen.getByText(/Jan/i)).toBeInTheDocument();
       });
     });
 
@@ -223,7 +216,9 @@ describe('SprintReviewList', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('No Completed Sprint')).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('common:emptyState.noCompletedSprint.title'))
+        ).toBeInTheDocument();
       });
     });
 
@@ -254,7 +249,7 @@ describe('SprintReviewList', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('Sprint 1')).toBeInTheDocument();
+        expect(screen.getByText(/Sprint 1/)).toBeInTheDocument();
       });
     });
   });
@@ -264,7 +259,9 @@ describe('SprintReviewList', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('Review Completed')).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('sprint-review:list.reviewStatus.completed'))
+        ).toBeInTheDocument();
       });
     });
 
@@ -272,7 +269,7 @@ describe('SprintReviewList', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('View Review')).toBeInTheDocument();
+        expect(screen.getByText(i18nT('sprint-review:list.viewReview'))).toBeInTheDocument();
       });
     });
 
@@ -285,7 +282,7 @@ describe('SprintReviewList', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('View Details')).toBeInTheDocument();
+        expect(screen.getByText(i18nT('sprint-review:list.viewDetails'))).toBeInTheDocument();
       });
     });
 
@@ -302,7 +299,9 @@ describe('SprintReviewList', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('Increment Required')).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('sprint-review:list.reviewStatus.incrementRequired'))
+        ).toBeInTheDocument();
       });
     });
 
@@ -319,7 +318,7 @@ describe('SprintReviewList', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('Create Increment')).toBeInTheDocument();
+        expect(screen.getByText(i18nT('sprint-review:list.createIncrement'))).toBeInTheDocument();
       });
     });
 
@@ -332,7 +331,9 @@ describe('SprintReviewList', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('Ready for Review')).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('sprint-review:list.reviewStatus.readyForReview'))
+        ).toBeInTheDocument();
       });
     });
   });
@@ -342,7 +343,7 @@ describe('SprintReviewList', () => {
       renderComponent();
 
       await waitFor(() => {
-        const viewButton = screen.getByText('View Review');
+        const viewButton = screen.getByText(i18nT('sprint-review:list.viewReview'));
         fireEvent.click(viewButton);
       });
 
@@ -362,7 +363,7 @@ describe('SprintReviewList', () => {
       renderComponent();
 
       await waitFor(() => {
-        const incrementButton = screen.getByText('Create Increment');
+        const incrementButton = screen.getByText(i18nT('sprint-review:list.createIncrement'));
         fireEvent.click(incrementButton);
       });
 
@@ -375,7 +376,7 @@ describe('SprintReviewList', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('Reviewed')).toBeInTheDocument();
+        expect(screen.getByText(i18nT('sprint-review:list.reviewed'))).toBeInTheDocument();
       });
     });
 
@@ -383,11 +384,11 @@ describe('SprintReviewList', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('Sprint 1')).toBeInTheDocument();
+        expect(screen.getByText(/Sprint 1/)).toBeInTheDocument();
       });
 
-      expect(screen.queryByText('Sprint 2')).not.toBeInTheDocument();
-      expect(screen.queryByText('Sprint 3')).not.toBeInTheDocument();
+      expect(screen.queryByText(/Sprint 2/)).not.toBeInTheDocument();
+      expect(screen.queryByText(/Sprint 3/)).not.toBeInTheDocument();
     });
 
     it('should handle cancelled sprints by filtering them out', async () => {
@@ -404,7 +405,7 @@ describe('SprintReviewList', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('Sprint 5')).toBeInTheDocument();
+        expect(screen.getByText(/Sprint 5/)).toBeInTheDocument();
       });
     });
   });
@@ -421,7 +422,7 @@ describe('SprintReviewList', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('Sprint 1')).toBeInTheDocument();
+        expect(screen.getByText(/Sprint 1/)).toBeInTheDocument();
       });
     });
 
@@ -436,7 +437,7 @@ describe('SprintReviewList', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('Sprint 1')).toBeInTheDocument();
+        expect(screen.getByText(/Sprint 1/)).toBeInTheDocument();
       });
     });
 
@@ -451,7 +452,7 @@ describe('SprintReviewList', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.queryByText('Sprint 1')).not.toBeInTheDocument();
+        expect(screen.queryByText(/Sprint 1/)).not.toBeInTheDocument();
       });
     });
   });
@@ -468,7 +469,9 @@ describe('SprintReviewList', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('Review In Progress')).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('sprint-review:list.reviewStatus.inProgress'))
+        ).toBeInTheDocument();
       });
     });
   });

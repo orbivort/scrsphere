@@ -1,0 +1,260 @@
+{
+  "actionItems": {
+    "createActionItem": "+ Create Action Item",
+    "deleteActionItem": "Delete Action Item",
+    "deleteAriaLabel": "Delete action item",
+    "due": "Due:",
+    "empty": "No action items yet. Convert improvement items into actionable tasks.",
+    "inBacklog": "In Backlog",
+    "status": {
+      "CANCELLED": "Cancelled",
+      "COMPLETED": "Completed",
+      "IN_PROGRESS": "In Progress",
+      "PENDING": "Pending"
+    },
+    "title": "Action Items",
+    "unassigned": "Unassigned"
+  },
+  "ariaLabels": {
+    "columnsRegion": "Retrospective feedback columns",
+    "sprintInfoRegion": "Sprint Information",
+    "summaryAriaLabel": "Retrospective summary"
+  },
+  "attendees": "attendees",
+  "attendeesAriaLabel": "{{attended}} of {{total}} attendees attended",
+  "attendeesCount": "{{attended}} / {{total}} {{label}}",
+  "attendeesLabel": "Attendees",
+  "attendeesSection": {
+    "title": "Attendees"
+  },
+  "backAriaLabel": "Go back to Retrospectives list",
+  "backToRetrospectives": "Back to Retrospectives",
+  "backlogHint": "This item will be present in the Product Backlog page for action.",
+  "categories": {
+    "didntGoWell": {
+      "placeholder": "What challenges or issues did you face?",
+      "title": "What didn't go well"
+    },
+    "improvements": {
+      "placeholder": "What improvements can we make for next Sprint?",
+      "title": "What can we improve"
+    },
+    "wentWell": {
+      "placeholder": "What went well during this Sprint?",
+      "title": "What went well"
+    }
+  },
+  "columnItem": {
+    "add": "Add",
+    "addItem": "+ Add Item",
+    "adding": "Adding...",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "deleteItem": "Delete item",
+    "edit": "Edit",
+    "editItem": "Edit item",
+    "itemsInColumn": "{{count}} items in {{title}}",
+    "removeVote": "Remove vote",
+    "save": "Save",
+    "saving": "Saving...",
+    "vote": "Vote",
+    "voteAriaLabel": "{{action}} for this item ({{count}} votes)"
+  },
+  "completeRetro": {
+    "ariaLabel": "Mark retrospective as completed",
+    "button": "Complete Retrospective",
+    "completing": "Completing...",
+    "description": "Mark this retrospective as completed to finalize it and prevent further edits."
+  },
+  "confirmationModal": {
+    "cancel": "Cancel",
+    "cannotCompleteTitle": "Cannot Complete Retrospective",
+    "cannotUndo": "This action cannot be undone",
+    "complete": "Complete",
+    "completeTitle": "Complete Retrospective",
+    "completing": "Completing...",
+    "confirmationQuestion": "Are you sure you want to mark this retrospective as completed? This action cannot be undone.",
+    "confirmationRequired": "Confirmation Required",
+    "finalStep": "Final step",
+    "lockWarning": "Once completed, the retrospective will be locked and no further changes can be made.",
+    "ok": "OK",
+    "validationIssues": "Please address the following issues"
+  },
+  "createActionItemModal": {
+    "cancel": "Cancel",
+    "createActionItem": "Create Action Item",
+    "creating": "Creating...",
+    "description": "Description",
+    "descriptionHelper": "Provide additional context to help the assignee understand the task",
+    "descriptionPlaceholder": "Add details about this action item...",
+    "dueDate": "Due Date *",
+    "loadingMembers": "Loading team members...",
+    "noMembers": "No team members available",
+    "optionalBadge": "optional",
+    "owner": "Owner *",
+    "ownerPlaceholder": "Select owner...",
+    "subtitle": "Add a new action item to track progress",
+    "title": "Create Action Item",
+    "titleLabel": "Title *",
+    "titlePlaceholder": "Enter action item title",
+    "unableToLoadMembers": "Unable to load team members. Please refresh the page.",
+    "unsavedMessage": "You have unsaved changes in the action item form. Are you sure you want to discard them?",
+    "unsavedTitle": "Unsaved Changes"
+  },
+  "deleteModal": {
+    "message": "Delete Action Item",
+    "title": "Confirm Deletion"
+  },
+  "errorState": {
+    "backToRetrospectives": "Back to Retrospectives",
+    "message": "The retrospective for this sprint could not be loaded.",
+    "retry": "Retry",
+    "title": "Retrospective not found"
+  },
+  "errors": {
+    "badRequest": "Invalid request. Please check your input and try again.",
+    "network": "Network error. Please check your internet connection.",
+    "notFound": "Resource not found. It may have been deleted.",
+    "notLoaded": "Retrospective not loaded. Please wait and try again.",
+    "serverError": "Server error. Please try again later.",
+    "unauthorized": "You are not authorized to perform this action."
+  },
+  "list": {
+    "actions": "actions",
+    "completedSprint": "Completed Sprint",
+    "completedSprints": "Completed Sprints",
+    "completedSprints_plural": "Completed Sprints",
+    "createRetrospective": "Create Retrospective",
+    "creating": "Creating...",
+    "goal": "Goal:",
+    "items": "items",
+    "loading": "Loading retrospectives...",
+    "retroStatus": {
+      "completed": "Retrospective Completed",
+      "draft": "Retrospective Draft",
+      "inProgress": "Retrospective In Progress",
+      "ready": "Ready for Retrospective"
+    },
+    "reviewed": "Reviewed",
+    "statusLabels": {
+      "active": "Active",
+      "cancelled": "Cancelled",
+      "completed": "Completed",
+      "planned": "Planned"
+    },
+    "subtitle": "Reflect on completed sprints, identify improvements, and track action items",
+    "title": "Sprint Retrospectives",
+    "viewRetrospective": "View Retrospective"
+  },
+  "loading": "Loading Retrospective...",
+  "sprintInfo": {
+    "businessDay_one": "{{count}} business day",
+    "businessDay_other": "{{count}} business days",
+    "completed": "completed",
+    "completion": "Completion",
+    "duration": "Duration",
+    "goal": "Goal:",
+    "includedPbis": "Included Product Backlog Items",
+    "items": "items",
+    "itemsCount": "{{count}} items",
+    "moreItems": "+{{count}} more items",
+    "priorityLabels": {
+      "COULD_HAVE": "Could Have",
+      "MUST_HAVE": "Must Have",
+      "SHOULD_HAVE": "Should Have",
+      "WONT_HAVE": "Won't Have"
+    },
+    "productBacklog": "Product Backlog",
+    "statusLabels": {
+      "DONE": "Done",
+      "IN_PROGRESS": "In Progress",
+      "NEW": "New",
+      "READY": "Ready",
+      "REFINED": "Refined"
+    },
+    "storyPoints": "story points",
+    "storyPointsCount": "{{count}} story points",
+    "taskCompletion": "{{completed}}/{{total}} completed",
+    "taskCount": "{{count}} tasks",
+    "tasks": "Tasks",
+    "tasksCount": "tasks"
+  },
+  "sprintStatus": {
+    "ACTIVE": "Active",
+    "CANCELLED": "Cancelled",
+    "COMPLETED": "Completed",
+    "PLANNED": "Planned"
+  },
+  "successModal": {
+    "close": "Close",
+    "closeDialog": "Close dialog",
+    "message": "Sprint Retrospective completed successfully!",
+    "title": "Success"
+  },
+  "summary": {
+    "addSubtitle": "Document the key insights, decisions, and action items",
+    "addSummary": "+ Add Summary",
+    "addSummaryAriaLabel": "Add retrospective summary",
+    "addTitle": "Add Retrospective Summary",
+    "approachingLimit": "Approaching character limit",
+    "cancel": "Cancel",
+    "cancelAriaLabel": "Cancel summary changes",
+    "charCounter": "{{count}}/1000 characters",
+    "charHelpText": "Enter key insights, decisions, and action items from the retrospective. Minimum 10 characters, maximum 1000 characters.",
+    "editAriaLabel": "Edit summary",
+    "editSubtitle": "Update the key insights and takeaways from this retrospective",
+    "editSummary": "Edit summary",
+    "editTitle": "Edit Retrospective Summary",
+    "empty": "No summary has been added yet...",
+    "emptyDescription": "No summary has been added yet. Add a summary to document key insights and decisions from this retrospective.",
+    "formAriaLabel": "Retrospective summary form",
+    "helperText": "Summarize the team's reflections and agreed-upon improvements",
+    "placeholder": "Write a summary of the retrospective outcomes, key takeaways, and action items...",
+    "save": "Save",
+    "saveAriaLabel": "Save summary",
+    "saving": "Saving...",
+    "summaryLabel": "Summary",
+    "takeawaysLabel": "What were the key takeaways from this retrospective?",
+    "title": "Retrospective Summary"
+  },
+  "title": "Sprint Retrospective",
+  "toast": {
+    "actionItemCreateFailed": "Failed to create action item",
+    "actionItemCreated": "Action item created successfully",
+    "actionItemDeleteFailed": "Failed to delete action item",
+    "actionItemDeleted": "Action item deleted successfully",
+    "itemAddFailed": "Failed to add item",
+    "itemAdded": "Item added successfully",
+    "itemDeleteFailed": "Failed to delete item",
+    "itemDeleted": "Item deleted successfully",
+    "itemUpdateFailed": "Failed to update item",
+    "itemUpdated": "Item updated successfully",
+    "participantAddFailed": "Failed to add participant",
+    "participantUpdateFailed": "Failed to update participant",
+    "removeVoteFailed": "Failed to remove vote",
+    "statusUpdateFailed": "Failed to update retrospective status",
+    "statusUpdated": "Retrospective status updated successfully",
+    "summaryUpdateFailed": "Failed to update summary",
+    "summaryUpdated": "Summary updated successfully",
+    "voteFailed": "Failed to vote"
+  },
+  "validation": {
+    "allTeamMembersAttendance": "All team members must be marked as attended or absent. Missing: {{names}}{{remaining}}.",
+    "dueDatePast": "Due date cannot be in the past",
+    "dueDateRequired": "Due date is required",
+    "itemContentMaxLength": "Item content must be 500 characters or less",
+    "itemContentRequired": "Please enter content for the item",
+    "noHtmlTags": "HTML tags are not allowed",
+    "ownerRequired": "Owner is required",
+    "participantAttendanceRequired": "At least one participant must be marked as attended.",
+    "participantRequired": "At least one participant must be added before completing the retrospective.",
+    "summaryMaxLength": "Summary must be 1000 characters or less",
+    "summaryMinLength": "Summary must be at least 10 characters",
+    "summaryRequired": "Summary is required",
+    "summaryRequiredBeforeComplete": "Retrospective Summary must be filled in before completing.",
+    "teamMemberAttendance": "{{name}} must be marked as attended.",
+    "titleMaxLength": "Title must be 200 characters or less",
+    "titleMinLength": "Title must be at least 3 characters",
+    "titleRequired": "Title is required"
+  }
+}

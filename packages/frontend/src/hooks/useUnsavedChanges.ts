@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 type ModalId = string;
 
@@ -12,6 +13,7 @@ export interface UseUnsavedChangesReturn {
 }
 
 export function useUnsavedChanges(): UseUnsavedChangesReturn {
+  const { t } = useTranslation('common');
   const [unsavedChangesModalOpen, setUnsavedChangesModalOpen] = useState(false);
   const [pendingModalClose, setPendingModalClose] = useState<ModalId | null>(null);
   const [pendingCloseAction, setPendingCloseAction] = useState<(() => void) | null>(null);
@@ -51,9 +53,9 @@ export function useUnsavedChanges(): UseUnsavedChangesReturn {
   }, []);
 
   const getUnsavedChangesMessage = useCallback(() => {
-    const modalName = pendingModalClose === 'editProfile' ? 'profile edit' : 'password change';
-    return `You have unsaved changes in the ${modalName} form. Are you sure you want to discard them?`;
-  }, [pendingModalClose]);
+    const modalType = pendingModalClose === 'editProfile' ? 'profileEdit' : 'passwordChange';
+    return t(`unsavedChanges.messages.${modalType}`);
+  }, [pendingModalClose, t]);
 
   return {
     unsavedChangesModalOpen,

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Reports Page Loading State Tests
  *
  * Test Coverage:
@@ -10,10 +10,8 @@
  * - Accessibility during loading (ARIA attributes)
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor, act } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MemoryRouter } from 'react-router';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
+import { screen, waitFor, act, renderWithProviders, initTestI18n } from '../../test-utils';
 
 import { Reports } from './Reports';
 import { useTeamStore } from '../../store';
@@ -79,28 +77,6 @@ vi.mock('../../components/EmptyState', () => ({
   ),
 }));
 
-// Test utilities
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        staleTime: 0,
-      },
-    },
-  });
-
-const renderReports = (queryClient?: QueryClient) => {
-  const testQueryClient = queryClient || createTestQueryClient();
-  return render(
-    <QueryClientProvider client={testQueryClient}>
-      <MemoryRouter>
-        <Reports />
-      </MemoryRouter>
-    </QueryClientProvider>
-  );
-};
-
 // Mock data
 const mockTeam = {
   id: 'team-1',
@@ -156,6 +132,10 @@ describe('Reports - Loading State Tests', () => {
   let mockUseTeamStore: ReturnType<typeof vi.fn>;
   let mockApiService: typeof apiService;
 
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.useFakeTimers();
     mockUseTeamStore = vi.mocked(useTeamStore);
@@ -178,7 +158,7 @@ describe('Reports - Loading State Tests', () => {
       mockApiService.getSprintHistory.mockImplementation(() => new Promise(() => {}));
       mockApiService.getInsights.mockImplementation(() => new Promise(() => {}));
 
-      const { container } = renderReports();
+      const { container } = renderWithProviders(<Reports />);
 
       // Should show skeleton loaders (CSS modules use hashed class names)
       const skeletonLoaders = container.querySelectorAll('[class*="skeleton-card"]');
@@ -191,7 +171,7 @@ describe('Reports - Loading State Tests', () => {
       mockApiService.getSprintHistory.mockResolvedValue({ data: mockSprintHistory });
       mockApiService.getInsights.mockResolvedValue({ data: mockInsights });
 
-      const { container } = renderReports();
+      const { container } = renderWithProviders(<Reports />);
 
       const chartSkeleton = container.querySelector('[class*="skeleton-chart"]');
       expect(chartSkeleton).toBeInTheDocument();
@@ -203,7 +183,7 @@ describe('Reports - Loading State Tests', () => {
       mockApiService.getSprintHistory.mockResolvedValue({ data: mockSprintHistory });
       mockApiService.getInsights.mockResolvedValue({ data: mockInsights });
 
-      const { container } = renderReports();
+      const { container } = renderWithProviders(<Reports />);
 
       const skeletonLoaders = container.querySelectorAll('[class*="skeleton"]');
       expect(skeletonLoaders.length).toBeGreaterThan(0);
@@ -214,7 +194,7 @@ describe('Reports - Loading State Tests', () => {
         currentTeam: null,
       });
 
-      renderReports();
+      renderWithProviders(<Reports />);
 
       expect(screen.getByTestId('empty-state-no-team')).toBeInTheDocument();
     });
@@ -230,7 +210,7 @@ describe('Reports - Loading State Tests', () => {
       mockApiService.getSprintHistory.mockResolvedValue({ data: mockSprintHistory });
       mockApiService.getInsights.mockResolvedValue({ data: mockInsights });
 
-      const { container } = renderReports();
+      const { container } = renderWithProviders(<Reports />);
 
       // Initially should have skeleton loaders
       expect(container.querySelectorAll('[class*="loading-state"]').length).toBeGreaterThan(0);
@@ -263,7 +243,7 @@ describe('Reports - Loading State Tests', () => {
       mockApiService.getSprintHistory.mockResolvedValue({ data: mockSprintHistory });
       mockApiService.getInsights.mockResolvedValue({ data: mockInsights });
 
-      const { container } = renderReports();
+      const { container } = renderWithProviders(<Reports />);
 
       expect(container.querySelector('[class*="skeleton-chart"]')).toBeInTheDocument();
 
@@ -289,7 +269,7 @@ describe('Reports - Loading State Tests', () => {
       mockApiService.getSprintHistory.mockResolvedValue({ data: mockSprintHistory });
       mockApiService.getInsights.mockResolvedValue({ data: mockInsights });
 
-      const { container } = renderReports();
+      const { container } = renderWithProviders(<Reports />);
 
       const initialSkeletons = container.querySelectorAll('[class*="loading-state"]');
       expect(initialSkeletons.length).toBeGreaterThan(0);
@@ -317,7 +297,7 @@ describe('Reports - Loading State Tests', () => {
       mockApiService.getSprintHistory.mockImplementation(() => new Promise(() => {}));
       mockApiService.getInsights.mockImplementation(() => new Promise(() => {}));
 
-      const { container } = renderReports();
+      const { container } = renderWithProviders(<Reports />);
 
       expect(container.querySelectorAll('[class*="skeleton"]').length).toBeGreaterThan(0);
 
@@ -347,27 +327,20 @@ describe('Reports - Loading State Tests', () => {
       mockApiService.getSprintHistory.mockResolvedValue({ data: mockSprintHistory });
       mockApiService.getInsights.mockResolvedValue({ data: mockInsights });
 
-      const { container } = renderReports();
+      const { container } = renderWithProviders(<Reports />);
 
       expect(container.querySelector('[class*="skeleton-chart"]')).toBeInTheDocument();
 
+      // Resolve both velocity and metrics together
       await act(async () => {
         resolveVelocity!({ data: mockVelocityData });
-        vi.runAllTimersAsync();
-      });
-
-      // Chart should be rendered after velocity data loads
-      await waitFor(() => {
-        expect(screen.getByTestId('bar-chart')).toBeInTheDocument();
-      });
-
-      await act(async () => {
         resolveMetrics!({ data: mockMetricsData });
         vi.runAllTimersAsync();
       });
 
-      // Metrics should be rendered
+      // After all data loads, chart and metrics should be rendered
       await waitFor(() => {
+        expect(screen.getByTestId('bar-chart')).toBeInTheDocument();
         expect(screen.getByText('22.5')).toBeInTheDocument();
       });
     });
@@ -380,7 +353,7 @@ describe('Reports - Loading State Tests', () => {
       mockApiService.getSprintHistory.mockResolvedValue({ data: mockSprintHistory });
       mockApiService.getInsights.mockResolvedValue({ data: mockInsights });
 
-      renderReports();
+      renderWithProviders(<Reports />);
 
       await act(async () => {
         vi.runAllTimersAsync();
@@ -397,7 +370,7 @@ describe('Reports - Loading State Tests', () => {
       mockApiService.getSprintHistory.mockResolvedValue({ data: mockSprintHistory });
       mockApiService.getInsights.mockResolvedValue({ data: mockInsights });
 
-      renderReports();
+      renderWithProviders(<Reports />);
 
       await act(async () => {
         vi.runAllTimersAsync();
@@ -413,7 +386,7 @@ describe('Reports - Loading State Tests', () => {
       mockApiService.getSprintHistory.mockRejectedValue(new Error('History error'));
       mockApiService.getInsights.mockResolvedValue({ data: mockInsights });
 
-      renderReports();
+      renderWithProviders(<Reports />);
 
       await act(async () => {
         vi.runAllTimersAsync();
@@ -437,7 +410,7 @@ describe('Reports - Loading State Tests', () => {
       mockApiService.getSprintHistory.mockImplementation(() => new Promise(() => {}));
       mockApiService.getInsights.mockImplementation(() => new Promise(() => {}));
 
-      const { container } = renderReports();
+      const { container } = renderWithProviders(<Reports />);
 
       expect(container.querySelectorAll('[class*="skeleton"]').length).toBeGreaterThan(0);
 
@@ -464,7 +437,7 @@ describe('Reports - Loading State Tests', () => {
       mockApiService.getSprintHistory.mockResolvedValue({ data: mockSprintHistory });
       mockApiService.getInsights.mockResolvedValue({ data: mockInsights });
 
-      renderReports();
+      renderWithProviders(<Reports />);
 
       act(() => {
         vi.advanceTimersByTime(3500);
@@ -487,7 +460,7 @@ describe('Reports - Loading State Tests', () => {
       mockApiService.getSprintHistory.mockResolvedValue({ data: mockSprintHistory });
       mockApiService.getInsights.mockResolvedValue({ data: mockInsights });
 
-      renderReports();
+      renderWithProviders(<Reports />);
 
       await act(async () => {
         vi.runAllTimersAsync();
@@ -504,7 +477,7 @@ describe('Reports - Loading State Tests', () => {
       mockApiService.getSprintHistory.mockResolvedValue({ data: mockSprintHistory });
       mockApiService.getInsights.mockResolvedValue({ data: mockInsights });
 
-      renderReports();
+      renderWithProviders(<Reports />);
 
       await act(async () => {
         vi.runAllTimersAsync();
@@ -525,7 +498,7 @@ describe('Reports - Loading State Tests', () => {
       mockApiService.getSprintHistory.mockImplementation(() => new Promise(() => {}));
       mockApiService.getInsights.mockImplementation(() => new Promise(() => {}));
 
-      const { container: _container } = renderReports();
+      const { container: _container } = renderWithProviders(<Reports />);
 
       // The reports container should have proper ARIA
       const reportsContainer = screen.getByTestId('reports');
@@ -538,7 +511,7 @@ describe('Reports - Loading State Tests', () => {
       mockApiService.getSprintHistory.mockImplementation(() => new Promise(() => {}));
       mockApiService.getInsights.mockImplementation(() => new Promise(() => {}));
 
-      renderReports();
+      renderWithProviders(<Reports />);
 
       // Page title should be accessible
       expect(screen.getByText('Reports')).toBeInTheDocument();
@@ -552,7 +525,7 @@ describe('Reports - Loading State Tests', () => {
       mockApiService.getSprintHistory.mockImplementation(() => new Promise(() => {}));
       mockApiService.getInsights.mockImplementation(() => new Promise(() => {}));
 
-      const { container, unmount } = renderReports();
+      const { container, unmount } = renderWithProviders(<Reports />);
 
       expect(container.querySelectorAll('[class*="skeleton"]').length).toBeGreaterThan(0);
 
@@ -573,7 +546,7 @@ describe('Reports - Loading State Tests', () => {
       mockApiService.getSprintHistory.mockImplementation(() => new Promise(() => {}));
       mockApiService.getInsights.mockImplementation(() => new Promise(() => {}));
 
-      const { unmount } = renderReports();
+      const { unmount } = renderWithProviders(<Reports />);
 
       unmount();
 
@@ -591,7 +564,7 @@ describe('Reports - Loading State Tests', () => {
       mockApiService.getSprintHistory.mockRejectedValue(new Error('Network error'));
       mockApiService.getInsights.mockRejectedValue(new Error('Network error'));
 
-      renderReports();
+      renderWithProviders(<Reports />);
 
       await act(async () => {
         vi.runAllTimersAsync();
@@ -610,7 +583,7 @@ describe('Reports - Loading State Tests', () => {
       mockApiService.getSprintHistory.mockResolvedValue({ data: [] });
       mockApiService.getInsights.mockResolvedValue({ data: mockInsights });
 
-      renderReports();
+      renderWithProviders(<Reports />);
 
       await act(async () => {
         vi.runAllTimersAsync();
@@ -627,7 +600,7 @@ describe('Reports - Loading State Tests', () => {
       mockApiService.getSprintHistory.mockResolvedValue({ data: mockSprintHistory });
       mockApiService.getInsights.mockResolvedValue({ data: [] });
 
-      renderReports();
+      renderWithProviders(<Reports />);
 
       await act(async () => {
         vi.runAllTimersAsync();
@@ -650,7 +623,7 @@ describe('Reports - Loading State Tests', () => {
       );
       mockApiService.getInsights.mockResolvedValue({ data: [] });
 
-      const { container } = renderReports();
+      const { container } = renderWithProviders(<Reports />);
 
       expect(container.querySelectorAll('[class*="skeleton"]').length).toBeGreaterThan(0);
 

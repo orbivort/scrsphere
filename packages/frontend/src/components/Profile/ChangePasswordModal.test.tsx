@@ -1,9 +1,43 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, act, fireEvent } from '@testing-library/react';
+import { screen, act, fireEvent, renderWithProviders } from '../../test-utils';
 import userEvent from '@testing-library/user-event';
 import { mockStore } from '../../__mocks__/mockData';
 
 import { ChangePasswordModal } from './ChangePasswordModal';
+
+// Mock react-i18next for tests
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => {
+      const map: Record<string, string> = {
+        'profile.changePasswordTitle': 'Change Password',
+        close: 'close',
+        'profile.currentPassword': 'Current Password',
+        'profile.placeholder.currentPassword': 'Enter your current password',
+        'profile.showPassword': 'Show password',
+        'profile.hidePassword': 'Hide password',
+        'profile.newPassword': 'New Password',
+        'profile.placeholder.newPassword': 'Enter your new password',
+        'profile.passwordStrength.strengthLabels.weak': 'Weak',
+        'profile.passwordStrength.strengthLabels.medium': 'Medium',
+        'profile.passwordStrength.strengthLabels.strong': 'Strong',
+        'profile.passwordStrength.requirementsTitle': 'Password Requirements:',
+        'profile.passwordStrength.minLength': 'At least 12 characters',
+        'profile.passwordStrength.uppercase': 'At least one uppercase letter',
+        'profile.passwordStrength.lowercase': 'At least one lowercase letter',
+        'profile.passwordStrength.number': 'At least one number',
+        'profile.passwordStrength.special': 'At least one special character',
+        'profile.confirmNewPassword': 'Confirm New Password',
+        'profile.placeholder.confirmPassword': 'Confirm your new password',
+        'profile.passwordsMatch': 'Passwords match',
+        cancel: 'Cancel',
+        'profile.changing': 'Changing...',
+        'profile.passwordChanged': 'Password changed successfully',
+      };
+      return map[key] ?? key;
+    },
+  }),
+}));
 
 vi.mock('./ChangePasswordModal.module.css', () => ({
   default: new Proxy(
@@ -125,7 +159,7 @@ const setup = (options: SetupOptions = {}) => {
     return { success: mockSuccess } as any;
   });
 
-  const utils = render(
+  const utils = renderWithProviders(
     <ChangePasswordModal isOpen={isOpen} onClose={onClose} onDirtyChange={onDirtyChange} />
   );
 

@@ -1,0 +1,27 @@
+{
+  "common": {
+    "allRightsReserved": "All rights reserved.",
+    "greeting": "Hello",
+    "needHelp": "Need help? Contact us at",
+    "thankYouForUsing": "Thank you for using",
+    "visitApp": "Visit"
+  },
+  "passwordReset": {
+    "bodyIntro": "We received a request to reset the password for {{email}}.",
+    "buttonHint": "Click the button below to create a new password:",
+    "cta": "Reset password",
+    "expiresIn": "This link expires in {{duration}}.",
+    "fallbackLinkHint": "If the button above doesn't work, copy and paste the following link into your browser:",
+    "heading": "Hi {{name}},",
+    "ignoreIfNotRequested": "If you didn't request this, you can safely ignore this email.",
+    "subject": "Reset your Scrumooth password",
+    "supportContact": "If you have any questions or need assistance, please contact our support team."
+  },
+  "welcome": {
+    "bodyIntro": "Your account has been created successfully.",
+    "closing": "We're excited to have you on board.",
+    "cta": "Get started",
+    "heading": "Welcome, {{name}}!",
+    "subject": "Welcome to Scrumooth"
+  }
+}

@@ -1,7 +1,5 @@
-﻿import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { screen, render, waitFor } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MemoryRouter } from 'react-router';
+import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
+import { screen, renderWithProviders, waitFor, initTestI18n } from '../../test-utils';
 
 import { useTeamStore } from '../../store';
 import {
@@ -16,6 +14,10 @@ import {
 import { TaskStatus, type Task, type Sprint, ImpedimentStatus } from '../../types';
 
 import { SprintBoard } from './SprintBoard';
+
+beforeAll(async () => {
+  await initTestI18n();
+});
 
 vi.mock('../../store', () => ({
   useTeamStore: vi.fn(),
@@ -97,20 +99,6 @@ const mockImpediments = [createMockImpediment({ id: 'imp-1', status: ImpedimentS
 
 const mockTeamStore = useTeamStore as ReturnType<typeof vi.fn>;
 
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        gcTime: 0,
-        staleTime: 0,
-      },
-      mutations: {
-        retry: false,
-      },
-    },
-  });
-
 const getDefaultMockData = () => ({
   sprint: mockSprint,
   tasks: mockTasks,
@@ -182,18 +170,7 @@ const getDefaultMutations = () => {
   };
 };
 
-const renderSprintBoard = (queryClient = createTestQueryClient()) => {
-  return render(
-    <QueryClientProvider client={queryClient}>
-      <MemoryRouter>
-        <SprintBoard />
-      </MemoryRouter>
-    </QueryClientProvider>
-  );
-};
-
 describe('SprintBoard Branch Coverage Tests', () => {
-  let queryClient: QueryClient;
   let useSprintBoardData: ReturnType<typeof vi.fn>;
   let useTaskMutations: ReturnType<typeof vi.fn>;
   let useTaskFormValidation: ReturnType<typeof vi.fn>;
@@ -204,7 +181,6 @@ describe('SprintBoard Branch Coverage Tests', () => {
 
   beforeEach(async () => {
     vi.clearAllMocks();
-    queryClient = createTestQueryClient();
 
     const hooks = await import('./SprintBoard.hooks');
     const modalHandlers = await import('./SprintBoard.modalHandlers');
@@ -267,10 +243,6 @@ describe('SprintBoard Branch Coverage Tests', () => {
     });
   });
 
-  afterEach(() => {
-    queryClient.clear();
-  });
-
   describe('Toast Callback Branches', () => {
     it('should handle success toast type', async () => {
       const _mockSuccess = vi.fn();
@@ -284,7 +256,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         handleFormDataChange: vi.fn(),
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -292,7 +264,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
     });
 
     it('should handle error toast type', async () => {
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -318,7 +290,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         },
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -343,7 +315,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         },
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -361,7 +333,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         ],
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -378,7 +350,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         ],
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -403,7 +375,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         },
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -423,7 +395,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         impediments: [createMockImpediment({ id: 'imp-1', status: ImpedimentStatus.OPEN })],
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -445,7 +417,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         impediments: [createMockImpediment({ id: 'imp-1', status: ImpedimentStatus.RESOLVED })],
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -461,7 +433,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         definitionService.definitionService as { verifyDoDForPBI: typeof mockVerifyDoD }
       ).verifyDoDForPBI = mockVerifyDoD;
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -475,7 +447,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         definitionService.definitionService as { verifyDoDForPBI: typeof mockVerifyDoD }
       ).verifyDoDForPBI = mockVerifyDoD;
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -492,7 +464,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         getAvailableTransitions: vi.fn(() => [TaskStatus.IN_PROGRESS, TaskStatus.DONE]),
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -532,7 +504,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         },
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -572,7 +544,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         },
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -588,7 +560,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         getAvailableTransitions: vi.fn(() => []),
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -603,7 +575,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         getAvailableTransitions: vi.fn(() => []),
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -621,7 +593,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         getAvailableTransitions: vi.fn(() => [TaskStatus.IN_PROGRESS]),
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -639,7 +611,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         getAvailableTransitions: vi.fn(() => [TaskStatus.IN_PROGRESS]),
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -657,7 +629,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         getAvailableTransitions: vi.fn(() => [TaskStatus.IN_PROGRESS]),
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -711,7 +683,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         getAvailableTransitions: vi.fn(() => [TaskStatus.DONE]),
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -757,7 +729,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         },
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -778,7 +750,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         },
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -798,7 +770,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         },
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -812,7 +784,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         getAvailableTransitions: vi.fn(() => []),
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -852,7 +824,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         },
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -862,7 +834,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
 
   describe('Delete Confirm', () => {
     it('should not delete when no selected task', async () => {
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -902,7 +874,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         },
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -919,7 +891,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         },
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -937,7 +909,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         ],
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -947,7 +919,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
 
   describe('Modal State Detection', () => {
     it('should detect when detail modal is open', async () => {
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -955,7 +927,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
     });
 
     it('should detect when edit modal is open', async () => {
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -963,7 +935,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
     });
 
     it('should detect when create modal is open', async () => {
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -971,7 +943,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
     });
 
     it('should detect when delete confirm modal is open', async () => {
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -979,7 +951,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
     });
 
     it('should detect when complete sprint modal is open', async () => {
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -987,7 +959,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
     });
 
     it('should detect when keyboard help modal is open', async () => {
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -1002,7 +974,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         wipWarnings: [{ column: TaskStatus.TODO, current: 10, limit: 5 }],
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -1015,7 +987,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         wipWarnings: [{ column: TaskStatus.IN_PROGRESS, current: 5, limit: 3 }],
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -1028,7 +1000,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         wipWarnings: [{ column: TaskStatus.DONE, current: 20, limit: 15 }],
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -1055,7 +1027,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         },
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -1080,7 +1052,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         },
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -1095,7 +1067,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         daysRemaining: 5,
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -1108,7 +1080,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         daysRemaining: 0,
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -1121,7 +1093,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         daysRemaining: -2,
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -1131,7 +1103,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
 
   describe('Focus Trap', () => {
     it('should call useFocusTrap for detail modal', async () => {
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(useFocusTrap).toHaveBeenCalled();
@@ -1150,7 +1122,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         handleKeyDown: vi.fn(),
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -1167,7 +1139,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         handleKeyDown: vi.fn(),
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -1187,7 +1159,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         handleDragLeave: vi.fn(),
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -1205,7 +1177,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         handleDragLeave: vi.fn(),
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -1223,7 +1195,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         handleDragLeave: vi.fn(),
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -1264,7 +1236,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         },
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -1303,7 +1275,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         },
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -1344,7 +1316,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         },
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -1383,7 +1355,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         },
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -1422,7 +1394,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         },
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
@@ -1450,7 +1422,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         },
       });
 
-      renderSprintBoard(queryClient);
+      renderWithProviders(<SprintBoard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('sprint-board')).toBeInTheDocument();

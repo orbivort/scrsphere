@@ -1,6 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 
+import { i18nT } from '@/test-utils';
+
 import { SkeletonChart } from './SkeletonChart';
 
 // Mock the CSS module
@@ -77,7 +79,10 @@ describe('SkeletonChart', () => {
 
     it('has default aria-label when not provided', () => {
       render(<SkeletonChart />);
-      expect(screen.getByRole('status')).toHaveAttribute('aria-label', 'Loading chart');
+      expect(screen.getByRole('status')).toHaveAttribute(
+        'aria-label',
+        i18nT('loadingStates.loadingChart')
+      );
     });
 
     it('has visually hidden text for screen readers', () => {
@@ -121,7 +126,10 @@ describe('SkeletonChart', () => {
 
     it('uses default label when not provided', () => {
       render(<SkeletonChart />);
-      expect(screen.getByRole('status')).toHaveAttribute('aria-label', 'Loading chart');
+      expect(screen.getByRole('status')).toHaveAttribute(
+        'aria-label',
+        i18nT('loadingStates.loadingChart')
+      );
     });
 
     it('supports descriptive labels', () => {
@@ -188,15 +196,13 @@ describe('SkeletonChart', () => {
     });
 
     it('maintains correct element hierarchy', () => {
-      const { container } = render(<SkeletonChart />);
-
-      const skeletonChart = container.querySelector('.skeleton-chart');
-      const children = Array.from(skeletonChart?.children || []);
+      render(<SkeletonChart />);
 
       // Should have chart area and visually hidden span
-      expect(children.length).toBe(2);
-      expect(children[0]).toHaveClass('skeleton-chart-area');
-      expect(children[1]).toHaveClass('visually-hidden');
+      const chartArea = document.querySelector('.skeleton-chart-area');
+      expect(chartArea).toBeInTheDocument();
+      const hiddenText = screen.getByText(i18nT('loadingStates.loadingChart'));
+      expect(hiddenText).toHaveClass('visually-hidden');
     });
   });
 });

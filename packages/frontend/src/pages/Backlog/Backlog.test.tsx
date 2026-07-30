@@ -1,12 +1,15 @@
-﻿import { screen, render, waitFor } from '@testing-library/react';
+import { screen, renderWithProviders, waitFor, i18nT } from '../../test-utils';
 import userEvent from '@testing-library/user-event';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MemoryRouter } from 'react-router';
-import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { vi, describe, it, expect, beforeEach, beforeAll, afterEach } from 'vitest';
 
 import { useTeamStore } from '../../store';
 import { apiService } from '../../services';
-import { createMockBacklogItem, createMockTeam, createMockProductGoal } from '../../test-utils';
+import {
+  createMockBacklogItem,
+  createMockTeam,
+  createMockProductGoal,
+  initTestI18n,
+} from '../../test-utils';
 import { ItemStatus, MoSCoWPriority } from '../../types';
 
 import { ProductBacklog } from './Backlog';
@@ -47,30 +50,6 @@ Object.assign(navigator, {
 });
 
 const mockTeamStore = useTeamStore as ReturnType<typeof vi.fn>;
-
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        gcTime: 0,
-        staleTime: 0,
-      },
-      mutations: {
-        retry: false,
-      },
-    },
-  });
-
-const renderBacklog = (queryClient = createTestQueryClient()) => {
-  return render(
-    <QueryClientProvider client={queryClient}>
-      <MemoryRouter>
-        <ProductBacklog />
-      </MemoryRouter>
-    </QueryClientProvider>
-  );
-};
 
 const mockTeam = createMockTeam({ id: 'team-1', name: 'Test Team' });
 
@@ -182,11 +161,12 @@ const setupApiMocks = (overrides = {}) => {
 };
 
 describe('ProductBacklog Component', () => {
-  let queryClient: QueryClient;
+  beforeAll(async () => {
+    await initTestI18n();
+  });
 
   beforeEach(() => {
     vi.clearAllMocks();
-    queryClient = createTestQueryClient();
 
     mockTeamStore.mockReturnValue({
       currentTeam: mockTeam,
@@ -208,17 +188,18 @@ describe('ProductBacklog Component', () => {
   });
 
   afterEach(() => {
-    queryClient.clear();
+    vi.clearAllMocks();
   });
 
   describe('Rendering', () => {
     it('should render loading state initially', () => {
-      renderBacklog(queryClient);
-      expect(screen.getAllByText(/loading/i).length).toBeGreaterThan(0);
+      renderWithProviders(<ProductBacklog />);
+      // Loading state shows the page title "Product Backlog"
+      expect(screen.getAllByText(i18nT('backlog:title')).length).toBeGreaterThan(0);
     });
 
     it('should render backlog items after loading', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -245,7 +226,7 @@ describe('ProductBacklog Component', () => {
         clearTeamContext: vi.fn(),
       });
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText(/no team selected/i)).toBeInTheDocument();
@@ -263,7 +244,7 @@ describe('ProductBacklog Component', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText(/no active goal/i)).toBeInTheDocument();
@@ -282,7 +263,7 @@ describe('ProductBacklog Component', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         const emptyText =
@@ -295,7 +276,7 @@ describe('ProductBacklog Component', () => {
     });
 
     it('should display page title and item count', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Product Backlog')).toBeInTheDocument();
@@ -305,7 +286,7 @@ describe('ProductBacklog Component', () => {
     });
 
     it('should display active goal banner', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -318,7 +299,7 @@ describe('ProductBacklog Component', () => {
 
   describe('View Modes', () => {
     it('should render board view by default', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -329,7 +310,7 @@ describe('ProductBacklog Component', () => {
     });
 
     it('should switch to list view when clicking list button', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -345,7 +326,7 @@ describe('ProductBacklog Component', () => {
     });
 
     it('should toggle between views correctly', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -366,7 +347,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Drag and Drop', () => {
     it('should render draggable cards in board view', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -379,7 +360,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Bulk Import', () => {
     it('should have bulk import button', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -392,12 +373,13 @@ describe('ProductBacklog Component', () => {
 
   describe('Loading States', () => {
     it('should show loading spinner during initial load', () => {
-      renderBacklog(queryClient);
-      expect(screen.getAllByText(/loading product backlog/i).length).toBeGreaterThan(0);
+      renderWithProviders(<ProductBacklog />);
+      // Loading state shows the page title "Product Backlog"
+      expect(screen.getAllByText(i18nT('backlog:title')).length).toBeGreaterThan(0);
     });
 
     it('should disable buttons during mutation pending state', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -422,7 +404,7 @@ describe('ProductBacklog Component', () => {
       window.innerWidth = 768;
       window.dispatchEvent(new Event('resize'));
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -438,7 +420,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Integration', () => {
     it('should handle complete workflow: create, view, edit, delete', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -473,7 +455,7 @@ describe('ProductBacklog Component', () => {
     });
 
     it('should handle search and filter combination', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -498,7 +480,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Create Item Workflow', () => {
     it('should open create modal when clicking new item button', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -512,7 +494,7 @@ describe('ProductBacklog Component', () => {
     });
 
     it('should create a new item with valid data', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -536,7 +518,7 @@ describe('ProductBacklog Component', () => {
     });
 
     it('should show validation error for empty title', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -557,7 +539,7 @@ describe('ProductBacklog Component', () => {
     });
 
     it('should close create modal on cancel', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -579,7 +561,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Item Detail Modal', () => {
     it('should open detail modal when clicking an item', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -595,7 +577,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Edit Item Workflow', () => {
     it('should open edit modal from detail view', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -616,7 +598,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Delete Item Workflow', () => {
     it('should open delete confirmation modal', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -637,7 +619,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Filter Interactions', () => {
     it('should filter items by status', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -654,7 +636,7 @@ describe('ProductBacklog Component', () => {
     });
 
     it('should search items by title', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -670,7 +652,7 @@ describe('ProductBacklog Component', () => {
     });
 
     it('should show no results for non-matching search', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -688,7 +670,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Priority Change', () => {
     it('should have priority badges displayed', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -701,7 +683,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Bulk Upload Modal', () => {
     it('should open bulk upload modal', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -724,7 +706,7 @@ describe('ProductBacklog Component', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         const backlogElement = screen.queryByTestId('product-backlog');
@@ -744,7 +726,7 @@ describe('ProductBacklog Component', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -766,7 +748,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Active Goal Banner', () => {
     it('should display active goal information', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -777,7 +759,7 @@ describe('ProductBacklog Component', () => {
     });
 
     it('should show goal progress metrics', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -789,7 +771,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Status Change Workflow', () => {
     it('should handle quick status change to READY with validation modal', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -804,7 +786,7 @@ describe('ProductBacklog Component', () => {
     });
 
     it('should handle validation check changes', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -818,7 +800,7 @@ describe('ProductBacklog Component', () => {
     });
 
     it('should handle validation cancel', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -837,7 +819,7 @@ describe('ProductBacklog Component', () => {
     });
 
     it('should handle status transition validation errors', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -853,7 +835,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Form Validation', () => {
     it('should validate form data with workflow errors', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -877,7 +859,7 @@ describe('ProductBacklog Component', () => {
     });
 
     it('should handle edit form with labels containing commas', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -915,7 +897,7 @@ describe('ProductBacklog Component', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -942,7 +924,7 @@ describe('ProductBacklog Component', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -969,7 +951,7 @@ describe('ProductBacklog Component', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -979,7 +961,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Status Change to DONE with Child Tasks', () => {
     it('should prevent marking as DONE when child tasks are incomplete', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       // Component renders with existing items
       await waitFor(() => {
@@ -1006,7 +988,7 @@ describe('ProductBacklog Component', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       // Component renders even when there's an error fetching child tasks
       await waitFor(() => {
@@ -1017,7 +999,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Priority Change on Board', () => {
     it('should handle priority change via board view', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1030,7 +1012,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Modal Manager State', () => {
     it('should open create modal', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1047,7 +1029,7 @@ describe('ProductBacklog Component', () => {
     });
 
     it('should open detail modal when clicking item', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1063,7 +1045,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Items by MoSCoW Calculation', () => {
     it('should correctly group items by MoSCoW priority', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1088,7 +1070,7 @@ describe('ProductBacklog Component', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1111,7 +1093,7 @@ describe('ProductBacklog Component', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1127,7 +1109,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Bulk Upload Complete', () => {
     it('should handle bulk upload completion', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1162,7 +1144,7 @@ describe('ProductBacklog Component', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1190,7 +1172,7 @@ describe('ProductBacklog Component', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1206,7 +1188,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Filter State Management', () => {
     it('should handle filter changes', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1221,7 +1203,7 @@ describe('ProductBacklog Component', () => {
     });
 
     it('should handle status filter toggles', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1265,7 +1247,7 @@ describe('ProductBacklog Component', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       // Item should be rendered
       await waitFor(() => {
@@ -1276,7 +1258,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Form Data with Initial Values', () => {
     it('should set initial form data correctly', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1295,7 +1277,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Handle Open Create Modal', () => {
     it('should open create modal with empty form', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1316,7 +1298,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Handle Open Detail Modal', () => {
     it('should open detail modal and set selected item', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1330,7 +1312,7 @@ describe('ProductBacklog Component', () => {
     });
 
     it('should close detail modal and clear selected item', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1355,7 +1337,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Handle Open Edit Modal', () => {
     it('should not open edit modal when no item selected', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1371,7 +1353,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Handle Edit Submit', () => {
     it('should not submit edit when validation fails', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1387,7 +1369,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Handle Delete Confirm', () => {
     it('should not delete when no item selected', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1403,7 +1385,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Handle Open Delete Modal', () => {
     it('should open delete modal from detail view', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1424,7 +1406,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Handle Quick Status Change - No Selected Item', () => {
     it('should not change status when no item is selected', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1436,7 +1418,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Handle Quick Status Change - Invalid Transition', () => {
     it('should show error for invalid status transition', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1452,7 +1434,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Handle Quick Status Change - Field Validation Error', () => {
     it('should show field validation error', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1468,7 +1450,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Handle Validation Check Change', () => {
     it('should update validation checks state', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1484,7 +1466,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Handle Validation Confirm - No Pending Status', () => {
     it('should not confirm validation when no pending status', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1507,7 +1489,7 @@ describe('ProductBacklog Component', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1530,7 +1512,7 @@ describe('ProductBacklog Component', () => {
         })
       );
 
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1546,7 +1528,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Handle Validation Cancel', () => {
     it('should close validation modal and reset state', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1567,7 +1549,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Done Count Calculation', () => {
     it('should calculate done count correctly', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1579,7 +1561,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Label Tags Handling', () => {
     it('should handle label tags in form data', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1595,7 +1577,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Workflow Error Handling', () => {
     it('should display workflow errors', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();
@@ -1611,7 +1593,7 @@ describe('ProductBacklog Component', () => {
 
   describe('Backlog Provider', () => {
     it('should render with BacklogProvider', async () => {
-      renderBacklog(queryClient);
+      renderWithProviders(<ProductBacklog />);
 
       await waitFor(() => {
         expect(screen.getByText('Feature A')).toBeInTheDocument();

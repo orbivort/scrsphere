@@ -4,11 +4,10 @@
  * Unit tests for the StatusChangeHistoryTimeline component using React Testing Library.
  */
 
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
 
+import { renderWithProviders, initTestI18n } from '../../../test-utils';
 import { apiService } from '../../../services';
 import { StatusChangeHistoryTimeline } from './StatusChangeHistoryTimeline';
 
@@ -19,26 +18,10 @@ vi.mock('../../../services', () => ({
   },
 }));
 
-/**
- * Creates a query client for testing
- */
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-    },
-  });
-
-/**
- * Wrapper component for tests that need QueryClient
- */
-const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <QueryClientProvider client={createTestQueryClient()}>{children}</QueryClientProvider>
-);
-
 describe('StatusChangeHistoryTimeline', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
   const mockHistoryData = {
     data: [
       {
@@ -70,11 +53,7 @@ describe('StatusChangeHistoryTimeline', () => {
   });
 
   it('should render collapsed by default', () => {
-    render(
-      <TestWrapper>
-        <StatusChangeHistoryTimeline entityId="item-1" entityType="BacklogItem" />
-      </TestWrapper>
-    );
+    renderWithProviders(<StatusChangeHistoryTimeline entityId="item-1" entityType="BacklogItem" />);
 
     expect(screen.getByText('Status History')).toBeInTheDocument();
     expect(screen.queryByText('Loading history...')).not.toBeInTheDocument();
@@ -83,11 +62,7 @@ describe('StatusChangeHistoryTimeline', () => {
   it('should expand when clicked', async () => {
     vi.mocked(apiService.getStatusChangeHistory).mockResolvedValueOnce(mockHistoryData);
 
-    render(
-      <TestWrapper>
-        <StatusChangeHistoryTimeline entityId="item-1" entityType="BacklogItem" />
-      </TestWrapper>
-    );
+    renderWithProviders(<StatusChangeHistoryTimeline entityId="item-1" entityType="BacklogItem" />);
 
     const toggleButton = screen.getByRole('button', { name: /status history/i });
     fireEvent.click(toggleButton);
@@ -98,11 +73,7 @@ describe('StatusChangeHistoryTimeline', () => {
   it('should fetch history data when expanded', async () => {
     vi.mocked(apiService.getStatusChangeHistory).mockResolvedValueOnce(mockHistoryData);
 
-    render(
-      <TestWrapper>
-        <StatusChangeHistoryTimeline entityId="item-1" entityType="BacklogItem" />
-      </TestWrapper>
-    );
+    renderWithProviders(<StatusChangeHistoryTimeline entityId="item-1" entityType="BacklogItem" />);
 
     const toggleButton = screen.getByRole('button', { name: /status history/i });
     fireEvent.click(toggleButton);
@@ -120,11 +91,7 @@ describe('StatusChangeHistoryTimeline', () => {
   it('should display history items after loading', async () => {
     vi.mocked(apiService.getStatusChangeHistory).mockResolvedValueOnce(mockHistoryData);
 
-    render(
-      <TestWrapper>
-        <StatusChangeHistoryTimeline entityId="item-1" entityType="BacklogItem" />
-      </TestWrapper>
-    );
+    renderWithProviders(<StatusChangeHistoryTimeline entityId="item-1" entityType="BacklogItem" />);
 
     const toggleButton = screen.getByRole('button', { name: /status history/i });
     fireEvent.click(toggleButton);
@@ -139,11 +106,7 @@ describe('StatusChangeHistoryTimeline', () => {
   it('should display status transitions', async () => {
     vi.mocked(apiService.getStatusChangeHistory).mockResolvedValueOnce(mockHistoryData);
 
-    render(
-      <TestWrapper>
-        <StatusChangeHistoryTimeline entityId="item-1" entityType="BacklogItem" />
-      </TestWrapper>
-    );
+    renderWithProviders(<StatusChangeHistoryTimeline entityId="item-1" entityType="BacklogItem" />);
 
     const toggleButton = screen.getByRole('button', { name: /status history/i });
     fireEvent.click(toggleButton);
@@ -157,11 +120,7 @@ describe('StatusChangeHistoryTimeline', () => {
   it('should display change notes when present', async () => {
     vi.mocked(apiService.getStatusChangeHistory).mockResolvedValueOnce(mockHistoryData);
 
-    render(
-      <TestWrapper>
-        <StatusChangeHistoryTimeline entityId="item-1" entityType="BacklogItem" />
-      </TestWrapper>
-    );
+    renderWithProviders(<StatusChangeHistoryTimeline entityId="item-1" entityType="BacklogItem" />);
 
     const toggleButton = screen.getByRole('button', { name: /status history/i });
     fireEvent.click(toggleButton);
@@ -174,11 +133,7 @@ describe('StatusChangeHistoryTimeline', () => {
   it('should show empty state when no history', async () => {
     vi.mocked(apiService.getStatusChangeHistory).mockResolvedValueOnce({ data: [] });
 
-    render(
-      <TestWrapper>
-        <StatusChangeHistoryTimeline entityId="item-1" entityType="BacklogItem" />
-      </TestWrapper>
-    );
+    renderWithProviders(<StatusChangeHistoryTimeline entityId="item-1" entityType="BacklogItem" />);
 
     const toggleButton = screen.getByRole('button', { name: /status history/i });
     fireEvent.click(toggleButton);
@@ -191,11 +146,7 @@ describe('StatusChangeHistoryTimeline', () => {
   it('should show error state when fetch fails', async () => {
     vi.mocked(apiService.getStatusChangeHistory).mockRejectedValueOnce(new Error('Failed'));
 
-    render(
-      <TestWrapper>
-        <StatusChangeHistoryTimeline entityId="item-1" entityType="BacklogItem" />
-      </TestWrapper>
-    );
+    renderWithProviders(<StatusChangeHistoryTimeline entityId="item-1" entityType="BacklogItem" />);
 
     const toggleButton = screen.getByRole('button', { name: /status history/i });
     fireEvent.click(toggleButton);
@@ -208,11 +159,7 @@ describe('StatusChangeHistoryTimeline', () => {
   it('should collapse when clicked again', async () => {
     vi.mocked(apiService.getStatusChangeHistory).mockResolvedValueOnce(mockHistoryData);
 
-    render(
-      <TestWrapper>
-        <StatusChangeHistoryTimeline entityId="item-1" entityType="BacklogItem" />
-      </TestWrapper>
-    );
+    renderWithProviders(<StatusChangeHistoryTimeline entityId="item-1" entityType="BacklogItem" />);
 
     const toggleButton = screen.getByRole('button', { name: /status history/i });
 
@@ -248,11 +195,7 @@ describe('StatusChangeHistoryTimeline', () => {
 
     vi.mocked(apiService.getStatusChangeHistory).mockResolvedValueOnce(recentHistory);
 
-    render(
-      <TestWrapper>
-        <StatusChangeHistoryTimeline entityId="item-1" entityType="BacklogItem" />
-      </TestWrapper>
-    );
+    renderWithProviders(<StatusChangeHistoryTimeline entityId="item-1" entityType="BacklogItem" />);
 
     const toggleButton = screen.getByRole('button', { name: /status history/i });
     fireEvent.click(toggleButton);
@@ -277,11 +220,7 @@ describe('StatusChangeHistoryTimeline', () => {
 
     vi.mocked(apiService.getStatusChangeHistory).mockResolvedValueOnce(historyWithoutChanger);
 
-    render(
-      <TestWrapper>
-        <StatusChangeHistoryTimeline entityId="item-1" entityType="BacklogItem" />
-      </TestWrapper>
-    );
+    renderWithProviders(<StatusChangeHistoryTimeline entityId="item-1" entityType="BacklogItem" />);
 
     const toggleButton = screen.getByRole('button', { name: /status history/i });
     fireEvent.click(toggleButton);
@@ -307,11 +246,7 @@ describe('StatusChangeHistoryTimeline', () => {
 
     vi.mocked(apiService.getStatusChangeHistory).mockResolvedValueOnce(initialHistory);
 
-    render(
-      <TestWrapper>
-        <StatusChangeHistoryTimeline entityId="item-1" entityType="BacklogItem" />
-      </TestWrapper>
-    );
+    renderWithProviders(<StatusChangeHistoryTimeline entityId="item-1" entityType="BacklogItem" />);
 
     const toggleButton = screen.getByRole('button', { name: /status history/i });
     fireEvent.click(toggleButton);

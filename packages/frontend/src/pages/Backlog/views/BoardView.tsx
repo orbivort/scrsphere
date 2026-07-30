@@ -10,6 +10,7 @@
  */
 
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { type ProductBacklogItem, MoSCoWPriority } from '../../../types';
 import { MOSCOW_CONFIG } from '../config/moscow.config';
@@ -18,6 +19,28 @@ import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { useVirtualScroll, shouldEnableVirtualization } from '../../../hooks/useVirtualScroll';
 
 import styles from './BoardView.module.css';
+
+/**
+ * Helper function to get translated MoSCoW labels
+ */
+const getMoscowLabels = (t: (key: string) => string) => ({
+  [MoSCoWPriority.MUST_HAVE]: {
+    label: t('moscow.mustHave') as string,
+    description: t('moscow.mustHaveDesc') as string,
+  },
+  [MoSCoWPriority.SHOULD_HAVE]: {
+    label: t('moscow.shouldHave') as string,
+    description: t('moscow.shouldHaveDesc') as string,
+  },
+  [MoSCoWPriority.COULD_HAVE]: {
+    label: t('moscow.couldHave') as string,
+    description: t('moscow.couldHaveDesc') as string,
+  },
+  [MoSCoWPriority.WONT_HAVE]: {
+    label: t('moscow.wontHave') as string,
+    description: t('moscow.wontHaveDesc') as string,
+  },
+});
 
 /**
  * Props for the BoardView component
@@ -82,6 +105,8 @@ const VirtualizedColumn: React.FC<VirtualizedColumnProps> = ({
   onPriorityChange,
   forceVirtualization,
 }) => {
+  const { t } = useTranslation('backlog');
+  const moscowLabels = getMoscowLabels(t as (key: string) => string);
   const enableVirtualization =
     forceVirtualization ?? shouldEnableVirtualization(items.length, VIRTUALIZATION_THRESHOLD);
 
@@ -96,13 +121,16 @@ const VirtualizedColumn: React.FC<VirtualizedColumnProps> = ({
     onDrop(e, priority);
   };
 
+  const translatedLabel = moscowLabels[priority].label;
+  const translatedDescription = moscowLabels[priority].description;
+
   return (
     <div
       className={`${styles['moscow-column']} ${isDraggingOver ? styles['drag-active'] : ''}`}
       onDrop={handleDrop}
       onDragOver={onDragOver}
       role="list"
-      aria-label={`${config.label} column, ${items.length} items`}
+      aria-label={`${translatedLabel} column, ${items.length} items`}
       style={
         {
           '--column-color': config.color,
@@ -131,13 +159,13 @@ const VirtualizedColumn: React.FC<VirtualizedColumnProps> = ({
             </svg>
           </div>
           <div className={styles['moscow-column-title-info']}>
-            <h3 className={styles['moscow-column-title']}>{config.label}</h3>
-            <span className={styles['moscow-column-desc']}>{config.description}</span>
+            <h3 className={styles['moscow-column-title']}>{translatedLabel}</h3>
+            <span className={styles['moscow-column-desc']}>{translatedDescription}</span>
           </div>
         </div>
         <div className={styles['moscow-column-count']}>
           <span className={styles['count-number']}>{items.length}</span>
-          <span className={styles['count-label']}>items</span>
+          <span className={styles['count-label']}>{t('boardView.items') as string}</span>
         </div>
       </div>
 
@@ -169,7 +197,7 @@ const VirtualizedColumn: React.FC<VirtualizedColumnProps> = ({
             >
               <path d={config.icon} />
             </svg>
-            <span>Drop items here</span>
+            <span>{t('boardView.dropItemsHere') as string}</span>
           </div>
         ) : enableVirtualization ? (
           <div style={{ height: totalSize, position: 'relative', width: '100%' }}>
@@ -251,6 +279,7 @@ export const BoardView: React.FC<BoardViewProps> = ({
   onItemClick,
   onPriorityChange,
 }) => {
+  const { t } = useTranslation('backlog');
   const { draggedItem, handleDragStart, handleDrop, handleDragOver, handleDragEnd } =
     useDragAndDrop({
       onDrop: onPriorityChange,
@@ -287,7 +316,11 @@ export const BoardView: React.FC<BoardViewProps> = ({
   const enableVirtualization = shouldEnableVirtualization(totalItems, VIRTUALIZATION_THRESHOLD);
 
   return (
-    <div className={styles['moscow-board-view']} role="list" aria-label="MoSCoW priority board">
+    <div
+      className={styles['moscow-board-view']}
+      role="list"
+      aria-label={t('aria.priorityBoard') as string}
+    >
       {Object.values(MoSCoWPriority).map((priority) => {
         const config = MOSCOW_CONFIG[priority];
         const items = itemsByMoscow[priority];

@@ -12,7 +12,10 @@ import {
   Filler,
   type ChartOptions,
 } from 'chart.js';
+import { useTranslation } from 'react-i18next';
+import { formatChartDate } from '@scrumooth/shared';
 
+import { useI18nStore } from '../../../i18n/useI18nStore';
 import { logger } from '../../../utils/logger';
 
 ChartJS.register(
@@ -26,35 +29,6 @@ ChartJS.register(
   Filler
 );
 
-const CHART_OPTIONS: ChartOptions<'line'> = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: {
-      position: 'top',
-    },
-    title: {
-      display: true,
-      text: 'Sprint Burndown Chart',
-    },
-  },
-  scales: {
-    y: {
-      beginAtZero: true,
-      title: {
-        display: true,
-        text: 'Estimated Hours',
-      },
-    },
-    x: {
-      title: {
-        display: true,
-        text: 'Day',
-      },
-    },
-  },
-};
-
 interface BurndownData {
   dates: string[];
   ideal: number[];
@@ -66,6 +40,41 @@ interface BurndownChartProps {
 }
 
 export const BurndownChart: React.FC<BurndownChartProps> = ({ data }) => {
+  const { t } = useTranslation('dashboard');
+  const { locale } = useI18nStore();
+
+  const chartOptions = useMemo<ChartOptions<'line'>>(
+    () => ({
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'top',
+        },
+        title: {
+          display: true,
+          text: t('burndown.title'),
+        },
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: t('burndown.estimatedHoursAxis'),
+          },
+        },
+        x: {
+          title: {
+            display: true,
+            text: t('burndown.daysAxis'),
+          },
+        },
+      },
+    }),
+    [t]
+  );
+
   const chartData = useMemo(() => {
     const dates = data?.dates ?? [];
     const ideal = data?.ideal ?? [];
@@ -79,7 +88,7 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({ data }) => {
         labels: [],
         datasets: [
           {
-            label: 'Ideal',
+            label: t('burndown.ideal'),
             data: [],
             borderColor: '#9CA3AF',
             backgroundColor: 'transparent',
@@ -87,7 +96,7 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({ data }) => {
             tension: 0,
           },
           {
-            label: 'Actual',
+            label: t('burndown.actual'),
             data: [],
             borderColor: '#1A66FF',
             backgroundColor: 'rgba(26, 102, 255, 0.1)',
@@ -106,7 +115,7 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({ data }) => {
         labels: [],
         datasets: [
           {
-            label: 'Ideal',
+            label: t('burndown.ideal'),
             data: [],
             borderColor: '#9CA3AF',
             backgroundColor: 'transparent',
@@ -114,7 +123,7 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({ data }) => {
             tension: 0,
           },
           {
-            label: 'Actual',
+            label: t('burndown.actual'),
             data: [],
             borderColor: '#1A66FF',
             backgroundColor: 'rgba(26, 102, 255, 0.1)',
@@ -126,10 +135,10 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({ data }) => {
     }
 
     return {
-      labels: dates,
+      labels: dates.map((d) => formatChartDate(d, locale)),
       datasets: [
         {
-          label: 'Ideal',
+          label: t('burndown.ideal'),
           data: ideal,
           borderColor: '#9CA3AF',
           backgroundColor: 'transparent',
@@ -137,7 +146,7 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({ data }) => {
           tension: 0,
         },
         {
-          label: 'Actual',
+          label: t('burndown.actual'),
           data: actual,
           borderColor: '#1A66FF',
           backgroundColor: 'rgba(26, 102, 255, 0.1)',
@@ -146,14 +155,14 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({ data }) => {
         },
       ],
     };
-  }, [data]);
+  }, [data, t, locale]);
 
   const chartSummary = useMemo(() => {
     if (!data) return '';
 
     const { dates, ideal, actual } = data;
     if (!dates.length || !ideal.length || !actual.length) {
-      return 'No burndown data available.';
+      return t('burndown.noData');
     }
 
     const totalDays = dates.length;
@@ -167,16 +176,19 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({ data }) => {
     const idealRemaining = lastActualIndex >= 0 ? ideal[lastActualIndex] : ideal[ideal.length - 1];
     const actualRemaining = lastActualIndex >= 0 ? actual[lastActualIndex] : null;
 
-    const actualText = actualRemaining !== null ? `${actualRemaining} points` : 'no data';
+    const actualText =
+      actualRemaining !== null
+        ? t('burndown.points', { count: actualRemaining })
+        : t('burndown.noDataText');
 
-    return (
-      `Sprint burndown chart: ${totalDays} days tracked. ` +
-      `Current day: ${currentDay}. ` +
-      `Starting story points: ${startPoints}. ` +
-      `Ideal remaining: ${idealRemaining} points. ` +
-      `Actual remaining: ${actualText}.`
-    );
-  }, [data]);
+    return t('burndown.summary', {
+      totalDays,
+      currentDay,
+      startPoints,
+      idealRemaining,
+      actualText,
+    });
+  }, [data, t]);
 
   return (
     <>
@@ -184,11 +196,7 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({ data }) => {
         {chartSummary}
       </p>
       <div aria-describedby="burndown-chart-summary">
-        <Line
-          data={chartData}
-          options={CHART_OPTIONS}
-          aria-label="Sprint burndown chart showing progress over time"
-        />
+        <Line data={chartData} options={chartOptions} aria-label={t('burndown.ariaLabel')} />
       </div>
     </>
   );

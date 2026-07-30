@@ -1,0 +1,199 @@
+{
+  "aria": {
+    "closeModal": "Cerrar modal",
+    "teamStatistics": "Estadísticas del equipo"
+  },
+  "capabilities": {
+    "agileCeremonies": "Ceremonias ágiles",
+    "agileCeremoniesDesc": "Facilitar Daily Scrums, Revisiones y Retrospectivas",
+    "progressTracking": "Seguimiento de Progreso",
+    "progressTrackingDesc": "Seguir el progreso con paneles y reportes en tiempo real",
+    "sprintPlanning": "Sprint Planning",
+    "sprintPlanningDesc": "Planificar y gestionar Sprints con su equipo",
+    "teamCollaboration": "Colaboración del equipo",
+    "teamCollaborationDesc": "Trabajar juntos efectivamente con objetivos compartidos y visibilidad",
+    "title": "Capacidades de la plataforma"
+  },
+  "deleteModal": {
+    "cancel": "Cancelar",
+    "close": "Cerrar",
+    "confirmation": "¿Está seguro de que desea eliminar a {{name}} del equipo?",
+    "removeMember": "Eliminar Miembro",
+    "removing": "Eliminando...",
+    "title": "Eliminar Miembro del equipo",
+    "warning": "Esta acción no puede ser revertida. El usuario perderá acceso a todos los recursos del equipo."
+  },
+  "developer": {
+    "badge": "Miembro del equipo",
+    "checkInvitations": "Verificar Invitaciones",
+    "description": "Unirse a un equipo Scrum existente...",
+    "howToJoin": {
+      "checkNotifications": "Revise sus notificaciones: Busque invitaciones de equipo pendientes",
+      "contactLeadership": "Contacte a su liderazgo: Comuníquese con su Scrum Master o Product Owner",
+      "invitationsSentBy": "Las invitaciones de equipo son enviadas por: Scrum Masters o Product Owners solamente",
+      "title": "Cómo unirse a un equipo"
+    },
+    "title": "Developer"
+  },
+  "errorStates": {
+    "accessDenied": "Acceso denegado",
+    "notInvited": "No ha sido invitado a un equipo aún",
+    "teamAccessRequired": "Acceso al equipo requerido",
+    "teamNotFound": "equipo no encontrado",
+    "tryAgain": "Intentar de nuevo",
+    "unableToLoad": "No se pudo cargar el equipo"
+  },
+  "errors": {
+    "genericInviteError": "No se pudo agregar el miembro. Por favor intente más tarde.",
+    "genericRemoveError": "No se pudo eliminar el miembro. Por favor intente más tarde.",
+    "memberAlreadyExists": "Este usuario ya es miembro del equipo.",
+    "memberNotFound": "Miembro no encontrado. Puede haber sido eliminado.",
+    "memberRemoved": "El miembro ha sido eliminado exitosamente.",
+    "networkError": "Error de red. Por favor verifique su conexión e intente de nuevo.",
+    "noPermissionToAddMembers": "No tiene permiso para agregar miembros al equipo. Solo los Product Owners y Scrum Masters pueden invitar miembros.",
+    "noPermissionToRemoveMembers": "No tiene permiso para eliminar miembros del equipo. Solo los Scrum Masters y Product Owners pueden eliminar miembros."
+  },
+  "help": {
+    "description": "Si no está seguro de su rol o necesita ayuda, contacte a su administrador de organización o consulte con su gerente de proyecto.",
+    "title": "¿Necesita ayuda para comenzar?"
+  },
+  "initializing": "Inicializando contexto de equipo...",
+  "inviteErrors": {
+    "alreadyMember": "Este usuario ya es miembro del equipo.",
+    "emailRequired": "La dirección de correo electrónico es requerida.",
+    "emailTooLong": "La dirección de correo electrónico es demasiado larga. La longitud máxima es de 254 caracteres.",
+    "genericError": "No se pudo agregar el miembro al equipo. Por favor intente más tarde.",
+    "invalidEmail": "Por favor ingrese una dirección de correo electrónico válida.",
+    "networkError": "Error de red. Por favor verifique su conexión e intente de nuevo.",
+    "noPermission": "No tiene permiso para agregar miembros al equipo.",
+    "userNotFound": "No se encontró usuario con esta dirección de correo electrónico. El usuario debe registrarse primero antes de poder ser invitado a un equipo."
+  },
+  "inviteModal": {
+    "addedSuccess": "{{name}} ha sido agregado al equipo como {{role}}.",
+    "adding": "Agregando...",
+    "cancel": "Cancelar",
+    "emailLabel": "Dirección de correo electrónico",
+    "emailPlaceholder": "Ingrese dirección de correo electrónico",
+    "role": "Rol",
+    "sendInvite": "Enviar Invitación",
+    "title": "Invitar Miembro del equipo",
+    "unsentMessage": "Tiene una invitación de equipo no enviada. ¿Está seguro de que desea descartarla?",
+    "unsentTitle": "Invitación No Enviada"
+  },
+  "leadership": {
+    "badge": "Liderazgo",
+    "createTeam": "Crear Nuevo equipo",
+    "description": "Como líder ágil, tiene la autoridad para crear y gestionar equipos. Hágase cargo del éxito de su proyecto estableciendo su espacio de trabajo del equipo.",
+    "quickStart": {
+      "step1": "Crear equipo",
+      "step2": "Invitar miembros",
+      "step3": "Iniciar Sprint"
+    },
+    "quickStartTitle": "Proceso de inicio rápido:",
+    "title": "Scrum Master o Product Owner"
+  },
+  "loading": "Cargando información del equipo...",
+  "memberCard": {
+    "ariaLabels": {
+      "removeFromTeam": "Eliminar del equipo",
+      "removeNameFromTeam": "Eliminar a {{name}} del equipo",
+      "sendMessage": "Enviar mensaje",
+      "sendMessageTo": "Enviar mensaje a {{name}}",
+      "teamMember": "Miembro del equipo: {{name}}"
+    },
+    "memberSince": "Miembro desde",
+    "roleNames": {
+      "administrator": "Administrador",
+      "developer": "Developer",
+      "productOwner": "Product Owner",
+      "scrumMaster": "Scrum Master"
+    },
+    "titles": {
+      "removeFromTeam": "Eliminar del equipo",
+      "sendMessage": "Enviar mensaje"
+    },
+    "unknownDate": "Desconocido",
+    "unknownUser": "Usuario desconocido"
+  },
+  "members": {
+    "addFirstMember": "Agregar Primer Miembro",
+    "adding": "Agregando...",
+    "clearAllFilters": "Limpiar todos los filtros",
+    "clearFilters": "Limpiar filtros",
+    "clearSearchAriaLabel": "Limpiar búsqueda",
+    "empty": "No se encontraron miembros del equipo.",
+    "filterByRoleAriaLabel": "Filtrar miembros por rol",
+    "filterOptions": {
+      "allRoles": "Todos los Roles",
+      "developer": "Developer",
+      "productOwner": "Product Owner",
+      "scrumMaster": "Scrum Master"
+    },
+    "filterResults": "Mostrando {{shown}} de {{total}} miembro(s)",
+    "inviteMember": "Invitar Miembro",
+    "noMatchSearch": "Ningún miembro coincide con sus criterios de búsqueda.",
+    "searchAriaLabel": "Buscar por nombre o correo electrónico",
+    "searchPlaceholder": "Buscar por nombre o correo electrónico...",
+    "sortByAriaLabel": "Ordenar miembros por",
+    "sortOptions": {
+      "byJoined": "Ordenar por Fecha de Ingreso",
+      "byName": "Ordenar por Nombre",
+      "byRole": "Ordenar por Rol"
+    },
+    "title": "Miembros del equipo",
+    "viewModeAriaLabel": "Alternar modo de vista",
+    "viewToggles": {
+      "cardView": "Vista de tarjeta",
+      "listView": "Vista de lista"
+    }
+  },
+  "noTeam": "Sin equipo",
+  "selectTeam": "Seleccionar equipo",
+  "sendMessageModal": {
+    "cancel": "Cancelar",
+    "errors": {
+      "genericError": "No se pudo enviar el mensaje. Por favor intente más tarde.",
+      "networkError": "Error de red. Por favor verifique su conexión e intente de nuevo.",
+      "noPermission": "No tiene permiso para enviar mensajes a este usuario.",
+      "recipientNotFound": "Destinatario no encontrado. El usuario puede haber sido eliminado."
+    },
+    "messageLabel": "Mensaje",
+    "messagePlaceholder": "Escriba su mensaje aquí...",
+    "requiredAriaLabel": "obligatorio",
+    "send": "Enviar Mensaje",
+    "sending": "Enviando...",
+    "subtitle": "A: {{name}} ({{email}})",
+    "success": "¡Mensaje enviado exitosamente!",
+    "title": "Enviar Mensaje",
+    "unsavedMessage": "Tiene un mensaje no enviado. ¿Está seguro de que desea descartarlo?",
+    "unsavedTitle": "Mensaje No Enviado",
+    "validation": {
+      "emptyMessage": "Por favor ingrese un mensaje.",
+      "maxLength": "El mensaje debe tener menos de {{limit}} caracteres."
+    }
+  },
+  "subtitle": "Gestionar miembros del equipo y estándares del equipo",
+  "teamInfo": {
+    "created": "Creado: {{date}}",
+    "lastUpdated": "Última actualización: {{date}}",
+    "memberCount": "{{count}} miembros",
+    "memberCount_one": "{{count}} miembro",
+    "memberCount_other": "{{count}} miembros",
+    "teamId": "ID del equipo: {{id}}",
+    "unableToLoad": "No se pudieron cargar los detalles del equipo. Por favor intente actualizando la página.",
+    "unavailable": "Información del equipo no disponible"
+  },
+  "teamStats": {
+    "avgVelocity": "Velocidad promedio",
+    "completedSprints": "Sprints completados",
+    "sprintSuccessRate": "Tasa de éxito del Sprint",
+    "storyPointsCompleted": "Story Points completados"
+  },
+  "title": "Equipo",
+  "welcome": {
+    "selectRole": "Seleccione su rol para continuar",
+    "subtitle": "Su viaje ágil comienza aquí...",
+    "title": "¡Le damos la bienvenida a Scrumooth, {{name}}!"
+  },
+  "yourTeams": "Sus equipos"
+}

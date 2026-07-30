@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { type ApiResponse, type ProductBacklogItem, type TeamMember } from '../../types';
 import { useModalFocus } from '../../hooks/useModalFocus';
@@ -50,6 +51,7 @@ export const AddFeedbackModal: React.FC<AddFeedbackModalProps> = ({
   isPending,
 }) => {
   const [showUnsavedChangesModal, setShowUnsavedChangesModal] = useState(false);
+  const { t } = useTranslation('sprint-review');
 
   const hasUnsavedChanges = useCallback(() => {
     return (
@@ -103,11 +105,9 @@ export const AddFeedbackModal: React.FC<AddFeedbackModalProps> = ({
                 <MessageSquareIcon size={24} />
               </div>
               <h2 id="feedback-form-title" className={styles['feedback-form-title']}>
-                Add Stakeholder Feedback
+                {t('addFeedbackModal.title')}
               </h2>
-              <p className={styles['feedback-form-subtitle']}>
-                Capture valuable insights from stakeholders to improve your product
-              </p>
+              <p className={styles['feedback-form-subtitle']}>{t('addFeedbackModal.subtitle')}</p>
             </div>
             <button
               className={styles['feedback-form-close']}
@@ -115,7 +115,7 @@ export const AddFeedbackModal: React.FC<AddFeedbackModalProps> = ({
                 handleCloseAttempt();
                 setFormErrors({});
               }}
-              aria-label="Close dialog"
+              aria-label={t('addFeedbackModal.cancel')}
               type="button"
             >
               <XIcon size={24} />
@@ -125,12 +125,13 @@ export const AddFeedbackModal: React.FC<AddFeedbackModalProps> = ({
           <div className={styles['feedback-form-body']}>
             <div className={styles['feedback-form-legend']}>
               <InfoIcon size={14} />
-              <span>Required fields are marked with *</span>
+              <span>{t('addFeedbackModal.requiredFieldsNote')}</span>
             </div>
 
             <div className={styles['form-group']}>
               <label htmlFor="feedback-author">
-                Author Name <span className={styles['required-asterisk']}>*</span>
+                {t('addFeedbackModal.authorName')}{' '}
+                <span className={styles['required-asterisk']}>*</span>
               </label>
               <div className={styles['input-with-counter']}>
                 <input
@@ -138,7 +139,7 @@ export const AddFeedbackModal: React.FC<AddFeedbackModalProps> = ({
                   type="text"
                   value={feedbackForm.authorName}
                   onChange={(e) => setFeedbackForm({ ...feedbackForm, authorName: e.target.value })}
-                  placeholder="Enter stakeholder name"
+                  placeholder={t('addFeedbackModal.authorNamePlaceholder')}
                   className={formErrors.authorName ? styles.error : ''}
                   aria-required="true"
                   aria-invalid={!!formErrors.authorName}
@@ -161,7 +162,7 @@ export const AddFeedbackModal: React.FC<AddFeedbackModalProps> = ({
             </div>
 
             <div className={styles['form-group']}>
-              <label htmlFor="feedback-category">Category</label>
+              <label htmlFor="feedback-category">{t('addFeedbackModal.category')}</label>
               <div className={styles['category-select-wrapper']}>
                 <span
                   className={`${styles['category-indicator']} ${styles[feedbackForm.category]}`}
@@ -178,24 +179,27 @@ export const AddFeedbackModal: React.FC<AddFeedbackModalProps> = ({
                   }
                   className={styles['category-select']}
                 >
-                  <option value="positive">Positive Feedback</option>
-                  <option value="negative">Negative Feedback</option>
-                  <option value="suggestion">Suggestion</option>
-                  <option value="question">Question</option>
+                  <option value="positive">{t('addFeedbackModal.categoryOptions.positive')}</option>
+                  <option value="negative">{t('addFeedbackModal.categoryOptions.negative')}</option>
+                  <option value="suggestion">
+                    {t('addFeedbackModal.categoryOptions.suggestion')}
+                  </option>
+                  <option value="question">{t('addFeedbackModal.categoryOptions.question')}</option>
                 </select>
               </div>
             </div>
 
             <div className={styles['form-group']}>
               <label htmlFor="feedback-content">
-                Feedback <span className={styles['required-asterisk']}>*</span>
+                {t('addFeedbackModal.feedback')}{' '}
+                <span className={styles['required-asterisk']}>*</span>
               </label>
               <div className={styles['input-with-counter']}>
                 <textarea
                   id="feedback-content"
                   value={feedbackForm.content}
                   onChange={(e) => setFeedbackForm({ ...feedbackForm, content: e.target.value })}
-                  placeholder="Enter stakeholder feedback..."
+                  placeholder={t('addFeedbackModal.feedbackPlaceholder')}
                   rows={4}
                   className={formErrors.content ? styles.error : ''}
                   aria-required="true"
@@ -219,7 +223,7 @@ export const AddFeedbackModal: React.FC<AddFeedbackModalProps> = ({
             </div>
 
             <div className={styles['form-group']}>
-              <label htmlFor="feedback-pbi">Related PBI (Optional)</label>
+              <label htmlFor="feedback-pbi">{t('addFeedbackModal.relatedPbi')}</label>
               <select
                 id="feedback-pbi"
                 value={feedbackForm.relatedPbiId ?? ''}
@@ -230,7 +234,7 @@ export const AddFeedbackModal: React.FC<AddFeedbackModalProps> = ({
                   })
                 }
               >
-                <option value="">None</option>
+                <option value="">{t('addFeedbackModal.none')}</option>
                 {sprintBacklogItems?.data?.map((pbi: ProductBacklogItem) => (
                   <option key={pbi.id} value={pbi.id}>
                     {pbi.title}
@@ -276,7 +280,7 @@ export const AddFeedbackModal: React.FC<AddFeedbackModalProps> = ({
                 />
                 <span className={styles['action-required-label']}>
                   <AlertTriangleIcon size={24} className={styles['action-required-icon']} />
-                  Action Required
+                  {t('addFeedbackModal.actionRequired')}
                 </span>
               </div>
             </div>
@@ -284,7 +288,8 @@ export const AddFeedbackModal: React.FC<AddFeedbackModalProps> = ({
             {feedbackForm.actionRequired && (
               <div className={styles['form-group']}>
                 <label htmlFor="feedback-owner" className={styles['required-label']}>
-                  Owner <span className={styles['required-asterisk']}>*</span>
+                  {t('addFeedbackModal.owner')}{' '}
+                  <span className={styles['required-asterisk']}>*</span>
                 </label>
                 <select
                   id="feedback-owner"
@@ -300,7 +305,7 @@ export const AddFeedbackModal: React.FC<AddFeedbackModalProps> = ({
                   aria-invalid={!!formErrors.ownerId}
                   aria-describedby={formErrors.ownerId ? 'feedback-owner-error' : undefined}
                 >
-                  <option value="">Select owner...</option>
+                  <option value="">{t('addFeedbackModal.ownerPlaceholder')}</option>
                   {teamMembers?.map((member) => (
                     <option key={member.userId} value={member.userId}>
                       {member.user
@@ -327,7 +332,7 @@ export const AddFeedbackModal: React.FC<AddFeedbackModalProps> = ({
               }}
               type="button"
             >
-              Cancel
+              {t('addFeedbackModal.cancel')}
             </button>
             <button
               className={`${styles.button} ${styles['button-primary']}`}
@@ -336,10 +341,10 @@ export const AddFeedbackModal: React.FC<AddFeedbackModalProps> = ({
               type="button"
             >
               {isPending ? (
-                'Adding...'
+                t('addFeedbackModal.adding')
               ) : (
                 <>
-                  <PlusIcon size={24} /> Add Feedback
+                  <PlusIcon size={24} /> {t('addFeedbackModal.addFeedback')}
                 </>
               )}
             </button>
@@ -351,8 +356,8 @@ export const AddFeedbackModal: React.FC<AddFeedbackModalProps> = ({
         isOpen={showUnsavedChangesModal}
         onConfirm={handleDiscardChanges}
         onCancel={handleCancelDiscard}
-        title="Unsaved Feedback Changes"
-        message="You have unsaved feedback. Are you sure you want to discard it?"
+        title={t('addFeedbackModal.unsavedTitle')}
+        message={t('addFeedbackModal.unsavedMessage')}
       />
     </>
   );

@@ -6,6 +6,7 @@ import { generateUUIDv7 } from '../../utils/uuid';
 import bcrypt from 'bcrypt';
 import { CSRF_CONSTANTS } from '../../middleware/csrf.middleware';
 import { getCsrfToken, extractCsrfFromCookies, replaceCsrfCookie } from '../helpers/test-helpers';
+import { setLocaleHeader, SUPPORTED_LOCALES } from '../helpers/i18n-helpers';
 
 const uniqueId = () => `${Date.now()}-${Math.random().toString(36).substring(7)}`;
 
@@ -919,6 +920,160 @@ describe('User Profile Deletion Integration Tests', () => {
         where: { email: email.toLowerCase() },
       });
       expect(existingUser).not.toBeNull();
+    });
+  });
+
+  describe('i18n Locale Support', () => {
+    const testEmails: string[] = [];
+    const testTeams: string[] = [];
+
+    afterEach(async () => {
+      await cleanupTeams(testTeams);
+      await cleanupTestData(testEmails);
+      testEmails.length = 0;
+      testTeams.length = 0;
+    });
+
+    it('should return translated deletion warning messages for blocked users', async () => {
+      const email = `i18n-blocked-${uniqueId()}@example.com`;
+      const teamName = `I18n Blocked Team ${uniqueId()}`;
+      testEmails.push(email);
+      testTeams.push(teamName);
+
+      const user = await createTestUserInDb(email);
+      const team = await createTestTeamInDb(teamName);
+      await addTeamMember(team.id, user.id, 'PRODUCT_OWNER');
+
+      const cookies = await loginAndGetCookies(email);
+
+      // Test with each supported locale
+      for (const locale of SUPPORTED_LOCALES) {
+        const response = await request(app)
+          .get('/api/v1/auth/me/deletion-check')
+          .set('Cookie', cookies)
+          .set(setLocaleHeader(locale))
+          .expect(200);
+
+        expect(response.body.success).toBe(true);
+        expect(response.body.data.canDelete).toBe(false);
+        expect(response.body.data.blockedReason).toBeDefined();
+        // Verify blockedReason contains team name and role info
+        expect(response.body.data.blockedReason).toContain(teamName);
+        expect(response.body.data.blockedReason).toContain('Product Owner');
+        // Verify grace period guidance is present
+        expect(response.body.data.blockedReason).toContain('14-day');
+        expect(response.body.data.blockedReason).toContain('grace period');
+      }
+    });
+
+    it('should return translated grace period notices for scheduled deletions', async () => {
+      const email = `i18n-grace-${uniqueId()}@example.com`;
+      const teamName = `I18n Grace Team ${uniqueId()}`;
+      testEmails.push(email);
+      testTeams.push(teamName);
+
+      const user = await createTestUserInDb(email);
+      const team = await createTestTeamInDb(teamName);
+      await addTeamMember(team.id, user.id, 'PRODUCT_OWNER');
+
+      const cookies = await loginAndGetCookies(email);
+      const { csrfToken } = extractCsrfFromCookies(cookies);
+
+      // Schedule deletion
+      const scheduleResponse = await request(app)
+        .post('/api/v1/auth/me/schedule-deletion')
+        .set('Cookie', cookies)
+        .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+        .send({ confirmation: 'SCHEDULE DELETION' })
+        .expect(201);
+
+      expect(scheduleResponse.body.success).toBe(true);
+      expect(scheduleResponse.body.data.gracePeriodDays).toBe(14);
+
+      // Test deletion status with each supported locale
+      for (const locale of SUPPORTED_LOCALES) {
+        const statusResponse = await request(app)
+          .get('/api/v1/auth/me/deletion-status')
+          .set('Cookie', cookies)
+          .set(setLocaleHeader(locale))
+          .expect(200);
+
+        expect(statusResponse.body.success).toBe(true);
+        expect(statusResponse.body.data.daysRemaining).toBeGreaterThan(0);
+        expect(statusResponse.body.data.canForceDelete).toBe(false);
+        // Verify grace period info is present
+        expect(statusResponse.body.data.scheduledDeletionAt).toBeDefined();
+      }
+
+      // Test deletion check with locale shows pending deletion info
+      for (const locale of SUPPORTED_LOCALES) {
+        const checkResponse = await request(app)
+          .get('/api/v1/auth/me/deletion-check')
+          .set('Cookie', cookies)
+          .set(setLocaleHeader(locale))
+          .expect(200);
+
+        expect(checkResponse.body.success).toBe(true);
+        expect(checkResponse.body.data.pendingDeletion).toBeDefined();
+        expect(checkResponse.body.data.pendingDeletion?.gracePeriodDays).toBe(14);
+      }
+    });
+
+    it('should return translated deletion confirmation prompts for validation errors', async () => {
+      const email = `i18n-confirm-${uniqueId()}@example.com`;
+      testEmails.push(email);
+
+      await createTestUserInDb(email);
+      const cookies = await loginAndGetCookies(email);
+      const { csrfToken } = extractCsrfFromCookies(cookies);
+
+      // Test validation error for wrong confirmation phrase with each locale
+      for (const locale of SUPPORTED_LOCALES) {
+        const response = await request(app)
+          .delete('/api/v1/auth/me')
+          .set('Cookie', cookies)
+          .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+          .set(setLocaleHeader(locale))
+          .send({ confirmation: 'WRONG CONFIRMATION' })
+          .expect(422);
+
+        expect(response.body.success).toBe(false);
+        expect(response.body.error.code).toBe('VALIDATION_ERROR');
+        // Verify confirmation guidance is present in error message
+        expect(response.body.error.details).toBeDefined();
+        expect(response.body.error.details?.[0]?.field).toBe('confirmation');
+        expect(response.body.error.details?.[0]?.message).toContain('DELETE MY ACCOUNT');
+      }
+
+      // Test validation error for missing confirmation with each locale
+      for (const locale of SUPPORTED_LOCALES) {
+        const response = await request(app)
+          .delete('/api/v1/auth/me')
+          .set('Cookie', cookies)
+          .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+          .set(setLocaleHeader(locale))
+          .send({})
+          .expect(422);
+
+        expect(response.body.success).toBe(false);
+        expect(response.body.error.code).toBe('VALIDATION_ERROR');
+        expect(response.body.error.details).toBeDefined();
+      }
+
+      // Test scheduled deletion validation error with each locale
+      for (const locale of SUPPORTED_LOCALES) {
+        const response = await request(app)
+          .post('/api/v1/auth/me/schedule-deletion')
+          .set('Cookie', cookies)
+          .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+          .set(setLocaleHeader(locale))
+          .send({ confirmation: 'WRONG CONFIRMATION' })
+          .expect(422);
+
+        expect(response.body.success).toBe(false);
+        expect(response.body.error.code).toBe('VALIDATION_ERROR');
+        expect(response.body.error.details?.[0]?.message).toContain('SCHEDULE DELETION');
+      }
     });
   });
 });

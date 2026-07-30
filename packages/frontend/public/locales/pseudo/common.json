@@ -1,0 +1,522 @@
+{
+  "actions": "[Àctíónssss]",
+  "add": "[Àddd]",
+  "all": "[Àlll]",
+  "appName": "[Scrúmóóthhhh]",
+  "apply": "[Àpplyyy]",
+  "aria": {
+    "cardView": "[Càrd víéwwww]",
+    "clearSearch": "[Cléàr séàrchhhhh]",
+    "closeDialog": "[Clósé díàlóggggg]",
+    "closeErrorMessage": "[Clósé érrór méssàgééééééé]",
+    "closeForm": "[Clósé fórmmmm]",
+    "closeMenu": "[Clósé ménúúúú]",
+    "closeModal": "[Clósé módàlllll]",
+    "closeNotification": "[Clósé nótífícàtíónnnnnnn]",
+    "collapseSidebar": "[Cóllàpsé sídébàrrrrrr]",
+    "expandSidebar": "[Éxpànd sídébàrrrrrr]",
+    "listView": "[Líst víéwwww]",
+    "loadingNotifications": "[Lóàdíng nótífícàtíónssssssss]",
+    "navigateTo": "[Nàvígàté tóóóóó {{page}}]",
+    "openMenu": "[Ópén ménúúúú]",
+    "skipToMainContent": "[Skíp tó màín cónténttttttt]",
+    "switchTeam": "[Swítch téàmmmmm]",
+    "toggleSidebar": "[Tógglé sídébàrrrrrr]",
+    "viewMode": "[Víéw módéééé]"
+  },
+  "attendeeForm": {
+    "emailInvalid": "[Pléàsé éntér à vàlíd émàíl àddrésssssssssssss]",
+    "nameMaxLength": "[Nàmé múst bé 100 chàràctérs ór lésssssssssssss]",
+    "nameRequired": "[Nàmé ís réqúírédddddd]",
+    "roleRequired": "[Rólé ís réqúírédddddd]"
+  },
+  "attendeesSection": {
+    "absent": "[Àbsénttt]",
+    "addAttendee": "[Àdd Àtténdéééééé]",
+    "addAttendeeSubtitle": "[Àdd à néw àtténdéé tó thís révíéw séssíónnnnnnnnnnnnnn]",
+    "addAttendeeTitle": "[Àdd Àtténdéééééé]",
+    "addAttendees": "[Àdd Àtténdéésssss]",
+    "addAttendeesAriaLabel": "[Àdd Àtténdéésssss]",
+    "attendanceCount": "[{{attended}} / {{total}} àtténdédddd]",
+    "attended": "[Àtténdédddd]",
+    "cancel": "[Càncélll]",
+    "cannotAddToCompleted": "[Cànnót àdd tó à cómplétéd révíéwwwwwwwwwww]",
+    "closeModal": "[Clósé módàlllll]",
+    "editAttendee": "[Édít àtténdéééééé]",
+    "editAttendeeSubtitle": "[Úpdàté àtténdéé ínfórmàtíón fór thís révíéwwwwwwwwwwwwww]",
+    "editAttendeeTitle": "[Édít Àtténdéééééé]",
+    "emptyHint": "[Màrk téàm mémbérs àbóvé ór àdd àtténdéés mànúàllyyyyyyyyyyyyyyyy.]",
+    "emptyMessage": "[Nó àtténdéés récórdéd yéttttttttt.]",
+    "filterAll": "[ÀÀlll ({{count}})]",
+    "filterAriaLabel": "[Fíltér àtténdéés by typééééééééé]",
+    "filterGuests": "[GGúúéésstts ({{count}})]",
+    "filterTeam": "[TTééààm ({{count}})]",
+    "formAttendedLabel": "[Àtténdédddd]",
+    "formEmailLabel": "[Émàílll]",
+    "formEmailPlaceholder": "[Éntér émàíl àddréss (óptíónàllllllllll)]",
+    "formNameLabel": "[NNààmmé]",
+    "formNamePlaceholder": "[Éntér àtténdéé nàmééééééé]",
+    "formNameRequired": "[*]",
+    "formRoleLabel": "[RRóóllé]",
+    "formRoleRequired": "[*]",
+    "markAsAbsent": "[Màrk às àbséntttttt]",
+    "markAsAttended": "[Màrk às àtténdédddddd]",
+    "removeAttendee": "[Rémóvé àtténdééééééé]",
+    "removeAttendeeConfirm": "[Rémóvééé]",
+    "removeAttendeeTitle": "[Rémóvé Àtténdééééééé]",
+    "roleDeveloper": "[Dévélópérrrr]",
+    "roleProductOwner": "[Pródúct Ównérrrrr]",
+    "roleScrumMaster": "[Scrúm Màstérrrrr]",
+    "roleStakeholder": "[Stàkéhóldérrrrr]",
+    "saveError": "[Fàíléd tó sàvé àtténdéé. Pléàsé try àgàínnnnnnnnnnnnnn.]",
+    "saving": "[SSààvvíínng...]",
+    "teamMemberCannotEdit": "[Téàm mémbérs cànnót bé édítédddddddddd]",
+    "title": "[Àtténdééssss]",
+    "unmarkedTitle": "[Téàm mémbérs nót yét màrkédddddddddd ({{count}})]",
+    "update": "[Úpdàtééé]"
+  },
+  "back": "[BBààcck]",
+  "by": "[bby]",
+  "cancel": "[Càncélll]",
+  "characterCounter": {
+    "approachingLimit": "[Àppróàchíng chàràctér límítttttttttt]",
+    "min": "[{{current}}/{{max}} chàràctérsssss]"
+  },
+  "chunkError": {
+    "description": "[À pórtíón óf thé àpplícàtíón fàíléd tó lóàd. Thís mày bé dúé tó à nétwórk íssúé ór àn óútdàtéd vérsíónnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn.]",
+    "reload": "[Rélóàddd]",
+    "title": "[Únàblé tó lóàd pàgééééééé]"
+  },
+  "clear": "[Cléàrrr]",
+  "close": "[Clósééé]",
+  "collapse": "[Cóllàpséééé]",
+  "confirm": "[Cónfírmmmm]",
+  "confirmDialog": {
+    "defaultMessage": "[Àré yóú súré yóú wànt tó prócééddddddddddd?]",
+    "removeMessage": "[Àré yóú súré yóú wànt tó rémóvééééééééééé {{name}}?]"
+  },
+  "copied": "[CCóóppííééd!]",
+  "copy": "[CCóóppy]",
+  "create": "[Créàtééé]",
+  "created": "[Créàtédddd]",
+  "dateInput": {
+    "clearDate": "[Cléàr dàtéééé]",
+    "openCalendar": "[Ópén càléndàrrrrr]"
+  },
+  "delete": "[Délétééé]",
+  "deleteAccount": {
+    "accountToBeDeleted": "[Àccóúnt tó bé délétédddddddd]",
+    "afterDeletionDate": "[Àftér thé délétíón dàté, yóú càn fórcé-délété yóúr àccóúnttttttttttttttttttt]",
+    "associatedData": "[Àll àssócíàtéd dàtà ànd àctívíty hístóryyyyyyyyyyyyy]",
+    "canAssignNewPO": "[Yóú càn stíll àssígn à néw Pródúct Ównérrrrrrrrrrrrr]",
+    "canCancelAnytime": "[Yóú càn càncél thís réqúést àt àny tímééééééééééééé]",
+    "cancelDeletion": "[Càncél Délétíónnnnnn]",
+    "close": "[Clósééé]",
+    "confirmationCheckbox": "[Í úndérstànd thàt thís àctíón ís pérmànént ànd cànnót bé úndóné. Í wànt tó délété my àccóúnt ànd àll àssócíàtéd dàtààààààààààààààààààààààààààààààààààààà.]",
+    "confirmationHelp": "[Thís hélps prévént àccídéntàl délétíónnnnnnnnnnnnn]",
+    "confirmationInput": {
+      "error": "[Phràsé dóés nót màtch. Pléàsé typé éxàctlyyyyyyyyyyyyyy:]",
+      "instructions": "[Typé thé phràsé éxàctly às shówn, càsé-sénsítívé, tó énàblé thé délété búttón. Préss Éntér whén thé phràsé màtchés tó súbmíttttttttttttttttttttttttttttttttttttttt.]",
+      "label": "[Tó cónfírm délétíón, pléàsé typééééééééééé:]",
+      "placeholder": "[TTyyppé \"{{phrase}}\" tó cónfírmmmmm]",
+      "success": "[Cónfírmàtíón phràsé màtchéssssssssss]"
+    },
+    "confirmationLabel": "[Typé <strónggggg>{{phrase}}</stróng> tó cónfírmmmmmmm]",
+    "confirmationPlaceholder": "[TTyyppé {{phrase}}]",
+    "dangerZone": {
+      "collapse": "[Cóllàpsé Dàngér Zónééééééé]",
+      "delete": "[Délétééé]",
+      "deleteAccount": {
+        "ariaLabel": "[Délété yóúr àccóúnt pérmànéntlyyyyyyyyyyy]",
+        "description": "[Pérmànéntly rémóvé yóúr àccóúnt ànd àll àssócíàtéd dàtàààààààààààààààààà]",
+        "title": "[Délété Àccóúntttttt]"
+      },
+      "expand": "[Éxpànd Dàngér Zónééééééé]",
+      "subtitle": "[Írrévérsíblé ànd déstrúctívéééééééééé]",
+      "title": "[Dàngér Zónééééé]"
+    },
+    "dataWillBeDeleted": "[Dàtà thàt wíll bé délétéddddddddd]",
+    "deleteAccount": "[Délété Àccóúntttttt]",
+    "deleteAnyway": "[Délété Ànywàyyyyy]",
+    "deleting": "[DDééllééttíínng...]",
+    "deletionRightsNotice": {
+      "afterGracePeriod": "[Àftér 14 dàys, yóú càn pérmànéntly délété yóúr àccóúnt régàrdléssssssssssssssssssssss.]",
+      "description": "[Yóú hàvé thé ríght tó délété yóúr àccóúnt. Síncé yóú àré thé làst Pródúct Ównér, wé àsk thàt yóú schédúlé délétíón wíth à 14-dày gràcé péríód só yóúr téàms càn prépàréééééééééééééééééééééééééééééééééééééééééééééééééééé.]",
+      "list": {
+        "assignNewPO": "[Yóú càn àssígn à néw Pródúct Ównérrrrrrrrrrrr]",
+        "cancelAnytime": "[Yóú càn càncél thé délétíón àt àny tímééééééééééééé]",
+        "teamMembersNotified": "[Téàm mémbérs wíll bé nótífíédddddddddd]"
+      },
+      "title": "[Yóúr Ríght tó Éràsúréééééééé]"
+    },
+    "forceCheckbox": "[Í úndérstànd thàt téàms wíll lósé théír Pródúct Ównér ànd Í wànt tó pérmànéntly délété my àccóúnt ànywàyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy.]",
+    "forceConfirmationHelp": "[Thís àctíón cànnót bé úndónéééééééééé]",
+    "forceDeleteWarning": {
+      "description": "[Thé 14-dày gràcé péríód hàs éndéd. Yóú càn nów pérmànéntly délété yóúr àccóúnttttttttttttttttttttttttt.]",
+      "impact": {
+        "cannotUndo": "[Thís àctíón CÀNNÓT bé úndónéééééééééé]",
+        "deleteAllData": "[Délété àll yóúr dàtà pérmànéntlyyyyyyyyyyy]",
+        "removePO": "[Rémóvé yóú às Pródúct Ównér fróm téàms wíth nó réplàcémént àssígnédddddddddddddddddddddd]",
+        "title": "[Thís wílllll:]"
+      },
+      "teams": {
+        "consequences": "[Thésé téàms wíll nót bé àblé tó àdd ór rémóvé téàm mémbérs, mànàgé sprínts, ór àccéss téàm séttíngsssssssssssssssssssssssssssssss.]",
+        "title": "[Thé fóllówíng téàms wíll hàvé NÓ Pródúct Ównérrrrrrrrrrrrrrrr:]"
+      },
+      "title": "[Gràcé Péríód Cómplétéééééééé]"
+    },
+    "gracePeriodProgress": {
+      "daysRemaining": "[Dàys rémàíníngggggg]",
+      "deletionDate": "[Délétíón dàtééééé]",
+      "progressAriaLabel": "[{{percent}}% óf gràcé péríód élàpséddddddddd]",
+      "requested": "[Réqúéstédddd]",
+      "title": "[Délétíón Schédúléddddddd]"
+    },
+    "profileAndAccount": "[Yóúr prófílé ànd àccóúnt ínfórmàtíónnnnnnnnnnnn]",
+    "scheduleCheckbox": "[Í úndérstànd thàt à 14-dày gràcé péríód wíll bégín, dúríng whích téàm mémbérs wíll bé nótífíéd. Í càn càncél àt àny tíméééééééééééééééééééééééééééééééééééééé.]",
+    "scheduleConfirmationHelp": "[Thís stàrts à 14-dày gràcé péríóddddddddddd]",
+    "scheduleConfirmationLabel": "[Typé <strónggggg>{{phrase}}</stróng> tó schédúlé délétíónnnnnnnnnn]",
+    "scheduleConfirmationPlaceholder": "[TTyyppé {{phrase}}]",
+    "scheduleDeletion": "[Schédúlé Délétíónnnnnnn]",
+    "scheduling": "[Schédúlínggggg...]",
+    "teamImpact": {
+      "blocked": {
+        "goToSettings": "[Gó tó Téàm Séttíngsssssss]",
+        "goToSettingsAria": "[GGóó ttó {{teamName}} séttíngs tó àssígn à néw Pródúct Ównérrrrrrrrrrrrr]",
+        "warning": "[Yóú àré thé ónly Pródúct Ównér. Íf yóú délété yóúr àccóúnt, thís téàm wíll hàvé nó Pródúct Ównér. Yóú càn schédúlé délétíón wíth à 14-dày gràcé péríóddddddddddddddddddddddddddddddddddddddddddddddd.]"
+      },
+      "description": "[Yóú àré à mémbér ófffffff {{count}} ttééààm]",
+      "description_plural": "[Yóú àré à mémbér ófffffff {{count}} téàmsss]",
+      "regular": {
+        "message": "[Yóú wíll bé rémóvéd fróm thís téàmmmmmmmmmmmm.]"
+      },
+      "title": "[Téàm Ímpàcttttt]"
+    },
+    "teamMembersNotified": "[Téàm mémbérs hàvé béén nótífíéddddddddddd]",
+    "teamMemberships": "[Téàm mémbérshíps ànd rólésssssssss]",
+    "teamsCount": "[({{count}} ttééààmms)]",
+    "title": "[Délété Àccóúntttttt]",
+    "warningTitle": "[Thís àctíón ís pérmànént ànd cànnót bé úndóné. Àll yóúr dàtà wíll bé pérmànéntly délétédddddddddddddddddddddddddddd.]",
+    "whatHappensNext": "[Whàt hàppéns néxttttttt]"
+  },
+  "download": "[Dównlóàdddd]",
+  "draftRestore": {
+    "daysAgo": "[{{count}} ddààyy ààggó]",
+    "daysAgo_other": "[{{count}} dàys àgóóóó]",
+    "discard": "[Díscàrdddd]",
+    "draftFound": "[Wé fóúnd à dràft yóú wéré wórkíng ónnnnnnnnnnnnn {{time}}.]",
+    "draftSaved": "[Dràft sàvéddddd]",
+    "hoursAgo": "[{{count}} hóúr àgóóóó]",
+    "hoursAgo_other": "[{{count}} hóúrs àgóóóó]",
+    "justNow": "[júst nówwww]",
+    "minutesAgo": "[{{count}} mínúté àgóóóóó]",
+    "minutesAgo_other": "[{{count}} mínútés àgóóóóó]",
+    "recently": "[récéntlyyyy]",
+    "restoreDraft": "[Réstóré Dràfttttt]",
+    "restorePrompt": "[Réstóré únsàvéd prógréssssssssss?]",
+    "startFresh": "[Stàrt Fréshhhhh]",
+    "unsavedDraftFound": "[Únsàvéd Dràft Fóúnddddddd]"
+  },
+  "edit": "[ÉÉddíít]",
+  "emptyState": {
+    "error": {
+      "description": "[Àn érrór óccúrréd whílé lóàdíng thé dàtà. Pléàsé try àgàínnnnnnnnnnnnnnnnnnn.]",
+      "title": "[Sóméthíng Wént Wrónggggggg]"
+    },
+    "noActiveGoal": {
+      "action": "[Gó tó Pródúct Góàlsssssss]",
+      "description": "[Pléàsé sét àn àctívé pródúct góàl béfóré cóntínúínggggggggggggggggg.]",
+      "title": "[Nó Àctívé Góàllllll]"
+    },
+    "noActiveSprint": {
+      "action": "[Gó tó Sprínt Plànníngggggggg]",
+      "description": "[Stàrt à néw sprínt fróm Sprínt Plànníng tó cóntínúééééééééééééééééé.]",
+      "title": "[Nó Àctívé Spríntttttt]"
+    },
+    "noCompletedSprint": {
+      "description": "[Cómplété à sprínt tó stàrt tràckíngggggggggggg.]",
+      "title": "[Nó Cómplétéd Sprínttttttt]"
+    },
+    "noData": {
+      "description": "[Théré ís nó dàtà tó dísplày àt thís tíméééééééééééééé.]",
+      "title": "[Nó Dàtà Àvàílàblééééééé]"
+    },
+    "noTeam": {
+      "description": "[Pléàsé séléct à téàm tó cóntínúééééééééééé.]",
+      "title": "[Nó Téàm Séléctédddddd]"
+    }
+  },
+  "error": {
+    "boundary": {
+      "description": "[Àn únéxpéctéd érrór óccúrréd. Yóú càn try àgàín ór gó bàck tó thé dàshbóàrdddddddddddddddddddddddd.]",
+      "goHome": "[Gó tó dàshbóàrdddddd]",
+      "retry": "[Try àgàínnnn]",
+      "title": "[Sóméthíng wént wrónggggggg]"
+    },
+    "http": {
+      "networkOffline": "[Yóú àré ófflíné. Pléàsé chéck yóúr cónnéctíónnnnnnnnnnnnnnn.]",
+      "serverError": "[À sérvér érrór óccúrréd. Óúr téàm hàs béén nótífíéddddddddddddddddd.]",
+      "timeout": "[Thé réqúést tóók tóó lóng. Pléàsé try àgàínnnnnnnnnnnnnnn.]"
+    },
+    "operations": {
+      "addTeamMember": "[Fàíléd tó àdd téàm mémbérrrrrrrrr]",
+      "changePassword": "[Fàíléd tó chàngé pàsswórddddddddd]",
+      "completeSprint": "[Fàíléd tó cómplété sprínttttttttt]",
+      "createBacklogItem": "[Fàíléd tó créàté bàcklóg ítémmmmmmmmmm]",
+      "createDefinition": "[Fàíléd tó créàté défínítíónnnnnnnnnn]",
+      "createGoal": "[Fàíléd tó créàté góàllllllll]",
+      "createImpediment": "[Fàíléd tó créàté ímpédíméntttttttttt]",
+      "createIncrement": "[Fàíléd tó créàté íncréménttttttttt]",
+      "createRetrospective": "[Fàíléd tó créàté rétróspéctívéééééééééé]",
+      "createReview": "[Fàíléd tó créàté révíéwwwwwwww]",
+      "createSprint": "[Fàíléd tó créàté spríntttttttt]",
+      "createTask": "[Fàíléd tó créàté tàskkkkkkkk]",
+      "createTeam": "[Fàíléd tó créàté téàmmmmmmmm]",
+      "deleteBacklogItem": "[Fàíléd tó délété bàcklóg ítémmmmmmmmmm]",
+      "deleteDefinition": "[Fàíléd tó délété défínítíónnnnnnnnnn]",
+      "deleteGoal": "[Fàíléd tó délété góàllllllll]",
+      "deleteImpediment": "[Fàíléd tó délété ímpédíméntttttttttt]",
+      "deleteIncrement": "[Fàíléd tó délété íncréménttttttttt]",
+      "deleteRetrospective": "[Fàíléd tó délété rétróspéctívéééééééééé]",
+      "deleteReview": "[Fàíléd tó délété révíéwwwwwwww]",
+      "deleteSprint": "[Fàíléd tó délété spríntttttttt]",
+      "deleteTask": "[Fàíléd tó délété tàskkkkkkkk]",
+      "deleteTeam": "[Fàíléd tó délété téàmmmmmmmm]",
+      "editBacklogItem": "[Fàíléd tó édít bàcklóg ítémmmmmmmmmm]",
+      "exportData": "[Fàíléd tó éxpórt dàtàààààààà]",
+      "importData": "[Fàíléd tó ímpórt dàtàààààààà]",
+      "removeTeamMember": "[Fàíléd tó rémóvé téàm mémbérrrrrrrrrr]",
+      "selectTeam": "[Fàíléd tó séléct téàmmmmmmmm]",
+      "startSprint": "[Fàíléd tó stàrt spríntttttttt]",
+      "updateBacklogItem": "[Fàíléd tó úpdàté bàcklóg ítémmmmmmmmmm]",
+      "updateDefinition": "[Fàíléd tó úpdàté défínítíónnnnnnnnnn]",
+      "updateGoal": "[Fàíléd tó úpdàté góàllllllll]",
+      "updateImpediment": "[Fàíléd tó úpdàté ímpédíméntttttttttt]",
+      "updateIncrement": "[Fàíléd tó úpdàté íncréménttttttttt]",
+      "updateProfile": "[Fàíléd tó úpdàté prófílééééééééé]",
+      "updateRetrospective": "[Fàíléd tó úpdàté rétróspéctívéééééééééé]",
+      "updateReview": "[Fàíléd tó úpdàté révíéwwwwwwww]",
+      "updateSprint": "[Fàíléd tó úpdàté spríntttttttt]",
+      "updateTask": "[Fàíléd tó úpdàté tàskkkkkkkk]",
+      "updateTeam": "[Fàíléd tó úpdàté téàmmmmmmmm]",
+      "updateTeamMemberRole": "[Fàíléd tó úpdàté téàm mémbér rólééééééééééé]"
+    }
+  },
+  "errorBoundary": {
+    "apiError": "[Àn érrór óccúrréd whílé cómmúnícàtíng wíth thé sérvérrrrrrrrrrrrrrrrrr.]",
+    "authError": "[Yóúr séssíón hàs éxpíréd. Pléàsé lóg ín àgàínnnnnnnnnnnnnnn.]",
+    "connectionError": "[Cónnéctíón Érrórrrrrr]",
+    "defaultError": "[Àn érrór óccúrréd. Pléàsé try àgàín làtérrrrrrrrrrrrrr.]",
+    "devDetails": "[Érrór Détàíls (Dévélópmént Ónlyyyyyyyyyyy)]",
+    "forbiddenError": "[Yóú dó nót hàvé pérmíssíón tó pérfórm thís àctíónnnnnnnnnnnnnnnn.]",
+    "i18nError": "[Fàíléd tó lóàd làngúàgé résóúrcés. Pléàsé rélóàd thé pàgééééééééééééééééééé.]",
+    "networkError": "[Únàblé tó cónnéct tó thé sérvér. Pléàsé chéck yóúr íntérnét cónnéctíónnnnnnnnnnnnnnnnnnnnnnn.]",
+    "notFoundError": "[Thé réqúéstéd résóúrcé wàs nót fóúnddddddddddddd.]",
+    "reloadPage": "[Rélóàd Pàgééééé]",
+    "runtimeError": "[Àn únéxpéctéd érrór óccúrréd. Pléàsé try àgàínnnnnnnnnnnnnnnn.]",
+    "serverError": "[À sérvér érrór óccúrréd. Pléàsé try àgàín làtérrrrrrrrrrrrrrrr.]",
+    "timeoutError": "[Thé réqúést tíméd óút. Pléàsé try àgàínnnnnnnnnnnnn.]",
+    "title": "[Sóméthíng wént wrónggggggg]",
+    "tryAgain": "[Try Àgàínnnn]",
+    "validationError": "[Ínvàlíd dàtà próvídéd. Pléàsé chéck yóúr ínpútttttttttttttttt.]"
+  },
+  "errorMessage": {
+    "dismiss": "[Dísmíss érrór méssàgéééééééé]"
+  },
+  "expand": "[Éxpànddd]",
+  "export": "[Éxpórttt]",
+  "filter": "[Fíltérrr]",
+  "helpPanel": {
+    "avoidExample": "[✗ ÀÀvvóóííd:]",
+    "goodExample": "[✓ Góód éxàmpléééééé:]",
+    "tipsFor": "[Típs fórrrr {{title}}]",
+    "title": "[TTíípps]"
+  },
+  "import": "[Ímpórttt]",
+  "initializing": "[Ínítíàlízíngggggg...]",
+  "language": "[Làngúàgéééé]",
+  "loading": "[Lóàdíngggg...]",
+  "loadingStates": {
+    "loadingCardContent": "[Lóàdíng càrd cónténttttttt]",
+    "loadingChart": "[Lóàdíng chàrttttt]",
+    "loadingContent": "[Lóàdíng cónténtttttt]",
+    "loadingListItems": "[Lóàdíng líst ítémsssssss]"
+  },
+  "localeSyncFailed": "[Fàíléd tó sync làngúàgé préféréncé. Ít wíll sync ón néxt lógínnnnnnnnnnnnnnnnnnnn.]",
+  "nav": {
+    "activeSprint": "[Àctívé Sprínttttt]",
+    "dailyScrum": "[Dàíly Scrúmmmmm]",
+    "dashboard": "[Dàshbóàrdddd]",
+    "impediments": "[Ímpédíméntsssss]",
+    "increments": "[Íncréméntssss]",
+    "notifications": "[Nótífícàtíónsssss]",
+    "productBacklog": "[Pródúct Bàcklógggggg]",
+    "productGoals": "[Pródúct Góàlsssss]",
+    "reports": "[Répórtssss]",
+    "retrospective": "[Rétróspéctívééééé]",
+    "settings": {
+      "data": "[DDààttà]",
+      "privacyData": "[Prívàcy & Dàtàààààà]",
+      "sprintConfiguration": "[Sprínt Cónfígúràtíónnnnnnn]",
+      "team": "[TTééààm]",
+      "teamDefinitions": "[Téàm Défínítíónssssss]",
+      "teamManagement": "[Téàm Mànàgéméntttttt]"
+    },
+    "settingsLabel": "[Séttíngssss]",
+    "sprintPlanning": "[Sprínt Plànníngggggg]",
+    "sprintReview": "[Sprínt Révíéwwwww]",
+    "team": "[TTééààm]"
+  },
+  "next": "[NNééxxt]",
+  "no": "[NNó]",
+  "noResults": "[Nó résúlts fóúndddddd]",
+  "noTeamSelected": "[Nó téàm séléctédddddd]",
+  "none": "[NNóónné]",
+  "notifications": {
+    "connectionError": "[Cónnéctíón érrórrrrrr]",
+    "empty": "[Nó nótífícàtíóns yéttttttt]",
+    "loading": "[Lóàdíng nótífícàtíónsssssssss...]",
+    "markAllRead": "[Màrk àll às réàdddddd]",
+    "title": "[Nótífícàtíónsssss]",
+    "viewAll": "[Víéw àll nótífícàtíónssssssss]"
+  },
+  "optional": "[Óptíónàllll]",
+  "pageError": {
+    "backToDashboard": "[Bàck tó Dàshbóàrddddddd]",
+    "description": "[Wé éncóúntéréd àn érrór whílé lóàdíng thís pàgé. Thís míght bé dúé tó à témpóràry íssúé ór à próblém wíth yóúr cónnéctíónnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn.]",
+    "reloadPage": "[Rélóàd Pàgééééé]",
+    "technicalDetails": "[Téchnícàl Détàílsssssss]",
+    "title": "[{{pageName}} Érrórrr]"
+  },
+  "permission": {
+    "actionError": "[Yóú dó nót hàvé pérmíssíón tó pérfórm thís àctíónnnnnnnnnnnnnnnn.]",
+    "insufficientRoles": "[Ínsúffícíént pérmíssíóns. Réqúíréd róléssssssssssssss: {{roles}}]",
+    "transitionError": "[Yóú dó nót hàvé pérmíssíón tó pérfórm thís trànsítíónnnnnnnnnnnnnnnnnn.]"
+  },
+  "previous": "[Prévíóússss]",
+  "print": "[Prínttt]",
+  "profile": {
+    "changePasswordTitle": "[Chàngé Pàsswórdddddd]",
+    "changing": "[CChhàànnggíínng...]",
+    "confirmNewPassword": "[Cónfírm Néw Pàsswórddddddd]",
+    "contactSupportToChangeEmail": "[Cóntàct súppórt tó chàngé yóúr émàíl àddréssssssssssssssss]",
+    "currentPassword": "[Cúrrént Pàsswórdddddd]",
+    "currentPasswordIncorrect": "[Cúrrént pàsswórd ís íncórréctttttttttt]",
+    "editTitle": "[Édít Prófílééééé]",
+    "email": "[Émàílll]",
+    "firstName": "[Fírst Nàméééé]",
+    "hidePassword": "[Hídé pàsswórddddd]",
+    "lastName": "[Làst Nàméééé]",
+    "newPassword": "[Néw Pàsswórddddd]",
+    "passwordChanged": "[Pàsswórd chàngéd súccéssfúllyyyyyyyyyy]",
+    "passwordRequirements": "[Pàsswórd múst bé àt léàst 8 chàràctérs ànd ínclúdé úppércàsé, lówércàsé, númbér, ànd spécíàl chàràctérrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr]",
+    "passwordStrength": {
+      "lowercase": "[Óné lówércàsé léttér (à-zzzzzzzzz)]",
+      "minLength": "[Àt léàst 12 chàràctérssssssss]",
+      "number": "[ÓÓnnéé nnúúmmbbéér (0-9)]",
+      "requirementsTitle": "[Pàsswórd Réqúíréméntssssssss:]",
+      "special": "[ÓÓnnéé ssppééccííààll cchhààrrààccttéér (!@#$%^&*)]",
+      "strengthLabels": {
+        "medium": "[Médíúmmm]",
+        "strong": "[Strónggg]",
+        "weak": "[WWééààk]"
+      },
+      "uppercase": "[Óné úppércàsé léttér (À-ZZZZZZZZZ)]"
+    },
+    "passwordsDoNotMatch": "[Pàsswórds dó nót màtchhhhhhhh]",
+    "passwordsMatch": "[Pàsswórds màtchhhhhh]",
+    "placeholder": {
+      "confirmPassword": "[Cónfírm yóúr néw pàsswórddddddddd]",
+      "currentPassword": "[Éntér yóúr cúrrént pàsswórdddddddddd]",
+      "firstName": "[Éntér yóúr fírst nàméééééééé]",
+      "lastName": "[Éntér yóúr làst nàmééééééé]",
+      "newPassword": "[Éntér yóúr néw pàsswórdddddddd]"
+    },
+    "profileUpdated": "[Prófílé úpdàtéd súccéssfúllyyyyyyyyyy]",
+    "readOnly": "[Réàd-ónlyyyy]",
+    "saveChanges": "[Sàvé Chàngésssss]",
+    "saving": "[SSààvvíínng...]",
+    "showPassword": "[Shów pàsswórddddd]"
+  },
+  "redo": "[RRééddó]",
+  "refresh": "[Réfréshhhh]",
+  "remove": "[Rémóvééé]",
+  "required": "[Réqúírédddd]",
+  "reset": "[Réséttt]",
+  "retry": "[Rétryyy]",
+  "save": "[SSààvvé]",
+  "search": "[Séàrchhh]",
+  "selectLanguage": "[Séléct làngúàgéééééé]",
+  "sessionWarning": {
+    "extending": "[Éxténdínggggg...]",
+    "logOut": "[LLóógg ÓÓúút]",
+    "message": "[Yóúr séssíón wíll éxpíré sóón dúé tó ínàctívíty. Yóú wíll bé àútómàtícàlly lóggéd óút ínnnnnnnnnnnnnnnnnnnnnnnnnnnn:]",
+    "stayLoggedIn": "[Stày Lóggéd Ínnnnnn]",
+    "title": "[Séssíón Tíméóút Wàrníngggggggg]"
+  },
+  "showLess": "[Shów lésssss]",
+  "showMore": "[Shów móréééé]",
+  "sort": "[SSóórrt]",
+  "status": "[Stàtússs]",
+  "statusSelector": {
+    "changeItemStatusHint": "[Clíck tó chàngé ítém stàtússssssssss]",
+    "changeStatus": "[Chàngé Stàtússsss]",
+    "currentStatusClickable": "[Cúrrént stàtússssss: {{status}}. Clíck tó chàngé stàtússsssssss.]",
+    "currentStatusLocked": "[Cúrrént stàtússssss: {{status}} (llóócckkééd)]",
+    "statusOptions": "[Stàtús óptíónssssss]"
+  },
+  "submit": "[Súbmíttt]",
+  "teamSelection": {
+    "empty": "[Yóú dón't hàvé àny téàms yétttttttttt.]",
+    "goToTeamPage": "[Gó tó Téàm Pàgéééééé]",
+    "loading": "[Lóàdíng téàmssssss...]",
+    "roles": {
+      "developer": "[Dévélópérrrr]",
+      "productOwner": "[Pródúct Ównérrrrr]",
+      "scrumMaster": "[Scrúm Màstérrrrr]"
+    },
+    "switching": "[Swítchínggggg...]",
+    "title": "[Séléct à Téàmmmmm]"
+  },
+  "translationPending": "[Trànslàtíón péndínggggggg]",
+  "unassigned": "[Únàssígnédddd]",
+  "undo": "[ÚÚnnddó]",
+  "unsavedChanges": {
+    "attentionRequired": "[Àtténtíón Réqúíréddddddd]",
+    "discard": "[Díscàrdddd]",
+    "discardChanges": "[Díscàrd Chàngéssssss]",
+    "discardDescription": "[Clósé wíthóút sàvíng ànd lósé àll módífícàtíónssssssssssssssss]",
+    "goBack": "[GGóó BBààcck]",
+    "goBackDescription": "[Cóntínúé édítíng ànd sàvé yóúr chàngésssssssssssss]",
+    "message": "[Yóú hàvé únsàvéd chàngés. Àré yóú súré yóú wànt tó díscàrd thémmmmmmmmmmmmmmmmmmmmm?]",
+    "messages": {
+      "passwordChange": "[Yóú hàvé únsàvéd chàngés ín thé pàsswórd chàngé fórm. Àré yóú súré yóú wànt tó díscàrd thémmmmmmmmmmmmmmmmmmmmmmmmmmmmm?]",
+      "profileEdit": "[Yóú hàvé únsàvéd chàngés ín thé prófílé édít fórm. Àré yóú súré yóú wànt tó díscàrd thémmmmmmmmmmmmmmmmmmmmmmmmmmmm?]"
+    },
+    "permanentlyLost": "[Yóúr chàngés wíll bé pérmànéntly lóst íf yóú díscàrd thém. Thís àctíón cànnót bé úndónéééééééééééééééééééééééééééé.]",
+    "subtitle": "[Pléàsé révíéw béfóré cóntínúínggggggggggg]",
+    "title": "[Únsàvéd Chàngéssssss]",
+    "unsavedModifications": "[Únsàvéd módífícàtíóns détéctédddddddddd]",
+    "whatWouldYouDo": "[Whàt wóúld yóú líké tó dóóóóóóóóó?]"
+  },
+  "unsavedChangesModal": {
+    "discard": "[Díscàrdddd]",
+    "keepEditing": "[Kéép Édítínggggg]",
+    "message": "[Yóú hàvé únsàvéd chàngés. Àré yóú súré yóú wànt tó díscàrd thémmmmmmmmmmmmmmmmmmmmm?]",
+    "title": "[Únsàvéd Chàngéssssss]"
+  },
+  "update": "[Úpdàtééé]",
+  "updated": "[Úpdàtédddd]",
+  "upload": "[Úplóàddd]",
+  "userMenu": {
+    "changePassword": "[Chàngé Pàsswórdddddd]",
+    "editProfile": "[Édít Prófílééééé]",
+    "logout": "[Lógóúttt]"
+  },
+  "view": "[VVííééw]",
+  "widgetError": {
+    "failedToLoad": "[{{widgetName}} fàíléd tó lóàdddddd]",
+    "retryAria": "[Rétry lóàdíngggggg {{widgetName}}]"
+  },
+  "yes": "[Yéss]"
+}

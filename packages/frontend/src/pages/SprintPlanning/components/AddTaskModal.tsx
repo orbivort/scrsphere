@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { UnsavedChangesModal } from '../../../components/common/Form/UnsavedChangesModal';
 
@@ -27,6 +28,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
   teamMembers,
   itemTitle,
 }) => {
+  const { t } = useTranslation('sprint');
   const modalRef = useRef<HTMLDivElement>(null);
   const previousActiveElement = useRef<HTMLElement | null>(null);
   const titleInputRef = useRef<HTMLInputElement>(null);
@@ -147,12 +149,12 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
       let hasError = false;
 
       if (!title.trim()) {
-        setTitleError('Task title is required');
+        setTitleError(t('sprintPlanning.addTaskModal.taskTitleRequired'));
         hasError = true;
       }
 
       if (estimatedHours <= 0) {
-        setEstimatedHoursError('Estimated hours must be greater than 0');
+        setEstimatedHoursError(t('sprintPlanning.addTaskModal.hoursGreaterThanZero'));
         hasError = true;
       }
 
@@ -169,7 +171,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
         assigneeId,
       });
     },
-    [title, estimatedHours, assigneeId, onSubmit]
+    [title, estimatedHours, assigneeId, onSubmit, t]
   );
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -206,11 +208,12 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
                 <CheckIcon size={24} />
               </div>
               <h2 id="add-task-title" className={styles.title}>
-                Add New Task
+                {t('sprintPlanning.addTaskModal.addNewTask')}
               </h2>
               {itemTitle && (
                 <p className={styles.subtitle}>
-                  Adding task to <span className={styles['item-highlight']}>{itemTitle}</span>
+                  {t('sprintPlanning.addTaskModal.addingTaskTo')}
+                  <span className={styles['item-highlight']}>{itemTitle}</span>
                 </p>
               )}
             </div>
@@ -218,7 +221,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
               type="button"
               className={styles['close-button']}
               onClick={handleClose}
-              aria-label="Close modal"
+              aria-label={t('sprintPlanning.addTaskModal.cancel')}
             >
               <XIcon size={20} />
             </button>
@@ -238,7 +241,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
               {/* Task Title Field */}
               <div className={styles['form-group']}>
                 <label htmlFor="task-title" className={styles['form-label']}>
-                  Task Title
+                  {t('sprintPlanning.addTaskModal.titleLabel')}
                   <span className={styles.required}>*</span>
                 </label>
                 <div className={styles['input-wrapper']}>
@@ -248,7 +251,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
                     type="text"
                     value={title}
                     onChange={handleTitleChange}
-                    placeholder="e.g., Implement user authentication"
+                    placeholder={t('sprintPlanning.addTaskModal.titlePlaceholder')}
                     className={`${styles['form-input']} ${titleError ? styles['input-error'] : ''}`}
                     aria-required="true"
                     aria-invalid={!!titleError}
@@ -264,7 +267,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
                   </div>
                 )}
                 <span className={styles['input-hint']}>
-                  Describe what needs to be done clearly and concisely
+                  {t('sprintPlanning.addTaskModal.describeTaskHint')}
                 </span>
               </div>
 
@@ -273,7 +276,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
                 {/* Estimated Hours Field */}
                 <div className={styles['form-group']}>
                   <label htmlFor="task-estimate" className={styles['form-label']}>
-                    Estimated Hours
+                    {t('sprintPlanning.addTaskModal.estimatedHoursLabel')}
                     <span className={styles.required}>*</span>
                   </label>
                   <div className={styles['input-wrapper']}>
@@ -302,14 +305,18 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
                       {estimatedHoursError}
                     </div>
                   )}
-                  <span className={styles['input-hint']}>Hours needed to complete</span>
+                  <span className={styles['input-hint']}>
+                    {t('sprintPlanning.addTaskModal.hoursNeededHint')}
+                  </span>
                 </div>
 
                 {/* Assignee Field */}
                 <div className={styles['form-group']}>
                   <label htmlFor="task-assignee" className={styles['form-label']}>
-                    Assignee
-                    <span className={styles.optional}>Optional</span>
+                    {t('sprintPlanning.addTaskModal.assigneeLabel')}
+                    <span className={styles.optional}>
+                      {t('sprintPlanning.addTaskModal.optional')}
+                    </span>
                   </label>
                   <div className={styles['select-wrapper']}>
                     <select
@@ -318,7 +325,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
                       onChange={(e) => setAssigneeId(e.target.value)}
                       className={styles['form-select']}
                     >
-                      <option value="">Unassigned</option>
+                      <option value="">{t('sprintPlanning.addTaskModal.unassigned')}</option>
                       {teamMembers.map((member) => (
                         <option key={member.memberId} value={member.userId}>
                           {member.memberName}
@@ -329,7 +336,9 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
                       <UserIcon size={16} />
                     </span>
                   </div>
-                  <span className={styles['input-hint']}>Who will work on this?</span>
+                  <span className={styles['input-hint']}>
+                    {t('sprintPlanning.addTaskModal.whoWillWorkHint')}
+                  </span>
                 </div>
               </div>
             </form>
@@ -338,7 +347,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
           {/* Footer */}
           <footer className={styles.footer}>
             <button type="button" className={styles['button-secondary']} onClick={handleClose}>
-              Cancel
+              {t('sprintPlanning.addTaskModal.cancel')}
             </button>
             <button
               type="submit"
@@ -349,7 +358,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
               <span className={styles['button-icon']}>
                 <CheckIcon size={16} />
               </span>
-              Add Task
+              {t('sprintPlanning.addTaskModal.addTask')}
             </button>
           </footer>
         </div>
@@ -360,8 +369,8 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
         isOpen={showUnsavedChangesModal}
         onConfirm={handleDiscardChanges}
         onCancel={handleCancelUnsavedChanges}
-        title="Unsaved Task Changes"
-        message="You have unsaved changes to the task. Are you sure you want to discard them?"
+        title={t('sprintPlanning.addTaskModal.unsavedTaskTitle')}
+        message={t('sprintPlanning.addTaskModal.unsavedTaskMessage')}
       />
     </>
   );

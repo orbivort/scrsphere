@@ -1,5 +1,7 @@
 // Type definitions for Agile Scrum Tracker
 
+import type { Locale } from '@scrumooth/shared';
+
 export enum UserRole {
   ADMINISTRATOR = 'administrator',
   PRODUCT_OWNER = 'product_owner',
@@ -54,6 +56,7 @@ export interface User {
   firstName: string;
   lastName: string;
   avatarUrl?: string;
+  locale?: Locale;
   termsAcceptedAt?: string;
   createdAt: string;
   updatedAt: string;
@@ -568,6 +571,7 @@ export interface RegisterData {
   firstName: string;
   lastName: string;
   termsAccepted: true;
+  locale?: Locale;
 }
 
 export interface AuthTokens {
@@ -619,7 +623,7 @@ export interface SprintConfiguration {
 export interface GeneratedSprint {
   id: string;
   teamId: string;
-  name: string; // e.g., "Sprint-2601 (2026/1/5-2026/1/16)"
+  name: string; // e.g., "Sprint-2w-2601 (2026-01-05 – 2026-01-16)"
   sprintNumber: number; // 01, 02, etc.
   year: number;
   startDate: string;

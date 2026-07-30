@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { ItemStatus } from '../../../types';
 import type { FilterState } from '../types/backlog.types';
@@ -7,12 +8,28 @@ import styles from './BacklogFilterBar.module.css';
 
 import { SearchIcon, XIcon } from '@/components/common/Icons';
 
+/**
+ * Helper function to get translated status label
+ */
+const getStatusLabel = (status: string, t: (key: string) => string): string => {
+  const statusMap: Record<string, string> = {
+    NEW: 'status.new',
+    REFINED: 'status.refined',
+    READY: 'status.ready',
+    IN_PROGRESS: 'status.inProgress',
+    DONE: 'status.done',
+  };
+  return t(statusMap[status] ?? status);
+};
+
 export interface BacklogFilterBarProps {
   filters: FilterState;
   onFiltersChange: (filters: FilterState) => void;
 }
 
 export const BacklogFilterBar: React.FC<BacklogFilterBarProps> = ({ filters, onFiltersChange }) => {
+  const { t } = useTranslation('backlog');
+
   return (
     <div className={styles['filter-bar']}>
       <div className={styles['filter-main']}>
@@ -21,7 +38,7 @@ export const BacklogFilterBar: React.FC<BacklogFilterBarProps> = ({ filters, onF
           <input
             type="text"
             className={styles['filter-search-input']}
-            placeholder="Search items..."
+            placeholder={t('filter.searchItems') as string}
             value={filters.search}
             onChange={(e) => onFiltersChange({ ...filters, search: e.target.value })}
           />
@@ -29,7 +46,7 @@ export const BacklogFilterBar: React.FC<BacklogFilterBarProps> = ({ filters, onF
             <button
               className={styles['search-clear']}
               onClick={() => onFiltersChange({ ...filters, search: '' })}
-              aria-label="Clear search"
+              aria-label={t('filter.clearSearch') as string}
             >
               <XIcon width="12" height="12" />
             </button>
@@ -41,24 +58,26 @@ export const BacklogFilterBar: React.FC<BacklogFilterBarProps> = ({ filters, onF
             className={`${styles['status-chip']} ${filters.status.length === 0 ? styles.active : ''}`}
             onClick={() => onFiltersChange({ ...filters, status: [] })}
           >
-            ALL
+            {t('filter.all') as string}
           </button>
-          {Object.values(ItemStatus).map((status) => (
-            <button
-              key={status}
-              className={`${styles['status-chip']} ${filters.status.includes(status) ? styles.active : ''}`}
-              onClick={() =>
-                onFiltersChange({
-                  ...filters,
-                  status: filters.status.includes(status)
-                    ? filters.status.filter((s) => s !== status)
-                    : [...filters.status, status],
-                })
-              }
-            >
-              {status.replace('_', ' ')}
-            </button>
-          ))}
+          {Object.values(ItemStatus).map((status) => {
+            return (
+              <button
+                key={status}
+                className={`${styles['status-chip']} ${filters.status.includes(status) ? styles.active : ''}`}
+                onClick={() =>
+                  onFiltersChange({
+                    ...filters,
+                    status: filters.status.includes(status)
+                      ? filters.status.filter((s) => s !== status)
+                      : [...filters.status, status],
+                  })
+                }
+              >
+                {getStatusLabel(status, t as (key: string) => string)}
+              </button>
+            );
+          })}
         </div>
       </div>
     </div>

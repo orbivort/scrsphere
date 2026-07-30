@@ -211,6 +211,9 @@ jobs:
           console.log('Changelog entry generated for [' + version + ']');
           SCRIPT
 
+      - name: i18n strict check
+        run: pnpm run i18n:check:strict
+
       - name: Bump package.json versions
         id: bump
         env:

@@ -1,0 +1,71 @@
+{
+  "accountDeletionCancelled": "Suppression de compte annulée",
+  "accountDeletionCancelledMessage": "La suppression de compte programmée a été annulée.",
+  "accountDeletionScheduled": "Un membre de l'équipe a programmé la suppression de son compte",
+  "accountDeletionScheduledMessage": "Un Product Owner de votre équipe a programmé la suppression de son compte. Le compte sera définitivement supprimé le {{deletionDate}}. Veuillez assigner un nouveau Product Owner avant cette date.",
+  "ariaLabels": {
+    "dismiss": "Ignorer la notification",
+    "filterNotifications": "Filtrer les notifications",
+    "goToNextPage": "Aller à la page suivante",
+    "goToPreviousPage": "Aller à la page précédente",
+    "markAsRead": "Marquer comme lu",
+    "notificationItem": "Notification de {{sender}} : {{message}}",
+    "pagination": "Pagination"
+  },
+  "backlogAdjustmentRequired": "Nouvel ajustement du backlog requiert votre action",
+  "backlogAdjustmentRequiredMessage": "Vous avez été assigné comme propriétaire d'un ajustement du backlog : {{action}} - « {{description}} »",
+  "dateGroups": {
+    "older": "Plus ancien",
+    "thisWeek": "Cette semaine",
+    "today": "Aujourd'hui",
+    "yesterday": "Hier"
+  },
+  "empty": {
+    "message": "Vous verrez les notifications ici en cas d'activité",
+    "title": "Aucune notification"
+  },
+  "error": {
+    "message": "Une erreur s'est produite lors de la récupération de vos notifications.",
+    "title": "Échec du chargement des notifications",
+    "tryAgain": "Réessayer"
+  },
+  "feedbackRequired": "Nouveau retour requiert votre action",
+  "feedbackRequiredMessage": "Vous avez été assigné comme propriétaire du retour de {{authorName}} : « {{content}} »",
+  "filters": {
+    "all": "Tout",
+    "directMessages": "Messages directs",
+    "impediments": "Impediments",
+    "reminders": "Rappels",
+    "taskAssignments": "Attributions de tâches",
+    "teamCreated": "Équipe créée",
+    "teamDeleted": "Équipe supprimée",
+    "teamInvitations": "Invitations d'équipe",
+    "teamUpdated": "Équipe mise à jour",
+    "unread": "Non lu"
+  },
+  "impedimentAssigned": "Nouvel Impediment assigné : « {{impedimentTitle}} »",
+  "loading": {
+    "ariaLabel": "Chargement des notifications",
+    "title": "Chargement des notifications..."
+  },
+  "markAllAsRead": "Tout marquer comme lu",
+  "marking": "Marquage...",
+  "pagination": {
+    "next": "Suivant",
+    "pageInfo": "Page {{current}} sur {{total}}",
+    "previous": "Précédent"
+  },
+  "skipToMainContent": "Aller au contenu principal",
+  "subtitle": "Restez informé des activités de l'équipe et des mises à jour importantes",
+  "teamCreated": "Équipe créée : « {{teamName}} »",
+  "teamCreatedMessage": "Vous avez créé l'équipe avec succès",
+  "teamDeleted": "Équipe supprimée : « {{teamName}} »",
+  "teamDeletedMessage": "Supprimée par {{deleterName}}",
+  "teamInvitation": "Vous avez été invité à rejoindre l'équipe « {{teamName}} »",
+  "teamInvitationMessage": "Invité par {{inviterName}}",
+  "teamRemoval": "Vous avez été retiré de l'équipe « {{teamName}} »",
+  "teamRemovalMessage": "Retiré par {{removerName}}",
+  "teamUpdated": "Équipe mise à jour : « {{teamName}} »",
+  "teamUpdatedMessage": "Mise à jour par {{updaterName}}",
+  "title": "Notifications"
+}

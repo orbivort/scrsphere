@@ -1,4 +1,6 @@
 // Authentication Service
+import type { Locale } from '@scrumooth/shared';
+
 import type {
   LoginCredentials,
   RegisterData,
@@ -148,6 +150,7 @@ class AuthService {
   async updateProfile(profileData: {
     firstName: string;
     lastName: string;
+    locale?: Locale;
   }): Promise<ApiResponse<User>> {
     const { data } = await this.api.put('/auth/me/profile', profileData);
     return data;

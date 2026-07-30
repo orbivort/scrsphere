@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { formatLocaleDate } from '@scrumooth/shared';
 
 import type { TeamMember } from '../../types';
 import { MailIcon, TrashIcon } from '../../components/common/Icons';
 
 import { SendMessageModal } from './SendMessageModal';
 import styles from './Team.module.css';
+
+import { useI18nStore } from '@/i18n/useI18nStore';
 
 const ROLE_BADGE_CLASSES: Record<string, string> = {
   scrum_master: 'role-scrum-master',
@@ -13,24 +17,10 @@ const ROLE_BADGE_CLASSES: Record<string, string> = {
   administrator: 'role-administrator',
 };
 
-const ROLE_NAMES: Record<string, string> = {
-  scrum_master: 'Scrum Master',
-  product_owner: 'Product Owner',
-  developer: 'Developer',
-  administrator: 'Administrator',
-};
-
 const getRoleBadgeClass = (role: string): string => {
   const normalizedRole = role.toLowerCase();
   const className = ROLE_BADGE_CLASSES[normalizedRole] ?? 'role-default';
   return styles[className] ?? '';
-};
-
-const formatRoleName = (role: string): string => {
-  const normalizedRole = role.toLowerCase();
-  return (
-    ROLE_NAMES[normalizedRole] ?? role.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())
-  );
 };
 
 interface MemberCardProps {
@@ -48,12 +38,16 @@ export const MemberCard: React.FC<MemberCardProps> = ({
   isDeleting,
   viewMode = 'card',
 }) => {
+  const { t } = useTranslation('team');
+  const { locale } = useI18nStore();
   const [showMessageModal, setShowMessageModal] = useState(false);
 
   const user = member.user;
   const displayName = user
-    ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'Unknown User'
-    : 'Unknown User';
+    ? `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
+      user.email ||
+      t('memberCard.unknownUser')
+    : t('memberCard.unknownUser');
   const email = user?.email ?? '';
   const role = member.role;
   /* eslint-disable @typescript-eslint/no-unnecessary-condition -- runtime data may differ from User type */
@@ -64,13 +58,24 @@ export const MemberCard: React.FC<MemberCardProps> = ({
     : '?';
   /* eslint-enable @typescript-eslint/no-unnecessary-condition */
 
+  const formatRoleName = (roleKey: string): string => {
+    const normalizedRole = roleKey.toLowerCase();
+    const roleKeyMap: Record<string, string> = {
+      scrum_master: 'scrumMaster',
+      product_owner: 'productOwner',
+      developer: 'developer',
+      administrator: 'administrator',
+    };
+    const i18nKey = roleKeyMap[normalizedRole];
+    if (i18nKey) {
+      return t(`memberCard.roleNames.${i18nKey}` as never);
+    }
+    return roleKey.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+  };
+
   const memberSince = member.joinedAt
-    ? new Date(member.joinedAt).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      })
-    : 'Unknown';
+    ? formatLocaleDate(member.joinedAt, locale)
+    : t('memberCard.unknownDate');
 
   const handleSendMessage = () => {
     setShowMessageModal(true);
@@ -90,7 +95,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({
         <article
           className={styles['member-row']}
           role="listitem"
-          aria-label={`Team member: ${displayName}`}
+          aria-label={t('memberCard.ariaLabels.teamMember', { name: displayName })}
         >
           <div className={styles['member-row-avatar']} aria-hidden="true">
             {initials}
@@ -110,8 +115,8 @@ export const MemberCard: React.FC<MemberCardProps> = ({
               type="button"
               className={styles['action-button']}
               onClick={handleSendMessage}
-              aria-label={`Send message to ${displayName}`}
-              title="Send message"
+              aria-label={t('memberCard.ariaLabels.sendMessageTo', { name: displayName })}
+              title={t('memberCard.titles.sendMessage')}
             >
               <MailIcon />
             </button>
@@ -121,8 +126,8 @@ export const MemberCard: React.FC<MemberCardProps> = ({
                 className={`${styles['action-button']} ${styles.delete}`}
                 onClick={handleDelete}
                 disabled={isDeleting}
-                aria-label={`Remove ${displayName} from team`}
-                title="Remove from team"
+                aria-label={t('memberCard.ariaLabels.removeNameFromTeam', { name: displayName })}
+                title={t('memberCard.titles.removeFromTeam')}
               >
                 <TrashIcon />
               </button>
@@ -148,7 +153,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({
       <article
         className={styles['member-card']}
         role="listitem"
-        aria-label={`Team member: ${displayName}`}
+        aria-label={t('memberCard.ariaLabels.teamMember', { name: displayName })}
       >
         <div className={styles['member-avatar']} aria-hidden="true">
           {initials}
@@ -160,7 +165,9 @@ export const MemberCard: React.FC<MemberCardProps> = ({
             <span className={`${styles['role-badge']} ${getRoleBadgeClass(role)}`}>
               {formatRoleName(role)}
             </span>
-            <span className={styles['member-since']}>Member since {memberSince}</span>
+            <span className={styles['member-since']}>
+              {t('memberCard.memberSince')} {memberSince}
+            </span>
           </div>
         </div>
         <div className={styles['member-actions']}>
@@ -168,8 +175,8 @@ export const MemberCard: React.FC<MemberCardProps> = ({
             type="button"
             className={styles['action-button']}
             onClick={handleSendMessage}
-            aria-label={`Send message to ${displayName}`}
-            title="Send message"
+            aria-label={t('memberCard.ariaLabels.sendMessageTo', { name: displayName })}
+            title={t('memberCard.titles.sendMessage')}
           >
             <MailIcon />
           </button>
@@ -179,8 +186,8 @@ export const MemberCard: React.FC<MemberCardProps> = ({
               className={`${styles['action-button']} ${styles.delete}`}
               onClick={handleDelete}
               disabled={isDeleting}
-              aria-label={`Remove ${displayName} from team`}
-              title="Remove from team"
+              aria-label={t('memberCard.ariaLabels.removeNameFromTeam', { name: displayName })}
+              title={t('memberCard.titles.removeFromTeam')}
             >
               <TrashIcon />
             </button>

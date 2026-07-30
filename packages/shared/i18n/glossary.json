@@ -1,0 +1,40 @@
+{
+  "_meta": {
+    "source": "The Scrum Guide by Ken Schwaber & Jeff Sutherland, November 2020",
+    "sourceUrl": "https://scrumguides.org/",
+    "languages": ["en", "de", "fr", "it", "es"],
+    "notes": [
+      "Core Scrum terms (Sprint, Product Backlog, Sprint Goal, etc.) follow the official",
+      "translation guidelines - some terms remain in English per Scrum.org directives."
+    ],
+    "convention": [
+      "String values are base terms (English) that apply to all locales unless overridden.",
+      "Object values can specify locale-specific translations.",
+      "With locale overrides (object format)",
+      "\"Abc\": { \"_base\": \"Abc\", \"es\": \"Def\" }"
+    ],
+    "lastUpdated": "2026-07-27",
+    "maintainer": "Scrumooth Team"
+  },
+  "Scrum": "Scrum",
+  "Scrum Master": "Scrum Master",
+  "Product Owner": "Product Owner",
+  "Developers": "Developers",
+  "Developer": "Developer",
+  "Sprint": "Sprint",
+  "Sprint Planning": "Sprint Planning",
+  "Daily Scrum": "Daily Scrum",
+  "Sprint Review": "Sprint Review",
+  "Sprint Reviews": "Sprint Reviews",
+  "Sprint Retrospective": "Sprint Retrospective",
+  "Sprint Retrospectives": "Sprint Retrospectives",
+  "Product Backlog": "Product Backlog",
+  "Sprint Backlog": "Sprint Backlog",
+  "Increment": "Increment",
+  "Increments": "Increments",
+  "Product Goal": "Product Goal",
+  "Product Goals": "Product Goals",
+  "Sprint Goal": "Sprint Goal",
+  "Impediment": "Impediment",
+  "Impediments": "Impediments"
+}

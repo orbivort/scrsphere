@@ -278,7 +278,7 @@
     background-color var(--transition-fast),
     box-shadow var(--transition-fast),
     transform var(--transition-fast);
-  text-align: left;
+  text-align: start;
 }
 
 .status-option:disabled {

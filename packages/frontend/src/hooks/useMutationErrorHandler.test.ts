@@ -22,6 +22,13 @@ vi.mock('../utils/logger', () => ({
   setStoreProvider: vi.fn(),
 }));
 
+// Mock i18n config - i18nInstance.t returns fallback messages
+vi.mock('../i18n/config', () => ({
+  i18nInstance: {
+    t: (key: string, fallback: string) => fallback,
+  },
+}));
+
 describe('useMutationErrorHandler', () => {
   const mockSetFormErrors = vi.fn();
   const mockSetWorkflowError = vi.fn();
@@ -139,7 +146,9 @@ describe('useMutationErrorHandler', () => {
         setWorkflowError: mockSetWorkflowError,
       });
 
-      expect(mockSetWorkflowError).toHaveBeenCalledWith('You do not have permission');
+      expect(mockSetWorkflowError).toHaveBeenCalledWith(
+        'You do not have permission to perform this transition.'
+      );
     });
 
     it('should handle 403 error without message', () => {
@@ -159,7 +168,7 @@ describe('useMutationErrorHandler', () => {
       });
 
       expect(mockSetWorkflowError).toHaveBeenCalledWith(
-        'You do not have permission to perform this action'
+        'You do not have permission to perform this action.'
       );
     });
 

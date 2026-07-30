@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 
 import { apiService } from '../../services';
 import { useTeamStore, useAuthStore } from '../../store';
@@ -26,6 +27,8 @@ interface TeamSwitcherProps {
 }
 
 export const TeamSwitcher: React.FC<TeamSwitcherProps> = ({ compact = false }) => {
+  const { t } = useTranslation('team');
+  const { t: tCommon } = useTranslation('common');
   const [isOpen, setIsOpen] = useState(false);
   const {
     currentTeam,
@@ -123,7 +126,7 @@ export const TeamSwitcher: React.FC<TeamSwitcherProps> = ({ compact = false }) =
           </div>
           {!compact && (
             <div className={styles['team-info']}>
-              <span className={styles['team-name']}>No Team</span>
+              <span className={styles['team-name']}>{t('noTeam')}</span>
             </div>
           )}
         </div>
@@ -177,7 +180,7 @@ export const TeamSwitcher: React.FC<TeamSwitcherProps> = ({ compact = false }) =
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
-        aria-label="Switch team"
+        aria-label={tCommon('aria.switchTeam')}
       >
         <div
           className={styles['team-avatar']}
@@ -220,7 +223,7 @@ export const TeamSwitcher: React.FC<TeamSwitcherProps> = ({ compact = false }) =
             onClick={(e) => e.stopPropagation()}
           >
             <div className={styles['team-switcher-header']}>
-              <h3>Your Teams</h3>
+              <h3>{t('yourTeams')}</h3>
               <span className={styles['team-count-badge']}>{teams.length}</span>
             </div>
             <div className={styles['team-switcher-list']}>

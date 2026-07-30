@@ -1,5 +1,11 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import {
+  screen,
+  fireEvent,
+  waitFor,
+  renderWithProviders,
+  initTestI18n,
+} from '../../../../test-utils';
 import { vi } from 'vitest';
 
 import { EditTeamModal } from './EditTeamModal';
@@ -26,13 +32,17 @@ describe('EditTeamModal', () => {
   const mockOnClose = vi.fn();
   const mockOnSubmit = vi.fn();
 
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   describe('Rendering', () => {
     it('should render modal when isOpen is true and team is provided', () => {
-      render(
+      renderWithProviders(
         <EditTeamModal
           isOpen={true}
           team={mockTeam}
@@ -47,7 +57,7 @@ describe('EditTeamModal', () => {
     });
 
     it('should NOT render modal when isOpen is false', () => {
-      render(
+      renderWithProviders(
         <EditTeamModal
           isOpen={false}
           team={mockTeam}
@@ -61,7 +71,7 @@ describe('EditTeamModal', () => {
     });
 
     it('should NOT render modal when team is null', () => {
-      render(
+      renderWithProviders(
         <EditTeamModal
           isOpen={true}
           team={null}
@@ -75,7 +85,7 @@ describe('EditTeamModal', () => {
     });
 
     it('should pre-fill form with team data', () => {
-      render(
+      renderWithProviders(
         <EditTeamModal
           isOpen={true}
           team={mockTeam}
@@ -90,7 +100,7 @@ describe('EditTeamModal', () => {
     });
 
     it('should render action buttons', () => {
-      render(
+      renderWithProviders(
         <EditTeamModal
           isOpen={true}
           team={mockTeam}
@@ -107,7 +117,7 @@ describe('EditTeamModal', () => {
 
   describe('Form validation', () => {
     it('should disable submit button when team name is empty', () => {
-      render(
+      renderWithProviders(
         <EditTeamModal
           isOpen={true}
           team={mockTeam}
@@ -125,7 +135,7 @@ describe('EditTeamModal', () => {
     });
 
     it('should show error when team name exceeds 100 characters', async () => {
-      render(
+      renderWithProviders(
         <EditTeamModal
           isOpen={true}
           team={mockTeam}
@@ -149,7 +159,7 @@ describe('EditTeamModal', () => {
     });
 
     it('should show error when description exceeds 1000 characters', async () => {
-      render(
+      renderWithProviders(
         <EditTeamModal
           isOpen={true}
           team={mockTeam}
@@ -178,7 +188,7 @@ describe('EditTeamModal', () => {
 
   describe('Form submission', () => {
     it('should call onSubmit with team id and form data when valid', () => {
-      render(
+      renderWithProviders(
         <EditTeamModal
           isOpen={true}
           team={mockTeam}
@@ -201,7 +211,7 @@ describe('EditTeamModal', () => {
     });
 
     it('should trim whitespace from name and description', () => {
-      render(
+      renderWithProviders(
         <EditTeamModal
           isOpen={true}
           team={mockTeam}
@@ -227,7 +237,7 @@ describe('EditTeamModal', () => {
     });
 
     it('should disable submit button when no changes are made', () => {
-      render(
+      renderWithProviders(
         <EditTeamModal
           isOpen={true}
           team={mockTeam}
@@ -242,7 +252,7 @@ describe('EditTeamModal', () => {
     });
 
     it('should enable submit button when changes are made', () => {
-      render(
+      renderWithProviders(
         <EditTeamModal
           isOpen={true}
           team={mockTeam}
@@ -260,7 +270,7 @@ describe('EditTeamModal', () => {
     });
 
     it('should disable submit button when isSubmitting is true', () => {
-      render(
+      renderWithProviders(
         <EditTeamModal
           isOpen={true}
           team={mockTeam}
@@ -278,7 +288,7 @@ describe('EditTeamModal', () => {
     });
 
     it('should show loading state when submitting', () => {
-      render(
+      renderWithProviders(
         <EditTeamModal
           isOpen={true}
           team={mockTeam}
@@ -294,7 +304,7 @@ describe('EditTeamModal', () => {
 
   describe('Change detection', () => {
     it('should show change indicator when form is modified', () => {
-      render(
+      renderWithProviders(
         <EditTeamModal
           isOpen={true}
           team={mockTeam}
@@ -311,7 +321,7 @@ describe('EditTeamModal', () => {
     });
 
     it('should not show change indicator when form matches original values', () => {
-      render(
+      renderWithProviders(
         <EditTeamModal
           isOpen={true}
           team={mockTeam}
@@ -331,7 +341,7 @@ describe('EditTeamModal', () => {
 
   describe('Modal actions', () => {
     it('should call onClose when cancel button is clicked without changes', () => {
-      render(
+      renderWithProviders(
         <EditTeamModal
           isOpen={true}
           team={mockTeam}
@@ -348,7 +358,7 @@ describe('EditTeamModal', () => {
     });
 
     it('should call onClose when close button is clicked without changes', () => {
-      render(
+      renderWithProviders(
         <EditTeamModal
           isOpen={true}
           team={mockTeam}
@@ -365,7 +375,7 @@ describe('EditTeamModal', () => {
     });
 
     it('should disable cancel button when submitting', () => {
-      render(
+      renderWithProviders(
         <EditTeamModal
           isOpen={true}
           team={mockTeam}
@@ -382,7 +392,7 @@ describe('EditTeamModal', () => {
 
   describe('Unsaved changes dialog', () => {
     it('should show unsaved changes dialog when closing dirty form', () => {
-      render(
+      renderWithProviders(
         <EditTeamModal
           isOpen={true}
           team={mockTeam}
@@ -402,7 +412,7 @@ describe('EditTeamModal', () => {
     });
 
     it('should close modal when discarding changes', () => {
-      render(
+      renderWithProviders(
         <EditTeamModal
           isOpen={true}
           team={mockTeam}
@@ -425,7 +435,7 @@ describe('EditTeamModal', () => {
     });
 
     it('should keep modal open when canceling discard', () => {
-      render(
+      renderWithProviders(
         <EditTeamModal
           isOpen={true}
           team={mockTeam}
@@ -451,7 +461,7 @@ describe('EditTeamModal', () => {
 
   describe('Character counters', () => {
     it('should display character count for name field', () => {
-      render(
+      renderWithProviders(
         <EditTeamModal
           isOpen={true}
           team={mockTeam}
@@ -465,7 +475,7 @@ describe('EditTeamModal', () => {
     });
 
     it('should display character count for description field', () => {
-      render(
+      renderWithProviders(
         <EditTeamModal
           isOpen={true}
           team={mockTeam}
@@ -480,7 +490,7 @@ describe('EditTeamModal', () => {
 
     it('should show warning class when name is 80-99 characters', () => {
       const teamWithLongName = { ...mockTeam, name: 'a'.repeat(85) };
-      render(
+      renderWithProviders(
         <EditTeamModal
           isOpen={true}
           team={teamWithLongName}
@@ -496,7 +506,7 @@ describe('EditTeamModal', () => {
 
     it('should show error class when name is 100 characters', () => {
       const teamWith100CharName = { ...mockTeam, name: 'a'.repeat(100) };
-      render(
+      renderWithProviders(
         <EditTeamModal
           isOpen={true}
           team={teamWith100CharName}
@@ -512,7 +522,7 @@ describe('EditTeamModal', () => {
 
     it('should show warning class when description is 800-999 characters', () => {
       const teamWithLongDesc = { ...mockTeam, description: 'a'.repeat(850) };
-      render(
+      renderWithProviders(
         <EditTeamModal
           isOpen={true}
           team={teamWithLongDesc}
@@ -528,7 +538,7 @@ describe('EditTeamModal', () => {
 
     it('should show error class when description is 1000 characters', () => {
       const teamWith1000CharDesc = { ...mockTeam, description: 'a'.repeat(1000) };
-      render(
+      renderWithProviders(
         <EditTeamModal
           isOpen={true}
           team={teamWith1000CharDesc}
@@ -545,7 +555,7 @@ describe('EditTeamModal', () => {
 
   describe('Form interactions and states', () => {
     it('should disable inputs when submitting', () => {
-      render(
+      renderWithProviders(
         <EditTeamModal
           isOpen={true}
           team={mockTeam}
@@ -563,7 +573,7 @@ describe('EditTeamModal', () => {
     });
 
     it('should show form legend with required fields indicator', () => {
-      render(
+      renderWithProviders(
         <EditTeamModal
           isOpen={true}
           team={mockTeam}
@@ -577,7 +587,7 @@ describe('EditTeamModal', () => {
     });
 
     it('should close modal when clicking overlay with no unsaved changes', () => {
-      render(
+      renderWithProviders(
         <EditTeamModal
           isOpen={true}
           team={mockTeam}
@@ -595,7 +605,7 @@ describe('EditTeamModal', () => {
     });
 
     it('should not close modal when clicking overlay with unsaved changes', () => {
-      render(
+      renderWithProviders(
         <EditTeamModal
           isOpen={true}
           team={mockTeam}
@@ -616,7 +626,7 @@ describe('EditTeamModal', () => {
     });
 
     it('should clear errors when valid input is provided', () => {
-      render(
+      renderWithProviders(
         <EditTeamModal
           isOpen={true}
           team={mockTeam}

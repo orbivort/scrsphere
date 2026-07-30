@@ -1,7 +1,6 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { vi } from 'vitest';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { screen, fireEvent, waitFor, renderWithProviders, initTestI18n } from '../../test-utils';
+import { vi, beforeAll } from 'vitest';
 
 import { SendMessageModal } from './SendMessageModal';
 import { notificationApi } from '../../services/notificationApi';
@@ -32,20 +31,6 @@ const defaultProps = {
   recipientEmail: 'john@example.com',
 };
 
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-    },
-  });
-
-const renderWithProviders = (ui) => {
-  const testQueryClient = createTestQueryClient();
-  return render(<QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>);
-};
-
 const setup = (overrides = {}) => {
   const props = { ...defaultProps, ...overrides };
   return {
@@ -55,6 +40,10 @@ const setup = (overrides = {}) => {
 };
 
 describe('SendMessageModal', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });

@@ -1,6 +1,8 @@
-﻿import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router';
-import { formatDistanceToNow, isToday, isYesterday, isThisWeek } from 'date-fns';
+import { isToday, isYesterday, isThisWeek } from 'date-fns';
+import { useTranslation } from 'react-i18next';
+import { formatRelativeTime, type Locale } from '@scrumooth/shared';
 
 import { useNotifications, useMarkAsRead, useMarkAllAsRead } from '../../hooks/useNotifications';
 import { NotificationType, type Notification } from '../../types/notification.types';
@@ -19,6 +21,8 @@ import {
   EditIcon,
   TrashIcon,
 } from '../../components/common/Icons';
+import { useI18nStore } from '../../i18n/useI18nStore';
+import { getNotificationTitle, getNotificationMessage } from '../../utils/notificationTranslation';
 
 import styles from './Notifications.module.css';
 
@@ -64,17 +68,18 @@ const getNotificationRoute = (notification: Notification): string => {
 
 type FilterType = 'all' | 'unread' | NotificationType;
 
-const filterOptions: { value: FilterType; label: string }[] = [
-  { value: 'all', label: 'All' },
-  { value: 'unread', label: 'Unread' },
-  { value: NotificationType.TEAM_INVITATION, label: 'Team Invitations' },
-  { value: NotificationType.TASK_ASSIGNMENT, label: 'Task Assignments' },
-  { value: NotificationType.IMPEDIMENT_ASSIGNMENT, label: 'Impediments' },
-  { value: NotificationType.DAILY_UPDATE_REMINDER, label: 'Reminders' },
-  { value: NotificationType.TEAM_CREATED, label: 'Team Created' },
-  { value: NotificationType.TEAM_UPDATED, label: 'Team Updated' },
-  { value: NotificationType.TEAM_DELETED, label: 'Team Deleted' },
-  { value: NotificationType.DIRECT_MESSAGE, label: 'Direct Messages' },
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- TFunction signature varies by i18next version
+const getFilterOptions = (t: any): { value: FilterType; label: string }[] => [
+  { value: 'all', label: t('filters.all') },
+  { value: 'unread', label: t('filters.unread') },
+  { value: NotificationType.TEAM_INVITATION, label: t('filters.teamInvitations') },
+  { value: NotificationType.TASK_ASSIGNMENT, label: t('filters.taskAssignments') },
+  { value: NotificationType.IMPEDIMENT_ASSIGNMENT, label: t('filters.impediments') },
+  { value: NotificationType.DAILY_UPDATE_REMINDER, label: t('filters.reminders') },
+  { value: NotificationType.TEAM_CREATED, label: t('filters.teamCreated') },
+  { value: NotificationType.TEAM_UPDATED, label: t('filters.teamUpdated') },
+  { value: NotificationType.TEAM_DELETED, label: t('filters.teamDeleted') },
+  { value: NotificationType.DIRECT_MESSAGE, label: t('filters.directMessages') },
 ];
 
 interface GroupedNotifications {
@@ -110,9 +115,11 @@ const groupNotificationsByDate = (notifications: Notification[]): GroupedNotific
 };
 
 export const Notifications: React.FC = () => {
+  const { t } = useTranslation('notifications');
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState<FilterType>('all');
+  const { locale } = useI18nStore();
 
   const filters = useMemo(
     () => ({
@@ -160,7 +167,7 @@ export const Notifications: React.FC = () => {
   return (
     <div className={styles.page} data-testid="notifications">
       <a href="#main-content" className={styles['skip-link']}>
-        Skip to main content
+        {t('skipToMainContent')}
       </a>
 
       <header className={styles.header}>
@@ -169,11 +176,9 @@ export const Notifications: React.FC = () => {
             <span className={styles['page-title-icon']}>
               <BellIcon size={24} />
             </span>
-            Notifications
+            {t('title')}
           </h1>
-          <p className={styles['page-subtitle']}>
-            Stay updated with team activities and important updates
-          </p>
+          <p className={styles['page-subtitle']}>{t('subtitle')}</p>
         </div>
         <div className={styles['header-actions']}>
           {data?.unreadCount && data.unreadCount > 0 && (
@@ -186,14 +191,18 @@ export const Notifications: React.FC = () => {
               <span className={styles['mark-all-button-icon']}>
                 <CheckIcon size={16} />
               </span>
-              {markAllAsRead.isPending ? 'Marking...' : 'Mark All as Read'}
+              {markAllAsRead.isPending ? t('marking') : t('markAllAsRead')}
             </button>
           )}
         </div>
       </header>
 
-      <div className={styles['filter-bar']} role="tablist" aria-label="Filter notifications">
-        {filterOptions.map((option) => (
+      <div
+        className={styles['filter-bar']}
+        role="tablist"
+        aria-label={t('ariaLabels.filterNotifications')}
+      >
+        {getFilterOptions(t).map((option) => (
           <button
             key={option.value}
             onClick={() => handleFilterChange(option.value)}
@@ -213,22 +222,20 @@ export const Notifications: React.FC = () => {
             <div
               className={styles['loading-spinner']}
               role="status"
-              aria-label="Loading notifications"
+              aria-label={t('loading.ariaLabel')}
             />
-            <p className={styles['loading-text']}>Loading notifications...</p>
+            <p className={styles['loading-text']}>{t('loading.title')}</p>
           </div>
         ) : error ? (
           <div className={styles['error-state']} role="alert">
             <div className={styles['error-state-icon']}>
               <AlertCircleIcon size={32} />
             </div>
-            <h2 className={styles['error-state-title']}>Failed to load notifications</h2>
-            <p className={styles['error-state-text']}>
-              Something went wrong while fetching your notifications.
-            </p>
+            <h2 className={styles['error-state-title']}>{t('error.title')}</h2>
+            <p className={styles['error-state-text']}>{t('error.message')}</p>
             <button onClick={handleRetry} className={styles['retry-button']} type="button">
               <RefreshCwIcon size={16} />
-              Try Again
+              {t('error.tryAgain')}
             </button>
           </div>
         ) : !data?.notifications || data.notifications.length === 0 ? (
@@ -236,58 +243,68 @@ export const Notifications: React.FC = () => {
             <div className={styles['empty-state-icon']}>
               <InboxIcon size={48} />
             </div>
-            <h2 className={styles['empty-state-title']}>No notifications yet</h2>
-            <p className={styles['empty-state-text']}>
-              You will see notifications here when there is activity
-            </p>
+            <h2 className={styles['empty-state-title']}>{t('empty.title')}</h2>
+            <p className={styles['empty-state-text']}>{t('empty.message')}</p>
           </div>
         ) : (
           <>
             <NotificationGroup
-              title="Today"
+              title={t('dateGroups.today')}
               notifications={groupedNotifications.today}
               onNotificationClick={handleNotificationClick}
+              locale={locale}
+              t={t}
             />
             <NotificationGroup
-              title="Yesterday"
+              title={t('dateGroups.yesterday')}
               notifications={groupedNotifications.yesterday}
               onNotificationClick={handleNotificationClick}
+              locale={locale}
+              t={t}
             />
             <NotificationGroup
-              title="This Week"
+              title={t('dateGroups.thisWeek')}
               notifications={groupedNotifications.thisWeek}
               onNotificationClick={handleNotificationClick}
+              locale={locale}
+              t={t}
             />
             <NotificationGroup
-              title="Older"
+              title={t('dateGroups.older')}
               notifications={groupedNotifications.older}
               onNotificationClick={handleNotificationClick}
+              locale={locale}
+              t={t}
             />
 
             {data.pagination.totalPages > 1 && (
-              <nav className={styles.pagination} aria-label="Pagination" role="navigation">
+              <nav
+                className={styles.pagination}
+                aria-label={t('ariaLabels.pagination')}
+                role="navigation"
+              >
                 <button
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
                   className={styles['pagination-button']}
-                  aria-label="Go to previous page"
+                  aria-label={t('ariaLabels.goToPreviousPage')}
                   aria-disabled={page === 1}
                   type="button"
                 >
-                  Previous
+                  {t('pagination.previous')}
                 </button>
                 <span className={styles['pagination-info']} aria-current="page">
-                  Page {page} of {data.pagination.totalPages}
+                  {t('pagination.pageInfo', { current: page, total: data.pagination.totalPages })}
                 </span>
                 <button
                   onClick={() => setPage((p) => Math.min(data.pagination.totalPages, p + 1))}
                   disabled={page === data.pagination.totalPages}
                   className={styles['pagination-button']}
-                  aria-label="Go to next page"
+                  aria-label={t('ariaLabels.goToNextPage')}
                   aria-disabled={page === data.pagination.totalPages}
                   type="button"
                 >
-                  Next
+                  {t('pagination.next')}
                 </button>
               </nav>
             )}
@@ -302,12 +319,17 @@ interface NotificationGroupProps {
   title: string;
   notifications: Notification[];
   onNotificationClick: (notification: Notification) => void;
+  locale: Locale;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- TFunction signature varies by i18next version
+  t: any;
 }
 
 const NotificationGroup: React.FC<NotificationGroupProps> = ({
   title,
   notifications,
   onNotificationClick,
+  locale,
+  t,
 }) => {
   if (notifications.length === 0) return null;
 
@@ -328,7 +350,7 @@ const NotificationGroup: React.FC<NotificationGroupProps> = ({
                 onNotificationClick(notification);
               }
             }}
-            aria-label={`${notification.title}. ${notification.message ?? ''}. ${formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}`}
+            aria-label={`${getNotificationTitle(notification, t)}. ${getNotificationMessage(notification, t) ?? ''}. ${formatRelativeTime(notification.createdAt, locale)}`}
           >
             <div
               className={styles['notification-icon']}
@@ -338,18 +360,20 @@ const NotificationGroup: React.FC<NotificationGroupProps> = ({
               {getNotificationIcon(notification.type)}
             </div>
             <div className={styles['notification-content']}>
-              <h3 className={styles['notification-title']}>{notification.title}</h3>
-              {notification.message && (
-                <p className={styles['notification-message']}>{notification.message}</p>
+              <h3 className={styles['notification-title']}>
+                {getNotificationTitle(notification, t)}
+              </h3>
+              {getNotificationMessage(notification, t) && (
+                <p className={styles['notification-message']}>
+                  {getNotificationMessage(notification, t)}
+                </p>
               )}
               <div className={styles['notification-meta']}>
                 {!notification.isRead && (
                   <span className={styles['unread-indicator']} aria-hidden="true" />
                 )}
                 <time className={styles['notification-time']} dateTime={notification.createdAt}>
-                  {formatDistanceToNow(new Date(notification.createdAt), {
-                    addSuffix: true,
-                  })}
+                  {formatRelativeTime(notification.createdAt, locale)}
                 </time>
               </div>
             </div>

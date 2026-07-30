@@ -1,0 +1,53 @@
+{
+  "chunk": {
+    "loadFailed": "Failed to load application resources.",
+    "refreshRequired": "A new version is available. Please refresh the page."
+  },
+  "generic": {
+    "contactSupport": "If the problem persists, please contact support.",
+    "goBack": "Go Back",
+    "retry": "Retry",
+    "tryAgain": "Please try again.",
+    "unexpectedError": "An unexpected error occurred. Please try again."
+  },
+  "http": {
+    "badRequest": "Invalid request. Please check your input and try again.",
+    "conflict": "A conflict occurred. The resource may have been modified by another user.",
+    "forbidden": "Access denied. You do not have permission for this resource.",
+    "internalServerError": "Server error. Please try again later.",
+    "notFound": "Resource not found. It may have been deleted.",
+    "serviceUnavailable": "Service temporarily unavailable. Please try again later.",
+    "unauthorized": "You are not authorized to perform this action.",
+    "validationFailed": "Validation failed. Please check your input."
+  },
+  "network": {
+    "connectionLost": "Network error. Please check your internet connection.",
+    "serverUnreachable": "Unable to reach the server. Please check your connection.",
+    "timeout": "Request timed out. Please try again."
+  },
+  "permission": {
+    "accessDenied": "Access denied.",
+    "loginRequired": "Please log in to continue.",
+    "noPermission": "You do not have permission to perform this action.",
+    "notAuthorized": "You are not authorized to perform this action."
+  },
+  "session": {
+    "absoluteTimeout": "Your session has expired. Please log in again.",
+    "concurrentSession": "Your session was terminated because you logged in from another device.",
+    "expired": "Your session has expired. Please log in again.",
+    "idleTimeout": "Your session has timed out due to inactivity."
+  },
+  "title": "Error",
+  "workflow": {
+    "alreadyExists": "{{resource}} already exists.",
+    "cannotDelete": "Cannot delete {{resource}}.",
+    "cannotModify": "Cannot modify {{resource}} in its current state.",
+    "createFailed": "Failed to create {{resource}}.",
+    "deleteFailed": "Failed to delete {{resource}}.",
+    "loadFailed": "Failed to load {{resource}}.",
+    "notFound": "{{resource}} not found.",
+    "operationFailed": "Failed to {{operation}}. Please try again.",
+    "saveFailed": "Failed to save {{resource}}.",
+    "updateFailed": "Failed to update {{resource}}."
+  }
+}

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { getCategoryColor, type CategoryConfig } from './categories';
 import styles from './DefinitionEditor.module.css';
@@ -39,14 +40,15 @@ export function DefinitionEditor<
   onCancel,
   isLoading = false,
 }: DefinitionEditorProps<T>): React.ReactElement {
+  const { t } = useTranslation('settings');
   const [items, setItems] = useState<T[]>([]);
   const [newItemText, setNewItemText] = useState('');
   const [newItemCategory, setNewItemCategory] = useState<string>(categories[0]?.value ?? '');
   const [hasChanges, setHasChanges] = useState(false);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
 
-  const definitionLabel = definitionType === 'DoD' ? 'Definition of Done' : 'Definition of Ready';
-  const shortLabel = definitionType === 'DoD' ? 'DoD' : 'DoR';
+  const definitionLabel = definitionType === 'DoD' ? t('dodPanel.title') : t('dorPanel.title');
+  const shortLabel = definitionType === 'DoD' ? t('dodPanel.shortLabel') : t('dorPanel.shortLabel');
 
   useEffect(() => {
     if (definition.items.length > 0) {
@@ -141,14 +143,12 @@ export function DefinitionEditor<
   };
 
   const infoText =
-    definitionType === 'DoD'
-      ? 'The Definition of Done is a formal description of the state of the Increment when it meets the quality measures required for the product. Work cannot be considered part of an Increment unless it meets the Definition of Done.'
-      : 'The Definition of Ready is a checklist of criteria that a user story must meet before it can be taken into a sprint. It ensures that the team has enough information to complete the work successfully.';
+    definitionType === 'DoD' ? t('definitionEditor.dodInfo') : t('definitionEditor.dorInfo');
 
   return (
     <div className={styles['definition-editor']}>
       <div className={styles['definition-editor-header']}>
-        <h3>Edit {definitionLabel}</h3>
+        <h3>{t('definitionEditor.editTitle', { label: definitionLabel })}</h3>
         <span className={styles['version-badge']}>v{definition.version}</span>
       </div>
 
@@ -165,7 +165,10 @@ export function DefinitionEditor<
           >
             {categories.map((cat) => (
               <option key={cat.value} value={cat.value}>
-                {cat.icon} {cat.label}
+                {cat.icon}{' '}
+                {definitionType === 'DoD'
+                  ? t(`definitionEditor.dodCategories.${cat.value}` as never)
+                  : t(`definitionEditor.dorCategories.${cat.value}` as never)}
               </option>
             ))}
           </select>
@@ -173,7 +176,7 @@ export function DefinitionEditor<
             type="text"
             value={newItemText}
             onChange={(e) => setNewItemText(e.target.value)}
-            placeholder={`Enter new ${shortLabel} criterion...`}
+            placeholder={t('definitionEditor.newItemPlaceholder', { shortLabel })}
             className={styles['item-input']}
             onKeyPress={(e) => e.key === 'Enter' && handleAddItem()}
           />
@@ -183,17 +186,17 @@ export function DefinitionEditor<
           onClick={handleAddItem}
           disabled={!newItemText.trim()}
           type="button"
-          aria-label="Add new item"
+          aria-label={t('definitionEditor.ariaLabels.addNewItem')}
         >
           <PlusIcon size={14} />
-          Add Item
+          {t('definitionEditor.addItem')}
         </button>
       </div>
 
       <div className={styles['definition-items-list']}>
         {items.length === 0 ? (
           <div className={styles['empty-state']}>
-            <p>No {shortLabel} items yet. Add your first criterion above.</p>
+            <p>{t('definitionEditor.empty', { shortLabel })}</p>
           </div>
         ) : (
           items.map((item, index) => (
@@ -206,9 +209,9 @@ export function DefinitionEditor<
                   className={styles['order-button']}
                   onClick={() => handleMoveUp(index)}
                   disabled={index === 0}
-                  title="Move up"
+                  title={t('definitionEditor.ariaLabels.moveUp')}
                   type="button"
-                  aria-label="Move item up"
+                  aria-label={t('definitionEditor.ariaLabels.moveItemUp')}
                 >
                   <ArrowUpIcon size={12} />
                 </button>
@@ -217,9 +220,9 @@ export function DefinitionEditor<
                   className={styles['order-button']}
                   onClick={() => handleMoveDown(index)}
                   disabled={index === items.length - 1}
-                  title="Move down"
+                  title={t('definitionEditor.ariaLabels.moveDown')}
                   type="button"
-                  aria-label="Move item down"
+                  aria-label={t('definitionEditor.ariaLabels.moveItemDown')}
                 >
                   <ArrowDownIcon size={12} />
                 </button>
@@ -231,9 +234,19 @@ export function DefinitionEditor<
                 className={styles['item-category']}
                 style={getCategoryColor(item.category ?? categories[0]?.value ?? '', categories)}
               >
+                {!categories.find((c) => c.value === item.category) && item.category && (
+                  <option value={item.category}>
+                    {definitionType === 'DoD'
+                      ? t('dodPanel.uncategorized')
+                      : t('dorPanel.uncategorized')}
+                  </option>
+                )}
                 {categories.map((cat) => (
                   <option key={cat.value} value={cat.value}>
-                    {cat.icon} {cat.label}
+                    {cat.icon}{' '}
+                    {definitionType === 'DoD'
+                      ? t(`definitionEditor.dodCategories.${cat.value}` as never)
+                      : t(`definitionEditor.dorCategories.${cat.value}` as never)}
                   </option>
                 ))}
               </select>
@@ -243,16 +256,24 @@ export function DefinitionEditor<
                 value={item.description}
                 onChange={(e) => handleEditItem(item.id, e.target.value)}
                 className={styles['item-description']}
-                aria-label="Item description"
+                aria-label={t('definitionEditor.ariaLabels.itemDescription')}
               />
 
               <div className={styles['item-actions']}>
                 <button
                   className={`${styles['toggle-button']} ${item.isActive ? styles['toggle-button-active'] : ''}`}
                   onClick={() => handleToggleItem(item.id)}
-                  title={item.isActive ? 'Deactivate' : 'Activate'}
+                  title={
+                    item.isActive
+                      ? t('definitionEditor.ariaLabels.deactivate')
+                      : t('definitionEditor.ariaLabels.activate')
+                  }
                   type="button"
-                  aria-label={item.isActive ? 'Deactivate item' : 'Activate item'}
+                  aria-label={
+                    item.isActive
+                      ? t('definitionEditor.ariaLabels.deactivateItem')
+                      : t('definitionEditor.ariaLabels.activateItem')
+                  }
                   aria-pressed={item.isActive}
                 >
                   {item.isActive ? <CheckIcon size={16} /> : <CircleIcon size={16} />}
@@ -260,9 +281,9 @@ export function DefinitionEditor<
                 <button
                   className={styles['remove-button']}
                   onClick={() => handleRemoveItem(item.id)}
-                  title="Remove"
+                  title={t('definitionEditor.ariaLabels.remove')}
                   type="button"
-                  aria-label="Remove item"
+                  aria-label={t('definitionEditor.ariaLabels.removeItem')}
                 >
                   <TrashIcon size={16} />
                 </button>
@@ -274,10 +295,10 @@ export function DefinitionEditor<
 
       <div className={styles['definition-summary']}>
         <span className={styles['active-count-summary']}>
-          {items.filter((i) => i.isActive).length} active items
+          {t('definitionEditor.activeItems', { count: items.filter((i) => i.isActive).length })}
         </span>
         <span className={styles['inactive-count-summary']}>
-          {items.filter((i) => !i.isActive).length} inactive
+          {t('definitionEditor.inactive', { count: items.filter((i) => !i.isActive).length })}
         </span>
       </div>
 
@@ -288,7 +309,7 @@ export function DefinitionEditor<
           disabled={isLoading}
           type="button"
         >
-          Cancel
+          {t('definitionEditor.cancel')}
         </button>
         <button
           className={`${styles.button} ${styles['button-primary']}`}
@@ -297,11 +318,11 @@ export function DefinitionEditor<
           type="button"
         >
           {isLoading ? (
-            'Saving...'
+            t('definitionEditor.saving')
           ) : (
             <>
               <SaveIcon size={16} />
-              Save Changes
+              {t('definitionEditor.saveChanges')}
             </>
           )}
         </button>
@@ -310,7 +331,7 @@ export function DefinitionEditor<
       {hasChanges && (
         <div className={styles['unsaved-warning']} role="alert">
           <AlertTriangleIcon size={16} />
-          You have unsaved changes
+          {t('definitionEditor.unsavedWarning')}
         </div>
       )}
 
@@ -322,22 +343,22 @@ export function DefinitionEditor<
           aria-labelledby="cancel-dialog-title"
         >
           <div className={styles.dialog}>
-            <h4 id="cancel-dialog-title">Discard Changes?</h4>
-            <p>You have unsaved changes. Are you sure you want to cancel?</p>
+            <h4 id="cancel-dialog-title">{t('definitionEditor.discardDialog.title')}</h4>
+            <p>{t('definitionEditor.discardDialog.message')}</p>
             <div className={styles['dialog-actions']}>
               <button
                 className={`${styles.button} ${styles['button-secondary']}`}
                 onClick={handleDismissDialog}
                 type="button"
               >
-                Keep Editing
+                {t('definitionEditor.discardDialog.keepEditing')}
               </button>
               <button
                 className={`${styles.button} ${styles['button-danger']}`}
                 onClick={handleConfirmCancel}
                 type="button"
               >
-                Discard Changes
+                {t('definitionEditor.discardDialog.discardChanges')}
               </button>
             </div>
           </div>

@@ -1,6 +1,7 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { fireEvent } from '@testing-library/react';
+import { screen, renderWithProviders, initTestI18n, i18nT } from '../../test-utils';
+import { vi, describe, it, expect, beforeEach, beforeAll } from 'vitest';
 
 import { CreateSprintReviewModal } from './CreateSprintReviewModal';
 
@@ -46,6 +47,10 @@ const defaultProps = {
 };
 
 describe('CreateSprintReviewModal - Additional Edge Case Tests', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -53,7 +58,7 @@ describe('CreateSprintReviewModal - Additional Edge Case Tests', () => {
   describe('Date Input Edge Cases', () => {
     it('should handle empty date value', () => {
       const setCreateReviewData = vi.fn();
-      render(
+      renderWithProviders(
         <CreateSprintReviewModal
           {...defaultProps}
           createReviewData={{ reviewDate: '', summary: '' }}
@@ -67,7 +72,7 @@ describe('CreateSprintReviewModal - Additional Edge Case Tests', () => {
 
     it('should handle date change to empty string', () => {
       const setCreateReviewData = vi.fn();
-      render(
+      renderWithProviders(
         <CreateSprintReviewModal {...defaultProps} setCreateReviewData={setCreateReviewData} />
       );
 
@@ -82,12 +87,13 @@ describe('CreateSprintReviewModal - Additional Edge Case Tests', () => {
 
     it('should handle date change to valid date', () => {
       const setCreateReviewData = vi.fn();
-      render(
+      renderWithProviders(
         <CreateSprintReviewModal {...defaultProps} setCreateReviewData={setCreateReviewData} />
       );
 
       const dateInput = screen.getByLabelText(/Review Date/i);
-      fireEvent.change(dateInput, { target: { value: '2026-12-31' } });
+      // LocaleDateInput expects locale format (dd/MM/yyyy for en)
+      fireEvent.change(dateInput, { target: { value: '31/12/2026' } });
 
       expect(setCreateReviewData).toHaveBeenCalledWith({
         reviewDate: '2026-12-31',
@@ -97,7 +103,7 @@ describe('CreateSprintReviewModal - Additional Edge Case Tests', () => {
 
     it('should handle past dates', () => {
       const setCreateReviewData = vi.fn();
-      render(
+      renderWithProviders(
         <CreateSprintReviewModal
           {...defaultProps}
           createReviewData={{ reviewDate: '2020-01-01', summary: '' }}
@@ -106,12 +112,13 @@ describe('CreateSprintReviewModal - Additional Edge Case Tests', () => {
       );
 
       const dateInput = screen.getByLabelText(/Review Date/i);
-      expect(dateInput).toHaveValue('2020-01-01');
+      // LocaleDateInput displays dates in locale format (dd/MM/yyyy for en)
+      expect(dateInput).toHaveValue('01/01/2020');
     });
 
     it('should handle future dates', () => {
       const setCreateReviewData = vi.fn();
-      render(
+      renderWithProviders(
         <CreateSprintReviewModal
           {...defaultProps}
           createReviewData={{ reviewDate: '2030-12-31', summary: '' }}
@@ -120,14 +127,15 @@ describe('CreateSprintReviewModal - Additional Edge Case Tests', () => {
       );
 
       const dateInput = screen.getByLabelText(/Review Date/i);
-      expect(dateInput).toHaveValue('2030-12-31');
+      // LocaleDateInput displays dates in locale format (dd/MM/yyyy for en)
+      expect(dateInput).toHaveValue('31/12/2030');
     });
   });
 
   describe('Summary Input Edge Cases', () => {
     it('should handle very long summary text', () => {
       const longSummary = 'A'.repeat(1000);
-      render(
+      renderWithProviders(
         <CreateSprintReviewModal
           {...defaultProps}
           createReviewData={{ reviewDate: '2026-01-14', summary: longSummary }}
@@ -140,7 +148,7 @@ describe('CreateSprintReviewModal - Additional Edge Case Tests', () => {
 
     it('should handle special characters in summary', () => {
       const specialChars = '!@#$%^&*()_+-=[]{}|;:\'",.<>?/~`';
-      render(
+      renderWithProviders(
         <CreateSprintReviewModal
           {...defaultProps}
           createReviewData={{ reviewDate: '2026-01-14', summary: specialChars }}
@@ -153,7 +161,7 @@ describe('CreateSprintReviewModal - Additional Edge Case Tests', () => {
 
     it('should handle unicode characters in summary', () => {
       const unicodeText = '你好世界 🌍 مرحبا';
-      render(
+      renderWithProviders(
         <CreateSprintReviewModal
           {...defaultProps}
           createReviewData={{ reviewDate: '2026-01-14', summary: unicodeText }}
@@ -166,7 +174,7 @@ describe('CreateSprintReviewModal - Additional Edge Case Tests', () => {
 
     it('should handle multiline summary', () => {
       const multilineSummary = 'Line 1\nLine 2\nLine 3';
-      render(
+      renderWithProviders(
         <CreateSprintReviewModal
           {...defaultProps}
           createReviewData={{ reviewDate: '2026-01-14', summary: multilineSummary }}
@@ -179,7 +187,7 @@ describe('CreateSprintReviewModal - Additional Edge Case Tests', () => {
 
     it('should handle summary with only whitespace', () => {
       const setCreateReviewData = vi.fn();
-      render(
+      renderWithProviders(
         <CreateSprintReviewModal {...defaultProps} setCreateReviewData={setCreateReviewData} />
       );
 
@@ -195,7 +203,7 @@ describe('CreateSprintReviewModal - Additional Edge Case Tests', () => {
 
   describe('Error State Combinations', () => {
     it('should display multiple errors simultaneously', () => {
-      render(
+      renderWithProviders(
         <CreateSprintReviewModal
           {...defaultProps}
           formErrors={{
@@ -213,7 +221,9 @@ describe('CreateSprintReviewModal - Additional Edge Case Tests', () => {
     });
 
     it('should display error with non-Error object', () => {
-      render(<CreateSprintReviewModal {...defaultProps} isError={true} error={null} />);
+      renderWithProviders(
+        <CreateSprintReviewModal {...defaultProps} isError={true} error={null} />
+      );
 
       expect(
         screen.getByText('Failed to create sprint review. Please try again.')
@@ -221,7 +231,7 @@ describe('CreateSprintReviewModal - Additional Edge Case Tests', () => {
     });
 
     it('should display error with string error', () => {
-      render(
+      renderWithProviders(
         <CreateSprintReviewModal
           {...defaultProps}
           isError={true}
@@ -237,7 +247,7 @@ describe('CreateSprintReviewModal - Additional Edge Case Tests', () => {
     it('should clear errors when closing modal', () => {
       const onClose = vi.fn();
       const setFormErrors = vi.fn();
-      render(
+      renderWithProviders(
         <CreateSprintReviewModal
           {...defaultProps}
           onClose={onClose}
@@ -246,7 +256,7 @@ describe('CreateSprintReviewModal - Additional Edge Case Tests', () => {
         />
       );
 
-      fireEvent.click(screen.getByRole('button', { name: /Cancel/i }));
+      fireEvent.click(screen.getByText(i18nT('sprint-review:createModal.cancel')));
 
       expect(setFormErrors).toHaveBeenCalledWith({});
       expect(onClose).toHaveBeenCalled();
@@ -255,25 +265,31 @@ describe('CreateSprintReviewModal - Additional Edge Case Tests', () => {
 
   describe('Button State Combinations', () => {
     it('should disable button when isPending is true regardless of hasIncrement', () => {
-      render(<CreateSprintReviewModal {...defaultProps} isPending={true} hasIncrement={false} />);
+      renderWithProviders(
+        <CreateSprintReviewModal {...defaultProps} isPending={true} hasIncrement={false} />
+      );
 
       expect(screen.getByRole('button', { name: /Creating/i })).toBeDisabled();
     });
 
     it('should disable button when hasIncrement is false regardless of isPending', () => {
-      render(<CreateSprintReviewModal {...defaultProps} isPending={false} hasIncrement={false} />);
+      renderWithProviders(
+        <CreateSprintReviewModal {...defaultProps} isPending={false} hasIncrement={false} />
+      );
 
       expect(screen.getByRole('button', { name: /Create Review/i })).toBeDisabled();
     });
 
     it('should enable button only when both isPending is false and hasIncrement is true', () => {
-      render(<CreateSprintReviewModal {...defaultProps} isPending={false} hasIncrement={true} />);
+      renderWithProviders(
+        <CreateSprintReviewModal {...defaultProps} isPending={false} hasIncrement={true} />
+      );
 
       expect(screen.getByRole('button', { name: /Create Review/i })).not.toBeDisabled();
     });
 
     it('should show Creating... text when isPending is true', () => {
-      render(<CreateSprintReviewModal {...defaultProps} isPending={true} />);
+      renderWithProviders(<CreateSprintReviewModal {...defaultProps} isPending={true} />);
 
       expect(screen.getByText('Creating...')).toBeInTheDocument();
     });
@@ -281,42 +297,52 @@ describe('CreateSprintReviewModal - Additional Edge Case Tests', () => {
 
   describe('Focus and Keyboard Interactions', () => {
     it('should have type="button" on close button', () => {
-      render(<CreateSprintReviewModal {...defaultProps} />);
+      renderWithProviders(<CreateSprintReviewModal {...defaultProps} />);
 
-      const closeButton = screen.getByRole('button', { name: /Close dialog/i });
+      const closeButton = screen
+        .getAllByRole('button')
+        .find(
+          (button) =>
+            button.getAttribute('aria-label') === i18nT('sprint-review:createModal.cancel')
+        );
       expect(closeButton).toHaveAttribute('type', 'button');
     });
 
     it('should have cancel button', () => {
-      render(<CreateSprintReviewModal {...defaultProps} />);
+      renderWithProviders(<CreateSprintReviewModal {...defaultProps} />);
 
-      const cancelButton = screen.getByRole('button', { name: /Cancel/i });
+      const cancelButton = screen.getByText(i18nT('sprint-review:createModal.cancel'));
       expect(cancelButton).toBeInTheDocument();
     });
 
     it('should have aria-label on close button', () => {
-      render(<CreateSprintReviewModal {...defaultProps} />);
+      renderWithProviders(<CreateSprintReviewModal {...defaultProps} />);
 
-      const closeButton = screen.getByRole('button', { name: /Close dialog/i });
-      expect(closeButton).toHaveAttribute('aria-label', 'Close dialog');
+      const closeButton = screen
+        .getAllByRole('button')
+        .find(
+          (button) =>
+            button.getAttribute('aria-label') === i18nT('sprint-review:createModal.cancel')
+        );
+      expect(closeButton).toHaveAttribute('aria-label', i18nT('sprint-review:createModal.cancel'));
     });
   });
 
   describe('Modal Visibility', () => {
     it('should not render anything when isOpen is false', () => {
-      render(<CreateSprintReviewModal {...defaultProps} isOpen={false} />);
+      renderWithProviders(<CreateSprintReviewModal {...defaultProps} isOpen={false} />);
 
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
       expect(screen.queryByRole('button')).not.toBeInTheDocument();
     });
 
     it('should render all elements when isOpen is true', () => {
-      render(<CreateSprintReviewModal {...defaultProps} />);
+      renderWithProviders(<CreateSprintReviewModal {...defaultProps} />);
 
       expect(screen.getByRole('dialog')).toBeInTheDocument();
       expect(screen.getByLabelText(/Review Date/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/Summary/i)).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /Cancel/i })).toBeInTheDocument();
+      expect(screen.getByText(i18nT('sprint-review:createModal.cancel'))).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /Create Review/i })).toBeInTheDocument();
     });
   });
@@ -324,7 +350,7 @@ describe('CreateSprintReviewModal - Additional Edge Case Tests', () => {
   describe('Form Submission', () => {
     it('should call onSubmit when Create Review button is clicked', () => {
       const onSubmit = vi.fn();
-      render(<CreateSprintReviewModal {...defaultProps} onSubmit={onSubmit} />);
+      renderWithProviders(<CreateSprintReviewModal {...defaultProps} onSubmit={onSubmit} />);
 
       fireEvent.click(screen.getByRole('button', { name: /Create Review/i }));
 
@@ -333,7 +359,7 @@ describe('CreateSprintReviewModal - Additional Edge Case Tests', () => {
 
     it('should not call onSubmit when button is disabled', () => {
       const onSubmit = vi.fn();
-      render(
+      renderWithProviders(
         <CreateSprintReviewModal {...defaultProps} onSubmit={onSubmit} hasIncrement={false} />
       );
 
@@ -344,36 +370,43 @@ describe('CreateSprintReviewModal - Additional Edge Case Tests', () => {
   });
 
   describe('ARIA and Accessibility', () => {
-    it('should have aria-required on date input', () => {
-      render(<CreateSprintReviewModal {...defaultProps} />);
+    it('should have required attribute on date input', () => {
+      renderWithProviders(<CreateSprintReviewModal {...defaultProps} />);
 
       const dateInput = screen.getByLabelText(/Review Date/i);
-      expect(dateInput).toHaveAttribute('aria-required', 'true');
+      // LocaleDateInput uses required HTML attribute, not aria-required
+      expect(dateInput).toBeRequired();
     });
 
     it('should have aria-invalid set to true when error exists', () => {
-      render(<CreateSprintReviewModal {...defaultProps} formErrors={{ reviewDate: 'Required' }} />);
+      renderWithProviders(
+        <CreateSprintReviewModal {...defaultProps} formErrors={{ reviewDate: 'Required' }} />
+      );
 
       const dateInput = screen.getByLabelText(/Review Date/i);
       expect(dateInput).toHaveAttribute('aria-invalid', 'true');
     });
 
     it('should have aria-invalid set to false when no error', () => {
-      render(<CreateSprintReviewModal {...defaultProps} formErrors={{}} />);
+      renderWithProviders(<CreateSprintReviewModal {...defaultProps} formErrors={{}} />);
 
       const dateInput = screen.getByLabelText(/Review Date/i);
       expect(dateInput).toHaveAttribute('aria-invalid', 'false');
     });
 
     it('should have role="alert" on error messages', () => {
-      render(<CreateSprintReviewModal {...defaultProps} formErrors={{ reviewDate: 'Required' }} />);
+      renderWithProviders(
+        <CreateSprintReviewModal {...defaultProps} formErrors={{ reviewDate: 'Required' }} />
+      );
 
       const errorMessage = screen.getByRole('alert');
       expect(errorMessage).toHaveTextContent('Required');
     });
 
     it('should have proper id on error message for aria-describedby', () => {
-      render(<CreateSprintReviewModal {...defaultProps} formErrors={{ reviewDate: 'Required' }} />);
+      renderWithProviders(
+        <CreateSprintReviewModal {...defaultProps} formErrors={{ reviewDate: 'Required' }} />
+      );
 
       const dateInput = screen.getByLabelText(/Review Date/i);
       const errorId = dateInput.getAttribute('aria-describedby');
@@ -386,7 +419,7 @@ describe('CreateSprintReviewModal - Additional Edge Case Tests', () => {
 
   describe('Increment Warning Display', () => {
     it('should show increment warning when formErrors.increment exists', () => {
-      render(
+      renderWithProviders(
         <CreateSprintReviewModal
           {...defaultProps}
           formErrors={{ increment: 'No delivered increment found' }}
@@ -397,13 +430,13 @@ describe('CreateSprintReviewModal - Additional Edge Case Tests', () => {
     });
 
     it('should not show increment warning when formErrors.increment does not exist', () => {
-      render(<CreateSprintReviewModal {...defaultProps} formErrors={{}} />);
+      renderWithProviders(<CreateSprintReviewModal {...defaultProps} formErrors={{}} />);
 
       expect(screen.queryByText('No delivered increment found')).not.toBeInTheDocument();
     });
 
     it('should show warning icon when increment warning is displayed', () => {
-      render(
+      renderWithProviders(
         <CreateSprintReviewModal
           {...defaultProps}
           formErrors={{ increment: 'No delivered increment found' }}
@@ -418,9 +451,15 @@ describe('CreateSprintReviewModal - Additional Edge Case Tests', () => {
   describe('Close Button Behavior', () => {
     it('should call onClose when close button is clicked', () => {
       const onClose = vi.fn();
-      render(<CreateSprintReviewModal {...defaultProps} onClose={onClose} />);
+      renderWithProviders(<CreateSprintReviewModal {...defaultProps} onClose={onClose} />);
 
-      fireEvent.click(screen.getByRole('button', { name: /Close dialog/i }));
+      const closeButton = screen
+        .getAllByRole('button')
+        .find(
+          (button) =>
+            button.getAttribute('aria-label') === i18nT('sprint-review:createModal.cancel')
+        );
+      fireEvent.click(closeButton!);
 
       expect(onClose).toHaveBeenCalled();
     });
@@ -428,7 +467,7 @@ describe('CreateSprintReviewModal - Additional Edge Case Tests', () => {
 
   describe('Summary Placeholder', () => {
     it('should display placeholder text in summary textarea', () => {
-      render(
+      renderWithProviders(
         <CreateSprintReviewModal
           {...defaultProps}
           createReviewData={{ reviewDate: '', summary: '' }}
@@ -442,14 +481,14 @@ describe('CreateSprintReviewModal - Additional Edge Case Tests', () => {
 
   describe('Required Field Indicators', () => {
     it('should show asterisk on Review Date label', () => {
-      render(<CreateSprintReviewModal {...defaultProps} />);
+      renderWithProviders(<CreateSprintReviewModal {...defaultProps} />);
 
       const label = screen.getByText(/Review Date/);
       expect(label.textContent).toContain('*');
     });
 
     it('should show (Optional) on Summary label', () => {
-      render(<CreateSprintReviewModal {...defaultProps} />);
+      renderWithProviders(<CreateSprintReviewModal {...defaultProps} />);
 
       expect(screen.getByText(/Summary \(Optional\)/i)).toBeInTheDocument();
     });

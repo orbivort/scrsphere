@@ -957,7 +957,7 @@
 }
 
 .goals-table th {
-  text-align: left;
+  text-align: start;
   padding: var(--space-4) var(--space-5);
   background: var(--color-background-page);
   font-weight: var(--font-weight-semibold);

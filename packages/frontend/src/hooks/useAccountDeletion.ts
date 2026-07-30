@@ -1,5 +1,7 @@
-﻿import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import type { AxiosError } from 'axios';
 
 import { useAuthStore } from '../store';
@@ -7,7 +9,7 @@ import { apiService } from '../services';
 import { logger } from '../utils/logger';
 import type { DeletionEligibilityResult, ApiResponse } from '../types';
 
-function getFriendlyErrorMessage(error: unknown, defaultMessage: string): string {
+function getFriendlyErrorMessage(error: unknown, defaultMessage: string, t: TFunction): string {
   if (!error) return defaultMessage;
 
   const axiosError = error as AxiosError<ApiResponse<never>>;
@@ -17,10 +19,13 @@ function getFriendlyErrorMessage(error: unknown, defaultMessage: string): string
 
   if (error instanceof Error) {
     if (error.message.includes('network') || error.message.includes('Network')) {
-      return 'Network error. Please check your connection and try again.';
+      return t(
+        'accountDeletion.networkError',
+        'Network error. Please check your connection and try again.'
+      );
     }
     if (error.message.includes('timeout') || error.message.includes('Timeout')) {
-      return 'Request timed out. Please try again.';
+      return t('accountDeletion.timeoutError', 'Request timed out. Please try again.');
     }
     return error.message || defaultMessage;
   }
@@ -50,6 +55,7 @@ export function useAccountDeletion(
   userMenuOpen: boolean,
   onUserMenuClose?: () => void
 ): UseAccountDeletionReturn {
+  const { t } = useTranslation('common');
   const { logout } = useAuthStore();
   const navigate = useNavigate();
 
@@ -101,20 +107,29 @@ export function useAccountDeletion(
           void logout();
           void navigate('/login', {
             replace: true,
-            state: { message: 'Your account has been successfully deleted.' },
+            state: {
+              message: t('accountDeletion.success', 'Your account has been successfully deleted.'),
+            },
           });
         } else {
-          setDeleteError(response.error?.message ?? 'Failed to delete account. Please try again.');
+          setDeleteError(
+            response.error?.message ??
+              t('accountDeletion.deleteFailed', 'Failed to delete account. Please try again.')
+          );
         }
       } catch (error) {
         setDeleteError(
-          getFriendlyErrorMessage(error, 'Failed to delete account. Please try again.')
+          getFriendlyErrorMessage(
+            error,
+            t('accountDeletion.deleteFailed', 'Failed to delete account. Please try again.'),
+            t
+          )
         );
       } finally {
         setIsDeleting(false);
       }
     },
-    [logout, navigate, onUserMenuClose]
+    [logout, navigate, onUserMenuClose, t]
   );
 
   const handleScheduleDeletion = useCallback(
@@ -129,18 +144,23 @@ export function useAccountDeletion(
           void fetchDeletionEligibility(true);
         } else {
           setDeleteError(
-            response.error?.message ?? 'Failed to schedule deletion. Please try again.'
+            response.error?.message ??
+              t('accountDeletion.scheduleFailed', 'Failed to schedule deletion. Please try again.')
           );
         }
       } catch (error) {
         setDeleteError(
-          getFriendlyErrorMessage(error, 'Failed to schedule deletion. Please try again.')
+          getFriendlyErrorMessage(
+            error,
+            t('accountDeletion.scheduleFailed', 'Failed to schedule deletion. Please try again.'),
+            t
+          )
         );
       } finally {
         setIsScheduling(false);
       }
     },
-    [fetchDeletionEligibility]
+    [fetchDeletionEligibility, t]
   );
 
   const handleCancelDeletion = useCallback(async () => {
@@ -153,16 +173,23 @@ export function useAccountDeletion(
         setDeletionEligibility(null);
         void fetchDeletionEligibility(true);
       } else {
-        setDeleteError(response.error?.message ?? 'Failed to cancel deletion. Please try again.');
+        setDeleteError(
+          response.error?.message ??
+            t('accountDeletion.cancelFailed', 'Failed to cancel deletion. Please try again.')
+        );
       }
     } catch (error) {
       setDeleteError(
-        getFriendlyErrorMessage(error, 'Failed to cancel deletion. Please try again.')
+        getFriendlyErrorMessage(
+          error,
+          t('accountDeletion.cancelFailed', 'Failed to cancel deletion. Please try again.'),
+          t
+        )
       );
     } finally {
       setIsCancelling(false);
     }
-  }, [fetchDeletionEligibility]);
+  }, [fetchDeletionEligibility, t]);
 
   const handleForceDelete = useCallback(
     async (confirmation: string) => {
@@ -177,20 +204,29 @@ export function useAccountDeletion(
           void logout();
           void navigate('/login', {
             replace: true,
-            state: { message: 'Your account has been successfully deleted.' },
+            state: {
+              message: t('accountDeletion.success', 'Your account has been successfully deleted.'),
+            },
           });
         } else {
-          setDeleteError(response.error?.message ?? 'Failed to delete account. Please try again.');
+          setDeleteError(
+            response.error?.message ??
+              t('accountDeletion.deleteFailed', 'Failed to delete account. Please try again.')
+          );
         }
       } catch (error) {
         setDeleteError(
-          getFriendlyErrorMessage(error, 'Failed to delete account. Please try again.')
+          getFriendlyErrorMessage(
+            error,
+            t('accountDeletion.deleteFailed', 'Failed to delete account. Please try again.'),
+            t
+          )
         );
       } finally {
         setIsForceDeleting(false);
       }
     },
-    [logout, navigate, onUserMenuClose]
+    [logout, navigate, onUserMenuClose, t]
   );
 
   // Fetch eligibility when user menu opens

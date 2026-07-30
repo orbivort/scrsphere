@@ -1,7 +1,6 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
+import { screen, waitFor, renderWithProviders, initTestI18n } from '../../test-utils';
 import userEvent from '@testing-library/user-event';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import {
   AttendeesSection,
@@ -108,20 +107,6 @@ vi.mock('../ConfirmDialog/ConfirmDialog', () => ({
     ) : null,
 }));
 
-// Create wrapper with QueryClient
-const createWrapper = () => {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: { retry: false },
-      mutations: { retry: false },
-    },
-  });
-
-  return function Wrapper({ children }: { children: React.ReactNode }) {
-    return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
-  };
-};
-
 const defaultProps: AttendeesSectionProps = {
   entityId: 'entity-1',
   sprintId: 'sprint-1',
@@ -200,6 +185,10 @@ const mockTeamMembers: TeamMember[] = [
 ];
 
 describe('AttendeesSection Component', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -210,42 +199,32 @@ describe('AttendeesSection Component', () => {
 
   describe('Component Rendering Tests', () => {
     it('renders with default props', () => {
-      render(<AttendeesSection {...defaultProps} />, {
-        wrapper: createWrapper(),
-      });
+      renderWithProviders(<AttendeesSection {...defaultProps} />);
 
       expect(screen.getByText('Attendees')).toBeInTheDocument();
     });
 
     it('renders attendance count', () => {
-      render(<AttendeesSection {...defaultProps} attendees={mockAttendees} />, {
-        wrapper: createWrapper(),
-      });
+      renderWithProviders(<AttendeesSection {...defaultProps} attendees={mockAttendees} />);
 
       // 2 attended out of 3 total
       expect(screen.getByText('2 / 3 attended')).toBeInTheDocument();
     });
 
     it('renders "Add Attendees" button', () => {
-      render(<AttendeesSection {...defaultProps} />, {
-        wrapper: createWrapper(),
-      });
+      renderWithProviders(<AttendeesSection {...defaultProps} />);
 
       expect(screen.getByRole('button', { name: /add attendees/i })).toBeInTheDocument();
     });
 
     it('renders filter tabs', () => {
-      render(<AttendeesSection {...defaultProps} attendees={mockAttendees} />, {
-        wrapper: createWrapper(),
-      });
+      renderWithProviders(<AttendeesSection {...defaultProps} attendees={mockAttendees} />);
 
       expect(screen.getByRole('radiogroup', { name: /filter attendees/i })).toBeInTheDocument();
     });
 
     it('renders empty state when no attendees', () => {
-      render(<AttendeesSection {...defaultProps} />, {
-        wrapper: createWrapper(),
-      });
+      renderWithProviders(<AttendeesSection {...defaultProps} />);
 
       expect(screen.getByText('No attendees recorded yet.')).toBeInTheDocument();
     });
@@ -253,9 +232,7 @@ describe('AttendeesSection Component', () => {
 
   describe('Filter Tabs Tests', () => {
     it('renders all three filter tabs', () => {
-      render(<AttendeesSection {...defaultProps} attendees={mockAttendees} />, {
-        wrapper: createWrapper(),
-      });
+      renderWithProviders(<AttendeesSection {...defaultProps} attendees={mockAttendees} />);
 
       expect(screen.getByRole('radio', { name: /all/i })).toBeInTheDocument();
       expect(screen.getByRole('radio', { name: /team/i })).toBeInTheDocument();
@@ -263,13 +240,12 @@ describe('AttendeesSection Component', () => {
     });
 
     it('shows correct counts on filter tabs', () => {
-      render(
+      renderWithProviders(
         <AttendeesSection
           {...defaultProps}
           attendees={mockAttendees}
           teamMembers={mockTeamMembers}
-        />,
-        { wrapper: createWrapper() }
+        />
       );
 
       expect(screen.getByText('All (3)')).toBeInTheDocument();
@@ -277,9 +253,7 @@ describe('AttendeesSection Component', () => {
 
     it('changes active filter when clicked', async () => {
       const user = userEvent.setup();
-      render(<AttendeesSection {...defaultProps} attendees={mockAttendees} />, {
-        wrapper: createWrapper(),
-      });
+      renderWithProviders(<AttendeesSection {...defaultProps} attendees={mockAttendees} />);
 
       const guestsTab = screen.getByRole('radio', { name: /guests/i });
       await user.click(guestsTab);
@@ -290,20 +264,19 @@ describe('AttendeesSection Component', () => {
 
   describe('Unmarked Team Members Tests', () => {
     it('renders unmarked section when there are unmarked team members', () => {
-      render(
+      renderWithProviders(
         <AttendeesSection
           {...defaultProps}
           attendees={[mockAttendees[0]]} // Only John is marked
           teamMembers={mockTeamMembers}
-        />,
-        { wrapper: createWrapper() }
+        />
       );
 
       expect(screen.getByText(/team members not yet marked/i)).toBeInTheDocument();
     });
 
     it('does not render unmarked section when all team members are marked', () => {
-      render(
+      renderWithProviders(
         <AttendeesSection
           {...defaultProps}
           attendees={[
@@ -312,22 +285,20 @@ describe('AttendeesSection Component', () => {
             { ...mockAttendees[2], name: 'Charlie Brown' },
           ]}
           teamMembers={mockTeamMembers}
-        />,
-        { wrapper: createWrapper() }
+        />
       );
 
       expect(screen.queryByText(/team members not yet marked/i)).not.toBeInTheDocument();
     });
 
     it('does not render unmarked section when completed', () => {
-      render(
+      renderWithProviders(
         <AttendeesSection
           {...defaultProps}
           attendees={[mockAttendees[0]]}
           teamMembers={mockTeamMembers}
           isCompleted={true}
-        />,
-        { wrapper: createWrapper() }
+        />
       );
 
       expect(screen.queryByText(/team members not yet marked/i)).not.toBeInTheDocument();
@@ -337,14 +308,13 @@ describe('AttendeesSection Component', () => {
       const user = userEvent.setup();
       const onAddTeamMember = vi.fn();
 
-      render(
+      renderWithProviders(
         <AttendeesSection
           {...defaultProps}
           attendees={[mockAttendees[0]]}
           teamMembers={mockTeamMembers}
           onAddTeamMember={onAddTeamMember}
-        />,
-        { wrapper: createWrapper() }
+        />
       );
 
       // Find the first attended button in the unmarked section
@@ -358,14 +328,13 @@ describe('AttendeesSection Component', () => {
       const user = userEvent.setup();
       const onAddTeamMember = vi.fn();
 
-      render(
+      renderWithProviders(
         <AttendeesSection
           {...defaultProps}
           attendees={[mockAttendees[0]]}
           teamMembers={mockTeamMembers}
           onAddTeamMember={onAddTeamMember}
-        />,
-        { wrapper: createWrapper() }
+        />
       );
 
       // Find the first absent button in the unmarked section
@@ -381,9 +350,7 @@ describe('AttendeesSection Component', () => {
 
   describe('Attendee Card Tests', () => {
     it('renders attendee cards for each attendee', () => {
-      render(<AttendeesSection {...defaultProps} attendees={mockAttendees} />, {
-        wrapper: createWrapper(),
-      });
+      renderWithProviders(<AttendeesSection {...defaultProps} attendees={mockAttendees} />);
 
       expect(screen.getByText('John Doe')).toBeInTheDocument();
       expect(screen.getByText('Jane Smith')).toBeInTheDocument();
@@ -391,35 +358,27 @@ describe('AttendeesSection Component', () => {
     });
 
     it('renders attendee initials in avatar', () => {
-      render(<AttendeesSection {...defaultProps} attendees={mockAttendees} />, {
-        wrapper: createWrapper(),
-      });
+      renderWithProviders(<AttendeesSection {...defaultProps} attendees={mockAttendees} />);
 
       // John Doe -> JD
       expect(screen.getByText('JD')).toBeInTheDocument();
     });
 
     it('renders formatted role name', () => {
-      render(<AttendeesSection {...defaultProps} attendees={mockAttendees} />, {
-        wrapper: createWrapper(),
-      });
+      renderWithProviders(<AttendeesSection {...defaultProps} attendees={mockAttendees} />);
 
       expect(screen.getByText('product owner')).toBeInTheDocument();
     });
 
     it('shows attended status button as selected for attended attendees', () => {
-      render(<AttendeesSection {...defaultProps} attendees={[mockAttendees[0]]} />, {
-        wrapper: createWrapper(),
-      });
+      renderWithProviders(<AttendeesSection {...defaultProps} attendees={[mockAttendees[0]]} />);
 
       const attendedButtons = screen.getAllByRole('button', { name: /mark as attended/i });
       expect(attendedButtons[0]).toHaveClass('selected');
     });
 
     it('shows absent status button as selected for absent attendees', () => {
-      render(<AttendeesSection {...defaultProps} attendees={[mockAttendees[1]]} />, {
-        wrapper: createWrapper(),
-      });
+      renderWithProviders(<AttendeesSection {...defaultProps} attendees={[mockAttendees[1]]} />);
 
       const absentButtons = screen.getAllByRole('button', { name: /mark as absent/i });
       expect(absentButtons[0]).toHaveClass('selected');
@@ -429,13 +388,12 @@ describe('AttendeesSection Component', () => {
       const user = userEvent.setup();
       const onToggleAttendance = vi.fn();
 
-      render(
+      renderWithProviders(
         <AttendeesSection
           {...defaultProps}
           attendees={[mockAttendees[1]]}
           onToggleAttendance={onToggleAttendance}
-        />,
-        { wrapper: createWrapper() }
+        />
       );
 
       const attendedButton = screen.getByRole('button', { name: /mark as attended/i });
@@ -447,29 +405,24 @@ describe('AttendeesSection Component', () => {
 
   describe('Edit and Delete Tests', () => {
     it('renders edit button for non-team-member attendees', () => {
-      render(<AttendeesSection {...defaultProps} attendees={[mockAttendees[1]]} />, {
-        wrapper: createWrapper(),
-      });
+      renderWithProviders(<AttendeesSection {...defaultProps} attendees={[mockAttendees[1]]} />);
 
       expect(screen.getByRole('button', { name: /edit attendee/i })).toBeInTheDocument();
     });
 
     it('renders delete button for each attendee', () => {
-      render(<AttendeesSection {...defaultProps} attendees={[mockAttendees[0]]} />, {
-        wrapper: createWrapper(),
-      });
+      renderWithProviders(<AttendeesSection {...defaultProps} attendees={[mockAttendees[0]]} />);
 
       expect(screen.getByRole('button', { name: /remove attendee/i })).toBeInTheDocument();
     });
 
     it('disables edit button for team members', () => {
-      render(
+      renderWithProviders(
         <AttendeesSection
           {...defaultProps}
           attendees={[mockAttendees[0]]}
           teamMembers={mockTeamMembers}
-        />,
-        { wrapper: createWrapper() }
+        />
       );
 
       const editButton = screen.getByRole('button', { name: /team members cannot be edited/i });
@@ -478,9 +431,7 @@ describe('AttendeesSection Component', () => {
 
     it('opens delete confirmation dialog when delete is clicked', async () => {
       const user = userEvent.setup();
-      render(<AttendeesSection {...defaultProps} attendees={[mockAttendees[0]]} />, {
-        wrapper: createWrapper(),
-      });
+      renderWithProviders(<AttendeesSection {...defaultProps} attendees={[mockAttendees[0]]} />);
 
       const deleteButton = screen.getByRole('button', { name: /remove attendee/i });
       await user.click(deleteButton);
@@ -492,27 +443,24 @@ describe('AttendeesSection Component', () => {
 
   describe('Completed State Tests', () => {
     it('disables "Add Attendees" button when completed', () => {
-      render(<AttendeesSection {...defaultProps} isCompleted={true} />, {
-        wrapper: createWrapper(),
-      });
+      renderWithProviders(<AttendeesSection {...defaultProps} isCompleted={true} />);
 
       const addButton = screen.getByRole('button', { name: /add attendees/i });
       expect(addButton).toBeDisabled();
     });
 
     it('does not render edit/delete buttons when completed', () => {
-      render(<AttendeesSection {...defaultProps} attendees={mockAttendees} isCompleted={true} />, {
-        wrapper: createWrapper(),
-      });
+      renderWithProviders(
+        <AttendeesSection {...defaultProps} attendees={mockAttendees} isCompleted={true} />
+      );
 
       expect(screen.queryByRole('button', { name: /edit attendee/i })).not.toBeInTheDocument();
       expect(screen.queryByRole('button', { name: /remove attendee/i })).not.toBeInTheDocument();
     });
 
     it('disables attendance toggle buttons when completed', () => {
-      render(
-        <AttendeesSection {...defaultProps} attendees={[mockAttendees[0]]} isCompleted={true} />,
-        { wrapper: createWrapper() }
+      renderWithProviders(
+        <AttendeesSection {...defaultProps} attendees={[mockAttendees[0]]} isCompleted={true} />
       );
 
       const attendedButton = screen.getByRole('button', { name: /mark as attended/i });
@@ -523,9 +471,7 @@ describe('AttendeesSection Component', () => {
   describe('Modal Tests', () => {
     it('opens add attendee modal when "Add Attendees" is clicked', async () => {
       const user = userEvent.setup();
-      render(<AttendeesSection {...defaultProps} />, {
-        wrapper: createWrapper(),
-      });
+      renderWithProviders(<AttendeesSection {...defaultProps} />);
 
       const addButton = screen.getByRole('button', { name: /add attendees/i });
       await user.click(addButton);
@@ -537,9 +483,7 @@ describe('AttendeesSection Component', () => {
 
     it('closes modal when cancel is clicked', async () => {
       const user = userEvent.setup();
-      render(<AttendeesSection {...defaultProps} />, {
-        wrapper: createWrapper(),
-      });
+      renderWithProviders(<AttendeesSection {...defaultProps} />);
 
       // Open modal
       const addButton = screen.getByRole('button', { name: /add attendees/i });
@@ -556,9 +500,7 @@ describe('AttendeesSection Component', () => {
 
     it('opens edit modal with attendee data when edit is clicked', async () => {
       const user = userEvent.setup();
-      render(<AttendeesSection {...defaultProps} attendees={[mockAttendees[1]]} />, {
-        wrapper: createWrapper(),
-      });
+      renderWithProviders(<AttendeesSection {...defaultProps} attendees={[mockAttendees[1]]} />);
 
       const editButton = screen.getByRole('button', { name: /edit attendee/i });
       await user.click(editButton);
@@ -571,9 +513,7 @@ describe('AttendeesSection Component', () => {
   describe('Form Validation Tests', () => {
     it('shows error when submitting empty name', async () => {
       const user = userEvent.setup();
-      render(<AttendeesSection {...defaultProps} />, {
-        wrapper: createWrapper(),
-      });
+      renderWithProviders(<AttendeesSection {...defaultProps} />);
 
       // Open modal
       const addButton = screen.getByRole('button', { name: /add attendees/i });
@@ -592,9 +532,7 @@ describe('AttendeesSection Component', () => {
 
     it('shows error for invalid email', async () => {
       const user = userEvent.setup();
-      render(<AttendeesSection {...defaultProps} />, {
-        wrapper: createWrapper(),
-      });
+      renderWithProviders(<AttendeesSection {...defaultProps} />);
 
       // Open modal
       const addButton = screen.getByRole('button', { name: /add attendees/i });
@@ -613,9 +551,7 @@ describe('AttendeesSection Component', () => {
 
     it('accepts valid email', async () => {
       const user = userEvent.setup();
-      render(<AttendeesSection {...defaultProps} />, {
-        wrapper: createWrapper(),
-      });
+      renderWithProviders(<AttendeesSection {...defaultProps} />);
 
       // Open modal
       const addButton = screen.getByRole('button', { name: /add attendees/i });
@@ -636,9 +572,7 @@ describe('AttendeesSection Component', () => {
 
   describe('Loading States Tests', () => {
     it('disables add button when isCompleted is true', () => {
-      render(<AttendeesSection {...defaultProps} isCompleted={true} />, {
-        wrapper: createWrapper(),
-      });
+      renderWithProviders(<AttendeesSection {...defaultProps} isCompleted={true} />);
 
       const addButton = screen.getByRole('button', { name: /add attendees/i });
       expect(addButton).toBeDisabled();
@@ -646,9 +580,9 @@ describe('AttendeesSection Component', () => {
     });
 
     it('disables attendance buttons when isUpdating is true', () => {
-      render(<AttendeesSection {...defaultProps} attendees={mockAttendees} isUpdating={true} />, {
-        wrapper: createWrapper(),
-      });
+      renderWithProviders(
+        <AttendeesSection {...defaultProps} attendees={mockAttendees} isUpdating={true} />
+      );
 
       const attendedButtons = screen.getAllByRole('button', { name: /mark as attended/i });
       attendedButtons.forEach((button) => {
@@ -657,14 +591,13 @@ describe('AttendeesSection Component', () => {
     });
 
     it('disables quick action buttons when isAdding is true', () => {
-      render(
+      renderWithProviders(
         <AttendeesSection
           {...defaultProps}
           attendees={[mockAttendees[0]]}
           teamMembers={mockTeamMembers}
           isAdding={true}
-        />,
-        { wrapper: createWrapper() }
+        />
       );
 
       // Quick action buttons in unmarked section should be disabled
@@ -675,18 +608,14 @@ describe('AttendeesSection Component', () => {
 
   describe('Accessibility Tests', () => {
     it('has correct heading structure', () => {
-      render(<AttendeesSection {...defaultProps} />, {
-        wrapper: createWrapper(),
-      });
+      renderWithProviders(<AttendeesSection {...defaultProps} />);
 
       const heading = screen.getByRole('heading', { name: /attendees/i });
       expect(heading).toBeInTheDocument();
     });
 
     it('filter tabs have correct ARIA attributes', () => {
-      render(<AttendeesSection {...defaultProps} attendees={mockAttendees} />, {
-        wrapper: createWrapper(),
-      });
+      renderWithProviders(<AttendeesSection {...defaultProps} attendees={mockAttendees} />);
 
       const filterGroup = screen.getByRole('radiogroup', { name: /filter attendees/i });
       expect(filterGroup).toBeInTheDocument();
@@ -696,9 +625,7 @@ describe('AttendeesSection Component', () => {
     });
 
     it('attendance buttons have aria-pressed attribute', () => {
-      render(<AttendeesSection {...defaultProps} attendees={[mockAttendees[0]]} />, {
-        wrapper: createWrapper(),
-      });
+      renderWithProviders(<AttendeesSection {...defaultProps} attendees={[mockAttendees[0]]} />);
 
       const attendedButton = screen.getByRole('button', { name: /mark as attended/i });
       expect(attendedButton).toHaveAttribute('aria-pressed', 'true');
@@ -706,9 +633,7 @@ describe('AttendeesSection Component', () => {
 
     it('modal has correct ARIA attributes when open', async () => {
       const user = userEvent.setup();
-      render(<AttendeesSection {...defaultProps} />, {
-        wrapper: createWrapper(),
-      });
+      renderWithProviders(<AttendeesSection {...defaultProps} />);
 
       const addButton = screen.getByRole('button', { name: /add attendees/i });
       await user.click(addButton);
@@ -719,9 +644,7 @@ describe('AttendeesSection Component', () => {
 
     it('form inputs have correct labels', async () => {
       const user = userEvent.setup();
-      render(<AttendeesSection {...defaultProps} />, {
-        wrapper: createWrapper(),
-      });
+      renderWithProviders(<AttendeesSection {...defaultProps} />);
 
       const addButton = screen.getByRole('button', { name: /add attendees/i });
       await user.click(addButton);
@@ -735,18 +658,18 @@ describe('AttendeesSection Component', () => {
   describe('Edge Cases', () => {
     it('handles attendee with no email', () => {
       const attendeeWithoutEmail = { ...mockAttendees[2] };
-      render(<AttendeesSection {...defaultProps} attendees={[attendeeWithoutEmail]} />, {
-        wrapper: createWrapper(),
-      });
+      renderWithProviders(
+        <AttendeesSection {...defaultProps} attendees={[attendeeWithoutEmail]} />
+      );
 
       expect(screen.getByText('Bob Wilson')).toBeInTheDocument();
     });
 
     it('handles attendee with no userId', () => {
       const attendeeWithoutUserId = { ...mockAttendees[1], userId: undefined };
-      render(<AttendeesSection {...defaultProps} attendees={[attendeeWithoutUserId]} />, {
-        wrapper: createWrapper(),
-      });
+      renderWithProviders(
+        <AttendeesSection {...defaultProps} attendees={[attendeeWithoutUserId]} />
+      );
 
       expect(screen.getByText('Jane Smith')).toBeInTheDocument();
     });
@@ -757,9 +680,8 @@ describe('AttendeesSection Component', () => {
         role: 'Unknown Role',
       } as TeamMember;
 
-      render(
-        <AttendeesSection {...defaultProps} attendees={[]} teamMembers={[teamMemberWithoutUser]} />,
-        { wrapper: createWrapper() }
+      renderWithProviders(
+        <AttendeesSection {...defaultProps} attendees={[]} teamMembers={[teamMemberWithoutUser]} />
       );
 
       // Should not crash
@@ -768,9 +690,7 @@ describe('AttendeesSection Component', () => {
 
     it('handles single name (no space) for initials', () => {
       const singleNameAttendee = { ...mockAttendees[0], name: 'Madonna' };
-      render(<AttendeesSection {...defaultProps} attendees={[singleNameAttendee]} />, {
-        wrapper: createWrapper(),
-      });
+      renderWithProviders(<AttendeesSection {...defaultProps} attendees={[singleNameAttendee]} />);
 
       // Should show 'M' (first letter of single name, sliced to max 2 chars)
       expect(screen.getByText('M')).toBeInTheDocument();
@@ -778,9 +698,7 @@ describe('AttendeesSection Component', () => {
 
     it('handles empty name for initials', () => {
       const emptyNameAttendee = { ...mockAttendees[0], name: '' };
-      render(<AttendeesSection {...defaultProps} attendees={[emptyNameAttendee]} />, {
-        wrapper: createWrapper(),
-      });
+      renderWithProviders(<AttendeesSection {...defaultProps} attendees={[emptyNameAttendee]} />);
 
       expect(screen.getByText('??')).toBeInTheDocument();
     });
@@ -788,9 +706,8 @@ describe('AttendeesSection Component', () => {
 
   describe('Custom ClassName Tests', () => {
     it('applies custom className to section', () => {
-      const { container } = render(
-        <AttendeesSection {...defaultProps} className="custom-section" />,
-        { wrapper: createWrapper() }
+      const { container } = renderWithProviders(
+        <AttendeesSection {...defaultProps} className="custom-section" />
       );
 
       const section = container.querySelector('.attendees-section');
@@ -801,13 +718,12 @@ describe('AttendeesSection Component', () => {
   describe('Integration Tests', () => {
     it('filters attendees correctly when switching tabs', async () => {
       const user = userEvent.setup();
-      render(
+      renderWithProviders(
         <AttendeesSection
           {...defaultProps}
           attendees={mockAttendees}
           teamMembers={mockTeamMembers}
-        />,
-        { wrapper: createWrapper() }
+        />
       );
 
       // Click on Guests tab
@@ -819,9 +735,8 @@ describe('AttendeesSection Component', () => {
     });
 
     it('maintains state when props change', () => {
-      const { rerender } = render(
-        <AttendeesSection {...defaultProps} attendees={mockAttendees} />,
-        { wrapper: createWrapper() }
+      const { rerender } = renderWithProviders(
+        <AttendeesSection {...defaultProps} attendees={mockAttendees} />
       );
 
       expect(screen.getByText('John Doe')).toBeInTheDocument();
@@ -830,11 +745,7 @@ describe('AttendeesSection Component', () => {
         ...mockAttendees,
         { ...mockAttendees[0], id: 'attendee-4', name: 'New Person' },
       ];
-      rerender(
-        <QueryClientProvider client={new QueryClient()}>
-          <AttendeesSection {...defaultProps} attendees={newAttendees} />
-        </QueryClientProvider>
-      );
+      rerender(<AttendeesSection {...defaultProps} attendees={newAttendees} />);
 
       expect(screen.getByText('New Person')).toBeInTheDocument();
     });

@@ -1,0 +1,196 @@
+{
+  "aria": {
+    "closeModal": "[Clósé módàlllll]",
+    "teamStatistics": "[Téàm Stàtístícssssss]"
+  },
+  "capabilities": {
+    "agileCeremonies": "[Àgílé Cérémóníéssssss]",
+    "agileCeremoniesDesc": "[Fàcílítàté dàíly scrúms, révíéws, ànd rétróspéctívésssssssssssssssss]",
+    "progressTracking": "[Prógréss Tràckínggggggg]",
+    "progressTrackingDesc": "[Tràck prógréss wíth réàl-tímé dàshbóàrds ànd répórtsssssssssssssssss]",
+    "sprintPlanning": "[Sprínt Plànníngggggg]",
+    "sprintPlanningDesc": "[Plàn ànd mànàgé sprínts wíth yóúr téàmmmmmmmmmmmmm]",
+    "teamCollaboration": "[Téàm Cóllàbóràtíónnnnnnn]",
+    "teamCollaborationDesc": "[Wórk tógéthér éfféctívély wíth shàréd góàls ànd vísíbílítyyyyyyyyyyyyyyyyyyy]",
+    "title": "[Plàtfórm Càpàbílítíéssssssss]"
+  },
+  "deleteModal": {
+    "cancel": "[Càncélll]",
+    "close": "[Clósééé]",
+    "confirmation": "[Àré yóú súré yóú wànt tó rémóvééééééééééé {{name}} fróm thé téàmmmmmm?]",
+    "removeMember": "[Rémóvé Mémbérrrrr]",
+    "removing": "[RRéémmóóvvíínng...]",
+    "title": "[Rémóvé Téàm Mémbérrrrrrr]",
+    "warning": "[Thís àctíón cànnót bé úndóné. Thé úsér wíll lósé àccéss tó àll téàm résóúrcésssssssssssssssssssssssss.]"
+  },
+  "developer": {
+    "badge": "[Téàm Mémbérrrrr]",
+    "checkInvitations": "[Chéck Ínvítàtíónsssssss]",
+    "description": "[Jóín àn éxístíng Scrúm téàmmmmmmmmmm...]",
+    "howToJoin": {
+      "checkNotifications": "[Chéck yóúr nótífícàtíóns: Lóók fór péndíng téàm ínvítàtíónsssssssssssssssssss]",
+      "contactLeadership": "[Cóntàct yóúr léàdérshíp: Réàch óút tó yóúr Scrúm Màstér ór Pródúct Ównérrrrrrrrrrrrrrrrrrrrrrr]",
+      "invitationsSentBy": "[Téàm ínvítàtíóns àré sént by: Scrúm Màstérs ór Pródúct Ównérs ónlyyyyyyyyyyyyyyyyyyyyy]",
+      "title": "[Hów tó Jóín à Téàmmmmmmm]"
+    },
+    "title": "[Dévélópérrrr]"
+  },
+  "errorStates": {
+    "accessDenied": "[Àccéss déníéddddd]",
+    "notInvited": "[Yóú hàvén't béén ínvítéd tó à téàm yéttttttttttttt]",
+    "teamAccessRequired": "[Téàm àccéss réqúíréddddddd]",
+    "teamNotFound": "[Téàm nót fóúndddddd]",
+    "tryAgain": "[Try Àgàínnnn]",
+    "unableToLoad": "[Únàblé tó lóàd téàmmmmmmm]"
+  },
+  "errors": {
+    "genericInviteError": "[Fàíléd tó àdd téàm mémbér. Pléàsé try àgàín làtérrrrrrrrrrrrrrrr.]",
+    "genericRemoveError": "[Fàíléd tó rémóvé téàm mémbér. Pléàsé try àgàín làtérrrrrrrrrrrrrrrrr.]",
+    "memberAlreadyExists": "[Thís úsér ís àlréàdy à mémbér óf thé téàmmmmmmmmmmmmmm.]",
+    "memberNotFound": "[Téàm mémbér nót fóúnd. Théy mày hàvé àlréàdy béén rémóvéddddddddddddddddddd.]",
+    "memberRemoved": "[Téàm mémbér hàs béén súccéssfúlly rémóvédddddddddddddd.]",
+    "networkError": "[Nétwórk érrór. Pléàsé chéck yóúr cónnéctíón ànd try àgàínnnnnnnnnnnnnnnnnnn.]",
+    "noPermissionToAddMembers": "[Yóú dó nót hàvé pérmíssíón tó àdd téàm mémbérs. Ónly Pródúct Ównérs ànd Scrúm Màstérs càn ínvíté mémbérsssssssssssssssssssssssssssssssss.]",
+    "noPermissionToRemoveMembers": "[Yóú dó nót hàvé pérmíssíón tó rémóvé téàm mémbérs. Ónly Scrúm Màstérs ànd Pródúct Ównérs càn rémóvé mémbérssssssssssssssssssssssssssssssssss.]"
+  },
+  "help": {
+    "description": "[Íf yóú'ré únsúré àbóút yóúr rólé ór nééd àssístàncé, cóntàct yóúr órgànízàtíón àdmínístràtór ór chéck wíth yóúr prójéct mànàgérrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr.]",
+    "title": "[Nééd Hélp Géttíng Stàrtéddddddddd?]"
+  },
+  "initializing": "[Ínítíàlízíng téàm cóntéxtttttttttt...]",
+  "inviteErrors": {
+    "alreadyMember": "[Thís úsér ís àlréàdy à mémbér óf thé téàmmmmmmmmmmmmmm.]",
+    "emailRequired": "[Émàíl àddréss ís réqúíréddddddddd.]",
+    "emailTooLong": "[Émàíl àddréss ís tóó lóng. Màxímúm léngth ís 254 chàràctérsssssssssssssssssss.]",
+    "genericError": "[Fàíléd tó àdd téàm mémbér. Pléàsé try àgàín làtérrrrrrrrrrrrrrrr.]",
+    "invalidEmail": "[Pléàsé éntér à vàlíd émàíl àddrésssssssssssss.]",
+    "networkError": "[Nétwórk érrór. Pléàsé chéck yóúr cónnéctíón ànd try àgàínnnnnnnnnnnnnnnnnnn.]",
+    "noPermission": "[Yóú dó nót hàvé pérmíssíón tó àdd téàm mémbérssssssssssssssss.]",
+    "userNotFound": "[Nó úsér fóúnd wíth thís émàíl àddréss. Thé úsér múst régístér fírst béfóré théy càn bé ínvítéd tó à téàmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm.]"
+  },
+  "inviteModal": {
+    "addedSuccess": "[{{name}} hàs béén àddéd tó thé téàm àsssssssssss {{role}}.]",
+    "adding": "[ÀÀddddíínng...]",
+    "cancel": "[Càncélll]",
+    "emailLabel": "[Émàíl Àddréssssss]",
+    "emailPlaceholder": "[Éntér émàíl àddréssssssss]",
+    "role": "[RRóóllé]",
+    "sendInvite": "[Sénd Ínvítééééé]",
+    "title": "[Ínvíté Téàm Mémbérrrrrrr]",
+    "unsentMessage": "[Yóú hàvé àn únsént téàm ínvítàtíón. Àré yóú súré yóú wànt tó díscàrd íttttttttttttttttttttttt?]",
+    "unsentTitle": "[Únsént Ínvítàtíónnnnnnn]"
+  },
+  "leadership": {
+    "badge": "[Léàdérshípppp]",
+    "createTeam": "[Créàté Néw Téàmmmmmm]",
+    "description": "[Às àn àgílé léàdér, yóú hàvé thé àúthóríty tó créàté ànd mànàgé téàms. Tàké chàrgé óf yóúr prójéct's súccéss by éstàblíshíng yóúr téàm wórkspàcééééééééééééééééééééééééééééééééééééééééééééé.]",
+    "quickStart": {
+      "step1": "[Créàté téàmmmmm]",
+      "step2": "[Ínvíté mémbérssssss]",
+      "step3": "[Stàrt sprínttttt]"
+    },
+    "quickStartTitle": "[Qúíck Stàrt Prócéssssssss:]",
+    "title": "[Scrúm Màstér ór Pródúct Ównérrrrrrrrrr]"
+  },
+  "loading": "[Lóàdíng téàm ínfórmàtíónnnnnnnnnn...]",
+  "memberCard": {
+    "ariaLabels": {
+      "removeFromTeam": "[Rémóvé fróm téàmmmmmm]",
+      "removeNameFromTeam": "[RRéémmóóvvé {{name}} fróm téàmmmm]",
+      "sendMessage": "[Sénd méssàgééééé]",
+      "sendMessageTo": "[Sénd méssàgé tóóóóóó {{name}}]",
+      "teamMember": "[Téàm mémbérrrrr: {{name}}]"
+    },
+    "memberSince": "[Mémbér síncééééé]",
+    "roleNames": {
+      "administrator": "[Àdmínístràtórrrrr]",
+      "developer": "[Dévélópérrrr]",
+      "productOwner": "[Pródúct Ównérrrrr]",
+      "scrumMaster": "[Scrúm Màstérrrrr]"
+    },
+    "titles": {
+      "removeFromTeam": "[Rémóvé fróm téàmmmmmm]",
+      "sendMessage": "[Sénd méssàgééééé]"
+    },
+    "unknownDate": "[Únknównnnn]",
+    "unknownUser": "[Únknówn Úsérrrrr]"
+  },
+  "members": {
+    "addFirstMember": "[Àdd Fírst Mémbérrrrrr]",
+    "adding": "[ÀÀddddíínng...]",
+    "clearAllFilters": "[Cléàr àll fíltérsssssss]",
+    "clearFilters": "[Cléàr fíltérsssss]",
+    "clearSearchAriaLabel": "[Cléàr séàrchhhhh]",
+    "empty": "[Nó téàm mémbérs fóúndddddddd.]",
+    "filterByRoleAriaLabel": "[Fíltér mémbérs by róléééééééé]",
+    "filterOptions": {
+      "allRoles": "[Àll Róléssss]",
+      "developer": "[Dévélópérrrr]",
+      "productOwner": "[Pródúct Ównérrrrr]",
+      "scrumMaster": "[Scrúm Màstérrrrr]"
+    },
+    "filterResults": "[Shówíngggg {{shown}} óóff {{total}} mémbér(ssss)]",
+    "inviteMember": "[Ínvíté Mémbérrrrr]",
+    "noMatchSearch": "[Nó mémbérs màtch yóúr séàrch crítéríààààààààààààà.]",
+    "searchAriaLabel": "[Séàrch by nàmé ór émàíllllllll]",
+    "searchPlaceholder": "[Séàrch by nàmé ór émàílllllllll...]",
+    "sortByAriaLabel": "[Sórt mémbérs byyyyyy]",
+    "sortOptions": {
+      "byJoined": "[Sórt by Jóínédddddd]",
+      "byName": "[Sórt by Nàmééééé]",
+      "byRole": "[Sórt by Rólééééé]"
+    },
+    "title": "[Téàm Mémbérsssss]",
+    "viewModeAriaLabel": "[Víéw módé tóggléééééé]",
+    "viewToggles": {
+      "cardView": "[Càrd víéwwww]",
+      "listView": "[Líst víéwwww]"
+    }
+  },
+  "noTeam": "[NNóó TTééààm]",
+  "selectTeam": "[Séléct à Téàmmmmm]",
+  "sendMessageModal": {
+    "cancel": "[Càncélll]",
+    "errors": {
+      "genericError": "[Fàíléd tó sénd méssàgé. Pléàsé try àgàín làtérrrrrrrrrrrrrrrr.]",
+      "networkError": "[Nétwórk érrór. Pléàsé chéck yóúr cónnéctíón ànd try àgàínnnnnnnnnnnnnnnnnnn.]",
+      "noPermission": "[Yóú dó nót hàvé pérmíssíón tó sénd méssàgés tó thís úsérrrrrrrrrrrrrrrrrrr.]",
+      "recipientNotFound": "[Récípíént nót fóúnd. Thé úsér mày hàvé béén rémóvéddddddddddddddddd.]"
+    },
+    "messageLabel": "[Méssàgéééé]",
+    "messagePlaceholder": "[Typé yóúr méssàgé hérééééééééé...]",
+    "send": "[Sénd Méssàgééééé]",
+    "sending": "[Séndíngggg...]",
+    "subtitle": "[TTóó: {{name}} ({{email}})]",
+    "success": "[Méssàgé sént súccéssfúllyyyyyyyyy!]",
+    "title": "[Sénd Méssàgééééé]",
+    "unsavedMessage": "[Yóú hàvé àn únsént méssàgé. Àré yóú súré yóú wànt tó díscàrd íttttttttttttttttttttt?]",
+    "unsavedTitle": "[Únsént Méssàgéééééé]",
+    "validation": {
+      "emptyMessage": "[Pléàsé éntér à méssàgéééééééé.]",
+      "maxLength": "[Méssàgé múst bé léss thànnnnnnnnn {{limit}} chàràctérsssss.]"
+    }
+  },
+  "subtitle": "[Mànàgé téàm mémbérs ànd téàm stàndàrdsssssssssssss]",
+  "teamInfo": {
+    "created": "[Créàtédddd: {{date}}]",
+    "lastUpdated": "[Làst úpdàtédddddd: {{date}}]",
+    "memberCount": "[{{count}} mémbérssss]",
+    "teamId": "[TTééààmm ÍÍD: {{id}}]",
+    "unableToLoad": "[Únàblé tó lóàd téàm détàíls. Pléàsé try réfréshíng thé pàgééééééééééééééééééé.]",
+    "unavailable": "[Téàm Ínfórmàtíón Únàvàílàbléééééééééé]"
+  },
+  "teamStats": {
+    "avgVelocity": "[Àvg Vélócítyyyyy]",
+    "completedSprints": "[Cómplétéd Spríntsssssss]",
+    "sprintSuccessRate": "[Sprínt Súccéss Ràtééééééé]",
+    "storyPointsCompleted": "[Stóry Póínts Cómplétédddddddd]"
+  },
+  "title": "[TTééààm]",
+  "welcome": {
+    "selectRole": "[Séléct Yóúr Rólé tó Cóntínúéééééééééé]",
+    "subtitle": "[Yóúr àgílé jóúrnéy stàrts hérééééééééééé...]",
+    "title": "[Wélcómé tó Scrúmóóthhhhhhhh, {{name}}!]"
+  },
+  "yourTeams": "[Yóúr Téàmssss]"
+}

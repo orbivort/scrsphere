@@ -9,6 +9,12 @@ import { generateUUIDv7 } from '../../utils/uuid';
 import bcrypt from 'bcrypt';
 import { CSRF_CONSTANTS } from '../../middleware/csrf.middleware';
 import { getCsrfToken, extractCsrfFromCookies } from '../helpers/test-helpers';
+import {
+  createI18nTestUser,
+  getTranslatedMessage,
+  expectAllLocalesHaveTranslation,
+} from '../helpers/i18n-helpers';
+import type { Locale } from '@scrumooth/shared';
 
 const uniqueId = () => `${Date.now()}-${Math.random().toString(36).substring(7)}`;
 
@@ -706,6 +712,285 @@ describe('Retrospectives Integration Tests', () => {
         .expect(401);
 
       expect(response.body.success).toBe(false);
+    });
+  });
+
+  describe('i18n Locale Support', () => {
+    const testEmails: string[] = [];
+    const testTeams: string[] = [];
+
+    afterEach(async () => {
+      await cleanupTeams(testTeams);
+      await cleanupTestData(testEmails);
+      testEmails.length = 0;
+      testTeams.length = 0;
+    });
+
+    describe('Translated retrospective category labels', () => {
+      it('should have category translation keys in all supported locales', () => {
+        // Verify all locales have translation keys for retrospective categories
+        const categoryTranslations = {
+          'retrospectives:categoryWentWell': {
+            en: 'What went well',
+            de: 'Was gut lief',
+            es: 'Qué funcionó bien',
+            fr: 'Ce qui a bien fonctionné',
+            it: 'Cosa ha funzionato bene',
+          },
+          'retrospectives:categoryDidntGoWell': {
+            en: "What didn't go well",
+            de: 'Was nicht gut lief',
+            es: 'Qué no funcionó bien',
+            fr: "Ce qui n'a pas bien fonctionné",
+            it: 'Cosa non ha funzionato bene',
+          },
+          'retrospectives:categoryImprovement': {
+            en: 'Improvements',
+            de: 'Verbesserungen',
+            es: 'Mejoras',
+            fr: 'Améliorations',
+            it: 'Miglioramenti',
+          },
+        };
+
+        for (const [key, expected] of Object.entries(categoryTranslations)) {
+          const translations = expectAllLocalesHaveTranslation(key);
+          expect(translations.en).toBe(expected.en);
+          expect(translations.de).toBe(expected.de);
+          expect(translations.es).toBe(expected.es);
+          expect(translations.fr).toBe(expected.fr);
+          expect(translations.it).toBe(expected.it);
+        }
+      });
+
+      it('should return translated category label based on locale preference', async () => {
+        const email = `i18n-category-${uniqueId()}@example.com`;
+        testEmails.push(email);
+
+        const user = await createI18nTestUser(email, 'de', prisma);
+        const teamName = `i18n Category Team ${uniqueId()}`;
+        testTeams.push(teamName);
+
+        const team = await createTestTeam(teamName);
+        await addTeamMember(team.id, user.id, 'SCRUM_MASTER');
+        const sprint = await createTestSprint(team.id, 'Sprint');
+
+        const retro = await prisma.sprintRetrospective.create({
+          data: {
+            id: generateUUIDv7(),
+            sprintId: sprint.id,
+            teamId: team.id,
+            facilitatorId: user.id,
+            retroDate: new Date(),
+          },
+        });
+
+        const item = await prisma.retrospectiveItem.create({
+          data: {
+            id: generateUUIDv7(),
+            retrospectiveId: retro.id,
+            category: 'WENT_WELL',
+            content: 'Team collaboration was excellent',
+          },
+        });
+
+        const cookies = await loginAndGetCookies(email);
+
+        const response = await request(app)
+          .get(`/api/v1/retrospectives/${retro.id}`)
+          .set('Cookie', cookies)
+          .expect(200);
+
+        expect(response.body.success).toBe(true);
+        expect(response.body.data.items).toBeDefined();
+        const retroItem = response.body.data.items.find((i: { id: string }) => i.id === item.id);
+        expect(retroItem).toBeDefined();
+        expect(retroItem.category).toBe('WENT_WELL');
+
+        // Verify German category label translation exists
+        const germanLabel = getTranslatedMessage('retrospectives:categoryWentWell', 'de');
+        expect(germanLabel).toBe('Was gut lief');
+      });
+
+      it('should have different category labels for each locale', async () => {
+        const testCases: { locale: Locale; expectedLabel: string }[] = [
+          { locale: 'en', expectedLabel: 'What went well' },
+          { locale: 'de', expectedLabel: 'Was gut lief' },
+          { locale: 'es', expectedLabel: 'Qué funcionó bien' },
+          { locale: 'fr', expectedLabel: 'Ce qui a bien fonctionné' },
+          { locale: 'it', expectedLabel: 'Cosa ha funzionato bene' },
+        ];
+
+        for (const { locale, expectedLabel } of testCases) {
+          const label = getTranslatedMessage('retrospectives:categoryWentWell', locale);
+          expect(label).toBe(expectedLabel);
+        }
+      });
+    });
+
+    describe('Translated action item messages', () => {
+      it('should have action item status translation keys in all supported locales', () => {
+        const statusKeys = [
+          'retrospectives:statusPending',
+          'retrospectives:statusInProgress',
+          'retrospectives:statusCompleted',
+          'retrospectives:statusCancelled',
+        ];
+
+        for (const key of statusKeys) {
+          const translations = expectAllLocalesHaveTranslation(key);
+          expect(typeof translations.en).toBe('string');
+          expect(typeof translations.de).toBe('string');
+          expect(typeof translations.es).toBe('string');
+          expect(typeof translations.fr).toBe('string');
+          expect(typeof translations.it).toBe('string');
+        }
+      });
+
+      it('should have action item message translation keys in all supported locales', () => {
+        const messageKeysWithInterpolation = [
+          'retrospectives:actionItemCreated',
+          'retrospectives:actionItemUpdated',
+        ];
+
+        for (const key of messageKeysWithInterpolation) {
+          const translations = expectAllLocalesHaveTranslation(key);
+          // Verify interpolation placeholder exists
+          expect(translations.en).toContain('{{title}}');
+          expect(translations.de).toContain('{{title}}');
+          expect(translations.es).toContain('{{title}}');
+          expect(translations.fr).toContain('{{title}}');
+          expect(translations.it).toContain('{{title}}');
+        }
+
+        // actionItemDeleted doesn't need interpolation
+        const deleteTranslations = expectAllLocalesHaveTranslation(
+          'retrospectives:actionItemDeleted'
+        );
+        expect(typeof deleteTranslations.en).toBe('string');
+        expect(typeof deleteTranslations.de).toBe('string');
+        expect(typeof deleteTranslations.es).toBe('string');
+        expect(typeof deleteTranslations.fr).toBe('string');
+        expect(typeof deleteTranslations.it).toBe('string');
+      });
+
+      it('should translate action item creation message with interpolation', async () => {
+        const email = `i18n-action-msg-${uniqueId()}@example.com`;
+        testEmails.push(email);
+
+        const user = await createI18nTestUser(email, 'fr', prisma);
+        const teamName = `i18n Action Team ${uniqueId()}`;
+        testTeams.push(teamName);
+
+        const team = await createTestTeam(teamName);
+        await addTeamMember(team.id, user.id, 'SCRUM_MASTER');
+        const sprint = await createTestSprint(team.id, 'Sprint');
+
+        const retro = await prisma.sprintRetrospective.create({
+          data: {
+            id: generateUUIDv7(),
+            sprintId: sprint.id,
+            teamId: team.id,
+            facilitatorId: user.id,
+            retroDate: new Date(),
+          },
+        });
+
+        const cookies = await loginAndGetCookies(email);
+        const { csrfToken } = extractCsrfFromCookies(cookies);
+
+        const actionItemTitle = 'Improve code review process';
+        const response = await request(app)
+          .post(`/api/v1/retrospectives/${retro.id}/action-items`)
+          .set('Cookie', cookies)
+          .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+          .send({
+            title: actionItemTitle,
+            description: 'We need to improve our code review practices',
+            ownerId: user.id,
+            status: 'PENDING',
+            dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+          })
+          .expect(201);
+
+        expect(response.body.success).toBe(true);
+        expect(response.body.data.title).toBe(actionItemTitle);
+
+        // Verify French action item message translation with interpolation
+        const frenchMessage = getTranslatedMessage('retrospectives:actionItemCreated', 'fr', {
+          title: actionItemTitle,
+        });
+        expect(frenchMessage).toContain(actionItemTitle);
+        expect(frenchMessage).toContain('créée');
+      });
+
+      it('should have error translation keys available for retrospective operations', () => {
+        // Verify that error translation keys exist for all supported locales
+        // Note: The retrospective controller uses hardcoded English messages,
+        // but these translation keys are available for future i18n integration
+        const errorKeys = [
+          'retrospectives:itemCreated',
+          'retrospectives:itemUpdated',
+          'retrospectives:itemDeleted',
+          'retrospectives:voteAdded',
+          'retrospectives:voteRemoved',
+          'retrospectives:attendeeAdded',
+          'retrospectives:attendeeRemoved',
+          'retrospectives:retrospectiveCreated',
+          'retrospectives:retrospectiveUpdated',
+        ];
+
+        for (const key of errorKeys) {
+          const translations = expectAllLocalesHaveTranslation(key);
+          expect(typeof translations.en).toBe('string');
+          expect(typeof translations.de).toBe('string');
+          expect(typeof translations.es).toBe('string');
+          expect(typeof translations.fr).toBe('string');
+          expect(typeof translations.it).toBe('string');
+        }
+      });
+
+      it('should translate action item status labels for all locales', () => {
+        const statusTranslations = {
+          'retrospectives:statusPending': {
+            en: 'Pending',
+            de: 'Ausstehend',
+            es: 'Pendiente',
+            fr: 'En attente',
+            it: 'In sospeso',
+          },
+          'retrospectives:statusInProgress': {
+            en: 'In progress',
+            de: 'In Bearbeitung',
+            es: 'En progreso',
+            fr: 'En cours',
+            it: 'In corso',
+          },
+          'retrospectives:statusCompleted': {
+            en: 'Completed',
+            de: 'Abgeschlossen',
+            es: 'Completado',
+            fr: 'Terminé',
+            it: 'Completato',
+          },
+          'retrospectives:statusCancelled': {
+            en: 'Cancelled',
+            de: 'Abgebrochen',
+            es: 'Cancelado',
+            fr: 'Annulé',
+            it: 'Annullato',
+          },
+        };
+
+        for (const [key, expected] of Object.entries(statusTranslations)) {
+          const translations = expectAllLocalesHaveTranslation(key);
+          expect(translations.en).toBe(expected.en);
+          expect(translations.de).toBe(expected.de);
+          expect(translations.es).toBe(expected.es);
+          expect(translations.fr).toBe(expected.fr);
+          expect(translations.it).toBe(expected.it);
+        }
+      });
     });
   });
 });

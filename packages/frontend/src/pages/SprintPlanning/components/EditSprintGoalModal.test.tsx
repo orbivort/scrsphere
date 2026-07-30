@@ -1,11 +1,24 @@
 import React from 'react';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
-import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { screen, waitFor, fireEvent, within } from '@testing-library/react';
+import { vi, describe, it, expect, beforeEach, afterEach, beforeAll } from 'vitest';
+
+import { renderWithProviders, initTestI18n } from '../../../test-utils';
 
 import { EditSprintGoalModal } from './EditSprintGoalModal';
 
+// Initialize i18n before all tests
+beforeAll(async () => {
+  await initTestI18n();
+});
+
 // Helper function to get the textarea by its id
 const getTextarea = () => screen.getByRole('textbox', { name: /Sprint Goal/i });
+
+// Helper function to get the footer cancel button (not the close button)
+const getFooterCancelButton = () => {
+  const footer = document.querySelector('footer');
+  return within(footer as HTMLElement).getByRole('button', { name: 'Cancel' });
+};
 
 // Mock CSS modules
 vi.mock('./EditSprintGoalModal.module.css', () => ({
@@ -93,46 +106,46 @@ describe('EditSprintGoalModal', () => {
 
   describe('Rendering', () => {
     it('should render modal when isOpen is true', () => {
-      render(<EditSprintGoalModal {...defaultProps} />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} />);
 
       expect(document.getElementById('edit-goal-form')).toBeInTheDocument();
       expect(screen.getByRole('heading', { name: /Edit Sprint Goal/i })).toBeInTheDocument();
     });
 
     it('should not render modal when isOpen is false', () => {
-      render(<EditSprintGoalModal {...defaultProps} isOpen={false} />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} isOpen={false} />);
 
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
 
     it('should display sprint name in subtitle', () => {
-      render(<EditSprintGoalModal {...defaultProps} sprintName="My Sprint" />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} sprintName="My Sprint" />);
 
       expect(screen.getByText(/My Sprint/)).toBeInTheDocument();
     });
 
     it('should render without subtitle when sprintName is not provided', () => {
-      render(<EditSprintGoalModal {...defaultProps} sprintName={undefined} />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} sprintName={undefined} />);
 
       expect(screen.queryByText(/Sprint:/i)).not.toBeInTheDocument();
     });
 
     it('should pre-populate textarea with initial goal', () => {
-      render(<EditSprintGoalModal {...defaultProps} initialGoal="My existing goal" />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} initialGoal="My existing goal" />);
 
       const textarea = getTextarea();
       expect(textarea).toHaveValue('My existing goal');
     });
 
     it('should render action buttons', () => {
-      render(<EditSprintGoalModal {...defaultProps} />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} />);
 
-      expect(screen.getByRole('button', { name: /Cancel/i })).toBeInTheDocument();
+      expect(getFooterCancelButton()).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /Save Goal/i })).toBeInTheDocument();
     });
 
     it('should render tips section', () => {
-      render(<EditSprintGoalModal {...defaultProps} />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} />);
 
       expect(screen.getByText(/Tips for a good Sprint Goal/i)).toBeInTheDocument();
       expect(screen.getByText(/Focus on value delivery/i)).toBeInTheDocument();
@@ -142,7 +155,7 @@ describe('EditSprintGoalModal', () => {
     });
 
     it('should render character counter', () => {
-      render(<EditSprintGoalModal {...defaultProps} initialGoal="Test" />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} initialGoal="Test" />);
 
       expect(screen.getByText(/4\/500/i)).toBeInTheDocument();
     });
@@ -150,28 +163,28 @@ describe('EditSprintGoalModal', () => {
 
   describe('Form Validation', () => {
     it('should disable save button when goal is empty', () => {
-      render(<EditSprintGoalModal {...defaultProps} initialGoal="" />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} initialGoal="" />);
 
       const saveButton = screen.getByRole('button', { name: /Save Goal/i });
       expect(saveButton).toBeDisabled();
     });
 
     it('should disable save button when goal is only whitespace', () => {
-      render(<EditSprintGoalModal {...defaultProps} initialGoal="   " />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} initialGoal="   " />);
 
       const saveButton = screen.getByRole('button', { name: /Save Goal/i });
       expect(saveButton).toBeDisabled();
     });
 
     it('should enable save button when goal has content', () => {
-      render(<EditSprintGoalModal {...defaultProps} initialGoal="Valid goal" />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} initialGoal="Valid goal" />);
 
       const saveButton = screen.getByRole('button', { name: /Save Goal/i });
       expect(saveButton).not.toBeDisabled();
     });
 
     it('should show error when submitting with empty goal', async () => {
-      render(<EditSprintGoalModal {...defaultProps} initialGoal="" />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} initialGoal="" />);
 
       const form = document.getElementById('edit-goal-form');
       fireEvent.submit(form);
@@ -182,7 +195,7 @@ describe('EditSprintGoalModal', () => {
     });
 
     it('should clear error when user starts typing', async () => {
-      render(<EditSprintGoalModal {...defaultProps} initialGoal="" />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} initialGoal="" />);
 
       const form = document.getElementById('edit-goal-form');
       fireEvent.submit(form);
@@ -200,7 +213,7 @@ describe('EditSprintGoalModal', () => {
 
   describe('Form Submission', () => {
     it('should call onSave with goal text when form is valid', async () => {
-      render(<EditSprintGoalModal {...defaultProps} initialGoal="New Goal" />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} initialGoal="New Goal" />);
 
       const saveButton = screen.getByRole('button', { name: /Save Goal/i });
       fireEvent.click(saveButton);
@@ -211,7 +224,9 @@ describe('EditSprintGoalModal', () => {
     });
 
     it('should trim whitespace from goal', async () => {
-      render(<EditSprintGoalModal {...defaultProps} initialGoal="  Goal with spaces  " />);
+      renderWithProviders(
+        <EditSprintGoalModal {...defaultProps} initialGoal="  Goal with spaces  " />
+      );
 
       const saveButton = screen.getByRole('button', { name: /Save Goal/i });
       fireEvent.click(saveButton);
@@ -222,7 +237,7 @@ describe('EditSprintGoalModal', () => {
     });
 
     it('should update goal text when user types', async () => {
-      render(<EditSprintGoalModal {...defaultProps} initialGoal="" />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} initialGoal="" />);
 
       const textarea = getTextarea();
       fireEvent.change(textarea, { target: { value: 'Updated goal text' } });
@@ -238,20 +253,20 @@ describe('EditSprintGoalModal', () => {
 
   describe('Loading State', () => {
     it('should show loading state when isSaving is true', () => {
-      render(<EditSprintGoalModal {...defaultProps} isSaving={true} />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} isSaving={true} />);
 
       expect(screen.getByText(/Saving.../i)).toBeInTheDocument();
     });
 
     it('should disable buttons when saving', () => {
-      render(<EditSprintGoalModal {...defaultProps} isSaving={true} />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} isSaving={true} />);
 
-      expect(screen.getByRole('button', { name: /Cancel/i })).toBeDisabled();
+      expect(getFooterCancelButton()).toBeDisabled();
       expect(screen.getByRole('button', { name: /Saving.../i })).toBeDisabled();
     });
 
     it('should have aria-busy attribute when saving', () => {
-      render(<EditSprintGoalModal {...defaultProps} isSaving={true} />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} isSaving={true} />);
 
       const saveButton = screen.getByRole('button', { name: /Saving.../i });
       expect(saveButton).toHaveAttribute('aria-busy', 'true');
@@ -260,23 +275,23 @@ describe('EditSprintGoalModal', () => {
 
   describe('Modal Close Behavior', () => {
     it('should call onClose when clicking cancel button without changes', () => {
-      render(<EditSprintGoalModal {...defaultProps} />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} />);
 
-      const cancelButton = screen.getByRole('button', { name: /Cancel/i });
+      const cancelButton = getFooterCancelButton();
       fireEvent.click(cancelButton);
 
       expect(defaultProps.onClose).toHaveBeenCalled();
     });
 
     it('should show unsaved changes modal when closing with changes', () => {
-      render(<EditSprintGoalModal {...defaultProps} initialGoal="Original" />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} initialGoal="Original" />);
 
       // Make a change
       const textarea = getTextarea();
       fireEvent.change(textarea, { target: { value: 'Modified' } });
 
       // Try to close
-      const cancelButton = screen.getByRole('button', { name: /Cancel/i });
+      const cancelButton = getFooterCancelButton();
       fireEvent.click(cancelButton);
 
       // Should show unsaved changes modal
@@ -285,14 +300,14 @@ describe('EditSprintGoalModal', () => {
     });
 
     it('should close when confirming discard of unsaved changes', () => {
-      render(<EditSprintGoalModal {...defaultProps} initialGoal="Original" />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} initialGoal="Original" />);
 
       // Make a change
       const textarea = getTextarea();
       fireEvent.change(textarea, { target: { value: 'Modified' } });
 
       // Try to close
-      const cancelButton = screen.getByRole('button', { name: /Cancel/i });
+      const cancelButton = getFooterCancelButton();
       fireEvent.click(cancelButton);
 
       // Confirm discard
@@ -303,14 +318,14 @@ describe('EditSprintGoalModal', () => {
     });
 
     it('should stay open when canceling discard of unsaved changes', () => {
-      render(<EditSprintGoalModal {...defaultProps} initialGoal="Original" />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} initialGoal="Original" />);
 
       // Make a change
       const textarea = getTextarea();
       fireEvent.change(textarea, { target: { value: 'Modified' } });
 
       // Try to close
-      const cancelButton = screen.getByRole('button', { name: /Cancel/i });
+      const cancelButton = getFooterCancelButton();
       fireEvent.click(cancelButton);
 
       // Cancel discard
@@ -323,7 +338,7 @@ describe('EditSprintGoalModal', () => {
     });
 
     it('should call onClose when clicking overlay without changes', () => {
-      render(<EditSprintGoalModal {...defaultProps} />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} />);
 
       const overlay = screen.getByRole('presentation');
       fireEvent.click(overlay);
@@ -332,7 +347,7 @@ describe('EditSprintGoalModal', () => {
     });
 
     it('should not close when clicking modal content', () => {
-      render(<EditSprintGoalModal {...defaultProps} />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} />);
 
       const modal = document.getElementById('edit-goal-form');
       fireEvent.click(modal);
@@ -341,9 +356,9 @@ describe('EditSprintGoalModal', () => {
     });
 
     it('should close directly when no changes made', () => {
-      render(<EditSprintGoalModal {...defaultProps} />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} />);
 
-      const cancelButton = screen.getByRole('button', { name: /Cancel/i });
+      const cancelButton = getFooterCancelButton();
       fireEvent.click(cancelButton);
 
       expect(screen.queryByTestId('unsaved-changes-modal')).not.toBeInTheDocument();
@@ -353,7 +368,7 @@ describe('EditSprintGoalModal', () => {
 
   describe('Accessibility', () => {
     it('should have correct ARIA attributes on dialog', () => {
-      render(<EditSprintGoalModal {...defaultProps} />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} />);
 
       const dialog = screen.getByRole('dialog');
       expect(dialog).toHaveAttribute('aria-modal', 'true');
@@ -361,14 +376,14 @@ describe('EditSprintGoalModal', () => {
     });
 
     it('should have required indicator on goal field', () => {
-      render(<EditSprintGoalModal {...defaultProps} />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} />);
 
       const textarea = getTextarea();
       expect(textarea).toHaveAttribute('aria-required', 'true');
     });
 
     it('should update aria-invalid when validation fails', async () => {
-      render(<EditSprintGoalModal {...defaultProps} initialGoal="" />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} initialGoal="" />);
 
       const textarea = getTextarea();
       expect(textarea).toHaveAttribute('aria-invalid', 'false');
@@ -382,7 +397,7 @@ describe('EditSprintGoalModal', () => {
     });
 
     it('should have aria-describedby for error messages when invalid', async () => {
-      render(<EditSprintGoalModal {...defaultProps} initialGoal="" />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} initialGoal="" />);
 
       // Submit the form directly since the button is disabled when goal is empty
       const form = document.getElementById('edit-goal-form');
@@ -395,7 +410,7 @@ describe('EditSprintGoalModal', () => {
     });
 
     it('should have maxLength attribute on textarea', () => {
-      render(<EditSprintGoalModal {...defaultProps} />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} />);
 
       const textarea = getTextarea();
       expect(textarea).toHaveAttribute('maxLength', '500');
@@ -404,7 +419,7 @@ describe('EditSprintGoalModal', () => {
 
   describe('Character Counter', () => {
     it('should update character count when typing', () => {
-      render(<EditSprintGoalModal {...defaultProps} initialGoal="" />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} initialGoal="" />);
 
       const textarea = getTextarea();
       fireEvent.change(textarea, { target: { value: 'Hello' } });
@@ -414,7 +429,7 @@ describe('EditSprintGoalModal', () => {
 
     it('should show warning style when approaching limit', () => {
       const longGoal = 'a'.repeat(460); // 460 characters, 90% of 500
-      render(<EditSprintGoalModal {...defaultProps} initialGoal={longGoal} />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} initialGoal={longGoal} />);
 
       const counter = screen.getByText(/460\/500/i);
       expect(counter).toHaveClass('char-counter-warning');
@@ -422,7 +437,7 @@ describe('EditSprintGoalModal', () => {
 
     it('should not show warning style when under 90%', () => {
       const mediumGoal = 'a'.repeat(400); // 400 characters, 80% of 500
-      render(<EditSprintGoalModal {...defaultProps} initialGoal={mediumGoal} />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} initialGoal={mediumGoal} />);
 
       const counter = screen.getByText(/400\/500/i);
       expect(counter).not.toHaveClass('char-counter-warning');
@@ -431,7 +446,9 @@ describe('EditSprintGoalModal', () => {
 
   describe('Form Reset', () => {
     it('should reset form when modal reopens', () => {
-      const { rerender } = render(<EditSprintGoalModal {...defaultProps} isOpen={false} />);
+      const { rerender } = renderWithProviders(
+        <EditSprintGoalModal {...defaultProps} isOpen={false} />
+      );
 
       // Open modal
       rerender(<EditSprintGoalModal {...defaultProps} isOpen={true} />);
@@ -449,7 +466,7 @@ describe('EditSprintGoalModal', () => {
     });
 
     it('should update initialGoal when prop changes', () => {
-      const { rerender } = render(
+      const { rerender } = renderWithProviders(
         <EditSprintGoalModal {...defaultProps} initialGoal="First Goal" />
       );
 
@@ -464,7 +481,7 @@ describe('EditSprintGoalModal', () => {
 
   describe('Keyboard Navigation', () => {
     it('should focus textarea when modal opens', async () => {
-      render(<EditSprintGoalModal {...defaultProps} />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} />);
 
       await waitFor(() => {
         const textarea = getTextarea();
@@ -473,10 +490,10 @@ describe('EditSprintGoalModal', () => {
     });
 
     it('should support tab navigation through form elements', () => {
-      render(<EditSprintGoalModal {...defaultProps} />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} />);
 
       const textarea = getTextarea();
-      const cancelButton = screen.getByRole('button', { name: /Cancel/i });
+      const cancelButton = getFooterCancelButton();
       const saveButton = screen.getByRole('button', { name: /Save Goal/i });
 
       expect(textarea).toBeInTheDocument();
@@ -485,7 +502,7 @@ describe('EditSprintGoalModal', () => {
     });
 
     it('should handle Shift+Tab to navigate backwards', () => {
-      render(<EditSprintGoalModal {...defaultProps} initialGoal="Test goal" />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} initialGoal="Test goal" />);
 
       const saveButton = screen.getByRole('button', { name: /Save Goal/i });
 
@@ -498,7 +515,7 @@ describe('EditSprintGoalModal', () => {
 
   describe('Tips Card Display', () => {
     it('should display all tips in the tips card', () => {
-      render(<EditSprintGoalModal {...defaultProps} />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} />);
 
       expect(screen.getByText(/Focus on value delivery/i)).toBeInTheDocument();
       expect(screen.getByText(/Be specific and measurable/i)).toBeInTheDocument();
@@ -507,7 +524,7 @@ describe('EditSprintGoalModal', () => {
     });
 
     it('should have correct structure for tips', () => {
-      render(<EditSprintGoalModal {...defaultProps} />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} />);
 
       const tipsCard = screen.getByText(/Tips for a good Sprint Goal/i).closest('div');
       expect(tipsCard).toBeInTheDocument();
@@ -520,7 +537,7 @@ describe('EditSprintGoalModal', () => {
   describe('Form Interaction Edge Cases', () => {
     it('should handle typing very long goal text', () => {
       const longGoal = 'a'.repeat(500);
-      render(<EditSprintGoalModal {...defaultProps} initialGoal={longGoal} />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} initialGoal={longGoal} />);
 
       const textarea = getTextarea();
       expect(textarea).toHaveValue(longGoal);
@@ -528,13 +545,13 @@ describe('EditSprintGoalModal', () => {
 
     it('should show character counter at maximum', () => {
       const maxGoal = 'a'.repeat(500);
-      render(<EditSprintGoalModal {...defaultProps} initialGoal={maxGoal} />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} initialGoal={maxGoal} />);
 
       expect(screen.getByText(/500\/500/i)).toBeInTheDocument();
     });
 
     it('should handle goal with only whitespace correctly', () => {
-      render(<EditSprintGoalModal {...defaultProps} initialGoal="   " />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} initialGoal="   " />);
 
       const textarea = getTextarea();
       expect(textarea).toHaveValue('   ');
@@ -544,7 +561,7 @@ describe('EditSprintGoalModal', () => {
     });
 
     it('should handle initialGoal as undefined', () => {
-      render(
+      renderWithProviders(
         <EditSprintGoalModal {...defaultProps} initialGoal={undefined as unknown as string} />
       );
 
@@ -553,7 +570,7 @@ describe('EditSprintGoalModal', () => {
     });
 
     it('should not trim on each keystroke', () => {
-      render(<EditSprintGoalModal {...defaultProps} initialGoal="" />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} initialGoal="" />);
 
       const textarea = getTextarea();
       fireEvent.change(textarea, { target: { value: '  Test  ' } });
@@ -564,7 +581,7 @@ describe('EditSprintGoalModal', () => {
 
   describe('Modal State Transitions', () => {
     it('should maintain state when modal stays open', () => {
-      render(<EditSprintGoalModal {...defaultProps} initialGoal="Initial" />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} initialGoal="Initial" />);
 
       const textarea = getTextarea();
       fireEvent.change(textarea, { target: { value: 'Modified' } });
@@ -576,7 +593,7 @@ describe('EditSprintGoalModal', () => {
     });
 
     it('should reset goal on modal reopen with different initialGoal', () => {
-      const { rerender } = render(
+      const { rerender } = renderWithProviders(
         <EditSprintGoalModal {...defaultProps} isOpen={false} initialGoal="First" />
       );
 
@@ -597,7 +614,7 @@ describe('EditSprintGoalModal', () => {
 
   describe('Textarea Interactions', () => {
     it('should handle paste events correctly', () => {
-      render(<EditSprintGoalModal {...defaultProps} initialGoal="" />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} initialGoal="" />);
 
       const textarea = getTextarea();
       fireEvent.change(textarea, { target: { value: 'Pasted text' } });
@@ -606,7 +623,7 @@ describe('EditSprintGoalModal', () => {
     });
 
     it('should handle cut events correctly', () => {
-      render(<EditSprintGoalModal {...defaultProps} initialGoal="Some text" />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} initialGoal="Some text" />);
 
       const textarea = getTextarea();
       textarea.setSelectionRange(0, 4);
@@ -616,7 +633,7 @@ describe('EditSprintGoalModal', () => {
     });
 
     it('should handle clear events', () => {
-      render(<EditSprintGoalModal {...defaultProps} initialGoal="Text to clear" />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} initialGoal="Text to clear" />);
 
       const textarea = getTextarea();
       fireEvent.change(textarea, { target: { value: '' } });
@@ -627,13 +644,13 @@ describe('EditSprintGoalModal', () => {
 
   describe('Sprint Name Display', () => {
     it('should display sprint name when provided', () => {
-      render(<EditSprintGoalModal {...defaultProps} sprintName="Sprint 5" />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} sprintName="Sprint 5" />);
 
       expect(screen.getByText(/Sprint 5/)).toBeInTheDocument();
     });
 
     it('should display sprint name in subtitle', () => {
-      render(<EditSprintGoalModal {...defaultProps} sprintName="Sprint 10" />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} sprintName="Sprint 10" />);
 
       expect(screen.getByText(/Sprint 10/)).toBeInTheDocument();
     });
@@ -641,7 +658,7 @@ describe('EditSprintGoalModal', () => {
 
   describe('Input Hint Display', () => {
     it('should display input hint about sprint goal', () => {
-      render(<EditSprintGoalModal {...defaultProps} />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} />);
 
       expect(screen.getByText(/A good sprint goal focuses on value delivery/i)).toBeInTheDocument();
     });
@@ -649,7 +666,7 @@ describe('EditSprintGoalModal', () => {
 
   describe('Goal Error Edge Cases', () => {
     it('should focus textarea after showing error', async () => {
-      render(<EditSprintGoalModal {...defaultProps} initialGoal="" />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} initialGoal="" />);
 
       const form = document.getElementById('edit-goal-form');
       fireEvent.submit(form);
@@ -663,7 +680,7 @@ describe('EditSprintGoalModal', () => {
     });
 
     it('should clear error when goal becomes valid', async () => {
-      render(<EditSprintGoalModal {...defaultProps} initialGoal="" />);
+      renderWithProviders(<EditSprintGoalModal {...defaultProps} initialGoal="" />);
 
       const form = document.getElementById('edit-goal-form');
       fireEvent.submit(form);

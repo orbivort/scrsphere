@@ -1,7 +1,5 @@
-﻿import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MemoryRouter } from 'react-router';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
+import { screen, fireEvent, waitFor, renderWithProviders, initTestI18n } from '../../test-utils';
 
 import { NotificationPanel } from './NotificationPanel';
 import * as useNotificationsModule from '../../hooks/useNotifications';
@@ -38,33 +36,14 @@ const createMockNotification = (overrides: Partial<Notification> = {}): Notifica
   ...overrides,
 });
 
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        gcTime: 0,
-        staleTime: 0,
-      },
-      mutations: {
-        retry: false,
-      },
-    },
-  });
-
-const renderWithProviders = (ui: React.ReactElement) => {
-  const queryClient = createTestQueryClient();
-  return render(
-    <QueryClientProvider client={queryClient}>
-      <MemoryRouter>{ui}</MemoryRouter>
-    </QueryClientProvider>
-  );
-};
-
 describe('NotificationPanel Component', () => {
   const mockOnClose = vi.fn();
   const mockMutateAsync = vi.fn();
   const mockMutate = vi.fn();
+
+  beforeAll(async () => {
+    await initTestI18n();
+  });
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -157,6 +136,40 @@ describe('NotificationPanel Component', () => {
 
       expect(screen.getByText('First Notification')).toBeInTheDocument();
       expect(screen.getByText('Second Notification')).toBeInTheDocument();
+    });
+
+    it('should display team invitation with inviter name from params', () => {
+      const notification = createMockNotification({
+        id: 'notif-invite-1',
+        type: NotificationType.TEAM_INVITATION,
+        title: 'You\'ve been invited to join team "Development Team"',
+        message: 'Invited by John Doe',
+        messageKey: 'teamInvitationMessage',
+        params: {
+          titleKey: 'teamInvitation',
+          titleParams: { teamName: 'Development Team' },
+          messageKey: 'teamInvitationMessage',
+          messageParams: { teamName: 'Development Team', inviterName: 'John Doe' },
+        },
+      });
+
+      vi.spyOn(useNotificationsModule, 'useNotifications').mockReturnValue({
+        data: {
+          notifications: [notification],
+          pagination: { page: 1, limit: 10, total: 1, totalPages: 1 },
+          unreadCount: 1,
+        },
+        isLoading: false,
+        error: null,
+      } as any);
+
+      renderWithProviders(<NotificationPanel isOpen onClose={mockOnClose} />);
+
+      // Verify that the notification title and message are displayed
+      expect(
+        screen.getByText('You\'ve been invited to join team "Development Team"')
+      ).toBeInTheDocument();
+      expect(screen.getByText('Invited by John Doe')).toBeInTheDocument();
     });
 
     it('should render View all notifications button', () => {

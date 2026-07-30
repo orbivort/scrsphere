@@ -1,8 +1,7 @@
-import React from 'react';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
+import { screen, waitFor, renderWithProviders, initTestI18n } from '../../test-utils';
 import userEvent from '@testing-library/user-event';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
 
 import * as storeModule from '../../store';
 import * as hooksModule from '../../hooks';
@@ -96,7 +95,7 @@ const createMockUser = (overrides: Partial<User> = {}): User => ({
   ...overrides,
 });
 
-// Helper to create a test query client
+// Helper to create a test query client for rerender tests
 const createTestQueryClient = () =>
   new QueryClient({
     defaultOptions: {
@@ -111,12 +110,10 @@ const createTestQueryClient = () =>
     },
   });
 
-// Helper to render with providers
-const renderWithProviders = (ui: React.ReactElement, queryClient = createTestQueryClient()) => {
-  return render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>);
-};
-
 describe('TeamSwitcher Component', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
   const mockSetCurrentTeam = vi.fn();
   const mockSetUserTeamsWithRoles = vi.fn();
   const mockSetUserRoleInCurrentTeam = vi.fn();
@@ -552,7 +549,7 @@ describe('TeamSwitcher Component', () => {
         data: teams,
       });
 
-      const { rerender } = renderWithProviders(<TeamSwitcher />, queryClient);
+      const { rerender } = renderWithProviders(<TeamSwitcher />, { queryClient });
 
       await waitFor(() => {
         expect(screen.getByText('Alpha Team')).toBeInTheDocument();
@@ -564,11 +561,7 @@ describe('TeamSwitcher Component', () => {
       );
 
       // Act
-      rerender(
-        <QueryClientProvider client={queryClient}>
-          <TeamSwitcher />
-        </QueryClientProvider>
-      );
+      rerender(<TeamSwitcher />);
 
       // Assert
       await waitFor(() => {

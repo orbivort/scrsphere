@@ -1,0 +1,114 @@
+{
+  "allStatus": "Tutti gli stati",
+  "card": {
+    "createdFromDailyUpdate": "Creato da Aggiornamento Giornaliero",
+    "fromDailyScrum": "Dal Daily Scrum",
+    "owner": "Proprietario",
+    "reportedBy": "Segnalato da",
+    "resolution": "Risoluzione",
+    "sprint": "Sprint",
+    "unknown": "Sconosciuto",
+    "viewDetailsAria": "Vedi dettagli per Impediment: {{title}}. Stato: {{status}}"
+  },
+  "createModal": {
+    "activeSprint": "(Attivo)",
+    "createImpediment": "Crea Impediment",
+    "creating": "Creazione in corso...",
+    "descriptionLabel": "Descrizione",
+    "descriptionPlaceholder": "Fornisci dettagli sull'Impediment",
+    "sprintLabel": "Sprint",
+    "subtitle": "Documenta i blocchi che ostacolano il progresso del tuo team",
+    "title": "Segnala Nuovo Impediment",
+    "titleLabel": "Titolo",
+    "titlePlaceholder": "Breve descrizione dell'Impediment"
+  },
+  "deleteModal": {
+    "actionWarning": "Avviso Azione",
+    "deleteImpediment": "Elimina Impediment",
+    "deleting": "Eliminazione in corso...",
+    "item": "Elemento:",
+    "statusLabel": "Stato:",
+    "subtitle": "Questa azione è permanente e non può essere annullata",
+    "title": "Elimina Impediment",
+    "unknownItem": "Elemento Sconosciuto",
+    "warningText": "Stai per eliminare permanentemente questo Impediment. Questa azione non può essere annullata. Tutti i dati associati saranno permanentemente eliminati."
+  },
+  "detailModal": {
+    "cancel": "Annulla",
+    "close": "Chiudi",
+    "createdFromDailyScrum": "Creato da Aggiornamento Daily Scrum",
+    "createdLabel": "Creato",
+    "deleteLabel": "Elimina",
+    "deleting": "Eliminazione in corso...",
+    "descriptionLabel": "Descrizione",
+    "ownerLabel": "Proprietario",
+    "reportedByLabel": "Segnalato da",
+    "resolutionLabel": "Risoluzione",
+    "resolutionPlaceholder": "Descrivi come questo Impediment è stato risolto...",
+    "saveResolution": "Salva Risoluzione",
+    "saving": "Salvataggio in corso...",
+    "sprintLabel": "Sprint",
+    "statusLabel": "Stato",
+    "subtitle": "Visualizza e gestisci le informazioni dell'Impediment",
+    "title": "Dettagli Impediment",
+    "titleLabel": "Titolo",
+    "viewDailyUpdate": "Vedi Aggiornamento Giornaliero"
+  },
+  "emptyState": {
+    "clearFilter": "Cancella Filtro",
+    "noFilterImpedimentsDescription": "Non ci sono Impediments {{status}} in \"{{sprintName}}\". Prova a selezionare un filtro di stato diverso.",
+    "noImpedimentsDescription": "Ottimo! Nessun Impediment segnalato per lo sprint attivo \"{{sprintName}}\".",
+    "noImpedimentsForFilter": "Nessun Impediment {{status}}",
+    "noImpedimentsForSprint": "Nessun Impediment per {{sprintName}}"
+  },
+  "errorState": {
+    "failedImpediments": "Caricamento Impediments non riuscito. Riprova.",
+    "failedSprint": "Caricamento informazioni sprint attivo non riuscito. Riprova.",
+    "retry": "Riprova",
+    "title": "Errore Caricamento Dati"
+  },
+  "filterByStatus": "Filtra per stato",
+  "reportImpediment": "Segnala Impediment",
+  "stats": {
+    "CLOSED": "Chiuso",
+    "IN_PROGRESS": "In Corso",
+    "OPEN": "Aperto",
+    "RESOLVED": "Risolto",
+    "closed": "Chiuso",
+    "inProgress": "In Corso",
+    "open": "Aperto",
+    "resolved": "Risolto"
+  },
+  "status": {
+    "CLOSED": "Chiuso",
+    "IN_PROGRESS": "In Corso",
+    "OPEN": "Aperto",
+    "RESOLVED": "Risolto",
+    "closed": "Chiuso",
+    "inProgress": "In Corso",
+    "open": "Aperto",
+    "resolved": "Risolto"
+  },
+  "subtitle": "{{sprintName}} - Traccia e risolvi i blocchi che ostacolano il team",
+  "title": "Impediments",
+  "toast": {
+    "created": "Impediment creato con successo",
+    "deleted": "Impediment eliminato con successo",
+    "failedCreate": "Creazione Impediment non riuscita. Riprova.",
+    "failedDelete": "Eliminazione Impediment non riuscita. Riprova.",
+    "failedUpdate": "Aggiornamento Impediment non riuscito. Riprova.",
+    "noActiveSprint": "Nessuno sprint attivo trovato. Inizia uno sprint prima.",
+    "teamIdRequired": "ID del team è richiesto. Seleziona un team prima.",
+    "updated": "Impediment aggiornato con successo"
+  },
+  "unsavedModal": {
+    "message": "Hai modifiche non salvate nel modulo Impediment. Sei sicuro di volerle scartare?",
+    "title": "Modifiche Non Salvate"
+  },
+  "validation": {
+    "descriptionRequired": "La descrizione è richiesta",
+    "descriptionTooShort": "La descrizione deve avere almeno 10 caratteri",
+    "titleRequired": "Il titolo è richiesto",
+    "titleTooShort": "Il titolo deve avere almeno 3 caratteri"
+  }
+}

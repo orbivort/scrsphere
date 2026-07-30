@@ -1,8 +1,6 @@
-﻿import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
-import { MemoryRouter } from 'react-router';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import React from 'react';
+import { screen, waitFor, renderWithProviders, initTestI18n, i18nT } from '../../test-utils';
+import { vi, describe, it, expect, beforeEach, beforeAll } from 'vitest';
 
 import { SprintReviewList } from './SprintReviewList';
 import { SprintStatus, IncrementStatus } from '../../types';
@@ -19,13 +17,10 @@ vi.mock('react-router', async (importOriginal) => {
 
 const mockNavigate = vi.fn();
 
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: { retry: false, gcTime: 0, staleTime: 0 },
-      mutations: { retry: false },
-    },
-  });
+// Initialize i18n before all tests
+beforeAll(async () => {
+  await initTestI18n();
+});
 
 const mockTeam = {
   id: 'team-1',
@@ -46,15 +41,7 @@ function renderComponent(overrides: { currentTeam?: typeof mockTeam | null } = {
     loadTeam: vi.fn(),
   } as any);
 
-  const queryClient = createTestQueryClient();
-
-  return render(
-    <QueryClientProvider client={queryClient}>
-      <MemoryRouter>
-        <SprintReviewList />
-      </MemoryRouter>
-    </QueryClientProvider>
-  );
+  return renderWithProviders(<SprintReviewList />);
 }
 
 describe('SprintReviewList - Additional Edge Case Tests', () => {
@@ -232,7 +219,9 @@ describe('SprintReviewList - Additional Edge Case Tests', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('Review In Progress')).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('sprint-review:list.reviewStatus.inProgress'))
+        ).toBeInTheDocument();
       });
     });
 
@@ -280,7 +269,9 @@ describe('SprintReviewList - Additional Edge Case Tests', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('Ready for Review')).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('sprint-review:list.reviewStatus.readyForReview'))
+        ).toBeInTheDocument();
       });
     });
 
@@ -320,7 +311,9 @@ describe('SprintReviewList - Additional Edge Case Tests', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('Increment Required')).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('sprint-review:list.reviewStatus.incrementRequired'))
+        ).toBeInTheDocument();
       });
     });
   });
@@ -363,7 +356,7 @@ describe('SprintReviewList - Additional Edge Case Tests', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('Goal:')).toBeInTheDocument();
+        expect(screen.getByText(i18nT('sprint-review:list.goal'))).toBeInTheDocument();
         expect(screen.getByText('Complete authentication feature')).toBeInTheDocument();
       });
     });
@@ -408,7 +401,7 @@ describe('SprintReviewList - Additional Edge Case Tests', () => {
         expect(screen.getByText('Sprint 1')).toBeInTheDocument();
       });
 
-      expect(screen.queryByText('Goal:')).not.toBeInTheDocument();
+      expect(screen.queryByText(i18nT('sprint-review:list.goal'))).not.toBeInTheDocument();
     });
   });
 
@@ -582,7 +575,7 @@ describe('SprintReviewList - Additional Edge Case Tests', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('Completed Sprint')).toBeInTheDocument();
+        expect(screen.getByText(i18nT('sprint-review:list.completedSprint'))).toBeInTheDocument();
       });
     });
 
@@ -691,7 +684,7 @@ describe('SprintReviewList - Additional Edge Case Tests', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('Reviewed')).toBeInTheDocument();
+        expect(screen.getByText(i18nT('sprint-review:list.reviewed'))).toBeInTheDocument();
       });
     });
   });
@@ -733,8 +726,8 @@ describe('SprintReviewList - Additional Edge Case Tests', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('Create Increment')).toBeInTheDocument();
-        expect(screen.getByText('View Details')).toBeInTheDocument();
+        expect(screen.getByText(i18nT('sprint-review:list.createIncrement'))).toBeInTheDocument();
+        expect(screen.getByText(i18nT('sprint-review:list.viewDetails'))).toBeInTheDocument();
       });
     });
 
@@ -783,8 +776,10 @@ describe('SprintReviewList - Additional Edge Case Tests', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('View Review')).toBeInTheDocument();
-        expect(screen.queryByText('Create Increment')).not.toBeInTheDocument();
+        expect(screen.getByText(i18nT('sprint-review:list.viewReview'))).toBeInTheDocument();
+        expect(
+          screen.queryByText(i18nT('sprint-review:list.createIncrement'))
+        ).not.toBeInTheDocument();
       });
     });
   });
@@ -834,7 +829,9 @@ describe('SprintReviewList - Additional Edge Case Tests', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('Ready for Review')).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('sprint-review:list.reviewStatus.readyForReview'))
+        ).toBeInTheDocument();
       });
     });
 
@@ -882,7 +879,9 @@ describe('SprintReviewList - Additional Edge Case Tests', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('Ready for Review')).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('sprint-review:list.reviewStatus.readyForReview'))
+        ).toBeInTheDocument();
       });
     });
 
@@ -930,7 +929,9 @@ describe('SprintReviewList - Additional Edge Case Tests', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText('Increment Required')).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('sprint-review:list.reviewStatus.incrementRequired'))
+        ).toBeInTheDocument();
       });
     });
   });
@@ -972,7 +973,9 @@ describe('SprintReviewList - Additional Edge Case Tests', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Sprint Reviews');
+        expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
+          i18nT('sprint-review:list.title')
+        );
       });
     });
 

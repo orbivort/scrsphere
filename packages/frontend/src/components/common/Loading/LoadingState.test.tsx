@@ -1,5 +1,7 @@
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeAll } from 'vitest';
+
+import { initTestI18n, i18nT } from '@/test-utils';
 
 import { LoadingState } from './LoadingState';
 
@@ -59,6 +61,10 @@ function getLoadingStateContainer(container: HTMLElement, variant: string) {
 }
 
 describe('LoadingState', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   describe('Variant Rendering Tests', () => {
     it('renders spinner variant with correct size', () => {
       render(<LoadingState variant="spinner" size="sm" />);
@@ -175,7 +181,7 @@ describe('LoadingState', () => {
       expect(loader).toBeInTheDocument();
       expect(loader).toHaveClass('page-loader');
       // Loading... appears in both visually hidden span and paragraph
-      const loadingTexts = screen.getAllByText('Loading...');
+      const loadingTexts = screen.getAllByText(i18nT('loading'));
       expect(loadingTexts.length).toBeGreaterThanOrEqual(1);
     });
 
@@ -352,20 +358,20 @@ describe('LoadingState', () => {
   describe('Default Props Tests', () => {
     it('uses default label when not provided for spinner variant', () => {
       render(<LoadingState variant="spinner" />);
-      expect(screen.getByRole('status')).toHaveAttribute('aria-label', 'Loading...');
+      expect(screen.getByRole('status')).toHaveAttribute('aria-label', i18nT('loading'));
     });
 
     it('uses default label when not provided for skeleton-text variant', () => {
       const { container } = render(<LoadingState variant="skeleton-text" />);
       const loader = getLoadingStateContainer(container, 'skeleton-text');
-      expect(loader).toHaveAttribute('aria-label', 'Loading...');
+      expect(loader).toHaveAttribute('aria-label', i18nT('loading'));
     });
 
     it('uses default label when not provided for page variant', () => {
       render(<LoadingState variant="page" />);
-      expect(screen.getByRole('status')).toHaveAttribute('aria-label', 'Loading...');
+      expect(screen.getByRole('status')).toHaveAttribute('aria-label', i18nT('loading'));
       // Loading... appears in both visually hidden span and paragraph
-      const loadingTexts = screen.getAllByText('Loading...');
+      const loadingTexts = screen.getAllByText(i18nT('loading'));
       expect(loadingTexts.length).toBeGreaterThanOrEqual(1);
     });
 

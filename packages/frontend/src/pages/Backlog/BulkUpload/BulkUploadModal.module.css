@@ -385,7 +385,7 @@
 
 .file-details {
   flex: 1;
-  text-align: left;
+  text-align: start;
 }
 
 .file-name {
@@ -546,7 +546,7 @@
   top: 0;
   background: var(--gradient-table-header-bg);
   padding: var(--space-3) var(--space-4);
-  text-align: left;
+  text-align: start;
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-tertiary);
@@ -876,7 +876,7 @@
 }
 
 .error-summary {
-  text-align: left;
+  text-align: start;
   background: var(--color-error-50);
   border: var(--border-width-1) solid var(--color-error-200);
   border-radius: var(--radius-lg);

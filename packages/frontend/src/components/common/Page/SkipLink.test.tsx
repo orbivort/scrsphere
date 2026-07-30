@@ -1,11 +1,15 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
+import { screen, fireEvent, renderWithProviders, initTestI18n } from '../../../test-utils';
 
 import { SkipLink } from './SkipLink';
 
 describe('SkipLink Component', () => {
   const mockTargetId = 'main-content';
   const mockTargetContent = 'Main Content Area';
+
+  beforeAll(async () => {
+    await initTestI18n();
+  });
 
   beforeEach(() => {
     // Create a target element in the DOM
@@ -26,7 +30,7 @@ describe('SkipLink Component', () => {
 
   describe('Component Rendering Tests', () => {
     it('renders skip link with default text', () => {
-      render(<SkipLink targetId={mockTargetId} />);
+      renderWithProviders(<SkipLink targetId={mockTargetId} />);
 
       const skipLink = screen.getByText('Skip to main content');
       expect(skipLink).toBeInTheDocument();
@@ -35,14 +39,14 @@ describe('SkipLink Component', () => {
 
     it('renders skip link with custom text', () => {
       const customText = 'Jump to content';
-      render(<SkipLink targetId={mockTargetId} text={customText} />);
+      renderWithProviders(<SkipLink targetId={mockTargetId} text={customText} />);
 
       const skipLink = screen.getByText(customText);
       expect(skipLink).toBeInTheDocument();
     });
 
     it('has correct href attribute pointing to target', () => {
-      render(<SkipLink targetId={mockTargetId} />);
+      renderWithProviders(<SkipLink targetId={mockTargetId} />);
 
       const skipLink = screen.getByText('Skip to main content');
       expect(skipLink).toHaveAttribute('href', `#${mockTargetId}`);
@@ -50,7 +54,7 @@ describe('SkipLink Component', () => {
 
     it('applies custom className', () => {
       const customClass = 'custom-skip-class';
-      render(<SkipLink targetId={mockTargetId} className={customClass} />);
+      renderWithProviders(<SkipLink targetId={mockTargetId} className={customClass} />);
 
       const skipLink = screen.getByText('Skip to main content');
       expect(skipLink).toHaveClass('skip-link');
@@ -58,7 +62,7 @@ describe('SkipLink Component', () => {
     });
 
     it('renders without custom className', () => {
-      render(<SkipLink targetId={mockTargetId} />);
+      renderWithProviders(<SkipLink targetId={mockTargetId} />);
 
       const skipLink = screen.getByText('Skip to main content');
       expect(skipLink).toHaveClass('skip-link');
@@ -67,7 +71,7 @@ describe('SkipLink Component', () => {
 
   describe('User Interaction Tests', () => {
     it('focuses target element when clicked', () => {
-      render(<SkipLink targetId={mockTargetId} />);
+      renderWithProviders(<SkipLink targetId={mockTargetId} />);
 
       const skipLink = screen.getByText('Skip to main content');
       const targetElement = document.getElementById(mockTargetId);
@@ -81,7 +85,7 @@ describe('SkipLink Component', () => {
     });
 
     it('sets and removes tabindex on target element when clicked', () => {
-      render(<SkipLink targetId={mockTargetId} />);
+      renderWithProviders(<SkipLink targetId={mockTargetId} />);
 
       const skipLink = screen.getByText('Skip to main content');
       const targetElement = document.getElementById(mockTargetId);
@@ -96,7 +100,7 @@ describe('SkipLink Component', () => {
     });
 
     it('prevents default anchor behavior', () => {
-      render(<SkipLink targetId={mockTargetId} />);
+      renderWithProviders(<SkipLink targetId={mockTargetId} />);
 
       const skipLink = screen.getByText('Skip to main content');
       const preventDefaultSpy = vi.spyOn(Event.prototype, 'preventDefault');
@@ -108,7 +112,7 @@ describe('SkipLink Component', () => {
     });
 
     it('handles keyboard activation (Enter key)', () => {
-      render(<SkipLink targetId={mockTargetId} />);
+      renderWithProviders(<SkipLink targetId={mockTargetId} />);
 
       const skipLink = screen.getByText('Skip to main content');
       const targetElement = document.getElementById(mockTargetId);
@@ -129,7 +133,7 @@ describe('SkipLink Component', () => {
         document.body.removeChild(targetElement);
       }
 
-      render(<SkipLink targetId={mockTargetId} />);
+      renderWithProviders(<SkipLink targetId={mockTargetId} />);
 
       const skipLink = screen.getByText('Skip to main content');
 
@@ -138,7 +142,7 @@ describe('SkipLink Component', () => {
     });
 
     it('handles empty targetId', () => {
-      render(<SkipLink targetId="" />);
+      renderWithProviders(<SkipLink targetId="" />);
 
       const skipLink = screen.getByText('Skip to main content');
       expect(skipLink).toHaveAttribute('href', '#');
@@ -153,7 +157,7 @@ describe('SkipLink Component', () => {
       specialTarget.id = specialTargetId;
       document.body.appendChild(specialTarget);
 
-      render(<SkipLink targetId={specialTargetId} />);
+      renderWithProviders(<SkipLink targetId={specialTargetId} />);
 
       const skipLink = screen.getByText('Skip to main content');
       expect(skipLink).toHaveAttribute('href', `#${specialTargetId}`);
@@ -164,14 +168,14 @@ describe('SkipLink Component', () => {
 
     it('handles very long text', () => {
       const longText = 'Skip to the main content area of this page immediately';
-      render(<SkipLink targetId={mockTargetId} text={longText} />);
+      renderWithProviders(<SkipLink targetId={mockTargetId} text={longText} />);
 
       const skipLink = screen.getByText(longText);
       expect(skipLink).toBeInTheDocument();
     });
 
     it('handles empty text', () => {
-      render(<SkipLink targetId={mockTargetId} text="" />);
+      renderWithProviders(<SkipLink targetId={mockTargetId} text="" />);
 
       // Empty string should still render the anchor
       const skipLink = document.querySelector('a.skip-link');
@@ -182,7 +186,7 @@ describe('SkipLink Component', () => {
 
   describe('Accessibility Tests', () => {
     it('is focusable via keyboard', () => {
-      render(<SkipLink targetId={mockTargetId} />);
+      renderWithProviders(<SkipLink targetId={mockTargetId} />);
 
       const skipLink = screen.getByText('Skip to main content');
       skipLink.focus();
@@ -191,14 +195,14 @@ describe('SkipLink Component', () => {
     });
 
     it('has correct role as link', () => {
-      render(<SkipLink targetId={mockTargetId} />);
+      renderWithProviders(<SkipLink targetId={mockTargetId} />);
 
       const skipLink = screen.getByRole('link');
       expect(skipLink).toBeInTheDocument();
     });
 
     it('target element receives focus management after click', () => {
-      render(<SkipLink targetId={mockTargetId} />);
+      renderWithProviders(<SkipLink targetId={mockTargetId} />);
 
       const skipLink = screen.getByText('Skip to main content');
       const targetElement = document.getElementById(mockTargetId);
@@ -218,7 +222,7 @@ describe('SkipLink Component', () => {
       secondTarget.id = secondTargetId;
       document.body.appendChild(secondTarget);
 
-      render(
+      renderWithProviders(
         <>
           <SkipLink targetId={mockTargetId} text="Skip to main" />
           <SkipLink targetId={secondTargetId} text="Skip to secondary" />
@@ -236,7 +240,7 @@ describe('SkipLink Component', () => {
     });
 
     it('maintains tabindex cleanup even with rapid clicks', () => {
-      render(<SkipLink targetId={mockTargetId} />);
+      renderWithProviders(<SkipLink targetId={mockTargetId} />);
 
       const skipLink = screen.getByText('Skip to main content');
       const targetElement = document.getElementById(mockTargetId);

@@ -1,8 +1,8 @@
-import { screen, render, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, beforeAll, vi } from 'vitest';
 
+import { renderWithProviders, initTestI18n } from '../../test-utils';
 import { PendingFeedback } from './PendingFeedback';
 import { useTeamStore } from '../../store';
 import { apiService } from '../../services';
@@ -18,25 +18,11 @@ vi.mock('../../services', () => ({
   },
 }));
 
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-    },
+describe('PendingFeedback', () => {
+  beforeAll(async () => {
+    await initTestI18n();
   });
 
-const renderPendingFeedback = (props = {}) => {
-  const queryClient = createTestQueryClient();
-  return render(
-    <QueryClientProvider client={queryClient}>
-      <PendingFeedback {...props} />
-    </QueryClientProvider>
-  );
-};
-
-describe('PendingFeedback', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     (useTeamStore as ReturnType<typeof vi.fn>).mockReturnValue({
@@ -50,7 +36,7 @@ describe('PendingFeedback', () => {
         data: [],
       });
 
-      renderPendingFeedback();
+      renderWithProviders(<PendingFeedback />);
 
       expect(screen.queryByText('Pending Feedback')).not.toBeInTheDocument();
     });
@@ -74,7 +60,7 @@ describe('PendingFeedback', () => {
     });
 
     it('should render title with count', async () => {
-      renderPendingFeedback();
+      renderWithProviders(<PendingFeedback />);
 
       await waitFor(() => {
         expect(screen.getByText('Pending Feedback')).toBeInTheDocument();
@@ -82,7 +68,7 @@ describe('PendingFeedback', () => {
     });
 
     it('should render feedback cards', async () => {
-      renderPendingFeedback();
+      renderWithProviders(<PendingFeedback />);
 
       await waitFor(() => {
         expect(screen.getByText('Great feature!')).toBeInTheDocument();
@@ -107,7 +93,7 @@ describe('PendingFeedback', () => {
     });
 
     it('should be expanded by default', async () => {
-      renderPendingFeedback();
+      renderWithProviders(<PendingFeedback />);
 
       await waitFor(() => {
         expect(screen.getByText('Test')).toBeInTheDocument();
@@ -115,7 +101,7 @@ describe('PendingFeedback', () => {
     });
 
     it('should collapse when clicking header', async () => {
-      renderPendingFeedback();
+      renderWithProviders(<PendingFeedback />);
 
       await waitFor(() => {
         expect(screen.getByText('Pending Feedback')).toBeInTheDocument();

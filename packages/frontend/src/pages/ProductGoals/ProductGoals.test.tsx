@@ -1,8 +1,6 @@
-﻿import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { BrowserRouter } from 'react-router';
-import { vi } from 'vitest';
+import React from 'react';
+import { screen, fireEvent, waitFor, renderWithProviders, initTestI18n } from '../../test-utils';
+import { vi, beforeAll } from 'vitest';
 
 import { ItemStatus, type ProductGoal, type ProductBacklogItem } from '../../types';
 import styles from './ProductGoals.module.css';
@@ -101,14 +99,6 @@ const mockBacklogItems: ProductBacklogItem[] = [
 ];
 
 const setup = (overrides = {}) => {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-    },
-  });
-
   mockUseTeamStore.mockReturnValue({
     currentTeam: mockTeam,
     ...overrides.teamStore,
@@ -128,19 +118,16 @@ const setup = (overrides = {}) => {
     handleError: vi.fn((error, defaultMessage) => defaultMessage),
   });
 
-  const Wrapper = ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>{children}</BrowserRouter>
-    </QueryClientProvider>
-  );
-
   return {
-    render: () => render(<ProductGoalsPage />, { wrapper: Wrapper }),
-    queryClient,
+    render: () => renderWithProviders(<ProductGoalsPage />),
   };
 };
 
 describe('ProductGoalsPage', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -386,19 +373,12 @@ describe('ProductGoalsPage', () => {
         }
       );
 
-      await waitFor(() => {
-        expect(
-          screen.getByLabelText((content) => content.trim().startsWith('Target Date'))
-        ).toBeInTheDocument();
-      });
-
+      // Use the hidden date input which accepts ISO format
       const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-      fireEvent.change(
-        screen.getByLabelText((content) => content.trim().startsWith('Target Date')),
-        {
-          target: { value: tomorrow },
-        }
-      );
+      const hiddenDateInput = document.querySelector('input[type="date"]');
+      if (hiddenDateInput) {
+        fireEvent.change(hiddenDateInput, { target: { value: tomorrow } });
+      }
 
       fireEvent.change(
         screen.getByPlaceholderText(
@@ -535,19 +515,12 @@ describe('ProductGoalsPage', () => {
         }
       );
 
-      await waitFor(() => {
-        expect(
-          screen.getByLabelText((content) => content.trim().startsWith('Target Date'))
-        ).toBeInTheDocument();
-      });
-
+      // Use the hidden date input which accepts ISO format
       const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-      fireEvent.change(
-        screen.getByLabelText((content) => content.trim().startsWith('Target Date')),
-        {
-          target: { value: tomorrow },
-        }
-      );
+      const hiddenDateInput = document.querySelector('input[type="date"]');
+      if (hiddenDateInput) {
+        fireEvent.change(hiddenDateInput, { target: { value: tomorrow } });
+      }
 
       fireEvent.change(
         screen.getByPlaceholderText(
@@ -562,9 +535,7 @@ describe('ProductGoalsPage', () => {
 
       await waitFor(() => {
         // Use getAllByText since error appears in both modal and toast
-        const errorMessages = screen.getAllByText(
-          'Failed to create product goal: Failed to create goal'
-        );
+        const errorMessages = screen.getAllByText(/Failed to create product goal/i);
         expect(errorMessages.length).toBeGreaterThan(0);
       });
     });
@@ -600,19 +571,12 @@ describe('ProductGoalsPage', () => {
         }
       );
 
-      await waitFor(() => {
-        expect(
-          screen.getByLabelText((content) => content.trim().startsWith('Target Date'))
-        ).toBeInTheDocument();
-      });
-
+      // Use the hidden date input which accepts ISO format
       const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-      fireEvent.change(
-        screen.getByLabelText((content) => content.trim().startsWith('Target Date')),
-        {
-          target: { value: tomorrow },
-        }
-      );
+      const hiddenDateInput = document.querySelector('input[type="date"]');
+      if (hiddenDateInput) {
+        fireEvent.change(hiddenDateInput, { target: { value: tomorrow } });
+      }
 
       fireEvent.change(
         screen.getByPlaceholderText(

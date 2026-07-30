@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import type { TeamMember, User, ProductBacklogItem } from '../../../types';
 import type { ViewMode, SwimlaneGroup } from '../SprintBoard.types';
@@ -35,11 +36,13 @@ export const BoardFilters: React.FC<BoardFiltersProps> = ({
   onViewModeChange,
   onSwimlaneGroupChange,
 }) => {
+  const { t } = useTranslation('sprint');
+
   return (
-    <div className={styles['board-controls']} role="toolbar" aria-label="Board controls">
+    <div className={styles['board-controls']} role="toolbar" aria-label={t('aria.boardControls')}>
       <div className={styles['filter-group']}>
         <label htmlFor="filter-assignee" className={styles['visually-hidden']}>
-          Filter by assignee
+          {t('boardFilters.filterByAssignee')}
         </label>
         <select
           id="filter-assignee"
@@ -47,7 +50,7 @@ export const BoardFilters: React.FC<BoardFiltersProps> = ({
           value={filterAssignee}
           onChange={(e) => onFilterAssigneeChange(e.target.value)}
         >
-          <option value="all">All Assignees</option>
+          <option value="all">{t('boardFilters.allAssignees')}</option>
           {teamMembers.map((member) => (
             <option key={member.id} value={member.userId}>
               {member.user?.firstName} {member.user?.lastName}
@@ -56,7 +59,7 @@ export const BoardFilters: React.FC<BoardFiltersProps> = ({
         </select>
 
         <label htmlFor="filter-pbi" className={styles['visually-hidden']}>
-          Filter by backlog item
+          {t('boardFilters.filterByBacklogItem')}
         </label>
         <select
           id="filter-pbi"
@@ -64,16 +67,16 @@ export const BoardFilters: React.FC<BoardFiltersProps> = ({
           value={filterPbi}
           onChange={(e) => onFilterPbiChange(e.target.value)}
         >
-          <option value="all">All Items</option>
+          <option value="all">{t('boardFilters.allItemsOption')}</option>
           {sprintItems.map((item) => (
             <option key={item.id} value={item.id}>
-              {item.title} ({item.storyPoints ?? 0} pts)
+              {item.title} ({item.storyPoints ?? 0} {t('pts' as never)})
             </option>
           ))}
         </select>
 
         <label htmlFor="search-tasks" className={styles['visually-hidden']}>
-          Search tasks
+          {t('boardFilters.searchTasks')}
         </label>
         <div className={styles['search-input-wrapper']}>
           <span className={styles['search-icon']}>
@@ -83,7 +86,7 @@ export const BoardFilters: React.FC<BoardFiltersProps> = ({
             id="search-tasks"
             type="text"
             className={styles['filter-search']}
-            placeholder="Search tasks..."
+            placeholder={t('boardFilters.searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => onSearchQueryChange(e.target.value)}
           />
@@ -92,8 +95,8 @@ export const BoardFilters: React.FC<BoardFiltersProps> = ({
               type="button"
               className={styles['search-clear-button']}
               onClick={() => onSearchQueryChange('')}
-              aria-label="Clear search"
-              title="Clear search"
+              aria-label={t('boardFilters.clearSearch')}
+              title={t('boardFilters.clearSearch')}
             >
               <XIcon size={16} />
             </button>
@@ -102,20 +105,24 @@ export const BoardFilters: React.FC<BoardFiltersProps> = ({
       </div>
 
       <div className={styles['view-controls']}>
-        <div className={styles['view-mode-toggle']} role="group" aria-label="View mode">
+        <div
+          className={styles['view-mode-toggle']}
+          role="group"
+          aria-label={t('boardFilters.viewMode')}
+        >
           <button
             className={`${styles['view-btn']} ${viewMode === 'kanban' ? styles.active : ''}`}
             onClick={() => onViewModeChange('kanban')}
             aria-pressed={viewMode === 'kanban'}
           >
-            Kanban
+            {t('boardFilters.kanban')}
           </button>
           <button
             className={`${styles['view-btn']} ${viewMode === 'swimlanes' ? styles.active : ''}`}
             onClick={() => onViewModeChange('swimlanes')}
             aria-pressed={viewMode === 'swimlanes'}
           >
-            Swimlanes
+            {t('boardFilters.swimlanes')}
           </button>
         </div>
 
@@ -124,11 +131,11 @@ export const BoardFilters: React.FC<BoardFiltersProps> = ({
             className={styles['swimlane-select']}
             value={swimlaneGroup}
             onChange={(e) => onSwimlaneGroupChange(e.target.value as SwimlaneGroup)}
-            aria-label="Group swimlanes by"
+            aria-label={t('boardFilters.groupSwimlanesBy')}
           >
-            <option value="none">No Grouping</option>
-            <option value="assignee">By Assignee</option>
-            <option value="pbi">By Backlog Item</option>
+            <option value="none">{t('boardFilters.noGrouping')}</option>
+            <option value="assignee">{t('boardFilters.byAssignee')}</option>
+            <option value="pbi">{t('boardFilters.byBacklogItem')}</option>
           </select>
         )}
       </div>

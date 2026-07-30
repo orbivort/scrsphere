@@ -1,7 +1,6 @@
-﻿import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
+import { screen, fireEvent, waitFor, renderWithProviders, initTestI18n } from '../../test-utils';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router';
 
 import { TeamSelectionModal } from './TeamSelectionModal';
 import { useTeamContext } from '../../contexts/TeamContext';
@@ -90,6 +89,10 @@ const mockTeam3 = {
 };
 
 describe('TeamSelectionModal Component', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(useTeamContext).mockReturnValue(mockTeamContext);
@@ -97,70 +100,50 @@ describe('TeamSelectionModal Component', () => {
 
   describe('Component Rendering Tests', () => {
     it('renders nothing when isOpen is false', () => {
-      render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={false} onClose={vi.fn()} />
-        </MemoryRouter>
-      );
+      renderWithProviders(<TeamSelectionModal isOpen={false} onClose={vi.fn()} />);
 
       expect(screen.queryByText('Select a Team')).not.toBeInTheDocument();
     });
 
     it('renders modal when isOpen is true', () => {
-      render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
-      );
+      renderWithProviders(<TeamSelectionModal isOpen={true} onClose={vi.fn()} />);
 
       expect(screen.getByText('Select a Team')).toBeInTheDocument();
     });
 
     it('renders close button', () => {
-      render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
-      );
+      renderWithProviders(<TeamSelectionModal isOpen={true} onClose={vi.fn()} />);
 
       expect(screen.getByLabelText('Close')).toBeInTheDocument();
     });
 
     it('renders modal overlay', () => {
-      const { container } = render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
+      const { container } = renderWithProviders(
+        <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
       );
 
       expect(container.querySelector('.team-selection-overlay')).toBeInTheDocument();
     });
 
     it('renders modal container', () => {
-      const { container } = render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
+      const { container } = renderWithProviders(
+        <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
       );
 
       expect(container.querySelector('.team-selection-modal')).toBeInTheDocument();
     });
 
     it('renders header section', () => {
-      const { container } = render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
+      const { container } = renderWithProviders(
+        <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
       );
 
       expect(container.querySelector('.team-selection-header')).toBeInTheDocument();
     });
 
     it('renders content section', () => {
-      const { container } = render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
+      const { container } = renderWithProviders(
+        <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
       );
 
       expect(container.querySelector('.team-selection-content')).toBeInTheDocument();
@@ -174,11 +157,7 @@ describe('TeamSelectionModal Component', () => {
         isLoading: true,
       });
 
-      render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
-      );
+      renderWithProviders(<TeamSelectionModal isOpen={true} onClose={vi.fn()} />);
 
       expect(screen.getByText('Loading teams...')).toBeInTheDocument();
     });
@@ -189,10 +168,8 @@ describe('TeamSelectionModal Component', () => {
         isLoading: true,
       });
 
-      const { container } = render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
+      const { container } = renderWithProviders(
+        <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
       );
 
       expect(container.querySelector('.spinner')).toBeInTheDocument();
@@ -204,10 +181,8 @@ describe('TeamSelectionModal Component', () => {
         isLoading: true,
       });
 
-      const { container } = render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
+      const { container } = renderWithProviders(
+        <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
       );
 
       expect(container.querySelector('.team-list')).not.toBeInTheDocument();
@@ -222,11 +197,7 @@ describe('TeamSelectionModal Component', () => {
         userTeams: [],
       });
 
-      render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
-      );
+      renderWithProviders(<TeamSelectionModal isOpen={true} onClose={vi.fn()} />);
 
       expect(screen.getByText("You don't have any teams yet.")).toBeInTheDocument();
     });
@@ -238,11 +209,7 @@ describe('TeamSelectionModal Component', () => {
         userTeams: [],
       });
 
-      render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
-      );
+      renderWithProviders(<TeamSelectionModal isOpen={true} onClose={vi.fn()} />);
 
       expect(screen.getByText('Go to Team Page')).toBeInTheDocument();
     });
@@ -255,11 +222,7 @@ describe('TeamSelectionModal Component', () => {
         userTeams: [],
       });
 
-      render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={onClose} />
-        </MemoryRouter>
-      );
+      renderWithProviders(<TeamSelectionModal isOpen={true} onClose={onClose} />);
 
       const button = screen.getByText('Go to Team Page');
       await userEvent.click(button);
@@ -276,10 +239,8 @@ describe('TeamSelectionModal Component', () => {
         userTeams: [mockTeam],
       });
 
-      const { container } = render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
+      const { container } = renderWithProviders(
+        <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
       );
 
       expect(container.querySelector('.team-list')).toBeInTheDocument();
@@ -292,11 +253,7 @@ describe('TeamSelectionModal Component', () => {
         userTeams: [mockTeam, mockTeam2, mockTeam3],
       });
 
-      render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
-      );
+      renderWithProviders(<TeamSelectionModal isOpen={true} onClose={vi.fn()} />);
 
       expect(screen.getByText('Test Team')).toBeInTheDocument();
       expect(screen.getByText('Second Team')).toBeInTheDocument();
@@ -310,11 +267,7 @@ describe('TeamSelectionModal Component', () => {
         userTeams: [mockTeam],
       });
 
-      render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
-      );
+      renderWithProviders(<TeamSelectionModal isOpen={true} onClose={vi.fn()} />);
 
       expect(screen.getByText('Test Team')).toBeInTheDocument();
     });
@@ -326,11 +279,7 @@ describe('TeamSelectionModal Component', () => {
         userTeams: [mockTeam],
       });
 
-      render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
-      );
+      renderWithProviders(<TeamSelectionModal isOpen={true} onClose={vi.fn()} />);
 
       expect(screen.getByText('Test team description')).toBeInTheDocument();
     });
@@ -343,11 +292,7 @@ describe('TeamSelectionModal Component', () => {
         userTeams: [teamWithoutDescription],
       });
 
-      render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
-      );
+      renderWithProviders(<TeamSelectionModal isOpen={true} onClose={vi.fn()} />);
 
       expect(screen.queryByText('Test team description')).not.toBeInTheDocument();
     });
@@ -359,10 +304,8 @@ describe('TeamSelectionModal Component', () => {
         userTeams: [mockTeam, mockTeam2],
       });
 
-      const { container } = render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
+      const { container } = renderWithProviders(
+        <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
       );
 
       const teamCards = container.querySelectorAll('.team-card');
@@ -378,11 +321,7 @@ describe('TeamSelectionModal Component', () => {
         userTeams: [mockTeam],
       });
 
-      render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
-      );
+      renderWithProviders(<TeamSelectionModal isOpen={true} onClose={vi.fn()} />);
 
       expect(screen.getByText('Developer')).toBeInTheDocument();
     });
@@ -394,11 +333,7 @@ describe('TeamSelectionModal Component', () => {
         userTeams: [mockTeam2],
       });
 
-      render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
-      );
+      renderWithProviders(<TeamSelectionModal isOpen={true} onClose={vi.fn()} />);
 
       expect(screen.getByText('Product Owner')).toBeInTheDocument();
     });
@@ -410,11 +345,7 @@ describe('TeamSelectionModal Component', () => {
         userTeams: [mockTeam3],
       });
 
-      render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
-      );
+      renderWithProviders(<TeamSelectionModal isOpen={true} onClose={vi.fn()} />);
 
       expect(screen.getByText('Scrum Master')).toBeInTheDocument();
     });
@@ -427,11 +358,7 @@ describe('TeamSelectionModal Component', () => {
         userTeams: [teamWithUnknownRole],
       });
 
-      render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
-      );
+      renderWithProviders(<TeamSelectionModal isOpen={true} onClose={vi.fn()} />);
 
       expect(screen.getByText('UNKNOWN_ROLE')).toBeInTheDocument();
     });
@@ -443,10 +370,8 @@ describe('TeamSelectionModal Component', () => {
         userTeams: [mockTeam],
       });
 
-      const { container } = render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
+      const { container } = renderWithProviders(
+        <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
       );
 
       const badge = container.querySelector('.badge-dev');
@@ -460,10 +385,8 @@ describe('TeamSelectionModal Component', () => {
         userTeams: [mockTeam2],
       });
 
-      const { container } = render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
+      const { container } = renderWithProviders(
+        <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
       );
 
       const badge = container.querySelector('.badge-po');
@@ -477,10 +400,8 @@ describe('TeamSelectionModal Component', () => {
         userTeams: [mockTeam3],
       });
 
-      const { container } = render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
+      const { container } = renderWithProviders(
+        <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
       );
 
       const badge = container.querySelector('.badge-sm');
@@ -497,11 +418,7 @@ describe('TeamSelectionModal Component', () => {
         userTeams: [mockTeam],
       });
 
-      render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={onClose} />
-        </MemoryRouter>
-      );
+      renderWithProviders(<TeamSelectionModal isOpen={true} onClose={onClose} />);
 
       const closeButton = screen.getByLabelText('Close');
       await userEvent.click(closeButton);
@@ -518,11 +435,7 @@ describe('TeamSelectionModal Component', () => {
         switchTeam,
       });
 
-      render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
-      );
+      renderWithProviders(<TeamSelectionModal isOpen={true} onClose={vi.fn()} />);
 
       const teamCard = screen.getByText('Test Team').closest('button');
       if (teamCard) {
@@ -545,11 +458,7 @@ describe('TeamSelectionModal Component', () => {
         switchTeam,
       });
 
-      render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
-      );
+      renderWithProviders(<TeamSelectionModal isOpen={true} onClose={vi.fn()} />);
 
       const teamCard = screen.getByText('Test Team').closest('button');
       if (teamCard) {
@@ -577,10 +486,8 @@ describe('TeamSelectionModal Component', () => {
         switchTeam,
       });
 
-      const { container } = render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
+      const { container } = renderWithProviders(
+        <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
       );
 
       const teamCard = screen.getByText('Test Team').closest('button');
@@ -608,10 +515,8 @@ describe('TeamSelectionModal Component', () => {
         switchTeam,
       });
 
-      const { container } = render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
+      const { container } = renderWithProviders(
+        <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
       );
 
       const teamCard = screen.getByText('Test Team').closest('button');
@@ -637,11 +542,7 @@ describe('TeamSelectionModal Component', () => {
         switchTeam,
       });
 
-      render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={onClose} />
-        </MemoryRouter>
-      );
+      renderWithProviders(<TeamSelectionModal isOpen={true} onClose={onClose} />);
 
       const teamCard = screen.getByText('Test Team').closest('button');
       if (teamCard) {
@@ -667,11 +568,7 @@ describe('TeamSelectionModal Component', () => {
         switchTeam,
       });
 
-      render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
-      );
+      renderWithProviders(<TeamSelectionModal isOpen={true} onClose={vi.fn()} />);
 
       const teamCard = screen.getByText('Test Team').closest('button');
       if (teamCard) {
@@ -694,10 +591,8 @@ describe('TeamSelectionModal Component', () => {
         switchTeam,
       });
 
-      const { container } = render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
+      const { container } = renderWithProviders(
+        <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
       );
 
       const teamCard = screen.getByText('Test Team').closest('button');
@@ -720,10 +615,8 @@ describe('TeamSelectionModal Component', () => {
         switchTeam,
       });
 
-      const { container } = render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
+      const { container } = renderWithProviders(
+        <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
       );
 
       const teamCard = screen.getByText('Test Team').closest('button');
@@ -741,11 +634,7 @@ describe('TeamSelectionModal Component', () => {
 
   describe('Accessibility Tests', () => {
     it('has accessible close button', () => {
-      render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
-      );
+      renderWithProviders(<TeamSelectionModal isOpen={true} onClose={vi.fn()} />);
 
       const closeButton = screen.getByLabelText('Close');
       expect(closeButton).toBeInTheDocument();
@@ -759,11 +648,7 @@ describe('TeamSelectionModal Component', () => {
         userTeams: [mockTeam],
       });
 
-      render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
-      );
+      renderWithProviders(<TeamSelectionModal isOpen={true} onClose={vi.fn()} />);
 
       const teamCard = screen.getByRole('button', { name: /test team/i });
       teamCard.focus();
@@ -780,11 +665,7 @@ describe('TeamSelectionModal Component', () => {
         userTeams: [mockTeam, mockTeam2],
       });
 
-      render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
-      );
+      renderWithProviders(<TeamSelectionModal isOpen={true} onClose={vi.fn()} />);
 
       await user.tab();
       expect(screen.getByLabelText('Close')).toHaveFocus();
@@ -804,11 +685,7 @@ describe('TeamSelectionModal Component', () => {
         userTeams: [teamWithoutDescription],
       });
 
-      render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
-      );
+      renderWithProviders(<TeamSelectionModal isOpen={true} onClose={vi.fn()} />);
 
       expect(screen.getByText('Test Team')).toBeInTheDocument();
     });
@@ -821,11 +698,7 @@ describe('TeamSelectionModal Component', () => {
         userTeams: [teamWithEmptyName],
       });
 
-      render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
-      );
+      renderWithProviders(<TeamSelectionModal isOpen={true} onClose={vi.fn()} />);
 
       const teamCard = screen.queryByRole('button', { name: /developer/i });
       expect(teamCard).toBeInTheDocument();
@@ -840,11 +713,7 @@ describe('TeamSelectionModal Component', () => {
         userTeams: [teamWithLongName],
       });
 
-      render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
-      );
+      renderWithProviders(<TeamSelectionModal isOpen={true} onClose={vi.fn()} />);
 
       expect(screen.getByText(longName)).toBeInTheDocument();
     });
@@ -858,11 +727,7 @@ describe('TeamSelectionModal Component', () => {
         userTeams: [teamWithLongDescription],
       });
 
-      render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
-      );
+      renderWithProviders(<TeamSelectionModal isOpen={true} onClose={vi.fn()} />);
 
       expect(screen.getByText(longDescription)).toBeInTheDocument();
     });
@@ -876,11 +741,7 @@ describe('TeamSelectionModal Component', () => {
         userTeams: [teamWithSpecialChars],
       });
 
-      render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
-      );
+      renderWithProviders(<TeamSelectionModal isOpen={true} onClose={vi.fn()} />);
 
       expect(screen.getByText(specialName)).toBeInTheDocument();
     });
@@ -892,10 +753,8 @@ describe('TeamSelectionModal Component', () => {
         userTeams: [mockTeam],
       });
 
-      const { container } = render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
+      const { container } = renderWithProviders(
+        <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
       );
 
       const teamCards = container.querySelectorAll('.team-card');
@@ -915,11 +774,7 @@ describe('TeamSelectionModal Component', () => {
         userTeams: manyTeams,
       });
 
-      render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
-      );
+      renderWithProviders(<TeamSelectionModal isOpen={true} onClose={vi.fn()} />);
 
       manyTeams.forEach((team) => {
         expect(screen.getByText(team.name)).toBeInTheDocument();
@@ -937,11 +792,7 @@ describe('TeamSelectionModal Component', () => {
         switchTeam,
       });
 
-      render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
-      );
+      renderWithProviders(<TeamSelectionModal isOpen={true} onClose={vi.fn()} />);
 
       const firstTeamCard = screen.getByText('Test Team').closest('button');
       const secondTeamCard = screen.getByText('Second Team').closest('button');
@@ -971,20 +822,14 @@ describe('TeamSelectionModal Component', () => {
         userTeams: [mockTeam],
       });
 
-      render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
-      );
+      renderWithProviders(<TeamSelectionModal isOpen={true} onClose={vi.fn()} />);
 
       expect(useTeamContext).toHaveBeenCalled();
     });
 
     it('updates when team context changes', () => {
-      const { rerender } = render(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
+      const { rerender } = renderWithProviders(
+        <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
       );
 
       vi.mocked(useTeamContext).mockReturnValue({
@@ -993,11 +838,7 @@ describe('TeamSelectionModal Component', () => {
         userTeams: [mockTeam],
       });
 
-      rerender(
-        <MemoryRouter>
-          <TeamSelectionModal isOpen={true} onClose={vi.fn()} />
-        </MemoryRouter>
-      );
+      rerender(<TeamSelectionModal isOpen={true} onClose={vi.fn()} />);
 
       expect(screen.getByText('Test Team')).toBeInTheDocument();
     });

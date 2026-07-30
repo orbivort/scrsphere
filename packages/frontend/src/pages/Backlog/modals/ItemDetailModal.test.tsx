@@ -1,11 +1,10 @@
 import React from 'react';
-import { screen, render, waitFor } from '@testing-library/react';
+import { screen, renderWithProviders, waitFor } from '../../../test-utils';
 import userEvent from '@testing-library/user-event';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, beforeAll, vi } from 'vitest';
 
 import { ItemStatus, MoSCoWPriority } from '../../../types';
-import { createMockBacklogItem } from '../../../test-utils';
+import { createMockBacklogItem, initTestI18n } from '../../../test-utils';
 import { BacklogProvider, useBacklogContext } from '../context/BacklogContext';
 
 import { ItemDetailModal } from './ItemDetailModal';
@@ -40,33 +39,21 @@ const SetDetailContextValues: React.FC<{ workflowError?: string | null }> = ({ w
   return null;
 };
 
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-    },
-  });
-
 const renderDetailModal = (props = {}) => {
-  const queryClient = createTestQueryClient();
-  return render(
-    <QueryClientProvider client={queryClient}>
-      <BacklogProvider>
-        <SetSelectedItem item={mockItem} />
-        <ItemDetailModal
-          isOpen={true}
-          onClose={vi.fn()}
-          onEdit={vi.fn()}
-          onDelete={vi.fn()}
-          onStatusChange={vi.fn()}
-          isUpdating={false}
-          isLoadingChildTasks={false}
-          {...props}
-        />
-      </BacklogProvider>
-    </QueryClientProvider>
+  return renderWithProviders(
+    <BacklogProvider>
+      <SetSelectedItem item={mockItem} />
+      <ItemDetailModal
+        isOpen={true}
+        onClose={vi.fn()}
+        onEdit={vi.fn()}
+        onDelete={vi.fn()}
+        onStatusChange={vi.fn()}
+        isUpdating={false}
+        isLoadingChildTasks={false}
+        {...props}
+      />
+    </BacklogProvider>
   );
 };
 
@@ -76,27 +63,28 @@ describe('ItemDetailModal', () => {
   const mockOnDelete = vi.fn();
   const mockOnStatusChange = vi.fn();
 
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   describe('Rendering', () => {
     it('should not render when closed', () => {
-      const queryClient = createTestQueryClient();
-      render(
-        <QueryClientProvider client={queryClient}>
-          <BacklogProvider>
-            <ItemDetailModal
-              isOpen={false}
-              onClose={mockOnClose}
-              onEdit={mockOnEdit}
-              onDelete={mockOnDelete}
-              onStatusChange={mockOnStatusChange}
-              isUpdating={false}
-              isLoadingChildTasks={false}
-            />
-          </BacklogProvider>
-        </QueryClientProvider>
+      renderWithProviders(
+        <BacklogProvider>
+          <ItemDetailModal
+            isOpen={false}
+            onClose={mockOnClose}
+            onEdit={mockOnEdit}
+            onDelete={mockOnDelete}
+            onStatusChange={mockOnStatusChange}
+            isUpdating={false}
+            isLoadingChildTasks={false}
+          />
+        </BacklogProvider>
       );
 
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
@@ -197,22 +185,19 @@ describe('ItemDetailModal', () => {
         status: ItemStatus.DONE,
       });
 
-      const queryClient = createTestQueryClient();
-      render(
-        <QueryClientProvider client={queryClient}>
-          <BacklogProvider>
-            <SetSelectedItem item={doneItem} />
-            <ItemDetailModal
-              isOpen={true}
-              onClose={vi.fn()}
-              onEdit={vi.fn()}
-              onDelete={vi.fn()}
-              onStatusChange={vi.fn()}
-              isUpdating={false}
-              isLoadingChildTasks={false}
-            />
-          </BacklogProvider>
-        </QueryClientProvider>
+      renderWithProviders(
+        <BacklogProvider>
+          <SetSelectedItem item={doneItem} />
+          <ItemDetailModal
+            isOpen={true}
+            onClose={vi.fn()}
+            onEdit={vi.fn()}
+            onDelete={vi.fn()}
+            onStatusChange={vi.fn()}
+            isUpdating={false}
+            isLoadingChildTasks={false}
+          />
+        </BacklogProvider>
       );
 
       await waitFor(() => {
@@ -226,22 +211,19 @@ describe('ItemDetailModal', () => {
         status: ItemStatus.IN_PROGRESS,
       });
 
-      const queryClient = createTestQueryClient();
-      render(
-        <QueryClientProvider client={queryClient}>
-          <BacklogProvider>
-            <SetSelectedItem item={inProgressItem} />
-            <ItemDetailModal
-              isOpen={true}
-              onClose={vi.fn()}
-              onEdit={vi.fn()}
-              onDelete={vi.fn()}
-              onStatusChange={vi.fn()}
-              isUpdating={false}
-              isLoadingChildTasks={false}
-            />
-          </BacklogProvider>
-        </QueryClientProvider>
+      renderWithProviders(
+        <BacklogProvider>
+          <SetSelectedItem item={inProgressItem} />
+          <ItemDetailModal
+            isOpen={true}
+            onClose={vi.fn()}
+            onEdit={vi.fn()}
+            onDelete={vi.fn()}
+            onStatusChange={vi.fn()}
+            isUpdating={false}
+            isLoadingChildTasks={false}
+          />
+        </BacklogProvider>
       );
 
       await waitFor(() => {
@@ -253,23 +235,20 @@ describe('ItemDetailModal', () => {
 
   describe('Error Banner', () => {
     it('should show workflow error banner', async () => {
-      const queryClient = createTestQueryClient();
-      render(
-        <QueryClientProvider client={queryClient}>
-          <BacklogProvider>
-            <SetDetailContextValues workflowError="Status transition failed" />
-            <SetSelectedItem item={mockItem} />
-            <ItemDetailModal
-              isOpen={true}
-              onClose={vi.fn()}
-              onEdit={vi.fn()}
-              onDelete={vi.fn()}
-              onStatusChange={vi.fn()}
-              isUpdating={false}
-              isLoadingChildTasks={false}
-            />
-          </BacklogProvider>
-        </QueryClientProvider>
+      renderWithProviders(
+        <BacklogProvider>
+          <SetDetailContextValues workflowError="Status transition failed" />
+          <SetSelectedItem item={mockItem} />
+          <ItemDetailModal
+            isOpen={true}
+            onClose={vi.fn()}
+            onEdit={vi.fn()}
+            onDelete={vi.fn()}
+            onStatusChange={vi.fn()}
+            isUpdating={false}
+            isLoadingChildTasks={false}
+          />
+        </BacklogProvider>
       );
 
       await waitFor(() => {
@@ -285,22 +264,19 @@ describe('ItemDetailModal', () => {
         description: undefined,
       });
 
-      const queryClient = createTestQueryClient();
-      render(
-        <QueryClientProvider client={queryClient}>
-          <BacklogProvider>
-            <SetSelectedItem item={itemNoDescription} />
-            <ItemDetailModal
-              isOpen={true}
-              onClose={vi.fn()}
-              onEdit={vi.fn()}
-              onDelete={vi.fn()}
-              onStatusChange={vi.fn()}
-              isUpdating={false}
-              isLoadingChildTasks={false}
-            />
-          </BacklogProvider>
-        </QueryClientProvider>
+      renderWithProviders(
+        <BacklogProvider>
+          <SetSelectedItem item={itemNoDescription} />
+          <ItemDetailModal
+            isOpen={true}
+            onClose={vi.fn()}
+            onEdit={vi.fn()}
+            onDelete={vi.fn()}
+            onStatusChange={vi.fn()}
+            isUpdating={false}
+            isLoadingChildTasks={false}
+          />
+        </BacklogProvider>
       );
 
       await waitFor(() => {
@@ -314,22 +290,19 @@ describe('ItemDetailModal', () => {
         labels: [],
       });
 
-      const queryClient = createTestQueryClient();
-      render(
-        <QueryClientProvider client={queryClient}>
-          <BacklogProvider>
-            <SetSelectedItem item={itemNoLabels} />
-            <ItemDetailModal
-              isOpen={true}
-              onClose={vi.fn()}
-              onEdit={vi.fn()}
-              onDelete={vi.fn()}
-              onStatusChange={vi.fn()}
-              isUpdating={false}
-              isLoadingChildTasks={false}
-            />
-          </BacklogProvider>
-        </QueryClientProvider>
+      renderWithProviders(
+        <BacklogProvider>
+          <SetSelectedItem item={itemNoLabels} />
+          <ItemDetailModal
+            isOpen={true}
+            onClose={vi.fn()}
+            onEdit={vi.fn()}
+            onDelete={vi.fn()}
+            onStatusChange={vi.fn()}
+            isUpdating={false}
+            isLoadingChildTasks={false}
+          />
+        </BacklogProvider>
       );
 
       await waitFor(() => {
@@ -343,22 +316,19 @@ describe('ItemDetailModal', () => {
         acceptanceCriteria: undefined,
       });
 
-      const queryClient = createTestQueryClient();
-      render(
-        <QueryClientProvider client={queryClient}>
-          <BacklogProvider>
-            <SetSelectedItem item={itemNoCriteria} />
-            <ItemDetailModal
-              isOpen={true}
-              onClose={vi.fn()}
-              onEdit={vi.fn()}
-              onDelete={vi.fn()}
-              onStatusChange={vi.fn()}
-              isUpdating={false}
-              isLoadingChildTasks={false}
-            />
-          </BacklogProvider>
-        </QueryClientProvider>
+      renderWithProviders(
+        <BacklogProvider>
+          <SetSelectedItem item={itemNoCriteria} />
+          <ItemDetailModal
+            isOpen={true}
+            onClose={vi.fn()}
+            onEdit={vi.fn()}
+            onDelete={vi.fn()}
+            onStatusChange={vi.fn()}
+            isUpdating={false}
+            isLoadingChildTasks={false}
+          />
+        </BacklogProvider>
       );
 
       await waitFor(() => {

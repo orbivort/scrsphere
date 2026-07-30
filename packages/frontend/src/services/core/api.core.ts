@@ -4,6 +4,7 @@ import axios, { type AxiosError, type AxiosInstance, type InternalAxiosRequestCo
 import type { ApiResponse } from '../../types';
 import { logger } from '../../utils/logger';
 import { navigateTo, getCurrentPath } from '../../utils/navigation';
+import { i18nInstance } from '../../i18n/config';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:5001/api/v1';
 const API_TIMEOUT = parseInt(import.meta.env.VITE_API_TIMEOUT ?? '30000', 10);
@@ -24,8 +25,16 @@ function getCsrfTokenFromCookie(): string | null {
 
 async function fetchCsrfToken(): Promise<string | null> {
   try {
+    // Include Accept-Language header so the backend locale middleware
+    // resolves the correct locale and sets the cookie accordingly.
+    const headers: Record<string, string> = {};
+    const currentLng = i18nInstance.language;
+    if (currentLng) {
+      headers['Accept-Language'] = currentLng;
+    }
     const response = await fetch(`${API_BASE_URL}/auth/csrf-token`, {
       credentials: 'include',
+      headers,
     });
     if (response.ok) {
       return getCsrfTokenFromCookie();
@@ -66,6 +75,24 @@ export class CoreApiService {
     this.api.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
       if (this.currentTeamId) {
         config.headers['X-Team-Id'] = this.currentTeamId;
+      }
+
+      // Add Accept-Language header for i18n
+      // Priority: i18next's current language (authoritative) > cookie fallback
+      // Using i18next directly ensures the backend always receives the correct
+      // locale even on first visit when the cookie may not yet be set.
+      const currentLng = i18nInstance.language;
+      if (currentLng) {
+        config.headers['Accept-Language'] = currentLng;
+      } else {
+        // Fallback: read from cookie if i18next hasn't initialized yet
+        const locale = document.cookie
+          .split(';')
+          .find((c) => c.trim().startsWith('scrumooth_locale='))
+          ?.split('=')[1];
+        if (locale) {
+          config.headers['Accept-Language'] = locale;
+        }
       }
 
       const method = config.method?.toUpperCase();

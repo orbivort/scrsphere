@@ -1,8 +1,13 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { screen, fireEvent, renderWithProviders, initTestI18n, i18nT } from '../../test-utils';
+import { vi, describe, it, expect, beforeEach, beforeAll } from 'vitest';
 
 import { CreateSprintReviewModal } from './CreateSprintReviewModal';
+
+// Initialize i18n before all tests
+beforeAll(async () => {
+  await initTestI18n();
+});
 
 vi.mock('./CreateSprintReviewModal.module.css', () => ({
   default: {
@@ -48,7 +53,7 @@ describe('CreateSprintReviewModal', () => {
 
   describe('Rendering', () => {
     it('should render modal when isOpen is true', () => {
-      render(<CreateSprintReviewModal {...defaultProps} />);
+      renderWithProviders(<CreateSprintReviewModal {...defaultProps} />);
 
       expect(screen.getByRole('dialog')).toBeInTheDocument();
       expect(screen.getByRole('dialog')).toHaveAttribute('aria-modal', 'true');
@@ -56,28 +61,36 @@ describe('CreateSprintReviewModal', () => {
     });
 
     it('should not render modal when isOpen is false', () => {
-      render(<CreateSprintReviewModal {...defaultProps} isOpen={false} />);
+      renderWithProviders(<CreateSprintReviewModal {...defaultProps} isOpen={false} />);
 
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
 
     it('should render close button', () => {
-      render(<CreateSprintReviewModal {...defaultProps} />);
+      renderWithProviders(<CreateSprintReviewModal {...defaultProps} />);
 
-      expect(screen.getByRole('button', { name: /Close dialog/i })).toBeInTheDocument();
+      const closeButton = screen
+        .getAllByRole('button')
+        .find(
+          (button) =>
+            button.getAttribute('aria-label') === i18nT('sprint-review:createModal.cancel')
+        );
+      expect(closeButton).toBeInTheDocument();
     });
 
     it('should render review date input', () => {
-      render(<CreateSprintReviewModal {...defaultProps} />);
+      renderWithProviders(<CreateSprintReviewModal {...defaultProps} />);
 
       const dateInput = screen.getByLabelText(/Review Date/i);
       expect(dateInput).toBeInTheDocument();
-      expect(dateInput).toHaveAttribute('type', 'date');
-      expect(dateInput).toHaveAttribute('aria-required', 'true');
+      // LocaleDateInput uses a visible text input, not a date input
+      expect(dateInput).toHaveAttribute('type', 'text');
+      // LocaleDateInput uses required HTML attribute, not aria-required
+      expect(dateInput).toBeRequired();
     });
 
     it('should render summary textarea', () => {
-      render(<CreateSprintReviewModal {...defaultProps} />);
+      renderWithProviders(<CreateSprintReviewModal {...defaultProps} />);
 
       const textarea = screen.getByLabelText(/Summary/i);
       expect(textarea).toBeInTheDocument();
@@ -85,25 +98,26 @@ describe('CreateSprintReviewModal', () => {
     });
 
     it('should render action buttons', () => {
-      render(<CreateSprintReviewModal {...defaultProps} />);
+      renderWithProviders(<CreateSprintReviewModal {...defaultProps} />);
 
-      expect(screen.getByRole('button', { name: /Cancel/i })).toBeInTheDocument();
+      expect(screen.getByText(i18nT('sprint-review:createModal.cancel'))).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /Create Review/i })).toBeInTheDocument();
     });
 
     it('should display review date value from createReviewData', () => {
-      render(
+      renderWithProviders(
         <CreateSprintReviewModal
           {...defaultProps}
           createReviewData={{ reviewDate: '2026-02-15', summary: '' }}
         />
       );
 
-      expect(screen.getByLabelText(/Review Date/i)).toHaveValue('2026-02-15');
+      // LocaleDateInput displays dates in locale format (dd/MM/yyyy for en)
+      expect(screen.getByLabelText(/Review Date/i)).toHaveValue('15/02/2026');
     });
 
     it('should display summary value from createReviewData', () => {
-      render(
+      renderWithProviders(
         <CreateSprintReviewModal
           {...defaultProps}
           createReviewData={{ reviewDate: '', summary: 'My sprint review summary' }}
@@ -117,12 +131,13 @@ describe('CreateSprintReviewModal', () => {
   describe('Form Interactions', () => {
     it('should call setCreateReviewData when review date changes', () => {
       const setCreateReviewData = vi.fn();
-      render(
+      renderWithProviders(
         <CreateSprintReviewModal {...defaultProps} setCreateReviewData={setCreateReviewData} />
       );
 
       const dateInput = screen.getByLabelText(/Review Date/i);
-      fireEvent.change(dateInput, { target: { value: '2026-03-20' } });
+      // LocaleDateInput expects locale format (dd/MM/yyyy for en)
+      fireEvent.change(dateInput, { target: { value: '20/03/2026' } });
 
       expect(setCreateReviewData).toHaveBeenCalledWith({
         reviewDate: '2026-03-20',
@@ -132,7 +147,7 @@ describe('CreateSprintReviewModal', () => {
 
     it('should call setCreateReviewData when summary changes', () => {
       const setCreateReviewData = vi.fn();
-      render(
+      renderWithProviders(
         <CreateSprintReviewModal {...defaultProps} setCreateReviewData={setCreateReviewData} />
       );
 
@@ -147,9 +162,15 @@ describe('CreateSprintReviewModal', () => {
 
     it('should call onClose when close button is clicked', () => {
       const onClose = vi.fn();
-      render(<CreateSprintReviewModal {...defaultProps} onClose={onClose} />);
+      renderWithProviders(<CreateSprintReviewModal {...defaultProps} onClose={onClose} />);
 
-      fireEvent.click(screen.getByRole('button', { name: /Close dialog/i }));
+      const closeButton = screen
+        .getAllByRole('button')
+        .find(
+          (button) =>
+            button.getAttribute('aria-label') === i18nT('sprint-review:createModal.cancel')
+        );
+      fireEvent.click(closeButton!);
 
       expect(onClose).toHaveBeenCalled();
     });
@@ -157,7 +178,7 @@ describe('CreateSprintReviewModal', () => {
     it('should call onClose and setFormErrors when Cancel button is clicked', () => {
       const onClose = vi.fn();
       const setFormErrors = vi.fn();
-      render(
+      renderWithProviders(
         <CreateSprintReviewModal
           {...defaultProps}
           onClose={onClose}
@@ -165,7 +186,7 @@ describe('CreateSprintReviewModal', () => {
         />
       );
 
-      fireEvent.click(screen.getByRole('button', { name: /Cancel/i }));
+      fireEvent.click(screen.getByText(i18nT('sprint-review:createModal.cancel')));
 
       expect(onClose).toHaveBeenCalled();
       expect(setFormErrors).toHaveBeenCalledWith({});
@@ -173,7 +194,7 @@ describe('CreateSprintReviewModal', () => {
 
     it('should call onSubmit when Create Review button is clicked', () => {
       const onSubmit = vi.fn();
-      render(<CreateSprintReviewModal {...defaultProps} onSubmit={onSubmit} />);
+      renderWithProviders(<CreateSprintReviewModal {...defaultProps} onSubmit={onSubmit} />);
 
       fireEvent.click(screen.getByRole('button', { name: /Create Review/i }));
 
@@ -183,7 +204,7 @@ describe('CreateSprintReviewModal', () => {
 
   describe('Form Validation and Errors', () => {
     it('should display review date error when formErrors.reviewDate exists', () => {
-      render(
+      renderWithProviders(
         <CreateSprintReviewModal
           {...defaultProps}
           formErrors={{ reviewDate: 'Review date is required' }}
@@ -194,7 +215,7 @@ describe('CreateSprintReviewModal', () => {
     });
 
     it('should mark review date input as invalid when formErrors.reviewDate exists', () => {
-      render(
+      renderWithProviders(
         <CreateSprintReviewModal
           {...defaultProps}
           formErrors={{ reviewDate: 'Review date is required' }}
@@ -205,13 +226,13 @@ describe('CreateSprintReviewModal', () => {
     });
 
     it('should not mark review date input as invalid when no error', () => {
-      render(<CreateSprintReviewModal {...defaultProps} formErrors={{}} />);
+      renderWithProviders(<CreateSprintReviewModal {...defaultProps} formErrors={{}} />);
 
       expect(screen.getByLabelText(/Review Date/i)).toHaveAttribute('aria-invalid', 'false');
     });
 
     it('should display modal error when isError is true and error is Error instance', () => {
-      render(
+      renderWithProviders(
         <CreateSprintReviewModal
           {...defaultProps}
           isError={true}
@@ -223,7 +244,9 @@ describe('CreateSprintReviewModal', () => {
     });
 
     it('should display default error message when isError is true and error is not Error instance', () => {
-      render(<CreateSprintReviewModal {...defaultProps} isError={true} error={null} />);
+      renderWithProviders(
+        <CreateSprintReviewModal {...defaultProps} isError={true} error={null} />
+      );
 
       expect(
         screen.getByText('Failed to create sprint review. Please try again.')
@@ -231,7 +254,9 @@ describe('CreateSprintReviewModal', () => {
     });
 
     it('should not display error message when isError is false', () => {
-      render(<CreateSprintReviewModal {...defaultProps} isError={false} error={null} />);
+      renderWithProviders(
+        <CreateSprintReviewModal {...defaultProps} isError={false} error={null} />
+      );
 
       expect(
         screen.queryByText('Failed to create sprint review. Please try again.')
@@ -241,19 +266,19 @@ describe('CreateSprintReviewModal', () => {
 
   describe('Loading State', () => {
     it('should disable Create Review button when isPending is true', () => {
-      render(<CreateSprintReviewModal {...defaultProps} isPending={true} />);
+      renderWithProviders(<CreateSprintReviewModal {...defaultProps} isPending={true} />);
 
       expect(screen.getByRole('button', { name: /Creating/i })).toBeDisabled();
     });
 
     it('should show "Creating..." text when isPending is true', () => {
-      render(<CreateSprintReviewModal {...defaultProps} isPending={true} />);
+      renderWithProviders(<CreateSprintReviewModal {...defaultProps} isPending={true} />);
 
       expect(screen.getByText('Creating...')).toBeInTheDocument();
     });
 
     it('should show "Create Review" text when isPending is false', () => {
-      render(<CreateSprintReviewModal {...defaultProps} isPending={false} />);
+      renderWithProviders(<CreateSprintReviewModal {...defaultProps} isPending={false} />);
 
       expect(screen.getByRole('button', { name: /Create Review/i })).not.toBeDisabled();
     });
@@ -261,19 +286,21 @@ describe('CreateSprintReviewModal', () => {
 
   describe('Increment Validation', () => {
     it('should disable Create Review button when hasIncrement is false', () => {
-      render(<CreateSprintReviewModal {...defaultProps} hasIncrement={false} />);
+      renderWithProviders(<CreateSprintReviewModal {...defaultProps} hasIncrement={false} />);
 
       expect(screen.getByRole('button', { name: /Create Review/i })).toBeDisabled();
     });
 
     it('should enable Create Review button when hasIncrement is true and not pending', () => {
-      render(<CreateSprintReviewModal {...defaultProps} hasIncrement={true} isPending={false} />);
+      renderWithProviders(
+        <CreateSprintReviewModal {...defaultProps} hasIncrement={true} isPending={false} />
+      );
 
       expect(screen.getByRole('button', { name: /Create Review/i })).not.toBeDisabled();
     });
 
     it('should display warning when formErrors.increment exists', () => {
-      render(
+      renderWithProviders(
         <CreateSprintReviewModal
           {...defaultProps}
           formErrors={{ increment: 'No delivered increment found' }}
@@ -286,7 +313,7 @@ describe('CreateSprintReviewModal', () => {
 
   describe('Accessibility', () => {
     it('should have proper ARIA attributes on modal', () => {
-      render(<CreateSprintReviewModal {...defaultProps} />);
+      renderWithProviders(<CreateSprintReviewModal {...defaultProps} />);
 
       const dialog = screen.getByRole('dialog');
       expect(dialog).toHaveAttribute('aria-modal', 'true');
@@ -294,13 +321,13 @@ describe('CreateSprintReviewModal', () => {
     });
 
     it('should have accessible title', () => {
-      render(<CreateSprintReviewModal {...defaultProps} />);
+      renderWithProviders(<CreateSprintReviewModal {...defaultProps} />);
 
       expect(screen.getByRole('heading', { level: 3 })).toHaveTextContent('Create Sprint Review');
     });
 
     it('should have aria-describedby on date input when error exists', () => {
-      render(
+      renderWithProviders(
         <CreateSprintReviewModal
           {...defaultProps}
           formErrors={{ reviewDate: 'Date is required' }}
@@ -316,7 +343,7 @@ describe('CreateSprintReviewModal', () => {
 
   describe('Negative Test Cases', () => {
     it('should handle empty review date and summary', () => {
-      render(
+      renderWithProviders(
         <CreateSprintReviewModal
           {...defaultProps}
           createReviewData={{ reviewDate: '', summary: '' }}
@@ -329,7 +356,7 @@ describe('CreateSprintReviewModal', () => {
 
     it('should handle long summary text', () => {
       const longSummary = 'A'.repeat(500);
-      render(
+      renderWithProviders(
         <CreateSprintReviewModal
           {...defaultProps}
           createReviewData={{ reviewDate: '', summary: longSummary }}
@@ -340,7 +367,9 @@ describe('CreateSprintReviewModal', () => {
     });
 
     it('should handle both isPending and hasIncrement false', () => {
-      render(<CreateSprintReviewModal {...defaultProps} isPending={true} hasIncrement={false} />);
+      renderWithProviders(
+        <CreateSprintReviewModal {...defaultProps} isPending={true} hasIncrement={false} />
+      );
 
       expect(screen.getByRole('button', { name: /Creating/i })).toBeDisabled();
     });

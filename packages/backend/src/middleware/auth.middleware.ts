@@ -1,11 +1,13 @@
 // Authentication Middleware
 import { type Request, type Response, type NextFunction } from 'express';
 import { authService } from '../services/auth.service';
-import { UnauthorizedError } from '../utils/errors';
+import { UnauthorizedError, ForbiddenError } from '../utils/errors';
+import { type UserRole } from '@scrumooth/shared';
 import { logger } from '../utils/logger';
 import prisma from '../utils/prisma';
 import { COOKIE_NAMES } from '../utils/cookieConfig';
 import { updateRequestContext } from '../utils/requestContext';
+import { t } from '../i18n/requestT.js';
 
 /**
  * Authentication middleware
@@ -33,7 +35,7 @@ export const authenticate = async (
     }
 
     if (!token) {
-      throw new UnauthorizedError('No token provided');
+      throw new UnauthorizedError(t('errors:unauthorized'));
     }
 
     // Verify token
@@ -122,17 +124,18 @@ export const optionalAuth = async (
 /**
  * Role-based authorization middleware
  */
-export const requireRoles = (...roles: string[]) => {
+export const requireRoles = (...roles: UserRole[]) => {
   return async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
     try {
       if (!req.user) {
         throw new UnauthorizedError('Authentication required');
       }
 
-      // Get user's role in the team (if teamId is in params)
+      // Get user's role in the team (if teamId is in params or body)
       const teamId = req.params.teamId ?? req.body.teamId;
 
       if (teamId) {
+        // Check role in specific team
         const teamMember = await req.prisma?.teamMember.findUnique({
           where: {
             teamId_userId: {
@@ -142,8 +145,20 @@ export const requireRoles = (...roles: string[]) => {
           },
         });
 
-        if (!teamMember || !roles.includes(teamMember.role)) {
-          throw new UnauthorizedError('Insufficient permissions');
+        if (!teamMember || !roles.includes(teamMember.role as UserRole)) {
+          throw new ForbiddenError('Insufficient permissions');
+        }
+      } else {
+        // Check if user has required role in any team
+        const teamMembership = await req.prisma?.teamMember.findFirst({
+          where: {
+            userId: req.user.id,
+            role: { in: roles },
+          },
+        });
+
+        if (!teamMembership) {
+          throw new ForbiddenError('Insufficient permissions');
         }
       }
 

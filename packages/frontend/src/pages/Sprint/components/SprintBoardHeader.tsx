@@ -1,4 +1,6 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { formatDateRange } from '@scrumooth/shared';
 
 import {
   ZapIcon,
@@ -10,6 +12,8 @@ import {
 } from '../../../components/common/Icons';
 import type { Sprint } from '../../../types';
 import styles from '../SprintBoard.module.css';
+
+import { useI18nStore } from '@/i18n/useI18nStore';
 
 export interface SprintBoardHeaderProps {
   sprint: Sprint;
@@ -32,6 +36,9 @@ export const SprintBoardHeader: React.FC<SprintBoardHeaderProps> = ({
   onCompleteSprint,
   showBurndown,
 }) => {
+  const { t } = useTranslation('sprint');
+  const { locale } = useI18nStore();
+
   return (
     <header className={styles['sprint-board-header']}>
       <div className={styles['header-left']}>
@@ -39,13 +46,12 @@ export const SprintBoardHeader: React.FC<SprintBoardHeaderProps> = ({
           <ZapIcon size={24} aria-hidden="true" /> {sprint.name}
         </h1>
         <span className={styles['sprint-dates']}>
-          {new Date(sprint.startDate).toLocaleDateString()} -{' '}
-          {new Date(sprint.endDate).toLocaleDateString()}
+          {formatDateRange(sprint.startDate, sprint.endDate, locale)}
           <span
             className={`${styles['days-remaining']} ${daysRemaining <= 2 ? styles.warning : ''}`}
           >
             {' '}
-            • {daysRemaining} days remaining
+            • {t('daysRemaining', { count: daysRemaining })}
           </span>
         </span>
       </div>
@@ -53,8 +59,8 @@ export const SprintBoardHeader: React.FC<SprintBoardHeaderProps> = ({
         <button
           className={`${styles.button} ${styles['button-secondary']} ${styles['keyboard-help-button']}`}
           onClick={onKeyboardHelp}
-          aria-label="Keyboard shortcuts help"
-          title="Keyboard shortcuts (?)"
+          aria-label={t('boardHeader.keyboardShortcuts')}
+          title={`${t('boardHeader.keyboardShortcuts')} (?)`}
         >
           <KeyboardIcon size={16} aria-hidden="true" />
           <span className={styles['keyboard-shortcut-hint']}>?</span>
@@ -65,28 +71,28 @@ export const SprintBoardHeader: React.FC<SprintBoardHeaderProps> = ({
           aria-expanded={showBurndown}
           aria-controls="burndown-panel"
         >
-          <ChartIcon size={16} aria-hidden="true" /> Burndown
+          <ChartIcon size={16} aria-hidden="true" /> {t('boardHeader.burndown')}
         </button>
         <button
           className={`${styles.button} ${styles['button-secondary']}`}
           onClick={onOpenBacklogManager}
-          aria-label="Manage sprint backlog"
+          aria-label={t('boardHeader.manageBacklog')}
         >
-          <ClipboardListIcon size={16} aria-hidden="true" /> Manage Backlog
+          <ClipboardListIcon size={16} aria-hidden="true" /> {t('boardHeader.manageBacklog')}
         </button>
         <button
           className={`${styles.button} ${styles['button-primary']}`}
           onClick={onOpenCreateModal}
-          aria-label="Add new task"
+          aria-label={t('boardHeader.addTask')}
         >
-          <PlusIcon size={16} aria-hidden="true" /> Add Task
+          <PlusIcon size={16} aria-hidden="true" /> {t('boardHeader.addTask')}
         </button>
         <button
           className={`${styles.button} ${styles['button-complete-sprint']}`}
           onClick={onCompleteSprint}
-          aria-label="Complete sprint"
+          aria-label={t('boardHeader.completeSprint')}
         >
-          <CheckIcon size={16} aria-hidden="true" /> Complete Sprint
+          <CheckIcon size={16} aria-hidden="true" /> {t('boardHeader.completeSprint')}
         </button>
       </div>
     </header>

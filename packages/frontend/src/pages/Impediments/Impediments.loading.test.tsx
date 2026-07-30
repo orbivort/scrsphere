@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Impediments Page Loading State Tests
  *
  * Test Coverage:
@@ -9,10 +9,17 @@
  * - Button loading states (Create, Save, Delete buttons)
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor, act, fireEvent } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MemoryRouter } from 'react-router';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
+import {
+  screen,
+  waitFor,
+  act,
+  fireEvent,
+  renderWithProviders,
+  initTestI18n,
+  i18nT,
+} from '../../test-utils';
+import React from 'react';
 
 import { Impediments } from './Impediments';
 import { useTeamStore } from '../../store';
@@ -58,30 +65,6 @@ vi.mock('../../components/TeamMemberSelect/TeamMemberSelect', () => ({
 vi.mock('../../components/common/ToastContainer', () => ({
   ToastContainer: () => <div data-testid="toast-container" />,
 }));
-
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        staleTime: 0,
-      },
-      mutations: {
-        retry: false,
-      },
-    },
-  });
-
-const renderImpediments = (queryClient?: QueryClient) => {
-  const testQueryClient = queryClient || createTestQueryClient();
-  return render(
-    <QueryClientProvider client={testQueryClient}>
-      <MemoryRouter>
-        <Impediments />
-      </MemoryRouter>
-    </QueryClientProvider>
-  );
-};
 
 const mockTeam = {
   id: 'team-1',
@@ -141,9 +124,13 @@ const mockImpediments = [
   },
 ];
 
-const getPageLoader = () => screen.getByRole('status', { name: /Loading impediments/i });
+const getPageLoader = () => screen.getByRole('status', { name: i18nT('impediments:title') });
 
 describe('Impediments - Loading State Tests', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   let mockUseTeamStore: ReturnType<typeof vi.fn>;
   let mockApiService: typeof apiService;
 
@@ -170,7 +157,7 @@ describe('Impediments - Loading State Tests', () => {
       mockApiService.getActiveSprint.mockImplementation(() => new Promise(() => {}));
       mockApiService.getImpediments.mockImplementation(() => new Promise(() => {}));
 
-      renderImpediments();
+      renderWithProviders(<Impediments />);
 
       expect(getPageLoader()).toBeInTheDocument();
     });
@@ -179,7 +166,7 @@ describe('Impediments - Loading State Tests', () => {
       mockApiService.getActiveSprint.mockResolvedValue({ success: true, data: mockSprint });
       mockApiService.getImpediments.mockImplementation(() => new Promise(() => {}));
 
-      renderImpediments();
+      renderWithProviders(<Impediments />);
 
       expect(getPageLoader()).toBeInTheDocument();
     });
@@ -188,7 +175,7 @@ describe('Impediments - Loading State Tests', () => {
       mockApiService.getActiveSprint.mockImplementation(() => new Promise(() => {}));
       mockApiService.getImpediments.mockResolvedValue({ success: true, data: [] });
 
-      renderImpediments();
+      renderWithProviders(<Impediments />);
 
       expect(getPageLoader()).toBeInTheDocument();
     });
@@ -197,7 +184,7 @@ describe('Impediments - Loading State Tests', () => {
       mockApiService.getActiveSprint.mockResolvedValue({ success: true, data: mockSprint });
       mockApiService.getImpediments.mockImplementation(() => new Promise(() => {}));
 
-      renderImpediments();
+      renderWithProviders(<Impediments />);
 
       expect(getPageLoader()).toBeInTheDocument();
     });
@@ -208,10 +195,12 @@ describe('Impediments - Loading State Tests', () => {
       mockApiService.getActiveSprint.mockResolvedValue({ success: true, data: mockSprint });
       mockApiService.getImpediments.mockResolvedValue({ success: true, data: mockImpediments });
 
-      renderImpediments();
+      renderWithProviders(<Impediments />);
 
       await waitFor(() => {
-        expect(screen.queryByRole('status', { name: /Loading/i })).not.toBeInTheDocument();
+        expect(
+          screen.queryByRole('status', { name: i18nT('impediments:title') })
+        ).not.toBeInTheDocument();
       });
 
       expect(screen.getByText('Impediments')).toBeInTheDocument();
@@ -227,7 +216,7 @@ describe('Impediments - Loading State Tests', () => {
       );
       mockApiService.getImpediments.mockResolvedValue({ success: true, data: [] });
 
-      renderImpediments();
+      renderWithProviders(<Impediments />);
 
       expect(getPageLoader()).toBeInTheDocument();
 
@@ -236,7 +225,9 @@ describe('Impediments - Loading State Tests', () => {
       });
 
       await waitFor(() => {
-        expect(screen.queryByRole('status', { name: /Loading/i })).not.toBeInTheDocument();
+        expect(
+          screen.queryByRole('status', { name: i18nT('impediments:title') })
+        ).not.toBeInTheDocument();
       });
     });
 
@@ -244,7 +235,7 @@ describe('Impediments - Loading State Tests', () => {
       mockApiService.getActiveSprint.mockResolvedValue({ success: true, data: mockSprint });
       mockApiService.getImpediments.mockImplementation(() => new Promise(() => {}));
 
-      renderImpediments();
+      renderWithProviders(<Impediments />);
 
       expect(getPageLoader()).toBeInTheDocument();
     });
@@ -253,10 +244,12 @@ describe('Impediments - Loading State Tests', () => {
       mockApiService.getActiveSprint.mockResolvedValue({ success: true, data: mockSprint });
       mockApiService.getImpediments.mockResolvedValue({ success: true, data: [] });
 
-      renderImpediments();
+      renderWithProviders(<Impediments />);
 
       await waitFor(() => {
-        expect(screen.queryByRole('status', { name: /Loading/i })).not.toBeInTheDocument();
+        expect(
+          screen.queryByRole('status', { name: i18nT('impediments:title') })
+        ).not.toBeInTheDocument();
       });
 
       expect(screen.getByText(/No Impediments for Sprint 1/)).toBeInTheDocument();
@@ -276,7 +269,7 @@ describe('Impediments - Loading State Tests', () => {
       );
       mockApiService.getImpediments.mockImplementation(() => new Promise(() => {}));
 
-      renderImpediments();
+      renderWithProviders(<Impediments />);
 
       expect(getPageLoader()).toBeInTheDocument();
 
@@ -314,7 +307,7 @@ describe('Impediments - Loading State Tests', () => {
           })
       );
 
-      renderImpediments();
+      renderWithProviders(<Impediments />);
 
       expect(getPageLoader()).toBeInTheDocument();
 
@@ -331,7 +324,9 @@ describe('Impediments - Loading State Tests', () => {
       });
 
       await waitFor(() => {
-        expect(screen.queryByRole('status', { name: /Loading/i })).not.toBeInTheDocument();
+        expect(
+          screen.queryByRole('status', { name: i18nT('impediments:title') })
+        ).not.toBeInTheDocument();
       });
 
       vi.useRealTimers();
@@ -343,7 +338,7 @@ describe('Impediments - Loading State Tests', () => {
       mockApiService.getActiveSprint.mockImplementation(() => new Promise(() => {}));
       mockApiService.getImpediments.mockImplementation(() => new Promise(() => {}));
 
-      renderImpediments();
+      renderWithProviders(<Impediments />);
 
       const loader = getPageLoader();
       expect(loader).toBeInTheDocument();
@@ -355,7 +350,7 @@ describe('Impediments - Loading State Tests', () => {
       mockApiService.getActiveSprint.mockImplementation(() => new Promise(() => {}));
       mockApiService.getImpediments.mockImplementation(() => new Promise(() => {}));
 
-      renderImpediments();
+      renderWithProviders(<Impediments />);
 
       const loader = getPageLoader();
       expect(loader).toBeInTheDocument();
@@ -366,7 +361,7 @@ describe('Impediments - Loading State Tests', () => {
       mockApiService.getActiveSprint.mockImplementation(() => new Promise(() => {}));
       mockApiService.getImpediments.mockImplementation(() => new Promise(() => {}));
 
-      renderImpediments();
+      renderWithProviders(<Impediments />);
 
       const loader = getPageLoader();
       expect(loader).toBeInTheDocument();
@@ -379,13 +374,15 @@ describe('Impediments - Loading State Tests', () => {
       mockApiService.getActiveSprint.mockImplementation(() => new Promise(() => {}));
       mockApiService.getImpediments.mockImplementation(() => new Promise(() => {}));
 
-      const { unmount } = renderImpediments();
+      const { unmount } = renderWithProviders(<Impediments />);
 
       expect(getPageLoader()).toBeInTheDocument();
 
       unmount();
 
-      expect(screen.queryByRole('status', { name: /Loading/i })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('status', { name: i18nT('impediments:title') })
+      ).not.toBeInTheDocument();
     });
 
     it('should not cause memory leaks with pending promises', async () => {
@@ -400,7 +397,7 @@ describe('Impediments - Loading State Tests', () => {
       );
       mockApiService.getImpediments.mockImplementation(() => new Promise(() => {}));
 
-      const { unmount } = renderImpediments();
+      const { unmount } = renderWithProviders(<Impediments />);
 
       unmount();
 
@@ -409,7 +406,9 @@ describe('Impediments - Loading State Tests', () => {
         vi.runAllTimersAsync();
       });
 
-      expect(screen.queryByRole('status', { name: /Loading/i })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('status', { name: i18nT('impediments:title') })
+      ).not.toBeInTheDocument();
 
       vi.useRealTimers();
     });
@@ -433,7 +432,7 @@ describe('Impediments - Loading State Tests', () => {
             })
         );
 
-        renderImpediments();
+        renderWithProviders(<Impediments />);
 
         await act(async () => {
           vi.runAllTimersAsync();
@@ -479,7 +478,7 @@ describe('Impediments - Loading State Tests', () => {
             })
         );
 
-        renderImpediments();
+        renderWithProviders(<Impediments />);
 
         await act(async () => {
           vi.runAllTimersAsync();
@@ -521,7 +520,7 @@ describe('Impediments - Loading State Tests', () => {
           data: { id: 'new-imp', title: 'New Impediment' },
         });
 
-        renderImpediments();
+        renderWithProviders(<Impediments />);
 
         await act(async () => {
           vi.runAllTimersAsync();
@@ -567,7 +566,7 @@ describe('Impediments - Loading State Tests', () => {
 
         mockApiService.createImpediment.mockRejectedValue(new Error('Network error'));
 
-        renderImpediments();
+        renderWithProviders(<Impediments />);
 
         await act(async () => {
           vi.runAllTimersAsync();
@@ -616,7 +615,7 @@ describe('Impediments - Loading State Tests', () => {
           data: { ...mockImpediments[0], status: ImpedimentStatus.IN_PROGRESS },
         });
 
-        renderImpediments();
+        renderWithProviders(<Impediments />);
 
         await act(async () => {
           vi.runAllTimersAsync();
@@ -652,7 +651,7 @@ describe('Impediments - Loading State Tests', () => {
 
         mockApiService.updateImpediment.mockRejectedValue(new Error('Network error'));
 
-        renderImpediments();
+        renderWithProviders(<Impediments />);
 
         await act(async () => {
           vi.runAllTimersAsync();
@@ -694,7 +693,7 @@ describe('Impediments - Loading State Tests', () => {
             })
         );
 
-        renderImpediments();
+        renderWithProviders(<Impediments />);
 
         await act(async () => {
           vi.runAllTimersAsync();
@@ -737,7 +736,7 @@ describe('Impediments - Loading State Tests', () => {
             })
         );
 
-        renderImpediments();
+        renderWithProviders(<Impediments />);
 
         await act(async () => {
           vi.runAllTimersAsync();
@@ -774,7 +773,7 @@ describe('Impediments - Loading State Tests', () => {
 
         mockApiService.deleteImpediment.mockResolvedValue({ success: true });
 
-        renderImpediments();
+        renderWithProviders(<Impediments />);
 
         await act(async () => {
           vi.runAllTimersAsync();
@@ -824,7 +823,7 @@ describe('Impediments - Loading State Tests', () => {
             })
         );
 
-        renderImpediments();
+        renderWithProviders(<Impediments />);
 
         await act(async () => {
           vi.runAllTimersAsync();
@@ -869,7 +868,7 @@ describe('Impediments - Loading State Tests', () => {
             })
         );
 
-        renderImpediments();
+        renderWithProviders(<Impediments />);
 
         await act(async () => {
           vi.runAllTimersAsync();
@@ -921,7 +920,7 @@ describe('Impediments - Loading State Tests', () => {
             })
         );
 
-        renderImpediments();
+        renderWithProviders(<Impediments />);
 
         await act(async () => {
           vi.runAllTimersAsync();
@@ -973,10 +972,12 @@ describe('Impediments - Loading State Tests', () => {
         fetchTeams: vi.fn(),
       });
 
-      renderImpediments();
+      renderWithProviders(<Impediments />);
 
       expect(screen.getByText('No Team Selected')).toBeInTheDocument();
-      expect(screen.queryByRole('status', { name: /Loading/i })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('status', { name: i18nT('impediments:title') })
+      ).not.toBeInTheDocument();
     });
 
     it('should not show loading state when no team is selected', () => {
@@ -987,9 +988,11 @@ describe('Impediments - Loading State Tests', () => {
         fetchTeams: vi.fn(),
       });
 
-      renderImpediments();
+      renderWithProviders(<Impediments />);
 
-      expect(screen.queryByRole('status', { name: /Loading/i })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('status', { name: i18nT('impediments:title') })
+      ).not.toBeInTheDocument();
     });
   });
 
@@ -998,23 +1001,27 @@ describe('Impediments - Loading State Tests', () => {
       mockApiService.getActiveSprint.mockResolvedValue({ success: true, data: null });
       mockApiService.getImpediments.mockResolvedValue({ success: true, data: [] });
 
-      renderImpediments();
+      renderWithProviders(<Impediments />);
 
       await waitFor(() => {
         expect(screen.getByText('No Active Sprint')).toBeInTheDocument();
       });
 
-      expect(screen.queryByRole('status', { name: /Loading/i })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('status', { name: i18nT('impediments:title') })
+      ).not.toBeInTheDocument();
     });
 
     it('should not show loading state when no active sprint exists', async () => {
       mockApiService.getActiveSprint.mockResolvedValue({ success: true, data: null });
       mockApiService.getImpediments.mockResolvedValue({ success: true, data: [] });
 
-      renderImpediments();
+      renderWithProviders(<Impediments />);
 
       await waitFor(() => {
-        expect(screen.queryByRole('status', { name: /Loading/i })).not.toBeInTheDocument();
+        expect(
+          screen.queryByRole('status', { name: i18nT('impediments:title') })
+        ).not.toBeInTheDocument();
       });
     });
   });

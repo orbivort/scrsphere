@@ -1,0 +1,122 @@
+.date-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.date-input-wrapper input[type='text'] {
+  width: 100%;
+  padding: var(--space-2) var(--space-10) var(--space-2) var(--space-3);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-primary);
+  border: var(--border-width-1) solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition:
+    border-color var(--transition-normal),
+    box-shadow var(--transition-normal);
+}
+
+.date-input-wrapper input[type='text']:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: var(--focus-ring);
+}
+
+.date-input-wrapper input[type='text']:disabled {
+  background-color: var(--color-bg-disabled);
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
+}
+
+.date-input-wrapper.has-error input[type='text'] {
+  border-color: var(--color-danger);
+}
+
+.date-input-wrapper.has-error input[type='text']:focus {
+  border-color: var(--color-danger);
+  box-shadow: var(--focus-ring-danger);
+}
+
+.date-input-wrapper input[type='text']::placeholder {
+  color: var(--color-text-placeholder);
+  opacity: var(--opacity-60);
+}
+
+.hidden-date-input {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.calendar-button {
+  position: absolute;
+  right: var(--space-2);
+  background: transparent;
+  border: var(--border-width-1) solid transparent;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  opacity: var(--opacity-60);
+  transition: opacity var(--transition-normal);
+  width: var(--space-8);
+  height: var(--space-8);
+}
+
+.calendar-button:hover {
+  opacity: var(--opacity-100);
+  color: var(--color-text-primary);
+}
+
+.calendar-button:focus {
+  outline: none;
+}
+
+.calendar-button:disabled {
+  cursor: not-allowed;
+  opacity: var(--opacity-30);
+}
+
+.date-input-wrapper:has(input[type='text']:focus) ~ .calendar-button {
+  color: var(--color-primary);
+  opacity: var(--opacity-100);
+}
+
+.clear-button {
+  position: absolute;
+  right: var(--space-10);
+  background: transparent;
+  border: var(--border-width-1) solid transparent;
+  padding: 0;
+  width: var(--space-5);
+  height: var(--space-5);
+  font-size: var(--font-size-xl);
+  line-height: var(--line-height-tight);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  opacity: var(--opacity-50);
+  transition: opacity var(--transition-normal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clear-button:hover {
+  opacity: var(--opacity-100);
+  color: var(--color-text-primary);
+}
+
+.clear-button:focus {
+  outline: none;
+}
+
+.input-error {
+  border-color: var(--color-danger) !important;
+}

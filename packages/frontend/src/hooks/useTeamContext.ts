@@ -2,6 +2,7 @@
 import { useNavigate } from 'react-router';
 
 import { useTeamContext } from '../contexts/TeamContext';
+import { i18nInstance } from '../i18n/config';
 
 interface UseTeamContextOptions {
   requireTeam?: boolean;
@@ -29,7 +30,15 @@ export const useRequireTeam = (options: UseTeamContextOptions = {}) => {
     }
 
     if (requireRoles.length > 0 && userRole && !requireRoles.includes(userRole)) {
-      setError(`Insufficient permissions. Required roles: ${requireRoles.join(', ')}`);
+      setError(
+        i18nInstance.t(
+          'common:permission.insufficientRoles',
+          'Insufficient permissions. Required roles: {{roles}}',
+          {
+            roles: requireRoles.join(', '),
+          }
+        )
+      );
     } else {
       setError(null);
     }

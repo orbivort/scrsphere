@@ -1,0 +1,114 @@
+{
+  "allStatus": "Alle Status",
+  "card": {
+    "createdFromDailyUpdate": "Erstellt aus täglichem Update",
+    "fromDailyScrum": "Aus Daily Scrum",
+    "owner": "Verantwortlicher",
+    "reportedBy": "Gemeldet von",
+    "resolution": "Lösung",
+    "sprint": "Sprint",
+    "unknown": "Unbekannt",
+    "viewDetailsAria": "Details für Impediment anzeigen: {{title}}. Status: {{status}}"
+  },
+  "createModal": {
+    "activeSprint": "(Aktiv)",
+    "createImpediment": "Impediment erstellen",
+    "creating": "Erstellen...",
+    "descriptionLabel": "Beschreibung",
+    "descriptionPlaceholder": "Details zum Impediment angeben",
+    "sprintLabel": "Sprint",
+    "subtitle": "Blocker dokumentieren, die den Fortschritt Ihres Teams behindern",
+    "title": "Neues Impediment melden",
+    "titleLabel": "Titel",
+    "titlePlaceholder": "Kurze Beschreibung des Impediments"
+  },
+  "deleteModal": {
+    "actionWarning": "Aktionswarnung",
+    "deleteImpediment": "Impediment löschen",
+    "deleting": "Löschen...",
+    "item": "Element:",
+    "statusLabel": "Status:",
+    "subtitle": "Diese Aktion ist dauerhaft und kann nicht rückgängig gemacht werden",
+    "title": "Impediment löschen",
+    "unknownItem": "Unbekanntes Element",
+    "warningText": "Sie sind dabei, dieses Impediment dauerhaft zu löschen. Diese Aktion kann nicht rückgängig gemacht werden. Alle zugehörigen Daten werden dauerhaft entfernt."
+  },
+  "detailModal": {
+    "cancel": "Abbrechen",
+    "close": "Schließen",
+    "createdFromDailyScrum": "Erstellt aus Daily Scrum Update",
+    "createdLabel": "Erstellt",
+    "deleteLabel": "Löschen",
+    "deleting": "Löschen...",
+    "descriptionLabel": "Beschreibung",
+    "ownerLabel": "Eigentümer",
+    "reportedByLabel": "Gemeldet von",
+    "resolutionLabel": "Lösung",
+    "resolutionPlaceholder": "Beschreiben Sie, wie dieses Impediment gelöst wurde...",
+    "saveResolution": "Lösung speichern",
+    "saving": "Speichern...",
+    "sprintLabel": "Sprint",
+    "statusLabel": "Status",
+    "subtitle": "Impediment-Informationen anzeigen und verwalten",
+    "title": "Impediment-Details",
+    "titleLabel": "Titel",
+    "viewDailyUpdate": "Tägliches Update anzeigen"
+  },
+  "emptyState": {
+    "clearFilter": "Filter löschen",
+    "noFilterImpedimentsDescription": "Es gibt keine {{status}} Impediments in \"{{sprintName}}\". Versuchen Sie einen anderen Status-Filter.",
+    "noImpedimentsDescription": "Sehr gut! Keine Impediments für den aktiven Sprint \"{{sprintName}}\" gemeldet.",
+    "noImpedimentsForFilter": "Keine {{status}} Impediments",
+    "noImpedimentsForSprint": "Keine Impediments für {{sprintName}}"
+  },
+  "errorState": {
+    "failedImpediments": "Impediments konnten nicht geladen werden. Bitte versuchen Sie es erneut.",
+    "failedSprint": "Aktive Sprint-Informationen konnten nicht geladen werden. Bitte versuchen Sie es erneut.",
+    "retry": "Erneut versuchen",
+    "title": "Fehler beim Laden der Daten"
+  },
+  "filterByStatus": "Nach Status filtern",
+  "reportImpediment": "Impediment melden",
+  "stats": {
+    "CLOSED": "Geschlossen",
+    "IN_PROGRESS": "In Bearbeitung",
+    "OPEN": "Offen",
+    "RESOLVED": "Gelöst",
+    "closed": "Geschlossen",
+    "inProgress": "In Bearbeitung",
+    "open": "Offen",
+    "resolved": "Gelöst"
+  },
+  "status": {
+    "CLOSED": "Geschlossen",
+    "IN_PROGRESS": "In Bearbeitung",
+    "OPEN": "Offen",
+    "RESOLVED": "Gelöst",
+    "closed": "Geschlossen",
+    "inProgress": "In Bearbeitung",
+    "open": "Offen",
+    "resolved": "Gelöst"
+  },
+  "subtitle": "{{sprintName}} - Blocker verfolgen und lösen, die das Team betreffen",
+  "title": "Impediments",
+  "toast": {
+    "created": "Impediment erfolgreich erstellt",
+    "deleted": "Impediment erfolgreich gelöscht",
+    "failedCreate": "Impediment konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
+    "failedDelete": "Impediment konnte nicht gelöscht werden. Bitte versuchen Sie es erneut.",
+    "failedUpdate": "Impediment konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut.",
+    "noActiveSprint": "Kein aktiver Sprint gefunden. Bitte starten Sie zuerst einen Sprint.",
+    "teamIdRequired": "Team-ID ist erforderlich. Bitte wählen Sie zuerst ein Team.",
+    "updated": "Impediment erfolgreich aktualisiert"
+  },
+  "unsavedModal": {
+    "message": "Sie haben ungespeicherte Änderungen im Impediment-Formular. Sind Sie sicher, dass Sie diese verwerfen möchten?",
+    "title": "Ungespeicherte Änderungen"
+  },
+  "validation": {
+    "descriptionRequired": "Beschreibung ist erforderlich",
+    "descriptionTooShort": "Beschreibung muss mindestens 10 Zeichen haben",
+    "titleRequired": "Titel ist erforderlich",
+    "titleTooShort": "Titel muss mindestens 3 Zeichen haben"
+  }
+}

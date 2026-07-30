@@ -1,0 +1,71 @@
+{
+  "accountDeletionCancelled": "Account deletion cancelled",
+  "accountDeletionCancelledMessage": "The scheduled account deletion has been cancelled.",
+  "accountDeletionScheduled": "Team member scheduled account deletion",
+  "accountDeletionScheduledMessage": "A Product Owner in your team has scheduled their account deletion. The account will be permanently deleted on {{deletionDate}}. Please assign a new Product Owner before then.",
+  "ariaLabels": {
+    "dismiss": "Dismiss notification",
+    "filterNotifications": "Filter notifications",
+    "goToNextPage": "Go to next page",
+    "goToPreviousPage": "Go to previous page",
+    "markAsRead": "Mark as read",
+    "notificationItem": "Notification from {{sender}}: {{message}}",
+    "pagination": "Pagination"
+  },
+  "backlogAdjustmentRequired": "New Backlog Adjustment Requires Your Action",
+  "backlogAdjustmentRequiredMessage": "You have been assigned as the owner of a backlog adjustment: {{action}} - \"{{description}}\"",
+  "dateGroups": {
+    "older": "Older",
+    "thisWeek": "This Week",
+    "today": "Today",
+    "yesterday": "Yesterday"
+  },
+  "empty": {
+    "message": "You will see notifications here when there is activity",
+    "title": "No notifications yet"
+  },
+  "error": {
+    "message": "Something went wrong while fetching your notifications.",
+    "title": "Failed to load notifications",
+    "tryAgain": "Try Again"
+  },
+  "feedbackRequired": "New Feedback Requires Your Action",
+  "feedbackRequiredMessage": "You have been assigned as the owner of feedback from {{authorName}}: \"{{content}}\"",
+  "filters": {
+    "all": "All",
+    "directMessages": "Direct Messages",
+    "impediments": "Impediments",
+    "reminders": "Reminders",
+    "taskAssignments": "Task Assignments",
+    "teamCreated": "Team Created",
+    "teamDeleted": "Team Deleted",
+    "teamInvitations": "Team Invitations",
+    "teamUpdated": "Team Updated",
+    "unread": "Unread"
+  },
+  "impedimentAssigned": "New impediment assigned: \"{{impedimentTitle}}\"",
+  "loading": {
+    "ariaLabel": "Loading notifications",
+    "title": "Loading notifications..."
+  },
+  "markAllAsRead": "Mark All as Read",
+  "marking": "Marking...",
+  "pagination": {
+    "next": "Next",
+    "pageInfo": "Page {{current}} of {{total}}",
+    "previous": "Previous"
+  },
+  "skipToMainContent": "Skip to main content",
+  "subtitle": "Stay updated with team activities and important updates",
+  "teamCreated": "Team created: \"{{teamName}}\"",
+  "teamCreatedMessage": "You have successfully created the team",
+  "teamDeleted": "Team deleted: \"{{teamName}}\"",
+  "teamDeletedMessage": "Deleted by {{deleterName}}",
+  "teamInvitation": "You've been invited to join team \"{{teamName}}\"",
+  "teamInvitationMessage": "Invited by {{inviterName}}",
+  "teamRemoval": "You've been removed from team \"{{teamName}}\"",
+  "teamRemovalMessage": "Removed by {{removerName}}",
+  "teamUpdated": "Team updated: \"{{teamName}}\"",
+  "teamUpdatedMessage": "Updated by {{updaterName}}",
+  "title": "Notifications"
+}

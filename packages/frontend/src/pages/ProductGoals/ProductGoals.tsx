@@ -2,6 +2,8 @@
 
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
+import { formatLocaleDate } from '@scrumooth/shared';
 
 import { apiService } from '../../services';
 import { useTeamStore } from '../../store';
@@ -21,6 +23,26 @@ import { useToast } from '../../hooks/useToast';
 import { ToastContainer } from '../../components/common/ToastContainer';
 import { EmptyState } from '../../components/EmptyState';
 import { LoadingState } from '../../components/common/Loading';
+import { i18nInstance } from '../../i18n/config';
+
+/**
+ * Helper function to detect and translate backend error messages
+ */
+function getTranslatedErrorMessage(message: string): string {
+  // Detect transition error messages
+  if (message.includes('Transition from') && message.includes('is not allowed')) {
+    return i18nInstance.t('backlog:productGoals.invalidTransition');
+  }
+  // Detect permission-related error messages
+  if (
+    message.includes('You do not have permission') ||
+    message.includes('Required roles') ||
+    message.includes('Insufficient permissions')
+  ) {
+    return i18nInstance.t('common:permission.transitionError');
+  }
+  return message;
+}
 
 import { StatusChangeModal } from './components/StatusChangeModal';
 import {
@@ -31,6 +53,7 @@ import {
 } from './components/ProductGoalModal';
 import styles from './ProductGoals.module.css';
 
+import { useI18nStore } from '@/i18n/useI18nStore';
 import {
   TargetIcon,
   CloseIcon,
@@ -60,46 +83,80 @@ const INITIAL_FORM_DATA: FormData = {
 const PRODUCT_GOAL_STATUSES = ['new', 'active', 'completed', 'abandoned'] as const;
 type ProductGoalStatus = (typeof PRODUCT_GOAL_STATUSES)[number];
 
-const PRODUCT_GOAL_STATUS_CONFIG: Record<ProductGoalStatus, StatusConfig> = {
+// Product Goal Status Configuration - labels/descriptions set dynamically in component
+const PRODUCT_GOAL_STATUS_CONFIG_BASE = {
   new: {
-    label: 'New',
     color: '#6b7280',
     bgColor: '#f3f4f6',
     borderColor: '#d1d5db',
     icon: 'M12 4v16m8-8H4',
-    description: 'Goal is newly created and not yet started',
   },
   active: {
-    label: 'Active',
     color: '#2563eb',
     bgColor: '#dbeafe',
     borderColor: '#93c5fd',
     icon: 'M13 10V3L4 14h7v7l9-11h-7z',
-    description: 'Goal is currently being worked on',
   },
   completed: {
-    label: 'Completed',
     color: '#059669',
     bgColor: '#d1fae5',
     borderColor: '#6ee7b7',
     icon: 'M5 13l4 4L19 7',
-    description: 'Goal has been successfully achieved',
   },
   abandoned: {
-    label: 'Abandoned',
     color: '#dc2626',
     bgColor: '#fee2e2',
     borderColor: '#fca5a5',
     icon: 'M6 18L18 6M6 6l12 12',
-    description: 'Goal has been discontinued',
   },
-};
+} as const;
 
 export const ProductGoalsPage: React.FC = () => {
   const { currentTeam } = useTeamStore();
+  const { locale } = useI18nStore();
   const queryClient = useQueryClient();
   const { handleError } = useApiError();
+  const { t } = useTranslation('backlog');
   const teamId = currentTeam?.id;
+
+  // Status label i18n key mapping for product goals
+  const GOAL_STATUS_LABEL_KEYS: Record<string, string> = {
+    new: 'productGoals.new',
+    NEW: 'productGoals.new',
+    active: 'productGoals.active',
+    ACTIVE: 'productGoals.active',
+    completed: 'productGoals.completed',
+    COMPLETED: 'productGoals.completed',
+    abandoned: 'productGoals.abandoned',
+    ABANDONED: 'productGoals.abandoned',
+  };
+
+  // Build status config with i18n labels/descriptions
+  const PRODUCT_GOAL_STATUS_CONFIG: Record<ProductGoalStatus, StatusConfig> = useMemo(
+    () => ({
+      new: {
+        ...PRODUCT_GOAL_STATUS_CONFIG_BASE.new,
+        label: t('productGoals.new') as string,
+        description: t('productGoals.statusNewDesc') as string,
+      },
+      active: {
+        ...PRODUCT_GOAL_STATUS_CONFIG_BASE.active,
+        label: t('productGoals.active') as string,
+        description: t('productGoals.statusActiveDesc') as string,
+      },
+      completed: {
+        ...PRODUCT_GOAL_STATUS_CONFIG_BASE.completed,
+        label: t('productGoals.completed') as string,
+        description: t('productGoals.statusCompletedDesc') as string,
+      },
+      abandoned: {
+        ...PRODUCT_GOAL_STATUS_CONFIG_BASE.abandoned,
+        label: t('productGoals.abandoned') as string,
+        description: t('productGoals.statusAbandonedDesc') as string,
+      },
+    }),
+    [t]
+  );
 
   // State for modals
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -214,7 +271,7 @@ export const ProductGoalsPage: React.FC = () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.productGoal.lists() });
 
       // Show success toast
-      success('Product goal created successfully!');
+      success(t('productGoals.goalCreatedSuccess') as string);
 
       // Clear localStorage draft with verification
       const clearResult = clearDraft();
@@ -238,7 +295,7 @@ export const ProductGoalsPage: React.FC = () => {
       const err = error as { response?: { data?: { error?: { message?: string } } } };
       const userMessage = handleError(
         error,
-        `Failed to create product goal: ${err.response?.data?.error?.message}`
+        `${t('productGoals.failedToCreateGoal') as string}: ${err.response?.data?.error?.message}`
       );
       setModalErrorMessage(userMessage);
       showErrorToast(userMessage);
@@ -253,7 +310,7 @@ export const ProductGoalsPage: React.FC = () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.productGoal.lists() });
 
       // Show success toast
-      success('Product goal updated successfully!');
+      success(t('productGoals.goalUpdatedSuccess') as string);
 
       // Clear localStorage draft with verification
       const clearResult = clearDraft();
@@ -277,7 +334,7 @@ export const ProductGoalsPage: React.FC = () => {
       const err = error as { response?: { data?: { error?: { message?: string } } } };
       const userMessage = handleError(
         error,
-        `Failed to update product goal: ${err.response?.data?.error?.message}`
+        `${t('productGoals.failedToUpdateGoal') as string}: ${err.response?.data?.error?.message}`
       );
       setModalErrorMessage(userMessage);
       showErrorToast(userMessage);
@@ -291,7 +348,7 @@ export const ProductGoalsPage: React.FC = () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.productGoal.lists() });
 
       // Show success toast
-      success('Product goal deleted successfully!');
+      success(t('productGoals.goalDeletedSuccess') as string);
 
       setPageErrorMessage(null);
     },
@@ -299,7 +356,7 @@ export const ProductGoalsPage: React.FC = () => {
       const err = error as { response?: { data?: { error?: { message?: string } } } };
       const userMessage = handleError(
         error,
-        `Failed to delete product goal: ${err.response?.data?.error?.message}`
+        `${t('productGoals.failedToDeleteGoal') as string}: ${err.response?.data?.error?.message}`
       );
       setPageErrorMessage(userMessage);
       showErrorToast(userMessage);
@@ -317,14 +374,14 @@ export const ProductGoalsPage: React.FC = () => {
       setStatusChangeValidationMessage(null);
 
       // Show success toast
-      success('Status updated successfully!');
+      success(t('productGoals.statusUpdatedSuccess') as string);
     },
     onError: (error: unknown) => {
       const err = error as { response?: { data?: { error?: { message?: string } } } };
-      const userMessage = handleError(
-        error,
-        `Failed to change status: ${err.response?.data?.error?.message}`
-      );
+      const backendMessage = err.response?.data?.error?.message ?? '';
+      // Translate the backend error message if it's a known pattern
+      const translatedDetail = backendMessage ? getTranslatedErrorMessage(backendMessage) : '';
+      const userMessage = translatedDetail || (t('productGoals.failedToChangeStatus') as string);
       setStatusChangeError(userMessage);
       showErrorToast(userMessage);
     },
@@ -352,7 +409,7 @@ export const ProductGoalsPage: React.FC = () => {
   const handleOpenEdit = (goal: ProductGoal) => {
     if (!canEditGoal(goal)) {
       setPageErrorMessage(
-        `Cannot edit product goal with status "${goal.status.toLowerCase()}". Completed and abandoned goals cannot be edited.`
+        t('productGoals.cannotEditGoalStatus', { status: goal.status.toLowerCase() }) as string
       );
       return;
     }
@@ -406,12 +463,12 @@ export const ProductGoalsPage: React.FC = () => {
       if (response.success && response.data) {
         setStatusHistory(response.data);
       } else {
-        setHistoryError('Failed to load status history');
+        setHistoryError(t('productGoals.failedToLoadStatusHistory') as string);
         setStatusHistory([]);
       }
     } catch (error) {
       logger.error('Failed to fetch status history', undefined, { error });
-      setHistoryError('Failed to load status history');
+      setHistoryError(t('productGoals.failedToLoadStatusHistory') as string);
       setStatusHistory([]);
     } finally {
       setIsHistoryLoading(false);
@@ -436,9 +493,7 @@ export const ProductGoalsPage: React.FC = () => {
 
     // Check if trying to activate when another goal is already active
     if (newStatus === 'active' && hasActiveGoal(selectedGoal.id)) {
-      setStatusChangeError(
-        'There is already an active product goal for this team. Please complete or abandon the current active goal first.'
-      );
+      setStatusChangeError(t('productGoals.alreadyActiveGoal') as string);
       return;
     }
 
@@ -455,7 +510,10 @@ export const ProductGoalsPage: React.FC = () => {
     if (newStatus === 'abandoned' && hasAssociatedBacklogItems(selectedGoal.id)) {
       const itemCount = getAssociatedBacklogItemCount(selectedGoal.id);
       setStatusChangeValidationMessage(
-        `Note: This goal has ${itemCount} associated backlog item${itemCount > 1 ? 's' : ''}. Abandoning this goal will not affect those items.`
+        t('productGoals.abandonWarning', {
+          count: itemCount,
+          plural: itemCount > 1 ? 's' : '',
+        }) as string
       );
     }
 
@@ -479,29 +537,29 @@ export const ProductGoalsPage: React.FC = () => {
       switch (fieldName) {
         case 'title':
           if (!value || value.trim() === '') {
-            return 'Please enter a goal title. This helps your team quickly identify the objective.';
+            return t('productGoals.titleRequired') as string;
           }
           if (value.trim().length < 3) {
-            return `Title is too short (${value.trim().length}/3 characters). Try being more specific about what you want to achieve.`;
+            return t('productGoals.titleTooShort', { length: value.trim().length }) as string;
           }
           if (value.trim().length > 100) {
-            return `Title is too long (${value.trim().length}/100 characters). Consider making it more concise for better readability.`;
+            return t('productGoals.titleTooLong', { length: value.trim().length }) as string;
           }
           return undefined;
         case 'description':
           if (!value || value.trim() === '') {
-            return 'Description is required to help your team understand the goal context.';
+            return t('productGoals.descriptionRequired') as string;
           }
           if (value.trim().length < 10) {
-            return `Description is too short (${value.trim().length}/10 characters). Please provide more context about the goal.`;
+            return t('productGoals.descriptionTooShort', { length: value.trim().length }) as string;
           }
           if (value.trim().length > 1000) {
-            return `Description must not exceed 1000 characters (currently ${value.trim().length}).`;
+            return t('productGoals.descriptionTooLong', { length: value.trim().length }) as string;
           }
           return undefined;
         case 'targetDate': {
           if (!value || value.trim() === '') {
-            return 'Target date is required to track goal progress and timeline.';
+            return t('productGoals.targetDateRequired') as string;
           }
           const selectedDate = new Date(value);
           const today = new Date();
@@ -511,19 +569,23 @@ export const ProductGoalsPage: React.FC = () => {
           const oneYearFromNow = new Date();
           oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
           if (selectedDate > oneYearFromNow) {
-            return 'Target date is more than 1 year away. Consider breaking this into smaller milestones.';
+            return t('productGoals.targetDateTooFar') as string;
           }
           return undefined;
         }
         case 'successMetrics': {
           if (!value || value.trim() === '') {
-            return 'Success metrics are required to measure goal achievement.';
+            return t('productGoals.successMetricsRequired') as string;
           }
           if (value.trim().length < 5) {
-            return `Success metrics are too short (${value.trim().length}/5 characters). Please define measurable criteria.`;
+            return t('productGoals.successMetricsTooShort', {
+              length: value.trim().length,
+            }) as string;
           }
           if (value.trim().length > 500) {
-            return `Success metrics must not exceed 500 characters (currently ${value.trim().length}).`;
+            return t('productGoals.successMetricsTooLong', {
+              length: value.trim().length,
+            }) as string;
           }
           return undefined;
         }
@@ -531,7 +593,7 @@ export const ProductGoalsPage: React.FC = () => {
           return undefined;
       }
     },
-    []
+    [t]
   );
 
   // Validate all form fields
@@ -600,7 +662,7 @@ export const ProductGoalsPage: React.FC = () => {
   const handleDelete = (goal: ProductGoal) => {
     if (!canDeleteGoal(goal)) {
       setPageErrorMessage(
-        `Cannot delete product goal with status "${goal.status.toLowerCase()}". Only goals with "new" or "abandoned" status can be deleted.`
+        t('productGoals.cannotDeleteGoalStatus', { status: goal.status.toLowerCase() }) as string
       );
       return;
     }
@@ -608,7 +670,11 @@ export const ProductGoalsPage: React.FC = () => {
     if (hasAssociatedBacklogItems(goal.id)) {
       const itemCount = getAssociatedBacklogItemCount(goal.id);
       setPageErrorMessage(
-        `Cannot delete product goal "${goal.title}" because it has ${itemCount} associated backlog item${itemCount > 1 ? 's' : ''}. Please remove or reassign the backlog items before deleting this goal.`
+        t('productGoals.cannotDeleteGoalHasItems', {
+          title: goal.title,
+          count: itemCount,
+          plural: itemCount > 1 ? 's' : '',
+        }) as string
       );
       return;
     }
@@ -669,19 +735,25 @@ export const ProductGoalsPage: React.FC = () => {
 
   const getIncompleteItemsMessage = (incompleteItems: ProductBacklogItem[]): string => {
     if (incompleteItems.length === 0) {
-      return 'Cannot mark goal as Completed: No backlog items are associated with this goal.';
+      return t('productGoals.cannotCompleteGoalNoItems') as string;
     }
     const itemNames = incompleteItems
       .slice(0, 3)
       .map((item) => `"${item.title}"`)
       .join(', ');
-    const moreCount = incompleteItems.length > 3 ? ` and ${incompleteItems.length - 3} more` : '';
-    return `Cannot mark goal as Completed. The following backlog items are not done: ${itemNames}${moreCount}. All backlog items must have "DONE" status before completing the goal.`;
+    const moreCount =
+      incompleteItems.length > 3
+        ? (t('productGoals.andMore', { count: incompleteItems.length - 3 }) as string)
+        : '';
+    return t('productGoals.cannotCompleteGoalIncomplete', {
+      items: itemNames,
+      more: moreCount,
+    }) as string;
   };
 
   const handleSubmit = () => {
     if (!teamId) {
-      setModalErrorMessage('Team ID is required. Please select a team first.');
+      setModalErrorMessage(t('productGoals.teamIdRequired') as string);
       return;
     }
 
@@ -695,7 +767,7 @@ export const ProductGoalsPage: React.FC = () => {
 
     // Validate all fields before submission
     if (!validateForm()) {
-      setModalErrorMessage('Please fill in all required fields correctly before submitting.');
+      setModalErrorMessage(t('productGoals.fillRequiredFields') as string);
       return;
     }
 
@@ -839,16 +911,16 @@ export const ProductGoalsPage: React.FC = () => {
 
   // Strategic alignment options
   const strategicOptions = [
-    { value: '', label: 'Select a strategic objective...' },
-    { value: 'growth', label: '🚀 Growth & Acquisition' },
-    { value: 'retention', label: '💎 Retention & Engagement' },
-    { value: 'revenue', label: '💰 Revenue Optimization' },
-    { value: 'tech', label: '⚙️ Technical Excellence' },
-    { value: 'ux', label: '✨ User Experience' },
+    { value: '', label: t('productGoals.strategicAlignmentPlaceholder') as string },
+    { value: 'growth', label: t('productGoals.strategicOptionGrowth') as string },
+    { value: 'retention', label: t('productGoals.strategicOptionRetention') as string },
+    { value: 'revenue', label: t('productGoals.strategicOptionRevenue') as string },
+    { value: 'tech', label: t('productGoals.strategicOptionTech') as string },
+    { value: 'ux', label: t('productGoals.strategicOptionUx') as string },
   ];
 
   if (isLoading) {
-    return <LoadingState variant="page" label="Loading Product Goals..." />;
+    return <LoadingState variant="page" label={t('productGoals.loading') as string} />;
   }
 
   if (!teamId) {
@@ -868,7 +940,7 @@ export const ProductGoalsPage: React.FC = () => {
               <button
                 className={styles['error-close']}
                 onClick={() => setPageErrorMessage(null)}
-                aria-label="Close error message"
+                aria-label={t('productGoals.closeError') as string}
               >
                 ×
               </button>
@@ -882,12 +954,12 @@ export const ProductGoalsPage: React.FC = () => {
               <span className={styles['page-title-icon']}>
                 <TargetIcon />
               </span>
-              Product Goals
-              <span className={styles['item-count']}>{filteredGoals.length} goals</span>
+              {t('productGoals.title') as string}
+              <span className={styles['item-count']}>
+                {t('productGoals.goalsCount', { count: filteredGoals.length }) as string}
+              </span>
             </h1>
-            <p className={styles['page-subtitle']}>
-              Define and track objectives to guide product development
-            </p>
+            <p className={styles['page-subtitle']}>{t('productGoals.subtitle') as string}</p>
           </div>
           <div className={styles['header-right']}>
             <div className={styles['view-toggle']}>
@@ -898,7 +970,7 @@ export const ProductGoalsPage: React.FC = () => {
                 <span className={styles['toggle-icon']}>
                   <GridViewIcon size={14} />
                 </span>{' '}
-                Grid
+                {t('productGoals.grid') as string}
               </button>
               <button
                 className={`${styles['toggle-button']} ${viewMode === 'table' ? styles.active : ''}`}
@@ -907,7 +979,7 @@ export const ProductGoalsPage: React.FC = () => {
                 <span className={styles['toggle-icon']}>
                   <MenuIcon size={14} />
                 </span>{' '}
-                Table
+                {t('productGoals.table') as string}
               </button>
             </div>
             <button
@@ -915,7 +987,7 @@ export const ProductGoalsPage: React.FC = () => {
               onClick={handleOpenCreate}
             >
               <PlusIcon size={14} strokeWidth={2.5} />
-              New Goal
+              {t('productGoals.newGoal') as string}
             </button>
           </div>
         </header>
@@ -930,63 +1002,72 @@ export const ProductGoalsPage: React.FC = () => {
               <input
                 type="text"
                 className={styles['search-input']}
-                placeholder="Search goals by title, description, or metrics..."
+                placeholder={t('productGoals.searchPlaceholder') as string}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                aria-label="Search product goals"
+                aria-label={t('productGoals.searchAriaLabel') as string}
               />
               {searchQuery && (
                 <button
                   className={styles['clear-search']}
                   onClick={() => setSearchQuery('')}
-                  aria-label="Clear search"
-                  title="Clear search"
+                  aria-label={t('productGoals.clearSearch') as string}
+                  title={t('productGoals.clearSearch') as string}
                 >
                   ×
                 </button>
               )}
             </div>
 
-            <div className={styles['status-filter']} role="group" aria-label="Filter by status">
+            <div
+              className={styles['status-filter']}
+              role="group"
+              aria-label={t('productGoals.filterByStatus') as string}
+            >
               <button
                 className={`${styles['filter-button']} ${styles.all} ${statusFilter === 'all' ? styles.active : ''}`}
                 onClick={() => setStatusFilter('all')}
                 aria-pressed={statusFilter === 'all'}
               >
-                ALL
+                {t('productGoals.allFilter') as string}
               </button>
               <button
                 className={`${styles['filter-button']} ${statusFilter === 'active' ? styles.active : ''}`}
                 onClick={() => setStatusFilter('active')}
                 aria-pressed={statusFilter === 'active'}
               >
-                ACTIVE
+                {t('productGoals.activeFilter') as string}
               </button>
               <button
                 className={`${styles['filter-button']} ${statusFilter === 'new' ? styles.active : ''}`}
                 onClick={() => setStatusFilter('new')}
                 aria-pressed={statusFilter === 'new'}
               >
-                NEW
+                {t('productGoals.newFilter') as string}
               </button>
               <button
                 className={`${styles['filter-button']} ${statusFilter === 'completed' ? styles.active : ''}`}
                 onClick={() => setStatusFilter('completed')}
                 aria-pressed={statusFilter === 'completed'}
               >
-                COMPLETED
+                {t('productGoals.completedFilter') as string}
               </button>
               <button
                 className={`${styles['filter-button']} ${statusFilter === 'abandoned' ? styles.active : ''}`}
                 onClick={() => setStatusFilter('abandoned')}
                 aria-pressed={statusFilter === 'abandoned'}
               >
-                ABANDONED
+                {t('productGoals.abandonedFilter') as string}
               </button>
             </div>
 
             <span className={styles['results-count']}>
-              {filteredGoals.length} of {goals.length} goals
+              {
+                t('productGoals.resultsCount', {
+                  filtered: filteredGoals.length,
+                  total: goals.length,
+                }) as string
+              }
             </span>
           </div>
         )}
@@ -1003,13 +1084,13 @@ export const ProductGoalsPage: React.FC = () => {
             </span>
             <h3>
               {searchQuery || statusFilter !== 'all'
-                ? 'No Goals Match Your Criteria'
-                : 'No Goals Yet'}
+                ? (t('productGoals.noGoalsMatch') as string)
+                : (t('productGoals.noGoalsYet') as string)}
             </h3>
             <p>
               {searchQuery || statusFilter !== 'all'
-                ? "Try adjusting your search or filter settings to find what you're looking for."
-                : "Create your first product goal to start tracking your team's objectives."}
+                ? (t('productGoals.noGoalsMatchDesc') as string)
+                : (t('productGoals.noGoalsYetDesc') as string)}
             </p>
             {searchQuery || statusFilter !== 'all' ? (
               <button
@@ -1020,7 +1101,7 @@ export const ProductGoalsPage: React.FC = () => {
                 }}
               >
                 <CloseIcon size={16} />
-                Clear Filters
+                {t('productGoals.clearFilters') as string}
               </button>
             ) : (
               <button
@@ -1028,7 +1109,7 @@ export const ProductGoalsPage: React.FC = () => {
                 onClick={handleOpenCreate}
               >
                 <PlusIcon size={16} />
-                Create First Goal
+                {t('productGoals.createFirstGoal') as string}
               </button>
             )}
           </div>
@@ -1048,17 +1129,33 @@ export const ProductGoalsPage: React.FC = () => {
                   <div className={styles['goal-card-header']}>
                     <div className={styles['goal-status-indicator']}>
                       <span className={`${styles['status-dot']} ${styles[statusClass]}`} />
-                      <span className={styles['status-text']}>{goal.status}</span>
+                      <span className={styles['status-text']}>
+                        {t(
+                          `productGoalStatus.${goal.status.toUpperCase()}` as
+                            | 'productGoalStatus.NEW'
+                            | 'productGoalStatus.ACTIVE'
+                            | 'productGoalStatus.COMPLETED'
+                            | 'productGoalStatus.ABANDONED'
+                        )}
+                      </span>
                     </div>
                     <div className={styles['goal-actions']}>
                       <button
                         className={styles['action-btn']}
                         onClick={() => handleOpenStatusChange(goal)}
-                        title={canEditGoal(goal) ? 'Change status' : 'View status history'}
+                        title={
+                          canEditGoal(goal)
+                            ? (t('productGoals.changeStatus') as string)
+                            : (t('productGoals.viewStatusHistory') as string)
+                        }
                         aria-label={
                           canEditGoal(goal)
-                            ? `Change status for goal: ${goal.title}`
-                            : `View status history for goal: ${goal.title}`
+                            ? (t('productGoals.changeStatusForGoal', {
+                                title: goal.title,
+                              }) as string)
+                            : (t('productGoals.viewStatusHistoryForGoal', {
+                                title: goal.title,
+                              }) as string)
                         }
                       >
                         <ShieldIcon size={16} />
@@ -1067,12 +1164,17 @@ export const ProductGoalsPage: React.FC = () => {
                         className={styles['action-btn']}
                         onClick={() => handleOpenEdit(goal)}
                         title={
-                          canEditGoal(goal) ? 'Edit' : 'Cannot edit completed or abandoned goals'
+                          canEditGoal(goal)
+                            ? (t('productGoals.edit') as string)
+                            : (t('productGoals.cannotEditCompletedAbandoned') as string)
                         }
                         aria-label={
                           canEditGoal(goal)
-                            ? `Edit goal: ${goal.title}`
-                            : `Cannot edit ${goal.title}: ${goal.status.toLowerCase()} goals cannot be edited`
+                            ? (t('productGoals.editGoalAriaLabel', { title: goal.title }) as string)
+                            : (t('productGoals.cannotEditGoalAriaLabel', {
+                                title: goal.title,
+                                status: goal.status.toLowerCase(),
+                              }) as string)
                         }
                         disabled={!canEditGoal(goal)}
                       >
@@ -1083,17 +1185,24 @@ export const ProductGoalsPage: React.FC = () => {
                         onClick={() => handleDelete(goal)}
                         title={
                           !canDeleteGoal(goal)
-                            ? 'Cannot delete active or completed goals'
+                            ? (t('productGoals.cannotDeleteActiveCompleted') as string)
                             : hasAssociatedBacklogItems(goal.id)
-                              ? 'Cannot delete: has associated backlog items'
-                              : 'Delete'
+                              ? (t('productGoals.cannotDeleteHasItems') as string)
+                              : (t('productGoals.delete') as string)
                         }
                         aria-label={
                           !canDeleteGoal(goal)
-                            ? `Cannot delete ${goal.title}: ${goal.status.toLowerCase()} goals cannot be deleted`
+                            ? (t('productGoals.cannotDeleteGoalAriaLabel', {
+                                title: goal.title,
+                                status: goal.status.toLowerCase(),
+                              }) as string)
                             : hasAssociatedBacklogItems(goal.id)
-                              ? `Cannot delete ${goal.title}: has associated backlog items`
-                              : `Delete goal: ${goal.title}`
+                              ? (t('productGoals.cannotDeleteHasItemsAriaLabel', {
+                                  title: goal.title,
+                                }) as string)
+                              : (t('productGoals.deleteGoalAriaLabel', {
+                                  title: goal.title,
+                                }) as string)
                         }
                         disabled={!canDeleteGoal(goal) || hasAssociatedBacklogItems(goal.id)}
                       >
@@ -1104,12 +1213,12 @@ export const ProductGoalsPage: React.FC = () => {
 
                   <h3 className={styles['goal-title']}>{goal.title}</h3>
                   <p className={styles['goal-description']}>
-                    {goal.description ?? 'No description'}
+                    {goal.description ?? (t('productGoals.noDescription') as string)}
                   </p>
 
                   <div className={styles['goal-progress-section']}>
                     <div className={styles['progress-header']}>
-                      <span>Progress</span>
+                      <span>{t('productGoals.progress') as string}</span>
                       <span className={styles['progress-value']}>{progress}%</span>
                     </div>
                     <div className={styles['progress-bar']}>
@@ -1117,27 +1226,31 @@ export const ProductGoalsPage: React.FC = () => {
                     </div>
                     <div className={styles['progress-details']}>
                       <span>
-                        {completedCount}/{itemCount} items
+                        {completedCount}/{itemCount} {t('productGoals.items') as string}
                       </span>
                       <span>
-                        {completedPoints}/{totalPoints} pts
+                        {completedPoints}/{totalPoints} {t('productGoals.pts') as string}
                       </span>
                     </div>
                   </div>
 
                   {goal.targetDate && (
                     <div className={styles['goal-deadline']}>
-                      <span className={styles['deadline-label']}>Target Date</span>
+                      <span className={styles['deadline-label']}>
+                        {t('productGoals.targetDate') as string}
+                      </span>
                       <span
                         className={`${styles['deadline-value']} ${daysRemaining !== null && daysRemaining < 0 ? styles.overdue : daysRemaining !== null && daysRemaining < 30 ? styles.urgent : ''}`}
                       >
-                        {new Date(goal.targetDate).toLocaleDateString()}
+                        {formatLocaleDate(goal.targetDate, locale)}
                         {daysRemaining !== null && (
                           <span className={styles['days-remaining']}>
                             (
                             {daysRemaining < 0
-                              ? `${Math.abs(daysRemaining)}d overdue`
-                              : `${daysRemaining}d left`}
+                              ? (t('productGoals.dOverdue', {
+                                  count: Math.abs(daysRemaining),
+                                }) as string)
+                              : (t('productGoals.dLeft', { count: daysRemaining }) as string)}
                             )
                           </span>
                         )}
@@ -1147,7 +1260,9 @@ export const ProductGoalsPage: React.FC = () => {
 
                   {goal.successMetrics && (
                     <div className={styles['goal-metrics']}>
-                      <span className={styles['metrics-label']}>Success Metrics</span>
+                      <span className={styles['metrics-label']}>
+                        {t('productGoals.successMetrics') as string}
+                      </span>
                       <p className={styles['metrics-text']}>{goal.successMetrics}</p>
                     </div>
                   )}
@@ -1161,12 +1276,12 @@ export const ProductGoalsPage: React.FC = () => {
               <table className={styles['goals-table']}>
                 <thead>
                   <tr>
-                    <th>Title</th>
-                    <th>Status</th>
-                    <th>Progress</th>
-                    <th>Target Date</th>
-                    <th>Items</th>
-                    <th>Actions</th>
+                    <th>{t('productGoals.tableTitle') as string}</th>
+                    <th>{t('productGoals.tableStatus') as string}</th>
+                    <th>{t('productGoals.tableProgress') as string}</th>
+                    <th>{t('productGoals.tableTargetDate') as string}</th>
+                    <th>{t('productGoals.tableItems') as string}</th>
+                    <th>{t('productGoals.tableActions') as string}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1189,7 +1304,13 @@ export const ProductGoalsPage: React.FC = () => {
                         </td>
                         <td>
                           <span className={`${styles['status-badge']} ${styles[tableStatusClass]}`}>
-                            {goal.status}
+                            {t(
+                              `productGoalStatus.${goal.status.toUpperCase()}` as
+                                | 'productGoalStatus.NEW'
+                                | 'productGoalStatus.ACTIVE'
+                                | 'productGoalStatus.COMPLETED'
+                                | 'productGoalStatus.ABANDONED'
+                            )}
                           </span>
                         </td>
                         <td>
@@ -1206,12 +1327,14 @@ export const ProductGoalsPage: React.FC = () => {
                         <td>
                           {goal.targetDate ? (
                             <div>
-                              <div>{new Date(goal.targetDate).toLocaleDateString()}</div>
+                              <div>{formatLocaleDate(goal.targetDate, locale)}</div>
                               {daysRemaining !== null && (
                                 <small className={daysRemaining < 0 ? styles.overdue : ''}>
                                   {daysRemaining < 0
-                                    ? `${Math.abs(daysRemaining)}d overdue`
-                                    : `${daysRemaining}d left`}
+                                    ? (t('productGoals.dOverdue', {
+                                        count: Math.abs(daysRemaining),
+                                      }) as string)
+                                    : (t('productGoals.dLeft', { count: daysRemaining }) as string)}
                                 </small>
                               )}
                             </div>
@@ -1225,11 +1348,19 @@ export const ProductGoalsPage: React.FC = () => {
                             <button
                               className={styles['btn-icon']}
                               onClick={() => handleOpenStatusChange(goal)}
-                              title={canEditGoal(goal) ? 'Change status' : 'View status history'}
+                              title={
+                                canEditGoal(goal)
+                                  ? (t('productGoals.changeStatus') as string)
+                                  : (t('productGoals.viewStatusHistory') as string)
+                              }
                               aria-label={
                                 canEditGoal(goal)
-                                  ? `Change status for goal: ${goal.title}`
-                                  : `View status history for goal: ${goal.title}`
+                                  ? (t('productGoals.changeStatusForGoal', {
+                                      title: goal.title,
+                                    }) as string)
+                                  : (t('productGoals.viewStatusHistoryForGoal', {
+                                      title: goal.title,
+                                    }) as string)
                               }
                             >
                               <ShieldIcon size={16} />
@@ -1239,13 +1370,18 @@ export const ProductGoalsPage: React.FC = () => {
                               onClick={() => handleOpenEdit(goal)}
                               title={
                                 canEditGoal(goal)
-                                  ? 'Edit'
-                                  : 'Cannot edit completed or abandoned goals'
+                                  ? (t('productGoals.edit') as string)
+                                  : (t('productGoals.cannotEditCompletedAbandoned') as string)
                               }
                               aria-label={
                                 canEditGoal(goal)
-                                  ? `Edit goal: ${goal.title}`
-                                  : `Cannot edit ${goal.title}: ${goal.status.toLowerCase()} goals cannot be edited`
+                                  ? (t('productGoals.editGoalAriaLabel', {
+                                      title: goal.title,
+                                    }) as string)
+                                  : (t('productGoals.cannotEditGoalAriaLabel', {
+                                      title: goal.title,
+                                      status: goal.status.toLowerCase(),
+                                    }) as string)
                               }
                               disabled={!canEditGoal(goal)}
                             >
@@ -1256,17 +1392,24 @@ export const ProductGoalsPage: React.FC = () => {
                               onClick={() => handleDelete(goal)}
                               title={
                                 !canDeleteGoal(goal)
-                                  ? 'Cannot delete active or completed goals'
+                                  ? (t('productGoals.cannotDeleteActiveCompleted') as string)
                                   : hasAssociatedBacklogItems(goal.id)
-                                    ? 'Cannot delete: has associated backlog items'
-                                    : 'Delete'
+                                    ? (t('productGoals.cannotDeleteHasItems') as string)
+                                    : (t('productGoals.delete') as string)
                               }
                               aria-label={
                                 !canDeleteGoal(goal)
-                                  ? `Cannot delete ${goal.title}: ${goal.status.toLowerCase()} goals cannot be deleted`
+                                  ? (t('productGoals.cannotDeleteGoalAriaLabel', {
+                                      title: goal.title,
+                                      status: goal.status.toLowerCase(),
+                                    }) as string)
                                   : hasAssociatedBacklogItems(goal.id)
-                                    ? `Cannot delete ${goal.title}: has associated backlog items`
-                                    : `Delete goal: ${goal.title}`
+                                    ? (t('productGoals.cannotDeleteHasItemsAriaLabel', {
+                                        title: goal.title,
+                                      }) as string)
+                                    : (t('productGoals.deleteGoalAriaLabel', {
+                                        title: goal.title,
+                                      }) as string)
                               }
                               disabled={!canDeleteGoal(goal) || hasAssociatedBacklogItems(goal.id)}
                             >
@@ -1345,16 +1488,16 @@ export const ProductGoalsPage: React.FC = () => {
                         <AlertTriangleIcon size={24} />
                       </div>
                       <h2 id="delete-modal-title" className={styles['modal-title']}>
-                        Delete Goal
+                        {t('productGoals.deleteGoal') as string}
                       </h2>
                       <p className={styles['modal-subtitle']}>
-                        This action is permanent and cannot be undone
+                        {t('productGoals.deleteSubtitle') as string}
                       </p>
                     </div>
                     <button
                       className={styles['modal-close']}
                       onClick={() => setShowDeleteConfirm(null)}
-                      aria-label="Close modal"
+                      aria-label={t('productGoals.closeModal') as string}
                       type="button"
                     >
                       <CloseIcon size={18} />
@@ -1370,18 +1513,23 @@ export const ProductGoalsPage: React.FC = () => {
                           <AlertTriangleIcon size={24} />
                         </span>
                         <div className={styles['warning-title-group']}>
-                          <h3 className={styles['warning-title']}>Action Warning</h3>
+                          <h3 className={styles['warning-title']}>
+                            {t('productGoals.actionWarning') as string}
+                          </h3>
                           <p className={styles['warning-subtitle']}>
-                            Goal:{' '}
-                            <strong>&ldquo;{goalToDelete?.title ?? 'Unknown Goal'}&rdquo;</strong>
+                            {t('productGoals.goalLabel') as string}{' '}
+                            <strong>
+                              &ldquo;
+                              {goalToDelete?.title ?? (t('productGoals.unknownGoal') as string)}
+                              &rdquo;
+                            </strong>
                           </p>
                         </div>
                       </div>
 
                       <div className={styles['warning-content']}>
                         <p className={styles['delete-warning-text']}>
-                          You are about to permanently delete this product goal. This action{' '}
-                          <strong>cannot be undone</strong>.
+                          {t('productGoals.deleteWarningText') as string}
                         </p>
 
                         {goalToDelete && (
@@ -1390,11 +1538,11 @@ export const ProductGoalsPage: React.FC = () => {
                               <TargetIcon size={24} />
                             </span>
                             <span className={styles['impact-text']}>
-                              Status:{' '}
+                              {t('productGoals.statusLabel') as string}{' '}
                               <strong
                                 className={`${styles['status-badge']} ${styles[goalToDelete.status.toLowerCase()]}`}
                               >
-                                {goalToDelete.status}
+                                {t(GOAL_STATUS_LABEL_KEYS[goalToDelete.status] as never)}
                               </strong>
                             </span>
                           </div>
@@ -1411,7 +1559,7 @@ export const ProductGoalsPage: React.FC = () => {
                       onClick={() => setShowDeleteConfirm(null)}
                       disabled={deleteMutation.isPending}
                     >
-                      Cancel
+                      {t('productGoals.cancel') as string}
                     </button>
                     <button
                       type="button"
@@ -1423,12 +1571,12 @@ export const ProductGoalsPage: React.FC = () => {
                       {deleteMutation.isPending ? (
                         <>
                           <span className={styles['button-spinner']} aria-hidden="true" />
-                          Deleting...
+                          {t('productGoals.deleting') as string}
                         </>
                       ) : (
                         <>
                           <TrashIcon size={16} />
-                          Delete Goal
+                          {t('productGoals.deleteGoal') as string}
                         </>
                       )}
                     </button>

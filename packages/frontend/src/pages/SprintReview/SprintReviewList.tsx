@@ -1,9 +1,9 @@
-﻿import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
+import { formatDateRange } from '@scrumooth/shared';
 
-import { apiService } from '../../services';
-import { useTeamStore } from '../../store';
 import {
   SprintStatus,
   IncrementStatus,
@@ -11,6 +11,8 @@ import {
   type SprintReview,
   type Increment,
 } from '../../types';
+import { useTeamStore } from '../../store';
+import { apiService } from '../../services';
 import { EmptyState } from '../../components/EmptyState';
 import { LoadingState } from '../../components/common/Loading';
 import {
@@ -24,6 +26,8 @@ import {
 
 import styles from './SprintReviewList.module.css';
 
+import { useI18nStore } from '@/i18n/useI18nStore';
+
 interface SprintWithReview extends Sprint {
   review?: SprintReview;
   increment?: Increment;
@@ -35,46 +39,42 @@ const normalizeStatus = (status: string): SprintStatus => {
   return status.toLowerCase() as SprintStatus;
 };
 
-const formatDateRange = (startDate: string, endDate: string): string => {
-  const start = new Date(startDate);
-  const end = new Date(endDate);
-  const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
-  return `${start.toLocaleDateString('en-US', options)} - ${end.toLocaleDateString('en-US', options)}, ${end.getFullYear()}`;
-};
-
-const getStatusConfig = (status: string): { label: string; className: string } => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- TFunction signature varies by i18next version
+const getStatusConfig = (status: string, t: any): { label: string; className: string } => {
   const normalizedStatus = normalizeStatus(status);
   switch (normalizedStatus) {
     case SprintStatus.ACTIVE:
       return {
-        label: 'Active',
+        label: t('list.statusLabels.active'),
         className: styles['status-active'] ?? '',
       };
     case SprintStatus.COMPLETED:
       return {
-        label: 'Completed',
+        label: t('list.statusLabels.completed'),
         className: styles['status-completed'] ?? '',
       };
     case SprintStatus.PLANNED:
       return {
-        label: 'Planned',
+        label: t('list.statusLabels.planned'),
         className: styles['status-planned'] ?? '',
       };
     case SprintStatus.CANCELLED:
       return {
-        label: 'Cancelled',
+        label: t('list.statusLabels.cancelled'),
         className: styles['status-cancelled'] ?? '',
       };
     default:
       return {
-        label: 'Planned',
+        label: t('list.statusLabels.planned'),
         className: styles['status-planned'] ?? '',
       };
   }
 };
 
 const getReviewStatusConfig = (
-  sprint: SprintWithReview
+  sprint: SprintWithReview,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- TFunction signature varies by i18next version
+  t: any
 ): {
   label: string;
   icon: React.ReactNode;
@@ -84,14 +84,14 @@ const getReviewStatusConfig = (
   if (sprint.review) {
     if (sprint.review.status === 'completed') {
       return {
-        label: 'Review Completed',
+        label: t('list.reviewStatus.completed'),
         icon: <CheckCircleIcon size={24} />,
         className: styles['review-completed'] ?? '',
         canView: true,
       };
     }
     return {
-      label: 'Review In Progress',
+      label: t('list.reviewStatus.inProgress'),
       icon: <span style={{ color: 'var(--color-primary-600)' }}>●</span>,
       className: styles['review-in-progress'] ?? '',
       canView: true,
@@ -100,7 +100,7 @@ const getReviewStatusConfig = (
 
   if (!sprint.hasDeliveredIncrement) {
     return {
-      label: 'Increment Required',
+      label: t('list.reviewStatus.incrementRequired'),
       icon: <PackageIcon size={24} />,
       className: styles['review-blocked'] ?? '',
       canView: false,
@@ -108,7 +108,7 @@ const getReviewStatusConfig = (
   }
 
   return {
-    label: 'Ready for Review',
+    label: t('list.reviewStatus.readyForReview'),
     icon: <PlayIcon size={24} />,
     className: styles['review-ready'] ?? '',
     canView: true,
@@ -116,8 +116,10 @@ const getReviewStatusConfig = (
 };
 
 export const SprintReviewList: React.FC = () => {
+  const { t } = useTranslation('sprint-review');
   const navigate = useNavigate();
   const { currentTeam } = useTeamStore();
+  const { locale } = useI18nStore();
   const teamId = currentTeam?.id;
 
   const { data: sprintsData, isLoading: isLoadingSprints } = useQuery({
@@ -182,7 +184,7 @@ export const SprintReviewList: React.FC = () => {
   if (isLoadingSprints) {
     return (
       <div className={styles['page-container']}>
-        <LoadingState variant="page" label="Loading sprint reviews..." />
+        <LoadingState variant="page" label={t('list.loading')} />
       </div>
     );
   }
@@ -195,24 +197,24 @@ export const SprintReviewList: React.FC = () => {
             <span className={styles['page-title-icon']}>
               <FileTextIcon size={24} />
             </span>
-            Sprint Reviews
+            {t('list.title')}
           </h1>
-          <p className={styles['page-subtitle']}>
-            Review completed sprints, inspect increments, and gather stakeholder feedback
-          </p>
+          <p className={styles['page-subtitle']}>{t('list.subtitle')}</p>
         </div>
         <div className={styles['header-stats']}>
           <div className={styles['stat-item']}>
             <span className={styles['stat-value']}>{completedSprints.length}</span>
             <span className={styles['stat-label']}>
-              Completed Sprint{completedSprints.length !== 1 ? 's' : ''}
+              {completedSprints.length !== 1
+                ? t('list.completedSprints')
+                : t('list.completedSprint')}
             </span>
           </div>
           <div className={styles['stat-item']}>
             <span className={styles['stat-value']}>
               {completedSprints.filter((s) => s.review?.status === 'completed').length}
             </span>
-            <span className={styles['stat-label']}>Reviewed</span>
+            <span className={styles['stat-label']}>{t('list.reviewed')}</span>
           </div>
         </div>
       </header>
@@ -224,12 +226,12 @@ export const SprintReviewList: React.FC = () => {
           <section className={styles.section}>
             <h2 className={styles['section-title']}>
               <CheckCircleIcon size={24} className={styles['section-icon']} />
-              Completed Sprints
+              {t('list.completedSprints')}
             </h2>
             <div className={styles['sprint-grid']}>
               {completedSprints.map((sprint) => {
-                const statusConfig = getStatusConfig(sprint.status);
-                const reviewConfig = getReviewStatusConfig(sprint);
+                const statusConfig = getStatusConfig(sprint.status, t);
+                const reviewConfig = getReviewStatusConfig(sprint, t);
 
                 return (
                   <article key={sprint.id} className={styles['sprint-card']}>
@@ -242,12 +244,12 @@ export const SprintReviewList: React.FC = () => {
                     </div>
 
                     <div className={styles['card-date']}>
-                      {formatDateRange(sprint.startDate, sprint.endDate)}
+                      {formatDateRange(sprint.startDate, sprint.endDate, locale)}
                     </div>
 
                     {sprint.sprintGoal && (
                       <div className={styles['sprint-goal']}>
-                        <span className={styles['goal-label']}>Goal:</span>
+                        <span className={styles['goal-label']}>{t('list.goal')}</span>
                         <span className={styles['goal-text']}>{sprint.sprintGoal}</span>
                       </div>
                     )}
@@ -265,7 +267,7 @@ export const SprintReviewList: React.FC = () => {
                             onClick={handleCreateIncrement}
                           >
                             <PlusIcon size={16} />
-                            Create Increment
+                            {t('list.createIncrement')}
                           </button>
                         )}
                         <button
@@ -273,7 +275,7 @@ export const SprintReviewList: React.FC = () => {
                           onClick={() => handleViewReview(sprint.id)}
                         >
                           <EyeIcon size={16} />
-                          {sprint.review ? 'View Review' : 'View Details'}
+                          {sprint.review ? t('list.viewReview') : t('list.viewDetails')}
                         </button>
                       </div>
                     </div>

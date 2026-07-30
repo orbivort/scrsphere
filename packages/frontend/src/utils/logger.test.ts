@@ -310,4 +310,47 @@ describe('Logger', () => {
       expect(typeof componentLogger.debug).toBe('function');
     });
   });
+
+  describe('window undefined case', () => {
+    it('should handle undefined window in getCurrentPage', () => {
+      const originalWindow = global.window;
+      // @ts-expect-error - Testing undefined window
+      delete global.window;
+
+      const entry = logger.getStructuredEntry('info', 'Test');
+      expect(entry.context.page).toBe('');
+
+      global.window = originalWindow;
+    });
+  });
+
+  describe('store provider error handling', () => {
+    it('should handle errors from store provider gracefully', () => {
+      resetStoreProvider();
+      setStoreProvider({
+        getAuthState: () => {
+          throw new Error('Store not ready');
+        },
+        getTeamState: () => ({ currentTeamId: 'test-team' }),
+      });
+
+      logger.info('Test message');
+
+      expect(consoleSpies.info).toHaveBeenCalled();
+    });
+
+    it('should handle errors from team store provider gracefully', () => {
+      resetStoreProvider();
+      setStoreProvider({
+        getAuthState: () => ({ user: { id: 'test-user' } }),
+        getTeamState: () => {
+          throw new Error('Team store not ready');
+        },
+      });
+
+      logger.info('Test message');
+
+      expect(consoleSpies.info).toHaveBeenCalled();
+    });
+  });
 });

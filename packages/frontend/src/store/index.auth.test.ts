@@ -299,6 +299,36 @@ describe('useAuthStore - Async Actions', () => {
       expect(result).toBe(false);
       expect(useAuthStore.getState().profileUpdateError).toBe('Network error');
     });
+
+    it('should update profile with locale', async () => {
+      const mockQueryClient = { invalidateQueries: vi.fn(), clear: vi.fn() };
+      setQueryClient(mockQueryClient as unknown as QueryClient);
+
+      const updatedUser = createMockUser('1', 'test@example.com');
+      updatedUser.firstName = 'Jane';
+      updatedUser.lastName = 'Smith';
+      updatedUser.locale = 'de';
+
+      vi.mocked(apiService.updateProfile).mockResolvedValue({
+        success: true,
+        data: updatedUser,
+      });
+
+      const result = await act(async () => {
+        return await useAuthStore
+          .getState()
+          .updateProfile({ firstName: 'Jane', lastName: 'Smith', locale: 'de' });
+      });
+
+      expect(apiService.updateProfile).toHaveBeenCalledWith({
+        firstName: 'Jane',
+        lastName: 'Smith',
+        locale: 'de',
+      });
+      expect(result).toBe(true);
+      expect(useAuthStore.getState().user?.locale).toBe('de');
+      expect(useAuthStore.getState().isUpdatingProfile).toBe(false);
+    });
   });
 
   describe('changePassword', () => {

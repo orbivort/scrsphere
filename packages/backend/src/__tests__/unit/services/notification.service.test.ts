@@ -20,6 +20,12 @@ vi.mock('../../../config', () => ({
     notification: {
       maxPageSize: 100,
     },
+    logging: {
+      directory: 'logs',
+      level: 'info',
+      maxSize: '10m',
+      maxFiles: '7d',
+    },
   },
 }));
 

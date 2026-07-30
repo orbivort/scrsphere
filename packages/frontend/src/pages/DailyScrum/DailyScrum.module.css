@@ -1916,7 +1916,7 @@
 
   .daily-scrum-sprint-goal-container {
     flex-direction: row;
-    text-align: left;
+    text-align: start;
     gap: var(--space-4);
     padding: var(--space-4) var(--space-5);
   }

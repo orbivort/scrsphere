@@ -1,9 +1,8 @@
-﻿import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import React from 'react';
+import { screen, waitFor, renderWithProviders, initTestI18n } from '../../test-utils';
 import userEvent from '@testing-library/user-event';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { BrowserRouter, useNavigate } from 'react-router';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { useNavigate } from 'react-router';
+import { vi, describe, it, expect, beforeEach, beforeAll } from 'vitest';
 
 import { RetrospectiveList } from './RetrospectiveList';
 import { apiService } from '../../services';
@@ -14,23 +13,9 @@ import {
   type SprintRetrospective,
 } from '../../types';
 
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-    },
-  });
-
-const renderWithProviders = (ui: React.ReactElement) => {
-  const testQueryClient = createTestQueryClient();
-  return render(
-    <QueryClientProvider client={testQueryClient}>
-      <BrowserRouter>{ui}</BrowserRouter>
-    </QueryClientProvider>
-  );
-};
+beforeAll(async () => {
+  await initTestI18n();
+});
 
 const createMockSprint = (overrides: Partial<Sprint> = {}): Sprint => ({
   id: 'sprint-1',

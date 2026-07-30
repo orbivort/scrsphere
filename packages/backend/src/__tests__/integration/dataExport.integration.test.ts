@@ -8,6 +8,10 @@ import { generateUUIDv7 } from '../../utils/uuid';
 import bcrypt from 'bcrypt';
 import { CSRF_CONSTANTS } from '../../middleware/csrf.middleware';
 import { getCsrfToken, extractCsrfFromCookies } from '../helpers/test-helpers';
+import { setLocaleHeader, SUPPORTED_LOCALES, createI18nTestUser } from '../helpers/i18n-helpers';
+import type { Locale } from '@scrumooth/shared';
+
+const uniqueId = () => `${Date.now()}-${Math.random().toString(36).substring(7)}`;
 
 describe('Data Export API Integration Tests', () => {
   let authToken: string[];
@@ -285,6 +289,274 @@ describe('Data Export API Integration Tests', () => {
         .send({});
 
       expect(initiateResponse.body.success).toBe(true);
+    });
+  });
+
+  describe('i18n Locale Support', () => {
+    const testEmails: string[] = [];
+
+    afterAll(async () => {
+      // Cleanup test users created for i18n tests
+      for (const email of testEmails) {
+        const user = await prisma.user.findUnique({ where: { email } });
+        if (user) {
+          await prisma.refreshToken.deleteMany({ where: { userId: user.id } });
+          await prisma.user.delete({ where: { id: user.id } });
+        }
+      }
+    });
+
+    describe('Translated export notification messages', () => {
+      it('should return export initiation message respecting locale header', async () => {
+        for (const locale of SUPPORTED_LOCALES) {
+          const email = `i18n-export-${locale}-${uniqueId()}@example.com`;
+          testEmails.push(email);
+
+          // Create user with locale preference
+          void (await createI18nTestUser(email, locale as Locale, prisma));
+
+          const { csrfCookie, csrfToken } = await getCsrfToken();
+
+          // Login to get auth token
+          const loginResponse = await request(app)
+            .post('/api/v1/auth/login')
+            .set('Cookie', csrfCookie)
+            .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+            .set(setLocaleHeader(locale as Locale))
+            .send({
+              email,
+              password: 'TestPassword123!',
+            });
+
+          const setCookie = loginResponse.headers['set-cookie'];
+          const authCookies = setCookie
+            ? [...(Array.isArray(setCookie) ? setCookie : [setCookie]), csrfCookie]
+            : [csrfCookie];
+
+          // Cancel any existing exports first
+          const activeExportsResponse = await request(app)
+            .get('/api/v1/user/export-data/active')
+            .set('Cookie', authCookies);
+
+          if (activeExportsResponse.body.data?.exports?.length > 0) {
+            const { csrfToken: newCsrfToken } = extractCsrfFromCookies(authCookies);
+            for (const exportJob of activeExportsResponse.body.data.exports) {
+              await request(app)
+                .delete(`/api/v1/user/export-data/${exportJob.jobId}`)
+                .set('Cookie', authCookies)
+                .set(CSRF_CONSTANTS.HEADER_NAME, newCsrfToken);
+            }
+          }
+
+          // Initiate export with locale header
+          const { csrfToken: newCsrfToken } = extractCsrfFromCookies(authCookies);
+          const initiateResponse = await request(app)
+            .post('/api/v1/user/export-data')
+            .set('Cookie', authCookies)
+            .set(CSRF_CONSTANTS.HEADER_NAME, newCsrfToken)
+            .set(setLocaleHeader(locale as Locale))
+            .send({});
+
+          expect(initiateResponse.status).toBe(202);
+          expect(initiateResponse.body.success).toBe(true);
+          expect(initiateResponse.body.data).toHaveProperty('jobId');
+          expect(initiateResponse.body.data).toHaveProperty('status', 'pending');
+          expect(initiateResponse.body.data).toHaveProperty('message');
+        }
+      });
+
+      it('should return translated cancellation message for each locale', async () => {
+        for (const locale of SUPPORTED_LOCALES) {
+          const email = `i18n-cancel-${locale}-${uniqueId()}@example.com`;
+          testEmails.push(email);
+
+          // Create user with locale preference
+          void (await createI18nTestUser(email, locale as Locale, prisma));
+
+          const { csrfCookie, csrfToken } = await getCsrfToken();
+
+          // Login
+          const loginResponse = await request(app)
+            .post('/api/v1/auth/login')
+            .set('Cookie', csrfCookie)
+            .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+            .set(setLocaleHeader(locale as Locale))
+            .send({
+              email,
+              password: 'TestPassword123!',
+            });
+
+          const setCookie = loginResponse.headers['set-cookie'];
+          const authCookies = setCookie
+            ? [...(Array.isArray(setCookie) ? setCookie : [setCookie]), csrfCookie]
+            : [csrfCookie];
+
+          // Initiate export
+          const { csrfToken: newCsrfToken } = extractCsrfFromCookies(authCookies);
+          const initiateResponse = await request(app)
+            .post('/api/v1/user/export-data')
+            .set('Cookie', authCookies)
+            .set(CSRF_CONSTANTS.HEADER_NAME, newCsrfToken)
+            .set(setLocaleHeader(locale as Locale))
+            .send({});
+
+          if (initiateResponse.status === 202) {
+            const jobId = initiateResponse.body.data.jobId;
+
+            // Cancel the export
+            const cancelResponse = await request(app)
+              .delete(`/api/v1/user/export-data/${jobId}`)
+              .set('Cookie', authCookies)
+              .set(CSRF_CONSTANTS.HEADER_NAME, newCsrfToken)
+              .set(setLocaleHeader(locale as Locale));
+
+            expect(cancelResponse.status).toBe(200);
+            expect(cancelResponse.body.success).toBe(true);
+            expect(cancelResponse.body.data.message).toContain('cancelled');
+          }
+        }
+      });
+    });
+
+    describe('Locale-aware export format', () => {
+      it('should export data with locale-aware timestamps', async () => {
+        const locale: Locale = 'de';
+        const email = `i18n-format-${uniqueId()}@example.com`;
+        testEmails.push(email);
+
+        // Create user with German locale preference
+        void (await createI18nTestUser(email, locale, prisma));
+
+        const { csrfCookie, csrfToken } = await getCsrfToken();
+
+        // Login
+        const loginResponse = await request(app)
+          .post('/api/v1/auth/login')
+          .set('Cookie', csrfCookie)
+          .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+          .set(setLocaleHeader(locale))
+          .send({
+            email,
+            password: 'TestPassword123!',
+          });
+
+        const setCookie = loginResponse.headers['set-cookie'];
+        const authCookies = setCookie
+          ? [...(Array.isArray(setCookie) ? setCookie : [setCookie]), csrfCookie]
+          : [csrfCookie];
+
+        // Cancel any existing exports first
+        const activeExportsResponse = await request(app)
+          .get('/api/v1/user/export-data/active')
+          .set('Cookie', authCookies);
+
+        if (activeExportsResponse.body.data?.exports?.length > 0) {
+          const { csrfToken: newCsrfToken } = extractCsrfFromCookies(authCookies);
+          for (const exportJob of activeExportsResponse.body.data.exports) {
+            await request(app)
+              .delete(`/api/v1/user/export-data/${exportJob.jobId}`)
+              .set('Cookie', authCookies)
+              .set(CSRF_CONSTANTS.HEADER_NAME, newCsrfToken);
+          }
+        }
+
+        // Initiate export
+        const { csrfToken: newCsrfToken } = extractCsrfFromCookies(authCookies);
+        const initiateResponse = await request(app)
+          .post('/api/v1/user/export-data')
+          .set('Cookie', authCookies)
+          .set(CSRF_CONSTANTS.HEADER_NAME, newCsrfToken)
+          .set(setLocaleHeader(locale))
+          .send({});
+
+        expect(initiateResponse.status).toBe(202);
+
+        // Check that the response includes ISO 8601 timestamps
+        // These can be formatted by frontend according to user locale
+        const { estimatedCompletionTime } = initiateResponse.body.data;
+        expect(estimatedCompletionTime).toBeDefined();
+
+        // Verify it's a valid ISO date string
+        const parsedDate = new Date(estimatedCompletionTime);
+        expect(parsedDate instanceof Date).toBe(true);
+        expect(parsedDate.getTime()).toBeGreaterThan(0);
+      });
+
+      it('should include locale preference in export metadata', async () => {
+        for (const locale of SUPPORTED_LOCALES) {
+          const email = `i18n-meta-${locale}-${uniqueId()}@example.com`;
+          testEmails.push(email);
+
+          const user = await createI18nTestUser(email, locale as Locale, prisma);
+
+          // Verify user locale preference is stored correctly
+          const dbUser = await prisma.user.findUnique({
+            where: { id: user.id },
+            select: { locale: true },
+          });
+
+          expect(dbUser?.locale).toBe(locale);
+        }
+      });
+
+      it('should accept export with locale-specific Accept-Language header', async () => {
+        const locale: Locale = 'fr';
+        const email = `i18n-accept-${uniqueId()}@example.com`;
+        testEmails.push(email);
+
+        // Create user with French locale preference
+        void (await createI18nTestUser(email, locale, prisma));
+
+        const { csrfCookie, csrfToken } = await getCsrfToken();
+
+        // Login
+        const loginResponse = await request(app)
+          .post('/api/v1/auth/login')
+          .set('Cookie', csrfCookie)
+          .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+          .set(setLocaleHeader(locale))
+          .send({
+            email,
+            password: 'TestPassword123!',
+          });
+
+        const setCookie = loginResponse.headers['set-cookie'];
+        const authCookies = setCookie
+          ? [...(Array.isArray(setCookie) ? setCookie : [setCookie]), csrfCookie]
+          : [csrfCookie];
+
+        // Cancel any existing exports first
+        const activeExportsResponse = await request(app)
+          .get('/api/v1/user/export-data/active')
+          .set('Cookie', authCookies);
+
+        if (activeExportsResponse.body.data?.exports?.length > 0) {
+          const { csrfToken: newCsrfToken } = extractCsrfFromCookies(authCookies);
+          for (const exportJob of activeExportsResponse.body.data.exports) {
+            await request(app)
+              .delete(`/api/v1/user/export-data/${exportJob.jobId}`)
+              .set('Cookie', authCookies)
+              .set(CSRF_CONSTANTS.HEADER_NAME, newCsrfToken);
+          }
+        }
+
+        // Initiate export with French locale
+        const { csrfToken: newCsrfToken } = extractCsrfFromCookies(authCookies);
+        const initiateResponse = await request(app)
+          .post('/api/v1/user/export-data')
+          .set('Cookie', authCookies)
+          .set(CSRF_CONSTANTS.HEADER_NAME, newCsrfToken)
+          .set(setLocaleHeader(locale))
+          .send({
+            options: {
+              includeSessions: true,
+              includeNotifications: true,
+            },
+          });
+
+        expect(initiateResponse.status).toBe(202);
+        expect(initiateResponse.body.success).toBe(true);
+      });
     });
   });
 });

@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
+import { screen, renderWithProviders, fireEvent, initTestI18n } from '../../test-utils';
 
 import { PageErrorBoundary } from './PageErrorBoundary';
 
@@ -27,6 +27,10 @@ vi.mock('./ErrorBoundary.module.css', () => ({
 }));
 
 describe('PageErrorBoundary Component', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     console.error = vi.fn();
   });
@@ -38,7 +42,7 @@ describe('PageErrorBoundary Component', () => {
 
   describe('Component Rendering Tests', () => {
     it('should render children when no error occurs', () => {
-      render(
+      renderWithProviders(
         <PageErrorBoundary pageName="Dashboard">
           <div>Page content</div>
         </PageErrorBoundary>
@@ -48,7 +52,7 @@ describe('PageErrorBoundary Component', () => {
     });
 
     it('should render error UI when an error is thrown', () => {
-      render(
+      renderWithProviders(
         <PageErrorBoundary pageName="Dashboard">
           <ThrowError error={new Error('Page error')} />
         </PageErrorBoundary>
@@ -58,7 +62,7 @@ describe('PageErrorBoundary Component', () => {
     });
 
     it('should display page name in error title', () => {
-      render(
+      renderWithProviders(
         <PageErrorBoundary pageName="Sprint Board">
           <ThrowError error={new Error('Page error')} />
         </PageErrorBoundary>
@@ -68,7 +72,7 @@ describe('PageErrorBoundary Component', () => {
     });
 
     it('should display error message', () => {
-      render(
+      renderWithProviders(
         <PageErrorBoundary pageName="Dashboard">
           <ThrowError error={new Error('Page error')} />
         </PageErrorBoundary>
@@ -82,7 +86,7 @@ describe('PageErrorBoundary Component', () => {
     });
 
     it('should have proper ARIA attributes', () => {
-      render(
+      renderWithProviders(
         <PageErrorBoundary pageName="Dashboard">
           <ThrowError error={new Error('Page error')} />
         </PageErrorBoundary>
@@ -95,7 +99,7 @@ describe('PageErrorBoundary Component', () => {
 
   describe('User Interaction Tests', () => {
     it('should render Reload Page button', () => {
-      render(
+      renderWithProviders(
         <PageErrorBoundary pageName="Dashboard">
           <ThrowError error={new Error('Page error')} />
         </PageErrorBoundary>
@@ -107,7 +111,7 @@ describe('PageErrorBoundary Component', () => {
     it('should call onRetry callback when provided and Reload Page is clicked', () => {
       const onRetry = vi.fn();
 
-      render(
+      renderWithProviders(
         <PageErrorBoundary pageName="Dashboard" onRetry={onRetry}>
           <ThrowError error={new Error('Page error')} />
         </PageErrorBoundary>
@@ -124,7 +128,7 @@ describe('PageErrorBoundary Component', () => {
       delete (window as any).location;
       window.location = { href: '' } as Location;
 
-      render(
+      renderWithProviders(
         <PageErrorBoundary pageName="Dashboard">
           <ThrowError error={new Error('Page error')} />
         </PageErrorBoundary>
@@ -141,7 +145,7 @@ describe('PageErrorBoundary Component', () => {
 
   describe('Error State Management Tests', () => {
     it('should reset error state when retry is triggered', async () => {
-      const { container, rerender } = render(
+      const { container, rerender } = renderWithProviders(
         <PageErrorBoundary pageName="Dashboard">
           <ThrowError error={new Error('Page error')} />
         </PageErrorBoundary>
@@ -171,7 +175,7 @@ describe('PageErrorBoundary Component', () => {
 
   describe('Edge Case Tests', () => {
     it('should handle errors with empty page name', () => {
-      render(
+      renderWithProviders(
         <PageErrorBoundary pageName="">
           <ThrowError error={new Error('Page error')} />
         </PageErrorBoundary>
@@ -181,7 +185,7 @@ describe('PageErrorBoundary Component', () => {
     });
 
     it('should handle errors with special characters in page name', () => {
-      render(
+      renderWithProviders(
         <PageErrorBoundary pageName="Sprint's Board & Tasks">
           <ThrowError error={new Error('Page error')} />
         </PageErrorBoundary>

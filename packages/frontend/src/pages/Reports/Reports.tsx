@@ -1,5 +1,7 @@
 import React, { lazy, Suspense } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
+import { formatLocaleDate } from '@scrumooth/shared';
 
 import { apiService } from '../../services';
 import { useTeamStore } from '../../store';
@@ -24,6 +26,8 @@ import {
 
 import styles from './Reports.module.css';
 
+import { useI18nStore } from '@/i18n/useI18nStore';
+
 // Lazy load the VelocityChart component to reduce initial bundle size
 const VelocityChart = lazy(() =>
   import('./components/VelocityChart').then((module) => ({
@@ -38,6 +42,8 @@ interface VelocityData {
 }
 
 export const Reports: React.FC = () => {
+  const { t } = useTranslation('reports');
+  const { locale } = useI18nStore();
   const { currentTeam } = useTeamStore();
   const teamId = currentTeam?.id;
 
@@ -70,8 +76,7 @@ export const Reports: React.FC = () => {
   });
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    return formatLocaleDate(dateString, locale);
   };
 
   const getStatusBadgeClass = (status: string) => {
@@ -127,9 +132,9 @@ export const Reports: React.FC = () => {
           <div className={styles['header-content']}>
             <h1 className={styles['page-title']}>
               <ReportsIcon size={32} aria-hidden="true" />
-              Reports
+              {t('title')}
             </h1>
-            <p className={styles['page-subtitle']}>Track team performance and sprint metrics</p>
+            <p className={styles['page-subtitle']}>{t('subtitle')}</p>
           </div>
         </header>
         <main id="main-content" className={styles.content} tabIndex={-1}>
@@ -137,8 +142,8 @@ export const Reports: React.FC = () => {
             <div className={styles['error-icon']} aria-hidden="true">
               <AlertTriangleIcon size={64} />
             </div>
-            <h2>Error Loading Reports</h2>
-            <p>Unable to load report data. Please try again later.</p>
+            <h2>{t('error.title')}</h2>
+            <p>{t('error.message')}</p>
           </div>
         </main>
       </div>
@@ -152,15 +157,15 @@ export const Reports: React.FC = () => {
   return (
     <div className={styles.reports} data-testid="reports">
       <a href="#main-content" className={styles['skip-link']}>
-        Skip to main content
+        {t('skipToMainContent')}
       </a>
       <header className={styles['reports-header']}>
         <div className={styles['header-content']}>
           <h1 className={styles['page-title']}>
             <ReportsIcon size={32} aria-hidden="true" />
-            Reports
+            {t('title')}
           </h1>
-          <p className={styles['page-subtitle']}>Track team performance and sprint metrics</p>
+          <p className={styles['page-subtitle']}>{t('subtitle')}</p>
         </div>
       </header>
 
@@ -168,12 +173,12 @@ export const Reports: React.FC = () => {
         <div className={styles['chart-section']}>
           <div className={`${styles['chart-card']} ${styles['animate-fade-in-up']}`}>
             {isVelocityLoading ? (
-              <LoadingState variant="skeleton-chart" label="Loading velocity chart..." />
+              <LoadingState variant="skeleton-chart" label={t('loading.velocityChart')} />
             ) : (
               <div className={styles['chart-container']}>
                 <Suspense
                   fallback={
-                    <LoadingState variant="skeleton-chart" label="Loading velocity chart..." />
+                    <LoadingState variant="skeleton-chart" label={t('loading.velocityChart')} />
                   }
                 >
                   <VelocityChart data={velocityData?.data as VelocityData | undefined} />
@@ -189,7 +194,7 @@ export const Reports: React.FC = () => {
               variant="skeleton-card"
               cardVariant="stats"
               itemCount={4}
-              label="Loading metrics..."
+              label={t('loading.metrics')}
             />
           ) : (
             <>
@@ -200,19 +205,20 @@ export const Reports: React.FC = () => {
                   <span className={styles['metric-icon']} aria-hidden="true">
                     <ZapIcon size={16} />
                   </span>
-                  <h3>Average Velocity</h3>
+                  <h3>{t('metrics.avgVelocity.title')}</h3>
                 </div>
                 <div className={styles['metric-value']}>
                   {metrics?.averageVelocity.toFixed(1) ?? '—'}
                 </div>
-                <div className={styles['metric-label']}>Story Points per Sprint</div>
+                <div className={styles['metric-label']}>{t('metrics.avgVelocity.unit')}</div>
                 <div
                   className={`${styles['metric-trend']} ${getTrendClass(metrics?.velocityTrend ?? 0)}`}
                 >
                   <span className={styles['trend-icon']}>
                     {getTrendIcon(metrics?.velocityTrend ?? 0)}
                   </span>
-                  <span>{formatTrend(metrics?.velocityTrend ?? 0)}</span> from last sprint
+                  <span>{formatTrend(metrics?.velocityTrend ?? 0)}</span>{' '}
+                  {t('metrics.avgVelocity.fromLastSprint')}
                 </div>
               </div>
 
@@ -223,17 +229,18 @@ export const Reports: React.FC = () => {
                   <span className={styles['metric-icon']} aria-hidden="true">
                     <CheckCircleIcon size={16} />
                   </span>
-                  <h3>Sprint Success Rate</h3>
+                  <h3>{t('metrics.sprintSuccessRate.title')}</h3>
                 </div>
                 <div className={styles['metric-value']}>{metrics?.successRate ?? 0}%</div>
-                <div className={styles['metric-label']}>Sprint Goals Met</div>
+                <div className={styles['metric-label']}>{t('metrics.sprintSuccessRate.unit')}</div>
                 <div
                   className={`${styles['metric-trend']} ${getTrendClass(metrics?.successRateTrend ?? 0)}`}
                 >
                   <span className={styles['trend-icon']}>
                     {getTrendIcon(metrics?.successRateTrend ?? 0)}
                   </span>
-                  <span>{formatTrend(metrics?.successRateTrend ?? 0)}</span> from last month
+                  <span>{formatTrend(metrics?.successRateTrend ?? 0)}</span>{' '}
+                  {t('metrics.sprintSuccessRate.fromLastMonth')}
                 </div>
               </div>
 
@@ -244,20 +251,17 @@ export const Reports: React.FC = () => {
                   <span className={styles['metric-icon']} aria-hidden="true">
                     <AlertTriangleIcon size={16} />
                   </span>
-                  <h3>Impediments</h3>
+                  <h3>{t('metrics.impediments.title')}</h3>
                 </div>
                 <div className={styles['metric-value']}>
                   {metrics?.impediments.resolved ?? 0} / {metrics?.impediments.total ?? 0}
                 </div>
-                <div className={styles['metric-label']}>Resolved</div>
+                <div className={styles['metric-label']}>{t('metrics.impediments.resolved')}</div>
                 <div className={`${styles['metric-trend']} ${styles.neutral}`}>
                   <span>
                     {(metrics?.impediments.total ?? 0) - (metrics?.impediments.resolved ?? 0)}
                   </span>{' '}
-                  open impediment
-                  {(metrics?.impediments.total ?? 0) - (metrics?.impediments.resolved ?? 0) !== 1
-                    ? 's'
-                    : ''}
+                  {t('metrics.impediments.openCount')}
                 </div>
               </div>
 
@@ -268,12 +272,12 @@ export const Reports: React.FC = () => {
                   <span className={styles['metric-icon']} aria-hidden="true">
                     <SmileIcon size={16} />
                   </span>
-                  <h3>Team Satisfaction</h3>
+                  <h3>{t('metrics.teamSatisfaction.title')}</h3>
                 </div>
                 <div className={styles['metric-value']}>
                   {metrics?.teamSatisfaction.rating.toFixed(1) ?? '—'} / 5
                 </div>
-                <div className={styles['metric-label']}>Average Rating</div>
+                <div className={styles['metric-label']}>{t('metrics.teamSatisfaction.unit')}</div>
                 <div
                   className={`${styles['metric-trend']} ${getTrendClass(metrics?.teamSatisfaction.trend ?? 0)}`}
                 >
@@ -287,7 +291,7 @@ export const Reports: React.FC = () => {
                         ? `↓ ${Math.abs(metrics.teamSatisfaction.trend).toFixed(1)}`
                         : '—'}
                   </span>{' '}
-                  from last sprint
+                  {t('metrics.teamSatisfaction.fromLastSprint')}
                 </div>
               </div>
             </>
@@ -297,13 +301,17 @@ export const Reports: React.FC = () => {
         <div className={`${styles['sprint-history']} ${styles['animate-fade-in-up']}`}>
           <div className={styles['sprint-history-header']}>
             <CalendarIcon size={20} aria-hidden="true" />
-            <h3>Sprint History</h3>
+            <h3>{t('sprintHistory.title')}</h3>
           </div>
           {isHistoryLoading ? (
-            <LoadingState variant="skeleton-list" itemCount={3} label="Loading sprint history..." />
+            <LoadingState
+              variant="skeleton-list"
+              itemCount={3}
+              label={t('loading.sprintHistory')}
+            />
           ) : sprintHistory.length === 0 ? (
             <div className={styles['empty-history']}>
-              <p>No sprint history available.</p>
+              <p>{t('sprintHistory.empty')}</p>
             </div>
           ) : (
             <div className={styles['history-list']}>
@@ -320,23 +328,29 @@ export const Reports: React.FC = () => {
                         {formatDate(sprint.startDate)} - {formatDate(sprint.endDate)}
                       </span>
                     </div>
-                    <span className={getStatusBadgeClass(sprint.status)}>{sprint.status}</span>
+                    <span className={getStatusBadgeClass(sprint.status)}>
+                      {t(`sprintStatusLabels.${sprint.status}` as never)}
+                    </span>
                   </div>
                   <div className={styles['history-stats']}>
                     <div className={styles.stat}>
-                      <span className={styles.label}>Planned</span>
-                      <span className={styles.value}>{sprint.plannedPoints} pts</span>
+                      <span className={styles.label}>{t('sprintHistory.stats.planned')}</span>
+                      <span className={styles.value}>
+                        {sprint.plannedPoints} {t('pts')}
+                      </span>
                     </div>
                     <div className={styles.stat}>
-                      <span className={styles.label}>Completed</span>
-                      <span className={styles.value}>{sprint.completedPoints} pts</span>
+                      <span className={styles.label}>{t('sprintHistory.stats.completed')}</span>
+                      <span className={styles.value}>
+                        {sprint.completedPoints} {t('pts')}
+                      </span>
                     </div>
                     <div className={styles.stat}>
-                      <span className={styles.label}>Team Members</span>
+                      <span className={styles.label}>{t('sprintHistory.stats.teamMembers')}</span>
                       <span className={styles.value}>{sprint.teamMembers}</span>
                     </div>
                     <div className={styles.stat}>
-                      <span className={styles.label}>Impediments</span>
+                      <span className={styles.label}>{t('sprintHistory.stats.impediments')}</span>
                       <span className={styles.value}>{sprint.impediments}</span>
                     </div>
                   </div>
@@ -349,13 +363,13 @@ export const Reports: React.FC = () => {
         <div className={`${styles['insights-section']} ${styles['animate-fade-in-up']}`}>
           <div className={styles['insights-header']}>
             <LightbulbIcon size={20} aria-hidden="true" />
-            <h3>Key Insights</h3>
+            <h3>{t('insights.title')}</h3>
           </div>
           {isInsightsLoading ? (
-            <LoadingState variant="skeleton-list" itemCount={3} label="Loading insights..." />
+            <LoadingState variant="skeleton-list" itemCount={3} label={t('loading.insights')} />
           ) : insights.length === 0 ? (
             <div className={styles['empty-insights']}>
-              <p>No insights available yet. Complete more sprints to generate insights.</p>
+              <p>{t('insights.empty')}</p>
             </div>
           ) : (
             <div className={styles['insights-list']}>
@@ -366,8 +380,8 @@ export const Reports: React.FC = () => {
                 >
                   <span className={styles['insight-icon']}>{getInsightIcon(insight.type)}</span>
                   <div className={styles['insight-content']}>
-                    <h4>{insight.title}</h4>
-                    <p>{insight.description}</p>
+                    <h4>{t(`insights.items.${insight.id}.title` as never)}</h4>
+                    <p>{t(`insights.items.${insight.id}.description` as never)}</p>
                   </div>
                 </div>
               ))}

@@ -1,9 +1,8 @@
-﻿import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MemoryRouter } from 'react-router';
 
+import { renderWithProviders, initTestI18n } from '../../../test-utils';
 import { useTeamStore } from '../../../store';
 import { apiService } from '../../../services';
 
@@ -44,33 +43,10 @@ vi.mock('../../../services', () => ({
 // Mock console.error to avoid noise in tests
 const originalConsoleError = console.error;
 
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        staleTime: 0,
-        gcTime: 0,
-      },
-      mutations: {
-        retry: false,
-      },
-    },
-  });
-
-const renderWithProviders = (component: React.ReactElement, initialEntries?: string[]) => {
-  const queryClient = createTestQueryClient();
-  return {
-    ...render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter initialEntries={initialEntries}>{component}</MemoryRouter>
-      </QueryClientProvider>
-    ),
-    queryClient,
-  };
-};
-
 describe('SprintConfiguration Component', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
   const mockTeamId = 'team-123';
   const mockTeam = { id: mockTeamId, name: 'Test Team' };
   const currentYear = 2026;

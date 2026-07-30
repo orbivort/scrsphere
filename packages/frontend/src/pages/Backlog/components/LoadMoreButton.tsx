@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { ClockIcon } from '../../../components/common/Icons';
 
@@ -19,6 +20,8 @@ export const LoadMoreButton: React.FC<LoadMoreButtonProps> = ({
   loadedCount,
   totalCount,
 }) => {
+  const { t } = useTranslation('backlog');
+
   if (!hasMore) return null;
 
   const remaining = totalCount - loadedCount;
@@ -35,18 +38,20 @@ export const LoadMoreButton: React.FC<LoadMoreButtonProps> = ({
         {isLoading ? (
           <>
             <span className={styles['loading-spinner']} aria-hidden="true" />
-            <span>Loading...</span>
+            <span>{t('loadMore.loading') as string}</span>
           </>
         ) : (
           <>
             <ClockIcon size={16} />
-            <span>Load More</span>
-            <span className={styles['remaining-count']}>({remaining} remaining)</span>
+            <span>{t('loadMore.loadMore') as string}</span>
+            <span className={styles['remaining-count']}>
+              ({t('loadMore.remainingCount', { count: remaining }) as string})
+            </span>
           </>
         )}
       </button>
       <p className={styles['progress-text']}>
-        Showing {loadedCount} of {totalCount} items
+        {t('loadMore.showingItems', { shown: loadedCount, total: totalCount }) as string}
       </p>
     </div>
   );

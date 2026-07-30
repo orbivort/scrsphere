@@ -1,8 +1,10 @@
 import React, { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import styles from './BulkUploadModal.module.css';
 import { isValidFileType, formatFileSize, downloadTemplate } from './bulkUploadUtils';
 
+import { useI18nStore } from '@/i18n/useI18nStore';
 import {
   CheckCircleIcon,
   UploadIcon,
@@ -27,6 +29,8 @@ export const FileDropZone: React.FC<FileDropZoneProps> = ({
 }) => {
   const [isDragActive, setIsDragActive] = useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const { t } = useTranslation('backlog');
+  const { locale } = useI18nStore();
 
   const handleDragEnter = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -57,11 +61,11 @@ export const FileDropZone: React.FC<FileDropZoneProps> = ({
         if (file && isValidFileType(file)) {
           onFileSelect(file);
         } else {
-          alert('Please upload a CSV file');
+          alert(t('bulkUpload.dropzone.pleaseUploadCsv'));
         }
       }
     },
-    [onFileSelect]
+    [onFileSelect, t]
   );
 
   const handleFileInputChange = useCallback(
@@ -72,11 +76,11 @@ export const FileDropZone: React.FC<FileDropZoneProps> = ({
         if (file && isValidFileType(file)) {
           onFileSelect(file);
         } else {
-          alert('Please upload a CSV file');
+          alert(t('bulkUpload.dropzone.pleaseUploadCsv'));
         }
       }
     },
-    [onFileSelect]
+    [onFileSelect, t]
   );
 
   const handleClick = useCallback(() => {
@@ -97,10 +101,13 @@ export const FileDropZone: React.FC<FileDropZoneProps> = ({
     [onFileRemove]
   );
 
-  const handleDownloadTemplate = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    downloadTemplate();
-  }, []);
+  const handleDownloadTemplate = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      downloadTemplate(locale);
+    },
+    [locale]
+  );
 
   return (
     <div>
@@ -115,7 +122,7 @@ export const FileDropZone: React.FC<FileDropZoneProps> = ({
         onClick={handleClick}
         role="button"
         tabIndex={0}
-        aria-label="Upload CSV file"
+        aria-label={t('bulkUpload.dropzone.uploadAriaLabel') as string}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             handleClick();
@@ -137,8 +144,12 @@ export const FileDropZone: React.FC<FileDropZoneProps> = ({
 
         {selectedFile ? (
           <>
-            <h3 className={styles['drop-zone-title']}>File Ready</h3>
-            <p className={styles['drop-zone-subtitle']}>Click to change or drag a new file</p>
+            <h3 className={styles['drop-zone-title']}>
+              {t('bulkUpload.dropzone.fileReady') as string}
+            </h3>
+            <p className={styles['drop-zone-subtitle']}>
+              {t('bulkUpload.dropzone.clickToChange') as string}
+            </p>
             <div className={styles['file-info']}>
               <div className={styles['file-icon']}>
                 <FileTextIcon size={20} />
@@ -151,7 +162,7 @@ export const FileDropZone: React.FC<FileDropZoneProps> = ({
                 type="button"
                 className={styles['file-remove']}
                 onClick={handleRemoveFile}
-                aria-label="Remove file"
+                aria-label={t('bulkUpload.dropzone.removeFile') as string}
               >
                 <XIcon size={16} />
               </button>
@@ -159,9 +170,13 @@ export const FileDropZone: React.FC<FileDropZoneProps> = ({
           </>
         ) : (
           <>
-            <h3 className={styles['drop-zone-title']}>Drop your CSV file here</h3>
-            <p className={styles['drop-zone-subtitle']}>or click to browse</p>
-            <p className={styles['drop-zone-hint']}>Supports CSV files up to 5MB</p>
+            <h3 className={styles['drop-zone-title']}>
+              {t('bulkUpload.dropzone.dropCsvHere') as string}
+            </h3>
+            <p className={styles['drop-zone-subtitle']}>
+              {t('bulkUpload.dropzone.orClickToBrowse') as string}
+            </p>
+            <p className={styles['drop-zone-hint']}>{t('bulkUpload.dropzone.hint') as string}</p>
           </>
         )}
       </div>
@@ -174,11 +189,11 @@ export const FileDropZone: React.FC<FileDropZoneProps> = ({
       )}
 
       <div className={styles['template-section']}>
-        <h4>Need a template?</h4>
-        <p>Download our CSV template to get started with the correct format.</p>
+        <h4>{t('bulkUpload.dropzone.needTemplate') as string}</h4>
+        <p>{t('bulkUpload.dropzone.templateDescription') as string}</p>
         <button type="button" className={styles['template-btn']} onClick={handleDownloadTemplate}>
           <DownloadIcon size={16} />
-          Download CSV Template
+          {t('bulkUpload.dropzone.downloadTemplate') as string}
         </button>
       </div>
     </div>

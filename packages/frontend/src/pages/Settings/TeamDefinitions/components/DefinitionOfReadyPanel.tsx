@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
+import { formatLocaleDate } from '@scrumooth/shared';
 
 import { LoadingState } from '../../../../components/common/Loading';
 import { ToastContainer } from '../../../../components/common/ToastContainer';
@@ -14,9 +17,36 @@ import { DefinitionEditor } from './DefinitionEditor';
 import { DOR_CATEGORIES, getCategoryColor } from './categories';
 import styles from './DefinitionOfReadyPanel.module.css';
 
+import { useI18nStore } from '@/i18n/useI18nStore';
 import { EditIcon, PlusIcon, RefreshCwIcon } from '@/components/common/Icons';
 
+/**
+ * Maps default DoR descriptions to translation keys
+ */
+const DOR_DESCRIPTION_MAP: Record<string, string> = {
+  'User story clearly written': 'dorPanel.item.userStoryWritten',
+  'Acceptance criteria defined': 'dorPanel.item.acceptanceCriteriaDefined',
+  'Story points estimated': 'dorPanel.item.storyPointsEstimatedOld',
+  'Dependencies identified': 'dorPanel.item.dependenciesIdentified',
+  'Clear title and description provided': 'dorPanel.item.clearTitle',
+  'Acceptance criteria defined and agreed': 'dorPanel.item.acceptanceCriteria',
+  'Story points estimated by the team': 'dorPanel.item.storyPointsEstimated',
+  'Business value assigned': 'dorPanel.item.businessValue',
+  'Dependencies identified and documented': 'dorPanel.item.dependencies',
+  'No blockers or impediments': 'dorPanel.item.noBlockers',
+};
+
+/**
+ * Translates a DoR item description if it matches a known default
+ */
+function getTranslatedDescription(item: DoRItem, t: TFunction<'settings'>): string {
+  const translationKey = DOR_DESCRIPTION_MAP[item.description];
+  return translationKey ? t(translationKey as never) : item.description;
+}
+
 export function DefinitionOfReadyPanel(): React.JSX.Element {
+  const { t } = useTranslation('settings');
+  const { locale } = useI18nStore();
   const [isEditing, setIsEditing] = useState(false);
   const queryClient = useQueryClient();
   const { currentTeam } = useTeamStore();
@@ -51,11 +81,10 @@ export function DefinitionOfReadyPanel(): React.JSX.Element {
         queryKey: queryKeys.definitionOfReady.byTeam(teamId ?? ''),
       });
       setIsEditing(false);
-      success('Definition of Ready updated successfully');
+      success(t('dorPanel.toast.updatedSuccessfully'));
     },
     onError: (error: unknown) => {
-      const message =
-        error instanceof Error ? error.message : 'Failed to update Definition of Ready';
+      const message = error instanceof Error ? error.message : t('dorPanel.toast.updateFailed');
       showError(message);
     },
   });
@@ -76,7 +105,7 @@ export function DefinitionOfReadyPanel(): React.JSX.Element {
     return (
       <div className={styles.container}>
         <div className={styles['no-team']}>
-          <p>Please select a team to view Definition of Ready.</p>
+          <p>{t('dorPanel.noTeam')}</p>
         </div>
       </div>
     );
@@ -85,7 +114,7 @@ export function DefinitionOfReadyPanel(): React.JSX.Element {
   if (isLoading) {
     return (
       <div className={styles.container}>
-        <LoadingState variant="spinner" size="md" label="Loading Definition of Ready..." />
+        <LoadingState variant="spinner" size="md" label={t('dorPanel.loading')} />
       </div>
     );
   }
@@ -94,13 +123,13 @@ export function DefinitionOfReadyPanel(): React.JSX.Element {
     return (
       <div className={styles.container}>
         <div className={styles.error}>
-          <p>Failed to load Definition of Ready</p>
+          <p>{t('dorPanel.error')}</p>
           <button
             className={`${styles.button} ${styles['button-primary']}`}
             onClick={() => refetch()}
           >
             <RefreshCwIcon size={16} />
-            Retry
+            {t('dorPanel.retry')}
           </button>
         </div>
       </div>
@@ -128,34 +157,21 @@ export function DefinitionOfReadyPanel(): React.JSX.Element {
   const activeItems = sortedItems.filter((item) => item.isActive);
   const inactiveItems = sortedItems.filter((item) => !item.isActive);
 
-  const formatDate = (dateString: string): string => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
-  };
-
   const isEmpty = items.length === 0 || (response?.data?.items.length ?? 0) === 0;
 
   if (isEmpty) {
     return (
       <div className={styles.container}>
         <div className={styles.empty}>
-          <h3 className={styles['empty-title']}>Definition of Ready</h3>
-          <p className={styles['empty-text']}>
-            No Definition of Ready configured for this team yet.
-          </p>
-          <p className={styles['empty-description']}>
-            The Definition of Ready is a checklist of criteria that a user story must meet before it
-            can be taken into a sprint.
-          </p>
+          <h3 className={styles['empty-title']}>{t('dorPanel.empty.title')}</h3>
+          <p className={styles['empty-text']}>{t('dorPanel.empty.message')}</p>
+          <p className={styles['empty-description']}>{t('dorPanel.empty.description')}</p>
           <button
             className={`${styles.button} ${styles['button-primary']}`}
             onClick={handleConfigure}
           >
             <PlusIcon size={16} />
-            Configure DoR
+            {t('dorPanel.empty.configureButton')}
           </button>
         </div>
       </div>
@@ -168,12 +184,12 @@ export function DefinitionOfReadyPanel(): React.JSX.Element {
       <div className={styles.container}>
         <div className={styles.header}>
           <div className={styles['header-left']}>
-            <h3 className={styles['header-title']}>Definition of Ready</h3>
+            <h3 className={styles['header-title']}>{t('dorPanel.title')}</h3>
             <div className={styles['header-meta']}>
               <span className={styles['version-badge']}>v{definition?.version ?? 1}</span>
               {definition?.updatedAt && (
                 <span className={styles['updated-date']}>
-                  Last updated: {formatDate(definition.updatedAt)}
+                  {t('dorPanel.lastUpdated')} {formatLocaleDate(definition.updatedAt, locale)}
                 </span>
               )}
             </div>
@@ -184,7 +200,7 @@ export function DefinitionOfReadyPanel(): React.JSX.Element {
               onClick={handleConfigure}
             >
               <EditIcon size={16} />
-              Edit DoR
+              {t('dorPanel.editButton')}
             </button>
           </div>
         </div>
@@ -199,9 +215,14 @@ export function DefinitionOfReadyPanel(): React.JSX.Element {
                   className={styles['item-category']}
                   style={getCategoryColor(item.category ?? '', DOR_CATEGORIES)}
                 >
-                  {category?.icon} {category?.label}
+                  {category?.icon}{' '}
+                  {category
+                    ? t(`definitionEditor.dorCategories.${category.value}` as never)
+                    : t('dorPanel.uncategorized')}
                 </span>
-                <span className={styles['item-description']}>{item.description}</span>
+                <span className={styles['item-description']}>
+                  {getTranslatedDescription(item, t)}
+                </span>
               </div>
             );
           })}
@@ -209,9 +230,13 @@ export function DefinitionOfReadyPanel(): React.JSX.Element {
 
         <div className={styles.footer}>
           <div className={styles.counts}>
-            <span className={styles['active-count']}>{activeItems.length} active items</span>
+            <span className={styles['active-count']}>
+              {t('dorPanel.activeItems', { count: activeItems.length })}
+            </span>
             {inactiveItems.length > 0 && (
-              <span className={styles['inactive-count']}>{inactiveItems.length} inactive</span>
+              <span className={styles['inactive-count']}>
+                {t('dorPanel.inactive', { count: inactiveItems.length })}
+              </span>
             )}
           </div>
         </div>

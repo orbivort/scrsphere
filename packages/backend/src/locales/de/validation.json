@@ -1,0 +1,39 @@
+{
+  "auth": {
+    "confirmPasswordRequired": "Passwortbestätigung ist erforderlich",
+    "currentPasswordRequired": "Aktuelles Passwort ist erforderlich",
+    "deleteConfirmation": "Die Bestätigung muss genau \"DELETE MY ACCOUNT\" lauten",
+    "emailRequired": "E-Mail-Adresse ist erforderlich",
+    "invalidEmail": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+    "invalidPassword": "Passwort ist ungültig",
+    "newPasswordRequired": "Neues Passwort ist erforderlich",
+    "passwordNeedsLowercase": "Das Passwort muss einen Kleinbuchstaben enthalten",
+    "passwordNeedsNumber": "Das Passwort muss eine Zahl enthalten",
+    "passwordNeedsSpecialChar": "Das Passwort muss ein Sonderzeichen enthalten",
+    "passwordNeedsUppercase": "Das Passwort muss einen Großbuchstaben enthalten",
+    "passwordRequired": "Passwort ist erforderlich",
+    "passwordTooShort": "Das Passwort erfüllt nicht die Mindestlängenanforderung",
+    "passwordsDoNotMatch": "Passwörter stimmen nicht überein",
+    "refreshTokenRequired": "Refresh-Token ist erforderlich",
+    "resetTokenRequired": "Reset-Token ist erforderlich",
+    "scheduleDeletionConfirmation": "Die Bestätigung muss genau \"SCHEDULE DELETION\" lauten",
+    "termsRequired": "Sie müssen die Nutzungsbedingungen akzeptieren"
+  },
+  "fieldRequired": "Dieses Feld ist erforderlich",
+  "fieldTooLong": "Dieses Feld ist zu lang",
+  "firstName": "Vorname",
+  "invalidEmail": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+  "lastName": "Nachname",
+  "passwordTooShort": "Passwort muss mindestens {{min}} Zeichen haben",
+  "passwordsDoNotMatch": "Passwörter stimmen nicht überein",
+  "workflow": {
+    "authenticationRequired": "Benutzer-Authentifizierung für diesen Übergang erforderlich",
+    "initialStatusMustBe": "Initialer Status muss {{defaultStatus}} sein",
+    "noWorkflow": "Kein Workflow für Entitätstyp {{entityType}} konfiguriert",
+    "permissionDenied": "Sie haben keine Berechtigung für diesen Übergang",
+    "permissionDeniedRoles": "Sie haben keine Berechtigung für diesen Übergang. Erforderliche Rollen: {{roles}}",
+    "targetStateNotFound": "Zielstatus {{toStatus}} existiert nicht im Workflow",
+    "transitionDisabled": "Dieser Übergang ist derzeit deaktiviert",
+    "transitionNotAllowed": "Übergang von {{fromStatus}} zu {{toStatus}} ist nicht erlaubt"
+  }
+}

@@ -1,8 +1,13 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent, renderWithProviders, initTestI18n } from '../../../test-utils';
+import { beforeAll } from 'vitest';
 
 import { HelpPanel } from './HelpPanel';
 
 describe('HelpPanel', () => {
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   const defaultProps = {
     title: 'writing goal titles',
     tips: [
@@ -13,14 +18,14 @@ describe('HelpPanel', () => {
   };
 
   it('should render help trigger button', () => {
-    render(<HelpPanel {...defaultProps} />);
+    renderWithProviders(<HelpPanel {...defaultProps} />);
 
     expect(screen.getByText('Tips for writing goal titles')).toBeInTheDocument();
     expect(screen.getByText('💡')).toBeInTheDocument();
   });
 
   it('should expand when clicked', () => {
-    render(<HelpPanel {...defaultProps} />);
+    renderWithProviders(<HelpPanel {...defaultProps} />);
 
     const trigger = screen.getByRole('button');
     expect(trigger).toHaveAttribute('aria-expanded', 'false');
@@ -32,7 +37,7 @@ describe('HelpPanel', () => {
   });
 
   it('should display all tips when expanded', () => {
-    render(<HelpPanel {...defaultProps} />);
+    renderWithProviders(<HelpPanel {...defaultProps} />);
 
     fireEvent.click(screen.getByRole('button'));
 
@@ -42,7 +47,7 @@ describe('HelpPanel', () => {
   });
 
   it('should collapse when clicked again', () => {
-    render(<HelpPanel {...defaultProps} />);
+    renderWithProviders(<HelpPanel {...defaultProps} />);
 
     const trigger = screen.getByRole('button');
     fireEvent.click(trigger);
@@ -60,7 +65,7 @@ describe('HelpPanel', () => {
       },
     };
 
-    render(<HelpPanel {...propsWithExamples} />);
+    renderWithProviders(<HelpPanel {...propsWithExamples} />);
     fireEvent.click(screen.getByRole('button'));
 
     expect(screen.getByText('✓ Good example:')).toBeInTheDocument();
@@ -75,7 +80,7 @@ describe('HelpPanel', () => {
       },
     };
 
-    render(<HelpPanel {...propsWithExamples} />);
+    renderWithProviders(<HelpPanel {...propsWithExamples} />);
     fireEvent.click(screen.getByRole('button'));
 
     expect(screen.getByText('✗ Avoid:')).toBeInTheDocument();
@@ -91,7 +96,7 @@ describe('HelpPanel', () => {
       },
     };
 
-    render(<HelpPanel {...propsWithBothExamples} />);
+    renderWithProviders(<HelpPanel {...propsWithBothExamples} />);
     fireEvent.click(screen.getByRole('button'));
 
     expect(screen.getByText('✓ Good example:')).toBeInTheDocument();
@@ -99,14 +104,14 @@ describe('HelpPanel', () => {
   });
 
   it('should have correct aria attributes', () => {
-    render(<HelpPanel {...defaultProps} />);
+    renderWithProviders(<HelpPanel {...defaultProps} />);
 
     const trigger = screen.getByRole('button');
     expect(trigger).toHaveAttribute('aria-controls', 'help-content');
   });
 
   it('should be type button to prevent form submission', () => {
-    render(<HelpPanel {...defaultProps} />);
+    renderWithProviders(<HelpPanel {...defaultProps} />);
 
     const trigger = screen.getByRole('button');
     expect(trigger).toHaveAttribute('type', 'button');

@@ -1,0 +1,6 @@
+# i18n ignore file
+# Add translation keys that are allowed to be missing from non-English locales.
+# Format: one key per line (locale/namespace:key or just key)
+# Entries should have an expiry — link to an issue for tracking.
+
+# No entries yet — all keys must be present in all locales

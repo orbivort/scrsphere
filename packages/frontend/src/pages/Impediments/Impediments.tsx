@@ -1,6 +1,8 @@
-﻿import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useSearchParams } from 'react-router';
+import { useTranslation } from 'react-i18next';
+import { formatLocaleDate } from '@scrumooth/shared';
 
 import { apiService } from '../../services';
 import { useTeamStore } from '../../store';
@@ -31,12 +33,16 @@ import {
 
 import styles from './Impediments.module.css';
 
+import { useI18nStore } from '@/i18n/useI18nStore';
+
 const QUERY_STALE_TIME = 5 * 60 * 1000;
 const QUERY_CACHE_TIME = 10 * 60 * 1000;
 
 export const Impediments: React.FC = () => {
+  const { t } = useTranslation(['impediments', 'common']);
   const { currentTeam } = useTeamStore();
   const navigate = useNavigate();
+  const { locale } = useI18nStore();
   const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
 
@@ -134,7 +140,7 @@ export const Impediments: React.FC = () => {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.impediment.all });
       void queryClient.invalidateQueries({ queryKey: queryKeys.dailyUpdate.all });
-      success('Impediment updated successfully');
+      success(t('toast.updated'));
     },
     onError: (
       error: Error & { response?: { status: number; data?: { error?: { message: string } } } }
@@ -143,12 +149,12 @@ export const Impediments: React.FC = () => {
       if (error.response?.status === 400 && error.response.data?.error?.message) {
         const errorMessage = error.response.data.error.message;
         if (errorMessage.includes('teamId')) {
-          toastError('Team ID is required. Please select a team first.');
+          toastError(t('toast.teamIdRequired'));
         } else {
           toastError(errorMessage);
         }
       } else {
-        toastError('Failed to update impediment. Please try again.');
+        toastError(t('toast.failedUpdate'));
       }
     },
   });
@@ -160,7 +166,7 @@ export const Impediments: React.FC = () => {
       setShowCreateModal(false);
       setFormData({ title: '', description: '', ownerId: '' });
       setFormErrors({});
-      success('Impediment created successfully');
+      success(t('toast.created'));
     },
     onError: (
       error: Error & { response?: { status: number; data?: { error?: { message: string } } } }
@@ -174,7 +180,7 @@ export const Impediments: React.FC = () => {
           toastError(errorMessage);
         }
       } else {
-        toastError('Failed to create impediment. Please try again.');
+        toastError(t('toast.failedCreate'));
       }
     },
   });
@@ -186,7 +192,7 @@ export const Impediments: React.FC = () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.dailyUpdate.all });
       setSelectedImpediment(null);
       setSearchParams({});
-      success('Impediment deleted successfully');
+      success(t('toast.deleted'));
     },
     onError: (
       error: Error & { response?: { status: number; data?: { error?: { message: string } } } }
@@ -195,12 +201,12 @@ export const Impediments: React.FC = () => {
       if (error.response?.status === 400 && error.response.data?.error?.message) {
         const errorMessage = error.response.data.error.message;
         if (errorMessage.includes('teamId')) {
-          toastError('Team ID is required. Please select a team first.');
+          toastError(t('toast.teamIdRequired'));
         } else {
           toastError(errorMessage);
         }
       } else {
-        toastError('Failed to delete impediment. Please try again.');
+        toastError(t('toast.failedDelete'));
       }
     },
   });
@@ -261,13 +267,13 @@ export const Impediments: React.FC = () => {
   const getStatusLabel = (status: ImpedimentStatus): string => {
     switch (status) {
       case 'OPEN':
-        return 'Open';
+        return t('status.open');
       case 'IN_PROGRESS':
-        return 'In Progress';
+        return t('status.inProgress');
       case 'RESOLVED':
-        return 'Resolved';
+        return t('status.resolved');
       case 'CLOSED':
-        return 'Closed';
+        return t('status.closed');
       default:
         return status;
     }
@@ -275,7 +281,7 @@ export const Impediments: React.FC = () => {
 
   const handleStatusChange = (impedimentId: string, newStatus: ImpedimentStatus) => {
     if (!teamId) {
-      toastError('Team ID is required. Please select a team first.');
+      toastError(t('toast.teamIdRequired'));
       return;
     }
 
@@ -337,23 +343,23 @@ export const Impediments: React.FC = () => {
     const errors: Record<string, string> = {};
 
     if (!teamId) {
-      errors.teamId = 'Team ID is required. Please select a team first.';
+      errors.teamId = t('toast.teamIdRequired');
     }
 
     if (!activeSprint?.id) {
-      errors.sprintId = 'No active sprint found. Please start a sprint first.';
+      errors.sprintId = t('toast.noActiveSprint');
     }
 
     if (!formData.title.trim()) {
-      errors.title = 'Title is required';
+      errors.title = t('validation.titleRequired');
     } else if (formData.title.trim().length < 3) {
-      errors.title = 'Title must be at least 3 characters';
+      errors.title = t('validation.titleTooShort');
     }
 
     if (!formData.description.trim()) {
-      errors.description = 'Description is required';
+      errors.description = t('validation.descriptionRequired');
     } else if (formData.description.trim().length < 10) {
-      errors.description = 'Description must be at least 10 characters';
+      errors.description = t('validation.descriptionTooShort');
     }
 
     setFormErrors(errors);
@@ -364,12 +370,12 @@ export const Impediments: React.FC = () => {
     e.preventDefault();
 
     if (!teamId) {
-      setFormErrors({ teamId: 'Team ID is required. Please select a team first.' });
+      setFormErrors({ teamId: t('toast.teamIdRequired') });
       return;
     }
 
     if (!activeSprint?.id) {
-      setFormErrors({ sprintId: 'No active sprint found. Please start a sprint first.' });
+      setFormErrors({ sprintId: t('toast.noActiveSprint') });
       return;
     }
 
@@ -460,7 +466,7 @@ export const Impediments: React.FC = () => {
   }
 
   if (isLoading) {
-    return <LoadingState variant="page" label="Loading impediments..." />;
+    return <LoadingState variant="page" label={t('title')} />;
   }
 
   if (!activeSprint) {
@@ -469,18 +475,18 @@ export const Impediments: React.FC = () => {
 
   if (hasError) {
     const errorMessage = sprintError
-      ? 'Failed to load active sprint information. Please try again.'
-      : 'Failed to load impediments. Please try again.';
+      ? t('errorState.failedSprint')
+      : t('errorState.failedImpediments');
 
     return (
       <div className={styles.impediments}>
         <div className={styles['empty-state-container']}>
           <div className={styles['empty-state']}>
             <AlertCircleIcon className={`${styles['empty-state-icon']} ${styles['error-icon']}`} />
-            <h2>Error Loading Data</h2>
+            <h2>{t('errorState.title')}</h2>
             <p>{errorMessage}</p>
             <button className={`${styles.btn} ${styles['btn-primary']}`} onClick={handleRetry}>
-              Retry
+              {t('errorState.retry')}
             </button>
           </div>
         </div>
@@ -495,15 +501,15 @@ export const Impediments: React.FC = () => {
         <div className={styles['header-content']}>
           <h1 className={styles['page-title']}>
             <AlertTriangleIcon className={styles['page-title-icon']} />
-            Impediments
+            {t('title')}
           </h1>
           <p className={styles['page-subtitle']}>
-            {activeSprint.name} • Track and resolve blockers affecting the team
+            {t('subtitle', { sprintName: activeSprint.name })}
           </p>
         </div>
         <div className={styles['header-actions']}>
           <label htmlFor="filter-status" className={styles['visually-hidden']}>
-            Filter by status
+            {t('filterByStatus')}
           </label>
           <select
             id="filter-status"
@@ -511,18 +517,18 @@ export const Impediments: React.FC = () => {
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
           >
-            <option value="all">All Status</option>
-            <option value="OPEN">Open</option>
-            <option value="IN_PROGRESS">In Progress</option>
-            <option value="RESOLVED">Resolved</option>
-            <option value="CLOSED">Closed</option>
+            <option value="all">{t('allStatus')}</option>
+            <option value="OPEN">{t('status.open')}</option>
+            <option value="IN_PROGRESS">{t('status.inProgress')}</option>
+            <option value="RESOLVED">{t('status.resolved')}</option>
+            <option value="CLOSED">{t('status.closed')}</option>
           </select>
           <button
             className={`${styles.btn} ${styles['btn-primary']}`}
             onClick={() => setShowCreateModal(true)}
           >
             <PlusIcon style={{ width: '16px', height: '16px' }} />
-            Report Impediment
+            {t('reportImpediment')}
           </button>
         </div>
       </div>
@@ -533,25 +539,25 @@ export const Impediments: React.FC = () => {
           <span className={`${styles['stat-value']} ${styles['stat-value-open']}`}>
             {sprintImpedimentsStats.open}
           </span>
-          <span className={styles['stat-label']}>Open</span>
+          <span className={styles['stat-label']}>{t('stats.open')}</span>
         </div>
         <div className={styles['stat-card']}>
           <span className={`${styles['stat-value']} ${styles['stat-value-in-progress']}`}>
             {sprintImpedimentsStats.inProgress}
           </span>
-          <span className={styles['stat-label']}>In Progress</span>
+          <span className={styles['stat-label']}>{t('stats.inProgress')}</span>
         </div>
         <div className={styles['stat-card']}>
           <span className={`${styles['stat-value']} ${styles['stat-value-resolved']}`}>
             {sprintImpedimentsStats.resolved}
           </span>
-          <span className={styles['stat-label']}>Resolved</span>
+          <span className={styles['stat-label']}>{t('stats.resolved')}</span>
         </div>
         <div className={styles['stat-card']}>
           <span className={`${styles['stat-value']} ${styles['stat-value-closed']}`}>
             {sprintImpedimentsStats.closed}
           </span>
-          <span className={styles['stat-label']}>Closed</span>
+          <span className={styles['stat-label']}>{t('stats.closed')}</span>
         </div>
       </div>
 
@@ -571,7 +577,10 @@ export const Impediments: React.FC = () => {
               }}
               tabIndex={0}
               role="button"
-              aria-label={`View details for impediment: ${impediment.title}. Status: ${getStatusLabel(impediment.status)}`}
+              aria-label={t('card.viewDetailsAria', {
+                title: impediment.title,
+                status: getStatusLabel(impediment.status),
+              })}
             >
               <div className={styles['card-header']}>
                 <div className={styles['card-title-row']}>
@@ -586,16 +595,19 @@ export const Impediments: React.FC = () => {
                 <div className={styles['card-meta']}>
                   <span className={styles['meta-item']}>
                     <CalendarIcon className={styles['meta-icon']} />
-                    {new Date(impediment.createdAt).toLocaleDateString()}
+                    {formatLocaleDate(impediment.createdAt, locale)}
                   </span>
                   {impediment.sprintId && (
                     <span className={styles['meta-item']}>
                       <SprintIcon className={styles['meta-icon']} />
-                      Sprint
+                      {t('card.sprint')}
                     </span>
                   )}
                   {impediment.dailyUpdateId && (
-                    <span className={styles['source-badge']} title="Created from Daily Update">
+                    <span
+                      className={styles['source-badge']}
+                      title={t('card.createdFromDailyUpdate')}
+                    >
                       <FileTextIcon
                         style={{
                           width: '12px',
@@ -604,7 +616,7 @@ export const Impediments: React.FC = () => {
                           display: 'inline',
                         }}
                       />
-                      From Daily Scrum
+                      {t('card.fromDailyScrum')}
                     </span>
                   )}
                 </div>
@@ -612,27 +624,27 @@ export const Impediments: React.FC = () => {
               <p className={styles['card-description']}>{impediment.description}</p>
               <div className={styles['card-footer']}>
                 <div className={styles['footer-item']}>
-                  <span className={styles['footer-label']}>Reported by</span>
+                  <span className={styles['footer-label']}>{t('card.reportedBy')}</span>
                   <span className={styles['footer-value']}>
                     {impediment.reportedBy?.firstName && impediment.reportedBy.lastName
                       ? `${impediment.reportedBy.firstName} ${impediment.reportedBy.lastName}`
-                      : (impediment.reportedBy?.email ?? 'Unknown')}
+                      : (impediment.reportedBy?.email ?? t('card.unknown'))}
                   </span>
                 </div>
                 {impediment.owner && (
                   <div className={styles['footer-item']}>
-                    <span className={styles['footer-label']}>Owner</span>
+                    <span className={styles['footer-label']}>{t('card.owner')}</span>
                     <span className={styles['footer-value']}>
                       {impediment.owner.firstName && impediment.owner.lastName
                         ? `${impediment.owner.firstName} ${impediment.owner.lastName}`
-                        : impediment.owner.email || 'Unknown'}
+                        : impediment.owner.email || t('card.unknown')}
                     </span>
                   </div>
                 )}
               </div>
               {impediment.resolution && (
                 <div className={styles['resolution-section']}>
-                  <h4 className={styles['resolution-label']}>Resolution</h4>
+                  <h4 className={styles['resolution-label']}>{t('card.resolution')}</h4>
                   <p className={styles['resolution-text']}>{impediment.resolution}</p>
                 </div>
               )}
@@ -650,13 +662,22 @@ export const Impediments: React.FC = () => {
               )}
               <h3>
                 {filterStatus === 'all'
-                  ? `No Impediments for ${activeSprint.name || 'Active Sprint'}`
-                  : `No ${getStatusLabel(filterStatus as ImpedimentStatus)} Impediments`}
+                  ? t('emptyState.noImpedimentsForSprint', {
+                      sprintName: activeSprint.name || 'Active Sprint',
+                    })
+                  : t('emptyState.noImpedimentsForFilter', {
+                      status: getStatusLabel(filterStatus as ImpedimentStatus),
+                    })}
               </h3>
               <p>
                 {filterStatus === 'all'
-                  ? `Great! No impediments reported for the current active sprint "${activeSprint.name || 'Unknown'}.`
-                  : `There are no ${getStatusLabel(filterStatus as ImpedimentStatus).toLowerCase()} impediments in "${activeSprint.name || 'Unknown'}. Try selecting a different status filter.`}
+                  ? t('emptyState.noImpedimentsDescription', {
+                      sprintName: activeSprint.name || 'Unknown',
+                    })
+                  : t('emptyState.noFilterImpedimentsDescription', {
+                      status: getStatusLabel(filterStatus as ImpedimentStatus).toLowerCase(),
+                      sprintName: activeSprint.name || 'Unknown',
+                    })}
               </p>
               {filterStatus !== 'all' && (
                 <button
@@ -664,7 +685,7 @@ export const Impediments: React.FC = () => {
                   onClick={() => setFilterStatus('all')}
                   style={{ marginBottom: '12px' }}
                 >
-                  Clear Filter
+                  {t('emptyState.clearFilter')}
                 </button>
               )}
               <button
@@ -672,7 +693,7 @@ export const Impediments: React.FC = () => {
                 onClick={() => setShowCreateModal(true)}
               >
                 <PlusIcon style={{ width: '16px', height: '16px' }} />
-                Report Impediment
+                {t('reportImpediment')}
               </button>
             </div>
           </div>
@@ -699,16 +720,14 @@ export const Impediments: React.FC = () => {
                   <AlertTriangleIcon className={styles['modal-icon']} />
                 </div>
                 <h2 id="create-modal-title" className={styles['modal-title']}>
-                  Report New Impediment
+                  {t('createModal.title')}
                 </h2>
-                <p className={styles['modal-subtitle']}>
-                  Document blockers affecting your team&apos;s progress
-                </p>
+                <p className={styles['modal-subtitle']}>{t('createModal.subtitle')}</p>
               </div>
               <button
                 className={styles['modal-close']}
                 onClick={() => handleCloseCreateModal()}
-                aria-label="Close modal"
+                aria-label={t('common:aria.closeModal')}
               >
                 <XIcon className={styles['modal-close-icon']} />
               </button>
@@ -720,7 +739,7 @@ export const Impediments: React.FC = () => {
                     htmlFor="impediment-sprint"
                     className={`${styles['form-label']} ${styles['form-label-required']}`}
                   >
-                    Sprint
+                    {t('createModal.sprintLabel')}
                   </label>
                   <div
                     id="impediment-sprint"
@@ -728,7 +747,9 @@ export const Impediments: React.FC = () => {
                     aria-invalid={!!formErrors.sprintId}
                     aria-describedby={formErrors.sprintId ? 'sprint-error' : undefined}
                   >
-                    <span className={styles['team-name']}>{activeSprint.name} (Active)</span>
+                    <span className={styles['team-name']}>
+                      {activeSprint.name} {t('createModal.activeSprint')}
+                    </span>
                   </div>
                   {formErrors.sprintId && (
                     <span id="sprint-error" className={styles['form-error-message']} role="alert">
@@ -741,13 +762,13 @@ export const Impediments: React.FC = () => {
                     htmlFor="impediment-title"
                     className={`${styles['form-label']} ${styles['form-label-required']}`}
                   >
-                    Title
+                    {t('createModal.titleLabel')}
                   </label>
                   <input
                     id="impediment-title"
                     type="text"
                     className={`${styles['form-input']} ${formErrors.title ? styles['form-input-error'] : ''}`}
-                    placeholder="Brief description of the impediment"
+                    placeholder={t('createModal.titlePlaceholder')}
                     value={formData.title}
                     onChange={(e) => handleInputChange('title', e.target.value)}
                     aria-required="true"
@@ -765,13 +786,13 @@ export const Impediments: React.FC = () => {
                     htmlFor="impediment-description"
                     className={`${styles['form-label']} ${styles['form-label-required']}`}
                   >
-                    Description
+                    {t('createModal.descriptionLabel')}
                   </label>
                   <textarea
                     id="impediment-description"
                     className={`${styles['form-textarea']} ${formErrors.description ? styles['form-textarea-error'] : ''}`}
                     rows={4}
-                    placeholder="Provide details about the impediment"
+                    placeholder={t('createModal.descriptionPlaceholder')}
                     value={formData.description}
                     onChange={(e) => handleInputChange('description', e.target.value)}
                     aria-required="true"
@@ -803,7 +824,7 @@ export const Impediments: React.FC = () => {
                 className={`${styles.btn} ${styles['btn-secondary']}`}
                 onClick={() => handleCloseCreateModal()}
               >
-                Cancel
+                {t('detailModal.cancel')}
               </button>
               <button
                 className={`${styles.btn} ${styles['btn-primary']}`}
@@ -814,12 +835,12 @@ export const Impediments: React.FC = () => {
                 {createMutation.isPending ? (
                   <>
                     <span className={styles['btn-spinner']} aria-hidden="true" />
-                    Creating...
+                    {t('createModal.creating')}
                   </>
                 ) : (
                   <>
                     <SaveIcon style={{ width: '12px', height: '12px', flexShrink: 0 }} />
-                    Create Impediment
+                    {t('createModal.createImpediment')}
                   </>
                 )}
               </button>
@@ -848,14 +869,14 @@ export const Impediments: React.FC = () => {
                   <FileTextIcon className={styles['modal-icon']} />
                 </div>
                 <h2 id="detail-modal-title" className={styles['modal-title']}>
-                  Impediment Details
+                  {t('detailModal.title')}
                 </h2>
-                <p className={styles['modal-subtitle']}>View and manage impediment information</p>
+                <p className={styles['modal-subtitle']}>{t('detailModal.subtitle')}</p>
               </div>
               <button
                 className={styles['modal-close']}
                 onClick={handleCloseDetail}
-                aria-label="Close modal"
+                aria-label={t('common:aria.closeModal')}
               >
                 <XIcon className={styles['modal-close-icon']} />
               </button>
@@ -868,14 +889,15 @@ export const Impediments: React.FC = () => {
                       <FileTextIcon className={styles['source-icon']} />
                       <div className={styles['source-info']}>
                         <span className={styles['source-label']}>
-                          Created from Daily Scrum Update
+                          {t('detailModal.createdFromDailyScrum')}
                         </span>
                         <span className={styles['source-date']}>
                           by {effectiveSelectedImpediment.dailyUpdate.user?.firstName}{' '}
                           {effectiveSelectedImpediment.dailyUpdate.user?.lastName} on{' '}
-                          {new Date(
-                            effectiveSelectedImpediment.dailyUpdate.updateDate
-                          ).toLocaleDateString()}
+                          {formatLocaleDate(
+                            effectiveSelectedImpediment.dailyUpdate.updateDate,
+                            locale
+                          )}
                         </span>
                       </div>
                       <button
@@ -886,7 +908,7 @@ export const Impediments: React.FC = () => {
                           )
                         }
                       >
-                        View Daily Update
+                        {t('detailModal.viewDailyUpdate')}
                         <ArrowRightIcon
                           style={{
                             width: '14px',
@@ -902,14 +924,14 @@ export const Impediments: React.FC = () => {
               <div className={styles['detail-section']}>
                 <label className={styles['detail-label']}>
                   <FileTextIcon className={styles['detail-label-icon']} />
-                  Title
+                  {t('detailModal.titleLabel')}
                 </label>
                 <p className={styles['detail-value']}>{effectiveSelectedImpediment.title}</p>
               </div>
               <div className={styles['detail-section']}>
                 <label className={styles['detail-label']}>
                   <FileTextIcon className={styles['detail-label-icon']} />
-                  Description
+                  {t('detailModal.descriptionLabel')}
                 </label>
                 <p className={styles['detail-value']}>{effectiveSelectedImpediment.description}</p>
               </div>
@@ -917,7 +939,7 @@ export const Impediments: React.FC = () => {
                 <div className={styles['detail-section']}>
                   <label className={styles['detail-label']}>
                     <SprintIcon className={styles['detail-label-icon']} />
-                    Sprint
+                    {t('detailModal.sprintLabel')}
                   </label>
                   <p className={styles['detail-value']}>
                     {effectiveSelectedImpediment.sprint.name}
@@ -927,7 +949,7 @@ export const Impediments: React.FC = () => {
               <div className={styles['detail-section']}>
                 <label htmlFor="impediment-status" className={styles['detail-label']}>
                   <AlertCircleIcon className={styles['detail-label-icon']} />
-                  Status
+                  {t('detailModal.statusLabel')}
                 </label>
                 <select
                   id="impediment-status"
@@ -937,10 +959,10 @@ export const Impediments: React.FC = () => {
                     handleStatusSelect(e.target.value as ImpedimentStatus);
                   }}
                 >
-                  <option value="OPEN">Open</option>
-                  <option value="IN_PROGRESS">In Progress</option>
-                  <option value="RESOLVED">Resolved</option>
-                  <option value="CLOSED">Closed</option>
+                  <option value="OPEN">{t('status.open')}</option>
+                  <option value="IN_PROGRESS">{t('status.inProgress')}</option>
+                  <option value="RESOLVED">{t('status.resolved')}</option>
+                  <option value="CLOSED">{t('status.closed')}</option>
                 </select>
               </div>
               {showResolutionInput && !effectiveSelectedImpediment.resolution && (
@@ -950,13 +972,13 @@ export const Impediments: React.FC = () => {
                     className={`${styles['detail-label']} ${styles['form-label-required']}`}
                   >
                     <CheckCircleIcon className={styles['detail-label-icon']} />
-                    Resolution
+                    {t('detailModal.resolutionLabel')}
                   </label>
                   <textarea
                     id="impediment-resolution"
                     className={styles['resolution-input']}
                     rows={3}
-                    placeholder="Describe how this impediment was resolved..."
+                    placeholder={t('detailModal.resolutionPlaceholder')}
                     value={resolutionInput}
                     onChange={(e) => setResolutionInput(e.target.value)}
                     aria-required="true"
@@ -969,7 +991,7 @@ export const Impediments: React.FC = () => {
                         setResolutionInput('');
                       }}
                     >
-                      Cancel
+                      {t('detailModal.cancel')}
                     </button>
                     <button
                       className={`${styles.btn} ${styles['btn-primary']}`}
@@ -984,12 +1006,12 @@ export const Impediments: React.FC = () => {
                       {updateMutation.isPending ? (
                         <>
                           <span className={styles['btn-spinner']} aria-hidden="true" />
-                          Saving...
+                          {t('detailModal.saving')}
                         </>
                       ) : (
                         <>
                           <SaveIcon style={{ width: '12px', height: '12px', flexShrink: 0 }} />
-                          Save Resolution
+                          {t('detailModal.saveResolution')}
                         </>
                       )}
                     </button>
@@ -1000,7 +1022,7 @@ export const Impediments: React.FC = () => {
                 <div className={styles['detail-section']}>
                   <label className={styles['detail-label']}>
                     <CheckCircleIcon className={styles['detail-label-icon']} />
-                    Resolution
+                    {t('detailModal.resolutionLabel')}
                   </label>
                   <div className={styles['detail-card']}>
                     <p className={styles['detail-card-text']}>
@@ -1012,36 +1034,36 @@ export const Impediments: React.FC = () => {
               <div className={styles['detail-section']}>
                 <label className={styles['detail-label']}>
                   <AlertCircleIcon className={styles['detail-label-icon']} />
-                  Reported by
+                  {t('detailModal.reportedByLabel')}
                 </label>
                 <p className={styles['detail-value']}>
                   {effectiveSelectedImpediment.reportedBy?.firstName &&
                   effectiveSelectedImpediment.reportedBy.lastName
                     ? `${effectiveSelectedImpediment.reportedBy.firstName} ${effectiveSelectedImpediment.reportedBy.lastName}`
-                    : (effectiveSelectedImpediment.reportedBy?.email ?? 'Unknown')}
+                    : (effectiveSelectedImpediment.reportedBy?.email ?? t('card.unknown'))}
                 </p>
               </div>
               {effectiveSelectedImpediment.owner && (
                 <div className={styles['detail-section']}>
                   <label className={styles['detail-label']}>
                     <AlertCircleIcon className={styles['detail-label-icon']} />
-                    Owner
+                    {t('detailModal.ownerLabel')}
                   </label>
                   <p className={styles['detail-value']}>
                     {effectiveSelectedImpediment.owner.firstName &&
                     effectiveSelectedImpediment.owner.lastName
                       ? `${effectiveSelectedImpediment.owner.firstName} ${effectiveSelectedImpediment.owner.lastName}`
-                      : effectiveSelectedImpediment.owner.email || 'Unknown'}
+                      : effectiveSelectedImpediment.owner.email || t('card.unknown')}
                   </p>
                 </div>
               )}
               <div className={styles['detail-section']}>
                 <label className={styles['detail-label']}>
                   <CalendarIcon className={styles['detail-label-icon']} />
-                  Created
+                  {t('detailModal.createdLabel')}
                 </label>
                 <p className={styles['detail-value']}>
-                  {new Date(effectiveSelectedImpediment.createdAt).toLocaleString()}
+                  {formatLocaleDate(effectiveSelectedImpediment.createdAt, locale, 'PPp')}
                 </p>
               </div>
             </div>
@@ -1053,13 +1075,13 @@ export const Impediments: React.FC = () => {
               >
                 {deleteMutation.isPending ? (
                   <>
-                    <LoadingState variant="spinner" size="sm" label="Deleting impediment" />
-                    Deleting...
+                    <LoadingState variant="spinner" size="sm" label={t('detailModal.deleting')} />
+                    {t('detailModal.deleting')}
                   </>
                 ) : (
                   <>
                     <TrashIcon style={{ width: '16px', height: '16px' }} />
-                    Delete
+                    {t('detailModal.deleteLabel')}
                   </>
                 )}
               </button>
@@ -1067,7 +1089,7 @@ export const Impediments: React.FC = () => {
                 className={`${styles.btn} ${styles['btn-secondary']}`}
                 onClick={handleCloseDetail}
               >
-                Close
+                {t('detailModal.close')}
               </button>
             </div>
           </div>
@@ -1098,16 +1120,14 @@ export const Impediments: React.FC = () => {
                   <AlertTriangleIcon className={styles['modal-icon']} />
                 </div>
                 <h2 id="delete-title" className={styles['modal-title']}>
-                  Delete Impediment
+                  {t('deleteModal.title')}
                 </h2>
-                <p className={styles['modal-subtitle']}>
-                  This action is permanent and cannot be undone
-                </p>
+                <p className={styles['modal-subtitle']}>{t('deleteModal.subtitle')}</p>
               </div>
               <button
                 className={styles['modal-close']}
                 onClick={() => setShowDeleteConfirm(false)}
-                aria-label="Close modal"
+                aria-label={t('common:aria.closeModal')}
                 type="button"
               >
                 <XIcon className={styles['modal-close-icon']} />
@@ -1123,22 +1143,19 @@ export const Impediments: React.FC = () => {
                     <AlertTriangleIcon />
                   </div>
                   <div className={styles['warning-title-group']}>
-                    <h3 className={styles['warning-title']}>Action Warning</h3>
+                    <h3 className={styles['warning-title']}>{t('deleteModal.actionWarning')}</h3>
                     <p className={styles['warning-subtitle']}>
-                      Item:{' '}
+                      {t('deleteModal.item')}{' '}
                       <strong>
-                        &ldquo;{effectiveSelectedImpediment.title || 'Unknown Item'}&rdquo;
+                        &ldquo;{effectiveSelectedImpediment.title || t('deleteModal.unknownItem')}
+                        &rdquo;
                       </strong>
                     </p>
                   </div>
                 </div>
 
                 <div className={styles['warning-content']}>
-                  <p className={styles['delete-warning-text']}>
-                    You are about to permanently delete this impediment. This action{' '}
-                    <strong>cannot be undone</strong>. All associated data will be permanently
-                    removed.
-                  </p>
+                  <p className={styles['delete-warning-text']}>{t('deleteModal.warningText')}</p>
 
                   {/* Impact Alert */}
                   <div className={styles['impact-alert']}>
@@ -1146,7 +1163,7 @@ export const Impediments: React.FC = () => {
                       <AlertCircleIcon />
                     </span>
                     <span className={styles['impact-text']}>
-                      Status:{' '}
+                      {t('deleteModal.statusLabel')}{' '}
                       <strong
                         className={`${styles['status-badge-inline']} ${styles[`status-badge-${effectiveSelectedImpediment.status.toLowerCase().replace('_', '-')}`] ?? styles['status-badge-open']}`}
                       >
@@ -1166,7 +1183,7 @@ export const Impediments: React.FC = () => {
                 onClick={() => setShowDeleteConfirm(false)}
                 disabled={deleteMutation.isPending}
               >
-                Cancel
+                {t('detailModal.cancel')}
               </button>
               <button
                 type="button"
@@ -1181,12 +1198,12 @@ export const Impediments: React.FC = () => {
                 {deleteMutation.isPending ? (
                   <>
                     <span className={styles['btn-spinner']} aria-hidden="true" />
-                    Deleting...
+                    {t('deleteModal.deleting')}
                   </>
                 ) : (
                   <>
                     <TrashIcon style={{ width: '14px', height: '14px' }} />
-                    Delete Impediment
+                    {t('deleteModal.deleteImpediment')}
                   </>
                 )}
               </button>
@@ -1200,8 +1217,8 @@ export const Impediments: React.FC = () => {
         isOpen={showUnsavedChangesModal}
         onConfirm={handleDiscardChanges}
         onCancel={handleCancelDiscard}
-        title="Unsaved Changes"
-        message="You have unsaved changes in the impediment form. Are you sure you want to discard them?"
+        title={t('unsavedModal.title')}
+        message={t('unsavedModal.message')}
       />
 
       <ToastContainer toasts={toasts} onClose={removeToast} />

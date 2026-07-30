@@ -1,5 +1,7 @@
 // Custom Error Classes and Error Handling Utilities
 
+import { t as reqT } from '../i18n/requestT.js';
+
 // Base Application Error
 export class AppError extends Error {
   public readonly statusCode: number;
@@ -240,6 +242,29 @@ export const formatValidationErrors = (
   }));
 };
 
+// i18n-localized error helpers (additive, non-breaking)
+// These are opt-in replacements for raw error strings. Existing call sites continue to work.
+
+/**
+ * Resolve a localized "X not found" message. Prefer this over raw
+ * `new NotFoundError('Notification')` so the phrase is translated per locale.
+ */
+export function notFound(entityKey: string, params?: Record<string, unknown>): NotFoundError {
+  return new NotFoundError(reqT('errors:entityNotFound', { entity: reqT(entityKey, params) }));
+}
+
+/**
+ * Resolve an arbitrary localized error. Use when the message must be translated.
+ */
+export function localizedError(
+  key: string,
+  params: Record<string, unknown> = {},
+  statusCode = 400,
+  code = 'BAD_REQUEST'
+): AppError {
+  return new AppError(reqT(key, params), statusCode, code);
+}
+
 export default {
   AppError,
   BadRequestError,
@@ -261,4 +286,6 @@ export default {
   createErrorResponse,
   createSuccessResponse,
   asyncHandler,
+  notFound,
+  localizedError,
 };

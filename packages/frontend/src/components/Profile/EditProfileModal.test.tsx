@@ -1,9 +1,33 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor, act, fireEvent } from '@testing-library/react';
+import { screen, waitFor, act, fireEvent, renderWithProviders } from '../../test-utils';
 import userEvent from '@testing-library/user-event';
 import { mockStore } from '../../__mocks__/mockData';
 
 import { EditProfileModal } from './EditProfileModal';
+
+// Mock react-i18next for tests
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => {
+      const map: Record<string, string> = {
+        'profile.editTitle': 'Edit Profile',
+        close: 'close',
+        'profile.firstName': 'First Name',
+        'profile.placeholder.firstName': 'Enter your first name',
+        'profile.lastName': 'Last Name',
+        'profile.placeholder.lastName': 'Enter your last name',
+        'profile.email': 'Email',
+        'profile.readOnly': 'Read-only',
+        'profile.contactSupportToChangeEmail': 'Contact support to change your email address',
+        cancel: 'Cancel',
+        'profile.saveChanges': 'Save Changes',
+        'profile.saving': 'Saving...',
+        'profile.profileUpdated': 'Profile updated successfully',
+      };
+      return map[key] ?? key;
+    },
+  }),
+}));
 
 vi.mock('./EditProfileModal.module.css', () => ({
   default: new Proxy(
@@ -88,7 +112,7 @@ const setup = (options: SetupOptions = {}) => {
     return { success: mockSuccess } as any;
   });
 
-  const utils = render(
+  const utils = renderWithProviders(
     <EditProfileModal isOpen={isOpen} onClose={onClose} onDirtyChange={onDirtyChange} />
   );
 
@@ -525,7 +549,7 @@ describe('EditProfileModal', () => {
       const onDirtyChange = vi.fn();
       const onClose = vi.fn();
 
-      const { container } = render(
+      const { container } = renderWithProviders(
         <EditProfileModal isOpen={true} onClose={onClose} onDirtyChange={onDirtyChange} />
       );
 

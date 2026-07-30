@@ -1,10 +1,10 @@
 import React from 'react';
-import { screen, render, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, beforeAll, vi } from 'vitest';
 
+import { renderWithProviders, initTestI18n, createMockBacklogItem } from '../../../test-utils';
 import { ItemStatus, MoSCoWPriority } from '../../../types';
-import { createMockBacklogItem } from '../../../test-utils';
 import { BacklogProvider, useBacklogContext } from '../context/BacklogContext';
 
 import { DeleteConfirmModal } from './DeleteConfirmModal';
@@ -28,7 +28,7 @@ const SetSelectedItem: React.FC<{ item: ReturnType<typeof createMockBacklogItem>
 };
 
 const renderDeleteModal = (props = {}) => {
-  return render(
+  return renderWithProviders(
     <BacklogProvider>
       <SetSelectedItem item={mockItem} />
       <DeleteConfirmModal
@@ -46,13 +46,17 @@ describe('DeleteConfirmModal', () => {
   const mockOnClose = vi.fn();
   const mockOnConfirm = vi.fn();
 
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   describe('Rendering', () => {
     it('should not render when closed', () => {
-      render(
+      renderWithProviders(
         <BacklogProvider>
           <DeleteConfirmModal
             isOpen={false}
@@ -129,7 +133,7 @@ describe('DeleteConfirmModal', () => {
     });
 
     it('should disable buttons during deletion', async () => {
-      render(
+      renderWithProviders(
         <BacklogProvider>
           <SetSelectedItem item={mockItem} />
           <DeleteConfirmModal

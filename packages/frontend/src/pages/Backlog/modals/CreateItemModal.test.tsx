@@ -1,10 +1,11 @@
 import React from 'react';
-import { screen, render, waitFor, fireEvent } from '@testing-library/react';
+import { screen, renderWithProviders, waitFor, fireEvent } from '../../../test-utils';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, beforeAll, vi } from 'vitest';
 
 import { BacklogProvider, useBacklogContext } from '../context/BacklogContext';
 import type { ItemFormData, FormErrors } from '../types/backlog.types';
+import { initTestI18n } from '../../../test-utils';
 
 import { CreateItemModal } from './CreateItemModal';
 
@@ -24,7 +25,7 @@ const SetContextValues: React.FC<{
 };
 
 const renderCreateModal = (props = {}) => {
-  return render(
+  return renderWithProviders(
     <BacklogProvider>
       <CreateItemModal
         isOpen={true}
@@ -40,6 +41,10 @@ const renderCreateModal = (props = {}) => {
 describe('CreateItemModal', () => {
   const mockOnClose = vi.fn();
   const mockOnSubmit = vi.fn();
+
+  beforeAll(async () => {
+    await initTestI18n();
+  });
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -229,7 +234,7 @@ describe('CreateItemModal', () => {
   describe('Unsaved Changes', () => {
     it('should show unsaved changes modal when closing with unsaved changes', async () => {
       const handleClose = vi.fn();
-      render(
+      renderWithProviders(
         <BacklogProvider>
           <SetContextValues
             initialFormData={{
@@ -269,7 +274,7 @@ describe('CreateItemModal', () => {
 
     it('should call onClose when confirming discard in unsaved changes modal', async () => {
       const handleClose = vi.fn();
-      render(
+      renderWithProviders(
         <BacklogProvider>
           <SetContextValues
             initialFormData={{
@@ -311,7 +316,7 @@ describe('CreateItemModal', () => {
 
   describe('Error States', () => {
     it('should display workflow error banner', () => {
-      render(
+      renderWithProviders(
         <BacklogProvider>
           <SetContextValues workflowError="Workflow validation failed" />
           <CreateItemModal
@@ -327,7 +332,7 @@ describe('CreateItemModal', () => {
     });
 
     it('should dismiss workflow error banner when clicking close', async () => {
-      render(
+      renderWithProviders(
         <BacklogProvider>
           <SetContextValues workflowError="Workflow validation failed" />
           <CreateItemModal
@@ -350,7 +355,7 @@ describe('CreateItemModal', () => {
     });
 
     it('should display title error', () => {
-      render(
+      renderWithProviders(
         <BacklogProvider>
           <SetContextValues formErrors={{ title: 'Title is required' }} />
           <CreateItemModal
@@ -367,7 +372,7 @@ describe('CreateItemModal', () => {
     });
 
     it('should display moscow priority error', () => {
-      render(
+      renderWithProviders(
         <BacklogProvider>
           <SetContextValues formErrors={{ moscowPriority: 'Priority is required' }} />
           <CreateItemModal

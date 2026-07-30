@@ -9,6 +9,8 @@
 
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
+import { formatLocaleDate, formatRelativeTime } from '@scrumooth/shared';
 
 import { apiService } from '../../services';
 import {
@@ -23,6 +25,8 @@ import {
 } from '../common/Icons';
 
 import styles from './StatusHistorySection.module.css';
+
+import { useI18nStore } from '@/i18n/useI18nStore';
 
 /**
  * Color configuration for a status
@@ -56,6 +60,12 @@ export interface StatusHistorySectionProps {
    * If not provided, default colors are used.
    */
   statusColorMap?: Record<string, StatusColorConfig>;
+  /**
+   * Optional mapping for translating status names.
+   * Keys should be status names from backend (e.g., 'NEW', 'ACTIVE').
+   * Values should be translated display names.
+   */
+  statusNameMap?: Record<string, string>;
 }
 
 /**
@@ -120,14 +130,77 @@ export interface StatusChangeHistoryItem {
 export const StatusHistorySection: React.FC<StatusHistorySectionProps> = ({
   entityId,
   entityType,
-  title = 'Status History',
+  title,
   className = '',
   history: externalHistory,
   isLoading: externalIsLoading,
   error: externalError,
   statusColorMap,
+  statusNameMap,
 }) => {
+  const { t } = useTranslation('backlog');
+  const { locale } = useI18nStore();
   const [isExpanded, setIsExpanded] = useState(false);
+
+  // Default title from translation if not provided
+  const sectionTitle = title ?? t('statusHistory.title');
+
+  /**
+   * Translates a status name using the provided mapping or i18n keys
+   */
+  const getTranslatedStatusName = (statusName: string | undefined): string => {
+    if (!statusName) return t('statusHistory.stateUnknown');
+    // Use the statusNameMap if provided
+    if (statusNameMap?.[statusName.toUpperCase()]) {
+      return statusNameMap[statusName.toUpperCase()] ?? statusName;
+    }
+    // Map status names to i18n keys
+    const statusKeyMap: Record<
+      string,
+      'status.new' | 'status.refined' | 'status.ready' | 'status.inProgress' | 'status.done'
+    > = {
+      NEW: 'status.new',
+      REFINED: 'status.refined',
+      READY: 'status.ready',
+      IN_PROGRESS: 'status.inProgress',
+      DONE: 'status.done',
+      TODO: 'status.new', // TODO maps to New
+    };
+    const key = statusKeyMap[statusName.toUpperCase()];
+    if (key) {
+      return t(key);
+    }
+    // Fallback to the original name
+    return statusName;
+  };
+
+  /**
+   * Translates a change reason using i18n keys
+   */
+  const getTranslatedChangeReason = (reason: string | undefined): string => {
+    if (!reason) return '';
+    // Map change reason strings to i18n keys
+    const reasonKeyMap: Record<
+      string,
+      | 'statusHistory.changeReasonInitialCreation'
+      | 'statusHistory.changeReasonStatusUpdate'
+      | 'statusHistory.changeReasonInitialCreationBulk'
+      | 'statusHistory.changeReasonGoalInitialCreation'
+      | 'statusHistory.changeReasonGoalStatusUpdate'
+    > = {
+      'Initial backlog item creation': 'statusHistory.changeReasonInitialCreation',
+      'Backlog item status updated': 'statusHistory.changeReasonStatusUpdate',
+      'Initial backlog item creation (bulk)': 'statusHistory.changeReasonInitialCreationBulk',
+      'Initial goal creation': 'statusHistory.changeReasonGoalInitialCreation',
+      'Goal status updated': 'statusHistory.changeReasonGoalStatusUpdate',
+    };
+    const key = reasonKeyMap[reason];
+    if (key) {
+      return t(key);
+    }
+    // Return original if no mapping found
+    return reason;
+  };
 
   // Use external data if provided, otherwise fetch from API
   const {
@@ -157,21 +230,19 @@ export const StatusHistorySection: React.FC<StatusHistorySectionProps> = ({
   const history: StatusChangeHistoryItem[] = externalHistory ?? historyData?.data ?? [];
 
   /**
-   * Formats a date string to relative time
+   * Formats a date string to locale-aware relative time for recent items,
+   * or locale-aware absolute date for older items (7+ days)
    */
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return 'Just now';
-    if (diffMins < 60) return `${diffMins}m ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    if (diffDays < 7) return `${diffDays}d ago`;
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    if (diffDays < 7) {
+      return formatRelativeTime(dateString, locale);
+    }
+    return formatLocaleDate(dateString, locale);
   };
 
   /**
@@ -232,7 +303,7 @@ export const StatusHistorySection: React.FC<StatusHistorySectionProps> = ({
       >
         <div className={styles['history-toggle-left']}>
           <ClockIcon size={16} />
-          <h3 className={styles['section-heading']}>{title}</h3>
+          <h3 className={styles['section-heading']}>{sectionTitle}</h3>
         </div>
         <ChevronDownIcon
           size={16}
@@ -247,7 +318,7 @@ export const StatusHistorySection: React.FC<StatusHistorySectionProps> = ({
               <div className={styles['loading-spinner']}>
                 <div className={styles['spinner-ring']} />
               </div>
-              <span>Loading history...</span>
+              <span>{t('statusHistory.loadingHistory', 'Loading history...')}</span>
             </div>
           )}
 
@@ -255,14 +326,22 @@ export const StatusHistorySection: React.FC<StatusHistorySectionProps> = ({
             <div className={styles['history-error']}>
               <div className={styles['error-header']}>
                 <AlertCircleIcon size={20} />
-                <span className={styles['error-title']}>Failed to load history</span>
+                <span className={styles['error-title']}>
+                  {t('statusHistory.failedToLoadHistory', 'Failed to load history')}
+                </span>
               </div>
               <div className={styles['error-details']}>
                 <p className={styles['error-message']}>
-                  {error instanceof Error ? error.message : 'An unexpected error occurred'}
+                  {error instanceof Error
+                    ? error.message
+                    : t('statusHistory.errorUnexpected', 'An unexpected error occurred')}
                 </p>
                 {failureCount > 0 && (
-                  <p className={styles['error-attempts']}>Attempt {failureCount} of 3 failed</p>
+                  <p className={styles['error-attempts']}>
+                    {t('statusHistory.errorAttempts', 'Attempt {{attempt}} of 3 failed', {
+                      attempt: failureCount,
+                    })}
+                  </p>
                 )}
               </div>
               <div className={styles['error-actions']}>
@@ -275,12 +354,12 @@ export const StatusHistorySection: React.FC<StatusHistorySectionProps> = ({
                   {queryIsLoading ? (
                     <>
                       <span className={styles['retry-spinner']} />
-                      Retrying...
+                      {t('statusHistory.retrying', 'Retrying...')}
                     </>
                   ) : (
                     <>
                       <RefreshCwIcon size={14} />
-                      Retry
+                      {t('common:retry', 'Retry')}
                     </>
                   )}
                 </button>
@@ -289,7 +368,7 @@ export const StatusHistorySection: React.FC<StatusHistorySectionProps> = ({
                   onClick={() => setIsExpanded(false)}
                   type="button"
                 >
-                  Dismiss
+                  {t('statusHistory.dismiss', 'Dismiss')}
                 </button>
               </div>
             </div>
@@ -298,25 +377,29 @@ export const StatusHistorySection: React.FC<StatusHistorySectionProps> = ({
           {error && externalHistory && (
             <div className={styles['history-error']}>
               <AlertCircleIcon size={16} />
-              <span>Failed to load history</span>
+              <span>{t('statusHistory.failedToLoadHistory', 'Failed to load history')}</span>
             </div>
           )}
 
           {!isLoading && !error && history.length === 0 && (
             <div className={styles['history-empty']}>
               <ClockIcon size={32} strokeWidth={1.5} />
-              <span>No status changes recorded yet</span>
+              <span>{t('statusHistory.noStatusChangesYet', 'No status changes recorded yet')}</span>
             </div>
           )}
 
           {!isLoading && !error && history.length > 0 && (
             <div className={styles['timeline']}>
               {history.map((item, index) => {
-                const fromStateName = item.fromState?.displayName ?? item.fromState?.name ?? 'New';
-                const toStateName = item.toState?.displayName ?? item.toState?.name ?? 'Unknown';
+                const fromStateName = getTranslatedStatusName(
+                  item.fromState?.displayName ?? item.fromState?.name
+                );
+                const toStateName = getTranslatedStatusName(
+                  item.toState?.displayName ?? item.toState?.name
+                );
                 const changerName = item.changer
                   ? `${item.changer.firstName} ${item.changer.lastName}`
-                  : 'Unknown User';
+                  : t('statusHistory.unknownUser', 'Unknown User');
 
                 return (
                   <div
@@ -376,7 +459,7 @@ export const StatusHistorySection: React.FC<StatusHistorySectionProps> = ({
                         {item.changeReason && (
                           <div className={styles['timeline-reason']}>
                             <MessageSquareIcon size={12} />
-                            <span>{item.changeReason}</span>
+                            <span>{getTranslatedChangeReason(item.changeReason)}</span>
                           </div>
                         )}
                       </div>
