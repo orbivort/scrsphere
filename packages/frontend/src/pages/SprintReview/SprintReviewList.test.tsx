@@ -14,7 +14,7 @@ import { SprintStatus, IncrementStatus } from '../../types';
 import * as apiServiceModule from '../../services';
 import * as teamStoreModule from '../../store';
 
-vi.mock('react-router-dom', async (importOriginal) => {
+vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal();
   return {
     ...(actual as any),

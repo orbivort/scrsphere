@@ -20,7 +20,7 @@ import {
   createTestQueryClient,
 } from '../../test-utils';
 import { render } from '@testing-library/react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router';
 import { type QueryClient } from '@tanstack/react-query';
 
 import { SprintReview } from './SprintReview';

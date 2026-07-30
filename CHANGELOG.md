@@ -5,6 +5,53 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.5] - 2026-07-29
+
+### Security
+
+- **react-router**: fix high CSRF bypass vulnerability - migrate from react-router-dom to react-router v8.3.0
+  - GHSA-qwww-vcr4-c8h2: RSC Mode CSRF Bypass allows action execution before 400 response
+- **postcss**: fix high path traversal vulnerability - override to ^8.5.18
+  - GHSA-r28c-9q8g-f849: Path traversal in source map auto-loading (sourceMappingURL) leads to arbitrary .map file disclosure
+- **valibot**: fix moderate record() issue vulnerability - override to ^1.4.2
+  - GHSA-5qjj-4xww-7phc: record() issue paths can make flatten() throw for inherited Object property names
+
+## [2.0.4] - 2026-07-24
+
+### Security
+
+- **axios**: fix 9 vulnerabilities (5 high, 4 moderate) - upgrade to 1.18.0
+  - GHSA-gcfj-64vw-6mp9 (high): Axios Node HTTP adapter can use an inherited proxy after interceptor config cloning
+  - GHSA-42h9-826w-cgv3 (high): Prototype pollution auth subfields can inject Basic auth
+  - GHSA-pmv8-rq9r-6j72 (high): Prototype pollution gadgets can alter axios request construction
+  - GHSA-jqh4-m9w3-8hp9 (high): Excessive recursion in formDataToJSON can cause denial of service
+  - GHSA-mmx7-hfxf-jppx (high): Deep formToJSON Key Recursion Can Cause Denial of Service
+  - GHSA-f4gw-2p7v-4548 (moderate): Fetch adapter ReadableStream uploads bypass maxBodyLength
+  - GHSA-hcpx-6fm6-wx23 (moderate): Axios can be tricked into using prototype-polluted headers
+  - GHSA-7q8q-rj6j-mhjq (moderate): Axios fetch adapter never calls request interceptor
+  - GHSA-mwf2-3pr3-8698 (moderate): Axios may leak proxy credentials to a third-party site
+- **react-router**: fix 3 vulnerabilities (1 high, 2 moderate) - upgrade to 7.18.0
+  - GHSA-wrjc-x8rr-h8h6 (moderate): open redirect vulnerability in redirect handling
+  - GHSA-h8fp-f39c-q6mh (moderate): XSS vulnerability in error boundaries
+  - GHSA-337j-9hxr-rhxg (high): constructor injection vulnerability
+- **brace-expansion**: fix high DoS vulnerability - override to 5.0.7
+  - GHSA-3jxr-9vmj-r5cp: DoS via exponential-time expansion of consecutive non-expanding {} groups
+- **js-yaml**: fix high CPU consumption vulnerability - override to 4.3.0
+  - GHSA-52cp-r559-cp3m: YAML merge-key chains can force quadratic CPU consumption
+- **shell-quote**: fix high DoS vulnerability - override to 1.8.5
+  - GHSA-395f-4hp3-45gv: Quadratic-complexity Denial of Service in parse()
+- **fast-uri**: fix 2 high host confusion vulnerabilities - override to 3.1.4
+  - GHSA-v2hh-gcrm-f6hx: host confusion via literal backslash authority delimiter
+  - GHSA-4c8g-83qw-93j6: host confusion via failed IDN canonicalization
+- **hono**: fix 3 moderate vulnerabilities - override to 4.12.27
+  - GHSA-xgm2-5f3f-mvvc: API Gateway header dropping via Host header manipulation
+  - GHSA-hvrm-45r6-mjfj: JSX context isolation bypass
+  - GHSA-w62v-xxxg-mg59: XSS vulnerability in cx() utility
+- **@hono/node-server**: fix moderate path traversal vulnerability - override to 2.0.5
+  - GHSA-frvp-7c67-39w9: path traversal in serve-static on Windows via encoded backslash
+- **body-parser**: fix low DoS vulnerability - override to 2.3.0
+  - GHSA-v422-hmwv-36x6: DoS when invalid limit value silently disables size enforcement
+
 ## [2.0.3] - 2026-06-19
 
 ### Security

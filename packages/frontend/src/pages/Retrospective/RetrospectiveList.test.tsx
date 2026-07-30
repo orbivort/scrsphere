@@ -1,7 +1,7 @@
 import React from 'react';
 import { screen, waitFor, renderWithProviders, initTestI18n } from '../../test-utils';
 import userEvent from '@testing-library/user-event';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { vi, describe, it, expect, beforeEach, beforeAll } from 'vitest';
 
 import { RetrospectiveList } from './RetrospectiveList';
@@ -94,8 +94,8 @@ vi.mock('../../store', () => ({
   })),
 }));
 
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
+vi.mock('react-router', async () => {
+  const actual = await vi.importActual('react-router');
   return {
     ...actual,
     useNavigate: vi.fn(),

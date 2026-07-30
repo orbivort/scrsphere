@@ -23,7 +23,6 @@ import {
   i18nT,
 } from '../../test-utils';
 import { vi, beforeAll } from 'vitest';
-
 import { IncrementDetail } from './IncrementDetail';
 import { apiService } from '../../services';
 import { useToast } from '../../hooks/useToast';
@@ -43,8 +42,8 @@ const mockNavigate = vi.fn();
 const mockUseParams = vi.fn();
 const mockUseSearchParams = vi.fn();
 
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
+vi.mock('react-router', async () => {
+  const actual = await vi.importActual('react-router');
   return {
     ...actual,
     useNavigate: () => mockNavigate,

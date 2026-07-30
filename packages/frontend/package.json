@@ -1,6 +1,6 @@
 {
   "name": "@scrumooth/frontend",
-  "version": "2.0.3",
+  "version": "2.0.5",
   "private": true,
   "license": "Apache-2.0",
   "description": "Frontend UI for Scrumooth - Agile Scrum Lifecycle Management System",
@@ -63,7 +63,7 @@
     "@scrumooth/shared": "workspace:*",
     "@tanstack/react-query": "^5.101.0",
     "@tanstack/react-virtual": "^3.14.2",
-    "axios": "^1.17.0",
+    "axios": "^1.18.0",
     "chart.js": "^4.5.1",
     "date-fns": "catalog:",
     "i18next": "catalog:",
@@ -75,7 +75,7 @@
     "react-dom": "^19.2.7",
     "react-i18next": "^15.7.0",
     "react-markdown": "^10.1.0",
-    "react-router-dom": "^7.17.0",
+    "react-router": "^8.3.0",
     "rehype-sanitize": "^6.0.0",
     "remark-gfm": "^4.0.1",
     "zustand": "^5.0.14"

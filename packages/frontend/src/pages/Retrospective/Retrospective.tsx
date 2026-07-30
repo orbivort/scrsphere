@@ -1,7 +1,7 @@
 /* eslint-disable icon-rules/no-inline-svg -- TODO: Migrate inline SVGs to shared icon components */
 import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { formatLocaleDate } from '@scrumooth/shared';
 

@@ -9,7 +9,7 @@ import {
   i18nT,
 } from '../../test-utils';
 import { vi, beforeAll } from 'vitest';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router';
 
 import { useTeamStore } from '../../store';
 import { apiService } from '../../services';

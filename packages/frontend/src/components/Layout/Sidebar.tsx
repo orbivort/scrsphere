@@ -1,7 +1,7 @@
 // Main Layout Component
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
 import { useAuthStore, useUIStore } from '../../store';

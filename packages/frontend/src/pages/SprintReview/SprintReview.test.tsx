@@ -1,7 +1,7 @@
 import React from 'react';
 import { screen, fireEvent, waitFor, initTestI18n, AllProviders, i18nT } from '../../test-utils';
 import { vi, describe, it, expect, beforeEach, beforeAll } from 'vitest';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router';
 import { QueryClient } from '@tanstack/react-query';
 import { render } from '@testing-library/react';
 

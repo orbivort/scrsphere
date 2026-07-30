@@ -1,6 +1,6 @@
 import React from 'react';
 import { screen, fireEvent, renderWithProviders, initTestI18n } from '../../../test-utils';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router';
 import { vi } from 'vitest';
 
 import { definitionService } from '../../../services';

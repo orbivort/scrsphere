@@ -2,15 +2,16 @@ import { renderHook, waitFor, initTestI18n, AllProviders } from '../test-utils';
 import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
 
 import { useRequireTeam, useTeamRole } from './useTeamContext';
-import type * as ReactRouterDom from 'react-router-dom';
 import { useTeamContext } from '../contexts/TeamContext';
 
 vi.mock('../contexts/TeamContext', () => ({
   useTeamContext: vi.fn(),
 }));
 
-vi.mock('react-router-dom', async (importOriginal) => {
-  const actual = await importOriginal<ReactRouterDom>();
+import type * as ReactRouter from 'react-router';
+
+vi.mock('react-router', async (importOriginal) => {
+  const actual: typeof ReactRouter = await importOriginal();
   return {
     ...actual,
     useNavigate: () => vi.fn(),

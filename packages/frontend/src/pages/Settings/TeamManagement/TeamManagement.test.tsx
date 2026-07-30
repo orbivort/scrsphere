@@ -2,7 +2,7 @@ import React from 'react';
 import { screen, within, initTestI18n } from '../../../test-utils';
 import { render } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { MemoryRouter, Routes, Route } from 'react-router';
 import { I18nextProvider } from 'react-i18next';
 import { vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
