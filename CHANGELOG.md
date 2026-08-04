@@ -7,9 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.1.1] - 2026-08-04
 
-### Fixed
+### Security
 
-- fix dependency installation in container build
+- **sanitize-html**: fix moderate URI scheme validation vulnerability - upgrade to 2.17.6
+  - GHSA-vccv-cmxp-4j9h: incomplete URI scheme validation allows javascript: URIs through action, formaction, data, poster, and background attributes
+- **ip-address**: fix 3 vulnerabilities (1 high, 2 moderate) - override to ^10.3.1
+  - GHSA-mwp4-54f8-5fhr (high): leading-zero octets decoded as decimal instead of octal, allowing SSRF and trust-boundary bypass
+  - GHSA-4xrf-jv44-h6hh (moderate): CIDR suffix suppresses special-use classification and can bypass SSRF and trust-boundary checks
+  - GHSA-22jq-vg5j-6vgg (moderate): misclassification of IPv4-mapped/NAT64 IPv6 addresses can bypass SSRF and trust-boundary checks
+- **undici**: fix 5 vulnerabilities (1 high, 4 moderate) - override to ^7.29.0
+  - GHSA-4cwx-7wf7-3272 (high): cross-user information disclosure and parse-time crash via degenerate private cache directives
+  - GHSA-8xcm-r25x-g524 (moderate): downstream response desynchronization via retry interceptor
+  - GHSA-m8rv-5g2x-5cg5 (moderate): CRLF Injection via blob-like body 'type' property
+  - GHSA-jr45-8vmc-qm54 (moderate): cross-user information disclosure via whitespace around equals in Cache-Control directives
+  - GHSA-v3r7-h72x-cjcm (moderate): cookie attribute injection via unsanitized domain and unparsed setCookie fields
+- **fast-uri**: fix high host confusion vulnerability - override to ^3.1.5
+  - GHSA-7p8r-x3mc-p8w7: host confusion via backslash authority introducer
+- **brace-expansion**: fix high DoS vulnerability - override to ^5.0.9
+  - GHSA-rgw5-rvv9-x895: DoS via unbounded intermediate arrays, bypassing the CVE-2026-14257 mitigation
+- **hono**: fix moderate ReDoS vulnerability - override to ^4.12.34
+  - GHSA-8j4g-w8fx-2239: ReDoS in CORS middleware via Access-Control-Request-Headers
 
 ## [2.1.0] - 2026-07-30
 
