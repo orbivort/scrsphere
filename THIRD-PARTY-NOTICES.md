@@ -4,7 +4,7 @@ This document contains the license information for third-party packages used in 
 
 **Project:** Scrumooth - Agile Scrum Lifecycle Management System
 **License:** Apache-2.0
-**Last Updated:** July 30, 2026
+**Last Updated:** August 4, 2026
 
 ---
 
@@ -39,7 +39,7 @@ This document contains the license information for third-party packages used in 
 | node-cron                 | 4.2.1   | MIT          | Lucas Merencia                | https://github.com/merencia/node-cron                              |
 | nodemailer                | 9.0.1   | MIT          | Andris Reinman                | https://github.com/nodemailer/nodemailer                           |
 | resolve-accept-language   | 3.2.2   | MIT          | Nicolas Bouvrette             | https://github.com/resolve-accept-language/resolve-accept-language |
-| sanitize-html             | 2.17.4  | MIT          | Apostrophe Technologies, Inc. | https://github.com/apostrophecms/sanitize-html                     |
+| sanitize-html             | 2.17.6  | MIT          | Apostrophe Technologies, Inc. | https://github.com/apostrophecms/sanitize-html                     |
 | uuid                      | 14.0.0  | MIT          | uuidjs                        | https://github.com/uuidjs/uuid                                     |
 | winston                   | 3.19.0  | MIT          | Charlie Robbins               | https://github.com/winstonjs/winston                               |
 | winston-daily-rotate-file | 5.0.0   | MIT          | Matt Hamann                   | https://github.com/winstonjs/winston-daily-rotate-file             |
@@ -320,4 +320,4 @@ This document should be updated whenever:
 ---
 
 **Document Version:** 2.0  
-**Generated:** July 30, 2026
+**Generated:** August 4, 2026
