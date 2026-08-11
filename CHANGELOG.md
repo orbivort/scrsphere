@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.1.2] - 2026-08-11
 
+### Security
+
+- **js-yaml**: fix high quadratic CPU consumption vulnerability - override to ^4.3.1
+  - CVE-2026-59870 / GHSA-5p4m-2wfm-xmqj: quadratic CPU consumption in `!!omap` resolution, not backported to the 4.x line patched by GHSA-52cp-r559-cp3m
+- **nanoid**: fix high DoS vulnerability - override to ^3.3.17
+  - GHSA-2v37-7h3g-55p8: custom generators can loop indefinitely when size is zero
+
 ## [2.1.1] - 2026-08-04
 
 ### Security
