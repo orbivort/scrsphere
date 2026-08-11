@@ -1,5 +1,8 @@
 {
   "backToIncrements": "Back to Increments",
+  "card": {
+    "integrationVerified": "Integration verified"
+  },
   "create": {
     "actions": {
       "cancel": "Cancel",
@@ -159,6 +162,28 @@
       "sprintCompleted": "Sprint Completed",
       "sprintReview": "Sprint Review"
     }
+  },
+  "incrementIntegrity": {
+    "addTest": "[Åðð Îñţêĝŕåţîøñ Ţêšţ]",
+    "chain": "[Îñçŕêµêñţ Çĥåîñ]",
+    "dependenciesMet": "[Åłł þŕîøŕ îñçŕêµêñţš îñţêĝŕåţê šûççêššƒûłłý]",
+    "dependenciesMissing": "[Šøµê þŕîøŕ îñçŕêµêñţš ĥåvê ñøţ þåššêð îñţêĝŕåţîøñ ţêšţš]",
+    "fail": "[ƒåîłêð]",
+    "firstIncrement": "[ƒîŕšţ Îñçŕêµêñţ — ñø þŕîøŕ Îñçŕêµêñţ ţø ţêšţ åĝåîñšţ]",
+    "integrationTests": "[Îñţêĝŕåţîøñ Ţêšţš]",
+    "integrationVerified": "[Îñţêĝŕåţîøñ vêŕîƒîêð]",
+    "notVerified": "[Îñţêĝŕåţîøñ ñøţ vêŕîƒîêð]",
+    "notes": "[Ţêšţ ñøţêš]",
+    "pass": "[Þåššêð]",
+    "pending": "[Þêñðîñĝ]",
+    "priorIncrement": "[Þŕîøŕ Îñçŕêµêñţ]",
+    "testResult": "[Ţêšţ Řêšûłţ]",
+    "title": "[Îñçŕêµêñţ Îñţêĝŕåţîøñ]",
+    "unverified": "[Ñøţ vêŕîƒîêð]",
+    "verificationRequired": "[Îñţêĝŕåţîøñ vêŕîƒîçåţîøñ îš ŕêqûîŕêð ßêƒøŕê µåŕķîñĝ åš vêŕîƒîêð]",
+    "verified": "[Vêŕîƒîêð]",
+    "verifyHint": "[Vêŕîƒý ţĥåţ ţĥîš îñçŕêµêñţ îñţêĝŕåţêš wîţĥ åłł þŕîøŕ îñçŕêµêñţš]",
+    "verifyNow": "[Vêŕîƒý Îñţêĝŕåţîøñ]"
   },
   "list": {
     "ariaLabelFilter": "Filter increments by status",

@@ -118,6 +118,7 @@ class SprintService {
         sprintGoal: true,
         status: true,
         cancellationReason: true,
+        smNotes: true,
         createdAt: true,
         createdBy: true,
         updatedAt: true,
@@ -148,6 +149,7 @@ class SprintService {
         sprintGoal: true,
         status: true,
         cancellationReason: true,
+        smNotes: true,
         createdAt: true,
         createdBy: true,
         updatedAt: true,
@@ -229,6 +231,7 @@ class SprintService {
         sprintGoal: true,
         status: true,
         cancellationReason: true,
+        smNotes: true,
         createdAt: true,
         updatedAt: true,
         sprintBacklogItems: {

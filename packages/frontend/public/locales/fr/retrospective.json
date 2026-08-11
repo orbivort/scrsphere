@@ -271,5 +271,30 @@
     "titleMaxLength": "Le titre doit avoir 200 caractères ou moins",
     "titleMinLength": "Le titre doit avoir au moins 3 caractères",
     "titleRequired": "Le titre est requis"
+  },
+  "valuesReflection": {
+    "title": "Réflexion sur les valeurs Scrum",
+    "values": {
+      "COMMITMENT": {
+        "label": "Engagement",
+        "question": "Nous sommes-nous engagés personnellement envers l'objectif du Sprint ?"
+      },
+      "COURAGE": {
+        "label": "Courage",
+        "question": "Avons-nous eu le courage de soulever et de traiter les problèmes difficiles ?"
+      },
+      "FOCUS": {
+        "label": "Concentration",
+        "question": "Sommes-nous restés concentrés sur le travail du Sprint ?"
+      },
+      "OPENNESS": {
+        "label": "Ouverture",
+        "question": "Avons-nous été ouverts sur les progrès et les défis ?"
+      },
+      "RESPECT": {
+        "label": "Respect",
+        "question": "Avons-nous respecté les compétences et l'indépendance de chacun ?"
+      }
+    }
   }
 }

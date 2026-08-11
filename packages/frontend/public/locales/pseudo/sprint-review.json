@@ -44,6 +44,8 @@
     "none": "[NNóónné]",
     "owner": "[ÓÓwwnnéér *]",
     "ownerPlaceholder": "[Séléct ównérrrrrr...]",
+    "productGoalAssessment": "[Pródúct Góàl Prógréss Àsséssménttttttttttt]",
+    "productGoalAssessmentPlaceholder": "[Hów ís thé téàm prógréssíng tówàrd thé Pródúct Góàlllllllllllllllll?]",
     "relatedPbi": "[Rélàtéd PBÍ (Óptíónàllllllll)]",
     "requiredFieldsNote": "[Réqúíréd fíélds àré màrkéd wíthhhhhhhhhhh *]",
     "subtitle": "[Càptúré vàlúàblé ínsíghts fróm stàkéhóldérs tó ímpróvé yóúr pródúctttttttttttttttttttttt]",
@@ -129,6 +131,7 @@
     "title": "[Érrórrr]",
     "unknown": "[Únknówn érrórrrrr]"
   },
+  "errorPrefix": "[ÉÉrrrróór: {{message}}]",
   "feedback": {
     "actionRequired": "[Àctíón Réqúírédddddd]",
     "actionTaken": "[Àctíón Tàkénnnnn]",
@@ -212,6 +215,7 @@
     "storyPointsCompleted": "[Stóry Póínts Cómplétédddddddd]",
     "workingDays": "[wórkíng dàysssss]"
   },
+  "pts": "[ptss]",
   "reviewThisSprint": "[Révíéw Thís Sprínttttttt]",
   "select": "[Sélécttt]",
   "selectSprint": "[Séléct Sprínt fór Révíéwwwwwwwww]",

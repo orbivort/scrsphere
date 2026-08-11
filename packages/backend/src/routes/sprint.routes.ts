@@ -1,6 +1,7 @@
 // Sprint Routes
 import { Router, type Router as RouterType } from 'express';
 import * as sprintController from '../controllers/sprint.controller';
+import * as smDashboardController from '../controllers/smDashboard.controller';
 import { incrementSprintService } from '../services/sprint.service';
 import { authenticate } from '../middleware/auth.middleware';
 import { validateBody, validateParams, validateQuery } from '../middleware/validation.middleware';
@@ -300,6 +301,13 @@ router.get(
   '/:sprintId/dod-compliance',
   validateParams(sprintIdParamSchema),
   sprintController.getDoDComplianceReport
+);
+
+router.patch(
+  '/:id/sm-notes',
+  validateParams(sprintIdSchema),
+  validateBody(z.object({ smNotes: z.string().max(5000).optional().default('') })),
+  smDashboardController.updateSprintSmNotes
 );
 
 export default router;

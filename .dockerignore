@@ -72,6 +72,7 @@ packages/*/.env.*
 AGENTS.md
 CLAUDE.md
 CODEBUDDY.md
+openspec/
 
 # -----------------------------------------------------------------------------
 # OS Generated Files

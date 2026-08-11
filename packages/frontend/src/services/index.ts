@@ -20,6 +20,8 @@ export { incrementService } from './domain/increment.service';
 export { sprintReviewService } from './domain/sprintReview.service';
 export { retrospectiveService } from './domain/retrospective.service';
 export { systemParamsService } from './domain/systemParams.service';
+export { smDashboardService } from './domain/smDashboard.service';
+export { healthCheckService } from './domain/healthCheck.service';
 
 // Mapping utilities
 export * from './utils/mapping.utils';

@@ -19,6 +19,8 @@ import incrementRoutes from './routes/increment.routes';
 import sprintReviewRoutes from './routes/sprintReview.routes';
 import retrospectiveRoutes from './routes/retrospective.routes';
 import impedimentRoutes from './routes/impediment.routes';
+import healthCheckRoutes from './routes/healthCheck.routes';
+import smDashboardRoutes from './routes/smDashboard.routes';
 import reportsRoutes from './routes/reports.routes';
 import notificationRoutes from './routes/notification.routes';
 import configRoutes from './routes/config.routes';
@@ -185,6 +187,12 @@ v1Router.use('/daily-updates', dailyUpdateRoutes);
 
 // Increment routes
 v1Router.use('/increments', incrementRoutes);
+
+// Scrum Master facilitation dashboard routes
+v1Router.use('/dashboard', smDashboardRoutes);
+
+// Scrum Values health check routes
+v1Router.use('/health-checks', healthCheckRoutes);
 
 // Sprint Review routes
 v1Router.use('/sprint-reviews', sprintReviewRoutes);

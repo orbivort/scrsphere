@@ -23,6 +23,7 @@ interface FeedbackFormData {
   actionRequired: boolean;
   relatedPbiId?: string;
   ownerId?: string;
+  productGoalAssessment?: string;
 }
 
 interface AddFeedbackModalProps {
@@ -241,6 +242,25 @@ export const AddFeedbackModal: React.FC<AddFeedbackModalProps> = ({
                   </option>
                 ))}
               </select>
+            </div>
+
+            <div className={styles['form-group']}>
+              <label htmlFor="feedback-product-goal-assessment">
+                {t('addFeedbackModal.productGoalAssessment')}
+              </label>
+              <textarea
+                id="feedback-product-goal-assessment"
+                value={feedbackForm.productGoalAssessment ?? ''}
+                onChange={(e) =>
+                  setFeedbackForm({
+                    ...feedbackForm,
+                    productGoalAssessment: e.target.value,
+                  })
+                }
+                placeholder={t('addFeedbackModal.productGoalAssessmentPlaceholder')}
+                rows={3}
+                maxLength={2000}
+              />
             </div>
 
             <div className={styles['form-group']}>

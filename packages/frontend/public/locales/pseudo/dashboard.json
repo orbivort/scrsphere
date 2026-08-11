@@ -10,6 +10,8 @@
     "noData": "[Nó búrndówn dàtà àvàílàbléééééééééé.]",
     "noDataText": "[nnóó ddààttà]",
     "points": "[{{count}} ppóóíínntts]",
+    "points_one": "[{{count}} póínttt]",
+    "points_other": "[{{count}} ppóóíínntts]",
     "storyPointsAxis": "[Stóry Póíntsssss]",
     "summary": "[Sprínt búrndówn chàrtttttttt: {{totalDays}} dàys tràckéd. Cúrrént dàyyyyyyyyyy: {{currentDay}}. Stàrtíng stóry póíntsssssssss: {{startPoints}}. Ídéàl rémàínínggggggg: {{idealRemaining}} póínts. Àctúàl rémàíníngggggggggg: {{actualText}}.]",
     "title": "[Sprínt Búrndówn Chàrtttttttt]"
@@ -54,6 +56,8 @@
   "daysRemainingLabel": "[Dàys Rémàíníngggggg]",
   "failedToLoad": "[Fàíléd tó Lóàd Dàshbóàrddddddddd]",
   "hoursAgo": "[{{count}} hhóóúúr{{plural}} ààggó]",
+  "hoursAgo_one": "[{{count}} hhóóúúr{{plural}} ààggó]",
+  "hoursAgo_other": "[{{count}} hhóóúúr{{plural}} ààggó]",
   "idealBurndown": "[Ídéàl Búrndównnnnnn]",
   "impedimentList": {
     "ariaLabel": "[Ímpédíménts lístttttt]",
@@ -83,6 +87,8 @@
     "totalTasks": "[Tótàl Tàsksssss]"
   },
   "minutesAgo": "[{{count}} mmíínnúútté{{plural}} ààggó]",
+  "minutesAgo_one": "[{{count}} mmíínnúútté{{plural}} ààggó]",
+  "minutesAgo_other": "[{{count}} mmíínnúútté{{plural}} ààggó]",
   "noActiveSprint": "[Nó àctívé spríntttttt]",
   "noDailyUpdates": "[Nó dàíly úpdàtés fór tódày yéttttttttttt.]",
   "noOpenImpediments": "[Nó ópén ímpédíménts. Gréàt jóbbbbbbbbbbb!]",

@@ -3,6 +3,7 @@ import { Router, type Router as RouterType } from 'express';
 import * as teamController from '../controllers/team.controller';
 import * as dodController from '../controllers/dod.controller';
 import * as dorController from '../controllers/dor.controller';
+import * as healthCheckController from '../controllers/teamHealthCheck.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import { validateBody, validateParams } from '../middleware/validation.middleware';
 import { z } from 'zod';
@@ -222,6 +223,29 @@ router.get(
   '/:teamId/definition-of-ready/history',
   validateParams(teamIdSchema),
   dorController.getDoRHistory
+);
+
+/**
+ * @route   POST /api/v1/teams/:teamId/health-checks
+ * @desc    Create a new Scrum Values health check for a team
+ * @access  Private (Scrum Master)
+ */
+router.post(
+  '/:teamId/health-checks',
+  validateParams(teamIdSchema),
+  validateBody(z.object({ sprintId: z.string().uuid().optional().nullable() })),
+  healthCheckController.createHealthCheck
+);
+
+/**
+ * @route   GET /api/v1/teams/:teamId/health-check-trend
+ * @desc    Get Scrum Values health check trend for a team
+ * @access  Private
+ */
+router.get(
+  '/:teamId/health-check-trend',
+  validateParams(teamIdSchema),
+  healthCheckController.getTrend
 );
 
 export default router;

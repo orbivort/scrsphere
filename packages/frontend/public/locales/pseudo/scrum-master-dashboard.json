@@ -1,0 +1,81 @@
+{
+  "healthCheck": {
+    "createNew": "[Rún à néw héàlth chéckkkkkkkk]",
+    "noHealthCheck": "[Nó héàlth chéck résúlts yétttttttttt]",
+    "overallAverage": "[Óvéràll àvéràgéééééé]",
+    "respondAnonymous": "[Súbmít ànónymóúslyyyyyyy]",
+    "responseSaved": "[Réspónsés súbmíttéd. Thànk yóúúúúúúúúúúú!]",
+    "results": "[Héàlth Chéck Résúltsssssss]",
+    "submitResponse": "[Súbmít réspónséssssss]",
+    "subtitle": "[Ràté éàch Scrúm Vàlúé fróm 1 tóóóóóóóóóóó 5]",
+    "title": "[Scrúm Vàlúés Héàlth Chéckkkkkkkkk]"
+  },
+  "scrumValues": {
+    "scoreHigh": "[Héàlthyyyy]",
+    "scoreLow": "[Nééds àtténtíónnnnnn]",
+    "scoreMedium": "[Dévélópíngggg]",
+    "subtitle": "[Thé fívé vàlúés thàt gúídé thé Scrúm Téàmmmmmmmmmmmmmm]",
+    "title": "[Scrúm Vàlúésssss]",
+    "values": {
+      "COMMITMENT": {
+        "definition": "[Pérsónàlly cómmíttíng tó thé óbjéctívés óf thé Scrúm Téàmmmmmmmmmmmmmmmmmmm.]",
+        "label": "[Cómmítméntttt]",
+        "question": "[Dó yóú féél thé téàm ís pérsónàlly cómmíttéd tó àchíévíng thé Sprínt Góàllllllllllllllllllllllll?]"
+      },
+      "COURAGE": {
+        "definition": "[Hàvíng thé cóúràgé tó cómmít, dó thé ríght thíng, ànd wórk ón tóúgh próblémsssssssssssssssssssssssss.]",
+        "label": "[Cóúràgéééé]",
+        "question": "[Dó yóú féél thé téàm hàs thé cóúràgé tó ràísé íssúés ànd tàcklé tóúgh próblémsssssssssssssssssssssssss?]"
+      },
+      "FOCUS": {
+        "definition": "[Fócúsíng ón thé wórk óf thé Sprínt ànd thé góàls óf thé Scrúm Téàmmmmmmmmmmmmmmmmmmmmmm.]",
+        "label": "[Fócússs]",
+        "question": "[Dó yóú féél thé téàm fócúsés ón thé Sprínt wórk wíthóút dístràctíónnnnnnnnnnnnnnnnnnnnnn?]"
+      },
+      "OPENNESS": {
+        "definition": "[Béíng ópén àbóút thé wórk ànd thé chàlléngés wíth pérfórmíng thé wórkkkkkkkkkkkkkkkkkkkkkk.]",
+        "label": "[Ópénnésssss]",
+        "question": "[Dó yóú féél thé téàm ís ópén àbóút prógréss ànd chàlléngésssssssssssssssssss?]"
+      },
+      "RESPECT": {
+        "definition": "[Réspéctíng éàch óthér tó bé càpàblé, índépéndént péópléééééééééééééééééé.]",
+        "label": "[Réspéctttt]",
+        "question": "[Dó yóú féél téàm mémbérs réspéct óné ànóthér's skílls ànd índépéndéncééééééééééééééééééééééé?]"
+      }
+    }
+  },
+  "scrumValuesBanner": {
+    "rotating": "[À Scrúm Vàlúé tó réfléct ónnnnnnnnnn]",
+    "todayFocus": "[Scrúm Vàlúé óf thé dàyyyyyyyy]"
+  },
+  "smDashboard": {
+    "achievementRate": "[Àchíévémént ràtéééééé]",
+    "actionItemCompletion": "[Rétróspéctívé Àctíón Ítémsssssssss]",
+    "atRisk": "[ààtt rrííssk]",
+    "avgResolutionDays": "[Àvg. résólútíón (dàyssssssss)]",
+    "completedEvents": "[Cómplétédddd]",
+    "completionRate": "[Cómplétíón ràtéééééé]",
+    "dailyScrumCount": "[Dàíly Scrúmsssss]",
+    "dodCompliance": "[Défínítíón óf Dóné Cómplíàncéééééééééé]",
+    "eventCompliance": "[Évént Cómplíàncéééééé]",
+    "healthCheck": "[Scrúm Vàlúés Héàlth Chéckkkkkkkkk]",
+    "impedimentMetrics": "[Ímpédímént Métrícsssssss]",
+    "loadError": "[Fàíléd tó lóàd dàshbóàrd dàtàààààààààà]",
+    "missingEvents": "[Míssíngggg]",
+    "noData": "[Nó dàshbóàrd dàtà àvàílàblé yéttttttttttt]",
+    "overallHealth": "[Óvéràll héàlthhhhhh]",
+    "sprintGoalAchievement": "[Sprínt Góàl Àchíévéméntttttttt]",
+    "subtitle": "[À fàcílítàtíón óvérvíéw óf téàm héàlth ànd Scrúm prócéss cómplíàncéééééééééééééééééééééé]",
+    "title": "[Scrúm Màstér Dàshbóàrdddddddd]"
+  },
+  "smNotes": {
+    "charCounter": "[{{count}} / 2000 chàráctéééérs]",
+    "emptyError": "[Ñøţêš çåññøţ þê êµþţý.]",
+    "maxLengthError": "[Ñøţêš µûšţ þê 2000 çĥåŕåçţêŕš øŕ ƒêŵêŕ.]",
+    "noHtmlTags": "[HŢMŁ ţåĝš åŕê ñøţ åłłøŵêð îñ ñøţêš.]",
+    "placeholder": "[Récórd óbsérvàtíóns, cóàchíng nótés, ànd fàcílítàtíón ínsíghts fór thé Scrúm Téàmmmmmmmmmmmmmmmmmmmmmmmmmmm...]",
+    "saveError": "[Fàíléd tó sàvé nótésssssss]",
+    "saved": "[Nótés sàvéddddd]",
+    "title": "[Scrúm Màstér Nótésssssss]"
+  }
+}

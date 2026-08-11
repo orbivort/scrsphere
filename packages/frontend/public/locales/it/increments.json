@@ -1,5 +1,8 @@
 {
   "backToIncrements": "Torna agli Increments",
+  "card": {
+    "integrationVerified": "Integrazione verificata"
+  },
   "create": {
     "actions": {
       "cancel": "Annulla",
@@ -159,6 +162,28 @@
       "sprintCompleted": "Sprint Completato",
       "sprintReview": "Sprint Review"
     }
+  },
+  "incrementIntegrity": {
+    "addTest": "Aggiungi test di integrazione",
+    "chain": "Catena degli incrementi",
+    "dependenciesMet": "Tutti gli incrementi precedenti si integrano correttamente",
+    "dependenciesMissing": "Alcuni incrementi precedenti non hanno superato i test di integrazione",
+    "fail": "Fallito",
+    "firstIncrement": "Primo incremento — nessun incremento precedente da testare",
+    "integrationTests": "Test di integrazione",
+    "integrationVerified": "Integrazione verificata",
+    "notVerified": "Integrazione non verificata",
+    "notes": "Note del test",
+    "pass": "Superato",
+    "pending": "In sospeso",
+    "priorIncrement": "Incremento precedente",
+    "testResult": "Risultato del test",
+    "title": "Integrazione degli incrementi",
+    "unverified": "Non verificato",
+    "verificationRequired": "È richiesta la verifica dell'integrazione prima di contrassegnare come verificato",
+    "verified": "Verificato",
+    "verifyHint": "Verifica che questo incremento si integri con tutti gli incrementi precedenti",
+    "verifyNow": "Verifica l'integrazione"
   },
   "list": {
     "ariaLabelFilter": "Filtra Increments per stato",

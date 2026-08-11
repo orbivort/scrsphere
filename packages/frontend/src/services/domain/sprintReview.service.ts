@@ -4,6 +4,7 @@ import type {
   StakeholderFeedback,
   BacklogAdjustment,
   ReviewAttendee,
+  ProductGoalSnapshot,
   ApiResponse,
 } from '../../types';
 import { coreApiService } from '../core/api.core';
@@ -105,6 +106,38 @@ class SprintReviewService {
 
   async deleteAttendee(attendeeId: string): Promise<ApiResponse<{ message: string }>> {
     const { data } = await this.api.delete(`/sprint-reviews/attendees/${attendeeId}`);
+    return data;
+  }
+
+  // Product Goal integration at Sprint Review
+
+  async getProductGoalForReview(reviewId: string): Promise<
+    ApiResponse<{
+      reviewId: string;
+      reviewDate: string;
+      sprintId: string;
+      sprintName: string;
+      productGoal: {
+        id: string;
+        title: string;
+        description?: string;
+        successMetrics?: string;
+        status: string;
+      } | null;
+    }>
+  > {
+    const { data } = await this.api.get(`/sprint-reviews/${reviewId}/product-goal`);
+    return data;
+  }
+
+  async submitProductGoalAssessment(
+    reviewId: string,
+    payload: { assessment?: string; successMetricValues?: Record<string, unknown> }
+  ): Promise<ApiResponse<ProductGoalSnapshot>> {
+    const { data } = await this.api.post(
+      `/sprint-reviews/${reviewId}/product-goal-assessment`,
+      payload
+    );
     return data;
   }
 }

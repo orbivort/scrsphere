@@ -271,5 +271,30 @@
     "titleMaxLength": "Titel muss 200 Zeichen oder weniger sein",
     "titleMinLength": "Titel muss mindestens 3 Zeichen haben",
     "titleRequired": "Titel ist erforderlich"
+  },
+  "valuesReflection": {
+    "title": "Scrum-Werte-Reflexion",
+    "values": {
+      "COMMITMENT": {
+        "label": "Engagement",
+        "question": "Haben wir uns persönlich für das Sprint-Ziel eingesetzt?"
+      },
+      "COURAGE": {
+        "label": "Mut",
+        "question": "Hatten wir den Mut, Probleme anzusprechen und anzugehen?"
+      },
+      "FOCUS": {
+        "label": "Fokus",
+        "question": "Bleiben wir bei der Sprint-Arbeit konzentriert?"
+      },
+      "OPENNESS": {
+        "label": "Offenheit",
+        "question": "Waren wir offen über Fortschritte und Herausforderungen?"
+      },
+      "RESPECT": {
+        "label": "Respekt",
+        "question": "Haben wir die Fähigkeiten und Selbstständigkeit der anderen respektiert?"
+      }
+    }
   }
 }

@@ -1,0 +1,81 @@
+{
+  "healthCheck": {
+    "createNew": "Realizar un nuevo chequeo de salud",
+    "noHealthCheck": "Aún no hay resultados del chequeo de salud",
+    "overallAverage": "Promedio general",
+    "respondAnonymous": "Enviar de forma anónima",
+    "responseSaved": "Respuestas enviadas. ¡Gracias!",
+    "results": "Resultados del chequeo de salud",
+    "submitResponse": "Enviar respuestas",
+    "subtitle": "Califique cada valor de Scrum de 1 a 5",
+    "title": "Chequeo de salud de valores Scrum"
+  },
+  "scrumValues": {
+    "scoreHigh": "Saludable",
+    "scoreLow": "Requiere atención",
+    "scoreMedium": "En desarrollo",
+    "subtitle": "Los cinco valores que guían al equipo Scrum",
+    "title": "Valores de Scrum",
+    "values": {
+      "COMMITMENT": {
+        "definition": "Comprometerse personalmente con los objetivos del equipo Scrum.",
+        "label": "Compromiso",
+        "question": "¿Sientes que el equipo está personalmente comprometido a lograr el objetivo del Sprint?"
+      },
+      "COURAGE": {
+        "definition": "Tener el coraje de comprometerse, hacer lo correcto y trabajar en problemas difíciles.",
+        "label": "Coraje",
+        "question": "¿Sientes que el equipo tiene el coraje de plantear problemas y abordarlos?"
+      },
+      "FOCUS": {
+        "definition": "Centrarse en el trabajo del Sprint y los objetivos del equipo Scrum.",
+        "label": "Enfoque",
+        "question": "¿Sientes que el equipo se centra en el trabajo del Sprint sin distracciones?"
+      },
+      "OPENNESS": {
+        "definition": "Ser abierto sobre el trabajo y los desafíos de realizarlo.",
+        "label": "Apertura",
+        "question": "¿Sientes que el equipo es abierto sobre el progreso y los desafíos?"
+      },
+      "RESPECT": {
+        "definition": "Respetarse mutuamente como personas capaces e independientes.",
+        "label": "Respeto",
+        "question": "¿Sientes que los miembros del equipo se respetan mutuamente?"
+      }
+    }
+  },
+  "scrumValuesBanner": {
+    "rotating": "Un valor de Scrum para reflexionar",
+    "todayFocus": "Valor de Scrum del día"
+  },
+  "smDashboard": {
+    "achievementRate": "Tasa de logro",
+    "actionItemCompletion": "Acciones de la retrospectiva",
+    "atRisk": "en riesgo",
+    "avgResolutionDays": "Resolución media (días)",
+    "completedEvents": "Completados",
+    "completionRate": "Tasa de finalización",
+    "dailyScrumCount": "Daily Scrums",
+    "dodCompliance": "Cumplimiento de la Definición de Hecho",
+    "eventCompliance": "Cumplimiento de eventos",
+    "healthCheck": "Chequeo de salud de valores Scrum",
+    "impedimentMetrics": "Métricas de impedimentos",
+    "loadError": "No se pudieron cargar los datos del panel",
+    "missingEvents": "Faltantes",
+    "noData": "Aún no hay datos del panel disponibles",
+    "overallHealth": "Salud general",
+    "sprintGoalAchievement": "Logro del objetivo del Sprint",
+    "subtitle": "Una visión general de la salud del equipo y el cumplimiento del proceso Scrum",
+    "title": "Panel del Scrum Master"
+  },
+  "smNotes": {
+    "charCounter": "{{count}} / 2000 caracteres",
+    "emptyError": "Las notas no pueden estar vacías.",
+    "maxLengthError": "Las notas deben tener 2000 caracteres o menos.",
+    "noHtmlTags": "No se permiten etiquetas HTML en las notas.",
+    "placeholder": "Registre observaciones, notas de coaching y reflexiones de facilitación para el equipo Scrum...",
+    "saveError": "No se pudieron guardar las notas",
+    "saved": "Notas guardadas",
+    "title": "Notas del Scrum Master"
+  }
+}

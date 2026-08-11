@@ -1,5 +1,10 @@
 // Product Goals Service
-import type { ProductGoal, ApiResponse, StatusChangeHistoryItem } from '../../types';
+import type {
+  ProductGoal,
+  ProductGoalSnapshot,
+  ApiResponse,
+  StatusChangeHistoryItem,
+} from '../../types';
 import { coreApiService } from '../core/api.core';
 
 class ProductGoalsService {
@@ -34,6 +39,11 @@ class ProductGoalsService {
 
   async getProductGoalStatusHistory(id: string): Promise<ApiResponse<StatusChangeHistoryItem[]>> {
     const { data } = await this.api.get(`/product-goals/${id}/status-history`);
+    return data;
+  }
+
+  async getSnapshots(id: string): Promise<ApiResponse<ProductGoalSnapshot[]>> {
+    const { data } = await this.api.get(`/product-goals/${id}/snapshots`);
     return data;
   }
 }

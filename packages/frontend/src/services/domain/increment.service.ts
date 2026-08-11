@@ -1,5 +1,11 @@
 // Increment Service
-import type { Increment, IncrementMetrics, ApiResponse } from '../../types';
+import type {
+  Increment,
+  IncrementMetrics,
+  ApiResponse,
+  IntegrationTestRecord,
+  IncrementChainNode,
+} from '../../types';
 import { coreApiService } from '../core/api.core';
 
 class IncrementService {
@@ -45,6 +51,43 @@ class IncrementService {
     const { data } = await this.api.get('/increments/metrics', {
       params: { teamId },
     });
+    return data;
+  }
+
+  // --- Increment integration verification ---
+
+  async getIntegrationTests(incrementId: string): Promise<ApiResponse<IntegrationTestRecord[]>> {
+    const { data } = await this.api.get(`/increments/${incrementId}/integration-tests`);
+    return data;
+  }
+
+  async createIntegrationTest(
+    incrementId: string,
+    payload: {
+      priorIncrementId: string;
+      testResult: 'PASSED' | 'FAILED';
+      notes?: string;
+    }
+  ): Promise<ApiResponse<IntegrationTestRecord>> {
+    const { data } = await this.api.post(`/increments/${incrementId}/integration-tests`, payload);
+    return data;
+  }
+
+  async verifyIntegration(incrementId: string): Promise<
+    ApiResponse<{
+      integrationVerified: boolean;
+      priorCount: number;
+      allPassed: boolean;
+      missingTests?: string[];
+      failedTests?: string[];
+    }>
+  > {
+    const { data } = await this.api.post(`/increments/${incrementId}/verify-integration`);
+    return data;
+  }
+
+  async getIncrementChain(incrementId: string): Promise<ApiResponse<IncrementChainNode[]>> {
+    const { data } = await this.api.get(`/increments/${incrementId}/chain`);
     return data;
   }
 }

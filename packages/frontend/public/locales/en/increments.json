@@ -1,5 +1,8 @@
 {
   "backToIncrements": "Back to Increments",
+  "card": {
+    "integrationVerified": "Integration verified"
+  },
   "create": {
     "actions": {
       "cancel": "Cancel",
@@ -159,6 +162,28 @@
       "sprintCompleted": "Sprint Completed",
       "sprintReview": "Sprint Review"
     }
+  },
+  "incrementIntegrity": {
+    "addTest": "Add Integration Test",
+    "chain": "Increment Chain",
+    "dependenciesMet": "All prior Increments integrate successfully",
+    "dependenciesMissing": "Some prior Increments have not passed integration tests",
+    "fail": "Failed",
+    "firstIncrement": "First Increment — no prior Increment to test against",
+    "integrationTests": "Integration Tests",
+    "integrationVerified": "Integration verified",
+    "notVerified": "Integration not verified",
+    "notes": "Test notes",
+    "pass": "Passed",
+    "pending": "Pending",
+    "priorIncrement": "Prior Increment",
+    "testResult": "Test Result",
+    "title": "Increment Integration",
+    "unverified": "Not verified",
+    "verificationRequired": "Integration verification is required before marking as verified",
+    "verified": "Verified",
+    "verifyHint": "Verify that this Increment integrates with all prior Increments",
+    "verifyNow": "Verify Integration"
   },
   "list": {
     "ariaLabelFilter": "Filter increments by status",

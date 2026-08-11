@@ -12,6 +12,7 @@ import { queryKeys } from '../../hooks/queryKeys';
 import { LoadingState } from '../../components/common/Loading';
 import { ToastContainer } from '../../components/common/ToastContainer';
 
+import { IncrementIntegrityPanel } from './IncrementIntegrityPanel';
 import styles from './IncrementDetail.module.css';
 
 import { useI18nStore } from '@/i18n/useI18nStore';
@@ -484,6 +485,11 @@ export const IncrementDetail: React.FC = () => {
               )}
             </div>
           </div>
+
+          <IncrementIntegrityPanel
+            incrementId={increment.id}
+            integrationVerified={increment.integrationVerified}
+          />
         </div>
       </div>
 

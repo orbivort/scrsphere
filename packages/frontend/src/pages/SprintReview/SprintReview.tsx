@@ -51,6 +51,10 @@ import { CreateSprintReviewModal } from './CreateSprintReviewModal';
 
 import { useI18nStore } from '@/i18n/useI18nStore';
 import { AttendeesSection, type AttendeeFormData } from '@/components/AttendeesSection';
+import { SMNotes } from '@/components/common/SMNotes';
+import { ProductGoalProgress } from '@/components/common/ProductGoalProgress';
+import { ScrumValuesBanner } from '@/components/common/ScrumValuesBanner';
+import { smDashboardService, sprintReviewService } from '@/services';
 
 const mapTeamRoleToAttendeeRole = (role?: string): string => {
   const roleMap: Record<string, string> = {
@@ -73,6 +77,7 @@ interface FeedbackFormData {
   actionRequired: boolean;
   relatedPbiId?: string;
   ownerId?: string;
+  productGoalAssessment?: string;
 }
 
 interface AdjustmentFormData {
@@ -141,7 +146,7 @@ export const SprintReview: React.FC = () => {
   const { sprintId: urlSprintId } = useParams<{ sprintId: string }>();
   const navigate = useNavigate();
   const [, setSearchParams] = useSearchParams();
-  const { currentTeam } = useTeamStore();
+  const { currentTeam, userRoleInCurrentTeam } = useTeamStore();
   const queryClient = useQueryClient();
   const { handleMutationError } = useMutationErrorHandler();
   const { locale } = useI18nStore();
@@ -246,6 +251,17 @@ export const SprintReview: React.FC = () => {
     const reviews = reviewsData?.data ?? [];
     return reviews.find((r) => r.sprintId === sprintId);
   }, [reviewsData, sprintId]);
+
+  const { data: productGoalData } = useQuery({
+    queryKey: ['sprint-review-product-goal', review?.id],
+    queryFn: () => {
+      if (!review?.id) {
+        throw new Error('No review available');
+      }
+      return sprintReviewService.getProductGoalForReview(review.id);
+    },
+    enabled: !!review?.id,
+  });
 
   useEffect(() => {
     if (review?.status === 'completed') {
@@ -886,6 +902,10 @@ export const SprintReview: React.FC = () => {
         </div>
       </div>
 
+      <div className={styles['values-banner']}>
+        <ScrumValuesBanner />
+      </div>
+
       <div className={styles['section-tabs']} role="tablist" aria-label={t('ariaLabels.sections')}>
         {SECTION_TABS.map((tab) => (
           <button
@@ -945,6 +965,20 @@ export const SprintReview: React.FC = () => {
               </div>
             </div>
 
+            {productGoalData?.data?.productGoal && (
+              <div className={`${styles['overview-card']} ${styles['full-width']}`}>
+                <ProductGoalProgress
+                  goal={{
+                    id: productGoalData.data.productGoal.id,
+                    title: productGoalData.data.productGoal.title,
+                    description: productGoalData.data.productGoal.description,
+                    successMetrics: productGoalData.data.productGoal.successMetrics,
+                    status: productGoalData.data.productGoal.status,
+                  }}
+                />
+              </div>
+            )}
+
             <div className={styles['overview-grid']}>
               <div className={`${styles['overview-card']} ${styles['sprint-goal-card']}`}>
                 <h3>
@@ -982,6 +1016,15 @@ export const SprintReview: React.FC = () => {
                 <p>{review.summary ?? t('overview.noSummary')}</p>
               </div>
             </div>
+
+            {userRoleInCurrentTeam?.toUpperCase() === 'SCRUM_MASTER' && (
+              <div className={`${styles['overview-card']} ${styles['full-width']}`}>
+                <SMNotes
+                  value={review.smNotes}
+                  onSave={(notes) => smDashboardService.updateSprintReviewSmNotes(review.id, notes)}
+                />
+              </div>
+            )}
 
             <AttendeesSection
               entityId={review.id || ''}

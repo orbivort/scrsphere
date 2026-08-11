@@ -1,5 +1,8 @@
 {
   "backToIncrements": "Retour aux Increments",
+  "card": {
+    "integrationVerified": "Intégration vérifiée"
+  },
   "create": {
     "actions": {
       "cancel": "Annuler",
@@ -159,6 +162,28 @@
       "sprintCompleted": "Sprint terminé",
       "sprintReview": "Sprint Review"
     }
+  },
+  "incrementIntegrity": {
+    "addTest": "Ajouter un test d'intégration",
+    "chain": "Chaîne d'incréments",
+    "dependenciesMet": "Tous les incréments précédents s'intègrent correctement",
+    "dependenciesMissing": "Certains incréments précédents n'ont pas réussi les tests d'intégration",
+    "fail": "Échoué",
+    "firstIncrement": "Premier incrément — aucun incrément précédent à tester",
+    "integrationTests": "Tests d'intégration",
+    "integrationVerified": "Intégration vérifiée",
+    "notVerified": "Intégration non vérifiée",
+    "notes": "Notes du test",
+    "pass": "Réussi",
+    "pending": "En attente",
+    "priorIncrement": "Incrément précédent",
+    "testResult": "Résultat du test",
+    "title": "Intégration des incréments",
+    "unverified": "Non vérifié",
+    "verificationRequired": "La vérification d'intégration est requise avant de marquer comme vérifié",
+    "verified": "Vérifié",
+    "verifyHint": "Vérifiez que cet incrément s'intègre avec tous les incréments précédents",
+    "verifyNow": "Vérifier l'intégration"
   },
   "list": {
     "ariaLabelFilter": "Filtrer les Increments par statut",

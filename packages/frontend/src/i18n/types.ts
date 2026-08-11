@@ -14,6 +14,7 @@ import type enSettings from '../../public/locales/en/settings.json';
 import type enNotifications from '../../public/locales/en/notifications.json';
 import type enErrors from '../../public/locales/en/errors.json';
 import type enValidation from '../../public/locales/en/validation.json';
+import type enScrumMasterDashboard from '../../public/locales/en/scrum-master-dashboard.json';
 
 declare module 'i18next' {
   interface CustomTypeOptions {
@@ -35,6 +36,7 @@ declare module 'i18next' {
       notifications: typeof enNotifications;
       errors: typeof enErrors;
       validation: typeof enValidation;
+      'scrum-master-dashboard': typeof enScrumMasterDashboard;
     };
   }
 }

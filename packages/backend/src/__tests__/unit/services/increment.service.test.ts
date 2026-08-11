@@ -8,6 +8,7 @@ vi.mock('../../../utils/prisma', () => ({
       findUnique: vi.fn(),
       create: vi.fn(),
       update: vi.fn(),
+      count: vi.fn(),
     },
     incrementPBI: {
       createMany: vi.fn(),
@@ -165,6 +166,7 @@ describe('IncrementService', () => {
       vi.mocked(prisma.sprint.findUnique).mockResolvedValue(mockSprint as any);
       vi.mocked(prisma.increment.create).mockResolvedValue({ id: 'test-uuid' } as any);
       vi.mocked(prisma.increment.findUnique).mockResolvedValue(mockIncrement as any);
+      vi.mocked(prisma.increment.count).mockResolvedValue(0);
       vi.mocked(prisma.doDChecklistVerification.findMany).mockResolvedValue([]);
 
       const result = await incrementService.createIncrement(userId, {
@@ -227,6 +229,7 @@ describe('IncrementService', () => {
       vi.mocked(prisma.sprint.findUnique).mockResolvedValue(mockSprint as any);
       vi.mocked(prisma.increment.create).mockResolvedValue({ id: 'test-uuid' } as any);
       vi.mocked(prisma.increment.findUnique).mockResolvedValue(mockIncrement as any);
+      vi.mocked(prisma.increment.count).mockResolvedValue(0);
       vi.mocked(prisma.doDChecklistVerification.findMany).mockResolvedValue([]);
 
       await incrementService.createIncrement(userId, {

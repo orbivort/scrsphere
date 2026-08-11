@@ -1,0 +1,43 @@
+{
+  "healthCheck": {
+    "alreadyResponded": "You have already responded to this health check",
+    "invalidScore": "Score must be between 1 and 5",
+    "notFound": "Health check not found"
+  },
+  "incrementIntegration": {
+    "differentTeam": "Prior increment must belong to the same team",
+    "notFound": "Increment not found",
+    "priorNotFound": "Prior Increment not found",
+    "sameIncrement": "Current and prior increment must be different",
+    "verificationRequired": "Increment cannot be verified: integration verification is required. All prior Increments must have PASSED integration tests."
+  },
+  "productGoal": {
+    "noProductGoal": "This Sprint is not linked to a Product Goal",
+    "snapshotNotFound": "Product Goal snapshot not found"
+  },
+  "scrumValues": {
+    "COMMITMENT": {
+      "definition": "Personally committing to the objectives of the Scrum Team.",
+      "question": "Do you feel the team is personally committed to achieving the Sprint Goal?"
+    },
+    "COURAGE": {
+      "definition": "Having the courage to commit, do the right thing, and work on tough problems.",
+      "question": "Do you feel the team has the courage to raise issues and tackle tough problems?"
+    },
+    "FOCUS": {
+      "definition": "Focusing on the work of the Sprint and the goals of the Scrum Team.",
+      "question": "Do you feel the team focuses on the Sprint work without distraction?"
+    },
+    "OPENNESS": {
+      "definition": "Being open about the work and the challenges with performing the work.",
+      "question": "Do you feel the team is open about progress and challenges?"
+    },
+    "RESPECT": {
+      "definition": "Respecting each other to be capable, independent people.",
+      "question": "Do you feel team members respect one another's skills and independence?"
+    }
+  },
+  "smDashboard": {
+    "notFound": "Dashboard data not found"
+  }
+}

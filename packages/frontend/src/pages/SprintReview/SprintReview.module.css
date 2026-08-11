@@ -108,6 +108,10 @@
   font-weight: var(--font-weight-semibold);
 }
 
+.values-banner {
+  margin-bottom: var(--space-4);
+}
+
 .section-tabs {
   display: flex;
   gap: var(--space-2);

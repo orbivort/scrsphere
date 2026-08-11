@@ -44,6 +44,8 @@
     "none": "Ninguno",
     "owner": "Propietario *",
     "ownerPlaceholder": "Seleccionar propietario...",
+    "productGoalAssessment": "Evaluación del progreso del objetivo del producto",
+    "productGoalAssessmentPlaceholder": "¿Cómo está progresando el equipo hacia el objetivo del producto?",
     "relatedPbi": "PBI Relacionado (Opcional)",
     "requiredFieldsNote": "Los campos requeridos están marcados con *",
     "subtitle": "Capture información valiosa de las partes interesadas para mejorar su producto",

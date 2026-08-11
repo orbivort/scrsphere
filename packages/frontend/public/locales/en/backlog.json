@@ -436,6 +436,20 @@
     "title": "Pending Retro Actions",
     "updating": "Updating..."
   },
+  "productGoal": {
+    "assessProgress": "Assess Progress",
+    "assessment": "Assessment",
+    "assessmentPlaceholder": "How is the team progressing toward the Product Goal?",
+    "completedPbis": "Completed backlog items",
+    "completedStoryPoints": "Completed story points",
+    "latestAssessment": "Latest assessment",
+    "noProductGoal": "This Sprint is not linked to a Product Goal",
+    "progress": "Product Goal Progress",
+    "snapshots": "Progress Snapshots",
+    "stakeholderAssessment": "Stakeholder assessment",
+    "successMetrics": "Success Metrics",
+    "title": "Product Goal"
+  },
   "productGoalStatus": {
     "ABANDONED": "Abandoned",
     "ACTIVE": "Active",
@@ -554,6 +568,7 @@
     "productGoal": "Product Goal",
     "progress": "Progress",
     "progressBarAriaLabel": "Form completion: {{percentage}}%",
+    "progressSnapshots": "Progress Snapshots",
     "pts": "pts",
     "requiredFields": "Required fields",
     "resultsCount": "{{filtered}} of {{total}} goals",

@@ -44,6 +44,8 @@
     "none": "None",
     "owner": "Owner *",
     "ownerPlaceholder": "Select owner...",
+    "productGoalAssessment": "Product Goal Progress Assessment",
+    "productGoalAssessmentPlaceholder": "How is the team progressing toward the Product Goal?",
     "relatedPbi": "Related PBI (Optional)",
     "requiredFieldsNote": "Required fields are marked with *",
     "subtitle": "Capture valuable insights from stakeholders to improve your product",

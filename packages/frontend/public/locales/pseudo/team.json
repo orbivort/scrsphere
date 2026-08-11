@@ -159,6 +159,7 @@
     },
     "messageLabel": "[Méssàgéééé]",
     "messagePlaceholder": "[Typé yóúr méssàgé hérééééééééé...]",
+    "requiredAriaLabel": "[réqúírédddd]",
     "send": "[Sénd Méssàgééééé]",
     "sending": "[Séndíngggg...]",
     "subtitle": "[TTóó: {{name}} ({{email}})]",
@@ -176,6 +177,8 @@
     "created": "[Créàtédddd: {{date}}]",
     "lastUpdated": "[Làst úpdàtédddddd: {{date}}]",
     "memberCount": "[{{count}} mémbérssss]",
+    "memberCount_one": "[{{count}} mméémmbbéér]",
+    "memberCount_other": "[{{count}} mémbérssss]",
     "teamId": "[TTééààmm ÍÍD: {{id}}]",
     "unableToLoad": "[Únàblé tó lóàd téàm détàíls. Pléàsé try réfréshíng thé pàgééééééééééééééééééé.]",
     "unavailable": "[Téàm Ínfórmàtíón Únàvàílàbléééééééééé]"

@@ -1206,6 +1206,11 @@
   flex-shrink: 0;
 }
 
+.save-button-icon {
+  margin-inline-end: var(--space-1);
+  flex-shrink: 0;
+}
+
 /* ========================================
    ACTION ITEMS SECTION
    ======================================== */
@@ -1235,10 +1240,18 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-xl);
   font-weight: var(--font-weight-bold);
   margin: 0;
-  letter-spacing: -0.025em;
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-text-primary);
+}
+
+.section-title-icon {
+  width: var(--space-5);
+  height: var(--space-5);
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
 }
 
 .action-items-list {
@@ -1975,7 +1988,69 @@
   transform: translateY(-1px);
 }
 
-/* Complete Retro Section */
+/* Scrum Master Notes Section */
+.sm-notes-section {
+  background: linear-gradient(
+    135deg,
+    var(--color-background-card) 0%,
+    var(--color-background-page) 100%
+  );
+  border-radius: var(--radius-2xl);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--space-6);
+  border: var(--border-width-1) solid var(--color-border-default);
+  animation: fade-in-up 0.4s cubic-bezier(0, 0, 0.2, 1) 0.35s backwards;
+}
+
+.values-banner {
+  margin-bottom: var(--space-4);
+}
+
+.values-reflection {
+  margin-bottom: var(--space-4);
+  border: var(--border-width-1) solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  background: var(--color-background-card);
+}
+
+.values-reflection-summary {
+  padding: var(--space-3) var(--space-4);
+  cursor: pointer;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  user-select: none;
+}
+
+.values-reflection-summary:hover {
+  color: var(--color-text-link);
+}
+
+.values-reflection-body {
+  padding: 0 var(--space-4) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.values-reflection-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.values-reflection-name {
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
+  color: var(--color-primary-700);
+}
+
+.values-reflection-question {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
 .complete-retro-section {
   margin-top: var(--space-8);
   padding: var(--space-6);
@@ -1995,6 +2070,11 @@
   font-weight: var(--font-weight-bold);
   box-shadow: var(--shadow-md);
   transition: all 0.15s cubic-bezier(0, 0, 0.2, 1);
+}
+
+.complete-button-icon {
+  width: var(--space-5);
+  height: var(--space-5);
 }
 
 .complete-button:hover:not(:disabled) {

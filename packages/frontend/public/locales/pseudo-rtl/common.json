@@ -2,6 +2,7 @@
   "actions": "Actions",
   "add": "Add",
   "all": "All",
+  "anonymous": "[Åñøñýµøûš]",
   "appName": "Scrumooth",
   "apply": "Apply",
   "aria": {
@@ -343,6 +344,7 @@
     "loadingListItems": "Loading list items"
   },
   "localeSyncFailed": "Failed to sync language preference. It will sync on next login.",
+  "name": "[Ñààmèé]",
   "nav": {
     "activeSprint": "Active Sprint",
     "dailyScrum": "Daily Scrum",
@@ -354,6 +356,7 @@
     "productGoals": "Product Goals",
     "reports": "Reports",
     "retrospective": "Retrospective",
+    "scrumMaster": "Scrum Master Dashboard",
     "settings": {
       "data": "Data",
       "privacyData": "Privacy & Data",
@@ -369,9 +372,11 @@
   },
   "next": "Next",
   "no": "No",
+  "noData": "[Ñø ðåţå åvåîłåßłê]",
   "noResults": "No results found",
   "noTeamSelected": "No team selected",
   "none": "None",
+  "notSet": "[Ñøţ Šêţ]",
   "notifications": {
     "connectionError": "Connection error",
     "empty": "No notifications yet",
@@ -380,6 +385,7 @@
     "title": "Notifications",
     "viewAll": "View all notifications"
   },
+  "open": "[Øøpèéñ]",
   "optional": "Optional",
   "pageError": {
     "backToDashboard": "Back to Dashboard",
@@ -513,6 +519,7 @@
     "editProfile": "Edit Profile",
     "logout": "Logout"
   },
+  "verify": "[Vêŕîƒý]",
   "view": "View",
   "widgetError": {
     "failedToLoad": "{{widgetName}} failed to load",

@@ -44,6 +44,8 @@
     "none": "Keine",
     "owner": "Eigentümer *",
     "ownerPlaceholder": "Eigentümer auswählen...",
+    "productGoalAssessment": "Bewertung des Produktziel-Fortschritts",
+    "productGoalAssessmentPlaceholder": "Wie kommt das Team mit dem Produktziel voran?",
     "relatedPbi": "Verwandtes PBI (Optional)",
     "requiredFieldsNote": "Pflichtfelder sind mit * markiert",
     "subtitle": "Wertvolle Insights von Stakeholders erfassen, um Ihr Produkt zu verbessern",

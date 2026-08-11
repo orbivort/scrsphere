@@ -37,6 +37,8 @@ model User {
   passwordResetTokens  PasswordResetToken[]
   refreshTokens        RefreshToken[]
   actionItems          RetroActionItem[]          @relation("ActionItemOwner")
+  integrationTests     IncrementIntegrationTest[]
+  healthCheckResponses TeamHealthCheckResponse[]
   retroItemVotes       RetroItemVote[]            @relation("RetroItemVoter")
   retrospectiveItems   RetrospectiveItem[]        @relation("RetroItemAuthor")
   scheduledDeletions   ScheduledDeletion[]
@@ -64,6 +66,7 @@ model Team {
   definitionOfDone    DefinitionOfDone?
   definitionOfReady   DefinitionOfReady?
   generatedSprints    GeneratedSprint[]
+  healthChecks        TeamHealthCheck[]
   impediments         Impediment[]
   increments          Increment[]
   productBacklog      ProductBacklogItem[]
@@ -111,6 +114,7 @@ model ProductGoal {
   updatedAt          DateTime             @updatedAt @db.Timestamptz(3)
   updatedBy          String?              @db.Uuid
   backlogItems       ProductBacklogItem[]
+  snapshots          ProductGoalSnapshot[]
   creator            User?                @relation("GoalCreator", fields: [createdBy], references: [id], onDelete: SetNull)
   team               Team                 @relation(fields: [teamId], references: [id], onDelete: Cascade)
   sprints            Sprint[]
@@ -167,6 +171,7 @@ model Sprint {
   sprintGoal         String?
   status             SprintStatus          @default(PLANNED)
   cancellationReason String?
+  smNotes            String?
   createdAt          DateTime              @default(now()) @db.Timestamptz(3)
   createdBy          String?               @db.Uuid
   updatedAt          DateTime              @updatedAt @db.Timestamptz(3)
@@ -180,6 +185,7 @@ model Sprint {
   sprintBacklogItems SprintBacklogItem[]
   retrospective      SprintRetrospective?
   sprintReview       SprintReview?
+  healthChecks       TeamHealthCheck[]
   goal               ProductGoal?          @relation(fields: [goalId], references: [id], onDelete: SetNull)
   team               Team                  @relation(fields: [teamId], references: [id], onDelete: Cascade)
   tasks              Task[]
@@ -328,6 +334,7 @@ model Impediment {
   @@index([reportedById])
   @@index([ownerId])
   @@index([teamId, status])
+  @@index([teamId, status, createdAt])
   @@map("impediments")
 }
 
@@ -442,32 +449,121 @@ model DoRChecklistVerification {
 }
 
 model Increment {
-  id               String          @id @db.Uuid
-  sprintId         String          @db.Uuid
-  teamId           String          @db.Uuid
-  name             String
-  description      String?
-  totalStoryPoints Int             @default(0)
-  status           IncrementStatus @default(DRAFT)
-  deliveredAt      DateTime?       @db.Timestamptz(3)
-  deliveryMethod   DeliveryMethod?
-  notes            String?
-  createdAt        DateTime        @default(now()) @db.Timestamptz(3)
-  createdBy        String?         @db.Uuid
-  updatedAt        DateTime        @updatedAt @db.Timestamptz(3)
-  updatedBy        String?         @db.Uuid
-  pbis             IncrementPBI[]
-  creator          User?           @relation("IncrementCreator", fields: [createdBy], references: [id], onDelete: SetNull)
-  sprint           Sprint          @relation(fields: [sprintId], references: [id], onDelete: Cascade)
-  team             Team            @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  sprintReview     SprintReview?
+  id                   String                    @id @db.Uuid
+  sprintId             String                    @db.Uuid
+  teamId               String                    @db.Uuid
+  name                 String
+  description          String?
+  totalStoryPoints     Int                       @default(0)
+  status               IncrementStatus           @default(DRAFT)
+  integrationVerified  Boolean                   @default(false)
+  deliveredAt          DateTime?                 @db.Timestamptz(3)
+  deliveryMethod       DeliveryMethod?
+  notes                String?
+  createdAt            DateTime                  @default(now()) @db.Timestamptz(3)
+  createdBy            String?                   @db.Uuid
+  updatedAt            DateTime                  @updatedAt @db.Timestamptz(3)
+  updatedBy            String?                   @db.Uuid
+  pbis                 IncrementPBI[]
+  creator              User?                     @relation("IncrementCreator", fields: [createdBy], references: [id], onDelete: SetNull)
+  sprint               Sprint                    @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+  team                 Team                      @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  sprintReview         SprintReview?
+  integrationTestsAsCurrent IncrementIntegrationTest[] @relation("IntegrationCurrentIncrement")
+  integrationTestsAsPrior   IncrementIntegrationTest[] @relation("IntegrationPriorIncrement")
 
   @@index([sprintId])
   @@index([teamId])
   @@index([status])
   @@index([deliveredAt])
   @@index([sprintId, status])
+  @@index([teamId, status, createdAt])
   @@map("increments")
+}
+
+model IncrementIntegrationTest {
+  id                String         @id @db.Uuid
+  currentIncrementId String        @db.Uuid
+  priorIncrementId  String         @db.Uuid
+  testResult        IntegrationTestResult @default(PENDING)
+  testedById        String         @db.Uuid
+  testedAt          DateTime       @default(now()) @db.Timestamptz(3)
+  notes             String?
+  createdAt         DateTime       @default(now()) @db.Timestamptz(3)
+  createdBy         String?        @db.Uuid
+  updatedAt         DateTime       @updatedAt @db.Timestamptz(3)
+  updatedBy         String?        @db.Uuid
+  currentIncrement  Increment      @relation("IntegrationCurrentIncrement", fields: [currentIncrementId], references: [id], onDelete: Cascade)
+  priorIncrement    Increment      @relation("IntegrationPriorIncrement", fields: [priorIncrementId], references: [id], onDelete: Cascade)
+  testedBy          User           @relation(fields: [testedById], references: [id], onDelete: Restrict)
+
+  @@index([currentIncrementId])
+  @@index([priorIncrementId])
+  @@index([testedById])
+  @@unique([currentIncrementId, priorIncrementId])
+  @@map("increment_integration_tests")
+}
+
+model ProductGoalSnapshot {
+  id                    String       @id @db.Uuid
+  goalId                String       @db.Uuid
+  sprintReviewId        String       @db.Uuid
+  successMetricValues   Json?
+  completedPbiCount     Int          @default(0)
+  completedStoryPoints  Int          @default(0)
+  assessment            String?
+  createdAt             DateTime     @default(now()) @db.Timestamptz(3)
+  createdBy             String?      @db.Uuid
+  updatedAt             DateTime     @updatedAt @db.Timestamptz(3)
+  updatedBy             String?      @db.Uuid
+  goal                  ProductGoal  @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  sprintReview          SprintReview @relation(fields: [sprintReviewId], references: [id], onDelete: Cascade)
+
+  @@index([goalId])
+  @@index([sprintReviewId])
+  @@unique([goalId, sprintReviewId])
+  @@map("product_goal_snapshots")
+}
+
+model TeamHealthCheck {
+  id        String            @id @db.Uuid
+  teamId    String            @db.Uuid
+  sprintId  String?           @db.Uuid
+  status    HealthCheckStatus @default(OPEN)
+  createdAt DateTime          @default(now()) @db.Timestamptz(3)
+  createdBy String?           @db.Uuid
+  updatedAt DateTime          @updatedAt @db.Timestamptz(3)
+  updatedBy String?           @db.Uuid
+  team      Team              @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  sprint    Sprint?           @relation(fields: [sprintId], references: [id], onDelete: SetNull)
+  responses TeamHealthCheckResponse[]
+
+  @@index([teamId])
+  @@index([sprintId])
+  @@index([status])
+  @@index([teamId, status, createdAt])
+  @@map("team_health_checks")
+}
+
+model TeamHealthCheckResponse {
+  id            String         @id @db.Uuid
+  healthCheckId String         @db.Uuid
+  userId        String         @db.Uuid
+  scrumValue    ScrumValue
+  score         Int
+  anonymous     Boolean        @default(false)
+  createdAt     DateTime       @default(now()) @db.Timestamptz(3)
+  createdBy     String?        @db.Uuid
+  updatedAt     DateTime       @updatedAt @db.Timestamptz(3)
+  updatedBy     String?        @db.Uuid
+  healthCheck   TeamHealthCheck @relation(fields: [healthCheckId], references: [id], onDelete: Cascade)
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([healthCheckId, userId, scrumValue])
+  @@index([healthCheckId])
+  @@index([userId])
+  @@index([healthCheckId, scrumValue])
+  @@map("team_health_check_responses")
 }
 
 model IncrementPBI {
@@ -496,12 +592,14 @@ model SprintReview {
   reviewDate         DateTime              @db.Timestamptz(3)
   summary            String?
   status             String                @default("in_progress")
+  smNotes            String?
   createdAt          DateTime              @default(now()) @db.Timestamptz(3)
   createdBy          String?               @db.Uuid
   updatedAt          DateTime              @updatedAt @db.Timestamptz(3)
   updatedBy          String?               @db.Uuid
   backlogAdjustments BacklogAdjustment[]
   attendees          ReviewAttendee[]
+  productGoalSnapshots ProductGoalSnapshot[]
   creator            User?                 @relation("ReviewCreator", fields: [createdBy], references: [id], onDelete: SetNull)
   increment          Increment             @relation(fields: [incrementId], references: [id], onDelete: Cascade)
   sprint             Sprint                @relation(fields: [sprintId], references: [id], onDelete: Cascade)
@@ -531,12 +629,13 @@ model ReviewAttendee {
 }
 
 model StakeholderFeedback {
-  id             String           @id @db.Uuid
-  reviewId       String           @db.Uuid
-  authorName     String
-  content        String
-  category       FeedbackCategory @default(POSITIVE)
-  relatedPbiId   String?          @db.Uuid
+  id                    String           @id @db.Uuid
+  reviewId              String           @db.Uuid
+  authorName            String
+  content               String
+  productGoalAssessment String?
+  category              FeedbackCategory @default(POSITIVE)
+  relatedPbiId          String?          @db.Uuid
   actionRequired Boolean          @default(false)
   actionTaken    Boolean          @default(false)
   ownerId        String?          @db.Uuid
@@ -584,6 +683,7 @@ model SprintRetrospective {
   status            RetrospectiveStatus @default(DRAFT)
   summary           String?
   dodEvolutionNotes String?
+  smNotes           String?
   createdAt         DateTime            @default(now()) @db.Timestamptz(3)
   createdBy         String?             @db.Uuid
   updatedAt         DateTime            @updatedAt @db.Timestamptz(3)
@@ -683,6 +783,7 @@ model RetroActionItem {
   @@index([dueDate])
   @@index([completedAt])
   @@index([retrospectiveId, status])
+  @@index([ownerId, status, dueDate])
   @@map("retro_action_items")
 }
 
@@ -1025,6 +1126,25 @@ enum IncrementStatus {
 enum DeliveryMethod {
   SPRINT_REVIEW
   EARLY_RELEASE
+}
+
+enum IntegrationTestResult {
+  PENDING
+  PASSED
+  FAILED
+}
+
+enum ScrumValue {
+  COMMITMENT
+  FOCUS
+  OPENNESS
+  RESPECT
+  COURAGE
+}
+
+enum HealthCheckStatus {
+  OPEN
+  CLOSED
 }
 
 enum FeedbackCategory {

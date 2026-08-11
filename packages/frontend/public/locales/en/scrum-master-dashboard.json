@@ -1,0 +1,81 @@
+{
+  "healthCheck": {
+    "createNew": "Run a new health check",
+    "noHealthCheck": "No health check results yet",
+    "overallAverage": "Overall average",
+    "respondAnonymous": "Submit anonymously",
+    "responseSaved": "Responses submitted. Thank you!",
+    "results": "Health Check Results",
+    "submitResponse": "Submit responses",
+    "subtitle": "Rate each Scrum Value from 1 to 5",
+    "title": "Scrum Values Health Check"
+  },
+  "scrumValues": {
+    "scoreHigh": "Healthy",
+    "scoreLow": "Needs attention",
+    "scoreMedium": "Developing",
+    "subtitle": "The five values that guide the Scrum Team",
+    "title": "Scrum Values",
+    "values": {
+      "COMMITMENT": {
+        "definition": "Personally committing to the objectives of the Scrum Team.",
+        "label": "Commitment",
+        "question": "Do you feel the team is personally committed to achieving the Sprint Goal?"
+      },
+      "COURAGE": {
+        "definition": "Having the courage to commit, do the right thing, and work on tough problems.",
+        "label": "Courage",
+        "question": "Do you feel the team has the courage to raise issues and tackle tough problems?"
+      },
+      "FOCUS": {
+        "definition": "Focusing on the work of the Sprint and the goals of the Scrum Team.",
+        "label": "Focus",
+        "question": "Do you feel the team focuses on the Sprint work without distraction?"
+      },
+      "OPENNESS": {
+        "definition": "Being open about the work and the challenges with performing the work.",
+        "label": "Openness",
+        "question": "Do you feel the team is open about progress and challenges?"
+      },
+      "RESPECT": {
+        "definition": "Respecting each other to be capable, independent people.",
+        "label": "Respect",
+        "question": "Do you feel team members respect one another's skills and independence?"
+      }
+    }
+  },
+  "scrumValuesBanner": {
+    "rotating": "A Scrum Value to reflect on",
+    "todayFocus": "Scrum Value of the day"
+  },
+  "smDashboard": {
+    "achievementRate": "Achievement rate",
+    "actionItemCompletion": "Retrospective Action Items",
+    "atRisk": "at risk",
+    "avgResolutionDays": "Avg. resolution (days)",
+    "completedEvents": "Completed",
+    "completionRate": "Completion rate",
+    "dailyScrumCount": "Daily Scrums",
+    "dodCompliance": "Definition of Done Compliance",
+    "eventCompliance": "Event Compliance",
+    "healthCheck": "Scrum Values Health Check",
+    "impedimentMetrics": "Impediment Metrics",
+    "loadError": "Failed to load dashboard data",
+    "missingEvents": "Missing",
+    "noData": "No dashboard data available yet",
+    "overallHealth": "Overall health",
+    "sprintGoalAchievement": "Sprint Goal Achievement",
+    "subtitle": "A facilitation overview of team health and Scrum process compliance",
+    "title": "Scrum Master Dashboard"
+  },
+  "smNotes": {
+    "charCounter": "{{count}} / 2000 characters",
+    "emptyError": "Notes cannot be empty.",
+    "maxLengthError": "Notes must be 2000 characters or fewer.",
+    "noHtmlTags": "HTML tags are not allowed in notes.",
+    "placeholder": "Record observations, coaching notes, and facilitation insights for the Scrum Team...",
+    "saveError": "Failed to save notes",
+    "saved": "Notes saved",
+    "title": "Scrum Master Notes"
+  }
+}

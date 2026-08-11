@@ -133,6 +133,7 @@ vi.mock('./domain/productGoals.service', () => ({
     updateProductGoal: vi.fn().mockResolvedValue({}),
     deleteProductGoal: vi.fn().mockResolvedValue({}),
     getProductGoalStatusHistory: vi.fn().mockResolvedValue({ data: [] }),
+    getSnapshots: vi.fn().mockResolvedValue({ data: [] }),
   },
 }));
 

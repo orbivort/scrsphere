@@ -145,6 +145,7 @@ class ApiService {
   deleteProductGoal = productGoalsService.deleteProductGoal.bind(productGoalsService);
   getProductGoalStatusHistory =
     productGoalsService.getProductGoalStatusHistory.bind(productGoalsService);
+  getProductGoalSnapshots = productGoalsService.getSnapshots.bind(productGoalsService);
 
   // Sprint Configuration endpoints
   getSprintConfiguration = sprintConfigService.getSprintConfiguration.bind(sprintConfigService);

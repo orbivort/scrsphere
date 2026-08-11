@@ -54,11 +54,15 @@
     "edit": "[ÉÉddíít]",
     "editItem": "[Édít ítémmmm]",
     "itemsInColumn": "[{{count}} ítéms ínnnn {{title}}]",
+    "itemsInColumn_one": "[{{count}} ítéms ínnnn {{title}}]",
+    "itemsInColumn_other": "[{{count}} ítéms ínnnn {{title}}]",
     "removeVote": "[Rémóvé vótééééé]",
     "save": "[SSààvvé]",
     "saving": "[SSààvvíínng...]",
     "vote": "[VVóótté]",
-    "voteAriaLabel": "[{{action}} fór thís ítémmmmmm ({{count}} vvóóttéés)]"
+    "voteAriaLabel": "[{{action}} fór thís ítémmmmmm ({{count}} vvóóttéés)]",
+    "voteAriaLabel_one": "[{{action}} fór thís ítémmmmmm ({{count}} vvóótté)]",
+    "voteAriaLabel_other": "[{{action}} fór thís ítémmmmmm ({{count}} vvóóttéés)]"
   },
   "completeRetro": {
     "ariaLabel": "[Màrk rétróspéctívé às cómplétéddddddddddd]",
@@ -147,6 +151,7 @@
     "viewRetrospective": "[Víéw Rétróspéctívééééééé]"
   },
   "loading": "[Lóàdíng Rétróspéctívééééééééé...]",
+  "pts": "[ptss]",
   "sprintInfo": {
     "businessDay_one": "[{{count}} búsínéss dàyyyyy]",
     "businessDay_other": "[{{count}} búsínéss dàyssssss]",
@@ -157,7 +162,11 @@
     "includedPbis": "[Ínclúdéd Pródúct Bàcklóg Ítémssssssssss]",
     "items": "[ítémsss]",
     "itemsCount": "[{{count}} ítémsss]",
+    "itemsCount_one": "[{{count}} ííttéém]",
+    "itemsCount_other": "[{{count}} ítémsss]",
     "moreItems": "[+{{count}} móré ítémsssss]",
+    "moreItems_one": "[+{{count}} móré ítémmmm]",
+    "moreItems_other": "[+{{count}} móré ítémsssss]",
     "priorityLabels": {
       "COULD_HAVE": "[Cóúld Hàvéééé]",
       "MUST_HAVE": "[Múst Hàvéééé]",
@@ -174,8 +183,12 @@
     },
     "storyPoints": "[stóry póíntsssss]",
     "storyPointsCount": "[{{count}} stóry póíntsssss]",
+    "storyPointsCount_one": "[{{count}} stóry póínttttt]",
+    "storyPointsCount_other": "[{{count}} stóry póíntsssss]",
     "taskCompletion": "[{{completed}}/{{total}} cómplétédddd]",
     "taskCount": "[{{count}} tàsksss]",
+    "taskCount_one": "[{{count}} ttààssk]",
+    "taskCount_other": "[{{count}} tàsksss]",
     "tasks": "[Tàsksss]",
     "tasksCount": "[tàsksss]"
   },
@@ -200,6 +213,8 @@
     "cancel": "[Càncélll]",
     "cancelAriaLabel": "[Càncél súmmàry chàngéssssssss]",
     "charCounter": "[{{count}}/1000 cchhààrrààccttéérrs]",
+    "charCounter_one": "[{{count}}/1000 cchhààrrààccttéér]",
+    "charCounter_other": "[{{count}}/1000 cchhààrrààccttéérrs]",
     "charHelpText": "[Éntér kéy ínsíghts, décísíóns, ànd àctíón ítéms fróm thé rétróspéctívé. Mínímúm 10 chàràctérs, màxímúm 1000 chàràctérsssssssssssssssssssssssssssssssssssss.]",
     "editAriaLabel": "[Édít súmmàryyyyy]",
     "editSubtitle": "[Úpdàté thé kéy ínsíghts ànd tàkéàwàys fróm thís rétróspéctívéééééééééééééééééééé]",
@@ -256,5 +271,30 @@
     "titleMaxLength": "[Títlé múst bé 200 chàràctérs ór lésssssssssssss]",
     "titleMinLength": "[Títlé múst bé àt léàst 3 chàràctérssssssssssss]",
     "titleRequired": "[Títlé ís réqúíréddddddd]"
+  },
+  "valuesReflection": {
+    "title": "[Scrúm Vàlúés Réfléctíónnnnnnnn]",
+    "values": {
+      "COMMITMENT": {
+        "label": "[Cómmítméntttt]",
+        "question": "[Díd wé pérsónàlly cómmít tó thé Sprínt Góàlllllllllllllll?]"
+      },
+      "COURAGE": {
+        "label": "[Cóúràgéééé]",
+        "question": "[Díd wé hàvé thé cóúràgé tó ràísé íssúés ànd tàcklé tóúgh próblémsssssssssssssssssssss?]"
+      },
+      "FOCUS": {
+        "label": "[Fócússs]",
+        "question": "[Díd wé stày fócúséd ón thé Sprínt wórkkkkkkkkkkkkk?]"
+      },
+      "OPENNESS": {
+        "label": "[Ópénnésssss]",
+        "question": "[Wéré wé ópén àbóút prógréss ànd chàlléngéssssssssssssss?]"
+      },
+      "RESPECT": {
+        "label": "[Réspéctttt]",
+        "question": "[Díd wé réspéct éàch óthér's skílls ànd índépéndéncééééééééééééééééé?]"
+      }
+    }
   }
 }

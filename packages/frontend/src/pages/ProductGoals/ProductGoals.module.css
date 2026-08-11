@@ -934,6 +934,41 @@
   line-height: var(--line-height-relaxed);
 }
 
+.goal-snapshots {
+  margin-top: var(--space-3);
+  padding: var(--space-3);
+  background: var(--color-background-page);
+  border-radius: var(--radius-lg);
+  border: var(--border-width-1) solid var(--color-border-default);
+}
+
+.snapshots-list {
+  list-style: none;
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.snapshot-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+}
+
+.snapshot-sprint {
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+.snapshot-count {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+}
+
 /* ========================================
    TABLE VIEW
    ======================================== */

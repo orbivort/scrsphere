@@ -33,7 +33,12 @@ import {
   UsersIcon,
 } from '../common/Icons';
 import { LanguageSwitcher } from '../common/LanguageSwitcher/LanguageSwitcher';
-import { NAV_ITEMS, SETTINGS_GROUPS, getFilteredSettingsGroups } from '../../config/navigation';
+import {
+  NAV_ITEMS,
+  SETTINGS_GROUPS,
+  getFilteredNavItems,
+  getFilteredSettingsGroups,
+} from '../../config/navigation';
 import { getRoleLabel, getRoleBadgeClass } from '../../utils/roleUtils';
 
 import styles from './Layout.module.css';
@@ -177,6 +182,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   // Filtered settings groups based on user role
   const filteredSettingsGroups = getFilteredSettingsGroups(SETTINGS_GROUPS, userRole);
+  const filteredNavItems = getFilteredNavItems(NAV_ITEMS, userRole);
 
   return (
     <div
@@ -201,7 +207,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         </div>
 
         <nav className={styles['sidebar-nav']} ref={sidebarNavRef}>
-          {NAV_ITEMS.map((item) => {
+          {filteredNavItems.map((item) => {
             const IconComponent = item.icon;
             return (
               <Link

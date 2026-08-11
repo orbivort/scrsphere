@@ -503,6 +503,33 @@
   border-color: var(--color-gray-300);
 }
 
+.card-header-badges {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.integration-verified-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--color-emerald-50) 0%, var(--color-emerald-100) 100%);
+  color: var(--color-emerald-800);
+  border: var(--border-width-1) solid var(--color-emerald-400);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+}
+
+.integration-verified-badge svg {
+  width: 12px;
+  height: 12px;
+}
+
 .increment-description {
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);

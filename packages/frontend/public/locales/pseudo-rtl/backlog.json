@@ -406,6 +406,20 @@
     "title": "Pending Retro Actions",
     "updating": "Updating..."
   },
+  "productGoal": {
+    "assessProgress": "[Åššêšš Þŕøĝŕêšš]",
+    "assessment": "[Åššêššµêñţ]",
+    "assessmentPlaceholder": "[Ĥøw îš ţĥê ţêåµ þŕøĝŕêššîñĝ ţøwåŕð ţĥê Þŕøðûçţ Göåł?]",
+    "completedPbis": "[Çøµþłêţêð ßåçķłøĝ îţêµš]",
+    "completedStoryPoints": "[Çøµþłêţêð šţøŕý þøîñţš]",
+    "latestAssessment": "[Łåţêšţ åššêššµêñţ]",
+    "noProductGoal": "[Ţĥîš Šþŕîñţ îš ñøţ łîñķêð ţø å Þŕøðûçţ Göåł]",
+    "progress": "[Þŕøðûçţ Göåł Þŕøĝŕêšš]",
+    "snapshots": "[Þŕøĝŕêšš Šñåþšĥøţš]",
+    "stakeholderAssessment": "[Šţåķêĥøłðêŕ åššêššµêñţ]",
+    "successMetrics": "[Šûççêšš Mêţŕîçš]",
+    "title": "[Þŕøðûçţ Göåł]"
+  },
   "productGoalStatus": {
     "ABANDONED": "Abandoned",
     "ACTIVE": "Active",
@@ -512,6 +526,7 @@
     "productGoal": "Product Goal",
     "progress": "Progress",
     "progressBarAriaLabel": "Form completion: {{percentage}}%",
+    "progressSnapshots": "Progress Snapshots",
     "pts": "pts",
     "requiredFields": "Required fields",
     "resultsCount": "{{filtered}} of {{total}} goals",

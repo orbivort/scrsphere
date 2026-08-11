@@ -28,6 +28,11 @@ import enRetrospectives from '../locales/en/retrospectives.json' with { type: 'j
 import deRetrospectives from '../locales/de/retrospectives.json' with { type: 'json' };
 import frRetrospectives from '../locales/fr/retrospectives.json' with { type: 'json' };
 import esRetrospectives from '../locales/es/retrospectives.json' with { type: 'json' };
+import enCompliance from '../locales/en/scrumGuideCompliance.json' with { type: 'json' };
+import deCompliance from '../locales/de/scrumGuideCompliance.json' with { type: 'json' };
+import frCompliance from '../locales/fr/scrumGuideCompliance.json' with { type: 'json' };
+import esCompliance from '../locales/es/scrumGuideCompliance.json' with { type: 'json' };
+import itCompliance from '../locales/it/scrumGuideCompliance.json' with { type: 'json' };
 
 const resources = {
   en: {
@@ -36,6 +41,7 @@ const resources = {
     errors: enErrors,
     validation: enValidation,
     retrospectives: enRetrospectives,
+    scrumGuideCompliance: enCompliance,
   },
   de: {
     emails: deEmails,
@@ -43,6 +49,7 @@ const resources = {
     errors: deErrors,
     validation: deValidation,
     retrospectives: deRetrospectives,
+    scrumGuideCompliance: deCompliance,
   },
   fr: {
     emails: frEmails,
@@ -50,6 +57,7 @@ const resources = {
     errors: frErrors,
     validation: frValidation,
     retrospectives: frRetrospectives,
+    scrumGuideCompliance: frCompliance,
   },
   es: {
     emails: esEmails,
@@ -57,6 +65,7 @@ const resources = {
     errors: esErrors,
     validation: esValidation,
     retrospectives: esRetrospectives,
+    scrumGuideCompliance: esCompliance,
   },
   it: {
     emails: itEmails,
@@ -64,6 +73,7 @@ const resources = {
     errors: itErrors,
     validation: itValidation,
     retrospectives: itRetrospectives,
+    scrumGuideCompliance: itCompliance,
   },
 };
 
@@ -77,7 +87,7 @@ export const i18nInstance: I18nType = i18next.createInstance({
   // are unaffected by this change.
   load: 'currentOnly',
   nonExplicitSupportedLngs: true,
-  ns: ['emails', 'notifications', 'errors', 'validation', 'retrospectives'],
+  ns: ['emails', 'notifications', 'errors', 'validation', 'retrospectives', 'scrumGuideCompliance'],
   defaultNS: 'errors',
   interpolation: { escapeValue: false },
   returnNull: false,
