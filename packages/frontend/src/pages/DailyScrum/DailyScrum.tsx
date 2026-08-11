@@ -231,6 +231,12 @@ export const DailyScrum: React.FC = () => {
 
   const sprint = sprintData?.data;
 
+  const { data: sprintTasksData } = useQuery({
+    queryKey: queryKeys.sprintTasks.bySprint(sprint?.id ?? ''),
+    queryFn: () => apiService.getSprintTasks(sprint?.id ?? ''),
+    enabled: !!sprint?.id,
+  });
+
   const { data: updatesData, isLoading: isUpdatesLoading } = useQuery({
     queryKey: ['dailyUpdates', sprint?.id, selectedDate],
     queryFn: () => apiService.getDailyUpdates(sprint?.id ?? '', selectedDate),
@@ -562,9 +568,11 @@ export const DailyScrum: React.FC = () => {
     return { totalMembers, submitted, impediments, participation };
   }, [updates, currentTeam?.members?.length]);
 
-  // Calculate sprint completion based on completed tasks
+  // Calculate sprint completion based on completed tasks.
+  // Prefer the dedicated sprint-tasks endpoint (fresh, reliable data) and
+  // fall back to the tasks embedded in the active-sprint payload.
   const sprintCompletion = useMemo(() => {
-    const tasks = sprint?.tasks ?? [];
+    const tasks = sprintTasksData?.data ?? sprint?.tasks ?? [];
     if (tasks.length === 0) {
       return { percentage: 0, completedTasks: 0, totalTasks: 0 };
     }
@@ -574,7 +582,7 @@ export const DailyScrum: React.FC = () => {
     const percentage = Math.round((completedTasks / totalTasks) * 100);
 
     return { percentage, completedTasks, totalTasks };
-  }, [sprint?.tasks]);
+  }, [sprintTasksData?.data, sprint?.tasks]);
 
   const handleToggleExpand = useCallback((updateId: string) => {
     setExpandedUpdate((prev) => (prev === updateId ? null : updateId));

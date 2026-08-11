@@ -1022,6 +1022,7 @@ export const SprintReview: React.FC = () => {
                 <SMNotes
                   value={review.smNotes}
                   onSave={(notes) => smDashboardService.updateSprintReviewSmNotes(review.id, notes)}
+                  disabled={isReviewCompleted}
                 />
               </div>
             )}
