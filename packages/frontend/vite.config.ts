@@ -126,6 +126,8 @@ export default defineConfig(({ mode }) => {
         'test-results',
         'src/__mocks__/',
         'src/**/*.scenarios.test.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
+        '**/*.css',
+        '**/*.module.css',
       ],
       testTimeout: 30000,
       coverage: {
@@ -142,6 +144,10 @@ export default defineConfig(({ mode }) => {
           'src/services/mockDataUtils.ts',
           'src/services/mockErrorSimulation.ts',
           'src/services/mockResponseUtils.ts',
+          'src/i18n/testConfig.ts',
+          'src/test-utils/i18nHelpers.ts',
+          '**/*.css',
+          '**/*.module.css',
         ],
         all: true,
         thresholds: {
