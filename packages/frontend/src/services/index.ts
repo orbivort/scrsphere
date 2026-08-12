@@ -20,8 +20,9 @@ export { incrementService } from './domain/increment.service';
 export { sprintReviewService } from './domain/sprintReview.service';
 export { retrospectiveService } from './domain/retrospective.service';
 export { systemParamsService } from './domain/systemParams.service';
-export { smDashboardService } from './domain/smDashboard.service';
-export { healthCheckService } from './domain/healthCheck.service';
+
+// smDashboardService and healthCheckService are re-exported below with mock
+// substitution (see "API Service Selection").
 
 // Mapping utilities
 export * from './utils/mapping.utils';
@@ -33,12 +34,24 @@ import {
   type ApiService,
 } from './api';
 import { mockApiService } from './mockApi';
+import { smDashboardService as realSmDashboardService } from './domain/smDashboard.service';
+import { healthCheckService as realHealthCheckService } from './domain/healthCheck.service';
+import { mockSmDashboardService, mockHealthCheckService } from './mockSmDashboard.service';
 
 // Use mock API in development mode (when no backend is available)
 // Set VITE_USE_MOCK_API=false in .env to use real API
 const USE_MOCK_API = import.meta.env.VITE_USE_MOCK_API !== 'false';
 
 export const apiService = (USE_MOCK_API ? mockApiService : realApiService) as ApiService;
+
+// Scrum Master Dashboard / Health Check services follow the same object
+// substitution convention: swap to the mock implementation when mock mode is on.
+export const smDashboardService = (
+  USE_MOCK_API ? mockSmDashboardService : realSmDashboardService
+) as typeof realSmDashboardService;
+export const healthCheckService = (
+  USE_MOCK_API ? mockHealthCheckService : realHealthCheckService
+) as typeof realHealthCheckService;
 
 // Stub for setAuthCallbacks when using mock API
 const mockSetAuthCallbacks = (_onLogout: () => void) => {
