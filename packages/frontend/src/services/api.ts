@@ -184,6 +184,9 @@ class ApiService {
   addAttendee = sprintReviewService.addAttendee.bind(sprintReviewService);
   updateAttendee = sprintReviewService.updateAttendee.bind(sprintReviewService);
   deleteAttendee = sprintReviewService.deleteAttendee.bind(sprintReviewService);
+  getProductGoalForReview = sprintReviewService.getProductGoalForReview.bind(sprintReviewService);
+  submitProductGoalAssessment =
+    sprintReviewService.submitProductGoalAssessment.bind(sprintReviewService);
 
   // Sprint Retrospective endpoints
   getRetrospectives = retrospectiveService.getRetrospectives.bind(retrospectiveService);

@@ -54,7 +54,7 @@ import { AttendeesSection, type AttendeeFormData } from '@/components/AttendeesS
 import { SMNotes } from '@/components/common/SMNotes';
 import { ProductGoalProgress } from '@/components/common/ProductGoalProgress';
 import { ScrumValuesBanner } from '@/components/common/ScrumValuesBanner';
-import { smDashboardService, sprintReviewService } from '@/services';
+import { smDashboardService } from '@/services';
 
 const mapTeamRoleToAttendeeRole = (role?: string): string => {
   const roleMap: Record<string, string> = {
@@ -258,7 +258,7 @@ export const SprintReview: React.FC = () => {
       if (!review?.id) {
         throw new Error('No review available');
       }
-      return sprintReviewService.getProductGoalForReview(review.id);
+      return apiService.getProductGoalForReview(review.id);
     },
     enabled: !!review?.id,
   });
@@ -360,8 +360,10 @@ export const SprintReview: React.FC = () => {
       // Persist the Product Goal assessment as a snapshot so it can be surfaced
       // in the Product Goal detail timeline.
       if (feedback.productGoalAssessment) {
-        await sprintReviewService
-          .submitProductGoalAssessment(reviewId, { assessment: feedback.productGoalAssessment })
+        await apiService
+          .submitProductGoalAssessment(reviewId, {
+            assessment: feedback.productGoalAssessment,
+          })
           .catch(() => {
             // Snapshot creation is best-effort; the feedback itself was saved.
           });

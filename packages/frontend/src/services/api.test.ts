@@ -197,6 +197,10 @@ vi.mock('./domain/sprintReview.service', () => ({
     addAttendee: vi.fn().mockResolvedValue({}),
     updateAttendee: vi.fn().mockResolvedValue({}),
     deleteAttendee: vi.fn().mockResolvedValue({}),
+    getProductGoalForReview: vi.fn().mockResolvedValue({
+      data: { productGoal: null },
+    }),
+    submitProductGoalAssessment: vi.fn().mockResolvedValue({ data: {} }),
   },
 }));
 

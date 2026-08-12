@@ -730,7 +730,7 @@ export const mockProductBacklogItems: ProductBacklogItem[] = [
     description: 'Interface for team members to submit and view daily Scrum updates',
     priority: MoSCoWPriority.SHOULD_HAVE,
     storyPoints: 8,
-    status: 'IN_PROGRESS' as ItemStatus,
+    status: 'DONE' as ItemStatus,
     labels: ['frontend', 'feature'],
     acceptanceCriteria:
       '- Submit yesterday/today/impediments\n- View team updates\n- Historical updates\n- Notification reminders',

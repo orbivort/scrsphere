@@ -13,6 +13,7 @@ import {
   type SprintGoalAchievement,
   type ActionItemCompletion,
   type ProductGoalSnapshot,
+  type ProductGoalProgressAssessment,
   type TeamHealthCheck,
   type HealthCheckValueScore,
 } from '@scrumooth/shared';
@@ -26,6 +27,7 @@ export type {
   SprintGoalAchievement,
   ActionItemCompletion,
   ProductGoalSnapshot,
+  ProductGoalProgressAssessment,
   TeamHealthCheck,
   HealthCheckValueScore,
 };
