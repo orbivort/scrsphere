@@ -1621,7 +1621,7 @@ describe('SprintReview - Scrum Master Notes Tests', () => {
     setupBasicMocks();
   });
 
-  it('should disable Scrum Master Notes form and Save button when review is completed', async () => {
+  it('should render Scrum Master Notes in read-only view mode when review is completed', async () => {
     setupBasicMocks({
       review: { status: 'completed' },
     });
@@ -1632,11 +1632,9 @@ describe('SprintReview - Scrum Master Notes Tests', () => {
       expect(screen.getByText('Scrum Master Notes')).toBeInTheDocument();
     });
 
-    const saveButton = screen.getByRole('button', { name: /Save/i });
-    const textarea = screen.getByLabelText('Scrum Master Notes');
-
-    expect(saveButton).toBeDisabled();
-    expect(textarea).toBeDisabled();
-    expect(textarea).toHaveAttribute('readonly');
+    // Completed reviews force read-only view mode: no editable textarea and no Save/Edit buttons.
+    expect(screen.queryByLabelText('Scrum Master Notes')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Save/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Edit/i })).not.toBeInTheDocument();
   });
 });

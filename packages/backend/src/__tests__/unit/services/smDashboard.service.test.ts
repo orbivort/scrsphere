@@ -106,9 +106,27 @@ describe('SMDashboardService', () => {
   describe('getActionItemCompletion', () => {
     it('should compute completion rate', async () => {
       vi.mocked(prisma.retroActionItem.findMany).mockResolvedValue([
-        { id: 'a1', title: 'A1', status: 'COMPLETED', dueDate: null, owner: null },
-        { id: 'a2', title: 'A2', status: 'PENDING', dueDate: null, owner: null },
-        { id: 'a3', title: 'A3', status: 'PENDING', dueDate: null, owner: null },
+        {
+          id: 'a1',
+          title: 'A1',
+          status: 'COMPLETED',
+          dueDate: null,
+          owner: { id: 'u1', firstName: 'Jane', lastName: 'Doe' },
+        },
+        {
+          id: 'a2',
+          title: 'A2',
+          status: 'PENDING',
+          dueDate: null,
+          owner: { id: 'u2', firstName: 'John', lastName: 'Smith' },
+        },
+        {
+          id: 'a3',
+          title: 'A3',
+          status: 'PENDING',
+          dueDate: null,
+          owner: { id: 'u3', firstName: 'Alice', lastName: 'Lee' },
+        },
       ] as any);
 
       const result = await smDashboardService.getActionItemCompletion('team-1');
@@ -117,6 +135,10 @@ describe('SMDashboardService', () => {
       expect(result.completed).toBe(1);
       expect(result.completionRate).toBe(33);
       expect(result.pendingItems).toHaveLength(2);
+      expect(result.pendingItems.map((i) => i.ownerName).sort()).toEqual([
+        'Alice Lee',
+        'John Smith',
+      ]);
     });
   });
 });
