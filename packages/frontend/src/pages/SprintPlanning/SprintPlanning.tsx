@@ -9,6 +9,7 @@ import { useTeamStore } from '../../store';
 import { useMutationErrorHandler } from '../../hooks/useMutationErrorHandler';
 import { queryKeys } from '../../hooks/queryKeys';
 import { ToastContainer } from '../../components/common/ToastContainer';
+import { ScrumValuesBanner } from '../../components/common/ScrumValuesBanner';
 import { useToast } from '../../hooks/useToast';
 import {
   ItemStatus,
@@ -1087,6 +1088,10 @@ export const SprintPlanning: React.FC = () => {
             </Link>
           </div>
         </header>
+
+        <div className={styles['values-banner']}>
+          <ScrumValuesBanner />
+        </div>
 
         {/* Metrics Bar */}
         <section

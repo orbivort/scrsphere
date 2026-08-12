@@ -62,6 +62,10 @@
   z-index: var(--z-dropdown);
 }
 
+.values-banner {
+  margin-bottom: var(--space-4);
+}
+
 /* Top gradient accent line */
 .daily-scrum-header::before {
   content: '';

@@ -10,6 +10,7 @@ import type { DailyUpdate, ApiResponse } from '../../types';
 import { TaskStatus } from '../../types';
 import { TeamMemberSelect } from '../../components/TeamMemberSelect/TeamMemberSelect';
 import { LoadingState } from '../../components/common/Loading';
+import { ScrumValuesBanner } from '../../components/common/ScrumValuesBanner';
 import { useModalFocus } from '../../hooks/useModalFocus';
 import { queryKeys } from '../../hooks/queryKeys';
 import {
@@ -748,6 +749,10 @@ export const DailyScrum: React.FC = () => {
               </Button>
             )}
           </div>
+        </div>
+
+        <div className={styles['values-banner']}>
+          <ScrumValuesBanner />
         </div>
 
         <div className={styles['daily-scrum-sprint-goal-banner']}>
