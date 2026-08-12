@@ -76,13 +76,17 @@ export const smDashboardService = {
     );
     const averageResolutionDays =
       resolved.length > 0
-        ? Math.round(
-            resolved.reduce((sum, i) => {
+        ? // Round to 1 decimal place. Using Math.round alone collapses sub-12-hour
+          // resolutions to 0, hiding valid data even when resolved impediments exist.
+          Math.round(
+            (resolved.reduce((sum, i) => {
               const start = new Date(i.createdAt).getTime();
               const end = i.resolvedAt ? new Date(i.resolvedAt).getTime() : start;
               return sum + (end - start) / (1000 * 60 * 60 * 24);
-            }, 0) / resolved.length
-          )
+            }, 0) /
+              resolved.length) *
+              10
+          ) / 10
         : 0;
 
     const now = Date.now();

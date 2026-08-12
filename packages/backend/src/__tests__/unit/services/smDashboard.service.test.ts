@@ -348,6 +348,26 @@ describe('SMDashboardService', () => {
       expect(result.averageResolutionDays).toBe(9);
     });
 
+    it('should preserve sub-day resolutions instead of rounding to 0', async () => {
+      const now = Date.now();
+      vi.mocked(prisma.impediment.findMany).mockResolvedValue([
+        {
+          id: 'imp-fast',
+          title: 'Fast Resolve',
+          status: 'RESOLVED',
+          createdAt: new Date(now - 8 * 60 * 60 * 1000),
+          resolvedAt: new Date(now - 2 * 60 * 60 * 1000),
+          sprint: { name: 'Sprint 1' },
+        },
+      ] as any);
+
+      const result = await smDashboardService.getImpedimentMetrics('team-1');
+
+      expect(result.resolved).toBe(1);
+      // 6 hours = 0.25 days -> rounds to 0.3, NOT 0.
+      expect(result.averageResolutionDays).toBe(0.3);
+    });
+
     it('should report averageResolutionDays 0 when no resolved impediments and not at risk under sprint duration', async () => {
       const now = Date.now();
       vi.mocked(prisma.impediment.findMany).mockResolvedValue([
