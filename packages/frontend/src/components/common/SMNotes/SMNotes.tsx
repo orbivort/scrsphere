@@ -1,7 +1,11 @@
 // SMNotes
 // Editable text area for Scrum Master observations and coaching notes on
 // Scrum events (Sprint, Sprint Review, Retrospective).
-import React, { useCallback, useEffect, useState } from 'react';
+//
+// Provides two distinct modes:
+//  - View mode: read-only, formatted display of the saved notes with an "Edit" action.
+//  - Edit mode: editable textarea with validation, dirty-state tracking and save/cancel.
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '../Button';
@@ -36,12 +40,22 @@ export const SMNotes: React.FC<SMNotesProps> = ({
   const [draft, setDraft] = useState(value ?? '');
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [editing, setEditing] = useState(alwaysShow);
+  // Default to view mode when disabled (e.g. a completed event), otherwise respect alwaysShow.
+  const [editing, setEditing] = useState(disabled ? false : alwaysShow);
   const [error, setError] = useState<string | null>(null);
+  // Tracks whether the user has ever saved or explicitly started editing. This prevents the
+  // `alwaysShow && !value` auto-show from re-opening the form after a save when the parent has
+  // not yet refetched the updated value (e.g. the Retrospective page does not invalidate the
+  // query on note save), which would otherwise keep the textarea editable.
+  const [hasInteracted, setHasInteracted] = useState(false);
 
+  // Sync the draft whenever the persisted value changes externally (e.g. after a refetch).
   useEffect(() => {
     setDraft(value ?? '');
   }, [value]);
+
+  /** True when the current draft differs from the persisted value (i.e. unsaved edits). */
+  const isDirty = useMemo(() => draft !== (value ?? ''), [draft, value]);
 
   const validate = useCallback(
     (notes: string): string | null => {
@@ -64,6 +78,7 @@ export const SMNotes: React.FC<SMNotesProps> = ({
   const handleChange = useCallback((next: string) => {
     setDraft(next);
     setError(null);
+    setSaved(false);
   }, []);
 
   const handleSave = useCallback(async () => {
@@ -83,8 +98,8 @@ export const SMNotes: React.FC<SMNotesProps> = ({
       await onSave(draft);
       setSaved(true);
       setError(null);
+      setHasInteracted(true);
       setEditing(false);
-      setTimeout(() => setSaved(false), 2000);
     } catch {
       setSaved(false);
       setError(t('smNotes.saveError'));
@@ -93,20 +108,45 @@ export const SMNotes: React.FC<SMNotesProps> = ({
     }
   }, [draft, onSave, validate, t, disabled]);
 
-  const showForm = editing || (alwaysShow && !value);
+  const startEditing = useCallback(() => {
+    setError(null);
+    setSaved(false);
+    setHasInteracted(true);
+    setEditing(true);
+  }, []);
+
+  const cancelEditing = useCallback(() => {
+    setDraft(value ?? '');
+    setError(null);
+    setSaved(false);
+    setEditing(false);
+  }, [value]);
+
+  // Disabled (e.g. completed event) forces read-only view mode: never show the editable form.
+  const showForm = !disabled && (editing || (alwaysShow && !value && !hasInteracted));
   const hasError = Boolean(error);
+  const saveDisabled = disabled || saving || !isDirty || hasError;
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h3 className={styles.title}>
-          <ClipboardIcon className={styles.icon} />
-          {t('smNotes.title')}
-        </h3>
+        <div className={styles['title-group']}>
+          <h3 className={styles.title}>
+            <ClipboardIcon className={styles.icon} />
+            {t('smNotes.title')}
+          </h3>
+          <span
+            className={`${styles['mode-badge']} ${showForm ? styles['mode-badge-editing'] : styles['mode-badge-viewing']}`}
+            role="status"
+            aria-label={showForm ? t('smNotes.modeEditing') : t('smNotes.modeViewing')}
+          >
+            {showForm ? t('smNotes.modeEditing') : t('smNotes.modeViewing')}
+          </span>
+        </div>
         {!showForm && !disabled && (
-          <button type="button" className={styles.editButton} onClick={() => setEditing(true)}>
+          <Button variant="secondary" size="sm" onClick={startEditing}>
             {t('common:edit')}
-          </button>
+          </Button>
         )}
       </div>
 
@@ -132,36 +172,37 @@ export const SMNotes: React.FC<SMNotesProps> = ({
           )}
           <div className={styles.footer}>
             <span
-              className={`${styles.charCounter} ${draft.length > SM_NOTES_MAX_LENGTH - 200 ? styles['charCounter-warning'] : ''}`}
+              className={`${styles['char-counter']} ${draft.length > SM_NOTES_MAX_LENGTH - 200 ? styles['char-counter-warning'] : ''}`}
               aria-live="polite"
             >
               {t('smNotes.charCounter', { count: draft.length })}
             </span>
             <div className={styles.actions}>
               {!alwaysShow && (
-                <Button
-                  variant="link"
-                  size="sm"
-                  onClick={() => setEditing(false)}
-                  disabled={disabled}
-                >
+                <Button variant="link" size="sm" onClick={cancelEditing} disabled={saving}>
                   {t('common:cancel')}
                 </Button>
               )}
-              {saved && <span className={styles.saved}>{t('smNotes.saved')}</span>}
-              <Button
-                onClick={() => void handleSave()}
-                loading={saving}
-                disabled={saving || disabled}
-              >
-                {!saving && <SaveIcon size={16} className={styles.saveIcon} />}
+              <Button onClick={() => void handleSave()} loading={saving} disabled={saveDisabled}>
+                {!saving && <SaveIcon size={16} className={styles['save-icon']} />}
                 {t('common:save')}
               </Button>
             </div>
           </div>
         </>
       ) : (
-        <p className={styles.notes}>{draft || t('common:noData')}</p>
+        <div className={styles.view}>
+          {saved && (
+            <div className={styles.confirmation} role="status" aria-live="polite">
+              {t('smNotes.saved')}
+            </div>
+          )}
+          {draft ? (
+            <p className={styles.notes}>{draft}</p>
+          ) : (
+            <p className={styles.empty}>{t('common:noData')}</p>
+          )}
+        </div>
       )}
     </div>
   );

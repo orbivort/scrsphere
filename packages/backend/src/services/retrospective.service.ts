@@ -50,6 +50,7 @@ export interface SprintRetrospective {
   status: 'DRAFT' | 'IN_PROGRESS' | 'COMPLETED';
   isAnonymous: boolean;
   summary?: string;
+  smNotes?: string;
   dodEvolutionNotes?: string;
   createdAt: Date;
   updatedAt: Date;
@@ -612,6 +613,7 @@ class RetrospectiveService {
       status: retro.status as SprintRetrospective['status'],
       isAnonymous: retro.isAnonymous,
       summary: retro.summary ?? undefined,
+      smNotes: retro.smNotes ?? undefined,
       dodEvolutionNotes: retro.dodEvolutionNotes ?? undefined,
       createdAt: retro.createdAt,
       updatedAt: retro.updatedAt,

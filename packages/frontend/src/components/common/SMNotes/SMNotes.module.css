@@ -8,6 +8,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.title-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
 }
 
 .title {
@@ -28,18 +36,28 @@
   flex-shrink: 0;
 }
 
-.edit-button {
-  border: var(--border-width-0);
-  background: transparent;
-  color: var(--color-text-link);
-  font-size: var(--font-size-sm);
-  cursor: pointer;
-  padding: var(--space-1);
+/* Mode indicator badge */
+.mode-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-0-5) var(--space-2);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
-.edit-button:hover {
-  color: var(--color-text-link-hover);
-  text-decoration: underline;
+.mode-badge-editing {
+  background: var(--color-primary-100);
+  color: var(--color-primary-700);
+}
+
+.mode-badge-viewing {
+  background: var(--color-background-disabled);
+  color: var(--color-text-secondary);
 }
 
 .textarea {
@@ -71,7 +89,7 @@
 }
 
 .textarea-error {
-  border-color: var(--color-danger-500) !important;
+  border-color: var(--color-error-500) !important;
 }
 
 .textarea-error:focus {
@@ -81,7 +99,7 @@
 .error {
   margin: 0;
   font-size: var(--font-size-xs);
-  color: var(--color-danger-600);
+  color: var(--color-error-600);
 }
 
 .footer {
@@ -131,9 +149,27 @@
   height: 1rem;
 }
 
-.saved {
-  font-size: var(--font-size-xs);
-  color: var(--color-success-600);
+/* Read-only view mode */
+.view {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: var(--input-border-width) solid var(--input-border-color);
+  border-radius: var(--input-border-radius);
+  background: var(--color-background-disabled);
+}
+
+.confirmation {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--input-border-radius);
+  background: var(--color-success-50);
+  color: var(--color-success-700);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
 }
 
 .notes {
@@ -141,4 +177,12 @@
   font-size: var(--font-size-sm);
   color: var(--color-text-primary);
   white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+.empty {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-style: italic;
 }

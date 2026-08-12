@@ -72,6 +72,8 @@
     "charCounter": "{{count}} / 2000 characters",
     "emptyError": "Notes cannot be empty.",
     "maxLengthError": "Notes must be 2000 characters or fewer.",
+    "modeEditing": "Editing",
+    "modeViewing": "Viewing",
     "noHtmlTags": "HTML tags are not allowed in notes.",
     "placeholder": "Record observations, coaching notes, and facilitation insights for the Scrum Team...",
     "saveError": "Failed to save notes",

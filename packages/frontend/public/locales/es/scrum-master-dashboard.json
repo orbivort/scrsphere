@@ -72,6 +72,8 @@
     "charCounter": "{{count}} / 2000 caracteres",
     "emptyError": "Las notas no pueden estar vacías.",
     "maxLengthError": "Las notas deben tener 2000 caracteres o menos.",
+    "modeEditing": "Editando",
+    "modeViewing": "Viendo",
     "noHtmlTags": "No se permiten etiquetas HTML en las notas.",
     "placeholder": "Registre observaciones, notas de coaching y reflexiones de facilitación para el equipo Scrum...",
     "saveError": "No se pudieron guardar las notas",

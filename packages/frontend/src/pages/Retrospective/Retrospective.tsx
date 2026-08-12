@@ -1656,47 +1656,6 @@ export const SprintRetrospective: React.FC = () => {
             />
           </div>
 
-          <AttendeesSection
-            entityId={retrospective.id}
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- sprintId is guaranteed to be defined after the guard at line 969
-            sprintId={sprintId!}
-            attendees={retrospective.attendees}
-            teamMembers={teamMembers}
-            isCompleted={retrospective.status === RetrospectiveStatus.COMPLETED}
-            apiConfig={{
-              addAttendee: (data: AttendeeFormData) =>
-                apiService.addRetroAttendee(retrospective.id, {
-                  name: data.name,
-                  email: data.email,
-                  role: data.role,
-                  attended: data.attended,
-                }),
-              updateAttendee: (id: string, data: AttendeeFormData) =>
-                apiService.updateRetroAttendee(id, {
-                  name: data.name,
-                  email: data.email,
-                  role: data.role,
-                  attended: data.attended,
-                }),
-              deleteAttendee: (id: string) => apiService.deleteRetroAttendee(id),
-            }}
-            queryKey={['retrospective', sprintId] as string[]}
-            defaultRole="stakeholder"
-            onToggleAttendance={(attendeeId, attended) => {
-              updateAttendeeMutation.mutate({ attendeeId, attended });
-            }}
-            onAddTeamMember={(member, attended) => {
-              addAttendeeMutation.mutate({
-                name: `${member.user?.firstName ?? ''} ${member.user?.lastName ?? ''}`.trim(),
-                email: member.user?.email,
-                role: mapTeamRoleToAttendeeRole(member.role),
-                attended,
-              });
-            }}
-            isAdding={addAttendeeMutation.isPending}
-            isUpdating={updateAttendeeMutation.isPending}
-          />
-
           <div className={styles['summary-section']}>
             <div className={styles['summary-header']}>
               <h3>
@@ -1857,6 +1816,47 @@ export const SprintRetrospective: React.FC = () => {
               />
             </div>
           )}
+
+          <AttendeesSection
+            entityId={retrospective.id}
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- sprintId is guaranteed to be defined after the guard at line 969
+            sprintId={sprintId!}
+            attendees={retrospective.attendees}
+            teamMembers={teamMembers}
+            isCompleted={retrospective.status === RetrospectiveStatus.COMPLETED}
+            apiConfig={{
+              addAttendee: (data: AttendeeFormData) =>
+                apiService.addRetroAttendee(retrospective.id, {
+                  name: data.name,
+                  email: data.email,
+                  role: data.role,
+                  attended: data.attended,
+                }),
+              updateAttendee: (id: string, data: AttendeeFormData) =>
+                apiService.updateRetroAttendee(id, {
+                  name: data.name,
+                  email: data.email,
+                  role: data.role,
+                  attended: data.attended,
+                }),
+              deleteAttendee: (id: string) => apiService.deleteRetroAttendee(id),
+            }}
+            queryKey={['retrospective', sprintId] as string[]}
+            defaultRole="stakeholder"
+            onToggleAttendance={(attendeeId, attended) => {
+              updateAttendeeMutation.mutate({ attendeeId, attended });
+            }}
+            onAddTeamMember={(member, attended) => {
+              addAttendeeMutation.mutate({
+                name: `${member.user?.firstName ?? ''} ${member.user?.lastName ?? ''}`.trim(),
+                email: member.user?.email,
+                role: mapTeamRoleToAttendeeRole(member.role),
+                attended,
+              });
+            }}
+            isAdding={addAttendeeMutation.isPending}
+            isUpdating={updateAttendeeMutation.isPending}
+          />
 
           {retrospective.status !== RetrospectiveStatus.COMPLETED && (
             <div className={styles['complete-retro-section']}>

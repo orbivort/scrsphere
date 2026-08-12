@@ -244,7 +244,7 @@ export const smDashboardService = {
         title: a.title,
         dueDate: a.dueDate ? a.dueDate.toISOString() : null,
         overdue: Boolean(a.dueDate && new Date(a.dueDate).getTime() < now),
-        ownerName: a.owner ? `${a.owner.firstName} ${a.owner.lastName}` : '',
+        ownerName: `${a.owner.firstName} ${a.owner.lastName}`,
       }))
       .sort((a, b) => {
         if (!a.dueDate) return 1;

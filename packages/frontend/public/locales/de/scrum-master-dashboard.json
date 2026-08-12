@@ -72,6 +72,8 @@
     "charCounter": "{{count}} / 2000 Zeichen",
     "emptyError": "Notizen dürfen nicht leer sein.",
     "maxLengthError": "Notizen dürfen höchstens 2000 Zeichen lang sein.",
+    "modeEditing": "Bearbeiten",
+    "modeViewing": "Anzeigen",
     "noHtmlTags": "HTML-Tags sind in Notizen nicht erlaubt.",
     "placeholder": "Beobachtungen, Coaching-Notizen und Erkenntnisse zur Moderation für das Scrum-Team festhalten...",
     "saveError": "Notizen konnten nicht gespeichert werden",
