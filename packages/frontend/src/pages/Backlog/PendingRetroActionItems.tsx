@@ -51,7 +51,10 @@ export const PendingRetroActionItems: React.FC<PendingRetroActionItemsProps> = (
 
   const markAddedMutation = useMutation({
     mutationFn: ({ retroId, actionItemId }: { retroId: string; actionItemId: string }) =>
-      apiService.updateActionItem(retroId, actionItemId, { addedToSprintBacklog: true }),
+      apiService.updateActionItem(retroId, actionItemId, {
+        addedToSprintBacklog: true,
+        status: 'COMPLETED',
+      }),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.pendingRetroActionItems.all });
       void queryClient.invalidateQueries({ queryKey: queryKeys.retrospective.allList });

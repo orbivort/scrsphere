@@ -2199,6 +2199,35 @@ describe('Retrospective Component', () => {
         screen.queryByText('This item will be present in the Product Backlog page for action.')
       ).not.toBeInTheDocument();
     });
+
+    it('should show Completed status badge when action item is both added to backlog and COMPLETED', async () => {
+      (apiService.getRetrospectiveBySprintId as ReturnType<typeof vi.fn>).mockResolvedValue({
+        success: true,
+        data: {
+          ...mockRetrospective,
+          actionItems: [
+            {
+              ...mockRetrospective.actionItems[0],
+              id: 'action-completed-in-backlog',
+              title: 'Completed backlog action',
+              status: 'COMPLETED',
+              addedToSprintBacklog: true,
+            },
+          ],
+        },
+      });
+
+      renderWithProviders(<SprintRetrospective />);
+
+      await waitFor(() => {
+        expect(screen.getByText('Completed backlog action')).toBeInTheDocument();
+      });
+
+      // The status badge should say "Completed" (not the "In Backlog" badge),
+      // even though the item was added to the sprint backlog.
+      expect(screen.getByText((content) => content === 'Completed')).toBeInTheDocument();
+      expect(screen.queryByText((content) => content === 'In Backlog')).not.toBeInTheDocument();
+    });
   });
 
   describe('Complete Retrospective - Validation Edge Cases', () => {

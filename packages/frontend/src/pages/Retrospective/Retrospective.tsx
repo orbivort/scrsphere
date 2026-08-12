@@ -1575,15 +1575,14 @@ export const SprintRetrospective: React.FC = () => {
                       <div className={styles['action-item-header']}>
                         <h4>{actionItem.title}</h4>
                         <div className={styles['action-item-badges']}>
-                          {!actionItem.addedToSprintBacklog && (
+                          {actionItem.status === 'COMPLETED' || !actionItem.addedToSprintBacklog ? (
                             <span
                               className={styles['status-badge']}
                               style={{ backgroundColor: statusColor.bg, color: statusColor.text }}
                             >
                               {t(`actionItems.status.${actionItem.status.toUpperCase()}` as never)}
                             </span>
-                          )}
-                          {actionItem.addedToSprintBacklog && (
+                          ) : (
                             <span className={styles['backlog-badge']}>
                               {t('actionItems.inBacklog')}
                             </span>
