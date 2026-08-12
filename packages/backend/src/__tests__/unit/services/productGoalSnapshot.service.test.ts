@@ -35,7 +35,7 @@ describe('ProductGoalSnapshotService', () => {
   });
 
   describe('getProductGoalForReview', () => {
-    it('should return the product goal linked to the review sprint', async () => {
+    it('should return the product goal linked to the review sprint with progress counts', async () => {
       vi.mocked(prisma.sprintReview.findUnique).mockResolvedValue({
         id: 'rev-1',
         reviewDate: new Date(),
@@ -46,11 +46,36 @@ describe('ProductGoalSnapshotService', () => {
           goal: { id: 'goal-1', title: 'Launch', status: 'ACTIVE' },
         },
       } as any);
+      vi.mocked(prisma.productBacklogItem.findMany).mockResolvedValue([
+        { id: 'p1', status: 'DONE', storyPoints: 5 },
+        { id: 'p2', status: 'TO_DO', storyPoints: 3 },
+      ] as any);
 
       const result = await productGoalSnapshotService.getProductGoalForReview('rev-1');
 
       expect(result.productGoal).not.toBeNull();
       expect(result.productGoal?.title).toBe('Launch');
+      expect(result.productGoal?.completedPbiCount).toBe(1);
+      expect(result.productGoal?.totalPbiCount).toBe(2);
+      expect(result.productGoal?.completedStoryPoints).toBe(5);
+      expect(result.productGoal?.totalStoryPoints).toBe(8);
+    });
+
+    it('should return null product goal when the sprint has no linked goal', async () => {
+      vi.mocked(prisma.sprintReview.findUnique).mockResolvedValue({
+        id: 'rev-1',
+        reviewDate: new Date(),
+        sprint: {
+          id: 'sprint-1',
+          name: 'Sprint 1',
+          goalId: null,
+          goal: null,
+        },
+      } as any);
+
+      const result = await productGoalSnapshotService.getProductGoalForReview('rev-1');
+
+      expect(result.productGoal).toBeNull();
     });
 
     it('should throw NotFoundError when review is missing', async () => {

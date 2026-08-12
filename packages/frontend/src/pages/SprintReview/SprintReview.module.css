@@ -1569,15 +1569,50 @@
 }
 
 .sprint-goal-card {
-  background: linear-gradient(135deg, var(--color-primary-100) 0%, var(--color-primary-50) 100%);
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-50) 0%,
+    var(--color-background-card) 100%
+  );
   border: var(--border-width-1) solid var(--color-primary-200);
 }
 
+/* Decorative accent for a stronger, business-grade anchor */
+.sprint-goal-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--border-width-4);
+  background: linear-gradient(
+    90deg,
+    var(--color-primary-500) 0%,
+    var(--color-accent-indigo-500) 100%
+  );
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}
+
 .sprint-goal-card h3 {
-  color: var(--color-primary-600);
+  color: var(--color-primary-700);
+  font-size: var(--font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+  padding-bottom: var(--space-3);
+  margin-bottom: var(--space-3);
+  border-bottom: var(--border-width-1) solid var(--color-primary-100);
+}
+
+.sprint-goal-card h3 svg {
+  width: var(--space-4-5);
+  height: var(--space-4-5);
 }
 
 .sprint-goal-text {
+  position: relative;
+  z-index: var(--z-base);
   font-size: var(--font-size-base);
   color: var(--color-text-primary);
   line-height: var(--line-height-relaxed);
@@ -1585,8 +1620,10 @@
   padding: var(--space-4);
   background: var(--color-background-elevated);
   border-radius: var(--radius-lg);
+  border: var(--border-width-1) solid var(--color-primary-100);
   border-left: var(--border-width-4) solid var(--color-primary-500);
   font-weight: var(--font-weight-medium);
+  box-shadow: var(--shadow-sm);
 }
 
 /* Tablet & Small Desktop (<= 1200px) */

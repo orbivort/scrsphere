@@ -21,6 +21,9 @@ vi.mock('../../../utils/prisma', () => ({
       findUnique: vi.fn(),
       update: vi.fn(),
     },
+    productGoal: {
+      findFirst: vi.fn(),
+    },
     productBacklogItem: {
       findMany: vi.fn(),
       findUnique: vi.fn(),
@@ -350,6 +353,53 @@ describe('SprintService', () => {
       const result = await sprintService.startSprint('sprint-1', 'user-1');
 
       expect(result.status).toBe('ACTIVE');
+    });
+
+    it('should link the active product goal when converting a generated sprint to a sprint', async () => {
+      const mockGeneratedSprint = {
+        id: 'gen-1',
+        teamId: 'team-1',
+        name: 'Sprint 2',
+        startDate: new Date('2024-01-15'),
+        endDate: new Date('2024-01-28'),
+        sprintGoal: 'Goal',
+        status: 'PLANNED',
+        createdBy: 'system',
+        sprintId: null,
+      };
+
+      const mockConvertedSprint = {
+        id: 'sprint-2',
+        teamId: 'team-1',
+        name: 'Sprint 2',
+        startDate: new Date('2024-01-15'),
+        endDate: new Date('2024-01-28'),
+        sprintGoal: 'Goal',
+        goalId: 'goal-active-1',
+        status: 'PLANNED',
+        createdBy: 'system',
+      };
+
+      (prisma.sprint.findUnique as any).mockResolvedValueOnce(null); // no existing Sprint
+      (prisma.generatedSprint.findUnique as any).mockResolvedValueOnce(mockGeneratedSprint);
+      (prisma.productGoal.findFirst as any).mockResolvedValueOnce({ id: 'goal-active-1' });
+      (prisma.sprint.findFirst as any).mockResolvedValue(null);
+      (prisma.sprint.create as any).mockResolvedValue(mockConvertedSprint);
+      (prisma.generatedSprint.update as any).mockResolvedValue(mockGeneratedSprint);
+      (prisma.burndownData.createMany as any).mockResolvedValue({ count: 0 });
+      (prisma.burndownData.findMany as any).mockResolvedValue([]);
+
+      await sprintService.startSprint('gen-1', 'user-1');
+
+      expect(prisma.productGoal.findFirst).toHaveBeenCalledWith({
+        where: { teamId: 'team-1', status: 'ACTIVE' },
+        select: { id: true },
+      });
+      expect(prisma.sprint.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ goalId: 'goal-active-1' }),
+        })
+      );
     });
 
     it('should throw NotFoundError when sprint not found', async () => {

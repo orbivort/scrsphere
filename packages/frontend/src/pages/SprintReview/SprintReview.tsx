@@ -354,8 +354,20 @@ export const SprintReview: React.FC = () => {
   });
 
   const addFeedbackMutation = useMutation({
-    mutationFn: (feedback: Partial<StakeholderFeedback>) =>
-      apiService.addStakeholderFeedback(review?.id ?? '', feedback),
+    mutationFn: async (feedback: Partial<StakeholderFeedback>) => {
+      const reviewId = review?.id ?? '';
+      const result = await apiService.addStakeholderFeedback(reviewId, feedback);
+      // Persist the Product Goal assessment as a snapshot so it can be surfaced
+      // in the Product Goal detail timeline.
+      if (feedback.productGoalAssessment) {
+        await sprintReviewService
+          .submitProductGoalAssessment(reviewId, { assessment: feedback.productGoalAssessment })
+          .catch(() => {
+            // Snapshot creation is best-effort; the feedback itself was saved.
+          });
+      }
+      return result;
+    },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.sprintReview.all });
       setShowFeedbackForm(false);
@@ -965,7 +977,7 @@ export const SprintReview: React.FC = () => {
               </div>
             </div>
 
-            {productGoalData?.data?.productGoal && (
+            {productGoalData?.data?.productGoal ? (
               <div className={`${styles['overview-card']} ${styles['full-width']}`}>
                 <ProductGoalProgress
                   goal={{
@@ -974,8 +986,19 @@ export const SprintReview: React.FC = () => {
                     description: productGoalData.data.productGoal.description,
                     successMetrics: productGoalData.data.productGoal.successMetrics,
                     status: productGoalData.data.productGoal.status,
+                    completedPbiCount: productGoalData.data.productGoal.completedPbiCount,
+                    totalPbiCount: productGoalData.data.productGoal.totalPbiCount,
+                    completedStoryPoints: productGoalData.data.productGoal.completedStoryPoints,
+                    totalStoryPoints: productGoalData.data.productGoal.totalStoryPoints,
                   }}
                 />
+              </div>
+            ) : (
+              <div className={`${styles['overview-card']} ${styles['full-width']}`}>
+                <h3>
+                  <TargetIcon /> {t('overview.productGoal')}
+                </h3>
+                <p className={styles['sprint-goal-text']}>{t('overview.noProductGoal')}</p>
               </div>
             )}
 

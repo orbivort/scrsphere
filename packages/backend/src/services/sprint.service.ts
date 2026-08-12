@@ -662,6 +662,16 @@ class SprintService {
     const sprintId = generateUUIDv7();
     const creatorId = userId ?? generatedSprint.createdBy ?? 'system';
 
+    // Link the team's active Product Goal (if any) so the Sprint Review page can
+    // surface Product Goal progress during the review.
+    const activeGoal = await prisma.productGoal.findFirst({
+      where: {
+        teamId: generatedSprint.teamId,
+        status: 'ACTIVE',
+      },
+      select: { id: true },
+    });
+
     const sprint = await prisma.sprint.create({
       data: {
         id: sprintId,
@@ -670,6 +680,7 @@ class SprintService {
         startDate: generatedSprint.startDate,
         endDate: generatedSprint.endDate,
         sprintGoal: generatedSprint.sprintGoal,
+        goalId: activeGoal?.id ?? null,
         status: 'PLANNED',
         createdBy: creatorId,
       },

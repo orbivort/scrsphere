@@ -37,12 +37,34 @@ export const productGoalSnapshotService = {
       throw new NotFoundError('Sprint Review');
     }
 
+    const goal = review.sprint.goal;
+    let progress = {
+      completedPbiCount: 0,
+      totalPbiCount: 0,
+      completedStoryPoints: 0,
+      totalStoryPoints: 0,
+    };
+
+    if (goal) {
+      const backlogItems = await prisma.productBacklogItem.findMany({
+        where: { goalId: goal.id },
+        select: { status: true, storyPoints: true },
+      });
+      const completedItems = backlogItems.filter((b) => b.status === 'DONE');
+      progress = {
+        completedPbiCount: completedItems.length,
+        totalPbiCount: backlogItems.length,
+        completedStoryPoints: completedItems.reduce((sum, b) => sum + (b.storyPoints ?? 0), 0),
+        totalStoryPoints: backlogItems.reduce((sum, b) => sum + (b.storyPoints ?? 0), 0),
+      };
+    }
+
     return {
       reviewId: review.id,
       reviewDate: review.reviewDate,
       sprintId: review.sprint.id,
       sprintName: review.sprint.name,
-      productGoal: review.sprint.goal ?? null,
+      productGoal: goal ? { ...goal, ...progress } : null,
     };
   },
 

@@ -123,6 +123,10 @@ class SprintReviewService {
         description?: string;
         successMetrics?: string;
         status: string;
+        completedPbiCount: number;
+        totalPbiCount: number;
+        completedStoryPoints: number;
+        totalStoryPoints: number;
       } | null;
     }>
   > {

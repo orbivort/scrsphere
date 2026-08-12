@@ -122,11 +122,11 @@ describe('ProductGoalProgress Component', () => {
       expect(pbiBar.size).toBe('small');
     });
 
-    it('passes primary variant to the story points progress bar', () => {
+    it('passes accent variant to the story points progress bar', () => {
       render(<ProductGoalProgress goal={createGoal()} />);
 
       const storyBar = progressBarProps[1];
-      expect(storyBar.variant).toBe('primary');
+      expect(storyBar.variant).toBe('accent');
       expect(storyBar.size).toBe('small');
     });
   });
