@@ -141,6 +141,7 @@ export default defineConfig(({ mode }) => {
           'src/__mocks__/',
           'src/services/mockApi.ts',
           'src/services/mockData.ts',
+          'src/services/mockSmDashboard.service.ts',
           'src/services/mockSmDashboardData.ts',
           'src/services/mockDataUtils.ts',
           'src/services/mockErrorSimulation.ts',
