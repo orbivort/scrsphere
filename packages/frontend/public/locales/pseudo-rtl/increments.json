@@ -10,7 +10,8 @@
       "createIncrement": "Create Increment",
       "creating": "Creating...",
       "delivering": "Delivering...",
-      "skipToSprintReview": "Skip to Sprint Review"
+      "skipToSprintReview": "Skip to Sprint Review",
+      "verifying": "Verifying integration..."
     },
     "backToIncrements": "Back to Increments",
     "backToSprintReview": "Back to Sprint Review",
@@ -43,7 +44,8 @@
     "progressSteps": {
       "creatingIncrement": "Creating Increment...",
       "deliveringIncrement": "Delivering Increment...",
-      "redirecting": "Redirecting..."
+      "redirecting": "Redirecting...",
+      "verifyingIntegration": "Verifying Integration..."
     },
     "summary": {
       "pbisSelected": "PBIs Selected",
@@ -58,7 +60,10 @@
       "createdSuccess": "Increment created successfully!",
       "deliverFailed": "Failed to deliver increment. You can deliver it manually from the increment detail page.",
       "deliveredSuccess": "Increment delivered! Redirecting to Sprint Review...",
-      "validationFailed": "Validation failed"
+      "integrationRequired": "Integration verification is required before this increment can be delivered. Add integration tests against prior increments, then verify and deliver.",
+      "validationFailed": "Validation failed",
+      "verificationFailed": "Failed to verify integration. You can verify and deliver it manually from the increment detail page.",
+      "verifyingIntegration": "Integration verified! Delivering increment..."
     },
     "validation": {
       "atLeastOnePbi": "At least one PBI must be selected",

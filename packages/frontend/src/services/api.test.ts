@@ -179,6 +179,7 @@ vi.mock('./domain/increment.service', () => ({
     createIncrement: vi.fn().mockResolvedValue({ data: {} }),
     updateIncrement: vi.fn().mockResolvedValue({}),
     deliverIncrement: vi.fn().mockResolvedValue({}),
+    verifyIntegration: vi.fn().mockResolvedValue({ data: {} }),
     getIncrementMetrics: vi.fn().mockResolvedValue({ data: {} }),
   },
 }));

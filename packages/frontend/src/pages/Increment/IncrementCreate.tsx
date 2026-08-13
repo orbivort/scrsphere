@@ -53,7 +53,7 @@ export const IncrementCreate: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
-  const { toasts, success, error: showError, removeToast } = useToast();
+  const { toasts, success, error: showError, warning: showWarning, removeToast } = useToast();
   const { currentTeam } = useTeamContext();
   const { user } = useAuthStore();
   const { locale } = useI18nStore();
@@ -71,7 +71,7 @@ export const IncrementCreate: React.FC = () => {
 
   // Workflow state
   const [workflowStep, setWorkflowStep] = useState<
-    'creating' | 'delivering' | 'redirecting' | null
+    'creating' | 'verifying' | 'delivering' | 'redirecting' | null
   >(fromSprintComplete ? 'creating' : null);
 
   // Query: Get sprint data (for workflow mode or when sprint is pre-selected)
@@ -163,27 +163,43 @@ export const IncrementCreate: React.FC = () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.increment.all });
 
       if (fromSprintComplete && response.data?.id) {
-        setWorkflowStep('delivering');
+        setWorkflowStep('verifying');
         success(t('create.toast.createdAndDelivering'));
 
-        try {
-          await deliverMutation.mutateAsync(response.data.id);
-          setWorkflowStep('redirecting');
-          success(t('create.toast.deliveredSuccess'));
+        const redirectToDetail = () => {
+          void navigate(
+            `/increment/${response.data?.id}?fromSprintComplete=true&sprintId=${selectedSprintId}`
+          );
+        };
 
-          setTimeout(() => {
-            void navigate(`/sprint-review/${selectedSprintId}`);
-          }, 1500);
+        try {
+          const verification = await apiService.verifyIntegration(response.data.id);
+          const allPassed = verification.data?.allPassed;
+
+          if (allPassed) {
+            setWorkflowStep('delivering');
+            try {
+              await deliverMutation.mutateAsync(response.data.id);
+              setWorkflowStep('redirecting');
+              success(t('create.toast.deliveredSuccess'));
+
+              setTimeout(() => {
+                void navigate(`/sprint-review/${selectedSprintId}`);
+              }, 1500);
+            } catch (_error) {
+              setWorkflowStep(null);
+              showError(t('create.toast.deliverFailed'));
+              redirectToDetail();
+            }
+          } else {
+            setWorkflowStep(null);
+            showWarning(t('create.toast.integrationRequired'));
+            redirectToDetail();
+          }
         } catch (_error) {
           setWorkflowStep(null);
-          showError(t('create.toast.deliverFailed'));
-          if (response.data.id) {
-            void navigate(
-              `/increment/${response.data.id}?fromSprintComplete=true&sprintId=${selectedSprintId}`
-            );
-          } else {
-            void navigate('/increments');
-          }
+          showWarning(t('create.toast.verificationFailed'));
+          redirectToDetail();
         }
       } else {
         success(t('create.toast.createdSuccess'));
@@ -414,7 +430,7 @@ export const IncrementCreate: React.FC = () => {
                 <span className={styles['workflow-step']}>
                   {workflowStep === 'creating'
                     ? t('create.workflowIndicator.step2Of4')
-                    : workflowStep === 'delivering'
+                    : workflowStep === 'verifying' || workflowStep === 'delivering'
                       ? t('create.workflowIndicator.step3Of4')
                       : workflowStep === 'redirecting'
                         ? t('create.workflowIndicator.step4Of4')
@@ -460,7 +476,7 @@ export const IncrementCreate: React.FC = () => {
               </div>
               <div
                 className={`${styles['progress-step']} ${
-                  workflowStep === 'delivering'
+                  workflowStep === 'verifying' || workflowStep === 'delivering'
                     ? styles.active
                     : workflowStep === 'redirecting'
                       ? styles.completed
@@ -468,7 +484,7 @@ export const IncrementCreate: React.FC = () => {
                 }`}
               >
                 <span className={styles['step-number']}>
-                  {workflowStep === 'delivering' ? (
+                  {workflowStep === 'verifying' || workflowStep === 'delivering' ? (
                     <ClockIcon size={12} />
                   ) : workflowStep === 'redirecting' ? (
                     <CheckIcon size={12} strokeWidth={3} />
@@ -477,11 +493,13 @@ export const IncrementCreate: React.FC = () => {
                   )}
                 </span>
                 <span className={styles['step-label']}>
-                  {workflowStep === 'delivering'
-                    ? t('create.progressSteps.deliveringIncrement')
-                    : workflowStep === 'redirecting'
-                      ? t('create.progressSteps.redirecting')
-                      : t('create.workflowSteps.deliverIncrement')}
+                  {workflowStep === 'verifying'
+                    ? t('create.progressSteps.verifyingIntegration')
+                    : workflowStep === 'delivering'
+                      ? t('create.progressSteps.deliveringIncrement')
+                      : workflowStep === 'redirecting'
+                        ? t('create.progressSteps.redirecting')
+                        : t('create.workflowSteps.deliverIncrement')}
                 </span>
               </div>
               <div
@@ -688,7 +706,16 @@ export const IncrementCreate: React.FC = () => {
                     className={`${styles.button} ${styles['button-primary']}`}
                     disabled={createMutation.isPending || deliverMutation.isPending}
                   >
-                    {createMutation.isPending ? (
+                    {workflowStep === 'verifying' ? (
+                      <>
+                        <LoadingState
+                          variant="spinner"
+                          size="sm"
+                          label={t('create.actions.verifying')}
+                        />
+                        <span>{t('create.actions.verifying')}</span>
+                      </>
+                    ) : createMutation.isPending ? (
                       <>
                         <LoadingState
                           variant="spinner"

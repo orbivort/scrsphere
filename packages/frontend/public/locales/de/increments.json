@@ -10,7 +10,8 @@
       "createIncrement": "Increment erstellen",
       "creating": "Erstellen...",
       "delivering": "Liefern...",
-      "skipToSprintReview": "Zum Sprint Review springen"
+      "skipToSprintReview": "Zum Sprint Review springen",
+      "verifying": "Integration wird verifiziert..."
     },
     "backToIncrements": "Zurück zu Increments",
     "backToSprintReview": "Zurück zum Sprint Review",
@@ -43,7 +44,8 @@
     "progressSteps": {
       "creatingIncrement": "Increment wird erstellt...",
       "deliveringIncrement": "Increment wird geliefert...",
-      "redirecting": "Weiterleitung..."
+      "redirecting": "Weiterleitung...",
+      "verifyingIntegration": "Integration wird verifiziert..."
     },
     "summary": {
       "pbisSelected": "PBIs ausgewählt",
@@ -58,7 +60,10 @@
       "createdSuccess": "Increment erfolgreich erstellt!",
       "deliverFailed": "Increment konnte nicht geliefert werden. Sie können es manuell über die Increment-Detailseite liefern.",
       "deliveredSuccess": "Increment geliefert! Weiterleitung zum Sprint Review...",
-      "validationFailed": "Validierung fehlgeschlagen"
+      "integrationRequired": "Eine Integrationsverifizierung ist erforderlich, bevor dieses Increment geliefert werden kann. Fügen Sie Integrationstests gegenüber früheren Increments hinzu, verifizieren Sie dann und liefern Sie.",
+      "validationFailed": "Validierung fehlgeschlagen",
+      "verificationFailed": "Integrationsverifizierung fehlgeschlagen. Sie können sie manuell über die Increment-Detailseite verifizieren und liefern.",
+      "verifyingIntegration": "Integration verifiziert! Increment wird geliefert..."
     },
     "validation": {
       "atLeastOnePbi": "Mindestens ein PBI muss ausgewählt werden",

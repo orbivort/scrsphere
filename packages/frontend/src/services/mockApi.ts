@@ -1991,6 +1991,27 @@ class MockApiService {
     return { success: true, data: this.incrementsStore[index] as Increment };
   }
 
+  async verifyIntegration(_incrementId: string): Promise<
+    ApiResponse<{
+      integrationVerified: boolean;
+      priorCount: number;
+      allPassed: boolean;
+      missingTests?: string[];
+      failedTests?: string[];
+    }>
+  > {
+    await delay(300);
+    // Mock always returns a verified, all-passed result so the workflow fast path is preserved in dev.
+    return {
+      success: true,
+      data: {
+        integrationVerified: true,
+        priorCount: 0,
+        allPassed: true,
+      },
+    };
+  }
+
   async getIncrementMetrics(_teamId: string): Promise<ApiResponse<IncrementMetrics>> {
     await delay(300);
     return {

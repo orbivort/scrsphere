@@ -10,7 +10,8 @@
       "createIncrement": "[Créàté Íncréméntttttt]",
       "creating": "[CCrrééààttíínng...]",
       "delivering": "[Délívérínggggg...]",
-      "skipToSprintReview": "[Skíp tó Sprínt Révíéwwwwwwww]"
+      "skipToSprintReview": "[Skíp tó Sprínt Révíéwwwwwwww]",
+      "verifying": "[Vérífýíng íntégrátíónnnnn...]"
     },
     "backToIncrements": "[Bàck tó Íncréméntsssssss]",
     "backToSprintReview": "[Bàck tó Sprínt Révíéwwwwwwww]",
@@ -43,7 +44,8 @@
     "progressSteps": {
       "creatingIncrement": "[Créàtíng Íncréméntttttttt...]",
       "deliveringIncrement": "[Délívéríng Íncréméntttttttt...]",
-      "redirecting": "[Rédíréctíngggggg...]"
+      "redirecting": "[Rédíréctíngggggg...]",
+      "verifyingIntegration": "[Vérífýíng Íntégrátíónnnnnnn...]"
     },
     "summary": {
       "pbisSelected": "[PBÍs Séléctéddddd]",
@@ -58,7 +60,10 @@
       "createdSuccess": "[Íncrémént créàtéd súccéssfúllyyyyyyyyyyy!]",
       "deliverFailed": "[Fàíléd tó délívér íncrémént. Yóú càn délívér ít mànúàlly fróm thé íncrémént détàíl pàgéééééééééééééééééééééééééééé.]",
       "deliveredSuccess": "[Íncrémént délívéréd! Rédíréctíng tó Sprínt Révíéwwwwwwwwwwwwwwwww...]",
-      "validationFailed": "[Vàlídàtíón fàíléddddddd]"
+      "integrationRequired": "[Íntégrátíón vérífícàtíón ís réqúíréd béfóré thís íncrémént càn bé délívéréd. Àdd íntégrátíón tésts àgàínst príór íncréménts, théén vérífý ànd délívérrr.]",
+      "validationFailed": "[Vàlídàtíón fàíléddddddd]",
+      "verificationFailed": "[Fàíléd tó vérífý íntégrátíón. Yóú càn vérífý ànd délívér ít mànúàlly fróm thé íncrémént détàíl pàgéééééééééééééééééééééééééééééééé.]",
+      "verifyingIntegration": "[Íntégrátíón vérífýíng! Délívéríng íncréméntttttttttttttttt...]"
     },
     "validation": {
       "atLeastOnePbi": "[Àt léàst óné PBÍ múst bé séléctéddddddddddd]",

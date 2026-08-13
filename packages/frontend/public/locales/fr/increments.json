@@ -10,7 +10,8 @@
       "createIncrement": "Créer l'Increment",
       "creating": "Création...",
       "delivering": "Livraison...",
-      "skipToSprintReview": "Passer à la Sprint Review"
+      "skipToSprintReview": "Passer à la Sprint Review",
+      "verifying": "Vérification de l'intégration..."
     },
     "backToIncrements": "Retour aux Increments",
     "backToSprintReview": "Retour à la Sprint Review",
@@ -43,7 +44,8 @@
     "progressSteps": {
       "creatingIncrement": "Création de l'Increment...",
       "deliveringIncrement": "Livraison de l'Increment...",
-      "redirecting": "Redirection..."
+      "redirecting": "Redirection...",
+      "verifyingIntegration": "Vérification de l'intégration..."
     },
     "summary": {
       "pbisSelected": "PBIs sélectionnés",
@@ -58,7 +60,10 @@
       "createdSuccess": "Increment créé avec succès !",
       "deliverFailed": "Impossible de livrer l'Increment. Vous pouvez le livrer manuellement depuis la page de détail de l'Increment.",
       "deliveredSuccess": "Increment livré ! Redirection vers la Sprint Review...",
-      "validationFailed": "Validation échouée"
+      "integrationRequired": "La vérification de l'intégration est requise avant de pouvoir livrer cet Increment. Ajoutez des tests d'intégration contre les Increments précédents, puis vérifiez et livrez.",
+      "validationFailed": "Validation échouée",
+      "verificationFailed": "Échec de la vérification de l'intégration. Vous pouvez la vérifier et la livrer manuellement depuis la page de détail de l'Increment.",
+      "verifyingIntegration": "Intégration vérifiée ! Livraison de l'Increment..."
     },
     "validation": {
       "atLeastOnePbi": "Au moins un PBI doit être sélectionné",
