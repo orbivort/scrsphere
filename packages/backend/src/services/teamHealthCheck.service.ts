@@ -199,4 +199,31 @@ export const teamHealthCheckService = {
 
     return this.getResults(latest.id);
   },
+
+  /**
+   * Latest health check status for a team (member-open lookup). Only exposes
+   * the health check identity and its OPEN/CLOSED status so regular members
+   * can discover an open survey without accessing SM-gated aggregated results.
+   */
+  async getLatestStatusForTeam(teamId: string) {
+    const latest = await prisma.teamHealthCheck.findFirst({
+      where: { teamId },
+      select: {
+        id: true,
+        status: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    if (!latest) {
+      return null;
+    }
+
+    return {
+      healthCheckId: latest.id,
+      status: latest.status,
+      createdAt: latest.createdAt.toISOString(),
+    };
+  },
 };

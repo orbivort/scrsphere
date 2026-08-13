@@ -226,4 +226,48 @@ describe('HealthCheckService', () => {
       await expect(healthCheckService.getTrend('team-1')).rejects.toThrow('Unauthorized');
     });
   });
+
+  describe('getLatest', () => {
+    it('should return the latest health check status for a team', async () => {
+      const mockResponse = {
+        data: {
+          success: true as const,
+          data: {
+            healthCheckId: 'hc-1',
+            status: HealthCheckStatus.OPEN,
+            createdAt: '2024-01-15T00:00:00Z',
+          },
+        },
+      };
+      vi.mocked(mockApi.get).mockResolvedValue(mockResponse);
+
+      const result = await healthCheckService.getLatest('team-1');
+
+      expect(mockApi.get).toHaveBeenCalledWith('/teams/team-1/health-checks/latest');
+      expect(result.success).toBe(true);
+      expect(result.data?.healthCheckId).toBe('hc-1');
+      expect(result.data?.status).toBe(HealthCheckStatus.OPEN);
+    });
+
+    it('should return null when the team has no health checks', async () => {
+      const mockResponse = {
+        data: {
+          success: true as const,
+          data: null,
+        },
+      };
+      vi.mocked(mockApi.get).mockResolvedValue(mockResponse);
+
+      const result = await healthCheckService.getLatest('team-1');
+
+      expect(result.success).toBe(true);
+      expect(result.data).toBeNull();
+    });
+
+    it('should handle latest fetch errors', async () => {
+      vi.mocked(mockApi.get).mockRejectedValue(new Error('Not found'));
+
+      await expect(healthCheckService.getLatest('team-1')).rejects.toThrow('Not found');
+    });
+  });
 });

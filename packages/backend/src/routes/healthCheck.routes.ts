@@ -1,7 +1,8 @@
 import { Router, type Router as RouterType } from 'express';
 import * as healthCheckController from '../controllers/teamHealthCheck.controller';
-import { authenticate } from '../middleware/auth.middleware';
+import { authenticate, requireRoles } from '../middleware/auth.middleware';
 import { validateParams, validateBody } from '../middleware/validation.middleware';
+import { UserRole } from '@scrumooth/shared';
 import { z } from 'zod';
 
 const router: RouterType = Router();
@@ -30,6 +31,11 @@ router.post(
   healthCheckController.submitResponses
 );
 
-router.get('/:id/results', validateParams(idSchema), healthCheckController.getResults);
+router.get(
+  '/:id/results',
+  validateParams(idSchema),
+  requireRoles(UserRole.SCRUM_MASTER),
+  healthCheckController.getResults
+);
 
 export default router;

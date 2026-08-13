@@ -427,4 +427,39 @@ describe('TeamHealthCheckService', () => {
       expect(result).toEqual({ healthCheckId: 'hc-latest', overallAverage: 4 });
     });
   });
+
+  describe('getLatestStatusForTeam', () => {
+    it('should return null when the team has no health checks', async () => {
+      vi.mocked(prisma.teamHealthCheck.findFirst).mockResolvedValue(null as any);
+
+      const result = await teamHealthCheckService.getLatestStatusForTeam('team-1');
+
+      expect(result).toBeNull();
+      expect(prisma.teamHealthCheck.findFirst).toHaveBeenCalledWith({
+        where: { teamId: 'team-1' },
+        select: {
+          id: true,
+          status: true,
+          createdAt: true,
+        },
+        orderBy: { createdAt: 'desc' },
+      });
+    });
+
+    it('should return the latest health check identity and status only', async () => {
+      vi.mocked(prisma.teamHealthCheck.findFirst).mockResolvedValue({
+        id: 'hc-latest',
+        status: 'OPEN',
+        createdAt: new Date('2024-02-01T10:00:00.000Z'),
+      } as any);
+
+      const result = await teamHealthCheckService.getLatestStatusForTeam('team-1');
+
+      expect(result).toEqual({
+        healthCheckId: 'hc-latest',
+        status: 'OPEN',
+        createdAt: '2024-02-01T10:00:00.000Z',
+      });
+    });
+  });
 });

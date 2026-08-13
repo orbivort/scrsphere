@@ -42,3 +42,12 @@ export const getTrend = asyncHandler(async (req: Request, res: Response) => {
   const trend = await teamHealthCheckService.getTrend(teamId);
   res.json(createSuccessResponse(trend));
 });
+
+export const getLatestStatus = asyncHandler(async (req: Request, res: Response) => {
+  const teamId = getParamValue(req.params.teamId ?? req.params.id);
+  if (!teamId) {
+    throw new BadRequestError('Team ID is required');
+  }
+  const latest = await teamHealthCheckService.getLatestStatusForTeam(teamId);
+  res.json(createSuccessResponse(latest));
+});

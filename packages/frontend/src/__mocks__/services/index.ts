@@ -125,6 +125,7 @@ export const healthCheckService: Record<string, Mock<AnyFn>> = {
   getResults: vi.fn(),
   submitResponses: vi.fn(),
   getTrend: vi.fn(),
+  getLatest: vi.fn(),
 };
 
 export const definitionService: Record<string, Mock<AnyFn>> = {

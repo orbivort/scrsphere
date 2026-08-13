@@ -4,6 +4,7 @@ import {
   submitResponses,
   getResults,
   getTrend,
+  getLatestStatus,
 } from '../../../controllers/teamHealthCheck.controller';
 import { teamHealthCheckService } from '../../../services/teamHealthCheck.service';
 import { createMockRequest, createMockResponse, createMockNext } from '../../setup/testSetup';
@@ -14,6 +15,7 @@ vi.mock('../../../services/teamHealthCheck.service', () => ({
     submitResponses: vi.fn(),
     getResults: vi.fn(),
     getTrend: vi.fn(),
+    getLatestStatusForTeam: vi.fn(),
   },
 }));
 
@@ -255,6 +257,66 @@ describe('Team Health Check Controller', () => {
       (teamHealthCheckService.getTrend as any).mockRejectedValue(error);
 
       getTrend(mockReq as any, mockRes as any, mockNext);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(mockNext).toHaveBeenCalledWith(error);
+    });
+  });
+
+  describe('getLatestStatus', () => {
+    it('should return the latest health check status for a team via teamId param', async () => {
+      mockReq.params = { teamId: 'team-123' };
+      const mockLatest = {
+        healthCheckId: 'hc-1',
+        status: 'OPEN',
+        createdAt: '2024-01-01T00:00:00Z',
+      };
+
+      (teamHealthCheckService.getLatestStatusForTeam as any).mockResolvedValue(mockLatest);
+
+      getLatestStatus(mockReq as any, mockRes as any, mockNext);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(mockNext).not.toHaveBeenCalled();
+      expect(teamHealthCheckService.getLatestStatusForTeam).toHaveBeenCalledWith('team-123');
+      expect(mockRes._json).toEqual({
+        success: true,
+        data: mockLatest,
+      });
+    });
+
+    it('should return null when no health check exists for the team', async () => {
+      mockReq.params = { teamId: 'team-123' };
+
+      (teamHealthCheckService.getLatestStatusForTeam as any).mockResolvedValue(null);
+
+      getLatestStatus(mockReq as any, mockRes as any, mockNext);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(teamHealthCheckService.getLatestStatusForTeam).toHaveBeenCalledWith('team-123');
+      expect(mockRes._json).toEqual({
+        success: true,
+        data: null,
+      });
+    });
+
+    it('should throw error when team ID is missing', async () => {
+      mockReq.params = {};
+
+      getLatestStatus(mockReq as any, mockRes as any, mockNext);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(mockNext).toHaveBeenCalledWith(expect.any(Error));
+      expect((mockNext.mock.calls[0] as any)[0].message).toBe('Team ID is required');
+    });
+
+    it('should handle service errors', async () => {
+      mockReq.params = { teamId: 'team-123' };
+      const error = new Error('Database error');
+
+      (teamHealthCheckService.getLatestStatusForTeam as any).mockRejectedValue(error);
+
+      getLatestStatus(mockReq as any, mockRes as any, mockNext);
       await new Promise((resolve) => setTimeout(resolve, 0));
 
       expect(mockNext).toHaveBeenCalledWith(error);

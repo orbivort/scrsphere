@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { AxiosError } from 'axios';
 import { formatLocaleDate } from '@scrumooth/shared';
 
-import { apiService } from '../../services';
+import { apiService, healthCheckService } from '../../services';
 import { useTeamStore, useAuthStore } from '../../store';
 import { logger } from '../../utils/logger';
 import { TeamSwitcher } from '../../components/TeamSwitcher/TeamSwitcher';
@@ -40,7 +40,9 @@ import {
   TrashIcon,
 } from '../../components/common/Icons';
 import { queryKeys } from '../../hooks/queryKeys';
+import { HealthCheckSurvey } from '../../components/common/HealthCheckSurvey';
 import type { Team, TeamMember, ApiResponse, TeamMetrics, SprintHistoryItem } from '../../types';
+import { HealthCheckStatus } from '../../types';
 
 import { MemberCard } from './MemberCard';
 import styles from './Team.module.css';
@@ -137,6 +139,7 @@ export const TeamManagement: React.FC = () => {
   const [roleFilter, setRoleFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'name' | 'role' | 'joined'>('name');
   const [viewMode, setViewMode] = useState<'card' | 'list'>('card');
+  const [showHealthCheck, setShowHealthCheck] = useState(false);
 
   const cancelButtonRef = useRef<HTMLButtonElement>(null);
   const inviteCancelButtonRef = useRef<HTMLButtonElement>(null);
@@ -534,6 +537,24 @@ export const TeamManagement: React.FC = () => {
     enabled: !!teamId && !isUninvitedUser,
     staleTime: 5 * 60 * 1000,
   });
+
+  const { data: healthCheckLatestData } = useQuery<
+    ApiResponse<{ healthCheckId: string; status: HealthCheckStatus; createdAt: string } | null>,
+    Error
+  >({
+    queryKey: queryKeys.healthCheck.latest(teamId ?? ''),
+    queryFn: () => {
+      if (!teamId || isUninvitedUser) {
+        throw new Error('No team available');
+      }
+      return healthCheckService.getLatest(teamId);
+    },
+    enabled: !!teamId && !isUninvitedUser,
+    staleTime: 60 * 1000,
+  });
+
+  const latestHealthCheck = healthCheckLatestData?.success ? healthCheckLatestData.data : null;
+  const hasOpenHealthCheck = latestHealthCheck?.status === HealthCheckStatus.OPEN;
 
   const { data: sprintHistoryData } = useQuery<ApiResponse<SprintHistoryItem[]>, Error>({
     queryKey: ['sprintHistory', teamId],
@@ -999,6 +1020,34 @@ export const TeamManagement: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {hasOpenHealthCheck && (
+        <section className={styles['health-check']} aria-label={t('healthCheck.sectionTitle')}>
+          <div className={styles['health-check-header']}>
+            <h3 className={styles['health-check-title']}>
+              <SparklesIcon size={18} />
+              {t('healthCheck.sectionTitle')}
+            </h3>
+            <button
+              type="button"
+              className={styles['health-check-toggle']}
+              onClick={() => setShowHealthCheck((prev) => !prev)}
+              aria-expanded={showHealthCheck}
+              aria-controls="team-health-check-survey"
+            >
+              {showHealthCheck ? t('healthCheck.collapse') : t('healthCheck.expand')}
+            </button>
+          </div>
+          {showHealthCheck && (
+            <div id="team-health-check-survey" className={styles['health-check-body']}>
+              <HealthCheckSurvey
+                teamId={teamId ?? ''}
+                healthCheckId={latestHealthCheck.healthCheckId}
+              />
+            </div>
+          )}
+        </section>
+      )}
 
       {memberToDelete && (
         <div className={styles['modal-overlay']} role="presentation">

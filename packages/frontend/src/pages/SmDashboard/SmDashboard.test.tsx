@@ -296,7 +296,7 @@ describe('SmDashboard', () => {
       });
     });
 
-    it('should create a new health check and show the survey', async () => {
+    it('should create a new health check', async () => {
       (smDashboardService.getDashboard as vi.Mock).mockResolvedValue(mockDashboardResponse());
       (healthCheckService.getTrend as vi.Mock).mockResolvedValue({
         success: true as const,
@@ -317,10 +317,26 @@ describe('SmDashboard', () => {
       fireEvent.click(screen.getByText(i18nT('scrum-master-dashboard:healthCheck.createNew')));
 
       await waitFor(() => {
-        expect(screen.getByTestId('health-check-survey')).toBeInTheDocument();
+        expect(healthCheckService.createHealthCheck).toHaveBeenCalledWith('team-1');
+      });
+    });
+
+    it('should not render the survey on the dashboard (it lives on the Team page)', async () => {
+      (smDashboardService.getDashboard as vi.Mock).mockResolvedValue(mockDashboardResponse());
+      (healthCheckService.getTrend as vi.Mock).mockResolvedValue({
+        success: true as const,
+        data: [],
       });
 
-      expect(healthCheckService.createHealthCheck).toHaveBeenCalledWith('team-1');
+      renderComponent();
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(i18nT('scrum-master-dashboard:smDashboard.healthCheck'))
+        ).toBeInTheDocument();
+      });
+
+      expect(screen.queryByTestId('health-check-survey')).not.toBeInTheDocument();
     });
   });
 

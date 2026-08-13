@@ -14,12 +14,14 @@ import {
   mockEventSchedule,
   mockHealthCheckDetails,
   mockHealthCheckTrend,
+  mockHealthCheckLatest,
 } from './mockSmDashboardData';
 import type { SmDashboardData, EventSchedule } from './domain/smDashboard.service';
 import type {
   HealthCheckResponsePayload,
   HealthCheckResults,
   HealthCheckTrendItem,
+  HealthCheckLatest,
 } from './domain/healthCheck.service';
 
 export class MockSmDashboardService {
@@ -85,6 +87,11 @@ export class MockHealthCheckService {
   async getTrend(_teamId: string): Promise<ApiResponse<HealthCheckTrendItem[]>> {
     await mockDelay(300);
     return { success: true, data: mockHealthCheckTrend };
+  }
+
+  async getLatest(_teamId: string): Promise<ApiResponse<HealthCheckLatest | null>> {
+    await mockDelay(200);
+    return { success: true, data: mockHealthCheckLatest };
   }
 }
 

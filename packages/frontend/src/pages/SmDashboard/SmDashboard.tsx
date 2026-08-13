@@ -1,7 +1,7 @@
 // Scrum Master Facilitation Dashboard
 // Aggregates Scrum event compliance, impediment health, DoD adherence, Sprint
 // Goal achievement, retrospective action items, and Scrum Values health.
-import React, { useState } from 'react';
+import React from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 
@@ -9,7 +9,6 @@ import { useTeamContext } from '../../contexts/TeamContext';
 import { smDashboardService, healthCheckService } from '../../services';
 import { LoadingState } from '../../components/common/Loading';
 import { ScrumValuesBanner } from '../../components/common/ScrumValuesBanner';
-import { HealthCheckSurvey } from '../../components/common/HealthCheckSurvey';
 import { ShieldIcon } from '../../components/common/Icons';
 
 import { DoDTrendChart } from './DoDTrendChart';
@@ -21,7 +20,6 @@ const SmDashboardContent: React.FC = () => {
   const { t } = useTranslation(['scrum-master-dashboard', 'common']);
   const { currentTeam } = useTeamContext();
   const queryClient = useQueryClient();
-  const [showSurvey, setShowSurvey] = useState(false);
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['sm-dashboard', currentTeam?.id],
@@ -54,7 +52,6 @@ const SmDashboardContent: React.FC = () => {
       return healthCheckService.createHealthCheck(currentTeam.id);
     },
     onSuccess: (res) => {
-      setShowSurvey(true);
       void queryClient.invalidateQueries({ queryKey: ['sm-dashboard', currentTeam?.id] });
       return res;
     },
@@ -193,13 +190,6 @@ const SmDashboardContent: React.FC = () => {
               {t('healthCheck.createNew')}
             </button>
           </div>
-
-          {showSurvey && currentTeam?.id && dashboard.healthCheck && (
-            <HealthCheckSurvey
-              teamId={currentTeam.id}
-              healthCheckId={dashboard.healthCheck.healthCheckId}
-            />
-          )}
 
           {dashboard.healthCheck?.results.length ? (
             <>

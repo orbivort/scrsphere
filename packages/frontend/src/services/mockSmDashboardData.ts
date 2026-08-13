@@ -13,7 +13,11 @@ import {
 } from '../types';
 
 import type { SmDashboardData, EventSchedule } from './domain/smDashboard.service';
-import type { HealthCheckTrendItem, HealthCheckResults } from './domain/healthCheck.service';
+import type {
+  HealthCheckTrendItem,
+  HealthCheckResults,
+  HealthCheckLatest,
+} from './domain/healthCheck.service';
 
 // ==================== Event Compliance ====================
 // Mirrors the Scrum Guide events across the last several sprints.
@@ -315,4 +319,10 @@ export const mockHealthCheckDetails: HealthCheckResults = {
   createdAt: '2026-02-10T09:00:00Z',
   results: mockHealthCheckResults,
   overallAverage: 4.1,
+};
+
+export const mockHealthCheckLatest: HealthCheckLatest = {
+  healthCheckId: 'hc-003',
+  status: HealthCheckStatus.OPEN,
+  createdAt: '2026-02-10T09:00:00Z',
 };

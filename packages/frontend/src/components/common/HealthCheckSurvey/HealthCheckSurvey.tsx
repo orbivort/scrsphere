@@ -6,6 +6,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 
 import { healthCheckService } from '../../../services';
+import { queryKeys } from '../../../hooks/queryKeys';
 import { ScrumValue } from '../../../types';
 
 import styles from './HealthCheckSurvey.module.css';
@@ -37,7 +38,10 @@ export const HealthCheckSurvey: React.FC<HealthCheckSurveyProps> = ({ teamId, he
       ),
     onSuccess: () => {
       setSubmitted(true);
+      // Refresh both the SM dashboard (results/trend) and the team page
+      // (latest health check status) after a successful submission.
       void queryClient.invalidateQueries({ queryKey: ['sm-dashboard', teamId] });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.healthCheck.latest(teamId) });
     },
   });
 

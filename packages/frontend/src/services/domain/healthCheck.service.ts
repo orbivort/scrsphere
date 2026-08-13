@@ -23,6 +23,12 @@ export interface HealthCheckTrendItem {
   values: Array<{ scrumValue: string; averageScore: number }>;
 }
 
+export interface HealthCheckLatest {
+  healthCheckId: string;
+  status: HealthCheckStatus;
+  createdAt: string;
+}
+
 class HealthCheckService {
   private get api() {
     return coreApiService.axiosInstance;
@@ -52,6 +58,11 @@ class HealthCheckService {
 
   async getTrend(teamId: string): Promise<ApiResponse<HealthCheckTrendItem[]>> {
     const { data } = await this.api.get(`/teams/${teamId}/health-check-trend`);
+    return data;
+  }
+
+  async getLatest(teamId: string): Promise<ApiResponse<HealthCheckLatest | null>> {
+    const { data } = await this.api.get(`/teams/${teamId}/health-checks/latest`);
     return data;
   }
 }
