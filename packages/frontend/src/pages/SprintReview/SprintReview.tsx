@@ -7,6 +7,7 @@ import { formatLocaleDate } from '@scrumooth/shared';
 import {
   IncrementStatus,
   DeliveryMethod,
+  ItemStatus,
   type SprintReview as SprintReviewType,
   type StakeholderFeedback,
   type ReviewAttendee,
@@ -129,6 +130,24 @@ const getCategoryIcon = (category: string): string => {
     question: '❓',
   };
   return icons[category] ?? '💬';
+};
+
+// i18n keys (in the `common` namespace) for each backlog item status label.
+const STATUS_TRANSLATION_KEYS: Record<ItemStatus, string> = {
+  [ItemStatus.NEW]: 'common:status.new',
+  [ItemStatus.REFINED]: 'common:status.refined',
+  [ItemStatus.READY]: 'common:status.ready',
+  [ItemStatus.IN_PROGRESS]: 'common:status.inProgress',
+  [ItemStatus.DONE]: 'common:status.done',
+};
+
+// CSS Module color class (without `styles.`) for each backlog item status.
+const STATUS_STYLE_KEYS: Record<ItemStatus, string> = {
+  [ItemStatus.NEW]: 'status-new',
+  [ItemStatus.REFINED]: 'status-refined',
+  [ItemStatus.READY]: 'status-ready',
+  [ItemStatus.IN_PROGRESS]: 'status-in-progress',
+  [ItemStatus.DONE]: 'status-done',
 };
 
 // Helper component for hint text
@@ -325,6 +344,31 @@ export const SprintReview: React.FC = () => {
       completionRate,
     };
   }, [sprintBacklogItems]);
+
+  // Partition the full sprint backlog into delivered (DONE) vs. the rest, and
+  // track which PBIs were explicitly included in the delivered increment.
+  const { doneItems, notDoneItems, incrementPbiIds } = useMemo(() => {
+    const pbis = sprintBacklogItems?.data ?? [];
+    const doneItems: ProductBacklogItem[] = [];
+    const notDoneItems: ProductBacklogItem[] = [];
+    const incrementPbiIds = new Set<string>();
+
+    for (const pbi of pbis) {
+      if (pbi.status === ItemStatus.DONE) {
+        doneItems.push(pbi);
+      } else {
+        notDoneItems.push(pbi);
+      }
+    }
+
+    for (const pbi of increment?.pbis ?? []) {
+      if (pbi.id) {
+        incrementPbiIds.add(pbi.id);
+      }
+    }
+
+    return { doneItems, notDoneItems, incrementPbiIds };
+  }, [sprintBacklogItems, increment]);
 
   const createReviewMutation = useMutation({
     mutationFn: (data: {
@@ -1115,19 +1159,49 @@ export const SprintReview: React.FC = () => {
                 </p>
 
                 <div className={styles['included-items']}>
-                  <h4>{t('increment.includedPbis')}</h4>
+                  <h4>{t('increment.completedItems')}</h4>
                   <div className={styles['pbi-list']}>
-                    {increment.pbis?.length === 0 ? (
-                      <p className={styles['no-data']}>{t('increment.noPbis')}</p>
+                    {doneItems.length === 0 ? (
+                      <p className={styles['no-data']}>{t('increment.noCompletedItems')}</p>
                     ) : (
-                      increment.pbis?.map((pbi, index) => (
+                      doneItems.map((pbi, index) => (
                         <div key={pbi.id || `pbi-${index}`} className={styles['pbi-card']}>
                           <span className={styles['pbi-title']}>{pbi.title}</span>
                           <span className={styles['pbi-points']}>
                             {pbi.storyPoints ?? 0} {t('pts')}
                           </span>
-                          <span className={`${styles['pbi-status']} ${styles.done}`}>
-                            <CheckIcon /> {t('increment.done')}
+                          <span
+                            className={`${styles['pbi-status']} ${styles[STATUS_STYLE_KEYS[pbi.status]]}`}
+                          >
+                            <CheckIcon /> {t(STATUS_TRANSLATION_KEYS[pbi.status], pbi.status)}
+                          </span>
+                          {incrementPbiIds.has(pbi.id) && (
+                            <span className={styles['in-increment-badge']}>
+                              {t('increment.inIncrement')}
+                            </span>
+                          )}
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+
+                <div className={styles['included-items']}>
+                  <h4>{t('increment.notCompletedItems')}</h4>
+                  <div className={styles['pbi-list']}>
+                    {notDoneItems.length === 0 ? (
+                      <p className={styles['no-data']}>{t('increment.noNotCompletedItems')}</p>
+                    ) : (
+                      notDoneItems.map((pbi, index) => (
+                        <div key={pbi.id || `pbi-${index}`} className={styles['pbi-card']}>
+                          <span className={styles['pbi-title']}>{pbi.title}</span>
+                          <span className={styles['pbi-points']}>
+                            {pbi.storyPoints ?? 0} {t('pts')}
+                          </span>
+                          <span
+                            className={`${styles['pbi-status']} ${styles[STATUS_STYLE_KEYS[pbi.status]]}`}
+                          >
+                            {t(STATUS_TRANSLATION_KEYS[pbi.status], pbi.status)}
                           </span>
                         </div>
                       ))
@@ -1148,7 +1222,17 @@ export const SprintReview: React.FC = () => {
                 <div className={styles['increment-stats']}>
                   <div className={styles['stat-item']}>
                     <span className={styles['stat-label']}>{t('increment.totalStoryPoints')}</span>
-                    <span className={styles['stat-value']}>{increment.totalStoryPoints || 0}</span>
+                    <span className={styles['stat-value']}>
+                      {sprintStats.committedStoryPoints || 0}
+                    </span>
+                  </div>
+                  <div className={styles['stat-item']}>
+                    <span className={styles['stat-label']}>
+                      {t('increment.completedStoryPoints')}
+                    </span>
+                    <span className={styles['stat-value']}>
+                      {sprintStats.completedStoryPoints || 0}
+                    </span>
                   </div>
                   <div className={styles['stat-item']}>
                     <span className={styles['stat-label']}>{t('increment.deliveryMethod')}</span>

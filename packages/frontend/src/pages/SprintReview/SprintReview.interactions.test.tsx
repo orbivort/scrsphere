@@ -234,7 +234,7 @@ function setupBasicMocks(
 
   vi.spyOn(apiServiceModule.apiService, 'getSprintBacklogPBIs').mockResolvedValue({
     success: true,
-    ...overrides.sprintBacklogItems,
+    data: overrides.sprintBacklogItems?.data ?? mockSprintBacklogItems.data,
   });
 
   vi.spyOn(apiServiceModule.apiService, 'updateSprintReview').mockResolvedValue({

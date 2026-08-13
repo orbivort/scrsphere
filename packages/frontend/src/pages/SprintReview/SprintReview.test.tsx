@@ -337,6 +337,103 @@ describe('SprintReview Component', () => {
     });
   });
 
+  describe('Increment Section', () => {
+    const mockPbiDone = {
+      id: 'pbi-done',
+      title: 'Done item',
+      status: 'DONE',
+      storyPoints: 3,
+    };
+    const mockPbiInProgress = {
+      id: 'pbi-progress',
+      title: 'In progress item',
+      status: 'IN_PROGRESS',
+      storyPoints: 5,
+    };
+    const mockPbiNew = {
+      id: 'pbi-new',
+      title: 'New item',
+      status: 'NEW',
+      storyPoints: 2,
+    };
+
+    function setupIncrementMocks() {
+      vi.spyOn(apiServiceModule.apiService, 'getSprintBacklogPBIs').mockResolvedValue({
+        success: true,
+        data: [mockPbiDone, mockPbiInProgress, mockPbiNew] as any,
+      });
+      vi.spyOn(apiServiceModule.apiService, 'getIncrements').mockResolvedValue({
+        success: true,
+        data: [
+          {
+            ...mockIncrement,
+            pbis: [mockPbiDone] as any,
+          },
+        ],
+      });
+    }
+
+    async function openIncrementTab() {
+      renderComponent();
+      await waitFor(() => {
+        expect(screen.getByText('Overview')).toBeInTheDocument();
+      });
+      const incrementTab = screen.getByText('Increment').closest('button');
+      if (incrementTab) {
+        fireEvent.click(incrementTab);
+      }
+      await waitFor(() => {
+        expect(screen.getByText('Increment Presented')).toBeInTheDocument();
+      });
+    }
+
+    it('should render completed items from the full sprint backlog', async () => {
+      setupIncrementMocks();
+      await openIncrementTab();
+
+      expect(screen.getByText('Completed Items')).toBeInTheDocument();
+      expect(screen.getByText('Done item')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('common:status.done'))).toBeInTheDocument();
+    });
+
+    it('should render not completed items with real statuses', async () => {
+      setupIncrementMocks();
+      await openIncrementTab();
+
+      expect(screen.getByText('Not Completed Items')).toBeInTheDocument();
+      expect(screen.getByText('In progress item')).toBeInTheDocument();
+      expect(screen.getByText('New item')).toBeInTheDocument();
+      expect(screen.getByText(i18nT('common:status.inProgress'))).toBeInTheDocument();
+      expect(screen.getByText(i18nT('common:status.new'))).toBeInTheDocument();
+    });
+
+    it('should total story points reflect all backlog items', async () => {
+      setupIncrementMocks();
+      await openIncrementTab();
+
+      // Sum of all backlog items: 3 (done) + 5 (in progress) + 2 (new) = 10
+      const totalLabel = screen.getByText(i18nT('sprint-review:increment.totalStoryPoints'));
+      const statItem = totalLabel.closest('div');
+      expect(statItem?.textContent).toContain('10');
+
+      // Completed story points: only the DONE item = 3
+      const completedLabel = screen.getByText(
+        i18nT('sprint-review:increment.completedStoryPoints')
+      );
+      const completedStat = completedLabel.closest('div');
+      expect(completedStat?.textContent).toContain('3');
+    });
+
+    it('should mark items that were part of the delivered increment with a badge', async () => {
+      setupIncrementMocks();
+      await openIncrementTab();
+
+      expect(screen.getByText(i18nT('sprint-review:increment.inIncrement'))).toBeInTheDocument();
+      const badge = screen.getByText(i18nT('sprint-review:increment.inIncrement'));
+      expect(badge.closest('div')?.textContent).toContain('Done item');
+    });
+  });
+
   describe('Status Badge Rendering', () => {
     it('should render status badge for active sprint', async () => {
       vi.spyOn(apiServiceModule.apiService, 'getSprint').mockResolvedValue({

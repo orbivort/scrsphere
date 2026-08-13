@@ -497,9 +497,6 @@ describe('TeamSelectionModal Component', () => {
 
       await waitFor(() => {
         expect(screen.getByText('Switching...')).toBeInTheDocument();
-      });
-
-      await waitFor(() => {
         expect(container.querySelector('.switching-indicator')).toBeInTheDocument();
       });
     });
