@@ -109,6 +109,7 @@
       "sprintReviewOption": "Sprint Review",
       "title": "Livrer l'Increment"
     },
+    "deliverRequiresIntegration": "L'intégration doit être vérifiée avant que cet incrément puisse être livré.",
     "dodVerification": {
       "byCategory": "Vérification par catégorie",
       "byPbi": "Vérification par PBI",
@@ -172,6 +173,7 @@
     "firstIncrement": "Premier incrément — aucun incrément précédent à tester",
     "integrationTests": "Tests d'intégration",
     "integrationVerified": "Intégration vérifiée",
+    "lockedHint": "Cet incrément a été livré et est verrouillé. Les tests d'intégration ne peuvent pas être modifiés.",
     "notVerified": "Intégration non vérifiée",
     "notes": "Notes du test",
     "pass": "Réussi",

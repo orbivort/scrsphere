@@ -273,6 +273,14 @@ export const incrementService = {
       throw new BadRequestError('Increment is already delivered');
     }
 
+    // A DRAFT increment must have its integration with all prior Increments
+    // verified before it can be delivered (released).
+    if (existing.status === 'DRAFT' && !existing.integrationVerified) {
+      throw new BadRequestError(
+        'Increment cannot be delivered: integration verification is required. All prior Increments must have PASSED integration tests.'
+      );
+    }
+
     await prisma.increment.update({
       where: { id },
       data: {

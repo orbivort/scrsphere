@@ -109,6 +109,7 @@
       "sprintReviewOption": "[Sprínt Révíéwwwww]",
       "title": "[Délívér Íncréménttttttt]"
     },
+    "deliverRequiresIntegration": "[Íntégrátíón múst bé vérífíéd béfóré thís Íncrémént çán bé délívéréd]",
     "dodVerification": {
       "byCategory": "[Vérífícàtíón by Càtégóryyyyyyyyy]",
       "byPbi": "[Vérífícàtíón by PBÍÍÍÍÍÍÍ]",
@@ -172,6 +173,7 @@
     "firstIncrement": "[Fírst Íncrémént — nó príór Íncrémént tó tést àgàínsttttttttttttttttt]",
     "integrationTests": "[Íntégràtíón Téstsssssss]",
     "integrationVerified": "[Íntégràtíón vérífíéddddddd]",
+    "lockedHint": "[Thís Íncrémént hás béén délívéréd ànd ís lóçkéddddddddddddddd]",
     "notVerified": "[Íntégràtíón nót vérífíéddddddddd]",
     "notes": "[Tést nótéssss]",
     "pass": "[Pàsséddd]",

@@ -109,6 +109,7 @@
       "sprintReviewOption": "Sprint Review",
       "title": "Increment liefern"
     },
+    "deliverRequiresIntegration": "Die Integration muss verifiziert sein, bevor dieses Increment geliefert werden kann.",
     "dodVerification": {
       "byCategory": "Überprüfung nach Kategorie",
       "byPbi": "Überprüfung nach PBI",
@@ -172,6 +173,7 @@
     "firstIncrement": "Erstes Increment — kein vorheriges Increment zum Testen vorhanden",
     "integrationTests": "Integrationstests",
     "integrationVerified": "Integration verifiziert",
+    "lockedHint": "Dieses Increment wurde geliefert und ist gesperrt. Integrationstests können nicht geändert werden.",
     "notVerified": "Integration nicht verifiziert",
     "notes": "Testnotizen",
     "pass": "Bestanden",

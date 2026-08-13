@@ -12,6 +12,14 @@ interface CreateIntegrationTestData {
   notes?: string;
 }
 
+/**
+ * Increment statuses considered immutable for integration purposes. Once an
+ * Increment is delivered (or archived), its integration test results and
+ * verification flag must not change, mirroring the delivered-lock enforced by
+ * incrementService.updateIncrement.
+ */
+const LOCKED_INTEGRATION_STATUSES = ['DELIVERED', 'ARCHIVED'];
+
 export const incrementIntegrationService = {
   /**
    * Create (or update) an integration test between a current and a prior Increment.
@@ -24,6 +32,10 @@ export const incrementIntegrationService = {
     });
     if (!current) {
       throw new NotFoundError('Increment');
+    }
+
+    if (LOCKED_INTEGRATION_STATUSES.includes(current.status)) {
+      throw new BadRequestError('Cannot update a delivered increment');
     }
 
     const prior = await prisma.increment.findUnique({
@@ -122,6 +134,10 @@ export const incrementIntegrationService = {
     const increment = await prisma.increment.findUnique({ where: { id: incrementId } });
     if (!increment) {
       throw new NotFoundError('Increment');
+    }
+
+    if (LOCKED_INTEGRATION_STATUSES.includes(increment.status)) {
+      throw new BadRequestError('Cannot update a delivered increment');
     }
 
     const priorIncrements = await prisma.increment.findMany({

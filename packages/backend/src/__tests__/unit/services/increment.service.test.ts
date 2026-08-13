@@ -464,6 +464,66 @@ describe('IncrementService', () => {
         BadRequestError
       );
     });
+
+    it('should throw BadRequestError when a DRAFT increment is not integration verified', async () => {
+      const incrementId = 'increment-1';
+      const existingIncrement = {
+        id: incrementId,
+        name: 'Increment 1',
+        status: 'DRAFT',
+        integrationVerified: false,
+      };
+
+      vi.mocked(prisma.increment.findUnique).mockResolvedValue(existingIncrement as any);
+
+      await expect(incrementService.deliverIncrement(incrementId, 'sprint_review')).rejects.toThrow(
+        BadRequestError
+      );
+      expect(prisma.increment.update).not.toHaveBeenCalled();
+    });
+
+    it('should deliver a DRAFT increment when integration is verified', async () => {
+      const incrementId = 'increment-1';
+      const userId = 'user-123';
+      const existingIncrement = {
+        id: incrementId,
+        name: 'Increment 1',
+        status: 'DRAFT',
+        integrationVerified: true,
+        sprintId: 'sprint-1',
+        teamId: 'team-1',
+      };
+      const deliveredIncrement = {
+        id: incrementId,
+        name: 'Increment 1',
+        status: 'DELIVERED',
+        deliveredAt: new Date(),
+        deliveryMethod: 'EARLY_RELEASE',
+        sprint: { id: 'sprint-1', name: 'Sprint 1', status: 'ACTIVE' },
+        pbis: [],
+      };
+
+      vi.mocked(prisma.increment.findUnique).mockResolvedValue(existingIncrement as any);
+      vi.mocked(prisma.increment.update).mockResolvedValue({} as any);
+
+      const mockGetById = vi.spyOn(incrementService, 'getIncrementById');
+      mockGetById.mockResolvedValue(deliveredIncrement as any);
+
+      const result = await incrementService.deliverIncrement(
+        incrementId,
+        'early_release',
+        undefined,
+        userId
+      );
+
+      expect(result.status).toBe('DELIVERED');
+      expect(prisma.increment.update).toHaveBeenCalledWith({
+        where: { id: incrementId },
+        data: expect.objectContaining({ status: 'DELIVERED' }),
+      });
+
+      mockGetById.mockRestore();
+    });
   });
 
   describe('getIncrementMetrics', () => {

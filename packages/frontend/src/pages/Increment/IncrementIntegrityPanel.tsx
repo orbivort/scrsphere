@@ -6,7 +6,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 
 import { incrementService } from '../../services';
-import { IntegrationTestResult } from '../../types';
+import { IntegrationTestResult, IncrementStatus } from '../../types';
 
 type TestResultInput = IntegrationTestResult.PASSED | IntegrationTestResult.FAILED;
 import styles from './IncrementIntegrityPanel.module.css';
@@ -14,12 +14,18 @@ import styles from './IncrementIntegrityPanel.module.css';
 interface IncrementIntegrityPanelProps {
   incrementId: string;
   integrationVerified?: boolean;
+  /** The Increment status, used to lock editing once delivered/archived. */
+  status?: IncrementStatus;
 }
 
 export const IncrementIntegrityPanel: React.FC<IncrementIntegrityPanelProps> = ({
   incrementId,
   integrationVerified = false,
+  status,
 }) => {
+  // Delivered/archived Increments are immutable: integration tests and
+  // verification cannot be modified after the Increment is finalized.
+  const locked = status === IncrementStatus.DELIVERED || status === IncrementStatus.ARCHIVED;
   const { t } = useTranslation(['increments', 'common']);
   const queryClient = useQueryClient();
 
@@ -130,6 +136,7 @@ export const IncrementIntegrityPanel: React.FC<IncrementIntegrityPanelProps> = (
             value={priorIncrementId}
             onChange={(e) => setPriorIncrementId(e.target.value)}
             required
+            disabled={locked}
             aria-label={t('incrementIntegrity.priorIncrement')}
           >
             <option value="">{t('incrementIntegrity.priorIncrement')}...</option>
@@ -142,6 +149,7 @@ export const IncrementIntegrityPanel: React.FC<IncrementIntegrityPanelProps> = (
           <select
             value={testResult}
             onChange={(e) => setTestResult(e.target.value as TestResultInput)}
+            disabled={locked}
             aria-label={t('incrementIntegrity.testResult')}
           >
             <option value={IntegrationTestResult.PASSED}>{t('incrementIntegrity.pass')}</option>
@@ -151,12 +159,13 @@ export const IncrementIntegrityPanel: React.FC<IncrementIntegrityPanelProps> = (
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder={t('incrementIntegrity.notes')}
+            disabled={locked}
             aria-label={t('incrementIntegrity.notes')}
           />
           <button
             type="submit"
             className={styles.submit}
-            disabled={!priorIncrementId || addTestMutation.isPending}
+            disabled={locked || !priorIncrementId || addTestMutation.isPending}
           >
             {t('incrementIntegrity.addTest')}
           </button>
@@ -170,11 +179,15 @@ export const IncrementIntegrityPanel: React.FC<IncrementIntegrityPanelProps> = (
           type="button"
           className={styles['verify-button']}
           onClick={() => verifyMutation.mutate()}
-          disabled={verifyMutation.isPending}
+          disabled={locked || verifyMutation.isPending}
         >
           {t('incrementIntegrity.verifyNow')}
         </button>
-        <p className={styles['verify-hint']}>{t('incrementIntegrity.verifyHint')}</p>
+        {locked ? (
+          <p className={styles['verify-hint']}>{t('incrementIntegrity.lockedHint')}</p>
+        ) : (
+          <p className={styles['verify-hint']}>{t('incrementIntegrity.verifyHint')}</p>
+        )}
       </div>
 
       {/* Dependency chain */}

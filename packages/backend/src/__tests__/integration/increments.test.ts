@@ -455,7 +455,7 @@ describe('Increments Integration Tests', () => {
       const team = await createTestTeam(teamName);
       await addTeamMember(team.id, user.id, 'PRODUCT_OWNER');
       const sprint = await createTestSprint(team.id, 'Sprint');
-      const increment = await createTestIncrement(sprint.id, team.id, 'Deliverable');
+      const increment = await createTestIncrement(sprint.id, team.id, 'Deliverable', 'VERIFIED');
 
       const cookies = await loginAndGetCookies(email);
 
@@ -486,7 +486,7 @@ describe('Increments Integration Tests', () => {
       const team = await createTestTeam(teamName);
       await addTeamMember(team.id, user.id, 'PRODUCT_OWNER');
       const sprint = await createTestSprint(team.id, 'Sprint');
-      const increment = await createTestIncrement(sprint.id, team.id, 'Early Release');
+      const increment = await createTestIncrement(sprint.id, team.id, 'Early Release', 'VERIFIED');
 
       const cookies = await loginAndGetCookies(email);
 

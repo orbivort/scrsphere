@@ -183,8 +183,17 @@ export const IncrementDetail: React.FC = () => {
   }
 
   const statusColor = getStatusColor(increment.status);
+  // Delivery is offered for DRAFT and VERIFIED increments. A DRAFT increment can
+  // only actually be delivered once its integration with all prior Increments is
+  // verified, so the button is shown disabled with an explanatory reason until
+  // then. VERIFIED increments are guaranteed to be verified (the backend blocks
+  // DRAFT -> VERIFIED without integration verification).
   const canDeliver =
     increment.status === IncrementStatus.VERIFIED || increment.status === IncrementStatus.DRAFT;
+  const deliverBlockedReason =
+    increment.status === IncrementStatus.DRAFT && !increment.integrationVerified
+      ? 'detail.deliverRequiresIntegration'
+      : undefined;
 
   return (
     <div className={styles['increment-detail-page']} data-testid="increment-detail">
@@ -221,6 +230,9 @@ export const IncrementDetail: React.FC = () => {
             <button
               className={`${styles.button} ${styles['button-primary']}`}
               onClick={() => setShowDeliverModal(true)}
+              disabled={deliverBlockedReason !== undefined}
+              data-disabled-reason={deliverBlockedReason}
+              title={deliverBlockedReason ? t(deliverBlockedReason) : undefined}
             >
               <RocketIcon size={16} />
               <span>{t('detail.deliverIncrement')}</span>
@@ -489,6 +501,7 @@ export const IncrementDetail: React.FC = () => {
           <IncrementIntegrityPanel
             incrementId={increment.id}
             integrationVerified={increment.integrationVerified}
+            status={increment.status}
           />
         </div>
       </div>

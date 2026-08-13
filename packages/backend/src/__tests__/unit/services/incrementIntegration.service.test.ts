@@ -274,6 +274,25 @@ describe('IncrementIntegrationService', () => {
       ).rejects.toThrow(BadRequestError);
       expect(prisma.incrementIntegrationTest.create).not.toHaveBeenCalled();
     });
+
+    it.each(['DELIVERED', 'ARCHIVED'])(
+      'should throw BadRequestError when current increment is %s (locked)',
+      async (status) => {
+        vi.mocked(prisma.increment.findUnique).mockResolvedValueOnce(
+          mockIncrement({ id: 'inc-current', status }) as never
+        );
+
+        await expect(
+          incrementIntegrationService.createTest('user-1', {
+            currentIncrementId: 'inc-current',
+            priorIncrementId: 'inc-prior',
+            testResult: 'PASSED',
+          })
+        ).rejects.toThrow(BadRequestError);
+        expect(prisma.incrementIntegrationTest.create).not.toHaveBeenCalled();
+        expect(prisma.incrementIntegrationTest.update).not.toHaveBeenCalled();
+      }
+    );
   });
 
   describe('getTestsForIncrement', () => {
@@ -417,6 +436,21 @@ describe('IncrementIntegrationService', () => {
       ).rejects.toThrow(NotFoundError);
       expect(prisma.increment.update).not.toHaveBeenCalled();
     });
+
+    it.each(['DELIVERED', 'ARCHIVED'])(
+      'should throw BadRequestError when increment is %s (locked)',
+      async (status) => {
+        vi.mocked(prisma.increment.findUnique).mockResolvedValueOnce(
+          mockIncrement({ id: 'inc-current', status }) as never
+        );
+
+        await expect(
+          incrementIntegrationService.verifyIntegration('user-1', 'inc-current')
+        ).rejects.toThrow(BadRequestError);
+        expect(prisma.increment.findMany).not.toHaveBeenCalled();
+        expect(prisma.increment.update).not.toHaveBeenCalled();
+      }
+    );
   });
 
   describe('getIncrementChain', () => {

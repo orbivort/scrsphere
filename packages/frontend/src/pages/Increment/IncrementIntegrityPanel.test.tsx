@@ -7,6 +7,7 @@ import {
   type IncrementChainNode,
 } from '@scrumooth/shared';
 
+import { IncrementStatus } from '../../types';
 import { incrementService } from '@/services';
 import { IncrementIntegrityPanel } from './IncrementIntegrityPanel';
 
@@ -216,6 +217,52 @@ describe('IncrementIntegrityPanel', () => {
     await waitFor(() => {
       expect(mockedIncrementService.verifyIntegration).toHaveBeenCalledWith('inc-1');
     });
+  });
+
+  it.each([IncrementStatus.DELIVERED, IncrementStatus.ARCHIVED])(
+    'disables the integration form and verify button when status is %s (locked)',
+    async (status) => {
+      mockedIncrementService.getIncrementChain.mockResolvedValue({
+        data: [makeChainNode({ id: 'inc-0', integrationVerified: false })],
+      });
+
+      renderPanel({ status });
+
+      const priorSelect = await screen.findByLabelText(
+        i18nT('increments:incrementIntegrity.priorIncrement')
+      );
+      const resultSelect = screen.getByLabelText(i18nT('increments:incrementIntegrity.testResult'));
+      const notesInput = screen.getByLabelText(i18nT('increments:incrementIntegrity.notes'));
+      const addButton = screen.getByRole('button', {
+        name: i18nT('increments:incrementIntegrity.addTest'),
+      });
+      const verifyButton = screen.getByRole('button', {
+        name: i18nT('increments:incrementIntegrity.verifyNow'),
+      });
+
+      expect(priorSelect).toBeDisabled();
+      expect(resultSelect).toBeDisabled();
+      expect(notesInput).toBeDisabled();
+      expect(addButton).toBeDisabled();
+      expect(verifyButton).toBeDisabled();
+      expect(
+        screen.getByText(i18nT('increments:incrementIntegrity.lockedHint'))
+      ).toBeInTheDocument();
+    }
+  );
+
+  it('keeps the integration form enabled for a non-locked status (DRAFT/VERIFIED)', async () => {
+    mockedIncrementService.getIncrementChain.mockResolvedValue({
+      data: [makeChainNode({ id: 'inc-0', integrationVerified: false })],
+    });
+
+    renderPanel({ status: IncrementStatus.VERIFIED });
+
+    const priorSelect = await screen.findByLabelText(
+      i18nT('increments:incrementIntegrity.priorIncrement')
+    );
+    expect(priorSelect).toBeEnabled();
+    expect(screen.queryByText(i18nT('increments:incrementIntegrity.lockedHint'))).toBeNull();
   });
 
   it('adds an integration test via the form', async () => {

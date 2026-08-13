@@ -254,6 +254,72 @@ describe('Scrum Guide Compliance Enhancement Integration Tests', () => {
       expect(response.body.data.priorIncrementName).toBe('Prior');
     });
 
+    it('should reject adding an integration test to a delivered increment', async () => {
+      const email = `integ-delivered-${uniqueId()}@example.com`;
+      testEmails.push(email);
+
+      const user = await createTestUserInDb(email);
+      const teamName = `Integ Delivered Team ${uniqueId()}`;
+      testTeams.push(teamName);
+
+      const team = await createTestTeam(teamName);
+      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      const sprint = await createTestSprint(team.id, 'Sprint');
+      const current = await createTestIncrement(
+        sprint.id,
+        team.id,
+        'Delivered Current',
+        'DELIVERED'
+      );
+      const prior = await createTestIncrement(sprint.id, team.id, 'Prior');
+
+      const cookies = await loginAndGetCookies(email);
+      const { csrfToken } = extractCsrfFromCookies(cookies);
+
+      const response = await request(app)
+        .post(`/api/v1/increments/${current.id}/integration-tests`)
+        .set('Cookie', cookies)
+        .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+        .send({
+          priorIncrementId: prior.id,
+          testResult: 'PASSED',
+        })
+        .expect(400);
+
+      expect(response.body.success).toBe(false);
+    });
+
+    it('should reject verifying integration for a delivered increment', async () => {
+      const email = `integ-verify-delivered-${uniqueId()}@example.com`;
+      testEmails.push(email);
+
+      const user = await createTestUserInDb(email);
+      const teamName = `Integ Verify Delivered Team ${uniqueId()}`;
+      testTeams.push(teamName);
+
+      const team = await createTestTeam(teamName);
+      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      const sprint = await createTestSprint(team.id, 'Sprint');
+      const increment = await createTestIncrement(
+        sprint.id,
+        team.id,
+        'Delivered Increment',
+        'DELIVERED',
+        true
+      );
+
+      const cookies = await loginAndGetCookies(email);
+      const { csrfToken } = extractCsrfFromCookies(cookies);
+
+      const response = await request(app)
+        .post(`/api/v1/increments/${increment.id}/verify-integration`)
+        .set('Cookie', cookies)
+        .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+        .expect(400);
+
+      expect(response.body.success).toBe(false);
+    });
+
     it('should return 422 when testResult is invalid', async () => {
       const email = `integ-invalid-${uniqueId()}@example.com`;
       testEmails.push(email);

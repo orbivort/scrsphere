@@ -333,9 +333,9 @@ describe('IncrementDetail', () => {
       });
     });
 
-    it('should show deliver button for DRAFT status', async () => {
+    it('should show deliver button for DRAFT status when integration is verified', async () => {
       (apiService.getIncrement as vi.Mock).mockResolvedValue({
-        data: { ...mockIncrement, status: IncrementStatus.DRAFT },
+        data: { ...mockIncrement, status: IncrementStatus.DRAFT, integrationVerified: true },
       });
       (apiService.getEligiblePBIsForIncrement as vi.Mock).mockResolvedValue({
         data: mockEligiblePBIs,
@@ -343,9 +343,32 @@ describe('IncrementDetail', () => {
 
       renderComponent();
 
-      await waitFor(() => {
-        expect(screen.getByText(i18nT('increments:detail.deliverIncrement'))).toBeInTheDocument();
+      const deliverButton = await screen.findByRole('button', {
+        name: i18nT('increments:detail.deliverIncrement'),
       });
+      expect(deliverButton).toBeEnabled();
+    });
+
+    it('should disable deliver button for DRAFT status when integration is not verified', async () => {
+      (apiService.getIncrement as vi.Mock).mockResolvedValue({
+        data: { ...mockIncrement, status: IncrementStatus.DRAFT, integrationVerified: false },
+      });
+      (apiService.getEligiblePBIsForIncrement as vi.Mock).mockResolvedValue({
+        data: mockEligiblePBIs,
+      });
+
+      renderComponent();
+
+      const deliverButton = await screen.findByRole('button', {
+        name: i18nT('increments:detail.deliverIncrement'),
+      });
+
+      expect(deliverButton).toBeInTheDocument();
+      expect(deliverButton).toBeDisabled();
+      expect(deliverButton).toHaveAttribute(
+        'data-disabled-reason',
+        'detail.deliverRequiresIntegration'
+      );
     });
 
     it('should not show deliver button for DELIVERED status', async () => {
