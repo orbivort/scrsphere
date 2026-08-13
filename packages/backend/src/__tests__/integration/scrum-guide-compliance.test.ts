@@ -641,7 +641,7 @@ describe('Scrum Guide Compliance Enhancement Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'SCRUM_MASTER');
 
       const cookies = await loginAndGetCookies(email);
       const { csrfToken } = extractCsrfFromCookies(cookies);
@@ -684,7 +684,7 @@ describe('Scrum Guide Compliance Enhancement Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'SCRUM_MASTER');
 
       const cookies = await loginAndGetCookies(email);
       const { csrfToken } = extractCsrfFromCookies(cookies);
@@ -731,7 +731,7 @@ describe('Scrum Guide Compliance Enhancement Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'SCRUM_MASTER');
 
       const cookies = await loginAndGetCookies(email);
       const { csrfToken } = extractCsrfFromCookies(cookies);

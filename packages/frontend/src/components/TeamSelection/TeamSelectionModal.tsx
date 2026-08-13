@@ -21,6 +21,9 @@ export const TeamSelectionModal: React.FC<TeamSelectionModalProps> = ({ isOpen, 
   if (!isOpen) return null;
 
   const handleTeamSelect = async (teamId: string) => {
+    // Guard against concurrent/in-flight switches triggered by rapid clicks.
+    if (switching !== null) return;
+
     setSwitching(teamId);
 
     try {

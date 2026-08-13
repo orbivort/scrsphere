@@ -2688,8 +2688,9 @@ describe('TeamManagement - Multiple Teams', () => {
       const longLocalPart = 'a'.repeat(250);
       await user.type(emailInput, `${longLocalPart}@b.com`);
 
-      const submitButton = screen.getByRole('button', { name: /send invite/i });
-      await user.click(submitButton);
+      // Use fireEvent.submit to bypass native HTML5 form validation on the
+      // `type="email"` input, so the component's validateEmail logic runs.
+      fireEvent.submit(screen.getByText('Email Address').closest('form')!);
 
       await waitFor(() => {
         expect(screen.getByText(i18nT('team:inviteErrors.emailTooLong'))).toBeInTheDocument();
