@@ -19,14 +19,26 @@ export const ScrumValuesBanner: React.FC<ScrumValuesBannerProps> = ({ intervalMs
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    const timer = setInterval(() => {
+    let rotateTimeout: ReturnType<typeof setTimeout> | undefined;
+    let mounted = true;
+
+    const rotateValue = () => {
       setVisible(false);
-      setTimeout(() => {
+      rotateTimeout = setTimeout(() => {
+        if (!mounted) return;
         setIndex((prev) => (prev + 1) % SCRUM_VALUES.length);
         setVisible(true);
       }, 300);
-    }, intervalMs);
-    return () => clearInterval(timer);
+    };
+
+    const timer = setInterval(rotateValue, intervalMs);
+    return () => {
+      mounted = false;
+      clearInterval(timer);
+      if (rotateTimeout) {
+        clearTimeout(rotateTimeout);
+      }
+    };
   }, [intervalMs]);
 
   const value = SCRUM_VALUES[index];
