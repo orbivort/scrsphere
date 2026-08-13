@@ -9,27 +9,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- add the scrum values health check to Team page
-- show full backlog completion status in increment for sprint review
-- add integration verification before delivery increment
-- require integration verification before delivery and lock delivered increments
-- add mock data flow for product goal visibility in sprint review
-- add Scrum Values Banner to Sprint Planning, Daily Scrum, Sprint Review and Retrospective
-- add product goal progress to sprint review
-- add mock scrum master dashboard and Health check services
-- disable default external avatar service
-- self-host Inter font and remove Google Fonts dependency
-- enhance scrum master notes with view/edit mode
-- add scrum master dashboard and team health check features
+#### Increment Integrity
 
-### Fixed
+- **Cross-Increment integration verification**: add integration test tracking and a verification gate to ensure each new Increment is additive and compatible with prior Increments, per the Scrum Guide's requirement that "all Increments work together"
 
-- prevent scrum banner state updates after unmount for scrum values banner
-- preserve sub-day resolution averages
-- show completed status badge when action item is marked added
-- update tests to reflect owner names and read-only view mode
-- use consistent fallback for ownerName and params access
-- use sprint tasks endpoint and disable notes on completed review
+#### Scrum Master Facilitation Dashboard
+
+- **Scrum Master dashboard**: add a dedicated SM facilitation dashboard (role-gated to SCRUM_MASTER)
+  - Event compliance tracking for the last 5 Sprints (completed/missed events, timebox adherence)
+  - Impediment metrics: status distribution, average resolution time, and aging report
+  - Team DoD compliance trend (compliance percentage per Sprint)
+  - Sprint Goal achievement rate (achieved / partially / not achieved across completed Sprints)
+  - Retrospective action item completion (total, completed, pending, overdue counts)
+  - Scrum values health check aligned with the five Scrum Values
+- **Scrum Master notes**: add SM Notes section on Sprint Review and Retrospective (visible to SCRUM_MASTER)
+
+#### Sprint Review Product Goal Visibility
+
+- **Product Goal visibility**: display the linked Product Goal prominently on the Sprint Review page
+- **Product Goal progress snapshots**: add a Product Goal Snapshot model capturing success metric values, completed PBI count, completed story points, and stakeholder assessment summary at each Sprint Review
+
+#### Scrum Values Integration
+
+- **Scrum Values banner**: add a subtle, collapsible banner rotating through the five Scrum Values (Commitment, Focus, Openness, Respect, Courage) to Sprint Planning, Daily Scrum, Sprint Review and Retrospective
+- **Scrum Values reflection**: add value-based reflection prompts section to the Sprint Retrospective (collapsible and opt-in)
+- **Scrum values health check survey**: add Scrum values health check survey to Team
 
 ## [2.1.2] - 2026-08-11
 
