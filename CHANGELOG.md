@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2026-08-13
+
+### Added
+
+- add the scrum values health check to Team page
+- show full backlog completion status in increment for sprint review
+- add integration verification before delivery increment
+- require integration verification before delivery and lock delivered increments
+- add mock data flow for product goal visibility in sprint review
+- add Scrum Values Banner to Sprint Planning, Daily Scrum, Sprint Review and Retrospective
+- add product goal progress to sprint review
+- add mock scrum master dashboard and Health check services
+- disable default external avatar service
+- self-host Inter font and remove Google Fonts dependency
+- enhance scrum master notes with view/edit mode
+- add scrum master dashboard and team health check features
+
+### Fixed
+
+- prevent scrum banner state updates after unmount for scrum values banner
+- preserve sub-day resolution averages
+- show completed status badge when action item is marked added
+- update tests to reflect owner names and read-only view mode
+- use consistent fallback for ownerName and params access
+- use sprint tasks endpoint and disable notes on completed review
+
 ## [2.1.2] - 2026-08-11
 
 ### Security
