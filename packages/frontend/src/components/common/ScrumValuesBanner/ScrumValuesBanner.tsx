@@ -23,6 +23,7 @@ export const ScrumValuesBanner: React.FC<ScrumValuesBannerProps> = ({ intervalMs
     let mounted = true;
 
     const rotateValue = () => {
+      if (!mounted) return;
       setVisible(false);
       rotateTimeout = setTimeout(() => {
         if (!mounted) return;

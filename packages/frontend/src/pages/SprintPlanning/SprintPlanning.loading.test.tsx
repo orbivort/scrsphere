@@ -67,6 +67,12 @@ vi.mock('../../components/EmptyState', () => ({
   ),
 }));
 
+// Mock ScrumValuesBanner to avoid its periodic rotation timer interfering
+// with fake-timer based tests (vi.runAllTimersAsync / advanceTimersByTime).
+vi.mock('../../components/common/ScrumValuesBanner', () => ({
+  ScrumValuesBanner: () => <div data-testid="scrum-values-banner" />,
+}));
+
 // Mock data
 const mockTeam = {
   id: 'team-1',

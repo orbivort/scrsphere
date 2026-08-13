@@ -48,6 +48,12 @@ vi.mock('../../services', () => ({
   },
 }));
 
+// Mock ScrumValuesBanner to avoid its periodic rotation timer interfering
+// with fake-timer based tests (vi.runAllTimersAsync / advanceTimersByTime).
+vi.mock('../../components/common/ScrumValuesBanner', () => ({
+  ScrumValuesBanner: () => <div data-testid="scrum-values-banner" />,
+}));
+
 // Mock react-router
 const mockNavigate = vi.fn();
 vi.mock('react-router', async () => {
