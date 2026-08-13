@@ -347,7 +347,9 @@ describe('SMNotes Component', () => {
       const textarea = screen.getByRole('textbox');
       fireEvent.change(textarea, { target: { value: nearLimit } });
 
-      expect(document.querySelector('.char-counter-warning')).toBeInTheDocument();
+      const counter = document.querySelector('[aria-live="polite"]');
+      expect(counter).toBeInTheDocument();
+      expect(counter?.className).toContain('char-counter-warning');
     });
   });
 

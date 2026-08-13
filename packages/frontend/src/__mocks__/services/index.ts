@@ -113,6 +113,20 @@ export const sessionManager: Record<string, Mock<AnyFn>> = {
   isSessionExpired: vi.fn(),
 };
 
+export const smDashboardService: Record<string, Mock<AnyFn>> = {
+  getDashboard: vi.fn(),
+  getEventSchedule: vi.fn(),
+};
+
+export const healthCheckService: Record<string, Mock<AnyFn>> = {
+  getHealthChecks: vi.fn(),
+  createHealthCheck: vi.fn(),
+  getHealthCheck: vi.fn(),
+  getResults: vi.fn(),
+  submitResponses: vi.fn(),
+  getTrend: vi.fn(),
+};
+
 export const definitionService: Record<string, Mock<AnyFn>> = {
   getDefinitionOfDone: vi.fn(),
   updateDefinitionOfDone: vi.fn(),

@@ -14,6 +14,7 @@ import {
   IncrementsPage,
   RetrospectivesPage,
   ReportsPage,
+  SmDashboardPage,
 } from '../pages';
 import { generateTestUser, type TestUser } from './dataFactory';
 
@@ -32,6 +33,7 @@ type AuthFixtures = {
   incrementsPage: IncrementsPage;
   retrospectivesPage: RetrospectivesPage;
   reportsPage: ReportsPage;
+  smDashboardPage: SmDashboardPage;
 };
 
 type TestUserFixtures = {
@@ -624,7 +626,239 @@ async function mockAuthApi(page: Page) {
       }),
     });
   });
+
+  // =====================================================
+  // Scrum Guide Compliance feature routes (registered LAST → checked FIRST)
+  // =====================================================
+
+  // Scrum Master facilitation dashboard
+  await page.route('**/api/v1/dashboard/scrum-master**', async (route: Route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        success: true,
+        data: mockScrumMasterDashboard,
+      }),
+    });
+  });
+
+  // Health check trend
+  await page.route('**/api/v1/teams/*/health-check-trend**', async (route: Route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        success: true,
+        data: mockHealthCheckTrend,
+      }),
+    });
+  });
+
+  // Single increment detail (for integration verification E2E) - must be
+  // registered AFTER the increments catch-all so it takes priority.
+  await page.route('**/api/v1/increments/inc-current', async (route: Route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        success: true,
+        data: {
+          id: 'inc-current',
+          name: 'Current Increment',
+          description: 'Integration verified increment',
+          status: 'DRAFT',
+          sprintId: 'sprint-1',
+          sprint: { id: 'sprint-1', name: 'Sprint-1' },
+          teamId: 'team-1',
+          totalStoryPoints: 5,
+          integrationVerified: true,
+          includedPBIs: ['pbi-1'],
+          dodVerifications: [],
+          deliveredAt: null,
+          deliveryMethod: null,
+          createdAt: '2026-02-03T09:00:00Z',
+          updatedAt: '2026-02-03T09:00:00Z',
+        },
+      }),
+    });
+  });
+
+  // Increment integration tests
+  await page.route('**/api/v1/increments/*/integration-tests**', async (route: Route) => {
+    if (route.request().method() === 'POST') {
+      await route.fulfill({
+        status: 201,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          success: true,
+          data: {
+            id: 'itest-1',
+            priorIncrementId: 'inc-prior',
+            priorIncrementName: 'Prior Increment',
+            currentIncrementId: 'inc-current',
+            currentIncrementName: 'Current Increment',
+            testResult: 'PASSED',
+            notes: 'Verified in E2E',
+            createdAt: new Date().toISOString(),
+          },
+        }),
+      });
+      return;
+    }
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        success: true,
+        data: [
+          {
+            id: 'itest-1',
+            priorIncrementId: 'inc-prior',
+            priorIncrementName: 'Prior Increment',
+            currentIncrementId: 'inc-current',
+            currentIncrementName: 'Current Increment',
+            testResult: 'PASSED',
+            notes: 'Integration verified',
+            createdAt: new Date().toISOString(),
+          },
+        ],
+      }),
+    });
+  });
+
+  // Increment verify integration
+  await page.route('**/api/v1/increments/*/verify-integration**', async (route: Route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        success: true,
+        data: {
+          incrementId: 'inc-current',
+          integrationVerified: true,
+          priorCount: 1,
+          missingTests: [],
+        },
+      }),
+    });
+  });
+
+  // Increment dependency chain
+  await page.route('**/api/v1/increments/*/chain**', async (route: Route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        success: true,
+        data: [
+          {
+            id: 'inc-prior',
+            name: 'Prior Increment',
+            status: 'VERIFIED',
+            isCurrent: false,
+          },
+          {
+            id: 'inc-current',
+            name: 'Current Increment',
+            status: 'DRAFT',
+            isCurrent: true,
+          },
+        ],
+      }),
+    });
+  });
 }
+
+// Mock data for the Scrum Master facilitation dashboard (E2E)
+const mockScrumMasterDashboard = {
+  eventCompliance: [
+    {
+      sprintId: 'sprint-1',
+      sprintName: 'Sprint-1',
+      status: 'completed',
+      sprintPlanningCompleted: true,
+      sprintReviewCompleted: true,
+      retrospectiveCompleted: true,
+      dailyScrumHeld: 10,
+      dailyScrumExpected: 10,
+      timeboxExceeded: false,
+    },
+  ],
+  impedimentMetrics: {
+    total: 2,
+    open: 1,
+    inProgress: 1,
+    resolved: 0,
+    closed: 0,
+    averageResolutionDays: 1.5,
+    aging: [
+      {
+        id: 'imp-001',
+        title: 'E2E test impediment',
+        status: 'OPEN',
+        ageDays: 3,
+        atRisk: true,
+        sprintName: 'Sprint-1',
+      },
+    ],
+  },
+  dodComplianceTrend: [
+    {
+      sprintId: 'sprint-1',
+      sprintName: 'Sprint-1',
+      compliancePercentage: 90,
+      totalItems: 10,
+      metItems: 9,
+    },
+  ],
+  sprintGoalAchievement: {
+    sprintId: 'sprint-1',
+    sprintName: 'Sprint-1',
+    sprintGoal: 'Complete core features',
+    achievement: 'achieved',
+    achievementRate: 100,
+    achieved: 1,
+    partial: 0,
+    notAchieved: 0,
+    list: [],
+  },
+  actionItemCompletion: {
+    total: 2,
+    completed: 1,
+    inProgress: 1,
+    pending: 0,
+    overdue: 0,
+    completionRate: 50,
+    pendingItems: [],
+  },
+  healthCheck: {
+    healthCheckId: 'hc-001',
+    results: [
+      { scrumValue: 'COMMITMENT', averageScore: 4.2, responseCount: 5 },
+      { scrumValue: 'FOCUS', averageScore: 3.8, responseCount: 5 },
+      { scrumValue: 'OPENNESS', averageScore: 4.5, responseCount: 5 },
+      { scrumValue: 'RESPECT', averageScore: 4.1, responseCount: 5 },
+      { scrumValue: 'COURAGE', averageScore: 3.6, responseCount: 5 },
+    ],
+    overallAverage: 4.1,
+  },
+};
+
+const mockHealthCheckTrend = [
+  {
+    healthCheckId: 'hc-001',
+    createdAt: '2026-02-02T09:00:00Z',
+    overallAverage: 3.8,
+    values: [],
+  },
+  {
+    healthCheckId: 'hc-002',
+    createdAt: '2026-02-06T09:00:00Z',
+    overallAverage: 4.1,
+    values: [],
+  },
+];
 
 export const test = base.extend<AuthFixtures & TestUserFixtures & MockApiFixtures>({
   mockApi: async ({ page }, use) => {
@@ -710,6 +944,11 @@ export const test = base.extend<AuthFixtures & TestUserFixtures & MockApiFixture
   reportsPage: async ({ page }, use) => {
     const reportsPage = new ReportsPage(page);
     await use(reportsPage);
+  },
+
+  smDashboardPage: async ({ page }, use) => {
+    const smDashboardPage = new SmDashboardPage(page);
+    await use(smDashboardPage);
   },
 
   testUser: async ({}, use) => {
