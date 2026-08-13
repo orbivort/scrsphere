@@ -104,6 +104,7 @@ export function initI18n(): Promise<TFunction> {
       'notifications',
       'errors',
       'validation',
+      'scrum-master-dashboard',
     ],
     defaultNS: 'common',
 

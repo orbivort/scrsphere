@@ -436,6 +436,20 @@
     "title": "Acciones retro pendientes",
     "updating": "Actualizando..."
   },
+  "productGoal": {
+    "assessProgress": "Evaluar progreso",
+    "assessment": "Evaluación",
+    "assessmentPlaceholder": "¿Cómo está progresando el equipo hacia el objetivo del producto?",
+    "completedPbis": "Elementos del backlog completados",
+    "completedStoryPoints": "Story points completados",
+    "latestAssessment": "Evaluación más reciente",
+    "noProductGoal": "Este Sprint no está vinculado a un objetivo del producto",
+    "progress": "Progreso del objetivo del producto",
+    "snapshots": "Instantáneas de progreso",
+    "stakeholderAssessment": "Evaluación de los interesados",
+    "successMetrics": "Métricas de éxito",
+    "title": "Product Goal"
+  },
   "productGoalStatus": {
     "ABANDONED": "Abandonado",
     "ACTIVE": "Activo",
@@ -554,6 +568,7 @@
     "productGoal": "Product Goal",
     "progress": "Progreso",
     "progressBarAriaLabel": "Completado del formulario: {{percentage}}%",
+    "progressSnapshots": "Instantáneas de progreso",
     "pts": "pts",
     "requiredFields": "Campos requeridos",
     "resultsCount": "{{filtered}} de {{total}} objetivos",

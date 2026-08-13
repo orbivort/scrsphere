@@ -240,6 +240,13 @@ export const queryKeys = {
     byEntity: (entityType: string, entityId: string) =>
       ['statusChangeHistory', entityType, entityId] as const,
   },
+
+  // Scrum Values Health Check queries
+  healthCheck: {
+    all: ['health-check'] as const,
+    latest: (teamId: string) => [...queryKeys.healthCheck.all, 'latest', teamId] as const,
+    trend: (teamId: string) => [...queryKeys.healthCheck.all, 'trend', teamId] as const,
+  },
 } as const;
 
 // Type helper for query keys

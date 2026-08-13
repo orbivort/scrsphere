@@ -246,6 +246,18 @@ export const ProductGoalsPage: React.FC = () => {
     enabled: !!teamId,
   });
 
+  // Fetch Product Goal progress snapshots for the selected goal
+  const { data: snapshotsData } = useQuery({
+    queryKey: ['productGoal-snapshots', selectedGoal?.id],
+    queryFn: () => {
+      if (!selectedGoal?.id) {
+        throw new Error('No Product Goal selected');
+      }
+      return apiService.getProductGoalSnapshots(selectedGoal.id);
+    },
+    enabled: !!selectedGoal?.id,
+  });
+
   // Define handleCloseModal to reset form state
   const handleCloseModal = useCallback(() => {
     setShowCreateModal(false);
@@ -1266,6 +1278,27 @@ export const ProductGoalsPage: React.FC = () => {
                       <p className={styles['metrics-text']}>{goal.successMetrics}</p>
                     </div>
                   )}
+
+                  {goal.id === selectedGoal?.id && snapshotsData?.data?.length ? (
+                    <div className={styles['goal-snapshots']}>
+                      <span className={styles['metrics-label']}>
+                        {t('productGoals.progressSnapshots') as string}
+                      </span>
+                      <ol className={styles['snapshots-list']}>
+                        {snapshotsData.data.map((snap) => (
+                          <li key={snap.id} className={styles['snapshot-item']}>
+                            <span className={styles['snapshot-sprint']}>
+                              {snap.sprintName ?? snap.createdAt}
+                            </span>
+                            <span className={styles['snapshot-count']}>
+                              {snap.completedPbiCount} {t('productGoals.items') as string} ·{' '}
+                              {snap.completedStoryPoints} {t('productGoals.pts') as string}
+                            </span>
+                          </li>
+                        ))}
+                      </ol>
+                    </div>
+                  ) : null}
                 </div>
               );
             })}

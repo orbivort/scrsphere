@@ -1,52 +1,51 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
-import { generateAvatarUrl, getAvatarServiceUrl } from './avatar';
-
 describe('avatar', () => {
   beforeEach(() => {
     vi.resetModules();
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    vi.resetModules();
+    vi.unstubAllEnvs();
   });
 
   describe('generateAvatarUrl', () => {
-    it('should generate avatar URL with encoded seed', () => {
-      const seed = 'test-user-123';
-      const result = generateAvatarUrl(seed);
+    it('should return empty string when no avatar service URL is configured', async () => {
+      vi.stubEnv('VITE_AVATAR_SERVICE_URL', undefined);
+      const { generateAvatarUrl } = await import('./avatar');
 
-      expect(result).toContain('https://api.dicebear.com/7.x/avataaars/svg');
-      expect(result).toContain('seed=test-user-123');
+      const result = generateAvatarUrl('test-user-123');
+
+      expect(result).toBe('');
     });
 
-    it('should encode special characters in seed', () => {
+    it('should generate URL with encoded seed when service URL is configured', async () => {
+      vi.stubEnv('VITE_AVATAR_SERVICE_URL', 'https://example.com/avatar');
+      const { generateAvatarUrl } = await import('./avatar');
+
       const seed = 'user@example.com';
       const result = generateAvatarUrl(seed);
 
-      expect(result).toContain('seed=user%40example.com');
+      expect(result).toBe('https://example.com/avatar?seed=user%40example.com');
     });
 
-    it('should encode spaces in seed', () => {
-      const seed = 'user name';
-      const result = generateAvatarUrl(seed);
+    it('should handle empty seed', async () => {
+      vi.stubEnv('VITE_AVATAR_SERVICE_URL', undefined);
+      const { generateAvatarUrl } = await import('./avatar');
 
-      expect(result).toContain('seed=user%20name');
-    });
+      const result = generateAvatarUrl('');
 
-    it('should handle empty seed', () => {
-      const seed = '';
-      const result = generateAvatarUrl(seed);
-
-      expect(result).toContain('seed=');
+      expect(result).toBe('');
     });
   });
 
   describe('getAvatarServiceUrl', () => {
-    it('should return default avatar service URL', () => {
-      const result = getAvatarServiceUrl();
+    it('should return empty string when no avatar service URL is configured', async () => {
+      vi.stubEnv('VITE_AVATAR_SERVICE_URL', undefined);
+      const { getAvatarServiceUrl } = await import('./avatar');
 
-      expect(result).toBe('https://api.dicebear.com/7.x/avataaars/svg');
+      expect(getAvatarServiceUrl()).toBe('');
     });
   });
 });

@@ -10,6 +10,7 @@
   "actions": "Actions",
   "add": "Add",
   "all": "All",
+  "anonymous": "Anonymous",
   "appName": "Scrumooth",
   "apply": "Apply",
   "aria": {
@@ -440,6 +441,7 @@
     "wontHave": "Won't Have",
     "wontHaveDesc": "Not in this release - Out of scope"
   },
+  "name": "Name",
   "nav": {
     "activeSprint": "Active Sprint",
     "dailyScrum": "Daily Scrum",
@@ -452,6 +454,7 @@
     "reports": "Reports",
     "retrospective": "Retrospective",
     "retrospectives": "Sprint Retrospective",
+    "scrumMaster": "Scrum Master Dashboard",
     "settings": {
       "data": "Data",
       "privacyData": "Privacy & Data",
@@ -471,9 +474,11 @@
   },
   "next": "Next",
   "no": "No",
+  "noData": "No data available",
   "noResults": "No results found",
   "noTeamSelected": "No team selected",
   "none": "None",
+  "notSet": "Not set",
   "notifications": {
     "connectionError": "Connection error",
     "empty": "No notifications yet",
@@ -482,6 +487,7 @@
     "title": "Notifications",
     "viewAll": "View all notifications"
   },
+  "open": "Open",
   "optional": "Optional",
   "pageError": {
     "backToDashboard": "Back to Dashboard",
@@ -707,6 +713,7 @@
     "titleTooLong": "Title exceeds maximum length by {{overBy}} character{{plural}}. Current: {{current}}/200 characters. Please shorten your title.",
     "titleTooShort": "Title is too short ({{length}} characters). Please use at least 5 characters to provide a clear description."
   },
+  "verify": "Verify",
   "view": "View",
   "widgetError": {
     "failedToLoad": "{{widgetName}} failed to load",

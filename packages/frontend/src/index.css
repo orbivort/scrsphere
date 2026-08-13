@@ -4,6 +4,11 @@
 @import url('./styles/tokens.css');
 
 /* ========================================
+   SELF-HOSTED FONTS - Local Inter variable
+   ======================================== */
+@import url('./styles/fonts.css');
+
+/* ========================================
    BASE CSS RESET AND GLOBAL STYLES
    ======================================== */
 

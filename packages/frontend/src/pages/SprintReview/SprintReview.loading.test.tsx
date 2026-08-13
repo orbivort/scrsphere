@@ -86,6 +86,12 @@ vi.mock('../../hooks/useModalFocus', () => ({
   }),
 }));
 
+// Mock ScrumValuesBanner to avoid its periodic rotation timer interfering
+// with fake-timer based tests (vi.runAllTimersAsync / advanceTimersByTime).
+vi.mock('../../components/common/ScrumValuesBanner', () => ({
+  ScrumValuesBanner: () => <div data-testid="scrum-values-banner" />,
+}));
+
 // Mock child components
 vi.mock('./AttendeeForm', () => ({
   AttendeeForm: () => <div data-testid="attendee-form" />,

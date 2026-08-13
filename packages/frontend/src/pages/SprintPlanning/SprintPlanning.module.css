@@ -236,6 +236,10 @@
   font-weight: var(--font-weight-medium);
 }
 
+.values-banner {
+  margin-bottom: var(--space-4);
+}
+
 /* Metrics Bar */
 .sprint-planning-metrics-bar {
   display: grid;

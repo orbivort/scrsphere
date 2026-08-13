@@ -1,6 +1,8 @@
 import express, { type Router as RouterType } from 'express';
 import authenticate from '../middleware/auth.middleware';
 import { validateBody } from '../middleware/validation.middleware';
+import { updateRetrospectiveSmNotes } from '../controllers/smDashboard.controller';
+import { z } from 'zod';
 import {
   getRetrospectives,
   getRetrospectiveById,
@@ -69,5 +71,12 @@ router.put(
   updateRetroAttendee
 );
 router.delete('/attendees/:attendeeId', authenticate, deleteRetroAttendee);
+
+router.patch(
+  '/:id/sm-notes',
+  authenticate,
+  validateBody(z.object({ smNotes: z.string().max(5000).optional().default('') })),
+  updateRetrospectiveSmNotes
+);
 
 export default router;

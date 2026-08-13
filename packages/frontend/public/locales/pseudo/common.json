@@ -1,7 +1,16 @@
 {
+  "accountDeletion": {
+    "cancelFailed": "[Fàíléd tó càncél délétíón. Pléàsé try àgàínnnnnnnnnnnnnnn.]",
+    "deleteFailed": "[Fàíléd tó délété àccóúnt. Pléàsé try àgàínnnnnnnnnnnnnn.]",
+    "networkError": "[Nétwórk érrór. Pléàsé chéck yóúr cónnéctíón ànd try àgàínnnnnnnnnnnnnnnnnnn.]",
+    "scheduleFailed": "[Fàíléd tó schédúlé délétíón. Pléàsé try àgàínnnnnnnnnnnnnnn.]",
+    "success": "[Yóúr àccóúnt hàs béén súccéssfúlly délétédddddddddddddd.]",
+    "timeoutError": "[Réqúést tíméd óút. Pléàsé try àgàínnnnnnnnnnnn.]"
+  },
   "actions": "[Àctíónssss]",
   "add": "[Àddd]",
   "all": "[Àlll]",
+  "anonymous": "[Ànónymóússss]",
   "appName": "[Scrúmóóthhhh]",
   "apply": "[Àpplyyy]",
   "aria": {
@@ -48,9 +57,15 @@
     "emptyHint": "[Màrk téàm mémbérs àbóvé ór àdd àtténdéés mànúàllyyyyyyyyyyyyyyyy.]",
     "emptyMessage": "[Nó àtténdéés récórdéd yéttttttttt.]",
     "filterAll": "[ÀÀlll ({{count}})]",
+    "filterAll_one": "[ÀÀlll ({{count}})]",
+    "filterAll_other": "[ÀÀlll ({{count}})]",
     "filterAriaLabel": "[Fíltér àtténdéés by typééééééééé]",
     "filterGuests": "[GGúúéésstts ({{count}})]",
+    "filterGuests_one": "[GGúúéésst ({{count}})]",
+    "filterGuests_other": "[GGúúéésstts ({{count}})]",
     "filterTeam": "[TTééààm ({{count}})]",
+    "filterTeam_one": "[TTééààm ({{count}})]",
+    "filterTeam_other": "[TTééààm ({{count}})]",
     "formAttendedLabel": "[Àtténdédddd]",
     "formEmailLabel": "[Émàílll]",
     "formEmailPlaceholder": "[Éntér émàíl àddréss (óptíónàllllllllll)]",
@@ -73,9 +88,12 @@
     "teamMemberCannotEdit": "[Téàm mémbérs cànnót bé édítédddddddddd]",
     "title": "[Àtténdééssss]",
     "unmarkedTitle": "[Téàm mémbérs nót yét màrkédddddddddd ({{count}})]",
+    "unmarkedTitle_one": "[Téàm mémbér nót yét màrkédddddddddd ({{count}})]",
+    "unmarkedTitle_other": "[Téàm mémbérs nót yét màrkédddddddddd ({{count}})]",
     "update": "[Úpdàtééé]"
   },
   "back": "[BBààcck]",
+  "backlogHint": "[Thís ítém wíll bé présént ín thé Pródúct Bàcklóg pàgé fór àctíónnnnnnnnnnnnnnnnnnnnn.]",
   "by": "[bby]",
   "cancel": "[Càncélll]",
   "characterCounter": {
@@ -186,6 +204,8 @@
         "warning": "[Yóú àré thé ónly Pródúct Ównér. Íf yóú délété yóúr àccóúnt, thís téàm wíll hàvé nó Pródúct Ównér. Yóú càn schédúlé délétíón wíth à 14-dày gràcé péríóddddddddddddddddddddddddddddddddddddddddddddddd.]"
       },
       "description": "[Yóú àré à mémbér ófffffff {{count}} ttééààm]",
+      "description_one": "[Yóú àré à mémbér ófffffff {{count}} ttééààm]",
+      "description_other": "[Yóú àré à mémbér ófffffff {{count}} ttééààm]",
       "description_plural": "[Yóú àré à mémbér ófffffff {{count}} téàmsss]",
       "regular": {
         "message": "[Yóú wíll bé rémóvéd fróm thís téàmmmmmmmmmmmm.]"
@@ -195,6 +215,8 @@
     "teamMembersNotified": "[Téàm mémbérs hàvé béén nótífíéddddddddddd]",
     "teamMemberships": "[Téàm mémbérshíps ànd rólésssssssss]",
     "teamsCount": "[({{count}} ttééààmms)]",
+    "teamsCount_one": "[({{count}} ttééààmms)]",
+    "teamsCount_other": "[({{count}} ttééààmms)]",
     "title": "[Délété Àccóúntttttt]",
     "warningTitle": "[Thís àctíón ís pérmànént ànd cànnót bé úndóné. Àll yóúr dàtà wíll bé pérmànéntly délétédddddddddddddddddddddddddddd.]",
     "whatHappensNext": "[Whàt hàppéns néxttttttt]"
@@ -202,14 +224,17 @@
   "download": "[Dównlóàdddd]",
   "draftRestore": {
     "daysAgo": "[{{count}} ddààyy ààggó]",
+    "daysAgo_one": "[{{count}} ddààyy ààggó]",
     "daysAgo_other": "[{{count}} dàys àgóóóó]",
     "discard": "[Díscàrdddd]",
     "draftFound": "[Wé fóúnd à dràft yóú wéré wórkíng ónnnnnnnnnnnnn {{time}}.]",
     "draftSaved": "[Dràft sàvéddddd]",
     "hoursAgo": "[{{count}} hóúr àgóóóó]",
+    "hoursAgo_one": "[{{count}} hóúr àgóóóó]",
     "hoursAgo_other": "[{{count}} hóúrs àgóóóó]",
     "justNow": "[júst nówwww]",
     "minutesAgo": "[{{count}} mínúté àgóóóóó]",
+    "minutesAgo_one": "[{{count}} mínúté àgóóóóó]",
     "minutesAgo_other": "[{{count}} mínútés àgóóóóó]",
     "recently": "[récéntlyyyy]",
     "restoreDraft": "[Réstóré Dràfttttt]",
@@ -323,18 +348,80 @@
   "errorMessage": {
     "dismiss": "[Dísmíss érrór méssàgéééééééé]"
   },
+  "errorStates": {
+    "accessDenied": "[Àccéss déníéddddd]",
+    "accessDeniedDetails": "[Yóú dó nót hàvé pérmíssíón tó àccéss thís pàgé ór résóúrcééééééééééééééééééé.]",
+    "notInvited": "[Nót ínvítéddddd]",
+    "notInvitedDetails": "[Yóú hàvé nót béén ínvítéd tó thís téàm yétttttttttttttt.]",
+    "teamAccessRequired": "[Téàm àccéss réqúíréddddddd]",
+    "teamAccessRequiredDetails": "[Pléàsé séléct ór créàté à téàm tó cóntínúéééééééééééééé.]",
+    "teamNotFound": "[Téàm nót fóúndddddd]",
+    "teamNotFoundDetails": "[Thé téàm yóú àré lóókíng fór cóúld nót bé fóúndddddddddddddddd.]",
+    "unableToLoad": "[Únàblé tó lóàdddddd]",
+    "unableToLoadDetails": "[Únàblé tó lóàd thé réqúéstéd cóntént. Pléàsé try àgàínnnnnnnnnnnnnnnnnn.]",
+    "unexpectedError": "[Únéxpéctéd érrórrrrrr]"
+  },
   "expand": "[Éxpànddd]",
   "export": "[Éxpórttt]",
   "filter": "[Fíltérrr]",
+  "filters": {
+    "all": "[Àlll]",
+    "directMessages": "[Díréct Méssàgéssssss]",
+    "impediments": "[Ímpédíméntsssss]",
+    "reminders": "[Rémíndérssss]",
+    "taskAssignments": "[Tàsk Àssígnméntssssss]",
+    "teamCreated": "[Téàm Créàtéddddd]",
+    "teamDeleted": "[Téàm Délétéddddd]",
+    "teamInvitations": "[Téàm Ínvítàtíónssssss]",
+    "teamUpdated": "[Téàm Úpdàtéddddd]",
+    "unread": "[Únréàddd]"
+  },
   "helpPanel": {
     "avoidExample": "[✗ ÀÀvvóóííd:]",
     "goodExample": "[✓ Góód éxàmpléééééé:]",
     "tipsFor": "[Típs fórrrr {{title}}]",
     "title": "[TTíípps]"
   },
+  "i18nInitError": {
+    "debugInfo": "[Débúg Ínfóóóó]",
+    "message": "[Thé àpplícàtíón cóúld nót lóàd trànslàtíóns wíthínnnnnnnnnnnnnnnnn {{timeout}}ss.]",
+    "retry": "[Rétryyy]",
+    "title": "[Ínítíàlízàtíón Tíméóútttttttt]"
+  },
+  "iconGallery": {
+    "categories": "[{{count}} càtégóríésssss]",
+    "categories_one": "[{{count}} càtégóryyyy]",
+    "categories_other": "[{{count}} càtégóríésssss]",
+    "matching": "[{{count}} màtchíngggg]",
+    "matching_one": "[{{count}} màtchíngggg]",
+    "matching_other": "[{{count}} màtchíngggg]",
+    "noResults": "[Nó ícóns fóúndddddd]",
+    "noResultsHint": "[Try àdjústíng yóúr séàrch qúéryyyyyyyyyyy]",
+    "searchAriaLabel": "[Séàrch ícónsssss]",
+    "searchPlaceholder": "[Séàrch ícóns by nàmé ór càtégóryyyyyyyyyyyy...]",
+    "subtitle": "[Brówsé ànd cópy ímpórt stàtéménts fór àll àvàílàblé ícóns. Clíck àny ícón tó cópy íts ímpórt stàtéméntttttttttttttttttttttttttttttttt.]",
+    "title": "[Ícón Gàlléryyyyy]",
+    "totalIcons": "[{{count}} tótàl ícónsssss]",
+    "totalIcons_one": "[{{count}} tótàl ícónnnnn]",
+    "totalIcons_other": "[{{count}} tótàl ícónsssss]"
+  },
   "import": "[Ímpórttt]",
   "initializing": "[Ínítíàlízíngggggg...]",
   "language": "[Làngúàgéééé]",
+  "list": {
+    "reviewStatus": {
+      "completed": "[Cómplétédddd]",
+      "inProgress": "[Ín Prógréssssss]",
+      "incrementRequired": "[Íncrémént Réqúíréddddddd]",
+      "readyForReview": "[Réàdy fór Révíéwwwwww]"
+    },
+    "statusLabels": {
+      "active": "[Àctívééé]",
+      "cancelled": "[Càncéllédddd]",
+      "completed": "[Cómplétédddd]",
+      "planned": "[Plànnédddd]"
+    }
+  },
   "loading": "[Lóàdíngggg...]",
   "loadingStates": {
     "loadingCardContent": "[Lóàdíng càrd cónténttttttt]",
@@ -343,17 +430,31 @@
     "loadingListItems": "[Lóàdíng líst ítémsssssss]"
   },
   "localeSyncFailed": "[Fàíléd tó sync làngúàgé préféréncé. Ít wíll sync ón néxt lógínnnnnnnnnnnnnnnnnnnn.]",
+  "minLabel": "[mmíín {{min}}]",
+  "moscow": {
+    "couldHave": "[Cóúld Hàvéééé]",
+    "couldHaveDesc": "[Désíràblé íf póssíblé - Nícé tó hàvéééééééééééé]",
+    "mustHave": "[Múst Hàvéééé]",
+    "mustHaveDesc": "[Crítícàl fór délívéry - Nón-négótíàblééééééééééééé]",
+    "shouldHave": "[Shóúld Hàvééééé]",
+    "shouldHaveDesc": "[Ímpórtànt bút nót vítàl - Hígh príórítyyyyyyyyyyyyy]",
+    "wontHave": "[Wón't Hàvéééé]",
+    "wontHaveDesc": "[Nót ín thís réléàsé - Óút óf scópéééééééééééé]"
+  },
+  "name": "[NNààmmé]",
   "nav": {
     "activeSprint": "[Àctívé Sprínttttt]",
     "dailyScrum": "[Dàíly Scrúmmmmm]",
     "dashboard": "[Dàshbóàrdddd]",
-    "impediments": "[Ímpédíméntsssss]",
-    "increments": "[Íncréméntssss]",
+    "impediments": "[Ímpédíméntttt]",
+    "increments": "[Íncréméntttt]",
     "notifications": "[Nótífícàtíónsssss]",
     "productBacklog": "[Pródúct Bàcklógggggg]",
-    "productGoals": "[Pródúct Góàlsssss]",
+    "productGoals": "[Pródúct Góàlllll]",
     "reports": "[Répórtssss]",
     "retrospective": "[Rétróspéctívééééé]",
+    "retrospectives": "[Sprínt Rétróspéctívééééééé]",
+    "scrumMaster": "[Scrúm Màstér Dàshbóàrdddddddd]",
     "settings": {
       "data": "[DDààttà]",
       "privacyData": "[Prívàcy & Dàtàààààà]",
@@ -367,11 +468,17 @@
     "sprintReview": "[Sprínt Révíéwwwww]",
     "team": "[TTééààm]"
   },
+  "networkErrors": {
+    "networkError": "[Nétwórk érrór. Pléàsé chéck yóúr cónnéctíón ànd try àgàínnnnnnnnnnnnnnnnnnn.]",
+    "timeout": "[Réqúést tíméd óút. Pléàsé try àgàínnnnnnnnnnnn.]"
+  },
   "next": "[NNééxxt]",
   "no": "[NNó]",
+  "noData": "[Nó dàtà àvàílàblééééééé]",
   "noResults": "[Nó résúlts fóúndddddd]",
   "noTeamSelected": "[Nó téàm séléctédddddd]",
   "none": "[NNóónné]",
+  "notSet": "[NNóótt sséét]",
   "notifications": {
     "connectionError": "[Cónnéctíón érrórrrrrr]",
     "empty": "[Nó nótífícàtíóns yéttttttt]",
@@ -380,6 +487,7 @@
     "title": "[Nótífícàtíónsssss]",
     "viewAll": "[Víéw àll nótífícàtíónssssssss]"
   },
+  "open": "[ÓÓppéén]",
   "optional": "[Óptíónàllll]",
   "pageError": {
     "backToDashboard": "[Bàck tó Dàshbóàrddddddd]",
@@ -417,6 +525,8 @@
       "requirementsTitle": "[Pàsswórd Réqúíréméntssssssss:]",
       "special": "[ÓÓnnéé ssppééccííààll cchhààrrààccttéér (!@#$%^&*)]",
       "strengthLabels": {
+        "fair": "[FFààíír]",
+        "good": "[GGóóóód]",
         "medium": "[Médíúmmm]",
         "strong": "[Strónggg]",
         "weak": "[WWééààk]"
@@ -457,7 +567,66 @@
   "showLess": "[Shów lésssss]",
   "showMore": "[Shów móréééé]",
   "sort": "[SSóórrt]",
-  "status": "[Stàtússs]",
+  "sprintPlanning": {
+    "activeCategory": "[[ÀÀccttíívvé]]",
+    "doneCategory": "[[DDóónné]]",
+    "moscow": {
+      "could": "[Cóúlddd]",
+      "couldHave": "[Cóúld Hàvéééé]",
+      "must": "[MMúússt]",
+      "mustHave": "[Múst Hàvéééé]",
+      "should": "[Shóúlddd]",
+      "shouldHave": "[Shóúld Hàvééééé]",
+      "wont": "[WWóónn't]",
+      "wontHave": "[Wón't Hàvéééé]"
+    },
+    "readyChecklist": {
+      "dependenciesIdentified": "[Dépéndéncíés ídéntífíédddddddd]",
+      "estimatedByTeam": "[Éstímàtéd by téàmmmmmmm]",
+      "hasClearAcceptanceCriteria": "[Hàs cléàr àccéptàncé crítéríàààààààààà]",
+      "understandableByTeam": "[Úndérstàndàblé by téàmmmmmmmm]"
+    },
+    "startSprintModal": {
+      "error": {
+        "activeSprintExists": "[Àctívé Sprínt Éxístsssssss]",
+        "anotherSprintActive": "[Ànóthér sprínt ís àlréàdy àctívé. Pléàsé cómplété thé cúrrént sprínt béfóré stàrtíng à néw ónéééééééééééééééééééééééééééééé.]",
+        "invalidRequest": "[Ínvàlíd Réqúéstttttt]",
+        "invalidRequestMessage": "[Pléàsé chéck yóúr sprínt dàtà ànd try àgàín. Màké súré àll réqúíréd fíélds àré fílléd córréctlyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy.]",
+        "invalidSprintBacklog": "[Ínvàlíd Sprínt Bàcklógggggggg]",
+        "invalidSprintBacklogMessage": "[Théré ís àn íssúé wíth thé sprínt bàcklóg ítéms. Pléàsé rémóvé ànd ré-àdd thé ítéms, thén try àgàínnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn.]",
+        "invalidTaskAssignment": "[Ínvàlíd Tàsk Àssígnméntttttttt]",
+        "invalidTaskAssignmentMessage": "[Óné ór móré tàsks àré àssígnéd tó ínvàlíd téàm mémbérs. Pléàsé révíéw tàsk àssígnménts ànd énsúré àll àssígnéés àré cúrrént téàm mémbérsssssssssssssssssssssssssssssssssssssssssss.]",
+        "networkError": "[Nétwórk Érrórrrrr]",
+        "networkErrorMessage": "[Únàblé tó cónnéct tó thé sérvér. Pléàsé chéck yóúr íntérnét cónnéctíón ànd try àgàínnnnnnnnnnnnnnnnnnnnnnnnnnn.]",
+        "permissionDenied": "[Yóú dó nót hàvé pérmíssíón tó stàrt spríntsssssssssssssss.]",
+        "sessionExpired": "[Séssíón Éxpírédddddd]",
+        "sessionExpiredMessage": "[Yóúr séssíón hàs éxpíréd. Pléàsé lóg ín àgàín ànd rétryyyyyyyyyyyyyyyyyy.]",
+        "sprintConflict": "[Sprínt Cónflíctttttt]",
+        "sprintConflictMessage": "[Thís sprínt ís béíng módífíéd by ànóthér úsér. Pléàsé wàít à mómént ànd try àgàínnnnnnnnnnnnnnnnnnnnnnnnnn.]",
+        "sprintGoalRequired": "[Sprínt Góàl Réqúíréddddddd]",
+        "sprintGoalRequiredMessage": "[Pléàsé défíné à sprínt góàl béfóré stàrtíng thé spríntttttttttttttttttt.]",
+        "sprintNotFound": "[Sprínt Nót Fóúndddddd]",
+        "sprintNotFoundMessage": "[Thé séléctéd sprínt nó lóngér éxísts. Ít mày hàvé béén délétéd. Pléàsé réfrésh ànd séléct à dífférént spríntttttttttttttttttttttttttttttttttt.]",
+        "timeout": "[Réqúést Tíméóútttttt]",
+        "timeoutMessage": "[Thé réqúést tóók tóó lóng tó cómplété. Pléàsé try àgàínnnnnnnnnnnnnnnnnn.]",
+        "unableToStart": "[Únàblé tó Stàrt Spríntttttttt]",
+        "unauthorized": "[Únàúthórízéddddd]"
+      }
+    },
+    "upcomingCategory": "[[Úpcómíngggg]]"
+  },
+  "status": {
+    "done": "[DDóónné]",
+    "doneDesc": "[Cómplétédddd]",
+    "inProgress": "[Ín Prógréssssss]",
+    "inProgressDesc": "[Cúrréntly béíng wórkéd ónnnnnnnnn]",
+    "new": "[Néww]",
+    "newDesc": "[Néwly créàtéd ítémmmmmmm]",
+    "ready": "[Réàdyyy]",
+    "readyDesc": "[Réàdy fór spríntttttt]",
+    "refined": "[Réfínédddd]",
+    "refinedDesc": "[Réqúíréménts clàrífíédddddddd]"
+  },
   "statusSelector": {
     "changeItemStatusHint": "[Clíck tó chàngé ítém stàtússssssssss]",
     "changeStatus": "[Chàngé Stàtússsss]",
@@ -513,6 +682,38 @@
     "editProfile": "[Édít Prófílééééé]",
     "logout": "[Lógóúttt]"
   },
+  "validation": {
+    "acceptanceCriteriaRequired": "[Àccéptàncé Crítéríà ís réqúíréd. Pléàsé défíné spécífíc, téstàblé cóndítíóns fór cómplétíónnnnnnnnnnnnnnnnnnnnnnnnnnnnn.]",
+    "activeGoalRequired": "[Àn àctívé góàl ís réqúíréd. Pléàsé sét àn àctívé pródúct góàl fírstttttttttttttttttttttt.]",
+    "businessValueMinimum": "[Búsínéss Vàlúé múst bé àt léàst 1 póínt. Pléàsé séléct à vàlíd vàlúéééééééééééééééééééééé.]",
+    "businessValueMinimumOptional": "[Búsínéss Vàlúé múst bé àt léàst 1 póínt. Pléàsé séléct à vàlúé thàt réflécts thé rélàtívé ímpórtàncé óf thís ítémmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm.]",
+    "businessValueRequired": "[Búsínéss Vàlúé ís réqúíréd. Pléàsé séléct à vàlúé thàt réflécts thé ímpórtàncé óf thís ítémmmmmmmmmmmmmmmmmmmmmmmmmmmmm.]",
+    "businessValueTooLarge": "[Búsínéss Vàlúéééééé ({{value}}) éxcééds màxímúm óf 100 póínts. Pléàsé séléct à vàlúé thàt fíts wíthín thé stàndàrd ràngééééééééééééééééééééééééééééé.]",
+    "cannotChangeStatus": "[Cànnót chàngé stàtús tóóóóóóóóó \"{{status}}\". Thé fóllówíng màndàtóry fíélds múst bé cómplétéd fírsttttttttttttttttttt: {{fields}}. Pléàsé clíck \"Édít Ítém\" tó úpdàté thís bàcklóg ítémmmmmmmmmmmmmmmmmm.]",
+    "descriptionRequired": "[Déscríptíón ís réqúíréd. Pléàsé próvídé détàíléd ínfórmàtíón àbóút thís bàcklóg ítémmmmmmmmmmmmmmmmmmmmmmmmmmm.]",
+    "estimateMinimum": "[Éstímàté múst bé àt léàst 1 stóry póínt. Pléàsé séléct à vàlíd vàlúéééééééééééééééééééééé.]",
+    "estimateMinimumOptional": "[Éstímàté múst bé àt léàst 1 stóry póínt. Pléàsé séléct à vàlúé fróm thé drópdówn ór léàvé émpty íf nót réàdy tó éstímàtéééééééééééééééééééééééééééééééééééééé.]",
+    "estimateRequired": "[Éstímàté ís réqúíréd. Pléàsé séléct à stóry póínt vàlúé fróm thé drópdównnnnnnnnnnnnnnnnnnnnnnnn.]",
+    "estimateTooLarge": "[Éstímàtéééé ({{estimate}}) éxcééds màxímúm óf 100 stóry póínts. Fór làrgér wórk ítéms, cónsídér bréàkíng thís íntó smàllér, móré mànàgéàblé bàcklóg ítémssssssssssssssssssssssssssssssssssssssss.]",
+    "fieldAcceptanceCriteria": "[Àccéptàncé Crítéríààààààà]",
+    "fieldBusinessValue": "[Búsínéss Vàlúéééééé]",
+    "fieldDescription": "[Déscríptíónnnnn]",
+    "fieldEstimate": "[Éstímàté (Stóry Póíntssssssss)]",
+    "fieldLabels": "[Làbéls (àt léàst ónéééééééé)]",
+    "fieldMoscowPriority": "[MóSCóW Príórítyyyyyy]",
+    "fieldTitle": "[Títlé (mínímúm 5 chàràctérssssssssss)]",
+    "invalidTransition": "[Trànsítíón frómmmmmm {{current}} ttóó {{target}} ís nót àllówéd. Àllówéd trànsítíónsssssssssssss: {{allowed}}]",
+    "labelsRequired": "[Àt léàst óné làbél ís réqúíréd. Pléàsé àdd à làbél tó càtégórízé thís ítémmmmmmmmmmmmmmmmmmmmmmmm.]",
+    "moscowPriorityRequired": "[MóSCóW Príóríty ís réqúíréd. Pléàsé séléct óné óf thé fóúr príóríty lévélssssssssssssssssssssssss.]",
+    "none": "[NNóónné]",
+    "statusAlreadySet": "[Ítém ís àlréàdy ín thís stàtússssssssss]",
+    "statusRequired": "[Stàtús ís réqúíréddddddd.]",
+    "teamIdRequired": "[Téàm ÍD ís réqúíréd. Pléàsé séléct à téàm fírstttttttttttttttt.]",
+    "titleRequired": "[Títlé ís réqúíréd. Pléàsé éntér à déscríptívé títlé fór thís bàcklóg ítémmmmmmmmmmmmmmmmmmmmmmmm.]",
+    "titleTooLong": "[Títlé éxcééds màxímúm léngth byyyyyyyyyyy {{overBy}} chàràctérrrr{{plural}}. CCúúrrrréénnt: {{current}}/200 chàràctérs. Pléàsé shórtén yóúr títléééééééééééééé.]",
+    "titleTooShort": "[Títlé ís tóó shórttttttt ({{length}} chàràctérs). Pléàsé úsé àt léàst 5 chàràctérs tó próvídé à cléàr déscríptíónnnnnnnnnnnnnnnnnnnnnnnnn.]"
+  },
+  "verify": "[Vérífyyy]",
   "view": "[VVííééw]",
   "widgetError": {
     "failedToLoad": "[{{widgetName}} fàíléd tó lóàdddddd]",

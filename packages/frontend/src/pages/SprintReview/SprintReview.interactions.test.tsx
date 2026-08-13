@@ -188,13 +188,14 @@ const mockSprintBacklogItems = {
   ],
 };
 
-function renderComponent(sprintId = 'sprint-1') {
+function renderComponent(sprintId = 'sprint-1', userRoleInCurrentTeam?: string) {
   const queryClient = createTestQueryClient();
 
   vi.spyOn(teamStoreModule, 'useTeamStore').mockReturnValue({
     currentTeam: mockTeam,
     setCurrentTeam: vi.fn(),
     loadTeam: vi.fn(),
+    userRoleInCurrentTeam,
   } as unknown as ReturnType<typeof teamStoreModule.useTeamStore>);
 
   return renderWithProviders(
@@ -233,7 +234,7 @@ function setupBasicMocks(
 
   vi.spyOn(apiServiceModule.apiService, 'getSprintBacklogPBIs').mockResolvedValue({
     success: true,
-    ...overrides.sprintBacklogItems,
+    data: overrides.sprintBacklogItems?.data ?? mockSprintBacklogItems.data,
   });
 
   vi.spyOn(apiServiceModule.apiService, 'updateSprintReview').mockResolvedValue({
@@ -1611,5 +1612,29 @@ describe('SprintReview - Attendee Count Tests', () => {
     await waitFor(() => {
       expect(screen.getByText(/0 \/ 0 Attendees/i)).toBeInTheDocument();
     });
+  });
+});
+
+describe('SprintReview - Scrum Master Notes Tests', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setupBasicMocks();
+  });
+
+  it('should render Scrum Master Notes in read-only view mode when review is completed', async () => {
+    setupBasicMocks({
+      review: { status: 'completed' },
+    });
+
+    renderComponent('sprint-1', 'scrum_master');
+
+    await waitFor(() => {
+      expect(screen.getByText('Scrum Master Notes')).toBeInTheDocument();
+    });
+
+    // Completed reviews force read-only view mode: no editable textarea and no Save/Edit buttons.
+    expect(screen.queryByLabelText('Scrum Master Notes')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Save/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Edit/i })).not.toBeInTheDocument();
   });
 });

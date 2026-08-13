@@ -1,5 +1,8 @@
 {
   "backToIncrements": "[Bàck tó Íncréméntsssssss]",
+  "card": {
+    "integrationVerified": "[Íntégràtíón vérífíéddddddd]"
+  },
   "create": {
     "actions": {
       "cancel": "[Càncélll]",
@@ -7,7 +10,8 @@
       "createIncrement": "[Créàté Íncréméntttttt]",
       "creating": "[CCrrééààttíínng...]",
       "delivering": "[Délívérínggggg...]",
-      "skipToSprintReview": "[Skíp tó Sprínt Révíéwwwwwwww]"
+      "skipToSprintReview": "[Skíp tó Sprínt Révíéwwwwwwww]",
+      "verifying": "[Vérífýíng íntégrátíónnnnn...]"
     },
     "backToIncrements": "[Bàck tó Íncréméntsssssss]",
     "backToSprintReview": "[Bàck tó Sprínt Révíéwwwwwwww]",
@@ -40,7 +44,8 @@
     "progressSteps": {
       "creatingIncrement": "[Créàtíng Íncréméntttttttt...]",
       "deliveringIncrement": "[Délívéríng Íncréméntttttttt...]",
-      "redirecting": "[Rédíréctíngggggg...]"
+      "redirecting": "[Rédíréctíngggggg...]",
+      "verifyingIntegration": "[Vérífýíng Íntégrátíónnnnnnn...]"
     },
     "summary": {
       "pbisSelected": "[PBÍs Séléctéddddd]",
@@ -55,7 +60,10 @@
       "createdSuccess": "[Íncrémént créàtéd súccéssfúllyyyyyyyyyyy!]",
       "deliverFailed": "[Fàíléd tó délívér íncrémént. Yóú càn délívér ít mànúàlly fróm thé íncrémént détàíl pàgéééééééééééééééééééééééééééé.]",
       "deliveredSuccess": "[Íncrémént délívéréd! Rédíréctíng tó Sprínt Révíéwwwwwwwwwwwwwwwww...]",
-      "validationFailed": "[Vàlídàtíón fàíléddddddd]"
+      "integrationRequired": "[Íntégrátíón vérífícàtíón ís réqúíréd béfóré thís íncrémént càn bé délívéréd. Àdd íntégrátíón tésts àgàínst príór íncréménts, théén vérífý ànd délívérrr.]",
+      "validationFailed": "[Vàlídàtíón fàíléddddddd]",
+      "verificationFailed": "[Fàíléd tó vérífý íntégrátíón. Yóú càn vérífý ànd délívér ít mànúàlly fróm thé íncrémént détàíl pàgéééééééééééééééééééééééééééééééé.]",
+      "verifyingIntegration": "[Íntégrátíón vérífýíng! Délívéríng íncréméntttttttttttttttt...]"
     },
     "validation": {
       "atLeastOnePbi": "[Àt léàst óné PBÍ múst bé séléctéddddddddddd]",
@@ -106,6 +114,7 @@
       "sprintReviewOption": "[Sprínt Révíéwwwww]",
       "title": "[Délívér Íncréménttttttt]"
     },
+    "deliverRequiresIntegration": "[Íntégrátíón múst bé vérífíéd béfóré thís Íncrémént çán bé délívéréd]",
     "dodVerification": {
       "byCategory": "[Vérífícàtíón by Càtégóryyyyyyyyy]",
       "byPbi": "[Vérífícàtíón by PBÍÍÍÍÍÍÍ]",
@@ -160,6 +169,29 @@
       "sprintReview": "[Sprínt Révíéwwwww]"
     }
   },
+  "incrementIntegrity": {
+    "addTest": "[Àdd Íntégràtíón Tésttttttt]",
+    "chain": "[Íncrémént Chàínnnnnn]",
+    "dependenciesMet": "[Àll príór Íncréménts íntégràté súccéssfúllyyyyyyyyyyyyyy]",
+    "dependenciesMissing": "[Sómé príór Íncréménts hàvé nót pàsséd íntégràtíón téstssssssssssssssssss]",
+    "fail": "[Fàíléddd]",
+    "firstIncrement": "[Fírst Íncrémént — nó príór Íncrémént tó tést àgàínsttttttttttttttttt]",
+    "integrationTests": "[Íntégràtíón Téstsssssss]",
+    "integrationVerified": "[Íntégràtíón vérífíéddddddd]",
+    "lockedHint": "[Thís Íncrémént hás béén délívéréd ànd ís lóçkéddddddddddddddd]",
+    "notVerified": "[Íntégràtíón nót vérífíéddddddddd]",
+    "notes": "[Tést nótéssss]",
+    "pass": "[Pàsséddd]",
+    "pending": "[Péndíngggg]",
+    "priorIncrement": "[Príór Íncréméntttttt]",
+    "testResult": "[Tést Résúlttttt]",
+    "title": "[Íncrémént Íntégràtíónnnnnnnn]",
+    "unverified": "[Nót vérífíéddddd]",
+    "verificationRequired": "[Íntégràtíón vérífícàtíón ís réqúíréd béfóré màrkíng às vérífíédddddddddddddddddddd]",
+    "verified": "[Vérífíédddd]",
+    "verifyHint": "[Vérífy thàt thís Íncrémént íntégràtés wíth àll príór Íncréméntssssssssssssssssssss]",
+    "verifyNow": "[Vérífy Íntégràtíónnnnnnn]"
+  },
   "list": {
     "ariaLabelFilter": "[Fíltér íncréménts by stàtússssssssss]",
     "ariaLabelSearch": "[Séàrch íncréméntsssssss]",
@@ -189,6 +221,7 @@
   },
   "loading": "[Lóàdíng íncréméntssssssss...]",
   "noDescription": "[Nó déscríptíón próvídéddddddddd.]",
+  "pts": "[ptss]",
   "skipToSprintReview": "[Skíp tó Sprínt Révíéwwwwwwww]",
   "sprintPrefix": "[SSPPRRÍÍNNT {{sprintId}}]",
   "status": {

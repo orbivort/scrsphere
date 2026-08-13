@@ -492,16 +492,16 @@ packages/frontend/
 
 ### Frontend Environment Variables
 
-| Variable                  | Type    | Default                            | Description                   |
-| ------------------------- | ------- | ---------------------------------- | ----------------------------- |
-| `VITE_API_URL`            | url     | `http://localhost:5001/api/v1`     | Backend API URL               |
-| `VITE_API_TIMEOUT`        | integer | 30000                              | API request timeout (ms)      |
-| `VITE_USE_MOCK_API`       | boolean | false                              | Use mock API instead of real  |
-| `VITE_DEV_PORT`           | integer | 5173                               | Vite dev server port          |
-| `VITE_BACKLOG_ITEM_LIMIT` | integer | 200                                | Max backlog items per request |
-| `VITE_LOG_LEVEL`          | string  | debug (dev) / info (prod)          | Frontend log level            |
-| `VITE_SENTRY_DSN`         | string  | -                                  | Sentry error reporting DSN    |
-| `VITE_AVATAR_SERVICE_URL` | url     | `https://api.dicebear.com/7.x/...` | Avatar generation service     |
+| Variable                  | Type    | Default                        | Description                                  |
+| ------------------------- | ------- | ------------------------------ | -------------------------------------------- |
+| `VITE_API_URL`            | url     | `http://localhost:5001/api/v1` | Backend API URL                              |
+| `VITE_API_TIMEOUT`        | integer | 30000                          | API request timeout (ms)                     |
+| `VITE_USE_MOCK_API`       | boolean | false                          | Use mock API instead of real                 |
+| `VITE_DEV_PORT`           | integer | 5173                           | Vite dev server port                         |
+| `VITE_BACKLOG_ITEM_LIMIT` | integer | 200                            | Max backlog items per request                |
+| `VITE_LOG_LEVEL`          | string  | debug (dev) / info (prod)      | Frontend log level                           |
+| `VITE_SENTRY_DSN`         | string  | -                              | Sentry error reporting DSN                   |
+| `VITE_AVATAR_SERVICE_URL` | url     | - (disabled)                   | Avatar generation service (self-hosted only) |
 
 ### Production Deployment Checklist
 

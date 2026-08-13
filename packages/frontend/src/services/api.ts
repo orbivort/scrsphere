@@ -145,6 +145,7 @@ class ApiService {
   deleteProductGoal = productGoalsService.deleteProductGoal.bind(productGoalsService);
   getProductGoalStatusHistory =
     productGoalsService.getProductGoalStatusHistory.bind(productGoalsService);
+  getProductGoalSnapshots = productGoalsService.getSnapshots.bind(productGoalsService);
 
   // Sprint Configuration endpoints
   getSprintConfiguration = sprintConfigService.getSprintConfiguration.bind(sprintConfigService);
@@ -167,6 +168,7 @@ class ApiService {
   createIncrement = incrementService.createIncrement.bind(incrementService);
   updateIncrement = incrementService.updateIncrement.bind(incrementService);
   deliverIncrement = incrementService.deliverIncrement.bind(incrementService);
+  verifyIntegration = incrementService.verifyIntegration.bind(incrementService);
   getIncrementMetrics = incrementService.getIncrementMetrics.bind(incrementService);
 
   // Sprint Review endpoints
@@ -183,6 +185,9 @@ class ApiService {
   addAttendee = sprintReviewService.addAttendee.bind(sprintReviewService);
   updateAttendee = sprintReviewService.updateAttendee.bind(sprintReviewService);
   deleteAttendee = sprintReviewService.deleteAttendee.bind(sprintReviewService);
+  getProductGoalForReview = sprintReviewService.getProductGoalForReview.bind(sprintReviewService);
+  submitProductGoalAssessment =
+    sprintReviewService.submitProductGoalAssessment.bind(sprintReviewService);
 
   // Sprint Retrospective endpoints
   getRetrospectives = retrospectiveService.getRetrospectives.bind(retrospectiveService);

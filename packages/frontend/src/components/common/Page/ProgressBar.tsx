@@ -16,7 +16,7 @@ interface ProgressBarProps {
   /** Size variant */
   size?: 'small' | 'medium' | 'large';
   /** Color variant */
-  variant?: 'primary' | 'success' | 'warning' | 'danger';
+  variant?: 'primary' | 'success' | 'warning' | 'danger' | 'accent';
   /** Additional CSS class name */
   className?: string;
 }

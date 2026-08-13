@@ -1,5 +1,8 @@
 {
   "backToIncrements": "Back to Increments",
+  "card": {
+    "integrationVerified": "Integration verified"
+  },
   "create": {
     "actions": {
       "cancel": "Cancel",
@@ -7,7 +10,8 @@
       "createIncrement": "Create Increment",
       "creating": "Creating...",
       "delivering": "Delivering...",
-      "skipToSprintReview": "Skip to Sprint Review"
+      "skipToSprintReview": "Skip to Sprint Review",
+      "verifying": "Verifying integration..."
     },
     "backToIncrements": "Back to Increments",
     "backToSprintReview": "Back to Sprint Review",
@@ -40,7 +44,8 @@
     "progressSteps": {
       "creatingIncrement": "Creating Increment...",
       "deliveringIncrement": "Delivering Increment...",
-      "redirecting": "Redirecting..."
+      "redirecting": "Redirecting...",
+      "verifyingIntegration": "Verifying Integration..."
     },
     "summary": {
       "pbisSelected": "PBIs Selected",
@@ -55,7 +60,10 @@
       "createdSuccess": "Increment created successfully!",
       "deliverFailed": "Failed to deliver increment. You can deliver it manually from the increment detail page.",
       "deliveredSuccess": "Increment delivered! Redirecting to Sprint Review...",
-      "validationFailed": "Validation failed"
+      "integrationRequired": "Integration verification is required before this increment can be delivered. Add integration tests against prior increments, then verify and deliver.",
+      "validationFailed": "Validation failed",
+      "verificationFailed": "Failed to verify integration. You can verify and deliver it manually from the increment detail page.",
+      "verifyingIntegration": "Integration verified! Delivering increment..."
     },
     "validation": {
       "atLeastOnePbi": "At least one PBI must be selected",
@@ -106,6 +114,7 @@
       "sprintReviewOption": "Sprint Review",
       "title": "Deliver Increment"
     },
+    "deliverRequiresIntegration": "[Îñţêĝŕåţîøñ µûšţ ßê véŕîƒîêð ßêƒøŕê ţĥîš îñçŕêµêñţ çåñ ßê đêłîvêŕêð]",
     "dodVerification": {
       "byCategory": "Verification by Category",
       "byPbi": "Verification by PBI",
@@ -159,6 +168,29 @@
       "sprintCompleted": "Sprint Completed",
       "sprintReview": "Sprint Review"
     }
+  },
+  "incrementIntegrity": {
+    "addTest": "[Åðð Îñţêĝŕåţîøñ Ţêšţ]",
+    "chain": "[Îñçŕêµêñţ Çĥåîñ]",
+    "dependenciesMet": "[Åłł þŕîøŕ îñçŕêµêñţš îñţêĝŕåţê šûççêššƒûłłý]",
+    "dependenciesMissing": "[Šøµê þŕîøŕ îñçŕêµêñţš ĥåvê ñøţ þåššêð îñţêĝŕåţîøñ ţêšţš]",
+    "fail": "[ƒåîłêð]",
+    "firstIncrement": "[ƒîŕšţ Îñçŕêµêñţ — ñø þŕîøŕ Îñçŕêµêñţ ţø ţêšţ åĝåîñšţ]",
+    "integrationTests": "[Îñţêĝŕåţîøñ Ţêšţš]",
+    "integrationVerified": "[Îñţêĝŕåţîøñ vêŕîƒîêð]",
+    "lockedHint": "[Ţĥîš îñçŕêµêñţ ĥåš ßêêñ đêłîvêŕêð åñð îš łöçķêð]",
+    "notVerified": "[Îñţêĝŕåţîøñ ñøţ vêŕîƒîêð]",
+    "notes": "[Ţêšţ ñøţêš]",
+    "pass": "[Þåššêð]",
+    "pending": "[Þêñðîñĝ]",
+    "priorIncrement": "[Þŕîøŕ Îñçŕêµêñţ]",
+    "testResult": "[Ţêšţ Řêšûłţ]",
+    "title": "[Îñçŕêµêñţ Îñţêĝŕåţîøñ]",
+    "unverified": "[Ñøţ vêŕîƒîêð]",
+    "verificationRequired": "[Îñţêĝŕåţîøñ vêŕîƒîçåţîøñ îš ŕêqûîŕêð ßêƒøŕê µåŕķîñĝ åš vêŕîƒîêð]",
+    "verified": "[Vêŕîƒîêð]",
+    "verifyHint": "[Vêŕîƒý ţĥåţ ţĥîš îñçŕêµêñţ îñţêĝŕåţêš wîţĥ åłł þŕîøŕ îñçŕêµêñţš]",
+    "verifyNow": "[Vêŕîƒý Îñţêĝŕåţîøñ]"
   },
   "list": {
     "ariaLabelFilter": "Filter increments by status",

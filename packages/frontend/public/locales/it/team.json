@@ -53,6 +53,11 @@
     "noPermissionToAddMembers": "Non hai il permesso di aggiungere membri al team. Solo i Product Owner e gli Scrum Master possono invitare membri.",
     "noPermissionToRemoveMembers": "Non hai il permesso di rimuovere membri dal team. Solo gli Scrum Master e i Product Owner possono rimuovere membri."
   },
+  "healthCheck": {
+    "collapse": "Comprimi",
+    "expand": "Espandi",
+    "sectionTitle": "Controllo salute dei valori Scrum"
+  },
   "help": {
     "description": "Se non sei sicuro del tuo ruolo o hai bisogno di assistenza, contatta l'amministratore della tua organizzazione o verifica con il tuo project manager.",
     "title": "Hai bisogno di aiuto per iniziare?"

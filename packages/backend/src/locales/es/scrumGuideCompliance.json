@@ -1,0 +1,43 @@
+{
+  "healthCheck": {
+    "alreadyResponded": "Ya has respondido a este chequeo de salud",
+    "invalidScore": "La puntuación debe estar entre 1 y 5",
+    "notFound": "Chequeo de salud no encontrado"
+  },
+  "incrementIntegration": {
+    "differentTeam": "El incremento anterior debe pertenecer al mismo equipo",
+    "notFound": "Incremento no encontrado",
+    "priorNotFound": "Incremento anterior no encontrado",
+    "sameIncrement": "El incremento actual y el anterior deben ser diferentes",
+    "verificationRequired": "El incremento no puede verificarse: la verificación de integración es obligatoria. Todos los incrementos anteriores deben tener pruebas de integración PASADAS."
+  },
+  "productGoal": {
+    "noProductGoal": "Este Sprint no está vinculado a un objetivo del producto",
+    "snapshotNotFound": "Instantánea del objetivo del producto no encontrada"
+  },
+  "scrumValues": {
+    "COMMITMENT": {
+      "definition": "Comprometerse personalmente con los objetivos del equipo Scrum.",
+      "question": "¿Sientes que el equipo está personalmente comprometido a lograr el objetivo del Sprint?"
+    },
+    "COURAGE": {
+      "definition": "Tener el coraje de comprometerse, hacer lo correcto y trabajar en problemas difíciles.",
+      "question": "¿Sientes que el equipo tiene el coraje de plantear problemas y abordarlos?"
+    },
+    "FOCUS": {
+      "definition": "Centrarse en el trabajo del Sprint y los objetivos del equipo Scrum.",
+      "question": "¿Sientes que el equipo se centra en el trabajo del Sprint sin distracciones?"
+    },
+    "OPENNESS": {
+      "definition": "Ser abierto sobre el trabajo y los desafíos de realizarlo.",
+      "question": "¿Sientes que el equipo es abierto sobre el progreso y los desafíos?"
+    },
+    "RESPECT": {
+      "definition": "Respetarse mutuamente como personas capaces e independientes.",
+      "question": "¿Sientes que los miembros del equipo se respetan mutuamente?"
+    }
+  },
+  "smDashboard": {
+    "notFound": "Datos del panel no encontrados"
+  }
+}

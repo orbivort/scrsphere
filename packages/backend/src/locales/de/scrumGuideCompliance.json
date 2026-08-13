@@ -1,0 +1,43 @@
+{
+  "healthCheck": {
+    "alreadyResponded": "Sie haben bereits auf diesen Gesundheitscheck geantwortet",
+    "invalidScore": "Bewertung muss zwischen 1 und 5 liegen",
+    "notFound": "Gesundheitscheck nicht gefunden"
+  },
+  "incrementIntegration": {
+    "differentTeam": "Das vorherige Inkrement muss zum selben Team gehören",
+    "notFound": "Inkrement nicht gefunden",
+    "priorNotFound": "Vorheriges Inkrement nicht gefunden",
+    "sameIncrement": "Aktuelles und vorheriges Inkrement müssen unterschiedlich sein",
+    "verificationRequired": "Inkrement kann nicht verifiziert werden: Integrationsverifizierung ist erforderlich. Alle vorherigen Inkremente müssen PASSED-Integrationstests haben."
+  },
+  "productGoal": {
+    "noProductGoal": "Dieser Sprint ist keinem Produktziel zugeordnet",
+    "snapshotNotFound": "Produktziel-Snapshot nicht gefunden"
+  },
+  "scrumValues": {
+    "COMMITMENT": {
+      "definition": "Persönliches Engagement für die Ziele des Scrum-Teams.",
+      "question": "Haben Sie das Gefühl, dass sich das Team persönlich für das Erreichen des Sprint-Ziels einsetzt?"
+    },
+    "COURAGE": {
+      "definition": "Der Mut, sich zu verpflichten, das Richtige zu tun und schwierige Probleme anzugehen.",
+      "question": "Haben Sie das Gefühl, dass das Team den Mut hat, Probleme anzusprechen?"
+    },
+    "FOCUS": {
+      "definition": "Konzentration auf die Arbeit des Sprints und die Ziele des Scrum-Teams.",
+      "question": "Haben Sie das Gefühl, dass sich das Team ohne Ablenkung auf die Sprint-Arbeit konzentriert?"
+    },
+    "OPENNESS": {
+      "definition": "Offenheit gegenüber der Arbeit und den Herausforderungen bei der Ausführung.",
+      "question": "Haben Sie das Gefühl, dass das Team offen über Fortschritte und Herausforderungen spricht?"
+    },
+    "RESPECT": {
+      "definition": "Respekt für die Fähigkeiten und Selbstständigkeit der Teammitglieder.",
+      "question": "Haben Sie das Gefühl, dass sich die Teammitglieder gegenseitig respektieren?"
+    }
+  },
+  "smDashboard": {
+    "notFound": "Dashboard-Daten nicht gefunden"
+  }
+}

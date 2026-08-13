@@ -81,6 +81,43 @@ describe('PendingRetroActionItems', () => {
     });
   });
 
+  describe('Mark Added', () => {
+    beforeEach(() => {
+      (apiService.getPendingRetroActionItems as ReturnType<typeof vi.fn>).mockResolvedValue({
+        data: [
+          {
+            id: 'action-1',
+            title: 'Test Action',
+            status: 'PENDING',
+            createdAt: '2024-01-15T10:00:00Z',
+            retrospectiveId: 'retro-1',
+          },
+        ],
+      });
+      (apiService.updateActionItem as ReturnType<typeof vi.fn>).mockResolvedValue({
+        success: true,
+        data: { id: 'action-1', status: 'COMPLETED', addedToSprintBacklog: true },
+      });
+    });
+
+    it('should mark the action item as COMPLETED when clicking Mark Added', async () => {
+      renderWithProviders(<PendingRetroActionItems />);
+
+      await waitFor(() => {
+        expect(screen.getByText('Test Action')).toBeInTheDocument();
+      });
+
+      await userEvent.click(screen.getByText('Mark Added'));
+
+      await waitFor(() => {
+        expect(apiService.updateActionItem).toHaveBeenCalledWith('retro-1', 'action-1', {
+          addedToSprintBacklog: true,
+          status: 'COMPLETED',
+        });
+      });
+    });
+  });
+
   describe('Expand/Collapse', () => {
     beforeEach(() => {
       (apiService.getPendingRetroActionItems as ReturnType<typeof vi.fn>).mockResolvedValue({

@@ -61,6 +61,14 @@
   background: linear-gradient(90deg, var(--color-error-500) 0%, var(--color-error-400) 100%);
 }
 
+.accent {
+  background: linear-gradient(
+    90deg,
+    var(--color-accent-indigo-600) 0%,
+    var(--color-accent-indigo-500) 100%
+  );
+}
+
 .progress-text {
   font-size: var(--text-size, var(--font-size-sm));
   font-weight: var(--font-weight-semibold);

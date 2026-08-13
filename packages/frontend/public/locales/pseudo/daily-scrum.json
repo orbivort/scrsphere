@@ -6,6 +6,8 @@
     "trackedImpediment": "[Tràckéd ímpédíménttttttt]",
     "untrackedImpediment": "[Úntràckéd ímpédíménttttttt]",
     "viewAllImpediments": "[Víéw àlllll {{count}} ímpédíméntsssss]",
+    "viewAllImpediments_one": "[Víéw àlllll {{count}} ímpédíménttttt]",
+    "viewAllImpediments_other": "[Víéw àlllll {{count}} ímpédíméntsssss]",
     "viewDetails": "[Víéw Détàílsssss]"
   },
   "aria": {
@@ -47,15 +49,30 @@
   },
   "formatTimeSince": {
     "daysAgo": "[{{count}}dd ààggó]",
+    "daysAgo_one": "[{{count}}dd ààggó]",
+    "daysAgo_other": "[{{count}}dd ààggó]",
     "hoursAgo": "[{{count}}hh ààggó]",
+    "hoursAgo_one": "[{{count}}hh ààggó]",
+    "hoursAgo_other": "[{{count}}hh ààggó]",
     "justNow": "[júst nówwww]",
-    "minutesAgo": "[{{count}}mm ààggó]"
+    "minutesAgo": "[{{count}}mm ààggó]",
+    "minutesAgo_one": "[{{count}}mm ààggó]",
+    "minutesAgo_other": "[{{count}}mm ààggó]"
   },
   "impedimentStatus": {
     "closed": "[Clóséddd]",
     "inProgress": "[Ín Prógréssssss]",
     "open": "[ÓÓppéén]",
     "resolved": "[Résólvédddd]"
+  },
+  "loading": {
+    "actions": "[Lóàdíng àctíónsssssss...]",
+    "pageHeader": "[Lóàdíng pàgé héàdérrrrrrrr...]",
+    "pendingMembers": "[Lóàdíng péndíng mémbérsssssssss...]",
+    "sectionHeader": "[Lóàdíng séctíón héàdérrrrrrrrr...]",
+    "sprintProgress": "[Lóàdíng sprínt prógréssssssssss...]",
+    "statistics": "[Lóàdíng stàtístícssssssss...]",
+    "teamUpdates": "[Lóàdíng téàm úpdàtéssssssss...]"
   },
   "promoteModal": {
     "createImpediment": "[Créàté Ímpédíménttttttt]",
@@ -86,7 +103,9 @@
   "sprintGoal": {
     "addInPlanning": "[Àdd óné ín Sprínt Plànnínggggggggg]",
     "label": "[Sprínt Góàlllll]",
-    "noGoalDefined": "[Nó sprínt góàl défínédddddddd.]"
+    "noGoalDefined": "[Nó sprínt góàl défínédddddddd.]",
+    "progressAriaLabel": "[{{percentage}}% sprínt cómplétíónnnnnnnn ({{completed}} óóff {{total}} tàsks cómplétéddddddd)]",
+    "progressTitle": "[{{completed}} óóff {{total}} tàsks cómplétédddddd]"
   },
   "sprintProgress": {
     "dayOfTotal": "[DDàày {{current}} óóff {{total}}]",
@@ -122,6 +141,8 @@
     "reminderSent": "[Rémíndér séntttttt!]",
     "remindersSentOne": "[Rémíndérs sént tó 1 téàm mémbérrrrrrrrrrr]",
     "remindersSentPlural": "[Rémíndérs sént tóóóóóóó {{count}} téàm mémbérsssss]",
+    "remindersSentPlural_one": "[Rémíndérs sént tóóóóóóó {{count}} téàm mémbérrrrr]",
+    "remindersSentPlural_other": "[Rémíndérs sént tóóóóóóó {{count}} téàm mémbérsssss]",
     "resourceNotFound": "[Thé réqúéstéd résóúrcé wàs nót fóúnddddddddddddd.]",
     "serverError": "[À sérvér érrór óccúrréd. Pléàsé try àgàín làtérrrrrrrrrrrrrrrr.]",
     "sessionExpired": "[Yóúr séssíón hàs éxpíréd. Pléàsé lóg ín àgàínnnnnnnnnnnnnnn.]",

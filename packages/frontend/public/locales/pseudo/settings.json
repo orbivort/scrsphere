@@ -22,6 +22,8 @@
   },
   "definitionEditor": {
     "activeItems": "[{{count}} àctívé ítémsssss]",
+    "activeItems_one": "[{{count}} àctívé ítémmmmm]",
+    "activeItems_other": "[{{count}} àctívé ítémsssss]",
     "addItem": "[Àdd Ítémmmm]",
     "ariaLabels": {
       "activate": "[Àctívàtéééé]",
@@ -64,16 +66,25 @@
     "editTitle": "[ÉÉddíít {{label}}]",
     "empty": "[NNó {{shortLabel}} ítéms yét. Àdd yóúr fírst crítéríón àbóvéééééééééééééé.]",
     "inactive": "[{{count}} ínàctívéééé]",
+    "inactive_one": "[{{count}} ínàctívéééé]",
+    "inactive_other": "[{{count}} ínàctívéééé]",
     "newItemPlaceholder": "[Éntér néwwww {{shortLabel}} crítéríónnnnn...]",
     "saveChanges": "[Sàvé Chàngésssss]",
     "saving": "[SSààvvíínng...]",
     "unsavedWarning": "[Yóú hàvé únsàvéd chàngésssssssss]"
   },
   "deleteTeamModal": {
+    "awaitingConfirmation": "[Àwàítíng cónfírmàtíónnnnnnnn]",
+    "blockedDescription": "[Thís téàm hàs óné ór móré pródúct góàls àssócíàtéd wíth ít. Tó délété thís téàm, yóú múst fírst rémóvé àll pródúct góàls línkéd tó ítttttttttttttttttttttttttttttttttttttttttt.]",
     "blockedSubtitle": "[Thís téàm cànnót bé délétéd dúé tó àctívé pródúct góàlssssssssssssssssss]",
+    "bodyAriaLabel": "[Délété cónfírmàtíón cónténtttttttttt]",
     "cancel": "[Càncélll]",
+    "cancelButton": "[Càncélll]",
+    "cannotBeUndone": "[cànnót bé úndónéééééé]",
     "cannotDelete": "[Cànnót Délétééééé]",
+    "cannotDeleteButton": "[Cànnót Délétééééé]",
     "closeModal": "[Clósé módàlllll]",
+    "confirmLabel": "[TTyyppé \"{{teamName}}\" tó cónfírmmmmm]",
     "confirmation": {
       "awaitingConfirmation": "[Àwàítíng cónfírmàtíónnnnnnnn]",
       "label": "[TTyyppé \"{{name}}\" tó cónfírmmmmm]",
@@ -81,10 +92,30 @@
       "placeholder": "[TTyyppé \"{{name}}\" tó cónfírm délétíónnnnnnnn]",
       "srHint": "[Typé thé téàm nàmé éxàctly às shówn tó énàblé thé délété búttón, thén préss Éntér ór clíck Délété Téàmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm]"
     },
+    "consequence1": "[Àll téàm dàtà wíll bé pérmànéntly rémóvédddddddddddddd]",
+    "consequence2": "[Téàm mémbérs wíll lósé àccéss tó téàm résóúrcéssssssssssssssss]",
+    "consequence3": "[Àssócíàtéd séttíngs ànd cónfígúràtíóns wíll bé délétédddddddddddddddddd]",
+    "consequence4": "[Thís àctíón ís írrévérsíbléééééééééé]",
+    "consequencesTitle": "[Cónséqúéncés óf délétíónnnnnnnnn:]",
+    "criticalActionWarning": "[Crítícàl Àctíón Wàrníngggggggg]",
+    "deleteButton": "[Délété Téàmmmmm]",
     "deleteTeam": "[Délété Téàmmmmm]",
+    "deleteWarning": "[Yóú àré àbóút tó pérmànéntly délété thís téàm. Thís àctíónnnnnnnnnnnnnnnnnnn ]",
     "deleting": "[DDééllééttíínng...]",
+    "deletingButton": "[DDééllééttíínng...]",
+    "deletionBlocked": "[Délétíón Blóckédddddd]",
+    "matchConfirmed": "[Màtch cónfírmédddddd]",
+    "memberImpact": "[{{count}} mémbér(s) wíll bé rémóvéd fróm thís téàmmmmmmmmmmmmmm]",
+    "memberImpact_one": "[{{count}} mémbér wíll bé rémóvéd fróm thís téàmmmmmmmmmmmmm]",
+    "memberImpact_other": "[{{count}} mémbér(s) wíll bé rémóvéd fróm thís téàmmmmmmmmmmmmmm]",
     "normalSubtitle": "[Thís àctíón ís pérmànént ànd cànnót bé úndónééééééééééééééé]",
     "pasteWarning": "[Mànúàl typíng réqúíréd fór sécúríty. Cópy-pàsté ís dísàbléddddddddddddddddddd.]",
+    "requiredActions": "[Réqúíréd àctíónsssssss:]",
+    "srConfirmHint": "[Typé thé téàm nàmé éxàctly às shówn tó énàblé thé délété búttón, thén préss Éntér ór clíck Délété Téàmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm]",
+    "step1": "[Nàvígàté tó thé Pródúct Góàls séctíónnnnnnnnnnnnn]",
+    "step2": "[Délété ór réàssígn àll góàls fórrrrrrrrrrrr \"{{teamName}}\"]",
+    "step3": "[Rétúrn héré tó cómplété téàm délétíónnnnnnnnnnnnn]",
+    "teamLabel": "[TTééààm:]",
     "title": "[Délété Téàmmmmm]",
     "warningCard": {
       "blockedBadge": "[Délétíón Blóckédddddd]",
@@ -106,6 +137,8 @@
   },
   "dodPanel": {
     "activeItems": "[{{count}} àctívé ítémsssss]",
+    "activeItems_one": "[{{count}} àctívé ítémsssss]",
+    "activeItems_other": "[{{count}} àctívé ítémsssss]",
     "editButton": "[Édít DóDDDD]",
     "empty": {
       "configureButton": "[Cónfígúré DóDDDDD]",
@@ -118,6 +151,8 @@
       "title": "[Fàíléd tó Lóàdddddd]"
     },
     "inactive": "[{{count}} ínàctívéééé]",
+    "inactive_one": "[{{count}} ínàctívéééé]",
+    "inactive_other": "[{{count}} ínàctívéééé]",
     "item": {
       "codeReviewed": "[Códé ís péér-révíéwéd ànd àppróvédddddddddddd]",
       "documentation": "[Códé ís própérly dócúméntédddddddddd]",
@@ -141,6 +176,8 @@
   },
   "dorPanel": {
     "activeItems": "[{{count}} àctívé ítémsssss]",
+    "activeItems_one": "[{{count}} àctívé ítémsssss]",
+    "activeItems_other": "[{{count}} àctívé ítémsssss]",
     "editButton": "[Édít DóRRRR]",
     "empty": {
       "configureButton": "[Cónfígúré DóRRRRR]",
@@ -150,6 +187,8 @@
     },
     "error": "[Fàíléd tó lóàd Défínítíón óf Réàdyyyyyyyyyyyy]",
     "inactive": "[{{count}} ínàctívéééé]",
+    "inactive_one": "[{{count}} ínàctívéééé]",
+    "inactive_other": "[{{count}} ínàctívéééé]",
     "item": {
       "acceptanceCriteria": "[Àccéptàncé crítéríà défínéd ànd àgrééddddddddddddd]",
       "acceptanceCriteriaDefined": "[Àccéptàncé crítéríà défínédddddddddd]",
@@ -171,7 +210,8 @@
     "toast": {
       "updateFailed": "[Fàíléd tó úpdàté Défínítíón óf Réàdyyyyyyyyyyyy]",
       "updatedSuccessfully": "[Défínítíón óf Réàdy úpdàtéd súccéssfúllyyyyyyyyyyyyy]"
-    }
+    },
+    "uncategorized": "[Úncàtégórízéddddd]"
   },
   "editTeamModal": {
     "beforeUnload": "[Yóú hàvé únsàvéd chàngés ín thé téàm édít fórm. Àré yóú súré yóú wànt tó léàvééééééééééééééééééééééééé?]",
@@ -325,17 +365,25 @@
       "cancel": "[Càncélll]",
       "duration": "[Dúràtíónnnn:]",
       "generateButton": "[Généràtéééé {{count}} Spríntssss]",
+      "generateButton_one": "[Généràtéééé {{count}} Spríntssss]",
+      "generateButton_other": "[Généràtéééé {{count}} Spríntssss]",
       "generatedSprints": "[Généràtéd Spríntsssssss]",
       "generating": "[Généràtínggggg...]",
       "moreSprints": "[... àànndd {{count}} móré spríntsssss]",
+      "moreSprints_one": "[... àànndd {{count}} móré spríntsssss]",
+      "moreSprints_other": "[... àànndd {{count}} móré spríntsssss]",
       "sprintsToGenerate": "[Sprínts tó Généràtééééééé:]",
       "title": "[Sprínt Généràtíón Prévíéwwwwwwwww]",
       "warning": "[Thís wíll généràtééééééé {{count}} sprínts fórrrrr {{year}}. Éxístíng sprínts fór thís yéàr mày bé àfféctédddddddddddddddd.]",
+      "warning_one": "[Thís wíll généràtééééééé {{count}} sprínts fórrrrr {{year}}. Éxístíng sprínts fór thís yéàr mày bé àfféctédddddddddddddddd.]",
+      "warning_other": "[Thís wíll généràtééééééé {{count}} sprínts fórrrrr {{year}}. Éxístíng sprínts fór thís yéàr mày bé àfféctédddddddddddddddd.]",
       "year": "[YYééààr:]"
     },
     "saveConfiguration": "[Sàvé Cónfígúràtíónnnnnnn]",
     "saving": "[SSààvvíínng...]",
     "sprintCount": "[{{count}} spríntssss]",
+    "sprintCount_one": "[{{count}} sspprríínnt]",
+    "sprintCount_other": "[{{count}} spríntssss]",
     "sprintDuration": "[Sprínt Dúràtíónnnnnn]",
     "subtitle": "[Cónfígúré sprínt dúràtíón ànd àútómàtícàlly généràté sprínt plàns fór thé yéàrrrrrrrrrrrrrrrrrrrrrrrrr]",
     "title": "[Sprínt Cónfígúràtíónnnnnnn]",
@@ -362,6 +410,8 @@
     "ariaLabel": "[Téàmsss]",
     "card": {
       "cardAriaLabel": "[{{name}}, {{count}} mémbérs. Úsé àrrów kéys tó nàvígàté bétwéén càrds, Éntér ór Spàcé tó àccéss àctíónsssssssssssssssssssssssssss.]",
+      "cardAriaLabel_one": "[{{name}}, {{count}} mémbérs. Úsé àrrów kéys tó nàvígàté bétwéén càrds, Éntér ór Spàcé tó àccéss àctíónsssssssssssssssssssssssssss.]",
+      "cardAriaLabel_other": "[{{name}}, {{count}} mémbérs. Úsé àrrów kéys tó nàvígàté bétwéén càrds, Éntér ór Spàcé tó àccéss àctíónsssssssssssssssssssssssssss.]",
       "createdBy": "[Créàtéd byyyyy {{firstName}} {{lastName}}]",
       "delete": "[Délétééé]",
       "deleteTeam": "[DDéélléétté {{name}}]",
@@ -370,6 +420,8 @@
       "editTeam": "[ÉÉddíít {{name}}]",
       "loading": "[Lóàdíngggg...]",
       "memberCount": "[{{count}} mméémmbbéér]",
+      "memberCount_one": "[{{count}} mméémmbbéér]",
+      "memberCount_other": "[{{count}} mméémmbbéér]",
       "memberCount_plural": "[{{count}} mémbérssss]"
     },
     "empty": {
@@ -393,6 +445,7 @@
   "teamManagement": {
     "createTeam": "[Créàté Téàmmmmm]",
     "pagination": {
+      "ariaLabel": "[Pàgínàtíónnnn]",
       "goToNext": "[Gó tó néxt pàgéééééé]",
       "goToPrevious": "[Gó tó prévíóús pàgééééééé]",
       "next": "[NNééxxt]",
@@ -407,7 +460,9 @@
       "editTeam": "[Yóú dó nót hàvé pérmíssíón tó édít thís téàmmmmmmmmmmmmmmm.]"
     },
     "subtitle": "[Créàté ànd mànàgé téàms àcróss thé órgànízàtíónnnnnnnnnnnnnnnn]",
-    "teamCount": "[{{count}} ttééààmm]",
+    "teamCount": "[{{count}} ttééààm]",
+    "teamCount_one": "[{{count}} ttééààm]",
+    "teamCount_other": "[{{count}} téàmsss]",
     "title": "[Téàm Mànàgéméntttttt]",
     "toast": {
       "cannotDeleteWithGoals": "[Cànnót délété téàm wíth éxístíng pródúct góàlsssssssssssssss]",

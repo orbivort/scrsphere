@@ -10,7 +10,7 @@ import userEvent from '@testing-library/user-event';
 import { vi, beforeAll } from 'vitest';
 
 import { useTeamStore, useAuthStore } from '../../store';
-import { apiService } from '../../services';
+import { apiService, healthCheckService } from '../../services';
 
 import { TeamManagement } from './Team';
 
@@ -24,6 +24,9 @@ vi.mock('../../services', () => ({
     getSprintHistory: vi.fn(),
     addTeamMember: vi.fn(),
     removeTeamMember: vi.fn(),
+  },
+  healthCheckService: {
+    getLatest: vi.fn(),
   },
   sessionManager: {
     startSession: vi.fn(),
@@ -55,6 +58,11 @@ describe('TeamManagement - Multiple Teams', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    // Default: no open health check so the survey section does not render.
+    (healthCheckService.getLatest as unknown as vi.Mock).mockResolvedValue({
+      success: true,
+      data: null,
+    });
     (useTeamStore as unknown as vi.Mock).mockReturnValue({
       currentTeam: { id: '123e4567-e89b-12d3-a456-426614174001', name: 'Test Team' },
       userTeamsWithRoles: [
@@ -2680,12 +2688,121 @@ describe('TeamManagement - Multiple Teams', () => {
       const longLocalPart = 'a'.repeat(250);
       await user.type(emailInput, `${longLocalPart}@b.com`);
 
-      const submitButton = screen.getByRole('button', { name: /send invite/i });
-      await user.click(submitButton);
+      // Use fireEvent.submit to bypass native HTML5 form validation on the
+      // `type="email"` input, so the component's validateEmail logic runs.
+      fireEvent.submit(screen.getByText('Email Address').closest('form')!);
 
       await waitFor(() => {
         expect(screen.getByText(i18nT('team:inviteErrors.emailTooLong'))).toBeInTheDocument();
       });
     });
+  });
+});
+
+describe('TeamManagement - Scrum Values Health Check Survey', () => {
+  const mockSetCurrentTeam = vi.fn();
+  const mockSwitchTeam = vi.fn();
+  const mockSetUserTeamsWithRoles = vi.fn();
+  const mockSetUserRoleInCurrentTeam = vi.fn();
+
+  beforeAll(async () => {
+    await initTestI18n();
+  });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    (apiService.getMyTeams as unknown as vi.Mock).mockResolvedValue({
+      success: true,
+      data: [
+        {
+          id: '123e4567-e89b-12d3-a456-426614174001',
+          name: 'Alpha Team',
+          userRole: 'developer',
+        },
+      ],
+    });
+    (apiService.getTeam as unknown as vi.Mock).mockResolvedValue({
+      success: true,
+      data: {
+        id: '123e4567-e89b-12d3-a456-426614174001',
+        name: 'Alpha Team',
+        members: [],
+        createdAt: '2024-01-01T00:00:00Z',
+        updatedAt: '2024-06-01T00:00:00Z',
+      },
+    });
+    (apiService.getTeamMetrics as unknown as vi.Mock).mockResolvedValue({
+      success: true,
+      data: {},
+    });
+    (apiService.getSprintHistory as unknown as vi.Mock).mockResolvedValue({
+      success: true,
+      data: [],
+    });
+    (useTeamStore as unknown as vi.Mock).mockReturnValue({
+      currentTeam: { id: '123e4567-e89b-12d3-a456-426614174001', name: 'Alpha Team' },
+      userTeamsWithRoles: [
+        {
+          id: '123e4567-e89b-12d3-a456-426614174001',
+          name: 'Alpha Team',
+          userRole: 'developer',
+        },
+      ],
+      setCurrentTeam: mockSetCurrentTeam,
+      switchTeam: mockSwitchTeam,
+      setUserTeamsWithRoles: mockSetUserTeamsWithRoles,
+      setUserRoleInCurrentTeam: mockSetUserRoleInCurrentTeam,
+    });
+    mockUseAuthStore.mockReturnValue({
+      user: { id: 'user-1', name: 'Test User', email: 'test@example.com' },
+    });
+  });
+
+  it('renders a collapsed health check survey section when an OPEN health check exists', async () => {
+    const user = userEvent.setup();
+    (healthCheckService.getLatest as unknown as vi.Mock).mockResolvedValue({
+      success: true,
+      data: {
+        healthCheckId: 'hc-001',
+        status: 'OPEN',
+        createdAt: '2024-01-15T00:00:00Z',
+      },
+    });
+
+    renderWithProviders(<TeamManagement />);
+
+    await waitFor(() => {
+      expect(screen.getByText(i18nT('team:healthCheck.sectionTitle'))).toBeInTheDocument();
+    });
+
+    // Collapsed by default: shows "Expand" and no survey body.
+    const toggle = screen.getByRole('button', {
+      name: i18nT('team:healthCheck.expand'),
+    });
+    expect(toggle).toBeInTheDocument();
+    expect(toggle.getAttribute('aria-expanded')).toBe('false');
+
+    // Expanding renders the survey form.
+    await user.click(toggle);
+    await waitFor(() => {
+      expect(screen.getByText(/rate each scrum value/i)).toBeInTheDocument();
+    });
+    expect(
+      screen.getByRole('button', { name: i18nT('team:healthCheck.collapse') })
+    ).toBeInTheDocument();
+  });
+
+  it('does not render the survey section when no health check is open', async () => {
+    (healthCheckService.getLatest as unknown as vi.Mock).mockResolvedValue({
+      success: true,
+      data: null,
+    });
+
+    renderWithProviders(<TeamManagement />);
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Alpha Team' })).toBeInTheDocument();
+    });
+    expect(screen.queryByText(i18nT('team:healthCheck.sectionTitle'))).not.toBeInTheDocument();
   });
 });

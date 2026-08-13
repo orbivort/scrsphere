@@ -1,5 +1,7 @@
 import { Router, type Router as RouterType } from 'express';
 import * as sprintReviewController from '../controllers/sprintReview.controller';
+import * as smDashboardController from '../controllers/smDashboard.controller';
+import * as productGoalSnapshotController from '../controllers/productGoalSnapshot.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import { validateBody, validateParams, validateQuery } from '../middleware/validation.middleware';
 import { z } from 'zod';
@@ -48,6 +50,7 @@ const updateReviewSchema = z.object({
         id: z.string().uuid().optional(),
         authorName: z.string(),
         content: z.string(),
+        productGoalAssessment: z.string().max(2000).optional(),
         category: z.enum(['positive', 'negative', 'suggestion', 'question']),
         relatedPbiId: z.string().uuid().nullable().optional(),
         actionRequired: z.boolean().optional(),
@@ -74,6 +77,7 @@ const updateReviewSchema = z.object({
 const addFeedbackSchema = z.object({
   authorName: z.string().min(1, 'Author name is required'),
   content: z.string().min(1, 'Feedback content is required'),
+  productGoalAssessment: z.string().max(2000).optional(),
   category: z.enum(['positive', 'negative', 'suggestion', 'question']).default('positive'),
   relatedPbiId: z.string().uuid().nullable().optional(),
   actionRequired: z.boolean().default(false),
@@ -162,6 +166,32 @@ router.delete(
   '/attendees/:id',
   validateParams(z.object({ id: z.string().uuid('Invalid attendee ID') })),
   sprintReviewController.deleteAttendee
+);
+
+router.patch(
+  '/:id/sm-notes',
+  validateParams(reviewIdSchema),
+  validateBody(z.object({ smNotes: z.string().max(5000).optional().default('') })),
+  smDashboardController.updateSprintReviewSmNotes
+);
+
+// Product Goal integration at Sprint Review
+router.get(
+  '/:id/product-goal',
+  validateParams(reviewIdSchema),
+  productGoalSnapshotController.getProductGoalForReview
+);
+
+router.post(
+  '/:id/product-goal-assessment',
+  validateParams(reviewIdSchema),
+  validateBody(
+    z.object({
+      assessment: z.string().max(5000).optional(),
+      successMetricValues: z.record(z.string(), z.any()).optional(),
+    })
+  ),
+  productGoalSnapshotController.submitProductGoalAssessment
 );
 
 router.delete('/:id', validateParams(reviewIdSchema), sprintReviewController.deleteSprintReview);

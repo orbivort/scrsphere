@@ -13,11 +13,6 @@ import { getTestI18nInstance } from '../../i18n/testConfig';
 
 import { Dashboard } from './Dashboard';
 
-// Hoisted mock for react-chartjs-2 Line component
-const { mockLine } = vi.hoisted(() => ({
-  mockLine: vi.fn(() => <div data-testid="mock-line-chart" />),
-}));
-
 vi.mock('../../store', () => ({
   useTeamStore: vi.fn(),
   useAuthStore: vi.fn(),
@@ -39,8 +34,10 @@ vi.mock('../../hooks', () => ({
   }),
 }));
 
-vi.mock('react-chartjs-2', () => ({
-  Line: mockLine,
+vi.mock('./components/BurndownChart', () => ({
+  BurndownChart: ({ data }: { data: unknown }) => (
+    <div data-testid="burndown-chart">Chart with {data ? 'data' : 'no data'}</div>
+  ),
 }));
 
 const createTestQueryClient = () =>
@@ -929,7 +926,7 @@ describe('Dashboard Component', () => {
       renderWithProviders(<Dashboard />);
 
       await waitFor(() => {
-        const chart = screen.getByTestId('mock-line-chart');
+        const chart = screen.getByTestId('burndown-chart');
         expect(chart).toBeInTheDocument();
       });
     });

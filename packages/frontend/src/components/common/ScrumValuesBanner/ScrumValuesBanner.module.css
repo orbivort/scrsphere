@@ -1,0 +1,37 @@
+.banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  background: linear-gradient(90deg, var(--color-gray-50), transparent);
+  border-left: var(--border-width-4) solid var(--color-success-500);
+  transition: opacity var(--duration-slow) var(--ease-in-out);
+}
+
+.visible {
+  opacity: 1;
+}
+
+.hidden {
+  opacity: 0;
+}
+
+.label {
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.name {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-success-700);
+  white-space: nowrap;
+}
+
+.definition {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+}

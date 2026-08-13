@@ -45,6 +45,8 @@ import {
   type DoRChecklistVerification,
   type StakeholderFeedback,
   type BacklogAdjustment,
+  type ProductGoalSnapshot,
+  type ProductGoalProgressAssessment,
   type RetroActionItem,
   type RetrospectiveItem,
   type IncrementMetrics,
@@ -1989,6 +1991,27 @@ class MockApiService {
     return { success: true, data: this.incrementsStore[index] as Increment };
   }
 
+  async verifyIntegration(_incrementId: string): Promise<
+    ApiResponse<{
+      integrationVerified: boolean;
+      priorCount: number;
+      allPassed: boolean;
+      missingTests?: string[];
+      failedTests?: string[];
+    }>
+  > {
+    await delay(300);
+    // Mock always returns a verified, all-passed result so the workflow fast path is preserved in dev.
+    return {
+      success: true,
+      data: {
+        integrationVerified: true,
+        priorCount: 0,
+        allPassed: true,
+      },
+    };
+  }
+
   async getIncrementMetrics(_teamId: string): Promise<ApiResponse<IncrementMetrics>> {
     await delay(300);
     return {
@@ -2011,6 +2034,9 @@ class MockApiService {
   }
 
   // ==================== Sprint Reviews ====================
+
+  // Product Goal progress snapshots captured at Sprint Reviews (mock).
+  private productGoalSnapshotsStore: ProductGoalSnapshot[] = [];
 
   private sprintReviewsStore: SprintReview[] = [
     // ==================== Completed Sprint Reviews ====================
@@ -2378,9 +2404,160 @@ class MockApiService {
       category: feedback.category ?? 'positive',
       actionRequired: feedback.actionRequired ?? false,
       actionTaken: false,
+      productGoalAssessment: feedback.productGoalAssessment,
       createdAt: new Date().toISOString(),
     };
     return { success: true, data: newFeedback };
+  }
+
+  // ==================== Product Goal at Sprint Review ====================
+
+  // Returns the active Product Goal for the review's sprint, along with
+  // progress computed from the goal's backlog items. Mirrors the backend
+  // GET /sprint-reviews/:id/product-goal response shape.
+  async getProductGoalForReview(reviewId: string): Promise<
+    ApiResponse<{
+      reviewId: string;
+      reviewDate: string;
+      sprintId: string;
+      sprintName: string;
+      productGoal: {
+        id: string;
+        title: string;
+        description?: string;
+        successMetrics?: string;
+        status: string;
+        completedPbiCount: number;
+        totalPbiCount: number;
+        completedStoryPoints: number;
+        totalStoryPoints: number;
+      } | null;
+    }>
+  > {
+    await delay(300);
+    const review = this.sprintReviewsStore.find((r) => r.id === reviewId);
+    const sprint = mockSprints.find((s) => s.id === review?.sprintId);
+    const teamId = review?.teamId ?? getCurrentTeam().id;
+
+    // In mock mode the Sprint model has no goalId, so we apply the team's
+    // active Product Goal (see "apply the active goal accordingly").
+    const activeGoal = mockProductGoals.find((g) => g.teamId === teamId && g.status === 'ACTIVE');
+
+    if (!activeGoal) {
+      return {
+        success: true,
+        data: {
+          reviewId,
+          reviewDate: review?.reviewDate ?? new Date().toISOString(),
+          sprintId: sprint?.id ?? '',
+          sprintName: sprint?.name ?? '',
+          productGoal: null,
+        },
+      };
+    }
+
+    const goalItems = mockProductBacklogItems.filter((b) => b.goalId === activeGoal.id);
+    const completedItems = goalItems.filter((b) => b.status === 'DONE');
+    const completedStoryPoints = completedItems.reduce((sum, b) => sum + (b.storyPoints ?? 0), 0);
+    const totalStoryPoints = goalItems.reduce((sum, b) => sum + (b.storyPoints ?? 0), 0);
+
+    return {
+      success: true,
+      data: {
+        reviewId,
+        reviewDate: review?.reviewDate ?? new Date().toISOString(),
+        sprintId: sprint?.id ?? '',
+        sprintName: sprint?.name ?? '',
+        productGoal: {
+          id: activeGoal.id,
+          title: activeGoal.title,
+          description: activeGoal.description,
+          successMetrics: activeGoal.successMetrics,
+          status: activeGoal.status,
+          completedPbiCount: completedItems.length,
+          totalPbiCount: goalItems.length,
+          completedStoryPoints,
+          totalStoryPoints,
+        },
+      },
+    };
+  }
+
+  // Records a Product Goal progress assessment as a snapshot. Mirrors the
+  // backend POST /sprint-reviews/:id/product-goal-assessment endpoint.
+  async submitProductGoalAssessment(
+    reviewId: string,
+    payload: ProductGoalProgressAssessment
+  ): Promise<ApiResponse<ProductGoalSnapshot>> {
+    await delay(300);
+    const review = this.sprintReviewsStore.find((r) => r.id === reviewId);
+    const sprint = mockSprints.find((s) => s.id === review?.sprintId);
+    const teamId = review?.teamId ?? getCurrentTeam().id;
+    const activeGoal = mockProductGoals.find((g) => g.teamId === teamId && g.status === 'ACTIVE');
+
+    if (!activeGoal) {
+      return {
+        success: false,
+        error: {
+          code: 'BAD_REQUEST',
+          message: 'This sprint is not linked to a Product Goal',
+        },
+      };
+    }
+
+    const snapshot: ProductGoalSnapshot = {
+      id: `snapshot-${Date.now()}`,
+      goalId: activeGoal.id,
+      sprintReviewId: reviewId,
+      successMetricValues: payload.successMetricValues ?? null,
+      assessment: payload.assessment,
+      completedPbiCount: mockProductBacklogItems.filter(
+        (b) => b.goalId === activeGoal.id && b.status === 'DONE'
+      ).length,
+      completedStoryPoints: mockProductBacklogItems
+        .filter((b) => b.goalId === activeGoal.id && b.status === 'DONE')
+        .reduce((sum, b) => sum + (b.storyPoints ?? 0), 0),
+      createdAt: new Date().toISOString(),
+      sprintName: sprint?.name,
+      reviewDate: review?.reviewDate,
+    };
+    this.productGoalSnapshotsStore.push(snapshot);
+    return { success: true, data: snapshot };
+  }
+
+  // Returns the Product Goal progress snapshots captured across Sprint Reviews.
+  // Mirrors the backend GET /product-goals/:id/snapshots endpoint.
+  async getProductGoalSnapshots(goalId: string): Promise<ApiResponse<ProductGoalSnapshot[]>> {
+    await delay(300);
+    const snapshots = this.productGoalSnapshotsStore.filter((s) => s.goalId === goalId);
+    // Seed a couple of historical snapshots so the timeline is populated in mock mode.
+    const seeded: ProductGoalSnapshot[] = [
+      {
+        id: 'snapshot-seed-1',
+        goalId,
+        sprintReviewId: 'review-1',
+        successMetricValues: null,
+        assessment: 'Infrastructure delivered on schedule; core UI scaffolding in place.',
+        completedPbiCount: 3,
+        completedStoryPoints: 21,
+        createdAt: '2026-01-18T16:00:00Z',
+        sprintName: 'Sprint-2w-2601 (2026-01-05 – 2026-01-16)',
+        reviewDate: '2026-01-18T15:00:00Z',
+      },
+      {
+        id: 'snapshot-seed-2',
+        goalId,
+        sprintReviewId: 'review-2',
+        successMetricValues: null,
+        assessment: 'Dashboard and sprint board delivered; mobile responsiveness still open.',
+        completedPbiCount: 5,
+        completedStoryPoints: 34,
+        createdAt: '2026-02-01T17:00:00Z',
+        sprintName: 'Sprint-2w-2602 (2026-01-19 – 2026-01-30)',
+        reviewDate: '2026-02-01T15:00:00Z',
+      },
+    ];
+    return { success: true, data: [...seeded, ...snapshots] };
   }
 
   // ==================== Sprint Retrospectives ====================

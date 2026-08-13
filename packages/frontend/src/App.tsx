@@ -36,6 +36,7 @@ import {
   LazyTeamManagement as TeamManagement,
   LazyTeamManagementPage as TeamManagementPage,
   LazyReports as Reports,
+  LazySmDashboard as SmDashboard,
   LazyIncrementList as IncrementList,
   LazyIncrementDetail as IncrementDetail,
   LazyIncrementCreate as IncrementCreate,
@@ -351,6 +352,16 @@ function App() {
                             <ProtectedRoute>
                               <LazyRoute fallbackMessage="Loading reports...">
                                 <Reports />
+                              </LazyRoute>
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="/scrum-master-dashboard"
+                          element={
+                            <ProtectedRoute>
+                              <LazyRoute fallbackMessage="Loading Scrum Master dashboard...">
+                                <SmDashboard />
                               </LazyRoute>
                             </ProtectedRoute>
                           }

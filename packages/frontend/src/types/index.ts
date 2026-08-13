@@ -1,6 +1,39 @@
 // Type definitions for Agile Scrum Tracker
 
-import type { Locale } from '@scrumooth/shared';
+import {
+  IntegrationTestResult,
+  ScrumValue,
+  HealthCheckStatus,
+  type Locale,
+  type IntegrationTestRecord,
+  type IncrementChainNode,
+  type EventComplianceSummary,
+  type ImpedimentMetrics,
+  type DoDComplianceTrend,
+  type SprintGoalAchievement,
+  type ActionItemCompletion,
+  type ProductGoalSnapshot,
+  type ProductGoalProgressAssessment,
+  type TeamHealthCheck,
+  type HealthCheckValueScore,
+} from '@scrumooth/shared';
+
+export type {
+  IntegrationTestRecord,
+  IncrementChainNode,
+  EventComplianceSummary,
+  ImpedimentMetrics,
+  DoDComplianceTrend,
+  SprintGoalAchievement,
+  ActionItemCompletion,
+  ProductGoalSnapshot,
+  ProductGoalProgressAssessment,
+  TeamHealthCheck,
+  HealthCheckValueScore,
+};
+
+// Enums are runtime values; re-export as values.
+export { IntegrationTestResult, ScrumValue, HealthCheckStatus };
 
 export enum UserRole {
   ADMINISTRATOR = 'administrator',
@@ -336,6 +369,7 @@ export interface Increment {
   dodVerifications: DoDChecklistVerification[];
   totalStoryPoints: number;
   status: IncrementStatus;
+  integrationVerified?: boolean;
   createdAt: string;
   deliveredAt?: string;
   deliveryMethod?: DeliveryMethod;
@@ -356,6 +390,7 @@ export interface SprintReview {
   feedback: StakeholderFeedback[];
   backlogAdjustments: BacklogAdjustment[];
   summary?: string;
+  smNotes?: string | null;
   status?: string;
   createdAt: string;
   updatedAt: string;
@@ -379,6 +414,7 @@ export interface StakeholderFeedback {
   content: string;
   category: 'positive' | 'negative' | 'suggestion' | 'question';
   relatedPbiId?: string;
+  productGoalAssessment?: string;
   actionRequired: boolean;
   actionTaken: boolean;
   ownerId?: string;
@@ -430,6 +466,7 @@ export interface SprintRetrospective {
   items: RetrospectiveItem[];
   actionItems: RetroActionItem[];
   summary?: string;
+  smNotes?: string | null;
   dodEvolutionNotes?: string; // Notes about DoD changes
   isAnonymous: boolean;
   createdAt: string;

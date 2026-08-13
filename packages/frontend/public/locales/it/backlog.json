@@ -436,6 +436,20 @@
     "title": "Azioni retro in sospeso",
     "updating": "Aggiornamento..."
   },
+  "productGoal": {
+    "assessProgress": "Valuta l'avanzamento",
+    "assessment": "Valutazione",
+    "assessmentPlaceholder": "Come sta progredendo il team verso l'obiettivo di prodotto?",
+    "completedPbis": "Elementi del backlog completati",
+    "completedStoryPoints": "Story points completati",
+    "latestAssessment": "Valutazione più recente",
+    "noProductGoal": "Questo Sprint non è collegato a un obiettivo di prodotto",
+    "progress": "Avanzamento dell'obiettivo di prodotto",
+    "snapshots": "Snapshot di avanzamento",
+    "stakeholderAssessment": "Valutazione degli stakeholder",
+    "successMetrics": "Metriche di successo",
+    "title": "Product Goal"
+  },
   "productGoalStatus": {
     "ABANDONED": "Abbandonato",
     "ACTIVE": "Attivo",
@@ -554,6 +568,7 @@
     "productGoal": "Product Goal",
     "progress": "Progresso",
     "progressBarAriaLabel": "Completamento modulo: {{percentage}}%",
+    "progressSnapshots": "Snapshot di avanzamento",
     "pts": "pt",
     "requiredFields": "Campi richiesti",
     "resultsCount": "{{filtered}} di {{total}} obiettivi",

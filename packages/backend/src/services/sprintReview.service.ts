@@ -27,6 +27,7 @@ interface UpdateReviewData {
     id?: string;
     authorName: string;
     content: string;
+    productGoalAssessment?: string;
     category: string;
     relatedPbiId?: string;
     actionRequired?: boolean;
@@ -47,6 +48,7 @@ interface UpdateReviewData {
 interface AddFeedbackData {
   authorName: string;
   content: string;
+  productGoalAssessment?: string;
   category: string;
   relatedPbiId?: string;
   actionRequired?: boolean;
@@ -350,6 +352,7 @@ export const sprintReviewService = {
             reviewId: id,
             authorName: f.authorName,
             content: f.content,
+            productGoalAssessment: f.productGoalAssessment,
             category: categoryMap[f.category] ?? 'POSITIVE',
             relatedPbiId: f.relatedPbiId,
             actionRequired: f.actionRequired ?? false,
@@ -441,6 +444,7 @@ export const sprintReviewService = {
         reviewId: id,
         authorName: data.authorName,
         content: data.content,
+        productGoalAssessment: data.productGoalAssessment,
         category: categoryMap[data.category] ?? 'POSITIVE',
         relatedPbiId: data.relatedPbiId,
         actionRequired: data.actionRequired ?? false,

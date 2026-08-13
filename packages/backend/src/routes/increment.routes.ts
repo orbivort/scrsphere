@@ -1,5 +1,6 @@
 import { Router, type Router as RouterType } from 'express';
 import * as incrementController from '../controllers/increment.controller';
+import * as incrementIntegrationController from '../controllers/incrementIntegration.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import { validateBody, validateParams, validateQuery } from '../middleware/validation.middleware';
 import { z } from 'zod';
@@ -65,6 +66,38 @@ router.post(
   validateParams(incrementIdSchema),
   validateBody(deliverIncrementSchema),
   incrementController.deliverIncrement
+);
+
+// --- Increment integration verification ---
+const createIntegrationTestSchema = z.object({
+  priorIncrementId: z.string().uuid('Invalid prior increment ID'),
+  testResult: z.enum(['PASSED', 'FAILED'], 'Invalid test result'),
+  notes: z.string().max(2000).optional(),
+});
+
+router.post(
+  '/:id/integration-tests',
+  validateParams(incrementIdSchema),
+  validateBody(createIntegrationTestSchema),
+  incrementIntegrationController.createIntegrationTest
+);
+
+router.get(
+  '/:id/integration-tests',
+  validateParams(incrementIdSchema),
+  incrementIntegrationController.getIntegrationTests
+);
+
+router.post(
+  '/:id/verify-integration',
+  validateParams(incrementIdSchema),
+  incrementIntegrationController.verifyIntegration
+);
+
+router.get(
+  '/:id/chain',
+  validateParams(incrementIdSchema),
+  incrementIntegrationController.getIncrementChain
 );
 
 export default router;

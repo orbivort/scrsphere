@@ -1,0 +1,29 @@
+/* ========================================
+   SELF-HOSTED FONT FACES
+   Inter (Variable) — Latin subset
+   Downloaded from the Inter variable font release; bundled locally
+   to remove the external Google Fonts dependency.
+   License: SIL Open Font License 1.1 (see src/assets/fonts/OFL.txt)
+   ======================================== */
+
+/* Inter variable font — a single file covers the full weight axis (100-900).
+   The application consumes weights 400 / 500 / 600 / 700 via the
+   --font-weight-* design tokens.
+   The @font-face descriptor below intentionally uses literal values
+   (a variable weight range and the modern tech() src syntax), which the
+   project's design-token lint rules do not permit outside of this file. */
+
+/* stylelint-disable font-family-name-quotes, declaration-property-value-allowed-list, at-rule-descriptor-value-no-unknown */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  font-named-instance: 'Regular';
+  src: url('../assets/fonts/InterVariable.woff2') format('woff2') tech('variations');
+
+  /* Latin unicode-range (matches the Google Fonts CSS2 subset) */
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}

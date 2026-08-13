@@ -1,0 +1,43 @@
+{
+  "healthCheck": {
+    "alreadyResponded": "Vous avez déjà répondu à ce contrôle de santé",
+    "invalidScore": "Le score doit être compris entre 1 et 5",
+    "notFound": "Contrôle de santé introuvable"
+  },
+  "incrementIntegration": {
+    "differentTeam": "L'incrément précédent doit appartenir à la même équipe",
+    "notFound": "Incrément introuvable",
+    "priorNotFound": "Incrément précédent introuvable",
+    "sameIncrement": "L'incrément actuel et l'incrément précédent doivent être différents",
+    "verificationRequired": "L'incrément ne peut pas être vérifié : une vérification d'intégration est requise. Tous les incréments précédents doivent avoir des tests d'intégration RÉUSSIS."
+  },
+  "productGoal": {
+    "noProductGoal": "Ce Sprint n'est lié à aucun objectif produit",
+    "snapshotNotFound": "Instantané de l'objectif produit introuvable"
+  },
+  "scrumValues": {
+    "COMMITMENT": {
+      "definition": "S'engager personnellement envers les objectifs de l'équipe Scrum.",
+      "question": "Sentez-vous que l'équipe est personnellement engagée à atteindre l'objectif du Sprint ?"
+    },
+    "COURAGE": {
+      "definition": "Avoir le courage de s'engager, de faire ce qu'il faut et de travailler sur des problèmes difficiles.",
+      "question": "Sentez-vous que l'équipe a le courage de soulever les problèmes et de les traiter ?"
+    },
+    "FOCUS": {
+      "definition": "Se concentrer sur le travail du Sprint et les objectifs de l'équipe Scrum.",
+      "question": "Sentez-vous que l'équipe se concentre sur le travail du Sprint sans distraction ?"
+    },
+    "OPENNESS": {
+      "definition": "Être ouvert sur le travail et les défis liés à sa réalisation.",
+      "question": "Sentez-vous que l'équipe est ouverte sur les progrès et les défis ?"
+    },
+    "RESPECT": {
+      "definition": "Se respecter mutuellement en tant que personnes capables et indépendantes.",
+      "question": "Sentez-vous que les membres de l'équipe se respectent mutuellement ?"
+    }
+  },
+  "smDashboard": {
+    "notFound": "Données du tableau de bord introuvables"
+  }
+}

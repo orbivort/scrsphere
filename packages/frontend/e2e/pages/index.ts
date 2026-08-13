@@ -13,3 +13,4 @@ export { ProductGoalsPage } from './ProductGoalsPage';
 export { IncrementsPage } from './IncrementsPage';
 export { RetrospectivesPage } from './RetrospectivesPage';
 export { ReportsPage } from './ReportsPage';
+export { SmDashboardPage } from './SmDashboardPage';

@@ -135,14 +135,15 @@
   gap: var(--space-2);
   margin: 0;
   font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-gray-900);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-text-primary);
 }
 
 .section-icon {
-  width: 20px;
-  height: 20px;
-  color: var(--color-gray-600);
+  width: var(--space-5);
+  height: var(--space-5);
+  color: var(--color-text-secondary);
   flex-shrink: 0;
 }
 

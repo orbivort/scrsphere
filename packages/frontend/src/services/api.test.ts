@@ -133,6 +133,7 @@ vi.mock('./domain/productGoals.service', () => ({
     updateProductGoal: vi.fn().mockResolvedValue({}),
     deleteProductGoal: vi.fn().mockResolvedValue({}),
     getProductGoalStatusHistory: vi.fn().mockResolvedValue({ data: [] }),
+    getSnapshots: vi.fn().mockResolvedValue({ data: [] }),
   },
 }));
 
@@ -178,6 +179,7 @@ vi.mock('./domain/increment.service', () => ({
     createIncrement: vi.fn().mockResolvedValue({ data: {} }),
     updateIncrement: vi.fn().mockResolvedValue({}),
     deliverIncrement: vi.fn().mockResolvedValue({}),
+    verifyIntegration: vi.fn().mockResolvedValue({ data: {} }),
     getIncrementMetrics: vi.fn().mockResolvedValue({ data: {} }),
   },
 }));
@@ -196,6 +198,10 @@ vi.mock('./domain/sprintReview.service', () => ({
     addAttendee: vi.fn().mockResolvedValue({}),
     updateAttendee: vi.fn().mockResolvedValue({}),
     deleteAttendee: vi.fn().mockResolvedValue({}),
+    getProductGoalForReview: vi.fn().mockResolvedValue({
+      data: { productGoal: null },
+    }),
+    submitProductGoalAssessment: vi.fn().mockResolvedValue({ data: {} }),
   },
 }));
 

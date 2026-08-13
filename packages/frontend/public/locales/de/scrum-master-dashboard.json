@@ -1,0 +1,83 @@
+{
+  "healthCheck": {
+    "createNew": "Neuen Gesundheitscheck durchführen",
+    "noHealthCheck": "Noch keine Ergebnisse des Gesundheitschecks",
+    "overallAverage": "Gesamtdurchschnitt",
+    "respondAnonymous": "Anonym senden",
+    "responseSaved": "Antworten übermittelt. Vielen Dank!",
+    "results": "Ergebnisse des Gesundheitschecks",
+    "submitResponse": "Antworten senden",
+    "subtitle": "Bewerten Sie jeden Scrum-Wert von 1 bis 5",
+    "title": "Scrum-Werte-Gesundheitscheck"
+  },
+  "scrumValues": {
+    "scoreHigh": "Gesund",
+    "scoreLow": "Handlungsbedarf",
+    "scoreMedium": "In Entwicklung",
+    "subtitle": "Die fünf Werte, die das Scrum-Team leiten",
+    "title": "Scrum-Werte",
+    "values": {
+      "COMMITMENT": {
+        "definition": "Persönliches Engagement für die Ziele des Scrum-Teams.",
+        "label": "Engagement",
+        "question": "Haben Sie das Gefühl, dass sich das Team persönlich für das Erreichen des Sprint-Ziels einsetzt?"
+      },
+      "COURAGE": {
+        "definition": "Der Mut, sich zu verpflichten, das Richtige zu tun und schwierige Probleme anzugehen.",
+        "label": "Mut",
+        "question": "Haben Sie das Gefühl, dass das Team den Mut hat, Probleme anzusprechen?"
+      },
+      "FOCUS": {
+        "definition": "Konzentration auf die Arbeit des Sprints und die Ziele des Scrum-Teams.",
+        "label": "Fokus",
+        "question": "Haben Sie das Gefühl, dass sich das Team ohne Ablenkung auf die Sprint-Arbeit konzentriert?"
+      },
+      "OPENNESS": {
+        "definition": "Offenheit gegenüber der Arbeit und den Herausforderungen bei der Ausführung.",
+        "label": "Offenheit",
+        "question": "Haben Sie das Gefühl, dass das Team offen über Fortschritte und Herausforderungen spricht?"
+      },
+      "RESPECT": {
+        "definition": "Respekt für die Fähigkeiten und Selbstständigkeit der Teammitglieder.",
+        "label": "Respekt",
+        "question": "Haben Sie das Gefühl, dass sich die Teammitglieder gegenseitig respektieren?"
+      }
+    }
+  },
+  "scrumValuesBanner": {
+    "rotating": "Ein Scrum-Wert zum Nachdenken",
+    "todayFocus": "Scrum-Wert des Tages"
+  },
+  "smDashboard": {
+    "achievementRate": "Erfolgsquote",
+    "actionItemCompletion": "Retrospektiven-Aktionspunkte",
+    "atRisk": "gefährdet",
+    "avgResolutionDays": "Ø Lösungsdauer (Tage)",
+    "completedEvents": "Abgeschlossen",
+    "completionRate": "Abschlussquote",
+    "dailyScrumCount": "Daily Scrums",
+    "dodCompliance": "Definition of Done-Konformität",
+    "eventCompliance": "Event-Konformität",
+    "healthCheck": "Scrum-Werte-Gesundheitscheck",
+    "impedimentMetrics": "Hindernis-Kennzahlen",
+    "loadError": "Dashboard-Daten konnten nicht geladen werden",
+    "missingEvents": "Fehlend",
+    "noData": "Noch keine Dashboard-Daten verfügbar",
+    "overallHealth": "Gesundheit gesamt",
+    "sprintGoalAchievement": "Sprint-Ziel-Erreichung",
+    "subtitle": "Ein Überblick über Team-Gesundheit und Scrum-Prozess-Konformität",
+    "title": "Dashboard des Scrum Masters"
+  },
+  "smNotes": {
+    "charCounter": "{{count}} / 2000 Zeichen",
+    "emptyError": "Notizen dürfen nicht leer sein.",
+    "maxLengthError": "Notizen dürfen höchstens 2000 Zeichen lang sein.",
+    "modeEditing": "Bearbeiten",
+    "modeViewing": "Anzeigen",
+    "noHtmlTags": "HTML-Tags sind in Notizen nicht erlaubt.",
+    "placeholder": "Beobachtungen, Coaching-Notizen und Erkenntnisse zur Moderation für das Scrum-Team festhalten...",
+    "saveError": "Notizen konnten nicht gespeichert werden",
+    "saved": "Notizen gespeichert",
+    "title": "Notizen des Scrum Masters"
+  }
+}

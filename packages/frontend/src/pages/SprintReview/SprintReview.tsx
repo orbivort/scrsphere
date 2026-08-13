@@ -7,6 +7,7 @@ import { formatLocaleDate } from '@scrumooth/shared';
 import {
   IncrementStatus,
   DeliveryMethod,
+  ItemStatus,
   type SprintReview as SprintReviewType,
   type StakeholderFeedback,
   type ReviewAttendee,
@@ -51,6 +52,10 @@ import { CreateSprintReviewModal } from './CreateSprintReviewModal';
 
 import { useI18nStore } from '@/i18n/useI18nStore';
 import { AttendeesSection, type AttendeeFormData } from '@/components/AttendeesSection';
+import { SMNotes } from '@/components/common/SMNotes';
+import { ProductGoalProgress } from '@/components/common/ProductGoalProgress';
+import { ScrumValuesBanner } from '@/components/common/ScrumValuesBanner';
+import { smDashboardService } from '@/services';
 
 const mapTeamRoleToAttendeeRole = (role?: string): string => {
   const roleMap: Record<string, string> = {
@@ -73,6 +78,7 @@ interface FeedbackFormData {
   actionRequired: boolean;
   relatedPbiId?: string;
   ownerId?: string;
+  productGoalAssessment?: string;
 }
 
 interface AdjustmentFormData {
@@ -126,6 +132,24 @@ const getCategoryIcon = (category: string): string => {
   return icons[category] ?? '💬';
 };
 
+// i18n keys (in the `common` namespace) for each backlog item status label.
+const STATUS_TRANSLATION_KEYS: Record<ItemStatus, string> = {
+  [ItemStatus.NEW]: 'common:status.new',
+  [ItemStatus.REFINED]: 'common:status.refined',
+  [ItemStatus.READY]: 'common:status.ready',
+  [ItemStatus.IN_PROGRESS]: 'common:status.inProgress',
+  [ItemStatus.DONE]: 'common:status.done',
+};
+
+// CSS Module color class (without `styles.`) for each backlog item status.
+const STATUS_STYLE_KEYS: Record<ItemStatus, string> = {
+  [ItemStatus.NEW]: 'status-new',
+  [ItemStatus.REFINED]: 'status-refined',
+  [ItemStatus.READY]: 'status-ready',
+  [ItemStatus.IN_PROGRESS]: 'status-in-progress',
+  [ItemStatus.DONE]: 'status-done',
+};
+
 // Helper component for hint text
 const BacklogHint: React.FC<{ message: string }> = ({ message }) => (
   <div className={styles['backlog-hint']}>
@@ -141,7 +165,7 @@ export const SprintReview: React.FC = () => {
   const { sprintId: urlSprintId } = useParams<{ sprintId: string }>();
   const navigate = useNavigate();
   const [, setSearchParams] = useSearchParams();
-  const { currentTeam } = useTeamStore();
+  const { currentTeam, userRoleInCurrentTeam } = useTeamStore();
   const queryClient = useQueryClient();
   const { handleMutationError } = useMutationErrorHandler();
   const { locale } = useI18nStore();
@@ -247,6 +271,17 @@ export const SprintReview: React.FC = () => {
     return reviews.find((r) => r.sprintId === sprintId);
   }, [reviewsData, sprintId]);
 
+  const { data: productGoalData } = useQuery({
+    queryKey: ['sprint-review-product-goal', review?.id],
+    queryFn: () => {
+      if (!review?.id) {
+        throw new Error('No review available');
+      }
+      return apiService.getProductGoalForReview(review.id);
+    },
+    enabled: !!review?.id,
+  });
+
   useEffect(() => {
     if (review?.status === 'completed') {
       setIsReviewCompleted(true);
@@ -310,6 +345,31 @@ export const SprintReview: React.FC = () => {
     };
   }, [sprintBacklogItems]);
 
+  // Partition the full sprint backlog into delivered (DONE) vs. the rest, and
+  // track which PBIs were explicitly included in the delivered increment.
+  const { doneItems, notDoneItems, incrementPbiIds } = useMemo(() => {
+    const pbis = sprintBacklogItems?.data ?? [];
+    const doneItems: ProductBacklogItem[] = [];
+    const notDoneItems: ProductBacklogItem[] = [];
+    const incrementPbiIds = new Set<string>();
+
+    for (const pbi of pbis) {
+      if (pbi.status === ItemStatus.DONE) {
+        doneItems.push(pbi);
+      } else {
+        notDoneItems.push(pbi);
+      }
+    }
+
+    for (const pbi of increment?.pbis ?? []) {
+      if (pbi.id) {
+        incrementPbiIds.add(pbi.id);
+      }
+    }
+
+    return { doneItems, notDoneItems, incrementPbiIds };
+  }, [sprintBacklogItems, increment]);
+
   const createReviewMutation = useMutation({
     mutationFn: (data: {
       sprintId: string;
@@ -338,8 +398,22 @@ export const SprintReview: React.FC = () => {
   });
 
   const addFeedbackMutation = useMutation({
-    mutationFn: (feedback: Partial<StakeholderFeedback>) =>
-      apiService.addStakeholderFeedback(review?.id ?? '', feedback),
+    mutationFn: async (feedback: Partial<StakeholderFeedback>) => {
+      const reviewId = review?.id ?? '';
+      const result = await apiService.addStakeholderFeedback(reviewId, feedback);
+      // Persist the Product Goal assessment as a snapshot so it can be surfaced
+      // in the Product Goal detail timeline.
+      if (feedback.productGoalAssessment) {
+        await apiService
+          .submitProductGoalAssessment(reviewId, {
+            assessment: feedback.productGoalAssessment,
+          })
+          .catch(() => {
+            // Snapshot creation is best-effort; the feedback itself was saved.
+          });
+      }
+      return result;
+    },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.sprintReview.all });
       setShowFeedbackForm(false);
@@ -886,6 +960,10 @@ export const SprintReview: React.FC = () => {
         </div>
       </div>
 
+      <div className={styles['values-banner']}>
+        <ScrumValuesBanner />
+      </div>
+
       <div className={styles['section-tabs']} role="tablist" aria-label={t('ariaLabels.sections')}>
         {SECTION_TABS.map((tab) => (
           <button
@@ -945,6 +1023,31 @@ export const SprintReview: React.FC = () => {
               </div>
             </div>
 
+            {productGoalData?.data?.productGoal ? (
+              <div className={`${styles['overview-card']} ${styles['full-width']}`}>
+                <ProductGoalProgress
+                  goal={{
+                    id: productGoalData.data.productGoal.id,
+                    title: productGoalData.data.productGoal.title,
+                    description: productGoalData.data.productGoal.description,
+                    successMetrics: productGoalData.data.productGoal.successMetrics,
+                    status: productGoalData.data.productGoal.status,
+                    completedPbiCount: productGoalData.data.productGoal.completedPbiCount,
+                    totalPbiCount: productGoalData.data.productGoal.totalPbiCount,
+                    completedStoryPoints: productGoalData.data.productGoal.completedStoryPoints,
+                    totalStoryPoints: productGoalData.data.productGoal.totalStoryPoints,
+                  }}
+                />
+              </div>
+            ) : (
+              <div className={`${styles['overview-card']} ${styles['full-width']}`}>
+                <h3>
+                  <TargetIcon /> {t('overview.productGoal')}
+                </h3>
+                <p className={styles['sprint-goal-text']}>{t('overview.noProductGoal')}</p>
+              </div>
+            )}
+
             <div className={styles['overview-grid']}>
               <div className={`${styles['overview-card']} ${styles['sprint-goal-card']}`}>
                 <h3>
@@ -982,6 +1085,16 @@ export const SprintReview: React.FC = () => {
                 <p>{review.summary ?? t('overview.noSummary')}</p>
               </div>
             </div>
+
+            {userRoleInCurrentTeam?.toUpperCase() === 'SCRUM_MASTER' && (
+              <div className={`${styles['overview-card']} ${styles['full-width']}`}>
+                <SMNotes
+                  value={review.smNotes}
+                  onSave={(notes) => smDashboardService.updateSprintReviewSmNotes(review.id, notes)}
+                  disabled={isReviewCompleted}
+                />
+              </div>
+            )}
 
             <AttendeesSection
               entityId={review.id || ''}
@@ -1046,19 +1159,49 @@ export const SprintReview: React.FC = () => {
                 </p>
 
                 <div className={styles['included-items']}>
-                  <h4>{t('increment.includedPbis')}</h4>
+                  <h4>{t('increment.completedItems')}</h4>
                   <div className={styles['pbi-list']}>
-                    {increment.pbis?.length === 0 ? (
-                      <p className={styles['no-data']}>{t('increment.noPbis')}</p>
+                    {doneItems.length === 0 ? (
+                      <p className={styles['no-data']}>{t('increment.noCompletedItems')}</p>
                     ) : (
-                      increment.pbis?.map((pbi, index) => (
+                      doneItems.map((pbi, index) => (
                         <div key={pbi.id || `pbi-${index}`} className={styles['pbi-card']}>
                           <span className={styles['pbi-title']}>{pbi.title}</span>
                           <span className={styles['pbi-points']}>
                             {pbi.storyPoints ?? 0} {t('pts')}
                           </span>
-                          <span className={`${styles['pbi-status']} ${styles.done}`}>
-                            <CheckIcon /> {t('increment.done')}
+                          <span
+                            className={`${styles['pbi-status']} ${styles[STATUS_STYLE_KEYS[pbi.status]]}`}
+                          >
+                            <CheckIcon /> {t(STATUS_TRANSLATION_KEYS[pbi.status], pbi.status)}
+                          </span>
+                          {incrementPbiIds.has(pbi.id) && (
+                            <span className={styles['in-increment-badge']}>
+                              {t('increment.inIncrement')}
+                            </span>
+                          )}
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+
+                <div className={styles['included-items']}>
+                  <h4>{t('increment.notCompletedItems')}</h4>
+                  <div className={styles['pbi-list']}>
+                    {notDoneItems.length === 0 ? (
+                      <p className={styles['no-data']}>{t('increment.noNotCompletedItems')}</p>
+                    ) : (
+                      notDoneItems.map((pbi, index) => (
+                        <div key={pbi.id || `pbi-${index}`} className={styles['pbi-card']}>
+                          <span className={styles['pbi-title']}>{pbi.title}</span>
+                          <span className={styles['pbi-points']}>
+                            {pbi.storyPoints ?? 0} {t('pts')}
+                          </span>
+                          <span
+                            className={`${styles['pbi-status']} ${styles[STATUS_STYLE_KEYS[pbi.status]]}`}
+                          >
+                            {t(STATUS_TRANSLATION_KEYS[pbi.status], pbi.status)}
                           </span>
                         </div>
                       ))
@@ -1079,7 +1222,17 @@ export const SprintReview: React.FC = () => {
                 <div className={styles['increment-stats']}>
                   <div className={styles['stat-item']}>
                     <span className={styles['stat-label']}>{t('increment.totalStoryPoints')}</span>
-                    <span className={styles['stat-value']}>{increment.totalStoryPoints || 0}</span>
+                    <span className={styles['stat-value']}>
+                      {sprintStats.committedStoryPoints || 0}
+                    </span>
+                  </div>
+                  <div className={styles['stat-item']}>
+                    <span className={styles['stat-label']}>
+                      {t('increment.completedStoryPoints')}
+                    </span>
+                    <span className={styles['stat-value']}>
+                      {sprintStats.completedStoryPoints || 0}
+                    </span>
                   </div>
                   <div className={styles['stat-item']}>
                     <span className={styles['stat-label']}>{t('increment.deliveryMethod')}</span>

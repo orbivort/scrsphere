@@ -1,12 +1,13 @@
-/* eslint-disable icon-rules/no-inline-svg -- TODO: Migrate inline SVGs to shared icon components */
 import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useParams, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { formatLocaleDate } from '@scrumooth/shared';
 
-import { apiService } from '../../services';
+import { apiService, smDashboardService } from '../../services';
 import { useTeamStore, useAuthStore } from '../../store';
+import { SMNotes } from '../../components/common/SMNotes';
+import { ScrumValuesBanner } from '../../components/common/ScrumValuesBanner';
 import { logger } from '../../utils/logger';
 import {
   RetrospectiveCategory,
@@ -26,7 +27,18 @@ import { LoadingState } from '../../components/common/Loading/LoadingState';
 import { ConfirmDialog } from '../../components/ConfirmDialog';
 import { queryKeys } from '../../hooks/queryKeys';
 import { TOAST_SUCCESS_DURATION } from '../../utils/constants';
-import { InfoIcon, PlusIcon, SaveIcon } from '../../components/common/Icons';
+import {
+  AlertCircleIcon,
+  AlertTriangleIcon,
+  CheckCircleIcon,
+  CheckIcon,
+  ClipboardListIcon,
+  EditIcon,
+  InfoIcon,
+  LightbulbIcon,
+  PlusIcon,
+  SaveIcon,
+} from '../../components/common/Icons';
 
 import styles from './Retrospective.module.css';
 import { CreateActionItemModal } from './CreateActionItemModal';
@@ -55,7 +67,7 @@ const mapTeamRoleToAttendeeRole = (role?: string): string => {
 export const SprintRetrospective: React.FC = () => {
   const { sprintId } = useParams<{ sprintId: string }>();
   const navigate = useNavigate();
-  const { currentTeam } = useTeamStore();
+  const { currentTeam, userRoleInCurrentTeam } = useTeamStore();
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
   const { t } = useTranslation('retrospective');
@@ -1046,34 +1058,9 @@ export const SprintRetrospective: React.FC = () => {
                     className={`${styles['confirm-modal-icon-wrapper']} ${validationErrors.length > 0 ? styles['confirm-modal-icon-wrapper-danger'] : styles['confirm-modal-icon-wrapper-success']}`}
                   >
                     {validationErrors.length > 0 ? (
-                      <svg
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <circle cx="12" cy="12" r="10" />
-                        <line x1="12" y1="8" x2="12" y2="12" />
-                        <line x1="12" y1="16" x2="12.01" y2="16" />
-                      </svg>
+                      <AlertCircleIcon size={24} />
                     ) : (
-                      <svg
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                        <polyline points="22 4 12 14.01 9 11.01" />
-                      </svg>
+                      <CheckCircleIcon size={24} />
                     )}
                   </div>
                   <h2 id="complete-modal-title" className={styles['confirm-modal-title']}>
@@ -1095,20 +1082,7 @@ export const SprintRetrospective: React.FC = () => {
                   <ul className={styles['confirm-validation-list']}>
                     {validationErrors.map((error, index) => (
                       <li key={index} className={styles['confirm-validation-item']}>
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <circle cx="12" cy="12" r="10" />
-                          <line x1="12" y1="8" x2="12" y2="12" />
-                          <line x1="12" y1="16" x2="12.01" y2="16" />
-                        </svg>
+                        <AlertCircleIcon size={16} />
                         {error}
                       </li>
                     ))}
@@ -1117,20 +1091,7 @@ export const SprintRetrospective: React.FC = () => {
                   <div className={styles['confirm-warning-card']}>
                     <div className={styles['confirm-warning-card-header']}>
                       <div className={styles['confirm-warning-card-icon']}>
-                        <svg
-                          width="28"
-                          height="28"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
-                          <line x1="12" y1="9" x2="12" y2="13" />
-                          <line x1="12" y1="17" x2="12.01" y2="17" />
-                        </svg>
+                        <AlertTriangleIcon size={28} />
                       </div>
                       <div className={styles['confirm-warning-card-title-group']}>
                         <h3 className={styles['confirm-warning-card-title']}>
@@ -1146,20 +1107,7 @@ export const SprintRetrospective: React.FC = () => {
                         {t('confirmationModal.confirmationQuestion')}
                       </p>
                       <div className={styles['confirm-info-box']}>
-                        <svg
-                          width="20"
-                          height="20"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <circle cx="12" cy="12" r="10" />
-                          <line x1="12" y1="16" x2="12" y2="12" />
-                          <line x1="12" y1="8" x2="12.01" y2="8" />
-                        </svg>
+                        <InfoIcon size={20} />
                         <span className={styles['confirm-info-text']}>
                           {t('confirmationModal.lockWarning')}
                         </span>
@@ -1197,36 +1145,12 @@ export const SprintRetrospective: React.FC = () => {
                     >
                       {updateStatusMutation.isPending ? (
                         <>
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            aria-hidden="true"
-                          >
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
+                          <CheckIcon size={16} />
                           {t('confirmationModal.completing')}
                         </>
                       ) : (
                         <>
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            aria-hidden="true"
-                          >
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
+                          <CheckIcon size={16} />
                           {t('confirmationModal.complete')}
                         </>
                       )}
@@ -1266,6 +1190,28 @@ export const SprintRetrospective: React.FC = () => {
             </span>
           </div>
         </div>
+
+        <div className={styles['values-banner']}>
+          <ScrumValuesBanner />
+        </div>
+
+        <details className={styles['values-reflection']}>
+          <summary className={styles['values-reflection-summary']}>
+            {t('valuesReflection.title')}
+          </summary>
+          <div className={styles['values-reflection-body']}>
+            {['COMMITMENT', 'FOCUS', 'OPENNESS', 'RESPECT', 'COURAGE'].map((value) => (
+              <div key={value} className={styles['values-reflection-item']}>
+                <span className={styles['values-reflection-name']}>
+                  {t(`valuesReflection.values.${value}.label` as never)}
+                </span>
+                <p className={styles['values-reflection-question']}>
+                  {t(`valuesReflection.values.${value}.question` as never)}
+                </p>
+              </div>
+            ))}
+          </div>
+        </details>
 
         {sprint && (
           <section
@@ -1603,7 +1549,10 @@ export const SprintRetrospective: React.FC = () => {
 
           <div className={styles['action-items-section']}>
             <div className={styles['section-header']}>
-              <h3>{t('actionItems.title')}</h3>
+              <h3>
+                <ClipboardListIcon className={styles['section-title-icon']} />
+                {t('actionItems.title')}
+              </h3>
               <button
                 className={`${styles.button} ${styles['button-primary']}`}
                 onClick={() => setUiState((prev) => ({ ...prev, showActionForm: true }))}
@@ -1626,15 +1575,14 @@ export const SprintRetrospective: React.FC = () => {
                       <div className={styles['action-item-header']}>
                         <h4>{actionItem.title}</h4>
                         <div className={styles['action-item-badges']}>
-                          {!actionItem.addedToSprintBacklog && (
+                          {actionItem.status === 'COMPLETED' || !actionItem.addedToSprintBacklog ? (
                             <span
                               className={styles['status-badge']}
                               style={{ backgroundColor: statusColor.bg, color: statusColor.text }}
                             >
                               {t(`actionItems.status.${actionItem.status.toUpperCase()}` as never)}
                             </span>
-                          )}
-                          {actionItem.addedToSprintBacklog && (
+                          ) : (
                             <span className={styles['backlog-badge']}>
                               {t('actionItems.inBacklog')}
                             </span>
@@ -1707,6 +1655,167 @@ export const SprintRetrospective: React.FC = () => {
             />
           </div>
 
+          <div className={styles['summary-section']}>
+            <div className={styles['summary-header']}>
+              <h3>
+                <span className={styles['summary-header-icon']} aria-hidden="true">
+                  <LightbulbIcon size={20} />
+                </span>
+                {t('summary.title')}
+              </h3>
+              {!editState.isEditingSummary && !uiState.showSummaryForm && retrospective.summary && (
+                <button
+                  className={`${styles['icon-button']} ${styles.edit}`}
+                  onClick={handleEditSummary}
+                  disabled={isCompleted}
+                  aria-label={t('summary.editAriaLabel')}
+                  title={t('summary.editSummary')}
+                >
+                  <EditIcon size={16} />
+                </button>
+              )}
+            </div>
+
+            {uiState.showSummaryForm || editState.isEditingSummary ? (
+              <div
+                className={styles['summary-form']}
+                role="form"
+                aria-label={t('summary.formAriaLabel')}
+              >
+                <div className={styles['summary-form-header']}>
+                  <div className={styles['summary-form-icon']} aria-hidden="true">
+                    <LightbulbIcon size={24} />
+                  </div>
+                  <div>
+                    <h4>
+                      {editState.isEditingSummary ? t('summary.editTitle') : t('summary.addTitle')}
+                    </h4>
+                    <p className={styles['summary-form-subtitle']}>
+                      {editState.isEditingSummary
+                        ? t('summary.editSubtitle')
+                        : t('summary.addSubtitle')}
+                    </p>
+                  </div>
+                </div>
+                <div className={styles['form-group']}>
+                  <label htmlFor="summary-input">
+                    <span>
+                      {editState.isEditingSummary
+                        ? t('summary.summaryLabel')
+                        : t('summary.takeawaysLabel')}
+                    </span>
+                    <span className={styles['required-indicator']}>*</span>
+                  </label>
+                  <textarea
+                    id="summary-input"
+                    value={formState.summaryContent}
+                    onChange={(e) =>
+                      setFormState((prev) => ({ ...prev, summaryContent: e.target.value }))
+                    }
+                    placeholder={editState.isEditingSummary ? '' : t('summary.takeawaysLabel')}
+                    rows={6}
+                    maxLength={1000}
+                    aria-label={t('ariaLabels.summaryAriaLabel')}
+                    aria-describedby="summary-help summary-counter"
+                    aria-invalid={
+                      !formState.summaryContent.trim() || formState.summaryContent.length < 10
+                    }
+                    aria-required="true"
+                    autoFocus
+                  />
+                  <div id="summary-help" className={styles['help-text']}>
+                    <InfoIcon size={16} />
+                    <span>{t('summary.charHelpText')}</span>
+                  </div>
+                  <div className={styles['form-footer']}>
+                    <span
+                      id="summary-counter"
+                      className={`${styles['char-counter']} ${
+                        formState.summaryContent.length > 900
+                          ? styles['char-counter-error']
+                          : formState.summaryContent.length > 800
+                            ? styles['char-counter-warning']
+                            : ''
+                      }`}
+                      aria-live="polite"
+                    >
+                      {t('summary.charCounter', { count: formState.summaryContent.length })}
+                    </span>
+                    {formState.summaryContent.length > 800 &&
+                      formState.summaryContent.length <= 1000 && (
+                        <span className={styles['warning-text']}>
+                          {t('summary.approachingLimit')}
+                        </span>
+                      )}
+                  </div>
+                  <div className={styles['form-actions']}>
+                    <button
+                      className={`${styles.button} ${styles['button-secondary']}`}
+                      onClick={handleCancelSummary}
+                      disabled={updateSummaryMutation.isPending}
+                      aria-label={t('summary.cancelAriaLabel')}
+                    >
+                      {t('summary.cancel')}
+                    </button>
+                    <button
+                      className={`${styles.button} ${styles['button-primary']}`}
+                      onClick={handleSaveSummary}
+                      disabled={!formState.summaryContent.trim() || updateSummaryMutation.isPending}
+                      aria-label={t('summary.saveAriaLabel')}
+                    >
+                      {updateSummaryMutation.isPending ? (
+                        <>
+                          <SaveIcon size={16} className={styles['save-button-icon']} />
+                          {t('summary.saving')}
+                        </>
+                      ) : (
+                        <>
+                          <SaveIcon size={16} className={styles['save-button-icon']} />
+                          {t('summary.save')}
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <>
+                {retrospective.summary ? (
+                  <div className={styles['summary-content']}>
+                    <p className={styles['summary-content-text']}>{retrospective.summary}</p>
+                  </div>
+                ) : (
+                  <div className={styles['summary-empty-state']}>
+                    <div className={styles['summary-empty-icon']} aria-hidden="true">
+                      <LightbulbIcon size={32} />
+                    </div>
+                    <p className={styles['summary-empty-text']}>{t('summary.emptyDescription')}</p>
+                    <button
+                      className={styles['add-summary-button']}
+                      onClick={handleAddSummary}
+                      disabled={isCompleted}
+                      aria-label={t('summary.addSummaryAriaLabel')}
+                    >
+                      {t('summary.addSummary')}
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+
+          {userRoleInCurrentTeam?.toUpperCase() === 'SCRUM_MASTER' && retrospective.id && (
+            <div className={styles['sm-notes-section']}>
+              <SMNotes
+                value={retrospective.smNotes}
+                onSave={(notes) =>
+                  smDashboardService.updateRetrospectiveSmNotes(retrospective.id, notes)
+                }
+                disabled={isCompleted}
+              />
+            </div>
+          )}
+
           <AttendeesSection
             entityId={retrospective.id}
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- sprintId is guaranteed to be defined after the guard at line 969
@@ -1748,254 +1857,6 @@ export const SprintRetrospective: React.FC = () => {
             isUpdating={updateAttendeeMutation.isPending}
           />
 
-          <div className={styles['summary-section']}>
-            <div className={styles['summary-header']}>
-              <h3>
-                <span className={styles['summary-header-icon']} aria-hidden="true">
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                    <polyline points="14 2 14 8 20 8" />
-                    <line x1="16" y1="13" x2="8" y2="13" />
-                    <line x1="16" y1="17" x2="8" y2="17" />
-                    <polyline points="10 9 9 9 8 9" />
-                  </svg>
-                </span>
-                {t('summary.title')}
-              </h3>
-              {!editState.isEditingSummary && !uiState.showSummaryForm && retrospective.summary && (
-                <button
-                  className={`${styles['icon-button']} ${styles.edit}`}
-                  onClick={handleEditSummary}
-                  disabled={isCompleted}
-                  aria-label={t('summary.editAriaLabel')}
-                  title={t('summary.editSummary')}
-                >
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                  </svg>
-                </button>
-              )}
-            </div>
-
-            {uiState.showSummaryForm || editState.isEditingSummary ? (
-              <div
-                className={styles['summary-form']}
-                role="form"
-                aria-label={t('summary.formAriaLabel')}
-              >
-                <div className={styles['summary-form-header']}>
-                  <div className={styles['summary-form-icon']} aria-hidden="true">
-                    <svg
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                      <polyline points="14 2 14 8 20 8" />
-                      <line x1="16" y1="13" x2="8" y2="13" />
-                      <line x1="16" y1="17" x2="8" y2="17" />
-                      <polyline points="10 9 9 9 8 9" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h4>
-                      {editState.isEditingSummary ? t('summary.editTitle') : t('summary.addTitle')}
-                    </h4>
-                    <p className={styles['summary-form-subtitle']}>
-                      {editState.isEditingSummary
-                        ? t('summary.editSubtitle')
-                        : t('summary.addSubtitle')}
-                    </p>
-                  </div>
-                </div>
-                <div className={styles['form-group']}>
-                  <label htmlFor="summary-input">
-                    <span>
-                      {editState.isEditingSummary
-                        ? t('summary.summaryLabel')
-                        : t('summary.takeawaysLabel')}
-                    </span>
-                    <span className={styles['required-indicator']}>*</span>
-                  </label>
-                  <textarea
-                    id="summary-input"
-                    value={formState.summaryContent}
-                    onChange={(e) =>
-                      setFormState((prev) => ({ ...prev, summaryContent: e.target.value }))
-                    }
-                    placeholder={editState.isEditingSummary ? '' : t('summary.takeawaysLabel')}
-                    rows={6}
-                    maxLength={1000}
-                    aria-label={t('ariaLabels.summaryAriaLabel')}
-                    aria-describedby="summary-help summary-counter"
-                    aria-invalid={
-                      !formState.summaryContent.trim() || formState.summaryContent.length < 10
-                    }
-                    aria-required="true"
-                    autoFocus
-                  />
-                  <div id="summary-help" className={styles['help-text']}>
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      aria-hidden="true"
-                    >
-                      <circle cx="12" cy="12" r="10" />
-                      <line x1="12" y1="16" x2="12" y2="12" />
-                      <line x1="12" y1="8" x2="12.01" y2="8" />
-                    </svg>
-                    <span>{t('summary.charHelpText')}</span>
-                  </div>
-                  <div className={styles['form-footer']}>
-                    <span
-                      id="summary-counter"
-                      className={`${styles['char-counter']} ${
-                        formState.summaryContent.length > 900
-                          ? styles['char-counter-error']
-                          : formState.summaryContent.length > 800
-                            ? styles['char-counter-warning']
-                            : ''
-                      }`}
-                      aria-live="polite"
-                    >
-                      {t('summary.charCounter', { count: formState.summaryContent.length })}
-                    </span>
-                    {formState.summaryContent.length > 800 &&
-                      formState.summaryContent.length <= 1000 && (
-                        <span className={styles['warning-text']}>
-                          {t('summary.approachingLimit')}
-                        </span>
-                      )}
-                  </div>
-                  <div className={styles['form-actions']}>
-                    <button
-                      className={`${styles.button} ${styles['button-secondary']}`}
-                      onClick={handleCancelSummary}
-                      disabled={updateSummaryMutation.isPending}
-                      aria-label={t('summary.cancelAriaLabel')}
-                    >
-                      {t('summary.cancel')}
-                    </button>
-                    <button
-                      className={`${styles.button} ${styles['button-primary']}`}
-                      onClick={handleSaveSummary}
-                      disabled={!formState.summaryContent.trim() || updateSummaryMutation.isPending}
-                      aria-label={t('summary.saveAriaLabel')}
-                    >
-                      {updateSummaryMutation.isPending ? (
-                        <>
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            aria-hidden="true"
-                          >
-                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
-                            <polyline points="17 21 17 13 7 13 7 21" />
-                            <polyline points="7 3 7 8 15 8" />
-                          </svg>
-                          {t('summary.saving')}
-                        </>
-                      ) : (
-                        <>
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            aria-hidden="true"
-                          >
-                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
-                            <polyline points="17 21 17 13 7 13 7 21" />
-                            <polyline points="7 3 7 8 15 8" />
-                          </svg>
-                          {t('summary.save')}
-                        </>
-                      )}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <>
-                {retrospective.summary ? (
-                  <div className={styles['summary-content']}>
-                    <p className={styles['summary-content-text']}>{retrospective.summary}</p>
-                  </div>
-                ) : (
-                  <div className={styles['summary-empty-state']}>
-                    <div className={styles['summary-empty-icon']} aria-hidden="true">
-                      <svg
-                        width="32"
-                        height="32"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                        <polyline points="14 2 14 8 20 8" />
-                        <line x1="16" y1="13" x2="8" y2="13" />
-                        <line x1="16" y1="17" x2="8" y2="17" />
-                        <polyline points="10 9 9 9 8 9" />
-                      </svg>
-                    </div>
-                    <p className={styles['summary-empty-text']}>{t('summary.emptyDescription')}</p>
-                    <button
-                      className={styles['add-summary-button']}
-                      onClick={handleAddSummary}
-                      disabled={isCompleted}
-                      aria-label={t('summary.addSummaryAriaLabel')}
-                    >
-                      {t('summary.addSummary')}
-                    </button>
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-
           {retrospective.status !== RetrospectiveStatus.COMPLETED && (
             <div className={styles['complete-retro-section']}>
               <button
@@ -2004,6 +1865,7 @@ export const SprintRetrospective: React.FC = () => {
                 disabled={updateStatusMutation.isPending}
                 aria-label={t('completeRetro.ariaLabel')}
               >
+                <CheckCircleIcon className={styles['complete-button-icon']} />
                 {updateStatusMutation.isPending
                   ? t('completeRetro.completing')
                   : t('completeRetro.button')}

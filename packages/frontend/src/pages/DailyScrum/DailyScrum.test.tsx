@@ -43,6 +43,7 @@ vi.mock('../../store', () => ({
 vi.mock('../../services', () => ({
   apiService: {
     getActiveSprint: vi.fn(),
+    getSprintTasks: vi.fn(),
     getDailyUpdates: vi.fn(),
     getTeamMembersWithUpdates: vi.fn(),
     createDailyUpdate: vi.fn(),
@@ -206,6 +207,7 @@ const mockUseTeamStore = useTeamStore as Mock;
 const mockUseAuthStore = useAuthStore as Mock;
 const mockApiService = apiService as {
   getActiveSprint: Mock;
+  getSprintTasks: Mock;
   getDailyUpdates: Mock;
   getTeamMembersWithUpdates: Mock;
   createDailyUpdate: Mock;
@@ -355,6 +357,7 @@ function setupDefaultStore(overrides: { currentTeam?: Team | null; user?: User |
 function setupDefaultApiMocks(
   overrides: {
     getActiveSprint?: Mock;
+    getSprintTasks?: Mock;
     getDailyUpdates?: Mock;
     getTeamMembersWithUpdates?: Mock;
     createDailyUpdate?: Mock;
@@ -368,6 +371,14 @@ function setupDefaultApiMocks(
       vi.fn().mockResolvedValue({
         success: true,
         data: createMockSprint(),
+      })
+  );
+
+  mockApiService.getSprintTasks.mockImplementation(
+    overrides.getSprintTasks ??
+      vi.fn().mockResolvedValue({
+        success: true,
+        data: [],
       })
   );
 

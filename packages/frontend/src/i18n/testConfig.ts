@@ -24,6 +24,7 @@ import enSettings from '../../public/locales/en/settings.json';
 import enNotifications from '../../public/locales/en/notifications.json';
 import enErrors from '../../public/locales/en/errors.json';
 import enValidation from '../../public/locales/en/validation.json';
+import enScrumMasterDashboard from '../../public/locales/en/scrum-master-dashboard.json';
 import deCommon from '../../public/locales/de/common.json';
 import deAuth from '../../public/locales/de/auth.json';
 import deDashboard from '../../public/locales/de/dashboard.json';
@@ -40,6 +41,7 @@ import deSettings from '../../public/locales/de/settings.json';
 import deNotifications from '../../public/locales/de/notifications.json';
 import deErrors from '../../public/locales/de/errors.json';
 import deValidation from '../../public/locales/de/validation.json';
+import deScrumMasterDashboard from '../../public/locales/de/scrum-master-dashboard.json';
 import frCommon from '../../public/locales/fr/common.json';
 import frAuth from '../../public/locales/fr/auth.json';
 import frDashboard from '../../public/locales/fr/dashboard.json';
@@ -56,6 +58,7 @@ import frSettings from '../../public/locales/fr/settings.json';
 import frNotifications from '../../public/locales/fr/notifications.json';
 import frErrors from '../../public/locales/fr/errors.json';
 import frValidation from '../../public/locales/fr/validation.json';
+import frScrumMasterDashboard from '../../public/locales/fr/scrum-master-dashboard.json';
 import esCommon from '../../public/locales/es/common.json';
 import esAuth from '../../public/locales/es/auth.json';
 import esDashboard from '../../public/locales/es/dashboard.json';
@@ -72,6 +75,7 @@ import esSettings from '../../public/locales/es/settings.json';
 import esNotifications from '../../public/locales/es/notifications.json';
 import esErrors from '../../public/locales/es/errors.json';
 import esValidation from '../../public/locales/es/validation.json';
+import esScrumMasterDashboard from '../../public/locales/es/scrum-master-dashboard.json';
 import itCommon from '../../public/locales/it/common.json';
 import itAuth from '../../public/locales/it/auth.json';
 import itDashboard from '../../public/locales/it/dashboard.json';
@@ -88,6 +92,7 @@ import itSettings from '../../public/locales/it/settings.json';
 import itNotifications from '../../public/locales/it/notifications.json';
 import itErrors from '../../public/locales/it/errors.json';
 import itValidation from '../../public/locales/it/validation.json';
+import itScrumMasterDashboard from '../../public/locales/it/scrum-master-dashboard.json';
 
 const NAMESPACES = [
   'common',
@@ -106,6 +111,7 @@ const NAMESPACES = [
   'notifications',
   'errors',
   'validation',
+  'scrum-master-dashboard',
 ] as const;
 
 // Build resource maps per locale
@@ -126,6 +132,7 @@ const enResources = {
   notifications: enNotifications,
   errors: enErrors,
   validation: enValidation,
+  'scrum-master-dashboard': enScrumMasterDashboard,
 };
 
 const deResources = {
@@ -145,6 +152,7 @@ const deResources = {
   notifications: deNotifications,
   errors: deErrors,
   validation: deValidation,
+  'scrum-master-dashboard': deScrumMasterDashboard,
 };
 
 const frResources = {
@@ -164,6 +172,7 @@ const frResources = {
   notifications: frNotifications,
   errors: frErrors,
   validation: frValidation,
+  'scrum-master-dashboard': frScrumMasterDashboard,
 };
 
 const esResources = {
@@ -183,6 +192,7 @@ const esResources = {
   notifications: esNotifications,
   errors: esErrors,
   validation: esValidation,
+  'scrum-master-dashboard': esScrumMasterDashboard,
 };
 
 const itResources = {
@@ -202,6 +212,7 @@ const itResources = {
   notifications: itNotifications,
   errors: itErrors,
   validation: itValidation,
+  'scrum-master-dashboard': itScrumMasterDashboard,
 };
 
 type LocaleResources = Record<string, Record<string, unknown>>;

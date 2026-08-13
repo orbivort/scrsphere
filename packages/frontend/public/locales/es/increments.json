@@ -1,5 +1,8 @@
 {
   "backToIncrements": "Volver a Increments",
+  "card": {
+    "integrationVerified": "Integración verificada"
+  },
   "create": {
     "actions": {
       "cancel": "Cancelar",
@@ -7,7 +10,8 @@
       "createIncrement": "Crear Increment",
       "creating": "Creando...",
       "delivering": "Entregando...",
-      "skipToSprintReview": "Ir a Sprint Review"
+      "skipToSprintReview": "Ir a Sprint Review",
+      "verifying": "Verificando integración..."
     },
     "backToIncrements": "Volver a Increments",
     "backToSprintReview": "Volver a Sprint Review",
@@ -40,7 +44,8 @@
     "progressSteps": {
       "creatingIncrement": "Creando Increment...",
       "deliveringIncrement": "Entregando Increment...",
-      "redirecting": "Redirigiendo..."
+      "redirecting": "Redirigiendo...",
+      "verifyingIntegration": "Verificando Integración..."
     },
     "summary": {
       "pbisSelected": "PBIs Seleccionados",
@@ -55,7 +60,10 @@
       "createdSuccess": "¡Increment creado",
       "deliverFailed": "Falló al entregar Increment. Puede entregarlo manualmente desde la página de detalle del Increment.",
       "deliveredSuccess": "¡Increment entregado! Redirigiendo a Sprint Review...",
-      "validationFailed": "Validación fallida"
+      "integrationRequired": "Se requiere verificación de integración antes de poder entregar este Increment. Agregue pruebas de integración contra Increments anteriores, luego verifique y entregue.",
+      "validationFailed": "Validación fallida",
+      "verificationFailed": "Falló la verificación de integración. Puede verificarla y entregarla manualmente desde la página de detalle del Increment.",
+      "verifyingIntegration": "¡Integración verificada! Entregando Increment..."
     },
     "validation": {
       "atLeastOnePbi": "Al menos un PBI debe ser seleccionado",
@@ -106,6 +114,7 @@
       "sprintReviewOption": "Sprint Review",
       "title": "Entregar Increment"
     },
+    "deliverRequiresIntegration": "La integración debe verificarse antes de poder entregar este incremento.",
     "dodVerification": {
       "byCategory": "Verificación por Categoría",
       "byPbi": "Verificación por PBI",
@@ -159,6 +168,29 @@
       "sprintCompleted": "Sprint Completado",
       "sprintReview": "Sprint Review"
     }
+  },
+  "incrementIntegrity": {
+    "addTest": "Añadir prueba de integración",
+    "chain": "Cadena de incrementos",
+    "dependenciesMet": "Todos los incrementos anteriores se integran correctamente",
+    "dependenciesMissing": "Algunos incrementos anteriores no han superado las pruebas de integración",
+    "fail": "Fallida",
+    "firstIncrement": "Primer incremento — no hay un incremento anterior para probar",
+    "integrationTests": "Pruebas de integración",
+    "integrationVerified": "Integración verificada",
+    "lockedHint": "Este incremento ha sido entregado y está bloqueado. Las pruebas de integración no se pueden cambiar.",
+    "notVerified": "Integración no verificada",
+    "notes": "Notas de la prueba",
+    "pass": "Aprobada",
+    "pending": "Pendiente",
+    "priorIncrement": "Incremento anterior",
+    "testResult": "Resultado de la prueba",
+    "title": "Integración de incrementos",
+    "unverified": "No verificado",
+    "verificationRequired": "Se requiere la verificación de integración antes de marcar como verificado",
+    "verified": "Verificado",
+    "verifyHint": "Verifique que este incremento se integra con todos los incrementos anteriores",
+    "verifyNow": "Verificar integración"
   },
   "list": {
     "ariaLabelFilter": "Filtrar increments por estado",

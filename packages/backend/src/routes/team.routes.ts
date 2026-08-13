@@ -3,8 +3,10 @@ import { Router, type Router as RouterType } from 'express';
 import * as teamController from '../controllers/team.controller';
 import * as dodController from '../controllers/dod.controller';
 import * as dorController from '../controllers/dor.controller';
-import { authenticate } from '../middleware/auth.middleware';
+import * as healthCheckController from '../controllers/teamHealthCheck.controller';
+import { authenticate, requireRoles } from '../middleware/auth.middleware';
 import { validateBody, validateParams } from '../middleware/validation.middleware';
+import { UserRole } from '@scrumooth/shared';
 import { z } from 'zod';
 
 const router: RouterType = Router();
@@ -222,6 +224,42 @@ router.get(
   '/:teamId/definition-of-ready/history',
   validateParams(teamIdSchema),
   dorController.getDoRHistory
+);
+
+/**
+ * @route   POST /api/v1/teams/:teamId/health-checks
+ * @desc    Create a new Scrum Values health check for a team
+ * @access  Private (Scrum Master)
+ */
+router.post(
+  '/:teamId/health-checks',
+  validateParams(teamIdSchema),
+  requireRoles(UserRole.SCRUM_MASTER),
+  validateBody(z.object({ sprintId: z.string().uuid().optional().nullable() })),
+  healthCheckController.createHealthCheck
+);
+
+/**
+ * @route   GET /api/v1/teams/:teamId/health-checks/latest
+ * @desc    Get the latest Scrum Values health check status for a team
+ * @access  Private (all team members) - used to discover an open survey
+ */
+router.get(
+  '/:teamId/health-checks/latest',
+  validateParams(teamIdSchema),
+  healthCheckController.getLatestStatus
+);
+
+/**
+ * @route   GET /api/v1/teams/:teamId/health-check-trend
+ * @desc    Get Scrum Values health check trend for a team
+ * @access  Private (Scrum Master)
+ */
+router.get(
+  '/:teamId/health-check-trend',
+  validateParams(teamIdSchema),
+  requireRoles(UserRole.SCRUM_MASTER),
+  healthCheckController.getTrend
 );
 
 export default router;

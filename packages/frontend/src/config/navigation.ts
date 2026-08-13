@@ -4,6 +4,8 @@ export interface NavItem {
   path: string;
   icon: React.ComponentType<{ size?: number; className?: string }>;
   labelKey: string;
+  /** Roles that may see this item. When omitted, visible to all team members. */
+  roles?: string[];
 }
 
 export interface SettingsItem {
@@ -35,6 +37,7 @@ import {
   BuildingIcon,
   SettingsIcon,
   DownloadIcon,
+  ShieldIcon,
 } from '../components/common/Icons';
 
 export const NAV_ITEMS: NavItem[] = [
@@ -49,6 +52,12 @@ export const NAV_ITEMS: NavItem[] = [
   { path: '/sprint-review', icon: FileTextIcon, labelKey: 'nav.sprintReview' },
   { path: '/retrospectives', icon: SearchIcon, labelKey: 'nav.retrospectives' },
   { path: '/reports', icon: TrendingUpIcon, labelKey: 'nav.reports' },
+  {
+    path: '/scrum-master-dashboard',
+    icon: ShieldIcon,
+    labelKey: 'nav.scrumMaster',
+    roles: ['SCRUM_MASTER'],
+  },
   { path: '/team', icon: UsersIcon, labelKey: 'nav.team' },
 ];
 
@@ -105,4 +114,13 @@ export function getFilteredSettingsGroups(
       ),
     }))
     .filter((group) => group.items.length > 0);
+}
+
+export function getFilteredNavItems(items: NavItem[], userRole: string | null): NavItem[] {
+  const normalizedUserRole = userRole?.toUpperCase() ?? null;
+  return items.filter(
+    (item) =>
+      !item.roles ||
+      (normalizedUserRole && item.roles.some((role) => role.toUpperCase() === normalizedUserRole))
+  );
 }

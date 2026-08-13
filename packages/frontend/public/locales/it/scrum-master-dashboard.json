@@ -1,0 +1,83 @@
+{
+  "healthCheck": {
+    "createNew": "Esegui un nuovo health check",
+    "noHealthCheck": "Nessun risultato dell'health check",
+    "overallAverage": "Media complessiva",
+    "respondAnonymous": "Invia in modo anonimo",
+    "responseSaved": "Risposte inviate. Grazie!",
+    "results": "Risultati dell'health check",
+    "submitResponse": "Invia le risposte",
+    "subtitle": "Valuta ogni valore Scrum da 1 a 5",
+    "title": "Health check dei valori Scrum"
+  },
+  "scrumValues": {
+    "scoreHigh": "Sano",
+    "scoreLow": "Richiede attenzione",
+    "scoreMedium": "In sviluppo",
+    "subtitle": "I cinque valori che guidano il team Scrum",
+    "title": "Valori Scrum",
+    "values": {
+      "COMMITMENT": {
+        "definition": "Impegnarsi personalmente per gli obiettivi del team Scrum.",
+        "label": "Impegno",
+        "question": "Senti che il team è personalmente impegnato a raggiungere l'obiettivo dello Sprint?"
+      },
+      "COURAGE": {
+        "definition": "Avere il coraggio di impegnarsi, fare la cosa giusta e affrontare problemi difficili.",
+        "label": "Coraggio",
+        "question": "Senti che il team ha il coraggio di sollevare problemi e affrontarli?"
+      },
+      "FOCUS": {
+        "definition": "Concentrarsi sul lavoro dello Sprint e sugli obiettivi del team Scrum.",
+        "label": "Concentrazione",
+        "question": "Senti che il team si concentra sul lavoro dello Sprint senza distrazioni?"
+      },
+      "OPENNESS": {
+        "definition": "Essere aperti sul lavoro e sulle sfide da affrontare.",
+        "label": "Apertura",
+        "question": "Senti che il team è aperto su progressi e sfide?"
+      },
+      "RESPECT": {
+        "definition": "Rispettarsi a vicenda come persone capaci e indipendenti.",
+        "label": "Rispetto",
+        "question": "Senti che i membri del team si rispettano a vicenda?"
+      }
+    }
+  },
+  "scrumValuesBanner": {
+    "rotating": "Un valore Scrum su cui riflettere",
+    "todayFocus": "Valore Scrum del giorno"
+  },
+  "smDashboard": {
+    "achievementRate": "Tasso di raggiungimento",
+    "actionItemCompletion": "Azioni della retrospettiva",
+    "atRisk": "a rischio",
+    "avgResolutionDays": "Risoluzione media (giorni)",
+    "completedEvents": "Completati",
+    "completionRate": "Tasso di completamento",
+    "dailyScrumCount": "Daily Scrum",
+    "dodCompliance": "Conformità alla Definizione di Fatto",
+    "eventCompliance": "Conformità degli eventi",
+    "healthCheck": "Health check dei valori Scrum",
+    "impedimentMetrics": "Metriche degli impedimenti",
+    "loadError": "Impossibile caricare i dati della dashboard",
+    "missingEvents": "Mancanti",
+    "noData": "Nessun dato della dashboard disponibile",
+    "overallHealth": "Salute complessiva",
+    "sprintGoalAchievement": "Raggiungimento dell'obiettivo dello Sprint",
+    "subtitle": "Una panoramica sulla salute del team e sulla conformità al processo Scrum",
+    "title": "Dashboard dello Scrum Master"
+  },
+  "smNotes": {
+    "charCounter": "{{count}} / 2000 caratteri",
+    "emptyError": "Le note non possono essere vuote.",
+    "maxLengthError": "Le note devono essere di 2000 caratteri o meno.",
+    "modeEditing": "Modifica",
+    "modeViewing": "Visualizzazione",
+    "noHtmlTags": "I tag HTML non sono consentiti nelle note.",
+    "placeholder": "Registra osservazioni, note di coaching e riflessioni di facilitazione per il team Scrum...",
+    "saveError": "Impossibile salvare le note",
+    "saved": "Note salvate",
+    "title": "Note dello Scrum Master"
+  }
+}

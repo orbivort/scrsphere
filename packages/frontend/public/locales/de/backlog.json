@@ -436,6 +436,20 @@
     "title": "Offene Retro-Aktionen",
     "updating": "Aktualisieren..."
   },
+  "productGoal": {
+    "assessProgress": "Fortschritt bewerten",
+    "assessment": "Bewertung",
+    "assessmentPlaceholder": "Wie kommt das Team mit dem Produktziel voran?",
+    "completedPbis": "Abgeschlossene Backlog-Elemente",
+    "completedStoryPoints": "Abgeschlossene Story Points",
+    "latestAssessment": "Aktuelle Bewertung",
+    "noProductGoal": "Dieser Sprint ist keinem Produktziel zugeordnet",
+    "progress": "Produktziel-Fortschritt",
+    "snapshots": "Fortschritts-Snapshots",
+    "stakeholderAssessment": "Stakeholder-Bewertung",
+    "successMetrics": "Erfolgskennzahlen",
+    "title": "Product Goal"
+  },
   "productGoalStatus": {
     "ABANDONED": "Aufgegeben",
     "ACTIVE": "Aktiv",
@@ -554,6 +568,7 @@
     "productGoal": "Product Goal",
     "progress": "Fortschritt",
     "progressBarAriaLabel": "Formular-Vervollständigung: {{percentage}}%",
+    "progressSnapshots": "Fortschritts-Snapshots",
     "pts": "Pkt",
     "requiredFields": "Erforderliche Felder",
     "resultsCount": "{{filtered}} von {{total}} Zielen",

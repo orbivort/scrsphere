@@ -271,5 +271,30 @@
     "titleMaxLength": "Title must be 200 characters or less",
     "titleMinLength": "Title must be at least 3 characters",
     "titleRequired": "Title is required"
+  },
+  "valuesReflection": {
+    "title": "Scrum Values Reflection",
+    "values": {
+      "COMMITMENT": {
+        "label": "Commitment",
+        "question": "Did we personally commit to the Sprint Goal?"
+      },
+      "COURAGE": {
+        "label": "Courage",
+        "question": "Did we have the courage to raise issues and tackle tough problems?"
+      },
+      "FOCUS": {
+        "label": "Focus",
+        "question": "Did we stay focused on the Sprint work?"
+      },
+      "OPENNESS": {
+        "label": "Openness",
+        "question": "Were we open about progress and challenges?"
+      },
+      "RESPECT": {
+        "label": "Respect",
+        "question": "Did we respect each other's skills and independence?"
+      }
+    }
   }
 }

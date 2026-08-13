@@ -73,6 +73,12 @@ export const LazyReports = lazy(() =>
   }))
 );
 
+export const LazySmDashboard = lazy(() =>
+  import('../pages/SmDashboard/SmDashboard').then((module) => ({
+    default: module.SmDashboard,
+  }))
+);
+
 export const LazyIncrementList = lazy(() =>
   import('../pages/Increment/IncrementList').then((module) => ({
     default: module.IncrementList,

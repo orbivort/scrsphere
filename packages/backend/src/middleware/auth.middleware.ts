@@ -131,8 +131,9 @@ export const requireRoles = (...roles: UserRole[]) => {
         throw new UnauthorizedError('Authentication required');
       }
 
-      // Get user's role in the team (if teamId is in params or body)
-      const teamId = req.params.teamId ?? req.body.teamId;
+      // Get user's role in the team (if teamId is in params or body).
+      // req.body may be undefined for GET/DELETE requests, so guard it.
+      const teamId = req.params.teamId ?? req.body?.teamId;
 
       if (teamId) {
         // Check role in specific team

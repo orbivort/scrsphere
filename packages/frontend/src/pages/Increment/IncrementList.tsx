@@ -288,13 +288,21 @@ export const IncrementList: React.FC = () => {
               </div>
               <div className={styles['card-header']}>
                 <h3 className={styles['increment-name']}>{increment.name}</h3>
-                <span
-                  className={styles['status-badge']}
-                  data-status={increment.status.toLowerCase()}
-                >
-                  <span>{getStatusIcon(increment.status)}</span>
-                  <span>{getStatusLabel(increment.status)}</span>
-                </span>
+                <div className={styles['card-header-badges']}>
+                  {increment.integrationVerified && (
+                    <span className={styles['integration-verified-badge']}>
+                      <CheckCircleIcon size={12} />
+                      <span>{t('card.integrationVerified')}</span>
+                    </span>
+                  )}
+                  <span
+                    className={styles['status-badge']}
+                    data-status={increment.status.toLowerCase()}
+                  >
+                    <span>{getStatusIcon(increment.status)}</span>
+                    <span>{getStatusLabel(increment.status)}</span>
+                  </span>
+                </div>
               </div>
               <p className={styles['increment-description']}>
                 {increment.description ?? t('noDescription')}

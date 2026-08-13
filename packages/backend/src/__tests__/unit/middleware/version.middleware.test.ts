@@ -169,9 +169,10 @@ describe('Version Middleware', () => {
       const endTime = process.hrtime.bigint();
       const durationMs = Number(endTime - startTime) / 1_000_000;
 
-      // 3ms threshold accounts for test infrastructure overhead
-      // Actual performance is better measured by the batch test below
-      expect(durationMs).toBeLessThan(3);
+      // A single cold invocation is dominated by test-infrastructure/CPU-scheduling
+      // jitter, so use a generous wall-clock threshold here. The meaningful throughput
+      // guarantee is the < 1ms average asserted by the batch test below.
+      expect(durationMs).toBeLessThan(10);
     });
 
     it('should handle 1000 requests efficiently', () => {

@@ -10,6 +10,7 @@
   "actions": "Azioni",
   "add": "Aggiungi",
   "all": "Tutti",
+  "anonymous": "Anonimo",
   "appName": "Scrumooth",
   "apply": "Applica",
   "aria": {
@@ -440,6 +441,7 @@
     "wontHave": "Non avrà",
     "wontHaveDesc": "Non in questa versione – Fuori ambito"
   },
+  "name": "Nome",
   "nav": {
     "activeSprint": "Sprint attivo",
     "dailyScrum": "Daily Scrum",
@@ -452,6 +454,7 @@
     "reports": "Report",
     "retrospective": "Sprint Retrospective",
     "retrospectives": "Sprint Retrospective",
+    "scrumMaster": "Dashboard dello Scrum Master",
     "settings": {
       "data": "Dati",
       "privacyData": "Privacy e dati",
@@ -471,9 +474,11 @@
   },
   "next": "Avanti",
   "no": "No",
+  "noData": "Nessun dato disponibile",
   "noResults": "Nessun risultato trovato",
   "noTeamSelected": "Nessun team selezionato",
   "none": "Nessuno",
+  "notSet": "Non impostato",
   "notifications": {
     "connectionError": "Errore di connessione",
     "empty": "Nessuna notifica ancora",
@@ -482,6 +487,7 @@
     "title": "Notifiche",
     "viewAll": "Vedi tutte le notifiche"
   },
+  "open": "Aperti",
   "optional": "Opzionale",
   "pageError": {
     "backToDashboard": "Torna alla dashboard",
@@ -707,6 +713,7 @@
     "titleTooLong": "Il titolo supera la lunghezza massima di {{overBy}} carattere{{plural}}. Corrente: {{current}}/200 caratteri. Si prega di accorciare il titolo.",
     "titleTooShort": "Il titolo è troppo corto ({{length}} caratteri). Si prega di utilizzare almeno 5 caratteri per fornire una descrizione chiara."
   },
+  "verify": "Verifica",
   "view": "Visualizza",
   "widgetError": {
     "failedToLoad": "{{widgetName}} non ha potuto essere caricato",

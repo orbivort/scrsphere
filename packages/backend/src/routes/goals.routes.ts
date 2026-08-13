@@ -1,6 +1,7 @@
 // Product Goals Routes
 import { Router, type Router as RouterType } from 'express';
 import * as goalsController from '../controllers/goals.controller';
+import * as productGoalSnapshotController from '../controllers/productGoalSnapshot.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import { validateBody, validateParams, validateQuery } from '../middleware/validation.middleware';
 import { z } from 'zod';
@@ -100,6 +101,17 @@ router.get(
   '/:id/status-history',
   validateParams(goalIdSchema),
   goalsController.getProductGoalStatusHistory
+);
+
+/**
+ * @route   GET /api/v1/product-goals/:id/snapshots
+ * @desc    Get Product Goal progress snapshots across Sprint Reviews
+ * @access  Private
+ */
+router.get(
+  '/:id/snapshots',
+  validateParams(goalIdSchema),
+  productGoalSnapshotController.getGoalSnapshots
 );
 
 export default router;

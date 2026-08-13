@@ -2,6 +2,7 @@ import prisma from '../utils/prisma';
 import { NotFoundError, BadRequestError } from '../utils/errors';
 import { generateUUIDv7 } from '../utils/uuid';
 import { sprintReviewService } from './sprintReview.service';
+import { incrementIntegrationService } from './incrementIntegration.service';
 import { logger } from '../utils/logger';
 import type { IncrementStatus, DeliveryMethod } from '../generated/prisma/client';
 
@@ -179,6 +180,18 @@ export const incrementService = {
       });
     }
 
+    // First-increment exemption: the team's first Increment has no prior
+    // Increment to test against, so it is auto-marked integration-verified.
+    const priorCount = await prisma.increment.count({
+      where: { teamId: data.teamId, NOT: { id: incrementId } },
+    });
+    if (priorCount === 0) {
+      await prisma.increment.update({
+        where: { id: incrementId },
+        data: { integrationVerified: true },
+      });
+    }
+
     return this.getIncrementById(incrementId);
   },
 
@@ -206,6 +219,22 @@ export const incrementService = {
     if (data.description !== undefined) updateData.description = data.description;
     if (data.totalStoryPoints !== undefined) updateData.totalStoryPoints = data.totalStoryPoints;
     if (data.status !== undefined) updateData.status = data.status.toUpperCase() as IncrementStatus;
+
+    // Guard: prevent DRAFT -> VERIFIED unless integration is verified.
+    if (
+      data.status?.toUpperCase() === 'VERIFIED' &&
+      existing.status === 'DRAFT' &&
+      !existing.integrationVerified
+    ) {
+      // Recompute from the latest integration test state before blocking.
+      await incrementIntegrationService.refreshVerificationStatus(id);
+      const latest = await prisma.increment.findUnique({ where: { id } });
+      if (!latest?.integrationVerified) {
+        throw new BadRequestError(
+          'Increment cannot be verified: integration verification is required. All prior Increments must have PASSED integration tests.'
+        );
+      }
+    }
 
     await prisma.increment.update({
       where: { id },
@@ -242,6 +271,14 @@ export const incrementService = {
 
     if (existing.status === 'DELIVERED') {
       throw new BadRequestError('Increment is already delivered');
+    }
+
+    // A DRAFT increment must have its integration with all prior Increments
+    // verified before it can be delivered (released).
+    if (existing.status === 'DRAFT' && !existing.integrationVerified) {
+      throw new BadRequestError(
+        'Increment cannot be delivered: integration verification is required. All prior Increments must have PASSED integration tests.'
+      );
     }
 
     await prisma.increment.update({
