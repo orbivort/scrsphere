@@ -81,7 +81,7 @@ const SmDashboardContent: React.FC = () => {
     <div className={styles.container}>
       <ScrumValuesBanner />
 
-      <div className={styles.section}>
+      <div className={styles.section} data-testid="event-compliance">
         <h2 className={styles['section-title']}>{t('smDashboard.eventCompliance')}</h2>
         {dashboard.eventCompliance.length === 0 ? (
           <p className={styles.empty}>{t('common:noData')}</p>
@@ -116,7 +116,7 @@ const SmDashboardContent: React.FC = () => {
       </div>
 
       <div className={styles.grid}>
-        <div className={styles.section}>
+        <div className={styles.section} data-testid="impediment-metrics">
           <h2 className={styles['section-title']}>{t('smDashboard.impedimentMetrics')}</h2>
           <div className={styles['stat-grid']}>
             <div className={styles.stat}>
@@ -146,14 +146,14 @@ const SmDashboardContent: React.FC = () => {
           )}
         </div>
 
-        <div className={styles.section}>
+        <div className={styles.section} data-testid="dod-trend">
           <h2 className={styles['section-title']}>{t('smDashboard.dodCompliance')}</h2>
           <DoDTrendChart data={dashboard.dodComplianceTrend} />
         </div>
       </div>
 
       <div className={styles.grid}>
-        <div className={styles.section}>
+        <div className={styles.section} data-testid="sprint-goal">
           <h2 className={styles['section-title']}>{t('smDashboard.sprintGoalAchievement')}</h2>
           <div className={styles.stat}>
             <span className={styles['stat-value']}>
@@ -163,7 +163,7 @@ const SmDashboardContent: React.FC = () => {
           </div>
         </div>
 
-        <div className={styles.section}>
+        <div className={styles.section} data-testid="action-items">
           <h2 className={styles['section-title']}>{t('smDashboard.actionItemCompletion')}</h2>
           <div className={styles.stat}>
             <span className={styles['stat-value']}>
@@ -178,7 +178,7 @@ const SmDashboardContent: React.FC = () => {
           )}
         </div>
 
-        <div className={styles.section}>
+        <div className={styles.section} data-testid="health-check">
           <div className={styles['section-header']}>
             <h2 className={styles['section-title']}>{t('smDashboard.healthCheck')}</h2>
             <button
@@ -194,7 +194,7 @@ const SmDashboardContent: React.FC = () => {
           {dashboard.healthCheck?.results.length ? (
             <>
               <div className={styles.stat}>
-                <span className={styles['stat-value']}>
+                <span className={styles['stat-value']} data-testid="health-score">
                   {dashboard.healthCheck.overallAverage}/5
                 </span>
                 <span className={styles['stat-label']}>{t('smDashboard.overallHealth')}</span>
@@ -224,7 +224,7 @@ export const SmDashboard: React.FC = () => {
       <a href="#main-content" className={styles['skip-link']}>
         {t('common:loading')}
       </a>
-      <header className={styles['page-header']}>
+      <header className={styles['page-header']} data-testid="sm-dashboard-header">
         <div className={styles['header-content']}>
           <h1 className={styles['page-title']}>
             <span className={styles['page-title-icon']}>

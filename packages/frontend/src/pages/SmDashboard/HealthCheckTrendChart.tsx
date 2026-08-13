@@ -64,7 +64,11 @@ export const HealthCheckTrendChart: React.FC<HealthCheckTrendChartProps> = ({ da
   }
 
   return (
-    <div style={{ height: 200 }} aria-label={t('healthCheck.results')}>
+    <div
+      style={{ height: 200 }}
+      aria-label={t('healthCheck.results')}
+      data-testid="health-check-trend-chart"
+    >
       <Line data={chartData} options={chartOptions} />
     </div>
   );

@@ -35,28 +35,42 @@ export class SmDashboardPage extends BasePage {
     await this.waitForPageLoad();
   }
 
+  /**
+   * Dashboard sections render asynchronously after the data query resolves.
+   * Wait for the section to become visible before reporting its state so the
+   * check is robust against the initial loading state.
+   */
+  private async waitForVisible(locator: Locator, timeout = 15000): Promise<boolean> {
+    try {
+      await locator.waitFor({ state: 'visible', timeout });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   async isEventComplianceVisible(): Promise<boolean> {
-    return this.isElementVisible(this.eventComplianceSection);
+    return this.waitForVisible(this.eventComplianceSection);
   }
 
   async isImpedimentMetricsVisible(): Promise<boolean> {
-    return this.isElementVisible(this.impedimentMetricsSection);
+    return this.waitForVisible(this.impedimentMetricsSection);
   }
 
   async isDoDTrendVisible(): Promise<boolean> {
-    return this.isElementVisible(this.dodTrendSection);
+    return this.waitForVisible(this.dodTrendSection);
   }
 
   async isSprintGoalVisible(): Promise<boolean> {
-    return this.isElementVisible(this.sprintGoalSection);
+    return this.waitForVisible(this.sprintGoalSection);
   }
 
   async isActionItemsVisible(): Promise<boolean> {
-    return this.isElementVisible(this.actionItemsSection);
+    return this.waitForVisible(this.actionItemsSection);
   }
 
   async isHealthCheckVisible(): Promise<boolean> {
-    return this.isElementVisible(this.healthCheckSection);
+    return this.waitForVisible(this.healthCheckSection);
   }
 
   async hasEmptyState(): Promise<boolean> {
