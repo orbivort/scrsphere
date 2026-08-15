@@ -55,8 +55,8 @@
     "loadtest:data:clear": "tsx scripts/generate-load-test-data.ts --clear"
   },
   "dependencies": {
-    "@prisma/adapter-pg": "^7.8.0",
-    "@prisma/client": "^7.8.0",
+    "@prisma/adapter-pg": "^7.9.1",
+    "@prisma/client": "^7.9.1",
     "@scrumooth/shared": "workspace:*",
     "bcrypt": "^6.0.0",
     "compression": "^1.8.1",
@@ -101,7 +101,7 @@
     "eslint-plugin-unicorn": "^64.0.0",
     "globals": "catalog:",
     "prettier": "catalog:",
-    "prisma": "^7.8.0",
+    "prisma": "^7.9.1",
     "rimraf": "catalog:",
     "supertest": "^7.2.2",
     "tsx": "catalog:",

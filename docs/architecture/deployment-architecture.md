@@ -611,11 +611,12 @@ The backend uses Winston for structured, JSON-formatted logging:
 ```
 
 **Log retention policies:**
-| Log Type | Retention | Rationale |
-| ------------- | --------- | --------------------------------------- |
-| Combined | 14 days | General application logs |
-| Error | 30 days | Extended retention for debugging |
-| Audit | 30 days | Security and compliance requirements |
+
+| Log Type | Retention | Rationale                            |
+| -------- | --------- | ------------------------------------ |
+| Combined | 14 days   | General application logs             |
+| Error    | 30 days   | Extended retention for debugging     |
+| Audit    | 30 days   | Security and compliance requirements |
 
 ### Health Check Endpoint
 

@@ -24,8 +24,8 @@ This document contains the license information for third-party packages used in 
 
 | Dependency Name           | Version | License Type | Copyright Holder              | Source/Repository URL                                              |
 | ------------------------- | ------- | ------------ | ----------------------------- | ------------------------------------------------------------------ |
-| @prisma/adapter-pg        | 7.8.0   | Apache-2.0   | Prisma Data, Inc.             | https://github.com/prisma/prisma                                   |
-| @prisma/client            | 7.8.0   | Apache-2.0   | Prisma Data, Inc.             | https://github.com/prisma/prisma                                   |
+| @prisma/adapter-pg        | 7.9.1   | Apache-2.0   | Prisma Data, Inc.             | https://github.com/prisma/prisma                                   |
+| @prisma/client            | 7.9.1   | Apache-2.0   | Prisma Data, Inc.             | https://github.com/prisma/prisma                                   |
 | bcrypt                    | 6.0.0   | MIT          | Nick Campbell                 | https://github.com/kelektiv/node.bcrypt.js                         |
 | compression               | 1.8.1   | MIT          | Jonathan Ong                  | https://github.com/expressjs/compression                           |
 | cookie-parser             | 1.4.7   | MIT          | TJ Holowaychuk                | https://github.com/expressjs/cookie-parser                         |
@@ -74,7 +74,7 @@ This document contains the license information for third-party packages used in 
 | eslint-plugin-unicorn            | 64.0.0  | MIT          | Sindre Sorhus         | https://github.com/sindresorhus/eslint-plugin-unicorn  |
 | globals                          | 17.6.0  | MIT          | Sindre Sorhus         | https://github.com/sindresorhus/globals                |
 | prettier                         | 3.8.3   | MIT          | Prettier              | https://github.com/prettier/prettier                   |
-| prisma                           | 7.8.0   | Apache-2.0   | Prisma Data, Inc.     | https://github.com/prisma/prisma                       |
+| prisma                           | 7.9.1   | Apache-2.0   | Prisma Data, Inc.     | https://github.com/prisma/prisma                       |
 | rimraf                           | 6.1.3   | MIT          | Isaac Z. Schlueter    | https://github.com/isaacs/rimraf                       |
 | supertest                        | 7.2.2   | MIT          | TJ Holowaychuk        | https://github.com/ladjs/supertest                     |
 | tsx                              | 4.22.4  | MIT          | Hiroki Osame          | https://github.com/privatenumber/tsx                   |

@@ -416,15 +416,16 @@ Before starting the sprint, verify:
    ```
 
 3. **Select Items**
-   | Item | Points | Priority |
-   |------|--------|----------|
-   | Save to wishlist | 5 | Must |
-   | View wishlist | 3 | Must |
-   | Remove from wishlist | 2 | Must |
-   | Wishlist count badge | 3 | Should |
-   | Move to cart | 5 | Should |
-   | Share wishlist | 5 | Could |
-   | **Total** | **23** | |
+
+   | Item                 | Points | Priority |
+   | -------------------- | ------ | -------- |
+   | Save to wishlist     | 5      | Must     |
+   | View wishlist        | 3      | Must     |
+   | Remove from wishlist | 2      | Must     |
+   | Wishlist count badge | 3      | Should   |
+   | Move to cart         | 5      | Should   |
+   | Share wishlist       | 5      | Could    |
+   | **Total**            | **23** |          |
 
 4. **Verify and Commit**
    - Team agrees to 23 points

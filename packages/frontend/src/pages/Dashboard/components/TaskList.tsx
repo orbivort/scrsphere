@@ -96,9 +96,7 @@ const TaskList: React.FC<TaskListProps> = memo(({ tasks, emptyMessage, onTaskCli
           >
             {t(
               `taskStatus.${task.status.toUpperCase()}` as
-                | 'taskStatus.TODO'
-                | 'taskStatus.IN_PROGRESS'
-                | 'taskStatus.DONE'
+                'taskStatus.TODO' | 'taskStatus.IN_PROGRESS' | 'taskStatus.DONE'
             )}
           </span>
         </li>
