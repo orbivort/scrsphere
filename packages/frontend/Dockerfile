@@ -18,7 +18,7 @@
 # Build arguments for version pinning and reproducibility
 ARG NODE_VERSION=24.14.1
 ARG PNPM_VERSION=11.5.0
-ARG NGINX_VERSION=1.27
+ARG NGINX_VERSION=1.30
 
 # =============================================================================
 # Stage 1: Builder
