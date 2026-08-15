@@ -60,7 +60,7 @@ This document contains the license information for third-party packages used in 
 | @types/cors                      | 2.8.19  | MIT          | DefinitelyTyped       | https://github.com/DefinitelyTyped/DefinitelyTyped     |
 | @types/express                   | 5.0.6   | MIT          | DefinitelyTyped       | https://github.com/DefinitelyTyped/DefinitelyTyped     |
 | @types/jsonwebtoken              | 9.0.10  | MIT          | DefinitelyTyped       | https://github.com/DefinitelyTyped/DefinitelyTyped     |
-| @types/node                      | 24.13.1 | MIT          | DefinitelyTyped       | https://github.com/DefinitelyTyped/DefinitelyTyped     |
+| @types/node                      | 24.13.3 | MIT          | DefinitelyTyped       | https://github.com/DefinitelyTyped/DefinitelyTyped     |
 | @types/node-cron                 | 3.0.11  | MIT          | DefinitelyTyped       | https://github.com/DefinitelyTyped/DefinitelyTyped     |
 | @types/nodemailer                | 8.0.0   | MIT          | DefinitelyTyped       | https://github.com/DefinitelyTyped/DefinitelyTyped     |
 | @types/sanitize-html             | 2.16.1  | MIT          | DefinitelyTyped       | https://github.com/DefinitelyTyped/DefinitelyTyped     |
@@ -117,7 +117,7 @@ This document contains the license information for third-party packages used in 
 | @testing-library/jest-dom   | 6.10.0  | MIT          | Testing Library            | https://github.com/testing-library/jest-dom              |
 | @testing-library/react      | 16.3.2  | MIT          | Testing Library            | https://github.com/testing-library/react-testing-library |
 | @testing-library/user-event | 14.6.1  | MIT          | Testing Library            | https://github.com/testing-library/user-event            |
-| @types/node                 | 24.13.1 | MIT          | DefinitelyTyped            | https://github.com/DefinitelyTyped/DefinitelyTyped       |
+| @types/node                 | 24.13.3 | MIT          | DefinitelyTyped            | https://github.com/DefinitelyTyped/DefinitelyTyped       |
 | @types/react                | 19.2.17 | MIT          | DefinitelyTyped            | https://github.com/DefinitelyTyped/DefinitelyTyped       |
 | @types/react-dom            | 19.2.3  | MIT          | DefinitelyTyped            | https://github.com/DefinitelyTyped/DefinitelyTyped       |
 | @vitejs/plugin-react        | 6.0.2   | MIT          | Vite                       | https://github.com/vitejs/vite-plugin-react              |
@@ -181,7 +181,7 @@ This document contains the license information for third-party packages used in 
 | Dependency Name        | Version | License Type | Copyright Holder       | Source/Repository URL                              |
 | ---------------------- | ------- | ------------ | ---------------------- | -------------------------------------------------- |
 | @eslint/js             | 10.0.1  | MIT          | OpenJS Foundation      | https://github.com/eslint/eslint                   |
-| @types/node            | 24.13.1 | MIT          | DefinitelyTyped        | https://github.com/DefinitelyTyped/DefinitelyTyped |
+| @types/node            | 24.13.3 | MIT          | DefinitelyTyped        | https://github.com/DefinitelyTyped/DefinitelyTyped |
 | @vitest/coverage-v8    | 4.1.8   | MIT          | Vladimir Sheremet      | https://github.com/vitest-dev/vitest               |
 | date-fns               | 4.4.0   | MIT          | Sasha Koss, Lesha Koss | https://github.com/date-fns/date-fns               |
 | eslint                 | 10.4.1  | MIT          | OpenJS Foundation      | https://github.com/eslint/eslint                   |

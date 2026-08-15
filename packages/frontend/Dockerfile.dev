@@ -16,8 +16,8 @@
 # =============================================================================
 
 # Build arguments for version pinning
-ARG NODE_VERSION=24.14.1
-ARG PNPM_VERSION=11.5.0
+ARG NODE_VERSION=24.19.0
+ARG PNPM_VERSION=11.21.0
 
 # node:${NODE_VERSION}-slim already bundles Node.js + corepack, avoiding the
 # slow apt-get install and manual Node download steps entirely. It matches the
