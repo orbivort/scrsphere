@@ -85,7 +85,12 @@ strictDepBuilds: true # ensures build scripts only run for allowed packages
 
 # Performance Optimizations
 optimisticRepeatInstall: true # speeds up repeat installs
-verifyDepsBeforeRun: install # verifies dependencies before running scripts
+# Disable the pre-run dependency install. The Docker dev images install
+# node_modules during build and run as a non-root user that cannot write to the
+# root-owned /app tree, so forcing a `pnpm install` before `pnpm run`/`pnpm exec`
+# fails with EACCES at container startup. Keeping this off means deps must be
+# installed explicitly (which the build step already does).
+verifyDepsBeforeRun: false
 
 # Audit Configuration
 auditConfig:

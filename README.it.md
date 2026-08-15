@@ -413,13 +413,13 @@ docker compose down
 ### Costruire le immagini Docker manualmente
 
 ```bash
-# Immagini di produzione
-docker build -t scrumooth-backend ./packages/backend
-docker build -t scrumooth-frontend ./packages/frontend
-
 # Immagini di sviluppo (con dipendenze dev e modalità watch)
-docker build -f ./packages/backend/Dockerfile.dev -t scrumooth-backend:dev ./packages/backend
-docker build -f ./packages/frontend/Dockerfile.dev -t scrumooth-frontend:dev ./packages/frontend
+docker build -t scrumooth-backend:dev -f packages/backend/Dockerfile.dev .
+docker build -t scrumooth-frontend:dev -f packages/frontend/Dockerfile.dev .
+
+# Immagini di produzione
+docker build -t scrumooth-backend -f packages/backend/Dockerfile .
+docker build -t scrumooth-frontend -f packages/frontend/Dockerfile .
 ```
 
 ## ☁️ Deployment

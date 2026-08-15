@@ -17,6 +17,8 @@ services:
       args:
         BUILD_DATE: "${BUILD_DATE:-}"
         VCS_REF: "${VCS_REF:-}"
+        NPM_REGISTRY: "${NPM_REGISTRY:-__default__}"
+        APT_MIRROR: "${APT_MIRROR:-}"
     image: scrumooth-backend-dev:${VERSION:-latest}
     container_name: scrumooth-backend-dev
     ports:
@@ -27,6 +29,13 @@ services:
       - NODE_ENV=development
       - PORT=5001
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/scrumooth_dev
+      # Override relative LOG_DIR/EMAIL_TEST_OUTPUT_DIR from packages/backend/.env
+      # (env_file) with absolute paths under the writable /app/logs directory. The
+      # backend runs as the non-root 'scrumooth' user with CWD /app/packages/backend,
+      # so relative paths resolve inside the root-owned package dir and fail with EACCES.
+      - EMAIL_TEST_MODE=true
+      - LOG_DIR=/app/logs
+      - EMAIL_TEST_OUTPUT_DIR=/app/logs/emails
     volumes:
       # Mount source code for hot reload
       - ./packages/backend/src:/app/packages/backend/src
@@ -74,6 +83,8 @@ services:
       args:
         BUILD_DATE: "${BUILD_DATE:-}"
         VCS_REF: "${VCS_REF:-}"
+        NPM_REGISTRY: "${NPM_REGISTRY:-__default__}"
+        APT_MIRROR: "${APT_MIRROR:-}"
     image: scrumooth-frontend-dev:${VERSION:-latest}
     container_name: scrumooth-frontend-dev
     ports:

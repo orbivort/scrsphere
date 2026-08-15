@@ -412,14 +412,16 @@ docker compose down
 
 ### Build Docker Images Manually
 
-```bash
-# Production images
-docker build -t scrumooth-backend ./packages/backend
-docker build -t scrumooth-frontend ./packages/frontend
+> **Note:** All Dockerfiles reference repository-root-relative paths (monorepo workspace files such as `package.json`, `pnpm-lock.yaml`, and `packages/shared/`). You must build them from the **repository root** and use `-f` to point at the Dockerfile — passing the package directory as the build context will fail.
 
+```bash
 # Development images (with dev dependencies and watch mode)
-docker build -f ./packages/backend/Dockerfile.dev -t scrumooth-backend:dev ./packages/backend
-docker build -f ./packages/frontend/Dockerfile.dev -t scrumooth-frontend:dev ./packages/frontend
+docker build -t scrumooth-backend:dev -f packages/backend/Dockerfile.dev .
+docker build -t scrumooth-frontend:dev -f packages/frontend/Dockerfile.dev .
+
+# Production images (build from the repo root)
+docker build -t scrumooth-backend -f packages/backend/Dockerfile .
+docker build -t scrumooth-frontend -f packages/frontend/Dockerfile .
 ```
 
 ## ☁️ Deployment

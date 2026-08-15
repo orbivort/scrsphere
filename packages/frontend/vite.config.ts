@@ -36,6 +36,13 @@ export default defineConfig(({ mode }) => {
   // For username.github.io/repo-name, set VITE_BASE_PATH='/repo-name/'
   const base = env.VITE_BASE_PATH || '/';
 
+  // Source maps expose source code. Emit them only for development builds;
+  // keep production bundles free of .map files to avoid source-code leakage
+  // and reduce image size. Checking the Vite mode is the canonical way: the
+  // default `vite build` mode is "production" (no source maps), while
+  // `vite build --mode development` and `vite dev` emit them.
+  const isDev = mode === 'development';
+
   return {
     base,
     define: {
@@ -51,6 +58,11 @@ export default defineConfig(({ mode }) => {
         filename: 'dist/stats.html',
       }),
     ],
+    // Relocate Vite's dependency cache out of the default node_modules/.vite.
+    // In the dev container node_modules is root-owned (read-only to the non-root
+    // user), so VITE_CACHE_DIR points at a writable directory. Falls back to the
+    // Vite default for local (non-container) development.
+    cacheDir: env.VITE_CACHE_DIR || 'node_modules/.vite',
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
@@ -70,7 +82,7 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       outDir: 'dist',
-      sourcemap: true,
+      sourcemap: isDev,
       rollupOptions: {
         output: {
           manualChunks(id) {

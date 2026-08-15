@@ -13,6 +13,11 @@
 .gitignore
 .gitattributes
 .github/
+.gitmodules
+.svn/
+.hg/
+.hgignore
+.bzr/
 
 # -----------------------------------------------------------------------------
 # Dependencies (must be installed fresh in container)
@@ -29,8 +34,11 @@ node_modules/
 # Build Outputs (will be generated during build)
 # -----------------------------------------------------------------------------
 dist/
+**/dist/
 build/
+**/build/
 out/
+**/out/
 *.tsbuildinfo
 tsconfig.tsbuildinfo
 .vite/
@@ -48,6 +56,7 @@ tsconfig.tsbuildinfo
 packages/*/.env
 packages/*/.env.*
 !packages/*/.env.example
+!k6/.env.k6.example
 
 # -----------------------------------------------------------------------------
 # IDE & Editor Files (not needed in builds)
@@ -73,6 +82,15 @@ AGENTS.md
 CLAUDE.md
 CODEBUDDY.md
 openspec/
+*.copilot
+*.sublime-project
+*.sublime-workspace
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
 
 # -----------------------------------------------------------------------------
 # OS Generated Files
@@ -80,18 +98,37 @@ openspec/
 .DS_Store
 .AppleDouble
 .LSOverride
+Icon
 ._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
 Thumbs.db
 Thumbs.db:encryptable
 ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
 [Dd]esktop.ini
 $RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+.nfs*
 
 # -----------------------------------------------------------------------------
 # Logs
 # -----------------------------------------------------------------------------
 logs/
+**/logs/
 *.log
+**/*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -115,28 +152,52 @@ pnpm-debug.log*
 .pnp.*
 .turbo
 .webpack-cache/
+.node_repl_history
+.babel_cache/
 
 # -----------------------------------------------------------------------------
 # Testing & Coverage (not needed for production builds)
 # -----------------------------------------------------------------------------
 coverage/
+**/coverage/
 .nyc_output/
 playwright-report/
+**/playwright-report/
 test-results/
+**/test-results/
 playwright/.cache/
+**/playwright/.cache/
 benchmark-results/
+**/benchmark-results/
 __tests__/
+**/__tests__/
 *.test.ts
 *.test.tsx
 *.spec.ts
 *.spec.tsx
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
 cypress/videos/
+**/cypress/videos/
 cypress/screenshots/
+**/cypress/screenshots/
 cypress/downloads/
+**/cypress/downloads/
 .jest-cache/
+**/e2e/screenshots/
 
 # Loadtest results
 k6/results/
+
+# Security / static analysis reports
+.snyk/
+.grype/
+.trivy/
+semgrep/
+scan-results/
+dependency-check-report.html
 
 # -----------------------------------------------------------------------------
 # Database Files (use containerized databases)
@@ -161,14 +222,19 @@ k6/results/
 *.der
 *.p12
 *.pfx
+*.p7b
+*.p7c
 secrets/
 .secrets/
+certs/
 
 # -----------------------------------------------------------------------------
 # Documentation (not needed in images)
 # -----------------------------------------------------------------------------
 docs/
+**/docs/
 *.md
+**/*.md
 !README.md
 LICENSE
 
@@ -195,11 +261,15 @@ Jenkinsfile
 # Misc Build Artifacts
 # -----------------------------------------------------------------------------
 tmp/
+**/tmp/
 temp/
+**/temp/
 *.tmp
 *.temp
 backup/
+**/backup/
 backups/
+**/backups/
 *.bak
 *.backup
 .netlify
@@ -245,7 +315,22 @@ package-lock.json
 yarn.lock
 
 # -----------------------------------------------------------------------------
-# TypeScript Project References
+# TypeScript Project References (covered by *.tsbuildinfo above)
 # -----------------------------------------------------------------------------
-tsconfig.tsbuildinfo
-**/tsconfig.tsbuildinfo
+
+# -----------------------------------------------------------------------------
+# Catch-all: ignore all hidden dotfiles by default, then whitelist the ones
+# the build actually needs. This mirrors Docker best practices and keeps the
+# build context minimal regardless of what tools create dotfiles locally.
+# -----------------------------------------------------------------------------
+.*
+!/.dockerignore
+!/.env.example
+!/.eslintrc*
+!/.prettier*
+!/.stylelintrc*
+!/.nvmrc
+!/.node-version
+!/.npmrc
+!/.pnpmfile.cjs
+!/.editorconfig
