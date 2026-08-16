@@ -98,7 +98,6 @@
     "cross-env": "catalog:",
     "eslint": "catalog:",
     "eslint-config-prettier": "catalog:",
-    "eslint-plugin-unicorn": "^64.0.0",
     "globals": "catalog:",
     "prettier": "catalog:",
     "prisma": "^7.9.1",
