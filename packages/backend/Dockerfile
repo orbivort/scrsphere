@@ -16,13 +16,46 @@
 # =============================================================================
 
 # Build arguments for version pinning and reproducibility
+# NODE_VERSION: the Node.js major.minor.patch release to run the app on.
+# DEBIAN_VARIANT: the Debian release codename used as the OS base for the
+#   node image. We intentionally pin to "trixie" (Debian 13) rather than the
+#   floating "-slim" tag. The floating "node:<ver>-slim" tag currently resolves
+#   to Debian bookworm (Debian 12), whose older package set accumulates CVEs
+#   (e.g. perl, glibc, tar). Debian 13 ships current patched packages and keeps
+#   image scanners clean. Both the builder and production stages must use the
+#   same DEBIAN_VARIANT so runtime matches build-time behaviour.
 ARG NODE_VERSION=24.19.0
+ARG DEBIAN_VARIANT=trixie
 ARG PNPM_VERSION=11.21.0
+
+# =============================================================================
+# KNOWN UPSTREAM CVEs (do NOT "fix" these in this Dockerfile)
+# =============================================================================
+# After moving to the trixie (Debian 13) base, image scanners still report a
+# small set of CVEs that CANNOT be resolved here. They originate upstream, not
+# from this project or from the Debian base:
+#
+# 1. npm CLI bundled inside the Node image (tar 7.5.16, undici 6.26.0,
+#    brace-expansion 5.0.6, ip-address 10.2.0). These are internal dependencies
+#    of the `npm`/`npx` CLI that ships with Node. They are NOT part of the app's
+#    own dependency tree (`pnpm audit` is clean) and are only reachable at
+#    runtime via `prisma migrate deploy`. They will be fixed by a future Node
+#    LTS patch release that bumps its bundled npm — NOT by changing the Debian
+#    base or adding pnpm/npm overrides. Do NOT override them.
+#
+# 2. deb/perl (5.40.1-6) in trixie. These are recent CVEs for which no patched
+#    perl package has been released in ANY Debian release yet. They resolve
+#    automatically once Debian publishes updated perl packages.
+#
+# Re-scan the image after each Node.js 24.x LTS patch release and after each
+# Debian trixie point release to confirm these are cleared. See SECURITY.md
+# "Image Vulnerability Monitoring".
+# =============================================================================
 
 # =============================================================================
 # Stage 1: Builder
 # =============================================================================
-FROM node:${NODE_VERSION}-slim AS builder
+FROM node:${NODE_VERSION}-${DEBIAN_VARIANT}-slim AS builder
 
 # npm registry override (falls back to the official registry if not provided)
 # Exported as npm_config_registry so that ALL pnpm/Prisma operations (including
@@ -67,6 +100,7 @@ ARG BUILD_DATE
 ARG VCS_REF
 ARG NODE_VERSION
 ARG PNPM_VERSION
+ARG DEBIAN_VARIANT
 
 # OCI Image Labels
 LABEL org.opencontainers.image.title="Scrumooth Backend Builder" \
@@ -160,13 +194,14 @@ RUN cd packages/backend/dist && node /tmp/add-import-extensions.js
 # =============================================================================
 # Stage 2: Production
 # =============================================================================
-FROM node:${NODE_VERSION}-slim AS production
+FROM node:${NODE_VERSION}-${DEBIAN_VARIANT}-slim AS production
 
 # Build arguments for labels
 ARG VERSION
 ARG BUILD_DATE
 ARG VCS_REF
 ARG NODE_VERSION
+ARG DEBIAN_VARIANT
 # npm registry override (falls back to the official registry if not provided)
 # A sentinel default (__default__) lets us detect whether the user actually
 # supplied --build-arg NPM_REGISTRY=... on the command line.
@@ -263,6 +298,9 @@ RUN set -eu; \
     npm prune --omit=dev --registry="$(cat /tmp/npm_registry)" && \
     npm install --no-save --registry="$(cat /tmp/npm_registry)" i18next@^26.0.0 intl-pluralrules@^2.0.1 date-fns@^4.4.0 && \
     npm cache clean --force && \
+    # jq is only needed above to strip pnpm-specific entries from package.json.
+    # Purge it now so the vulnerable build-time tool is not left in the runtime image.
+    apt-get purge -y jq && rm -rf /var/lib/apt/lists/* && \
     rm -rf /root/.npm /home/node/.npm /tmp/*.log
 
 # Copy shared package build output into node_modules
@@ -287,7 +325,7 @@ RUN chmod +x ./docker-entrypoint.sh
 ENV NODE_ENV=production \
     PORT=5010
 
-# Switch to non-root user for security (node user exists in node:bookworm-slim)
+# Switch to non-root user for security (node user exists in the node slim image)
 USER node
 
 # Expose application port

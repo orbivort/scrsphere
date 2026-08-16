@@ -1,4 +1,5 @@
 import path from 'path';
+import { readFileSync } from 'fs';
 
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
@@ -6,6 +7,10 @@ import react from '@vitejs/plugin-react';
 // Dedicated Vitest config for the frontend package. Keeping the test block
 // separate from vite.config.ts follows the current convention (see the
 // backend and shared packages) and lets the build config stay focused.
+const rootPackageJson = JSON.parse(
+  readFileSync(path.resolve(import.meta.dirname, '../../package.json'), 'utf-8')
+);
+
 export default defineConfig({
   plugins: [react()],
   resolve: {
@@ -13,6 +18,11 @@ export default defineConfig({
       '@': path.resolve(import.meta.dirname, './src'),
       '@scrumooth/shared': path.resolve(import.meta.dirname, '../shared/dist'),
     },
+  },
+  // Define globals consistently with vite.config.ts (e.g. __APP_VERSION__) so
+  // components render identically in tests and in the production build.
+  define: {
+    __APP_VERSION__: JSON.stringify(rootPackageJson.version),
   },
   test: {
     globals: true,

@@ -16,13 +16,18 @@
 # =============================================================================
 
 # Build arguments for version pinning
+# DEBIAN_VARIANT pins the OS base to trixie (Debian 13), matching the production
+# Dockerfile so dev and prod runtimes are consistent. The floating "-slim" tag
+# resolves to the aging bookworm (Debian 12) package set, which accumulates CVEs.
 ARG NODE_VERSION=24.19.0
+ARG DEBIAN_VARIANT=trixie
 ARG PNPM_VERSION=11.21.0
 
-# node:${NODE_VERSION}-slim already bundles Node.js + corepack, avoiding the
-# slow apt-get install and manual Node download steps entirely. It matches the
-# production Dockerfile exactly for a consistent runtime across environments.
-FROM node:${NODE_VERSION}-slim
+# node:${NODE_VERSION}-${DEBIAN_VARIANT}-slim already bundles Node.js + corepack,
+# avoiding the slow apt-get install and manual Node download steps entirely. It
+# matches the production Dockerfile exactly for a consistent runtime across
+# environments.
+FROM node:${NODE_VERSION}-${DEBIAN_VARIANT}-slim
 
 # npm registry override (falls back to the official registry if not provided)
 # Allows local builds to use a faster mirror without affecting the codebase.
@@ -64,6 +69,7 @@ ARG BUILD_DATE
 ARG VCS_REF
 ARG NODE_VERSION
 ARG PNPM_VERSION
+ARG DEBIAN_VARIANT
 
 # OCI Image Labels
 LABEL org.opencontainers.image.title="Scrumooth Backend Development" \

@@ -16,14 +16,19 @@
 # =============================================================================
 
 # Build arguments for version pinning and reproducibility
+# DEBIAN_VARIANT pins the Node builder OS base to trixie (Debian 13). The
+# floating "node:<ver>-slim" tag resolves to the aging bookworm (Debian 12)
+# package set, which accumulates CVEs. Pinning to trixie matches the backend
+# images and keeps image scanners clean.
 ARG NODE_VERSION=24.19.0
+ARG DEBIAN_VARIANT=trixie
 ARG PNPM_VERSION=11.21.0
 ARG NGINX_VERSION=1.30
 
 # =============================================================================
 # Stage 1: Builder
 # =============================================================================
-FROM node:${NODE_VERSION}-slim AS builder
+FROM node:${NODE_VERSION}-${DEBIAN_VARIANT}-slim AS builder
 
 # npm registry override (falls back to the official registry if not provided)
 # Exported as npm_config_registry so that ALL pnpm operations honor the mirror.
@@ -62,6 +67,7 @@ ARG BUILD_DATE
 ARG VCS_REF
 ARG NODE_VERSION
 ARG PNPM_VERSION
+ARG DEBIAN_VARIANT
 
 # Build arguments for Vite environment variables (non-sensitive only)
 # These are passed from docker-compose.yml build.args
