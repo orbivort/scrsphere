@@ -1,0 +1,20 @@
+# =============================================================================
+# Docker Ignore File for Scrumooth Backup Service
+# =============================================================================
+# This directory is used as the build context for the backup service image
+# (see .github/workflows/release.yml). Only the script files and Dockerfile
+# are needed in the image, so everything else is excluded to keep the build
+# context minimal.
+# =============================================================================
+
+# Documentation (not needed in the image)
+*.md
+**/*.md
+
+# Temp / backup artifacts
+*.tmp
+*.log
+backups/
+**/backups/
+backup/
+**/backup/

@@ -1,28 +1,43 @@
 # Scrumooth
 
-**Agiles Scrum-Lebenszyklus-Managementsystem**
+**Selbst gehostetes Scrum-Tool, getreu dem Scrum Guide**
 
 > **Sprachen:** [English](README.md) | [Deutsch](README.de.md) | [Español](README.es.md) | [Français](README.fr.md) | [Italiano](README.it.md)
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-
 [![CI](https://github.com/orbivort/scrumooth/actions/workflows/ci.yml/badge.svg)](https://github.com/orbivort/scrumooth/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/github/orbivort/scrumooth/graph/badge.svg?token=Z2T4R3G8F7)](https://codecov.io/github/orbivort/scrumooth)
-[![Known Vulnerabilities](https://snyk.io/test/github/orbivort/scrumooth/badge.svg)](https://snyk.io/test/github/orbivort/scrumooth)
-
+[![codecov](https://codecov.io/github/orbivort/scrumooth/graph/badge.svg)](https://codecov.io/github/orbivort/scrumooth)
 [![GitHub release](https://img.shields.io/github/v/release/orbivort/scrumooth?include_prereleases)](https://github.com/orbivort/scrumooth/releases)
 [![GitHub issues](https://img.shields.io/github/issues/orbivort/scrumooth)](https://github.com/orbivort/scrumooth/issues)
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue.svg)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-24+-green.svg)](https://nodejs.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-18+-336791.svg)](https://www.postgresql.org/)
 
-[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-GitHub_Pages-success?style=for-the-badge)](https://orbivort.github.io/scrumooth/)
+Scrumooth ist ein selbst gehostetes Scrum-Tool, das den Scrum Guide getreu umsetzt. Dank seines bewusst schlanken Designs führt es Teams durch den gesamten Scrum-Lebenszyklus — vom Product Goal und Backlog bis hin zu Sprint Review und Sprint Retrospective — ohne die Komplexität schwergewichtiger SaaS-Plattformen. Stellen Sie es auf Ihrer eigenen Infrastruktur bereit, behalten Sie die Kontrolle über Ihre Daten und zahlen Sie niemals pro Benutzer.
 
-Scrumooth ist eine selbst gehostete Webanwendung zur Verwaltung agiler Scrum-Prozesse. Sie wurde entwickelt, um den Scrum Guide getreu umzusetzen, und nutzt moderne Technologien sowie strenge Qualitätsstandards. Sie bietet eine vollständige Lösung, die Teams durch den gesamten Scrum-Lebenszyklus führt — von Product Goals und Backlogs bis hin zu Sprint Reviews und Sprint Retrospectives — und lässt sich auf der eigenen Infrastruktur ohne Kosten pro Benutzer bereitstellen.
+## Inhaltsverzeichnis
+
+- [Live-Demo](#live-demo)
+- [Funktionen](#funktionen)
+- [Tech-Stack](#tech-stack)
+- [Schnellstart](#schnellstart)
+- [Voraussetzungen](#voraussetzungen)
+- [Installation](#installation)
+- [Testen](#testen)
+- [Code-Qualität](#code-qualität)
+- [Datenbankverwaltung](#datenbankverwaltung)
+- [Docker-Unterstützung](#docker-unterstützung)
+- [Deployment](#deployment)
+- [Dokumentation](#dokumentation)
+- [Fehlerbehebung](#fehlerbehebung)
+- [Roadmap](#roadmap)
+- [Mitwirken](#mitwirken)
+- [Lizenz](#lizenz)
 
 ## 🚀 Live-Demo
 
-Probieren Sie Scrumooth sofort in Ihrem Browser aus — keine Installation erforderlich. Die Demo läuft mit Mock-Daten (kein Backend erforderlich), sodass Sie den vollständigen Scrum-Lebenszyklus sofort erkunden können.
+Probieren Sie Scrumooth sofort in Ihrem Browser aus — keine Installation erforderlich. Die Demo läuft mit Mock-Daten (kein Backend erforderlich), sodass Sie den gesamten Scrum-Lebenszyklus sofort erkunden können.
 
 <p align="center">
   <a href="https://orbivort.github.io/scrumooth/" target="_blank" rel="noopener noreferrer">
@@ -30,31 +45,31 @@ Probieren Sie Scrumooth sofort in Ihrem Browser aus — keine Installation erfor
   </a>
 </p>
 
-> **Hinweis:** Die Demo verwendet In-Memory-Mock-Daten — alle Änderungen sind nur in Ihrer Browser-Sitzung lokal und werden beim Aktualisieren zurückgesetzt. Für persistente Daten und Mehrbenutzer-Zusammenarbeit folgen Sie der [Installation](#-installation)-Anleitung, um Ihre eigene Instanz selbst zu hosten.
+> **Hinweis:** Die Demo verwendet In-Memory-Mock-Daten — alle von Ihnen vorgenommenen Änderungen sind nur lokal in Ihrer Browser-Sitzung gültig und werden beim Aktualisieren zurückgesetzt. Für persistente Daten und Mehrbenutzer-Zusammenarbeit folgen Sie der Anleitung unter [Installation](#installation), um Ihre eigene Instanz selbst zu hosten.
 
 ## ✨ Funktionen
 
 ### Kernfunktionen von Scrum
 
-- **Product Goals** — Strategische Ausrichtung und Zielverfolgung
-- **Product Backlog** — MoSCoW-Priorisierung (Must, Should, Could, Won't)
-- **Sprint Planning** — Konfigurierbare Sprint-Dauern und Kapazitätsplanung
-- **Sprint Execution** — Interaktives Kanban-Board mit Drag-and-Drop
-- **Daily Scrum** — Tägliches Standup-Tracking und Aktualisierungen
-- **Impediments** — Erkennung und Behebung von Blockern
-- **Incremental Delivery** — Verwaltung von Product Increments
-- **Sprint Reviews** — Verwaltung von Review-Meetings und Dokumentation
-- **Sprint Retrospectives** — Teamreflexion und kontinuierliche Verbesserung
+- **Product Goal** – Strategische Ausrichtung und Zielverfolgung
+- **Product Backlog** – MoSCoW-Priorisierung (Must, Should, Could, Won't)
+- **Sprint Planning** – Konfigurierbare Sprint-Dauern und Kapazitätsplanung
+- **Sprint Execution** – Interaktives Kanban-Board mit Drag-and-Drop
+- **Daily Scrum** – Tägliches Standup-Tracking und Aktualisierungen
+- **Impediment** – Erkennung von Blockern und Verfolgung der Behebung
+- **Increment** – Verwaltung des Produkt-Inkrements
+- **Sprint Review** – Verwaltung und Dokumentation von Review-Meetings
+- **Sprint Retrospective** – Teamreflexion und kontinuierliche Verbesserung
 
 ### Erweiterte Funktionen
 
-- **Dashboard & Berichte** — Echtzeitkennzahlen und Visualisierungen
-- **Workflow-Engine** — Rollenbasierte Berechtigungen und Zustandsübergänge
-- **Definition of Done/Ready** — anpassbare Checklisten
-- **Team-Kommunikation** — integrierte Benachrichtigungen und Messaging
-- **Audit-Logging** — umfassende Aktionsverfolgung
+- **Dashboard & Reporting** – Echtzeit-Metriken und Visualisierungen
+- **Workflow-Engine** – Rollenbasierte Berechtigungen und Statusübergänge
+- **Definition of Done/Ready** – Anpassbare Checklisten
+- **Teamkommunikation** – Integrierte Benachrichtigungen und Nachrichten
+- **Audit-Protokollierung** – Umfassende Nachverfolgung von Aktionen
 
-## 🛠 Technologie-Stack
+## 🛠 Tech-Stack
 
 ### Backend
 
@@ -65,8 +80,8 @@ Probieren Sie Scrumooth sofort in Ihrem Browser aus — keine Installation erfor
 - **Authentifizierung:** JWT mit bcrypt
 - **Validierung:** Zod
 - **Geplante Jobs:** node-cron
-- **E-Mail:** Nodemailer (SMTP-, SendGrid-, AWS-SES-Anbieter)
-- **Protokollierung:** Winston mit rotierenden Logdateien
+- **E-Mail:** Nodemailer (Anbieter SMTP, SendGrid, AWS SES)
+- **Protokollierung:** Winston mit rotierenden Datei-Transports
 
 ### Frontend
 
@@ -84,9 +99,9 @@ Probieren Sie Scrumooth sofort in Ihrem Browser aus — keine Installation erfor
 - Konstanten und Enumerationen
 - Hilfsfunktionen
 
-### Tests & Qualität
+### Testen & Qualität
 
-- **Unit- / Integrationstests:** Vitest
+- **Unit / Integration:** Vitest
 - **End-to-End:** Playwright (Frontend) + Vitest (Backend)
 - **Lasttests:** k6 (10 vorgefertigte Szenarien)
 - **Linting:** ESLint + Stylelint
@@ -112,8 +127,8 @@ scrumooth/
 │   ├── frontend/             # React + Vite Frontend
 │   │   ├── src/
 │   │   │   ├── components/   # React-Komponenten
-│   │   │   ├── pages/        # Routenbasierte Seiten
-│   │   │   ├── hooks/        # Custom React Hooks
+│   │   │   ├── pages/        # Seiten auf Routenebene
+│   │   │   ├── hooks/        # Eigene React Hooks
 │   │   │   ├── services/     # API-Client-Dienste
 │   │   │   ├── stores/       # Zustand-Stores
 │   │   │   └── styles/       # CSS und Design Tokens
@@ -126,23 +141,40 @@ scrumooth/
 │   ├── architecture/         # Systemdesign, Datenmodell, Sicherheit
 │   ├── deployment/           # Deployment-Anleitungen
 │   └── user-guide/           # Benutzerdokumentation und Anleitungen
-├── k6/                       # Lasttestszenarien (k6)
-│   └── scripts/scenarios/    # vorgefertigte Lasttestszenarien
+├── k6/                       # Lasttest-Szenarien (k6)
+│   └── scripts/scenarios/    # vorgefertigte Lasttest-Szenarien
 ├── scripts/                  # Build- und Hilfsskripte
 ├── .github/workflows/        # CI-, Release- und GitHub-Pages-Deployment
 ├── docker-compose.yml        # Produktions-Docker-Compose
 ├── docker-compose.dev.yml    # Entwicklungs-Docker-Compose
 ├── CHANGELOG.md              # Versionshistorie
 ├── SECURITY.md               # Sicherheitsrichtlinie und Meldeverfahren
+├── CONTRIBUTING.md           # Beitragsrichtlinien
+├── CODE_OF_CONDUCT.md        # Verhaltenskodex der Community
 └── THIRD-PARTY-NOTICES.md    # Drittanbieter-Lizenzhinweise
 ```
 
+## ⚡ Schnellstart
+
+Der schnellste Weg, eine lokale Instanz zu betreiben, ist Docker Compose:
+
+```bash
+git clone https://github.com/orbivort/scrumooth.git
+cd scrumooth
+cp packages/backend/.env.production.example packages/backend/.env.production
+docker compose up -d
+```
+
+Dies startet den Caddy-Reverse-Proxy, das Backend, das Frontend und PostgreSQL. Sobald alles läuft, öffnen Sie <http://localhost> (HTTPS ist standardmäßig auf Port 443 aktiviert). Für ein vollständiges manuelles Setup (ohne Docker) siehe [Installation](#installation).
+
+> **Hinweis:** Der Produktions-Compose-Stack erfordert `packages/backend/.env.production`. Wenn Sie eine vollständig vorkonfigurierte Entwicklungsumgebung mit Hot Reload bevorzugen, verwenden Sie stattdessen `docker compose -f docker-compose.dev.yml up`.
+
 ## 📋 Voraussetzungen
 
-- **Node.js** v24.14.1 oder höher
-- **pnpm** v11.5.0 oder höher
+- **Node.js** v24.19.0 oder höher
+- **pnpm** v11.21.0 oder höher
 - **PostgreSQL** v18 oder höher
-- **Git**
+- **Docker** & **Docker Compose** (optional, für den Schnellstart)
 
 ## 🚀 Installation
 
@@ -161,7 +193,7 @@ Dieses Projekt verwendet pnpm als Paketmanager. Das Projekt erzwingt pnpm über 
 pnpm install
 ```
 
-### 3. Umgebung konfigurieren
+### 3. Umgebungskonfiguration
 
 Kopieren Sie die Beispiel-Umgebungsdateien und konfigurieren Sie Ihre Einstellungen:
 
@@ -200,7 +232,7 @@ VITE_USE_MOCK_API=false
 
 ### 4. Datenbank einrichten
 
-Generieren Sie den Prisma-Client und erstellen Sie anschließend Ihr Datenbankschema. Für die lokale Entwicklung können Sie beide Ansätze wählen:
+Generieren Sie den Prisma-Client und erstellen Sie anschließend Ihr Datenbankschema. Für die lokale Entwicklung können Sie einen der beiden Ansätze wählen:
 
 ```bash
 # Prisma-Client generieren (immer erforderlich)
@@ -213,7 +245,7 @@ pnpm run db:push
 pnpm run db:migrate
 ```
 
-Für Produktionsbereitstellungen verwenden Sie `pnpm run db:migrate:prod`, um bestehende Migrationen ohne Rückfragen anzuwenden.
+Für Produktions-Deployments verwenden Sie `pnpm run db:migrate:prod`, um bestehende Migrationen ohne Rückfragen anzuwenden.
 
 ### 5. Entwicklungsserver starten
 
@@ -221,7 +253,7 @@ Für Produktionsbereitstellungen verwenden Sie `pnpm run db:migrate:prod`, um be
 pnpm run dev
 ```
 
-Dadurch werden Backend und Frontend gleichzeitig gestartet. Um sie unabhängig voneinander zu starten:
+Dies startet Backend- und Frontend-Server gleichzeitig. Um sie unabhängig voneinander auszuführen:
 
 ```bash
 pnpm run dev:backend    # Nur Backend (http://localhost:5001)
@@ -230,172 +262,67 @@ pnpm run dev:frontend   # Nur Frontend (http://localhost:5173)
 
 ## 🎯 Verwendung
 
-### Entwicklung
+Die gängigsten Befehle für die tägliche Entwicklung:
+
+| Aufgabe                    | Befehl                  |
+| -------------------------- | ----------------------- |
+| Backend + Frontend starten | `pnpm run dev`          |
+| Nur Backend starten        | `pnpm run dev:backend`  |
+| Nur Frontend starten       | `pnpm run dev:frontend` |
+| Alle Pakete bauen          | `pnpm run build`        |
+
+## 🧪 Testen
 
 ```bash
-# Frontend und Backend zusammen starten
-pnpm run dev
-
-# Im Testmodus starten (verwendet NODE_ENV=test)
-pnpm run dev:test
-
-# Nur eine Seite starten
-pnpm run dev:backend
-pnpm run dev:frontend
+pnpm run test              # Alle Tests
+pnpm run test:coverage     # Mit Coverage-Bericht
+pnpm run test:unit         # Nur Unit-Tests
+pnpm run test:integration  # Backend-Integrationstests
+pnpm run test:e2e          # End-to-End (Backend Vitest + Frontend Playwright)
+pnpm run test:watch        # Watch-Modus
 ```
 
-### Build
-
-```bash
-# Alle Pakete bauen
-pnpm run build
-
-# Build-Artefakte bereinigen
-pnpm run clean
-
-# Vollständige Bereinigung inklusive node_modules
-pnpm run clean:all
-```
-
-## 🧪 Tests
-
-### Tests ausführen
-
-```bash
-# Alle Tests über alle Pakete ausführen
-pnpm run test
-
-# Mit Abdeckungsbericht ausführen
-pnpm run test:coverage
-
-# Nur Unit-Tests ausführen
-pnpm run test:unit
-
-# Integrationstests ausführen (nur Backend)
-pnpm run test:integration
-
-# End-to-End-Tests ausführen (Backend Vitest + Frontend Playwright)
-pnpm run test:e2e
-
-# E2E für nur eine Seite ausführen
-pnpm run test:e2e:backend
-pnpm run test:e2e:frontend
-
-# Watch-Modus
-pnpm run test:watch
-```
-
-Es gelten folgende Abdeckungsschwellenwerte: **80 % Zeilen, Funktionen, Anweisungen** und **70 % Zweige**.
+Erzwungene Coverage-Schwellenwerte: **80 % Zeilen, Funktionen, Anweisungen, Zweige**.
 
 ### Lasttests (k6)
 
-Zehn vorgefertigte Lasttestszenarien befinden sich unter [`k6/scripts/scenarios/`](k6/scripts/scenarios). Kopieren Sie vor der Ausführung [`k6/.env.k6.example`](k6/.env.k6.example) nach `k6/.env.k6` und konfigurieren Sie Ihr Ziel.
+Vorgefertigte Lasttest-Szenarien liegen unter [`k6/scripts/scenarios/`](k6/scripts/scenarios). Kopieren Sie [`k6/.env.k6.example`](k6/.env.k6.example) nach `k6/.env.k6`, konfigurieren Sie Ihr Ziel und führen Sie anschließend ein Szenario aus, zum Beispiel:
 
 ```bash
-# Realistische Alltagslast
-pnpm run loadtest:normal
-
-# Sprint-Planning-Rush (Worst-Case-Nebenläufigkeit)
-pnpm run loadtest:peak
-
-# System bis zum Versagen belasten
-pnpm run loadtest:stress
-
-# Simulierter 8-Stunden-Arbeitstag
-pnpm run loadtest:endurance
-
-# Weitere Szenarien
-pnpm run loadtest:multi-team
-pnpm run loadtest:daily-scrum
-pnpm run loadtest:auth
-pnpm run loadtest:db
-
-# Seed-Daten für Lasttests generieren
-pnpm run loadtest:generate-data
+pnpm run loadtest:normal    # Realistische Alltagslast
+pnpm run loadtest:peak      # Sprint-Planning-Rush (Worst-Case-Nebenläufigkeit)
+pnpm run loadtest:stress    # System bis zum Versagen belasten
 ```
 
-> **Voraussetzung:** Installieren Sie [k6](https://k6.io/docs/get-started/installation/) und stellen Sie sicher, dass Ihr Ziel-Backend läuft.
+> **Voraussetzung:** Installieren Sie [k6](https://k6.io/docs/get-started/installation/) und stellen Sie sicher, dass Ihr Ziel-Backend läuft. Weitere Szenarien (endurance, multi-team, daily-scrum, auth, db) sind über die `loadtest:*`-Skripte in [`package.json`](package.json) verfügbar.
 
 ## 🔍 Code-Qualität
 
-### Linting
+| Aufgabe                       | Befehl               |
+| ----------------------------- | -------------------- |
+| Lint (ESLint)                 | `pnpm run lint`      |
+| Lint & automatische Korrektur | `pnpm run lint:fix`  |
+| CSS-Lint (Stylelint)          | `pnpm run lint:css`  |
+| Formatieren (Prettier)        | `pnpm run format`    |
+| Typprüfung                    | `pnpm run typecheck` |
+| Sicherheits-Audit             | `pnpm run audit`     |
 
-```bash
-# ESLint auf TypeScript/JavaScript-Dateien ausführen
-pnpm run lint
-
-# ESLint-Probleme automatisch beheben
-pnpm run lint:fix
-
-# Stylelint auf CSS-Dateien ausführen
-pnpm run lint:css
-
-# Stylelint-Probleme automatisch beheben
-pnpm run lint:css:fix
-```
-
-### Formatierung
-
-```bash
-# Alle Quelldateien mit Prettier formatieren
-pnpm run format
-
-# Formatierung prüfen, ohne Änderungen zu schreiben
-pnpm run format:check
-
-# CSS-spezifische Formatierung
-pnpm run format:css
-pnpm run format:css:check
-```
-
-### Typprüfung
-
-```bash
-# TypeScript-Typprüfung über alle Pakete ausführen
-pnpm run typecheck
-```
-
-### Sicherheits-Audit
-
-```bash
-# Installierte Abhängigkeiten auf bekannte Schwachstellen prüfen
-pnpm run audit
-
-# Veraltete Abhängigkeiten auflisten
-pnpm run outdated
-```
+Vollständiger Entwicklungs-Workflow und Quality Gates finden Sie in [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ## 🗄 Datenbankverwaltung
 
 ```bash
-# Prisma-Client generieren (nach Schemaänderungen)
-pnpm run db:generate
-
-# Schema an Datenbank pushen (Entwicklung, keine Migrationsdateien)
-pnpm run db:push
-
-# Neue Migration erstellen und anwenden (Entwicklung)
-pnpm run db:migrate
-
-# Migrationen in Produktion anwenden (nicht-interaktiv)
-pnpm run db:migrate:prod
-
-# Migrationen auf die Testdatenbank anwenden
-pnpm run db:migrate:test
-
-# Prisma Studio öffnen (Datenbank-GUI)
-pnpm run db:studio
-
-# Datenbank zurücksetzen (⚠️ zerstört alle Daten)
-pnpm run db:reset
-
-# Prisma-Schema validieren
-pnpm run db:validate
+pnpm run db:generate     # Prisma-Client generieren (nach Schemaänderungen)
+pnpm run db:migrate      # Migration erstellen und anwenden (Entwicklung)
+pnpm run db:migrate:prod # Migrationen in Produktion anwenden (nicht-interaktiv)
+pnpm run db:studio       # Prisma Studio öffnen (Datenbank-GUI)
 ```
+
+Weitere Datenbankbefehle (`db:push`, `db:reset`, `db:validate`, `db:migrate:test`) sind in [`CONTRIBUTING.md`](CONTRIBUTING.md) dokumentiert.
 
 ## 🐳 Docker-Unterstützung
 
-Das Projekt enthält Docker-Konfiguration sowohl für die Entwicklung als auch für den Produktionsbetrieb.
+Das Projekt enthält Docker-Konfiguration für Entwicklungs- und Produktions-Deployment.
 
 ### Docker Compose verwenden
 
@@ -412,39 +339,55 @@ docker compose down
 
 ### Docker-Images manuell bauen
 
-```bash
-# Produktions-Images
-docker build -t scrumooth-backend ./packages/backend
-docker build -t scrumooth-frontend ./packages/frontend
+> **Hinweis:** Alle Dockerfiles referenzieren Pfade relativ zum Repository-Root (Monorepo-Workspace-Dateien wie `package.json`, `pnpm-lock.yaml` und `packages/shared/`). Sie müssen sie vom **Repository-Root** aus bauen und `-f` verwenden, um auf das Dockerfile zu zeigen — das Übergeben des Paketverzeichnisses als Build-Kontext schlägt fehl.
 
+```bash
 # Entwicklungs-Images (mit Dev-Abhängigkeiten und Watch-Modus)
-docker build -f ./packages/backend/Dockerfile.dev -t scrumooth-backend:dev ./packages/backend
-docker build -f ./packages/frontend/Dockerfile.dev -t scrumooth-frontend:dev ./packages/frontend
+docker build -t scrumooth-backend:dev -f packages/backend/Dockerfile.dev .
+docker build -t scrumooth-frontend:dev -f packages/frontend/Dockerfile.dev .
+
+# Produktions-Images (vom Repository-Root bauen)
+docker build -t scrumooth-backend -f packages/backend/Dockerfile .
+docker build -t scrumooth-frontend -f packages/frontend/Dockerfile .
 ```
 
-## ☁️ Bereitstellung
+<details>
+<summary>Registry/apt-Mirror verwenden</summary>
+
+Wenn Sie sich hinter einem Netzwerk befinden, das einen npm-Registry- oder apt-Mirror erfordert, können Sie diese als Build-Argumente oder Umgebungsvariablen setzen:
+
+```bash
+# Docker Compose
+$env:NPM_REGISTRY="https://your_mirror_url"
+$env:APT_MIRROR="your_mirror_url"
+
+# Manueller Build
+docker build --build-arg NPM_REGISTRY=https://your_mirror_url --build-arg APT_MIRROR=your_mirror_url .
+```
+
+</details>
+
+## ☁️ Deployment
 
 ### Selbst gehostete Produktion
 
-Siehe [`docs/deployment/DEPLOYMENT.md`](docs/deployment/DEPLOYMENT.md) für eine vollständige Anleitung zur Produktionsbereitstellung mit Umgebungskonfiguration, Datenbankmigration, Reverse-Proxy-Einrichtung und operativen Best Practices.
+Vollständige Anleitung zum Produktions-Deployment mit Umgebungskonfiguration, Datenbankmigration, Reverse-Proxy-Einrichtung und operativen Best Practices finden Sie in [`docs/deployment/DEPLOYMENT.md`](docs/deployment/DEPLOYMENT.md).
 
-### Demo-Bereitstellung auf GitHub Pages
+### Demo-Deployment auf GitHub Pages
 
-Der `main`-Branch wird automatisch über den [`Deploy to GitHub Pages`](.github/workflows/deploy-github-pages.yml)-Workflow auf GitHub Pages bereitgestellt. Der Pages-Build:
-
-- Verwendet eine In-Memory-**Mock-API** (kein Backend oder Datenbank erforderlich)
-
-Live-Demo: <https://orbivort.github.io/scrumooth/>
+Der `main`-Branch wird über den Workflow [`Deploy to GitHub Pages`](.github/workflows/deploy-github-pages.yml) automatisch auf GitHub Pages bereitgestellt, unter Verwendung einer In-Memory-**Mock-API** (kein Backend oder keine Datenbank erforderlich). Probieren Sie es über die [Live-Demo](#live-demo) oben aus.
 
 ## 📚 Dokumentation
 
 | Bereich                    | Ort                                                                                                               |
 | -------------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | **Benutzerhandbuch**       | [`docs/user-guide/`](docs/user-guide) — Erste Schritte, Kernfunktionen, Scrum-Workflows                           |
-| **REST-API-Referenz**      | [`docs/api/`](docs/api) — 19 Endpunktgruppen (Authentifizierung, Sprints, Backlog, Berichte, etc.)                |
+| **REST-API-Referenz**      | [`docs/api/`](docs/api) — Endpunktgruppen zu Authentifizierung, Sprints, Backlog, Berichten und mehr              |
 | **Systemarchitektur**      | [`docs/architecture/`](docs/architecture) — Systemdesign, Datenmodell, Komponenten-Design, Sicherheitsarchitektur |
 | **Deployment-Anleitung**   | [`docs/deployment/DEPLOYMENT.md`](docs/deployment/DEPLOYMENT.md)                                                  |
-| **Sicherheitsrichtlinie**  | [`SECURITY.md`](SECURITY.md) — Meldung von Schwachstellen                                                         |
+| **Sicherheitsrichtlinie**  | [`SECURITY.md`](SECURITY.md) — Meldeverfahren für Schwachstellen                                                  |
+| **Mitwirken**              | [`CONTRIBUTING.md`](CONTRIBUTING.md) — Richtlinien und Entwicklungs-Workflow                                      |
+| **Verhaltenskodex**        | [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) — Standards der Community                                              |
 | **Release-Historie**       | [`CHANGELOG.md`](CHANGELOG.md)                                                                                    |
 | **Drittanbieter-Hinweise** | [`THIRD-PARTY-NOTICES.md`](THIRD-PARTY-NOTICES.md)                                                                |
 
@@ -452,25 +395,25 @@ Live-Demo: <https://orbivort.github.io/scrumooth/>
 
 ### `Cannot find module @scrumooth/shared`
 
-Das Shared-Paket muss kompiliert werden, bevor Backend/Frontend Imports auflösen können.
+Das Shared-Paket muss gebaut werden, bevor Backend/Frontend Importe auflösen können.
 
 ```bash
 pnpm --filter=@scrumooth/shared run build
 ```
 
-Dies wird normalerweise automatisch durch `pnpm install` und die Dev-Skripte gehandhabt, ist aber nach einem manuellen `pnpm run clean` erforderlich.
+Dies wird normalerweise automatisch von `pnpm install` und den Dev-Skripten erledigt, ist aber nach einem manuellen `pnpm run clean` erforderlich.
 
-### `pnpm install` schlägt mit "Use pnpm instead" fehl
+### `pnpm install` schlägt mit „Use pnpm instead" fehl
 
 Das Repository erzwingt pnpm über ein `preinstall`-Skript. Installieren Sie pnpm global:
 
 ```bash
-npm install -g pnpm@11.5.0
+npm install -g pnpm@11.21.0
 ```
 
 ### Datenbankverbindungsfehler beim Start
 
-Überprüfen Sie, ob Ihre `DATABASE_URL` in `packages/backend/.env` auf eine laufende PostgreSQL-Instanz (Version 18 oder höher) zeigt und die Datenbank existiert. Führen Sie `pnpm run db:validate` aus, um das Prisma-Schema gegen die Verbindung zu validieren.
+Überprüfen Sie, ob Ihre `DATABASE_URL` in `packages/backend/.env` auf eine laufende PostgreSQL-18+-Instanz zeigt und die Datenbank existiert. Führen Sie `pnpm run db:validate` aus, um das Prisma-Schema gegen die Verbindung zu validieren.
 
 ### Port bereits belegt (5001 oder 5173)
 
@@ -479,7 +422,7 @@ Standard-Ports können über Umgebungsvariablen überschrieben werden:
 - Backend: `PORT` in `packages/backend/.env`
 - Frontend: `VITE_DEV_PORT` in `packages/frontend/.env`
 
-### Frontend erreicht Backend nicht
+### Frontend erreicht das Backend nicht
 
 Prüfen Sie, ob `VITE_API_URL` in `packages/frontend/.env` mit der tatsächlichen Backend-Adresse übereinstimmt und `CORS_ORIGIN` in `packages/backend/.env` die Frontend-Origin erlaubt.
 
@@ -487,16 +430,20 @@ Prüfen Sie, ob `VITE_API_URL` in `packages/frontend/.env` mit der tatsächliche
 
 Setzen Sie `VITE_USE_MOCK_API=true` in `packages/frontend/.env`, um dieselbe Mock-API zu verwenden, die auch die Live-Demo antreibt.
 
+## 🗺 Roadmap
+
+Scrumooth befindet sich in aktiver Entwicklung. Zu den kommenden Prioritäten gehören:
+
+- [ ] Verbesserte Reporting- und Analyse-Dashboards
+- [ ] Weitere Integrationen und Webhooks
+- [ ] Härtung von Performance und Skalierbarkeit
+
+Projektstatus und neueste Änderungen werden im [CHANGELOG](CHANGELOG.md) verfolgt. Feedback und Feature-Wünsche sind über [GitHub Issues](https://github.com/orbivort/scrumooth/issues) willkommen.
+
+## 🤝 Mitwirken
+
+Beiträge sind willkommen! Bitte lesen Sie [`CONTRIBUTING.md`](CONTRIBUTING.md) für Entwicklungs-Workflow, Codestandards und den Pull-Request-Prozess, und lesen Sie den [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) vor der Teilnahme.
+
 ## 📝 Lizenz
 
-Dieses Projekt ist unter der Apache License 2.0 lizenziert — siehe die [LICENSE](LICENSE)-Datei für Details.
-
-```
-Copyright 2026 Orbivort
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-```
+Dieses Projekt ist unter der [Apache License 2.0](LICENSE) lizenziert.

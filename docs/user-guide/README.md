@@ -206,11 +206,11 @@ Scrumooth implements the Scrum framework as defined in the [Scrum Guide](https:/
 
 ## Document Version
 
-| Attribute             | Value        |
-| --------------------- | ------------ |
-| **Version**           | 1.0          |
-| **Last Updated**      | January 2026 |
-| **Scrumooth Version** | 1.x          |
+| Attribute             | Value       |
+| --------------------- | ----------- |
+| **Version**           | 1.1         |
+| **Last Updated**      | August 2026 |
+| **Scrumooth Version** | 1.x         |
 
 ---
 

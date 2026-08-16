@@ -12,18 +12,24 @@ Welcome to the scrumooth API documentation. This comprehensive guide provides de
 - [Rate Limiting](#rate-limiting)
 - [Endpoints](#endpoints)
 - [Common Patterns](#common-patterns)
-- [SDKs and Client Libraries](#sdks-and-client-libraries)
+- [Client Integration Examples](#client-integration-examples)
+- [Best Practices](#best-practices)
 
 ## Getting Started
 
 ### Base URL
 
-All API requests should be made to the following base URL:
+Scrumooth is **self-hosted**, so there is no public API endpoint. All API requests
+are made against **your own deployment**:
 
 ```
-Production: https://api.scrumooth.dev/api/v1
-Development: http://localhost:3000/api/v1
+Self-hosted:  https://<your-domain>/api/v1
+Development:  http://localhost:5001/api/v1
 ```
+
+Replace `<your-domain>` with the hostname of your own instance. For local
+development, the backend listens on port `5001` by default (override it with
+`PORT` in `packages/backend/.env`).
 
 ### Content Type
 
@@ -38,7 +44,7 @@ Accept: application/json
 
 ```bash
 # Register a new user
-curl -X POST https://api.scrumooth.dev/api/v1/auth/register \
+curl -X POST http://localhost:5001/api/v1/auth/register \
   -H "Content-Type: application/json" \
   -d '{
     "email": "user@example.com",
@@ -48,7 +54,7 @@ curl -X POST https://api.scrumooth.dev/api/v1/auth/register \
   }'
 
 # Login
-curl -X POST https://api.scrumooth.dev/api/v1/auth/login \
+curl -X POST http://localhost:5001/api/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "email": "user@example.com",
@@ -452,32 +458,35 @@ async function fetchAllTeams(page = 1, limit = 20) {
 }
 ```
 
-## SDKs and Client Libraries
+## Client Integration Examples
 
-### JavaScript/TypeScript
+> **Note:** Scrumooth does not currently ship an official SDK or client library.
+> Integrate with the API directly over HTTP. The examples below use the standard
+> `fetch` API and cURL.
+
+### JavaScript/TypeScript (fetch)
 
 ```typescript
-import { scrumoothClient } from '@scrumooth/client';
+const BASE_URL = 'http://localhost:5001/api/v1';
 
-const client = new scrumoothClient({
-  baseURL: 'https://api.scrumooth.dev/api/v1',
+// Login (sets HTTP-only cookies)
+const loginResponse = await fetch(`${BASE_URL}/auth/login`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  credentials: 'include',
+  body: JSON.stringify({
+    email: 'user@example.com',
+    password: 'your-password',
+  }),
+});
+
+// Get teams (cookies are sent automatically)
+const teamsResponse = await fetch(`${BASE_URL}/teams`, {
   credentials: 'include',
 });
 
-// Login
-await client.auth.login({
-  email: 'user@example.com',
-  password: 'password',
-});
-
-// Get teams
-const teams = await client.teams.list();
-
-// Create team
-const team = await client.teams.create({
-  name: 'My Team',
-  description: 'Team description',
-});
+const { data } = await teamsResponse.json();
+console.log(data.items);
 ```
 
 ### cURL Examples
@@ -514,5 +523,5 @@ See [CHANGELOG.md](../../CHANGELOG.md) for API version history and changes.
 
 ---
 
-**Last Updated**: 2026-05-10  
-**API Version**: v1.0.0
+**Last Updated**: 2026-08-16  
+**API Version**: v1

@@ -303,13 +303,7 @@ export class EmailService {
             | 'NOTIFICATION',
           subject: input.subject,
           status: status as
-            | 'PENDING'
-            | 'SENT'
-            | 'DELIVERED'
-            | 'FAILED'
-            | 'BOUNCED'
-            | 'OPENED'
-            | 'CLICKED',
+            'PENDING' | 'SENT' | 'DELIVERED' | 'FAILED' | 'BOUNCED' | 'OPENED' | 'CLICKED',
           provider: providerName,
           messageId: result.messageId,
           errorMessage: result.error?.message,

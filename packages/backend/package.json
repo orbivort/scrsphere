@@ -4,14 +4,15 @@
   "private": true,
   "license": "Apache-2.0",
   "type": "module",
-  "description": "Backend API for Scrumooth - Agile Scrum Lifecycle Management System",
+  "description": "Backend API for Scrumooth - Self-hosted Scrum tool, faithful to the Scrum Guide",
   "keywords": [
-    "agile",
     "scrum",
-    "project-management",
+    "scrum-tool",
+    "scrum-guide",
+    "self-hosted",
+    "typescript",
     "nodejs",
     "express",
-    "typescript",
     "prisma"
   ],
   "repository": {
@@ -19,6 +20,11 @@
     "url": "https://github.com/orbivort/scrumooth.git",
     "directory": "packages/backend"
   },
+  "bugs": {
+    "url": "https://github.com/orbivort/scrumooth/issues"
+  },
+  "homepage": "https://github.com/orbivort/scrumooth#readme",
+  "author": "Orbivort",
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
@@ -55,8 +61,8 @@
     "loadtest:data:clear": "tsx scripts/generate-load-test-data.ts --clear"
   },
   "dependencies": {
-    "@prisma/adapter-pg": "^7.8.0",
-    "@prisma/client": "^7.8.0",
+    "@prisma/adapter-pg": "^7.9.1",
+    "@prisma/client": "^7.9.1",
     "@scrumooth/shared": "workspace:*",
     "bcrypt": "^6.0.0",
     "compression": "^1.8.1",
@@ -89,19 +95,16 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "catalog:",
     "@types/node-cron": "^3.0.11",
-    "@types/nodemailer": "^8.0.0",
+    "@types/nodemailer": "^8.0.1",
     "@types/sanitize-html": "^2.16.1",
     "@types/supertest": "^7.2.0",
-    "@typescript-eslint/eslint-plugin": "catalog:",
-    "@typescript-eslint/parser": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "cross-env": "catalog:",
     "eslint": "catalog:",
     "eslint-config-prettier": "catalog:",
-    "eslint-plugin-unicorn": "^64.0.0",
     "globals": "catalog:",
     "prettier": "catalog:",
-    "prisma": "^7.8.0",
+    "prisma": "^7.9.1",
     "rimraf": "catalog:",
     "supertest": "^7.2.2",
     "tsx": "catalog:",
@@ -109,6 +112,6 @@
     "vitest": "catalog:"
   },
   "engines": {
-    "node": "^24.14.1"
+    "node": "^24.19.0"
   }
 }

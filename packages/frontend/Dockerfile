@@ -4,16 +4,62 @@
 # Multi-stage build for minimal image size and security
 # Following Docker and OCI best practices
 # =============================================================================
+#
+# NOTE: Dependencies are pulled from the official npm registry by default.
+# If you are in a region with slow access to registry.npmjs.org, you can pass
+# the NPM_REGISTRY build-arg to point at a faster mirror, for example:
+#
+#   docker build -t scrumooth-frontend:latest -f packages/frontend/Dockerfile \
+#     --build-arg NPM_REGISTRY=your_mirror_url .
+#
+# Without the build-arg, the build falls back to the official registry.
+# =============================================================================
 
 # Build arguments for version pinning and reproducibility
-ARG NODE_VERSION=24.14.1
-ARG PNPM_VERSION=11.5.0
-ARG NGINX_VERSION=1.27
+# DEBIAN_VARIANT pins the Node builder OS base to trixie (Debian 13). The
+# floating "node:<ver>-slim" tag resolves to the aging bookworm (Debian 12)
+# package set, which accumulates CVEs. Pinning to trixie matches the backend
+# images and keeps image scanners clean.
+ARG NODE_VERSION=24.19.0
+ARG DEBIAN_VARIANT=trixie
+ARG PNPM_VERSION=11.21.0
+ARG NGINX_VERSION=1.30
 
 # =============================================================================
 # Stage 1: Builder
 # =============================================================================
-FROM node:${NODE_VERSION}-slim AS builder
+FROM node:${NODE_VERSION}-${DEBIAN_VARIANT}-slim AS builder
+
+# npm registry override (falls back to the official registry if not provided)
+# Exported as npm_config_registry so that ALL pnpm operations honor the mirror.
+# A sentinel default (__default__) lets us detect whether the user actually
+# supplied --build-arg NPM_REGISTRY=... on the command line.
+ARG NPM_REGISTRY=__default__
+
+# Resolve the effective registry and print a friendly terminal notice as early
+# as possible. When the user provided --build-arg NPM_REGISTRY=..., display it.
+# Otherwise show a clear reminder and fall back to the official registry. The
+# resolved value is written to /tmp/npm_registry for reuse in later steps.
+RUN set -eu; \
+    printf 'NPM_REGISTRY=%s\n' "${NPM_REGISTRY}"; \
+    if [ "${NPM_REGISTRY}" = "__default__" ]; then \
+      NPM_REGISTRY="https://registry.npmjs.org"; \
+      printf '\n'; \
+      printf '============================================================\n'; \
+      printf '  NOTICE: no --build-arg NPM_REGISTRY was provided.\n'; \
+      printf '  Using the default npm registry: %s\n' "${NPM_REGISTRY}"; \
+      printf '  If downloads are slow, rebuild with a faster mirror:\n'; \
+      printf '    --build-arg NPM_REGISTRY=your_mirror_url\n'; \
+      printf '============================================================\n'; \
+      printf '\n'; \
+    else \
+      printf '\n'; \
+      printf '============================================================\n'; \
+      printf '  npm registry: %s\n' "${NPM_REGISTRY}"; \
+      printf '============================================================\n'; \
+      printf '\n'; \
+    fi; \
+    printf '%s' "${NPM_REGISTRY}" > /tmp/npm_registry
 
 # Build arguments for labels
 ARG VERSION
@@ -21,6 +67,7 @@ ARG BUILD_DATE
 ARG VCS_REF
 ARG NODE_VERSION
 ARG PNPM_VERSION
+ARG DEBIAN_VARIANT
 
 # Build arguments for Vite environment variables (non-sensitive only)
 # These are passed from docker-compose.yml build.args
@@ -51,16 +98,22 @@ ENV CI=true
 
 # Copy package files first for better layer caching
 # Order: least frequently changed to most frequently changed
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.json ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.json tsconfig.base.json tsconfig.build.json ./
 COPY packages/shared/package.json packages/shared/tsconfig.json ./packages/shared/
 COPY packages/frontend/package.json packages/frontend/tsconfig.json ./packages/frontend/
 
 # Extract app version from package.json (avoids hardcoding)
 RUN node -e "console.log(require('./packages/frontend/package.json').version)" > /tmp/app_version
 
+# Write project .npmrc so BOTH pnpm and npm-based postinstall scripts honor
+# the mirror. Also export npm_config_registry so npm operations honor it.
+RUN printf 'registry=%s\n' "$(cat /tmp/npm_registry)" > .npmrc && \
+    export npm_config_registry="$(cat /tmp/npm_registry)"
+
 # Install dependencies with frozen lockfile for reproducible builds
 # Use --shamefully-hoist for flat node_modules structure
-RUN pnpm install --frozen-lockfile --shamefully-hoist
+RUN sh -c 'export npm_config_registry="$(cat /tmp/npm_registry)"; \
+    pnpm install --frozen-lockfile --shamefully-hoist --registry="$(cat /tmp/npm_registry)"'
 
 # Copy source code (most frequently changed)
 COPY packages/shared ./packages/shared
@@ -75,8 +128,14 @@ RUN echo "VITE_BASE_PATH=${VITE_BASE_PATH}" > packages/frontend/.env.production 
     echo "VITE_BACKLOG_MAX_ITEMS_PER_GOAL=${VITE_BACKLOG_MAX_ITEMS_PER_GOAL}" >> packages/frontend/.env.production && \
     echo "VITE_LOG_LEVEL=${VITE_LOG_LEVEL}" >> packages/frontend/.env.production
 
-# Build shared package first (dependency for frontend)
-RUN cd packages/shared && pnpm exec tsc
+# Build shared package first (dependency for frontend).
+# The shared package is a composite (project-reference) build, so it MUST be
+# compiled with `tsc --build` (tsc -b). Plain `tsc` on a composite project does
+# not reliably emit the .d.ts declaration files.
+# `--force` forces a complete rebuild and guarantees all .d.ts files are
+# emitted. Without it, Docker COPY sets identical file mtimes, which confuses
+# TypeScript's incremental build into skipping .d.ts emission.
+RUN cd packages/shared && pnpm exec tsc --build --force
 
 # Run TypeScript strict checks before Vite build
 RUN cd packages/frontend && pnpm exec tsc --noEmit

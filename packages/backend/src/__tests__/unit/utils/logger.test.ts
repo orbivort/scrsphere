@@ -15,13 +15,26 @@ const mockConfigNodeEnv = vi.hoisted(() => {
   };
 });
 
-// Mock winston-daily-rotate-file before importing logger
-vi.mock('winston-daily-rotate-file', () => {
+// Mock winston-daily-rotate-file before importing logger.
+// The mock must extend winston.Transport so it is detected as a modern stream
+// transport; plain class mocks are classified as "legacy" transports and
+// trigger the winston deprecation warning on logger.add().
+// Note: winston exposes the transport base class at runtime as
+// `winston.Transport` (capital T), but its type definitions only declare
+// `winston.transport` (singular). Cast to reconcile the type/runtime mismatch.
+// An async factory is used so winston can be imported inside the factory,
+// which is hoisted above top-level imports by vitest.
+vi.mock('winston-daily-rotate-file', async () => {
+  const winstonModule = (await import('winston')) as unknown as {
+    Transport: new (options?: object) => object;
+  };
+  class DailyRotateFile extends winstonModule.Transport {
+    name = 'dailyRotateFile';
+    on = vi.fn();
+    log = vi.fn();
+  }
   return {
-    default: class DailyRotateFile {
-      on = vi.fn();
-      log = vi.fn();
-    },
+    default: DailyRotateFile,
   };
 });
 

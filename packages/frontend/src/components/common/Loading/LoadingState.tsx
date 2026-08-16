@@ -13,12 +13,7 @@ import { SkeletonText } from './SkeletonText';
  * Loading variant types for different use cases
  */
 export type LoadingVariant =
-  | 'spinner'
-  | 'skeleton-text'
-  | 'skeleton-card'
-  | 'skeleton-list'
-  | 'skeleton-chart'
-  | 'page';
+  'spinner' | 'skeleton-text' | 'skeleton-card' | 'skeleton-list' | 'skeleton-chart' | 'page';
 
 /**
  * Size variants for loading components

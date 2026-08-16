@@ -1,0 +1,38 @@
+name: 'Setup pnpm + Node + install'
+description: 'Install pnpm, Node.js, and dependencies with native caching, then optionally build the shared package'
+author: 'Scrumooth Team'
+
+inputs:
+  node-version:
+    description: 'Node.js version to use'
+    required: true
+  pnpm-version:
+    description: 'pnpm version to use'
+    required: true
+  build-shared:
+    description: 'Build the @scrumooth/shared package after install'
+    required: false
+    default: 'false'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v5
+      with:
+        version: ${{ inputs.pnpm-version }}
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v5
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: pnpm
+
+    - name: Install dependencies
+      shell: bash
+      run: pnpm install --frozen-lockfile
+
+    - name: Build shared package
+      if: inputs.build-shared == 'true'
+      shell: bash
+      run: pnpm --filter=@scrumooth/shared run build

@@ -121,7 +121,9 @@ The script will:
 5. Deploy and verify all services
 6. Display access URL and next steps
 
-> **Note**: The script is designed for Linux/macOS. Windows users should run it in WSL or Git Bash.
+> **Note**: The script is designed for Linux/macOS. Windows users should run it in WSL or Git Bash. See [scripts/deployment/README.md](../../scripts/deployment/README.md) for the full reference (including its handling of build-time Vite variables).
+
+> **Important**: Because the script pulls pre-built images and creates its own `.env.production` and `docker-compose.prod.yml`, it is the recommended path for a **checkout-free, image-only** deployment. It also configures the automated backup services, so you do not need the repository source tree at runtime.
 
 ### Option B: Manual Deployment
 
@@ -279,13 +281,15 @@ curl http://localhost:5010/health
 
 ### Backend Image
 
-| Attribute    | Value                            |
-| ------------ | -------------------------------- |
-| Base Image   | `node:24-alpine`                 |
-| Architecture | `linux/amd64`, `linux/arm64`     |
-| Exposed Port | `5010`                           |
-| User         | `scrumooth` (non-root, UID 1001) |
-| Health Check | HTTP GET `/health` endpoint      |
+| Attribute    | Value                             |
+| ------------ | --------------------------------- |
+| Base Image   | `node:24.14.1-slim` (Debian slim) |
+| Architecture | `linux/amd64` (see note below)    |
+| Exposed Port | `5010`                            |
+| User         | `node` (non-root)                 |
+| Health Check | HTTP GET `/health` endpoint       |
+
+> **Note on architecture**: The published images are currently built for the runner's default platform (`linux/amd64`) only. `linux/arm64` images are not published yet. If you need ARM64, either build the images from source on an ARM host, or track the release workflow to add a `platforms` matrix.
 
 **Image Contents**:
 
@@ -304,13 +308,15 @@ curl http://localhost:5010/health
 
 ### Frontend Image
 
-| Attribute    | Value                        |
-| ------------ | ---------------------------- |
-| Base Image   | `nginx:alpine`               |
-| Architecture | `linux/amd64`, `linux/arm64` |
-| Exposed Port | `80`                         |
-| User         | `nginx` (non-root)           |
-| Health Check | wget spider check on `/`     |
+| Attribute    | Value                          |
+| ------------ | ------------------------------ |
+| Base Image   | `nginx:1.30-alpine`            |
+| Architecture | `linux/amd64` (see note below) |
+| Exposed Port | `80`                           |
+| User         | `nginx` (non-root)             |
+| Health Check | wget spider check on `/`       |
+
+> **Note on architecture**: As with the backend image, the published frontend image is currently built for `linux/amd64` only. `linux/arm64` is not published yet.
 
 **Image Contents**:
 
@@ -324,6 +330,33 @@ curl http://localhost:5010/health
 - Gzip compression
 - Static asset caching (1 year expiry)
 - Security headers
+
+### Build-Time vs. Runtime Configuration
+
+Understanding which settings you can change after pulling an image is essential:
+
+**Runtime configuration (fully overridable via env / `.env` / Kubernetes secrets):**
+
+- `DATABASE_URL`, `JWT_SECRET`, `NODE_ENV`, `CORS_ORIGIN`, `FRONTEND_URL`
+- All email settings (`EMAIL_*`, `SMTP_*`)
+- `PORT`, `LOG_LEVEL`, session and rate-limit variables
+
+These are read by the backend at startup (and validated by the entrypoint), so you can point a pulled image at **your own database** without rebuilding.
+
+**Build-time configuration (baked into the published image, NOT overridable at runtime):**
+
+The frontend's Vite environment variables are compiled into the JavaScript bundle during the Docker build and are fixed in the images published to GHCR:
+
+| Variable                          | Value baked into published images |
+| --------------------------------- | --------------------------------- |
+| `VITE_BASE_PATH`                  | `/scrumooth/`                     |
+| `VITE_API_URL`                    | `/api/v1`                         |
+| `VITE_USE_MOCK_API`               | `false`                           |
+| `VITE_BACKLOG_ITEM_LIMIT`         | `100`                             |
+| `VITE_BACKLOG_MAX_ITEMS_PER_GOAL` | `200`                             |
+| `VITE_LOG_LEVEL`                  | `info`                            |
+
+These defaults assume the standard nginx `/api` → backend proxy and a `/scrumooth/` base path. To use different values, you must **build the frontend image locally** from source (e.g. via the repo's `docker-compose.yml`) rather than pulling a pre-built image. See the [deployment script notes](../../scripts/deployment/README.md) for a worked example.
 
 ---
 
@@ -928,13 +961,15 @@ pgbouncer:
 
 ### Automated Backup Services
 
+> **Note on backup images**: The release workflow also builds and publishes a pre-built backup service image (`ghcr.io/{owner}/scrumooth/backup`). However, the backup scripts below mount `./scripts/maintenance/database` from a **repository checkout**. If you deploy purely from pulled images (no source checkout), you have two options: (a) rely on the bundled scripts that ship inside the pre-built backup image, or (b) provide the scripts via a checkout. For a checkout-free deployment, prefer the `deploy.sh` script, which configures the backup services automatically.
+
 #### SQL Backup Service (Daily)
 
 Creates SQL dumps of the database daily at 2:00 AM.
 
 ```yaml
 backup:
-  image: postgres:18-alpine
+  image: ghcr.io/{owner}/scrumooth/backup:1.0.0
   container_name: scrumooth-backup
   volumes:
     - ./backups:/backups
@@ -944,17 +979,13 @@ backup:
     - POSTGRES_PASSWORD=${DB_PASSWORD}
     - DB_NAME=${DB_NAME:-scrumooth}
     - PGHOST=postgres
-  command: >
-    sh -c "
-      apk add --no-cache bash &&
-      echo '0 2 * * * cd /scripts && ./db-backup.sh /backups >> /backups/backup.log 2>&1' | crontab - &&
-      crond -f -l 2
-    "
   depends_on:
     postgres:
       condition: service_healthy
   restart: unless-stopped
 ```
+
+> **Note**: The example above mounts the backup scripts from a source checkout. If you only pull images (no checkout), the scripts are already bundled inside the `scrumooth/backup` image and you can omit the `./scripts/maintenance/database` volume mount.
 
 #### Volume Backup Service (Weekly)
 
@@ -1088,7 +1119,7 @@ Expected response:
     "min": 3
   },
   "version": "1.0.0",
-  "nodeVersion": "v24.14.1"
+  "nodeVersion": "v24.19.0"
 }
 ```
 

@@ -120,14 +120,7 @@ export interface ProductGoal {
   title: string;
   description?: string;
   status:
-    | 'new'
-    | 'NEW'
-    | 'active'
-    | 'ACTIVE'
-    | 'completed'
-    | 'COMPLETED'
-    | 'abandoned'
-    | 'ABANDONED';
+    'new' | 'NEW' | 'active' | 'ACTIVE' | 'completed' | 'COMPLETED' | 'abandoned' | 'ABANDONED';
   targetDate?: string;
   successMetrics?: string;
   strategicAlignment?: string;

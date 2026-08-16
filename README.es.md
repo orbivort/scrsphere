@@ -1,28 +1,43 @@
 # Scrumooth
 
-**Sistema ágil de gestión del ciclo de vida de Scrum**
+**Herramienta de Scrum autohospedada, fiel a la Scrum Guide**
 
 > **Idiomas:** [English](README.md) | [Deutsch](README.de.md) | [Español](README.es.md) | [Français](README.fr.md) | [Italiano](README.it.md)
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-
 [![CI](https://github.com/orbivort/scrumooth/actions/workflows/ci.yml/badge.svg)](https://github.com/orbivort/scrumooth/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/github/orbivort/scrumooth/graph/badge.svg?token=Z2T4R3G8F7)](https://codecov.io/github/orbivort/scrumooth)
-[![Known Vulnerabilities](https://snyk.io/test/github/orbivort/scrumooth/badge.svg)](https://snyk.io/test/github/orbivort/scrumooth)
-
+[![codecov](https://codecov.io/github/orbivort/scrumooth/graph/badge.svg)](https://codecov.io/github/orbivort/scrumooth)
 [![GitHub release](https://img.shields.io/github/v/release/orbivort/scrumooth?include_prereleases)](https://github.com/orbivort/scrumooth/releases)
 [![GitHub issues](https://img.shields.io/github/issues/orbivort/scrumooth)](https://github.com/orbivort/scrumooth/issues)
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue.svg)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-24+-green.svg)](https://nodejs.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-18+-336791.svg)](https://www.postgresql.org/)
 
-[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-GitHub_Pages-success?style=for-the-badge)](https://orbivort.github.io/scrumooth/)
+Scrumooth es una herramienta de Scrum autohospedada que implementa fielmente la Scrum Guide. Ligera por diseño, guía a los equipos a lo largo de todo el ciclo de vida de Scrum — desde el Product Goal y el backlog hasta la Sprint Review y la retrospectiva — sin la complejidad de las plataformas SaaS pesadas. Despliéguela en su propia infraestructura, mantenga sus datos bajo su control y no pague nunca por usuario.
 
-Scrumooth es una aplicación web autohospedada para gestionar procesos ágiles de Scrum, construida para seguir fielmente la Guía de Scrum con tecnologías modernas y rigurosos estándares de calidad. Proporciona una solución completa que guía a los equipos a través de todo el ciclo de vida de Scrum — desde los Product Goals y backlogs hasta las Sprint Reviews y Sprint Retrospectives — todo desplegable en su propia infraestructura sin coste por usuario.
+## Tabla de contenidos
+
+- [Demo en vivo](#live-demo)
+- [Características](#features)
+- [Stack tecnológico](#tech-stack)
+- [Inicio rápido](#quick-start)
+- [Requisitos previos](#prerequisites)
+- [Instalación](#installation)
+- [Pruebas](#testing)
+- [Calidad del código](#code-quality)
+- [Gestión de la base de datos](#database-management)
+- [Soporte de Docker](#docker-support)
+- [Despliegue](#deployment)
+- [Documentación](#documentation)
+- [Solución de problemas](#troubleshooting)
+- [Hoja de ruta](#roadmap)
+- [Contribuciones](#contributing)
+- [Licencia](#license)
 
 ## 🚀 Demo en vivo
 
-Pruebe Scrumooth al instante en su navegador — sin necesidad de instalación. La demo se ejecuta con datos simulados (no se necesita backend), por lo que puede explorar el ciclo de vida completo de Scrum de inmediato.
+Pruebe Scrumooth al instante en su navegador, sin necesidad de instalación. La demo se ejecuta con datos simulados (no requiere backend), de modo que puede explorar el ciclo de vida completo de Scrum de inmediato.
 
 <p align="center">
   <a href="https://orbivort.github.io/scrumooth/" target="_blank" rel="noopener noreferrer">
@@ -30,29 +45,29 @@ Pruebe Scrumooth al instante en su navegador — sin necesidad de instalación. 
   </a>
 </p>
 
-> **Nota:** La demo utiliza datos simulados en memoria — cualquier cambio que realice permanece únicamente en su sesión del navegador y se pierde al actualizar. Para datos persistentes y colaboración multiusuario, siga la guía de [Instalación](#-instalación) para autohospedar su propia instancia.
+> **Nota:** La demo utiliza datos simulados en memoria — cualquier cambio que realice es local a su sesión del navegador y se restablece al recargar la página. Para datos persistentes y colaboración multiusuario, siga la guía de [Instalación](#installation) para autohospedar su propia instancia.
 
 ## ✨ Características
 
-### Funcionalidades principales de Scrum
+### Características principales de Scrum
 
-- **Product Goals** — Alineación estratégica y seguimiento de objetivos
-- **Product Backlog** — Priorización MoSCoW (Must, Should, Could, Won't)
-- **Sprint Planning** — Duraciones de Sprint configurables y planificación de capacidad
-- **Sprint Execution** — Tablero Kanban interactivo con arrastrar y soltar
-- **Daily Scrum** — Seguimiento del standup diario y actualizaciones
-- **Impediments** — Identificación de bloqueadores y seguimiento de resolución
-- **Incremental Delivery** — Gestión de Increments de producto
-- **Sprint Reviews** — Gestión y documentación de reuniones de revisión
-- **Sprint Retrospectives** — Reflexión del equipo y mejora continua
+- **Product Goal** - Alineación estratégica y seguimiento de objetivos
+- **Product Backlog** - Priorización MoSCoW (Must, Should, Could, Won't)
+- **Sprint Planning** - Duraciones de sprint configurables y planificación de capacidad
+- **Ejecución del Sprint** - Tablero Kanban interactivo con arrastrar y soltar
+- **Daily Scrum** - Seguimiento y actualizaciones de la reunión diaria
+- **Impediment** - Identificación de bloqueos y seguimiento de su resolución
+- **Increment** - Gestión del incremento de producto
+- **Sprint Review** - Gestión y documentación de la reunión de revisión
+- **Sprint Retrospective** - Reflexión del equipo y mejora continua
 
-### Funcionalidades avanzadas
+### Características avanzadas
 
-- **Dashboard e informes** — Métricas y visualizaciones en tiempo real
-- **Motor de flujo de trabajo** — Permisos basados en roles y transiciones de estado
-- **Definition of Done/Ready** — Listas de verificación personalizables
-- **Comunicación del equipo** — Notificaciones y mensajería integradas
-- **Registro de auditoría** — Seguimiento exhaustivo de acciones
+- **Panel e informes** - Métricas y visualizaciones en tiempo real
+- **Motor de flujo de trabajo** - Permisos basados en roles y transiciones de estado
+- **Definition of Done/Ready** - Listas de verificación personalizables
+- **Comunicación del equipo** - Notificaciones y mensajería integradas
+- **Registro de auditoría** - Seguimiento exhaustivo de acciones
 
 ## 🛠 Stack tecnológico
 
@@ -64,9 +79,9 @@ Pruebe Scrumooth al instante en su navegador — sin necesidad de instalación. 
 - **Base de datos:** PostgreSQL 18+ con Prisma ORM 7
 - **Autenticación:** JWT con bcrypt
 - **Validación:** Zod
-- **Jobs programados:** node-cron
+- **Trabajos programados:** node-cron
 - **Correo electrónico:** Nodemailer (proveedores SMTP, SendGrid, AWS SES)
-- **Registro:** Winston con archivos de registro rotativos
+- **Registro:** Winston con transports de archivos rotativos
 
 ### Frontend
 
@@ -82,15 +97,15 @@ Pruebe Scrumooth al instante en su navegador — sin necesidad de instalación. 
 
 - Tipos e interfaces de TypeScript
 - Constantes y enumeraciones
-- Funciones utilitarias
+- Funciones de utilidad
 
 ### Pruebas y calidad
 
-- **Unitarias/Integración:** Vitest
+- **Unitarias / Integración:** Vitest
 - **End-to-End:** Playwright (frontend) + Vitest (backend)
 - **Pruebas de carga:** k6 (10 escenarios predefinidos)
 - **Linting:** ESLint + Stylelint
-- **Formateo:** Prettier
+- **Formato:** Prettier
 - **Git Hooks:** Husky + lint-staged
 
 ## 📁 Estructura del proyecto
@@ -104,9 +119,9 @@ scrumooth/
 │   │   │   ├── services/     # Capa de lógica de negocio
 │   │   │   ├── middleware/   # Middleware de Express
 │   │   │   ├── routes/       # Definiciones de rutas API
-│   │   │   ├── utils/        # Funciones utilitarias
-│   │   │   └── __tests__/    # Pruebas unitarias, integración y e2e
-│   │   ├── prisma/           # Esquema y migraciones de base de datos
+│   │   │   ├── utils/        # Funciones de utilidad
+│   │   │   └── __tests__/    # Pruebas unitarias, de integración y e2e
+│   │   ├── prisma/           # Esquema de base de datos y migraciones
 │   │   ├── Dockerfile        # Imagen de producción
 │   │   └── Dockerfile.dev    # Imagen de desarrollo
 │   ├── frontend/             # Frontend React + Vite
@@ -122,7 +137,7 @@ scrumooth/
 │   │   └── Dockerfile.dev    # Imagen de desarrollo
 │   └── shared/               # Tipos, constantes y utilidades compartidas
 ├── docs/
-│   ├── api/                  # Referencia API REST
+│   ├── api/                  # Referencia de la API REST
 │   ├── architecture/         # Diseño del sistema, modelo de datos, seguridad
 │   ├── deployment/           # Guías de despliegue
 │   └── user-guide/           # Documentación y guías de usuario
@@ -134,15 +149,32 @@ scrumooth/
 ├── docker-compose.dev.yml    # Docker Compose de desarrollo
 ├── CHANGELOG.md              # Historial de versiones
 ├── SECURITY.md               # Política de seguridad y reportes
+├── CONTRIBUTING.md           # Directrices de contribución
+├── CODE_OF_CONDUCT.md        # Código de conducta de la comunidad
 └── THIRD-PARTY-NOTICES.md    # Atribuciones de licencias de terceros
 ```
 
+## ⚡ Inicio rápido
+
+La forma más rápida de ejecutar una instancia local es con Docker Compose:
+
+```bash
+git clone https://github.com/orbivort/scrumooth.git
+cd scrumooth
+cp packages/backend/.env.production.example packages/backend/.env.production
+docker compose up -d
+```
+
+Esto inicia el proxy inverso Caddy, el backend, el frontend y PostgreSQL. Una vez en ejecución, abra <http://localhost> (HTTPS está habilitado por defecto en el puerto 443). Para una configuración manual completa (sin Docker), consulte [Instalación](#installation).
+
+> **Nota:** El stack de Compose de producción requiere `packages/backend/.env.production`. Si prefiere un entorno de desarrollo completamente preconfigurado con recarga en caliente, utilice `docker compose -f docker-compose.dev.yml up` en su lugar.
+
 ## 📋 Requisitos previos
 
-- **Node.js** v24.14.1 o superior
-- **pnpm** v11.5.0 o superior
+- **Node.js** v24.19.0 o superior
+- **pnpm** v11.21.0 o superior
 - **PostgreSQL** v18 o superior
-- **Git**
+- **Docker** y **Docker Compose** (opcional, para el inicio rápido)
 
 ## 🚀 Instalación
 
@@ -155,7 +187,7 @@ cd scrumooth
 
 ### 2. Instalar dependencias
 
-Este proyecto utiliza pnpm como gestor de paquetes. El proyecto exige el uso de pnpm mediante scripts de preinstalación.
+Este proyecto utiliza pnpm como gestor de paquetes. El proyecto exige pnpm mediante scripts de preinstalación.
 
 ```bash
 pnpm install
@@ -163,7 +195,7 @@ pnpm install
 
 ### 3. Configuración del entorno
 
-Copie los archivos de entorno de ejemplo y configure los parámetros:
+Copie los archivos de entorno de ejemplo y configure sus ajustes:
 
 ```bash
 # Configuración del backend
@@ -200,20 +232,20 @@ VITE_USE_MOCK_API=false
 
 ### 4. Configuración de la base de datos
 
-Genere el cliente de Prisma y luego cree el esquema de la base de datos. Para desarrollo local puede usar cualquiera de los dos enfoques:
+Genere el cliente de Prisma y luego cree el esquema de su base de datos. Para el desarrollo local puede utilizar cualquiera de los dos enfoques:
 
 ```bash
-# Generar cliente Prisma (siempre requerido)
+# Generar el cliente Prisma (siempre requerido)
 pnpm run db:generate
 
-# Opción A: Push directo del esquema (iteración rápida, sin archivos de migración)
+# Opción A: Hacer push del esquema directamente (iteración rápida, sin archivos de migración)
 pnpm run db:push
 
 # Opción B: Crear y aplicar una migración (recomendado para cambios rastreados)
 pnpm run db:migrate
 ```
 
-Para despliegues en producción, use `pnpm run db:migrate:prod` para aplicar migraciones existentes sin prompts interactivos.
+Para despliegues en producción, utilice `pnpm run db:migrate:prod` para aplicar las migraciones existentes sin solicitudes interactivas.
 
 ### 5. Iniciar el servidor de desarrollo
 
@@ -221,7 +253,7 @@ Para despliegues en producción, use `pnpm run db:migrate:prod` para aplicar mig
 pnpm run dev
 ```
 
-Esto iniciará los servidores backend y frontend de forma concurrente. Para ejecutarlos de forma independiente:
+Esto iniciará los servidores de backend y frontend de forma simultánea. Para ejecutarlos de forma independiente:
 
 ```bash
 pnpm run dev:backend    # Solo backend (http://localhost:5001)
@@ -230,273 +262,188 @@ pnpm run dev:frontend   # Solo frontend (http://localhost:5173)
 
 ## 🎯 Uso
 
-### Desarrollo
+Los comandos más comunes para el desarrollo diario:
 
-```bash
-# Iniciar frontend y backend juntos
-pnpm run dev
-
-# Iniciar en modo test (usa NODE_ENV=test)
-pnpm run dev:test
-
-# Iniciar solo un lado
-pnpm run dev:backend
-pnpm run dev:frontend
-```
-
-### Build
-
-```bash
-# Construir todos los paquetes
-pnpm run build
-
-# Limpiar artefactos de build
-pnpm run clean
-
-# Limpieza completa incluyendo node_modules
-pnpm run clean:all
-```
+| Tarea                        | Comando                 |
+| ---------------------------- | ----------------------- |
+| Iniciar backend + frontend   | `pnpm run dev`          |
+| Iniciar solo backend         | `pnpm run dev:backend`  |
+| Iniciar solo frontend        | `pnpm run dev:frontend` |
+| Construir todos los paquetes | `pnpm run build`        |
 
 ## 🧪 Pruebas
 
-### Ejecutar pruebas
-
 ```bash
-# Ejecutar todas las pruebas en todos los paquetes
-pnpm run test
-
-# Ejecutar con informe de cobertura
-pnpm run test:coverage
-
-# Ejecutar solo pruebas unitarias
-pnpm run test:unit
-
-# Ejecutar pruebas de integración (solo backend)
-pnpm run test:integration
-
-# Ejecutar pruebas end-to-end (Vitest backend + Playwright frontend)
-pnpm run test:e2e
-
-# Ejecutar E2E para un solo lado
-pnpm run test:e2e:backend
-pnpm run test:e2e:frontend
-
-# Modo watch
-pnpm run test:watch
+pnpm run test              # Todas las pruebas
+pnpm run test:coverage     # Con informe de cobertura
+pnpm run test:unit         # Solo pruebas unitarias
+pnpm run test:integration  # Pruebas de integración del backend
+pnpm run test:e2e          # End-to-end (backend Vitest + frontend Playwright)
+pnpm run test:watch        # Modo watch
 ```
 
-Umbrales de cobertura obligatorios: **80% líneas, funciones, sentencias** y **70% ramas**.
+Umbrales de cobertura aplicados: **80 % líneas, funciones, sentencias y ramas**.
 
 ### Pruebas de carga (k6)
 
-Diez escenarios de pruebas de carga predefinidos se encuentran en [`k6/scripts/scenarios/`](k6/scripts/scenarios). Antes de ejecutar, copie [`k6/.env.k6.example`](k6/.env.k6.example) a `k6/.env.k6` y configure su destino.
+Los escenarios de pruebas de carga predefinidos se encuentran en [`k6/scripts/scenarios/`](k6/scripts/scenarios). Copie [`k6/.env.k6.example`](k6/.env.k6.example) a `k6/.env.k6`, configure su destino y, a continuación, ejecute un escenario como:
 
 ```bash
-# Carga cotidiana realista
-pnpm run loadtest:normal
-
-# Pico de Sprint Planning (concurrencia en el peor caso)
-pnpm run loadtest:peak
-
-# Llevar el sistema hasta el punto de ruptura
-pnpm run loadtest:stress
-
-# Simulación de jornada laboral sostenida de 8 horas
-pnpm run loadtest:endurance
-
-# Otros escenarios
-pnpm run loadtest:multi-team
-pnpm run loadtest:daily-scrum
-pnpm run loadtest:auth
-pnpm run loadtest:db
-
-# Generar datos seed para pruebas de carga
-pnpm run loadtest:generate-data
+pnpm run loadtest:normal    # Carga diaria realista
+pnpm run loadtest:peak      # Pico de Sprint Planning (concurrencia en el peor de los casos)
+pnpm run loadtest:stress    # Llevar el sistema hasta que se rompa
 ```
 
-> **Requisito previo:** Instale [k6](https://k6.io/docs/get-started/installation/) y asegúrese de que su backend objetivo esté en ejecución.
+> **Requisito previo:** Instale [k6](https://k6.io/docs/get-started/installation/) y asegúrese de que su backend de destino esté en ejecución. Escenarios adicionales (endurance, multi-team, daily-scrum, auth, db) están disponibles mediante los scripts `loadtest:*` en [`package.json`](package.json).
 
 ## 🔍 Calidad del código
 
-### Linting
+| Tarea                  | Comando              |
+| ---------------------- | -------------------- |
+| Lint (ESLint)          | `pnpm run lint`      |
+| Lint y autocorrección  | `pnpm run lint:fix`  |
+| Lint CSS (Stylelint)   | `pnpm run lint:css`  |
+| Formato (Prettier)     | `pnpm run format`    |
+| Verificación de tipos  | `pnpm run typecheck` |
+| Auditoría de seguridad | `pnpm run audit`     |
 
-```bash
-# Ejecutar ESLint en archivos TypeScript/JavaScript
-pnpm run lint
-
-# Autocorregir problemas de ESLint
-pnpm run lint:fix
-
-# Ejecutar Stylelint en archivos CSS
-pnpm run lint:css
-
-# Autocorregir problemas de Stylelint
-pnpm run lint:css:fix
-```
-
-### Formateo
-
-```bash
-# Formatear todos los archivos fuente con Prettier
-pnpm run format
-
-# Verificar el formato sin aplicar cambios
-pnpm run format:check
-
-# Formateo específico de CSS
-pnpm run format:css
-pnpm run format:css:check
-```
-
-### Verificación de tipos
-
-```bash
-# Ejecutar verificación de tipos TypeScript en todos los paquetes
-pnpm run typecheck
-```
-
-### Auditoría de seguridad
-
-```bash
-# Comprobar dependencias instaladas en busca de vulnerabilidades conocidas
-pnpm run audit
-
-# Listar dependencias desactualizadas
-pnpm run outdated
-```
+Consulte [`CONTRIBUTING.md`](CONTRIBUTING.md) para conocer el flujo de trabajo de desarrollo completo y los controles de calidad.
 
 ## 🗄 Gestión de la base de datos
 
 ```bash
-# Generar cliente Prisma (tras cambios de esquema)
-pnpm run db:generate
-
-# Push del esquema a la base de datos (desarrollo, sin archivos de migración)
-pnpm run db:push
-
-# Crear y aplicar una nueva migración (desarrollo)
-pnpm run db:migrate
-
-# Aplicar migraciones en producción (no interactivo)
-pnpm run db:migrate:prod
-
-# Aplicar migraciones a la base de datos de test
-pnpm run db:migrate:test
-
-# Abrir Prisma Studio (GUI de base de datos)
-pnpm run db:studio
-
-# Restablecer la base de datos (⚠️ destruye todos los datos)
-pnpm run db:reset
-
-# Validar el esquema de Prisma
-pnpm run db:validate
+pnpm run db:generate     # Generar el cliente Prisma (tras cambios de esquema)
+pnpm run db:migrate      # Crear y aplicar una migración (desarrollo)
+pnpm run db:migrate:prod # Aplicar migraciones en producción (no interactivo)
+pnpm run db:studio       # Abrir Prisma Studio (GUI de base de datos)
 ```
 
-## 🐳 Soporte Docker
+Comandos de base de datos adicionales (`db:push`, `db:reset`, `db:validate`, `db:migrate:test`) están documentados en [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
-El proyecto incluye configuración Docker tanto para despliegue de desarrollo como de producción.
+## 🐳 Soporte de Docker
+
+El proyecto incluye configuración de Docker tanto para desarrollo como para despliegue en producción.
 
 ### Usar Docker Compose
 
 ```bash
-# Entorno de desarrollo (con hot reload)
+# Entorno de desarrollo (con recarga en caliente)
 docker compose -f docker-compose.dev.yml up
 
 # Entorno de producción (detached)
 docker compose up -d
 
-# Detener y eliminar
+# Desmontar
 docker compose down
 ```
 
 ### Construir imágenes Docker manualmente
 
-```bash
-# Imágenes de producción
-docker build -t scrumooth-backend ./packages/backend
-docker build -t scrumooth-frontend ./packages/frontend
+> **Nota:** Todos los Dockerfiles referencian rutas relativas a la raíz del repositorio (archivos del workspace del monorepo como `package.json`, `pnpm-lock.yaml` y `packages/shared/`). Debe construirlos desde la **raíz del repositorio** y usar `-f` para apuntar al Dockerfile — pasar el directorio del paquete como contexto de build fallará.
 
-# Imágenes de desarrollo (con dependencias dev y modo watch)
-docker build -f ./packages/backend/Dockerfile.dev -t scrumooth-backend:dev ./packages/backend
-docker build -f ./packages/frontend/Dockerfile.dev -t scrumooth-frontend:dev ./packages/frontend
+```bash
+# Imágenes de desarrollo (con dependencias de desarrollo y modo watch)
+docker build -t scrumooth-backend:dev -f packages/backend/Dockerfile.dev .
+docker build -t scrumooth-frontend:dev -f packages/frontend/Dockerfile.dev .
+
+# Imágenes de producción (construir desde la raíz del repositorio)
+docker build -t scrumooth-backend -f packages/backend/Dockerfile .
+docker build -t scrumooth-frontend -f packages/frontend/Dockerfile .
 ```
+
+<details>
+<summary>Usar un mirror de registry/apt</summary>
+
+Si se encuentra detrás de una red que requiere un registry de npm o un mirror de apt, puede configurarlos como argumentos de build o variables de entorno:
+
+```bash
+# Docker Compose
+$env:NPM_REGISTRY="https://your_mirror_url"
+$env:APT_MIRROR="your_mirror_url"
+
+# Build manual
+docker build --build-arg NPM_REGISTRY=https://your_mirror_url --build-arg APT_MIRROR=your_mirror_url .
+```
+
+</details>
 
 ## ☁️ Despliegue
 
 ### Producción autohospedada
 
-Consulte [`docs/deployment/DEPLOYMENT.md`](docs/deployment/DEPLOYMENT.md) para la guía completa de despliegue en producción, que cubre configuración de entorno, migración de base de datos, configuración de proxy inverso y buenas prácticas operativas.
+Consulte [`docs/deployment/DEPLOYMENT.md`](docs/deployment/DEPLOYMENT.md) para obtener una guía completa de despliegue en producción, que cubre la configuración del entorno, la migración de la base de datos, la configuración del proxy inverso y las buenas prácticas operativas.
 
-### Despliegue de demo en GitHub Pages
+### Despliegue de la demo en GitHub Pages
 
-La rama `main` se despliega automáticamente a GitHub Pages mediante el workflow [`Deploy to GitHub Pages`](.github/workflows/deploy-github-pages.yml). El build de Pages:
-
-- Usa una **Mock API** en memoria (no requiere backend ni base de datos)
-
-Demo en vivo: <https://orbivort.github.io/scrumooth/>
+La rama `main` se despliega automáticamente en GitHub Pages mediante el workflow [`Deploy to GitHub Pages`](.github/workflows/deploy-github-pages.yml), utilizando una **Mock API** en memoria (no requiere backend ni base de datos). Consulte la [Demo en vivo](#live-demo) más arriba para probarla.
 
 ## 📚 Documentación
 
-| Área                         | Ubicación                                                                                                                         |
-| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| **Guía de usuario**          | [`docs/user-guide/`](docs/user-guide) — primeros pasos, características principales, flujos de trabajo Scrum                      |
-| **Referencia API REST**      | [`docs/api/`](docs/api) — 19 grupos de endpoints (autenticación, sprints, backlog, informes, etc.)                                |
-| **Arquitectura del sistema** | [`docs/architecture/`](docs/architecture) — diseño del sistema, modelo de datos, diseño de componentes, arquitectura de seguridad |
-| **Guía de despliegue**       | [`docs/deployment/DEPLOYMENT.md`](docs/deployment/DEPLOYMENT.md)                                                                  |
-| **Política de seguridad**    | [`SECURITY.md`](SECURITY.md) — procedimiento de reporte de vulnerabilidades                                                       |
-| **Historial de releases**    | [`CHANGELOG.md`](CHANGELOG.md)                                                                                                    |
-| **Avisos de terceros**       | [`THIRD-PARTY-NOTICES.md`](THIRD-PARTY-NOTICES.md)                                                                                |
+| Área                          | Ubicación                                                                                                                         |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| **Guía de usuario**           | [`docs/user-guide/`](docs/user-guide) — primeros pasos, características principales, flujos de trabajo Scrum                      |
+| **Referencia de la API REST** | [`docs/api/`](docs/api) — grupos de endpoints que cubren autenticación, sprints, backlog, informes y más                          |
+| **Arquitectura del sistema**  | [`docs/architecture/`](docs/architecture) — diseño del sistema, modelo de datos, diseño de componentes, arquitectura de seguridad |
+| **Guía de despliegue**        | [`docs/deployment/DEPLOYMENT.md`](docs/deployment/DEPLOYMENT.md)                                                                  |
+| **Política de seguridad**     | [`SECURITY.md`](SECURITY.md) — procedimiento de reporte de vulnerabilidades                                                       |
+| **Contribuciones**            | [`CONTRIBUTING.md`](CONTRIBUTING.md) — directrices y flujo de trabajo de desarrollo                                               |
+| **Código de conducta**        | [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) — normas de la comunidad                                                               |
+| **Historial de releases**     | [`CHANGELOG.md`](CHANGELOG.md)                                                                                                    |
+| **Avisos de terceros**        | [`THIRD-PARTY-NOTICES.md`](THIRD-PARTY-NOTICES.md)                                                                                |
 
 ## 🛟 Solución de problemas
 
 ### `Cannot find module @scrumooth/shared`
 
-El paquete compartido debe compilarse antes de que el backend o frontend pueda resolver las importaciones.
+El paquete compartido debe compilarse antes de que el backend o frontend puedan resolver las importaciones.
 
 ```bash
 pnpm --filter=@scrumooth/shared run build
 ```
 
-Esto se gestiona automáticamente mediante `pnpm install` y los scripts de desarrollo, pero es necesario tras un `pnpm run clean` manual.
+Esto normalmente se gestiona automáticamente mediante `pnpm install` y los scripts de desarrollo, pero es necesario tras un `pnpm run clean` manual.
 
 ### `pnpm install` falla con "Use pnpm instead"
 
-El repositorio exige el uso de pnpm mediante un script `preinstall`. Instale pnpm globalmente:
+El repositorio exige pnpm mediante un script `preinstall`. Instale pnpm globalmente:
 
 ```bash
-npm install -g pnpm@11.5.0
+npm install -g pnpm@11.21.0
 ```
 
 ### Errores de conexión a la base de datos al iniciar
 
-Verifique que su `DATABASE_URL` en `packages/backend/.env` apunte a una instancia PostgreSQL 18+ en ejecución y que la base de datos exista. Ejecute `pnpm run db:validate` para validar el esquema de Prisma contra la conexión.
+Verifique que su `DATABASE_URL` en `packages/backend/.env` apunte a una instancia de PostgreSQL 18+ en ejecución y que la base de datos exista. Ejecute `pnpm run db:validate` para validar el esquema de Prisma contra la conexión.
 
 ### Puerto ya en uso (5001 o 5173)
 
-Los puertos predeterminados se pueden cambiar mediante variables de entorno:
+Los puertos predeterminados se pueden sobrescribir mediante variables de entorno:
 
 - Backend: `PORT` en `packages/backend/.env`
 - Frontend: `VITE_DEV_PORT` en `packages/frontend/.env`
 
-### El frontend no puede conectarse al backend
+### El frontend no puede alcanzar el backend
 
 Compruebe que `VITE_API_URL` en `packages/frontend/.env` coincida con la dirección real del backend y que `CORS_ORIGIN` en `packages/backend/.env` permita el origen del frontend.
 
-### ¿Quiere desarrollar sin backend?
+### ¿Quiere desarrollar sin un backend?
 
 Establezca `VITE_USE_MOCK_API=true` en `packages/frontend/.env` para usar la misma Mock API que impulsa la demo en vivo.
 
+## 🗺 Hoja de ruta
+
+Scrumooth está en desarrollo activo. Las próximas prioridades incluyen:
+
+- [ ] Paneles de informes y analíticas mejorados
+- [ ] Integraciones y webhooks adicionales
+- [ ] Refuerzo del rendimiento y la escalabilidad
+
+El estado del proyecto y los últimos cambios se registran en el [CHANGELOG](CHANGELOG.md). Los comentarios y las solicitudes de funciones son bienvenidos a través de [GitHub Issues](https://github.com/orbivort/scrumooth/issues).
+
+## 🤝 Contribuciones
+
+¡Las contribuciones son bienvenidas! Lea [`CONTRIBUTING.md`](CONTRIBUTING.md) para conocer el flujo de trabajo de desarrollo, los estándares de código y el proceso de pull request, y revise el [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) antes de participar.
+
 ## 📝 Licencia
 
-Este proyecto está licenciado bajo la Licencia Apache 2.0 — consulte el archivo [LICENSE](LICENSE) para más detalles.
-
-```
-Copyright 2026 Orbivort
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-```
+Este proyecto está licenciado bajo la [Apache License 2.0](LICENSE).

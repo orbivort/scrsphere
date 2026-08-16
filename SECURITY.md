@@ -264,16 +264,56 @@ We will notify users of security incidents via:
 - GitHub Security Advisories
 - Release notes
 
+## Image Vulnerability Monitoring
+
+Container images are scanned as part of the release pipeline. The production
+base images are pinned for reproducibility:
+
+- **Backend (Node.js)**: `node:24.19.0-trixie-slim` — Node.js 24.x LTS on Debian 13
+  (trixie). The Debian variant is pinned via the `DEBIAN_VARIANT` build arg in
+  `packages/backend/Dockerfile` and `packages/backend/Dockerfile.dev` rather than
+  using the floating `-slim` tag, which resolves to the aging bookworm (Debian 12)
+  package set and accumulates CVEs.
+- **Frontend builder (Node.js)**: `node:24.19.0-trixie-slim` (same policy).
+- **Frontend runtime (nginx)**: `nginx:${NGINX_VERSION}-alpine` — pinned to the
+  latest stable nginx series via the `NGINX_VERSION` build arg.
+
+### Known Upstream Findings (tracked, not actionable in-repo)
+
+After moving to the trixie base, scanners still report a small set of CVEs that
+**cannot** be fixed in this repository because they originate upstream:
+
+1. **npm CLI bundled inside the Node image** (`tar`, `undici`, `brace-expansion`,
+   `ip-address`). These are internal dependencies of the `npm`/`npx` CLI shipped
+   with Node and are **not** part of Scrumooth's own dependency tree (`pnpm audit`
+   is clean). They are fixed by a future Node.js 24.x LTS patch release, not by
+   this project. Do not add pnpm/npm overrides for them.
+2. **`deb/perl`** in trixie — recent CVEs with no patched perl package released in
+   any Debian distribution yet. They clear automatically once Debian publishes
+   updates.
+
+### Monitoring Cadence
+
+Re-run the image scanner (`docker scan`, Trivy, Grype, or the CI-integrated
+scanner) and verify these findings are cleared after each of:
+
+- A **Node.js 24.x LTS patch release** (bumps bundled npm → clears npm CLI CVEs)
+- A **Debian trixie point release** (clears `deb/perl` CVEs)
+
+Refer to the inline comment block "KNOWN UPSTREAM CVEs" in
+`packages/backend/Dockerfile` for the authoritative current list.
+
 ## Policy Updates
 
 This security policy is reviewed and updated regularly
 
 ### Version History
 
-| Version | Date       | Changes                 |
-| ------- | ---------- | ----------------------- |
-| 1.0     | 2026-05-04 | Initial security policy |
-| 2.0     | 2026-06-07 | Updated version         |
+| Version | Date       | Changes                                                                               |
+| ------- | ---------- | ------------------------------------------------------------------------------------- |
+| 1.0     | 2026-05-04 | Initial security policy                                                               |
+| 2.0     | 2026-06-07 | Updated version                                                                       |
+| 2.1     | 2026-08-16 | Added Image Vulnerability Monitoring section (Debian 13 base + upstream CVE tracking) |
 
 ## Additional Resources
 

@@ -1,0 +1,79 @@
+name: 'Wait for CI to pass'
+description: 'Poll the CI workflow for a given commit until it succeeds, failing fast on failure'
+author: 'Scrumooth Team'
+
+inputs:
+  commit-sha:
+    description: 'Commit SHA to check CI status for'
+    required: true
+  max-attempts:
+    description: 'Maximum number of polling attempts'
+    required: false
+    default: '12'
+  sleep-seconds:
+    description: 'Seconds to wait between attempts'
+    required: false
+    default: '30'
+  fail-on-failure:
+    description: 'Exit immediately if CI reports a failure status'
+    required: false
+    default: 'false'
+  timeout-message:
+    description: 'Error message when the timeout is reached'
+    required: false
+    default: 'CI workflow has not passed on the target commit within the allowed time.'
+  token:
+    description: 'GitHub token used to query run status'
+    required: false
+    default: ${{ github.token }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Wait for CI to pass
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        COMMIT_SHA: ${{ inputs.commit-sha }}
+        MAX_ATTEMPTS: ${{ inputs.max-attempts }}
+        SLEEP_SECONDS: ${{ inputs.sleep-seconds }}
+        FAIL_ON_FAILURE: ${{ inputs.fail-on-failure }}
+        TIMEOUT_MESSAGE: ${{ inputs.timeout-message }}
+      run: |
+        echo "Waiting for CI workflow to pass on commit ${COMMIT_SHA}..."
+        ATTEMPT=0
+        while [ "$ATTEMPT" -lt "$MAX_ATTEMPTS" ]; do
+          ATTEMPT=$((ATTEMPT + 1))
+
+          SUCCESS_RUNS=$(gh run list \
+            --workflow=ci.yml \
+            --commit="${COMMIT_SHA}" \
+            --status=success \
+            --limit=1 \
+            --json databaseId 2>/dev/null || echo "[]")
+
+          if [[ "${SUCCESS_RUNS}" != "[]" ]]; then
+            echo "CI validation passed for commit ${COMMIT_SHA}"
+            exit 0
+          fi
+
+          if [[ "${FAIL_ON_FAILURE}" == "true" ]]; then
+            FAILED_RUNS=$(gh run list \
+              --workflow=ci.yml \
+              --commit="${COMMIT_SHA}" \
+              --status=failure \
+              --limit=1 \
+              --json databaseId 2>/dev/null || echo "[]")
+
+            if [[ "${FAILED_RUNS}" != "[]" ]]; then
+              echo "::error::CI workflow failed on commit ${COMMIT_SHA}. Aborting."
+              exit 1
+            fi
+          fi
+
+          echo "  Attempt ${ATTEMPT}/${MAX_ATTEMPTS}: CI not yet passed, waiting ${SLEEP_SECONDS}s..."
+          sleep "${SLEEP_SECONDS}"
+        done
+
+        echo "::error::${TIMEOUT_MESSAGE}"
+        exit 1

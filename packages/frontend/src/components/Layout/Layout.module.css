@@ -96,21 +96,33 @@
   font-weight: var(--font-weight-bold);
   margin: 0;
   white-space: nowrap;
-  overflow: hidden;
+  flex: 1;
+  min-width: 0;
   color: var(--color-primary-300);
   letter-spacing: var(--letter-spacing-tight);
 }
 
+/* Give the brand mark a distinct elevated pill so it reads as a separate badge
+   against the dark sidebar gradient, instead of blending into the background.
+   Sized a little larger than the 18px wordmark so the icon leads the eye
+   without overwhelming the text (standard brand-lockup proportion). */
 .logo svg {
   flex-shrink: 0;
   color: var(--color-primary-400);
-  width: 40px;
-  height: 40px;
-  min-width: 40px;
-  min-height: 40px;
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  min-height: 30px;
+  padding: 2px;
+  background: linear-gradient(180deg, var(--color-gray-700) 0%, var(--color-gray-800) 100%);
+  border: var(--border-width-1) solid var(--color-gray-600);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
 }
 
 .logo-text {
+  overflow: visible;
+  flex-shrink: 0;
   background: linear-gradient(135deg, var(--color-primary-400) 0%, var(--color-primary-300) 100%);
   background-clip: text;
   -webkit-text-fill-color: transparent;

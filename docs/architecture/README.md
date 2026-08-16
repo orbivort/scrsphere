@@ -248,11 +248,12 @@ Internationalization architecture and implementation:
 | ---------- | ------- | -------------------- |
 | Node.js    | 24+     | Runtime environment  |
 | Express.js | 5.x     | Web framework        |
-| TypeScript | 5.x     | Programming language |
+| TypeScript | 6.x     | Programming language |
 | Prisma     | 7.x     | ORM                  |
 | PostgreSQL | 18+     | Database             |
 | JWT        | -       | Authentication       |
 | bcrypt     | 6.x     | Password hashing     |
+| Zod        | 4.x     | Request validation   |
 | Winston    | 3.x     | Logging              |
 
 ### Frontend
@@ -261,10 +262,10 @@ Internationalization architecture and implementation:
 | -------------- | ------- | ----------------------- |
 | React          | 19.x    | UI framework            |
 | Vite           | 8.x     | Build tool              |
-| TypeScript     | 5.x     | Programming language    |
+| TypeScript     | 6.x     | Programming language    |
 | TanStack Query | 5.x     | Server state management |
 | Zustand        | 5.x     | Client state management |
-| React Router   | 7.x     | Routing                 |
+| React Router   | 8.x     | Routing                 |
 | Chart.js       | 4.x     | Data visualization      |
 | Axios          | 1.x     | HTTP client             |
 
@@ -375,6 +376,6 @@ Key architectural decisions documented in this section:
 
 ---
 
-**Last Updated**: 2026-07-18  
+**Last Updated**: 2026-08-16  
 **Version**: 1.1.0  
-**Maintainers**: Scrumooth Team
+**Maintainers**: Orbivort

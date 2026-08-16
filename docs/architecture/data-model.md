@@ -172,18 +172,19 @@ The database schema is organized into logical groups:
 **Purpose**: Store user account information and profile data.
 
 **Fields**:
-| Field | Type | Constraints | Description |
-|-------|------|-------------|-------------|
-| id | UUID | PK | Unique identifier |
-| email | String | Unique, Required | User email address |
-| password | String | Required | Hashed password (bcrypt) |
-| firstName | String | Required | User first name |
-| lastName | String | Required | User last name |
-| avatarUrl | String | Optional | Avatar URL |
-| createdAt | Timestamp | Auto | Creation timestamp |
-| updatedAt | Timestamp | Auto | Update timestamp |
-| marketingOptIn | Boolean | Default: false | Marketing consent |
-| termsAcceptedAt | Timestamp | Optional | Terms acceptance date |
+
+| Field           | Type      | Constraints      | Description              |
+| --------------- | --------- | ---------------- | ------------------------ |
+| id              | UUID      | PK               | Unique identifier        |
+| email           | String    | Unique, Required | User email address       |
+| password        | String    | Required         | Hashed password (bcrypt) |
+| firstName       | String    | Required         | User first name          |
+| lastName        | String    | Required         | User last name           |
+| avatarUrl       | String    | Optional         | Avatar URL               |
+| createdAt       | Timestamp | Auto             | Creation timestamp       |
+| updatedAt       | Timestamp | Auto             | Update timestamp         |
+| marketingOptIn  | Boolean   | Default: false   | Marketing consent        |
+| termsAcceptedAt | Timestamp | Optional         | Terms acceptance date    |
 
 **Indexes**:
 
@@ -202,14 +203,15 @@ The database schema is organized into logical groups:
 **Purpose**: Define teams and their settings.
 
 **Fields**:
-| Field | Type | Constraints | Description |
-|-------|------|-------------|-------------|
-| id | UUID | PK | Unique identifier |
-| name | String | Unique, Required | Team name |
-| description | String | Optional | Team description |
-| createdAt | Timestamp | Auto | Creation timestamp |
-| createdBy | UUID | FK (User) | Creator user ID |
-| updatedAt | Timestamp | Auto | Update timestamp |
+
+| Field       | Type      | Constraints      | Description        |
+| ----------- | --------- | ---------------- | ------------------ |
+| id          | UUID      | PK               | Unique identifier  |
+| name        | String    | Unique, Required | Team name          |
+| description | String    | Optional         | Team description   |
+| createdAt   | Timestamp | Auto             | Creation timestamp |
+| createdBy   | UUID      | FK (User)        | Creator user ID    |
+| updatedAt   | Timestamp | Auto             | Update timestamp   |
 
 **Indexes**:
 
@@ -230,13 +232,14 @@ The database schema is organized into logical groups:
 **Purpose**: Manage team membership and roles.
 
 **Fields**:
-| Field | Type | Constraints | Description |
-|-------|------|-------------|-------------|
-| id | UUID | PK | Unique identifier |
-| teamId | UUID | FK (Team) | Team reference |
-| userId | UUID | FK (User) | User reference |
-| role | Enum | Required | User role |
-| joinedAt | Timestamp | Auto | Join timestamp |
+
+| Field    | Type      | Constraints | Description       |
+| -------- | --------- | ----------- | ----------------- |
+| id       | UUID      | PK          | Unique identifier |
+| teamId   | UUID      | FK (Team)   | Team reference    |
+| userId   | UUID      | FK (User)   | User reference    |
+| role     | Enum      | Required    | User role         |
+| joinedAt | Timestamp | Auto        | Join timestamp    |
 
 **Roles**:
 
@@ -260,16 +263,17 @@ The database schema is organized into logical groups:
 **Purpose**: Define strategic product goals.
 
 **Fields**:
-| Field | Type | Constraints | Description |
-|-------|------|-------------|-------------|
-| id | UUID | PK | Unique identifier |
-| teamId | UUID | FK (Team) | Team reference |
-| title | String | Required | Goal title |
-| description | String | Optional | Goal description |
-| status | Enum | Required | Goal status |
-| targetDate | Timestamp | Optional | Target completion date |
-| successMetrics | String | Optional | Success criteria |
-| strategicAlignment | String | Optional | Strategic context |
+
+| Field              | Type      | Constraints | Description            |
+| ------------------ | --------- | ----------- | ---------------------- |
+| id                 | UUID      | PK          | Unique identifier      |
+| teamId             | UUID      | FK (Team)   | Team reference         |
+| title              | String    | Required    | Goal title             |
+| description        | String    | Optional    | Goal description       |
+| status             | Enum      | Required    | Goal status            |
+| targetDate         | Timestamp | Optional    | Target completion date |
+| successMetrics     | String    | Optional    | Success criteria       |
+| strategicAlignment | String    | Optional    | Strategic context      |
 
 **Statuses**:
 
@@ -290,19 +294,20 @@ The database schema is organized into logical groups:
 **Purpose**: Manage product backlog items.
 
 **Fields**:
-| Field | Type | Constraints | Description |
-|-------|------|-------------|-------------|
-| id | UUID | PK | Unique identifier |
-| teamId | UUID | FK (Team) | Team reference |
-| goalId | UUID | FK (ProductGoal) | Goal reference |
-| title | String | Required | Item title |
-| description | String | Optional | Item description |
-| priority | Enum | Required | MoSCoW priority |
-| businessValue | Int | Optional | Business value score |
-| storyPoints | Int | Optional | Story point estimate |
-| status | Enum | Required | Item status |
-| labels | String[] | Optional | Item labels |
-| acceptanceCriteria | String | Optional | Acceptance criteria |
+
+| Field              | Type     | Constraints      | Description          |
+| ------------------ | -------- | ---------------- | -------------------- |
+| id                 | UUID     | PK               | Unique identifier    |
+| teamId             | UUID     | FK (Team)        | Team reference       |
+| goalId             | UUID     | FK (ProductGoal) | Goal reference       |
+| title              | String   | Required         | Item title           |
+| description        | String   | Optional         | Item description     |
+| priority           | Enum     | Required         | MoSCoW priority      |
+| businessValue      | Int      | Optional         | Business value score |
+| storyPoints        | Int      | Optional         | Story point estimate |
+| status             | Enum     | Required         | Item status          |
+| labels             | String[] | Optional         | Item labels          |
+| acceptanceCriteria | String   | Optional         | Acceptance criteria  |
 
 **Priorities (MoSCoW)**:
 
@@ -333,17 +338,18 @@ The database schema is organized into logical groups:
 **Purpose**: Define and manage sprints.
 
 **Fields**:
-| Field | Type | Constraints | Description |
-|-------|------|-------------|-------------|
-| id | UUID | PK | Unique identifier |
-| teamId | UUID | FK (Team) | Team reference |
-| goalId | UUID | FK (ProductGoal) | Goal reference |
-| name | String | Required | Sprint name |
-| startDate | Timestamp | Required | Sprint start date |
-| endDate | Timestamp | Required | Sprint end date |
-| sprintGoal | String | Optional | Sprint goal |
-| status | Enum | Required | Sprint status |
-| cancellationReason | String | Optional | Cancellation reason |
+
+| Field              | Type      | Constraints      | Description         |
+| ------------------ | --------- | ---------------- | ------------------- |
+| id                 | UUID      | PK               | Unique identifier   |
+| teamId             | UUID      | FK (Team)        | Team reference      |
+| goalId             | UUID      | FK (ProductGoal) | Goal reference      |
+| name               | String    | Required         | Sprint name         |
+| startDate          | Timestamp | Required         | Sprint start date   |
+| endDate            | Timestamp | Required         | Sprint end date     |
+| sprintGoal         | String    | Optional         | Sprint goal         |
+| status             | Enum      | Required         | Sprint status       |
+| cancellationReason | String    | Optional         | Cancellation reason |
 
 **Statuses**:
 
@@ -366,17 +372,18 @@ The database schema is organized into logical groups:
 **Purpose**: Manage sprint tasks.
 
 **Fields**:
-| Field | Type | Constraints | Description |
-|-------|------|-------------|-------------|
-| id | UUID | PK | Unique identifier |
-| sprintId | UUID | FK (Sprint) | Sprint reference |
-| pbiId | UUID | FK (ProductBacklogItem) | Backlog item reference |
-| title | String | Required | Task title |
-| description | String | Optional | Task description |
-| assigneeId | UUID | FK (User) | Assignee reference |
-| status | Enum | Required | Task status |
-| estimatedHours | Float | Optional | Estimated hours |
-| remainingHours | Float | Optional | Remaining hours |
+
+| Field          | Type   | Constraints             | Description            |
+| -------------- | ------ | ----------------------- | ---------------------- |
+| id             | UUID   | PK                      | Unique identifier      |
+| sprintId       | UUID   | FK (Sprint)             | Sprint reference       |
+| pbiId          | UUID   | FK (ProductBacklogItem) | Backlog item reference |
+| title          | String | Required                | Task title             |
+| description    | String | Optional                | Task description       |
+| assigneeId     | UUID   | FK (User)               | Assignee reference     |
+| status         | Enum   | Required                | Task status            |
+| estimatedHours | Float  | Optional                | Estimated hours        |
+| remainingHours | Float  | Optional                | Remaining hours        |
 
 **Statuses**:
 
@@ -398,23 +405,25 @@ The database schema is organized into logical groups:
 **Purpose**: Define team-specific checklists.
 
 **Fields (DoD/DoR)**:
-| Field | Type | Constraints | Description |
-|-------|------|-------------|-------------|
-| id | UUID | PK | Unique identifier |
-| teamId | UUID | FK (Team), Unique | Team reference |
-| version | Int | Default: 1 | Version number |
-| createdAt | Timestamp | Auto | Creation timestamp |
-| updatedAt | Timestamp | Auto | Update timestamp |
+
+| Field     | Type      | Constraints       | Description        |
+| --------- | --------- | ----------------- | ------------------ |
+| id        | UUID      | PK                | Unique identifier  |
+| teamId    | UUID      | FK (Team), Unique | Team reference     |
+| version   | Int       | Default: 1        | Version number     |
+| createdAt | Timestamp | Auto              | Creation timestamp |
+| updatedAt | Timestamp | Auto              | Update timestamp   |
 
 **Fields (DoDItem/DoRItem)**:
-| Field | Type | Constraints | Description |
-|-------|------|-------------|-------------|
-| id | UUID | PK | Unique identifier |
-| dodId/dorId | UUID | FK | DoD/DoR reference |
-| description | String | Required | Item description |
-| category | String | Optional | Item category |
-| isActive | Boolean | Default: true | Active status |
-| order | Int | Required | Display order |
+
+| Field       | Type    | Constraints   | Description       |
+| ----------- | ------- | ------------- | ----------------- |
+| id          | UUID    | PK            | Unique identifier |
+| dodId/dorId | UUID    | FK            | DoD/DoR reference |
+| description | String  | Required      | Item description  |
+| category    | String  | Optional      | Item category     |
+| isActive    | Boolean | Default: true | Active status     |
+| order       | Int     | Required      | Display order     |
 
 ## Relationships
 

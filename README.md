@@ -1,24 +1,39 @@
 # Scrumooth
 
-**Agile Scrum Lifecycle Management System**
+**Self-hosted Scrum tool, faithful to the Scrum Guide**
 
 > **Languages:** [English](README.md) | [Deutsch](README.de.md) | [Español](README.es.md) | [Français](README.fr.md) | [Italiano](README.it.md)
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-
 [![CI](https://github.com/orbivort/scrumooth/actions/workflows/ci.yml/badge.svg)](https://github.com/orbivort/scrumooth/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/github/orbivort/scrumooth/graph/badge.svg?token=Z2T4R3G8F7)](https://codecov.io/github/orbivort/scrumooth)
-[![Known Vulnerabilities](https://snyk.io/test/github/orbivort/scrumooth/badge.svg)](https://snyk.io/test/github/orbivort/scrumooth)
-
+[![codecov](https://codecov.io/github/orbivort/scrumooth/graph/badge.svg)](https://codecov.io/github/orbivort/scrumooth)
 [![GitHub release](https://img.shields.io/github/v/release/orbivort/scrumooth?include_prereleases)](https://github.com/orbivort/scrumooth/releases)
 [![GitHub issues](https://img.shields.io/github/issues/orbivort/scrumooth)](https://github.com/orbivort/scrumooth/issues)
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue.svg)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-24+-green.svg)](https://nodejs.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-18+-336791.svg)](https://www.postgresql.org/)
 
-[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-GitHub_Pages-success?style=for-the-badge)](https://orbivort.github.io/scrumooth/)
+Scrumooth is a self-hosted Scrum tool that faithfully implements the Scrum Guide. Lightweight by design, it guides teams through the full Scrum lifecycle — from product goal and backlog to sprint review and retrospective — without the complexity of heavy SaaS platforms. Deploy it on your own infrastructure, keep your data under your control, and never pay per user.
 
-Scrumooth is a self-hosted web application for managing Agile Scrum processes, built to faithfully follow the Scrum Guide with modern technologies and rigorous quality standards. It provides a complete solution that guides teams through the entire Scrum lifecycle — from product goals and backlogs to sprint reviews and retrospectives — all deployable on your own infrastructure with zero per‑user fees.
+## Table of Contents
+
+- [Live Demo](#live-demo)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Quick Start](#quick-start)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Testing](#testing)
+- [Code Quality](#code-quality)
+- [Database Management](#database-management)
+- [Docker Support](#docker-support)
+- [Deployment](#deployment)
+- [Documentation](#documentation)
+- [Troubleshooting](#troubleshooting)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## 🚀 Live Demo
 
@@ -30,21 +45,21 @@ Try Scrumooth instantly in your browser — no installation required. The demo r
   </a>
 </p>
 
-> **Note:** The demo uses in‑memory mock data — any changes you make are local to your browser session and reset on refresh. For persistent data and multi‑user collaboration, follow the [Installation](#-installation) guide to self‑host your own instance.
+> **Note:** The demo uses in‑memory mock data — any changes you make are local to your browser session and reset on refresh. For persistent data and multi‑user collaboration, follow the [Installation](#installation) guide to self‑host your own instance.
 
 ## ✨ Features
 
 ### Core Scrum Features
 
-- **Product Goals** - Strategic alignment and goal tracking
+- **Product Goal** - Strategic alignment and goal tracking
 - **Product Backlog** - MoSCoW prioritization (Must, Should, Could, Won't)
 - **Sprint Planning** - Configurable sprint durations and capacity planning
 - **Sprint Execution** - Interactive Kanban board with drag-and-drop
 - **Daily Scrum** - Daily standup tracking and updates
-- **Impediments** - Blocker identification and resolution tracking
-- **Incremental Delivery** - Product increment management
-- **Sprint Reviews** - Review meeting management and documentation
-- **Retrospectives** - Team reflection and continuous improvement
+- **Impediment** - Blocker identification and resolution tracking
+- **Increment** - Product increment management
+- **Sprint Review** - Review meeting management and documentation
+- **Sprint Retrospective** - Team reflection and continuous improvement
 
 ### Advanced Features
 
@@ -134,15 +149,32 @@ scrumooth/
 ├── docker-compose.dev.yml    # Development Docker Compose
 ├── CHANGELOG.md              # Version history
 ├── SECURITY.md               # Security policy and reporting
+├── CONTRIBUTING.md           # Contributing guidelines
+├── CODE_OF_CONDUCT.md        # Community code of conduct
 └── THIRD-PARTY-NOTICES.md    # Third-party license attributions
 ```
 
+## ⚡ Quick Start
+
+The fastest way to run a local instance is with Docker Compose:
+
+```bash
+git clone https://github.com/orbivort/scrumooth.git
+cd scrumooth
+cp packages/backend/.env.production.example packages/backend/.env.production
+docker compose up -d
+```
+
+This starts the Caddy reverse proxy, backend, frontend, and PostgreSQL. Once running, open <http://localhost> (HTTPS is enabled by default on port 443). For a full manual setup (without Docker), see [Installation](#installation).
+
+> **Note:** The production compose stack requires `packages/backend/.env.production`. If you prefer a fully pre-configured, hot-reloading development environment, use `docker compose -f docker-compose.dev.yml up` instead.
+
 ## 📋 Prerequisites
 
-- **Node.js** v24.14.1 or higher
-- **pnpm** v11.5.0 or higher
+- **Node.js** v24.19.0 or higher
+- **pnpm** v11.21.0 or higher
 - **PostgreSQL** v18 or higher
-- **Git**
+- **Docker** & **Docker Compose** (optional, for the Quick Start)
 
 ## 🚀 Installation
 
@@ -230,168 +262,63 @@ pnpm run dev:frontend   # Frontend only (http://localhost:5173)
 
 ## 🎯 Usage
 
-### Development
+The most common commands for everyday development:
 
-```bash
-# Start both frontend and backend
-pnpm run dev
-
-# Start in test mode (uses NODE_ENV=test)
-pnpm run dev:test
-
-# Start only one side
-pnpm run dev:backend
-pnpm run dev:frontend
-```
-
-### Build
-
-```bash
-# Build all packages
-pnpm run build
-
-# Clean build artifacts
-pnpm run clean
-
-# Full clean including node_modules
-pnpm run clean:all
-```
+| Task                     | Command                 |
+| ------------------------ | ----------------------- |
+| Start backend + frontend | `pnpm run dev`          |
+| Start backend only       | `pnpm run dev:backend`  |
+| Start frontend only      | `pnpm run dev:frontend` |
+| Build all packages       | `pnpm run build`        |
 
 ## 🧪 Testing
 
-### Run Tests
-
 ```bash
-# Run all tests across all packages
-pnpm run test
-
-# Run with coverage report
-pnpm run test:coverage
-
-# Run unit tests only
-pnpm run test:unit
-
-# Run integration tests (backend only)
-pnpm run test:integration
-
-# Run end-to-end tests (backend Vitest + frontend Playwright)
-pnpm run test:e2e
-
-# Run e2e for one side only
-pnpm run test:e2e:backend
-pnpm run test:e2e:frontend
-
-# Watch mode
-pnpm run test:watch
+pnpm run test              # All tests
+pnpm run test:coverage     # With coverage report
+pnpm run test:unit         # Unit tests only
+pnpm run test:integration  # Backend integration tests
+pnpm run test:e2e          # End-to-end (backend Vitest + frontend Playwright)
+pnpm run test:watch        # Watch mode
 ```
 
-Coverage thresholds enforced: **80% lines, functions, statements** and **70% branches**.
+Coverage thresholds enforced: **80% lines, functions, statements, branches**.
 
 ### Load Testing (k6)
 
-Ten pre-built load test scenarios live under [`k6/scripts/scenarios/`](k6/scripts/scenarios). Before running, copy [`k6/.env.k6.example`](k6/.env.k6.example) to `k6/.env.k6` and configure your target.
+Pre-built load test scenarios live under [`k6/scripts/scenarios/`](k6/scripts/scenarios). Copy [`k6/.env.k6.example`](k6/.env.k6.example) to `k6/.env.k6`, configure your target, then run a scenario such as:
 
 ```bash
-# Realistic everyday load
-pnpm run loadtest:normal
-
-# Sprint planning rush (worst-case concurrency)
-pnpm run loadtest:peak
-
-# Push the system until it breaks
-pnpm run loadtest:stress
-
-# Sustained 8-hour workday simulation
-pnpm run loadtest:endurance
-
-# Other scenarios
-pnpm run loadtest:multi-team
-pnpm run loadtest:daily-scrum
-pnpm run loadtest:auth
-pnpm run loadtest:db
-
-# Generate seed data for load tests
-pnpm run loadtest:generate-data
+pnpm run loadtest:normal    # Realistic everyday load
+pnpm run loadtest:peak      # Sprint planning rush (worst-case concurrency)
+pnpm run loadtest:stress    # Push the system until it breaks
 ```
 
-> **Prerequisite:** Install [k6](https://k6.io/docs/get-started/installation/) and ensure your target backend is running.
+> **Prerequisite:** Install [k6](https://k6.io/docs/get-started/installation/) and ensure your target backend is running. Additional scenarios (endurance, multi-team, daily-scrum, auth, db) are available via the `loadtest:*` scripts in [`package.json`](package.json).
 
 ## 🔍 Code Quality
 
-### Linting
+| Task                 | Command              |
+| -------------------- | -------------------- |
+| Lint (ESLint)        | `pnpm run lint`      |
+| Lint & auto-fix      | `pnpm run lint:fix`  |
+| Lint CSS (Stylelint) | `pnpm run lint:css`  |
+| Format (Prettier)    | `pnpm run format`    |
+| Type check           | `pnpm run typecheck` |
+| Security audit       | `pnpm run audit`     |
 
-```bash
-# Run ESLint on TypeScript/JavaScript files
-pnpm run lint
-
-# Auto-fix ESLint issues
-pnpm run lint:fix
-
-# Run Stylelint on CSS files
-pnpm run lint:css
-
-# Auto-fix Stylelint issues
-pnpm run lint:css:fix
-```
-
-### Formatting
-
-```bash
-# Format all source files with Prettier
-pnpm run format
-
-# Check formatting without writing changes
-pnpm run format:check
-
-# CSS-specific formatting
-pnpm run format:css
-pnpm run format:css:check
-```
-
-### Type Checking
-
-```bash
-# Run TypeScript type checking across all packages
-pnpm run typecheck
-```
-
-### Security Auditing
-
-```bash
-# Check installed dependencies for known vulnerabilities
-pnpm run audit
-
-# List outdated dependencies
-pnpm run outdated
-```
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the full development workflow and quality gates.
 
 ## 🗄 Database Management
 
 ```bash
-# Generate Prisma client (after schema changes)
-pnpm run db:generate
-
-# Push schema to database (development, no migration files)
-pnpm run db:push
-
-# Create and apply a new migration (development)
-pnpm run db:migrate
-
-# Apply migrations in production (non-interactive)
-pnpm run db:migrate:prod
-
-# Apply migrations against the test database
-pnpm run db:migrate:test
-
-# Open Prisma Studio (database GUI)
-pnpm run db:studio
-
-# Reset the database (⚠️ destroys all data)
-pnpm run db:reset
-
-# Validate the Prisma schema
-pnpm run db:validate
+pnpm run db:generate     # Generate Prisma client (after schema changes)
+pnpm run db:migrate      # Create and apply a migration (development)
+pnpm run db:migrate:prod # Apply migrations in production (non-interactive)
+pnpm run db:studio       # Open Prisma Studio (database GUI)
 ```
+
+Additional database commands (`db:push`, `db:reset`, `db:validate`, `db:migrate:test`) are documented in [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ## 🐳 Docker Support
 
@@ -412,15 +339,33 @@ docker compose down
 
 ### Build Docker Images Manually
 
-```bash
-# Production images
-docker build -t scrumooth-backend ./packages/backend
-docker build -t scrumooth-frontend ./packages/frontend
+> **Note:** All Dockerfiles reference repository-root-relative paths (monorepo workspace files such as `package.json`, `pnpm-lock.yaml`, and `packages/shared/`). You must build them from the **repository root** and use `-f` to point at the Dockerfile — passing the package directory as the build context will fail.
 
+```bash
 # Development images (with dev dependencies and watch mode)
-docker build -f ./packages/backend/Dockerfile.dev -t scrumooth-backend:dev ./packages/backend
-docker build -f ./packages/frontend/Dockerfile.dev -t scrumooth-frontend:dev ./packages/frontend
+docker build -t scrumooth-backend:dev -f packages/backend/Dockerfile.dev .
+docker build -t scrumooth-frontend:dev -f packages/frontend/Dockerfile.dev .
+
+# Production images (build from the repo root)
+docker build -t scrumooth-backend -f packages/backend/Dockerfile .
+docker build -t scrumooth-frontend -f packages/frontend/Dockerfile .
 ```
+
+<details>
+<summary>Using a registry/apt mirror</summary>
+
+If you are behind a network that requires an npm registry or apt mirror, you can set them as build arguments or environment variables:
+
+```bash
+# Docker Compose
+$env:NPM_REGISTRY="https://your_mirror_url"
+$env:APT_MIRROR="your_mirror_url"
+
+# Manual build
+docker build --build-arg NPM_REGISTRY=https://your_mirror_url --build-arg APT_MIRROR=your_mirror_url .
+```
+
+</details>
 
 ## ☁️ Deployment
 
@@ -430,21 +375,19 @@ See [`docs/deployment/DEPLOYMENT.md`](docs/deployment/DEPLOYMENT.md) for full pr
 
 ### Demo Deployment on GitHub Pages
 
-The `main` branch is automatically deployed to GitHub Pages via the [`Deploy to GitHub Pages`](.github/workflows/deploy-github-pages.yml) workflow. The Pages build:
-
-- Uses an in-memory **mock API** (no backend or database required)
-
-Live demo: <https://orbivort.github.io/scrumooth/>
+The `main` branch is automatically deployed to GitHub Pages via the [`Deploy to GitHub Pages`](.github/workflows/deploy-github-pages.yml) workflow, using an in-memory **mock API** (no backend or database required). See the [Live Demo](#live-demo) above to try it.
 
 ## 📚 Documentation
 
 | Area                    | Location                                                                                                       |
 | ----------------------- | -------------------------------------------------------------------------------------------------------------- |
 | **User guide**          | [`docs/user-guide/`](docs/user-guide) — getting started, core features, Scrum workflows                        |
-| **REST API reference**  | [`docs/api/`](docs/api) — 19 endpoint groups (authentication, sprints, backlog, reports, etc.)                 |
+| **REST API reference**  | [`docs/api/`](docs/api) — endpoint groups covering authentication, sprints, backlog, reports, and more         |
 | **System architecture** | [`docs/architecture/`](docs/architecture) — system design, data model, component design, security architecture |
 | **Deployment guide**    | [`docs/deployment/DEPLOYMENT.md`](docs/deployment/DEPLOYMENT.md)                                               |
 | **Security policy**     | [`SECURITY.md`](SECURITY.md) — vulnerability reporting procedure                                               |
+| **Contributing**        | [`CONTRIBUTING.md`](CONTRIBUTING.md) — guidelines and development workflow                                     |
+| **Code of conduct**     | [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) — community standards                                               |
 | **Release history**     | [`CHANGELOG.md`](CHANGELOG.md)                                                                                 |
 | **Third-party notices** | [`THIRD-PARTY-NOTICES.md`](THIRD-PARTY-NOTICES.md)                                                             |
 
@@ -465,7 +408,7 @@ This is normally handled automatically by `pnpm install` and the dev scripts, bu
 The repository enforces pnpm via a `preinstall` script. Install pnpm globally:
 
 ```bash
-npm install -g pnpm@11.5.0
+npm install -g pnpm@11.21.0
 ```
 
 ### Database connection errors on startup
@@ -487,16 +430,20 @@ Check that `VITE_API_URL` in `packages/frontend/.env` matches the actual backend
 
 Set `VITE_USE_MOCK_API=true` in `packages/frontend/.env` to use the same mock API that powers the live demo.
 
+## 🗺 Roadmap
+
+Scrumooth is under active development. Upcoming priorities include:
+
+- [ ] Enhanced reporting and analytics dashboards
+- [ ] Additional integrations and webhooks
+- [ ] Performance and scalability hardening
+
+The project status and latest changes are tracked in the [CHANGELOG](CHANGELOG.md). Feedback and feature requests are welcome via [GitHub Issues](https://github.com/orbivort/scrumooth/issues).
+
+## 🤝 Contributing
+
+Contributions are welcome! Please read [`CONTRIBUTING.md`](CONTRIBUTING.md) for development workflow, code standards, and the pull request process, and review the [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) before participating.
+
 ## 📝 License
 
-This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
-
-```
-Copyright 2026 Orbivort
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-```
+This project is licensed under the [Apache License 2.0](LICENSE).

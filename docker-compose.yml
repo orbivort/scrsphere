@@ -66,6 +66,8 @@ services:
       args:
         BUILD_DATE: "${BUILD_DATE:-}"
         VCS_REF: "${VCS_REF:-}"
+        NPM_REGISTRY: "${NPM_REGISTRY:-__default__}"
+        APT_MIRROR: "${APT_MIRROR:-}"
     image: scrumooth-backend:${VERSION:-latest}
     container_name: scrumooth-backend
     expose:
@@ -117,6 +119,7 @@ services:
       args:
         BUILD_DATE: "${BUILD_DATE:-}"
         VCS_REF: "${VCS_REF:-}"
+        NPM_REGISTRY: "${NPM_REGISTRY:-__default__}"
         # Vite environment variables (non-sensitive only)
         # Read from .env.production file
         VITE_BASE_PATH: "${VITE_BASE_PATH:-/scrumooth/}"
@@ -180,7 +183,6 @@ services:
       - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --locale=en_US.UTF-8
     volumes:
       - scrumooth_postgres_data:/var/lib/postgresql
-      - ./logs/postgres:/var/log/postgresql
     restart: unless-stopped
     networks:
       - scrumooth-network
@@ -188,7 +190,7 @@ services:
     security_opt:
       - no-new-privileges:true
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d scrumooth"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-scrumooth} -d ${DB_NAME:-scrumooth}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -206,29 +208,11 @@ services:
         reservations:
           cpus: '0.25'
           memory: 128M
-    # PostgreSQL with logging enabled
-    command:
-      - "postgres"
-      - "-c"
-      - "logging_collector=on"
-      - "-c"
-      - "log_directory=/var/log/postgresql"
-      - "-c"
-      - "log_filename=postgresql-%Y-%m-%d_%H%M%S.log"
-      - "-c"
-      - "log_statement=mod"
-      - "-c"
-      - "log_connections=on"
-      - "-c"
-      - "log_disconnections=on"
-      - "-c"
-      - "log_checkpoints=on"
-      - "-c"
-      - "log_lock_waits=on"
-      - "-c"
-      - "log_min_duration_statement=1000"
-      - "-c"
-      - "log_line_prefix=%t [%p]: [%l-1] user=%u,db=%d,app=%a,client=%h "
+    # PostgreSQL writes its logs to stderr (default), which Docker captures as
+    # container logs. The file-based logging_collector is NOT used because the
+    # official postgres image runs as a non-root user and the /var/log/postgresql
+    # directory is root-owned, causing "Permission denied" on container startup.
+    # Use `docker compose logs postgres` to view database logs.
 
   # ===========================================================================
   # PgBouncer - Connection Pooling for Production

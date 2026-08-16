@@ -4,12 +4,64 @@
 # Optimized for development with hot reload and debugging support
 # Following Docker and OCI best practices
 # =============================================================================
+#
+# NOTE: Dependencies are pulled from the official npm registry by default.
+# If you are in a region with slow access to registry.npmjs.org, you can pass
+# the NPM_REGISTRY build-arg to point at a faster mirror, for example:
+#
+#   docker build -t scrumooth-frontend:dev -f packages/frontend/Dockerfile.dev \
+#     --build-arg NPM_REGISTRY=your_mirror_url .
+#
+# Without the build-arg, the build falls back to the official registry.
+# =============================================================================
 
 # Build arguments for version pinning
-ARG NODE_VERSION=24.14.1
-ARG PNPM_VERSION=11.5.0
+# DEBIAN_VARIANT pins the OS base to trixie (Debian 13), matching the production
+# Dockerfile so dev and prod runtimes are consistent. The floating "-slim" tag
+# resolves to the aging bookworm (Debian 12) package set, which accumulates CVEs.
+ARG NODE_VERSION=24.19.0
+ARG DEBIAN_VARIANT=trixie
+ARG PNPM_VERSION=11.21.0
 
-FROM debian:bookworm-slim
+# node:${NODE_VERSION}-${DEBIAN_VARIANT}-slim already bundles Node.js + corepack,
+# avoiding the slow apt-get install and manual Node download steps entirely. It
+# matches the production Dockerfile exactly for a consistent runtime across
+# environments.
+FROM node:${NODE_VERSION}-${DEBIAN_VARIANT}-slim
+
+# npm registry override (falls back to the official registry if not provided)
+# Allows local builds to use a faster mirror without affecting the codebase.
+# A sentinel default (__default__) lets us detect whether the user actually
+# supplied --build-arg NPM_REGISTRY=... on the command line.
+ARG NPM_REGISTRY=__default__
+
+# Debian apt mirror override (see production Dockerfile).
+ARG APT_MIRROR=
+
+# Resolve the effective registry and print a friendly terminal notice as early
+# as possible. When the user provided --build-arg NPM_REGISTRY=..., display it.
+# Otherwise show a clear reminder and fall back to the official registry. The
+# resolved value is written to /tmp/npm_registry for reuse in later steps.
+RUN set -eu; \
+    printf 'NPM_REGISTRY=%s\n' "${NPM_REGISTRY}"; \
+    if [ "${NPM_REGISTRY}" = "__default__" ]; then \
+      NPM_REGISTRY="https://registry.npmjs.org"; \
+      printf '\n'; \
+      printf '============================================================\n'; \
+      printf '  NOTICE: no --build-arg NPM_REGISTRY was provided.\n'; \
+      printf '  Using the default npm registry: %s\n' "${NPM_REGISTRY}"; \
+      printf '  If downloads are slow, rebuild with a faster mirror:\n'; \
+      printf '    --build-arg NPM_REGISTRY=your_mirror_url\n'; \
+      printf '============================================================\n'; \
+      printf '\n'; \
+    else \
+      printf '\n'; \
+      printf '============================================================\n'; \
+      printf '  npm registry: %s\n' "${NPM_REGISTRY}"; \
+      printf '============================================================\n'; \
+      printf '\n'; \
+    fi; \
+    printf '%s' "${NPM_REGISTRY}" > /tmp/npm_registry
 
 # Build arguments for labels
 ARG VERSION
@@ -17,6 +69,7 @@ ARG BUILD_DATE
 ARG VCS_REF
 ARG NODE_VERSION
 ARG PNPM_VERSION
+ARG DEBIAN_VARIANT
 
 # OCI Image Labels
 LABEL org.opencontainers.image.title="Scrumooth Frontend Development" \
@@ -31,26 +84,30 @@ LABEL org.opencontainers.image.title="Scrumooth Frontend Development" \
 WORKDIR /app
 
 # Install build dependencies and Node.js
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# Only dumb-init is needed beyond what the node image provides.
+# No apt cache mounts: cache-mounting apt's state dirs causes recurring build
+# failures from persisted apt lock files (see production Dockerfile notes).
+# If APT_MIRROR is set, rewrite sources.list so apt uses the faster mirror.
+RUN set -eu; \
+    if [ -n "${APT_MIRROR}" ]; then \
+      sed -i "s|deb.debian.org/debian|${APT_MIRROR}/debian|g" /etc/apt/sources.list.d/debian.sources; \
+      sed -i "s|deb.debian.org/debian-security|${APT_MIRROR}/debian-security|g" /etc/apt/sources.list.d/debian.sources; \
+    fi; \
+    apt-get update && apt-get install -y --no-install-recommends \
     dumb-init \
-    git \
-    curl \
-    ca-certificates \
-    xz-utils \
     && rm -rf /var/lib/apt/lists/*
-
-# Download and install Node.js from official binaries
-ARG NODE_VERSION
-RUN curl -fsSL https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz -o /tmp/node.tar.xz && \
-    tar -xJf /tmp/node.tar.xz -C /usr/local --strip-components=1 && \
-    rm -f /tmp/node.tar.xz && \
-    ls -la /usr/local/bin/node && \
-    /usr/local/bin/node --version && \
-    /usr/local/bin/npm --version
 
 # Add Node.js to PATH
 ENV PATH="/usr/local/bin:${PATH}" \
     CI=true
+
+# Persist corepack's cache OUTSIDE /root/.cache. Corepack stores its prepared
+# pnpm shims in COREPACK_HOME (default ~/.cache/node/corepack). The dependency
+# install step later runs `rm -rf /root/.cache` to shrink the image, which would
+# wipe the prepared pnpm shim and force corepack to re-download it (from the
+# wrong registry) on every later `pnpm` invocation. Pointing COREPACK_HOME at a
+# dedicated path keeps the shim intact across layers.
+ENV COREPACK_HOME=/usr/local/share/corepack
 
 # Install pnpm using corepack
 RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
@@ -60,30 +117,83 @@ RUN groupadd --system --gid 1001 nodejs && \
     useradd --system --uid 1001 --gid nodejs --home-dir /home/scrumooth --create-home scrumooth
 
 # Copy package files first for better layer caching
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.json ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.json tsconfig.base.json tsconfig.build.json ./
 COPY packages/shared/package.json packages/shared/tsconfig.json ./packages/shared/
 COPY packages/frontend/package.json packages/frontend/tsconfig.json ./packages/frontend/
 
 # Extract app version from package.json (avoids hardcoding)
 RUN node -e "console.log(require('./packages/frontend/package.json').version)" > /tmp/app_version
 
-# Install dependencies
-RUN pnpm install --shamefully-hoist
+# Write project .npmrc so BOTH pnpm and npm-based postinstall scripts honor
+# the mirror. npm/pnpm may strip some env vars during postinstall, but they
+# always read the project-level .npmrc.
+# Also export npm_config_registry so npm operations honor the mirror.
+# verify-deps-before-run=false stops `pnpm run dev:frontend` from triggering a
+# `pnpm install` at container startup. That install would need to write temp
+# files to the root-owned /app dir (EACCES for the non-root scrumooth user);
+# node_modules is already installed in the image and must not be mutated.
+RUN printf 'registry=%s\n' "$(cat /tmp/npm_registry)" > .npmrc && \
+    printf 'verify-deps-before-run=false\n' >> .npmrc && \
+    export npm_config_registry="$(cat /tmp/npm_registry)"
+
+# Install dependencies.
+# NOTE: No --mount=type=cache for the pnpm store. A cached store is susceptible
+# to corruption (partial/interrupted downloads persist across builds and surface
+# as ERR_PNPM_ENOENT when a later build tries to import the missing files). A
+# fresh store on every build is slower but deterministic and reliable.
+# caches are cleaned in the SAME layer as the install. If they were removed
+# in a later RUN, the cache bytes would still be present in the intermediate layer
+# and count toward the final image size. Cleaning here removes the ~380MB pnpm
+# store and the ~520MB node-gyp/npm caches that postinstall scripts (esbuild,
+# @swc) write to /root/.cache.
+RUN sh -c 'export npm_config_registry="$(cat /tmp/npm_registry)"; \
+    pnpm install --shamefully-hoist --registry="$(cat /tmp/npm_registry)"; \
+    pnpm store prune; \
+    rm -rf /root/.cache /root/.npm /tmp/*.log'
 
 # Copy source code
 COPY packages/shared ./packages/shared
 COPY packages/frontend ./packages/frontend
 
-# Build shared package (dependency for frontend)
-RUN cd packages/shared && pnpm exec tsc
+# Build shared package (dependency for frontend).
+# The shared package is a composite (project-reference) build, so it MUST be
+# compiled with `tsc --build` (tsc -b). Plain `tsc` on a composite project does
+# not reliably emit the .d.ts declaration files. `--force` guarantees all .d.ts
+# files are emitted (Docker COPY sets identical file mtimes, which confuses
+# TypeScript's incremental build into skipping .d.ts emission).
+#
+# We invoke the hoisted tsc binary DIRECTLY (/app/node_modules/.bin/tsc) rather
+# than `pnpm exec tsc`. `pnpm exec` re-resolves the workspace and RE-INSTALLS
+# all deps into a new layer (~414MB), duplicating node_modules. Direct tsc uses
+# the already-installed tsc and does not trigger a reinstall.
+# Cache cleanup runs in the SAME layer: the install-layer cleanup already
+# removed the caches, and direct tsc does not re-populate them.
+RUN sh -c 'export npm_config_registry="$(cat /tmp/npm_registry)"; \
+    export COREPACK_NPM_REGISTRY="$(cat /tmp/npm_registry)"; \
+    /app/node_modules/.bin/tsc -b packages/shared --force && \
+    pnpm store prune && \
+    rm -rf /root/.cache /root/.npm /root/.local/share/pnpm/store /tmp/*.log'
 
-# Set proper ownership
-RUN chown -R scrumooth:nodejs /app
+# Ownership note: node_modules is already installed (root-owned, world-readable)
+# and is never written at runtime, so we deliberately do NOT run
+# `chown -R /app` (that would duplicate ~460MB into a new layer and bloat the
+# image). However, the Vite dev server DOES need write access to the frontend
+# package directory at runtime: it writes a temporary bundled copy of
+# vite.config.ts (vite.config.ts.timestamp-*.mjs) next to the config file, and
+# (with the VITE_CACHE_DIR override below) its dependency cache. So we chown
+# ONLY /app/packages/frontend (which excludes the node_modules volume) to the
+# runtime user. The bind-mounted host source dirs (src/public) are host-owned
+# and already writable by the container user via the mount.
+RUN chown -R scrumooth:nodejs /app/packages/frontend
 
 # Set development environment
+# VITE_CACHE_DIR relocates Vite's dependency cache out of the root-owned
+# /app/node_modules/.vite into the writable frontend package directory, avoiding
+# an EACCES failure when the non-root user starts the dev server.
 ENV NODE_ENV=development \
     PORT=5173 \
-    CI=true
+    CI=true \
+    VITE_CACHE_DIR=/app/packages/frontend/.vite
 
 # Switch to non-root user
 USER scrumooth
@@ -91,9 +201,9 @@ USER scrumooth
 # Expose Vite dev server port
 EXPOSE 5173
 
-# Health check for development
+# Health check for development (uses Node to avoid a curl dependency)
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
-  CMD curl -f http://localhost:5173/ || exit 1
+  CMD node -e "require('http').get('http://localhost:5173/', (r) => {process.exit(r.statusCode < 500 ? 0 : 1)}).on('error', () => process.exit(1))"
 
 # Use dumb-init as PID 1 for proper signal handling
 ENTRYPOINT ["dumb-init", "--"]

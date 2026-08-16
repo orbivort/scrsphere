@@ -10,30 +10,29 @@ publicHoistPattern:
 
 catalog:
   '@eslint/js': ^10.0.1
-  '@types/node': ^24.13.1
-  '@typescript-eslint/eslint-plugin': ^8.60.1
-  '@typescript-eslint/parser': ^8.60.1
-  '@vitest/coverage-v8': ^4.1.8
-  '@vitest/ui': ^4.1.8
+  '@types/node': ^24.13.3
+  '@typescript-eslint/eslint-plugin': ^8.67.0
+  '@typescript-eslint/parser': ^8.67.0
+  '@vitest/coverage-v8': ^4.1.10
+  '@vitest/ui': ^4.1.10
   cross-env: ^10.1.0
   date-fns: ^4.4.0
-  entities: ^8.0.0
-  eslint: ^10.4.1
+  eslint: ^10.8.1
   eslint-config-prettier: ^10.1.8
   eslint-plugin-react: ^7.37.5
   eslint-plugin-react-hooks: ^7.1.1
-  eslint-plugin-react-refresh: ^0.5.2
-  globals: ^17.6.0
+  eslint-plugin-react-refresh: ^0.5.4
+  globals: ^17.11.0
   i18next: ^26.0.0
   intl-pluralrules: ^2.0.1
-  prettier: ^3.8.3
+  prettier: ^3.9.6
   rimraf: ^6.1.3
-  stylelint: ^17.13.0
+  stylelint: ^17.14.1
   stylelint-config-standard: ^40.0.0
-  tsx: ^4.22.4
+  tsx: ^4.23.12
   typescript: ^6.0.3
-  typescript-eslint: ^8.60.1
-  vitest: ^4.1.8
+  typescript-eslint: ^8.67.0
+  vitest: ^4.1.10
 
 # Build configuration for pnpm v11
 allowBuilds:
@@ -85,7 +84,12 @@ strictDepBuilds: true # ensures build scripts only run for allowed packages
 
 # Performance Optimizations
 optimisticRepeatInstall: true # speeds up repeat installs
-verifyDepsBeforeRun: install # verifies dependencies before running scripts
+# Disable the pre-run dependency install. The Docker dev images install
+# node_modules during build and run as a non-root user that cannot write to the
+# root-owned /app tree, so forcing a `pnpm install` before `pnpm run`/`pnpm exec`
+# fails with EACCES at container startup. Keeping this off means deps must be
+# installed explicitly (which the build step already does).
+verifyDepsBeforeRun: false
 
 # Audit Configuration
 auditConfig:
