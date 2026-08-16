@@ -1,10 +1,13 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "composite": true,
+    // Backend uses ESM syntax (tsx in dev, tsc for build) with path aliases and
+    // extensionless relative imports, so moduleResolution "bundler" is required.
+    // A move to "NodeNext" would require adding explicit .js extensions to all
+    // relative imports and resolving path aliases at runtime.
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "target": "ES2023",
     "outDir": "./dist",
     "rootDir": "./src",
     "incremental": true,

@@ -92,7 +92,7 @@ ENV CI=true
 
 # Copy package files first for better layer caching
 # Order: least frequently changed to most frequently changed
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.json ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.json tsconfig.base.json tsconfig.build.json ./
 COPY packages/shared/package.json packages/shared/tsconfig.json ./packages/shared/
 COPY packages/frontend/package.json packages/frontend/tsconfig.json ./packages/frontend/
 

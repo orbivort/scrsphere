@@ -54,6 +54,8 @@ jobs:
               - 'package.json'
               - 'pnpm-workspace.yaml'
               - 'tsconfig.json'
+              - 'tsconfig.base.json'
+              - 'tsconfig.build.json'
               - 'eslint.config.js'
 
   validate-branch-name:

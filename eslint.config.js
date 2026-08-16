@@ -159,6 +159,7 @@ export default tseslint.config(
       '**/__tests__/**/*',
       '**/setupTests.ts',
       '**/vite.config.ts',
+      '**/vitest.config.ts',
       '**/playwright.config.ts',
       '**/e2e/**/*',
       // Icon components are allowed to have inline SVGs (they ARE the shared icons)
