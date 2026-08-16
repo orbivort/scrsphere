@@ -4,14 +4,15 @@
   "private": true,
   "license": "Apache-2.0",
   "type": "module",
-  "description": "Backend API for Scrumooth - Agile Scrum Lifecycle Management System",
+  "description": "Backend API for Scrumooth - Self-hosted Scrum tool, faithful to the Scrum Guide",
   "keywords": [
-    "agile",
     "scrum",
-    "project-management",
+    "scrum-tool",
+    "scrum-guide",
+    "self-hosted",
+    "typescript",
     "nodejs",
     "express",
-    "typescript",
     "prisma"
   ],
   "repository": {
@@ -19,6 +20,11 @@
     "url": "https://github.com/orbivort/scrumooth.git",
     "directory": "packages/backend"
   },
+  "bugs": {
+    "url": "https://github.com/orbivort/scrumooth/issues"
+  },
+  "homepage": "https://github.com/orbivort/scrumooth#readme",
+  "author": "Orbivort",
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
@@ -89,11 +95,9 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "catalog:",
     "@types/node-cron": "^3.0.11",
-    "@types/nodemailer": "^8.0.0",
+    "@types/nodemailer": "^8.0.1",
     "@types/sanitize-html": "^2.16.1",
     "@types/supertest": "^7.2.0",
-    "@typescript-eslint/eslint-plugin": "catalog:",
-    "@typescript-eslint/parser": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "cross-env": "catalog:",
     "eslint": "catalog:",
@@ -108,6 +112,6 @@
     "vitest": "catalog:"
   },
   "engines": {
-    "node": "^24.14.1"
+    "node": "^24.19.0"
   }
 }

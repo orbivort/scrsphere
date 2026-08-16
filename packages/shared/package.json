@@ -4,11 +4,12 @@
   "private": true,
   "type": "module",
   "license": "Apache-2.0",
-  "description": "Shared types and utilities for Scrumooth - Agile Scrum Lifecycle Management System",
+  "description": "Shared types and utilities for Scrumooth - Self-hosted Scrum tool, faithful to the Scrum Guide",
   "keywords": [
-    "agile",
     "scrum",
-    "project-management",
+    "scrum-tool",
+    "scrum-guide",
+    "self-hosted",
     "typescript",
     "shared"
   ],
@@ -17,8 +18,20 @@
     "url": "https://github.com/orbivort/scrumooth.git",
     "directory": "packages/shared"
   },
+  "bugs": {
+    "url": "https://github.com/orbivort/scrumooth/issues"
+  },
+  "homepage": "https://github.com/orbivort/scrumooth#readme",
+  "author": "Orbivort",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "restricted"
+  },
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -64,5 +77,8 @@
     "rimraf": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
+  },
+  "engines": {
+    "node": "^24.19.0"
   }
 }

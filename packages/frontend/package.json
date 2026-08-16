@@ -3,13 +3,14 @@
   "version": "2.2.0",
   "private": true,
   "license": "Apache-2.0",
-  "description": "Frontend UI for Scrumooth - Agile Scrum Lifecycle Management System",
+  "description": "Frontend UI for Scrumooth - Self-hosted Scrum tool, faithful to the Scrum Guide",
   "keywords": [
-    "agile",
     "scrum",
-    "project-management",
-    "react",
+    "scrum-tool",
+    "scrum-guide",
+    "self-hosted",
     "typescript",
+    "react",
     "vite"
   ],
   "repository": {
@@ -17,6 +18,11 @@
     "url": "https://github.com/orbivort/scrumooth.git",
     "directory": "packages/frontend"
   },
+  "bugs": {
+    "url": "https://github.com/orbivort/scrumooth/issues"
+  },
+  "homepage": "https://github.com/orbivort/scrumooth#readme",
+  "author": "Orbivort",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -113,6 +119,6 @@
     "vitest": "catalog:"
   },
   "engines": {
-    "node": "^24.14.1"
+    "node": "^24.19.0"
   }
 }

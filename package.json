@@ -3,19 +3,26 @@
   "version": "2.2.0",
   "private": true,
   "license": "Apache-2.0",
-  "description": "Scrumooth - Agile Scrum Lifecycle Management System",
+  "description": "Scrumooth - Self-hosted Scrum tool, faithful to the Scrum Guide",
   "keywords": [
-    "agile",
     "scrum",
-    "project-management",
+    "scrum-tool",
+    "scrum-guide",
+    "self-hosted",
     "typescript",
-    "react",
-    "nodejs"
+    "nodejs",
+    "postgresql",
+    "docker"
   ],
   "repository": {
     "type": "git",
     "url": "https://github.com/orbivort/scrumooth.git"
   },
+  "bugs": {
+    "url": "https://github.com/orbivort/scrumooth/issues"
+  },
+  "homepage": "https://github.com/orbivort/scrumooth#readme",
+  "author": "Orbivort",
   "type": "module",
   "packageManager": "pnpm@11.21.0",
   "workspaces": [
@@ -32,7 +39,6 @@
     "dev:watch": "concurrently \"pnpm --filter=@scrumooth/backend run dev:watch\" \"pnpm --filter=@scrumooth/frontend run dev:watch\"",
     "dev:watch:backend": "pnpm --filter=@scrumooth/backend run dev:watch",
     "dev:watch:frontend": "pnpm --filter=@scrumooth/frontend run dev:watch",
-    "dev:watch:all": "concurrently \"pnpm --filter=@scrumooth/backend run dev:watch\" \"pnpm --filter=@scrumooth/frontend run dev:watch\"",
     "prebuild": "node scripts/utility/check-package-manager.js",
     "build": "pnpm run -r build",
     "build:watch": "pnpm run -r build --watch",
@@ -103,8 +109,6 @@
     "@commitlint/cli": "^21.2.2",
     "@commitlint/config-conventional": "^21.2.2",
     "@eslint/js": "catalog:",
-    "@typescript-eslint/eslint-plugin": "catalog:",
-    "@typescript-eslint/parser": "catalog:",
     "concurrently": "^10.0.4",
     "dotenv-cli": "^11.0.0",
     "eslint": "catalog:",
