@@ -73,36 +73,16 @@ jobs:
             exit 1
           fi
 
+      - name: Get main commit SHA
+        id: main-sha
+        run: echo "sha=$(git rev-parse main)" >> "$GITHUB_OUTPUT"
+
       - name: Verify CI passed on main
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          SHA=$(git rev-parse main)
-          echo "Checking CI status for commit ${SHA}..."
-          
-          MAX_ATTEMPTS=12
-          ATTEMPT=0
-          while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
-            ATTEMPT=$((ATTEMPT + 1))
-            
-            RUNS=$(gh run list \
-              --workflow=ci.yml \
-              --commit="${SHA}" \
-              --status=success \
-              --limit=1 \
-              --json databaseId 2>/dev/null || echo "[]")
-            
-            if [[ "${RUNS}" != "[]" ]]; then
-              echo "✅ CI validation passed for commit ${SHA}"
-              exit 0
-            fi
-            
-            echo "  Attempt ${ATTEMPT}/${MAX_ATTEMPTS}: CI not yet passed, waiting 30s..."
-            sleep 30
-          done
-          
-          echo "::error::CI workflow has not passed on commit ${SHA} after $((MAX_ATTEMPTS * 30))s. A successful CI run is required before preparing a release."
-          exit 1
+        uses: ./.github/actions/wait-for-ci
+        with:
+          commit-sha: ${{ steps.main-sha.outputs.sha }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          timeout-message: 'A successful CI run is required before preparing a release.'
 
       - name: Create release branch
         run: |
@@ -115,32 +95,11 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v5
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
+      - name: Setup pnpm + Node + install
+        uses: ./.github/actions/setup-node-pnpm
         with:
           node-version: ${{ env.NODE_VERSION }}
-
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
-        id: pnpm-cache
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v5
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+          pnpm-version: ${{ env.PNPM_VERSION }}
 
       - name: Generate changelog entry
         id: changelog

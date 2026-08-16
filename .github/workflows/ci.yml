@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches: [main, develop]
-    paths-ignore:
+    paths-ignore: &paths-ignore
       - '**.md'
       - 'docs/**'
       - '.vscode/**'
@@ -11,12 +11,7 @@ on:
       - 'LICENSE'
   pull_request:
     branches: [main, develop]
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - '.vscode/**'
-      - '**.drawio'
-      - 'LICENSE'
+    paths-ignore: *paths-ignore
   workflow_dispatch:
 
 env:
@@ -30,7 +25,6 @@ concurrency:
 permissions:
   contents: read
   actions: read
-  security-events: write
 
 jobs:
   detect-changes:
@@ -46,8 +40,8 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Detect changed paths
-        uses: dorny/paths-filter@v4
         id: filter
+        uses: dorny/paths-filter@v4
         with:
           filters: |
             backend:
@@ -67,7 +61,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 2
     if: github.event_name == 'pull_request'
-    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -80,38 +73,21 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     needs: [detect-changes, validate-branch-name]
-    if: always() && needs.validate-branch-name.result != 'failure' && (needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.frontend == 'true' || needs.detect-changes.outputs.shared == 'true')
-    
+    if: >-
+      always() &&
+      needs.validate-branch-name.result != 'failure' &&
+      (needs.detect-changes.outputs.backend == 'true' ||
+       needs.detect-changes.outputs.frontend == 'true' ||
+       needs.detect-changes.outputs.shared == 'true')
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v5
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
+      - name: Setup pnpm + Node + install
+        uses: ./.github/actions/setup-node-pnpm
         with:
           node-version: ${{ env.NODE_VERSION }}
-
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
-        id: pnpm-cache
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v5
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+          pnpm-version: ${{ env.PNPM_VERSION }}
 
       - name: Setup Prisma Client
         uses: ./.github/actions/setup-prisma
@@ -140,7 +116,7 @@ jobs:
 
       - name: Locale JSON size report
         run: |
-          echo "### 🌐 Locale JSON Sizes" >> $GITHUB_STEP_SUMMARY
+          echo "### Locale JSON Sizes" >> $GITHUB_STEP_SUMMARY
           echo '| File | Size |' >> $GITHUB_STEP_SUMMARY
           echo '| --- | --- |' >> $GITHUB_STEP_SUMMARY
           find packages/frontend/public/locales packages/backend/src/locales -name '*.json' -exec sh -c 'size=$(wc -c < "$1"); echo "| $1 | ${size} bytes |" >> $GITHUB_STEP_SUMMARY; if [ "$size" -gt 51200 ]; then echo "::warning::$1 exceeds 50KB (${size} bytes)"; fi' _ {} \;
@@ -150,7 +126,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     if: github.event_name == 'pull_request'
-    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -164,40 +139,16 @@ jobs:
     timeout-minutes: 15
     needs: [lint-and-typecheck, detect-changes]
     if: needs.detect-changes.outputs.frontend == 'true' || needs.detect-changes.outputs.shared == 'true'
-    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v5
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
+      - name: Setup pnpm + Node + install
+        uses: ./.github/actions/setup-node-pnpm
         with:
           node-version: ${{ env.NODE_VERSION }}
-
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
-        id: pnpm-cache
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v5
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build shared package
-        run: pnpm --filter=@scrumooth/shared run build
+          pnpm-version: ${{ env.PNPM_VERSION }}
+          build-shared: 'true'
 
       - name: Run frontend tests
         run: pnpm --filter=@scrumooth/frontend run test
@@ -207,56 +158,32 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     needs: [lint-and-typecheck, detect-changes]
-    if: (needs.detect-changes.outputs.frontend == 'true' || needs.detect-changes.outputs.shared == 'true') && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
-    
+    if: >-
+      (needs.detect-changes.outputs.frontend == 'true' || needs.detect-changes.outputs.shared == 'true') &&
+      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
     strategy:
       fail-fast: false
       matrix:
         shard: [1/2, 2/2]
-    
     env:
       CI: true
       E2E_BROWSERS: desktop
       VITE_USE_MOCK_API: false
       VITE_API_URL: http://localhost:5001/api/v1
-    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v5
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
+      - name: Setup pnpm + Node + install
+        uses: ./.github/actions/setup-node-pnpm
         with:
           node-version: ${{ env.NODE_VERSION }}
-
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
-        id: pnpm-cache
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v5
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build shared package
-        run: pnpm --filter=@scrumooth/shared run build
+          pnpm-version: ${{ env.PNPM_VERSION }}
+          build-shared: 'true'
 
       - name: Cache Playwright browsers
-        uses: actions/cache@v5
         id: playwright-cache
+        uses: actions/cache@v5
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('packages/frontend/package.json', 'pnpm-lock.yaml') }}
@@ -264,7 +191,12 @@ jobs:
             ${{ runner.os }}-playwright-
 
       - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: pnpm --filter=@scrumooth/frontend exec playwright install --with-deps chromium firefox webkit
+
+      - name: Install Playwright browser dependencies
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: pnpm --filter=@scrumooth/frontend exec playwright install-deps chromium firefox webkit
 
       - name: Run frontend E2E tests (Shard ${{ matrix.shard }})
         run: pnpm --filter=@scrumooth/frontend exec playwright test --shard=${{ matrix.shard }}
@@ -284,51 +216,28 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     needs: [lint-and-typecheck, detect-changes]
-    if: (needs.detect-changes.outputs.frontend == 'true' || needs.detect-changes.outputs.shared == 'true') && github.event_name == 'pull_request'
-    
+    if: >-
+      (needs.detect-changes.outputs.frontend == 'true' || needs.detect-changes.outputs.shared == 'true') &&
+      github.event_name == 'pull_request'
     env:
       CI: true
       E2E_BROWSERS: chromium
       VITE_USE_MOCK_API: false
       VITE_API_URL: http://localhost:5001/api/v1
-    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v5
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
+      - name: Setup pnpm + Node + install
+        uses: ./.github/actions/setup-node-pnpm
         with:
           node-version: ${{ env.NODE_VERSION }}
-
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
-        id: pnpm-cache
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v5
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build shared package
-        run: pnpm --filter=@scrumooth/shared run build
+          pnpm-version: ${{ env.PNPM_VERSION }}
+          build-shared: 'true'
 
       - name: Cache Playwright browsers
-        uses: actions/cache@v5
         id: playwright-cache
+        uses: actions/cache@v5
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('packages/frontend/package.json', 'pnpm-lock.yaml') }}
@@ -361,41 +270,17 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     needs: [test-frontend, detect-changes]
-    if: always() && (needs.detect-changes.outputs.frontend == 'true' || needs.detect-changes.outputs.shared == 'true') && (needs.test-frontend.result == 'success' || needs.test-frontend.result == 'skipped')
-    
+    if: needs.detect-changes.outputs.frontend == 'true' || needs.detect-changes.outputs.shared == 'true'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v5
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
+      - name: Setup pnpm + Node + install
+        uses: ./.github/actions/setup-node-pnpm
         with:
           node-version: ${{ env.NODE_VERSION }}
-
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
-        id: pnpm-cache
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v5
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build shared package
-        run: pnpm --filter=@scrumooth/shared run build
+          pnpm-version: ${{ env.PNPM_VERSION }}
+          build-shared: 'true'
 
       - name: Run frontend tests with coverage
         run: pnpm --filter=@scrumooth/frontend run test:coverage
@@ -424,43 +309,19 @@ jobs:
     timeout-minutes: 15
     needs: [lint-and-typecheck, detect-changes]
     if: needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.shared == 'true'
-    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v5
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
+      - name: Setup pnpm + Node + install
+        uses: ./.github/actions/setup-node-pnpm
         with:
           node-version: ${{ env.NODE_VERSION }}
-
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
-        id: pnpm-cache
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v5
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+          pnpm-version: ${{ env.PNPM_VERSION }}
+          build-shared: 'true'
 
       - name: Setup Prisma Client
         uses: ./.github/actions/setup-prisma
-
-      - name: Build shared package
-        run: pnpm --filter=@scrumooth/shared run build
 
       - name: Run backend unit tests
         run: pnpm --filter=@scrumooth/backend run test:unit
@@ -471,9 +332,8 @@ jobs:
     timeout-minutes: 20
     needs: [lint-and-typecheck, detect-changes]
     if: needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.shared == 'true'
-    
     services:
-      postgres:
+      postgres: &postgres-service
         image: postgres:18-alpine
         env:
           POSTGRES_USER: test
@@ -486,47 +346,22 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-    
     env:
       DATABASE_URL: postgresql://test:test@localhost:5432/scrumooth_test
       NODE_ENV: test
-    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v5
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
+      - name: Setup pnpm + Node + install
+        uses: ./.github/actions/setup-node-pnpm
         with:
           node-version: ${{ env.NODE_VERSION }}
-
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
-        id: pnpm-cache
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v5
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+          pnpm-version: ${{ env.PNPM_VERSION }}
+          build-shared: 'true'
 
       - name: Setup Prisma Client
         uses: ./.github/actions/setup-prisma
-
-      - name: Build shared package
-        run: pnpm --filter=@scrumooth/shared run build
 
       - name: Run database migrations
         run: pnpm --filter=@scrumooth/backend exec prisma migrate deploy
@@ -540,62 +375,24 @@ jobs:
     timeout-minutes: 25
     needs: [lint-and-typecheck, detect-changes]
     if: needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.shared == 'true'
-    
     services:
-      postgres:
-        image: postgres:18-alpine
-        env:
-          POSTGRES_USER: test
-          POSTGRES_PASSWORD: test
-          POSTGRES_DB: scrumooth_test
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-    
+      postgres: *postgres-service
     env:
       DATABASE_URL: postgresql://test:test@localhost:5432/scrumooth_test
       NODE_ENV: test
-    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v5
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
+      - name: Setup pnpm + Node + install
+        uses: ./.github/actions/setup-node-pnpm
         with:
           node-version: ${{ env.NODE_VERSION }}
-
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
-        id: pnpm-cache
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v5
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+          pnpm-version: ${{ env.PNPM_VERSION }}
+          build-shared: 'true'
 
       - name: Setup Prisma Client
         uses: ./.github/actions/setup-prisma
-
-      - name: Build shared package
-        run: pnpm --filter=@scrumooth/shared run build
 
       - name: Run database migrations
         run: pnpm --filter=@scrumooth/backend exec prisma migrate deploy
@@ -608,63 +405,25 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     needs: [test-backend, test-backend-integration, test-backend-e2e, detect-changes]
-    if: always() && (needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.shared == 'true') && (needs.test-backend.result == 'success' || needs.test-backend.result == 'skipped') && (needs.test-backend-integration.result == 'success' || needs.test-backend-integration.result == 'skipped') && (needs.test-backend-e2e.result == 'success' || needs.test-backend-e2e.result == 'skipped')
-    
+    if: needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.shared == 'true'
     services:
-      postgres:
-        image: postgres:18-alpine
-        env:
-          POSTGRES_USER: test
-          POSTGRES_PASSWORD: test
-          POSTGRES_DB: scrumooth_test
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-    
+      postgres: *postgres-service
     env:
       DATABASE_URL: postgresql://test:test@localhost:5432/scrumooth_test
       NODE_ENV: test
-    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v5
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
+      - name: Setup pnpm + Node + install
+        uses: ./.github/actions/setup-node-pnpm
         with:
           node-version: ${{ env.NODE_VERSION }}
-
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
-        id: pnpm-cache
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v5
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+          pnpm-version: ${{ env.PNPM_VERSION }}
+          build-shared: 'true'
 
       - name: Setup Prisma Client
         uses: ./.github/actions/setup-prisma
-
-      - name: Build shared package
-        run: pnpm --filter=@scrumooth/shared run build
 
       - name: Run database migrations
         run: pnpm --filter=@scrumooth/backend exec prisma migrate deploy
@@ -694,36 +453,31 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    needs: [test-frontend, test-frontend-e2e, test-frontend-e2e-smoke, test-frontend-coverage, test-backend, test-backend-integration, test-backend-e2e, test-backend-coverage, detect-changes]
-    if: always() && (needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.frontend == 'true' || needs.detect-changes.outputs.shared == 'true') && (needs.test-frontend.result == 'success' || needs.test-frontend.result == 'skipped') && (needs.test-frontend-e2e.result == 'success' || needs.test-frontend-e2e.result == 'skipped') && (needs.test-frontend-e2e-smoke.result == 'success' || needs.test-frontend-e2e-smoke.result == 'skipped') && (needs.test-frontend-coverage.result == 'success' || needs.test-frontend-coverage.result == 'skipped') && (needs.test-backend-coverage.result == 'success' || needs.test-backend-coverage.result == 'skipped')
-    
+    needs:
+      [
+        test-frontend,
+        test-frontend-e2e,
+        test-frontend-e2e-smoke,
+        test-frontend-coverage,
+        test-backend,
+        test-backend-integration,
+        test-backend-e2e,
+        test-backend-coverage,
+        detect-changes,
+      ]
+    if: >-
+      needs.detect-changes.outputs.backend == 'true' ||
+      needs.detect-changes.outputs.frontend == 'true' ||
+      needs.detect-changes.outputs.shared == 'true'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v5
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
+      - name: Setup pnpm + Node + install
+        uses: ./.github/actions/setup-node-pnpm
         with:
           node-version: ${{ env.NODE_VERSION }}
-
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
-        id: pnpm-cache
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v5
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+          pnpm-version: ${{ env.PNPM_VERSION }}
 
       - name: Cache TypeScript build
         uses: actions/cache@v5
@@ -731,12 +485,9 @@ jobs:
           path: |
             packages/*/dist
             packages/*/.tsbuildinfo
-          key: ${{ runner.os }}-ts-build-${{ github.sha }}
+          key: ${{ runner.os }}-ts-build-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-ts-build-
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
 
       - name: Setup Prisma Client
         uses: ./.github/actions/setup-prisma
@@ -757,22 +508,20 @@ jobs:
     name: Security Audit
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: [lint-and-typecheck, detect-changes]
-    if: needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.frontend == 'true' || needs.detect-changes.outputs.shared == 'true'
-    
+    needs: [detect-changes]
+    if: >-
+      needs.detect-changes.outputs.backend == 'true' ||
+      needs.detect-changes.outputs.frontend == 'true' ||
+      needs.detect-changes.outputs.shared == 'true'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v5
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
+      - name: Setup pnpm + Node + install
+        uses: ./.github/actions/setup-node-pnpm
         with:
           node-version: ${{ env.NODE_VERSION }}
+          pnpm-version: ${{ env.PNPM_VERSION }}
 
       - name: Run pnpm audit (using official registry)
         run: pnpm audit --registry https://registry.npmjs.org/ --audit-level=high
@@ -782,17 +531,18 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     needs: detect-changes
-    if: needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.frontend == 'true' || needs.detect-changes.outputs.shared == 'true'
+    if: >-
+      needs.detect-changes.outputs.backend == 'true' ||
+      needs.detect-changes.outputs.frontend == 'true' ||
+      needs.detect-changes.outputs.shared == 'true'
     permissions:
       contents: read
-      security-events: write
       actions: read
-    
+      security-events: write
     strategy:
       fail-fast: false
       matrix:
         language: ['typescript']
-    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -804,18 +554,11 @@ jobs:
           queries: security-and-quality
           config-file: ./.github/codeql/codeql-config.yml
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v5
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
+      - name: Setup pnpm + Node + install
+        uses: ./.github/actions/setup-node-pnpm
         with:
           node-version: ${{ env.NODE_VERSION }}
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+          pnpm-version: ${{ env.PNPM_VERSION }}
 
       - name: Setup Prisma Client
         uses: ./.github/actions/setup-prisma
@@ -831,37 +574,15 @@ jobs:
     timeout-minutes: 15
     needs: [build, detect-changes]
     if: needs.detect-changes.outputs.frontend == 'true' || needs.detect-changes.outputs.shared == 'true'
-    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v5
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
+      - name: Setup pnpm + Node + install
+        uses: ./.github/actions/setup-node-pnpm
         with:
           node-version: ${{ env.NODE_VERSION }}
-
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
-        id: pnpm-cache
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v5
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+          pnpm-version: ${{ env.PNPM_VERSION }}
 
       - name: Download build artifacts
         uses: actions/download-artifact@v4
@@ -872,11 +593,11 @@ jobs:
       - name: Analyze bundle size
         id: bundle-size
         run: |
-          echo "### 📦 Bundle Size Report" >> $GITHUB_STEP_SUMMARY
+          echo "### Bundle Size Report" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Package | Size | Gzipped |" >> $GITHUB_STEP_SUMMARY
           echo "|---------|------|---------|" >> $GITHUB_STEP_SUMMARY
-          
+
           cd packages/frontend/dist
           for file in $(find . -name "*.js" -o -name "*.css" | head -20); do
             SIZE=$(stat -c%s "$file" 2>/dev/null || stat -f%z "$file" 2>/dev/null)
@@ -885,7 +606,7 @@ jobs:
             GZIP_KB=$(echo "scale=2; $GZIP_SIZE / 1024" | bc)
             echo "| $file | ${SIZE_KB} KB | ${GZIP_KB} KB |" >> $GITHUB_STEP_SUMMARY
           done
-          
+
           TOTAL_SIZE=$(du -sb . | cut -f1)
           TOTAL_MB=$(echo "scale=2; $TOTAL_SIZE / 1048576" | bc)
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -905,46 +626,21 @@ jobs:
     timeout-minutes: 20
     needs: [build, detect-changes]
     if: needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.shared == 'true'
-    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v5
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
+      - name: Setup pnpm + Node + install
+        uses: ./.github/actions/setup-node-pnpm
         with:
           node-version: ${{ env.NODE_VERSION }}
-
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
-        id: pnpm-cache
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v5
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+          pnpm-version: ${{ env.PNPM_VERSION }}
 
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
           path: packages
-
-      - name: Build shared package
-        run: pnpm --filter=@scrumooth/shared run build
 
       - name: Setup Prisma Client
         uses: ./.github/actions/setup-prisma
@@ -958,7 +654,7 @@ jobs:
       - name: Generate performance report
         id: perf-report
         run: |
-          echo "### ⚡ Performance Report" >> $GITHUB_STEP_SUMMARY
+          echo "### Performance Report" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Performance benchmarks completed successfully." >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
