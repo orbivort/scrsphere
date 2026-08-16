@@ -253,6 +253,7 @@ Internationalization architecture and implementation:
 | PostgreSQL | 18+     | Database             |
 | JWT        | -       | Authentication       |
 | bcrypt     | 6.x     | Password hashing     |
+| Zod        | 4.x     | Request validation   |
 | Winston    | 3.x     | Logging              |
 
 ### Frontend
@@ -375,6 +376,6 @@ Key architectural decisions documented in this section:
 
 ---
 
-**Last Updated**: 2026-07-18  
+**Last Updated**: 2026-08-16  
 **Version**: 1.1.0  
-**Maintainers**: Scrumooth Team
+**Maintainers**: Orbivort
