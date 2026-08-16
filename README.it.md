@@ -35,6 +35,8 @@ Scrumooth è uno strumento Scrum self-hosted che implementa fedelmente la Scrum 
 - [Contribuire](#contributing)
 - [Licenza](#license)
 
+<a id="live-demo"></a>
+
 ## 🚀 Demo dal vivo
 
 Prova subito Scrumooth nel tuo browser, senza alcuna installazione. La demo viene eseguita con dati simulati (nessun backend necessario), così puoi esplorare immediatamente l'intero ciclo di vita di Scrum.
@@ -46,6 +48,8 @@ Prova subito Scrumooth nel tuo browser, senza alcuna installazione. La demo vien
 </p>
 
 > **Nota:** La demo utilizza dati simulati in memoria — qualsiasi modifica apporti è locale alla sessione del browser e viene azzerata al refresh. Per dati persistenti e collaborazione multi-utente, segui la guida all'[Installazione](#installation) per ospitare autonomamente la tua istanza.
+
+<a id="features"></a>
 
 ## ✨ Funzionalità
 
@@ -68,6 +72,8 @@ Prova subito Scrumooth nel tuo browser, senza alcuna installazione. La demo vien
 - **Definition of Done/Ready** - Checklist personalizzabili
 - **Comunicazione del team** - Notifiche e messaggistica integrate
 - **Registrazione degli audit** - Tracciamento completo delle azioni
+
+<a id="tech-stack"></a>
 
 ## 🛠 Stack tecnologico
 
@@ -154,6 +160,8 @@ scrumooth/
 └── THIRD-PARTY-NOTICES.md    # Attribuzioni delle licenze di terze parti
 ```
 
+<a id="quick-start"></a>
+
 ## ⚡ Avvio rapido
 
 Il modo più rapido per eseguire un'istanza locale è usare Docker Compose:
@@ -169,12 +177,16 @@ Questo avvia il reverse proxy Caddy, il backend, il frontend e PostgreSQL. Una v
 
 > **Nota:** Lo stack Compose di produzione richiede `packages/backend/.env.production`. Se preferisci un ambiente di sviluppo completamente preconfigurato con hot reload, usa invece `docker compose -f docker-compose.dev.yml up`.
 
+<a id="prerequisites"></a>
+
 ## 📋 Prerequisiti
 
 - **Node.js** v24.19.0 o superiore
 - **pnpm** v11.21.0 o superiore
 - **PostgreSQL** v18 o superiore
 - **Docker** e **Docker Compose** (opzionale, per l'avvio rapido)
+
+<a id="installation"></a>
 
 ## 🚀 Installazione
 
@@ -271,6 +283,8 @@ I comandi più comuni per lo sviluppo quotidiano:
 | Avviare solo il frontend    | `pnpm run dev:frontend` |
 | Compilare tutti i pacchetti | `pnpm run build`        |
 
+<a id="testing"></a>
+
 ## 🧪 Test
 
 ```bash
@@ -296,6 +310,8 @@ pnpm run loadtest:stress    # Spingere il sistema fino al punto di rottura
 
 > **Prerequisito:** Installa [k6](https://k6.io/docs/get-started/installation/) e assicurati che il backend di destinazione sia in esecuzione. Ulteriori scenari (endurance, multi-team, daily-scrum, auth, db) sono disponibili tramite gli script `loadtest:*` in [`package.json`](package.json).
 
+<a id="code-quality"></a>
+
 ## 🔍 Qualità del codice
 
 | Attività                     | Comando              |
@@ -309,6 +325,8 @@ pnpm run loadtest:stress    # Spingere il sistema fino al punto di rottura
 
 Consulta [`CONTRIBUTING.md`](CONTRIBUTING.md) per il flusso di lavoro di sviluppo completo e i controlli di qualità.
 
+<a id="database-management"></a>
+
 ## 🗄 Gestione del database
 
 ```bash
@@ -319,6 +337,8 @@ pnpm run db:studio       # Aprire Prisma Studio (GUI del database)
 ```
 
 Ulteriori comandi per il database (`db:push`, `db:reset`, `db:validate`, `db:migrate:test`) sono documentati in [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
+<a id="docker-support"></a>
 
 ## 🐳 Supporto Docker
 
@@ -367,6 +387,8 @@ docker build --build-arg NPM_REGISTRY=https://your_mirror_url --build-arg APT_MI
 
 </details>
 
+<a id="deployment"></a>
+
 ## ☁️ Distribuzione
 
 ### Produzione self-hosted
@@ -376,6 +398,8 @@ Consulta [`docs/deployment/DEPLOYMENT.md`](docs/deployment/DEPLOYMENT.md) per la
 ### Distribuzione della demo su GitHub Pages
 
 Il branch `main` viene distribuito automaticamente su GitHub Pages tramite il workflow [`Deploy to GitHub Pages`](.github/workflows/deploy-github-pages.yml), utilizzando una **Mock API** in memoria (nessun backend o database richiesto). Consulta la [Demo dal vivo](#live-demo) qui sopra per provarla.
+
+<a id="documentation"></a>
 
 ## 📚 Documentazione
 
@@ -390,6 +414,8 @@ Il branch `main` viene distribuito automaticamente su GitHub Pages tramite il wo
 | **Codice di condotta**          | [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) — standard della community                                                                        |
 | **Cronologia dei release**      | [`CHANGELOG.md`](CHANGELOG.md)                                                                                                               |
 | **Attribuzioni di terze parti** | [`THIRD-PARTY-NOTICES.md`](THIRD-PARTY-NOTICES.md)                                                                                           |
+
+<a id="troubleshooting"></a>
 
 ## 🛟 Risoluzione dei problemi
 
@@ -430,6 +456,8 @@ Verifica che `VITE_API_URL` in `packages/frontend/.env` corrisponda all'indirizz
 
 Imposta `VITE_USE_MOCK_API=true` in `packages/frontend/.env` per utilizzare la stessa Mock API che alimenta la demo dal vivo.
 
+<a id="roadmap"></a>
+
 ## 🗺 Roadmap
 
 Scrumooth è in fase di sviluppo attivo. Le priorità imminenti includono:
@@ -440,9 +468,13 @@ Scrumooth è in fase di sviluppo attivo. Le priorità imminenti includono:
 
 Lo stato del progetto e le ultime modifiche sono tracciati nel [CHANGELOG](CHANGELOG.md). Feedback e richieste di funzionalità sono benvenuti tramite [GitHub Issues](https://github.com/orbivort/scrumooth/issues).
 
+<a id="contributing"></a>
+
 ## 🤝 Contribuire
 
 I contributi sono benvenuti! Leggi [`CONTRIBUTING.md`](CONTRIBUTING.md) per il flusso di lavoro di sviluppo, gli standard di codice e il processo di pull request, e consulta il [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) prima di partecipare.
+
+<a id="license"></a>
 
 ## 📝 Licenza
 

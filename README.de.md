@@ -19,21 +19,23 @@ Scrumooth ist ein selbst gehostetes Scrum-Tool, das den Scrum Guide getreu umset
 ## Inhaltsverzeichnis
 
 - [Live-Demo](#live-demo)
-- [Funktionen](#funktionen)
+- [Funktionen](#features)
 - [Tech-Stack](#tech-stack)
-- [Schnellstart](#schnellstart)
-- [Voraussetzungen](#voraussetzungen)
+- [Schnellstart](#quick-start)
+- [Voraussetzungen](#prerequisites)
 - [Installation](#installation)
-- [Testen](#testen)
-- [Code-Qualität](#code-qualität)
-- [Datenbankverwaltung](#datenbankverwaltung)
-- [Docker-Unterstützung](#docker-unterstützung)
+- [Testen](#testing)
+- [Code-Qualität](#code-quality)
+- [Datenbankverwaltung](#database-management)
+- [Docker-Unterstützung](#docker-support)
 - [Deployment](#deployment)
-- [Dokumentation](#dokumentation)
-- [Fehlerbehebung](#fehlerbehebung)
+- [Dokumentation](#documentation)
+- [Fehlerbehebung](#troubleshooting)
 - [Roadmap](#roadmap)
-- [Mitwirken](#mitwirken)
-- [Lizenz](#lizenz)
+- [Mitwirken](#contributing)
+- [Lizenz](#license)
+
+<a id="live-demo"></a>
 
 ## 🚀 Live-Demo
 
@@ -46,6 +48,8 @@ Probieren Sie Scrumooth sofort in Ihrem Browser aus — keine Installation erfor
 </p>
 
 > **Hinweis:** Die Demo verwendet In-Memory-Mock-Daten — alle von Ihnen vorgenommenen Änderungen sind nur lokal in Ihrer Browser-Sitzung gültig und werden beim Aktualisieren zurückgesetzt. Für persistente Daten und Mehrbenutzer-Zusammenarbeit folgen Sie der Anleitung unter [Installation](#installation), um Ihre eigene Instanz selbst zu hosten.
+
+<a id="features"></a>
 
 ## ✨ Funktionen
 
@@ -68,6 +72,8 @@ Probieren Sie Scrumooth sofort in Ihrem Browser aus — keine Installation erfor
 - **Definition of Done/Ready** – Anpassbare Checklisten
 - **Teamkommunikation** – Integrierte Benachrichtigungen und Nachrichten
 - **Audit-Protokollierung** – Umfassende Nachverfolgung von Aktionen
+
+<a id="tech-stack"></a>
 
 ## 🛠 Tech-Stack
 
@@ -154,6 +160,8 @@ scrumooth/
 └── THIRD-PARTY-NOTICES.md    # Drittanbieter-Lizenzhinweise
 ```
 
+<a id="quick-start"></a>
+
 ## ⚡ Schnellstart
 
 Der schnellste Weg, eine lokale Instanz zu betreiben, ist Docker Compose:
@@ -169,12 +177,16 @@ Dies startet den Caddy-Reverse-Proxy, das Backend, das Frontend und PostgreSQL. 
 
 > **Hinweis:** Der Produktions-Compose-Stack erfordert `packages/backend/.env.production`. Wenn Sie eine vollständig vorkonfigurierte Entwicklungsumgebung mit Hot Reload bevorzugen, verwenden Sie stattdessen `docker compose -f docker-compose.dev.yml up`.
 
+<a id="prerequisites"></a>
+
 ## 📋 Voraussetzungen
 
 - **Node.js** v24.19.0 oder höher
 - **pnpm** v11.21.0 oder höher
 - **PostgreSQL** v18 oder höher
 - **Docker** & **Docker Compose** (optional, für den Schnellstart)
+
+<a id="installation"></a>
 
 ## 🚀 Installation
 
@@ -271,6 +283,8 @@ Die gängigsten Befehle für die tägliche Entwicklung:
 | Nur Frontend starten       | `pnpm run dev:frontend` |
 | Alle Pakete bauen          | `pnpm run build`        |
 
+<a id="testing"></a>
+
 ## 🧪 Testen
 
 ```bash
@@ -296,6 +310,8 @@ pnpm run loadtest:stress    # System bis zum Versagen belasten
 
 > **Voraussetzung:** Installieren Sie [k6](https://k6.io/docs/get-started/installation/) und stellen Sie sicher, dass Ihr Ziel-Backend läuft. Weitere Szenarien (endurance, multi-team, daily-scrum, auth, db) sind über die `loadtest:*`-Skripte in [`package.json`](package.json) verfügbar.
 
+<a id="code-quality"></a>
+
 ## 🔍 Code-Qualität
 
 | Aufgabe                       | Befehl               |
@@ -309,6 +325,8 @@ pnpm run loadtest:stress    # System bis zum Versagen belasten
 
 Vollständiger Entwicklungs-Workflow und Quality Gates finden Sie in [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
+<a id="database-management"></a>
+
 ## 🗄 Datenbankverwaltung
 
 ```bash
@@ -319,6 +337,8 @@ pnpm run db:studio       # Prisma Studio öffnen (Datenbank-GUI)
 ```
 
 Weitere Datenbankbefehle (`db:push`, `db:reset`, `db:validate`, `db:migrate:test`) sind in [`CONTRIBUTING.md`](CONTRIBUTING.md) dokumentiert.
+
+<a id="docker-support"></a>
 
 ## 🐳 Docker-Unterstützung
 
@@ -367,6 +387,8 @@ docker build --build-arg NPM_REGISTRY=https://your_mirror_url --build-arg APT_MI
 
 </details>
 
+<a id="deployment"></a>
+
 ## ☁️ Deployment
 
 ### Selbst gehostete Produktion
@@ -376,6 +398,8 @@ Vollständige Anleitung zum Produktions-Deployment mit Umgebungskonfiguration, D
 ### Demo-Deployment auf GitHub Pages
 
 Der `main`-Branch wird über den Workflow [`Deploy to GitHub Pages`](.github/workflows/deploy-github-pages.yml) automatisch auf GitHub Pages bereitgestellt, unter Verwendung einer In-Memory-**Mock-API** (kein Backend oder keine Datenbank erforderlich). Probieren Sie es über die [Live-Demo](#live-demo) oben aus.
+
+<a id="documentation"></a>
 
 ## 📚 Dokumentation
 
@@ -390,6 +414,8 @@ Der `main`-Branch wird über den Workflow [`Deploy to GitHub Pages`](.github/wor
 | **Verhaltenskodex**        | [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) — Standards der Community                                              |
 | **Release-Historie**       | [`CHANGELOG.md`](CHANGELOG.md)                                                                                    |
 | **Drittanbieter-Hinweise** | [`THIRD-PARTY-NOTICES.md`](THIRD-PARTY-NOTICES.md)                                                                |
+
+<a id="troubleshooting"></a>
 
 ## 🛟 Fehlerbehebung
 
@@ -430,6 +456,8 @@ Prüfen Sie, ob `VITE_API_URL` in `packages/frontend/.env` mit der tatsächliche
 
 Setzen Sie `VITE_USE_MOCK_API=true` in `packages/frontend/.env`, um dieselbe Mock-API zu verwenden, die auch die Live-Demo antreibt.
 
+<a id="roadmap"></a>
+
 ## 🗺 Roadmap
 
 Scrumooth befindet sich in aktiver Entwicklung. Zu den kommenden Prioritäten gehören:
@@ -440,9 +468,13 @@ Scrumooth befindet sich in aktiver Entwicklung. Zu den kommenden Prioritäten ge
 
 Projektstatus und neueste Änderungen werden im [CHANGELOG](CHANGELOG.md) verfolgt. Feedback und Feature-Wünsche sind über [GitHub Issues](https://github.com/orbivort/scrumooth/issues) willkommen.
 
+<a id="contributing"></a>
+
 ## 🤝 Mitwirken
 
 Beiträge sind willkommen! Bitte lesen Sie [`CONTRIBUTING.md`](CONTRIBUTING.md) für Entwicklungs-Workflow, Codestandards und den Pull-Request-Prozess, und lesen Sie den [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) vor der Teilnahme.
+
+<a id="license"></a>
 
 ## 📝 Lizenz
 
