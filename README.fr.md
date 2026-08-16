@@ -139,8 +139,8 @@ scrumooth/
 
 ## 📋 Prérequis
 
-- **Node.js** v24.14.1 ou supérieur
-- **pnpm** v11.5.0 ou supérieur
+- **Node.js** v24.19.0 ou supérieur
+- **pnpm** v11.21.0 ou supérieur
 - **PostgreSQL** v18 ou supérieur
 - **Git**
 
@@ -465,7 +465,7 @@ Cela est normalement géré automatiquement par `pnpm install` et les scripts de
 Le dépôt impose pnpm via un script `preinstall`. Installez pnpm globalement :
 
 ```bash
-npm install -g pnpm@11.5.0
+npm install -g pnpm@11.21.0
 ```
 
 ### Erreurs de connexion à la base de données au démarrage

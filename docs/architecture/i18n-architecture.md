@@ -34,7 +34,7 @@
 
 ## 1. Executive Summary
 
-Scrumooth supports 5 locales (`en`, `de`, `fr`, `it`, `es`) end-to-end across frontend, backend, and shared packages. The architecture uses **i18next v24+** with `react-i18next`, lazy-loaded namespaced JSON files, native `Intl` APIs for pluralization/formatting, and a per-request locale resolver on the backend via `AsyncLocalStorage`.
+Scrumooth supports 5 locales (`en`, `de`, `fr`, `it`, `es`) end-to-end across frontend, backend, and shared packages. The architecture uses **i18next v26+** with `react-i18next`, lazy-loaded namespaced JSON files, native `Intl` APIs for pluralization/formatting, and a per-request locale resolver on the backend via `AsyncLocalStorage`.
 
 **Key design choices:**
 
@@ -100,7 +100,7 @@ Scrumooth supports 5 locales (`en`, `de`, `fr`, `it`, `es`) end-to-end across fr
 
 ### ADR-001: i18n Library — `i18next` + `react-i18next`
 
-**Decision:** Use `i18next` v24+ with `react-i18next`, `i18next-http-backend`, and `i18next-browser-languagedetector`.
+**Decision:** Use `i18next` v26+ with `react-i18next`, `i18next-http-backend`, and `i18next-browser-languagedetector`.
 **Rationale:** Mature ecosystem, framework-agnostic core (so backend can use the same library), built-in lazy namespace loading, native `Intl.PluralRules` support (no resolver polyfill needed beyond `intl-pluralrules` for Safari < 14).
 **Alternatives considered:** `react-intl` (Format.JS) — rejected because its ICU MessageFormat is overkill for European Scrum terminology; `lingui` — rejected due to smaller ecosystem.
 
@@ -197,7 +197,7 @@ Scrumooth supports 5 locales (`en`, `de`, `fr`, `it`, `es`) end-to-end across fr
 
 | Package                            | Purpose                                              |
 | ---------------------------------- | ---------------------------------------------------- |
-| `i18next` (v24+)                   | Core i18n library                                    |
+| `i18next` (v26+)                   | Core i18n library                                    |
 | `react-i18next` (v15+)             | React bindings (`useTranslation`, `I18nextProvider`) |
 | `i18next-http-backend`             | Lazy-loads namespace JSON over HTTP                  |
 | `i18next-browser-languagedetector` | Detects locale from cookie + navigator               |
@@ -295,7 +295,7 @@ Each route component declares its namespaces via `useTranslation()`. `i18next-ht
 
 **File:** `packages/backend/src/i18n/config.ts` (81 lines)
 
-Initialized at startup via `i18next.createInstance()`. All 5 locales × 5 namespaces are bundled via `with { type: 'json' }` ESM import attributes (Node 22+/TS 5.3+):
+Initialized at startup via `i18next.createInstance()`. All 5 locales × 5 namespaces are bundled via `with { type: 'json' }` ESM import attributes (Node 24+/TS 6.x; the feature itself requires Node 22+/TS 5.3+):
 
 ```typescript
 import enEmails from '../locales/en/emails.json' with { type: 'json' };

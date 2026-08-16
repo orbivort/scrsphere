@@ -1088,7 +1088,7 @@ Expected response:
     "min": 3
   },
   "version": "1.0.0",
-  "nodeVersion": "v24.14.1"
+  "nodeVersion": "v24.19.0"
 }
 ```
 
