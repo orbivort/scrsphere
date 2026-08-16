@@ -186,10 +186,14 @@ cypress/screenshots/
 cypress/downloads/
 **/cypress/downloads/
 .jest-cache/
-**/e2e/screenshots/
+# E2E test sources (Playwright) - not needed in production image builds
+**/e2e/
+e2e/
+**/playwright/
 
-# Loadtest results
-k6/results/
+# Load testing (k6) - not needed in production image builds
+**/k6/
+k6/
 
 # Security / static analysis reports
 .snyk/
@@ -291,7 +295,9 @@ helm/
 # -----------------------------------------------------------------------------
 scripts/
 !scripts/utility/add-import-extensions.js
-!scripts/maintenance/database/*
+# NOTE: scripts/maintenance and scripts/deployment are intentionally excluded.
+# The backup service builds from its own subdirectory context
+# (scripts/maintenance/database), which has its own .dockerignore.
 !scripts/deployment/*
 # Allow backend scripts for configuration validation
 !packages/backend/scripts/*
