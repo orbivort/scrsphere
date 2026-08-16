@@ -6,7 +6,7 @@ import react from '@vitejs/plugin-react';
 import { visualizer } from 'rollup-plugin-visualizer';
 
 const rootPackageJson = JSON.parse(
-  readFileSync(path.resolve(__dirname, '../../package.json'), 'utf-8')
+  readFileSync(path.resolve(import.meta.dirname, '../../package.json'), 'utf-8')
 );
 
 // Simple plugin to replace version placeholder in HTML
@@ -65,8 +65,8 @@ export default defineConfig(({ mode }) => {
     cacheDir: env.VITE_CACHE_DIR || 'node_modules/.vite',
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, './src'),
-        '@scrumooth/shared': path.resolve(__dirname, '../shared/dist'),
+        '@': path.resolve(import.meta.dirname, './src'),
+        '@scrumooth/shared': path.resolve(import.meta.dirname, '../shared/dist'),
       },
     },
     server: {
