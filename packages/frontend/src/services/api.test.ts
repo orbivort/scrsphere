@@ -18,6 +18,7 @@ vi.mock('./domain/auth.service', () => ({
   authService: {
     login: vi.fn().mockResolvedValue({ data: { user: { id: '1' } } }),
     register: vi.fn().mockResolvedValue({ data: { user: { id: '1' } } }),
+    getRegistrationPolicy: vi.fn().mockResolvedValue({ data: {} }),
     logout: vi.fn().mockResolvedValue({}),
     logoutAllSessions: vi.fn().mockResolvedValue({}),
     getCurrentUser: vi.fn().mockResolvedValue({ data: { user: { id: '1' } } }),

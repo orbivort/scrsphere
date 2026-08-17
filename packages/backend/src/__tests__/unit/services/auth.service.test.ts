@@ -131,7 +131,7 @@ vi.mock('../../../config', () => ({
     },
     deletion: {
       gracePeriodDays: 14,
-      scheduleConfirmationPhrase: 'SCHEDULE DELETE',
+      scheduleConfirmationPhrase: 'SCHEDULE DELETION',
     },
     email: {
       provider: 'test',
@@ -166,7 +166,7 @@ vi.mock('../../../config', () => ({
     },
     deletion: {
       gracePeriodDays: 14,
-      scheduleConfirmationPhrase: 'SCHEDULE DELETE',
+      scheduleConfirmationPhrase: 'SCHEDULE DELETION',
     },
     email: {
       provider: 'test',
@@ -790,7 +790,7 @@ describe('authService', () => {
         status: 'PENDING',
       });
 
-      const result = await authService.scheduleDeletion('user-1', 'SCHEDULE DELETE');
+      const result = await authService.scheduleDeletion('user-1', 'SCHEDULE DELETION');
 
       expect(result.status).toBe('PENDING');
     });
@@ -801,7 +801,7 @@ describe('authService', () => {
         status: 'PENDING',
       });
 
-      await expect(authService.scheduleDeletion('user-1', 'SCHEDULE DELETE')).rejects.toThrow(
+      await expect(authService.scheduleDeletion('user-1', 'SCHEDULE DELETION')).rejects.toThrow(
         ConflictError
       );
     });

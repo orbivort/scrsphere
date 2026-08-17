@@ -85,7 +85,7 @@ vi.mock('../../../config', () => ({
     },
     deletion: {
       gracePeriodDays: 14,
-      scheduleConfirmationPhrase: 'SCHEDULE DELETE',
+      scheduleConfirmationPhrase: 'SCHEDULE DELETION',
     },
   },
   config: {
@@ -117,7 +117,7 @@ vi.mock('../../../config', () => ({
     },
     deletion: {
       gracePeriodDays: 14,
-      scheduleConfirmationPhrase: 'SCHEDULE DELETE',
+      scheduleConfirmationPhrase: 'SCHEDULE DELETION',
     },
   },
 }));
