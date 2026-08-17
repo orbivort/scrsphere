@@ -4,14 +4,20 @@ import { useTranslation } from 'react-i18next';
 
 import styles from './LoginPage.module.css';
 
-import { EyeIcon, EyeOffIcon, LoaderIcon, ScrumoothIcon } from '@/components/common/Icons';
+import {
+  EyeIcon,
+  EyeOffIcon,
+  InfoIcon,
+  LoaderIcon,
+  ScrumoothIcon,
+} from '@/components/common/Icons';
 import { ErrorMessage } from '@/components/ErrorMessage';
 import { useApiError } from '@/hooks';
 import { apiService } from '@/services';
 import { useAuthStore, useSessionStore, useTeamStore } from '@/store';
 import { logger } from '@/utils/logger';
 import { getCurrentPath } from '@/utils/navigation';
-import type { LoginCredentials } from '@/types';
+import type { LoginCredentials, RegistrationPolicy } from '@/types';
 import { getUserFriendlyErrorMessage, type ErrorDetails } from '@/utils/authErrors';
 import { syncLocaleFromUser, useI18nStore } from '@/i18n/useI18nStore';
 
@@ -33,6 +39,22 @@ function getPasswordStrength(password: string): PasswordStrength {
   return 'strong';
 }
 
+/**
+ * Detects a registration rejection caused by the email domain restriction.
+ * Matches the backend's localized message(s) for `validation:auth.emailDomainNotAllowed`.
+ */
+const isDomainNotAllowedError = (backendMessage: string | undefined): boolean => {
+  if (!backendMessage) return false;
+  const lower = backendMessage.toLowerCase();
+  return (
+    lower.includes('registration is restricted to allowed email') || // en
+    lower.includes('registrierung ist auf zulässige e-mail') || // de
+    lower.includes('registro está restringido a los dominios de correo permitidos') || // es
+    lower.includes('inscription est restreinte aux domaines e-mail autorisés') || // fr
+    lower.includes('registrazione è limitata ai domini email consentiti') // it
+  );
+};
+
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const { t } = useTranslation('auth');
@@ -51,6 +73,11 @@ export const LoginPage: React.FC = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [registrationPolicy, setRegistrationPolicy] = useState<RegistrationPolicy>({
+    restricted: false,
+    allowedDomains: [],
+  });
+  const [emailFieldError, setEmailFieldError] = useState<string | null>(null);
 
   const passwordStrength = useMemo(
     () => (isRegisterMode ? getPasswordStrength(password) : null),
@@ -74,6 +101,28 @@ export const LoginPage: React.FC = () => {
       setPassword('demo123456');
     }
   }, []);
+
+  // Fetch the registration policy when entering register mode so the form can
+  // reflect the domain restriction (cosmetic guidance only; never the boundary).
+  useEffect(() => {
+    if (!isRegisterMode) return;
+    let cancelled = false;
+    void apiService
+      .getRegistrationPolicy()
+      .then((response) => {
+        if (!cancelled && response.success && response.data) {
+          setRegistrationPolicy(response.data);
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          logger.warn('Failed to fetch registration policy', undefined, { error: err });
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [isRegisterMode]);
 
   const handleLogin = useCallback(
     async (e: React.FormEvent) => {
@@ -219,9 +268,18 @@ export const LoginPage: React.FC = () => {
           void navigate('/team');
         } else {
           const backendMessage = response.error?.message;
-          const userFriendlyMessage = getUserFriendlyErrorMessage(backendMessage, 'register');
-          setError(userFriendlyMessage);
-          setErrorType('error');
+          if (isDomainNotAllowedError(backendMessage)) {
+            setEmailFieldError(
+              t('login.emailDomainNotAllowed', {
+                domain: registrationPolicy.allowedDomains.join(', '),
+              }) as string
+            );
+            setError(null);
+          } else {
+            const userFriendlyMessage = getUserFriendlyErrorMessage(backendMessage, 'register');
+            setError(userFriendlyMessage);
+            setErrorType('error');
+          }
         }
       } catch (err) {
         const axiosError = err as {
@@ -249,7 +307,14 @@ export const LoginPage: React.FC = () => {
           backendMessage = err.message;
         }
 
-        if (backendMessage || errorDetails?.details) {
+        if (isDomainNotAllowedError(backendMessage)) {
+          setEmailFieldError(
+            t('login.emailDomainNotAllowed', {
+              domain: registrationPolicy.allowedDomains.join(', '),
+            }) as string
+          );
+          setError(null);
+        } else if (backendMessage || errorDetails?.details) {
           const userFriendlyMessage = getUserFriendlyErrorMessage(
             backendMessage,
             'register',
@@ -276,16 +341,19 @@ export const LoginPage: React.FC = () => {
       setCurrentTeam,
       handleError,
       t,
+      registrationPolicy,
     ]
   );
 
   const clearError = () => {
     setError(null);
+    setEmailFieldError(null);
   };
 
   const toggleMode = () => {
     setIsRegisterMode(!isRegisterMode);
     setError(null);
+    setEmailFieldError(null);
     setTermsAccepted(false);
     setShowPassword(false);
   };
@@ -386,13 +454,43 @@ export const LoginPage: React.FC = () => {
             <input
               id="email"
               type="email"
-              className={styles['input-field']}
+              className={`${styles['input-field']} ${
+                emailFieldError ? styles['input-field-error'] : ''
+              }`}
               placeholder={t('placeholder.email')}
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (emailFieldError) setEmailFieldError(null);
+              }}
               required
               autoComplete="email"
+              aria-invalid={emailFieldError ? true : undefined}
+              aria-describedby={
+                emailFieldError
+                  ? 'email-field-error'
+                  : isRegisterMode && registrationPolicy.restricted
+                    ? 'email-field-hint'
+                    : undefined
+              }
             />
+            {/* Registration domain restriction hint (register mode, cosmetic only) */}
+            {isRegisterMode && registrationPolicy.restricted && !emailFieldError && (
+              <div className={styles['domain-hint']} role="note">
+                <InfoIcon size={16} className={styles['domain-hint-icon']} aria-hidden="true" />
+                <p className={styles['domain-hint-text']} id="email-field-hint">
+                  {t('login.emailDomainHint', {
+                    domains: registrationPolicy.allowedDomains.join(', '),
+                  })}
+                </p>
+              </div>
+            )}
+            {/* Inline email field error (register domain rejection) */}
+            {emailFieldError && (
+              <p className={styles['field-error']} id="email-field-error" role="alert">
+                {emailFieldError}
+              </p>
+            )}
           </div>
 
           {/* Password */}
