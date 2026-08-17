@@ -9,6 +9,7 @@ import {
   BadRequestError,
   ConflictError,
   NotFoundError,
+  ForbiddenError,
   SessionIdleTimeoutError,
   SessionAbsoluteTimeoutError,
   SessionRevokedError,
@@ -19,6 +20,7 @@ import {
 import { generateUUIDv7 } from '../utils/uuid';
 import { logger } from '../utils/logger';
 import { getRequestLocale } from '../utils/requestContext.js';
+import { t as requestT } from '../i18n/requestT.js';
 import { NotificationService } from './notification.service';
 
 const notificationService = new NotificationService();
@@ -74,6 +76,15 @@ interface SessionValidationResult {
   token?: RefreshToken;
 }
 
+/**
+ * Extracts the lowercased email domain (substring after the last '@').
+ * Returns an empty string when no '@' is present.
+ */
+const getEmailDomain = (email: string): string => {
+  const at = email.lastIndexOf('@');
+  return at === -1 ? '' : email.slice(at + 1).toLowerCase();
+};
+
 class AuthService {
   private cleanupInterval: NodeJS.Timeout | null = null;
   private isShuttingDown = false;
@@ -93,6 +104,14 @@ class AuthService {
 
   async register(data: RegisterData, sessionInfo?: SessionInfo): Promise<LoginResponse> {
     const { email, password, firstName, lastName } = data;
+
+    // Enforce the opt-in email domain restriction (sole enforcement point).
+    // Rejection is a ForbiddenError (HTTP 403); a validation-layer .refine()
+    // would produce a 422 instead, so enforcement lives here in the service.
+    const allowedDomains = config.registration.allowedEmailDomains;
+    if (allowedDomains.length > 0 && !allowedDomains.includes(getEmailDomain(email))) {
+      throw new ForbiddenError(requestT('validation:auth.emailDomainNotAllowed'));
+    }
 
     const existingUser = await prisma.user.findUnique({
       where: { email: email.toLowerCase() },

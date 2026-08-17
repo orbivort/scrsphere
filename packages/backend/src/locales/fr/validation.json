@@ -3,6 +3,7 @@
     "confirmPasswordRequired": "La confirmation du mot de passe est requise",
     "currentPasswordRequired": "Le mot de passe actuel est requis",
     "deleteConfirmation": "La confirmation doit être exactement \"DELETE MY ACCOUNT\"",
+    "emailDomainNotAllowed": "L'inscription est restreinte aux domaines e-mail autorisés",
     "emailRequired": "L'adresse e-mail est requise",
     "invalidEmail": "Veuillez entrer une adresse e-mail valide",
     "invalidPassword": "Le mot de passe est invalide",
@@ -17,7 +18,7 @@
     "refreshTokenRequired": "Le jeton d'actualisation est requis",
     "resetTokenRequired": "Le jeton de réinitialisation est requis",
     "scheduleDeletionConfirmation": "La confirmation doit être exactement \"SCHEDULE DELETION\"",
-    "termsRequired": "Vous devez accepter les conditions d'utilisation"
+    "termsRequired": "Vous devez accepter la politique d'utilisation acceptable et la politique de protection des données de l'entreprise"
   },
   "fieldRequired": "Ce champ est requis",
   "fieldTooLong": "Ce champ est trop long",

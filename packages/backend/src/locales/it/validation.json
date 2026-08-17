@@ -3,6 +3,7 @@
     "confirmPasswordRequired": "La conferma della password è obbligatoria",
     "currentPasswordRequired": "La password attuale è obbligatoria",
     "deleteConfirmation": "La conferma deve essere esattamente \"DELETE MY ACCOUNT\"",
+    "emailDomainNotAllowed": "La registrazione è limitata ai domini email consentiti",
     "emailRequired": "L'email è obbligatoria",
     "invalidEmail": "Inserisci un indirizzo email valido",
     "invalidPassword": "La password non è valida",
@@ -17,7 +18,7 @@
     "refreshTokenRequired": "Il token di aggiornamento è obbligatorio",
     "resetTokenRequired": "Il token di ripristino è obbligatorio",
     "scheduleDeletionConfirmation": "La conferma deve essere esattamente \"SCHEDULE DELETION\"",
-    "termsRequired": "Devi accettare i termini di servizio"
+    "termsRequired": "Deve accettare la Politica di Utilizzo Accettabile e la Politica di Protezione dei Dati aziendale"
   },
   "fieldRequired": "Questo campo è obbligatorio",
   "fieldTooLong": "Questo campo è troppo lungo",

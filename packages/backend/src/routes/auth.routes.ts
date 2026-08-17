@@ -28,6 +28,9 @@ const router: RouterType = Router();
 
 router.get('/csrf-token', generateCsrfTokenHandler);
 
+// Public registration policy for frontend UX guidance (never the security boundary).
+router.get('/registration-policy', authController.getRegistrationPolicy);
+
 router.post('/register', authRateLimit, validateBody(registerSchema), authController.register);
 
 router.post('/login', loginRateLimit, validateBody(loginSchema), authController.login);

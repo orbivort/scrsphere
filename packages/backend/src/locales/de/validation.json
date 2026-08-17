@@ -3,6 +3,7 @@
     "confirmPasswordRequired": "Passwortbestätigung ist erforderlich",
     "currentPasswordRequired": "Aktuelles Passwort ist erforderlich",
     "deleteConfirmation": "Die Bestätigung muss genau \"DELETE MY ACCOUNT\" lauten",
+    "emailDomainNotAllowed": "Die Registrierung ist auf zulässige E-Mail-Domains beschränkt",
     "emailRequired": "E-Mail-Adresse ist erforderlich",
     "invalidEmail": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
     "invalidPassword": "Passwort ist ungültig",
@@ -17,7 +18,7 @@
     "refreshTokenRequired": "Refresh-Token ist erforderlich",
     "resetTokenRequired": "Reset-Token ist erforderlich",
     "scheduleDeletionConfirmation": "Die Bestätigung muss genau \"SCHEDULE DELETION\" lauten",
-    "termsRequired": "Sie müssen die Nutzungsbedingungen akzeptieren"
+    "termsRequired": "Sie müssen die Richtlinie zur zulässigen Nutzung und die Datenschutzrichtlinie des Unternehmens akzeptieren"
   },
   "fieldRequired": "Dieses Feld ist erforderlich",
   "fieldTooLong": "Dieses Feld ist zu lang",

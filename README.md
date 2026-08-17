@@ -230,6 +230,11 @@ JWT_SECRET=your-64-character-secret-key-here
 
 # CORS Configuration
 CORS_ORIGIN=http://localhost:5173
+
+# Optional: restrict new-account registration to specific email domains.
+# Leave empty/unset for open registration. Enforced server-side (HTTP 403 on
+# disallowed domains). Tenant-control gate only, not email verification.
+REGISTRATION_ALLOWED_EMAIL_DOMAINS=example.com,example.eu
 ```
 
 **Frontend** (`packages/frontend/.env`):

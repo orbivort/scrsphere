@@ -662,6 +662,18 @@ User passwords must meet the following criteria:
 └───────────────────────────────────────────────────────────────┘
 ```
 
+### Registration Domain Restriction
+
+Scrumooth supports an **opt-in email domain restriction** that limits new-account registration to one or more configured email domains, suitable for single-organization self-hosted deployments.
+
+- **Configuration:** set `REGISTRATION_ALLOWED_EMAIL_DOMAINS` (comma-separated, e.g., `example.com,example.eu`). Leave empty or unset for open registration (default). The list is lowercased and deduplicated at startup.
+- **Enforcement (server-side, authoritative):** the domain allowlist is enforced in `auth.service.ts` during registration. A registration whose email domain is not in the allowlist is rejected with **`403 Forbidden`** and a localized message. The client is never the security boundary; direct API calls are equally subject to the check.
+- **Scope:** applies to **new registrations only**. Login, password reset, and existing accounts are unaffected by the allowlist.
+- **Matching:** exact, case-insensitive match on the email domain. Subdomains are **not** implicitly allowed (e.g., allowing `example.com` does **not** allow `sub.example.com`).
+- **Policy endpoint:** `GET /api/v1/auth/registration-policy` returns `{ restricted, allowedDomains }` (unauthenticated) so the frontend can surface guidance; it does not weaken enforcement.
+- **Startup validation:** malformed domains cause the process to fail fast with a descriptive error.
+- **Documented limits:** this is a **tenant-control gate, not an email-verification or identity-proof mechanism**. It does not replace rate limiting, consent handling, or other abuse controls.
+
 ### Account Deletion
 
 Account deletion follows a **14-day grace period** model for GDPR compliance:

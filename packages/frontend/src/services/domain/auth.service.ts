@@ -6,6 +6,7 @@ import type {
   RegisterData,
   User,
   ApiResponse,
+  RegistrationPolicy,
   DeletionEligibilityResult,
 } from '../../types';
 import { coreApiService, setAuthCallbacks } from '../core/api.core';
@@ -43,6 +44,11 @@ class AuthService {
     }>
   > {
     const { data } = await this.api.post('/auth/register', userData);
+    return data;
+  }
+
+  async getRegistrationPolicy(): Promise<ApiResponse<RegistrationPolicy>> {
+    const { data } = await this.api.get('/auth/registration-policy');
     return data;
   }
 

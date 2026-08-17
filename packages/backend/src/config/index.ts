@@ -92,6 +92,34 @@ const generateSecret = (): string => {
   return secret;
 };
 
+const EMAIL_DOMAIN_PATTERN = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/;
+
+/**
+ * Parses the REGISTRATION_ALLOWED_EMAIL_DOMAINS CSV into a normalized,
+ * deduplicated list of lowercase domains. Emits a deferred warning when
+ * duplicate entries are present (benign, not fatal). Returns an empty array
+ * when the variable is unset/empty (restriction disabled).
+ */
+const buildAllowedEmailDomains = (): string[] => {
+  const raw = process.env.REGISTRATION_ALLOWED_EMAIL_DOMAINS;
+  if (!raw) return [];
+
+  const parsed = raw
+    .split(',')
+    .map((d) => d.trim().toLowerCase())
+    .filter(Boolean);
+
+  const unique = [...new Set(parsed)];
+  if (unique.length !== parsed.length) {
+    logDeferred(
+      'warn',
+      'REGISTRATION_ALLOWED_EMAIL_DOMAINS contains duplicate entries. They will be deduplicated.'
+    );
+  }
+
+  return unique;
+};
+
 export const config = {
   // Server
   nodeEnv: process.env.NODE_ENV ?? 'development',
@@ -186,6 +214,15 @@ export const config = {
   deletion: {
     scheduleConfirmationPhrase: 'SCHEDULE DELETION',
     gracePeriodDays: parseInt(process.env.ACCOUNT_DELETION_GRACE_PERIOD_DAYS ?? '14', 10),
+  },
+
+  // Registration Configuration (opt-in email domain restriction)
+  registration: {
+    // Comma-separated list of allowed email domains, e.g. "acme.com,acme.eu".
+    // Empty string or unset => restriction disabled (open registration).
+    allowedEmailDomains: buildAllowedEmailDomains(),
+    // Derived convenience flag: true when the restriction is active.
+    isRestricted: buildAllowedEmailDomains().length > 0,
   },
 
   // Database Transaction Configuration
@@ -301,6 +338,16 @@ export const validateConfig = (): void => {
 
   if (missing.length > 0) {
     throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
+  }
+
+  // Validate registration email domain restriction
+  for (const domain of config.registration.allowedEmailDomains) {
+    if (!EMAIL_DOMAIN_PATTERN.test(domain)) {
+      throw new Error(
+        `REGISTRATION_ALLOWED_EMAIL_DOMAINS contains an invalid domain: "${domain}". ` +
+          'Domains must be lowercase labels (e.g. "acme.com"), each with a valid TLD.'
+      );
+    }
   }
 
   if (config.nodeEnv === 'production') {
@@ -478,6 +525,16 @@ export const validateConfig = (): void => {
     // Validate FRONTEND_URL for email links
     if (!process.env.FRONTEND_URL) {
       throw new Error('FRONTEND_URL must be set in production for email links');
+    }
+
+    // Caveat: registration domain restriction is a coarse tenant gate, not
+    // email verification. Warn (non-fatal) when enabled in production.
+    if (config.registration.isRestricted) {
+      logDeferred(
+        'warn',
+        'REGISTRATION_ALLOWED_EMAIL_DOMAINS is set. Note this is a tenant-control gate, ' +
+          'not an email-verification or identity-proof mechanism.'
+      );
     }
   }
 

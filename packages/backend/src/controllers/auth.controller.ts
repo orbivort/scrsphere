@@ -101,6 +101,17 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   );
 });
 
+export const getRegistrationPolicy = asyncHandler(async (_req: Request, res: Response) => {
+  // Public, unauthenticated endpoint reflecting the current registration policy.
+  // The allowed-domain list is not secret; enforcement remains server-side regardless.
+  res.json(
+    createSuccessResponse({
+      restricted: config.registration.isRestricted,
+      allowedDomains: config.registration.allowedEmailDomains,
+    })
+  );
+});
+
 export const login = asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body as LoginInput;
   const sessionInfo = extractSessionInfo(req);

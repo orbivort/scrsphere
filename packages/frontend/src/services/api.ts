@@ -46,6 +46,7 @@ class ApiService {
   // Auth endpoints
   login = authService.login.bind(authService);
   register = authService.register.bind(authService);
+  getRegistrationPolicy = authService.getRegistrationPolicy.bind(authService);
   logout = authService.logout.bind(authService);
   logoutAllSessions = authService.logoutAllSessions.bind(authService);
   getCurrentUser = authService.getCurrentUser.bind(authService);

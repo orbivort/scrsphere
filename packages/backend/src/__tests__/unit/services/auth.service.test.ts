@@ -1,6 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { authService } from '../../../services/auth.service';
-import { UnauthorizedError, ConflictError, NotFoundError } from '../../../utils/errors';
+import {
+  UnauthorizedError,
+  ConflictError,
+  NotFoundError,
+  ForbiddenError,
+} from '../../../utils/errors';
 import prisma from '../../../utils/prisma';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
@@ -217,9 +222,40 @@ vi.mock('../../../utils/uuid', () => ({
   generateUUIDv7: vi.fn().mockReturnValue('mock-uuid-123'),
 }));
 
+// Mock config so the registration domain restriction can be toggled per test.
+// Default: restriction disabled (open registration), preserving existing tests.
+const { mockAllowedEmailDomains } = vi.hoisted(() => ({ mockAllowedEmailDomains: [] as string[] }));
+import type * as ConfigModule from '../../../config';
+
+vi.mock('../../../config', async (importOriginal) => {
+  const actual = await importOriginal<typeof ConfigModule>();
+  const overriddenConfig = {
+    ...actual.config,
+    registration: {
+      get allowedEmailDomains() {
+        return mockAllowedEmailDomains;
+      },
+      get isRestricted() {
+        return mockAllowedEmailDomains.length > 0;
+      },
+    },
+  };
+  return {
+    ...actual,
+    config: overriddenConfig,
+    default: overriddenConfig,
+  };
+});
+
+/** Set the allowed domains for a test (mutates the shared array in place). */
+const setAllowedDomains = (domains: string[]): void => {
+  mockAllowedEmailDomains.splice(0, mockAllowedEmailDomains.length, ...domains);
+};
+
 describe('authService', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    setAllowedDomains([]);
   });
 
   describe('register', () => {
@@ -272,6 +308,166 @@ describe('authService', () => {
           marketingOptIn: false,
         })
       ).rejects.toThrow(ConflictError);
+    });
+
+    it('should throw ForbiddenError when restriction is active and domain is not allowed', async () => {
+      setAllowedDomains(['acme.com']);
+
+      await expect(
+        authService.register({
+          email: 'user@gmail.com',
+          password: 'password123',
+          firstName: 'Test',
+          lastName: 'User',
+          termsAccepted: true,
+          marketingOptIn: false,
+        })
+      ).rejects.toThrow(ForbiddenError);
+      // The uniqueness query must not be reached.
+      expect(prisma.user.findUnique).not.toHaveBeenCalled();
+    });
+
+    it('should allow registration when domain is in the allowed list', async () => {
+      setAllowedDomains(['acme.com']);
+
+      (prisma.user.findUnique as any).mockResolvedValue(null);
+      (bcrypt.hash as any).mockResolvedValue('hashed-password');
+      (prisma.user.create as any).mockResolvedValue({
+        id: 'user-1',
+        email: 'user@acme.com',
+        password: 'hashed-password',
+        firstName: 'Test',
+        lastName: 'User',
+        avatarUrl: null,
+        termsAcceptedAt: new Date(),
+        marketingOptIn: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+      (prisma.consentRecord.createMany as any).mockResolvedValue({});
+      (prisma.refreshToken.create as any).mockResolvedValue({});
+
+      const result = await authService.register({
+        email: 'user@acme.com',
+        password: 'password123',
+        firstName: 'Test',
+        lastName: 'User',
+        termsAccepted: true,
+        marketingOptIn: false,
+      });
+
+      expect(result.user).toBeDefined();
+      expect(prisma.user.create).toHaveBeenCalled();
+    });
+
+    it('should match domains case-insensitively', async () => {
+      setAllowedDomains(['acme.com']);
+
+      (prisma.user.findUnique as any).mockResolvedValue(null);
+      (bcrypt.hash as any).mockResolvedValue('hashed-password');
+      (prisma.user.create as any).mockResolvedValue({
+        id: 'user-1',
+        email: 'user@ACME.com',
+        password: 'hashed-password',
+        firstName: 'Test',
+        lastName: 'User',
+        avatarUrl: null,
+        termsAcceptedAt: new Date(),
+        marketingOptIn: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+      (prisma.consentRecord.createMany as any).mockResolvedValue({});
+      (prisma.refreshToken.create as any).mockResolvedValue({});
+
+      const result = await authService.register({
+        email: 'User@ACME.com',
+        password: 'password123',
+        firstName: 'Test',
+        lastName: 'User',
+        termsAccepted: true,
+        marketingOptIn: false,
+      });
+
+      expect(result.user).toBeDefined();
+    });
+
+    it('should reject a subdomain when only the parent domain is allowed (exact match)', async () => {
+      setAllowedDomains(['acme.com']);
+
+      await expect(
+        authService.register({
+          email: 'user@sub.acme.com',
+          password: 'password123',
+          firstName: 'Test',
+          lastName: 'User',
+          termsAccepted: true,
+          marketingOptIn: false,
+        })
+      ).rejects.toThrow(ForbiddenError);
+    });
+
+    it('should allow multiple allowed domains', async () => {
+      setAllowedDomains(['acme.com', 'acme.eu']);
+
+      (prisma.user.findUnique as any).mockResolvedValue(null);
+      (bcrypt.hash as any).mockResolvedValue('hashed-password');
+      (prisma.user.create as any).mockResolvedValue({
+        id: 'user-1',
+        email: 'user@acme.eu',
+        password: 'hashed-password',
+        firstName: 'Test',
+        lastName: 'User',
+        avatarUrl: null,
+        termsAcceptedAt: new Date(),
+        marketingOptIn: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+      (prisma.consentRecord.createMany as any).mockResolvedValue({});
+      (prisma.refreshToken.create as any).mockResolvedValue({});
+
+      const result = await authService.register({
+        email: 'user@acme.eu',
+        password: 'password123',
+        firstName: 'Test',
+        lastName: 'User',
+        termsAccepted: true,
+        marketingOptIn: false,
+      });
+
+      expect(result.user).toBeDefined();
+    });
+
+    it('should allow any domain when restriction is disabled', async () => {
+      // mockAllowedEmailDomains defaults to [] (disabled) in beforeEach.
+      (prisma.user.findUnique as any).mockResolvedValue(null);
+      (bcrypt.hash as any).mockResolvedValue('hashed-password');
+      (prisma.user.create as any).mockResolvedValue({
+        id: 'user-1',
+        email: 'user@example.com',
+        password: 'hashed-password',
+        firstName: 'Test',
+        lastName: 'User',
+        avatarUrl: null,
+        termsAcceptedAt: new Date(),
+        marketingOptIn: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+      (prisma.consentRecord.createMany as any).mockResolvedValue({});
+      (prisma.refreshToken.create as any).mockResolvedValue({});
+
+      const result = await authService.register({
+        email: 'user@example.com',
+        password: 'password123',
+        firstName: 'Test',
+        lastName: 'User',
+        termsAccepted: true,
+        marketingOptIn: false,
+      });
+
+      expect(result.user).toBeDefined();
     });
   });
 

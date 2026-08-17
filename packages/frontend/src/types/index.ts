@@ -604,6 +604,11 @@ export interface RegisterData {
   locale?: Locale;
 }
 
+export interface RegistrationPolicy {
+  restricted: boolean;
+  allowedDomains: string[];
+}
+
 export interface AuthTokens {
   accessToken: string;
   refreshToken: string;

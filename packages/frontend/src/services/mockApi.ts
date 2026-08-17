@@ -18,6 +18,7 @@ import {
   type PaginatedResponse,
   type LoginCredentials,
   type RegisterData,
+  type RegistrationPolicy,
   type AuthTokens,
   type User,
   type Team,
@@ -164,6 +165,18 @@ class MockApiService {
           refreshToken: `mock-refresh-token-${Date.now()}`,
         },
         sessionInfo: getMockSessionInfo(),
+      },
+    };
+  }
+
+  async getRegistrationPolicy(): Promise<ApiResponse<RegistrationPolicy>> {
+    await delay(100);
+    // Mock mode defaults to open registration (no domain restriction).
+    return {
+      success: true,
+      data: {
+        restricted: false,
+        allowedDomains: [],
       },
     };
   }
