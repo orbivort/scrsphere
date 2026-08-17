@@ -16,6 +16,10 @@
 
 Scrumooth è uno strumento Scrum self-hosted che implementa fedelmente la Scrum Guide. Leggero per impostazione, guida i team lungo l'intero ciclo di vita di Scrum — dal Product Goal e dal backlog fino alla Sprint Review e alla Sprint Retrospective — senza la complessità delle piattaforme SaaS più pesanti. Distribuiscilo sulla tua infrastruttura, mantieni i tuoi dati sotto il tuo controllo e non pagare mai per utente.
 
+<p align="center">
+  <img src="docs/screenshots/scrumooth_it.png" alt="Scrumooth" width="800" />
+</p>
+
 ## Indice
 
 - [Demo dal vivo](#live-demo)
