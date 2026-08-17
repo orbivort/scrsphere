@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2026-08-17
+
+### Added
+
+- **login**: add email domain restriction to account registration
+
+### Security
+
+- **node**: bump Node.js from `24.14.1` to `24.19.0`
+- **pnpm**: bump pnpm from `11.5.0` to `11.21.0`
+- **nginx**: bump the production nginx image from `1.27` to `1.30`
+- **build**: refresh dev/transitive dependencies with the latest stable versions
+- **docker**: pin the Node base image to Debian `trixie` (Debian 13)
+- **docker**: enhance docker build
+
 ## [2.2.0] - 2026-08-13
 
 ### Added
