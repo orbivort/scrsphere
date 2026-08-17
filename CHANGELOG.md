@@ -9,11 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- add email domain restriction to account registration
+- **login**: add email domain restriction to account registration
 
-### Fixed
+### Security
 
-- update product goal translations per i18n glossary
+- **node**: bump Node.js from `24.14.1` to `24.19.0`
+- **pnpm**: bump pnpm from `11.5.0` to `11.21.0`
+- **nginx**: bump the production nginx image from `1.27` to `1.30`
+- **build**: refresh dev/transitive dependencies with the latest stable versions
+- **docker**: pin the Node base image to Debian `trixie` (Debian 13)
+- **docker**: enhance docker build
 
 ## [2.2.0] - 2026-08-13
 
