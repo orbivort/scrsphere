@@ -7,9 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.3.1] - 2026-08-18
 
-### Fixed
+### Security
 
-- **deps**: upgrade deepmerge-ts to 8.0.1 to fix GHSA-ggr8-5vv4-36mx
+- **deepmerge-ts**: fix high stack exhaustion (DoS) vulnerability - override to ^8.0.0
+  - GHSA-ggr8-5vv4-36mx / CVE-2026-40345: unbounded recursion in `deepmerge()`/`deepmergeInto()` when merging recursive object graphs can crash the process with `RangeError: Maximum call stack size exceeded` (availability only; plain JSON is not affected)
 
 ## [2.3.0] - 2026-08-17
 
