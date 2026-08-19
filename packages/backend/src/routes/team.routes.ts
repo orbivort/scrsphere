@@ -22,11 +22,11 @@ const createTeamSchema = z.object({
 
 const addMemberSchema = z.object({
   email: z.string().email('Invalid email'),
-  role: z.enum(['PRODUCT_OWNER', 'SCRUM_MASTER', 'DEVELOPER']),
+  role: z.enum(['PRODUCT_OWNER', 'SCRUM_MASTER', 'DEVELOPERS']),
 });
 
 const updateMemberSchema = z.object({
-  role: z.enum(['PRODUCT_OWNER', 'SCRUM_MASTER', 'DEVELOPER']),
+  role: z.enum(['PRODUCT_OWNER', 'SCRUM_MASTER', 'DEVELOPERS']),
 });
 
 const teamIdSchema = z.object({

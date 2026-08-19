@@ -330,7 +330,7 @@ describe('ProductBacklogService', () => {
         id: 'member-id',
         teamId,
         userId,
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
       } as any);
       vi.mocked(prisma.productBacklogItem.create).mockResolvedValue(mockPBI as any);
 
@@ -480,7 +480,7 @@ describe('ProductBacklogService', () => {
         id: 'member-id',
         teamId: mockPBI.teamId,
         userId,
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
       } as any);
       vi.mocked(workflowService.validateTransition).mockResolvedValue({
         isValid: false,
@@ -509,7 +509,7 @@ describe('ProductBacklogService', () => {
         id: 'member-id',
         teamId: mockPBI.teamId,
         userId,
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
       } as any);
       vi.mocked(workflowService.validateTransition).mockResolvedValue({
         isValid: true,
@@ -669,7 +669,7 @@ describe('ProductBacklogService', () => {
         id: 'member-id',
         teamId: mockPBI.teamId,
         userId,
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
       } as any);
       vi.mocked(prisma.productBacklogItem.update).mockResolvedValue(updatedPBI as any);
 
@@ -1007,7 +1007,7 @@ describe('ProductBacklogService', () => {
         id: 'member-id',
         teamId,
         userId,
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
       } as any);
       vi.mocked(prisma.$transaction).mockImplementation(async (cb: any) => cb(mockTx));
 

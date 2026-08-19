@@ -23,7 +23,7 @@
     "title": "Teammitglied entfernen",
     "warning": "Diese Aktion kann nicht rückgängig gemacht werden. Der Benutzer verliert den Zugriff auf alle Team-Ressourcen."
   },
-  "developer": {
+  "developers": {
     "badge": "Teammitglied",
     "checkInvitations": "Einladungen überprüfen",
     "description": "Treten Sie einem bestehenden Scrum-Team bei...",
@@ -33,7 +33,7 @@
       "invitationsSentBy": "Team-Einladungen werden gesendet von: Scrum Mastern oder ausschließlich von Product Ownern",
       "title": "Wie Sie einem Team beitreten"
     },
-    "title": "Developer"
+    "title": "Developers"
   },
   "errorStates": {
     "accessDenied": "Zugang verweigert",
@@ -109,7 +109,7 @@
     "memberSince": "Mitglied seit",
     "roleNames": {
       "administrator": "Administrator",
-      "developer": "Developer",
+      "developers": "Developers",
       "productOwner": "Product Owner",
       "scrumMaster": "Scrum Master"
     },
@@ -130,7 +130,7 @@
     "filterByRoleAriaLabel": "Mitglieder nach Rolle filtern",
     "filterOptions": {
       "allRoles": "Alle Rollen",
-      "developer": "Developer",
+      "developers": "Developers",
       "productOwner": "Product Owner",
       "scrumMaster": "Scrum Master"
     },

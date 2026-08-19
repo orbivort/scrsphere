@@ -276,8 +276,8 @@ describe('Team Controller', () => {
     it('should add a member to team', async () => {
       mockReq.params = { teamId: 'team-123' };
       mockReq.userId = 'user-123';
-      mockReq.body = { email: 'new@example.com', role: 'DEVELOPER' };
-      const mockMember = { id: 'member-123', userId: 'user-456', role: 'DEVELOPER' };
+      mockReq.body = { email: 'new@example.com', role: 'DEVELOPERS' };
+      const mockMember = { id: 'member-123', userId: 'user-456', role: 'DEVELOPERS' };
 
       (teamService.addMember as any).mockResolvedValue(mockMember);
 
@@ -413,7 +413,7 @@ describe('Team Controller', () => {
       mockReq.userId = 'user-123';
       const mockTeams = [
         { id: 'team-1', name: 'Team 1', role: 'PRODUCT_OWNER' },
-        { id: 'team-2', name: 'Team 2', role: 'DEVELOPER' },
+        { id: 'team-2', name: 'Team 2', role: 'DEVELOPERS' },
       ];
 
       (teamService.getUserTeamsWithRoles as any).mockResolvedValue(mockTeams);
@@ -447,7 +447,7 @@ describe('Team Controller', () => {
       mockReq.params = { teamId: 'team-123' };
       mockReq.userId = 'user-123';
 
-      (teamService.getUserRoleInTeam as any).mockResolvedValue('DEVELOPER');
+      (teamService.getUserRoleInTeam as any).mockResolvedValue('DEVELOPERS');
 
       getMyRoleInTeam(mockReq as any, mockRes as any, mockNext);
       await new Promise((resolve) => setTimeout(resolve, 0));
@@ -456,7 +456,7 @@ describe('Team Controller', () => {
       expect(teamService.getUserRoleInTeam).toHaveBeenCalledWith('user-123', 'team-123');
       expect(mockRes._json).toEqual({
         success: true,
-        data: { role: 'DEVELOPER' },
+        data: { role: 'DEVELOPERS' },
       });
     });
 

@@ -32,8 +32,8 @@ export const TeamMemberSelect: React.FC<TeamMemberSelectProps> = ({
         return 'Product Owner';
       case 'scrum_master':
         return 'Scrum Master';
-      case 'developer':
-        return 'Developer';
+      case 'developers':
+        return 'Developers';
       default:
         return role;
     }

@@ -234,7 +234,7 @@ describe('TeamSwitcher Component', () => {
       // Arrange
       const teams = [
         createMockTeam('team-1', 'Alpha Team', 'scrum_master'),
-        createMockTeam('team-2', 'Beta Team', 'developer'),
+        createMockTeam('team-2', 'Beta Team', 'developers'),
       ];
 
       vi.mocked(storeModule.useTeamStore).mockReturnValue(
@@ -264,7 +264,7 @@ describe('TeamSwitcher Component', () => {
       // Arrange
       const teams = [
         createMockTeam('team-1', 'Alpha Team', 'scrum_master'),
-        createMockTeam('team-2', 'Beta Team', 'developer'),
+        createMockTeam('team-2', 'Beta Team', 'developers'),
       ];
 
       vi.mocked(storeModule.useTeamStore).mockReturnValue(
@@ -294,7 +294,7 @@ describe('TeamSwitcher Component', () => {
       // Arrange
       const teams = [
         createMockTeam('team-1', 'Alpha Team', 'scrum_master'),
-        createMockTeam('team-2', 'Beta Team', 'developer'),
+        createMockTeam('team-2', 'Beta Team', 'developers'),
       ];
 
       vi.mocked(storeModule.useTeamStore).mockReturnValue(
@@ -327,7 +327,7 @@ describe('TeamSwitcher Component', () => {
       const user = userEvent.setup();
       const teams = [
         createMockTeam('team-1', 'Alpha Team', 'scrum_master'),
-        createMockTeam('team-2', 'Beta Team', 'developer'),
+        createMockTeam('team-2', 'Beta Team', 'developers'),
       ];
 
       vi.mocked(storeModule.useTeamStore).mockReturnValue(
@@ -365,7 +365,7 @@ describe('TeamSwitcher Component', () => {
       const user = userEvent.setup();
       const teams = [
         createMockTeam('team-1', 'Alpha Team', 'scrum_master'),
-        createMockTeam('team-2', 'Beta Team', 'developer'),
+        createMockTeam('team-2', 'Beta Team', 'developers'),
       ];
 
       vi.mocked(storeModule.useTeamStore).mockReturnValue(
@@ -410,7 +410,7 @@ describe('TeamSwitcher Component', () => {
       const user = userEvent.setup();
       const teams = [
         createMockTeam('team-1', 'Alpha Team', 'scrum_master'),
-        createMockTeam('team-2', 'Beta Team', 'developer'),
+        createMockTeam('team-2', 'Beta Team', 'developers'),
       ];
 
       vi.mocked(storeModule.useTeamStore).mockReturnValue(
@@ -454,7 +454,7 @@ describe('TeamSwitcher Component', () => {
       const user = userEvent.setup();
       const teams = [
         createMockTeam('team-1', 'Alpha Team', 'scrum_master'),
-        createMockTeam('team-2', 'Beta Team', 'developer'),
+        createMockTeam('team-2', 'Beta Team', 'developers'),
       ];
 
       vi.mocked(storeModule.useTeamStore).mockReturnValue(
@@ -500,7 +500,7 @@ describe('TeamSwitcher Component', () => {
       // Arrange
       const storeTeams = [
         createMockTeam('team-1', 'Store Team Alpha', 'scrum_master'),
-        createMockTeam('team-2', 'Store Team Beta', 'developer'),
+        createMockTeam('team-2', 'Store Team Beta', 'developers'),
       ];
 
       vi.mocked(storeModule.useTeamStore).mockReturnValue(
@@ -530,7 +530,7 @@ describe('TeamSwitcher Component', () => {
       // Arrange
       const teams = [
         createMockTeam('team-1', 'Alpha Team', 'scrum_master'),
-        createMockTeam('team-2', 'Beta Team', 'developer'),
+        createMockTeam('team-2', 'Beta Team', 'developers'),
       ];
 
       const queryClient = createTestQueryClient();
@@ -609,7 +609,7 @@ describe('TeamSwitcher Component', () => {
 
     it('should handle teams with special characters in names', async () => {
       // Arrange
-      const specialTeam = createMockTeam('team-1', 'Team @#$%^&*()', 'developer');
+      const specialTeam = createMockTeam('team-1', 'Team @#$%^&*()', 'developers');
 
       vi.mocked(storeModule.useTeamStore).mockReturnValue(
         createMockTeamStore({ currentTeam: specialTeam, userTeamsWithRoles: [specialTeam] }) as any
@@ -666,7 +666,7 @@ describe('TeamSwitcher Component', () => {
 
     it('should handle teams with multi-word names for initials', async () => {
       // Arrange
-      const multiWordTeam = createMockTeam('team-1', 'Engineering Team Alpha', 'developer');
+      const multiWordTeam = createMockTeam('team-1', 'Engineering Team Alpha', 'developers');
 
       vi.mocked(storeModule.useTeamStore).mockReturnValue(
         createMockTeamStore({
@@ -700,7 +700,7 @@ describe('TeamSwitcher Component', () => {
       const teams = [
         createMockTeam('team-1', 'Alpha Team', 'scrum_master'),
         createMockTeam('team-2', 'Beta Team', 'product_owner'),
-        createMockTeam('team-3', 'Gamma Team', 'developer'),
+        createMockTeam('team-3', 'Gamma Team', 'developers'),
         createMockTeam('team-4', 'Delta Team', 'unknown_role'),
       ];
 
@@ -730,7 +730,7 @@ describe('TeamSwitcher Component', () => {
       await waitFor(() => {
         const scrumMasterElements = screen.getAllByText('scrum master');
         const productOwnerElements = screen.getAllByText('product owner');
-        const developerElements = screen.getAllByText('developer');
+        const developerElements = screen.getAllByText('developers');
         const unknownRoleElements = screen.getAllByText('unknown role');
 
         expect(scrumMasterElements.length).toBeGreaterThanOrEqual(1);
@@ -745,7 +745,7 @@ describe('TeamSwitcher Component', () => {
       const user = userEvent.setup();
       const teams = [
         createMockTeam('team-1', 'Alpha Team', 'scrum_master'),
-        createMockTeam('team-2', 'Beta Team', 'developer'),
+        createMockTeam('team-2', 'Beta Team', 'developers'),
         createMockTeam('team-3', 'Gamma Team', 'product_owner'),
       ];
 
@@ -823,7 +823,7 @@ describe('TeamSwitcher Component', () => {
       // Arrange
       const teams = [
         createMockTeam('team-1', 'Alpha Team', 'scrum_master'),
-        createMockTeam('team-2', 'Beta Team', 'developer'),
+        createMockTeam('team-2', 'Beta Team', 'developers'),
       ];
 
       vi.mocked(storeModule.useTeamStore).mockReturnValue(
@@ -855,7 +855,7 @@ describe('TeamSwitcher Component', () => {
       const user = userEvent.setup();
       const teams = [
         createMockTeam('team-1', 'Alpha Team', 'scrum_master'),
-        createMockTeam('team-2', 'Beta Team', 'developer'),
+        createMockTeam('team-2', 'Beta Team', 'developers'),
       ];
 
       vi.mocked(storeModule.useTeamStore).mockReturnValue(
@@ -893,7 +893,7 @@ describe('TeamSwitcher Component', () => {
       const user = userEvent.setup();
       const teams = [
         createMockTeam('team-1', 'Alpha Team', 'scrum_master'),
-        createMockTeam('team-2', 'Beta Team', 'developer'),
+        createMockTeam('team-2', 'Beta Team', 'developers'),
       ];
 
       vi.mocked(storeModule.useTeamStore).mockReturnValue(
@@ -931,7 +931,7 @@ describe('TeamSwitcher Component', () => {
       const user = userEvent.setup();
       const teams = [
         createMockTeam('team-1', 'Alpha Team', 'scrum_master'),
-        createMockTeam('team-2', 'Beta Team', 'developer'),
+        createMockTeam('team-2', 'Beta Team', 'developers'),
       ];
 
       vi.mocked(storeModule.useTeamStore).mockReturnValue(
@@ -968,7 +968,7 @@ describe('TeamSwitcher Component', () => {
       // Arrange
       const teams = [
         createMockTeam('team-1', 'Alpha Team', 'scrum_master'),
-        createMockTeam('team-2', 'Beta Team', 'developer'),
+        createMockTeam('team-2', 'Beta Team', 'developers'),
       ];
 
       vi.mocked(storeModule.useTeamStore).mockReturnValue(
@@ -1027,7 +1027,7 @@ describe('TeamSwitcher Component', () => {
       // Arrange
       const teams = [
         createMockTeam('team-1', 'Alpha Team', 'scrum_master'),
-        createMockTeam('team-2', 'Beta Team', 'developer'),
+        createMockTeam('team-2', 'Beta Team', 'developers'),
       ];
 
       vi.mocked(storeModule.useTeamStore).mockReturnValue(
@@ -1059,7 +1059,7 @@ describe('TeamSwitcher Component', () => {
       const user = userEvent.setup();
       const teams = [
         createMockTeam('team-1', 'Alpha Team', 'scrum_master'),
-        createMockTeam('team-2', 'Beta Team', 'developer'),
+        createMockTeam('team-2', 'Beta Team', 'developers'),
       ];
 
       vi.mocked(storeModule.useTeamStore).mockReturnValue(
@@ -1090,7 +1090,7 @@ describe('TeamSwitcher Component', () => {
         expect(screen.getByText('Alpha Team')).toBeInTheDocument();
         expect(screen.getByText('Beta Team')).toBeInTheDocument();
         expect(screen.getByText('scrum master')).toBeInTheDocument();
-        expect(screen.getByText('developer')).toBeInTheDocument();
+        expect(screen.getByText('developers')).toBeInTheDocument();
       });
     });
   });

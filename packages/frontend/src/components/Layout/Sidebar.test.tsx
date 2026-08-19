@@ -228,7 +228,7 @@ const createMockTeamContext = (overrides = {}) => ({
     name: 'Test Team',
     description: 'A test team',
   },
-  userRole: 'DEVELOPER',
+  userRole: 'DEVELOPERS',
   hasMultipleTeams: false,
   switchTeam: vi.fn(),
   userTeams: [],
@@ -332,7 +332,7 @@ describe('Layout Component', () => {
       renderWithProviders(<Layout>Content</Layout>);
 
       expect(screen.getByText('Test Team')).toBeInTheDocument();
-      expect(screen.getByText('Developer')).toBeInTheDocument();
+      expect(screen.getByText('Developers')).toBeInTheDocument();
     });
 
     it('renders "No team selected" when no team is selected', () => {
@@ -525,7 +525,7 @@ describe('Layout Component', () => {
         teamContext: createMockTeamContext({
           hasMultipleTeams: true,
           userTeams: [
-            { id: 'team-1', name: 'Team 1', userRole: 'DEVELOPER' },
+            { id: 'team-1', name: 'Team 1', userRole: 'DEVELOPERS' },
             { id: 'team-2', name: 'Team 2', userRole: 'SCRUM_MASTER' },
           ],
           switchTeam,
@@ -551,7 +551,7 @@ describe('Layout Component', () => {
         teamContext: createMockTeamContext({
           hasMultipleTeams: true,
           userTeams: [
-            { id: 'team-1', name: 'Team 1', userRole: 'DEVELOPER' },
+            { id: 'team-1', name: 'Team 1', userRole: 'DEVELOPERS' },
             { id: 'team-2', name: 'Team 2', userRole: 'SCRUM_MASTER' },
           ],
           switchTeam,
@@ -771,7 +771,7 @@ describe('Layout Component', () => {
 
     it('filters settings items based on user role', () => {
       renderWithProviders(<Layout>Content</Layout>, {
-        teamContext: createMockTeamContext({ userRole: 'DEVELOPER' }),
+        teamContext: createMockTeamContext({ userRole: 'DEVELOPERS' }),
       });
 
       expect(screen.queryByText(i18nT('nav.settings.sprintConfiguration'))).not.toBeInTheDocument();
@@ -813,12 +813,12 @@ describe('Layout Component', () => {
       expect(screen.getByText('Scrum Master')).toBeInTheDocument();
     });
 
-    it('displays correct role label for DEVELOPER', () => {
+    it('displays correct role label for DEVELOPERS', () => {
       renderWithProviders(<Layout>Content</Layout>, {
-        teamContext: createMockTeamContext({ userRole: 'DEVELOPER' }),
+        teamContext: createMockTeamContext({ userRole: 'DEVELOPERS' }),
       });
 
-      expect(screen.getByText('Developer')).toBeInTheDocument();
+      expect(screen.getByText('Developers')).toBeInTheDocument();
     });
 
     it('displays "No Role" when user role is null', () => {

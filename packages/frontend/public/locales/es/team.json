@@ -23,7 +23,7 @@
     "title": "Eliminar Miembro del equipo",
     "warning": "Esta acción no puede ser revertida. El usuario perderá acceso a todos los recursos del equipo."
   },
-  "developer": {
+  "developers": {
     "badge": "Miembro del equipo",
     "checkInvitations": "Verificar Invitaciones",
     "description": "Unirse a un equipo Scrum existente...",
@@ -33,7 +33,7 @@
       "invitationsSentBy": "Las invitaciones de equipo son enviadas por: Scrum Masters o Product Owners solamente",
       "title": "Cómo unirse a un equipo"
     },
-    "title": "Developer"
+    "title": "Developers"
   },
   "errorStates": {
     "accessDenied": "Acceso denegado",
@@ -109,7 +109,7 @@
     "memberSince": "Miembro desde",
     "roleNames": {
       "administrator": "Administrador",
-      "developer": "Developer",
+      "developers": "Developers",
       "productOwner": "Product Owner",
       "scrumMaster": "Scrum Master"
     },
@@ -130,7 +130,7 @@
     "filterByRoleAriaLabel": "Filtrar miembros por rol",
     "filterOptions": {
       "allRoles": "Todos los Roles",
-      "developer": "Developer",
+      "developers": "Developers",
       "productOwner": "Product Owner",
       "scrumMaster": "Scrum Master"
     },

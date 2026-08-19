@@ -158,6 +158,7 @@ model ProductBacklogItem {
   @@index([priority])
   @@index([teamId, status])
   @@index([teamId, status, priority])
+  @@index([labels], type: Gin)
   @@map("product_backlog_items")
 }
 
@@ -918,6 +919,7 @@ model StatusChangeHistory {
   @@index([entityId])
   @@index([createdAt])
   @@index([entityType, entityId])
+  @@index([metadata(ops: JsonbPathOps)], type: Gin)
   @@map("status_change_history")
 }
 
@@ -941,6 +943,7 @@ model Notification {
   @@index([userId])
   @@index([userId, isRead])
   @@index([createdAt])
+  @@index([data(ops: JsonbPathOps)], type: Gin)
   @@map("notifications")
 }
 
@@ -1065,7 +1068,7 @@ model PasswordResetToken {
 enum UserRole {
   PRODUCT_OWNER
   SCRUM_MASTER
-  DEVELOPER
+  DEVELOPERS
 }
 
 enum ItemStatus {

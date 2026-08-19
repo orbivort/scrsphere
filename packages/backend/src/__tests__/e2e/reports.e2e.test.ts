@@ -445,7 +445,7 @@ describe('E2E: Reports', () => {
       const email = `dev-reports-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
       const cookies = await loginAndGetCookies(email);
 

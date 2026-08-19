@@ -23,7 +23,7 @@
     "title": "[Rémóvé Téàm Mémbérrrrrrr]",
     "warning": "[Thís àctíón cànnót bé úndóné. Thé úsér wíll lósé àccéss tó àll téàm résóúrcésssssssssssssssssssssssss.]"
   },
-  "developer": {
+  "developers": {
     "badge": "[Téàm Mémbérrrrr]",
     "checkInvitations": "[Chéck Ínvítàtíónsssssss]",
     "description": "[Jóín àn éxístíng Scrúm téàmmmmmmmmmm...]",
@@ -33,7 +33,7 @@
       "invitationsSentBy": "[Téàm ínvítàtíóns àré sént by: Scrúm Màstérs ór Pródúct Ównérs ónlyyyyyyyyyyyyyyyyyyyyy]",
       "title": "[Hów tó Jóín à Téàmmmmmmm]"
     },
-    "title": "[Dévélópérrrr]"
+    "title": "[Dévélópérrrrs]"
   },
   "errorStates": {
     "accessDenied": "[Àccéss déníéddddd]",
@@ -109,7 +109,7 @@
     "memberSince": "[Mémbér síncééééé]",
     "roleNames": {
       "administrator": "[Àdmínístràtórrrrr]",
-      "developer": "[Dévélópérrrr]",
+      "developers": "[Dévélópérrrrs]",
       "productOwner": "[Pródúct Ównérrrrr]",
       "scrumMaster": "[Scrúm Màstérrrrr]"
     },
@@ -130,7 +130,7 @@
     "filterByRoleAriaLabel": "[Fíltér mémbérs by róléééééééé]",
     "filterOptions": {
       "allRoles": "[Àll Róléssss]",
-      "developer": "[Dévélópérrrr]",
+      "developers": "[Dévélópérrrrs]",
       "productOwner": "[Pródúct Ównérrrrr]",
       "scrumMaster": "[Scrúm Màstérrrrr]"
     },

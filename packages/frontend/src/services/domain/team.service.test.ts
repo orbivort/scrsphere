@@ -149,19 +149,19 @@ describe('TeamService', () => {
       const mockResponse = {
         data: {
           success: true,
-          data: { id: 'member-1', userId: 'user-1', role: 'DEVELOPER' },
+          data: { id: 'member-1', userId: 'user-1', role: 'DEVELOPERS' },
         },
       };
       vi.mocked(mockApi.post).mockResolvedValue(mockResponse);
 
-      const result = await teamService.addTeamMember('1', 'new@example.com', 'developer');
+      const result = await teamService.addTeamMember('1', 'new@example.com', 'developers');
 
       expect(mockApi.post).toHaveBeenCalledWith('/teams/1/members', {
         email: 'new@example.com',
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
       });
       expect(result.success).toBe(true);
-      expect(result.data?.role).toBe('DEVELOPER');
+      expect(result.data?.role).toBe('DEVELOPERS');
     });
 
     it('should convert role to uppercase', async () => {
@@ -223,7 +223,7 @@ describe('TeamService', () => {
           success: true,
           data: [
             { id: '1', name: 'Team 1', userRole: 'PRODUCT_OWNER' },
-            { id: '2', name: 'Team 2', userRole: 'DEVELOPER' },
+            { id: '2', name: 'Team 2', userRole: 'DEVELOPERS' },
           ],
         },
       };
@@ -261,7 +261,7 @@ describe('TeamService', () => {
       const mockResponse = {
         data: {
           success: true,
-          data: { id: '1', name: 'Team 1', userRole: 'DEVELOPER' },
+          data: { id: '1', name: 'Team 1', userRole: 'DEVELOPERS' },
         },
       };
       vi.mocked(mockApi.post).mockResolvedValue(mockResponse);
@@ -270,7 +270,7 @@ describe('TeamService', () => {
 
       expect(mockApi.post).toHaveBeenCalledWith('/teams/select-team', { teamId: '1' });
       expect(result.success).toBe(true);
-      expect(result.data?.userRole).toBe('DEVELOPER');
+      expect(result.data?.userRole).toBe('DEVELOPERS');
     });
   });
 });

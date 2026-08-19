@@ -79,7 +79,7 @@
     "removeAttendee": "Eliminar asistente",
     "removeAttendeeConfirm": "Eliminar",
     "removeAttendeeTitle": "Eliminar asistente",
-    "roleDeveloper": "Developer",
+    "roleDevelopers": "Developers",
     "roleProductOwner": "Product Owner",
     "roleScrumMaster": "Scrum Master",
     "roleStakeholder": "Interesado",
@@ -640,7 +640,7 @@
     "goToTeamPage": "Ir a página de equipo",
     "loading": "Cargando equipos...",
     "roles": {
-      "developer": "Developer",
+      "developers": "Developers",
       "productOwner": "Product Owner",
       "scrumMaster": "Scrum Master"
     },

@@ -660,7 +660,7 @@ describe('SprintService', () => {
       };
 
       (prisma.task.create as any).mockResolvedValue(mockTask);
-      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPER' });
+      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
       (workflowService.executeStatusChange as any).mockResolvedValue({});
 
       const result = await sprintService.createTask('user-1', {
@@ -693,7 +693,7 @@ describe('SprintService', () => {
 
       (prisma.task.findFirst as any).mockResolvedValue(mockTask);
       (prisma.task.update as any).mockResolvedValue(mockUpdatedTask);
-      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPER' });
+      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
       (workflowService.validateTransition as any).mockResolvedValue({
         isValid: true,
         allowed: true,
@@ -1482,7 +1482,7 @@ describe('SprintService - Additional Coverage', () => {
 
       (prisma.task.findFirst as any).mockResolvedValue(mockTask);
       (prisma.task.update as any).mockResolvedValue(mockUpdatedTask);
-      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPER' });
+      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
       (workflowService.validateTransition as any).mockResolvedValue({
         isValid: true,
         allowed: true,
@@ -1525,7 +1525,7 @@ describe('SprintService - Additional Coverage', () => {
         ...mockTask,
         ...args.data,
       }));
-      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPER' });
+      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
       (workflowService.validateTransition as any).mockResolvedValue({
         isValid: true,
         allowed: true,
@@ -1585,7 +1585,7 @@ describe('SprintService - Additional Coverage', () => {
       };
 
       (prisma.task.findFirst as any).mockResolvedValue(mockTask);
-      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPER' });
+      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
       (workflowService.validateTransition as any).mockResolvedValue({
         isValid: false,
         allowed: false,
@@ -1621,7 +1621,7 @@ describe('SprintService - Additional Coverage', () => {
       };
 
       (prisma.task.create as any).mockResolvedValue(mockTask);
-      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPER' });
+      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
       (workflowService.executeStatusChange as any).mockResolvedValue({});
       (prisma.user.findUnique as any).mockResolvedValue(mockAssigner);
       (prisma.notification.create as any).mockResolvedValue({});
@@ -1653,7 +1653,7 @@ describe('SprintService - Additional Coverage', () => {
       };
 
       (prisma.task.create as any).mockResolvedValue(mockTask);
-      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPER' });
+      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
       (workflowService.executeStatusChange as any).mockResolvedValue({});
 
       const result = await sprintService.createTask('user-1', {

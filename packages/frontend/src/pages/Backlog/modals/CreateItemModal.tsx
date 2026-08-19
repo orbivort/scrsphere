@@ -49,7 +49,7 @@ export const CreateItemModal: React.FC<CreateItemModalProps> = ({
 
   // Only Developers are responsible for sizing; PO/SM cannot set story points.
   const { userRole } = useTeamContext();
-  const isDeveloper = userRole === 'DEVELOPER';
+  const isDeveloper = userRole === 'DEVELOPERS';
 
   const {
     formData,

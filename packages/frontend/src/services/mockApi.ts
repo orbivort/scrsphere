@@ -2085,14 +2085,14 @@ class MockApiService {
           id: 'attendee-4',
           name: 'Emma Davis',
           email: 'emma.davis@company.com',
-          role: 'developer',
+          role: 'developers',
           attended: true,
         },
         {
           id: 'attendee-5',
           name: 'Alex Brown',
           email: 'alex.brown@company.com',
-          role: 'developer',
+          role: 'developers',
           attended: true,
         },
         {
@@ -2187,14 +2187,14 @@ class MockApiService {
           id: 'attendee-10',
           name: 'Emma Davis',
           email: 'emma.davis@company.com',
-          role: 'developer',
+          role: 'developers',
           attended: true,
         },
         {
           id: 'attendee-11',
           name: 'Alex Brown',
           email: 'alex.brown@company.com',
-          role: 'developer',
+          role: 'developers',
           attended: true,
         },
         {
@@ -2585,7 +2585,7 @@ class MockApiService {
       facilitatorId: UUIDS.users.scrumMaster,
       status: RetrospectiveStatus.COMPLETED,
       participants: [
-        { id: UUIDS.users.admin, firstName: 'John', lastName: 'Administrator', role: 'developer' },
+        { id: UUIDS.users.admin, firstName: 'John', lastName: 'Administrator', role: 'developers' },
         {
           id: UUIDS.users.scrumMaster,
           firstName: 'Sarah',
@@ -2598,8 +2598,8 @@ class MockApiService {
           lastName: 'Wilson',
           role: 'product_owner',
         },
-        { id: UUIDS.users.developer2, firstName: 'Emma', lastName: 'Davis', role: 'developer' },
-        { id: UUIDS.users.guest, firstName: 'Alex', lastName: 'Brown', role: 'developer' },
+        { id: UUIDS.users.developer2, firstName: 'Emma', lastName: 'Davis', role: 'developers' },
+        { id: UUIDS.users.guest, firstName: 'Alex', lastName: 'Brown', role: 'developers' },
       ],
       attendees: [
         {
@@ -2607,7 +2607,7 @@ class MockApiService {
           userId: UUIDS.users.admin,
           name: 'John Administrator',
           email: 'demo@example.com',
-          role: 'developer',
+          role: 'developers',
           attended: true,
         },
         {
@@ -2631,7 +2631,7 @@ class MockApiService {
           userId: UUIDS.users.developer2,
           name: 'Emma Davis',
           email: 'emma.davis@example.com',
-          role: 'developer',
+          role: 'developers',
           attended: true,
         },
         {
@@ -2639,7 +2639,7 @@ class MockApiService {
           userId: UUIDS.users.guest,
           name: 'Alex Brown',
           email: 'alex.brown@example.com',
-          role: 'developer',
+          role: 'developers',
           attended: false,
         },
       ],
@@ -2733,7 +2733,7 @@ class MockApiService {
       facilitatorId: UUIDS.users.scrumMaster,
       status: RetrospectiveStatus.COMPLETED,
       participants: [
-        { id: UUIDS.users.admin, firstName: 'John', lastName: 'Administrator', role: 'developer' },
+        { id: UUIDS.users.admin, firstName: 'John', lastName: 'Administrator', role: 'developers' },
         {
           id: UUIDS.users.scrumMaster,
           firstName: 'Sarah',
@@ -2746,8 +2746,8 @@ class MockApiService {
           lastName: 'Wilson',
           role: 'product_owner',
         },
-        { id: UUIDS.users.developer2, firstName: 'Emma', lastName: 'Davis', role: 'developer' },
-        { id: UUIDS.users.guest, firstName: 'Alex', lastName: 'Brown', role: 'developer' },
+        { id: UUIDS.users.developer2, firstName: 'Emma', lastName: 'Davis', role: 'developers' },
+        { id: UUIDS.users.guest, firstName: 'Alex', lastName: 'Brown', role: 'developers' },
       ],
       attendees: [
         {
@@ -2755,7 +2755,7 @@ class MockApiService {
           userId: UUIDS.users.admin,
           name: 'John Administrator',
           email: 'demo@example.com',
-          role: 'developer',
+          role: 'developers',
           attended: true,
         },
         {
@@ -2779,7 +2779,7 @@ class MockApiService {
           userId: UUIDS.users.developer2,
           name: 'Emma Davis',
           email: 'emma.davis@example.com',
-          role: 'developer',
+          role: 'developers',
           attended: true,
         },
         {
@@ -2787,7 +2787,7 @@ class MockApiService {
           userId: UUIDS.users.guest,
           name: 'Alex Brown',
           email: 'alex.brown@example.com',
-          role: 'developer',
+          role: 'developers',
           attended: true,
         },
         {
@@ -2933,7 +2933,7 @@ class MockApiService {
       facilitatorId: UUIDS.users.scrumMaster,
       status: RetrospectiveStatus.IN_PROGRESS,
       participants: [
-        { id: UUIDS.users.admin, firstName: 'John', lastName: 'Administrator', role: 'developer' },
+        { id: UUIDS.users.admin, firstName: 'John', lastName: 'Administrator', role: 'developers' },
         {
           id: UUIDS.users.scrumMaster,
           firstName: 'Sarah',
@@ -2946,8 +2946,8 @@ class MockApiService {
           lastName: 'Wilson',
           role: 'product_owner',
         },
-        { id: UUIDS.users.developer2, firstName: 'Emma', lastName: 'Davis', role: 'developer' },
-        { id: UUIDS.users.guest, firstName: 'Alex', lastName: 'Brown', role: 'developer' },
+        { id: UUIDS.users.developer2, firstName: 'Emma', lastName: 'Davis', role: 'developers' },
+        { id: UUIDS.users.guest, firstName: 'Alex', lastName: 'Brown', role: 'developers' },
       ],
       attendees: [
         {
@@ -2955,7 +2955,7 @@ class MockApiService {
           userId: UUIDS.users.admin,
           name: 'John Administrator',
           email: 'demo@example.com',
-          role: 'developer',
+          role: 'developers',
           attended: true,
         },
         {
@@ -2979,7 +2979,7 @@ class MockApiService {
           userId: UUIDS.users.developer2,
           name: 'Emma Davis',
           email: 'emma.davis@example.com',
-          role: 'developer',
+          role: 'developers',
           attended: false,
         },
         {
@@ -2987,7 +2987,7 @@ class MockApiService {
           userId: UUIDS.users.guest,
           name: 'Alex Brown',
           email: 'alex.brown@example.com',
-          role: 'developer',
+          role: 'developers',
           attended: true,
         },
       ],
@@ -3389,7 +3389,7 @@ class MockApiService {
     const currentUser = getCurrentUser();
     const teamsWithRoles = mockTeams.map((team) => {
       const member = team.members?.find((m) => m.userId === currentUser.id);
-      const userRole = member?.role ?? 'developer';
+      const userRole = member?.role ?? 'developers';
       return {
         ...team,
         userRole,
@@ -3406,7 +3406,7 @@ class MockApiService {
     const currentUser = getCurrentUser();
     const team = mockTeams.find((t) => t.id === teamId);
     const member = team?.members?.find((m) => m.userId === currentUser.id);
-    const role = member?.role ?? 'developer';
+    const role = member?.role ?? 'developers';
     return {
       success: true,
       data: { role },
@@ -3427,7 +3427,7 @@ class MockApiService {
     }
     const currentUser = getCurrentUser();
     const member = team.members?.find((m) => m.userId === currentUser.id);
-    const userRole = member?.role ?? 'developer';
+    const userRole = member?.role ?? 'developers';
     return {
       success: true,
       data: {

@@ -81,7 +81,7 @@ describe('TeamManagement Component - Data Scenarios', () => {
           id: `member-large-${index}`,
           teamId: 'team-1',
           userId: `user-large-${index}`,
-          role: index === 0 ? 'scrum_master' : index === 1 ? 'product_owner' : 'developer',
+          role: index === 0 ? 'scrum_master' : index === 1 ? 'product_owner' : 'developers',
           joinedAt: '2024-01-01T00:00:00Z',
           user: {
             id: `user-large-${index}`,
@@ -130,7 +130,7 @@ describe('TeamManagement Component - Data Scenarios', () => {
             id: 'member-minimal-1',
             teamId: 'team-1',
             userId: 'user-minimal-1',
-            role: 'developer',
+            role: 'developers',
             joinedAt: '2024-01-01T00:00:00Z',
             user: {
               id: 'user-minimal-1',

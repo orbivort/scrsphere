@@ -16,7 +16,7 @@ const mockTeamMembers: (TeamMember & { user?: User })[] = [
     id: 'member-1',
     teamId: 'team-1',
     userId: 'user-1',
-    role: 'developer',
+    role: 'developers',
     joinedAt: '2026-01-01T00:00:00Z',
     user: mockUsers[0],
   },
@@ -320,7 +320,7 @@ describe('BoardFilters', () => {
           id: 'member-1',
           teamId: 'team-1',
           userId: 'user-1',
-          role: 'developer',
+          role: 'developers',
           joinedAt: '2026-01-01T00:00:00Z',
         },
       ];

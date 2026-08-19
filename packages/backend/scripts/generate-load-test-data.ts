@@ -111,7 +111,7 @@ async function generateTestData(options: DataGenerationOptions) {
         },
       });
 
-      const role = u === 0 ? 'PRODUCT_OWNER' : u === 1 ? 'SCRUM_MASTER' : 'DEVELOPER';
+      const role = u === 0 ? 'PRODUCT_OWNER' : u === 1 ? 'SCRUM_MASTER' : 'DEVELOPERS';
       const teamMemberId = generateUUIDv7();
 
       await prisma.teamMember.create({

@@ -66,7 +66,7 @@ describe('TeamManagement - Multiple Teams', () => {
     (useTeamStore as unknown as vi.Mock).mockReturnValue({
       currentTeam: { id: '123e4567-e89b-12d3-a456-426614174001', name: 'Test Team' },
       userTeamsWithRoles: [
-        { id: '123e4567-e89b-12d3-a456-426614174001', name: 'Test Team', userRole: 'developer' },
+        { id: '123e4567-e89b-12d3-a456-426614174001', name: 'Test Team', userRole: 'developers' },
       ],
       setCurrentTeam: mockSetCurrentTeam,
       switchTeam: mockSwitchTeam,
@@ -116,7 +116,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
         {
           id: '123e4567-e89b-12d3-a456-426614174002',
@@ -185,7 +185,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
         {
           id: '123e4567-e89b-12d3-a456-426614174002',
@@ -210,7 +210,7 @@ describe('TeamManagement - Multiple Teams', () => {
             id: 'member-1',
             teamId: '123e4567-e89b-12d3-a456-426614174001',
             userId: 'user-1',
-            role: 'developer',
+            role: 'developers',
             joinedAt: '2024-01-01T00:00:00Z',
             user: {
               id: 'user-1',
@@ -351,7 +351,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
         {
           id: '123e4567-e89b-12d3-a456-426614174002',
@@ -430,7 +430,7 @@ describe('TeamManagement - Multiple Teams', () => {
         createdBy: `user-${i + 1}`,
         createdAt: '2024-01-01T00:00:00Z',
         updatedAt: '2024-01-01T00:00:00Z',
-        userRole: 'developer',
+        userRole: 'developers',
       }));
 
       const mockCurrentTeam = {
@@ -480,7 +480,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -528,7 +528,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
         {
           id: '123e4567-e89b-12d3-a456-426614174002',
@@ -610,7 +610,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -792,7 +792,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -858,7 +858,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -1033,7 +1033,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -1087,7 +1087,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -1138,7 +1138,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -1189,7 +1189,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -1240,7 +1240,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-06-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -1291,7 +1291,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -1360,7 +1360,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -1413,7 +1413,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -1450,7 +1450,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -1489,7 +1489,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -1530,7 +1530,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -1600,7 +1600,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -1675,7 +1675,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -1747,7 +1747,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -1820,7 +1820,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -1869,7 +1869,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -1920,7 +1920,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -2014,11 +2014,11 @@ describe('TeamManagement - Multiple Teams', () => {
         createdBy: 'user-1',
         createdAt: '2024-01-01T00:00:00Z',
         updatedAt: '2024-06-01T00:00:00Z',
-        userRole: 'developer',
+        userRole: 'developers',
       },
     ];
 
-    function setupDefaultMocks(members: Array<Record<string, unknown>>, userRole = 'developer') {
+    function setupDefaultMocks(members: Array<Record<string, unknown>>, userRole = 'developers') {
       const currentTeam = { ...baseTeam, members };
       const teamsList = [
         {
@@ -2049,7 +2049,7 @@ describe('TeamManagement - Multiple Teams', () => {
     it('should toggle list view mode', async () => {
       const user = userEvent.setup();
       const members = [
-        createMember('member-1', 'user-2', 'developer', 'jane@example.com', 'Jane', 'Smith'),
+        createMember('member-1', 'user-2', 'developers', 'jane@example.com', 'Jane', 'Smith'),
         createMember('member-2', 'user-3', 'scrum_master', 'bob@example.com', 'Bob', 'Johnson'),
       ];
       setupDefaultMocks(members);
@@ -2076,7 +2076,7 @@ describe('TeamManagement - Multiple Teams', () => {
     it('should show search no results message when search does not match any member', async () => {
       const user = userEvent.setup();
       const members = [
-        createMember('member-1', 'user-2', 'developer', 'jane@example.com', 'Jane', 'Smith'),
+        createMember('member-1', 'user-2', 'developers', 'jane@example.com', 'Jane', 'Smith'),
         createMember('member-2', 'user-3', 'scrum_master', 'bob@example.com', 'Bob', 'Johnson'),
       ];
       setupDefaultMocks(members);
@@ -2101,7 +2101,7 @@ describe('TeamManagement - Multiple Teams', () => {
     it('should show clear search button when search query is entered', async () => {
       const user = userEvent.setup();
       const members = [
-        createMember('member-1', 'user-2', 'developer', 'jane@example.com', 'Jane', 'Smith'),
+        createMember('member-1', 'user-2', 'developers', 'jane@example.com', 'Jane', 'Smith'),
       ];
       setupDefaultMocks(members);
 
@@ -2124,7 +2124,7 @@ describe('TeamManagement - Multiple Teams', () => {
     it('should show clear filters link in filter results when search is active', async () => {
       const user = userEvent.setup();
       const members = [
-        createMember('member-1', 'user-2', 'developer', 'jane@example.com', 'Jane', 'Smith'),
+        createMember('member-1', 'user-2', 'developers', 'jane@example.com', 'Jane', 'Smith'),
       ];
       setupDefaultMocks(members);
 
@@ -2151,7 +2151,7 @@ describe('TeamManagement - Multiple Teams', () => {
         createMember(
           'member-1',
           'user-2',
-          'developer',
+          'developers',
           'jane@example.com',
           'Jane',
           'Smith',
@@ -2160,7 +2160,7 @@ describe('TeamManagement - Multiple Teams', () => {
         createMember(
           'member-2',
           'user-3',
-          'developer',
+          'developers',
           'bob@example.com',
           'Bob',
           'Johnson',
@@ -2184,7 +2184,7 @@ describe('TeamManagement - Multiple Teams', () => {
     it('should filter members by role', async () => {
       const user = userEvent.setup();
       const members = [
-        createMember('member-1', 'user-2', 'developer', 'jane@example.com', 'Jane', 'Smith'),
+        createMember('member-1', 'user-2', 'developers', 'jane@example.com', 'Jane', 'Smith'),
         createMember('member-2', 'user-3', 'scrum_master', 'bob@example.com', 'Bob', 'Johnson'),
       ];
       setupDefaultMocks(members);
@@ -2257,7 +2257,14 @@ describe('TeamManagement - Multiple Teams', () => {
     it('should show error when inviting an already existing member', async () => {
       const user = userEvent.setup();
       const members = [
-        createMember('member-1', 'user-2', 'developer', 'existing@example.com', 'Existing', 'User'),
+        createMember(
+          'member-1',
+          'user-2',
+          'developers',
+          'existing@example.com',
+          'Existing',
+          'User'
+        ),
       ];
       setupDefaultMocks(members, 'product_owner');
 
@@ -2288,7 +2295,7 @@ describe('TeamManagement - Multiple Teams', () => {
     it('should show error in delete modal when member removal fails', async () => {
       const user = userEvent.setup();
       const members = [
-        createMember('member-1', 'user-2', 'developer', 'jane@example.com', 'Jane', 'Smith'),
+        createMember('member-1', 'user-2', 'developers', 'jane@example.com', 'Jane', 'Smith'),
       ];
       setupDefaultMocks(members, 'product_owner');
 
@@ -2360,7 +2367,7 @@ describe('TeamManagement - Multiple Teams', () => {
 
     it('should not show remove button for own member', async () => {
       const members = [
-        createMember('member-1', 'user-1', 'developer', 'test@example.com', 'Test', 'User'),
+        createMember('member-1', 'user-1', 'developers', 'test@example.com', 'Test', 'User'),
       ];
       setupDefaultMocks(members, 'product_owner');
 
@@ -2433,7 +2440,7 @@ describe('TeamManagement - Multiple Teams', () => {
     it('should show success message when team member is removed successfully', async () => {
       const user = userEvent.setup();
       const members = [
-        createMember('member-1', 'user-2', 'developer', 'jane@example.com', 'Jane', 'Smith'),
+        createMember('member-1', 'user-2', 'developers', 'jane@example.com', 'Jane', 'Smith'),
       ];
       setupDefaultMocks(members, 'product_owner');
       (apiService.removeTeamMember as unknown as vi.Mock).mockResolvedValue({
@@ -2498,7 +2505,14 @@ describe('TeamManagement - Multiple Teams', () => {
     it('should show error when invite API returns 409 conflict', async () => {
       const user = userEvent.setup();
       const members = [
-        createMember('member-1', 'user-2', 'developer', 'existing@example.com', 'Existing', 'User'),
+        createMember(
+          'member-1',
+          'user-2',
+          'developers',
+          'existing@example.com',
+          'Existing',
+          'User'
+        ),
       ];
       setupDefaultMocks(members, 'product_owner');
       (apiService.addTeamMember as unknown as vi.Mock).mockRejectedValue(
@@ -2565,7 +2579,7 @@ describe('TeamManagement - Multiple Teams', () => {
     it('should show error in delete modal when remove API returns 404', async () => {
       const user = userEvent.setup();
       const members = [
-        createMember('member-1', 'user-2', 'developer', 'jane@example.com', 'Jane', 'Smith'),
+        createMember('member-1', 'user-2', 'developers', 'jane@example.com', 'Jane', 'Smith'),
       ];
       setupDefaultMocks(members, 'product_owner');
       (apiService.removeTeamMember as unknown as vi.Mock).mockRejectedValue(
@@ -2596,7 +2610,7 @@ describe('TeamManagement - Multiple Teams', () => {
     it('should show network error in delete modal when remove API fails with network error', async () => {
       const user = userEvent.setup();
       const members = [
-        createMember('member-1', 'user-2', 'developer', 'jane@example.com', 'Jane', 'Smith'),
+        createMember('member-1', 'user-2', 'developers', 'jane@example.com', 'Jane', 'Smith'),
       ];
       setupDefaultMocks(members, 'product_owner');
       (apiService.removeTeamMember as unknown as vi.Mock).mockRejectedValue(
@@ -2633,7 +2647,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-06-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -2717,7 +2731,7 @@ describe('TeamManagement - Scrum Values Health Check Survey', () => {
         {
           id: '123e4567-e89b-12d3-a456-426614174001',
           name: 'Alpha Team',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ],
     });
@@ -2745,7 +2759,7 @@ describe('TeamManagement - Scrum Values Health Check Survey', () => {
         {
           id: '123e4567-e89b-12d3-a456-426614174001',
           name: 'Alpha Team',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ],
       setCurrentTeam: mockSetCurrentTeam,

@@ -272,7 +272,7 @@ function createMockTeamMember(overrides: Partial<TeamMember> = {}): TeamMember {
     id: 'member-1',
     teamId: 'team-1',
     userId: 'user-1',
-    role: UserRole.DEVELOPER,
+    role: UserRole.DEVELOPERS,
     joinedAt: '2024-01-01T00:00:00Z',
     user: createMockUser(overrides.user),
     ...overrides,

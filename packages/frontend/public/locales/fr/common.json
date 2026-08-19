@@ -79,7 +79,7 @@
     "removeAttendee": "Supprimer le participant",
     "removeAttendeeConfirm": "Supprimer",
     "removeAttendeeTitle": "Supprimer le participant",
-    "roleDeveloper": "Developer",
+    "roleDevelopers": "Developers",
     "roleProductOwner": "Product Owner",
     "roleScrumMaster": "Scrum Master",
     "roleStakeholder": "Partie prenante",
@@ -640,7 +640,7 @@
     "goToTeamPage": "Aller à la page Équipe",
     "loading": "Chargement des équipes...",
     "roles": {
-      "developer": "Developer",
+      "developers": "Developers",
       "productOwner": "Product Owner",
       "scrumMaster": "Scrum Master"
     },

@@ -127,7 +127,7 @@ const mockTasks = [
 ];
 
 const mockTeamMembers = [
-  { id: 'user-1', name: 'John Developer', email: 'john@example.com', role: 'developer' },
+  { id: 'user-1', name: 'John Developer', email: 'john@example.com', role: 'developers' },
   { id: 'user-2', name: 'Jane Tester', email: 'jane@example.com', role: 'tester' },
 ];
 

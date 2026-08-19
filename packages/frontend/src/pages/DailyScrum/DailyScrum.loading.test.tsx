@@ -97,7 +97,7 @@ const mockTeam = {
       id: 'member-1',
       teamId: 'team-1',
       userId: 'user-1',
-      role: UserRole.DEVELOPER,
+      role: UserRole.DEVELOPERS,
       user: {
         id: 'user-1',
         email: 'test@example.com',

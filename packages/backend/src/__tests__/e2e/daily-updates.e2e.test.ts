@@ -51,7 +51,7 @@ describe('E2E: Daily Updates', () => {
 
   const setupTeamWithUser = async (
     email: string,
-    role: (typeof ROLES)[keyof typeof ROLES] = ROLES.DEVELOPER
+    role: (typeof ROLES)[keyof typeof ROLES] = ROLES.DEVELOPERS
   ) => {
     const user = await createTestUser(email);
     const teamName = `Daily Update Team ${uniqueTestId()}`;
@@ -66,7 +66,7 @@ describe('E2E: Daily Updates', () => {
       const email = `get-updates-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
       const sprint = await createTestSprintInDb(
         team.id,
         `Sprint ${uniqueTestId()}`,
@@ -91,7 +91,7 @@ describe('E2E: Daily Updates', () => {
       const email = `filter-date-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
       const sprint = await createTestSprintInDb(
         team.id,
         `Sprint ${uniqueTestId()}`,
@@ -146,7 +146,7 @@ describe('E2E: Daily Updates', () => {
       const email = `create-update-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
       const sprint = await createTestSprintInDb(
         team.id,
         `Sprint ${uniqueTestId()}`,
@@ -178,7 +178,7 @@ describe('E2E: Daily Updates', () => {
       const email = `minimal-update-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
       const sprint = await createTestSprintInDb(
         team.id,
         `Sprint ${uniqueTestId()}`,
@@ -203,7 +203,7 @@ describe('E2E: Daily Updates', () => {
       const email = `long-content-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
       const sprint = await createTestSprintInDb(
         team.id,
         `Sprint ${uniqueTestId()}`,
@@ -247,7 +247,7 @@ describe('E2E: Daily Updates', () => {
       const email = `get-by-id-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
       const sprint = await createTestSprintInDb(
         team.id,
         `Sprint ${uniqueTestId()}`,
@@ -305,7 +305,7 @@ describe('E2E: Daily Updates', () => {
       const email = `update-daily-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
       const sprint = await createTestSprintInDb(
         team.id,
         `Sprint ${uniqueTestId()}`,
@@ -336,7 +336,7 @@ describe('E2E: Daily Updates', () => {
       const email = `partial-update-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
       const sprint = await createTestSprintInDb(
         team.id,
         `Sprint ${uniqueTestId()}`,
@@ -385,7 +385,7 @@ describe('E2E: Daily Updates', () => {
       const email = `delete-update-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
       const sprint = await createTestSprintInDb(
         team.id,
         `Sprint ${uniqueTestId()}`,
@@ -493,7 +493,7 @@ describe('E2E: Daily Updates', () => {
       const email = `promote-impediment-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
       const sprint = await createTestSprintInDb(
         team.id,
         `Sprint ${uniqueTestId()}`,
@@ -533,7 +533,7 @@ describe('E2E: Daily Updates', () => {
       const email = `missing-fields-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
       const sprint = await createTestSprintInDb(
         team.id,
         `Sprint ${uniqueTestId()}`,
@@ -562,7 +562,7 @@ describe('E2E: Daily Updates', () => {
       const email = `short-title-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
       const sprint = await createTestSprintInDb(
         team.id,
         `Sprint ${uniqueTestId()}`,
@@ -593,7 +593,7 @@ describe('E2E: Daily Updates', () => {
       const email = `short-desc-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
       const sprint = await createTestSprintInDb(
         team.id,
         `Sprint ${uniqueTestId()}`,
@@ -635,7 +635,7 @@ describe('E2E: Daily Updates', () => {
       const team = await createTestTeamInDb(teamName);
 
       await addTeamMember(team.id, sender.id, ROLES.SCRUM_MASTER);
-      await addTeamMember(team.id, recipient.id, ROLES.DEVELOPER);
+      await addTeamMember(team.id, recipient.id, ROLES.DEVELOPERS);
 
       const sprint = await createTestSprintInDb(
         team.id,
@@ -722,7 +722,7 @@ describe('E2E: Daily Updates', () => {
       const email = `concurrent-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
       const sprint = await createTestSprintInDb(
         team.id,
         `Sprint ${uniqueTestId()}`,
@@ -754,7 +754,7 @@ describe('E2E: Daily Updates', () => {
       const email = `special-chars-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
       const sprint = await createTestSprintInDb(
         team.id,
         `Sprint ${uniqueTestId()}`,
@@ -783,7 +783,7 @@ describe('E2E: Daily Updates', () => {
       const email = `unicode-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
       const sprint = await createTestSprintInDb(
         team.id,
         `Sprint ${uniqueTestId()}`,
@@ -812,7 +812,7 @@ describe('E2E: Daily Updates', () => {
       const email = `null-impediment-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
       const sprint = await createTestSprintInDb(
         team.id,
         `Sprint ${uniqueTestId()}`,
@@ -845,7 +845,7 @@ describe('E2E: Daily Updates', () => {
       const email = `dev-update-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
       const sprint = await createTestSprintInDb(
         team.id,
         `Sprint ${uniqueTestId()}`,

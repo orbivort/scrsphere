@@ -456,7 +456,7 @@ describe('E2E: Sprint Review Management', () => {
             },
             {
               name: 'Jane Smith',
-              role: 'developer',
+              role: 'developers',
               attended: true,
             },
           ],
@@ -897,7 +897,7 @@ describe('E2E: Sprint Review Management', () => {
         const cookies = await loginAndGetCookies(email);
         const { csrfToken } = extractCsrfFromCookies(cookies);
 
-        const roles = ['product_owner', 'scrum_master', 'developer', 'stakeholder'];
+        const roles = ['product_owner', 'scrum_master', 'developers', 'stakeholder'];
 
         for (const role of roles) {
           const response = await request(app)
@@ -963,7 +963,7 @@ describe('E2E: Sprint Review Management', () => {
         const attendee = await createTestReviewAttendeeInDb(
           review.id,
           'Original Name',
-          'developer'
+          'developers'
         );
 
         const cookies = await loginAndGetCookies(email);
@@ -1255,7 +1255,7 @@ describe('E2E: Sprint Review Management', () => {
       const email = `dev-view-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
       const sprint = await createTestSprintInDb(
         team.id,
         `Sprint ${uniqueTestId()}`,

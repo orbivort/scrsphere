@@ -65,7 +65,7 @@ export const createTestTeamInDb = async (
 export const addTeamMember = async (
   teamId: string,
   userId: string,
-  role: 'PRODUCT_OWNER' | 'SCRUM_MASTER' | 'DEVELOPER' = 'DEVELOPER'
+  role: 'PRODUCT_OWNER' | 'SCRUM_MASTER' | 'DEVELOPERS' = 'DEVELOPERS'
 ): Promise<void> => {
   const membershipId = generateUUIDv7();
   await prisma.teamMember.create({

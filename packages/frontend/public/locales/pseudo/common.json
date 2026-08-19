@@ -79,7 +79,7 @@
     "removeAttendee": "[Rémóvé àtténdééééééé]",
     "removeAttendeeConfirm": "[Rémóvééé]",
     "removeAttendeeTitle": "[Rémóvé Àtténdééééééé]",
-    "roleDeveloper": "[Dévélópérrrr]",
+    "roleDevelopers": "[Dévélópérrrrs]",
     "roleProductOwner": "[Pródúct Ównérrrrr]",
     "roleScrumMaster": "[Scrúm Màstérrrrr]",
     "roleStakeholder": "[Stàkéhóldérrrrr]",
@@ -640,7 +640,7 @@
     "goToTeamPage": "[Gó tó Téàm Pàgéééééé]",
     "loading": "[Lóàdíng téàmssssss...]",
     "roles": {
-      "developer": "[Dévélópérrrr]",
+      "developers": "[Dévélópérrrrs]",
       "productOwner": "[Pródúct Ównérrrrr]",
       "scrumMaster": "[Scrúm Màstérrrrr]"
     },

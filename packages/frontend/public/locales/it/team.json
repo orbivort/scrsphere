@@ -23,7 +23,7 @@
     "title": "Rimuovi Membro del Team",
     "warning": "Questa azione non può essere annullata. L'utente perderà l'accesso a tutte le risorse del team."
   },
-  "developer": {
+  "developers": {
     "badge": "Membro del Team",
     "checkInvitations": "Controlla Inviti",
     "description": "Unisciti a un team Scrum esistente...",
@@ -33,7 +33,7 @@
       "invitationsSentBy": "Gli inviti del team sono inviati da: Scrum Master o Product Owner solo",
       "title": "Come unirsi a un team"
     },
-    "title": "Developer"
+    "title": "Developers"
   },
   "errorStates": {
     "accessDenied": "Accesso negato",
@@ -109,7 +109,7 @@
     "memberSince": "Membro dal",
     "roleNames": {
       "administrator": "Amministratore",
-      "developer": "Developer",
+      "developers": "Developers",
       "productOwner": "Product Owner",
       "scrumMaster": "Scrum Master"
     },
@@ -130,7 +130,7 @@
     "filterByRoleAriaLabel": "Filtra membri per ruolo",
     "filterOptions": {
       "allRoles": "Tutti i Ruoli",
-      "developer": "Developer",
+      "developers": "Developers",
       "productOwner": "Product Owner",
       "scrumMaster": "Scrum Master"
     },

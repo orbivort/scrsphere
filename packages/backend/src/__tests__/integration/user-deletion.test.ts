@@ -45,7 +45,7 @@ describe('User Profile Deletion Integration Tests', () => {
   const addTeamMember = async (
     teamId: string,
     userId: string,
-    role: 'PRODUCT_OWNER' | 'SCRUM_MASTER' | 'DEVELOPER'
+    role: 'PRODUCT_OWNER' | 'SCRUM_MASTER' | 'DEVELOPERS'
   ) => {
     const membershipId = generateUUIDv7();
 
@@ -220,7 +220,7 @@ describe('User Profile Deletion Integration Tests', () => {
 
       const user = await createTestUserInDb(email);
       const team = await createTestTeamInDb(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
 
       const cookies = await loginAndGetCookies(email);
 
@@ -232,7 +232,7 @@ describe('User Profile Deletion Integration Tests', () => {
       expect(response.body.success).toBe(true);
       expect(response.body.data.canDelete).toBe(true);
       expect(response.body.data.teams).toHaveLength(1);
-      expect(response.body.data.teams[0].role).toBe('DEVELOPER');
+      expect(response.body.data.teams[0].role).toBe('DEVELOPERS');
       expect(response.body.data.teams[0].isLastPO).toBe(false);
       expect(response.body.data.blockedReason).toBeNull();
     });
@@ -306,7 +306,7 @@ describe('User Profile Deletion Integration Tests', () => {
       const team1 = await createTestTeamInDb(teamName1);
       const team2 = await createTestTeamInDb(teamName2);
       await addTeamMember(team1.id, user.id, 'PRODUCT_OWNER');
-      await addTeamMember(team2.id, user.id, 'DEVELOPER');
+      await addTeamMember(team2.id, user.id, 'DEVELOPERS');
 
       const cookies = await loginAndGetCookies(email);
 
@@ -429,7 +429,7 @@ describe('User Profile Deletion Integration Tests', () => {
       const user = await createTestUserInDb(email);
       const team = await createTestTeamInDb(teamName);
 
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       await createRefreshToken(user.id);
       await createNotification(user.id);
       await createNotification(user.id);
@@ -553,7 +553,7 @@ describe('User Profile Deletion Integration Tests', () => {
 
       const user = await createTestUserInDb(email);
       const team = await createTestTeamInDb(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
 
       const cookies = await loginAndGetCookies(email);
       const { csrfToken } = extractCsrfFromCookies(cookies);

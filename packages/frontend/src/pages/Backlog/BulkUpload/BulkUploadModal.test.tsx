@@ -64,7 +64,7 @@ describe('BulkUploadModal', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.spyOn(teamContextModule, 'useTeamContext').mockReturnValue({
-      userRole: 'DEVELOPER',
+      userRole: 'DEVELOPERS',
       currentTeam: null,
       userTeams: [],
       isLoading: false,
@@ -770,7 +770,7 @@ describe('BulkUploadModal', () => {
 
     it('should show the story points column and no hint for a Developer', async () => {
       vi.spyOn(teamContextModule, 'useTeamContext').mockReturnValue({
-        userRole: 'DEVELOPER',
+        userRole: 'DEVELOPERS',
       } as never);
       await reachPreview();
 

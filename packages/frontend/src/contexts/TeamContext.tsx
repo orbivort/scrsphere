@@ -216,7 +216,7 @@ function getRoleBadgeColor(role: string): string {
       return 'badge-po';
     case 'SCRUM_MASTER':
       return 'badge-sm';
-    case 'DEVELOPER':
+    case 'DEVELOPERS':
       return 'badge-dev';
     default:
       return 'badge-default';
@@ -229,8 +229,8 @@ function getRoleLabel(role: string): string {
       return 'Product Owner';
     case 'SCRUM_MASTER':
       return 'Scrum Master';
-    case 'DEVELOPER':
-      return 'Developer';
+    case 'DEVELOPERS':
+      return 'Developers';
     default:
       return role;
   }

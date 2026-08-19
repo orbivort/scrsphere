@@ -83,7 +83,7 @@ describe('Cross-Feature Integration Tests', () => {
   const addTeamMember = async (
     teamId: string,
     userId: string,
-    role: 'PRODUCT_OWNER' | 'SCRUM_MASTER' | 'DEVELOPER'
+    role: 'PRODUCT_OWNER' | 'SCRUM_MASTER' | 'DEVELOPERS'
   ) => {
     const membershipId = generateUUIDv7();
     await prisma.teamMember.create({
@@ -324,7 +324,7 @@ describe('Cross-Feature Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
 
       const dailyUpdate = await prisma.dailyUpdate.create({
@@ -379,7 +379,7 @@ describe('Cross-Feature Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Completed Sprint', 'COMPLETED');
       const pbi = await createTestPBI(team.id, 'Completed PBI', ItemStatus.DONE, 8);
 
@@ -482,7 +482,7 @@ describe('Cross-Feature Integration Tests', () => {
 
       const team = await createTestTeam(teamName);
       await addTeamMember(team.id, scrumMaster.id, 'SCRUM_MASTER');
-      await addTeamMember(team.id, developer.id, 'DEVELOPER');
+      await addTeamMember(team.id, developer.id, 'DEVELOPERS');
 
       const cookies = await loginAndGetCookies(email1);
 
@@ -727,7 +727,7 @@ describe('Cross-Feature Integration Tests', () => {
 
         const team = await createTestTeam(teamName);
         // Only Developers may set story points, so use a Developer here.
-        await addTeamMember(team.id, await getUserIdFromEmail(email), 'DEVELOPER');
+        await addTeamMember(team.id, await getUserIdFromEmail(email), 'DEVELOPERS');
 
         // Test with each locale header - validation should be consistent
         for (const locale of SUPPORTED_LOCALES) {
@@ -806,7 +806,7 @@ describe('Cross-Feature Integration Tests', () => {
 
         const team = await createTestTeam(teamName);
         // Only Developers may set story points, so use a Developer here.
-        await addTeamMember(team.id, await getUserIdFromEmail(email), 'DEVELOPER');
+        await addTeamMember(team.id, await getUserIdFromEmail(email), 'DEVELOPERS');
 
         // Create sprint with Italian locale
         const { csrfToken } = extractCsrfFromCookies(cookies);
@@ -865,7 +865,7 @@ describe('Cross-Feature Integration Tests', () => {
         testTeams.push(teamName);
 
         const team = await createTestTeam(teamName);
-        await addTeamMember(team.id, await getUserIdFromEmail(email), 'DEVELOPER');
+        await addTeamMember(team.id, await getUserIdFromEmail(email), 'DEVELOPERS');
         const sprint = await createTestSprint(team.id, 'Spanish Sprint');
 
         // Create daily update with Spanish locale
@@ -914,7 +914,7 @@ describe('Cross-Feature Integration Tests', () => {
 
         const team = await createTestTeam(teamName);
         // Only Developers may set story points, so use a Developer here.
-        await addTeamMember(team.id, await getUserIdFromEmail(email), 'DEVELOPER');
+        await addTeamMember(team.id, await getUserIdFromEmail(email), 'DEVELOPERS');
 
         // First operation with English
         const { csrfToken } = extractCsrfFromCookies(cookies);

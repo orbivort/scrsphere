@@ -73,7 +73,7 @@ describe('Sprint Configuration Integration Tests', () => {
   const addTeamMember = async (
     teamId: string,
     userId: string,
-    role: 'PRODUCT_OWNER' | 'SCRUM_MASTER' | 'DEVELOPER'
+    role: 'PRODUCT_OWNER' | 'SCRUM_MASTER' | 'DEVELOPERS'
   ) => {
     const membershipId = generateUUIDv7();
     await prisma.teamMember.create({
@@ -195,7 +195,7 @@ describe('Sprint Configuration Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       await createTestSprint(team.id, 'Sprint 1', 'COMPLETED');
       await createTestSprint(team.id, 'Sprint 2', 'PLANNED');
 
@@ -240,7 +240,7 @@ describe('Sprint Configuration Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       await createTestSprint(team.id, 'Completed Sprint', 'COMPLETED');
       await createTestSprint(team.id, 'Active Sprint', 'ACTIVE');
 
@@ -267,7 +267,7 @@ describe('Sprint Configuration Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       await createTestSprint(team.id, 'Completed Sprint', 'COMPLETED');
 
       const cookies = await loginAndGetCookies(email);
@@ -404,7 +404,7 @@ describe('Sprint Configuration Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Specific Sprint');
 
       const cookies = await loginAndGetCookies(email);
@@ -608,7 +608,7 @@ describe('Sprint Configuration Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
       const pbi = await createTestPBI(team.id, 'Sprint PBI', 'READY');
 
@@ -653,7 +653,7 @@ describe('Sprint Configuration Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
       const pbi = await createTestPBI(team.id);
 
@@ -740,7 +740,7 @@ describe('Sprint Configuration Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
       const pbi = await createTestPBI(team.id);
 
@@ -795,7 +795,7 @@ describe('Sprint Configuration Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
       const pbi = await createTestPBI(team.id);
 
@@ -851,7 +851,7 @@ describe('Sprint Configuration Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
       const pbi = await createTestPBI(team.id);
 

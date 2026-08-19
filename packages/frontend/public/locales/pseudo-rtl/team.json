@@ -23,7 +23,7 @@
     "title": "Remove Team Member",
     "warning": "This action cannot be undone. The user will lose access to all team resources."
   },
-  "developer": {
+  "developers": {
     "badge": "Team Member",
     "checkInvitations": "Check Invitations",
     "description": "Join an existing Scrum team...",
@@ -33,7 +33,7 @@
       "invitationsSentBy": "Team invitations are sent by: Scrum Masters or Product Owners only",
       "title": "How to Join a Team"
     },
-    "title": "Developer"
+    "title": "Developers"
   },
   "errorStates": {
     "accessDenied": "Access denied",
@@ -109,7 +109,7 @@
     "memberSince": "Member since",
     "roleNames": {
       "administrator": "Administrator",
-      "developer": "Developer",
+      "developers": "Developers",
       "productOwner": "Product Owner",
       "scrumMaster": "Scrum Master"
     },
@@ -130,7 +130,7 @@
     "filterByRoleAriaLabel": "Filter members by role",
     "filterOptions": {
       "allRoles": "All Roles",
-      "developer": "Developer",
+      "developers": "Developers",
       "productOwner": "Product Owner",
       "scrumMaster": "Scrum Master"
     },

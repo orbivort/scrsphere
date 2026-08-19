@@ -53,7 +53,7 @@ const createMockTeamMember = (
   id: 'tm-1',
   teamId: 'team-1',
   userId: 'user-1',
-  role: 'developer' as const,
+  role: 'developers' as const,
   joinedAt: '2026-01-01T00:00:00Z',
   user: {
     id: 'user-1',
@@ -470,7 +470,7 @@ describe('TaskEditModal', () => {
           id: 'tm-1',
           teamId: 'team-1',
           userId: 'user-1',
-          role: 'developer' as const,
+          role: 'developers' as const,
           joinedAt: '2026-01-01T00:00:00Z',
         },
       ];

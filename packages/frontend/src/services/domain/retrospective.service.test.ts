@@ -394,7 +394,7 @@ describe('RetrospectiveService', () => {
       const attendeeData = {
         name: 'John Doe',
         email: 'john@example.com',
-        role: 'developer',
+        role: 'developers',
         attended: true,
       };
       const mockResponse = {

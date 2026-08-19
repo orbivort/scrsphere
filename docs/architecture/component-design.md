@@ -1201,17 +1201,17 @@ packages/shared/
 
 Core domain types defined in `packages/shared/src/types/index.ts`:
 
-| Type                | Purpose                                      |
-| ------------------- | -------------------------------------------- |
-| `User`              | User entity with role and profile data       |
-| `UserRole`          | Enum: PRODUCT_OWNER, SCRUM_MASTER, DEVELOPER |
-| `UserSession`       | Session data with userId, email, role        |
-| `Team`              | Team entity with name and description        |
-| `Sprint`            | Sprint entity with dates and status          |
-| `SprintStatus`      | Enum: PLANNED, ACTIVE, COMPLETED, CANCELLED  |
-| `BacklogItem`       | Backlog item with priority and story points  |
-| `BacklogItemStatus` | Enum: NEW, REFINED, READY, IN_PROGRESS, DONE |
-| `Task`              | Task entity linked to backlog item           |
+| Type                | Purpose                                       |
+| ------------------- | --------------------------------------------- |
+| `User`              | User entity with role and profile data        |
+| `UserRole`          | Enum: PRODUCT_OWNER, SCRUM_MASTER, DEVELOPERS |
+| `UserSession`       | Session data with userId, email, role         |
+| `Team`              | Team entity with name and description         |
+| `Sprint`            | Sprint entity with dates and status           |
+| `SprintStatus`      | Enum: PLANNED, ACTIVE, COMPLETED, CANCELLED   |
+| `BacklogItem`       | Backlog item with priority and story points   |
+| `BacklogItemStatus` | Enum: NEW, REFINED, READY, IN_PROGRESS, DONE  |
+| `Task`              | Task entity linked to backlog item            |
 
 ### Shared Constants
 

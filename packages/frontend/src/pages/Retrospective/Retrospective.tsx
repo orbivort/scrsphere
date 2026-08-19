@@ -58,8 +58,8 @@ const mapTeamRoleToAttendeeRole = (role?: string): string => {
   const roleMap: Record<string, string> = {
     product_owner: 'product_owner',
     scrum_master: 'scrum_master',
-    developer: 'developer',
-    team_member: 'developer',
+    developers: 'developers',
+    team_member: 'developers',
   };
   return roleMap[role?.toLowerCase() ?? ''] ?? 'stakeholder';
 };

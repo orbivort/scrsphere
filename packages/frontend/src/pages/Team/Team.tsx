@@ -125,8 +125,8 @@ export const TeamManagement: React.FC = () => {
   const [isInvitingMember, setIsInvitingMember] = useState(false);
   const [newMemberEmail, setNewMemberEmail] = useState('');
   const [newMemberRole, setNewMemberRole] = useState<
-    'developer' | 'scrum_master' | 'product_owner'
-  >('developer');
+    'developers' | 'scrum_master' | 'product_owner'
+  >('developers');
   const [inviteError, setInviteError] = useState<string | null>(null);
   const [inviteSuccess, setInviteSuccess] = useState<string | null>(null);
   const [memberToDelete, setMemberToDelete] = useState<TeamMember | null>(null);
@@ -269,7 +269,7 @@ export const TeamManagement: React.FC = () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.team.byId(teamId) });
       setIsInvitingMember(false);
       setNewMemberEmail('');
-      setNewMemberRole('developer');
+      setNewMemberRole('developers');
       setInviteError(null);
       const memberName = response.data?.user?.firstName
         ? `${response.data.user.firstName} ${response.data.user.lastName || ''}`.trim()
@@ -371,7 +371,7 @@ export const TeamManagement: React.FC = () => {
   const resetInviteForm = useCallback(() => {
     setIsInvitingMember(false);
     setNewMemberEmail('');
-    setNewMemberRole('developer');
+    setNewMemberRole('developers');
     setInviteError(null);
     setShowInviteUnsavedWarning(false);
   }, []);
@@ -649,24 +649,24 @@ export const TeamManagement: React.FC = () => {
                   <div className={styles['role-icon-developer']}>
                     <CodeIcon size={24} />
                   </div>
-                  <div className={styles['role-badge-developer']}>{t('developer.badge')}</div>
+                  <div className={styles['role-badge-developer']}>{t('developers.badge')}</div>
                 </div>
-                <h3 className={styles['role-title']}>{t('developer.title')}</h3>
-                <p className={styles['role-description']}>{t('developer.description')}</p>
+                <h3 className={styles['role-title']}>{t('developers.title')}</h3>
+                <p className={styles['role-description']}>{t('developers.description')}</p>
                 <div className={styles['developer-info-box']}>
                   <div className={styles['info-box-header']}>
                     <ShieldIcon size={24} />
-                    <h4>{t('developer.howToJoin.title')}</h4>
+                    <h4>{t('developers.howToJoin.title')}</h4>
                   </div>
                   <ul className={styles['info-box-list']}>
                     <li>
-                      <strong>{t('developer.howToJoin.invitationsSentBy')}</strong>
+                      <strong>{t('developers.howToJoin.invitationsSentBy')}</strong>
                     </li>
                     <li>
-                      <strong>{t('developer.howToJoin.checkNotifications')}</strong>
+                      <strong>{t('developers.howToJoin.checkNotifications')}</strong>
                     </li>
                     <li>
-                      <strong>{t('developer.howToJoin.contactLeadership')}</strong>
+                      <strong>{t('developers.howToJoin.contactLeadership')}</strong>
                     </li>
                   </ul>
                   <button
@@ -675,7 +675,7 @@ export const TeamManagement: React.FC = () => {
                     type="button"
                   >
                     <MailIcon size={20} />
-                    <span>{t('developer.checkInvitations')}</span>
+                    <span>{t('developers.checkInvitations')}</span>
                   </button>
                 </div>
               </div>
@@ -867,7 +867,7 @@ export const TeamManagement: React.FC = () => {
                 <option value="all">{t('members.filterOptions.allRoles')}</option>
                 <option value="product_owner">{t('members.filterOptions.productOwner')}</option>
                 <option value="scrum_master">{t('members.filterOptions.scrumMaster')}</option>
-                <option value="developer">{t('members.filterOptions.developer')}</option>
+                <option value="developers">{t('members.filterOptions.developers')}</option>
               </select>
               <select
                 value={sortBy}
@@ -1180,13 +1180,13 @@ export const TeamManagement: React.FC = () => {
                       value={newMemberRole}
                       onChange={(e) =>
                         setNewMemberRole(
-                          e.target.value as 'developer' | 'scrum_master' | 'product_owner'
+                          e.target.value as 'developers' | 'scrum_master' | 'product_owner'
                         )
                       }
                       className={styles['role-select']}
                       disabled={addTeamMemberMutation.isPending}
                     >
-                      <option value="developer">{t('members.filterOptions.developer')}</option>
+                      <option value="developers">{t('members.filterOptions.developers')}</option>
                       <option value="scrum_master">{t('members.filterOptions.scrumMaster')}</option>
                       <option value="product_owner">
                         {t('members.filterOptions.productOwner')}

@@ -57,7 +57,7 @@ describe('BulkUploadModal Integration Tests', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.spyOn(teamContextModule, 'useTeamContext').mockReturnValue({
-      userRole: 'DEVELOPER',
+      userRole: 'DEVELOPERS',
       currentTeam: null,
       userTeams: [],
       isLoading: false,

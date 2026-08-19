@@ -140,7 +140,7 @@ export const createMockTeamMember = (overrides?: Partial<TeamMember>): TeamMembe
   id: generateId('member'),
   teamId: 'team-1',
   userId: 'user-1',
-  role: 'developer' as UserRole,
+  role: 'developers' as UserRole,
   joinedAt: '2026-01-01T00:00:00Z',
   ...overrides,
 });
@@ -185,7 +185,7 @@ export const mockTeamMembers: TeamMember[] = [
     id: 'member-1',
     teamId: 'team-1',
     userId: 'user-1',
-    role: 'developer' as UserRole,
+    role: 'developers' as UserRole,
     joinedAt: '2026-01-01T00:00:00Z',
     user: mockUsers[0],
   },

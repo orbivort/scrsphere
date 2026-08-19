@@ -14,7 +14,7 @@ export interface User {
 export enum UserRole {
   PRODUCT_OWNER = 'PRODUCT_OWNER',
   SCRUM_MASTER = 'SCRUM_MASTER',
-  DEVELOPER = 'DEVELOPER',
+  DEVELOPERS = 'DEVELOPERS',
 }
 
 export interface UserSession {

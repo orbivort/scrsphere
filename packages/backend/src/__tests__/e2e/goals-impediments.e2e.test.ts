@@ -48,7 +48,7 @@ describe('E2E: Goals and Impediments', () => {
 
   const setupTeamWithUser = async (
     email: string,
-    role: (typeof ROLES)[keyof typeof ROLES] = ROLES.DEVELOPER
+    role: (typeof ROLES)[keyof typeof ROLES] = ROLES.DEVELOPERS
   ) => {
     const user = await createTestUser(email);
     const teamName = `Goals Team ${uniqueTestId()}`;
@@ -190,7 +190,7 @@ describe('E2E: Goals and Impediments', () => {
         const email = `no-perm-goal-${uniqueTestId()}@example.com`;
         testEmails.push(email);
 
-        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
         const cookies = await loginAndGetCookies(email);
         const { csrfToken } = extractCsrfFromCookies(cookies);
@@ -214,7 +214,7 @@ describe('E2E: Goals and Impediments', () => {
         const email = `get-goal-${uniqueTestId()}@example.com`;
         testEmails.push(email);
 
-        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
         const goal = await createTestProductGoalInDb(team.id, `Get Goal ${uniqueTestId()}`);
 
@@ -234,7 +234,7 @@ describe('E2E: Goals and Impediments', () => {
         const email = `nonexistent-goal-${uniqueTestId()}@example.com`;
         testEmails.push(email);
 
-        await setupTeamWithUser(email, ROLES.DEVELOPER);
+        await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
         const cookies = await loginAndGetCookies(email);
 
@@ -277,7 +277,7 @@ describe('E2E: Goals and Impediments', () => {
         const email = `update-no-perm-${uniqueTestId()}@example.com`;
         testEmails.push(email);
 
-        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
         const goal = await createTestProductGoalInDb(team.id, `No Perm Goal ${uniqueTestId()}`);
 
@@ -331,7 +331,7 @@ describe('E2E: Goals and Impediments', () => {
         const email = `impediments-list-${uniqueTestId()}@example.com`;
         testEmails.push(email);
 
-        const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+        const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
         await createTestImpedimentInDb(team.id, user.id, `Impediment 1 ${uniqueTestId()}`);
         await createTestImpedimentInDb(team.id, user.id, `Impediment 2 ${uniqueTestId()}`);
@@ -368,7 +368,7 @@ describe('E2E: Goals and Impediments', () => {
         const email = `create-impediment-${uniqueTestId()}@example.com`;
         testEmails.push(email);
 
-        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
         const cookies = await loginAndGetCookies(email);
         const { csrfToken } = extractCsrfFromCookies(cookies);
@@ -396,7 +396,7 @@ describe('E2E: Goals and Impediments', () => {
         const email = `empty-impediment-title-${uniqueTestId()}@example.com`;
         testEmails.push(email);
 
-        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
         const cookies = await loginAndGetCookies(email);
         const { csrfToken } = extractCsrfFromCookies(cookies);
@@ -420,7 +420,7 @@ describe('E2E: Goals and Impediments', () => {
         const email = `get-impediment-${uniqueTestId()}@example.com`;
         testEmails.push(email);
 
-        const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+        const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
         const impediment = await createTestImpedimentInDb(
           team.id,
@@ -444,7 +444,7 @@ describe('E2E: Goals and Impediments', () => {
         const email = `nonexistent-impediment-${uniqueTestId()}@example.com`;
         testEmails.push(email);
 
-        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
         const cookies = await loginAndGetCookies(email);
 
@@ -463,7 +463,7 @@ describe('E2E: Goals and Impediments', () => {
         const email = `update-impediment-${uniqueTestId()}@example.com`;
         testEmails.push(email);
 
-        const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+        const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
         const impediment = await createTestImpedimentInDb(
           team.id,

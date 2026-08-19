@@ -950,7 +950,7 @@ describe('E2E: Sprint Configuration', () => {
       const email = `dev-view-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
       await createTestSprintConfigurationInDb(team.id);
 
       const cookies = await loginAndGetCookies(email);

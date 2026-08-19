@@ -61,7 +61,7 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
   // The backend rejects a batch that carries story points from a non-Developer,
   // so the story points column is hidden in the preview for non-Developers.
   const { userRole } = useTeamContext();
-  const isDeveloper = userRole === 'DEVELOPER';
+  const isDeveloper = userRole === 'DEVELOPERS';
 
   const resetState = useCallback(() => {
     setStep('upload');

@@ -210,7 +210,7 @@ describe('Auth Middleware', () => {
     it('should throw UnauthorizedError if user not authenticated', async () => {
       mockReq.user = undefined;
 
-      const middleware = requireRoles(UserRole.DEVELOPER);
+      const middleware = requireRoles(UserRole.DEVELOPERS);
       await middleware(mockReq as any, mockRes as any, mockNext);
 
       expect(mockNext).toHaveBeenCalledWith(expect.any(UnauthorizedError));
@@ -221,7 +221,7 @@ describe('Auth Middleware', () => {
       mockReq.params = { teamId: 'team-id' };
       vi.mocked(prisma.teamMember.findUnique).mockResolvedValue(null);
 
-      const middleware = requireRoles(UserRole.DEVELOPER);
+      const middleware = requireRoles(UserRole.DEVELOPERS);
       await middleware(mockReq as any, mockRes as any, mockNext);
 
       expect(mockNext).toHaveBeenCalledWith(expect.any(ForbiddenError));
@@ -234,7 +234,7 @@ describe('Auth Middleware', () => {
       vi.mocked(prisma.teamMember.findFirst).mockResolvedValue({
         teamId: 'any-team-id',
         userId: mockUser.id,
-        role: UserRole.DEVELOPER,
+        role: UserRole.DEVELOPERS,
         joinedAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -242,7 +242,7 @@ describe('Auth Middleware', () => {
         updatedBy: null,
       } as any);
 
-      const middleware = requireRoles(UserRole.DEVELOPER);
+      const middleware = requireRoles(UserRole.DEVELOPERS);
       await middleware(mockReq as any, mockRes as any, mockNext);
 
       expect(mockNext).toHaveBeenCalledWith();
@@ -262,7 +262,7 @@ describe('Auth Middleware', () => {
         updatedBy: null,
       } as any);
 
-      const middleware = requireRoles(UserRole.DEVELOPER);
+      const middleware = requireRoles(UserRole.DEVELOPERS);
       await middleware(mockReq as any, mockRes as any, mockNext);
 
       expect(mockNext).toHaveBeenCalledWith(expect.any(ForbiddenError));

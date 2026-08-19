@@ -31,7 +31,7 @@ const mockTeams: Team[] = [
     createdAt: '2026-01-02T00:00:00Z',
     updatedAt: '2026-01-02T00:00:00Z',
     memberCount: 3,
-    userRole: 'DEVELOPER',
+    userRole: 'DEVELOPERS',
     creator: {
       id: 'user-2',
       firstName: 'Jane',
@@ -136,7 +136,7 @@ describe('TeamList', () => {
         })
       ).toBeInTheDocument();
 
-      // Team Beta has DEVELOPER role, should NOT show edit button
+      // Team Beta has DEVELOPERS role, should NOT show edit button
       expect(
         screen.queryByRole('button', {
           name: i18nT('settings:teamList.card.editTeam', { name: 'Team Beta' }),
@@ -192,7 +192,7 @@ describe('TeamList', () => {
         })
       ).toBeInTheDocument();
 
-      // Team Beta has DEVELOPER role, should NOT show delete button
+      // Team Beta has DEVELOPERS role, should NOT show delete button
       expect(
         screen.queryByRole('button', {
           name: i18nT('settings:teamList.card.deleteTeam', { name: 'Team Beta' }),
@@ -230,7 +230,7 @@ describe('TeamList', () => {
         })
       ).toBeInTheDocument();
 
-      // Team Beta has DEVELOPER role, should NOT show any buttons
+      // Team Beta has DEVELOPERS role, should NOT show any buttons
       expect(
         screen.queryByRole('button', {
           name: i18nT('settings:teamList.card.editTeam', { name: 'Team Beta' }),

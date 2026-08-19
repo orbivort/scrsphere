@@ -31,7 +31,7 @@ vi.mock('react-router', async () => {
 const createMockTeam = (
   id: string,
   name: string,
-  role = 'DEVELOPER'
+  role = 'DEVELOPERS'
 ): Team & { userRole: string } => ({
   id,
   name,
@@ -110,7 +110,7 @@ describe('TeamProvider', () => {
       teamsLoading: false,
       teamsError: null,
       currentTeam: mockTeam,
-      userRoleInCurrentTeam: 'DEVELOPER',
+      userRoleInCurrentTeam: 'DEVELOPERS',
       switchTeam: mockSwitchTeam,
       refreshTeams: mockRefreshTeams,
     });
@@ -122,7 +122,7 @@ describe('TeamProvider', () => {
     );
 
     expect(screen.getByTestId('current-team')).toHaveTextContent('Test Team');
-    expect(screen.getByTestId('user-role')).toHaveTextContent('DEVELOPER');
+    expect(screen.getByTestId('user-role')).toHaveTextContent('DEVELOPERS');
     expect(screen.getByTestId('teams-count')).toHaveTextContent('1');
   });
 
@@ -200,7 +200,7 @@ describe('TeamProvider', () => {
       teamsLoading: false,
       teamsError: null,
       currentTeam: teams[0],
-      userRoleInCurrentTeam: 'DEVELOPER',
+      userRoleInCurrentTeam: 'DEVELOPERS',
       switchTeam: mockSwitchTeam,
       refreshTeams: mockRefreshTeams,
     });
@@ -290,7 +290,7 @@ describe('TeamInitializer', () => {
       teamsLoading: false,
       teamsError: null,
       currentTeam: createMockTeam('team-1', 'Team 1'),
-      userRoleInCurrentTeam: 'DEVELOPER',
+      userRoleInCurrentTeam: 'DEVELOPERS',
       switchTeam: mockSwitchTeam,
       refreshTeams: mockRefreshTeams,
     });
@@ -425,7 +425,7 @@ describe('TeamInitializer edge cases', () => {
       teamsLoading: false,
       teamsError: null,
       currentTeam: null,
-      userRoleInCurrentTeam: 'DEVELOPER',
+      userRoleInCurrentTeam: 'DEVELOPERS',
       switchTeam: mockSwitchTeam,
       refreshTeams: mockRefreshTeams,
     });
@@ -444,7 +444,7 @@ describe('TeamInitializer edge cases', () => {
   it('should show team selection when multiple teams and no current team', () => {
     const teams = [
       createMockTeam('team-1', 'Team 1', 'PRODUCT_OWNER'),
-      createMockTeam('team-2', 'Team 2', 'DEVELOPER'),
+      createMockTeam('team-2', 'Team 2', 'DEVELOPERS'),
     ];
 
     vi.mocked(useTeamStateModule.useTeamState).mockReturnValue({
@@ -469,7 +469,7 @@ describe('TeamInitializer edge cases', () => {
     expect(screen.getByText('Team 1')).toBeInTheDocument();
     expect(screen.getByText('Team 2')).toBeInTheDocument();
     expect(screen.getByText('Product Owner')).toBeInTheDocument();
-    expect(screen.getByText('Developer')).toBeInTheDocument();
+    expect(screen.getByText('Developers')).toBeInTheDocument();
   });
 
   it('should handle switchTeam error in provider', async () => {

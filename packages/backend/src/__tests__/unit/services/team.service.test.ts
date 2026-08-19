@@ -113,7 +113,7 @@ describe('TeamService', () => {
         id: 'member-id',
         teamId: mockTeam.id,
         userId,
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
         joinedAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -161,7 +161,7 @@ describe('TeamService', () => {
         id: 'member-id',
         teamId: mockTeam.id,
         userId,
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
         joinedAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -229,7 +229,7 @@ describe('TeamService', () => {
         id: 'member-id',
         teamId: mockTeam.id,
         userId: otherUserId,
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
         joinedAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -435,7 +435,7 @@ describe('TeamService', () => {
             id: 'other-member-id',
             teamId: mockTeam.id,
             userId: otherUserId,
-            role: 'DEVELOPER',
+            role: 'DEVELOPERS',
             joinedAt: new Date(),
             createdAt: new Date(),
             updatedAt: new Date(),
@@ -485,7 +485,7 @@ describe('TeamService', () => {
         id: memberId,
         teamId: mockTeam.id,
         userId: memberUserId,
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
         joinedAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -546,12 +546,12 @@ describe('TeamService', () => {
       const memberId = 'member-to-remove';
       const mockTeam = fixtures.teams.validTeam();
 
-      // Mock checkTeamRole - user is DEVELOPER (not allowed)
+      // Mock checkTeamRole - user is DEVELOPERS (not allowed)
       vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce({
         id: 'requester-member-id',
         teamId: mockTeam.id,
         userId,
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
         joinedAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -610,7 +610,7 @@ describe('TeamService', () => {
         id: memberId,
         teamId: mockTeam.id,
         userId: memberUserId,
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
         joinedAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -647,7 +647,7 @@ describe('TeamService', () => {
         id: memberId,
         teamId: mockTeam.id,
         userId: memberUserId,
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
         joinedAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -684,7 +684,7 @@ describe('TeamService', () => {
         id: memberId,
         teamId: mockTeam.id,
         userId: memberUserId,
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
         joinedAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -737,7 +737,7 @@ describe('TeamService', () => {
         id: 'existing-member-id',
         teamId,
         userId: 'existing-user-id',
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
         joinedAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -746,7 +746,7 @@ describe('TeamService', () => {
       } as any);
 
       await expect(
-        teamService.addMember(teamId, userId, { email: memberEmail, role: 'DEVELOPER' })
+        teamService.addMember(teamId, userId, { email: memberEmail, role: 'DEVELOPERS' })
       ).rejects.toThrow(ConflictError);
     });
 
@@ -779,7 +779,7 @@ describe('TeamService', () => {
         id: 'new-member-id',
         teamId,
         userId: newUserId,
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
         joinedAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -797,7 +797,7 @@ describe('TeamService', () => {
 
       const result = await teamService.addMember(teamId, userId, {
         email: memberEmail,
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
       });
 
       expect(result).toBeDefined();
@@ -820,7 +820,7 @@ describe('TeamService', () => {
         id: 'member-id',
         teamId,
         userId,
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
         joinedAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -830,7 +830,7 @@ describe('TeamService', () => {
 
       const result = await teamService.getUserRoleInTeam(userId, teamId);
 
-      expect(result).toBe('DEVELOPER');
+      expect(result).toBe('DEVELOPERS');
     });
 
     it('should return null when user is not a member', async () => {
@@ -854,7 +854,7 @@ describe('TeamService', () => {
         id: 'member-id',
         teamId,
         userId,
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
         joinedAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -891,7 +891,7 @@ describe('TeamService', () => {
               id: 'member-id',
               teamId: 'team-id',
               userId: 'other-user-id',
-              role: 'DEVELOPER',
+              role: 'DEVELOPERS',
               joinedAt: new Date(),
               createdAt: new Date(),
               updatedAt: new Date(),

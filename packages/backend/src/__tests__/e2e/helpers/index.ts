@@ -156,7 +156,7 @@ export const ERROR_CODES = {
 export const ROLES = {
   PRODUCT_OWNER: 'PRODUCT_OWNER',
   SCRUM_MASTER: 'SCRUM_MASTER',
-  DEVELOPER: 'DEVELOPER',
+  DEVELOPERS: 'DEVELOPERS',
 } as const;
 
 export const SPRINT_STATUSES = {

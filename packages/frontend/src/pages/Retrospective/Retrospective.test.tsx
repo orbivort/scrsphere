@@ -70,7 +70,7 @@ const mockRetrospective = {
       attended: true,
       name: 'John Doe',
       email: 'john@example.com',
-      role: 'DEVELOPER',
+      role: 'DEVELOPERS',
     },
     {
       id: 'attendee-2',
@@ -94,7 +94,7 @@ const mockRetrospective = {
       attended: true,
       name: 'Alice Brown',
       email: 'alice@example.com',
-      role: 'DEVELOPER',
+      role: 'DEVELOPERS',
     },
   ],
   items: [
@@ -164,7 +164,7 @@ const mockTeamData = {
   members: [
     {
       userId: 'user-1',
-      role: 'DEVELOPER',
+      role: 'DEVELOPERS',
       user: { id: 'user-1', firstName: 'John', lastName: 'Doe', email: 'john@example.com' },
     },
     {
@@ -179,7 +179,7 @@ const mockTeamData = {
     },
     {
       userId: 'user-4',
-      role: 'DEVELOPER',
+      role: 'DEVELOPERS',
       user: { id: 'user-4', firstName: 'Alice', lastName: 'Brown', email: 'alice@example.com' },
     },
   ],
@@ -1527,7 +1527,7 @@ describe('Retrospective Component', () => {
               attended: null as unknown as boolean,
               name: 'Unmarked User',
               email: 'unmarked@example.com',
-              role: 'DEVELOPER',
+              role: 'DEVELOPERS',
             },
           ],
         },

@@ -42,7 +42,7 @@ const mockTeams: Team[] = [
     createdAt: '2026-01-02T00:00:00Z',
     updatedAt: '2026-01-02T00:00:00Z',
     memberCount: 3,
-    userRole: 'DEVELOPER',
+    userRole: 'DEVELOPERS',
     creator: {
       id: 'user-2',
       firstName: 'Jane',
@@ -171,7 +171,7 @@ describe('TeamManagement', () => {
   describe('Role-based access control', () => {
     it('should allow all users to see the Create Team button', () => {
       vi.mocked(TeamContext.useTeamContext).mockReturnValue({
-        userRole: 'DEVELOPER',
+        userRole: 'DEVELOPERS',
         refreshTeams: mockRefreshTeams,
         currentTeam: null,
         userTeams: [],
@@ -224,9 +224,9 @@ describe('TeamManagement', () => {
       expect(screen.getByRole('button', { name: /delete team gamma/i })).toBeInTheDocument();
     });
 
-    it('should NOT show edit/delete buttons for DEVELOPER role', () => {
+    it('should NOT show edit/delete buttons for DEVELOPERS role', () => {
       vi.mocked(TeamContext.useTeamContext).mockReturnValue({
-        userRole: 'DEVELOPER',
+        userRole: 'DEVELOPERS',
         refreshTeams: mockRefreshTeams,
         currentTeam: null,
         userTeams: [],
@@ -298,7 +298,7 @@ describe('TeamManagement', () => {
 
     it('should show permission error when trying to edit without proper permissions', async () => {
       vi.mocked(TeamContext.useTeamContext).mockReturnValue({
-        userRole: 'DEVELOPER',
+        userRole: 'DEVELOPERS',
         refreshTeams: mockRefreshTeams,
         currentTeam: null,
         userTeams: [],
@@ -718,7 +718,7 @@ describe('TeamManagement', () => {
       const _user = userEvent.setup();
 
       vi.mocked(TeamContext.useTeamContext).mockReturnValue({
-        userRole: 'DEVELOPER',
+        userRole: 'DEVELOPERS',
         refreshTeams: mockRefreshTeams,
         currentTeam: null,
         userTeams: [],
@@ -1115,7 +1115,7 @@ describe('TeamManagement', () => {
       const _user = userEvent.setup();
 
       vi.mocked(TeamContext.useTeamContext).mockReturnValue({
-        userRole: 'DEVELOPER',
+        userRole: 'DEVELOPERS',
         refreshTeams: mockRefreshTeams,
         currentTeam: null,
         userTeams: [],
@@ -1134,7 +1134,7 @@ describe('TeamManagement', () => {
       const _user = userEvent.setup();
 
       vi.mocked(TeamContext.useTeamContext).mockReturnValue({
-        userRole: 'DEVELOPER',
+        userRole: 'DEVELOPERS',
         refreshTeams: mockRefreshTeams,
         currentTeam: null,
         userTeams: [],
@@ -1254,7 +1254,7 @@ describe('TeamManagement', () => {
       const _user = userEvent.setup();
 
       vi.mocked(TeamContext.useTeamContext).mockReturnValue({
-        userRole: 'DEVELOPER',
+        userRole: 'DEVELOPERS',
         refreshTeams: mockRefreshTeams,
         currentTeam: null,
         userTeams: [],
@@ -1635,7 +1635,7 @@ describe('TeamManagement', () => {
       await user.type(descriptionInput, ' updated');
 
       vi.mocked(TeamContext.useTeamContext).mockReturnValue({
-        userRole: 'DEVELOPER',
+        userRole: 'DEVELOPERS',
         refreshTeams: mockRefreshTeams,
         currentTeam: null,
         userTeams: [],
@@ -1681,7 +1681,7 @@ describe('TeamManagement', () => {
       await user.type(confirmationInput, 'Team Alpha');
 
       vi.mocked(TeamContext.useTeamContext).mockReturnValue({
-        userRole: 'DEVELOPER',
+        userRole: 'DEVELOPERS',
         refreshTeams: mockRefreshTeams,
         currentTeam: null,
         userTeams: [],

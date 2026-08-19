@@ -519,7 +519,7 @@ describe('E2E: Retrospective Management', () => {
         const email = `vote-item-${uniqueTestId()}@example.com`;
         testEmails.push(email);
 
-        const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+        const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
         const sprint = await createTestSprintInDb(
           team.id,
           `Sprint ${uniqueTestId()}`,
@@ -550,7 +550,7 @@ describe('E2E: Retrospective Management', () => {
         const email = `vote-nonexistent-${uniqueTestId()}@example.com`;
         testEmails.push(email);
 
-        const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+        const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
         const sprint = await createTestSprintInDb(
           team.id,
           `Sprint ${uniqueTestId()}`,
@@ -579,7 +579,7 @@ describe('E2E: Retrospective Management', () => {
         const email = `unvote-item-${uniqueTestId()}@example.com`;
         testEmails.push(email);
 
-        const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+        const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
         const sprint = await createTestSprintInDb(
           team.id,
           `Sprint ${uniqueTestId()}`,
@@ -923,7 +923,7 @@ describe('E2E: Retrospective Management', () => {
           .send({
             name: 'John Doe',
             email: 'john@example.com',
-            role: 'developer',
+            role: 'developers',
             attended: true,
           })
           .expect(HTTP_STATUS.CREATED);
@@ -985,7 +985,7 @@ describe('E2E: Retrospective Management', () => {
           .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken1)
           .send({
             name: 'Original Name',
-            role: 'developer',
+            role: 'developers',
           });
 
         const attendeeId = createResponse.body.data.id;
@@ -1031,7 +1031,7 @@ describe('E2E: Retrospective Management', () => {
           .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken1)
           .send({
             name: 'To Delete',
-            role: 'developer',
+            role: 'developers',
           });
 
         const attendeeId = createResponse.body.data.id;
@@ -1093,8 +1093,8 @@ describe('E2E: Retrospective Management', () => {
       testTeamNames.push(teamName);
       const team = await createTestTeamInDb(teamName);
 
-      await addTeamMember(team.id, user1.id, ROLES.DEVELOPER);
-      await addTeamMember(team.id, user2.id, ROLES.DEVELOPER);
+      await addTeamMember(team.id, user1.id, ROLES.DEVELOPERS);
+      await addTeamMember(team.id, user2.id, ROLES.DEVELOPERS);
 
       const sprint = await createTestSprintInDb(
         team.id,
@@ -1191,7 +1191,7 @@ describe('E2E: Retrospective Management', () => {
       const email = `dev-vote-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
       const sprint = await createTestSprintInDb(
         team.id,
         `Sprint ${uniqueTestId()}`,
@@ -1217,7 +1217,7 @@ describe('E2E: Retrospective Management', () => {
       const email = `dev-add-item-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
       const sprint = await createTestSprintInDb(
         team.id,
         `Sprint ${uniqueTestId()}`,

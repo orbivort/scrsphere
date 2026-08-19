@@ -77,7 +77,7 @@ describe('Daily Updates Integration Tests', () => {
   const addTeamMember = async (
     teamId: string,
     userId: string,
-    role: 'PRODUCT_OWNER' | 'SCRUM_MASTER' | 'DEVELOPER'
+    role: 'PRODUCT_OWNER' | 'SCRUM_MASTER' | 'DEVELOPERS'
   ) => {
     const membershipId = generateUUIDv7();
     await prisma.teamMember.create({
@@ -206,7 +206,7 @@ describe('Daily Updates Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint with Updates');
       await createTestDailyUpdate(sprint.id, user.id, 'Yesterday', 'Today');
 
@@ -229,7 +229,7 @@ describe('Daily Updates Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Empty Sprint');
 
       const cookies = await loginAndGetCookies(email);
@@ -286,7 +286,7 @@ describe('Daily Updates Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint for Update');
 
       const cookies = await loginAndGetCookies(email);
@@ -318,7 +318,7 @@ describe('Daily Updates Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
 
       const cookies = await loginAndGetCookies(email);
@@ -369,7 +369,7 @@ describe('Daily Updates Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
       const update = await createTestDailyUpdate(sprint.id, user.id);
 
@@ -429,7 +429,7 @@ describe('Daily Updates Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
       const update = await createTestDailyUpdate(sprint.id, user.id, 'Old', 'Old');
 
@@ -486,7 +486,7 @@ describe('Daily Updates Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
       const update = await createTestDailyUpdate(sprint.id, user.id);
 
@@ -536,7 +536,7 @@ describe('Daily Updates Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
       await createTestDailyUpdate(sprint.id, user.id);
 
@@ -561,7 +561,7 @@ describe('Daily Updates Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
 
       const cookies = await loginAndGetCookies(email);
@@ -605,7 +605,7 @@ describe('Daily Updates Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
       const update = await createTestDailyUpdate(
         sprint.id,
@@ -643,7 +643,7 @@ describe('Daily Updates Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
       const update = await createTestDailyUpdate(sprint.id, user.id);
 
@@ -702,7 +702,7 @@ describe('Daily Updates Integration Tests', () => {
 
       const team = await createTestTeam(teamName);
       await addTeamMember(team.id, sender.id, 'SCRUM_MASTER');
-      await addTeamMember(team.id, receiver.id, 'DEVELOPER');
+      await addTeamMember(team.id, receiver.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
 
       const cookies = await loginAndGetCookies(email1);
@@ -854,7 +854,7 @@ describe('Daily Updates Integration Tests', () => {
         testTeams.push(teamName);
 
         const team = await createTestTeam(teamName);
-        await addTeamMember(team.id, user.id, 'DEVELOPER');
+        await addTeamMember(team.id, user.id, 'DEVELOPERS');
         const sprint = await createTestSprint(team.id, 'Sprint');
 
         // Create first update
@@ -912,7 +912,7 @@ describe('Daily Updates Integration Tests', () => {
         testTeams.push(teamName);
 
         const team = await createTestTeam(teamName);
-        await addTeamMember(team.id, user.id, 'DEVELOPER');
+        await addTeamMember(team.id, user.id, 'DEVELOPERS');
         const sprint = await createTestSprint(team.id, 'Sprint');
 
         const cookies = await loginAndGetCookies(email);
@@ -981,7 +981,7 @@ describe('Daily Updates Integration Tests', () => {
 
         const team = await createTestTeam(teamName);
         await addTeamMember(team.id, sender.id, 'SCRUM_MASTER');
-        await addTeamMember(team.id, receiver.id, 'DEVELOPER');
+        await addTeamMember(team.id, receiver.id, 'DEVELOPERS');
         const sprint = await createTestSprint(team.id, 'Sprint');
 
         const cookies = await loginAndGetCookies(email1);

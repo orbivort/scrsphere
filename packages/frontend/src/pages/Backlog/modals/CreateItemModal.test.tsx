@@ -50,7 +50,7 @@ describe('CreateItemModal', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.spyOn(teamContextModule, 'useTeamContext').mockReturnValue({
-      userRole: 'DEVELOPER',
+      userRole: 'DEVELOPERS',
       currentTeam: null,
       userTeams: [],
       isLoading: false,
@@ -154,7 +154,7 @@ describe('CreateItemModal', () => {
   describe('Developer-only sizing', () => {
     it('should enable the Estimate select for a Developer', () => {
       vi.spyOn(teamContextModule, 'useTeamContext').mockReturnValue({
-        userRole: 'DEVELOPER',
+        userRole: 'DEVELOPERS',
       } as never);
       renderCreateModal();
 

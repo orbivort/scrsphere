@@ -54,7 +54,7 @@ describe('E2E: Workflow Operations', () => {
 
   const setupTeamWithUser = async (
     email: string,
-    role: (typeof ROLES)[keyof typeof ROLES] = ROLES.DEVELOPER
+    role: (typeof ROLES)[keyof typeof ROLES] = ROLES.DEVELOPERS
   ) => {
     const user = await createTestUser(email);
     const teamName = `Workflow Team ${uniqueTestId()}`;
@@ -70,7 +70,7 @@ describe('E2E: Workflow Operations', () => {
         const email = `reviews-list-${uniqueTestId()}@example.com`;
         testEmails.push(email);
 
-        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
         const cookies = await loginAndGetCookies(email);
 
@@ -88,7 +88,7 @@ describe('E2E: Workflow Operations', () => {
         const email = `no-reviews-${uniqueTestId()}@example.com`;
         testEmails.push(email);
 
-        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
         const cookies = await loginAndGetCookies(email);
 
@@ -170,7 +170,7 @@ describe('E2E: Workflow Operations', () => {
         const email = `retro-get-${uniqueTestId()}@example.com`;
         testEmails.push(email);
 
-        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
         const sprint = await createTestSprintInDb(
           team.id,
@@ -192,7 +192,7 @@ describe('E2E: Workflow Operations', () => {
         const email = `no-retro-${uniqueTestId()}@example.com`;
         testEmails.push(email);
 
-        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
         const sprint = await createTestSprintInDb(
           team.id,
@@ -343,7 +343,7 @@ describe('E2E: Workflow Operations', () => {
         const email = `backlog-pbis-${uniqueTestId()}@example.com`;
         testEmails.push(email);
 
-        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
         const sprint = await createTestSprintInDb(
           team.id,
@@ -366,7 +366,7 @@ describe('E2E: Workflow Operations', () => {
         const email = `empty-backlog-${uniqueTestId()}@example.com`;
         testEmails.push(email);
 
-        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
         const sprint = await createTestSprintInDb(
           team.id,
@@ -856,7 +856,7 @@ describe('E2E: Workflow Operations', () => {
       const email = `dev-view-backlog-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
       const sprint = await createTestSprintInDb(
         team.id,

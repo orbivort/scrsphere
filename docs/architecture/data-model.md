@@ -245,7 +245,7 @@ The database schema is organized into logical groups:
 
 - `PRODUCT_OWNER`: Product backlog management
 - `SCRUM_MASTER`: Sprint and team management
-- `DEVELOPER`: Task execution
+- `DEVELOPERS`: Task execution
 
 **Indexes**:
 

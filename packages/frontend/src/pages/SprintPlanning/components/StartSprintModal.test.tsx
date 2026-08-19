@@ -522,8 +522,8 @@ describe('StartSprintModal', () => {
   });
 
   describe('Permission Warning', () => {
-    it('should show permission warning when userRole is DEVELOPER', () => {
-      renderWithProviders(<StartSprintModal {...defaultProps} userRole="DEVELOPER" />);
+    it('should show permission warning when userRole is DEVELOPERS', () => {
+      renderWithProviders(<StartSprintModal {...defaultProps} userRole="DEVELOPERS" />);
 
       expect(
         screen.getByText(
@@ -576,7 +576,7 @@ describe('StartSprintModal', () => {
     });
 
     it('should disable start button when user lacks permission', () => {
-      renderWithProviders(<StartSprintModal {...defaultProps} userRole="DEVELOPER" />);
+      renderWithProviders(<StartSprintModal {...defaultProps} userRole="DEVELOPERS" />);
 
       expect(
         screen.getByRole('button', {
@@ -586,7 +586,7 @@ describe('StartSprintModal', () => {
     });
 
     it('should show tooltip hint when start button is disabled due to permission', () => {
-      renderWithProviders(<StartSprintModal {...defaultProps} userRole="DEVELOPER" />);
+      renderWithProviders(<StartSprintModal {...defaultProps} userRole="DEVELOPERS" />);
 
       const startButton = screen.getByRole('button', {
         name: new RegExp(`^${i18nT('sprint:sprintPlanning.startSprintModal.start')}$`),
@@ -731,7 +731,7 @@ describe('StartSprintModal', () => {
       renderWithProviders(
         <StartSprintModal
           {...defaultProps}
-          userRole="DEVELOPER"
+          userRole="DEVELOPERS"
           error="Another sprint is already active"
         />
       );

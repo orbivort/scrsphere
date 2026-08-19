@@ -121,9 +121,9 @@ describe('ProductBacklog handlers coverage', () => {
     vi.clearAllMocks();
 
     vi.spyOn(teamContextModule, 'useTeamContext').mockReturnValue({
-      userRole: 'DEVELOPER',
+      userRole: 'DEVELOPERS',
       currentTeam: mockTeam,
-      userTeams: [{ ...mockTeam, userRole: 'DEVELOPER' }],
+      userTeams: [{ ...mockTeam, userRole: 'DEVELOPERS' }],
       isLoading: false,
       error: null,
       switchTeam: vi.fn(),

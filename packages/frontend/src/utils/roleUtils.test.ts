@@ -20,8 +20,8 @@ describe('roleUtils', () => {
       expect(getRoleLabel('SCRUM_MASTER')).toBe('Scrum Master');
     });
 
-    it('should return "Developer" for DEVELOPER', () => {
-      expect(getRoleLabel('DEVELOPER')).toBe('Developer');
+    it('should return "Developers" for DEVELOPERS', () => {
+      expect(getRoleLabel('DEVELOPERS')).toBe('Developers');
     });
 
     it('should return the role itself for unknown roles', () => {
@@ -57,8 +57,8 @@ describe('roleUtils', () => {
       expect(getRoleBadgeClass('SCRUM_MASTER', mockStyles)).toBe('sm-class');
     });
 
-    it('should return dev class for DEVELOPER', () => {
-      expect(getRoleBadgeClass('DEVELOPER', mockStyles)).toBe('dev-class');
+    it('should return dev class for DEVELOPERS', () => {
+      expect(getRoleBadgeClass('DEVELOPERS', mockStyles)).toBe('dev-class');
     });
 
     it('should return default class for unknown roles', () => {
@@ -74,7 +74,7 @@ describe('roleUtils', () => {
     it('should handle partial styles', () => {
       const partialStyles = { 'badge-po': 'po-class' };
       expect(getRoleBadgeClass('PRODUCT_OWNER', partialStyles)).toBe('po-class');
-      expect(getRoleBadgeClass('DEVELOPER', partialStyles)).toBe('');
+      expect(getRoleBadgeClass('DEVELOPERS', partialStyles)).toBe('');
     });
 
     it('should return empty string for SCRUM_MASTER when badge-sm style is missing', () => {
@@ -105,8 +105,8 @@ describe('roleUtils', () => {
       expect(getRoleBadgeColor('SCRUM_MASTER')).toBe('#3b82f6');
     });
 
-    it('should return green for DEVELOPER', () => {
-      expect(getRoleBadgeColor('DEVELOPER')).toBe('#10b981');
+    it('should return green for DEVELOPERS', () => {
+      expect(getRoleBadgeColor('DEVELOPERS')).toBe('#10b981');
     });
 
     it('should return gray for unknown roles', () => {
@@ -139,8 +139,8 @@ describe('roleUtils', () => {
       expect(canStartSprint('scrum_master')).toBe(true);
     });
 
-    it('should return false for DEVELOPER', () => {
-      expect(canStartSprint('DEVELOPER')).toBe(false);
+    it('should return false for DEVELOPERS', () => {
+      expect(canStartSprint('DEVELOPERS')).toBe(false);
     });
 
     it('should return false for unknown roles', () => {

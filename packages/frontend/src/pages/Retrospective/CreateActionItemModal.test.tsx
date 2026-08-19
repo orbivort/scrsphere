@@ -31,7 +31,7 @@ const defaultTeamMembers = [
     id: 'user-1',
     name: 'John Doe',
     user: { id: 'user-1', firstName: 'John', lastName: 'Doe', email: 'john@example.com' },
-    role: 'DEVELOPER',
+    role: 'DEVELOPERS',
   },
   {
     id: 'user-2',

@@ -263,7 +263,7 @@ class ProductBacklogService {
     // Only Developers may size. A non-Developer attempting to set story points is
     // rejected even though they may update every other field on the item.
     const isSizingAttempt = data.storyPoints !== undefined;
-    if (isSizingAttempt && teamMember.role !== 'DEVELOPER') {
+    if (isSizingAttempt && teamMember.role !== 'DEVELOPERS') {
       throw localizedError('errors:developerOnlySizing', {}, 403, 'FORBIDDEN');
     }
 
@@ -401,7 +401,7 @@ class ProductBacklogService {
     // predictable; the UI disables the column for non-Developers so this is a guard
     // against direct API/bypass requests, not a common UX path).
     const hasSizingAttempt = items.some((item) => item.storyPoints !== undefined);
-    if (hasSizingAttempt && teamMember?.role !== 'DEVELOPER') {
+    if (hasSizingAttempt && teamMember?.role !== 'DEVELOPERS') {
       throw localizedError('errors:developerOnlySizing', {}, 403, 'FORBIDDEN');
     }
 
@@ -656,7 +656,7 @@ class ProductBacklogService {
       where: { teamId, userId },
     });
 
-    if (isSizingAttempt && teamMember?.role !== 'DEVELOPER') {
+    if (isSizingAttempt && teamMember?.role !== 'DEVELOPERS') {
       throw localizedError('errors:developerOnlySizing', {}, 403, 'FORBIDDEN');
     }
 

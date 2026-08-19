@@ -63,7 +63,7 @@ const mockTeam = {
   createdAt: '2026-01-01T00:00:00Z',
   updatedAt: '2026-01-01T00:00:00Z',
   members: [],
-  userRole: 'DEVELOPER',
+  userRole: 'DEVELOPERS',
 };
 
 const mockTeam2 = {
@@ -314,7 +314,7 @@ describe('TeamSelectionModal Component', () => {
   });
 
   describe('Role Badge Rendering Tests', () => {
-    it('renders DEVELOPER role badge correctly', () => {
+    it('renders DEVELOPERS role badge correctly', () => {
       vi.mocked(useTeamContext).mockReturnValue({
         ...mockTeamContext,
         isLoading: false,
@@ -323,7 +323,7 @@ describe('TeamSelectionModal Component', () => {
 
       renderWithProviders(<TeamSelectionModal isOpen={true} onClose={vi.fn()} />);
 
-      expect(screen.getByText('Developer')).toBeInTheDocument();
+      expect(screen.getByText('Developers')).toBeInTheDocument();
     });
 
     it('renders PRODUCT_OWNER role badge correctly', () => {
@@ -363,7 +363,7 @@ describe('TeamSelectionModal Component', () => {
       expect(screen.getByText('UNKNOWN_ROLE')).toBeInTheDocument();
     });
 
-    it('applies correct badge class for DEVELOPER role', () => {
+    it('applies correct badge class for DEVELOPERS role', () => {
       vi.mocked(useTeamContext).mockReturnValue({
         ...mockTeamContext,
         isLoading: false,

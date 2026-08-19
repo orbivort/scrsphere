@@ -79,7 +79,7 @@
     "removeAttendee": "Remove attendee",
     "removeAttendeeConfirm": "Remove",
     "removeAttendeeTitle": "Remove Attendee",
-    "roleDeveloper": "Developer",
+    "roleDevelopers": "Developers",
     "roleProductOwner": "Product Owner",
     "roleScrumMaster": "Scrum Master",
     "roleStakeholder": "Stakeholder",
@@ -640,7 +640,7 @@
     "goToTeamPage": "Go to Team Page",
     "loading": "Loading teams...",
     "roles": {
-      "developer": "Developer",
+      "developers": "Developers",
       "productOwner": "Product Owner",
       "scrumMaster": "Scrum Master"
     },

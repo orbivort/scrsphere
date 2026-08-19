@@ -33,7 +33,7 @@ beforeAll(async () => {
 const createMockTeam = (overrides: Partial<TeamMembership> = {}): TeamMembership => ({
   id: 'team-1',
   name: 'Test Team',
-  role: 'DEVELOPER',
+  role: 'DEVELOPERS',
   isLastPO: false,
   ...overrides,
 });
@@ -47,7 +47,7 @@ describe('TeamImpactWarning Component', () => {
     it('should display team memberships with roles', () => {
       const teams: TeamMembership[] = [
         createMockTeam({ id: 'team-1', name: 'Alpha Team', role: 'PRODUCT_OWNER' }),
-        createMockTeam({ id: 'team-2', name: 'Beta Team', role: 'DEVELOPER' }),
+        createMockTeam({ id: 'team-2', name: 'Beta Team', role: 'DEVELOPERS' }),
       ];
 
       renderWithProviders(<TeamImpactWarning teams={teams} isBlocked={false} />);
@@ -55,7 +55,7 @@ describe('TeamImpactWarning Component', () => {
       expect(screen.getByText('Alpha Team')).toBeInTheDocument();
       expect(screen.getByText('PRODUCT_OWNER')).toBeInTheDocument();
       expect(screen.getByText('Beta Team')).toBeInTheDocument();
-      expect(screen.getByText('DEVELOPER')).toBeInTheDocument();
+      expect(screen.getByText('DEVELOPERS')).toBeInTheDocument();
     });
 
     it('should display correct team count in description', () => {

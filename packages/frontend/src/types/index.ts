@@ -39,7 +39,7 @@ export enum UserRole {
   ADMINISTRATOR = 'administrator',
   PRODUCT_OWNER = 'product_owner',
   SCRUM_MASTER = 'scrum_master',
-  DEVELOPER = 'developer',
+  DEVELOPERS = 'developers',
 }
 
 export enum ItemStatus {
@@ -396,7 +396,7 @@ export interface ReviewAttendee {
   userId?: string;
   name: string;
   email?: string;
-  role: string; // 'product_owner', 'scrum_master', 'developer', 'stakeholder'
+  role: string; // 'product_owner', 'scrum_master', 'developers', 'stakeholder'
   attended: boolean;
 }
 
@@ -500,7 +500,7 @@ export interface RetroAttendee {
   userId?: string;
   name: string;
   email?: string;
-  role: string; // 'product_owner', 'scrum_master', 'developer', 'stakeholder'
+  role: string; // 'product_owner', 'scrum_master', 'developers', 'stakeholder'
   attended: boolean;
 }
 

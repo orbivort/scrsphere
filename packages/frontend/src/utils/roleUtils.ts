@@ -8,8 +8,8 @@ export function getRoleLabel(role: string | null): string {
       return 'Product Owner';
     case 'SCRUM_MASTER':
       return 'Scrum Master';
-    case 'DEVELOPER':
-      return 'Developer';
+    case 'DEVELOPERS':
+      return 'Developers';
     default:
       return role;
   }
@@ -26,7 +26,7 @@ export function getRoleBadgeClass(role: string | null, styles: Record<string, st
       return styles['badge-po'] ?? '';
     case 'SCRUM_MASTER':
       return styles['badge-sm'] ?? '';
-    case 'DEVELOPER':
+    case 'DEVELOPERS':
       return styles['badge-dev'] ?? '';
     default:
       return styles['badge-default'] ?? '';
@@ -43,7 +43,7 @@ export function getRoleBadgeColor(role: string | null): string {
       return '#f59e0b';
     case 'SCRUM_MASTER':
       return '#3b82f6';
-    case 'DEVELOPER':
+    case 'DEVELOPERS':
       return '#10b981';
     default:
       return '#6b7280';

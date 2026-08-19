@@ -72,7 +72,7 @@ const mockTeam = {
   members: [
     {
       userId: 'user-1',
-      role: 'DEVELOPER',
+      role: 'DEVELOPERS',
       user: { id: 'user-1', firstName: 'John', lastName: 'Doe', email: 'john@example.com' },
     },
     {
@@ -117,7 +117,7 @@ const mockRetrospective = {
       attended: true,
       name: 'John Doe',
       email: 'john@example.com',
-      role: 'DEVELOPER',
+      role: 'DEVELOPERS',
     },
   ],
   items: [

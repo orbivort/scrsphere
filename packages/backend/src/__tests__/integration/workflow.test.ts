@@ -417,7 +417,7 @@ describe('Workflow Integration Tests', () => {
               id: generateUUIDv7(),
               teamId: team.id,
               userId: user.id,
-              role: 'DEVELOPER', // Not PRODUCT_OWNER
+              role: 'DEVELOPERS', // Not PRODUCT_OWNER
             },
           });
 
@@ -470,7 +470,7 @@ describe('Workflow Integration Tests', () => {
               id: generateUUIDv7(),
               teamId: team.id,
               userId: user.id,
-              role: 'DEVELOPER', // Not PRODUCT_OWNER - admin routes require PRODUCT_OWNER
+              role: 'DEVELOPERS', // Not PRODUCT_OWNER - admin routes require PRODUCT_OWNER
             },
           });
 

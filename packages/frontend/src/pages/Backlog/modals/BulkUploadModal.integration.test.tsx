@@ -11,28 +11,28 @@
  */
 
 import { describe, it, expect, vi, beforeEach, beforeAll, afterEach } from 'vitest';
-import { renderWithProviders, screen, waitFor, act } from '../../test-utils';
+import { renderWithProviders, screen, waitFor, act } from '../../../test-utils';
 
-import { ProductBacklog } from './Backlog';
-import * as teamContextModule from '../../contexts/TeamContext';
-import { useTeamStore } from '../../store';
-import { apiService, definitionService } from '../../services';
-import { ItemStatus, MoSCoWPriority } from '../../types';
-import { initTestI18n } from '../../test-utils';
+import { ProductBacklog } from '../Backlog';
+import * as teamContextModule from '../../../contexts/TeamContext';
+import { useTeamStore } from '../../../store';
+import { apiService, definitionService } from '../../../services';
+import { ItemStatus, MoSCoWPriority } from '../../../types';
+import { initTestI18n } from '../../../test-utils';
 
 // Mock stores
-vi.mock('../../store', () => ({
+vi.mock('../../../store', () => ({
   useTeamStore: vi.fn(),
 }));
 
-vi.mock('../../hooks/useMutationErrorHandler', () => ({
+vi.mock('../../../hooks/useMutationErrorHandler', () => ({
   useMutationErrorHandler: () => ({
     handleMutationError: vi.fn((_error, _context) => 'An error occurred'),
   }),
 }));
 
 // Mock API service
-vi.mock('../../services', () => ({
+vi.mock('../../../services', () => ({
   apiService: {
     getProductBacklog: vi.fn(),
     getProductGoals: vi.fn(),
@@ -50,7 +50,7 @@ vi.mock('../../services', () => ({
 }));
 
 // Mock hooks
-vi.mock('../../hooks/useToast', () => ({
+vi.mock('../../../hooks/useToast', () => ({
   useToast: () => ({
     toasts: [],
     success: vi.fn(),
@@ -62,25 +62,25 @@ vi.mock('../../hooks/useToast', () => ({
 }));
 
 // Mock child components
-vi.mock('../../components/EmptyState', () => ({
+vi.mock('../../../components/EmptyState', () => ({
   EmptyState: ({ type }: { type: string }) => (
     <div data-testid={`empty-state-${type}`}>Empty State: {type}</div>
   ),
 }));
 
-vi.mock('./PendingAdjustments', () => ({
+vi.mock('../PendingAdjustments', () => ({
   PendingAdjustments: () => <div data-testid="pending-adjustments" />,
 }));
 
-vi.mock('./PendingFeedback', () => ({
+vi.mock('../PendingFeedback', () => ({
   PendingFeedback: () => <div data-testid="pending-feedback" />,
 }));
 
-vi.mock('./PendingRetroActionItems', () => ({
+vi.mock('../PendingRetroActionItems', () => ({
   PendingRetroActionItems: () => <div data-testid="pending-retro-action-items" />,
 }));
 
-vi.mock('./components', () => ({
+vi.mock('../components', () => ({
   BacklogHeader: () => <div data-testid="backlog-header" />,
   BacklogFilterBar: () => <div data-testid="backlog-filter-bar" />,
   ActiveGoalBanner: () => <div data-testid="active-goal-banner" />,
@@ -99,15 +99,15 @@ vi.mock('./components', () => ({
   ),
 }));
 
-vi.mock('./views/BoardView', () => ({
+vi.mock('../views/BoardView', () => ({
   BoardView: () => <div data-testid="board-view" />,
 }));
 
-vi.mock('./views/ListView', () => ({
+vi.mock('../views/ListView', () => ({
   ListView: () => <div data-testid="list-view" />,
 }));
 
-vi.mock('./modals', () => ({
+vi.mock('.', () => ({
   CreateItemModal: () => <div data-testid="create-item-modal" />,
   EditItemModal: () => <div data-testid="edit-item-modal" />,
   ItemDetailModal: () => <div data-testid="item-detail-modal" />,

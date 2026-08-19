@@ -87,7 +87,7 @@ const addFeedbackSchema = z.object({
 const addAttendeeSchema = z.object({
   name: z.string().min(1, 'Name is required').max(100, 'Name is too long'),
   email: z.string().email('Invalid email format').max(255).optional().or(z.literal('')),
-  role: z.enum(['product_owner', 'scrum_master', 'developer', 'stakeholder'], {
+  role: z.enum(['product_owner', 'scrum_master', 'developers', 'stakeholder'], {
     error: 'Invalid role selected',
   }),
   attended: z.boolean().default(true),
@@ -97,7 +97,7 @@ const updateAttendeeSchema = z.object({
   name: z.string().min(1, 'Name is required').max(100, 'Name is too long').optional(),
   email: z.string().email('Invalid email format').max(255).optional().or(z.literal('')),
   role: z
-    .enum(['product_owner', 'scrum_master', 'developer', 'stakeholder'], {
+    .enum(['product_owner', 'scrum_master', 'developers', 'stakeholder'], {
       error: 'Invalid role selected',
     })
     .optional(),

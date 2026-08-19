@@ -411,7 +411,7 @@ describe('WorkflowService', () => {
         'NEW',
         'ACTIVE',
         'user-1',
-        ['DEVELOPER']
+        ['DEVELOPERS']
       );
 
       expect(result.isValid).toBe(true);
@@ -719,7 +719,7 @@ describe('WorkflowService', () => {
           fromStatus: 'NEW',
           toStatus: 'ACTIVE',
           userId: 'user-1',
-          userRoles: ['DEVELOPER'],
+          userRoles: ['DEVELOPERS'],
         })
       ).rejects.toThrow(ForbiddenError);
     });

@@ -62,7 +62,7 @@ const mockTeam = {
     {
       userId: 'user-2',
       teamId: 'team-1',
-      role: 'developer',
+      role: 'developers',
       joinedAt: '2026-01-01T00:00:00Z',
       user: {
         id: 'user-2',
@@ -107,7 +107,7 @@ const mockReview = {
       id: 'attendee-2',
       name: 'Jane Smith',
       email: 'jane@example.com',
-      role: 'developer',
+      role: 'developers',
       attended: false,
     },
   ],

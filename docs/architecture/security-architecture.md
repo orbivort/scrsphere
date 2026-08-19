@@ -163,7 +163,7 @@ Scrumooth implements a three-role RBAC model with hierarchical permissions:
 │                    └──────────┬───────────┘                          │
 │                               │ inherits                             │
 │                    ┌──────────▼───────────┐                          │
-│                    │     DEVELOPER        │                          │
+│                    │     DEVELOPERS       │                          │
 │                    │  - Task updates      │                          │
 │                    │  - View boards       │                          │
 │                    │  - Personal profile  │                          │

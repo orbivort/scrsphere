@@ -132,7 +132,7 @@ const mockAttendees: Attendee[] = [
     userId: 'user-1',
     name: 'John Doe',
     email: 'john@example.com',
-    role: 'developer',
+    role: 'developers',
     attended: true,
   },
   {
@@ -160,7 +160,7 @@ const mockTeamMembers: TeamMember[] = [
       lastName: 'Doe',
       email: 'john@example.com',
     },
-    role: 'Developer',
+    role: 'Developers',
   },
   {
     id: 'team-2',

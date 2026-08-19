@@ -226,8 +226,8 @@ describe('SprintBoard Component', () => {
     mockTeamStore.mockReturnValue({
       currentTeam: mockTeam,
       teams: [mockTeam],
-      userRoleInCurrentTeam: 'developer',
-      userTeamsWithRoles: [{ ...mockTeam, userRole: 'developer' }],
+      userRoleInCurrentTeam: 'developers',
+      userTeamsWithRoles: [{ ...mockTeam, userRole: 'developers' }],
       setCurrentTeam: vi.fn(),
       setTeams: vi.fn(),
       setUserTeamsWithRoles: vi.fn(),
@@ -1151,8 +1151,8 @@ describe('SprintBoard Modal Interactions', () => {
     mockTeamStore.mockReturnValue({
       currentTeam: mockTeam,
       teams: [mockTeam],
-      userRoleInCurrentTeam: 'developer',
-      userTeamsWithRoles: [{ ...mockTeam, userRole: 'developer' }],
+      userRoleInCurrentTeam: 'developers',
+      userTeamsWithRoles: [{ ...mockTeam, userRole: 'developers' }],
       setCurrentTeam: vi.fn(),
       setTeams: vi.fn(),
       setUserTeamsWithRoles: vi.fn(),

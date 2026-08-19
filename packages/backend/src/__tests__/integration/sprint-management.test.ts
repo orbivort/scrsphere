@@ -77,7 +77,7 @@ describe('Sprint Management Integration Tests', () => {
   const addTeamMember = async (
     teamId: string,
     userId: string,
-    role: 'PRODUCT_OWNER' | 'SCRUM_MASTER' | 'DEVELOPER'
+    role: 'PRODUCT_OWNER' | 'SCRUM_MASTER' | 'DEVELOPERS'
   ) => {
     const membershipId = generateUUIDv7();
     await prisma.teamMember.create({
@@ -577,7 +577,7 @@ describe('Sprint Management Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint with Tasks', 'ACTIVE');
       const pbi = await createTestPBI(team.id, 'PBI for Tasks');
 
@@ -624,7 +624,7 @@ describe('Sprint Management Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint for Task', 'ACTIVE');
       const pbi = await createTestPBI(team.id, 'PBI for Task');
 
@@ -670,7 +670,7 @@ describe('Sprint Management Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint for Update', 'ACTIVE');
       const pbi = await createTestPBI(team.id, 'PBI for Update');
 
@@ -725,7 +725,7 @@ describe('Sprint Management Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint for Delete', 'ACTIVE');
       const pbi = await createTestPBI(team.id, 'PBI for Delete');
 

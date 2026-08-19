@@ -71,7 +71,7 @@ describe('Scrum Guide Compliance Enhancement Integration Tests', () => {
   const addTeamMember = async (
     teamId: string,
     userId: string,
-    role: 'PRODUCT_OWNER' | 'SCRUM_MASTER' | 'DEVELOPER'
+    role: 'PRODUCT_OWNER' | 'SCRUM_MASTER' | 'DEVELOPERS'
   ) => {
     const membershipId = generateUUIDv7();
     await prisma.teamMember.create({
@@ -230,7 +230,7 @@ describe('Scrum Guide Compliance Enhancement Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
       const current = await createTestIncrement(sprint.id, team.id, 'Current');
       const prior = await createTestIncrement(sprint.id, team.id, 'Prior');
@@ -263,7 +263,7 @@ describe('Scrum Guide Compliance Enhancement Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
       const current = await createTestIncrement(
         sprint.id,
@@ -298,7 +298,7 @@ describe('Scrum Guide Compliance Enhancement Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
       const increment = await createTestIncrement(
         sprint.id,
@@ -329,7 +329,7 @@ describe('Scrum Guide Compliance Enhancement Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
       const current = await createTestIncrement(sprint.id, team.id, 'Current');
       const prior = await createTestIncrement(sprint.id, team.id, 'Prior');
@@ -359,7 +359,7 @@ describe('Scrum Guide Compliance Enhancement Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
       const current = await createTestIncrement(sprint.id, team.id, 'Current');
       const prior = await createTestIncrement(sprint.id, team.id, 'Prior');
@@ -396,7 +396,7 @@ describe('Scrum Guide Compliance Enhancement Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
       const increment = await createTestIncrement(sprint.id, team.id, 'First Increment');
 
@@ -423,7 +423,7 @@ describe('Scrum Guide Compliance Enhancement Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
       const prior = await createTestIncrement(
         sprint.id,
@@ -457,7 +457,7 @@ describe('Scrum Guide Compliance Enhancement Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
       const first = await createTestIncrement(sprint.id, team.id, 'First');
       const second = await createTestIncrement(sprint.id, team.id, 'Second');
@@ -536,7 +536,7 @@ describe('Scrum Guide Compliance Enhancement Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
 
       const cookies = await loginAndGetCookies(email);
 
@@ -773,7 +773,7 @@ describe('Scrum Guide Compliance Enhancement Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
 
       const goal = await createTestProductGoal(team.id, 'Launch MVP');
       const sprint = await createTestSprint(team.id, 'Sprint', 'COMPLETED', goal.id);
@@ -828,7 +828,7 @@ describe('Scrum Guide Compliance Enhancement Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
 
       const sprint = await createTestSprint(team.id, 'Sprint', 'COMPLETED');
       const increment = await createTestIncrement(sprint.id, team.id, 'Review Increment');

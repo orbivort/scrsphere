@@ -37,7 +37,7 @@ const createMockTeamMember = (
   id: 'tm-1',
   teamId: 'team-1',
   userId: 'user-1',
-  role: 'developer' as const,
+  role: 'developers' as const,
   joinedAt: '2026-01-01T00:00:00Z',
   user: {
     id: 'user-1',
@@ -222,7 +222,7 @@ describe('SwimlanesBoard', () => {
         />
       );
 
-      expect(screen.getAllByText('developer').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('developers').length).toBeGreaterThan(0);
     });
 
     it('should render task cards in correct columns', () => {
@@ -759,7 +759,7 @@ describe('SwimlanesBoard', () => {
           id: 'tm-1',
           teamId: 'team-1',
           userId: 'user-1',
-          role: 'developer' as const,
+          role: 'developers' as const,
           joinedAt: '2026-01-01T00:00:00Z',
         },
       ];
@@ -837,7 +837,7 @@ describe('SwimlanesBoard', () => {
         createMockTeamMember({
           id: 'tm-1',
           userId: 'user-1',
-          role: 'developer' as const,
+          role: 'developers' as const,
           user: {
             id: 'user-1',
             email: 'john@example.com',
@@ -858,7 +858,7 @@ describe('SwimlanesBoard', () => {
         />
       );
 
-      expect(screen.getByText('developer')).toBeInTheDocument();
+      expect(screen.getByText('developers')).toBeInTheDocument();
     });
   });
 

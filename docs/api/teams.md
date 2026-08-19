@@ -533,7 +533,7 @@ POST /api/v1/teams/:teamId/members
 ```json
 {
   "email": "string (required, valid email)",
-  "role": "string (required, one of: PRODUCT_OWNER, SCRUM_MASTER, DEVELOPER)"
+  "role": "string (required, one of: PRODUCT_OWNER, SCRUM_MASTER, DEVELOPERS)"
 }
 ```
 
@@ -550,7 +550,7 @@ Content-Type: application/json
       "id": "550e8400-e29b-41d4-a716-446655440003",
       "userId": "550e8400-e29b-41d4-a716-446655440004",
       "teamId": "550e8400-e29b-41d4-a716-446655440000",
-      "role": "DEVELOPER",
+      "role": "DEVELOPERS",
       "joinedAt": "2026-04-29T14:00:00.000Z",
       "user": {
         "id": "550e8400-e29b-41d4-a716-446655440004",
@@ -598,7 +598,7 @@ curl -X POST https://api.scrumooth.dev/api/v1/teams/550e8400-e29b-41d4-a716-4466
   -b cookies.txt \
   -d '{
     "email": "developer@example.com",
-    "role": "DEVELOPER"
+    "role": "DEVELOPERS"
   }'
 ```
 
@@ -697,7 +697,7 @@ PUT /api/v1/teams/:teamId/members/:memberId
 
 ```json
 {
-  "role": "string (required, one of: PRODUCT_OWNER, SCRUM_MASTER, DEVELOPER)"
+  "role": "string (required, one of: PRODUCT_OWNER, SCRUM_MASTER, DEVELOPERS)"
 }
 ```
 

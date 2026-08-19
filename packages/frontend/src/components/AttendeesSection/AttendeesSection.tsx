@@ -98,7 +98,7 @@ export interface AttendeesSectionProps {
 const ROLE_OPTIONS = [
   { value: 'product_owner', labelKey: 'attendeesSection.roleProductOwner' },
   { value: 'scrum_master', labelKey: 'attendeesSection.roleScrumMaster' },
-  { value: 'developer', labelKey: 'attendeesSection.roleDeveloper' },
+  { value: 'developers', labelKey: 'attendeesSection.roleDevelopers' },
   { value: 'stakeholder', labelKey: 'attendeesSection.roleStakeholder' },
 ] as const;
 
