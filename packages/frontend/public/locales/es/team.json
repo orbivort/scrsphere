@@ -72,6 +72,7 @@
     "networkError": "Error de red. Por favor verifique su conexión e intente de nuevo.",
     "noPermission": "No tiene permiso para agregar miembros al equipo.",
     "roleAlreadyTaken": "El rol {{role}} ya está asignado a otro miembro del equipo. Cada equipo puede tener exactamente un Product Owner y un Scrum Master.",
+    "teamSizeLimit": "Este equipo ha alcanzado el tamaño máximo de {{max}} miembros. No se pueden agregar más miembros.",
     "userNotFound": "No se encontró usuario con esta dirección de correo electrónico. El usuario debe registrarse primero antes de poder ser invitado a un equipo."
   },
   "inviteModal": {
@@ -146,6 +147,7 @@
       "byName": "Ordenar por Nombre",
       "byRole": "Ordenar por Rol"
     },
+    "teamFull": "Este equipo está lleno (máximo {{max}} miembros). No se pueden agregar más miembros.",
     "title": "Miembros del equipo",
     "viewModeAriaLabel": "Alternar modo de vista",
     "viewToggles": {
@@ -183,6 +185,7 @@
     "created": "Creado: {{date}}",
     "lastUpdated": "Última actualización: {{date}}",
     "memberCount": "{{count}} miembros",
+    "memberCountLimit": "{{count}}/{{max}} miembros",
     "memberCount_one": "{{count}} miembro",
     "memberCount_other": "{{count}} miembros",
     "teamId": "ID del equipo: {{id}}",

@@ -1,5 +1,6 @@
 // Team Service
 import prisma from '../utils/prisma';
+import config from '../config';
 import { NotFoundError, ForbiddenError, ConflictError, localizedError } from '../utils/errors';
 import { generateUUIDv7 } from '../utils/uuid';
 import { NotificationService } from './notification.service';
@@ -33,6 +34,7 @@ export type TeamWithMembers = Team & {
     >;
   })[];
   memberCount: number;
+  maxSize: number;
   userRole?: UserRole;
 };
 
@@ -145,6 +147,7 @@ class TeamService {
       return {
         ...team,
         memberCount: team.members.length,
+        maxSize: config.team.maxSize,
         userRole: userMember?.role,
       };
     });
@@ -203,6 +206,7 @@ class TeamService {
     const teamWithMemberCount = {
       ...team,
       memberCount: team.members.length,
+      maxSize: config.team.maxSize,
     };
 
     // Check if user is a member
@@ -291,6 +295,7 @@ class TeamService {
     const teamWithMemberCount = {
       ...team,
       memberCount: team.members.length,
+      maxSize: config.team.maxSize,
     };
 
     return teamWithMemberCount as TeamWithMembers;
@@ -373,6 +378,7 @@ class TeamService {
     const teamWithMemberCount = {
       ...team,
       memberCount: team.members.length,
+      maxSize: config.team.maxSize,
     };
 
     return teamWithMemberCount;
@@ -476,6 +482,17 @@ class TeamService {
     // Enforce exactly one Product Owner / Scrum Master per team
     if (data.role === 'PRODUCT_OWNER' || data.role === 'SCRUM_MASTER') {
       await this.assertLeadershipRoleAvailable(teamId, data.role);
+    }
+
+    // Enforce the Scrum Guide maximum team size
+    const memberCount = await prisma.teamMember.count({ where: { teamId } });
+    if (memberCount >= config.team.maxSize) {
+      throw localizedError(
+        'errors:teamSizeLimitReached',
+        { max: config.team.maxSize },
+        409,
+        'TEAM_SIZE_LIMIT_REACHED'
+      );
     }
 
     const memberId = generateUUIDv7();
@@ -705,6 +722,7 @@ class TeamService {
     (Team & {
       userRole: UserRole;
       memberCount: number;
+      maxSize: number;
       members: (TeamMember & { user: User })[];
     })[]
   > {
@@ -735,6 +753,7 @@ class TeamService {
           ...team,
           userRole: userMember.role,
           memberCount: team.members.length,
+          maxSize: config.team.maxSize,
         };
       });
   }

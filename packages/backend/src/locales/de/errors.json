@@ -14,6 +14,7 @@
   "recordNotFound": "Datensatz nicht gefunden",
   "roleAlreadyTaken": "Für dieses Team existiert bereits ein {{role}}. Jedes Team kann genau einen {{role}} haben.",
   "routeNotFound": "{{method}} {{path}} nicht gefunden",
+  "teamSizeLimitReached": "Dieses Team hat die maximale Größe von {{max}} Mitgliedern erreicht. Es können keine weiteren Mitglieder hinzugefügt werden.",
   "tokenExpired": "Token ist abgelaufen",
   "unauthorized": "Authentifizierung erforderlich",
   "unexpectedError": "Ein unerwarteter Fehler ist aufgetreten"

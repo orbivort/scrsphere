@@ -420,6 +420,7 @@
       "editTeam": "Modifier {{name}}",
       "loading": "Chargement...",
       "memberCount": "{{count}} membre",
+      "memberCountLimit": "{{count}}/{{max}} membres",
       "memberCount_one": "{{count}} membre",
       "memberCount_other": "{{count}} membre",
       "memberCount_plural": "{{count}} membres"

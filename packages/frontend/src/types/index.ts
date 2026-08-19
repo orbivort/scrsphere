@@ -111,6 +111,8 @@ export interface Team {
   createdBy: string;
   createdAt: string;
   updatedAt: string;
+  memberCount?: number;
+  maxSize?: number;
   members?: TeamMember[];
 }
 

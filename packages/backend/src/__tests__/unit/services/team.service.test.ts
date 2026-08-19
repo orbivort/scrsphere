@@ -937,6 +937,99 @@ describe('TeamService', () => {
       expect(result.role).toBe('PRODUCT_OWNER');
       expect(prisma.teamMember.create).toHaveBeenCalled();
     });
+
+    it('should reject adding a member when the team is at capacity', async () => {
+      const userId = 'test-user-id';
+      const teamId = 'team-id';
+      const memberEmail = 'new-member@example.com';
+
+      vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce({
+        id: 'requester-member-id',
+        teamId,
+        userId,
+        role: 'SCRUM_MASTER',
+        joinedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: null,
+        updatedBy: null,
+      } as any);
+
+      vi.mocked(prisma.user.findUnique).mockResolvedValueOnce(
+        fixtures.users.validUser({ id: 'new-member-id', email: memberEmail }) as any
+      );
+
+      vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce(null as any);
+
+      // Team is at the maximum size (default 10)
+      vi.mocked(prisma.teamMember.count).mockResolvedValue(10 as any);
+
+      await expect(
+        teamService.addMember(teamId, userId, { email: memberEmail, role: 'DEVELOPERS' })
+      ).rejects.toMatchObject({
+        statusCode: 409,
+        code: 'TEAM_SIZE_LIMIT_REACHED',
+      });
+
+      expect(prisma.teamMember.create).not.toHaveBeenCalled();
+    });
+
+    it('should allow adding a member when the team is below capacity', async () => {
+      const userId = 'test-user-id';
+      const teamId = 'team-id';
+      const memberEmail = 'new-member@example.com';
+      const newUserId = 'new-member-id';
+      const mockTeam = fixtures.teams.validTeam({ id: teamId });
+
+      vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce({
+        id: 'requester-member-id',
+        teamId,
+        userId,
+        role: 'SCRUM_MASTER',
+        joinedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: null,
+        updatedBy: null,
+      } as any);
+
+      vi.mocked(prisma.user.findUnique).mockResolvedValueOnce(
+        fixtures.users.validUser({ id: newUserId, email: memberEmail }) as any
+      );
+
+      vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce(null as any);
+
+      // Team is below the maximum size (default 10)
+      vi.mocked(prisma.teamMember.count).mockResolvedValue(9 as any);
+
+      vi.mocked(prisma.teamMember.create).mockResolvedValue({
+        id: 'new-member-id',
+        teamId,
+        userId: newUserId,
+        role: 'DEVELOPERS',
+        joinedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: userId,
+        updatedBy: null,
+        user: fixtures.users.validUser({ id: newUserId }),
+        team: mockTeam,
+      } as any);
+
+      vi.mocked(prisma.team.findUnique).mockResolvedValue(mockTeam as any);
+      vi.mocked(prisma.user.findUnique).mockResolvedValue(
+        fixtures.users.validUser({ id: userId }) as any
+      );
+
+      const result = await teamService.addMember(teamId, userId, {
+        email: memberEmail,
+        role: 'DEVELOPERS',
+      });
+
+      expect(result).toBeDefined();
+      expect(result.userId).toBe(newUserId);
+      expect(prisma.teamMember.create).toHaveBeenCalled();
+    });
   });
 
   describe('updateMemberRole', () => {

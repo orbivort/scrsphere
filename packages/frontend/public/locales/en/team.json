@@ -72,6 +72,7 @@
     "networkError": "Network error. Please check your connection and try again.",
     "noPermission": "You do not have permission to add team members.",
     "roleAlreadyTaken": "The {{role}} role is already assigned to another team member. Each team can have exactly one Product Owner and one Scrum Master.",
+    "teamSizeLimit": "This team has reached the maximum size of {{max}} members. No additional members can be added.",
     "userNotFound": "No user found with this email address. The user must register first before they can be invited to a team."
   },
   "inviteModal": {
@@ -146,6 +147,7 @@
       "byName": "Sort by Name",
       "byRole": "Sort by Role"
     },
+    "teamFull": "This team is full (maximum {{max}} members). No additional members can be added.",
     "title": "Team Members",
     "viewModeAriaLabel": "View mode toggle",
     "viewToggles": {
@@ -183,6 +185,7 @@
     "created": "Created: {{date}}",
     "lastUpdated": "Last updated: {{date}}",
     "memberCount": "{{count}} members",
+    "memberCountLimit": "{{count}}/{{max}} members",
     "memberCount_one": "{{count}} member",
     "memberCount_other": "{{count}} members",
     "teamId": "Team ID: {{id}}",

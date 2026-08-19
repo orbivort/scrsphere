@@ -262,7 +262,12 @@ export const TeamList: React.FC<TeamListProps> = ({
           <div className={styles['team-card-header']}>
             <h3 className={styles['team-card-name']}>{team.name}</h3>
             <span className={styles['team-card-members']}>
-              {t('teamList.card.memberCount', { count: team.memberCount ?? 0 })}
+              {team.maxSize !== undefined
+                ? t('teamList.card.memberCountLimit', {
+                    count: team.memberCount ?? 0,
+                    max: team.maxSize,
+                  })
+                : t('teamList.card.memberCount', { count: team.memberCount ?? 0 })}
             </span>
           </div>
 

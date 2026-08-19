@@ -14,6 +14,7 @@
   "recordNotFound": "Enregistrement introuvable",
   "roleAlreadyTaken": "Un {{role}} existe déjà pour cette équipe. Chaque équipe ne peut avoir qu'un seul {{role}}.",
   "routeNotFound": "{{method}} {{path}} introuvable",
+  "teamSizeLimitReached": "Cette équipe a atteint la taille maximale de {{max}} membres. Aucun membre supplémentaire ne peut être ajouté.",
   "tokenExpired": "Le jeton a expiré",
   "unauthorized": "Authentification requise",
   "unexpectedError": "Une erreur inattendue s'est produite"

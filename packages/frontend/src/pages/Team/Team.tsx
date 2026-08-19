@@ -289,6 +289,11 @@ export const TeamManagement: React.FC = () => {
 
       if (
         error instanceof AxiosError &&
+        error.response?.data?.error?.code === 'TEAM_SIZE_LIMIT_REACHED'
+      ) {
+        setInviteError(t('inviteErrors.teamSizeLimit', { max: maxSize ?? 10 }));
+      } else if (
+        error instanceof AxiosError &&
         error.response?.data?.error?.code === 'ROLE_ALREADY_TAKEN'
       ) {
         setInviteError(
@@ -557,6 +562,8 @@ export const TeamManagement: React.FC = () => {
   }, [team?.members, searchQuery, roleFilter, sortBy]);
 
   const memberCount = team?.members?.length ?? 0;
+  const maxSize = team?.maxSize;
+  const atCapacity = maxSize !== undefined && memberCount >= maxSize;
   const filteredCount = filteredAndSortedMembers.length;
 
   const { data: teamMetricsData } = useQuery<ApiResponse<TeamMetrics>, Error>({
@@ -820,7 +827,9 @@ export const TeamManagement: React.FC = () => {
           <div className={styles['team-info-header']}>
             <h2 id="team-name">{team.name}</h2>
             <span className={styles['team-size']}>
-              {t('teamInfo.memberCount', { count: team.members?.length ?? 0 })}
+              {maxSize !== undefined
+                ? t('teamInfo.memberCountLimit', { count: memberCount, max: maxSize })
+                : t('teamInfo.memberCount', { count: memberCount })}
             </span>
           </div>
           {team.description && <p className={styles['team-description']}>{team.description}</p>}
@@ -853,7 +862,8 @@ export const TeamManagement: React.FC = () => {
             <button
               className={`${styles.button} ${styles['button-primary']}`}
               onClick={handleInviteMember}
-              disabled={addTeamMemberMutation.isPending}
+              disabled={addTeamMemberMutation.isPending || atCapacity}
+              title={atCapacity ? t('members.teamFull', { max: maxSize }) : undefined}
               type="button"
             >
               {addTeamMemberMutation.isPending ? (
@@ -866,6 +876,12 @@ export const TeamManagement: React.FC = () => {
             </button>
           )}
         </div>
+        {atCapacity && canInviteMembers() && (
+          <div className={styles['team-full-hint']} role="status" aria-live="polite">
+            <AlertIcon size={16} />
+            <span>{t('members.teamFull', { max: maxSize })}</span>
+          </div>
+        )}
 
         {memberCount > 0 && (
           <div className={styles['members-controls']}>

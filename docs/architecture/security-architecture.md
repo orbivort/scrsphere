@@ -298,6 +298,8 @@ const createTeamSchema = z.object({
 });
 ```
 
+In addition to request-body schema validation, business-rule limits are enforced in the service layer. For example, `TeamService.addMember()` validates that a team has not reached its configured maximum size (default `10`, configurable via `TEAM_MAX_SIZE`) before creating a membership, returning `409 TEAM_SIZE_LIMIT_REACHED` when the team is at capacity. This prevents arbitrarily large Scrum Teams and aligns with the Scrum Guide recommendation.
+
 ### SQL Injection Prevention
 
 SQL injection is prevented through Prisma ORM's parameterized queries. All database access goes through Prisma, which:

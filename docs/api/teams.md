@@ -590,6 +590,20 @@ Content-Type: application/json
 }
 ```
 
+**409 Conflict - Team Size Limit Reached**
+
+The Scrum Team has reached its configured maximum number of members (default `10`, configurable via `TEAM_MAX_SIZE`). No additional members can be added.
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "TEAM_SIZE_LIMIT_REACHED",
+    "message": "This team has reached the maximum size of 10 members. No additional members can be added."
+  }
+}
+```
+
 **Example Request**
 
 ```bash
@@ -846,13 +860,14 @@ For Definition of Done and Definition of Ready endpoints, see:
 
 ## Error Codes
 
-| Code                   | HTTP Status | Description                                                |
-| ---------------------- | ----------- | ---------------------------------------------------------- |
-| `VALIDATION_ERROR`     | 400         | Request validation failed                                  |
-| `AUTHENTICATION_ERROR` | 401         | Authentication required                                    |
-| `AUTHORIZATION_ERROR`  | 403         | Insufficient permissions                                   |
-| `NOT_FOUND`            | 404         | Team or member not found                                   |
-| `CONFLICT`             | 409         | Resource conflict (e.g., duplicate name, already a member) |
+| Code                      | HTTP Status | Description                                                |
+| ------------------------- | ----------- | ---------------------------------------------------------- |
+| `VALIDATION_ERROR`        | 400         | Request validation failed                                  |
+| `AUTHENTICATION_ERROR`    | 401         | Authentication required                                    |
+| `AUTHORIZATION_ERROR`     | 403         | Insufficient permissions                                   |
+| `NOT_FOUND`               | 404         | Team or member not found                                   |
+| `CONFLICT`                | 409         | Resource conflict (e.g., duplicate name, already a member) |
+| `TEAM_SIZE_LIMIT_REACHED` | 409         | Team has reached its maximum member size                   |
 
 ## Best Practices
 

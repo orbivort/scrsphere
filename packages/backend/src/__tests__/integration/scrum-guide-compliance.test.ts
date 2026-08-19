@@ -1056,4 +1056,116 @@ describe('Scrum Guide Compliance Enhancement Integration Tests', () => {
       expect(updated?.role).toBe('PRODUCT_OWNER');
     });
   });
+
+  describe('Team Size Limit', () => {
+    const testEmails: string[] = [];
+    const testTeams: string[] = [];
+
+    afterEach(async () => {
+      await cleanupTeams(testTeams);
+      await cleanupTestData(testEmails);
+      testEmails.length = 0;
+      testTeams.length = 0;
+    });
+
+    it('should expose maxSize on the team detail response', async () => {
+      const email = `size-meta-${uniqueId()}@example.com`;
+      testEmails.push(email);
+
+      const user = await createTestUserInDb(email);
+      const teamName = `Size Meta Team ${uniqueId()}`;
+      testTeams.push(teamName);
+
+      const team = await createTestTeam(teamName);
+      await addTeamMember(team.id, user.id, 'SCRUM_MASTER');
+
+      const cookies = await loginAndGetCookies(email);
+
+      const response = await request(app)
+        .get(`/api/v1/teams/${team.id}`)
+        .set('Cookie', cookies)
+        .expect(200);
+
+      expect(response.body.success).toBe(true);
+      expect(response.body.data.maxSize).toBe(10);
+      expect(response.body.data.memberCount).toBe(1);
+    });
+
+    it('should reject adding a member with TEAM_SIZE_LIMIT_REACHED when the team is at capacity', async () => {
+      const smEmail = `size-sm-${uniqueId()}@example.com`;
+      const targetEmail = `size-target-${uniqueId()}@example.com`;
+      testEmails.push(smEmail, targetEmail);
+
+      const smUser = await createTestUserInDb(smEmail);
+      await createTestUserInDb(targetEmail);
+
+      const teamName = `Size Limit Team ${uniqueId()}`;
+      testTeams.push(teamName);
+
+      const team = await createTestTeam(teamName);
+      await addTeamMember(team.id, smUser.id, 'SCRUM_MASTER');
+
+      // Fill the team to the maximum size (default 10) with developers
+      const maxSize = 10;
+      const fillerEmails: string[] = [];
+      for (let i = 0; i < maxSize - 1; i += 1) {
+        const fillerEmail = `size-filler-${i}-${uniqueId()}@example.com`;
+        const filler = await createTestUserInDb(fillerEmail);
+        await addTeamMember(team.id, filler.id, 'DEVELOPERS');
+        fillerEmails.push(fillerEmail);
+      }
+      testEmails.push(...fillerEmails);
+
+      const cookies = await loginAndGetCookies(smEmail);
+      const { csrfToken } = extractCsrfFromCookies(cookies);
+
+      const response = await request(app)
+        .post(`/api/v1/teams/${team.id}/members`)
+        .set('Cookie', cookies)
+        .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+        .send({ email: targetEmail, role: 'DEVELOPERS' })
+        .expect(409);
+
+      expect(response.body.success).toBe(false);
+      expect(response.body.error.code).toBe('TEAM_SIZE_LIMIT_REACHED');
+
+      // No membership row should have been created for the target user
+      const targetUser = await prisma.user.findUnique({
+        where: { email: targetEmail.toLowerCase() },
+      });
+      const membership = await prisma.teamMember.findUnique({
+        where: {
+          teamId_userId: { teamId: team.id, userId: targetUser!.id },
+        },
+      });
+      expect(membership).toBeNull();
+    });
+
+    it('should allow adding a member when the team is below capacity', async () => {
+      const smEmail = `size-below-${uniqueId()}@example.com`;
+      const devEmail = `size-dev-${uniqueId()}@example.com`;
+      testEmails.push(smEmail, devEmail);
+
+      const smUser = await createTestUserInDb(smEmail);
+      await createTestUserInDb(devEmail);
+
+      const teamName = `Size Below Team ${uniqueId()}`;
+      testTeams.push(teamName);
+
+      const team = await createTestTeam(teamName);
+      await addTeamMember(team.id, smUser.id, 'SCRUM_MASTER');
+
+      const cookies = await loginAndGetCookies(smEmail);
+      const { csrfToken } = extractCsrfFromCookies(cookies);
+
+      const response = await request(app)
+        .post(`/api/v1/teams/${team.id}/members`)
+        .set('Cookie', cookies)
+        .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+        .send({ email: devEmail, role: 'DEVELOPERS' })
+        .expect(201);
+
+      expect(response.body.success).toBe(true);
+    });
+  });
 });

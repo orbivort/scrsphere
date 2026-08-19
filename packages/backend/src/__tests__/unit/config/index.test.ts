@@ -209,6 +209,22 @@ describe('config', () => {
       expect(config.notification.maxPageSize).toBe(100);
     });
 
+    it('should have default team configuration', async () => {
+      delete process.env.TEAM_MAX_SIZE;
+
+      const { config } = await import('../../../config');
+
+      expect(config.team.maxSize).toBe(10);
+    });
+
+    it('should use TEAM_MAX_SIZE env var for team config', async () => {
+      process.env.TEAM_MAX_SIZE = '8';
+
+      const { config } = await import('../../../config');
+
+      expect(config.team.maxSize).toBe(8);
+    });
+
     it('should have default event loop monitoring configuration', async () => {
       delete process.env.EVENT_LOOP_MONITORING_ENABLED;
       delete process.env.EVENT_LOOP_RESOLUTION;
@@ -315,6 +331,16 @@ describe('config', () => {
       const { validateConfig } = await import('../../../config');
 
       expect(() => validateConfig()).not.toThrow();
+    });
+
+    it('should throw error when TEAM_MAX_SIZE is less than 1', async () => {
+      process.env.DATABASE_URL = 'postgresql://user:pass@localhost:5432/db';
+      process.env.JWT_SECRET = 'a'.repeat(64);
+      process.env.TEAM_MAX_SIZE = '0';
+
+      const { validateConfig } = await import('../../../config');
+
+      expect(() => validateConfig()).toThrow('TEAM_MAX_SIZE must be a positive integer');
     });
   });
 

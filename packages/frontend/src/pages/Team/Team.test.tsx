@@ -726,6 +726,146 @@ describe('TeamManagement - Multiple Teams', () => {
       expect(inviteButton).toBeInTheDocument();
     });
 
+    it('should display the member count vs max size limit', async () => {
+      const mockTeams = [
+        {
+          id: '123e4567-e89b-12d3-a456-426614174001',
+          name: 'Alpha Team',
+          description: 'Main development team',
+          createdBy: 'user-1',
+          createdAt: '2024-01-01T00:00:00Z',
+          updatedAt: '2024-01-01T00:00:00Z',
+          userRole: 'product_owner',
+        },
+      ];
+
+      const mockCurrentTeam = {
+        id: '123e4567-e89b-12d3-a456-426614174001',
+        name: 'Alpha Team',
+        description: 'Main development team',
+        createdBy: 'user-1',
+        createdAt: '2024-01-01T00:00:00Z',
+        updatedAt: '2024-01-01T00:00:00Z',
+        maxSize: 10,
+        members: [
+          {
+            id: 'user-1',
+            firstName: 'John',
+            lastName: 'Doe',
+            email: 'john@example.com',
+            role: 'ADMIN',
+          },
+          {
+            id: 'user-2',
+            firstName: 'Jane',
+            lastName: 'Smith',
+            email: 'jane@example.com',
+            role: 'MEMBER',
+          },
+        ],
+      };
+
+      (apiService.getMyTeams as unknown as vi.Mock).mockResolvedValue({
+        success: true,
+        data: mockTeams,
+      });
+
+      (apiService.getTeam as unknown as vi.Mock).mockResolvedValue({
+        success: true,
+        data: mockCurrentTeam,
+      });
+
+      (useTeamStore as unknown as vi.Mock).mockReturnValue({
+        currentTeam: mockCurrentTeam,
+        userTeamsWithRoles: mockTeams,
+        setCurrentTeam: mockSetCurrentTeam,
+        switchTeam: mockSwitchTeam,
+        setUserTeamsWithRoles: mockSetUserTeamsWithRoles,
+        setUserRoleInCurrentTeam: mockSetUserRoleInCurrentTeam,
+      });
+
+      renderWithProviders(<TeamManagement />);
+
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: 'Alpha Team' })).toBeInTheDocument();
+      });
+
+      // Component renders the capacity indicator "2/10 members"
+      expect(screen.getByText(/2\/10/i)).toBeInTheDocument();
+    });
+
+    it('should disable the invite button and show a hint when the team is at capacity', async () => {
+      const mockTeams = [
+        {
+          id: '123e4567-e89b-12d3-a456-426614174001',
+          name: 'Alpha Team',
+          description: 'Main development team',
+          createdBy: 'user-1',
+          createdAt: '2024-01-01T00:00:00Z',
+          updatedAt: '2024-01-01T00:00:00Z',
+          userRole: 'product_owner',
+        },
+      ];
+
+      const mockCurrentTeam = {
+        id: '123e4567-e89b-12d3-a456-426614174001',
+        name: 'Alpha Team',
+        description: 'Main development team',
+        createdBy: 'user-1',
+        createdAt: '2024-01-01T00:00:00Z',
+        updatedAt: '2024-01-01T00:00:00Z',
+        maxSize: 2,
+        members: [
+          {
+            id: 'user-1',
+            firstName: 'John',
+            lastName: 'Doe',
+            email: 'john@example.com',
+            role: 'ADMIN',
+          },
+          {
+            id: 'user-2',
+            firstName: 'Jane',
+            lastName: 'Smith',
+            email: 'jane@example.com',
+            role: 'MEMBER',
+          },
+        ],
+      };
+
+      (apiService.getMyTeams as unknown as vi.Mock).mockResolvedValue({
+        success: true,
+        data: mockTeams,
+      });
+
+      (apiService.getTeam as unknown as vi.Mock).mockResolvedValue({
+        success: true,
+        data: mockCurrentTeam,
+      });
+
+      (useTeamStore as unknown as vi.Mock).mockReturnValue({
+        currentTeam: mockCurrentTeam,
+        userTeamsWithRoles: mockTeams,
+        setCurrentTeam: mockSetCurrentTeam,
+        switchTeam: mockSwitchTeam,
+        setUserTeamsWithRoles: mockSetUserTeamsWithRoles,
+        setUserRoleInCurrentTeam: mockSetUserRoleInCurrentTeam,
+      });
+
+      renderWithProviders(<TeamManagement />);
+
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: 'Alpha Team' })).toBeInTheDocument();
+      });
+
+      // The invite button is present but disabled at capacity
+      const inviteButton = screen.getByRole('button', { name: /invite member/i });
+      expect(inviteButton).toBeDisabled();
+
+      // The "team is full" hint is shown
+      expect(screen.getByText(/team is full/i)).toBeInTheDocument();
+    });
+
     it('should handle remove member functionality', async () => {
       const mockTeams = [
         {

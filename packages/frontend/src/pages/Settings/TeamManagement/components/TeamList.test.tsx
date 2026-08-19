@@ -566,6 +566,30 @@ describe('TeamList', () => {
       ).toBeInTheDocument();
     });
 
+    it('should display the member count against the max size limit when available', () => {
+      const teamWithMaxSize: Team = {
+        ...mockTeams[0],
+        memberCount: 5,
+        maxSize: 10,
+      };
+
+      renderWithProviders(
+        <TeamList
+          teams={[teamWithMaxSize]}
+          isLoading={false}
+          error={null}
+          onEdit={mockOnEdit}
+          onDelete={mockOnDelete}
+          canEdit={true}
+          canDelete={true}
+        />
+      );
+
+      expect(
+        screen.getByText(i18nT('settings:teamList.card.memberCountLimit', { count: 5, max: 10 }))
+      ).toBeInTheDocument();
+    });
+
     it('should navigate between cards with arrow keys', () => {
       renderWithProviders(
         <TeamList
