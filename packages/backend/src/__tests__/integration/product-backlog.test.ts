@@ -299,7 +299,8 @@ describe('Product Backlog Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'PRODUCT_OWNER');
+      // Only Developers may set story points, so use a Developer here.
+      await addTeamMember(team.id, user.id, 'DEVELOPER');
 
       const cookies = await loginAndGetCookies(email);
 
@@ -432,7 +433,8 @@ describe('Product Backlog Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'PRODUCT_OWNER');
+      // Only Developers may set story points, so use a Developer here.
+      await addTeamMember(team.id, user.id, 'DEVELOPER');
       const pbi = await createTestPBI(team.id, 'Original Title');
 
       const cookies = await loginAndGetCookies(email);
@@ -770,7 +772,8 @@ describe('Product Backlog Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'PRODUCT_OWNER');
+      // Only Developers may set story points, so use a Developer here.
+      await addTeamMember(team.id, user.id, 'DEVELOPER');
 
       const cookies = await loginAndGetCookies(email);
       const { csrfToken } = extractCsrfFromCookies(cookies);

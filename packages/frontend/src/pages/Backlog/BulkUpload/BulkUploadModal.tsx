@@ -7,6 +7,7 @@ import { apiService } from '../../../services';
 import { logger } from '../../../utils/logger';
 import { queryKeys } from '../../../hooks/queryKeys';
 import type { ProductBacklogItem } from '../../../types';
+import { useTeamContext } from '../../../contexts/TeamContext';
 import { useBacklogCapacityValidation } from '../hooks/useBacklogCapacityValidation';
 
 import styles from './BulkUploadModal.module.css';
@@ -22,7 +23,7 @@ import {
   type UploadResult,
 } from './bulkUploadUtils';
 
-import { XIcon, ArrowLeftIcon, UploadIcon } from '@/components/common/Icons';
+import { XIcon, ArrowLeftIcon, UploadIcon, InfoIcon } from '@/components/common/Icons';
 
 type UploadStep = 'upload' | 'preview' | 'progress' | 'summary';
 
@@ -55,6 +56,12 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
   const abortControllerRef = useRef<AbortController | null>(null);
   const { validateBulkImport } = useBacklogCapacityValidation();
   const { t } = useTranslation('backlog');
+
+  // Only Developers are responsible for sizing; PO/SM cannot set story points.
+  // The backend rejects a batch that carries story points from a non-Developer,
+  // so the story points column is hidden in the preview for non-Developers.
+  const { userRole } = useTeamContext();
+  const isDeveloper = userRole === 'DEVELOPER';
 
   const resetState = useCallback(() => {
     setStep('upload');
@@ -271,6 +278,10 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
 
   const validItems = getValidItems(parsedItems);
   const canImport = validItems.length > 0;
+  // Only surface the Developer-only sizing notice when the uploaded CSV actually
+  // carries story points. If the column was removed, there is nothing to size and
+  // the backend will accept the batch, so no hint is needed.
+  const hasStoryPoints = parsedItems.some((item) => item.storyPoints !== undefined);
 
   return (
     <div className={styles['modal-overlay']} onClick={handleClose} role="dialog" aria-modal="true">
@@ -320,7 +331,19 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
               />
             )}
 
-            {step === 'preview' && <DataPreview items={parsedItems} />}
+            {step === 'preview' && (
+              <>
+                {!isDeveloper && hasStoryPoints && (
+                  <div className={styles['hint-banner']} role="note">
+                    <span className={styles['hint-icon']} aria-hidden="true">
+                      <InfoIcon width="16" height="16" />
+                    </span>
+                    <span>{t('bulkUpload.storyPointsDeveloperOnly') as string}</span>
+                  </div>
+                )}
+                <DataPreview items={parsedItems} showStoryPoints={isDeveloper} />
+              </>
+            )}
 
             {step === 'progress' && (
               <UploadProgress

@@ -82,6 +82,7 @@
       "remaining": "Restants",
       "title": "Téléchargement..."
     },
+    "storyPointsDeveloperOnly": "Seuls les développeurs peuvent définir des points d'histoire. La colonne des points d'histoire est désactivée pour votre rôle.",
     "summary": {
       "close": "Fermer",
       "created": "{{count}} éléments créés",
@@ -198,6 +199,7 @@
     "removeLabel": "Supprimer l'étiquette {{label}}",
     "requiredFields": "Indique les champs requis",
     "selectMoscowPriority": "Sélectionner la priorité MoSCoW",
+    "storyPointsDeveloperOnly": "Seuls les développeurs peuvent définir des points d'histoire. L'estimation est la responsabilité des développeurs qui effectuent le travail.",
     "storyPointsHelp": "Estimez l'effort relatif en utilisant la séquence de Fibonacci. Considérez la complexité, l'incertitude et le risque. Laissez vide si pas prêt à estimer.",
     "storyPointsLabel": "Estimation (Story Points)",
     "storyPointsPlaceholder": "Sélectionner l'estimation...",
@@ -270,6 +272,7 @@
     "saving": "Sauvegarde...",
     "savingChanges": "Sauvegarde des modifications...",
     "selectMoscowPriority": "Sélectionner la priorité MoSCoW",
+    "storyPointsDeveloperOnly": "Seuls les développeurs peuvent définir des points d'histoire. L'estimation est la responsabilité des développeurs qui effectuent le travail.",
     "storyPointsHelp": "Requis: Estimez l'effort relatif en utilisant la séquence de Fibonacci. Considérez la complexité, l'incertitude et le risque.",
     "storyPointsLabel": "Estimation (Story Points)",
     "storyPointsPlaceholder": "Sélectionner l'estimation... (requis)",

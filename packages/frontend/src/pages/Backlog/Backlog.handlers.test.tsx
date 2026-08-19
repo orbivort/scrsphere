@@ -32,6 +32,7 @@ import {
 import { ItemStatus, MoSCoWPriority } from '../../types';
 
 import { ProductBacklog } from './Backlog';
+import * as teamContextModule from '../../contexts/TeamContext';
 
 /* ------------------------------------------------------------------ */
 /* Mocks                                                              */
@@ -118,6 +119,17 @@ describe('ProductBacklog handlers coverage', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+
+    vi.spyOn(teamContextModule, 'useTeamContext').mockReturnValue({
+      userRole: 'DEVELOPER',
+      currentTeam: mockTeam,
+      userTeams: [{ ...mockTeam, userRole: 'DEVELOPER' }],
+      isLoading: false,
+      error: null,
+      switchTeam: vi.fn(),
+      refreshTeams: vi.fn(),
+      hasMultipleTeams: false,
+    } as never);
 
     mockTeamStore.mockReturnValue({
       currentTeam: mockTeam,

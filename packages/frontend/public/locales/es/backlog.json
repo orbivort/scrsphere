@@ -82,6 +82,7 @@
       "remaining": "Restante",
       "title": "Cargando..."
     },
+    "storyPointsDeveloperOnly": "Solo los desarrolladores pueden establecer puntos de historia. La columna de puntos de historia está deshabilitada para su rol.",
     "summary": {
       "close": "Cerrar",
       "created": "{{count}} elementos creados",
@@ -198,6 +199,7 @@
     "removeLabel": "Eliminar etiqueta {{label}}",
     "requiredFields": "Indica campos requeridos",
     "selectMoscowPriority": "Seleccionar prioridad MoSCoW",
+    "storyPointsDeveloperOnly": "Solo los desarrolladores pueden establecer puntos de historia. La estimación es responsabilidad de los desarrolladores que realizan el trabajo.",
     "storyPointsHelp": "Estime el esfuerzo relativo usando la secuencia Fibonacci. Considere complejidad, incertidumbre y riesgo. Deje vacío si no está listo para estimar.",
     "storyPointsLabel": "Estimación (Story Points)",
     "storyPointsPlaceholder": "Seleccionar estimación...",
@@ -270,6 +272,7 @@
     "saving": "Guardando...",
     "savingChanges": "Guardando cambios...",
     "selectMoscowPriority": "Seleccionar prioridad MoSCoW",
+    "storyPointsDeveloperOnly": "Solo los desarrolladores pueden establecer puntos de historia. La estimación es responsabilidad de los desarrolladores que realizan el trabajo.",
     "storyPointsHelp": "Requerido: Estime el esfuerzo relativo usando la secuencia Fibonacci. Considere complejidad, incertidumbre y riesgo.",
     "storyPointsLabel": "Estimación (Story Points)",
     "storyPointsPlaceholder": "Seleccionar estimación... (requerido)",

@@ -367,6 +367,13 @@ class SprintService {
       throw new BadRequestError('Only planned sprints can be started');
     }
 
+    // A Sprint cannot be started without a Sprint Goal commitment (Scrum Guide:
+    // the Sprint Goal is created during Sprint Planning). This is defense-in-depth;
+    // the UI already blocks goal-less starts, but direct API calls must not bypass it.
+    if (!sprint.sprintGoal?.trim()) {
+      throw new BadRequestError('Sprint cannot be started without a Sprint Goal');
+    }
+
     const activeSprint = await prisma.sprint.findFirst({
       where: {
         teamId: sprint.teamId,
@@ -605,6 +612,60 @@ class SprintService {
   }
 
   /**
+   * Determine which PBIs (among the given candidate PBIs) do NOT satisfy the team's
+   * Definition of Done. A PBI is compliant only when every active DoD item is verified.
+   * A team with no active DoD items has no gate to satisfy (vacuously compliant), so all
+   * candidate PBIs are considered compliant.
+   *
+   * Runs against the transaction client so the gate is atomic with the status write.
+   */
+  private async findPBIsWithoutFullDoD(
+    tx: Omit<
+      Prisma.TransactionClient,
+      '$connect' | '$disconnect' | '$on' | '$transaction' | '$use' | '$extends'
+    >,
+    teamId: string,
+    pbiIds: string[]
+  ): Promise<string[]> {
+    const dod = await tx.definitionOfDone.findUnique({
+      where: { teamId },
+      select: {
+        items: {
+          where: { isActive: true },
+          select: { id: true },
+        },
+      },
+    });
+
+    const activeDodItemIds = (dod?.items ?? []).map((item) => item.id);
+    if (activeDodItemIds.length === 0) {
+      return [];
+    }
+
+    const verifiedRows = await tx.doDChecklistVerification.findMany({
+      where: {
+        pbiId: { in: pbiIds },
+        dodItemId: { in: activeDodItemIds },
+        isVerified: true,
+      },
+      select: { pbiId: true, dodItemId: true },
+    });
+
+    const verifiedMap = new Map<string, Set<string>>();
+    for (const row of verifiedRows) {
+      const set = verifiedMap.get(row.pbiId) ?? new Set<string>();
+      set.add(row.dodItemId);
+      verifiedMap.set(row.pbiId, set);
+    }
+
+    const activeDodIdSet = new Set(activeDodItemIds);
+    return pbiIds.filter((pbiId) => {
+      const verified = verifiedMap.get(pbiId) ?? new Set<string>();
+      return !Array.from(activeDodIdSet).every((dodItemId) => verified.has(dodItemId));
+    });
+  }
+
+  /**
    * Reinitialize burndown data within a transaction
    * This ensures burndown data is created atomically with sprint start
    */
@@ -772,8 +833,23 @@ class SprintService {
       select: { id: true },
     });
 
+    const teamId = sprint.teamId;
+
     const updatedSprint = await withTransaction(
       async (tx) => {
+        // Definition of Done is the gate to "Done": a PBI whose tasks are all DONE may only be
+        // marked DONE if every active DoD item is verified for it. This is enforced inside the
+        // same transaction as the status write so a direct API call cannot bypass the gate.
+        if (pbiIdsToUpdate.length > 0) {
+          const nonCompliantPbiIds = await this.findPBIsWithoutFullDoD(tx, teamId, pbiIdsToUpdate);
+
+          if (nonCompliantPbiIds.length > 0) {
+            throw new BadRequestError(
+              `Sprint cannot be completed because the Definition of Done is not met for PBI(s): ${nonCompliantPbiIds.join(', ')}. Verify all Definition of Done items for these items before completing the sprint.`
+            );
+          }
+        }
+
         const sprint = await tx.sprint.update({
           where: { id: sprintId },
           data: { status: 'COMPLETED' },

@@ -6,6 +6,7 @@ import { BulkUploadModal } from './BulkUploadModal';
 import { apiService } from '../../../services';
 import { BacklogProvider } from '../context/BacklogContext';
 import * as bulkUploadUtils from './bulkUploadUtils';
+import * as teamContextModule from '../../../contexts/TeamContext';
 
 vi.mock('../../../services', () => ({
   apiService: {
@@ -62,6 +63,16 @@ describe('BulkUploadModal', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.spyOn(teamContextModule, 'useTeamContext').mockReturnValue({
+      userRole: 'DEVELOPER',
+      currentTeam: null,
+      userTeams: [],
+      isLoading: false,
+      error: null,
+      switchTeam: vi.fn(),
+      refreshTeams: vi.fn(),
+      hasMultipleTeams: false,
+    } as never);
     (apiService.getProductBacklog as ReturnType<typeof vi.fn>).mockResolvedValue({
       success: true,
       data: [],
@@ -725,6 +736,100 @@ describe('BulkUploadModal', () => {
       await waitFor(() => {
         expect(screen.getByText('Drop your CSV file here')).toBeInTheDocument();
       });
+    });
+  });
+
+  describe('Developer-only sizing', () => {
+    const reachPreview = async () => {
+      const mockItems = [{ _rowNumber: 1, title: 'Test Item', storyPoints: 8, _isValid: true }];
+      mockParseCSV.mockReturnValue({
+        items: mockItems,
+        errors: [],
+        totalRows: 1,
+      });
+      mockValidateItems.mockReturnValue(mockItems);
+      mockGetValidItems.mockReturnValue(mockItems);
+
+      renderBulkUploadModal();
+
+      await waitFor(() => {
+        expect(screen.getByText('Drop your CSV file here')).toBeInTheDocument();
+      });
+
+      const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+      if (fileInput) {
+        fireEvent.change(fileInput, {
+          target: { files: [createMockFile('test.csv', 'title\nTest Item')] },
+        });
+      }
+
+      await waitFor(() => {
+        expect(screen.getByText('Data Preview')).toBeInTheDocument();
+      });
+    };
+
+    it('should show the story points column and no hint for a Developer', async () => {
+      vi.spyOn(teamContextModule, 'useTeamContext').mockReturnValue({
+        userRole: 'DEVELOPER',
+      } as never);
+      await reachPreview();
+
+      expect(screen.getByText('Points')).toBeInTheDocument();
+      expect(screen.getByText('8')).toBeInTheDocument();
+      expect(screen.queryByText(/Only Developers can set story points/i)).not.toBeInTheDocument();
+    });
+
+    it('should hide the story points column and show a hint for a Product Owner', async () => {
+      vi.spyOn(teamContextModule, 'useTeamContext').mockReturnValue({
+        userRole: 'PRODUCT_OWNER',
+      } as never);
+      await reachPreview();
+
+      expect(screen.getByText(/Only Developers can set story points/i)).toBeInTheDocument();
+      expect(screen.queryByText('Points')).not.toBeInTheDocument();
+      expect(screen.queryByText('8')).not.toBeInTheDocument();
+    });
+
+    it('should hide the story points column and show a hint for a Scrum Master', async () => {
+      vi.spyOn(teamContextModule, 'useTeamContext').mockReturnValue({
+        userRole: 'SCRUM_MASTER',
+      } as never);
+      await reachPreview();
+
+      expect(screen.getByText(/Only Developers can set story points/i)).toBeInTheDocument();
+      expect(screen.queryByText('Points')).not.toBeInTheDocument();
+      expect(screen.queryByText('8')).not.toBeInTheDocument();
+    });
+
+    it('should NOT show the sizing hint for a Product Owner when the CSV has no story points', async () => {
+      vi.spyOn(teamContextModule, 'useTeamContext').mockReturnValue({
+        userRole: 'PRODUCT_OWNER',
+      } as never);
+
+      // The imported CSV carries no story points (column removed), so the hint must not appear.
+      const itemsWithoutSizing = [{ _rowNumber: 1, title: 'Test Item', _isValid: true }];
+      mockParseCSV.mockReturnValue({ items: itemsWithoutSizing, errors: [], totalRows: 1 });
+      mockValidateItems.mockReturnValue(itemsWithoutSizing);
+      mockGetValidItems.mockReturnValue(itemsWithoutSizing);
+
+      renderBulkUploadModal();
+
+      await waitFor(() => {
+        expect(screen.getByText('Drop your CSV file here')).toBeInTheDocument();
+      });
+
+      const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+      if (fileInput) {
+        fireEvent.change(fileInput, {
+          target: { files: [createMockFile('test.csv', 'title\nTest Item')] },
+        });
+      }
+
+      await waitFor(() => {
+        expect(screen.getByText('Data Preview')).toBeInTheDocument();
+      });
+
+      expect(screen.queryByText(/Only Developers can set story points/i)).not.toBeInTheDocument();
     });
   });
 

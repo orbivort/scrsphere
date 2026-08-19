@@ -7,6 +7,7 @@ import { useFocusTrap } from '../hooks/useFocusTrap';
 import { useBacklogCapacityValidation } from '../hooks/useBacklogCapacityValidation';
 import { MOSCOW_CONFIG } from '../config/moscow.config';
 import { handleMoscowKeyDown } from '../utils/formHandlers';
+import { useTeamContext } from '../../../contexts/TeamContext';
 import { UnsavedChangesModal } from '../../../components/common/Form/UnsavedChangesModal';
 
 import styles from './CreateItemModal.module.css';
@@ -45,6 +46,10 @@ export const CreateItemModal: React.FC<CreateItemModalProps> = ({
     availableSlots: number;
   } | null>(null);
   const { t } = useTranslation('backlog');
+
+  // Only Developers are responsible for sizing; PO/SM cannot set story points.
+  const { userRole } = useTeamContext();
+  const isDeveloper = userRole === 'DEVELOPER';
 
   const {
     formData,
@@ -407,7 +412,8 @@ export const CreateItemModal: React.FC<CreateItemModalProps> = ({
                         e.target.value ? parseInt(e.target.value) : undefined
                       )
                     }
-                    aria-describedby="estimate-help"
+                    disabled={!isDeveloper}
+                    aria-describedby={`estimate-help${!isDeveloper ? ' estimate-hint' : ''}`}
                   >
                     <option value="">{t('createItem.storyPointsPlaceholder') as string}</option>
                     <option value={1}>1 - {t('estimateOptions.1') as string}</option>
@@ -420,6 +426,11 @@ export const CreateItemModal: React.FC<CreateItemModalProps> = ({
                   <span id="estimate-help" className={styles['field-help']}>
                     {t('createItem.storyPointsHelp') as string}
                   </span>
+                  {!isDeveloper && (
+                    <span id="estimate-hint" className={styles['field-help-warning']}>
+                      {t('createItem.storyPointsDeveloperOnly') as string}
+                    </span>
+                  )}
                 </div>
               </div>
 

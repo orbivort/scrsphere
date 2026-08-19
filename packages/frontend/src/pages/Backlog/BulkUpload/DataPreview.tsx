@@ -10,9 +10,11 @@ import { FileTextIcon, CheckIcon, XIcon, AlertCircleIcon } from '@/components/co
 
 interface DataPreviewProps {
   items: BulkUploadItem[];
+  /** Hide the story points column (non-Developers cannot size items). Defaults to true. */
+  showStoryPoints?: boolean;
 }
 
-export const DataPreview: React.FC<DataPreviewProps> = ({ items }) => {
+export const DataPreview: React.FC<DataPreviewProps> = ({ items, showStoryPoints = true }) => {
   const { t } = useTranslation('backlog');
   const validCount = items.filter((item) => item._isValid).length;
   const invalidCount = items.filter((item) => !item._isValid).length;
@@ -83,9 +85,11 @@ export const DataPreview: React.FC<DataPreviewProps> = ({ items }) => {
               <th className={styles['priority-cell']}>
                 {t('bulkUpload.preview.priorityHeader') as string}
               </th>
-              <th className={styles['points-cell']}>
-                {t('bulkUpload.preview.pointsHeader') as string}
-              </th>
+              {showStoryPoints && (
+                <th className={styles['points-cell']}>
+                  {t('bulkUpload.preview.pointsHeader') as string}
+                </th>
+              )}
               <th className={styles['points-cell']}>
                 {t('bulkUpload.preview.valueHeader') as string}
               </th>
@@ -143,7 +147,9 @@ export const DataPreview: React.FC<DataPreviewProps> = ({ items }) => {
                     <span className={styles['text-tertiary']}>-</span>
                   )}
                 </td>
-                <td className={styles['points-cell']}>{item.storyPoints ?? '-'}</td>
+                {showStoryPoints && (
+                  <td className={styles['points-cell']}>{item.storyPoints ?? '-'}</td>
+                )}
                 <td className={styles['points-cell']}>{item.businessValue ?? '-'}</td>
                 <td className={styles['labels-cell']}>
                   {item.labels && item.labels.length > 0 ? (

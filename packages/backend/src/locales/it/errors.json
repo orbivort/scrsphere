@@ -1,5 +1,6 @@
 {
   "databaseError": "Si è verificato un errore del database",
+  "developerOnlySizing": "Solo gli sviluppatori possono impostare gli story point, poiché gli sviluppatori che eseguono il lavoro sono responsabili della stima.",
   "emailAlreadyExists": "Un account con l'email {{email}} esiste già",
   "entityNotFound": "{{entity}} non trovato",
   "fieldAlreadyExists": "{{field}} esiste già",

@@ -14,6 +14,12 @@ vi.mock('../../../utils/prisma', () => ({
     teamMember: {
       findFirst: vi.fn(),
     },
+    definitionOfDone: {
+      findUnique: vi.fn(),
+    },
+    doDChecklistVerification: {
+      findMany: vi.fn(),
+    },
     $transaction: vi.fn(),
   },
 }));
@@ -255,6 +261,92 @@ describe('ProductBacklogService', () => {
         })
       );
     });
+
+    it('should allow a non-Developer to create an unsized item', async () => {
+      const userId = 'test-user-id';
+      const mockPBI = {
+        id: 'test-pbi-uuid',
+        teamId: 'team-id',
+        title: 'New PBI',
+        status: 'NEW',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      // Membership is only resolved for the sizing guard; an unsized create skips it.
+      vi.mocked(prisma.productBacklogItem.create).mockResolvedValue(mockPBI as any);
+      vi.mocked(prisma.teamMember.findFirst).mockResolvedValue({
+        id: 'member-id',
+        teamId: 'team-id',
+        userId,
+        role: 'PRODUCT_OWNER',
+      } as any);
+
+      const result = await productBacklogService.createPBI(userId, {
+        teamId: mockPBI.teamId,
+        title: mockPBI.title,
+      });
+
+      expect(result.title).toBe(mockPBI.title);
+      expect(workflowService.executeStatusChange).toHaveBeenCalled();
+    });
+
+    it('should reject a non-Developer creating a sized item with a 403', async () => {
+      const userId = 'test-user-id';
+      const teamId = 'team-id';
+
+      vi.mocked(prisma.teamMember.findFirst).mockResolvedValue({
+        id: 'member-id',
+        teamId,
+        userId,
+        role: 'PRODUCT_OWNER',
+      } as any);
+
+      await expect(
+        productBacklogService.createPBI(userId, {
+          teamId,
+          title: 'New PBI',
+          storyPoints: 5,
+        })
+      ).rejects.toMatchObject({ statusCode: 403, code: 'FORBIDDEN' });
+
+      expect(prisma.productBacklogItem.create).not.toHaveBeenCalled();
+    });
+
+    it('should allow a Developer to create a sized item', async () => {
+      const userId = 'test-user-id';
+      const teamId = 'team-id';
+      const mockPBI = {
+        id: 'test-pbi-uuid',
+        teamId,
+        title: 'New PBI',
+        status: 'NEW',
+        storyPoints: 5,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      vi.mocked(prisma.teamMember.findFirst).mockResolvedValue({
+        id: 'member-id',
+        teamId,
+        userId,
+        role: 'DEVELOPER',
+      } as any);
+      vi.mocked(prisma.productBacklogItem.create).mockResolvedValue(mockPBI as any);
+
+      const result = await productBacklogService.createPBI(userId, {
+        teamId,
+        title: mockPBI.title,
+        storyPoints: 5,
+      });
+
+      expect(result.storyPoints).toBe(5);
+      expect(prisma.productBacklogItem.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ storyPoints: 5 }),
+        })
+      );
+    });
   });
 
   describe('updatePBI', () => {
@@ -428,6 +520,163 @@ describe('ProductBacklogService', () => {
       await expect(
         productBacklogService.updatePBI(pbiId, userId, { status: 'DONE' })
       ).rejects.toThrow(ForbiddenError);
+    });
+
+    it('should allow DONE transition when all active DoD items are verified', async () => {
+      const userId = 'test-user-id';
+      const pbiId = 'pbi-id';
+      const mockPBI = {
+        id: pbiId,
+        teamId: 'team-id',
+        title: 'Test PBI',
+        status: 'IN_PROGRESS',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      const updatedPBI = { ...mockPBI, status: 'DONE' };
+
+      vi.mocked(prisma.productBacklogItem.findUnique).mockResolvedValue(mockPBI as any);
+      vi.mocked(prisma.teamMember.findFirst).mockResolvedValue({
+        id: 'member-id',
+        teamId: mockPBI.teamId,
+        userId,
+        role: 'PRODUCT_OWNER',
+      } as any);
+      vi.mocked(workflowService.validateTransition).mockResolvedValue({
+        isValid: true,
+        allowed: true,
+      } as any);
+      // Team has one active DoD item, fully verified for the PBI.
+      vi.mocked(prisma.definitionOfDone.findUnique).mockResolvedValue({
+        items: [{ id: 'dod-item-1' }],
+      } as any);
+      vi.mocked(prisma.doDChecklistVerification.findMany).mockResolvedValue([
+        { pbiId, dodItemId: 'dod-item-1' },
+      ] as any);
+      vi.mocked(prisma.productBacklogItem.update).mockResolvedValue(updatedPBI as any);
+
+      const result = await productBacklogService.updatePBI(pbiId, userId, { status: 'DONE' });
+
+      expect(result.status).toBe('DONE');
+    });
+
+    it('should throw BadRequestError when DONE transition attempted without full DoD verification', async () => {
+      const userId = 'test-user-id';
+      const pbiId = 'pbi-id';
+      const mockPBI = {
+        id: pbiId,
+        teamId: 'team-id',
+        title: 'Test PBI',
+        status: 'IN_PROGRESS',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      vi.mocked(prisma.productBacklogItem.findUnique).mockResolvedValue(mockPBI as any);
+      vi.mocked(prisma.teamMember.findFirst).mockResolvedValue({
+        id: 'member-id',
+        teamId: mockPBI.teamId,
+        userId,
+        role: 'PRODUCT_OWNER',
+      } as any);
+      vi.mocked(workflowService.validateTransition).mockResolvedValue({
+        isValid: true,
+        allowed: true,
+      } as any);
+      // Team has one active DoD item that is NOT verified for the PBI.
+      vi.mocked(prisma.definitionOfDone.findUnique).mockResolvedValue({
+        items: [{ id: 'dod-item-1' }],
+      } as any);
+      vi.mocked(prisma.doDChecklistVerification.findMany).mockResolvedValue([] as any);
+
+      await expect(
+        productBacklogService.updatePBI(pbiId, userId, { status: 'DONE' })
+      ).rejects.toThrow(BadRequestError);
+      expect(prisma.productBacklogItem.update).not.toHaveBeenCalled();
+    });
+
+    it('should reject a non-Developer setting story points on update with a 403', async () => {
+      const userId = 'test-user-id';
+      const pbiId = 'pbi-id';
+      const mockPBI = {
+        id: pbiId,
+        teamId: 'team-id',
+        title: 'Test PBI',
+        status: 'NEW',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      vi.mocked(prisma.productBacklogItem.findUnique).mockResolvedValue(mockPBI as any);
+      vi.mocked(prisma.teamMember.findFirst).mockResolvedValue({
+        id: 'member-id',
+        teamId: mockPBI.teamId,
+        userId,
+        role: 'SCRUM_MASTER',
+      } as any);
+
+      await expect(
+        productBacklogService.updatePBI(pbiId, userId, { storyPoints: 8 })
+      ).rejects.toMatchObject({ statusCode: 403, code: 'FORBIDDEN' });
+
+      expect(prisma.productBacklogItem.update).not.toHaveBeenCalled();
+    });
+
+    it('should allow a non-Developer to update fields other than story points', async () => {
+      const userId = 'test-user-id';
+      const pbiId = 'pbi-id';
+      const mockPBI = {
+        id: pbiId,
+        teamId: 'team-id',
+        title: 'Original Title',
+        status: 'NEW',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      const updatedPBI = { ...mockPBI, description: 'Updated description' };
+
+      vi.mocked(prisma.productBacklogItem.findUnique).mockResolvedValue(mockPBI as any);
+      vi.mocked(prisma.teamMember.findFirst).mockResolvedValue({
+        id: 'member-id',
+        teamId: mockPBI.teamId,
+        userId,
+        role: 'PRODUCT_OWNER',
+      } as any);
+      vi.mocked(prisma.productBacklogItem.update).mockResolvedValue(updatedPBI as any);
+
+      const result = await productBacklogService.updatePBI(pbiId, userId, {
+        description: 'Updated description',
+      });
+
+      expect(result.description).toBe('Updated description');
+    });
+
+    it('should allow a Developer to set story points on update', async () => {
+      const userId = 'test-user-id';
+      const pbiId = 'pbi-id';
+      const mockPBI = {
+        id: pbiId,
+        teamId: 'team-id',
+        title: 'Test PBI',
+        status: 'NEW',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      const updatedPBI = { ...mockPBI, storyPoints: 13 };
+
+      vi.mocked(prisma.productBacklogItem.findUnique).mockResolvedValue(mockPBI as any);
+      vi.mocked(prisma.teamMember.findFirst).mockResolvedValue({
+        id: 'member-id',
+        teamId: mockPBI.teamId,
+        userId,
+        role: 'DEVELOPER',
+      } as any);
+      vi.mocked(prisma.productBacklogItem.update).mockResolvedValue(updatedPBI as any);
+
+      const result = await productBacklogService.updatePBI(pbiId, userId, { storyPoints: 13 });
+
+      expect(result.storyPoints).toBe(13);
+      expect(prisma.productBacklogItem.update).toHaveBeenCalled();
     });
   });
 
@@ -736,6 +985,42 @@ describe('ProductBacklogService', () => {
       expect(result.errors[0]!.row).toBe(2);
       expect(result.errors[0]!.field).toBe('title');
       expect(result.errors[0]!.message).toBe('Duplicate title within the bulk upload');
+    });
+
+    it('should reject the whole batch with a 403 when a non-Developer includes a sized row', async () => {
+      // beforeEach sets the caller role to PRODUCT_OWNER.
+      const itemsWithSizing = [
+        { _rowNumber: 1, teamId, title: 'Item 1' },
+        { _rowNumber: 2, teamId, title: 'Item 2', storyPoints: 5 },
+      ];
+
+      await expect(
+        productBacklogService.createPBIBulk(userId, itemsWithSizing)
+      ).rejects.toMatchObject({ statusCode: 403, code: 'FORBIDDEN' });
+
+      expect(prisma.$transaction).not.toHaveBeenCalled();
+      expect(prisma.productBacklogItem.create).not.toHaveBeenCalled();
+    });
+
+    it('should allow a Developer to bulk create items with story points', async () => {
+      vi.mocked(prisma.teamMember.findFirst).mockResolvedValue({
+        id: 'member-id',
+        teamId,
+        userId,
+        role: 'DEVELOPER',
+      } as any);
+      vi.mocked(prisma.$transaction).mockImplementation(async (cb: any) => cb(mockTx));
+
+      const sizedItems = [
+        { _rowNumber: 1, teamId, title: 'Item 1', storyPoints: 3 },
+        { _rowNumber: 2, teamId, title: 'Item 2', storyPoints: 8 },
+      ];
+
+      const result = await productBacklogService.createPBIBulk(userId, sizedItems);
+
+      expect(result.successful).toBe(2);
+      expect(result.failed).toBe(0);
+      expect(result.errors).toHaveLength(0);
     });
   });
 

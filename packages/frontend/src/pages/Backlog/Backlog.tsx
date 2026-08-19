@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import { apiService, definitionService } from '../../services';
 import { useTeamStore } from '../../store';
+import { useTeamContext } from '../../contexts/TeamContext';
 import { logger } from '../../utils/logger';
 import { queryKeys } from '../../hooks/queryKeys';
 import { useToast } from '../../hooks/useToast';
@@ -75,6 +76,10 @@ const BacklogContent: React.FC = () => {
 
   const { currentTeam } = useTeamStore();
   const teamId = currentTeam?.id;
+
+  // Only Developers are responsible for sizing; PO/SM cannot set story points.
+  const { userRole } = useTeamContext();
+  const isDeveloper = userRole === 'DEVELOPER';
 
   const {
     backlogData,
@@ -156,7 +161,8 @@ const BacklogContent: React.FC = () => {
       formData,
       { teamId, activeGoalId: activeGoal?.id },
       t as (key: string, options?: Record<string, unknown>) => string,
-      isEditMode
+      isEditMode,
+      isDeveloper
     );
 
     if (result.workflowError) {
@@ -235,7 +241,8 @@ const BacklogContent: React.FC = () => {
       updates: {
         title: formData.title.trim(),
         description: formData.description.trim() || undefined,
-        storyPoints: formData.estimate,
+        // Only Developers may size; non-Developers cannot change story points.
+        ...(isDeveloper ? { storyPoints: formData.estimate } : {}),
         priority: formData.moscowPriority,
         businessValue: formData.businessValue,
         labels: labelsArray,
@@ -257,7 +264,8 @@ const BacklogContent: React.FC = () => {
       teamId,
       title: formData.title.trim(),
       description: formData.description.trim() || undefined,
-      storyPoints: formData.estimate,
+      // Only Developers may size; non-Developers create unsized items.
+      ...(isDeveloper ? { storyPoints: formData.estimate } : {}),
       priority: formData.moscowPriority,
       businessValue: formData.businessValue,
       labels: labelsArray,

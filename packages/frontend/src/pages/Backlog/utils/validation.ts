@@ -54,11 +54,13 @@ export interface ItemValidationResult {
  * @param context - Validation context containing team and goal information
  * @param t - Translation function for i18n
  * @param isEditMode - Whether the form is in edit mode (requires more fields)
+ * @param canSize - Whether the caller is allowed to set story points (Developers only).
+ *                  When false, story points are optional/ignored for non-Developers.
  * @returns Validation result with errors and workflow error if any
  *
  * @example
  * ```typescript
- * const result = validateFormData(formData, { teamId: '123', activeGoalId: '456' }, t, true);
+ * const result = validateFormData(formData, { teamId: '123', activeGoalId: '456' }, t, true, isDeveloper);
  * if (!result.isValid) {
  *   console.log('Validation errors:', result.errors);
  * }
@@ -68,7 +70,8 @@ export const validateFormData = (
   formData: ItemFormData,
   context: ValidationContext,
   t: TranslateFunction,
-  isEditMode: boolean = false
+  isEditMode: boolean = false,
+  canSize: boolean = true
 ): ValidationResult => {
   const errors: FormErrors = {};
   let workflowError: string | undefined;
@@ -109,8 +112,10 @@ export const validateFormData = (
     errors.moscowPriority = t('validation.moscowPriorityRequired');
   }
 
-  // Enhanced Estimate Validation - Required for Edit mode
-  if (isEditMode) {
+  // Enhanced Estimate Validation.
+  // Only Developers are responsible for sizing. For PO/SM the field is disabled and any
+  // story points are ignored, so no estimate validation applies for them.
+  if (canSize && isEditMode) {
     if (formData.estimate === undefined) {
       errors.estimate = t('validation.estimateRequired');
     } else if (formData.estimate < 1) {
@@ -118,14 +123,12 @@ export const validateFormData = (
     } else if (formData.estimate > 100) {
       errors.estimate = t('validation.estimateTooLarge', { estimate: formData.estimate });
     }
-  } else {
+  } else if (canSize && formData.estimate !== undefined) {
     // Create mode - optional but validated if provided
-    if (formData.estimate !== undefined) {
-      if (formData.estimate < 1) {
-        errors.estimate = t('validation.estimateMinimumOptional');
-      } else if (formData.estimate > 100) {
-        errors.estimate = t('validation.estimateTooLarge', { estimate: formData.estimate });
-      }
+    if (formData.estimate < 1) {
+      errors.estimate = t('validation.estimateMinimumOptional');
+    } else if (formData.estimate > 100) {
+      errors.estimate = t('validation.estimateTooLarge', { estimate: formData.estimate });
     }
   }
 

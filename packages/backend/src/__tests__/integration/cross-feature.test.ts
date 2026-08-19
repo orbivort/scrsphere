@@ -726,7 +726,8 @@ describe('Cross-Feature Integration Tests', () => {
         testTeams.push(teamName);
 
         const team = await createTestTeam(teamName);
-        await addTeamMember(team.id, await getUserIdFromEmail(email), 'PRODUCT_OWNER');
+        // Only Developers may set story points, so use a Developer here.
+        await addTeamMember(team.id, await getUserIdFromEmail(email), 'DEVELOPER');
 
         // Test with each locale header - validation should be consistent
         for (const locale of SUPPORTED_LOCALES) {
@@ -804,7 +805,8 @@ describe('Cross-Feature Integration Tests', () => {
         testTeams.push(teamName);
 
         const team = await createTestTeam(teamName);
-        await addTeamMember(team.id, await getUserIdFromEmail(email), 'SCRUM_MASTER');
+        // Only Developers may set story points, so use a Developer here.
+        await addTeamMember(team.id, await getUserIdFromEmail(email), 'DEVELOPER');
 
         // Create sprint with Italian locale
         const { csrfToken } = extractCsrfFromCookies(cookies);
@@ -911,7 +913,8 @@ describe('Cross-Feature Integration Tests', () => {
         testTeams.push(teamName);
 
         const team = await createTestTeam(teamName);
-        await addTeamMember(team.id, await getUserIdFromEmail(email), 'PRODUCT_OWNER');
+        // Only Developers may set story points, so use a Developer here.
+        await addTeamMember(team.id, await getUserIdFromEmail(email), 'DEVELOPER');
 
         // First operation with English
         const { csrfToken } = extractCsrfFromCookies(cookies);

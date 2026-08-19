@@ -5,6 +5,7 @@ import { BulkUploadModal } from './BulkUploadModal';
 import { apiService } from '../../../services';
 import { BacklogProvider } from '../context/BacklogContext';
 import { initTestI18n } from '../../../test-utils';
+import * as teamContextModule from '../../../contexts/TeamContext';
 
 vi.mock('../../../services', () => ({
   apiService: {
@@ -55,6 +56,16 @@ describe('BulkUploadModal Integration Tests', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.spyOn(teamContextModule, 'useTeamContext').mockReturnValue({
+      userRole: 'DEVELOPER',
+      currentTeam: null,
+      userTeams: [],
+      isLoading: false,
+      error: null,
+      switchTeam: vi.fn(),
+      refreshTeams: vi.fn(),
+      hasMultipleTeams: false,
+    } as never);
     (apiService.getProductBacklog as ReturnType<typeof vi.fn>).mockResolvedValue({
       success: true,
       data: [],

@@ -14,6 +14,7 @@ import { describe, it, expect, vi, beforeEach, beforeAll, afterEach } from 'vite
 import { renderWithProviders, screen, waitFor, act } from '../../test-utils';
 
 import { ProductBacklog } from './Backlog';
+import * as teamContextModule from '../../contexts/TeamContext';
 import { useTeamStore } from '../../store';
 import { apiService, definitionService } from '../../services';
 import { ItemStatus, MoSCoWPriority } from '../../types';
@@ -163,6 +164,17 @@ describe('Backlog - Loading State Tests', () => {
     mockUseTeamStore = vi.mocked(useTeamStore);
     mockApiService = vi.mocked(apiService);
     mockDefinitionService = vi.mocked(definitionService);
+
+    vi.spyOn(teamContextModule, 'useTeamContext').mockReturnValue({
+      userRole: 'DEVELOPER',
+      currentTeam: mockTeam,
+      userTeams: [{ ...mockTeam, userRole: 'DEVELOPER' }],
+      isLoading: false,
+      error: null,
+      switchTeam: vi.fn(),
+      refreshTeams: vi.fn(),
+      hasMultipleTeams: false,
+    } as never);
 
     mockUseTeamStore.mockReturnValue({
       currentTeam: mockTeam,

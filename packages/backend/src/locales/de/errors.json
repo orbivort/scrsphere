@@ -1,5 +1,6 @@
 {
   "databaseError": "Ein Datenbankfehler ist aufgetreten",
+  "developerOnlySizing": "Nur Entwickler können Story Points festlegen, da die Entwickler, die die Arbeit ausführen, für die Schätzung verantwortlich sind.",
   "emailAlreadyExists": "Ein Konto mit der E-Mail {{email}} existiert bereits",
   "entityNotFound": "{{entity}} nicht gefunden",
   "fieldAlreadyExists": "{{field}} existiert bereits",

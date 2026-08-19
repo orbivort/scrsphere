@@ -1,5 +1,6 @@
 {
   "databaseError": "A database error occurred",
+  "developerOnlySizing": "Only Developers can set story points, as the Developers who perform the work are responsible for sizing.",
   "emailAlreadyExists": "An account with email {{email}} already exists",
   "entityNotFound": "{{entity}} not found",
   "fieldAlreadyExists": "{{field}} already exists",

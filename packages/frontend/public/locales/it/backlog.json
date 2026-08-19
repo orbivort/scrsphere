@@ -82,6 +82,7 @@
       "remaining": "Rimanente",
       "title": "Caricamento..."
     },
+    "storyPointsDeveloperOnly": "Solo gli sviluppatori possono impostare gli story point. La colonna degli story point è disabilitata per il tuo ruolo.",
     "summary": {
       "close": "Chiudi",
       "created": "{{count}} elementi creati",
@@ -198,6 +199,7 @@
     "removeLabel": "Rimuovi etichetta {{label}}",
     "requiredFields": "Indica i campi richiesti",
     "selectMoscowPriority": "Seleziona priorità MoSCoW",
+    "storyPointsDeveloperOnly": "Solo gli sviluppatori possono impostare gli story point. La stima è responsabilità degli sviluppatori che eseguono il lavoro.",
     "storyPointsHelp": "Stima lo sforzo relativo usando la sequenza di Fibonacci. Considera complessità, incertezza e rischio. Lascia vuoto se non pronto per stimare.",
     "storyPointsLabel": "Stima (Story Points)",
     "storyPointsPlaceholder": "Seleziona stima...",
@@ -270,6 +272,7 @@
     "saving": "Salvataggio...",
     "savingChanges": "Salvataggio modifiche...",
     "selectMoscowPriority": "Seleziona priorità MoSCoW",
+    "storyPointsDeveloperOnly": "Solo gli sviluppatori possono impostare gli story point. La stima è responsabilità degli sviluppatori che eseguono il lavoro.",
     "storyPointsHelp": "Richiesto: Stima lo sforzo relativo usando la sequenza di Fibonacci. Considera complessità, incertezza e rischio.",
     "storyPointsLabel": "Stima (Story Points)",
     "storyPointsPlaceholder": "Seleziona stima... (richiesto)",

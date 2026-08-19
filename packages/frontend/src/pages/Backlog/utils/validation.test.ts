@@ -210,6 +210,21 @@ describe('validation', () => {
 
         expect(result.errors.estimate).toContain('exceeds maximum of 100');
       });
+
+      it('should NOT require estimate for non-Developers in edit mode', () => {
+        // PO/SM cannot size; the estimate field is disabled and must be optional so
+        // they can still submit the edit form.
+        const result = validateFormData(
+          { ...validFormData, estimate: undefined },
+          validContext,
+          mockT,
+          true,
+          false
+        );
+
+        expect(result.errors.estimate).toBeUndefined();
+        expect(result.isValid).toBe(true);
+      });
     });
 
     describe('Business Value Validation', () => {

@@ -140,7 +140,8 @@ describe('E2E: Product Backlog Management', () => {
       const email = `create-pbi-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { team } = await setupTeamWithUser(email, ROLES.PRODUCT_OWNER);
+      // Only Developers may set story points, so use a Developer here.
+      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
 
       const cookies = await loginAndGetCookies(email);
       const { csrfToken } = extractCsrfFromCookies(cookies);
@@ -300,7 +301,8 @@ describe('E2E: Product Backlog Management', () => {
       const email = `update-pbi-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { team } = await setupTeamWithUser(email, ROLES.PRODUCT_OWNER);
+      // Only Developers may set story points, so use a Developer here.
+      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
 
       const pbi = await createTestPBIInDb(team.id, `Update PBI ${uniqueTestId()}`);
 

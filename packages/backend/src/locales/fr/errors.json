@@ -1,5 +1,6 @@
 {
   "databaseError": "Une erreur de base de données s'est produite",
+  "developerOnlySizing": "Seuls les développeurs peuvent définir des points d'histoire, car les développeurs qui effectuent le travail sont responsables de l'estimation.",
   "emailAlreadyExists": "Un compte avec l'e-mail {{email}} existe déjà",
   "entityNotFound": "{{entity}} introuvable",
   "fieldAlreadyExists": "{{field}} existe déjà",

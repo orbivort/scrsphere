@@ -135,6 +135,12 @@ vi.mock('../../../utils/dbTransaction', () => ({
       user: {
         findMany: vi.fn(),
       },
+      definitionOfDone: {
+        findUnique: vi.fn(),
+      },
+      doDChecklistVerification: {
+        findMany: vi.fn(),
+      },
     });
   }),
   TRANSACTION_CONFIG: {
@@ -309,6 +315,7 @@ describe('SprintService', () => {
         status: 'PLANNED',
         startDate: new Date(),
         endDate: new Date(),
+        sprintGoal: 'Goal',
       };
 
       (prisma.sprint.findUnique as any).mockResolvedValue(mockSprint);
@@ -432,10 +439,47 @@ describe('SprintService', () => {
         teamId: 'team-1',
         name: 'Sprint 1',
         status: 'PLANNED',
+        sprintGoal: 'Goal',
       };
 
       (prisma.sprint.findUnique as any).mockResolvedValue(mockSprint);
       (prisma.sprint.findFirst as any).mockResolvedValue({ id: 'active-sprint' });
+
+      await expect(sprintService.startSprint('sprint-1', 'user-1')).rejects.toThrow(
+        BadRequestError
+      );
+    });
+
+    it('should throw BadRequestError when sprint goal is missing', async () => {
+      const mockSprint = {
+        id: 'sprint-1',
+        teamId: 'team-1',
+        name: 'Sprint 1',
+        status: 'PLANNED',
+        startDate: new Date(),
+        endDate: new Date(),
+        sprintGoal: null,
+      };
+
+      (prisma.sprint.findUnique as any).mockResolvedValue(mockSprint);
+
+      await expect(sprintService.startSprint('sprint-1', 'user-1')).rejects.toThrow(
+        BadRequestError
+      );
+    });
+
+    it('should throw BadRequestError when sprint goal is whitespace-only', async () => {
+      const mockSprint = {
+        id: 'sprint-1',
+        teamId: 'team-1',
+        name: 'Sprint 1',
+        status: 'PLANNED',
+        startDate: new Date(),
+        endDate: new Date(),
+        sprintGoal: '   ',
+      };
+
+      (prisma.sprint.findUnique as any).mockResolvedValue(mockSprint);
 
       await expect(sprintService.startSprint('sprint-1', 'user-1')).rejects.toThrow(
         BadRequestError
@@ -1055,6 +1099,7 @@ describe('SprintService - Additional Coverage', () => {
         status: 'PLANNED',
         startDate: new Date(),
         endDate: new Date(),
+        sprintGoal: 'Goal',
       };
 
       const mockPBI = {
@@ -1130,6 +1175,7 @@ describe('SprintService - Additional Coverage', () => {
         status: 'PLANNED',
         startDate: new Date(),
         endDate: new Date(),
+        sprintGoal: 'Goal',
       };
 
       const mockTaskWorkflow = {
@@ -1203,6 +1249,7 @@ describe('SprintService - Additional Coverage', () => {
         status: 'PLANNED',
         startDate: new Date(),
         endDate: new Date(),
+        sprintGoal: 'Goal',
       };
 
       (prisma.sprint.findUnique as any).mockResolvedValue(mockSprint);
@@ -1304,6 +1351,13 @@ describe('SprintService - Additional Coverage', () => {
       (prisma.workflow.findFirst as any).mockResolvedValue(mockWorkflow);
 
       const mockCompletedSprint = { ...mockSprint, status: 'COMPLETED' };
+
+      // Team has one active DoD item that is fully verified for the PBI, so the gate passes.
+      const mockActiveDoD = {
+        items: [{ id: 'dod-item-1' }],
+      };
+      const mockVerifiedRows = [{ pbiId: 'pbi-1', dodItemId: 'dod-item-1' }];
+
       (withTransaction as any).mockImplementation(async (callback: any) => {
         return callback({
           sprint: {
@@ -1321,12 +1375,90 @@ describe('SprintService - Additional Coverage', () => {
           workflowState: {
             findMany: vi.fn().mockResolvedValue(mockStates),
           },
+          definitionOfDone: {
+            findUnique: vi.fn().mockResolvedValue(mockActiveDoD),
+          },
+          doDChecklistVerification: {
+            findMany: vi.fn().mockResolvedValue(mockVerifiedRows),
+          },
         });
       });
 
       const result = await sprintService.completeSprint('sprint-1', 'user-1');
 
       expect(result.status).toBe('COMPLETED');
+    });
+
+    it('should throw BadRequestError when a PBI with all tasks done is not DoD-verified', async () => {
+      const mockSprint = {
+        id: 'sprint-1',
+        teamId: 'team-1',
+        name: 'Sprint 1',
+        status: 'ACTIVE',
+        sprintBacklogItems: [
+          {
+            id: 'sbi-1',
+            pbiId: 'pbi-1',
+            pbi: {
+              id: 'pbi-1',
+              title: 'PBI 1',
+              status: 'IN_PROGRESS',
+              storyPoints: 8,
+            },
+          },
+        ],
+      };
+
+      const mockTasks = [
+        {
+          id: 'task-1',
+          pbiId: 'pbi-1',
+          status: 'DONE',
+        },
+      ];
+
+      (prisma.sprint.findUnique as any).mockResolvedValue(mockSprint);
+      (prisma.sprintBacklogItem.findMany as any).mockResolvedValue(mockSprint.sprintBacklogItems);
+      (prisma.task.findMany as any).mockResolvedValue(mockTasks);
+      (prisma.workflow.findFirst as any).mockResolvedValue(null);
+
+      // Team has one active DoD item that is NOT verified for the PBI, so the gate fails.
+      const mockActiveDoD = {
+        items: [{ id: 'dod-item-1' }],
+      };
+      const mockUnverifiedRows: Array<{ pbiId: string; dodItemId: string }> = [];
+
+      (withTransaction as any).mockImplementation(async (callback: any) => {
+        return callback({
+          sprint: {
+            update: vi.fn(),
+          },
+          productBacklogItem: {
+            updateMany: vi.fn(),
+          },
+          statusChangeHistory: {
+            create: vi.fn(),
+          },
+          workflow: {
+            findFirst: vi.fn(),
+          },
+          workflowState: {
+            findMany: vi.fn(),
+          },
+          definitionOfDone: {
+            findUnique: vi.fn().mockResolvedValue(mockActiveDoD),
+          },
+          doDChecklistVerification: {
+            findMany: vi.fn().mockResolvedValue(mockUnverifiedRows),
+          },
+        });
+      });
+
+      await expect(sprintService.completeSprint('sprint-1', 'user-1')).rejects.toThrow(
+        BadRequestError
+      );
+      // No PBI should be marked DONE and no status change history should be recorded.
+      expect(prisma.sprintBacklogItem.findMany).toHaveBeenCalled();
     });
   });
 

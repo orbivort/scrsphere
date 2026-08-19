@@ -8,6 +8,7 @@ import { createMockBacklogItem, initTestI18n } from '../../../test-utils';
 import { BacklogProvider, useBacklogContext } from '../context/BacklogContext';
 
 import { EditItemModal } from './EditItemModal';
+import * as teamContextModule from '../../../contexts/TeamContext';
 
 const mockItem = createMockBacklogItem({
   id: 'pbi-1',
@@ -69,6 +70,16 @@ describe('EditItemModal', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.spyOn(teamContextModule, 'useTeamContext').mockReturnValue({
+      userRole: 'DEVELOPER',
+      currentTeam: null,
+      userTeams: [],
+      isLoading: false,
+      error: null,
+      switchTeam: vi.fn(),
+      refreshTeams: vi.fn(),
+      hasMultipleTeams: false,
+    } as never);
   });
 
   describe('Rendering', () => {
@@ -336,6 +347,47 @@ describe('EditItemModal', () => {
 
       const estimateSelect = screen.getByLabelText(/estimate/i);
       await userEvent.selectOptions(estimateSelect, '13');
+    });
+  });
+
+  describe('Developer-only sizing', () => {
+    it('should enable the Estimate select for a Developer', async () => {
+      vi.spyOn(teamContextModule, 'useTeamContext').mockReturnValue({
+        userRole: 'DEVELOPER',
+      } as never);
+      renderEditModal();
+
+      await waitFor(() => {
+        const estimateSelect = document.getElementById('edit-estimate') as HTMLSelectElement;
+        expect(estimateSelect).toBeEnabled();
+      });
+      expect(screen.queryByText(/Only Developers can set story points/i)).not.toBeInTheDocument();
+    });
+
+    it('should disable the Estimate select with a hint for a Product Owner', async () => {
+      vi.spyOn(teamContextModule, 'useTeamContext').mockReturnValue({
+        userRole: 'PRODUCT_OWNER',
+      } as never);
+      renderEditModal();
+
+      await waitFor(() => {
+        const estimateSelect = document.getElementById('edit-estimate') as HTMLSelectElement;
+        expect(estimateSelect).toBeDisabled();
+      });
+      expect(screen.getByText(/Only Developers can set story points/i)).toBeInTheDocument();
+    });
+
+    it('should disable the Estimate select with a hint for a Scrum Master', async () => {
+      vi.spyOn(teamContextModule, 'useTeamContext').mockReturnValue({
+        userRole: 'SCRUM_MASTER',
+      } as never);
+      renderEditModal();
+
+      await waitFor(() => {
+        const estimateSelect = document.getElementById('edit-estimate') as HTMLSelectElement;
+        expect(estimateSelect).toBeDisabled();
+      });
+      expect(screen.getByText(/Only Developers can set story points/i)).toBeInTheDocument();
     });
   });
 
