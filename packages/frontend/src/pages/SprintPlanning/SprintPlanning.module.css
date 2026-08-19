@@ -883,12 +883,13 @@
 .sprint-goal-card::before {
   content: '';
   position: absolute;
-  top: 0;
-  right: 0;
-  width: 120px;
-  height: 120px;
+  bottom: 0;
+  left: 0;
+  width: 140px;
+  height: 140px;
   background: radial-gradient(circle, var(--color-primary-100) 0%, transparent 70%);
   opacity: var(--opacity-50);
+  pointer-events: none;
 }
 
 .goal-header {
@@ -908,22 +909,43 @@
 }
 
 .goal-edit-btn {
-  background: transparent;
-  border: var(--border-width-1) solid transparent;
+  background: var(--color-background-card);
+  border: var(--border-width-1) solid var(--color-primary-200);
   font-size: var(--font-size-xs);
-  color: var(--color-primary-600);
+  color: var(--color-primary-700);
   cursor: pointer;
-  padding: var(--space-1) var(--space-2);
-  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-md);
   font-weight: var(--font-weight-semibold);
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
-  transition: background-color var(--transition-fast);
+  box-shadow: var(--shadow-xs);
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .goal-edit-btn:hover {
+  background: var(--color-primary-50);
+  border-color: var(--color-primary-400);
+  color: var(--color-primary-800);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(calc(var(--space-px) * -1));
+}
+
+.goal-edit-btn:active {
+  transform: translateY(0);
   background: var(--color-primary-100);
+  border-color: var(--color-primary-500);
+}
+
+.goal-edit-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
 }
 
 .goal-text {

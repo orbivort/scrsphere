@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import type { ProductBacklogItem, TeamMember, User } from '../../../../types';
+import { UserRole } from '../../../../types';
 import type { FormErrors, TaskFormData } from '../../SprintBoard.types';
 import { UnsavedChangesModal } from '../../../../components/common/Form/UnsavedChangesModal';
 import { hasUnsavedChangesForCreate } from '../../utils/formChangeDetection';
@@ -78,6 +79,12 @@ export const TaskCreateModal: React.FC<TaskCreateModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     onSubmit(e);
   };
+
+  // Only developers can be assigned tasks. The role may be uppercase (backend
+  // enum) or lowercase (mock data), so compare case-insensitively.
+  const developerMembers = teamMembers.filter(
+    (member) => String(member.role).toLowerCase() === UserRole.DEVELOPERS
+  );
 
   const RequiredIndicator = () => (
     <span className={styles['required-indicator']} aria-hidden="true">
@@ -241,7 +248,7 @@ export const TaskCreateModal: React.FC<TaskCreateModalProps> = ({
                   aria-describedby={formErrors.assigneeId ? 'task-assignee-error' : undefined}
                 >
                   <option value="">{t('taskCreate.unassigned')}</option>
-                  {teamMembers.map((member) => (
+                  {developerMembers.map((member) => (
                     <option key={member.id} value={member.userId}>
                       {member.user?.firstName} {member.user?.lastName}
                     </option>

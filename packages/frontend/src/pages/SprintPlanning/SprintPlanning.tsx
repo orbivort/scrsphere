@@ -15,6 +15,7 @@ import {
   ItemStatus,
   TaskStatus,
   SprintStatus,
+  UserRole,
   type ProductBacklogItem,
   type GeneratedSprint,
   type TeamMember,
@@ -481,9 +482,14 @@ export const SprintPlanning: React.FC = () => {
 
   useEffect(() => {
     const members: TeamMember[] = teamMembersData?.data?.members ?? [];
-    if (members.length > 0) {
+    // Only developers contribute to team capacity and appear as task assignees.
+    // The role may be uppercase (backend enum) or lowercase (mock data), so compare case-insensitively.
+    const developers = members.filter(
+      (member) => String(member.role).toLowerCase() === UserRole.DEVELOPERS
+    );
+    if (developers.length > 0) {
       setTeamAvailability(
-        members.map((member) => ({
+        developers.map((member) => ({
           memberId: member.id,
           userId: member.userId,
           memberName: member.user ? `${member.user.firstName} ${member.user.lastName}` : 'Unknown',
@@ -491,7 +497,7 @@ export const SprintPlanning: React.FC = () => {
         }))
       );
     } else {
-      setTeamAvailability([]); // Clear availability if no members
+      setTeamAvailability([]); // Clear availability if no developers
     }
   }, [teamMembersData]);
 

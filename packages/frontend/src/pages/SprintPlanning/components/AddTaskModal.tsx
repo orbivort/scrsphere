@@ -291,12 +291,12 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
                         if (estimatedHoursError) setEstimatedHoursError('');
                       }}
                       placeholder="4"
-                      className={`${styles['form-input']} ${estimatedHoursError ? styles['input-error'] : ''}`}
+                      className={`${styles['form-input']} ${styles['estimate-input']} ${estimatedHoursError ? styles['input-error'] : ''}`}
                       aria-required="true"
                       aria-invalid={!!estimatedHoursError}
                       aria-describedby={estimatedHoursError ? 'estimate-error' : undefined}
                     />
-                    <span className={styles['input-icon-left']}>
+                    <span className={styles['input-icon']}>
                       <ClockIcon size={16} />
                     </span>
                   </div>
