@@ -71,6 +71,7 @@
     "invalidEmail": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
     "networkError": "Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
     "noPermission": "Sie haben keine Berechtigung, Teammitglieder hinzuzufügen.",
+    "roleAlreadyTaken": "Die Rolle {{role}} ist bereits einem anderen Teammitglied zugewiesen. Jedes Team kann genau einen Product Owner und einen Scrum Master haben.",
     "userNotFound": "Kein Benutzer mit dieser E-Mail-Adresse gefunden. Der Benutzer muss sich zuerst registrieren, bevor er zu einem Team eingeladen werden kann."
   },
   "inviteModal": {

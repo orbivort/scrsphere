@@ -859,4 +859,201 @@ describe('Scrum Guide Compliance Enhancement Integration Tests', () => {
       expect(response.body.success).toBe(false);
     });
   });
+
+  describe('Single Product Owner / Scrum Master per Team', () => {
+    const testEmails: string[] = [];
+    const testTeams: string[] = [];
+
+    afterEach(async () => {
+      await cleanupTeams(testTeams);
+      await cleanupTestData(testEmails);
+      testEmails.length = 0;
+      testTeams.length = 0;
+    });
+
+    it('should reject adding a second Product Owner with ROLE_ALREADY_TAKEN', async () => {
+      const smEmail = `sm-po-second-${uniqueId()}@example.com`;
+      const poEmail = `po-first-${uniqueId()}@example.com`;
+      const targetEmail = `po-second-${uniqueId()}@example.com`;
+      testEmails.push(smEmail, poEmail, targetEmail);
+
+      const smUser = await createTestUserInDb(smEmail);
+      const poUser = await createTestUserInDb(poEmail);
+      const targetUser = await createTestUserInDb(targetEmail);
+
+      const teamName = `Single PO Team ${uniqueId()}`;
+      testTeams.push(teamName);
+
+      const team = await createTestTeam(teamName);
+      await addTeamMember(team.id, smUser.id, 'SCRUM_MASTER');
+      await addTeamMember(team.id, poUser.id, 'PRODUCT_OWNER');
+
+      const cookies = await loginAndGetCookies(smEmail);
+      const { csrfToken } = extractCsrfFromCookies(cookies);
+
+      const response = await request(app)
+        .post(`/api/v1/teams/${team.id}/members`)
+        .set('Cookie', cookies)
+        .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+        .send({ email: targetEmail, role: 'PRODUCT_OWNER' })
+        .expect(409);
+
+      expect(response.body.success).toBe(false);
+      expect(response.body.error.code).toBe('ROLE_ALREADY_TAKEN');
+
+      // No membership row should have been created for the target user
+      const membership = await prisma.teamMember.findUnique({
+        where: { teamId_userId: { teamId: team.id, userId: targetUser.id } },
+      });
+      expect(membership).toBeNull();
+    });
+
+    it('should reject adding a second Scrum Master with ROLE_ALREADY_TAKEN', async () => {
+      const smEmail = `sm-second-${uniqueId()}@example.com`;
+      const targetEmail = `sm-target-${uniqueId()}@example.com`;
+      testEmails.push(smEmail, targetEmail);
+
+      const smUser = await createTestUserInDb(smEmail);
+      await createTestUserInDb(targetEmail);
+
+      const teamName = `Single SM Team ${uniqueId()}`;
+      testTeams.push(teamName);
+
+      const team = await createTestTeam(teamName);
+      await addTeamMember(team.id, smUser.id, 'SCRUM_MASTER');
+
+      const cookies = await loginAndGetCookies(smEmail);
+      const { csrfToken } = extractCsrfFromCookies(cookies);
+
+      const response = await request(app)
+        .post(`/api/v1/teams/${team.id}/members`)
+        .set('Cookie', cookies)
+        .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+        .send({ email: targetEmail, role: 'SCRUM_MASTER' })
+        .expect(409);
+
+      expect(response.body.success).toBe(false);
+      expect(response.body.error.code).toBe('ROLE_ALREADY_TAKEN');
+    });
+
+    it('should reject promoting a member to an already-taken Scrum Master role', async () => {
+      const smEmail = `sm-promote-${uniqueId()}@example.com`;
+      const devEmail = `dev-promote-${uniqueId()}@example.com`;
+      testEmails.push(smEmail, devEmail);
+
+      const smUser = await createTestUserInDb(smEmail);
+      const devUser = await createTestUserInDb(devEmail);
+
+      const teamName = `Promote SM Team ${uniqueId()}`;
+      testTeams.push(teamName);
+
+      const team = await createTestTeam(teamName);
+      await addTeamMember(team.id, smUser.id, 'SCRUM_MASTER');
+
+      const membership = await prisma.teamMember.create({
+        data: {
+          id: generateUUIDv7(),
+          teamId: team.id,
+          userId: devUser.id,
+          role: 'DEVELOPERS',
+        },
+      });
+
+      const cookies = await loginAndGetCookies(smEmail);
+      const { csrfToken } = extractCsrfFromCookies(cookies);
+
+      const response = await request(app)
+        .put(`/api/v1/teams/${team.id}/members/${membership.id}`)
+        .set('Cookie', cookies)
+        .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+        .send({ role: 'SCRUM_MASTER' })
+        .expect(409);
+
+      expect(response.body.success).toBe(false);
+      expect(response.body.error.code).toBe('ROLE_ALREADY_TAKEN');
+
+      // The role should remain unchanged in the database
+      const unchanged = await prisma.teamMember.findUnique({ where: { id: membership.id } });
+      expect(unchanged?.role).toBe('DEVELOPERS');
+    });
+
+    it('should return 404 NOT_FOUND when updating a member from another team', async () => {
+      const smEmail = `sm-cross-${uniqueId()}@example.com`;
+      const otherMemberEmail = `other-cross-${uniqueId()}@example.com`;
+      testEmails.push(smEmail, otherMemberEmail);
+
+      const smUser = await createTestUserInDb(smEmail);
+      const otherMember = await createTestUserInDb(otherMemberEmail);
+
+      const teamOneName = `Cross Team One ${uniqueId()}`;
+      const teamTwoName = `Cross Team Two ${uniqueId()}`;
+      testTeams.push(teamOneName, teamTwoName);
+
+      const teamOne = await createTestTeam(teamOneName);
+      const teamTwo = await createTestTeam(teamTwoName);
+      await addTeamMember(teamOne.id, smUser.id, 'SCRUM_MASTER');
+      await addTeamMember(teamTwo.id, otherMember.id, 'DEVELOPERS');
+
+      const otherMembership = await prisma.teamMember.findUnique({
+        where: { teamId_userId: { teamId: teamTwo.id, userId: otherMember.id } },
+      });
+      expect(otherMembership).not.toBeNull();
+
+      const cookies = await loginAndGetCookies(smEmail);
+      const { csrfToken } = extractCsrfFromCookies(cookies);
+
+      const response = await request(app)
+        .put(`/api/v1/teams/${teamOne.id}/members/${otherMembership?.id}`)
+        .set('Cookie', cookies)
+        .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+        .send({ role: 'DEVELOPERS' })
+        .expect(404);
+
+      expect(response.body.success).toBe(false);
+      expect(response.body.error.code).toBe('NOT_FOUND');
+    });
+
+    it('should allow adding a developer and promoting to a free Product Owner role', async () => {
+      const smEmail = `sm-regress-${uniqueId()}@example.com`;
+      const devEmail = `dev-regress-${uniqueId()}@example.com`;
+      testEmails.push(smEmail, devEmail);
+
+      const smUser = await createTestUserInDb(smEmail);
+      await createTestUserInDb(devEmail);
+
+      const teamName = `Regression Team ${uniqueId()}`;
+      testTeams.push(teamName);
+
+      const team = await createTestTeam(teamName);
+      await addTeamMember(team.id, smUser.id, 'SCRUM_MASTER');
+
+      const cookies = await loginAndGetCookies(smEmail);
+      const { csrfToken } = extractCsrfFromCookies(cookies);
+
+      // Normal add of a DEVELOPERS member
+      const addResponse = await request(app)
+        .post(`/api/v1/teams/${team.id}/members`)
+        .set('Cookie', cookies)
+        .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+        .send({ email: devEmail, role: 'DEVELOPERS' })
+        .expect(201);
+
+      expect(addResponse.body.success).toBe(true);
+      const membershipId: string = addResponse.body.data.id;
+
+      // Normal promotion to a free PRODUCT_OWNER role
+      const promoteResponse = await request(app)
+        .put(`/api/v1/teams/${team.id}/members/${membershipId}`)
+        .set('Cookie', cookies)
+        .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+        .send({ role: 'PRODUCT_OWNER' })
+        .expect(200);
+
+      expect(promoteResponse.body.success).toBe(true);
+      expect(promoteResponse.body.data.role).toBe('PRODUCT_OWNER');
+
+      const updated = await prisma.teamMember.findUnique({ where: { id: membershipId } });
+      expect(updated?.role).toBe('PRODUCT_OWNER');
+    });
+  });
 });

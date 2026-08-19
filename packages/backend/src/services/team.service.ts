@@ -1,6 +1,6 @@
 // Team Service
 import prisma from '../utils/prisma';
-import { NotFoundError, ForbiddenError, ConflictError } from '../utils/errors';
+import { NotFoundError, ForbiddenError, ConflictError, localizedError } from '../utils/errors';
 import { generateUUIDv7 } from '../utils/uuid';
 import { NotificationService } from './notification.service';
 import {
@@ -473,6 +473,11 @@ class TeamService {
       throw new ConflictError('User is already a team member');
     }
 
+    // Enforce exactly one Product Owner / Scrum Master per team
+    if (data.role === 'PRODUCT_OWNER' || data.role === 'SCRUM_MASTER') {
+      await this.assertLeadershipRoleAvailable(teamId, data.role);
+    }
+
     const memberId = generateUUIDv7();
 
     const member = await prisma.teamMember.create({
@@ -585,12 +590,53 @@ class TeamService {
     // Check if user is Scrum Master
     await this.checkTeamRole(teamId, userId, ['SCRUM_MASTER']);
 
-    const member = await prisma.teamMember.update({
+    const member = await prisma.teamMember.findUnique({
+      where: { id: memberId },
+    });
+
+    if (member?.teamId !== teamId) {
+      throw new NotFoundError('Team member');
+    }
+
+    // Enforce exactly one Product Owner / Scrum Master per team
+    if (role === 'PRODUCT_OWNER' || role === 'SCRUM_MASTER') {
+      await this.assertLeadershipRoleAvailable(teamId, role, member.id);
+    }
+
+    const updatedMember = await prisma.teamMember.update({
       where: { id: memberId },
       data: { role },
     });
 
-    return member;
+    return updatedMember;
+  }
+
+  /**
+   * Ensure the team does not already have a member with the given leadership role.
+   * Each team can have exactly one Product Owner and one Scrum Master.
+   */
+  private async assertLeadershipRoleAvailable(
+    teamId: string,
+    role: 'PRODUCT_OWNER' | 'SCRUM_MASTER',
+    excludeMemberId?: string
+  ): Promise<void> {
+    const count = await prisma.teamMember.count({
+      where: {
+        teamId,
+        role,
+        ...(excludeMemberId ? { id: { not: excludeMemberId } } : {}),
+      },
+    });
+
+    if (count > 0) {
+      const roleLabel = role === 'PRODUCT_OWNER' ? 'Product Owner' : 'Scrum Master';
+      throw localizedError(
+        'errors:roleAlreadyTaken',
+        { role: roleLabel },
+        409,
+        'ROLE_ALREADY_TAKEN'
+      );
+    }
   }
 
   /**

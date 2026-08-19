@@ -283,11 +283,28 @@ export const TeamManagement: React.FC = () => {
         })
       );
     },
-    onError: (error: Error) => {
+    onError: (error: Error | AxiosError<ApiResponse<never>>) => {
       logger.error('Failed to add team member', undefined, { error });
       const errorMessage = error.message.toLowerCase();
 
-      if (errorMessage.includes('404') || errorMessage.includes('not found')) {
+      if (
+        error instanceof AxiosError &&
+        error.response?.data?.error?.code === 'ROLE_ALREADY_TAKEN'
+      ) {
+        setInviteError(
+          t('inviteErrors.roleAlreadyTaken', {
+            role: t(
+              `memberCard.roleNames.${
+                newMemberRole === 'scrum_master'
+                  ? 'scrumMaster'
+                  : newMemberRole === 'product_owner'
+                    ? 'productOwner'
+                    : newMemberRole
+              }` as never
+            ),
+          })
+        );
+      } else if (errorMessage.includes('404') || errorMessage.includes('not found')) {
         setInviteError(t('inviteErrors.userNotFound'));
       } else if (
         errorMessage.includes('409') ||
@@ -473,6 +490,22 @@ export const TeamManagement: React.FC = () => {
   }, [teamData, setCurrentTeam]);
 
   const team = teamData?.success ? teamData.data : currentTeam;
+
+  const { hasProductOwner, hasScrumMaster } = useMemo(() => {
+    const members = team?.members ?? [];
+    return {
+      hasProductOwner: members.some((member) => member.role.toUpperCase() === 'PRODUCT_OWNER'),
+      hasScrumMaster: members.some((member) => member.role.toUpperCase() === 'SCRUM_MASTER'),
+    };
+  }, [team?.members]);
+
+  useEffect(() => {
+    if (newMemberRole === 'product_owner' && hasProductOwner) {
+      setNewMemberRole('developers');
+    } else if (newMemberRole === 'scrum_master' && hasScrumMaster) {
+      setNewMemberRole('developers');
+    }
+  }, [newMemberRole, hasProductOwner, hasScrumMaster]);
 
   const filteredAndSortedMembers = useMemo(() => {
     if (!team?.members) return [];
@@ -1187,8 +1220,10 @@ export const TeamManagement: React.FC = () => {
                       disabled={addTeamMemberMutation.isPending}
                     >
                       <option value="developers">{t('members.filterOptions.developers')}</option>
-                      <option value="scrum_master">{t('members.filterOptions.scrumMaster')}</option>
-                      <option value="product_owner">
+                      <option value="scrum_master" disabled={hasScrumMaster}>
+                        {t('members.filterOptions.scrumMaster')}
+                      </option>
+                      <option value="product_owner" disabled={hasProductOwner}>
                         {t('members.filterOptions.productOwner')}
                       </option>
                     </select>

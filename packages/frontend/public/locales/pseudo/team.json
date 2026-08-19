@@ -71,6 +71,7 @@
     "invalidEmail": "[Pléàsé éntér à vàlíd émàíl àddrésssssssssssss.]",
     "networkError": "[Nétwórk érrór. Pléàsé chéck yóúr cónnéctíón ànd try àgàínnnnnnnnnnnnnnnnnnn.]",
     "noPermission": "[Yóú dó nót hàvé pérmíssíón tó àdd téàm mémbérssssssssssssssss.]",
+    "roleAlreadyTaken": "[Thé {{role}} rólé ís àlréàdy àssígnéd tó ànóthér téàm mémbér. Éàch téàm càn hàvé éxàctly óné Pródúct Ównér ànd óné Scrúm Màstérrrrrrrrrrrrrrrrrrrrrrrrrr.]",
     "userNotFound": "[Nó úsér fóúnd wíth thís émàíl àddréss. Thé úsér múst régístér fírst béfóré théy càn bé ínvítéd tó à téàmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm.]"
   },
   "inviteModal": {

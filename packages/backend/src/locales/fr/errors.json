@@ -12,6 +12,7 @@
   "invalidToken": "Jeton invalide",
   "pleaseLoginAgain": "Veuillez vous reconnecter pour continuer",
   "recordNotFound": "Enregistrement introuvable",
+  "roleAlreadyTaken": "Un {{role}} existe déjà pour cette équipe. Chaque équipe ne peut avoir qu'un seul {{role}}.",
   "routeNotFound": "{{method}} {{path}} introuvable",
   "tokenExpired": "Le jeton a expiré",
   "unauthorized": "Authentification requise",

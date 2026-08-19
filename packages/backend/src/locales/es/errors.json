@@ -12,6 +12,7 @@
   "invalidToken": "Token inválido",
   "pleaseLoginAgain": "Inicie sesión nuevamente para continuar",
   "recordNotFound": "Registro no encontrado",
+  "roleAlreadyTaken": "Ya existe un {{role}} para este equipo. Cada equipo puede tener exactamente un {{role}}.",
   "routeNotFound": "{{method}} {{path}} no encontrado",
   "tokenExpired": "El token ha expirado",
   "unauthorized": "Se requiere autenticación",

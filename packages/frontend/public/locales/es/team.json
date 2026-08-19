@@ -71,6 +71,7 @@
     "invalidEmail": "Por favor ingrese una dirección de correo electrónico válida.",
     "networkError": "Error de red. Por favor verifique su conexión e intente de nuevo.",
     "noPermission": "No tiene permiso para agregar miembros al equipo.",
+    "roleAlreadyTaken": "El rol {{role}} ya está asignado a otro miembro del equipo. Cada equipo puede tener exactamente un Product Owner y un Scrum Master.",
     "userNotFound": "No se encontró usuario con esta dirección de correo electrónico. El usuario debe registrarse primero antes de poder ser invitado a un equipo."
   },
   "inviteModal": {

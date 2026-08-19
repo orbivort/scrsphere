@@ -12,6 +12,7 @@
   "invalidToken": "Token non valido",
   "pleaseLoginAgain": "Accedi di nuovo per continuare",
   "recordNotFound": "Record non trovato",
+  "roleAlreadyTaken": "Esiste già un {{role}} per questo team. Ogni team può avere esattamente un {{role}}.",
   "routeNotFound": "{{method}} {{path}} non trovato",
   "tokenExpired": "Il token è scaduto",
   "unauthorized": "Autenticazione richiesta",

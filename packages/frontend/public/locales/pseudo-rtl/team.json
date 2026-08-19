@@ -71,6 +71,7 @@
     "invalidEmail": "Please enter a valid email address.",
     "networkError": "Network error. Please check your connection and try again.",
     "noPermission": "You do not have permission to add team members.",
+    "roleAlreadyTaken": "[Thé {{role}} rólé ís àlréàdy àssígnéd tó ànóthér téàm mémbér. Éàch téàm càn hàvé éxàctly óné Pródúct Ównér ànd óné Scrúm Màstérrrrrrrrrrrrrrrrrrrrrrrrrr.]",
     "userNotFound": "No user found with this email address. The user must register first before they can be invited to a team."
   },
   "inviteModal": {

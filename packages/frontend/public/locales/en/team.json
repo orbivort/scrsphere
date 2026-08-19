@@ -71,6 +71,7 @@
     "invalidEmail": "Please enter a valid email address.",
     "networkError": "Network error. Please check your connection and try again.",
     "noPermission": "You do not have permission to add team members.",
+    "roleAlreadyTaken": "The {{role}} role is already assigned to another team member. Each team can have exactly one Product Owner and one Scrum Master.",
     "userNotFound": "No user found with this email address. The user must register first before they can be invited to a team."
   },
   "inviteModal": {

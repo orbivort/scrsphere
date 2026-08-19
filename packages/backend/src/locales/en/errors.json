@@ -12,6 +12,7 @@
   "invalidToken": "Invalid token",
   "pleaseLoginAgain": "Please log in again to continue",
   "recordNotFound": "Record not found",
+  "roleAlreadyTaken": "A {{role}} already exists for this team. Each team can have exactly one {{role}}.",
   "routeNotFound": "{{method}} {{path}} not found",
   "tokenExpired": "Token has expired",
   "unauthorized": "Authentication required",
