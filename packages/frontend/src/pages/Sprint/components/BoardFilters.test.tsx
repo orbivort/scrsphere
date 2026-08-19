@@ -122,16 +122,16 @@ describe('BoardFilters', () => {
       expect(screen.getByRole('button', { name: 'Swimlanes' })).toBeInTheDocument();
     });
 
-    it('should render team members in assignee dropdown', () => {
+    it('should render only developers in assignee dropdown', () => {
       renderWithProviders(<BoardFilters {...defaultProps} />);
 
       const assigneeSelect = screen.getByLabelText('Filter by assignee');
       expect(assigneeSelect).toBeInTheDocument();
 
-      // Open dropdown to see options
+      // Only developers should appear as assignee filter options
       const options = screen.getAllByRole('option');
       expect(options.some((opt) => opt.textContent?.includes('John Doe'))).toBe(true);
-      expect(options.some((opt) => opt.textContent?.includes('Jane Smith'))).toBe(true);
+      expect(options.some((opt) => opt.textContent?.includes('Jane Smith'))).toBe(false);
     });
 
     it('should render sprint items in PBI dropdown', () => {

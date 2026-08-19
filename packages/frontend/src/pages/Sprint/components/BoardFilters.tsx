@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import type { TeamMember, User, ProductBacklogItem } from '../../../types';
+import { UserRole } from '../../../types';
 import type { ViewMode, SwimlaneGroup } from '../SprintBoard.types';
 import styles from '../SprintBoard.module.css';
 
@@ -38,6 +39,13 @@ export const BoardFilters: React.FC<BoardFiltersProps> = ({
 }) => {
   const { t } = useTranslation('sprint');
 
+  // Only developers can be assigned tasks, so the assignee filter lists only
+  // developers. The role may be uppercase (backend enum) or lowercase (mock
+  // data), so compare case-insensitively.
+  const developerMembers = teamMembers.filter(
+    (member) => String(member.role).toLowerCase() === UserRole.DEVELOPERS
+  );
+
   return (
     <div className={styles['board-controls']} role="toolbar" aria-label={t('aria.boardControls')}>
       <div className={styles['filter-group']}>
@@ -51,7 +59,7 @@ export const BoardFilters: React.FC<BoardFiltersProps> = ({
           onChange={(e) => onFilterAssigneeChange(e.target.value)}
         >
           <option value="all">{t('boardFilters.allAssignees')}</option>
-          {teamMembers.map((member) => (
+          {developerMembers.map((member) => (
             <option key={member.id} value={member.userId}>
               {member.user?.firstName} {member.user?.lastName}
             </option>
