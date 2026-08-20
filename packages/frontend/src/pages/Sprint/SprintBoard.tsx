@@ -74,8 +74,11 @@ import styles from './SprintBoard.module.css';
 export const SprintBoard: React.FC = () => {
   const { currentTeam, userRoleInCurrentTeam } = useTeamStore();
   const currentUserId = useAuthStore((s) => s.user?.id);
-  // Task assignment is Developers-only (self-managed claim/release).
-  const isDeveloper = String(userRoleInCurrentTeam).toLowerCase() === UserRole.DEVELOPERS;
+  // Task assignment is Developers-only (self-managed claim/release). The role
+  // may be uppercase (backend enum) or lowercase, and UserRole.DEVELOPERS from
+  // @scrumooth/shared is uppercase, so normalize both sides before comparing.
+  const isDeveloper =
+    String(userRoleInCurrentTeam).toLowerCase() === UserRole.DEVELOPERS.toLowerCase();
   const navigate = useNavigate();
   const { t } = useTranslation('sprint');
   const teamId = currentTeam?.id;
@@ -798,6 +801,7 @@ export const SprintBoard: React.FC = () => {
           onFormDataChange={handleFormDataChange}
           isUpdating={mutations.updateTaskMutation.isPending}
           modalRef={editModalRef}
+          currentUserId={currentUserId}
         />
       )}
 

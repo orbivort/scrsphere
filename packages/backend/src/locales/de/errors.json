@@ -19,7 +19,9 @@
     "anotherActive": "Ein anderer Sprint ist bereits aktiv",
     "missingGoal": "Der Sprint kann ohne Sprint-Ziel nicht gestartet werden",
     "notPlanned": "Nur geplante Sprints können gestartet werden",
-    "notReadyToStart": "Das Sprint-Backlog muss gespeichert werden, bevor der Sprint gestartet werden kann"
+    "notReadyToStart": "Das Sprint-Backlog muss gespeichert werden, bevor der Sprint gestartet werden kann",
+    "pbiAlreadyCommitted": "Backlog-Element \"{{pbiTitle}}\" ist bereits einem anderen Sprint zugeordnet ({{sprintName}}). Ein Produkt-Backlog-Element kann jeweils nur in einem Sprint bearbeitet werden.",
+    "pbiConflictAtStart": "Der Sprint kann nicht gestartet werden: Die folgenden Backlog-Elemente sind bereits einem anderen Sprint zugeordnet: {{items}}."
   },
   "task": {
     "cannotAssignOtherDeveloper": "Nur der Beauftragte selbst darf diese Aufgabe zuweisen. Entwickler weisen sich ihre Arbeit selbst zu.",

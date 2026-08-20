@@ -92,6 +92,36 @@ export const saveSprintBacklog = asyncHandler(async (req: Request, res: Response
 });
 
 /**
+ * Save the Sprint Planning draft incrementally (Developers-only)
+ * @route PUT /api/v1/sprints/:id/backlog/draft
+ */
+export const saveSprintPlanningDraft = asyncHandler(async (req: Request, res: Response) => {
+  const id = getParamValue(req.params.id);
+  if (!id) {
+    throw new BadRequestError('Sprint ID is required');
+  }
+  const userId = req.user?.id;
+  if (!userId) {
+    throw new BadRequestError('User not authenticated');
+  }
+  const result = await sprintService.saveSprintPlanningDraft(id, userId, req.body);
+  res.json(createSuccessResponse(result));
+});
+
+/**
+ * Load the Sprint Planning draft for resume (read-only, authenticated team members)
+ * @route GET /api/v1/sprints/:id/planning-draft
+ */
+export const getSprintPlanningDraft = asyncHandler(async (req: Request, res: Response) => {
+  const id = getParamValue(req.params.id);
+  if (!id) {
+    throw new BadRequestError('Sprint ID is required');
+  }
+  const draft = await sprintService.getSprintPlanningDraft(id);
+  res.json(createSuccessResponse(draft));
+});
+
+/**
  * Rollback sprint start
  * Used when sprint start fails after partial database updates
  */

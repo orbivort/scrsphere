@@ -197,9 +197,18 @@ class SprintConfigurationService {
     const sprints = await prisma.generatedSprint.findMany({
       where,
       orderBy: { sprintNumber: 'asc' },
+      include: {
+        sprint: { select: { id: true, status: true } },
+      },
     });
 
-    return sprints;
+    // The authoritative lifecycle status lives on the materialized Sprint (linked via
+    // GeneratedSprint.sprintId). The GeneratedSprint.status field is not always kept in sync
+    // for sprints completed before the sync fix, so surface the real status where available.
+    return sprints.map(({ sprint, ...generated }) => ({
+      ...generated,
+      status: sprint?.status ?? generated.status,
+    }));
   }
 
   async deleteGeneratedSprint(sprintId: string): Promise<void> {

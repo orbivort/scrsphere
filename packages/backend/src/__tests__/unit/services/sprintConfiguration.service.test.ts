@@ -296,7 +296,32 @@ describe('SprintConfigurationService', () => {
       expect(prisma.generatedSprint.findMany).toHaveBeenCalledWith({
         where: { teamId },
         orderBy: { sprintNumber: 'asc' },
+        include: { sprint: { select: { id: true, status: true } } },
       });
+    });
+
+    it('should surface the materialized Sprint status as authoritative', async () => {
+      const teamId = 'test-team-id';
+      // GeneratedSprint.status is stale (PLANNED) but its linked materialized Sprint is COMPLETED.
+      const mockSprints = [
+        {
+          id: 'sprint-1',
+          teamId,
+          name: 'Sprint 1',
+          sprintNumber: 1,
+          year: 2024,
+          status: 'PLANNED',
+          sprint: { id: 'mat-1', status: 'COMPLETED' },
+        },
+      ];
+
+      vi.mocked(prisma.generatedSprint.findMany).mockResolvedValue(mockSprints as any);
+
+      const result = await sprintConfigurationService.getGeneratedSprints(teamId);
+
+      expect(result).toHaveLength(1);
+      // The real lifecycle status overrides the stale GeneratedSprint.status.
+      expect(result[0]?.status).toBe('COMPLETED');
     });
 
     it('should filter by year when provided', async () => {
@@ -321,6 +346,7 @@ describe('SprintConfigurationService', () => {
       expect(prisma.generatedSprint.findMany).toHaveBeenCalledWith({
         where: { teamId, year },
         orderBy: { sprintNumber: 'asc' },
+        include: { sprint: { select: { id: true, status: true } } },
       });
     });
   });

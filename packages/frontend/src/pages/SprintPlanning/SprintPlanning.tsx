@@ -5,7 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { TIME, formatDateRange } from '@scrumooth/shared';
 
 import { apiService } from '../../services';
-import { useTeamStore } from '../../store';
+import { API_BASE_URL, getCsrfHeader } from '../../services/core/api.core';
+import { useTeamStore, useAuthStore } from '../../store';
 import { useMutationErrorHandler } from '../../hooks/useMutationErrorHandler';
 import { queryKeys } from '../../hooks/queryKeys';
 import { ToastContainer } from '../../components/common/ToastContainer';
@@ -25,13 +26,19 @@ import { LoadingState } from '../../components/common/Loading';
 import { useAnnounce } from '../../components/LiveAnnouncer';
 import {
   CalendarIcon,
+  ChevronDownIcon,
   ClockIcon,
   SettingsIcon,
   FileTextIcon,
   TargetIcon,
   PlayIcon,
+  SaveIcon,
   XIcon,
   EditIcon,
+  CheckCircleIcon,
+  AlertCircleIcon,
+  InfoIcon,
+  LockIcon,
 } from '../../components/common/Icons';
 
 import { AddTaskModal } from './components/AddTaskModal';
@@ -74,6 +81,39 @@ interface ReadyChecklistItem {
   label: string;
   checked: boolean;
 }
+
+/**
+ * Return the tasks the acting developer is allowed to persist for a sprint.
+ *
+ * During collaborative planning the shared draft may contain tasks already claimed by
+ * other developers. A Developer may only create/update unassigned tasks and their own
+ * tasks; tasks owned by another Developer are read-only here and must be excluded from
+ * the save payload — otherwise the backend's self-assignment guard rejects the whole
+ * request (403) and an explicit save would otherwise overwrite the other developer's work.
+ */
+const getPersistableTasks = (
+  items: SprintBacklogItem[],
+  currentUserId?: string
+): Array<{
+  id: string;
+  pbiId: string;
+  title: string;
+  assigneeId?: string;
+  estimatedHours?: number;
+  remainingHours?: number;
+}> =>
+  items.flatMap((item) =>
+    item.tasks
+      .filter((task) => !task.assigneeId || task.assigneeId === currentUserId)
+      .map((task) => ({
+        id: task.id,
+        pbiId: item.id,
+        title: task.title,
+        assigneeId: task.assigneeId ?? undefined,
+        estimatedHours: task.estimatedHours,
+        remainingHours: task.remainingHours,
+      }))
+  );
 
 const getMoscowPriorityConfig = (
   t: (key: string) => string
@@ -143,16 +183,22 @@ const getSprintTimeCategory = (startDate: string, endDate: string): SprintTimeCa
   }
 };
 
+/**
+ * Build a clear, scannable label for a sprint option in the selection dropdown.
+ *
+ * Format: "Sprint-2w-2617 (2026-08-17 – 2026-08-28) · Active"
+ *
+ * The sprint name already embeds its full date range (e.g. "Sprint-2w-2617 (2026-08-17 –
+ * 2026-08-28)"), so no date range is repeated here. The category (Active/Upcoming) is already
+ * conveyed by the optgroup headers, so it is intentionally not repeated either. The lifecycle
+ * status is shown as the final segment. A graceful fallback prevents raw i18n keys (e.g.
+ * "sprintStatus.DRAFT") from leaking when a status has no translation yet.
+ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- TFunction signature varies by i18next version
 const formatSprintOptionLabel = (sprint: SprintWithCategory, t: any): string => {
-  const categoryLabel =
-    sprint.category === 'current'
-      ? t('sprintPlanning.activeCategory')
-      : sprint.category === 'future'
-        ? t('sprintPlanning.upcomingCategory')
-        : t('sprintPlanning.doneCategory');
-  const statusDisplay = t(`sprintStatus.${sprint.status.toUpperCase()}`);
-  return `${categoryLabel} ${sprint.name} (${statusDisplay})`;
+  const statusKey = `sprintStatus.${sprint.status.toUpperCase()}`;
+  const statusDisplay = t(statusKey, { defaultValue: statusKey });
+  return `${sprint.name} \u00b7 ${statusDisplay}`;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- TFunction signature varies by i18next version
@@ -202,6 +248,7 @@ export const SprintPlanning: React.FC = () => {
   const { t } = useTranslation('sprint');
   const { t: tBacklog } = useTranslation('backlog');
   const { currentTeam, userRoleInCurrentTeam } = useTeamStore();
+  const { user: currentUser } = useAuthStore();
   const { locale } = useI18nStore();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -230,9 +277,21 @@ export const SprintPlanning: React.FC = () => {
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const [focusedItemIndex, setFocusedItemIndex] = useState<number>(-1);
   const [grabbedItemId, setGrabbedItemId] = useState<string | null>(null);
+  const [draftStatus, setDraftStatus] = useState<'idle' | 'loading' | 'loaded' | 'none' | 'failed'>(
+    'idle'
+  );
+  const [draftConflicts, setDraftConflicts] = useState<
+    Array<{ pbiId: string; sprintName: string }>
+  >([]);
 
   const sprintBacklogRef = useRef<HTMLDivElement>(null);
   const announce = useAnnounce();
+
+  // Guards the resume hydration so the debounced auto-save does not fire while a saved
+  // draft is being loaded into state for the current sprint.
+  const hydratedSprintRef = useRef<string | null>(null);
+  const isHydratingRef = useRef(false);
+  const dirtyRef = useRef(false);
 
   const MOSCOW_PRIORITY_CONFIG = useMemo(
     () => getMoscowPriorityConfig(t as (key: string) => string),
@@ -330,15 +389,9 @@ export const SprintPlanning: React.FC = () => {
   const saveSprintBacklogMutation = useMutation({
     mutationFn: () => {
       const items = sprintBacklogItems.map((item) => ({ pbiId: item.id }));
-      const tasks = sprintBacklogItems.flatMap((item) =>
-        item.tasks.map((task) => ({
-          pbiId: item.id,
-          title: task.title,
-          assigneeId: task.assigneeId,
-          estimatedHours: task.estimatedHours,
-          remainingHours: task.remainingHours,
-        }))
-      );
+      // Only persist unassigned tasks and the acting developer's own tasks; tasks already
+      // claimed by another developer are read-only here and must not be sent to the backend.
+      const tasks = getPersistableTasks(sprintBacklogItems, currentUser?.id);
       return apiService.saveSprintBacklog(selectedSprintId ?? '', { items, tasks });
     },
     onSuccess: (response) => {
@@ -391,11 +444,32 @@ export const SprintPlanning: React.FC = () => {
     return readyItems;
   }, [backlogData, sprintBacklogItems]);
 
+  const backlogTitleById = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const item of backlogData?.data ?? []) {
+      map.set(item.id, item.title);
+    }
+    return map;
+  }, [backlogData]);
+
   const filteredBacklogItems = getFilteredBacklogItems();
 
   const selectedSprint = generatedSprintsData?.data?.find(
     (s: GeneratedSprint) => s.id === selectedSprintId
   );
+
+  // ACTIVE and COMPLETED sprint backlogs are locked (read-only): the committed Sprint
+  // Backlog is a persistent artifact and must not be replanned from Sprint Planning.
+  const lockedSprint =
+    !!selectedSprint &&
+    (selectedSprint.status === SprintStatus.ACTIVE ||
+      selectedSprint.status === SprintStatus.COMPLETED);
+
+  // The Developers own the Sprint Backlog (Scrum Guide). Adding items from the Product
+  // Backlog and removing items from the Sprint Backlog are Developers-only actions; other
+  // roles may view the plan but cannot modify it. This mirrors the backend's
+  // `assertDeveloperRole` guard for saving the backlog.
+  const canModifyBacklog = isDeveloper && !lockedSprint;
 
   const categorizedSprints = useMemo(() => {
     const current: SprintWithCategory[] = [];
@@ -404,6 +478,8 @@ export const SprintPlanning: React.FC = () => {
     if (generatedSprintsData?.data) {
       generatedSprintsData.data.forEach((sprint: GeneratedSprint) => {
         if (!sprint.startDate || !sprint.endDate) return;
+        // Cancelled sprints are irrelevant to planning and must not be selectable.
+        if (sprint.status === SprintStatus.CANCELLED) return;
 
         const category = getSprintTimeCategory(sprint.startDate, sprint.endDate);
         if (category === 'past') return;
@@ -527,7 +603,91 @@ export const SprintPlanning: React.FC = () => {
     if (selectedSprintId && !planningStartTime) {
       setPlanningStartTime(new Date());
     }
+    // Reset planning state when switching sprints so a previously selected sprint's backlog
+    // and draft indicators are never shown for a different sprint. The resume-hydration effect
+    // below repopulates the backlog from the newly selected sprint's saved draft, and sets
+    // backlogSaved back to true if that draft is persisted.
+    setSprintBacklogItems([]);
+    setBacklogSaved(false);
+    dirtyRef.current = false;
+    setDraftStatus('idle');
+    setDraftConflicts([]);
   }, [selectedSprintId, planningStartTime]);
+
+  // Incremental auto-save: persist the planning draft server-side whenever the selection or
+  // decomposition changes, so an unexpected quit does not lose work (Scrum Guide: the Sprint
+  // Backlog is a persistent, real-time artifact). A `beforeunload` flush covers the last change.
+  useEffect(() => {
+    if (!selectedSprintId) return;
+    // Skip the very first run for a sprint while it is being hydrated from a saved draft.
+    if (isHydratingRef.current || hydratedSprintRef.current !== selectedSprintId) return;
+    if (!dirtyRef.current) return;
+
+    dirtyRef.current = false;
+    const timer = setTimeout(() => {
+      const items = sprintBacklogItems.map((item) => ({ pbiId: item.id }));
+      // Only persist unassigned tasks and the acting developer's own tasks; tasks already
+      // claimed by another developer are read-only here and must not be sent to the backend.
+      const tasks = getPersistableTasks(sprintBacklogItems, currentUser?.id).map((task) => ({
+        id: task.id.startsWith('task-') ? undefined : task.id,
+        description: undefined,
+        pbiId: task.pbiId,
+        title: task.title,
+        assigneeId: task.assigneeId ?? null,
+        estimatedHours: task.estimatedHours,
+        remainingHours: task.remainingHours,
+      }));
+      void apiService.saveSprintPlanningDraft(selectedSprintId, {
+        items,
+        tasks,
+        sprintGoal: selectedSprint?.sprintGoal,
+      });
+    }, 700);
+    return () => clearTimeout(timer);
+  }, [sprintBacklogItems, selectedSprintId, selectedSprint?.sprintGoal, currentUser?.id]);
+
+  // Flush any pending draft changes when the user leaves the page.
+  useEffect(() => {
+    if (!selectedSprintId) return;
+    const handler = (_event: BeforeUnloadEvent) => {
+      if (!dirtyRef.current) return;
+      // Best-effort flush so the last change survives a quit. Uses fetch + keepalive instead
+      // of navigator.sendBeacon because the backend requires a custom `x-csrf-token` header
+      // on non-GET requests and sendBeacon cannot set custom headers.
+      try {
+        const payload = JSON.stringify({
+          items: sprintBacklogItems.map((item) => ({ pbiId: item.id })),
+          // Only persist unassigned tasks and the acting developer's own tasks; tasks already
+          // claimed by another developer are read-only here and must not be sent to the backend.
+          tasks: getPersistableTasks(sprintBacklogItems, currentUser?.id).map((task) => ({
+            id: task.id.startsWith('task-') ? undefined : task.id,
+            description: undefined,
+            pbiId: task.pbiId,
+            title: task.title,
+            assigneeId: task.assigneeId ?? null,
+            estimatedHours: task.estimatedHours,
+            remainingHours: task.remainingHours,
+          })),
+          sprintGoal: selectedSprint?.sprintGoal,
+        });
+        void fetch(`${API_BASE_URL}/sprints/${selectedSprintId}/backlog/draft`, {
+          method: 'PUT',
+          credentials: 'include',
+          keepalive: true,
+          headers: {
+            'Content-Type': 'application/json',
+            ...getCsrfHeader(),
+          },
+          body: payload,
+        });
+        dirtyRef.current = false;
+      } catch {
+        // A flush failure is non-fatal; the debounced save already captured recent state.
+      }
+    };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [selectedSprintId, sprintBacklogItems, selectedSprint?.sprintGoal, currentUser?.id]);
 
   const checkItemReadiness = useCallback(
     (item: ProductBacklogItem): { isReady: boolean; checklist: ReadyChecklistItem[] } => {
@@ -545,8 +705,115 @@ export const SprintPlanning: React.FC = () => {
     [t]
   );
 
+  // Resume interrupted Sprint Planning: load any previously saved draft for the selected
+  // sprint and pre-fill the planning state so the Developers can continue where they left off.
+  useEffect(() => {
+    if (!selectedSprintId || hydratedSprintRef.current === selectedSprintId) return;
+    // Wait until the full backlog is loaded so saved PBIs can be matched by id.
+    if (!backlogData?.data) return;
+
+    isHydratingRef.current = true;
+    setDraftStatus('loading');
+    void apiService
+      .getSprintPlanningDraft(selectedSprintId)
+      .then((response) => {
+        if (!response.success || !response.data) {
+          setDraftStatus('failed');
+          return;
+        }
+        const draft = response.data;
+        setDraftConflicts(draft.conflicts);
+
+        if (draft.items.length === 0 && draft.tasks.length === 0) {
+          // No saved draft for this sprint: clear any backlog left over from a previously
+          // selected sprint so stale task assignments are never shown for the wrong sprint.
+          setSprintBacklogItems([]);
+          setDraftStatus('none');
+          return;
+        }
+
+        const fullBacklog = backlogData.data;
+        const itemPbiIds = new Set(draft.items.map((i) => i.pbiId));
+        const tasksByPbi = new Map<string, typeof draft.tasks>();
+        for (const task of draft.tasks) {
+          const existing = tasksByPbi.get(task.pbiId) ?? [];
+          existing.push(task);
+          tasksByPbi.set(task.pbiId, existing);
+        }
+
+        const hydrated: SprintBacklogItem[] = [];
+        for (const pbi of fullBacklog) {
+          if (!itemPbiIds.has(pbi.id)) continue;
+          const savedTasks = tasksByPbi.get(pbi.id) ?? [];
+          const { isReady, checklist } = checkItemReadiness(pbi);
+          const assigneeNames = new Map(teamAvailability.map((m) => [m.userId, m.memberName]));
+          hydrated.push({
+            ...pbi,
+            tasks: savedTasks.map((task) => ({
+              id: task.id,
+              title: task.title,
+              pbiId: task.pbiId,
+              assigneeId: task.assigneeId ?? undefined,
+              assigneeName: task.assigneeId
+                ? (assigneeNames.get(task.assigneeId) ?? undefined)
+                : undefined,
+              status: TaskStatus.TODO,
+              estimatedHours: task.estimatedHours ?? undefined,
+              remainingHours: task.remainingHours ?? undefined,
+            })),
+            isReady,
+            readyChecklist: checklist,
+          });
+        }
+
+        if (hydrated.length > 0) {
+          setSprintBacklogItems(hydrated);
+          setDraftStatus('loaded');
+          // The backlog is already persisted server-side (the draft is read by any role).
+          // Mark it saved so the "Start Sprint" action — which is available to the whole
+          // team per the Scrum Guide — is enabled for PO/SM as well, not just Developers.
+          setBacklogSaved(true);
+          // A committed (active/completed) sprint is read-only: load the backlog for
+          // inspection but do not present it as a resumable planning draft.
+          if (!lockedSprint) {
+            info(t('sprintPlanning.toast.draftRestored', { count: hydrated.length }));
+          }
+        } else {
+          // A draft exists but none of its PBIs matched the available backlog pool. Clear any
+          // backlog left over from a previously selected sprint so no stale items are shown.
+          setSprintBacklogItems([]);
+          setDraftStatus('none');
+        }
+      })
+      .catch((err) => {
+        // A failed draft load must not block planning; fall back to an empty state.
+        setDraftStatus('failed');
+        showError(t('sprintPlanning.toast.failedToLoadDraft'));
+        void err;
+      })
+      .finally(() => {
+        isHydratingRef.current = false;
+        hydratedSprintRef.current = selectedSprintId;
+      });
+  }, [
+    selectedSprintId,
+    backlogData,
+    checkItemReadiness,
+    teamAvailability,
+    lockedSprint,
+    t,
+    info,
+    showError,
+  ]);
+
   const handleAddToSprint = useCallback(
     (item: ProductBacklogItem) => {
+      // Only Developers may add items from the Product Backlog into the Sprint Backlog.
+      if (!isDeveloper) {
+        warning(t('sprintPlanning.toast.developersOnlyAdd'));
+        return;
+      }
+
       if (!selectedSprintId) {
         warning(t('sprintPlanning.toast.selectSprintFirst'));
         return;
@@ -574,6 +841,7 @@ export const SprintPlanning: React.FC = () => {
         };
 
         setSprintBacklogItems((prev) => [...prev, sprintItem]);
+        dirtyRef.current = true;
 
         const taskInfo =
           generatedTasks.length > 0
@@ -586,11 +854,26 @@ export const SprintPlanning: React.FC = () => {
         showError(t('sprintPlanning.toast.errorProcessingItem', { error: errorMessage }));
       }
     },
-    [selectedSprintId, sprintBacklogItems, success, warning, showError, t, checkItemReadiness]
+    [
+      selectedSprintId,
+      sprintBacklogItems,
+      success,
+      warning,
+      showError,
+      t,
+      checkItemReadiness,
+      isDeveloper,
+    ]
   );
 
   const handleRemoveFromSprint = useCallback(
     (itemId: string) => {
+      // Only Developers may remove items from the Sprint Backlog.
+      if (!isDeveloper) {
+        warning(t('sprintPlanning.toast.developersOnlyRemove'));
+        return;
+      }
+
       if (!itemId) {
         showError(t('sprintPlanning.toast.invalidItemId'));
         return;
@@ -606,6 +889,7 @@ export const SprintPlanning: React.FC = () => {
         const itemTitle = item.title;
 
         setSprintBacklogItems((prev) => prev.filter((i) => i.id !== itemId));
+        dirtyRef.current = true;
 
         info(t('sprintPlanning.toast.removedFromSprint', { title: itemTitle }));
       } catch (err) {
@@ -614,7 +898,7 @@ export const SprintPlanning: React.FC = () => {
         showError(t('sprintPlanning.toast.errorRemovingItem', { error: errorMessage }));
       }
     },
-    [sprintBacklogItems, showError, info, t]
+    [sprintBacklogItems, showError, info, t, warning, isDeveloper]
   );
 
   const handleAddTask = useCallback(
@@ -642,6 +926,7 @@ export const SprintPlanning: React.FC = () => {
           return item;
         })
       );
+      dirtyRef.current = true;
 
       setSelectedItemForTask(null);
       setShowTaskModal(false);
@@ -672,32 +957,46 @@ export const SprintPlanning: React.FC = () => {
           return item;
         })
       );
+      dirtyRef.current = true;
     },
     [teamAvailability]
   );
 
-  const handleRemoveTask = useCallback((itemId: string, taskId: string) => {
-    setSprintBacklogItems((prev) =>
-      prev.map((item) => {
-        if (item.id === itemId) {
-          return {
-            ...item,
-            tasks: item.tasks.filter((task) => task.id !== taskId),
-          };
-        }
-        return item;
-      })
-    );
-  }, []);
+  const handleRemoveTask = useCallback(
+    (itemId: string, taskId: string) => {
+      // Only Developers may modify task decomposition in the Sprint Backlog.
+      if (!isDeveloper) {
+        warning(t('sprintPlanning.toast.developersOnlyRemove'));
+        return;
+      }
+      setSprintBacklogItems((prev) =>
+        prev.map((item) => {
+          if (item.id === itemId) {
+            return {
+              ...item,
+              tasks: item.tasks.filter((task) => task.id !== taskId),
+            };
+          }
+          return item;
+        })
+      );
+      dirtyRef.current = true;
+    },
+    [isDeveloper, warning, t]
+  );
 
-  const handleDragStart = useCallback((e: React.DragEvent, itemId: string) => {
-    e.dataTransfer.setData('itemId', itemId);
-    e.dataTransfer.effectAllowed = 'move';
-    setDraggedItemId(itemId);
+  const handleDragStart = useCallback(
+    (e: React.DragEvent, itemId: string) => {
+      if (lockedSprint || !isDeveloper) return;
+      e.dataTransfer.setData('itemId', itemId);
+      e.dataTransfer.effectAllowed = 'move';
+      setDraggedItemId(itemId);
 
-    const target = e.target as HTMLElement;
-    target.style.opacity = '0.5';
-  }, []);
+      const target = e.target as HTMLElement;
+      target.style.opacity = '0.5';
+    },
+    [lockedSprint, isDeveloper]
+  );
 
   const handleDragEnd = useCallback((e: React.DragEvent) => {
     const target = e.target as HTMLElement;
@@ -711,7 +1010,7 @@ export const SprintPlanning: React.FC = () => {
       e.preventDefault();
       setIsDraggingOver(false);
 
-      if (!selectedSprintId) return;
+      if (!selectedSprintId || !canModifyBacklog) return;
 
       const itemId = e.dataTransfer.getData('itemId');
       const item = (backlogData?.data ?? []).find((i) => i.id === itemId);
@@ -719,7 +1018,7 @@ export const SprintPlanning: React.FC = () => {
         handleAddToSprint(item);
       }
     },
-    [selectedSprintId, backlogData, handleAddToSprint]
+    [selectedSprintId, canModifyBacklog, backlogData, handleAddToSprint]
   );
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
@@ -739,6 +1038,13 @@ export const SprintPlanning: React.FC = () => {
    */
   const handleGrabItem = useCallback(
     (item: ProductBacklogItem) => {
+      // Only Developers may grab and move backlog items into the Sprint Backlog.
+      if (!isDeveloper) {
+        warning(t('sprintPlanning.toast.developersOnlyAdd'));
+        announce(t('sprintPlanning.toast.developersOnlyAdd'), 'assertive');
+        return;
+      }
+
       if (!selectedSprintId) {
         warning(t('sprintPlanning.toast.selectSprintFirst'));
         announce(t('sprintPlanning.toast.selectSprintFirst'), 'assertive');
@@ -748,7 +1054,7 @@ export const SprintPlanning: React.FC = () => {
       setGrabbedItemId(item.id);
       announce(t('sprintPlanning.accessibility.grabbedItem', { title: item.title }), 'assertive');
     },
-    [selectedSprintId, warning, announce, t]
+    [selectedSprintId, warning, announce, t, isDeveloper]
   );
 
   /**
@@ -835,6 +1141,19 @@ export const SprintPlanning: React.FC = () => {
 
   const handleSprintBacklogKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
+      // Non-Developers cannot modify the Sprint Backlog; only navigate or do nothing.
+      if (!canModifyBacklog) {
+        // Still allow arrow-key navigation so the read-only backlog stays keyboard-accessible.
+        if (e.key === 'ArrowDown' && focusedItemIndex < sprintBacklogItems.length - 1) {
+          e.preventDefault();
+          setFocusedItemIndex(focusedItemIndex + 1);
+        } else if (e.key === 'ArrowUp' && focusedItemIndex > 0) {
+          e.preventDefault();
+          setFocusedItemIndex(focusedItemIndex - 1);
+        }
+        return;
+      }
+
       // Handle dropping grabbed item
       if (e.key === 'Enter' && grabbedItemId) {
         e.preventDefault();
@@ -868,6 +1187,7 @@ export const SprintPlanning: React.FC = () => {
       }
     },
     [
+      canModifyBacklog,
       grabbedItemId,
       focusedItemIndex,
       filteredBacklogItems,
@@ -899,8 +1219,9 @@ export const SprintPlanning: React.FC = () => {
       return;
     }
 
-    // Readiness gate: the Sprint Backlog must be saved (persisted) before the sprint
-    // can be started. A Developers-only "Save Sprint Backlog" action persists the plan.
+    // Readiness gate: the Sprint Backlog must be persisted before the sprint can be
+    // started. Persistence happens either when a Developer explicitly saves the backlog
+    // or when a saved draft (read by any role) is hydrated into the plan.
     if (!backlogSaved) {
       showError(t('sprintPlanning.toast.saveBacklogFirst'));
       return;
@@ -1049,46 +1370,53 @@ export const SprintPlanning: React.FC = () => {
             <label htmlFor="sprint-select" className={styles['visually-hidden']}>
               {t('sprintPlanning.selectSprint')}
             </label>
-            <select
-              id="sprint-select"
-              data-testid="sprint-select"
-              className={styles['sprint-select']}
-              value={selectedSprintId ?? ''}
-              onChange={(e) => setSelectedSprintId(e.target.value || null)}
-              aria-describedby="sprint-select-hint"
-              disabled={generatedSprintsLoading}
-            >
-              <option value="">{t('sprintPlanning.selectSprint')}</option>
+            <div className={styles['sprint-select-wrapper']}>
+              <select
+                id="sprint-select"
+                data-testid="sprint-select"
+                className={styles['sprint-select']}
+                value={selectedSprintId ?? ''}
+                onChange={(e) => setSelectedSprintId(e.target.value || null)}
+                aria-describedby="sprint-select-hint"
+                disabled={generatedSprintsLoading}
+              >
+                <option value="">{t('sprintPlanning.selectSprint')}</option>
 
-              {categorizedSprints.current.length > 0 && (
-                <optgroup label={t('sprintPlanning.activeSprints')}>
-                  {categorizedSprints.current.map((sprint) => (
-                    <option key={sprint.id} value={sprint.id}>
-                      {formatSprintOptionLabel(sprint, t)}
-                    </option>
-                  ))}
-                </optgroup>
-              )}
-
-              {categorizedSprints.future.length > 0 && (
-                <optgroup label={t('sprintPlanning.upcomingSprints')}>
-                  {categorizedSprints.future.map((sprint) => (
-                    <option key={sprint.id} value={sprint.id}>
-                      {formatSprintOptionLabel(sprint, t)}
-                    </option>
-                  ))}
-                </optgroup>
-              )}
-
-              {categorizedSprints.current.length === 0 &&
-                categorizedSprints.future.length === 0 && (
-                  <optgroup label={t('sprintPlanning.noSprintsAvailable')}>
-                    <option disabled value="">
-                      {t('sprintPlanning.noSprintsHint')}
-                    </option>
+                {categorizedSprints.current.length > 0 && (
+                  <optgroup label={t('sprintPlanning.activeSprints')}>
+                    {categorizedSprints.current.map((sprint) => (
+                      <option key={sprint.id} value={sprint.id}>
+                        {formatSprintOptionLabel(sprint, t)}
+                      </option>
+                    ))}
                   </optgroup>
                 )}
-            </select>
+
+                {categorizedSprints.future.length > 0 && (
+                  <optgroup label={t('sprintPlanning.upcomingSprints')}>
+                    {categorizedSprints.future.map((sprint) => (
+                      <option key={sprint.id} value={sprint.id}>
+                        {formatSprintOptionLabel(sprint, t)}
+                      </option>
+                    ))}
+                  </optgroup>
+                )}
+
+                {categorizedSprints.current.length === 0 &&
+                  categorizedSprints.future.length === 0 && (
+                    <optgroup label={t('sprintPlanning.noSprintsAvailable')}>
+                      <option disabled value="">
+                        {t('sprintPlanning.noSprintsHint')}
+                      </option>
+                    </optgroup>
+                  )}
+              </select>
+              <ChevronDownIcon
+                size={18}
+                className={styles['sprint-select-chevron']}
+                aria-hidden="true"
+              />
+            </div>
             <span id="sprint-select-hint" className={styles['visually-hidden']}>
               {t('sprintPlanning.chooseSprint')}
             </span>
@@ -1292,16 +1620,19 @@ export const SprintPlanning: React.FC = () => {
                 return (
                   <div
                     key={item.id}
-                    className={`${styles['planning-item']} ${draggedItemId === item.id ? styles.dragging : ''} ${isFocused ? styles.focused : ''} ${isReady ? styles.ready : styles['not-ready']} ${isGrabbed ? styles.grabbed : ''}`}
-                    draggable
+                    className={`${styles['planning-item']} ${draggedItemId === item.id ? styles.dragging : ''} ${isFocused ? styles.focused : ''} ${isReady ? styles.ready : styles['not-ready']} ${isGrabbed ? styles.grabbed : ''} ${!canModifyBacklog ? styles.locked : ''}`}
+                    draggable={canModifyBacklog}
                     onDragStart={(e) => handleDragStart(e, item.id)}
                     onDragEnd={handleDragEnd}
-                    onClick={() => handleAddToSprint(item)}
-                    onKeyDown={(e) => handleKeyDown(e, item, index)}
+                    onClick={() => canModifyBacklog && handleAddToSprint(item)}
+                    onKeyDown={(e) => {
+                      if (!canModifyBacklog) return;
+                      handleKeyDown(e, item, index);
+                    }}
                     onFocus={() => setFocusedItemIndex(index)}
                     onBlur={() => setFocusedItemIndex(-1)}
                     role="option"
-                    tabIndex={0}
+                    tabIndex={canModifyBacklog ? 0 : -1}
                     aria-selected={isFocused}
                     aria-grabbed={isGrabbed ? 'true' : 'false'}
                     aria-roledescription="draggable backlog item"
@@ -1345,16 +1676,19 @@ export const SprintPlanning: React.FC = () => {
                         ))}
                       </div>
                     </div>
-                    <button
-                      className={styles['item-add-btn']}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleAddToSprint(item);
-                      }}
-                      aria-label={t('sprintPlanning.addItemAria', { title: item.title })}
-                    >
-                      {t('sprintPlanning.addToSprint')}
-                    </button>
+                    {isDeveloper && (
+                      <button
+                        className={styles['item-add-btn']}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleAddToSprint(item);
+                        }}
+                        disabled={lockedSprint}
+                        aria-label={t('sprintPlanning.addItemAria', { title: item.title })}
+                      >
+                        {t('sprintPlanning.addToSprint')}
+                      </button>
+                    )}
                   </div>
                 );
               })}
@@ -1372,14 +1706,16 @@ export const SprintPlanning: React.FC = () => {
           {/* Sprint Backlog */}
           <section
             ref={sprintBacklogRef}
-            className={`${styles['sprint-backlog']} ${!selectedSprintId ? styles.disabled : ''} ${isDraggingOver ? styles['drag-over'] : ''} ${grabbedItemId ? styles['drop-target-active'] : ''}`}
+            className={`${styles['sprint-backlog']} ${!selectedSprintId ? styles.disabled : ''} ${!canModifyBacklog ? styles['read-only'] : ''} ${isDraggingOver ? styles['drag-over'] : ''} ${grabbedItemId ? styles['drop-target-active'] : ''}`}
             onDrop={handleDrop}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onKeyDown={handleSprintBacklogKeyDown}
             aria-labelledby="sprint-backlog-title"
             role="region"
-            aria-dropeffect={grabbedItemId ? 'move' : isDraggingOver ? 'move' : 'none'}
+            aria-dropeffect={
+              canModifyBacklog && (grabbedItemId || isDraggingOver) ? 'move' : 'none'
+            }
           >
             <div className={styles['sprint-header']}>
               <h3 id="sprint-backlog-title">
@@ -1415,6 +1751,7 @@ export const SprintPlanning: React.FC = () => {
                         onClick={() => {
                           setShowSprintGoalModal(true);
                         }}
+                        disabled={lockedSprint}
                         aria-label={t('sprintPlanning.editSprintGoalAria')}
                       >
                         <EditIcon size={12} aria-hidden="true" />{' '}
@@ -1425,6 +1762,84 @@ export const SprintPlanning: React.FC = () => {
                       {/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- empty string should show No goal defined */}
                       {selectedSprint.sprintGoal || t('sprintPlanning.noGoalDefined')}
                     </div>
+                  </div>
+                )}
+
+                {draftStatus === 'loaded' && !lockedSprint && (
+                  <div
+                    className={`${styles['draft-status']} ${styles['draft-status-loaded']}`}
+                    role="status"
+                    aria-live="polite"
+                  >
+                    <span className={styles['draft-status-icon']} aria-hidden="true">
+                      <CheckCircleIcon size={16} />
+                    </span>
+                    {t('sprintPlanning.draftLoadedNotice')}
+                  </div>
+                )}
+
+                {draftStatus === 'none' && (
+                  <div
+                    className={`${styles['draft-status']} ${styles['draft-status-none']}`}
+                    role="note"
+                  >
+                    <span className={styles['draft-status-icon']} aria-hidden="true">
+                      <InfoIcon size={16} />
+                    </span>
+                    {t('sprintPlanning.draftNoneNotice')}
+                  </div>
+                )}
+
+                {draftStatus === 'failed' && (
+                  <div
+                    className={`${styles['draft-status']} ${styles['draft-status-failed']}`}
+                    role="alert"
+                  >
+                    <span className={styles['draft-status-icon']} aria-hidden="true">
+                      <AlertCircleIcon size={16} />
+                    </span>
+                    {t('sprintPlanning.draftFailedNotice')}
+                  </div>
+                )}
+
+                {draftConflicts.length > 0 && (
+                  <div
+                    className={`${styles['draft-status']} ${styles['draft-status-failed']}`}
+                    role="alert"
+                  >
+                    <span className={styles['draft-status-icon']} aria-hidden="true">
+                      <AlertCircleIcon size={16} />
+                    </span>
+                    <span>
+                      {t('sprintPlanning.draftConflictNotice')}{' '}
+                      {draftConflicts
+                        .map((c) => `${backlogTitleById.get(c.pbiId) ?? c.pbiId} (${c.sprintName})`)
+                        .join(', ')}
+                    </span>
+                  </div>
+                )}
+
+                {lockedSprint && (
+                  <div
+                    className={`${styles['draft-status']} ${styles['draft-status-locked']}`}
+                    role="note"
+                  >
+                    <span className={styles['draft-status-icon']} aria-hidden="true">
+                      <LockIcon size={16} />
+                    </span>
+                    {t('sprintPlanning.backlogLockedNotice')}
+                  </div>
+                )}
+
+                {!isDeveloper && (
+                  <div
+                    className={`${styles['draft-status']} ${styles['draft-status-readonly']}`}
+                    role="note"
+                  >
+                    <span className={styles['draft-status-icon']} aria-hidden="true">
+                      <LockIcon size={16} />
+                    </span>
+                    {t('sprintPlanning.backlogReadOnlyNotice')}
                   </div>
                 )}
 
@@ -1469,22 +1884,31 @@ export const SprintPlanning: React.FC = () => {
                     sprintBacklogItems.map((item, index) => (
                       <div
                         key={item.id}
-                        className={`${styles['sprint-item']} ${focusedItemIndex === index ? styles.focused : ''}`}
+                        className={`${styles['sprint-item']} ${focusedItemIndex === index ? styles.focused : ''} ${!canModifyBacklog ? styles.locked : ''}`}
                         role="listitem"
                         tabIndex={0}
                         onFocus={() => setFocusedItemIndex(index)}
                         onBlur={() => setFocusedItemIndex(-1)}
                         onKeyDown={(e) => {
+                          if (!canModifyBacklog) return;
                           if (e.key === 'Delete' || e.key === 'Backspace') {
                             e.preventDefault();
                             handleRemoveFromSprintWithAnnounce(item.id);
                           }
                         }}
-                        aria-label={t('sprintPlanning.sprintItemAria', {
-                          title: item.title,
-                          points: item.storyPoints ?? 0,
-                          taskCount: item.tasks.length,
-                        })}
+                        aria-label={
+                          canModifyBacklog
+                            ? t('sprintPlanning.sprintItemAria', {
+                                title: item.title,
+                                points: item.storyPoints ?? 0,
+                                taskCount: item.tasks.length,
+                              })
+                            : t('sprintPlanning.sprintItemReadOnlyAria', {
+                                title: item.title,
+                                points: item.storyPoints ?? 0,
+                                taskCount: item.tasks.length,
+                              })
+                        }
                       >
                         <div className={styles['sprint-item-header']}>
                           <div className={styles['sprint-item-info']}>
@@ -1494,14 +1918,19 @@ export const SprintPlanning: React.FC = () => {
                               {item.storyPoints ?? 0} {t('sprintPlanning.pts')}
                             </span>
                           </div>
-                          <button
-                            className={styles['remove-item-btn']}
-                            onClick={() => handleRemoveFromSprint(item.id)}
-                            title={t('sprintPlanning.removeFromSprint')}
-                            aria-label={t('sprintPlanning.removeItemAria', { title: item.title })}
-                          >
-                            <XIcon size={14} />
-                          </button>
+                          {canModifyBacklog && (
+                            <button
+                              className={styles['remove-item-btn']}
+                              onClick={() => handleRemoveFromSprint(item.id)}
+                              disabled={lockedSprint}
+                              title={t('sprintPlanning.removeFromSprint')}
+                              aria-label={t('sprintPlanning.removeItemAria', {
+                                title: item.title,
+                              })}
+                            >
+                              <XIcon size={14} />
+                            </button>
+                          )}
                         </div>
 
                         {/* Tasks for this item */}
@@ -1528,13 +1957,27 @@ export const SprintPlanning: React.FC = () => {
                                       e.target.value || undefined
                                     )
                                   }
+                                  disabled={
+                                    lockedSprint ||
+                                    // A task already claimed by another developer is read-only here;
+                                    // the assignee cannot be changed or cleared, so no DB update
+                                    // fires for it.
+                                    (task.assigneeId != null && task.assigneeId !== currentUser?.id)
+                                  }
                                   aria-label={t('sprintPlanning.taskAssigneeAria', {
                                     title: task.title,
                                   })}
                                 >
                                   <option value="">{t('sprintPlanning.unassigned')}</option>
+                                  {/* Keep all developers listed so that tasks already assigned to
+                                      others remain visible. A developer may only select themselves;
+                                      assigning to anyone else is prevented here and on the backend. */}
                                   {teamAvailability.map((member) => (
-                                    <option key={member.memberId} value={member.userId}>
+                                    <option
+                                      key={member.memberId}
+                                      value={member.userId}
+                                      disabled={member.userId !== currentUser?.id}
+                                    >
                                       {member.memberName}
                                     </option>
                                   ))}
@@ -1551,16 +1994,19 @@ export const SprintPlanning: React.FC = () => {
                                   </span>
                                 </div>
                               )}
-                              <button
-                                className={styles['remove-task-btn']}
-                                onClick={() => handleRemoveTask(item.id, task.id)}
-                                title={t('sprintPlanning.removeTaskTitle')}
-                                aria-label={t('sprintPlanning.removeTaskAria', {
-                                  title: task.title,
-                                })}
-                              >
-                                <XIcon size={12} />
-                              </button>
+                              {isDeveloper && (
+                                <button
+                                  className={styles['remove-task-btn']}
+                                  onClick={() => handleRemoveTask(item.id, task.id)}
+                                  disabled={lockedSprint}
+                                  title={t('sprintPlanning.removeTaskTitle')}
+                                  aria-label={t('sprintPlanning.removeTaskAria', {
+                                    title: task.title,
+                                  })}
+                                >
+                                  <XIcon size={12} />
+                                </button>
+                              )}
                             </div>
                           ))}
                           {isDeveloper && (
@@ -1570,6 +2016,7 @@ export const SprintPlanning: React.FC = () => {
                                 setSelectedItemForTask(item.id);
                                 setShowTaskModal(true);
                               }}
+                              disabled={lockedSprint}
                               aria-label={t('sprintPlanning.addTaskToItemAria', {
                                 title: item.title,
                               })}
@@ -1590,27 +2037,43 @@ export const SprintPlanning: React.FC = () => {
                       className={`${styles.button} ${styles['button-secondary']}`}
                       onClick={() => saveSprintBacklogMutation.mutate()}
                       disabled={
-                        sprintBacklogItems.length === 0 || saveSprintBacklogMutation.isPending
+                        lockedSprint ||
+                        sprintBacklogItems.length === 0 ||
+                        saveSprintBacklogMutation.isPending
                       }
                       aria-busy={saveSprintBacklogMutation.isPending}
+                      title={lockedSprint ? t('sprintPlanning.backlogLockedTitle') : undefined}
                     >
-                      {saveSprintBacklogMutation.isPending
-                        ? t('sprintPlanning.savingBacklog')
-                        : t('sprintPlanning.saveSprintBacklog')}
+                      {saveSprintBacklogMutation.isPending ? (
+                        t('sprintPlanning.savingBacklog')
+                      ) : (
+                        <>
+                          <SaveIcon size={14} aria-hidden="true" />
+                          {t('sprintPlanning.saveSprintBacklog')}
+                        </>
+                      )}
                     </button>
                   )}
+                  {/* The Start Sprint action is available to the whole team (PO/SM included)
+                      per the Scrum Guide; it is the single action that transitions the
+                      committed Sprint Backlog into execution. It stays disabled until the
+                      backlog has been persisted server-side (either hydrated from a saved
+                      draft or explicitly saved by a Developer). */}
                   <button
                     className={`${styles.button} ${styles['button-primary']}`}
                     onClick={handleStartSprint}
                     disabled={
+                      lockedSprint ||
                       sprintBacklogItems.length === 0 ||
                       !backlogSaved ||
                       startSprintMutation.isPending
                     }
                     title={
-                      sprintBacklogItems.length > 0 && !backlogSaved
-                        ? t('sprintPlanning.saveBacklogFirstHint')
-                        : undefined
+                      lockedSprint
+                        ? t('sprintPlanning.backlogLockedTitle')
+                        : sprintBacklogItems.length > 0 && !backlogSaved
+                          ? t('sprintPlanning.saveBacklogFirstHint')
+                          : undefined
                     }
                     aria-busy={startSprintMutation.isPending}
                   >
@@ -1638,6 +2101,7 @@ export const SprintPlanning: React.FC = () => {
           }}
           onSubmit={handleAddTask}
           teamMembers={teamAvailability}
+          currentUserId={currentUser?.id}
           itemTitle={
             selectedItemForTask
               ? sprintBacklogItems.find((item) => item.id === selectedItemForTask)?.title

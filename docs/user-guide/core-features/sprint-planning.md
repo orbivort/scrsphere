@@ -10,6 +10,7 @@ Sprint Planning is the ceremony where the Scrum Team defines the Sprint Goal and
 - [Capacity Planning](#capacity-planning)
 - [Selecting Backlog Items](#selecting-backlog-items)
 - [Defining the Sprint Goal](#defining-the-sprint-goal)
+- [Draft Persistence and Resume](#draft-persistence-and-resume)
 - [Starting the Sprint](#starting-the-sprint)
 - [Best Practices](#best-practices)
 
@@ -328,6 +329,28 @@ Before starting the sprint, verify:
 - Update task status on the board
 - Participate in Daily Scrum
 - Raise impediments immediately
+
+---
+
+## Draft Persistence and Resume
+
+Sprint Planning is a collaborative ceremony. To honor the Scrum Guide's principle that the **Sprint Backlog** is a persistent, highly-visible artifact owned by the Developers, Scrumooth **automatically saves your planning work** and lets you resume an interrupted session.
+
+### How It Works
+
+- **Incremental auto-save**: As you select backlog items, draft task assignments, or update the Sprint Goal, the planning state is saved to the server automatically (debounced). You do **not** need to remember to save before leaving.
+- **Resume on re-entry**: When you (or another Developer) open Sprint Planning for the same sprint again, the previously saved draft is loaded and pre-filled — selected items, their tasks, and the working Sprint Goal are restored so you can continue where you left off.
+- **Unload flush**: If you close the page or navigate away mid-planning, any pending changes are flushed so nothing is lost.
+
+### Shared and Collaborative
+
+Because the draft is stored server-side, it is **shared across the team**. Any Developer who opens the sprint sees the same plan. This reflects the Developers' collective selection and decomposition of the work, as Scrum expects.
+
+### Commit Remains Explicit
+
+Auto-save persists the **draft** only. Starting the Sprint remains the single, explicit commit action that transitions the sprint to **Active** and turns the draft into the committed Sprint Backlog used on the Sprint Board.
+
+> **Note**: Draft persistence is available to Developers. Other team members can view the plan, but only Developers can modify the sprint backlog draft.
 
 ---
 

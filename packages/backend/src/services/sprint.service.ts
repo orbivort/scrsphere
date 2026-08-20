@@ -83,6 +83,51 @@ export interface SaveSprintBacklogData {
   }>;
 }
 
+// Incremental Sprint Planning draft payload (selected PBIs, decomposed tasks,
+// working Sprint Goal, and optional capacity). Saved server-side so an interrupted
+// planning event can be resumed by the Developers.
+export interface SaveSprintPlanningDraftData {
+  items?: Array<{ pbiId: string }>;
+  tasks?: Array<{
+    id?: string;
+    pbiId: string;
+    title: string;
+    description?: string;
+    assigneeId?: string | null;
+    estimatedHours?: number;
+    remainingHours?: number;
+  }>;
+  sprintGoal?: string;
+  capacity?: Array<{
+    memberId: string;
+    userId: string;
+    availableHours: number;
+  }>;
+}
+
+// Loaded Sprint Planning draft returned to the frontend for resume.
+export interface SprintPlanningDraft {
+  sprintId: string | null;
+  sprintGoal: string | null;
+  items: Array<{ pbiId: string }>;
+  tasks: Array<{
+    id: string;
+    pbiId: string;
+    title: string;
+    description: string | null;
+    assigneeId: string | null;
+    estimatedHours: number | null;
+    remainingHours: number | null;
+  }>;
+  capacity: Array<{
+    memberId: string;
+    userId: string;
+    availableHours: number;
+  }>;
+  /** PBIs selected in this draft that are already committed to another non-draft sprint. */
+  conflicts: Array<{ pbiId: string; sprintName: string }>;
+}
+
 export interface SprintStartResult {
   sprint: Sprint;
   rollbackData: {
@@ -370,7 +415,9 @@ class SprintService {
       sprint = { id: converted.id, teamId: converted.teamId, status: converted.status };
     }
 
-    if (sprint.status !== 'PLANNED') {
+    // A backlog can be saved while the sprint is still being planned (`DRAFT` or `PLANNED`).
+    // Once a sprint is ACTIVE/COMPLETED/CANCELLED it is no longer being planned.
+    if (sprint.status !== 'DRAFT' && sprint.status !== 'PLANNED') {
       throw new BadRequestError(requestT('errors:sprint.notPlanned'));
     }
 
@@ -405,7 +452,13 @@ class SprintService {
     const result = await withTransaction(async (tx) => {
       // Idempotent replace: clear the existing draft for this sprint, then re-create.
       await tx.sprintBacklogItem.deleteMany({ where: { sprintId: resolvedSprintId } });
-      await tx.task.deleteMany({ where: { sprintId: resolvedSprintId } });
+
+      // Preserve tasks already claimed by other developers: this Developer's save may only
+      // recreate unassigned tasks and their own tasks. Without this guard, replacing the
+      // whole draft here would silently discard another Developer's self-assigned work.
+      await tx.task.deleteMany({
+        where: { sprintId: resolvedSprintId, OR: [{ assigneeId: null }, { assigneeId: userId }] },
+      });
 
       const backlogItemData = items.map((item) => ({
         id: generateUUIDv7(),
@@ -446,6 +499,355 @@ class SprintService {
   }
 
   /**
+   * Save (incrementally) the Sprint Planning draft. Differs from `saveSprintBacklog`:
+   * - materializes a real `Sprint` as `DRAFT` on the first save of a planning session
+   * - accepts `status ∈ {DRAFT, PLANNED}` so a resumed draft can be re-saved
+   * - upserts selected backlog items, decomposed tasks, the working Sprint Goal, and
+   *   optional capacity atomically in one transaction
+   * The Developers own the Sprint Backlog (Scrum Guide), so this is Developers-only,
+   * self-assignment-only, and every task's PBI must be in the selected backlog.
+   */
+  async saveSprintPlanningDraft(
+    sprintId: string,
+    userId: string,
+    data?: SaveSprintPlanningDraftData
+  ): Promise<{ sprintId: string; sprintGoal: string | null }> {
+    let sprint = await prisma.sprint.findUnique({
+      where: { id: sprintId },
+      select: { id: true, teamId: true, status: true, sprintGoal: true },
+    });
+
+    if (!sprint) {
+      const generatedSprint = await prisma.generatedSprint.findUnique({
+        where: { id: sprintId },
+      });
+
+      if (!generatedSprint) {
+        throw new NotFoundError('Sprint');
+      }
+
+      const converted = await this.convertGeneratedSprintToSprint(generatedSprint, userId, 'DRAFT');
+      sprint = {
+        id: converted.id,
+        teamId: converted.teamId,
+        status: converted.status,
+        sprintGoal: converted.sprintGoal,
+      };
+    }
+
+    if (sprint.status !== 'DRAFT' && sprint.status !== 'PLANNED') {
+      throw new BadRequestError(requestT('errors:sprint.notPlanned'));
+    }
+
+    // DEVELOPERS-only: the Scrum Team's Developers select and decompose the work.
+    await this.assertDeveloperRole(sprint.teamId, userId);
+
+    const items = data?.items ?? [];
+    const tasks = data?.tasks ?? [];
+
+    // Validate self-assignment for every provided task assignment.
+    for (const task of tasks) {
+      await this.assertSelfAssignmentAllowed(sprint.teamId, userId, task.assigneeId ?? null);
+    }
+
+    // Reject any task that references a PBI not part of the selected backlog.
+    const selectedPbiIds = new Set(items.map((item) => item.pbiId));
+    for (const task of tasks) {
+      if (task.pbiId && !selectedPbiIds.has(task.pbiId)) {
+        throw new BadRequestError(requestT('validation:task.pbiNotInBacklog'));
+      }
+    }
+
+    // Layer 2 — Selection-time conflict: a PBI that is already committed to another
+    // non-draft (ACTIVE/PLANNED/COMPLETED) sprint cannot be added to this planning draft.
+    // PBIs shared across multiple DRAFT sprints remain allowed (planning reconsideration).
+    if (selectedPbiIds.size > 0) {
+      const committed = await prisma.sprintBacklogItem.findMany({
+        where: {
+          pbiId: { in: [...selectedPbiIds] },
+          sprint: {
+            teamId: sprint.teamId,
+            id: { not: sprint.id },
+            status: { in: ['ACTIVE', 'PLANNED', 'COMPLETED'] },
+          },
+        },
+        select: {
+          pbi: { select: { title: true } },
+          sprint: { select: { name: true } },
+        },
+        take: 1,
+      });
+
+      if (committed.length > 0) {
+        throw new BadRequestError(
+          requestT('errors:sprint.pbiAlreadyCommitted', {
+            pbiTitle: committed[0]?.pbi.title ?? '',
+            sprintName: committed[0]?.sprint.name ?? '',
+          })
+        );
+      }
+    }
+
+    const transactionOptions: TransactionOptions = {
+      ...TRANSACTION_CONFIG.DEFAULT,
+      operationName: 'saveSprintPlanningDraft',
+    };
+
+    const resolvedSprintId = sprint.id;
+    const sprintGoal = data?.sprintGoal ?? sprint.sprintGoal ?? null;
+
+    await withTransaction(async (tx) => {
+      // Update the working Sprint Goal (the "why" of the Sprint).
+      if (data?.sprintGoal !== undefined) {
+        await tx.sprint.update({
+          where: { id: resolvedSprintId },
+          data: { sprintGoal: data.sprintGoal || null },
+        });
+      }
+
+      // Ensure the sprint stays marked as an in-progress draft (never ACTIVE here).
+      if (sprint.status === 'PLANNED') {
+        await tx.sprint.update({
+          where: { id: resolvedSprintId },
+          data: { status: 'DRAFT' },
+        });
+      }
+
+      // Upsert selected backlog items: delete removed, create added, keep unchanged.
+      const existingBacklogItems = await tx.sprintBacklogItem.findMany({
+        where: { sprintId: resolvedSprintId },
+        select: { pbiId: true },
+      });
+      const existingPbiSet = new Set(existingBacklogItems.map((b) => b.pbiId));
+      const incomingPbiSet = new Set(items.map((i) => i.pbiId));
+
+      const toCreate = items.filter((i) => !existingPbiSet.has(i.pbiId));
+      const toDeletePbiIds = Array.from(existingPbiSet).filter((p) => !incomingPbiSet.has(p));
+
+      if (toCreate.length > 0) {
+        await tx.sprintBacklogItem.createMany({
+          data: toCreate.map((item) => ({
+            id: generateUUIDv7(),
+            sprintId: resolvedSprintId,
+            pbiId: item.pbiId,
+            createdBy: userId,
+          })),
+        });
+      }
+      if (toDeletePbiIds.length > 0) {
+        await tx.sprintBacklogItem.deleteMany({
+          where: { sprintId: resolvedSprintId, pbiId: { in: toDeletePbiIds } },
+        });
+      }
+
+      // Upsert tasks: preserve stable task IDs, create new, update changed, delete removed.
+      // A PBI can legitimately hold multiple decomposed tasks, so tasks are matched by their
+      // own id (or, for freshly added tasks that only carry a temporary client id, by their
+      // pbiId+title) rather than by pbiId alone. Keying by pbiId collapsed every task of a
+      // multi-task PBI onto a single row and silently dropped the remaining ones.
+      const existingTasks = await tx.task.findMany({
+        where: { sprintId: resolvedSprintId },
+        select: { id: true, pbiId: true, title: true, assigneeId: true },
+      });
+      const existingTaskById = new Map(existingTasks.map((t) => [t.id, t]));
+      const existingTaskByPbiTitle = new Map(
+        existingTasks.map((t) => [`${t.pbiId}::${t.title}`, t])
+      );
+
+      // Whole-PBI removal: drop every task of a PBI that is no longer selected.
+      // Membership is driven by the selected backlog items, NOT by the incoming task list.
+      // The task payload only carries unassigned tasks and the acting developer's own tasks
+      // (other developers' tasks are filtered out client-side by getPersistableTasks). If a
+      // selected PBI's tasks are ALL owned by other developers, it would have no tasks in the
+      // payload and deriving membership from `tasks` here would wrongly delete every task of
+      // that PBI on each save, silently erasing another developer's decomposition work.
+      const incomingPbiIds = new Set(items.map((item) => item.pbiId));
+      const taskToDeletePbiIds = Array.from(new Set(existingTasks.map((t) => t.pbiId))).filter(
+        (p) => !incomingPbiIds.has(p)
+      );
+      if (taskToDeletePbiIds.length > 0) {
+        await tx.task.deleteMany({
+          where: { sprintId: resolvedSprintId, pbiId: { in: taskToDeletePbiIds } },
+        });
+      }
+
+      const matchedTaskIds = new Set<string>();
+      for (const task of tasks) {
+        // 1) Match by a stable persisted id when the client sends one.
+        const byId = task.id ? existingTaskById.get(task.id) : undefined;
+        // 2) Freshly added tasks carry a temporary client id (stripped before sending); match
+        //    them to an existing row of the same PBI with the same title so repeated auto-saves
+        //    update it instead of duplicating it.
+        const byPbiTitle = byId
+          ? undefined
+          : existingTaskByPbiTitle.get(`${task.pbiId}::${task.title}`);
+        const existing = byId ?? byPbiTitle;
+
+        if (existing) {
+          matchedTaskIds.add(existing.id);
+          await tx.task.update({
+            where: { id: existing.id },
+            data: {
+              title: task.title,
+              description: task.description,
+              assigneeId: task.assigneeId ?? null,
+              estimatedHours: task.estimatedHours,
+              remainingHours: task.remainingHours ?? task.estimatedHours,
+              updatedBy: userId,
+            },
+          });
+        } else {
+          await tx.task.create({
+            data: {
+              id: generateUUIDv7(),
+              sprintId: resolvedSprintId,
+              pbiId: task.pbiId,
+              title: task.title,
+              description: task.description,
+              assigneeId: task.assigneeId ?? null,
+              estimatedHours: task.estimatedHours,
+              remainingHours: task.remainingHours ?? task.estimatedHours,
+              status: 'TODO' as TaskStatus,
+              createdBy: userId,
+            },
+          });
+        }
+      }
+
+      // Individual-task removal: delete the acting developer's (or unassigned) tasks that are
+      // no longer present in the incoming list, without touching tasks claimed by another
+      // Developer (those are read-only here and excluded from the save payload).
+      const staleOwnTasks = existingTasks.filter(
+        (t) =>
+          !matchedTaskIds.has(t.id) &&
+          incomingPbiIds.has(t.pbiId) &&
+          (t.assigneeId === null || t.assigneeId === userId)
+      );
+      if (staleOwnTasks.length > 0) {
+        await tx.task.deleteMany({
+          where: { sprintId: resolvedSprintId, id: { in: staleOwnTasks.map((t) => t.id) } },
+        });
+      }
+
+      // Persist optional capacity. No dedicated table exists; store as audit-friendly
+      // metadata on the sprint is not possible, so capacity is intentionally carried in
+      // the returned draft payload and not persisted beyond this point (see Open Questions).
+    }, transactionOptions);
+
+    return { sprintId: resolvedSprintId, sprintGoal };
+  }
+
+  /**
+   * Load an existing Sprint Planning draft (selected backlog items, tasks, capacity, and
+   * working Sprint Goal) for a Sprint id. Returns an empty draft when none exists. This is
+   * read-only and open to any authenticated team member (transparency), so no role gate here.
+   */
+  async getSprintPlanningDraft(sprintId: string): Promise<SprintPlanningDraft> {
+    const emptyDraft = (): SprintPlanningDraft => ({
+      sprintId: null,
+      sprintGoal: null,
+      items: [],
+      tasks: [],
+      capacity: [],
+      conflicts: [],
+    });
+
+    let sprint = await prisma.sprint.findUnique({
+      where: { id: sprintId },
+      select: {
+        id: true,
+        teamId: true,
+        status: true,
+        sprintGoal: true,
+      },
+    });
+
+    // The frontend selects sprints by GeneratedSprint id. When a draft was saved, the
+    // GeneratedSprint was materialized into a real Sprint row with a NEW id, linked back
+    // via GeneratedSprint.sprintId. Resolve that link so resume finds the saved draft.
+    if (!sprint) {
+      const generatedSprint = await prisma.generatedSprint.findUnique({
+        where: { id: sprintId },
+        select: { sprintId: true },
+      });
+      const materializedId = generatedSprint?.sprintId;
+      if (materializedId) {
+        sprint = await prisma.sprint.findUnique({
+          where: { id: materializedId },
+          select: {
+            id: true,
+            teamId: true,
+            status: true,
+            sprintGoal: true,
+          },
+        });
+      }
+    }
+
+    // No materialized Sprint yet -> no draft to resume.
+    if (!sprint) {
+      return emptyDraft();
+    }
+
+    const [backlogItems, tasks] = await Promise.all([
+      prisma.sprintBacklogItem.findMany({
+        where: { sprintId: sprint.id },
+        select: { pbiId: true },
+      }),
+      prisma.task.findMany({
+        where: { sprintId: sprint.id },
+        select: {
+          id: true,
+          pbiId: true,
+          title: true,
+          description: true,
+          assigneeId: true,
+          estimatedHours: true,
+          remainingHours: true,
+        },
+      }),
+    ]);
+
+    const committedConflicts =
+      backlogItems.length > 0
+        ? await prisma.sprintBacklogItem.findMany({
+            where: {
+              pbiId: { in: backlogItems.map((item) => item.pbiId) },
+              sprint: {
+                teamId: sprint.teamId,
+                id: { not: sprint.id },
+                status: { in: ['ACTIVE', 'PLANNED', 'COMPLETED'] },
+              },
+            },
+            select: {
+              pbi: { select: { id: true, title: true } },
+              sprint: { select: { name: true } },
+            },
+          })
+        : [];
+
+    return {
+      sprintId: sprint.id,
+      sprintGoal: sprint.sprintGoal ?? null,
+      items: backlogItems,
+      tasks: tasks.map((task) => ({
+        id: task.id,
+        pbiId: task.pbiId,
+        title: task.title,
+        description: task.description,
+        assigneeId: task.assigneeId,
+        estimatedHours: task.estimatedHours,
+        remainingHours: task.remainingHours,
+      })),
+      capacity: [],
+      conflicts: committedConflicts.map((item) => ({
+        pbiId: item.pbi.id,
+        sprintName: item.sprint.name,
+      })),
+    };
+  }
+
+  /**
    * Start sprint with comprehensive transaction management
    * All database operations are atomic - either all succeed or all fail
    * Includes rollback data capture for error recovery
@@ -467,7 +869,9 @@ class SprintService {
       }
     }
 
-    if (sprint.status !== 'PLANNED') {
+    // A sprint can be started from either a committed `PLANNED` state or an in-progress
+    // `DRAFT` produced during Sprint Planning; `ACTIVE`/`COMPLETED`/`CANCELLED` cannot.
+    if (sprint.status !== 'DRAFT' && sprint.status !== 'PLANNED') {
       throw new BadRequestError(requestT('errors:sprint.notPlanned'));
     }
 
@@ -511,6 +915,34 @@ class SprintService {
 
     const pbiIds = savedBacklog.map((item) => item.pbiId);
 
+    // Layer 1 — Commit-time exclusivity: a Product Backlog Item can be committed to at most
+    // one sprint at a time. Reject the start if any of this sprint's PBIs is already in
+    // another non-draft (committed) sprint's backlog. PBIs shared across multiple DRAFT
+    // sprints are allowed (planning reconsideration), but committing must be exclusive.
+    if (pbiIds.length > 0) {
+      const conflictingItems = await prisma.sprintBacklogItem.findMany({
+        where: {
+          pbiId: { in: pbiIds },
+          sprint: {
+            teamId: sprint.teamId,
+            id: { not: sprint.id },
+            status: { in: ['ACTIVE', 'PLANNED', 'COMPLETED'] },
+          },
+        },
+        select: {
+          pbi: { select: { id: true, title: true } },
+          sprint: { select: { name: true } },
+        },
+      });
+
+      if (conflictingItems.length > 0) {
+        const items = conflictingItems
+          .map((item) => `"${item.pbi.title}" (${item.sprint.name})`)
+          .join(', ');
+        throw new BadRequestError(requestT('errors:sprint.pbiConflictAtStart', { items }));
+      }
+    }
+
     const transactionOptions: TransactionOptions = {
       ...TRANSACTION_CONFIG.START_SPRINT,
       operationName: 'startSprint',
@@ -523,6 +955,41 @@ class SprintService {
         where: { id: currentSprintId },
         data: { status: 'ACTIVE' },
       });
+
+      // Keep the linked GeneratedSprint status in sync (the record the frontend reads for
+      // status) so the Sprint Planning selector marks the active sprint as read-only/locked.
+      await tx.generatedSprint.updateMany({
+        where: { sprintId: currentSprintId },
+        data: { status: 'ACTIVE' },
+      });
+
+      // Layer 3 — Auto-clean stale drafts: these PBIs are now committed to this sprint, so
+      // remove them from any other sprint's DRAFT backlog (and their orphaned draft tasks).
+      // This keeps the Sprint Backlog artifacts coherent: a committed PBI must not remain in
+      // a future planning draft.
+      if (pbiIds.length > 0) {
+        const staleDraftItems = await tx.sprintBacklogItem.findMany({
+          where: {
+            pbiId: { in: pbiIds },
+            sprint: {
+              id: { not: currentSprintId },
+              status: 'DRAFT',
+            },
+          },
+          select: { id: true, sprintId: true },
+        });
+
+        if (staleDraftItems.length > 0) {
+          const staleItemIds = staleDraftItems.map((item) => item.id);
+          const staleSprintIds = [...new Set(staleDraftItems.map((item) => item.sprintId))];
+          await tx.sprintBacklogItem.deleteMany({
+            where: { id: { in: staleItemIds } },
+          });
+          await tx.task.deleteMany({
+            where: { sprintId: { in: staleSprintIds }, pbiId: { in: pbiIds } },
+          });
+        }
+      }
 
       // Move every saved backlog PBI to IN_PROGRESS (no task creation happens here —
       // tasks were already persisted by `saveSprintBacklog` during planning).
@@ -604,6 +1071,11 @@ class SprintService {
       async (tx) => {
         await tx.sprint.update({
           where: { id: sprintId },
+          data: { status: 'PLANNED' },
+        });
+
+        await tx.generatedSprint.updateMany({
+          where: { sprintId },
           data: { status: 'PLANNED' },
         });
 
@@ -732,7 +1204,8 @@ class SprintService {
    */
   private async convertGeneratedSprintToSprint(
     generatedSprint: GeneratedSprint,
-    userId?: string
+    userId?: string,
+    status: 'DRAFT' | 'PLANNED' = 'PLANNED'
   ): Promise<Sprint> {
     if (generatedSprint.sprintId) {
       const existingSprint = await prisma.sprint.findUnique({
@@ -765,7 +1238,7 @@ class SprintService {
         endDate: generatedSprint.endDate,
         sprintGoal: generatedSprint.sprintGoal,
         goalId: activeGoal?.id ?? null,
-        status: 'PLANNED',
+        status,
         createdBy: creatorId,
       },
     });
@@ -881,6 +1354,14 @@ class SprintService {
 
         const sprint = await tx.sprint.update({
           where: { id: sprintId },
+          data: { status: 'COMPLETED' },
+        });
+
+        // Keep the linked GeneratedSprint status in sync so the Sprint Planning selector
+        // and other consumers see the real lifecycle state (the GeneratedSprint is the
+        // record the frontend reads for status, not the materialized Sprint).
+        await tx.generatedSprint.updateMany({
+          where: { sprintId },
           data: { status: 'COMPLETED' },
         });
 

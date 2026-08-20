@@ -65,6 +65,53 @@ class SprintService {
     return response;
   }
 
+  /**
+   * Save the Sprint Planning draft incrementally (Developers-only).
+   */
+  async saveSprintPlanningDraft(
+    id: string,
+    data: {
+      items?: Array<{ pbiId: string }>;
+      tasks?: Array<{
+        id?: string;
+        pbiId: string;
+        title: string;
+        description?: string;
+        assigneeId?: string | null;
+        estimatedHours?: number;
+        remainingHours?: number;
+      }>;
+      sprintGoal?: string;
+    }
+  ): Promise<ApiResponse<{ sprintId: string; sprintGoal: string | null }>> {
+    const { data: response } = await this.api.put(`/sprints/${id}/backlog/draft`, data);
+    return response;
+  }
+
+  /**
+   * Load an existing Sprint Planning draft for resume (read-only, any authenticated team member).
+   */
+  async getSprintPlanningDraft(id: string): Promise<
+    ApiResponse<{
+      sprintId: string | null;
+      sprintGoal: string | null;
+      items: Array<{ pbiId: string }>;
+      tasks: Array<{
+        id: string;
+        pbiId: string;
+        title: string;
+        description: string | null;
+        assigneeId: string | null;
+        estimatedHours: number | null;
+        remainingHours: number | null;
+      }>;
+      conflicts: Array<{ pbiId: string; sprintName: string }>;
+    }>
+  > {
+    const { data: response } = await this.api.get(`/sprints/${id}/planning-draft`);
+    return response;
+  }
+
   async rollbackSprintStart(
     id: string,
     rollbackData: {

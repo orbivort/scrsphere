@@ -342,7 +342,7 @@ describe('E2E: Sprint Management', () => {
       const email = `start-sprint-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { team } = await setupTeamWithUser(email, ROLES.SCRUM_MASTER);
+      const { team, user } = await setupTeamWithUser(email, ROLES.SCRUM_MASTER);
 
       const sprint = await createTestSprintInDb(
         team.id,
@@ -355,6 +355,16 @@ describe('E2E: Sprint Management', () => {
         PBI_STATUSES.READY
       );
 
+      // The Sprint Backlog must be saved before the sprint can start.
+      await prisma.sprintBacklogItem.create({
+        data: {
+          id: generateTestUUID(),
+          sprintId: sprint.id,
+          pbiId: pbi.id,
+          createdBy: user.id,
+        },
+      });
+
       const cookies = await loginAndGetCookies(email);
       const { csrfToken } = extractCsrfFromCookies(cookies);
 
@@ -362,9 +372,7 @@ describe('E2E: Sprint Management', () => {
         .post(`/api/v1/sprints/${sprint.id}/start`)
         .set('Cookie', cookies)
         .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
-        .send({
-          backlogItems: [{ pbiId: pbi.id }],
-        })
+        .send({})
         .expect(HTTP_STATUS.OK);
 
       expect(response.body.success).toBe(true);

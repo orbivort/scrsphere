@@ -114,7 +114,11 @@ vi.mock('../../../utils/dbTransaction', () => ({
         findUnique: vi.fn(),
         update: vi.fn(),
       },
+      generatedSprint: {
+        updateMany: vi.fn(),
+      },
       sprintBacklogItem: {
+        findMany: vi.fn().mockResolvedValue([]),
         createMany: vi.fn(),
       },
       productBacklogItem: {
@@ -326,7 +330,9 @@ describe('SprintService', () => {
 
       (prisma.sprint.findUnique as any).mockResolvedValue(mockSprint);
       (prisma.sprint.findFirst as any).mockResolvedValue(null);
-      (prisma.sprintBacklogItem.findMany as any).mockResolvedValue([{ pbiId: 'pbi-1' }]);
+      (prisma.sprintBacklogItem.findMany as any)
+        .mockResolvedValueOnce([{ pbiId: 'pbi-1' }])
+        .mockResolvedValueOnce([]);
       (prisma.task.findMany as any).mockResolvedValue([{ estimatedHours: 8 }]);
 
       const mockUpdatedSprint = { ...mockSprint, status: 'ACTIVE' };
@@ -336,7 +342,11 @@ describe('SprintService', () => {
             findUnique: vi.fn().mockResolvedValue(mockSprint),
             update: vi.fn().mockResolvedValue(mockUpdatedSprint),
           },
+          generatedSprint: {
+            updateMany: vi.fn(),
+          },
           sprintBacklogItem: {
+            findMany: vi.fn().mockResolvedValue([]),
             createMany: vi.fn(),
           },
           productBacklogItem: {
@@ -369,6 +379,69 @@ describe('SprintService', () => {
 
       expect(result.status).toBe('ACTIVE');
       expect(prisma.sprintBacklogItem.findMany).toHaveBeenCalled();
+    });
+
+    it('should start a sprint from the DRAFT planning state', async () => {
+      const mockSprint = {
+        id: 'sprint-1',
+        teamId: 'team-1',
+        name: 'Sprint 1',
+        status: 'DRAFT',
+        startDate: new Date(),
+        endDate: new Date(),
+        sprintGoal: 'Goal',
+      };
+
+      (prisma.sprint.findUnique as any).mockResolvedValue(mockSprint);
+      (prisma.sprint.findFirst as any).mockResolvedValue(null);
+      (prisma.sprintBacklogItem.findMany as any)
+        .mockResolvedValueOnce([{ pbiId: 'pbi-1' }])
+        .mockResolvedValueOnce([]);
+      (prisma.task.findMany as any).mockResolvedValue([{ estimatedHours: 8 }]);
+
+      const mockUpdatedSprint = { ...mockSprint, status: 'ACTIVE' };
+      (withTransaction as any).mockImplementation(async (callback: any) => {
+        return callback({
+          sprint: {
+            findUnique: vi.fn().mockResolvedValue(mockSprint),
+            update: vi.fn().mockResolvedValue(mockUpdatedSprint),
+          },
+          generatedSprint: {
+            updateMany: vi.fn(),
+          },
+          sprintBacklogItem: {
+            findMany: vi.fn().mockResolvedValue([]),
+            createMany: vi.fn(),
+          },
+          productBacklogItem: {
+            update: vi.fn(),
+            updateMany: vi.fn(),
+          },
+          task: {
+            createMany: vi.fn(),
+          },
+          burndownData: {
+            deleteMany: vi.fn(),
+            createMany: vi.fn(),
+          },
+          workflow: {
+            findFirst: vi.fn(),
+          },
+          workflowState: {
+            findMany: vi.fn(),
+          },
+          statusChangeHistory: {
+            create: vi.fn(),
+          },
+          user: {
+            findMany: vi.fn().mockResolvedValue([]),
+          },
+        });
+      });
+
+      const result = await sprintService.startSprint('sprint-1', 'user-1');
+
+      expect(result.status).toBe('ACTIVE');
     });
 
     it('should throw BadRequestError when the sprint backlog has not been saved', async () => {
@@ -423,7 +496,9 @@ describe('SprintService', () => {
       (prisma.generatedSprint.update as any).mockResolvedValue(mockGeneratedSprint);
       (prisma.burndownData.createMany as any).mockResolvedValue({ count: 0 });
       (prisma.burndownData.findMany as any).mockResolvedValue([]);
-      (prisma.sprintBacklogItem.findMany as any).mockResolvedValue([{ pbiId: 'pbi-1' }]);
+      (prisma.sprintBacklogItem.findMany as any)
+        .mockResolvedValueOnce([{ pbiId: 'pbi-1' }])
+        .mockResolvedValueOnce([]);
       (prisma.task.findMany as any).mockResolvedValue([]);
 
       await sprintService.startSprint('gen-1', 'user-1');
@@ -474,7 +549,9 @@ describe('SprintService', () => {
 
       (prisma.sprint.findUnique as any).mockResolvedValue(mockSprint);
       (prisma.sprint.findFirst as any).mockResolvedValue({ id: 'active-sprint' });
-      (prisma.sprintBacklogItem.findMany as any).mockResolvedValue([{ pbiId: 'pbi-1' }]);
+      (prisma.sprintBacklogItem.findMany as any)
+        .mockResolvedValueOnce([{ pbiId: 'pbi-1' }])
+        .mockResolvedValueOnce([]);
 
       await expect(sprintService.startSprint('sprint-1', 'user-1')).rejects.toThrow(
         BadRequestError
@@ -538,6 +615,9 @@ describe('SprintService', () => {
         return callback({
           sprint: {
             update: vi.fn().mockResolvedValue(mockCompletedSprint),
+          },
+          generatedSprint: {
+            updateMany: vi.fn(),
           },
           productBacklogItem: {
             updateMany: vi.fn(),
@@ -1229,7 +1309,9 @@ describe('SprintService - Additional Coverage', () => {
       (prisma.productBacklogItem.findMany as any).mockResolvedValue([mockPBI]);
       (prisma.workflow.findFirst as any).mockResolvedValue(mockWorkflow);
       (prisma.workflowState.findMany as any).mockResolvedValue(mockStates);
-      (prisma.sprintBacklogItem.findMany as any).mockResolvedValue([{ pbiId: 'pbi-1' }]);
+      (prisma.sprintBacklogItem.findMany as any)
+        .mockResolvedValueOnce([{ pbiId: 'pbi-1' }])
+        .mockResolvedValueOnce([]);
       (prisma.task.findMany as any).mockResolvedValue([]);
 
       const mockUpdatedSprint = { ...mockSprint, status: 'ACTIVE' };
@@ -1239,7 +1321,11 @@ describe('SprintService - Additional Coverage', () => {
             findUnique: vi.fn().mockResolvedValue(mockSprint),
             update: vi.fn().mockResolvedValue(mockUpdatedSprint),
           },
+          generatedSprint: {
+            updateMany: vi.fn(),
+          },
           sprintBacklogItem: {
+            findMany: vi.fn().mockResolvedValue([]),
             createMany: vi.fn(),
           },
           productBacklogItem: {
@@ -1294,7 +1380,9 @@ describe('SprintService - Additional Coverage', () => {
       (prisma.sprint.findUnique as any).mockResolvedValue(mockSprint);
       (prisma.sprint.findFirst as any).mockResolvedValue(null);
       (prisma.productBacklogItem.findMany as any).mockResolvedValue([]);
-      (prisma.sprintBacklogItem.findMany as any).mockResolvedValue([{ pbiId: 'pbi-1' }]);
+      (prisma.sprintBacklogItem.findMany as any)
+        .mockResolvedValueOnce([{ pbiId: 'pbi-1' }])
+        .mockResolvedValueOnce([]);
       (prisma.task.findMany as any).mockResolvedValue([{ estimatedHours: 8 }]);
 
       const mockUpdatedSprint = { ...mockSprint, status: 'ACTIVE' };
@@ -1304,7 +1392,11 @@ describe('SprintService - Additional Coverage', () => {
             findUnique: vi.fn().mockResolvedValue(mockSprint),
             update: vi.fn().mockResolvedValue(mockUpdatedSprint),
           },
+          generatedSprint: {
+            updateMany: vi.fn(),
+          },
           sprintBacklogItem: {
+            findMany: vi.fn().mockResolvedValue([]),
             createMany: vi.fn(),
           },
           productBacklogItem: {
@@ -1455,6 +1547,9 @@ describe('SprintService - Additional Coverage', () => {
           sprint: {
             update: vi.fn().mockResolvedValue(mockCompletedSprint),
           },
+          generatedSprint: {
+            updateMany: vi.fn(),
+          },
           productBacklogItem: {
             updateMany: vi.fn(),
           },
@@ -1594,6 +1689,9 @@ describe('SprintService - Additional Coverage', () => {
         return callback({
           sprint: {
             update: vi.fn().mockResolvedValue(mockCompletedSprint),
+          },
+          generatedSprint: {
+            updateMany: vi.fn(),
           },
           productBacklogItem: {
             updateMany: updateManyMock,
@@ -2065,6 +2163,349 @@ describe('SprintService - Additional Coverage', () => {
     });
   });
 
+  describe('saveSprintPlanningDraft', () => {
+    it('should materialize a GeneratedSprint as DRAFT and upsert backlog, tasks, and goal', async () => {
+      const mockGeneratedSprint = {
+        id: 'gen-1',
+        teamId: 'team-1',
+        name: 'Sprint 1',
+        startDate: new Date('2024-01-01'),
+        endDate: new Date('2024-01-14'),
+        sprintGoal: 'Goal',
+        status: 'PLANNED',
+        createdBy: 'system',
+        sprintId: null,
+      };
+      const mockConvertedSprint = {
+        id: 'sprint-real-1',
+        teamId: 'team-1',
+        name: 'Sprint 1',
+        startDate: new Date('2024-01-01'),
+        endDate: new Date('2024-01-14'),
+        sprintGoal: 'Goal',
+        goalId: null,
+        status: 'DRAFT',
+        createdBy: 'system',
+      };
+
+      (prisma.sprint.findUnique as any).mockResolvedValueOnce(null); // no real Sprint yet
+      (prisma.generatedSprint.findUnique as any).mockResolvedValueOnce(mockGeneratedSprint);
+      (prisma.productGoal.findFirst as any).mockResolvedValueOnce(null);
+      (prisma.sprint.create as any).mockResolvedValue(mockConvertedSprint);
+      (prisma.generatedSprint.update as any).mockResolvedValue(mockGeneratedSprint);
+      (prisma.burndownData.createMany as any).mockResolvedValue({ count: 0 });
+      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
+      (prisma.sprintBacklogItem.findMany as any).mockResolvedValue([]);
+
+      (withTransaction as any).mockImplementation(async (callback: any) => {
+        return callback({
+          sprint: {
+            update: vi.fn().mockResolvedValue(mockConvertedSprint),
+          },
+          sprintBacklogItem: {
+            findMany: vi.fn().mockResolvedValue([]),
+            createMany: vi.fn(),
+            deleteMany: vi.fn(),
+          },
+          task: {
+            findMany: vi.fn().mockResolvedValue([]),
+            create: vi.fn(),
+            createMany: vi.fn(),
+            update: vi.fn(),
+            deleteMany: vi.fn(),
+          },
+        });
+      });
+
+      const result = await sprintService.saveSprintPlanningDraft('gen-1', 'user-1', {
+        items: [{ pbiId: 'pbi-1' }],
+        tasks: [{ pbiId: 'pbi-1', title: 'Task 1', assigneeId: 'user-1', estimatedHours: 8 }],
+        sprintGoal: 'Goal 1',
+      });
+
+      // The generated sprint is converted to a real sprint as DRAFT.
+      expect(prisma.sprint.create).toHaveBeenCalledWith(
+        expect.objectContaining({ data: expect.objectContaining({ status: 'DRAFT' }) })
+      );
+      expect(result.sprintId).toBe('sprint-real-1');
+      expect(result.sprintGoal).toBe('Goal 1');
+    });
+
+    it('should save a draft against an existing DRAFT sprint (resume re-save)', async () => {
+      (prisma.sprint.findUnique as any).mockResolvedValue({
+        id: 'sprint-1',
+        teamId: 'team-1',
+        status: 'DRAFT',
+        sprintGoal: 'Goal',
+      });
+      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
+      (prisma.sprintBacklogItem.findMany as any).mockResolvedValue([]);
+
+      const sprintUpdate = vi.fn().mockResolvedValue({ id: 'sprint-1', status: 'DRAFT' });
+      (withTransaction as any).mockImplementation(async (callback: any) => {
+        return callback({
+          sprint: { update: sprintUpdate },
+          sprintBacklogItem: {
+            findMany: vi.fn().mockResolvedValue([{ pbiId: 'pbi-1' }]),
+            createMany: vi.fn(),
+            deleteMany: vi.fn(),
+          },
+          task: {
+            findMany: vi.fn().mockResolvedValue([{ id: 'task-1', pbiId: 'pbi-1' }]),
+            create: vi.fn(),
+            update: vi.fn(),
+            deleteMany: vi.fn(),
+          },
+        });
+      });
+
+      const result = await sprintService.saveSprintPlanningDraft('sprint-1', 'user-1', {
+        items: [{ pbiId: 'pbi-1' }, { pbiId: 'pbi-2' }],
+        tasks: [{ pbiId: 'pbi-1', title: 'Task 1' }],
+        sprintGoal: 'Updated Goal',
+      });
+
+      expect(result.sprintId).toBe('sprint-1');
+      expect(sprintUpdate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: 'sprint-1' },
+          data: expect.objectContaining({ sprintGoal: 'Updated Goal' }),
+        })
+      );
+    });
+
+    it('should preserve multiple tasks of the same PBI across re-saves (no collapse, no duplicates)', async () => {
+      (prisma.sprint.findUnique as any).mockResolvedValue({
+        id: 'sprint-1',
+        teamId: 'team-1',
+        status: 'DRAFT',
+        sprintGoal: 'Goal',
+      });
+      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
+      (prisma.sprintBacklogItem.findMany as any).mockResolvedValue([]);
+
+      // The sprint already holds 3 decomposed tasks for a single PBI (e.g. a 8-point story).
+      const taskUpdate = vi.fn().mockResolvedValue({});
+      const taskCreate = vi.fn().mockResolvedValue({});
+      const taskDeleteMany = vi.fn().mockResolvedValue({ count: 0 });
+      (withTransaction as any).mockImplementation(async (callback: any) => {
+        return callback({
+          sprint: { update: vi.fn().mockResolvedValue({ id: 'sprint-1', status: 'DRAFT' }) },
+          sprintBacklogItem: {
+            findMany: vi.fn().mockResolvedValue([{ pbiId: 'pbi-1' }]),
+            createMany: vi.fn(),
+            deleteMany: vi.fn(),
+          },
+          task: {
+            findMany: vi.fn().mockResolvedValue([
+              { id: 'task-a', pbiId: 'pbi-1', title: 'Plan: Story - Task 1', assigneeId: null },
+              { id: 'task-b', pbiId: 'pbi-1', title: 'Plan: Story - Task 2', assigneeId: null },
+              { id: 'task-c', pbiId: 'pbi-1', title: 'Plan: Story - Task 3', assigneeId: null },
+            ]),
+            create: taskCreate,
+            update: taskUpdate,
+            deleteMany: taskDeleteMany,
+          },
+        });
+      });
+
+      // Re-save with the same 3 tasks. The frontend strips temporary ids, so they arrive
+      // without an id; they must be matched by pbiId+title and updated in place.
+      await sprintService.saveSprintPlanningDraft('sprint-1', 'user-1', {
+        items: [{ pbiId: 'pbi-1' }],
+        tasks: [
+          { pbiId: 'pbi-1', title: 'Plan: Story - Task 1', assigneeId: null, estimatedHours: 8 },
+          { pbiId: 'pbi-1', title: 'Plan: Story - Task 2', assigneeId: null, estimatedHours: 8 },
+          { pbiId: 'pbi-1', title: 'Plan: Story - Task 3', assigneeId: null, estimatedHours: 8 },
+        ],
+      });
+
+      // Every existing task row is updated; nothing new is created and nothing stale is deleted.
+      expect(taskUpdate).toHaveBeenCalledTimes(3);
+      expect(taskCreate).not.toHaveBeenCalled();
+      expect(taskDeleteMany).not.toHaveBeenCalled();
+    });
+
+    it('should remove an individual task of a PBI that is no longer in the draft', async () => {
+      (prisma.sprint.findUnique as any).mockResolvedValue({
+        id: 'sprint-1',
+        teamId: 'team-1',
+        status: 'DRAFT',
+        sprintGoal: 'Goal',
+      });
+      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
+      (prisma.sprintBacklogItem.findMany as any).mockResolvedValue([]);
+
+      const taskUpdate = vi.fn().mockResolvedValue({});
+      const taskCreate = vi.fn().mockResolvedValue({});
+      const taskDeleteMany = vi.fn().mockResolvedValue({ count: 1 });
+      (withTransaction as any).mockImplementation(async (callback: any) => {
+        return callback({
+          sprint: { update: vi.fn().mockResolvedValue({ id: 'sprint-1', status: 'DRAFT' }) },
+          sprintBacklogItem: {
+            findMany: vi.fn().mockResolvedValue([{ pbiId: 'pbi-1' }]),
+            createMany: vi.fn(),
+            deleteMany: vi.fn(),
+          },
+          task: {
+            findMany: vi.fn().mockResolvedValue([
+              { id: 'task-a', pbiId: 'pbi-1', title: 'Plan: Story - Task 1', assigneeId: null },
+              { id: 'task-b', pbiId: 'pbi-1', title: 'Plan: Story - Task 2', assigneeId: null },
+              { id: 'task-c', pbiId: 'pbi-1', title: 'Plan: Story - Task 3', assigneeId: 'user-2' },
+            ]),
+            create: taskCreate,
+            update: taskUpdate,
+            deleteMany: taskDeleteMany,
+          },
+        });
+      });
+
+      // The acting developer removed "Task 2" (unassigned) from the PBI: it must be deleted while
+      // "Task 1" is kept (updated). "Task 3" is claimed by another developer — it is not part of
+      // the payload (the frontend excludes other developers' tasks) and must be left untouched.
+      await sprintService.saveSprintPlanningDraft('sprint-1', 'user-1', {
+        items: [{ pbiId: 'pbi-1' }],
+        tasks: [
+          { pbiId: 'pbi-1', title: 'Plan: Story - Task 1', assigneeId: null, estimatedHours: 8 },
+        ],
+      });
+
+      // "Task 1" is updated in place; "Task 2" (own/unassigned) is deleted; "Task 3" (user-2's)
+      // is neither updated, created, nor deleted.
+      expect(taskUpdate).toHaveBeenCalledTimes(1);
+      expect(taskCreate).not.toHaveBeenCalled();
+      expect(taskDeleteMany).toHaveBeenCalledTimes(1);
+      expect(taskDeleteMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            id: { in: ['task-b'] },
+          }),
+        })
+      );
+    });
+
+    it("should preserve another developer's tasks for a selected PBI that has no tasks in the payload", async () => {
+      (prisma.sprint.findUnique as any).mockResolvedValue({
+        id: 'sprint-1',
+        teamId: 'team-1',
+        status: 'DRAFT',
+        sprintGoal: 'Goal',
+      });
+      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
+      (prisma.sprintBacklogItem.findMany as any).mockResolvedValue([]);
+
+      const taskUpdate = vi.fn().mockResolvedValue({});
+      const taskCreate = vi.fn().mockResolvedValue({});
+      const taskDeleteMany = vi.fn().mockResolvedValue({ count: 0 });
+      (withTransaction as any).mockImplementation(async (callback: any) => {
+        return callback({
+          sprint: { update: vi.fn().mockResolvedValue({ id: 'sprint-1', status: 'DRAFT' }) },
+          sprintBacklogItem: {
+            findMany: vi.fn().mockResolvedValue([{ pbiId: 'pbi-1' }]),
+            createMany: vi.fn(),
+            deleteMany: vi.fn(),
+          },
+          task: {
+            findMany: vi.fn().mockResolvedValue([
+              { id: 'task-a', pbiId: 'pbi-1', title: 'Plan: Story - Task 1', assigneeId: 'user-2' },
+              { id: 'task-b', pbiId: 'pbi-1', title: 'Plan: Story - Task 2', assigneeId: 'user-2' },
+              { id: 'task-c', pbiId: 'pbi-1', title: 'Plan: Story - Task 3', assigneeId: 'user-2' },
+            ]),
+            create: taskCreate,
+            update: taskUpdate,
+            deleteMany: taskDeleteMany,
+          },
+        });
+      });
+
+      // The PBI remains selected, but its tasks are ALL claimed by another developer (user-2).
+      // The frontend excludes other developers' tasks from the payload (getPersistableTasks), so
+      // the payload carries no tasks for this PBI. The whole-PBI removal must NOT delete its
+      // tasks: PBI membership is derived from `items`, not from the (filtered) task list.
+      await sprintService.saveSprintPlanningDraft('sprint-1', 'user-1', {
+        items: [{ pbiId: 'pbi-1' }],
+        tasks: [],
+      });
+
+      // No task is created, updated, or deleted — another developer's decomposition is preserved.
+      expect(taskUpdate).not.toHaveBeenCalled();
+      expect(taskCreate).not.toHaveBeenCalled();
+      expect(taskDeleteMany).not.toHaveBeenCalled();
+    });
+
+    it('should throw ForbiddenError for a non-Developer', async () => {
+      (prisma.sprint.findUnique as any).mockResolvedValue({
+        id: 'sprint-1',
+        teamId: 'team-1',
+        status: 'PLANNED',
+        sprintGoal: null,
+      });
+      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'PRODUCT_OWNER' });
+
+      await expect(
+        sprintService.saveSprintPlanningDraft('sprint-1', 'user-1', { items: [] })
+      ).rejects.toThrow(ForbiddenError);
+    });
+
+    it('should reject a task whose PBI is not in the selected backlog', async () => {
+      (prisma.sprint.findUnique as any).mockResolvedValue({
+        id: 'sprint-1',
+        teamId: 'team-1',
+        status: 'PLANNED',
+        sprintGoal: null,
+      });
+      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
+
+      await expect(
+        sprintService.saveSprintPlanningDraft('sprint-1', 'user-1', {
+          items: [{ pbiId: 'pbi-1' }],
+          tasks: [{ pbiId: 'pbi-999', title: 'Task 1' }],
+        })
+      ).rejects.toThrow(BadRequestError);
+    });
+  });
+
+  describe('getSprintPlanningDraft', () => {
+    it('should return an empty draft when no Sprint exists', async () => {
+      (prisma.sprint.findUnique as any).mockResolvedValue(null);
+
+      const draft = await sprintService.getSprintPlanningDraft('unknown-1');
+      expect(draft.sprintId).toBeNull();
+      expect(draft.items).toEqual([]);
+      expect(draft.tasks).toEqual([]);
+    });
+
+    it('should load saved backlog items, tasks, and Sprint Goal for resume', async () => {
+      (prisma.sprint.findUnique as any).mockResolvedValue({
+        id: 'sprint-1',
+        teamId: 'team-1',
+        status: 'DRAFT',
+        sprintGoal: 'Goal 1',
+      });
+      (prisma.sprintBacklogItem.findMany as any)
+        .mockResolvedValueOnce([{ pbiId: 'pbi-1' }])
+        .mockResolvedValueOnce([]);
+      (prisma.task.findMany as any).mockResolvedValue([
+        {
+          id: 'task-1',
+          pbiId: 'pbi-1',
+          title: 'Task 1',
+          description: null,
+          assigneeId: 'user-1',
+          estimatedHours: 8,
+          remainingHours: 8,
+        },
+      ]);
+
+      const draft = await sprintService.getSprintPlanningDraft('sprint-1');
+      expect(draft.sprintId).toBe('sprint-1');
+      expect(draft.sprintGoal).toBe('Goal 1');
+      expect(draft.items).toEqual([{ pbiId: 'pbi-1' }]);
+      expect(draft.tasks).toHaveLength(1);
+      expect(draft.tasks[0]?.pbiId).toBe('pbi-1');
+    });
+  });
+
   describe('createTask with notification', () => {
     it('should block cross-assignment to another user (self-managed assignment)', async () => {
       (prisma.sprint.findUnique as any).mockResolvedValue({ id: 'sprint-1', teamId: 'team-1' });
@@ -2154,6 +2595,9 @@ describe('SprintService - Additional Coverage', () => {
         return callback({
           sprint: {
             update: vi.fn().mockResolvedValue({ ...mockSprint, status: 'PLANNED' }),
+          },
+          generatedSprint: {
+            updateMany: vi.fn(),
           },
           task: {
             deleteMany: vi.fn(),

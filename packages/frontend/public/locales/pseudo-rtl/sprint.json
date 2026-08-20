@@ -546,6 +546,7 @@
     "ACTIVE": "Active",
     "CANCELLED": "Cancelled",
     "COMPLETED": "Completed",
+    "DRAFT": "Draft",
     "PLANNED": "Planned"
   },
   "swimlanes": {

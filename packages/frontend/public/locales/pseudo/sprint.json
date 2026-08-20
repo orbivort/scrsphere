@@ -566,6 +566,7 @@
     "ACTIVE": "[Àctívééé]",
     "CANCELLED": "[Càncéllédddd]",
     "COMPLETED": "[Cómplétédddd]",
+    "DRAFT": "[Dràfttt]",
     "PLANNED": "[Plànnédddd]"
   },
   "swimlanes": {

@@ -71,6 +71,7 @@ export enum TaskStatus {
 }
 
 export enum SprintStatus {
+  DRAFT = 'draft',
   PLANNED = 'planned',
   ACTIVE = 'active',
   COMPLETED = 'completed',

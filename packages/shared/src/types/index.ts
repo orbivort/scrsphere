@@ -46,6 +46,7 @@ export interface Sprint {
 }
 
 export enum SprintStatus {
+  DRAFT = 'DRAFT',
   PLANNED = 'PLANNED',
   ACTIVE = 'ACTIVE',
   COMPLETED = 'COMPLETED',

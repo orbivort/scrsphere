@@ -19,7 +19,9 @@
     "anotherActive": "Another sprint is already active",
     "missingGoal": "The sprint cannot be started without a Sprint Goal",
     "notPlanned": "Only planned sprints can be started",
-    "notReadyToStart": "The Sprint Backlog must be saved before the sprint can be started"
+    "notReadyToStart": "The Sprint Backlog must be saved before the sprint can be started",
+    "pbiAlreadyCommitted": "Backlog item \"{{pbiTitle}}\" is already committed to another sprint ({{sprintName}}). A Product Backlog Item can be worked in only one sprint at a time.",
+    "pbiConflictAtStart": "The Sprint cannot be started: the following backlog items are already committed to another sprint: {{items}}."
   },
   "task": {
     "cannotAssignOtherDeveloper": "Only the assignee themselves may assign this task. Developers self-assign their work.",

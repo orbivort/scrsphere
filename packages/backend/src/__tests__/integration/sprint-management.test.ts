@@ -94,7 +94,8 @@ describe('Sprint Management Integration Tests', () => {
   const createTestSprint = async (
     teamId: string,
     name: string,
-    status: 'PLANNED' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' = 'PLANNED'
+    status: 'PLANNED' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DRAFT' = 'PLANNED',
+    options: { sprintGoal?: string } = {}
   ) => {
     const sprintId = generateUUIDv7();
     const startDate = new Date();
@@ -108,7 +109,7 @@ describe('Sprint Management Integration Tests', () => {
         startDate,
         endDate,
         status,
-        sprintGoal: 'Test sprint goal',
+        sprintGoal: options.sprintGoal ?? 'Test sprint goal',
       },
     });
     return sprint;
@@ -566,6 +567,442 @@ describe('Sprint Management Integration Tests', () => {
     });
   });
 
+  describe('Sprint Planning Draft (save → resume → start)', () => {
+    const testEmails: string[] = [];
+    const testTeams: string[] = [];
+
+    afterEach(async () => {
+      await cleanupTeams(testTeams);
+      await cleanupTestData(testEmails);
+      testEmails.length = 0;
+      testTeams.length = 0;
+    });
+
+    it('should save a draft, resume it, and start the sprint', async () => {
+      const email = `draft-lifecycle-${uniqueId()}@example.com`;
+      testEmails.push(email);
+
+      const user = await createTestUserInDb(email);
+      const teamName = `Draft Lifecycle Team ${uniqueId()}`;
+      testTeams.push(teamName);
+
+      const team = await createTestTeam(teamName);
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
+      const sprint = await createTestSprint(team.id, 'Sprint to Plan', 'PLANNED');
+      const pbi = await createTestPBI(team.id, 'Planned PBI', 'READY');
+
+      const cookies = await loginAndGetCookies(email);
+      const { csrfToken } = extractCsrfFromCookies(cookies);
+
+      // 1. Save the planning draft incrementally.
+      const saveResponse = await request(app)
+        .put(`/api/v1/sprints/${sprint.id}/backlog/draft`)
+        .set('Cookie', cookies)
+        .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+        .send({
+          items: [{ pbiId: pbi.id }],
+          tasks: [{ pbiId: pbi.id, title: 'Task 1', assigneeId: user.id }],
+          sprintGoal: 'Draft goal',
+        })
+        .expect(200);
+
+      expect(saveResponse.body.success).toBe(true);
+      expect(saveResponse.body.data.sprintId).toBe(sprint.id);
+      expect(saveResponse.body.data.sprintGoal).toBe('Draft goal');
+
+      // 2. Resume the draft: reload it.
+      const resumeResponse = await request(app)
+        .get(`/api/v1/sprints/${sprint.id}/planning-draft`)
+        .set('Cookie', cookies)
+        .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+        .expect(200);
+
+      expect(resumeResponse.body.success).toBe(true);
+      expect(resumeResponse.body.data.sprintGoal).toBe('Draft goal');
+      expect(resumeResponse.body.data.items).toHaveLength(1);
+      expect(resumeResponse.body.data.tasks).toHaveLength(1);
+      expect(resumeResponse.body.data.tasks[0].pbiId).toBe(pbi.id);
+
+      // 3. Start the sprint from the resumed draft.
+      const startResponse = await request(app)
+        .post(`/api/v1/sprints/${sprint.id}/start`)
+        .set('Cookie', cookies)
+        .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+        .send({})
+        .expect(200);
+
+      expect(startResponse.body.success).toBe(true);
+      expect(startResponse.body.data.status).toBe('ACTIVE');
+
+      const updatedSprint = await prisma.sprint.findUnique({
+        where: { id: sprint.id },
+        select: { status: true },
+      });
+      expect(updatedSprint?.status).toBe('ACTIVE');
+    });
+
+    it('should keep every task of a multi-task PBI across repeated draft saves', async () => {
+      const email = `draft-multitask-${uniqueId()}@example.com`;
+      testEmails.push(email);
+
+      const user = await createTestUserInDb(email);
+      const teamName = `Draft MultiTask Team ${uniqueId()}`;
+      testTeams.push(teamName);
+
+      const team = await createTestTeam(teamName);
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
+      const sprint = await createTestSprint(team.id, 'Sprint to Plan', 'PLANNED');
+      const pbi = await createTestPBI(team.id, '8-Point PBI', 'READY');
+
+      const cookies = await loginAndGetCookies(email);
+      const { csrfToken } = extractCsrfFromCookies(cookies);
+
+      // A single PBI is decomposed into three tasks (e.g. an 8-point story).
+      const tasks = [
+        { pbiId: pbi.id, title: 'Plan: 8-Point PBI - Task 1', estimatedHours: 8 },
+        { pbiId: pbi.id, title: 'Plan: 8-Point PBI - Task 2', estimatedHours: 8 },
+        { pbiId: pbi.id, title: 'Plan: 8-Point PBI - Task 3', estimatedHours: 8 },
+      ];
+      const payload = { items: [{ pbiId: pbi.id }], tasks };
+
+      // First incremental save.
+      await request(app)
+        .put(`/api/v1/sprints/${sprint.id}/backlog/draft`)
+        .set('Cookie', cookies)
+        .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+        .send(payload)
+        .expect(200);
+
+      // Second save mirrors the frontend debounced auto-save: the same three tasks are sent
+      // again (their temporary client ids stripped). This previously collapsed all three onto
+      // one row, losing the other two.
+      await request(app)
+        .put(`/api/v1/sprints/${sprint.id}/backlog/draft`)
+        .set('Cookie', cookies)
+        .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+        .send(payload)
+        .expect(200);
+
+      // All three tasks must survive the re-save and be visible on resume.
+      const resumeResponse = await request(app)
+        .get(`/api/v1/sprints/${sprint.id}/planning-draft`)
+        .set('Cookie', cookies)
+        .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+        .expect(200);
+
+      expect(resumeResponse.body.data.items).toHaveLength(1);
+      expect(resumeResponse.body.data.tasks).toHaveLength(3);
+      const titles = resumeResponse.body.data.tasks.map((t: { title: string }) => t.title);
+      expect(titles).toEqual(
+        expect.arrayContaining([
+          'Plan: 8-Point PBI - Task 1',
+          'Plan: 8-Point PBI - Task 2',
+          'Plan: 8-Point PBI - Task 3',
+        ])
+      );
+    });
+
+    it("should preserve a PBI's tasks when another developer saves a draft with none of them", async () => {
+      const email = `draft-otherdev-${uniqueId()}@example.com`;
+      const otherEmail = `draft-otherdev-owner-${uniqueId()}@example.com`;
+      testEmails.push(email);
+      testEmails.push(otherEmail);
+
+      const user = await createTestUserInDb(email);
+      const ownerUser = await createTestUserInDb(otherEmail);
+      const teamName = `Draft Other Dev Team ${uniqueId()}`;
+      testTeams.push(teamName);
+
+      const team = await createTestTeam(teamName);
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
+      await addTeamMember(team.id, ownerUser.id, 'DEVELOPERS');
+      const sprint = await createTestSprint(team.id, 'Sprint to Plan', 'PLANNED');
+      const pbi = await createTestPBI(team.id, '8-Point PBI', 'READY');
+
+      // The acting developer (owner) decomposes an 8-point PBI into three tasks.
+      const ownerCookies = await loginAndGetCookies(otherEmail);
+      const { csrfToken: ownerCsrf } = extractCsrfFromCookies(ownerCookies);
+      await request(app)
+        .put(`/api/v1/sprints/${sprint.id}/backlog/draft`)
+        .set('Cookie', ownerCookies)
+        .set(CSRF_CONSTANTS.HEADER_NAME, ownerCsrf)
+        .send({
+          items: [{ pbiId: pbi.id }],
+          tasks: [
+            { pbiId: pbi.id, title: 'Plan: 8-Point PBI - Task 1', assigneeId: ownerUser.id },
+            { pbiId: pbi.id, title: 'Plan: 8-Point PBI - Task 2', assigneeId: ownerUser.id },
+            { pbiId: pbi.id, title: 'Plan: 8-Point PBI - Task 3', assigneeId: ownerUser.id },
+          ],
+        })
+        .expect(200);
+
+      // A second developer saves the same draft. The frontend's getPersistableTasks filters
+      // out tasks owned by other developers, so this developer's payload carries the selected
+      // PBI but NO tasks for it. The whole-PBI removal must NOT drop the owner's tasks.
+      const cookies = await loginAndGetCookies(email);
+      const { csrfToken } = extractCsrfFromCookies(cookies);
+      await request(app)
+        .put(`/api/v1/sprints/${sprint.id}/backlog/draft`)
+        .set('Cookie', cookies)
+        .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+        .send({
+          items: [{ pbiId: pbi.id }],
+          tasks: [],
+        })
+        .expect(200);
+
+      // The owner's three tasks must survive the other developer's save and be visible on resume.
+      const resumeResponse = await request(app)
+        .get(`/api/v1/sprints/${sprint.id}/planning-draft`)
+        .set('Cookie', cookies)
+        .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+        .expect(200);
+
+      expect(resumeResponse.body.data.items).toHaveLength(1);
+      expect(resumeResponse.body.data.tasks).toHaveLength(3);
+      const titles = resumeResponse.body.data.tasks.map((t: { title: string }) => t.title);
+      expect(titles).toEqual(
+        expect.arrayContaining([
+          'Plan: 8-Point PBI - Task 1',
+          'Plan: 8-Point PBI - Task 2',
+          'Plan: 8-Point PBI - Task 3',
+        ])
+      );
+    });
+
+    it('should resume a draft saved against a GeneratedSprint id (frontend scenario)', async () => {
+      const email = `draft-gen-${uniqueId()}@example.com`;
+      testEmails.push(email);
+
+      const user = await createTestUserInDb(email);
+      const teamName = `Draft Gen Team ${uniqueId()}`;
+      testTeams.push(teamName);
+
+      const team = await createTestTeam(teamName);
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
+      const pbi = await createTestPBI(team.id, 'Gen PBI', 'READY');
+
+      // The frontend selects sprints by GeneratedSprint id. Create one that has NOT been
+      // materialized into a Sprint yet, mirroring an upcoming sprint in the selector.
+      const generatedSprint = await prisma.generatedSprint.create({
+        data: {
+          id: generateUUIDv7(),
+          teamId: team.id,
+          name: 'Gen Sprint',
+          sprintNumber: 1,
+          year: 2026,
+          startDate: new Date('2026-09-28T00:00:00.000Z'),
+          endDate: new Date('2026-10-09T23:59:59.000Z'),
+          status: 'PLANNED',
+          createdBy: user.id,
+        },
+      });
+
+      const cookies = await loginAndGetCookies(email);
+      const { csrfToken } = extractCsrfFromCookies(cookies);
+
+      // 1. Save the draft against the GeneratedSprint id. The service materializes a real
+      //    Sprint (DRAFT) and links GeneratedSprint.sprintId -> that new Sprint.
+      const saveResponse = await request(app)
+        .put(`/api/v1/sprints/${generatedSprint.id}/backlog/draft`)
+        .set('Cookie', cookies)
+        .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+        .send({
+          items: [{ pbiId: pbi.id }],
+          tasks: [{ pbiId: pbi.id, title: 'Gen Task', assigneeId: user.id }],
+          sprintGoal: 'Gen draft goal',
+        })
+        .expect(200);
+
+      expect(saveResponse.body.success).toBe(true);
+      // The returned sprintId is the materialized Sprint id (different from the generated id).
+      const materializedSprintId = saveResponse.body.data.sprintId as string;
+      expect(materializedSprintId).not.toBe(generatedSprint.id);
+
+      // 2. Resume the draft by the SAME GeneratedSprint id the frontend uses. This must
+      //    resolve the materialized Sprint via GeneratedSprint.sprintId and return the draft.
+      const resumeResponse = await request(app)
+        .get(`/api/v1/sprints/${generatedSprint.id}/planning-draft`)
+        .set('Cookie', cookies)
+        .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+        .expect(200);
+
+      expect(resumeResponse.body.success).toBe(true);
+      expect(resumeResponse.body.data.sprintId).toBe(materializedSprintId);
+      expect(resumeResponse.body.data.sprintGoal).toBe('Gen draft goal');
+      expect(resumeResponse.body.data.items).toHaveLength(1);
+      expect(resumeResponse.body.data.items[0].pbiId).toBe(pbi.id);
+      expect(resumeResponse.body.data.tasks).toHaveLength(1);
+      expect(resumeResponse.body.data.tasks[0].title).toBe('Gen Task');
+    });
+
+    it('should reject a non-Developer from saving the planning draft', async () => {
+      const email = `draft-po-${uniqueId()}@example.com`;
+      testEmails.push(email);
+
+      const user = await createTestUserInDb(email);
+      const teamName = `Draft PO Team ${uniqueId()}`;
+      testTeams.push(teamName);
+
+      const team = await createTestTeam(teamName);
+      await addTeamMember(team.id, user.id, 'PRODUCT_OWNER');
+      const sprint = await createTestSprint(team.id, 'Sprint to Plan', 'PLANNED');
+      const pbi = await createTestPBI(team.id, 'Planned PBI', 'READY');
+
+      const cookies = await loginAndGetCookies(email);
+      const { csrfToken } = extractCsrfFromCookies(cookies);
+
+      await request(app)
+        .put(`/api/v1/sprints/${sprint.id}/backlog/draft`)
+        .set('Cookie', cookies)
+        .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+        .send({
+          items: [{ pbiId: pbi.id }],
+        })
+        .expect(403);
+    });
+
+    it('should reject a task whose PBI is not in the selected backlog', async () => {
+      const email = `draft-pbi-${uniqueId()}@example.com`;
+      testEmails.push(email);
+
+      const user = await createTestUserInDb(email);
+      const teamName = `Draft PBI Team ${uniqueId()}`;
+      testTeams.push(teamName);
+
+      const team = await createTestTeam(teamName);
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
+      const sprint = await createTestSprint(team.id, 'Sprint to Plan', 'PLANNED');
+      const pbi = await createTestPBI(team.id, 'Planned PBI', 'READY');
+
+      const cookies = await loginAndGetCookies(email);
+      const { csrfToken } = extractCsrfFromCookies(cookies);
+
+      await request(app)
+        .put(`/api/v1/sprints/${sprint.id}/backlog/draft`)
+        .set('Cookie', cookies)
+        .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+        .send({
+          items: [{ pbiId: pbi.id }],
+          // A valid UUID for a PBI that is NOT part of the selected backlog.
+          tasks: [{ pbiId: generateUUIDv7(), title: 'Task 1' }],
+        })
+        .expect(400);
+    });
+
+    it('should reject saving a draft PBI that is already committed to an active sprint (Layer 2)', async () => {
+      const email = `draft-conflict-save-${uniqueId()}@example.com`;
+      testEmails.push(email);
+
+      const user = await createTestUserInDb(email);
+      const teamName = `Draft Conflict Save Team ${uniqueId()}`;
+      testTeams.push(teamName);
+
+      const team = await createTestTeam(teamName);
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
+      const pbi = await createTestPBI(team.id, 'Shared PBI', 'READY');
+
+      // Active sprint A already commits the PBI.
+      const sprintA = await createTestSprint(team.id, 'Active Sprint A', 'ACTIVE');
+      await prisma.sprintBacklogItem.create({
+        data: { id: generateUUIDv7(), sprintId: sprintA.id, pbiId: pbi.id },
+      });
+
+      const draftSprint = await createTestSprint(team.id, 'Draft Sprint B', 'DRAFT');
+
+      const cookies = await loginAndGetCookies(email);
+      const { csrfToken } = extractCsrfFromCookies(cookies);
+
+      await request(app)
+        .put(`/api/v1/sprints/${draftSprint.id}/backlog/draft`)
+        .set('Cookie', cookies)
+        .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+        .send({
+          items: [{ pbiId: pbi.id }],
+        })
+        .expect(400);
+    });
+
+    it('should reject starting a sprint whose PBI is committed to another committed sprint (Layer 1)', async () => {
+      const email = `draft-conflict-start-${uniqueId()}@example.com`;
+      testEmails.push(email);
+
+      const user = await createTestUserInDb(email);
+      const teamName = `Draft Conflict Start Team ${uniqueId()}`;
+      testTeams.push(teamName);
+
+      const team = await createTestTeam(teamName);
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
+      const pbi = await createTestPBI(team.id, 'Shared PBI', 'READY');
+
+      // A COMPLETED sprint already committed the PBI (so the per-team "active" guard does not
+      // trigger — this specifically exercises the PBI-exclusivity check).
+      const completedSprint = await createTestSprint(team.id, 'Completed Sprint A', 'COMPLETED');
+      await prisma.sprintBacklogItem.create({
+        data: { id: generateUUIDv7(), sprintId: completedSprint.id, pbiId: pbi.id },
+      });
+
+      const draftSprint = await createTestSprint(team.id, 'Draft Sprint B', 'DRAFT', {
+        sprintGoal: 'Goal B',
+      });
+      await prisma.sprintBacklogItem.create({
+        data: { id: generateUUIDv7(), sprintId: draftSprint.id, pbiId: pbi.id },
+      });
+
+      const cookies = await loginAndGetCookies(email);
+      const { csrfToken } = extractCsrfFromCookies(cookies);
+
+      await request(app)
+        .post(`/api/v1/sprints/${draftSprint.id}/start`)
+        .set('Cookie', cookies)
+        .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+        .send({})
+        .expect(400);
+    });
+
+    it('should auto-remove committed PBIs from other DRAFT sprints on start (Layer 3)', async () => {
+      const email = `draft-cleanup-${uniqueId()}@example.com`;
+      testEmails.push(email);
+
+      const user = await createTestUserInDb(email);
+      const teamName = `Draft Cleanup Team ${uniqueId()}`;
+      testTeams.push(teamName);
+
+      const team = await createTestTeam(teamName);
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
+      const pbi = await createTestPBI(team.id, 'Shared PBI', 'READY');
+
+      // Draft B (to be started) and Draft C (stale) both include the PBI.
+      const draftB = await createTestSprint(team.id, 'Draft Sprint B', 'DRAFT', {
+        sprintGoal: 'Goal B',
+      });
+      const draftC = await createTestSprint(team.id, 'Draft Sprint C', 'DRAFT');
+      await prisma.sprintBacklogItem.create({
+        data: { id: generateUUIDv7(), sprintId: draftB.id, pbiId: pbi.id },
+      });
+      await prisma.sprintBacklogItem.create({
+        data: { id: generateUUIDv7(), sprintId: draftC.id, pbiId: pbi.id },
+      });
+
+      const cookies = await loginAndGetCookies(email);
+      const { csrfToken } = extractCsrfFromCookies(cookies);
+
+      // Draft B goes ACTIVE.
+      await request(app)
+        .post(`/api/v1/sprints/${draftB.id}/start`)
+        .set('Cookie', cookies)
+        .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+        .send({})
+        .expect(200);
+
+      // The stale draft C must no longer contain the PBI.
+      const staleRemaining = await prisma.sprintBacklogItem.findMany({
+        where: { sprintId: draftC.id, pbiId: pbi.id },
+      });
+      expect(staleRemaining).toHaveLength(0);
+    });
+  });
+
   describe('POST /api/v1/sprints/:id/complete', () => {
     const testEmails: string[] = [];
     const testTeams: string[] = [];
@@ -601,6 +1038,51 @@ describe('Sprint Management Integration Tests', () => {
 
       expect(response.body.success).toBe(true);
       expect(response.body.data.status).toBe('COMPLETED');
+    });
+
+    it('should sync the GeneratedSprint status to COMPLETED when a sprint completes', async () => {
+      const email = `complete-sync-${uniqueId()}@example.com`;
+      testEmails.push(email);
+
+      const user = await createTestUserInDb(email);
+      const teamName = `Complete Sync Team ${uniqueId()}`;
+      testTeams.push(teamName);
+
+      const team = await createTestTeam(teamName);
+      await addTeamMember(team.id, user.id, 'SCRUM_MASTER');
+
+      // Materialized ACTIVE sprint linked to a GeneratedSprint (status stays PLANNED).
+      const sprint = await createTestSprint(team.id, 'Sprint to Complete', 'ACTIVE');
+      const generatedSprint = await prisma.generatedSprint.create({
+        data: {
+          id: generateUUIDv7(),
+          teamId: team.id,
+          name: 'Gen Sprint',
+          sprintNumber: 1,
+          year: 2026,
+          startDate: new Date('2026-09-28T00:00:00.000Z'),
+          endDate: new Date('2026-10-09T23:59:59.000Z'),
+          status: 'PLANNED',
+          createdBy: user.id,
+          sprintId: sprint.id,
+        },
+      });
+
+      const cookies = await loginAndGetCookies(email);
+      const { csrfToken } = extractCsrfFromCookies(cookies);
+
+      await request(app)
+        .post(`/api/v1/sprints/${sprint.id}/complete`)
+        .set('Cookie', cookies)
+        .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+        .expect(200);
+
+      // The frontend reads GeneratedSprint.status, so it must reflect the completed state.
+      const synced = await prisma.generatedSprint.findUnique({
+        where: { id: generatedSprint.id },
+        select: { status: true },
+      });
+      expect(synced?.status).toBe('COMPLETED');
     });
   });
 

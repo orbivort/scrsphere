@@ -520,6 +520,14 @@ describe('E2E: Workflow Operations', () => {
           SPRINT_STATUSES.PLANNED
         );
 
+        // The Sprint Backlog must be saved before the sprint can start.
+        const pbi = await createTestPBIInDb(
+          team.id,
+          `Start PBI ${uniqueTestId()}`,
+          PBI_STATUSES.READY
+        );
+        await addPBIToSprintBacklog(sprint.id, pbi.id);
+
         const cookies = await loginAndGetCookies(email);
         const { csrfToken } = extractCsrfFromCookies(cookies);
 
@@ -659,6 +667,14 @@ describe('E2E: Workflow Operations', () => {
         `Concurrent Sprint ${uniqueTestId()}`,
         SPRINT_STATUSES.PLANNED
       );
+
+      // The Sprint Backlog must be saved before the sprint can start.
+      const pbi = await createTestPBIInDb(
+        team.id,
+        `Concurrent PBI ${uniqueTestId()}`,
+        PBI_STATUSES.READY
+      );
+      await addPBIToSprintBacklog(sprint.id, pbi.id);
 
       const cookies = await loginAndGetCookies(email);
       const { csrfToken } = extractCsrfFromCookies(cookies);

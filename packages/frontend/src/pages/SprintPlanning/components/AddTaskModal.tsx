@@ -16,6 +16,7 @@ export interface AddTaskModalProps {
     userId: string;
     memberName: string;
   }>;
+  currentUserId?: string;
   itemTitle?: string;
 }
 
@@ -26,6 +27,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
   onClose,
   onSubmit,
   teamMembers,
+  currentUserId,
   itemTitle,
 }) => {
   const { t } = useTranslation('sprint');
@@ -326,8 +328,15 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
                       className={styles['form-select']}
                     >
                       <option value="">{t('sprintPlanning.addTaskModal.unassigned')}</option>
+                      {/* Keep all developers listed; only the current developer may be selected
+                          for the new task. Assigning to anyone else is prevented here and on
+                          the backend. */}
                       {teamMembers.map((member) => (
-                        <option key={member.memberId} value={member.userId}>
+                        <option
+                          key={member.memberId}
+                          value={member.userId}
+                          disabled={member.userId !== currentUserId}
+                        >
                           {member.memberName}
                         </option>
                       ))}

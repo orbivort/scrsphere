@@ -784,6 +784,111 @@ class MockApiService {
     return { success: true, data: { sprintId: id, backlogItems: backlogItemIds, taskIds } };
   }
 
+  async saveSprintPlanningDraft(
+    id: string,
+    data?: {
+      items?: Array<{ pbiId: string }>;
+      tasks?: Array<{
+        id?: string;
+        pbiId: string;
+        title: string;
+        description?: string;
+        assigneeId?: string | null;
+        estimatedHours?: number;
+        remainingHours?: number;
+      }>;
+      sprintGoal?: string;
+    }
+  ): Promise<ApiResponse<{ sprintId: string; sprintGoal: string | null }>> {
+    await delay(400);
+
+    const sprintIndex = mockSprints.findIndex((s) => s.id === id);
+    if (sprintIndex === -1) {
+      return {
+        success: false,
+        error: { code: 'NOT_FOUND', message: 'Sprint not found' },
+      };
+    }
+
+    // Incremental upsert: replace existing draft tasks for the sprint, then re-create.
+    for (let i = mockTasks.length - 1; i >= 0; i--) {
+      if (mockTasks[i]?.sprintId === id) {
+        mockTasks.splice(i, 1);
+      }
+    }
+    (data?.tasks ?? []).forEach((task) => {
+      mockTasks.push({
+        id: task.id ?? `task-${Date.now()}`,
+        sprintId: id,
+        pbiId: task.pbiId,
+        title: task.title,
+        description: task.description,
+        assigneeId: task.assigneeId ?? undefined,
+        status: TaskStatus.TODO,
+        estimatedHours: task.estimatedHours,
+        remainingHours: task.remainingHours ?? task.estimatedHours,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
+    });
+
+    if (data?.sprintGoal !== undefined && mockSprints[sprintIndex]) {
+      mockSprints[sprintIndex] = {
+        ...(mockSprints[sprintIndex] as Sprint),
+        sprintGoal: data.sprintGoal,
+      };
+    }
+
+    return {
+      success: true,
+      data: { sprintId: id, sprintGoal: data?.sprintGoal ?? null },
+    };
+  }
+
+  async getSprintPlanningDraft(id: string): Promise<
+    ApiResponse<{
+      sprintId: string | null;
+      sprintGoal: string | null;
+      items: Array<{ pbiId: string }>;
+      tasks: Array<{
+        id: string;
+        pbiId: string;
+        title: string;
+        description: string | null;
+        assigneeId: string | null;
+        estimatedHours: number | null;
+        remainingHours: number | null;
+      }>;
+      conflicts: Array<{ pbiId: string; sprintName: string }>;
+    }>
+  > {
+    await delay(300);
+
+    const tasks = mockTasks
+      .filter((t) => t.sprintId === id)
+      .map((t) => ({
+        id: t.id,
+        pbiId: t.pbiId,
+        title: t.title,
+        description: t.description ?? null,
+        assigneeId: t.assigneeId ?? null,
+        estimatedHours: t.estimatedHours ?? null,
+        remainingHours: t.remainingHours ?? null,
+      }));
+    const itemPbiIds = Array.from(new Set(tasks.map((t) => t.pbiId)));
+
+    return {
+      success: true,
+      data: {
+        sprintId: id,
+        sprintGoal: null,
+        items: itemPbiIds.map((pbiId) => ({ pbiId })),
+        tasks,
+        conflicts: [],
+      },
+    };
+  }
+
   async updateSprint(id: string, updates: Partial<Sprint>): Promise<ApiResponse<Sprint>> {
     await delay(400);
 

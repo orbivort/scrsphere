@@ -135,25 +135,56 @@
   z-index: var(--z-base);
 }
 
+.sprint-select-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-width: 280px;
+}
+
 .sprint-select {
-  padding: var(--space-3) var(--space-4);
+  width: 100%;
+  padding: var(--space-3) var(--space-10) var(--space-3) var(--space-4);
   border: var(--border-width-2) solid var(--color-border-default);
   border-radius: var(--radius-lg);
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-primary);
   background-color: var(--color-background-card);
   cursor: pointer;
-  min-width: 280px;
+  appearance: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
   transition:
     border-color var(--transition-fast),
     box-shadow var(--transition-fast),
     background-color var(--transition-fast);
 }
 
+.sprint-select-chevron {
+  position: absolute;
+  right: var(--space-4);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-secondary);
+  pointer-events: none;
+  transition: color var(--transition-fast);
+}
+
+.sprint-select-wrapper:focus-within .sprint-select-chevron {
+  color: var(--color-primary-500);
+}
+
 .sprint-select:disabled {
   background-color: var(--color-background-hover);
   cursor: not-allowed;
   opacity: var(--opacity-70);
+}
+
+.sprint-select:disabled ~ .sprint-select-chevron {
+  color: var(--color-text-tertiary);
 }
 
 .sprint-select:focus {
@@ -168,14 +199,18 @@
 }
 
 .sprint-select optgroup {
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-primary);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
   background-color: var(--color-background-page);
-  padding: var(--space-1);
+  padding: var(--space-3) var(--space-2);
 }
 
 .sprint-select option {
   font-weight: var(--font-weight-normal);
+  font-size: var(--font-size-base);
   color: var(--color-text-primary);
   padding: var(--space-2) var(--space-3);
 }
@@ -700,6 +735,15 @@
   opacity: 1;
 }
 
+.planning-item .item-add-btn:disabled {
+  cursor: not-allowed;
+  opacity: var(--opacity-40);
+  background: var(--color-background-muted);
+  color: var(--color-text-muted);
+  box-shadow: none;
+  transform: none;
+}
+
 .empty-pool {
   text-align: center;
   padding: var(--space-12) var(--space-6);
@@ -745,6 +789,13 @@
 .sprint-backlog.disabled {
   opacity: var(--opacity-60);
   background: var(--color-background-page);
+}
+
+/* Read-only when the acting member is not a Developer (e.g. PO/SM). The Sprint Backlog is
+   owned by the Developers, so other roles may view the plan but cannot drag or drop items. */
+.sprint-backlog.read-only {
+  border-color: var(--color-border-default);
+  border-style: solid;
 }
 
 .sprint-backlog:not(.disabled):hover {
@@ -956,6 +1007,54 @@
   position: relative;
 }
 
+/* Draft status indicator */
+.draft-status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 var(--space-4) var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  background: var(--color-surface-secondary);
+  border: var(--border-width-1) solid var(--color-border-default);
+}
+
+.draft-status-loaded {
+  color: var(--color-success-700);
+  background: var(--color-success-50);
+  border-color: var(--color-success-200);
+}
+
+.draft-status-none {
+  color: var(--color-text-tertiary);
+}
+
+.draft-status-failed {
+  color: var(--color-danger-700);
+  background: var(--color-danger-50);
+  border-color: var(--color-danger-200);
+}
+
+.draft-status-locked {
+  color: var(--color-warning-700);
+  background: var(--color-warning-50);
+  border-color: var(--color-warning-200);
+}
+
+.draft-status-readonly {
+  color: var(--color-text-secondary);
+  background: var(--color-surface-secondary);
+  border-color: var(--color-border-default);
+}
+
+.draft-status-icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+}
+
 /* Sprint Stats */
 .sprint-planning-sprint-stats {
   display: grid;
@@ -1108,6 +1207,36 @@
 .remove-task-btn:focus {
   outline: none;
   box-shadow: var(--shadow-focus-error-3);
+}
+
+/* Disabled (read-only) state when the sprint backlog is locked */
+.remove-item-btn:disabled,
+.remove-task-btn:disabled {
+  cursor: not-allowed;
+  opacity: var(--opacity-40);
+  background: var(--color-background-muted);
+  color: var(--color-text-muted);
+  box-shadow: none;
+  transform: none;
+}
+
+.remove-item-btn:disabled:hover,
+.remove-task-btn:disabled:hover {
+  background: var(--color-background-muted);
+  color: var(--color-text-muted);
+  transform: none;
+}
+
+.planning-item.locked,
+.sprint-item.locked {
+  cursor: default;
+  opacity: var(--opacity-80);
+}
+
+.planning-item.locked:hover,
+.sprint-item.locked:hover {
+  transform: none;
+  box-shadow: none;
 }
 
 /* Item Tasks */

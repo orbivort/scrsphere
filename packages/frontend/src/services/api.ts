@@ -98,6 +98,8 @@ class ApiService {
   getSprint = sprintService.getSprint.bind(sprintService);
   startSprint = sprintService.startSprint.bind(sprintService);
   saveSprintBacklog = sprintService.saveSprintBacklog.bind(sprintService);
+  saveSprintPlanningDraft = sprintService.saveSprintPlanningDraft.bind(sprintService);
+  getSprintPlanningDraft = sprintService.getSprintPlanningDraft.bind(sprintService);
   rollbackSprintStart = sprintService.rollbackSprintStart.bind(sprintService);
   updateSprint = sprintService.updateSprint.bind(sprintService);
   completeSprint = sprintService.completeSprint.bind(sprintService);
