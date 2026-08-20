@@ -707,6 +707,139 @@ describe('E2E: Sprint Management', () => {
         expect(response.body.data.status).toBe(TASK_STATUSES.DONE);
         expect(response.body.data.remainingHours).toBe(0);
       });
+
+      it('should move a task to REVIEW and have a peer approve it to DONE', async () => {
+        const email = `review-task-${uniqueTestId()}@example.com`;
+        testEmails.push(email);
+
+        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
+        const sprint = await createTestSprintInDb(
+          team.id,
+          `Review Task Sprint ${uniqueTestId()}`,
+          SPRINT_STATUSES.ACTIVE
+        );
+        const pbi = await createTestPBIInDb(team.id, `PBI for Review ${uniqueTestId()}`);
+
+        // The assignee is the logged-in user (so they cannot self-approve below).
+        const task = await createTestTaskInDb(
+          sprint.id,
+          pbi.id,
+          `Task to Review ${uniqueTestId()}`,
+          TASK_STATUSES.IN_PROGRESS
+        );
+
+        const cookies = await loginAndGetCookies(email);
+        const { csrfToken } = extractCsrfFromCookies(cookies);
+
+        // IN_PROGRESS → REVIEW
+        const reviewResponse = await request(app)
+          .put(`/api/v1/sprints/${sprint.id}/tasks/${task.id}`)
+          .set('Cookie', cookies)
+          .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+          .send({
+            status: TASK_STATUSES.REVIEW,
+            remainingHours: 4,
+          })
+          .expect(HTTP_STATUS.OK);
+
+        expect(reviewResponse.body.success).toBe(true);
+        expect(reviewResponse.body.data.status).toBe(TASK_STATUSES.REVIEW);
+
+        // A different team member (reviewer) approves REVIEW → DONE.
+        const reviewerEmail = `reviewer-${uniqueTestId()}@example.com`;
+        testEmails.push(reviewerEmail);
+        const reviewer = await createTestUser(reviewerEmail);
+        await addTeamMember(team.id, reviewer.id, ROLES.DEVELOPERS);
+        const reviewerCookies = await loginAndGetCookies(reviewerEmail);
+        const reviewerCsrf = extractCsrfFromCookies(reviewerCookies).csrfToken;
+
+        const doneResponse = await request(app)
+          .put(`/api/v1/sprints/${sprint.id}/tasks/${task.id}`)
+          .set('Cookie', reviewerCookies)
+          .set(CSRF_CONSTANTS.HEADER_NAME, reviewerCsrf)
+          .send({
+            status: TASK_STATUSES.DONE,
+            remainingHours: 0,
+          })
+          .expect(HTTP_STATUS.OK);
+
+        expect(doneResponse.body.success).toBe(true);
+        expect(doneResponse.body.data.status).toBe(TASK_STATUSES.DONE);
+      });
+
+      it('should reject the assignee self-approving REVIEW → DONE with 403', async () => {
+        const email = `self-review-task-${uniqueTestId()}@example.com`;
+        testEmails.push(email);
+
+        const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
+        const sprint = await createTestSprintInDb(
+          team.id,
+          `Self Review Task Sprint ${uniqueTestId()}`,
+          SPRINT_STATUSES.ACTIVE
+        );
+        const pbi = await createTestPBIInDb(team.id, `PBI for Self Review ${uniqueTestId()}`);
+
+        // The assignee IS the logged-in user.
+        const task = await createTestTaskInDb(
+          sprint.id,
+          pbi.id,
+          `Self Review Task ${uniqueTestId()}`,
+          TASK_STATUSES.REVIEW,
+          user.id
+        );
+
+        const cookies = await loginAndGetCookies(email);
+        const { csrfToken } = extractCsrfFromCookies(cookies);
+
+        const response = await request(app)
+          .put(`/api/v1/sprints/${sprint.id}/tasks/${task.id}`)
+          .set('Cookie', cookies)
+          .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+          .send({
+            status: TASK_STATUSES.DONE,
+            remainingHours: 0,
+          })
+          .expect(HTTP_STATUS.FORBIDDEN);
+
+        expect(response.body.success).toBe(false);
+      });
+
+      it('should allow the assignee to send their own REVIEW task back to IN_PROGRESS (rework)', async () => {
+        const email = `rework-task-${uniqueTestId()}@example.com`;
+        testEmails.push(email);
+
+        const { user, team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
+        const sprint = await createTestSprintInDb(
+          team.id,
+          `Rework Task Sprint ${uniqueTestId()}`,
+          SPRINT_STATUSES.ACTIVE
+        );
+        const pbi = await createTestPBIInDb(team.id, `PBI for Rework ${uniqueTestId()}`);
+
+        const task = await createTestTaskInDb(
+          sprint.id,
+          pbi.id,
+          `Rework Task ${uniqueTestId()}`,
+          TASK_STATUSES.REVIEW,
+          user.id
+        );
+
+        const cookies = await loginAndGetCookies(email);
+        const { csrfToken } = extractCsrfFromCookies(cookies);
+
+        const response = await request(app)
+          .put(`/api/v1/sprints/${sprint.id}/tasks/${task.id}`)
+          .set('Cookie', cookies)
+          .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+          .send({
+            status: TASK_STATUSES.IN_PROGRESS,
+            remainingHours: 6,
+          })
+          .expect(HTTP_STATUS.OK);
+
+        expect(response.body.success).toBe(true);
+        expect(response.body.data.status).toBe(TASK_STATUSES.IN_PROGRESS);
+      });
     });
 
     describe('DELETE /api/v1/sprints/:sprintId/tasks/:taskId', () => {

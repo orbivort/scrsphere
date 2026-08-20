@@ -10,6 +10,7 @@ export interface SprintStats {
   totalTasks: number;
   todoTasks: number;
   inProgressTasks: number;
+  reviewTasks: number;
   doneTasks: number;
   totalPbis: number;
   completedPbis: number;
@@ -92,6 +93,7 @@ export function useSprintBoard({ teamId }: UseSprintBoardOptions): UseSprintBoar
     const totalTasks = tasks.length;
     const todoTasks = tasks.filter((t: Task) => t.status === 'TODO').length;
     const inProgressTasks = tasks.filter((t: Task) => t.status === 'IN_PROGRESS').length;
+    const reviewTasks = tasks.filter((t: Task) => t.status === 'REVIEW').length;
     const doneTasks = tasks.filter((t: Task) => t.status === 'DONE').length;
 
     const totalPbis = sprintItems.length;
@@ -115,6 +117,7 @@ export function useSprintBoard({ teamId }: UseSprintBoardOptions): UseSprintBoar
       totalTasks,
       todoTasks,
       inProgressTasks,
+      reviewTasks,
       doneTasks,
       totalPbis,
       completedPbis,

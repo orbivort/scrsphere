@@ -27,6 +27,9 @@
   "lastName": "Last name",
   "passwordTooShort": "Password must be at least {{min}} characters",
   "passwordsDoNotMatch": "Passwords do not match",
+  "task": {
+    "cannotApproveOwnReview": "You cannot approve your own task review. Another team member must perform the review approval."
+  },
   "workflow": {
     "authenticationRequired": "User authentication required for this transition",
     "initialStatusMustBe": "Initial status must be {{defaultStatus}}",

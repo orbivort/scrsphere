@@ -22,6 +22,7 @@ import { SprintBoard } from './SprintBoard';
 
 vi.mock('../../store', () => ({
   useTeamStore: vi.fn(),
+  useAuthStore: vi.fn(() => ({ user: null })),
 }));
 
 vi.mock('../../services', () => ({
@@ -121,17 +122,19 @@ const getDefaultMockData = () => ({
   dodVerifications: [],
   sprintLoading: false,
   tasksLoading: false,
-  wipLimits: { todo: 5, in_progress: 3, done: 10 },
+  wipLimits: { todo: 5, in_progress: 3, review: 3, done: 10 },
   filteredTasks: mockTasks,
   tasksByStatus: {
     todo: [mockTasks[0]],
     in_progress: [mockTasks[1]],
+    review: [],
     done: [mockTasks[2]],
   },
   sprintStats: {
     totalTasks: 3,
     todoTasks: 1,
     inProgressTasks: 1,
+    reviewTasks: 0,
     doneTasks: 1,
     totalEstimatedHours: 24,
     totalRemainingHours: 16,
@@ -365,6 +368,9 @@ describe('SprintBoard Component', () => {
         screen.getByRole('heading', { name: i18nT('sprint:taskStatus.inProgress') })
       ).toBeInTheDocument();
       expect(
+        screen.getByRole('heading', { name: i18nT('sprint:taskStatus.review') })
+      ).toBeInTheDocument();
+      expect(
         screen.getByRole('heading', { name: i18nT('sprint:taskStatus.done') })
       ).toBeInTheDocument();
     });
@@ -394,6 +400,7 @@ describe('SprintBoard Component', () => {
         tasksByStatus: {
           todo: tasks,
           in_progress: [],
+          review: [],
           done: [],
         },
       });
@@ -496,6 +503,7 @@ describe('SprintBoard Component', () => {
         tasksByStatus: {
           todo: [tasks[0]],
           in_progress: [tasks[1]],
+          review: [],
           done: [tasks[2]],
         },
       });
@@ -829,6 +837,7 @@ describe('SprintBoard Component', () => {
         tasksByStatus: {
           todo: [tasks[0]],
           in_progress: [tasks[1]],
+          review: [],
           done: [tasks[2]],
         },
       });
@@ -1225,6 +1234,7 @@ describe('SprintBoard Modal Interactions', () => {
         tasksByStatus: {
           todo: [tasks[0]],
           in_progress: [tasks[1]],
+          review: [],
           done: [tasks[2]],
         },
       });

@@ -78,6 +78,10 @@ describe('TASK_STATUS_CONFIG_BASE', () => {
     expect(TASK_STATUS_CONFIG_BASE[TaskStatus.IN_PROGRESS]).toBeDefined();
   });
 
+  it('should have configuration for REVIEW status', () => {
+    expect(TASK_STATUS_CONFIG_BASE[TaskStatus.REVIEW]).toBeDefined();
+  });
+
   it('should have configuration for DONE status', () => {
     expect(TASK_STATUS_CONFIG_BASE[TaskStatus.DONE]).toBeDefined();
   });
@@ -130,6 +134,30 @@ describe('TASK_STATUS_CONFIG_BASE', () => {
     });
   });
 
+  describe('REVIEW Status Configuration', () => {
+    const config = TASK_STATUS_CONFIG_BASE[TaskStatus.REVIEW];
+
+    it('should have color defined', () => {
+      expect(config.color).toBeDefined();
+      expect(config.color).toMatch(/^#[0-9a-fA-F]{6}$/);
+    });
+
+    it('should have background color defined', () => {
+      expect(config.bgColor).toBeDefined();
+      expect(config.bgColor).toMatch(/^#[0-9a-fA-F]{6}$/);
+    });
+
+    it('should have border color defined', () => {
+      expect(config.borderColor).toBeDefined();
+      expect(config.borderColor).toMatch(/^#[0-9a-fA-F]{6}$/);
+    });
+
+    it('should have icon defined', () => {
+      expect(config.icon).toBeDefined();
+      expect(typeof config.icon).toBe('string');
+    });
+  });
+
   describe('DONE Status Configuration', () => {
     const config = TASK_STATUS_CONFIG_BASE[TaskStatus.DONE];
 
@@ -158,9 +186,12 @@ describe('TASK_STATUS_CONFIG_BASE', () => {
     it('should have distinct colors for each status', () => {
       const todoColor = TASK_STATUS_CONFIG_BASE[TaskStatus.TODO].color;
       const inProgressColor = TASK_STATUS_CONFIG_BASE[TaskStatus.IN_PROGRESS].color;
+      const reviewColor = TASK_STATUS_CONFIG_BASE[TaskStatus.REVIEW].color;
       const doneColor = TASK_STATUS_CONFIG_BASE[TaskStatus.DONE].color;
 
       expect(todoColor).not.toBe(inProgressColor);
+      expect(inProgressColor).not.toBe(reviewColor);
+      expect(reviewColor).not.toBe(doneColor);
       expect(inProgressColor).not.toBe(doneColor);
       expect(todoColor).not.toBe(doneColor);
     });
@@ -168,9 +199,12 @@ describe('TASK_STATUS_CONFIG_BASE', () => {
     it('should have distinct background colors for each status', () => {
       const todoBg = TASK_STATUS_CONFIG_BASE[TaskStatus.TODO].bgColor;
       const inProgressBg = TASK_STATUS_CONFIG_BASE[TaskStatus.IN_PROGRESS].bgColor;
+      const reviewBg = TASK_STATUS_CONFIG_BASE[TaskStatus.REVIEW].bgColor;
       const doneBg = TASK_STATUS_CONFIG_BASE[TaskStatus.DONE].bgColor;
 
       expect(todoBg).not.toBe(inProgressBg);
+      expect(inProgressBg).not.toBe(reviewBg);
+      expect(reviewBg).not.toBe(doneBg);
       expect(inProgressBg).not.toBe(doneBg);
       expect(todoBg).not.toBe(doneBg);
     });
@@ -200,6 +234,10 @@ describe('TASK_STATUS_LABEL_KEYS', () => {
     expect(TASK_STATUS_LABEL_KEYS[TaskStatus.IN_PROGRESS]).toBe('taskStatus.inProgress');
   });
 
+  it('should have label key for REVIEW', () => {
+    expect(TASK_STATUS_LABEL_KEYS[TaskStatus.REVIEW]).toBe('taskStatus.review');
+  });
+
   it('should have label key for DONE', () => {
     expect(TASK_STATUS_LABEL_KEYS[TaskStatus.DONE]).toBe('taskStatus.done');
   });
@@ -212,6 +250,10 @@ describe('TASK_STATUS_DESCRIPTION_KEYS', () => {
 
   it('should have description key for IN_PROGRESS', () => {
     expect(TASK_STATUS_DESCRIPTION_KEYS[TaskStatus.IN_PROGRESS]).toBe('taskStatus.inProgressDesc');
+  });
+
+  it('should have description key for REVIEW', () => {
+    expect(TASK_STATUS_DESCRIPTION_KEYS[TaskStatus.REVIEW]).toBe('taskStatus.reviewDesc');
   });
 
   it('should have description key for DONE', () => {

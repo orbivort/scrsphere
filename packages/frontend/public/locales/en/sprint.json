@@ -29,6 +29,7 @@
     "noCompletedTasks": "No completed tasks",
     "noTasks": "No tasks",
     "noTasksInProgress": "No tasks in progress",
+    "noTasksInReview": "No tasks awaiting review",
     "noTasksToDo": "No tasks to do",
     "partOf": "Part of: {{title}}",
     "pbiLabel": "PBI:",
@@ -239,6 +240,7 @@
     "title": "Keyboard Shortcuts",
     "toggleBurndown": "Toggle burndown chart"
   },
+  "reviewApprovalRestricted": "You cannot approve your own task review. Another team member must perform the review approval.",
   "sprintBacklogManager": {
     "add": "Add",
     "addFirstItem": "+ Add First Item",
@@ -634,6 +636,7 @@
     "notSet": "Not set",
     "parentPbi": "Parent PBI",
     "remainingHours": "Remaining Hours",
+    "reviewDescription": "Task is awaiting peer review",
     "status": "Status",
     "statusHistory": "Status History",
     "taskInformation": "Task Information",
@@ -661,6 +664,8 @@
     "doneDesc": "Task has been completed",
     "inProgress": "In Progress",
     "inProgressDesc": "Task is currently being worked on",
+    "review": "Review",
+    "reviewDesc": "Task is awaiting peer review",
     "todo": "To Do",
     "todoDesc": "Task is ready to be started"
   },

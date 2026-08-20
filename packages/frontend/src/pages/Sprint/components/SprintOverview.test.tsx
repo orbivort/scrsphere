@@ -9,6 +9,7 @@ const defaultProps: SprintOverviewProps = {
   totalTasks: 10,
   todoTasks: 3,
   inProgressTasks: 4,
+  reviewTasks: 0,
   doneTasks: 3,
   totalEstimatedHours: 80,
   totalRemainingHours: 40,
@@ -83,6 +84,7 @@ describe('SprintOverview', () => {
           totalTasks={0}
           todoTasks={0}
           inProgressTasks={0}
+          reviewTasks={0}
           doneTasks={0}
           progressPercentage={0}
         />
@@ -117,6 +119,7 @@ describe('SprintOverview', () => {
           {...defaultProps}
           todoTasks={0}
           inProgressTasks={0}
+          reviewTasks={0}
           doneTasks={10}
           progressPercentage={100}
           totalRemainingHours={0}

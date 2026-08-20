@@ -54,6 +54,7 @@ export interface SprintStats {
   totalTasks: number;
   todoTasks: number;
   inProgressTasks: number;
+  reviewTasks: number;
   doneTasks: number;
   totalEstimatedHours: number;
   totalRemainingHours: number;
@@ -84,7 +85,7 @@ export interface UseSprintBoardDataReturn {
   // Derived data
   wipLimits: WIPLimits;
   filteredTasks: Task[];
-  tasksByStatus: { todo: Task[]; in_progress: Task[]; done: Task[] };
+  tasksByStatus: TasksByStatus;
   sprintStats: SprintStats;
   daysRemaining: number;
   sprintDuration: number;
@@ -194,6 +195,7 @@ export const useSprintBoardData = (
     return {
       todo: Infinity,
       in_progress: inProgressLimit,
+      review: inProgressLimit,
       done: Infinity,
     };
   }, [teamMembers.length]);
@@ -219,6 +221,7 @@ export const useSprintBoardData = (
     () => ({
       todo: filteredTasks.filter((t) => t.status === TaskStatusEnum.TODO),
       in_progress: filteredTasks.filter((t) => t.status === TaskStatusEnum.IN_PROGRESS),
+      review: filteredTasks.filter((t) => t.status === TaskStatusEnum.REVIEW),
       done: filteredTasks.filter((t) => t.status === TaskStatusEnum.DONE),
     }),
     [filteredTasks]
@@ -229,6 +232,7 @@ export const useSprintBoardData = (
     const totalTasks = tasks.length;
     const todoTasks = tasks.filter((t) => t.status === TaskStatusEnum.TODO).length;
     const inProgressTasks = tasks.filter((t) => t.status === TaskStatusEnum.IN_PROGRESS).length;
+    const reviewTasks = tasks.filter((t) => t.status === TaskStatusEnum.REVIEW).length;
     const doneTasks = tasks.filter((t) => t.status === TaskStatusEnum.DONE).length;
 
     const totalEstimatedHours = tasks.reduce((sum, t) => sum + (t.estimatedHours ?? 0), 0);
@@ -256,6 +260,7 @@ export const useSprintBoardData = (
       totalTasks,
       todoTasks,
       inProgressTasks,
+      reviewTasks,
       doneTasks,
       totalEstimatedHours,
       totalRemainingHours,
@@ -338,6 +343,14 @@ export const useSprintBoardData = (
         column: TaskStatusEnum.IN_PROGRESS,
         current: tasksByStatus.in_progress.length,
         limit: wipLimits.in_progress,
+      });
+    }
+
+    if (tasksByStatus.review.length > wipLimits.review) {
+      warnings.push({
+        column: TaskStatusEnum.REVIEW,
+        current: tasksByStatus.review.length,
+        limit: wipLimits.review,
       });
     }
 
@@ -488,6 +501,7 @@ export const useFocusTrap = (isActive: boolean, modalRef: RefObject<HTMLElement 
 const STATUS_ORDER: TaskStatus[] = [
   TaskStatusEnum.TODO,
   TaskStatusEnum.IN_PROGRESS,
+  TaskStatusEnum.REVIEW,
   TaskStatusEnum.DONE,
 ];
 
@@ -585,6 +599,7 @@ export const useKeyboardNavigation = (
     () => ({
       [TaskStatusEnum.TODO]: t('taskStatus.todo'),
       [TaskStatusEnum.IN_PROGRESS]: t('taskStatus.inProgress'),
+      [TaskStatusEnum.REVIEW]: t('taskStatus.review'),
       [TaskStatusEnum.DONE]: t('taskStatus.done'),
     }),
     [t]
@@ -642,6 +657,8 @@ export const useKeyboardNavigation = (
           return wipLimits.todo;
         case TaskStatusEnum.IN_PROGRESS:
           return wipLimits.in_progress;
+        case TaskStatusEnum.REVIEW:
+          return wipLimits.review;
         case TaskStatusEnum.DONE:
           return wipLimits.done;
         default:
@@ -908,6 +925,20 @@ export const useKeyboardNavigation = (
                 showToast('error', result.error ?? t('board.invalidTransition'));
               }
             } else if (task.status === TaskStatusEnum.IN_PROGRESS) {
+              // IN_PROGRESS now advances to REVIEW (peer review) rather than straight to DONE.
+              const result = validateAndPrepareTransition(task, TaskStatusEnum.REVIEW, {
+                checkWipLimits: true,
+                wipLimits,
+                tasksByStatus,
+              });
+
+              if (result.valid && result.updates) {
+                onMoveTask(task.id, result.updates);
+              } else {
+                showToast('error', result.error ?? t('board.invalidTransition'));
+              }
+            } else if (task.status === TaskStatusEnum.REVIEW) {
+              // A peer approves the REVIEW → DONE transition.
               const result = validateAndPrepareTransition(task, TaskStatusEnum.DONE);
 
               if (result.valid && result.updates) {
@@ -945,6 +976,16 @@ export const useKeyboardNavigation = (
             // Legacy behavior: Move to previous status
             e.preventDefault();
             if (task.status === TaskStatusEnum.DONE) {
+              // DONE now steps back to REVIEW (the column immediately to its left).
+              const result = validateAndPrepareTransition(task, TaskStatusEnum.REVIEW);
+
+              if (result.valid && result.updates) {
+                onMoveTask(task.id, result.updates);
+              } else {
+                showToast('error', result.error ?? t('board.invalidTransition'));
+              }
+            } else if (task.status === TaskStatusEnum.REVIEW) {
+              // A REVIEW task can be sent back for rework (REVIEW → IN_PROGRESS).
               const result = validateAndPrepareTransition(task, TaskStatusEnum.IN_PROGRESS);
 
               if (result.valid && result.updates) {
@@ -1312,6 +1353,8 @@ export interface UseTaskFormValidationOptions {
   };
   selectedTask: Task | null;
   onSetFormErrors: (errors: Record<string, string | undefined>) => void;
+  /** Id of the currently signed-in user, used to block self-approval of peer reviews. */
+  currentUserId?: string;
 }
 
 export interface UseTaskFormValidationReturn {
@@ -1343,7 +1386,7 @@ export interface UseTaskFormValidationReturn {
 export const useTaskFormValidation = (
   options: UseTaskFormValidationOptions
 ): UseTaskFormValidationReturn => {
-  const { formData, selectedTask, onSetFormErrors } = options;
+  const { formData, selectedTask, onSetFormErrors, currentUserId } = options;
   const { t } = useTranslation('sprint');
 
   // Build TASK_STATUS_LABELS for i18n
@@ -1351,6 +1394,7 @@ export const useTaskFormValidation = (
     () => ({
       [TaskStatusEnum.TODO]: t('taskStatus.todo'),
       [TaskStatusEnum.IN_PROGRESS]: t('taskStatus.inProgress'),
+      [TaskStatusEnum.REVIEW]: t('taskStatus.review'),
       [TaskStatusEnum.DONE]: t('taskStatus.done'),
     }),
     [t]
@@ -1364,7 +1408,8 @@ export const useTaskFormValidation = (
     (currentStatus: TaskStatus, newStatus: TaskStatus): { valid: boolean; message?: string } => {
       const validTransitions: Record<TaskStatus, TaskStatus[]> = {
         [TaskStatusEnum.TODO]: [TaskStatusEnum.IN_PROGRESS],
-        [TaskStatusEnum.IN_PROGRESS]: [TaskStatusEnum.DONE, TaskStatusEnum.TODO],
+        [TaskStatusEnum.IN_PROGRESS]: [TaskStatusEnum.REVIEW, TaskStatusEnum.TODO],
+        [TaskStatusEnum.REVIEW]: [TaskStatusEnum.DONE, TaskStatusEnum.IN_PROGRESS],
         [TaskStatusEnum.DONE]: [],
       };
 
@@ -1394,7 +1439,8 @@ export const useTaskFormValidation = (
   const getAvailableTransitions = useCallback((currentStatus: TaskStatus): TaskStatus[] => {
     const validTransitions: Record<TaskStatus, TaskStatus[]> = {
       [TaskStatusEnum.TODO]: [TaskStatusEnum.IN_PROGRESS],
-      [TaskStatusEnum.IN_PROGRESS]: [TaskStatusEnum.DONE, TaskStatusEnum.TODO],
+      [TaskStatusEnum.IN_PROGRESS]: [TaskStatusEnum.REVIEW, TaskStatusEnum.TODO],
+      [TaskStatusEnum.REVIEW]: [TaskStatusEnum.DONE, TaskStatusEnum.IN_PROGRESS],
       [TaskStatusEnum.DONE]: [],
     };
     return validTransitions[currentStatus];
@@ -1419,15 +1465,41 @@ export const useTaskFormValidation = (
         };
       }
 
-      // Step 2: Check WIP limits for IN_PROGRESS
-      if (newStatus === TaskStatusEnum.IN_PROGRESS && options?.checkWipLimits) {
-        const wipLimit = options.wipLimits?.in_progress ?? 0;
-        const currentCount = options.tasksByStatus?.in_progress.length ?? 0;
-        if (currentCount >= wipLimit) {
-          return {
-            valid: false,
-            error: t('validation.wipLimitReached', { limit: wipLimit }),
-          };
+      // Step 1b: The task assignee cannot self-approve the peer review (REVIEW → DONE).
+      // Mirror the backend SprintService.updateTask ForbiddenError guard so drag-drop and
+      // keyboard moves do not reach the API for the owner. Unassigned tasks have no one to
+      // exclude and may be approved by any developer.
+      if (
+        task.status === TaskStatusEnum.REVIEW &&
+        newStatus === TaskStatusEnum.DONE &&
+        currentUserId &&
+        task.assigneeId !== undefined &&
+        task.assigneeId === currentUserId
+      ) {
+        return {
+          valid: false,
+          error: t('reviewApprovalRestricted'),
+        };
+      }
+
+      // Step 2: Check WIP limits for IN_PROGRESS and REVIEW columns
+      if (options?.checkWipLimits && options.wipLimits) {
+        const bucket: 'in_progress' | 'review' | null =
+          newStatus === TaskStatusEnum.IN_PROGRESS
+            ? 'in_progress'
+            : newStatus === TaskStatusEnum.REVIEW
+              ? 'review'
+              : null;
+
+        if (bucket) {
+          const wipLimit = options.wipLimits[bucket];
+          const currentCount = options.tasksByStatus?.[bucket].length ?? 0;
+          if (currentCount >= wipLimit) {
+            return {
+              valid: false,
+              error: t('validation.wipLimitReached', { limit: wipLimit }),
+            };
+          }
         }
       }
 
@@ -1457,7 +1529,7 @@ export const useTaskFormValidation = (
 
       return { valid: true, updates };
     },
-    [validateTaskStatusTransition, t]
+    [validateTaskStatusTransition, t, currentUserId]
   );
 
   // ============================================

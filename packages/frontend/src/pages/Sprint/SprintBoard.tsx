@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
 import { definitionService } from '../../services';
-import { useTeamStore } from '../../store';
+import { useTeamStore, useAuthStore } from '../../store';
 import { logger } from '../../utils/logger';
 import { useDebounce, useToast } from '../../hooks';
 import { ToastContainer } from '../../components/common/ToastContainer/ToastContainer';
@@ -72,6 +72,7 @@ import styles from './SprintBoard.module.css';
 
 export const SprintBoard: React.FC = () => {
   const { currentTeam } = useTeamStore();
+  const currentUserId = useAuthStore((s) => s.user?.id);
   const navigate = useNavigate();
   const { t } = useTranslation('sprint');
   const teamId = currentTeam?.id;
@@ -89,6 +90,10 @@ export const SprintBoard: React.FC = () => {
       [TaskStatusEnum.IN_PROGRESS]: {
         ...TASK_STATUS_CONFIG_BASE[TaskStatusEnum.IN_PROGRESS],
         label: t('taskStatus.inProgress'),
+      },
+      [TaskStatusEnum.REVIEW]: {
+        ...TASK_STATUS_CONFIG_BASE[TaskStatusEnum.REVIEW],
+        label: t('taskStatus.review'),
       },
       [TaskStatusEnum.DONE]: {
         ...TASK_STATUS_CONFIG_BASE[TaskStatusEnum.DONE],
@@ -180,6 +185,7 @@ export const SprintBoard: React.FC = () => {
     formData,
     selectedTask,
     onSetFormErrors: handleSetFormErrors,
+    currentUserId,
   });
 
   const { validateForm, validateAndPrepareTransition, getAvailableTransitions } = formValidation;
@@ -579,6 +585,7 @@ export const SprintBoard: React.FC = () => {
         totalTasks={sprintStats.totalTasks}
         todoTasks={sprintStats.todoTasks}
         inProgressTasks={sprintStats.inProgressTasks}
+        reviewTasks={sprintStats.reviewTasks}
         doneTasks={sprintStats.doneTasks}
         totalEstimatedHours={sprintStats.totalEstimatedHours}
         totalRemainingHours={sprintStats.totalRemainingHours}
@@ -678,6 +685,30 @@ export const SprintBoard: React.FC = () => {
             />
 
             <KanbanColumn
+              status={TaskStatusEnum.REVIEW}
+              title={t('taskStatus.review')}
+              tasks={tasksByStatus.review}
+              wipLimit={wipLimits.review}
+              allTasksByStatus={tasksByStatus}
+              wipLimits={wipLimits}
+              draggedTaskId={draggedTaskId}
+              dropTargetColumn={dropTargetColumn}
+              focusedTaskId={focusedTaskId}
+              keyboardGrabState={keyboardGrabState}
+              keyboardDropTargetStatus={keyboardDropTargetStatus}
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onTaskClick={openDetailModal}
+              onKeyDown={handleKeyDown}
+              onFocus={setFocusedTaskId}
+              onBlur={() => setFocusedTaskId(null)}
+              onMoveStatus={handleMoveStatus}
+            />
+
+            <KanbanColumn
               status={TaskStatusEnum.DONE}
               title={t('taskStatus.done')}
               tasks={tasksByStatus.done}
@@ -742,6 +773,7 @@ export const SprintBoard: React.FC = () => {
           getAvailableTransitions={getAvailableTransitions}
           isUpdating={mutations.updateTaskMutation.isPending}
           modalRef={detailModalRef}
+          currentUserId={currentUserId}
         />
       )}
 

@@ -29,6 +29,7 @@
     "noCompletedTasks": "Nessun task completato",
     "noTasks": "Nessun task",
     "noTasksInProgress": "Nessun task in corso",
+    "noTasksInReview": "Nessun task in attesa di revisione",
     "noTasksToDo": "Nessun task da fare",
     "partOf": "Parte di: {{title}}",
     "pbiLabel": "PBI:",
@@ -239,6 +240,7 @@
     "title": "Scorciatoie Tastiera",
     "toggleBurndown": "Mostra/nascondi burndown chart"
   },
+  "reviewApprovalRestricted": "Non puoi approvare la revisione del tuo task. Un altro membro del team deve eseguire la revisione.",
   "sprintBacklogManager": {
     "add": "Aggiungi",
     "addFirstItem": "+ Aggiungi Primo Elemento",
@@ -634,6 +636,7 @@
     "notSet": "Non impostato",
     "parentPbi": "PBI Padre",
     "remainingHours": "Ore rimanenti",
+    "reviewDescription": "Il task è in attesa di revisione tra pari",
     "status": "Stato",
     "statusHistory": "Storico stato",
     "taskInformation": "Informazione Task",
@@ -661,6 +664,8 @@
     "doneDesc": "Il task è stato completato",
     "inProgress": "In corso",
     "inProgressDesc": "Il task è in fase di lavorazione",
+    "review": "Revisione",
+    "reviewDesc": "Il task è in attesa di revisione tra pari",
     "todo": "Da fare",
     "todoDesc": "Il task è pronto per iniziare"
   },

@@ -10,8 +10,8 @@ interface TransitionValidationResult {
 
 interface ValidateTransitionOptions {
   checkWipLimits?: boolean;
-  wipLimits?: { in_progress: number };
-  tasksByStatus?: { in_progress: Task[] };
+  wipLimits?: { in_progress: number; review: number };
+  tasksByStatus?: { in_progress: Task[]; review: Task[] };
   checkRequiredFields?: boolean;
 }
 
@@ -33,15 +33,27 @@ export function validateAndPrepareTransition(
     }
   }
 
-  // Step 2: Check WIP limits for IN_PROGRESS
-  if (newStatus === TaskStatus.IN_PROGRESS && options?.checkWipLimits) {
-    const wipLimit = options.wipLimits?.in_progress ?? 0;
-    const currentCount = options.tasksByStatus?.in_progress.length ?? 0;
-    if (currentCount >= wipLimit) {
-      return {
-        valid: false,
-        error: `WIP limit reached for In Progress (${wipLimit} tasks max)`,
-      };
+  // Step 2: Check WIP limits for IN_PROGRESS and REVIEW
+  if (options?.checkWipLimits) {
+    if (newStatus === TaskStatus.IN_PROGRESS) {
+      const wipLimit = options.wipLimits?.in_progress ?? 0;
+      const currentCount = options.tasksByStatus?.in_progress.length ?? 0;
+      if (currentCount >= wipLimit) {
+        return {
+          valid: false,
+          error: `WIP limit reached for In Progress (${wipLimit} tasks max)`,
+        };
+      }
+    }
+    if (newStatus === TaskStatus.REVIEW) {
+      const wipLimit = options.wipLimits?.review ?? 0;
+      const currentCount = options.tasksByStatus?.review.length ?? 0;
+      if (currentCount >= wipLimit) {
+        return {
+          valid: false,
+          error: `WIP limit reached for Review (${wipLimit} tasks max)`,
+        };
+      }
     }
   }
 
@@ -253,6 +265,82 @@ describe('validateAndPrepareTransition', () => {
         status: TaskStatus.IN_PROGRESS,
       });
       expect(result.updates?.remainingHours).toBeUndefined();
+    });
+  });
+
+  describe('Review Status', () => {
+    it('should allow IN_PROGRESS → REVIEW when the validator permits it', () => {
+      const task = createMockTask({ status: TaskStatus.IN_PROGRESS });
+      const mockValidator = (_from: TaskStatus, _to: TaskStatus) =>
+        ({ valid: true }) as { valid: boolean; message?: string };
+
+      const result = validateAndPrepareTransition(task, TaskStatus.REVIEW, {}, mockValidator);
+
+      expect(result.valid).toBe(true);
+      expect(result.updates).toEqual({ status: TaskStatus.REVIEW });
+    });
+
+    it('should reject IN_PROGRESS → DONE (must pass through REVIEW)', () => {
+      const task = createMockTask({ status: TaskStatus.IN_PROGRESS });
+      // Mirrors the new transition graph where the direct IN_PROGRESS → DONE edge was removed.
+      const mockValidator = (_from: TaskStatus, to: TaskStatus) =>
+        to === TaskStatus.DONE
+          ? { valid: false, message: 'Cannot transition directly from IN_PROGRESS to DONE' }
+          : ({ valid: true } as { valid: boolean; message?: string });
+
+      const result = validateAndPrepareTransition(task, TaskStatus.DONE, {}, mockValidator);
+
+      expect(result.valid).toBe(false);
+      expect(result.error).toContain('Cannot transition directly from IN_PROGRESS to DONE');
+    });
+
+    it('should allow REVIEW → DONE', () => {
+      const task = createMockTask({ status: TaskStatus.REVIEW });
+      const mockValidator = (_from: TaskStatus, _to: TaskStatus) =>
+        ({ valid: true }) as { valid: boolean; message?: string };
+
+      const result = validateAndPrepareTransition(task, TaskStatus.DONE, {}, mockValidator);
+
+      expect(result.valid).toBe(true);
+      expect(result.updates).toEqual({ status: TaskStatus.DONE, remainingHours: 0 });
+    });
+
+    it('should allow REVIEW → IN_PROGRESS (rework)', () => {
+      const task = createMockTask({ status: TaskStatus.REVIEW });
+      const mockValidator = (_from: TaskStatus, _to: TaskStatus) =>
+        ({ valid: true }) as { valid: boolean; message?: string };
+
+      const result = validateAndPrepareTransition(task, TaskStatus.IN_PROGRESS, {}, mockValidator);
+
+      expect(result.valid).toBe(true);
+      expect(result.updates).toEqual({ status: TaskStatus.IN_PROGRESS });
+    });
+
+    it('should fail when the REVIEW WIP limit is reached', () => {
+      const task = createMockTask({ status: TaskStatus.IN_PROGRESS });
+      const options = {
+        checkWipLimits: true,
+        wipLimits: { in_progress: 3, review: 2 },
+        tasksByStatus: { in_progress: [], review: [createMockTask(), createMockTask()] },
+      };
+
+      const result = validateAndPrepareTransition(task, TaskStatus.REVIEW, options);
+
+      expect(result.valid).toBe(false);
+      expect(result.error).toContain('Review');
+    });
+
+    it('should pass when the REVIEW WIP limit is not reached', () => {
+      const task = createMockTask({ status: TaskStatus.IN_PROGRESS });
+      const options = {
+        checkWipLimits: true,
+        wipLimits: { in_progress: 3, review: 2 },
+        tasksByStatus: { in_progress: [], review: [createMockTask()] },
+      };
+
+      const result = validateAndPrepareTransition(task, TaskStatus.REVIEW, options);
+
+      expect(result.valid).toBe(true);
     });
   });
 

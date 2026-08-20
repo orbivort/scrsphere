@@ -29,6 +29,7 @@
     "noCompletedTasks": "Keine abgeschlossenen Aufgaben",
     "noTasks": "Keine Aufgaben",
     "noTasksInProgress": "Keine Aufgaben in Bearbeitung",
+    "noTasksInReview": "Keine Aufgaben warten auf Überprüfung",
     "noTasksToDo": "Keine Aufgaben zu erledigen",
     "partOf": "Teil von: {{title}}",
     "pbiLabel": "PBI:",
@@ -239,6 +240,7 @@
     "title": "Tastaturkürzel",
     "toggleBurndown": "Burndown-Chart umschalten"
   },
+  "reviewApprovalRestricted": "Sie können die Überprüfung Ihrer eigenen Aufgabe nicht genehmigen. Ein anderes Teammitglied muss die Überprüfung durchführen.",
   "sprintBacklogManager": {
     "add": "Hinzufügen",
     "addFirstItem": "+ Erstes Element hinzufügen",
@@ -634,6 +636,7 @@
     "notSet": "Nicht festgelegt",
     "parentPbi": "Übergeordnetes PBI",
     "remainingHours": "Verbleibende Stunden",
+    "reviewDescription": "Aufgabe wartet auf Peer-Review",
     "status": "Status",
     "statusHistory": "Statushistorie",
     "taskInformation": "Aufgabeninformationen",
@@ -661,6 +664,8 @@
     "doneDesc": "Aufgabe wurde abgeschlossen",
     "inProgress": "In Bearbeitung",
     "inProgressDesc": "Aufgabe wird aktuell bearbeitet",
+    "review": "Überprüfung",
+    "reviewDesc": "Aufgabe wartet auf Peer-Review",
     "todo": "Zu erledigen",
     "todoDesc": "Aufgabe kann begonnen werden"
   },

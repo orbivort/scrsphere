@@ -293,6 +293,79 @@ describe('TaskDetailModal', () => {
     });
   });
 
+  describe('Review Approval Guard', () => {
+    it('should disable the REVIEW → DONE option for the task assignee', async () => {
+      const user = userEvent.setup();
+      const reviewTask = createMockTask({
+        status: TaskStatus.REVIEW,
+        assigneeId: 'user-1',
+      });
+
+      renderWithProviders(
+        <TaskDetailModal
+          {...defaultProps}
+          task={reviewTask}
+          currentUserId="user-1"
+          getAvailableTransitions={() => [TaskStatus.DONE, TaskStatus.IN_PROGRESS]}
+        />
+      );
+
+      const trigger = screen.getByRole('button', { name: /review/i });
+      await user.click(trigger);
+
+      const doneOption = screen.getByRole('option', { name: /done/i });
+      expect(doneOption).toBeDisabled();
+      expect(doneOption).toHaveAttribute('aria-disabled', 'true');
+    });
+
+    it('should enable the REVIEW → DONE option for another team member', async () => {
+      const user = userEvent.setup();
+      const reviewTask = createMockTask({
+        status: TaskStatus.REVIEW,
+        assigneeId: 'user-1',
+      });
+
+      renderWithProviders(
+        <TaskDetailModal
+          {...defaultProps}
+          task={reviewTask}
+          currentUserId="user-2"
+          getAvailableTransitions={() => [TaskStatus.DONE, TaskStatus.IN_PROGRESS]}
+        />
+      );
+
+      const trigger = screen.getByRole('button', { name: /review/i });
+      await user.click(trigger);
+
+      const doneOption = screen.getByRole('option', { name: /done/i });
+      expect(doneOption).not.toBeDisabled();
+      expect(doneOption).toHaveAttribute('aria-disabled', 'false');
+    });
+
+    it('should enable the REVIEW → DONE option for the assignee when the task is unassigned', async () => {
+      const user = userEvent.setup();
+      const unassignedReviewTask = createMockTask({
+        status: TaskStatus.REVIEW,
+        assigneeId: null,
+      });
+
+      renderWithProviders(
+        <TaskDetailModal
+          {...defaultProps}
+          task={unassignedReviewTask}
+          currentUserId="user-1"
+          getAvailableTransitions={() => [TaskStatus.DONE]}
+        />
+      );
+
+      const trigger = screen.getByRole('button', { name: /review/i });
+      await user.click(trigger);
+
+      const doneOption = screen.getByRole('option', { name: /done/i });
+      expect(doneOption).not.toBeDisabled();
+    });
+  });
+
   describe('Edge Cases', () => {
     it('should handle task without description', () => {
       const taskWithoutDesc = createMockTask({ description: undefined });

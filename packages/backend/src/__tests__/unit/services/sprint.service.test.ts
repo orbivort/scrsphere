@@ -4,7 +4,7 @@ import {
   sprintBacklogManagerService,
   incrementSprintService,
 } from '../../../services/sprint.service';
-import { NotFoundError, BadRequestError } from '../../../utils/errors';
+import { NotFoundError, BadRequestError, ForbiddenError } from '../../../utils/errors';
 
 // Mock prisma
 vi.mock('../../../utils/prisma', () => ({
@@ -88,6 +88,12 @@ vi.mock('../../../services/workflow.service', () => ({
 // Mock logger
 vi.mock('../../../utils/logger', () => ({
   default: {
+    info: vi.fn(),
+    error: vi.fn(),
+    warn: vi.fn(),
+    debug: vi.fn(),
+  },
+  logger: {
     info: vi.fn(),
     error: vi.fn(),
     warn: vi.fn(),
@@ -1460,6 +1466,77 @@ describe('SprintService - Additional Coverage', () => {
       // No PBI should be marked DONE and no status change history should be recorded.
       expect(prisma.sprintBacklogItem.findMany).toHaveBeenCalled();
     });
+
+    it('should NOT auto-complete a PBI that has a task in REVIEW', async () => {
+      const mockSprint = {
+        id: 'sprint-1',
+        teamId: 'team-1',
+        name: 'Sprint 1',
+        status: 'ACTIVE',
+        sprintBacklogItems: [
+          {
+            id: 'sbi-1',
+            pbiId: 'pbi-1',
+            pbi: {
+              id: 'pbi-1',
+              title: 'PBI 1',
+              status: 'IN_PROGRESS',
+              storyPoints: 8,
+            },
+          },
+        ],
+      };
+
+      // One task is DONE, the other is REVIEW -> PBI must remain incomplete.
+      const mockTasks = [
+        { id: 'task-1', pbiId: 'pbi-1', status: 'DONE' },
+        { id: 'task-2', pbiId: 'pbi-1', status: 'REVIEW' },
+      ];
+
+      (prisma.sprint.findUnique as any).mockResolvedValue(mockSprint);
+      (prisma.sprintBacklogItem.findMany as any).mockResolvedValue(mockSprint.sprintBacklogItems);
+      (prisma.task.findMany as any).mockResolvedValue(mockTasks);
+
+      const mockCompletedSprint = { ...mockSprint, status: 'COMPLETED' };
+
+      // Team has one active DoD item that is fully verified for the PBI, so the gate passes.
+      const mockActiveDoD = { items: [{ id: 'dod-item-1' }] };
+      const mockVerifiedRows = [{ pbiId: 'pbi-1', dodItemId: 'dod-item-1' }];
+
+      const updateManyMock = vi.fn().mockResolvedValue({ count: 0 });
+      (withTransaction as any).mockImplementation(async (callback: any) => {
+        return callback({
+          sprint: {
+            update: vi.fn().mockResolvedValue(mockCompletedSprint),
+          },
+          productBacklogItem: {
+            updateMany: updateManyMock,
+          },
+          statusChangeHistory: {
+            create: vi.fn(),
+          },
+          workflow: {
+            findFirst: vi.fn(),
+          },
+          workflowState: {
+            findMany: vi.fn(),
+          },
+          definitionOfDone: {
+            findUnique: vi.fn().mockResolvedValue(mockActiveDoD),
+          },
+          doDChecklistVerification: {
+            findMany: vi.fn().mockResolvedValue(mockVerifiedRows),
+          },
+        });
+      });
+
+      await sprintService.completeSprint('sprint-1', 'user-1');
+
+      // The PBI has a REVIEW task, so it must NOT be marked DONE.
+      expect(updateManyMock).not.toHaveBeenCalledWith(
+        expect.objectContaining({ data: expect.objectContaining({ status: 'DONE' }) })
+      );
+    });
   });
 
   describe('updateTask with status change', () => {
@@ -1595,6 +1672,161 @@ describe('SprintService - Additional Coverage', () => {
       await expect(
         sprintService.updateTask('sprint-1', 'task-1', { status: 'DONE' }, 'user-1')
       ).rejects.toThrow(BadRequestError);
+    });
+
+    it('should allow a non-assignee developer to approve REVIEW → DONE', async () => {
+      const mockTask = {
+        id: 'task-1',
+        sprintId: 'sprint-1',
+        title: 'Task 1',
+        status: 'REVIEW',
+        assigneeId: 'assignee-1',
+        sprint: {
+          teamId: 'team-1',
+          team: {
+            members: [],
+          },
+        },
+      };
+
+      const mockUpdatedTask = { ...mockTask, status: 'DONE' };
+
+      (prisma.task.findFirst as any).mockResolvedValue(mockTask);
+      (prisma.task.update as any).mockResolvedValue(mockUpdatedTask);
+      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
+      (workflowService.validateTransition as any).mockResolvedValue({
+        isValid: true,
+        allowed: true,
+      });
+      (workflowService.executeStatusChange as any).mockResolvedValue({});
+      (prisma.burndownData.findFirst as any).mockResolvedValue(null);
+      (prisma.sprint.findUnique as any).mockResolvedValue({
+        status: 'ACTIVE',
+        startDate: new Date(),
+        endDate: new Date(),
+      });
+
+      const result = await sprintService.updateTask(
+        'sprint-1',
+        'task-1',
+        { status: 'DONE' },
+        'reviewer-1'
+      );
+
+      expect(result.status).toBe('DONE');
+    });
+
+    it('should throw ForbiddenError when the assignee self-approves REVIEW → DONE', async () => {
+      const mockTask = {
+        id: 'task-1',
+        sprintId: 'sprint-1',
+        title: 'Task 1',
+        status: 'REVIEW',
+        assigneeId: 'user-1',
+        sprint: {
+          teamId: 'team-1',
+          team: {
+            members: [],
+          },
+        },
+      };
+
+      (prisma.task.findFirst as any).mockResolvedValue(mockTask);
+      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
+      // The guard fires before workflow validation, so validateTransition must not be reached.
+      (workflowService.validateTransition as any).mockResolvedValue({
+        isValid: true,
+        allowed: true,
+      });
+
+      await expect(
+        sprintService.updateTask('sprint-1', 'task-1', { status: 'DONE' }, 'user-1')
+      ).rejects.toThrow(ForbiddenError);
+      expect(workflowService.validateTransition).not.toHaveBeenCalled();
+    });
+
+    it('should allow the assignee to send a REVIEW task back to IN_PROGRESS (rework)', async () => {
+      const mockTask = {
+        id: 'task-1',
+        sprintId: 'sprint-1',
+        title: 'Task 1',
+        status: 'REVIEW',
+        assigneeId: 'user-1',
+        sprint: {
+          teamId: 'team-1',
+          team: {
+            members: [],
+          },
+        },
+      };
+
+      const mockUpdatedTask = { ...mockTask, status: 'IN_PROGRESS' };
+
+      (prisma.task.findFirst as any).mockResolvedValue(mockTask);
+      (prisma.task.update as any).mockResolvedValue(mockUpdatedTask);
+      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
+      (workflowService.validateTransition as any).mockResolvedValue({
+        isValid: true,
+        allowed: true,
+      });
+      (workflowService.executeStatusChange as any).mockResolvedValue({});
+      (prisma.burndownData.findFirst as any).mockResolvedValue(null);
+      (prisma.sprint.findUnique as any).mockResolvedValue({
+        status: 'ACTIVE',
+        startDate: new Date(),
+        endDate: new Date(),
+      });
+
+      const result = await sprintService.updateTask(
+        'sprint-1',
+        'task-1',
+        { status: 'IN_PROGRESS' },
+        'user-1'
+      );
+
+      expect(result.status).toBe('IN_PROGRESS');
+    });
+
+    it('should allow the assignee to approve an unassigned REVIEW task to DONE', async () => {
+      const mockTask = {
+        id: 'task-1',
+        sprintId: 'sprint-1',
+        title: 'Task 1',
+        status: 'REVIEW',
+        assigneeId: null,
+        sprint: {
+          teamId: 'team-1',
+          team: {
+            members: [],
+          },
+        },
+      };
+
+      const mockUpdatedTask = { ...mockTask, status: 'DONE' };
+
+      (prisma.task.findFirst as any).mockResolvedValue(mockTask);
+      (prisma.task.update as any).mockResolvedValue(mockUpdatedTask);
+      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
+      (workflowService.validateTransition as any).mockResolvedValue({
+        isValid: true,
+        allowed: true,
+      });
+      (workflowService.executeStatusChange as any).mockResolvedValue({});
+      (prisma.burndownData.findFirst as any).mockResolvedValue(null);
+      (prisma.sprint.findUnique as any).mockResolvedValue({
+        status: 'ACTIVE',
+        startDate: new Date(),
+        endDate: new Date(),
+      });
+
+      const result = await sprintService.updateTask(
+        'sprint-1',
+        'task-1',
+        { status: 'DONE' },
+        'user-1'
+      );
+
+      expect(result.status).toBe('DONE');
     });
   });
 

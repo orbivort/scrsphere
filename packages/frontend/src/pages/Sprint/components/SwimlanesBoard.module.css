@@ -18,7 +18,7 @@
 
 .swimlanes-header {
   display: grid;
-  grid-template-columns: 200px repeat(3, 1fr);
+  grid-template-columns: 200px repeat(4, 1fr);
   background: linear-gradient(180deg, var(--color-background-page) 0%, var(--color-gray-50) 100%);
   border-bottom: var(--border-width-2) solid var(--color-border-default);
   position: sticky;
@@ -60,6 +60,10 @@
   color: var(--color-primary-600);
 }
 
+.review {
+  color: var(--color-accent-indigo-600);
+}
+
 .done {
   color: var(--color-success-600);
 }
@@ -80,7 +84,7 @@
 
 .swimlane-row {
   display: grid;
-  grid-template-columns: 200px repeat(3, 1fr);
+  grid-template-columns: 200px repeat(4, 1fr);
   border-bottom: var(--border-width-1) solid var(--color-border-default);
   min-height: 100px;
 }
@@ -148,6 +152,10 @@
 
 .stat-dot.in-progress {
   background: var(--color-primary-500);
+}
+
+.stat-dot.review {
+  background: var(--color-accent-indigo-500);
 }
 
 .stat-dot.done {

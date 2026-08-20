@@ -27,6 +27,9 @@
   "lastName": "Nachname",
   "passwordTooShort": "Passwort muss mindestens {{min}} Zeichen haben",
   "passwordsDoNotMatch": "Passwörter stimmen nicht überein",
+  "task": {
+    "cannotApproveOwnReview": "Sie können die Überprüfung Ihrer eigenen Aufgabe nicht genehmigen. Ein anderes Teammitglied muss die Genehmigung der Überprüfung durchführen."
+  },
   "workflow": {
     "authenticationRequired": "Benutzer-Authentifizierung für diesen Übergang erforderlich",
     "initialStatusMustBe": "Initialer Status muss {{defaultStatus}} sein",

@@ -15,6 +15,7 @@ import {
   ZapIcon,
   CheckCircleIcon,
   MessageSquareIcon,
+  EyeIcon,
 } from '../../../components/common/Icons';
 import { useVirtualScroll, shouldEnableVirtualization } from '../../../hooks/useVirtualScroll';
 
@@ -27,6 +28,7 @@ import { TaskCard } from './TaskCard';
 const STATUS_LABEL_KEYS: Record<TaskStatus, string> = {
   [TaskStatusEnum.TODO]: 'taskStatus.todo',
   [TaskStatusEnum.IN_PROGRESS]: 'taskStatus.inProgress',
+  [TaskStatusEnum.REVIEW]: 'taskStatus.review',
   [TaskStatusEnum.DONE]: 'taskStatus.done',
 };
 
@@ -38,6 +40,7 @@ export interface SwimlanesBoardProps {
   tasksByStatus: {
     todo: Task[];
     in_progress: Task[];
+    review: Task[];
     done: Task[];
   };
   draggedTaskId: string | null;
@@ -300,6 +303,7 @@ export const SwimlanesBoard = React.memo<SwimlanesBoardProps>(
     const getSwimlaneStats = (tasks: Task[]) => {
       const todo = tasks.filter((t) => t.status === TaskStatusEnum.TODO).length;
       const inProgress = tasks.filter((t) => t.status === TaskStatusEnum.IN_PROGRESS).length;
+      const review = tasks.filter((t) => t.status === TaskStatusEnum.REVIEW).length;
       const done = tasks.filter((t) => t.status === TaskStatusEnum.DONE).length;
       const totalHours = tasks.reduce((sum, t) => sum + (t.estimatedHours ?? 0), 0);
       const remainingHours = tasks.reduce(
@@ -307,7 +311,7 @@ export const SwimlanesBoard = React.memo<SwimlanesBoardProps>(
         0
       );
 
-      return { todo, inProgress, done, totalHours, remainingHours, total: tasks.length };
+      return { todo, inProgress, review, done, totalHours, remainingHours, total: tasks.length };
     };
 
     const sortedKeys = Object.keys(groupedBySwimlane).sort((a, b) => {
@@ -357,6 +361,14 @@ export const SwimlanesBoard = React.memo<SwimlanesBoardProps>(
             <span className={styles['column-total']}>{tasksByStatus.in_progress.length}</span>
           </div>
           <div
+            className={`${styles['swimlane-column-header']} ${styles.review} ${dropTargetColumn === TaskStatusEnum.REVIEW ? styles['drop-target'] : ''} ${keyboardGrabState === 'grabbed' && keyboardDropTargetStatus === TaskStatusEnum.REVIEW ? styles['keyboard-drop-target'] : ''}`}
+            role="columnheader"
+            aria-dropeffect={keyboardGrabState === 'grabbed' ? 'move' : 'none'}
+          >
+            <EyeIcon size={14} aria-hidden="true" /> {t('taskStatus.review').toUpperCase()}
+            <span className={styles['column-total']}>{tasksByStatus.review.length}</span>
+          </div>
+          <div
             className={`${styles['swimlane-column-header']} ${styles.done} ${dropTargetColumn === TaskStatusEnum.DONE ? styles['drop-target'] : ''} ${keyboardGrabState === 'grabbed' && keyboardDropTargetStatus === TaskStatusEnum.DONE ? styles['keyboard-drop-target'] : ''}`}
             role="columnheader"
             aria-dropeffect={keyboardGrabState === 'grabbed' ? 'move' : 'none'}
@@ -374,6 +386,7 @@ export const SwimlanesBoard = React.memo<SwimlanesBoardProps>(
 
             const todoTasks = tasks.filter((t) => t.status === TaskStatusEnum.TODO);
             const inProgressTasks = tasks.filter((t) => t.status === TaskStatusEnum.IN_PROGRESS);
+            const reviewTasks = tasks.filter((t) => t.status === TaskStatusEnum.REVIEW);
             const doneTasks = tasks.filter((t) => t.status === TaskStatusEnum.DONE);
 
             return (
@@ -391,6 +404,10 @@ export const SwimlanesBoard = React.memo<SwimlanesBoardProps>(
                     <span className={styles['stat-item']}>
                       <span className={`${styles['stat-dot']} ${styles['in-progress']}`} />
                       {stats.inProgress}
+                    </span>
+                    <span className={styles['stat-item']}>
+                      <span className={`${styles['stat-dot']} ${styles.review}`} />
+                      {stats.review}
                     </span>
                     <span className={styles['stat-item']}>
                       <span className={`${styles['stat-dot']} ${styles.done}`} />
@@ -428,6 +445,26 @@ export const SwimlanesBoard = React.memo<SwimlanesBoardProps>(
                   tasks={inProgressTasks}
                   label={label}
                   status={TaskStatusEnum.IN_PROGRESS}
+                  draggedTaskId={draggedTaskId}
+                  focusedTaskId={focusedTaskId}
+                  keyboardGrabState={keyboardGrabState}
+                  keyboardDraggedTaskId={keyboardDraggedTaskId}
+                  keyboardDropTargetStatus={keyboardDropTargetStatus}
+                  onDragStart={onDragStart}
+                  onDragEnd={onDragEnd}
+                  onDrop={onDrop}
+                  onDragOver={onDragOver}
+                  onDragLeave={onDragLeave}
+                  onTaskClick={onTaskClick}
+                  onKeyDown={onKeyDown}
+                  onFocus={onFocus}
+                  onBlur={onBlur}
+                />
+
+                <VirtualizedTaskCell
+                  tasks={reviewTasks}
+                  label={label}
+                  status={TaskStatusEnum.REVIEW}
                   draggedTaskId={draggedTaskId}
                   focusedTaskId={focusedTaskId}
                   keyboardGrabState={keyboardGrabState}

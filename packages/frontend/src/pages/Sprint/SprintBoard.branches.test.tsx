@@ -21,6 +21,7 @@ beforeAll(async () => {
 
 vi.mock('../../store', () => ({
   useTeamStore: vi.fn(),
+  useAuthStore: vi.fn(() => ({ user: null })),
 }));
 
 vi.mock('../../services', () => ({
@@ -109,17 +110,19 @@ const getDefaultMockData = () => ({
   dodVerifications: [],
   sprintLoading: false,
   tasksLoading: false,
-  wipLimits: { todo: 5, in_progress: 3, done: 10 },
+  wipLimits: { todo: 5, in_progress: 3, review: 3, done: 10 },
   filteredTasks: mockTasks,
   tasksByStatus: {
     todo: [mockTasks[0]],
     in_progress: [mockTasks[1]],
+    review: [],
     done: [mockTasks[2]],
   },
   sprintStats: {
     totalTasks: 3,
     todoTasks: 1,
     inProgressTasks: 1,
+    reviewTasks: 0,
     doneTasks: 1,
     totalEstimatedHours: 24,
     totalRemainingHours: 16,
@@ -286,6 +289,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         tasksByStatus: {
           todo: [],
           in_progress: [],
+          review: [],
           done: allDoneTasks,
         },
       });
@@ -311,6 +315,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         tasksByStatus: {
           todo: [tasksWithSamePbi[0]],
           in_progress: [tasksWithSamePbi[1]],
+          review: [],
           done: [tasksWithSamePbi[2]],
         },
       });
@@ -371,6 +376,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         tasksByStatus: {
           todo: incompleteTasks,
           in_progress: [],
+          review: [],
           done: [],
         },
       });
@@ -390,6 +396,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         tasksByStatus: {
           todo: [],
           in_progress: [],
+          review: [],
           done: [createMockTask({ id: 'task-1', status: TaskStatus.DONE })],
         },
         impediments: [createMockImpediment({ id: 'imp-1', status: ImpedimentStatus.OPEN })],
@@ -412,6 +419,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         tasksByStatus: {
           todo: [],
           in_progress: [],
+          review: [],
           done: [doneTask],
         },
         impediments: [createMockImpediment({ id: 'imp-1', status: ImpedimentStatus.RESOLVED })],
@@ -746,6 +754,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         tasksByStatus: {
           todo: [],
           in_progress: [],
+          review: [],
           done: [],
         },
       });
@@ -766,6 +775,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         tasksByStatus: {
           todo: [task],
           in_progress: [],
+          review: [],
           done: [],
         },
       });
@@ -1016,6 +1026,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
           totalTasks: 10,
           todoTasks: 3,
           inProgressTasks: 4,
+          reviewTasks: 0,
           doneTasks: 3,
           totalEstimatedHours: 80,
           totalRemainingHours: 50,
@@ -1041,6 +1052,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
           totalTasks: 0,
           todoTasks: 0,
           inProgressTasks: 0,
+          reviewTasks: 0,
           doneTasks: 0,
           totalEstimatedHours: 0,
           totalRemainingHours: 0,
@@ -1418,6 +1430,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         tasksByStatus: {
           todo: [taskWithoutPbi],
           in_progress: [],
+          review: [],
           done: [],
         },
       });

@@ -29,6 +29,7 @@
     "noCompletedTasks": "Aucune tâche terminée",
     "noTasks": "Aucune tâche",
     "noTasksInProgress": "Aucune tâche en cours",
+    "noTasksInReview": "Aucune tâche en attente de revue",
     "noTasksToDo": "Aucune tâche à faire",
     "partOf": "Partie de : {{title}}",
     "pbiLabel": "PBI :",
@@ -239,6 +240,7 @@
     "title": "Raccourcis clavier",
     "toggleBurndown": "Afficher/masquer le graphique d'avancement"
   },
+  "reviewApprovalRestricted": "Vous ne pouvez pas approuver la revue de votre propre tâche. Un autre membre de l'équipe doit effectuer la revue.",
   "sprintBacklogManager": {
     "add": "Ajouter",
     "addFirstItem": "+ Ajouter le premier Élément",
@@ -634,6 +636,7 @@
     "notSet": "Non défini",
     "parentPbi": "PBI Parent",
     "remainingHours": "Heures restantes",
+    "reviewDescription": "La tâche est en attente de revue par les pairs",
     "status": "Statut",
     "statusHistory": "Historique du statut",
     "taskInformation": "Information sur la Tâche",
@@ -661,6 +664,8 @@
     "doneDesc": "La tâche a été terminée",
     "inProgress": "En cours",
     "inProgressDesc": "La tâche est en cours de réalisation",
+    "review": "Revue",
+    "reviewDesc": "La tâche est en attente de revue par les pairs",
     "todo": "À faire",
     "todoDesc": "La tâche est prête à commencer"
   },

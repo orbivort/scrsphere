@@ -355,6 +355,48 @@ describe('Workflow Integration Tests', () => {
 
       expect(response.body.success).toBe(true);
     });
+
+    it('should return REVIEW (not DONE) for a Task IN_PROGRESS status', async () => {
+      const email = `allowed-transitions-inprog-${uniqueId()}@example.com`;
+      testEmails.push(email);
+
+      await createTestUserInDb(email, 'TestPassword123!', 'Dev', 'eloper');
+
+      const cookies = await loginAndGetCookies(email);
+
+      const response = await request(app)
+        .get('/api/v1/workflows/Task/allowed-transitions/IN_PROGRESS')
+        .set('Cookie', cookies)
+        .expect(200);
+
+      expect(response.body.success).toBe(true);
+      const toNames = response.body.data.map(
+        (t: { toState?: { name?: string } }) => t.toState?.name
+      );
+      expect(toNames).toContain('REVIEW');
+      expect(toNames).not.toContain('DONE');
+    });
+
+    it('should return DONE and IN_PROGRESS for a Task REVIEW status', async () => {
+      const email = `allowed-transitions-review-${uniqueId()}@example.com`;
+      testEmails.push(email);
+
+      await createTestUserInDb(email, 'TestPassword123!', 'Dev', 'eloper');
+
+      const cookies = await loginAndGetCookies(email);
+
+      const response = await request(app)
+        .get('/api/v1/workflows/Task/allowed-transitions/REVIEW')
+        .set('Cookie', cookies)
+        .expect(200);
+
+      expect(response.body.success).toBe(true);
+      const toNames = response.body.data.map(
+        (t: { toState?: { name?: string } }) => t.toState?.name
+      );
+      expect(toNames).toContain('DONE');
+      expect(toNames).toContain('IN_PROGRESS');
+    });
   });
 
   describe('GET /api/v1/workflows/:entityType/:entityId/history', () => {

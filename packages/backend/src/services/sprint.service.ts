@@ -1,6 +1,6 @@
 // Sprint Service
 import prisma from '../utils/prisma';
-import { NotFoundError, BadRequestError } from '../utils/errors';
+import { NotFoundError, BadRequestError, ForbiddenError } from '../utils/errors';
 import { generateUUIDv7 } from '../utils/uuid';
 import { workflowService } from './workflow.service';
 import {
@@ -23,6 +23,7 @@ import {
 import { logger } from '../utils/logger';
 import { processBatch } from '../utils/batch';
 import { notificationService } from './notification.service';
+import { t as requestT } from '../i18n/requestT.js';
 
 // Sprint with relations (optimized for API responses)
 export type SprintWithRelations = Omit<Sprint, 'createdBy' | 'updatedBy'> & {
@@ -764,7 +765,11 @@ class SprintService {
 
   /**
    * Complete sprint with PBI status updates
-   * PBIs with all tasks DONE will be automatically updated to DONE status
+   * PBIs with all tasks DONE will be automatically updated to DONE status.
+   *
+   * A PBI is only auto-advanced to `DONE` when EVERY one of its tasks is `DONE`.
+   * Any task in `REVIEW` (awaiting peer review) is not complete, so it deliberately
+   * blocks PBI auto-completion until it is approved to `DONE`.
    */
   async completeSprint(sprintId: string, userId?: string): Promise<Sprint> {
     const sprint = await this.getSprintById(sprintId);
@@ -813,6 +818,8 @@ class SprintService {
         allDone: true,
       };
       entry.tasks.push(task);
+      // Any task not in `DONE` — including `REVIEW` (awaiting peer review) — counts as
+      // incomplete, so a PBI with a task in `REVIEW` is intentionally NOT auto-completed.
       if (task.status !== 'DONE') entry.allDone = false;
       pbiTaskStatusMap.set(task.pbiId, entry);
     }
@@ -1115,6 +1122,20 @@ class SprintService {
 
       if (!teamMember) {
         throw new BadRequestError('You are not a member of this team');
+      }
+
+      // The REVIEW → DONE approval step must be performed by a team member other than the
+      // task's assignee. The assignee may request review and rework but cannot self-approve.
+      // An unassigned task (assigneeId === null) has no one to exclude, so any developer may
+      // approve it. This is an authorization failure, hence ForbiddenError.
+      if (
+        task.status === 'REVIEW' &&
+        data.status === 'DONE' &&
+        userId &&
+        task.assigneeId !== null &&
+        task.assigneeId === userId
+      ) {
+        throw new ForbiddenError(requestT('validation:task.cannotApproveOwnReview'));
       }
 
       const userRoles = [teamMember.role];

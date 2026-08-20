@@ -29,6 +29,7 @@
     "noCompletedTasks": "Sin tareas completadas",
     "noTasks": "Sin tareas",
     "noTasksInProgress": "Sin tareas en curso",
+    "noTasksInReview": "Sin tareas pendientes de revisión",
     "noTasksToDo": "Sin tareas por hacer",
     "partOf": "Parte de: {{title}}",
     "pbiLabel": "PBI:",
@@ -239,6 +240,7 @@
     "title": "Atajos de Teclado",
     "toggleBurndown": "Mostrar/ocultar burndown chart"
   },
+  "reviewApprovalRestricted": "No puede aprobar la revisión de su propia tarea. Otro miembro del equipo debe realizar la revisión.",
   "sprintBacklogManager": {
     "add": "Agregar",
     "addFirstItem": "+ Agregar Primer Elemento",
@@ -634,6 +636,7 @@
     "notSet": "No definido",
     "parentPbi": "PBI Padre",
     "remainingHours": "Horas restantes",
+    "reviewDescription": "La tarea está pendiente de revisión por pares",
     "status": "Estado",
     "statusHistory": "Historial de estado",
     "taskInformation": "Información de la tarea",
@@ -661,6 +664,8 @@
     "doneDesc": "La tarea ha sido completada",
     "inProgress": "En curso",
     "inProgressDesc": "La tarea está siendo trabajada",
+    "review": "Revisión",
+    "reviewDesc": "La tarea está pendiente de revisión por pares",
     "todo": "Por hacer",
     "todoDesc": "La tarea está lista para comenzar"
   },

@@ -56,7 +56,7 @@ const updateTaskSchema = z.object({
   title: z.string().min(1).max(200).optional(),
   description: z.string().max(2000).optional(),
   assigneeId: z.string().uuid().optional().nullable(),
-  status: z.enum(['TODO', 'IN_PROGRESS', 'DONE']).optional(),
+  status: z.enum(['TODO', 'IN_PROGRESS', 'REVIEW', 'DONE']).optional(),
   estimatedHours: z.number().positive().optional(),
   remainingHours: z.number().min(0).optional(),
 });

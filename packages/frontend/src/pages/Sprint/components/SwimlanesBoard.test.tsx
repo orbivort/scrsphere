@@ -72,6 +72,7 @@ const defaultProps: SwimlanesBoardProps = {
   tasksByStatus: {
     todo: [],
     in_progress: [],
+    review: [],
     done: [],
   },
   draggedTaskId: null,
@@ -180,6 +181,7 @@ describe('SwimlanesBoard', () => {
 
       expect(screen.getAllByText('TO DO').length).toBeGreaterThan(0);
       expect(screen.getAllByText('IN PROGRESS').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('REVIEW').length).toBeGreaterThan(0);
       expect(screen.getAllByText('DONE').length).toBeGreaterThan(0);
     });
 
@@ -250,6 +252,7 @@ describe('SwimlanesBoard', () => {
         tasksByStatus: {
           todo: [createMockTask({ id: 'task-1' }), createMockTask({ id: 'task-4' })],
           in_progress: [createMockTask({ id: 'task-2' })],
+          review: [],
           done: [createMockTask({ id: 'task-3' })],
         },
       };
@@ -257,6 +260,7 @@ describe('SwimlanesBoard', () => {
 
       expect(screen.getAllByText('TO DO').length).toBeGreaterThan(0);
       expect(screen.getAllByText('IN PROGRESS').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('REVIEW').length).toBeGreaterThan(0);
       expect(screen.getAllByText('DONE').length).toBeGreaterThan(0);
     });
   });
@@ -634,7 +638,8 @@ describe('SwimlanesBoard', () => {
       );
 
       const columnHeaders = screen.getAllByRole('columnheader');
-      expect(columnHeaders.length).toBe(4);
+      // Label column + TODO + IN_PROGRESS + REVIEW + DONE.
+      expect(columnHeaders.length).toBe(5);
     });
 
     it('should set aria-dropeffect based on keyboard grab state', () => {
@@ -696,7 +701,8 @@ describe('SwimlanesBoard', () => {
       );
 
       const columnHeaders = screen.getAllByRole('columnheader');
-      expect(columnHeaders.length).toBe(4);
+      // Label column + TODO + IN_PROGRESS + REVIEW + DONE.
+      expect(columnHeaders.length).toBe(5);
     });
 
     it('should have aria-labels on cells', () => {

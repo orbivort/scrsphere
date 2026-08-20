@@ -45,6 +45,16 @@ const mockTasks: Array<{
     createdAt: '2026-02-01T00:00:00Z',
     updatedAt: '2026-02-01T00:00:00Z',
   },
+  {
+    id: 'task-4',
+    sprintId: 'sprint-1',
+    pbiId: 'pbi-2',
+    title: 'Peer review login',
+    status: TaskStatus.REVIEW,
+    assigneeId: 'user-1',
+    createdAt: '2026-02-01T00:00:00Z',
+    updatedAt: '2026-02-01T00:00:00Z',
+  },
 ];
 
 describe('TaskList Component', () => {
@@ -68,6 +78,7 @@ describe('TaskList Component', () => {
       expect(screen.getByText('Implement login')).toBeInTheDocument();
       expect(screen.getByText('Implement logout')).toBeInTheDocument();
       expect(screen.getByText('Write tests')).toBeInTheDocument();
+      expect(screen.getByText('Peer review login')).toBeInTheDocument();
     });
 
     it('should display task status badges', () => {
@@ -75,8 +86,10 @@ describe('TaskList Component', () => {
 
       const doneBadges = screen.getAllByText(i18nT('dashboard:taskStatus.DONE'));
       const inProgressBadges = screen.getAllByText(i18nT('dashboard:taskStatus.IN_PROGRESS'));
+      const reviewBadges = screen.getAllByText(i18nT('dashboard:taskStatus.REVIEW'));
       expect(doneBadges.length).toBeGreaterThan(0);
       expect(inProgressBadges.length).toBeGreaterThan(0);
+      expect(reviewBadges.length).toBeGreaterThan(0);
     });
 
     it('should render all tasks with correct structure', () => {
@@ -158,6 +171,9 @@ describe('TaskList Component', () => {
       expect(list).toHaveAttribute('aria-activedescendant', 'task-item-2');
 
       await user.keyboard('{ArrowDown}');
+      expect(list).toHaveAttribute('aria-activedescendant', 'task-item-3');
+
+      await user.keyboard('{ArrowDown}');
       expect(list).toHaveAttribute('aria-activedescendant', 'task-item-0');
     });
 
@@ -174,7 +190,7 @@ describe('TaskList Component', () => {
       const list = screen.getByRole('list', { name: 'Task list' });
 
       await user.keyboard('{ArrowUp}');
-      expect(list).toHaveAttribute('aria-activedescendant', 'task-item-2');
+      expect(list).toHaveAttribute('aria-activedescendant', 'task-item-3');
     });
 
     it('should jump to first item with Home key', async () => {
@@ -196,7 +212,7 @@ describe('TaskList Component', () => {
 
       const list = screen.getByRole('list', { name: 'Task list' });
       await user.keyboard('{End}');
-      expect(list).toHaveAttribute('aria-activedescendant', 'task-item-2');
+      expect(list).toHaveAttribute('aria-activedescendant', 'task-item-3');
     });
 
     it('should trigger click action with Enter key', async () => {

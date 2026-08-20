@@ -12,12 +12,14 @@ import styles from './TaskCard.module.css';
 const STATUS_ORDER: TaskStatus[] = [
   TaskStatusEnum.TODO,
   TaskStatusEnum.IN_PROGRESS,
+  TaskStatusEnum.REVIEW,
   TaskStatusEnum.DONE,
 ];
 
 const STATUS_LABEL_KEYS: Record<TaskStatus, string> = {
   [TaskStatusEnum.TODO]: 'taskStatus.todo',
   [TaskStatusEnum.IN_PROGRESS]: 'taskStatus.inProgress',
+  [TaskStatusEnum.REVIEW]: 'taskStatus.review',
   [TaskStatusEnum.DONE]: 'taskStatus.done',
 };
 
@@ -41,12 +43,14 @@ export interface TaskCardProps {
   wipLimits?: {
     todo: number;
     in_progress: number;
+    review: number;
     done: number;
   };
   /** Current task counts by status */
   tasksByStatus?: {
     todo: Task[];
     in_progress: Task[];
+    review: Task[];
     done: Task[];
   };
 }
@@ -104,7 +108,9 @@ export const TaskCard = React.memo<TaskCardProps>(
         case TaskStatusEnum.TODO:
           return [TaskStatusEnum.IN_PROGRESS];
         case TaskStatusEnum.IN_PROGRESS:
-          return [TaskStatusEnum.TODO, TaskStatusEnum.DONE];
+          return [TaskStatusEnum.REVIEW, TaskStatusEnum.TODO];
+        case TaskStatusEnum.REVIEW:
+          return [TaskStatusEnum.DONE, TaskStatusEnum.IN_PROGRESS];
         case TaskStatusEnum.DONE:
           return [TaskStatusEnum.IN_PROGRESS];
         default:
@@ -540,7 +546,7 @@ export const TaskCard = React.memo<TaskCardProps>(
             )}
           </div>
           <span
-            className={`${styles['task-status-badge']} ${styles[task.status.toLowerCase().replace('_', '-') as 'todo' | 'in-progress' | 'done']}`}
+            className={`${styles['task-status-badge']} ${styles[task.status.toLowerCase().replace('_', '-') as 'todo' | 'in-progress' | 'review' | 'done']}`}
             aria-label={t('board.statusBadge', {
               status: t(STATUS_LABEL_KEYS[task.status] as never),
             })}

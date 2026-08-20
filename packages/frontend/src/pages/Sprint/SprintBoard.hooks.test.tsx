@@ -1379,9 +1379,10 @@ describe('useKeyboardNavigation Hook', () => {
     tasksByStatus: {
       todo: [createMockTask({ id: 'task-1', status: TaskStatus.TODO })],
       in_progress: [createMockTask({ id: 'task-2', status: TaskStatus.IN_PROGRESS })],
+      review: [],
       done: [createMockTask({ id: 'task-3', status: TaskStatus.DONE })],
     },
-    wipLimits: { todo: 5, in_progress: 3, done: 10 },
+    wipLimits: { todo: 5, in_progress: 3, review: 3, done: 10 },
     teamId: 'team-1',
     validateAndPrepareTransition: vi.fn((_task, targetStatus) => {
       if (targetStatus === TaskStatus.DONE) {
@@ -1574,7 +1575,8 @@ describe('useKeyboardNavigation Hook', () => {
           task
         );
       });
-      expect(result.current.keyboardDropTargetStatus).toBe(TaskStatus.IN_PROGRESS);
+      // REVIEW is the column immediately to the left of DONE in the board order.
+      expect(result.current.keyboardDropTargetStatus).toBe(TaskStatus.REVIEW);
     });
 
     it('should drop with Enter when target status differs from current', () => {
@@ -1841,7 +1843,8 @@ describe('useKeyboardNavigation Hook', () => {
         );
       });
 
-      expect(onMoveTask).toHaveBeenCalledWith('task-3', { status: TaskStatus.IN_PROGRESS });
+      // REVIEW is the column immediately to the left of DONE in the board order.
+      expect(onMoveTask).toHaveBeenCalledWith('task-3', { status: TaskStatus.REVIEW });
     });
 
     it('should show error on Ctrl+ArrowLeft when transition is invalid', () => {
@@ -1938,7 +1941,7 @@ describe('useKeyboardNavigation Hook', () => {
       expect(showToast).toHaveBeenCalledWith('error', 'Invalid transition');
     });
 
-    it('should move from IN_PROGRESS to DONE on ArrowRight (no ctrl)', () => {
+    it('should move from IN_PROGRESS to REVIEW on ArrowRight (no ctrl)', () => {
       const onMoveTask = vi.fn();
       const showToast = vi.fn();
       const { result } = renderHook(() =>
@@ -1957,14 +1960,10 @@ describe('useKeyboardNavigation Hook', () => {
         );
       });
 
+      // IN_PROGRESS now advances to REVIEW (peer review) rather than straight to DONE.
       expect(onMoveTask).toHaveBeenCalledWith('task-2', {
-        status: TaskStatus.DONE,
-        remainingHours: 0,
+        status: TaskStatus.REVIEW,
       });
-      expect(showToast).toHaveBeenCalledWith(
-        'success',
-        'Task moved to Done (Remaining hours set to 0)'
-      );
     });
 
     it('should do nothing on ArrowRight from DONE (no ctrl)', () => {
@@ -1986,7 +1985,7 @@ describe('useKeyboardNavigation Hook', () => {
       expect(onMoveTask).not.toHaveBeenCalled();
     });
 
-    it('should move from DONE to IN_PROGRESS on ArrowLeft (no ctrl)', () => {
+    it('should move from DONE to REVIEW on ArrowLeft (no ctrl)', () => {
       const onMoveTask = vi.fn();
       const { result } = renderHook(() => useKeyboardNavigation({ ...mockOptions, onMoveTask }));
       const task = createMockTask({ id: 'task-3', status: TaskStatus.DONE });
@@ -2002,7 +2001,8 @@ describe('useKeyboardNavigation Hook', () => {
         );
       });
 
-      expect(onMoveTask).toHaveBeenCalledWith('task-3', { status: TaskStatus.IN_PROGRESS });
+      // Legacy movement steps DONE back to REVIEW (the column immediately to its left).
+      expect(onMoveTask).toHaveBeenCalledWith('task-3', { status: TaskStatus.REVIEW });
     });
 
     it('should move from IN_PROGRESS to TODO on ArrowLeft (no ctrl)', () => {
@@ -2382,10 +2382,11 @@ describe('useDragAndDrop Hook', () => {
       createMockTask({ id: 'task-1', status: TaskStatus.TODO }),
       createMockTask({ id: 'task-2', status: TaskStatus.IN_PROGRESS }),
     ],
-    wipLimits: { todo: 5, in_progress: 3, done: 10 },
+    wipLimits: { todo: 5, in_progress: 3, review: 3, done: 10 },
     tasksByStatus: {
       todo: [createMockTask({ id: 'task-1', status: TaskStatus.TODO })],
       in_progress: [createMockTask({ id: 'task-2', status: TaskStatus.IN_PROGRESS })],
+      review: [],
       done: [],
     },
     teamId: 'team-1',
@@ -2642,10 +2643,11 @@ describe('useTaskFormValidation Hook', () => {
       TaskStatus.IN_PROGRESS,
       {
         checkWipLimits: true,
-        wipLimits: { todo: 5, in_progress: 3, done: 10 },
+        wipLimits: { todo: 5, in_progress: 3, review: 3, done: 10 },
         tasksByStatus: {
           todo: [],
           in_progress: [],
+          review: [],
           done: [],
         },
       }
@@ -2663,10 +2665,11 @@ describe('useTaskFormValidation Hook', () => {
       TaskStatus.IN_PROGRESS,
       {
         checkWipLimits: true,
-        wipLimits: { todo: 5, in_progress: 2, done: 10 },
+        wipLimits: { todo: 5, in_progress: 2, review: 3, done: 10 },
         tasksByStatus: {
           todo: [],
           in_progress: [createMockTask(), createMockTask()],
+          review: [],
           done: [],
         },
       }
@@ -2701,7 +2704,8 @@ describe('useTaskFormValidation Hook', () => {
   it('should set remaining hours to 0 when moving to DONE', () => {
     const { result } = renderHook(() => useTaskFormValidation(mockOptions));
 
-    const task = createMockTask({ id: 'task-1', status: TaskStatus.IN_PROGRESS });
+    // REVIEW → DONE is the valid approval transition (IN_PROGRESS → DONE is no longer allowed).
+    const task = createMockTask({ id: 'task-1', status: TaskStatus.REVIEW });
     const transitionResult = result.current.validateAndPrepareTransition(task, TaskStatus.DONE);
 
     expect(transitionResult.valid).toBe(true);
@@ -2864,8 +2868,10 @@ describe('useTaskFormValidation Hook', () => {
 
     const transitions = result.current.getAvailableTransitions(TaskStatus.IN_PROGRESS);
 
-    expect(transitions).toContain(TaskStatus.DONE);
+    // IN_PROGRESS can request a peer review or move back to TODO (no direct DONE).
+    expect(transitions).toContain(TaskStatus.REVIEW);
     expect(transitions).toContain(TaskStatus.TODO);
+    expect(transitions).not.toContain(TaskStatus.DONE);
   });
 
   it('should get empty transitions for DONE status', () => {

@@ -129,6 +129,108 @@ describe('WorkflowService', () => {
       expect(prisma.workflow.findUnique).toHaveBeenCalled();
     });
 
+    it('should reconcile a legacy 3-state Task workflow by adding REVIEW and deactivating IN_PROGRESS → DONE', async () => {
+      // Existing legacy Task workflow without a REVIEW state.
+      const legacyWorkflow = {
+        id: 'workflow-1',
+        entityType: 'Task',
+        name: 'Task Workflow',
+        defaultStatus: 'TODO',
+        states: [
+          { id: 'state-todo', name: 'TODO', displayName: 'To Do', orderIndex: 1 },
+          { id: 'state-inprog', name: 'IN_PROGRESS', displayName: 'In Progress', orderIndex: 2 },
+          { id: 'state-done', name: 'DONE', displayName: 'Done', orderIndex: 3 },
+        ],
+        transitions: [
+          {
+            id: 'trans-ip-done',
+            fromStateId: 'state-inprog',
+            toStateId: 'state-done',
+            isActive: true,
+          },
+        ],
+      };
+      void legacyWorkflow;
+
+      // The workflow already exists (pre-REVIEW state), so reconciliation runs instead of seeding.
+      (prisma.workflow.findUnique as any).mockResolvedValue(legacyWorkflow);
+
+      const stateByWorkflowAndName = new Map<string, { id: string; name: string }>([
+        ['TODO', { id: 'state-todo', name: 'TODO' }],
+        ['IN_PROGRESS', { id: 'state-inprog', name: 'IN_PROGRESS' }],
+        ['DONE', { id: 'state-done', name: 'DONE' }],
+      ]);
+      stateByWorkflowAndName.set('REVIEW', { id: 'state-review', name: 'REVIEW' });
+
+      const createdReviewStateCalls: Array<Record<string, unknown>> = [];
+      const transitionUpdates: Array<Record<string, unknown>> = [];
+
+      const stateFindFirstMock = vi.fn((args: any) => {
+        const name = args.where?.name;
+        return Promise.resolve(stateByWorkflowAndName.get(name) ?? null);
+      });
+
+      // The reconciliation queries transitions by from/to state ids.
+      const transitionFindFirstMock = vi.fn((args: any) => {
+        if (args.where?.fromStateId === 'state-inprog' && args.where?.toStateId === 'state-done') {
+          return Promise.resolve({ id: 'trans-ip-done' });
+        }
+        return Promise.resolve(null);
+      });
+
+      const transitionUpdateMock = vi.fn((args: any) => {
+        transitionUpdates.push(args.data);
+        return Promise.resolve({});
+      });
+
+      const reconciledWorkflow = {
+        id: 'workflow-1',
+        entityType: 'Task',
+        name: 'Task Workflow',
+        defaultStatus: 'TODO',
+        states: [
+          { id: 'state-todo', name: 'TODO', orderIndex: 1 },
+          { id: 'state-inprog', name: 'IN_PROGRESS', orderIndex: 2 },
+          { id: 'state-review', name: 'REVIEW', orderIndex: 3 },
+          { id: 'state-done', name: 'DONE', orderIndex: 4 },
+        ],
+        transitions: [],
+      };
+
+      (prisma.$transaction as any).mockImplementation(async (callback: any) => {
+        const workflowState = {
+          findFirst: stateFindFirstMock,
+          update: vi.fn(),
+          create: vi.fn().mockImplementation((args: any) => {
+            createdReviewStateCalls.push(args.data);
+            return { id: 'state-review', ...args.data };
+          }),
+        };
+        const workflowTransition = {
+          findFirst: transitionFindFirstMock,
+          update: transitionUpdateMock,
+          create: vi.fn(),
+        };
+        const workflow = {
+          findUnique: vi.fn().mockResolvedValue(reconciledWorkflow),
+        };
+        return callback({ workflowState, workflowTransition, workflow });
+      });
+
+      const result = await workflowService.getWorkflowByEntityType('Task', 'user-1');
+
+      expect(result).toBeDefined();
+      // The reconciliation must create a REVIEW state.
+      expect(createdReviewStateCalls.length).toBeGreaterThan(0);
+      expect(createdReviewStateCalls[0]?.name).toBe('REVIEW');
+      expect(createdReviewStateCalls[0]?.orderIndex).toBe(3);
+      // The legacy direct IN_PROGRESS → DONE transition must be deactivated.
+      expect(transitionUpdateMock).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { id: 'trans-ip-done' } })
+      );
+      expect(transitionUpdates.some((u) => u.isActive === false)).toBe(true);
+    });
+
     it('should return null for unknown entity type', async () => {
       const result = await workflowService.getWorkflowByEntityType('UnknownType', 'user-1');
       expect(result).toBeNull();
@@ -610,6 +712,157 @@ describe('WorkflowService', () => {
 
       expect(result.isValid).toBe(true);
       expect(result.allowed).toBe(true);
+    });
+
+    it('should allow the Task IN_PROGRESS → REVIEW transition (peer review request)', async () => {
+      const mockWorkflow = {
+        id: 'workflow-1',
+        entityType: 'Task',
+        name: 'Task Workflow',
+        defaultStatus: 'TODO',
+        states: [
+          { id: 'state-todo', name: 'TODO', displayName: 'To Do', orderIndex: 1 },
+          { id: 'state-inprog', name: 'IN_PROGRESS', displayName: 'In Progress', orderIndex: 2 },
+          { id: 'state-review', name: 'REVIEW', displayName: 'Review', orderIndex: 3 },
+          { id: 'state-done', name: 'DONE', displayName: 'Done', orderIndex: 4 },
+        ],
+        transitions: [
+          {
+            id: 'trans-ip-review',
+            fromStateId: 'state-inprog',
+            toStateId: 'state-review',
+            isActive: true,
+            allowedRoles: ['DEVELOPERS', 'SCRUM_MASTER'],
+            allowedUserIds: [],
+          },
+        ],
+      };
+
+      (prisma.workflow.findUnique as any).mockResolvedValue(mockWorkflow);
+
+      const result = await workflowService.validateTransition(
+        'Task',
+        'IN_PROGRESS',
+        'REVIEW',
+        'user-1',
+        ['DEVELOPERS']
+      );
+
+      expect(result.isValid).toBe(true);
+      expect(result.allowed).toBe(true);
+    });
+
+    it('should allow the Task REVIEW → DONE transition (peer review approval)', async () => {
+      const mockWorkflow = {
+        id: 'workflow-1',
+        entityType: 'Task',
+        name: 'Task Workflow',
+        defaultStatus: 'TODO',
+        states: [
+          { id: 'state-todo', name: 'TODO', displayName: 'To Do', orderIndex: 1 },
+          { id: 'state-inprog', name: 'IN_PROGRESS', displayName: 'In Progress', orderIndex: 2 },
+          { id: 'state-review', name: 'REVIEW', displayName: 'Review', orderIndex: 3 },
+          { id: 'state-done', name: 'DONE', displayName: 'Done', orderIndex: 4 },
+        ],
+        transitions: [
+          {
+            id: 'trans-review-done',
+            fromStateId: 'state-review',
+            toStateId: 'state-done',
+            isActive: true,
+            allowedRoles: ['DEVELOPERS', 'SCRUM_MASTER'],
+            allowedUserIds: [],
+          },
+        ],
+      };
+
+      (prisma.workflow.findUnique as any).mockResolvedValue(mockWorkflow);
+
+      const result = await workflowService.validateTransition('Task', 'REVIEW', 'DONE', 'user-1', [
+        'DEVELOPERS',
+      ]);
+
+      expect(result.isValid).toBe(true);
+      expect(result.allowed).toBe(true);
+    });
+
+    it('should allow the Task REVIEW → IN_PROGRESS transition (rework)', async () => {
+      const mockWorkflow = {
+        id: 'workflow-1',
+        entityType: 'Task',
+        name: 'Task Workflow',
+        defaultStatus: 'TODO',
+        states: [
+          { id: 'state-todo', name: 'TODO', displayName: 'To Do', orderIndex: 1 },
+          { id: 'state-inprog', name: 'IN_PROGRESS', displayName: 'In Progress', orderIndex: 2 },
+          { id: 'state-review', name: 'REVIEW', displayName: 'Review', orderIndex: 3 },
+          { id: 'state-done', name: 'DONE', displayName: 'Done', orderIndex: 4 },
+        ],
+        transitions: [
+          {
+            id: 'trans-review-ip',
+            fromStateId: 'state-review',
+            toStateId: 'state-inprog',
+            isActive: true,
+            allowedRoles: ['DEVELOPERS', 'SCRUM_MASTER'],
+            allowedUserIds: [],
+          },
+        ],
+      };
+
+      (prisma.workflow.findUnique as any).mockResolvedValue(mockWorkflow);
+
+      const result = await workflowService.validateTransition(
+        'Task',
+        'REVIEW',
+        'IN_PROGRESS',
+        'user-1',
+        ['DEVELOPERS']
+      );
+
+      expect(result.isValid).toBe(true);
+      expect(result.allowed).toBe(true);
+    });
+
+    it('should not allow the direct Task IN_PROGRESS → DONE transition (must go through REVIEW)', async () => {
+      const mockWorkflow = {
+        id: 'workflow-1',
+        entityType: 'Task',
+        name: 'Task Workflow',
+        defaultStatus: 'TODO',
+        states: [
+          { id: 'state-todo', name: 'TODO', displayName: 'To Do', orderIndex: 1 },
+          { id: 'state-inprog', name: 'IN_PROGRESS', displayName: 'In Progress', orderIndex: 2 },
+          { id: 'state-review', name: 'REVIEW', displayName: 'Review', orderIndex: 3 },
+          { id: 'state-done', name: 'DONE', displayName: 'Done', orderIndex: 4 },
+        ],
+        // The legacy direct IN_PROGRESS → DONE transition is absent/inactive.
+        transitions: [
+          {
+            id: 'trans-ip-review',
+            fromStateId: 'state-inprog',
+            toStateId: 'state-review',
+            isActive: true,
+            allowedRoles: ['DEVELOPERS', 'SCRUM_MASTER'],
+            allowedUserIds: [],
+          },
+        ],
+      };
+
+      (prisma.workflow.findUnique as any).mockResolvedValue(mockWorkflow);
+
+      const result = await workflowService.validateTransition(
+        'Task',
+        'IN_PROGRESS',
+        'DONE',
+        'user-1',
+        ['DEVELOPERS']
+      );
+
+      // The transition edge is absent from the graph, so the move is not allowed
+      // (even though the target state exists). `isValid` stays true per the service
+      // semantics; `allowed` is the gate that the caller must honor.
+      expect(result.allowed).toBe(false);
     });
   });
 

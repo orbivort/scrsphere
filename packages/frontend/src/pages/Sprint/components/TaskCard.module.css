@@ -318,6 +318,15 @@
   color: var(--color-primary-700);
 }
 
+.task-status-badge.review {
+  background: linear-gradient(
+    135deg,
+    var(--color-accent-purple-100) 0%,
+    var(--color-accent-purple-200) 100%
+  );
+  color: var(--color-accent-indigo-600);
+}
+
 .task-status-badge.done {
   background: linear-gradient(135deg, var(--color-success-100) 0%, var(--color-success-200) 100%);
   color: var(--color-success-800);

@@ -138,6 +138,7 @@
   "taskStatus": {
     "DONE": "Completato",
     "IN_PROGRESS": "In Corso",
+    "REVIEW": "Revisione",
     "TODO": "Todo"
   },
   "tasksDone": "compiti completati",

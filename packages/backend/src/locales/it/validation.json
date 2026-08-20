@@ -27,6 +27,9 @@
   "lastName": "Cognome",
   "passwordTooShort": "La password deve avere almeno {{min}} caratteri",
   "passwordsDoNotMatch": "Le password non corrispondono",
+  "task": {
+    "cannotApproveOwnReview": "Non puoi approvare la revisione della tua attività. Un altro membro del team deve eseguire l'approvazione della revisione."
+  },
   "workflow": {
     "authenticationRequired": "Autenticazione utente richiesta per questa transizione",
     "initialStatusMustBe": "Lo stato iniziale deve essere {{defaultStatus}}",

@@ -40,6 +40,12 @@ export const TASK_STATUS_CONFIG_BASE: Record<
     borderColor: '#93c5fd',
     icon: 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15',
   },
+  [TaskStatusEnum.REVIEW]: {
+    color: '#4338ca',
+    bgColor: '#e0e7ff',
+    borderColor: '#a5b4fc',
+    icon: 'M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z',
+  },
   [TaskStatusEnum.DONE]: {
     color: '#065f46',
     bgColor: '#d1fae5',
@@ -54,6 +60,7 @@ export const TASK_STATUS_CONFIG_BASE: Record<
 export const TASK_STATUS_LABEL_KEYS: Record<TaskStatus, string> = {
   [TaskStatusEnum.TODO]: 'taskStatus.todo',
   [TaskStatusEnum.IN_PROGRESS]: 'taskStatus.inProgress',
+  [TaskStatusEnum.REVIEW]: 'taskStatus.review',
   [TaskStatusEnum.DONE]: 'taskStatus.done',
 };
 
@@ -63,5 +70,6 @@ export const TASK_STATUS_LABEL_KEYS: Record<TaskStatus, string> = {
 export const TASK_STATUS_DESCRIPTION_KEYS: Record<TaskStatus, string> = {
   [TaskStatusEnum.TODO]: 'taskStatus.todoDesc',
   [TaskStatusEnum.IN_PROGRESS]: 'taskStatus.inProgressDesc',
+  [TaskStatusEnum.REVIEW]: 'taskStatus.reviewDesc',
   [TaskStatusEnum.DONE]: 'taskStatus.doneDesc',
 };

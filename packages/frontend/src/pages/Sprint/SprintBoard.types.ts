@@ -52,6 +52,7 @@ export interface BurndownDataPoint {
 export interface WIPLimits {
   todo: number;
   in_progress: number;
+  review: number;
   done: number;
 }
 
@@ -120,6 +121,7 @@ export interface SprintStats {
   totalTasks: number;
   todoTasks: number;
   inProgressTasks: number;
+  reviewTasks: number;
   doneTasks: number;
   totalEstimatedHours: number;
   totalRemainingHours: number;
@@ -134,6 +136,7 @@ export interface SprintStats {
 export interface TasksByStatus {
   todo: Task[];
   in_progress: Task[];
+  review: Task[];
   done: Task[];
 }
 
@@ -150,7 +153,7 @@ export interface ValidationResult {
 
 export interface TransitionOptions {
   checkWipLimits?: boolean;
-  wipLimits?: { in_progress: number };
+  wipLimits?: WIPLimits;
   tasksByStatus?: TasksByStatus;
   checkRequiredFields?: boolean;
 }

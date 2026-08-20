@@ -13,6 +13,7 @@ import {
   CircleIcon,
   ClipboardIcon,
   RefreshCwIcon,
+  EyeIcon,
   XCircleIcon,
   CheckCircleIcon,
 } from '@/components/common/Icons';
@@ -266,6 +267,11 @@ export const CompleteSprintModal: React.FC<CompleteSprintModalProps> = ({
                           <>
                             <RefreshCwIcon size={12} aria-hidden="true" />{' '}
                             {t('taskStatus.inProgress')}
+                          </>
+                        )}
+                        {task.status === TaskStatusEnum.REVIEW && (
+                          <>
+                            <EyeIcon size={12} aria-hidden="true" /> {t('taskStatus.review')}
                           </>
                         )}
                       </div>

@@ -138,6 +138,7 @@
   "taskStatus": {
     "DONE": "Done",
     "IN_PROGRESS": "In Progress",
+    "REVIEW": "Review",
     "TODO": "Todo"
   },
   "tasksDone": "tasks done",

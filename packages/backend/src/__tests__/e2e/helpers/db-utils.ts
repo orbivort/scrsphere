@@ -162,7 +162,7 @@ export const createTestTaskInDb = async (
   sprintId: string,
   pbiId: string,
   title?: string,
-  status: 'TODO' | 'IN_PROGRESS' | 'DONE' = 'TODO',
+  status: 'TODO' | 'IN_PROGRESS' | 'REVIEW' | 'DONE' = 'TODO',
   assigneeId?: string
 ): Promise<{ id: string; title: string; status: string }> => {
   const taskTitle = title || `Task-${uniqueTestId()}`;
