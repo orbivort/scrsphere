@@ -10,10 +10,21 @@
   "invalidReference": "Riferimento non valido",
   "invalidRelation": "Relazione non valida",
   "invalidToken": "Token non valido",
+  "notTeamMember": "Non sei membro di questo team",
   "pleaseLoginAgain": "Accedi di nuovo per continuare",
   "recordNotFound": "Record non trovato",
   "roleAlreadyTaken": "Esiste già un {{role}} per questo team. Ogni team può avere esattamente un {{role}}.",
   "routeNotFound": "{{method}} {{path}} non trovato",
+  "sprint": {
+    "anotherActive": "Un altro sprint è già attivo",
+    "missingGoal": "Lo sprint non può essere avviato senza un obiettivo di sprint",
+    "notPlanned": "Solo gli sprint pianificati possono essere avviati",
+    "notReadyToStart": "Il backlog dello sprint deve essere salvato prima di poter avviare lo sprint"
+  },
+  "task": {
+    "cannotAssignOtherDeveloper": "Solo l'assegnatario stesso può assegnare questa attività. Gli sviluppatori si autoassegnano il proprio lavoro.",
+    "creationRequiresDeveloper": "Solo gli sviluppatori possono creare e scomporre le attività, poiché gli sviluppatori che eseguono il lavoro sono responsabili della scomposizione delle attività."
+  },
   "teamSizeLimitReached": "Questo team ha raggiunto la dimensione massima di {{max}} membri. Non è possibile aggiungere altri membri.",
   "tokenExpired": "Il token è scaduto",
   "unauthorized": "Autenticazione richiesta",

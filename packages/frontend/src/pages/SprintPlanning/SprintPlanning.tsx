@@ -209,6 +209,11 @@ export const SprintPlanning: React.FC = () => {
   const currentYear = new Date().getFullYear();
   const { handleMutationError } = useMutationErrorHandler();
 
+  // Task decomposition and assignment are Developers-only (self-assignment/claim). PO/SM
+  // participate in planning but cannot create or assign tasks.
+  const isDeveloper = String(userRoleInCurrentTeam).toLowerCase() === UserRole.DEVELOPERS;
+  const [backlogSaved, setBacklogSaved] = useState(false);
+
   const [selectedSprintId, setSelectedSprintId] = useState<string | null>(null);
   const [sprintBacklogItems, setSprintBacklogItems] = useState<SprintBacklogItem[]>([]);
   const [showTaskModal, setShowTaskModal] = useState(false);
@@ -283,20 +288,7 @@ export const SprintPlanning: React.FC = () => {
   });
 
   const startSprintMutation = useMutation({
-    mutationFn: (params: {
-      sprintId: string;
-      data: {
-        backlogItems: Array<{ pbiId: string }>;
-        tasks: Array<{
-          pbiId: string;
-          title: string;
-          description?: string;
-          assigneeId?: string;
-          estimatedHours?: number;
-          remainingHours?: number;
-        }>;
-      };
-    }) => apiService.startSprint(params.sprintId, params.data),
+    mutationFn: (sprintId: string) => apiService.startSprint(sprintId, {}),
     onSuccess: (response) => {
       if (response.success) {
         void queryClient.invalidateQueries({ queryKey: queryKeys.generatedSprint.all });
@@ -332,6 +324,36 @@ export const SprintPlanning: React.FC = () => {
       showError(message);
       void queryClient.invalidateQueries({ queryKey: queryKeys.productBacklog.all });
       void queryClient.invalidateQueries({ queryKey: queryKeys.generatedSprint.all });
+    },
+  });
+
+  const saveSprintBacklogMutation = useMutation({
+    mutationFn: () => {
+      const items = sprintBacklogItems.map((item) => ({ pbiId: item.id }));
+      const tasks = sprintBacklogItems.flatMap((item) =>
+        item.tasks.map((task) => ({
+          pbiId: item.id,
+          title: task.title,
+          assigneeId: task.assigneeId,
+          estimatedHours: task.estimatedHours,
+          remainingHours: task.remainingHours,
+        }))
+      );
+      return apiService.saveSprintBacklog(selectedSprintId ?? '', { items, tasks });
+    },
+    onSuccess: (response) => {
+      if (response.success) {
+        setBacklogSaved(true);
+        success(t('sprintPlanning.toast.backlogSaved'));
+      } else {
+        showError(response.error?.message ?? t('sprintPlanning.toast.failedToSaveBacklog'));
+      }
+    },
+    onError: (error: unknown) => {
+      handleMutationError(error, {
+        operationName: 'save sprint backlog',
+        showToast: (msg) => showError(msg),
+      });
     },
   });
 
@@ -877,6 +899,13 @@ export const SprintPlanning: React.FC = () => {
       return;
     }
 
+    // Readiness gate: the Sprint Backlog must be saved (persisted) before the sprint
+    // can be started. A Developers-only "Save Sprint Backlog" action persists the plan.
+    if (!backlogSaved) {
+      showError(t('sprintPlanning.toast.saveBacklogFirst'));
+      return;
+    }
+
     if (capacityPercentage > 100) {
       warning(t('sprintPlanning.toast.overCapacityWarning'));
     }
@@ -888,6 +917,7 @@ export const SprintPlanning: React.FC = () => {
     sprintBacklogItems.length,
     capacityPercentage,
     selectedSprint,
+    backlogSaved,
     showError,
     warning,
     t,
@@ -896,27 +926,9 @@ export const SprintPlanning: React.FC = () => {
   const handleConfirmStartSprint = async () => {
     if (!selectedSprintId) return;
 
-    const backlogItems = sprintBacklogItems.map((item) => ({
-      pbiId: item.id,
-    }));
-
-    const tasks = sprintBacklogItems.flatMap((item) =>
-      item.tasks.map((task) => ({
-        pbiId: item.id,
-        title: task.title,
-        assigneeId: task.assigneeId,
-        estimatedHours: task.estimatedHours,
-        remainingHours: task.remainingHours,
-      }))
-    );
-
-    startSprintMutation.mutate({
-      sprintId: selectedSprintId,
-      data: {
-        backlogItems,
-        tasks,
-      },
-    });
+    // The backlog/tasks are already persisted via `saveSprintBacklog`; the start
+    // transition only activates the sprint and moves saved PBIs to IN_PROGRESS.
+    startSprintMutation.mutate(selectedSprintId);
   };
 
   const handleCancelStartSprint = () => {
@@ -1505,27 +1517,33 @@ export const SprintPlanning: React.FC = () => {
                               role="listitem"
                             >
                               <span className={styles['task-title']}>{task.title}</span>
-                              <select
-                                className={styles['task-assignee-select']}
-                                value={task.assigneeId ?? ''}
-                                onChange={(e) =>
-                                  handleUpdateTaskAssignee(
-                                    item.id,
-                                    task.id,
-                                    e.target.value || undefined
-                                  )
-                                }
-                                aria-label={t('sprintPlanning.taskAssigneeAria', {
-                                  title: task.title,
-                                })}
-                              >
-                                <option value="">{t('sprintPlanning.unassigned')}</option>
-                                {teamAvailability.map((member) => (
-                                  <option key={member.memberId} value={member.userId}>
-                                    {member.memberName}
-                                  </option>
-                                ))}
-                              </select>
+                              {isDeveloper ? (
+                                <select
+                                  className={styles['task-assignee-select']}
+                                  value={task.assigneeId ?? ''}
+                                  onChange={(e) =>
+                                    handleUpdateTaskAssignee(
+                                      item.id,
+                                      task.id,
+                                      e.target.value || undefined
+                                    )
+                                  }
+                                  aria-label={t('sprintPlanning.taskAssigneeAria', {
+                                    title: task.title,
+                                  })}
+                                >
+                                  <option value="">{t('sprintPlanning.unassigned')}</option>
+                                  {teamAvailability.map((member) => (
+                                    <option key={member.memberId} value={member.userId}>
+                                      {member.memberName}
+                                    </option>
+                                  ))}
+                                </select>
+                              ) : (
+                                <span className={styles['task-assignee-readonly']}>
+                                  {task.assigneeName ?? t('sprintPlanning.unassigned')}
+                                </span>
+                              )}
                               {task.estimatedHours && (
                                 <div className={styles['task-hours-container']}>
                                   <span className={styles['task-hours-label']}>
@@ -1545,18 +1563,20 @@ export const SprintPlanning: React.FC = () => {
                               </button>
                             </div>
                           ))}
-                          <button
-                            className={styles['add-task-btn']}
-                            onClick={() => {
-                              setSelectedItemForTask(item.id);
-                              setShowTaskModal(true);
-                            }}
-                            aria-label={t('sprintPlanning.addTaskToItemAria', {
-                              title: item.title,
-                            })}
-                          >
-                            {t('sprintPlanning.addTask')}
-                          </button>
+                          {isDeveloper && (
+                            <button
+                              className={styles['add-task-btn']}
+                              onClick={() => {
+                                setSelectedItemForTask(item.id);
+                                setShowTaskModal(true);
+                              }}
+                              aria-label={t('sprintPlanning.addTaskToItemAria', {
+                                title: item.title,
+                              })}
+                            >
+                              {t('sprintPlanning.addTask')}
+                            </button>
+                          )}
                         </div>
                       </div>
                     ))
@@ -1564,10 +1584,34 @@ export const SprintPlanning: React.FC = () => {
                 </div>
 
                 <div className={styles['sprint-actions']}>
+                  {isDeveloper && (
+                    <button
+                      type="button"
+                      className={`${styles.button} ${styles['button-secondary']}`}
+                      onClick={() => saveSprintBacklogMutation.mutate()}
+                      disabled={
+                        sprintBacklogItems.length === 0 || saveSprintBacklogMutation.isPending
+                      }
+                      aria-busy={saveSprintBacklogMutation.isPending}
+                    >
+                      {saveSprintBacklogMutation.isPending
+                        ? t('sprintPlanning.savingBacklog')
+                        : t('sprintPlanning.saveSprintBacklog')}
+                    </button>
+                  )}
                   <button
                     className={`${styles.button} ${styles['button-primary']}`}
                     onClick={handleStartSprint}
-                    disabled={sprintBacklogItems.length === 0 || startSprintMutation.isPending}
+                    disabled={
+                      sprintBacklogItems.length === 0 ||
+                      !backlogSaved ||
+                      startSprintMutation.isPending
+                    }
+                    title={
+                      sprintBacklogItems.length > 0 && !backlogSaved
+                        ? t('sprintPlanning.saveBacklogFirstHint')
+                        : undefined
+                    }
                     aria-busy={startSprintMutation.isPending}
                   >
                     {startSprintMutation.isPending ? (
@@ -1632,7 +1676,8 @@ export const SprintPlanning: React.FC = () => {
           capacityPercentage={capacityPercentage}
           error={startSprintError}
           isLoading={startSprintMutation.isPending}
-          userRole={userRoleInCurrentTeam}
+          hasSprintGoal={!!selectedSprint?.sprintGoal?.trim()}
+          hasSavedBacklog={backlogSaved}
         />
       </div>
     </>

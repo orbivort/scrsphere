@@ -47,6 +47,24 @@ class SprintService {
     return response;
   }
 
+  async saveSprintBacklog(
+    id: string,
+    data: {
+      items?: Array<{ pbiId: string }>;
+      tasks?: Array<{
+        pbiId: string;
+        title: string;
+        description?: string;
+        assigneeId?: string;
+        estimatedHours?: number;
+        remainingHours?: number;
+      }>;
+    }
+  ): Promise<ApiResponse<{ sprintId: string; backlogItems: string[]; taskIds: string[] }>> {
+    const { data: response } = await this.api.post(`/sprints/${id}/backlog`, data);
+    return response;
+  }
+
   async rollbackSprintStart(
     id: string,
     rollbackData: {

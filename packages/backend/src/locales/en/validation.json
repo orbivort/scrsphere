@@ -28,7 +28,8 @@
   "passwordTooShort": "Password must be at least {{min}} characters",
   "passwordsDoNotMatch": "Passwords do not match",
   "task": {
-    "cannotApproveOwnReview": "You cannot approve your own task review. Another team member must perform the review approval."
+    "cannotApproveOwnReview": "You cannot approve your own task review. Another team member must perform the review approval.",
+    "pbiNotInBacklog": "A task can only be created against a Product Backlog Item that is part of the selected Sprint Backlog."
   },
   "workflow": {
     "authenticationRequired": "User authentication required for this transition",

@@ -177,6 +177,7 @@ vi.mock('../../services', () => ({
     getTeam: vi.fn(),
     getSprintTasks: vi.fn(),
     startSprint: vi.fn(),
+    saveSprintBacklog: vi.fn(),
     updateGeneratedSprint: vi.fn(),
     getProductGoals: vi.fn(),
   },
@@ -225,6 +226,11 @@ vi.mock('../../types', () => ({
     ACTIVE: 'ACTIVE',
     COMPLETED: 'COMPLETED',
     CANCELLED: 'CANCELLED',
+  },
+  UserRole: {
+    PRODUCT_OWNER: 'product_owner',
+    SCRUM_MASTER: 'scrum_master',
+    DEVELOPERS: 'developers',
   },
   MoSCoWPriority: {
     MUST_HAVE: 'MUST_HAVE',
@@ -309,7 +315,10 @@ describe('SprintPlanning Integration Tests', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     resetMockIdCounter();
-    mockStore(useTeamStore, { currentTeam: createMockTeam() });
+    mockStore(useTeamStore, {
+      currentTeam: createMockTeam(),
+      userRoleInCurrentTeam: 'DEVELOPERS',
+    });
     mockStore(useAuthStore, createMockAuthStoreState());
     mockApiMethod(
       apiService.getProductGoals,
@@ -4233,6 +4242,10 @@ describe('SprintPlanning Integration Tests', () => {
       );
       mockApiMethod(apiService.getTeam, createMockApiResponse({ data: createMockTeam() }));
       mockApiMethod(apiService.getSprintTasks, createMockApiResponse({ data: [] }));
+      mockApiMethod(
+        apiService.saveSprintBacklog,
+        createMockApiResponse({ data: { sprintId: mockSprint.id, backlogItems: [], taskIds: [] } })
+      );
 
       renderWithProviders(<SprintPlanning />);
 
@@ -4250,7 +4263,11 @@ describe('SprintPlanning Integration Tests', () => {
         .closest('[role="option"]') as HTMLElement;
       await user.click(backlogItem);
 
-      // Wait for the item to be added to sprint
+      // Save the Sprint Backlog before the sprint can be started
+      const saveButton = screen.getByRole('button', { name: /Save Sprint Backlog/i });
+      await user.click(saveButton);
+
+      // Wait for the item to be added and the backlog to be saved
       await waitFor(() => {
         const startButtons = screen.getAllByRole('button', { name: /Start Sprint/i });
         expect(startButtons[0]).not.toBeDisabled();

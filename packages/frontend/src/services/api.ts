@@ -97,6 +97,7 @@ class ApiService {
   createSprint = sprintService.createSprint.bind(sprintService);
   getSprint = sprintService.getSprint.bind(sprintService);
   startSprint = sprintService.startSprint.bind(sprintService);
+  saveSprintBacklog = sprintService.saveSprintBacklog.bind(sprintService);
   rollbackSprintStart = sprintService.rollbackSprintStart.bind(sprintService);
   updateSprint = sprintService.updateSprint.bind(sprintService);
   completeSprint = sprintService.completeSprint.bind(sprintService);

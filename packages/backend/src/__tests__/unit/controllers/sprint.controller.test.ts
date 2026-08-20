@@ -5,6 +5,7 @@ import {
   getSprintById,
   createSprint,
   startSprint,
+  saveSprintBacklog,
   rollbackSprintStart,
   completeSprint,
   cancelSprint,
@@ -30,6 +31,7 @@ vi.mock('../../../services/sprint.service', () => ({
     getSprintById: vi.fn(),
     createSprint: vi.fn(),
     startSprint: vi.fn(),
+    saveSprintBacklog: vi.fn(),
     rollbackSprintStart: vi.fn(),
     completeSprint: vi.fn(),
     cancelSprint: vi.fn(),
@@ -210,11 +212,7 @@ describe('Sprint Controller', () => {
       await new Promise((resolve) => setTimeout(resolve, 0));
 
       expect(mockNext).not.toHaveBeenCalled();
-      expect(sprintService.startSprint).toHaveBeenCalledWith(
-        'sprint-123',
-        'user-123',
-        mockReq.body
-      );
+      expect(sprintService.startSprint).toHaveBeenCalledWith('sprint-123', 'user-123');
       expect(mockRes._json).toEqual({
         success: true,
         data: mockSprint,
@@ -235,6 +233,53 @@ describe('Sprint Controller', () => {
       mockReq.user = undefined;
 
       startSprint(mockReq as any, mockRes as any, mockNext);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(mockNext).toHaveBeenCalledWith(expect.any(BadRequestError));
+    });
+  });
+
+  describe('saveSprintBacklog', () => {
+    it('should save the sprint backlog', async () => {
+      mockReq.params = { id: 'sprint-123' };
+      mockReq.user = { id: 'user-123' };
+      mockReq.body = {
+        items: [{ pbiId: 'pbi-1' }],
+        tasks: [{ pbiId: 'pbi-1', title: 'Task 1' }],
+      };
+      const mockResult = { sprintId: 'sprint-123', backlogItems: ['item-1'], taskIds: ['task-1'] };
+
+      (sprintService.saveSprintBacklog as any).mockResolvedValue(mockResult);
+
+      saveSprintBacklog(mockReq as any, mockRes as any, mockNext);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(mockNext).not.toHaveBeenCalled();
+      expect(sprintService.saveSprintBacklog).toHaveBeenCalledWith(
+        'sprint-123',
+        'user-123',
+        mockReq.body
+      );
+      expect(mockRes._json).toEqual({
+        success: true,
+        data: mockResult,
+      });
+    });
+
+    it('should throw BadRequestError when ID is missing', async () => {
+      mockReq.params = {};
+
+      saveSprintBacklog(mockReq as any, mockRes as any, mockNext);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(mockNext).toHaveBeenCalledWith(expect.any(BadRequestError));
+    });
+
+    it('should throw BadRequestError when user is not authenticated', async () => {
+      mockReq.params = { id: 'sprint-123' };
+      mockReq.user = undefined;
+
+      saveSprintBacklog(mockReq as any, mockRes as any, mockNext);
       await new Promise((resolve) => setTimeout(resolve, 0));
 
       expect(mockNext).toHaveBeenCalledWith(expect.any(BadRequestError));

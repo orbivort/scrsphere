@@ -30,6 +30,8 @@ export interface TaskEditModalProps {
   onFormDataChange: (data: Partial<TaskFormData>) => void;
   isUpdating: boolean;
   modalRef: React.RefObject<HTMLDivElement | null>;
+  isDeveloper?: boolean;
+  currentUserId?: string;
 }
 
 export const TaskEditModal: React.FC<TaskEditModalProps> = ({
@@ -45,6 +47,8 @@ export const TaskEditModal: React.FC<TaskEditModalProps> = ({
   onFormDataChange,
   isUpdating,
   modalRef,
+  isDeveloper = false,
+  currentUserId,
 }) => {
   const { t } = useTranslation('sprint');
   const [showUnsavedChangesModal, setShowUnsavedChangesModal] = useState(false);
@@ -271,13 +275,19 @@ export const TaskEditModal: React.FC<TaskEditModalProps> = ({
                   className={formErrors.assigneeId ? styles.error : ''}
                   aria-invalid={!!formErrors.assigneeId}
                   aria-describedby={formErrors.assigneeId ? 'edit-task-assignee-error' : undefined}
+                  disabled={!isDeveloper}
                 >
                   <option value="">{t('taskCreate.unassigned')}</option>
-                  {developerMembers.map((member) => (
-                    <option key={member.id} value={member.userId}>
-                      {member.user?.firstName} {member.user?.lastName}
-                    </option>
-                  ))}
+                  {/* Self-managed assignment: a Developer may only claim the task for
+                      themselves or release it back to unassigned. */}
+                  {isDeveloper &&
+                    developerMembers
+                      .filter((member) => member.userId === currentUserId)
+                      .map((member) => (
+                        <option key={member.id} value={member.userId}>
+                          {member.user?.firstName} {member.user?.lastName}
+                        </option>
+                      ))}
                 </select>
                 {formErrors.assigneeId && (
                   <span id="edit-task-assignee-error" className={styles['form-error']} role="alert">

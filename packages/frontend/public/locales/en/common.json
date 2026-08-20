@@ -284,6 +284,7 @@
       "timeout": "The request took too long. Please try again."
     },
     "operations": {
+      "addStakeholderFeedback": "Failed to add stakeholder feedback",
       "addTeamMember": "Failed to add team member",
       "changePassword": "Failed to change password",
       "completeSprint": "Failed to complete sprint",
@@ -295,6 +296,7 @@
       "createRetrospective": "Failed to create retrospective",
       "createReview": "Failed to create review",
       "createSprint": "Failed to create sprint",
+      "createSprintReview": "Failed to create sprint review",
       "createTask": "Failed to create task",
       "createTeam": "Failed to create team",
       "deleteBacklogItem": "Failed to delete backlog item",
@@ -309,8 +311,11 @@
       "deleteTeam": "Failed to delete team",
       "editBacklogItem": "Failed to edit backlog item",
       "exportData": "Failed to export data",
+      "generateSprints": "Failed to generate sprints",
       "importData": "Failed to import data",
       "removeTeamMember": "Failed to remove team member",
+      "saveConfiguration": "Failed to save configuration",
+      "saveSprintBacklog": "Failed to save the sprint backlog",
       "selectTeam": "Failed to select team",
       "startSprint": "Failed to start sprint",
       "updateBacklogItem": "Failed to update backlog item",
@@ -322,6 +327,7 @@
       "updateRetrospective": "Failed to update retrospective",
       "updateReview": "Failed to update review",
       "updateSprint": "Failed to update sprint",
+      "updateSprintGoal": "Failed to update sprint goal",
       "updateTask": "Failed to update task",
       "updateTeam": "Failed to update team",
       "updateTeamMemberRole": "Failed to update team member role"

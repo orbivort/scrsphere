@@ -115,36 +115,20 @@ describe('roleUtils', () => {
   });
 
   describe('canStartSprint', () => {
-    it('should return false for null', () => {
-      expect(canStartSprint(null)).toBe(false);
+    it('should return true when both a Sprint Goal and a saved backlog are present', () => {
+      expect(canStartSprint({ hasSprintGoal: true, hasSavedBacklog: true })).toBe(true);
     });
 
-    it('should return false for empty string', () => {
-      expect(canStartSprint('')).toBe(false);
+    it('should return false when there is no Sprint Goal', () => {
+      expect(canStartSprint({ hasSprintGoal: false, hasSavedBacklog: true })).toBe(false);
     });
 
-    it('should return true for PRODUCT_OWNER', () => {
-      expect(canStartSprint('PRODUCT_OWNER')).toBe(true);
+    it('should return false when the Sprint Backlog has not been saved', () => {
+      expect(canStartSprint({ hasSprintGoal: true, hasSavedBacklog: false })).toBe(false);
     });
 
-    it('should return true for SCRUM_MASTER', () => {
-      expect(canStartSprint('SCRUM_MASTER')).toBe(true);
-    });
-
-    it('should return true for lowercase product_owner', () => {
-      expect(canStartSprint('product_owner')).toBe(true);
-    });
-
-    it('should return true for lowercase scrum_master', () => {
-      expect(canStartSprint('scrum_master')).toBe(true);
-    });
-
-    it('should return false for DEVELOPERS', () => {
-      expect(canStartSprint('DEVELOPERS')).toBe(false);
-    });
-
-    it('should return false for unknown roles', () => {
-      expect(canStartSprint('UNKNOWN')).toBe(false);
+    it('should return false when neither prerequisite is met', () => {
+      expect(canStartSprint({ hasSprintGoal: false, hasSavedBacklog: false })).toBe(false);
     });
   });
 });

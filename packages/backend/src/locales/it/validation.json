@@ -28,7 +28,8 @@
   "passwordTooShort": "La password deve avere almeno {{min}} caratteri",
   "passwordsDoNotMatch": "Le password non corrispondono",
   "task": {
-    "cannotApproveOwnReview": "Non puoi approvare la revisione della tua attività. Un altro membro del team deve eseguire l'approvazione della revisione."
+    "cannotApproveOwnReview": "Non puoi approvare la revisione della tua attività. Un altro membro del team deve eseguire l'approvazione della revisione.",
+    "pbiNotInBacklog": "Un'attività può essere creata solo per un elemento del product backlog che fa parte del backlog dello sprint selezionato."
   },
   "workflow": {
     "authenticationRequired": "Autenticazione utente richiesta per questa transizione",

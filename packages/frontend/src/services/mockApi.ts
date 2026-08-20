@@ -731,6 +731,59 @@ class MockApiService {
     return { success: true, data: mockSprints[sprintIndex] as Sprint };
   }
 
+  async saveSprintBacklog(
+    id: string,
+    data?: {
+      items?: Array<{ pbiId: string }>;
+      tasks?: Array<{
+        pbiId: string;
+        title: string;
+        description?: string;
+        assigneeId?: string;
+        estimatedHours?: number;
+        remainingHours?: number;
+      }>;
+    }
+  ): Promise<ApiResponse<{ sprintId: string; backlogItems: string[]; taskIds: string[] }>> {
+    await delay(400);
+
+    const sprintIndex = mockSprints.findIndex((s) => s.id === id);
+    if (sprintIndex === -1) {
+      return {
+        success: false,
+        error: { code: 'NOT_FOUND', message: 'Sprint not found' },
+      };
+    }
+
+    // Idempotent replace: clear existing draft tasks for the sprint, then re-create.
+    for (let i = mockTasks.length - 1; i >= 0; i--) {
+      if (mockTasks[i]?.sprintId === id) {
+        mockTasks.splice(i, 1);
+      }
+    }
+
+    const backlogItemIds = (data?.items ?? []).map(() => generateUUID());
+    const taskIds = (data?.tasks ?? []).map(() => generateUUID());
+
+    (data?.tasks ?? []).forEach((task, i) => {
+      mockTasks.push({
+        id: taskIds[i] ?? generateUUID(),
+        sprintId: id,
+        pbiId: task.pbiId,
+        title: task.title,
+        description: task.description,
+        assigneeId: task.assigneeId,
+        status: TaskStatus.TODO,
+        estimatedHours: task.estimatedHours,
+        remainingHours: task.remainingHours ?? task.estimatedHours,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
+    });
+
+    return { success: true, data: { sprintId: id, backlogItems: backlogItemIds, taskIds } };
+  }
+
   async updateSprint(id: string, updates: Partial<Sprint>): Promise<ApiResponse<Sprint>> {
     await delay(400);
 

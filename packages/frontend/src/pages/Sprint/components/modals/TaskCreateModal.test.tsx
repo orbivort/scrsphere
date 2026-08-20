@@ -65,6 +65,8 @@ const defaultProps: TaskCreateModalProps = {
   onFormDataChange: vi.fn(),
   isCreating: false,
   modalRef: { current: null },
+  isDeveloper: true,
+  currentUserId: 'user-1',
 };
 
 describe('TaskCreateModal', () => {
@@ -211,9 +213,9 @@ describe('TaskCreateModal', () => {
       );
 
       const select = screen.getByLabelText(/Assignee/);
-      await user.selectOptions(select, 'user-2');
+      await user.selectOptions(select, 'user-1');
 
-      expect(onFormDataChange).toHaveBeenCalledWith({ assigneeId: 'user-2' });
+      expect(onFormDataChange).toHaveBeenCalledWith({ assigneeId: 'user-1' });
     });
 
     it('should call onFormDataChange when estimated hours changes', () => {

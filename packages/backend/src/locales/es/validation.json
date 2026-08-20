@@ -28,7 +28,8 @@
   "passwordTooShort": "La contraseña debe tener al menos {{min}} caracteres",
   "passwordsDoNotMatch": "Las contraseñas no coinciden",
   "task": {
-    "cannotApproveOwnReview": "No puede aprobar la revisión de su propia tarea. Otro miembro del equipo debe realizar la aprobación de la revisión."
+    "cannotApproveOwnReview": "No puede aprobar la revisión de su propia tarea. Otro miembro del equipo debe realizar la aprobación de la revisión.",
+    "pbiNotInBacklog": "Solo se puede crear una tarea contra un elemento del backlog de producto que forme parte del backlog del sprint seleccionado."
   },
   "workflow": {
     "authenticationRequired": "Se requiere autenticación de usuario para esta transición",

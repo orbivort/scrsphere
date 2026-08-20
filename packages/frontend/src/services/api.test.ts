@@ -73,6 +73,7 @@ vi.mock('./domain/sprint.service', () => ({
     createSprint: vi.fn().mockResolvedValue({ data: {} }),
     getSprint: vi.fn().mockResolvedValue({ data: {} }),
     startSprint: vi.fn().mockResolvedValue({}),
+    saveSprintBacklog: vi.fn().mockResolvedValue({ data: {} }),
     rollbackSprintStart: vi.fn().mockResolvedValue({}),
     updateSprint: vi.fn().mockResolvedValue({}),
     completeSprint: vi.fn().mockResolvedValue({}),

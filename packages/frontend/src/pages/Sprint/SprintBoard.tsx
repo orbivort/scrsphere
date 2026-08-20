@@ -1,6 +1,7 @@
 import React, { useState, useReducer, useCallback, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import { UserRole } from '@scrumooth/shared';
 
 import { definitionService } from '../../services';
 import { useTeamStore, useAuthStore } from '../../store';
@@ -71,8 +72,10 @@ import { SprintBacklogManager } from './SprintBacklogManager';
 import styles from './SprintBoard.module.css';
 
 export const SprintBoard: React.FC = () => {
-  const { currentTeam } = useTeamStore();
+  const { currentTeam, userRoleInCurrentTeam } = useTeamStore();
   const currentUserId = useAuthStore((s) => s.user?.id);
+  // Task assignment is Developers-only (self-managed claim/release).
+  const isDeveloper = String(userRoleInCurrentTeam).toLowerCase() === UserRole.DEVELOPERS;
   const navigate = useNavigate();
   const { t } = useTranslation('sprint');
   const teamId = currentTeam?.id;
@@ -781,6 +784,7 @@ export const SprintBoard: React.FC = () => {
         <TaskEditModal
           task={selectedTask}
           formData={formData}
+          isDeveloper={isDeveloper}
           formErrors={formErrors}
           workflowError={workflowError}
           sprintItems={sprintItems}
@@ -809,6 +813,8 @@ export const SprintBoard: React.FC = () => {
           onFormDataChange={handleFormDataChange}
           isCreating={mutations.createTaskMutation.isPending}
           modalRef={createModalRef}
+          isDeveloper={isDeveloper}
+          currentUserId={currentUserId}
         />
       )}
 

@@ -61,8 +61,13 @@ const updateTaskSchema = z.object({
   remainingHours: z.number().min(0).optional(),
 });
 
-const startSprintSchema = z.object({
-  backlogItems: z
+// The start transition no longer accepts a backlog/task payload: readiness is validated
+// server-side against the backlog persisted via `saveSprintBacklog`. Any supplied body is
+// intentionally ignored, so the schema stays minimal.
+const startSprintSchema = z.object({}).strict();
+
+const saveSprintBacklogSchema = z.object({
+  items: z
     .array(
       z.object({
         pbiId: z.string().uuid('Invalid PBI ID'),
@@ -159,6 +164,18 @@ router.post(
   validateParams(sprintIdSchema),
   validateBody(startSprintSchema),
   sprintController.startSprint
+);
+
+/**
+ * @route   POST /api/v1/sprints/:id/backlog
+ * @desc    Save the Sprint Backlog draft for a PLANNED sprint (Developers-only)
+ * @access  Private
+ */
+router.post(
+  '/:id/backlog',
+  validateParams(sprintIdSchema),
+  validateBody(saveSprintBacklogSchema),
+  sprintController.saveSprintBacklog
 );
 
 /**

@@ -1175,6 +1175,22 @@
   box-shadow: var(--shadow-focus-primary-4);
 }
 
+.task-assignee-readonly {
+  display: inline-flex;
+  align-items: center;
+  min-width: 120px;
+  max-width: 180px;
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  background: var(--color-background-page);
+  border: var(--border-width-1) dashed var(--color-border-default);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .task-title {
   flex: 1;
   font-size: var(--font-size-sm);

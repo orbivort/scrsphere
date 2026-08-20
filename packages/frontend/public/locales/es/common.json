@@ -284,6 +284,7 @@
       "timeout": "La solicitud tardó demasiado. Verifique su conexión e intente nuevamente."
     },
     "operations": {
+      "addStakeholderFeedback": "Error al agregar comentarios de las partes interesadas",
       "addTeamMember": "Error al agregar miembro del equipo",
       "changePassword": "Error al cambiar contraseña",
       "completeSprint": "Error al completar Sprint",
@@ -295,6 +296,7 @@
       "createRetrospective": "Error al crear retrospectiva",
       "createReview": "Error al crear revisión",
       "createSprint": "Error al crear Sprint",
+      "createSprintReview": "Error al crear la Sprint Review",
       "createTask": "Error al crear tarea",
       "createTeam": "Error al crear equipo",
       "deleteBacklogItem": "Error al eliminar elemento del Backlog",
@@ -309,8 +311,11 @@
       "deleteTeam": "Error al eliminar equipo",
       "editBacklogItem": "Error al editar elemento del Backlog",
       "exportData": "Error al exportar datos",
+      "generateSprints": "Error al generar sprints",
       "importData": "Error al importar datos",
       "removeTeamMember": "Error al eliminar miembro del equipo",
+      "saveConfiguration": "Error al guardar la configuración",
+      "saveSprintBacklog": "Error al guardar el backlog del sprint",
       "selectTeam": "Error al seleccionar equipo",
       "startSprint": "Error al iniciar Sprint",
       "updateBacklogItem": "Error al actualizar elemento del Backlog",
@@ -322,6 +327,7 @@
       "updateRetrospective": "Error al actualizar retrospectiva",
       "updateReview": "Error al actualizar revisión",
       "updateSprint": "Error al actualizar Sprint",
+      "updateSprintGoal": "Error al actualizar el objetivo del sprint",
       "updateTask": "Error al actualizar tarea",
       "updateTeam": "Error al actualizar equipo",
       "updateTeamMemberRole": "Error al actualizar rol del miembro"

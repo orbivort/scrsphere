@@ -430,17 +430,139 @@ describe('Sprint Management Integration Tests', () => {
 
       const { csrfToken } = extractCsrfFromCookies(cookies);
 
+      // The Sprint Backlog must be saved before the sprint can start.
+      await prisma.sprintBacklogItem.create({
+        data: {
+          id: generateUUIDv7(),
+          sprintId: sprint.id,
+          pbiId: pbi.id,
+          createdBy: user.id,
+        },
+      });
+
       const response = await request(app)
         .post(`/api/v1/sprints/${sprint.id}/start`)
         .set('Cookie', cookies)
         .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
-        .send({
-          backlogItems: [{ pbiId: pbi.id }],
-        })
+        .send({})
         .expect(200);
 
       expect(response.body.success).toBe(true);
       expect(response.body.data.status).toBe('ACTIVE');
+    });
+  });
+
+  describe('POST /api/v1/sprints/:id/backlog', () => {
+    const testEmails: string[] = [];
+    const testTeams: string[] = [];
+
+    afterEach(async () => {
+      await cleanupTeams(testTeams);
+      await cleanupTestData(testEmails);
+      testEmails.length = 0;
+      testTeams.length = 0;
+    });
+
+    it('should save the sprint backlog for a Developer', async () => {
+      const email = `save-backlog-${uniqueId()}@example.com`;
+      testEmails.push(email);
+
+      const user = await createTestUserInDb(email);
+      const teamName = `Save Backlog Team ${uniqueId()}`;
+      testTeams.push(teamName);
+
+      const team = await createTestTeam(teamName);
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
+      const sprint = await createTestSprint(team.id, 'Sprint to Plan', 'PLANNED');
+      const pbi = await createTestPBI(team.id, 'Planned PBI', 'READY');
+
+      const cookies = await loginAndGetCookies(email);
+      const { csrfToken } = extractCsrfFromCookies(cookies);
+
+      const response = await request(app)
+        .post(`/api/v1/sprints/${sprint.id}/backlog`)
+        .set('Cookie', cookies)
+        .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+        .send({
+          items: [{ pbiId: pbi.id }],
+          tasks: [{ pbiId: pbi.id, title: 'Task 1', assigneeId: user.id }],
+        })
+        .expect(200);
+
+      expect(response.body.success).toBe(true);
+      expect(response.body.data.sprintId).toBe(sprint.id);
+      expect(response.body.data.backlogItems).toHaveLength(1);
+      expect(response.body.data.taskIds).toHaveLength(1);
+
+      const savedItems = await prisma.sprintBacklogItem.findMany({
+        where: { sprintId: sprint.id },
+      });
+      const savedTasks = await prisma.task.findMany({ where: { sprintId: sprint.id } });
+      expect(savedItems).toHaveLength(1);
+      expect(savedTasks).toHaveLength(1);
+      expect(savedTasks[0]!.title).toBe('Task 1');
+    });
+
+    it('should reject a non-Developer from saving the backlog', async () => {
+      const email = `save-backlog-po-${uniqueId()}@example.com`;
+      testEmails.push(email);
+
+      const user = await createTestUserInDb(email);
+      const teamName = `Save Backlog PO Team ${uniqueId()}`;
+      testTeams.push(teamName);
+
+      const team = await createTestTeam(teamName);
+      await addTeamMember(team.id, user.id, 'PRODUCT_OWNER');
+      const sprint = await createTestSprint(team.id, 'Sprint to Plan', 'PLANNED');
+      const pbi = await createTestPBI(team.id, 'Planned PBI', 'READY');
+
+      const cookies = await loginAndGetCookies(email);
+      const { csrfToken } = extractCsrfFromCookies(cookies);
+
+      await request(app)
+        .post(`/api/v1/sprints/${sprint.id}/backlog`)
+        .set('Cookie', cookies)
+        .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+        .send({
+          items: [{ pbiId: pbi.id }],
+        })
+        .expect(403);
+
+      const savedItems = await prisma.sprintBacklogItem.findMany({
+        where: { sprintId: sprint.id },
+      });
+      expect(savedItems).toHaveLength(0);
+    });
+
+    it('should reject a Developer assigning a task to another member', async () => {
+      const email = `save-backlog-assign-${uniqueId()}@example.com`;
+      testEmails.push(email);
+
+      const user = await createTestUserInDb(email);
+      const otherUser = await createTestUserInDb(`other-${email}`);
+      testEmails.push(`other-${email}`);
+
+      const teamName = `Save Backlog Assign Team ${uniqueId()}`;
+      testTeams.push(teamName);
+
+      const team = await createTestTeam(teamName);
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
+      await addTeamMember(team.id, otherUser.id, 'DEVELOPERS');
+      const sprint = await createTestSprint(team.id, 'Sprint to Plan', 'PLANNED');
+      const pbi = await createTestPBI(team.id, 'Planned PBI', 'READY');
+
+      const cookies = await loginAndGetCookies(email);
+      const { csrfToken } = extractCsrfFromCookies(cookies);
+
+      await request(app)
+        .post(`/api/v1/sprints/${sprint.id}/backlog`)
+        .set('Cookie', cookies)
+        .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+        .send({
+          items: [{ pbiId: pbi.id }],
+          tasks: [{ pbiId: pbi.id, title: 'Task 1', assigneeId: otherUser.id }],
+        })
+        .expect(403);
     });
   });
 
@@ -1062,14 +1184,22 @@ describe('Sprint Management Integration Tests', () => {
         const cookies = await loginAndGetCookies(email);
         const { csrfToken } = extractCsrfFromCookies(cookies);
 
+        // The Sprint Backlog must be saved before the sprint can start.
+        await prisma.sprintBacklogItem.create({
+          data: {
+            id: generateUUIDv7(),
+            sprintId: sprint.id,
+            pbiId: pbi.id,
+            createdBy: user.id,
+          },
+        });
+
         const response = await request(app)
           .post(`/api/v1/sprints/${sprint.id}/start`)
           .set('Cookie', cookies)
           .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
           .set(setLocaleHeader('it'))
-          .send({
-            backlogItems: [{ pbiId: pbi.id }],
-          })
+          .send({})
           .expect(200);
 
         expect(response.body.success).toBe(true);

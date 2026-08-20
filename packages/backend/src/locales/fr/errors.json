@@ -10,10 +10,21 @@
   "invalidReference": "Référence invalide",
   "invalidRelation": "Relation invalide",
   "invalidToken": "Jeton invalide",
+  "notTeamMember": "Vous n'êtes pas membre de cette équipe",
   "pleaseLoginAgain": "Veuillez vous reconnecter pour continuer",
   "recordNotFound": "Enregistrement introuvable",
   "roleAlreadyTaken": "Un {{role}} existe déjà pour cette équipe. Chaque équipe ne peut avoir qu'un seul {{role}}.",
   "routeNotFound": "{{method}} {{path}} introuvable",
+  "sprint": {
+    "anotherActive": "Un autre sprint est déjà actif",
+    "missingGoal": "Le sprint ne peut pas démarrer sans un objectif de sprint",
+    "notPlanned": "Seuls les sprints planifiés peuvent démarrer",
+    "notReadyToStart": "Le backlog du sprint doit être enregistré avant de pouvoir démarrer le sprint"
+  },
+  "task": {
+    "cannotAssignOtherDeveloper": "Seul l'assigné lui-même peut assigner cette tâche. Les développeurs s'auto-assignent leur travail.",
+    "creationRequiresDeveloper": "Seuls les développeurs peuvent créer et décomposer des tâches, car les développeurs qui effectuent le travail sont responsables de la décomposition des tâches."
+  },
   "teamSizeLimitReached": "Cette équipe a atteint la taille maximale de {{max}} membres. Aucun membre supplémentaire ne peut être ajouté.",
   "tokenExpired": "Le jeton a expiré",
   "unauthorized": "Authentification requise",

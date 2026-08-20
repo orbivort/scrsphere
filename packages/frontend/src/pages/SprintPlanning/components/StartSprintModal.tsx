@@ -35,7 +35,8 @@ export interface StartSprintModalProps {
   capacityPercentage: number;
   error?: string | null;
   isLoading?: boolean;
-  userRole?: string | null;
+  hasSprintGoal?: boolean;
+  hasSavedBacklog?: boolean;
 }
 
 // Icons imported from shared library
@@ -143,7 +144,8 @@ export const StartSprintModal: React.FC<StartSprintModalProps> = ({
   capacityPercentage,
   error,
   isLoading = false,
-  userRole,
+  hasSprintGoal = false,
+  hasSavedBacklog = false,
 }) => {
   const { t } = useTranslation('sprint');
   const modalRef = useRef<HTMLDivElement>(null);
@@ -221,7 +223,8 @@ export const StartSprintModal: React.FC<StartSprintModalProps> = ({
   };
 
   const capacityStatus = getCapacityStatus();
-  const hasPermissionToStart = canStartSprint(userRole ?? null);
+  // Starting a Sprint is readiness-gated (Sprint Goal + saved backlog), not role-gated.
+  const readyToStart = canStartSprint({ hasSprintGoal, hasSavedBacklog });
 
   if (!isOpen) return null;
 
@@ -279,18 +282,18 @@ export const StartSprintModal: React.FC<StartSprintModalProps> = ({
 
         {/* Body */}
         <div className={styles.body}>
-          {/* Permission Warning */}
-          {!hasPermissionToStart && (
+          {/* Readiness Warning */}
+          {!readyToStart && (
             <div className={styles['error-banner']} role="alert">
               <span className={styles['error-icon']}>
                 <AlertTriangleIcon size={16} />
               </span>
               <div className={styles['error-content']}>
                 <span className={styles['error-title']}>
-                  {t('sprintPlanning.startSprintModal.permissionRequired')}
+                  {t('sprintPlanning.startSprintModal.notReadyToStart')}
                 </span>
                 <span className={styles['error-text']}>
-                  {t('sprintPlanning.startSprintModal.permissionDeniedMessage')}
+                  {t('sprintPlanning.startSprintModal.saveBacklogFirstMessage')}
                 </span>
               </div>
             </div>
@@ -469,12 +472,10 @@ export const StartSprintModal: React.FC<StartSprintModalProps> = ({
             type="button"
             className={styles['button-primary']}
             onClick={onConfirm}
-            disabled={isLoading || capacityStatus === 'danger' || !hasPermissionToStart}
+            disabled={isLoading || capacityStatus === 'danger' || !readyToStart}
             aria-busy={isLoading}
             title={
-              !hasPermissionToStart
-                ? t('sprintPlanning.startSprintModal.onlyPoSmCanStart')
-                : undefined
+              !readyToStart ? t('sprintPlanning.startSprintModal.saveBacklogFirstHint') : undefined
             }
           >
             {isLoading ? (

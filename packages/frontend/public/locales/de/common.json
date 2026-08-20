@@ -284,6 +284,7 @@
       "timeout": "Die Anfrage hat zu lange gedauert. Bitte versuchen Sie es erneut."
     },
     "operations": {
+      "addStakeholderFeedback": "Fehler beim Hinzufügen des Stakeholder-Feedbacks",
       "addTeamMember": "Fehler beim Hinzufügen des Teammitglieds",
       "changePassword": "Fehler beim Ändern des Passworts",
       "completeSprint": "Fehler beim Abschließen des Sprints",
@@ -295,6 +296,7 @@
       "createRetrospective": "Fehler beim Erstellen der Retrospective",
       "createReview": "Fehler beim Erstellen des Reviews",
       "createSprint": "Fehler beim Erstellen des Sprints",
+      "createSprintReview": "Fehler beim Erstellen der Sprint Review",
       "createTask": "Fehler beim Erstellen der Aufgabe",
       "createTeam": "Fehler beim Erstellen des Teams",
       "deleteBacklogItem": "Fehler beim Löschen des Backlog-Elements",
@@ -309,8 +311,11 @@
       "deleteTeam": "Fehler beim Löschen des Teams",
       "editBacklogItem": "Fehler beim Bearbeiten des Backlog-Elements",
       "exportData": "Fehler beim Exportieren der Daten",
+      "generateSprints": "Fehler beim Generieren der Sprints",
       "importData": "Fehler beim Importieren der Daten",
       "removeTeamMember": "Fehler beim Entfernen des Teammitglieds",
+      "saveConfiguration": "Fehler beim Speichern der Konfiguration",
+      "saveSprintBacklog": "Fehler beim Speichern des Sprint-Backlogs",
       "selectTeam": "Fehler beim Auswählen des Teams",
       "startSprint": "Fehler beim Starten des Sprints",
       "updateBacklogItem": "Fehler beim Aktualisieren des Backlog-Elements",
@@ -322,6 +327,7 @@
       "updateRetrospective": "Fehler beim Aktualisieren der Retrospective",
       "updateReview": "Fehler beim Aktualisieren des Reviews",
       "updateSprint": "Fehler beim Aktualisieren des Sprints",
+      "updateSprintGoal": "Fehler beim Aktualisieren des Sprint-Ziels",
       "updateTask": "Fehler beim Aktualisieren der Aufgabe",
       "updateTeam": "Fehler beim Aktualisieren des Teams",
       "updateTeamMemberRole": "Fehler beim Aktualisieren der Teammitgliedsrolle"

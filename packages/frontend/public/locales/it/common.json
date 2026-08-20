@@ -284,6 +284,7 @@
       "timeout": "La richiesta ha impiegato troppo tempo. Riprova."
     },
     "operations": {
+      "addStakeholderFeedback": "Errore durante l'aggiunta del feedback degli stakeholder",
       "addTeamMember": "Errore durante l'aggiunta del membro del team",
       "changePassword": "Errore durante la modifica della password",
       "completeSprint": "Errore durante il completamento dello sprint",
@@ -295,6 +296,7 @@
       "createRetrospective": "Errore durante la creazione della retrospettiva",
       "createReview": "Errore durante la creazione della revisione",
       "createSprint": "Errore durante la creazione dello sprint",
+      "createSprintReview": "Errore durante la creazione della Sprint Review",
       "createTask": "Errore durante la creazione del task",
       "createTeam": "Errore durante la creazione del team",
       "deleteBacklogItem": "Errore durante l'eliminazione dell'elemento del backlog",
@@ -309,8 +311,11 @@
       "deleteTeam": "Errore durante l'eliminazione del team",
       "editBacklogItem": "Errore durante la modifica dell'elemento del backlog",
       "exportData": "Errore durante l'esportazione dei dati",
+      "generateSprints": "Errore durante la generazione degli sprint",
       "importData": "Errore durante l'importazione dei dati",
       "removeTeamMember": "Errore durante la rimozione del membro del team",
+      "saveConfiguration": "Errore durante il salvataggio della configurazione",
+      "saveSprintBacklog": "Errore durante il salvataggio del backlog dello sprint",
       "selectTeam": "Errore durante la selezione del team",
       "startSprint": "Errore durante l'avvio dello sprint",
       "updateBacklogItem": "Errore durante l'aggiornamento dell'elemento del backlog",
@@ -322,6 +327,7 @@
       "updateRetrospective": "Errore durante l'aggiornamento della retrospettiva",
       "updateReview": "Errore durante l'aggiornamento della revisione",
       "updateSprint": "Errore durante l'aggiornamento dello sprint",
+      "updateSprintGoal": "Errore durante l'aggiornamento dell'obiettivo dello sprint",
       "updateTask": "Errore durante l'aggiornamento del task",
       "updateTeam": "Errore durante l'aggiornamento del team",
       "updateTeamMemberRole": "Errore durante l'aggiornamento del ruolo del membro"

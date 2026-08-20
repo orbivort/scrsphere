@@ -50,14 +50,18 @@ export function getRoleBadgeColor(role: string | null): string {
   }
 }
 
-const ROLES_THAT_CAN_START_SPRINT = [
-  'product_owner',
-  'scrum_master',
-  'PRODUCT_OWNER',
-  'SCRUM_MASTER',
-];
+/**
+ * Readiness inputs that determine whether a Sprint can be started.
+ *
+ * Starting a Sprint is no longer role-gated (any team member may do it). It is instead
+ * gated on the Scrum Planning outputs being ready: a committed Sprint Goal AND a saved,
+ * non-empty Sprint Backlog.
+ */
+export interface SprintStartReadiness {
+  hasSprintGoal: boolean;
+  hasSavedBacklog: boolean;
+}
 
-export function canStartSprint(role: string | null): boolean {
-  if (!role) return false;
-  return ROLES_THAT_CAN_START_SPRINT.includes(role);
+export function canStartSprint(readiness: SprintStartReadiness): boolean {
+  return readiness.hasSprintGoal && readiness.hasSavedBacklog;
 }

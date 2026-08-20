@@ -326,6 +326,8 @@ describe('SprintService', () => {
 
       (prisma.sprint.findUnique as any).mockResolvedValue(mockSprint);
       (prisma.sprint.findFirst as any).mockResolvedValue(null);
+      (prisma.sprintBacklogItem.findMany as any).mockResolvedValue([{ pbiId: 'pbi-1' }]);
+      (prisma.task.findMany as any).mockResolvedValue([{ estimatedHours: 8 }]);
 
       const mockUpdatedSprint = { ...mockSprint, status: 'ACTIVE' };
       (withTransaction as any).mockImplementation(async (callback: any) => {
@@ -366,6 +368,26 @@ describe('SprintService', () => {
       const result = await sprintService.startSprint('sprint-1', 'user-1');
 
       expect(result.status).toBe('ACTIVE');
+      expect(prisma.sprintBacklogItem.findMany).toHaveBeenCalled();
+    });
+
+    it('should throw BadRequestError when the sprint backlog has not been saved', async () => {
+      const mockSprint = {
+        id: 'sprint-1',
+        teamId: 'team-1',
+        name: 'Sprint 1',
+        status: 'PLANNED',
+        startDate: new Date(),
+        endDate: new Date(),
+        sprintGoal: 'Goal',
+      };
+
+      (prisma.sprint.findUnique as any).mockResolvedValue(mockSprint);
+      (prisma.sprintBacklogItem.findMany as any).mockResolvedValue([]);
+
+      await expect(sprintService.startSprint('sprint-1', 'user-1')).rejects.toThrow(
+        BadRequestError
+      );
     });
 
     it('should link the active product goal when converting a generated sprint to a sprint', async () => {
@@ -401,6 +423,8 @@ describe('SprintService', () => {
       (prisma.generatedSprint.update as any).mockResolvedValue(mockGeneratedSprint);
       (prisma.burndownData.createMany as any).mockResolvedValue({ count: 0 });
       (prisma.burndownData.findMany as any).mockResolvedValue([]);
+      (prisma.sprintBacklogItem.findMany as any).mockResolvedValue([{ pbiId: 'pbi-1' }]);
+      (prisma.task.findMany as any).mockResolvedValue([]);
 
       await sprintService.startSprint('gen-1', 'user-1');
 
@@ -450,6 +474,7 @@ describe('SprintService', () => {
 
       (prisma.sprint.findUnique as any).mockResolvedValue(mockSprint);
       (prisma.sprint.findFirst as any).mockResolvedValue({ id: 'active-sprint' });
+      (prisma.sprintBacklogItem.findMany as any).mockResolvedValue([{ pbiId: 'pbi-1' }]);
 
       await expect(sprintService.startSprint('sprint-1', 'user-1')).rejects.toThrow(
         BadRequestError
@@ -667,6 +692,7 @@ describe('SprintService', () => {
 
       (prisma.task.create as any).mockResolvedValue(mockTask);
       (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
+      (prisma.sprint.findUnique as any).mockResolvedValue({ id: 'sprint-1', teamId: 'team-1' });
       (workflowService.executeStatusChange as any).mockResolvedValue({});
 
       const result = await sprintService.createTask('user-1', {
@@ -677,6 +703,33 @@ describe('SprintService', () => {
 
       expect(result).toBeDefined();
       expect(result.title).toBe('New Task');
+    });
+
+    it('should throw ForbiddenError when a non-Developer tries to create a task', async () => {
+      (prisma.sprint.findUnique as any).mockResolvedValue({ id: 'sprint-1', teamId: 'team-1' });
+      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'PRODUCT_OWNER' });
+
+      await expect(
+        sprintService.createTask('user-1', {
+          sprintId: 'sprint-1',
+          pbiId: 'pbi-1',
+          title: 'New Task',
+        })
+      ).rejects.toThrow(ForbiddenError);
+    });
+
+    it('should throw ForbiddenError when a Developer assigns the task to another member', async () => {
+      (prisma.sprint.findUnique as any).mockResolvedValue({ id: 'sprint-1', teamId: 'team-1' });
+      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
+
+      await expect(
+        sprintService.createTask('user-1', {
+          sprintId: 'sprint-1',
+          pbiId: 'pbi-1',
+          title: 'New Task',
+          assigneeId: 'another-user',
+        })
+      ).rejects.toThrow(ForbiddenError);
     });
   });
 
@@ -723,6 +776,54 @@ describe('SprintService', () => {
       await expect(
         sprintService.updateTask('sprint-1', 'nonexistent', { title: 'Updated' }, 'user-1')
       ).rejects.toThrow(NotFoundError);
+    });
+
+    it('should throw ForbiddenError when a Developer reassigns a task to another member', async () => {
+      const mockTask = {
+        id: 'task-1',
+        sprintId: 'sprint-1',
+        title: 'Task 1',
+        status: 'TODO',
+        assigneeId: null,
+        sprint: { teamId: 'team-1' },
+      };
+
+      (prisma.task.findFirst as any).mockResolvedValue(mockTask);
+      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
+
+      await expect(
+        sprintService.updateTask('sprint-1', 'task-1', { assigneeId: 'another-user' }, 'user-1')
+      ).rejects.toThrow(ForbiddenError);
+    });
+
+    it('should allow a Developer to self-assign a task', async () => {
+      const mockTask = {
+        id: 'task-1',
+        sprintId: 'sprint-1',
+        title: 'Task 1',
+        status: 'TODO',
+        assigneeId: null,
+        sprint: { teamId: 'team-1' },
+      };
+
+      const mockUpdatedTask = { ...mockTask, assigneeId: 'user-1' };
+
+      (prisma.task.findFirst as any).mockResolvedValue(mockTask);
+      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
+      (prisma.task.update as any).mockResolvedValue(mockUpdatedTask);
+      (workflowService.validateTransition as any).mockResolvedValue({
+        isValid: true,
+        allowed: true,
+      });
+
+      const result = await sprintService.updateTask(
+        'sprint-1',
+        'task-1',
+        { assigneeId: 'user-1' },
+        'user-1'
+      );
+
+      expect(result.assigneeId).toBe('user-1');
     });
   });
 
@@ -1128,6 +1229,8 @@ describe('SprintService - Additional Coverage', () => {
       (prisma.productBacklogItem.findMany as any).mockResolvedValue([mockPBI]);
       (prisma.workflow.findFirst as any).mockResolvedValue(mockWorkflow);
       (prisma.workflowState.findMany as any).mockResolvedValue(mockStates);
+      (prisma.sprintBacklogItem.findMany as any).mockResolvedValue([{ pbiId: 'pbi-1' }]);
+      (prisma.task.findMany as any).mockResolvedValue([]);
 
       const mockUpdatedSprint = { ...mockSprint, status: 'ACTIVE' };
       (withTransaction as any).mockImplementation(async (callback: any) => {
@@ -1165,15 +1268,12 @@ describe('SprintService - Additional Coverage', () => {
         });
       });
 
-      const result = await sprintService.startSprint('sprint-1', 'user-1', {
-        backlogItems: [{ pbiId: 'pbi-1' }],
-        tasks: [],
-      });
+      const result = await sprintService.startSprint('sprint-1', 'user-1');
 
       expect(result.status).toBe('ACTIVE');
     });
 
-    it('should start sprint with tasks and assignees', async () => {
+    it('should move saved backlog PBIs to IN_PROGRESS and use persisted tasks for burndown', async () => {
       const mockSprint = {
         id: 'sprint-1',
         teamId: 'team-1',
@@ -1194,6 +1294,8 @@ describe('SprintService - Additional Coverage', () => {
       (prisma.sprint.findUnique as any).mockResolvedValue(mockSprint);
       (prisma.sprint.findFirst as any).mockResolvedValue(null);
       (prisma.productBacklogItem.findMany as any).mockResolvedValue([]);
+      (prisma.sprintBacklogItem.findMany as any).mockResolvedValue([{ pbiId: 'pbi-1' }]);
+      (prisma.task.findMany as any).mockResolvedValue([{ estimatedHours: 8 }]);
 
       const mockUpdatedSprint = { ...mockSprint, status: 'ACTIVE' };
       (withTransaction as any).mockImplementation(async (callback: any) => {
@@ -1231,23 +1333,15 @@ describe('SprintService - Additional Coverage', () => {
         });
       });
 
-      const result = await sprintService.startSprint('sprint-1', 'user-1', {
-        backlogItems: [],
-        tasks: [
-          {
-            pbiId: 'pbi-1',
-            title: 'Task 1',
-            description: 'Description',
-            assigneeId: 'user-1',
-            estimatedHours: 8,
-          },
-        ],
-      });
+      // The start transition consumes the backlog/tasks persisted by `saveSprintBacklog`;
+      // it reads persisted tasks for the burndown baseline and does NOT create new ones.
+      const result = await sprintService.startSprint('sprint-1', 'user-1');
 
       expect(result.status).toBe('ACTIVE');
+      expect(prisma.task.findMany).toHaveBeenCalled();
     });
 
-    it('should throw BadRequestError for invalid assignee IDs', async () => {
+    it('should throw BadRequestError when the saved backlog is empty', async () => {
       const mockSprint = {
         id: 'sprint-1',
         teamId: 'team-1',
@@ -1261,6 +1355,7 @@ describe('SprintService - Additional Coverage', () => {
       (prisma.sprint.findUnique as any).mockResolvedValue(mockSprint);
       (prisma.sprint.findFirst as any).mockResolvedValue(null);
       (prisma.productBacklogItem.findMany as any).mockResolvedValue([]);
+      (prisma.sprintBacklogItem.findMany as any).mockResolvedValue([]);
 
       (withTransaction as any).mockImplementation(async (callback: any) => {
         return callback({
@@ -1297,18 +1392,9 @@ describe('SprintService - Additional Coverage', () => {
         });
       });
 
-      await expect(
-        sprintService.startSprint('sprint-1', 'user-1', {
-          backlogItems: [],
-          tasks: [
-            {
-              pbiId: 'pbi-1',
-              title: 'Task 1',
-              assigneeId: 'invalid-user',
-            },
-          ],
-        })
-      ).rejects.toThrow(BadRequestError);
+      await expect(sprintService.startSprint('sprint-1', 'user-1')).rejects.toThrow(
+        BadRequestError
+      );
     });
   });
 
@@ -1830,43 +1916,168 @@ describe('SprintService - Additional Coverage', () => {
     });
   });
 
-  describe('createTask with notification', () => {
-    it('should create notification when task is assigned to another user', async () => {
-      const mockTask = {
-        id: 'task-1',
-        sprintId: 'sprint-1',
-        pbiId: 'pbi-1',
-        title: 'New Task',
-        status: 'TODO',
-        assigneeId: 'assignee-1',
-        sprint: {
-          teamId: 'team-1',
-          name: 'Sprint 1',
-          team: { id: 'team-1' },
-        },
+  describe('saveSprintBacklog', () => {
+    it('should persist backlog items and tasks for a PLANNED sprint', async () => {
+      const mockSprint = {
+        id: 'sprint-1',
+        teamId: 'team-1',
+        status: 'PLANNED',
       };
 
-      const mockAssigner = {
-        id: 'user-1',
-        firstName: 'John',
-        lastName: 'Doe',
-      };
-
-      (prisma.task.create as any).mockResolvedValue(mockTask);
+      (prisma.sprint.findUnique as any).mockResolvedValue(mockSprint);
       (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
-      (workflowService.executeStatusChange as any).mockResolvedValue({});
-      (prisma.user.findUnique as any).mockResolvedValue(mockAssigner);
-      (prisma.notification.create as any).mockResolvedValue({});
 
-      const result = await sprintService.createTask('user-1', {
-        sprintId: 'sprint-1',
-        pbiId: 'pbi-1',
-        title: 'New Task',
-        assigneeId: 'assignee-1',
+      (withTransaction as any).mockImplementation(async (callback: any) => {
+        return callback({
+          sprintBacklogItem: {
+            deleteMany: vi.fn(),
+            createMany: vi.fn(),
+          },
+          task: {
+            deleteMany: vi.fn(),
+            createMany: vi.fn(),
+          },
+        });
       });
 
-      expect(result).toBeDefined();
-      expect(result.title).toBe('New Task');
+      const result = await sprintService.saveSprintBacklog('sprint-1', 'user-1', {
+        items: [{ pbiId: 'pbi-1' }],
+        tasks: [
+          {
+            pbiId: 'pbi-1',
+            title: 'Task 1',
+            assigneeId: 'user-1',
+            estimatedHours: 8,
+          },
+        ],
+      });
+
+      expect(result.sprintId).toBe('sprint-1');
+      expect(result.backlogItems).toHaveLength(1);
+      expect(result.taskIds).toHaveLength(1);
+    });
+
+    it('should materialize a GeneratedSprint and persist the backlog against the real Sprint', async () => {
+      const mockGeneratedSprint = {
+        id: 'gen-1',
+        teamId: 'team-1',
+        name: 'Sprint 1',
+        startDate: new Date('2024-01-01'),
+        endDate: new Date('2024-01-14'),
+        sprintGoal: 'Goal',
+        status: 'PLANNED',
+        createdBy: 'system',
+        sprintId: null,
+      };
+
+      const mockConvertedSprint = {
+        id: 'sprint-real-1',
+        teamId: 'team-1',
+        name: 'Sprint 1',
+        startDate: new Date('2024-01-01'),
+        endDate: new Date('2024-01-14'),
+        sprintGoal: 'Goal',
+        goalId: null,
+        status: 'PLANNED',
+        createdBy: 'system',
+      };
+
+      (prisma.sprint.findUnique as any).mockResolvedValueOnce(null); // no real Sprint yet
+      (prisma.generatedSprint.findUnique as any).mockResolvedValueOnce(mockGeneratedSprint);
+      (prisma.productGoal.findFirst as any).mockResolvedValueOnce(null);
+      (prisma.sprint.create as any).mockResolvedValue(mockConvertedSprint);
+      (prisma.generatedSprint.update as any).mockResolvedValue(mockGeneratedSprint);
+      (prisma.burndownData.createMany as any).mockResolvedValue({ count: 0 });
+      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
+
+      (withTransaction as any).mockImplementation(async (callback: any) => {
+        return callback({
+          sprintBacklogItem: {
+            deleteMany: vi.fn(),
+            createMany: vi.fn(),
+          },
+          task: {
+            deleteMany: vi.fn(),
+            createMany: vi.fn(),
+          },
+        });
+      });
+
+      const result = await sprintService.saveSprintBacklog('gen-1', 'user-1', {
+        items: [{ pbiId: 'pbi-1' }],
+        tasks: [{ pbiId: 'pbi-1', title: 'Task 1', assigneeId: 'user-1', estimatedHours: 8 }],
+      });
+
+      // The generated sprint is converted into a real sprint first...
+      expect(prisma.sprint.create).toHaveBeenCalledWith(
+        expect.objectContaining({ data: expect.objectContaining({ teamId: 'team-1' }) })
+      );
+      expect(prisma.generatedSprint.update).toHaveBeenCalledWith({
+        where: { id: 'gen-1' },
+        data: { sprintId: 'sprint-real-1' },
+      });
+
+      // ...and the backlog/tasks are persisted against the real sprint ID.
+      expect(result.sprintId).toBe('sprint-real-1');
+      expect(result.backlogItems).toHaveLength(1);
+      expect(result.taskIds).toHaveLength(1);
+    });
+
+    it('should throw ForbiddenError for a non-Developer', async () => {
+      (prisma.sprint.findUnique as any).mockResolvedValue({
+        id: 'sprint-1',
+        teamId: 'team-1',
+        status: 'PLANNED',
+      });
+      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'PRODUCT_OWNER' });
+
+      await expect(
+        sprintService.saveSprintBacklog('sprint-1', 'user-1', { items: [] })
+      ).rejects.toThrow(ForbiddenError);
+    });
+
+    it('should throw BadRequestError when the sprint is not PLANNED', async () => {
+      (prisma.sprint.findUnique as any).mockResolvedValue({
+        id: 'sprint-1',
+        teamId: 'team-1',
+        status: 'ACTIVE',
+      });
+
+      await expect(
+        sprintService.saveSprintBacklog('sprint-1', 'user-1', { items: [] })
+      ).rejects.toThrow(BadRequestError);
+    });
+
+    it('should reject a task that references a PBI outside the selected backlog', async () => {
+      (prisma.sprint.findUnique as any).mockResolvedValue({
+        id: 'sprint-1',
+        teamId: 'team-1',
+        status: 'PLANNED',
+      });
+      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
+
+      await expect(
+        sprintService.saveSprintBacklog('sprint-1', 'user-1', {
+          items: [{ pbiId: 'pbi-1' }],
+          tasks: [{ pbiId: 'pbi-999', title: 'Task 1' }],
+        })
+      ).rejects.toThrow(BadRequestError);
+    });
+  });
+
+  describe('createTask with notification', () => {
+    it('should block cross-assignment to another user (self-managed assignment)', async () => {
+      (prisma.sprint.findUnique as any).mockResolvedValue({ id: 'sprint-1', teamId: 'team-1' });
+      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
+
+      await expect(
+        sprintService.createTask('user-1', {
+          sprintId: 'sprint-1',
+          pbiId: 'pbi-1',
+          title: 'New Task',
+          assigneeId: 'assignee-1',
+        })
+      ).rejects.toThrow(ForbiddenError);
     });
 
     it('should not create notification when assignee is the creator', async () => {
@@ -1886,6 +2097,7 @@ describe('SprintService - Additional Coverage', () => {
 
       (prisma.task.create as any).mockResolvedValue(mockTask);
       (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
+      (prisma.sprint.findUnique as any).mockResolvedValue({ id: 'sprint-1', teamId: 'team-1' });
       (workflowService.executeStatusChange as any).mockResolvedValue({});
 
       const result = await sprintService.createTask('user-1', {

@@ -457,6 +457,17 @@ describe('Sprint Configuration Integration Tests', () => {
       await addTeamMember(team.id, user.id, 'SCRUM_MASTER');
       const sprint = await createTestSprint(team.id, 'Sprint To Start');
 
+      // A Sprint Backlog must be saved before the sprint can start.
+      const pbi = await createTestPBI(team.id, 'Ready PBI', 'READY');
+      await prisma.sprintBacklogItem.create({
+        data: {
+          id: generateUUIDv7(),
+          sprintId: sprint.id,
+          pbiId: pbi.id,
+          createdBy: user.id,
+        },
+      });
+
       const cookies = await loginAndGetCookies(email);
 
       const { csrfToken } = extractCsrfFromCookies(cookies);
