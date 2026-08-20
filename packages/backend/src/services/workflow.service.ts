@@ -331,35 +331,35 @@ class WorkflowService {
           fromState: 'TODO',
           toState: 'IN_PROGRESS',
           requiresApproval: false,
-          allowedRoles: ['DEVELOPERS', 'SCRUM_MASTER'],
+          allowedRoles: ['DEVELOPERS'],
           allowedUserIds: [],
         },
         {
           fromState: 'IN_PROGRESS',
           toState: 'REVIEW',
           requiresApproval: false,
-          allowedRoles: ['DEVELOPERS', 'SCRUM_MASTER'],
+          allowedRoles: ['DEVELOPERS'],
           allowedUserIds: [],
         },
         {
           fromState: 'REVIEW',
           toState: 'DONE',
           requiresApproval: false,
-          allowedRoles: ['DEVELOPERS', 'SCRUM_MASTER'],
+          allowedRoles: ['DEVELOPERS'],
           allowedUserIds: [],
         },
         {
           fromState: 'REVIEW',
           toState: 'IN_PROGRESS',
           requiresApproval: false,
-          allowedRoles: ['DEVELOPERS', 'SCRUM_MASTER'],
+          allowedRoles: ['DEVELOPERS'],
           allowedUserIds: [],
         },
         {
           fromState: 'IN_PROGRESS',
           toState: 'TODO',
           requiresApproval: false,
-          allowedRoles: ['DEVELOPERS', 'SCRUM_MASTER'],
+          allowedRoles: ['DEVELOPERS'],
           allowedUserIds: [],
         },
       ],
@@ -611,9 +611,10 @@ class WorkflowService {
       }
 
       // 1. Shift DONE to orderIndex 4 and insert REVIEW at orderIndex 3.
+      // Note: WorkflowState has no `updatedAt` column, only `createdAt`.
       await tx.workflowState.update({
         where: { id: doneState.id },
-        data: { orderIndex: 4, updatedAt: now },
+        data: { orderIndex: 4 },
       });
 
       await tx.workflowState.create({
@@ -656,9 +657,10 @@ class WorkflowService {
           },
         });
         if (existing) {
+          // Note: WorkflowTransition has no `updatedAt` column, only `createdAt`.
           await tx.workflowTransition.update({
             where: { id: existing.id },
-            data: { isActive: true, updatedAt: now },
+            data: { isActive: true },
           });
         } else {
           await tx.workflowTransition.create({
@@ -669,7 +671,7 @@ class WorkflowService {
               toStateId: toState.id,
               condition: null,
               requiresApproval: false,
-              allowedRoles: ['DEVELOPERS', 'SCRUM_MASTER'],
+              allowedRoles: ['DEVELOPERS'],
               allowedUserIds: [],
               isActive: true,
               createdAt: now,
@@ -689,7 +691,7 @@ class WorkflowService {
       if (directDoneTransition) {
         await tx.workflowTransition.update({
           where: { id: directDoneTransition.id },
-          data: { isActive: false, updatedAt: now },
+          data: { isActive: false },
         });
       }
 
@@ -1161,25 +1163,36 @@ class WorkflowService {
 
     const transitions = workflow.transitions.filter((t) => t.fromStateId === fromState.id);
 
+    // Map states by id so the related states can be attached to each transition
+    // without an additional query. Consumers need the source/target status names,
+    // but `workflow.transitions` does not include the related state relations.
+    const stateById = new Map<string, WorkflowState>(workflow.states.map((s) => [s.id, s]));
+
     // Filter by permissions
-    const allowedTransitions = transitions.filter((transition) => {
-      if (!transition.isActive) return false;
+    const allowedTransitions = transitions
+      .filter((transition) => {
+        if (!transition.isActive) return false;
 
-      if (transition.allowedRoles.length > 0) {
-        const hasRole = transition.allowedRoles.some((role) => userRoles.includes(role));
-        if (!hasRole) return false;
-      }
+        if (transition.allowedRoles.length > 0) {
+          const hasRole = transition.allowedRoles.some((role) => userRoles.includes(role));
+          if (!hasRole) return false;
+        }
 
-      if (transition.allowedUserIds.length > 0) {
-        if (!userId) return false;
-        const hasUserPermission = transition.allowedUserIds.includes(userId);
-        if (!hasUserPermission) return false;
-      }
+        if (transition.allowedUserIds.length > 0) {
+          if (!userId) return false;
+          const hasUserPermission = transition.allowedUserIds.includes(userId);
+          if (!hasUserPermission) return false;
+        }
 
-      return true;
-    });
+        return true;
+      })
+      .map((transition) => ({
+        ...transition,
+        fromState: stateById.get(transition.fromStateId) ?? null,
+        toState: stateById.get(transition.toStateId) ?? null,
+      }));
 
-    return allowedTransitions;
+    return allowedTransitions as unknown as WorkflowTransition[];
   }
 
   /**

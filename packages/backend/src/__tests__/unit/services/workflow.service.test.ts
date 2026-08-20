@@ -786,6 +786,56 @@ describe('WorkflowService', () => {
       expect(result.allowed).toBe(true);
     });
 
+    it('should reject SCRUM_MASTER but allow DEVELOPERS on a DEVELOPERS-only Task transition', async () => {
+      const mockWorkflow = {
+        id: 'workflow-1',
+        entityType: 'Task',
+        name: 'Task Workflow',
+        defaultStatus: 'TODO',
+        states: [
+          { id: 'state-todo', name: 'TODO', displayName: 'To Do', orderIndex: 1 },
+          { id: 'state-inprog', name: 'IN_PROGRESS', displayName: 'In Progress', orderIndex: 2 },
+          { id: 'state-review', name: 'REVIEW', displayName: 'Review', orderIndex: 3 },
+          { id: 'state-done', name: 'DONE', displayName: 'Done', orderIndex: 4 },
+        ],
+        transitions: [
+          {
+            id: 'trans-todo-ip',
+            fromStateId: 'state-todo',
+            toStateId: 'state-inprog',
+            isActive: true,
+            // Only Developers may change task status (per the 2020 Scrum Guide).
+            allowedRoles: ['DEVELOPERS'],
+            allowedUserIds: [],
+          },
+        ],
+      };
+
+      (prisma.workflow.findUnique as any).mockResolvedValue(mockWorkflow);
+
+      // A Developer is allowed.
+      const devResult = await workflowService.validateTransition(
+        'Task',
+        'TODO',
+        'IN_PROGRESS',
+        'user-1',
+        ['DEVELOPERS']
+      );
+      expect(devResult.isValid).toBe(true);
+      expect(devResult.allowed).toBe(true);
+
+      // A Scrum Master is not allowed.
+      const smResult = await workflowService.validateTransition(
+        'Task',
+        'TODO',
+        'IN_PROGRESS',
+        'user-2',
+        ['SCRUM_MASTER']
+      );
+      expect(smResult.isValid).toBe(true);
+      expect(smResult.allowed).toBe(false);
+    });
+
     it('should allow the Task REVIEW → IN_PROGRESS transition (rework)', async () => {
       const mockWorkflow = {
         id: 'workflow-1',

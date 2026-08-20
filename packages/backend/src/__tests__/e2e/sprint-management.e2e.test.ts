@@ -670,7 +670,7 @@ describe('E2E: Sprint Management', () => {
         expect(response.body.data.status).toBe(TASK_STATUSES.IN_PROGRESS);
       });
 
-      it('should mark task as done', async () => {
+      it('should move a task to REVIEW for peer review', async () => {
         const email = `done-task-${uniqueTestId()}@example.com`;
         testEmails.push(email);
 
@@ -693,19 +693,20 @@ describe('E2E: Sprint Management', () => {
         const cookies = await loginAndGetCookies(email);
         const { csrfToken } = extractCsrfFromCookies(cookies);
 
+        // With peer review enabled, a Developer can no longer jump straight from
+        // IN_PROGRESS to DONE; the task must first move to REVIEW for peer approval.
         const response = await request(app)
           .put(`/api/v1/sprints/${sprint.id}/tasks/${task.id}`)
           .set('Cookie', cookies)
           .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
           .send({
-            status: TASK_STATUSES.DONE,
-            remainingHours: 0,
+            status: TASK_STATUSES.REVIEW,
+            remainingHours: 4,
           })
           .expect(HTTP_STATUS.OK);
 
         expect(response.body.success).toBe(true);
-        expect(response.body.data.status).toBe(TASK_STATUSES.DONE);
-        expect(response.body.data.remainingHours).toBe(0);
+        expect(response.body.data.status).toBe(TASK_STATUSES.REVIEW);
       });
 
       it('should move a task to REVIEW and have a peer approve it to DONE', async () => {

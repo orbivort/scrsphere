@@ -271,7 +271,23 @@ export const getAllowedTransitions = async (req: Request, res: Response): Promis
       return;
     }
     const userId = req.user?.id;
-    const userRoles: string[] = [];
+
+    // Resolve the caller's roles across all the teams they belong to. This endpoint is
+    // team-agnostic, so a user may act with any role they hold in any team (e.g. a
+    // developer in one team and a Product Owner in another). Without this, role-gated
+    // transitions would never be returned for anyone.
+    let userRoles: string[] = [];
+    if (userId && req.prisma) {
+      try {
+        const memberships = await req.prisma.teamMember.findMany({
+          where: { userId },
+          select: { role: true },
+        });
+        userRoles = [...new Set(memberships.map((m) => m.role))];
+      } catch (error) {
+        logger.warn('Failed to resolve user roles for allowed transitions', { error });
+      }
+    }
 
     const transitions = await workflowService.getAllowedTransitions(
       entityType,

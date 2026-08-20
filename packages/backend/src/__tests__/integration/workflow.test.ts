@@ -334,17 +334,46 @@ describe('Workflow Integration Tests', () => {
 
   describe('GET /api/v1/workflows/:entityType/allowed-transitions/:fromStatus', () => {
     const testEmails: string[] = [];
+    const testTeams: string[] = [];
+
+    // The user must be a team member so the endpoint can resolve their role and
+    // return role-gated transitions (e.g. only Developers may change task status).
+    const createDeveloperMember = async (email: string) => {
+      const user = await createTestUserInDb(email, 'TestPassword123!', 'Dev', 'eloper');
+      const team = await prisma.team.create({
+        data: {
+          id: generateUUIDv7(),
+          name: `Allowed Transitions Team ${uniqueId()}`,
+          description: 'Test team for allowed transitions',
+        },
+      });
+      testTeams.push(team.id);
+      await prisma.teamMember.create({
+        data: {
+          id: generateUUIDv7(),
+          teamId: team.id,
+          userId: user.id,
+          role: 'DEVELOPERS',
+        },
+      });
+      return user;
+    };
 
     afterEach(async () => {
+      for (const teamId of testTeams) {
+        await prisma.teamMember.deleteMany({ where: { teamId } });
+        await prisma.team.delete({ where: { id: teamId } }).catch(() => {});
+      }
       await cleanupTestData(testEmails);
       testEmails.length = 0;
+      testTeams.length = 0;
     });
 
     it('should return allowed transitions from a status', async () => {
       const email = `allowed-transitions-${uniqueId()}@example.com`;
       testEmails.push(email);
 
-      await createTestUserInDb(email, 'TestPassword123!', 'Dev', 'eloper');
+      await createDeveloperMember(email);
 
       const cookies = await loginAndGetCookies(email);
 
@@ -360,7 +389,7 @@ describe('Workflow Integration Tests', () => {
       const email = `allowed-transitions-inprog-${uniqueId()}@example.com`;
       testEmails.push(email);
 
-      await createTestUserInDb(email, 'TestPassword123!', 'Dev', 'eloper');
+      await createDeveloperMember(email);
 
       const cookies = await loginAndGetCookies(email);
 
@@ -381,7 +410,7 @@ describe('Workflow Integration Tests', () => {
       const email = `allowed-transitions-review-${uniqueId()}@example.com`;
       testEmails.push(email);
 
-      await createTestUserInDb(email, 'TestPassword123!', 'Dev', 'eloper');
+      await createDeveloperMember(email);
 
       const cookies = await loginAndGetCookies(email);
 
