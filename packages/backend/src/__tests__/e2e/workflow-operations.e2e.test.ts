@@ -11,6 +11,8 @@ import {
   addTeamMember,
   createTestSprintInDb,
   createTestPBIInDb,
+  createTestIncrementInDb,
+  createTestSprintReviewInDb,
   createTestRetrospectiveInDb,
   createTestRetrospectiveItemInDb,
   addPBIToSprintBacklog,
@@ -556,17 +558,39 @@ describe('E2E: Workflow Operations', () => {
     });
 
     describe('POST /api/v1/sprints/:id/complete', () => {
+      // Per the Scrum Guide (2020), a Sprint can only be completed once the Sprint Review and
+      // Sprint Retrospective have both concluded. This helper creates a completed Sprint Review
+      // and a COMPLETED Sprint Retrospective (with their linked Increment) for the sprint so the
+      // complete endpoint's prerequisite-event gate is satisfied.
+      const completePrerequisiteEvents = async (
+        sprintId: string,
+        teamId: string,
+        userId: string
+      ): Promise<void> => {
+        const increment = await createTestIncrementInDb(sprintId, teamId);
+        await createTestSprintReviewInDb(
+          sprintId,
+          teamId,
+          increment.id,
+          userId,
+          undefined,
+          'completed'
+        );
+        await createTestRetrospectiveInDb(sprintId, teamId, userId, 'COMPLETED');
+      };
+
       it('should complete a sprint successfully', async () => {
         const email = `complete-sprint-${uniqueTestId()}@example.com`;
         testEmails.push(email);
 
-        const { team } = await setupTeamWithUser(email, ROLES.SCRUM_MASTER);
+        const { user, team } = await setupTeamWithUser(email, ROLES.SCRUM_MASTER);
 
         const sprint = await createTestSprintInDb(
           team.id,
           `Complete Sprint ${uniqueTestId()}`,
           SPRINT_STATUSES.ACTIVE
         );
+        await completePrerequisiteEvents(sprint.id, team.id, user.id);
 
         const cookies = await loginAndGetCookies(email);
         const { csrfToken } = extractCsrfFromCookies(cookies);

@@ -144,26 +144,32 @@ export const SprintReviewList: React.FC = () => {
   const reviews = useMemo(() => reviewsData?.data ?? [], [reviewsData]);
   const increments = useMemo(() => incrementsData?.data ?? [], [incrementsData]);
 
-  const completedSprints = useMemo((): SprintWithReview[] => {
-    return sprints
-      .filter((sprint) => normalizeStatus(sprint.status) === SprintStatus.COMPLETED)
-      .map((sprint) => {
-        const sprintReviews = reviews.filter((r) => r.sprintId === sprint.id);
-        const review = sprintReviews[0];
-        const sprintIncrements = increments.filter((inc) => inc.sprintId === sprint.id);
-        const deliveredIncrement = sprintIncrements.find(
-          (inc) =>
-            inc.status === IncrementStatus.DELIVERED || inc.status === IncrementStatus.VERIFIED
-        );
+  const reviewableSprints = useMemo((): SprintWithReview[] => {
+    return (
+      sprints
+        // The Sprint Review is the second-to-last Sprint event: it must be reachable for an
+        // active/ending Sprint, not only after the Sprint is COMPLETED.
+        .filter((sprint) =>
+          [SprintStatus.ACTIVE, SprintStatus.COMPLETED].includes(normalizeStatus(sprint.status))
+        )
+        .map((sprint) => {
+          const sprintReviews = reviews.filter((r) => r.sprintId === sprint.id);
+          const review = sprintReviews[0];
+          const sprintIncrements = increments.filter((inc) => inc.sprintId === sprint.id);
+          const deliveredIncrement = sprintIncrements.find(
+            (inc) =>
+              inc.status === IncrementStatus.DELIVERED || inc.status === IncrementStatus.VERIFIED
+          );
 
-        return {
-          ...sprint,
-          review,
-          increment: deliveredIncrement,
-          hasDeliveredIncrement: !!deliveredIncrement,
-        };
-      })
-      .sort((a, b) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime());
+          return {
+            ...sprint,
+            review,
+            increment: deliveredIncrement,
+            hasDeliveredIncrement: !!deliveredIncrement,
+          };
+        })
+        .sort((a, b) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime())
+    );
   }, [sprints, reviews, increments]);
 
   const handleViewReview = useCallback(
@@ -203,23 +209,23 @@ export const SprintReviewList: React.FC = () => {
         </div>
         <div className={styles['header-stats']}>
           <div className={styles['stat-item']}>
-            <span className={styles['stat-value']}>{completedSprints.length}</span>
+            <span className={styles['stat-value']}>{reviewableSprints.length}</span>
             <span className={styles['stat-label']}>
-              {completedSprints.length !== 1
+              {reviewableSprints.length !== 1
                 ? t('list.completedSprints')
                 : t('list.completedSprint')}
             </span>
           </div>
           <div className={styles['stat-item']}>
             <span className={styles['stat-value']}>
-              {completedSprints.filter((s) => s.review?.status === 'completed').length}
+              {reviewableSprints.filter((s) => s.review?.status === 'completed').length}
             </span>
             <span className={styles['stat-label']}>{t('list.reviewed')}</span>
           </div>
         </div>
       </header>
 
-      {completedSprints.length === 0 ? (
+      {reviewableSprints.length === 0 ? (
         <EmptyState type="no-completed-sprint" variant="default" />
       ) : (
         <div className={styles.content}>
@@ -229,7 +235,7 @@ export const SprintReviewList: React.FC = () => {
               {t('list.completedSprints')}
             </h2>
             <div className={styles['sprint-grid']}>
-              {completedSprints.map((sprint) => {
+              {reviewableSprints.map((sprint) => {
                 const statusConfig = getStatusConfig(sprint.status, t);
                 const reviewConfig = getReviewStatusConfig(sprint, t);
 

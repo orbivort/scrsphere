@@ -621,7 +621,8 @@ export const createTestSprintReviewInDb = async (
   teamId: string,
   incrementId: string,
   createdBy: string,
-  reviewDate?: Date
+  reviewDate?: Date,
+  status: 'in_progress' | 'completed' = 'in_progress'
 ): Promise<{
   id: string;
   sprintId: string;
@@ -639,7 +640,7 @@ export const createTestSprintReviewInDb = async (
       incrementId,
       reviewDate: reviewDate || new Date(),
       summary: 'Test sprint review summary',
-      status: 'in_progress',
+      status,
       createdBy,
     },
   });

@@ -53,6 +53,7 @@ vi.mock('../../../config/backlog.config', () => ({
 
 // Now import the service and other dependencies
 import { productBacklogService } from '../../../services/backlog.service';
+import { incrementService } from '../../../services/increment.service';
 import prisma from '../../../utils/prisma';
 import { workflowService } from '../../../services/workflow.service';
 import { NotFoundError, BadRequestError, ForbiddenError, AppError } from '../../../utils/errors';
@@ -350,6 +351,12 @@ describe('ProductBacklogService', () => {
   });
 
   describe('updatePBI', () => {
+    beforeEach(() => {
+      // A successful DONE transition composes the Sprint Increment; stub it out so real
+      // Prisma calls are not made in unrelated update tests.
+      vi.spyOn(incrementService, 'composeDonePBI').mockResolvedValue();
+    });
+
     it('should update PBI successfully', async () => {
       const userId = 'test-user-id';
       const pbiId = 'pbi-id';
@@ -677,6 +684,106 @@ describe('ProductBacklogService', () => {
 
       expect(result.storyPoints).toBe(13);
       expect(prisma.productBacklogItem.update).toHaveBeenCalled();
+    });
+  });
+
+  describe('updatePBI DONE transition composes the Sprint Increment', () => {
+    beforeEach(() => {
+      vi.spyOn(incrementService, 'composeDonePBI').mockResolvedValue();
+    });
+
+    it('should compose the Sprint Increment after a successful DONE transition', async () => {
+      const userId = 'test-user-id';
+      const pbiId = 'pbi-id';
+      const mockPBI = {
+        id: pbiId,
+        teamId: 'team-id',
+        title: 'Test PBI',
+        status: 'IN_PROGRESS',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      const updatedPBI = { ...mockPBI, status: 'DONE' };
+
+      vi.mocked(prisma.productBacklogItem.findUnique).mockResolvedValue(mockPBI as any);
+      vi.mocked(prisma.teamMember.findFirst).mockResolvedValue({
+        id: 'member-id',
+        teamId: mockPBI.teamId,
+        userId,
+        role: 'DEVELOPERS',
+      } as any);
+      vi.mocked(prisma.definitionOfDone.findUnique).mockResolvedValue({
+        items: [],
+      } as any);
+      vi.mocked(prisma.doDChecklistVerification.findMany).mockResolvedValue([] as any);
+      vi.mocked(prisma.productBacklogItem.update).mockResolvedValue(updatedPBI as any);
+
+      const result = await productBacklogService.updatePBI(pbiId, userId, {
+        status: 'DONE',
+      });
+
+      expect(result.status).toBe('DONE');
+      // The existing status-update path composes the Sprint Increment on DONE.
+      expect(incrementService.composeDonePBI).toHaveBeenCalledWith(pbiId, userId);
+    });
+
+    it('should not compose the Increment when the DoD gate rejects the DONE transition', async () => {
+      const userId = 'test-user-id';
+      const pbiId = 'pbi-id';
+      const mockPBI = {
+        id: pbiId,
+        teamId: 'team-id',
+        title: 'Test PBI',
+        status: 'IN_PROGRESS',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      vi.mocked(prisma.productBacklogItem.findUnique).mockResolvedValue(mockPBI as any);
+      vi.mocked(prisma.teamMember.findFirst).mockResolvedValue({
+        id: 'member-id',
+        teamId: mockPBI.teamId,
+        userId,
+        role: 'DEVELOPERS',
+      } as any);
+      // One active DoD item exists but is NOT verified -> gate fails.
+      vi.mocked(prisma.definitionOfDone.findUnique).mockResolvedValue({
+        items: [{ id: 'dod-item-1' }],
+      } as any);
+      vi.mocked(prisma.doDChecklistVerification.findMany).mockResolvedValue([] as any);
+
+      await expect(
+        productBacklogService.updatePBI(pbiId, userId, { status: 'DONE' })
+      ).rejects.toThrow(BadRequestError);
+      // Composition must not run when the DoD gate rejects the transition.
+      expect(incrementService.composeDonePBI).not.toHaveBeenCalled();
+    });
+
+    it('should not compose the Increment for a non-DONE status change', async () => {
+      const userId = 'test-user-id';
+      const pbiId = 'pbi-id';
+      const mockPBI = {
+        id: pbiId,
+        teamId: 'team-id',
+        title: 'Test PBI',
+        status: 'NEW',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      const updatedPBI = { ...mockPBI, status: 'READY' };
+
+      vi.mocked(prisma.productBacklogItem.findUnique).mockResolvedValue(mockPBI as any);
+      vi.mocked(prisma.teamMember.findFirst).mockResolvedValue({
+        id: 'member-id',
+        teamId: mockPBI.teamId,
+        userId,
+        role: 'DEVELOPERS',
+      } as any);
+      vi.mocked(prisma.productBacklogItem.update).mockResolvedValue(updatedPBI as any);
+
+      await productBacklogService.updatePBI(pbiId, userId, { status: 'READY' });
+
+      expect(incrementService.composeDonePBI).not.toHaveBeenCalled();
     });
   });
 

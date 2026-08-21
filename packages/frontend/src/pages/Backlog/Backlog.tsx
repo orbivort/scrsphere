@@ -369,29 +369,30 @@ const BacklogContent: React.FC = () => {
   const executeStatusChange = (newStatus: ItemStatus) => {
     if (!selectedItem) return;
     setWorkflowError(null);
+
+    const onSuccess = () => {
+      setSelectedItem((prev) => (prev ? { ...prev, status: newStatus } : null));
+      setShowValidationModal(false);
+      setValidationChecks({});
+      setPendingStatus(null);
+    };
+    const onError = (error: unknown) => {
+      const err = error as {
+        response?: { status?: number; data?: { error?: { message?: string } } };
+      };
+      if (err.response?.status === 400 && err.response.data?.error?.message) {
+        setWorkflowError(err.response.data.error.message);
+      } else if (err.response?.status === 403) {
+        setWorkflowError(
+          err.response.data?.error?.message ??
+            (t as (key: string) => string)('common:permission.transitionError')
+        );
+      }
+    };
+
     updateItemMutation.mutate(
       { id: selectedItem.id, updates: { status: newStatus } },
-      {
-        onSuccess: () => {
-          setSelectedItem((prev) => (prev ? { ...prev, status: newStatus } : null));
-          setShowValidationModal(false);
-          setValidationChecks({});
-          setPendingStatus(null);
-        },
-        onError: (error: unknown) => {
-          const err = error as {
-            response?: { status?: number; data?: { error?: { message?: string } } };
-          };
-          if (err.response?.status === 400 && err.response.data?.error?.message) {
-            setWorkflowError(err.response.data.error.message);
-          } else if (err.response?.status === 403) {
-            setWorkflowError(
-              err.response.data?.error?.message ??
-                (t as (key: string) => string)('common:permission.transitionError')
-            );
-          }
-        },
-      }
+      { onSuccess, onError }
     );
   };
 

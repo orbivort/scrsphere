@@ -189,6 +189,53 @@ describe('Sprint Management Integration Tests', () => {
     }
   };
 
+  // Per the Scrum Guide (2020), a Sprint can only be completed once the Sprint Review and
+  // Sprint Retrospective have both concluded. This helper creates a completed Sprint Review
+  // and a COMPLETED Sprint Retrospective (with their linked Increment) for the sprint so the
+  // complete endpoint's prerequisite-event gate is satisfied.
+  const completePrerequisiteEvents = async (
+    sprintId: string,
+    teamId: string,
+    userId: string
+  ): Promise<void> => {
+    const increment = await prisma.increment.create({
+      data: {
+        id: generateUUIDv7(),
+        sprintId,
+        teamId,
+        name: 'Completion Increment',
+        status: 'DELIVERED',
+        integrationVerified: true,
+        totalStoryPoints: 0,
+      },
+    });
+
+    await prisma.sprintReview.create({
+      data: {
+        id: generateUUIDv7(),
+        sprintId,
+        teamId,
+        incrementId: increment.id,
+        reviewDate: new Date(),
+        status: 'completed',
+        createdBy: userId,
+        updatedBy: userId,
+      },
+    });
+
+    await prisma.sprintRetrospective.create({
+      data: {
+        id: generateUUIDv7(),
+        sprintId,
+        teamId,
+        retroDate: new Date(),
+        facilitatorId: userId,
+        status: 'COMPLETED',
+        createdBy: userId,
+      },
+    });
+  };
+
   describe('GET /api/v1/sprints', () => {
     const testEmails: string[] = [];
     const testTeams: string[] = [];
@@ -1106,6 +1153,7 @@ describe('Sprint Management Integration Tests', () => {
       const team = await createTestTeam(teamName);
       await addTeamMember(team.id, user.id, 'SCRUM_MASTER');
       const sprint = await createTestSprint(team.id, 'Sprint to Complete', 'ACTIVE');
+      await completePrerequisiteEvents(sprint.id, team.id, user.id);
 
       const cookies = await loginAndGetCookies(email);
 
@@ -1134,6 +1182,7 @@ describe('Sprint Management Integration Tests', () => {
 
       // Materialized ACTIVE sprint linked to a GeneratedSprint (status stays PLANNED).
       const sprint = await createTestSprint(team.id, 'Sprint to Complete', 'ACTIVE');
+      await completePrerequisiteEvents(sprint.id, team.id, user.id);
       const generatedSprint = await prisma.generatedSprint.create({
         data: {
           id: generateUUIDv7(),
@@ -1681,6 +1730,7 @@ describe('Sprint Management Integration Tests', () => {
         const team = await createTestTeam(teamName);
         await addTeamMember(team.id, user.id, 'SCRUM_MASTER');
         const sprint = await createTestSprint(team.id, 'Sprint to Complete', 'ACTIVE');
+        await completePrerequisiteEvents(sprint.id, team.id, user.id);
 
         const cookies = await loginAndGetCookies(email);
         const { csrfToken } = extractCsrfFromCookies(cookies);

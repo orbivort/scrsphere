@@ -1953,101 +1953,8 @@ describe('SprintService - Additional Coverage', () => {
     });
   });
 
-  describe('completeSprint with PBI updates', () => {
-    it('should update PBI status to DONE when all tasks are done', async () => {
-      const mockSprint = {
-        id: 'sprint-1',
-        teamId: 'team-1',
-        name: 'Sprint 1',
-        status: 'ACTIVE',
-        sprintBacklogItems: [
-          {
-            id: 'sbi-1',
-            pbiId: 'pbi-1',
-            pbi: {
-              id: 'pbi-1',
-              title: 'PBI 1',
-              status: 'IN_PROGRESS',
-              storyPoints: 8,
-            },
-          },
-        ],
-      };
-
-      const mockTasks = [
-        {
-          id: 'task-1',
-          pbiId: 'pbi-1',
-          status: 'DONE',
-        },
-      ];
-
-      const mockWorkflow = {
-        id: 'workflow-1',
-        entityType: 'BacklogItem',
-      };
-
-      const mockStates = [
-        { id: 'state-in-progress', name: 'IN_PROGRESS' },
-        { id: 'state-done', name: 'DONE' },
-      ];
-
-      (prisma.sprint.findUnique as any).mockResolvedValue(mockSprint);
-      (prisma.sprintReview.findUnique as any).mockResolvedValue({
-        id: 'review-1',
-        status: 'completed',
-      });
-      (prisma.sprintRetrospective.findUnique as any).mockResolvedValue({
-        id: 'retro-1',
-        status: 'COMPLETED',
-      });
-      (prisma.sprintBacklogItem.findMany as any).mockResolvedValue(mockSprint.sprintBacklogItems);
-      (prisma.task.findMany as any).mockResolvedValue(mockTasks);
-      (prisma.workflow.findFirst as any).mockResolvedValue(mockWorkflow);
-
-      const mockCompletedSprint = { ...mockSprint, status: 'COMPLETED' };
-
-      // Team has one active DoD item that is fully verified for the PBI, so the gate passes.
-      const mockActiveDoD = {
-        items: [{ id: 'dod-item-1' }],
-      };
-      const mockVerifiedRows = [{ pbiId: 'pbi-1', dodItemId: 'dod-item-1' }];
-
-      (withTransaction as any).mockImplementation(async (callback: any) => {
-        return callback({
-          sprint: {
-            update: vi.fn().mockResolvedValue(mockCompletedSprint),
-          },
-          generatedSprint: {
-            updateMany: vi.fn(),
-          },
-          productBacklogItem: {
-            updateMany: vi.fn(),
-          },
-          statusChangeHistory: {
-            create: vi.fn(),
-          },
-          workflow: {
-            findFirst: vi.fn().mockResolvedValue(mockWorkflow),
-          },
-          workflowState: {
-            findMany: vi.fn().mockResolvedValue(mockStates),
-          },
-          definitionOfDone: {
-            findUnique: vi.fn().mockResolvedValue(mockActiveDoD),
-          },
-          doDChecklistVerification: {
-            findMany: vi.fn().mockResolvedValue(mockVerifiedRows),
-          },
-        });
-      });
-
-      const result = await sprintService.completeSprint('sprint-1', 'user-1');
-
-      expect(result.status).toBe('COMPLETED');
-    });
-
-    it('should throw BadRequestError when a PBI with all tasks done is not DoD-verified', async () => {
+  describe('completeSprint closes the container without changing PBI status', () => {
+    it('should close the Sprint container without auto-advancing any PBI to DONE', async () => {
       const mockSprint = {
         id: 'sprint-1',
         teamId: 'team-1',
@@ -2086,90 +1993,8 @@ describe('SprintService - Additional Coverage', () => {
       });
       (prisma.sprintBacklogItem.findMany as any).mockResolvedValue(mockSprint.sprintBacklogItems);
       (prisma.task.findMany as any).mockResolvedValue(mockTasks);
-      (prisma.workflow.findFirst as any).mockResolvedValue(null);
-
-      // Team has one active DoD item that is NOT verified for the PBI, so the gate fails.
-      const mockActiveDoD = {
-        items: [{ id: 'dod-item-1' }],
-      };
-      const mockUnverifiedRows: Array<{ pbiId: string; dodItemId: string }> = [];
-
-      (withTransaction as any).mockImplementation(async (callback: any) => {
-        return callback({
-          sprint: {
-            update: vi.fn(),
-          },
-          productBacklogItem: {
-            updateMany: vi.fn(),
-          },
-          statusChangeHistory: {
-            create: vi.fn(),
-          },
-          workflow: {
-            findFirst: vi.fn(),
-          },
-          workflowState: {
-            findMany: vi.fn(),
-          },
-          definitionOfDone: {
-            findUnique: vi.fn().mockResolvedValue(mockActiveDoD),
-          },
-          doDChecklistVerification: {
-            findMany: vi.fn().mockResolvedValue(mockUnverifiedRows),
-          },
-        });
-      });
-
-      await expect(sprintService.completeSprint('sprint-1', 'user-1')).rejects.toThrow(
-        BadRequestError
-      );
-      // No PBI should be marked DONE and no status change history should be recorded.
-      expect(prisma.sprintBacklogItem.findMany).toHaveBeenCalled();
-    });
-
-    it('should NOT auto-complete a PBI that has a task in REVIEW', async () => {
-      const mockSprint = {
-        id: 'sprint-1',
-        teamId: 'team-1',
-        name: 'Sprint 1',
-        status: 'ACTIVE',
-        sprintBacklogItems: [
-          {
-            id: 'sbi-1',
-            pbiId: 'pbi-1',
-            pbi: {
-              id: 'pbi-1',
-              title: 'PBI 1',
-              status: 'IN_PROGRESS',
-              storyPoints: 8,
-            },
-          },
-        ],
-      };
-
-      // One task is DONE, the other is REVIEW -> PBI must remain incomplete.
-      const mockTasks = [
-        { id: 'task-1', pbiId: 'pbi-1', status: 'DONE' },
-        { id: 'task-2', pbiId: 'pbi-1', status: 'REVIEW' },
-      ];
-
-      (prisma.sprint.findUnique as any).mockResolvedValue(mockSprint);
-      (prisma.sprintReview.findUnique as any).mockResolvedValue({
-        id: 'review-1',
-        status: 'completed',
-      });
-      (prisma.sprintRetrospective.findUnique as any).mockResolvedValue({
-        id: 'retro-1',
-        status: 'COMPLETED',
-      });
-      (prisma.sprintBacklogItem.findMany as any).mockResolvedValue(mockSprint.sprintBacklogItems);
-      (prisma.task.findMany as any).mockResolvedValue(mockTasks);
 
       const mockCompletedSprint = { ...mockSprint, status: 'COMPLETED' };
-
-      // Team has one active DoD item that is fully verified for the PBI, so the gate passes.
-      const mockActiveDoD = { items: [{ id: 'dod-item-1' }] };
-      const mockVerifiedRows = [{ pbiId: 'pbi-1', dodItemId: 'dod-item-1' }];
 
       const updateManyMock = vi.fn().mockResolvedValue({ count: 0 });
       (withTransaction as any).mockImplementation(async (callback: any) => {
@@ -2186,27 +2011,65 @@ describe('SprintService - Additional Coverage', () => {
           statusChangeHistory: {
             create: vi.fn(),
           },
-          workflow: {
-            findFirst: vi.fn(),
+        });
+      });
+
+      const result = await sprintService.completeSprint('sprint-1', 'user-1');
+
+      expect(result.status).toBe('COMPLETED');
+      // Completion is a pure container close: no PBI is transitioned to DONE.
+      expect(updateManyMock).not.toHaveBeenCalled();
+      // No status-change history is written for PBIs.
+      expect(prisma.sprintBacklogItem.findMany).not.toHaveBeenCalled();
+      expect(prisma.task.findMany).not.toHaveBeenCalled();
+    });
+
+    it('should close the Sprint container without running any DoD verification', async () => {
+      const mockSprint = {
+        id: 'sprint-1',
+        teamId: 'team-1',
+        name: 'Sprint 1',
+        status: 'ACTIVE',
+        sprintBacklogItems: [],
+      };
+
+      (prisma.sprint.findUnique as any).mockResolvedValue(mockSprint);
+      (prisma.sprintReview.findUnique as any).mockResolvedValue({
+        id: 'review-1',
+        status: 'completed',
+      });
+      (prisma.sprintRetrospective.findUnique as any).mockResolvedValue({
+        id: 'retro-1',
+        status: 'COMPLETED',
+      });
+
+      const mockCompletedSprint = { ...mockSprint, status: 'COMPLETED' };
+
+      const dodFindUniqueMock = vi.fn();
+      const dodVerificationMock = vi.fn();
+      (withTransaction as any).mockImplementation(async (callback: any) => {
+        return callback({
+          sprint: {
+            update: vi.fn().mockResolvedValue(mockCompletedSprint),
           },
-          workflowState: {
-            findMany: vi.fn(),
+          generatedSprint: {
+            updateMany: vi.fn(),
           },
           definitionOfDone: {
-            findUnique: vi.fn().mockResolvedValue(mockActiveDoD),
+            findUnique: dodFindUniqueMock,
           },
           doDChecklistVerification: {
-            findMany: vi.fn().mockResolvedValue(mockVerifiedRows),
+            findMany: dodVerificationMock,
           },
         });
       });
 
-      await sprintService.completeSprint('sprint-1', 'user-1');
+      const result = await sprintService.completeSprint('sprint-1', 'user-1');
 
-      // The PBI has a REVIEW task, so it must NOT be marked DONE.
-      expect(updateManyMock).not.toHaveBeenCalledWith(
-        expect.objectContaining({ data: expect.objectContaining({ status: 'DONE' }) })
-      );
+      expect(result.status).toBe('COMPLETED');
+      // The duplicate DoD gate was removed from sprint completion.
+      expect(dodFindUniqueMock).not.toHaveBeenCalled();
+      expect(dodVerificationMock).not.toHaveBeenCalled();
     });
   });
 

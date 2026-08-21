@@ -9,6 +9,7 @@ import {
 } from '../utils/errors';
 import { generateUUIDv7 } from '../utils/uuid';
 import { workflowService } from './workflow.service';
+import { incrementService } from './increment.service';
 import { logger } from '../utils/logger';
 import { BACKLOG_CONFIG, isBacklogLimitEnabled } from '../config/backlog.config';
 import type {
@@ -319,6 +320,14 @@ class ProductBacklogService {
       } catch (error) {
         logger.error('Failed to record status change history', { error });
       }
+    }
+
+    // Continuously compose the Sprint's Increment from this Done PBI (find-or-create the
+    // Sprint Increment then upsert the incrementPBI row) whenever an item transitions to
+    // DONE via the existing status-update path. The composition is best-effort and
+    // non-fatal: it never rolls back the successful DONE write.
+    if (data.status === 'DONE') {
+      await incrementService.composeDonePBI(pbiId, userId);
     }
 
     return pbi;

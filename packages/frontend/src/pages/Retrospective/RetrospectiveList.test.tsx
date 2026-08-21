@@ -147,10 +147,11 @@ describe('RetrospectiveList', () => {
       });
     });
 
-    it('should not render non-completed sprints', async () => {
+    it('should render active and completed sprints, filtering out planned', async () => {
       const mixedSprints = [
-        createMockSprint({ id: 'sprint-1', status: SprintStatus.COMPLETED }),
-        createMockSprint({ id: 'sprint-2', status: SprintStatus.ACTIVE }),
+        createMockSprint({ id: 'sprint-1', name: 'Sprint 1', status: SprintStatus.COMPLETED }),
+        createMockSprint({ id: 'sprint-2', name: 'Sprint 2', status: SprintStatus.ACTIVE }),
+        createMockSprint({ id: 'sprint-3', name: 'Sprint 3', status: SprintStatus.PLANNED }),
       ];
       (apiService.getSprints as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
@@ -160,8 +161,11 @@ describe('RetrospectiveList', () => {
       renderWithProviders(<RetrospectiveList />);
 
       await waitFor(() => {
-        expect(screen.queryByText('Sprint 2')).not.toBeInTheDocument();
+        expect(screen.getByText('Sprint 1')).toBeInTheDocument();
+        expect(screen.getByText('Sprint 2')).toBeInTheDocument();
       });
+
+      expect(screen.queryByText('Sprint 3')).not.toBeInTheDocument();
     });
 
     it('should sort sprints by end date descending', async () => {

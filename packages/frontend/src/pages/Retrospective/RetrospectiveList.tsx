@@ -66,18 +66,24 @@ export const RetrospectiveList: React.FC = () => {
     return status.toLowerCase() as SprintStatus;
   };
 
-  const completedSprints = useMemo((): SprintWithRetro[] => {
-    return sprints
-      .filter((sprint) => normalizeStatus(sprint.status) === SprintStatus.COMPLETED)
-      .map((sprint) => {
-        const sprintRetro = retrospectives.find((r) => r.sprintId === sprint.id);
+  const retroReviewableSprints = useMemo((): SprintWithRetro[] => {
+    return (
+      sprints
+        // The Retrospective is the Sprint event that concludes the Sprint: it must be
+        // reachable for an active/ending Sprint, not only after the Sprint is COMPLETED.
+        .filter((sprint) =>
+          [SprintStatus.ACTIVE, SprintStatus.COMPLETED].includes(normalizeStatus(sprint.status))
+        )
+        .map((sprint) => {
+          const sprintRetro = retrospectives.find((r) => r.sprintId === sprint.id);
 
-        return {
-          ...sprint,
-          retrospective: sprintRetro,
-        };
-      })
-      .sort((a, b) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime());
+          return {
+            ...sprint,
+            retrospective: sprintRetro,
+          };
+        })
+        .sort((a, b) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime())
+    );
   }, [sprints, retrospectives]);
 
   const getStatusConfig = (status: string): { label: string; className: string } => {
@@ -215,17 +221,17 @@ export const RetrospectiveList: React.FC = () => {
         </div>
         <div className={styles['header-stats']}>
           <div className={styles['stat-item']}>
-            <span className={styles['stat-value']}>{completedSprints.length}</span>
+            <span className={styles['stat-value']}>{retroReviewableSprints.length}</span>
             <span className={styles['stat-label']}>
-              {completedSprints.length === 1
+              {retroReviewableSprints.length === 1
                 ? t('list.completedSprint')
-                : t('list.completedSprints_plural')}
+                : t('list.completedSprints')}
             </span>
           </div>
           <div className={styles['stat-item']}>
             <span className={styles['stat-value']}>
               {
-                completedSprints.filter(
+                retroReviewableSprints.filter(
                   (s) => s.retrospective?.status === RetrospectiveStatus.COMPLETED
                 ).length
               }
@@ -235,7 +241,7 @@ export const RetrospectiveList: React.FC = () => {
         </div>
       </header>
 
-      {completedSprints.length === 0 ? (
+      {retroReviewableSprints.length === 0 ? (
         <EmptyState type="no-completed-sprint" variant="default" />
       ) : (
         <div className={styles.content}>
@@ -245,7 +251,7 @@ export const RetrospectiveList: React.FC = () => {
               {t('list.completedSprints')}
             </h2>
             <div className={styles['sprint-grid']}>
-              {completedSprints.map((sprint) => {
+              {retroReviewableSprints.map((sprint) => {
                 const statusConfig = getStatusConfig(sprint.status);
                 const retroConfig = getRetroStatusConfig(sprint);
                 const RetroIcon = retroConfig.icon;

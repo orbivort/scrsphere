@@ -1131,52 +1131,6 @@ class SprintService {
    *
    * Runs against the transaction client so the gate is atomic with the status write.
    */
-  private async findPBIsWithoutFullDoD(
-    tx: Omit<
-      Prisma.TransactionClient,
-      '$connect' | '$disconnect' | '$on' | '$transaction' | '$use' | '$extends'
-    >,
-    teamId: string,
-    pbiIds: string[]
-  ): Promise<string[]> {
-    const dod = await tx.definitionOfDone.findUnique({
-      where: { teamId },
-      select: {
-        items: {
-          where: { isActive: true },
-          select: { id: true },
-        },
-      },
-    });
-
-    const activeDodItemIds = (dod?.items ?? []).map((item) => item.id);
-    if (activeDodItemIds.length === 0) {
-      return [];
-    }
-
-    const verifiedRows = await tx.doDChecklistVerification.findMany({
-      where: {
-        pbiId: { in: pbiIds },
-        dodItemId: { in: activeDodItemIds },
-        isVerified: true,
-      },
-      select: { pbiId: true, dodItemId: true },
-    });
-
-    const verifiedMap = new Map<string, Set<string>>();
-    for (const row of verifiedRows) {
-      const set = verifiedMap.get(row.pbiId) ?? new Set<string>();
-      set.add(row.dodItemId);
-      verifiedMap.set(row.pbiId, set);
-    }
-
-    const activeDodIdSet = new Set(activeDodItemIds);
-    return pbiIds.filter((pbiId) => {
-      const verified = verifiedMap.get(pbiId) ?? new Set<string>();
-      return !Array.from(activeDodIdSet).every((dodItemId) => verified.has(dodItemId));
-    });
-  }
-
   /**
    * Reinitialize burndown data within a transaction
    * This ensures burndown data is created atomically with sprint start
@@ -1276,12 +1230,14 @@ class SprintService {
   }
 
   /**
-   * Complete sprint with PBI status updates
-   * PBIs with all tasks DONE will be automatically updated to DONE status.
+   * Complete sprint (pure container close).
    *
-   * A PBI is only auto-advanced to `DONE` when EVERY one of its tasks is `DONE`.
-   * Any task in `REVIEW` (awaiting peer review) is not complete, so it deliberately
-   * blocks PBI auto-completion until it is approved to `DONE`.
+   * Per the Scrum Guide (2020), completing a Sprint only closes the Sprint container. It
+   * SHALL NOT transition any Product Backlog item to `DONE` — Done is a deliberate,
+   * Definition-of-Done-gated per-item action the Developers perform during the Sprint (see
+   * `updatePBI` with `status: 'DONE'` on the Product Backlog service). Completion is gated
+   * on the Sprint Review being `completed` and the Sprint Retrospective being `COMPLETED`
+   * (the Review is the second-to-last event, the Retrospective concludes the Sprint).
    */
   async completeSprint(sprintId: string, userId?: string): Promise<Sprint> {
     const sprint = await this.getSprintById(sprintId);
@@ -1326,85 +1282,8 @@ class SprintService {
       );
     }
 
-    const [sprintBacklogItems, tasks] = await Promise.all([
-      prisma.sprintBacklogItem.findMany({
-        where: { sprintId },
-        select: {
-          id: true,
-          sprintId: true,
-          pbiId: true,
-          createdAt: true,
-          updatedAt: true,
-          pbi: {
-            select: {
-              id: true,
-              title: true,
-              status: true,
-              storyPoints: true,
-            },
-          },
-        },
-      }),
-      prisma.task.findMany({
-        where: { sprintId },
-        select: {
-          id: true,
-          pbiId: true,
-          status: true,
-        },
-      }),
-    ]);
-
-    const pbiTaskStatusMap = new Map<
-      string,
-      { tasks: Array<{ id: string; pbiId: string; status: TaskStatus }>; allDone: boolean }
-    >();
-
-    for (const task of tasks) {
-      const entry = pbiTaskStatusMap.get(task.pbiId) ?? {
-        tasks: [],
-        allDone: true,
-      };
-      entry.tasks.push(task);
-      // Any task not in `DONE` — including `REVIEW` (awaiting peer review) — counts as
-      // incomplete, so a PBI with a task in `REVIEW` is intentionally NOT auto-completed.
-      if (task.status !== 'DONE') entry.allDone = false;
-      pbiTaskStatusMap.set(task.pbiId, entry);
-    }
-
-    const pbiIdsToUpdate: string[] = [];
-    const pbiUpdates: { pbiId: string; fromStatus: string }[] = [];
-
-    for (const item of sprintBacklogItems) {
-      const statusInfo = pbiTaskStatusMap.get(item.pbiId);
-      if (statusInfo?.allDone && statusInfo.tasks.length > 0 && item.pbi.status !== 'DONE') {
-        pbiIdsToUpdate.push(item.pbi.id);
-        pbiUpdates.push({ pbiId: item.pbi.id, fromStatus: item.pbi.status });
-      }
-    }
-
-    const workflow = await prisma.workflow.findFirst({
-      where: { entityType: 'BacklogItem' },
-      select: { id: true },
-    });
-
-    const teamId = sprint.teamId;
-
     const updatedSprint = await withTransaction(
       async (tx) => {
-        // Definition of Done is the gate to "Done": a PBI whose tasks are all DONE may only be
-        // marked DONE if every active DoD item is verified for it. This is enforced inside the
-        // same transaction as the status write so a direct API call cannot bypass the gate.
-        if (pbiIdsToUpdate.length > 0) {
-          const nonCompliantPbiIds = await this.findPBIsWithoutFullDoD(tx, teamId, pbiIdsToUpdate);
-
-          if (nonCompliantPbiIds.length > 0) {
-            throw new BadRequestError(
-              `Sprint cannot be completed because the Definition of Done is not met for PBI(s): ${nonCompliantPbiIds.join(', ')}. Verify all Definition of Done items for these items before completing the sprint.`
-            );
-          }
-        }
-
         const sprint = await tx.sprint.update({
           where: { id: sprintId },
           data: { status: 'COMPLETED' },
@@ -1417,43 +1296,6 @@ class SprintService {
           where: { sprintId },
           data: { status: 'COMPLETED' },
         });
-
-        if (pbiIdsToUpdate.length > 0) {
-          await tx.productBacklogItem.updateMany({
-            where: { id: { in: pbiIdsToUpdate } },
-            data: {
-              status: 'DONE',
-              updatedBy: userId,
-            },
-          });
-
-          if (workflow) {
-            const states = await tx.workflowState.findMany({
-              where: { workflowId: workflow.id },
-            });
-
-            const inProgressState = states.find((s) => s.name === 'IN_PROGRESS');
-            const doneState = states.find((s) => s.name === 'DONE');
-
-            if (inProgressState && doneState) {
-              for (const update of pbiUpdates) {
-                await tx.statusChangeHistory.create({
-                  data: {
-                    id: generateUUIDv7(),
-                    entityType: 'BacklogItem',
-                    entityId: update.pbiId,
-                    workflowId: workflow.id,
-                    fromStateId: inProgressState.id,
-                    toStateId: doneState.id,
-                    changedBy: userId ?? 'system',
-                    changeReason: 'Sprint completed - All tasks done',
-                    metadata: { source: 'sprint_completion' },
-                  },
-                });
-              }
-            }
-          }
-        }
 
         return sprint;
       },

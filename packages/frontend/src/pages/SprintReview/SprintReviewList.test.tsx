@@ -170,14 +170,15 @@ describe('SprintReviewList', () => {
       });
     });
 
-    it('should render completed sprints in a grid', async () => {
+    it('should render completed and active sprints in a grid', async () => {
       renderComponent();
 
       await waitFor(() => {
         expect(screen.getByText(/Sprint 1/)).toBeInTheDocument();
       });
 
-      expect(screen.queryByText(/Sprint 2/)).not.toBeInTheDocument();
+      // Active sprints are reviewable before closure; planned sprints are not shown.
+      expect(screen.getByText(/Sprint 2/)).toBeInTheDocument();
       expect(screen.queryByText(/Sprint 3/)).not.toBeInTheDocument();
     });
 
@@ -185,7 +186,7 @@ describe('SprintReviewList', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText(i18nT('sprint-review:list.goal'))).toBeInTheDocument();
+        expect(screen.getAllByText(i18nT('sprint-review:list.goal')).length).toBeGreaterThan(0);
       });
     });
 
@@ -203,14 +204,15 @@ describe('SprintReviewList', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText(/Jan/i)).toBeInTheDocument();
+        expect(screen.getAllByText(/Jan/i).length).toBeGreaterThan(0);
       });
     });
 
-    it('should render empty state when no completed sprints exist', async () => {
+    it('should render empty state when no reviewable (active/completed) sprints exist', async () => {
+      // A PLANNED-only Sprint is not yet reviewable, so the list shows the empty state.
       vi.spyOn(apiServiceModule.apiService, 'getSprints').mockResolvedValue({
         success: true,
-        data: [mockSprints[1]],
+        data: [mockSprints[2]],
       });
 
       renderComponent();
@@ -282,7 +284,9 @@ describe('SprintReviewList', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText(i18nT('sprint-review:list.viewDetails'))).toBeInTheDocument();
+        expect(screen.getAllByText(i18nT('sprint-review:list.viewDetails')).length).toBeGreaterThan(
+          0
+        );
       });
     });
 
@@ -300,8 +304,8 @@ describe('SprintReviewList', () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText(i18nT('sprint-review:list.reviewStatus.incrementRequired'))
-        ).toBeInTheDocument();
+          screen.getAllByText(i18nT('sprint-review:list.reviewStatus.incrementRequired')).length
+        ).toBeGreaterThan(0);
       });
     });
 
@@ -318,7 +322,9 @@ describe('SprintReviewList', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText(i18nT('sprint-review:list.createIncrement'))).toBeInTheDocument();
+        expect(
+          screen.getAllByText(i18nT('sprint-review:list.createIncrement')).length
+        ).toBeGreaterThan(0);
       });
     });
 
@@ -363,7 +369,7 @@ describe('SprintReviewList', () => {
       renderComponent();
 
       await waitFor(() => {
-        const incrementButton = screen.getByText(i18nT('sprint-review:list.createIncrement'));
+        const incrementButton = screen.getAllByText(i18nT('sprint-review:list.createIncrement'))[0];
         fireEvent.click(incrementButton);
       });
 
@@ -380,14 +386,15 @@ describe('SprintReviewList', () => {
       });
     });
 
-    it('should only display completed sprints, filtering out active and planned', async () => {
+    it('should display completed and active sprints, filtering out planned', async () => {
       renderComponent();
 
       await waitFor(() => {
         expect(screen.getByText(/Sprint 1/)).toBeInTheDocument();
       });
 
-      expect(screen.queryByText(/Sprint 2/)).not.toBeInTheDocument();
+      // Active sprints are now reviewable before closure; planned sprints are filtered out.
+      expect(screen.getByText(/Sprint 2/)).toBeInTheDocument();
       expect(screen.queryByText(/Sprint 3/)).not.toBeInTheDocument();
     });
 
