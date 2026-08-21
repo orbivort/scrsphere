@@ -17,6 +17,7 @@
   "routeNotFound": "{{method}} {{path}} no encontrado",
   "sprint": {
     "anotherActive": "Ya hay otro sprint activo",
+    "cancelRequiresProductOwner": "Solo el Product Owner puede cancelar un sprint",
     "missingGoal": "El sprint no se puede iniciar sin un objetivo de sprint",
     "notPlanned": "Solo se pueden iniciar sprints planificados",
     "notReadyToStart": "El backlog del sprint debe guardarse antes de poder iniciar el sprint",

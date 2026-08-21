@@ -24,6 +24,7 @@ describe('SprintBoardHeader', () => {
   const mockOnOpenBacklogManager = vi.fn();
   const mockOnOpenCreateModal = vi.fn();
   const mockOnCompleteSprint = vi.fn();
+  const mockOnCancelSprint = vi.fn();
 
   const defaultProps: SprintBoardHeaderProps = {
     sprint: mockSprint,
@@ -33,7 +34,10 @@ describe('SprintBoardHeader', () => {
     onOpenBacklogManager: mockOnOpenBacklogManager,
     onOpenCreateModal: mockOnOpenCreateModal,
     onCompleteSprint: mockOnCompleteSprint,
+    onCancelSprint: mockOnCancelSprint,
     showBurndown: false,
+    canMutate: true,
+    isProductOwner: false,
   };
 
   beforeAll(async () => {
@@ -237,6 +241,52 @@ describe('SprintBoardHeader', () => {
       renderWithProviders(<SprintBoardHeader {...defaultProps} />);
 
       expect(screen.getByText('?')).toBeInTheDocument();
+    });
+  });
+
+  describe('Role-based Controls', () => {
+    it('should hide Add Task and Manage Backlog when the user cannot mutate (PO/SM)', () => {
+      renderWithProviders(
+        <SprintBoardHeader {...defaultProps} canMutate={false} isProductOwner={false} />
+      );
+
+      expect(
+        screen.queryByRole('button', { name: i18nT('sprint:boardHeader.addTask') })
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', { name: i18nT('sprint:boardHeader.manageBacklog') })
+      ).not.toBeInTheDocument();
+      // Complete Sprint stays available to all Scrum Team members.
+      expect(
+        screen.getByRole('button', { name: i18nT('sprint:boardHeader.completeSprint') })
+      ).toBeInTheDocument();
+    });
+
+    it('should show Cancel Sprint only for the Product Owner', () => {
+      renderWithProviders(<SprintBoardHeader {...defaultProps} isProductOwner={true} />);
+
+      const cancelButton = screen.getByRole('button', {
+        name: i18nT('sprint:boardHeader.cancelSprint'),
+      });
+      expect(cancelButton).toBeInTheDocument();
+    });
+
+    it('should hide Cancel Sprint for a Developer', () => {
+      renderWithProviders(<SprintBoardHeader {...defaultProps} isProductOwner={false} />);
+
+      expect(
+        screen.queryByRole('button', { name: i18nT('sprint:boardHeader.cancelSprint') })
+      ).not.toBeInTheDocument();
+    });
+
+    it('should call onCancelSprint when the Product Owner clicks Cancel Sprint', async () => {
+      renderWithProviders(<SprintBoardHeader {...defaultProps} isProductOwner={true} />);
+
+      await userEvent.click(
+        screen.getByRole('button', { name: i18nT('sprint:boardHeader.cancelSprint') })
+      );
+
+      expect(mockOnCancelSprint).toHaveBeenCalledTimes(1);
     });
   });
 

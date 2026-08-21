@@ -299,39 +299,6 @@
   flex-shrink: 0;
 }
 
-.task-status-badge {
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-bold);
-  padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-full);
-  text-transform: uppercase;
-  letter-spacing: var(--letter-spacing-wide);
-}
-
-.task-status-badge.todo {
-  background: linear-gradient(135deg, var(--color-gray-100) 0%, var(--color-gray-200) 100%);
-  color: var(--color-gray-700);
-}
-
-.task-status-badge.in-progress {
-  background: linear-gradient(135deg, var(--color-primary-100) 0%, var(--color-primary-200) 100%);
-  color: var(--color-primary-700);
-}
-
-.task-status-badge.review {
-  background: linear-gradient(
-    135deg,
-    var(--color-accent-purple-100) 0%,
-    var(--color-accent-purple-200) 100%
-  );
-  color: var(--color-accent-indigo-600);
-}
-
-.task-status-badge.done {
-  background: linear-gradient(135deg, var(--color-success-100) 0%, var(--color-success-200) 100%);
-  color: var(--color-success-800);
-}
-
 .task-card-actions {
   position: absolute;
   top: var(--space-2);

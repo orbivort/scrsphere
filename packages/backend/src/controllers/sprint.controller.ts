@@ -170,8 +170,12 @@ export const cancelSprint = asyncHandler(async (req: Request, res: Response) => 
   if (!id) {
     throw new BadRequestError('Sprint ID is required');
   }
+  const userId = req.user?.id;
+  if (!userId) {
+    throw new BadRequestError('User not authenticated');
+  }
   const { reason } = req.body;
-  const sprint = await sprintService.cancelSprint(id, reason);
+  const sprint = await sprintService.cancelSprint(id, reason, userId);
   res.json(createSuccessResponse(sprint));
 });
 
@@ -259,7 +263,8 @@ export const deleteTask = asyncHandler(async (req: Request, res: Response) => {
   if (!taskId) {
     throw new BadRequestError('Task ID is required');
   }
-  await sprintService.deleteTask(sprintId, taskId);
+  const userId = req.user?.id;
+  await sprintService.deleteTask(sprintId, taskId, userId);
   res.json(createSuccessResponse(null));
 });
 

@@ -1,5 +1,12 @@
 import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
-import { screen, fireEvent, waitFor, renderWithProviders, initTestI18n } from '../../test-utils';
+import {
+  screen,
+  fireEvent,
+  waitFor,
+  act,
+  renderWithProviders,
+  initTestI18n,
+} from '../../test-utils';
 import userEvent from '@testing-library/user-event';
 
 import { TeamSelectionModal } from './TeamSelectionModal';
@@ -476,9 +483,15 @@ describe('TeamSelectionModal Component', () => {
     });
 
     it('shows switching indicator on selected team', async () => {
-      const switchTeam = vi
-        .fn()
-        .mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 100)));
+      // Use a manually-resolved deferred so the intermediate "switching" state is
+      // deterministic and does not depend on real timer timing (which was flaky).
+      let resolveSwitch = () => {};
+      const switchTeam = vi.fn().mockImplementation(
+        () =>
+          new Promise<void>((resolve) => {
+            resolveSwitch = resolve;
+          })
+      );
       vi.mocked(useTeamContext).mockReturnValue({
         ...mockTeamContext,
         isLoading: false,
@@ -499,12 +512,23 @@ describe('TeamSelectionModal Component', () => {
         expect(screen.getByText('Switching...')).toBeInTheDocument();
         expect(container.querySelector('.switching-indicator')).toBeInTheDocument();
       });
+
+      // Let the pending switch settle so the component's state is cleaned up.
+      await act(async () => {
+        resolveSwitch();
+      });
     });
 
     it('applies switching class to selected team card', async () => {
-      const switchTeam = vi
-        .fn()
-        .mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 100)));
+      // Use a manually-resolved deferred so the intermediate "switching" state is
+      // deterministic and does not depend on real timer timing (which was flaky).
+      let resolveSwitch = () => {};
+      const switchTeam = vi.fn().mockImplementation(
+        () =>
+          new Promise<void>((resolve) => {
+            resolveSwitch = resolve;
+          })
+      );
       vi.mocked(useTeamContext).mockReturnValue({
         ...mockTeamContext,
         isLoading: false,
@@ -524,6 +548,11 @@ describe('TeamSelectionModal Component', () => {
       await waitFor(() => {
         const switchingCard = container.querySelector('.team-card-switching');
         expect(switchingCard).toBeInTheDocument();
+      });
+
+      // Let the pending switch settle so the component's state is cleaned up.
+      await act(async () => {
+        resolveSwitch();
       });
     });
   });

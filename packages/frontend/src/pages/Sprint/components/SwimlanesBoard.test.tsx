@@ -87,6 +87,7 @@ const defaultProps: SwimlanesBoardProps = {
   onKeyDown: vi.fn(),
   onFocus: vi.fn(),
   onBlur: vi.fn(),
+  canMutate: true,
 };
 
 describe('SwimlanesBoard', () => {

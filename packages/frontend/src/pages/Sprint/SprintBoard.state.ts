@@ -9,6 +9,7 @@ export const initialModalState: ModalState = {
   showEditModal: false,
   showDeleteConfirm: false,
   showCompleteSprintModal: false,
+  showCancelSprintModal: false,
   showBacklogManager: false,
   showDodVerification: false,
   showKeyboardHelp: false,
@@ -34,6 +35,8 @@ export function modalReducer(state: ModalState, action: ModalAction): ModalState
       };
     case 'OPEN_COMPLETE_SPRINT_MODAL':
       return { ...state, showCompleteSprintModal: true, workflowError: null };
+    case 'OPEN_CANCEL_SPRINT_MODAL':
+      return { ...state, showCancelSprintModal: true, workflowError: null };
     case 'OPEN_BACKLOG_MANAGER':
       return { ...state, showBacklogManager: true, workflowError: null };
     case 'OPEN_DOD_VERIFICATION':
@@ -55,6 +58,8 @@ export function modalReducer(state: ModalState, action: ModalAction): ModalState
         completeSprintError: null,
         workflowError: null,
       };
+    case 'CLOSE_CANCEL_SPRINT_MODAL':
+      return { ...state, showCancelSprintModal: false, workflowError: null };
     case 'CLOSE_BACKLOG_MANAGER':
       return { ...state, showBacklogManager: false, workflowError: null };
     case 'CLOSE_DOD_VERIFICATION':

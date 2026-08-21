@@ -65,6 +65,7 @@ export interface ModalState {
   showEditModal: boolean;
   showDeleteConfirm: boolean;
   showCompleteSprintModal: boolean;
+  showCancelSprintModal: boolean;
   showBacklogManager: boolean;
   showDodVerification: boolean;
   showKeyboardHelp: boolean;
@@ -79,6 +80,7 @@ export type ModalAction =
   | { type: 'OPEN_EDIT_MODAL'; payload: Task }
   | { type: 'OPEN_DELETE_CONFIRM'; payload: Task }
   | { type: 'OPEN_COMPLETE_SPRINT_MODAL' }
+  | { type: 'OPEN_CANCEL_SPRINT_MODAL' }
   | { type: 'OPEN_BACKLOG_MANAGER' }
   | { type: 'OPEN_DOD_VERIFICATION' }
   | { type: 'OPEN_KEYBOARD_HELP' }
@@ -87,6 +89,7 @@ export type ModalAction =
   | { type: 'CLOSE_EDIT_MODAL' }
   | { type: 'CLOSE_DELETE_CONFIRM' }
   | { type: 'CLOSE_COMPLETE_SPRINT_MODAL' }
+  | { type: 'CLOSE_CANCEL_SPRINT_MODAL' }
   | { type: 'CLOSE_BACKLOG_MANAGER' }
   | { type: 'CLOSE_DOD_VERIFICATION' }
   | { type: 'CLOSE_KEYBOARD_HELP' }

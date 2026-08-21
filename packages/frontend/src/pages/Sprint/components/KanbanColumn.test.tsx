@@ -77,6 +77,7 @@ describe('KanbanColumn', () => {
     onFocus: mockOnFocus,
     onBlur: mockOnBlur,
     onMoveStatus: mockOnMoveStatus,
+    canMutate: true,
   };
 
   beforeAll(async () => {

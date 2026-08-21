@@ -539,6 +539,9 @@ export interface UseKeyboardNavigationOptions {
   showToast: (type: 'success' | 'error' | 'warning' | 'info', message: string) => void;
   /** Whether any modal is currently open */
   isModalOpen: boolean;
+  /** Whether the current user may mutate the Sprint Backlog (Developers-only). When false,
+   *  the create shortcut and keyboard-driven task moves are disabled. */
+  canMutate: boolean;
 }
 
 /**
@@ -586,6 +589,7 @@ export const useKeyboardNavigation = (
     onToggleBurndown,
     showToast,
     isModalOpen,
+    canMutate,
   } = options;
 
   // Screen reader announcement hook
@@ -758,6 +762,7 @@ export const useKeyboardNavigation = (
           break;
         case 'n':
         case 'N':
+          if (!canMutate) return;
           e.preventDefault();
           onOpenCreateModal();
           break;
@@ -776,7 +781,7 @@ export const useKeyboardNavigation = (
 
     document.addEventListener('keydown', handleGlobalKeyDown);
     return () => document.removeEventListener('keydown', handleGlobalKeyDown);
-  }, [isModalOpen, onOpenKeyboardHelp, onOpenCreateModal, onToggleBurndown]);
+  }, [isModalOpen, onOpenKeyboardHelp, onOpenCreateModal, onToggleBurndown, canMutate]);
 
   // ============================================
   // Main Keyboard Handler
@@ -785,6 +790,12 @@ export const useKeyboardNavigation = (
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent, task: Task) => {
       const currentIndex = filteredTasks.findIndex((t) => t.id === task.id);
+
+      // Read-only users (PO/SM) may navigate and open details, but must not move tasks:
+      // block grab (space) and status moves (ArrowLeft/ArrowRight) when they cannot mutate.
+      if (!canMutate && (e.key === ' ' || e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+        return;
+      }
 
       // Handle keyboard drag operations when in grab mode
       if (keyboardGrabState === 'grabbed' && keyboardDraggedTaskId === task.id) {
@@ -875,6 +886,8 @@ export const useKeyboardNavigation = (
       // Normal keyboard operations (not in grab mode)
       switch (e.key) {
         case ' ':
+          // Grab/move is Developers-only; read-only users can still open details and navigate.
+          if (!canMutate) return;
           e.preventDefault();
           // Start grab mode
           setKeyboardDraggedTaskId(task.id);
@@ -1041,6 +1054,7 @@ export const useKeyboardNavigation = (
       announceCancelled,
       announceGrabbed,
       onOpenDetail,
+      canMutate,
       t,
     ]
   );
@@ -1079,6 +1093,7 @@ export interface UseTaskMutationsReturn {
   >;
   deleteTaskMutation: UseMutationResult<unknown, unknown, string, unknown>;
   completeSprintMutation: UseMutationResult<unknown, unknown, void, unknown>;
+  cancelSprintMutation: UseMutationResult<unknown, unknown, { reason: string }, unknown>;
 }
 
 export const useTaskMutations = (options: UseTaskMutationsOptions): UseTaskMutationsReturn => {
@@ -1204,11 +1219,35 @@ export const useTaskMutations = (options: UseTaskMutationsOptions): UseTaskMutat
     },
   });
 
+  const cancelSprintMutation = useMutation({
+    mutationFn: async ({ reason }: { reason: string }) => {
+      if (!sprintId) throw new Error('No active sprint');
+      return apiService.cancelSprint(sprintId, reason);
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.productBacklog.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.sprintTasks.all });
+      if (teamId) {
+        void queryClient.invalidateQueries({ queryKey: queryKeys.sprint.activeSprint(teamId) });
+      }
+      onCloseModal();
+      showToast('success', t('board.sprintCancelled'));
+    },
+    onError: (error: unknown) => {
+      handleMutationError(error, {
+        operationName: 'cancel sprint',
+        showToast: (msg) => showToast('error', msg),
+      });
+    },
+  });
+
   return {
     createTaskMutation,
     updateTaskMutation,
     deleteTaskMutation,
     completeSprintMutation,
+    cancelSprintMutation,
   };
 };
 
@@ -1508,6 +1547,9 @@ export const useTaskFormValidation = (
         const missingFields: string[] = [];
         if (!task.assigneeId) {
           missingFields.push(t('validation.fieldAssignee'));
+        }
+        if (!task.description?.trim()) {
+          missingFields.push(t('validation.fieldDescription'));
         }
         if (!task.estimatedHours || task.estimatedHours <= 0) {
           missingFields.push(t('validation.fieldEstimatedHours'));

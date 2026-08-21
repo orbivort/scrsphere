@@ -94,6 +94,9 @@ export interface TaskDetailModalProps {
   modalRef: React.RefObject<HTMLDivElement | null>;
   /** Id of the currently signed-in user, used to hide the peer-review approval for the assignee. */
   currentUserId?: string;
+  /** Whether the current user may mutate the Sprint Backlog (Developers-only). When false,
+   *  the edit/delete actions and the status selector are disabled (read-only). */
+  canMutate?: boolean;
 }
 
 export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
@@ -108,10 +111,13 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
   isUpdating,
   modalRef,
   currentUserId,
+  canMutate = true,
 }) => {
   const { t } = useTranslation('sprint');
   const { locale } = useI18nStore();
   const isViewOnlyMode = task.status === TaskStatusEnum.DONE;
+  // PO/SM cannot edit/delete/move tasks (Developers-only), so the detail modal is read-only.
+  const isReadOnly = isViewOnlyMode || !canMutate;
 
   // Build full TASK_STATUS_CONFIG with i18n labels
   const TASK_STATUS_CONFIG: Record<TaskStatus, StatusConfig> = {
@@ -145,7 +151,7 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
     task.assigneeId !== undefined &&
     task.assigneeId === currentUserId;
 
-  const availableStatuses = isViewOnlyMode
+  const availableStatuses = isReadOnly
     ? []
     : getAvailableTransitions(task.status).filter(
         (s) => !(isAssigneeSelfReview && s === TaskStatusEnum.DONE)
@@ -239,7 +245,7 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
                   onStatusChange={onStatusChange}
                   availableStatuses={availableStatuses}
                   isLoading={isUpdating}
-                  disabled={isViewOnlyMode}
+                  disabled={isReadOnly}
                 />
               </div>
 
@@ -327,7 +333,7 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
               type="button"
               className={`${styles.button} ${styles['button-danger']}`}
               onClick={onDelete}
-              disabled={isViewOnlyMode}
+              disabled={isReadOnly}
             >
               <TrashIcon size={16} aria-hidden="true" />
               {t('taskDetail.deleteTask')}
@@ -345,9 +351,9 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
               type="button"
               className={`${styles.button} ${styles['button-primary']}`}
               onClick={onEdit}
-              disabled={isViewOnlyMode}
+              disabled={isReadOnly}
             >
-              {isViewOnlyMode ? (
+              {isReadOnly ? (
                 t('taskDetail.viewOnly')
               ) : (
                 <>

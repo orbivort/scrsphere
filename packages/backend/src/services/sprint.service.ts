@@ -1272,6 +1272,13 @@ class SprintService {
       throw new BadRequestError('Only active sprints can be completed');
     }
 
+    // Completing a Sprint is available to any Scrum Team member (Developer, PO, or SM).
+    // The Scrum Guide does not assign "complete" to a single role, so a membership check
+    // closes the open-endpoint gap without over-restricting.
+    if (userId) {
+      await this.assertTeamMember(sprint.teamId, userId);
+    }
+
     const [sprintBacklogItems, tasks] = await Promise.all([
       prisma.sprintBacklogItem.findMany({
         where: { sprintId },
@@ -1411,21 +1418,73 @@ class SprintService {
 
   /**
    * Cancel sprint
+   *
+   * Product Owner-only, and only for an `ACTIVE` sprint (Scrum Guide: "Only the Product
+   * Owner has authority to cancel a Sprint, and only if the Sprint Goal becomes obsolete").
+   * A `PLANNED`, `COMPLETED`, or already `CANCELLED` sprint cannot be cancelled. Requires a
+   * cancellation reason. Incomplete (non-`DONE`) PBIs are returned to the Product Backlog
+   * (status restored to `READY`); the sprint's decomposed tasks are removed as the plan is
+   * abandoned.
    */
-  async cancelSprint(sprintId: string, reason: string): Promise<Sprint> {
-    const sprint = await this.getSprintById(sprintId);
-
-    if (sprint.status === 'COMPLETED') {
-      throw new BadRequestError('Cannot cancel a completed sprint');
+  async cancelSprint(sprintId: string, reason: string, userId?: string): Promise<Sprint> {
+    if (!reason.trim()) {
+      throw new BadRequestError('Cancellation reason is required');
     }
 
-    const updatedSprint = await prisma.sprint.update({
-      where: { id: sprintId },
-      data: {
-        status: 'CANCELLED',
-        cancellationReason: reason,
-      },
+    const sprint = await this.getSprintById(sprintId);
+
+    if (userId) {
+      await this.assertProductOwnerRole(sprint.teamId, userId);
+    }
+
+    if (sprint.status !== 'ACTIVE') {
+      throw new BadRequestError('Only active sprints can be cancelled');
+    }
+
+    const sprintBacklogItems = await prisma.sprintBacklogItem.findMany({
+      where: { sprintId },
+      select: { pbiId: true },
     });
+    const pbiIds = sprintBacklogItems.map((sbi) => sbi.pbiId);
+
+    const updatedSprint = await withTransaction(
+      async (tx) => {
+        const updated = await tx.sprint.update({
+          where: { id: sprintId },
+          data: {
+            status: 'CANCELLED',
+            cancellationReason: reason,
+          },
+        });
+
+        // Keep the linked GeneratedSprint status in sync.
+        await tx.generatedSprint.updateMany({
+          where: { sprintId },
+          data: { status: 'CANCELLED' },
+        });
+
+        // Remove the Sprint Backlog for the cancelled sprint.
+        await tx.sprintBacklogItem.deleteMany({ where: { sprintId } });
+
+        // Remove the decomposed tasks of the cancelled sprint's plan.
+        await tx.task.deleteMany({ where: { sprintId } });
+
+        // Return incomplete PBIs to the Product Backlog (restore to READY); DONE PBIs stay DONE.
+        const incompletePbiIds = await tx.productBacklogItem.findMany({
+          where: { id: { in: pbiIds }, status: { not: 'DONE' } },
+          select: { id: true },
+        });
+        if (incompletePbiIds.length > 0) {
+          await tx.productBacklogItem.updateMany({
+            where: { id: { in: incompletePbiIds.map((p) => p.id) } },
+            data: { status: 'READY' },
+          });
+        }
+
+        return updated;
+      },
+      { ...TRANSACTION_CONFIG.DEFAULT, operationName: 'cancelSprint' }
+    );
 
     return updatedSprint;
   }
@@ -1523,6 +1582,43 @@ class SprintService {
 
     if (teamMember.role !== 'DEVELOPERS') {
       throw new ForbiddenError(requestT('errors:task.creationRequiresDeveloper'));
+    }
+  }
+
+  /**
+   * Assert that the acting user is a `PRODUCT_OWNER`-role team member for the given team.
+   * Resolves the user's `TeamMember` role and throws `ForbiddenError` when the role is not
+   * `PRODUCT_OWNER`. Only the Product Owner may cancel a Sprint (Scrum Guide: "Only the
+   * Product Owner has authority to cancel a Sprint").
+   */
+  private async assertProductOwnerRole(teamId: string, userId: string): Promise<void> {
+    const teamMember = await prisma.teamMember.findFirst({
+      where: { teamId, userId },
+      select: { role: true },
+    });
+
+    if (!teamMember) {
+      throw new ForbiddenError(requestT('errors:notTeamMember'));
+    }
+
+    if (teamMember.role !== 'PRODUCT_OWNER') {
+      throw new ForbiddenError(requestT('errors:sprint.cancelRequiresProductOwner'));
+    }
+  }
+
+  /**
+   * Assert that the acting user is a member of the given team (any Scrum Team role:
+   * Developer, Product Owner, or Scrum Master). Throws `ForbiddenError` when the user is
+   * not a member. Completing a Sprint is available to any Scrum Team member.
+   */
+  private async assertTeamMember(teamId: string, userId: string): Promise<void> {
+    const teamMember = await prisma.teamMember.findFirst({
+      where: { teamId, userId },
+      select: { id: true },
+    });
+
+    if (!teamMember) {
+      throw new ForbiddenError(requestT('errors:notTeamMember'));
     }
   }
 
@@ -1675,9 +1771,15 @@ class SprintService {
       throw new NotFoundError('Task');
     }
 
+    // Developers-only task mutation on the Active Sprint Board: the Sprint Backlog is a
+    // plan by and for the Developers, so editing a task's status, title, description, or
+    // hours is restricted to `DEVELOPER`-role members. PO/SM are rejected here.
+    if (userId) {
+      await this.assertDeveloperRole(task.sprint.teamId, userId);
+    }
+
     // Self-managed assignment: apply the self-assignment guard ONLY when the change
     // actually carries `assigneeId` and its value differs from the current assignee.
-    // Status/estimate-only updates are unaffected and remain open to all team members.
     if (userId && 'assigneeId' in data && data.assigneeId !== task.assigneeId) {
       await this.assertAssigneeIsSameTeamDeveloper(task.sprint.teamId, userId, data.assigneeId);
     }
@@ -1801,14 +1903,25 @@ class SprintService {
 
   /**
    * Delete task
+   *
+   * Developers-only: the Sprint Backlog is owned by the Developers, so only `DEVELOPER`-role
+   * members may delete a task. PO/SM are rejected.
    */
-  async deleteTask(sprintId: string, taskId: string): Promise<void> {
+  async deleteTask(sprintId: string, taskId: string, userId?: string): Promise<void> {
     const task = await prisma.task.findFirst({
       where: { id: taskId, sprintId },
+      select: {
+        id: true,
+        sprint: { select: { teamId: true } },
+      },
     });
 
     if (!task) {
       throw new NotFoundError('Task');
+    }
+
+    if (userId) {
+      await this.assertDeveloperRole(task.sprint.teamId, userId);
     }
 
     await prisma.task.delete({
@@ -2035,6 +2148,25 @@ export interface RemovePBIFromSprintData {
 }
 
 class SprintBacklogManagerService {
+  /**
+   * Assert that the acting user is a `DEVELOPERS`-role team member for the given team.
+   * Managing the active Sprint Backlog (adding/removing PBIs) is a Developers' act.
+   */
+  private async assertDeveloperRole(teamId: string, userId: string): Promise<void> {
+    const teamMember = await prisma.teamMember.findFirst({
+      where: { teamId, userId },
+      select: { role: true },
+    });
+
+    if (!teamMember) {
+      throw new ForbiddenError(requestT('errors:notTeamMember'));
+    }
+
+    if (teamMember.role !== 'DEVELOPERS') {
+      throw new ForbiddenError(requestT('errors:task.creationRequiresDeveloper'));
+    }
+  }
+
   async addPBIToActiveSprint(
     sprintId: string,
     userId: string,
@@ -2057,6 +2189,9 @@ class SprintBacklogManagerService {
     if (sprint.status !== 'ACTIVE') {
       throw new BadRequestError('Can only add items to an active sprint');
     }
+
+    // Developers-only: the active Sprint Backlog is owned by the Developers.
+    await this.assertDeveloperRole(sprint.teamId, userId);
 
     const existingItem = sprint.sprintBacklogItems.find((item) => item.pbiId === data.pbiId);
     if (existingItem) {
@@ -2241,6 +2376,9 @@ class SprintBacklogManagerService {
     if (sprint.status !== 'ACTIVE') {
       throw new BadRequestError('Can only remove items from an active sprint');
     }
+
+    // Developers-only: the active Sprint Backlog is owned by the Developers.
+    await this.assertDeveloperRole(sprint.teamId, userId);
 
     const sprintBacklogItem = sprint.sprintBacklogItems[0];
     if (!sprintBacklogItem) {

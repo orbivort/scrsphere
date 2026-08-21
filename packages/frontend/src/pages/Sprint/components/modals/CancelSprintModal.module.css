@@ -1,0 +1,156 @@
+/* ============================================================================
+  CANCEL SPRINT MODAL - Professional Warning Design
+  Product Owner-only Sprint cancellation (Scrum Guide: only the PO may cancel)
+  ============================================================================ */
+
+.cancel-sprint-modal {
+  max-width: 560px;
+}
+
+.cancel-sprint-modal .modal-body {
+  padding: var(--space-6);
+}
+
+/* ============================================================================
+  TITLE ICON - Destructive Accent
+  ============================================================================ */
+
+.title-icon {
+  color: var(--color-error-600);
+}
+
+/* ============================================================================
+  ERROR MESSAGE - Professional Alert
+  ============================================================================ */
+
+.error-message {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  background: linear-gradient(135deg, var(--color-error-50) 0%, var(--color-error-100) 100%);
+  border: var(--border-width-2) solid var(--color-error-300);
+  color: var(--color-error-800);
+  padding: var(--space-4);
+  border-radius: var(--radius-xl);
+  margin-bottom: var(--space-5);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  box-shadow: var(--shadow-error-light);
+}
+
+.error-message svg {
+  flex-shrink: 0;
+  margin-top: var(--space-0-5);
+  color: var(--color-error-600);
+}
+
+/* ============================================================================
+  WARNING BOX - Critical Warning Design
+  ============================================================================ */
+
+.warning-box {
+  display: flex;
+  gap: var(--space-4);
+  align-items: flex-start;
+  background: linear-gradient(135deg, var(--color-warning-50) 0%, var(--color-warning-100) 100%);
+  border: var(--border-width-2) solid var(--color-warning-300);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-5);
+  margin-bottom: var(--space-5);
+  box-shadow: var(--shadow-warning-panel);
+  position: relative;
+  overflow: hidden;
+}
+
+.warning-box::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--border-width-4);
+  background: linear-gradient(
+    90deg,
+    var(--color-warning-400) 0%,
+    var(--color-warning-500) 50%,
+    var(--color-warning-600) 100%
+  );
+}
+
+.warning-icon {
+  flex-shrink: 0;
+  margin-top: var(--space-0-5);
+  color: var(--color-warning-600);
+}
+
+.warning-box p {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-warning-900);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-relaxed);
+}
+
+/* ============================================================================
+  REASON FIELD - Required Input
+  ============================================================================ */
+
+.reason-label {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.reason-input {
+  width: 100%;
+  padding: var(--space-3-5);
+  border: var(--border-width-2) solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  background: var(--color-background-card);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  font-family: inherit;
+  line-height: var(--line-height-relaxed);
+  resize: vertical;
+  min-height: var(--space-20);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.reason-input:focus {
+  outline: none;
+  border-color: var(--color-error-400);
+  box-shadow: var(--shadow-focus-error-3);
+}
+
+.reason-hint {
+  margin: var(--space-2) 0 0 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+/* ============================================================================
+  RESPONSIVE
+  ============================================================================ */
+
+@media (width <= 768px) {
+  .cancel-sprint-modal .modal-footer {
+    flex-direction: column-reverse;
+    gap: var(--space-3);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

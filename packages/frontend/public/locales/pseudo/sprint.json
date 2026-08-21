@@ -35,8 +35,8 @@
     "remainingHoursGreaterThanZero": "[Rémàíníng hóúrs múst bé gréàtér thànnnnnnnnnnnnn 0]",
     "remainingHoursSetToZero": "[ (Rémàíníng hóúrs sét tóóóóóóóóóó 0)]",
     "sprintBoard": "[Sprínt Bóàrddddd]",
+    "sprintCancelled": "[Sprínt càncélléd súccéssfúlly]",
     "sprintCompleted": "[Sprínt cómplétéd súccéssfúlly! Rédíréctíng tó créàté Íncréménttttttttttttttttttttt...]",
-    "statusBadge": "[SSttààttúús: {{status}}]",
     "statusChangedTo": "[Tàsk stàtús chàngéd tóóóóóóóó {{status}}]",
     "targetStatus": "[Tàrgét stàtússssss: {{status}}. {{count}} tàsks cúrréntly ín thís cólúmnnnnnnnnnnn.{{limitText}}]",
     "targetStatus_one": "[Tàrgét stàtússssss: {{status}}. {{count}} tàsk cúrréntly ín thís cólúmnnnnnnnnnnn.{{limitText}}]",
@@ -81,6 +81,7 @@
   "boardHeader": {
     "addTask": "[Àdd Tàskkkk]",
     "burndown": "[Búrndównnnn]",
+    "cancelSprint": "[Càncéll Sprínttttt]",
     "completeSprint": "[Cómplété Spríntttttt]",
     "keyboardShortcuts": "[Kéybóàrd Shórtcútsssssss]",
     "manageBacklog": "[Mànàgé Bàcklógggggg]"
@@ -104,6 +105,17 @@
     "sprintBurndownChart": "[Sprínt Búrndówn Chàrtttttttt]",
     "variance": "[Vàríàncéééé]",
     "viewDataTable": "[Víéw Dàtà Tàbléééééé]"
+  },
+  "cancelSprint": {
+    "closeModal": "[Clósé módàlllll]",
+    "confirmCancel": "[Càncéll Sprínttttt]",
+    "keepSprint": "[Kéép Sprínttttt]",
+    "processing": "[Càncéllíngggggggg...]",
+    "reasonHint": "[Thís réásón ís récórdéd wíth thé càncéllátíón ànd shówn ín thé Sprínt hístóryn.]",
+    "reasonLabel": "[Réásón fór càncéllátíónn]",
+    "reasonPlaceholder": "[Éxpláín whý thé Sprínt Góàl hás bécómé óbsóléttéééééé...]",
+    "title": "[Càncéll Sprínttttt]",
+    "warning": "[Càncéllíngggggggg {{sprintName}} wíll énd thé Sprínt ímmédíàtély ànd rétúrn íncómplété bàcklóg ítéms tó thé Próduct Bàcklógggggggg. Ónly thé Próduct Ównér càn càncél à Sprínttttttttttttttttttttt.]"
   },
   "completeSprint": {
     "cancel": "[Càncélll]",
@@ -671,6 +683,7 @@
     "descriptionRequired": "[Déscríptíón ís réqúírédddddddd]",
     "estimatedHoursPositive": "[Éstímàtéd hóúrs múst bé gréàtér thànnnnnnnnnnnnn 0]",
     "fieldAssignee": "[Àssígnééééé]",
+    "fieldDescription": "[Déscríptíónnnnnnn]",
     "fieldEstimatedHours": "[Éstímàtéd Hóúrssssss]",
     "invalidTaskTransition": "[Trànsítíón frómmmmmm {{current}} ttóó {{target}} ís nót àllówéd. Àllówéd trànsítíónsssssssssssss: {{allowed}}]",
     "invalidTransition": "[Ínvàlíd stàtús trànsítíónnnnnnnnn]",

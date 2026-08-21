@@ -36,8 +36,8 @@
     "remainingHoursGreaterThanZero": "Remaining hours must be greater than 0",
     "remainingHoursSetToZero": " (Remaining hours set to 0)",
     "sprintBoard": "Sprint Board",
+    "sprintCancelled": "Sprint cancelled successfully",
     "sprintCompleted": "Sprint completed successfully! Redirecting to create Increment...",
-    "statusBadge": "Status: {{status}}",
     "statusChangedTo": "Task status changed to {{status}}",
     "targetStatus": "Target status: {{status}}. {{count}} tasks currently in this column.{{limitText}}",
     "targetStatus_one": "Target status: {{status}}. {{count}} task currently in this column.{{limitText}}",
@@ -82,6 +82,7 @@
   "boardHeader": {
     "addTask": "Add Task",
     "burndown": "Burndown",
+    "cancelSprint": "Cancel Sprint",
     "completeSprint": "Complete Sprint",
     "keyboardShortcuts": "Keyboard Shortcuts",
     "manageBacklog": "Manage Backlog"
@@ -105,6 +106,17 @@
     "sprintBurndownChart": "Sprint Burndown Chart",
     "variance": "Variance",
     "viewDataTable": "View Data Table"
+  },
+  "cancelSprint": {
+    "closeModal": "Close modal",
+    "confirmCancel": "Cancel Sprint",
+    "keepSprint": "Keep Sprint",
+    "processing": "Cancelling...",
+    "reasonHint": "This reason is recorded with the cancellation and shown in the Sprint history.",
+    "reasonLabel": "Reason for cancellation",
+    "reasonPlaceholder": "Explain why the Sprint Goal has become obsolete...",
+    "title": "Cancel Sprint",
+    "warning": "Cancelling {{sprintName}} will end the Sprint immediately and return incomplete backlog items to the Product Backlog. Only the Product Owner can cancel a Sprint."
   },
   "completeSprint": {
     "cancel": "Cancel",
@@ -694,6 +706,7 @@
     "descriptionRequired": "Description is required",
     "estimatedHoursPositive": "Estimated hours must be greater than 0",
     "fieldAssignee": "Assignee",
+    "fieldDescription": "Description",
     "fieldEstimatedHours": "Estimated Hours",
     "invalidTaskTransition": "Transition from {{current}} to {{target}} is not allowed. Allowed transitions: {{allowed}}",
     "invalidTransition": "Invalid status transition",

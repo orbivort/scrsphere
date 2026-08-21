@@ -463,7 +463,7 @@ describe('E2E: Sprint Management', () => {
       const email = `cancel-sprint-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { team } = await setupTeamWithUser(email, ROLES.SCRUM_MASTER);
+      const { team } = await setupTeamWithUser(email, ROLES.PRODUCT_OWNER);
 
       const sprint = await createTestSprintInDb(
         team.id,
@@ -921,7 +921,7 @@ describe('E2E: Sprint Management', () => {
         const email = `add-pbi-${uniqueTestId()}@example.com`;
         testEmails.push(email);
 
-        const { team } = await setupTeamWithUser(email, ROLES.SCRUM_MASTER);
+        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
         const sprint = await createTestSprintInDb(
           team.id,
@@ -956,7 +956,7 @@ describe('E2E: Sprint Management', () => {
         const email = `remove-pbi-${uniqueTestId()}@example.com`;
         testEmails.push(email);
 
-        const { team } = await setupTeamWithUser(email, ROLES.SCRUM_MASTER);
+        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
         const sprint = await createTestSprintInDb(
           team.id,

@@ -53,6 +53,9 @@ export interface TaskCardProps {
     review: Task[];
     done: Task[];
   };
+  /** Whether the current user may mutate the Sprint Backlog (Developers-only). When false,
+   *  the card is not draggable and keyboard-driven moves are disabled (read-only). */
+  canMutate?: boolean;
 }
 
 /**
@@ -85,6 +88,7 @@ export const TaskCard = React.memo<TaskCardProps>(
     onMoveStatus,
     wipLimits,
     tasksByStatus,
+    canMutate = true,
   }) => {
     const { t } = useTranslation('sprint');
     const announce = useAnnounce();
@@ -321,6 +325,12 @@ export const TaskCard = React.memo<TaskCardProps>(
     // Handle keyboard events
     const handleKeyDown = useCallback(
       (e: React.KeyboardEvent) => {
+        // Read-only users (PO/SM) must not move tasks; only delegate to the parent handler.
+        if (!canMutate) {
+          onKeyDown(e, task);
+          return;
+        }
+
         // Handle grab mode keyboard events (only when onMoveStatus is provided)
         if (internalIsGrabbed && onMoveStatus) {
           switch (e.key) {
@@ -409,6 +419,7 @@ export const TaskCard = React.memo<TaskCardProps>(
         validateWIPLimit,
         announceDrop,
         announceWIPError,
+        canMutate,
         t,
       ]
     );
@@ -458,9 +469,12 @@ export const TaskCard = React.memo<TaskCardProps>(
       <div
         ref={cardRef}
         className={classNames}
-        draggable
-        onDragStart={(e) => onDragStart(e, task.id)}
-        onDragEnd={onDragEnd}
+        draggable={canMutate}
+        onDragStart={(e) => {
+          if (!canMutate) return;
+          onDragStart(e, task.id);
+        }}
+        onDragEnd={canMutate ? onDragEnd : undefined}
         onClick={onClick}
         onKeyDown={handleKeyDown}
         onFocus={onFocus}
@@ -545,14 +559,6 @@ export const TaskCard = React.memo<TaskCardProps>(
               </span>
             )}
           </div>
-          <span
-            className={`${styles['task-status-badge']} ${styles[task.status.toLowerCase().replace('_', '-') as 'todo' | 'in-progress' | 'review' | 'done']}`}
-            aria-label={t('board.statusBadge', {
-              status: t(STATUS_LABEL_KEYS[task.status] as never),
-            })}
-          >
-            {t(STATUS_LABEL_KEYS[task.status] as never)}
-          </span>
         </div>
 
         <div className={styles['task-card-actions']} aria-hidden="true">

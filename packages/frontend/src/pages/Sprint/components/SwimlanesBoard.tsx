@@ -58,6 +58,8 @@ export interface SwimlanesBoardProps {
   onKeyDown: (e: React.KeyboardEvent, task: Task) => void;
   onFocus: (taskId: string) => void;
   onBlur: () => void;
+  /** Whether the current user may mutate the Sprint Backlog (Developers-only). */
+  canMutate: boolean;
 }
 
 /**
@@ -98,6 +100,7 @@ interface VirtualizedTaskCellProps {
   onKeyDown: (e: React.KeyboardEvent, task: Task) => void;
   onFocus: (taskId: string) => void;
   onBlur: () => void;
+  canMutate: boolean;
 }
 
 const VirtualizedTaskCell: React.FC<VirtualizedTaskCellProps> = ({
@@ -118,6 +121,7 @@ const VirtualizedTaskCell: React.FC<VirtualizedTaskCellProps> = ({
   onKeyDown,
   onFocus,
   onBlur,
+  canMutate,
 }) => {
   const { t } = useTranslation('sprint');
   const enableVirtualization = shouldEnableVirtualization(tasks.length, VIRTUALIZATION_THRESHOLD);
@@ -188,6 +192,7 @@ const VirtualizedTaskCell: React.FC<VirtualizedTaskCellProps> = ({
                   onKeyDown={onKeyDown}
                   onFocus={() => onFocus(task.id)}
                   onBlur={onBlur}
+                  canMutate={canMutate}
                 />
               </div>
             ))}
@@ -224,6 +229,7 @@ const VirtualizedTaskCell: React.FC<VirtualizedTaskCellProps> = ({
           onKeyDown={onKeyDown}
           onFocus={() => onFocus(task.id)}
           onBlur={onBlur}
+          canMutate={canMutate}
         />
       ))}
       {tasks.length === 0 && (
@@ -257,6 +263,7 @@ export const SwimlanesBoard = React.memo<SwimlanesBoardProps>(
     onKeyDown,
     onFocus,
     onBlur,
+    canMutate,
   }) => {
     const { t } = useTranslation('sprint');
 
@@ -439,6 +446,7 @@ export const SwimlanesBoard = React.memo<SwimlanesBoardProps>(
                   onKeyDown={onKeyDown}
                   onFocus={onFocus}
                   onBlur={onBlur}
+                  canMutate={canMutate}
                 />
 
                 <VirtualizedTaskCell
@@ -459,6 +467,7 @@ export const SwimlanesBoard = React.memo<SwimlanesBoardProps>(
                   onKeyDown={onKeyDown}
                   onFocus={onFocus}
                   onBlur={onBlur}
+                  canMutate={canMutate}
                 />
 
                 <VirtualizedTaskCell
@@ -479,6 +488,7 @@ export const SwimlanesBoard = React.memo<SwimlanesBoardProps>(
                   onKeyDown={onKeyDown}
                   onFocus={onFocus}
                   onBlur={onBlur}
+                  canMutate={canMutate}
                 />
 
                 <VirtualizedTaskCell
@@ -499,6 +509,7 @@ export const SwimlanesBoard = React.memo<SwimlanesBoardProps>(
                   onKeyDown={onKeyDown}
                   onFocus={onFocus}
                   onBlur={onBlur}
+                  canMutate={canMutate}
                 />
               </div>
             );

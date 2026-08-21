@@ -63,6 +63,9 @@ export function validateAndPrepareTransition(
     if (!task.assigneeId) {
       missingFields.push('Assignee');
     }
+    if (!task.description || !task.description.trim()) {
+      missingFields.push('Description');
+    }
     if (!task.estimatedHours || task.estimatedHours <= 0) {
       missingFields.push('Estimated Hours');
     }
@@ -220,6 +223,36 @@ describe('validateAndPrepareTransition', () => {
 
       expect(result.valid).toBe(false);
       expect(result.error).toContain('Estimated Hours');
+    });
+
+    it('should fail when description is missing', () => {
+      const task = createMockTask({
+        status: TaskStatus.TODO,
+        assigneeId: 'user-1',
+        description: undefined,
+        estimatedHours: 8,
+      });
+      const options = { checkRequiredFields: true };
+
+      const result = validateAndPrepareTransition(task, TaskStatus.IN_PROGRESS, options);
+
+      expect(result.valid).toBe(false);
+      expect(result.error).toContain('Description');
+    });
+
+    it('should fail when description is only whitespace', () => {
+      const task = createMockTask({
+        status: TaskStatus.TODO,
+        assigneeId: 'user-1',
+        description: '   ',
+        estimatedHours: 8,
+      });
+      const options = { checkRequiredFields: true };
+
+      const result = validateAndPrepareTransition(task, TaskStatus.IN_PROGRESS, options);
+
+      expect(result.valid).toBe(false);
+      expect(result.error).toContain('Description');
     });
 
     it('should skip required fields check when not moving to IN_PROGRESS', () => {

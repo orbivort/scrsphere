@@ -36,8 +36,8 @@
     "remainingHoursGreaterThanZero": "Las horas restantes deben ser mayores que 0",
     "remainingHoursSetToZero": " (Horas restantes puestas a 0)",
     "sprintBoard": "Sprint Board",
+    "sprintCancelled": "Sprint cancelado con éxito",
     "sprintCompleted": "¡Sprint completado con éxito! Redirigiendo a crear Increment...",
-    "statusBadge": "Estado: {{status}}",
     "statusChangedTo": "Estado de tarea cambiado a {{status}}",
     "targetStatus": "Estado destino: {{status}}. {{count}} tareas actualmente en esta columna.{{limitText}}",
     "targetStatus_one": "Estado destino: {{status}}. {{count}} tarea actualmente en esta columna.{{limitText}}",
@@ -82,6 +82,7 @@
   "boardHeader": {
     "addTask": "Agregar tarea",
     "burndown": "Burndown",
+    "cancelSprint": "Cancelar Sprint",
     "completeSprint": "Completar Sprint",
     "keyboardShortcuts": "Atajos de teclado",
     "manageBacklog": "Gestionar Backlog"
@@ -105,6 +106,17 @@
     "sprintBurndownChart": "Gráfico de burn-down del Sprint",
     "variance": "Variación",
     "viewDataTable": "Ver Tabla de Datos"
+  },
+  "cancelSprint": {
+    "closeModal": "Cerrar modal",
+    "confirmCancel": "Cancelar Sprint",
+    "keepSprint": "Mantener Sprint",
+    "processing": "Cancelando...",
+    "reasonHint": "Esta razón se registra con la cancelación y se muestra en el historial del Sprint.",
+    "reasonLabel": "Motivo de la cancelación",
+    "reasonPlaceholder": "Explique por qué el objetivo del Sprint ha quedado obsoleto...",
+    "title": "Cancelar Sprint",
+    "warning": "Cancelar {{sprintName}} finalizará el Sprint de inmediato y devolverá los elementos de backlog incompletos al Product Backlog. Solo el Product Owner puede cancelar un Sprint."
   },
   "completeSprint": {
     "cancel": "Cancelar",
@@ -694,6 +706,7 @@
     "descriptionRequired": "La descripción es obligatoria",
     "estimatedHoursPositive": "Las horas estimadas deben ser mayores que 0",
     "fieldAssignee": "Asignado",
+    "fieldDescription": "Descripción",
     "fieldEstimatedHours": "Horas estimadas",
     "invalidTaskTransition": "La transición de {{current}} a {{target}} no está permitida. Transiciones permitidas: {{allowed}}",
     "invalidTransition": "Transición de estado inválida",

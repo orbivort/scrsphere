@@ -399,7 +399,7 @@ describe('E2E: Workflow Operations', () => {
         const email = `add-pbi-${uniqueTestId()}@example.com`;
         testEmails.push(email);
 
-        const { team } = await setupTeamWithUser(email, ROLES.SCRUM_MASTER);
+        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
         const sprint = await createTestSprintInDb(
           team.id,
@@ -460,7 +460,7 @@ describe('E2E: Workflow Operations', () => {
         const email = `remove-pbi-${uniqueTestId()}@example.com`;
         testEmails.push(email);
 
-        const { team } = await setupTeamWithUser(email, ROLES.SCRUM_MASTER);
+        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
         const sprint = await createTestSprintInDb(
           team.id,
@@ -701,7 +701,7 @@ describe('E2E: Workflow Operations', () => {
       const email = `multi-sprint-pbi-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { team } = await setupTeamWithUser(email, ROLES.SCRUM_MASTER);
+      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
       const sprint1 = await createTestSprintInDb(
         team.id,
@@ -810,7 +810,7 @@ describe('E2E: Workflow Operations', () => {
   });
 
   describe('Authorization and Permissions', () => {
-    it('should allow scrum master to manage sprint backlog', async () => {
+    it('should reject scrum master from managing sprint backlog', async () => {
       const email = `sm-backlog-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
@@ -834,12 +834,13 @@ describe('E2E: Workflow Operations', () => {
           pbiId: pbi.id,
           reason: 'Scrum master adding PBI',
         })
-        .expect(HTTP_STATUS.CREATED);
+        .expect(HTTP_STATUS.FORBIDDEN);
 
-      expect(response.body.success).toBe(true);
+      expect(response.body.success).toBe(false);
+      expect(response.body.error.code).toBe(ERROR_CODES.FORBIDDEN);
     });
 
-    it('should allow product owner to manage sprint backlog', async () => {
+    it('should reject product owner from managing sprint backlog', async () => {
       const email = `po-backlog-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
@@ -863,9 +864,10 @@ describe('E2E: Workflow Operations', () => {
           pbiId: pbi.id,
           reason: 'Product owner adding PBI',
         })
-        .expect(HTTP_STATUS.CREATED);
+        .expect(HTTP_STATUS.FORBIDDEN);
 
-      expect(response.body.success).toBe(true);
+      expect(response.body.success).toBe(false);
+      expect(response.body.error.code).toBe(ERROR_CODES.FORBIDDEN);
     });
 
     it('should allow developer to view sprint backlog', async () => {

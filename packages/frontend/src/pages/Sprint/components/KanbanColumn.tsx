@@ -39,6 +39,8 @@ export interface KanbanColumnProps {
   onFocus: (taskId: string) => void;
   onBlur: () => void;
   onMoveStatus: (taskId: string, newStatus: TaskStatus) => void;
+  /** Whether the current user may mutate the Sprint Backlog (Developers-only). */
+  canMutate: boolean;
 }
 
 /**
@@ -136,6 +138,7 @@ interface VirtualizedTaskListProps {
   onKeyDown: (e: React.KeyboardEvent, task: Task) => void;
   onFocus: (taskId: string) => void;
   onBlur: () => void;
+  canMutate: boolean;
 }
 
 const VirtualizedTaskList: React.FC<VirtualizedTaskListProps> = ({
@@ -153,6 +156,7 @@ const VirtualizedTaskList: React.FC<VirtualizedTaskListProps> = ({
   onKeyDown,
   onFocus,
   onBlur,
+  canMutate,
 }) => {
   const enableVirtualization = shouldEnableVirtualization(tasks.length, VIRTUALIZATION_THRESHOLD);
 
@@ -200,6 +204,7 @@ const VirtualizedTaskList: React.FC<VirtualizedTaskListProps> = ({
                 onBlur={onBlur}
                 wipLimits={wipLimits}
                 tasksByStatus={allTasksByStatus}
+                canMutate={canMutate}
               />
             </div>
           ))}
@@ -226,6 +231,7 @@ const VirtualizedTaskList: React.FC<VirtualizedTaskListProps> = ({
           onBlur={onBlur}
           wipLimits={wipLimits}
           tasksByStatus={allTasksByStatus}
+          canMutate={canMutate}
         />
       ))}
     </div>
@@ -253,6 +259,7 @@ export const KanbanColumn: React.FC<KanbanColumnProps> = ({
   onKeyDown,
   onFocus,
   onBlur,
+  canMutate,
 }) => {
   const headerClass = getColumnHeaderClass(status);
   const icon = getColumnIcon(status);
@@ -315,6 +322,7 @@ export const KanbanColumn: React.FC<KanbanColumnProps> = ({
           onKeyDown={onKeyDown}
           onFocus={onFocus}
           onBlur={onBlur}
+          canMutate={canMutate}
         />
       )}
     </div>

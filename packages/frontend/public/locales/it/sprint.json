@@ -36,8 +36,8 @@
     "remainingHoursGreaterThanZero": "Le ore rimanenti devono essere maggiori di 0",
     "remainingHoursSetToZero": " (Ore rimanenti impostate a 0)",
     "sprintBoard": "Sprint Board",
+    "sprintCancelled": "Sprint annullato con successo",
     "sprintCompleted": "Sprint completato con successo! Reindirizzamento alla creazione dell'Increment...",
-    "statusBadge": "Stato: {{status}}",
     "statusChangedTo": "Stato task cambiato a {{status}}",
     "targetStatus": "Stato destinazione: {{status}}. {{count}} tasks attualmente in questa colonna.{{limitText}}",
     "targetStatus_one": "Stato destinazione: {{status}}. {{count}} tasks attualmente in questa colonna.{{limitText}}",
@@ -82,6 +82,7 @@
   "boardHeader": {
     "addTask": "Aggiungi task",
     "burndown": "Burndown",
+    "cancelSprint": "Annulla Sprint",
     "completeSprint": "Completa Sprint",
     "keyboardShortcuts": "Scorciatoie tastiera",
     "manageBacklog": "Gestisci Backlog"
@@ -105,6 +106,17 @@
     "sprintBurndownChart": "Grafico burndown dello Sprint",
     "variance": "Varianza",
     "viewDataTable": "Vedi Tabella Dati"
+  },
+  "cancelSprint": {
+    "closeModal": "Chiudi modale",
+    "confirmCancel": "Annulla Sprint",
+    "keepSprint": "Mantieni Sprint",
+    "processing": "Annullamento...",
+    "reasonHint": "Questo motivo viene registrato con l'annullamento e mostrato nella cronologia dello Sprint.",
+    "reasonLabel": "Motivo dell'annullamento",
+    "reasonPlaceholder": "Spiega perché l'obiettivo dello Sprint è diventato obsoleto...",
+    "title": "Annulla Sprint",
+    "warning": "L'annullamento di {{sprintName}} terminerà lo Sprint immediatamente e riporterà gli elementi di backlog incompleti al Product Backlog. Solo il Product Owner può annullare uno Sprint."
   },
   "completeSprint": {
     "cancel": "Annulla",
@@ -694,6 +706,7 @@
     "descriptionRequired": "La descrizione è obbligatoria",
     "estimatedHoursPositive": "Le ore stimate devono essere maggiori di 0",
     "fieldAssignee": "Assegnatario",
+    "fieldDescription": "Descrizione",
     "fieldEstimatedHours": "Ore stimate",
     "invalidTaskTransition": "La transizione da {{current}} a {{target}} non è permessa. Transizioni permesse: {{allowed}}",
     "invalidTransition": "Transizione di stato non valida",

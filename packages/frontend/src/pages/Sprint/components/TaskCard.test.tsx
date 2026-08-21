@@ -14,7 +14,7 @@ import { I18nextProvider } from 'react-i18next';
 import { TaskCard, type TaskCardProps } from './TaskCard';
 import { AnnouncerProvider } from '../../../components/LiveAnnouncer';
 import { TaskStatus, type Task } from '../../../types';
-import { initTestI18n, i18nT } from '../../../test-utils';
+import { initTestI18n } from '../../../test-utils';
 import { getTestI18nInstance } from '../../../i18n/testConfig';
 
 // Mock task data
@@ -88,16 +88,6 @@ describe('TaskCard', () => {
       expect(screen.getByText('#-123')).toBeInTheDocument();
       expect(screen.getByText('Test description')).toBeInTheDocument();
       expect(screen.getByText('John Doe')).toBeInTheDocument();
-    });
-
-    it('should render status badge correctly', () => {
-      render(
-        <TestWrapper>
-          <TaskCard {...defaultProps} />
-        </TestWrapper>
-      );
-
-      expect(screen.getByText(i18nT('sprint:taskStatus.todo'))).toBeInTheDocument();
     });
 
     it('should render PBI information when present', () => {

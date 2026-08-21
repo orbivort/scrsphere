@@ -203,7 +203,7 @@ describe('Cross-Feature Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'PRODUCT_OWNER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
       const pbi = await createTestPBI(team.id, 'PBI To Add');
 

@@ -65,3 +65,24 @@ export interface SprintStartReadiness {
 export function canStartSprint(readiness: SprintStartReadiness): boolean {
   return readiness.hasSprintGoal && readiness.hasSavedBacklog;
 }
+
+/**
+ * Whether the given team role may mutate the Sprint Backlog on the Active Sprint Board.
+ *
+ * The Sprint Backlog is "a plan by and for the Developers" (Scrum Guide), so only
+ * `DEVELOPERS`-role members may create/edit/delete/move tasks and manage the backlog.
+ * PO/SM keep read-only inspection. The role may be uppercase (backend enum) or lowercase.
+ */
+export function canMutateSprintBacklog(role: string | null | undefined): boolean {
+  return String(role ?? '').toLowerCase() === 'developers';
+}
+
+/**
+ * Whether the given team role may cancel a Sprint.
+ *
+ * Only the Product Owner has authority to cancel a Sprint (Scrum Guide). The role may be
+ * uppercase (backend enum) or lowercase.
+ */
+export function canCancelSprint(role: string | null | undefined): boolean {
+  return String(role ?? '').toLowerCase() === 'product_owner';
+}

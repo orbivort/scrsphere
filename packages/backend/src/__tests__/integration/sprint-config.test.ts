@@ -553,7 +553,7 @@ describe('Sprint Configuration Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'SCRUM_MASTER');
+      await addTeamMember(team.id, user.id, 'PRODUCT_OWNER');
       const sprint = await createTestSprint(team.id, 'Sprint To Cancel', 'ACTIVE');
 
       const cookies = await loginAndGetCookies(email);
@@ -709,7 +709,7 @@ describe('Sprint Configuration Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'PRODUCT_OWNER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint', 'ACTIVE');
       const pbi = await createTestPBI(team.id, 'PBI To Add');
 

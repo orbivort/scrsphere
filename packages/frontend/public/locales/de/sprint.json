@@ -36,8 +36,8 @@
     "remainingHoursGreaterThanZero": "Verbleibende Stunden müssen größer als 0 sein",
     "remainingHoursSetToZero": " (Verbleibende Stunden auf 0 gesetzt)",
     "sprintBoard": "Sprint-Board",
+    "sprintCancelled": "Sprint erfolgreich abgebrochen",
     "sprintCompleted": "Sprint erfolgreich abgeschlossen! Weiterleitung zur Increment-Erstellung...",
-    "statusBadge": "Status: {{status}}",
     "statusChangedTo": "Aufgabenstatus geändert zu {{status}}",
     "targetStatus": "Zielstatus: {{status}}. {{count}} Aufgaben aktuell in dieser Spalte.{{limitText}}",
     "targetStatus_one": "Zielstatus: {{status}}. {{count}} Aufgabe aktuell in dieser Spalte.{{limitText}}",
@@ -82,6 +82,7 @@
   "boardHeader": {
     "addTask": "Aufgabe hinzufügen",
     "burndown": "Burndown",
+    "cancelSprint": "Sprint abbrechen",
     "completeSprint": "Sprint abschließen",
     "keyboardShortcuts": "Tastaturkürzel",
     "manageBacklog": "Backlog verwalten"
@@ -105,6 +106,17 @@
     "sprintBurndownChart": "Sprint-Burndown-Chart",
     "variance": "Abweichung",
     "viewDataTable": "Datentabelle anzeigen"
+  },
+  "cancelSprint": {
+    "closeModal": "Modul schließen",
+    "confirmCancel": "Sprint abbrechen",
+    "keepSprint": "Sprint behalten",
+    "processing": "Wird abgebrochen...",
+    "reasonHint": "Dieser Grund wird beim Abbruch gespeichert und im Sprint-Verlauf angezeigt.",
+    "reasonLabel": "Grund für den Abbruch",
+    "reasonPlaceholder": "Erklären Sie, warum das Sprint-Ziel obsolet geworden ist...",
+    "title": "Sprint abbrechen",
+    "warning": "Durch das Abbrechen von {{sprintName}} wird der Sprint sofort beendet und unvollständige Backlog-Elemente kehren zum Product Backlog zurück. Nur der Product Owner kann einen Sprint abbrechen."
   },
   "completeSprint": {
     "cancel": "Abbrechen",
@@ -694,6 +706,7 @@
     "descriptionRequired": "Beschreibung ist erforderlich",
     "estimatedHoursPositive": "Geschätzte Stunden müssen größer als 0 sein",
     "fieldAssignee": "Bearbeiter",
+    "fieldDescription": "Beschreibung",
     "fieldEstimatedHours": "Geschätzte Stunden",
     "invalidTaskTransition": "Übergang von {{current}} zu {{target}} ist nicht erlaubt. Erlaubte Übergänge: {{allowed}}",
     "invalidTransition": "Ungültiger Statusübergang",

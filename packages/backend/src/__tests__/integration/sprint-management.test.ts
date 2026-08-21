@@ -1187,8 +1187,8 @@ describe('Sprint Management Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'SCRUM_MASTER');
-      const sprint = await createTestSprint(team.id, 'Sprint to Cancel', 'PLANNED');
+      await addTeamMember(team.id, user.id, 'PRODUCT_OWNER');
+      const sprint = await createTestSprint(team.id, 'Sprint to Cancel', 'ACTIVE');
 
       const cookies = await loginAndGetCookies(email);
 
@@ -1708,8 +1708,8 @@ describe('Sprint Management Integration Tests', () => {
         testTeams.push(teamName);
 
         const team = await createTestTeam(teamName);
-        await addTeamMember(team.id, user.id, 'SCRUM_MASTER');
-        const sprint = await createTestSprint(team.id, 'Sprint to Cancel', 'PLANNED');
+        await addTeamMember(team.id, user.id, 'PRODUCT_OWNER');
+        const sprint = await createTestSprint(team.id, 'Sprint to Cancel', 'ACTIVE');
 
         const cookies = await loginAndGetCookies(email);
         const { csrfToken } = extractCsrfFromCookies(cookies);

@@ -6,6 +6,7 @@ import { UserRole } from '@scrumooth/shared';
 import { definitionService } from '../../services';
 import { useTeamStore, useAuthStore } from '../../store';
 import { logger } from '../../utils/logger';
+import { canMutateSprintBacklog, canCancelSprint } from '../../utils/roleUtils';
 import { useDebounce, useToast } from '../../hooks';
 import { ToastContainer } from '../../components/common/ToastContainer/ToastContainer';
 import {
@@ -66,6 +67,7 @@ import {
   TaskCreateModal,
   DeleteConfirmModal,
   CompleteSprintModal,
+  CancelSprintModal,
   KeyboardHelpModal,
 } from './components/modals';
 import { SprintBacklogManager } from './SprintBacklogManager';
@@ -80,6 +82,10 @@ export const SprintBoard: React.FC = () => {
   // comparing.
   const isDeveloper =
     String(userRoleInCurrentTeam).toLowerCase() === UserRole.DEVELOPERS.toLowerCase();
+  // Mutating the Sprint Backlog (create/edit/delete/move tasks, manage backlog) is
+  // Developers-only; PO/SM keep read-only inspection. Only the Product Owner may cancel.
+  const canMutate = canMutateSprintBacklog(userRoleInCurrentTeam);
+  const isProductOwner = canCancelSprint(userRoleInCurrentTeam);
   const navigate = useNavigate();
   const { t } = useTranslation('sprint');
   const teamId = currentTeam?.id;
@@ -117,6 +123,7 @@ export const SprintBoard: React.FC = () => {
     showEditModal,
     showDeleteConfirm,
     showCompleteSprintModal,
+    showCancelSprintModal,
     showBacklogManager,
     showDodVerification,
     showKeyboardHelp,
@@ -143,12 +150,14 @@ export const SprintBoard: React.FC = () => {
   const createModalRef = useRef<HTMLDivElement>(null);
   const deleteModalRef = useRef<HTMLDivElement>(null);
   const completeSprintModalRef = useRef<HTMLDivElement>(null);
+  const cancelSprintModalRef = useRef<HTMLDivElement>(null);
 
   useFocusTrap(showDetailModal, detailModalRef);
   useFocusTrap(showEditModal, editModalRef);
   useFocusTrap(showTaskModal, createModalRef);
   useFocusTrap(showDeleteConfirm, deleteModalRef);
   useFocusTrap(showCompleteSprintModal, completeSprintModalRef);
+  useFocusTrap(showCancelSprintModal, cancelSprintModalRef);
 
   const boardData = useSprintBoardData({
     teamId,
@@ -202,6 +211,7 @@ export const SprintBoard: React.FC = () => {
     modalDispatch({ type: 'CLOSE_DELETE_CONFIRM' });
     modalDispatch({ type: 'CLOSE_DETAIL_MODAL' });
     modalDispatch({ type: 'CLOSE_EDIT_MODAL' });
+    modalDispatch({ type: 'CLOSE_CANCEL_SPRINT_MODAL' });
     formDispatch({ type: 'RESET_FORM' });
   }, []);
 
@@ -282,6 +292,7 @@ export const SprintBoard: React.FC = () => {
     showTaskModal ||
     showDeleteConfirm ||
     showCompleteSprintModal ||
+    showCancelSprintModal ||
     showKeyboardHelp;
 
   const openDetailModal = useCallback((task: Task) => {
@@ -303,6 +314,7 @@ export const SprintBoard: React.FC = () => {
     onToggleBurndown: () => setShowBurndown((prev) => !prev),
     showToast,
     isModalOpen,
+    canMutate,
   });
 
   const {
@@ -353,6 +365,23 @@ export const SprintBoard: React.FC = () => {
   const handleOpenCompleteSprintModal = useCallback(() => {
     modalDispatch({ type: 'OPEN_COMPLETE_SPRINT_MODAL' });
   }, []);
+
+  const handleOpenCancelSprintModal = useCallback(() => {
+    modalDispatch({ type: 'OPEN_CANCEL_SPRINT_MODAL' });
+  }, []);
+
+  const handleCloseCancelSprintModal = useCallback(() => {
+    modalDispatch({ type: 'CLOSE_CANCEL_SPRINT_MODAL' });
+  }, []);
+
+  const handleConfirmCancelSprint = useCallback(
+    (reason: string) => {
+      if (reason.trim()) {
+        mutations.cancelSprintMutation.mutate({ reason });
+      }
+    },
+    [mutations.cancelSprintMutation]
+  );
 
   const incompleteTasksCount = tasks.filter((t) => t.status !== TaskStatusEnum.DONE).length;
   const incompletePbisCount = new Set(
@@ -584,7 +613,10 @@ export const SprintBoard: React.FC = () => {
         onOpenBacklogManager={() => modalDispatch({ type: 'OPEN_BACKLOG_MANAGER' })}
         onOpenCreateModal={openCreateModal}
         onCompleteSprint={handleOpenCompleteSprintModal}
+        onCancelSprint={handleOpenCancelSprintModal}
         showBurndown={showBurndown}
+        canMutate={canMutate}
+        isProductOwner={isProductOwner}
       />
 
       <SprintOverview
@@ -665,6 +697,7 @@ export const SprintBoard: React.FC = () => {
               onFocus={setFocusedTaskId}
               onBlur={() => setFocusedTaskId(null)}
               onMoveStatus={handleMoveStatus}
+              canMutate={canMutate}
             />
 
             <KanbanColumn
@@ -689,6 +722,7 @@ export const SprintBoard: React.FC = () => {
               onFocus={setFocusedTaskId}
               onBlur={() => setFocusedTaskId(null)}
               onMoveStatus={handleMoveStatus}
+              canMutate={canMutate}
             />
 
             <KanbanColumn
@@ -713,6 +747,7 @@ export const SprintBoard: React.FC = () => {
               onFocus={setFocusedTaskId}
               onBlur={() => setFocusedTaskId(null)}
               onMoveStatus={handleMoveStatus}
+              canMutate={canMutate}
             />
 
             <KanbanColumn
@@ -737,6 +772,7 @@ export const SprintBoard: React.FC = () => {
               onFocus={setFocusedTaskId}
               onBlur={() => setFocusedTaskId(null)}
               onMoveStatus={handleMoveStatus}
+              canMutate={canMutate}
             />
           </>
         ) : (
@@ -761,6 +797,7 @@ export const SprintBoard: React.FC = () => {
             onKeyDown={handleKeyDown}
             onFocus={setFocusedTaskId}
             onBlur={() => setFocusedTaskId(null)}
+            canMutate={canMutate}
           />
         )}
       </div>
@@ -781,6 +818,7 @@ export const SprintBoard: React.FC = () => {
           isUpdating={mutations.updateTaskMutation.isPending}
           modalRef={detailModalRef}
           currentUserId={currentUserId}
+          canMutate={canMutate}
         />
       )}
 
@@ -860,6 +898,17 @@ export const SprintBoard: React.FC = () => {
           }}
           isCompleting={mutations.completeSprintMutation.isPending}
           modalRef={completeSprintModalRef}
+        />
+      )}
+
+      {showCancelSprintModal && (
+        <CancelSprintModal
+          sprintName={sprint.name}
+          isCancelling={mutations.cancelSprintMutation.isPending}
+          cancelSprintError={workflowError}
+          onClose={handleCloseCancelSprintModal}
+          onConfirm={handleConfirmCancelSprint}
+          modalRef={cancelSprintModalRef}
         />
       )}
 

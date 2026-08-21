@@ -372,6 +372,7 @@ describe('Sprint Controller', () => {
     it('should cancel a sprint', async () => {
       mockReq.params = { id: 'sprint-123' };
       mockReq.body = { reason: 'Project cancelled' };
+      mockReq.user = { id: 'po-123' };
       const mockSprint = { id: 'sprint-123', status: 'CANCELLED' };
 
       (sprintService.cancelSprint as any).mockResolvedValue(mockSprint);
@@ -380,7 +381,11 @@ describe('Sprint Controller', () => {
       await new Promise((resolve) => setTimeout(resolve, 0));
 
       expect(mockNext).not.toHaveBeenCalled();
-      expect(sprintService.cancelSprint).toHaveBeenCalledWith('sprint-123', 'Project cancelled');
+      expect(sprintService.cancelSprint).toHaveBeenCalledWith(
+        'sprint-123',
+        'Project cancelled',
+        'po-123'
+      );
       expect(mockRes._json).toEqual({
         success: true,
         data: mockSprint,
@@ -555,6 +560,7 @@ describe('Sprint Controller', () => {
   describe('deleteTask', () => {
     it('should delete a task', async () => {
       mockReq.params = { sprintId: 'sprint-123', taskId: 'task-456' };
+      mockReq.user = { id: 'dev-123' };
 
       (sprintService.deleteTask as any).mockResolvedValue(undefined);
 
@@ -562,7 +568,7 @@ describe('Sprint Controller', () => {
       await new Promise((resolve) => setTimeout(resolve, 0));
 
       expect(mockNext).not.toHaveBeenCalled();
-      expect(sprintService.deleteTask).toHaveBeenCalledWith('sprint-123', 'task-456');
+      expect(sprintService.deleteTask).toHaveBeenCalledWith('sprint-123', 'task-456', 'dev-123');
       expect(mockRes._json).toEqual({
         success: true,
         data: null,

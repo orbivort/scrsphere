@@ -1397,6 +1397,7 @@ describe('useKeyboardNavigation Hook', () => {
     onToggleBurndown: vi.fn(),
     showToast: vi.fn(),
     isModalOpen: false,
+    canMutate: true,
   };
 
   it('should initialize with default state', () => {
