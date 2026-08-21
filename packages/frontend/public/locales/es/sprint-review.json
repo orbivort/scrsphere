@@ -149,6 +149,7 @@
   },
   "findingActiveSprint": "Buscando Sprint activo...",
   "increment": {
+    "allSprintItems": "Todos los elementos del Sprint",
     "completedItems": "Elementos completados",
     "completedStoryPoints": "Story Points completados",
     "deliveredAt": "Entregado el",
@@ -158,7 +159,10 @@
     "done": "Completado",
     "earlyReleaseDelivery": "Entrega anticipada",
     "inIncrement": "En el increment",
+    "inIncrementCount": "En {{count}} increment",
+    "inIncrementCount_plural": "En {{count}} increments",
     "includedPbis": "Product Backlog Items incluidos",
+    "incrementNumber": "Increment {{number}}",
     "noCompletedItems": "No hay elementos completados para este Sprint.",
     "noDescription": "Sin descripción",
     "noIncrement": "Sin Increment disponible",
@@ -167,15 +171,19 @@
     "noPbis": "No hay PBIs incluidos en este Increment.",
     "notCompletedItems": "Elementos no completados",
     "notDelivered": "No entregado",
+    "selectorLabel": "Increments de la Sprint Review",
     "sprintReviewDelivery": "Sprint Review",
     "title": "Increment presentado",
     "totalStoryPoints": "Story Points totales"
   },
   "list": {
+    "activeSprint": "Sprint Activo",
+    "activeSprints": "Sprints Activos",
     "completedSprint": "Sprint completado",
     "completedSprints": "Sprints completados",
     "completedSprints_plural": "Sprints completados",
     "createIncrement": "Crear Increment",
+    "createReview": "Crear Sprint Review",
     "goal": "Goal:",
     "loading": "Cargando Sprint Reviews...",
     "reviewStatus": {
@@ -184,6 +192,8 @@
       "incrementRequired": "Increment requerido",
       "readyForReview": "Listo para Review"
     },
+    "reviewableSprint": "Sprint revisable",
+    "reviewableSprints": "Sprints revisables",
     "reviewed": "Revisado",
     "statusLabels": {
       "active": "Activo",
@@ -191,7 +201,7 @@
       "completed": "Completado",
       "planned": "Planificado"
     },
-    "subtitle": "Revisar Sprints completados, inspeccionar Increments y recopilar Feedback de Stakeholders",
+    "subtitle": "Revisar Sprints, inspeccionar Increments y recopilar Feedback de Stakeholders",
     "title": "Sprint Reviews",
     "viewDetails": "Ver detalles",
     "viewReview": "Ver Review"

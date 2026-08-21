@@ -147,7 +147,7 @@ describe('RetrospectiveList', () => {
       });
     });
 
-    it('should render active and completed sprints, filtering out planned', async () => {
+    it('should render active and completed sprints in separate sections, filtering out planned', async () => {
       const mixedSprints = [
         createMockSprint({ id: 'sprint-1', name: 'Sprint 1', status: SprintStatus.COMPLETED }),
         createMockSprint({ id: 'sprint-2', name: 'Sprint 2', status: SprintStatus.ACTIVE }),
@@ -164,6 +164,10 @@ describe('RetrospectiveList', () => {
         expect(screen.getByText('Sprint 1')).toBeInTheDocument();
         expect(screen.getByText('Sprint 2')).toBeInTheDocument();
       });
+
+      // Active sprints are reviewable before closure and grouped under their own section.
+      expect(screen.getByText('Active Sprints')).toBeInTheDocument();
+      expect(screen.getByText('Completed Sprints')).toBeInTheDocument();
 
       expect(screen.queryByText('Sprint 3')).not.toBeInTheDocument();
     });
@@ -473,8 +477,69 @@ describe('RetrospectiveList', () => {
     });
   });
 
+  describe('Sectioned Layout', () => {
+    it('should render the Active section before the Completed section', async () => {
+      const mixedSprints = [
+        createMockSprint({ id: 'sprint-1', name: 'Sprint 1', status: SprintStatus.COMPLETED }),
+        createMockSprint({ id: 'sprint-2', name: 'Sprint 2', status: SprintStatus.ACTIVE }),
+      ];
+      (apiService.getSprints as ReturnType<typeof vi.fn>).mockResolvedValue({
+        success: true,
+        data: mixedSprints,
+      });
+
+      renderWithProviders(<RetrospectiveList />);
+
+      await waitFor(() => {
+        expect(screen.getByText('Sprint 1')).toBeInTheDocument();
+      });
+
+      const sections = screen.getAllByRole('heading', { level: 2 });
+      expect(sections[0]).toHaveTextContent('Active Sprints');
+      expect(sections[1]).toHaveTextContent('Completed Sprints');
+    });
+
+    it('should omit the Active section when there are no active sprints', async () => {
+      const sprints = [
+        createMockSprint({ id: 'sprint-1', name: 'Sprint 1', status: SprintStatus.COMPLETED }),
+      ];
+      (apiService.getSprints as ReturnType<typeof vi.fn>).mockResolvedValue({
+        success: true,
+        data: sprints,
+      });
+
+      renderWithProviders(<RetrospectiveList />);
+
+      await waitFor(() => {
+        expect(screen.getByText('Sprint 1')).toBeInTheDocument();
+      });
+
+      expect(screen.queryByText('Active Sprints')).not.toBeInTheDocument();
+      expect(screen.getByText('Completed Sprints')).toBeInTheDocument();
+    });
+
+    it('should omit the Completed section when there are no completed sprints', async () => {
+      const sprints = [
+        createMockSprint({ id: 'sprint-2', name: 'Sprint 2', status: SprintStatus.ACTIVE }),
+      ];
+      (apiService.getSprints as ReturnType<typeof vi.fn>).mockResolvedValue({
+        success: true,
+        data: sprints,
+      });
+
+      renderWithProviders(<RetrospectiveList />);
+
+      await waitFor(() => {
+        expect(screen.getByText('Sprint 2')).toBeInTheDocument();
+      });
+
+      expect(screen.getByText('Active Sprints')).toBeInTheDocument();
+      expect(screen.queryByText('Completed Sprints')).not.toBeInTheDocument();
+    });
+  });
+
   describe('Header Statistics', () => {
-    it('should display total completed sprints count', async () => {
+    it('should display total reviewable sprints count', async () => {
       const sprints = [
         createMockSprint({ id: 'sprint-1', name: 'Sprint 1' }),
         createMockSprint({ id: 'sprint-2', name: 'Sprint 2' }),
@@ -489,6 +554,7 @@ describe('RetrospectiveList', () => {
       await waitFor(() => {
         expect(screen.getByText('2')).toBeInTheDocument();
       });
+      expect(screen.getByText('Reviewable Sprints')).toBeInTheDocument();
     });
   });
 

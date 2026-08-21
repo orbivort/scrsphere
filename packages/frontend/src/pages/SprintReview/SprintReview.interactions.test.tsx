@@ -1057,8 +1057,9 @@ describe('SprintReview - Increment Section Tests', () => {
     fireEvent.click(incrementTab);
 
     await waitFor(() => {
-      expect(screen.getByText('User Login')).toBeInTheDocument();
-      expect(screen.getByText('User Registration')).toBeInTheDocument();
+      // PBIs appear in both the increment's included list and the full sprint list
+      expect(screen.getAllByText('User Login').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('User Registration').length).toBeGreaterThan(0);
     });
   });
 
@@ -1075,7 +1076,8 @@ describe('SprintReview - Increment Section Tests', () => {
     fireEvent.click(incrementTab);
 
     await waitFor(() => {
-      expect(screen.getByText('21')).toBeInTheDocument();
+      // "21" appears for both total and completed story points of the increment
+      expect(screen.getAllByText('21').length).toBeGreaterThan(0);
     });
   });
 
@@ -1152,7 +1154,7 @@ describe('SprintReview - Increment Section Tests', () => {
     fireEvent.click(incrementTab);
 
     await waitFor(() => {
-      expect(screen.getByText('User Login')).toBeInTheDocument();
+      expect(screen.getAllByText('User Login').length).toBeGreaterThan(0);
     });
   });
 

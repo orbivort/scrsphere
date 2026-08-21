@@ -125,6 +125,8 @@
   },
   "list": {
     "actions": "azioni",
+    "activeSprint": "Sprint Attivo",
+    "activeSprints": "Sprint Attivi",
     "completedSprint": "Sprint completato",
     "completedSprints": "Sprints completati",
     "completedSprints_plural": "Sprints completati",
@@ -139,6 +141,8 @@
       "inProgress": "Retrospective in corso",
       "ready": "Pronto per Retrospective"
     },
+    "reviewableSprint": "Sprint revisabile",
+    "reviewableSprints": "Sprint revisabili",
     "reviewed": "Revisionato",
     "statusLabels": {
       "active": "Attivo",
@@ -146,7 +150,7 @@
       "completed": "Completato",
       "planned": "Pianificato"
     },
-    "subtitle": "Riflettere sui Sprints completati, identificare miglioramenti e seguire Action Items",
+    "subtitle": "Riflettere sui Sprints, identificare miglioramenti e seguire Action Items",
     "title": "Sprint Retrospectives",
     "viewRetrospective": "Vedi Retrospective"
   },

@@ -539,7 +539,7 @@ describe('SprintReviewList - Additional Edge Case Tests', () => {
       });
     });
 
-    it('should show singular "Sprint" for one completed sprint', async () => {
+    it('should show singular "Sprint" for one reviewable sprint', async () => {
       vi.spyOn(apiServiceModule.apiService, 'getSprints').mockResolvedValue({
         success: true,
         data: [
@@ -575,11 +575,11 @@ describe('SprintReviewList - Additional Edge Case Tests', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText(i18nT('sprint-review:list.completedSprint'))).toBeInTheDocument();
+        expect(screen.getByText(i18nT('sprint-review:list.reviewableSprint'))).toBeInTheDocument();
       });
     });
 
-    it('should show plural "Sprints" for multiple completed sprints', async () => {
+    it('should show plural "Sprints" for multiple reviewable sprints', async () => {
       vi.spyOn(apiServiceModule.apiService, 'getSprints').mockResolvedValue({
         success: true,
         data: [
@@ -625,7 +625,7 @@ describe('SprintReviewList - Additional Edge Case Tests', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByRole('heading', { level: 2 })).toBeInTheDocument();
+        expect(screen.getByText(i18nT('sprint-review:list.reviewableSprints'))).toBeInTheDocument();
       });
     });
 
@@ -686,6 +686,122 @@ describe('SprintReviewList - Additional Edge Case Tests', () => {
       await waitFor(() => {
         expect(screen.getByText(i18nT('sprint-review:list.reviewed'))).toBeInTheDocument();
       });
+    });
+  });
+
+  describe('Sectioned Layout', () => {
+    const buildSprint = (id: string, name: string, status: SprintStatus) => ({
+      id,
+      teamId: 'team-1',
+      name,
+      startDate: '2026-01-01T00:00:00Z',
+      endDate: '2026-01-14T23:59:59Z',
+      status,
+      createdAt: '2026-01-01T00:00:00Z',
+      updatedAt: '2026-01-01T00:00:00Z',
+    });
+
+    it('should group active sprints under "Active Sprints" and completed under "Completed Sprints"', async () => {
+      vi.spyOn(apiServiceModule.apiService, 'getSprints').mockResolvedValue({
+        success: true,
+        data: [
+          buildSprint('sprint-1', 'Sprint 1', SprintStatus.COMPLETED),
+          buildSprint('sprint-2', 'Sprint 2', SprintStatus.ACTIVE),
+        ],
+      });
+
+      vi.spyOn(apiServiceModule.apiService, 'getSprintReviews').mockResolvedValue({
+        success: true,
+        data: [],
+      });
+
+      vi.spyOn(apiServiceModule.apiService, 'getIncrements').mockResolvedValue({
+        success: true,
+        data: [],
+      });
+
+      vi.spyOn(teamStoreModule, 'useTeamStore').mockReturnValue({
+        currentTeam: mockTeam,
+        setCurrentTeam: vi.fn(),
+        loadTeam: vi.fn(),
+      } as any);
+
+      renderComponent();
+
+      await waitFor(() => {
+        expect(screen.getByText('Sprint 1')).toBeInTheDocument();
+      });
+
+      const sections = screen.getAllByRole('heading', { level: 2 });
+      // Active section renders first, then Completed.
+      expect(sections[0]).toHaveTextContent(i18nT('sprint-review:list.activeSprints'));
+      expect(sections[1]).toHaveTextContent(i18nT('sprint-review:list.completedSprints'));
+    });
+
+    it('should omit the Active section when there are no active sprints', async () => {
+      vi.spyOn(apiServiceModule.apiService, 'getSprints').mockResolvedValue({
+        success: true,
+        data: [buildSprint('sprint-1', 'Sprint 1', SprintStatus.COMPLETED)],
+      });
+
+      vi.spyOn(apiServiceModule.apiService, 'getSprintReviews').mockResolvedValue({
+        success: true,
+        data: [],
+      });
+
+      vi.spyOn(apiServiceModule.apiService, 'getIncrements').mockResolvedValue({
+        success: true,
+        data: [],
+      });
+
+      vi.spyOn(teamStoreModule, 'useTeamStore').mockReturnValue({
+        currentTeam: mockTeam,
+        setCurrentTeam: vi.fn(),
+        loadTeam: vi.fn(),
+      } as any);
+
+      renderComponent();
+
+      await waitFor(() => {
+        expect(screen.getByText('Sprint 1')).toBeInTheDocument();
+      });
+
+      expect(screen.queryByText(i18nT('sprint-review:list.activeSprints'))).not.toBeInTheDocument();
+      expect(screen.getByText(i18nT('sprint-review:list.completedSprints'))).toBeInTheDocument();
+    });
+
+    it('should omit the Completed section when there are no completed sprints', async () => {
+      vi.spyOn(apiServiceModule.apiService, 'getSprints').mockResolvedValue({
+        success: true,
+        data: [buildSprint('sprint-2', 'Sprint 2', SprintStatus.ACTIVE)],
+      });
+
+      vi.spyOn(apiServiceModule.apiService, 'getSprintReviews').mockResolvedValue({
+        success: true,
+        data: [],
+      });
+
+      vi.spyOn(apiServiceModule.apiService, 'getIncrements').mockResolvedValue({
+        success: true,
+        data: [],
+      });
+
+      vi.spyOn(teamStoreModule, 'useTeamStore').mockReturnValue({
+        currentTeam: mockTeam,
+        setCurrentTeam: vi.fn(),
+        loadTeam: vi.fn(),
+      } as any);
+
+      renderComponent();
+
+      await waitFor(() => {
+        expect(screen.getByText('Sprint 2')).toBeInTheDocument();
+      });
+
+      expect(screen.getByText(i18nT('sprint-review:list.activeSprints'))).toBeInTheDocument();
+      expect(
+        screen.queryByText(i18nT('sprint-review:list.completedSprints'))
+      ).not.toBeInTheDocument();
     });
   });
 

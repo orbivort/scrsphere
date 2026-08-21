@@ -267,7 +267,10 @@ export const incrementService = {
    * meets the team's Definition of Done, during the Sprint — not manufactured at Sprint
    * close. When a PBI is marked `DONE`, it is added to its Sprint's Increment, creating
    * that Increment if it does not yet exist. By default a Sprint's `DONE` PBIs accumulate
-   * into a single Increment (find-or-create then upsert) rather than one Increment per PBI.
+   * into a single open Increment (find-or-create then upsert) rather than one Increment
+   * per PBI. An Increment is only reused while it is still open (`DRAFT` or `VERIFIED`);
+   * once it is `DELIVERED` or `ARCHIVED` it is frozen, and a new Increment is created to
+   * hold subsequent Done PBIs.
    *
    * The Sprint is resolved from the PBI's active `sprintBacklogItem`. If the PBI is not
    * part of an active Sprint, the composition is a no-op (the PBI has no Sprint Increment
@@ -295,10 +298,15 @@ export const incrementService = {
 
       const { id: sprintId, teamId } = sprintBacklogItem.sprint;
 
-      // Find-or-create the Sprint's canonical Increment (single Increment per Sprint by
-      // default, per the Scrum Guide an Increment accumulates Done work during the Sprint).
+      // Find-or-create the Sprint's canonical Increment. Per the Scrum Guide an Increment
+      // accumulates Done work during the Sprint, but only while it is still open. A
+      // `DRAFT` or `VERIFIED` Increment is treated as open and continues to accumulate
+      // newly-Done PBIs. A `DELIVERED` or `ARCHIVED` Increment is frozen — it represents a
+      // released product Increment that must not receive new work — so a brand-new
+      // Increment is created to hold subsequent Done PBIs.
+      const OPEN_INCREMENT_STATUSES = ['DRAFT', 'VERIFIED'] as const;
       let increment = await prisma.increment.findFirst({
-        where: { sprintId },
+        where: { sprintId, status: { in: [...OPEN_INCREMENT_STATUSES] } },
         select: { id: true },
       });
 

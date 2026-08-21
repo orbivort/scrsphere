@@ -188,6 +188,9 @@ export const SprintReview: React.FC = () => {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isReviewCompleted, setIsReviewCompleted] = useState(false);
   const [showCompleteConfirmation, setShowCompleteConfirmation] = useState(false);
+  // The Sprint Review can present one or more Increments produced during the Sprint.
+  // The selector lets the team inspect each Increment independently.
+  const [activeIncrementId, setActiveIncrementId] = useState<string | undefined>();
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [feedbackForm, setFeedbackForm] = useState<FeedbackFormData>(initialFeedbackForm);
   const [adjustmentForm, setAdjustmentForm] = useState<AdjustmentFormData>(initialAdjustmentForm);
@@ -288,12 +291,33 @@ export const SprintReview: React.FC = () => {
     }
   }, [review?.status]);
 
-  const increment = useMemo(() => {
-    const increments = incrementsData?.data ?? [];
-    return increments.find(
+  // A Sprint may produce several Increments (e.g. via early releases and the Sprint Review
+  // delivery). The Sprint Review presents all of them, so we render every Increment of the
+  // Sprint rather than selecting a single one. `primaryIncrement` remains the first
+  // delivered/verified Increment for legacy flows (e.g. creating the review).
+  const increments = useMemo(() => {
+    const all = incrementsData?.data ?? [];
+    const deliveredOrVerified = all.filter(
       (inc) => inc.status === IncrementStatus.DELIVERED || inc.status === IncrementStatus.VERIFIED
     );
+    return deliveredOrVerified.length > 0 ? deliveredOrVerified : all;
   }, [incrementsData]);
+
+  const primaryIncrement = increments[0];
+
+  // Keep the active increment selector in sync with the available increments.
+  useEffect(() => {
+    if (increments.length > 0) {
+      setActiveIncrementId((current) => {
+        if (current && increments.some((inc) => inc.id === current)) {
+          return current;
+        }
+        return increments[0]?.id;
+      });
+    } else {
+      setActiveIncrementId(undefined);
+    }
+  }, [increments]);
 
   const sprintDuration = useMemo(() => {
     if (!sprint) return { days: 0, weeks: 0, workingDays: 0 };
@@ -345,13 +369,16 @@ export const SprintReview: React.FC = () => {
     };
   }, [sprintBacklogItems]);
 
-  // Partition the full sprint backlog into delivered (DONE) vs. the rest, and
-  // track which PBIs were explicitly included in the delivered increment.
-  const { doneItems, notDoneItems, incrementPbiIds } = useMemo(() => {
+  // Partition the full sprint backlog into delivered (DONE) vs. the rest, and map each
+  // PBI to the Increment(s) that include it. Because a Sprint can deliver multiple
+  // Increments, a Done PBI is attributed to whichever Increment contains it (via its
+  // `pbis`), which lets the Increment tab show exactly what each Increment contributed.
+  const { doneItems, notDoneItems, pbiIncrementIds } = useMemo(() => {
     const pbis = sprintBacklogItems?.data ?? [];
     const doneItems: ProductBacklogItem[] = [];
     const notDoneItems: ProductBacklogItem[] = [];
-    const incrementPbiIds = new Set<string>();
+    // pbiId -> set of increment ids that include it
+    const pbiIncrementIds = new Map<string, Set<string>>();
 
     for (const pbi of pbis) {
       if (pbi.status === ItemStatus.DONE) {
@@ -361,14 +388,18 @@ export const SprintReview: React.FC = () => {
       }
     }
 
-    for (const pbi of increment?.pbis ?? []) {
-      if (pbi.id) {
-        incrementPbiIds.add(pbi.id);
+    for (const inc of increments) {
+      for (const pbi of inc.pbis ?? []) {
+        if (pbi.id) {
+          const ids = pbiIncrementIds.get(pbi.id) ?? new Set<string>();
+          ids.add(inc.id);
+          pbiIncrementIds.set(pbi.id, ids);
+        }
       }
     }
 
-    return { doneItems, notDoneItems, incrementPbiIds };
-  }, [sprintBacklogItems, increment]);
+    return { doneItems, notDoneItems, pbiIncrementIds };
+  }, [sprintBacklogItems, increments]);
 
   const createReviewMutation = useMutation({
     mutationFn: (data: {
@@ -382,7 +413,7 @@ export const SprintReview: React.FC = () => {
         teamId: data.teamId,
         reviewDate: data.reviewDate,
         summary: data.summary,
-        incrementId: increment?.id,
+        incrementId: primaryIncrement?.id,
       }),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.sprintReview.all });
@@ -600,7 +631,7 @@ export const SprintReview: React.FC = () => {
       return;
     }
 
-    if (!increment) {
+    if (increments.length === 0) {
       setFormErrors({
         increment: t('createModal.incrementRequiredWarning'),
       });
@@ -613,7 +644,7 @@ export const SprintReview: React.FC = () => {
       reviewDate: createReviewData.reviewDate,
       summary: createReviewData.summary,
     });
-  }, [sprintId, createReviewData, increment, teamId, createReviewMutation, t]);
+  }, [sprintId, createReviewData, increments, teamId, createReviewMutation, t]);
 
   const handleCompleteReview = useCallback(() => {
     if (!review?.id) {
@@ -886,7 +917,7 @@ export const SprintReview: React.FC = () => {
             </div>
             <h3>{t('noReview.title')}</h3>
             <p>{t('noReview.message')}</p>
-            {!increment && (
+            {increments.length === 0 && (
               <div className={styles['increment-notice']}>
                 <span className={styles['notice-icon']}>
                   <PackageIcon />
@@ -898,7 +929,7 @@ export const SprintReview: React.FC = () => {
               </div>
             )}
             <div className={styles['empty-state-actions']}>
-              {!increment && (
+              {increments.length === 0 && (
                 <button
                   className={`${styles.button} ${styles['button-secondary']}`}
                   onClick={() => navigate('/increments')}
@@ -909,7 +940,7 @@ export const SprintReview: React.FC = () => {
               <button
                 className={`${styles.button} ${styles['button-primary']}`}
                 onClick={() => setShowCreateReviewModal(true)}
-                disabled={!increment}
+                disabled={increments.length === 0}
               >
                 <FileTextIcon size={16} />
                 {t('noReview.createSprintReview')}
@@ -932,7 +963,7 @@ export const SprintReview: React.FC = () => {
           isPending={createReviewMutation.isPending}
           isError={createReviewMutation.isError}
           error={createReviewMutation.error as Error | null}
-          hasIncrement={!!increment}
+          hasIncrement={increments.length > 0}
         />
       </div>
     );
@@ -1146,117 +1177,191 @@ export const SprintReview: React.FC = () => {
             aria-labelledby="increment-tab"
             className={`${styles.section} ${styles['increment-section']}`}
           >
-            {increment ? (
-              <div className={styles['increment-presentation']}>
-                <div className={styles['increment-header']}>
-                  <h3>
-                    <PackageIcon /> {t('increment.title')}
-                  </h3>
-                  <span className={styles['increment-name']}>{increment.name}</span>
-                </div>
-                <p className={styles['increment-description']}>
-                  {increment.description ?? t('increment.noDescription')}
-                </p>
+            {increments.length > 0 ? (
+              <>
+                {increments.length > 1 && (
+                  <div
+                    className={styles['increment-selector']}
+                    role="tablist"
+                    aria-label={t('increment.selectorLabel')}
+                  >
+                    {increments.map((inc, index) => {
+                      const isActive = inc.id === activeIncrementId;
+                      return (
+                        <button
+                          key={inc.id}
+                          role="tab"
+                          aria-selected={isActive}
+                          className={`${styles['increment-selector-tab']} ${isActive ? styles['increment-selector-tab-active'] : ''}`}
+                          onClick={() => setActiveIncrementId(inc.id)}
+                          type="button"
+                        >
+                          <PackageIcon size={16} />
+                          {t('increment.incrementNumber', { number: index + 1 })}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
 
-                <div className={styles['included-items']}>
-                  <h4>{t('increment.completedItems')}</h4>
-                  <div className={styles['pbi-list']}>
-                    {doneItems.length === 0 ? (
-                      <p className={styles['no-data']}>{t('increment.noCompletedItems')}</p>
-                    ) : (
-                      doneItems.map((pbi, index) => (
-                        <div key={pbi.id || `pbi-${index}`} className={styles['pbi-card']}>
-                          <span className={styles['pbi-title']}>{pbi.title}</span>
-                          <span className={styles['pbi-points']}>
-                            {pbi.storyPoints ?? 0} {t('pts')}
-                          </span>
-                          <span
-                            className={`${styles['pbi-status']} ${styles[STATUS_STYLE_KEYS[pbi.status]]}`}
-                          >
-                            <CheckIcon /> {t(STATUS_TRANSLATION_KEYS[pbi.status], pbi.status)}
-                          </span>
-                          {incrementPbiIds.has(pbi.id) && (
-                            <span className={styles['in-increment-badge']}>
-                              {t('increment.inIncrement')}
-                            </span>
+                {(() => {
+                  const activeIncrement =
+                    increments.find((inc) => inc.id === activeIncrementId) ?? increments[0];
+                  if (!activeIncrement) return null;
+                  const activeIncrementPbis = activeIncrement.pbis ?? [];
+
+                  return (
+                    <div className={styles['increment-presentation']}>
+                      <div className={styles['increment-header']}>
+                        <h3>
+                          <PackageIcon /> {t('increment.title')}
+                        </h3>
+                        <span className={styles['increment-name']}>{activeIncrement.name}</span>
+                      </div>
+                      <p className={styles['increment-description']}>
+                        {activeIncrement.description ?? t('increment.noDescription')}
+                      </p>
+
+                      <div className={styles['included-items']}>
+                        <h4>{t('increment.includedPbis')}</h4>
+                        <div className={styles['pbi-list']}>
+                          {activeIncrementPbis.length === 0 ? (
+                            <p className={styles['no-data']}>{t('increment.noPbis')}</p>
+                          ) : (
+                            activeIncrementPbis.map((pbi, index) => (
+                              <div key={pbi.id || `pbi-${index}`} className={styles['pbi-card']}>
+                                <span className={styles['pbi-title']}>{pbi.title}</span>
+                                <span className={styles['pbi-points']}>
+                                  {pbi.storyPoints ?? 0} {t('pts')}
+                                </span>
+                                <span
+                                  className={`${styles['pbi-status']} ${styles[STATUS_STYLE_KEYS[pbi.status]]}`}
+                                >
+                                  <CheckIcon /> {t(STATUS_TRANSLATION_KEYS[pbi.status], pbi.status)}
+                                </span>
+                              </div>
+                            ))
                           )}
                         </div>
-                      ))
-                    )}
-                  </div>
-                </div>
+                      </div>
 
-                <div className={styles['included-items']}>
-                  <h4>{t('increment.notCompletedItems')}</h4>
-                  <div className={styles['pbi-list']}>
-                    {notDoneItems.length === 0 ? (
-                      <p className={styles['no-data']}>{t('increment.noNotCompletedItems')}</p>
-                    ) : (
-                      notDoneItems.map((pbi, index) => (
-                        <div key={pbi.id || `pbi-${index}`} className={styles['pbi-card']}>
-                          <span className={styles['pbi-title']}>{pbi.title}</span>
-                          <span className={styles['pbi-points']}>
-                            {pbi.storyPoints ?? 0} {t('pts')}
+                      <div className={styles['increment-stats']}>
+                        <div className={styles['stat-item']}>
+                          <span className={styles['stat-label']}>
+                            {t('increment.totalStoryPoints')}
                           </span>
-                          <span
-                            className={`${styles['pbi-status']} ${styles[STATUS_STYLE_KEYS[pbi.status]]}`}
-                          >
-                            {t(STATUS_TRANSLATION_KEYS[pbi.status], pbi.status)}
+                          <span className={styles['stat-value']}>
+                            {activeIncrement.totalStoryPoints}
                           </span>
                         </div>
-                      ))
-                    )}
-                  </div>
-                </div>
+                        <div className={styles['stat-item']}>
+                          <span className={styles['stat-label']}>
+                            {t('increment.completedStoryPoints')}
+                          </span>
+                          <span className={styles['stat-value']}>
+                            {activeIncrementPbis.reduce(
+                              (sum, pbi) => sum + (pbi.storyPoints ?? 0),
+                              0
+                            )}
+                          </span>
+                        </div>
+                        <div className={styles['stat-item']}>
+                          <span className={styles['stat-label']}>
+                            {t('increment.deliveryMethod')}
+                          </span>
+                          <span className={styles['stat-value']}>
+                            {activeIncrement.deliveryMethod?.toLowerCase() ===
+                            DeliveryMethod.SPRINT_REVIEW.toLowerCase() ? (
+                              t('increment.sprintReviewDelivery')
+                            ) : (
+                              <>
+                                <RocketIcon size={14} /> {t('increment.earlyReleaseDelivery')}
+                              </>
+                            )}
+                          </span>
+                        </div>
+                        <div className={styles['stat-item']}>
+                          <span className={styles['stat-label']}>{t('increment.deliveredAt')}</span>
+                          <span className={styles['stat-value']}>
+                            {activeIncrement.deliveredAt
+                              ? formatLocaleDate(activeIncrement.deliveredAt, locale, 'PPPP')
+                              : t('increment.notDelivered')}
+                          </span>
+                        </div>
+                      </div>
 
-                <div className={styles['dod-verification']}>
-                  <h4>{t('increment.dodVerification')}</h4>
-                  <div className={styles['dod-status']}>
-                    <span className={styles['dod-icon']}>
-                      <CheckIcon />
-                    </span>
-                    <span>{t('increment.dodAllVerified')}</span>
-                  </div>
-                </div>
+                      <div className={styles['dod-verification']}>
+                        <h4>{t('increment.dodVerification')}</h4>
+                        <div className={styles['dod-status']}>
+                          <span className={styles['dod-icon']}>
+                            <CheckIcon />
+                          </span>
+                          <span>{t('increment.dodAllVerified')}</span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
 
-                <div className={styles['increment-stats']}>
-                  <div className={styles['stat-item']}>
-                    <span className={styles['stat-label']}>{t('increment.totalStoryPoints')}</span>
-                    <span className={styles['stat-value']}>
-                      {sprintStats.committedStoryPoints || 0}
-                    </span>
-                  </div>
-                  <div className={styles['stat-item']}>
-                    <span className={styles['stat-label']}>
-                      {t('increment.completedStoryPoints')}
-                    </span>
-                    <span className={styles['stat-value']}>
-                      {sprintStats.completedStoryPoints || 0}
-                    </span>
-                  </div>
-                  <div className={styles['stat-item']}>
-                    <span className={styles['stat-label']}>{t('increment.deliveryMethod')}</span>
-                    <span className={styles['stat-value']}>
-                      {increment.deliveryMethod?.toLowerCase() ===
-                      DeliveryMethod.SPRINT_REVIEW.toLowerCase() ? (
-                        t('increment.sprintReviewDelivery')
+                <div className={styles['sprint-items-section']}>
+                  <h4 className={styles['sprint-items-title']}>{t('increment.allSprintItems')}</h4>
+
+                  <div className={styles['included-items']}>
+                    <h4>{t('increment.completedItems')}</h4>
+                    <div className={styles['pbi-list']}>
+                      {doneItems.length === 0 ? (
+                        <p className={styles['no-data']}>{t('increment.noCompletedItems')}</p>
                       ) : (
-                        <>
-                          <RocketIcon size={14} /> {t('increment.earlyReleaseDelivery')}
-                        </>
+                        doneItems.map((pbi, index) => {
+                          const includedIncrementIds = pbiIncrementIds.get(pbi.id);
+                          const incrementCount = includedIncrementIds?.size ?? 0;
+                          return (
+                            <div key={pbi.id || `pbi-${index}`} className={styles['pbi-card']}>
+                              <span className={styles['pbi-title']}>{pbi.title}</span>
+                              <span className={styles['pbi-points']}>
+                                {pbi.storyPoints ?? 0} {t('pts')}
+                              </span>
+                              <span
+                                className={`${styles['pbi-status']} ${styles[STATUS_STYLE_KEYS[pbi.status]]}`}
+                              >
+                                <CheckIcon /> {t(STATUS_TRANSLATION_KEYS[pbi.status], pbi.status)}
+                              </span>
+                              {incrementCount > 0 && (
+                                <span className={styles['in-increment-badge']}>
+                                  {t('increment.inIncrementCount', { count: incrementCount })}
+                                </span>
+                              )}
+                            </div>
+                          );
+                        })
                       )}
-                    </span>
+                    </div>
                   </div>
-                  <div className={styles['stat-item']}>
-                    <span className={styles['stat-label']}>{t('increment.deliveredAt')}</span>
-                    <span className={styles['stat-value']}>
-                      {increment.deliveredAt
-                        ? formatLocaleDate(increment.deliveredAt, locale, 'PPPP')
-                        : t('increment.notDelivered')}
-                    </span>
+
+                  <div className={styles['included-items']}>
+                    <h4>{t('increment.notCompletedItems')}</h4>
+                    <div className={styles['pbi-list']}>
+                      {notDoneItems.length === 0 ? (
+                        <p className={styles['no-data']}>{t('increment.noNotCompletedItems')}</p>
+                      ) : (
+                        notDoneItems.map((pbi, index) => (
+                          <div key={pbi.id || `pbi-${index}`} className={styles['pbi-card']}>
+                            <span className={styles['pbi-title']}>{pbi.title}</span>
+                            <span className={styles['pbi-points']}>
+                              {pbi.storyPoints ?? 0} {t('pts')}
+                            </span>
+                            <span
+                              className={`${styles['pbi-status']} ${styles[STATUS_STYLE_KEYS[pbi.status]]}`}
+                            >
+                              {t(STATUS_TRANSLATION_KEYS[pbi.status], pbi.status)}
+                            </span>
+                          </div>
+                        ))
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
+              </>
             ) : (
               <div className={styles['empty-state-container']}>
                 <div className={styles['empty-state']}>

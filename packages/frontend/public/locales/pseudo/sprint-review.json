@@ -149,6 +149,7 @@
   },
   "findingActiveSprint": "[Fíndíng àctívé sprínttttttttt...]",
   "increment": {
+    "allSprintItems": "[Àll Ítémssssssssssssss fór thè Spríntttttttttt]",
     "completedItems": "[Cómplétéd Ítémssssssssssss]",
     "completedStoryPoints": "[Cómplétéd Stóry Póíntssssssss]",
     "deliveredAt": "[Délívéréd Àttttt]",
@@ -158,7 +159,10 @@
     "done": "[DDóónné]",
     "earlyReleaseDelivery": "[Éàrly Réléàsééééé]",
     "inIncrement": "[Ín íncréménttttttttt]",
+    "inIncrementCount": "[Ín {{count}} íncréméntttttttttttt]",
+    "inIncrementCount_plural": "[Ín {{count}} íncréméntssssssssss]",
     "includedPbis": "[Ínclúdéd Pródúct Bàcklóg Ítémssssssssss]",
+    "incrementNumber": "[Íncrémént {{number}}]",
     "noCompletedItems": "[Nó cómplétéd ítémsssss fór thís sprínttttttttt.]",
     "noDescription": "[Nó déscríptíónnnnnn]",
     "noIncrement": "[Nó Íncrémént Àvàílàbléééééééé]",
@@ -167,15 +171,19 @@
     "noPbis": "[Nó PBÍs ínclúdéd ín thís íncréméntttttttttttt.]",
     "notCompletedItems": "[Nót Cómplétéd Ítémssssssssssss]",
     "notDelivered": "[Nót délívéréddddd]",
+    "selectorLabel": "[Sprínt Révíéw Íncréméntssssssss]",
     "sprintReviewDelivery": "[Sprínt Révíéwwwww]",
     "title": "[Íncrémént Préséntéddddddd]",
     "totalStoryPoints": "[Tótàl Stóry Póíntsssssss]"
   },
   "list": {
+    "activeSprint": "[Àctívé Spríntttttt]",
+    "activeSprints": "[Àctívé Spríntsssssss]",
     "completedSprint": "[Cómplétéd Spríntttttt]",
     "completedSprints": "[Cómplétéd Spríntsssssss]",
     "completedSprints_plural": "[Cómplétéd Spríntsssssss]",
     "createIncrement": "[Créàté Íncréméntttttt]",
+    "createReview": "[Créàté Sprínt Révíéwwwwwww]",
     "goal": "[GGóóààl:]",
     "loading": "[Lóàdíng sprínt révíéwsssssssss...]",
     "reviewStatus": {
@@ -184,6 +192,8 @@
       "incrementRequired": "[Íncrémént Réqúíréddddddd]",
       "readyForReview": "[Réàdy fór Révíéwwwwww]"
     },
+    "reviewableSprint": "[Révíéwàblé Spríntttttt]",
+    "reviewableSprints": "[Révíéwàblé Spríntsssssss]",
     "reviewed": "[Révíéwédddd]",
     "statusLabels": {
       "active": "[Àctívééé]",
@@ -191,7 +201,7 @@
       "completed": "[Cómplétédddd]",
       "planned": "[Plànnédddd]"
     },
-    "subtitle": "[Révíéw cómplétéd sprínts, ínspéct íncréménts, ànd gàthér stàkéhóldér féédbàckkkkkkkkkkkkkkkkkkkkkkkkk]",
+    "subtitle": "[Révíéw sprínts, ínspéct íncréménts, ànd gàthér stàkéhóldér féédbàckkkkkkkkkkkkkkkkkkkkkkkkk]",
     "title": "[Sprínt Révíéwssssss]",
     "viewDetails": "[Víéw Détàílsssss]",
     "viewReview": "[Víéw Révíéwwwww]"

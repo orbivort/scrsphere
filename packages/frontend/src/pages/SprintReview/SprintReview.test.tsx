@@ -367,6 +367,7 @@ describe('SprintReview Component', () => {
         data: [
           {
             ...mockIncrement,
+            totalStoryPoints: 3,
             pbis: [mockPbiDone] as any,
           },
         ],
@@ -392,8 +393,9 @@ describe('SprintReview Component', () => {
       await openIncrementTab();
 
       expect(screen.getByText('Completed Items')).toBeInTheDocument();
-      expect(screen.getByText('Done item')).toBeInTheDocument();
-      expect(screen.getByText(i18nT('common:status.done'))).toBeInTheDocument();
+      // "Done item" appears both in the increment's included PBIs and the full sprint list
+      expect(screen.getAllByText('Done item').length).toBeGreaterThan(0);
+      expect(screen.getAllByText(i18nT('common:status.done')).length).toBeGreaterThan(0);
     });
 
     it('should render not completed items with real statuses', async () => {
@@ -407,16 +409,16 @@ describe('SprintReview Component', () => {
       expect(screen.getByText(i18nT('common:status.new'))).toBeInTheDocument();
     });
 
-    it('should total story points reflect all backlog items', async () => {
+    it('should total story points reflect the presented increment', async () => {
       setupIncrementMocks();
       await openIncrementTab();
 
-      // Sum of all backlog items: 3 (done) + 5 (in progress) + 2 (new) = 10
+      // Stats reflect the active Increment's own totals (totalStoryPoints = 3)
       const totalLabel = screen.getByText(i18nT('sprint-review:increment.totalStoryPoints'));
       const statItem = totalLabel.closest('div');
-      expect(statItem?.textContent).toContain('10');
+      expect(statItem?.textContent).toContain('3');
 
-      // Completed story points: only the DONE item = 3
+      // Completed story points: the PBIs included in the increment (done item = 3)
       const completedLabel = screen.getByText(
         i18nT('sprint-review:increment.completedStoryPoints')
       );
@@ -424,13 +426,74 @@ describe('SprintReview Component', () => {
       expect(completedStat?.textContent).toContain('3');
     });
 
-    it('should mark items that were part of the delivered increment with a badge', async () => {
+    it('should render the PBIs included in the presented increment', async () => {
       setupIncrementMocks();
       await openIncrementTab();
 
-      expect(screen.getByText(i18nT('sprint-review:increment.inIncrement'))).toBeInTheDocument();
-      const badge = screen.getByText(i18nT('sprint-review:increment.inIncrement'));
-      expect(badge.closest('div')?.textContent).toContain('Done item');
+      expect(screen.getByText(i18nT('sprint-review:increment.includedPbis'))).toBeInTheDocument();
+      // The increment includes the Done item
+      expect(screen.getAllByText('Done item').length).toBeGreaterThan(0);
+    });
+
+    it('should mark items included in an increment with a count badge', async () => {
+      setupIncrementMocks();
+      await openIncrementTab();
+
+      // Done item is included in exactly one increment
+      expect(
+        screen.getByText(i18nT('sprint-review:increment.inIncrementCount', { count: 1 }))
+      ).toBeInTheDocument();
+    });
+
+    it('should show an increment selector and switch between multiple increments', async () => {
+      const mockPbiDone2 = {
+        id: 'pbi-done-2',
+        title: 'Done item 2',
+        status: 'DONE',
+        storyPoints: 2,
+      };
+      vi.spyOn(apiServiceModule.apiService, 'getSprintBacklogPBIs').mockResolvedValue({
+        success: true,
+        data: [mockPbiDone, mockPbiDone2, mockPbiInProgress, mockPbiNew] as any,
+      });
+      vi.spyOn(apiServiceModule.apiService, 'getIncrements').mockResolvedValue({
+        success: true,
+        data: [
+          {
+            ...mockIncrement,
+            id: 'inc-1',
+            totalStoryPoints: 3,
+            pbis: [mockPbiDone] as any,
+          },
+          {
+            ...mockIncrement,
+            id: 'inc-2',
+            totalStoryPoints: 2,
+            pbis: [mockPbiDone2] as any,
+          },
+        ],
+      });
+
+      await openIncrementTab();
+
+      // Selector with both increments is rendered
+      expect(
+        screen.getByText(i18nT('sprint-review:increment.incrementNumber', { number: 1 }))
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(i18nT('sprint-review:increment.incrementNumber', { number: 2 }))
+      ).toBeInTheDocument();
+
+      // Switch to the second increment
+      fireEvent.click(
+        screen.getByText(i18nT('sprint-review:increment.incrementNumber', { number: 2 }))
+      );
+      // "Done item 2" appears both in the increment's included PBIs and the full sprint list
+      expect(screen.getAllByText('Done item 2').length).toBeGreaterThan(0);
+
+      // Both done items appear in the "All Items for the Sprint" completed list
+      expect(screen.getByText(i18nT('sprint-review:increment.allSprintItems'))).toBeInTheDocument();
+      expect(screen.getAllByText('Done item').length).toBeGreaterThan(0);
     });
   });
 

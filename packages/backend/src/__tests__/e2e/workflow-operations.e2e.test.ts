@@ -145,6 +145,45 @@ describe('E2E: Workflow Operations', () => {
         expect(response.body.success).toBe(false);
       });
 
+      it('should create a review with a date-only reviewDate string (regression)', async () => {
+        const email = `review-dateonly-${uniqueTestId()}@example.com`;
+        testEmails.push(email);
+
+        const { team } = await setupTeamWithUser(email, ROLES.SCRUM_MASTER);
+
+        const sprint = await createTestSprintInDb(
+          team.id,
+          `Review Dateonly ${uniqueTestId()}`,
+          SPRINT_STATUSES.ACTIVE
+        );
+        const increment = await createTestIncrementInDb(
+          sprint.id,
+          team.id,
+          'Delivered Increment',
+          'DELIVERED'
+        );
+
+        const cookies = await loginAndGetCookies(email);
+        const { csrfToken } = extractCsrfFromCookies(cookies);
+
+        const response = await request(app)
+          .post('/api/v1/sprint-reviews')
+          .set('Cookie', cookies)
+          .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+          .send({
+            sprintId: sprint.id,
+            teamId: team.id,
+            incrementId: increment.id,
+            // The frontend sends a date-only string like "2026-08-22".
+            reviewDate: '2026-08-22',
+            summary: 'Sprint review summary',
+          })
+          .expect(HTTP_STATUS.CREATED);
+
+        expect(response.body.success).toBe(true);
+        expect(response.body.data.reviewDate).toBeDefined();
+      });
+
       it('should return 422 UNPROCESSABLE_ENTITY with missing required fields', async () => {
         const email = `review-missing-${uniqueTestId()}@example.com`;
         testEmails.push(email);
