@@ -535,7 +535,7 @@ describe('Sprint Management Integration Tests', () => {
       expect(savedItems).toHaveLength(0);
     });
 
-    it('should reject a Developer assigning a task to another member', async () => {
+    it('should allow a Developer to save a backlog task assigned to another Developer on the team', async () => {
       const email = `save-backlog-assign-${uniqueId()}@example.com`;
       testEmails.push(email);
 
@@ -555,13 +555,94 @@ describe('Sprint Management Integration Tests', () => {
       const cookies = await loginAndGetCookies(email);
       const { csrfToken } = extractCsrfFromCookies(cookies);
 
-      await request(app)
+      const response = await request(app)
         .post(`/api/v1/sprints/${sprint.id}/backlog`)
         .set('Cookie', cookies)
         .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
         .send({
           items: [{ pbiId: pbi.id }],
           tasks: [{ pbiId: pbi.id, title: 'Task 1', assigneeId: otherUser.id }],
+        })
+        .expect(200);
+
+      expect(response.body.success).toBe(true);
+    });
+
+    it('should not duplicate tasks when the backlog is saved repeatedly with tasks assigned to another Developer', async () => {
+      const email = `save-backlog-re-save-${uniqueId()}@example.com`;
+      testEmails.push(email);
+
+      const user = await createTestUserInDb(email);
+      const otherUser = await createTestUserInDb(`other-${email}`);
+      testEmails.push(`other-${email}`);
+
+      const teamName = `Save Backlog Re-save Team ${uniqueId()}`;
+      testTeams.push(teamName);
+
+      const team = await createTestTeam(teamName);
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
+      await addTeamMember(team.id, otherUser.id, 'DEVELOPERS');
+      const sprint = await createTestSprint(team.id, 'Sprint to Plan', 'PLANNED');
+      const pbi = await createTestPBI(team.id, 'Planned PBI', 'READY');
+
+      const cookies = await loginAndGetCookies(email);
+      const { csrfToken } = extractCsrfFromCookies(cookies);
+
+      const payload = {
+        items: [{ pbiId: pbi.id }],
+        tasks: [{ pbiId: pbi.id, title: 'Task 1', assigneeId: otherUser.id }],
+      };
+
+      // Save the backlog twice; each save is an idempotent full replace.
+      for (let i = 0; i < 2; i += 1) {
+        await request(app)
+          .post(`/api/v1/sprints/${sprint.id}/backlog`)
+          .set('Cookie', cookies)
+          .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+          .send(payload)
+          .expect(200);
+      }
+
+      // Resume the planning draft: the task must appear exactly once, not duplicated.
+      const resumeResponse = await request(app)
+        .get(`/api/v1/sprints/${sprint.id}/planning-draft`)
+        .set('Cookie', cookies)
+        .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+        .expect(200);
+
+      expect(resumeResponse.body.data.tasks).toHaveLength(1);
+      const task = resumeResponse.body.data.tasks[0] as { title: string; assigneeId: string };
+      expect(task.title).toBe('Task 1');
+      expect(task.assigneeId).toBe(otherUser.id);
+    });
+
+    it('should reject a Developer saving a backlog task assigned to a non-Developer', async () => {
+      const email = `save-backlog-assign-po-${uniqueId()}@example.com`;
+      testEmails.push(email);
+
+      const user = await createTestUserInDb(email);
+      const poUser = await createTestUserInDb(`po-${email}`);
+      testEmails.push(`po-${email}`);
+
+      const teamName = `Save Backlog Assign PO Team ${uniqueId()}`;
+      testTeams.push(teamName);
+
+      const team = await createTestTeam(teamName);
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
+      await addTeamMember(team.id, poUser.id, 'PRODUCT_OWNER');
+      const sprint = await createTestSprint(team.id, 'Sprint to Plan', 'PLANNED');
+      const pbi = await createTestPBI(team.id, 'Planned PBI', 'READY');
+
+      const cookies = await loginAndGetCookies(email);
+      const { csrfToken } = extractCsrfFromCookies(cookies);
+
+      await request(app)
+        .post(`/api/v1/sprints/${sprint.id}/backlog`)
+        .set('Cookie', cookies)
+        .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+        .send({
+          items: [{ pbiId: pbi.id }],
+          tasks: [{ pbiId: pbi.id, title: 'Task 1', assigneeId: poUser.id }],
         })
         .expect(403);
     });
@@ -736,9 +817,9 @@ describe('Sprint Management Integration Tests', () => {
         })
         .expect(200);
 
-      // A second developer saves the same draft. The frontend's getPersistableTasks filters
-      // out tasks owned by other developers, so this developer's payload carries the selected
-      // PBI but NO tasks for it. The whole-PBI removal must NOT drop the owner's tasks.
+      // A second developer saves the same draft with an empty task payload. The backend must
+      // preserve the tasks already persisted for the PBI rather than dropping them, regardless
+      // of the frontend's (team-wide) getPersistableTasks behavior.
       const cookies = await loginAndGetCookies(email);
       const { csrfToken } = extractCsrfFromCookies(cookies);
       await request(app)

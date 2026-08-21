@@ -24,7 +24,7 @@
     "pbiConflictAtStart": "Le sprint ne peut pas démarrer : les éléments du backlog suivants sont déjà engagés dans un autre sprint : {{items}}."
   },
   "task": {
-    "cannotAssignOtherDeveloper": "Seul l'assigné lui-même peut assigner cette tâche. Les développeurs s'auto-assignent leur travail.",
+    "assigneeMustBeDeveloper": "Seuls les développeurs de l'équipe peuvent être assignés. Les Product Owners et Scrum Masters ne peuvent pas assigner de tâches.",
     "creationRequiresDeveloper": "Seuls les développeurs peuvent créer et décomposer des tâches, car les développeurs qui effectuent le travail sont responsables de la décomposition des tâches."
   },
   "teamSizeLimitReached": "Cette équipe a atteint la taille maximale de {{max}} membres. Aucun membre supplémentaire ne peut être ajouté.",

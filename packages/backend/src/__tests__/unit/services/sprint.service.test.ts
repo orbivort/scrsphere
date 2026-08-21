@@ -798,16 +798,44 @@ describe('SprintService', () => {
       ).rejects.toThrow(ForbiddenError);
     });
 
-    it('should throw ForbiddenError when a Developer assigns the task to another member', async () => {
+    it('should allow a Developer to create a task assigned to another Developer on the team', async () => {
+      const mockTask = {
+        id: 'task-1',
+        sprintId: 'sprint-1',
+        pbiId: 'pbi-1',
+        title: 'New Task',
+        status: 'TODO',
+        assigneeId: 'another-user',
+      };
+
       (prisma.sprint.findUnique as any).mockResolvedValue({ id: 'sprint-1', teamId: 'team-1' });
       (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
+      (prisma.task.create as any).mockResolvedValue(mockTask);
+      (workflowService.executeStatusChange as any).mockResolvedValue({});
+
+      const result = await sprintService.createTask('user-1', {
+        sprintId: 'sprint-1',
+        pbiId: 'pbi-1',
+        title: 'New Task',
+        assigneeId: 'another-user',
+      });
+
+      expect(result.assigneeId).toBe('another-user');
+    });
+
+    it('should throw ForbiddenError when the assignee is not a Developer on the team', async () => {
+      (prisma.sprint.findUnique as any).mockResolvedValue({ id: 'sprint-1', teamId: 'team-1' });
+      // Acting user is a Developer; the target assignee is a Product Owner.
+      (prisma.teamMember.findFirst as any)
+        .mockResolvedValueOnce({ role: 'DEVELOPERS' })
+        .mockResolvedValueOnce({ role: 'PRODUCT_OWNER' });
 
       await expect(
         sprintService.createTask('user-1', {
           sprintId: 'sprint-1',
           pbiId: 'pbi-1',
           title: 'New Task',
-          assigneeId: 'another-user',
+          assigneeId: 'po-user',
         })
       ).rejects.toThrow(ForbiddenError);
     });
@@ -858,7 +886,33 @@ describe('SprintService', () => {
       ).rejects.toThrow(NotFoundError);
     });
 
-    it('should throw ForbiddenError when a Developer reassigns a task to another member', async () => {
+    it('should allow a Developer to reassign a task to another Developer on the team', async () => {
+      const mockTask = {
+        id: 'task-1',
+        sprintId: 'sprint-1',
+        title: 'Task 1',
+        status: 'TODO',
+        assigneeId: null,
+        sprint: { teamId: 'team-1' },
+      };
+
+      const mockUpdatedTask = { ...mockTask, assigneeId: 'another-user' };
+
+      (prisma.task.findFirst as any).mockResolvedValue(mockTask);
+      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
+      (prisma.task.update as any).mockResolvedValue(mockUpdatedTask);
+
+      const result = await sprintService.updateTask(
+        'sprint-1',
+        'task-1',
+        { assigneeId: 'another-user' },
+        'user-1'
+      );
+
+      expect(result.assigneeId).toBe('another-user');
+    });
+
+    it('should throw ForbiddenError when the assignee is not a Developer on the team', async () => {
       const mockTask = {
         id: 'task-1',
         sprintId: 'sprint-1',
@@ -869,11 +923,41 @@ describe('SprintService', () => {
       };
 
       (prisma.task.findFirst as any).mockResolvedValue(mockTask);
-      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
+      // Acting user is a Developer; the target assignee is a Scrum Master.
+      (prisma.teamMember.findFirst as any)
+        .mockResolvedValueOnce({ role: 'DEVELOPERS' })
+        .mockResolvedValueOnce({ role: 'SCRUM_MASTER' });
 
       await expect(
-        sprintService.updateTask('sprint-1', 'task-1', { assigneeId: 'another-user' }, 'user-1')
+        sprintService.updateTask('sprint-1', 'task-1', { assigneeId: 'sm-user' }, 'user-1')
       ).rejects.toThrow(ForbiddenError);
+    });
+
+    it('should allow a Developer to reassign a task to a colleague mid-Sprint without changing its status', async () => {
+      const mockTask = {
+        id: 'task-1',
+        sprintId: 'sprint-1',
+        title: 'Task 1',
+        status: 'IN_PROGRESS',
+        assigneeId: 'user-1',
+        sprint: { teamId: 'team-1' },
+      };
+
+      const mockUpdatedTask = { ...mockTask, assigneeId: 'another-user' };
+
+      (prisma.task.findFirst as any).mockResolvedValue(mockTask);
+      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
+      (prisma.task.update as any).mockResolvedValue(mockUpdatedTask);
+
+      const result = await sprintService.updateTask(
+        'sprint-1',
+        'task-1',
+        { assigneeId: 'another-user' },
+        'user-1'
+      );
+
+      expect(result.assigneeId).toBe('another-user');
+      expect(result.status).toBe('IN_PROGRESS');
     });
 
     it('should allow a Developer to self-assign a task', async () => {
@@ -2134,6 +2218,56 @@ describe('SprintService - Additional Coverage', () => {
       ).rejects.toThrow(ForbiddenError);
     });
 
+    it('should accept a save whose task is assigned to another Developer on the team', async () => {
+      (prisma.sprint.findUnique as any).mockResolvedValue({
+        id: 'sprint-1',
+        teamId: 'team-1',
+        status: 'PLANNED',
+      });
+      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
+
+      (withTransaction as any).mockImplementation(async (callback: any) => {
+        return callback({
+          sprintBacklogItem: {
+            deleteMany: vi.fn(),
+            createMany: vi.fn(),
+          },
+          task: {
+            deleteMany: vi.fn(),
+            createMany: vi.fn(),
+          },
+        });
+      });
+
+      await expect(
+        sprintService.saveSprintBacklog('sprint-1', 'user-1', {
+          items: [{ pbiId: 'pbi-1' }],
+          tasks: [
+            { pbiId: 'pbi-1', title: 'Task 1', assigneeId: 'another-user', estimatedHours: 8 },
+          ],
+        })
+      ).resolves.toBeDefined();
+    });
+
+    it('should reject a save whose task is assigned to a non-Developer on the team', async () => {
+      (prisma.sprint.findUnique as any).mockResolvedValue({
+        id: 'sprint-1',
+        teamId: 'team-1',
+        status: 'PLANNED',
+      });
+      // Acting user is a Developer; the target assignee is a Product Owner.
+      (prisma.teamMember.findFirst as any)
+        .mockResolvedValueOnce({ role: 'DEVELOPERS' })
+        .mockResolvedValueOnce({ role: 'PRODUCT_OWNER' });
+
+      await expect(
+        sprintService.saveSprintBacklog('sprint-1', 'user-1', {
+          items: [{ pbiId: 'pbi-1' }],
+          tasks: [{ pbiId: 'pbi-1', title: 'Task 1', assigneeId: 'po-user', estimatedHours: 8 }],
+        })
+      ).rejects.toThrow(ForbiddenError);
+    });
+
     it('should throw BadRequestError when the sprint is not PLANNED', async () => {
       (prisma.sprint.findUnique as any).mockResolvedValue({
         id: 'sprint-1',
@@ -2507,18 +2641,29 @@ describe('SprintService - Additional Coverage', () => {
   });
 
   describe('createTask with notification', () => {
-    it('should block cross-assignment to another user (self-managed assignment)', async () => {
+    it('should allow cross-assignment to another Developer (self-managed team assignment)', async () => {
+      const mockTask = {
+        id: 'task-1',
+        sprintId: 'sprint-1',
+        pbiId: 'pbi-1',
+        title: 'New Task',
+        status: 'TODO',
+        assigneeId: 'assignee-1',
+      };
+
       (prisma.sprint.findUnique as any).mockResolvedValue({ id: 'sprint-1', teamId: 'team-1' });
       (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
+      (prisma.task.create as any).mockResolvedValue(mockTask);
+      (workflowService.executeStatusChange as any).mockResolvedValue({});
 
-      await expect(
-        sprintService.createTask('user-1', {
-          sprintId: 'sprint-1',
-          pbiId: 'pbi-1',
-          title: 'New Task',
-          assigneeId: 'assignee-1',
-        })
-      ).rejects.toThrow(ForbiddenError);
+      const result = await sprintService.createTask('user-1', {
+        sprintId: 'sprint-1',
+        pbiId: 'pbi-1',
+        title: 'New Task',
+        assigneeId: 'assignee-1',
+      });
+
+      expect(result.assigneeId).toBe('assignee-1');
     });
 
     it('should not create notification when assignee is the creator', async () => {

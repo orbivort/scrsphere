@@ -24,7 +24,7 @@
     "pbiConflictAtStart": "The Sprint cannot be started: the following backlog items are already committed to another sprint: {{items}}."
   },
   "task": {
-    "cannotAssignOtherDeveloper": "Only the assignee themselves may assign this task. Developers self-assign their work.",
+    "assigneeMustBeDeveloper": "Only Developers on the team can be assigned. Product Owners and Scrum Masters cannot assign tasks.",
     "creationRequiresDeveloper": "Only Developers can create and decompose tasks, as the Developers who perform the work own task decomposition."
   },
   "teamSizeLimitReached": "This team has reached the maximum size of {{max}} members. No additional members can be added.",

@@ -24,7 +24,7 @@
     "pbiConflictAtStart": "Der Sprint kann nicht gestartet werden: Die folgenden Backlog-Elemente sind bereits einem anderen Sprint zugeordnet: {{items}}."
   },
   "task": {
-    "cannotAssignOtherDeveloper": "Nur der Beauftragte selbst darf diese Aufgabe zuweisen. Entwickler weisen sich ihre Arbeit selbst zu.",
+    "assigneeMustBeDeveloper": "Nur Entwickler im Team können zugewiesen werden. Product Owner und Scrum Master können keine Aufgaben zuweisen.",
     "creationRequiresDeveloper": "Nur Entwickler können Aufgaben erstellen und zerlegen, da die Entwickler, die die Arbeit ausführen, die Aufgabenzerlegung verantworten."
   },
   "teamSizeLimitReached": "Dieses Team hat die maximale Größe von {{max}} Mitgliedern erreicht. Es können keine weiteren Mitglieder hinzugefügt werden.",

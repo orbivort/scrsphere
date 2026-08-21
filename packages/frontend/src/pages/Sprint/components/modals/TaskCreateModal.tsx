@@ -22,7 +22,6 @@ export interface TaskCreateModalProps {
   isCreating: boolean;
   modalRef: React.RefObject<HTMLDivElement | null>;
   isDeveloper?: boolean;
-  currentUserId?: string;
 }
 
 export const TaskCreateModal: React.FC<TaskCreateModalProps> = ({
@@ -37,7 +36,6 @@ export const TaskCreateModal: React.FC<TaskCreateModalProps> = ({
   isCreating,
   modalRef,
   isDeveloper = false,
-  currentUserId,
 }) => {
   const { t } = useTranslation('sprint');
   const [showUnsavedChangesModal, setShowUnsavedChangesModal] = useState(false);
@@ -253,16 +251,14 @@ export const TaskCreateModal: React.FC<TaskCreateModalProps> = ({
                   disabled={!isDeveloper}
                 >
                   <option value="">{t('taskCreate.unassigned')}</option>
-                  {/* Self-managed assignment: a Developer may only claim the task for
-                      themselves or leave it unassigned. */}
+                  {/* Self-managed Developers-as-a-team assignment: any Developer on the team may
+                      be selected. PO/SM cannot assign (disabled below). */}
                   {isDeveloper &&
-                    developerMembers
-                      .filter((member) => member.userId === currentUserId)
-                      .map((member) => (
-                        <option key={member.id} value={member.userId}>
-                          {member.user?.firstName} {member.user?.lastName}
-                        </option>
-                      ))}
+                    developerMembers.map((member) => (
+                      <option key={member.id} value={member.userId}>
+                        {member.user?.firstName} {member.user?.lastName}
+                      </option>
+                    ))}
                 </select>
                 {formErrors.assigneeId && (
                   <span id="task-assignee-error" className={styles['form-error']} role="alert">

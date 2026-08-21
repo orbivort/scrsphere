@@ -429,7 +429,7 @@ class SprintService {
 
     // Validate self-assignment for every provided task assignment.
     for (const task of tasks) {
-      await this.assertSelfAssignmentAllowed(sprint.teamId, userId, task.assigneeId);
+      await this.assertAssigneeIsSameTeamDeveloper(sprint.teamId, userId, task.assigneeId);
     }
 
     // If any task references a PBI that is not part of the selected backlog, reject it.
@@ -453,12 +453,11 @@ class SprintService {
       // Idempotent replace: clear the existing draft for this sprint, then re-create.
       await tx.sprintBacklogItem.deleteMany({ where: { sprintId: resolvedSprintId } });
 
-      // Preserve tasks already claimed by other developers: this Developer's save may only
-      // recreate unassigned tasks and their own tasks. Without this guard, replacing the
-      // whole draft here would silently discard another Developer's self-assigned work.
-      await tx.task.deleteMany({
-        where: { sprintId: resolvedSprintId, OR: [{ assigneeId: null }, { assigneeId: userId }] },
-      });
+      // Delete every task of this sprint so the payload is recreated as the single source of
+      // truth. Under Developers-as-a-team assignment the payload carries the whole backlog
+      // (including tasks assigned to other Developers), so a partial delete would duplicate
+      // those tasks instead of replacing them.
+      await tx.task.deleteMany({ where: { sprintId: resolvedSprintId } });
 
       const backlogItemData = items.map((item) => ({
         id: generateUUIDv7(),
@@ -547,7 +546,7 @@ class SprintService {
 
     // Validate self-assignment for every provided task assignment.
     for (const task of tasks) {
-      await this.assertSelfAssignmentAllowed(sprint.teamId, userId, task.assigneeId ?? null);
+      await this.assertAssigneeIsSameTeamDeveloper(sprint.teamId, userId, task.assigneeId ?? null);
     }
 
     // Reject any task that references a PBI not part of the selected backlog.
@@ -1528,11 +1527,16 @@ class SprintService {
   }
 
   /**
-   * Assert that an assignee reference is either absent (unassigned) or the acting user
-   * themselves. A Developer may self-assign or clear an assignment, but may never assign
-   * work to another team member, and PO/SM must never assign anyone.
+   * Assert that an assignee reference is either absent (unassigned) or another Developer
+   * on the same team. A Developer may assign work to any Developer on the team or clear an
+   * assignment, but PO/SM must never assign anyone.
+   *
+   * NOTE: The team-member and same-team-Developer checks below are intentional guards that go
+   * beyond the Scrum Guide's minimum. The Guide leaves "who does what" to the self-managing
+   * Developers and does not itself define an assignee role or its eligibility; we choose to
+   * keep assignment a Developer-owned act within the team.
    */
-  private async assertSelfAssignmentAllowed(
+  private async assertAssigneeIsSameTeamDeveloper(
     teamId: string,
     userId: string,
     assigneeId?: string | null
@@ -1541,8 +1545,13 @@ class SprintService {
 
     await this.assertDeveloperRole(teamId, userId);
 
-    if (assigneeId !== userId) {
-      throw new ForbiddenError(requestT('errors:task.cannotAssignOtherDeveloper'));
+    const assignee = await prisma.teamMember.findFirst({
+      where: { teamId, userId: assigneeId },
+      select: { role: true },
+    });
+
+    if (assignee?.role !== 'DEVELOPERS') {
+      throw new ForbiddenError(requestT('errors:task.assigneeMustBeDeveloper'));
     }
   }
 
@@ -1563,7 +1572,7 @@ class SprintService {
       throw new NotFoundError('Sprint');
     }
     await this.assertDeveloperRole(sprint.teamId, userId);
-    await this.assertSelfAssignmentAllowed(sprint.teamId, userId, data.assigneeId);
+    await this.assertAssigneeIsSameTeamDeveloper(sprint.teamId, userId, data.assigneeId);
 
     const task = await prisma.task.create({
       data: {
@@ -1670,7 +1679,7 @@ class SprintService {
     // actually carries `assigneeId` and its value differs from the current assignee.
     // Status/estimate-only updates are unaffected and remain open to all team members.
     if (userId && 'assigneeId' in data && data.assigneeId !== task.assigneeId) {
-      await this.assertSelfAssignmentAllowed(task.sprint.teamId, userId, data.assigneeId);
+      await this.assertAssigneeIsSameTeamDeveloper(task.sprint.teamId, userId, data.assigneeId);
     }
 
     if (data.status && data.status !== task.status && userId) {

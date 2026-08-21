@@ -83,17 +83,14 @@ interface ReadyChecklistItem {
 }
 
 /**
- * Return the tasks the acting developer is allowed to persist for a sprint.
+ * Return the tasks to persist for a sprint.
  *
- * During collaborative planning the shared draft may contain tasks already claimed by
- * other developers. A Developer may only create/update unassigned tasks and their own
- * tasks; tasks owned by another Developer are read-only here and must be excluded from
- * the save payload — otherwise the backend's self-assignment guard rejects the whole
- * request (403) and an explicit save would otherwise overwrite the other developer's work.
+ * The Developers are self-managing as a team: any Developer may assign a task to any
+ * Developer on the team (or leave it unassigned). All tasks in the current draft are
+ * therefore included in the save payload so the Sprint Backlog is persisted as a whole.
  */
 const getPersistableTasks = (
-  items: SprintBacklogItem[],
-  currentUserId?: string
+  items: SprintBacklogItem[]
 ): Array<{
   id: string;
   pbiId: string;
@@ -103,16 +100,14 @@ const getPersistableTasks = (
   remainingHours?: number;
 }> =>
   items.flatMap((item) =>
-    item.tasks
-      .filter((task) => !task.assigneeId || task.assigneeId === currentUserId)
-      .map((task) => ({
-        id: task.id,
-        pbiId: item.id,
-        title: task.title,
-        assigneeId: task.assigneeId ?? undefined,
-        estimatedHours: task.estimatedHours,
-        remainingHours: task.remainingHours,
-      }))
+    item.tasks.map((task) => ({
+      id: task.id,
+      pbiId: item.id,
+      title: task.title,
+      assigneeId: task.assigneeId ?? undefined,
+      estimatedHours: task.estimatedHours,
+      remainingHours: task.remainingHours,
+    }))
   );
 
 const getMoscowPriorityConfig = (
@@ -256,8 +251,9 @@ export const SprintPlanning: React.FC = () => {
   const currentYear = new Date().getFullYear();
   const { handleMutationError } = useMutationErrorHandler();
 
-  // Task decomposition and assignment are Developers-only (self-assignment/claim). PO/SM
-  // participate in planning but cannot create or assign tasks.
+  // Task decomposition and assignment are Developers-only (self-managed as a team: any
+  // Developer may assign any same-team Developer). PO/SM participate in planning but cannot
+  // create or assign tasks.
   const isDeveloper = String(userRoleInCurrentTeam).toLowerCase() === UserRole.DEVELOPERS;
   const [backlogSaved, setBacklogSaved] = useState(false);
 
@@ -389,9 +385,9 @@ export const SprintPlanning: React.FC = () => {
   const saveSprintBacklogMutation = useMutation({
     mutationFn: () => {
       const items = sprintBacklogItems.map((item) => ({ pbiId: item.id }));
-      // Only persist unassigned tasks and the acting developer's own tasks; tasks already
-      // claimed by another developer are read-only here and must not be sent to the backend.
-      const tasks = getPersistableTasks(sprintBacklogItems, currentUser?.id);
+      // Persist the whole Sprint Backlog (unassigned tasks and tasks assigned to any
+      // Developer) so team-wide assignment is preserved on save.
+      const tasks = getPersistableTasks(sprintBacklogItems);
       return apiService.saveSprintBacklog(selectedSprintId ?? '', { items, tasks });
     },
     onSuccess: (response) => {
@@ -626,9 +622,9 @@ export const SprintPlanning: React.FC = () => {
     dirtyRef.current = false;
     const timer = setTimeout(() => {
       const items = sprintBacklogItems.map((item) => ({ pbiId: item.id }));
-      // Only persist unassigned tasks and the acting developer's own tasks; tasks already
-      // claimed by another developer are read-only here and must not be sent to the backend.
-      const tasks = getPersistableTasks(sprintBacklogItems, currentUser?.id).map((task) => ({
+      // Persist the whole Sprint Backlog (unassigned tasks and tasks assigned to any
+      // Developer) so team-wide assignment is preserved on save.
+      const tasks = getPersistableTasks(sprintBacklogItems).map((task) => ({
         id: task.id.startsWith('task-') ? undefined : task.id,
         description: undefined,
         pbiId: task.pbiId,
@@ -657,9 +653,9 @@ export const SprintPlanning: React.FC = () => {
       try {
         const payload = JSON.stringify({
           items: sprintBacklogItems.map((item) => ({ pbiId: item.id })),
-          // Only persist unassigned tasks and the acting developer's own tasks; tasks already
-          // claimed by another developer are read-only here and must not be sent to the backend.
-          tasks: getPersistableTasks(sprintBacklogItems, currentUser?.id).map((task) => ({
+          // Persist the whole Sprint Backlog (unassigned tasks and tasks assigned to any
+          // Developer) so team-wide assignment is preserved on save.
+          tasks: getPersistableTasks(sprintBacklogItems).map((task) => ({
             id: task.id.startsWith('task-') ? undefined : task.id,
             description: undefined,
             pbiId: task.pbiId,
@@ -1957,27 +1953,16 @@ export const SprintPlanning: React.FC = () => {
                                       e.target.value || undefined
                                     )
                                   }
-                                  disabled={
-                                    lockedSprint ||
-                                    // A task already claimed by another developer is read-only here;
-                                    // the assignee cannot be changed or cleared, so no DB update
-                                    // fires for it.
-                                    (task.assigneeId != null && task.assigneeId !== currentUser?.id)
-                                  }
+                                  disabled={lockedSprint}
                                   aria-label={t('sprintPlanning.taskAssigneeAria', {
                                     title: task.title,
                                   })}
                                 >
                                   <option value="">{t('sprintPlanning.unassigned')}</option>
-                                  {/* Keep all developers listed so that tasks already assigned to
-                                      others remain visible. A developer may only select themselves;
-                                      assigning to anyone else is prevented here and on the backend. */}
+                                  {/* Self-managed Developers-as-a-team assignment: any Developer on
+                                      the team may be selected (or the assignment cleared). */}
                                   {teamAvailability.map((member) => (
-                                    <option
-                                      key={member.memberId}
-                                      value={member.userId}
-                                      disabled={member.userId !== currentUser?.id}
-                                    >
+                                    <option key={member.memberId} value={member.userId}>
                                       {member.memberName}
                                     </option>
                                   ))}
@@ -2101,7 +2086,6 @@ export const SprintPlanning: React.FC = () => {
           }}
           onSubmit={handleAddTask}
           teamMembers={teamAvailability}
-          currentUserId={currentUser?.id}
           itemTitle={
             selectedItemForTask
               ? sprintBacklogItems.find((item) => item.id === selectedItemForTask)?.title

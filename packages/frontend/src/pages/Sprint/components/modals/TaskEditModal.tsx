@@ -31,7 +31,6 @@ export interface TaskEditModalProps {
   isUpdating: boolean;
   modalRef: React.RefObject<HTMLDivElement | null>;
   isDeveloper?: boolean;
-  currentUserId?: string;
 }
 
 export const TaskEditModal: React.FC<TaskEditModalProps> = ({
@@ -48,7 +47,6 @@ export const TaskEditModal: React.FC<TaskEditModalProps> = ({
   isUpdating,
   modalRef,
   isDeveloper = false,
-  currentUserId,
 }) => {
   const { t } = useTranslation('sprint');
   const [showUnsavedChangesModal, setShowUnsavedChangesModal] = useState(false);
@@ -278,16 +276,14 @@ export const TaskEditModal: React.FC<TaskEditModalProps> = ({
                   disabled={!isDeveloper}
                 >
                   <option value="">{t('taskCreate.unassigned')}</option>
-                  {/* Self-managed assignment: a Developer may only claim the task for
-                      themselves or release it back to unassigned. */}
+                  {/* Self-managed Developers-as-a-team assignment: any Developer on the team may
+                      be selected, or the assignment cleared. PO/SM cannot assign (disabled below). */}
                   {isDeveloper &&
-                    developerMembers
-                      .filter((member) => member.userId === currentUserId)
-                      .map((member) => (
-                        <option key={member.id} value={member.userId}>
-                          {member.user?.firstName} {member.user?.lastName}
-                        </option>
-                      ))}
+                    developerMembers.map((member) => (
+                      <option key={member.id} value={member.userId}>
+                        {member.user?.firstName} {member.user?.lastName}
+                      </option>
+                    ))}
                 </select>
                 {formErrors.assigneeId && (
                   <span id="edit-task-assignee-error" className={styles['form-error']} role="alert">

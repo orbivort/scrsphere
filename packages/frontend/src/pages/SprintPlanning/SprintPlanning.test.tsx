@@ -302,6 +302,7 @@ beforeAll(async () => {
 
 import {
   createMockTeam,
+  createMockTeamMember,
   createMockBacklogItem,
   createMockProductGoal,
   createMockGeneratedSprint,
@@ -1548,6 +1549,59 @@ describe('SprintPlanning Integration Tests', () => {
         /Task assignee: Plan: Assignee Item - Task/i
       );
       await user.selectOptions(assigneeSelects[0], '');
+    });
+
+    it('lists every team Developer as a selectable assignee (self-managed team assignment)', async () => {
+      const user = userEvent.setup();
+      const mockSprint = createMockGeneratedSprint();
+      const mockBacklogItem = createMockBacklogItem({
+        title: 'Team Assignee Item',
+        status: 'READY',
+      });
+
+      mockApiMethod(apiService.getGeneratedSprints, createMockApiResponse({ data: [mockSprint] }));
+      mockApiMethod(
+        apiService.getProductBacklog,
+        createMockApiResponse({ data: [mockBacklogItem] })
+      );
+      // Two Developers on the team: the acting user and a colleague.
+      mockApiMethod(
+        apiService.getTeam,
+        createMockApiResponse({
+          data: {
+            ...createMockTeam(),
+            members: [
+              createMockTeamMember({ userId: 'user-1', role: 'developers' }),
+              createMockTeamMember({ userId: 'user-2', role: 'developers' }),
+            ],
+          },
+        })
+      );
+      mockApiMethod(apiService.getSprintTasks, createMockApiResponse({ data: [] }));
+
+      renderWithProviders(<SprintPlanning />);
+
+      await waitFor(() => {
+        expect(screen.getByText('Team Assignee Item')).toBeInTheDocument();
+      });
+
+      // Select sprint
+      const sprintSelect = screen.getByTestId('sprint-select');
+      await user.selectOptions(sprintSelect, mockSprint.id);
+
+      // Add item to sprint
+      await user.click(screen.getByText('Team Assignee Item'));
+
+      const assigneeSelects = screen.getAllByLabelText(
+        /Task assignee: Plan: Team Assignee Item - Task/i
+      );
+      // The acting user can assign the task to the colleague, not just themselves.
+      expect(assigneeSelects[0].options[1]).toHaveValue('user-1');
+      expect(assigneeSelects[0].options[2]).toHaveValue('user-2');
+      expect(assigneeSelects[0].options[1]).not.toBeDisabled();
+      expect(assigneeSelects[0].options[2]).not.toBeDisabled();
+
+      await user.selectOptions(assigneeSelects[0], 'user-2');
     });
   });
 
