@@ -242,13 +242,28 @@ class SprintConfigurationService {
       throw new NotFoundError('Generated sprint');
     }
 
-    const updatedSprint = await prisma.generatedSprint.update({
-      where: { id: sprintId },
-      data: {
-        ...updates,
-        updatedBy: userId,
-        updatedAt: new Date(),
-      },
+    // Keep the materialized Sprint record in sync: once a Sprint has been materialized from
+    // this GeneratedSprint (e.g. during `saveSprintBacklog`), the Sprint Goal is committed on
+    // the Sprint record. `startSprint` reads the goal from the Sprint, so it must be updated
+    // here too, otherwise a later goal edit would be lost and the sprint could not be started.
+    const updatedSprint = await prisma.$transaction(async (tx) => {
+      const result = await tx.generatedSprint.update({
+        where: { id: sprintId },
+        data: {
+          ...updates,
+          updatedBy: userId,
+          updatedAt: new Date(),
+        },
+      });
+
+      if (sprint.sprintId && updates.sprintGoal !== undefined) {
+        await tx.sprint.update({
+          where: { id: sprint.sprintId },
+          data: { sprintGoal: updates.sprintGoal },
+        });
+      }
+
+      return result;
     });
 
     return updatedSprint;

@@ -1,8 +1,21 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 // Mock modules with factory functions (hoisted, so no external variables allowed)
+const prismaTx = vi.hoisted(() => {
+  return {
+    generatedSprint: {
+      findUnique: vi.fn(),
+      update: vi.fn(),
+    },
+    sprint: {
+      update: vi.fn(),
+    },
+  };
+});
+
 vi.mock('../../../utils/prisma', () => ({
   default: {
+    $transaction: vi.fn((fn: (tx: unknown) => Promise<unknown>) => fn(prismaTx)),
     sprintConfiguration: {
       findUnique: vi.fn(),
       create: vi.fn(),
@@ -14,6 +27,9 @@ vi.mock('../../../utils/prisma', () => ({
       create: vi.fn(),
       deleteMany: vi.fn(),
       delete: vi.fn(),
+      update: vi.fn(),
+    },
+    sprint: {
       update: vi.fn(),
     },
   },
@@ -417,20 +433,59 @@ describe('SprintConfigurationService', () => {
         id: sprintId,
         status: 'PLANNED',
       } as any);
-      vi.mocked(prisma.generatedSprint.update).mockResolvedValue(mockSprint as any);
+      vi.mocked(prismaTx.generatedSprint.update).mockResolvedValue(mockSprint as any);
 
       const result = await sprintConfigurationService.updateGeneratedSprint(sprintId, userId, {
         sprintGoal: 'New goal',
       });
 
       expect(result.sprintGoal).toBe('New goal');
-      expect(prisma.generatedSprint.update).toHaveBeenCalledWith({
+      expect(prismaTx.generatedSprint.update).toHaveBeenCalledWith({
         where: { id: sprintId },
         data: {
           sprintGoal: 'New goal',
           updatedBy: userId,
           updatedAt: expect.any(Date),
         },
+      });
+      // No linked materialized Sprint -> the Sprint record must not be touched.
+      expect(prismaTx.sprint.update).not.toHaveBeenCalled();
+    });
+
+    it('should propagate the sprint goal to the linked materialized Sprint', async () => {
+      const sprintId = 'sprint-id';
+      const linkedSprintId = 'linked-sprint-id';
+      const userId = 'user-id';
+      const mockSprint = {
+        id: sprintId,
+        teamId: 'team-id',
+        name: 'Sprint 1',
+        status: 'PLANNED',
+        sprintGoal: 'New goal',
+        sprintId: linkedSprintId,
+        updatedBy: userId,
+        updatedAt: new Date(),
+      };
+
+      vi.mocked(prisma.generatedSprint.findUnique).mockResolvedValue({
+        id: sprintId,
+        sprintId: linkedSprintId,
+        status: 'PLANNED',
+      } as any);
+      vi.mocked(prismaTx.generatedSprint.update).mockResolvedValue(mockSprint as any);
+      vi.mocked(prismaTx.sprint.update).mockResolvedValue({
+        id: linkedSprintId,
+        sprintGoal: 'New goal',
+      } as any);
+
+      const result = await sprintConfigurationService.updateGeneratedSprint(sprintId, userId, {
+        sprintGoal: 'New goal',
+      });
+
+      expect(result.sprintGoal).toBe('New goal');
+      expect(prismaTx.sprint.update).toHaveBeenCalledWith({
+        where: { id: linkedSprintId },
+        data: { sprintGoal: 'New goal' },
       });
     });
 

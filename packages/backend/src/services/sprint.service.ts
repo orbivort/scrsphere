@@ -878,6 +878,24 @@ class SprintService {
     // Goal is committed AND a non-empty backlog has been saved during Sprint Planning.
     // The backlog and its decomposed tasks are persisted via `saveSprintBacklog`;
     // the start transition merely consumes what was already planned.
+    //
+    // Reconciliation: a materialized Sprint may carry a stale/empty goal if it was created
+    // from a GeneratedSprint before the goal was committed (the goal edit historically only
+    // wrote to the GeneratedSprint). If the linked GeneratedSprint has a goal, adopt it onto
+    // the Sprint before the readiness check so previously-stuck sprints can still start.
+    if (!sprint.sprintGoal?.trim()) {
+      const generatedSprint = await prisma.generatedSprint.findFirst({
+        where: { sprintId: sprint.id },
+        select: { sprintGoal: true },
+      });
+      if (generatedSprint?.sprintGoal?.trim()) {
+        sprint = await prisma.sprint.update({
+          where: { id: sprint.id },
+          data: { sprintGoal: generatedSprint.sprintGoal },
+        });
+      }
+    }
+
     if (!sprint.sprintGoal?.trim()) {
       throw new BadRequestError(requestT('errors:sprint.missingGoal'));
     }
@@ -1277,6 +1295,35 @@ class SprintService {
     // closes the open-endpoint gap without over-restricting.
     if (userId) {
       await this.assertTeamMember(sprint.teamId, userId);
+    }
+
+    // Prerequisite events gate: per the Scrum Guide (2020), the Sprint Review is the
+    // second-to-last event and the Sprint Retrospective concludes the Sprint. A Sprint cannot
+    // be closed until both are completed. This is enforced server-side (fail-fast, outside the
+    // transaction) so a direct API call cannot bypass the frontend checks.
+    const [sprintReview, sprintRetrospective] = await Promise.all([
+      prisma.sprintReview.findUnique({
+        where: { sprintId },
+        select: { id: true, status: true },
+      }),
+      prisma.sprintRetrospective.findUnique({
+        where: { sprintId },
+        select: { id: true, status: true },
+      }),
+    ]);
+
+    const missingPrerequisites: string[] = [];
+    if (sprintReview?.status !== 'completed') {
+      missingPrerequisites.push('Sprint Review');
+    }
+    if (sprintRetrospective?.status !== 'COMPLETED') {
+      missingPrerequisites.push('Sprint Retrospective');
+    }
+
+    if (missingPrerequisites.length > 0) {
+      throw new BadRequestError(
+        `Sprint cannot be completed because the following prerequisite event(s) are not completed: ${missingPrerequisites.join(', ')}. Complete them before closing the sprint.`
+      );
     }
 
     const [sprintBacklogItems, tasks] = await Promise.all([

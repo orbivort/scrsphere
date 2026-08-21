@@ -19,6 +19,7 @@ vi.mock('../../../utils/prisma', () => ({
     },
     generatedSprint: {
       findUnique: vi.fn(),
+      findFirst: vi.fn(),
       update: vi.fn(),
     },
     productGoal: {
@@ -62,6 +63,12 @@ vi.mock('../../../utils/prisma', () => ({
     },
     statusChangeHistory: {
       create: vi.fn(),
+    },
+    sprintReview: {
+      findUnique: vi.fn(),
+    },
+    sprintRetrospective: {
+      findUnique: vi.fn(),
     },
     user: {
       findUnique: vi.fn(),
@@ -594,6 +601,43 @@ describe('SprintService', () => {
         BadRequestError
       );
     });
+
+    it('should reconcile a stale empty sprint goal from the linked generated sprint', async () => {
+      const mockSprint = {
+        id: 'sprint-1',
+        teamId: 'team-1',
+        name: 'Sprint 1',
+        status: 'PLANNED',
+        startDate: new Date(),
+        endDate: new Date(),
+        sprintGoal: null,
+      };
+      const mockReconciledSprint = { ...mockSprint, sprintGoal: 'Adopted Goal' };
+
+      // Materialized Sprint exists but its goal is stale/empty.
+      (prisma.sprint.findUnique as any).mockResolvedValue(mockSprint);
+      // The linked GeneratedSprint carries the committed goal.
+      (prisma.generatedSprint.findFirst as any).mockResolvedValue({
+        sprintGoal: 'Adopted Goal',
+      });
+      (prisma.sprint.update as any).mockResolvedValue(mockReconciledSprint);
+      // No backlog saved -> startSprint should reconcile the goal first, then fail on the
+      // empty backlog rather than the missing goal.
+      (prisma.sprintBacklogItem.findMany as any).mockResolvedValue([]);
+
+      await expect(sprintService.startSprint('sprint-1', 'user-1')).rejects.toThrow(
+        BadRequestError
+      );
+
+      expect(prisma.generatedSprint.findFirst).toHaveBeenCalledWith({
+        where: { sprintId: 'sprint-1' },
+        select: { sprintGoal: true },
+      });
+      expect(prisma.sprint.update).toHaveBeenCalledWith({
+        where: { id: 'sprint-1' },
+        data: { sprintGoal: 'Adopted Goal' },
+      });
+    });
   });
 
   describe('completeSprint', () => {
@@ -608,6 +652,14 @@ describe('SprintService', () => {
 
       (prisma.sprint.findUnique as any).mockResolvedValue(mockSprint);
       (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
+      (prisma.sprintReview.findUnique as any).mockResolvedValue({
+        id: 'review-1',
+        status: 'completed',
+      });
+      (prisma.sprintRetrospective.findUnique as any).mockResolvedValue({
+        id: 'retro-1',
+        status: 'COMPLETED',
+      });
       (prisma.sprintBacklogItem.findMany as any).mockResolvedValue([]);
       (prisma.task.findMany as any).mockResolvedValue([]);
       (prisma.workflow.findFirst as any).mockResolvedValue(null);
@@ -639,6 +691,100 @@ describe('SprintService', () => {
       const result = await sprintService.completeSprint('sprint-1', 'user-1');
 
       expect(result.status).toBe('COMPLETED');
+    });
+
+    it('should throw BadRequestError when the Sprint Review is missing', async () => {
+      const mockSprint = {
+        id: 'sprint-1',
+        teamId: 'team-1',
+        name: 'Sprint 1',
+        status: 'ACTIVE',
+        sprintBacklogItems: [],
+      };
+
+      (prisma.sprint.findUnique as any).mockResolvedValue(mockSprint);
+      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
+      (prisma.sprintReview.findUnique as any).mockResolvedValue(null);
+      (prisma.sprintRetrospective.findUnique as any).mockResolvedValue({
+        id: 'retro-1',
+        status: 'COMPLETED',
+      });
+
+      await expect(sprintService.completeSprint('sprint-1', 'user-1')).rejects.toThrow(
+        BadRequestError
+      );
+    });
+
+    it('should throw BadRequestError when the Sprint Review is not completed', async () => {
+      const mockSprint = {
+        id: 'sprint-1',
+        teamId: 'team-1',
+        name: 'Sprint 1',
+        status: 'ACTIVE',
+        sprintBacklogItems: [],
+      };
+
+      (prisma.sprint.findUnique as any).mockResolvedValue(mockSprint);
+      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
+      (prisma.sprintReview.findUnique as any).mockResolvedValue({
+        id: 'review-1',
+        status: 'in_progress',
+      });
+      (prisma.sprintRetrospective.findUnique as any).mockResolvedValue({
+        id: 'retro-1',
+        status: 'COMPLETED',
+      });
+
+      await expect(sprintService.completeSprint('sprint-1', 'user-1')).rejects.toThrow(
+        BadRequestError
+      );
+    });
+
+    it('should throw BadRequestError when the Sprint Retrospective is missing', async () => {
+      const mockSprint = {
+        id: 'sprint-1',
+        teamId: 'team-1',
+        name: 'Sprint 1',
+        status: 'ACTIVE',
+        sprintBacklogItems: [],
+      };
+
+      (prisma.sprint.findUnique as any).mockResolvedValue(mockSprint);
+      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
+      (prisma.sprintReview.findUnique as any).mockResolvedValue({
+        id: 'review-1',
+        status: 'completed',
+      });
+      (prisma.sprintRetrospective.findUnique as any).mockResolvedValue(null);
+
+      await expect(sprintService.completeSprint('sprint-1', 'user-1')).rejects.toThrow(
+        BadRequestError
+      );
+    });
+
+    it('should throw BadRequestError when the Sprint Retrospective is not completed', async () => {
+      const mockSprint = {
+        id: 'sprint-1',
+        teamId: 'team-1',
+        name: 'Sprint 1',
+        status: 'ACTIVE',
+        sprintBacklogItems: [],
+      };
+
+      (prisma.sprint.findUnique as any).mockResolvedValue(mockSprint);
+      (prisma.teamMember.findFirst as any).mockResolvedValue({ role: 'DEVELOPERS' });
+      (prisma.sprintReview.findUnique as any).mockResolvedValue({
+        id: 'review-1',
+        status: 'completed',
+      });
+      (prisma.sprintRetrospective.findUnique as any).mockResolvedValue({
+        id: 'retro-1',
+        status: 'DRAFT',
+      });
+
+      await expect(sprintService.completeSprint('sprint-1', 'user-1')).rejects.toThrow(
+        BadRequestError
+      );
     });
 
     it('should throw NotFoundError when sprint not found', async () => {
@@ -1847,6 +1993,14 @@ describe('SprintService - Additional Coverage', () => {
       ];
 
       (prisma.sprint.findUnique as any).mockResolvedValue(mockSprint);
+      (prisma.sprintReview.findUnique as any).mockResolvedValue({
+        id: 'review-1',
+        status: 'completed',
+      });
+      (prisma.sprintRetrospective.findUnique as any).mockResolvedValue({
+        id: 'retro-1',
+        status: 'COMPLETED',
+      });
       (prisma.sprintBacklogItem.findMany as any).mockResolvedValue(mockSprint.sprintBacklogItems);
       (prisma.task.findMany as any).mockResolvedValue(mockTasks);
       (prisma.workflow.findFirst as any).mockResolvedValue(mockWorkflow);
@@ -1922,6 +2076,14 @@ describe('SprintService - Additional Coverage', () => {
       ];
 
       (prisma.sprint.findUnique as any).mockResolvedValue(mockSprint);
+      (prisma.sprintReview.findUnique as any).mockResolvedValue({
+        id: 'review-1',
+        status: 'completed',
+      });
+      (prisma.sprintRetrospective.findUnique as any).mockResolvedValue({
+        id: 'retro-1',
+        status: 'COMPLETED',
+      });
       (prisma.sprintBacklogItem.findMany as any).mockResolvedValue(mockSprint.sprintBacklogItems);
       (prisma.task.findMany as any).mockResolvedValue(mockTasks);
       (prisma.workflow.findFirst as any).mockResolvedValue(null);
@@ -1992,6 +2154,14 @@ describe('SprintService - Additional Coverage', () => {
       ];
 
       (prisma.sprint.findUnique as any).mockResolvedValue(mockSprint);
+      (prisma.sprintReview.findUnique as any).mockResolvedValue({
+        id: 'review-1',
+        status: 'completed',
+      });
+      (prisma.sprintRetrospective.findUnique as any).mockResolvedValue({
+        id: 'retro-1',
+        status: 'COMPLETED',
+      });
       (prisma.sprintBacklogItem.findMany as any).mockResolvedValue(mockSprint.sprintBacklogItems);
       (prisma.task.findMany as any).mockResolvedValue(mockTasks);
 

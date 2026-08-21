@@ -2216,7 +2216,6 @@ describe('useTaskMutations Hook', () => {
     onCloseModal: vi.fn(),
     onCloseCompleteSprintModal: vi.fn(),
     onSetCompleteSprintError: vi.fn(),
-    onNavigateToIncrement: vi.fn(),
     showToast: vi.fn(),
   };
 
@@ -2348,32 +2347,6 @@ describe('useTaskMutations Hook', () => {
 
     expect(mockOptions.onSetCompleteSprintError).toHaveBeenCalledWith('Test error message');
     expect(mockOptions.showToast).toHaveBeenCalledWith('error', 'Test error message');
-  });
-
-  it('should call onNavigateToIncrement after completeSprint success timeout', async () => {
-    vi.useFakeTimers();
-    vi.mocked(apiService.completeSprint).mockResolvedValue({} as never);
-    const onNavigateToIncrement = vi.fn();
-
-    const { result } = renderHook(
-      () =>
-        useTaskMutations({
-          ...mockOptions,
-          onNavigateToIncrement,
-        }),
-      { wrapper }
-    );
-
-    await act(async () => {
-      result.current.completeSprintMutation.mutate();
-    });
-
-    act(() => {
-      vi.advanceTimersByTime(1500);
-    });
-
-    expect(onNavigateToIncrement).toHaveBeenCalledWith('sprint-1');
-    vi.useRealTimers();
   });
 });
 

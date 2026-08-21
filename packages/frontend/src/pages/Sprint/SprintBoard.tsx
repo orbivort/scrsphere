@@ -188,6 +188,8 @@ export const SprintBoard: React.FC = () => {
     burndownChartData,
     wipWarnings,
     groupedBySwimlane,
+    isReviewCompleted,
+    isRetrospectiveCompleted,
   } = boardData;
 
   const handleSetFormErrors = useCallback((errors: Record<string, string | undefined>) => {
@@ -219,13 +221,6 @@ export const SprintBoard: React.FC = () => {
     modalDispatch({ type: 'SET_COMPLETE_SPRINT_ERROR', payload: error });
   }, []);
 
-  const handleNavigateToIncrement = useCallback(
-    (sprintId: string) => {
-      void navigate(`/increment/create?sprintId=${sprintId}&fromSprintComplete=true`);
-    },
-    [navigate]
-  );
-
   const showToast = useCallback(
     (type: 'success' | 'error' | 'warning' | 'info', message: string) => {
       switch (type) {
@@ -250,7 +245,6 @@ export const SprintBoard: React.FC = () => {
     onCloseModal: closeModal,
     onCloseCompleteSprintModal: handleCloseCompleteSprintModal,
     onSetCompleteSprintError: handleSetCompleteSprintError,
-    onNavigateToIncrement: handleNavigateToIncrement,
     showToast,
   });
 
@@ -403,12 +397,26 @@ export const SprintBoard: React.FC = () => {
   const outstandingImpedimentsCount = outstandingImpediments.length;
   const hasIncompleteTasks = incompleteTasksCount > 0;
   const hasOutstandingImpediments = outstandingImpedimentsCount > 0;
+  const hasIncompleteReview = !isReviewCompleted;
+  const hasIncompleteRetrospective = !isRetrospectiveCompleted;
 
   const handleProceedToDodVerification = useCallback(() => {
-    if (hasIncompleteTasks || hasOutstandingImpediments) return;
+    if (
+      hasIncompleteTasks ||
+      hasOutstandingImpediments ||
+      hasIncompleteReview ||
+      hasIncompleteRetrospective
+    ) {
+      return;
+    }
     modalDispatch({ type: 'CLOSE_COMPLETE_SPRINT_MODAL' });
     modalDispatch({ type: 'OPEN_DOD_VERIFICATION' });
-  }, [hasIncompleteTasks, hasOutstandingImpediments]);
+  }, [
+    hasIncompleteTasks,
+    hasOutstandingImpediments,
+    hasIncompleteReview,
+    hasIncompleteRetrospective,
+  ]);
 
   const handleDodVerificationConfirm = useCallback(
     async (verifications: { pbiId: string; dodItemId: string; isVerified: boolean }[]) => {
@@ -885,6 +893,8 @@ export const SprintBoard: React.FC = () => {
           incompletePbisCount={incompletePbisCount}
           outstandingImpediments={outstandingImpediments}
           outstandingImpedimentsCount={outstandingImpedimentsCount}
+          isReviewCompleted={isReviewCompleted}
+          isRetrospectiveCompleted={isRetrospectiveCompleted}
           completeSprintError={completeSprintError}
           onClose={handleCloseCompleteSprintModal}
           onProceedToDodVerification={handleProceedToDodVerification}
@@ -895,6 +905,14 @@ export const SprintBoard: React.FC = () => {
           onViewImpediments={() => {
             modalDispatch({ type: 'CLOSE_COMPLETE_SPRINT_MODAL' });
             void navigate('/impediments');
+          }}
+          onViewSprintReview={() => {
+            modalDispatch({ type: 'CLOSE_COMPLETE_SPRINT_MODAL' });
+            void navigate(`/sprint-review/${sprint.id}`);
+          }}
+          onViewRetrospective={() => {
+            modalDispatch({ type: 'CLOSE_COMPLETE_SPRINT_MODAL' });
+            void navigate(`/retrospective/${sprint.id}`);
           }}
           isCompleting={mutations.completeSprintMutation.isPending}
           modalRef={completeSprintModalRef}

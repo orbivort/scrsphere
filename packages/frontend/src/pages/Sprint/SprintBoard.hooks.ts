@@ -8,7 +8,12 @@ import {
 import { useTranslation } from 'react-i18next';
 import { TIME } from '@scrumooth/shared';
 
-import { apiService, definitionService } from '../../services';
+import {
+  apiService,
+  definitionService,
+  sprintReviewService,
+  retrospectiveService,
+} from '../../services';
 import { useAnnounce } from '../../components/LiveAnnouncer';
 import { useMutationErrorHandler } from '../../hooks/useMutationErrorHandler';
 import { queryKeys } from '../../hooks/queryKeys';
@@ -23,6 +28,8 @@ import {
   type DoDChecklistVerification,
   type TaskStatus,
   type Sprint,
+  type SprintReview,
+  type SprintRetrospective,
 } from '../../types';
 
 import type {
@@ -76,6 +83,12 @@ export interface UseSprintBoardDataReturn {
   impediments: Impediment[];
   dodVerifications: DoDChecklistVerification[];
   burndownData: unknown;
+
+  // Sprint Review / Retrospective completion prerequisites
+  sprintReview: SprintReview | null;
+  isReviewCompleted: boolean;
+  sprintRetrospective: SprintRetrospective | null;
+  isRetrospectiveCompleted: boolean;
 
   // Loading states
   isLoading: boolean;
@@ -167,6 +180,20 @@ export const useSprintBoardData = (
     enabled: !!sprint?.id && showDodVerification,
   });
 
+  // Fetch Sprint Review (prerequisite for sprint completion)
+  const { data: sprintReviewsData } = useQuery({
+    queryKey: queryKeys.sprintReview.byTeamAndSprint(teamId, sprint?.id),
+    queryFn: () => sprintReviewService.getSprintReviews(teamId ?? '', sprint?.id ?? ''),
+    enabled: !!sprint?.id && !!teamId,
+  });
+
+  // Fetch Sprint Retrospective (prerequisite for sprint completion)
+  const { data: retrospectiveData } = useQuery({
+    queryKey: queryKeys.retrospective.bySprint(sprint?.id ?? ''),
+    queryFn: () => retrospectiveService.getRetrospectiveBySprintId(sprint?.id ?? ''),
+    enabled: !!sprint?.id,
+  });
+
   // ============================================
   // Extract Raw Data
   // ============================================
@@ -183,6 +210,14 @@ export const useSprintBoardData = (
     dodComplianceData?.data?.pbiDetails.flatMap(
       (detail: { verifications: DoDChecklistVerification[] }) => detail.verifications
     ) ?? [];
+
+  // Sprint Review / Retrospective completion prerequisites.
+  // A missing event record (or a 404) is treated as "not completed".
+  const sprintReview: SprintReview | null =
+    (sprintReviewsData?.data ?? []).find((review) => review.sprintId === sprint?.id) ?? null;
+  const isReviewCompleted = sprintReview?.status === 'completed';
+  const sprintRetrospective: SprintRetrospective | null = retrospectiveData?.data ?? null;
+  const isRetrospectiveCompleted = sprintRetrospective?.status === 'COMPLETED';
 
   // ============================================
   // Derived Computations
@@ -395,6 +430,12 @@ export const useSprintBoardData = (
     impediments,
     dodVerifications,
     burndownData,
+
+    // Sprint Review / Retrospective completion prerequisites
+    sprintReview,
+    isReviewCompleted,
+    sprintRetrospective,
+    isRetrospectiveCompleted,
 
     // Loading states
     isLoading,
@@ -1079,7 +1120,6 @@ export interface UseTaskMutationsOptions {
   onCloseModal: () => void;
   onCloseCompleteSprintModal: () => void;
   onSetCompleteSprintError: (error: string | null) => void;
-  onNavigateToIncrement: (sprintId: string) => void;
   showToast: (type: 'success' | 'error' | 'warning' | 'info', message: string) => void;
 }
 
@@ -1103,7 +1143,6 @@ export const useTaskMutations = (options: UseTaskMutationsOptions): UseTaskMutat
     onCloseModal,
     onCloseCompleteSprintModal,
     onSetCompleteSprintError,
-    onNavigateToIncrement,
     showToast,
   } = options;
 
@@ -1202,11 +1241,6 @@ export const useTaskMutations = (options: UseTaskMutationsOptions): UseTaskMutat
       void queryClient.invalidateQueries({ queryKey: queryKeys.sprintTasks.all });
       onCloseCompleteSprintModal();
       showToast('success', t('board.sprintCompleted'));
-      setTimeout(() => {
-        if (sprintId) {
-          onNavigateToIncrement(sprintId);
-        }
-      }, 1500);
     },
     onError: (error: unknown) => {
       const message = handleMutationError(error, {
