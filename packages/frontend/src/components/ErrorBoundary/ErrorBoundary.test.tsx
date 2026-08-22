@@ -1,9 +1,11 @@
 import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
-import { screen, fireEvent, renderWithProviders } from '@/test-utils';
+import { createRef } from 'react';
+import { screen, fireEvent, renderWithProviders, act } from '@/test-utils';
 
 import { initTestI18n, i18nT } from '@/test-utils';
 import { ErrorBoundary } from './ErrorBoundary';
 import { APIErrorBoundary } from './APIErrorBoundary';
+import { getTestI18nInstance } from '@/i18n/testConfig';
 
 const ThrowError: React.FC<{ error?: Error }> = ({ error }) => {
   if (error) {
@@ -34,6 +36,30 @@ vi.mock('./ErrorBoundary.module.css', () => ({
     'api-error-button': 'api-error-button',
   },
 }));
+
+// react-i18next's withTranslation attaches the underlying class to the
+// `WrappedComponent` static, letting tests exercise instance methods that are
+// not wired up to any UI (e.g. handleReset / handleRetry at the retry limit).
+interface ErrorBoundaryClassProps {
+  children?: React.ReactNode;
+  t: (key: string, options?: Record<string, string>) => string;
+  i18n: object;
+  tReady: boolean;
+  maxRetries?: number;
+}
+
+interface ErrorBoundaryInstance {
+  handleReset: () => void;
+  handleRetry: () => void;
+}
+
+const ErrorBoundaryClass = (
+  ErrorBoundary as unknown as {
+    WrappedComponent: React.ForwardRefExoticComponent<
+      ErrorBoundaryClassProps & React.RefAttributes<ErrorBoundaryInstance>
+    >;
+  }
+).WrappedComponent;
 
 describe('ErrorBoundary Component', () => {
   beforeAll(async () => {
@@ -162,6 +188,16 @@ describe('ErrorBoundary Component', () => {
 
       expect(screen.getByText(i18nT('errorBoundary.validationError'))).toBeInTheDocument();
     });
+
+    it('should display i18n error message for i18n resource failures', () => {
+      renderWithProviders(
+        <ErrorBoundary>
+          <ThrowError error={new Error('Failed to load i18n locale resources')} />
+        </ErrorBoundary>
+      );
+
+      expect(screen.getByText(i18nT('errorBoundary.i18nError'))).toBeInTheDocument();
+    });
   });
 
   describe('User Interaction Tests', () => {
@@ -183,6 +219,135 @@ describe('ErrorBoundary Component', () => {
       );
 
       expect(screen.queryByText(i18nT('errorBoundary.tryAgain'))).not.toBeInTheDocument();
+    });
+
+    it('should reset error state and render children again when Try Again is clicked', () => {
+      const { container, rerender } = renderWithProviders(
+        <ErrorBoundary>
+          <ThrowError error={new Error('Test error')} />
+        </ErrorBoundary>
+      );
+
+      expect(screen.getByText(i18nT('errorBoundary.tryAgain'))).toBeInTheDocument();
+
+      // Swap in non-throwing children while still in the error state
+      rerender(
+        <ErrorBoundary>
+          <div>Recovered content</div>
+        </ErrorBoundary>
+      );
+
+      fireEvent.click(screen.getByText(i18nT('errorBoundary.tryAgain')));
+
+      expect(container.querySelector('.error-boundary')).toBeNull();
+      expect(screen.getByText('Recovered content')).toBeInTheDocument();
+    });
+
+    it('should reload the page when Reload Page is clicked', () => {
+      const reloadMock = vi.fn();
+      vi.stubGlobal('location', { ...window.location, reload: reloadMock });
+
+      renderWithProviders(
+        <ErrorBoundary>
+          <ThrowError error={new Error('Test error')} />
+        </ErrorBoundary>
+      );
+
+      fireEvent.click(screen.getByText(i18nT('errorBoundary.reloadPage')));
+      expect(reloadMock).toHaveBeenCalled();
+
+      vi.unstubAllGlobals();
+    });
+  });
+
+  describe('safeT fallback and error handling', () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    const mockGetFixedT = (tImpl: (key: string) => string) => {
+      const i18nInstance = getTestI18nInstance();
+      // i18next's getFixedT has overloaded types; casting through `never` keeps
+      // the mock typed without reaching for `any`.
+      vi.spyOn(i18nInstance, 'getFixedT').mockReturnValue(tImpl as never);
+    };
+
+    it('uses hardcoded English when t() returns the i18n key unchanged', () => {
+      mockGetFixedT((key: string) => key);
+
+      renderWithProviders(
+        <ErrorBoundary>
+          <ThrowError error={new Error('Test error')} />
+        </ErrorBoundary>
+      );
+
+      // FALLBACK_TEXT.runtimeError, distinct from the translated runtime message
+      expect(screen.getByText('An unexpected error occurred.')).toBeInTheDocument();
+    });
+
+    it('uses hardcoded English when t() throws', () => {
+      mockGetFixedT(() => {
+        throw new Error('i18n unavailable');
+      });
+
+      renderWithProviders(
+        <ErrorBoundary>
+          <ThrowError error={new Error('Test error')} />
+        </ErrorBoundary>
+      );
+
+      expect(screen.getByText('An unexpected error occurred.')).toBeInTheDocument();
+    });
+  });
+
+  describe('instance method coverage (direct class access)', () => {
+    it('handleReset clears the error state and renders children again', () => {
+      const instanceRef = createRef<ErrorBoundaryInstance>();
+      const { container, rerender } = renderWithProviders(
+        <ErrorBoundaryClass ref={instanceRef} t={() => ''} i18n={{}} tReady>
+          <ThrowError error={new Error('Test error')} />
+        </ErrorBoundaryClass>
+      );
+
+      expect(container.querySelector('.error-boundary')).toBeInTheDocument();
+
+      // Swap in non-throwing children while still in the error state
+      rerender(
+        <ErrorBoundaryClass ref={instanceRef} t={() => ''} i18n={{}} tReady>
+          <div>Recovered content</div>
+        </ErrorBoundaryClass>
+      );
+
+      act(() => {
+        instanceRef.current?.handleReset();
+      });
+
+      expect(container.querySelector('.error-boundary')).toBeNull();
+      expect(screen.getByText('Recovered content')).toBeInTheDocument();
+    });
+
+    it('handleRetry is a no-op once the retry limit is reached', () => {
+      const instanceRef = createRef<ErrorBoundaryInstance>();
+      const { container, rerender } = renderWithProviders(
+        <ErrorBoundaryClass ref={instanceRef} t={() => ''} i18n={{}} tReady maxRetries={0}>
+          <ThrowError error={new Error('Test error')} />
+        </ErrorBoundaryClass>
+      );
+
+      expect(container.querySelector('.error-boundary')).toBeInTheDocument();
+
+      rerender(
+        <ErrorBoundaryClass ref={instanceRef} t={() => ''} i18n={{}} tReady maxRetries={0}>
+          <div>Recovered content</div>
+        </ErrorBoundaryClass>
+      );
+
+      // retryCount (0) is not < maxRetries (0), so the state is not reset
+      act(() => {
+        instanceRef.current?.handleRetry();
+      });
+
+      expect(container.querySelector('.error-boundary')).toBeInTheDocument();
     });
   });
 });

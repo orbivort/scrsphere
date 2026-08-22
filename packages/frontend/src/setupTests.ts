@@ -37,19 +37,28 @@ Object.defineProperty(globalThis, 'import.meta', {
   configurable: true,
 });
 
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: (query: string) => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: () => {},
-    removeListener: () => {},
-    addEventListener: () => {},
-    removeEventListener: () => {},
-    dispatchEvent: () => false,
-  }),
-});
+// Window-dependent mocks are skipped in non-DOM (e.g. node/SSR) test environments
+if (typeof window !== 'undefined') {
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: (query: string) => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: () => {},
+      removeListener: () => {},
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      dispatchEvent: () => false,
+    }),
+  });
+
+  // Mock window.confirm
+  Object.defineProperty(window, 'confirm', {
+    writable: true,
+    value: vi.fn(() => true),
+  });
+}
 
 class MockResizeObserver {
   observe() {}
@@ -67,12 +76,6 @@ class MockIntersectionObserver {
 
 globalThis.IntersectionObserver =
   MockIntersectionObserver as unknown as typeof IntersectionObserver;
-
-// Mock window.confirm
-Object.defineProperty(window, 'confirm', {
-  writable: true,
-  value: vi.fn(() => true),
-});
 
 // Create live region element for screen reader announcements
 const createLiveRegion = () => {

@@ -7,6 +7,8 @@ import {
   redactSensitiveData,
 } from './errorReporter';
 import type { ErrorReporter } from './errorReporter';
+import { logger } from './logger';
+import { useAuthStore, useTeamStore } from '../store';
 
 const mockEnv = (env: Record<string, string | boolean | undefined>) => {
   vi.stubGlobal('import.meta', {
@@ -648,5 +650,152 @@ describe('CompositeErrorReporter', () => {
       expect(mockReporter1.captureException).toHaveBeenCalled();
       expect(mockReporter2.captureException).toHaveBeenCalled();
     });
+  });
+});
+
+describe('context enrichment from stores', () => {
+  let reporter: ConsoleErrorReporter;
+  let errorSpy: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    reporter = new ConsoleErrorReporter();
+    errorSpy = vi.spyOn(logger, 'error').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    errorSpy.mockRestore();
+    useAuthStore.setState({ user: null });
+    useTeamStore.setState({ currentTeamId: null });
+  });
+
+  const testUser = {
+    id: 'user-123',
+    email: 'test@example.com',
+    firstName: 'Test',
+    lastName: 'User',
+    createdAt: '2024-01-01T00:00:00.000Z',
+    updatedAt: '2024-01-01T00:00:00.000Z',
+  };
+
+  it('should enrich context with userId from the auth store', () => {
+    useAuthStore.setState({ user: testUser });
+
+    reporter.captureException(new Error('Test'));
+
+    expect(errorSpy).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ userId: 'user-123' }),
+      expect.anything()
+    );
+  });
+
+  it('should enrich context with teamId from the team store', () => {
+    useTeamStore.setState({ currentTeamId: 'team-123' });
+
+    reporter.captureException(new Error('Test'));
+
+    expect(errorSpy).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ teamId: 'team-123' }),
+      expect.anything()
+    );
+  });
+
+  it('should not override an explicit userId from the provided context', () => {
+    useAuthStore.setState({ user: testUser });
+
+    reporter.captureException(new Error('Test'), { userId: 'explicit-user' });
+
+    expect(errorSpy).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ userId: 'explicit-user' }),
+      expect.anything()
+    );
+  });
+});
+
+describe('SentryErrorReporter with configured DSN', () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it('should initialize Sentry when a DSN is configured', () => {
+    vi.stubEnv('VITE_SENTRY_DSN', 'https://test@sentry.io/123');
+    const infoSpy = vi.spyOn(logger, 'info').mockImplementation(() => {});
+
+    new SentryErrorReporter();
+
+    expect(infoSpy).toHaveBeenCalledWith('[SentryErrorReporter] Initialized with DSN');
+    infoSpy.mockRestore();
+  });
+
+  it('should capture exception for Sentry when initialized', () => {
+    vi.stubEnv('VITE_SENTRY_DSN', 'https://test@sentry.io/123');
+    const debugSpy = vi.spyOn(logger, 'debug').mockImplementation(() => {});
+
+    const reporter = new SentryErrorReporter();
+    reporter.captureException(new Error('Test'));
+
+    expect(debugSpy).toHaveBeenCalledWith(
+      '[SentryErrorReporter] Exception captured for Sentry',
+      expect.anything(),
+      expect.anything()
+    );
+    debugSpy.mockRestore();
+  });
+
+  it('should capture message for Sentry when initialized', () => {
+    vi.stubEnv('VITE_SENTRY_DSN', 'https://test@sentry.io/123');
+    const debugSpy = vi.spyOn(logger, 'debug').mockImplementation(() => {});
+
+    const reporter = new SentryErrorReporter();
+    reporter.captureMessage('Test message');
+
+    expect(debugSpy).toHaveBeenCalledWith(
+      '[SentryErrorReporter] Message captured for Sentry',
+      expect.anything(),
+      expect.anything()
+    );
+    debugSpy.mockRestore();
+  });
+
+  it('should not throw on setUser/setContext/clearContext when initialized', () => {
+    vi.stubEnv('VITE_SENTRY_DSN', 'https://test@sentry.io/123');
+
+    const reporter = new SentryErrorReporter();
+
+    expect(() => {
+      reporter.setUser({ id: 'user-1', email: 'test@example.com' });
+      reporter.setContext('custom', { key: 'value' });
+      reporter.clearContext('custom');
+    }).not.toThrow();
+  });
+});
+
+describe('createErrorReporter environment branches', () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it('should create a ConsoleErrorReporter in production without a Sentry DSN', async () => {
+    vi.resetModules();
+    vi.stubEnv('DEV', false);
+    vi.stubEnv('PROD', true);
+    vi.stubEnv('VITE_SENTRY_DSN', undefined);
+
+    const mod = await import('./errorReporter');
+
+    expect(mod.errorReporter).toBeInstanceOf(mod.ConsoleErrorReporter);
+  });
+
+  it('should create a CompositeErrorReporter in production with a Sentry DSN', async () => {
+    vi.resetModules();
+    vi.stubEnv('DEV', false);
+    vi.stubEnv('PROD', true);
+    vi.stubEnv('VITE_SENTRY_DSN', 'https://test@sentry.io/123');
+
+    const mod = await import('./errorReporter');
+
+    expect(mod.errorReporter).toBeInstanceOf(mod.CompositeErrorReporter);
   });
 });

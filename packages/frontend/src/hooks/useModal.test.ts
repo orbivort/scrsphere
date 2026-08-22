@@ -110,6 +110,27 @@ describe('useModal', () => {
       document.body.removeChild(lastButton);
     });
 
+    it('should not trap focus when Shift+Tab is pressed on a non-first element', () => {
+      const firstButton = document.createElement('button');
+      const lastButton = document.createElement('button');
+      document.body.appendChild(firstButton);
+      document.body.appendChild(lastButton);
+
+      renderHook(() => useModal({ isOpen: true, onClose: mockOnClose }));
+
+      lastButton.focus();
+
+      const tabEvent = new KeyboardEvent('keydown', { key: 'Tab' });
+      Object.defineProperty(tabEvent, 'shiftKey', { value: true });
+      const preventDefaultSpy = vi.spyOn(tabEvent, 'preventDefault');
+      document.dispatchEvent(tabEvent);
+
+      expect(preventDefaultSpy).not.toHaveBeenCalled();
+
+      document.body.removeChild(firstButton);
+      document.body.removeChild(lastButton);
+    });
+
     it('should not trap focus when modal is closed', () => {
       const firstButton = document.createElement('button');
       const lastButton = document.createElement('button');

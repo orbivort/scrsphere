@@ -1230,4 +1230,227 @@ describe('SessionManager', () => {
       setItemSpy.mockRestore();
     });
   });
+
+  describe('handleUserActivity branch coverage', () => {
+    // Extract the bound mousedown handler by spying on addEventListener BEFORE
+    // initialize() registers it (spying after initialize yields no calls).
+    const captureActivityHandler = (): (() => void) | undefined => {
+      const addSpy = vi.spyOn(document, 'addEventListener');
+      sessionManager.initialize(testConfig, mockHandlers);
+      return addSpy.mock.calls.find(([event]) => event === 'mousedown')?.[1] as
+        (() => void) | undefined;
+    };
+
+    // The activity throttle timer is private and is NOT cleared by destroy(),
+    // so reset it (along with the idle-reset timestamp) before each test to
+    // keep tests independent.
+    beforeEach(() => {
+      const internals = sessionManager as unknown as {
+        activityThrottleTimer: ReturnType<typeof setTimeout> | null;
+        lastIdleResetTime: number;
+      };
+      internals.activityThrottleTimer = null;
+      internals.lastIdleResetTime = 0;
+    });
+
+    it('should no-op when activity fires after destroy (not initialized)', () => {
+      const addSpy = vi.spyOn(document, 'addEventListener');
+      sessionManager.initialize(testConfig, mockHandlers);
+      const handler = addSpy.mock.calls.find(([event]) => event === 'mousedown')?.[1] as
+        (() => void) | undefined;
+
+      sessionManager.destroy();
+
+      expect(() => handler?.()).not.toThrow();
+      expect(mockHandlers.onActivityUpdate).not.toHaveBeenCalled();
+    });
+
+    it('should return early without resetting timers when warning is shown', () => {
+      const handler = captureActivityHandler();
+
+      vi.advanceTimersByTime(120000);
+      expect(mockHandlers.onWarning).toHaveBeenCalledTimes(1);
+
+      handler?.();
+      expect(mockHandlers.onActivityUpdate).not.toHaveBeenCalled();
+    });
+
+    it('should throttle idle resets within the 5s reset throttle window', () => {
+      const mockNotifier = vi.fn().mockResolvedValue(undefined);
+      sessionManager.setActivityNotifier(mockNotifier);
+
+      const handler = captureActivityHandler();
+      vi.advanceTimersByTime(10000);
+
+      handler?.();
+      expect(mockNotifier).toHaveBeenCalledTimes(1);
+      const activityCalls = mockHandlers.onActivityUpdate.mock.calls.length;
+
+      // Immediate second dispatch falls inside the 5s idle-reset throttle
+      handler?.();
+      expect(mockNotifier).toHaveBeenCalledTimes(1);
+      expect(mockHandlers.onActivityUpdate).toHaveBeenCalledTimes(activityCalls);
+    });
+
+    it('should skip server notification while the activity throttle timer is active', () => {
+      const mockNotifier = vi.fn().mockResolvedValue(undefined);
+      sessionManager.setActivityNotifier(mockNotifier);
+
+      const handler = captureActivityHandler();
+      vi.advanceTimersByTime(10000);
+
+      handler?.();
+      expect(mockNotifier).toHaveBeenCalledTimes(1);
+
+      // Past the 5s idle-reset throttle but still within the 60s activity throttle
+      vi.advanceTimersByTime(6000);
+      handler?.();
+      expect(mockNotifier).toHaveBeenCalledTimes(1);
+    });
+
+    it('should notify again after the activity throttle window elapses', () => {
+      const mockNotifier = vi.fn().mockResolvedValue(undefined);
+      sessionManager.setActivityNotifier(mockNotifier);
+
+      const handler = captureActivityHandler();
+      vi.advanceTimersByTime(10000);
+
+      handler?.();
+      expect(mockNotifier).toHaveBeenCalledTimes(1);
+
+      vi.advanceTimersByTime(60000);
+      vi.advanceTimersByTime(6000);
+      handler?.();
+      expect(mockNotifier).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('checkForSessionUpdate branch coverage', () => {
+    it('should adopt a newer stored activity timestamp on visibility change', () => {
+      sessionManager.initialize(testConfig, mockHandlers);
+
+      const newerActivity = Date.now() + 10000;
+      localStorage.setItem(STORAGE_KEY_LAST_ACTIVITY, newerActivity.toString());
+
+      Object.defineProperty(document, 'visibilityState', {
+        value: 'visible',
+        writable: true,
+      });
+
+      document.dispatchEvent(new Event('visibilitychange'));
+
+      expect(sessionManager.getTimeUntilTimeout()).toBeGreaterThan(180000);
+    });
+  });
+
+  describe('handleTimeout and notifyServerOfActivity branch coverage', () => {
+    type SessionManagerInternals = {
+      activityNotifier: (() => Promise<void>) | null;
+      handleTimeout: () => void;
+      notifyServerOfActivity: () => Promise<void>;
+    };
+
+    const internals = (): SessionManagerInternals =>
+      sessionManager as unknown as SessionManagerInternals;
+
+    it('should no-op handleTimeout when not initialized', () => {
+      expect(() => internals().handleTimeout()).not.toThrow();
+    });
+
+    it('should reschedule the idle timer when time still remains on timeout', () => {
+      sessionManager.initialize(testConfig, mockHandlers);
+
+      expect(sessionManager.getTimeUntilTimeout()).toBeGreaterThan(0);
+      expect(() => internals().handleTimeout()).not.toThrow();
+      expect(mockHandlers.onTimeout).not.toHaveBeenCalled();
+    });
+
+    it('should no-op notifyServerOfActivity when no notifier is registered', async () => {
+      internals().activityNotifier = null;
+
+      await expect(internals().notifyServerOfActivity()).resolves.toBeUndefined();
+    });
+
+    it('should invoke the registered notifier successfully', async () => {
+      const mockNotifier = vi.fn().mockResolvedValue(undefined);
+      sessionManager.setActivityNotifier(mockNotifier);
+
+      await internals().notifyServerOfActivity();
+      expect(mockNotifier).toHaveBeenCalledTimes(1);
+    });
+
+    it('should swallow notifier errors', async () => {
+      const mockNotifier = vi.fn().mockRejectedValue(new Error('Network error'));
+      sessionManager.setActivityNotifier(mockNotifier);
+      const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+      await expect(internals().notifyServerOfActivity()).resolves.toBeUndefined();
+      expect(mockNotifier).toHaveBeenCalledTimes(1);
+      expect(errorSpy).toHaveBeenCalled();
+
+      errorSpy.mockRestore();
+    });
+  });
+
+  describe('remaining branch coverage', () => {
+    type SessionManagerInternals = {
+      sessionStartTime: number | null;
+      showWarning: () => void;
+      timerGeneration: number;
+    };
+
+    const internals = (): SessionManagerInternals =>
+      sessionManager as unknown as SessionManagerInternals;
+
+    it('should return 0 session age before any session starts', () => {
+      internals().sessionStartTime = null;
+      expect(sessionManager.getSessionAge()).toBe(0);
+    });
+
+    it('should handle missing stored config during session update', () => {
+      sessionManager.initialize(testConfig, mockHandlers);
+      localStorage.removeItem(STORAGE_KEY_SESSION_CONFIG);
+
+      Object.defineProperty(document, 'visibilityState', {
+        value: 'visible',
+        writable: true,
+      });
+
+      expect(() => document.dispatchEvent(new Event('visibilitychange'))).not.toThrow();
+    });
+
+    it('should handle missing stored activity during session update', () => {
+      sessionManager.initialize(testConfig, mockHandlers);
+      localStorage.removeItem(STORAGE_KEY_LAST_ACTIVITY);
+
+      Object.defineProperty(document, 'visibilityState', {
+        value: 'visible',
+        writable: true,
+      });
+
+      expect(() => document.dispatchEvent(new Event('visibilitychange'))).not.toThrow();
+    });
+
+    it('should skip stale idle and warning timer callbacks after generation bump', () => {
+      sessionManager.initialize(testConfig, mockHandlers);
+
+      // Simulate a generation bump without clearing the pending timers
+      internals().timerGeneration = 999;
+
+      vi.advanceTimersByTime(180000);
+
+      expect(mockHandlers.onWarning).not.toHaveBeenCalled();
+      expect(mockHandlers.onTimeout).not.toHaveBeenCalled();
+    });
+
+    it('should no-op showWarning when the warning is already shown', () => {
+      sessionManager.initialize(testConfig, mockHandlers);
+
+      vi.advanceTimersByTime(120000);
+      expect(mockHandlers.onWarning).toHaveBeenCalledTimes(1);
+
+      internals().showWarning();
+      expect(mockHandlers.onWarning).toHaveBeenCalledTimes(1);
+    });
+  });
 });

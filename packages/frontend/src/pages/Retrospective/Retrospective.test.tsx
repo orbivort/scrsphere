@@ -48,12 +48,14 @@ vi.mock('../../services', () => ({
 }));
 
 const mockNavigate = vi.fn();
+// Mutable params so tests can exercise the missing-sprintId guard path
+let mockUseParams: Record<string, string | undefined> = { sprintId: 'sprint-1' };
 vi.mock('react-router', async () => {
   const actual = await vi.importActual('react-router');
   return {
     ...actual,
     useNavigate: () => mockNavigate,
-    useParams: () => ({ sprintId: 'sprint-1' }),
+    useParams: () => mockUseParams,
   };
 });
 
@@ -218,6 +220,7 @@ const mockSprintData = {
 describe('Retrospective Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockUseParams = { sprintId: 'sprint-1' };
     (useTeamStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
       currentTeam: { id: 'team-1' },
     });

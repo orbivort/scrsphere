@@ -1,11 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook, waitFor, act } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 
 import { useBacklogData } from './useBacklogData';
 import { apiService } from '../../../services';
 import { ItemStatus, MoSCoWPriority } from '../../../types';
+import type { ProductBacklogItem, PaginatedResponse } from '../../../types';
 import type { FilterState } from '../types/backlog.types';
 
 vi.mock('../../../services', () => ({
@@ -579,6 +580,157 @@ describe('useBacklogData', () => {
       });
 
       expect(result.current.backlogData).toBeUndefined();
+    });
+  });
+
+  describe('Pagination & Auto-Loading', () => {
+    const multiPageBacklogResponse = (): PaginatedResponse<ProductBacklogItem> => ({
+      success: true,
+      data: [createMockBacklogItem()],
+      pagination: { page: 1, limit: 100, totalPages: 2, total: 1 },
+    });
+
+    it('should fetch the next page when hasNextPage is true and not already fetching', async () => {
+      vi.mocked(apiService.getProductBacklog).mockResolvedValue(multiPageBacklogResponse());
+      vi.mocked(apiService.getProductGoals).mockResolvedValue({ success: true, data: [] });
+
+      const { result } = renderHook(() => useBacklogData('team-1', defaultFilters), { wrapper });
+
+      await waitFor(() => {
+        expect(result.current.hasNextPage).toBe(true);
+      });
+      expect(result.current.isFetchingNextPage).toBe(false);
+
+      act(() => {
+        result.current.fetchNextPage();
+      });
+
+      await waitFor(() => {
+        expect(apiService.getProductBacklog).toHaveBeenCalledWith(
+          'team-1',
+          expect.objectContaining({ page: 2 })
+        );
+      });
+    });
+
+    it('should not fetch the next page when hasNextPage is false', async () => {
+      vi.mocked(apiService.getProductBacklog).mockResolvedValue({
+        success: true,
+        data: [createMockBacklogItem()],
+        pagination: { page: 1, limit: 100, totalPages: 1, total: 1 },
+      });
+      vi.mocked(apiService.getProductGoals).mockResolvedValue({ success: true, data: [] });
+
+      const { result } = renderHook(() => useBacklogData('team-1', defaultFilters), { wrapper });
+
+      await waitFor(() => {
+        expect(result.current.hasNextPage).toBe(false);
+      });
+
+      act(() => {
+        result.current.fetchNextPage();
+      });
+
+      expect(apiService.getProductBacklog).toHaveBeenCalledTimes(1);
+      expect(apiService.getProductBacklog).not.toHaveBeenCalledWith(
+        'team-1',
+        expect.objectContaining({ page: 2 })
+      );
+    });
+
+    it('should auto-load the next page when a search filter is active and more pages exist', async () => {
+      let resolveSecondPage: ((value: PaginatedResponse<ProductBacklogItem>) => void) | undefined;
+      const secondPagePromise = new Promise<PaginatedResponse<ProductBacklogItem>>((resolve) => {
+        resolveSecondPage = resolve;
+      });
+
+      vi.mocked(apiService.getProductBacklog).mockImplementation((_teamId, params) => {
+        if (params?.page === 2) {
+          return secondPagePromise;
+        }
+        return Promise.resolve(multiPageBacklogResponse());
+      });
+      vi.mocked(apiService.getProductGoals).mockResolvedValue({ success: true, data: [] });
+
+      const filters: FilterState = { status: [], search: 'test' };
+      const { result } = renderHook(() => useBacklogData('team-1', filters), { wrapper });
+
+      await waitFor(() => {
+        expect(apiService.getProductBacklog).toHaveBeenCalledWith(
+          'team-1',
+          expect.objectContaining({ page: 2 })
+        );
+      });
+
+      await waitFor(() => {
+        expect(result.current.isAutoLoading).toBe(true);
+      });
+
+      await act(async () => {
+        resolveSecondPage?.({
+          success: true,
+          data: [],
+          pagination: { page: 2, limit: 100, totalPages: 2, total: 1 },
+        });
+      });
+
+      await waitFor(() => {
+        expect(result.current.isAutoLoading).toBe(false);
+      });
+    });
+
+    it('should not auto-load the next page when no search filter is provided', async () => {
+      vi.mocked(apiService.getProductBacklog).mockResolvedValue(multiPageBacklogResponse());
+      vi.mocked(apiService.getProductGoals).mockResolvedValue({ success: true, data: [] });
+
+      const { result } = renderHook(() => useBacklogData('team-1', defaultFilters), { wrapper });
+
+      await waitFor(() => {
+        expect(result.current.hasNextPage).toBe(true);
+      });
+
+      expect(apiService.getProductBacklog).toHaveBeenCalledTimes(1);
+      expect(apiService.getProductBacklog).not.toHaveBeenCalledWith(
+        'team-1',
+        expect.objectContaining({ page: 2 })
+      );
+    });
+
+    it('should treat items without a description as not matching the search description', async () => {
+      const activeGoal = createMockGoal({ id: 'goal-1' });
+      const itemWithDescription = createMockBacklogItem({
+        id: 'pbi-1',
+        goalId: 'goal-1',
+        title: 'Dashboard UI',
+        description: 'A widget for the dashboard',
+        labels: ['ui'],
+      });
+      const itemWithoutDescription = createMockBacklogItem({
+        id: 'pbi-2',
+        goalId: 'goal-1',
+        title: 'Profile Page',
+        description: undefined,
+        labels: ['ui'],
+      });
+
+      vi.mocked(apiService.getProductBacklog).mockResolvedValue({
+        success: true,
+        data: [itemWithDescription, itemWithoutDescription],
+        pagination: { page: 1, limit: 100, totalPages: 1, total: 2 },
+      });
+      vi.mocked(apiService.getProductGoals).mockResolvedValue({
+        success: true,
+        data: [activeGoal],
+      });
+
+      const filters: FilterState = { status: [], search: 'widget' };
+      const { result } = renderHook(() => useBacklogData('team-1', filters), { wrapper });
+
+      await waitFor(() => {
+        expect(result.current.filteredItems.length).toBe(1);
+      });
+
+      expect(result.current.filteredItems[0]?.id).toBe('pbi-1');
     });
   });
 });

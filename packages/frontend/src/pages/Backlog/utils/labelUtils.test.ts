@@ -122,6 +122,16 @@ describe('labelUtils', () => {
         const result = validateLabels('  frontend  ,  backend  ');
         expect(result).toEqual([]);
       });
+
+      it('should not report empty-label errors for whitespace-only segments', () => {
+        const result = validateLabels('frontend,  ,backend');
+        expect(result).not.toContain('Remove empty labels between commas.');
+      });
+
+      it('should not report extra-space errors because labels are pre-trimmed', () => {
+        const result = validateLabels('  frontend  , backend ');
+        expect(result).not.toContain('has extra spaces');
+      });
     });
   });
 });

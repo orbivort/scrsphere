@@ -546,6 +546,27 @@ describe('StatusHistorySection Component', () => {
       });
     });
 
+    it('translates mapped change reasons using i18n keys', async () => {
+      const itemWithMappedReason = {
+        ...mockHistoryItem,
+        changeReason: 'Backlog item status updated',
+      };
+
+      vi.mocked(apiService.getStatusChangeHistory).mockResolvedValue({
+        data: [itemWithMappedReason],
+        pagination: { total: 1, limit: 20, offset: 0 },
+      });
+
+      renderWithProviders(<StatusHistorySection {...defaultProps} />);
+
+      const button = screen.getByRole('button', { name: /status history/i });
+      await userEvent.click(button);
+
+      await waitFor(() => {
+        expect(screen.getByText('Backlog item status updated')).toBeInTheDocument();
+      });
+    });
+
     it('renders change notes', async () => {
       vi.mocked(apiService.getStatusChangeHistory).mockResolvedValue({
         data: [mockHistoryItem],
@@ -787,6 +808,59 @@ describe('StatusHistorySection Component', () => {
       await waitFor(() => {
         const dot = container.querySelector('.timeline-dot');
         expect(dot).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Status Name Mapping Tests', () => {
+    it('uses statusNameMap to translate status names', async () => {
+      const nameMap = {
+        NEW: 'Brand New',
+        IN_PROGRESS: 'Actively Working',
+      };
+
+      // Use raw backend state names (no displayName) so the map keys match
+      const itemWithRawStateNames = {
+        ...mockHistoryItem,
+        fromState: { id: 'state-1', name: 'NEW' },
+        toState: { id: 'state-2', name: 'IN_PROGRESS' },
+      };
+
+      vi.mocked(apiService.getStatusChangeHistory).mockResolvedValue({
+        data: [itemWithRawStateNames],
+        pagination: { total: 1, limit: 20, offset: 0 },
+      });
+
+      renderWithProviders(<StatusHistorySection {...defaultProps} statusNameMap={nameMap} />);
+
+      const button = screen.getByRole('button', { name: /status history/i });
+      await userEvent.click(button);
+
+      await waitFor(() => {
+        expect(screen.getByText('Brand New')).toBeInTheDocument();
+        expect(screen.getByText('Actively Working')).toBeInTheDocument();
+      });
+    });
+
+    it('falls back to i18n status keys for statuses missing from statusNameMap', async () => {
+      const nameMap = {
+        NEW: 'Brand New',
+      };
+
+      vi.mocked(apiService.getStatusChangeHistory).mockResolvedValue({
+        data: [mockHistoryItem],
+        pagination: { total: 1, limit: 20, offset: 0 },
+      });
+
+      renderWithProviders(<StatusHistorySection {...defaultProps} statusNameMap={nameMap} />);
+
+      const button = screen.getByRole('button', { name: /status history/i });
+      await userEvent.click(button);
+
+      await waitFor(() => {
+        expect(screen.getByText('Brand New')).toBeInTheDocument();
+        // IN_PROGRESS is not in the map, so it falls back to the original name
+        expect(screen.getByText('In Progress')).toBeInTheDocument();
       });
     });
   });
