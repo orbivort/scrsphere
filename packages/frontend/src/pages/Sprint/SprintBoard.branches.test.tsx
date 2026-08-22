@@ -8,7 +8,6 @@ import {
   createMockSprint,
   createMockBacklogItem,
   createMockTeamMember,
-  createMockDoDItem,
   createMockImpediment,
 } from '../../__mocks__/mockData';
 import { TaskStatus, type Task, type Sprint, ImpedimentStatus } from '../../types';
@@ -91,11 +90,6 @@ const mockSprintItems = [
   createMockBacklogItem({ id: 'pbi-2', title: 'PBI 2' }),
 ];
 
-const mockDoDItems = [
-  createMockDoDItem({ id: 'dod-1', description: 'Code reviewed' }),
-  createMockDoDItem({ id: 'dod-2', description: 'Tests passed' }),
-];
-
 const mockImpediments = [createMockImpediment({ id: 'imp-1', status: ImpedimentStatus.OPEN })];
 
 const mockTeamStore = useTeamStore as ReturnType<typeof vi.fn>;
@@ -105,9 +99,7 @@ const getDefaultMockData = () => ({
   tasks: mockTasks,
   teamMembers: mockTeamMembers,
   sprintItems: mockSprintItems,
-  dodItems: mockDoDItems,
   impediments: mockImpediments,
-  dodVerifications: [],
   sprintReview: null,
   isReviewCompleted: true,
   sprintRetrospective: null,
@@ -358,106 +350,6 @@ describe('SprintBoard Branch Coverage Tests', () => {
           createMockImpediment({ id: 'imp-3', status: ImpedimentStatus.RESOLVED }),
         ],
       });
-
-      renderWithProviders(<SprintBoard />);
-
-      await waitFor(() => {
-        expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
-      });
-    });
-  });
-
-  describe('Proceed to DoD Verification', () => {
-    it('should not proceed when there are incomplete tasks', async () => {
-      const incompleteTasks = [
-        createMockTask({ id: 'task-1', status: TaskStatus.TODO, pbiId: 'pbi-1' }),
-      ];
-
-      useSprintBoardData.mockReturnValue({
-        ...getDefaultMockData(),
-        tasks: incompleteTasks,
-        filteredTasks: incompleteTasks,
-        tasksByStatus: {
-          todo: incompleteTasks,
-          in_progress: [],
-          review: [],
-          done: [],
-        },
-      });
-
-      renderWithProviders(<SprintBoard />);
-
-      await waitFor(() => {
-        expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
-      });
-    });
-
-    it('should not proceed when there are outstanding impediments', async () => {
-      useSprintBoardData.mockReturnValue({
-        ...getDefaultMockData(),
-        tasks: [createMockTask({ id: 'task-1', status: TaskStatus.DONE })],
-        filteredTasks: [createMockTask({ id: 'task-1', status: TaskStatus.DONE })],
-        tasksByStatus: {
-          todo: [],
-          in_progress: [],
-          review: [],
-          done: [createMockTask({ id: 'task-1', status: TaskStatus.DONE })],
-        },
-        impediments: [createMockImpediment({ id: 'imp-1', status: ImpedimentStatus.OPEN })],
-      });
-
-      renderWithProviders(<SprintBoard />);
-
-      await waitFor(() => {
-        expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
-      });
-    });
-
-    it('should proceed when no incomplete tasks and no outstanding impediments', async () => {
-      const doneTask = createMockTask({ id: 'task-1', status: TaskStatus.DONE, pbiId: 'pbi-1' });
-
-      useSprintBoardData.mockReturnValue({
-        ...getDefaultMockData(),
-        tasks: [doneTask],
-        filteredTasks: [doneTask],
-        tasksByStatus: {
-          todo: [],
-          in_progress: [],
-          review: [],
-          done: [doneTask],
-        },
-        impediments: [createMockImpediment({ id: 'imp-1', status: ImpedimentStatus.RESOLVED })],
-      });
-
-      renderWithProviders(<SprintBoard />);
-
-      await waitFor(() => {
-        expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
-      });
-    });
-  });
-
-  describe('DoD Verification Confirm', () => {
-    it('should handle DoD verification with multiple PBIs', async () => {
-      const definitionService = await import('../../services');
-      const mockVerifyDoD = vi.fn().mockResolvedValue({ success: true });
-      (
-        definitionService.definitionService as { verifyDoDForPBI: typeof mockVerifyDoD }
-      ).verifyDoDForPBI = mockVerifyDoD;
-
-      renderWithProviders(<SprintBoard />);
-
-      await waitFor(() => {
-        expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
-      });
-    });
-
-    it('should handle DoD verification error', async () => {
-      const definitionService = await import('../../services');
-      const mockVerifyDoD = vi.fn().mockRejectedValue(new Error('Verification failed'));
-      (
-        definitionService.definitionService as { verifyDoDForPBI: typeof mockVerifyDoD }
-      ).verifyDoDForPBI = mockVerifyDoD;
 
       renderWithProviders(<SprintBoard />);
 

@@ -80,6 +80,29 @@ describe('TaskDetailModal', () => {
       expect(screen.getByText('User Authentication')).toBeInTheDocument();
     });
 
+    it('should render the parent PBI as a preview button', () => {
+      const onOpenPbiPreview = vi.fn();
+      renderWithProviders(
+        <TaskDetailModal {...defaultProps} onOpenPbiPreview={onOpenPbiPreview} />
+      );
+
+      const pbiLink = screen.getByRole('button', { name: /View parent PBI/i });
+      expect(pbiLink).toBeInTheDocument();
+      expect(screen.getByText('User Authentication')).toBeInTheDocument();
+    });
+
+    it('should call onOpenPbiPreview with the parent PBI id when clicked', async () => {
+      const onOpenPbiPreview = vi.fn();
+      const user = userEvent.setup();
+      renderWithProviders(
+        <TaskDetailModal {...defaultProps} onOpenPbiPreview={onOpenPbiPreview} />
+      );
+
+      await user.click(screen.getByRole('button', { name: /View parent PBI/i }));
+
+      expect(onOpenPbiPreview).toHaveBeenCalledWith('pbi-1');
+    });
+
     it('should render estimated hours', () => {
       renderWithProviders(<TaskDetailModal {...defaultProps} />);
 

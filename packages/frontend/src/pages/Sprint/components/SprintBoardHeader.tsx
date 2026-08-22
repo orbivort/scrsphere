@@ -4,7 +4,6 @@ import { formatDateRange } from '@scrumooth/shared';
 
 import {
   ZapIcon,
-  KeyboardIcon,
   ChartIcon,
   ClipboardListIcon,
   PlusIcon,
@@ -19,7 +18,6 @@ import { useI18nStore } from '@/i18n/useI18nStore';
 export interface SprintBoardHeaderProps {
   sprint: Sprint;
   daysRemaining: number;
-  onKeyboardHelp: () => void;
   onToggleBurndown: () => void;
   onOpenBacklogManager: () => void;
   onOpenCreateModal: () => void;
@@ -35,7 +33,6 @@ export interface SprintBoardHeaderProps {
 export const SprintBoardHeader: React.FC<SprintBoardHeaderProps> = ({
   sprint,
   daysRemaining,
-  onKeyboardHelp,
   onToggleBurndown,
   onOpenBacklogManager,
   onOpenCreateModal,
@@ -65,15 +62,6 @@ export const SprintBoardHeader: React.FC<SprintBoardHeaderProps> = ({
         </span>
       </div>
       <div className={styles['header-right']}>
-        <button
-          className={`${styles.button} ${styles['button-secondary']} ${styles['keyboard-help-button']}`}
-          onClick={onKeyboardHelp}
-          aria-label={t('boardHeader.keyboardShortcuts')}
-          title={`${t('boardHeader.keyboardShortcuts')} (?)`}
-        >
-          <KeyboardIcon size={16} aria-hidden="true" />
-          <span className={styles['keyboard-shortcut-hint']}>?</span>
-        </button>
         <button
           className={`${styles.button} ${styles['button-secondary']}`}
           onClick={onToggleBurndown}
@@ -109,7 +97,7 @@ export const SprintBoardHeader: React.FC<SprintBoardHeaderProps> = ({
         </button>
         {isProductOwner && (
           <button
-            className={`${styles.button} ${styles['button-secondary']}`}
+            className={`${styles.button} ${styles['button-cancel-sprint']}`}
             onClick={onCancelSprint}
             aria-label={t('boardHeader.cancelSprint')}
           >

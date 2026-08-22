@@ -16,6 +16,7 @@ import {
   CheckCircleIcon,
   MessageSquareIcon,
   EyeIcon,
+  InfoIcon,
 } from '../../../components/common/Icons';
 import { useVirtualScroll, shouldEnableVirtualization } from '../../../hooks/useVirtualScroll';
 
@@ -60,6 +61,11 @@ export interface SwimlanesBoardProps {
   onBlur: () => void;
   /** Whether the current user may mutate the Sprint Backlog (Developers-only). */
   canMutate: boolean;
+  /** IDs of PBIs whose child tasks are all DONE but whose PBI is not yet marked DONE.
+   *  A "mark done" shortcut is rendered on those swimlane headers. */
+  readyToDonePbiIds?: string[];
+  /** Opens the lightweight PBI preview popup for a given PBI id instead of navigating away. */
+  onOpenPbiPreview?: (pbiId: string) => void;
 }
 
 /**
@@ -264,6 +270,8 @@ export const SwimlanesBoard = React.memo<SwimlanesBoardProps>(
     onFocus,
     onBlur,
     canMutate,
+    readyToDonePbiIds = [],
+    onOpenPbiPreview,
   }) => {
     const { t } = useTranslation('sprint');
 
@@ -399,9 +407,48 @@ export const SwimlanesBoard = React.memo<SwimlanesBoardProps>(
             return (
               <div key={key} className={styles['swimlane-row']} role="row">
                 <div className={styles['swimlane-label']} role="cell">
-                  <div className={styles['swimlane-label-content']}>
+                  <div
+                    className={`${styles['swimlane-label-content']} ${swimlaneGroup === 'pbi' && onOpenPbiPreview ? styles['swimlane-label-clickable'] : ''}`}
+                    onClick={
+                      swimlaneGroup === 'pbi' && onOpenPbiPreview
+                        ? () => onOpenPbiPreview(key)
+                        : undefined
+                    }
+                    role={swimlaneGroup === 'pbi' && onOpenPbiPreview ? 'button' : undefined}
+                    tabIndex={swimlaneGroup === 'pbi' && onOpenPbiPreview ? 0 : undefined}
+                    aria-label={
+                      swimlaneGroup === 'pbi' && onOpenPbiPreview
+                        ? t('swimlanes.openPbiPreviewAria', { title: label })
+                        : undefined
+                    }
+                    onKeyDown={
+                      swimlaneGroup === 'pbi' && onOpenPbiPreview
+                        ? (e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              onOpenPbiPreview(key);
+                            }
+                          }
+                        : undefined
+                    }
+                  >
                     <span className={styles['swimlane-name']}>{label}</span>
                     {subtitle && <span className={styles['swimlane-subtitle']}>{subtitle}</span>}
+                    {swimlaneGroup === 'pbi' && readyToDonePbiIds.includes(key) && (
+                      <button
+                        type="button"
+                        className={styles['mark-done-link']}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onOpenPbiPreview?.(key);
+                        }}
+                        aria-label={t('swimlanes.markPbiDoneAria', { title: label })}
+                      >
+                        <CheckCircleIcon size={14} aria-hidden="true" />
+                        {t('swimlanes.markPbiDone')}
+                        <InfoIcon size={12} aria-hidden="true" />
+                      </button>
+                    )}
                   </div>
                   <div className={styles['swimlane-stats']}>
                     <span className={styles['stat-item']}>

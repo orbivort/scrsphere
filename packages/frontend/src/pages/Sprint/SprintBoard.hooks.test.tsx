@@ -13,8 +13,8 @@ import {
   useDragAndDrop,
   useTaskFormValidation,
 } from './SprintBoard.hooks';
-import { TaskStatus, type Task } from '../../types';
-import { apiService, definitionService } from '../../services';
+import { TaskStatus, ItemStatus, type Task, type ProductBacklogItem } from '../../types';
+import { apiService } from '../../services';
 
 beforeAll(async () => {
   await initTestI18n();
@@ -107,7 +107,6 @@ describe('useSprintBoardData Hook', () => {
         useSprintBoardData({
           teamId: undefined,
           showBurndown: false,
-          showDodVerification: false,
           filterAssignee: 'all',
           filterPbi: 'all',
           debouncedSearchQuery: '',
@@ -162,7 +161,6 @@ describe('useSprintBoardData Hook', () => {
         useSprintBoardData({
           teamId: 'team-1',
           showBurndown: false,
-          showDodVerification: false,
           filterAssignee: 'all',
           filterPbi: 'all',
           debouncedSearchQuery: '',
@@ -226,7 +224,6 @@ describe('useSprintBoardData Hook', () => {
         useSprintBoardData({
           teamId: 'team-1',
           showBurndown: false,
-          showDodVerification: false,
           filterAssignee: 'user-1',
           filterPbi: 'all',
           debouncedSearchQuery: '',
@@ -290,7 +287,6 @@ describe('useSprintBoardData Hook', () => {
         useSprintBoardData({
           teamId: 'team-1',
           showBurndown: false,
-          showDodVerification: false,
           filterAssignee: 'all',
           filterPbi: 'all',
           debouncedSearchQuery: 'authentication',
@@ -355,7 +351,6 @@ describe('useSprintBoardData Hook', () => {
         useSprintBoardData({
           teamId: 'team-1',
           showBurndown: false,
-          showDodVerification: false,
           filterAssignee: 'all',
           filterPbi: 'all',
           debouncedSearchQuery: '',
@@ -436,7 +431,6 @@ describe('useSprintBoardData Hook', () => {
         useSprintBoardData({
           teamId: 'team-1',
           showBurndown: false,
-          showDodVerification: false,
           filterAssignee: 'all',
           filterPbi: 'all',
           debouncedSearchQuery: '',
@@ -503,7 +497,6 @@ describe('useSprintBoardData Hook', () => {
         useSprintBoardData({
           teamId: 'team-1',
           showBurndown: false,
-          showDodVerification: false,
           filterAssignee: 'all',
           filterPbi: 'all',
           debouncedSearchQuery: '',
@@ -557,7 +550,6 @@ describe('useSprintBoardData Hook', () => {
         useSprintBoardData({
           teamId: 'team-1',
           showBurndown: false,
-          showDodVerification: false,
           filterAssignee: 'all',
           filterPbi: 'all',
           debouncedSearchQuery: '',
@@ -601,7 +593,6 @@ describe('useSprintBoardData Hook', () => {
         useSprintBoardData({
           teamId: 'team-1',
           showBurndown: false,
-          showDodVerification: false,
           filterAssignee: 'all',
           filterPbi: 'all',
           debouncedSearchQuery: '',
@@ -646,7 +637,6 @@ describe('useSprintBoardData Hook', () => {
         useSprintBoardData({
           teamId: 'team-1',
           showBurndown: false,
-          showDodVerification: false,
           filterAssignee: 'all',
           filterPbi: 'all',
           debouncedSearchQuery: '',
@@ -695,7 +685,6 @@ describe('useSprintBoardData Hook', () => {
         useSprintBoardData({
           teamId: 'team-1',
           showBurndown: false,
-          showDodVerification: false,
           filterAssignee: 'all',
           filterPbi: 'pbi-1',
           debouncedSearchQuery: '',
@@ -745,7 +734,6 @@ describe('useSprintBoardData Hook', () => {
         useSprintBoardData({
           teamId: 'team-1',
           showBurndown: false,
-          showDodVerification: false,
           filterAssignee: 'all',
           filterPbi: 'all',
           debouncedSearchQuery: 'login',
@@ -805,7 +793,6 @@ describe('useSprintBoardData Hook', () => {
         useSprintBoardData({
           teamId: 'team-1',
           showBurndown: false,
-          showDodVerification: false,
           filterAssignee: 'all',
           filterPbi: 'all',
           debouncedSearchQuery: 'authentication',
@@ -856,7 +843,6 @@ describe('useSprintBoardData Hook', () => {
         useSprintBoardData({
           teamId: 'team-1',
           showBurndown: false,
-          showDodVerification: false,
           filterAssignee: 'all',
           filterPbi: 'all',
           debouncedSearchQuery: '',
@@ -875,6 +861,78 @@ describe('useSprintBoardData Hook', () => {
     expect(Object.keys(groups)).toContain('pbi-2');
     expect(groups['pbi-1']).toHaveLength(2);
     expect(groups['pbi-2']).toHaveLength(1);
+  });
+
+  it('should identify PBIs whose tasks are all done but whose PBI is not yet DONE', async () => {
+    const createMockPBI = (overrides: Partial<ProductBacklogItem> = {}): ProductBacklogItem => ({
+      id: 'pbi-1',
+      teamId: 'team-1',
+      title: 'Test PBI',
+      priority: 'MUST_HAVE',
+      storyPoints: 5,
+      status: ItemStatus.READY,
+      labels: [],
+      createdBy: 'user-1',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      ...overrides,
+    });
+
+    const tasks = [
+      createMockTask({ id: 'task-1', pbiId: 'pbi-1', status: TaskStatus.DONE }),
+      createMockTask({ id: 'task-2', pbiId: 'pbi-1', status: TaskStatus.DONE }),
+      createMockTask({ id: 'task-3', pbiId: 'pbi-2', status: TaskStatus.DONE }),
+      createMockTask({ id: 'task-4', pbiId: 'pbi-3', status: TaskStatus.IN_PROGRESS }),
+      createMockTask({ id: 'task-5', pbiId: 'pbi-4', status: TaskStatus.DONE }),
+    ];
+
+    const mockSprint = {
+      id: 'sprint-1',
+      teamId: 'team-1',
+      name: 'Sprint 1',
+      status: 'active' as const,
+      sprintGoal: 'Test goal',
+      startDate: new Date().toISOString(),
+      endDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
+      tasks,
+      items: [
+        // pbi-1: all tasks done, PBI not DONE -> candidate
+        createMockPBI({ id: 'pbi-1', status: ItemStatus.READY }),
+        // pbi-2: all tasks done, PBI already DONE -> excluded
+        createMockPBI({ id: 'pbi-2', status: ItemStatus.DONE }),
+        // pbi-3: not all tasks done -> excluded
+        createMockPBI({ id: 'pbi-3', status: ItemStatus.IN_PROGRESS }),
+        // pbi-4: all tasks done, PBI not DONE -> candidate
+        createMockPBI({ id: 'pbi-4', status: ItemStatus.READY }),
+      ],
+    };
+
+    vi.mocked(apiService.getActiveSprint).mockResolvedValue({ data: mockSprint } as never);
+    vi.mocked(apiService.getSprintTasks).mockResolvedValue({ data: tasks } as never);
+    vi.mocked(apiService.getTeam).mockResolvedValue({
+      data: { id: 'team-1', name: 'Test Team', members: [] },
+    } as never);
+    vi.mocked(apiService.getDefinitionOfDone).mockResolvedValue({ data: { items: [] } } as never);
+    vi.mocked(apiService.getImpediments).mockResolvedValue({ data: [] } as never);
+
+    const { result } = renderHook(
+      () =>
+        useSprintBoardData({
+          teamId: 'team-1',
+          showBurndown: false,
+          filterAssignee: 'all',
+          filterPbi: 'all',
+          debouncedSearchQuery: '',
+          swimlaneGroup: 'none',
+        }),
+      { wrapper }
+    );
+
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    });
+
+    expect(result.current.readyToDonePbiIds.sort()).toEqual(['pbi-1', 'pbi-4']);
   });
 
   it('should compute burndown chart data with backend values', async () => {
@@ -923,7 +981,6 @@ describe('useSprintBoardData Hook', () => {
         useSprintBoardData({
           teamId: 'team-1',
           showBurndown: true,
-          showDodVerification: false,
           filterAssignee: 'all',
           filterPbi: 'all',
           debouncedSearchQuery: '',
@@ -972,7 +1029,6 @@ describe('useSprintBoardData Hook', () => {
         useSprintBoardData({
           teamId: 'team-1',
           showBurndown: true,
-          showDodVerification: false,
           filterAssignee: 'all',
           filterPbi: 'all',
           debouncedSearchQuery: '',
@@ -986,180 +1042,6 @@ describe('useSprintBoardData Hook', () => {
     });
 
     expect(result.current.burndownChartData).toEqual([]);
-  });
-
-  it('should return DoD compliance verifications when showDodVerification is true', async () => {
-    const tasks: Task[] = [];
-
-    const mockSprint = {
-      id: 'sprint-1',
-      teamId: 'team-1',
-      name: 'Sprint 1',
-      status: 'active' as const,
-      sprintGoal: 'Test goal',
-      startDate: new Date().toISOString(),
-      endDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
-      tasks,
-      items: [],
-    };
-
-    vi.mocked(apiService.getActiveSprint).mockResolvedValue({ data: mockSprint } as never);
-    vi.mocked(apiService.getSprintTasks).mockResolvedValue({ data: tasks } as never);
-    vi.mocked(apiService.getTeam).mockResolvedValue({
-      data: { id: 'team-1', name: 'Test Team', members: [] },
-    } as never);
-    vi.mocked(apiService.getDefinitionOfDone).mockResolvedValue({
-      data: { items: [] },
-    } as never);
-    vi.mocked(apiService.getImpediments).mockResolvedValue({ data: [] } as never);
-    vi.mocked(definitionService.getDefinitionOfDone).mockResolvedValue({
-      success: true,
-      data: {
-        id: 'dod-1',
-        teamId: 'team-1',
-        items: [
-          {
-            id: 'dod-item-1',
-            description: 'Code reviewed',
-            category: 'quality',
-            isActive: true,
-            order: 1,
-          },
-          {
-            id: 'dod-item-2',
-            description: 'Tests passed',
-            category: 'testing',
-            isActive: true,
-            order: 2,
-          },
-        ],
-        version: 1,
-        updatedAt: new Date().toISOString(),
-      },
-    });
-    vi.mocked(definitionService.getDoDComplianceReport).mockResolvedValue({
-      success: true,
-      data: {
-        sprintId: 'sprint-1',
-        totalPBIs: 1,
-        dodCompliantPBIs: 0,
-        pendingVerification: 1,
-        failedCompliance: 0,
-        complianceRate: 0,
-        pbiDetails: [
-          {
-            pbiId: 'pbi-1',
-            pbiTitle: 'Feature A',
-            status: 'in_progress' as const,
-            dodItemsTotal: 2,
-            dodItemsVerified: 0,
-            compliancePercentage: 0,
-            verifications: [
-              {
-                id: 'v-1',
-                pbiId: 'pbi-1',
-                dodItemId: 'dod-item-1',
-                isVerified: false,
-                verifiedBy: 'user-1',
-                verifiedAt: new Date().toISOString(),
-              },
-            ],
-          },
-        ],
-      },
-    });
-
-    const { result } = renderHook(
-      () =>
-        useSprintBoardData({
-          teamId: 'team-1',
-          showBurndown: false,
-          showDodVerification: true,
-          filterAssignee: 'all',
-          filterPbi: 'all',
-          debouncedSearchQuery: '',
-          swimlaneGroup: 'none',
-        }),
-      { wrapper }
-    );
-
-    await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 100));
-    });
-
-    expect(result.current.dodVerifications.length).toBeGreaterThan(0);
-    expect(result.current.dodVerifications[0]?.id).toBe('v-1');
-  });
-
-  it('should filter active DoD items sorted by order', async () => {
-    const tasks: Task[] = [];
-
-    const mockSprint = {
-      id: 'sprint-1',
-      teamId: 'team-1',
-      name: 'Sprint 1',
-      status: 'active' as const,
-      sprintGoal: 'Test goal',
-      startDate: new Date().toISOString(),
-      endDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
-      tasks,
-      items: [],
-    };
-
-    vi.mocked(apiService.getActiveSprint).mockResolvedValue({ data: mockSprint } as never);
-    vi.mocked(apiService.getSprintTasks).mockResolvedValue({ data: tasks } as never);
-    vi.mocked(apiService.getTeam).mockResolvedValue({
-      data: { id: 'team-1', name: 'Test Team', members: [] },
-    } as never);
-    vi.mocked(apiService.getImpediments).mockResolvedValue({ data: [] } as never);
-    vi.mocked(definitionService.getDefinitionOfDone).mockResolvedValue({
-      success: true,
-      data: {
-        id: 'dod-1',
-        teamId: 'team-1',
-        items: [
-          { id: 'dod-3', description: 'Third item', category: 'testing', isActive: true, order: 3 },
-          { id: 'dod-1', description: 'First item', category: 'quality', isActive: true, order: 1 },
-          {
-            id: 'dod-inactive',
-            description: 'Inactive item',
-            category: 'other',
-            isActive: false,
-            order: 2,
-          },
-          { id: 'dod-2', description: 'Second item', category: 'review', isActive: true, order: 2 },
-        ],
-        version: 1,
-        updatedAt: new Date().toISOString(),
-      },
-    });
-
-    vi.mocked(apiService.getDefinitionOfDone).mockResolvedValue({
-      data: { items: [] },
-    } as never);
-
-    const { result } = renderHook(
-      () =>
-        useSprintBoardData({
-          teamId: 'team-1',
-          showBurndown: false,
-          showDodVerification: false,
-          filterAssignee: 'all',
-          filterPbi: 'all',
-          debouncedSearchQuery: '',
-          swimlaneGroup: 'none',
-        }),
-      { wrapper }
-    );
-
-    await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 100));
-    });
-
-    expect(result.current.dodItems).toHaveLength(3);
-    expect(result.current.dodItems[0]?.order).toBe(1);
-    expect(result.current.dodItems[1]?.order).toBe(2);
-    expect(result.current.dodItems[2]?.order).toBe(3);
   });
 
   it('should not generate WIP warnings when limit is not exceeded', async () => {
@@ -1196,7 +1078,6 @@ describe('useSprintBoardData Hook', () => {
         useSprintBoardData({
           teamId: 'team-1',
           showBurndown: false,
-          showDodVerification: false,
           filterAssignee: 'all',
           filterPbi: 'all',
           debouncedSearchQuery: '',

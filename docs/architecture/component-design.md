@@ -233,8 +233,7 @@ pages/                               # Page-scoped feature components
 │   │   ├── TaskCard.tsx
 │   │   ├── SwimlanesBoard.tsx
 │   │   ├── SprintBoardHeader.tsx
-│   │   ├── BurndownChart.tsx
-│   │   └── DoDVerificationModal.tsx
+│   │   └── BurndownChart.tsx
 │   └── utils/                       # Form validation and change detection
 ├── SprintPlanning/
 │   └── components/                  # AddTaskModal, StartSprintModal, etc.

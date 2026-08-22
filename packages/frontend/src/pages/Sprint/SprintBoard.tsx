@@ -1,11 +1,11 @@
 import React, { useState, useReducer, useCallback, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import { useQueryClient } from '@tanstack/react-query';
 import { UserRole } from '@scrumooth/shared';
 
-import { definitionService } from '../../services';
 import { useTeamStore, useAuthStore } from '../../store';
-import { logger } from '../../utils/logger';
+import { queryKeys } from '../../hooks/queryKeys';
 import { canMutateSprintBacklog, canCancelSprint } from '../../utils/roleUtils';
 import { useDebounce, useToast } from '../../hooks';
 import { ToastContainer } from '../../components/common/ToastContainer/ToastContainer';
@@ -14,6 +14,7 @@ import {
   ImpedimentStatus,
   type Task,
   type TaskStatus,
+  type ProductBacklogItem,
 } from '../../types';
 import { EmptyState } from '../../components/EmptyState';
 import { LoadingState } from '../../components/common/Loading';
@@ -34,7 +35,6 @@ function getTranslatedPermissionError(message: string): string {
   return message;
 }
 
-import { DoDVerificationModal } from './components/DoDVerificationModal';
 import type { ViewMode, SwimlaneGroup } from './SprintBoard.types';
 import { TASK_STATUS_CONFIG_BASE } from './SprintBoard.constants';
 import {
@@ -69,6 +69,7 @@ import {
   CompleteSprintModal,
   CancelSprintModal,
   KeyboardHelpModal,
+  PbiPreviewModal,
 } from './components/modals';
 import { SprintBacklogManager } from './SprintBacklogManager';
 import styles from './SprintBoard.module.css';
@@ -89,6 +90,12 @@ export const SprintBoard: React.FC = () => {
   const navigate = useNavigate();
   const { t } = useTranslation('sprint');
   const teamId = currentTeam?.id;
+  const queryClient = useQueryClient();
+
+  // PBI preview popup opened from a task's Parent PBI field or a swimlane header.
+  const [selectedPbiForPreview, setSelectedPbiForPreview] = useState<ProductBacklogItem | null>(
+    null
+  );
 
   // Build TASK_STATUS_CONFIG with i18n labels
   const TASK_STATUS_CONFIG: Record<
@@ -125,7 +132,6 @@ export const SprintBoard: React.FC = () => {
     showCompleteSprintModal,
     showCancelSprintModal,
     showBacklogManager,
-    showDodVerification,
     showKeyboardHelp,
     selectedTask,
     completeSprintError,
@@ -162,7 +168,6 @@ export const SprintBoard: React.FC = () => {
   const boardData = useSprintBoardData({
     teamId,
     showBurndown,
-    showDodVerification,
     filterAssignee,
     filterPbi,
     debouncedSearchQuery,
@@ -174,9 +179,7 @@ export const SprintBoard: React.FC = () => {
     tasks,
     teamMembers,
     sprintItems,
-    dodItems,
     impediments,
-    dodVerifications,
     sprintLoading,
     tasksLoading,
     wipLimits,
@@ -188,6 +191,7 @@ export const SprintBoard: React.FC = () => {
     burndownChartData,
     wipWarnings,
     groupedBySwimlane,
+    readyToDonePbiIds,
     isReviewCompleted,
     isRetrospectiveCompleted,
   } = boardData;
@@ -293,6 +297,26 @@ export const SprintBoard: React.FC = () => {
     modalDispatch({ type: 'OPEN_DETAIL_MODAL', payload: task });
     formDispatch({ type: 'INITIALIZE_FORM_FOR_EDIT', payload: task });
   }, []);
+
+  const openPbiPreview = useCallback(
+    (pbiId: string) => {
+      const pbi = sprintItems.find((item) => item.id === pbiId) ?? null;
+      setSelectedPbiForPreview(pbi);
+    },
+    [sprintItems]
+  );
+
+  const closePbiPreview = useCallback(() => {
+    setSelectedPbiForPreview(null);
+  }, []);
+
+  const handlePbiMarkedDone = useCallback(
+    (_pbiId: string) => {
+      // Refresh the sprint (and its items) so the PBI status change is reflected on the board.
+      void queryClient.invalidateQueries({ queryKey: queryKeys.sprint.activeSprint(teamId ?? '') });
+    },
+    [queryClient, teamId]
+  );
 
   const keyboardNav = useKeyboardNavigation({
     tasks,
@@ -400,7 +424,7 @@ export const SprintBoard: React.FC = () => {
   const hasIncompleteReview = !isReviewCompleted;
   const hasIncompleteRetrospective = !isRetrospectiveCompleted;
 
-  const handleProceedToDodVerification = useCallback(() => {
+  const handleCompleteSprint = useCallback(() => {
     if (
       hasIncompleteTasks ||
       hasOutstandingImpediments ||
@@ -410,47 +434,14 @@ export const SprintBoard: React.FC = () => {
       return;
     }
     modalDispatch({ type: 'CLOSE_COMPLETE_SPRINT_MODAL' });
-    modalDispatch({ type: 'OPEN_DOD_VERIFICATION' });
+    mutations.completeSprintMutation.mutate();
   }, [
     hasIncompleteTasks,
     hasOutstandingImpediments,
     hasIncompleteReview,
     hasIncompleteRetrospective,
+    mutations.completeSprintMutation,
   ]);
-
-  const handleDodVerificationConfirm = useCallback(
-    async (verifications: { pbiId: string; dodItemId: string; isVerified: boolean }[]) => {
-      try {
-        const pbiVerifications = new Map<string, { dodItemId: string; isVerified: boolean }[]>();
-
-        for (const v of verifications) {
-          if (!pbiVerifications.has(v.pbiId)) {
-            pbiVerifications.set(v.pbiId, []);
-          }
-          pbiVerifications.get(v.pbiId)?.push({ dodItemId: v.dodItemId, isVerified: v.isVerified });
-        }
-
-        const savePromises: Promise<unknown>[] = [];
-        pbiVerifications.forEach((items, pbiId) => {
-          savePromises.push(definitionService.verifyDoDForPBI(pbiId, items));
-        });
-
-        await Promise.all(savePromises);
-
-        modalDispatch({ type: 'CLOSE_DOD_VERIFICATION' });
-        mutations.completeSprintMutation.mutate();
-      } catch (error) {
-        logger.error('Failed to save DoD verifications', undefined, { error });
-        toastError(t('board.failedToSaveDodVerifications'));
-      }
-    },
-    [mutations.completeSprintMutation, toastError, t]
-  );
-
-  const handleDodVerificationCancel = useCallback(() => {
-    modalDispatch({ type: 'CLOSE_DOD_VERIFICATION' });
-    modalDispatch({ type: 'OPEN_COMPLETE_SPRINT_MODAL' });
-  }, []);
 
   const handleQuickStatusChange = useCallback(
     (newStatus: TaskStatus) => {
@@ -616,7 +607,6 @@ export const SprintBoard: React.FC = () => {
       <SprintBoardHeader
         sprint={sprint}
         daysRemaining={daysRemaining}
-        onKeyboardHelp={() => modalDispatch({ type: 'OPEN_KEYBOARD_HELP' })}
         onToggleBurndown={() => setShowBurndown(!showBurndown)}
         onOpenBacklogManager={() => modalDispatch({ type: 'OPEN_BACKLOG_MANAGER' })}
         onOpenCreateModal={openCreateModal}
@@ -806,6 +796,8 @@ export const SprintBoard: React.FC = () => {
             onFocus={setFocusedTaskId}
             onBlur={() => setFocusedTaskId(null)}
             canMutate={canMutate}
+            readyToDonePbiIds={readyToDonePbiIds}
+            onOpenPbiPreview={openPbiPreview}
           />
         )}
       </div>
@@ -815,6 +807,7 @@ export const SprintBoard: React.FC = () => {
           task={selectedTask}
           workflowError={workflowError}
           onClose={closeDetailModal}
+          onOpenPbiPreview={openPbiPreview}
           onEdit={openEditModal}
           onDelete={() => {
             modalDispatch({ type: 'CLOSE_DETAIL_MODAL' });
@@ -897,7 +890,7 @@ export const SprintBoard: React.FC = () => {
           isRetrospectiveCompleted={isRetrospectiveCompleted}
           completeSprintError={completeSprintError}
           onClose={handleCloseCompleteSprintModal}
-          onProceedToDodVerification={handleProceedToDodVerification}
+          onCompleteSprint={handleCompleteSprint}
           onManageBacklog={() => {
             modalDispatch({ type: 'CLOSE_COMPLETE_SPRINT_MODAL' });
             modalDispatch({ type: 'OPEN_BACKLOG_MANAGER' });
@@ -930,17 +923,6 @@ export const SprintBoard: React.FC = () => {
         />
       )}
 
-      <DoDVerificationModal
-        isOpen={showDodVerification}
-        onClose={handleDodVerificationCancel}
-        onConfirm={handleDodVerificationConfirm}
-        dodItems={dodItems}
-        pbis={sprintItems}
-        tasks={tasks}
-        isLoading={mutations.completeSprintMutation.isPending}
-        existingVerifications={dodVerifications}
-      />
-
       {showBacklogManager && (
         <SprintBacklogManager
           sprintId={sprint.id}
@@ -949,6 +931,14 @@ export const SprintBoard: React.FC = () => {
           onClose={() => modalDispatch({ type: 'CLOSE_BACKLOG_MANAGER' })}
         />
       )}
+
+      <PbiPreviewModal
+        item={selectedPbiForPreview}
+        canMutate={canMutate}
+        teamId={teamId}
+        onClose={closePbiPreview}
+        onMarkedDone={handlePbiMarkedDone}
+      />
 
       {showKeyboardHelp && (
         <KeyboardHelpModal onClose={() => modalDispatch({ type: 'CLOSE_KEYBOARD_HELP' })} />

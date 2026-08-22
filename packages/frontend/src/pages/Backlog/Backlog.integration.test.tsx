@@ -296,6 +296,39 @@ describe('Backlog Integration Tests', () => {
     });
   });
 
+  describe('Deep Link via ?pbi= query param', () => {
+    it('should open the item detail modal for the targeted PBI', async () => {
+      renderWithProviders(<ProductBacklog />, { initialRoute: '/?pbi=pbi-1' });
+
+      await waitFor(() => {
+        expect(screen.getByRole('dialog')).toBeInTheDocument();
+      });
+
+      // The detail modal should show the targeted PBI's title.
+      expect(screen.getAllByText('Feature A').length).toBeGreaterThan(0);
+    });
+
+    it('should not open a detail modal when no pbi param is present', async () => {
+      renderWithProviders(<ProductBacklog />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
+      });
+
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
+
+    it('should not open a detail modal when the pbi param matches no item', async () => {
+      renderWithProviders(<ProductBacklog />, { initialRoute: '/?pbi=does-not-exist' });
+
+      await waitFor(() => {
+        expect(screen.getByTestId('product-backlog')).toBeInTheDocument();
+      });
+
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
+  });
+
   describe('Filters', () => {
     it('should filter items by search', async () => {
       renderWithProviders(<ProductBacklog />);

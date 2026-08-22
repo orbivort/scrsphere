@@ -7,9 +7,7 @@ import {
   type TeamMember,
   type User,
   type ProductBacklogItem,
-  type DoDItem,
   type Impediment,
-  type DoDChecklistVerification,
 } from '../../types';
 
 // ============================================================================
@@ -67,7 +65,6 @@ export interface ModalState {
   showCompleteSprintModal: boolean;
   showCancelSprintModal: boolean;
   showBacklogManager: boolean;
-  showDodVerification: boolean;
   showKeyboardHelp: boolean;
   selectedTask: Task | null;
   completeSprintError: string | null;
@@ -82,7 +79,6 @@ export type ModalAction =
   | { type: 'OPEN_COMPLETE_SPRINT_MODAL' }
   | { type: 'OPEN_CANCEL_SPRINT_MODAL' }
   | { type: 'OPEN_BACKLOG_MANAGER' }
-  | { type: 'OPEN_DOD_VERIFICATION' }
   | { type: 'OPEN_KEYBOARD_HELP' }
   | { type: 'CLOSE_CREATE_MODAL' }
   | { type: 'CLOSE_DETAIL_MODAL' }
@@ -91,7 +87,6 @@ export type ModalAction =
   | { type: 'CLOSE_COMPLETE_SPRINT_MODAL' }
   | { type: 'CLOSE_CANCEL_SPRINT_MODAL' }
   | { type: 'CLOSE_BACKLOG_MANAGER' }
-  | { type: 'CLOSE_DOD_VERIFICATION' }
   | { type: 'CLOSE_KEYBOARD_HELP' }
   | { type: 'SET_COMPLETE_SPRINT_ERROR'; payload: string | null }
   | { type: 'SET_WORKFLOW_ERROR'; payload: string | null }
@@ -168,7 +163,6 @@ export interface TransitionOptions {
 export interface UseSprintBoardDataOptions {
   teamId: string | undefined;
   showBurndown: boolean;
-  showDodVerification: boolean;
   filterAssignee: string;
   filterPbi: string;
   debouncedSearchQuery: string;
@@ -180,9 +174,7 @@ export interface UseSprintBoardDataReturn {
   tasks: Task[];
   teamMembers: (TeamMember & { user?: User })[];
   sprintItems: ProductBacklogItem[];
-  dodItems: DoDItem[];
   impediments: Impediment[];
-  dodVerifications: DoDChecklistVerification[];
   burndownData: unknown;
   isLoading: boolean;
   sprintLoading: boolean;

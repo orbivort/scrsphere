@@ -18,7 +18,6 @@ describe('initialModalState', () => {
     expect(initialModalState.showDeleteConfirm).toBe(false);
     expect(initialModalState.showCompleteSprintModal).toBe(false);
     expect(initialModalState.showBacklogManager).toBe(false);
-    expect(initialModalState.showDodVerification).toBe(false);
     expect(initialModalState.showKeyboardHelp).toBe(false);
   });
 
@@ -101,14 +100,6 @@ describe('modalReducer', () => {
       expect(state.workflowError).toBeNull();
     });
 
-    it('should handle OPEN_DOD_VERIFICATION', () => {
-      const action: ModalAction = { type: 'OPEN_DOD_VERIFICATION' };
-      const state = modalReducer(initialModalState, action);
-
-      expect(state.showDodVerification).toBe(true);
-      expect(state.workflowError).toBeNull();
-    });
-
     it('should handle OPEN_KEYBOARD_HELP', () => {
       const action: ModalAction = { type: 'OPEN_KEYBOARD_HELP' };
       const state = modalReducer(initialModalState, action);
@@ -187,15 +178,6 @@ describe('modalReducer', () => {
       expect(state.workflowError).toBeNull();
     });
 
-    it('should handle CLOSE_DOD_VERIFICATION', () => {
-      const openState = modalReducer(initialModalState, { type: 'OPEN_DOD_VERIFICATION' });
-      const closeAction: ModalAction = { type: 'CLOSE_DOD_VERIFICATION' };
-      const state = modalReducer(openState, closeAction);
-
-      expect(state.showDodVerification).toBe(false);
-      expect(state.workflowError).toBeNull();
-    });
-
     it('should handle CLOSE_KEYBOARD_HELP', () => {
       const openState = modalReducer(initialModalState, { type: 'OPEN_KEYBOARD_HELP' });
       const closeAction: ModalAction = { type: 'CLOSE_KEYBOARD_HELP' };
@@ -259,7 +241,6 @@ describe('modalReducer', () => {
         showDeleteConfirm: true,
         showCompleteSprintModal: true,
         showBacklogManager: true,
-        showDodVerification: true,
         showKeyboardHelp: true,
         selectedTask: task,
         completeSprintError: 'Error',

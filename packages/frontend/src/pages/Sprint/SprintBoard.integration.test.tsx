@@ -9,7 +9,6 @@ import {
   createMockSprint,
   createMockBacklogItem,
   createMockTeamMember,
-  createMockDoDItem,
   createMockImpediment,
 } from '../../__mocks__/mockData';
 import { TaskStatus, type Task, type Sprint, ImpedimentStatus } from '../../types';
@@ -91,11 +90,6 @@ const mockSprintItems = [
   createMockBacklogItem({ id: 'pbi-2', title: 'PBI 2' }),
 ];
 
-const mockDoDItems = [
-  createMockDoDItem({ id: 'dod-1', description: 'Code reviewed' }),
-  createMockDoDItem({ id: 'dod-2', description: 'Tests passed' }),
-];
-
 const mockImpediments = [createMockImpediment({ id: 'imp-1', status: ImpedimentStatus.OPEN })];
 
 const mockTeamStore = useTeamStore as ReturnType<typeof vi.fn>;
@@ -105,9 +99,7 @@ const getDefaultMockData = () => ({
   tasks: mockTasks,
   teamMembers: mockTeamMembers,
   sprintItems: mockSprintItems,
-  dodItems: mockDoDItems,
   impediments: mockImpediments,
-  dodVerifications: [],
   sprintLoading: false,
   tasksLoading: false,
   wipLimits: { todo: 5, in_progress: 3, review: 3, done: 10 },

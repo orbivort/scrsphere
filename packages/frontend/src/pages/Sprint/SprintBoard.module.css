@@ -627,24 +627,6 @@
   background: var(--color-background-page);
 }
 
-.keyboard-help-button {
-  position: relative;
-}
-
-.keyboard-shortcut-hint {
-  position: absolute;
-  top: calc(var(--space-1) * -1);
-  right: calc(var(--space-1) * -1);
-  background: var(--color-primary-600);
-  color: var(--color-text-inverse);
-  font-size: 10px;
-  font-weight: var(--font-weight-bold);
-  padding: 2px 5px;
-  border-radius: var(--radius-sm);
-  line-height: var(--line-height-tight);
-  box-shadow: var(--shadow-sm);
-}
-
 .button-complete-sprint {
   background: var(--color-success-600);
   color: var(--color-text-inverse);
@@ -660,6 +642,23 @@
 .button-complete-sprint:active:not(:disabled) {
   transform: translateY(0);
   box-shadow: var(--shadow-success-button);
+}
+
+.button-cancel-sprint {
+  background: var(--color-error-600);
+  color: var(--color-text-inverse);
+  box-shadow: var(--shadow-error-medium);
+}
+
+.button-cancel-sprint:hover:not(:disabled) {
+  background: var(--color-error-700);
+  transform: translateY(calc(var(--space-0-5) * -1));
+  box-shadow: var(--shadow-error-medium);
+}
+
+.button-cancel-sprint:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: var(--shadow-error-medium);
 }
 
 /* ============================================================================

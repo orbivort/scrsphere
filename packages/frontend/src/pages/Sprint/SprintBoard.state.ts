@@ -11,7 +11,6 @@ export const initialModalState: ModalState = {
   showCompleteSprintModal: false,
   showCancelSprintModal: false,
   showBacklogManager: false,
-  showDodVerification: false,
   showKeyboardHelp: false,
   selectedTask: null,
   completeSprintError: null,
@@ -39,8 +38,6 @@ export function modalReducer(state: ModalState, action: ModalAction): ModalState
       return { ...state, showCancelSprintModal: true, workflowError: null };
     case 'OPEN_BACKLOG_MANAGER':
       return { ...state, showBacklogManager: true, workflowError: null };
-    case 'OPEN_DOD_VERIFICATION':
-      return { ...state, showDodVerification: true, workflowError: null };
     case 'OPEN_KEYBOARD_HELP':
       return { ...state, showKeyboardHelp: true };
     case 'CLOSE_CREATE_MODAL':
@@ -62,8 +59,6 @@ export function modalReducer(state: ModalState, action: ModalAction): ModalState
       return { ...state, showCancelSprintModal: false, workflowError: null };
     case 'CLOSE_BACKLOG_MANAGER':
       return { ...state, showBacklogManager: false, workflowError: null };
-    case 'CLOSE_DOD_VERIFICATION':
-      return { ...state, showDodVerification: false, workflowError: null };
     case 'CLOSE_KEYBOARD_HELP':
       return { ...state, showKeyboardHelp: false };
     case 'SET_COMPLETE_SPRINT_ERROR':

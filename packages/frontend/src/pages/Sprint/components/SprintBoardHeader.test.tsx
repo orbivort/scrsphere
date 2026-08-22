@@ -19,7 +19,6 @@ const mockSprint: Sprint = {
 };
 
 describe('SprintBoardHeader', () => {
-  const mockOnKeyboardHelp = vi.fn();
   const mockOnToggleBurndown = vi.fn();
   const mockOnOpenBacklogManager = vi.fn();
   const mockOnOpenCreateModal = vi.fn();
@@ -29,7 +28,6 @@ describe('SprintBoardHeader', () => {
   const defaultProps: SprintBoardHeaderProps = {
     sprint: mockSprint,
     daysRemaining: 7,
-    onKeyboardHelp: mockOnKeyboardHelp,
     onToggleBurndown: mockOnToggleBurndown,
     onOpenBacklogManager: mockOnOpenBacklogManager,
     onOpenCreateModal: mockOnOpenCreateModal,
@@ -73,9 +71,6 @@ describe('SprintBoardHeader', () => {
     it('should render all action buttons', () => {
       renderWithProviders(<SprintBoardHeader {...defaultProps} />);
 
-      expect(
-        screen.getByLabelText(i18nT('sprint:boardHeader.keyboardShortcuts'))
-      ).toBeInTheDocument();
       expect(
         screen.getByRole('button', { name: i18nT('sprint:boardHeader.burndown') })
       ).toBeInTheDocument();
@@ -122,14 +117,6 @@ describe('SprintBoardHeader', () => {
   });
 
   describe('Button Interactions', () => {
-    it('should call onKeyboardHelp when clicking keyboard help button', async () => {
-      renderWithProviders(<SprintBoardHeader {...defaultProps} />);
-
-      await userEvent.click(screen.getByLabelText(i18nT('sprint:boardHeader.keyboardShortcuts')));
-
-      expect(mockOnKeyboardHelp).toHaveBeenCalledTimes(1);
-    });
-
     it('should call onToggleBurndown when clicking burndown button', async () => {
       renderWithProviders(<SprintBoardHeader {...defaultProps} />);
 
@@ -201,17 +188,6 @@ describe('SprintBoardHeader', () => {
   });
 
   describe('Accessibility', () => {
-    it('should have correct aria-label for keyboard help button', () => {
-      renderWithProviders(<SprintBoardHeader {...defaultProps} />);
-
-      const button = screen.getByLabelText(i18nT('sprint:boardHeader.keyboardShortcuts'));
-      expect(button).toBeInTheDocument();
-      expect(button).toHaveAttribute(
-        'title',
-        `${i18nT('sprint:boardHeader.keyboardShortcuts')} (?)`
-      );
-    });
-
     it('should have correct aria-label for manage backlog button', () => {
       renderWithProviders(<SprintBoardHeader {...defaultProps} />);
 
@@ -235,12 +211,6 @@ describe('SprintBoardHeader', () => {
         name: i18nT('sprint:boardHeader.completeSprint'),
       });
       expect(button).toHaveAttribute('aria-label', i18nT('sprint:boardHeader.completeSprint'));
-    });
-
-    it('should have keyboard shortcut hint visible', () => {
-      renderWithProviders(<SprintBoardHeader {...defaultProps} />);
-
-      expect(screen.getByText('?')).toBeInTheDocument();
     });
   });
 
@@ -269,6 +239,16 @@ describe('SprintBoardHeader', () => {
         name: i18nT('sprint:boardHeader.cancelSprint'),
       });
       expect(cancelButton).toBeInTheDocument();
+    });
+
+    it('should apply the danger style to the Cancel Sprint button', () => {
+      renderWithProviders(<SprintBoardHeader {...defaultProps} isProductOwner={true} />);
+
+      const cancelButton = screen.getByRole('button', {
+        name: i18nT('sprint:boardHeader.cancelSprint'),
+      });
+      expect(cancelButton.className).toContain('button-cancel-sprint');
+      expect(cancelButton.className).not.toContain('button-secondary');
     });
 
     it('should hide Cancel Sprint for a Developer', () => {

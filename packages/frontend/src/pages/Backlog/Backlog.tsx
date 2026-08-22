@@ -1,5 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import { useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
 import { apiService, definitionService } from '../../services';
@@ -61,6 +62,9 @@ const BacklogContent: React.FC = () => {
   });
   const [isLoadingChildTasks, setIsLoadingChildTasks] = useState(false);
   const { toasts, success, error: showError, removeToast } = useToast();
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const targetPbiId = searchParams.get('pbi');
 
   const {
     formData,
@@ -196,11 +200,38 @@ const BacklogContent: React.FC = () => {
     resetForm();
   };
 
-  const handleOpenDetailModal = (item: ProductBacklogItem) => {
-    setSelectedItem(item);
-    setWorkflowError(null);
-    setShowDetailModal(true);
-  };
+  const handleOpenDetailModal = useCallback(
+    (item: ProductBacklogItem) => {
+      setSelectedItem(item);
+      setWorkflowError(null);
+      setShowDetailModal(true);
+    },
+    [setSelectedItem, setWorkflowError, setShowDetailModal]
+  );
+
+  // Deep-link support: when the URL carries a `?pbi=<id>` query param (e.g. navigated from
+  // a task's Parent PBI field on the Sprint board), open that item's detail modal directly.
+  // Once handled, the param is removed so it does not re-open on subsequent renders.
+  useEffect(() => {
+    if (!targetPbiId || isLoading) return;
+
+    const items = backlogData?.data ?? [];
+    const targetItem = items.find((item) => item.id === targetPbiId);
+    if (targetItem) {
+      handleOpenDetailModal(targetItem);
+      // Remove only the `pbi` param, preserving any others.
+      const nextParams = new URLSearchParams(searchParams);
+      nextParams.delete('pbi');
+      setSearchParams(nextParams, { replace: true });
+    }
+  }, [
+    targetPbiId,
+    isLoading,
+    backlogData?.data,
+    searchParams,
+    setSearchParams,
+    handleOpenDetailModal,
+  ]);
 
   const handleCloseDetailModal = () => {
     setShowDetailModal(false);

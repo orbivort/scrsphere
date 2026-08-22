@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import baseStyles from './base/ModalBase.module.css';
 import styles from './CancelSprintModal.module.css';
 
-import { AlertTriangleIcon, CloseIcon, XCircleIcon } from '@/components/common/Icons';
+import { AlertTriangleIcon, CloseIcon, XCircleIcon, XIcon } from '@/components/common/Icons';
 
 export interface CancelSprintModalProps {
   sprintName: string;
@@ -96,9 +96,15 @@ export const CancelSprintModal: React.FC<CancelSprintModalProps> = ({
             aria-busy={isCancelling}
           >
             {isCancelling ? (
-              <>{t('cancelSprint.processing')}</>
+              <>
+                <XIcon size={16} aria-hidden="true" />
+                {t('cancelSprint.processing')}
+              </>
             ) : (
-              <>{t('cancelSprint.confirmCancel')}</>
+              <>
+                <XIcon size={16} aria-hidden="true" />
+                {t('cancelSprint.confirmCancel')}
+              </>
             )}
           </button>
         </div>

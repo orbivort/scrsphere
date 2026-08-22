@@ -145,6 +145,42 @@
   white-space: nowrap;
 }
 
+/* Parent PBI link (navigates to the Product Backlog detail page) */
+.detail-value-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  max-width: 100%;
+  padding: var(--space-0-5) var(--space-1);
+  margin: calc(var(--space-0-5) * -1) calc(var(--space-1) * -1);
+  background: transparent;
+  border-width: 0;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  color: var(--color-primary-600);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-align: end;
+  font: inherit;
+}
+
+.detail-value-link:hover,
+.detail-value-link:focus-visible {
+  color: var(--color-primary-700);
+  background: var(--color-primary-50);
+  outline: 2px solid var(--color-primary-300);
+  outline-offset: 2px;
+}
+
+.detail-value-link:active {
+  color: var(--color-primary-800);
+}
+
+.detail-value-link .detail-value {
+  color: inherit;
+  text-decoration: inherit;
+}
+
 /* Detail Row Full Width */
 .detail-row-full {
   display: flex;

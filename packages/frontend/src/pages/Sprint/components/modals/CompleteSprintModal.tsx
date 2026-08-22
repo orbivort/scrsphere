@@ -45,7 +45,7 @@ export interface CompleteSprintModalProps {
   isRetrospectiveCompleted: boolean;
   completeSprintError: string | null;
   onClose: () => void;
-  onProceedToDodVerification: () => void;
+  onCompleteSprint: () => void;
   onManageBacklog: () => void;
   onViewImpediments: () => void;
   onViewSprintReview: () => void;
@@ -67,7 +67,7 @@ export const CompleteSprintModal: React.FC<CompleteSprintModalProps> = ({
   isRetrospectiveCompleted,
   completeSprintError,
   onClose,
-  onProceedToDodVerification,
+  onCompleteSprint,
   onManageBacklog,
   onViewImpediments,
   onViewSprintReview,
@@ -367,7 +367,7 @@ export const CompleteSprintModal: React.FC<CompleteSprintModalProps> = ({
           </button>
           <button
             className={styles['button-complete-sprint-confirm']}
-            onClick={hasBlockingPrerequisites ? undefined : onProceedToDodVerification}
+            onClick={hasBlockingPrerequisites ? undefined : onCompleteSprint}
             disabled={isCompleting || hasBlockingPrerequisites}
             aria-busy={isCompleting}
             title={
@@ -379,7 +379,7 @@ export const CompleteSprintModal: React.FC<CompleteSprintModalProps> = ({
                     ? t('completeSprint.cannotCompleteWithIncompleteReview')
                     : hasIncompleteRetrospective
                       ? t('completeSprint.cannotCompleteWithIncompleteRetrospective')
-                      : t('completeSprint.proceedToDodVerificationTitle')
+                      : t('completeSprint.completeSprintTitle')
             }
           >
             {isCompleting ? (
@@ -403,7 +403,7 @@ export const CompleteSprintModal: React.FC<CompleteSprintModalProps> = ({
                   aria-hidden="true"
                   className={styles['button-icon-active']}
                 />
-                {t('completeSprint.proceedToDodVerification')}
+                {t('completeSprint.completeSprintConfirm')}
               </>
             )}
           </button>

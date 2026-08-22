@@ -12,6 +12,7 @@ import {
   ShieldIcon,
   TrashIcon,
   EditIcon,
+  InfoIcon,
 } from '../../../../components/common/Icons';
 
 import baseStyles from './base/ModalBase.module.css';
@@ -85,6 +86,8 @@ export interface TaskDetailModalProps {
   task: Task;
   workflowError: string | null;
   onClose: () => void;
+  /** Opens the lightweight PBI preview popup for a given PBI id instead of navigating away. */
+  onOpenPbiPreview?: (pbiId: string) => void;
   onEdit: () => void;
   onDelete: () => void;
   onStatusChange: (status: TaskStatus) => void;
@@ -103,6 +106,7 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
   task,
   workflowError,
   onClose,
+  onOpenPbiPreview,
   onEdit,
   onDelete,
   onStatusChange,
@@ -262,9 +266,19 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
               {/* Parent PBI Row */}
               <div className={styles['detail-row-full']}>
                 <span className={styles['detail-label']}>{t('taskDetail.parentPbi')}</span>
-                <span className={styles['detail-value']}>
-                  {task.pbi?.title ?? t('taskDetail.unknown')}
-                </span>
+                {task.pbi ? (
+                  <button
+                    type="button"
+                    className={styles['detail-value-link']}
+                    onClick={() => onOpenPbiPreview?.(task.pbiId)}
+                    aria-label={t('taskDetail.openParentPbi', { title: task.pbi.title })}
+                  >
+                    <span className={styles['detail-value']}>{task.pbi.title}</span>
+                    <InfoIcon size={14} aria-hidden="true" />
+                  </button>
+                ) : (
+                  <span className={styles['detail-value']}>{t('taskDetail.unknown')}</span>
+                )}
               </div>
             </div>
           </div>

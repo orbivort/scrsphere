@@ -13,7 +13,6 @@ import {
   createMockSprint,
   createMockBacklogItem,
   createMockTeamMember,
-  createMockDoDItem,
   createMockImpediment,
 } from '../../__mocks__/mockData';
 import { TaskStatus, type Task, type Sprint, ImpedimentStatus } from '../../types';
@@ -89,11 +88,6 @@ const mockSprintItems = [
   createMockBacklogItem({ id: 'pbi-2', title: 'PBI 2' }),
 ];
 
-const mockDoDItems = [
-  createMockDoDItem({ id: 'dod-1', description: 'Code reviewed' }),
-  createMockDoDItem({ id: 'dod-2', description: 'Tests passed' }),
-];
-
 const mockImpediments = [createMockImpediment({ id: 'imp-1', status: ImpedimentStatus.OPEN })];
 
 const mockTeamStore = useTeamStore as ReturnType<typeof vi.fn>;
@@ -117,9 +111,7 @@ const getDefaultMockData = () => ({
   tasks: mockTasks,
   teamMembers: mockTeamMembers,
   sprintItems: mockSprintItems,
-  dodItems: mockDoDItems,
   impediments: mockImpediments,
-  dodVerifications: [],
   sprintReview: null,
   isReviewCompleted: true,
   sprintRetrospective: null,
@@ -530,16 +522,6 @@ describe('SprintBoard Component', () => {
         impediments,
       });
 
-      renderSprintBoard(queryClient);
-
-      await waitFor(() => {
-        expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
-      });
-    });
-  });
-
-  describe('DoD Verification', () => {
-    it('should handle DoD verification modal', async () => {
       renderSprintBoard(queryClient);
 
       await waitFor(() => {
@@ -1261,24 +1243,6 @@ describe('SprintBoard Modal Interactions', () => {
         impediments,
       });
 
-      renderSprintBoard(queryClient);
-
-      await waitFor(() => {
-        expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
-      });
-    });
-  });
-
-  describe('DoD Verification Workflow', () => {
-    it('should handle DoD verification confirm', async () => {
-      renderSprintBoard(queryClient);
-
-      await waitFor(() => {
-        expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
-      });
-    });
-
-    it('should handle DoD verification cancel', async () => {
       renderSprintBoard(queryClient);
 
       await waitFor(() => {

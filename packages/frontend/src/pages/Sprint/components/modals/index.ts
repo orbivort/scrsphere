@@ -18,3 +18,6 @@ export type { CancelSprintModalProps } from './CancelSprintModal';
 
 export { KeyboardHelpModal } from './KeyboardHelpModal';
 export type { KeyboardHelpModalProps } from './KeyboardHelpModal';
+
+export { PbiPreviewModal } from './PbiPreviewModal';
+export type { PbiPreviewModalProps } from './PbiPreviewModal';

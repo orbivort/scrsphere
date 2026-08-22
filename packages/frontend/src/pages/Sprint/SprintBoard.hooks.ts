@@ -8,24 +8,18 @@ import {
 import { useTranslation } from 'react-i18next';
 import { TIME } from '@scrumooth/shared';
 
-import {
-  apiService,
-  definitionService,
-  sprintReviewService,
-  retrospectiveService,
-} from '../../services';
+import { apiService, sprintReviewService, retrospectiveService } from '../../services';
 import { useAnnounce } from '../../components/LiveAnnouncer';
 import { useMutationErrorHandler } from '../../hooks/useMutationErrorHandler';
 import { queryKeys } from '../../hooks/queryKeys';
 import {
   TaskStatus as TaskStatusEnum,
+  ItemStatus,
   type Task,
   type User,
   type TeamMember,
   type ProductBacklogItem,
-  type DoDItem,
   type Impediment,
-  type DoDChecklistVerification,
   type TaskStatus,
   type Sprint,
   type SprintReview,
@@ -50,7 +44,6 @@ import { calculateWIPLimit } from './SprintBoard.constants';
 export interface UseSprintBoardDataOptions {
   teamId: string | undefined;
   showBurndown: boolean;
-  showDodVerification: boolean;
   filterAssignee: string;
   filterPbi: string;
   debouncedSearchQuery: string;
@@ -79,9 +72,7 @@ export interface UseSprintBoardDataReturn {
   tasks: Task[];
   teamMembers: (TeamMember & { user?: User })[];
   sprintItems: ProductBacklogItem[];
-  dodItems: DoDItem[];
   impediments: Impediment[];
-  dodVerifications: DoDChecklistVerification[];
   burndownData: unknown;
 
   // Sprint Review / Retrospective completion prerequisites
@@ -105,6 +96,8 @@ export interface UseSprintBoardDataReturn {
   burndownChartData: BurndownDataPoint[];
   wipWarnings: { column: TaskStatus; current: number; limit: number }[];
   groupedBySwimlane: Record<string, Task[]> | null;
+  /** IDs of PBIs whose child tasks are all DONE but whose PBI is not yet marked DONE. */
+  readyToDonePbiIds: string[];
 }
 
 // ============================================
@@ -114,15 +107,8 @@ export interface UseSprintBoardDataReturn {
 export const useSprintBoardData = (
   options: UseSprintBoardDataOptions
 ): UseSprintBoardDataReturn => {
-  const {
-    teamId,
-    showBurndown,
-    showDodVerification,
-    filterAssignee,
-    filterPbi,
-    debouncedSearchQuery,
-    swimlaneGroup,
-  } = options;
+  const { teamId, showBurndown, filterAssignee, filterPbi, debouncedSearchQuery, swimlaneGroup } =
+    options;
 
   // ============================================
   // Data Fetching with useQuery
@@ -159,25 +145,11 @@ export const useSprintBoardData = (
     enabled: !!sprint?.id && showBurndown && !!teamId,
   });
 
-  // Fetch DoD items
-  const { data: dodData } = useQuery({
-    queryKey: ['definition-of-done', teamId],
-    queryFn: () => definitionService.getDefinitionOfDone(teamId ?? ''),
-    enabled: !!teamId,
-  });
-
   // Fetch impediments
   const { data: impedimentsData } = useQuery({
     queryKey: ['impediments', teamId],
     queryFn: () => apiService.getImpediments(teamId ?? ''),
     enabled: !!teamId,
-  });
-
-  // Fetch DoD compliance (conditional)
-  const { data: dodComplianceData } = useQuery({
-    queryKey: ['dod-compliance', sprint?.id],
-    queryFn: () => definitionService.getDoDComplianceReport(sprint?.id ?? ''),
-    enabled: !!sprint?.id && showDodVerification,
   });
 
   // Fetch Sprint Review (prerequisite for sprint completion)
@@ -201,15 +173,7 @@ export const useSprintBoardData = (
   const tasks = tasksData?.data ?? sprintTasks;
   const teamMembers: (TeamMember & { user?: User })[] = teamData?.data?.members ?? [];
   const sprintItems: ProductBacklogItem[] = useMemo(() => sprint?.items ?? [], [sprint]);
-  const dodItems: DoDItem[] =
-    (dodData as { data?: { items?: DoDItem[] } } | undefined)?.data?.items
-      ?.filter((item: DoDItem) => item.isActive)
-      .sort((a: DoDItem, b: DoDItem) => a.order - b.order) ?? [];
   const impediments: Impediment[] = impedimentsData?.data ?? [];
-  const dodVerifications: DoDChecklistVerification[] =
-    dodComplianceData?.data?.pbiDetails.flatMap(
-      (detail: { verifications: DoDChecklistVerification[] }) => detail.verifications
-    ) ?? [];
 
   // Sprint Review / Retrospective completion prerequisites.
   // A missing event record (or a 404) is treated as "not completed".
@@ -417,6 +381,18 @@ export const useSprintBoardData = (
     return groups;
   }, [filteredTasks, swimlaneGroup]);
 
+  // PBIs whose child tasks are all DONE but whose PBI is not yet marked DONE. These are
+  // candidates for the developer to promote to DONE (with the DoD check) from the board.
+  const readyToDonePbiIds = useMemo(() => {
+    return sprintItems
+      .filter((item) => item.status !== ItemStatus.DONE)
+      .filter((item) => {
+        const itemTasks = tasks.filter((t) => t.pbiId === item.id);
+        return itemTasks.length > 0 && itemTasks.every((t) => t.status === TaskStatusEnum.DONE);
+      })
+      .map((item) => item.id);
+  }, [sprintItems, tasks]);
+
   // Combined loading state
   const isLoading = sprintLoading || tasksLoading;
 
@@ -426,9 +402,7 @@ export const useSprintBoardData = (
     tasks,
     teamMembers,
     sprintItems,
-    dodItems,
     impediments,
-    dodVerifications,
     burndownData,
 
     // Sprint Review / Retrospective completion prerequisites
@@ -452,6 +426,7 @@ export const useSprintBoardData = (
     burndownChartData,
     wipWarnings,
     groupedBySwimlane,
+    readyToDonePbiIds,
   };
 };
 

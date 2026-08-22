@@ -33,7 +33,7 @@ describe('CompleteSprintModal', () => {
     isRetrospectiveCompleted: true,
     completeSprintError: null,
     onClose: vi.fn(),
-    onProceedToDodVerification: vi.fn(),
+    onCompleteSprint: vi.fn(),
     onManageBacklog: vi.fn(),
     onViewImpediments: vi.fn(),
     onViewSprintReview: vi.fn(),
@@ -354,39 +354,33 @@ describe('CompleteSprintModal', () => {
       expect(screen.getByText(/All tasks are complete/)).toBeInTheDocument();
     });
 
-    it('should show Proceed to DoD Verification button when all clear', () => {
+    it('should show Complete Sprint button when all clear', () => {
       renderWithProviders(<CompleteSprintModal {...allClearProps} />);
 
-      const dodButton = screen.getByText('Proceed to DoD Verification');
-      expect(dodButton).toBeInTheDocument();
-      expect(dodButton).not.toBeDisabled();
+      const completeButton = screen.getByRole('button', { name: /Complete Sprint/i });
+      expect(completeButton).toBeInTheDocument();
+      expect(completeButton).not.toBeDisabled();
     });
 
-    it('should call onProceedToDodVerification when Proceed button clicked', async () => {
-      const onProceedToDodVerification = vi.fn();
+    it('should call onCompleteSprint when Complete Sprint button clicked', async () => {
+      const onCompleteSprint = vi.fn();
       const user = userEvent.setup();
 
       renderWithProviders(
-        <CompleteSprintModal
-          {...allClearProps}
-          onProceedToDodVerification={onProceedToDodVerification}
-        />
+        <CompleteSprintModal {...allClearProps} onCompleteSprint={onCompleteSprint} />
       );
 
-      const dodButton = screen.getByText('Proceed to DoD Verification');
-      await user.click(dodButton);
+      const completeButton = screen.getByRole('button', { name: /Complete Sprint/i });
+      await user.click(completeButton);
 
-      expect(onProceedToDodVerification).toHaveBeenCalledTimes(1);
+      expect(onCompleteSprint).toHaveBeenCalledTimes(1);
     });
 
     it('should show correct title attribute tooltip for all-clear button', () => {
       renderWithProviders(<CompleteSprintModal {...allClearProps} />);
 
-      const dodButton = screen.getByText('Proceed to DoD Verification');
-      expect(dodButton.closest('button')).toHaveAttribute(
-        'title',
-        'Proceed to Definition of Done verification'
-      );
+      const completeButton = screen.getByRole('button', { name: /Complete Sprint/i });
+      expect(completeButton).toHaveAttribute('title', 'Complete the sprint');
     });
   });
 

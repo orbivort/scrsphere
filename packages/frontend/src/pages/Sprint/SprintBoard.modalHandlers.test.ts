@@ -350,7 +350,6 @@ describe('Modal Action Types', () => {
       'CLOSE_DELETE_CONFIRM',
       'CLOSE_COMPLETE_SPRINT_MODAL',
       'CLOSE_BACKLOG_MANAGER',
-      'CLOSE_DOD_VERIFICATION',
       'CLOSE_KEYBOARD_HELP',
     ];
 

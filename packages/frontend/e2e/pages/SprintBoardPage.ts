@@ -24,7 +24,6 @@ export class SprintBoardPage extends BasePage {
   readonly taskCreateModal: Locator;
   readonly deleteModal: Locator;
   readonly completeSprintModal: Locator;
-  readonly dodVerificationModal: Locator;
   readonly burndownChart: Locator;
   readonly wipWarning: Locator;
   readonly emptyState: Locator;
@@ -75,9 +74,6 @@ export class SprintBoardPage extends BasePage {
       '[class*="delete-modal"], [class*="modal"]:has(h2:has-text("Delete"))'
     );
     this.completeSprintModal = page.locator('[class*="complete-sprint-modal"]');
-    this.dodVerificationModal = page.locator(
-      '[class*="dod-verification"], [class*="modal"]:has(h2:has-text("Definition of Done"))'
-    );
     this.burndownChart = page.locator('[class*="burndown-chart"], [class*="chart"]').first();
     this.wipWarning = page.locator('[class*="wip-warning"], [class*="warning"]');
     this.emptyState = page.locator('[class*="empty-state"]').first();
