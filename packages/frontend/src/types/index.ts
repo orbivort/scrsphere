@@ -16,6 +16,8 @@ import {
   type ProductGoalProgressAssessment,
   type TeamHealthCheck,
   type HealthCheckValueScore,
+  type TimeboxState,
+  type TimeboxStatus,
 } from '@scrumooth/shared';
 
 export type {
@@ -30,6 +32,8 @@ export type {
   ProductGoalProgressAssessment,
   TeamHealthCheck,
   HealthCheckValueScore,
+  TimeboxState,
+  TimeboxStatus,
 };
 
 // Enums are runtime values; re-export as values.

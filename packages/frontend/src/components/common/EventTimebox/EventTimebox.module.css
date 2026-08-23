@@ -1,0 +1,343 @@
+/* ============================================================
+   EventTimebox — ceremony chronometer
+   A polished, instrument-style timebox used across the four
+   Scrum events (Sprint Planning, Daily Scrum, Sprint Review,
+   Retrospective). Progressive state color conveys urgency at a
+   glance while a thin progress track shows how much of the
+   timebox has been consumed.
+   ============================================================ */
+
+.timebox {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-1-5) var(--space-4);
+  border-radius: var(--radius-lg);
+  border: var(--border-width-1) solid var(--color-border-default);
+  background: var(--color-background-card);
+  box-shadow: var(--timebox-shadow-idle);
+  font-variant-numeric: var(--font-variant-numeric-tabular);
+  transition:
+    border-color var(--duration-normal) var(--ease-in-out),
+    box-shadow var(--duration-normal) var(--ease-in-out),
+    background var(--duration-normal) var(--ease-in-out);
+}
+
+/* Icon chip — the "instrument dial" housing the clock glyph. */
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  flex: 0 0 auto;
+  border-radius: var(--radius-md);
+  background: var(--timebox-icon-bg, var(--color-gray-100));
+  color: var(--timebox-icon-color, var(--color-text-secondary));
+  transition:
+    background-color var(--duration-normal) var(--ease-in-out),
+    color var(--duration-normal) var(--ease-in-out);
+}
+
+/* The countdown value — digital chronometer styling. */
+.value {
+  display: inline-flex;
+  align-items: baseline;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--timebox-color, var(--color-text-primary));
+  white-space: nowrap;
+  transition: color var(--duration-normal) var(--ease-in-out);
+}
+
+/* Separates hours/minutes/seconds with a dimmed colon for a
+   true chronometer read. */
+.value-unit {
+  color: var(--color-text-disabled);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Live status pill. */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-0-5) var(--space-2);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wider);
+  text-transform: uppercase;
+  color: var(--timebox-status-color, var(--color-text-secondary));
+  background: var(--timebox-status-bg, var(--color-gray-100));
+  white-space: nowrap;
+  transition:
+    color var(--duration-normal) var(--ease-in-out),
+    background-color var(--duration-normal) var(--ease-in-out);
+}
+
+/* Pulsing "live" dot shown while the ceremony is in progress. */
+.live-dot {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: var(--radius-full);
+  background: var(--timebox-status-color, var(--color-text-secondary));
+}
+
+.controls {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  margin-left: var(--space-1);
+}
+
+.control-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  border: var(--border-width-1) solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  background: var(--color-background-card);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  transition:
+    background-color var(--duration-fast) var(--ease-in-out),
+    border-color var(--duration-fast) var(--ease-in-out),
+    box-shadow var(--duration-fast) var(--ease-in-out),
+    transform var(--duration-fast) var(--ease-in-out);
+}
+
+.control-button:focus-visible {
+  box-shadow: var(--focus-ring);
+  outline: none;
+}
+
+.control-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.control-button:hover:not(:disabled) {
+  background: var(--color-gray-50);
+  border-color: var(--color-border-hover);
+}
+
+.control-button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.start-button {
+  border-color: var(--color-success-500);
+  color: var(--color-success-700);
+  background: var(--color-success-50);
+}
+
+.start-button:hover:not(:disabled) {
+  background: var(--color-success-100);
+  border-color: var(--color-success-600);
+}
+
+.pause-button {
+  border-color: var(--color-warning-500);
+  color: var(--color-warning-700);
+  background: var(--color-warning-50);
+}
+
+.pause-button:hover:not(:disabled) {
+  background: var(--color-warning-100);
+  border-color: var(--color-warning-600);
+}
+
+.reset-button {
+  border-color: var(--color-border-default);
+  color: var(--color-text-secondary);
+}
+
+.reset-button:hover:not(:disabled) {
+  background: var(--color-gray-50);
+  border-color: var(--color-border-hover);
+}
+
+/* ============================================================
+   PROGRESS TRACK — consumes visually as the timebox elapses
+   ============================================================ */
+.progress {
+  position: absolute;
+  left: var(--space-1-5);
+  right: var(--space-1-5);
+  bottom: 0;
+  height: 3px;
+  border-radius: var(--radius-full) var(--radius-full) var(--radius-sm) var(--radius-sm);
+  overflow: hidden;
+  background: var(--color-gray-100);
+}
+
+.progress-fill {
+  height: 100%;
+  width: var(--progress, 0%);
+  border-radius: inherit;
+  background: var(--timebox-progress, var(--color-gray-300));
+  transition:
+    width var(--duration-slow) var(--ease-in-out),
+    background-color var(--duration-normal) var(--ease-in-out);
+}
+
+/* ============================================================
+   STATE — Running
+   ============================================================ */
+.running {
+  border-color: var(--color-primary-200);
+  box-shadow: var(--timebox-shadow-running);
+  background: radial-gradient(
+    120% 120% at 0% 0%,
+    var(--color-primary-50),
+    var(--color-background-card) 60%
+  );
+}
+
+.running .icon {
+  --timebox-icon-bg: var(--color-primary-50);
+  --timebox-icon-color: var(--color-primary-600);
+}
+
+.running .value {
+  --timebox-color: var(--color-primary-700);
+}
+
+.running .status {
+  --timebox-status-color: var(--color-primary-700);
+  --timebox-status-bg: var(--color-primary-50);
+}
+
+.running .progress-fill {
+  --timebox-progress: var(--color-primary-500);
+}
+
+/* ============================================================
+   STATE — Warning (10% of the timebox or less remaining)
+   ============================================================ */
+.warning {
+  border-color: var(--color-warning-200);
+  box-shadow: var(--timebox-shadow-warning);
+  background: radial-gradient(
+    120% 120% at 0% 0%,
+    var(--color-warning-50),
+    var(--color-background-card) 60%
+  );
+}
+
+.warning .icon {
+  --timebox-icon-bg: var(--color-warning-50);
+  --timebox-icon-color: var(--color-warning-600);
+}
+
+.warning .value {
+  --timebox-color: var(--color-warning-700);
+}
+
+.warning .status {
+  --timebox-status-color: var(--color-warning-700);
+  --timebox-status-bg: var(--color-warning-50);
+}
+
+.warning .progress-fill {
+  --timebox-progress: var(--color-warning-500);
+}
+
+/* ============================================================
+   STATE — Overtime (exceeded the maximum timebox)
+   ============================================================ */
+.overtime {
+  border-color: var(--color-error-200);
+  box-shadow: var(--timebox-shadow-overtime);
+  background: radial-gradient(
+    120% 120% at 0% 0%,
+    var(--color-error-50),
+    var(--color-background-card) 60%
+  );
+}
+
+.overtime .icon {
+  --timebox-icon-bg: var(--color-error-50);
+  --timebox-icon-color: var(--color-error-600);
+}
+
+.overtime .value {
+  --timebox-color: var(--color-error-700);
+}
+
+.overtime .status {
+  --timebox-status-color: var(--color-error-700);
+  --timebox-status-bg: var(--color-error-50);
+}
+
+.overtime .progress-fill {
+  --timebox-progress: var(--color-error-500);
+}
+
+/* ============================================================
+   MOTION
+   ============================================================ */
+
+/* Live dot pulsing while running (breathing rhythm). */
+@media (prefers-reduced-motion: no-preference) {
+  .live-dot {
+    animation: live-dot-pulse 1.6s var(--ease-in-out) infinite;
+  }
+
+  /* Overtime: urgent blink on the value. */
+  .overtime .value {
+    animation: overtime-pulse 1s var(--ease-in-out) infinite;
+  }
+}
+
+@keyframes live-dot-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@keyframes overtime-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.55;
+  }
+}
+
+/* Reduced motion: disable the overtime blink. */
+@media (prefers-reduced-motion: reduce) {
+  .overtime .value,
+  .live-dot {
+    animation: none;
+  }
+}
+
+/* ============================================================
+   COMPACT — keep the chronometer tidy on narrow headers
+   ============================================================ */
+@media (width <= 768px) {
+  .timebox {
+    padding: var(--space-1) var(--space-3);
+    gap: var(--space-2);
+  }
+
+  .status {
+    display: none;
+  }
+}

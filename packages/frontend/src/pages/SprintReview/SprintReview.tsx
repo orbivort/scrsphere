@@ -2,7 +2,7 @@ import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useParams, useNavigate, useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { formatLocaleDate } from '@scrumooth/shared';
+import { formatLocaleDate, SCRUM_EVENTS } from '@scrumooth/shared';
 
 import {
   IncrementStatus,
@@ -55,6 +55,7 @@ import { AttendeesSection, type AttendeeFormData } from '@/components/AttendeesS
 import { SMNotes } from '@/components/common/SMNotes';
 import { ProductGoalProgress } from '@/components/common/ProductGoalProgress';
 import { ScrumValuesBanner } from '@/components/common/ScrumValuesBanner';
+import { EventTimebox } from '@/components/common/EventTimebox/EventTimebox';
 import { smDashboardService } from '@/services';
 
 const mapTeamRoleToAttendeeRole = (role?: string): string => {
@@ -984,6 +985,7 @@ export const SprintReview: React.FC = () => {
           </p>
         </div>
         <div className={styles['header-actions']}>
+          <EventTimebox event={SCRUM_EVENTS.sprintReview} sprintId={sprintId} />
           <span className={styles['attendee-count']}>
             {review.attendees.filter((a) => a.attended).length} / {review.attendees.length}{' '}
             {t('overview.attendees')}

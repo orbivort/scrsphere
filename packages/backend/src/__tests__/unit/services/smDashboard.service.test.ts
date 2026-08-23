@@ -91,6 +91,7 @@ describe('SMDashboardService', () => {
           retrospective: { id: 'retro-1' },
           dailyUpdates: [{ id: 'd1' }, { id: 'd2' }],
           generatedSprint: null,
+          timeboxes: [],
         },
       ] as any);
       vi.mocked(prisma.sprintConfiguration.findUnique).mockResolvedValue(null as any);
@@ -209,6 +210,7 @@ describe('SMDashboardService', () => {
           retrospective: { id: 'retro-1' },
           dailyUpdates: [{ id: 'd1' }, { id: 'd2' }],
           generatedSprint: null,
+          timeboxes: [],
         },
         {
           id: 'sprint-2',
@@ -220,6 +222,7 @@ describe('SMDashboardService', () => {
           retrospective: null,
           dailyUpdates: [],
           generatedSprint: null,
+          timeboxes: [],
         },
       ];
 
@@ -255,6 +258,7 @@ describe('SMDashboardService', () => {
           retrospective: null,
           dailyUpdates: [{ id: 'd1' }],
           generatedSprint: null,
+          timeboxes: [],
         },
       ] as any);
       vi.mocked(prisma.sprintConfiguration.findUnique).mockResolvedValue({

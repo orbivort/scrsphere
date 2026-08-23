@@ -155,8 +155,12 @@ export function useDragAndDrop({
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/plain', taskId);
 
-    // Create custom drag image if needed
-    const taskElement = e.currentTarget as HTMLElement;
+    // Create a custom drag image if the source element is still in the DOM.
+    // React's synthetic drag event can surface a null `currentTarget` in some
+    // timing scenarios (e.g. the source node being removed mid-drag), which
+    // would otherwise crash the page with a "getBoundingClientRect of null" error.
+    const taskElement = e.currentTarget as HTMLElement | null;
+    if (!taskElement) return;
     const rect = taskElement.getBoundingClientRect();
     e.dataTransfer.setDragImage(taskElement, rect.width / 2, 20);
   }, []);

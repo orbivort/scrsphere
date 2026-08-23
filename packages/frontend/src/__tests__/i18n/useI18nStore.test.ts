@@ -2,14 +2,19 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { act } from '@testing-library/react';
 
 import { useI18nStore, syncLocaleFromUser } from '@/i18n/useI18nStore';
-import { DEFAULT_LOCALE, type Locale } from '@scrumooth/shared';
+import { DEFAULT_LOCALE, type Locale, type LocaleCookieOptions } from '@scrumooth/shared';
 
 // Toggleable flag so we can exercise both the secure and non-secure
 // locale cookie branches inside setLocale().
 let mockCookieSecure = false;
 
 vi.mock('@scrumooth/shared', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@scrumooth/shared')>();
+  const actual = (await importOriginal()) as {
+    getLocaleCookieOptions: (
+      runtime: 'node' | 'browser',
+      isProduction?: boolean
+    ) => LocaleCookieOptions;
+  };
   return {
     ...actual,
     getLocaleCookieOptions: vi.fn((runtime: 'browser') => ({

@@ -3,12 +3,24 @@
 // Sprint Goal achievement, and retrospective action item completion for the SM role.
 import prisma from '../utils/prisma';
 import { teamHealthCheckService } from './teamHealthCheck.service';
+import { timeboxFor, type ScrumEvent } from '@scrumooth/shared';
 
 const DURATION_DAYS: Record<string, number> = {
   ONE_WEEK: 7,
   TWO_WEEKS: 14,
   THREE_WEEKS: 21,
   FOUR_WEEKS: 28,
+};
+
+/**
+ * Guide-correct timebox cap in seconds for an event given the configured Sprint
+ * duration in days. Daily Scrum is a fixed 15 minutes; the month-scaled events
+ * (Planning, Review, Retrospective) scale proportionally from their one-month
+ * maximum.
+ */
+const getTimeboxSeconds = (eventType: string, durationDays: number): number => {
+  const weeks = Math.max(1, durationDays / 7);
+  return timeboxFor(eventType as ScrumEvent, weeks);
 };
 
 export const smDashboardService = {
@@ -24,6 +36,12 @@ export const smDashboardService = {
         retrospective: { select: { id: true } },
         dailyUpdates: { select: { id: true } },
         generatedSprint: { select: { sprintNumber: true } },
+        timeboxes: {
+          select: {
+            eventType: true,
+            concludedElapsedMs: true,
+          },
+        },
       },
       orderBy: { startDate: 'desc' },
       take: sprintCount,
@@ -33,18 +51,31 @@ export const smDashboardService = {
     const durationDays = config ? (DURATION_DAYS[config.duration] ?? 14) : 14;
     const expectedDailyScrums = Math.max(Math.floor(durationDays / 7) * 5, 1);
 
-    return sprints.map((sprint) => ({
-      sprintId: sprint.id,
-      sprintName: sprint.name,
-      status: sprint.status,
-      sprintPlanningCompleted: sprint.status !== 'PLANNED',
-      sprintReviewCompleted: Boolean(sprint.sprintReview),
-      retrospectiveCompleted: Boolean(sprint.retrospective),
-      dailyScrumHeld: sprint.dailyUpdates.length,
-      dailyScrumExpected:
-        sprint.status === 'COMPLETED' ? expectedDailyScrums : sprint.dailyUpdates.length,
-      timeboxExceeded: false,
-    }));
+    return sprints.map((sprint) => {
+      // A timebox is considered exceeded if any concluded event ran past its
+      // maximum. Compare the recorded elapsed (seconds) against the Guide-correct
+      // cap derived from the Sprint duration.
+      const timeboxExceeded = (sprint.timeboxes ?? []).some((tb) => {
+        if (tb.concludedElapsedMs === null) {
+          return false;
+        }
+        const capSeconds = getTimeboxSeconds(tb.eventType, durationDays);
+        return tb.concludedElapsedMs / 1000 > capSeconds;
+      });
+
+      return {
+        sprintId: sprint.id,
+        sprintName: sprint.name,
+        status: sprint.status,
+        sprintPlanningCompleted: sprint.status !== 'PLANNED',
+        sprintReviewCompleted: Boolean(sprint.sprintReview),
+        retrospectiveCompleted: Boolean(sprint.retrospective),
+        dailyScrumHeld: sprint.dailyUpdates.length,
+        dailyScrumExpected:
+          sprint.status === 'COMPLETED' ? expectedDailyScrums : sprint.dailyUpdates.length,
+        timeboxExceeded,
+      };
+    });
   },
 
   /**

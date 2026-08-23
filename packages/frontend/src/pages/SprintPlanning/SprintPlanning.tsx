@@ -2,7 +2,7 @@
 import { Link, useNavigate } from 'react-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { TIME, formatDateRange } from '@scrumooth/shared';
+import { TIME, formatDateRange, SCRUM_EVENTS } from '@scrumooth/shared';
 
 import { apiService } from '../../services';
 import { API_BASE_URL, getCsrfHeader } from '../../services/core/api.core';
@@ -11,6 +11,7 @@ import { useMutationErrorHandler } from '../../hooks/useMutationErrorHandler';
 import { queryKeys } from '../../hooks/queryKeys';
 import { ToastContainer } from '../../components/common/ToastContainer';
 import { ScrumValuesBanner } from '../../components/common/ScrumValuesBanner';
+import { EventTimebox } from '../../components/common/EventTimebox/EventTimebox';
 import { useToast } from '../../hooks/useToast';
 import {
   ItemStatus,
@@ -263,8 +264,6 @@ export const SprintPlanning: React.FC = () => {
   const [selectedItemForTask, setSelectedItemForTask] = useState<string | null>(null);
   const [teamAvailability, setTeamAvailability] = useState<TeamAvailability[]>([]);
   const [showCapacityModal, setShowCapacityModal] = useState(false);
-  const [planningStartTime, setPlanningStartTime] = useState<Date | null>(null);
-  const [elapsedTime, setElapsedTime] = useState(0);
   const [showStartSprintModal, setShowStartSprintModal] = useState(false);
   const [startSprintError, setStartSprintError] = useState<string | null>(null);
   const { toasts, success, error: showError, warning, info, removeToast } = useToast();
@@ -556,25 +555,6 @@ export const SprintPlanning: React.FC = () => {
   const velocityData = calculateVelocityData();
 
   useEffect(() => {
-    let interval: ReturnType<typeof setInterval> | undefined;
-    if (planningStartTime) {
-      interval = setInterval(() => {
-        setElapsedTime(Math.floor((Date.now() - planningStartTime.getTime()) / 1000));
-      }, 1000);
-    }
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [planningStartTime]);
-
-  const formatTime = (seconds: number) => {
-    const hrs = Math.floor(seconds / 3600);
-    const mins = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
-    return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  useEffect(() => {
     const members: TeamMember[] = teamMembersData?.data?.members ?? [];
     // Only developers contribute to team capacity and appear as task assignees.
     // The role may be uppercase (backend enum) or lowercase (mock data), so compare case-insensitively.
@@ -596,9 +576,6 @@ export const SprintPlanning: React.FC = () => {
   }, [teamMembersData]);
 
   useEffect(() => {
-    if (selectedSprintId && !planningStartTime) {
-      setPlanningStartTime(new Date());
-    }
     // Reset planning state when switching sprints so a previously selected sprint's backlog
     // and draft indicators are never shown for a different sprint. The resume-hydration effect
     // below repopulates the backlog from the newly selected sprint's saved draft, and sets
@@ -608,7 +585,7 @@ export const SprintPlanning: React.FC = () => {
     dirtyRef.current = false;
     setDraftStatus('idle');
     setDraftConflicts([]);
-  }, [selectedSprintId, planningStartTime]);
+  }, [selectedSprintId]);
 
   // Incremental auto-save: persist the planning draft server-side whenever the selection or
   // decomposition changes, so an unexpected quit does not lose work (Scrum Guide: the Sprint
@@ -1304,12 +1281,6 @@ export const SprintPlanning: React.FC = () => {
     return businessDays;
   };
 
-  const getRecommendedPlanningTime = () => {
-    const days = calculateSprintDuration();
-    const weeks = Math.ceil(days / 7);
-    return weeks * 2 * 60 * 60;
-  };
-
   const isLoading = generatedSprintsLoading || backlogLoading || goalsLoading;
 
   if (!teamId) {
@@ -1346,22 +1317,8 @@ export const SprintPlanning: React.FC = () => {
             <p className={styles['page-subtitle']}>{t('sprintPlanning.subtitle')}</p>
           </div>
           <div className={styles['header-right']}>
-            {planningStartTime && (
-              <div
-                className={styles['planning-timer']}
-                role="timer"
-                aria-label={t('sprintPlanning.planningTimeAria', { time: formatTime(elapsedTime) })}
-              >
-                <span className={styles['timer-icon']} aria-hidden="true">
-                  <ClockIcon size={16} />
-                </span>
-                <span
-                  className={`${styles['timer-value']} ${elapsedTime > getRecommendedPlanningTime() ? styles.warning : ''}`}
-                >
-                  {formatTime(elapsedTime)}
-                </span>
-                <span className={styles['timer-label']}>{t('sprintPlanning.planningTime')}</span>
-              </div>
+            {selectedSprintId && (
+              <EventTimebox event={SCRUM_EVENTS.sprintPlanning} sprintId={selectedSprintId} />
             )}
             <label htmlFor="sprint-select" className={styles['visually-hidden']}>
               {t('sprintPlanning.selectSprint')}

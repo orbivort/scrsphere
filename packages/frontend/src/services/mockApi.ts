@@ -2,6 +2,7 @@
 // This service returns mock data instead of making real API calls
 
 import i18n from 'i18next';
+import { timeboxFor, type ScrumEvent } from '@scrumooth/shared';
 
 import {
   RetrospectiveCategory,
@@ -37,6 +38,7 @@ import {
   type Increment,
   type SprintReview,
   type SprintRetrospective,
+  type TimeboxState,
   type DefinitionOfDone,
   type DoDItem,
   type DoDChecklistVerification,
@@ -1026,6 +1028,9 @@ class MockApiService {
   // ==================== Daily Updates ====================
   // Store for dynamically created updates during demo
   private dynamicDailyUpdates: DailyUpdate[] = [];
+
+  // In-memory timebox state for Scrum event timeboxes
+  private timeboxStore: Record<string, TimeboxState & { lastTick?: number }> = {};
 
   async getDailyUpdates(sprintId: string, date?: string): Promise<ApiResponse<DailyUpdate[]>> {
     await delay(300);
@@ -4454,8 +4459,185 @@ class MockApiService {
   // ==================== Generic HTTP Methods ====================
   // These methods route requests to specific mock implementations
 
+  // ==================== Timebox mock methods ====================
+
+  private timeboxKey(eventType: string, sprintId?: string): string {
+    return `${eventType}:${sprintId ?? 'no-sprint'}`;
+  }
+
+  /**
+   * Derive the timebox cap for an event using the same strict linear scale as
+   * the backend (`timeboxFor`): sprint length in weeks scales the one-month
+   * maximum proportionally. No hardcoded per-week values.
+   */
+  private timeboxSecondsFor(eventType: string, sprintId?: string): number {
+    // Resolve weeks from either a materialized Sprint or a GeneratedSprint,
+    // mirroring the backend's `resolveSprintId` + `toState`. The Planning page
+    // selects sprints by their GeneratedSprint id, so both lookups are needed.
+    let startDate: string | undefined;
+    let endDate: string | undefined;
+
+    if (sprintId) {
+      const sprint = mockSprints.find((s) => s.id === sprintId);
+      if (sprint) {
+        startDate = sprint.startDate;
+        endDate = sprint.endDate;
+      } else {
+        const generated = this.generatedSprintsStore.find((s) => s.id === sprintId);
+        if (generated) {
+          startDate = generated.startDate;
+          endDate = generated.endDate;
+        }
+      }
+    }
+
+    let weeks = 4;
+    if (startDate && endDate) {
+      const ms = new Date(endDate).getTime() - new Date(startDate).getTime();
+      weeks = Math.max(1, Math.round(ms / (7 * 24 * 60 * 60 * 1000)));
+    }
+    return timeboxFor(eventType as ScrumEvent, weeks);
+  }
+
+  async getTimebox(eventType: string, sprintId?: string): Promise<ApiResponse<TimeboxState>> {
+    await delay(200);
+    const key = this.timeboxKey(eventType, sprintId);
+    const now = Date.now();
+    const timeboxSeconds = this.timeboxSecondsFor(eventType, sprintId);
+
+    const existing = this.timeboxStore[key];
+    if (!existing) {
+      const state: TimeboxState = {
+        teamId: 'team-1',
+        eventType,
+        sprintId: sprintId ?? null,
+        date: new Date().toISOString(),
+        status: 'IDLE',
+        elapsedMs: 0,
+        timeboxSeconds,
+        version: 0,
+      };
+      this.timeboxStore[key] = state;
+      return { success: true, data: state };
+    }
+
+    const elapsedMs =
+      existing.status === 'RUNNING'
+        ? existing.elapsedMs + (now - (existing.lastTick ?? now))
+        : existing.elapsedMs;
+    this.timeboxStore[key] = { ...existing, elapsedMs, lastTick: now };
+    return { success: true, data: this.timeboxStore[key] };
+  }
+
+  async startTimebox(eventType: string, sprintId?: string): Promise<ApiResponse<TimeboxState>> {
+    await delay(200);
+    const key = this.timeboxKey(eventType, sprintId);
+    const state = await this.getTimebox(eventType, sprintId);
+    const current = state.data ?? {
+      teamId: 'team-1',
+      eventType,
+      sprintId: sprintId ?? null,
+      date: new Date().toISOString(),
+      status: 'IDLE',
+      elapsedMs: 0,
+      timeboxSeconds: this.timeboxSecondsFor(eventType, sprintId),
+      version: 0,
+    };
+    const running: TimeboxState = {
+      ...current,
+      status: 'RUNNING',
+      version: current.version + 1,
+    };
+    this.timeboxStore[key] = { ...running, lastTick: Date.now() };
+    return { success: true, data: running };
+  }
+
+  async pauseTimebox(eventType: string, sprintId?: string): Promise<ApiResponse<TimeboxState>> {
+    await delay(200);
+    const key = this.timeboxKey(eventType, sprintId);
+    const current = this.timeboxStore[key];
+    if (!current) {
+      const state: TimeboxState = {
+        teamId: 'team-1',
+        eventType,
+        sprintId: sprintId ?? null,
+        date: new Date().toISOString(),
+        status: 'PAUSED',
+        elapsedMs: 0,
+        timeboxSeconds: this.timeboxSecondsFor(eventType, sprintId),
+        version: 1,
+      };
+      this.timeboxStore[key] = { ...state, lastTick: Date.now() };
+      return { success: true, data: state };
+    }
+    const elapsedMs =
+      current.status === 'RUNNING'
+        ? current.elapsedMs + (Date.now() - (current.lastTick ?? Date.now()))
+        : current.elapsedMs;
+    const paused: TimeboxState = {
+      teamId: current.teamId,
+      eventType,
+      sprintId: current.sprintId,
+      date: current.date,
+      status: 'PAUSED',
+      elapsedMs,
+      timeboxSeconds: current.timeboxSeconds,
+      version: current.version + 1,
+    };
+    this.timeboxStore[key] = { ...paused, lastTick: Date.now() };
+    return { success: true, data: paused };
+  }
+
+  async resetTimebox(eventType: string, sprintId?: string): Promise<ApiResponse<TimeboxState>> {
+    await delay(200);
+    const key = this.timeboxKey(eventType, sprintId);
+    const state: TimeboxState = {
+      teamId: 'team-1',
+      eventType,
+      sprintId: sprintId ?? null,
+      date: new Date().toISOString(),
+      status: 'IDLE',
+      elapsedMs: 0,
+      timeboxSeconds: this.timeboxSecondsFor(eventType, sprintId),
+      version: (this.timeboxStore[key]?.version ?? 0) + 1,
+    };
+    this.timeboxStore[key] = { ...state, lastTick: Date.now() };
+    return { success: true, data: state };
+  }
+
+  async concludeTimebox(eventType: string, sprintId?: string): Promise<ApiResponse<TimeboxState>> {
+    await delay(200);
+    const key = this.timeboxKey(eventType, sprintId);
+    const current = this.timeboxStore[key];
+    const elapsedMs = current
+      ? current.status === 'RUNNING'
+        ? current.elapsedMs + (Date.now() - (current.lastTick ?? Date.now()))
+        : current.elapsedMs
+      : 0;
+    const state: TimeboxState = {
+      teamId: 'team-1',
+      eventType,
+      sprintId: sprintId ?? null,
+      date: new Date().toISOString(),
+      status: 'PAUSED',
+      elapsedMs,
+      timeboxSeconds: this.timeboxSecondsFor(eventType, sprintId),
+      version: (current?.version ?? 0) + 1,
+    };
+    this.timeboxStore[key] = { ...state, lastTick: Date.now() };
+    return { success: true, data: state };
+  }
+
   async get<T>(url: string, _config?: { params?: Record<string, unknown> }): Promise<{ data: T }> {
     await mockDelay(200);
+
+    // Route timebox read requests
+    if (url.startsWith('/timeboxes/')) {
+      const eventType = url.split('/')[2] ?? '';
+      const params = (_config?.params as { sprintId?: string } | undefined) ?? {};
+      const result = await this.getTimebox(eventType, params.sprintId);
+      return { data: { success: result.success, data: result.data } as T };
+    }
 
     // Route definition of done requests
     if (url.includes('/definition-of-done') && !url.includes('/history')) {
@@ -4548,6 +4730,27 @@ class MockApiService {
 
   async post<T>(_url: string, data?: unknown): Promise<{ data: T }> {
     await mockDelay(200);
+
+    // Route timebox control requests
+    if (_url.startsWith('/timeboxes/')) {
+      const segments = _url.split('/');
+      const eventType = segments[2] ?? '';
+      const action = segments[3];
+      const body = (data as { sprintId?: string } | undefined) ?? {};
+      let result: ApiResponse<TimeboxState>;
+      if (action === 'start') {
+        result = await this.startTimebox(eventType, body.sprintId);
+      } else if (action === 'pause') {
+        result = await this.pauseTimebox(eventType, body.sprintId);
+      } else if (action === 'reset') {
+        result = await this.resetTimebox(eventType, body.sprintId);
+      } else if (action === 'conclude') {
+        result = await this.concludeTimebox(eventType, body.sprintId);
+      } else {
+        result = await this.getTimebox(eventType, body.sprintId);
+      }
+      return { data: { success: result.success, data: result.data } as T };
+    }
 
     // Route data export requests
     if (_url === '/user/export-data') {

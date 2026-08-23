@@ -1,0 +1,24 @@
+{
+  "actions": {
+    "pause": "Pausar",
+    "reset": "Restablecer",
+    "start": "Iniciar"
+  },
+  "aria": {
+    "idle": "Timebox no iniciada",
+    "noTeam": "Temporizador no disponible hasta que se seleccione un equipo",
+    "overtime": "Timebox excedida",
+    "paused": "Timebox en pausa",
+    "running": "Timebox en curso",
+    "smOnly": "Solo el Scrum Master puede controlar la timebox",
+    "timer": "Tiempo restante: {{remaining}}",
+    "warning": "Timebox casi terminada"
+  },
+  "status": {
+    "idle": "Inactivo",
+    "noTeam": "Seleccione un equipo para iniciar el temporizador",
+    "overtime": "Tiempo excedido",
+    "paused": "En pausa",
+    "running": "En curso"
+  }
+}

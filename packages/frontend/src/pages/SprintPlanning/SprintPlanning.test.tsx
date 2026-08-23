@@ -3500,8 +3500,8 @@ describe('SprintPlanning Integration Tests', () => {
     });
   });
 
-  describe('Handle getRecommendedPlanningTime', () => {
-    it('should calculate recommended planning time correctly', async () => {
+  describe('Handle event timebox', () => {
+    it('renders the planning page with the shared timebox in the header', async () => {
       const mockSprint = createMockGeneratedSprint();
 
       mockApiMethod(apiService.getGeneratedSprints, createMockApiResponse({ data: [mockSprint] }));
@@ -4208,7 +4208,7 @@ describe('SprintPlanning Integration Tests', () => {
   });
 
   describe('Timer and Elapsed Time', () => {
-    it('should display elapsed planning time', async () => {
+    it('should display the shared event timebox when a sprint is selected', async () => {
       const user = userEvent.setup();
       const mockSprint = createMockGeneratedSprint();
 
@@ -4223,13 +4223,13 @@ describe('SprintPlanning Integration Tests', () => {
         expect(screen.getByTestId('sprint-select')).toBeInTheDocument();
       });
 
-      // Select sprint to start timer
+      // Select sprint to mount the timebox
       const sprintSelect = screen.getByTestId('sprint-select');
       await user.selectOptions(sprintSelect, mockSprint.id);
 
-      // Timer should be displayed
+      // The shared timebox should be displayed as a timer
       await waitFor(() => {
-        expect(screen.getByText(/Planning Time/i)).toBeInTheDocument();
+        expect(screen.getByRole('timer')).toBeInTheDocument();
       });
     });
   });

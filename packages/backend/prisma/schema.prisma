@@ -76,6 +76,7 @@ model Team {
   sprintReviews       SprintReview[]
   sprints             Sprint[]
   members             TeamMember[]
+  timeboxes           Timebox[]
   creator             User?                 @relation("TeamCreator", fields: [createdBy], references: [id], onDelete: SetNull)
 
   @@index([createdBy])
@@ -187,6 +188,7 @@ model Sprint {
   retrospective      SprintRetrospective?
   sprintReview       SprintReview?
   healthChecks       TeamHealthCheck[]
+  timeboxes          Timebox[]
   goal               ProductGoal?          @relation(fields: [goalId], references: [id], onDelete: SetNull)
   team               Team                  @relation(fields: [teamId], references: [id], onDelete: Cascade)
   tasks              Task[]
@@ -1065,6 +1067,33 @@ model PasswordResetToken {
   @@map("password_reset_tokens")
 }
 
+model Timebox {
+  id            String         @id @db.Uuid
+  teamId        String         @db.Uuid
+  eventType     String
+  sprintId      String?        @db.Uuid
+  date          DateTime       @db.Date
+  status        TimeboxStatus  @default(IDLE)
+  startedAt     DateTime?      @db.Timestamptz(3)
+  pausedAt      DateTime?      @db.Timestamptz(3)
+  accumulatedMs Int            @default(0)
+  version       Int            @default(0)
+  concludedAt   DateTime?      @db.Timestamptz(3)
+  concludedElapsedMs Int?     
+  createdAt     DateTime       @default(now()) @db.Timestamptz(3)
+  createdBy     String?        @db.Uuid
+  updatedAt     DateTime       @updatedAt @db.Timestamptz(3)
+  updatedBy     String?        @db.Uuid
+  team          Team           @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  sprint        Sprint?        @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, eventType, sprintId, date])
+  @@index([teamId])
+  @@index([sprintId])
+  @@index([date])
+  @@map("timeboxes")
+}
+
 enum UserRole {
   PRODUCT_OWNER
   SCRUM_MASTER
@@ -1170,6 +1199,12 @@ enum RetrospectiveStatus {
   DRAFT
   IN_PROGRESS
   COMPLETED
+}
+
+enum TimeboxStatus {
+  IDLE
+  RUNNING
+  PAUSED
 }
 
 enum SprintDuration {

@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { formatLocaleDate, formatDateRange, formatTime } from '@scrumooth/shared';
+import { formatLocaleDate, formatDateRange, formatTime, SCRUM_EVENTS } from '@scrumooth/shared';
 
 import { apiService } from '../../services';
 import { useTeamStore, useAuthStore } from '../../store';
@@ -11,6 +11,7 @@ import { TaskStatus } from '../../types';
 import { TeamMemberSelect } from '../../components/TeamMemberSelect/TeamMemberSelect';
 import { LoadingState } from '../../components/common/Loading';
 import { ScrumValuesBanner } from '../../components/common/ScrumValuesBanner';
+import { EventTimebox } from '../../components/common/EventTimebox/EventTimebox';
 import { useModalFocus } from '../../hooks/useModalFocus';
 import { queryKeys } from '../../hooks/queryKeys';
 import {
@@ -709,6 +710,7 @@ export const DailyScrum: React.FC = () => {
             </p>
           </div>
           <div className={styles['header-right']}>
+            <EventTimebox event={SCRUM_EVENTS.dailyScrum} sprintId={sprint.id} />
             <div className={styles['view-toggle']} role="group" aria-label={t('aria.viewMode')}>
               <button
                 className={`${styles['toggle-btn']} ${viewMode === 'card' ? styles.active : ''}`}

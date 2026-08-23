@@ -247,6 +247,13 @@ export const queryKeys = {
     latest: (teamId: string) => [...queryKeys.healthCheck.all, 'latest', teamId] as const,
     trend: (teamId: string) => [...queryKeys.healthCheck.all, 'trend', teamId] as const,
   },
+
+  // Scrum event timebox queries
+  timebox: {
+    all: ['timebox'] as const,
+    get: (event: string, sprintId: string, date?: string) =>
+      [...queryKeys.timebox.all, event, sprintId, date] as const,
+  },
 } as const;
 
 // Type helper for query keys

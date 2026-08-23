@@ -2,12 +2,13 @@ import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useParams, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { formatLocaleDate } from '@scrumooth/shared';
+import { formatLocaleDate, SCRUM_EVENTS } from '@scrumooth/shared';
 
 import { apiService, smDashboardService } from '../../services';
 import { useTeamStore, useAuthStore } from '../../store';
 import { SMNotes } from '../../components/common/SMNotes';
 import { ScrumValuesBanner } from '../../components/common/ScrumValuesBanner';
+import { EventTimebox } from '../../components/common/EventTimebox/EventTimebox';
 import { logger } from '../../utils/logger';
 import {
   RetrospectiveCategory,
@@ -1177,6 +1178,7 @@ export const SprintRetrospective: React.FC = () => {
             </p>
           </div>
           <div className={styles['header-actions']}>
+            <EventTimebox event={SCRUM_EVENTS.retrospective} sprintId={sprintId} />
             <span
               className={styles['participant-count']}
               aria-label={t('attendeesAriaLabel', {

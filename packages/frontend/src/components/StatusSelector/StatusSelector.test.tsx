@@ -670,9 +670,7 @@ describe('StatusSelector Component', () => {
     const setupPositionGeometry = (viewportWidth: number, left: number, width: number) => {
       vi.spyOn(window, 'innerWidth', 'get').mockReturnValue(viewportWidth);
       const right = left + width;
-      vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(function (
-        this: Element
-      ) {
+      vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(() => {
         return mockRect({ left, right, width });
       });
     };

@@ -22,6 +22,7 @@ export { sprintReviewService } from './domain/sprintReview.service';
 export { retrospectiveService } from './domain/retrospective.service';
 export { systemParamsService } from './domain/systemParams.service';
 export { dataExportService } from './domain/dataExport.service';
+export { timeboxService } from './domain/timebox.service';
 
 // Legacy ApiService class for backward compatibility
 // This maintains the existing API while encouraging direct service imports
@@ -41,6 +42,7 @@ import { sprintReviewService } from './domain/sprintReview.service';
 import { retrospectiveService } from './domain/retrospective.service';
 import { systemParamsService } from './domain/systemParams.service';
 import { dataExportService } from './domain/dataExport.service';
+import { timeboxService } from './domain/timebox.service';
 
 class ApiService {
   // Auth endpoints
@@ -213,6 +215,13 @@ class ApiService {
   addRetroAttendee = retrospectiveService.addRetroAttendee.bind(retrospectiveService);
   updateRetroAttendee = retrospectiveService.updateRetroAttendee.bind(retrospectiveService);
   deleteRetroAttendee = retrospectiveService.deleteRetroAttendee.bind(retrospectiveService);
+
+  // Timebox endpoints (Scrum event timeboxes)
+  getTimebox = timeboxService.getTimebox.bind(timeboxService);
+  startTimebox = timeboxService.startTimebox.bind(timeboxService);
+  pauseTimebox = timeboxService.pauseTimebox.bind(timeboxService);
+  resetTimebox = timeboxService.resetTimebox.bind(timeboxService);
+  concludeTimebox = timeboxService.concludeTimebox.bind(timeboxService);
 
   // Data Export endpoints (GDPR Article 20)
   initiateDataExport = dataExportService.initiateExport.bind(dataExportService);
