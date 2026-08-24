@@ -1,6 +1,8 @@
 {
   "accountDeletionCancelled": "Account deletion cancelled",
   "accountDeletionCancelledMessage": "The scheduled account deletion has been cancelled.",
+  "accountDeletionReminderMessage": "A Product Owner in your team will have their account permanently deleted in {{daysText}}. Please assign a new Product Owner if needed.",
+  "accountDeletionReminderTitle": "Account deletion reminder",
   "accountDeletionScheduled": "Team member scheduled account deletion",
   "accountDeletionScheduledMessage": "A Product Owner in your team has scheduled their account deletion. The account will be permanently deleted on {{deletionDate}}. Please assign a new Product Owner before then.",
   "ariaLabels": {
@@ -14,12 +16,16 @@
   },
   "backlogAdjustmentRequired": "New Backlog Adjustment Requires Your Action",
   "backlogAdjustmentRequiredMessage": "You have been assigned as the owner of a backlog adjustment: {{action}} - \"{{description}}\"",
+  "dailyScrumSignalMessage": "The Daily Scrum for \"{{sprintName}}\" is starting. Developers, please gather to inspect progress toward the Sprint Goal and adapt the Sprint Backlog.",
+  "dailyScrumSignalTitle": "Daily Scrum starting",
   "dateGroups": {
     "older": "Older",
     "thisWeek": "This Week",
     "today": "Today",
     "yesterday": "Yesterday"
   },
+  "directMessageBody": "{{message}}",
+  "directMessageTitle": "Message from {{senderName}}",
   "empty": {
     "message": "You will see notifications here when there is activity",
     "title": "No notifications yet"
@@ -43,19 +49,27 @@
     "unread": "Unread"
   },
   "impedimentAssigned": "New impediment assigned: \"{{impedimentTitle}}\"",
+  "impedimentAssignedMessage": "Reported by {{reporterName}}",
   "loading": {
     "ariaLabel": "Loading notifications",
     "title": "Loading notifications..."
   },
   "markAllAsRead": "Mark All as Read",
   "marking": "Marking...",
+  "newTaskAssignedMessage": "In sprint \"{{sprintName}}\"",
+  "newTaskAssignedTitle": "New task assigned: \"{{taskTitle}}\"",
   "pagination": {
     "next": "Next",
     "pageInfo": "Page {{current}} of {{total}}",
     "previous": "Previous"
   },
+  "remindersNone": "No reminders sent",
+  "remindersSent": "Reminders sent to {{count}} team member",
+  "remindersSent_plural": "Reminders sent to {{count}} team members",
   "skipToMainContent": "Skip to main content",
   "subtitle": "Stay updated with team activities and important updates",
+  "taskReassignedMessage": "In sprint \"{{sprintName}}\"",
+  "taskReassignedTitle": "Task reassigned to you: \"{{taskTitle}}\"",
   "teamCreated": "Team created: \"{{teamName}}\"",
   "teamCreatedMessage": "You have successfully created the team",
   "teamDeleted": "Team deleted: \"{{teamName}}\"",

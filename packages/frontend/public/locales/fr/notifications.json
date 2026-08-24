@@ -1,6 +1,8 @@
 {
   "accountDeletionCancelled": "Suppression de compte annulée",
   "accountDeletionCancelledMessage": "La suppression de compte programmée a été annulée.",
+  "accountDeletionReminderMessage": "Un Product Owner de votre équipe supprimera définitivement son compte dans {{daysText}}. Veuillez assigner un nouveau Product Owner si nécessaire.",
+  "accountDeletionReminderTitle": "Rappel de suppression de compte",
   "accountDeletionScheduled": "Un membre de l'équipe a programmé la suppression de son compte",
   "accountDeletionScheduledMessage": "Un Product Owner de votre équipe a programmé la suppression de son compte. Le compte sera définitivement supprimé le {{deletionDate}}. Veuillez assigner un nouveau Product Owner avant cette date.",
   "ariaLabels": {
@@ -14,12 +16,16 @@
   },
   "backlogAdjustmentRequired": "Nouvel ajustement du backlog requiert votre action",
   "backlogAdjustmentRequiredMessage": "Vous avez été assigné comme propriétaire d'un ajustement du backlog : {{action}} - « {{description}} »",
+  "dailyScrumSignalMessage": "Le Daily Scrum pour « {{sprintName}} » commence. Les développeurs sont invités à se réunir pour inspecter les progrès vers l'objectif du Sprint et adapter le Sprint Backlog.",
+  "dailyScrumSignalTitle": "Le Daily Scrum commence",
   "dateGroups": {
     "older": "Plus ancien",
     "thisWeek": "Cette semaine",
     "today": "Aujourd'hui",
     "yesterday": "Hier"
   },
+  "directMessageBody": "{{message}}",
+  "directMessageTitle": "Message de {{senderName}}",
   "empty": {
     "message": "Vous verrez les notifications ici en cas d'activité",
     "title": "Aucune notification"
@@ -43,19 +49,27 @@
     "unread": "Non lu"
   },
   "impedimentAssigned": "Nouvel Impediment assigné : « {{impedimentTitle}} »",
+  "impedimentAssignedMessage": "Signalé par {{reporterName}}",
   "loading": {
     "ariaLabel": "Chargement des notifications",
     "title": "Chargement des notifications..."
   },
   "markAllAsRead": "Tout marquer comme lu",
   "marking": "Marquage...",
+  "newTaskAssignedMessage": "Dans le sprint « {{sprintName}} »",
+  "newTaskAssignedTitle": "Nouvelle tâche assignée : « {{taskTitle}} »",
   "pagination": {
     "next": "Suivant",
     "pageInfo": "Page {{current}} sur {{total}}",
     "previous": "Précédent"
   },
+  "remindersNone": "Aucun rappel envoyé",
+  "remindersSent": "Rappels envoyés à {{count}} membre de l'équipe",
+  "remindersSent_plural": "Rappels envoyés à {{count}} membres de l'équipe",
   "skipToMainContent": "Aller au contenu principal",
   "subtitle": "Restez informé des activités de l'équipe et des mises à jour importantes",
+  "taskReassignedMessage": "Dans le sprint « {{sprintName}} »",
+  "taskReassignedTitle": "Tâche réassignée à vous : « {{taskTitle}} »",
   "teamCreated": "Équipe créée : « {{teamName}} »",
   "teamCreatedMessage": "Vous avez créé l'équipe avec succès",
   "teamDeleted": "Équipe supprimée : « {{teamName}} »",

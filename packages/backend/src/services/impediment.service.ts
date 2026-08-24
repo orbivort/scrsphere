@@ -134,8 +134,9 @@ class ImpedimentService {
           titleParams: {
             impedimentTitle: impediment.title,
           },
+          messageKey: 'impedimentAssignedMessage',
           messageParams: {
-            impedimentTitle: impediment.title,
+            reporterName: `${reporter.firstName} ${reporter.lastName}`,
           },
           data: {
             impedimentId: impediment.id,

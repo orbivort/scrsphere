@@ -23,6 +23,7 @@ const mockCreate = vi.fn();
 vi.mock('../../../services/notification.service', () => ({
   NotificationService: class MockNotificationService {
     create = mockCreate;
+    createLocalized = mockCreate;
   },
 }));
 
@@ -104,8 +105,10 @@ describe('MessageController', () => {
       expect(mockCreate).toHaveBeenCalledWith({
         userId: recipientId,
         type: 'DIRECT_MESSAGE',
-        title: 'Message from Sender User',
-        message: messageContent,
+        titleKey: 'directMessageTitle',
+        titleParams: { senderName: 'Sender User' },
+        messageKey: 'directMessageBody',
+        messageParams: { message: messageContent },
         data: {
           senderId,
           senderName: 'Sender User',
@@ -330,7 +333,7 @@ describe('MessageController', () => {
 
       expect(mockCreate).toHaveBeenCalledWith(
         expect.objectContaining({
-          message: messageContent,
+          messageParams: { message: messageContent },
         })
       );
       expect(mockRes.json).toHaveBeenCalledWith({
@@ -384,7 +387,7 @@ describe('MessageController', () => {
 
       expect(mockCreate).toHaveBeenCalledWith(
         expect.objectContaining({
-          message: messageContent,
+          messageParams: { message: messageContent },
         })
       );
       expect(mockRes.json).toHaveBeenCalledWith({
@@ -438,7 +441,7 @@ describe('MessageController', () => {
 
       expect(mockCreate).toHaveBeenCalledWith(
         expect.objectContaining({
-          message: messageContent,
+          messageParams: { message: messageContent },
         })
       );
       expect(mockRes.json).toHaveBeenCalledWith({
@@ -493,8 +496,10 @@ describe('MessageController', () => {
       expect(mockCreate).toHaveBeenCalledWith({
         userId: recipientId,
         type: 'DIRECT_MESSAGE',
-        title: "Message from Jean-Pierre O'Connor-Smith",
-        message: messageContent,
+        titleKey: 'directMessageTitle',
+        titleParams: { senderName: "Jean-Pierre O'Connor-Smith" },
+        messageKey: 'directMessageBody',
+        messageParams: { message: messageContent },
         data: {
           senderId,
           senderName: "Jean-Pierre O'Connor-Smith",
@@ -549,8 +554,10 @@ describe('MessageController', () => {
       expect(mockCreate).toHaveBeenCalledWith({
         userId: recipientId,
         type: 'DIRECT_MESSAGE',
-        title: 'Message from 田中 太郎',
-        message: messageContent,
+        titleKey: 'directMessageTitle',
+        titleParams: { senderName: '田中 太郎' },
+        messageKey: 'directMessageBody',
+        messageParams: { message: messageContent },
         data: {
           senderId,
           senderName: '田中 太郎',

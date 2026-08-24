@@ -11,6 +11,7 @@ import {
   type Prisma,
 } from '../generated/prisma/client';
 import { t } from '../i18n/requestT.js';
+import { notificationService } from './notification.service';
 
 export interface CreateDailyScrumData {
   sprintId: string;
@@ -492,23 +493,28 @@ class DailyScrumService {
       };
     }
 
-    await prisma.notification.createMany({
-      data: memberUserIds.map((memberUserId) => ({
-        id: generateUUIDv7(),
-        userId: memberUserId,
-        type: NotificationType.DAILY_SCRUM_SIGNAL,
-        title: t('notifications:dailyScrumSignalTitle'),
-        message: t('notifications:dailyScrumSignalMessage', {
-          sprintName: sprint.name,
-        }),
-        data: {
-          sprintId,
-          sprintName: sprint.name,
-          teamId: sprint.teamId,
-        } as Prisma.InputJsonValue,
-        createdBy: userId,
-      })),
-    });
+    // Create each signal via createLocalized so the notification stores the
+    // canonical i18n keys (params.titleKey/messageKey) in addition to the
+    // rendered text. The frontend uses those keys to re-translate the title and
+    // message at display time, so switching the UI language updates the text
+    // instead of showing the language the signal was created in.
+    await Promise.all(
+      memberUserIds.map((memberUserId) =>
+        notificationService.createLocalized({
+          userId: memberUserId,
+          type: NotificationType.DAILY_SCRUM_SIGNAL,
+          titleKey: 'dailyScrumSignalTitle',
+          messageKey: 'dailyScrumSignalMessage',
+          messageParams: { sprintName: sprint.name },
+          data: {
+            sprintId,
+            sprintName: sprint.name,
+            teamId: sprint.teamId,
+          },
+          createdBy: userId,
+        })
+      )
+    );
 
     return {
       sentCount: memberUserIds.length,

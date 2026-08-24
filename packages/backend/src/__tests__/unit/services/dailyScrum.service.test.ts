@@ -64,7 +64,16 @@ vi.mock('../../../i18n/requestT.js', () => ({
   }),
 }));
 
+// notificationService.createLocalized is used by sendTeamSignal to persist each
+// signal with canonical i18n keys so the frontend can re-translate at display time.
+vi.mock('../../../services/notification.service', () => ({
+  notificationService: {
+    createLocalized: vi.fn().mockResolvedValue({ id: 'notif-1' }),
+  },
+}));
+
 import { dailyScrumService } from '../../../services/dailyScrum.service';
+import { notificationService } from '../../../services/notification.service';
 import prisma from '../../../utils/prisma';
 import { NotFoundError, ConflictError, ForbiddenError } from '../../../utils/errors';
 import { UserRole, NotificationType } from '../../../generated/prisma/client';
@@ -446,20 +455,17 @@ describe('DailyScrumService', () => {
         ...mockScrum,
         participants: [{ id: 'p-1', userId: 'dev-1', user: { id: 'dev-1' } }],
       });
-      (prisma.notification.createMany as ReturnType<typeof vi.fn>).mockResolvedValue({
-        count: 1,
-      });
 
       const result = await dailyScrumService.sendTeamSignal('sprint-1', 'user-1');
 
-      expect(prisma.notification.createMany).toHaveBeenCalledWith(
+      expect(notificationService.createLocalized).toHaveBeenCalledTimes(1);
+      expect(notificationService.createLocalized).toHaveBeenCalledWith(
         expect.objectContaining({
-          data: expect.arrayContaining([
-            expect.objectContaining({
-              userId: 'dev-2',
-              type: NotificationType.DAILY_SCRUM_SIGNAL,
-            }),
-          ]),
+          userId: 'dev-2',
+          type: NotificationType.DAILY_SCRUM_SIGNAL,
+          titleKey: 'dailyScrumSignalTitle',
+          messageKey: 'dailyScrumSignalMessage',
+          messageParams: { sprintName: 'Sprint 1' },
         })
       );
       expect(result.sentCount).toBe(1);

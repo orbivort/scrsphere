@@ -50,11 +50,19 @@ export class MessageController {
         return;
       }
 
-      const notification = await notificationService.create({
+      // Use createLocalized so the notification stores canonical i18n keys
+      // (params.titleKey/messageKey). The frontend uses those keys to re-translate
+      // the title at display time, so switching the UI language updates the
+      // "Message from ..." text instead of freezing it in the creation language.
+      // The message body is the sender's own content and is passed through via
+      // the directMessageBody key.
+      const notification = await notificationService.createLocalized({
         userId: recipientId,
         type: 'DIRECT_MESSAGE',
-        title: `Message from ${sender.firstName} ${sender.lastName}`,
-        message,
+        titleKey: 'directMessageTitle',
+        titleParams: { senderName: `${sender.firstName} ${sender.lastName}` },
+        messageKey: 'directMessageBody',
+        messageParams: { message },
         data: {
           senderId,
           senderName: `${sender.firstName} ${sender.lastName}`,

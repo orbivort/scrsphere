@@ -109,7 +109,7 @@ vi.mock('react-i18next', async () => {
           'participation.sendTeamSignal': 'Send team-wide Daily Scrum signal',
           'inspectAdapt.progress': 'Progress toward Sprint Goal',
           'inspectAdapt.adaptations': 'Adaptations',
-          'inspectAdapt.impediments': 'Outstanding impediments',
+          'inspectAdapt.impediments': 'Open Impediments',
           'impedimentStatus.open': 'Open',
           'impedimentStatus.inProgress': 'In Progress',
           'impedimentStatus.resolved': 'Resolved',
@@ -339,7 +339,7 @@ describe('DailyScrum (goal-focused, team-level)', () => {
 
       renderWithProviders(<DailyScrum />, { queryClient: new QueryClient() });
 
-      expect(await screen.findByText('Outstanding impediments')).toBeInTheDocument();
+      expect(await screen.findByText('Open Impediments')).toBeInTheDocument();
       expect(screen.getByText('API access blocked')).toBeInTheDocument();
       expect(screen.getByText('Open')).toBeInTheDocument();
     });
@@ -350,7 +350,7 @@ describe('DailyScrum (goal-focused, team-level)', () => {
       renderWithProviders(<DailyScrum />, { queryClient: new QueryClient() });
 
       await screen.findByText('On track toward the goal');
-      expect(screen.queryByText('Outstanding impediments')).not.toBeInTheDocument();
+      expect(screen.queryByText('Open Impediments')).not.toBeInTheDocument();
     });
   });
 

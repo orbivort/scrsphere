@@ -116,7 +116,7 @@ test.describe('Daily Scrum Page', () => {
       await expect(page.getByText('E2E blocked API access').first()).toBeVisible({
         timeout: 15000,
       });
-      await expect(page.getByText('Outstanding impediments').first()).toBeVisible();
+      await expect(page.getByText('Open Impediments').first()).toBeVisible();
     });
   });
 });
