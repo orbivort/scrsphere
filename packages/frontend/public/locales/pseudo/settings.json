@@ -420,6 +420,7 @@
       "editTeam": "[ÉÉddíít {{name}}]",
       "loading": "[Lóàdíngggg...]",
       "memberCount": "[{{count}} mméémmbbéér]",
+      "memberCountLimit": "[{{count}}/{{max}} mémbérssss]",
       "memberCount_one": "[{{count}} mméémmbbéér]",
       "memberCount_other": "[{{count}} mméémmbbéér]",
       "memberCount_plural": "[{{count}} mémbérssss]"

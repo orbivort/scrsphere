@@ -1,6 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, type Mock } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach, type Mock } from 'vitest';
 import { screen, waitFor, fireEvent, renderWithProviders, initTestI18n } from '../../test-utils';
-import userEvent from '@testing-library/user-event';
 import { QueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
 
@@ -10,12 +9,13 @@ import {
   SprintStatus,
   UserRole,
   ImpedimentStatus,
-  type DailyUpdate,
+  type DailyScrum as DailyScrumRecord,
+  type DailyScrumParticipation,
+  type Impediment,
   type Sprint,
   type Team,
   type TeamMember,
   type User,
-  type Impediment,
 } from '../../types';
 
 import { DailyScrum } from './DailyScrum';
@@ -24,7 +24,6 @@ import { DailyScrum } from './DailyScrum';
 // MOCKS
 // ============================================================================
 
-// Mock react-router
 vi.mock('react-router', async () => {
   const actual = await vi.importActual('react-router');
   return {
@@ -33,1887 +32,446 @@ vi.mock('react-router', async () => {
   };
 });
 
-// Mock the store
 vi.mock('../../store', () => ({
   useTeamStore: vi.fn(),
   useAuthStore: vi.fn(),
 }));
 
-// Mock the API service
 vi.mock('../../services', () => ({
   apiService: {
     getActiveSprint: vi.fn(),
     getSprintTasks: vi.fn(),
-    getDailyUpdates: vi.fn(),
-    getTeamMembersWithUpdates: vi.fn(),
-    createDailyUpdate: vi.fn(),
-    promoteToImpediment: vi.fn(),
-    sendDailyUpdateReminder: vi.fn(),
+    getDailyScrum: vi.fn(),
+    getDailyScrumParticipation: vi.fn(),
+    createDailyScrum: vi.fn(),
+    updateDailyScrum: vi.fn(),
+    promoteImpedimentFromDailyScrum: vi.fn(),
+    sendDailyScrumTeamSignal: vi.fn(),
     getProductGoals: vi.fn(),
+    getImpediments: vi.fn(),
   },
 }));
 
-// Mock TeamMemberSelect component
 vi.mock('../../components/TeamMemberSelect/TeamMemberSelect', () => ({
-  TeamMemberSelect: ({
-    value,
-    onChange,
-    teamMembers,
-    disabled,
-  }: {
-    value: string;
-    onChange: (value: string) => void;
-    teamMembers: TeamMember[];
-    disabled?: boolean;
-  }) => (
-    <div className="form-group">
-      <label htmlFor="team-member-select">Assign to</label>
-      <select
-        id="team-member-select"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        disabled={disabled}
-        data-testid="team-member-select"
-      >
-        <option value="">Unassigned</option>
-        {teamMembers.map((member) => (
-          <option key={member.id} value={member.userId}>
-            {member.user?.firstName} {member.user?.lastName}
-          </option>
-        ))}
-      </select>
-    </div>
-  ),
-}));
-
-// Mock useToast hook
-vi.mock('../../hooks/useToast', () => ({
-  useToast: () => ({
-    toasts: [],
-    success: vi.fn(),
-    error: vi.fn(),
-    info: vi.fn(),
-    removeToast: vi.fn(),
-  }),
-  ToastContainer: ({ toasts }: { toasts: unknown[] }) => (
-    <div data-testid="toast-container">{toasts.length} toasts</div>
-  ),
-}));
-
-// Mock useFormDraft hook
-vi.mock('../../hooks/useFormDraft', () => ({
-  useFormDraft: () => ({
-    draft: null,
-    hasDraft: false,
-    saveDraft: vi.fn(),
-    clearDraft: vi.fn(),
-    showRestorePrompt: false,
-    setShowRestorePrompt: vi.fn(),
-    lastSavedAt: null,
-  }),
-}));
-
-// Mock useModalFocus hook
-vi.mock('../../hooks/useModalFocus', () => ({
-  useModalFocus: ({ _isOpen }: { _isOpen: boolean }) => ({
-    modalRef: { current: null },
-  }),
-}));
-
-// Mock CharacterCounter component
-vi.mock('../../components/common/Form/CharacterCounter', () => ({
-  CharacterCounter: ({ id, current, max }: { id: string; current: number; max: number }) => (
-    <span id={id} data-testid={`char-counter-${id}`}>
-      {current} / {max}
-    </span>
-  ),
-}));
-
-// Mock Button component
-vi.mock('../../components/Button', () => ({
-  Button: ({
-    children,
-    onClick,
-    variant,
-    type,
-    disabled,
-    loading,
-    className,
-  }: {
-    children: React.ReactNode;
-    onClick?: () => void;
-    variant?: string;
-    type?: 'button' | 'submit';
-    disabled?: boolean;
-    loading?: boolean;
-    className?: string;
-  }) => (
-    <button
-      type={type || 'button'}
-      onClick={onClick}
-      disabled={disabled || loading}
-      className={`btn btn-${variant} ${className || ''}`}
-      data-variant={variant}
-      data-loading={loading}
+  TeamMemberSelect: ({ value, onChange }: { value: string; onChange: (v: string) => void }) => (
+    <select
+      data-testid="team-member-select"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
     >
-      {loading ? 'Loading...' : children}
-    </button>
+      <option value="">Unassigned</option>
+    </select>
   ),
 }));
 
-// Mock Skeleton component
-vi.mock('../../components/Skeleton', () => ({
-  Skeleton: ({
-    width,
-    height,
-    borderRadius,
-    variant,
-    style,
-  }: {
-    width?: string | number;
-    height?: string | number;
-    borderRadius?: number;
-    variant?: 'text' | 'circular' | 'rectangular';
-    style?: React.CSSProperties;
-  }) => (
-    <div
-      data-testid="skeleton"
-      style={{
-        width,
-        height,
-        borderRadius,
-        ...style,
-      }}
-      data-variant={variant}
-    />
-  ),
+vi.mock('../../components/common/EventTimebox/EventTimebox', () => ({
+  EventTimebox: () => <div data-testid="event-timebox" />,
 }));
 
-// Mock Icon components
-vi.mock('../../components/Icon', () => ({
-  CheckCircleIcon: ({ _size }: { _size?: number }) => (
-    <span data-testid="check-circle-icon">✓</span>
-  ),
-  ClockIcon: ({ _size }: { _size?: number }) => <span data-testid="clock-icon">⏰</span>,
-  AlertTriangleIcon: ({ _size }: { _size?: number }) => (
-    <span data-testid="alert-triangle-icon">⚠️</span>
-  ),
-  ChartIcon: ({ _size }: { _size?: number }) => <span data-testid="chart-icon">📊</span>,
+vi.mock('../../components/common/ScrumValuesBanner', () => ({
+  ScrumValuesBanner: () => <div data-testid="scrum-values" />,
 }));
 
-// Type definitions for mocks
-const mockUseNavigate = useNavigate as Mock;
-const mockUseTeamStore = useTeamStore as Mock;
-const mockUseAuthStore = useAuthStore as Mock;
-const mockApiService = apiService as {
-  getActiveSprint: Mock;
-  getSprintTasks: Mock;
-  getDailyUpdates: Mock;
-  getTeamMembersWithUpdates: Mock;
-  createDailyUpdate: Mock;
-  promoteToImpediment: Mock;
-  sendDailyUpdateReminder: Mock;
-};
-
-// ============================================================================
-// I18N INITIALIZATION
-// ============================================================================
-
-beforeAll(async () => {
-  await initTestI18n();
+vi.mock('react-i18next', async () => {
+  const actual = await vi.importActual('react-i18next');
+  return {
+    ...actual,
+    useTranslation: () => ({
+      t: (key: string, _params?: Record<string, unknown>) => {
+        const map: Record<string, string> = {
+          'sprintGoal.label': 'Sprint Goal',
+          'sprintGoal.addInPlanning': 'Add in Sprint Planning',
+          'sprintGoal.noGoalDefined': 'No Sprint Goal defined',
+          'sprintGoal.progressAriaLabel': '50% sprint completion',
+          'inspectAdapt.title': 'Inspect & Adapt',
+          'inspectAdapt.startTitle': "Today's Daily Scrum",
+          'emptyState.noUpdates': 'No Daily Scrum Yet',
+          'emptyState.developersOnly':
+            'Only Developers record the Daily Scrum. You can view it once a Developer starts it.',
+          startDailyScrum: 'Start Daily Scrum',
+          'form.progressLabel': 'Progress toward Sprint Goal',
+          'form.progressPlaceholder': "Describe the team's progress toward the Sprint Goal...",
+          'form.adaptationsLabel': 'Adaptations (Sprint Backlog)',
+          'form.planLabel': 'Plan for next day',
+          'form.planPlaceholder': 'What will the team work on next?',
+          'validation.planRequired':
+            'Add an actionable plan for the next day to save the Daily Scrum.',
+          submitScrum: 'Submit Daily Scrum',
+          saveScrum: 'Save Daily Scrum',
+          editScrum: 'Edit Daily Scrum',
+          createImpediment: 'Create impediment',
+          'promoteModal.title': 'Create Impediment from Daily Scrum',
+          'stats.goalProgress': 'Goal progress',
+          'stats.backlogAdjusted': 'Backlog items adjusted',
+          'stats.participants': 'Participants',
+          'participation.joined': 'Joined',
+          'participation.notYetJoined': 'Not yet joined',
+          'participation.sendTeamSignal': 'Send team-wide Daily Scrum signal',
+          'inspectAdapt.progress': 'Progress toward Sprint Goal',
+          'inspectAdapt.adaptations': 'Adaptations',
+          'inspectAdapt.impediments': 'Outstanding impediments',
+          'impedimentStatus.open': 'Open',
+          'impedimentStatus.inProgress': 'In Progress',
+          'impedimentStatus.resolved': 'Resolved',
+          'impedimentStatus.closed': 'Closed',
+          'inspectAdapt.nextDayPlan': 'Plan for next day',
+          'focusModes.label': 'Daily Scrum focus (Developers choose the structure)',
+          'focusModes.hint': "Choose the focus the whole team used for today's Daily Scrum.",
+          'focusModes.viewTitle': 'Daily Scrum focus',
+          'focusModes.goalProgress': 'Goal progress',
+          'focusModes.sprintBacklogWalk': 'Sprint Backlog walk',
+          'focusModes.impedimentFirst': 'Impediment-first',
+          'focusModes.pairUpPlan': 'Pair-up plan',
+          'quickDates.today': 'Today',
+          'quickDates.yesterday': 'Yesterday',
+        };
+        return map[key] ?? key;
+      },
+    }),
+  };
 });
 
 // ============================================================================
-// TEST UTILITIES
+// HELPERS
 // ============================================================================
 
-function createTestQueryClient(): QueryClient {
-  return new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        gcTime: 0,
+const mockUser: User = {
+  id: 'user-1',
+  firstName: 'John',
+  lastName: 'Doe',
+  email: 'john@test.com',
+  role: UserRole.DEVELOPER,
+};
+
+const mockTeam: Team = {
+  id: 'team-1',
+  name: 'Team Alpha',
+  members: [
+    {
+      id: 'tm-1',
+      userId: 'user-1',
+      role: UserRole.DEVELOPER,
+      user: mockUser,
+    },
+    {
+      id: 'tm-2',
+      userId: 'user-2',
+      role: UserRole.DEVELOPER,
+      user: {
+        id: 'user-2',
+        firstName: 'Jane',
+        lastName: 'Smith',
+        email: 'jane@test.com',
+        role: UserRole.DEVELOPER,
       },
     },
-  });
-}
+  ] as TeamMember[],
+};
 
-function renderDailyScrum({
-  queryClient = createTestQueryClient(),
-  initialRoute = '/daily-scrum',
-}: {
-  queryClient?: QueryClient;
-  initialRoute?: string;
-} = {}) {
-  return renderWithProviders(<DailyScrum />, {
-    queryClient,
-    initialRoute,
-  });
-}
+const mockSprint: Sprint = {
+  id: 'sprint-1',
+  name: 'Sprint 1',
+  teamId: 'team-1',
+  startDate: '2026-08-17',
+  endDate: '2026-08-28',
+  status: SprintStatus.ACTIVE,
+  sprintGoal: 'Deliver the reporting module',
+  tasks: [],
+};
 
-// ============================================================================
-// MOCK DATA FACTORIES
-// ============================================================================
+const mockScrum: DailyScrumRecord = {
+  id: 'scrum-1',
+  sprintId: 'sprint-1',
+  scrumDate: new Date().toISOString().split('T')[0] ?? '',
+  progressNotes: 'On track toward the goal',
+  adaptationsNotes: 'Will adjust backlog item X',
+  planForNextDay: 'Pair up on feature Y',
+  focusMode: 'goal',
+  participants: [
+    { id: 'p-1', userId: 'user-1', user: mockUser },
+    {
+      id: 'p-2',
+      userId: 'user-2',
+      user: { id: 'user-2', firstName: 'Jane', lastName: 'Smith', email: 'jane@test.com' },
+    },
+  ],
+  backlogAdjustments: [
+    { id: 'ba-1', sprintBacklogItemId: 'item-1', action: 'reassigned', createdAt: '' },
+  ],
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+};
 
-function createMockUser(overrides: Partial<User> = {}): User {
-  return {
-    id: 'user-1',
-    email: 'john@example.com',
-    firstName: 'John',
-    lastName: 'Doe',
-    createdAt: '2024-01-01T00:00:00Z',
-    updatedAt: '2024-01-01T00:00:00Z',
-    ...overrides,
-  };
-}
-
-function createMockTeamMember(overrides: Partial<TeamMember> = {}): TeamMember {
-  return {
-    id: 'member-1',
-    teamId: 'team-1',
-    userId: 'user-1',
-    role: UserRole.DEVELOPERS,
-    joinedAt: '2024-01-01T00:00:00Z',
-    user: createMockUser(overrides.user),
-    ...overrides,
-  };
-}
-
-function createMockTeam(overrides: Partial<Team> = {}): Team {
-  return {
-    id: 'team-1',
-    name: 'Alpha Team',
-    description: 'Development team',
-    createdBy: 'user-1',
-    createdAt: '2024-01-01T00:00:00Z',
-    updatedAt: '2024-01-01T00:00:00Z',
-    members: [createMockTeamMember()],
-    ...overrides,
-  };
-}
-
-function createMockSprint(overrides: Partial<Sprint> = {}): Sprint {
-  const today = new Date();
-  const twoWeeksLater = new Date(today.getTime() + 14 * 24 * 60 * 60 * 1000);
-
-  return {
-    id: 'sprint-1',
-    name: 'Sprint 1',
-    sprintGoal: 'Complete core features',
-    status: SprintStatus.ACTIVE,
-    startDate: today.toISOString(),
-    endDate: twoWeeksLater.toISOString(),
-    teamId: 'team-1',
-    createdAt: '2024-01-01T00:00:00Z',
-    updatedAt: '2024-01-01T00:00:00Z',
-    ...overrides,
-  };
-}
-
-function createMockImpediment(overrides: Partial<Impediment> = {}): Impediment {
-  return {
-    id: 'impediment-1',
-    title: 'API Integration Issue',
-    description: 'Waiting for API documentation',
-    status: ImpedimentStatus.OPEN,
-    teamId: 'team-1',
-    sprintId: 'sprint-1',
-    reportedById: 'user-1',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    ...overrides,
-  };
-}
-
-function createMockDailyUpdate(overrides: Partial<DailyUpdate> = {}): DailyUpdate {
-  return {
-    id: 'update-1',
-    userId: 'user-1',
-    sprintId: 'sprint-1',
-    updateDate: new Date().toISOString().split('T')[0],
-    yesterdayWork: 'Completed login feature',
-    todayWork: 'Working on dashboard',
-    impediment: 'Waiting for API documentation',
-    createdAt: new Date().toISOString(),
-    user: createMockUser(overrides.user),
-    impedimentRecord: undefined,
-    ...overrides,
-  };
-}
-
-// ============================================================================
-// DEFAULT SETUP HELPERS
-// ============================================================================
-
-function setupDefaultStore(overrides: { currentTeam?: Team | null; user?: User | null } = {}) {
-  mockUseTeamStore.mockReturnValue({
-    currentTeam: overrides.currentTeam ?? createMockTeam(),
-  });
-  mockUseAuthStore.mockReturnValue({
-    user: overrides.user ?? createMockUser(),
-  });
-}
-
-function setupDefaultApiMocks(
+function setupMocks(
   overrides: {
-    getActiveSprint?: Mock;
-    getSprintTasks?: Mock;
-    getDailyUpdates?: Mock;
-    getTeamMembersWithUpdates?: Mock;
-    createDailyUpdate?: Mock;
-    promoteToImpediment?: Mock;
-    sendDailyUpdateReminder?: Mock;
-    getProductGoals?: Mock;
+    dailyScrum?: DailyScrumRecord | null;
+    participation?: DailyScrumParticipation | null;
+    sprintGoal?: string | null;
+    impediments?: Impediment[];
+    userRole?: string;
   } = {}
 ) {
-  mockApiService.getActiveSprint.mockImplementation(
-    overrides.getActiveSprint ??
-      vi.fn().mockResolvedValue({
-        success: true,
-        data: createMockSprint(),
-      })
-  );
-
-  mockApiService.getSprintTasks.mockImplementation(
-    overrides.getSprintTasks ??
-      vi.fn().mockResolvedValue({
-        success: true,
-        data: [],
-      })
-  );
-
-  mockApiService.getDailyUpdates.mockImplementation(
-    overrides.getDailyUpdates ??
-      vi.fn().mockResolvedValue({
-        success: true,
-        data: [createMockDailyUpdate()],
-      })
-  );
-
-  mockApiService.getTeamMembersWithUpdates.mockImplementation(
-    overrides.getTeamMembersWithUpdates ??
-      vi.fn().mockResolvedValue({
-        success: true,
-        data: {
-          submitted: [{ userId: 'user-1', userName: 'John Doe', hasSubmitted: true }],
-          pending: [{ userId: 'user-2', userName: 'Jane Smith', hasSubmitted: false }],
-        },
-      })
-  );
-
-  mockApiService.createDailyUpdate.mockImplementation(
-    overrides.createDailyUpdate ??
-      vi.fn().mockResolvedValue({
-        success: true,
-        data: createMockDailyUpdate(),
-      })
-  );
-
-  mockApiService.promoteToImpediment.mockImplementation(
-    overrides.promoteToImpediment ??
-      vi.fn().mockResolvedValue({
-        success: true,
-        data: createMockImpediment(),
-      })
-  );
-
-  mockApiService.sendDailyUpdateReminder.mockImplementation(
-    overrides.sendDailyUpdateReminder ??
-      vi.fn().mockResolvedValue({
-        success: true,
-        data: {
-          sentCount: 2,
-          totalPending: 3,
-          message: 'Reminders sent successfully',
-        },
-      })
-  );
-
-  mockApiService.getProductGoals.mockResolvedValue({
-    success: true,
-    data: [
-      {
-        id: 'goal-1',
-        title: 'Test Goal',
-        description: 'Test goal description',
-        status: 'ACTIVE',
-        teamId: 'team-1',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-    ],
+  const mockNavigate = vi.fn();
+  (useNavigate as Mock).mockReturnValue(mockNavigate);
+  (useTeamStore as unknown as Mock).mockReturnValue({
+    currentTeam: mockTeam,
+    // Default: the acting user is a Developer (Daily Scrum is a Developers-only event).
+    userRoleInCurrentTeam: overrides.userRole ?? UserRole.DEVELOPERS,
   });
+  (useAuthStore as unknown as Mock).mockReturnValue({ user: mockUser });
+
+  const api = apiService as unknown as Record<string, Mock>;
+  api.getActiveSprint.mockResolvedValue({
+    data: {
+      ...mockSprint,
+      sprintGoal: overrides.sprintGoal !== undefined ? overrides.sprintGoal : mockSprint.sprintGoal,
+    },
+  });
+  api.getSprintTasks.mockResolvedValue({ data: [] });
+  api.getDailyScrum.mockResolvedValue({ data: overrides.dailyScrum ?? null });
+  api.getDailyScrumParticipation.mockResolvedValue({
+    data:
+      overrides.participation ??
+      ({
+        dailyScrum: overrides.dailyScrum ?? null,
+        participants: overrides.dailyScrum?.participants ?? [],
+        nonParticipants: [],
+      } satisfies DailyScrumParticipation),
+  });
+  api.getImpediments.mockResolvedValue({ data: overrides.impediments ?? [] });
+
+  return { mockNavigate, api };
 }
 
 // ============================================================================
-// MAIN TEST SUITE
+// TESTS
 // ============================================================================
 
-describe('DailyScrum Component', () => {
-  let queryClient: QueryClient;
-  const mockNavigate = vi.fn();
-
-  beforeEach(() => {
-    vi.clearAllMocks();
-    queryClient = createTestQueryClient();
-    mockUseNavigate.mockReturnValue(mockNavigate);
-    setupDefaultStore();
-    setupDefaultApiMocks();
+describe('DailyScrum (goal-focused, team-level)', () => {
+  beforeEach(async () => {
+    await initTestI18n();
   });
 
   afterEach(() => {
-    queryClient.clear();
+    vi.clearAllMocks();
   });
 
-  // ============================================================================
-  // COMPONENT RENDERING TESTS
-  // ============================================================================
-  describe('Component Rendering', () => {
-    it('should render component without errors', () => {
-      renderDailyScrum({ queryClient });
-      expect(document.body).toBeTruthy();
-    });
-
-    it('should render empty state when no team is selected', async () => {
-      mockUseTeamStore.mockReturnValue({ currentTeam: null });
-      const freshQueryClient = createTestQueryClient();
-      renderDailyScrum({ queryClient: freshQueryClient });
-
-      await waitFor(() => {
-        expect(screen.getByText(/no team selected/i)).toBeInTheDocument();
-      });
-    });
-
-    it('should render main content when data is loaded', async () => {
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByRole('heading', { name: /daily scrum/i })).toBeInTheDocument();
-      });
-    });
-
-    it('should render sprint goal section', async () => {
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByText(/sprint goal/i)).toBeInTheDocument();
-      });
-    });
-
-    it('should render quick date buttons', async () => {
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        // Use getAllByText since "today" appears in multiple places
-        const todayButtons = screen.getAllByText(/today/i);
-        expect(todayButtons.length).toBeGreaterThan(0);
-      });
-
-      const yesterdayButtons = screen.getAllByText(/yesterday/i);
-      expect(yesterdayButtons.length).toBeGreaterThan(0);
-    });
-
-    it('should render team updates section', async () => {
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByText(/team updates/i)).toBeInTheDocument();
-      });
-    });
-
-    it('should render sidebar with pending members', async () => {
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByText(/waiting for updates/i)).toBeInTheDocument();
-      });
-    });
-
-    it('should render statistics bar with correct values', async () => {
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        // Use getAllByText since these labels appear in multiple places
-        const submittedElements = screen.getAllByText(/submitted/i);
-        expect(submittedElements.length).toBeGreaterThan(0);
-      });
-
-      const pendingElements = screen.getAllByText(/pending/i);
-      expect(pendingElements.length).toBeGreaterThan(0);
-
-      const impedimentsElements = screen.getAllByText(/impediments/i);
-      expect(impedimentsElements.length).toBeGreaterThan(0);
-
-      const participationElements = screen.getAllByText(/participation/i);
-      expect(participationElements.length).toBeGreaterThan(0);
-    });
-
-    it('should render view toggle buttons', async () => {
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: /cards/i })).toBeInTheDocument();
-      });
-
-      expect(screen.getByRole('button', { name: /list/i })).toBeInTheDocument();
-    });
-
-    it('should render date picker', async () => {
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByLabelText(/select date for daily updates/i)).toBeInTheDocument();
-      });
-    });
-
-    it('should show loading skeleton while data is loading', async () => {
-      // Create a new query client for this test
-      const testQueryClient = createTestQueryClient();
-
-      // Override to return a pending promise that never resolves
-      mockApiService.getActiveSprint.mockImplementation(() => new Promise(() => {}));
-
-      // Clear the store to trigger loading state
-      mockUseTeamStore.mockReturnValue({ currentTeam: createMockTeam() });
-
-      renderDailyScrum({ queryClient: testQueryClient });
-
-      // Wait for skeletons to appear - the component shows skeletons while loading
-      await waitFor(() => {
-        const _skeletons = screen.queryAllByTestId('skeleton');
-        // The component may or may not show skeletons depending on the loading state
-        // Just verify the component renders without crashing during loading
-        expect(document.body).toBeTruthy();
-      });
-    });
-  });
-
-  // ============================================================================
-  // USER INTERACTION TESTS
-  // ============================================================================
-  describe('User Interactions', () => {
-    it('should open update form when clicking submit update button', async () => {
-      setupDefaultApiMocks({
-        getDailyUpdates: vi.fn().mockResolvedValue({
-          success: true,
-          data: [],
-        }),
-      });
-
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: /submit update/i })).toBeInTheDocument();
-      });
-
-      await userEvent.click(screen.getByRole('button', { name: /submit update/i }));
-
-      await waitFor(() => {
-        expect(screen.getByLabelText(/what did you do yesterday/i)).toBeInTheDocument();
-      });
-    });
-
-    it('should open and close update form', async () => {
-      setupDefaultApiMocks({
-        getDailyUpdates: vi.fn().mockResolvedValue({
-          success: true,
-          data: [],
-        }),
-      });
-
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: /submit update/i })).toBeInTheDocument();
-      });
-
-      await userEvent.click(screen.getByRole('button', { name: /submit update/i }));
-
-      await waitFor(() => {
-        expect(screen.getByLabelText(/what did you do yesterday/i)).toBeInTheDocument();
-      });
-
-      await userEvent.click(screen.getByRole('button', { name: /cancel/i }));
-
-      expect(screen.queryByLabelText(/what did you do yesterday/i)).not.toBeInTheDocument();
-    });
-
-    it('should change date when selecting from date picker', async () => {
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByLabelText(/select date for daily updates/i)).toBeInTheDocument();
-      });
-
-      const datePicker = screen.getByLabelText(/select date for daily updates/i);
-      const newDate = '2024-03-15';
-
-      fireEvent.change(datePicker, { target: { value: newDate } });
-
-      expect(datePicker).toHaveValue(newDate);
-    });
-
-    it('should change view mode when clicking toggle buttons', async () => {
-      setupDefaultApiMocks({
-        getDailyUpdates: vi.fn().mockResolvedValue({
-          success: true,
-          data: [],
-        }),
-      });
-
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: /list/i })).toBeInTheDocument();
-      });
-
-      const listViewBtn = screen.getByRole('button', { name: /list/i });
-      await userEvent.click(listViewBtn);
-
-      expect(listViewBtn).toHaveAttribute('aria-pressed', 'true');
-    });
-
-    it('should select quick date when clicking date buttons', async () => {
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        const yesterdayButtons = screen.getAllByText(/yesterday/i);
-        expect(yesterdayButtons.length).toBeGreaterThan(0);
-      });
-
-      // Get today's date in local format (same as component uses)
-      const now = new Date();
-      const todayLocal = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-
-      const yesterdayButtons = screen.getAllByText(/yesterday/i);
-      const yesterdayBtn = yesterdayButtons.find((btn) => btn.tagName === 'BUTTON');
-      if (yesterdayBtn) {
-        await userEvent.click(yesterdayBtn);
-      }
-
-      // Verify date picker updated
-      const datePicker = screen.getByLabelText(/select date for daily updates/i);
-      expect(datePicker).not.toHaveValue(todayLocal);
-    });
-
-    it('should expand update card when clicked in compact view', async () => {
-      setupDefaultApiMocks({
-        getDailyUpdates: vi.fn().mockResolvedValue({
-          success: true,
-          data: [createMockDailyUpdate()],
-        }),
-      });
-
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        const johnDoeElements = screen.getAllByText(/john doe/i);
-        expect(johnDoeElements.length).toBeGreaterThan(0);
-      });
-
-      // Switch to compact view
-      const listViewBtn = screen.getByRole('button', { name: /list/i });
-      await userEvent.click(listViewBtn);
-
-      // Click on the compact card
-      const johnDoeElements = screen.getAllByText(/john doe/i);
-      const compactCard = johnDoeElements[0].closest('[role="button"]');
-      if (compactCard) {
-        await userEvent.click(compactCard);
-      }
-    });
-  });
-
-  // ============================================================================
-  // STATE MANAGEMENT TESTS
-  // ============================================================================
-  describe('State Management', () => {
-    it('should update selected date state when date changes', async () => {
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByLabelText(/select date for daily updates/i)).toBeInTheDocument();
-      });
-
-      const newDate = '2024-03-20';
-      const datePicker = screen.getByLabelText(/select date for daily updates/i);
-
-      fireEvent.change(datePicker, { target: { value: newDate } });
-
-      expect(datePicker).toHaveValue(newDate);
-    });
-
-    it('should update view mode state when toggling views', async () => {
-      setupDefaultApiMocks({
-        getDailyUpdates: vi.fn().mockResolvedValue({
-          success: true,
-          data: [],
-        }),
-      });
-
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: /list/i })).toBeInTheDocument();
-      });
-
-      const compactViewBtn = screen.getByRole('button', { name: /list/i });
-      await userEvent.click(compactViewBtn);
-
-      expect(compactViewBtn).toHaveAttribute('aria-pressed', 'true');
-    });
-
-    it('should track form data state correctly', async () => {
-      setupDefaultApiMocks({
-        getDailyUpdates: vi.fn().mockResolvedValue({
-          success: true,
-          data: [],
-        }),
-      });
-
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: /submit update/i })).toBeInTheDocument();
-      });
-
-      await userEvent.click(screen.getByRole('button', { name: /submit update/i }));
-
-      await waitFor(() => {
-        expect(screen.getByLabelText(/what did you do yesterday/i)).toBeInTheDocument();
-      });
-
-      const yesterdayTextarea = screen.getByLabelText(/what did you do yesterday/i);
-      await userEvent.type(yesterdayTextarea, 'Test work yesterday');
-
-      expect(yesterdayTextarea).toHaveValue('Test work yesterday');
-    });
-  });
-
-  // ============================================================================
-  // API INTEGRATION TESTS
-  // ============================================================================
-  describe('API Integration', () => {
-    it('should call getActiveSprint with correct teamId', async () => {
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(mockApiService.getActiveSprint).toHaveBeenCalledWith('team-1');
-      });
-    });
-
-    it('should call getDailyUpdates with correct parameters', async () => {
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(mockApiService.getDailyUpdates).toHaveBeenCalledWith('sprint-1', expect.any(String));
-      });
-    });
-
-    it('should call getTeamMembersWithUpdates with correct parameters', async () => {
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(mockApiService.getTeamMembersWithUpdates).toHaveBeenCalledWith(
-          'sprint-1',
-          expect.any(String)
-        );
-      });
-    });
-
-    it('should refetch data when date changes', async () => {
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByRole('heading', { name: /daily scrum/i })).toBeInTheDocument();
-      });
-
-      // Get initial call count after component loads
-      const initialCallCount = mockApiService.getDailyUpdates.mock.calls.length;
-
-      // LocaleDateInput has a hidden date input that accepts ISO format
-      const hiddenDateInput = document.querySelector('input[type="date"]');
-      if (hiddenDateInput) {
-        fireEvent.change(hiddenDateInput, { target: { value: '2024-03-15' } });
-      }
-
-      await waitFor(() => {
-        // Verify that getDailyUpdates was called again after date change
-        expect(mockApiService.getDailyUpdates).toHaveBeenCalledTimes(initialCallCount + 1);
-      });
-    });
-
-    it('should handle API errors gracefully', async () => {
-      setupDefaultApiMocks({
-        getDailyUpdates: vi.fn().mockRejectedValue(new Error('Network error')),
-      });
-
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByText(/daily scrum/i)).toBeInTheDocument();
-      });
-    });
-
-    it('should call createDailyUpdate when submitting form', async () => {
-      const createMock = vi.fn().mockResolvedValue({
-        success: true,
-        data: createMockDailyUpdate(),
-      });
-
-      setupDefaultApiMocks({
-        createDailyUpdate: createMock,
-        getDailyUpdates: vi.fn().mockResolvedValue({
-          success: true,
-          data: [],
-        }),
-      });
-
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: /submit update/i })).toBeInTheDocument();
-      });
-
-      await userEvent.click(screen.getByRole('button', { name: /submit update/i }));
-
-      await waitFor(() => {
-        expect(screen.getByLabelText(/what did you do yesterday/i)).toBeInTheDocument();
-      });
-
-      await userEvent.type(screen.getByLabelText(/what did you do yesterday/i), 'Yesterday work');
-      await userEvent.type(screen.getByLabelText(/what will you do today/i), 'Today work');
-
-      await userEvent.click(screen.getByRole('button', { name: /^submit update$/i }));
-
-      await waitFor(() => {
-        expect(createMock).toHaveBeenCalled();
-      });
-    });
-
-    it('should call sendDailyUpdateReminder when clicking send reminder', async () => {
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: /send reminder/i })).toBeInTheDocument();
-      });
-
-      await userEvent.click(screen.getByRole('button', { name: /send reminder/i }));
-
-      await waitFor(() => {
-        expect(mockApiService.sendDailyUpdateReminder).toHaveBeenCalledWith('sprint-1');
-      });
-    });
-  });
-
-  // ============================================================================
-  // PROMOTE IMPEDIMENT MODAL TESTS
-  // ============================================================================
-  describe('Promote Impediment Modal', () => {
-    it('should render update with impediment', async () => {
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        // Use getAllByText since the impediment text appears in multiple places
-        const impedimentElements = screen.getAllByText(/waiting for api documentation/i);
-        expect(impedimentElements.length).toBeGreaterThan(0);
-      });
-    });
-
-    it('should open promote modal when clicking track as impediment', async () => {
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByText(/track as impediment/i)).toBeInTheDocument();
-      });
-
-      const trackButton = screen.getByText(/track as impediment/i);
-      await userEvent.click(trackButton);
-
-      await waitFor(() => {
-        expect(screen.getByRole('dialog')).toBeInTheDocument();
-      });
-    });
-
-    it('should call promoteToImpediment API when submitting form', async () => {
-      const promoteMock = vi.fn().mockResolvedValue({
-        success: true,
-        data: createMockImpediment(),
-      });
-
-      setupDefaultApiMocks({
-        promoteToImpediment: promoteMock,
-      });
-
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByText(/track as impediment/i)).toBeInTheDocument();
-      });
-
-      await userEvent.click(screen.getByText(/track as impediment/i));
-
-      await waitFor(() => {
-        expect(screen.getByRole('dialog')).toBeInTheDocument();
-      });
-
-      // Fill in the form
-      const titleInput = screen.getByPlaceholderText(/brief title for the impediment/i);
-      await userEvent.type(titleInput, 'Test Impediment');
-
-      const descriptionTextarea = screen.getByPlaceholderText(/detailed description/i);
-      await userEvent.type(descriptionTextarea, 'Test description of the impediment');
-
-      // Click create impediment button
-      const createButton = screen.getByRole('button', { name: /create impediment/i });
-      await userEvent.click(createButton);
-
-      await waitFor(() => {
-        expect(promoteMock).toHaveBeenCalled();
-      });
-    });
-
-    it('should close modal when clicking cancel', async () => {
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByText(/track as impediment/i)).toBeInTheDocument();
-      });
-
-      await userEvent.click(screen.getByText(/track as impediment/i));
-
-      await waitFor(() => {
-        expect(
-          screen.getByRole('heading', { name: /create impediment from daily update/i })
-        ).toBeInTheDocument();
-      });
-
-      await userEvent.click(screen.getByRole('button', { name: /cancel/i }));
-
-      // Since the form has pre-filled data, the unsaved changes modal appears first
-      await waitFor(() => {
-        expect(screen.getByRole('heading', { name: /unsaved changes/i })).toBeInTheDocument();
-      });
-
-      // Click "Discard Changes" to close both modals
-      await userEvent.click(screen.getByRole('button', { name: /discard changes/i }));
-
-      await waitFor(() => {
-        expect(
-          screen.queryByRole('heading', { name: /create impediment from daily update/i })
-        ).not.toBeInTheDocument();
-      });
-    });
-  });
-
-  // ============================================================================
-  // FORM SUBMISSION TESTS
-  // ============================================================================
-  describe('Form Submission', () => {
-    it('should submit daily update form with valid data', async () => {
-      const createMock = vi.fn().mockResolvedValue({
-        success: true,
-        data: createMockDailyUpdate(),
-      });
-
-      setupDefaultApiMocks({
-        createDailyUpdate: createMock,
-        getDailyUpdates: vi.fn().mockResolvedValue({
-          success: true,
-          data: [],
-        }),
-      });
-
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: /submit update/i })).toBeInTheDocument();
-      });
-
-      await userEvent.click(screen.getByRole('button', { name: /submit update/i }));
-
-      await waitFor(() => {
-        expect(screen.getByLabelText(/what did you do yesterday/i)).toBeInTheDocument();
-      });
-
-      await userEvent.type(
-        screen.getByLabelText(/what did you do yesterday/i),
-        'Completed login feature'
-      );
-      await userEvent.type(
-        screen.getByLabelText(/what will you do today/i),
-        'Working on dashboard'
-      );
-      await userEvent.type(
-        screen.getByLabelText(/any impediments/i),
-        'Waiting for API documentation'
-      );
-
-      await userEvent.click(screen.getByRole('button', { name: /^submit update$/i }));
-
-      await waitFor(() => {
-        expect(createMock).toHaveBeenCalledWith('sprint-1', {
-          yesterdayWork: 'Completed login feature',
-          todayWork: 'Working on dashboard',
-          impediment: 'Waiting for API documentation',
-        });
-      });
-    });
-
-    it('should navigate to sprint planning when no active sprint', async () => {
-      setupDefaultApiMocks({
-        getActiveSprint: vi.fn().mockResolvedValue({
-          success: true,
-          data: null,
-        }),
-      });
-
-      renderDailyScrum({ queryClient });
+  describe('Sprint Goal anchor (spec R2)', () => {
+    it('renders the Sprint Goal as the primary anchor', async () => {
+      setupMocks();
 
-      await waitFor(() => {
-        expect(screen.getByText(/no active sprint/i)).toBeInTheDocument();
-      });
+      renderWithProviders(<DailyScrum />, { queryClient: new QueryClient() });
 
-      const navigateButton = screen.getByRole('button', { name: /go to sprint planning/i });
-      await userEvent.click(navigateButton);
-
-      expect(mockNavigate).toHaveBeenCalledWith('/sprint-planning');
-    });
-
-    it('should validate required fields in form', async () => {
-      setupDefaultApiMocks({
-        getDailyUpdates: vi.fn().mockResolvedValue({
-          success: true,
-          data: [],
-        }),
-      });
-
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: /submit update/i })).toBeInTheDocument();
-      });
-
-      await userEvent.click(screen.getByRole('button', { name: /submit update/i }));
-
-      await waitFor(() => {
-        expect(screen.getByLabelText(/what did you do yesterday/i)).toBeInTheDocument();
-      });
-
-      // Try to submit without filling required fields
-      const yesterdayTextarea = screen.getByLabelText(/what did you do yesterday/i);
-      expect(yesterdayTextarea).toHaveAttribute('required');
-
-      const todayTextarea = screen.getByLabelText(/what will you do today/i);
-      expect(todayTextarea).toHaveAttribute('required');
-    });
-
-    it('should show character counter for textareas', async () => {
-      setupDefaultApiMocks({
-        getDailyUpdates: vi.fn().mockResolvedValue({
-          success: true,
-          data: [],
-        }),
-      });
-
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: /submit update/i })).toBeInTheDocument();
-      });
-
-      await userEvent.click(screen.getByRole('button', { name: /submit update/i }));
-
-      await waitFor(() => {
-        expect(screen.getByTestId('char-counter-yesterday-work-count')).toBeInTheDocument();
-      });
-
-      expect(screen.getByTestId('char-counter-today-work-count')).toBeInTheDocument();
-      expect(screen.getByTestId('char-counter-impediment-count')).toBeInTheDocument();
-    });
-  });
-
-  // ============================================================================
-  // EDGE CASE TESTS
-  // ============================================================================
-  describe('Edge Cases', () => {
-    it('should handle empty updates array', async () => {
-      setupDefaultApiMocks({
-        getDailyUpdates: vi.fn().mockResolvedValue({
-          success: true,
-          data: [],
-        }),
-      });
-
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByText(/no updates yet/i)).toBeInTheDocument();
-      });
-    });
-
-    it('should handle sprint without goal', async () => {
-      setupDefaultApiMocks({
-        getActiveSprint: vi.fn().mockResolvedValue({
-          success: true,
-          data: createMockSprint({ sprintGoal: '' }),
-        }),
-      });
-
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByText(/no sprint goal defined/i)).toBeInTheDocument();
-      });
-    });
-
-    it('should handle all team members submitted updates', async () => {
-      setupDefaultApiMocks({
-        getTeamMembersWithUpdates: vi.fn().mockResolvedValue({
-          success: true,
-          data: {
-            submitted: [
-              { userId: 'user-1', userName: 'John Doe', hasSubmitted: true },
-              { userId: 'user-2', userName: 'Jane Smith', hasSubmitted: true },
-            ],
-            pending: [],
-          },
-        }),
-      });
-
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByText(/100%/i)).toBeInTheDocument();
-      });
-    });
-
-    it('should handle update with tracked impediment', async () => {
-      setupDefaultApiMocks({
-        getDailyUpdates: vi.fn().mockResolvedValue({
-          success: true,
-          data: [
-            createMockDailyUpdate({
-              impediment: 'Blocked by API',
-              impedimentRecord: { id: 'imp-1', status: ImpedimentStatus.OPEN },
-            }),
-          ],
-        }),
-      });
-
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        // Use getAllByText since there may be multiple elements with this text
-        const viewButtons = screen.getAllByText(/view impediment/i);
-        expect(viewButtons.length).toBeGreaterThan(0);
-      });
-    });
-
-    it('should navigate to impediment details when clicking view impediment', async () => {
-      setupDefaultApiMocks({
-        getDailyUpdates: vi.fn().mockResolvedValue({
-          success: true,
-          data: [
-            createMockDailyUpdate({
-              impediment: 'Blocked by API',
-              impedimentRecord: { id: 'imp-123', status: ImpedimentStatus.OPEN },
-            }),
-          ],
-        }),
-      });
-
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        // Use getAllByText since there may be multiple elements with this text
-        const viewButtons = screen.getAllByText(/view impediment/i);
-        expect(viewButtons.length).toBeGreaterThan(0);
-      });
-
-      const viewButtons = screen.getAllByText(/view impediment/i);
-      await userEvent.click(viewButtons[0]);
-
-      expect(mockNavigate).toHaveBeenCalledWith('/impediments?id=imp-123');
-    });
-
-    it('should handle sprint that has not started yet', async () => {
-      const futureDate = new Date();
-      futureDate.setDate(futureDate.getDate() + 7);
-
-      setupDefaultApiMocks({
-        getActiveSprint: vi.fn().mockResolvedValue({
-          success: true,
-          data: createMockSprint({
-            startDate: futureDate.toISOString(),
-            endDate: new Date(futureDate.getTime() + 14 * 24 * 60 * 60 * 1000).toISOString(),
-          }),
-        }),
-      });
-
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByText(/daily scrum/i)).toBeInTheDocument();
-      });
-    });
-
-    it('should handle multiple pending members', async () => {
-      setupDefaultApiMocks({
-        getTeamMembersWithUpdates: vi.fn().mockResolvedValue({
-          success: true,
-          data: {
-            submitted: [{ userId: 'user-1', userName: 'John Doe', hasSubmitted: true }],
-            pending: [
-              { userId: 'user-2', userName: 'Jane Smith', hasSubmitted: false },
-              { userId: 'user-3', userName: 'Bob Wilson', hasSubmitted: false },
-              { userId: 'user-4', userName: 'Alice Brown', hasSubmitted: false },
-            ],
-          },
-        }),
-      });
-
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByText(/jane smith/i)).toBeInTheDocument();
-      });
-
-      expect(screen.getByText(/bob wilson/i)).toBeInTheDocument();
-      expect(screen.getByText(/alice brown/i)).toBeInTheDocument();
-    });
-
-    it('should handle updates without impediments', async () => {
-      setupDefaultApiMocks({
-        getDailyUpdates: vi.fn().mockResolvedValue({
-          success: true,
-          data: [
-            createMockDailyUpdate({
-              impediment: undefined,
-            }),
-          ],
-        }),
-      });
-
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByText(/john doe/i)).toBeInTheDocument();
-      });
-
-      // Should not show impediment indicator
-      expect(screen.queryByText('🚧')).not.toBeInTheDocument();
-    });
-
-    it('should handle updates with None as impediment', async () => {
-      setupDefaultApiMocks({
-        getDailyUpdates: vi.fn().mockResolvedValue({
-          success: true,
-          data: [
-            createMockDailyUpdate({
-              impediment: 'None',
-            }),
-          ],
-        }),
-      });
-
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByText(/john doe/i)).toBeInTheDocument();
-      });
-
-      // Should not show impediment indicator for 'None'
-      expect(screen.queryByText('🚧')).not.toBeInTheDocument();
-    });
-  });
-
-  // ============================================================================
-  // ACCESSIBILITY TESTS
-  // ============================================================================
-  describe('Accessibility', () => {
-    it('should have proper ARIA labels on buttons', async () => {
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: /cards/i })).toBeInTheDocument();
-      });
-
-      const cardViewBtn = screen.getByRole('button', { name: /cards/i });
-      const listViewBtn = screen.getByRole('button', { name: /list/i });
-
-      expect(cardViewBtn).toHaveAttribute('aria-pressed');
-      expect(listViewBtn).toHaveAttribute('aria-pressed');
-    });
-
-    it('should support keyboard navigation', async () => {
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByLabelText(/select date for daily updates/i)).toBeInTheDocument();
-      });
-
-      const datePicker = screen.getByLabelText(/select date for daily updates/i);
-      datePicker.focus();
-      expect(document.activeElement).toBe(datePicker);
-    });
-
-    it('should have main content landmark for skip link target', async () => {
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByTestId('daily-scrum')).toBeInTheDocument();
-      });
-
-      // Skip link is now provided by Layout component
-      // The page should render correctly without its own skip link
-      const dailyScrum = screen.getByTestId('daily-scrum');
-      expect(dailyScrum).toBeInTheDocument();
-    });
-
-    it('should have proper heading hierarchy', async () => {
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByRole('heading', { name: /daily scrum/i })).toBeInTheDocument();
-      });
-
-      const h1Headings = screen.getAllByRole('heading', { level: 1 });
-      expect(h1Headings.length).toBe(1);
-      expect(h1Headings[0]).toHaveTextContent(/daily scrum/i);
-    });
-
-    it('should have accessible date picker', async () => {
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByLabelText(/select date for daily updates/i)).toBeInTheDocument();
-      });
-
-      const datePicker = screen.getByLabelText(/select date for daily updates/i);
-      // LocaleDateInput uses type="text" for the visible input
-      // The hidden input uses type="date" for native date picker
-      expect(datePicker).toHaveAttribute('type', 'text');
-    });
-
-    it('should have accessible form labels', async () => {
-      setupDefaultApiMocks({
-        getDailyUpdates: vi.fn().mockResolvedValue({
-          success: true,
-          data: [],
-        }),
-      });
-
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: /submit update/i })).toBeInTheDocument();
-      });
-
-      await userEvent.click(screen.getByRole('button', { name: /submit update/i }));
-
-      await waitFor(() => {
-        expect(screen.getByLabelText(/what did you do yesterday/i)).toBeInTheDocument();
-      });
-
-      expect(screen.getByLabelText(/what will you do today/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/any impediments/i)).toBeInTheDocument();
-    });
-
-    it('should have accessible modal when opened', async () => {
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByText(/track as impediment/i)).toBeInTheDocument();
-      });
-
-      await userEvent.click(screen.getByText(/track as impediment/i));
-
-      await waitFor(() => {
-        expect(screen.getByRole('dialog')).toBeInTheDocument();
-      });
-
-      const modal = screen.getByRole('dialog');
-      expect(modal).toHaveAttribute('aria-modal', 'true');
-    });
-
-    it('should have proper ARIA attributes on quick date buttons', async () => {
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        const todayButtons = screen.getAllByText(/today/i);
-        expect(todayButtons.length).toBeGreaterThan(0);
-      });
-
-      const todayButton = screen.getByRole('button', { name: /^today$/i });
-      expect(todayButton).toHaveAttribute('aria-current', 'date');
-    });
-  });
-
-  // ============================================================================
-  // BUSINESS LOGIC TESTS
-  // ============================================================================
-  describe('Business Logic', () => {
-    it('should calculate correct participation percentage', async () => {
-      const mockTeam = createMockTeam({
-        members: [
-          createMockTeamMember(),
-          createMockTeamMember({ id: 'member-2', userId: 'user-2' }),
-          createMockTeamMember({ id: 'member-3', userId: 'user-3' }),
-          createMockTeamMember({ id: 'member-4', userId: 'user-4' }),
-        ],
-      });
-
-      setupDefaultStore({ currentTeam: mockTeam });
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByRole('heading', { name: /daily scrum/i })).toBeInTheDocument();
-      });
-
-      // With 1 submitted out of 4 members = 25% participation
-      expect(screen.getByText(/25%/i)).toBeInTheDocument();
-    });
-
-    it('should count impediments correctly', async () => {
-      setupDefaultApiMocks({
-        getDailyUpdates: vi.fn().mockResolvedValue({
-          success: true,
-          data: [
-            createMockDailyUpdate({ impediment: 'Issue 1' }),
-            createMockDailyUpdate({ id: 'update-2', userId: 'user-2', impediment: 'Issue 2' }),
-            createMockDailyUpdate({ id: 'update-3', userId: 'user-3', impediment: 'None' }),
-          ],
-        }),
-      });
-
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        // Look for the impediments stat value in the stats bar
-        // Use getAllByText since "impediments" appears in multiple places
-        const impedimentsElements = screen.getAllByText(/impediments/i);
-        expect(impedimentsElements.length).toBeGreaterThan(0);
-      });
-
-      // The stats bar should show impediments section
-      const impedimentsSection = screen.getAllByText(/impediments/i)[0]?.closest('div');
-      expect(impedimentsSection).toBeInTheDocument();
-    });
-
-    it('should display correct sprint day calculation', async () => {
-      const today = new Date();
-      const yesterday = new Date(today);
-      yesterday.setDate(yesterday.getDate() - 1);
-
-      setupDefaultApiMocks({
-        getActiveSprint: vi.fn().mockResolvedValue({
-          success: true,
-          data: createMockSprint({
-            startDate: yesterday.toISOString(),
-          }),
-        }),
-      });
-
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        // Look for "Day" text which should be in the sprint subtitle
-        const dayElements = screen.getAllByText(/day/i);
-        expect(dayElements.length).toBeGreaterThan(0);
-      });
-    });
-
-    it('should display correct sprint progress percentage', async () => {
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByText(/sprint goal/i)).toBeInTheDocument();
-      });
-
-      // Should show progress percentage in the progress ring
-      const progressTexts = screen.getAllByText(/%/);
-      expect(progressTexts.length).toBeGreaterThan(0);
-    });
-  });
-
-  // ============================================================================
-  // TEMPLATE SELECTOR TESTS
-  // ============================================================================
-  describe('Template Selector', () => {
-    it('should render template buttons', async () => {
-      setupDefaultApiMocks({
-        getDailyUpdates: vi.fn().mockResolvedValue({
-          success: true,
-          data: [],
-        }),
-      });
-
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: /submit update/i })).toBeInTheDocument();
-      });
-
-      await userEvent.click(screen.getByRole('button', { name: /submit update/i }));
-
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: /feature development/i })).toBeInTheDocument();
-      });
-
-      expect(screen.getByRole('button', { name: /issue fixing/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /review/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /meetings/i })).toBeInTheDocument();
-    });
-
-    it('should apply template when clicked', async () => {
-      setupDefaultApiMocks({
-        getDailyUpdates: vi.fn().mockResolvedValue({
-          success: true,
-          data: [],
-        }),
-      });
-
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: /submit update/i })).toBeInTheDocument();
-      });
-
-      await userEvent.click(screen.getByRole('button', { name: /submit update/i }));
-
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: /feature development/i })).toBeInTheDocument();
-      });
-
-      await userEvent.click(screen.getByRole('button', { name: /feature development/i }));
-
-      const yesterdayTextarea = screen.getByLabelText(/what did you do yesterday/i);
-      expect(yesterdayTextarea).toHaveValue('Continued work on [feature name]:\n- ');
-    });
-  });
-
-  // ============================================================================
-  // UPDATE CARD TESTS
-  // ============================================================================
-  describe('Update Card', () => {
-    it('should display user information correctly', async () => {
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        // Use getAllByText since the user name appears in multiple places
-        const userElements = screen.getAllByText(/john doe/i);
-        expect(userElements.length).toBeGreaterThan(0);
-      });
-    });
-
-    it('should display yesterday and today work', async () => {
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        // Use getAllByText since the work text appears in multiple places
-        const yesterdayElements = screen.getAllByText(/completed login feature/i);
-        expect(yesterdayElements.length).toBeGreaterThan(0);
-      });
-
-      const todayElements = screen.getAllByText(/working on dashboard/i);
-      expect(todayElements.length).toBeGreaterThan(0);
-    });
-
-    it('should show impediment indicator when update has impediment', async () => {
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        // Use getAllByText since the impediment text appears in multiple places
-        const impedimentElements = screen.getAllByText(/waiting for api documentation/i);
-        expect(impedimentElements.length).toBeGreaterThan(0);
-      });
-    });
-
-    it('should show tracked impediment badge', async () => {
-      setupDefaultApiMocks({
-        getDailyUpdates: vi.fn().mockResolvedValue({
-          success: true,
-          data: [
-            createMockDailyUpdate({
-              impediment: 'API Issue',
-              impedimentRecord: { id: 'imp-1', status: ImpedimentStatus.IN_PROGRESS },
-            }),
-          ],
-        }),
-      });
-
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByText(/in progress/i)).toBeInTheDocument();
-      });
-    });
-
-    it('should show resolved impediment badge', async () => {
-      setupDefaultApiMocks({
-        getDailyUpdates: vi.fn().mockResolvedValue({
-          success: true,
-          data: [
-            createMockDailyUpdate({
-              impediment: 'API Issue',
-              impedimentRecord: { id: 'imp-1', status: ImpedimentStatus.RESOLVED },
-            }),
-          ],
-        }),
-      });
-
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByText(/resolved/i)).toBeInTheDocument();
-      });
-    });
-  });
-
-  // ============================================================================
-  // SIDEBAR TESTS
-  // ============================================================================
-  describe('Sidebar', () => {
-    it('should display sprint progress card', async () => {
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByText(/sprint progress/i)).toBeInTheDocument();
-      });
-    });
-
-    it('should display sprint dates', async () => {
-      renderDailyScrum({ queryClient });
-
-      // Wait for the sprint name to appear (only after loading is complete)
-      await waitFor(() => {
-        const sprintInfoElements = screen.getAllByText(/sprint 1/i);
-        expect(sprintInfoElements.length).toBeGreaterThan(0);
-      });
-    });
-
-    it('should have link to sprint board', async () => {
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: /view sprint board/i })).toBeInTheDocument();
-      });
-
-      await userEvent.click(screen.getByRole('button', { name: /view sprint board/i }));
-
-      expect(mockNavigate).toHaveBeenCalledWith('/sprint');
-    });
-
-    it('should display active impediments summary', async () => {
-      setupDefaultApiMocks({
-        getDailyUpdates: vi.fn().mockResolvedValue({
-          success: true,
-          data: [
-            createMockDailyUpdate({ impediment: 'Issue 1' }),
-            createMockDailyUpdate({ id: 'update-2', userId: 'user-2', impediment: 'Issue 2' }),
-          ],
-        }),
-      });
-
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByText(/active impediments/i)).toBeInTheDocument();
-      });
-    });
-  });
-
-  // ============================================================================
-  // NAVIGATION TESTS
-  // ============================================================================
-  describe('Navigation', () => {
-    it('should navigate to impediments page when more than 3 impediments', async () => {
-      setupDefaultApiMocks({
-        getDailyUpdates: vi.fn().mockResolvedValue({
-          success: true,
-          data: [
-            createMockDailyUpdate({
-              impediment: 'API Issue 1',
-              impedimentRecord: { id: 'imp-1', status: ImpedimentStatus.OPEN },
-            }),
-            createMockDailyUpdate({
-              id: 'update-2',
-              userId: 'user-2',
-              impediment: 'API Issue 2',
-              impedimentRecord: { id: 'imp-2', status: ImpedimentStatus.OPEN },
-            }),
-            createMockDailyUpdate({
-              id: 'update-3',
-              userId: 'user-3',
-              impediment: 'API Issue 3',
-              impedimentRecord: { id: 'imp-3', status: ImpedimentStatus.OPEN },
-            }),
-            createMockDailyUpdate({
-              id: 'update-4',
-              userId: 'user-4',
-              impediment: 'API Issue 4',
-              impedimentRecord: { id: 'imp-4', status: ImpedimentStatus.OPEN },
-            }),
-          ],
-        }),
-      });
-
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByText(/view all 4 impediments/i)).toBeInTheDocument();
-      });
-
-      await userEvent.click(screen.getByText(/view all 4 impediments/i));
-
-      expect(mockNavigate).toHaveBeenCalledWith('/impediments');
+      expect(await screen.findByText('Deliver the reporting module')).toBeInTheDocument();
+      expect(screen.getByText('Sprint Goal')).toBeInTheDocument();
     });
-
-    it('should navigate to sprint planning from empty sprint state', async () => {
-      setupDefaultApiMocks({
-        getActiveSprint: vi.fn().mockResolvedValue({
-          success: true,
-          data: null,
-        }),
-      });
-
-      renderDailyScrum({ queryClient });
 
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: /go to sprint planning/i })).toBeInTheDocument();
-      });
+    it('shows a link to define the goal when none is set', async () => {
+      const { mockNavigate } = setupMocks({ sprintGoal: null });
 
-      await userEvent.click(screen.getByRole('button', { name: /go to sprint planning/i }));
+      renderWithProviders(<DailyScrum />, { queryClient: new QueryClient() });
 
+      const defineLink = await screen.findByText('Add in Sprint Planning');
+      fireEvent.click(defineLink);
       expect(mockNavigate).toHaveBeenCalledWith('/sprint-planning');
     });
   });
 
-  // ============================================================================
-  // ERROR HANDLING TESTS
-  // ============================================================================
-  describe('Error Handling', () => {
-    it('should handle network errors when submitting update', async () => {
-      const createMock = vi.fn().mockRejectedValue(new Error('Network error'));
+  describe('Team-level record (spec R1)', () => {
+    it('shows the inspect/adapt/plan panels from the shared record', async () => {
+      setupMocks({ dailyScrum: mockScrum });
 
-      setupDefaultApiMocks({
-        createDailyUpdate: createMock,
-        getDailyUpdates: vi.fn().mockResolvedValue({
-          success: true,
-          data: [],
-        }),
-      });
+      renderWithProviders(<DailyScrum />, { queryClient: new QueryClient() });
 
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: /submit update/i })).toBeInTheDocument();
-      });
-
-      await userEvent.click(screen.getByRole('button', { name: /submit update/i }));
-
-      await waitFor(() => {
-        expect(screen.getByLabelText(/what did you do yesterday/i)).toBeInTheDocument();
-      });
-
-      await userEvent.type(
-        screen.getByLabelText(/what did you do yesterday/i),
-        'Test work yesterday'
-      );
-      await userEvent.type(screen.getByLabelText(/what will you do today/i), 'Test work today');
-
-      await userEvent.click(screen.getByRole('button', { name: /^submit update$/i }));
-
-      await waitFor(() => {
-        expect(createMock).toHaveBeenCalled();
-      });
+      // Content values from the shared team-level record (unique text).
+      expect(await screen.findByText('On track toward the goal')).toBeInTheDocument();
+      expect(screen.getByText('Will adjust backlog item X')).toBeInTheDocument();
+      expect(screen.getByText('Pair up on feature Y')).toBeInTheDocument();
     });
 
-    it('should handle 401 unauthorized errors', async () => {
-      const error = new Error('Unauthorized') as Error & { response?: { status: number } };
-      error.response = { status: 401 };
+    it('does not show a per-user "pending" list when nobody is missing', async () => {
+      setupMocks({ dailyScrum: mockScrum });
 
-      setupDefaultApiMocks({
-        getDailyUpdates: vi.fn().mockRejectedValue(error),
-      });
+      renderWithProviders(<DailyScrum />, { queryClient: new QueryClient() });
 
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByText(/daily scrum/i)).toBeInTheDocument();
-      });
+      await screen.findByText('On track toward the goal');
+      expect(screen.queryByText('Not yet joined')).not.toBeInTheDocument();
     });
 
-    it('should handle 403 forbidden errors', async () => {
-      const error = new Error('Forbidden') as Error & { response?: { status: number } };
-      error.response = { status: 403 };
+    it('does not auto-open the editable form when a saved record exists', async () => {
+      setupMocks({ dailyScrum: mockScrum });
 
-      setupDefaultApiMocks({
-        getDailyUpdates: vi.fn().mockRejectedValue(error),
-      });
+      renderWithProviders(<DailyScrum />, { queryClient: new QueryClient() });
 
-      renderDailyScrum({ queryClient });
-
-      await waitFor(() => {
-        expect(screen.getByText(/daily scrum/i)).toBeInTheDocument();
-      });
+      await screen.findByText('On track toward the goal');
+      // The editable "Save Daily Scrum" form must NOT be shown alongside the record.
+      expect(screen.queryByText('Save Daily Scrum')).not.toBeInTheDocument();
+      // The record view with Edit is shown instead.
+      expect(screen.getByText('Edit Daily Scrum')).toBeInTheDocument();
     });
 
-    it('should handle 500 server errors', async () => {
-      const error = new Error('Server Error') as Error & { response?: { status: number } };
-      error.response = { status: 500 };
+    it('opens the promote-impediment modal from the record view', async () => {
+      setupMocks({ dailyScrum: mockScrum });
 
-      setupDefaultApiMocks({
-        getDailyUpdates: vi.fn().mockRejectedValue(error),
-      });
+      renderWithProviders(<DailyScrum />, { queryClient: new QueryClient() });
 
-      renderDailyScrum({ queryClient });
+      const trigger = await screen.findByText('Create impediment');
+      fireEvent.click(trigger);
 
-      await waitFor(() => {
-        expect(screen.getByText(/daily scrum/i)).toBeInTheDocument();
-      });
+      expect(await screen.findByText('Create Impediment from Daily Scrum')).toBeInTheDocument();
+    });
+
+    it('renders sprint impediments in the Inspect & Adapt record', async () => {
+      const impediments: Impediment[] = [
+        {
+          id: 'imp-1',
+          teamId: 'team-1',
+          sprintId: 'sprint-1',
+          title: 'API access blocked',
+          description: 'Team cannot reach the external API',
+          reportedById: 'user-1',
+          status: ImpedimentStatus.OPEN,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+      ];
+      setupMocks({ dailyScrum: mockScrum, impediments });
+
+      renderWithProviders(<DailyScrum />, { queryClient: new QueryClient() });
+
+      expect(await screen.findByText('Outstanding impediments')).toBeInTheDocument();
+      expect(screen.getByText('API access blocked')).toBeInTheDocument();
+      expect(screen.getByText('Open')).toBeInTheDocument();
+    });
+
+    it('does not show an impediment section when none are raised', async () => {
+      setupMocks({ dailyScrum: mockScrum, impediments: [] });
+
+      renderWithProviders(<DailyScrum />, { queryClient: new QueryClient() });
+
+      await screen.findByText('On track toward the goal');
+      expect(screen.queryByText('Outstanding impediments')).not.toBeInTheDocument();
     });
   });
 
-  // ============================================================================
-  // PERFORMANCE TESTS
-  // ============================================================================
-  describe('Performance', () => {
-    it('should render with many updates efficiently', async () => {
-      const manyUpdates = Array.from({ length: 50 }, (_, i) =>
-        createMockDailyUpdate({
-          id: `update-${i}`,
-          userId: `user-${i}`,
-          user: createMockUser({
-            id: `user-${i}`,
-            firstName: `User${i}`,
-            lastName: `Test${i}`,
-          }),
-        })
+  describe('Choose-your-focus (spec R5)', () => {
+    it('renders the developer-chosen focus selector inside the edit form', async () => {
+      setupMocks();
+
+      renderWithProviders(<DailyScrum />, { queryClient: new QueryClient() });
+
+      // The focus selector is part of the edit form (auto-opened on today).
+      const progressLabel = await screen.findByText('Progress toward Sprint Goal');
+      expect(progressLabel).toBeInTheDocument();
+      expect(
+        screen.getByText('Daily Scrum focus (Developers choose the structure)')
+      ).toBeInTheDocument();
+      expect(screen.getByText('Impediment-first')).toBeInTheDocument();
+      expect(screen.getByText('Pair-up plan')).toBeInTheDocument();
+    });
+
+    it('saves the chosen focus with the record', async () => {
+      const { api } = setupMocks({ dailyScrum: null });
+
+      renderWithProviders(<DailyScrum />, { queryClient: new QueryClient() });
+
+      await screen.findByText('Progress toward Sprint Goal');
+      const planTextarea = screen.getByPlaceholderText('What will the team work on next?');
+      fireEvent.change(planTextarea, { target: { value: 'Pair up on feature Y' } });
+
+      fireEvent.click(screen.getByText('Impediment-first'));
+
+      const submitButton = screen.getByText('Submit Daily Scrum').closest('button');
+      expect(submitButton).toBeEnabled();
+      fireEvent.click(submitButton as HTMLElement);
+
+      await waitFor(() => expect(api.createDailyScrum).toHaveBeenCalled());
+      const createCall = api.createDailyScrum.mock.calls[0];
+      expect(createCall[1]).toHaveProperty('focusMode', 'impediment');
+    });
+  });
+
+  describe('Goal-relevant metrics (spec R7)', () => {
+    it('shows goal progress and backlog-adjusted metrics, not report counts', async () => {
+      setupMocks({ dailyScrum: mockScrum });
+
+      renderWithProviders(<DailyScrum />, { queryClient: new QueryClient() });
+
+      await screen.findByText('On track toward the goal');
+      // "Goal progress" appears in the stats bar and as the record's focus value.
+      expect(screen.getAllByText('Goal progress').length).toBeGreaterThanOrEqual(1);
+      expect(screen.getByText('Backlog items adjusted')).toBeInTheDocument();
+      expect(screen.getByText('Participants')).toBeInTheDocument();
+    });
+  });
+
+  describe('Create Daily Scrum', () => {
+    it("auto-opens today's form and requires an actionable next-day plan to submit", async () => {
+      const { api } = setupMocks({ dailyScrum: null });
+
+      renderWithProviders(<DailyScrum />, { queryClient: new QueryClient() });
+
+      // On today, the team-level form auto-opens to record the Daily Scrum.
+      const progressLabel = await screen.findByText('Progress toward Sprint Goal');
+      expect(progressLabel).toBeInTheDocument();
+
+      // Without a next-day plan the submit button is disabled and a hint is shown.
+      const submitButton = screen.getByText('Submit Daily Scrum').closest('button');
+      expect(submitButton).toBeDisabled();
+      expect(
+        screen.getByText('Add an actionable plan for the next day to save the Daily Scrum.')
+      ).toBeInTheDocument();
+
+      const progressTextarea = screen.getByPlaceholderText(
+        "Describe the team's progress toward the Sprint Goal..."
       );
+      fireEvent.change(progressTextarea, { target: { value: 'On track toward the goal' } });
 
-      setupDefaultApiMocks({
-        getDailyUpdates: vi.fn().mockResolvedValue({
-          success: true,
-          data: manyUpdates,
-        }),
-      });
+      // Still disabled until a plan is present.
+      expect(submitButton).toBeDisabled();
 
-      const startTime = performance.now();
-      renderDailyScrum({ queryClient });
+      const planTextarea = screen.getByPlaceholderText('What will the team work on next?');
+      fireEvent.change(planTextarea, { target: { value: 'Pair up on feature Y' } });
 
-      await waitFor(() => {
-        // Use getAllByText since the name appears in multiple places
-        const userElements = screen.getAllByText(/user0 test0/i);
-        expect(userElements.length).toBeGreaterThan(0);
-      });
+      expect(submitButton).toBeEnabled();
 
-      const endTime = performance.now();
-      const renderTime = endTime - startTime;
+      fireEvent.click(submitButton as HTMLElement);
 
-      // Should render in less than 1 second even with 50 updates
-      expect(renderTime).toBeLessThan(1000);
+      await waitFor(() => expect(api.createDailyScrum).toHaveBeenCalled());
+      const createCall = api.createDailyScrum.mock.calls[0];
+      expect(createCall[0]).toBe('sprint-1');
+      expect(createCall[1]).toHaveProperty('progressNotes');
+      expect(createCall[1]).toHaveProperty('planForNextDay', 'Pair up on feature Y');
+    });
+  });
+
+  describe('Developers-only recording (Scrum Guide)', () => {
+    it('does not offer the Start form to a Product Owner', async () => {
+      setupMocks({ dailyScrum: null, userRole: UserRole.PRODUCT_OWNER });
+
+      renderWithProviders(<DailyScrum />, { queryClient: new QueryClient() });
+
+      await screen.findByText('No Daily Scrum Yet');
+      // A non-Developer sees a read-only hint instead of the Start button/form.
+      expect(screen.queryByText('Start Daily Scrum')).not.toBeInTheDocument();
+      expect(screen.getByText(/Only Developers record the Daily Scrum/i)).toBeInTheDocument();
+    });
+
+    it('keeps a saved record readable but read-only for a non-Developer', async () => {
+      setupMocks({ dailyScrum: mockScrum, userRole: UserRole.SCRUM_MASTER });
+
+      renderWithProviders(<DailyScrum />, { queryClient: new QueryClient() });
+
+      // The shared content is still visible to observers.
+      expect(await screen.findByText('On track toward the goal')).toBeInTheDocument();
+      // The Developer-chosen focus is visible to observers too (part of the record).
+      // The focus view title is "Daily Scrum focus"; its value ("Goal progress")
+      // also appears in the stats bar, hence the getAllByText check.
+      expect(screen.getByText('Daily Scrum focus')).toBeInTheDocument();
+      expect(screen.getAllByText('Goal progress').length).toBeGreaterThanOrEqual(2);
+      // But the Developer-only authoring actions are hidden.
+      expect(screen.queryByText('Edit Daily Scrum')).not.toBeInTheDocument();
+      expect(screen.queryByText('Create impediment')).not.toBeInTheDocument();
     });
   });
 });

@@ -4,11 +4,14 @@ import { asyncHandler, createSuccessResponse, BadRequestError } from '../utils/e
 import { getParamValue } from '../utils/validation';
 
 export const getImpediments = asyncHandler(async (req: Request, res: Response) => {
-  const { teamId } = req.query;
+  const { teamId, sprintId } = req.query;
   if (!teamId || typeof teamId !== 'string') {
     throw new BadRequestError('teamId is required');
   }
-  const impediments = await impedimentService.getImpedimentsByTeam(teamId);
+  const impediments = await impedimentService.getImpedimentsByTeam(
+    teamId,
+    typeof sprintId === 'string' && sprintId ? sprintId : undefined
+  );
   return res.json(createSuccessResponse(impediments));
 });
 

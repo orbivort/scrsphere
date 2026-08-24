@@ -69,12 +69,12 @@
     "title": "[Scrúm Màstér Dàshbóàrdddddddd]"
   },
   "smNotes": {
-    "charCounter": "[{{count}} / 2000 chàráctéééérs]",
-    "emptyError": "[Ñøţêš çåññøţ þê êµþţý.]",
-    "maxLengthError": "[Ñøţêš µûšţ þê 2000 çĥåŕåçţêŕš øŕ ƒêŵêŕ.]",
-    "modeEditing": "[Édítíng]",
-    "modeViewing": "[Víéwíng]",
-    "noHtmlTags": "[HŢMŁ ţåĝš åŕê ñøţ åłłøŵêð îñ ñøţêš.]",
+    "charCounter": "[{{count}} / 2000 cchhààrrààccttéérrs]",
+    "emptyError": "[Nótés cànnót bé émptyyyyyyyy.]",
+    "maxLengthError": "[Nótés múst bé 2000 chàràctérs ór féwérrrrrrrrrrrrr.]",
+    "modeEditing": "[Édítíngggg]",
+    "modeViewing": "[Víéwíngggg]",
+    "noHtmlTags": "[HTML tàgs àré nót àllówéd ín nótéssssssssssss.]",
     "placeholder": "[Récórd óbsérvàtíóns, cóàchíng nótés, ànd fàcílítàtíón ínsíghts fór thé Scrúm Téàmmmmmmmmmmmmmmmmmmmmmmmmmmm...]",
     "saveError": "[Fàíléd tó sàvé nótésssssss]",
     "saved": "[Nótés sàvéddddd]",

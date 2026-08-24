@@ -126,6 +126,17 @@ export const queryKeys = {
     byTeam: (teamId: string) => [...queryKeys.dailyUpdate.lists(), { teamId }] as const,
   },
 
+  // Daily Scrum queries (team-level, goal-focused)
+  dailyScrum: {
+    all: ['daily-scrums'] as const,
+    lists: () => [...queryKeys.dailyScrum.all, 'list'] as const,
+    bySprint: (sprintId: string) => [...queryKeys.dailyScrum.lists(), { sprintId }] as const,
+    bySprintAndDate: (sprintId: string, date: string) =>
+      [...queryKeys.dailyScrum.bySprint(sprintId), { date }] as const,
+    participation: (sprintId: string, date: string) =>
+      [...queryKeys.dailyScrum.all, 'participation', { sprintId, date }] as const,
+  },
+
   // Product Goal queries
   productGoal: {
     all: ['product-goals'] as const,

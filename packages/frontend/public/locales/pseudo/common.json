@@ -79,7 +79,7 @@
     "removeAttendee": "[Rémóvé àtténdééééééé]",
     "removeAttendeeConfirm": "[Rémóvééé]",
     "removeAttendeeTitle": "[Rémóvé Àtténdééééééé]",
-    "roleDevelopers": "[Dévélópérrrrs]",
+    "roleDevelopers": "[Dévélópérssss]",
     "roleProductOwner": "[Pródúct Ównérrrrr]",
     "roleScrumMaster": "[Scrúm Màstérrrrr]",
     "roleStakeholder": "[Stàkéhóldérrrrr]",
@@ -284,7 +284,7 @@
       "timeout": "[Thé réqúést tóók tóó lóng. Pléàsé try àgàínnnnnnnnnnnnnnn.]"
     },
     "operations": {
-      "addStakeholderFeedback": "[Fàíléd tó àdd stàkéhóldér fèédbàckkkkkkkkkk]",
+      "addStakeholderFeedback": "[Fàíléd tó àdd stàkéhóldér féédbàckkkkkkkkkkkk]",
       "addTeamMember": "[Fàíléd tó àdd téàm mémbérrrrrrrrr]",
       "changePassword": "[Fàíléd tó chàngé pàsswórddddddddd]",
       "completeSprint": "[Fàíléd tó cómplété sprínttttttttt]",
@@ -296,7 +296,7 @@
       "createRetrospective": "[Fàíléd tó créàté rétróspéctívéééééééééé]",
       "createReview": "[Fàíléd tó créàté révíéwwwwwwww]",
       "createSprint": "[Fàíléd tó créàté spríntttttttt]",
-      "createSprintReview": "[Fàíléd tó créàté sprínt révíéwwwwwwww]",
+      "createSprintReview": "[Fàíléd tó créàté sprínt révíéwwwwwwwwww]",
       "createTask": "[Fàíléd tó créàté tàskkkkkkkk]",
       "createTeam": "[Fàíléd tó créàté téàmmmmmmmm]",
       "deleteBacklogItem": "[Fàíléd tó délété bàcklóg ítémmmmmmmmmm]",
@@ -311,11 +311,11 @@
       "deleteTeam": "[Fàíléd tó délété téàmmmmmmmm]",
       "editBacklogItem": "[Fàíléd tó édít bàcklóg ítémmmmmmmmmm]",
       "exportData": "[Fàíléd tó éxpórt dàtàààààààà]",
-      "generateSprints": "[Fàíléd tó généràté spríntssssssssss]",
+      "generateSprints": "[Fàíléd tó généràté spríntsssssssss]",
       "importData": "[Fàíléd tó ímpórt dàtàààààààà]",
       "removeTeamMember": "[Fàíléd tó rémóvé téàm mémbérrrrrrrrrr]",
       "saveConfiguration": "[Fàíléd tó sàvé cónfígúràtíónnnnnnnnnn]",
-      "saveSprintBacklog": "[Fàíléd tó sàvé thè sprínt bàcklógqqqqqq]",
+      "saveSprintBacklog": "[Fàíléd tó sàvé thé sprínt bàcklóggggggggggg]",
       "selectTeam": "[Fàíléd tó séléct téàmmmmmmmm]",
       "startSprint": "[Fàíléd tó stàrt spríntttttttt]",
       "updateBacklogItem": "[Fàíléd tó úpdàté bàcklóg ítémmmmmmmmmm]",
@@ -327,7 +327,7 @@
       "updateRetrospective": "[Fàíléd tó úpdàté rétróspéctívéééééééééé]",
       "updateReview": "[Fàíléd tó úpdàté révíéwwwwwwww]",
       "updateSprint": "[Fàíléd tó úpdàté spríntttttttt]",
-      "updateSprintGoal": "[Fàíléd tó úpdàté sprínt góàllllllll]",
+      "updateSprintGoal": "[Fàíléd tó úpdàté sprínt góàllllllllll]",
       "updateTask": "[Fàíléd tó úpdàté tàskkkkkkkk]",
       "updateTeam": "[Fàíléd tó úpdàté téàmmmmmmmm]",
       "updateTeamMemberRole": "[Fàíléd tó úpdàté téàm mémbér rólééééééééééé]"
@@ -646,7 +646,7 @@
     "goToTeamPage": "[Gó tó Téàm Pàgéééééé]",
     "loading": "[Lóàdíng téàmssssss...]",
     "roles": {
-      "developers": "[Dévélópérrrrs]",
+      "developers": "[Dévélópérssss]",
       "productOwner": "[Pródúct Ównérrrrr]",
       "scrumMaster": "[Scrúm Màstérrrrr]"
     },

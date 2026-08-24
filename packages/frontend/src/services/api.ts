@@ -12,6 +12,7 @@ export { productBacklogService } from './domain/productBacklog.service';
 export { sprintService } from './domain/sprint.service';
 export { sprintBacklogService } from './domain/sprintBacklog.service';
 export { dailyUpdatesService } from './domain/dailyUpdates.service';
+export { dailyScrumService } from './domain/dailyScrum.service';
 export { impedimentsService } from './domain/impediments.service';
 export { reportsService } from './domain/reports.service';
 export { productGoalsService } from './domain/productGoals.service';
@@ -33,6 +34,7 @@ import { productBacklogService } from './domain/productBacklog.service';
 import { sprintService } from './domain/sprint.service';
 import { sprintBacklogService } from './domain/sprintBacklog.service';
 import { dailyUpdatesService } from './domain/dailyUpdates.service';
+import { dailyScrumService } from './domain/dailyScrum.service';
 import { impedimentsService } from './domain/impediments.service';
 import { reportsService } from './domain/reports.service';
 import { productGoalsService } from './domain/productGoals.service';
@@ -130,6 +132,16 @@ class ApiService {
   promoteToImpediment = dailyUpdatesService.promoteToImpediment.bind(dailyUpdatesService);
   getImpedimentByDailyUpdate =
     dailyUpdatesService.getImpedimentByDailyUpdate.bind(dailyUpdatesService);
+
+  // Daily Scrum endpoints (team-level, goal-focused)
+  getDailyScrum = dailyScrumService.getDailyScrum.bind(dailyScrumService);
+  getDailyScrums = dailyScrumService.getDailyScrums.bind(dailyScrumService);
+  createDailyScrum = dailyScrumService.createDailyScrum.bind(dailyScrumService);
+  updateDailyScrum = dailyScrumService.updateDailyScrum.bind(dailyScrumService);
+  recordDailyScrumParticipation = dailyScrumService.recordParticipation.bind(dailyScrumService);
+  getDailyScrumParticipation = dailyScrumService.getParticipation.bind(dailyScrumService);
+  sendDailyScrumTeamSignal = dailyScrumService.sendTeamSignal.bind(dailyScrumService);
+  promoteImpedimentFromDailyScrum = dailyScrumService.promoteToImpediment.bind(dailyScrumService);
 
   // Impediments endpoints
   getImpediments = impedimentsService.getImpediments.bind(impedimentsService);

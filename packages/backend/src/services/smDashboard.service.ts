@@ -55,7 +55,7 @@ export const smDashboardService = {
       // A timebox is considered exceeded if any concluded event ran past its
       // maximum. Compare the recorded elapsed (seconds) against the Guide-correct
       // cap derived from the Sprint duration.
-      const timeboxExceeded = (sprint.timeboxes ?? []).some((tb) => {
+      const timeboxExceeded = sprint.timeboxes.some((tb) => {
         if (tb.concludedElapsedMs === null) {
           return false;
         }

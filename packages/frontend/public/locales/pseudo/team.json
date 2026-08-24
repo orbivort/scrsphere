@@ -33,7 +33,7 @@
       "invitationsSentBy": "[Téàm ínvítàtíóns àré sént by: Scrúm Màstérs ór Pródúct Ównérs ónlyyyyyyyyyyyyyyyyyyyyy]",
       "title": "[Hów tó Jóín à Téàmmmmmmm]"
     },
-    "title": "[Dévélópérrrrs]"
+    "title": "[Dévélópérssss]"
   },
   "errorStates": {
     "accessDenied": "[Àccéss déníéddddd]",
@@ -54,9 +54,9 @@
     "noPermissionToRemoveMembers": "[Yóú dó nót hàvé pérmíssíón tó rémóvé téàm mémbérs. Ónly Scrúm Màstérs ànd Pródúct Ównérs càn rémóvé mémbérssssssssssssssssssssssssssssssssss.]"
   },
   "healthCheck": {
-    "collapse": "[Cóllàpsé]",
-    "expand": "[Éxpànd]",
-    "sectionTitle": "[Scrúm Vàlúés Héàlth Chéck]"
+    "collapse": "[Cóllàpséééé]",
+    "expand": "[Éxpànddd]",
+    "sectionTitle": "[Scrúm Vàlúés Héàlth Chéckkkkkkkkk]"
   },
   "help": {
     "description": "[Íf yóú'ré únsúré àbóút yóúr rólé ór nééd àssístàncé, cóntàct yóúr órgànízàtíón àdmínístràtór ór chéck wíth yóúr prójéct mànàgérrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr.]",
@@ -71,7 +71,8 @@
     "invalidEmail": "[Pléàsé éntér à vàlíd émàíl àddrésssssssssssss.]",
     "networkError": "[Nétwórk érrór. Pléàsé chéck yóúr cónnéctíón ànd try àgàínnnnnnnnnnnnnnnnnnn.]",
     "noPermission": "[Yóú dó nót hàvé pérmíssíón tó àdd téàm mémbérssssssssssssssss.]",
-    "roleAlreadyTaken": "[Thé {{role}} rólé ís àlréàdy àssígnéd tó ànóthér téàm mémbér. Éàch téàm càn hàvé éxàctly óné Pródúct Ównér ànd óné Scrúm Màstérrrrrrrrrrrrrrrrrrrrrrrrrr.]",
+    "roleAlreadyTaken": "[TThhé {{role}} rólé ís àlréàdy àssígnéd tó ànóthér téàm mémbér. Éàch téàm càn hàvé éxàctly óné Pródúct Ównér ànd óné Scrúm Màstérrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr.]",
+    "teamSizeLimit": "[Thís téàm hàs réàchéd thé màxímúm sízé óffffffffffffff {{max}} mémbérs. Nó àddítíónàl mémbérs càn bé àddéddddddddddddddd.]",
     "userNotFound": "[Nó úsér fóúnd wíth thís émàíl àddréss. Thé úsér múst régístér fírst béfóré théy càn bé ínvítéd tó à téàmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm.]"
   },
   "inviteModal": {
@@ -110,7 +111,7 @@
     "memberSince": "[Mémbér síncééééé]",
     "roleNames": {
       "administrator": "[Àdmínístràtórrrrr]",
-      "developers": "[Dévélópérrrrs]",
+      "developers": "[Dévélópérssss]",
       "productOwner": "[Pródúct Ównérrrrr]",
       "scrumMaster": "[Scrúm Màstérrrrr]"
     },
@@ -131,7 +132,7 @@
     "filterByRoleAriaLabel": "[Fíltér mémbérs by róléééééééé]",
     "filterOptions": {
       "allRoles": "[Àll Róléssss]",
-      "developers": "[Dévélópérrrrs]",
+      "developers": "[Dévélópérssss]",
       "productOwner": "[Pródúct Ównérrrrr]",
       "scrumMaster": "[Scrúm Màstérrrrr]"
     },
@@ -146,6 +147,7 @@
       "byName": "[Sórt by Nàmééééé]",
       "byRole": "[Sórt by Rólééééé]"
     },
+    "teamFull": "[Thís téàm ís fúll (màxímúmmmmmmmmmm {{max}} mémbérs). Nó àddítíónàl mémbérs càn bé àddéddddddddddddddd.]",
     "title": "[Téàm Mémbérsssss]",
     "viewModeAriaLabel": "[Víéw módé tóggléééééé]",
     "viewToggles": {
@@ -183,6 +185,7 @@
     "created": "[Créàtédddd: {{date}}]",
     "lastUpdated": "[Làst úpdàtédddddd: {{date}}]",
     "memberCount": "[{{count}} mémbérssss]",
+    "memberCountLimit": "[{{count}}/{{max}} mémbérssss]",
     "memberCount_one": "[{{count}} mméémmbbéér]",
     "memberCount_other": "[{{count}} mémbérssss]",
     "teamId": "[TTééààmm ÍÍD: {{id}}]",

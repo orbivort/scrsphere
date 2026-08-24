@@ -20,9 +20,9 @@ interface UpdateImpedimentInput {
 }
 
 class ImpedimentService {
-  async getImpedimentsByTeam(teamId: string) {
+  async getImpedimentsByTeam(teamId: string, sprintId?: string) {
     return await prisma.impediment.findMany({
-      where: { teamId },
+      where: { teamId, ...(sprintId ? { sprintId } : {}) },
       include: {
         reportedBy: {
           select: {

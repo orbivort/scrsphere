@@ -20,6 +20,7 @@
     "trackedAsFormalImpediment": "Tracked as formal impediment",
     "viewMode": "View mode"
   },
+  "createImpediment": "Create impediment",
   "datePicker": {
     "ariaLabel": "Select date for daily updates",
     "label": "Select date for daily updates"
@@ -31,21 +32,48 @@
     "title": "Unsaved Draft Found"
   },
   "draftSaved": "Draft saved {{timeSince}}",
+  "editScrum": "Edit Daily Scrum",
   "emptyState": {
-    "beFirst": "Be the first to submit your daily update!",
-    "noUpdates": "No Updates Yet",
-    "noUpdatesForDate": "No team updates for this date."
+    "beFirst": "Start the Daily Scrum by recording your progress toward the Sprint Goal!",
+    "developersOnly": "Only Developers record the Daily Scrum. You can view it once a Developer starts it.",
+    "noUpdates": "No Daily Scrum Yet",
+    "noUpdatesForDate": "No Daily Scrum recorded for this date."
+  },
+  "focusModes": {
+    "descriptions": {
+      "backlog": "The team walked through the Sprint Backlog item by item.",
+      "goal": "The team inspected and adapted progress toward the Sprint Goal.",
+      "impediment": "The team surfaced and worked through impediments first.",
+      "pair": "The team planned pairing and collaboration for the next day."
+    },
+    "goalProgress": "Goal progress",
+    "hint": "Choose the focus the whole team used for today's Daily Scrum. It is saved to the shared record so everyone, including observers, can see how the event was run.",
+    "impedimentFirst": "Impediment-first",
+    "label": "Daily Scrum focus (Developers choose the structure)",
+    "pairUpPlan": "Pair-up plan",
+    "sprintBacklogWalk": "Sprint Backlog walk",
+    "viewTitle": "Daily Scrum focus"
   },
   "form": {
+    "adaptationsHint": "What must we adjust in the Sprint Backlog based on our progress?",
+    "adaptationsLabel": "Adaptations (Sprint Backlog)",
+    "adaptationsPlaceholder": "Describe agreed changes to the Sprint Backlog...",
+    "addAdjustment": "Add",
+    "backlogActionLabel": "Adjustment action",
+    "backlogActionPlaceholder": "What is the adjustment? (e.g. reassigned, flagged)",
+    "backlogAdjustmentsLabel": "Sprint Backlog adjustments (optional)",
+    "backlogItemPlaceholder": "Select a Sprint Backlog item...",
+    "backlogItemSelect": "Sprint Backlog item",
     "cancel": "Cancel",
-    "impedimentHint": "This impediment will be tracked and can be promoted to a formal impediment record",
-    "impedimentLabel": "Any impediments? (optional)",
-    "impedimentPlaceholder": "Describe any blockers or impediments...",
-    "submitting": "Submitting...",
-    "todayLabel": "What will you do today to help team meet the sprint goal?",
-    "todayPlaceholder": "Describe what you plan to work on today...",
-    "yesterdayLabel": "What did you do yesterday to help team meet the sprint goal?",
-    "yesterdayPlaceholder": "Describe what you accomplished yesterday..."
+    "fieldHint": "Optional",
+    "planHint": "An actionable plan for the next day of work, agreed by the Developers.",
+    "planLabel": "Plan for next day",
+    "planPlaceholder": "What will the team work on next?",
+    "progressHint": "How are we progressing toward the Sprint Goal?",
+    "progressLabel": "Progress toward Sprint Goal",
+    "progressPlaceholder": "Describe the team's progress toward the Sprint Goal...",
+    "removeAdjustment": "Remove adjustment",
+    "submitting": "Submitting..."
   },
   "formatTimeSince": {
     "daysAgo": "{{count}}d ago",
@@ -65,6 +93,16 @@
     "open": "Open",
     "resolved": "Resolved"
   },
+  "inspectAdapt": {
+    "adaptations": "Adaptations",
+    "backlogAdjustments": "Sprint Backlog adjustments",
+    "formTitle": "Inspect & Adapt",
+    "impediments": "Outstanding impediments",
+    "nextDayPlan": "Plan for next day",
+    "progress": "Progress toward Sprint Goal",
+    "startTitle": "Today's Daily Scrum",
+    "title": "Inspect & Adapt"
+  },
   "loading": {
     "actions": "Loading actions...",
     "pageHeader": "Loading page header...",
@@ -74,18 +112,23 @@
     "statistics": "Loading statistics...",
     "teamUpdates": "Loading team updates..."
   },
+  "participation": {
+    "joined": "Joined",
+    "notYetJoined": "Not yet joined",
+    "sendTeamSignal": "Send team-wide Daily Scrum signal"
+  },
   "promoteModal": {
     "createImpediment": "Create Impediment",
     "creating": "Creating...",
     "descriptionLabel": "Description",
     "descriptionPlaceholder": "Detailed description of the impediment",
-    "fromUpdateBy": "From Daily Update by:",
+    "fromUpdateBy": "From Daily Scrum by:",
     "originalImpedimentText": "Original Impediment Text:",
     "priority": "Priority",
     "priorityHigh": "High",
     "priorityLow": "Low",
     "priorityMedium": "Medium",
-    "title": "Create Impediment from Daily Update",
+    "title": "Create Impediment from Daily Scrum",
     "titleLabel": "Title",
     "titlePlaceholder": "Brief title for the impediment"
   },
@@ -100,6 +143,7 @@
     "retrying": "Retrying...",
     "title": "Submission Failed"
   },
+  "saveScrum": "Save Daily Scrum",
   "sprintGoal": {
     "addInPlanning": "Add one in Sprint Planning",
     "label": "Sprint Goal",
@@ -112,12 +156,17 @@
     "title": "Sprint Progress",
     "viewSprintBoard": "View Sprint Board"
   },
+  "startDailyScrum": "Start Daily Scrum",
   "stats": {
+    "backlogAdjusted": "Backlog items adjusted",
+    "goalProgress": "Goal progress",
     "impediments": "Impediments",
+    "participants": "Participants",
     "participation": "Participation",
     "pending": "Pending",
     "submitted": "Submitted"
   },
+  "submitScrum": "Submit Daily Scrum",
   "submitUpdate": "Submit Update",
   "subtitle": "{{sprintName}} - Day {{day}}",
   "teamUpdates": "Team Updates",
@@ -144,6 +193,7 @@
     "remindersSentPlural_one": "Reminders sent to {{count}} team member",
     "remindersSentPlural_other": "Reminders sent to {{count}} team members",
     "resourceNotFound": "The requested resource was not found.",
+    "scrumSaved": "Daily Scrum saved successfully!",
     "serverError": "A server error occurred. Please try again later.",
     "sessionExpired": "Your session has expired. Please log in again.",
     "submitFailed": "Failed to submit update. Please try again.",
@@ -168,6 +218,7 @@
   "validation": {
     "descriptionRequired": "Description is required",
     "descriptionTooShort": "Description must be at least 10 characters",
+    "planRequired": "Add an actionable plan for the next day to save the Daily Scrum.",
     "titleRequired": "Title is required",
     "titleTooShort": "Title must be at least 3 characters"
   },

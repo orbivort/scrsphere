@@ -8,49 +8,50 @@ datasource db {
 }
 
 model User {
-  id                   String                     @id @db.Uuid
-  email                String                     @unique
-  password             String
-  firstName            String
-  lastName             String
-  avatarUrl            String?
-  locale               String                     @default("en") @db.VarChar(10)
-  createdAt            DateTime                   @default(now()) @db.Timestamptz(3)
-  createdBy            String?                    @db.Uuid
-  updatedAt            DateTime                   @updatedAt @db.Timestamptz(3)
-  updatedBy            String?                    @db.Uuid
-  marketingOptIn       Boolean                    @default(false) @map("marketing_opt_in")
-  marketingOptInAt     DateTime?                  @map("marketing_opt_in_at") @db.Timestamptz(3)
-  termsAcceptedAt      DateTime?                  @map("terms_accepted_at") @db.Timestamptz(3)
-  backlogAdjustments   BacklogAdjustment[]
-  consentRecords       ConsentRecord[]
-  dailyUpdates         DailyUpdate[]
-  dodVerifications     DoDChecklistVerification[]
-  dorVerifications     DoRChecklistVerification[]
-  emailLogs            EmailLog[]
-  ownedImpediments     Impediment[]               @relation("ImpedimentOwner")
-  reportedImpediments  Impediment[]               @relation("ImpedimentReporter")
-  increments           Increment[]                @relation("IncrementCreator")
-  notifications        Notification[]
-  createdPBIs          ProductBacklogItem[]       @relation("PBICreator")
-  createdGoals         ProductGoal[]              @relation("GoalCreator")
-  passwordResetTokens  PasswordResetToken[]
-  refreshTokens        RefreshToken[]
-  actionItems          RetroActionItem[]          @relation("ActionItemOwner")
-  integrationTests     IncrementIntegrationTest[]
-  healthCheckResponses TeamHealthCheckResponse[]
-  retroItemVotes       RetroItemVote[]            @relation("RetroItemVoter")
-  retrospectiveItems   RetrospectiveItem[]        @relation("RetroItemAuthor")
-  scheduledDeletions   ScheduledDeletion[]
-  sprintBacklogChanges SprintBacklogChange[]      @relation("SprintBacklogChangeCreator")
-  retrospectives       SprintRetrospective[]      @relation("RetroFacilitator")
-  sprintReviews        SprintReview[]             @relation("ReviewCreator")
-  stakeholderFeedbacks StakeholderFeedback[]
-  statusChanges        StatusChangeHistory[]      @relation("StatusChanger")
-  assignedTasks        Task[]                     @relation("TaskAssignee")
-  teamMemberships      TeamMember[]
-  createdTeams         Team[]                     @relation("TeamCreator")
-  createdWorkflows     Workflow[]                 @relation("WorkflowCreator")
+  id                     String                     @id @db.Uuid
+  email                  String                     @unique
+  password               String
+  firstName              String
+  lastName               String
+  avatarUrl              String?
+  locale                 String                     @default("en") @db.VarChar(10)
+  createdAt              DateTime                   @default(now()) @db.Timestamptz(3)
+  createdBy              String?                    @db.Uuid
+  updatedAt              DateTime                   @updatedAt @db.Timestamptz(3)
+  updatedBy              String?                    @db.Uuid
+  marketingOptIn         Boolean                    @default(false) @map("marketing_opt_in")
+  marketingOptInAt       DateTime?                  @map("marketing_opt_in_at") @db.Timestamptz(3)
+  termsAcceptedAt        DateTime?                  @map("terms_accepted_at") @db.Timestamptz(3)
+  backlogAdjustments     BacklogAdjustment[]
+  consentRecords         ConsentRecord[]
+  dailyUpdates           DailyUpdate[]
+  dailyScrumParticipants DailyScrumParticipant[]
+  dodVerifications       DoDChecklistVerification[]
+  dorVerifications       DoRChecklistVerification[]
+  emailLogs              EmailLog[]
+  ownedImpediments       Impediment[]               @relation("ImpedimentOwner")
+  reportedImpediments    Impediment[]               @relation("ImpedimentReporter")
+  increments             Increment[]                @relation("IncrementCreator")
+  notifications          Notification[]
+  createdPBIs            ProductBacklogItem[]       @relation("PBICreator")
+  createdGoals           ProductGoal[]              @relation("GoalCreator")
+  passwordResetTokens    PasswordResetToken[]
+  refreshTokens          RefreshToken[]
+  actionItems            RetroActionItem[]          @relation("ActionItemOwner")
+  integrationTests       IncrementIntegrationTest[]
+  healthCheckResponses   TeamHealthCheckResponse[]
+  retroItemVotes         RetroItemVote[]            @relation("RetroItemVoter")
+  retrospectiveItems     RetrospectiveItem[]        @relation("RetroItemAuthor")
+  scheduledDeletions     ScheduledDeletion[]
+  sprintBacklogChanges   SprintBacklogChange[]      @relation("SprintBacklogChangeCreator")
+  retrospectives         SprintRetrospective[]      @relation("RetroFacilitator")
+  sprintReviews          SprintReview[]             @relation("ReviewCreator")
+  stakeholderFeedbacks   StakeholderFeedback[]
+  statusChanges          StatusChangeHistory[]      @relation("StatusChanger")
+  assignedTasks          Task[]                     @relation("TaskAssignee")
+  teamMemberships        TeamMember[]
+  createdTeams           Team[]                     @relation("TeamCreator")
+  createdWorkflows       Workflow[]                 @relation("WorkflowCreator")
 
   @@map("users")
 }
@@ -102,22 +103,22 @@ model TeamMember {
 }
 
 model ProductGoal {
-  id                 String               @id @db.Uuid
-  teamId             String               @db.Uuid
+  id                 String                @id @db.Uuid
+  teamId             String                @db.Uuid
   title              String
   description        String?
   status             ProductGoalStatus
-  targetDate         DateTime?            @db.Timestamptz(3)
+  targetDate         DateTime?             @db.Timestamptz(3)
   successMetrics     String?
   strategicAlignment String?
-  createdAt          DateTime             @default(now()) @db.Timestamptz(3)
-  createdBy          String?              @db.Uuid
-  updatedAt          DateTime             @updatedAt @db.Timestamptz(3)
-  updatedBy          String?              @db.Uuid
+  createdAt          DateTime              @default(now()) @db.Timestamptz(3)
+  createdBy          String?               @db.Uuid
+  updatedAt          DateTime              @updatedAt @db.Timestamptz(3)
+  updatedBy          String?               @db.Uuid
   backlogItems       ProductBacklogItem[]
   snapshots          ProductGoalSnapshot[]
-  creator            User?                @relation("GoalCreator", fields: [createdBy], references: [id], onDelete: SetNull)
-  team               Team                 @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  creator            User?                 @relation("GoalCreator", fields: [createdBy], references: [id], onDelete: SetNull)
+  team               Team                  @relation(fields: [teamId], references: [id], onDelete: Cascade)
   sprints            Sprint[]
 
   @@index([teamId])
@@ -180,6 +181,7 @@ model Sprint {
   updatedBy          String?               @db.Uuid
   burndownData       BurndownData[]
   dailyUpdates       DailyUpdate[]
+  dailyScrums        DailyScrum[]
   generatedSprint    GeneratedSprint?
   impediments        Impediment[]
   increments         Increment[]
@@ -205,16 +207,17 @@ model Sprint {
 }
 
 model SprintBacklogItem {
-  id        String                @id @db.Uuid
-  sprintId  String                @db.Uuid
-  pbiId     String                @db.Uuid
-  createdAt DateTime              @default(now()) @db.Timestamptz(3)
-  createdBy String?               @db.Uuid
-  updatedAt DateTime              @updatedAt @db.Timestamptz(3)
-  updatedBy String?               @db.Uuid
-  changes   SprintBacklogChange[]
-  pbi       ProductBacklogItem    @relation(fields: [pbiId], references: [id], onDelete: Cascade)
-  sprint    Sprint                @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+  id                    String                  @id @db.Uuid
+  sprintId              String                  @db.Uuid
+  pbiId                 String                  @db.Uuid
+  createdAt             DateTime                @default(now()) @db.Timestamptz(3)
+  createdBy             String?                 @db.Uuid
+  updatedAt             DateTime                @updatedAt @db.Timestamptz(3)
+  updatedBy             String?                 @db.Uuid
+  changes               SprintBacklogChange[]
+  dailyScrumAdjustments DailyScrumBacklogItem[]
+  pbi                   ProductBacklogItem      @relation(fields: [pbiId], references: [id], onDelete: Cascade)
+  sprint                Sprint                  @relation(fields: [sprintId], references: [id], onDelete: Cascade)
 
   @@unique([sprintId, pbiId])
   @@map("sprint_backlog_items")
@@ -291,6 +294,65 @@ model DailyUpdate {
   @@index([sprintId, updateDate])
   @@index([updateDate])
   @@map("daily_updates")
+}
+
+model DailyScrum {
+  id                 String                  @id @db.Uuid
+  sprintId           String                  @db.Uuid
+  scrumDate          DateTime                @db.Date
+  progressNotes      String?
+  adaptationsNotes   String?
+  planForNextDay     String?
+  // The structural focus the Developers chose (Scrum Guide: "Developers choose
+  // structure"). Stored on the shared team record so all team members can see
+  // how the event is being run. Stored as a plain string to keep it forward
+  // compatible; validated against DAILY_SCRUM_FOCUS_MODES at the API boundary.
+  focusMode          String?
+  createdAt          DateTime                @default(now()) @db.Timestamptz(3)
+  createdBy          String?                 @db.Uuid
+  updatedAt          DateTime                @updatedAt @db.Timestamptz(3)
+  updatedBy          String?                 @db.Uuid
+  sprint             Sprint                  @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+  backlogAdjustments DailyScrumBacklogItem[]
+  participants       DailyScrumParticipant[]
+
+  @@unique([sprintId, scrumDate])
+  @@index([sprintId, scrumDate])
+  @@index([scrumDate])
+  @@map("daily_scrums")
+}
+
+model DailyScrumBacklogItem {
+  id                  String            @id @db.Uuid
+  dailyScrumId        String            @db.Uuid
+  sprintBacklogItemId String            @db.Uuid
+  action              String
+  createdAt           DateTime          @default(now()) @db.Timestamptz(3)
+  createdBy           String?           @db.Uuid
+  updatedAt           DateTime          @updatedAt @db.Timestamptz(3)
+  updatedBy           String?           @db.Uuid
+  dailyScrum          DailyScrum        @relation(fields: [dailyScrumId], references: [id], onDelete: Cascade)
+  sprintBacklogItem   SprintBacklogItem @relation(fields: [sprintBacklogItemId], references: [id], onDelete: Cascade)
+
+  @@unique([dailyScrumId, sprintBacklogItemId])
+  @@index([dailyScrumId])
+  @@index([sprintBacklogItemId])
+  @@map("daily_scrum_backlog_items")
+}
+
+model DailyScrumParticipant {
+  id           String     @id @db.Uuid
+  dailyScrumId String     @db.Uuid
+  userId       String     @db.Uuid
+  createdAt    DateTime   @default(now()) @db.Timestamptz(3)
+  createdBy    String?    @db.Uuid
+  dailyScrum   DailyScrum @relation(fields: [dailyScrumId], references: [id], onDelete: Cascade)
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([dailyScrumId, userId])
+  @@index([dailyScrumId])
+  @@index([userId])
+  @@map("daily_scrum_participants")
 }
 
 model BurndownData {
@@ -452,26 +514,26 @@ model DoRChecklistVerification {
 }
 
 model Increment {
-  id                   String                    @id @db.Uuid
-  sprintId             String                    @db.Uuid
-  teamId               String                    @db.Uuid
-  name                 String
-  description          String?
-  totalStoryPoints     Int                       @default(0)
-  status               IncrementStatus           @default(DRAFT)
-  integrationVerified  Boolean                   @default(false)
-  deliveredAt          DateTime?                 @db.Timestamptz(3)
-  deliveryMethod       DeliveryMethod?
-  notes                String?
-  createdAt            DateTime                  @default(now()) @db.Timestamptz(3)
-  createdBy            String?                   @db.Uuid
-  updatedAt            DateTime                  @updatedAt @db.Timestamptz(3)
-  updatedBy            String?                   @db.Uuid
-  pbis                 IncrementPBI[]
-  creator              User?                     @relation("IncrementCreator", fields: [createdBy], references: [id], onDelete: SetNull)
-  sprint               Sprint                    @relation(fields: [sprintId], references: [id], onDelete: Cascade)
-  team                 Team                      @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  sprintReview         SprintReview?
+  id                        String                     @id @db.Uuid
+  sprintId                  String                     @db.Uuid
+  teamId                    String                     @db.Uuid
+  name                      String
+  description               String?
+  totalStoryPoints          Int                        @default(0)
+  status                    IncrementStatus            @default(DRAFT)
+  integrationVerified       Boolean                    @default(false)
+  deliveredAt               DateTime?                  @db.Timestamptz(3)
+  deliveryMethod            DeliveryMethod?
+  notes                     String?
+  createdAt                 DateTime                   @default(now()) @db.Timestamptz(3)
+  createdBy                 String?                    @db.Uuid
+  updatedAt                 DateTime                   @updatedAt @db.Timestamptz(3)
+  updatedBy                 String?                    @db.Uuid
+  pbis                      IncrementPBI[]
+  creator                   User?                      @relation("IncrementCreator", fields: [createdBy], references: [id], onDelete: SetNull)
+  sprint                    Sprint                     @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+  team                      Team                       @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  sprintReview              SprintReview?
   integrationTestsAsCurrent IncrementIntegrationTest[] @relation("IntegrationCurrentIncrement")
   integrationTestsAsPrior   IncrementIntegrationTest[] @relation("IntegrationPriorIncrement")
 
@@ -485,60 +547,60 @@ model Increment {
 }
 
 model IncrementIntegrationTest {
-  id                String         @id @db.Uuid
-  currentIncrementId String        @db.Uuid
-  priorIncrementId  String         @db.Uuid
-  testResult        IntegrationTestResult @default(PENDING)
-  testedById        String         @db.Uuid
-  testedAt          DateTime       @default(now()) @db.Timestamptz(3)
-  notes             String?
-  createdAt         DateTime       @default(now()) @db.Timestamptz(3)
-  createdBy         String?        @db.Uuid
-  updatedAt         DateTime       @updatedAt @db.Timestamptz(3)
-  updatedBy         String?        @db.Uuid
-  currentIncrement  Increment      @relation("IntegrationCurrentIncrement", fields: [currentIncrementId], references: [id], onDelete: Cascade)
-  priorIncrement    Increment      @relation("IntegrationPriorIncrement", fields: [priorIncrementId], references: [id], onDelete: Cascade)
-  testedBy          User           @relation(fields: [testedById], references: [id], onDelete: Restrict)
+  id                 String                @id @db.Uuid
+  currentIncrementId String                @db.Uuid
+  priorIncrementId   String                @db.Uuid
+  testResult         IntegrationTestResult @default(PENDING)
+  testedById         String                @db.Uuid
+  testedAt           DateTime              @default(now()) @db.Timestamptz(3)
+  notes              String?
+  createdAt          DateTime              @default(now()) @db.Timestamptz(3)
+  createdBy          String?               @db.Uuid
+  updatedAt          DateTime              @updatedAt @db.Timestamptz(3)
+  updatedBy          String?               @db.Uuid
+  currentIncrement   Increment             @relation("IntegrationCurrentIncrement", fields: [currentIncrementId], references: [id], onDelete: Cascade)
+  priorIncrement     Increment             @relation("IntegrationPriorIncrement", fields: [priorIncrementId], references: [id], onDelete: Cascade)
+  testedBy           User                  @relation(fields: [testedById], references: [id], onDelete: Restrict)
 
+  @@unique([currentIncrementId, priorIncrementId])
   @@index([currentIncrementId])
   @@index([priorIncrementId])
   @@index([testedById])
-  @@unique([currentIncrementId, priorIncrementId])
   @@map("increment_integration_tests")
 }
 
 model ProductGoalSnapshot {
-  id                    String       @id @db.Uuid
-  goalId                String       @db.Uuid
-  sprintReviewId        String       @db.Uuid
-  successMetricValues   Json?
-  completedPbiCount     Int          @default(0)
-  completedStoryPoints  Int          @default(0)
-  assessment            String?
-  createdAt             DateTime     @default(now()) @db.Timestamptz(3)
-  createdBy             String?      @db.Uuid
-  updatedAt             DateTime     @updatedAt @db.Timestamptz(3)
-  updatedBy             String?      @db.Uuid
-  goal                  ProductGoal  @relation(fields: [goalId], references: [id], onDelete: Cascade)
-  sprintReview          SprintReview @relation(fields: [sprintReviewId], references: [id], onDelete: Cascade)
+  id                   String       @id @db.Uuid
+  goalId               String       @db.Uuid
+  sprintReviewId       String       @db.Uuid
+  successMetricValues  Json?
+  completedPbiCount    Int          @default(0)
+  completedStoryPoints Int          @default(0)
+  assessment           String?
+  createdAt            DateTime     @default(now()) @db.Timestamptz(3)
+  createdBy            String?      @db.Uuid
+  updatedAt            DateTime     @updatedAt @db.Timestamptz(3)
+  updatedBy            String?      @db.Uuid
+  goal                 ProductGoal  @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  sprintReview         SprintReview @relation(fields: [sprintReviewId], references: [id], onDelete: Cascade)
 
+  @@unique([goalId, sprintReviewId])
   @@index([goalId])
   @@index([sprintReviewId])
-  @@unique([goalId, sprintReviewId])
   @@map("product_goal_snapshots")
 }
 
 model TeamHealthCheck {
-  id        String            @id @db.Uuid
-  teamId    String            @db.Uuid
-  sprintId  String?           @db.Uuid
-  status    HealthCheckStatus @default(OPEN)
-  createdAt DateTime          @default(now()) @db.Timestamptz(3)
-  createdBy String?           @db.Uuid
-  updatedAt DateTime          @updatedAt @db.Timestamptz(3)
-  updatedBy String?           @db.Uuid
-  team      Team              @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  sprint    Sprint?           @relation(fields: [sprintId], references: [id], onDelete: SetNull)
+  id        String                    @id @db.Uuid
+  teamId    String                    @db.Uuid
+  sprintId  String?                   @db.Uuid
+  status    HealthCheckStatus         @default(OPEN)
+  createdAt DateTime                  @default(now()) @db.Timestamptz(3)
+  createdBy String?                   @db.Uuid
+  updatedAt DateTime                  @updatedAt @db.Timestamptz(3)
+  updatedBy String?                   @db.Uuid
+  team      Team                      @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  sprint    Sprint?                   @relation(fields: [sprintId], references: [id], onDelete: SetNull)
   responses TeamHealthCheckResponse[]
 
   @@index([teamId])
@@ -549,18 +611,18 @@ model TeamHealthCheck {
 }
 
 model TeamHealthCheckResponse {
-  id            String         @id @db.Uuid
-  healthCheckId String         @db.Uuid
-  userId        String         @db.Uuid
+  id            String          @id @db.Uuid
+  healthCheckId String          @db.Uuid
+  userId        String          @db.Uuid
   scrumValue    ScrumValue
   score         Int
-  anonymous     Boolean        @default(false)
-  createdAt     DateTime       @default(now()) @db.Timestamptz(3)
-  createdBy     String?        @db.Uuid
-  updatedAt     DateTime       @updatedAt @db.Timestamptz(3)
-  updatedBy     String?        @db.Uuid
+  anonymous     Boolean         @default(false)
+  createdAt     DateTime        @default(now()) @db.Timestamptz(3)
+  createdBy     String?         @db.Uuid
+  updatedAt     DateTime        @updatedAt @db.Timestamptz(3)
+  updatedBy     String?         @db.Uuid
   healthCheck   TeamHealthCheck @relation(fields: [healthCheckId], references: [id], onDelete: Cascade)
-  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([healthCheckId, userId, scrumValue])
   @@index([healthCheckId])
@@ -588,26 +650,26 @@ model IncrementPBI {
 }
 
 model SprintReview {
-  id                 String                @id @db.Uuid
-  sprintId           String                @unique @db.Uuid
-  teamId             String                @db.Uuid
-  incrementId        String                @unique @db.Uuid
-  reviewDate         DateTime              @db.Timestamptz(3)
-  summary            String?
-  status             String                @default("in_progress")
-  smNotes            String?
-  createdAt          DateTime              @default(now()) @db.Timestamptz(3)
-  createdBy          String?               @db.Uuid
-  updatedAt          DateTime              @updatedAt @db.Timestamptz(3)
-  updatedBy          String?               @db.Uuid
-  backlogAdjustments BacklogAdjustment[]
-  attendees          ReviewAttendee[]
+  id                   String                @id @db.Uuid
+  sprintId             String                @unique @db.Uuid
+  teamId               String                @db.Uuid
+  incrementId          String                @unique @db.Uuid
+  reviewDate           DateTime              @db.Timestamptz(3)
+  summary              String?
+  status               String                @default("in_progress")
+  smNotes              String?
+  createdAt            DateTime              @default(now()) @db.Timestamptz(3)
+  createdBy            String?               @db.Uuid
+  updatedAt            DateTime              @updatedAt @db.Timestamptz(3)
+  updatedBy            String?               @db.Uuid
+  backlogAdjustments   BacklogAdjustment[]
+  attendees            ReviewAttendee[]
   productGoalSnapshots ProductGoalSnapshot[]
-  creator            User?                 @relation("ReviewCreator", fields: [createdBy], references: [id], onDelete: SetNull)
-  increment          Increment             @relation(fields: [incrementId], references: [id], onDelete: Cascade)
-  sprint             Sprint                @relation(fields: [sprintId], references: [id], onDelete: Cascade)
-  team               Team                  @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  feedback           StakeholderFeedback[]
+  creator              User?                 @relation("ReviewCreator", fields: [createdBy], references: [id], onDelete: SetNull)
+  increment            Increment             @relation(fields: [incrementId], references: [id], onDelete: Cascade)
+  sprint               Sprint                @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+  team                 Team                  @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  feedback             StakeholderFeedback[]
 
   @@index([teamId])
   @@index([reviewDate])
@@ -639,15 +701,15 @@ model StakeholderFeedback {
   productGoalAssessment String?
   category              FeedbackCategory @default(POSITIVE)
   relatedPbiId          String?          @db.Uuid
-  actionRequired Boolean          @default(false)
-  actionTaken    Boolean          @default(false)
-  ownerId        String?          @db.Uuid
-  createdAt      DateTime         @default(now()) @db.Timestamptz(3)
-  createdBy      String?          @db.Uuid
-  updatedAt      DateTime         @updatedAt @db.Timestamptz(3)
-  updatedBy      String?          @db.Uuid
-  owner          User?            @relation(fields: [ownerId], references: [id], onDelete: SetNull)
-  review         SprintReview     @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  actionRequired        Boolean          @default(false)
+  actionTaken           Boolean          @default(false)
+  ownerId               String?          @db.Uuid
+  createdAt             DateTime         @default(now()) @db.Timestamptz(3)
+  createdBy             String?          @db.Uuid
+  updatedAt             DateTime         @updatedAt @db.Timestamptz(3)
+  updatedBy             String?          @db.Uuid
+  owner                 User?            @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+  review                SprintReview     @relation(fields: [reviewId], references: [id], onDelete: Cascade)
 
   @@index([reviewId])
   @@index([ownerId])
@@ -929,11 +991,11 @@ model Notification {
   id         String           @id @db.Uuid
   userId     String           @db.Uuid
   type       NotificationType
-  title      String           // For backward compatibility and email/push fallback
-  message    String?          // For backward compatibility and email/push fallback
-  messageKey String?          // Translation key for display-time localization
-  params     Json?            // Translation parameters
-  data       Json?            // Additional metadata (teamId, etc)
+  title      String // For backward compatibility and email/push fallback
+  message    String? // For backward compatibility and email/push fallback
+  messageKey String? // Translation key for display-time localization
+  params     Json? // Translation parameters
+  data       Json? // Additional metadata (teamId, etc)
   isRead     Boolean          @default(false)
   readAt     DateTime?        @db.Timestamptz(3)
   createdAt  DateTime         @default(now()) @db.Timestamptz(3)
@@ -1022,26 +1084,26 @@ model ConsentRecord {
 }
 
 model EmailLog {
-  id          String      @id @db.Uuid
-  userId      String?     @db.Uuid
-  email       String
-  type        EmailType
-  subject     String
-  status      EmailStatus
-  provider    String
-  messageId   String?
+  id           String      @id @db.Uuid
+  userId       String?     @db.Uuid
+  email        String
+  type         EmailType
+  subject      String
+  status       EmailStatus
+  provider     String
+  messageId    String?
   errorMessage String?
-  metadata    Json        @default("{}")
-  testMode    Boolean     @default(false)
-  sentAt      DateTime?   @db.Timestamptz(3)
-  deliveredAt DateTime?   @db.Timestamptz(3)
-  openedAt    DateTime?   @db.Timestamptz(3)
-  clickedAt   DateTime?   @db.Timestamptz(3)
-  createdAt   DateTime    @default(now()) @db.Timestamptz(3)
-  createdBy   String?     @db.Uuid
-  updatedAt   DateTime    @updatedAt @db.Timestamptz(3)
-  updatedBy   String?     @db.Uuid
-  user        User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  metadata     Json        @default("{}")
+  testMode     Boolean     @default(false)
+  sentAt       DateTime?   @db.Timestamptz(3)
+  deliveredAt  DateTime?   @db.Timestamptz(3)
+  openedAt     DateTime?   @db.Timestamptz(3)
+  clickedAt    DateTime?   @db.Timestamptz(3)
+  createdAt    DateTime    @default(now()) @db.Timestamptz(3)
+  createdBy    String?     @db.Uuid
+  updatedAt    DateTime    @updatedAt @db.Timestamptz(3)
+  updatedBy    String?     @db.Uuid
+  user         User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([userId])
   @@index([email])
@@ -1068,24 +1130,24 @@ model PasswordResetToken {
 }
 
 model Timebox {
-  id            String         @id @db.Uuid
-  teamId        String         @db.Uuid
-  eventType     String
-  sprintId      String?        @db.Uuid
-  date          DateTime       @db.Date
-  status        TimeboxStatus  @default(IDLE)
-  startedAt     DateTime?      @db.Timestamptz(3)
-  pausedAt      DateTime?      @db.Timestamptz(3)
-  accumulatedMs Int            @default(0)
-  version       Int            @default(0)
-  concludedAt   DateTime?      @db.Timestamptz(3)
-  concludedElapsedMs Int?     
-  createdAt     DateTime       @default(now()) @db.Timestamptz(3)
-  createdBy     String?        @db.Uuid
-  updatedAt     DateTime       @updatedAt @db.Timestamptz(3)
-  updatedBy     String?        @db.Uuid
-  team          Team           @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  sprint        Sprint?        @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+  id                 String        @id @db.Uuid
+  teamId             String        @db.Uuid
+  eventType          String
+  sprintId           String?       @db.Uuid
+  date               DateTime      @db.Date
+  status             TimeboxStatus @default(IDLE)
+  startedAt          DateTime?     @db.Timestamptz(3)
+  pausedAt           DateTime?     @db.Timestamptz(3)
+  accumulatedMs      Int           @default(0)
+  version            Int           @default(0)
+  concludedAt        DateTime?     @db.Timestamptz(3)
+  concludedElapsedMs Int?
+  createdAt          DateTime      @default(now()) @db.Timestamptz(3)
+  createdBy          String?       @db.Uuid
+  updatedAt          DateTime      @updatedAt @db.Timestamptz(3)
+  updatedBy          String?       @db.Uuid
+  team               Team          @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  sprint             Sprint?       @relation(fields: [sprintId], references: [id], onDelete: Cascade)
 
   @@unique([teamId, eventType, sprintId, date])
   @@index([teamId])
@@ -1227,6 +1289,7 @@ enum NotificationType {
   TASK_ASSIGNMENT
   IMPEDIMENT_ASSIGNMENT
   DAILY_UPDATE_REMINDER
+  DAILY_SCRUM_SIGNAL
   TEAM_CREATED
   TEAM_UPDATED
   TEAM_DELETED

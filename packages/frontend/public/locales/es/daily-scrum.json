@@ -20,6 +20,7 @@
     "trackedAsFormalImpediment": "Rastreado como Impediment formal",
     "viewMode": "Modo de vista"
   },
+  "createImpediment": "Crear impedimento",
   "datePicker": {
     "ariaLabel": "Seleccionar fecha para actualizaciones diarias",
     "label": "Seleccionar fecha para actualizaciones diarias"
@@ -31,21 +32,48 @@
     "title": "Borrador No Guardado Encontrado"
   },
   "draftSaved": "Borrador guardado {{timeSince}}",
+  "editScrum": "Editar Daily Scrum",
   "emptyState": {
-    "beFirst": "¡Sea el primero en enviar su Actualización diaria!",
-    "noUpdates": "Sin Actualizaciones Aún",
-    "noUpdatesForDate": "Sin actualizaciones del equipo para esta fecha."
+    "beFirst": "¡Inicie el Daily Scrum registrando su progreso hacia el Sprint Goal!",
+    "developersOnly": "Solo los Desarrolladores registran el Daily Scrum. Puede verlo una vez que un Desarrollador lo inicie.",
+    "noUpdates": "Sin Daily Scrum Aún",
+    "noUpdatesForDate": "No se registró ningún Daily Scrum para esta fecha."
+  },
+  "focusModes": {
+    "descriptions": {
+      "backlog": "El equipo revisó el Sprint Backlog elemento por elemento.",
+      "goal": "El equipo inspeccionó y adaptó el progreso hacia el objetivo del Sprint.",
+      "impediment": "El equipo primero planteó y resolvió los impediments.",
+      "pair": "El equipo planificó el emparejamiento y la colaboración para el día siguiente."
+    },
+    "goalProgress": "Progreso del objetivo",
+    "hint": "Elija el enfoque que usó todo el equipo en el Daily Scrum de hoy. Se guarda en el registro compartido para que todos, incluidos los observadores, puedan ver cómo se realizó el evento.",
+    "impedimentFirst": "Impediment primero",
+    "label": "Enfoque del Daily Scrum (los desarrolladores deciden la estructura)",
+    "pairUpPlan": "Plan de pareja",
+    "sprintBacklogWalk": "Recorrido del Sprint Backlog",
+    "viewTitle": "Enfoque del Daily Scrum"
   },
   "form": {
+    "adaptationsHint": "¿Qué debemos ajustar en el Sprint Backlog según nuestro progreso?",
+    "adaptationsLabel": "Adaptaciones (Sprint Backlog)",
+    "adaptationsPlaceholder": "Describa los cambios acordados en el Sprint Backlog...",
+    "addAdjustment": "Agregar",
+    "backlogActionLabel": "Acción de ajuste",
+    "backlogActionPlaceholder": "¿Cuál es el ajuste? (p. ej., reasignado, marcado)",
+    "backlogAdjustmentsLabel": "Ajustes del Sprint Backlog (opcional)",
+    "backlogItemPlaceholder": "Seleccione un elemento del Sprint Backlog...",
+    "backlogItemSelect": "Elemento del Sprint Backlog",
     "cancel": "Cancelar",
-    "impedimentHint": "Este Impediment será rastreado y puede ser promovido a un registro formal de Impediment",
-    "impedimentLabel": "¿Algún Impediment? (opcional)",
-    "impedimentPlaceholder": "Describa algún bloqueador o Impediment...",
-    "submitting": "Enviando...",
-    "todayLabel": "¿Qué hará hoy para ayudar al equipo a alcanzar el Sprint Goal?",
-    "todayPlaceholder": "Describa lo que planea trabajar hoy...",
-    "yesterdayLabel": "¿Qué hizo ayer para ayudar al equipo a alcanzar el Sprint Goal?",
-    "yesterdayPlaceholder": "Describa lo que logró ayer..."
+    "fieldHint": "Opcional",
+    "planHint": "Un plan accionable para el siguiente día de trabajo, acordado por los desarrolladores.",
+    "planLabel": "Plan para el próximo día",
+    "planPlaceholder": "¿En qué trabajará el equipo a continuación?",
+    "progressHint": "¿Cómo avanzamos hacia el Sprint Goal?",
+    "progressLabel": "Progreso hacia el Sprint Goal",
+    "progressPlaceholder": "Describa el progreso del equipo hacia el Sprint Goal...",
+    "removeAdjustment": "Quitar ajuste",
+    "submitting": "Enviando..."
   },
   "formatTimeSince": {
     "daysAgo": "{{count}}d",
@@ -65,6 +93,16 @@
     "open": "Abierto",
     "resolved": "Resuelto"
   },
+  "inspectAdapt": {
+    "adaptations": "Adaptaciones",
+    "backlogAdjustments": "Ajustes del Sprint Backlog",
+    "formTitle": "Inspeccionar y adaptar",
+    "impediments": "Impedimentos pendientes",
+    "nextDayPlan": "Plan para el próximo día",
+    "progress": "Progreso hacia el Sprint Goal",
+    "startTitle": "Daily Scrum de hoy",
+    "title": "Inspeccionar y adaptar"
+  },
   "loading": {
     "actions": "Cargando acciones...",
     "pageHeader": "Cargando encabezado de página...",
@@ -74,18 +112,23 @@
     "statistics": "Cargando estadísticas...",
     "teamUpdates": "Cargando actualizaciones del equipo..."
   },
+  "participation": {
+    "joined": "Participantes",
+    "notYetJoined": "Aún no participan",
+    "sendTeamSignal": "Enviar señal de Daily Scrum a todo el equipo"
+  },
   "promoteModal": {
     "createImpediment": "Crear Impediment",
     "creating": "Creando...",
     "descriptionLabel": "Descripción",
     "descriptionPlaceholder": "Descripción detallada del Impediment",
-    "fromUpdateBy": "Desde Actualización Diaria de:",
+    "fromUpdateBy": "Desde Daily Scrum de:",
     "originalImpedimentText": "Texto Original del Impediment:",
     "priority": "Prioridad",
     "priorityHigh": "Alta",
     "priorityLow": "Baja",
     "priorityMedium": "Media",
-    "title": "Crear Impediment desde Actualización Diaria",
+    "title": "Crear Impediment desde Daily Scrum",
     "titleLabel": "Título",
     "titlePlaceholder": "Título breve para el Impediment"
   },
@@ -100,6 +143,7 @@
     "retrying": "Reintentando...",
     "title": "Envío Fallido"
   },
+  "saveScrum": "Guardar Daily Scrum",
   "sprintGoal": {
     "addInPlanning": "Agregar uno en Sprint Planning",
     "label": "Sprint Goal",
@@ -112,12 +156,17 @@
     "title": "Progreso del Sprint",
     "viewSprintBoard": "View Sprint Board"
   },
+  "startDailyScrum": "Iniciar Daily Scrum",
   "stats": {
+    "backlogAdjusted": "Elementos de backlog ajustados",
+    "goalProgress": "Progreso del objetivo",
     "impediments": "Impediments",
+    "participants": "Participantes",
     "participation": "Participación",
     "pending": "Pendiente",
     "submitted": "Enviado"
   },
+  "submitScrum": "Enviar Daily Scrum",
   "submitUpdate": "Enviar Actualización",
   "subtitle": "{{sprintName}} - Día {{day}}",
   "teamUpdates": "Actualizaciones del Equipo",
@@ -144,6 +193,7 @@
     "remindersSentPlural_one": "Recordatorios enviados a {{count}} miembro del equipo",
     "remindersSentPlural_other": "Recordatorios enviados a {{count}} miembros del equipo",
     "resourceNotFound": "El recurso solicitado no fue encontrado.",
+    "scrumSaved": "¡Daily Scrum guardado exitosamente!",
     "serverError": "Ocurrió un error del servidor. Por favor intente más tarde.",
     "sessionExpired": "Su sesión ha expirado. Por favor vuelva a iniciar sesión.",
     "submitFailed": "Falló al enviar Actualización. Por favor intente de nuevo.",
@@ -168,6 +218,7 @@
   "validation": {
     "descriptionRequired": "La descripción es requerida",
     "descriptionTooShort": "La descripción debe tener al menos 10 caracteres",
+    "planRequired": "Añade un plan viable para el próximo día para guardar el Daily Scrum.",
     "titleRequired": "El título es requerido",
     "titleTooShort": "El título debe tener al menos 3 caracteres"
   },

@@ -179,11 +179,11 @@ describe('scratch', () => {
   it('observes auto-expand', async () => {
     renderDailyScrum();
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /daily scrum/i })).toBeInTheDocument();
+      expect(screen.getAllByRole('heading', { name: /daily scrum/i }).length).toBeGreaterThan(0);
     });
     await new Promise((r) => setTimeout(r, 300));
-    const btn = screen.queryByRole('button', { name: /submit update/i });
-    const form = screen.queryByLabelText(/what did you do yesterday/i);
+    const btn = screen.queryByRole('button', { name: /submit daily scrum/i });
+    const form = screen.queryByLabelText(/progress toward sprint goal/i);
 
     console.log(`HAS_BUTTON=${btn !== null} HAS_FORM=${form !== null}`);
     expect(document.body).toBeTruthy();

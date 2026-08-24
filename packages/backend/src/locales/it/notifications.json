@@ -8,6 +8,8 @@
   "allSubmitted": "Tutti i membri del team hanno inviato i loro aggiornamenti",
   "backlogAdjustmentRequired": "Nuova regolazione del backlog richiede la tua azione",
   "backlogAdjustmentRequiredMessage": "Ti è stato assegnato il ruolo di proprietario di una regolazione del backlog: {{action}} - \"{{description}}\"",
+  "dailyScrumSignalMessage": "Il Daily Scrum per \"{{sprintName}}\" sta iniziando. Gli sviluppatori sono invitati a riunirsi per ispezionare i progressi verso l'obiettivo dello Sprint e adattare lo Sprint Backlog.",
+  "dailyScrumSignalTitle": "Il Daily Scrum sta iniziando",
   "dailyUpdateDeleted": "Aggiornamento giornaliero eliminato con successo",
   "dailyUpdateReminderDefault": "Non dimenticare di inviare il tuo aggiornamento giornaliero!",
   "dailyUpdateReminderFromUser": "{{senderName}} ti ha ricordato di inviare il tuo aggiornamento giornaliero",

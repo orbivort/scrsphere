@@ -125,8 +125,8 @@
   },
   "list": {
     "actions": "[àctíónssss]",
-    "activeSprint": "[Àctívé Spríntttttt]",
-    "activeSprints": "[Àctívé Spríntsssssss]",
+    "activeSprint": "[Àctívé Sprínttttt]",
+    "activeSprints": "[Àctívé Spríntssssss]",
     "completedSprint": "[Cómplétéd Spríntttttt]",
     "completedSprints": "[Cómplétéd Spríntsssssss]",
     "completedSprints_plural": "[Cómplétéd Spríntsssssss]",
@@ -141,7 +141,7 @@
       "inProgress": "[Rétróspéctívé Ín Prógréssssssssss]",
       "ready": "[Réàdy fór Rétróspéctívéééééééé]"
     },
-    "reviewableSprint": "[Révíéwàblé Spríntttttt]",
+    "reviewableSprint": "[Révíéwàblé Sprínttttttt]",
     "reviewableSprints": "[Révíéwàblé Spríntsssssss]",
     "reviewed": "[Révíéwédddd]",
     "statusLabels": {
@@ -150,7 +150,7 @@
       "completed": "[Cómplétédddd]",
       "planned": "[Plànnédddd]"
     },
-    "subtitle": "[Réfléct ón sprínts, ídéntífy ímpróvéménts, ànd tràck àctíón ítémssssssssssssssssssssssss]",
+    "subtitle": "[Réfléct ón sprínts, ídéntífy ímpróvéménts, ànd tràck àctíón ítémsssssssssssssssssssss]",
     "title": "[Sprínt Rétróspéctívéssssssss]",
     "viewRetrospective": "[Víéw Rétróspéctívééééééé]"
   },

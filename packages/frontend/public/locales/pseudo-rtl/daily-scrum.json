@@ -68,7 +68,7 @@
     "priorityHigh": "High",
     "priorityLow": "Low",
     "priorityMedium": "Medium",
-    "title": "Create Impediment from Daily Update",
+    "title": "Create Impediment from Daily Scrum",
     "titleLabel": "Title",
     "titlePlaceholder": "Brief title for the impediment"
   },
@@ -147,6 +147,7 @@
   "validation": {
     "descriptionRequired": "Description is required",
     "descriptionTooShort": "Description must be at least 10 characters",
+    "planRequired": "Add an actionable plan for the next day to save the Daily Scrum.",
     "titleRequired": "Title is required",
     "titleTooShort": "Title must be at least 3 characters"
   },

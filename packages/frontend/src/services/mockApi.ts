@@ -29,6 +29,8 @@ import {
   type Task,
   type Impediment,
   type DailyUpdate,
+  type DailyScrum,
+  type DailyScrumParticipant,
   type ProductGoal,
   type SprintConfiguration,
   type SprintDuration,
@@ -1143,6 +1145,186 @@ class MockApiService {
         sentCount: pendingMembers.length,
         totalPending: pendingMembers.length,
         message,
+      },
+    };
+  }
+
+  // ==================== Daily Scrum (team-level, goal-focused) ====================
+  private dynamicDailyScrums: DailyScrum[] = [];
+
+  async getDailyScrum(sprintId: string, date?: string): Promise<ApiResponse<DailyScrum | null>> {
+    await delay(250);
+
+    const scrumDate = date ?? new Date().toISOString().split('T')[0] ?? '';
+    const allScrums = [...this.dynamicDailyScrums];
+    const found = allScrums.find((s) => s.sprintId === sprintId && s.scrumDate === scrumDate);
+    return { success: true, data: found ?? null };
+  }
+
+  async getDailyScrums(sprintId: string, date?: string): Promise<ApiResponse<DailyScrum[]>> {
+    await delay(250);
+
+    let scrums = this.dynamicDailyScrums.filter((s) => s.sprintId === sprintId);
+    if (date) {
+      scrums = scrums.filter((s) => s.scrumDate === date);
+    }
+    scrums.sort((a, b) => b.scrumDate.localeCompare(a.scrumDate));
+    return { success: true, data: scrums };
+  }
+
+  async createDailyScrum(
+    sprintId: string,
+    scrum: Partial<DailyScrum>
+  ): Promise<ApiResponse<DailyScrum>> {
+    await delay(300);
+
+    const currentUser = getCurrentUser();
+    const today = new Date().toISOString().split('T')[0] ?? '';
+
+    const existing = this.dynamicDailyScrums.find(
+      (s) => s.sprintId === sprintId && s.scrumDate === today
+    );
+    if (existing) {
+      return {
+        success: false,
+        error: { code: 'CONFLICT', message: 'A Daily Scrum already exists for today' },
+      };
+    }
+
+    const newScrum: DailyScrum = {
+      id: `scrum-${Date.now()}`,
+      sprintId,
+      scrumDate: today,
+      progressNotes: scrum.progressNotes,
+      adaptationsNotes: scrum.adaptationsNotes,
+      planForNextDay: scrum.planForNextDay,
+      focusMode: scrum.focusMode ?? null,
+      participants: [
+        {
+          id: `sp-${Date.now()}`,
+          userId: currentUser.id,
+          user: currentUser,
+        },
+      ],
+      backlogAdjustments: scrum.backlogAdjustments ?? [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    this.dynamicDailyScrums.push(newScrum);
+    return { success: true, data: newScrum };
+  }
+
+  async updateDailyScrum(id: string, scrum: Partial<DailyScrum>): Promise<ApiResponse<DailyScrum>> {
+    await delay(300);
+
+    const index = this.dynamicDailyScrums.findIndex((s) => s.id === id);
+    if (index === -1) {
+      return {
+        success: false,
+        error: { code: 'NOT_FOUND', message: 'Daily Scrum not found' },
+      };
+    }
+
+    const current = this.dynamicDailyScrums[index] as DailyScrum;
+    const updated: DailyScrum = {
+      ...current,
+      progressNotes: scrum.progressNotes ?? current.progressNotes,
+      adaptationsNotes: scrum.adaptationsNotes ?? current.adaptationsNotes,
+      planForNextDay: scrum.planForNextDay ?? current.planForNextDay,
+      focusMode: scrum.focusMode === undefined ? current.focusMode : scrum.focusMode,
+      backlogAdjustments: scrum.backlogAdjustments ?? current.backlogAdjustments,
+      updatedAt: new Date().toISOString(),
+    };
+    this.dynamicDailyScrums[index] = updated;
+    return { success: true, data: updated };
+  }
+
+  async recordDailyScrumParticipation(id: string): Promise<ApiResponse<DailyScrum>> {
+    await delay(200);
+
+    const index = this.dynamicDailyScrums.findIndex((s) => s.id === id);
+    if (index === -1) {
+      return {
+        success: false,
+        error: { code: 'NOT_FOUND', message: 'Daily Scrum not found' },
+      };
+    }
+
+    const currentUser = getCurrentUser();
+    const current = this.dynamicDailyScrums[index] as DailyScrum;
+    const alreadyParticipating = current.participants.some((p) => p.userId === currentUser.id);
+
+    const updated: DailyScrum = {
+      ...current,
+      participants: alreadyParticipating
+        ? current.participants
+        : [
+            ...current.participants,
+            { id: `sp-${Date.now()}`, userId: currentUser.id, user: currentUser },
+          ],
+    };
+    this.dynamicDailyScrums[index] = updated;
+    return { success: true, data: updated };
+  }
+
+  async getDailyScrumParticipation(
+    sprintId: string,
+    date: string
+  ): Promise<
+    ApiResponse<{
+      dailyScrum: DailyScrum | null;
+      participants: DailyScrumParticipant[];
+      nonParticipants: { userId: string; userName: string }[];
+    }>
+  > {
+    await delay(250);
+
+    const allScrums = [...this.dynamicDailyScrums];
+    const dailyScrum =
+      allScrums.find((s) => s.sprintId === sprintId && s.scrumDate === date) ?? null;
+
+    const team = getCurrentTeam();
+    const participantUserIds = new Set(dailyScrum?.participants.map((p) => p.userId) ?? []);
+    const nonParticipants = (team.members ?? [])
+      .filter((m) => !participantUserIds.has(m.userId))
+      .map((m) => ({
+        userId: m.userId,
+        userName: `${m.user?.firstName ?? ''} ${m.user?.lastName ?? ''}`.trim(),
+      }));
+
+    return {
+      success: true,
+      data: {
+        dailyScrum,
+        participants: dailyScrum?.participants ?? [],
+        nonParticipants,
+      },
+    };
+  }
+
+  async sendDailyScrumTeamSignal(
+    sprintId: string
+  ): Promise<ApiResponse<{ sentCount: number; message: string }>> {
+    await delay(250);
+
+    const today = new Date().toISOString().split('T')[0];
+    const allScrums = [...this.dynamicDailyScrums];
+    const dailyScrum =
+      allScrums.find((s) => s.sprintId === sprintId && s.scrumDate === today) ?? null;
+    const team = getCurrentTeam();
+    const participantUserIds = new Set(dailyScrum?.participants.map((p) => p.userId) ?? []);
+    const memberCount = (team.members ?? []).filter(
+      (m) => !participantUserIds.has(m.userId)
+    ).length;
+    return {
+      success: true,
+      data: {
+        sentCount: memberCount,
+        message:
+          memberCount === 1
+            ? 'Daily Scrum signal sent to 1 team member'
+            : `Daily Scrum signal sent to ${memberCount} team members`,
       },
     };
   }

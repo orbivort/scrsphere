@@ -138,6 +138,7 @@
   "taskStatus": {
     "DONE": "[DDóónné]",
     "IN_PROGRESS": "[Ín Prógréssssss]",
+    "REVIEW": "[Révíéwww]",
     "TODO": "[TTóóddó]"
   },
   "tasksDone": "[tàsks dónéééé]",

@@ -8,6 +8,8 @@
   "allSubmitted": "Todos los miembros del equipo han enviado sus actualizaciones",
   "backlogAdjustmentRequired": "Nuevo Ajuste del Backlog Requiere Su Acción",
   "backlogAdjustmentRequiredMessage": "Se le ha asignado como propietario de un ajuste del backlog: {{action}} - \"{{description}}\"",
+  "dailyScrumSignalMessage": "El Daily Scrum para \"{{sprintName}}\" está comenzando. Desarrolladores, reúnanse para inspeccionar el progreso hacia el objetivo del Sprint y adaptar el Sprint Backlog.",
+  "dailyScrumSignalTitle": "El Daily Scrum está comenzando",
   "dailyUpdateDeleted": "Actualización diaria eliminada exitosamente",
   "dailyUpdateReminderDefault": "¡No olvide enviar su actualización diaria!",
   "dailyUpdateReminderFromUser": "{{senderName}} le recordó que envíe su actualización diaria",

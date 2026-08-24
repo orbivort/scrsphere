@@ -20,6 +20,10 @@
     "scheduleDeletionConfirmation": "Confirmation must be exactly \"SCHEDULE DELETION\"",
     "termsRequired": "You must accept the Corporate Acceptable Use Policy and Data Protection Policy"
   },
+  "dailyScrum": {
+    "developersOnly": "The Daily Scrum is an event for the Developers. Only Developers can record or edit the Daily Scrum.",
+    "planRequired": "An actionable plan for the next day is required for the Daily Scrum."
+  },
   "fieldRequired": "This field is required",
   "fieldTooLong": "This field is too long",
   "firstName": "First name",
