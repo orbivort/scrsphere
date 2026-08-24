@@ -30,22 +30,69 @@ export class DailyScrumPage extends BasePage {
       .nth(1);
     this.planInput = page.locator('#plan-next-day, [name="plan-next-day"], textarea').nth(2);
     this.submitButton = page.locator('button[type="submit"], button:has-text("Submit")');
-    this.scrumRecord = page.locator('[class*="scrum-record-header"], [class*="daily-scrum"]');
+    this.scrumRecord = page.locator('[class*="scrum-record-header"]').first();
     this.emptyState = page.locator('[class*="empty-state"]').first();
     this.dateSelector = page.locator('[class*="date-selector"], [class*="date-picker"]');
     this.previousDayButton = page.locator('button[aria-label*="previous" i], button:has-text("←")');
     this.nextDayButton = page.locator('button[aria-label*="next" i], button:has-text("→")');
     this.createImpedimentButton = page.locator('button:has-text("Create impediment")');
-    this.promoteModal = page.locator('[role="dialog"], [class*="promote-modal"]');
+    this.promoteModal = page.locator('[class*="promote-modal"]').first();
     this.promoteTitleInput = page.locator('[role="dialog"] input[type="text"]').first();
     this.promoteDescriptionInput = page.locator('[role="dialog"] textarea').first();
     this.promoteSubmitButton = page.locator('[role="dialog"] button:has-text("Create Impediment")');
     this.impedimentList = page.locator('[class*="impediment-list"]');
   }
 
+  /**
+   * Navigate to the Daily Scrum page.
+   *
+   * The Daily Scrum route is protected, so a bare `page.goto('/daily-scrum')`
+   * forces a full SPA reload. Under heavy parallel test load the reload can
+   * race with the app's auth/team bootstrap (localStorage rehydration +
+   * AuthInitializer + TeamInitializer) and the route guard briefly sees an
+   * unauthenticated state, redirecting to `/login`. Once that happens the
+   * `Create impediment` trigger — which only renders inside the Daily Scrum
+   * record view — never appears and the test fails (this was the webkit-only
+   * flake observed in the full 8-worker E2E run).
+   *
+   * To avoid the race we prefer a *client-side* navigation: the sidebar nav
+   * uses react-router `<Link>`, so dispatching a click on it keeps the
+   * in-memory auth and team state intact and never triggers a reload. We
+   * dispatch the click programmatically so the navigation works even when
+   * the sidebar is collapsed (e.g. on tablet/mobile viewports), where the
+   * link is in the DOM but outside the viewport. If the link is not present
+   * at all (e.g. user role hides it), we fall back to a full reload with a
+   * `/login` bounce recovery.
+   */
   async goto(): Promise<void> {
-    await this.navigate('/daily-scrum');
-    await this.waitForPageLoad();
+    const targetPath = '/daily-scrum';
+
+    // 1) Prefer client-side navigation. Dispatching a click works for both
+    //    expanded and collapsed sidebars because react-router's <Link>
+    //    handles the event programmatically and bypasses viewport checks.
+    const clientNavLink = this.page.locator('a[href="/daily-scrum"]').first();
+    if ((await clientNavLink.count()) > 0) {
+      await clientNavLink.dispatchEvent('click');
+      await this.page.waitForURL((url) => url.pathname === targetPath, { timeout: 30000 });
+      await this.waitForPageLoad();
+      return;
+    }
+
+    // 2) Fallback: full reload. If the guard bounces us to /login, recover by
+    //    routing through the team page (a protected route we know is healthy
+    //    in the beforeEach) and trying again.
+    for (let attempt = 0; attempt < 2; attempt++) {
+      await this.navigate(targetPath);
+      await this.waitForPageLoad();
+      if (!this.page.url().includes('/login')) {
+        return;
+      }
+      // Bounced to /login — the SPA lost its auth state across the reload.
+      // Hit the team page first to let AuthInitializer/TeamInitializer
+      // re-establish the session, then retry the target route.
+      await this.navigate('/team');
+      await this.waitForPageLoad();
+    }
   }
 
   async fillUpdateForm(data: {

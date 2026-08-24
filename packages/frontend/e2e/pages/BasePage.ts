@@ -14,11 +14,27 @@ export abstract class BasePage {
   }
 
   async navigate(path: string): Promise<void> {
-    try {
-      await this.page.goto(path, { waitUntil: 'domcontentloaded', timeout: 30000 });
-    } catch {
-      // Retry with load wait strategy if domcontentloaded times out
-      await this.page.goto(path, { waitUntil: 'load', timeout: 30000 });
+    // The Vite dev server can be slow under parallel test load. A first
+    // navigation is frequently interrupted with net::ERR_ABORTED ("frame was
+    // detached") which is transient, so retry with a short delay rather than
+    // failing immediately. Each attempt escalates the wait strategy from
+    // 'domcontentloaded' to 'load' to give the app more time to settle.
+    let lastError: unknown;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        await this.page.goto(path, {
+          waitUntil: attempt === 0 ? 'domcontentloaded' : 'load',
+          timeout: 30000,
+        });
+        lastError = undefined;
+        break;
+      } catch (error) {
+        lastError = error;
+        await this.page.waitForTimeout(500 * (attempt + 1));
+      }
+    }
+    if (lastError) {
+      throw lastError;
     }
     await this.dismissCookieBanner();
   }
