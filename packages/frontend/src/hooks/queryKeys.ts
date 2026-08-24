@@ -116,16 +116,6 @@ export const queryKeys = {
       [...queryKeys.productBacklog.all, 'infinite', filters] as const,
   },
 
-  // Daily Update queries
-  dailyUpdate: {
-    all: ['daily-updates'] as const,
-    lists: () => [...queryKeys.dailyUpdate.all, 'list'] as const,
-    list: (filters: { teamId?: string; sprintId?: string } = {}) =>
-      [...queryKeys.dailyUpdate.lists(), filters] as const,
-    bySprint: (sprintId: string) => [...queryKeys.dailyUpdate.lists(), { sprintId }] as const,
-    byTeam: (teamId: string) => [...queryKeys.dailyUpdate.lists(), { teamId }] as const,
-  },
-
   // Daily Scrum queries (team-level, goal-focused)
   dailyScrum: {
     all: ['daily-scrums'] as const,

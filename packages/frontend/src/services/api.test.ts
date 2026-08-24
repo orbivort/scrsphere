@@ -100,17 +100,6 @@ vi.mock('./domain/sprintBacklog.service', () => ({
   },
 }));
 
-vi.mock('./domain/dailyUpdates.service', () => ({
-  dailyUpdatesService: {
-    getDailyUpdates: vi.fn().mockResolvedValue({ data: [] }),
-    createDailyUpdate: vi.fn().mockResolvedValue({ data: {} }),
-    getTeamMembersWithUpdates: vi.fn().mockResolvedValue({ data: [] }),
-    sendDailyUpdateReminder: vi.fn().mockResolvedValue({}),
-    promoteToImpediment: vi.fn().mockResolvedValue({ data: {} }),
-    getImpedimentByDailyUpdate: vi.fn().mockResolvedValue({ data: {} }),
-  },
-}));
-
 vi.mock('./domain/impediments.service', () => ({
   impedimentsService: {
     getImpediments: vi.fn().mockResolvedValue({ data: [] }),

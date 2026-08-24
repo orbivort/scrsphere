@@ -447,14 +447,6 @@ async function mockAuthApi(page: Page) {
     });
   });
 
-  await page.route('**/api/v1/daily-updates/**', async (route: Route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({ success: true, data: [] }),
-    });
-  });
-
   // Sprint backlog catch-all (Daily Scrum reads the sprint's tasks)
   await page.route('**/api/v1/sprint-backlog/**', async (route: Route) => {
     await route.fulfill({

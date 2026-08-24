@@ -184,7 +184,6 @@ describe('DataExportService', () => {
       expect(result.user).toEqual(mockUser);
       expect(result.teamMemberships).toEqual(mockTeamMemberships);
       expect(result.sessions).toEqual(mockSessions);
-      expect(result.dailyUpdates).toEqual([]);
       expect(result.assignedTasks).toEqual([]);
     });
 

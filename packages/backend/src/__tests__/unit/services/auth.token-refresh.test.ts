@@ -31,9 +31,6 @@ vi.mock('../../../utils/prisma', () => ({
     notification: {
       deleteMany: vi.fn(),
     },
-    dailyUpdate: {
-      deleteMany: vi.fn(),
-    },
     task: {
       updateMany: vi.fn(),
     },

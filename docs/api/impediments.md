@@ -107,7 +107,6 @@ Content-Type: application/json
       "status": "IN_PROGRESS",
       "resolution": null,
       "resolvedAt": null,
-      "dailyUpdateId": null,
       "createdAt": "2026-05-10T10:00:00.000Z",
       "createdBy": "550e8400-e29b-41d4-a716-446655440001",
       "updatedAt": "2026-05-10T11:00:00.000Z",
@@ -127,8 +126,7 @@ Content-Type: application/json
       "sprint": {
         "id": "550e8400-e29b-41d4-a716-446655440000",
         "name": "Sprint 5"
-      },
-      "dailyUpdate": null
+      }
     }
   ]
 }
@@ -256,7 +254,6 @@ Content-Type: application/json
     "status": "IN_PROGRESS",
     "resolution": null,
     "resolvedAt": null,
-    "dailyUpdateId": null,
     "createdAt": "2026-05-10T10:00:00.000Z",
     "createdBy": "550e8400-e29b-41d4-a716-446655440001",
     "updatedAt": "2026-05-10T11:00:00.000Z",
@@ -276,8 +273,7 @@ Content-Type: application/json
     "sprint": {
       "id": "550e8400-e29b-41d4-a716-446655440000",
       "name": "Sprint 5"
-    },
-    "dailyUpdate": null
+    }
   }
 }
 ```
@@ -362,7 +358,6 @@ Content-Type: application/json
     "status": "OPEN",
     "resolution": null,
     "resolvedAt": null,
-    "dailyUpdateId": null,
     "createdAt": "2026-05-10T10:00:00.000Z",
     "createdBy": "550e8400-e29b-41d4-a716-446655440001",
     "updatedAt": "2026-05-10T10:00:00.000Z",
@@ -382,8 +377,7 @@ Content-Type: application/json
     "sprint": {
       "id": "550e8400-e29b-41d4-a716-446655440000",
       "name": "Sprint 5"
-    },
-    "dailyUpdate": null
+    }
   }
 }
 ```
@@ -467,7 +461,6 @@ Content-Type: application/json
     "status": "RESOLVED",
     "resolution": "Backend API endpoint deployed and verified. Frontend integration complete.",
     "resolvedAt": "2026-05-11T14:00:00.000Z",
-    "dailyUpdateId": null,
     "createdAt": "2026-05-10T10:00:00.000Z",
     "createdBy": "550e8400-e29b-41d4-a716-446655440001",
     "updatedAt": "2026-05-11T14:00:00.000Z",
@@ -487,8 +480,7 @@ Content-Type: application/json
     "sprint": {
       "id": "550e8400-e29b-41d4-a716-446655440000",
       "name": "Sprint 5"
-    },
-    "dailyUpdate": null
+    }
   }
 }
 ```

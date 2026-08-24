@@ -11,7 +11,6 @@ export { teamService } from './domain/team.service';
 export { productBacklogService } from './domain/productBacklog.service';
 export { sprintService } from './domain/sprint.service';
 export { sprintBacklogService } from './domain/sprintBacklog.service';
-export { dailyUpdatesService } from './domain/dailyUpdates.service';
 export { dailyScrumService } from './domain/dailyScrum.service';
 export { impedimentsService } from './domain/impediments.service';
 export { reportsService } from './domain/reports.service';
@@ -33,7 +32,6 @@ import { teamService } from './domain/team.service';
 import { productBacklogService } from './domain/productBacklog.service';
 import { sprintService } from './domain/sprint.service';
 import { sprintBacklogService } from './domain/sprintBacklog.service';
-import { dailyUpdatesService } from './domain/dailyUpdates.service';
 import { dailyScrumService } from './domain/dailyScrum.service';
 import { impedimentsService } from './domain/impediments.service';
 import { reportsService } from './domain/reports.service';
@@ -123,16 +121,6 @@ class ApiService {
   addPBIToSprint = sprintBacklogService.addPBIToSprint.bind(sprintBacklogService);
   removePBIFromSprint = sprintBacklogService.removePBIFromSprint.bind(sprintBacklogService);
   getSprintBacklogChanges = sprintBacklogService.getSprintBacklogChanges.bind(sprintBacklogService);
-
-  // Daily Updates endpoints
-  getDailyUpdates = dailyUpdatesService.getDailyUpdates.bind(dailyUpdatesService);
-  createDailyUpdate = dailyUpdatesService.createDailyUpdate.bind(dailyUpdatesService);
-  getTeamMembersWithUpdates =
-    dailyUpdatesService.getTeamMembersWithUpdates.bind(dailyUpdatesService);
-  sendDailyUpdateReminder = dailyUpdatesService.sendDailyUpdateReminder.bind(dailyUpdatesService);
-  promoteToImpediment = dailyUpdatesService.promoteToImpediment.bind(dailyUpdatesService);
-  getImpedimentByDailyUpdate =
-    dailyUpdatesService.getImpedimentByDailyUpdate.bind(dailyUpdatesService);
 
   // Daily Scrum endpoints (team-level, goal-focused)
   getDailyScrum = dailyScrumService.getDailyScrum.bind(dailyScrumService);

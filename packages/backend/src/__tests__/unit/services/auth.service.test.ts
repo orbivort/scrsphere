@@ -48,9 +48,6 @@ vi.mock('../../../utils/prisma', () => ({
       deleteMany: vi.fn(),
       create: vi.fn(),
     },
-    dailyUpdate: {
-      deleteMany: vi.fn(),
-    },
     task: {
       updateMany: vi.fn(),
     },
@@ -683,7 +680,6 @@ describe('authService', () => {
           refreshToken: { deleteMany: vi.fn().mockResolvedValue({}) },
           notification: { deleteMany: vi.fn().mockResolvedValue({}) },
           teamMember: { deleteMany: vi.fn().mockResolvedValue({}) },
-          dailyUpdate: { deleteMany: vi.fn().mockResolvedValue({}) },
           task: { updateMany: vi.fn().mockResolvedValue({}) },
           impediment: {
             deleteMany: vi.fn().mockResolvedValue({}),

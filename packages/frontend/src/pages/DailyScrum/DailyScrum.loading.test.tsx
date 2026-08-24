@@ -24,12 +24,15 @@ vi.mock('../../store', () => ({
 vi.mock('../../services', () => ({
   apiService: {
     getActiveSprint: vi.fn(),
-    getDailyUpdates: vi.fn(),
-    getTeamMembersWithUpdates: vi.fn(),
-    createDailyUpdate: vi.fn(),
-    promoteToImpediment: vi.fn(),
-    sendDailyUpdateReminder: vi.fn(),
+    getSprintTasks: vi.fn(),
+    getDailyScrum: vi.fn(),
+    getDailyScrumParticipation: vi.fn(),
+    createDailyScrum: vi.fn(),
+    updateDailyScrum: vi.fn(),
+    promoteImpedimentFromDailyScrum: vi.fn(),
+    sendDailyScrumTeamSignal: vi.fn(),
     getProductGoals: vi.fn(),
+    getImpediments: vi.fn(),
   },
 }));
 

@@ -68,7 +68,7 @@ describe('Notifications Integration Tests', () => {
   // Helper to create a notification
   const createTestNotification = async (
     userId: string,
-    type: 'TEAM_INVITATION' | 'TASK_ASSIGNMENT' | 'DAILY_UPDATE_REMINDER' = 'TASK_ASSIGNMENT',
+    type: 'TEAM_INVITATION' | 'TASK_ASSIGNMENT' | 'DAILY_SCRUM_SIGNAL' = 'TASK_ASSIGNMENT',
     title: string = 'Test Notification',
     isRead: boolean = false
   ) => {
@@ -282,7 +282,7 @@ describe('Notifications Integration Tests', () => {
       const user = await createTestUserInDb(email);
       await createTestNotification(user.id, 'TASK_ASSIGNMENT', 'Unread 1', false);
       await createTestNotification(user.id, 'TEAM_INVITATION', 'Unread 2', false);
-      await createTestNotification(user.id, 'DAILY_UPDATE_REMINDER', 'Unread 3', false);
+      await createTestNotification(user.id, 'DAILY_SCRUM_SIGNAL', 'Unread 3', false);
 
       const cookies = await loginAndGetCookies(email);
 

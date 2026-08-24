@@ -103,7 +103,6 @@ describe('Daily Scrum Integration Tests (team-level, goal-focused)', () => {
             where: { dailyScrum: { sprint: { teamId: team.id } } },
           });
           await prisma.dailyScrum.deleteMany({ where: { sprint: { teamId: team.id } } });
-          await prisma.dailyUpdate.deleteMany({ where: { sprint: { teamId: team.id } } });
           await prisma.impediment.deleteMany({ where: { teamId: team.id } });
           await prisma.task.deleteMany({ where: { sprint: { teamId: team.id } } });
           await prisma.sprint.deleteMany({ where: { teamId: team.id } });

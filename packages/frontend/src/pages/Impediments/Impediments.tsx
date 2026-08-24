@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNavigate, useSearchParams } from 'react-router';
+import { useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { formatLocaleDate } from '@scrumooth/shared';
 
@@ -26,7 +26,6 @@ import {
   FileTextIcon,
   XIcon,
   PlusIcon,
-  ArrowRightIcon,
   SaveIcon,
   TrashIcon,
 } from '../../components/common/Icons';
@@ -41,7 +40,6 @@ const QUERY_CACHE_TIME = 10 * 60 * 1000;
 export const Impediments: React.FC = () => {
   const { t } = useTranslation(['impediments', 'common']);
   const { currentTeam } = useTeamStore();
-  const navigate = useNavigate();
   const { locale } = useI18nStore();
   const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
@@ -139,7 +137,6 @@ export const Impediments: React.FC = () => {
       apiService.updateImpediment(id, updates),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.impediment.all });
-      void queryClient.invalidateQueries({ queryKey: queryKeys.dailyUpdate.all });
       success(t('toast.updated'));
     },
     onError: (
@@ -189,7 +186,6 @@ export const Impediments: React.FC = () => {
     mutationFn: (id: string) => apiService.deleteImpediment(id, teamId ?? ''),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.impediment.all });
-      void queryClient.invalidateQueries({ queryKey: queryKeys.dailyUpdate.all });
       setSelectedImpediment(null);
       setSearchParams({});
       success(t('toast.deleted'));
@@ -335,10 +331,6 @@ export const Impediments: React.FC = () => {
     setSearchParams({});
   };
 
-  const handleNavigateToDailyUpdate = (dailyUpdateId: string) => {
-    void navigate(`/daily-scrum?highlight=${dailyUpdateId}`);
-  };
-
   const validateForm = (): boolean => {
     const errors: Record<string, string> = {};
 
@@ -454,9 +446,6 @@ export const Impediments: React.FC = () => {
     const classes = [styles['impediment-card']];
     if (effectiveSelectedImpediment?.id === impediment.id) {
       classes.push(styles['impediment-card-selected']);
-    }
-    if (impediment.dailyUpdateId) {
-      classes.push(styles['impediment-card-from-daily']);
     }
     return classes.join(' ');
   };
@@ -601,22 +590,6 @@ export const Impediments: React.FC = () => {
                     <span className={styles['meta-item']}>
                       <SprintIcon className={styles['meta-icon']} />
                       {t('card.sprint')}
-                    </span>
-                  )}
-                  {impediment.dailyUpdateId && (
-                    <span
-                      className={styles['source-badge']}
-                      title={t('card.createdFromDailyUpdate')}
-                    >
-                      <FileTextIcon
-                        style={{
-                          width: '12px',
-                          height: '12px',
-                          marginRight: '4px',
-                          display: 'inline',
-                        }}
-                      />
-                      {t('card.fromDailyScrum')}
                     </span>
                   )}
                 </div>
@@ -882,45 +855,6 @@ export const Impediments: React.FC = () => {
               </button>
             </div>
             <div className={styles['modal-body']}>
-              {effectiveSelectedImpediment.dailyUpdateId &&
-                effectiveSelectedImpediment.dailyUpdate && (
-                  <div className={styles['source-context-section']}>
-                    <div className={styles['source-context-banner']}>
-                      <FileTextIcon className={styles['source-icon']} />
-                      <div className={styles['source-info']}>
-                        <span className={styles['source-label']}>
-                          {t('detailModal.createdFromDailyScrum')}
-                        </span>
-                        <span className={styles['source-date']}>
-                          by {effectiveSelectedImpediment.dailyUpdate.user?.firstName}{' '}
-                          {effectiveSelectedImpediment.dailyUpdate.user?.lastName} on{' '}
-                          {formatLocaleDate(
-                            effectiveSelectedImpediment.dailyUpdate.updateDate,
-                            locale
-                          )}
-                        </span>
-                      </div>
-                      <button
-                        className={styles['view-source-btn']}
-                        onClick={() =>
-                          handleNavigateToDailyUpdate(
-                            effectiveSelectedImpediment.dailyUpdateId ?? ''
-                          )
-                        }
-                      >
-                        {t('detailModal.viewDailyUpdate')}
-                        <ArrowRightIcon
-                          style={{
-                            width: '14px',
-                            height: '14px',
-                            marginLeft: '4px',
-                            display: 'inline',
-                          }}
-                        />
-                      </button>
-                    </div>
-                  </div>
-                )}
               <div className={styles['detail-section']}>
                 <label className={styles['detail-label']}>
                   <FileTextIcon className={styles['detail-label-icon']} />

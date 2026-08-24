@@ -34,7 +34,7 @@ export const smDashboardService = {
       include: {
         sprintReview: { select: { id: true } },
         retrospective: { select: { id: true } },
-        dailyUpdates: { select: { id: true } },
+        dailyScrums: { select: { id: true } },
         generatedSprint: { select: { sprintNumber: true } },
         timeboxes: {
           select: {
@@ -70,9 +70,9 @@ export const smDashboardService = {
         sprintPlanningCompleted: sprint.status !== 'PLANNED',
         sprintReviewCompleted: Boolean(sprint.sprintReview),
         retrospectiveCompleted: Boolean(sprint.retrospective),
-        dailyScrumHeld: sprint.dailyUpdates.length,
+        dailyScrumHeld: sprint.dailyScrums.length,
         dailyScrumExpected:
-          sprint.status === 'COMPLETED' ? expectedDailyScrums : sprint.dailyUpdates.length,
+          sprint.status === 'COMPLETED' ? expectedDailyScrums : sprint.dailyScrums.length,
         timeboxExceeded,
       };
     });

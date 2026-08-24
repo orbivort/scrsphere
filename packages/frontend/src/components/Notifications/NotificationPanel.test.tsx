@@ -185,7 +185,6 @@ describe('NotificationPanel Component', () => {
       { type: NotificationType.TEAM_REMOVAL, expectedIcon: '🚫' },
       { type: NotificationType.TASK_ASSIGNMENT, expectedIcon: '✅' },
       { type: NotificationType.IMPEDIMENT_ASSIGNMENT, expectedIcon: '🚧' },
-      { type: NotificationType.DAILY_UPDATE_REMINDER, expectedIcon: '☀️' },
       { type: NotificationType.TEAM_CREATED, expectedIcon: '🏢' },
       { type: NotificationType.TEAM_UPDATED, expectedIcon: '✏️' },
       { type: NotificationType.TEAM_DELETED, expectedIcon: '🗑️' },

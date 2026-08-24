@@ -44,23 +44,6 @@
     "planForNextDay": "Plan para el siguiente día",
     "progress": "Progreso hacia el objetivo del Sprint"
   },
-  "dailyUpdate": {
-    "dailyUpdatesList": "Lista de actualizaciones diarias",
-    "impediment": "Impediment:",
-    "impedimentPlaceholder": "Describa cualquier bloqueador o Impediment...",
-    "impedimentQuestion": "¿Algún Impediment? (opcional)",
-    "submitDailyScrum": "Enviar Daily Scrum",
-    "submitDailyScrumAriaLabel": "Enviar su actualización Daily Scrum",
-    "submitUpdate": "Enviar actualización",
-    "title": "Actualización diaria",
-    "today": "Hoy:",
-    "todayPlaceholder": "Describa lo que planea trabajar hoy...",
-    "todayQuestion": "¿Qué harás hoy para ayudar al equipo a cumplir el objetivo del Sprint?",
-    "unknownUser": "Usuario desconocido",
-    "yesterday": "Ayer:",
-    "yesterdayPlaceholder": "Describa lo que lograste ayer...",
-    "yesterdayQuestion": "¿Qué hiciste ayer para ayudar al equipo a cumplir el objetivo del Sprint?"
-  },
   "dashboardDetails": "Detalles del panel",
   "dataRefreshed": "Datos del panel actualizados exitosamente",
   "daysRemaining": "días restantes",
@@ -93,7 +76,6 @@
     "totalTasks": "Tareas totales"
   },
   "noActiveSprint": "Ningún Sprint activo",
-  "noDailyUpdates": "Aún no hay actualizaciones diarias para hoy.",
   "noOpenImpediments": "Sin Impediments abiertos. ¡Excelente trabajo!",
   "noSprintGoal": "Aún no hay objetivo del Sprint definido.",
   "noTasksYet": "Aún no hay tareas de los Developers.",
@@ -104,7 +86,6 @@
     "createIncrement": "Crear Increment",
     "reportImpediment": "Reportar Impediment",
     "startSprintPlanning": "Iniciar planificación del Sprint",
-    "submitDailyUpdate": "Enviar actualización diaria",
     "title": "Acciones rápidas",
     "viewSprintBoard": "Ver tablero del Sprint"
   },

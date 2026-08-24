@@ -526,7 +526,7 @@ The data flow follows a strict layered pattern from API services through TanStac
 | `sprintBacklogService`  | Sprint Backlog    | Add/remove PBIs, track changes           |
 | `productBacklogService` | Product Backlog   | CRUD, prioritization, MoSCoW             |
 | `productGoalsService`   | Product Goals     | CRUD, status transitions                 |
-| `dailyUpdatesService`   | Daily Scrum       | Create, update daily updates             |
+| `dailyScrumService`     | Daily Scrum       | Create, inspect & adapt the Daily Scrum  |
 | `impedimentsService`    | Impediments       | Create, resolve, assign                  |
 | `reportsService`        | Reports           | Velocity, burndown, sprint metrics       |
 | `definitionService`     | Definitions       | DoD/DoR checklist management             |
@@ -1127,7 +1127,7 @@ The backend follows a layered architecture where controllers handle HTTP concern
 | `sprint.service.ts`              | Sprints             | Lifecycle, planning, completion      |
 | `backlog.service.ts`             | Product Backlog     | CRUD, prioritization, MoSCoW         |
 | `goals.service.ts`               | Product Goals       | CRUD, status transitions             |
-| `dailyUpdate.service.ts`         | Daily Scrum         | Daily update creation and retrieval  |
+| `dailyScrum.service.ts`          | Daily Scrum         | Inspect & adapt, participation       |
 | `impediment.service.ts`          | Impediments         | Create, resolve, assign              |
 | `reports.service.ts`             | Reports             | Velocity, burndown calculations      |
 | `dod.service.ts`                 | Definition of Done  | DoD checklist management             |

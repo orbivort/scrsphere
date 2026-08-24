@@ -28,7 +28,6 @@ import {
   type Sprint,
   type Task,
   type Impediment,
-  type DailyUpdate,
   type DailyScrum,
   type DailyScrumParticipant,
   type ProductGoal,
@@ -81,7 +80,6 @@ import {
   mockSprints,
   mockTasks,
   mockImpediments,
-  mockDailyUpdates,
   mockBurndownData,
   mockVelocityData,
   mockProductGoals,
@@ -1027,127 +1025,8 @@ class MockApiService {
     };
   }
 
-  // ==================== Daily Updates ====================
-  // Store for dynamically created updates during demo
-  private dynamicDailyUpdates: DailyUpdate[] = [];
-
   // In-memory timebox state for Scrum event timeboxes
   private timeboxStore: Record<string, TimeboxState & { lastTick?: number }> = {};
-
-  async getDailyUpdates(sprintId: string, date?: string): Promise<ApiResponse<DailyUpdate[]>> {
-    await delay(300);
-
-    // Combine static mock data with dynamically created updates
-    const allUpdates = [...mockDailyUpdates, ...this.dynamicDailyUpdates];
-    let updates = allUpdates.filter((u) => u.sprintId === sprintId);
-
-    if (date) {
-      updates = updates.filter((u) => u.updateDate === date);
-    }
-
-    // Sort by creation time (most recent first)
-    updates.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-
-    return { success: true, data: updates };
-  }
-
-  async createDailyUpdate(
-    sprintId: string,
-    update: Partial<DailyUpdate>
-  ): Promise<ApiResponse<DailyUpdate>> {
-    await delay(400);
-
-    const currentUser = getCurrentUser();
-    const today = new Date().toISOString().split('T')[0] ?? '';
-
-    const newUpdate: DailyUpdate = {
-      id: `update-${Date.now()}`,
-      sprintId,
-      userId: currentUser.id,
-      updateDate: today,
-      yesterdayWork: update.yesterdayWork ?? '',
-      todayWork: update.todayWork ?? '',
-      impediment: update.impediment,
-      createdAt: new Date().toISOString(),
-      user: currentUser,
-    };
-
-    // Store in dynamic updates
-    this.dynamicDailyUpdates.push(newUpdate);
-
-    return { success: true, data: newUpdate };
-  }
-
-  async getTeamMembersWithUpdates(
-    sprintId: string,
-    date: string
-  ): Promise<
-    ApiResponse<{
-      submitted: DailyUpdate[];
-      pending: { userId: string; userName: string }[];
-    }>
-  > {
-    await delay(300);
-
-    const team = getCurrentTeam();
-    const allUpdates = [...mockDailyUpdates, ...this.dynamicDailyUpdates];
-    const todayUpdates = allUpdates.filter((u) => u.sprintId === sprintId && u.updateDate === date);
-
-    const submittedUserIds = new Set(todayUpdates.map((u) => u.userId));
-    const pendingMembers = (team.members ?? [])
-      .filter((m) => !submittedUserIds.has(m.userId))
-      .map((m) => ({
-        userId: m.userId,
-        userName: `${m.user?.firstName ?? ''} ${m.user?.lastName ?? ''}`.trim(),
-      }));
-
-    return {
-      success: true,
-      data: {
-        submitted: todayUpdates,
-        pending: pendingMembers,
-      },
-    };
-  }
-
-  async sendDailyUpdateReminder(sprintId: string): Promise<
-    ApiResponse<{
-      sentCount: number;
-      totalPending: number;
-      message: string;
-      errors?: string[];
-    }>
-  > {
-    await delay(300);
-
-    const team = getCurrentTeam();
-    const allUpdates = [...mockDailyUpdates, ...this.dynamicDailyUpdates];
-    const today = new Date().toISOString().split('T')[0];
-    const todayUpdates = allUpdates.filter(
-      (u) => u.sprintId === sprintId && u.updateDate === today
-    );
-
-    const submittedUserIds = new Set(todayUpdates.map((u) => u.userId));
-    const pendingMembers = (team.members ?? []).filter((m) => !submittedUserIds.has(m.userId));
-
-    // Note: Mock API doesn't do i18n - this matches the backend response pattern
-    // In real API, backend handles translation via request locale
-    const message =
-      pendingMembers.length > 0
-        ? pendingMembers.length === 1
-          ? 'Reminders sent to 1 team member'
-          : `Reminders sent to ${pendingMembers.length} team members`
-        : 'All team members have submitted their updates';
-
-    return {
-      success: true,
-      data: {
-        sentCount: pendingMembers.length,
-        totalPending: pendingMembers.length,
-        message,
-      },
-    };
-  }
 
   // ==================== Daily Scrum (team-level, goal-focused) ====================
   private dynamicDailyScrums: DailyScrum[] = [];
@@ -3977,43 +3856,6 @@ class MockApiService {
   async deleteImpediment(_id: string, _teamId: string): Promise<ApiResponse<never>> {
     await delay(300);
     return { success: true };
-  }
-
-  async promoteToImpediment(
-    _dailyUpdateId: string,
-    impedimentData: {
-      title: string;
-      description?: string;
-      ownerId?: string;
-      priority?: string;
-      teamId: string;
-      sprintId?: string;
-    }
-  ): Promise<ApiResponse<{ dailyUpdate: DailyUpdate; impediment: Impediment }>> {
-    await delay(400);
-    const currentUser = getCurrentUser();
-    const newImpediment: Impediment = {
-      id: `imp-${Date.now()}`,
-      teamId: impedimentData.teamId,
-      sprintId: impedimentData.sprintId,
-      title: impedimentData.title,
-      description: impedimentData.description ?? '',
-      reportedById: currentUser.id,
-      ownerId: impedimentData.ownerId,
-      status: ImpedimentStatus.OPEN,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      reportedBy: currentUser,
-    };
-    const dailyUpdate: DailyUpdate = {
-      id: _dailyUpdateId,
-      sprintId: impedimentData.sprintId ?? '',
-      userId: currentUser.id,
-      updateDate: new Date().toISOString().split('T')[0] ?? '',
-      createdAt: new Date().toISOString(),
-      user: currentUser,
-    };
-    return { success: true, data: { dailyUpdate, impediment: newImpediment } };
   }
 
   async getTasksByPbiId(pbiId: string): Promise<ApiResponse<Task[]>> {

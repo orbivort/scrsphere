@@ -24,7 +24,6 @@ model User {
   termsAcceptedAt        DateTime?                  @map("terms_accepted_at") @db.Timestamptz(3)
   backlogAdjustments     BacklogAdjustment[]
   consentRecords         ConsentRecord[]
-  dailyUpdates           DailyUpdate[]
   dailyScrumParticipants DailyScrumParticipant[]
   dodVerifications       DoDChecklistVerification[]
   dorVerifications       DoRChecklistVerification[]
@@ -180,7 +179,6 @@ model Sprint {
   updatedAt          DateTime              @updatedAt @db.Timestamptz(3)
   updatedBy          String?               @db.Uuid
   burndownData       BurndownData[]
-  dailyUpdates       DailyUpdate[]
   dailyScrums        DailyScrum[]
   generatedSprint    GeneratedSprint?
   impediments        Impediment[]
@@ -274,28 +272,6 @@ model Task {
   @@map("tasks")
 }
 
-model DailyUpdate {
-  id               String      @id @db.Uuid
-  sprintId         String      @db.Uuid
-  userId           String      @db.Uuid
-  updateDate       DateTime    @db.Date
-  yesterdayWork    String?
-  todayWork        String?
-  impediment       String?
-  createdAt        DateTime    @default(now()) @db.Timestamptz(3)
-  createdBy        String?     @db.Uuid
-  updatedAt        DateTime    @updatedAt @db.Timestamptz(3)
-  updatedBy        String?     @db.Uuid
-  sprint           Sprint      @relation(fields: [sprintId], references: [id], onDelete: Cascade)
-  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  impedimentRecord Impediment?
-
-  @@unique([sprintId, userId, updateDate])
-  @@index([sprintId, updateDate])
-  @@index([updateDate])
-  @@map("daily_updates")
-}
-
 model DailyScrum {
   id                 String                  @id @db.Uuid
   sprintId           String                  @db.Uuid
@@ -382,12 +358,10 @@ model Impediment {
   status        ImpedimentStatus @default(OPEN)
   resolution    String?
   resolvedAt    DateTime?        @db.Timestamptz(3)
-  dailyUpdateId String?          @unique @db.Uuid
   createdAt     DateTime         @default(now()) @db.Timestamptz(3)
   createdBy     String?          @db.Uuid
   updatedAt     DateTime         @updatedAt @db.Timestamptz(3)
   updatedBy     String?          @db.Uuid
-  dailyUpdate   DailyUpdate?     @relation(fields: [dailyUpdateId], references: [id], onDelete: SetNull)
   owner         User?            @relation("ImpedimentOwner", fields: [ownerId], references: [id], onDelete: SetNull)
   reportedBy    User             @relation("ImpedimentReporter", fields: [reportedById], references: [id], onDelete: Restrict)
   sprint        Sprint?          @relation(fields: [sprintId], references: [id], onDelete: SetNull)
@@ -1288,7 +1262,6 @@ enum NotificationType {
   TEAM_REMOVAL
   TASK_ASSIGNMENT
   IMPEDIMENT_ASSIGNMENT
-  DAILY_UPDATE_REMINDER
   DAILY_SCRUM_SIGNAL
   TEAM_CREATED
   TEAM_UPDATED

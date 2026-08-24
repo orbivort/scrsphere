@@ -5,7 +5,6 @@ type AnyFn = (...args: unknown[]) => unknown;
 export const apiService: Record<string, Mock<AnyFn>> = {
   getActiveSprint: vi.fn(),
   getBurndownData: vi.fn(),
-  getDailyUpdates: vi.fn(),
   getImpediments: vi.fn(),
   getTeams: vi.fn(),
   getTeam: vi.fn(),
@@ -88,7 +87,6 @@ export const apiService: Record<string, Mock<AnyFn>> = {
   addPBIToSprint: vi.fn(),
   removePBIFromSprint: vi.fn(),
   getSprintBacklogChanges: vi.fn(),
-  createDailyUpdate: vi.fn(),
   createImpediment: vi.fn(),
   updateImpediment: vi.fn(),
   resolveImpediment: vi.fn(),

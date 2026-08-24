@@ -360,7 +360,6 @@ export const cleanupUsers = async (emails: string[]): Promise<void> => {
         await prisma.refreshToken.deleteMany({ where: { userId: user.id } });
         await prisma.notification.deleteMany({ where: { userId: user.id } });
         await prisma.teamMember.deleteMany({ where: { userId: user.id } });
-        await prisma.dailyUpdate.deleteMany({ where: { userId: user.id } });
         await prisma.retroItemVote.deleteMany({ where: { userId: user.id } });
         await prisma.statusChangeHistory.deleteMany({ where: { changedBy: user.id } });
         await prisma.impediment.deleteMany({ where: { reportedById: user.id } });
@@ -416,7 +415,6 @@ export const cleanupTeamById = async (teamId: string): Promise<void> => {
 
     for (const sprintId of sprintIds) {
       await prisma.burndownData.deleteMany({ where: { sprintId } });
-      await prisma.dailyUpdate.deleteMany({ where: { sprintId } });
       await prisma.sprintBacklogChange.deleteMany({ where: { sprintId } });
       await prisma.sprintBacklogItem.deleteMany({ where: { sprintId } });
 
@@ -482,7 +480,6 @@ export const cleanupSprints = async (sprintIds: string[]): Promise<void> => {
     for (const sprintId of sprintIds) {
       await prisma.task.deleteMany({ where: { sprintId } });
       await prisma.burndownData.deleteMany({ where: { sprintId } });
-      await prisma.dailyUpdate.deleteMany({ where: { sprintId } });
       await prisma.sprintBacklogItem.deleteMany({ where: { sprintId } });
       await prisma.sprintBacklogChange.deleteMany({ where: { sprintId } });
       await prisma.sprint.delete({ where: { id: sprintId } });
@@ -503,48 +500,6 @@ export const cleanupPbis = async (pbiIds: string[]): Promise<void> => {
   } catch (_error) {
     // Ignore cleanup errors
   }
-};
-
-export const createTestDailyUpdateInDb = async (
-  sprintId: string,
-  userId: string,
-  updateDate?: Date,
-  yesterdayWork: string = 'Completed task A',
-  todayWork: string = 'Working on task B',
-  impediment: string | null = null
-): Promise<{
-  id: string;
-  sprintId: string;
-  userId: string;
-  updateDate: Date;
-  yesterdayWork: string;
-  todayWork: string;
-  impediment: string | null;
-}> => {
-  const dailyUpdateId = generateUUIDv7();
-  const date = updateDate || new Date();
-
-  const dailyUpdate = await prisma.dailyUpdate.create({
-    data: {
-      id: dailyUpdateId,
-      sprintId,
-      userId,
-      updateDate: date,
-      yesterdayWork,
-      todayWork,
-      impediment,
-    },
-  });
-
-  return {
-    id: dailyUpdate.id,
-    sprintId: dailyUpdate.sprintId,
-    userId: dailyUpdate.userId,
-    updateDate: dailyUpdate.updateDate,
-    yesterdayWork: dailyUpdate.yesterdayWork || '',
-    todayWork: dailyUpdate.todayWork || '',
-    impediment: dailyUpdate.impediment,
-  };
 };
 
 export const createTestIncrementInDb = async (
@@ -729,7 +684,7 @@ export const createTestNotificationInDb = async (
     | 'TEAM_REMOVAL'
     | 'TASK_ASSIGNMENT'
     | 'IMPEDIMENT_ASSIGNMENT'
-    | 'DAILY_UPDATE_REMINDER'
+    | 'DAILY_SCRUM_SIGNAL'
     | 'TEAM_CREATED'
     | 'TEAM_UPDATED'
     | 'TEAM_DELETED'

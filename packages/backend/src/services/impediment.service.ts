@@ -46,17 +46,6 @@ class ImpedimentService {
             name: true,
           },
         },
-        dailyUpdate: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-              },
-            },
-          },
-        },
       },
       orderBy: {
         createdAt: 'desc',
@@ -88,17 +77,6 @@ class ImpedimentService {
           select: {
             id: true,
             name: true,
-          },
-        },
-        dailyUpdate: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-              },
-            },
           },
         },
       },
@@ -138,17 +116,6 @@ class ImpedimentService {
           select: {
             id: true,
             name: true,
-          },
-        },
-        dailyUpdate: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-              },
-            },
           },
         },
       },
@@ -226,17 +193,6 @@ class ImpedimentService {
           select: {
             id: true,
             name: true,
-          },
-        },
-        dailyUpdate: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-              },
-            },
           },
         },
       },

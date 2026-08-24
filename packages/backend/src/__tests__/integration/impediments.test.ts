@@ -168,9 +168,6 @@ describe('Impediments Integration Tests', () => {
 
         if (team) {
           await prisma.impediment.deleteMany({ where: { teamId: team.id } });
-          await prisma.dailyUpdate.deleteMany({
-            where: { sprint: { teamId: team.id } },
-          });
           await prisma.sprint.deleteMany({ where: { teamId: team.id } });
           await prisma.productBacklogItem.deleteMany({ where: { teamId: team.id } });
           await prisma.teamMember.deleteMany({ where: { teamId: team.id } });

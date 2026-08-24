@@ -1,8 +1,6 @@
 {
   "allStatus": "Todos los estados",
   "card": {
-    "createdFromDailyUpdate": "Creado desde Actualización Diaria",
-    "fromDailyScrum": "Del Daily Scrum",
     "owner": "Propietario",
     "reportedBy": "Reportado por",
     "resolution": "Resolución",
@@ -36,7 +34,6 @@
   "detailModal": {
     "cancel": "Cancelar",
     "close": "Cerrar",
-    "createdFromDailyScrum": "Creado desde Actualización Daily Scrum",
     "createdLabel": "Creado",
     "deleteLabel": "Eliminar",
     "deleting": "Eliminando...",
@@ -51,8 +48,7 @@
     "statusLabel": "Estado",
     "subtitle": "Ver y gestionar información del Impediment",
     "title": "Detalles del Impediment",
-    "titleLabel": "Título",
-    "viewDailyUpdate": "Ver Actualización Diaria"
+    "titleLabel": "Título"
   },
   "emptyState": {
     "clearFilter": "Limpiar filtro",

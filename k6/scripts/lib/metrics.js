@@ -5,7 +5,7 @@ export const sprintResponseTime = new Trend('sprint_response_time', true);
 export const backlogResponseTime = new Trend('backlog_response_time', true);
 export const taskResponseTime = new Trend('task_response_time', true);
 export const reportResponseTime = new Trend('report_response_time', true);
-export const dailyUpdateResponseTime = new Trend('daily_update_response_time', true);
+export const dailyScrumResponseTime = new Trend('daily_scrum_response_time', true);
 
 export const authErrorRate = new Rate('auth_errors');
 export const apiErrorRate = new Rate('api_errors');
@@ -16,7 +16,7 @@ export const logoutCount = new Counter('logouts');
 export const taskUpdateCount = new Counter('task_updates');
 export const pbiCreateCount = new Counter('pbi_creates');
 export const sprintStartCount = new Counter('sprint_starts');
-export const dailyUpdateCount = new Counter('daily_updates');
+export const dailyScrumCount = new Counter('daily_scrums');
 
 export const activeUsers = new Gauge('active_users');
 export const dbConnections = new Gauge('db_connections');
@@ -38,8 +38,8 @@ export function recordResponseTime(category, duration) {
     case 'report':
       reportResponseTime.add(duration);
       break;
-    case 'dailyUpdate':
-      dailyUpdateResponseTime.add(duration);
+    case 'dailyScrum':
+      dailyScrumResponseTime.add(duration);
       break;
     default:
       break;
@@ -81,8 +81,8 @@ export function recordOperation(operation) {
     case 'sprintStart':
       sprintStartCount.add(1);
       break;
-    case 'dailyUpdate':
-      dailyUpdateCount.add(1);
+    case 'dailyScrum':
+      dailyScrumCount.add(1);
       break;
     default:
       break;

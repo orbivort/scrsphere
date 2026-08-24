@@ -44,23 +44,6 @@
     "planForNextDay": "[Plán fór néxt dày]",
     "progress": "[Prógréss tówàrd Sprínt Góàl]"
   },
-  "dailyUpdate": {
-    "dailyUpdatesList": "[Dàíly úpdàtés lísttttttt]",
-    "impediment": "[Ímpédíménttttt:]",
-    "impedimentPlaceholder": "[Déscríbé àny blóckérs ór ímpédíméntsssssssssssss...]",
-    "impedimentQuestion": "[Àny ímpédíménts? (óptíónàllllllllll)]",
-    "submitDailyScrum": "[Súbmít Dàíly Scrúmmmmmmm]",
-    "submitDailyScrumAriaLabel": "[Súbmít yóúr dàíly scrúm úpdàtéééééééééé]",
-    "submitUpdate": "[Súbmít Úpdàtééééé]",
-    "title": "[Dàíly Úpdàtééééé]",
-    "today": "[Tódàyyy:]",
-    "todayPlaceholder": "[Déscríbé whàt yóú plàn tó wórk ón tódàyyyyyyyyyyyyyy...]",
-    "todayQuestion": "[Whàt wíll yóú dó tódày tó hélp téàm méét thé sprínt góàlllllllllllllllllll?]",
-    "unknownUser": "[Únknówn Úsérrrrr]",
-    "yesterday": "[Yéstérdàyyyy:]",
-    "yesterdayPlaceholder": "[Déscríbé whàt yóú àccómplíshéd yéstérdàyyyyyyyyyyyyyy...]",
-    "yesterdayQuestion": "[Whàt díd yóú dó yéstérdày tó hélp téàm méét thé sprínt góàlllllllllllllllllll?]"
-  },
   "dashboardDetails": "[Dàshbóàrd Détàílsssssss]",
   "dataRefreshed": "[Dàshbóàrd dàtà réfréshéd súccéssfúllyyyyyyyyyyyyy]",
   "daysRemaining": "[dàys rémàíníngggggg]",
@@ -93,7 +76,6 @@
     "totalTasks": "[Tótàl Tàsksssss]"
   },
   "noActiveSprint": "[Nó àctívé spríntttttt]",
-  "noDailyUpdates": "[Nó dàíly úpdàtés fór tódày yéttttttttttt.]",
   "noOpenImpediments": "[Nó ópén ímpédíménts. Gréàt jóbbbbbbbbbbb!]",
   "noSprintGoal": "[Nó Sprínt Góàl défínéd yétttttttttt.]",
   "noTasksYet": "[Nó tàsks àssígnéd tó yóú yétttttttttt.]",
@@ -104,7 +86,6 @@
     "createIncrement": "[Créàté Íncréméntttttt]",
     "reportImpediment": "[Répórt Ímpédíménttttttt]",
     "startSprintPlanning": "[Stàrt Sprínt Plànníngggggggg]",
-    "submitDailyUpdate": "[Súbmít Dàíly Úpdàtééééééé]",
     "title": "[Qúíck Àctíónsssss]",
     "viewSprintBoard": "[Víéw Sprínt Bóàrddddddd]"
   },

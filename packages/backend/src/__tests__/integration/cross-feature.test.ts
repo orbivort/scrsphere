@@ -170,7 +170,6 @@ describe('Cross-Feature Integration Tests', () => {
           await prisma.sprintBacklogChange.deleteMany({ where: { sprint: { teamId: team.id } } });
           await prisma.sprintRetrospective.deleteMany({ where: { sprint: { teamId: team.id } } });
           await prisma.increment.deleteMany({ where: { teamId: team.id } });
-          await prisma.dailyUpdate.deleteMany({ where: { sprint: { teamId: team.id } } });
           await prisma.impediment.deleteMany({ where: { teamId: team.id } });
           await prisma.sprint.deleteMany({ where: { teamId: team.id } });
           await prisma.productBacklogItem.deleteMany({ where: { teamId: team.id } });
@@ -327,30 +326,29 @@ describe('Cross-Feature Integration Tests', () => {
       await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
 
-      const dailyUpdate = await prisma.dailyUpdate.create({
-        data: {
-          id: generateUUIDv7(),
-          sprintId: sprint.id,
-          userId: user.id,
-          updateDate: new Date(),
-          yesterdayWork: 'Worked on feature',
-          todayWork: 'Working on feature',
-          impediment: 'Blocked by external dependency',
-        },
-      });
-
       const cookies = await loginAndGetCookies(email);
 
       const { csrfToken } = extractCsrfFromCookies(cookies);
 
+      const created = await request(app)
+        .post(`/api/v1/daily-scrums/${sprint.id}`)
+        .set('Cookie', cookies)
+        .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+        .send({
+          progressNotes: 'Blocked by external dependency',
+          planForNextDay: 'Plan to unblock',
+        })
+        .expect(201);
+
+      const scrumId = created.body.data.id;
+
       const response = await request(app)
-        .post(`/api/v1/daily-updates/${dailyUpdate.id}/promote-impediment`)
+        .post(`/api/v1/daily-scrums/${scrumId}/promote-impediment`)
         .set('Cookie', cookies)
         .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
         .send({
           title: 'External Dependency Block',
           description: 'Blocked by external dependency - needs resolution',
-          teamId: team.id,
           sprintId: sprint.id,
         })
         .expect(201);
@@ -538,9 +536,9 @@ describe('Cross-Feature Integration Tests', () => {
         data: {
           id: generateUUIDv7(),
           userId: user.id,
-          type: NotificationType.DAILY_UPDATE_REMINDER,
-          title: 'Daily Update Reminder',
-          message: 'Please submit your daily update',
+          type: NotificationType.DAILY_SCRUM_SIGNAL,
+          title: 'Daily Scrum Signal',
+          message: 'Daily Scrum team signal',
         },
       });
 
@@ -586,7 +584,6 @@ describe('Cross-Feature Integration Tests', () => {
 
       const team = await createTestTeam(teamName);
       await addTeamMember(team.id, user.id, 'SCRUM_MASTER');
-      const sprint = await createTestSprint(team.id, 'Export Sprint');
 
       await prisma.productBacklogItem.create({
         data: {
@@ -596,17 +593,6 @@ describe('Cross-Feature Integration Tests', () => {
           status: ItemStatus.DONE,
           storyPoints: 5,
           priority: MoSCoWPriority.COULD_HAVE,
-        },
-      });
-
-      await prisma.dailyUpdate.create({
-        data: {
-          id: generateUUIDv7(),
-          sprintId: sprint.id,
-          userId: user.id,
-          updateDate: new Date(),
-          yesterdayWork: 'Export work',
-          todayWork: 'Export work',
         },
       });
 
@@ -868,33 +854,31 @@ describe('Cross-Feature Integration Tests', () => {
         await addTeamMember(team.id, await getUserIdFromEmail(email), 'DEVELOPERS');
         const sprint = await createTestSprint(team.id, 'Spanish Sprint');
 
-        // Create daily update with Spanish locale
+        // Create a Daily Scrum with Spanish locale
         const { csrfToken } = extractCsrfFromCookies(cookies);
 
-        const userId = await getUserIdFromEmail(email);
+        const created = await request(app)
+          .post(`/api/v1/daily-scrums/${sprint.id}`)
+          .set('Cookie', cookies)
+          .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+          .set(setLocaleHeader('es'))
+          .send({
+            progressNotes: 'Blocked by API issue',
+            planForNextDay: 'Plan to resolve API',
+          })
+          .expect(201);
 
-        const dailyUpdate = await prisma.dailyUpdate.create({
-          data: {
-            id: generateUUIDv7(),
-            sprintId: sprint.id,
-            userId,
-            updateDate: new Date(),
-            yesterdayWork: 'Worked on feature',
-            todayWork: 'Continuing feature',
-            impediment: 'Blocked by API issue',
-          },
-        });
+        const scrumId = created.body.data.id;
 
         // Promote impediment - locale should persist
         const impedimentResponse = await request(app)
-          .post(`/api/v1/daily-updates/${dailyUpdate.id}/promote-impediment`)
+          .post(`/api/v1/daily-scrums/${scrumId}/promote-impediment`)
           .set('Cookie', cookies)
           .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
           .set(setLocaleHeader('es'))
           .send({
             title: 'API Blocking Issue',
             description: 'API issue blocking progress',
-            teamId: team.id,
             sprintId: sprint.id,
           })
           .expect(201);

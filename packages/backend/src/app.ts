@@ -14,7 +14,6 @@ import sprintRoutes from './routes/sprint.routes';
 import goalsRoutes from './routes/goals.routes';
 import workflowRoutes from './routes/workflow.routes';
 import sprintConfigurationRoutes from './routes/sprintConfiguration.routes';
-import dailyUpdateRoutes from './routes/dailyUpdate.routes';
 import dailyScrumRoutes from './routes/dailyScrum.routes';
 import incrementRoutes from './routes/increment.routes';
 import sprintReviewRoutes from './routes/sprintReview.routes';
@@ -183,9 +182,6 @@ v1Router.use('/sprint-backlog', sprintRoutes);
 
 // Sprint Configuration routes
 v1Router.use('/sprint-configuration', sprintConfigurationRoutes);
-
-// Daily Updates routes
-v1Router.use('/daily-updates', dailyUpdateRoutes);
 
 // Daily Scrum routes
 v1Router.use('/daily-scrums', dailyScrumRoutes);

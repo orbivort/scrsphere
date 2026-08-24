@@ -53,7 +53,6 @@ export const EXPORT_CONSTANTS = {
   VALID_DATA_CATEGORIES: [
     'userProfile',
     'teamMemberships',
-    'dailyUpdates',
     'assignedTasks',
     'reportedImpediments',
     'ownedImpediments',

@@ -46,7 +46,6 @@ describe('ImpedimentService', () => {
           reportedBy: { id: 'user-1', firstName: 'John', lastName: 'Doe', email: 'john@test.com' },
           owner: null,
           sprint: null,
-          dailyUpdate: null,
           createdAt: new Date(),
         },
         {
@@ -57,7 +56,6 @@ describe('ImpedimentService', () => {
           reportedBy: { id: 'user-2', firstName: 'Jane', lastName: 'Doe', email: 'jane@test.com' },
           owner: { id: 'user-3', firstName: 'Bob', lastName: 'Smith', email: 'bob@test.com' },
           sprint: { id: 'sprint-1', name: 'Sprint 1' },
-          dailyUpdate: null,
           createdAt: new Date(),
         },
       ];
@@ -88,7 +86,6 @@ describe('ImpedimentService', () => {
         reportedBy: { id: 'user-1', firstName: 'John', lastName: 'Doe', email: 'john@test.com' },
         owner: null,
         sprint: null,
-        dailyUpdate: null,
       };
 
       vi.mocked(prisma.impediment.findFirst).mockResolvedValue(mockImpediment as any);
@@ -120,7 +117,6 @@ describe('ImpedimentService', () => {
         reportedBy: { id: 'user-1', firstName: 'John', lastName: 'Doe', email: 'john@test.com' },
         owner: null,
         sprint: null,
-        dailyUpdate: null,
       };
 
       vi.mocked(prisma.impediment.create).mockResolvedValue(mockImpediment as any);
@@ -148,7 +144,6 @@ describe('ImpedimentService', () => {
         reportedBy: { id: 'user-1', firstName: 'John', lastName: 'Doe', email: 'john@test.com' },
         owner: { id: 'user-2', firstName: 'Jane', lastName: 'Doe', email: 'jane@test.com' },
         sprint: null,
-        dailyUpdate: null,
       };
       const mockReporter = { id: 'user-1', firstName: 'John', lastName: 'Doe' };
 
@@ -186,7 +181,6 @@ describe('ImpedimentService', () => {
         reportedBy: { id: 'user-1', firstName: 'John', lastName: 'Doe', email: 'john@test.com' },
         owner: { id: 'user-1', firstName: 'John', lastName: 'Doe', email: 'john@test.com' },
         sprint: null,
-        dailyUpdate: null,
       };
 
       vi.mocked(prisma.impediment.create).mockResolvedValue(mockImpediment as any);
@@ -214,7 +208,6 @@ describe('ImpedimentService', () => {
         reportedBy: { id: 'user-1', firstName: 'John', lastName: 'Doe', email: 'john@test.com' },
         owner: null,
         sprint: null,
-        dailyUpdate: null,
       };
 
       vi.mocked(prisma.impediment.update).mockResolvedValue(mockImpediment as any);
@@ -237,7 +230,6 @@ describe('ImpedimentService', () => {
         reportedBy: { id: 'user-1', firstName: 'John', lastName: 'Doe', email: 'john@test.com' },
         owner: null,
         sprint: null,
-        dailyUpdate: null,
       };
 
       vi.mocked(prisma.impediment.update).mockResolvedValue(mockImpediment as any);
@@ -277,7 +269,6 @@ describe('ImpedimentService', () => {
         reportedBy: { id: 'user-1', firstName: 'John', lastName: 'Doe', email: 'john@test.com' },
         owner: null,
         sprint: null,
-        dailyUpdate: null,
       };
 
       vi.mocked(prisma.impediment.update).mockResolvedValue(mockImpediment as any);

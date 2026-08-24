@@ -65,7 +65,7 @@ Workflows         → /workflows/*
 Sprints           → /sprints/*
 Sprint Backlog    → /sprint-backlog/*      (shared with sprint routes)
 Sprint Config     → /sprint-configuration/*
-Daily Updates     → /daily-updates/*
+Daily Scrums      → /daily-scrums/*
 Increments        → /increments/*
 Sprint Reviews    → /sprint-reviews/*
 Retrospectives    → /retrospectives/*

@@ -262,21 +262,6 @@ export interface Impediment {
   reportedBy?: User;
   owner?: User;
   sprint?: { id: string; name: string };
-  dailyUpdateId?: string;
-  dailyUpdate?: DailyUpdate;
-}
-
-export interface DailyUpdate {
-  id: string;
-  sprintId: string;
-  userId: string;
-  updateDate: string;
-  yesterdayWork?: string;
-  todayWork?: string;
-  impediment?: string;
-  createdAt: string;
-  user?: User;
-  impedimentRecord?: Impediment;
 }
 
 export interface DailyScrumBacklogAdjustment {

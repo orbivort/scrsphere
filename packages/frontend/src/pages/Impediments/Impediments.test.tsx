@@ -518,43 +518,6 @@ describe('Impediments Component', () => {
         expect(datePattern.test(pageContent)).toBe(true);
       });
     });
-
-    it('should indicate impediments from daily scrum', async () => {
-      const impedimentsWithDailyUpdate = [
-        ...mockImpediments,
-        {
-          id: 'imp-5',
-          teamId: 'team-1',
-          sprintId: 'sprint-1',
-          title: 'Daily update impediment',
-          description: 'Created from daily update',
-          reportedById: 'user-1',
-          status: ImpedimentStatus.OPEN,
-          dailyUpdateId: 'daily-1',
-          createdAt: '2026-02-06T10:00:00Z',
-          updatedAt: '2026-02-06T10:00:00Z',
-          reportedBy: {
-            id: 'user-1',
-            firstName: 'John',
-            lastName: 'Doe',
-            email: 'john@example.com',
-            createdAt: '2026-01-01T00:00:00Z',
-            updatedAt: '2026-01-01T00:00:00Z',
-          },
-        },
-      ];
-
-      (apiService.getImpediments as ReturnType<typeof vi.fn>).mockResolvedValue({
-        success: true,
-        data: impedimentsWithDailyUpdate,
-      });
-
-      renderWithProviders(<Impediments />);
-
-      await waitFor(() => {
-        expect(screen.getByText('Daily update impediment')).toBeInTheDocument();
-      });
-    });
   });
 
   // ============================================================================
@@ -1399,61 +1362,6 @@ describe('Impediments Component', () => {
           screen.getByText('Team ID is required. Please select a team first.')
         ).toBeInTheDocument();
       });
-    });
-  });
-
-  // ============================================================================
-  // NAVIGATION TESTS
-  // ============================================================================
-  describe('Navigation', () => {
-    beforeEach(() => {
-      (apiService.getActiveSprint as ReturnType<typeof vi.fn>).mockResolvedValue({
-        success: true,
-        data: mockActiveSprint,
-      });
-      (apiService.getImpediments as ReturnType<typeof vi.fn>).mockResolvedValue({
-        success: true,
-        data: mockImpediments,
-      });
-    });
-
-    it('should navigate to daily scrum when daily update link is clicked', async () => {
-      const impedimentsWithDailyUpdate = [
-        {
-          ...mockImpediments[0],
-          dailyUpdateId: 'daily-1',
-          dailyUpdate: {
-            id: 'daily-1',
-            userId: 'user-1',
-            updateDate: '2026-02-05T00:00:00Z',
-            user: {
-              firstName: 'John',
-              lastName: 'Doe',
-            },
-          },
-        },
-      ];
-
-      (apiService.getImpediments as ReturnType<typeof vi.fn>).mockResolvedValue({
-        success: true,
-        data: impedimentsWithDailyUpdate,
-      });
-
-      renderWithProviders(<Impediments />);
-
-      await waitFor(() => {
-        expect(screen.getByText('API downtime')).toBeInTheDocument();
-      });
-
-      fireEvent.click(screen.getByText('API downtime'));
-
-      await waitFor(() => {
-        expect(screen.getByText('Impediment Details')).toBeInTheDocument();
-      });
-
-      // Look for link to daily scrum - the component shows "View Daily Update"
-      const dailyScrumLink = screen.getByText(/View Daily Update/i);
-      expect(dailyScrumLink).toBeInTheDocument();
     });
   });
 

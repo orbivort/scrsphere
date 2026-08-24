@@ -139,17 +139,17 @@ The database schema is organized into logical groups:
 │                         SPRINT MANAGEMENT                            │
 ├──────────────────────────────────────────────────────────────────────┤
 │                                                                      │
-│  ┌──────────────┐         ┌──────────────┐         ┌──────────────┐  │
-│  │    Sprint    │◄────────│     Task     │         │ DailyUpdate  │  │
-│  ├──────────────┤    1:N  ├──────────────┤         ├──────────────┤  │
-│  │ id (PK)      │         │ id (PK)      │         │ id (PK)      │  │
-│  │ teamId (FK)  │         │ sprintId (FK)│         │ sprintId (FK)│  │
-│  │ goalId (FK)  │         │ pbiId (FK)   │         │ userId (FK)  │  │
-│  │ name         │         │ title        │         │ updateDate   │  │
-│  │ startDate    │         │ assigneeId   │         │ yesterdayWork│  │
-│  │ endDate      │         │ status       │         │ todayWork    │  │
-│  │ sprintGoal   │         │ estimatedHrs │         │ impediment   │  │
-│  │ status       │         │ remainingHrs │         └──────────────┘  │
+│  ┌──────────────┐         ┌──────────────┐                           │
+│  │    Sprint    │◄────────│     Task     │                           │
+│  ├──────────────┤    1:N  ├──────────────┤                           │
+│  │ id (PK)      │         │ id (PK)      │                           │
+│  │ teamId (FK)  │         │ sprintId (FK)│                           │
+│  │ goalId (FK)  │         │ pbiId (FK)   │                           │
+│  │ name         │         │ title        │                           │
+│  │ startDate    │         │ assigneeId   │                           │
+│  │ endDate      │         │ status       │                           │
+│  │ sprintGoal   │         │ estimatedHrs │                           │
+│  │ status       │         │ remainingHrs │                           │
 │  └──────────────┘         └──────────────┘                           │
 │                                                                      │
 │  ┌──────────────┐         ┌──────────────┐                           │
@@ -437,7 +437,7 @@ Team (1) ──► (N) ProductGoal
 Team (1) ──► (N) Sprint
 ProductGoal (1) ──► (N) ProductBacklogItem
 Sprint (1) ──► (N) Task
-Sprint (1) ──► (N) DailyUpdate
+Sprint (1) ──► (N) DailyScrum
 ```
 
 ### Many-to-Many Relationships
@@ -489,7 +489,6 @@ CREATE INDEX idx_sessions_user_activity ON refresh_tokens(userId, lastActivityAt
 
 -- Date-based queries
 CREATE INDEX idx_sprint_dates ON sprints(startDate, endDate);
-CREATE INDEX idx_daily_updates_date ON daily_updates(updateDate);
 ```
 
 ### Query Optimization Examples

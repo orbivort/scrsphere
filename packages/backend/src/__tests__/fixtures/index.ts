@@ -473,36 +473,6 @@ export const fixtures = {
     }),
   },
 
-  dailyUpdates: {
-    validUpdate: (overrides: Record<string, unknown> = {}) => ({
-      id: generateTestUUID(),
-      sprintId: generateTestUUID(),
-      userId: generateTestUUID(),
-      date: new Date(),
-      yesterday: 'Completed API integration',
-      today: 'Working on frontend components',
-      blockers: ['Waiting for design approval'],
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      user: null,
-      ...overrides,
-    }),
-
-    noBlockersUpdate: (overrides: Record<string, unknown> = {}) => ({
-      id: generateTestUUID(),
-      sprintId: generateTestUUID(),
-      userId: generateTestUUID(),
-      date: new Date(),
-      yesterday: 'Fixed bugs',
-      today: 'Writing tests',
-      blockers: [],
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      user: null,
-      ...overrides,
-    }),
-  },
-
   auth: {
     validRegistration: () => ({
       email: 'newuser@example.com',
@@ -572,6 +542,5 @@ export type FixtureWorkflows = typeof fixtures.workflows;
 export type FixtureConsents = typeof fixtures.consents;
 export type FixtureImpediments = typeof fixtures.impediments;
 export type FixtureRetrospectives = typeof fixtures.retrospectives;
-export type FixtureDailyUpdates = typeof fixtures.dailyUpdates;
 export type FixtureAuth = typeof fixtures.auth;
 export type FixtureValidations = typeof fixtures.validations;

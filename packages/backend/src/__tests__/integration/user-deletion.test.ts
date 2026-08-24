@@ -128,7 +128,6 @@ describe('User Profile Deletion Integration Tests', () => {
           await prisma.refreshToken.deleteMany({ where: { userId: user.id } });
           await prisma.notification.deleteMany({ where: { userId: user.id } });
           await prisma.teamMember.deleteMany({ where: { userId: user.id } });
-          await prisma.dailyUpdate.deleteMany({ where: { userId: user.id } });
           await prisma.retroItemVote.deleteMany({ where: { userId: user.id } });
           await prisma.task.updateMany({
             where: { assigneeId: user.id },

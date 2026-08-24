@@ -52,7 +52,7 @@ const mockNotifications = [
   {
     id: 'notif-3',
     userId: 'user-1',
-    type: NotificationType.DAILY_UPDATE_REMINDER,
+    type: NotificationType.DIRECT_MESSAGE,
     title: 'Test Daily Update Reminder',
     message: 'Remember to submit your daily update',
     isRead: false,
@@ -146,7 +146,6 @@ describe('Notifications Component', () => {
       expect(screen.getByText('Team Invitations')).toBeInTheDocument();
       expect(screen.getByText('Task Assignments')).toBeInTheDocument();
       expect(screen.getByText('Impediments')).toBeInTheDocument();
-      expect(screen.getByText('Reminders')).toBeInTheDocument();
       expect(screen.getByText('Team Created')).toBeInTheDocument();
       expect(screen.getByText('Team Updated')).toBeInTheDocument();
       expect(screen.getByText('Team Deleted')).toBeInTheDocument();
@@ -567,13 +566,6 @@ describe('Notifications Component', () => {
           createdAt: new Date().toISOString(),
         },
         {
-          id: 't5',
-          type: NotificationType.DAILY_UPDATE_REMINDER,
-          title: 'Daily Reminder Unique',
-          isRead: false,
-          createdAt: new Date().toISOString(),
-        },
-        {
           id: 't6',
           type: NotificationType.TEAM_CREATED,
           title: 'Team Created Unique',
@@ -606,8 +598,8 @@ describe('Notifications Component', () => {
       mockUseNotifications.mockReturnValue({
         data: {
           notifications: allTypesNotifications,
-          pagination: { page: 1, limit: 50, total: 9, totalPages: 1 },
-          unreadCount: 9,
+          pagination: { page: 1, limit: 50, total: 8, totalPages: 1 },
+          unreadCount: 8,
         },
         isLoading: false,
         error: null,
@@ -624,7 +616,6 @@ describe('Notifications Component', () => {
       expect(screen.getByText('Team Removal Unique')).toBeInTheDocument();
       expect(screen.getByText('Task Assign Unique')).toBeInTheDocument();
       expect(screen.getByText('Impediment Assign Unique')).toBeInTheDocument();
-      expect(screen.getByText('Daily Reminder Unique')).toBeInTheDocument();
       expect(screen.getByText('Team Created Unique')).toBeInTheDocument();
       expect(screen.getByText('Team Updated Unique')).toBeInTheDocument();
       expect(screen.getByText('Team Deleted Unique')).toBeInTheDocument();

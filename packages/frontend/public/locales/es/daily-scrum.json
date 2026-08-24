@@ -15,7 +15,6 @@
     "clickToExpand": "Clic para expandir",
     "closeDialog": "Cerrar diálogo",
     "closeForm": "Cerrar formulario",
-    "dailyUpdateAriaLabel": "Actualización diaria de {{name}}. {{expandAction}}.",
     "impedimentStatus": "Estado del Impediment: {{status}}",
     "trackedAsFormalImpediment": "Rastreado como Impediment formal",
     "viewMode": "Modo de vista"
@@ -122,8 +121,6 @@
     "creating": "Creando...",
     "descriptionLabel": "Descripción",
     "descriptionPlaceholder": "Descripción detallada del Impediment",
-    "fromUpdateBy": "Desde Daily Scrum de:",
-    "originalImpedimentText": "Texto Original del Impediment:",
     "priority": "Prioridad",
     "priorityHigh": "Alta",
     "priorityLow": "Baja",
@@ -230,6 +227,5 @@
     "sendReminder": "Enviar Recordatorio",
     "sending": "Enviando...",
     "title": "Esperando Actualizaciones"
-  },
-  "yourDailyUpdate": "Su Actualización Diaria"
+  }
 }

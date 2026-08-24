@@ -8,7 +8,7 @@ import {
   randomFloat,
   randomItem,
   generateTeamUserId,
-  generateDailyUpdateData,
+  generateDailyScrumData,
   getAuthHeaders,
   getUserTeams,
   getActiveSprint,
@@ -101,17 +101,21 @@ function executeOperation(operation, token, csrfToken, jar, teamId, sprintId) {
       requestCount.add(1);
       break;
     }
-    case 'submitDailyUpdate': {
-      const updateData = generateDailyUpdateData(sprintId, __VU);
-      const res = http.post(`${config.baseUrl}/api/v1/daily-updates`, JSON.stringify(updateData), {
-        headers,
-        jar,
-        tags: { operation: 'submitDailyUpdate' },
-      });
-      check(res, { 'daily update submitted': (r) => r.status === 201 || r.status === 200 });
-      recordResponseTime('dailyUpdate', res.timings.duration);
+    case 'submitDailyScrum': {
+      const scrumData = generateDailyScrumData(sprintId, __VU);
+      const res = http.post(
+        `${config.baseUrl}/api/v1/daily-scrums/${sprintId}`,
+        JSON.stringify(scrumData),
+        {
+          headers,
+          jar,
+          tags: { operation: 'submitDailyScrum' },
+        }
+      );
+      check(res, { 'daily scrum submitted': (r) => r.status === 201 || r.status === 200 });
+      recordResponseTime('dailyScrum', res.timings.duration);
       requestCount.add(1);
-      recordOperation('dailyUpdate');
+      recordOperation('dailyScrum');
       break;
     }
     default:
@@ -159,7 +163,7 @@ export default function workdayEnduranceTest() {
     { name: 'viewBacklog', weight: 25 },
     { name: 'updateTask', weight: 20 },
     { name: 'viewReports', weight: 15 },
-    { name: 'submitDailyUpdate', weight: 10 },
+    { name: 'submitDailyScrum', weight: 10 },
   ];
 
   const totalWeight = operations.reduce((sum, op) => sum + op.weight, 0);

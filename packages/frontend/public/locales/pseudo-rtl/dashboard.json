@@ -42,23 +42,6 @@
     "planForNextDay": "Plan for next day",
     "progress": "Progress toward Sprint Goal"
   },
-  "dailyUpdate": {
-    "dailyUpdatesList": "Daily updates list",
-    "impediment": "Impediment:",
-    "impedimentPlaceholder": "Describe any blockers or impediments...",
-    "impedimentQuestion": "Any impediments? (optional)",
-    "submitDailyScrum": "Submit Daily Scrum",
-    "submitDailyScrumAriaLabel": "Submit your daily scrum update",
-    "submitUpdate": "Submit Update",
-    "title": "Daily Update",
-    "today": "Today:",
-    "todayPlaceholder": "Describe what you plan to work on today...",
-    "todayQuestion": "What will you do today to help team meet the sprint goal?",
-    "unknownUser": "Unknown User",
-    "yesterday": "Yesterday:",
-    "yesterdayPlaceholder": "Describe what you accomplished yesterday...",
-    "yesterdayQuestion": "What did you do yesterday to help team meet the sprint goal?"
-  },
   "dashboardDetails": "Dashboard Details",
   "dataRefreshed": "Dashboard data refreshed successfully",
   "daysRemaining": "days remaining",
@@ -91,7 +74,6 @@
     "totalTasks": "Total Tasks"
   },
   "noActiveSprint": "No active sprint",
-  "noDailyUpdates": "No daily updates for today yet.",
   "noOpenImpediments": "No open impediments. Great job!",
   "noSprintGoal": "No Sprint Goal defined yet.",
   "noTasksYet": "No tasks assigned to you yet.",
@@ -102,7 +84,6 @@
     "createIncrement": "Create Increment",
     "reportImpediment": "Report Impediment",
     "startSprintPlanning": "Start Sprint Planning",
-    "submitDailyUpdate": "Submit Daily Update",
     "title": "Quick Actions",
     "viewSprintBoard": "View Sprint Board"
   },

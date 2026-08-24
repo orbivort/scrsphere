@@ -16,12 +16,14 @@ vi.mock('../../services', () => ({
   apiService: {
     getActiveSprint: vi.fn(),
     getSprintTasks: vi.fn(),
-    getDailyUpdates: vi.fn(),
-    getTeamMembersWithUpdates: vi.fn(),
-    createDailyUpdate: vi.fn(),
-    promoteToImpediment: vi.fn(),
-    sendDailyUpdateReminder: vi.fn(),
+    getDailyScrum: vi.fn(),
+    getDailyScrumParticipation: vi.fn(),
+    createDailyScrum: vi.fn(),
+    updateDailyScrum: vi.fn(),
+    promoteImpedimentFromDailyScrum: vi.fn(),
+    sendDailyScrumTeamSignal: vi.fn(),
     getProductGoals: vi.fn(),
+    getImpediments: vi.fn(),
   },
 }));
 
@@ -164,11 +166,9 @@ describe('scratch', () => {
       },
     });
     mockApiService.getSprintTasks.mockResolvedValue({ success: true, data: [] });
-    mockApiService.getDailyUpdates.mockResolvedValue({ success: true, data: [] });
-    mockApiService.getTeamMembersWithUpdates.mockResolvedValue({
-      success: true,
-      data: { submitted: [], pending: [] },
-    });
+    mockApiService.getDailyScrum.mockResolvedValue({ success: true, data: null });
+    mockApiService.getDailyScrumParticipation.mockResolvedValue({ success: true, data: null });
+    mockApiService.getImpediments.mockResolvedValue({ success: true, data: [] });
     mockApiService.getProductGoals.mockResolvedValue({ success: true, data: [] });
   });
 

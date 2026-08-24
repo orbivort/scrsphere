@@ -13,7 +13,6 @@
     "clickToExpand": "Click to expand",
     "closeDialog": "Close dialog",
     "closeForm": "Close form",
-    "dailyUpdateAriaLabel": "{{name}}'s daily update. {{expandAction}}.",
     "impedimentStatus": "Impediment status: {{status}}",
     "trackedAsFormalImpediment": "Tracked as formal impediment",
     "viewMode": "View mode"
@@ -62,8 +61,6 @@
     "creating": "Creating...",
     "descriptionLabel": "Description",
     "descriptionPlaceholder": "Detailed description of the impediment",
-    "fromUpdateBy": "From Daily Update by:",
-    "originalImpedimentText": "Original Impediment Text:",
     "priority": "Priority",
     "priorityHigh": "High",
     "priorityLow": "Low",
@@ -159,6 +156,5 @@
     "sendReminder": "Send Reminder",
     "sending": "Sending...",
     "title": "Waiting for Updates"
-  },
-  "yourDailyUpdate": "Your Daily Update"
+  }
 }

@@ -208,7 +208,6 @@ export {
   createTestRetrospectiveInDb,
   createTestDoDInDb,
   createTestDoRInDb,
-  createTestDailyUpdateInDb,
   createTestIncrementInDb,
   createTestSprintConfigurationInDb,
   createTestSprintReviewInDb,

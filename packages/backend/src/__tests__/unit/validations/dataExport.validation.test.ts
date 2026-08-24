@@ -175,7 +175,6 @@ describe('Data Export Validation', () => {
             dataCategories: [
               'userProfile',
               'teamMemberships',
-              'dailyUpdates',
               'assignedTasks',
               'reportedImpediments',
             ],

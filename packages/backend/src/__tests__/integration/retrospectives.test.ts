@@ -156,9 +156,6 @@ describe('Retrospectives Integration Tests', () => {
             where: { teamId: team.id },
           });
           await prisma.impediment.deleteMany({ where: { teamId: team.id } });
-          await prisma.dailyUpdate.deleteMany({
-            where: { sprint: { teamId: team.id } },
-          });
           await prisma.sprintBacklogChange.deleteMany({
             where: { sprint: { teamId: team.id } },
           });

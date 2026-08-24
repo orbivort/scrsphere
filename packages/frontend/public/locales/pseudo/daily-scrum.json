@@ -15,7 +15,6 @@
     "clickToExpand": "[Clíck tó éxpàndddddd]",
     "closeDialog": "[Clósé díàlóggggg]",
     "closeForm": "[Clósé fórmmmm]",
-    "dailyUpdateAriaLabel": "[{{name}}'ss ddààííllyy úúppddààtté. {{expandAction}}.]",
     "impedimentStatus": "[Ímpédímént stàtússsssss: {{status}}]",
     "trackedAsFormalImpediment": "[Tràckéd às fórmàl ímpédíméntttttttttt]",
     "viewMode": "[Víéw módéééé]"
@@ -122,8 +121,6 @@
     "creating": "[CCrrééààttíínng...]",
     "descriptionLabel": "[Déscríptíónnnnn]",
     "descriptionPlaceholder": "[Détàíléd déscríptíón óf thé ímpédíménttttttttttttt]",
-    "fromUpdateBy": "[Fróm Dàíly Scrúm byyyyyyy:]",
-    "originalImpedimentText": "[Órígínàl Ímpédímént Téxttttttttt:]",
     "priority": "[Príórítyyyy]",
     "priorityHigh": "[HHííggh]",
     "priorityLow": "[Lóww]",
@@ -230,6 +227,5 @@
     "sendReminder": "[Sénd Rémíndérrrrr]",
     "sending": "[Séndíngggg...]",
     "title": "[Wàítíng fór Úpdàtésssssss]"
-  },
-  "yourDailyUpdate": "[Yóúr Dàíly Úpdàtééééééé]"
+  }
 }
