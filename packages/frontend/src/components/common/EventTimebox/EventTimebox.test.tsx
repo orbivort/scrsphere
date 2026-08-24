@@ -56,8 +56,10 @@ const { timeboxServiceMock } = vi.hoisted(() => {
   };
 });
 
-vi.mock('../../../services/domain/timebox.service', () => ({
-  timeboxService: timeboxServiceMock,
+// The component uses the swapped `apiService` (mock in dev, real otherwise), so the
+// test mocks `apiService` from the services index rather than the domain service.
+vi.mock('../../../services', () => ({
+  apiService: timeboxServiceMock,
 }));
 
 const renderWithClient = (ui: React.ReactElement) => {

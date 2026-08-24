@@ -354,7 +354,7 @@ export const Reports: React.FC = () => {
                       </span>
                     </div>
                     <span className={getStatusBadgeClass(sprint.status)}>
-                      {t(`sprintStatusLabels.${sprint.status}` as never)}
+                      {t(`sprintStatusLabels.${sprint.status.toUpperCase()}` as never)}
                     </span>
                   </div>
                   <div className={styles['history-stats']}>

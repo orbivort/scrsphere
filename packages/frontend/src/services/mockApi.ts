@@ -72,6 +72,7 @@ import {
 } from '../types';
 import type { BulkUploadItem } from '../pages/Backlog/BulkUpload/bulkUploadUtils';
 
+import type { TimeboxQuery } from './domain/timebox.service';
 import { mockSuccess, mockError, mockDelay } from './mockResponseUtils';
 import {
   mockUsers,
@@ -92,6 +93,17 @@ import {
 const generateUUID = () => crypto.randomUUID();
 
 const delay = (ms: number = 300) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// Returns the date in the user's local timezone (YYYY-MM-DD). The Daily Scrum
+// page queries by its locally-formatted "today" (formatLocalDate), so the mock
+// seed and lookups must use the same local date or "Today's Daily Scrum" would
+// show the empty state whenever the local timezone differs from UTC.
+const formatLocalDate = (d: Date = new Date()): string => {
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
 
 const getMockSessionInfo = (): SessionInfo => ({
   expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
@@ -556,8 +568,10 @@ class MockApiService {
       success: true,
       data: {
         ...activeSprint,
+        // Keep the sprint's product backlog items so the board can resolve each task's
+        // parent PBI (e.g. for the PBI preview "mark as done" popup).
+        items: activeSprint.items,
         tasks: sprintTasks,
-        items: [],
       },
     };
   }
@@ -847,6 +861,90 @@ class MockApiService {
     };
   }
 
+  /**
+   * Return the id of the first selectable draft sprint for the current team: the earliest
+   * PLANNED (draft) sprint that is not yet in the past and therefore appears in the Sprint
+   * Planning sprint selector. This sprint is seeded with a ready-to-resume planning draft
+   * so the prototype demonstrates task decomposition + assignment out of the box.
+   */
+  private getFirstSelectableSprintId(): string | null {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    const teamId = getCurrentTeam().id;
+
+    const selectable = this.generatedSprintsStore
+      .filter(
+        (s) =>
+          s.teamId === teamId &&
+          s.status === SprintStatus.PLANNED &&
+          !!s.startDate &&
+          !!s.endDate &&
+          new Date(s.endDate).getTime() >= now.getTime()
+      )
+      .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
+
+    return selectable[0]?.id ?? null;
+  }
+
+  /**
+   * Build a deterministic, pre-populated Sprint Planning draft (with task decomposition and
+   * Developer assignment) for the first selectable draft sprint. It is only used when the
+   * selected sprint has no persisted draft yet, so a real saved draft always takes priority.
+   */
+  private buildSeededPlanningDraft(): {
+    sprintGoal: string;
+    items: Array<{ pbiId: string }>;
+    tasks: Array<{
+      id: string;
+      pbiId: string;
+      title: string;
+      description: string | null;
+      assigneeId: string | null;
+      estimatedHours: number | null;
+      remainingHours: number | null;
+    }>;
+    conflicts: Array<{ pbiId: string; sprintName: string }>;
+  } {
+    // Developers on the Alpha team (self-managed: any Developer may be assigned).
+    const sarah = UUIDS.users.scrumMaster;
+    const emma = UUIDS.users.developer2;
+    const alex = UUIDS.users.guest;
+
+    const seed = (
+      id: string,
+      pbiId: string,
+      title: string,
+      assigneeId: string,
+      estimatedHours: number
+    ) => ({
+      id,
+      pbiId,
+      title,
+      description: null,
+      assigneeId,
+      estimatedHours,
+      remainingHours: estimatedHours,
+    });
+
+    return {
+      sprintGoal: 'Deliver product backlog management and team dashboard to streamline planning',
+      items: [{ pbiId: 'pbi-005' }, { pbiId: 'pbi-006' }],
+      tasks: [
+        // pbi-005: Product backlog management (13 story points -> 5 tasks)
+        seed('seed-task-001', 'pbi-005', 'Design backlog data model', sarah, 8),
+        seed('seed-task-002', 'pbi-005', 'Implement list and filtering UI', emma, 8),
+        seed('seed-task-003', 'pbi-005', 'Build drag-and-drop prioritization', alex, 8),
+        seed('seed-task-004', 'pbi-005', 'Add search functionality', sarah, 8),
+        seed('seed-task-005', 'pbi-005', 'Write unit tests for backlog utils', emma, 8),
+        // pbi-006: Team management dashboard (8 story points -> 3 tasks)
+        seed('seed-task-006', 'pbi-006', 'Design dashboard layout', alex, 8),
+        seed('seed-task-007', 'pbi-006', 'Implement role management', sarah, 8),
+        seed('seed-task-008', 'pbi-006', 'Build activity timeline', emma, 8),
+      ],
+      conflicts: [],
+    };
+  }
+
   async getSprintPlanningDraft(id: string): Promise<
     ApiResponse<{
       sprintId: string | null;
@@ -878,6 +976,23 @@ class MockApiService {
         remainingHours: t.remainingHours ?? null,
       }));
     const itemPbiIds = Array.from(new Set(tasks.map((t) => t.pbiId)));
+
+    // When the selected sprint is the first selectable draft sprint and it has no persisted
+    // draft yet, seed a realistic planning draft (items + task assignment) so the demo shows
+    // the full planning flow and enables the "Save Sprint Backlog" action immediately.
+    if (tasks.length === 0 && id === this.getFirstSelectableSprintId()) {
+      const seeded = this.buildSeededPlanningDraft();
+      return {
+        success: true,
+        data: {
+          sprintId: id,
+          sprintGoal: seeded.sprintGoal,
+          items: seeded.items,
+          tasks: seeded.tasks,
+          conflicts: seeded.conflicts,
+        },
+      };
+    }
 
     return {
       success: true,
@@ -931,10 +1046,22 @@ class MockApiService {
   }
 
   // ==================== Tasks ====================
+  /**
+   * Enrich a task with its parent Product Backlog Item so the Sprint Board can show
+   * the parent PBI (TaskCard) and open the PBI preview popup. Mirrors the backend,
+   * which embeds `pbi: { id, title }` on every task.
+   */
+  private attachParentPbi(tasks: Task[]): Task[] {
+    return tasks.map((task) => {
+      const pbi = mockProductBacklogItems.find((p) => p.id === task.pbiId);
+      return pbi ? { ...task, pbi } : task;
+    });
+  }
+
   async getSprintTasks(sprintId: string): Promise<ApiResponse<Task[]>> {
     await delay(300);
     const tasks = mockTasks.filter((t) => t.sprintId === sprintId);
-    return { success: true, data: tasks };
+    return { success: true, data: this.attachParentPbi(tasks) };
   }
 
   async createTask(sprintId: string, task: Partial<Task>): Promise<ApiResponse<Task>> {
@@ -999,6 +1126,32 @@ class MockApiService {
     return { success: true, data: activeSprint ?? (mockSprints[0] as Sprint) };
   }
 
+  async cancelSprint(id: string, reason: string): Promise<ApiResponse<Sprint>> {
+    await delay(500);
+    const sprintIndex = mockSprints.findIndex((s) => s.id === id);
+    if (sprintIndex === -1) {
+      return {
+        success: false,
+        error: {
+          code: 'NOT_FOUND',
+          message: 'Sprint not found',
+        },
+      };
+    }
+
+    const sprint = mockSprints[sprintIndex] as Sprint;
+    const cancelledSprint: Sprint = {
+      ...sprint,
+      status: SprintStatus.CANCELLED,
+      cancellationReason: reason.trim() ? reason : sprint.cancellationReason,
+      updatedAt: new Date().toISOString(),
+    };
+
+    mockSprints[sprintIndex] = cancelledSprint;
+
+    return { success: true, data: cancelledSprint };
+  }
+
   async getStatusChangeHistory(
     _entityType: string,
     _entityId: string,
@@ -1029,25 +1182,58 @@ class MockApiService {
   private timeboxStore: Record<string, TimeboxState & { lastTick?: number }> = {};
 
   // ==================== Daily Scrum (team-level, goal-focused) ====================
-  private dynamicDailyScrums: DailyScrum[] = [];
+  /**
+   * Seed a Daily Scrum record for the active Sprint (sprint-3) so the Dashboard
+   * "Inspect & Adapt" card (and the Daily Scrum page) render realistic data out
+   * of the box in mock mode, instead of showing the empty state. The date is a
+   * fixed constant so the same record is shown regardless of the real date; the
+   * query methods below deliberately match by sprint and ignore the date.
+   */
+  private static readonly SCRUM_SEED_DATE = '2026-08-25';
 
-  async getDailyScrum(sprintId: string, date?: string): Promise<ApiResponse<DailyScrum | null>> {
+  private dynamicDailyScrums: DailyScrum[] = [
+    {
+      id: 'scrum-seed-active',
+      sprintId: 'sprint-3',
+      scrumDate: MockApiService.SCRUM_SEED_DATE,
+      progressNotes:
+        'Burndown chart analytics and historical daily updates are progressing well; the team resolved the notification reminder review early.',
+      adaptationsNotes:
+        'Adjusted pairing so Emma and Mike can unblock the impediment workflow before the end of sprint.',
+      planForNextDay:
+        'Focus on completing the impediment CRUD operations and updating the API documentation for new endpoints.',
+      focusMode: 'goal',
+      sprintGoal:
+        'Complete daily Scrum and impediment tracking features to improve team collaboration',
+      participants: mockUsers.slice(0, 4).map((u) => ({
+        id: `sp-seed-${u.id}`,
+        userId: u.id,
+        user: u,
+      })) as DailyScrumParticipant[],
+      backlogAdjustments: [],
+      createdAt: `${MockApiService.SCRUM_SEED_DATE}T09:15:00.000Z`,
+      updatedAt: `${MockApiService.SCRUM_SEED_DATE}T09:18:00.000Z`,
+    },
+  ];
+
+  // The mock deliberately returns the seeded Inspect & Adapt record for a sprint
+  // regardless of the requested date. This keeps the same realistic data visible
+  // even when the date changes (e.g. timezone differences or a new day), instead
+  // of dropping to the empty state whenever the queried date differs from a seed
+  // date. This is mock-only behavior and does not affect the production API.
+  async getDailyScrum(sprintId: string, _date?: string): Promise<ApiResponse<DailyScrum | null>> {
     await delay(250);
 
-    const scrumDate = date ?? new Date().toISOString().split('T')[0] ?? '';
-    const allScrums = [...this.dynamicDailyScrums];
-    const found = allScrums.find((s) => s.sprintId === sprintId && s.scrumDate === scrumDate);
+    const found = this.dynamicDailyScrums.find((s) => s.sprintId === sprintId);
     return { success: true, data: found ?? null };
   }
 
-  async getDailyScrums(sprintId: string, date?: string): Promise<ApiResponse<DailyScrum[]>> {
+  async getDailyScrums(sprintId: string, _date?: string): Promise<ApiResponse<DailyScrum[]>> {
     await delay(250);
 
-    let scrums = this.dynamicDailyScrums.filter((s) => s.sprintId === sprintId);
-    if (date) {
-      scrums = scrums.filter((s) => s.scrumDate === date);
-    }
-    scrums.sort((a, b) => b.scrumDate.localeCompare(a.scrumDate));
+    const scrums = this.dynamicDailyScrums
+      .filter((s) => s.sprintId === sprintId)
+      .sort((a, b) => b.scrumDate.localeCompare(a.scrumDate));
     return { success: true, data: scrums };
   }
 
@@ -1058,7 +1244,7 @@ class MockApiService {
     await delay(300);
 
     const currentUser = getCurrentUser();
-    const today = new Date().toISOString().split('T')[0] ?? '';
+    const today = formatLocalDate();
 
     const existing = this.dynamicDailyScrums.find(
       (s) => s.sprintId === sprintId && s.scrumDate === today
@@ -1149,7 +1335,7 @@ class MockApiService {
 
   async getDailyScrumParticipation(
     sprintId: string,
-    date: string
+    _date?: string
   ): Promise<
     ApiResponse<{
       dailyScrum: DailyScrum | null;
@@ -1159,9 +1345,7 @@ class MockApiService {
   > {
     await delay(250);
 
-    const allScrums = [...this.dynamicDailyScrums];
-    const dailyScrum =
-      allScrums.find((s) => s.sprintId === sprintId && s.scrumDate === date) ?? null;
+    const dailyScrum = this.dynamicDailyScrums.find((s) => s.sprintId === sprintId) ?? null;
 
     const team = getCurrentTeam();
     const participantUserIds = new Set(dailyScrum?.participants.map((p) => p.userId) ?? []);
@@ -1187,10 +1371,7 @@ class MockApiService {
   ): Promise<ApiResponse<{ sentCount: number; message: string }>> {
     await delay(250);
 
-    const today = new Date().toISOString().split('T')[0];
-    const allScrums = [...this.dynamicDailyScrums];
-    const dailyScrum =
-      allScrums.find((s) => s.sprintId === sprintId && s.scrumDate === today) ?? null;
+    const dailyScrum = this.dynamicDailyScrums.find((s) => s.sprintId === sprintId) ?? null;
     const team = getCurrentTeam();
     const participantUserIds = new Set(dailyScrum?.participants.map((p) => p.userId) ?? []);
     const memberCount = (team.members ?? []).filter(
@@ -1206,6 +1387,63 @@ class MockApiService {
             : `Daily Scrum signal sent to ${memberCount} team members`,
       },
     };
+  }
+
+  async promoteImpedimentFromDailyScrum(
+    dailyScrumId: string,
+    impedimentData: {
+      title: string;
+      description?: string;
+      ownerId?: string;
+      priority?: string;
+      sprintId?: string;
+    }
+  ): Promise<ApiResponse<{ dailyScrum: DailyScrum; impediment: Impediment }>> {
+    await delay(350);
+
+    const title = impedimentData.title.trim();
+    if (!title) {
+      return {
+        success: false,
+        error: {
+          code: 'BAD_REQUEST',
+          message: 'An impediment title is required',
+        },
+      };
+    }
+
+    const scrumIndex = this.dynamicDailyScrums.findIndex((s) => s.id === dailyScrumId);
+    if (scrumIndex === -1) {
+      return {
+        success: false,
+        error: {
+          code: 'NOT_FOUND',
+          message: 'Daily Scrum not found',
+        },
+      };
+    }
+
+    const dailyScrum = this.dynamicDailyScrums[scrumIndex] as DailyScrum;
+    const currentUser = getCurrentUser();
+    const newImpediment: Impediment = {
+      id: `imp-${Date.now()}`,
+      teamId: dailyScrum.sprintId
+        ? (mockSprints.find((s) => s.id === dailyScrum.sprintId)?.teamId ?? getCurrentTeam().id)
+        : getCurrentTeam().id,
+      sprintId: impedimentData.sprintId ?? dailyScrum.sprintId,
+      title,
+      description: impedimentData.description ?? '',
+      reportedById: currentUser.id,
+      ownerId: impedimentData.ownerId,
+      status: ImpedimentStatus.OPEN,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      reportedBy: currentUser,
+    };
+
+    mockImpediments.push(newImpediment);
+
+    return { success: true, data: { dailyScrum, impediment: newImpediment } };
   }
 
   // ==================== Impediments ====================
@@ -1282,46 +1520,115 @@ class MockApiService {
     };
   }
 
-  async getSprintHistory(_teamId: string): Promise<ApiResponse<SprintHistoryItem[]>> {
+  async getSprintHistory(teamId: string): Promise<ApiResponse<SprintHistoryItem[]>> {
     await delay(300);
 
-    const history: SprintHistoryItem[] = mockSprints.map((sprint) => ({
-      id: sprint.id,
-      name: sprint.name,
-      startDate: sprint.startDate,
-      endDate: sprint.endDate,
-      status: sprint.status,
-      sprintGoal: sprint.sprintGoal,
-      plannedPoints: 13 + Math.floor(Math.random() * 10),
-      completedPoints:
-        sprint.status === SprintStatus.COMPLETED
-          ? 13 + Math.floor(Math.random() * 8)
-          : Math.floor(Math.random() * 10),
-      teamMembers: 5,
-      impediments: Math.floor(Math.random() * 3),
-    }));
+    const team = mockTeams.find((t) => t.id === teamId);
+    const memberCount = (team?.members ?? []).length || 5;
+
+    const history: SprintHistoryItem[] = mockSprints
+      .filter((sprint) => sprint.teamId === teamId)
+      .map((sprint) => {
+        const items = sprint.items ?? [];
+        const plannedPoints = items.reduce((sum, item) => sum + (item.storyPoints ?? 0), 0);
+        const completedPoints = items
+          .filter((item) => item.status === ItemStatus.DONE)
+          .reduce((sum, item) => sum + (item.storyPoints ?? 0), 0);
+
+        return {
+          id: sprint.id,
+          name: sprint.name,
+          startDate: sprint.startDate,
+          endDate: sprint.endDate,
+          status: sprint.status,
+          sprintGoal: sprint.sprintGoal,
+          plannedPoints,
+          completedPoints:
+            sprint.status === SprintStatus.COMPLETED
+              ? completedPoints || plannedPoints
+              : completedPoints,
+          teamMembers: memberCount,
+          impediments: mockImpediments.filter((i) => i.sprintId === sprint.id).length,
+        };
+      });
 
     return { success: true, data: history };
   }
 
-  async getTeamMetrics(_teamId: string): Promise<ApiResponse<TeamMetrics>> {
+  async getTeamMetrics(teamId: string): Promise<ApiResponse<TeamMetrics>> {
     await delay(300);
 
+    const history = mockSprints.filter((sprint) => sprint.teamId === teamId);
+    const completedSprints = history.filter((sprint) => sprint.status === SprintStatus.COMPLETED);
+
+    const completedPointsList = completedSprints.map((sprint) => {
+      const items = sprint.items ?? [];
+      const plannedPoints = items.reduce((sum, item) => sum + (item.storyPoints ?? 0), 0);
+      const donePoints = items
+        .filter((item) => item.status === ItemStatus.DONE)
+        .reduce((sum, item) => sum + (item.storyPoints ?? 0), 0);
+      return {
+        plannedPoints,
+        completedPoints: donePoints || plannedPoints,
+      };
+    });
+
+    const averageVelocity =
+      completedPointsList.length === 0
+        ? 0
+        : completedPointsList.reduce((sum, entry) => sum + entry.completedPoints, 0) /
+          completedPointsList.length;
+
+    const velocityTrend = (() => {
+      if (completedPointsList.length < 2) return 0;
+      const previous = completedPointsList[completedPointsList.length - 2]?.completedPoints ?? 0;
+      const latest = completedPointsList[completedPointsList.length - 1]?.completedPoints ?? 0;
+      if (previous === 0) return 0;
+      return Math.round(((latest - previous) / previous) * 100);
+    })();
+
+    const fullyDelivered = completedPointsList.filter(
+      (entry) => entry.completedPoints >= entry.plannedPoints
+    ).length;
+    const completionRate =
+      completedPointsList.length === 0
+        ? 0
+        : Math.round((fullyDelivered / completedPointsList.length) * 100);
+
+    const teamImpediments = mockImpediments.filter((i) => i.teamId === teamId);
+
     const metrics: TeamMetrics = {
-      averageVelocity: 15.5,
-      velocityTrend: 12,
-      completionRate: 85,
+      averageVelocity: Math.round(averageVelocity * 10) / 10,
+      velocityTrend,
+      completionRate,
       impediments: {
-        resolved: 2,
-        total: 3,
+        resolved: teamImpediments.filter((i) => i.status === ImpedimentStatus.RESOLVED).length,
+        total: teamImpediments.length,
       },
     };
 
     return { success: true, data: metrics };
   }
 
-  async getInsights(_teamId: string): Promise<ApiResponse<Insight[]>> {
+  async getInsights(teamId: string): Promise<ApiResponse<Insight[]>> {
     await delay(300);
+
+    const history = mockSprints.filter((sprint) => sprint.teamId === teamId);
+    const completedSprints = history.filter((sprint) => sprint.status === SprintStatus.COMPLETED);
+
+    const allDelivered = completedSprints.every((sprint) => {
+      const items = sprint.items ?? [];
+      const plannedPoints = items.reduce((sum, item) => sum + (item.storyPoints ?? 0), 0);
+      const donePoints = items
+        .filter((item) => item.status === ItemStatus.DONE)
+        .reduce((sum, item) => sum + (item.storyPoints ?? 0), 0);
+      return (donePoints || plannedPoints) >= plannedPoints;
+    });
+
+    const teamImpediments = mockImpediments.filter((i) => i.teamId === teamId);
+    const openImpediments = teamImpediments.filter(
+      (i) => i.status !== ImpedimentStatus.RESOLVED
+    ).length;
 
     const insights: Insight[] = [
       {
@@ -1329,21 +1636,28 @@ class MockApiService {
         type: 'positive',
         icon: 'positive',
         title: 'Consistent Backlog Completion',
-        description: 'All planned points were delivered in the last 2 sprints.',
+        description: allDelivered
+          ? 'All planned points were delivered in the completed sprints.'
+          : 'Some planned points remain undelivered in recent completed sprints.',
       },
       {
         id: 'impediment-trend',
-        type: 'warning',
-        icon: 'warning',
-        title: 'Open Impediments',
-        description: '2 impediments currently open. Consider addressing proactively.',
+        type: openImpediments > 0 ? 'warning' : 'positive',
+        icon: openImpediments > 0 ? 'warning' : 'positive',
+        title: openImpediments > 0 ? 'Open Impediments' : 'No Open Impediments',
+        description:
+          openImpediments > 0
+            ? `${openImpediments} impediment(s) currently open. Consider addressing proactively.`
+            : 'No impediments are currently open.',
       },
       {
         id: 'velocity-improvement',
         type: 'positive',
         icon: 'positive',
-        title: 'Velocity Increase',
-        description: 'Average velocity increased by 12% compared to previous sprints.',
+        title: 'Sprint Velocity',
+        description: `Completed sprints show a stable delivery cadence of ${
+          completedSprints.length || 0
+        } sprint(s).`,
       },
       {
         id: 'adaptation',
@@ -2097,7 +2411,10 @@ class MockApiService {
       notes:
         'Kanban board highly praised by team. Dashboard widgets provide excellent visibility into sprint health.',
     },
-    // ==================== DRAFT Increments ====================
+    // ==================== Sprint 3 increments ====================
+    // Sprint 3 produced multiple increments: the main Sprint Review delivery and
+    // an early release of the Daily Scrum summary widget. Keeping both DELIVERED
+    // lets the Sprint Review Increment page render the multi-increment selector.
     {
       id: 'increment-3',
       sprintId: 'sprint-3',
@@ -2105,12 +2422,86 @@ class MockApiService {
       name: 'Sprint 3 - Daily Scrum & Impediments',
       description:
         'Daily Scrum interface for team updates with historical tracking, and comprehensive impediment management system with status workflow and resolution tracking.',
-      includedPBIs: ['pbi-007', 'pbi-008'],
-      dodVerifications: [],
-      totalStoryPoints: 13,
-      status: IncrementStatus.DRAFT,
+      includedPBIs: ['pbi-007'],
+      dodVerifications: [
+        {
+          id: 'dod-v3-1',
+          pbiId: 'pbi-007',
+          dodItemId: 'dod-1',
+          isVerified: true,
+          verifiedBy: UUIDS.users.scrumMaster,
+          verifiedAt: '2026-02-15T14:00:00Z',
+          dodItemDescription: 'Code reviewed and approved',
+          dodItemCategory: 'quality',
+        },
+        {
+          id: 'dod-v3-2',
+          pbiId: 'pbi-007',
+          dodItemId: 'dod-2',
+          isVerified: true,
+          verifiedBy: UUIDS.users.developer1,
+          verifiedAt: '2026-02-15T14:30:00Z',
+          dodItemDescription: 'Unit tests passing (80% coverage)',
+          dodItemCategory: 'testing',
+        },
+        {
+          id: 'dod-v3-3',
+          pbiId: 'pbi-007',
+          dodItemId: 'dod-3',
+          isVerified: true,
+          verifiedBy: UUIDS.users.developer2,
+          verifiedAt: '2026-02-15T15:00:00Z',
+          dodItemDescription: 'Integration tests passing',
+          dodItemCategory: 'testing',
+        },
+      ],
+      totalStoryPoints: 8,
+      status: IncrementStatus.DELIVERED,
       createdAt: '2026-02-02T09:00:00Z',
+      deliveredAt: '2026-02-15T16:00:00Z',
+      deliveryMethod: DeliveryMethod.SPRINT_REVIEW,
       createdBy: UUIDS.users.scrumMaster,
+      notes:
+        'Daily Scrum interface delivered and well received. Impediment tracking still in progress for the next sprint.',
+    },
+    {
+      id: 'increment-3-early',
+      sprintId: 'sprint-3',
+      teamId: UUIDS.teams.alpha,
+      name: 'Early Release - Daily Scrum Summary Widget',
+      description:
+        'Compact Daily Scrum summary widget surfacing the latest team updates and open blockers directly on the sprint board. Shipped early to give stakeholders live visibility.',
+      includedPBIs: ['pbi-012'],
+      dodVerifications: [
+        {
+          id: 'dod-ve3-1',
+          pbiId: 'pbi-012',
+          dodItemId: 'dod-1',
+          isVerified: true,
+          verifiedBy: UUIDS.users.developer1,
+          verifiedAt: '2026-02-12T10:00:00Z',
+          dodItemDescription: 'Code reviewed and approved',
+          dodItemCategory: 'quality',
+        },
+        {
+          id: 'dod-ve3-2',
+          pbiId: 'pbi-012',
+          dodItemId: 'dod-2',
+          isVerified: true,
+          verifiedBy: UUIDS.users.admin,
+          verifiedAt: '2026-02-12T10:30:00Z',
+          dodItemDescription: 'Unit tests passing (80% coverage)',
+          dodItemCategory: 'testing',
+        },
+      ],
+      totalStoryPoints: 3,
+      status: IncrementStatus.DELIVERED,
+      createdAt: '2026-02-08T09:00:00Z',
+      deliveredAt: '2026-02-12T11:00:00Z',
+      deliveryMethod: DeliveryMethod.EARLY_RELEASE,
+      createdBy: UUIDS.users.developer1,
+      notes:
+        'Widget shipped ahead of the Sprint Review so stakeholders could track daily progress in real time.',
     },
     // ==================== Early Release Increment ====================
     {
@@ -2170,7 +2561,15 @@ class MockApiService {
     if (sprintId) {
       filtered = filtered.filter((i) => i.sprintId === sprintId);
     }
-    return { success: true, data: filtered };
+    // Resolve each increment's `includedPBIs` into full PBI objects so consumers
+    // (e.g. the Sprint Review Increment page) can render the included items directly.
+    const populated = filtered.map((increment) => ({
+      ...increment,
+      pbis: increment.includedPBIs
+        .map((pbiId) => mockProductBacklogItems.find((p) => p.id === pbiId))
+        .filter((pbi): pbi is ProductBacklogItem => Boolean(pbi)),
+    }));
+    return { success: true, data: populated };
   }
 
   async getIncrement(id: string): Promise<ApiResponse<Increment>> {
@@ -3812,6 +4211,8 @@ class MockApiService {
 
   async getPendingAdjustments(_teamId: string): Promise<ApiResponse<BacklogAdjustment[]>> {
     await delay(300);
+    // Mock data flow disabled: return no pending adjustments so the "Pending
+    // Adjustments" section is hidden.
     return { success: true, data: [] };
   }
 
@@ -3833,6 +4234,8 @@ class MockApiService {
 
   async getPendingFeedback(_teamId: string): Promise<ApiResponse<StakeholderFeedback[]>> {
     await delay(300);
+    // Mock data flow disabled: return no pending feedback so the "Pending
+    // Feedback" section is hidden.
     return { success: true, data: [] };
   }
 
@@ -3861,7 +4264,7 @@ class MockApiService {
   async getTasksByPbiId(pbiId: string): Promise<ApiResponse<Task[]>> {
     await delay(300);
     const tasks = mockTasks.filter((t) => t.pbiId === pbiId);
-    return { success: true, data: tasks };
+    return { success: true, data: this.attachParentPbi(tasks) };
   }
 
   async getDoRVerificationsForPBI(
@@ -4526,8 +4929,17 @@ class MockApiService {
     return timeboxFor(eventType as ScrumEvent, weeks);
   }
 
-  async getTimebox(eventType: string, sprintId?: string): Promise<ApiResponse<TimeboxState>> {
+  /**
+   * Accept the same `TimeboxQuery` shape as the real `timeboxService` so the
+   * swapped `apiService` (mock in dev) is a drop-in replacement. Sprint length
+   * (and therefore the max `timeboxSeconds`) is derived from the sprint's dates.
+   */
+  async getTimebox(
+    eventType: string,
+    query: TimeboxQuery = {}
+  ): Promise<ApiResponse<TimeboxState>> {
     await delay(200);
+    const sprintId = query.sprintId;
     const key = this.timeboxKey(eventType, sprintId);
     const now = Date.now();
     const timeboxSeconds = this.timeboxSecondsFor(eventType, sprintId);
@@ -4535,7 +4947,7 @@ class MockApiService {
     const existing = this.timeboxStore[key];
     if (!existing) {
       const state: TimeboxState = {
-        teamId: 'team-1',
+        teamId: query.teamId ?? 'team-1',
         eventType,
         sprintId: sprintId ?? null,
         date: new Date().toISOString(),
@@ -4556,12 +4968,16 @@ class MockApiService {
     return { success: true, data: this.timeboxStore[key] };
   }
 
-  async startTimebox(eventType: string, sprintId?: string): Promise<ApiResponse<TimeboxState>> {
+  async startTimebox(
+    eventType: string,
+    query: TimeboxQuery = {}
+  ): Promise<ApiResponse<TimeboxState>> {
     await delay(200);
+    const sprintId = query.sprintId;
     const key = this.timeboxKey(eventType, sprintId);
-    const state = await this.getTimebox(eventType, sprintId);
+    const state = await this.getTimebox(eventType, query);
     const current = state.data ?? {
-      teamId: 'team-1',
+      teamId: query.teamId ?? 'team-1',
       eventType,
       sprintId: sprintId ?? null,
       date: new Date().toISOString(),
@@ -4579,19 +4995,22 @@ class MockApiService {
     return { success: true, data: running };
   }
 
-  async pauseTimebox(eventType: string, sprintId?: string): Promise<ApiResponse<TimeboxState>> {
+  async pauseTimebox(
+    eventType: string,
+    query: TimeboxQuery = {}
+  ): Promise<ApiResponse<TimeboxState>> {
     await delay(200);
-    const key = this.timeboxKey(eventType, sprintId);
+    const key = this.timeboxKey(eventType, query.sprintId);
     const current = this.timeboxStore[key];
     if (!current) {
       const state: TimeboxState = {
-        teamId: 'team-1',
+        teamId: query.teamId ?? 'team-1',
         eventType,
-        sprintId: sprintId ?? null,
+        sprintId: query.sprintId ?? null,
         date: new Date().toISOString(),
         status: 'PAUSED',
         elapsedMs: 0,
-        timeboxSeconds: this.timeboxSecondsFor(eventType, sprintId),
+        timeboxSeconds: this.timeboxSecondsFor(eventType, query.sprintId),
         version: 1,
       };
       this.timeboxStore[key] = { ...state, lastTick: Date.now() };
@@ -4615,11 +5034,15 @@ class MockApiService {
     return { success: true, data: paused };
   }
 
-  async resetTimebox(eventType: string, sprintId?: string): Promise<ApiResponse<TimeboxState>> {
+  async resetTimebox(
+    eventType: string,
+    query: TimeboxQuery = {}
+  ): Promise<ApiResponse<TimeboxState>> {
     await delay(200);
+    const sprintId = query.sprintId;
     const key = this.timeboxKey(eventType, sprintId);
     const state: TimeboxState = {
-      teamId: 'team-1',
+      teamId: query.teamId ?? 'team-1',
       eventType,
       sprintId: sprintId ?? null,
       date: new Date().toISOString(),
@@ -4632,8 +5055,12 @@ class MockApiService {
     return { success: true, data: state };
   }
 
-  async concludeTimebox(eventType: string, sprintId?: string): Promise<ApiResponse<TimeboxState>> {
+  async concludeTimebox(
+    eventType: string,
+    query: TimeboxQuery = {}
+  ): Promise<ApiResponse<TimeboxState>> {
     await delay(200);
+    const sprintId = query.sprintId;
     const key = this.timeboxKey(eventType, sprintId);
     const current = this.timeboxStore[key];
     const elapsedMs = current
@@ -4642,7 +5069,7 @@ class MockApiService {
         : current.elapsedMs
       : 0;
     const state: TimeboxState = {
-      teamId: 'team-1',
+      teamId: query.teamId ?? 'team-1',
       eventType,
       sprintId: sprintId ?? null,
       date: new Date().toISOString(),
@@ -4661,8 +5088,8 @@ class MockApiService {
     // Route timebox read requests
     if (url.startsWith('/timeboxes/')) {
       const eventType = url.split('/')[2] ?? '';
-      const params = (_config?.params as { sprintId?: string } | undefined) ?? {};
-      const result = await this.getTimebox(eventType, params.sprintId);
+      const params = (_config?.params as { teamId?: string; sprintId?: string } | undefined) ?? {};
+      const result = await this.getTimebox(eventType, params);
       return { data: { success: result.success, data: result.data } as T };
     }
 
@@ -4763,18 +5190,18 @@ class MockApiService {
       const segments = _url.split('/');
       const eventType = segments[2] ?? '';
       const action = segments[3];
-      const body = (data as { sprintId?: string } | undefined) ?? {};
+      const body = (data as { teamId?: string; sprintId?: string } | undefined) ?? {};
       let result: ApiResponse<TimeboxState>;
       if (action === 'start') {
-        result = await this.startTimebox(eventType, body.sprintId);
+        result = await this.startTimebox(eventType, body);
       } else if (action === 'pause') {
-        result = await this.pauseTimebox(eventType, body.sprintId);
+        result = await this.pauseTimebox(eventType, body);
       } else if (action === 'reset') {
-        result = await this.resetTimebox(eventType, body.sprintId);
+        result = await this.resetTimebox(eventType, body);
       } else if (action === 'conclude') {
-        result = await this.concludeTimebox(eventType, body.sprintId);
+        result = await this.concludeTimebox(eventType, body);
       } else {
-        result = await this.getTimebox(eventType, body.sprintId);
+        result = await this.getTimebox(eventType, body);
       }
       return { data: { success: result.success, data: result.data } as T };
     }

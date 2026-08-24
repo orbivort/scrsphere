@@ -20,7 +20,8 @@ import { type ScrumEvent } from '@scrumooth/shared';
 import { ClockIcon, PlayIcon, SquareIcon, RefreshIcon } from '../Icons';
 import { useTeamStore } from '../../../store';
 import { queryKeys } from '../../../hooks/queryKeys';
-import { timeboxService, type TimeboxQuery } from '../../../services/domain/timebox.service';
+import { apiService } from '../../../services';
+import type { TimeboxQuery } from '../../../services/domain/timebox.service';
 import type { TimeboxState } from '../../../types';
 
 import styles from './EventTimebox.module.css';
@@ -105,7 +106,7 @@ export const EventTimebox: React.FC<EventTimeboxProps> = ({
 
   const { data: state } = useQuery<TimeboxState>({
     queryKey,
-    queryFn: () => timeboxService.getTimebox(event, query).then((res) => res.data as TimeboxState),
+    queryFn: () => apiService.getTimebox(event, query).then((res) => res.data as TimeboxState),
     enabled: Boolean(currentTeamId),
     refetchInterval: (q) => (q.state.data?.status === 'RUNNING' ? pollIntervalMs : false),
   });
@@ -124,15 +125,15 @@ export const EventTimebox: React.FC<EventTimeboxProps> = ({
   }, [queryClient, queryKey]);
 
   const startMutation = useMutation({
-    mutationFn: () => timeboxService.startTimebox(event, query),
+    mutationFn: () => apiService.startTimebox(event, query),
     onSuccess: invalidate,
   });
   const pauseMutation = useMutation({
-    mutationFn: () => timeboxService.pauseTimebox(event, query),
+    mutationFn: () => apiService.pauseTimebox(event, query),
     onSuccess: invalidate,
   });
   const resetMutation = useMutation({
-    mutationFn: () => timeboxService.resetTimebox(event, query),
+    mutationFn: () => apiService.resetTimebox(event, query),
     onSuccess: invalidate,
   });
 

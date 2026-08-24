@@ -808,6 +808,26 @@ export const mockProductBacklogItems: ProductBacklogItem[] = [
     updatedAt: '2026-02-04T00:00:00Z',
     creator: mockUsers[1],
   },
+  // In Progress Item in the current sprint - small, fully decomposed PBI used to
+  // demonstrate the "mark as done" flow (all child tasks are DONE, PBI is IN_PROGRESS).
+  {
+    id: 'pbi-012',
+    teamId: UUIDS.teams.alpha,
+    goalId: 'goal-active-1',
+    title: 'Daily Scrum summary widget',
+    description:
+      'Compact summary widget showing the latest daily Scrum updates and open blockers on the sprint board.',
+    priority: MoSCoWPriority.SHOULD_HAVE,
+    storyPoints: 3,
+    status: 'IN_PROGRESS' as ItemStatus,
+    labels: ['frontend', 'feature', 'dashboard'],
+    acceptanceCriteria:
+      '- Show today summary\n- Highlight open blockers\n- Link to full daily Scrum view',
+    createdBy: UUIDS.users.developer1,
+    createdAt: '2026-02-04T00:00:00Z',
+    updatedAt: '2026-02-06T00:00:00Z',
+    creator: mockUsers[2],
+  },
 ];
 
 // ==================== Sprints ====================
@@ -857,6 +877,7 @@ export const mockSprints: Sprint[] = [
     items: [
       mockProductBacklogItems[6] as ProductBacklogItem,
       mockProductBacklogItems[7] as ProductBacklogItem,
+      mockProductBacklogItems[11] as ProductBacklogItem, // pbi-012 (ready-to-done candidate)
     ],
     tasks: [],
   },
@@ -954,6 +975,37 @@ export const mockTasks: Task[] = [
     updatedAt: '2026-02-04T15:00:00Z',
     assignee: mockUsers[4],
   },
+  // PBI-012: Daily Scrum summary widget (all tasks DONE so the PBI is "ready to done")
+  {
+    id: 'task-done-007',
+    sprintId: 'sprint-3',
+    pbiId: 'pbi-012',
+    title: 'Build daily Scrum summary widget',
+    description:
+      'Implement the compact summary widget with today summary and open blocker highlights.',
+    assigneeId: UUIDS.users.developer1,
+    status: 'DONE' as TaskStatus,
+    estimatedHours: 2,
+    remainingHours: 0,
+    createdAt: '2026-02-05T09:00:00Z',
+    updatedAt: '2026-02-06T11:00:00Z',
+    assignee: mockUsers[2],
+  },
+  {
+    id: 'task-done-008',
+    sprintId: 'sprint-3',
+    pbiId: 'pbi-012',
+    title: 'Link widget to daily Scrum view',
+    description:
+      'Connect the summary widget to the full daily Scrum view with deep-link navigation.',
+    assigneeId: UUIDS.users.developer2,
+    status: 'DONE' as TaskStatus,
+    estimatedHours: 1,
+    remainingHours: 0,
+    createdAt: '2026-02-05T14:00:00Z',
+    updatedAt: '2026-02-06T09:30:00Z',
+    assignee: mockUsers[3],
+  },
 
   // ==================== IN_PROGRESS TASKS (6) ====================
   {
@@ -1044,6 +1096,53 @@ export const mockTasks: Task[] = [
     createdAt: '2026-02-05T09:00:00Z',
     updatedAt: '2026-02-05T14:00:00Z',
     assignee: mockUsers[4],
+  },
+
+  // ==================== REVIEW TASKS (3) ====================
+  {
+    id: 'task-review-001',
+    sprintId: 'sprint-3',
+    pbiId: 'pbi-007',
+    title: 'Review team updates view',
+    description:
+      'Peer review of the team updates view component for correctness, accessibility, and adherence to the Definition of Done before moving to Done.',
+    assigneeId: UUIDS.users.scrumMaster,
+    status: 'REVIEW' as TaskStatus,
+    estimatedHours: 2,
+    remainingHours: 1,
+    createdAt: '2026-02-05T09:00:00Z',
+    updatedAt: '2026-02-06T10:30:00Z',
+    assignee: mockUsers[1],
+  },
+  {
+    id: 'task-review-002',
+    sprintId: 'sprint-3',
+    pbiId: 'pbi-007',
+    title: 'Review historical updates feature',
+    description:
+      'Code review for the historical daily Scrum updates feature, covering date navigation, search, and edge-case handling.',
+    assigneeId: UUIDS.users.developer2,
+    status: 'REVIEW' as TaskStatus,
+    estimatedHours: 3,
+    remainingHours: 1,
+    createdAt: '2026-02-05T14:00:00Z',
+    updatedAt: '2026-02-06T13:00:00Z',
+    assignee: mockUsers[3],
+  },
+  {
+    id: 'task-review-003',
+    sprintId: 'sprint-3',
+    pbiId: 'pbi-008',
+    title: 'Review impediment CRUD operations',
+    description:
+      'Peer review of impediment create, read, update, and delete operations, including optimistic UI updates and audit trail logging.',
+    assigneeId: UUIDS.users.developer1,
+    status: 'REVIEW' as TaskStatus,
+    estimatedHours: 2,
+    remainingHours: 2,
+    createdAt: '2026-02-05T15:00:00Z',
+    updatedAt: '2026-02-06T09:00:00Z',
+    assignee: mockUsers[2],
   },
 
   // ==================== TODO TASKS (7) ====================
