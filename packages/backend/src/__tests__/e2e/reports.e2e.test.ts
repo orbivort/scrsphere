@@ -214,7 +214,7 @@ describe('E2E: Reports', () => {
       expect(response.body.success).toBe(true);
       expect(response.body.data).toHaveProperty('averageVelocity');
       expect(response.body.data).toHaveProperty('velocityTrend');
-      expect(response.body.data).toHaveProperty('successRate');
+      expect(response.body.data).toHaveProperty('completionRate');
     });
 
     it('should return metrics with sprint data', async () => {

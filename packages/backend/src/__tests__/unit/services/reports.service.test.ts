@@ -273,7 +273,7 @@ describe('ReportsService', () => {
       expect(result.velocityTrend).toBeGreaterThan(0);
     });
 
-    it('should calculate success rate correctly', async () => {
+    it('should calculate completion rate correctly', async () => {
       const mockSprints = [
         {
           id: 'sprint-1',
@@ -295,26 +295,54 @@ describe('ReportsService', () => {
 
       (prisma.sprint.findMany as any).mockResolvedValue(mockSprints);
       (prisma.impediment.findMany as any).mockResolvedValue([]);
-      (prisma.sprintRetrospective.findMany as any).mockResolvedValue([]);
 
       const result = await reportsService.getTeamMetrics('team-1');
 
-      // Sprint 1: 10/15 = 66.7% (not successful)
-      // Sprint 2: 20/22 = 90.9% (successful)
-      // Success rate: 50%
-      expect(result.successRate).toBe(50);
+      // Sprint 1: planned 15, completed 10 -> not fully delivered
+      // Sprint 2: planned 22, completed 20 -> not fully delivered
+      // Completion rate: 0%
+      expect(result.completionRate).toBe(0);
+    });
+
+    it('should count a sprint as fully delivered only when completed >= planned', async () => {
+      const mockSprints = [
+        {
+          id: 'sprint-1',
+          status: 'COMPLETED',
+          sprintBacklogItems: [
+            { pbi: { storyPoints: 10, status: 'DONE' } },
+            { pbi: { storyPoints: 5, status: 'TODO' } },
+          ],
+        },
+        {
+          id: 'sprint-2',
+          status: 'COMPLETED',
+          sprintBacklogItems: [
+            { pbi: { storyPoints: 20, status: 'DONE' } },
+            { pbi: { storyPoints: 0, status: 'TODO' } },
+          ],
+        },
+      ];
+
+      (prisma.sprint.findMany as any).mockResolvedValue(mockSprints);
+      (prisma.impediment.findMany as any).mockResolvedValue([]);
+
+      const result = await reportsService.getTeamMetrics('team-1');
+
+      // Sprint 1: planned 15, completed 10 -> not fully delivered
+      // Sprint 2: planned 20, completed 20 -> fully delivered
+      // Completion rate: 50%
+      expect(result.completionRate).toBe(50);
     });
 
     it('should return default values when no data', async () => {
       (prisma.sprint.findMany as any).mockResolvedValue([]);
       (prisma.impediment.findMany as any).mockResolvedValue([]);
-      (prisma.sprintRetrospective.findMany as any).mockResolvedValue([]);
 
       const result = await reportsService.getTeamMetrics('team-1');
 
       expect(result.averageVelocity).toBe(0);
-      expect(result.successRate).toBe(0);
-      expect(result.teamSatisfaction.rating).toBe(4);
+      expect(result.completionRate).toBe(0);
     });
 
     it('should use cache for subsequent calls', async () => {
@@ -547,7 +575,7 @@ describe('ReportsService', () => {
       expect(impedimentInsight).toBeDefined();
     });
 
-    it('should return high success rate insight', async () => {
+    it('should return high completion rate insight', async () => {
       const mockSprints = [
         {
           id: 'sprint-1',
@@ -566,13 +594,12 @@ describe('ReportsService', () => {
 
       (prisma.sprint.findMany as any).mockResolvedValue(mockSprints);
       (prisma.impediment.findMany as any).mockResolvedValue([]);
-      (prisma.sprintRetrospective.findMany as any).mockResolvedValue([]);
 
       const result = await reportsService.getInsights('team-1');
 
-      const successInsight = result.find((i) => i.id === 'high-success-rate');
-      expect(successInsight).toBeDefined();
-      expect(successInsight?.type).toBe('positive');
+      const completionInsight = result.find((i) => i.id === 'high-completion-rate');
+      expect(completionInsight).toBeDefined();
+      expect(completionInsight?.type).toBe('positive');
     });
 
     it('should return getting started insight when no data', async () => {

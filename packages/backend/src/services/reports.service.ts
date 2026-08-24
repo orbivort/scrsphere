@@ -12,6 +12,7 @@ export interface SprintHistoryItem {
   startDate: string;
   endDate: string;
   status: string;
+  sprintGoal?: string | null;
   plannedPoints: number;
   completedPoints: number;
   teamMembers: number;
@@ -21,15 +22,11 @@ export interface SprintHistoryItem {
 export interface TeamMetrics {
   averageVelocity: number;
   velocityTrend: number;
-  successRate: number;
-  successRateTrend: number;
+  /** Share of completed sprints whose planned points were fully delivered (completed >= planned). */
+  completionRate: number;
   impediments: {
     resolved: number;
     total: number;
-  };
-  teamSatisfaction: {
-    rating: number;
-    trend: number;
   };
 }
 
@@ -52,6 +49,7 @@ interface SprintWithRelations {
   startDate: Date;
   endDate: Date;
   status: string;
+  sprintGoal?: string | null;
   sprintBacklogItems: Array<{
     pbi: {
       storyPoints: number | null;
@@ -211,6 +209,7 @@ class ReportsService {
         startDate: sprint.startDate.toISOString(),
         endDate: sprint.endDate.toISOString(),
         status: sprint.status,
+        sprintGoal: sprint.sprintGoal,
         plannedPoints,
         completedPoints,
         teamMembers: uniqueAssignees.size,
@@ -221,10 +220,7 @@ class ReportsService {
 
   private calculateTeamMetrics(
     completedSprints: SprintWithRelations[],
-    impediments: Array<{ status: string }>,
-    retrospectives: Array<{
-      items: Array<{ votes: number }>;
-    }>
+    impediments: Array<{ status: string }>
   ): TeamMetrics {
     const velocities = completedSprints.map((sprint) => {
       return sprint.sprintBacklogItems
@@ -252,46 +248,30 @@ class ReportsService {
       velocityTrend = ((recentAvg - olderAvg) / olderAvg) * 100;
     }
 
-    const successfulSprints = completedSprints.filter((sprint) => {
+    // Honest "Sprint Backlog Completion Rate": share of completed sprints whose
+    // planned points were fully delivered (completed >= planned). This is a
+    // points-completion signal only, NOT an assertion that the Sprint Goal was met.
+    const fullyDeliveredSprints = completedSprints.filter((sprint) => {
       const { planned, completed } = this.calculateSprintPoints(sprint);
-      return completed >= planned * 0.8;
+      return planned > 0 && completed >= planned;
     });
 
-    const successRate =
-      completedSprints.length > 0 ? (successfulSprints.length / completedSprints.length) * 100 : 0;
+    const completionRate =
+      completedSprints.length > 0
+        ? (fullyDeliveredSprints.length / completedSprints.length) * 100
+        : 0;
 
     const resolvedImpediments = impediments.filter(
       (i) => i.status === 'RESOLVED' || i.status === 'CLOSED'
     ).length;
 
-    let teamSatisfactionRating = 4.0;
-    let satisfactionTrend = 0;
-
-    if (retrospectives.length > 0) {
-      const recentRetro = retrospectives[0];
-      const totalVotes = recentRetro?.items.reduce((sum, item) => sum + item.votes, 0) ?? 0;
-      teamSatisfactionRating = Math.min(5, 3 + totalVotes / 10);
-
-      if (retrospectives.length > 1) {
-        const olderRetro = retrospectives[retrospectives.length - 1];
-        const olderVotes = olderRetro?.items.reduce((sum, item) => sum + item.votes, 0) ?? 0;
-        const olderRating = Math.min(5, 3 + olderVotes / 10);
-        satisfactionTrend = teamSatisfactionRating - olderRating;
-      }
-    }
-
     return {
       averageVelocity: Math.round(averageVelocity * 10) / 10,
       velocityTrend: Math.round(velocityTrend),
-      successRate: Math.round(successRate),
-      successRateTrend: 0,
+      completionRate: Math.round(completionRate),
       impediments: {
         resolved: resolvedImpediments,
         total: impediments.length,
-      },
-      teamSatisfaction: {
-        rating: Math.round(teamSatisfactionRating * 10) / 10,
-        trend: Math.round(satisfactionTrend * 10) / 10,
       },
     };
   }
@@ -334,7 +314,13 @@ class ReportsService {
 
     const sprints = await prisma.sprint.findMany({
       where: { teamId },
-      include: {
+      select: {
+        id: true,
+        name: true,
+        startDate: true,
+        endDate: true,
+        status: true,
+        sprintGoal: true,
         sprintBacklogItems: {
           include: {
             pbi: {
@@ -370,7 +356,7 @@ class ReportsService {
     const cached = this.getCached<TeamMetrics>(cacheKey);
     if (cached) return cached;
 
-    const [completedSprints, impediments, retrospectives] = await Promise.all([
+    const [completedSprints, impediments] = await Promise.all([
       prisma.sprint.findMany({
         where: {
           teamId,
@@ -395,23 +381,11 @@ class ReportsService {
         where: { teamId },
         select: { status: true },
       }),
-      prisma.sprintRetrospective.findMany({
-        where: { teamId },
-        include: {
-          items: {
-            where: { category: 'WENT_WELL' },
-            select: { votes: true },
-          },
-        },
-        orderBy: { retroDate: 'desc' },
-        take: 5,
-      }),
     ]);
 
     const result = this.calculateTeamMetrics(
       completedSprints as unknown as SprintWithRelations[],
-      impediments,
-      retrospectives
+      impediments
     );
     this.setCached(cacheKey, result);
     return result;
@@ -424,7 +398,7 @@ class ReportsService {
 
     const insights: Insight[] = [];
 
-    const [sprints, impediments, retrospectives] = await Promise.all([
+    const [sprints, impediments] = await Promise.all([
       prisma.sprint.findMany({
         where: { teamId },
         include: {
@@ -457,35 +431,35 @@ class ReportsService {
         where: { teamId },
         select: { status: true },
       }),
-      prisma.sprintRetrospective.findMany({
-        where: { teamId },
-        include: {
-          items: {
-            where: { category: 'WENT_WELL' },
-            select: { votes: true },
-          },
-        },
-        orderBy: { retroDate: 'desc' },
-        take: 5,
-      }),
     ]);
 
     const completedSprints = sprints.filter((s) => s.status === 'COMPLETED');
     const metrics = this.calculateTeamMetrics(
       completedSprints as unknown as SprintWithRelations[],
-      impediments,
-      retrospectives
+      impediments
     );
-    const velocityData = this.calculateVelocityData(sprints as unknown as SprintWithRelations[]);
     const sprintHistory = this.calculateSprintHistory(sprints as unknown as SprintWithRelations[]);
+    const activeSprint = sprintHistory.find((s) => s.status === 'ACTIVE');
+
+    // Sprint Goal is the single objective of the Sprint. When it is defined, surface
+    // it as the primary focus so progress is inspected against the Goal, not just points.
+    if (activeSprint?.sprintGoal) {
+      insights.push({
+        id: 'active-sprint-goal',
+        type: 'positive',
+        icon: '🎯',
+        title: 'Active Sprint Goal',
+        description: activeSprint.sprintGoal,
+      });
+    }
 
     if (metrics.velocityTrend > 10) {
       insights.push({
         id: 'velocity-improvement',
         type: 'positive',
         icon: '📈',
-        title: 'Velocity Improvement',
-        description: `Average velocity increased by ${Math.abs(Math.round(metrics.velocityTrend))}% compared to previous sprints`,
+        title: 'Velocity Increase',
+        description: `Average velocity increased by ${Math.abs(Math.round(metrics.velocityTrend))}% compared to previous sprints.`,
       });
     } else if (metrics.velocityTrend < -10) {
       insights.push({
@@ -498,17 +472,17 @@ class ReportsService {
     }
 
     const recentCompletedSprints = sprintHistory.filter((s) => s.status === 'COMPLETED');
-    const allGoalsMet = recentCompletedSprints
+    const allDelivered = recentCompletedSprints
       .slice(0, 3)
-      .every((s) => s.completedPoints >= s.plannedPoints);
+      .every((s) => s.plannedPoints > 0 && s.completedPoints >= s.plannedPoints);
 
-    if (allGoalsMet && recentCompletedSprints.length >= 2) {
+    if (allDelivered && recentCompletedSprints.length >= 2) {
       insights.push({
         id: 'consistent-delivery',
         type: 'positive',
         icon: '✅',
-        title: 'Consistent Delivery',
-        description: `Team has maintained 100% sprint goal completion in the last ${Math.min(recentCompletedSprints.length, 3)} sprints`,
+        title: 'Consistent Backlog Completion',
+        description: `All planned points were delivered in the last ${Math.min(recentCompletedSprints.length, 3)} sprints.`,
       });
     }
 
@@ -516,50 +490,31 @@ class ReportsService {
     if (openImpediments > 0) {
       insights.push({
         id: 'impediment-trend',
-        type: openImpediments > 2 ? 'warning' : 'positive',
-        icon: openImpediments > 2 ? '⚠️' : '🚧',
-        title: 'Impediment Trend',
+        type: 'warning',
+        icon: '⚠️',
+        title: 'Open Impediments',
         description: `${openImpediments} impediment${openImpediments > 1 ? 's' : ''} currently open. Consider addressing proactively.`,
       });
     }
 
-    if (metrics.successRate >= 80) {
+    if (metrics.completionRate >= 80) {
       insights.push({
-        id: 'high-success-rate',
+        id: 'high-completion-rate',
         type: 'positive',
-        icon: '🎯',
-        title: 'High Success Rate',
-        description: `Team has achieved ${Math.round(metrics.successRate)}% sprint success rate. Keep up the great work!`,
+        icon: '✅',
+        title: 'Consistent Sprint Completion',
+        description: `${Math.round(metrics.completionRate)}% of completed sprints fully delivered their planned points.`,
       });
-    } else if (metrics.successRate < 60 && recentCompletedSprints.length >= 3) {
+    } else if (metrics.completionRate < 60 && recentCompletedSprints.length >= 3) {
       insights.push({
-        id: 'low-success-rate',
+        id: 'low-completion-rate',
         type: 'warning',
         icon: '⚠️',
-        title: 'Success Rate Attention',
-        description: `Sprint success rate is ${Math.round(metrics.successRate)}%. Consider reviewing sprint capacity and planning.`,
+        title: 'Sprint Completion Attention',
+        description: `${Math.round(metrics.completionRate)}% of completed sprints delivered all planned points. Consider reviewing sprint capacity and planning.`,
       });
     }
 
-    if (velocityData.completed.length >= 2) {
-      const lastCompleted = velocityData.completed[velocityData.completed.length - 1] ?? 0;
-      const previousCompleted = velocityData.completed[velocityData.completed.length - 2] ?? 0;
-
-      if (lastCompleted > previousCompleted && previousCompleted > 0) {
-        const improvement = ((lastCompleted - previousCompleted) / previousCompleted) * 100;
-        if (improvement > 20) {
-          insights.push({
-            id: 'recent-improvement',
-            type: 'positive',
-            icon: '🚀',
-            title: 'Recent Improvement',
-            description: `Last sprint showed ${Math.round(improvement)}% improvement in completed story points.`,
-          });
-        }
-      }
-    }
-
-    const activeSprint = sprintHistory.find((s) => s.status === 'ACTIVE');
     if (activeSprint && activeSprint.impediments > 1) {
       insights.push({
         id: 'active-sprint-impediments',
@@ -567,6 +522,18 @@ class ReportsService {
         icon: '⚠️',
         title: 'Active Sprint Impediments',
         description: `Current sprint has ${activeSprint.impediments} impediment${activeSprint.impediments > 1 ? 's' : ''}. Monitor closely.`,
+      });
+    }
+
+    // Adaptation (third pillar): encourage inspecting outcomes and adjusting the next Sprint.
+    if (recentCompletedSprints.length > 0) {
+      insights.push({
+        id: 'adaptation',
+        type: 'positive',
+        icon: '🔁',
+        title: 'Inspect & Adapt',
+        description:
+          'Use the Sprint Retrospective to turn these signals into improvements for the next Sprint.',
       });
     }
 

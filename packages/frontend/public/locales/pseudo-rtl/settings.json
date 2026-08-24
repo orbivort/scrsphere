@@ -313,8 +313,6 @@
     "generatedSprints": "Generated Sprints",
     "loading": "Loading configuration...",
     "notifications": {
-      "configurationSaveFailed": "Failed to save configuration: {{message}}",
-      "configurationSaved": "Configuration saved successfully!",
       "sprintDeleteFailed": "Failed to delete sprint: {{message}}",
       "sprintDeleted": "Sprint deleted successfully!",
       "sprintsGenerateFailed": "Failed to generate sprints: {{message}}",
@@ -333,8 +331,6 @@
       "warning": "This will generate {{count}} sprints for {{year}}. Existing sprints for this year may be affected.",
       "year": "Year:"
     },
-    "saveConfiguration": "Save Configuration",
-    "saving": "Saving...",
     "sprintCount": "{{count}} sprints",
     "sprintDuration": "Sprint Duration",
     "subtitle": "Configure sprint duration and automatically generate sprint plans for the year",

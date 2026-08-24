@@ -55,6 +55,8 @@ vi.mock('../../services', () => ({
     getTeamMetrics: vi.fn(),
     getSprintHistory: vi.fn(),
     getInsights: vi.fn(),
+    getProductGoals: vi.fn(),
+    getDefinitionOfDone: vi.fn(),
   },
 }));
 
@@ -93,15 +95,10 @@ const mockVelocityData = {
 const mockMetricsData = {
   averageVelocity: 22.5,
   velocityTrend: 5,
-  successRate: 85,
-  successRateTrend: 3,
+  completionRate: 85,
   impediments: {
     total: 5,
     resolved: 4,
-  },
-  teamSatisfaction: {
-    rating: 4.2,
-    trend: 0.3,
   },
 };
 
@@ -112,6 +109,7 @@ const mockSprintHistory = [
     status: 'COMPLETED',
     startDate: '2026-01-01T00:00:00Z',
     endDate: '2026-01-14T23:59:59Z',
+    sprintGoal: 'Deliver the reporting module',
     plannedPoints: 20,
     completedPoints: 18,
     teamMembers: 5,
@@ -128,6 +126,29 @@ const mockInsights = [
   },
 ];
 
+const mockProductGoals = [
+  {
+    id: 'goal-1',
+    teamId: 'team-1',
+    title: 'Streamline delivery',
+    description: 'Reduce time to market',
+    status: 'ACTIVE',
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z',
+  },
+];
+
+const mockDefinitionOfDone = {
+  id: 'dod-1',
+  teamId: 'team-1',
+  version: 1,
+  updatedAt: '2026-01-01T00:00:00Z',
+  items: [
+    { id: 'dod-item-1', description: 'Code reviewed', isActive: true, order: 1 },
+    { id: 'dod-item-2', description: 'Tests pass', isActive: true, order: 2 },
+  ],
+};
+
 describe('Reports - Loading State Tests', () => {
   let mockUseTeamStore: ReturnType<typeof vi.fn>;
   let mockApiService: typeof apiService;
@@ -143,6 +164,14 @@ describe('Reports - Loading State Tests', () => {
 
     mockUseTeamStore.mockReturnValue({
       currentTeam: mockTeam,
+    });
+
+    // Default resolutions for the artifact banner queries so they resolve in most tests.
+    (mockApiService.getProductGoals as ReturnType<typeof vi.fn>).mockResolvedValue({
+      data: mockProductGoals,
+    });
+    (mockApiService.getDefinitionOfDone as ReturnType<typeof vi.fn>).mockResolvedValue({
+      data: mockDefinitionOfDone,
     });
   });
 

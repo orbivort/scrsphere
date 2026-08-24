@@ -1,48 +1,14 @@
 {
+  "dod": {
+    "empty": "[Nó Défínítíón óf Dóné défínéd. Àdd óné tó énsúré cónsístént quáàlítyyyyyyy.]",
+    "title": "[Défínítíón óf Dónééé]"
+  },
   "error": {
     "message": "[Únàblé tó lóàd répórt dàtà. Pléàsé try àgàín làtérrrrrrrrrrrrrrrrr.]",
     "title": "[Érrór Lóàdíng Répórtssssssss]"
   },
   "insights": {
     "empty": "[Nó ínsíghts àvàílàblé yét. Cómplété móré sprínts tó généràté ínsíghtssssssssssssssssssssss.]",
-    "items": {
-      "active-sprint-impediments": {
-        "description": "[Cúrrént sprínt hàsssssss {{count}} ímpédímént(s). Mónítór clósélyyyyyyyyyyy.]",
-        "title": "[Àctívé Sprínt Ímpédíméntsssssssss]"
-      },
-      "consistent-delivery": {
-        "description": "[Téàm hàs màíntàínéd 100% sprínt góàl cómplétíón ín thé làsttttttttttttttttttt {{count}} spríntssss]",
-        "title": "[Cónsístént Délívéryyyyyyy]"
-      },
-      "get-started": {
-        "description": "[Cómplété móré sprínts tó généràté téàm pérfórmàncé ínsíghtsssssssssssssssssss.]",
-        "title": "[Géttíng Stàrtédddddd]"
-      },
-      "high-success-rate": {
-        "description": "[Téàm hàs àchíévéddddddd {{rate}}% sprínt súccéss ràté. Kéép úp thé gréàt wórkkkkkkkkkkkkkkk!]",
-        "title": "[Hígh Súccéss Ràtééééééé]"
-      },
-      "impediment-trend": {
-        "description": "[{{count}} ímpédímént(s) cúrréntly ópén. Cónsídér àddréssíng próàctívélyyyyyyyyyyyyyyyyyyyy.]",
-        "title": "[Ímpédímént Tréndddddd]"
-      },
-      "low-success-rate": {
-        "description": "[Sprínt súccéss ràté íssssssss {{rate}}%. Cónsídér révíéwíng sprínt càpàcíty ànd plànnínggggggggggggggggg.]",
-        "title": "[Súccéss Ràté Àtténtíónnnnnnnn]"
-      },
-      "recent-improvement": {
-        "description": "[Làst sprínt shówéddddddd {{improvement}}% ímpróvémént ín cómplétéd stóry póíntsssssssssssss.]",
-        "title": "[Récént Ímpróvéménttttttt]"
-      },
-      "velocity-decline": {
-        "description": "[Àvéràgé vélócíty décréàséd byyyyyyyyyy {{trend}}%. Cónsídér révíéwíng sprínt plànnínggggggggggggg.]",
-        "title": "[Vélócíty Déclínéééééé]"
-      },
-      "velocity-improvement": {
-        "description": "[Àvéràgé vélócíty íncréàséd byyyyyyyyyy {{trend}}% cómpàréd tó prévíóús spríntssssssssss]",
-        "title": "[Vélócíty Ímpróvéménttttttt]"
-      }
-    },
     "title": "[Kéy Ínsíghtsssss]"
   },
   "loading": {
@@ -57,26 +23,26 @@
       "title": "[Àvéràgé Vélócítyyyyyy]",
       "unit": "[Stóry Póínts pér Spríntttttttt]"
     },
+    "completionRate": {
+      "title": "[Sprínt Bácklógg Cómmplétíón Ràtééééééé]",
+      "unit": "[Sprínts Fúlly Délívéééééé]"
+    },
     "impediments": {
       "openCount": "[ópén ímpédímént(sssssss)]",
       "resolved": "[Résólvédddd]",
       "title": "[Ímpédíméntsssss]"
-    },
-    "sprintSuccessRate": {
-      "fromLastMonth": "[fróm làst mónthhhhhh]",
-      "title": "[Sprínt Súccéss Ràtééééééé]",
-      "unit": "[Sprínt Góàls Métttttt]"
-    },
-    "teamSatisfaction": {
-      "fromLastSprint": "[fróm làst spríntttttt]",
-      "title": "[Téàm Sàtísfàctíónnnnnnn]",
-      "unit": "[Àvéràgé Ràtíngggggg]"
     }
+  },
+  "productGoal": {
+    "empty": "[Nó àctívé pródúct góàl. Défíné à góàl tó gívé thé téàm à cléàr táàrgggggggggggg.]",
+    "title": "[Pródúct Góàl]",
+    "viewLink": "[Víéw góàlsssss]"
   },
   "pts": "[ptss]",
   "skipToMainContent": "[Skíp tó màín cónténttttttt]",
   "sprintHistory": {
     "empty": "[Nó sprínt hístóry àvàílàbléééééééééé.]",
+    "sprintGoalLabel": "[Sprínt Góàl]",
     "stats": {
       "completed": "[Cómplétédddd]",
       "impediments": "[Ímpédíméntsssss]",
@@ -93,6 +59,11 @@
   "subtitle": "[Tràck téàm pérfórmàncé ànd sprínt métrícssssssssssssss]",
   "title": "[Répórtssss]",
   "velocityChart": {
+    "accessibilityDescription": "[Bár chàrt cómpàríng plànnéd ànd cómplétéd stóry póínts pér sprínttttttt.]",
+    "ariaLabel": "[Sprínt vélócíty chàrt cómpàríng plànnéd ànd cómplétéd stóry póíntsssss.]",
+    "ariaTableCaption": "[Sprínt vélócíty dàtà]",
+    "ariaTableLabel": "[Sprínt vélócíty dàtà tábléééé]",
+    "ariaTableSprint": "[Sprínttt]",
     "completed": "[Cómplétédddd]",
     "planned": "[Plànnédddd]",
     "title": "[Sprínt Vélócítyyyyyy]",

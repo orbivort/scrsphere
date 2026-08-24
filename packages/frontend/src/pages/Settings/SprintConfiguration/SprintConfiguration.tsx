@@ -9,7 +9,6 @@ import { useTeamStore } from '../../../store';
 import {
   SprintDuration as SprintDurationEnum,
   SprintStatus,
-  type SprintConfiguration as SprintConfigType,
   type SprintDuration,
 } from '../../../types';
 import { EmptyState } from '../../../components/EmptyState';
@@ -29,7 +28,6 @@ import {
   AlertTriangleIcon,
   XIcon,
   RunningIcon,
-  SaveIcon,
   PlayIcon,
   RocketIcon,
 } from '../../../components/common/Icons';
@@ -128,37 +126,6 @@ export const SprintConfiguration: React.FC = () => {
     return generateSprintPreview(selectedYear, selectedDuration);
   }, [selectedYear, selectedDuration]);
 
-  const saveConfigMutation = useMutation({
-    mutationFn: (config: Partial<SprintConfigType>) => {
-      if (existingConfig?.id) {
-        return apiService.updateSprintConfiguration(existingConfig.id, config);
-      }
-      return apiService.createSprintConfiguration(config);
-    },
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: queryKeys.sprintConfiguration.all });
-      void queryClient.invalidateQueries({
-        queryKey: queryKeys.sprintConfiguration.byTeam(teamId),
-      });
-      void queryClient.invalidateQueries({ queryKey: queryKeys.generatedSprint.byTeam(teamId) });
-      setNotification({
-        type: 'success',
-        message: t('sprintConfiguration.notifications.configurationSaved'),
-      });
-      setTimeout(() => setNotification(null), TOAST_SUCCESS_DURATION);
-    },
-    onError: (error: unknown) => {
-      const message = handleMutationError(error, {
-        operationName: 'save configuration',
-      });
-      setNotification({
-        type: 'error',
-        message: t('sprintConfiguration.notifications.configurationSaveFailed', { message }),
-      });
-      setTimeout(() => setNotification(null), TOAST_DURATION);
-    },
-  });
-
   const generateSprintsMutation = useMutation({
     mutationFn: () =>
       apiService.generateSprintsForYear(teamId ?? '', selectedDuration, selectedYear),
@@ -209,15 +176,6 @@ export const SprintConfiguration: React.FC = () => {
       setTimeout(() => setNotification(null), TOAST_DURATION);
     },
   });
-
-  const handleSaveConfiguration = () => {
-    saveConfigMutation.mutate({
-      teamId,
-      duration: selectedDuration,
-      year: selectedYear,
-      sprintStartDay: 1,
-    });
-  };
 
   const handleGenerateSprints = () => {
     setShowPreview(true);
@@ -395,17 +353,6 @@ export const SprintConfiguration: React.FC = () => {
           <div className={styles['config-actions']}>
             <button
               className={`${styles['button']} ${styles['button-primary']}`}
-              onClick={handleSaveConfiguration}
-              disabled={saveConfigMutation.isPending}
-              type="button"
-            >
-              <SaveIcon size={16} />
-              {saveConfigMutation.isPending
-                ? t('sprintConfiguration.saving')
-                : t('sprintConfiguration.saveConfiguration')}
-            </button>
-            <button
-              className={`${styles['button']} ${styles['button-secondary']}`}
               onClick={handleGenerateSprints}
               disabled={!selectedYear || generateSprintsMutation.isPending}
               type="button"

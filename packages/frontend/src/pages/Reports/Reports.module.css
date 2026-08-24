@@ -209,7 +209,7 @@
 
 .metrics-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: var(--space-5);
   margin-bottom: var(--space-8);
 }
@@ -532,6 +532,149 @@
 }
 
 /* ========================================
+   SPRINT GOAL (history item)
+   ======================================== */
+
+.sprint-goal {
+  margin-top: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-background-hover);
+  border-left: var(--border-width-4) solid var(--color-primary-500);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-relaxed);
+}
+
+.sprint-goal-label {
+  display: block;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+  color: var(--color-primary-600);
+  margin-bottom: var(--space-1);
+}
+
+/* ========================================
+   ARTIFACT BANNER (Product Goal + DoD)
+   ======================================== */
+
+.artifact-banner {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-5);
+  margin-bottom: var(--space-8);
+}
+
+.artifact-card {
+  background: linear-gradient(
+    135deg,
+    var(--color-background-card) 0%,
+    var(--color-background-page) 100%
+  );
+  border-radius: var(--radius-xl);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-md);
+  border: var(--border-width-1) solid var(--color-border-default);
+  position: relative;
+  overflow: hidden;
+}
+
+.artifact-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--border-width-2);
+}
+
+.artifact-card.goal::before {
+  background: linear-gradient(90deg, var(--color-primary-500) 0%, var(--color-info-500) 100%);
+}
+
+.artifact-card.dod::before {
+  background: linear-gradient(90deg, var(--color-success-500) 0%, var(--color-info-500) 100%);
+}
+
+.artifact-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.artifact-header svg {
+  color: var(--color-primary-500);
+  flex-shrink: 0;
+}
+
+.artifact-header h3 {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-secondary);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.artifact-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-2) 0;
+  line-height: var(--line-height-tight);
+}
+
+.artifact-description {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-relaxed);
+  margin: 0;
+}
+
+.artifact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-top: var(--space-3);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary-600);
+  text-decoration: none;
+}
+
+.artifact-link:hover {
+  text-decoration: underline;
+  color: var(--color-primary-700);
+}
+
+.dod-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.dod-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-relaxed);
+}
+
+.dod-item svg {
+  color: var(--color-success-600);
+  flex-shrink: 0;
+  margin-top: var(--space-1);
+}
+
+/* ========================================
    INSIGHTS SECTION
    ======================================== */
 
@@ -580,6 +723,10 @@
 .insights-header svg {
   color: var(--color-warning-500);
   flex-shrink: 0;
+}
+
+.artifact-header.dod svg {
+  color: var(--color-success-600);
 }
 
 .insights-section h3 {
@@ -919,8 +1066,13 @@
 
   .chart-card,
   .sprint-history,
-  .insights-section {
+  .insights-section,
+  .artifact-card {
     padding: var(--space-4);
+  }
+
+  .artifact-banner {
+    grid-template-columns: 1fr;
   }
 
   .history-stats {
@@ -1018,7 +1170,8 @@
 
   .chart-card,
   .sprint-history,
-  .insights-section {
+  .insights-section,
+  .artifact-card {
     padding: var(--space-3);
     border-radius: var(--radius-lg);
   }
@@ -1104,6 +1257,7 @@
   .metric-card,
   .sprint-history,
   .insights-section,
+  .artifact-card,
   .history-item,
   .insight-item,
   .error-state {
@@ -1129,7 +1283,8 @@
   .chart-card,
   .metric-card,
   .sprint-history,
-  .insights-section {
+  .insights-section,
+  .artifact-card {
     box-shadow: none;
     break-inside: avoid;
   }

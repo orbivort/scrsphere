@@ -33,8 +33,6 @@ vi.mock('../../../services', () => ({
   apiService: {
     getSprintConfiguration: vi.fn(),
     getGeneratedSprints: vi.fn(),
-    createSprintConfiguration: vi.fn(),
-    updateSprintConfiguration: vi.fn(),
     generateSprintsForYear: vi.fn(),
     deleteGeneratedSprint: vi.fn(),
   },
@@ -86,8 +84,6 @@ describe('SprintConfiguration Component', () => {
     // Mock API calls
     vi.mocked(apiService.getSprintConfiguration).mockResolvedValue({ data: mockSprintConfig });
     vi.mocked(apiService.getGeneratedSprints).mockResolvedValue({ data: mockSprints });
-    vi.mocked(apiService.createSprintConfiguration).mockResolvedValue({ data: mockSprintConfig });
-    vi.mocked(apiService.updateSprintConfiguration).mockResolvedValue({ data: mockSprintConfig });
     vi.mocked(apiService.generateSprintsForYear).mockResolvedValue({ data: mockSprints });
     vi.mocked(apiService.deleteGeneratedSprint).mockResolvedValue({ data: null });
   });
@@ -186,12 +182,12 @@ describe('SprintConfiguration Component', () => {
 
       await waitFor(
         () => {
-          expect(screen.getByText('Save Configuration')).toBeInTheDocument();
+          expect(screen.getByText('Preview & Generate Sprints')).toBeInTheDocument();
         },
         { timeout: 3000 }
       );
 
-      expect(screen.getByText('Preview & Generate Sprints')).toBeInTheDocument();
+      expect(screen.queryByText('Save Configuration')).not.toBeInTheDocument();
     });
 
     it('should render generated sprints list when available', async () => {
@@ -308,44 +304,6 @@ describe('SprintConfiguration Component', () => {
   });
 
   describe('User Interactions', () => {
-    it('should save configuration when save button is clicked', async () => {
-      const user = userEvent.setup();
-      renderWithProviders(<SprintConfiguration />);
-
-      await waitFor(
-        () => {
-          expect(screen.getByText('Save Configuration')).toBeInTheDocument();
-        },
-        { timeout: 3000 }
-      );
-
-      const saveButton = screen.getByText('Save Configuration');
-      await user.click(saveButton);
-
-      await waitFor(() => {
-        expect(apiService.updateSprintConfiguration).toHaveBeenCalled();
-      });
-    });
-
-    it('should show success notification when config is saved', async () => {
-      const user = userEvent.setup();
-      renderWithProviders(<SprintConfiguration />);
-
-      await waitFor(
-        () => {
-          expect(screen.getByText('Save Configuration')).toBeInTheDocument();
-        },
-        { timeout: 3000 }
-      );
-
-      const saveButton = screen.getByText('Save Configuration');
-      await user.click(saveButton);
-
-      await waitFor(() => {
-        expect(screen.getByText('Configuration saved successfully!')).toBeInTheDocument();
-      });
-    });
-
     it('should open preview modal when clicking Preview & Generate Sprints button', async () => {
       const user = userEvent.setup();
       renderWithProviders(<SprintConfiguration />);
@@ -505,27 +463,6 @@ describe('SprintConfiguration Component', () => {
   });
 
   describe('Error Handling', () => {
-    it('should handle save configuration error', async () => {
-      const user = userEvent.setup();
-      vi.mocked(apiService.updateSprintConfiguration).mockRejectedValue(new Error('Save failed'));
-
-      renderWithProviders(<SprintConfiguration />);
-
-      await waitFor(
-        () => {
-          expect(screen.getByText('Save Configuration')).toBeInTheDocument();
-        },
-        { timeout: 3000 }
-      );
-
-      const saveButton = screen.getByText('Save Configuration');
-      await user.click(saveButton);
-
-      await waitFor(() => {
-        expect(screen.getByText(/Failed to save configuration:/)).toBeInTheDocument();
-      });
-    });
-
     it('should handle generate sprints error', async () => {
       const user = userEvent.setup();
       vi.mocked(apiService.generateSprintsForYear).mockRejectedValue(new Error('Generate failed'));
@@ -685,15 +622,13 @@ describe('SprintConfiguration Component', () => {
 
       await waitFor(
         () => {
-          expect(screen.getByText('Save Configuration')).toBeInTheDocument();
+          expect(screen.getByText('Preview & Generate Sprints')).toBeInTheDocument();
         },
         { timeout: 3000 }
       );
 
-      const saveButton = screen.getByText('Save Configuration').closest('button');
       const previewButton = screen.getByText('Preview & Generate Sprints').closest('button');
 
-      expect(saveButton).toBeInTheDocument();
       expect(previewButton).toBeInTheDocument();
     });
   });

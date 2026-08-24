@@ -53,6 +53,8 @@ const makeRow = (
     startedAt: Date | null;
     pausedAt: Date | null;
     accumulatedMs: number;
+    concludedAt: Date | null;
+    concludedElapsedMs: number | null;
     version: number;
   }> = {}
 ) => ({

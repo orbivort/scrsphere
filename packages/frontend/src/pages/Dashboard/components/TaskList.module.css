@@ -91,14 +91,42 @@
   background: linear-gradient(135deg, var(--color-success-400) 0%, var(--color-success-500) 100%);
 }
 
-.task-title {
+.task-content {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0-5);
+  min-width: 0;
+}
+
+.task-title {
   font-size: var(--font-size-sm);
   color: var(--color-text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   font-weight: var(--font-weight-medium);
+}
+
+.task-assignee {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.task-item.own {
+  border-color: var(--color-primary-300);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-50) 0%,
+    var(--color-background-page) 100%
+  );
+}
+
+.task-item.own .task-title {
+  font-weight: var(--font-weight-bold);
 }
 
 .task-status-badge {

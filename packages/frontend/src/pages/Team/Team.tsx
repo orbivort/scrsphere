@@ -618,7 +618,7 @@ export const TeamManagement: React.FC = () => {
     .filter((s) => s.status === 'COMPLETED')
     .reduce((sum, s) => sum + s.completedPoints, 0);
   const avgVelocity = teamMetrics?.averageVelocity ?? 0;
-  const sprintSuccessRate = teamMetrics?.successRate ?? 0;
+  const sprintCompletionRate = teamMetrics?.completionRate ?? 0;
 
   const isLoading = teamLoading;
 
@@ -1064,8 +1064,8 @@ export const TeamManagement: React.FC = () => {
             <TargetIcon size={24} />
           </div>
           <div className={styles['stat-content']}>
-            <div className={styles['stat-value']}>{sprintSuccessRate}%</div>
-            <div className={styles['stat-label']}>{t('teamStats.sprintSuccessRate')}</div>
+            <div className={styles['stat-value']}>{sprintCompletionRate}%</div>
+            <div className={styles['stat-label']}>{t('teamStats.sprintCompletionRate')}</div>
           </div>
         </div>
       </section>

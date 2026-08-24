@@ -1,48 +1,14 @@
 {
+  "dod": {
+    "empty": "Aucune Définition de Terminé définie. Ajoutez-en une pour garantir une qualité constante.",
+    "title": "Définition de Terminé"
+  },
   "error": {
     "message": "Impossible de charger les données du rapport. Veuillez réessayer plus tard.",
     "title": "Erreur lors du chargement des rapports"
   },
   "insights": {
     "empty": "Aucun enseignement disponible encore. Terminez plus de Sprints pour générer des enseignements.",
-    "items": {
-      "active-sprint-impediments": {
-        "description": "Le Sprint actuel a {{count}} Impediment(s). Surveillez de près.",
-        "title": "Impediments du Sprint actif"
-      },
-      "consistent-delivery": {
-        "description": "L'équipe a maintenu 100% de réalisation des objectifs de Sprint lors des {{count}} derniers Sprints",
-        "title": "Livraison cohérente"
-      },
-      "get-started": {
-        "description": "Terminez plus de Sprints pour générer des enseignements sur les performances de l'équipe.",
-        "title": "Pour commencer"
-      },
-      "high-success-rate": {
-        "description": "L'équipe a atteint {{rate}}% de taux de réussite des Sprints. Continuez ainsi !",
-        "title": "Taux de réussite élevé"
-      },
-      "impediment-trend": {
-        "description": "{{count}} Impediment(s) actuellement ouverts. Envisagez de les traiter proactivement.",
-        "title": "Tendance des Impediments"
-      },
-      "low-success-rate": {
-        "description": "Le taux de réussite des Sprints est de {{rate}}%. Envisagez de revoir la capacité et la planification.",
-        "title": "Attention au taux de réussite"
-      },
-      "recent-improvement": {
-        "description": "Le dernier Sprint a montré une amélioration de {{improvement}}% des Story Points terminés.",
-        "title": "Amélioration récente"
-      },
-      "velocity-decline": {
-        "description": "La vélocité moyenne a diminué de {{trend}}%. Envisagez de revoir la planification du Sprint.",
-        "title": "Baisse de vélocité"
-      },
-      "velocity-improvement": {
-        "description": "La vélocité moyenne a augmenté de {{trend}}% par rapport aux Sprints précédents",
-        "title": "Amélioration de la vélocité"
-      }
-    },
     "title": "Enseignements clés"
   },
   "loading": {
@@ -57,26 +23,26 @@
       "title": "Vélocité moyenne",
       "unit": "Story Points par Sprint"
     },
+    "completionRate": {
+      "title": "Taux de réalisation du Sprint Backlog",
+      "unit": "Sprints entièrement livrés"
+    },
     "impediments": {
       "openCount": "Impediment(s) ouvert(s)",
       "resolved": "Résolus",
       "title": "Impediments"
-    },
-    "sprintSuccessRate": {
-      "fromLastMonth": "du dernier mois",
-      "title": "Taux de réussite du Sprint",
-      "unit": "Objectifs de Sprint atteints"
-    },
-    "teamSatisfaction": {
-      "fromLastSprint": "du dernier Sprint",
-      "title": "Satisfaction de l'équipe",
-      "unit": "Note moyenne"
     }
+  },
+  "productGoal": {
+    "empty": "Aucun Objectif de Produit actif. Définissez un objectif pour donner à l'équipe une cible claire.",
+    "title": "Product Goal",
+    "viewLink": "Voir les objectifs"
   },
   "pts": "pts",
   "skipToMainContent": "Passer au contenu principal",
   "sprintHistory": {
     "empty": "Aucun historique de Sprint disponible.",
+    "sprintGoalLabel": "Sprint Goal",
     "stats": {
       "completed": "Terminé",
       "impediments": "Impediments",
@@ -93,6 +59,11 @@
   "subtitle": "Suivre les performances de l'équipe et les métriques du Sprint",
   "title": "Rapports",
   "velocityChart": {
+    "accessibilityDescription": "Graphique à barres comparant les Story Points planifiés et terminés par Sprint.",
+    "ariaLabel": "Graphique de vélocité du Sprint comparant les Story Points planifiés et terminés.",
+    "ariaTableCaption": "Données de vélocité du Sprint",
+    "ariaTableLabel": "Tableau des données de vélocité du Sprint",
+    "ariaTableSprint": "Sprint",
     "completed": "Terminé",
     "planned": "Planifié",
     "title": "Vélocité du Sprint",

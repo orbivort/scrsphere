@@ -626,15 +626,11 @@ export interface VelocityData {
 export interface TeamMetrics {
   averageVelocity: number;
   velocityTrend: number;
-  successRate: number;
-  successRateTrend: number;
+  /** Share of completed sprints whose planned points were fully delivered (completed >= planned). */
+  completionRate: number;
   impediments: {
     resolved: number;
     total: number;
-  };
-  teamSatisfaction: {
-    rating: number;
-    trend: number;
   };
 }
 
@@ -644,6 +640,7 @@ export interface SprintHistoryItem {
   startDate: string;
   endDate: string;
   status: string;
+  sprintGoal?: string | null;
   plannedPoints: number;
   completedPoints: number;
   teamMembers: number;

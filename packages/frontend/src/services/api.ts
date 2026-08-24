@@ -45,6 +45,7 @@ import { retrospectiveService } from './domain/retrospective.service';
 import { systemParamsService } from './domain/systemParams.service';
 import { dataExportService } from './domain/dataExport.service';
 import { timeboxService } from './domain/timebox.service';
+import { definitionService } from './domain/definition.service';
 
 class ApiService {
   // Auth endpoints
@@ -234,6 +235,9 @@ class ApiService {
   pauseTimebox = timeboxService.pauseTimebox.bind(timeboxService);
   resetTimebox = timeboxService.resetTimebox.bind(timeboxService);
   concludeTimebox = timeboxService.concludeTimebox.bind(timeboxService);
+
+  // Definition of Done endpoints
+  getDefinitionOfDone = definitionService.getDefinitionOfDone.bind(definitionService);
 
   // Data Export endpoints (GDPR Article 20)
   initiateDataExport = dataExportService.initiateExport.bind(dataExportService);

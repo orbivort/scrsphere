@@ -353,8 +353,6 @@
     "generatedSprints": "Generierte Sprints",
     "loading": "Konfiguration wird geladen...",
     "notifications": {
-      "configurationSaveFailed": "Konfiguration konnte nicht gespeichert werden: {{message}}",
-      "configurationSaved": "Konfiguration erfolgreich gespeichert!",
       "sprintDeleteFailed": "Sprint konnte nicht gelöscht werden: {{message}}",
       "sprintDeleted": "Sprint erfolgreich gelöscht!",
       "sprintsGenerateFailed": "Sprints konnten nicht generiert werden: {{message}}",
@@ -379,8 +377,6 @@
       "warning_other": "Dies wird {{count}} Sprints für {{year}} generieren. Bestehende Sprints für dieses Jahr können betroffen sein.",
       "year": "Jahr:"
     },
-    "saveConfiguration": "Konfiguration speichern",
-    "saving": "Speichern...",
     "sprintCount": "{{count}} Sprints",
     "sprintCount_one": "{{count}} Sprint",
     "sprintCount_other": "{{count}} Sprints",

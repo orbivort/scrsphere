@@ -195,7 +195,7 @@
   "teamStats": {
     "avgVelocity": "Vélocité moyenne",
     "completedSprints": "Sprints terminés",
-    "sprintSuccessRate": "Taux de succès du Sprint",
+    "sprintCompletionRate": "Taux de réalisation du Sprint Backlog",
     "storyPointsCompleted": "Story Points terminés"
   },
   "title": "Équipe",

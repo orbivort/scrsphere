@@ -30,9 +30,20 @@
     "unknownStatus": "Stato sconosciuto"
   },
   "completed": "completato",
-  "completedLabel": "Completato",
   "createBacklogItem": "Crea elemento backlog",
   "createNewBacklogItem": "Crea nuovo elemento backlog",
+  "dailyScrumSummary": {
+    "adaptations": "Adattamenti",
+    "notStarted": "Non è ancora registrato nessun Daily Scrum per oggi.",
+    "notYetJoined": "{{count}} sviluppatore non ha ancora partecipato",
+    "notYetJoined_one": "{{count}} sviluppatore non ha ancora partecipato",
+    "notYetJoined_other": "{{count}} sviluppatori non hanno ancora partecipato",
+    "participants": "{{count}} partecipante",
+    "participants_one": "{{count}} partecipante",
+    "participants_other": "{{count}} partecipanti",
+    "planForNextDay": "Piano per il giorno successivo",
+    "progress": "Progressi verso l'obiettivo dello Sprint"
+  },
   "dailyUpdate": {
     "dailyUpdatesList": "Lista aggiornamenti quotidiani",
     "impediment": "Impediment:",
@@ -55,9 +66,6 @@
   "daysRemaining": "giorni rimanenti",
   "daysRemainingLabel": "Giorni rimanenti",
   "failedToLoad": "Impossibile caricare la Dashboard",
-  "hoursAgo": "{{count}} or{{plural}} fa",
-  "hoursAgo_one": "{{count}} or{{plural}} fa",
-  "hoursAgo_other": "{{count}} or{{plural}} fa",
   "idealBurndown": "Burndown ideale",
   "impedimentList": {
     "ariaLabel": "Lista Impediments",
@@ -71,12 +79,10 @@
     "OPEN": "Aperto",
     "RESOLVED": "Risolto"
   },
-  "justNow": "proprio adesso",
-  "lastUpdated": "Ultimo aggiornamento",
   "loadingBurndownChart": "Caricamento grafico burndown",
   "loadingDashboard": "Caricamento dashboard...",
   "loadingImpediments": "Caricamento Impediments",
-  "loadingTeamUpdates": "Caricamento aggiornamenti team",
+  "loadingTeamUpdates": "Caricamento aggiornamenti Daily Scrum",
   "loadingUserContext": "Caricamento contesto utente...",
   "metrics": {
     "completedTasks": "Compiti completati",
@@ -86,14 +92,11 @@
     "storyPointsCompleted": "Story Points completati",
     "totalTasks": "Compiti totali"
   },
-  "minutesAgo": "{{count}} minut{{plural}} fa",
-  "minutesAgo_one": "{{count}} minut{{plural}} fa",
-  "minutesAgo_other": "{{count}} minut{{plural}} fa",
   "noActiveSprint": "Nessuno sprint attivo",
   "noDailyUpdates": "Ancora nessun aggiornamento quotidiano per oggi.",
   "noOpenImpediments": "Nessun Impediment aperto. Ottimo lavoro!",
   "noSprintGoal": "Nessun Sprint Goal definito.",
-  "noTasksYet": "Nessun compito ancora assegnato a te.",
+  "noTasksYet": "Ancora nessun compito dei Developers.",
   "notSubmitted": "Non inviato",
   "openImpediments": "Impediments aperti",
   "quickActions": {
@@ -115,7 +118,7 @@
   "retry": "Riprova",
   "retryLoadingDashboard": "Riprova caricamento dashboard",
   "retryLoadingImpediments": "Riprova caricamento Impediments",
-  "retryLoadingTeamUpdates": "Riprova caricamento aggiornamenti team",
+  "retryLoadingTeamUpdates": "Riprova caricamento aggiornamenti Daily Scrum",
   "sprintBurndownChart": "Grafico Burndown Sprint",
   "sprintCompletion": "Completamento sprint: {{progress}}%",
   "sprintGoal": "Sprint Goal",
@@ -130,10 +133,11 @@
   "submitDailyScrumUpdate": "Invia il tuo aggiornamento daily scrum",
   "submitted": "Inviato",
   "taskList": {
-    "ariaLabel": "Lista compiti",
-    "noTasks": "Nessun compito assegnato a te",
+    "ariaLabel": "Compiti dei Developers",
+    "noTasks": "Nessun compito dei Developers",
     "taskAriaLabel": "{{title}}, stato: {{status}}. Clicca per vedere il compito",
-    "title": "I miei compiti"
+    "title": "Compiti dei Developers",
+    "you": "Tu"
   },
   "taskStatus": {
     "DONE": "Completato",
@@ -145,7 +149,7 @@
   "tasksDoneLabel": "Compiti completati",
   "tasksOf": "{{completed}} di {{total}} compiti",
   "teamMembers": "Membri del team",
-  "teamUpdates": "Aggiornamenti del team",
+  "teamUpdates": "Inspect & Adapt",
   "title": "Dashboard",
   "unableToLoadBurndown": "Impossibile caricare il grafico burndown.",
   "unableToLoadImpediments": "Impossibile caricare gli Impediments.",
@@ -154,10 +158,9 @@
   "upcomingDeadlines": "Scadenze imminenti",
   "updateDailyScrum": "Aggiorna Daily Scrum",
   "viewAll": "Vedi tutto",
-  "viewAllMyTasks": "Vedi tutti i miei compiti",
+  "viewAllDeveloperTasks": "Vedi tutti i compiti dei Developers",
   "viewAllOpenImpediments": "Vedi tutti gli Impediments aperti",
-  "viewAllTeamUpdates": "Vedi tutti gli aggiornamenti del team",
-  "viewOrUpdateDailyScrum": "Vedi o aggiorna il tuo daily scrum",
+  "viewAllTeamUpdates": "Vedi tutti gli aggiornamenti del Daily Scrum",
   "viewSprintBoard": "Vedi Bacheca Sprint",
   "welcome": "Benvenuto, {{name}}",
   "welcomeBack": "Bentornato! Ecco una panoramica del tuo sprint attivo."

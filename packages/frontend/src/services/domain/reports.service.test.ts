@@ -118,15 +118,10 @@ describe('ReportsService', () => {
           data: {
             averageVelocity: 22.5,
             velocityTrend: 5.2,
-            successRate: 85.5,
-            successRateTrend: 2.1,
+            completionRate: 85.5,
             impediments: {
               resolved: 15,
               total: 18,
-            },
-            teamSatisfaction: {
-              rating: 4.2,
-              trend: 0.3,
             },
           },
         },
@@ -141,10 +136,9 @@ describe('ReportsService', () => {
       expect(result.success).toBe(true);
       expect(result.data?.averageVelocity).toBe(22.5);
       expect(result.data?.velocityTrend).toBe(5.2);
-      expect(result.data?.successRate).toBe(85.5);
+      expect(result.data?.completionRate).toBe(85.5);
       expect(result.data?.impediments.resolved).toBe(15);
       expect(result.data?.impediments.total).toBe(18);
-      expect(result.data?.teamSatisfaction.rating).toBe(4.2);
     });
   });
 

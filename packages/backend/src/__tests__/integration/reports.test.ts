@@ -472,12 +472,12 @@ describe('Reports Integration Tests', () => {
           expect(typeof formattedVelocity).toBe('string');
           expect(formattedVelocity.length).toBeGreaterThan(0);
 
-          // Format successRate as percentage
-          const successRate = metrics.successRate ?? 0;
+          // Format completionRate as percentage
+          const completionRate = metrics.completionRate ?? 0;
           const formattedRate = new Intl.NumberFormat(locale, {
             style: 'percent',
             maximumFractionDigits: 0,
-          }).format(successRate / 100);
+          }).format(completionRate / 100);
 
           expect(typeof formattedRate).toBe('string');
         }

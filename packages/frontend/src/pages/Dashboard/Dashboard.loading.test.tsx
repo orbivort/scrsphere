@@ -31,7 +31,8 @@ vi.mock('../../services', () => ({
   apiService: {
     getActiveSprint: vi.fn(),
     getBurndownData: vi.fn(),
-    getDailyUpdates: vi.fn(),
+    getDailyScrum: vi.fn(),
+    getDailyScrumParticipation: vi.fn(),
     getImpediments: vi.fn(),
     getProductGoals: vi.fn(),
   },

@@ -1412,6 +1412,7 @@ class MockApiService {
       startDate: sprint.startDate,
       endDate: sprint.endDate,
       status: sprint.status,
+      sprintGoal: sprint.sprintGoal,
       plannedPoints: 13 + Math.floor(Math.random() * 10),
       completedPoints:
         sprint.status === SprintStatus.COMPLETED
@@ -1430,15 +1431,10 @@ class MockApiService {
     const metrics: TeamMetrics = {
       averageVelocity: 15.5,
       velocityTrend: 12,
-      successRate: 85,
-      successRateTrend: 5,
+      completionRate: 85,
       impediments: {
         resolved: 2,
         total: 3,
-      },
-      teamSatisfaction: {
-        rating: 4.2,
-        trend: 0.3,
       },
     };
 
@@ -1450,26 +1446,33 @@ class MockApiService {
 
     const insights: Insight[] = [
       {
-        id: 'insight-1',
+        id: 'consistent-delivery',
         type: 'positive',
         icon: 'positive',
-        title: 'Consistent Delivery',
-        description: 'Team has maintained 100% sprint goal completion in the last 2 sprints',
+        title: 'Consistent Backlog Completion',
+        description: 'All planned points were delivered in the last 2 sprints.',
       },
       {
-        id: 'insight-2',
+        id: 'impediment-trend',
         type: 'warning',
         icon: 'warning',
-        title: 'Impediment Trend',
-        description:
-          '2 impediments reported in current sprint. Consider addressing CSS conflicts proactively.',
+        title: 'Open Impediments',
+        description: '2 impediments currently open. Consider addressing proactively.',
       },
       {
-        id: 'insight-3',
+        id: 'velocity-improvement',
         type: 'positive',
         icon: 'positive',
-        title: 'Velocity Improvement',
-        description: 'Average velocity increased by 12% compared to previous month',
+        title: 'Velocity Increase',
+        description: 'Average velocity increased by 12% compared to previous sprints.',
+      },
+      {
+        id: 'adaptation',
+        type: 'positive',
+        icon: 'positive',
+        title: 'Inspect & Adapt',
+        description:
+          'Use the Sprint Retrospective to turn these signals into improvements for the next Sprint.',
       },
     ];
 

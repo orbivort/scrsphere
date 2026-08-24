@@ -189,7 +189,7 @@
   "teamStats": {
     "avgVelocity": "Avg Velocity",
     "completedSprints": "Completed Sprints",
-    "sprintSuccessRate": "Sprint Success Rate",
+    "sprintCompletionRate": "Sprint Backlog Completion Rate",
     "storyPointsCompleted": "Story Points Completed"
   },
   "title": "Team",
