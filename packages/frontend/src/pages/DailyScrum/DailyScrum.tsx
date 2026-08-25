@@ -234,8 +234,13 @@ export const DailyScrum: React.FC = () => {
     enabled: !!sprint?.id,
   });
 
-  // Sprint backlog items (tasks) for the optional adaptation linkage
-  const sprintBacklogItems = sprintTasksData?.data ?? sprint?.tasks ?? [];
+  // Sprint Backlog items for the optional adaptation linkage. The backend
+  // `DailyScrumBacklogItem` rows reference `SprintBacklogItem` (the PBI-level
+  // sprint backlog entry), not `Task`, so the dropdown must offer SprintBacklogItem
+  // IDs. Task IDs are a different table and would fail the FK constraint.
+  const sprintBacklogItems = sprint?.sprintBacklogItems ?? [];
+  const sprintBacklogItemTitle = (item: { title?: string; pbi?: { title?: string } }): string =>
+    item.title ?? item.pbi?.title ?? '';
 
   const { data: scrumData, isLoading: isScrumLoading } = useQuery({
     queryKey: queryKeys.dailyScrum.bySprintAndDate(sprint?.id ?? '', selectedDate),
@@ -997,7 +1002,7 @@ export const DailyScrum: React.FC = () => {
                         <option value="">{t('form.backlogItemPlaceholder')}</option>
                         {sprintBacklogItems.map((item) => (
                           <option key={item.id} value={item.id}>
-                            {item.title}
+                            {sprintBacklogItemTitle(item)}
                           </option>
                         ))}
                       </select>
@@ -1031,7 +1036,7 @@ export const DailyScrum: React.FC = () => {
                               className={styles['backlog-adjustment-item']}
                             >
                               <span className={styles['backlog-item-name']}>
-                                {item?.title ?? adj.sprintBacklogItemId}
+                                {item ? sprintBacklogItemTitle(item) : adj.sprintBacklogItemId}
                               </span>
                               <span className={styles['backlog-action']}>{adj.action}</span>
                               <button

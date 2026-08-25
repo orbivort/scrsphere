@@ -564,6 +564,16 @@ class MockApiService {
 
     const sprintTasks = mockTasks.filter((t) => t.sprintId === activeSprint.id);
 
+    // Derive SprintBacklogItems (the PBI-level sprint backlog entries) from the
+    // sprint's items so the Daily Scrum "Sprint Backlog adjustments" dropdown can
+    // offer the same SprintBacklogItem IDs the backend FK expects.
+    const sprintBacklogItems: SprintBacklogItem[] = (activeSprint.items ?? []).map((pbi) => ({
+      id: `sbi-${activeSprint.id}-${pbi.id}`,
+      sprintId: activeSprint.id,
+      pbiId: pbi.id,
+      pbi,
+    }));
+
     return {
       success: true,
       data: {
@@ -572,6 +582,7 @@ class MockApiService {
         // parent PBI (e.g. for the PBI preview "mark as done" popup).
         items: activeSprint.items,
         tasks: sprintTasks,
+        sprintBacklogItems,
       },
     };
   }

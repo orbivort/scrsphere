@@ -222,13 +222,15 @@ export interface Sprint {
   updatedAt: string;
   items?: ProductBacklogItem[];
   tasks?: Task[];
+  sprintBacklogItems?: SprintBacklogItem[];
 }
 
 export interface SprintBacklogItem {
   id: string;
   sprintId: string;
   pbiId: string;
-  addedAt: string;
+  addedAt?: string;
+  createdAt?: string;
   pbi?: ProductBacklogItem;
 }
 
