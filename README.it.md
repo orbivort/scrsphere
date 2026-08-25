@@ -1,6 +1,8 @@
-# Scrumooth
+# Scrumooth – Blocca il rumore. Consegna senza intoppi.
 
-**Strumento Scrum self-hosted, fedele alla Scrum Guide**
+_Il linter di Scrum._
+
+_Self-hosted, open source e progettato per far rispettare la Scrum Guide 2020._
 
 > **Lingue:** [English](README.md) | [Deutsch](README.de.md) | [Español](README.es.md) | [Français](README.fr.md) | [Italiano](README.it.md)
 
@@ -14,15 +16,42 @@
 [![Node.js](https://img.shields.io/badge/Node.js-24+-green.svg)](https://nodejs.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-18+-336791.svg)](https://www.postgresql.org/)
 
-Scrumooth è uno strumento Scrum self-hosted che implementa fedelmente la Scrum Guide. Leggero per impostazione, guida i team lungo l'intero ciclo di vita di Scrum — dal Product Goal e dal backlog fino alla Sprint Review e alla Sprint Retrospective — senza la complessità delle piattaforme SaaS più pesanti. Distribuiscilo sulla tua infrastruttura, mantieni i tuoi dati sotto il tuo controllo e non pagare mai per utente.
-
 <p align="center">
   <img src="docs/screenshots/scrumooth_it.png" alt="Scrumooth" width="800" />
 </p>
 
+<a id="live-demo"></a>
+
+## 🖥️ Demo dal vivo
+
+Prova subito Scrumooth nel tuo browser, senza alcuna installazione. La demo viene eseguita con dati simulati (nessun backend necessario), così puoi esplorare immediatamente l'intero ciclo di vita di Scrum.
+
+<p align="center">
+  <a href="https://orbivort.github.io/scrumooth/" target="_blank" rel="noopener noreferrer">
+    <strong>👉 Avvia la demo dal vivo su GitHub Pages</strong>
+  </a>
+</p>
+
+> **Nota:** La demo utilizza dati simulati in memoria — qualsiasi modifica apporti è locale alla sessione del browser e viene azzerata al refresh. Per dati persistenti e collaborazione multi-utente, segui la guida all'[Installazione](#installation) per ospitare autonomamente la tua istanza.
+
+---
+
+<a id="the-manifesto"></a>
+
+## 📜 Il manifesto — Perché Scrumooth esiste
+
+> La maggior parte degli strumenti di gestione dei progetti sono **registratori passivi**.
+> Ti danno board, registrano i tuoi clic, disegnano grafici bellissimi—_dopo_ che lo Sprint è fallito.
+> Tracciano i tuoi errori. Non ti impediscono mai di commetterli.
+>
+> **Scrumooth ribalta il copione.** Siamo il **guardiano**, non l'annotatore.
+>
+> Trasformiamo la **Scrum Guide 2020** in codice eseguibile. Non ci limitiamo a suggerire le best practice—le **facciamo rispettare** in modo nativo, così il tuo team passa meno tempo a discutere sui processi e più tempo a consegnare software funzionante.
+
 ## Indice
 
 - [Demo dal vivo](#live-demo)
+- [Il manifesto](#the-manifesto)
 - [Funzionalità](#features)
 - [Stack tecnologico](#tech-stack)
 - [Avvio rapido](#quick-start)

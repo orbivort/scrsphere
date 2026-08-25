@@ -1,6 +1,8 @@
-# Scrumooth
+# Scrumooth – Block the noise. Ship the smooth.
 
-**Self-hosted Scrum tool, faithful to the Scrum Guide**
+_The Linter for Scrum._
+
+_Self-hosted, open-source, and built to enforce the 2020 Scrum Guide._
 
 > **Languages:** [English](README.md) | [Deutsch](README.de.md) | [Español](README.es.md) | [Français](README.fr.md) | [Italiano](README.it.md)
 
@@ -14,15 +16,42 @@
 [![Node.js](https://img.shields.io/badge/Node.js-24+-green.svg)](https://nodejs.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-18+-336791.svg)](https://www.postgresql.org/)
 
-Scrumooth is a self-hosted Scrum tool that faithfully implements the Scrum Guide. Lightweight by design, it guides teams through the full Scrum lifecycle — from product goal and backlog to sprint review and retrospective — without the complexity of heavy SaaS platforms. Deploy it on your own infrastructure, keep your data under your control, and never pay per user.
-
 <p align="center">
   <img src="docs/screenshots/scrumooth.png" alt="Scrumooth" width="800" />
 </p>
 
+<a id="live-demo"></a>
+
+## 🖥️ Live Demo
+
+Try Scrumooth instantly in your browser — no installation required. The demo runs with mock data (no backend needed) so you can explore the full Scrum lifecycle right away.
+
+<p align="center">
+  <a href="https://orbivort.github.io/scrumooth/" target="_blank" rel="noopener noreferrer">
+    <strong>👉 Launch the Live Demo on GitHub Pages</strong>
+  </a>
+</p>
+
+> **Note:** The demo uses in‑memory mock data — any changes you make are local to your browser session and reset on refresh. For persistent data and multi‑user collaboration, follow the [Installation](#installation) guide to self‑host your own instance.
+
+---
+
+<a id="the-manifesto"></a>
+
+## 📜 The Manifesto — Why Scrumooth exists
+
+> Most project management tools are **passive tape recorders**.
+> They give you boards, they log your clicks, they draw beautiful charts—_after_ the Sprint fails.
+> They track your mistakes. They never stop you from making them.
+>
+> **Scrumooth flips the script.** We are the **gatekeeper**, not the note-taker.
+>
+> We embed the **2020 Scrum Guide** as executable code. We don't just suggest best practices—we **enforce** them natively, so your team spends less time arguing about process and more time shipping working software.
+
 ## Table of Contents
 
 - [Live Demo](#live-demo)
+- [The Manifesto](#the-manifesto)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Quick Start](#quick-start)
@@ -38,20 +67,6 @@ Scrumooth is a self-hosted Scrum tool that faithfully implements the Scrum Guide
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
 - [License](#license)
-
-<a id="live-demo"></a>
-
-## 🚀 Live Demo
-
-Try Scrumooth instantly in your browser — no installation required. The demo runs with mock data (no backend needed) so you can explore the full Scrum lifecycle right away.
-
-<p align="center">
-  <a href="https://orbivort.github.io/scrumooth/" target="_blank" rel="noopener noreferrer">
-    <strong>👉 Launch the Live Demo on GitHub Pages</strong>
-  </a>
-</p>
-
-> **Note:** The demo uses in‑memory mock data — any changes you make are local to your browser session and reset on refresh. For persistent data and multi‑user collaboration, follow the [Installation](#installation) guide to self‑host your own instance.
 
 <a id="features"></a>
 

@@ -1,6 +1,8 @@
-# Scrumooth
+# Scrumooth – Blockiere das Rauschen. Liefere reibungslos.
 
-**Selbst gehostetes Scrum-Tool, getreu dem Scrum Guide**
+_Der Linter für Scrum._
+
+_Selbst gehostet, Open Source und entwickelt, um den Scrum Guide 2020 durchzusetzen._
 
 > **Sprachen:** [English](README.md) | [Deutsch](README.de.md) | [Español](README.es.md) | [Français](README.fr.md) | [Italiano](README.it.md)
 
@@ -14,15 +16,42 @@
 [![Node.js](https://img.shields.io/badge/Node.js-24+-green.svg)](https://nodejs.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-18+-336791.svg)](https://www.postgresql.org/)
 
-Scrumooth ist ein selbst gehostetes Scrum-Tool, das den Scrum Guide getreu umsetzt. Dank seines bewusst schlanken Designs führt es Teams durch den gesamten Scrum-Lebenszyklus — vom Product Goal und Backlog bis hin zu Sprint Review und Sprint Retrospective — ohne die Komplexität schwergewichtiger SaaS-Plattformen. Stellen Sie es auf Ihrer eigenen Infrastruktur bereit, behalten Sie die Kontrolle über Ihre Daten und zahlen Sie niemals pro Benutzer.
-
 <p align="center">
   <img src="docs/screenshots/scrumooth_de.png" alt="Scrumooth" width="800" />
 </p>
 
+<a id="live-demo"></a>
+
+## 🖥️ Live-Demo
+
+Probieren Sie Scrumooth sofort in Ihrem Browser aus — keine Installation erforderlich. Die Demo läuft mit Mock-Daten (kein Backend erforderlich), sodass Sie den gesamten Scrum-Lebenszyklus sofort erkunden können.
+
+<p align="center">
+  <a href="https://orbivort.github.io/scrumooth/" target="_blank" rel="noopener noreferrer">
+    <strong>👉 Live-Demo auf GitHub Pages starten</strong>
+  </a>
+</p>
+
+> **Hinweis:** Die Demo verwendet In-Memory-Mock-Daten — alle von Ihnen vorgenommenen Änderungen sind nur lokal in Ihrer Browser-Sitzung gültig und werden beim Aktualisieren zurückgesetzt. Für persistente Daten und Mehrbenutzer-Zusammenarbeit folgen Sie der Anleitung unter [Installation](#installation), um Ihre eigene Instanz selbst zu hosten.
+
+---
+
+<a id="the-manifesto"></a>
+
+## 📜 Das Manifest — Warum Scrumooth existiert
+
+> Die meisten Projektmanagement-Tools sind **passive Tonbandgeräte**.
+> Sie liefern Boards, sie protokollieren Ihre Klicks, sie zeichnen schöne Diagramme—_nachdem_ der Sprint gescheitert ist.
+> Sie verfolgen Ihre Fehler. Sie hindern Sie nie daran, sie zu begehen.
+>
+> **Scrumooth dreht den Spieß um.** Wir sind der **Gatekeeper**, nicht der Notenschreiber.
+>
+> Wir gießen den **Scrum Guide 2020** in ausführbaren Code. Wir schlagen Best Practices nicht nur vor—wir **erzwingen** sie nativ, sodass Ihr Team weniger Zeit damit verbringt, über Prozesse zu diskutieren, und mehr Zeit damit, funktionierende Software auszuliefern.
+
 ## Inhaltsverzeichnis
 
 - [Live-Demo](#live-demo)
+- [Das Manifest](#the-manifesto)
 - [Funktionen](#features)
 - [Tech-Stack](#tech-stack)
 - [Schnellstart](#quick-start)
