@@ -53,6 +53,7 @@ vi.mock('../../../utils/prisma', () => ({
       create: vi.fn(),
       createMany: vi.fn(),
       update: vi.fn(),
+      upsert: vi.fn(),
       deleteMany: vi.fn(),
     },
     workflow: {
@@ -3032,12 +3033,15 @@ describe('SprintService - Additional Coverage', () => {
   });
 
   describe('updateBurndownData', () => {
-    it('should update burndown data for active sprint', async () => {
+    it('should upsert burndown data for active sprint on a working day', async () => {
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
+
       const mockSprint = {
         id: 'sprint-1',
         status: 'ACTIVE',
-        startDate: new Date(),
-        endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        startDate: todayStart,
+        endDate: new Date(todayStart.getTime() + 7 * 24 * 60 * 60 * 1000),
       };
 
       const mockTasks = [
@@ -3047,14 +3051,18 @@ describe('SprintService - Additional Coverage', () => {
 
       (prisma.sprint.findUnique as any).mockResolvedValue(mockSprint);
       (prisma.task.findMany as any).mockResolvedValue(mockTasks);
-      (prisma.burndownData.findFirst as any).mockResolvedValue({
-        id: 'bd-1',
-        actualRemaining: 10,
-      });
+      (prisma.burndownData.upsert as any).mockResolvedValue({ id: 'bd-1' });
+
+      // Force today to be treated as a working day regardless of the actual
+      // weekday so the assertion is deterministic.
+      const getWorkingDaysSpy = vi
+        .spyOn(sprintService as any, 'getWorkingDays')
+        .mockReturnValue([todayStart]);
 
       await sprintService.updateBurndownData('sprint-1');
 
-      expect(prisma.burndownData.update).toHaveBeenCalled();
+      expect(prisma.burndownData.upsert).toHaveBeenCalled();
+      getWorkingDaysSpy.mockRestore();
     });
 
     it('should not update burndown data for non-active sprint', async () => {

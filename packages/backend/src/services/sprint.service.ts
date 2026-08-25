@@ -1859,13 +1859,12 @@ class SprintService {
       return;
     }
 
-    const [tasks, todayStart, todayEnd] = await Promise.all([
+    const [tasks, todayStart] = await Promise.all([
       prisma.task.findMany({
         where: { sprintId },
         select: { remainingHours: true, estimatedHours: true },
       }),
       Promise.resolve(this.getStartOfDay(new Date())),
-      Promise.resolve(this.getEndOfDay(new Date())),
     ]);
 
     const totalRemainingHours = tasks.reduce(
@@ -1873,44 +1872,47 @@ class SprintService {
       0
     );
 
-    const existingRecord = await prisma.burndownData.findFirst({
-      where: {
-        sprintId,
-        date: { gte: todayStart, lt: todayEnd },
-      },
+    const startDate = this.getStartOfDay(new Date(sprint.startDate));
+
+    const days = this.getWorkingDays(startDate, new Date(sprint.endDate));
+    const dayIndex = days.findIndex((d) => {
+      const dayStart = this.getStartOfDay(d);
+      return dayStart.getTime() === todayStart.getTime();
     });
 
-    if (existingRecord) {
-      await prisma.burndownData.update({
-        where: { id: existingRecord.id },
-        data: { actualRemaining: totalRemainingHours },
-      });
-    } else {
-      const startDate = this.getStartOfDay(new Date(sprint.startDate));
-
-      const days = this.getWorkingDays(startDate, new Date(sprint.endDate));
-      const dayIndex = days.findIndex((d) => {
-        const dayStart = this.getStartOfDay(d);
-        return dayStart.getTime() === todayStart.getTime();
-      });
-
-      if (dayIndex >= 0) {
-        const totalHours = tasks.reduce((sum, task) => sum + (task.estimatedHours ?? 0), 0);
-        const totalDays = days.length;
-        const dailyBurn = totalDays > 0 ? totalHours / totalDays : 0;
-
-        await prisma.burndownData.create({
-          data: {
-            id: generateUUIDv7(),
-            sprintId,
-            date: todayStart,
-            idealRemaining: Math.max(0, totalHours - dailyBurn * dayIndex),
-            actualRemaining: totalRemainingHours,
-            createdBy: null, // System-generated data has no specific creator
-          },
-        });
-      }
+    // Only track burndown for working days that fall within the sprint's window.
+    if (dayIndex < 0) {
+      return;
     }
+
+    const totalHours = tasks.reduce((sum, task) => sum + (task.estimatedHours ?? 0), 0);
+    const totalDays = days.length;
+    const dailyBurn = totalDays > 0 ? totalHours / totalDays : 0;
+
+    // Upsert atomically on the (sprintId, date) unique key. The previous
+    // findFirst-then-create pattern was subject to a TOCTOU race: two
+    // concurrent transitions on the same sprint could both see "no record for
+    // today" and both create, violating the unique constraint and surfacing as
+    // an intermittent 409 Conflict. Prisma's upsert serializes this.
+    await prisma.burndownData.upsert({
+      where: {
+        sprintId_date: {
+          sprintId,
+          date: todayStart,
+        },
+      },
+      update: {
+        actualRemaining: totalRemainingHours,
+      },
+      create: {
+        id: generateUUIDv7(),
+        sprintId,
+        date: todayStart,
+        idealRemaining: Math.max(0, totalHours - dailyBurn * dayIndex),
+        actualRemaining: totalRemainingHours,
+        createdBy: null, // System-generated data has no specific creator
+      },
+    });
   }
 
   /**
@@ -1919,15 +1921,6 @@ class SprintService {
   private getStartOfDay(date: Date): Date {
     const d = new Date(date);
     d.setHours(0, 0, 0, 0);
-    return d;
-  }
-
-  /**
-   * Get end of day (23:59:59.999)
-   */
-  private getEndOfDay(date: Date): Date {
-    const d = new Date(date);
-    d.setHours(23, 59, 59, 999);
     return d;
   }
 
