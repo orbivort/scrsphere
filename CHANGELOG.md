@@ -5,6 +5,42 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0] - 2026-08-25
+
+### Added
+
+- Potential fix for pull request finding 'CodeQL / Useless conditional'
+- add sprint backlog items for the optional adaptation linkage in daily scrum
+- enhance dashboard and reports, simplify sprint configuration
+- redesign and enforce daily scrum to goal focused inspection
+- add event timebox for sprint planning, daily scrum, sprint review and retrospective
+- remove bulk DoD checks from completing sprint, add quick marking PBI done function in sprint board
+- sprint review and retrospective enhancements
+- enhance the sprint closure flow
+- enforce Sprint Review and Retrospective completion before closing sprint
+- enforce role permissions for active sprint, add sprint cancellation feature
+- enforce task assignment to developers
+- support save and resume sprint planning
+- enforce developers self-management protection
+- restrict task status changes to developers
+- add REVIEW state for task
+- enforce task assignee for developers only
+- enforce task assignee for developers only
+- enforce maximum Scrum team size with default 10
+- enforce single PO / SM per Scrum team
+- enforce developer-only story point sizing, Sprint goal check, DoD verification
+
+### Changed
+
+- centralize sprint query keys and update icons
+- consolidate migration.sql
+- remove legacy daily update
+- rename DEVELOPER role to DEVELOPERS across codebase
+
+### Fixed
+
+- enhance tests for ci build
+
 ## [2.3.1] - 2026-08-18
 
 ### Security
