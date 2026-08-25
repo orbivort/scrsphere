@@ -11,8 +11,8 @@ CREATE SCHEMA IF NOT EXISTS "public";
 -- ============================================
 CREATE TYPE "UserRole" AS ENUM ('PRODUCT_OWNER', 'SCRUM_MASTER', 'DEVELOPERS');
 CREATE TYPE "ItemStatus" AS ENUM ('NEW', 'REFINED', 'READY', 'IN_PROGRESS', 'DONE');
-CREATE TYPE "TaskStatus" AS ENUM ('TODO', 'IN_PROGRESS', 'DONE');
-CREATE TYPE "SprintStatus" AS ENUM ('PLANNED', 'ACTIVE', 'COMPLETED', 'CANCELLED');
+CREATE TYPE "TaskStatus" AS ENUM ('TODO', 'IN_PROGRESS', 'REVIEW', 'DONE');
+CREATE TYPE "SprintStatus" AS ENUM ('DRAFT', 'PLANNED', 'ACTIVE', 'COMPLETED', 'CANCELLED');
 CREATE TYPE "ImpedimentStatus" AS ENUM ('OPEN', 'IN_PROGRESS', 'RESOLVED', 'CLOSED');
 CREATE TYPE "ProductGoalStatus" AS ENUM ('NEW', 'ACTIVE', 'COMPLETED', 'ABANDONED');
 CREATE TYPE "MoSCoWPriority" AS ENUM ('MUST_HAVE', 'SHOULD_HAVE', 'COULD_HAVE', 'WONT_HAVE');
@@ -25,9 +25,10 @@ CREATE TYPE "HealthCheckStatus" AS ENUM ('OPEN', 'CLOSED');
 CREATE TYPE "FeedbackCategory" AS ENUM ('POSITIVE', 'NEGATIVE', 'SUGGESTION', 'QUESTION');
 CREATE TYPE "ActionItemStatus" AS ENUM ('PENDING', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED');
 CREATE TYPE "RetrospectiveStatus" AS ENUM ('DRAFT', 'IN_PROGRESS', 'COMPLETED');
+CREATE TYPE "TimeboxStatus" AS ENUM ('IDLE', 'RUNNING', 'PAUSED');
 CREATE TYPE "SprintDuration" AS ENUM ('ONE_WEEK', 'TWO_WEEKS', 'THREE_WEEKS', 'FOUR_WEEKS');
 CREATE TYPE "ScheduledDeletionStatus" AS ENUM ('PENDING', 'CANCELLED', 'EXECUTED', 'EXPIRED');
-CREATE TYPE "NotificationType" AS ENUM ('TEAM_INVITATION', 'TEAM_REMOVAL', 'TASK_ASSIGNMENT', 'IMPEDIMENT_ASSIGNMENT', 'DAILY_UPDATE_REMINDER', 'TEAM_CREATED', 'TEAM_UPDATED', 'TEAM_DELETED', 'DIRECT_MESSAGE', 'ACCOUNT_DELETION_SCHEDULED', 'ACCOUNT_DELETION_CANCELLED');
+CREATE TYPE "NotificationType" AS ENUM ('TEAM_INVITATION', 'TEAM_REMOVAL', 'TASK_ASSIGNMENT', 'IMPEDIMENT_ASSIGNMENT', 'DAILY_SCRUM_SIGNAL', 'TEAM_CREATED', 'TEAM_UPDATED', 'TEAM_DELETED', 'DIRECT_MESSAGE', 'ACCOUNT_DELETION_SCHEDULED', 'ACCOUNT_DELETION_CANCELLED');
 CREATE TYPE "EmailType" AS ENUM ('PASSWORD_RESET', 'EMAIL_VERIFICATION', 'WELCOME', 'PASSWORD_CHANGE', 'ACCOUNT_DELETION', 'TEAM_INVITATION', 'NOTIFICATION');
 CREATE TYPE "EmailStatus" AS ENUM ('PENDING', 'SENT', 'DELIVERED', 'FAILED', 'BOUNCED', 'OPENED', 'CLICKED');
 
@@ -183,20 +184,43 @@ CREATE TABLE "tasks" (
     CONSTRAINT "tasks_pkey" PRIMARY KEY ("id")
 );
 
-CREATE TABLE "daily_updates" (
+CREATE TABLE "daily_scrums" (
     "id" UUID NOT NULL,
     "sprintId" UUID NOT NULL,
-    "userId" UUID NOT NULL,
-    "updateDate" DATE NOT NULL,
-    "yesterdayWork" TEXT,
-    "todayWork" TEXT,
-    "impediment" TEXT,
+    "scrumDate" DATE NOT NULL,
+    "progressNotes" TEXT,
+    "adaptationsNotes" TEXT,
+    "planForNextDay" TEXT,
+    "focusMode" TEXT,
     "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "createdBy" UUID,
     "updatedAt" TIMESTAMPTZ(3) NOT NULL,
     "updatedBy" UUID,
 
-    CONSTRAINT "daily_updates_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "daily_scrums_pkey" PRIMARY KEY ("id")
+);
+
+CREATE TABLE "daily_scrum_backlog_items" (
+    "id" UUID NOT NULL,
+    "dailyScrumId" UUID NOT NULL,
+    "sprintBacklogItemId" UUID NOT NULL,
+    "action" TEXT NOT NULL,
+    "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdBy" UUID,
+    "updatedAt" TIMESTAMPTZ(3) NOT NULL,
+    "updatedBy" UUID,
+
+    CONSTRAINT "daily_scrum_backlog_items_pkey" PRIMARY KEY ("id")
+);
+
+CREATE TABLE "daily_scrum_participants" (
+    "id" UUID NOT NULL,
+    "dailyScrumId" UUID NOT NULL,
+    "userId" UUID NOT NULL,
+    "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdBy" UUID,
+
+    CONSTRAINT "daily_scrum_participants_pkey" PRIMARY KEY ("id")
 );
 
 CREATE TABLE "burndown_data" (
@@ -224,7 +248,6 @@ CREATE TABLE "impediments" (
     "status" "ImpedimentStatus" NOT NULL DEFAULT 'OPEN',
     "resolution" TEXT,
     "resolvedAt" TIMESTAMPTZ(3),
-    "dailyUpdateId" UUID,
     "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "createdBy" UUID,
     "updatedAt" TIMESTAMPTZ(3) NOT NULL,
@@ -774,6 +797,28 @@ CREATE TABLE "team_health_check_responses" (
     CONSTRAINT "team_health_check_responses_pkey" PRIMARY KEY ("id")
 );
 
+-- Timebox table introduced by the sprint timeboxing feature.
+CREATE TABLE "timeboxes" (
+    "id" UUID NOT NULL,
+    "teamId" UUID NOT NULL,
+    "eventType" TEXT NOT NULL,
+    "sprintId" UUID,
+    "date" DATE NOT NULL,
+    "status" "TimeboxStatus" NOT NULL DEFAULT 'IDLE',
+    "startedAt" TIMESTAMPTZ(3),
+    "pausedAt" TIMESTAMPTZ(3),
+    "accumulatedMs" INTEGER NOT NULL DEFAULT 0,
+    "version" INTEGER NOT NULL DEFAULT 0,
+    "concludedAt" TIMESTAMPTZ(3),
+    "concludedElapsedMs" INTEGER,
+    "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdBy" UUID,
+    "updatedAt" TIMESTAMPTZ(3) NOT NULL,
+    "updatedBy" UUID,
+
+    CONSTRAINT "timeboxes_pkey" PRIMARY KEY ("id")
+);
+
 -- ============================================
 -- INDEXES
 -- ============================================
@@ -811,11 +856,16 @@ CREATE INDEX "tasks_pbiId_idx" ON "tasks"("pbiId");
 CREATE INDEX "tasks_assigneeId_idx" ON "tasks"("assigneeId");
 CREATE INDEX "tasks_status_idx" ON "tasks"("status");
 CREATE INDEX "tasks_sprintId_status_idx" ON "tasks"("sprintId", "status");
-CREATE INDEX "daily_updates_sprintId_updateDate_idx" ON "daily_updates"("sprintId", "updateDate");
-CREATE INDEX "daily_updates_updateDate_idx" ON "daily_updates"("updateDate");
-CREATE UNIQUE INDEX "daily_updates_sprintId_userId_updateDate_key" ON "daily_updates"("sprintId", "userId", "updateDate");
+CREATE INDEX "daily_scrums_sprintId_scrumDate_idx" ON "daily_scrums"("sprintId", "scrumDate");
+CREATE INDEX "daily_scrums_scrumDate_idx" ON "daily_scrums"("scrumDate");
+CREATE UNIQUE INDEX "daily_scrums_sprintId_scrumDate_key" ON "daily_scrums"("sprintId", "scrumDate");
+CREATE INDEX "daily_scrum_backlog_items_dailyScrumId_idx" ON "daily_scrum_backlog_items"("dailyScrumId");
+CREATE INDEX "daily_scrum_backlog_items_sprintBacklogItemId_idx" ON "daily_scrum_backlog_items"("sprintBacklogItemId");
+CREATE UNIQUE INDEX "daily_scrum_backlog_items_dailyScrumId_sprintBacklogItemId_key" ON "daily_scrum_backlog_items"("dailyScrumId", "sprintBacklogItemId");
+CREATE INDEX "daily_scrum_participants_dailyScrumId_idx" ON "daily_scrum_participants"("dailyScrumId");
+CREATE INDEX "daily_scrum_participants_userId_idx" ON "daily_scrum_participants"("userId");
+CREATE UNIQUE INDEX "daily_scrum_participants_dailyScrumId_userId_key" ON "daily_scrum_participants"("dailyScrumId", "userId");
 CREATE UNIQUE INDEX "burndown_data_sprintId_date_key" ON "burndown_data"("sprintId", "date");
-CREATE UNIQUE INDEX "impediments_dailyUpdateId_key" ON "impediments"("dailyUpdateId");
 CREATE INDEX "impediments_teamId_idx" ON "impediments"("teamId");
 CREATE INDEX "impediments_status_idx" ON "impediments"("status");
 CREATE INDEX "impediments_sprintId_idx" ON "impediments"("sprintId");
@@ -933,6 +983,17 @@ CREATE INDEX "team_health_check_responses_healthCheckId_idx" ON "team_health_che
 CREATE INDEX "team_health_check_responses_userId_idx" ON "team_health_check_responses"("userId");
 CREATE INDEX "team_health_check_responses_healthCheckId_scrumValue_idx" ON "team_health_check_responses"("healthCheckId", "scrumValue");
 
+-- Timebox indexes
+CREATE INDEX "timeboxes_teamId_idx" ON "timeboxes"("teamId");
+CREATE INDEX "timeboxes_sprintId_idx" ON "timeboxes"("sprintId");
+CREATE INDEX "timeboxes_date_idx" ON "timeboxes"("date");
+CREATE UNIQUE INDEX "timeboxes_teamId_eventType_sprintId_date_key" ON "timeboxes"("teamId", "eventType", "sprintId", "date");
+
+-- Partial unique indexes to enforce exactly one Product Owner / Scrum Master per team.
+-- (On a fresh database there is no data to deduplicate, so these are created directly.)
+CREATE UNIQUE INDEX "team_members_single_product_owner_idx" ON "team_members"("teamId") WHERE "role" = 'PRODUCT_OWNER';
+CREATE UNIQUE INDEX "team_members_single_scrum_master_idx" ON "team_members"("teamId") WHERE "role" = 'SCRUM_MASTER';
+
 -- Dashboard-related composite indexes added by the lifecycle enhancement
 CREATE INDEX "increments_teamId_status_createdAt_idx" ON "increments"("teamId", "status", "createdAt");
 CREATE INDEX "impediments_teamId_status_createdAt_idx" ON "impediments"("teamId", "status", "createdAt");
@@ -960,10 +1021,12 @@ ALTER TABLE "sprint_backlog_changes" ADD CONSTRAINT "sprint_backlog_changes_spri
 ALTER TABLE "tasks" ADD CONSTRAINT "tasks_assigneeId_fkey" FOREIGN KEY ("assigneeId") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 ALTER TABLE "tasks" ADD CONSTRAINT "tasks_pbiId_fkey" FOREIGN KEY ("pbiId") REFERENCES "product_backlog_items"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE "tasks" ADD CONSTRAINT "tasks_sprintId_fkey" FOREIGN KEY ("sprintId") REFERENCES "sprints"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "daily_updates" ADD CONSTRAINT "daily_updates_sprintId_fkey" FOREIGN KEY ("sprintId") REFERENCES "sprints"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "daily_updates" ADD CONSTRAINT "daily_updates_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "daily_scrums" ADD CONSTRAINT "daily_scrums_sprintId_fkey" FOREIGN KEY ("sprintId") REFERENCES "sprints"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "daily_scrum_backlog_items" ADD CONSTRAINT "daily_scrum_backlog_items_dailyScrumId_fkey" FOREIGN KEY ("dailyScrumId") REFERENCES "daily_scrums"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "daily_scrum_backlog_items" ADD CONSTRAINT "daily_scrum_backlog_items_sprintBacklogItemId_fkey" FOREIGN KEY ("sprintBacklogItemId") REFERENCES "sprint_backlog_items"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "daily_scrum_participants" ADD CONSTRAINT "daily_scrum_participants_dailyScrumId_fkey" FOREIGN KEY ("dailyScrumId") REFERENCES "daily_scrums"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "daily_scrum_participants" ADD CONSTRAINT "daily_scrum_participants_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE "burndown_data" ADD CONSTRAINT "burndown_data_sprintId_fkey" FOREIGN KEY ("sprintId") REFERENCES "sprints"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "impediments" ADD CONSTRAINT "impediments_dailyUpdateId_fkey" FOREIGN KEY ("dailyUpdateId") REFERENCES "daily_updates"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 ALTER TABLE "impediments" ADD CONSTRAINT "impediments_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 ALTER TABLE "impediments" ADD CONSTRAINT "impediments_reportedById_fkey" FOREIGN KEY ("reportedById") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 ALTER TABLE "impediments" ADD CONSTRAINT "impediments_sprintId_fkey" FOREIGN KEY ("sprintId") REFERENCES "sprints"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -1030,6 +1093,10 @@ ALTER TABLE "team_health_checks" ADD CONSTRAINT "team_health_checks_teamId_fkey"
 ALTER TABLE "team_health_checks" ADD CONSTRAINT "team_health_checks_sprintId_fkey" FOREIGN KEY ("sprintId") REFERENCES "sprints"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 ALTER TABLE "team_health_check_responses" ADD CONSTRAINT "team_health_check_responses_healthCheckId_fkey" FOREIGN KEY ("healthCheckId") REFERENCES "team_health_checks"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE "team_health_check_responses" ADD CONSTRAINT "team_health_check_responses_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- Timebox foreign keys
+ALTER TABLE "timeboxes" ADD CONSTRAINT "timeboxes_teamId_fkey" FOREIGN KEY ("teamId") REFERENCES "teams"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "timeboxes" ADD CONSTRAINT "timeboxes_sprintId_fkey" FOREIGN KEY ("sprintId") REFERENCES "sprints"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- ============================================
 -- CHECK CONSTRAINTS FOR BUSINESS RULES
