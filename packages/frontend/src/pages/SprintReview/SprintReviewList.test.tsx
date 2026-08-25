@@ -125,6 +125,17 @@ describe('SprintReviewList', () => {
       success: true,
       data: mockIncrements,
     });
+    vi.spyOn(apiServiceModule.apiService, 'createSprintReview').mockResolvedValue({
+      success: true,
+      data: {
+        id: 'review-new',
+        sprintId: 'sprint-1',
+        teamId: 'team-1',
+        reviewDate: '2026-01-14T00:00:00Z',
+        status: 'in_progress',
+        summary: '',
+      },
+    });
     vi.spyOn(teamStoreModule, 'useTeamStore').mockReturnValue({
       currentTeam: mockTeam,
       setCurrentTeam: vi.fn(),
@@ -159,25 +170,30 @@ describe('SprintReviewList', () => {
       expect(screen.getByText(i18nT('sprint-review:list.subtitle'))).toBeInTheDocument();
     });
 
-    it('should display stats showing completed sprint count', async () => {
+    it('should display stats showing reviewable sprint count', async () => {
       renderComponent();
 
       await waitFor(() => {
-        const completedSprintsText = screen.getAllByText(
-          i18nT('sprint-review:list.completedSprints')
+        const reviewableSprintsText = screen.getAllByText(
+          i18nT('sprint-review:list.reviewableSprints')
         );
-        expect(completedSprintsText.length).toBeGreaterThan(0);
+        expect(reviewableSprintsText.length).toBeGreaterThan(0);
       });
     });
 
-    it('should render completed sprints in a grid', async () => {
+    it('should render completed and active sprints in separate sections', async () => {
       renderComponent();
 
       await waitFor(() => {
         expect(screen.getByText(/Sprint 1/)).toBeInTheDocument();
       });
 
-      expect(screen.queryByText(/Sprint 2/)).not.toBeInTheDocument();
+      // Active sprints are reviewable before closure and grouped under their own section.
+      expect(screen.getByText(/Sprint 2/)).toBeInTheDocument();
+      expect(screen.getByText(i18nT('sprint-review:list.activeSprints'))).toBeInTheDocument();
+      expect(screen.getByText(i18nT('sprint-review:list.completedSprints'))).toBeInTheDocument();
+
+      // Planned sprints are not reviewable and not shown.
       expect(screen.queryByText(/Sprint 3/)).not.toBeInTheDocument();
     });
 
@@ -185,7 +201,7 @@ describe('SprintReviewList', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText(i18nT('sprint-review:list.goal'))).toBeInTheDocument();
+        expect(screen.getAllByText(i18nT('sprint-review:list.goal')).length).toBeGreaterThan(0);
       });
     });
 
@@ -203,14 +219,15 @@ describe('SprintReviewList', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText(/Jan/i)).toBeInTheDocument();
+        expect(screen.getAllByText(/Jan/i).length).toBeGreaterThan(0);
       });
     });
 
-    it('should render empty state when no completed sprints exist', async () => {
+    it('should render empty state when no reviewable (active/completed) sprints exist', async () => {
+      // A PLANNED-only Sprint is not yet reviewable, so the list shows the empty state.
       vi.spyOn(apiServiceModule.apiService, 'getSprints').mockResolvedValue({
         success: true,
-        data: [mockSprints[1]],
+        data: [mockSprints[2]],
       });
 
       renderComponent();
@@ -282,7 +299,9 @@ describe('SprintReviewList', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText(i18nT('sprint-review:list.viewDetails'))).toBeInTheDocument();
+        expect(screen.getAllByText(i18nT('sprint-review:list.viewDetails')).length).toBeGreaterThan(
+          0
+        );
       });
     });
 
@@ -300,8 +319,8 @@ describe('SprintReviewList', () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText(i18nT('sprint-review:list.reviewStatus.incrementRequired'))
-        ).toBeInTheDocument();
+          screen.getAllByText(i18nT('sprint-review:list.reviewStatus.incrementRequired')).length
+        ).toBeGreaterThan(0);
       });
     });
 
@@ -318,7 +337,9 @@ describe('SprintReviewList', () => {
       renderComponent();
 
       await waitFor(() => {
-        expect(screen.getByText(i18nT('sprint-review:list.createIncrement'))).toBeInTheDocument();
+        expect(
+          screen.getAllByText(i18nT('sprint-review:list.createIncrement')).length
+        ).toBeGreaterThan(0);
       });
     });
 
@@ -363,11 +384,59 @@ describe('SprintReviewList', () => {
       renderComponent();
 
       await waitFor(() => {
-        const incrementButton = screen.getByText(i18nT('sprint-review:list.createIncrement'));
+        const incrementButton = screen.getAllByText(i18nT('sprint-review:list.createIncrement'))[0];
         fireEvent.click(incrementButton);
       });
 
       expect(mockNavigate).toHaveBeenCalledWith('/increments');
+    });
+
+    it('should show "Create Sprint Review" button when increment exists but no review', async () => {
+      vi.spyOn(apiServiceModule.apiService, 'getSprintReviews').mockResolvedValue({
+        success: true,
+        data: [],
+      });
+
+      renderComponent();
+
+      await waitFor(() => {
+        expect(
+          screen.getAllByText(i18nT('sprint-review:list.createReview')).length
+        ).toBeGreaterThan(0);
+      });
+    });
+
+    it('should create a sprint review and navigate to detail page when submitted', async () => {
+      // No review exists for the delivered increment → the card offers "Create Sprint Review".
+      vi.spyOn(apiServiceModule.apiService, 'getSprintReviews').mockResolvedValue({
+        success: true,
+        data: [],
+      });
+
+      renderComponent();
+
+      await waitFor(() => {
+        const createButton = screen.getAllByText(i18nT('sprint-review:list.createReview'))[0];
+        fireEvent.click(createButton);
+      });
+
+      // The create modal opens; submit it.
+      await waitFor(() => {
+        expect(screen.getByRole('dialog')).toBeInTheDocument();
+      });
+      const submitButton = screen.getByText(i18nT('sprint-review:createModal.createReview'));
+      fireEvent.click(submitButton);
+
+      await waitFor(() => {
+        expect(apiServiceModule.apiService.createSprintReview).toHaveBeenCalledWith(
+          expect.objectContaining({
+            sprintId: 'sprint-1',
+            teamId: 'team-1',
+            incrementId: 'inc-1',
+          })
+        );
+      });
+      expect(mockNavigate).toHaveBeenCalledWith('/sprint-review/sprint-1');
     });
   });
 
@@ -380,14 +449,15 @@ describe('SprintReviewList', () => {
       });
     });
 
-    it('should only display completed sprints, filtering out active and planned', async () => {
+    it('should display completed and active sprints, filtering out planned', async () => {
       renderComponent();
 
       await waitFor(() => {
         expect(screen.getByText(/Sprint 1/)).toBeInTheDocument();
       });
 
-      expect(screen.queryByText(/Sprint 2/)).not.toBeInTheDocument();
+      // Active sprints are now reviewable before closure; planned sprints are filtered out.
+      expect(screen.getByText(/Sprint 2/)).toBeInTheDocument();
       expect(screen.queryByText(/Sprint 3/)).not.toBeInTheDocument();
     });
 

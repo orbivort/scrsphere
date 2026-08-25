@@ -132,28 +132,39 @@ describe('useFormDraft', () => {
   });
 
   it('should debounce save operations', async () => {
-    const { result } = renderHook(() =>
-      useFormDraft({ key: mockKey, initialData: mockInitialData, debounceMs: 200 })
-    );
+    // Use fake timers so the assertion does not depend on real-time scheduling,
+    // which is flaky when the full suite runs in parallel under CPU load.
+    vi.useFakeTimers();
 
-    const draft1 = { name: 'First', email: 'first@example.com' };
-    const draft2 = { name: 'Second', email: 'second@example.com' };
+    try {
+      const { result } = renderHook(() =>
+        useFormDraft({ key: mockKey, initialData: mockInitialData, debounceMs: 200 })
+      );
 
-    act(() => {
-      result.current.saveDraft(draft1);
-    });
+      const draft1 = { name: 'First', email: 'first@example.com' };
+      const draft2 = { name: 'Second', email: 'second@example.com' };
 
-    act(() => {
-      result.current.saveDraft(draft2);
-    });
+      act(() => {
+        result.current.saveDraft(draft1);
+      });
 
-    await waitFor(
-      () => {
-        const saved = localStorage.getItem(`form-draft-${mockKey}`);
-        expect(saved).toBe(JSON.stringify(draft2));
-      },
-      { timeout: 300 }
-    );
+      act(() => {
+        result.current.saveDraft(draft2);
+      });
+
+      // Still within the debounce window: nothing is persisted yet.
+      expect(localStorage.getItem(`form-draft-${mockKey}`)).toBeNull();
+
+      // Advancing past the debounce window fires the last scheduled write only,
+      // so the first draft is discarded and the second one is saved.
+      act(() => {
+        vi.advanceTimersByTime(200);
+      });
+
+      expect(localStorage.getItem(`form-draft-${mockKey}`)).toBe(JSON.stringify(draft2));
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('should update showRestorePrompt when setShowRestorePrompt is called', () => {

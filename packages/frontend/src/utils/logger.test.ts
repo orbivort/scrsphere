@@ -353,4 +353,115 @@ describe('Logger', () => {
       expect(consoleSpies.info).toHaveBeenCalled();
     });
   });
+
+  describe('getEnvironment branches', () => {
+    afterEach(() => {
+      vi.unstubAllEnvs();
+    });
+
+    it('should return production when DEV is false and PROD is true', () => {
+      vi.stubEnv('DEV', false);
+      vi.stubEnv('PROD', true);
+
+      const entry = logger.getStructuredEntry('info', 'Env test');
+      expect(entry.environment).toBe('production');
+    });
+
+    it('should return test when DEV and PROD are both false', () => {
+      vi.stubEnv('DEV', false);
+      vi.stubEnv('PROD', false);
+
+      const entry = logger.getStructuredEntry('info', 'Env test');
+      expect(entry.environment).toBe('test');
+    });
+  });
+
+  describe('getMinLogLevel fallback branches', () => {
+    afterEach(() => {
+      vi.unstubAllEnvs();
+    });
+
+    it('should fall back to debug when VITE_LOG_LEVEL is unset in development', () => {
+      vi.stubEnv('VITE_LOG_LEVEL', undefined);
+      vi.stubEnv('DEV', true);
+      vi.stubEnv('PROD', false);
+
+      logger.debug('Fallback debug');
+      expect(consoleSpies.log).toHaveBeenCalled();
+    });
+
+    it('should pass data to console.log for debug level', () => {
+      vi.stubEnv('VITE_LOG_LEVEL', undefined);
+      vi.stubEnv('DEV', true);
+      vi.stubEnv('PROD', false);
+
+      logger.debug('Debug with data', undefined, { key: 'value' });
+      expect(consoleSpies.log).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.any(String),
+        'Debug with data',
+        expect.any(String),
+        { key: 'value' }
+      );
+    });
+
+    it('should fall back to info when VITE_LOG_LEVEL is unset outside development', () => {
+      vi.stubEnv('VITE_LOG_LEVEL', undefined);
+      vi.stubEnv('DEV', false);
+      vi.stubEnv('PROD', false);
+
+      logger.debug('Filtered debug');
+      expect(consoleSpies.log).not.toHaveBeenCalled();
+
+      logger.info('Allowed info');
+      expect(consoleSpies.info).toHaveBeenCalled();
+    });
+
+    it('should respect an explicit warn log level', () => {
+      vi.stubEnv('VITE_LOG_LEVEL', 'warn');
+
+      logger.debug('Filtered debug');
+      expect(consoleSpies.log).not.toHaveBeenCalled();
+
+      logger.info('Filtered info');
+      expect(consoleSpies.info).not.toHaveBeenCalled();
+
+      logger.warn('Allowed warn');
+      expect(consoleSpies.warn).toHaveBeenCalled();
+    });
+  });
+
+  describe('production JSON console format', () => {
+    afterEach(() => {
+      vi.unstubAllEnvs();
+    });
+
+    it('should output JSON instead of the readable format in production', () => {
+      vi.stubEnv('DEV', false);
+      vi.stubEnv('PROD', true);
+
+      logger.info('JSON message');
+      expect(consoleSpies.info).toHaveBeenCalledWith(
+        expect.stringContaining('"message":"JSON message"'),
+        ''
+      );
+    });
+  });
+
+  describe('store provider unset branches', () => {
+    it('should log without enriching context when store provider is not set', () => {
+      resetStoreProvider();
+
+      logger.info('No provider');
+      expect(consoleSpies.info).toHaveBeenCalled();
+    });
+  });
+
+  describe('component logger debug calls', () => {
+    it('should log debug through the component logger', () => {
+      const componentLogger = createComponentLogger('DebugComponent');
+      componentLogger.debug('Component debug');
+      expect(consoleSpies.log).toHaveBeenCalled();
+    });
+  });
 });

@@ -260,7 +260,7 @@ describe('Workflow Controller', () => {
       mockReq.user = { id: 'user-123' };
       mockReq.prisma = {
         teamMember: {
-          findUnique: vi.fn().mockResolvedValue({ role: 'DEVELOPER' }),
+          findUnique: vi.fn().mockResolvedValue({ role: 'DEVELOPERS' }),
         },
       };
 
@@ -270,7 +270,7 @@ describe('Workflow Controller', () => {
 
       expect(workflowService.executeStatusChange).toHaveBeenCalledWith(
         expect.objectContaining({
-          userRoles: ['DEVELOPER'],
+          userRoles: ['DEVELOPERS'],
         })
       );
     });

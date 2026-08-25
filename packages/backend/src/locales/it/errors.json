@@ -1,5 +1,6 @@
 {
   "databaseError": "Si è verificato un errore del database",
+  "developerOnlySizing": "Solo gli sviluppatori possono impostare gli story point, poiché gli sviluppatori che eseguono il lavoro sono responsabili della stima.",
   "emailAlreadyExists": "Un account con l'email {{email}} esiste già",
   "entityNotFound": "{{entity}} non trovato",
   "fieldAlreadyExists": "{{field}} esiste già",
@@ -9,9 +10,25 @@
   "invalidReference": "Riferimento non valido",
   "invalidRelation": "Relazione non valida",
   "invalidToken": "Token non valido",
+  "notTeamMember": "Non sei membro di questo team",
   "pleaseLoginAgain": "Accedi di nuovo per continuare",
   "recordNotFound": "Record non trovato",
+  "roleAlreadyTaken": "Esiste già un {{role}} per questo team. Ogni team può avere esattamente un {{role}}.",
   "routeNotFound": "{{method}} {{path}} non trovato",
+  "sprint": {
+    "anotherActive": "Un altro sprint è già attivo",
+    "cancelRequiresProductOwner": "Solo il Product Owner può annullare uno sprint",
+    "missingGoal": "Lo sprint non può essere avviato senza un obiettivo di sprint",
+    "notPlanned": "Solo gli sprint pianificati possono essere avviati",
+    "notReadyToStart": "Il backlog dello sprint deve essere salvato prima di poter avviare lo sprint",
+    "pbiAlreadyCommitted": "L'elemento del backlog \"{{pbiTitle}}\" è già impegnato in un altro sprint ({{sprintName}}). Un elemento del Product Backlog può essere lavorato in un solo sprint alla volta.",
+    "pbiConflictAtStart": "Lo sprint non può essere avviato: i seguenti elementi del backlog sono già impegnati in un altro sprint: {{items}}."
+  },
+  "task": {
+    "assigneeMustBeDeveloper": "Possono essere assegnati solo gli sviluppatori del team. I Product Owner e gli Scrum Master non possono assegnare attività.",
+    "creationRequiresDeveloper": "Solo gli sviluppatori possono creare e scomporre le attività, poiché gli sviluppatori che eseguono il lavoro sono responsabili della scomposizione delle attività."
+  },
+  "teamSizeLimitReached": "Questo team ha raggiunto la dimensione massima di {{max}} membri. Non è possibile aggiungere altri membri.",
   "tokenExpired": "Il token è scaduto",
   "unauthorized": "Autenticazione richiesta",
   "unexpectedError": "Si è verificato un errore imprevisto"

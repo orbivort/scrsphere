@@ -8,7 +8,6 @@ import {
   createMockSprint,
   createMockBacklogItem,
   createMockTeamMember,
-  createMockDoDItem,
   createMockImpediment,
 } from '../../__mocks__/mockData';
 import { TaskStatus, type Task, type Sprint, ImpedimentStatus } from '../../types';
@@ -21,6 +20,7 @@ beforeAll(async () => {
 
 vi.mock('../../store', () => ({
   useTeamStore: vi.fn(),
+  useAuthStore: vi.fn(() => ({ user: null })),
 }));
 
 vi.mock('../../services', () => ({
@@ -90,11 +90,6 @@ const mockSprintItems = [
   createMockBacklogItem({ id: 'pbi-2', title: 'PBI 2' }),
 ];
 
-const mockDoDItems = [
-  createMockDoDItem({ id: 'dod-1', description: 'Code reviewed' }),
-  createMockDoDItem({ id: 'dod-2', description: 'Tests passed' }),
-];
-
 const mockImpediments = [createMockImpediment({ id: 'imp-1', status: ImpedimentStatus.OPEN })];
 
 const mockTeamStore = useTeamStore as ReturnType<typeof vi.fn>;
@@ -104,22 +99,26 @@ const getDefaultMockData = () => ({
   tasks: mockTasks,
   teamMembers: mockTeamMembers,
   sprintItems: mockSprintItems,
-  dodItems: mockDoDItems,
   impediments: mockImpediments,
-  dodVerifications: [],
+  sprintReview: null,
+  isReviewCompleted: true,
+  sprintRetrospective: null,
+  isRetrospectiveCompleted: true,
   sprintLoading: false,
   tasksLoading: false,
-  wipLimits: { todo: 5, in_progress: 3, done: 10 },
+  wipLimits: { todo: 5, in_progress: 3, review: 3, done: 10 },
   filteredTasks: mockTasks,
   tasksByStatus: {
     todo: [mockTasks[0]],
     in_progress: [mockTasks[1]],
+    review: [],
     done: [mockTasks[2]],
   },
   sprintStats: {
     totalTasks: 3,
     todoTasks: 1,
     inProgressTasks: 1,
+    reviewTasks: 0,
     doneTasks: 1,
     totalEstimatedHours: 24,
     totalRemainingHours: 16,
@@ -196,8 +195,8 @@ describe('SprintBoard Branch Coverage Tests', () => {
     mockTeamStore.mockReturnValue({
       currentTeam: mockTeam,
       teams: [mockTeam],
-      userRoleInCurrentTeam: 'developer',
-      userTeamsWithRoles: [{ ...mockTeam, userRole: 'developer' }],
+      userRoleInCurrentTeam: 'developers',
+      userTeamsWithRoles: [{ ...mockTeam, userRole: 'developers' }],
       setCurrentTeam: vi.fn(),
       setTeams: vi.fn(),
       setUserTeamsWithRoles: vi.fn(),
@@ -286,6 +285,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         tasksByStatus: {
           todo: [],
           in_progress: [],
+          review: [],
           done: allDoneTasks,
         },
       });
@@ -311,6 +311,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         tasksByStatus: {
           todo: [tasksWithSamePbi[0]],
           in_progress: [tasksWithSamePbi[1]],
+          review: [],
           done: [tasksWithSamePbi[2]],
         },
       });
@@ -349,103 +350,6 @@ describe('SprintBoard Branch Coverage Tests', () => {
           createMockImpediment({ id: 'imp-3', status: ImpedimentStatus.RESOLVED }),
         ],
       });
-
-      renderWithProviders(<SprintBoard />);
-
-      await waitFor(() => {
-        expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
-      });
-    });
-  });
-
-  describe('Proceed to DoD Verification', () => {
-    it('should not proceed when there are incomplete tasks', async () => {
-      const incompleteTasks = [
-        createMockTask({ id: 'task-1', status: TaskStatus.TODO, pbiId: 'pbi-1' }),
-      ];
-
-      useSprintBoardData.mockReturnValue({
-        ...getDefaultMockData(),
-        tasks: incompleteTasks,
-        filteredTasks: incompleteTasks,
-        tasksByStatus: {
-          todo: incompleteTasks,
-          in_progress: [],
-          done: [],
-        },
-      });
-
-      renderWithProviders(<SprintBoard />);
-
-      await waitFor(() => {
-        expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
-      });
-    });
-
-    it('should not proceed when there are outstanding impediments', async () => {
-      useSprintBoardData.mockReturnValue({
-        ...getDefaultMockData(),
-        tasks: [createMockTask({ id: 'task-1', status: TaskStatus.DONE })],
-        filteredTasks: [createMockTask({ id: 'task-1', status: TaskStatus.DONE })],
-        tasksByStatus: {
-          todo: [],
-          in_progress: [],
-          done: [createMockTask({ id: 'task-1', status: TaskStatus.DONE })],
-        },
-        impediments: [createMockImpediment({ id: 'imp-1', status: ImpedimentStatus.OPEN })],
-      });
-
-      renderWithProviders(<SprintBoard />);
-
-      await waitFor(() => {
-        expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
-      });
-    });
-
-    it('should proceed when no incomplete tasks and no outstanding impediments', async () => {
-      const doneTask = createMockTask({ id: 'task-1', status: TaskStatus.DONE, pbiId: 'pbi-1' });
-
-      useSprintBoardData.mockReturnValue({
-        ...getDefaultMockData(),
-        tasks: [doneTask],
-        filteredTasks: [doneTask],
-        tasksByStatus: {
-          todo: [],
-          in_progress: [],
-          done: [doneTask],
-        },
-        impediments: [createMockImpediment({ id: 'imp-1', status: ImpedimentStatus.RESOLVED })],
-      });
-
-      renderWithProviders(<SprintBoard />);
-
-      await waitFor(() => {
-        expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
-      });
-    });
-  });
-
-  describe('DoD Verification Confirm', () => {
-    it('should handle DoD verification with multiple PBIs', async () => {
-      const definitionService = await import('../../services');
-      const mockVerifyDoD = vi.fn().mockResolvedValue({ success: true });
-      (
-        definitionService.definitionService as { verifyDoDForPBI: typeof mockVerifyDoD }
-      ).verifyDoDForPBI = mockVerifyDoD;
-
-      renderWithProviders(<SprintBoard />);
-
-      await waitFor(() => {
-        expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
-      });
-    });
-
-    it('should handle DoD verification error', async () => {
-      const definitionService = await import('../../services');
-      const mockVerifyDoD = vi.fn().mockRejectedValue(new Error('Verification failed'));
-      (
-        definitionService.definitionService as { verifyDoDForPBI: typeof mockVerifyDoD }
-      ).verifyDoDForPBI = mockVerifyDoD;
 
       renderWithProviders(<SprintBoard />);
 
@@ -746,6 +650,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         tasksByStatus: {
           todo: [],
           in_progress: [],
+          review: [],
           done: [],
         },
       });
@@ -766,6 +671,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         tasksByStatus: {
           todo: [task],
           in_progress: [],
+          review: [],
           done: [],
         },
       });
@@ -1016,6 +922,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
           totalTasks: 10,
           todoTasks: 3,
           inProgressTasks: 4,
+          reviewTasks: 0,
           doneTasks: 3,
           totalEstimatedHours: 80,
           totalRemainingHours: 50,
@@ -1041,6 +948,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
           totalTasks: 0,
           todoTasks: 0,
           inProgressTasks: 0,
+          reviewTasks: 0,
           doneTasks: 0,
           totalEstimatedHours: 0,
           totalRemainingHours: 0,
@@ -1418,6 +1326,7 @@ describe('SprintBoard Branch Coverage Tests', () => {
         tasksByStatus: {
           todo: [taskWithoutPbi],
           in_progress: [],
+          review: [],
           done: [],
         },
       });

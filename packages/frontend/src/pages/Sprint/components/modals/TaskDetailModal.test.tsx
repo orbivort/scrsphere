@@ -80,6 +80,29 @@ describe('TaskDetailModal', () => {
       expect(screen.getByText('User Authentication')).toBeInTheDocument();
     });
 
+    it('should render the parent PBI as a preview button', () => {
+      const onOpenPbiPreview = vi.fn();
+      renderWithProviders(
+        <TaskDetailModal {...defaultProps} onOpenPbiPreview={onOpenPbiPreview} />
+      );
+
+      const pbiLink = screen.getByRole('button', { name: /View parent PBI/i });
+      expect(pbiLink).toBeInTheDocument();
+      expect(screen.getByText('User Authentication')).toBeInTheDocument();
+    });
+
+    it('should call onOpenPbiPreview with the parent PBI id when clicked', async () => {
+      const onOpenPbiPreview = vi.fn();
+      const user = userEvent.setup();
+      renderWithProviders(
+        <TaskDetailModal {...defaultProps} onOpenPbiPreview={onOpenPbiPreview} />
+      );
+
+      await user.click(screen.getByRole('button', { name: /View parent PBI/i }));
+
+      expect(onOpenPbiPreview).toHaveBeenCalledWith('pbi-1');
+    });
+
     it('should render estimated hours', () => {
       renderWithProviders(<TaskDetailModal {...defaultProps} />);
 
@@ -290,6 +313,79 @@ describe('TaskDetailModal', () => {
 
       const errorCloseButton = screen.getByLabelText('Close error message');
       expect(errorCloseButton).toBeInTheDocument();
+    });
+  });
+
+  describe('Review Approval Guard', () => {
+    it('should disable the REVIEW → DONE option for the task assignee', async () => {
+      const user = userEvent.setup();
+      const reviewTask = createMockTask({
+        status: TaskStatus.REVIEW,
+        assigneeId: 'user-1',
+      });
+
+      renderWithProviders(
+        <TaskDetailModal
+          {...defaultProps}
+          task={reviewTask}
+          currentUserId="user-1"
+          getAvailableTransitions={() => [TaskStatus.DONE, TaskStatus.IN_PROGRESS]}
+        />
+      );
+
+      const trigger = screen.getByRole('button', { name: /review/i });
+      await user.click(trigger);
+
+      const doneOption = screen.getByRole('option', { name: /done/i });
+      expect(doneOption).toBeDisabled();
+      expect(doneOption).toHaveAttribute('aria-disabled', 'true');
+    });
+
+    it('should enable the REVIEW → DONE option for another team member', async () => {
+      const user = userEvent.setup();
+      const reviewTask = createMockTask({
+        status: TaskStatus.REVIEW,
+        assigneeId: 'user-1',
+      });
+
+      renderWithProviders(
+        <TaskDetailModal
+          {...defaultProps}
+          task={reviewTask}
+          currentUserId="user-2"
+          getAvailableTransitions={() => [TaskStatus.DONE, TaskStatus.IN_PROGRESS]}
+        />
+      );
+
+      const trigger = screen.getByRole('button', { name: /review/i });
+      await user.click(trigger);
+
+      const doneOption = screen.getByRole('option', { name: /done/i });
+      expect(doneOption).not.toBeDisabled();
+      expect(doneOption).toHaveAttribute('aria-disabled', 'false');
+    });
+
+    it('should enable the REVIEW → DONE option for the assignee when the task is unassigned', async () => {
+      const user = userEvent.setup();
+      const unassignedReviewTask = createMockTask({
+        status: TaskStatus.REVIEW,
+        assigneeId: null,
+      });
+
+      renderWithProviders(
+        <TaskDetailModal
+          {...defaultProps}
+          task={unassignedReviewTask}
+          currentUserId="user-1"
+          getAvailableTransitions={() => [TaskStatus.DONE]}
+        />
+      );
+
+      const trigger = screen.getByRole('button', { name: /review/i });
+      await user.click(trigger);
+
+      const doneOption = screen.getByRole('option', { name: /done/i });
+      expect(doneOption).not.toBeDisabled();
     });
   });
 

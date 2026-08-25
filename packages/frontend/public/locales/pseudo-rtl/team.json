@@ -23,7 +23,7 @@
     "title": "Remove Team Member",
     "warning": "This action cannot be undone. The user will lose access to all team resources."
   },
-  "developer": {
+  "developers": {
     "badge": "Team Member",
     "checkInvitations": "Check Invitations",
     "description": "Join an existing Scrum team...",
@@ -33,7 +33,7 @@
       "invitationsSentBy": "Team invitations are sent by: Scrum Masters or Product Owners only",
       "title": "How to Join a Team"
     },
-    "title": "Developer"
+    "title": "Developers"
   },
   "errorStates": {
     "accessDenied": "Access denied",
@@ -71,6 +71,7 @@
     "invalidEmail": "Please enter a valid email address.",
     "networkError": "Network error. Please check your connection and try again.",
     "noPermission": "You do not have permission to add team members.",
+    "roleAlreadyTaken": "[Thé {{role}} rólé ís àlréàdy àssígnéd tó ànóthér téàm mémbér. Éàch téàm càn hàvé éxàctly óné Pródúct Ównér ànd óné Scrúm Màstérrrrrrrrrrrrrrrrrrrrrrrrrr.]",
     "userNotFound": "No user found with this email address. The user must register first before they can be invited to a team."
   },
   "inviteModal": {
@@ -109,7 +110,7 @@
     "memberSince": "Member since",
     "roleNames": {
       "administrator": "Administrator",
-      "developer": "Developer",
+      "developers": "Developers",
       "productOwner": "Product Owner",
       "scrumMaster": "Scrum Master"
     },
@@ -130,7 +131,7 @@
     "filterByRoleAriaLabel": "Filter members by role",
     "filterOptions": {
       "allRoles": "All Roles",
-      "developer": "Developer",
+      "developers": "Developers",
       "productOwner": "Product Owner",
       "scrumMaster": "Scrum Master"
     },
@@ -188,7 +189,7 @@
   "teamStats": {
     "avgVelocity": "Avg Velocity",
     "completedSprints": "Completed Sprints",
-    "sprintSuccessRate": "Sprint Success Rate",
+    "sprintCompletionRate": "Sprint Backlog Completion Rate",
     "storyPointsCompleted": "Story Points Completed"
   },
   "title": "Team",

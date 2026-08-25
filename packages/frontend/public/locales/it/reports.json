@@ -1,48 +1,14 @@
 {
+  "dod": {
+    "empty": "Nessuna Definizione di Fatto definita. Aggiungine una per garantire una qualità costante.",
+    "title": "Definizione di Fatto"
+  },
   "error": {
     "message": "Impossibile caricare i dati del report. Riprova più tardi.",
     "title": "Errore durante il caricamento dei report"
   },
   "insights": {
     "empty": "Nessun insight disponibile ancora. Completa più Sprint per generare insights.",
-    "items": {
-      "active-sprint-impediments": {
-        "description": "Lo Sprint attuale ha {{count}} Impediments. Monitora attentamente.",
-        "title": "Impediment dello Sprint attivo"
-      },
-      "consistent-delivery": {
-        "description": "Il team ha mantenuto il 100% del raggiungimento degli obiettivi negli ultimi {{count}} Sprint",
-        "title": "Consegna costante"
-      },
-      "get-started": {
-        "description": "Completa più Sprint per generare insights sulle prestazioni del team.",
-        "title": "Per iniziare"
-      },
-      "high-success-rate": {
-        "description": "Il team ha raggiunto {{rate}}% di tasso di successo degli Sprint. Ottimo lavoro!",
-        "title": "Alto tasso di successo"
-      },
-      "impediment-trend": {
-        "description": "{{count}} Impediments attualmente aperti. Considera di affrontarli proattivamente.",
-        "title": "Andamento Impediment"
-      },
-      "low-success-rate": {
-        "description": "Il tasso di successo degli Sprint è {{rate}}%. Considera di rivedere capacità e pianificazione.",
-        "title": "Attenzione al tasso di successo"
-      },
-      "recent-improvement": {
-        "description": "L'ultimo Sprint ha mostrato un miglioramento del {{improvement}}% nei Story Points completati.",
-        "title": "Miglioramento recente"
-      },
-      "velocity-decline": {
-        "description": "La velocity media è diminuita del {{trend}}%. Considera di rivedere la pianificazione dello Sprint.",
-        "title": "Calo della Velocity"
-      },
-      "velocity-improvement": {
-        "description": "La velocity media è aumentata del {{trend}}% rispetto agli Sprint precedenti",
-        "title": "Miglioramento della Velocity"
-      }
-    },
     "title": "Insights chiave"
   },
   "loading": {
@@ -57,26 +23,26 @@
       "title": "Velocity media",
       "unit": "Story Points per Sprint"
     },
+    "completionRate": {
+      "title": "Tasso di completamento del Sprint Backlog",
+      "unit": "Sprint completamente consegnati"
+    },
     "impediments": {
       "openCount": "Impediments aperti",
       "resolved": "Risolti",
       "title": "Impediments"
-    },
-    "sprintSuccessRate": {
-      "fromLastMonth": "dall'ultimo mese",
-      "title": "Tasso di successo del Sprint",
-      "unit": "Sprint Goals raggiunti"
-    },
-    "teamSatisfaction": {
-      "fromLastSprint": "dall'ultimo Sprint",
-      "title": "Soddisfazione del team",
-      "unit": "Valutazione media"
     }
+  },
+  "productGoal": {
+    "empty": "Nessun Obiettivo di Prodotto attivo. Definisci un obiettivo per dare al team un target chiaro.",
+    "title": "Product Goal",
+    "viewLink": "Vedi obiettivi"
   },
   "pts": "pts",
   "skipToMainContent": "Passa al contenuto principale",
   "sprintHistory": {
     "empty": "Nessuno storico di Sprint disponibile.",
+    "sprintGoalLabel": "Sprint Goal",
     "stats": {
       "completed": "Completato",
       "impediments": "Impediments",
@@ -93,6 +59,11 @@
   "subtitle": "Seguire le prestazioni del team e le metriche del Sprint",
   "title": "Report",
   "velocityChart": {
+    "accessibilityDescription": "Grafico a barre che confronta Story Points pianificati e completati per Sprint.",
+    "ariaLabel": "Grafico della velocity del Sprint che confronta Story Points pianificati e completati.",
+    "ariaTableCaption": "Dati della velocity del Sprint",
+    "ariaTableLabel": "Tabella dei dati della velocity del Sprint",
+    "ariaTableSprint": "Sprint",
     "completed": "Completato",
     "planned": "Pianificato",
     "title": "Velocity del Sprint",

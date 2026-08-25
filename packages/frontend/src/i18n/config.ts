@@ -105,6 +105,7 @@ export function initI18n(): Promise<TFunction> {
       'errors',
       'validation',
       'scrum-master-dashboard',
+      'timebox',
     ],
     defaultNS: 'common',
 

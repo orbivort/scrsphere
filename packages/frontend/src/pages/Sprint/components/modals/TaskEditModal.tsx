@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import type { Task, ProductBacklogItem, TeamMember, User } from '../../../../types';
+import { UserRole } from '../../../../types';
 import type { FormErrors, TaskFormData } from '../../SprintBoard.types';
 import { UnsavedChangesModal } from '../../../../components/common/Form/UnsavedChangesModal';
 import { hasUnsavedChangesForEdit } from '../../utils/formChangeDetection';
@@ -29,6 +30,7 @@ export interface TaskEditModalProps {
   onFormDataChange: (data: Partial<TaskFormData>) => void;
   isUpdating: boolean;
   modalRef: React.RefObject<HTMLDivElement | null>;
+  isDeveloper?: boolean;
 }
 
 export const TaskEditModal: React.FC<TaskEditModalProps> = ({
@@ -44,6 +46,7 @@ export const TaskEditModal: React.FC<TaskEditModalProps> = ({
   onFormDataChange,
   isUpdating,
   modalRef,
+  isDeveloper = false,
 }) => {
   const { t } = useTranslation('sprint');
   const [showUnsavedChangesModal, setShowUnsavedChangesModal] = useState(false);
@@ -106,6 +109,12 @@ export const TaskEditModal: React.FC<TaskEditModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     onSubmit(e);
   };
+
+  // Only developers can be assigned tasks. The role may be uppercase (backend
+  // enum) or lowercase (mock data), so compare case-insensitively.
+  const developerMembers = teamMembers.filter(
+    (member) => String(member.role).toLowerCase() === UserRole.DEVELOPERS
+  );
 
   const RequiredIndicator = () => (
     <span className={styles['required-indicator']} aria-hidden="true">
@@ -264,13 +273,17 @@ export const TaskEditModal: React.FC<TaskEditModalProps> = ({
                   className={formErrors.assigneeId ? styles.error : ''}
                   aria-invalid={!!formErrors.assigneeId}
                   aria-describedby={formErrors.assigneeId ? 'edit-task-assignee-error' : undefined}
+                  disabled={!isDeveloper}
                 >
                   <option value="">{t('taskCreate.unassigned')}</option>
-                  {teamMembers.map((member) => (
-                    <option key={member.id} value={member.userId}>
-                      {member.user?.firstName} {member.user?.lastName}
-                    </option>
-                  ))}
+                  {/* Self-managed Developers-as-a-team assignment: any Developer on the team may
+                      be selected, or the assignment cleared. PO/SM cannot assign (disabled below). */}
+                  {isDeveloper &&
+                    developerMembers.map((member) => (
+                      <option key={member.id} value={member.userId}>
+                        {member.user?.firstName} {member.user?.lastName}
+                      </option>
+                    ))}
                 </select>
                 {formErrors.assigneeId && (
                   <span id="edit-task-assignee-error" className={styles['form-error']} role="alert">

@@ -6,6 +6,7 @@ export interface Team {
   createdAt: string;
   updatedAt: string;
   memberCount?: number;
+  maxSize?: number;
   hasProductGoals?: boolean;
   userRole?: string;
   creator?: {

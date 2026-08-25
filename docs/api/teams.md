@@ -533,7 +533,7 @@ POST /api/v1/teams/:teamId/members
 ```json
 {
   "email": "string (required, valid email)",
-  "role": "string (required, one of: PRODUCT_OWNER, SCRUM_MASTER, DEVELOPER)"
+  "role": "string (required, one of: PRODUCT_OWNER, SCRUM_MASTER, DEVELOPERS)"
 }
 ```
 
@@ -550,7 +550,7 @@ Content-Type: application/json
       "id": "550e8400-e29b-41d4-a716-446655440003",
       "userId": "550e8400-e29b-41d4-a716-446655440004",
       "teamId": "550e8400-e29b-41d4-a716-446655440000",
-      "role": "DEVELOPER",
+      "role": "DEVELOPERS",
       "joinedAt": "2026-04-29T14:00:00.000Z",
       "user": {
         "id": "550e8400-e29b-41d4-a716-446655440004",
@@ -590,6 +590,20 @@ Content-Type: application/json
 }
 ```
 
+**409 Conflict - Team Size Limit Reached**
+
+The Scrum Team has reached its configured maximum number of members (default `10`, configurable via `TEAM_MAX_SIZE`). No additional members can be added.
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "TEAM_SIZE_LIMIT_REACHED",
+    "message": "This team has reached the maximum size of 10 members. No additional members can be added."
+  }
+}
+```
+
 **Example Request**
 
 ```bash
@@ -598,7 +612,7 @@ curl -X POST https://api.scrumooth.dev/api/v1/teams/550e8400-e29b-41d4-a716-4466
   -b cookies.txt \
   -d '{
     "email": "developer@example.com",
-    "role": "DEVELOPER"
+    "role": "DEVELOPERS"
   }'
 ```
 
@@ -697,7 +711,7 @@ PUT /api/v1/teams/:teamId/members/:memberId
 
 ```json
 {
-  "role": "string (required, one of: PRODUCT_OWNER, SCRUM_MASTER, DEVELOPER)"
+  "role": "string (required, one of: PRODUCT_OWNER, SCRUM_MASTER, DEVELOPERS)"
 }
 ```
 
@@ -846,13 +860,14 @@ For Definition of Done and Definition of Ready endpoints, see:
 
 ## Error Codes
 
-| Code                   | HTTP Status | Description                                                |
-| ---------------------- | ----------- | ---------------------------------------------------------- |
-| `VALIDATION_ERROR`     | 400         | Request validation failed                                  |
-| `AUTHENTICATION_ERROR` | 401         | Authentication required                                    |
-| `AUTHORIZATION_ERROR`  | 403         | Insufficient permissions                                   |
-| `NOT_FOUND`            | 404         | Team or member not found                                   |
-| `CONFLICT`             | 409         | Resource conflict (e.g., duplicate name, already a member) |
+| Code                      | HTTP Status | Description                                                |
+| ------------------------- | ----------- | ---------------------------------------------------------- |
+| `VALIDATION_ERROR`        | 400         | Request validation failed                                  |
+| `AUTHENTICATION_ERROR`    | 401         | Authentication required                                    |
+| `AUTHORIZATION_ERROR`     | 403         | Insufficient permissions                                   |
+| `NOT_FOUND`               | 404         | Team or member not found                                   |
+| `CONFLICT`                | 409         | Resource conflict (e.g., duplicate name, already a member) |
+| `TEAM_SIZE_LIMIT_REACHED` | 409         | Team has reached its maximum member size                   |
 
 ## Best Practices
 

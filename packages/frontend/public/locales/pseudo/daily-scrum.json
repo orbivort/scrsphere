@@ -15,11 +15,11 @@
     "clickToExpand": "[Clíck tó éxpàndddddd]",
     "closeDialog": "[Clósé díàlóggggg]",
     "closeForm": "[Clósé fórmmmm]",
-    "dailyUpdateAriaLabel": "[{{name}}'ss ddààííllyy úúppddààtté. {{expandAction}}.]",
     "impedimentStatus": "[Ímpédímént stàtússsssss: {{status}}]",
     "trackedAsFormalImpediment": "[Tràckéd às fórmàl ímpédíméntttttttttt]",
     "viewMode": "[Víéw módéééé]"
   },
+  "createImpediment": "[Créàté ímpédíménttttttt]",
   "datePicker": {
     "ariaLabel": "[Séléct dàté fór dàíly úpdàtéssssssssss]",
     "label": "[Séléct dàté fór dàíly úpdàtéssssssssss]"
@@ -31,21 +31,48 @@
     "title": "[Únsàvéd Dràft Fóúnddddddd]"
   },
   "draftSaved": "[Dràft sàvéddddd {{timeSince}}]",
+  "editScrum": "[Édít Dàíly Scrúmmmmmm]",
   "emptyState": {
-    "beFirst": "[Bé thé fírst tó súbmít yóúr dàíly úpdàtéééééééééééééé!]",
-    "noUpdates": "[Nó Úpdàtés Yétttttt]",
-    "noUpdatesForDate": "[Nó téàm úpdàtés fór thís dàtéééééééééé.]"
+    "beFirst": "[Stàrt thé Dàíly Scrúm by récórdíng yóúr prógréss tówàrd thé Sprínt Góàlllllllllllllllllllllll!]",
+    "developersOnly": "[Ónly Dévélópérs récórd thé Dàíly Scrúm. Yóú càn víéw ít óncé à Dévélópér stàrts ítttttttttttttttttttttttttt.]",
+    "noUpdates": "[Nó Dàíly Scrúm Yéttttttt]",
+    "noUpdatesForDate": "[Nó Dàíly Scrúm récórdéd fór thís dàtééééééééééééé.]"
+  },
+  "focusModes": {
+    "descriptions": {
+      "backlog": "[Thé téàm wàlkéd thróúgh thé Sprínt Bàcklóg ítém by ítémmmmmmmmmmmmmmmmmm.]",
+      "goal": "[Thé téàm ínspéctéd ànd àdàptéd prógréss tówàrd thé Sprínt Góàllllllllllllllllllll.]",
+      "impediment": "[Thé téàm súrfàcéd ànd wórkéd thróúgh ímpédíménts fírstttttttttttttttttt.]",
+      "pair": "[Thé téàm plànnéd pàíríng ànd cóllàbóràtíón fór thé néxt dàyyyyyyyyyyyyyyyyyyy.]"
+    },
+    "goalProgress": "[Góàl prógréssssss]",
+    "hint": "[Chóósé thé fócús thé whólé téàm úséd fór tódày's Dàíly Scrúm. Ít ís sàvéd tó thé shàréd récórd só évéryóné, ínclúdíng óbsérvérs, càn séé hów thé évént wàs rúnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn.]",
+    "impedimentFirst": "[Ímpédímént-fírstttttt]",
+    "label": "[Dàíly Scrúm fócús (Dévélópérs chóósé thé strúctúrééééééééééééééééé)]",
+    "pairUpPlan": "[Pàír-úp plànnnnn]",
+    "sprintBacklogWalk": "[Sprínt Bàcklóg wàlkkkkkkk]",
+    "viewTitle": "[Dàíly Scrúm fócússsssss]"
   },
   "form": {
+    "adaptationsHint": "[Whàt múst wé àdjúst ín thé Sprínt Bàcklóg bàséd ón óúr prógréssssssssssssssssssssss?]",
+    "adaptationsLabel": "[Àdàptàtíóns (Sprínt Bàcklógggggggggg)]",
+    "adaptationsPlaceholder": "[Déscríbé àgrééd chàngés tó thé Sprínt Bàcklógggggggggggggggg...]",
+    "addAdjustment": "[Àddd]",
+    "backlogActionLabel": "[Àdjústmént àctíónnnnnnn]",
+    "backlogActionPlaceholder": "[Whàt ís thé àdjústmént? (é.g. réàssígnéd, flàggédddddddddddddddd)]",
+    "backlogAdjustmentsLabel": "[Sprínt Bàcklóg àdjústménts (óptíónàlllllllllllll)]",
+    "backlogItemPlaceholder": "[Séléct à Sprínt Bàcklóg ítémmmmmmmmmmm...]",
+    "backlogItemSelect": "[Sprínt Bàcklóg ítémmmmmmm]",
     "cancel": "[Càncélll]",
-    "impedimentHint": "[Thís ímpédímént wíll bé tràckéd ànd càn bé prómótéd tó à fórmàl ímpédímént récórdddddddddddddddddddddddddd]",
-    "impedimentLabel": "[Àny ímpédíménts? (óptíónàllllllllll)]",
-    "impedimentPlaceholder": "[Déscríbé àny blóckérs ór ímpédíméntsssssssssssss...]",
-    "submitting": "[Súbmíttínggggg...]",
-    "todayLabel": "[Whàt wíll yóú dó tódày tó hélp téàm méét thé sprínt góàlllllllllllllllllll?]",
-    "todayPlaceholder": "[Déscríbé whàt yóú plàn tó wórk ón tódàyyyyyyyyyyyyyy...]",
-    "yesterdayLabel": "[Whàt díd yóú dó yéstérdày tó hélp téàm méét thé sprínt góàlllllllllllllllllll?]",
-    "yesterdayPlaceholder": "[Déscríbé whàt yóú àccómplíshéd yéstérdàyyyyyyyyyyyyyy...]"
+    "fieldHint": "[Óptíónàllll]",
+    "planHint": "[Àn àctíónàblé plàn fór thé néxt dày óf wórk, àgrééd by thé Dévélópérssssssssssssssssssssss.]",
+    "planLabel": "[Plàn fór néxt dàyyyyyyy]",
+    "planPlaceholder": "[Whàt wíll thé téàm wórk ón néxttttttttttt?]",
+    "progressHint": "[Hów àré wé prógréssíng tówàrd thé Sprínt Góàlllllllllllllll?]",
+    "progressLabel": "[Prógréss tówàrd Sprínt Góàllllllllll]",
+    "progressPlaceholder": "[Déscríbé thé téàm's prógréss tówàrd thé Sprínt Góàllllllllllllllllll...]",
+    "removeAdjustment": "[Rémóvé àdjústménttttttt]",
+    "submitting": "[Súbmíttínggggg...]"
   },
   "formatTimeSince": {
     "daysAgo": "[{{count}}dd ààggó]",
@@ -65,6 +92,16 @@
     "open": "[ÓÓppéén]",
     "resolved": "[Résólvédddd]"
   },
+  "inspectAdapt": {
+    "adaptations": "[Àdàptàtíónsssss]",
+    "backlogAdjustments": "[Sprínt Bàcklóg àdjústméntsssssssss]",
+    "formTitle": "[Ínspéct & Àdàptttttt]",
+    "impediments": "[Ópén Ímpédíméntssssss]",
+    "nextDayPlan": "[Plàn fór néxt dàyyyyyyy]",
+    "progress": "[Prógréss tówàrd Sprínt Góàllllllllll]",
+    "startTitle": "[Tódày's Dàíly Scrúmmmmmmm]",
+    "title": "[Ínspéct & Àdàptttttt]"
+  },
   "loading": {
     "actions": "[Lóàdíng àctíónsssssss...]",
     "pageHeader": "[Lóàdíng pàgé héàdérrrrrrrr...]",
@@ -74,18 +111,21 @@
     "statistics": "[Lóàdíng stàtístícssssssss...]",
     "teamUpdates": "[Lóàdíng téàm úpdàtéssssssss...]"
   },
+  "participation": {
+    "joined": "[Jóínéddd]",
+    "notYetJoined": "[Nót yét jóínédddddd]",
+    "sendTeamSignal": "[Sénd téàm-wídé Dàíly Scrúm sígnàlllllllllll]"
+  },
   "promoteModal": {
     "createImpediment": "[Créàté Ímpédíménttttttt]",
     "creating": "[CCrrééààttíínng...]",
     "descriptionLabel": "[Déscríptíónnnnn]",
     "descriptionPlaceholder": "[Détàíléd déscríptíón óf thé ímpédíménttttttttttttt]",
-    "fromUpdateBy": "[Fróm Dàíly Úpdàté byyyyyyyy:]",
-    "originalImpedimentText": "[Órígínàl Ímpédímént Téxttttttttt:]",
     "priority": "[Príórítyyyy]",
     "priorityHigh": "[HHííggh]",
     "priorityLow": "[Lóww]",
     "priorityMedium": "[Médíúmmm]",
-    "title": "[Créàté Ímpédímént fróm Dàíly Úpdàtéééééééééééé]",
+    "title": "[Créàté Ímpédímént fróm Dàíly Scrúmmmmmmmmmmmm]",
     "titleLabel": "[Títlééé]",
     "titlePlaceholder": "[Bríéf títlé fór thé ímpédíméntttttttttt]"
   },
@@ -100,6 +140,7 @@
     "retrying": "[RRééttrryyíínng...]",
     "title": "[Súbmíssíón Fàíléddddddd]"
   },
+  "saveScrum": "[Sàvé Dàíly Scrúmmmmmm]",
   "sprintGoal": {
     "addInPlanning": "[Àdd óné ín Sprínt Plànnínggggggggg]",
     "label": "[Sprínt Góàlllll]",
@@ -112,12 +153,17 @@
     "title": "[Sprínt Prógrésssssss]",
     "viewSprintBoard": "[Víéw Sprínt Bóàrddddddd]"
   },
+  "startDailyScrum": "[Stàrt Dàíly Scrúmmmmmmm]",
   "stats": {
+    "backlogAdjusted": "[Bàcklóg ítéms àdjústédddddddd]",
+    "goalProgress": "[Góàl prógréssssss]",
     "impediments": "[Ímpédíméntsssss]",
+    "participants": "[Pàrtícípàntsssss]",
     "participation": "[Pàrtícípàtíónnnnn]",
     "pending": "[Péndíngggg]",
     "submitted": "[Súbmíttédddd]"
   },
+  "submitScrum": "[Súbmít Dàíly Scrúmmmmmmm]",
   "submitUpdate": "[Súbmít Úpdàtééééé]",
   "subtitle": "[{{sprintName}} - DDààyy {{day}}]",
   "teamUpdates": "[Téàm Úpdàtésssss]",
@@ -144,6 +190,7 @@
     "remindersSentPlural_one": "[Rémíndérs sént tóóóóóóó {{count}} téàm mémbérrrrr]",
     "remindersSentPlural_other": "[Rémíndérs sént tóóóóóóó {{count}} téàm mémbérsssss]",
     "resourceNotFound": "[Thé réqúéstéd résóúrcé wàs nót fóúnddddddddddddd.]",
+    "scrumSaved": "[Dàíly Scrúm sàvéd súccéssfúllyyyyyyyyyyy!]",
     "serverError": "[À sérvér érrór óccúrréd. Pléàsé try àgàín làtérrrrrrrrrrrrrrrr.]",
     "sessionExpired": "[Yóúr séssíón hàs éxpíréd. Pléàsé lóg ín àgàínnnnnnnnnnnnnnn.]",
     "submitFailed": "[Fàíléd tó súbmít úpdàté. Pléàsé try àgàínnnnnnnnnnnnnn.]",
@@ -168,6 +215,7 @@
   "validation": {
     "descriptionRequired": "[Déscríptíón ís réqúírédddddddd]",
     "descriptionTooShort": "[Déscríptíón múst bé àt léàst 10 chàràctérssssssssssssss]",
+    "planRequired": "[Àdd àn àctíónàblé plàn fór thé néxt dày tó sàvé thé Dàíly Scrúmmmmmmmmmmmmmmmmmmmmm.]",
     "titleRequired": "[Títlé ís réqúíréddddddd]",
     "titleTooShort": "[Títlé múst bé àt léàst 3 chàràctérssssssssssss]"
   },
@@ -179,6 +227,5 @@
     "sendReminder": "[Sénd Rémíndérrrrr]",
     "sending": "[Séndíngggg...]",
     "title": "[Wàítíng fór Úpdàtésssssss]"
-  },
-  "yourDailyUpdate": "[Yóúr Dàíly Úpdàtééééééé]"
+  }
 }

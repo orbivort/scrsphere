@@ -1,9 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNavigate, useSearchParams } from 'react-router';
+import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import axios, { type AxiosError } from 'axios';
-import { formatDateRange } from '@scrumooth/shared';
 
 import { apiService } from '../../services';
 import { useToast } from '../../hooks/useToast';
@@ -16,78 +15,55 @@ import { ToastContainer } from '../../components/common/ToastContainer';
 import {
   AlertCircleIcon,
   ArrowLeftIcon,
-  CheckIcon,
-  ClockIcon,
   PackageIcon,
   PlusIcon,
 } from '../../components/common/Icons';
 
 import styles from './IncrementCreate.module.css';
 
-import { useI18nStore } from '@/i18n/useI18nStore';
-
 /**
  * IncrementCreate Component
  *
- * A form component for creating new increments. Supports both standalone creation
- * and workflow mode (when coming from sprint completion).
+ * A form component for creating new increments.
  *
  * Features:
- * - Sprint selection dropdown (standalone mode)
+ * - Sprint selection dropdown
  * - PBI selection with duplication prevention
- * - Auto-delivery in workflow mode
  * - Comprehensive form validation
  *
  * @example
- * // Standalone mode
  * <Route path="/increment/create" element={<IncrementCreate />} />
- *
- * // Workflow mode
- * <Route path="/increment/create?fromSprintComplete=true&sprintId=123" element={<IncrementCreate />} />
  */
-
-// Icons imported from shared library
 
 export const IncrementCreate: React.FC = () => {
   const { t } = useTranslation('increments');
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
-  const { toasts, success, error: showError, warning: showWarning, removeToast } = useToast();
+  const { toasts, success, error: showError, removeToast } = useToast();
   const { currentTeam } = useTeamContext();
   const { user } = useAuthStore();
-  const { locale } = useI18nStore();
 
-  const fromSprintComplete = searchParams.get('fromSprintComplete') === 'true';
-  const urlSprintId = searchParams.get('sprintId') ?? '';
   const teamId = currentTeam?.id ?? '';
 
   // Form state
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [selectedSprintId, setSelectedSprintId] = useState<string>(urlSprintId);
+  const [selectedSprintId, setSelectedSprintId] = useState<string>('');
   const [selectedPBIs, setSelectedPBIs] = useState<string[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Workflow state
-  const [workflowStep, setWorkflowStep] = useState<
-    'creating' | 'verifying' | 'delivering' | 'redirecting' | null
-  >(fromSprintComplete ? 'creating' : null);
-
-  // Query: Get sprint data (for workflow mode or when sprint is pre-selected)
-  const { data: sprintData, isLoading: isLoadingSprint } = useQuery({
+  // Query: Get sprint data when sprint is pre-selected
+  const { isLoading: isLoadingSprint } = useQuery({
     queryKey: ['sprint', selectedSprintId],
     queryFn: () => apiService.getSprint(selectedSprintId),
     enabled: !!selectedSprintId,
   });
 
-  const sprint = sprintData?.data;
-
-  // Query: Get available sprints for dropdown (standalone mode only)
+  // Query: Get available sprints for dropdown
   const { data: sprintsData, isLoading: isLoadingSprints } = useQuery({
     queryKey: ['sprints', teamId],
     queryFn: () => apiService.getSprints(teamId),
-    enabled: !!teamId && !fromSprintComplete,
+    enabled: !!teamId,
   });
 
   const availableSprints = useMemo(() => {
@@ -128,16 +104,6 @@ export const IncrementCreate: React.FC = () => {
     return pbiSet;
   }, [existingIncrementsData]);
 
-  // Effect: Auto-populate name/description when sprint data loads in workflow mode
-  React.useEffect(() => {
-    if (sprint && fromSprintComplete) {
-      setName(`${sprint.name} Increment`);
-      setDescription(
-        `Increment created from ${sprint.name} (${formatDateRange(sprint.startDate, sprint.endDate, locale)})`
-      );
-    }
-  }, [sprint, fromSprintComplete, locale]);
-
   // Effect: Auto-select eligible PBIs that are not already in increments
   React.useEffect(() => {
     if (eligiblePBIs.length > 0) {
@@ -162,56 +128,14 @@ export const IncrementCreate: React.FC = () => {
     onSuccess: async (response) => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.increment.all });
 
-      if (fromSprintComplete && response.data?.id) {
-        setWorkflowStep('verifying');
-        success(t('create.toast.createdAndDelivering'));
-
-        const redirectToDetail = () => {
-          void navigate(
-            `/increment/${response.data?.id}?fromSprintComplete=true&sprintId=${selectedSprintId}`
-          );
-        };
-
-        try {
-          const verification = await apiService.verifyIntegration(response.data.id);
-          const allPassed = verification.data?.allPassed;
-
-          if (allPassed) {
-            setWorkflowStep('delivering');
-            try {
-              await deliverMutation.mutateAsync(response.data.id);
-              setWorkflowStep('redirecting');
-              success(t('create.toast.deliveredSuccess'));
-
-              setTimeout(() => {
-                void navigate(`/sprint-review/${selectedSprintId}`);
-              }, 1500);
-            } catch (_error) {
-              setWorkflowStep(null);
-              showError(t('create.toast.deliverFailed'));
-              redirectToDetail();
-            }
-          } else {
-            setWorkflowStep(null);
-            showWarning(t('create.toast.integrationRequired'));
-            redirectToDetail();
-          }
-        } catch (_error) {
-          setWorkflowStep(null);
-          showWarning(t('create.toast.verificationFailed'));
-          redirectToDetail();
-        }
+      success(t('create.toast.createdSuccess'));
+      if (response.data) {
+        void navigate(`/increment/${response.data.id}`);
       } else {
-        success(t('create.toast.createdSuccess'));
-        if (response.data) {
-          void navigate(`/increment/${response.data.id}`);
-        } else {
-          void navigate('/increments');
-        }
+        void navigate('/increments');
       }
     },
     onError: (error: Error | AxiosError<ApiResponse<never>>) => {
-      setWorkflowStep(null);
       let errorMessage = t('create.toast.createFailed');
 
       if (axios.isAxiosError(error)) {
@@ -244,31 +168,6 @@ export const IncrementCreate: React.FC = () => {
           }
         }
       } else if (error.message) {
-        errorMessage = error.message;
-      }
-
-      showError(errorMessage);
-    },
-  });
-
-  // Mutation: Deliver increment (workflow mode)
-  const deliverMutation = useMutation({
-    mutationFn: (incrementId: string) =>
-      apiService.deliverIncrement(
-        incrementId,
-        'sprint_review',
-        'Delivered via sprint completion workflow'
-      ),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: queryKeys.increment.all });
-    },
-    onError: (error: Error | AxiosError<ApiResponse<never>>) => {
-      let errorMessage = t('detail.toast.deliverFailed');
-
-      if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError<ApiResponse<never>>;
-        errorMessage = axiosError.response?.data.error?.message ?? errorMessage;
-      } else if (error instanceof Error) {
         errorMessage = error.message;
       }
 
@@ -373,11 +272,7 @@ export const IncrementCreate: React.FC = () => {
    * Handles back button navigation
    */
   const handleBack = () => {
-    if (fromSprintComplete && selectedSprintId) {
-      void navigate(`/sprint-review/${selectedSprintId}`);
-    } else {
-      void navigate('/increments');
-    }
+    void navigate('/increments');
   };
 
   // Loading state
@@ -409,9 +304,7 @@ export const IncrementCreate: React.FC = () => {
         <div className={styles['detail-header']}>
           <button className={styles['back-button']} onClick={handleBack}>
             <ArrowLeftIcon size={20} />
-            <span>
-              {fromSprintComplete ? t('create.backToSprintReview') : t('create.backToIncrements')}
-            </span>
+            <span>{t('create.backToIncrements')}</span>
           </button>
           <div className={styles['header-content']}>
             <div className={styles['header-left']}>
@@ -422,101 +315,8 @@ export const IncrementCreate: React.FC = () => {
                 {t('create.title')}
               </h1>
             </div>
-            {fromSprintComplete && (
-              <div className={styles['workflow-indicator']}>
-                <span className={styles['workflow-badge']}>
-                  {t('create.workflowIndicator.title')}
-                </span>
-                <span className={styles['workflow-step']}>
-                  {workflowStep === 'creating'
-                    ? t('create.workflowIndicator.step2Of4')
-                    : workflowStep === 'verifying' || workflowStep === 'delivering'
-                      ? t('create.workflowIndicator.step3Of4')
-                      : workflowStep === 'redirecting'
-                        ? t('create.workflowIndicator.step4Of4')
-                        : t('create.workflowIndicator.step2Of4')}
-                </span>
-              </div>
-            )}
           </div>
         </div>
-
-        {fromSprintComplete && (
-          <div className={styles['workflow-progress']}>
-            <div className={styles['progress-steps']}>
-              <div className={`${styles['progress-step']} ${styles.completed}`}>
-                <span className={styles['step-number']}>
-                  <CheckIcon size={12} strokeWidth={3} />
-                </span>
-                <span className={styles['step-label']}>
-                  {t('create.workflowSteps.sprintCompleted')}
-                </span>
-              </div>
-              <div
-                className={`${styles['progress-step']} ${
-                  workflowStep === 'creating'
-                    ? styles.active
-                    : workflowStep === 'delivering' || workflowStep === 'redirecting'
-                      ? styles.completed
-                      : ''
-                }`}
-              >
-                <span className={styles['step-number']}>
-                  {workflowStep === 'creating' ? (
-                    <ClockIcon size={12} />
-                  ) : (
-                    <CheckIcon size={12} strokeWidth={3} />
-                  )}
-                </span>
-                <span className={styles['step-label']}>
-                  {workflowStep === 'creating'
-                    ? t('create.progressSteps.creatingIncrement')
-                    : t('create.workflowSteps.createIncrement')}
-                </span>
-              </div>
-              <div
-                className={`${styles['progress-step']} ${
-                  workflowStep === 'verifying' || workflowStep === 'delivering'
-                    ? styles.active
-                    : workflowStep === 'redirecting'
-                      ? styles.completed
-                      : ''
-                }`}
-              >
-                <span className={styles['step-number']}>
-                  {workflowStep === 'verifying' || workflowStep === 'delivering' ? (
-                    <ClockIcon size={12} />
-                  ) : workflowStep === 'redirecting' ? (
-                    <CheckIcon size={12} strokeWidth={3} />
-                  ) : (
-                    '3'
-                  )}
-                </span>
-                <span className={styles['step-label']}>
-                  {workflowStep === 'verifying'
-                    ? t('create.progressSteps.verifyingIntegration')
-                    : workflowStep === 'delivering'
-                      ? t('create.progressSteps.deliveringIncrement')
-                      : workflowStep === 'redirecting'
-                        ? t('create.progressSteps.redirecting')
-                        : t('create.workflowSteps.deliverIncrement')}
-                </span>
-              </div>
-              <div
-                className={`${styles['progress-step']} ${
-                  workflowStep === 'redirecting' ? styles.active : ''
-                }`}
-              >
-                <span className={styles['step-number']}>
-                  {workflowStep === 'redirecting' ? <ClockIcon size={12} /> : '4'}
-                </span>
-                <span className={styles['step-label']}>
-                  {t('create.workflowSteps.sprintReview')}
-                </span>
-              </div>
-            </div>
-          </div>
-        )}
 
         <form className={styles['create-form']} onSubmit={handleSubmit}>
           <div className={styles['form-grid']}>
@@ -543,35 +343,33 @@ export const IncrementCreate: React.FC = () => {
                     }}
                     placeholder={t('create.form.namePlaceholder')}
                     className={errors.name ? styles.error : ''}
-                    disabled={createMutation.isPending || deliverMutation.isPending}
+                    disabled={createMutation.isPending}
                   />
                   {errors.name && <span className={styles['error-message']}>{errors.name}</span>}
                 </div>
 
-                {!fromSprintComplete && (
-                  <div className={styles['form-group']}>
-                    <label htmlFor="sprintId">
-                      {t('create.form.sprint')} <span className={styles['required-mark']}>*</span>
-                    </label>
-                    <select
-                      id="sprintId"
-                      value={selectedSprintId}
-                      onChange={handleSprintChange}
-                      className={errors.sprintId ? styles.error : ''}
-                      disabled={createMutation.isPending || deliverMutation.isPending}
-                    >
-                      <option value="">{t('create.form.sprintPlaceholder')}</option>
-                      {availableSprints.map((sprint) => (
-                        <option key={sprint.id} value={sprint.id}>
-                          {sprint.name} ({sprint.status})
-                        </option>
-                      ))}
-                    </select>
-                    {errors.sprintId && (
-                      <span className={styles['error-message']}>{errors.sprintId}</span>
-                    )}
-                  </div>
-                )}
+                <div className={styles['form-group']}>
+                  <label htmlFor="sprintId">
+                    {t('create.form.sprint')} <span className={styles['required-mark']}>*</span>
+                  </label>
+                  <select
+                    id="sprintId"
+                    value={selectedSprintId}
+                    onChange={handleSprintChange}
+                    className={errors.sprintId ? styles.error : ''}
+                    disabled={createMutation.isPending}
+                  >
+                    <option value="">{t('create.form.sprintPlaceholder')}</option>
+                    {availableSprints.map((sprint) => (
+                      <option key={sprint.id} value={sprint.id}>
+                        {sprint.name} ({sprint.status})
+                      </option>
+                    ))}
+                  </select>
+                  {errors.sprintId && (
+                    <span className={styles['error-message']}>{errors.sprintId}</span>
+                  )}
+                </div>
 
                 <div className={styles['form-group']}>
                   <label htmlFor="description">{t('create.form.description')}</label>
@@ -581,7 +379,7 @@ export const IncrementCreate: React.FC = () => {
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder={t('create.form.descriptionPlaceholder')}
                     rows={4}
-                    disabled={createMutation.isPending || deliverMutation.isPending}
+                    disabled={createMutation.isPending}
                   />
                 </div>
               </div>
@@ -600,10 +398,7 @@ export const IncrementCreate: React.FC = () => {
                       className={`${styles.button} ${styles['button-secondary']} ${styles['button-small']}`}
                       onClick={handleSelectAllPBIs}
                       disabled={
-                        !selectedSprintId ||
-                        eligiblePBIs.length === 0 ||
-                        createMutation.isPending ||
-                        deliverMutation.isPending
+                        !selectedSprintId || eligiblePBIs.length === 0 || createMutation.isPending
                       }
                     >
                       {selectedPBIs.length ===
@@ -636,11 +431,7 @@ export const IncrementCreate: React.FC = () => {
                             type="checkbox"
                             checked={selectedPBIs.includes(pbi.id)}
                             onChange={() => {}}
-                            disabled={
-                              isAlreadyInIncrement ||
-                              createMutation.isPending ||
-                              deliverMutation.isPending
-                            }
+                            disabled={isAlreadyInIncrement || createMutation.isPending}
                           />
                           <div className={styles['pbi-selection-content']}>
                             <div className={styles['pbi-selection-header']}>
@@ -695,27 +486,16 @@ export const IncrementCreate: React.FC = () => {
                     type="button"
                     className={`${styles.button} ${styles['button-secondary']}`}
                     onClick={handleBack}
-                    disabled={createMutation.isPending || deliverMutation.isPending}
+                    disabled={createMutation.isPending}
                   >
-                    {fromSprintComplete
-                      ? t('create.actions.skipToSprintReview')
-                      : t('create.actions.cancel')}
+                    {t('create.actions.cancel')}
                   </button>
                   <button
                     type="submit"
                     className={`${styles.button} ${styles['button-primary']}`}
-                    disabled={createMutation.isPending || deliverMutation.isPending}
+                    disabled={createMutation.isPending}
                   >
-                    {workflowStep === 'verifying' ? (
-                      <>
-                        <LoadingState
-                          variant="spinner"
-                          size="sm"
-                          label={t('create.actions.verifying')}
-                        />
-                        <span>{t('create.actions.verifying')}</span>
-                      </>
-                    ) : createMutation.isPending ? (
+                    {createMutation.isPending ? (
                       <>
                         <LoadingState
                           variant="spinner"
@@ -723,20 +503,6 @@ export const IncrementCreate: React.FC = () => {
                           label={t('create.actions.creating')}
                         />
                         <span>{t('create.actions.creating')}</span>
-                      </>
-                    ) : deliverMutation.isPending ? (
-                      <>
-                        <LoadingState
-                          variant="spinner"
-                          size="sm"
-                          label={t('create.actions.delivering')}
-                        />
-                        <span>{t('create.actions.delivering')}</span>
-                      </>
-                    ) : fromSprintComplete ? (
-                      <>
-                        <PlusIcon size={16} />
-                        <span>{t('create.actions.createAndContinue')}</span>
                       </>
                     ) : (
                       <>
@@ -776,13 +542,6 @@ export const IncrementCreate: React.FC = () => {
                         </span>
                       )}
                     </div>
-                  </div>
-                )}
-
-                {deliverMutation.isError && (
-                  <div className={styles['form-error']}>
-                    <AlertCircleIcon size={16} />
-                    <span>{t('create.toast.deliverFailed')}</span>
                   </div>
                 )}
               </div>

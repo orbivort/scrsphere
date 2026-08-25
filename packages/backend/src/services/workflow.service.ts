@@ -251,7 +251,7 @@ class WorkflowService {
           fromState: 'NEW',
           toState: 'REFINED',
           requiresApproval: false,
-          allowedRoles: ['PRODUCT_OWNER', 'SCRUM_MASTER', 'DEVELOPER'],
+          allowedRoles: ['PRODUCT_OWNER', 'SCRUM_MASTER', 'DEVELOPERS'],
           allowedUserIds: [],
         },
         {
@@ -265,21 +265,21 @@ class WorkflowService {
           fromState: 'READY',
           toState: 'IN_PROGRESS',
           requiresApproval: false,
-          allowedRoles: ['DEVELOPER', 'SCRUM_MASTER'],
+          allowedRoles: ['DEVELOPERS', 'SCRUM_MASTER'],
           allowedUserIds: [],
         },
         {
           fromState: 'IN_PROGRESS',
           toState: 'DONE',
           requiresApproval: false,
-          allowedRoles: ['DEVELOPER', 'SCRUM_MASTER'],
+          allowedRoles: ['DEVELOPERS', 'SCRUM_MASTER'],
           allowedUserIds: [],
         },
         {
           fromState: 'IN_PROGRESS',
           toState: 'READY',
           requiresApproval: false,
-          allowedRoles: ['DEVELOPER', 'SCRUM_MASTER'],
+          allowedRoles: ['DEVELOPERS', 'SCRUM_MASTER'],
           allowedUserIds: [],
         },
       ],
@@ -308,13 +308,22 @@ class WorkflowService {
           orderIndex: 2,
         },
         {
+          name: 'REVIEW',
+          displayName: 'Review',
+          description: 'Task is awaiting peer review',
+          color: '#4338ca',
+          icon: 'eye',
+          isFinal: false,
+          orderIndex: 3,
+        },
+        {
           name: 'DONE',
           displayName: 'Done',
           description: 'Task is completed',
           color: '#10B981',
           icon: 'check',
           isFinal: true,
-          orderIndex: 3,
+          orderIndex: 4,
         },
       ],
       transitions: [
@@ -322,21 +331,35 @@ class WorkflowService {
           fromState: 'TODO',
           toState: 'IN_PROGRESS',
           requiresApproval: false,
-          allowedRoles: ['DEVELOPER', 'SCRUM_MASTER'],
+          allowedRoles: ['DEVELOPERS'],
           allowedUserIds: [],
         },
         {
           fromState: 'IN_PROGRESS',
+          toState: 'REVIEW',
+          requiresApproval: false,
+          allowedRoles: ['DEVELOPERS'],
+          allowedUserIds: [],
+        },
+        {
+          fromState: 'REVIEW',
           toState: 'DONE',
           requiresApproval: false,
-          allowedRoles: ['DEVELOPER', 'SCRUM_MASTER'],
+          allowedRoles: ['DEVELOPERS'],
+          allowedUserIds: [],
+        },
+        {
+          fromState: 'REVIEW',
+          toState: 'IN_PROGRESS',
+          requiresApproval: false,
+          allowedRoles: ['DEVELOPERS'],
           allowedUserIds: [],
         },
         {
           fromState: 'IN_PROGRESS',
           toState: 'TODO',
           requiresApproval: false,
-          allowedRoles: ['DEVELOPER', 'SCRUM_MASTER'],
+          allowedRoles: ['DEVELOPERS'],
           allowedUserIds: [],
         },
       ],
@@ -424,8 +447,12 @@ class WorkflowService {
     // 1. Try to fetch existing workflow first (fast path)
     const existingWorkflow = await this.fetchExistingWorkflow(canonicalType);
     if (existingWorkflow) {
-      this.cacheWorkflow(normalizedType, existingWorkflow);
-      return existingWorkflow;
+      // Reconcile workflows that predate the peer-review (REVIEW) state so existing
+      // deployments gain the new status without requiring a manual re-seed. This is
+      // idempotent: once a REVIEW state exists, reconciliation is a no-op.
+      const reconciledWorkflow = await this.reconcileDefaultWorkflow(existingWorkflow);
+      this.cacheWorkflow(normalizedType, reconciledWorkflow);
+      return reconciledWorkflow;
     }
 
     // 2. Check if we have a default config for this entity type
@@ -526,6 +553,166 @@ class WorkflowService {
     }
 
     return workflow as unknown as WorkflowWithStates;
+  }
+
+  /**
+   * Reconcile an existing workflow with the current default configuration.
+   *
+   * This upgrades a `Task` workflow that still matches the legacy 3-state shape
+   * (TODO / IN_PROGRESS / DONE) to include the peer-review `REVIEW` state and the
+   * associated transitions. It only touches workflows that are missing `REVIEW`;
+   * customized workflows (which no longer match the default state names) and
+   * already-reconciled workflows are left untouched.
+   *
+   * The reconciliation is idempotent: the presence of a `REVIEW` state is the
+   * marker, so it runs at most once per workflow. The legacy `IN_PROGRESS → DONE`
+   * transition is deactivated (`isActive = false`) rather than deleted so that
+   * `StatusChangeHistory.transitionId` references remain valid.
+   *
+   * @param workflow The existing workflow to reconcile (returned as-is if no
+   * reconciliation is required).
+   */
+  private async reconcileDefaultWorkflow(
+    workflow: WorkflowWithStates
+  ): Promise<WorkflowWithStates> {
+    if (workflow.entityType !== 'Task') {
+      return workflow;
+    }
+
+    const stateNames = new Set(workflow.states.map((s) => s.name));
+    // Already reconciled (REVIEW present) or a customized shape -> leave untouched.
+    if (stateNames.has('REVIEW') || !stateNames.has('TODO') || !stateNames.has('DONE')) {
+      return workflow;
+    }
+
+    logger.info('Reconciling default Task workflow to add REVIEW state', {
+      workflowId: workflow.id,
+    });
+
+    const now = new Date();
+    const reviewStateId = generateUUIDv7();
+
+    const updatedWorkflow = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+      const todoState = await tx.workflowState.findFirst({
+        where: { workflowId: workflow.id, name: 'TODO' },
+      });
+      const inProgressState = await tx.workflowState.findFirst({
+        where: { workflowId: workflow.id, name: 'IN_PROGRESS' },
+      });
+      const doneState = await tx.workflowState.findFirst({
+        where: { workflowId: workflow.id, name: 'DONE' },
+      });
+
+      if (!todoState || !inProgressState || !doneState) {
+        logger.warn('Task workflow missing expected default states; skipping reconciliation', {
+          workflowId: workflow.id,
+        });
+        return workflow;
+      }
+
+      // 1. Shift DONE to orderIndex 4 and insert REVIEW at orderIndex 3.
+      // Note: WorkflowState has no `updatedAt` column, only `createdAt`.
+      await tx.workflowState.update({
+        where: { id: doneState.id },
+        data: { orderIndex: 4 },
+      });
+
+      await tx.workflowState.create({
+        data: {
+          id: reviewStateId,
+          workflowId: workflow.id,
+          name: 'REVIEW',
+          displayName: 'Review',
+          description: 'Task is awaiting peer review',
+          color: '#4338ca',
+          icon: 'eye',
+          isFinal: false,
+          orderIndex: 3,
+          createdAt: now,
+        },
+      });
+
+      // 2. Add the new transitions: IN_PROGRESS → REVIEW, REVIEW → DONE, REVIEW → IN_PROGRESS.
+      const transitionDefs: Array<{ from: string; to: string }> = [
+        { from: 'IN_PROGRESS', to: 'REVIEW' },
+        { from: 'REVIEW', to: 'DONE' },
+        { from: 'REVIEW', to: 'IN_PROGRESS' },
+      ];
+
+      for (const def of transitionDefs) {
+        const fromState = await tx.workflowState.findFirst({
+          where: { workflowId: workflow.id, name: def.from },
+        });
+        const toState = await tx.workflowState.findFirst({
+          where: { workflowId: workflow.id, name: def.to },
+        });
+        if (!fromState || !toState) {
+          continue;
+        }
+        const existing = await tx.workflowTransition.findFirst({
+          where: {
+            workflowId: workflow.id,
+            fromStateId: fromState.id,
+            toStateId: toState.id,
+          },
+        });
+        if (existing) {
+          // Note: WorkflowTransition has no `updatedAt` column, only `createdAt`.
+          await tx.workflowTransition.update({
+            where: { id: existing.id },
+            data: { isActive: true },
+          });
+        } else {
+          await tx.workflowTransition.create({
+            data: {
+              id: generateUUIDv7(),
+              workflowId: workflow.id,
+              fromStateId: fromState.id,
+              toStateId: toState.id,
+              condition: null,
+              requiresApproval: false,
+              allowedRoles: ['DEVELOPERS'],
+              allowedUserIds: [],
+              isActive: true,
+              createdAt: now,
+            },
+          });
+        }
+      }
+
+      // 3. Deactivate the legacy direct IN_PROGRESS → DONE transition.
+      const directDoneTransition = await tx.workflowTransition.findFirst({
+        where: {
+          workflowId: workflow.id,
+          fromStateId: inProgressState.id,
+          toStateId: doneState.id,
+        },
+      });
+      if (directDoneTransition) {
+        await tx.workflowTransition.update({
+          where: { id: directDoneTransition.id },
+          data: { isActive: false },
+        });
+      }
+
+      // 4. Re-fetch the reconciled workflow.
+      const reconciled = await tx.workflow.findUnique({
+        where: { id: workflow.id },
+        include: {
+          states: { orderBy: { orderIndex: 'asc' } },
+          transitions: { where: { isActive: true } },
+        },
+      });
+
+      return (reconciled ?? workflow) as unknown as WorkflowWithStates;
+    });
+
+    logger.info('Task workflow reconciled with REVIEW state', {
+      workflowId: workflow.id,
+      reviewStateId,
+    });
+
+    return updatedWorkflow;
   }
 
   /**
@@ -976,25 +1163,36 @@ class WorkflowService {
 
     const transitions = workflow.transitions.filter((t) => t.fromStateId === fromState.id);
 
+    // Map states by id so the related states can be attached to each transition
+    // without an additional query. Consumers need the source/target status names,
+    // but `workflow.transitions` does not include the related state relations.
+    const stateById = new Map<string, WorkflowState>(workflow.states.map((s) => [s.id, s]));
+
     // Filter by permissions
-    const allowedTransitions = transitions.filter((transition) => {
-      if (!transition.isActive) return false;
+    const allowedTransitions = transitions
+      .filter((transition) => {
+        if (!transition.isActive) return false;
 
-      if (transition.allowedRoles.length > 0) {
-        const hasRole = transition.allowedRoles.some((role) => userRoles.includes(role));
-        if (!hasRole) return false;
-      }
+        if (transition.allowedRoles.length > 0) {
+          const hasRole = transition.allowedRoles.some((role) => userRoles.includes(role));
+          if (!hasRole) return false;
+        }
 
-      if (transition.allowedUserIds.length > 0) {
-        if (!userId) return false;
-        const hasUserPermission = transition.allowedUserIds.includes(userId);
-        if (!hasUserPermission) return false;
-      }
+        if (transition.allowedUserIds.length > 0) {
+          if (!userId) return false;
+          const hasUserPermission = transition.allowedUserIds.includes(userId);
+          if (!hasUserPermission) return false;
+        }
 
-      return true;
-    });
+        return true;
+      })
+      .map((transition) => ({
+        ...transition,
+        fromState: stateById.get(transition.fromStateId) ?? null,
+        toState: stateById.get(transition.toStateId) ?? null,
+      }));
 
-    return allowedTransitions;
+    return allowedTransitions as unknown as WorkflowTransition[];
   }
 
   /**

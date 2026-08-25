@@ -20,6 +20,10 @@
     "scheduleDeletionConfirmation": "La confirmation doit être exactement \"SCHEDULE DELETION\"",
     "termsRequired": "Vous devez accepter la politique d'utilisation acceptable et la politique de protection des données de l'entreprise"
   },
+  "dailyScrum": {
+    "developersOnly": "Le Daily Scrum est un événement pour les Développeurs. Seuls les Développeurs peuvent enregistrer ou modifier le Daily Scrum.",
+    "planRequired": "Un plan d'action pour le lendemain est requis pour le Daily Scrum."
+  },
   "fieldRequired": "Ce champ est requis",
   "fieldTooLong": "Ce champ est trop long",
   "firstName": "Prénom",
@@ -27,6 +31,10 @@
   "lastName": "Nom",
   "passwordTooShort": "Le mot de passe doit contenir au moins {{min}} caractères",
   "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
+  "task": {
+    "cannotApproveOwnReview": "Vous ne pouvez pas approuver la révision de votre propre tâche. Un autre membre de l'équipe doit effectuer l'approbation de la révision.",
+    "pbiNotInBacklog": "Une tâche ne peut être créée que pour un élément du backlog produit qui fait partie du backlog du sprint sélectionné."
+  },
   "workflow": {
     "authenticationRequired": "Authentification utilisateur requise pour cette transition",
     "initialStatusMustBe": "L'état initial doit être {{defaultStatus}}",

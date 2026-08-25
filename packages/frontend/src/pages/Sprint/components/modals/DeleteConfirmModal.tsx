@@ -15,6 +15,7 @@ import styles from './DeleteConfirmModal.module.css';
 const STATUS_LABEL_KEYS: Record<TaskStatus, string> = {
   [TaskStatusEnum.TODO]: 'taskStatus.todo',
   [TaskStatusEnum.IN_PROGRESS]: 'taskStatus.inProgress',
+  [TaskStatusEnum.REVIEW]: 'taskStatus.review',
   [TaskStatusEnum.DONE]: 'taskStatus.done',
 };
 

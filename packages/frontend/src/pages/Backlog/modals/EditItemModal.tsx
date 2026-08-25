@@ -6,6 +6,7 @@ import { useBacklogContext } from '../context/BacklogContext';
 import { useFocusTrap } from '../hooks/useFocusTrap';
 import { MOSCOW_CONFIG } from '../config/moscow.config';
 import { handleMoscowKeyDown } from '../utils/formHandlers';
+import { useTeamContext } from '../../../contexts/TeamContext';
 import { UnsavedChangesModal } from '../../../components/common/Form/UnsavedChangesModal';
 
 import styles from './EditItemModal.module.css';
@@ -36,6 +37,10 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
   const modalRef = useRef<HTMLDivElement>(null);
   const [showUnsavedModal, setShowUnsavedModal] = useState(false);
   const { t } = useTranslation('backlog');
+
+  // Only Developers are responsible for sizing; PO/SM cannot set story points.
+  const { userRole } = useTeamContext();
+  const isDeveloper = userRole === 'DEVELOPERS';
 
   const {
     selectedItem,
@@ -338,8 +343,9 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
                         e.target.value ? parseInt(e.target.value) : undefined
                       )
                     }
+                    disabled={!isDeveloper}
                     className={formErrors.estimate ? styles['input-error'] : ''}
-                    aria-describedby="edit-estimate-help edit-estimate-error"
+                    aria-describedby={`edit-estimate-help edit-estimate-error${!isDeveloper ? ' edit-estimate-hint' : ''}`}
                     aria-required="true"
                   >
                     <option value="">{t('editItem.storyPointsPlaceholder') as string}</option>
@@ -353,6 +359,11 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
                   <span id="edit-estimate-help" className={styles['field-help']}>
                     {t('editItem.storyPointsHelp') as string}
                   </span>
+                  {!isDeveloper && (
+                    <span id="edit-estimate-hint" className={styles['field-help-warning']}>
+                      {t('editItem.storyPointsDeveloperOnly') as string}
+                    </span>
+                  )}
                   {formErrors.estimate && (
                     <span id="edit-estimate-error" className={styles['error-message']} role="alert">
                       {formErrors.estimate}

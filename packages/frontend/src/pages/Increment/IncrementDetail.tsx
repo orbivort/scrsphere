@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useParams, useNavigate, useSearchParams } from 'react-router';
+import { useParams, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { formatLocaleDate } from '@scrumooth/shared';
 
@@ -21,7 +21,6 @@ import {
   ArrowLeftIcon,
   RocketIcon,
   CheckIcon,
-  ClockIcon,
   FileTextIcon,
   ClipboardIcon,
   CalendarIcon,
@@ -38,7 +37,6 @@ export const IncrementDetail: React.FC = () => {
   const { locale } = useI18nStore();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
   const { toasts, success, error: showError, removeToast } = useToast();
   const [showDeliverModal, setShowDeliverModal] = useState(false);
@@ -47,9 +45,6 @@ export const IncrementDetail: React.FC = () => {
   );
   const [deliveryNotes, setDeliveryNotes] = useState('');
   const [confirmDelivery, setConfirmDelivery] = useState(false);
-
-  const fromSprintComplete = searchParams.get('fromSprintComplete') === 'true';
-  const sprintId = searchParams.get('sprintId');
 
   const { modalRef } = useModalFocus({
     isOpen: showDeliverModal,
@@ -82,12 +77,6 @@ export const IncrementDetail: React.FC = () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.increment.all });
       setShowDeliverModal(false);
       success(t('detail.toast.deliveredSuccess'));
-
-      if (fromSprintComplete && sprintId) {
-        setTimeout(() => {
-          void navigate(`/sprint-review/${sprintId}`);
-        }, 1500);
-      }
     },
     onError: () => {
       showError(t('detail.toast.deliverFailed'));
@@ -109,11 +98,7 @@ export const IncrementDetail: React.FC = () => {
   };
 
   const handleBack = () => {
-    if (fromSprintComplete && sprintId) {
-      void navigate(`/sprint-review/${sprintId}`);
-    } else {
-      void navigate('/increments');
-    }
+    void navigate('/increments');
   };
 
   const includedPBIs = useMemo(() => {
@@ -201,7 +186,7 @@ export const IncrementDetail: React.FC = () => {
       <div className={styles['detail-header']}>
         <button className={styles['back-button']} onClick={handleBack}>
           <ArrowLeftIcon />
-          <span>{fromSprintComplete ? t('skipToSprintReview') : t('backToIncrements')}</span>
+          <span>{t('backToIncrements')}</span>
         </button>
         <div className={styles['header-content']}>
           <div className={styles['header-left']}>
@@ -218,14 +203,6 @@ export const IncrementDetail: React.FC = () => {
               {increment.status}
             </span>
           </div>
-          {fromSprintComplete && (
-            <div className={styles['workflow-indicator']}>
-              <span className={styles['workflow-badge']}>
-                {t('detail.sprintCompletionWorkflow')}
-              </span>
-              <span className={styles['workflow-step']}>{t('detail.workflowStep3Of4')}</span>
-            </div>
-          )}
           {canDeliver && (
             <button
               className={`${styles.button} ${styles['button-primary']}`}
@@ -240,41 +217,6 @@ export const IncrementDetail: React.FC = () => {
           )}
         </div>
       </div>
-
-      {fromSprintComplete && (
-        <div className={styles['workflow-progress']}>
-          <div className={styles['progress-steps']}>
-            <div className={`${styles['progress-step']} ${styles.completed}`}>
-              <span className={styles['step-number']}>
-                <CheckIcon size={12} />
-              </span>
-              <span className={styles['step-label']}>
-                {t('detail.workflowSteps.sprintCompleted')}
-              </span>
-            </div>
-            <div className={`${styles['progress-step']} ${styles.completed}`}>
-              <span className={styles['step-number']}>
-                <CheckIcon size={12} />
-              </span>
-              <span className={styles['step-label']}>
-                {t('detail.workflowSteps.createIncrement')}
-              </span>
-            </div>
-            <div className={`${styles['progress-step']} ${styles.active}`}>
-              <span className={styles['step-number']}>
-                <ClockIcon size={12} />
-              </span>
-              <span className={styles['step-label']}>
-                {t('detail.workflowSteps.deliverIncrement')}
-              </span>
-            </div>
-            <div className={`${styles['progress-step']}`}>
-              <span className={styles['step-number']}>4</span>
-              <span className={styles['step-label']}>{t('detail.workflowSteps.sprintReview')}</span>
-            </div>
-          </div>
-        </div>
-      )}
 
       <div className={styles['detail-grid']}>
         <div className={styles['left-column']}>

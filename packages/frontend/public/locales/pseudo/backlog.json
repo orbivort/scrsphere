@@ -82,6 +82,7 @@
       "remaining": "[Rémàíníngggg]",
       "title": "[Úplóàdínggggg...]"
     },
+    "storyPointsDeveloperOnly": "[Ónly Dévélópérs càn sét stóry póínts. Thé stóry póínts cólúmn ís dísàbléd fór yóúr róléééééééééééééééééééééééééééé.]",
     "summary": {
       "close": "[Clósééé]",
       "created": "[{{count}} ítéms créàtédddddd]",
@@ -198,6 +199,7 @@
     "removeLabel": "[Rémóvé làbélllll {{label}}]",
     "requiredFields": "[Índícàtés réqúíréd fíéldsssssssss]",
     "selectMoscowPriority": "[Séléct MóSCóW Príórítyyyyyyyy]",
+    "storyPointsDeveloperOnly": "[Ónly Dévélópérs càn sét stóry póínts. Sízíng ís thé réspónsíbílíty óf thé Dévélópérs whó pérfórm thé wórkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk.]",
     "storyPointsHelp": "[Éstímàté thé rélàtívé éffórt úsíng Fíbónàccí séqúéncé. Cónsídér cómpléxíty, úncértàínty, ànd rísk. Léàvé émpty íf nót réàdy tó éstímàtéééééééééééééééééééééééééééééééééééééééééé.]",
     "storyPointsLabel": "[Éstímàté (Stóry Póíntssssssss)]",
     "storyPointsPlaceholder": "[Séléct éstímàtééééééé...]",
@@ -270,6 +272,7 @@
     "saving": "[SSààvvíínng...]",
     "savingChanges": "[Sàvíng chàngésssssss...]",
     "selectMoscowPriority": "[Séléct MóSCóW Príórítyyyyyyyy]",
+    "storyPointsDeveloperOnly": "[Ónly Dévélópérs càn sét stóry póínts. Sízíng ís thé réspónsíbílíty óf thé Dévélópérs whó pérfórm thé wórkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk.]",
     "storyPointsHelp": "[Réqúíréd: Éstímàté thé rélàtívé éffórt úsíng Fíbónàccí séqúéncé. Cónsídér cómpléxíty, úncértàínty, ànd rískkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk.]",
     "storyPointsLabel": "[Éstímàté (Stóry Póíntssssssss)]",
     "storyPointsPlaceholder": "[Séléct éstímàté... (réqúírédddddddddd)]",

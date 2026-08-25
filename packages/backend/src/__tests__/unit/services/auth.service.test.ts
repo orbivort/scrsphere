@@ -48,9 +48,6 @@ vi.mock('../../../utils/prisma', () => ({
       deleteMany: vi.fn(),
       create: vi.fn(),
     },
-    dailyUpdate: {
-      deleteMany: vi.fn(),
-    },
     task: {
       updateMany: vi.fn(),
     },
@@ -109,80 +106,6 @@ vi.mock('jsonwebtoken', () => ({
   },
   sign: vi.fn().mockReturnValue('mock-access-token'),
   verify: vi.fn(),
-}));
-
-// Mock config
-vi.mock('../../../config', () => ({
-  default: {
-    jwt: {
-      secret: 'test-secret',
-      expiresIn: '15m',
-      refreshExpiresIn: '7d',
-    },
-    bcrypt: {
-      saltRounds: 10,
-    },
-    session: {
-      idleTimeoutMs: 1800000,
-      absoluteTimeoutMs: 86400000,
-      warningThresholdMs: 300000,
-      maxConcurrentSessions: 5,
-      cleanupIntervalMs: 3600000,
-    },
-    deletion: {
-      gracePeriodDays: 14,
-      scheduleConfirmationPhrase: 'SCHEDULE DELETION',
-    },
-    email: {
-      provider: 'test',
-      testMode: {
-        enabled: true,
-        outputDirectory: 'logs/test-emails',
-        logToConsole: false,
-        saveToFile: false,
-      },
-      frontendUrl: 'http://localhost:5173',
-      defaults: {
-        fromName: 'Test',
-        fromAddress: 'test@example.com',
-      },
-    },
-  },
-  config: {
-    jwt: {
-      secret: 'test-secret',
-      expiresIn: '15m',
-      refreshExpiresIn: '7d',
-    },
-    bcrypt: {
-      saltRounds: 10,
-    },
-    session: {
-      idleTimeoutMs: 1800000,
-      absoluteTimeoutMs: 86400000,
-      warningThresholdMs: 300000,
-      maxConcurrentSessions: 5,
-      cleanupIntervalMs: 3600000,
-    },
-    deletion: {
-      gracePeriodDays: 14,
-      scheduleConfirmationPhrase: 'SCHEDULE DELETION',
-    },
-    email: {
-      provider: 'test',
-      testMode: {
-        enabled: true,
-        outputDirectory: 'logs/test-emails',
-        logToConsole: false,
-        saveToFile: false,
-      },
-      frontendUrl: 'http://localhost:5173',
-      defaults: {
-        fromName: 'Test',
-        fromAddress: 'test@example.com',
-      },
-    },
-  },
 }));
 
 // Mock email service
@@ -757,7 +680,6 @@ describe('authService', () => {
           refreshToken: { deleteMany: vi.fn().mockResolvedValue({}) },
           notification: { deleteMany: vi.fn().mockResolvedValue({}) },
           teamMember: { deleteMany: vi.fn().mockResolvedValue({}) },
-          dailyUpdate: { deleteMany: vi.fn().mockResolvedValue({}) },
           task: { updateMany: vi.fn().mockResolvedValue({}) },
           impediment: {
             deleteMany: vi.fn().mockResolvedValue({}),

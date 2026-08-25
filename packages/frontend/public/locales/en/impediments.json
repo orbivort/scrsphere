@@ -1,8 +1,6 @@
 {
   "allStatus": "All Status",
   "card": {
-    "createdFromDailyUpdate": "Created from Daily Update",
-    "fromDailyScrum": "From Daily Scrum",
     "owner": "Owner",
     "reportedBy": "Reported by",
     "resolution": "Resolution",
@@ -36,7 +34,6 @@
   "detailModal": {
     "cancel": "Cancel",
     "close": "Close",
-    "createdFromDailyScrum": "Created from Daily Scrum Update",
     "createdLabel": "Created",
     "deleteLabel": "Delete",
     "deleting": "Deleting...",
@@ -51,8 +48,7 @@
     "statusLabel": "Status",
     "subtitle": "View and manage impediment information",
     "title": "Impediment Details",
-    "titleLabel": "Title",
-    "viewDailyUpdate": "View Daily Update"
+    "titleLabel": "Title"
   },
   "emptyState": {
     "clearFilter": "Clear Filter",

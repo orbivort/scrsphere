@@ -52,7 +52,7 @@ describe('E2E: Increment Management', () => {
 
   const setupTeamWithUser = async (
     email: string,
-    role: (typeof ROLES)[keyof typeof ROLES] = ROLES.DEVELOPER
+    role: (typeof ROLES)[keyof typeof ROLES] = ROLES.DEVELOPERS
   ) => {
     const user = await createTestUser(email);
     const teamName = `Increment Team ${uniqueTestId()}`;
@@ -189,7 +189,7 @@ describe('E2E: Increment Management', () => {
       const email = `get-increment-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
       const sprint = await createTestSprintInDb(
         team.id,
         `Sprint ${uniqueTestId()}`,
@@ -1050,7 +1050,7 @@ describe('E2E: Increment Management', () => {
       const email = `dev-view-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
       const sprint = await createTestSprintInDb(
         team.id,
         `Sprint ${uniqueTestId()}`,

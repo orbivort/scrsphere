@@ -27,7 +27,13 @@ export const createSprintReview = asyncHandler(async (req: Request, res: Respons
   if (!userId) {
     throw new Error('User not authenticated');
   }
-  const review = await sprintReviewService.createSprintReview(userId, req.body);
+  // Use the validated body so the Zod `reviewDate` transform (string → Date) is
+  // applied. Reading the raw `req.body` would pass a date-only string straight to
+  // Prisma, which rejects it with a PrismaClientValidationError (HTTP 400).
+  const review = await sprintReviewService.createSprintReview(
+    userId,
+    req.validatedBody as Parameters<typeof sprintReviewService.createSprintReview>[1]
+  );
   res.status(201).json(createSuccessResponse(review));
 });
 
@@ -42,7 +48,13 @@ export const updateSprintReview = asyncHandler(async (req: Request, res: Respons
     userId,
     body: req.body,
   });
-  const review = await sprintReviewService.updateSprintReview(id, userId, req.body);
+  // Use the validated body so the Zod `reviewDate` transform (string → Date) is
+  // applied; the raw body could otherwise carry a date-only string that Prisma rejects.
+  const review = await sprintReviewService.updateSprintReview(
+    id,
+    userId,
+    req.validatedBody as Parameters<typeof sprintReviewService.updateSprintReview>[2]
+  );
   logger.debug('updateSprintReview success', { reviewId: review.id });
   res.json(createSuccessResponse(review));
 });

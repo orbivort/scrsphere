@@ -79,7 +79,7 @@ describe('Impediments Integration Tests', () => {
   const addTeamMember = async (
     teamId: string,
     userId: string,
-    role: 'PRODUCT_OWNER' | 'SCRUM_MASTER' | 'DEVELOPER'
+    role: 'PRODUCT_OWNER' | 'SCRUM_MASTER' | 'DEVELOPERS'
   ) => {
     const membershipId = generateUUIDv7();
     await prisma.teamMember.create({
@@ -168,9 +168,6 @@ describe('Impediments Integration Tests', () => {
 
         if (team) {
           await prisma.impediment.deleteMany({ where: { teamId: team.id } });
-          await prisma.dailyUpdate.deleteMany({
-            where: { sprint: { teamId: team.id } },
-          });
           await prisma.sprint.deleteMany({ where: { teamId: team.id } });
           await prisma.productBacklogItem.deleteMany({ where: { teamId: team.id } });
           await prisma.teamMember.deleteMany({ where: { teamId: team.id } });
@@ -202,7 +199,7 @@ describe('Impediments Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       await createTestImpediment(team.id, user.id, 'Impediment 1');
       await createTestImpediment(team.id, user.id, 'Impediment 2');
 
@@ -313,7 +310,7 @@ describe('Impediments Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const impediment = await createTestImpediment(team.id, user.id, 'Specific Impediment');
 
       const cookies = await loginAndGetCookies(email);
@@ -338,7 +335,7 @@ describe('Impediments Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
 
       const cookies = await loginAndGetCookies(email);
 
@@ -381,7 +378,7 @@ describe('Impediments Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
 
       const cookies = await loginAndGetCookies(email);
@@ -465,7 +462,7 @@ describe('Impediments Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const impediment = await createTestImpediment(team.id, user.id, 'To Update');
 
       const cookies = await loginAndGetCookies(email);
@@ -495,7 +492,7 @@ describe('Impediments Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const impediment = await createTestImpediment(team.id, user.id, 'To Resolve');
 
       const cookies = await loginAndGetCookies(email);
@@ -527,7 +524,7 @@ describe('Impediments Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const impediment = await createTestImpediment(team.id, user.id);
 
       const cookies = await loginAndGetCookies(email);
@@ -567,7 +564,7 @@ describe('Impediments Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const impediment = await createTestImpediment(team.id, user.id, 'To Delete');
 
       const cookies = await loginAndGetCookies(email);
@@ -598,7 +595,7 @@ describe('Impediments Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const impediment = await createTestImpediment(team.id, user.id);
 
       const cookies = await loginAndGetCookies(email);
@@ -649,7 +646,7 @@ describe('Impediments Integration Tests', () => {
         testTeams.push(teamName);
 
         const team = await createTestTeam(teamName);
-        await addTeamMember(team.id, user.id, 'DEVELOPER');
+        await addTeamMember(team.id, user.id, 'DEVELOPERS');
 
         const cookies = await loginAndGetCookies(email);
 
@@ -676,7 +673,7 @@ describe('Impediments Integration Tests', () => {
           testTeams.push(teamName);
 
           const team = await createTestTeam(teamName);
-          await addTeamMember(team.id, user.id, 'DEVELOPER');
+          await addTeamMember(team.id, user.id, 'DEVELOPERS');
 
           const cookies = await loginAndGetCookies(email);
 
@@ -736,7 +733,7 @@ describe('Impediments Integration Tests', () => {
         testTeams.push(teamName);
 
         const team = await createTestTeam(teamName);
-        await addTeamMember(team.id, user.id, 'DEVELOPER');
+        await addTeamMember(team.id, user.id, 'DEVELOPERS');
         const sprint = await createTestSprint(team.id, 'Sprint');
 
         const cookies = await loginAndGetCookies(email);

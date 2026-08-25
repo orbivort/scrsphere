@@ -1197,7 +1197,7 @@ describe('Retrospective Validation', () => {
       it('should validate valid attendee data', () => {
         const data = {
           name: 'John Doe',
-          role: 'developer',
+          role: 'developers',
         };
 
         const result = addAttendeeSchema.safeParse(data);
@@ -1206,7 +1206,7 @@ describe('Retrospective Validation', () => {
       });
 
       it('should validate all valid roles', () => {
-        const validRoles = ['product_owner', 'scrum_master', 'developer', 'stakeholder'];
+        const validRoles = ['product_owner', 'scrum_master', 'developers', 'stakeholder'];
 
         validRoles.forEach((role) => {
           const result = addAttendeeSchema.safeParse({ name: 'John Doe', role });
@@ -1217,7 +1217,7 @@ describe('Retrospective Validation', () => {
       it('should accept optional email', () => {
         const data = {
           name: 'John Doe',
-          role: 'developer',
+          role: 'developers',
           email: 'john@example.com',
         };
 
@@ -1229,7 +1229,7 @@ describe('Retrospective Validation', () => {
       it('should default attended to true', () => {
         const data = {
           name: 'John Doe',
-          role: 'developer',
+          role: 'developers',
         };
 
         const result = addAttendeeSchema.safeParse(data);
@@ -1243,7 +1243,7 @@ describe('Retrospective Validation', () => {
       it('should accept attended as false', () => {
         const data = {
           name: 'John Doe',
-          role: 'developer',
+          role: 'developers',
           attended: false,
         };
 
@@ -1258,7 +1258,7 @@ describe('Retrospective Validation', () => {
       it('should accept name at maximum length (100 characters)', () => {
         const data = {
           name: 'a'.repeat(100),
-          role: 'developer',
+          role: 'developers',
         };
 
         const result = addAttendeeSchema.safeParse(data);
@@ -1270,7 +1270,7 @@ describe('Retrospective Validation', () => {
     describe('name validation', () => {
       it('should fail when name is missing', () => {
         const data = {
-          role: 'developer',
+          role: 'developers',
         };
 
         const result = addAttendeeSchema.safeParse(data);
@@ -1281,7 +1281,7 @@ describe('Retrospective Validation', () => {
       it('should fail when name is empty', () => {
         const data = {
           name: '',
-          role: 'developer',
+          role: 'developers',
         };
 
         const result = addAttendeeSchema.safeParse(data);
@@ -1292,7 +1292,7 @@ describe('Retrospective Validation', () => {
       it('should fail when name is too long (more than 100 characters)', () => {
         const data = {
           name: 'a'.repeat(101),
-          role: 'developer',
+          role: 'developers',
         };
 
         const result = addAttendeeSchema.safeParse(data);
@@ -1316,7 +1316,7 @@ describe('Retrospective Validation', () => {
         expect(result.success).toBe(false);
         if (!result.success) {
           expect(result.error.issues[0]?.message).toContain(
-            'product_owner, scrum_master, developer, stakeholder'
+            'product_owner, scrum_master, developers, stakeholder'
           );
         }
       });
@@ -1347,7 +1347,7 @@ describe('Retrospective Validation', () => {
       it('should fail with invalid email format', () => {
         const data = {
           name: 'John Doe',
-          role: 'developer',
+          role: 'developers',
           email: 'invalid-email',
         };
 
@@ -1370,7 +1370,7 @@ describe('Retrospective Validation', () => {
         validEmails.forEach((email) => {
           const result = addAttendeeSchema.safeParse({
             name: 'John Doe',
-            role: 'developer',
+            role: 'developers',
             email,
           });
           expect(result.success).toBe(true);
@@ -1518,7 +1518,7 @@ describe('Retrospective Validation', () => {
       });
 
       it('should accept all valid roles', () => {
-        const validRoles = ['product_owner', 'scrum_master', 'developer', 'stakeholder'];
+        const validRoles = ['product_owner', 'scrum_master', 'developers', 'stakeholder'];
 
         validRoles.forEach((role) => {
           const result = updateAttendeeSchema.safeParse({ role });

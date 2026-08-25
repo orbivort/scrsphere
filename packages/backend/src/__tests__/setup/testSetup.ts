@@ -85,7 +85,6 @@ export function createMockPrismaClient(): {
   productBacklogItem: ReturnType<typeof createMockProductBacklogItemModel>;
   refreshToken: ReturnType<typeof createMockRefreshTokenModel>;
   notification: ReturnType<typeof createMockNotificationModel>;
-  dailyUpdate: ReturnType<typeof createMockDailyUpdateModel>;
   impediment: ReturnType<typeof createMockImpedimentModel>;
   retrospectiveItem: ReturnType<typeof createMockRetrospectiveItemModel>;
   retroActionItem: ReturnType<typeof createMockRetroActionItemModel>;
@@ -107,7 +106,6 @@ export function createMockPrismaClient(): {
     productBacklogItem: createMockProductBacklogItemModel(),
     refreshToken: createMockRefreshTokenModel(),
     notification: createMockNotificationModel(),
-    dailyUpdate: createMockDailyUpdateModel(),
     impediment: createMockImpedimentModel(),
     retrospectiveItem: createMockRetrospectiveItemModel(),
     retroActionItem: createMockRetroActionItemModel(),
@@ -225,21 +223,6 @@ function createMockRefreshTokenModel(): MockModel {
 }
 
 function createMockNotificationModel(): MockModel {
-  return {
-    findUnique: vi.fn(),
-    findMany: vi.fn(),
-    findFirst: vi.fn(),
-    create: vi.fn(),
-    createMany: vi.fn(),
-    update: vi.fn(),
-    updateMany: vi.fn(),
-    delete: vi.fn(),
-    deleteMany: vi.fn(),
-    count: vi.fn(),
-  };
-}
-
-function createMockDailyUpdateModel(): MockModel {
   return {
     findUnique: vi.fn(),
     findMany: vi.fn(),

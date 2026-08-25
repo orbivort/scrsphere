@@ -127,7 +127,7 @@ const mockTasks = [
 ];
 
 const mockTeamMembers = [
-  { id: 'user-1', name: 'John Developer', email: 'john@example.com', role: 'developer' },
+  { id: 'user-1', name: 'John Developer', email: 'john@example.com', role: 'developers' },
   { id: 'user-2', name: 'Jane Tester', email: 'jane@example.com', role: 'tester' },
 ];
 
@@ -137,6 +137,32 @@ const mockActiveGoal = {
   description: 'First release with core features',
   status: 'active',
 };
+
+// Team-level Daily Scrum used to exercise the "Create impediment" flow on the
+// Daily Scrum page. An existing record is required for the promote button to
+// render in the Inspect & Adapt record view.
+const mockDailyScrum = {
+  id: 'scrum-1',
+  sprintId: 'sprint-1',
+  scrumDate: new Date().toISOString().split('T')[0] ?? '',
+  progressNotes: 'E2E progress toward the Sprint Goal',
+  adaptationsNotes: 'E2E adaptation notes',
+  planForNextDay: 'E2E plan for the next day',
+  participants: [
+    {
+      id: 'p-1',
+      userId: 'test-user-id',
+      user: { id: 'test-user-id', firstName: 'Test', lastName: 'User', email: 'test@example.com' },
+    },
+  ],
+  backlogAdjustments: [],
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+};
+
+// In-memory store of impediments created during a test run so the Daily Scrum
+// page reflects the promoted impediment after its query is invalidated.
+const e2eImpediments: Array<Record<string, unknown>> = [];
 
 type MockUser = {
   id: string;
@@ -350,7 +376,8 @@ async function mockAuthApi(page: Page) {
             createdBy: 'test-user-id',
             createdAt: now,
             updatedAt: now,
-            userRole: 'ADMIN',
+            // The Daily Scrum is a Developers-only event; the E2E actor is a Developer.
+            userRole: 'developers',
           },
         ],
       }),
@@ -420,11 +447,66 @@ async function mockAuthApi(page: Page) {
     });
   });
 
-  await page.route('**/api/v1/daily-updates/**', async (route: Route) => {
+  // Sprint backlog catch-all (Daily Scrum reads the sprint's tasks)
+  await page.route('**/api/v1/sprint-backlog/**', async (route: Route) => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify({ success: true, data: [] }),
+      body: JSON.stringify({ success: true, data: mockTasks }),
+    });
+  });
+
+  // Daily Scrum team-level catch-all (GET/POST)
+  await page.route('**/api/v1/daily-scrums/**', async (route: Route) => {
+    const url = new URL(route.request().url());
+    const method = route.request().method();
+
+    if (method === 'POST' && url.pathname.includes('/promote-impediment')) {
+      const body = route.request().postDataJSON() || {};
+      const impediment = {
+        id: 'imp-e2e-1',
+        teamId: 'team-1',
+        sprintId: body.sprintId || 'sprint-1',
+        title: body.title || 'E2E blocked API',
+        description: body.description || 'E2E team blocked by external API access',
+        reportedById: 'test-user-id',
+        status: 'OPEN',
+        reportedBy: {
+          id: 'test-user-id',
+          firstName: 'Test',
+          lastName: 'User',
+          email: 'test@example.com',
+        },
+        owner: null,
+        sprint: { id: 'sprint-1', name: 'Sprint 1' },
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      e2eImpediments.push(impediment);
+      await route.fulfill({
+        status: 201,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          success: true,
+          data: { dailyScrum: mockDailyScrum, impediment },
+        }),
+      });
+      return;
+    }
+
+    if (method === 'POST') {
+      await route.fulfill({
+        status: 201,
+        contentType: 'application/json',
+        body: JSON.stringify({ success: true, data: mockDailyScrum }),
+      });
+      return;
+    }
+
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ success: true, data: mockDailyScrum }),
     });
   });
 
@@ -456,10 +538,40 @@ async function mockAuthApi(page: Page) {
   });
 
   await page.route('**/api/v1/impediments**', async (route: Route) => {
+    const method = route.request().method();
+    if (method === 'POST') {
+      const body = route.request().postDataJSON() || {};
+      const created = {
+        id: `imp-${Date.now()}`,
+        teamId: body.teamId || 'team-1',
+        sprintId: body.sprintId || 'sprint-1',
+        title: body.title || 'E2E impediment',
+        description: body.description || 'E2E impediment description',
+        reportedById: 'test-user-id',
+        status: 'OPEN',
+        reportedBy: {
+          id: 'test-user-id',
+          firstName: 'Test',
+          lastName: 'User',
+          email: 'test@example.com',
+        },
+        owner: null,
+        sprint: { id: 'sprint-1', name: 'Sprint 1' },
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      e2eImpediments.push(created);
+      await route.fulfill({
+        status: 201,
+        contentType: 'application/json',
+        body: JSON.stringify({ success: true, data: created }),
+      });
+      return;
+    }
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify({ success: true, data: [] }),
+      body: JSON.stringify({ success: true, data: e2eImpediments }),
     });
   });
 
@@ -495,7 +607,8 @@ async function mockAuthApi(page: Page) {
           createdBy: 'test-user-id',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
-          userRole: 'ADMIN',
+          // The Daily Scrum is a Developers-only event; the E2E actor is a Developer.
+          userRole: 'developers',
         },
       }),
     });
@@ -587,6 +700,23 @@ async function mockAuthApi(page: Page) {
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify({ success: true, data: mockSprint }),
+    });
+  });
+
+  // Daily Scrum participation - registered AFTER the daily-scrums catch-all so
+  // it takes priority. Returns the DailyScrumParticipation shape the page needs.
+  await page.route('**/api/v1/daily-scrums/*/participation**', async (route: Route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        success: true,
+        data: {
+          dailyScrum: mockDailyScrum,
+          participants: mockDailyScrum.participants,
+          nonParticipants: [],
+        },
+      }),
     });
   });
 

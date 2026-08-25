@@ -1,0 +1,24 @@
+{
+  "actions": {
+    "pause": "[Pàúsééé]",
+    "reset": "[Réséttt]",
+    "start": "[Stàrttt]"
+  },
+  "aria": {
+    "idle": "[Tímébóx nót stàrtéddddddd]",
+    "noTeam": "[Tímér únàvàílàblé úntíl à téàm ís séléctédddddddddddddd]",
+    "overtime": "[Tímébóx éxcéédédddddd]",
+    "paused": "[Tímébóx pàúsédddddd]",
+    "running": "[Tímébóx rúnníngggggg]",
+    "smOnly": "[Ónly thé Scrúm Màstér càn cóntról thé tímébóxxxxxxxxxxxxxxx]",
+    "timer": "[Tímé rémàíníngggggg: {{remaining}}]",
+    "warning": "[Tímébóx àlmóst óvérrrrrrr]"
+  },
+  "status": {
+    "idle": "[ÍÍddllé]",
+    "noTeam": "[Séléct à téàm tó stàrt thé tímérrrrrrrrrrr]",
+    "overtime": "[Óvér tíméééé]",
+    "paused": "[Pàúséddd]",
+    "running": "[Rúnníngggg]"
+  }
+}

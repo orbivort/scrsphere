@@ -36,7 +36,7 @@ vi.mock('./AddTaskModal.module.css', () => ({
     'form-input': 'form-input',
     'input-error': 'input-error',
     'input-icon': 'input-icon',
-    'input-icon-left': 'input-icon-left',
+    'estimate-input': 'estimate-input',
     'error-message': 'error-message',
     'input-hint': 'input-hint',
     'form-row': 'form-row',

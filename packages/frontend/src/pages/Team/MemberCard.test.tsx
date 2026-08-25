@@ -18,7 +18,7 @@ const mockMember = {
   id: 'member-1',
   teamId: 'team-1',
   userId: 'user-1',
-  role: 'developer',
+  role: 'developers',
   joinedAt: '2024-01-01T00:00:00Z',
   user: {
     id: 'user-1',
@@ -62,7 +62,7 @@ describe('MemberCard', () => {
 
       expect(screen.getByText('John Doe')).toBeInTheDocument();
       expect(screen.getByText('john@example.com')).toBeInTheDocument();
-      expect(screen.getByText('Developer')).toBeInTheDocument();
+      expect(screen.getByText('Developers')).toBeInTheDocument();
     });
 
     test('should render member information in list view', () => {

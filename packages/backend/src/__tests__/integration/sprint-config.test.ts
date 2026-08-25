@@ -73,7 +73,7 @@ describe('Sprint Configuration Integration Tests', () => {
   const addTeamMember = async (
     teamId: string,
     userId: string,
-    role: 'PRODUCT_OWNER' | 'SCRUM_MASTER' | 'DEVELOPER'
+    role: 'PRODUCT_OWNER' | 'SCRUM_MASTER' | 'DEVELOPERS'
   ) => {
     const membershipId = generateUUIDv7();
     await prisma.teamMember.create({
@@ -175,6 +175,53 @@ describe('Sprint Configuration Integration Tests', () => {
     }
   };
 
+  // Per the Scrum Guide (2020), a Sprint can only be completed once the Sprint Review and
+  // Sprint Retrospective have both concluded. This helper creates a completed Sprint Review
+  // and a COMPLETED Sprint Retrospective (with their linked Increment) for the sprint so the
+  // complete endpoint's prerequisite-event gate is satisfied.
+  const completePrerequisiteEvents = async (
+    sprintId: string,
+    teamId: string,
+    userId: string
+  ): Promise<void> => {
+    const increment = await prisma.increment.create({
+      data: {
+        id: generateUUIDv7(),
+        sprintId,
+        teamId,
+        name: 'Completion Increment',
+        status: 'DELIVERED',
+        integrationVerified: true,
+        totalStoryPoints: 0,
+      },
+    });
+
+    await prisma.sprintReview.create({
+      data: {
+        id: generateUUIDv7(),
+        sprintId,
+        teamId,
+        incrementId: increment.id,
+        reviewDate: new Date(),
+        status: 'completed',
+        createdBy: userId,
+        updatedBy: userId,
+      },
+    });
+
+    await prisma.sprintRetrospective.create({
+      data: {
+        id: generateUUIDv7(),
+        sprintId,
+        teamId,
+        retroDate: new Date(),
+        facilitatorId: userId,
+        status: 'COMPLETED',
+        createdBy: userId,
+      },
+    });
+  };
+
   describe('GET /api/v1/sprints', () => {
     const testEmails: string[] = [];
     const testTeams: string[] = [];
@@ -195,7 +242,7 @@ describe('Sprint Configuration Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       await createTestSprint(team.id, 'Sprint 1', 'COMPLETED');
       await createTestSprint(team.id, 'Sprint 2', 'PLANNED');
 
@@ -240,7 +287,7 @@ describe('Sprint Configuration Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       await createTestSprint(team.id, 'Completed Sprint', 'COMPLETED');
       await createTestSprint(team.id, 'Active Sprint', 'ACTIVE');
 
@@ -267,7 +314,7 @@ describe('Sprint Configuration Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       await createTestSprint(team.id, 'Completed Sprint', 'COMPLETED');
 
       const cookies = await loginAndGetCookies(email);
@@ -404,7 +451,7 @@ describe('Sprint Configuration Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Specific Sprint');
 
       const cookies = await loginAndGetCookies(email);
@@ -457,6 +504,17 @@ describe('Sprint Configuration Integration Tests', () => {
       await addTeamMember(team.id, user.id, 'SCRUM_MASTER');
       const sprint = await createTestSprint(team.id, 'Sprint To Start');
 
+      // A Sprint Backlog must be saved before the sprint can start.
+      const pbi = await createTestPBI(team.id, 'Ready PBI', 'READY');
+      await prisma.sprintBacklogItem.create({
+        data: {
+          id: generateUUIDv7(),
+          sprintId: sprint.id,
+          pbiId: pbi.id,
+          createdBy: user.id,
+        },
+      });
+
       const cookies = await loginAndGetCookies(email);
 
       const { csrfToken } = extractCsrfFromCookies(cookies);
@@ -507,6 +565,7 @@ describe('Sprint Configuration Integration Tests', () => {
       const team = await createTestTeam(teamName);
       await addTeamMember(team.id, user.id, 'SCRUM_MASTER');
       const sprint = await createTestSprint(team.id, 'Sprint To Complete', 'ACTIVE');
+      await completePrerequisiteEvents(sprint.id, team.id, user.id);
 
       const cookies = await loginAndGetCookies(email);
 
@@ -542,7 +601,7 @@ describe('Sprint Configuration Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'SCRUM_MASTER');
+      await addTeamMember(team.id, user.id, 'PRODUCT_OWNER');
       const sprint = await createTestSprint(team.id, 'Sprint To Cancel', 'ACTIVE');
 
       const cookies = await loginAndGetCookies(email);
@@ -608,7 +667,7 @@ describe('Sprint Configuration Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
       const pbi = await createTestPBI(team.id, 'Sprint PBI', 'READY');
 
@@ -653,7 +712,7 @@ describe('Sprint Configuration Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
       const pbi = await createTestPBI(team.id);
 
@@ -698,7 +757,7 @@ describe('Sprint Configuration Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'PRODUCT_OWNER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint', 'ACTIVE');
       const pbi = await createTestPBI(team.id, 'PBI To Add');
 
@@ -740,7 +799,7 @@ describe('Sprint Configuration Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
       const pbi = await createTestPBI(team.id);
 
@@ -795,7 +854,7 @@ describe('Sprint Configuration Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
       const pbi = await createTestPBI(team.id);
 
@@ -851,7 +910,7 @@ describe('Sprint Configuration Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
       const pbi = await createTestPBI(team.id);
 

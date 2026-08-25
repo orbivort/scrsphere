@@ -25,7 +25,7 @@ const createMockTeamMember = (overrides: Partial<TeamMember> = {}): TeamMember =
   id: 'member-1',
   teamId: 'team-1',
   userId: 'user-1',
-  role: 'developer',
+  role: 'developers',
   joinedAt: '2024-01-01T00:00:00Z',
   user: createMockUser(),
   ...overrides,
@@ -101,8 +101,8 @@ describe('TeamMemberSelect Component', () => {
         <TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />
       );
 
-      expect(screen.getByText('John Doe (Developer)')).toBeInTheDocument();
-      expect(screen.getByText('Jane Smith (Developer)')).toBeInTheDocument();
+      expect(screen.getByText('John Doe (Developers)')).toBeInTheDocument();
+      expect(screen.getByText('Jane Smith (Developers)')).toBeInTheDocument();
     });
   });
 
@@ -126,12 +126,12 @@ describe('TeamMemberSelect Component', () => {
     });
 
     it('should display Developer role correctly', () => {
-      const teamMembers = [createMockTeamMember({ role: 'developer' })];
+      const teamMembers = [createMockTeamMember({ role: 'developers' })];
       renderWithProviders(
         <TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />
       );
 
-      expect(screen.getByText('John Doe (Developer)')).toBeInTheDocument();
+      expect(screen.getByText('John Doe (Developers)')).toBeInTheDocument();
     });
 
     it('should display unknown role as-is', () => {
@@ -155,7 +155,7 @@ describe('TeamMemberSelect Component', () => {
         <TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />
       );
 
-      expect(screen.getByText('John Doe (Developer)')).toBeInTheDocument();
+      expect(screen.getByText('John Doe (Developers)')).toBeInTheDocument();
     });
 
     it('should display email when name is not available', () => {
@@ -168,7 +168,7 @@ describe('TeamMemberSelect Component', () => {
         <TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />
       );
 
-      expect(screen.getByText('test@example.com (Developer)')).toBeInTheDocument();
+      expect(screen.getByText('test@example.com (Developers)')).toBeInTheDocument();
     });
 
     it('should display Unknown User when no user data', () => {
@@ -181,7 +181,7 @@ describe('TeamMemberSelect Component', () => {
         <TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />
       );
 
-      expect(screen.getByText('Unknown User (Developer)')).toBeInTheDocument();
+      expect(screen.getByText('Unknown User (Developers)')).toBeInTheDocument();
     });
 
     it('should display email when only first name is available', () => {
@@ -194,7 +194,7 @@ describe('TeamMemberSelect Component', () => {
         <TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />
       );
 
-      expect(screen.getByText('john@example.com (Developer)')).toBeInTheDocument();
+      expect(screen.getByText('john@example.com (Developers)')).toBeInTheDocument();
     });
   });
 
@@ -338,7 +338,7 @@ describe('TeamMemberSelect Component', () => {
         <TeamMemberSelect value="" onChange={mockOnChange} teamMembers={teamMembers} />
       );
 
-      expect(screen.getByText('partial@example.com (Developer)')).toBeInTheDocument();
+      expect(screen.getByText('partial@example.com (Developers)')).toBeInTheDocument();
     });
 
     it('should handle large number of team members', () => {
@@ -355,7 +355,7 @@ describe('TeamMemberSelect Component', () => {
 
       teamMembers.forEach((member) => {
         expect(
-          screen.getByText(`User${member.userId.split('-')[1]} Test (Developer)`)
+          screen.getByText(`User${member.userId.split('-')[1]} Test (Developers)`)
         ).toBeInTheDocument();
       });
     });

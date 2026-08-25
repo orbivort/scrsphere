@@ -437,7 +437,7 @@ describe('Retrospective Controller', () => {
   describe('addRetroAttendee', () => {
     it('should add attendee', async () => {
       mockReq.params = { retroId: 'retro-123' };
-      mockReq.body = { name: 'John Doe', email: 'john@example.com', role: 'DEVELOPER' };
+      mockReq.body = { name: 'John Doe', email: 'john@example.com', role: 'DEVELOPERS' };
       const mockAttendee = { id: 'attendee-123', name: 'John Doe' };
 
       (retrospectiveService.addAttendee as any).mockResolvedValue(mockAttendee);
@@ -453,7 +453,7 @@ describe('Retrospective Controller', () => {
 
     it('should trim name and email', async () => {
       mockReq.params = { retroId: 'retro-123' };
-      mockReq.body = { name: '  John Doe  ', email: '  john@example.com  ', role: 'DEVELOPER' };
+      mockReq.body = { name: '  John Doe  ', email: '  john@example.com  ', role: 'DEVELOPERS' };
       const mockAttendee = { id: 'attendee-123', name: 'John Doe' };
 
       (retrospectiveService.addAttendee as any).mockResolvedValue(mockAttendee);
@@ -463,7 +463,7 @@ describe('Retrospective Controller', () => {
       expect(retrospectiveService.addAttendee).toHaveBeenCalledWith('retro-123', {
         name: 'John Doe',
         email: 'john@example.com',
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
         attended: true,
       });
     });
@@ -701,7 +701,7 @@ describe('Retrospective Controller', () => {
 
     it('should handle addRetroAttendee with 500 error', async () => {
       mockReq.params = { retroId: 'retro-123' };
-      mockReq.body = { name: 'John Doe', role: 'DEVELOPER' };
+      mockReq.body = { name: 'John Doe', role: 'DEVELOPERS' };
 
       (retrospectiveService.addAttendee as any).mockRejectedValue(new Error('Database error'));
 
@@ -774,7 +774,7 @@ describe('Retrospective Controller', () => {
       mockReq.body = {
         name: 'John Doe',
         email: 'john@example.com',
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
         attended: false,
       };
       const mockAttendee = { id: 'attendee-123', name: 'John Doe', attended: false };
@@ -786,7 +786,7 @@ describe('Retrospective Controller', () => {
       expect(retrospectiveService.addAttendee).toHaveBeenCalledWith('retro-123', {
         name: 'John Doe',
         email: 'john@example.com',
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
         attended: false,
       });
       expect(mockRes._status).toBe(201);

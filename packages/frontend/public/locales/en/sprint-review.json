@@ -149,6 +149,7 @@
   },
   "findingActiveSprint": "Finding active sprint...",
   "increment": {
+    "allSprintItems": "All Items for the Sprint",
     "completedItems": "Completed Items",
     "completedStoryPoints": "Completed Story Points",
     "deliveredAt": "Delivered At",
@@ -158,7 +159,10 @@
     "done": "Done",
     "earlyReleaseDelivery": "Early Release",
     "inIncrement": "In increment",
+    "inIncrementCount": "In {{count}} increment",
+    "inIncrementCount_plural": "In {{count}} increments",
     "includedPbis": "Included Product Backlog Items",
+    "incrementNumber": "Increment {{number}}",
     "noCompletedItems": "No completed items for this sprint.",
     "noDescription": "No description",
     "noIncrement": "No Increment Available",
@@ -167,15 +171,19 @@
     "noPbis": "No PBIs included in this increment.",
     "notCompletedItems": "Not Completed Items",
     "notDelivered": "Not delivered",
+    "selectorLabel": "Sprint Review Increments",
     "sprintReviewDelivery": "Sprint Review",
     "title": "Increment Presented",
     "totalStoryPoints": "Total Story Points"
   },
   "list": {
+    "activeSprint": "Active Sprint",
+    "activeSprints": "Active Sprints",
     "completedSprint": "Completed Sprint",
     "completedSprints": "Completed Sprints",
     "completedSprints_plural": "Completed Sprints",
     "createIncrement": "Create Increment",
+    "createReview": "Create Sprint Review",
     "goal": "Goal:",
     "loading": "Loading sprint reviews...",
     "reviewStatus": {
@@ -184,6 +192,8 @@
       "incrementRequired": "Increment Required",
       "readyForReview": "Ready for Review"
     },
+    "reviewableSprint": "Reviewable Sprint",
+    "reviewableSprints": "Reviewable Sprints",
     "reviewed": "Reviewed",
     "statusLabels": {
       "active": "Active",
@@ -191,7 +201,7 @@
       "completed": "Completed",
       "planned": "Planned"
     },
-    "subtitle": "Review completed sprints, inspect increments, and gather stakeholder feedback",
+    "subtitle": "Review sprints, inspect increments, and gather stakeholder feedback",
     "title": "Sprint Reviews",
     "viewDetails": "View Details",
     "viewReview": "View Review"

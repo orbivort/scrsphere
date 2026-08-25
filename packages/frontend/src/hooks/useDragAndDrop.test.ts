@@ -47,7 +47,7 @@ describe('useDragAndDrop', () => {
 
   const defaultProps = {
     tasks: mockTasks,
-    wipLimits: { todo: 10, in_progress: 3, done: 100 },
+    wipLimits: { todo: 10, in_progress: 3, review: 3, done: 100 },
     sprintItems: mockSprintItems,
     onStatusChange: mockOnStatusChange,
     onValidationError: mockOnValidationError,
@@ -71,7 +71,13 @@ describe('useDragAndDrop', () => {
     it('should return correct transitions from IN_PROGRESS', () => {
       const { result } = renderHook(() => useDragAndDrop(defaultProps));
       const transitions = result.current.getAvailableTransitions(TaskStatus.IN_PROGRESS);
-      expect(transitions).toEqual([TaskStatus.TODO, TaskStatus.DONE]);
+      expect(transitions).toEqual([TaskStatus.REVIEW, TaskStatus.TODO]);
+    });
+
+    it('should return correct transitions from REVIEW', () => {
+      const { result } = renderHook(() => useDragAndDrop(defaultProps));
+      const transitions = result.current.getAvailableTransitions(TaskStatus.REVIEW);
+      expect(transitions).toEqual([TaskStatus.DONE, TaskStatus.IN_PROGRESS]);
     });
 
     it('should return correct transitions from DONE', () => {
@@ -112,7 +118,7 @@ describe('useDragAndDrop', () => {
       const { result } = renderHook(() =>
         useDragAndDrop({
           ...defaultProps,
-          wipLimits: { todo: 10, in_progress: 1, done: 100 },
+          wipLimits: { todo: 10, in_progress: 1, review: 3, done: 100 },
         })
       );
       const task = mockTasks[0]; // TODO task
@@ -123,6 +129,25 @@ describe('useDragAndDrop', () => {
       expect(validation.error).toContain('WIP limit reached');
     });
 
+    it('should enforce WIP limits for REVIEW', () => {
+      const { result } = renderHook(() =>
+        useDragAndDrop({
+          ...defaultProps,
+          wipLimits: { todo: 10, in_progress: 3, review: 1, done: 100 },
+          tasks: [
+            ...mockTasks,
+            { id: 'task-review', title: 'Review Task', status: TaskStatus.REVIEW },
+          ],
+        })
+      );
+      const task = mockTasks[1]; // IN_PROGRESS task
+
+      const validation = result.current.validateTransition(task, TaskStatus.REVIEW);
+
+      expect(validation.valid).toBe(false);
+      expect(validation.error).toContain('WIP limit reached for Review');
+    });
+
     it('should require parent PBI to be done for task completion', () => {
       const { result } = renderHook(() =>
         useDragAndDrop({
@@ -130,13 +155,14 @@ describe('useDragAndDrop', () => {
           sprintItems: [{ id: 'pbi-1', status: 'IN_PROGRESS', storyPoints: 5 }],
           tasks: [
             {
-              ...mockTasks[1],
-              pbiId: 'pbi-1', // IN_PROGRESS task with pbiId
+              ...mockTasks[2],
+              status: TaskStatus.REVIEW,
+              pbiId: 'pbi-1', // REVIEW task with pbiId
             },
           ],
         })
       );
-      const task = { ...mockTasks[1], pbiId: 'pbi-1' };
+      const task = { ...mockTasks[2], status: TaskStatus.REVIEW, pbiId: 'pbi-1' };
 
       const validation = result.current.validateTransition(task, TaskStatus.DONE);
 
@@ -146,7 +172,7 @@ describe('useDragAndDrop', () => {
 
     it('should provide updates when completing a task', () => {
       const { result } = renderHook(() => useDragAndDrop(defaultProps));
-      const task = mockTasks[1]; // IN_PROGRESS task
+      const task = { ...mockTasks[2], status: TaskStatus.REVIEW };
 
       const validation = result.current.validateTransition(task, TaskStatus.DONE);
 
@@ -239,6 +265,37 @@ describe('useDragAndDrop', () => {
       });
 
       expect(mockOnStatusChange).toHaveBeenCalledWith('task-1', TaskStatus.IN_PROGRESS, undefined);
+      expect(result.current.draggedTaskId).toBeNull();
+    });
+
+    it('should handle drop into the REVIEW column', () => {
+      const { result } = renderHook(() => useDragAndDrop(defaultProps));
+
+      const mockEvent = {
+        preventDefault: vi.fn(),
+        dataTransfer: {
+          getData: () => 'task-1', // TODO task
+        },
+      } as unknown as React.DragEvent;
+
+      act(() => {
+        result.current.handleDrop(mockEvent, TaskStatus.IN_PROGRESS);
+      });
+
+      // TODO → IN_PROGRESS, then IN_PROGRESS → REVIEW requires two drops; here we verify
+      // a REVIEW drop from an IN_PROGRESS task is accepted.
+      const reviewEvent = {
+        preventDefault: vi.fn(),
+        dataTransfer: {
+          getData: () => 'task-2', // IN_PROGRESS task
+        },
+      } as unknown as React.DragEvent;
+
+      act(() => {
+        result.current.handleDrop(reviewEvent, TaskStatus.REVIEW);
+      });
+
+      expect(mockOnStatusChange).toHaveBeenCalledWith('task-2', TaskStatus.REVIEW, undefined);
       expect(result.current.draggedTaskId).toBeNull();
     });
 
@@ -373,7 +430,7 @@ describe('useDragAndDrop', () => {
       const { result } = renderHook(() =>
         useDragAndDrop({
           ...defaultProps,
-          wipLimits: { todo: 10, in_progress: 0, done: 100 },
+          wipLimits: { todo: 10, in_progress: 0, review: 3, done: 100 },
         })
       );
 

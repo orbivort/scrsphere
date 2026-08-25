@@ -17,6 +17,7 @@ vi.mock('../../../utils/prisma', () => ({
       create: vi.fn(),
       update: vi.fn(),
       delete: vi.fn(),
+      count: vi.fn(),
     },
     user: {
       findUnique: vi.fn(),
@@ -113,7 +114,7 @@ describe('TeamService', () => {
         id: 'member-id',
         teamId: mockTeam.id,
         userId,
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
         joinedAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -161,7 +162,7 @@ describe('TeamService', () => {
         id: 'member-id',
         teamId: mockTeam.id,
         userId,
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
         joinedAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -229,7 +230,7 @@ describe('TeamService', () => {
         id: 'member-id',
         teamId: mockTeam.id,
         userId: otherUserId,
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
         joinedAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -435,7 +436,7 @@ describe('TeamService', () => {
             id: 'other-member-id',
             teamId: mockTeam.id,
             userId: otherUserId,
-            role: 'DEVELOPER',
+            role: 'DEVELOPERS',
             joinedAt: new Date(),
             createdAt: new Date(),
             updatedAt: new Date(),
@@ -485,7 +486,7 @@ describe('TeamService', () => {
         id: memberId,
         teamId: mockTeam.id,
         userId: memberUserId,
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
         joinedAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -546,12 +547,12 @@ describe('TeamService', () => {
       const memberId = 'member-to-remove';
       const mockTeam = fixtures.teams.validTeam();
 
-      // Mock checkTeamRole - user is DEVELOPER (not allowed)
+      // Mock checkTeamRole - user is DEVELOPERS (not allowed)
       vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce({
         id: 'requester-member-id',
         teamId: mockTeam.id,
         userId,
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
         joinedAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -610,7 +611,7 @@ describe('TeamService', () => {
         id: memberId,
         teamId: mockTeam.id,
         userId: memberUserId,
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
         joinedAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -647,7 +648,7 @@ describe('TeamService', () => {
         id: memberId,
         teamId: mockTeam.id,
         userId: memberUserId,
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
         joinedAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -684,7 +685,7 @@ describe('TeamService', () => {
         id: memberId,
         teamId: mockTeam.id,
         userId: memberUserId,
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
         joinedAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -737,7 +738,7 @@ describe('TeamService', () => {
         id: 'existing-member-id',
         teamId,
         userId: 'existing-user-id',
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
         joinedAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -746,7 +747,7 @@ describe('TeamService', () => {
       } as any);
 
       await expect(
-        teamService.addMember(teamId, userId, { email: memberEmail, role: 'DEVELOPER' })
+        teamService.addMember(teamId, userId, { email: memberEmail, role: 'DEVELOPERS' })
       ).rejects.toThrow(ConflictError);
     });
 
@@ -779,7 +780,7 @@ describe('TeamService', () => {
         id: 'new-member-id',
         teamId,
         userId: newUserId,
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
         joinedAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -797,7 +798,7 @@ describe('TeamService', () => {
 
       const result = await teamService.addMember(teamId, userId, {
         email: memberEmail,
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
       });
 
       expect(result).toBeDefined();
@@ -808,6 +809,384 @@ describe('TeamService', () => {
           type: 'TEAM_INVITATION',
         })
       );
+    });
+
+    it('should reject adding a second Product Owner', async () => {
+      const userId = 'test-user-id';
+      const teamId = 'team-id';
+      const memberEmail = 'new-po@example.com';
+
+      vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce({
+        id: 'requester-member-id',
+        teamId,
+        userId,
+        role: 'SCRUM_MASTER',
+        joinedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: null,
+        updatedBy: null,
+      } as any);
+
+      vi.mocked(prisma.user.findUnique).mockResolvedValueOnce(
+        fixtures.users.validUser({ id: 'new-po-id', email: memberEmail }) as any
+      );
+
+      vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce(null as any);
+
+      vi.mocked(prisma.teamMember.count).mockResolvedValue(1 as any);
+
+      await expect(
+        teamService.addMember(teamId, userId, { email: memberEmail, role: 'PRODUCT_OWNER' })
+      ).rejects.toMatchObject({
+        statusCode: 409,
+        code: 'ROLE_ALREADY_TAKEN',
+      });
+
+      expect(prisma.teamMember.create).not.toHaveBeenCalled();
+    });
+
+    it('should reject adding a second Scrum Master', async () => {
+      const userId = 'test-user-id';
+      const teamId = 'team-id';
+      const memberEmail = 'new-sm@example.com';
+
+      vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce({
+        id: 'requester-member-id',
+        teamId,
+        userId,
+        role: 'SCRUM_MASTER',
+        joinedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: null,
+        updatedBy: null,
+      } as any);
+
+      vi.mocked(prisma.user.findUnique).mockResolvedValueOnce(
+        fixtures.users.validUser({ id: 'new-sm-id', email: memberEmail }) as any
+      );
+
+      vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce(null as any);
+
+      vi.mocked(prisma.teamMember.count).mockResolvedValue(1 as any);
+
+      await expect(
+        teamService.addMember(teamId, userId, { email: memberEmail, role: 'SCRUM_MASTER' })
+      ).rejects.toMatchObject({
+        statusCode: 409,
+        code: 'ROLE_ALREADY_TAKEN',
+      });
+
+      expect(prisma.teamMember.create).not.toHaveBeenCalled();
+    });
+
+    it('should add a Product Owner when no Product Owner exists yet', async () => {
+      const userId = 'test-user-id';
+      const teamId = 'team-id';
+      const memberEmail = 'new-po@example.com';
+      const newUserId = 'new-po-id';
+      const mockTeam = fixtures.teams.validTeam({ id: teamId });
+
+      vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce({
+        id: 'requester-member-id',
+        teamId,
+        userId,
+        role: 'SCRUM_MASTER',
+        joinedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: null,
+        updatedBy: null,
+      } as any);
+
+      vi.mocked(prisma.user.findUnique).mockResolvedValueOnce(
+        fixtures.users.validUser({ id: newUserId, email: memberEmail }) as any
+      );
+
+      vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce(null as any);
+
+      vi.mocked(prisma.teamMember.count).mockResolvedValue(0 as any);
+
+      vi.mocked(prisma.teamMember.create).mockResolvedValue({
+        id: 'new-member-id',
+        teamId,
+        userId: newUserId,
+        role: 'PRODUCT_OWNER',
+        joinedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: userId,
+        updatedBy: null,
+        user: fixtures.users.validUser({ id: newUserId }),
+        team: mockTeam,
+      } as any);
+
+      vi.mocked(prisma.team.findUnique).mockResolvedValue(mockTeam as any);
+      vi.mocked(prisma.user.findUnique).mockResolvedValue(
+        fixtures.users.validUser({ id: userId }) as any
+      );
+
+      const result = await teamService.addMember(teamId, userId, {
+        email: memberEmail,
+        role: 'PRODUCT_OWNER',
+      });
+
+      expect(result).toBeDefined();
+      expect(result.userId).toBe(newUserId);
+      expect(result.role).toBe('PRODUCT_OWNER');
+      expect(prisma.teamMember.create).toHaveBeenCalled();
+    });
+
+    it('should reject adding a member when the team is at capacity', async () => {
+      const userId = 'test-user-id';
+      const teamId = 'team-id';
+      const memberEmail = 'new-member@example.com';
+
+      vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce({
+        id: 'requester-member-id',
+        teamId,
+        userId,
+        role: 'SCRUM_MASTER',
+        joinedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: null,
+        updatedBy: null,
+      } as any);
+
+      vi.mocked(prisma.user.findUnique).mockResolvedValueOnce(
+        fixtures.users.validUser({ id: 'new-member-id', email: memberEmail }) as any
+      );
+
+      vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce(null as any);
+
+      // Team is at the maximum size (default 10)
+      vi.mocked(prisma.teamMember.count).mockResolvedValue(10 as any);
+
+      await expect(
+        teamService.addMember(teamId, userId, { email: memberEmail, role: 'DEVELOPERS' })
+      ).rejects.toMatchObject({
+        statusCode: 409,
+        code: 'TEAM_SIZE_LIMIT_REACHED',
+      });
+
+      expect(prisma.teamMember.create).not.toHaveBeenCalled();
+    });
+
+    it('should allow adding a member when the team is below capacity', async () => {
+      const userId = 'test-user-id';
+      const teamId = 'team-id';
+      const memberEmail = 'new-member@example.com';
+      const newUserId = 'new-member-id';
+      const mockTeam = fixtures.teams.validTeam({ id: teamId });
+
+      vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce({
+        id: 'requester-member-id',
+        teamId,
+        userId,
+        role: 'SCRUM_MASTER',
+        joinedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: null,
+        updatedBy: null,
+      } as any);
+
+      vi.mocked(prisma.user.findUnique).mockResolvedValueOnce(
+        fixtures.users.validUser({ id: newUserId, email: memberEmail }) as any
+      );
+
+      vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce(null as any);
+
+      // Team is below the maximum size (default 10)
+      vi.mocked(prisma.teamMember.count).mockResolvedValue(9 as any);
+
+      vi.mocked(prisma.teamMember.create).mockResolvedValue({
+        id: 'new-member-id',
+        teamId,
+        userId: newUserId,
+        role: 'DEVELOPERS',
+        joinedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: userId,
+        updatedBy: null,
+        user: fixtures.users.validUser({ id: newUserId }),
+        team: mockTeam,
+      } as any);
+
+      vi.mocked(prisma.team.findUnique).mockResolvedValue(mockTeam as any);
+      vi.mocked(prisma.user.findUnique).mockResolvedValue(
+        fixtures.users.validUser({ id: userId }) as any
+      );
+
+      const result = await teamService.addMember(teamId, userId, {
+        email: memberEmail,
+        role: 'DEVELOPERS',
+      });
+
+      expect(result).toBeDefined();
+      expect(result.userId).toBe(newUserId);
+      expect(prisma.teamMember.create).toHaveBeenCalled();
+    });
+  });
+
+  describe('updateMemberRole', () => {
+    it('should reject promoting a member to an already-taken Scrum Master role', async () => {
+      const userId = 'test-user-id';
+      const teamId = 'team-id';
+      const memberId = 'member-to-update';
+
+      vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce({
+        id: 'requester-member-id',
+        teamId,
+        userId,
+        role: 'SCRUM_MASTER',
+        joinedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: null,
+        updatedBy: null,
+      } as any);
+
+      vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce({
+        id: memberId,
+        teamId,
+        userId: 'target-user-id',
+        role: 'DEVELOPERS',
+        joinedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: null,
+        updatedBy: null,
+      } as any);
+
+      vi.mocked(prisma.teamMember.count).mockResolvedValue(1 as any);
+
+      await expect(
+        teamService.updateMemberRole(teamId, userId, memberId, 'SCRUM_MASTER')
+      ).rejects.toMatchObject({
+        statusCode: 409,
+        code: 'ROLE_ALREADY_TAKEN',
+      });
+
+      expect(prisma.teamMember.update).not.toHaveBeenCalled();
+    });
+
+    it('should promote a member to Product Owner when the role is free', async () => {
+      const userId = 'test-user-id';
+      const teamId = 'team-id';
+      const memberId = 'member-to-update';
+
+      vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce({
+        id: 'requester-member-id',
+        teamId,
+        userId,
+        role: 'SCRUM_MASTER',
+        joinedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: null,
+        updatedBy: null,
+      } as any);
+
+      vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce({
+        id: memberId,
+        teamId,
+        userId: 'target-user-id',
+        role: 'DEVELOPERS',
+        joinedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: null,
+        updatedBy: null,
+      } as any);
+
+      vi.mocked(prisma.teamMember.count).mockResolvedValue(0 as any);
+
+      vi.mocked(prisma.teamMember.update).mockResolvedValue({
+        id: memberId,
+        teamId,
+        userId: 'target-user-id',
+        role: 'PRODUCT_OWNER',
+        joinedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: null,
+        updatedBy: null,
+      } as any);
+
+      const result = await teamService.updateMemberRole(teamId, userId, memberId, 'PRODUCT_OWNER');
+
+      expect(result.role).toBe('PRODUCT_OWNER');
+      expect(prisma.teamMember.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: memberId },
+          data: { role: 'PRODUCT_OWNER' },
+        })
+      );
+    });
+
+    it('should throw NotFoundError when the member is not found', async () => {
+      const userId = 'test-user-id';
+      const teamId = 'team-id';
+
+      vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce({
+        id: 'requester-member-id',
+        teamId,
+        userId,
+        role: 'SCRUM_MASTER',
+        joinedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: null,
+        updatedBy: null,
+      } as any);
+
+      vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce(null as any);
+
+      await expect(
+        teamService.updateMemberRole(teamId, userId, 'non-existent-member', 'DEVELOPERS')
+      ).rejects.toThrow(NotFoundError);
+
+      expect(prisma.teamMember.update).not.toHaveBeenCalled();
+    });
+
+    it('should throw NotFoundError when the member belongs to a different team', async () => {
+      const userId = 'test-user-id';
+      const teamId = 'team-id';
+      const memberId = 'member-from-other-team';
+
+      vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce({
+        id: 'requester-member-id',
+        teamId,
+        userId,
+        role: 'SCRUM_MASTER',
+        joinedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: null,
+        updatedBy: null,
+      } as any);
+
+      vi.mocked(prisma.teamMember.findUnique).mockResolvedValueOnce({
+        id: memberId,
+        teamId: 'other-team-id',
+        userId: 'target-user-id',
+        role: 'DEVELOPERS',
+        joinedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: null,
+        updatedBy: null,
+      } as any);
+
+      await expect(
+        teamService.updateMemberRole(teamId, userId, memberId, 'DEVELOPERS')
+      ).rejects.toThrow(NotFoundError);
+
+      expect(prisma.teamMember.update).not.toHaveBeenCalled();
     });
   });
 
@@ -820,7 +1199,7 @@ describe('TeamService', () => {
         id: 'member-id',
         teamId,
         userId,
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
         joinedAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -830,7 +1209,7 @@ describe('TeamService', () => {
 
       const result = await teamService.getUserRoleInTeam(userId, teamId);
 
-      expect(result).toBe('DEVELOPER');
+      expect(result).toBe('DEVELOPERS');
     });
 
     it('should return null when user is not a member', async () => {
@@ -854,7 +1233,7 @@ describe('TeamService', () => {
         id: 'member-id',
         teamId,
         userId,
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
         joinedAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -891,7 +1270,7 @@ describe('TeamService', () => {
               id: 'member-id',
               teamId: 'team-id',
               userId: 'other-user-id',
-              role: 'DEVELOPER',
+              role: 'DEVELOPERS',
               joinedAt: new Date(),
               createdAt: new Date(),
               updatedAt: new Date(),

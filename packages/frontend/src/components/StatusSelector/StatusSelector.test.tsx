@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
 import {
   screen,
   fireEvent,
@@ -645,6 +645,108 @@ describe('StatusSelector Component', () => {
       act(() => {
         window.dispatchEvent(new Event('scroll'));
       });
+    });
+  });
+
+  describe('Dropdown Position Calculation Tests', () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    const mockRect = (overrides: Partial<DOMRect>): DOMRect =>
+      ({
+        x: 0,
+        y: 0,
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        width: 0,
+        height: 0,
+        toJSON: () => ({}),
+        ...overrides,
+      }) as DOMRect;
+
+    const setupPositionGeometry = (viewportWidth: number, left: number, width: number) => {
+      vi.spyOn(window, 'innerWidth', 'get').mockReturnValue(viewportWidth);
+      const right = left + width;
+      vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(() => {
+        return mockRect({ left, right, width });
+      });
+    };
+
+    it('positions dropdown to the right when it would overflow the right edge only', async () => {
+      setupPositionGeometry(800, 600, 100);
+      const { container } = renderWithProviders(<StatusSelector {...defaultProps} />);
+
+      const button = screen.getByRole('button');
+      await userEvent.click(button);
+
+      await waitFor(() => {
+        expect(container.querySelector('.status-dropdown')).toHaveClass('dropdown-position-right');
+      });
+    });
+
+    it('positions dropdown to the right when both edges overflow and right has more space', async () => {
+      setupPositionGeometry(300, 30, 100);
+      const { container } = renderWithProviders(<StatusSelector {...defaultProps} />);
+
+      const button = screen.getByRole('button');
+      await userEvent.click(button);
+
+      await waitFor(() => {
+        expect(container.querySelector('.status-dropdown')).toHaveClass('dropdown-position-right');
+      });
+    });
+
+    it('positions dropdown to the left when both edges overflow and left has more space', async () => {
+      setupPositionGeometry(300, 150, 100);
+      const { container } = renderWithProviders(<StatusSelector {...defaultProps} />);
+
+      const button = screen.getByRole('button');
+      await userEvent.click(button);
+
+      await waitFor(() => {
+        expect(container.querySelector('.status-dropdown')).toBeInTheDocument();
+      });
+
+      // Force the position calculation to run (initial position is already 'left')
+      act(() => {
+        window.dispatchEvent(new Event('resize'));
+      });
+
+      expect(container.querySelector('.status-dropdown')).toHaveClass('dropdown-position-left');
+    });
+
+    it('positions dropdown centered when it fits within the viewport', async () => {
+      setupPositionGeometry(800, 300, 100);
+      const { container } = renderWithProviders(<StatusSelector {...defaultProps} />);
+
+      const button = screen.getByRole('button');
+      await userEvent.click(button);
+
+      await waitFor(() => {
+        expect(container.querySelector('.status-dropdown')).toHaveClass('dropdown-position-center');
+      });
+    });
+
+    it('falls back to left when a centered dropdown would overflow the right edge', async () => {
+      setupPositionGeometry(800, 510, 300);
+      const { container } = renderWithProviders(<StatusSelector {...defaultProps} />);
+
+      const button = screen.getByRole('button');
+      await userEvent.click(button);
+
+      await waitFor(() => {
+        expect(container.querySelector('.status-dropdown')).toBeInTheDocument();
+      });
+
+      // Force the position calculation to run (initial position is already 'left')
+      act(() => {
+        window.dispatchEvent(new Event('resize'));
+      });
+
+      expect(container.querySelector('.status-dropdown')).toHaveClass('dropdown-position-left');
     });
   });
 

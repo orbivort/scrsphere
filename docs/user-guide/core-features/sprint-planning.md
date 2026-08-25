@@ -10,6 +10,8 @@ Sprint Planning is the ceremony where the Scrum Team defines the Sprint Goal and
 - [Capacity Planning](#capacity-planning)
 - [Selecting Backlog Items](#selecting-backlog-items)
 - [Defining the Sprint Goal](#defining-the-sprint-goal)
+- [Saving the Sprint Backlog](#saving-the-sprint-backlog)
+- [Resuming Planning](#resuming-planning)
 - [Starting the Sprint](#starting-the-sprint)
 - [Best Practices](#best-practices)
 
@@ -284,6 +286,58 @@ A Sprint Goal should be:
 
 ---
 
+## Saving the Sprint Backlog
+
+Your planning work is preserved in two complementary ways, so you never lose progress and can always resume where you left off.
+
+### The "Save Sprint Backlog" Button
+
+As a **Developer**, you can explicitly save the current plan at any time:
+
+1. Select the items you want in the sprint backlog and break them down into tasks.
+2. Click **"Save Sprint Backlog"** in the sprint actions toolbar.
+3. The selected items and their task decomposition are saved for the sprint, and a confirmation toast confirms the save.
+
+Behavior notes:
+
+- While the save is running, the button shows **"Saving Sprint Backlog..."** and is disabled.
+- The button is disabled when no items are selected or when the sprint is already **Active** or **Completed** — in those states the Sprint Backlog is locked and cannot be modified.
+- Saving is **idempotent**: each save replaces the previously saved backlog for that sprint with the current selection.
+- A saved Sprint Backlog is **required before you can start the sprint** — the "Start Sprint" button stays disabled until the backlog has been saved (see [Starting the Sprint](#starting-the-sprint)).
+
+### Automatic Draft Saving
+
+- **Incremental auto-save**: As you select backlog items, draft task assignments, or update the Sprint Goal, the planning state is saved to the server automatically (debounced). You do **not** need to remember to save before leaving.
+- **Unload flush**: If you close the page or navigate away mid-planning, any pending changes are flushed so nothing is lost.
+- The explicit **"Save Sprint Backlog"** button captures a reviewable snapshot of the plan; the auto-save keeps that snapshot up to date continuously in the background.
+
+---
+
+## Resuming Planning
+
+Sprint Planning is a collaborative ceremony. To honor the Scrum Guide's principle that the **Sprint Backlog** is a persistent, highly-visible artifact owned by the Developers, Scrumooth lets you resume an interrupted session seamlessly.
+
+### Re-entering the Planning Page
+
+When you (or another Developer) open Sprint Planning for the same sprint again:
+
+1. The saved planning draft is loaded automatically.
+2. The **selected items, their tasks (including assignees), and the working Sprint Goal** are restored and pre-filled in the interface.
+3. A notice confirms the draft was resumed, so you can continue exactly where you left off — even after closing the page, switching sprints, or signing out.
+4. If no saved draft exists for the sprint yet, the planning page starts from a clean slate.
+
+### Shared and Collaborative
+
+Because the draft is stored server-side, it is **shared across the team**. Any Developer who opens the sprint sees the same plan. This reflects the Developers' collective selection and decomposition of the work, as Scrum expects.
+
+### Commit Remains Explicit
+
+Auto-save and the **"Save Sprint Backlog"** button persist the **draft** only. Starting the Sprint remains the single, explicit commit action that transitions the sprint to **Active** and turns the draft into the committed Sprint Backlog used on the Sprint Board.
+
+> **Note**: Saving the Sprint Backlog is available to Developers. Other team members can view the plan, but only Developers can modify the sprint backlog draft.
+
+---
+
 ## Starting the Sprint
 
 ### Pre-Start Checklist
@@ -291,6 +345,7 @@ A Sprint Goal should be:
 Before starting the sprint, verify:
 
 - [ ] Sprint Goal is defined and agreed
+- [ ] **The Sprint Backlog has been saved** (required — "Start Sprint" stays disabled until you save)
 - [ ] Selected items fit within capacity
 - [ ] All items have acceptance criteria
 - [ ] Team commits to the sprint backlog
@@ -305,6 +360,7 @@ Before starting the sprint, verify:
    - Sprint Goal is clear
 
 2. **Click "Start Sprint"**
+   - "Start Sprint" is only enabled after the Sprint Backlog has been saved. If you change the plan after saving, click **"Save Sprint Backlog"** again before starting.
    - The Start Sprint modal opens
    - Review sprint details (name, dates, goal)
    - Review selected backlog items and tasks

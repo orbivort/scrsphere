@@ -1,48 +1,14 @@
 {
+  "dod": {
+    "empty": "Keine Definition of Done festgelegt. Fügen Sie eine hinzu, um konstante Qualität zu gewährleisten.",
+    "title": "Definition of Done"
+  },
   "error": {
     "message": "Berichtsdaten konnten nicht geladen werden. Bitte versuchen Sie es später erneut.",
     "title": "Fehler beim Laden der Berichte"
   },
   "insights": {
     "empty": "Noch keine Insights verfügbar. Schließen Sie weitere Sprints ab, um Insights zu generieren.",
-    "items": {
-      "active-sprint-impediments": {
-        "description": "Aktueller Sprint hat {{count}} Impediment(se). Sollten genau beobachtet werden.",
-        "title": "Aktive Sprint-Impediments"
-      },
-      "consistent-delivery": {
-        "description": "Team hat in den letzten {{count}} Sprints 100% der Sprint Goals erreicht",
-        "title": "Konstante Lieferung"
-      },
-      "get-started": {
-        "description": "Schließen Sie weitere Sprints ab, um Team-Leistungs-Insights zu generieren.",
-        "title": "Erste Schritte"
-      },
-      "high-success-rate": {
-        "description": "Team hat {{rate}}% Sprint-Erfolgsrate erreicht. Großartige Arbeit!",
-        "title": "Hohe Erfolgsrate"
-      },
-      "impediment-trend": {
-        "description": "{{count}} Impediment(se) derzeit offen. Proaktiv angehen.",
-        "title": "Impediment-Trend"
-      },
-      "low-success-rate": {
-        "description": "Sprint-Erfolgsrate beträgt {{rate}}%. Sprint-Kapazität und -Planung überprüfen.",
-        "title": "Erfolgsrate beachten"
-      },
-      "recent-improvement": {
-        "description": "Letzter Sprint zeigte {{improvement}}% Verbesserung bei abgeschlossenen Story Points.",
-        "title": "Aktuelle Verbesserung"
-      },
-      "velocity-decline": {
-        "description": "Durchschnittliche Velocity um {{trend}}% gesunken. Sprint Planning überprüfen.",
-        "title": "Velocity-Rückgang"
-      },
-      "velocity-improvement": {
-        "description": "Durchschnittliche Velocity um {{trend}}% im Vergleich zu vorherigen Sprints gestiegen",
-        "title": "Velocity-Verbesserung"
-      }
-    },
     "title": "Wichtige Insights"
   },
   "loading": {
@@ -57,26 +23,26 @@
       "title": "Durchschnittliche Velocity",
       "unit": "Story Points pro Sprint"
     },
+    "completionRate": {
+      "title": "Abschlussquote des Sprint-Backlogs",
+      "unit": "Vollständig gelieferte Sprints"
+    },
     "impediments": {
       "openCount": "offene Impediments",
       "resolved": "Gelöst",
       "title": "Impediments"
-    },
-    "sprintSuccessRate": {
-      "fromLastMonth": "vom letzten Monat",
-      "title": "Sprint-Erfolgsrate",
-      "unit": "Sprint Goals erreicht"
-    },
-    "teamSatisfaction": {
-      "fromLastSprint": "vom letzten Sprint",
-      "title": "Team-Zufriedenheit",
-      "unit": "Durchschnittliche Bewertung"
     }
+  },
+  "productGoal": {
+    "empty": "Kein aktives Produktziel. Definieren Sie ein Ziel, um dem Team ein klares Ziel zu geben.",
+    "title": "Product Goal",
+    "viewLink": "Ziele anzeigen"
   },
   "pts": "pts",
   "skipToMainContent": "Zum Hauptinhalt springen",
   "sprintHistory": {
     "empty": "Keine Sprint-Historie verfügbar.",
+    "sprintGoalLabel": "Sprint Goal",
     "stats": {
       "completed": "Abgeschlossen",
       "impediments": "Impediments",
@@ -93,6 +59,11 @@
   "subtitle": "Team-Performance und Sprint-Metriken verfolgen",
   "title": "Berichte",
   "velocityChart": {
+    "accessibilityDescription": "Balkendiagramm, das geplante und abgeschlossene Story Points pro Sprint vergleicht.",
+    "ariaLabel": "Sprint-Velocity-Diagramm, das geplante und abgeschlossene Story Points vergleicht.",
+    "ariaTableCaption": "Sprint-Velocity-Daten",
+    "ariaTableLabel": "Sprint-Velocity-Datentabelle",
+    "ariaTableSprint": "Sprint",
     "completed": "Abgeschlossen",
     "planned": "Geplant",
     "title": "Sprint-Velocity",

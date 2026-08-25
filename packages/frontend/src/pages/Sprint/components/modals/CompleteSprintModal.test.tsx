@@ -29,11 +29,15 @@ describe('CompleteSprintModal', () => {
     incompletePbisCount: 2,
     outstandingImpediments: [],
     outstandingImpedimentsCount: 0,
+    isReviewCompleted: true,
+    isRetrospectiveCompleted: true,
     completeSprintError: null,
     onClose: vi.fn(),
-    onProceedToDodVerification: vi.fn(),
+    onCompleteSprint: vi.fn(),
     onManageBacklog: vi.fn(),
     onViewImpediments: vi.fn(),
+    onViewSprintReview: vi.fn(),
+    onViewRetrospective: vi.fn(),
     isCompleting: false,
     modalRef: { current: null },
   };
@@ -350,39 +354,33 @@ describe('CompleteSprintModal', () => {
       expect(screen.getByText(/All tasks are complete/)).toBeInTheDocument();
     });
 
-    it('should show Proceed to DoD Verification button when all clear', () => {
+    it('should show Complete Sprint button when all clear', () => {
       renderWithProviders(<CompleteSprintModal {...allClearProps} />);
 
-      const dodButton = screen.getByText('Proceed to DoD Verification');
-      expect(dodButton).toBeInTheDocument();
-      expect(dodButton).not.toBeDisabled();
+      const completeButton = screen.getByRole('button', { name: /Complete Sprint/i });
+      expect(completeButton).toBeInTheDocument();
+      expect(completeButton).not.toBeDisabled();
     });
 
-    it('should call onProceedToDodVerification when Proceed button clicked', async () => {
-      const onProceedToDodVerification = vi.fn();
+    it('should call onCompleteSprint when Complete Sprint button clicked', async () => {
+      const onCompleteSprint = vi.fn();
       const user = userEvent.setup();
 
       renderWithProviders(
-        <CompleteSprintModal
-          {...allClearProps}
-          onProceedToDodVerification={onProceedToDodVerification}
-        />
+        <CompleteSprintModal {...allClearProps} onCompleteSprint={onCompleteSprint} />
       );
 
-      const dodButton = screen.getByText('Proceed to DoD Verification');
-      await user.click(dodButton);
+      const completeButton = screen.getByRole('button', { name: /Complete Sprint/i });
+      await user.click(completeButton);
 
-      expect(onProceedToDodVerification).toHaveBeenCalledTimes(1);
+      expect(onCompleteSprint).toHaveBeenCalledTimes(1);
     });
 
     it('should show correct title attribute tooltip for all-clear button', () => {
       renderWithProviders(<CompleteSprintModal {...allClearProps} />);
 
-      const dodButton = screen.getByText('Proceed to DoD Verification');
-      expect(dodButton.closest('button')).toHaveAttribute(
-        'title',
-        'Proceed to Definition of Done verification'
-      );
+      const completeButton = screen.getByRole('button', { name: /Complete Sprint/i });
+      expect(completeButton).toHaveAttribute('title', 'Complete the sprint');
     });
   });
 
@@ -419,6 +417,159 @@ describe('CompleteSprintModal', () => {
       renderWithProviders(<CompleteSprintModal {...impedimentsOnlyProps} />);
 
       expect(screen.getByText(/1 outstanding impediment/)).toBeInTheDocument();
+    });
+  });
+
+  describe('Incomplete Sprint Review / Retrospective', () => {
+    it('should show Sprint Review warning when review is not completed', () => {
+      renderWithProviders(<CompleteSprintModal {...defaultProps} isReviewCompleted={false} />);
+
+      expect(
+        screen.getByText(i18nT('sprint:completeSprint.incompleteSprintReview'))
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(i18nT('sprint:completeSprint.incompleteSprintReviewDetails'))
+      ).toBeInTheDocument();
+    });
+
+    it('should show Sprint Retrospective warning when retrospective is not completed', () => {
+      renderWithProviders(
+        <CompleteSprintModal {...defaultProps} isRetrospectiveCompleted={false} />
+      );
+
+      expect(
+        screen.getByText(i18nT('sprint:completeSprint.incompleteSprintRetrospective'))
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(i18nT('sprint:completeSprint.incompleteSprintRetrospectiveDetails'))
+      ).toBeInTheDocument();
+    });
+
+    it('should disable Complete Sprint button when review is not completed', () => {
+      renderWithProviders(<CompleteSprintModal {...defaultProps} isReviewCompleted={false} />);
+
+      const completeButton = screen.getByRole('button', { name: /Complete Sprint/i });
+      expect(completeButton).toBeDisabled();
+      expect(screen.getByText(/Complete Sprint \(Disabled\)/)).toBeInTheDocument();
+    });
+
+    it('should disable Complete Sprint button when retrospective is not completed', () => {
+      renderWithProviders(
+        <CompleteSprintModal {...defaultProps} isRetrospectiveCompleted={false} />
+      );
+
+      const completeButton = screen.getByRole('button', { name: /Complete Sprint/i });
+      expect(completeButton).toBeDisabled();
+    });
+
+    it('should not show ready-to-complete message when review is incomplete', () => {
+      renderWithProviders(
+        <CompleteSprintModal
+          {...defaultProps}
+          incompleteTasks={[]}
+          incompleteTasksCount={0}
+          incompletePbisCount={0}
+          outstandingImpediments={[]}
+          outstandingImpedimentsCount={0}
+          isReviewCompleted={false}
+        />
+      );
+
+      expect(screen.queryByText(/All tasks are complete/)).not.toBeInTheDocument();
+    });
+
+    it('should call onViewSprintReview when View Sprint Review button clicked', async () => {
+      const onViewSprintReview = vi.fn();
+      const user = userEvent.setup();
+
+      renderWithProviders(
+        <CompleteSprintModal
+          {...defaultProps}
+          isReviewCompleted={false}
+          onViewSprintReview={onViewSprintReview}
+        />
+      );
+
+      const viewButton = screen.getByText('View Sprint Review');
+      await user.click(viewButton);
+
+      expect(onViewSprintReview).toHaveBeenCalledTimes(1);
+    });
+
+    it('should call onViewRetrospective when View Retrospective button clicked', async () => {
+      const onViewRetrospective = vi.fn();
+      const user = userEvent.setup();
+
+      renderWithProviders(
+        <CompleteSprintModal
+          {...defaultProps}
+          isRetrospectiveCompleted={false}
+          onViewRetrospective={onViewRetrospective}
+        />
+      );
+
+      const viewButton = screen.getByText('View Retrospective');
+      await user.click(viewButton);
+
+      expect(onViewRetrospective).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not show warnings when both events are completed', () => {
+      renderWithProviders(<CompleteSprintModal {...defaultProps} />);
+
+      expect(
+        screen.queryByText(i18nT('sprint:completeSprint.incompleteSprintReview'))
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByText(i18nT('sprint:completeSprint.incompleteSprintRetrospective'))
+      ).not.toBeInTheDocument();
+    });
+
+    it('should render warning blocks in the expected order', () => {
+      renderWithProviders(
+        <CompleteSprintModal
+          {...defaultProps}
+          incompleteTasks={[{ id: 't', title: 'T', status: 'TODO', pbiTitle: 'P' }]}
+          incompleteTasksCount={1}
+          incompletePbisCount={1}
+          outstandingImpediments={[
+            {
+              id: 'imp-1',
+              teamId: 'team-1',
+              title: 'Blocking',
+              description: 'D',
+              reportedById: 'u',
+              status: ImpedimentStatus.OPEN,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            },
+          ]}
+          outstandingImpedimentsCount={1}
+          isReviewCompleted={false}
+          isRetrospectiveCompleted={false}
+        />
+      );
+
+      const outstandingImpediments = screen.getByText(
+        i18nT('sprint:completeSprint.outstandingImpediments')
+      );
+      const incompleteWork = screen.getByText(i18nT('sprint:completeSprint.incompleteWork'));
+      const incompleteReview = screen.getByText(
+        i18nT('sprint:completeSprint.incompleteSprintReview')
+      );
+      const incompleteRetrospective = screen.getByText(
+        i18nT('sprint:completeSprint.incompleteSprintRetrospective')
+      );
+
+      expect(outstandingImpediments.compareDocumentPosition(incompleteWork)).toBe(
+        Node.DOCUMENT_POSITION_FOLLOWING
+      );
+      expect(incompleteWork.compareDocumentPosition(incompleteReview)).toBe(
+        Node.DOCUMENT_POSITION_FOLLOWING
+      );
+      expect(incompleteReview.compareDocumentPosition(incompleteRetrospective)).toBe(
+        Node.DOCUMENT_POSITION_FOLLOWING
+      );
     });
   });
 });

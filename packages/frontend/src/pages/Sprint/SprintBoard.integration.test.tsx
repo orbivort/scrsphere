@@ -9,7 +9,6 @@ import {
   createMockSprint,
   createMockBacklogItem,
   createMockTeamMember,
-  createMockDoDItem,
   createMockImpediment,
 } from '../../__mocks__/mockData';
 import { TaskStatus, type Task, type Sprint, ImpedimentStatus } from '../../types';
@@ -22,6 +21,7 @@ beforeAll(async () => {
 
 vi.mock('../../store', () => ({
   useTeamStore: vi.fn(),
+  useAuthStore: vi.fn(() => ({ user: null })),
 }));
 
 vi.mock('../../services', () => ({
@@ -90,11 +90,6 @@ const mockSprintItems = [
   createMockBacklogItem({ id: 'pbi-2', title: 'PBI 2' }),
 ];
 
-const mockDoDItems = [
-  createMockDoDItem({ id: 'dod-1', description: 'Code reviewed' }),
-  createMockDoDItem({ id: 'dod-2', description: 'Tests passed' }),
-];
-
 const mockImpediments = [createMockImpediment({ id: 'imp-1', status: ImpedimentStatus.OPEN })];
 
 const mockTeamStore = useTeamStore as ReturnType<typeof vi.fn>;
@@ -104,22 +99,22 @@ const getDefaultMockData = () => ({
   tasks: mockTasks,
   teamMembers: mockTeamMembers,
   sprintItems: mockSprintItems,
-  dodItems: mockDoDItems,
   impediments: mockImpediments,
-  dodVerifications: [],
   sprintLoading: false,
   tasksLoading: false,
-  wipLimits: { todo: 5, in_progress: 3, done: 10 },
+  wipLimits: { todo: 5, in_progress: 3, review: 3, done: 10 },
   filteredTasks: mockTasks,
   tasksByStatus: {
     todo: [mockTasks[0]!],
     in_progress: [mockTasks[1]!],
+    review: [],
     done: [mockTasks[2]!],
   },
   sprintStats: {
     totalTasks: 3,
     todoTasks: 1,
     inProgressTasks: 1,
+    reviewTasks: 0,
     doneTasks: 1,
     totalEstimatedHours: 24,
     totalRemainingHours: 16,
@@ -196,8 +191,8 @@ describe('SprintBoard Integration Tests', () => {
     mockTeamStore.mockReturnValue({
       currentTeam: mockTeam,
       teams: [mockTeam],
-      userRoleInCurrentTeam: 'developer',
-      userTeamsWithRoles: [{ ...mockTeam, userRole: 'developer' }],
+      userRoleInCurrentTeam: 'developers',
+      userTeamsWithRoles: [{ ...mockTeam, userRole: 'developers' }],
       setCurrentTeam: vi.fn(),
       setTeams: vi.fn(),
       setUserTeamsWithRoles: vi.fn(),
@@ -583,6 +578,7 @@ describe('SprintBoard Integration Tests', () => {
         tasksByStatus: {
           todo: [],
           in_progress: [],
+          review: [],
           done: [],
         },
       });
@@ -624,12 +620,14 @@ describe('SprintBoard Integration Tests', () => {
         tasksByStatus: {
           todo: [],
           in_progress: [],
+          review: [],
           done: allDoneTasks,
         },
         sprintStats: {
           totalTasks: 2,
           todoTasks: 0,
           inProgressTasks: 0,
+          reviewTasks: 0,
           doneTasks: 2,
           totalEstimatedHours: 16,
           totalRemainingHours: 0,

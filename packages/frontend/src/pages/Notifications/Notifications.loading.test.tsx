@@ -63,7 +63,7 @@ const mockNotifications = [
   {
     id: 'notif-3',
     userId: 'user-1',
-    type: NotificationType.DAILY_UPDATE_REMINDER,
+    type: NotificationType.DIRECT_MESSAGE,
     title: 'Daily Update Reminder',
     message: 'Remember to submit your daily update',
     isRead: false,

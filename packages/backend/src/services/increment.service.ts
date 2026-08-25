@@ -1,7 +1,6 @@
 import prisma from '../utils/prisma';
 import { NotFoundError, BadRequestError } from '../utils/errors';
 import { generateUUIDv7 } from '../utils/uuid';
-import { sprintReviewService } from './sprintReview.service';
 import { incrementIntegrationService } from './incrementIntegration.service';
 import { logger } from '../utils/logger';
 import type { IncrementStatus, DeliveryMethod } from '../generated/prisma/client';
@@ -260,6 +259,98 @@ export const incrementService = {
     return this.getIncrementById(id);
   },
 
+  /**
+   * Continuously compose a Sprint's Increment from a Product Backlog item that just
+   * reached `DONE`.
+   *
+   * This is the Scrum-Guide-aligned behavior: an Increment is born the moment a PBI
+   * meets the team's Definition of Done, during the Sprint — not manufactured at Sprint
+   * close. When a PBI is marked `DONE`, it is added to its Sprint's Increment, creating
+   * that Increment if it does not yet exist. By default a Sprint's `DONE` PBIs accumulate
+   * into a single open Increment (find-or-create then upsert) rather than one Increment
+   * per PBI. An Increment is only reused while it is still open (`DRAFT` or `VERIFIED`);
+   * once it is `DELIVERED` or `ARCHIVED` it is frozen, and a new Increment is created to
+   * hold subsequent Done PBIs.
+   *
+   * The Sprint is resolved from the PBI's active `sprintBacklogItem`. If the PBI is not
+   * part of an active Sprint, the composition is a no-op (the PBI has no Sprint Increment
+   * to join). This method is non-fatal: a composition failure is logged and swallowed so a
+   * successful "mark Done" write is never rolled back by a composition error.
+   *
+   * @param pbiId - the Product Backlog item that reached DONE
+   * @param userId - the user who marked the item DONE
+   */
+  async composeDonePBI(pbiId: string, userId?: string): Promise<void> {
+    try {
+      // Resolve the PBI's active Sprint (if any) via its sprint backlog membership.
+      const sprintBacklogItem = await prisma.sprintBacklogItem.findFirst({
+        where: { pbiId },
+        include: {
+          sprint: {
+            select: { id: true, teamId: true, status: true },
+          },
+        },
+      });
+
+      if (sprintBacklogItem?.sprint.status !== 'ACTIVE') {
+        return;
+      }
+
+      const { id: sprintId, teamId } = sprintBacklogItem.sprint;
+
+      // Find-or-create the Sprint's canonical Increment. Per the Scrum Guide an Increment
+      // accumulates Done work during the Sprint, but only while it is still open. A
+      // `DRAFT` or `VERIFIED` Increment is treated as open and continues to accumulate
+      // newly-Done PBIs. A `DELIVERED` or `ARCHIVED` Increment is frozen — it represents a
+      // released product Increment that must not receive new work — so a brand-new
+      // Increment is created to hold subsequent Done PBIs.
+      const OPEN_INCREMENT_STATUSES = ['DRAFT', 'VERIFIED'] as const;
+      let increment = await prisma.increment.findFirst({
+        where: { sprintId, status: { in: [...OPEN_INCREMENT_STATUSES] } },
+        select: { id: true },
+      });
+
+      if (!increment) {
+        const incrementId = generateUUIDv7();
+        await prisma.increment.create({
+          data: {
+            id: incrementId,
+            name: `Sprint Increment - ${sprintId}`,
+            description: `Increment composed from Done Product Backlog items of Sprint ${sprintId}.`,
+            sprintId,
+            teamId,
+            totalStoryPoints: 0,
+            status: 'DRAFT',
+            createdBy: userId ?? null,
+          },
+        });
+        increment = { id: incrementId };
+      }
+
+      // Upsert the incrementPBI row (idempotent — a PBI already in the Increment is left
+      // as-is). A DONE PBI is always eligible, so no DoD re-check is performed here.
+      const existingLink = await prisma.incrementPBI.findUnique({
+        where: { incrementId_pbiId: { incrementId: increment.id, pbiId } },
+        select: { id: true },
+      });
+
+      if (!existingLink) {
+        await prisma.incrementPBI.create({
+          data: {
+            id: generateUUIDv7(),
+            incrementId: increment.id,
+            pbiId,
+            createdBy: userId ?? null,
+          },
+        });
+      }
+    } catch (error) {
+      // A failure to compose the Increment must not undo the "mark Done" write. Log it
+      // with context so an operator can reconcile the Increment composition manually.
+      logger.error('Failed to compose Sprint Increment for Done PBI', { error, pbiId });
+    }
+  },
+
   async deliverIncrement(id: string, deliveryMethod: string, notes?: string, userId?: string) {
     const existing = await prisma.increment.findUnique({
       where: { id },
@@ -288,44 +379,9 @@ export const incrementService = {
         deliveredAt: new Date(),
         deliveryMethod: deliveryMethod.toUpperCase() as DeliveryMethod,
         notes,
+        updatedBy: userId,
       },
     });
-
-    if (
-      deliveryMethod.toLowerCase() === 'sprint_review' &&
-      existing.sprintId &&
-      existing.teamId &&
-      userId
-    ) {
-      try {
-        const existingReview = await prisma.sprintReview.findUnique({
-          where: { sprintId: existing.sprintId },
-        });
-
-        if (!existingReview) {
-          const sprint = await prisma.sprint.findUnique({
-            where: { id: existing.sprintId },
-            select: { name: true },
-          });
-
-          const summary = sprint?.name
-            ? `Sprint Review for ${sprint.name}`
-            : 'Sprint Review created automatically upon increment delivery.';
-
-          await sprintReviewService.createSprintReview(userId, {
-            sprintId: existing.sprintId,
-            teamId: existing.teamId,
-            incrementId: id,
-            reviewDate: new Date(),
-            summary,
-          });
-        }
-      } catch (error) {
-        // Auto-creation failure should not block increment delivery
-        // The review can be created manually if needed
-        logger.warn('Failed to auto-create sprint review', { error, incrementId: id });
-      }
-    }
 
     return this.getIncrementById(id);
   },

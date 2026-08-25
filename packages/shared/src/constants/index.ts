@@ -12,6 +12,7 @@ export const WORKFLOW_STATES = {
   TASK: {
     TODO: 'TODO',
     IN_PROGRESS: 'IN_PROGRESS',
+    REVIEW: 'REVIEW',
     DONE: 'DONE',
   },
   SPRINT: {

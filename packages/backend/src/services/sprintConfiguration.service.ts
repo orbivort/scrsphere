@@ -197,9 +197,18 @@ class SprintConfigurationService {
     const sprints = await prisma.generatedSprint.findMany({
       where,
       orderBy: { sprintNumber: 'asc' },
+      include: {
+        sprint: { select: { id: true, status: true } },
+      },
     });
 
-    return sprints;
+    // The authoritative lifecycle status lives on the materialized Sprint (linked via
+    // GeneratedSprint.sprintId). The GeneratedSprint.status field is not always kept in sync
+    // for sprints completed before the sync fix, so surface the real status where available.
+    return sprints.map(({ sprint, ...generated }) => ({
+      ...generated,
+      status: sprint?.status ?? generated.status,
+    }));
   }
 
   async deleteGeneratedSprint(sprintId: string): Promise<void> {
@@ -233,13 +242,28 @@ class SprintConfigurationService {
       throw new NotFoundError('Generated sprint');
     }
 
-    const updatedSprint = await prisma.generatedSprint.update({
-      where: { id: sprintId },
-      data: {
-        ...updates,
-        updatedBy: userId,
-        updatedAt: new Date(),
-      },
+    // Keep the materialized Sprint record in sync: once a Sprint has been materialized from
+    // this GeneratedSprint (e.g. during `saveSprintBacklog`), the Sprint Goal is committed on
+    // the Sprint record. `startSprint` reads the goal from the Sprint, so it must be updated
+    // here too, otherwise a later goal edit would be lost and the sprint could not be started.
+    const updatedSprint = await prisma.$transaction(async (tx) => {
+      const result = await tx.generatedSprint.update({
+        where: { id: sprintId },
+        data: {
+          ...updates,
+          updatedBy: userId,
+          updatedAt: new Date(),
+        },
+      });
+
+      if (sprint.sprintId && updates.sprintGoal !== undefined) {
+        await tx.sprint.update({
+          where: { id: sprint.sprintId },
+          data: { sprintGoal: updates.sprintGoal },
+        });
+      }
+
+      return result;
     });
 
     return updatedSprint;

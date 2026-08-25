@@ -13,7 +13,6 @@
     "clickToExpand": "Click to expand",
     "closeDialog": "Close dialog",
     "closeForm": "Close form",
-    "dailyUpdateAriaLabel": "{{name}}'s daily update. {{expandAction}}.",
     "impedimentStatus": "Impediment status: {{status}}",
     "trackedAsFormalImpediment": "Tracked as formal impediment",
     "viewMode": "View mode"
@@ -62,13 +61,11 @@
     "creating": "Creating...",
     "descriptionLabel": "Description",
     "descriptionPlaceholder": "Detailed description of the impediment",
-    "fromUpdateBy": "From Daily Update by:",
-    "originalImpedimentText": "Original Impediment Text:",
     "priority": "Priority",
     "priorityHigh": "High",
     "priorityLow": "Low",
     "priorityMedium": "Medium",
-    "title": "Create Impediment from Daily Update",
+    "title": "Create Impediment from Daily Scrum",
     "titleLabel": "Title",
     "titlePlaceholder": "Brief title for the impediment"
   },
@@ -147,6 +144,7 @@
   "validation": {
     "descriptionRequired": "Description is required",
     "descriptionTooShort": "Description must be at least 10 characters",
+    "planRequired": "Add an actionable plan for the next day to save the Daily Scrum.",
     "titleRequired": "Title is required",
     "titleTooShort": "Title must be at least 3 characters"
   },
@@ -158,6 +156,5 @@
     "sendReminder": "Send Reminder",
     "sending": "Sending...",
     "title": "Waiting for Updates"
-  },
-  "yourDailyUpdate": "Your Daily Update"
+  }
 }

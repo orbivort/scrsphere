@@ -125,8 +125,8 @@ export const TeamManagement: React.FC = () => {
   const [isInvitingMember, setIsInvitingMember] = useState(false);
   const [newMemberEmail, setNewMemberEmail] = useState('');
   const [newMemberRole, setNewMemberRole] = useState<
-    'developer' | 'scrum_master' | 'product_owner'
-  >('developer');
+    'developers' | 'scrum_master' | 'product_owner'
+  >('developers');
   const [inviteError, setInviteError] = useState<string | null>(null);
   const [inviteSuccess, setInviteSuccess] = useState<string | null>(null);
   const [memberToDelete, setMemberToDelete] = useState<TeamMember | null>(null);
@@ -269,7 +269,7 @@ export const TeamManagement: React.FC = () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.team.byId(teamId) });
       setIsInvitingMember(false);
       setNewMemberEmail('');
-      setNewMemberRole('developer');
+      setNewMemberRole('developers');
       setInviteError(null);
       const memberName = response.data?.user?.firstName
         ? `${response.data.user.firstName} ${response.data.user.lastName || ''}`.trim()
@@ -283,11 +283,33 @@ export const TeamManagement: React.FC = () => {
         })
       );
     },
-    onError: (error: Error) => {
+    onError: (error: Error | AxiosError<ApiResponse<never>>) => {
       logger.error('Failed to add team member', undefined, { error });
       const errorMessage = error.message.toLowerCase();
 
-      if (errorMessage.includes('404') || errorMessage.includes('not found')) {
+      if (
+        error instanceof AxiosError &&
+        error.response?.data?.error?.code === 'TEAM_SIZE_LIMIT_REACHED'
+      ) {
+        setInviteError(t('inviteErrors.teamSizeLimit', { max: maxSize ?? 10 }));
+      } else if (
+        error instanceof AxiosError &&
+        error.response?.data?.error?.code === 'ROLE_ALREADY_TAKEN'
+      ) {
+        setInviteError(
+          t('inviteErrors.roleAlreadyTaken', {
+            role: t(
+              `memberCard.roleNames.${
+                newMemberRole === 'scrum_master'
+                  ? 'scrumMaster'
+                  : newMemberRole === 'product_owner'
+                    ? 'productOwner'
+                    : newMemberRole
+              }` as never
+            ),
+          })
+        );
+      } else if (errorMessage.includes('404') || errorMessage.includes('not found')) {
         setInviteError(t('inviteErrors.userNotFound'));
       } else if (
         errorMessage.includes('409') ||
@@ -371,7 +393,7 @@ export const TeamManagement: React.FC = () => {
   const resetInviteForm = useCallback(() => {
     setIsInvitingMember(false);
     setNewMemberEmail('');
-    setNewMemberRole('developer');
+    setNewMemberRole('developers');
     setInviteError(null);
     setShowInviteUnsavedWarning(false);
   }, []);
@@ -474,6 +496,22 @@ export const TeamManagement: React.FC = () => {
 
   const team = teamData?.success ? teamData.data : currentTeam;
 
+  const { hasProductOwner, hasScrumMaster } = useMemo(() => {
+    const members = team?.members ?? [];
+    return {
+      hasProductOwner: members.some((member) => member.role.toUpperCase() === 'PRODUCT_OWNER'),
+      hasScrumMaster: members.some((member) => member.role.toUpperCase() === 'SCRUM_MASTER'),
+    };
+  }, [team?.members]);
+
+  useEffect(() => {
+    if (newMemberRole === 'product_owner' && hasProductOwner) {
+      setNewMemberRole('developers');
+    } else if (newMemberRole === 'scrum_master' && hasScrumMaster) {
+      setNewMemberRole('developers');
+    }
+  }, [newMemberRole, hasProductOwner, hasScrumMaster]);
+
   const filteredAndSortedMembers = useMemo(() => {
     if (!team?.members) return [];
 
@@ -524,6 +562,8 @@ export const TeamManagement: React.FC = () => {
   }, [team?.members, searchQuery, roleFilter, sortBy]);
 
   const memberCount = team?.members?.length ?? 0;
+  const maxSize = team?.maxSize;
+  const atCapacity = maxSize !== undefined && memberCount >= maxSize;
   const filteredCount = filteredAndSortedMembers.length;
 
   const { data: teamMetricsData } = useQuery<ApiResponse<TeamMetrics>, Error>({
@@ -578,7 +618,7 @@ export const TeamManagement: React.FC = () => {
     .filter((s) => s.status === 'COMPLETED')
     .reduce((sum, s) => sum + s.completedPoints, 0);
   const avgVelocity = teamMetrics?.averageVelocity ?? 0;
-  const sprintSuccessRate = teamMetrics?.successRate ?? 0;
+  const sprintCompletionRate = teamMetrics?.completionRate ?? 0;
 
   const isLoading = teamLoading;
 
@@ -649,24 +689,24 @@ export const TeamManagement: React.FC = () => {
                   <div className={styles['role-icon-developer']}>
                     <CodeIcon size={24} />
                   </div>
-                  <div className={styles['role-badge-developer']}>{t('developer.badge')}</div>
+                  <div className={styles['role-badge-developer']}>{t('developers.badge')}</div>
                 </div>
-                <h3 className={styles['role-title']}>{t('developer.title')}</h3>
-                <p className={styles['role-description']}>{t('developer.description')}</p>
+                <h3 className={styles['role-title']}>{t('developers.title')}</h3>
+                <p className={styles['role-description']}>{t('developers.description')}</p>
                 <div className={styles['developer-info-box']}>
                   <div className={styles['info-box-header']}>
                     <ShieldIcon size={24} />
-                    <h4>{t('developer.howToJoin.title')}</h4>
+                    <h4>{t('developers.howToJoin.title')}</h4>
                   </div>
                   <ul className={styles['info-box-list']}>
                     <li>
-                      <strong>{t('developer.howToJoin.invitationsSentBy')}</strong>
+                      <strong>{t('developers.howToJoin.invitationsSentBy')}</strong>
                     </li>
                     <li>
-                      <strong>{t('developer.howToJoin.checkNotifications')}</strong>
+                      <strong>{t('developers.howToJoin.checkNotifications')}</strong>
                     </li>
                     <li>
-                      <strong>{t('developer.howToJoin.contactLeadership')}</strong>
+                      <strong>{t('developers.howToJoin.contactLeadership')}</strong>
                     </li>
                   </ul>
                   <button
@@ -675,7 +715,7 @@ export const TeamManagement: React.FC = () => {
                     type="button"
                   >
                     <MailIcon size={20} />
-                    <span>{t('developer.checkInvitations')}</span>
+                    <span>{t('developers.checkInvitations')}</span>
                   </button>
                 </div>
               </div>
@@ -787,7 +827,9 @@ export const TeamManagement: React.FC = () => {
           <div className={styles['team-info-header']}>
             <h2 id="team-name">{team.name}</h2>
             <span className={styles['team-size']}>
-              {t('teamInfo.memberCount', { count: team.members?.length ?? 0 })}
+              {maxSize !== undefined
+                ? t('teamInfo.memberCountLimit', { count: memberCount, max: maxSize })
+                : t('teamInfo.memberCount', { count: memberCount })}
             </span>
           </div>
           {team.description && <p className={styles['team-description']}>{team.description}</p>}
@@ -820,7 +862,8 @@ export const TeamManagement: React.FC = () => {
             <button
               className={`${styles.button} ${styles['button-primary']}`}
               onClick={handleInviteMember}
-              disabled={addTeamMemberMutation.isPending}
+              disabled={addTeamMemberMutation.isPending || atCapacity}
+              title={atCapacity ? t('members.teamFull', { max: maxSize }) : undefined}
               type="button"
             >
               {addTeamMemberMutation.isPending ? (
@@ -833,6 +876,12 @@ export const TeamManagement: React.FC = () => {
             </button>
           )}
         </div>
+        {atCapacity && canInviteMembers() && (
+          <div className={styles['team-full-hint']} role="status" aria-live="polite">
+            <AlertIcon size={16} />
+            <span>{t('members.teamFull', { max: maxSize })}</span>
+          </div>
+        )}
 
         {memberCount > 0 && (
           <div className={styles['members-controls']}>
@@ -867,7 +916,7 @@ export const TeamManagement: React.FC = () => {
                 <option value="all">{t('members.filterOptions.allRoles')}</option>
                 <option value="product_owner">{t('members.filterOptions.productOwner')}</option>
                 <option value="scrum_master">{t('members.filterOptions.scrumMaster')}</option>
-                <option value="developer">{t('members.filterOptions.developer')}</option>
+                <option value="developers">{t('members.filterOptions.developers')}</option>
               </select>
               <select
                 value={sortBy}
@@ -1015,8 +1064,8 @@ export const TeamManagement: React.FC = () => {
             <TargetIcon size={24} />
           </div>
           <div className={styles['stat-content']}>
-            <div className={styles['stat-value']}>{sprintSuccessRate}%</div>
-            <div className={styles['stat-label']}>{t('teamStats.sprintSuccessRate')}</div>
+            <div className={styles['stat-value']}>{sprintCompletionRate}%</div>
+            <div className={styles['stat-label']}>{t('teamStats.sprintCompletionRate')}</div>
           </div>
         </div>
       </section>
@@ -1180,15 +1229,17 @@ export const TeamManagement: React.FC = () => {
                       value={newMemberRole}
                       onChange={(e) =>
                         setNewMemberRole(
-                          e.target.value as 'developer' | 'scrum_master' | 'product_owner'
+                          e.target.value as 'developers' | 'scrum_master' | 'product_owner'
                         )
                       }
                       className={styles['role-select']}
                       disabled={addTeamMemberMutation.isPending}
                     >
-                      <option value="developer">{t('members.filterOptions.developer')}</option>
-                      <option value="scrum_master">{t('members.filterOptions.scrumMaster')}</option>
-                      <option value="product_owner">
+                      <option value="developers">{t('members.filterOptions.developers')}</option>
+                      <option value="scrum_master" disabled={hasScrumMaster}>
+                        {t('members.filterOptions.scrumMaster')}
+                      </option>
+                      <option value="product_owner" disabled={hasProductOwner}>
                         {t('members.filterOptions.productOwner')}
                       </option>
                     </select>

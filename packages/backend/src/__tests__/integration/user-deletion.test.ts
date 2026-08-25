@@ -45,7 +45,7 @@ describe('User Profile Deletion Integration Tests', () => {
   const addTeamMember = async (
     teamId: string,
     userId: string,
-    role: 'PRODUCT_OWNER' | 'SCRUM_MASTER' | 'DEVELOPER'
+    role: 'PRODUCT_OWNER' | 'SCRUM_MASTER' | 'DEVELOPERS'
   ) => {
     const membershipId = generateUUIDv7();
 
@@ -128,7 +128,6 @@ describe('User Profile Deletion Integration Tests', () => {
           await prisma.refreshToken.deleteMany({ where: { userId: user.id } });
           await prisma.notification.deleteMany({ where: { userId: user.id } });
           await prisma.teamMember.deleteMany({ where: { userId: user.id } });
-          await prisma.dailyUpdate.deleteMany({ where: { userId: user.id } });
           await prisma.retroItemVote.deleteMany({ where: { userId: user.id } });
           await prisma.task.updateMany({
             where: { assigneeId: user.id },
@@ -220,7 +219,7 @@ describe('User Profile Deletion Integration Tests', () => {
 
       const user = await createTestUserInDb(email);
       const team = await createTestTeamInDb(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
 
       const cookies = await loginAndGetCookies(email);
 
@@ -232,15 +231,17 @@ describe('User Profile Deletion Integration Tests', () => {
       expect(response.body.success).toBe(true);
       expect(response.body.data.canDelete).toBe(true);
       expect(response.body.data.teams).toHaveLength(1);
-      expect(response.body.data.teams[0].role).toBe('DEVELOPER');
+      expect(response.body.data.teams[0].role).toBe('DEVELOPERS');
       expect(response.body.data.teams[0].isLastPO).toBe(false);
       expect(response.body.data.blockedReason).toBeNull();
     });
 
-    it('should return correct info for user who is PO with other POs', async () => {
-      const email1 = `po-with-other-${uniqueId()}@example.com`;
-      const email2 = `other-po-${uniqueId()}@example.com`;
-      const teamName = `Multiple PO Team ${uniqueId()}`;
+    it('should mark the PO as last PO even when the team has non-PO members', async () => {
+      // Scrum allows exactly one Product Owner per team, so a PO is always the
+      // last PO. A DEVELOPERS co-member must not affect that determination.
+      const email1 = `po-with-team-${uniqueId()}@example.com`;
+      const email2 = `team-dev-${uniqueId()}@example.com`;
+      const teamName = `PO With Team ${uniqueId()}`;
       testEmails.push(email1, email2);
       testTeams.push(teamName);
 
@@ -248,7 +249,7 @@ describe('User Profile Deletion Integration Tests', () => {
       const user2 = await createTestUserInDb(email2);
       const team = await createTestTeamInDb(teamName);
       await addTeamMember(team.id, user1.id, 'PRODUCT_OWNER');
-      await addTeamMember(team.id, user2.id, 'PRODUCT_OWNER');
+      await addTeamMember(team.id, user2.id, 'DEVELOPERS');
 
       const cookies = await loginAndGetCookies(email1);
 
@@ -258,11 +259,11 @@ describe('User Profile Deletion Integration Tests', () => {
         .expect(200);
 
       expect(response.body.success).toBe(true);
-      expect(response.body.data.canDelete).toBe(true);
+      expect(response.body.data.canDelete).toBe(false);
       expect(response.body.data.teams).toHaveLength(1);
       expect(response.body.data.teams[0].role).toBe('PRODUCT_OWNER');
-      expect(response.body.data.teams[0].isLastPO).toBe(false);
-      expect(response.body.data.blockedReason).toBeNull();
+      expect(response.body.data.teams[0].isLastPO).toBe(true);
+      expect(response.body.data.blockedReason).toContain(teamName);
     });
 
     it('should return blocked for user who is the only PO', async () => {
@@ -306,7 +307,7 @@ describe('User Profile Deletion Integration Tests', () => {
       const team1 = await createTestTeamInDb(teamName1);
       const team2 = await createTestTeamInDb(teamName2);
       await addTeamMember(team1.id, user.id, 'PRODUCT_OWNER');
-      await addTeamMember(team2.id, user.id, 'DEVELOPER');
+      await addTeamMember(team2.id, user.id, 'DEVELOPERS');
 
       const cookies = await loginAndGetCookies(email);
 
@@ -429,7 +430,7 @@ describe('User Profile Deletion Integration Tests', () => {
       const user = await createTestUserInDb(email);
       const team = await createTestTeamInDb(teamName);
 
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       await createRefreshToken(user.id);
       await createNotification(user.id);
       await createNotification(user.id);
@@ -553,7 +554,7 @@ describe('User Profile Deletion Integration Tests', () => {
 
       const user = await createTestUserInDb(email);
       const team = await createTestTeamInDb(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
 
       const cookies = await loginAndGetCookies(email);
       const { csrfToken } = extractCsrfFromCookies(cookies);
@@ -580,10 +581,12 @@ describe('User Profile Deletion Integration Tests', () => {
       testEmails.splice(testEmails.indexOf(email), 1);
     });
 
-    it('should allow PO to delete when there are other POs in team', async () => {
-      const email1 = `po-delete-with-other-${uniqueId()}@example.com`;
-      const email2 = `other-po-stay-${uniqueId()}@example.com`;
-      const teamName = `PO Delete With Other Team ${uniqueId()}`;
+    it('should block PO from deleting because they are always the last PO', async () => {
+      // Scrum allows exactly one Product Owner per team, so a PO is always the
+      // last PO and cannot immediately delete, even when the team has non-PO members.
+      const email1 = `po-delete-blocked-${uniqueId()}@example.com`;
+      const email2 = `team-dev-stay-${uniqueId()}@example.com`;
+      const teamName = `PO Delete Blocked Team ${uniqueId()}`;
       testEmails.push(email1, email2);
       testTeams.push(teamName);
 
@@ -591,7 +594,7 @@ describe('User Profile Deletion Integration Tests', () => {
       const user2 = await createTestUserInDb(email2);
       const team = await createTestTeamInDb(teamName);
       await addTeamMember(team.id, user1.id, 'PRODUCT_OWNER');
-      await addTeamMember(team.id, user2.id, 'PRODUCT_OWNER');
+      await addTeamMember(team.id, user2.id, 'DEVELOPERS');
 
       const cookies = await loginAndGetCookies(email1);
       const { csrfToken } = extractCsrfFromCookies(cookies);
@@ -601,15 +604,27 @@ describe('User Profile Deletion Integration Tests', () => {
         .set('Cookie', cookies)
         .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
         .send({ confirmation: 'DELETE MY ACCOUNT' })
-        .expect(200);
+        .expect(403);
 
-      expect(response.body.success).toBe(true);
+      expect(response.body.success).toBe(false);
+      expect(response.body.error.code).toBe('FORBIDDEN');
+
+      const remainingUser = await prisma.user.findUnique({
+        where: { id: user1.id },
+      });
+      expect(remainingUser).not.toBeNull();
 
       const remainingMembership = await prisma.teamMember.findFirst({
-        where: { teamId: team.id, userId: user2.id },
+        where: { teamId: team.id, userId: user1.id },
       });
       expect(remainingMembership).not.toBeNull();
       expect(remainingMembership?.role).toBe('PRODUCT_OWNER');
+
+      const developerMembership = await prisma.teamMember.findFirst({
+        where: { teamId: team.id, userId: user2.id },
+      });
+      expect(developerMembership).not.toBeNull();
+      expect(developerMembership?.role).toBe('DEVELOPERS');
 
       testEmails.splice(testEmails.indexOf(email1), 1);
     });

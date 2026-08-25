@@ -616,7 +616,6 @@ The following pages have been successfully migrated to use the LoadingState comp
 
 ### Components
 
-- **DoDVerificationModal.tsx** - Spinner for verification status
 - **StatusSelector.tsx** - Small spinner for status updates
 
 ### Migration Benefits

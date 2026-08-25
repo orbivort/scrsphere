@@ -90,7 +90,8 @@ const defaultProps = {
   capacityPercentage: 80,
   error: null,
   isLoading: false,
-  userRole: 'SCRUM_MASTER',
+  hasSprintGoal: true,
+  hasSavedBacklog: true,
 };
 
 describe('StartSprintModal', () => {
@@ -521,62 +522,34 @@ describe('StartSprintModal', () => {
     });
   });
 
-  describe('Permission Warning', () => {
-    it('should show permission warning when userRole is DEVELOPER', () => {
-      renderWithProviders(<StartSprintModal {...defaultProps} userRole="DEVELOPER" />);
+  describe('Readiness Warning', () => {
+    it('should show readiness warning when the Sprint Backlog has not been saved', () => {
+      renderWithProviders(<StartSprintModal {...defaultProps} hasSavedBacklog={false} />);
 
       expect(
         screen.getByText(
-          new RegExp(i18nT('sprint:sprintPlanning.startSprintModal.permissionRequired'))
+          new RegExp(i18nT('sprint:sprintPlanning.startSprintModal.notReadyToStart'))
         )
       ).toBeInTheDocument();
       expect(
-        screen.getByText(/Only Product Owner or Scrum Master can start a sprint/i)
+        screen.getByText(
+          new RegExp(i18nT('sprint:sprintPlanning.startSprintModal.saveBacklogFirstMessage'))
+        )
       ).toBeInTheDocument();
     });
 
-    it('should show permission warning when userRole is VIEWER', () => {
-      renderWithProviders(<StartSprintModal {...defaultProps} userRole="VIEWER" />);
+    it('should show readiness warning when there is no Sprint Goal', () => {
+      renderWithProviders(<StartSprintModal {...defaultProps} hasSprintGoal={false} />);
 
       expect(
         screen.getByText(
-          new RegExp(i18nT('sprint:sprintPlanning.startSprintModal.permissionRequired'))
+          new RegExp(i18nT('sprint:sprintPlanning.startSprintModal.notReadyToStart'))
         )
       ).toBeInTheDocument();
     });
 
-    it('should show permission warning when userRole is undefined', () => {
-      renderWithProviders(<StartSprintModal {...defaultProps} userRole={undefined} />);
-
-      expect(
-        screen.getByText(
-          new RegExp(i18nT('sprint:sprintPlanning.startSprintModal.permissionRequired'))
-        )
-      ).toBeInTheDocument();
-    });
-
-    it('should show permission warning when userRole is null', () => {
-      renderWithProviders(<StartSprintModal {...defaultProps} userRole={null} />);
-
-      expect(
-        screen.getByText(
-          new RegExp(i18nT('sprint:sprintPlanning.startSprintModal.permissionRequired'))
-        )
-      ).toBeInTheDocument();
-    });
-
-    it('should not show permission warning when userRole is PRODUCT_OWNER', () => {
-      renderWithProviders(<StartSprintModal {...defaultProps} userRole="PRODUCT_OWNER" />);
-
-      expect(
-        screen.queryByText(
-          new RegExp(i18nT('sprint:sprintPlanning.startSprintModal.permissionRequired'))
-        )
-      ).not.toBeInTheDocument();
-    });
-
-    it('should disable start button when user lacks permission', () => {
-      renderWithProviders(<StartSprintModal {...defaultProps} userRole="DEVELOPER" />);
+    it('should disable start button when the Sprint Backlog has not been saved', () => {
+      renderWithProviders(<StartSprintModal {...defaultProps} hasSavedBacklog={false} />);
 
       expect(
         screen.getByRole('button', {
@@ -585,44 +558,30 @@ describe('StartSprintModal', () => {
       ).toBeDisabled();
     });
 
-    it('should show tooltip hint when start button is disabled due to permission', () => {
-      renderWithProviders(<StartSprintModal {...defaultProps} userRole="DEVELOPER" />);
+    it('should show tooltip hint when start button is disabled due to missing saved backlog', () => {
+      renderWithProviders(<StartSprintModal {...defaultProps} hasSavedBacklog={false} />);
 
       const startButton = screen.getByRole('button', {
         name: new RegExp(`^${i18nT('sprint:sprintPlanning.startSprintModal.start')}$`),
       });
       expect(startButton).toHaveAttribute(
         'title',
-        i18nT('sprint:sprintPlanning.startSprintModal.onlyPoSmCanStart')
+        i18nT('sprint:sprintPlanning.startSprintModal.saveBacklogFirstHint')
       );
     });
 
-    it('should not show permission warning when userRole is SCRUM_MASTER', () => {
-      renderWithProviders(<StartSprintModal {...defaultProps} userRole="SCRUM_MASTER" />);
+    it('should not show readiness warning when Sprint Goal and saved backlog are present', () => {
+      renderWithProviders(<StartSprintModal {...defaultProps} />);
 
       expect(
         screen.queryByText(
-          new RegExp(i18nT('sprint:sprintPlanning.startSprintModal.permissionRequired'))
+          new RegExp(i18nT('sprint:sprintPlanning.startSprintModal.notReadyToStart'))
         )
       ).not.toBeInTheDocument();
     });
 
-    it('should allow start button when user has SCRUM_MASTER role and capacity is normal', () => {
-      renderWithProviders(
-        <StartSprintModal {...defaultProps} userRole="SCRUM_MASTER" capacityPercentage={80} />
-      );
-
-      expect(
-        screen.getByRole('button', {
-          name: new RegExp(`^${i18nT('sprint:sprintPlanning.startSprintModal.start')}$`),
-        })
-      ).not.toBeDisabled();
-    });
-
-    it('should disable start button when capacity is at exactly 100% but user has permission', () => {
-      renderWithProviders(
-        <StartSprintModal {...defaultProps} userRole="SCRUM_MASTER" capacityPercentage={100} />
-      );
+    it('should allow start button when ready and capacity is normal', () => {
+      renderWithProviders(<StartSprintModal {...defaultProps} capacityPercentage={80} />);
 
       expect(
         screen.getByRole('button', {
@@ -727,18 +686,18 @@ describe('StartSprintModal', () => {
       ).toBeInTheDocument();
     });
 
-    it('should show error banner even when permission warning is shown', () => {
+    it('should show error banner even when readiness warning is shown', () => {
       renderWithProviders(
         <StartSprintModal
           {...defaultProps}
-          userRole="DEVELOPER"
+          hasSavedBacklog={false}
           error="Another sprint is already active"
         />
       );
 
       expect(
         screen.getByText(
-          new RegExp(i18nT('sprint:sprintPlanning.startSprintModal.permissionRequired'))
+          new RegExp(i18nT('sprint:sprintPlanning.startSprintModal.notReadyToStart'))
         )
       ).toBeInTheDocument();
       expect(

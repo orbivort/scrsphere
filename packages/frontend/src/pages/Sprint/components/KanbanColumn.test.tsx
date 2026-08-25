@@ -32,12 +32,14 @@ const mockTasks = [
 const mockAllTasksByStatus = {
   todo: mockTasks,
   in_progress: [],
+  review: [],
   done: [],
 };
 
 const mockWipLimits = {
   todo: Infinity,
   in_progress: 3,
+  review: 3,
   done: Infinity,
 };
 
@@ -75,6 +77,7 @@ describe('KanbanColumn', () => {
     onFocus: mockOnFocus,
     onBlur: mockOnBlur,
     onMoveStatus: mockOnMoveStatus,
+    canMutate: true,
   };
 
   beforeAll(async () => {

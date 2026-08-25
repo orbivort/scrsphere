@@ -77,7 +77,7 @@ describe('Team Management Integration Tests', () => {
   const addTeamMember = async (
     teamId: string,
     userId: string,
-    role: 'PRODUCT_OWNER' | 'SCRUM_MASTER' | 'DEVELOPER'
+    role: 'PRODUCT_OWNER' | 'SCRUM_MASTER' | 'DEVELOPERS'
   ) => {
     const membershipId = generateUUIDv7();
     await prisma.teamMember.create({
@@ -154,7 +154,7 @@ describe('Team Management Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
 
       const cookies = await loginAndGetCookies(email);
 
@@ -324,7 +324,7 @@ describe('Team Management Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
 
       const cookies = await loginAndGetCookies(email);
 
@@ -490,7 +490,7 @@ describe('Team Management Integration Tests', () => {
         .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
         .send({
           email: memberEmail,
-          role: 'DEVELOPER',
+          role: 'DEVELOPERS',
         })
         .expect(201);
 
@@ -501,7 +501,7 @@ describe('Team Management Integration Tests', () => {
         where: { teamId: team.id, userId: member.id },
       });
       expect(membership).not.toBeNull();
-      expect(membership?.role).toBe('DEVELOPER');
+      expect(membership?.role).toBe('DEVELOPERS');
     });
 
     it('should return 404 when adding non-existent user', async () => {
@@ -526,7 +526,7 @@ describe('Team Management Integration Tests', () => {
         .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
         .send({
           email: 'nonexistent@example.com',
-          role: 'DEVELOPER',
+          role: 'DEVELOPERS',
         })
         .expect(404);
 
@@ -564,7 +564,7 @@ describe('Team Management Integration Tests', () => {
           id: generateUUIDv7(),
           teamId: team.id,
           userId: member.id,
-          role: 'DEVELOPER',
+          role: 'DEVELOPERS',
         },
       });
 
@@ -621,7 +621,7 @@ describe('Team Management Integration Tests', () => {
           id: generateUUIDv7(),
           teamId: team.id,
           userId: member.id,
-          role: 'DEVELOPER',
+          role: 'DEVELOPERS',
         },
       });
 
@@ -699,7 +699,7 @@ describe('Team Management Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
 
       const cookies = await loginAndGetCookies(email);
 
@@ -737,7 +737,7 @@ describe('Team Management Integration Tests', () => {
         testTeams.push(teamName);
 
         const team = await createTestTeam(teamName);
-        await addTeamMember(team.id, user.id, 'DEVELOPER');
+        await addTeamMember(team.id, user.id, 'DEVELOPERS');
 
         const cookies = await loginAndGetCookies(email);
 
@@ -760,7 +760,7 @@ describe('Team Management Integration Tests', () => {
         testTeams.push(teamName);
 
         const team = await createTestTeam(teamName);
-        await addTeamMember(team.id, user.id, 'DEVELOPER');
+        await addTeamMember(team.id, user.id, 'DEVELOPERS');
 
         const cookies = await loginAndGetCookies(email);
 
@@ -792,14 +792,14 @@ describe('Team Management Integration Tests', () => {
 
         const team = await createTestTeam(teamName);
         await addTeamMember(team.id, scrumMaster.id, 'SCRUM_MASTER');
-        await addTeamMember(team.id, developer.id, 'DEVELOPER');
+        await addTeamMember(team.id, developer.id, 'DEVELOPERS');
 
         const membership = await prisma.teamMember.create({
           data: {
             id: generateUUIDv7(),
             teamId: team.id,
             userId: targetMember.id,
-            role: 'DEVELOPER',
+            role: 'DEVELOPERS',
           },
         });
 
@@ -839,7 +839,7 @@ describe('Team Management Integration Tests', () => {
             id: generateUUIDv7(),
             teamId: team.id,
             userId: member.id,
-            role: 'DEVELOPER',
+            role: 'DEVELOPERS',
           },
         });
 
@@ -858,13 +858,13 @@ describe('Team Management Integration Tests', () => {
         expect(responseDe.body.success).toBe(true);
         expectLocaleCookie(responseDe, 'de');
 
-        // Update role back to DEVELOPER with Spanish locale
+        // Update role back to DEVELOPERS with Spanish locale
         const responseEs = await request(app)
           .put(`/api/v1/teams/${team.id}/members/${membership.id}`)
           .set('Cookie', cookies)
           .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
           .set(setLocaleHeader('es'))
-          .send({ role: 'DEVELOPER' })
+          .send({ role: 'DEVELOPERS' })
           .expect(200);
 
         expect(responseEs.body.success).toBe(true);
@@ -966,7 +966,7 @@ describe('Team Management Integration Tests', () => {
           .set(setLocaleHeader('de'))
           .send({
             email: newMemberEmail,
-            role: 'DEVELOPER',
+            role: 'DEVELOPERS',
           })
           .expect(201);
 
@@ -1007,7 +1007,7 @@ describe('Team Management Integration Tests', () => {
           .set(setLocaleHeader('es'))
           .send({
             email: 'nonexistent-user@example.com',
-            role: 'DEVELOPER',
+            role: 'DEVELOPERS',
           })
           .expect(404);
 
@@ -1040,7 +1040,7 @@ describe('Team Management Integration Tests', () => {
           .set(setLocaleHeader('fr'))
           .send({
             email: newMemberEmail,
-            role: 'DEVELOPER',
+            role: 'DEVELOPERS',
           })
           .expect(201);
 

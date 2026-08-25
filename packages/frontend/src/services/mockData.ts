@@ -12,7 +12,6 @@ import {
   type Sprint,
   type Task,
   type Impediment,
-  type DailyUpdate,
   type BurndownData,
   type VelocityData,
   type ProductGoal,
@@ -347,7 +346,7 @@ export const mockTeams: Team[] = [
         id: '018ff5b8-0e25-7e8c-9d2f-4a6b8c3d5e8a',
         teamId: UUIDS.teams.alpha,
         userId: UUIDS.users.scrumMaster,
-        role: 'developer' as UserRole,
+        role: 'developers' as UserRole,
         joinedAt: '2026-01-01T00:00:00Z',
         user: mockUsers[1] as User,
       },
@@ -371,7 +370,7 @@ export const mockTeams: Team[] = [
         id: '018ff5b8-0e28-7e8c-9d2f-4a6b8c3d5e8d',
         teamId: UUIDS.teams.alpha,
         userId: UUIDS.users.developer2,
-        role: 'developer' as UserRole,
+        role: 'developers' as UserRole,
         joinedAt: '2026-01-02T00:00:00Z',
         user: mockUsers[3] as User,
       },
@@ -379,7 +378,7 @@ export const mockTeams: Team[] = [
         id: '018ff5b8-0e29-7e8c-9d2f-4a6b8c3d5e8e',
         teamId: UUIDS.teams.alpha,
         userId: UUIDS.users.guest,
-        role: 'developer' as UserRole,
+        role: 'developers' as UserRole,
         joinedAt: '2026-01-03T00:00:00Z',
         user: mockUsers[4] as User,
       },
@@ -413,7 +412,7 @@ export const mockTeams: Team[] = [
         id: '018ff5b8-0e2c-7e8c-9d2f-4a6b8c3d5e91',
         teamId: UUIDS.teams.beta,
         userId: '018ff5b8-0e23-7e8c-9d2f-4a6b8c3d5e88',
-        role: 'developer' as UserRole,
+        role: 'developers' as UserRole,
         joinedAt: '2026-01-16T00:00:00Z',
         user: mockUsers[7] as User,
       },
@@ -421,7 +420,7 @@ export const mockTeams: Team[] = [
         id: '018ff5b8-0e2d-7e8c-9d2f-4a6b8c3d5e92',
         teamId: UUIDS.teams.beta,
         userId: '018ff5b8-0e24-7e8c-9d2f-4a6b8c3d5e89',
-        role: 'developer' as UserRole,
+        role: 'developers' as UserRole,
         joinedAt: '2026-01-20T00:00:00Z',
         user: mockUsers[8] as User,
       },
@@ -455,7 +454,7 @@ export const mockTeams: Team[] = [
         id: 'member-12',
         teamId: 'team-3',
         userId: 'user-12',
-        role: 'developer' as UserRole,
+        role: 'developers' as UserRole,
         joinedAt: '2026-02-01T00:00:00Z',
         user: mockUsers[11] as User,
       },
@@ -809,6 +808,26 @@ export const mockProductBacklogItems: ProductBacklogItem[] = [
     updatedAt: '2026-02-04T00:00:00Z',
     creator: mockUsers[1],
   },
+  // In Progress Item in the current sprint - small, fully decomposed PBI used to
+  // demonstrate the "mark as done" flow (all child tasks are DONE, PBI is IN_PROGRESS).
+  {
+    id: 'pbi-012',
+    teamId: UUIDS.teams.alpha,
+    goalId: 'goal-active-1',
+    title: 'Daily Scrum summary widget',
+    description:
+      'Compact summary widget showing the latest daily Scrum updates and open blockers on the sprint board.',
+    priority: MoSCoWPriority.SHOULD_HAVE,
+    storyPoints: 3,
+    status: 'IN_PROGRESS' as ItemStatus,
+    labels: ['frontend', 'feature', 'dashboard'],
+    acceptanceCriteria:
+      '- Show today summary\n- Highlight open blockers\n- Link to full daily Scrum view',
+    createdBy: UUIDS.users.developer1,
+    createdAt: '2026-02-04T00:00:00Z',
+    updatedAt: '2026-02-06T00:00:00Z',
+    creator: mockUsers[2],
+  },
 ];
 
 // ==================== Sprints ====================
@@ -858,6 +877,7 @@ export const mockSprints: Sprint[] = [
     items: [
       mockProductBacklogItems[6] as ProductBacklogItem,
       mockProductBacklogItems[7] as ProductBacklogItem,
+      mockProductBacklogItems[11] as ProductBacklogItem, // pbi-012 (ready-to-done candidate)
     ],
     tasks: [],
   },
@@ -955,6 +975,37 @@ export const mockTasks: Task[] = [
     updatedAt: '2026-02-04T15:00:00Z',
     assignee: mockUsers[4],
   },
+  // PBI-012: Daily Scrum summary widget (all tasks DONE so the PBI is "ready to done")
+  {
+    id: 'task-done-007',
+    sprintId: 'sprint-3',
+    pbiId: 'pbi-012',
+    title: 'Build daily Scrum summary widget',
+    description:
+      'Implement the compact summary widget with today summary and open blocker highlights.',
+    assigneeId: UUIDS.users.developer1,
+    status: 'DONE' as TaskStatus,
+    estimatedHours: 2,
+    remainingHours: 0,
+    createdAt: '2026-02-05T09:00:00Z',
+    updatedAt: '2026-02-06T11:00:00Z',
+    assignee: mockUsers[2],
+  },
+  {
+    id: 'task-done-008',
+    sprintId: 'sprint-3',
+    pbiId: 'pbi-012',
+    title: 'Link widget to daily Scrum view',
+    description:
+      'Connect the summary widget to the full daily Scrum view with deep-link navigation.',
+    assigneeId: UUIDS.users.developer2,
+    status: 'DONE' as TaskStatus,
+    estimatedHours: 1,
+    remainingHours: 0,
+    createdAt: '2026-02-05T14:00:00Z',
+    updatedAt: '2026-02-06T09:30:00Z',
+    assignee: mockUsers[3],
+  },
 
   // ==================== IN_PROGRESS TASKS (6) ====================
   {
@@ -1045,6 +1096,53 @@ export const mockTasks: Task[] = [
     createdAt: '2026-02-05T09:00:00Z',
     updatedAt: '2026-02-05T14:00:00Z',
     assignee: mockUsers[4],
+  },
+
+  // ==================== REVIEW TASKS (3) ====================
+  {
+    id: 'task-review-001',
+    sprintId: 'sprint-3',
+    pbiId: 'pbi-007',
+    title: 'Review team updates view',
+    description:
+      'Peer review of the team updates view component for correctness, accessibility, and adherence to the Definition of Done before moving to Done.',
+    assigneeId: UUIDS.users.scrumMaster,
+    status: 'REVIEW' as TaskStatus,
+    estimatedHours: 2,
+    remainingHours: 1,
+    createdAt: '2026-02-05T09:00:00Z',
+    updatedAt: '2026-02-06T10:30:00Z',
+    assignee: mockUsers[1],
+  },
+  {
+    id: 'task-review-002',
+    sprintId: 'sprint-3',
+    pbiId: 'pbi-007',
+    title: 'Review historical updates feature',
+    description:
+      'Code review for the historical daily Scrum updates feature, covering date navigation, search, and edge-case handling.',
+    assigneeId: UUIDS.users.developer2,
+    status: 'REVIEW' as TaskStatus,
+    estimatedHours: 3,
+    remainingHours: 1,
+    createdAt: '2026-02-05T14:00:00Z',
+    updatedAt: '2026-02-06T13:00:00Z',
+    assignee: mockUsers[3],
+  },
+  {
+    id: 'task-review-003',
+    sprintId: 'sprint-3',
+    pbiId: 'pbi-008',
+    title: 'Review impediment CRUD operations',
+    description:
+      'Peer review of impediment create, read, update, and delete operations, including optimistic UI updates and audit trail logging.',
+    assigneeId: UUIDS.users.developer1,
+    status: 'REVIEW' as TaskStatus,
+    estimatedHours: 2,
+    remainingHours: 2,
+    createdAt: '2026-02-05T15:00:00Z',
+    updatedAt: '2026-02-06T09:00:00Z',
+    assignee: mockUsers[2],
   },
 
   // ==================== TODO TASKS (7) ====================
@@ -1204,270 +1302,6 @@ export const mockImpediments: Impediment[] = [
     resolvedAt: '2026-02-07T00:00:00Z',
     reportedBy: mockUsers[4],
     owner: mockUsers[1],
-  },
-];
-
-// ==================== Daily Updates ====================
-// Comprehensive mock data for Daily Scrum demo - covers multiple days with all team members
-
-// Today's date for realistic demo
-const today = new Date();
-const yesterday = new Date(today);
-yesterday.setDate(yesterday.getDate() - 1);
-const twoDaysAgo = new Date(today);
-twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
-
-const formatDate = (d: Date): string => d.toISOString().split('T')[0] ?? '';
-const formatTime = (h: number, m: number): string =>
-  `${today.toISOString().split('T')[0] ?? ''}T${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:00Z`;
-
-export const mockDailyUpdates: DailyUpdate[] = [
-  // ============ TODAY'S UPDATES ============
-  {
-    id: 'update-today-1',
-    sprintId: 'sprint-3',
-    userId: UUIDS.users.admin,
-    updateDate: formatDate(today),
-    yesterdayWork:
-      'Completed the task card UI improvements with drag-and-drop functionality. Fixed several styling issues in the Kanban board. Reviewed and merged 3 PRs.',
-    todayWork:
-      'Working on the Sprint Board statistics component. Implementing real-time progress tracking. Will pair with Emma on API integration.',
-    impediment: 'None',
-    createdAt: formatTime(9, 5),
-    user: mockUsers[0],
-  },
-  {
-    id: 'update-today-2',
-    sprintId: 'sprint-3',
-    userId: UUIDS.users.developer2,
-    updateDate: formatDate(today),
-    yesterdayWork:
-      'Finished implementing the filter component for the backlog. Added support for multi-select filters. Wrote unit tests for filter logic.',
-    todayWork:
-      'Starting work on the sprint planning capacity visualization. Need to coordinate with Sarah on the design specs.',
-    impediment:
-      'Need design review from Sarah on capacity bar visualization - blocked until afternoon meeting.',
-    createdAt: formatTime(9, 12),
-    user: mockUsers[3],
-  },
-  {
-    id: 'update-today-3',
-    sprintId: 'sprint-3',
-    userId: UUIDS.users.guest,
-    updateDate: formatDate(today),
-    yesterdayWork:
-      'Set up the mock API service layer for testing. Created comprehensive test data for sprint planning. Fixed 2 bugs in the task status update flow.',
-    todayWork:
-      'Implementing the burndown chart component with Chart.js. Will add interactive tooltips and zoom functionality.',
-    impediment: 'None',
-    createdAt: formatTime(9, 18),
-    user: mockUsers[4],
-  },
-  {
-    id: 'update-today-4',
-    sprintId: 'sprint-3',
-    userId: UUIDS.users.developer1,
-    updateDate: formatDate(today),
-    yesterdayWork:
-      'Completed sprint goal definition for Sprint 4. Refined 5 new backlog items with the team. Updated product roadmap documentation.',
-    todayWork:
-      'Prioritizing new feature requests from stakeholders. Will prepare sprint demo presentation. Meeting with customers at 2pm.',
-    impediment: 'None',
-    createdAt: formatTime(9, 25),
-    user: mockUsers[2],
-  },
-
-  // ============ YESTERDAY'S UPDATES ============
-  {
-    id: 'update-yest-1',
-    sprintId: 'sprint-3',
-    userId: UUIDS.users.admin,
-    updateDate: formatDate(yesterday),
-    yesterdayWork:
-      'Implemented the basic Kanban board layout. Created task card components. Set up the drag-and-drop infrastructure.',
-    todayWork:
-      'Complete Kanban board with drag-and-drop. Start working on task card UI improvements. Code review for filter component.',
-    impediment: 'Waiting for UX mockups from design team - expected EOD.',
-    createdAt: `${formatDate(yesterday)}T09:03:00Z`,
-    user: mockUsers[0],
-  },
-  {
-    id: 'update-yest-2',
-    sprintId: 'sprint-3',
-    userId: UUIDS.users.developer2,
-    updateDate: formatDate(yesterday),
-    yesterdayWork:
-      'Built the backlog filter bar component. Added status and label filter options. Integrated with the product backlog page.',
-    todayWork:
-      'Add multi-select functionality to filters. Work on filter persistence. Start capacity planning UI.',
-    impediment: 'None',
-    createdAt: `${formatDate(yesterday)}T09:10:00Z`,
-    user: mockUsers[3],
-  },
-  {
-    id: 'update-yest-3',
-    sprintId: 'sprint-3',
-    userId: UUIDS.users.guest,
-    updateDate: formatDate(yesterday),
-    yesterdayWork:
-      'Created mock data generators for the demo. Set up testing infrastructure. Fixed issues with date formatting.',
-    todayWork:
-      'Expand mock data for daily scrum feature. Add more realistic test scenarios. Start burndown chart implementation.',
-    impediment: 'Test environment occasionally slow - need DevOps support.',
-    createdAt: `${formatDate(yesterday)}T09:22:00Z`,
-    user: mockUsers[4],
-  },
-  {
-    id: 'update-yest-4',
-    sprintId: 'sprint-3',
-    userId: UUIDS.users.scrumMaster,
-    updateDate: formatDate(yesterday),
-    yesterdayWork:
-      'Facilitated sprint planning meeting. Removed blockers for 2 team members. Updated sprint backlog priorities.',
-    todayWork:
-      'Prepare sprint review presentation. Follow up on impediments. Schedule retrospective for Friday.',
-    impediment: 'One team member out sick - need to redistribute tasks.',
-    createdAt: `${formatDate(yesterday)}T09:15:00Z`,
-    user: mockUsers[1],
-  },
-  {
-    id: 'update-yest-5',
-    sprintId: 'sprint-3',
-    userId: UUIDS.users.developer1,
-    updateDate: formatDate(yesterday),
-    yesterdayWork:
-      'Refined backlog items with development team. Created acceptance criteria for 3 user stories. Updated sprint goal.',
-    todayWork:
-      'Continue backlog refinement session. Work with stakeholders on feature priorities. Prepare demo for executives.',
-    impediment: 'None',
-    createdAt: `${formatDate(yesterday)}T09:30:00Z`,
-    user: mockUsers[2],
-  },
-
-  // ============ TWO DAYS AGO UPDATES ============
-  {
-    id: 'update-2days-1',
-    sprintId: 'sprint-3',
-    userId: UUIDS.users.admin,
-    updateDate: formatDate(twoDaysAgo),
-    yesterdayWork:
-      'Set up the sprint planning page structure. Created basic layout components. Started Kanban board wireframe.',
-    todayWork:
-      'Implement Kanban board columns and task cards. Add basic styling. Plan drag-and-drop implementation.',
-    impediment: 'None',
-    createdAt: `${formatDate(twoDaysAgo)}T09:02:00Z`,
-    user: mockUsers[0],
-  },
-  {
-    id: 'update-2days-2',
-    sprintId: 'sprint-3',
-    userId: UUIDS.users.developer2,
-    updateDate: formatDate(twoDaysAgo),
-    yesterdayWork:
-      'Implemented product backlog item cards. Added priority badge and status indicators. Set up filtering infrastructure.',
-    todayWork:
-      'Build filter bar component. Implement status and label filters. Add search functionality.',
-    impediment: 'None',
-    createdAt: `${formatDate(twoDaysAgo)}T09:08:00Z`,
-    user: mockUsers[3],
-  },
-  {
-    id: 'update-2days-3',
-    sprintId: 'sprint-3',
-    userId: UUIDS.users.guest,
-    updateDate: formatDate(twoDaysAgo),
-    yesterdayWork:
-      'Configured testing framework with Jest and React Testing Library. Wrote initial test cases for core components.',
-    todayWork:
-      'Expand test coverage to 70%. Create mock data generators. Fix failing tests from latest PR.',
-    impediment: 'CI/CD pipeline failing on specific test - investigating.',
-    createdAt: `${formatDate(twoDaysAgo)}T09:20:00Z`,
-    user: mockUsers[4],
-  },
-  {
-    id: 'update-2days-4',
-    sprintId: 'sprint-3',
-    userId: UUIDS.users.scrumMaster,
-    updateDate: formatDate(twoDaysAgo),
-    yesterdayWork:
-      'Kicked off Sprint 3 planning session. Defined sprint goal with team. Assigned sprint backlog items.',
-    todayWork:
-      'Monitor sprint progress. Address any blockers. Prepare for backlog refinement session.',
-    impediment: 'None',
-    createdAt: `${formatDate(twoDaysAgo)}T09:00:00Z`,
-    user: mockUsers[1],
-  },
-  {
-    id: 'update-2days-5',
-    sprintId: 'sprint-3',
-    userId: UUIDS.users.developer1,
-    updateDate: formatDate(twoDaysAgo),
-    yesterdayWork:
-      'Presented sprint goals to stakeholders. Gathered feedback on MVP features. Prioritized backlog items.',
-    todayWork:
-      'Create detailed acceptance criteria for high-priority items. Schedule refinement session with developers.',
-    impediment: 'Stakeholder requested urgent feature - need to assess impact on sprint.',
-    createdAt: `${formatDate(twoDaysAgo)}T09:35:00Z`,
-    user: mockUsers[2],
-  },
-
-  // ============ HISTORICAL DATA FROM PREVIOUS DATES ============
-  {
-    id: 'update-001',
-    sprintId: 'sprint-3',
-    userId: UUIDS.users.admin,
-    updateDate: '2026-02-12',
-    yesterdayWork: 'Completed daily Scrum form UI design. Started implementing team updates view.',
-    todayWork: 'Continue working on team updates view component. Start integrating with mock data.',
-    impediment: 'Waiting for design review from Sarah.',
-    createdAt: '2026-02-12T09:00:00Z',
-    user: mockUsers[0],
-  },
-  {
-    id: 'update-002',
-    sprintId: 'sprint-3',
-    userId: UUIDS.users.developer2,
-    updateDate: '2026-02-12',
-    yesterdayWork:
-      'Implemented form validation with error messages. Started impediment card design.',
-    todayWork: 'Finish impediment card component. Test form validation edge cases.',
-    impediment: 'None',
-    createdAt: '2026-02-12T09:15:00Z',
-    user: mockUsers[3],
-  },
-  {
-    id: 'update-003',
-    sprintId: 'sprint-3',
-    userId: UUIDS.users.guest,
-    updateDate: '2026-02-12',
-    yesterdayWork:
-      'Set up test environment for daily Scrum feature. Wrote unit tests for form component.',
-    todayWork: 'Start working on historical updates feature. Create mock data for testing.',
-    impediment: 'None',
-    createdAt: '2026-02-12T09:30:00Z',
-    user: mockUsers[4],
-  },
-  {
-    id: 'update-004',
-    sprintId: 'sprint-3',
-    userId: UUIDS.users.admin,
-    updateDate: '2026-02-13',
-    yesterdayWork: 'Finished team updates view component. Started integrating with API service.',
-    todayWork: 'Complete API integration. Start working on impediment CRUD operations.',
-    impediment: 'API documentation incomplete - need to clarify some endpoints.',
-    createdAt: '2026-02-13T09:00:00Z',
-    user: mockUsers[0],
-  },
-  {
-    id: 'update-005',
-    sprintId: 'sprint-3',
-    userId: UUIDS.users.developer2,
-    updateDate: '2026-02-13',
-    yesterdayWork: 'Completed impediment card design. Started implementing card interactions.',
-    todayWork: 'Finish card interactions. Fix CSS styling conflicts.',
-    impediment: 'CSS module conflicts causing layout issues.',
-    createdAt: '2026-02-13T09:15:00Z',
-    user: mockUsers[3],
   },
 ];
 

@@ -194,7 +194,7 @@ describe('ProductGoalService', () => {
         id: 'member-1',
         teamId: 'team-1',
         userId,
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
       } as any);
       vi.mocked(workflowService.validateTransition).mockResolvedValue({
         isValid: false,
@@ -219,7 +219,7 @@ describe('ProductGoalService', () => {
         id: 'member-1',
         teamId: 'team-1',
         userId,
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
       } as any);
       vi.mocked(workflowService.validateTransition).mockResolvedValue({
         isValid: true,
@@ -244,7 +244,7 @@ describe('ProductGoalService', () => {
         id: 'member-1',
         teamId: 'team-1',
         userId,
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
       } as any);
       vi.mocked(workflowService.validateTransition).mockResolvedValue({
         isValid: true,
@@ -380,7 +380,7 @@ describe('ProductGoalService', () => {
         id: 'member-1',
         teamId: 'team-1',
         userId,
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
       } as any);
       vi.mocked(workflowService.validateTransition).mockResolvedValue({
         isValid: false,
@@ -408,7 +408,7 @@ describe('ProductGoalService', () => {
         id: 'member-1',
         teamId: 'team-1',
         userId,
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
       } as any);
       vi.mocked(workflowService.validateTransition).mockResolvedValue({
         isValid: true,

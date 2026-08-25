@@ -82,6 +82,7 @@
       "remaining": "Remaining",
       "title": "Uploading..."
     },
+    "storyPointsDeveloperOnly": "Only Developers can set story points. The story points column is disabled for your role.",
     "summary": {
       "close": "Close",
       "created": "{{count}} items created",
@@ -198,6 +199,7 @@
     "removeLabel": "Remove label {{label}}",
     "requiredFields": "Indicates required fields",
     "selectMoscowPriority": "Select MoSCoW Priority",
+    "storyPointsDeveloperOnly": "Only Developers can set story points. Sizing is the responsibility of the Developers who perform the work.",
     "storyPointsHelp": "Estimate the relative effort using Fibonacci sequence. Consider complexity, uncertainty, and risk. Leave empty if not ready to estimate.",
     "storyPointsLabel": "Estimate (Story Points)",
     "storyPointsPlaceholder": "Select estimate...",
@@ -270,6 +272,7 @@
     "saving": "Saving...",
     "savingChanges": "Saving changes...",
     "selectMoscowPriority": "Select MoSCoW Priority",
+    "storyPointsDeveloperOnly": "Only Developers can set story points. Sizing is the responsibility of the Developers who perform the work.",
     "storyPointsHelp": "Required: Estimate the relative effort using Fibonacci sequence. Consider complexity, uncertainty, and risk.",
     "storyPointsLabel": "Estimate (Story Points)",
     "storyPointsPlaceholder": "Select estimate... (required)",

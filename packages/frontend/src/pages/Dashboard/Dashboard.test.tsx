@@ -22,17 +22,22 @@ vi.mock('../../services', () => ({
   apiService: {
     getActiveSprint: vi.fn(),
     getBurndownData: vi.fn(),
-    getDailyUpdates: vi.fn(),
+    getDailyScrum: vi.fn(),
+    getDailyScrumParticipation: vi.fn(),
     getImpediments: vi.fn(),
     getProductGoals: vi.fn(),
   },
 }));
 
-vi.mock('../../hooks', () => ({
-  useApiError: () => ({
-    handleError: vi.fn((_error, fallback) => fallback || 'An error occurred'),
-  }),
-}));
+vi.mock('../../hooks', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    useApiError: () => ({
+      handleError: vi.fn((_error, fallback) => fallback || 'An error occurred'),
+    }),
+  };
+});
 
 vi.mock('./components/BurndownChart', () => ({
   BurndownChart: ({ data }: { data: unknown }) => (
@@ -110,44 +115,63 @@ const mockBurndownData = {
   actual: [30, 28, 22, 18, 15, 10],
 };
 
-const mockDailyUpdates = [
-  {
-    id: 'update-1',
-    sprintId: 'sprint-1',
-    userId: 'user-1',
-    updateDate: '2026-02-05',
-    yesterdayWork: 'Completed login feature',
-    todayWork: 'Working on logout',
-    impediment: null,
-    createdAt: '2026-02-05T09:00:00Z',
-    user: {
-      id: 'user-1',
-      firstName: 'John',
-      lastName: 'Doe',
-      email: 'john@example.com',
-      createdAt: '2026-01-01T00:00:00Z',
-      updatedAt: '2026-01-01T00:00:00Z',
+const mockDailyScrum = {
+  id: 'scrum-1',
+  sprintId: 'sprint-1',
+  scrumDate: '2026-02-05',
+  progressNotes: 'Login module is nearly complete.',
+  adaptationsNotes: 'Reassigned tests to user-2.',
+  planForNextDay: 'Finish logout and start testing.',
+  focusMode: 'goal' as const,
+  sprintGoal: 'Complete authentication feature',
+  participants: [
+    {
+      id: 'participant-1',
+      userId: 'user-1',
+      user: {
+        id: 'user-1',
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'john@example.com',
+      },
     },
-  },
-  {
-    id: 'update-2',
-    sprintId: 'sprint-1',
-    userId: 'user-2',
-    updateDate: '2026-02-05',
-    yesterdayWork: 'Code review',
-    todayWork: 'Testing',
-    impediment: 'Waiting for API response',
-    createdAt: '2026-02-05T09:15:00Z',
-    user: {
-      id: 'user-2',
-      firstName: 'Jane',
-      lastName: 'Smith',
-      email: 'jane@example.com',
-      createdAt: '2026-01-01T00:00:00Z',
-      updatedAt: '2026-01-01T00:00:00Z',
+  ],
+  backlogAdjustments: [],
+  createdAt: '2026-02-05T09:00:00Z',
+  updatedAt: '2026-02-05T09:00:00Z',
+};
+
+const mockDailyScrumParticipation = {
+  dailyScrum: mockDailyScrum,
+  participants: [
+    {
+      id: 'participant-1',
+      userId: 'user-1',
+      userName: 'John Doe',
     },
-  },
-];
+  ],
+  nonParticipants: [
+    {
+      userId: 'user-2',
+      userName: 'Jane Smith',
+    },
+  ],
+};
+
+const mockEmptyParticipation = {
+  dailyScrum: null,
+  participants: [],
+  nonParticipants: [
+    {
+      userId: 'user-1',
+      userName: 'John Doe',
+    },
+    {
+      userId: 'user-2',
+      userName: 'Jane Smith',
+    },
+  ],
+};
 
 const mockImpediments = [
   {
@@ -191,6 +215,7 @@ describe('Dashboard Component', () => {
     vi.resetAllMocks();
     (useTeamStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
       currentTeam: { id: 'team-1', name: 'Test Team' },
+      userRoleInCurrentTeam: 'DEVELOPERS',
     });
     (useAuthStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
       user: { id: 'user-1', firstName: 'John', lastName: 'Doe' },
@@ -210,6 +235,16 @@ describe('Dashboard Component', () => {
           updatedAt: new Date().toISOString(),
         },
       ],
+    });
+
+    // Default: no Daily Scrum recorded for today yet, all Developers pending.
+    (apiService.getDailyScrum as ReturnType<typeof vi.fn>).mockResolvedValue({
+      success: true,
+      data: null,
+    });
+    (apiService.getDailyScrumParticipation as ReturnType<typeof vi.fn>).mockResolvedValue({
+      success: true,
+      data: mockEmptyParticipation,
     });
   });
 
@@ -271,10 +306,6 @@ describe('Dashboard Component', () => {
         success: true,
         data: mockBurndownData,
       });
-      (apiService.getDailyUpdates as ReturnType<typeof vi.fn>).mockResolvedValue({
-        success: true,
-        data: mockDailyUpdates,
-      });
       (apiService.getImpediments as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
         data: mockImpediments,
@@ -301,10 +332,6 @@ describe('Dashboard Component', () => {
       (apiService.getBurndownData as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
         data: mockBurndownData,
-      });
-      (apiService.getDailyUpdates as ReturnType<typeof vi.fn>).mockResolvedValue({
-        success: true,
-        data: mockDailyUpdates,
       });
       (apiService.getImpediments as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
@@ -341,10 +368,6 @@ describe('Dashboard Component', () => {
       (apiService.getBurndownData as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
         data: mockBurndownData,
-      });
-      (apiService.getDailyUpdates as ReturnType<typeof vi.fn>).mockResolvedValue({
-        success: true,
-        data: mockDailyUpdates,
       });
       (apiService.getImpediments as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
@@ -394,10 +417,6 @@ describe('Dashboard Component', () => {
         success: true,
         data: mockBurndownData,
       });
-      (apiService.getDailyUpdates as ReturnType<typeof vi.fn>).mockResolvedValue({
-        success: true,
-        data: mockDailyUpdates,
-      });
       (apiService.getImpediments as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
         data: mockImpediments,
@@ -433,7 +452,6 @@ describe('Dashboard Component', () => {
 
       await waitFor(() => {
         expect(screen.getByText(i18nT('dashboard:daysRemainingLabel'))).toBeInTheDocument();
-        expect(screen.getByText(i18nT('dashboard:completedLabel'))).toBeInTheDocument();
         expect(screen.getByText(i18nT('dashboard:tasksDoneLabel'))).toBeInTheDocument();
       });
     });
@@ -480,7 +498,7 @@ describe('Dashboard Component', () => {
     });
   });
 
-  describe('My Tasks Section', () => {
+  describe('Sprint Backlog Section', () => {
     beforeEach(() => {
       (apiService.getActiveSprint as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
@@ -490,30 +508,31 @@ describe('Dashboard Component', () => {
         success: true,
         data: mockBurndownData,
       });
-      (apiService.getDailyUpdates as ReturnType<typeof vi.fn>).mockResolvedValue({
-        success: true,
-        data: mockDailyUpdates,
-      });
       (apiService.getImpediments as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
         data: mockImpediments,
       });
     });
 
-    it('should display tasks assigned to current user', async () => {
+    it('should display all Sprint Backlog tasks regardless of assignee', async () => {
       renderWithProviders(<Dashboard />);
 
       await waitFor(() => {
+        // The Sprint Backlog is owned by the Developers as a whole (Scrum Guide),
+        // so tasks assigned to teammates are shown alongside the current user's.
         expect(screen.getByText('Implement login')).toBeInTheDocument();
         expect(screen.getByText('Implement logout')).toBeInTheDocument();
+        expect(screen.getByText('Write tests')).toBeInTheDocument();
       });
     });
 
-    it('should not display tasks assigned to other users', async () => {
+    it('should mark the current users own tasks with the "You" label', async () => {
       renderWithProviders(<Dashboard />);
 
       await waitFor(() => {
-        expect(screen.queryByText('Write tests')).not.toBeInTheDocument();
+        // user-1 owns 'Implement login' and 'Implement logout'; user-2 owns 'Write tests'
+        const youLabels = screen.getAllByText(i18nT('dashboard:taskList.you'));
+        expect(youLabels.length).toBeGreaterThan(0);
       });
     });
 
@@ -529,11 +548,11 @@ describe('Dashboard Component', () => {
       });
     });
 
-    it('should display empty message when no tasks assigned', async () => {
-      // Mock auth store with different user ID (no tasks assigned)
-      (useAuthStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-        user: { id: 'user-3', firstName: 'Jane', lastName: 'Smith' },
-        isAuthenticated: true,
+    it('should display empty message when Sprint Backlog has no tasks', async () => {
+      // Mock active sprint with an empty task list
+      (apiService.getActiveSprint as ReturnType<typeof vi.fn>).mockResolvedValue({
+        success: true,
+        data: { ...mockSprint, tasks: [] },
       });
 
       renderWithProviders(<Dashboard />);
@@ -551,7 +570,7 @@ describe('Dashboard Component', () => {
   });
 
   describe('Team Updates Section', () => {
-    it('should display daily updates when available', async () => {
+    it('should display the shared Daily Scrum record summary when it exists', async () => {
       (apiService.getActiveSprint as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
         data: mockSprint,
@@ -564,21 +583,26 @@ describe('Dashboard Component', () => {
         success: true,
         data: mockImpediments,
       });
-      (apiService.getDailyUpdates as ReturnType<typeof vi.fn>).mockResolvedValue({
+      (apiService.getDailyScrum as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
-        data: mockDailyUpdates,
+        data: mockDailyScrum,
+      });
+      (apiService.getDailyScrumParticipation as ReturnType<typeof vi.fn>).mockResolvedValue({
+        success: true,
+        data: mockDailyScrumParticipation,
       });
 
       renderWithProviders(<Dashboard />);
 
       await waitFor(() => {
-        expect(screen.getByText('John Doe')).toBeInTheDocument();
-        expect(screen.getByText('Jane Smith')).toBeInTheDocument();
-        expect(screen.getByText('Completed login feature')).toBeInTheDocument();
+        // Inspect & Adapt record content
+        expect(screen.getByText('Finish logout and start testing.')).toBeInTheDocument();
+        expect(screen.getByText('Login module is nearly complete.')).toBeInTheDocument();
+        expect(screen.getByText('Reassigned tests to user-2.')).toBeInTheDocument();
       });
     });
 
-    it('should display impediment in daily update', async () => {
+    it('should display participants and non-participants for the Daily Scrum', async () => {
       (apiService.getActiveSprint as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
         data: mockSprint,
@@ -591,15 +615,22 @@ describe('Dashboard Component', () => {
         success: true,
         data: mockImpediments,
       });
-      (apiService.getDailyUpdates as ReturnType<typeof vi.fn>).mockResolvedValue({
+      (apiService.getDailyScrum as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
-        data: mockDailyUpdates,
+        data: mockDailyScrum,
+      });
+      (apiService.getDailyScrumParticipation as ReturnType<typeof vi.fn>).mockResolvedValue({
+        success: true,
+        data: mockDailyScrumParticipation,
       });
 
       renderWithProviders(<Dashboard />);
 
       await waitFor(() => {
-        expect(screen.getByText('Waiting for API response')).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('dashboard:dailyScrumSummary.notYetJoined', { count: 1 }))
+        ).toBeInTheDocument();
+        expect(screen.queryByText('Jane Smith')).not.toBeInTheDocument();
       });
     });
 
@@ -616,7 +647,7 @@ describe('Dashboard Component', () => {
         success: true,
         data: mockImpediments,
       });
-      (apiService.getDailyUpdates as ReturnType<typeof vi.fn>).mockImplementation(
+      (apiService.getDailyScrumParticipation as ReturnType<typeof vi.fn>).mockImplementation(
         () => new Promise(() => {})
       );
 
@@ -630,7 +661,7 @@ describe('Dashboard Component', () => {
       });
     });
 
-    it('should display error state when daily updates fetch fails', async () => {
+    it('should display error state when the Daily Scrum fetch fails', async () => {
       (apiService.getActiveSprint as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
         data: mockSprint,
@@ -643,7 +674,7 @@ describe('Dashboard Component', () => {
         success: true,
         data: mockImpediments,
       });
-      (apiService.getDailyUpdates as ReturnType<typeof vi.fn>).mockRejectedValue(
+      (apiService.getDailyScrum as ReturnType<typeof vi.fn>).mockRejectedValue(
         new Error('Failed to load')
       );
 
@@ -659,7 +690,7 @@ describe('Dashboard Component', () => {
       );
     });
 
-    it('should display empty state when no daily updates exist', async () => {
+    it('should display empty state when no Daily Scrum exists for today', async () => {
       (apiService.getActiveSprint as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
         data: mockSprint,
@@ -672,19 +703,17 @@ describe('Dashboard Component', () => {
         success: true,
         data: mockImpediments,
       });
-      (apiService.getDailyUpdates as ReturnType<typeof vi.fn>).mockResolvedValue({
-        success: true,
-        data: [],
-      });
 
       renderWithProviders(<Dashboard />);
 
       await waitFor(() => {
-        expect(screen.getByText(i18nT('dashboard:noDailyUpdates'))).toBeInTheDocument();
+        expect(
+          screen.getByText(i18nT('dashboard:dailyScrumSummary.notStarted'))
+        ).toBeInTheDocument();
       });
     });
 
-    it('should show submit button when no updates exist', async () => {
+    it('should not render a card-level Start button (handled by Quick Actions)', async () => {
       (apiService.getActiveSprint as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
         data: mockSprint,
@@ -697,18 +726,17 @@ describe('Dashboard Component', () => {
         success: true,
         data: mockImpediments,
       });
-      (apiService.getDailyUpdates as ReturnType<typeof vi.fn>).mockResolvedValue({
-        success: true,
-        data: [],
-      });
 
       renderWithProviders(<Dashboard />);
 
       await waitFor(() => {
-        const submitButton = screen.getByLabelText(i18nT('dashboard:submitDailyScrumUpdate'));
-        expect(submitButton).toBeInTheDocument();
-        expect(submitButton).toHaveAttribute('href', '/daily-scrum');
+        expect(
+          screen.getByText(i18nT('dashboard:dailyScrumSummary.notStarted'))
+        ).toBeInTheDocument();
       });
+      expect(
+        screen.queryByLabelText(i18nT('dashboard:dailyScrumSummary.startAriaLabel'))
+      ).not.toBeInTheDocument();
     });
   });
 
@@ -721,10 +749,6 @@ describe('Dashboard Component', () => {
       (apiService.getBurndownData as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
         data: mockBurndownData,
-      });
-      (apiService.getDailyUpdates as ReturnType<typeof vi.fn>).mockResolvedValue({
-        success: true,
-        data: mockDailyUpdates,
       });
       (apiService.getImpediments as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
@@ -748,10 +772,6 @@ describe('Dashboard Component', () => {
         success: true,
         data: mockBurndownData,
       });
-      (apiService.getDailyUpdates as ReturnType<typeof vi.fn>).mockResolvedValue({
-        success: true,
-        data: mockDailyUpdates,
-      });
       (apiService.getImpediments as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
         data: mockImpediments,
@@ -772,10 +792,6 @@ describe('Dashboard Component', () => {
       (apiService.getBurndownData as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
         data: mockBurndownData,
-      });
-      (apiService.getDailyUpdates as ReturnType<typeof vi.fn>).mockResolvedValue({
-        success: true,
-        data: mockDailyUpdates,
       });
       (apiService.getImpediments as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
@@ -804,10 +820,6 @@ describe('Dashboard Component', () => {
         success: true,
         data: mockBurndownData,
       });
-      (apiService.getDailyUpdates as ReturnType<typeof vi.fn>).mockResolvedValue({
-        success: true,
-        data: mockDailyUpdates,
-      });
       (apiService.getImpediments as ReturnType<typeof vi.fn>).mockImplementation(
         () => new Promise(() => {})
       );
@@ -830,10 +842,6 @@ describe('Dashboard Component', () => {
       (apiService.getBurndownData as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
         data: mockBurndownData,
-      });
-      (apiService.getDailyUpdates as ReturnType<typeof vi.fn>).mockResolvedValue({
-        success: true,
-        data: mockDailyUpdates,
       });
       (apiService.getImpediments as ReturnType<typeof vi.fn>).mockRejectedValue(
         new Error('Failed to load')
@@ -862,10 +870,6 @@ describe('Dashboard Component', () => {
         success: true,
         data: mockBurndownData,
       });
-      (apiService.getDailyUpdates as ReturnType<typeof vi.fn>).mockResolvedValue({
-        success: true,
-        data: mockDailyUpdates,
-      });
       (apiService.getImpediments as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
         data: [],
@@ -887,10 +891,6 @@ describe('Dashboard Component', () => {
         success: true,
         data: mockBurndownData,
       });
-      (apiService.getDailyUpdates as ReturnType<typeof vi.fn>).mockResolvedValue({
-        success: true,
-        data: mockDailyUpdates,
-      });
       (apiService.getImpediments as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
         data: [mockImpediments[2]],
@@ -909,10 +909,6 @@ describe('Dashboard Component', () => {
       (apiService.getActiveSprint as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
         data: mockSprint,
-      });
-      (apiService.getDailyUpdates as ReturnType<typeof vi.fn>).mockResolvedValue({
-        success: true,
-        data: mockDailyUpdates,
       });
       (apiService.getImpediments as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
@@ -935,10 +931,6 @@ describe('Dashboard Component', () => {
       (apiService.getActiveSprint as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
         data: mockSprint,
-      });
-      (apiService.getDailyUpdates as ReturnType<typeof vi.fn>).mockResolvedValue({
-        success: true,
-        data: mockDailyUpdates,
       });
       (apiService.getImpediments as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
@@ -971,10 +963,6 @@ describe('Dashboard Component', () => {
         success: true,
         data: mockBurndownData,
       });
-      (apiService.getDailyUpdates as ReturnType<typeof vi.fn>).mockResolvedValue({
-        success: true,
-        data: mockDailyUpdates,
-      });
       (apiService.getImpediments as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
         data: mockImpediments,
@@ -983,7 +971,7 @@ describe('Dashboard Component', () => {
       renderWithProviders(<Dashboard />);
 
       await waitFor(() => {
-        expect(screen.getByText(i18nT('dashboard:submitDailyScrum'))).toBeInTheDocument();
+        expect(screen.getByText(i18nT('dashboard:updateDailyScrum'))).toBeInTheDocument();
         expect(screen.getByText(i18nT('dashboard:createBacklogItem'))).toBeInTheDocument();
         expect(screen.getByText(i18nT('dashboard:reportImpediment'))).toBeInTheDocument();
       });
@@ -998,10 +986,6 @@ describe('Dashboard Component', () => {
         success: true,
         data: mockBurndownData,
       });
-      (apiService.getDailyUpdates as ReturnType<typeof vi.fn>).mockResolvedValue({
-        success: true,
-        data: mockDailyUpdates,
-      });
       (apiService.getImpediments as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
         data: mockImpediments,
@@ -1010,7 +994,7 @@ describe('Dashboard Component', () => {
       renderWithProviders(<Dashboard />);
 
       await waitFor(() => {
-        const dailyScrumLink = screen.getByLabelText(i18nT('dashboard:submitDailyScrumUpdate'));
+        const dailyScrumLink = screen.getByLabelText(i18nT('dashboard:updateDailyScrum'));
         expect(dailyScrumLink).toHaveAttribute('href', '/daily-scrum');
 
         const backlogLink = screen.getByLabelText(i18nT('dashboard:createNewBacklogItem'));
@@ -1031,10 +1015,6 @@ describe('Dashboard Component', () => {
       (apiService.getBurndownData as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
         data: mockBurndownData,
-      });
-      (apiService.getDailyUpdates as ReturnType<typeof vi.fn>).mockResolvedValue({
-        success: true,
-        data: mockDailyUpdates,
       });
       (apiService.getImpediments as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
@@ -1058,10 +1038,6 @@ describe('Dashboard Component', () => {
         success: true,
         data: mockBurndownData,
       });
-      (apiService.getDailyUpdates as ReturnType<typeof vi.fn>).mockResolvedValue({
-        success: true,
-        data: mockDailyUpdates,
-      });
       (apiService.getImpediments as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
         data: mockImpediments,
@@ -1083,10 +1059,6 @@ describe('Dashboard Component', () => {
       (apiService.getBurndownData as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
         data: mockBurndownData,
-      });
-      (apiService.getDailyUpdates as ReturnType<typeof vi.fn>).mockResolvedValue({
-        success: true,
-        data: mockDailyUpdates,
       });
       (apiService.getImpediments as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
@@ -1110,10 +1082,6 @@ describe('Dashboard Component', () => {
         success: true,
         data: mockBurndownData,
       });
-      (apiService.getDailyUpdates as ReturnType<typeof vi.fn>).mockResolvedValue({
-        success: true,
-        data: mockDailyUpdates,
-      });
       (apiService.getImpediments as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
         data: mockImpediments,
@@ -1136,10 +1104,6 @@ describe('Dashboard Component', () => {
         success: true,
         data: mockBurndownData,
       });
-      (apiService.getDailyUpdates as ReturnType<typeof vi.fn>).mockResolvedValue({
-        success: true,
-        data: mockDailyUpdates,
-      });
       (apiService.getImpediments as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
         data: mockImpediments,
@@ -1150,7 +1114,7 @@ describe('Dashboard Component', () => {
       await waitFor(() => {
         // Check specific navigation links have proper labels
         expect(screen.getByLabelText(i18nT('dashboard:viewSprintBoard'))).toBeInTheDocument();
-        expect(screen.getByLabelText(i18nT('dashboard:viewAllMyTasks'))).toBeInTheDocument();
+        expect(screen.getByLabelText(i18nT('dashboard:viewAllDeveloperTasks'))).toBeInTheDocument();
         expect(screen.getByLabelText(i18nT('dashboard:viewAllTeamUpdates'))).toBeInTheDocument();
         expect(
           screen.getByLabelText(i18nT('dashboard:viewAllOpenImpediments'))
@@ -1168,10 +1132,6 @@ describe('Dashboard Component', () => {
       (apiService.getBurndownData as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
         data: mockBurndownData,
-      });
-      (apiService.getDailyUpdates as ReturnType<typeof vi.fn>).mockResolvedValue({
-        success: true,
-        data: mockDailyUpdates,
       });
       (apiService.getImpediments as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
@@ -1193,10 +1153,6 @@ describe('Dashboard Component', () => {
       (apiService.getBurndownData as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
         data: mockBurndownData,
-      });
-      (apiService.getDailyUpdates as ReturnType<typeof vi.fn>).mockResolvedValue({
-        success: true,
-        data: mockDailyUpdates,
       });
       (apiService.getImpediments as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,

@@ -308,32 +308,28 @@ export function generateTaskData(sprintId, pbiId, vu, iteration) {
   };
 }
 
-export function generateDailyUpdateData(sprintId, vu) {
-  const tasks = [
-    'Completed code review for feature X',
-    'Fixed bug in authentication module',
-    'Implemented unit tests for service layer',
-    'Updated documentation for API endpoints',
-    'Refactored database queries for performance',
-    'Added validation to form inputs',
-    'Integrated third-party API',
-    'Resolved merge conflicts in PR',
+export function generateDailyScrumData(sprintId, vu) {
+  const progressNotes = [
+    'Team is on track toward the Sprint Goal; most items are in review.',
+    'Progressing steadily; two backlog items were completed this morning.',
+    'Slightly behind on the goal due to a blocking dependency; unblocking now.',
+    'Working through the Sprint Backlog item by item; goal is achievable.',
   ];
 
-  const impediments = [
-    null,
-    null,
-    null,
-    'Waiting for API credentials from DevOps',
-    'Need clarification on requirements from PO',
-    'Blocked by dependency on Team Alpha',
+  const plans = [
+    'Complete the remaining review items and update the Sprint Backlog.',
+    'Pair on the blocked integration and plan the next Sprint Backlog item.',
+    'Finish the current task and hold a short refinement for tomorrow.',
+    'Resolve the dependency and continue with the next priority item.',
   ];
+
+  const focusModes = ['goal', 'impediment', 'sprint_backlog_walk', 'pair_up_plan'];
 
   return {
     sprintId,
-    yesterdayWork: randomItem(tasks),
-    todayWork: randomItem(tasks),
-    impediment: randomItem(impediments),
+    progressNotes: randomItem(progressNotes),
+    planForNextDay: randomItem(plans),
+    focusMode: randomItem(focusModes),
   };
 }
 

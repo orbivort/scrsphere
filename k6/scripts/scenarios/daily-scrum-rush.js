@@ -7,7 +7,7 @@ import {
   logout,
   randomFloat,
   generateTeamUserId,
-  generateDailyUpdateData,
+  generateDailyScrumData,
   getAuthHeaders,
   getUserTeams,
   getActiveSprint,
@@ -17,7 +17,7 @@ import { recordResponseTime, recordError, recordOperation } from '../lib/metrics
 const errorRate = new Rate('errors');
 const responseTime = new Trend('response_time');
 const requestCount = new Counter('requests');
-const dailyUpdatesCreated = new Counter('daily_updates_created');
+const dailyScrumsCreated = new Counter('daily_scrums_created');
 
 export const options = {
   scenarios: {
@@ -74,43 +74,58 @@ export default function dailyScrumRush() {
   }
   const sprintId = sprint.id;
 
-  const updateData = generateDailyUpdateData(sprintId, __VU);
+  const scrumData = generateDailyScrumData(sprintId, __VU);
 
-  const updateRes = http.post(
-    `${config.baseUrl}/api/v1/daily-updates`,
-    JSON.stringify(updateData),
-    { headers, jar, tags: { operation: 'createDailyUpdate' } }
+  const createRes = http.post(
+    `${config.baseUrl}/api/v1/daily-scrums/${sprintId}`,
+    JSON.stringify(scrumData),
+    { headers, jar, tags: { operation: 'createDailyScrum' } }
   );
 
-  check(updateRes, {
-    'daily update submitted': (r) => r.status === 201 || r.status === 200,
+  check(createRes, {
+    'daily scrum created': (r) => r.status === 201 || r.status === 200,
     'response time acceptable': (r) => r.timings.duration < 300,
   });
 
-  recordResponseTime('dailyUpdate', updateRes.timings.duration);
-  responseTime.add(updateRes.timings.duration);
+  recordResponseTime('dailyScrum', createRes.timings.duration);
+  responseTime.add(createRes.timings.duration);
   requestCount.add(1);
 
-  if (updateRes.status === 201 || updateRes.status === 200) {
-    dailyUpdatesCreated.add(1);
-    recordOperation('dailyUpdate');
+  let scrumId = null;
+  if (createRes.status === 201 || createRes.status === 200) {
+    dailyScrumsCreated.add(1);
+    recordOperation('dailyScrum');
+    const body = createRes.json();
+    scrumId = body?.data?.id || null;
   }
 
-  recordError('api', updateRes.status >= 400);
+  recordError('api', createRes.status >= 400);
 
   sleep(randomFloat(1, 3));
 
-  const listRes = http.get(`${config.baseUrl}/api/v1/daily-updates?sprintId=${sprintId}`, {
+  const listRes = http.get(`${config.baseUrl}/api/v1/daily-scrums/${sprintId}`, {
     headers,
     jar,
-    tags: { operation: 'listDailyUpdates' },
+    tags: { operation: 'listDailyScrums' },
   });
 
   check(listRes, {
-    'daily updates listed': (r) => r.status === 200,
+    'daily scrums listed': (r) => r.status === 200,
   });
 
   requestCount.add(1);
+
+  if (scrumId) {
+    const participateRes = http.post(
+      `${config.baseUrl}/api/v1/daily-scrums/record/${scrumId}/participate`,
+      null,
+      { headers, jar, tags: { operation: 'participateDailyScrum' } }
+    );
+    check(participateRes, {
+      'participation recorded': (r) => r.status === 201 || r.status === 200,
+    });
+    requestCount.add(1);
+  }
 
   sleep(randomFloat(2, 5));
 
@@ -129,7 +144,7 @@ Daily Scrum Rush Test Summary
 ========================================
 Total Requests: ${data.metrics.http_reqs?.values?.count || 0}
 Request Rate: ${(data.metrics.http_reqs?.values?.rate || 0).toFixed(2)} req/s
-Daily Updates Created: ${data.metrics.daily_updates_created?.values?.count || 0}
+Daily Scrums Created: ${data.metrics.daily_scrums_created?.values?.count || 0}
 
 Response Times:
   - P50: ${(data.metrics.http_req_duration?.values?.['p(50)'] || 0).toFixed(2)}ms

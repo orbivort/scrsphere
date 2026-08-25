@@ -14,7 +14,7 @@ import sprintRoutes from './routes/sprint.routes';
 import goalsRoutes from './routes/goals.routes';
 import workflowRoutes from './routes/workflow.routes';
 import sprintConfigurationRoutes from './routes/sprintConfiguration.routes';
-import dailyUpdateRoutes from './routes/dailyUpdate.routes';
+import dailyScrumRoutes from './routes/dailyScrum.routes';
 import incrementRoutes from './routes/increment.routes';
 import sprintReviewRoutes from './routes/sprintReview.routes';
 import retrospectiveRoutes from './routes/retrospective.routes';
@@ -26,6 +26,7 @@ import notificationRoutes from './routes/notification.routes';
 import configRoutes from './routes/config.routes';
 import dataExportRoutes from './routes/dataExport.routes';
 import consentRoutes from './routes/consent.routes';
+import timeboxRoutes from './routes/timebox.routes';
 import { requestLogger } from './middleware/requestLogger.middleware';
 import { requestId } from './middleware/requestId.middleware';
 import { localeResolver } from './middleware/locale.middleware.js';
@@ -182,8 +183,8 @@ v1Router.use('/sprint-backlog', sprintRoutes);
 // Sprint Configuration routes
 v1Router.use('/sprint-configuration', sprintConfigurationRoutes);
 
-// Daily Updates routes
-v1Router.use('/daily-updates', dailyUpdateRoutes);
+// Daily Scrum routes
+v1Router.use('/daily-scrums', dailyScrumRoutes);
 
 // Increment routes
 v1Router.use('/increments', incrementRoutes);
@@ -207,6 +208,9 @@ v1Router.use('/user', dataExportRoutes);
 
 // Consent routes (GDPR Article 7 - Consent Management)
 v1Router.use('/consent', consentRoutes);
+
+// Scrum event timebox routes
+v1Router.use('/timeboxes', timeboxRoutes);
 
 // Mount versioned API routers
 app.use('/api/v1', v1Router);

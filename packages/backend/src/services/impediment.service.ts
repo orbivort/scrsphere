@@ -20,9 +20,9 @@ interface UpdateImpedimentInput {
 }
 
 class ImpedimentService {
-  async getImpedimentsByTeam(teamId: string) {
+  async getImpedimentsByTeam(teamId: string, sprintId?: string) {
     return await prisma.impediment.findMany({
-      where: { teamId },
+      where: { teamId, ...(sprintId ? { sprintId } : {}) },
       include: {
         reportedBy: {
           select: {
@@ -44,17 +44,6 @@ class ImpedimentService {
           select: {
             id: true,
             name: true,
-          },
-        },
-        dailyUpdate: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-              },
-            },
           },
         },
       },
@@ -88,17 +77,6 @@ class ImpedimentService {
           select: {
             id: true,
             name: true,
-          },
-        },
-        dailyUpdate: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-              },
-            },
           },
         },
       },
@@ -140,17 +118,6 @@ class ImpedimentService {
             name: true,
           },
         },
-        dailyUpdate: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-              },
-            },
-          },
-        },
       },
     });
 
@@ -167,8 +134,9 @@ class ImpedimentService {
           titleParams: {
             impedimentTitle: impediment.title,
           },
+          messageKey: 'impedimentAssignedMessage',
           messageParams: {
-            impedimentTitle: impediment.title,
+            reporterName: `${reporter.firstName} ${reporter.lastName}`,
           },
           data: {
             impedimentId: impediment.id,
@@ -226,17 +194,6 @@ class ImpedimentService {
           select: {
             id: true,
             name: true,
-          },
-        },
-        dailyUpdate: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-              },
-            },
           },
         },
       },

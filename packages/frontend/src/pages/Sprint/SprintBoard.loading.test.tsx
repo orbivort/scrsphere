@@ -88,11 +88,9 @@ vi.mock('./components/modals', () => ({
   TaskCreateModal: () => <div data-testid="task-create-modal" />,
   DeleteConfirmModal: () => <div data-testid="delete-confirm-modal" />,
   CompleteSprintModal: () => <div data-testid="complete-sprint-modal" />,
+  CancelSprintModal: () => <div data-testid="cancel-sprint-modal" />,
   KeyboardHelpModal: () => <div data-testid="keyboard-help-modal" />,
-}));
-
-vi.mock('./components/DoDVerificationModal', () => ({
-  DoDVerificationModal: () => <div data-testid="dod-verification-modal" />,
+  PbiPreviewModal: () => <div data-testid="pbi-preview-modal" />,
 }));
 
 vi.mock('./SprintBacklogManager', () => ({

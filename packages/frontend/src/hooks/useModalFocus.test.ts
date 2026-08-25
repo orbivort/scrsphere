@@ -201,6 +201,60 @@ describe('useModalFocus', () => {
     expect(document.activeElement?.id).toBe('first');
   });
 
+  it('should not trap focus on Tab when not on last element', () => {
+    function TestComponent({ isOpen }: { isOpen: boolean }) {
+      const { modalRef } = useModalFocus({ isOpen, onClose });
+      return React.createElement(
+        'div',
+        { ref: modalRef },
+        React.createElement('button', { id: 'first' }, 'First'),
+        React.createElement('button', { id: 'last' }, 'Last')
+      );
+    }
+
+    render(React.createElement(TestComponent, { isOpen: true }));
+
+    const firstButton = document.querySelector('#first') as HTMLElement;
+    firstButton.focus();
+
+    const tabEvent = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true });
+    const preventDefaultSpy = vi.spyOn(tabEvent, 'preventDefault');
+
+    document.dispatchEvent(tabEvent);
+
+    expect(preventDefaultSpy).not.toHaveBeenCalled();
+    expect(document.activeElement?.id).toBe('first');
+  });
+
+  it('should not trap focus on Shift+Tab when not on first element', () => {
+    function TestComponent({ isOpen }: { isOpen: boolean }) {
+      const { modalRef } = useModalFocus({ isOpen, onClose });
+      return React.createElement(
+        'div',
+        { ref: modalRef },
+        React.createElement('button', { id: 'first' }, 'First'),
+        React.createElement('button', { id: 'last' }, 'Last')
+      );
+    }
+
+    render(React.createElement(TestComponent, { isOpen: true }));
+
+    const lastButton = document.querySelector('#last') as HTMLElement;
+    lastButton.focus();
+
+    const shiftTabEvent = new KeyboardEvent('keydown', {
+      key: 'Tab',
+      shiftKey: true,
+      bubbles: true,
+    });
+    const preventDefaultSpy = vi.spyOn(shiftTabEvent, 'preventDefault');
+
+    document.dispatchEvent(shiftTabEvent);
+
+    expect(preventDefaultSpy).not.toHaveBeenCalled();
+    expect(document.activeElement?.id).toBe('last');
+  });
+
   it('should wrap focus to last element on Shift+Tab when on first element', () => {
     function TestComponent({ isOpen }: { isOpen: boolean }) {
       const { modalRef } = useModalFocus({ isOpen, onClose });

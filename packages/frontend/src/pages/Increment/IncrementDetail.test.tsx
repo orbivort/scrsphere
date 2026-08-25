@@ -7,7 +7,6 @@
  * - Increment detail display
  * - Delivery modal functionality
  * - Navigation (back button)
- * - Workflow mode (from sprint completion)
  * - DoD verification display
  * - PBI list display
  * - Timeline display
@@ -40,7 +39,6 @@ vi.mock('../../hooks/useModalFocus', () => ({
 
 const mockNavigate = vi.fn();
 const mockUseParams = vi.fn();
-const mockUseSearchParams = vi.fn();
 
 vi.mock('react-router', async () => {
   const actual = await vi.importActual('react-router');
@@ -48,7 +46,6 @@ vi.mock('react-router', async () => {
     ...actual,
     useNavigate: () => mockNavigate,
     useParams: () => mockUseParams(),
-    useSearchParams: () => mockUseSearchParams(),
   };
 });
 
@@ -135,7 +132,6 @@ describe('IncrementDetail', () => {
     vi.clearAllMocks();
     (useToast as vi.Mock).mockReturnValue(mockToast);
     mockUseParams.mockReturnValue({ id: 'inc-1' });
-    mockUseSearchParams.mockReturnValue([new URLSearchParams(), vi.fn()]);
   });
 
   const renderComponent = (initialEntries = ['/increment/inc-1']) => {
@@ -651,84 +647,6 @@ describe('IncrementDetail', () => {
         expect(mockToast.error).toHaveBeenCalledWith(
           i18nT('increments:detail.toast.deliverFailed')
         );
-      });
-    });
-  });
-
-  describe('Workflow Mode', () => {
-    it('should show workflow indicator when fromSprintComplete', async () => {
-      mockUseSearchParams.mockReturnValue([
-        new URLSearchParams('fromSprintComplete=true&sprintId=sprint-1'),
-        vi.fn(),
-      ]);
-
-      (apiService.getIncrement as vi.Mock).mockResolvedValue({
-        data: mockIncrement,
-      });
-      (apiService.getEligiblePBIsForIncrement as vi.Mock).mockResolvedValue({
-        data: mockEligiblePBIs,
-      });
-
-      renderComponent(['/increment/inc-1?fromSprintComplete=true&sprintId=sprint-1']);
-
-      await waitFor(() => {
-        expect(
-          screen.getByText(i18nT('increments:detail.sprintCompletionWorkflow'))
-        ).toBeInTheDocument();
-      });
-
-      expect(screen.getByText(i18nT('increments:detail.workflowStep3Of4'))).toBeInTheDocument();
-    });
-
-    it('should show workflow progress steps', async () => {
-      mockUseSearchParams.mockReturnValue([
-        new URLSearchParams('fromSprintComplete=true&sprintId=sprint-1'),
-        vi.fn(),
-      ]);
-
-      (apiService.getIncrement as vi.Mock).mockResolvedValue({
-        data: mockIncrement,
-      });
-      (apiService.getEligiblePBIsForIncrement as vi.Mock).mockResolvedValue({
-        data: mockEligiblePBIs,
-      });
-
-      renderComponent(['/increment/inc-1?fromSprintComplete=true&sprintId=sprint-1']);
-
-      await waitFor(() => {
-        expect(
-          screen.getByText(i18nT('increments:detail.workflowSteps.sprintCompleted'))
-        ).toBeInTheDocument();
-      });
-
-      // Check workflow steps are displayed
-      const workflowIndicator = document.querySelector('[class*="workflow-indicator"]');
-      expect(workflowIndicator?.textContent).toContain(
-        i18nT('increments:detail.sprintCompletionWorkflow')
-      );
-      expect(workflowIndicator?.textContent).toContain('Step 3 of 4');
-      expect(workflowIndicator?.textContent).toContain(
-        i18nT('increments:detail.workflowSteps.deliverIncrement')
-      );
-    });
-
-    it('should show Skip to Sprint Review back button in workflow mode', async () => {
-      mockUseSearchParams.mockReturnValue([
-        new URLSearchParams('fromSprintComplete=true&sprintId=sprint-1'),
-        vi.fn(),
-      ]);
-
-      (apiService.getIncrement as vi.Mock).mockResolvedValue({
-        data: mockIncrement,
-      });
-      (apiService.getEligiblePBIsForIncrement as vi.Mock).mockResolvedValue({
-        data: mockEligiblePBIs,
-      });
-
-      renderComponent(['/increment/inc-1?fromSprintComplete=true&sprintId=sprint-1']);
-
-      await waitFor(() => {
-        expect(screen.getByText(i18nT('increments:skipToSprintReview'))).toBeInTheDocument();
       });
     });
   });

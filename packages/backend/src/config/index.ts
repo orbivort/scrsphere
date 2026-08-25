@@ -225,6 +225,13 @@ export const config = {
     isRestricted: buildAllowedEmailDomains().length > 0,
   },
 
+  // Team Configuration (Scrum Guide compliance)
+  team: {
+    // Maximum number of members allowed per Scrum Team (Scrum Guide: "typically 10 or fewer").
+    // Configurable so self-hosted deployments can adjust the limit.
+    maxSize: parseInt(process.env.TEAM_MAX_SIZE ?? '10', 10),
+  },
+
   // Database Transaction Configuration
   database: {
     transaction: {
@@ -440,6 +447,11 @@ export const validateConfig = (): void => {
 
   if (config.notification.maxPageSize < 10 || config.notification.maxPageSize > 100) {
     throw new Error('NOTIFICATION_MAX_PAGE_SIZE must be between 10 and 100');
+  }
+
+  // Validate team configuration
+  if (config.team.maxSize < 1) {
+    throw new Error('TEAM_MAX_SIZE must be a positive integer');
   }
 
   // Validate event loop monitoring configuration

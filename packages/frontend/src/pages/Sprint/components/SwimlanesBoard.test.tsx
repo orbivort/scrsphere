@@ -37,7 +37,7 @@ const createMockTeamMember = (
   id: 'tm-1',
   teamId: 'team-1',
   userId: 'user-1',
-  role: 'developer' as const,
+  role: 'developers' as const,
   joinedAt: '2026-01-01T00:00:00Z',
   user: {
     id: 'user-1',
@@ -72,6 +72,7 @@ const defaultProps: SwimlanesBoardProps = {
   tasksByStatus: {
     todo: [],
     in_progress: [],
+    review: [],
     done: [],
   },
   draggedTaskId: null,
@@ -86,6 +87,7 @@ const defaultProps: SwimlanesBoardProps = {
   onKeyDown: vi.fn(),
   onFocus: vi.fn(),
   onBlur: vi.fn(),
+  canMutate: true,
 };
 
 describe('SwimlanesBoard', () => {
@@ -180,6 +182,7 @@ describe('SwimlanesBoard', () => {
 
       expect(screen.getAllByText('TO DO').length).toBeGreaterThan(0);
       expect(screen.getAllByText('IN PROGRESS').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('REVIEW').length).toBeGreaterThan(0);
       expect(screen.getAllByText('DONE').length).toBeGreaterThan(0);
     });
 
@@ -222,7 +225,7 @@ describe('SwimlanesBoard', () => {
         />
       );
 
-      expect(screen.getAllByText('developer').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('developers').length).toBeGreaterThan(0);
     });
 
     it('should render task cards in correct columns', () => {
@@ -250,6 +253,7 @@ describe('SwimlanesBoard', () => {
         tasksByStatus: {
           todo: [createMockTask({ id: 'task-1' }), createMockTask({ id: 'task-4' })],
           in_progress: [createMockTask({ id: 'task-2' })],
+          review: [],
           done: [createMockTask({ id: 'task-3' })],
         },
       };
@@ -257,6 +261,7 @@ describe('SwimlanesBoard', () => {
 
       expect(screen.getAllByText('TO DO').length).toBeGreaterThan(0);
       expect(screen.getAllByText('IN PROGRESS').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('REVIEW').length).toBeGreaterThan(0);
       expect(screen.getAllByText('DONE').length).toBeGreaterThan(0);
     });
   });
@@ -320,6 +325,130 @@ describe('SwimlanesBoard', () => {
 
       const pbiLabels = screen.getAllByText(/PBI/);
       expect(pbiLabels[0]).toHaveTextContent('PBI 1');
+    });
+
+    it('should render a "mark done" shortcut for PBIs in readyToDonePbiIds', () => {
+      renderWithProviders(
+        <SwimlanesBoard
+          {...defaultProps}
+          swimlaneGroup="pbi"
+          groupedBySwimlane={mockGroupedByPBI}
+          sprintItems={mockSprintItems}
+          readyToDonePbiIds={['pbi-1']}
+        />
+      );
+
+      // Only PBI 1 (all tasks done) shows the shortcut; PBI 2 does not.
+      expect(screen.getAllByRole('button', { name: /All tasks done/ })).toHaveLength(1);
+      expect(screen.getByRole('button', { name: /PBI 1/ })).toBeInTheDocument();
+    });
+
+    it('should call onOpenPbiPreview when the mark-done shortcut is clicked', async () => {
+      const onOpenPbiPreview = vi.fn();
+      const user = userEvent.setup();
+      renderWithProviders(
+        <SwimlanesBoard
+          {...defaultProps}
+          swimlaneGroup="pbi"
+          groupedBySwimlane={mockGroupedByPBI}
+          sprintItems={mockSprintItems}
+          readyToDonePbiIds={['pbi-1']}
+          onOpenPbiPreview={onOpenPbiPreview}
+        />
+      );
+
+      await user.click(screen.getByRole('button', { name: /All tasks done/ }));
+
+      expect(onOpenPbiPreview).toHaveBeenCalledWith('pbi-1');
+    });
+
+    it('should open the PBI preview when the swimlane header is clicked', async () => {
+      const onOpenPbiPreview = vi.fn();
+      const user = userEvent.setup();
+      renderWithProviders(
+        <SwimlanesBoard
+          {...defaultProps}
+          swimlaneGroup="pbi"
+          groupedBySwimlane={mockGroupedByPBI}
+          sprintItems={mockSprintItems}
+          onOpenPbiPreview={onOpenPbiPreview}
+        />
+      );
+
+      await user.click(screen.getByRole('button', { name: /Open the PBI preview for PBI 1/i }));
+
+      expect(onOpenPbiPreview).toHaveBeenCalledWith('pbi-1');
+    });
+
+    it('should open the PBI preview from the header when the Enter key is pressed', async () => {
+      const onOpenPbiPreview = vi.fn();
+      const user = userEvent.setup();
+      renderWithProviders(
+        <SwimlanesBoard
+          {...defaultProps}
+          swimlaneGroup="pbi"
+          groupedBySwimlane={mockGroupedByPBI}
+          sprintItems={mockSprintItems}
+          onOpenPbiPreview={onOpenPbiPreview}
+        />
+      );
+
+      const header = screen.getByRole('button', { name: /Open the PBI preview for PBI 1/i });
+      header.focus();
+      await user.keyboard('{Enter}');
+
+      expect(onOpenPbiPreview).toHaveBeenCalledWith('pbi-1');
+    });
+
+    it('should not make the swimlane header clickable when grouping is not by PBI', () => {
+      const assigneeGroup: Record<string, Task[]> = {
+        'user-1': [createMockTask({ id: 'task-1' })],
+      };
+
+      renderWithProviders(
+        <SwimlanesBoard
+          {...defaultProps}
+          swimlaneGroup="assignee"
+          groupedBySwimlane={assigneeGroup}
+          teamMembers={[createMockTeamMember({ id: 'tm-1', userId: 'user-1' })]}
+          onOpenPbiPreview={vi.fn()}
+        />
+      );
+
+      expect(
+        screen.queryByRole('button', { name: /Open the PBI preview/i })
+      ).not.toBeInTheDocument();
+    });
+
+    it('should not render a "mark done" shortcut when readyToDonePbiIds is empty', () => {
+      renderWithProviders(
+        <SwimlanesBoard
+          {...defaultProps}
+          swimlaneGroup="pbi"
+          groupedBySwimlane={mockGroupedByPBI}
+          sprintItems={mockSprintItems}
+          readyToDonePbiIds={[]}
+        />
+      );
+
+      expect(screen.queryByRole('button', { name: /All tasks done/ })).not.toBeInTheDocument();
+    });
+
+    it('should not render a "mark done" shortcut when grouping is not by PBI', () => {
+      const assigneeGroup: Record<string, Task[]> = {
+        'user-1': [createMockTask({ id: 'task-1' })],
+      };
+
+      renderWithProviders(
+        <SwimlanesBoard
+          {...defaultProps}
+          swimlaneGroup="assignee"
+          groupedBySwimlane={assigneeGroup}
+          readyToDonePbiIds={['pbi-1']}
+        />
+      );
+
+      expect(screen.queryByRole('button', { name: /All tasks done/ })).not.toBeInTheDocument();
     });
   });
 
@@ -634,7 +763,8 @@ describe('SwimlanesBoard', () => {
       );
 
       const columnHeaders = screen.getAllByRole('columnheader');
-      expect(columnHeaders.length).toBe(4);
+      // Label column + TODO + IN_PROGRESS + REVIEW + DONE.
+      expect(columnHeaders.length).toBe(5);
     });
 
     it('should set aria-dropeffect based on keyboard grab state', () => {
@@ -696,7 +826,8 @@ describe('SwimlanesBoard', () => {
       );
 
       const columnHeaders = screen.getAllByRole('columnheader');
-      expect(columnHeaders.length).toBe(4);
+      // Label column + TODO + IN_PROGRESS + REVIEW + DONE.
+      expect(columnHeaders.length).toBe(5);
     });
 
     it('should have aria-labels on cells', () => {
@@ -759,7 +890,7 @@ describe('SwimlanesBoard', () => {
           id: 'tm-1',
           teamId: 'team-1',
           userId: 'user-1',
-          role: 'developer' as const,
+          role: 'developers' as const,
           joinedAt: '2026-01-01T00:00:00Z',
         },
       ];
@@ -837,7 +968,7 @@ describe('SwimlanesBoard', () => {
         createMockTeamMember({
           id: 'tm-1',
           userId: 'user-1',
-          role: 'developer' as const,
+          role: 'developers' as const,
           user: {
             id: 'user-1',
             email: 'john@example.com',
@@ -858,7 +989,7 @@ describe('SwimlanesBoard', () => {
         />
       );
 
-      expect(screen.getByText('developer')).toBeInTheDocument();
+      expect(screen.getByText('developers')).toBeInTheDocument();
     });
   });
 

@@ -2,15 +2,20 @@ import {
   screen,
   fireEvent,
   waitFor,
+  within,
+  act,
   renderWithProviders,
   initTestI18n,
   i18nT,
+  createTestQueryClient,
 } from '../../test-utils';
 import userEvent from '@testing-library/user-event';
+import { AxiosError, type AxiosResponse } from 'axios';
 import { vi, beforeAll } from 'vitest';
 
 import { useTeamStore, useAuthStore } from '../../store';
 import { apiService, healthCheckService } from '../../services';
+import type { ApiResponse } from '../../types';
 
 import { TeamManagement } from './Team';
 
@@ -66,7 +71,7 @@ describe('TeamManagement - Multiple Teams', () => {
     (useTeamStore as unknown as vi.Mock).mockReturnValue({
       currentTeam: { id: '123e4567-e89b-12d3-a456-426614174001', name: 'Test Team' },
       userTeamsWithRoles: [
-        { id: '123e4567-e89b-12d3-a456-426614174001', name: 'Test Team', userRole: 'developer' },
+        { id: '123e4567-e89b-12d3-a456-426614174001', name: 'Test Team', userRole: 'developers' },
       ],
       setCurrentTeam: mockSetCurrentTeam,
       switchTeam: mockSwitchTeam,
@@ -116,7 +121,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
         {
           id: '123e4567-e89b-12d3-a456-426614174002',
@@ -185,7 +190,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
         {
           id: '123e4567-e89b-12d3-a456-426614174002',
@@ -210,7 +215,7 @@ describe('TeamManagement - Multiple Teams', () => {
             id: 'member-1',
             teamId: '123e4567-e89b-12d3-a456-426614174001',
             userId: 'user-1',
-            role: 'developer',
+            role: 'developers',
             joinedAt: '2024-01-01T00:00:00Z',
             user: {
               id: 'user-1',
@@ -351,7 +356,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
         {
           id: '123e4567-e89b-12d3-a456-426614174002',
@@ -430,7 +435,7 @@ describe('TeamManagement - Multiple Teams', () => {
         createdBy: `user-${i + 1}`,
         createdAt: '2024-01-01T00:00:00Z',
         updatedAt: '2024-01-01T00:00:00Z',
-        userRole: 'developer',
+        userRole: 'developers',
       }));
 
       const mockCurrentTeam = {
@@ -480,7 +485,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -528,7 +533,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
         {
           id: '123e4567-e89b-12d3-a456-426614174002',
@@ -610,7 +615,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -721,6 +726,146 @@ describe('TeamManagement - Multiple Teams', () => {
       expect(inviteButton).toBeInTheDocument();
     });
 
+    it('should display the member count vs max size limit', async () => {
+      const mockTeams = [
+        {
+          id: '123e4567-e89b-12d3-a456-426614174001',
+          name: 'Alpha Team',
+          description: 'Main development team',
+          createdBy: 'user-1',
+          createdAt: '2024-01-01T00:00:00Z',
+          updatedAt: '2024-01-01T00:00:00Z',
+          userRole: 'product_owner',
+        },
+      ];
+
+      const mockCurrentTeam = {
+        id: '123e4567-e89b-12d3-a456-426614174001',
+        name: 'Alpha Team',
+        description: 'Main development team',
+        createdBy: 'user-1',
+        createdAt: '2024-01-01T00:00:00Z',
+        updatedAt: '2024-01-01T00:00:00Z',
+        maxSize: 10,
+        members: [
+          {
+            id: 'user-1',
+            firstName: 'John',
+            lastName: 'Doe',
+            email: 'john@example.com',
+            role: 'ADMIN',
+          },
+          {
+            id: 'user-2',
+            firstName: 'Jane',
+            lastName: 'Smith',
+            email: 'jane@example.com',
+            role: 'MEMBER',
+          },
+        ],
+      };
+
+      (apiService.getMyTeams as unknown as vi.Mock).mockResolvedValue({
+        success: true,
+        data: mockTeams,
+      });
+
+      (apiService.getTeam as unknown as vi.Mock).mockResolvedValue({
+        success: true,
+        data: mockCurrentTeam,
+      });
+
+      (useTeamStore as unknown as vi.Mock).mockReturnValue({
+        currentTeam: mockCurrentTeam,
+        userTeamsWithRoles: mockTeams,
+        setCurrentTeam: mockSetCurrentTeam,
+        switchTeam: mockSwitchTeam,
+        setUserTeamsWithRoles: mockSetUserTeamsWithRoles,
+        setUserRoleInCurrentTeam: mockSetUserRoleInCurrentTeam,
+      });
+
+      renderWithProviders(<TeamManagement />);
+
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: 'Alpha Team' })).toBeInTheDocument();
+      });
+
+      // Component renders the capacity indicator "2/10 members"
+      expect(screen.getByText(/2\/10/i)).toBeInTheDocument();
+    });
+
+    it('should disable the invite button and show a hint when the team is at capacity', async () => {
+      const mockTeams = [
+        {
+          id: '123e4567-e89b-12d3-a456-426614174001',
+          name: 'Alpha Team',
+          description: 'Main development team',
+          createdBy: 'user-1',
+          createdAt: '2024-01-01T00:00:00Z',
+          updatedAt: '2024-01-01T00:00:00Z',
+          userRole: 'product_owner',
+        },
+      ];
+
+      const mockCurrentTeam = {
+        id: '123e4567-e89b-12d3-a456-426614174001',
+        name: 'Alpha Team',
+        description: 'Main development team',
+        createdBy: 'user-1',
+        createdAt: '2024-01-01T00:00:00Z',
+        updatedAt: '2024-01-01T00:00:00Z',
+        maxSize: 2,
+        members: [
+          {
+            id: 'user-1',
+            firstName: 'John',
+            lastName: 'Doe',
+            email: 'john@example.com',
+            role: 'ADMIN',
+          },
+          {
+            id: 'user-2',
+            firstName: 'Jane',
+            lastName: 'Smith',
+            email: 'jane@example.com',
+            role: 'MEMBER',
+          },
+        ],
+      };
+
+      (apiService.getMyTeams as unknown as vi.Mock).mockResolvedValue({
+        success: true,
+        data: mockTeams,
+      });
+
+      (apiService.getTeam as unknown as vi.Mock).mockResolvedValue({
+        success: true,
+        data: mockCurrentTeam,
+      });
+
+      (useTeamStore as unknown as vi.Mock).mockReturnValue({
+        currentTeam: mockCurrentTeam,
+        userTeamsWithRoles: mockTeams,
+        setCurrentTeam: mockSetCurrentTeam,
+        switchTeam: mockSwitchTeam,
+        setUserTeamsWithRoles: mockSetUserTeamsWithRoles,
+        setUserRoleInCurrentTeam: mockSetUserRoleInCurrentTeam,
+      });
+
+      renderWithProviders(<TeamManagement />);
+
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: 'Alpha Team' })).toBeInTheDocument();
+      });
+
+      // The invite button is present but disabled at capacity
+      const inviteButton = screen.getByRole('button', { name: /invite member/i });
+      expect(inviteButton).toBeDisabled();
+
+      // The "team is full" hint is shown
+      expect(screen.getByText(/team is full/i)).toBeInTheDocument();
+    });
+
     it('should handle remove member functionality', async () => {
       const mockTeams = [
         {
@@ -792,7 +937,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -858,7 +1003,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -1033,7 +1178,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -1087,7 +1232,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -1138,7 +1283,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -1189,7 +1334,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -1240,7 +1385,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-06-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -1291,7 +1436,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -1360,7 +1505,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -1413,7 +1558,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -1450,7 +1595,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -1489,7 +1634,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -1530,7 +1675,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -1600,7 +1745,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -1675,7 +1820,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -1747,7 +1892,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -1820,7 +1965,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -1869,7 +2014,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -1920,7 +2065,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -2014,11 +2159,11 @@ describe('TeamManagement - Multiple Teams', () => {
         createdBy: 'user-1',
         createdAt: '2024-01-01T00:00:00Z',
         updatedAt: '2024-06-01T00:00:00Z',
-        userRole: 'developer',
+        userRole: 'developers',
       },
     ];
 
-    function setupDefaultMocks(members: Array<Record<string, unknown>>, userRole = 'developer') {
+    function setupDefaultMocks(members: Array<Record<string, unknown>>, userRole = 'developers') {
       const currentTeam = { ...baseTeam, members };
       const teamsList = [
         {
@@ -2049,7 +2194,7 @@ describe('TeamManagement - Multiple Teams', () => {
     it('should toggle list view mode', async () => {
       const user = userEvent.setup();
       const members = [
-        createMember('member-1', 'user-2', 'developer', 'jane@example.com', 'Jane', 'Smith'),
+        createMember('member-1', 'user-2', 'developers', 'jane@example.com', 'Jane', 'Smith'),
         createMember('member-2', 'user-3', 'scrum_master', 'bob@example.com', 'Bob', 'Johnson'),
       ];
       setupDefaultMocks(members);
@@ -2076,7 +2221,7 @@ describe('TeamManagement - Multiple Teams', () => {
     it('should show search no results message when search does not match any member', async () => {
       const user = userEvent.setup();
       const members = [
-        createMember('member-1', 'user-2', 'developer', 'jane@example.com', 'Jane', 'Smith'),
+        createMember('member-1', 'user-2', 'developers', 'jane@example.com', 'Jane', 'Smith'),
         createMember('member-2', 'user-3', 'scrum_master', 'bob@example.com', 'Bob', 'Johnson'),
       ];
       setupDefaultMocks(members);
@@ -2101,7 +2246,7 @@ describe('TeamManagement - Multiple Teams', () => {
     it('should show clear search button when search query is entered', async () => {
       const user = userEvent.setup();
       const members = [
-        createMember('member-1', 'user-2', 'developer', 'jane@example.com', 'Jane', 'Smith'),
+        createMember('member-1', 'user-2', 'developers', 'jane@example.com', 'Jane', 'Smith'),
       ];
       setupDefaultMocks(members);
 
@@ -2124,7 +2269,7 @@ describe('TeamManagement - Multiple Teams', () => {
     it('should show clear filters link in filter results when search is active', async () => {
       const user = userEvent.setup();
       const members = [
-        createMember('member-1', 'user-2', 'developer', 'jane@example.com', 'Jane', 'Smith'),
+        createMember('member-1', 'user-2', 'developers', 'jane@example.com', 'Jane', 'Smith'),
       ];
       setupDefaultMocks(members);
 
@@ -2151,7 +2296,7 @@ describe('TeamManagement - Multiple Teams', () => {
         createMember(
           'member-1',
           'user-2',
-          'developer',
+          'developers',
           'jane@example.com',
           'Jane',
           'Smith',
@@ -2160,7 +2305,7 @@ describe('TeamManagement - Multiple Teams', () => {
         createMember(
           'member-2',
           'user-3',
-          'developer',
+          'developers',
           'bob@example.com',
           'Bob',
           'Johnson',
@@ -2184,7 +2329,7 @@ describe('TeamManagement - Multiple Teams', () => {
     it('should filter members by role', async () => {
       const user = userEvent.setup();
       const members = [
-        createMember('member-1', 'user-2', 'developer', 'jane@example.com', 'Jane', 'Smith'),
+        createMember('member-1', 'user-2', 'developers', 'jane@example.com', 'Jane', 'Smith'),
         createMember('member-2', 'user-3', 'scrum_master', 'bob@example.com', 'Bob', 'Johnson'),
       ];
       setupDefaultMocks(members);
@@ -2257,7 +2402,14 @@ describe('TeamManagement - Multiple Teams', () => {
     it('should show error when inviting an already existing member', async () => {
       const user = userEvent.setup();
       const members = [
-        createMember('member-1', 'user-2', 'developer', 'existing@example.com', 'Existing', 'User'),
+        createMember(
+          'member-1',
+          'user-2',
+          'developers',
+          'existing@example.com',
+          'Existing',
+          'User'
+        ),
       ];
       setupDefaultMocks(members, 'product_owner');
 
@@ -2288,7 +2440,7 @@ describe('TeamManagement - Multiple Teams', () => {
     it('should show error in delete modal when member removal fails', async () => {
       const user = userEvent.setup();
       const members = [
-        createMember('member-1', 'user-2', 'developer', 'jane@example.com', 'Jane', 'Smith'),
+        createMember('member-1', 'user-2', 'developers', 'jane@example.com', 'Jane', 'Smith'),
       ];
       setupDefaultMocks(members, 'product_owner');
 
@@ -2360,7 +2512,7 @@ describe('TeamManagement - Multiple Teams', () => {
 
     it('should not show remove button for own member', async () => {
       const members = [
-        createMember('member-1', 'user-1', 'developer', 'test@example.com', 'Test', 'User'),
+        createMember('member-1', 'user-1', 'developers', 'test@example.com', 'Test', 'User'),
       ];
       setupDefaultMocks(members, 'product_owner');
 
@@ -2433,7 +2585,7 @@ describe('TeamManagement - Multiple Teams', () => {
     it('should show success message when team member is removed successfully', async () => {
       const user = userEvent.setup();
       const members = [
-        createMember('member-1', 'user-2', 'developer', 'jane@example.com', 'Jane', 'Smith'),
+        createMember('member-1', 'user-2', 'developers', 'jane@example.com', 'Jane', 'Smith'),
       ];
       setupDefaultMocks(members, 'product_owner');
       (apiService.removeTeamMember as unknown as vi.Mock).mockResolvedValue({
@@ -2498,7 +2650,14 @@ describe('TeamManagement - Multiple Teams', () => {
     it('should show error when invite API returns 409 conflict', async () => {
       const user = userEvent.setup();
       const members = [
-        createMember('member-1', 'user-2', 'developer', 'existing@example.com', 'Existing', 'User'),
+        createMember(
+          'member-1',
+          'user-2',
+          'developers',
+          'existing@example.com',
+          'Existing',
+          'User'
+        ),
       ];
       setupDefaultMocks(members, 'product_owner');
       (apiService.addTeamMember as unknown as vi.Mock).mockRejectedValue(
@@ -2565,7 +2724,7 @@ describe('TeamManagement - Multiple Teams', () => {
     it('should show error in delete modal when remove API returns 404', async () => {
       const user = userEvent.setup();
       const members = [
-        createMember('member-1', 'user-2', 'developer', 'jane@example.com', 'Jane', 'Smith'),
+        createMember('member-1', 'user-2', 'developers', 'jane@example.com', 'Jane', 'Smith'),
       ];
       setupDefaultMocks(members, 'product_owner');
       (apiService.removeTeamMember as unknown as vi.Mock).mockRejectedValue(
@@ -2596,7 +2755,7 @@ describe('TeamManagement - Multiple Teams', () => {
     it('should show network error in delete modal when remove API fails with network error', async () => {
       const user = userEvent.setup();
       const members = [
-        createMember('member-1', 'user-2', 'developer', 'jane@example.com', 'Jane', 'Smith'),
+        createMember('member-1', 'user-2', 'developers', 'jane@example.com', 'Jane', 'Smith'),
       ];
       setupDefaultMocks(members, 'product_owner');
       (apiService.removeTeamMember as unknown as vi.Mock).mockRejectedValue(
@@ -2633,7 +2792,7 @@ describe('TeamManagement - Multiple Teams', () => {
           createdBy: 'user-1',
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-06-01T00:00:00Z',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ];
 
@@ -2696,6 +2855,198 @@ describe('TeamManagement - Multiple Teams', () => {
         expect(screen.getByText(i18nT('team:inviteErrors.emailTooLong'))).toBeInTheDocument();
       });
     });
+
+    it('should disable the product owner option when the team already has a product owner', async () => {
+      const user = userEvent.setup();
+      const members = [
+        createMember('member-1', 'user-2', 'product_owner', 'po@example.com', 'Pat', 'Owner'),
+        createMember('member-2', 'user-3', 'developers', 'dev@example.com', 'Dev', 'Eloper'),
+      ];
+      setupDefaultMocks(members, 'product_owner');
+
+      renderWithProviders(<TeamManagement />);
+
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: 'Alpha Team' })).toBeInTheDocument();
+      });
+
+      const inviteButton = screen.getByRole('button', { name: /invite member/i });
+      await user.click(inviteButton);
+
+      await waitFor(() => {
+        expect(screen.getByText('Invite Team Member')).toBeInTheDocument();
+      });
+
+      const roleSelect = screen.getByLabelText(i18nT('team:inviteModal.role'));
+      const productOwnerOption = within(roleSelect).getByRole('option', {
+        name: i18nT('team:members.filterOptions.productOwner'),
+      });
+      const scrumMasterOption = within(roleSelect).getByRole('option', {
+        name: i18nT('team:members.filterOptions.scrumMaster'),
+      });
+      const developersOption = within(roleSelect).getByRole('option', {
+        name: i18nT('team:members.filterOptions.developers'),
+      });
+
+      expect(productOwnerOption).toBeDisabled();
+      expect(scrumMasterOption).toBeEnabled();
+      expect(developersOption).toBeEnabled();
+    });
+
+    it('should disable the scrum master option when the team already has a scrum master', async () => {
+      const user = userEvent.setup();
+      const members = [
+        createMember('member-1', 'user-2', 'scrum_master', 'sm@example.com', 'Sam', 'Master'),
+        createMember('member-2', 'user-3', 'developers', 'dev@example.com', 'Dev', 'Eloper'),
+      ];
+      setupDefaultMocks(members, 'product_owner');
+
+      renderWithProviders(<TeamManagement />);
+
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: 'Alpha Team' })).toBeInTheDocument();
+      });
+
+      const inviteButton = screen.getByRole('button', { name: /invite member/i });
+      await user.click(inviteButton);
+
+      await waitFor(() => {
+        expect(screen.getByText('Invite Team Member')).toBeInTheDocument();
+      });
+
+      const roleSelect = screen.getByLabelText(i18nT('team:inviteModal.role'));
+      const scrumMasterOption = within(roleSelect).getByRole('option', {
+        name: i18nT('team:members.filterOptions.scrumMaster'),
+      });
+      const productOwnerOption = within(roleSelect).getByRole('option', {
+        name: i18nT('team:members.filterOptions.productOwner'),
+      });
+      const developersOption = within(roleSelect).getByRole('option', {
+        name: i18nT('team:members.filterOptions.developers'),
+      });
+
+      expect(scrumMasterOption).toBeDisabled();
+      expect(productOwnerOption).toBeEnabled();
+      expect(developersOption).toBeEnabled();
+    });
+
+    it('should reset the selected role to developers when it becomes unavailable', async () => {
+      const user = userEvent.setup();
+      const queryClient = createTestQueryClient();
+
+      const teamWithoutPo = {
+        ...baseTeam,
+        members: [
+          createMember('member-1', 'user-2', 'developers', 'dev@example.com', 'Dev', 'Eloper'),
+        ],
+      };
+
+      const teamWithPo = {
+        ...baseTeam,
+        members: [
+          createMember('member-1', 'user-2', 'developers', 'dev@example.com', 'Dev', 'Eloper'),
+          createMember('member-2', 'user-3', 'product_owner', 'po@example.com', 'Pat', 'Owner'),
+        ],
+      };
+
+      const teamsList = [
+        { ...defaultTeamsList[0], userRole: 'product_owner' },
+      ] as typeof defaultTeamsList;
+
+      (apiService.getMyTeams as unknown as vi.Mock).mockResolvedValue({
+        success: true,
+        data: teamsList,
+      });
+      (apiService.getTeam as unknown as vi.Mock)
+        .mockResolvedValueOnce({ success: true, data: teamWithoutPo })
+        .mockResolvedValue({ success: true, data: teamWithPo });
+
+      (useTeamStore as unknown as vi.Mock).mockReturnValue({
+        currentTeam: teamWithoutPo,
+        userTeamsWithRoles: teamsList,
+        setCurrentTeam: mockSetCurrentTeam,
+        switchTeam: mockSwitchTeam,
+        setUserTeamsWithRoles: mockSetUserTeamsWithRoles,
+        setUserRoleInCurrentTeam: mockSetUserRoleInCurrentTeam,
+      });
+
+      renderWithProviders(<TeamManagement />, { queryClient });
+
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: 'Alpha Team' })).toBeInTheDocument();
+      });
+
+      const inviteButton = screen.getByRole('button', { name: /invite member/i });
+      await user.click(inviteButton);
+
+      await waitFor(() => {
+        expect(screen.getByText('Invite Team Member')).toBeInTheDocument();
+      });
+
+      const roleSelect = screen.getByLabelText(i18nT('team:inviteModal.role'));
+      await user.selectOptions(roleSelect, 'product_owner');
+      expect(roleSelect).toHaveValue('product_owner');
+
+      // Team data now loads with a Product Owner → the selected role becomes
+      // unavailable, and the component resets it back to developers.
+      await act(async () => {
+        await queryClient.refetchQueries({ queryKey: ['team', baseTeam.id] });
+      });
+
+      await waitFor(() => {
+        expect(roleSelect).toHaveValue('developers');
+      });
+    });
+
+    it('should show role already taken error when invite API rejects with ROLE_ALREADY_TAKEN', async () => {
+      const user = userEvent.setup();
+      const members = [
+        createMember('member-1', 'user-2', 'developers', 'dev@example.com', 'Dev', 'Eloper'),
+      ];
+      setupDefaultMocks(members, 'product_owner');
+
+      const roleTakenError = new AxiosError<ApiResponse<never>>(
+        'Request failed with status code 409',
+        'ERR_BAD_REQUEST'
+      );
+      roleTakenError.response = {
+        data: { error: { code: 'ROLE_ALREADY_TAKEN' } },
+        status: 409,
+        statusText: 'Conflict',
+        headers: {},
+        config: {},
+      } as AxiosResponse<ApiResponse<never>>;
+      (apiService.addTeamMember as unknown as vi.Mock).mockRejectedValue(roleTakenError);
+
+      renderWithProviders(<TeamManagement />);
+
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { name: 'Alpha Team' })).toBeInTheDocument();
+      });
+
+      const inviteButton = screen.getByRole('button', { name: /invite member/i });
+      await user.click(inviteButton);
+
+      await waitFor(() => {
+        expect(screen.getByText('Invite Team Member')).toBeInTheDocument();
+      });
+
+      const emailInput = screen.getByLabelText('Email Address');
+      await user.type(emailInput, 'new-member@example.com');
+
+      const submitButton = screen.getByRole('button', { name: /send invite/i });
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(
+            i18nT('team:inviteErrors.roleAlreadyTaken', {
+              role: i18nT('team:memberCard.roleNames.developers'),
+            })
+          )
+        ).toBeInTheDocument();
+      });
+    });
   });
 });
 
@@ -2717,7 +3068,7 @@ describe('TeamManagement - Scrum Values Health Check Survey', () => {
         {
           id: '123e4567-e89b-12d3-a456-426614174001',
           name: 'Alpha Team',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ],
     });
@@ -2745,7 +3096,7 @@ describe('TeamManagement - Scrum Values Health Check Survey', () => {
         {
           id: '123e4567-e89b-12d3-a456-426614174001',
           name: 'Alpha Team',
-          userRole: 'developer',
+          userRole: 'developers',
         },
       ],
       setCurrentTeam: mockSetCurrentTeam,

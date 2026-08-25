@@ -45,7 +45,7 @@ describe('Impediment Controller', () => {
       await new Promise((resolve) => setTimeout(resolve, 0));
 
       expect(mockNext).not.toHaveBeenCalled();
-      expect(impedimentService.getImpedimentsByTeam).toHaveBeenCalledWith('team-123');
+      expect(impedimentService.getImpedimentsByTeam).toHaveBeenCalledWith('team-123', undefined);
       expect(mockRes._json).toEqual({
         success: true,
         data: mockImpediments,

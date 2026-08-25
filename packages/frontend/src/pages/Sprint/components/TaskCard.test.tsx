@@ -14,7 +14,7 @@ import { I18nextProvider } from 'react-i18next';
 import { TaskCard, type TaskCardProps } from './TaskCard';
 import { AnnouncerProvider } from '../../../components/LiveAnnouncer';
 import { TaskStatus, type Task } from '../../../types';
-import { initTestI18n, i18nT } from '../../../test-utils';
+import { initTestI18n } from '../../../test-utils';
 import { getTestI18nInstance } from '../../../i18n/testConfig';
 
 // Mock task data
@@ -88,16 +88,6 @@ describe('TaskCard', () => {
       expect(screen.getByText('#-123')).toBeInTheDocument();
       expect(screen.getByText('Test description')).toBeInTheDocument();
       expect(screen.getByText('John Doe')).toBeInTheDocument();
-    });
-
-    it('should render status badge correctly', () => {
-      render(
-        <TestWrapper>
-          <TaskCard {...defaultProps} />
-        </TestWrapper>
-      );
-
-      expect(screen.getByText(i18nT('sprint:taskStatus.todo'))).toBeInTheDocument();
     });
 
     it('should render PBI information when present', () => {
@@ -795,7 +785,7 @@ describe('TaskCard', () => {
       });
     });
 
-    it('should allow IN_PROGRESS to DONE transition', async () => {
+    it('should allow IN_PROGRESS to REVIEW transition (peer review request)', async () => {
       const user = userEvent.setup();
       const onMoveStatus = vi.fn();
       const task = createMockTask({ status: TaskStatus.IN_PROGRESS });
@@ -812,7 +802,49 @@ describe('TaskCard', () => {
       await user.keyboard('{Control>}{ArrowRight}{/Control}');
 
       await waitFor(() => {
+        expect(onMoveStatus).toHaveBeenCalledWith('task-123', TaskStatus.REVIEW);
+      });
+    });
+
+    it('should allow REVIEW to DONE transition (peer approval)', async () => {
+      const user = userEvent.setup();
+      const onMoveStatus = vi.fn();
+      const task = createMockTask({ status: TaskStatus.REVIEW });
+
+      render(
+        <TestWrapper>
+          <TaskCard {...defaultProps} task={task} onMoveStatus={onMoveStatus} />
+        </TestWrapper>
+      );
+
+      const card = screen.getByRole('listitem');
+      card.focus();
+
+      await user.keyboard('{Control>}{ArrowRight}{/Control}');
+
+      await waitFor(() => {
         expect(onMoveStatus).toHaveBeenCalledWith('task-123', TaskStatus.DONE);
+      });
+    });
+
+    it('should allow REVIEW to IN_PROGRESS transition (rework)', async () => {
+      const user = userEvent.setup();
+      const onMoveStatus = vi.fn();
+      const task = createMockTask({ status: TaskStatus.REVIEW });
+
+      render(
+        <TestWrapper>
+          <TaskCard {...defaultProps} task={task} onMoveStatus={onMoveStatus} />
+        </TestWrapper>
+      );
+
+      const card = screen.getByRole('listitem');
+      card.focus();
+
+      await user.keyboard('{Control>}{ArrowLeft}{/Control}');
+
+      await waitFor(() => {
+        expect(onMoveStatus).toHaveBeenCalledWith('task-123', TaskStatus.IN_PROGRESS);
       });
     });
 
@@ -837,7 +869,7 @@ describe('TaskCard', () => {
       });
     });
 
-    it('should allow DONE to IN_PROGRESS transition', async () => {
+    it('should do nothing on Ctrl+ArrowLeft from DONE (no valid left transition)', async () => {
       const user = userEvent.setup();
       const onMoveStatus = vi.fn();
       const task = createMockTask({ status: TaskStatus.DONE });
@@ -853,9 +885,9 @@ describe('TaskCard', () => {
 
       await user.keyboard('{Control>}{ArrowLeft}{/Control}');
 
-      await waitFor(() => {
-        expect(onMoveStatus).toHaveBeenCalledWith('task-123', TaskStatus.IN_PROGRESS);
-      });
+      // REVIEW (the column to DONE's left) is not a valid transition from DONE,
+      // so the quick-move is a no-op.
+      expect(onMoveStatus).not.toHaveBeenCalled();
     });
 
     it('should not allow TODO to DONE direct transition', async () => {

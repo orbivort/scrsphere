@@ -157,3 +157,21 @@ export interface TeamHealthCheckResponseSubmission {
 export interface SmNotesUpdate {
   smNotes: string;
 }
+
+// --- Scrum event timeboxes ---
+
+export type TimeboxStatus = 'IDLE' | 'RUNNING' | 'PAUSED';
+
+export interface TimeboxState {
+  teamId: string;
+  eventType: string;
+  sprintId: string | null;
+  date: string;
+  status: TimeboxStatus;
+  /** Total elapsed milliseconds, including any currently running period. */
+  elapsedMs: number;
+  /** The event's timebox in seconds derived from the configured Sprint length. */
+  timeboxSeconds: number;
+  /** Monotonic version for last-write-wins conflict guarding. */
+  version: number;
+}

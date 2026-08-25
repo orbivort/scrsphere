@@ -52,7 +52,7 @@ describe('E2E: Product Backlog Management', () => {
 
   const setupTeamWithUser = async (
     email: string,
-    role: (typeof ROLES)[keyof typeof ROLES] = ROLES.DEVELOPER
+    role: (typeof ROLES)[keyof typeof ROLES] = ROLES.DEVELOPERS
   ) => {
     const user = await createTestUser(email);
     const teamName = `Backlog Team ${uniqueTestId()}`;
@@ -140,7 +140,8 @@ describe('E2E: Product Backlog Management', () => {
       const email = `create-pbi-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { team } = await setupTeamWithUser(email, ROLES.PRODUCT_OWNER);
+      // Only Developers may set story points, so use a Developer here.
+      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
       const cookies = await loginAndGetCookies(email);
       const { csrfToken } = extractCsrfFromCookies(cookies);
@@ -220,7 +221,7 @@ describe('E2E: Product Backlog Management', () => {
       const email = `no-perm-pbi-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
       const cookies = await loginAndGetCookies(email);
       const { csrfToken } = extractCsrfFromCookies(cookies);
@@ -244,7 +245,7 @@ describe('E2E: Product Backlog Management', () => {
       const email = `get-pbi-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
       const pbi = await createTestPBIInDb(team.id, `Get PBI ${uniqueTestId()}`);
 
@@ -264,7 +265,7 @@ describe('E2E: Product Backlog Management', () => {
       const email = `nonexistent-pbi-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      await setupTeamWithUser(email, ROLES.DEVELOPER);
+      await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
       const cookies = await loginAndGetCookies(email);
 
@@ -281,7 +282,7 @@ describe('E2E: Product Backlog Management', () => {
       const email = `invalid-pbi-id-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      await setupTeamWithUser(email, ROLES.DEVELOPER);
+      await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
       const cookies = await loginAndGetCookies(email);
 
@@ -300,7 +301,8 @@ describe('E2E: Product Backlog Management', () => {
       const email = `update-pbi-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { team } = await setupTeamWithUser(email, ROLES.PRODUCT_OWNER);
+      // Only Developers may set story points, so use a Developer here.
+      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
       const pbi = await createTestPBIInDb(team.id, `Update PBI ${uniqueTestId()}`);
 
@@ -350,7 +352,7 @@ describe('E2E: Product Backlog Management', () => {
       const email = `update-no-perm-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
       const pbi = await createTestPBIInDb(team.id, `No Perm PBI ${uniqueTestId()}`);
 
@@ -400,7 +402,7 @@ describe('E2E: Product Backlog Management', () => {
       const email = `delete-no-perm-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
       const pbi = await createTestPBIInDb(team.id, `No Delete PBI ${uniqueTestId()}`);
 
@@ -522,7 +524,7 @@ describe('E2E: Product Backlog Management', () => {
       const email = `pbi-tasks-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
       await createTestSprintInDb(team.id, `Sprint for Tasks ${uniqueTestId()}`, 'ACTIVE');
       const pbi = await createTestPBIInDb(team.id, `PBI with Tasks ${uniqueTestId()}`);

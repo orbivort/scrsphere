@@ -524,10 +524,6 @@ class AuthService {
         where: { userId },
       });
 
-      await tx.dailyUpdate.deleteMany({
-        where: { userId },
-      });
-
       await tx.task.updateMany({
         where: { assigneeId: userId },
         data: { assigneeId: null },

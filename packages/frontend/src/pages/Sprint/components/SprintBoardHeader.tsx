@@ -4,11 +4,11 @@ import { formatDateRange } from '@scrumooth/shared';
 
 import {
   ZapIcon,
-  KeyboardIcon,
   ChartIcon,
   ClipboardListIcon,
   PlusIcon,
   CheckIcon,
+  XIcon,
 } from '../../../components/common/Icons';
 import type { Sprint } from '../../../types';
 import styles from '../SprintBoard.module.css';
@@ -18,23 +18,29 @@ import { useI18nStore } from '@/i18n/useI18nStore';
 export interface SprintBoardHeaderProps {
   sprint: Sprint;
   daysRemaining: number;
-  onKeyboardHelp: () => void;
   onToggleBurndown: () => void;
   onOpenBacklogManager: () => void;
   onOpenCreateModal: () => void;
   onCompleteSprint: () => void;
+  onCancelSprint: () => void;
   showBurndown: boolean;
+  /** Whether the current user may mutate the Sprint Backlog (Developers-only). */
+  canMutate: boolean;
+  /** Whether the current user is the Product Owner (may cancel the Sprint). */
+  isProductOwner: boolean;
 }
 
 export const SprintBoardHeader: React.FC<SprintBoardHeaderProps> = ({
   sprint,
   daysRemaining,
-  onKeyboardHelp,
   onToggleBurndown,
   onOpenBacklogManager,
   onOpenCreateModal,
   onCompleteSprint,
+  onCancelSprint,
   showBurndown,
+  canMutate,
+  isProductOwner,
 }) => {
   const { t } = useTranslation('sprint');
   const { locale } = useI18nStore();
@@ -57,15 +63,6 @@ export const SprintBoardHeader: React.FC<SprintBoardHeaderProps> = ({
       </div>
       <div className={styles['header-right']}>
         <button
-          className={`${styles.button} ${styles['button-secondary']} ${styles['keyboard-help-button']}`}
-          onClick={onKeyboardHelp}
-          aria-label={t('boardHeader.keyboardShortcuts')}
-          title={`${t('boardHeader.keyboardShortcuts')} (?)`}
-        >
-          <KeyboardIcon size={16} aria-hidden="true" />
-          <span className={styles['keyboard-shortcut-hint']}>?</span>
-        </button>
-        <button
           className={`${styles.button} ${styles['button-secondary']}`}
           onClick={onToggleBurndown}
           aria-expanded={showBurndown}
@@ -73,20 +70,24 @@ export const SprintBoardHeader: React.FC<SprintBoardHeaderProps> = ({
         >
           <ChartIcon size={16} aria-hidden="true" /> {t('boardHeader.burndown')}
         </button>
-        <button
-          className={`${styles.button} ${styles['button-secondary']}`}
-          onClick={onOpenBacklogManager}
-          aria-label={t('boardHeader.manageBacklog')}
-        >
-          <ClipboardListIcon size={16} aria-hidden="true" /> {t('boardHeader.manageBacklog')}
-        </button>
-        <button
-          className={`${styles.button} ${styles['button-primary']}`}
-          onClick={onOpenCreateModal}
-          aria-label={t('boardHeader.addTask')}
-        >
-          <PlusIcon size={16} aria-hidden="true" /> {t('boardHeader.addTask')}
-        </button>
+        {canMutate && (
+          <button
+            className={`${styles.button} ${styles['button-secondary']}`}
+            onClick={onOpenBacklogManager}
+            aria-label={t('boardHeader.manageBacklog')}
+          >
+            <ClipboardListIcon size={16} aria-hidden="true" /> {t('boardHeader.manageBacklog')}
+          </button>
+        )}
+        {canMutate && (
+          <button
+            className={`${styles.button} ${styles['button-primary']}`}
+            onClick={onOpenCreateModal}
+            aria-label={t('boardHeader.addTask')}
+          >
+            <PlusIcon size={16} aria-hidden="true" /> {t('boardHeader.addTask')}
+          </button>
+        )}
         <button
           className={`${styles.button} ${styles['button-complete-sprint']}`}
           onClick={onCompleteSprint}
@@ -94,6 +95,15 @@ export const SprintBoardHeader: React.FC<SprintBoardHeaderProps> = ({
         >
           <CheckIcon size={16} aria-hidden="true" /> {t('boardHeader.completeSprint')}
         </button>
+        {isProductOwner && (
+          <button
+            className={`${styles.button} ${styles['button-cancel-sprint']}`}
+            onClick={onCancelSprint}
+            aria-label={t('boardHeader.cancelSprint')}
+          >
+            <XIcon size={16} aria-hidden="true" /> {t('boardHeader.cancelSprint')}
+          </button>
+        )}
       </div>
     </header>
   );

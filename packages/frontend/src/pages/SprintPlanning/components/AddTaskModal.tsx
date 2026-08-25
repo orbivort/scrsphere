@@ -291,12 +291,12 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
                         if (estimatedHoursError) setEstimatedHoursError('');
                       }}
                       placeholder="4"
-                      className={`${styles['form-input']} ${estimatedHoursError ? styles['input-error'] : ''}`}
+                      className={`${styles['form-input']} ${styles['estimate-input']} ${estimatedHoursError ? styles['input-error'] : ''}`}
                       aria-required="true"
                       aria-invalid={!!estimatedHoursError}
                       aria-describedby={estimatedHoursError ? 'estimate-error' : undefined}
                     />
-                    <span className={styles['input-icon-left']}>
+                    <span className={styles['input-icon']}>
                       <ClockIcon size={16} />
                     </span>
                   </div>
@@ -326,6 +326,9 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
                       className={styles['form-select']}
                     >
                       <option value="">{t('sprintPlanning.addTaskModal.unassigned')}</option>
+                      {/* Self-managed Developers-as-a-team assignment: any Developer on the team
+                          may be selected for the new task. PO/SM cannot assign (enforced on the
+                          backend and by disabling the controls for them). */}
                       {teamMembers.map((member) => (
                         <option key={member.memberId} value={member.userId}>
                           {member.memberName}

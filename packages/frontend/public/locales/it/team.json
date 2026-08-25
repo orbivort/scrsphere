@@ -23,7 +23,7 @@
     "title": "Rimuovi Membro del Team",
     "warning": "Questa azione non può essere annullata. L'utente perderà l'accesso a tutte le risorse del team."
   },
-  "developer": {
+  "developers": {
     "badge": "Membro del Team",
     "checkInvitations": "Controlla Inviti",
     "description": "Unisciti a un team Scrum esistente...",
@@ -33,7 +33,7 @@
       "invitationsSentBy": "Gli inviti del team sono inviati da: Scrum Master o Product Owner solo",
       "title": "Come unirsi a un team"
     },
-    "title": "Developer"
+    "title": "Developers"
   },
   "errorStates": {
     "accessDenied": "Accesso negato",
@@ -71,6 +71,8 @@
     "invalidEmail": "Per favore inserisci un indirizzo email valido.",
     "networkError": "Errore di rete. Per favore controlla la tua connessione e riprova.",
     "noPermission": "Non hai il permesso di aggiungere membri al team.",
+    "roleAlreadyTaken": "Il ruolo {{role}} è già assegnato a un altro membro del team. Ogni team può avere esattamente un Product Owner e uno Scrum Master.",
+    "teamSizeLimit": "Questo team ha raggiunto la dimensione massima di {{max}} membri. Non è possibile aggiungere altri membri.",
     "userNotFound": "Nessun utente trovato con questo indirizzo email. L'utente deve registrarsi prima di poter essere invitato a un team."
   },
   "inviteModal": {
@@ -109,7 +111,7 @@
     "memberSince": "Membro dal",
     "roleNames": {
       "administrator": "Amministratore",
-      "developer": "Developer",
+      "developers": "Developers",
       "productOwner": "Product Owner",
       "scrumMaster": "Scrum Master"
     },
@@ -130,7 +132,7 @@
     "filterByRoleAriaLabel": "Filtra membri per ruolo",
     "filterOptions": {
       "allRoles": "Tutti i Ruoli",
-      "developer": "Developer",
+      "developers": "Developers",
       "productOwner": "Product Owner",
       "scrumMaster": "Scrum Master"
     },
@@ -145,6 +147,7 @@
       "byName": "Ordina per Nome",
       "byRole": "Ordina per Ruolo"
     },
+    "teamFull": "Questo team è completo (massimo {{max}} membri). Non è possibile aggiungere altri membri.",
     "title": "Membri del Team",
     "viewModeAriaLabel": "Commuta modalità di visualizzazione",
     "viewToggles": {
@@ -182,6 +185,7 @@
     "created": "Creato: {{date}}",
     "lastUpdated": "Ultimo aggiornamento: {{date}}",
     "memberCount": "{{count}} membri",
+    "memberCountLimit": "{{count}}/{{max}} membri",
     "memberCount_one": "{{count}} membro",
     "memberCount_other": "{{count}} membri",
     "teamId": "ID del team: {{id}}",
@@ -191,7 +195,7 @@
   "teamStats": {
     "avgVelocity": "Velocity Media",
     "completedSprints": "Sprint Completati",
-    "sprintSuccessRate": "Tasso di Successo Sprint",
+    "sprintCompletionRate": "Tasso di completamento del Sprint Backlog",
     "storyPointsCompleted": "Story Points Completati"
   },
   "title": "Team",

@@ -31,7 +31,7 @@ const createMockTeamMember = (
   id: 'tm-1',
   teamId: 'team-1',
   userId: 'user-1',
-  role: 'developer' as const,
+  role: 'developers' as const,
   joinedAt: '2026-01-01T00:00:00Z',
   user: {
     id: 'user-1',
@@ -65,6 +65,8 @@ const defaultProps: TaskCreateModalProps = {
   onFormDataChange: vi.fn(),
   isCreating: false,
   modalRef: { current: null },
+  isDeveloper: true,
+  currentUserId: 'user-1',
 };
 
 describe('TaskCreateModal', () => {
@@ -211,9 +213,9 @@ describe('TaskCreateModal', () => {
       );
 
       const select = screen.getByLabelText(/Assignee/);
-      await user.selectOptions(select, 'user-2');
+      await user.selectOptions(select, 'user-1');
 
-      expect(onFormDataChange).toHaveBeenCalledWith({ assigneeId: 'user-2' });
+      expect(onFormDataChange).toHaveBeenCalledWith({ assigneeId: 'user-1' });
     });
 
     it('should call onFormDataChange when estimated hours changes', () => {
@@ -455,7 +457,7 @@ describe('TaskCreateModal', () => {
           id: 'tm-1',
           teamId: 'team-1',
           userId: 'user-1',
-          role: 'developer' as const,
+          role: 'developers' as const,
           joinedAt: '2026-01-01T00:00:00Z',
         },
       ];

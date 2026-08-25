@@ -134,7 +134,8 @@ describe('SprintReview Controller', () => {
   describe('createSprintReview', () => {
     it('should create a new sprint review', async () => {
       mockReq.user = { id: 'user-123' };
-      mockReq.body = { name: 'New Review', sprintId: 'sprint-123' };
+      mockReq.body = { sprintId: 'sprint-123' };
+      mockReq.validatedBody = { sprintId: 'sprint-123', reviewDate: new Date('2026-08-22') };
       const mockReview = { id: 'review-123', name: 'New Review' };
 
       (sprintReviewService.createSprintReview as any).mockResolvedValue(mockReview);
@@ -143,7 +144,10 @@ describe('SprintReview Controller', () => {
       await new Promise((resolve) => setTimeout(resolve, 0));
 
       expect(mockNext).not.toHaveBeenCalled();
-      expect(sprintReviewService.createSprintReview).toHaveBeenCalledWith('user-123', mockReq.body);
+      expect(sprintReviewService.createSprintReview).toHaveBeenCalledWith(
+        'user-123',
+        mockReq.validatedBody
+      );
       expect(mockRes._status).toBe(201);
       expect(mockRes._json).toEqual({
         success: true,
@@ -163,7 +167,8 @@ describe('SprintReview Controller', () => {
 
     it('should handle service errors', async () => {
       mockReq.user = { id: 'user-123' };
-      mockReq.body = { name: 'New Review' };
+      mockReq.body = { sprintId: 'sprint-123' };
+      mockReq.validatedBody = { sprintId: 'sprint-123' };
       const error = new Error('Validation error');
 
       (sprintReviewService.createSprintReview as any).mockRejectedValue(error);
@@ -180,6 +185,7 @@ describe('SprintReview Controller', () => {
       mockReq.params = { id: 'review-123' };
       mockReq.user = { id: 'user-123' };
       mockReq.body = { name: 'Updated Review' };
+      mockReq.validatedBody = { name: 'Updated Review' };
       const mockReview = { id: 'review-123', name: 'Updated Review' };
 
       (sprintReviewService.updateSprintReview as any).mockResolvedValue(mockReview);
@@ -191,7 +197,7 @@ describe('SprintReview Controller', () => {
       expect(sprintReviewService.updateSprintReview).toHaveBeenCalledWith(
         'review-123',
         'user-123',
-        mockReq.body
+        mockReq.validatedBody
       );
       expect(mockRes._json).toEqual({
         success: true,
@@ -212,6 +218,7 @@ describe('SprintReview Controller', () => {
     it('should handle undefined user by passing undefined to service', async () => {
       mockReq.params = { id: 'review-123' };
       mockReq.user = undefined;
+      mockReq.validatedBody = {};
       const mockReview = { id: 'review-123', name: 'Test Review' };
 
       (sprintReviewService.updateSprintReview as any).mockResolvedValue(mockReview);

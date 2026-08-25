@@ -353,8 +353,6 @@
     "generatedSprints": "[Généràtéd Spríntsssssss]",
     "loading": "[Lóàdíng cónfígúràtíónnnnnnnnn...]",
     "notifications": {
-      "configurationSaveFailed": "[Fàíléd tó sàvé cónfígúràtíónnnnnnnnnn: {{message}}]",
-      "configurationSaved": "[Cónfígúràtíón sàvéd súccéssfúllyyyyyyyyyyy!]",
       "sprintDeleteFailed": "[Fàíléd tó délété sprínttttttttt: {{message}}]",
       "sprintDeleted": "[Sprínt délétéd súccéssfúllyyyyyyyyyy!]",
       "sprintsGenerateFailed": "[Fàíléd tó généràté spríntssssssssss: {{message}}]",
@@ -379,8 +377,6 @@
       "warning_other": "[Thís wíll généràtééééééé {{count}} sprínts fórrrrr {{year}}. Éxístíng sprínts fór thís yéàr mày bé àfféctédddddddddddddddd.]",
       "year": "[YYééààr:]"
     },
-    "saveConfiguration": "[Sàvé Cónfígúràtíónnnnnnn]",
-    "saving": "[SSààvvíínng...]",
     "sprintCount": "[{{count}} spríntssss]",
     "sprintCount_one": "[{{count}} sspprríínnt]",
     "sprintCount_other": "[{{count}} spríntssss]",
@@ -420,6 +416,7 @@
       "editTeam": "[ÉÉddíít {{name}}]",
       "loading": "[Lóàdíngggg...]",
       "memberCount": "[{{count}} mméémmbbéér]",
+      "memberCountLimit": "[{{count}}/{{max}} mémbérssss]",
       "memberCount_one": "[{{count}} mméémmbbéér]",
       "memberCount_other": "[{{count}} mméémmbbéér]",
       "memberCount_plural": "[{{count}} mémbérssss]"

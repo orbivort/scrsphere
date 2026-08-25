@@ -55,7 +55,7 @@ describe('E2E: Data Export (GDPR Article 20)', () => {
           options: {
             includeSessions: true,
             includeNotifications: true,
-            dataCategories: ['userProfile', 'teamMemberships', 'dailyUpdates'],
+            dataCategories: ['userProfile', 'teamMemberships'],
           },
         })
         .expect(HTTP_STATUS.ACCEPTED);

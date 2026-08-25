@@ -459,15 +459,6 @@
   color: var(--color-warning-600);
 }
 
-.notification-icon[data-type='DAILY_UPDATE_REMINDER'] {
-  background: linear-gradient(
-    135deg,
-    var(--color-accent-purple-100) 0%,
-    var(--color-accent-purple-50) 100%
-  );
-  color: var(--color-accent-purple-600);
-}
-
 .notification-icon[data-type='TEAM_REMOVAL'] {
   background: linear-gradient(135deg, var(--color-error-100) 0%, var(--color-error-50) 100%);
   color: var(--color-error-600);

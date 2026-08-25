@@ -367,6 +367,31 @@ describe('LiveAnnouncer', () => {
     });
   });
 
+  describe('announcer not yet created (null ref) path', () => {
+    it('should no-op announce calls made before the announcer is created', () => {
+      // A child useLayoutEffect runs before the parent's passive useEffect
+      // that creates the announcer, so announcerRef.current is still null.
+      const EarlyAnnounceComponent: React.FC = () => {
+        const { announce } = useAnnouncement();
+
+        React.useLayoutEffect(() => {
+          expect(() => announce('Too early message')).not.toThrow();
+        }, [announce]);
+
+        return <div>Early child</div>;
+      };
+
+      renderWithProviders(
+        <AnnouncerProvider>
+          <EarlyAnnounceComponent />
+        </AnnouncerProvider>
+      );
+
+      // The provider effect still creates the live region afterwards
+      expect(document.getElementById('sr-announcer')).toBeInTheDocument();
+    });
+  });
+
   describe('Integration tests', () => {
     it('should handle multiple announcements in sequence', async () => {
       let capturedAnnounce: ((message: string, priority?: AnnouncerPriority) => void) | null = null;

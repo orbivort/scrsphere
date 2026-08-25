@@ -20,8 +20,8 @@ describe('roleUtils', () => {
       expect(getRoleLabel('SCRUM_MASTER')).toBe('Scrum Master');
     });
 
-    it('should return "Developer" for DEVELOPER', () => {
-      expect(getRoleLabel('DEVELOPER')).toBe('Developer');
+    it('should return "Developers" for DEVELOPERS', () => {
+      expect(getRoleLabel('DEVELOPERS')).toBe('Developers');
     });
 
     it('should return the role itself for unknown roles', () => {
@@ -57,8 +57,8 @@ describe('roleUtils', () => {
       expect(getRoleBadgeClass('SCRUM_MASTER', mockStyles)).toBe('sm-class');
     });
 
-    it('should return dev class for DEVELOPER', () => {
-      expect(getRoleBadgeClass('DEVELOPER', mockStyles)).toBe('dev-class');
+    it('should return dev class for DEVELOPERS', () => {
+      expect(getRoleBadgeClass('DEVELOPERS', mockStyles)).toBe('dev-class');
     });
 
     it('should return default class for unknown roles', () => {
@@ -74,7 +74,7 @@ describe('roleUtils', () => {
     it('should handle partial styles', () => {
       const partialStyles = { 'badge-po': 'po-class' };
       expect(getRoleBadgeClass('PRODUCT_OWNER', partialStyles)).toBe('po-class');
-      expect(getRoleBadgeClass('DEVELOPER', partialStyles)).toBe('');
+      expect(getRoleBadgeClass('DEVELOPERS', partialStyles)).toBe('');
     });
 
     it('should return empty string for SCRUM_MASTER when badge-sm style is missing', () => {
@@ -105,8 +105,8 @@ describe('roleUtils', () => {
       expect(getRoleBadgeColor('SCRUM_MASTER')).toBe('#3b82f6');
     });
 
-    it('should return green for DEVELOPER', () => {
-      expect(getRoleBadgeColor('DEVELOPER')).toBe('#10b981');
+    it('should return green for DEVELOPERS', () => {
+      expect(getRoleBadgeColor('DEVELOPERS')).toBe('#10b981');
     });
 
     it('should return gray for unknown roles', () => {
@@ -115,36 +115,20 @@ describe('roleUtils', () => {
   });
 
   describe('canStartSprint', () => {
-    it('should return false for null', () => {
-      expect(canStartSprint(null)).toBe(false);
+    it('should return true when both a Sprint Goal and a saved backlog are present', () => {
+      expect(canStartSprint({ hasSprintGoal: true, hasSavedBacklog: true })).toBe(true);
     });
 
-    it('should return false for empty string', () => {
-      expect(canStartSprint('')).toBe(false);
+    it('should return false when there is no Sprint Goal', () => {
+      expect(canStartSprint({ hasSprintGoal: false, hasSavedBacklog: true })).toBe(false);
     });
 
-    it('should return true for PRODUCT_OWNER', () => {
-      expect(canStartSprint('PRODUCT_OWNER')).toBe(true);
+    it('should return false when the Sprint Backlog has not been saved', () => {
+      expect(canStartSprint({ hasSprintGoal: true, hasSavedBacklog: false })).toBe(false);
     });
 
-    it('should return true for SCRUM_MASTER', () => {
-      expect(canStartSprint('SCRUM_MASTER')).toBe(true);
-    });
-
-    it('should return true for lowercase product_owner', () => {
-      expect(canStartSprint('product_owner')).toBe(true);
-    });
-
-    it('should return true for lowercase scrum_master', () => {
-      expect(canStartSprint('scrum_master')).toBe(true);
-    });
-
-    it('should return false for DEVELOPER', () => {
-      expect(canStartSprint('DEVELOPER')).toBe(false);
-    });
-
-    it('should return false for unknown roles', () => {
-      expect(canStartSprint('UNKNOWN')).toBe(false);
+    it('should return false when neither prerequisite is met', () => {
+      expect(canStartSprint({ hasSprintGoal: false, hasSavedBacklog: false })).toBe(false);
     });
   });
 });

@@ -14,6 +14,7 @@ import {
   CheckCircleIcon,
   MessageSquareIcon,
   RefreshCwIcon,
+  EyeIcon,
 } from '@/components/common/Icons';
 
 export interface KanbanColumnProps {
@@ -38,6 +39,8 @@ export interface KanbanColumnProps {
   onFocus: (taskId: string) => void;
   onBlur: () => void;
   onMoveStatus: (taskId: string, newStatus: TaskStatus) => void;
+  /** Whether the current user may mutate the Sprint Backlog (Developers-only). */
+  canMutate: boolean;
 }
 
 /**
@@ -61,6 +64,8 @@ const getColumnHeaderClass = (status: TaskStatus): string => {
       return styles.todo ?? '';
     case TaskStatusEnum.IN_PROGRESS:
       return styles['in-progress'] ?? '';
+    case TaskStatusEnum.REVIEW:
+      return styles.review ?? '';
     case TaskStatusEnum.DONE:
       return styles.done ?? '';
     default:
@@ -74,6 +79,8 @@ const getColumnIcon = (status: TaskStatus): React.ReactNode => {
       return <ClipboardListIcon size={14} aria-hidden="true" />;
     case TaskStatusEnum.IN_PROGRESS:
       return <ZapIcon size={14} aria-hidden="true" />;
+    case TaskStatusEnum.REVIEW:
+      return <EyeIcon size={14} aria-hidden="true" />;
     case TaskStatusEnum.DONE:
       return <CheckCircleIcon size={14} aria-hidden="true" />;
     default:
@@ -87,6 +94,8 @@ const getEmptyIcon = (status: TaskStatus): React.ReactNode => {
       return <MessageSquareIcon size={24} aria-hidden="true" />;
     case TaskStatusEnum.IN_PROGRESS:
       return <RefreshCwIcon size={24} aria-hidden="true" />;
+    case TaskStatusEnum.REVIEW:
+      return <EyeIcon size={24} aria-hidden="true" />;
     case TaskStatusEnum.DONE:
       return <CheckCircleIcon size={24} aria-hidden="true" />;
     default:
@@ -100,6 +109,8 @@ const getEmptyMessageKey = (status: TaskStatus): string => {
       return 'board.noTasksToDo';
     case TaskStatusEnum.IN_PROGRESS:
       return 'board.noTasksInProgress';
+    case TaskStatusEnum.REVIEW:
+      return 'board.noTasksInReview';
     case TaskStatusEnum.DONE:
       return 'board.noCompletedTasks';
     default:
@@ -127,6 +138,7 @@ interface VirtualizedTaskListProps {
   onKeyDown: (e: React.KeyboardEvent, task: Task) => void;
   onFocus: (taskId: string) => void;
   onBlur: () => void;
+  canMutate: boolean;
 }
 
 const VirtualizedTaskList: React.FC<VirtualizedTaskListProps> = ({
@@ -144,6 +156,7 @@ const VirtualizedTaskList: React.FC<VirtualizedTaskListProps> = ({
   onKeyDown,
   onFocus,
   onBlur,
+  canMutate,
 }) => {
   const enableVirtualization = shouldEnableVirtualization(tasks.length, VIRTUALIZATION_THRESHOLD);
 
@@ -191,6 +204,7 @@ const VirtualizedTaskList: React.FC<VirtualizedTaskListProps> = ({
                 onBlur={onBlur}
                 wipLimits={wipLimits}
                 tasksByStatus={allTasksByStatus}
+                canMutate={canMutate}
               />
             </div>
           ))}
@@ -217,6 +231,7 @@ const VirtualizedTaskList: React.FC<VirtualizedTaskListProps> = ({
           onBlur={onBlur}
           wipLimits={wipLimits}
           tasksByStatus={allTasksByStatus}
+          canMutate={canMutate}
         />
       ))}
     </div>
@@ -244,6 +259,7 @@ export const KanbanColumn: React.FC<KanbanColumnProps> = ({
   onKeyDown,
   onFocus,
   onBlur,
+  canMutate,
 }) => {
   const headerClass = getColumnHeaderClass(status);
   const icon = getColumnIcon(status);
@@ -253,7 +269,9 @@ export const KanbanColumn: React.FC<KanbanColumnProps> = ({
   const isDropTarget = dropTargetColumn === status;
   const isKeyboardDropTarget =
     keyboardGrabState === 'grabbed' && keyboardDropTargetStatus === status;
-  const isWipExceeded = status === TaskStatusEnum.IN_PROGRESS && tasks.length > wipLimit;
+  const isWipExceeded =
+    (status === TaskStatusEnum.IN_PROGRESS || status === TaskStatusEnum.REVIEW) &&
+    tasks.length > wipLimit;
 
   return (
     <div
@@ -304,6 +322,7 @@ export const KanbanColumn: React.FC<KanbanColumnProps> = ({
           onKeyDown={onKeyDown}
           onFocus={onFocus}
           onBlur={onBlur}
+          canMutate={canMutate}
         />
       )}
     </div>

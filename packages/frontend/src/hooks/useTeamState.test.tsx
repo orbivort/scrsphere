@@ -320,7 +320,7 @@ describe('useTeamState', () => {
 
       vi.mocked(apiService.getMyTeams).mockResolvedValue({
         success: true,
-        data: [teamWithRole, createMockTeam('team-2', 'Team 2', 'DEVELOPER')],
+        data: [teamWithRole, createMockTeam('team-2', 'Team 2', 'DEVELOPERS')],
       });
 
       await act(async () => {

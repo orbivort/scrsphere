@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  screen,
-  fireEvent,
-  waitFor,
-  renderWithProviders,
-  initTestI18n,
-  i18nT,
-} from '../../test-utils';
+import { screen, fireEvent, waitFor, renderWithProviders, initTestI18n } from '../../test-utils';
 import { vi, beforeAll } from 'vitest';
 import { IncrementCreate } from './IncrementCreate';
 import { apiService } from './../../services';
@@ -59,7 +52,7 @@ describe('IncrementCreate', () => {
   };
 
   describe('Sprint Selection', () => {
-    it('should render sprint dropdown when not in workflow mode', async () => {
+    it('should render sprint dropdown', async () => {
       (apiService.getSprints as vi.Mock).mockResolvedValue({
         data: [
           { id: 'sprint-1', name: 'Sprint 1', status: SprintStatus.ACTIVE },
@@ -75,26 +68,6 @@ describe('IncrementCreate', () => {
 
       expect(screen.getByText('Sprint 1 (active)')).toBeInTheDocument();
       expect(screen.getByText('Sprint 2 (completed)')).toBeInTheDocument();
-    });
-
-    it('should not render sprint dropdown in workflow mode', async () => {
-      (apiService.getSprint as vi.Mock).mockResolvedValue({
-        data: {
-          id: 'sprint-1',
-          name: 'Sprint 1',
-          startDate: '2024-01-01',
-          endDate: '2024-01-14',
-        },
-      });
-      (apiService.getEligiblePBIsForIncrement as vi.Mock).mockResolvedValue({
-        data: [],
-      });
-
-      renderComponent(['/increment/create?fromSprintComplete=true&sprintId=sprint-1']);
-
-      await waitFor(() => {
-        expect(screen.queryByLabelText(/sprint/i)).not.toBeInTheDocument();
-      });
     });
 
     it('should filter sprints to only show ACTIVE and COMPLETED', async () => {
@@ -299,268 +272,6 @@ describe('IncrementCreate', () => {
     });
   });
 
-  describe('Workflow Auto-Delivery', () => {
-    it('should auto-deliver increment in workflow mode', async () => {
-      const mockToast = {
-        toasts: [],
-        success: vi.fn(),
-        error: vi.fn(),
-        warning: vi.fn(),
-        removeToast: vi.fn(),
-      };
-      (useToast as vi.Mock).mockReturnValue(mockToast);
-
-      (apiService.getSprint as vi.Mock).mockResolvedValue({
-        data: {
-          id: 'sprint-1',
-          name: 'Sprint 1',
-          startDate: '2024-01-01',
-          endDate: '2024-01-14',
-        },
-      });
-      (apiService.getEligiblePBIsForIncrement as vi.Mock).mockResolvedValue({
-        data: [{ id: 'pbi-1', title: 'PBI 1', storyPoints: 5 }],
-      });
-      (apiService.getIncrements as vi.Mock).mockResolvedValue({ data: [] });
-      (apiService.createIncrement as vi.Mock).mockResolvedValue({
-        data: { id: 'inc-1' },
-      });
-      (apiService.verifyIntegration as vi.Mock).mockResolvedValue({
-        data: { integrationVerified: true, priorCount: 0, allPassed: true },
-      });
-      (apiService.deliverIncrement as vi.Mock).mockResolvedValue({});
-
-      renderComponent(['/increment/create?fromSprintComplete=true&sprintId=sprint-1']);
-
-      await waitFor(() => {
-        expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
-      });
-
-      fireEvent.change(screen.getByLabelText(/name/i), {
-        target: { value: 'Test Increment' },
-      });
-
-      fireEvent.click(screen.getByRole('button', { name: /create & continue/i }));
-
-      await waitFor(() => {
-        expect(apiService.createIncrement).toHaveBeenCalled();
-      });
-
-      await waitFor(() => {
-        expect(apiService.verifyIntegration).toHaveBeenCalledWith('inc-1');
-      });
-
-      await waitFor(() => {
-        expect(apiService.deliverIncrement).toHaveBeenCalledWith(
-          'inc-1',
-          'sprint_review',
-          'Delivered via sprint completion workflow'
-        );
-      });
-
-      await waitFor(() => {
-        expect(mockToast.success).toHaveBeenCalledWith(
-          'Increment delivered! Redirecting to Sprint Review...'
-        );
-      });
-    });
-
-    it('should handle delivery failure gracefully', async () => {
-      const mockToast = {
-        toasts: [],
-        success: vi.fn(),
-        error: vi.fn(),
-        warning: vi.fn(),
-        removeToast: vi.fn(),
-      };
-      (useToast as vi.Mock).mockReturnValue(mockToast);
-
-      (apiService.getSprint as vi.Mock).mockResolvedValue({
-        data: {
-          id: 'sprint-1',
-          name: 'Sprint 1',
-          startDate: '2024-01-01',
-          endDate: '2024-01-14',
-        },
-      });
-      (apiService.getEligiblePBIsForIncrement as vi.Mock).mockResolvedValue({
-        data: [{ id: 'pbi-1', title: 'PBI 1', storyPoints: 5 }],
-      });
-      (apiService.getIncrements as vi.Mock).mockResolvedValue({ data: [] });
-      (apiService.createIncrement as vi.Mock).mockResolvedValue({
-        data: { id: 'inc-1' },
-      });
-      (apiService.verifyIntegration as vi.Mock).mockResolvedValue({
-        data: { integrationVerified: true, priorCount: 0, allPassed: true },
-      });
-      (apiService.deliverIncrement as vi.Mock).mockRejectedValue(new Error('Delivery failed'));
-
-      renderComponent(['/increment/create?fromSprintComplete=true&sprintId=sprint-1']);
-
-      await waitFor(() => {
-        expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
-      });
-
-      fireEvent.change(screen.getByLabelText(/name/i), {
-        target: { value: 'Test Increment' },
-      });
-
-      fireEvent.click(screen.getByRole('button', { name: /create & continue/i }));
-
-      await waitFor(() => {
-        expect(mockToast.error).toHaveBeenCalledWith(
-          i18nT('increments:create.toast.deliverFailed')
-        );
-      });
-
-      expect(mockNavigate).toHaveBeenCalledWith(
-        '/increment/inc-1?fromSprintComplete=true&sprintId=sprint-1'
-      );
-    });
-
-    it('should not deliver and redirect to detail page when integration verification fails', async () => {
-      const mockToast = {
-        toasts: [],
-        success: vi.fn(),
-        error: vi.fn(),
-        warning: vi.fn(),
-        removeToast: vi.fn(),
-      };
-      (useToast as vi.Mock).mockReturnValue(mockToast);
-
-      (apiService.getSprint as vi.Mock).mockResolvedValue({
-        data: {
-          id: 'sprint-1',
-          name: 'Sprint 1',
-          startDate: '2024-01-01',
-          endDate: '2024-01-14',
-        },
-      });
-      (apiService.getEligiblePBIsForIncrement as vi.Mock).mockResolvedValue({
-        data: [{ id: 'pbi-1', title: 'PBI 1', storyPoints: 5 }],
-      });
-      (apiService.getIncrements as vi.Mock).mockResolvedValue({ data: [] });
-      (apiService.createIncrement as vi.Mock).mockResolvedValue({
-        data: { id: 'inc-1' },
-      });
-      (apiService.verifyIntegration as vi.Mock).mockResolvedValue({
-        data: {
-          integrationVerified: false,
-          priorCount: 1,
-          allPassed: false,
-          missingTests: ['inc-0'],
-        },
-      });
-
-      renderComponent(['/increment/create?fromSprintComplete=true&sprintId=sprint-1']);
-
-      await waitFor(() => {
-        expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
-      });
-
-      fireEvent.change(screen.getByLabelText(/name/i), {
-        target: { value: 'Test Increment' },
-      });
-
-      fireEvent.click(screen.getByRole('button', { name: /create & continue/i }));
-
-      await waitFor(() => {
-        expect(apiService.verifyIntegration).toHaveBeenCalledWith('inc-1');
-      });
-
-      // Must NOT deliver when integration is not verified
-      await waitFor(() => {
-        expect(apiService.deliverIncrement).not.toHaveBeenCalled();
-      });
-
-      expect(mockToast.warning).toHaveBeenCalledWith(
-        i18nT('increments:create.toast.integrationRequired')
-      );
-
-      expect(mockNavigate).toHaveBeenCalledWith(
-        '/increment/inc-1?fromSprintComplete=true&sprintId=sprint-1'
-      );
-    });
-
-    it('should redirect to detail page when verification call throws', async () => {
-      const mockToast = {
-        toasts: [],
-        success: vi.fn(),
-        error: vi.fn(),
-        warning: vi.fn(),
-        removeToast: vi.fn(),
-      };
-      (useToast as vi.Mock).mockReturnValue(mockToast);
-
-      (apiService.getSprint as vi.Mock).mockResolvedValue({
-        data: {
-          id: 'sprint-1',
-          name: 'Sprint 1',
-          startDate: '2024-01-01',
-          endDate: '2024-01-14',
-        },
-      });
-      (apiService.getEligiblePBIsForIncrement as vi.Mock).mockResolvedValue({
-        data: [{ id: 'pbi-1', title: 'PBI 1', storyPoints: 5 }],
-      });
-      (apiService.getIncrements as vi.Mock).mockResolvedValue({ data: [] });
-      (apiService.createIncrement as vi.Mock).mockResolvedValue({
-        data: { id: 'inc-1' },
-      });
-      (apiService.verifyIntegration as vi.Mock).mockRejectedValue(new Error('Verify failed'));
-
-      renderComponent(['/increment/create?fromSprintComplete=true&sprintId=sprint-1']);
-
-      await waitFor(() => {
-        expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
-      });
-
-      fireEvent.change(screen.getByLabelText(/name/i), {
-        target: { value: 'Test Increment' },
-      });
-
-      fireEvent.click(screen.getByRole('button', { name: /create & continue/i }));
-
-      await waitFor(() => {
-        expect(mockToast.warning).toHaveBeenCalledWith(
-          i18nT('increments:create.toast.verificationFailed')
-        );
-      });
-
-      // Must NOT deliver when verification itself fails
-      expect(apiService.deliverIncrement).not.toHaveBeenCalled();
-
-      expect(mockNavigate).toHaveBeenCalledWith(
-        '/increment/inc-1?fromSprintComplete=true&sprintId=sprint-1'
-      );
-    });
-
-    it('should show correct workflow step indicators', async () => {
-      (apiService.getSprint as vi.Mock).mockResolvedValue({
-        data: {
-          id: 'sprint-1',
-          name: 'Sprint 1',
-          startDate: '2024-01-01',
-          endDate: '2024-01-14',
-        },
-      });
-      (apiService.getEligiblePBIsForIncrement as vi.Mock).mockResolvedValue({
-        data: [],
-      });
-
-      renderComponent(['/increment/create?fromSprintComplete=true&sprintId=sprint-1']);
-
-      await waitFor(() => {
-        expect(screen.getByText('Step 2 of 4: Create Increment')).toBeInTheDocument();
-      });
-
-      expect(screen.getByText('Sprint Completed')).toBeInTheDocument();
-      expect(screen.getByText('Create Increment')).toBeInTheDocument();
-      expect(screen.getByText('Deliver Increment')).toBeInTheDocument();
-      expect(screen.getByText('Sprint Review')).toBeInTheDocument();
-    });
-  });
-
   describe('Form Validation', () => {
     it('should validate required fields', async () => {
       (apiService.getSprints as vi.Mock).mockResolvedValue({ data: [] });
@@ -726,7 +437,7 @@ describe('IncrementCreate', () => {
   });
 
   describe('Navigation', () => {
-    it('should navigate to increments list on cancel in standalone mode', async () => {
+    it('should navigate to increments list on cancel', async () => {
       (apiService.getSprints as vi.Mock).mockResolvedValue({ data: [] });
 
       renderComponent();
@@ -738,30 +449,6 @@ describe('IncrementCreate', () => {
       fireEvent.click(screen.getByText('Cancel'));
 
       expect(mockNavigate).toHaveBeenCalledWith('/increments');
-    });
-
-    it('should navigate to sprint review on back in workflow mode', async () => {
-      (apiService.getSprint as vi.Mock).mockResolvedValue({
-        data: {
-          id: 'sprint-1',
-          name: 'Sprint 1',
-          startDate: '2024-01-01',
-          endDate: '2024-01-14',
-        },
-      });
-      (apiService.getEligiblePBIsForIncrement as vi.Mock).mockResolvedValue({
-        data: [],
-      });
-
-      renderComponent(['/increment/create?fromSprintComplete=true&sprintId=sprint-1']);
-
-      await waitFor(() => {
-        expect(screen.getByText('Skip to Sprint Review')).toBeInTheDocument();
-      });
-
-      fireEvent.click(screen.getByText('Skip to Sprint Review'));
-
-      expect(mockNavigate).toHaveBeenCalledWith('/sprint-review/sprint-1');
     });
   });
 });

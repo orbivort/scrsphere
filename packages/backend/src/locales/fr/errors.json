@@ -1,5 +1,6 @@
 {
   "databaseError": "Une erreur de base de données s'est produite",
+  "developerOnlySizing": "Seuls les développeurs peuvent définir des points d'histoire, car les développeurs qui effectuent le travail sont responsables de l'estimation.",
   "emailAlreadyExists": "Un compte avec l'e-mail {{email}} existe déjà",
   "entityNotFound": "{{entity}} introuvable",
   "fieldAlreadyExists": "{{field}} existe déjà",
@@ -9,9 +10,25 @@
   "invalidReference": "Référence invalide",
   "invalidRelation": "Relation invalide",
   "invalidToken": "Jeton invalide",
+  "notTeamMember": "Vous n'êtes pas membre de cette équipe",
   "pleaseLoginAgain": "Veuillez vous reconnecter pour continuer",
   "recordNotFound": "Enregistrement introuvable",
+  "roleAlreadyTaken": "Un {{role}} existe déjà pour cette équipe. Chaque équipe ne peut avoir qu'un seul {{role}}.",
   "routeNotFound": "{{method}} {{path}} introuvable",
+  "sprint": {
+    "anotherActive": "Un autre sprint est déjà actif",
+    "cancelRequiresProductOwner": "Seul le Product Owner peut annuler un sprint",
+    "missingGoal": "Le sprint ne peut pas démarrer sans un objectif de sprint",
+    "notPlanned": "Seuls les sprints planifiés peuvent démarrer",
+    "notReadyToStart": "Le backlog du sprint doit être enregistré avant de pouvoir démarrer le sprint",
+    "pbiAlreadyCommitted": "L'élément du backlog « {{pbiTitle}} » est déjà engagé dans un autre sprint ({{sprintName}}). Un élément du Product Backlog ne peut être travaillé que dans un seul sprint à la fois.",
+    "pbiConflictAtStart": "Le sprint ne peut pas démarrer : les éléments du backlog suivants sont déjà engagés dans un autre sprint : {{items}}."
+  },
+  "task": {
+    "assigneeMustBeDeveloper": "Seuls les développeurs de l'équipe peuvent être assignés. Les Product Owners et Scrum Masters ne peuvent pas assigner de tâches.",
+    "creationRequiresDeveloper": "Seuls les développeurs peuvent créer et décomposer des tâches, car les développeurs qui effectuent le travail sont responsables de la décomposition des tâches."
+  },
+  "teamSizeLimitReached": "Cette équipe a atteint la taille maximale de {{max}} membres. Aucun membre supplémentaire ne peut être ajouté.",
   "tokenExpired": "Le jeton a expiré",
   "unauthorized": "Authentification requise",
   "unexpectedError": "Une erreur inattendue s'est produite"

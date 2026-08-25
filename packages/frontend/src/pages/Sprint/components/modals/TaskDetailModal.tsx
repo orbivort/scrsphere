@@ -12,6 +12,7 @@ import {
   ShieldIcon,
   TrashIcon,
   EditIcon,
+  InfoIcon,
 } from '../../../../components/common/Icons';
 
 import baseStyles from './base/ModalBase.module.css';
@@ -35,6 +36,12 @@ const STATUS_CONFIG_BASE: Record<TaskStatus, Omit<StatusConfig, 'label' | 'descr
     borderColor: '#93c5fd',
     icon: 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15',
   },
+  [TaskStatusEnum.REVIEW]: {
+    color: '#4338ca',
+    bgColor: '#e0e7ff',
+    borderColor: '#a5b4fc',
+    icon: 'M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z',
+  },
   [TaskStatusEnum.DONE]: {
     color: '#065f46',
     bgColor: '#d1fae5',
@@ -47,6 +54,7 @@ const STATUS_CONFIG_BASE: Record<TaskStatus, Omit<StatusConfig, 'label' | 'descr
 const STATUS_LABEL_KEYS: Record<TaskStatus, string> = {
   [TaskStatusEnum.TODO]: 'taskStatus.todo',
   [TaskStatusEnum.IN_PROGRESS]: 'taskStatus.inProgress',
+  [TaskStatusEnum.REVIEW]: 'taskStatus.review',
   [TaskStatusEnum.DONE]: 'taskStatus.done',
 };
 
@@ -54,6 +62,7 @@ const STATUS_LABEL_KEYS: Record<TaskStatus, string> = {
 const STATUS_DESCRIPTION_KEYS: Record<TaskStatus, string> = {
   [TaskStatusEnum.TODO]: 'taskDetail.todoDescription',
   [TaskStatusEnum.IN_PROGRESS]: 'taskDetail.inProgressDescription',
+  [TaskStatusEnum.REVIEW]: 'taskDetail.reviewDescription',
   [TaskStatusEnum.DONE]: 'taskDetail.doneDescription',
 };
 
@@ -61,6 +70,7 @@ const STATUS_DESCRIPTION_KEYS: Record<TaskStatus, string> = {
 const TASK_STATUS_COLOR_MAP = {
   TODO: { color: '#6b7280', bgColor: '#f3f4f6' },
   IN_PROGRESS: { color: '#3b82f6', bgColor: '#dbeafe' },
+  REVIEW: { color: '#4338ca', bgColor: '#e0e7ff' },
   DONE: { color: '#059669', bgColor: '#d1fae5' },
 };
 
@@ -68,6 +78,7 @@ const TASK_STATUS_COLOR_MAP = {
 const ALL_TASK_STATUSES: TaskStatus[] = [
   TaskStatusEnum.TODO,
   TaskStatusEnum.IN_PROGRESS,
+  TaskStatusEnum.REVIEW,
   TaskStatusEnum.DONE,
 ];
 
@@ -75,6 +86,8 @@ export interface TaskDetailModalProps {
   task: Task;
   workflowError: string | null;
   onClose: () => void;
+  /** Opens the lightweight PBI preview popup for a given PBI id instead of navigating away. */
+  onOpenPbiPreview?: (pbiId: string) => void;
   onEdit: () => void;
   onDelete: () => void;
   onStatusChange: (status: TaskStatus) => void;
@@ -82,12 +95,18 @@ export interface TaskDetailModalProps {
   getAvailableTransitions: (status: TaskStatus) => TaskStatus[];
   isUpdating: boolean;
   modalRef: React.RefObject<HTMLDivElement | null>;
+  /** Id of the currently signed-in user, used to hide the peer-review approval for the assignee. */
+  currentUserId?: string;
+  /** Whether the current user may mutate the Sprint Backlog (Developers-only). When false,
+   *  the edit/delete actions and the status selector are disabled (read-only). */
+  canMutate?: boolean;
 }
 
 export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
   task,
   workflowError,
   onClose,
+  onOpenPbiPreview,
   onEdit,
   onDelete,
   onStatusChange,
@@ -95,10 +114,14 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
   getAvailableTransitions,
   isUpdating,
   modalRef,
+  currentUserId,
+  canMutate = true,
 }) => {
   const { t } = useTranslation('sprint');
   const { locale } = useI18nStore();
   const isViewOnlyMode = task.status === TaskStatusEnum.DONE;
+  // PO/SM cannot edit/delete/move tasks (Developers-only), so the detail modal is read-only.
+  const isReadOnly = isViewOnlyMode || !canMutate;
 
   // Build full TASK_STATUS_CONFIG with i18n labels
   const TASK_STATUS_CONFIG: Record<TaskStatus, StatusConfig> = {
@@ -112,12 +135,31 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
       label: t(STATUS_LABEL_KEYS[TaskStatusEnum.IN_PROGRESS] as never),
       description: t(STATUS_DESCRIPTION_KEYS[TaskStatusEnum.IN_PROGRESS] as never),
     },
+    [TaskStatusEnum.REVIEW]: {
+      ...STATUS_CONFIG_BASE[TaskStatusEnum.REVIEW],
+      label: t(STATUS_LABEL_KEYS[TaskStatusEnum.REVIEW] as never),
+      description: t(STATUS_DESCRIPTION_KEYS[TaskStatusEnum.REVIEW] as never),
+    },
     [TaskStatusEnum.DONE]: {
       ...STATUS_CONFIG_BASE[TaskStatusEnum.DONE],
       label: t(STATUS_LABEL_KEYS[TaskStatusEnum.DONE] as never),
       description: t(STATUS_DESCRIPTION_KEYS[TaskStatusEnum.DONE] as never),
     },
   };
+
+  // The task assignee cannot self-approve the peer review (REVIEW → DONE); the
+  // backend rejects it with a ForbiddenError. Hide the approval option in the UI
+  // so the owner does not hit the error, mirroring the SprintService.updateTask guard.
+  const isAssigneeSelfReview =
+    task.status === TaskStatusEnum.REVIEW &&
+    task.assigneeId !== undefined &&
+    task.assigneeId === currentUserId;
+
+  const availableStatuses = isReadOnly
+    ? []
+    : getAvailableTransitions(task.status).filter(
+        (s) => !(isAssigneeSelfReview && s === TaskStatusEnum.DONE)
+      );
 
   return (
     <div
@@ -205,9 +247,9 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
                   statuses={ALL_TASK_STATUSES}
                   statusConfig={TASK_STATUS_CONFIG}
                   onStatusChange={onStatusChange}
-                  availableStatuses={isViewOnlyMode ? [] : getAvailableTransitions(task.status)}
+                  availableStatuses={availableStatuses}
                   isLoading={isUpdating}
-                  disabled={isViewOnlyMode}
+                  disabled={isReadOnly}
                 />
               </div>
 
@@ -224,9 +266,19 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
               {/* Parent PBI Row */}
               <div className={styles['detail-row-full']}>
                 <span className={styles['detail-label']}>{t('taskDetail.parentPbi')}</span>
-                <span className={styles['detail-value']}>
-                  {task.pbi?.title ?? t('taskDetail.unknown')}
-                </span>
+                {task.pbi ? (
+                  <button
+                    type="button"
+                    className={styles['detail-value-link']}
+                    onClick={() => onOpenPbiPreview?.(task.pbiId)}
+                    aria-label={t('taskDetail.openParentPbi', { title: task.pbi.title })}
+                  >
+                    <span className={styles['detail-value']}>{task.pbi.title}</span>
+                    <InfoIcon size={14} aria-hidden="true" />
+                  </button>
+                ) : (
+                  <span className={styles['detail-value']}>{t('taskDetail.unknown')}</span>
+                )}
               </div>
             </div>
           </div>
@@ -295,7 +347,7 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
               type="button"
               className={`${styles.button} ${styles['button-danger']}`}
               onClick={onDelete}
-              disabled={isViewOnlyMode}
+              disabled={isReadOnly}
             >
               <TrashIcon size={16} aria-hidden="true" />
               {t('taskDetail.deleteTask')}
@@ -313,9 +365,9 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
               type="button"
               className={`${styles.button} ${styles['button-primary']}`}
               onClick={onEdit}
-              disabled={isViewOnlyMode}
+              disabled={isReadOnly}
             >
-              {isViewOnlyMode ? (
+              {isReadOnly ? (
                 t('taskDetail.viewOnly')
               ) : (
                 <>

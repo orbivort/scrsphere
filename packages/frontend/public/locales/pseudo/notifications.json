@@ -1,6 +1,8 @@
 {
   "accountDeletionCancelled": "[Àccóúnt délétíón càncélléddddddddd]",
   "accountDeletionCancelledMessage": "[Thé schédúléd àccóúnt délétíón hàs béén càncéllédddddddddddddddd.]",
+  "accountDeletionReminderMessage": "[À Pródúct Ównér ín yóúr téàm wíll hàvé théír àccóúnt pér máñéñtly délétéd ínnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn {{daysText}}. Pléàsé àssígn à néw Pródúct Ównér íf néédédddddddddddd.]",
+  "accountDeletionReminderTitle": "[Àccóúnt délétíón rémíndééééééér]",
   "accountDeletionScheduled": "[Téàm mémbér schédúléd àccóúnt délétíónnnnnnnnnnnnn]",
   "accountDeletionScheduledMessage": "[À Pródúct Ównér ín yóúr téàm hàs schédúléd théír àccóúnt délétíón. Thé àccóúnt wíll bé pérmànéntly délétéd ónnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn {{deletionDate}}. Pléàsé àssígn à néw Pródúct Ównér béfóré thénnnnnnnnnnnnnnnn.]",
   "ariaLabels": {
@@ -14,12 +16,16 @@
   },
   "backlogAdjustmentRequired": "[Néw Bàcklóg Àdjústmént Réqúírés Yóúr Àctíónnnnnnnnnnnnnn]",
   "backlogAdjustmentRequiredMessage": "[Yóú hàvé béén àssígnéd às thé ównér óf à bàcklóg àdjústméntttttttttttttttttttt: {{action}} - \"{{description}}\"]",
+  "dailyScrumSignalMessage": "[Thé Dàíly Scrúm fóóóóóóó \"{{sprintName}}\" ís stàrtíng. Dévélópérs, pléàsé gàthér tó ínsféct prógréss tówàrd thé Sprínt Góàl ànd àdàpt thé Sprínt Bàcklógggggggggg.]",
+  "dailyScrumSignalTitle": "[Dàíly Scrúm stàrtíngggg]",
   "dateGroups": {
     "older": "[Óldérrr]",
     "thisWeek": "[Thís Wéékkkk]",
     "today": "[Tódàyyy]",
     "yesterday": "[Yéstérdàyyyy]"
   },
+  "directMessageBody": "{{message}}",
+  "directMessageTitle": "[Méssàgé frómmmmmmmm {{senderName}}]",
   "empty": {
     "message": "[Yóú wíll séé nótífícàtíóns héré whén théré ís àctívítyyyyyyyyyyyyyyyyyy]",
     "title": "[Nó nótífícàtíóns yéttttttt]"
@@ -35,7 +41,6 @@
     "all": "[Àlll]",
     "directMessages": "[Díréct Méssàgéssssss]",
     "impediments": "[Ímpédíméntsssss]",
-    "reminders": "[Rémíndérssss]",
     "taskAssignments": "[Tàsk Àssígnméntssssss]",
     "teamCreated": "[Téàm Créàtéddddd]",
     "teamDeleted": "[Téàm Délétéddddd]",
@@ -44,19 +49,27 @@
     "unread": "[Únréàddd]"
   },
   "impedimentAssigned": "[Néw ímpédímént àssígnéddddddddd: \"{{impedimentTitle}}\"]",
+  "impedimentAssignedMessage": "[Répórtéd byyyyyy {{reporterName}}]",
   "loading": {
     "ariaLabel": "[Lóàdíng nótífícàtíónssssssss]",
     "title": "[Lóàdíng nótífícàtíónsssssssss...]"
   },
   "markAllAsRead": "[Màrk Àll às Réàdddddd]",
   "marking": "[Màrkíngggg...]",
+  "newTaskAssignedMessage": "[Ín sprínttttttttt \"{{sprintName}}\"]",
+  "newTaskAssignedTitle": "[Néw tàsk àssígnédddddddddd: \"{{taskTitle}}\"]",
   "pagination": {
     "next": "[NNééxxt]",
     "pageInfo": "[PPààggé {{current}} óóff {{total}}]",
     "previous": "[Prévíóússss]"
   },
+  "remindersNone": "[Nó rémíndérs sénttttt]",
+  "remindersSent": "[Rémíndérs sént tóóóóóóó {{count}} téàm mémbérrrrr]",
+  "remindersSent_plural": "[Rémíndérs sént tóóóóóóó {{count}} téàm mémbérsssss]",
   "skipToMainContent": "[Skíp tó màín cónténttttttt]",
   "subtitle": "[Stày úpdàtéd wíth téàm àctívítíés ànd ímpórtànt úpdàtéssssssssssssssssss]",
+  "taskReassignedMessage": "[Ín sprínttttttttt \"{{sprintName}}\"]",
+  "taskReassignedTitle": "[Tàsk réàssígnéd tó yóúùùùùùùùùùùùù: \"{{taskTitle}}\"]",
   "teamCreated": "[Téàm créàtédddddd: \"{{teamName}}\"]",
   "teamCreatedMessage": "[Yóú hàvé súccéssfúlly créàtéd thé téàmmmmmmmmmmmmm]",
   "teamDeleted": "[Téàm délétédddddd: \"{{teamName}}\"]",

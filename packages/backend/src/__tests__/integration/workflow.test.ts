@@ -334,17 +334,46 @@ describe('Workflow Integration Tests', () => {
 
   describe('GET /api/v1/workflows/:entityType/allowed-transitions/:fromStatus', () => {
     const testEmails: string[] = [];
+    const testTeams: string[] = [];
+
+    // The user must be a team member so the endpoint can resolve their role and
+    // return role-gated transitions (e.g. only Developers may change task status).
+    const createDeveloperMember = async (email: string) => {
+      const user = await createTestUserInDb(email, 'TestPassword123!', 'Dev', 'eloper');
+      const team = await prisma.team.create({
+        data: {
+          id: generateUUIDv7(),
+          name: `Allowed Transitions Team ${uniqueId()}`,
+          description: 'Test team for allowed transitions',
+        },
+      });
+      testTeams.push(team.id);
+      await prisma.teamMember.create({
+        data: {
+          id: generateUUIDv7(),
+          teamId: team.id,
+          userId: user.id,
+          role: 'DEVELOPERS',
+        },
+      });
+      return user;
+    };
 
     afterEach(async () => {
+      for (const teamId of testTeams) {
+        await prisma.teamMember.deleteMany({ where: { teamId } });
+        await prisma.team.delete({ where: { id: teamId } }).catch(() => {});
+      }
       await cleanupTestData(testEmails);
       testEmails.length = 0;
+      testTeams.length = 0;
     });
 
     it('should return allowed transitions from a status', async () => {
       const email = `allowed-transitions-${uniqueId()}@example.com`;
       testEmails.push(email);
 
-      await createTestUserInDb(email, 'TestPassword123!', 'Dev', 'eloper');
+      await createDeveloperMember(email);
 
       const cookies = await loginAndGetCookies(email);
 
@@ -354,6 +383,48 @@ describe('Workflow Integration Tests', () => {
         .expect(200);
 
       expect(response.body.success).toBe(true);
+    });
+
+    it('should return REVIEW (not DONE) for a Task IN_PROGRESS status', async () => {
+      const email = `allowed-transitions-inprog-${uniqueId()}@example.com`;
+      testEmails.push(email);
+
+      await createDeveloperMember(email);
+
+      const cookies = await loginAndGetCookies(email);
+
+      const response = await request(app)
+        .get('/api/v1/workflows/Task/allowed-transitions/IN_PROGRESS')
+        .set('Cookie', cookies)
+        .expect(200);
+
+      expect(response.body.success).toBe(true);
+      const toNames = response.body.data.map(
+        (t: { toState?: { name?: string } }) => t.toState?.name
+      );
+      expect(toNames).toContain('REVIEW');
+      expect(toNames).not.toContain('DONE');
+    });
+
+    it('should return DONE and IN_PROGRESS for a Task REVIEW status', async () => {
+      const email = `allowed-transitions-review-${uniqueId()}@example.com`;
+      testEmails.push(email);
+
+      await createDeveloperMember(email);
+
+      const cookies = await loginAndGetCookies(email);
+
+      const response = await request(app)
+        .get('/api/v1/workflows/Task/allowed-transitions/REVIEW')
+        .set('Cookie', cookies)
+        .expect(200);
+
+      expect(response.body.success).toBe(true);
+      const toNames = response.body.data.map(
+        (t: { toState?: { name?: string } }) => t.toState?.name
+      );
+      expect(toNames).toContain('DONE');
+      expect(toNames).toContain('IN_PROGRESS');
     });
   });
 
@@ -417,7 +488,7 @@ describe('Workflow Integration Tests', () => {
               id: generateUUIDv7(),
               teamId: team.id,
               userId: user.id,
-              role: 'DEVELOPER', // Not PRODUCT_OWNER
+              role: 'DEVELOPERS', // Not PRODUCT_OWNER
             },
           });
 
@@ -470,7 +541,7 @@ describe('Workflow Integration Tests', () => {
               id: generateUUIDv7(),
               teamId: team.id,
               userId: user.id,
-              role: 'DEVELOPER', // Not PRODUCT_OWNER - admin routes require PRODUCT_OWNER
+              role: 'DEVELOPERS', // Not PRODUCT_OWNER - admin routes require PRODUCT_OWNER
             },
           });
 

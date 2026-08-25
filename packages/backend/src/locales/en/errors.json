@@ -1,5 +1,6 @@
 {
   "databaseError": "A database error occurred",
+  "developerOnlySizing": "Only Developers can set story points, as the Developers who perform the work are responsible for sizing.",
   "emailAlreadyExists": "An account with email {{email}} already exists",
   "entityNotFound": "{{entity}} not found",
   "fieldAlreadyExists": "{{field}} already exists",
@@ -9,9 +10,25 @@
   "invalidReference": "Invalid reference",
   "invalidRelation": "Invalid relation",
   "invalidToken": "Invalid token",
+  "notTeamMember": "You are not a member of this team",
   "pleaseLoginAgain": "Please log in again to continue",
   "recordNotFound": "Record not found",
+  "roleAlreadyTaken": "A {{role}} already exists for this team. Each team can have exactly one {{role}}.",
   "routeNotFound": "{{method}} {{path}} not found",
+  "sprint": {
+    "anotherActive": "Another sprint is already active",
+    "cancelRequiresProductOwner": "Only the Product Owner can cancel a Sprint",
+    "missingGoal": "The sprint cannot be started without a Sprint Goal",
+    "notPlanned": "Only planned sprints can be started",
+    "notReadyToStart": "The Sprint Backlog must be saved before the sprint can be started",
+    "pbiAlreadyCommitted": "Backlog item \"{{pbiTitle}}\" is already committed to another sprint ({{sprintName}}). A Product Backlog Item can be worked in only one sprint at a time.",
+    "pbiConflictAtStart": "The Sprint cannot be started: the following backlog items are already committed to another sprint: {{items}}."
+  },
+  "task": {
+    "assigneeMustBeDeveloper": "Only Developers on the team can be assigned. Product Owners and Scrum Masters cannot assign tasks.",
+    "creationRequiresDeveloper": "Only Developers can create and decompose tasks, as the Developers who perform the work own task decomposition."
+  },
+  "teamSizeLimitReached": "This team has reached the maximum size of {{max}} members. No additional members can be added.",
   "tokenExpired": "Token has expired",
   "unauthorized": "Authentication required",
   "unexpectedError": "An unexpected error occurred"

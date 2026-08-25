@@ -23,8 +23,8 @@ const retrospectiveStatusEnum = z.enum(['DRAFT', 'IN_PROGRESS', 'COMPLETED'], {
   error: 'Invalid status. Must be one of: DRAFT, IN_PROGRESS, COMPLETED',
 });
 
-const attendeeRoleEnum = z.enum(['product_owner', 'scrum_master', 'developer', 'stakeholder'], {
-  error: 'Invalid role. Must be one of: product_owner, scrum_master, developer, stakeholder',
+const attendeeRoleEnum = z.enum(['product_owner', 'scrum_master', 'developers', 'stakeholder'], {
+  error: 'Invalid role. Must be one of: product_owner, scrum_master, developers, stakeholder',
 });
 
 export const createRetrospectiveSchema = z.object({

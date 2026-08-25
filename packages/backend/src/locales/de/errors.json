@@ -1,5 +1,6 @@
 {
   "databaseError": "Ein Datenbankfehler ist aufgetreten",
+  "developerOnlySizing": "Nur Entwickler können Story Points festlegen, da die Entwickler, die die Arbeit ausführen, für die Schätzung verantwortlich sind.",
   "emailAlreadyExists": "Ein Konto mit der E-Mail {{email}} existiert bereits",
   "entityNotFound": "{{entity}} nicht gefunden",
   "fieldAlreadyExists": "{{field}} existiert bereits",
@@ -9,9 +10,25 @@
   "invalidReference": "Ungültige Referenz",
   "invalidRelation": "Ungültige Relation",
   "invalidToken": "Ungültiges Token",
+  "notTeamMember": "Sie sind kein Mitglied dieses Teams",
   "pleaseLoginAgain": "Bitte melden Sie sich erneut an, um fortzufahren",
   "recordNotFound": "Datensatz nicht gefunden",
+  "roleAlreadyTaken": "Für dieses Team existiert bereits ein {{role}}. Jedes Team kann genau einen {{role}} haben.",
   "routeNotFound": "{{method}} {{path}} nicht gefunden",
+  "sprint": {
+    "anotherActive": "Ein anderer Sprint ist bereits aktiv",
+    "cancelRequiresProductOwner": "Nur der Product Owner kann einen Sprint abbrechen",
+    "missingGoal": "Der Sprint kann ohne Sprint-Ziel nicht gestartet werden",
+    "notPlanned": "Nur geplante Sprints können gestartet werden",
+    "notReadyToStart": "Das Sprint-Backlog muss gespeichert werden, bevor der Sprint gestartet werden kann",
+    "pbiAlreadyCommitted": "Backlog-Element \"{{pbiTitle}}\" ist bereits einem anderen Sprint zugeordnet ({{sprintName}}). Ein Produkt-Backlog-Element kann jeweils nur in einem Sprint bearbeitet werden.",
+    "pbiConflictAtStart": "Der Sprint kann nicht gestartet werden: Die folgenden Backlog-Elemente sind bereits einem anderen Sprint zugeordnet: {{items}}."
+  },
+  "task": {
+    "assigneeMustBeDeveloper": "Nur Entwickler im Team können zugewiesen werden. Product Owner und Scrum Master können keine Aufgaben zuweisen.",
+    "creationRequiresDeveloper": "Nur Entwickler können Aufgaben erstellen und zerlegen, da die Entwickler, die die Arbeit ausführen, die Aufgabenzerlegung verantworten."
+  },
+  "teamSizeLimitReached": "Dieses Team hat die maximale Größe von {{max}} Mitgliedern erreicht. Es können keine weiteren Mitglieder hinzugefügt werden.",
   "tokenExpired": "Token ist abgelaufen",
   "unauthorized": "Authentifizierung erforderlich",
   "unexpectedError": "Ein unerwarteter Fehler ist aufgetreten"

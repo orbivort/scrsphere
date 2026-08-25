@@ -16,6 +16,8 @@ import {
   type ProductGoalProgressAssessment,
   type TeamHealthCheck,
   type HealthCheckValueScore,
+  type TimeboxState,
+  type TimeboxStatus,
 } from '@scrumooth/shared';
 
 export type {
@@ -30,6 +32,8 @@ export type {
   ProductGoalProgressAssessment,
   TeamHealthCheck,
   HealthCheckValueScore,
+  TimeboxState,
+  TimeboxStatus,
 };
 
 // Enums are runtime values; re-export as values.
@@ -39,7 +43,7 @@ export enum UserRole {
   ADMINISTRATOR = 'administrator',
   PRODUCT_OWNER = 'product_owner',
   SCRUM_MASTER = 'scrum_master',
-  DEVELOPER = 'developer',
+  DEVELOPERS = 'developers',
 }
 
 export enum ItemStatus {
@@ -66,10 +70,12 @@ export enum ValueEffortLevel {
 export enum TaskStatus {
   TODO = 'TODO',
   IN_PROGRESS = 'IN_PROGRESS',
+  REVIEW = 'REVIEW',
   DONE = 'DONE',
 }
 
 export enum SprintStatus {
+  DRAFT = 'draft',
   PLANNED = 'planned',
   ACTIVE = 'active',
   COMPLETED = 'completed',
@@ -111,6 +117,8 @@ export interface Team {
   createdBy: string;
   createdAt: string;
   updatedAt: string;
+  memberCount?: number;
+  maxSize?: number;
   members?: TeamMember[];
 }
 
@@ -214,13 +222,15 @@ export interface Sprint {
   updatedAt: string;
   items?: ProductBacklogItem[];
   tasks?: Task[];
+  sprintBacklogItems?: SprintBacklogItem[];
 }
 
 export interface SprintBacklogItem {
   id: string;
   sprintId: string;
   pbiId: string;
-  addedAt: string;
+  addedAt?: string;
+  createdAt?: string;
   pbi?: ProductBacklogItem;
 }
 
@@ -254,21 +264,67 @@ export interface Impediment {
   reportedBy?: User;
   owner?: User;
   sprint?: { id: string; name: string };
-  dailyUpdateId?: string;
-  dailyUpdate?: DailyUpdate;
 }
 
-export interface DailyUpdate {
+export interface DailyScrumBacklogAdjustment {
+  id: string;
+  sprintBacklogItemId: string;
+  action: string;
+  createdAt: string;
+  sprintBacklogItem?: {
+    id: string;
+    pbiId: string;
+    pbi?: {
+      id: string;
+      title: string;
+    };
+  } | null;
+}
+
+export interface DailyScrumParticipant {
+  id: string;
+  userId: string;
+  userName?: string;
+  user?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+}
+
+/**
+ * The structural focus the Developers choose for the Daily Scrum
+ * (Scrum Guide: "the Developers can choose whatever structure and
+ * techniques they want").
+ */
+export const DAILY_SCRUM_FOCUS_MODES = ['goal', 'backlog', 'impediment', 'pair'] as const;
+export type DailyScrumFocusMode = (typeof DAILY_SCRUM_FOCUS_MODES)[number];
+
+export interface DailyScrum {
   id: string;
   sprintId: string;
-  userId: string;
-  updateDate: string;
-  yesterdayWork?: string;
-  todayWork?: string;
-  impediment?: string;
+  scrumDate: string;
+  progressNotes?: string | null;
+  adaptationsNotes?: string | null;
+  planForNextDay?: string | null;
+  focusMode?: DailyScrumFocusMode | null;
+  sprintGoal?: string | null;
+  participants: DailyScrumParticipant[];
+  backlogAdjustments: DailyScrumBacklogAdjustment[];
   createdAt: string;
-  user?: User;
-  impedimentRecord?: Impediment;
+  updatedAt: string;
+}
+
+export interface DailyScrumParticipation {
+  dailyScrum: DailyScrum | null;
+  participants: DailyScrumParticipant[];
+  nonParticipants: Array<{ userId: string; userName: string }>;
+}
+
+export interface DailyScrumBacklogAdjustmentInput {
+  sprintBacklogItemId: string;
+  action: string;
 }
 
 export interface DefinitionOfDone {
@@ -396,7 +452,7 @@ export interface ReviewAttendee {
   userId?: string;
   name: string;
   email?: string;
-  role: string; // 'product_owner', 'scrum_master', 'developer', 'stakeholder'
+  role: string; // 'product_owner', 'scrum_master', 'developers', 'stakeholder'
   attended: boolean;
 }
 
@@ -500,7 +556,7 @@ export interface RetroAttendee {
   userId?: string;
   name: string;
   email?: string;
-  role: string; // 'product_owner', 'scrum_master', 'developer', 'stakeholder'
+  role: string; // 'product_owner', 'scrum_master', 'developers', 'stakeholder'
   attended: boolean;
 }
 
@@ -557,15 +613,11 @@ export interface VelocityData {
 export interface TeamMetrics {
   averageVelocity: number;
   velocityTrend: number;
-  successRate: number;
-  successRateTrend: number;
+  /** Share of completed sprints whose planned points were fully delivered (completed >= planned). */
+  completionRate: number;
   impediments: {
     resolved: number;
     total: number;
-  };
-  teamSatisfaction: {
-    rating: number;
-    trend: number;
   };
 }
 
@@ -575,6 +627,7 @@ export interface SprintHistoryItem {
   startDate: string;
   endDate: string;
   status: string;
+  sprintGoal?: string | null;
   plannedPoints: number;
   completedPoints: number;
   teamMembers: number;

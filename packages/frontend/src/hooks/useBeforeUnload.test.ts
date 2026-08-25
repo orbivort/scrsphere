@@ -73,6 +73,18 @@ describe('useBeforeUnload', () => {
     expect(preventDefaultSpy).toHaveBeenCalled();
   });
 
+  it('should set empty returnValue when no message is provided', () => {
+    renderHook(() => useBeforeUnload(true));
+
+    const event = new Event('beforeunload', { cancelable: true }) as BeforeUnloadEvent;
+    const preventDefaultSpy = vi.spyOn(event, 'preventDefault');
+    window.dispatchEvent(event);
+
+    expect(preventDefaultSpy).toHaveBeenCalled();
+    // jsdom reports returnValue as a boolean; falsy confirms the '' fallback path ran
+    expect(event.returnValue).toBeFalsy();
+  });
+
   it('should not prevent default when handler is called with enabled=false', () => {
     const { rerender } = renderHook(({ enabled }) => useBeforeUnload(enabled), {
       initialProps: { enabled: true },

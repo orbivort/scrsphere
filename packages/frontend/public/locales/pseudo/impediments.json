@@ -1,8 +1,6 @@
 {
   "allStatus": "[Àll Stàtússss]",
   "card": {
-    "createdFromDailyUpdate": "[Créàtéd fróm Dàíly Úpdàtééééééééé]",
-    "fromDailyScrum": "[Fróm Dàíly Scrúmmmmmm]",
     "owner": "[Ównérrr]",
     "reportedBy": "[Répórtéd byyyyy]",
     "resolution": "[Résólútíónnnn]",
@@ -36,7 +34,6 @@
   "detailModal": {
     "cancel": "[Càncélll]",
     "close": "[Clósééé]",
-    "createdFromDailyScrum": "[Créàtéd fróm Dàíly Scrúm Úpdàtééééééééééé]",
     "createdLabel": "[Créàtédddd]",
     "deleteLabel": "[Délétééé]",
     "deleting": "[DDééllééttíínng...]",
@@ -51,8 +48,7 @@
     "statusLabel": "[Stàtússs]",
     "subtitle": "[Víéw ànd mànàgé ímpédímént ínfórmàtíónnnnnnnnnnnnn]",
     "title": "[Ímpédímént Détàílsssssss]",
-    "titleLabel": "[Títlééé]",
-    "viewDailyUpdate": "[Víéw Dàíly Úpdàtééééééé]"
+    "titleLabel": "[Títlééé]"
   },
   "emptyState": {
     "clearFilter": "[Cléàr Fíltérrrrr]",

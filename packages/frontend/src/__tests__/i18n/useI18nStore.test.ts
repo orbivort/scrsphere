@@ -1,8 +1,28 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { act } from '@testing-library/react';
 
-import { useI18nStore } from '@/i18n/useI18nStore';
-import { DEFAULT_LOCALE, type Locale } from '@scrumooth/shared';
+import { useI18nStore, syncLocaleFromUser } from '@/i18n/useI18nStore';
+import { DEFAULT_LOCALE, type Locale, type LocaleCookieOptions } from '@scrumooth/shared';
+
+// Toggleable flag so we can exercise both the secure and non-secure
+// locale cookie branches inside setLocale().
+let mockCookieSecure = false;
+
+vi.mock('@scrumooth/shared', async (importOriginal) => {
+  const actual = (await importOriginal()) as {
+    getLocaleCookieOptions: (
+      runtime: 'node' | 'browser',
+      isProduction?: boolean
+    ) => LocaleCookieOptions;
+  };
+  return {
+    ...actual,
+    getLocaleCookieOptions: vi.fn((runtime: 'browser') => ({
+      ...actual.getLocaleCookieOptions(runtime),
+      secure: mockCookieSecure,
+    })),
+  };
+});
 
 describe('useI18nStore', () => {
   beforeEach(() => {
@@ -10,6 +30,8 @@ describe('useI18nStore', () => {
     act(() => {
       useI18nStore.setState({ locale: DEFAULT_LOCALE });
     });
+
+    mockCookieSecure = false;
 
     // Clear localStorage before each test
     localStorage.clear();
@@ -82,6 +104,64 @@ describe('useI18nStore', () => {
       expect(stored).toBeTruthy();
       const parsed = JSON.parse(stored!);
       expect(parsed.state.locale).toBe(DEFAULT_LOCALE);
+    });
+  });
+
+  describe('syncLocaleFromUser()', () => {
+    it('should set locale when it differs from the current locale', () => {
+      expect(useI18nStore.getState().locale).toBe(DEFAULT_LOCALE);
+
+      act(() => {
+        syncLocaleFromUser('de');
+      });
+
+      expect(useI18nStore.getState().locale).toBe('de');
+    });
+
+    it('should not change locale when it already matches', () => {
+      act(() => {
+        useI18nStore.getState().setLocale('fr');
+      });
+
+      // Calling with the same locale should be a no-op (does not call setLocale).
+      act(() => {
+        syncLocaleFromUser('fr');
+      });
+
+      expect(useI18nStore.getState().locale).toBe('fr');
+    });
+  });
+
+  describe('locale cookie', () => {
+    it('should write a cookie without Secure attribute on HTTP contexts', () => {
+      mockCookieSecure = false;
+      act(() => {
+        useI18nStore.getState().setLocale('es');
+      });
+
+      expect(document.cookie).toContain('scrumooth_locale=es');
+      expect(document.cookie).not.toContain('Secure');
+    });
+
+    it('should include Secure attribute on HTTPS contexts', () => {
+      mockCookieSecure = true;
+      let writtenCookie = '';
+      const cookieSetter = vi
+        .spyOn(Document.prototype, 'cookie', 'set')
+        .mockImplementation((value: string) => {
+          writtenCookie = value;
+        });
+
+      try {
+        act(() => {
+          useI18nStore.getState().setLocale('fr');
+        });
+      } finally {
+        cookieSetter.mockRestore();
+      }
+
+      expect(writtenCookie).toContain('scrumooth_locale=fr');
+      expect(writtenCookie).toContain('Secure');
     });
   });
 });

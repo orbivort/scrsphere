@@ -247,13 +247,22 @@
   pointer-events: none;
 }
 
-.input-icon-left {
-  position: absolute;
-  left: var(--space-3);
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--color-text-tertiary);
-  pointer-events: none;
+/* Numeric estimated-hours input: reserve right padding so the value never
+   runs under the right-aligned icon, and hide the native spinner so it cannot
+   collide with the icon. */
+.estimate-input {
+  padding-right: var(--space-10);
+}
+
+/* Remove number input arrows */
+.estimate-input::-webkit-outer-spin-button,
+.estimate-input::-webkit-inner-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
+.estimate-input[type='number'] {
+  appearance: textfield;
 }
 
 /* Form Inputs */

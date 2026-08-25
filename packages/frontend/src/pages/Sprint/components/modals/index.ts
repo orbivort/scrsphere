@@ -13,5 +13,11 @@ export type { DeleteConfirmModalProps } from './DeleteConfirmModal';
 export { CompleteSprintModal } from './CompleteSprintModal';
 export type { CompleteSprintModalProps } from './CompleteSprintModal';
 
+export { CancelSprintModal } from './CancelSprintModal';
+export type { CancelSprintModalProps } from './CancelSprintModal';
+
 export { KeyboardHelpModal } from './KeyboardHelpModal';
 export type { KeyboardHelpModalProps } from './KeyboardHelpModal';
+
+export { PbiPreviewModal } from './PbiPreviewModal';
+export type { PbiPreviewModalProps } from './PbiPreviewModal';

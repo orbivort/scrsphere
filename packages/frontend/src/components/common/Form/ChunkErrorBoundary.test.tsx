@@ -1,5 +1,6 @@
-import { screen, fireEvent, renderWithProviders, initTestI18n } from '../../../test-utils';
+import { screen, fireEvent, render, renderWithProviders, initTestI18n } from '../../../test-utils';
 import { describe, it, expect, vi, beforeAll, beforeEach, afterEach } from 'vitest';
+import { I18nextProvider, type i18n as I18nType } from 'react-i18next';
 
 import { ChunkErrorBoundary } from './ChunkErrorBoundary';
 
@@ -88,5 +89,74 @@ describe('ChunkErrorBoundary', () => {
         </ChunkErrorBoundary>
       );
     }).toThrow('Some other error');
+  });
+
+  it.each([
+    ['Loading CSS chunk 456 failed', 'Loading CSS chunk'],
+    ['Something went wrong', 'ChunkLoadError'],
+    ['Failed to loadNamespace: common', 'loadNamespace'],
+    ['i18next: cannot load the locale', 'i18next'],
+  ])('displays error UI when the error matches %s', (message, name) => {
+    const error = name === 'ChunkLoadError' ? new Error(message) : new Error(message);
+    if (name === 'ChunkLoadError') {
+      error.name = 'ChunkLoadError';
+    }
+
+    renderWithProviders(
+      <ChunkErrorBoundary>
+        <ThrowError error={error} />
+      </ChunkErrorBoundary>
+    );
+
+    expect(screen.getByText('Unable to load page')).toBeInTheDocument();
+  });
+
+  describe('safeT fallback behavior', () => {
+    const createFakeI18n = (t: I18nType['t']): I18nType =>
+      ({
+        t,
+        getFixedT: () => t,
+        hasLoadedNamespace: () => true,
+        getResourceBundle: () => ({}),
+        on: () => undefined,
+        off: () => undefined,
+        language: 'en',
+        languages: ['en'],
+        options: { supportedLngs: ['en'], fallbackLng: ['en'] },
+        isInitialized: true,
+        initializedLanguageOnce: true,
+      }) as any as I18nType;
+
+    it('uses hardcoded fallback when translation key is missing', () => {
+      const missingKeyI18n = createFakeI18n(((key: string) => key) as I18nType['t']);
+
+      render(
+        <I18nextProvider i18n={missingKeyI18n}>
+          <ChunkErrorBoundary>
+            <ThrowError error={new Error('Loading chunk 123 failed')} />
+          </ChunkErrorBoundary>
+        </I18nextProvider>
+      );
+
+      expect(screen.getByText('Page failed to load')).toBeInTheDocument();
+      expect(screen.getByText('Reload Page')).toBeInTheDocument();
+    });
+
+    it('uses hardcoded fallback when translation throws', () => {
+      const throwingI18n = createFakeI18n((() => {
+        throw new Error('translation failed');
+      }) as I18nType['t']);
+
+      render(
+        <I18nextProvider i18n={throwingI18n}>
+          <ChunkErrorBoundary>
+            <ThrowError error={new Error('Loading chunk 123 failed')} />
+          </ChunkErrorBoundary>
+        </I18nextProvider>
+      );
+
+      expect(screen.getByText('Page failed to load')).toBeInTheDocument();
+      expect(screen.getByText('Reload Page')).toBeInTheDocument();
+    });
   });
 });

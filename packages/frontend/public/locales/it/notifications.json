@@ -1,6 +1,8 @@
 {
   "accountDeletionCancelled": "Eliminazione account annullata",
   "accountDeletionCancelledMessage": "L'eliminazione account programmata è stata annullata.",
+  "accountDeletionReminderMessage": "Un Product Owner del tuo team eliminerà definitivamente il proprio account in {{daysText}}. Assegna un nuovo Product Owner se necessario.",
+  "accountDeletionReminderTitle": "Promemoria eliminazione account",
   "accountDeletionScheduled": "Un membro del team ha programmato l'eliminazione dell'account",
   "accountDeletionScheduledMessage": "Un Product Owner nel tuo team ha programmato l'eliminazione del proprio account. L'account sarà eliminato definitivamente il {{deletionDate}}. Assegna un nuovo Product Owner prima di allora.",
   "ariaLabels": {
@@ -14,12 +16,16 @@
   },
   "backlogAdjustmentRequired": "Nuova regolazione del backlog richiede la tua azione",
   "backlogAdjustmentRequiredMessage": "Ti è stato assegnato come proprietario di una regolazione del backlog: {{action}} - \"{{description}}\"",
+  "dailyScrumSignalMessage": "Il Daily Scrum per \"{{sprintName}}\" sta iniziando. Gli sviluppatori sono invitati a riunirsi per ispezionare i progressi verso l'obiettivo dello Sprint e adattare lo Sprint Backlog.",
+  "dailyScrumSignalTitle": "Il Daily Scrum sta iniziando",
   "dateGroups": {
     "older": "Più vecchie",
     "thisWeek": "Questa settimana",
     "today": "Oggi",
     "yesterday": "Ieri"
   },
+  "directMessageBody": "{{message}}",
+  "directMessageTitle": "Messaggio da {{senderName}}",
   "empty": {
     "message": "Vedrai le notifiche qui quando ci sarà attività",
     "title": "Nessuna notifica ancora"
@@ -35,7 +41,6 @@
     "all": "Tutte",
     "directMessages": "Messaggi diretti",
     "impediments": "Impediments",
-    "reminders": "Promemoria",
     "taskAssignments": "Assegnazioni attività",
     "teamCreated": "Team creato",
     "teamDeleted": "Team eliminato",
@@ -44,19 +49,27 @@
     "unread": "Non lette"
   },
   "impedimentAssigned": "Nuovo Impediment assegnato: \"{{impedimentTitle}}\"",
+  "impedimentAssignedMessage": "Segnalato da {{reporterName}}",
   "loading": {
     "ariaLabel": "Caricamento notifiche",
     "title": "Caricamento notifiche..."
   },
   "markAllAsRead": "Segna tutte come lette",
   "marking": "Contrassegno in corso...",
+  "newTaskAssignedMessage": "Nello sprint \"{{sprintName}}\"",
+  "newTaskAssignedTitle": "Nuova attività assegnata: \"{{taskTitle}}\"",
   "pagination": {
     "next": "Successiva",
     "pageInfo": "Pagina {{current}} di {{total}}",
     "previous": "Precedente"
   },
+  "remindersNone": "Nessun promemoria inviato",
+  "remindersSent": "Promemoria inviato a {{count}} membro del team",
+  "remindersSent_plural": "Promemoria inviati a {{count}} membri del team",
   "skipToMainContent": "Vai al contenuto principale",
   "subtitle": "Resta aggiornato sulle attività del team e sugli aggiornamenti importanti",
+  "taskReassignedMessage": "Nello sprint \"{{sprintName}}\"",
+  "taskReassignedTitle": "Attività riassegnata a te: \"{{taskTitle}}\"",
   "teamCreated": "Team creato: \"{{teamName}}\"",
   "teamCreatedMessage": "Hai creato con successo il team",
   "teamDeleted": "Team eliminato: \"{{teamName}}\"",

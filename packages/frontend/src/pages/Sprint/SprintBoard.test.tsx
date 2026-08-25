@@ -13,7 +13,6 @@ import {
   createMockSprint,
   createMockBacklogItem,
   createMockTeamMember,
-  createMockDoDItem,
   createMockImpediment,
 } from '../../__mocks__/mockData';
 import { TaskStatus, type Task, type Sprint, ImpedimentStatus } from '../../types';
@@ -22,6 +21,7 @@ import { SprintBoard } from './SprintBoard';
 
 vi.mock('../../store', () => ({
   useTeamStore: vi.fn(),
+  useAuthStore: vi.fn(() => ({ user: null })),
 }));
 
 vi.mock('../../services', () => ({
@@ -88,11 +88,6 @@ const mockSprintItems = [
   createMockBacklogItem({ id: 'pbi-2', title: 'PBI 2' }),
 ];
 
-const mockDoDItems = [
-  createMockDoDItem({ id: 'dod-1', description: 'Code reviewed' }),
-  createMockDoDItem({ id: 'dod-2', description: 'Tests passed' }),
-];
-
 const mockImpediments = [createMockImpediment({ id: 'imp-1', status: ImpedimentStatus.OPEN })];
 
 const mockTeamStore = useTeamStore as ReturnType<typeof vi.fn>;
@@ -116,22 +111,26 @@ const getDefaultMockData = () => ({
   tasks: mockTasks,
   teamMembers: mockTeamMembers,
   sprintItems: mockSprintItems,
-  dodItems: mockDoDItems,
   impediments: mockImpediments,
-  dodVerifications: [],
+  sprintReview: null,
+  isReviewCompleted: true,
+  sprintRetrospective: null,
+  isRetrospectiveCompleted: true,
   sprintLoading: false,
   tasksLoading: false,
-  wipLimits: { todo: 5, in_progress: 3, done: 10 },
+  wipLimits: { todo: 5, in_progress: 3, review: 3, done: 10 },
   filteredTasks: mockTasks,
   tasksByStatus: {
     todo: [mockTasks[0]],
     in_progress: [mockTasks[1]],
+    review: [],
     done: [mockTasks[2]],
   },
   sprintStats: {
     totalTasks: 3,
     todoTasks: 1,
     inProgressTasks: 1,
+    reviewTasks: 0,
     doneTasks: 1,
     totalEstimatedHours: 24,
     totalRemainingHours: 16,
@@ -226,8 +225,8 @@ describe('SprintBoard Component', () => {
     mockTeamStore.mockReturnValue({
       currentTeam: mockTeam,
       teams: [mockTeam],
-      userRoleInCurrentTeam: 'developer',
-      userTeamsWithRoles: [{ ...mockTeam, userRole: 'developer' }],
+      userRoleInCurrentTeam: 'developers',
+      userTeamsWithRoles: [{ ...mockTeam, userRole: 'developers' }],
       setCurrentTeam: vi.fn(),
       setTeams: vi.fn(),
       setUserTeamsWithRoles: vi.fn(),
@@ -365,6 +364,9 @@ describe('SprintBoard Component', () => {
         screen.getByRole('heading', { name: i18nT('sprint:taskStatus.inProgress') })
       ).toBeInTheDocument();
       expect(
+        screen.getByRole('heading', { name: i18nT('sprint:taskStatus.review') })
+      ).toBeInTheDocument();
+      expect(
         screen.getByRole('heading', { name: i18nT('sprint:taskStatus.done') })
       ).toBeInTheDocument();
     });
@@ -394,6 +396,7 @@ describe('SprintBoard Component', () => {
         tasksByStatus: {
           todo: tasks,
           in_progress: [],
+          review: [],
           done: [],
         },
       });
@@ -496,6 +499,7 @@ describe('SprintBoard Component', () => {
         tasksByStatus: {
           todo: [tasks[0]],
           in_progress: [tasks[1]],
+          review: [],
           done: [tasks[2]],
         },
       });
@@ -518,16 +522,6 @@ describe('SprintBoard Component', () => {
         impediments,
       });
 
-      renderSprintBoard(queryClient);
-
-      await waitFor(() => {
-        expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
-      });
-    });
-  });
-
-  describe('DoD Verification', () => {
-    it('should handle DoD verification modal', async () => {
       renderSprintBoard(queryClient);
 
       await waitFor(() => {
@@ -829,6 +823,7 @@ describe('SprintBoard Component', () => {
         tasksByStatus: {
           todo: [tasks[0]],
           in_progress: [tasks[1]],
+          review: [],
           done: [tasks[2]],
         },
       });
@@ -1151,8 +1146,8 @@ describe('SprintBoard Modal Interactions', () => {
     mockTeamStore.mockReturnValue({
       currentTeam: mockTeam,
       teams: [mockTeam],
-      userRoleInCurrentTeam: 'developer',
-      userTeamsWithRoles: [{ ...mockTeam, userRole: 'developer' }],
+      userRoleInCurrentTeam: 'developers',
+      userTeamsWithRoles: [{ ...mockTeam, userRole: 'developers' }],
       setCurrentTeam: vi.fn(),
       setTeams: vi.fn(),
       setUserTeamsWithRoles: vi.fn(),
@@ -1225,6 +1220,7 @@ describe('SprintBoard Modal Interactions', () => {
         tasksByStatus: {
           todo: [tasks[0]],
           in_progress: [tasks[1]],
+          review: [],
           done: [tasks[2]],
         },
       });
@@ -1247,24 +1243,6 @@ describe('SprintBoard Modal Interactions', () => {
         impediments,
       });
 
-      renderSprintBoard(queryClient);
-
-      await waitFor(() => {
-        expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
-      });
-    });
-  });
-
-  describe('DoD Verification Workflow', () => {
-    it('should handle DoD verification confirm', async () => {
-      renderSprintBoard(queryClient);
-
-      await waitFor(() => {
-        expect(screen.getByTestId('sprint-board')).toBeInTheDocument();
-      });
-    });
-
-    it('should handle DoD verification cancel', async () => {
       renderSprintBoard(queryClient);
 
       await waitFor(() => {

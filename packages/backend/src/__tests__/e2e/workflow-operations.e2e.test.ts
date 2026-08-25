@@ -11,6 +11,8 @@ import {
   addTeamMember,
   createTestSprintInDb,
   createTestPBIInDb,
+  createTestIncrementInDb,
+  createTestSprintReviewInDb,
   createTestRetrospectiveInDb,
   createTestRetrospectiveItemInDb,
   addPBIToSprintBacklog,
@@ -54,7 +56,7 @@ describe('E2E: Workflow Operations', () => {
 
   const setupTeamWithUser = async (
     email: string,
-    role: (typeof ROLES)[keyof typeof ROLES] = ROLES.DEVELOPER
+    role: (typeof ROLES)[keyof typeof ROLES] = ROLES.DEVELOPERS
   ) => {
     const user = await createTestUser(email);
     const teamName = `Workflow Team ${uniqueTestId()}`;
@@ -70,7 +72,7 @@ describe('E2E: Workflow Operations', () => {
         const email = `reviews-list-${uniqueTestId()}@example.com`;
         testEmails.push(email);
 
-        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
         const cookies = await loginAndGetCookies(email);
 
@@ -88,7 +90,7 @@ describe('E2E: Workflow Operations', () => {
         const email = `no-reviews-${uniqueTestId()}@example.com`;
         testEmails.push(email);
 
-        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
         const cookies = await loginAndGetCookies(email);
 
@@ -143,6 +145,45 @@ describe('E2E: Workflow Operations', () => {
         expect(response.body.success).toBe(false);
       });
 
+      it('should create a review with a date-only reviewDate string (regression)', async () => {
+        const email = `review-dateonly-${uniqueTestId()}@example.com`;
+        testEmails.push(email);
+
+        const { team } = await setupTeamWithUser(email, ROLES.SCRUM_MASTER);
+
+        const sprint = await createTestSprintInDb(
+          team.id,
+          `Review Dateonly ${uniqueTestId()}`,
+          SPRINT_STATUSES.ACTIVE
+        );
+        const increment = await createTestIncrementInDb(
+          sprint.id,
+          team.id,
+          'Delivered Increment',
+          'DELIVERED'
+        );
+
+        const cookies = await loginAndGetCookies(email);
+        const { csrfToken } = extractCsrfFromCookies(cookies);
+
+        const response = await request(app)
+          .post('/api/v1/sprint-reviews')
+          .set('Cookie', cookies)
+          .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
+          .send({
+            sprintId: sprint.id,
+            teamId: team.id,
+            incrementId: increment.id,
+            // The frontend sends a date-only string like "2026-08-22".
+            reviewDate: '2026-08-22',
+            summary: 'Sprint review summary',
+          })
+          .expect(HTTP_STATUS.CREATED);
+
+        expect(response.body.success).toBe(true);
+        expect(response.body.data.reviewDate).toBeDefined();
+      });
+
       it('should return 422 UNPROCESSABLE_ENTITY with missing required fields', async () => {
         const email = `review-missing-${uniqueTestId()}@example.com`;
         testEmails.push(email);
@@ -170,7 +211,7 @@ describe('E2E: Workflow Operations', () => {
         const email = `retro-get-${uniqueTestId()}@example.com`;
         testEmails.push(email);
 
-        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
         const sprint = await createTestSprintInDb(
           team.id,
@@ -192,7 +233,7 @@ describe('E2E: Workflow Operations', () => {
         const email = `no-retro-${uniqueTestId()}@example.com`;
         testEmails.push(email);
 
-        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
         const sprint = await createTestSprintInDb(
           team.id,
@@ -343,7 +384,7 @@ describe('E2E: Workflow Operations', () => {
         const email = `backlog-pbis-${uniqueTestId()}@example.com`;
         testEmails.push(email);
 
-        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
         const sprint = await createTestSprintInDb(
           team.id,
@@ -366,7 +407,7 @@ describe('E2E: Workflow Operations', () => {
         const email = `empty-backlog-${uniqueTestId()}@example.com`;
         testEmails.push(email);
 
-        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
         const sprint = await createTestSprintInDb(
           team.id,
@@ -399,7 +440,7 @@ describe('E2E: Workflow Operations', () => {
         const email = `add-pbi-${uniqueTestId()}@example.com`;
         testEmails.push(email);
 
-        const { team } = await setupTeamWithUser(email, ROLES.SCRUM_MASTER);
+        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
         const sprint = await createTestSprintInDb(
           team.id,
@@ -460,7 +501,7 @@ describe('E2E: Workflow Operations', () => {
         const email = `remove-pbi-${uniqueTestId()}@example.com`;
         testEmails.push(email);
 
-        const { team } = await setupTeamWithUser(email, ROLES.SCRUM_MASTER);
+        const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
         const sprint = await createTestSprintInDb(
           team.id,
@@ -520,6 +561,14 @@ describe('E2E: Workflow Operations', () => {
           SPRINT_STATUSES.PLANNED
         );
 
+        // The Sprint Backlog must be saved before the sprint can start.
+        const pbi = await createTestPBIInDb(
+          team.id,
+          `Start PBI ${uniqueTestId()}`,
+          PBI_STATUSES.READY
+        );
+        await addPBIToSprintBacklog(sprint.id, pbi.id);
+
         const cookies = await loginAndGetCookies(email);
         const { csrfToken } = extractCsrfFromCookies(cookies);
 
@@ -548,17 +597,39 @@ describe('E2E: Workflow Operations', () => {
     });
 
     describe('POST /api/v1/sprints/:id/complete', () => {
+      // Per the Scrum Guide (2020), a Sprint can only be completed once the Sprint Review and
+      // Sprint Retrospective have both concluded. This helper creates a completed Sprint Review
+      // and a COMPLETED Sprint Retrospective (with their linked Increment) for the sprint so the
+      // complete endpoint's prerequisite-event gate is satisfied.
+      const completePrerequisiteEvents = async (
+        sprintId: string,
+        teamId: string,
+        userId: string
+      ): Promise<void> => {
+        const increment = await createTestIncrementInDb(sprintId, teamId);
+        await createTestSprintReviewInDb(
+          sprintId,
+          teamId,
+          increment.id,
+          userId,
+          undefined,
+          'completed'
+        );
+        await createTestRetrospectiveInDb(sprintId, teamId, userId, 'COMPLETED');
+      };
+
       it('should complete a sprint successfully', async () => {
         const email = `complete-sprint-${uniqueTestId()}@example.com`;
         testEmails.push(email);
 
-        const { team } = await setupTeamWithUser(email, ROLES.SCRUM_MASTER);
+        const { user, team } = await setupTeamWithUser(email, ROLES.SCRUM_MASTER);
 
         const sprint = await createTestSprintInDb(
           team.id,
           `Complete Sprint ${uniqueTestId()}`,
           SPRINT_STATUSES.ACTIVE
         );
+        await completePrerequisiteEvents(sprint.id, team.id, user.id);
 
         const cookies = await loginAndGetCookies(email);
         const { csrfToken } = extractCsrfFromCookies(cookies);
@@ -660,6 +731,14 @@ describe('E2E: Workflow Operations', () => {
         SPRINT_STATUSES.PLANNED
       );
 
+      // The Sprint Backlog must be saved before the sprint can start.
+      const pbi = await createTestPBIInDb(
+        team.id,
+        `Concurrent PBI ${uniqueTestId()}`,
+        PBI_STATUSES.READY
+      );
+      await addPBIToSprintBacklog(sprint.id, pbi.id);
+
       const cookies = await loginAndGetCookies(email);
       const { csrfToken } = extractCsrfFromCookies(cookies);
 
@@ -685,7 +764,7 @@ describe('E2E: Workflow Operations', () => {
       const email = `multi-sprint-pbi-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { team } = await setupTeamWithUser(email, ROLES.SCRUM_MASTER);
+      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
       const sprint1 = await createTestSprintInDb(
         team.id,
@@ -794,7 +873,7 @@ describe('E2E: Workflow Operations', () => {
   });
 
   describe('Authorization and Permissions', () => {
-    it('should allow scrum master to manage sprint backlog', async () => {
+    it('should reject scrum master from managing sprint backlog', async () => {
       const email = `sm-backlog-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
@@ -818,12 +897,13 @@ describe('E2E: Workflow Operations', () => {
           pbiId: pbi.id,
           reason: 'Scrum master adding PBI',
         })
-        .expect(HTTP_STATUS.CREATED);
+        .expect(HTTP_STATUS.FORBIDDEN);
 
-      expect(response.body.success).toBe(true);
+      expect(response.body.success).toBe(false);
+      expect(response.body.error.code).toBe(ERROR_CODES.FORBIDDEN);
     });
 
-    it('should allow product owner to manage sprint backlog', async () => {
+    it('should reject product owner from managing sprint backlog', async () => {
       const email = `po-backlog-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
@@ -847,16 +927,17 @@ describe('E2E: Workflow Operations', () => {
           pbiId: pbi.id,
           reason: 'Product owner adding PBI',
         })
-        .expect(HTTP_STATUS.CREATED);
+        .expect(HTTP_STATUS.FORBIDDEN);
 
-      expect(response.body.success).toBe(true);
+      expect(response.body.success).toBe(false);
+      expect(response.body.error.code).toBe(ERROR_CODES.FORBIDDEN);
     });
 
     it('should allow developer to view sprint backlog', async () => {
       const email = `dev-view-backlog-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { team } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
       const sprint = await createTestSprintInDb(
         team.id,

@@ -263,7 +263,6 @@ class DataExportService {
     return {
       user,
       teamMemberships,
-      dailyUpdates: [],
       assignedTasks: [],
       reportedImpediments: [],
       ownedImpediments: [],

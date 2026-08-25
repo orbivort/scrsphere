@@ -13,6 +13,7 @@ import {
 import { ItemStatus, MoSCoWPriority } from '../../types';
 
 import { ProductBacklog } from './Backlog';
+import * as teamContextModule from '../../contexts/TeamContext';
 
 vi.mock('../../store', () => ({
   useTeamStore: vi.fn(),
@@ -167,6 +168,18 @@ describe('ProductBacklog Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+
+    // The modals read the user's role from TeamContext to gate story-point sizing.
+    vi.spyOn(teamContextModule, 'useTeamContext').mockReturnValue({
+      userRole: 'PRODUCT_OWNER',
+      currentTeam: mockTeam,
+      userTeams: [{ ...mockTeam, userRole: 'PRODUCT_OWNER' }],
+      isLoading: false,
+      error: null,
+      switchTeam: vi.fn(),
+      refreshTeams: vi.fn(),
+      hasMultipleTeams: false,
+    } as never);
 
     mockTeamStore.mockReturnValue({
       currentTeam: mockTeam,

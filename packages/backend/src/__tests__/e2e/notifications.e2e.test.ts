@@ -50,7 +50,7 @@ describe('E2E: Notifications', () => {
 
   const setupTeamWithUser = async (
     email: string,
-    role: (typeof ROLES)[keyof typeof ROLES] = ROLES.DEVELOPER
+    role: (typeof ROLES)[keyof typeof ROLES] = ROLES.DEVELOPERS
   ) => {
     const user = await createTestUser(email);
     const teamName = `Notification Team ${uniqueTestId()}`;
@@ -82,7 +82,7 @@ describe('E2E: Notifications', () => {
       const email = `notifications-list-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { user } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { user } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
       await createTestNotification(user.id, `Notification 1 ${uniqueTestId()}`);
       await createTestNotification(user.id, `Notification 2 ${uniqueTestId()}`);
@@ -104,7 +104,7 @@ describe('E2E: Notifications', () => {
       const email = `no-notifications-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      await setupTeamWithUser(email, ROLES.DEVELOPER);
+      await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
       const cookies = await loginAndGetCookies(email);
 
@@ -132,7 +132,7 @@ describe('E2E: Notifications', () => {
       const email = `pagination-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { user } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { user } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
       for (let i = 0; i < 15; i++) {
         await createTestNotification(user.id, `Notification ${i} ${uniqueTestId()}`);
@@ -154,7 +154,7 @@ describe('E2E: Notifications', () => {
       const email = `filter-read-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { user } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { user } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
       await createTestNotification(user.id, `Unread ${uniqueTestId()}`);
       const notif2 = await createTestNotification(user.id, `Read ${uniqueTestId()}`);
@@ -180,7 +180,7 @@ describe('E2E: Notifications', () => {
       const email = `unread-count-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { user } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { user } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
       await createTestNotification(user.id, `Unread 1 ${uniqueTestId()}`);
       await createTestNotification(user.id, `Unread 2 ${uniqueTestId()}`);
@@ -206,7 +206,7 @@ describe('E2E: Notifications', () => {
       const email = `zero-count-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      await setupTeamWithUser(email, ROLES.DEVELOPER);
+      await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
       const cookies = await loginAndGetCookies(email);
 
@@ -225,7 +225,7 @@ describe('E2E: Notifications', () => {
       const email = `mark-read-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { user } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { user } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
       const notification = await createTestNotification(user.id, `To Read ${uniqueTestId()}`);
 
@@ -245,7 +245,7 @@ describe('E2E: Notifications', () => {
       const email = `nonexistent-notif-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      await setupTeamWithUser(email, ROLES.DEVELOPER);
+      await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
       const cookies = await loginAndGetCookies(email);
       const { csrfToken } = extractCsrfFromCookies(cookies);
@@ -292,7 +292,7 @@ describe('E2E: Notifications', () => {
       const email = `read-all-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { user } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { user } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
       await createTestNotification(user.id, `Notif 1 ${uniqueTestId()}`);
       await createTestNotification(user.id, `Notif 2 ${uniqueTestId()}`);
@@ -316,7 +316,7 @@ describe('E2E: Notifications', () => {
       const email = `delete-notif-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      const { user } = await setupTeamWithUser(email, ROLES.DEVELOPER);
+      const { user } = await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
       const notification = await createTestNotification(user.id, `To Delete ${uniqueTestId()}`);
 
@@ -341,7 +341,7 @@ describe('E2E: Notifications', () => {
       const email = `delete-nonexistent-${uniqueTestId()}@example.com`;
       testEmails.push(email);
 
-      await setupTeamWithUser(email, ROLES.DEVELOPER);
+      await setupTeamWithUser(email, ROLES.DEVELOPERS);
 
       const cookies = await loginAndGetCookies(email);
       const { csrfToken } = extractCsrfFromCookies(cookies);

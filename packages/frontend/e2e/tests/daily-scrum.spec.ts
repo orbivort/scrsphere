@@ -85,6 +85,40 @@ test.describe('Daily Scrum Page', () => {
       expect(bodyContent).toBe(true);
     });
   });
+
+  test('TC-DAILY-005: Create an impediment from the Daily Scrum and verify it displays', async ({
+    dailyScrumPage,
+    page,
+  }) => {
+    await test.step('Navigate to daily scrum page', async () => {
+      await dailyScrumPage.goto();
+    });
+
+    await test.step('Open the promote-impediment modal', async () => {
+      const trigger = dailyScrumPage.createImpedimentButton;
+      await expect(trigger).toBeVisible({ timeout: 15000 });
+      await dailyScrumPage.openCreateImpedimentModal();
+      await expect(dailyScrumPage.promoteModal).toBeVisible();
+    });
+
+    await test.step('Fill and submit the impediment form', async () => {
+      await dailyScrumPage.createImpediment({
+        title: 'E2E blocked API access',
+        description: 'The team is blocked by external API access in the E2E test',
+      });
+      // Modal closes and a success toast appears.
+      await expect(dailyScrumPage.promoteModal).toBeHidden({ timeout: 15000 });
+    });
+
+    await test.step('Verify the impediment is displayed in the Inspect & Adapt section', async () => {
+      const items = dailyScrumPage.getRaisedImpediments();
+      await expect(items.first()).toBeVisible({ timeout: 15000 });
+      await expect(page.getByText('E2E blocked API access').first()).toBeVisible({
+        timeout: 15000,
+      });
+      await expect(page.getByText('Open Impediments').first()).toBeVisible();
+    });
+  });
 });
 
 test.describe('Daily Scrum - Responsive Design', () => {

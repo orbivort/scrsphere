@@ -11,7 +11,7 @@ export { teamService } from './domain/team.service';
 export { productBacklogService } from './domain/productBacklog.service';
 export { sprintService } from './domain/sprint.service';
 export { sprintBacklogService } from './domain/sprintBacklog.service';
-export { dailyUpdatesService } from './domain/dailyUpdates.service';
+export { dailyScrumService } from './domain/dailyScrum.service';
 export { impedimentsService } from './domain/impediments.service';
 export { reportsService } from './domain/reports.service';
 export { productGoalsService } from './domain/productGoals.service';
@@ -22,6 +22,7 @@ export { sprintReviewService } from './domain/sprintReview.service';
 export { retrospectiveService } from './domain/retrospective.service';
 export { systemParamsService } from './domain/systemParams.service';
 export { dataExportService } from './domain/dataExport.service';
+export { timeboxService } from './domain/timebox.service';
 
 // Legacy ApiService class for backward compatibility
 // This maintains the existing API while encouraging direct service imports
@@ -31,7 +32,7 @@ import { teamService } from './domain/team.service';
 import { productBacklogService } from './domain/productBacklog.service';
 import { sprintService } from './domain/sprint.service';
 import { sprintBacklogService } from './domain/sprintBacklog.service';
-import { dailyUpdatesService } from './domain/dailyUpdates.service';
+import { dailyScrumService } from './domain/dailyScrum.service';
 import { impedimentsService } from './domain/impediments.service';
 import { reportsService } from './domain/reports.service';
 import { productGoalsService } from './domain/productGoals.service';
@@ -41,6 +42,8 @@ import { sprintReviewService } from './domain/sprintReview.service';
 import { retrospectiveService } from './domain/retrospective.service';
 import { systemParamsService } from './domain/systemParams.service';
 import { dataExportService } from './domain/dataExport.service';
+import { timeboxService } from './domain/timebox.service';
+import { definitionService } from './domain/definition.service';
 
 class ApiService {
   // Auth endpoints
@@ -97,6 +100,9 @@ class ApiService {
   createSprint = sprintService.createSprint.bind(sprintService);
   getSprint = sprintService.getSprint.bind(sprintService);
   startSprint = sprintService.startSprint.bind(sprintService);
+  saveSprintBacklog = sprintService.saveSprintBacklog.bind(sprintService);
+  saveSprintPlanningDraft = sprintService.saveSprintPlanningDraft.bind(sprintService);
+  getSprintPlanningDraft = sprintService.getSprintPlanningDraft.bind(sprintService);
   rollbackSprintStart = sprintService.rollbackSprintStart.bind(sprintService);
   updateSprint = sprintService.updateSprint.bind(sprintService);
   completeSprint = sprintService.completeSprint.bind(sprintService);
@@ -116,15 +122,15 @@ class ApiService {
   removePBIFromSprint = sprintBacklogService.removePBIFromSprint.bind(sprintBacklogService);
   getSprintBacklogChanges = sprintBacklogService.getSprintBacklogChanges.bind(sprintBacklogService);
 
-  // Daily Updates endpoints
-  getDailyUpdates = dailyUpdatesService.getDailyUpdates.bind(dailyUpdatesService);
-  createDailyUpdate = dailyUpdatesService.createDailyUpdate.bind(dailyUpdatesService);
-  getTeamMembersWithUpdates =
-    dailyUpdatesService.getTeamMembersWithUpdates.bind(dailyUpdatesService);
-  sendDailyUpdateReminder = dailyUpdatesService.sendDailyUpdateReminder.bind(dailyUpdatesService);
-  promoteToImpediment = dailyUpdatesService.promoteToImpediment.bind(dailyUpdatesService);
-  getImpedimentByDailyUpdate =
-    dailyUpdatesService.getImpedimentByDailyUpdate.bind(dailyUpdatesService);
+  // Daily Scrum endpoints (team-level, goal-focused)
+  getDailyScrum = dailyScrumService.getDailyScrum.bind(dailyScrumService);
+  getDailyScrums = dailyScrumService.getDailyScrums.bind(dailyScrumService);
+  createDailyScrum = dailyScrumService.createDailyScrum.bind(dailyScrumService);
+  updateDailyScrum = dailyScrumService.updateDailyScrum.bind(dailyScrumService);
+  recordDailyScrumParticipation = dailyScrumService.recordParticipation.bind(dailyScrumService);
+  getDailyScrumParticipation = dailyScrumService.getParticipation.bind(dailyScrumService);
+  sendDailyScrumTeamSignal = dailyScrumService.sendTeamSignal.bind(dailyScrumService);
+  promoteImpedimentFromDailyScrum = dailyScrumService.promoteToImpediment.bind(dailyScrumService);
 
   // Impediments endpoints
   getImpediments = impedimentsService.getImpediments.bind(impedimentsService);
@@ -210,6 +216,16 @@ class ApiService {
   addRetroAttendee = retrospectiveService.addRetroAttendee.bind(retrospectiveService);
   updateRetroAttendee = retrospectiveService.updateRetroAttendee.bind(retrospectiveService);
   deleteRetroAttendee = retrospectiveService.deleteRetroAttendee.bind(retrospectiveService);
+
+  // Timebox endpoints (Scrum event timeboxes)
+  getTimebox = timeboxService.getTimebox.bind(timeboxService);
+  startTimebox = timeboxService.startTimebox.bind(timeboxService);
+  pauseTimebox = timeboxService.pauseTimebox.bind(timeboxService);
+  resetTimebox = timeboxService.resetTimebox.bind(timeboxService);
+  concludeTimebox = timeboxService.concludeTimebox.bind(timeboxService);
+
+  // Definition of Done endpoints
+  getDefinitionOfDone = definitionService.getDefinitionOfDone.bind(definitionService);
 
   // Data Export endpoints (GDPR Article 20)
   initiateDataExport = dataExportService.initiateExport.bind(dataExportService);

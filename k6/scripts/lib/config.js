@@ -91,7 +91,7 @@ export const endpointThresholds = {
     insights: { p95: 500, p99: 900 },
     burndown: { p95: 300, p99: 500 },
   },
-  dailyUpdates: {
+  dailyScrums: {
     create: { p95: 150, p99: 250 },
     list: { p95: 200, p99: 350 },
   },

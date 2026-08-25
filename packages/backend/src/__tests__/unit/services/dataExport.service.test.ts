@@ -156,7 +156,7 @@ describe('DataExportService', () => {
           id: 'tm-1',
           userId: 'user-1',
           teamId: 'team-1',
-          role: 'DEVELOPER',
+          role: 'DEVELOPERS',
           joinedAt: new Date(),
           team: { id: 'team-1', name: 'Team Alpha' },
         },
@@ -184,7 +184,6 @@ describe('DataExportService', () => {
       expect(result.user).toEqual(mockUser);
       expect(result.teamMemberships).toEqual(mockTeamMemberships);
       expect(result.sessions).toEqual(mockSessions);
-      expect(result.dailyUpdates).toEqual([]);
       expect(result.assignedTasks).toEqual([]);
     });
 
@@ -373,7 +372,7 @@ describe('DataExportService', () => {
           id: 'tm-1',
           userId: 'user-1',
           teamId: 'team-1',
-          role: 'DEVELOPER',
+          role: 'DEVELOPERS',
           joinedAt: new Date(),
           team: { id: 'team-1', name: 'Team Alpha' },
         },

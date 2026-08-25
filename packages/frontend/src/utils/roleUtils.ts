@@ -8,8 +8,8 @@ export function getRoleLabel(role: string | null): string {
       return 'Product Owner';
     case 'SCRUM_MASTER':
       return 'Scrum Master';
-    case 'DEVELOPER':
-      return 'Developer';
+    case 'DEVELOPERS':
+      return 'Developers';
     default:
       return role;
   }
@@ -26,7 +26,7 @@ export function getRoleBadgeClass(role: string | null, styles: Record<string, st
       return styles['badge-po'] ?? '';
     case 'SCRUM_MASTER':
       return styles['badge-sm'] ?? '';
-    case 'DEVELOPER':
+    case 'DEVELOPERS':
       return styles['badge-dev'] ?? '';
     default:
       return styles['badge-default'] ?? '';
@@ -43,21 +43,46 @@ export function getRoleBadgeColor(role: string | null): string {
       return '#f59e0b';
     case 'SCRUM_MASTER':
       return '#3b82f6';
-    case 'DEVELOPER':
+    case 'DEVELOPERS':
       return '#10b981';
     default:
       return '#6b7280';
   }
 }
 
-const ROLES_THAT_CAN_START_SPRINT = [
-  'product_owner',
-  'scrum_master',
-  'PRODUCT_OWNER',
-  'SCRUM_MASTER',
-];
+/**
+ * Readiness inputs that determine whether a Sprint can be started.
+ *
+ * Starting a Sprint is no longer role-gated (any team member may do it). It is instead
+ * gated on the Scrum Planning outputs being ready: a committed Sprint Goal AND a saved,
+ * non-empty Sprint Backlog.
+ */
+export interface SprintStartReadiness {
+  hasSprintGoal: boolean;
+  hasSavedBacklog: boolean;
+}
 
-export function canStartSprint(role: string | null): boolean {
-  if (!role) return false;
-  return ROLES_THAT_CAN_START_SPRINT.includes(role);
+export function canStartSprint(readiness: SprintStartReadiness): boolean {
+  return readiness.hasSprintGoal && readiness.hasSavedBacklog;
+}
+
+/**
+ * Whether the given team role may mutate the Sprint Backlog on the Active Sprint Board.
+ *
+ * The Sprint Backlog is "a plan by and for the Developers" (Scrum Guide), so only
+ * `DEVELOPERS`-role members may create/edit/delete/move tasks and manage the backlog.
+ * PO/SM keep read-only inspection. The role may be uppercase (backend enum) or lowercase.
+ */
+export function canMutateSprintBacklog(role: string | null | undefined): boolean {
+  return String(role ?? '').toLowerCase() === 'developers';
+}
+
+/**
+ * Whether the given team role may cancel a Sprint.
+ *
+ * Only the Product Owner has authority to cancel a Sprint (Scrum Guide). The role may be
+ * uppercase (backend enum) or lowercase.
+ */
+export function canCancelSprint(role: string | null | undefined): boolean {
+  return String(role ?? '').toLowerCase() === 'product_owner';
 }

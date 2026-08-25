@@ -6,7 +6,7 @@ import { logger } from '../../utils/logger';
 import { navigateTo, getCurrentPath } from '../../utils/navigation';
 import { i18nInstance } from '../../i18n/config';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:5001/api/v1';
+export const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:5001/api/v1';
 const API_TIMEOUT = parseInt(import.meta.env.VITE_API_TIMEOUT ?? '30000', 10);
 
 const CSRF_COOKIE_NAME = 'csrfToken';
@@ -21,6 +21,16 @@ function getCsrfTokenFromCookie(): string | null {
     }
   }
   return null;
+}
+
+/**
+ * Build the CSRF header for raw `fetch` calls (e.g. a keepalive flush on unload)
+ * that bypass the axios instance and therefore the interceptor that normally adds
+ * the header. Used because `navigator.sendBeacon` cannot set custom headers.
+ */
+export function getCsrfHeader(): Record<string, string> {
+  const token = getCsrfTokenFromCookie();
+  return token ? { [CSRF_HEADER_NAME]: token } : {};
 }
 
 async function fetchCsrfToken(): Promise<string | null> {

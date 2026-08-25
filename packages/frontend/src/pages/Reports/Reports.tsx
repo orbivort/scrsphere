@@ -1,4 +1,5 @@
-import React, { lazy, Suspense } from 'react';
+import React, { lazy, Suspense, useMemo } from 'react';
+import { Link } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { formatLocaleDate } from '@scrumooth/shared';
@@ -12,7 +13,6 @@ import {
   ZapIcon,
   CheckCircleIcon,
   AlertTriangleIcon,
-  SmileIcon,
   CalendarIcon,
   LightbulbIcon,
   TrendingUpIcon,
@@ -22,6 +22,8 @@ import {
   WarningIcon,
   XCircleIcon,
   CheckIcon,
+  TargetIcon,
+  ArrowRightIcon,
 } from '../../components/common/Icons';
 
 import styles from './Reports.module.css';
@@ -74,6 +76,23 @@ export const Reports: React.FC = () => {
     queryFn: () => apiService.getInsights(teamId ?? ''),
     enabled: !!teamId,
   });
+
+  const { data: productGoalsData } = useQuery({
+    queryKey: ['product-goals', teamId],
+    queryFn: () => apiService.getProductGoals(teamId ?? ''),
+    enabled: !!teamId,
+  });
+
+  const { data: definitionData } = useQuery({
+    queryKey: ['dod', teamId],
+    queryFn: () => apiService.getDefinitionOfDone(teamId ?? ''),
+    enabled: !!teamId,
+  });
+
+  const activeProductGoal = useMemo(() => {
+    const goals = productGoalsData?.data ?? [];
+    return goals.find((goal) => goal.status.toUpperCase() === 'ACTIVE');
+  }, [productGoalsData]);
 
   const formatDate = (dateString: string) => {
     return formatLocaleDate(dateString, locale);
@@ -188,12 +207,57 @@ export const Reports: React.FC = () => {
           </div>
         </div>
 
+        <div className={styles['artifact-banner']}>
+          <div className={`${styles['artifact-card']} ${styles.goal}`}>
+            <div className={styles['artifact-header']}>
+              <TargetIcon size={18} aria-hidden="true" />
+              <h3>{t('productGoal.title')}</h3>
+            </div>
+            {activeProductGoal ? (
+              <>
+                <h4 className={styles['artifact-title']}>{activeProductGoal.title}</h4>
+                {activeProductGoal.description ? (
+                  <p className={styles['artifact-description']}>{activeProductGoal.description}</p>
+                ) : null}
+                <Link to="/product-goals" className={styles['artifact-link']}>
+                  {t('productGoal.viewLink')}
+                  <ArrowRightIcon size={14} aria-hidden="true" />
+                </Link>
+              </>
+            ) : (
+              <p className={styles['artifact-description']}>{t('productGoal.empty')}</p>
+            )}
+          </div>
+
+          <div className={`${styles['artifact-card']} ${styles.dod}`}>
+            <div className={`${styles['artifact-header']} ${styles.dod}`}>
+              <CheckCircleIcon size={18} aria-hidden="true" />
+              <h3>{t('dod.title')}</h3>
+            </div>
+            {definitionData?.data && definitionData.data.items.length > 0 ? (
+              <ul className={styles['dod-items']}>
+                {definitionData.data.items
+                  .filter((item) => item.isActive)
+                  .slice(0, 4)
+                  .map((item) => (
+                    <li key={item.id} className={styles['dod-item']}>
+                      <CheckIcon size={14} aria-hidden="true" />
+                      <span>{item.description}</span>
+                    </li>
+                  ))}
+              </ul>
+            ) : (
+              <p className={styles['artifact-description']}>{t('dod.empty')}</p>
+            )}
+          </div>
+        </div>
+
         <div className={styles['metrics-grid']}>
           {isMetricsLoading ? (
             <LoadingState
               variant="skeleton-card"
               cardVariant="stats"
-              itemCount={4}
+              itemCount={3}
               label={t('loading.metrics')}
             />
           ) : (
@@ -229,19 +293,10 @@ export const Reports: React.FC = () => {
                   <span className={styles['metric-icon']} aria-hidden="true">
                     <CheckCircleIcon size={16} />
                   </span>
-                  <h3>{t('metrics.sprintSuccessRate.title')}</h3>
+                  <h3>{t('metrics.completionRate.title')}</h3>
                 </div>
-                <div className={styles['metric-value']}>{metrics?.successRate ?? 0}%</div>
-                <div className={styles['metric-label']}>{t('metrics.sprintSuccessRate.unit')}</div>
-                <div
-                  className={`${styles['metric-trend']} ${getTrendClass(metrics?.successRateTrend ?? 0)}`}
-                >
-                  <span className={styles['trend-icon']}>
-                    {getTrendIcon(metrics?.successRateTrend ?? 0)}
-                  </span>
-                  <span>{formatTrend(metrics?.successRateTrend ?? 0)}</span>{' '}
-                  {t('metrics.sprintSuccessRate.fromLastMonth')}
-                </div>
+                <div className={styles['metric-value']}>{metrics?.completionRate ?? 0}%</div>
+                <div className={styles['metric-label']}>{t('metrics.completionRate.unit')}</div>
               </div>
 
               <div
@@ -262,36 +317,6 @@ export const Reports: React.FC = () => {
                     {(metrics?.impediments.total ?? 0) - (metrics?.impediments.resolved ?? 0)}
                   </span>{' '}
                   {t('metrics.impediments.openCount')}
-                </div>
-              </div>
-
-              <div
-                className={`${styles['metric-card']} ${styles['animate-fade-in-up']} ${styles['stagger-4']}`}
-              >
-                <div className={styles['metric-header']}>
-                  <span className={styles['metric-icon']} aria-hidden="true">
-                    <SmileIcon size={16} />
-                  </span>
-                  <h3>{t('metrics.teamSatisfaction.title')}</h3>
-                </div>
-                <div className={styles['metric-value']}>
-                  {metrics?.teamSatisfaction.rating.toFixed(1) ?? '—'} / 5
-                </div>
-                <div className={styles['metric-label']}>{t('metrics.teamSatisfaction.unit')}</div>
-                <div
-                  className={`${styles['metric-trend']} ${getTrendClass(metrics?.teamSatisfaction.trend ?? 0)}`}
-                >
-                  <span className={styles['trend-icon']}>
-                    {getTrendIcon(metrics?.teamSatisfaction.trend ?? 0)}
-                  </span>
-                  <span>
-                    {metrics?.teamSatisfaction.trend && metrics.teamSatisfaction.trend > 0
-                      ? `↑ ${metrics.teamSatisfaction.trend.toFixed(1)}`
-                      : metrics?.teamSatisfaction.trend && metrics.teamSatisfaction.trend < 0
-                        ? `↓ ${Math.abs(metrics.teamSatisfaction.trend).toFixed(1)}`
-                        : '—'}
-                  </span>{' '}
-                  {t('metrics.teamSatisfaction.fromLastSprint')}
                 </div>
               </div>
             </>
@@ -329,7 +354,7 @@ export const Reports: React.FC = () => {
                       </span>
                     </div>
                     <span className={getStatusBadgeClass(sprint.status)}>
-                      {t(`sprintStatusLabels.${sprint.status}` as never)}
+                      {t(`sprintStatusLabels.${sprint.status.toUpperCase()}` as never)}
                     </span>
                   </div>
                   <div className={styles['history-stats']}>
@@ -354,6 +379,14 @@ export const Reports: React.FC = () => {
                       <span className={styles.value}>{sprint.impediments}</span>
                     </div>
                   </div>
+                  {sprint.sprintGoal ? (
+                    <div className={styles['sprint-goal']}>
+                      <span className={styles['sprint-goal-label']}>
+                        {t('sprintHistory.sprintGoalLabel')}
+                      </span>
+                      {sprint.sprintGoal}
+                    </div>
+                  ) : null}
                 </div>
               ))}
             </div>
@@ -380,8 +413,8 @@ export const Reports: React.FC = () => {
                 >
                   <span className={styles['insight-icon']}>{getInsightIcon(insight.type)}</span>
                   <div className={styles['insight-content']}>
-                    <h4>{t(`insights.items.${insight.id}.title` as never)}</h4>
-                    <p>{t(`insights.items.${insight.id}.description` as never)}</p>
+                    <h4>{insight.title}</h4>
+                    <p>{insight.description}</p>
                   </div>
                 </div>
               ))}

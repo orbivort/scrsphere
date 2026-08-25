@@ -13,7 +13,7 @@ import { useI18nStore } from '@/i18n/useI18nStore';
 const ROLE_BADGE_CLASSES: Record<string, string> = {
   scrum_master: 'role-scrum-master',
   product_owner: 'role-product-owner',
-  developer: 'role-developer',
+  developers: 'role-developer',
   administrator: 'role-administrator',
 };
 
@@ -63,7 +63,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({
     const roleKeyMap: Record<string, string> = {
       scrum_master: 'scrumMaster',
       product_owner: 'productOwner',
-      developer: 'developer',
+      developers: 'developers',
       administrator: 'administrator',
     };
     const i18nKey = roleKeyMap[normalizedRole];

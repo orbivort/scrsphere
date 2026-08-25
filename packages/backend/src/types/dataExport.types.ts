@@ -3,7 +3,6 @@
 import type {
   User,
   TeamMember,
-  DailyUpdate,
   Task,
   Impediment,
   RetrospectiveItem,
@@ -75,19 +74,6 @@ export interface TeamMembershipExport {
   teamName: string;
   role: string;
   joinedAt: string;
-}
-
-// Daily Update Export
-export interface DailyUpdateExport {
-  id: string;
-  sprintId: string;
-  sprintName: string;
-  updateDate: string;
-  yesterdayWork: string | null;
-  todayWork: string | null;
-  impediment: string | null;
-  createdAt: string;
-  updatedAt: string;
 }
 
 // Task Export
@@ -234,7 +220,6 @@ export interface StatusChangeExport {
 export interface UserDataCollection {
   user: User | null;
   teamMemberships: Array<TeamMember & { team: { id: string; name: string } }>;
-  dailyUpdates: Array<DailyUpdate & { sprint: { id: string; name: string } }>;
   assignedTasks: Array<
     Task & { pbi: { id: string; title: string }; sprint: { id: string; name: string } }
   >;

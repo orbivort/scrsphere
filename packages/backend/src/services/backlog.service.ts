@@ -1,8 +1,15 @@
 // Product Backlog Service
 import prisma from '../utils/prisma';
-import { AppError, NotFoundError, BadRequestError, ForbiddenError } from '../utils/errors';
+import {
+  AppError,
+  NotFoundError,
+  BadRequestError,
+  ForbiddenError,
+  localizedError,
+} from '../utils/errors';
 import { generateUUIDv7 } from '../utils/uuid';
 import { workflowService } from './workflow.service';
+import { incrementService } from './increment.service';
 import { logger } from '../utils/logger';
 import { BACKLOG_CONFIG, isBacklogLimitEnabled } from '../config/backlog.config';
 import type {
@@ -10,6 +17,7 @@ import type {
   ItemStatus,
   MoSCoWPriority,
   Prisma,
+  TeamMember,
 } from '../generated/prisma/client';
 
 // PBI with relations
@@ -168,6 +176,15 @@ class ProductBacklogService {
     const pbiId = generateUUIDv7();
     const initialStatus = data.status ?? 'NEW';
 
+    const isSizingAttempt = data.storyPoints !== undefined;
+
+    // Only Developers may size. Resolve membership + role up-front when sizing is
+    // attempted, and reuse the result for the workflow history below (avoids a second
+    // lookup in the sizing path). Non-Developers may still create unsized items.
+    const resolvedTeamMember = isSizingAttempt
+      ? await this.assertCanSizeOrResolve(data.teamId, userId, true)
+      : null;
+
     const pbi = await prisma.productBacklogItem.create({
       data: {
         id: pbiId,
@@ -187,9 +204,11 @@ class ProductBacklogService {
 
     // Record initial status in workflow history
     try {
-      const teamMember = await prisma.teamMember.findFirst({
-        where: { teamId: data.teamId, userId },
-      });
+      const teamMember =
+        resolvedTeamMember ??
+        (await prisma.teamMember.findFirst({
+          where: { teamId: data.teamId, userId },
+        }));
 
       await workflowService.executeStatusChange({
         entityType: 'BacklogItem',
@@ -242,6 +261,13 @@ class ProductBacklogService {
       throw new ForbiddenError('You are not a member of this team');
     }
 
+    // Only Developers may size. A non-Developer attempting to set story points is
+    // rejected even though they may update every other field on the item.
+    const isSizingAttempt = data.storyPoints !== undefined;
+    if (isSizingAttempt && teamMember.role !== 'DEVELOPERS') {
+      throw localizedError('errors:developerOnlySizing', {}, 403, 'FORBIDDEN');
+    }
+
     const userRoles = [teamMember.role];
 
     if (data.status && data.status !== existing.status) {
@@ -259,6 +285,12 @@ class ProductBacklogService {
 
       if (!validationResult.allowed) {
         throw new ForbiddenError(validationResult.reason ?? 'Status transition not allowed');
+      }
+
+      // Definition of Done is the gate to "Done": an item may only transition to DONE once
+      // every active DoD item is verified. This closes the direct-API bypass.
+      if (data.status === 'DONE') {
+        await this.assertFullDoDVerified(existing);
       }
     }
 
@@ -288,6 +320,14 @@ class ProductBacklogService {
       } catch (error) {
         logger.error('Failed to record status change history', { error });
       }
+    }
+
+    // Continuously compose the Sprint's Increment from this Done PBI (find-or-create the
+    // Sprint Increment then upsert the incrementPBI row) whenever an item transitions to
+    // DONE via the existing status-update path. The composition is best-effort and
+    // non-fatal: it never rolls back the successful DONE write.
+    if (data.status === 'DONE') {
+      await incrementService.composeDonePBI(pbiId, userId);
     }
 
     return pbi;
@@ -364,6 +404,15 @@ class ProductBacklogService {
         })
       : null;
     const userRoles = teamMember ? [teamMember.role] : [];
+
+    // Only Developers may size. If any row in the batch carries story points and the
+    // caller is not a Developer, reject the whole batch before writing (atomic and
+    // predictable; the UI disables the column for non-Developers so this is a guard
+    // against direct API/bypass requests, not a common UX path).
+    const hasSizingAttempt = items.some((item) => item.storyPoints !== undefined);
+    if (hasSizingAttempt && teamMember?.role !== 'DEVELOPERS') {
+      throw localizedError('errors:developerOnlySizing', {}, 403, 'FORBIDDEN');
+    }
 
     // Check for duplicate titles within the batch
     const seenTitles = new Set<string>();
@@ -554,6 +603,73 @@ class ProductBacklogService {
     for (const [goalId, additionalItems] of itemsByGoal) {
       await this.validateGoalCapacity(goalId, additionalItems);
     }
+  }
+
+  /**
+   * Definition of Done is the gate to "Done". Before an item may transition to DONE, every
+   * active DoD item must be verified for it. A team with no active DoD items has no gate to
+   * satisfy (vacuously compliant), so the transition is allowed.
+   * @throws BadRequestError when the active DoD checklist is not fully verified.
+   */
+  private async assertFullDoDVerified(pbi: ProductBacklogItem): Promise<void> {
+    const dod = await prisma.definitionOfDone.findUnique({
+      where: { teamId: pbi.teamId },
+      select: {
+        items: {
+          where: { isActive: true },
+          select: { id: true },
+        },
+      },
+    });
+
+    const activeDodItemIds = (dod?.items ?? []).map((item) => item.id);
+    if (activeDodItemIds.length === 0) {
+      return;
+    }
+
+    const verifiedRows = await prisma.doDChecklistVerification.findMany({
+      where: {
+        pbiId: pbi.id,
+        dodItemId: { in: activeDodItemIds },
+        isVerified: true,
+      },
+      select: { dodItemId: true },
+    });
+
+    const verifiedDodItemIds = new Set(verifiedRows.map((row) => row.dodItemId));
+    const unverified = activeDodItemIds.filter((id) => !verifiedDodItemIds.has(id));
+
+    if (unverified.length > 0) {
+      throw new BadRequestError(
+        `Item cannot be marked Done until all Definition of Done items are verified. Missing verification for ${unverified.length} active DoD item(s).`
+      );
+    }
+  }
+
+  /**
+   * Resolve the caller's team membership + role and enforce the Scrum Guide rule that
+   * only the Developers who do the work are responsible for sizing. When a sizing
+   * attempt is made by a non-Developer, a localized ForbiddenError (403) is thrown.
+   *
+   * @param teamId - the team the items belong to
+   * @param userId - the requesting user
+   * @param isSizingAttempt - true when the request carries a storyPoints value
+   * @returns the team member record, or null if the user is not a member
+   */
+  private async assertCanSizeOrResolve(
+    teamId: string,
+    userId: string,
+    isSizingAttempt: boolean
+  ): Promise<TeamMember | null> {
+    const teamMember = await prisma.teamMember.findFirst({
+      where: { teamId, userId },
+    });
+
+    if (isSizingAttempt && teamMember?.role !== 'DEVELOPERS') {
+      throw localizedError('errors:developerOnlySizing', {}, 403, 'FORBIDDEN');
+    }
+
+    return teamMember;
   }
 }
 

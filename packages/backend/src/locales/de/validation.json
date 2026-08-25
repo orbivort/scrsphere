@@ -20,6 +20,10 @@
     "scheduleDeletionConfirmation": "Die Bestätigung muss genau \"SCHEDULE DELETION\" lauten",
     "termsRequired": "Sie müssen die Richtlinie zur zulässigen Nutzung und die Datenschutzrichtlinie des Unternehmens akzeptieren"
   },
+  "dailyScrum": {
+    "developersOnly": "Das Daily Scrum ist ein Ereignis für die Entwickler. Nur Entwickler können das Daily Scrum erfassen oder bearbeiten.",
+    "planRequired": "Für das Daily Scrum ist ein umsetzbarer Plan für den nächsten Tag erforderlich."
+  },
   "fieldRequired": "Dieses Feld ist erforderlich",
   "fieldTooLong": "Dieses Feld ist zu lang",
   "firstName": "Vorname",
@@ -27,6 +31,10 @@
   "lastName": "Nachname",
   "passwordTooShort": "Passwort muss mindestens {{min}} Zeichen haben",
   "passwordsDoNotMatch": "Passwörter stimmen nicht überein",
+  "task": {
+    "cannotApproveOwnReview": "Sie können die Überprüfung Ihrer eigenen Aufgabe nicht genehmigen. Ein anderes Teammitglied muss die Genehmigung der Überprüfung durchführen.",
+    "pbiNotInBacklog": "Eine Aufgabe kann nur für ein Product Backlog Item erstellt werden, das Teil des ausgewählten Sprint-Backlogs ist."
+  },
   "workflow": {
     "authenticationRequired": "Benutzer-Authentifizierung für diesen Übergang erforderlich",
     "initialStatusMustBe": "Initialer Status muss {{defaultStatus}} sein",

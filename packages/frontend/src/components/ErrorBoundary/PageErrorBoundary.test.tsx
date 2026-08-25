@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vite
 import { screen, renderWithProviders, fireEvent, initTestI18n } from '../../test-utils';
 
 import { PageErrorBoundary } from './PageErrorBoundary';
+import { getTestI18nInstance } from '../../i18n/testConfig';
 
 const ThrowError: React.FC<{ error?: Error }> = ({ error }) => {
   if (error) {
@@ -192,6 +193,82 @@ describe('PageErrorBoundary Component', () => {
       );
 
       expect(screen.getByText("Sprint's Board & Tasks Error")).toBeInTheDocument();
+    });
+  });
+
+  describe('safeT fallback and error handling', () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    const mockGetFixedT = (tImpl: (key: string, options?: Record<string, string>) => string) => {
+      const i18nInstance = getTestI18nInstance();
+      // i18next's getFixedT has overloaded types; casting through `never` keeps
+      // the mock typed without reaching for `any`.
+      vi.spyOn(i18nInstance, 'getFixedT').mockReturnValue(tImpl as never);
+    };
+
+    it('falls back to hardcoded English when t() returns the i18n key unchanged', () => {
+      mockGetFixedT((key: string) => key);
+
+      renderWithProviders(
+        <PageErrorBoundary pageName="Dashboard">
+          <ThrowError error={new Error('Page error')} />
+        </PageErrorBoundary>
+      );
+
+      expect(screen.getByText('Error on Dashboard page')).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          'An error occurred while loading this page. Please try again or navigate back.'
+        )
+      ).toBeInTheDocument();
+    });
+
+    it('keeps the raw placeholder when the interpolated option is missing in the fallback', () => {
+      mockGetFixedT((key: string) => key);
+
+      renderWithProviders(
+        <PageErrorBoundary pageName={undefined as unknown as string}>
+          <ThrowError error={new Error('Page error')} />
+        </PageErrorBoundary>
+      );
+
+      // options?.pageName is undefined, so the ?? fallback keeps `pageName`.
+      expect(screen.getByText('Error on pageName page')).toBeInTheDocument();
+    });
+
+    it('falls back to hardcoded English when t() throws', () => {
+      mockGetFixedT(() => {
+        throw new Error('i18n unavailable');
+      });
+
+      renderWithProviders(
+        <PageErrorBoundary pageName="Dashboard">
+          <ThrowError error={new Error('Page error')} />
+        </PageErrorBoundary>
+      );
+
+      expect(screen.getByText('Error on Dashboard page')).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          'An error occurred while loading this page. Please try again or navigate back.'
+        )
+      ).toBeInTheDocument();
+    });
+
+    it('keeps the raw placeholder when the interpolated option is missing and t() throws', () => {
+      mockGetFixedT(() => {
+        throw new Error('i18n unavailable');
+      });
+
+      renderWithProviders(
+        <PageErrorBoundary pageName={undefined as unknown as string}>
+          <ThrowError error={new Error('Page error')} />
+        </PageErrorBoundary>
+      );
+
+      expect(screen.getByText('Error on pageName page')).toBeInTheDocument();
     });
   });
 });

@@ -173,6 +173,26 @@ describe('formHandlers', () => {
         expect(onPriorityChange).not.toHaveBeenCalled();
       });
     });
+
+    describe('Out-of-Range Index', () => {
+      it('should guard against an out-of-range index on ArrowRight', () => {
+        mockEvent.key = 'ArrowRight';
+
+        handleMoscowKeyDown(mockEvent, NaN, onPriorityChange);
+
+        expect(mockEvent.preventDefault).toHaveBeenCalled();
+        expect(onPriorityChange).not.toHaveBeenCalled();
+      });
+
+      it('should guard against an out-of-range index on ArrowLeft', () => {
+        mockEvent.key = 'ArrowLeft';
+
+        handleMoscowKeyDown(mockEvent, NaN, onPriorityChange);
+
+        expect(mockEvent.preventDefault).toHaveBeenCalled();
+        expect(onPriorityChange).not.toHaveBeenCalled();
+      });
+    });
   });
 
   describe('getMoscowPriorityIndex', () => {

@@ -233,8 +233,7 @@ pages/                               # Page-scoped feature components
 │   │   ├── TaskCard.tsx
 │   │   ├── SwimlanesBoard.tsx
 │   │   ├── SprintBoardHeader.tsx
-│   │   ├── BurndownChart.tsx
-│   │   └── DoDVerificationModal.tsx
+│   │   └── BurndownChart.tsx
 │   └── utils/                       # Form validation and change detection
 ├── SprintPlanning/
 │   └── components/                  # AddTaskModal, StartSprintModal, etc.
@@ -527,7 +526,7 @@ The data flow follows a strict layered pattern from API services through TanStac
 | `sprintBacklogService`  | Sprint Backlog    | Add/remove PBIs, track changes           |
 | `productBacklogService` | Product Backlog   | CRUD, prioritization, MoSCoW             |
 | `productGoalsService`   | Product Goals     | CRUD, status transitions                 |
-| `dailyUpdatesService`   | Daily Scrum       | Create, update daily updates             |
+| `dailyScrumService`     | Daily Scrum       | Create, inspect & adapt the Daily Scrum  |
 | `impedimentsService`    | Impediments       | Create, resolve, assign                  |
 | `reportsService`        | Reports           | Velocity, burndown, sprint metrics       |
 | `definitionService`     | Definitions       | DoD/DoR checklist management             |
@@ -1128,7 +1127,7 @@ The backend follows a layered architecture where controllers handle HTTP concern
 | `sprint.service.ts`              | Sprints             | Lifecycle, planning, completion      |
 | `backlog.service.ts`             | Product Backlog     | CRUD, prioritization, MoSCoW         |
 | `goals.service.ts`               | Product Goals       | CRUD, status transitions             |
-| `dailyUpdate.service.ts`         | Daily Scrum         | Daily update creation and retrieval  |
+| `dailyScrum.service.ts`          | Daily Scrum         | Inspect & adapt, participation       |
 | `impediment.service.ts`          | Impediments         | Create, resolve, assign              |
 | `reports.service.ts`             | Reports             | Velocity, burndown calculations      |
 | `dod.service.ts`                 | Definition of Done  | DoD checklist management             |
@@ -1201,17 +1200,17 @@ packages/shared/
 
 Core domain types defined in `packages/shared/src/types/index.ts`:
 
-| Type                | Purpose                                      |
-| ------------------- | -------------------------------------------- |
-| `User`              | User entity with role and profile data       |
-| `UserRole`          | Enum: PRODUCT_OWNER, SCRUM_MASTER, DEVELOPER |
-| `UserSession`       | Session data with userId, email, role        |
-| `Team`              | Team entity with name and description        |
-| `Sprint`            | Sprint entity with dates and status          |
-| `SprintStatus`      | Enum: PLANNED, ACTIVE, COMPLETED, CANCELLED  |
-| `BacklogItem`       | Backlog item with priority and story points  |
-| `BacklogItemStatus` | Enum: NEW, REFINED, READY, IN_PROGRESS, DONE |
-| `Task`              | Task entity linked to backlog item           |
+| Type                | Purpose                                       |
+| ------------------- | --------------------------------------------- |
+| `User`              | User entity with role and profile data        |
+| `UserRole`          | Enum: PRODUCT_OWNER, SCRUM_MASTER, DEVELOPERS |
+| `UserSession`       | Session data with userId, email, role         |
+| `Team`              | Team entity with name and description         |
+| `Sprint`            | Sprint entity with dates and status           |
+| `SprintStatus`      | Enum: PLANNED, ACTIVE, COMPLETED, CANCELLED   |
+| `BacklogItem`       | Backlog item with priority and story points   |
+| `BacklogItemStatus` | Enum: NEW, REFINED, READY, IN_PROGRESS, DONE  |
+| `Task`              | Task entity linked to backlog item            |
 
 ### Shared Constants
 

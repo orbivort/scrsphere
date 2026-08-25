@@ -177,6 +177,9 @@ vi.mock('../../services', () => ({
     getTeam: vi.fn(),
     getSprintTasks: vi.fn(),
     startSprint: vi.fn(),
+    saveSprintBacklog: vi.fn(),
+    saveSprintPlanningDraft: vi.fn(),
+    getSprintPlanningDraft: vi.fn(),
     updateGeneratedSprint: vi.fn(),
     getProductGoals: vi.fn(),
   },
@@ -225,6 +228,11 @@ vi.mock('../../types', () => ({
     ACTIVE: 'ACTIVE',
     COMPLETED: 'COMPLETED',
     CANCELLED: 'CANCELLED',
+  },
+  UserRole: {
+    PRODUCT_OWNER: 'product_owner',
+    SCRUM_MASTER: 'scrum_master',
+    DEVELOPERS: 'developers',
   },
   MoSCoWPriority: {
     MUST_HAVE: 'MUST_HAVE',
@@ -294,6 +302,7 @@ beforeAll(async () => {
 
 import {
   createMockTeam,
+  createMockTeamMember,
   createMockBacklogItem,
   createMockProductGoal,
   createMockGeneratedSprint,
@@ -309,11 +318,28 @@ describe('SprintPlanning Integration Tests', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     resetMockIdCounter();
-    mockStore(useTeamStore, { currentTeam: createMockTeam() });
+    mockStore(useTeamStore, {
+      currentTeam: createMockTeam(),
+      userRoleInCurrentTeam: 'DEVELOPERS',
+    });
     mockStore(useAuthStore, createMockAuthStoreState());
     mockApiMethod(
       apiService.getProductGoals,
       createMockApiResponse({ data: [createMockProductGoal()] })
+    );
+    // Default: no saved Sprint Planning draft (fresh planning session) so existing tests
+    // do not rehydrate state. Individual tests override this to exercise resume.
+    mockApiMethod(
+      apiService.getSprintPlanningDraft,
+      createMockApiResponse({
+        data: {
+          sprintId: null,
+          sprintGoal: null,
+          items: [],
+          tasks: [],
+          conflicts: [],
+        },
+      })
     );
   });
 
@@ -1523,6 +1549,59 @@ describe('SprintPlanning Integration Tests', () => {
         /Task assignee: Plan: Assignee Item - Task/i
       );
       await user.selectOptions(assigneeSelects[0], '');
+    });
+
+    it('lists every team Developer as a selectable assignee (self-managed team assignment)', async () => {
+      const user = userEvent.setup();
+      const mockSprint = createMockGeneratedSprint();
+      const mockBacklogItem = createMockBacklogItem({
+        title: 'Team Assignee Item',
+        status: 'READY',
+      });
+
+      mockApiMethod(apiService.getGeneratedSprints, createMockApiResponse({ data: [mockSprint] }));
+      mockApiMethod(
+        apiService.getProductBacklog,
+        createMockApiResponse({ data: [mockBacklogItem] })
+      );
+      // Two Developers on the team: the acting user and a colleague.
+      mockApiMethod(
+        apiService.getTeam,
+        createMockApiResponse({
+          data: {
+            ...createMockTeam(),
+            members: [
+              createMockTeamMember({ userId: 'user-1', role: 'developers' }),
+              createMockTeamMember({ userId: 'user-2', role: 'developers' }),
+            ],
+          },
+        })
+      );
+      mockApiMethod(apiService.getSprintTasks, createMockApiResponse({ data: [] }));
+
+      renderWithProviders(<SprintPlanning />);
+
+      await waitFor(() => {
+        expect(screen.getByText('Team Assignee Item')).toBeInTheDocument();
+      });
+
+      // Select sprint
+      const sprintSelect = screen.getByTestId('sprint-select');
+      await user.selectOptions(sprintSelect, mockSprint.id);
+
+      // Add item to sprint
+      await user.click(screen.getByText('Team Assignee Item'));
+
+      const assigneeSelects = screen.getAllByLabelText(
+        /Task assignee: Plan: Team Assignee Item - Task/i
+      );
+      // The acting user can assign the task to the colleague, not just themselves.
+      expect(assigneeSelects[0].options[1]).toHaveValue('user-1');
+      expect(assigneeSelects[0].options[2]).toHaveValue('user-2');
+      expect(assigneeSelects[0].options[1]).not.toBeDisabled();
+      expect(assigneeSelects[0].options[2]).not.toBeDisabled();
+
+      await user.selectOptions(assigneeSelects[0], 'user-2');
     });
   });
 
@@ -3421,8 +3500,8 @@ describe('SprintPlanning Integration Tests', () => {
     });
   });
 
-  describe('Handle getRecommendedPlanningTime', () => {
-    it('should calculate recommended planning time correctly', async () => {
+  describe('Handle event timebox', () => {
+    it('renders the planning page with the shared timebox in the header', async () => {
       const mockSprint = createMockGeneratedSprint();
 
       mockApiMethod(apiService.getGeneratedSprints, createMockApiResponse({ data: [mockSprint] }));
@@ -4129,7 +4208,7 @@ describe('SprintPlanning Integration Tests', () => {
   });
 
   describe('Timer and Elapsed Time', () => {
-    it('should display elapsed planning time', async () => {
+    it('should display the shared event timebox when a sprint is selected', async () => {
       const user = userEvent.setup();
       const mockSprint = createMockGeneratedSprint();
 
@@ -4144,13 +4223,13 @@ describe('SprintPlanning Integration Tests', () => {
         expect(screen.getByTestId('sprint-select')).toBeInTheDocument();
       });
 
-      // Select sprint to start timer
+      // Select sprint to mount the timebox
       const sprintSelect = screen.getByTestId('sprint-select');
       await user.selectOptions(sprintSelect, mockSprint.id);
 
-      // Timer should be displayed
+      // The shared timebox should be displayed as a timer
       await waitFor(() => {
-        expect(screen.getByText(/Planning Time/i)).toBeInTheDocument();
+        expect(screen.getByRole('timer')).toBeInTheDocument();
       });
     });
   });
@@ -4233,6 +4312,10 @@ describe('SprintPlanning Integration Tests', () => {
       );
       mockApiMethod(apiService.getTeam, createMockApiResponse({ data: createMockTeam() }));
       mockApiMethod(apiService.getSprintTasks, createMockApiResponse({ data: [] }));
+      mockApiMethod(
+        apiService.saveSprintBacklog,
+        createMockApiResponse({ data: { sprintId: mockSprint.id, backlogItems: [], taskIds: [] } })
+      );
 
       renderWithProviders(<SprintPlanning />);
 
@@ -4250,7 +4333,11 @@ describe('SprintPlanning Integration Tests', () => {
         .closest('[role="option"]') as HTMLElement;
       await user.click(backlogItem);
 
-      // Wait for the item to be added to sprint
+      // Save the Sprint Backlog before the sprint can be started
+      const saveButton = screen.getByRole('button', { name: /Save Sprint Backlog/i });
+      await user.click(saveButton);
+
+      // Wait for the item to be added and the backlog to be saved
       await waitFor(() => {
         const startButtons = screen.getAllByRole('button', { name: /Start Sprint/i });
         expect(startButtons[0]).not.toBeDisabled();
@@ -4262,6 +4349,516 @@ describe('SprintPlanning Integration Tests', () => {
 
       // Verify button click didn't throw and button is in document
       expect(startButtons[0]).toBeInTheDocument();
+    });
+  });
+
+  describe('Sprint Planning Draft Resume', () => {
+    it('should resume a saved planning draft on mount', async () => {
+      const mockSprint = createMockGeneratedSprint();
+      const mockBacklogItem = createMockBacklogItem({
+        title: 'Resumed Item',
+        status: 'READY',
+        storyPoints: 5,
+        acceptanceCriteria: 'Clear acceptance criteria',
+        description: 'Clear description',
+      });
+
+      mockApiMethod(apiService.getGeneratedSprints, createMockApiResponse({ data: [mockSprint] }));
+      mockApiMethod(
+        apiService.getProductBacklog,
+        createMockApiResponse({ data: [mockBacklogItem] })
+      );
+      mockApiMethod(apiService.getTeam, createMockApiResponse({ data: createMockTeam() }));
+      mockApiMethod(apiService.getSprintTasks, createMockApiResponse({ data: [] }));
+
+      // A saved draft exists for this sprint -> the page should rehydrate it.
+      mockApiMethod(
+        apiService.getSprintPlanningDraft,
+        createMockApiResponse({
+          data: {
+            sprintId: mockSprint.id,
+            sprintGoal: 'Resume goal',
+            items: [{ pbiId: mockBacklogItem.id }],
+            tasks: [
+              {
+                id: 'task-1',
+                pbiId: mockBacklogItem.id,
+                title: 'Resumed Task',
+                description: null,
+                assigneeId: null,
+                estimatedHours: 8,
+                remainingHours: 8,
+              },
+            ],
+            conflicts: [],
+          },
+        })
+      );
+
+      renderWithProviders(<SprintPlanning />);
+
+      await waitFor(() => {
+        expect(screen.getByText('Resumed Item')).toBeInTheDocument();
+      });
+
+      // Select sprint and verify the saved draft was rehydrated into the sprint backlog.
+      const sprintSelect = screen.getByTestId('sprint-select');
+      fireEvent.change(sprintSelect, { target: { value: mockSprint.id } });
+
+      await waitFor(() => {
+        expect(
+          screen.getByRole('button', { name: /Add task to Resumed Item/i })
+        ).toBeInTheDocument();
+      });
+
+      // The draft-status indicator confirms a saved draft was resumed.
+      expect(screen.getByText(/Resumed the saved Sprint Planning draft/i)).toBeInTheDocument();
+    });
+
+    it('should not rehydrate when no saved draft exists', async () => {
+      const mockSprint = createMockGeneratedSprint();
+      const mockBacklogItem = createMockBacklogItem({ title: 'Fresh Item', status: 'READY' });
+
+      mockApiMethod(apiService.getGeneratedSprints, createMockApiResponse({ data: [mockSprint] }));
+      mockApiMethod(
+        apiService.getProductBacklog,
+        createMockApiResponse({ data: [mockBacklogItem] })
+      );
+      mockApiMethod(apiService.getTeam, createMockApiResponse({ data: createMockTeam() }));
+      mockApiMethod(apiService.getSprintTasks, createMockApiResponse({ data: [] }));
+      // beforeEach default: empty draft -> fresh planning session.
+
+      renderWithProviders(<SprintPlanning />);
+
+      await waitFor(() => {
+        expect(screen.getByText('Fresh Item')).toBeInTheDocument();
+      });
+
+      const sprintSelect = screen.getByTestId('sprint-select');
+      fireEvent.change(sprintSelect, { target: { value: mockSprint.id } });
+
+      // Item is still only in the available backlog pool, not the sprint backlog yet.
+      expect(
+        screen.queryByRole('button', { name: /Add task to Fresh Item/i })
+      ).not.toBeInTheDocument();
+
+      // The draft-status indicator confirms there is no saved draft for this sprint.
+      await waitFor(() => {
+        expect(screen.getByText(/No saved draft for this sprint yet/i)).toBeInTheDocument();
+      });
+    });
+
+    it('should not show the previous sprint draft when switching to a sprint without a draft', async () => {
+      const mockSprintWithDraft = createMockGeneratedSprint({
+        id: 'sprint-with-draft',
+        name: 'Sprint With Draft',
+      });
+      const mockSprintNoDraft = createMockGeneratedSprint({
+        id: 'sprint-no-draft',
+        name: 'Sprint No Draft',
+      });
+      const mockBacklogItem = createMockBacklogItem({
+        title: 'Backlogged Item',
+        status: 'READY',
+        storyPoints: 8,
+        acceptanceCriteria: 'Clear acceptance criteria',
+        description: 'Clear description',
+      });
+
+      mockApiMethod(
+        apiService.getGeneratedSprints,
+        createMockApiResponse({ data: [mockSprintWithDraft, mockSprintNoDraft] })
+      );
+      mockApiMethod(
+        apiService.getProductBacklog,
+        createMockApiResponse({ data: [mockBacklogItem] })
+      );
+      mockApiMethod(apiService.getTeam, createMockApiResponse({ data: createMockTeam() }));
+      mockApiMethod(apiService.getSprintTasks, createMockApiResponse({ data: [] }));
+
+      // The first sprint has a saved draft with a task assignment; the second has none.
+      mockApiImplementation(
+        apiService.getSprintPlanningDraft,
+        (id: string) =>
+          new Promise((resolve) => {
+            if (id === mockSprintWithDraft.id) {
+              resolve(
+                createMockApiResponse({
+                  data: {
+                    sprintId: mockSprintWithDraft.id,
+                    sprintGoal: null,
+                    items: [{ pbiId: mockBacklogItem.id }],
+                    tasks: [
+                      {
+                        id: 'task-1',
+                        pbiId: mockBacklogItem.id,
+                        title: 'Stale Task Assignment',
+                        description: null,
+                        assigneeId: null,
+                        estimatedHours: 8,
+                        remainingHours: 8,
+                      },
+                    ],
+                    conflicts: [],
+                  },
+                })
+              );
+            } else {
+              resolve(
+                createMockApiResponse({
+                  data: {
+                    sprintId: mockSprintNoDraft.id,
+                    sprintGoal: null,
+                    items: [],
+                    tasks: [],
+                    conflicts: [],
+                  },
+                })
+              );
+            }
+          })
+      );
+
+      renderWithProviders(<SprintPlanning />);
+
+      // Wait for the page to finish loading before interacting with the sprint selector.
+      await waitFor(() => {
+        expect(screen.getByText('Backlogged Item')).toBeInTheDocument();
+      });
+
+      const sprintSelect = screen.getByTestId('sprint-select');
+
+      // Select the sprint that has a saved draft and verify its task assignment is shown.
+      fireEvent.change(sprintSelect, { target: { value: mockSprintWithDraft.id } });
+      await waitFor(() => {
+        expect(
+          screen.getByRole('button', { name: /Add task to Backlogged Item/i })
+        ).toBeInTheDocument();
+      });
+      expect(screen.getByText('Stale Task Assignment')).toBeInTheDocument();
+
+      // Switch to the sprint without a draft: the previous sprint's task assignment must not leak.
+      fireEvent.change(sprintSelect, { target: { value: mockSprintNoDraft.id } });
+
+      await waitFor(() => {
+        expect(screen.getByText(/No saved draft for this sprint yet/i)).toBeInTheDocument();
+      });
+      // The item is no longer in the sprint backlog and its task assignment is gone.
+      expect(
+        screen.queryByRole('button', { name: /Add task to Backlogged Item/i })
+      ).not.toBeInTheDocument();
+      expect(screen.queryByText('Stale Task Assignment')).not.toBeInTheDocument();
+    });
+
+    it('should warn when a selected PBI is already committed to another sprint', async () => {
+      const mockSprint = createMockGeneratedSprint();
+      const mockBacklogItem = createMockBacklogItem({
+        title: 'Conflicting Item',
+        status: 'READY',
+      });
+
+      mockApiMethod(apiService.getGeneratedSprints, createMockApiResponse({ data: [mockSprint] }));
+      mockApiMethod(
+        apiService.getProductBacklog,
+        createMockApiResponse({ data: [mockBacklogItem] })
+      );
+      mockApiMethod(apiService.getTeam, createMockApiResponse({ data: createMockTeam() }));
+      mockApiMethod(apiService.getSprintTasks, createMockApiResponse({ data: [] }));
+
+      // The draft resumes but flags that the selected PBI is committed to another sprint.
+      mockApiMethod(
+        apiService.getSprintPlanningDraft,
+        createMockApiResponse({
+          data: {
+            sprintId: mockSprint.id,
+            sprintGoal: 'Goal',
+            items: [{ pbiId: mockBacklogItem.id }],
+            tasks: [],
+            conflicts: [{ pbiId: mockBacklogItem.id, sprintName: 'Sprint-Active' }],
+          },
+        })
+      );
+
+      renderWithProviders(<SprintPlanning />);
+
+      await waitFor(() => {
+        expect(screen.getByText('Conflicting Item')).toBeInTheDocument();
+      });
+
+      const sprintSelect = screen.getByTestId('sprint-select');
+      fireEvent.change(sprintSelect, { target: { value: mockSprint.id } });
+
+      // The conflict warning banner lists the committed PBI and its owning sprint.
+      await waitFor(() => {
+        expect(screen.getByText(/Already committed to another sprint/i)).toBeInTheDocument();
+      });
+      expect(screen.getByText(/Sprint-Active/)).toBeInTheDocument();
+    });
+
+    it('should lock editing for an ACTIVE or COMPLETED sprint', async () => {
+      const mockSprint = createMockGeneratedSprint({
+        status: 'ACTIVE',
+      });
+      const mockBacklogItem = createMockBacklogItem({
+        title: 'Committed Item',
+        status: 'READY',
+        storyPoints: 5,
+        acceptanceCriteria: 'Clear acceptance criteria',
+        description: 'Clear description',
+      });
+
+      mockApiMethod(apiService.getGeneratedSprints, createMockApiResponse({ data: [mockSprint] }));
+      mockApiMethod(
+        apiService.getProductBacklog,
+        createMockApiResponse({ data: [mockBacklogItem] })
+      );
+      mockApiMethod(apiService.getTeam, createMockApiResponse({ data: createMockTeam() }));
+      mockApiMethod(apiService.getSprintTasks, createMockApiResponse({ data: [] }));
+
+      // A committed sprint still has a saved backlog that must load for read-only inspection.
+      mockApiMethod(
+        apiService.getSprintPlanningDraft,
+        createMockApiResponse({
+          data: {
+            sprintId: mockSprint.id,
+            sprintGoal: 'Goal',
+            items: [{ pbiId: mockBacklogItem.id }],
+            tasks: [
+              {
+                id: 'task-1',
+                pbiId: mockBacklogItem.id,
+                title: 'Committed Task',
+                description: null,
+                assigneeId: null,
+                estimatedHours: 8,
+                remainingHours: 8,
+              },
+            ],
+            conflicts: [],
+          },
+        })
+      );
+
+      renderWithProviders(<SprintPlanning />);
+
+      await waitFor(() => {
+        expect(screen.getByText('Committed Item')).toBeInTheDocument();
+      });
+
+      const sprintSelect = screen.getByTestId('sprint-select');
+      fireEvent.change(sprintSelect, { target: { value: mockSprint.id } });
+
+      // The read-only notice is shown and the backlog is loaded for inspection...
+      await waitFor(() => {
+        expect(screen.getByText(/Sprint Backlog is locked/i)).toBeInTheDocument();
+      });
+      expect(screen.getByText('Committed Task')).toBeInTheDocument();
+      // ...but the misleading "Resumed... continue planning" banner must NOT appear.
+      expect(
+        screen.queryByText(/Resumed the saved Sprint Planning draft/i)
+      ).not.toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /Start Sprint/i })).toBeDisabled();
+      expect(screen.getByRole('button', { name: /Add task to Committed Item/i })).toBeDisabled();
+    });
+  });
+
+  describe('Non-Developer Role (Developers-only planning)', () => {
+    const setupNonDeveloper = (role: 'product_owner' | 'scrum_master') => {
+      mockStore(useTeamStore, {
+        currentTeam: createMockTeam(),
+        userRoleInCurrentTeam: role,
+      });
+    };
+
+    it('should NOT show the "Add to Sprint" button for a Product Owner', async () => {
+      setupNonDeveloper('product_owner');
+      const mockSprint = createMockGeneratedSprint();
+      const mockBacklogItem = createMockBacklogItem({ title: 'PO View Item', status: 'READY' });
+
+      mockApiMethod(apiService.getGeneratedSprints, createMockApiResponse({ data: [mockSprint] }));
+      mockApiMethod(
+        apiService.getProductBacklog,
+        createMockApiResponse({ data: [mockBacklogItem] })
+      );
+      mockApiMethod(apiService.getTeam, createMockApiResponse({ data: createMockTeam() }));
+      mockApiMethod(apiService.getSprintTasks, createMockApiResponse({ data: [] }));
+
+      renderWithProviders(<SprintPlanning />);
+
+      await waitFor(() => {
+        expect(screen.getByText('PO View Item')).toBeInTheDocument();
+      });
+
+      const sprintSelect = screen.getByTestId('sprint-select');
+      await fireEvent.change(sprintSelect, { target: { value: mockSprint.id } });
+
+      // The read-only notice informs the PO that only Developers can modify the backlog.
+      await waitFor(() => {
+        expect(screen.getByText(/only Developers can add/i)).toBeInTheDocument();
+      });
+
+      // No "Add to Sprint" action is rendered for a non-Developer.
+      expect(
+        screen.queryByRole('button', { name: /Add PO View Item to sprint/i })
+      ).not.toBeInTheDocument();
+
+      // ...but the Start Sprint action remains available to the PO/SM (it is disabled only
+      // until a Developer saves the backlog).
+      const startSprintButton = screen.getByRole('button', { name: /Start Sprint/i });
+      expect(startSprintButton).toBeInTheDocument();
+      expect(startSprintButton).toBeDisabled();
+      // The Developer-only "Save Sprint Backlog" button is NOT shown to a non-Developer.
+      expect(
+        screen.queryByRole('button', { name: /Save Sprint Backlog/i })
+      ).not.toBeInTheDocument();
+    });
+
+    it('should ENABLE the Start Sprint action for a Product Owner when the backlog is persisted', async () => {
+      setupNonDeveloper('product_owner');
+      const mockSprint = createMockGeneratedSprint({ sprintGoal: 'PO Goal' });
+      const mockBacklogItem = createMockBacklogItem({ title: 'PO Start Item', status: 'READY' });
+
+      mockApiMethod(apiService.getGeneratedSprints, createMockApiResponse({ data: [mockSprint] }));
+      mockApiMethod(
+        apiService.getProductBacklog,
+        createMockApiResponse({ data: [mockBacklogItem] })
+      );
+      mockApiMethod(apiService.getTeam, createMockApiResponse({ data: createMockTeam() }));
+      mockApiMethod(apiService.getSprintTasks, createMockApiResponse({ data: [] }));
+
+      // The backlog is already persisted server-side (a Developer saved it earlier). The
+      // resume hydration reads the saved draft, which any role may read, so the PO/SM can
+      // start the sprint without being a Developer.
+      mockApiMethod(
+        apiService.getSprintPlanningDraft,
+        createMockApiResponse({
+          data: {
+            sprintId: mockSprint.id,
+            sprintGoal: 'PO Goal',
+            items: [{ pbiId: mockBacklogItem.id }],
+            tasks: [],
+            conflicts: [],
+          },
+        })
+      );
+
+      renderWithProviders(<SprintPlanning />);
+
+      await waitFor(() => {
+        expect(screen.getByText('PO Start Item')).toBeInTheDocument();
+      });
+
+      const sprintSelect = screen.getByTestId('sprint-select');
+      await fireEvent.change(sprintSelect, { target: { value: mockSprint.id } });
+
+      // The item hydrates into the plan and the persisted backlog marks it saved.
+      await waitFor(() => {
+        expect(screen.getByText('PO Start Item')).toBeInTheDocument();
+      });
+
+      // Start Sprint is enabled for the PO because the backlog is persisted server-side,
+      // even though the Developer-only "Save Sprint Backlog" button is hidden.
+      const startSprintButton = screen.getByRole('button', { name: /Start Sprint/i });
+      expect(startSprintButton).toBeEnabled();
+      expect(
+        screen.queryByRole('button', { name: /Save Sprint Backlog/i })
+      ).not.toBeInTheDocument();
+    });
+
+    it('should ENABLE the Start Sprint action for a Scrum Master when the backlog is persisted', async () => {
+      setupNonDeveloper('scrum_master');
+      const mockSprint = createMockGeneratedSprint({ sprintGoal: 'SM Goal' });
+      const mockBacklogItem = createMockBacklogItem({ title: 'SM Start Item', status: 'READY' });
+
+      mockApiMethod(apiService.getGeneratedSprints, createMockApiResponse({ data: [mockSprint] }));
+      mockApiMethod(
+        apiService.getProductBacklog,
+        createMockApiResponse({ data: [mockBacklogItem] })
+      );
+      mockApiMethod(apiService.getTeam, createMockApiResponse({ data: createMockTeam() }));
+      mockApiMethod(apiService.getSprintTasks, createMockApiResponse({ data: [] }));
+
+      mockApiMethod(
+        apiService.getSprintPlanningDraft,
+        createMockApiResponse({
+          data: {
+            sprintId: mockSprint.id,
+            sprintGoal: 'SM Goal',
+            items: [{ pbiId: mockBacklogItem.id }],
+            tasks: [],
+            conflicts: [],
+          },
+        })
+      );
+
+      renderWithProviders(<SprintPlanning />);
+
+      await waitFor(() => {
+        expect(screen.getByText('SM Start Item')).toBeInTheDocument();
+      });
+
+      const sprintSelect = screen.getByTestId('sprint-select');
+      await fireEvent.change(sprintSelect, { target: { value: mockSprint.id } });
+
+      await waitFor(() => {
+        expect(screen.getByText('SM Start Item')).toBeInTheDocument();
+      });
+
+      const startSprintButton = screen.getByRole('button', { name: /Start Sprint/i });
+      expect(startSprintButton).toBeEnabled();
+    });
+
+    it('should NOT allow a Product Owner to remove an item from the Sprint Backlog', async () => {
+      setupNonDeveloper('product_owner');
+      const mockSprint = createMockGeneratedSprint();
+      const mockBacklogItem = createMockBacklogItem({
+        title: 'PO Remove Item',
+        status: 'READY',
+        storyPoints: 5,
+        acceptanceCriteria: 'Clear acceptance criteria',
+        description: 'Clear description',
+      });
+
+      mockApiMethod(apiService.getGeneratedSprints, createMockApiResponse({ data: [mockSprint] }));
+      mockApiMethod(
+        apiService.getProductBacklog,
+        createMockApiResponse({ data: [mockBacklogItem] })
+      );
+      mockApiMethod(apiService.getTeam, createMockApiResponse({ data: createMockTeam() }));
+      mockApiMethod(apiService.getSprintTasks, createMockApiResponse({ data: [] }));
+
+      // A saved draft provides the backlog items for read-only inspection by the PO.
+      mockApiMethod(
+        apiService.getSprintPlanningDraft,
+        createMockApiResponse({
+          data: {
+            sprintId: mockSprint.id,
+            sprintGoal: 'Goal',
+            items: [{ pbiId: mockBacklogItem.id }],
+            tasks: [],
+            conflicts: [],
+          },
+        })
+      );
+
+      renderWithProviders(<SprintPlanning />);
+
+      await waitFor(() => {
+        expect(screen.getByText('PO Remove Item')).toBeInTheDocument();
+      });
+
+      const sprintSelect = screen.getByTestId('sprint-select');
+      await fireEvent.change(sprintSelect, { target: { value: mockSprint.id } });
+
+      // The item is loaded for inspection...
+      await waitFor(() => {
+        expect(screen.getByText(/Read-only: only Developers/i)).toBeInTheDocument();
+      });
+      expect(screen.getByText('PO Remove Item')).toBeInTheDocument();
+      // ...but no remove button is rendered for a non-Developer.
+      expect(
+        screen.queryByRole('button', { name: /Remove PO Remove Item from sprint/i })
+      ).not.toBeInTheDocument();
     });
   });
 });

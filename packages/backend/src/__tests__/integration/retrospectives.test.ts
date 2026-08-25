@@ -77,7 +77,7 @@ describe('Retrospectives Integration Tests', () => {
   const addTeamMember = async (
     teamId: string,
     userId: string,
-    role: 'PRODUCT_OWNER' | 'SCRUM_MASTER' | 'DEVELOPER'
+    role: 'PRODUCT_OWNER' | 'SCRUM_MASTER' | 'DEVELOPERS'
   ) => {
     const membershipId = generateUUIDv7();
     await prisma.teamMember.create({
@@ -156,9 +156,6 @@ describe('Retrospectives Integration Tests', () => {
             where: { teamId: team.id },
           });
           await prisma.impediment.deleteMany({ where: { teamId: team.id } });
-          await prisma.dailyUpdate.deleteMany({
-            where: { sprint: { teamId: team.id } },
-          });
           await prisma.sprintBacklogChange.deleteMany({
             where: { sprint: { teamId: team.id } },
           });
@@ -322,7 +319,7 @@ describe('Retrospectives Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
 
       const retro = await prisma.sprintRetrospective.create({
@@ -388,7 +385,7 @@ describe('Retrospectives Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
 
       const retro = await prisma.sprintRetrospective.create({
@@ -432,7 +429,7 @@ describe('Retrospectives Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
 
       const retro = await prisma.sprintRetrospective.create({
@@ -623,7 +620,7 @@ describe('Retrospectives Integration Tests', () => {
         .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
         .send({
           name: 'John Doe',
-          role: 'developer',
+          role: 'developers',
         })
         .expect(201);
 
@@ -638,7 +635,7 @@ describe('Retrospectives Integration Tests', () => {
         .post(`/api/v1/retrospectives/${generateUUIDv7()}/attendees`)
         .set('Cookie', csrfCookie)
         .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
-        .send({ name: 'Test', role: 'DEVELOPER' })
+        .send({ name: 'Test', role: 'DEVELOPERS' })
         .expect(401);
 
       expect(response.body.success).toBe(false);
@@ -684,7 +681,7 @@ describe('Retrospectives Integration Tests', () => {
           id: attendeeId,
           retrospectiveId: retro.id,
           name: 'Test Attendee',
-          role: 'developer',
+          role: 'developers',
           attended: true,
         },
       });

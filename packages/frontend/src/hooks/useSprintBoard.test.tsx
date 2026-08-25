@@ -240,8 +240,9 @@ describe('useSprintBoard', () => {
         createMockTask('1', 'TODO'),
         createMockTask('2', 'TODO'),
         createMockTask('3', 'IN_PROGRESS'),
-        createMockTask('4', 'DONE'),
+        createMockTask('4', 'REVIEW'),
         createMockTask('5', 'DONE'),
+        createMockTask('6', 'DONE'),
       ];
 
       const mockSprint = createMockSprint('sprint-1', '2024-01-01', '2024-01-14', tasks);
@@ -256,9 +257,10 @@ describe('useSprintBoard', () => {
       });
 
       await waitFor(() => {
-        expect(result.current.sprintStats.totalTasks).toBe(5);
+        expect(result.current.sprintStats.totalTasks).toBe(6);
         expect(result.current.sprintStats.todoTasks).toBe(2);
         expect(result.current.sprintStats.inProgressTasks).toBe(1);
+        expect(result.current.sprintStats.reviewTasks).toBe(1);
         expect(result.current.sprintStats.doneTasks).toBe(2);
       });
     });
@@ -355,6 +357,7 @@ describe('useSprintBoard', () => {
           totalTasks: 0,
           todoTasks: 0,
           inProgressTasks: 0,
+          reviewTasks: 0,
           doneTasks: 0,
           totalPbis: 0,
           completedPbis: 0,

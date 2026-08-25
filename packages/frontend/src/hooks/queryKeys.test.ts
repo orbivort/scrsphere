@@ -283,44 +283,6 @@ describe('queryKeys', () => {
     });
   });
 
-  describe('dailyUpdate keys', () => {
-    it('should generate correct all key', () => {
-      expect(queryKeys.dailyUpdate.all).toEqual(['daily-updates']);
-    });
-
-    it('should generate correct lists key', () => {
-      expect(queryKeys.dailyUpdate.lists()).toEqual(['daily-updates', 'list']);
-    });
-
-    it('should generate correct list key with filters', () => {
-      expect(queryKeys.dailyUpdate.list({ teamId: 'team-1', sprintId: 'sprint-1' })).toEqual([
-        'daily-updates',
-        'list',
-        { teamId: 'team-1', sprintId: 'sprint-1' },
-      ]);
-    });
-
-    it('should generate correct list key with empty filters', () => {
-      expect(queryKeys.dailyUpdate.list()).toEqual(['daily-updates', 'list', {}]);
-    });
-
-    it('should generate correct bySprint key', () => {
-      expect(queryKeys.dailyUpdate.bySprint('sprint-1')).toEqual([
-        'daily-updates',
-        'list',
-        { sprintId: 'sprint-1' },
-      ]);
-    });
-
-    it('should generate correct byTeam key', () => {
-      expect(queryKeys.dailyUpdate.byTeam('team-1')).toEqual([
-        'daily-updates',
-        'list',
-        { teamId: 'team-1' },
-      ]);
-    });
-  });
-
   describe('productGoal keys', () => {
     it('should generate correct all key', () => {
       expect(queryKeys.productGoal.all).toEqual(['product-goals']);

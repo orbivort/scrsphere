@@ -55,7 +55,7 @@ describe('E2E: Team Management', () => {
       testTeamNames.push(teamName);
 
       const team = await createTestTeamInDb(teamName);
-      await addTeamMember(team.id, user.id, ROLES.DEVELOPER);
+      await addTeamMember(team.id, user.id, ROLES.DEVELOPERS);
 
       const cookies = await loginAndGetCookies(email);
 
@@ -232,7 +232,7 @@ describe('E2E: Team Management', () => {
       testTeamNames.push(teamName);
 
       const team = await createTestTeamInDb(teamName);
-      await addTeamMember(team.id, user.id, ROLES.DEVELOPER);
+      await addTeamMember(team.id, user.id, ROLES.DEVELOPERS);
 
       const cookies = await loginAndGetCookies(email);
 
@@ -364,7 +364,7 @@ describe('E2E: Team Management', () => {
         .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
         .send({
           email: memberEmail,
-          role: ROLES.DEVELOPER,
+          role: ROLES.DEVELOPERS,
         })
         .expect(HTTP_STATUS.CREATED);
 
@@ -392,7 +392,7 @@ describe('E2E: Team Management', () => {
         .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
         .send({
           email: `nonexistent-${uniqueTestId()}@example.com`,
-          role: ROLES.DEVELOPER,
+          role: ROLES.DEVELOPERS,
         })
         .expect(HTTP_STATUS.NOT_FOUND);
 
@@ -412,7 +412,7 @@ describe('E2E: Team Management', () => {
       testTeamNames.push(teamName);
 
       const team = await createTestTeamInDb(teamName);
-      await addTeamMember(team.id, member.id, ROLES.DEVELOPER);
+      await addTeamMember(team.id, member.id, ROLES.DEVELOPERS);
 
       const cookies = await loginAndGetCookies(memberEmail);
       const { csrfToken } = extractCsrfFromCookies(cookies);
@@ -423,7 +423,7 @@ describe('E2E: Team Management', () => {
         .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken)
         .send({
           email: newMemberEmail,
-          role: ROLES.DEVELOPER,
+          role: ROLES.DEVELOPERS,
         })
         .expect(HTTP_STATUS.FORBIDDEN);
 
@@ -456,7 +456,7 @@ describe('E2E: Team Management', () => {
         .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken1)
         .send({
           email: memberEmail,
-          role: ROLES.DEVELOPER,
+          role: ROLES.DEVELOPERS,
         });
 
       const cookies = await loginAndGetCookies(adminEmail);
@@ -499,7 +499,7 @@ describe('E2E: Team Management', () => {
         .set(CSRF_CONSTANTS.HEADER_NAME, csrfToken1)
         .send({
           email: memberEmail,
-          role: ROLES.DEVELOPER,
+          role: ROLES.DEVELOPERS,
         });
 
       const cookies = await loginAndGetCookies(adminEmail);
@@ -549,7 +549,7 @@ describe('E2E: Team Management', () => {
       testTeamNames.push(teamName);
 
       const team = await createTestTeamInDb(teamName);
-      await addTeamMember(team.id, user.id, ROLES.DEVELOPER);
+      await addTeamMember(team.id, user.id, ROLES.DEVELOPERS);
 
       const cookies = await loginAndGetCookies(email);
       const { csrfToken } = extractCsrfFromCookies(cookies);
@@ -600,7 +600,7 @@ describe('E2E: Team Management', () => {
       testTeamNames.push(teamName);
 
       const team = await createTestTeamInDb(teamName);
-      await addTeamMember(team.id, user.id, ROLES.DEVELOPER);
+      await addTeamMember(team.id, user.id, ROLES.DEVELOPERS);
 
       const cookies = await loginAndGetCookies(email);
 
@@ -662,7 +662,7 @@ describe('E2E: Team Management', () => {
       testTeamNames.push(teamName);
 
       const team = await createTestTeamInDb(teamName);
-      await addTeamMember(team.id, user.id, ROLES.DEVELOPER);
+      await addTeamMember(team.id, user.id, ROLES.DEVELOPERS);
 
       const cookies = await loginAndGetCookies(email);
 

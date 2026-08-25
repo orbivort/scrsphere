@@ -77,7 +77,7 @@ describe('Product Backlog Integration Tests', () => {
   const addTeamMember = async (
     teamId: string,
     userId: string,
-    role: 'PRODUCT_OWNER' | 'SCRUM_MASTER' | 'DEVELOPER'
+    role: 'PRODUCT_OWNER' | 'SCRUM_MASTER' | 'DEVELOPERS'
   ) => {
     const membershipId = generateUUIDv7();
     await prisma.teamMember.create({
@@ -299,7 +299,8 @@ describe('Product Backlog Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'PRODUCT_OWNER');
+      // Only Developers may set story points, so use a Developer here.
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
 
       const cookies = await loginAndGetCookies(email);
 
@@ -432,7 +433,8 @@ describe('Product Backlog Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'PRODUCT_OWNER');
+      // Only Developers may set story points, so use a Developer here.
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const pbi = await createTestPBI(team.id, 'Original Title');
 
       const cookies = await loginAndGetCookies(email);
@@ -637,7 +639,7 @@ describe('Product Backlog Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const pbi = await createTestPBI(team.id, 'PBI with Tasks');
 
       // Create a sprint and task for the PBI
@@ -770,7 +772,8 @@ describe('Product Backlog Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'PRODUCT_OWNER');
+      // Only Developers may set story points, so use a Developer here.
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
 
       const cookies = await loginAndGetCookies(email);
       const { csrfToken } = extractCsrfFromCookies(cookies);

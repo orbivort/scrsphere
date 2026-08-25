@@ -15,6 +15,8 @@ import {
   ZapIcon,
   CheckCircleIcon,
   MessageSquareIcon,
+  EyeIcon,
+  InfoIcon,
 } from '../../../components/common/Icons';
 import { useVirtualScroll, shouldEnableVirtualization } from '../../../hooks/useVirtualScroll';
 
@@ -27,6 +29,7 @@ import { TaskCard } from './TaskCard';
 const STATUS_LABEL_KEYS: Record<TaskStatus, string> = {
   [TaskStatusEnum.TODO]: 'taskStatus.todo',
   [TaskStatusEnum.IN_PROGRESS]: 'taskStatus.inProgress',
+  [TaskStatusEnum.REVIEW]: 'taskStatus.review',
   [TaskStatusEnum.DONE]: 'taskStatus.done',
 };
 
@@ -38,6 +41,7 @@ export interface SwimlanesBoardProps {
   tasksByStatus: {
     todo: Task[];
     in_progress: Task[];
+    review: Task[];
     done: Task[];
   };
   draggedTaskId: string | null;
@@ -55,6 +59,13 @@ export interface SwimlanesBoardProps {
   onKeyDown: (e: React.KeyboardEvent, task: Task) => void;
   onFocus: (taskId: string) => void;
   onBlur: () => void;
+  /** Whether the current user may mutate the Sprint Backlog (Developers-only). */
+  canMutate: boolean;
+  /** IDs of PBIs whose child tasks are all DONE but whose PBI is not yet marked DONE.
+   *  A "mark done" shortcut is rendered on those swimlane headers. */
+  readyToDonePbiIds?: string[];
+  /** Opens the lightweight PBI preview popup for a given PBI id instead of navigating away. */
+  onOpenPbiPreview?: (pbiId: string) => void;
 }
 
 /**
@@ -95,6 +106,7 @@ interface VirtualizedTaskCellProps {
   onKeyDown: (e: React.KeyboardEvent, task: Task) => void;
   onFocus: (taskId: string) => void;
   onBlur: () => void;
+  canMutate: boolean;
 }
 
 const VirtualizedTaskCell: React.FC<VirtualizedTaskCellProps> = ({
@@ -115,6 +127,7 @@ const VirtualizedTaskCell: React.FC<VirtualizedTaskCellProps> = ({
   onKeyDown,
   onFocus,
   onBlur,
+  canMutate,
 }) => {
   const { t } = useTranslation('sprint');
   const enableVirtualization = shouldEnableVirtualization(tasks.length, VIRTUALIZATION_THRESHOLD);
@@ -185,6 +198,7 @@ const VirtualizedTaskCell: React.FC<VirtualizedTaskCellProps> = ({
                   onKeyDown={onKeyDown}
                   onFocus={() => onFocus(task.id)}
                   onBlur={onBlur}
+                  canMutate={canMutate}
                 />
               </div>
             ))}
@@ -221,6 +235,7 @@ const VirtualizedTaskCell: React.FC<VirtualizedTaskCellProps> = ({
           onKeyDown={onKeyDown}
           onFocus={() => onFocus(task.id)}
           onBlur={onBlur}
+          canMutate={canMutate}
         />
       ))}
       {tasks.length === 0 && (
@@ -254,6 +269,9 @@ export const SwimlanesBoard = React.memo<SwimlanesBoardProps>(
     onKeyDown,
     onFocus,
     onBlur,
+    canMutate,
+    readyToDonePbiIds = [],
+    onOpenPbiPreview,
   }) => {
     const { t } = useTranslation('sprint');
 
@@ -300,6 +318,7 @@ export const SwimlanesBoard = React.memo<SwimlanesBoardProps>(
     const getSwimlaneStats = (tasks: Task[]) => {
       const todo = tasks.filter((t) => t.status === TaskStatusEnum.TODO).length;
       const inProgress = tasks.filter((t) => t.status === TaskStatusEnum.IN_PROGRESS).length;
+      const review = tasks.filter((t) => t.status === TaskStatusEnum.REVIEW).length;
       const done = tasks.filter((t) => t.status === TaskStatusEnum.DONE).length;
       const totalHours = tasks.reduce((sum, t) => sum + (t.estimatedHours ?? 0), 0);
       const remainingHours = tasks.reduce(
@@ -307,7 +326,7 @@ export const SwimlanesBoard = React.memo<SwimlanesBoardProps>(
         0
       );
 
-      return { todo, inProgress, done, totalHours, remainingHours, total: tasks.length };
+      return { todo, inProgress, review, done, totalHours, remainingHours, total: tasks.length };
     };
 
     const sortedKeys = Object.keys(groupedBySwimlane).sort((a, b) => {
@@ -357,6 +376,14 @@ export const SwimlanesBoard = React.memo<SwimlanesBoardProps>(
             <span className={styles['column-total']}>{tasksByStatus.in_progress.length}</span>
           </div>
           <div
+            className={`${styles['swimlane-column-header']} ${styles.review} ${dropTargetColumn === TaskStatusEnum.REVIEW ? styles['drop-target'] : ''} ${keyboardGrabState === 'grabbed' && keyboardDropTargetStatus === TaskStatusEnum.REVIEW ? styles['keyboard-drop-target'] : ''}`}
+            role="columnheader"
+            aria-dropeffect={keyboardGrabState === 'grabbed' ? 'move' : 'none'}
+          >
+            <EyeIcon size={14} aria-hidden="true" /> {t('taskStatus.review').toUpperCase()}
+            <span className={styles['column-total']}>{tasksByStatus.review.length}</span>
+          </div>
+          <div
             className={`${styles['swimlane-column-header']} ${styles.done} ${dropTargetColumn === TaskStatusEnum.DONE ? styles['drop-target'] : ''} ${keyboardGrabState === 'grabbed' && keyboardDropTargetStatus === TaskStatusEnum.DONE ? styles['keyboard-drop-target'] : ''}`}
             role="columnheader"
             aria-dropeffect={keyboardGrabState === 'grabbed' ? 'move' : 'none'}
@@ -374,14 +401,54 @@ export const SwimlanesBoard = React.memo<SwimlanesBoardProps>(
 
             const todoTasks = tasks.filter((t) => t.status === TaskStatusEnum.TODO);
             const inProgressTasks = tasks.filter((t) => t.status === TaskStatusEnum.IN_PROGRESS);
+            const reviewTasks = tasks.filter((t) => t.status === TaskStatusEnum.REVIEW);
             const doneTasks = tasks.filter((t) => t.status === TaskStatusEnum.DONE);
 
             return (
               <div key={key} className={styles['swimlane-row']} role="row">
                 <div className={styles['swimlane-label']} role="cell">
-                  <div className={styles['swimlane-label-content']}>
+                  <div
+                    className={`${styles['swimlane-label-content']} ${swimlaneGroup === 'pbi' && onOpenPbiPreview ? styles['swimlane-label-clickable'] : ''}`}
+                    onClick={
+                      swimlaneGroup === 'pbi' && onOpenPbiPreview
+                        ? () => onOpenPbiPreview(key)
+                        : undefined
+                    }
+                    role={swimlaneGroup === 'pbi' && onOpenPbiPreview ? 'button' : undefined}
+                    tabIndex={swimlaneGroup === 'pbi' && onOpenPbiPreview ? 0 : undefined}
+                    aria-label={
+                      swimlaneGroup === 'pbi' && onOpenPbiPreview
+                        ? t('swimlanes.openPbiPreviewAria', { title: label })
+                        : undefined
+                    }
+                    onKeyDown={
+                      swimlaneGroup === 'pbi' && onOpenPbiPreview
+                        ? (e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              onOpenPbiPreview(key);
+                            }
+                          }
+                        : undefined
+                    }
+                  >
                     <span className={styles['swimlane-name']}>{label}</span>
                     {subtitle && <span className={styles['swimlane-subtitle']}>{subtitle}</span>}
+                    {swimlaneGroup === 'pbi' && readyToDonePbiIds.includes(key) && (
+                      <button
+                        type="button"
+                        className={styles['mark-done-link']}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onOpenPbiPreview?.(key);
+                        }}
+                        aria-label={t('swimlanes.markPbiDoneAria', { title: label })}
+                      >
+                        <CheckCircleIcon size={14} aria-hidden="true" />
+                        {t('swimlanes.markPbiDone')}
+                        <InfoIcon size={12} aria-hidden="true" />
+                      </button>
+                    )}
                   </div>
                   <div className={styles['swimlane-stats']}>
                     <span className={styles['stat-item']}>
@@ -391,6 +458,10 @@ export const SwimlanesBoard = React.memo<SwimlanesBoardProps>(
                     <span className={styles['stat-item']}>
                       <span className={`${styles['stat-dot']} ${styles['in-progress']}`} />
                       {stats.inProgress}
+                    </span>
+                    <span className={styles['stat-item']}>
+                      <span className={`${styles['stat-dot']} ${styles.review}`} />
+                      {stats.review}
                     </span>
                     <span className={styles['stat-item']}>
                       <span className={`${styles['stat-dot']} ${styles.done}`} />
@@ -422,6 +493,7 @@ export const SwimlanesBoard = React.memo<SwimlanesBoardProps>(
                   onKeyDown={onKeyDown}
                   onFocus={onFocus}
                   onBlur={onBlur}
+                  canMutate={canMutate}
                 />
 
                 <VirtualizedTaskCell
@@ -442,6 +514,28 @@ export const SwimlanesBoard = React.memo<SwimlanesBoardProps>(
                   onKeyDown={onKeyDown}
                   onFocus={onFocus}
                   onBlur={onBlur}
+                  canMutate={canMutate}
+                />
+
+                <VirtualizedTaskCell
+                  tasks={reviewTasks}
+                  label={label}
+                  status={TaskStatusEnum.REVIEW}
+                  draggedTaskId={draggedTaskId}
+                  focusedTaskId={focusedTaskId}
+                  keyboardGrabState={keyboardGrabState}
+                  keyboardDraggedTaskId={keyboardDraggedTaskId}
+                  keyboardDropTargetStatus={keyboardDropTargetStatus}
+                  onDragStart={onDragStart}
+                  onDragEnd={onDragEnd}
+                  onDrop={onDrop}
+                  onDragOver={onDragOver}
+                  onDragLeave={onDragLeave}
+                  onTaskClick={onTaskClick}
+                  onKeyDown={onKeyDown}
+                  onFocus={onFocus}
+                  onBlur={onBlur}
+                  canMutate={canMutate}
                 />
 
                 <VirtualizedTaskCell
@@ -462,6 +556,7 @@ export const SwimlanesBoard = React.memo<SwimlanesBoardProps>(
                   onKeyDown={onKeyDown}
                   onFocus={onFocus}
                   onBlur={onBlur}
+                  canMutate={canMutate}
                 />
               </div>
             );

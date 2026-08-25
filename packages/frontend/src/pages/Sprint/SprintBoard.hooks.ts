@@ -8,21 +8,22 @@ import {
 import { useTranslation } from 'react-i18next';
 import { TIME } from '@scrumooth/shared';
 
-import { apiService, definitionService } from '../../services';
+import { apiService, sprintReviewService, retrospectiveService } from '../../services';
 import { useAnnounce } from '../../components/LiveAnnouncer';
 import { useMutationErrorHandler } from '../../hooks/useMutationErrorHandler';
 import { queryKeys } from '../../hooks/queryKeys';
 import {
   TaskStatus as TaskStatusEnum,
+  ItemStatus,
   type Task,
   type User,
   type TeamMember,
   type ProductBacklogItem,
-  type DoDItem,
   type Impediment,
-  type DoDChecklistVerification,
   type TaskStatus,
   type Sprint,
+  type SprintReview,
+  type SprintRetrospective,
 } from '../../types';
 
 import type {
@@ -43,7 +44,6 @@ import { calculateWIPLimit } from './SprintBoard.constants';
 export interface UseSprintBoardDataOptions {
   teamId: string | undefined;
   showBurndown: boolean;
-  showDodVerification: boolean;
   filterAssignee: string;
   filterPbi: string;
   debouncedSearchQuery: string;
@@ -54,6 +54,7 @@ export interface SprintStats {
   totalTasks: number;
   todoTasks: number;
   inProgressTasks: number;
+  reviewTasks: number;
   doneTasks: number;
   totalEstimatedHours: number;
   totalRemainingHours: number;
@@ -71,10 +72,14 @@ export interface UseSprintBoardDataReturn {
   tasks: Task[];
   teamMembers: (TeamMember & { user?: User })[];
   sprintItems: ProductBacklogItem[];
-  dodItems: DoDItem[];
   impediments: Impediment[];
-  dodVerifications: DoDChecklistVerification[];
   burndownData: unknown;
+
+  // Sprint Review / Retrospective completion prerequisites
+  sprintReview: SprintReview | null;
+  isReviewCompleted: boolean;
+  sprintRetrospective: SprintRetrospective | null;
+  isRetrospectiveCompleted: boolean;
 
   // Loading states
   isLoading: boolean;
@@ -84,13 +89,15 @@ export interface UseSprintBoardDataReturn {
   // Derived data
   wipLimits: WIPLimits;
   filteredTasks: Task[];
-  tasksByStatus: { todo: Task[]; in_progress: Task[]; done: Task[] };
+  tasksByStatus: TasksByStatus;
   sprintStats: SprintStats;
   daysRemaining: number;
   sprintDuration: number;
   burndownChartData: BurndownDataPoint[];
   wipWarnings: { column: TaskStatus; current: number; limit: number }[];
   groupedBySwimlane: Record<string, Task[]> | null;
+  /** IDs of PBIs whose child tasks are all DONE but whose PBI is not yet marked DONE. */
+  readyToDonePbiIds: string[];
 }
 
 // ============================================
@@ -100,15 +107,8 @@ export interface UseSprintBoardDataReturn {
 export const useSprintBoardData = (
   options: UseSprintBoardDataOptions
 ): UseSprintBoardDataReturn => {
-  const {
-    teamId,
-    showBurndown,
-    showDodVerification,
-    filterAssignee,
-    filterPbi,
-    debouncedSearchQuery,
-    swimlaneGroup,
-  } = options;
+  const { teamId, showBurndown, filterAssignee, filterPbi, debouncedSearchQuery, swimlaneGroup } =
+    options;
 
   // ============================================
   // Data Fetching with useQuery
@@ -145,13 +145,6 @@ export const useSprintBoardData = (
     enabled: !!sprint?.id && showBurndown && !!teamId,
   });
 
-  // Fetch DoD items
-  const { data: dodData } = useQuery({
-    queryKey: ['definition-of-done', teamId],
-    queryFn: () => definitionService.getDefinitionOfDone(teamId ?? ''),
-    enabled: !!teamId,
-  });
-
   // Fetch impediments
   const { data: impedimentsData } = useQuery({
     queryKey: ['impediments', teamId],
@@ -159,11 +152,18 @@ export const useSprintBoardData = (
     enabled: !!teamId,
   });
 
-  // Fetch DoD compliance (conditional)
-  const { data: dodComplianceData } = useQuery({
-    queryKey: ['dod-compliance', sprint?.id],
-    queryFn: () => definitionService.getDoDComplianceReport(sprint?.id ?? ''),
-    enabled: !!sprint?.id && showDodVerification,
+  // Fetch Sprint Review (prerequisite for sprint completion)
+  const { data: sprintReviewsData } = useQuery({
+    queryKey: queryKeys.sprintReview.byTeamAndSprint(teamId, sprint?.id),
+    queryFn: () => sprintReviewService.getSprintReviews(teamId ?? '', sprint?.id ?? ''),
+    enabled: !!sprint?.id && !!teamId,
+  });
+
+  // Fetch Sprint Retrospective (prerequisite for sprint completion)
+  const { data: retrospectiveData } = useQuery({
+    queryKey: queryKeys.retrospective.bySprint(sprint?.id ?? ''),
+    queryFn: () => retrospectiveService.getRetrospectiveBySprintId(sprint?.id ?? ''),
+    enabled: !!sprint?.id,
   });
 
   // ============================================
@@ -173,15 +173,15 @@ export const useSprintBoardData = (
   const tasks = tasksData?.data ?? sprintTasks;
   const teamMembers: (TeamMember & { user?: User })[] = teamData?.data?.members ?? [];
   const sprintItems: ProductBacklogItem[] = useMemo(() => sprint?.items ?? [], [sprint]);
-  const dodItems: DoDItem[] =
-    (dodData as { data?: { items?: DoDItem[] } } | undefined)?.data?.items
-      ?.filter((item: DoDItem) => item.isActive)
-      .sort((a: DoDItem, b: DoDItem) => a.order - b.order) ?? [];
   const impediments: Impediment[] = impedimentsData?.data ?? [];
-  const dodVerifications: DoDChecklistVerification[] =
-    dodComplianceData?.data?.pbiDetails.flatMap(
-      (detail: { verifications: DoDChecklistVerification[] }) => detail.verifications
-    ) ?? [];
+
+  // Sprint Review / Retrospective completion prerequisites.
+  // A missing event record (or a 404) is treated as "not completed".
+  const sprintReview: SprintReview | null =
+    (sprintReviewsData?.data ?? []).find((review) => review.sprintId === sprint?.id) ?? null;
+  const isReviewCompleted = sprintReview?.status === 'completed';
+  const sprintRetrospective: SprintRetrospective | null = retrospectiveData?.data ?? null;
+  const isRetrospectiveCompleted = sprintRetrospective?.status === 'COMPLETED';
 
   // ============================================
   // Derived Computations
@@ -194,6 +194,7 @@ export const useSprintBoardData = (
     return {
       todo: Infinity,
       in_progress: inProgressLimit,
+      review: inProgressLimit,
       done: Infinity,
     };
   }, [teamMembers.length]);
@@ -219,6 +220,7 @@ export const useSprintBoardData = (
     () => ({
       todo: filteredTasks.filter((t) => t.status === TaskStatusEnum.TODO),
       in_progress: filteredTasks.filter((t) => t.status === TaskStatusEnum.IN_PROGRESS),
+      review: filteredTasks.filter((t) => t.status === TaskStatusEnum.REVIEW),
       done: filteredTasks.filter((t) => t.status === TaskStatusEnum.DONE),
     }),
     [filteredTasks]
@@ -229,6 +231,7 @@ export const useSprintBoardData = (
     const totalTasks = tasks.length;
     const todoTasks = tasks.filter((t) => t.status === TaskStatusEnum.TODO).length;
     const inProgressTasks = tasks.filter((t) => t.status === TaskStatusEnum.IN_PROGRESS).length;
+    const reviewTasks = tasks.filter((t) => t.status === TaskStatusEnum.REVIEW).length;
     const doneTasks = tasks.filter((t) => t.status === TaskStatusEnum.DONE).length;
 
     const totalEstimatedHours = tasks.reduce((sum, t) => sum + (t.estimatedHours ?? 0), 0);
@@ -256,6 +259,7 @@ export const useSprintBoardData = (
       totalTasks,
       todoTasks,
       inProgressTasks,
+      reviewTasks,
       doneTasks,
       totalEstimatedHours,
       totalRemainingHours,
@@ -341,6 +345,14 @@ export const useSprintBoardData = (
       });
     }
 
+    if (tasksByStatus.review.length > wipLimits.review) {
+      warnings.push({
+        column: TaskStatusEnum.REVIEW,
+        current: tasksByStatus.review.length,
+        limit: wipLimits.review,
+      });
+    }
+
     return warnings;
   }, [tasksByStatus, wipLimits]);
 
@@ -369,6 +381,18 @@ export const useSprintBoardData = (
     return groups;
   }, [filteredTasks, swimlaneGroup]);
 
+  // PBIs whose child tasks are all DONE but whose PBI is not yet marked DONE. These are
+  // candidates for the developer to promote to DONE (with the DoD check) from the board.
+  const readyToDonePbiIds = useMemo(() => {
+    return sprintItems
+      .filter((item) => item.status !== ItemStatus.DONE)
+      .filter((item) => {
+        const itemTasks = tasks.filter((t) => t.pbiId === item.id);
+        return itemTasks.length > 0 && itemTasks.every((t) => t.status === TaskStatusEnum.DONE);
+      })
+      .map((item) => item.id);
+  }, [sprintItems, tasks]);
+
   // Combined loading state
   const isLoading = sprintLoading || tasksLoading;
 
@@ -378,10 +402,14 @@ export const useSprintBoardData = (
     tasks,
     teamMembers,
     sprintItems,
-    dodItems,
     impediments,
-    dodVerifications,
     burndownData,
+
+    // Sprint Review / Retrospective completion prerequisites
+    sprintReview,
+    isReviewCompleted,
+    sprintRetrospective,
+    isRetrospectiveCompleted,
 
     // Loading states
     isLoading,
@@ -398,6 +426,7 @@ export const useSprintBoardData = (
     burndownChartData,
     wipWarnings,
     groupedBySwimlane,
+    readyToDonePbiIds,
   };
 };
 
@@ -488,6 +517,7 @@ export const useFocusTrap = (isActive: boolean, modalRef: RefObject<HTMLElement 
 const STATUS_ORDER: TaskStatus[] = [
   TaskStatusEnum.TODO,
   TaskStatusEnum.IN_PROGRESS,
+  TaskStatusEnum.REVIEW,
   TaskStatusEnum.DONE,
 ];
 
@@ -525,6 +555,9 @@ export interface UseKeyboardNavigationOptions {
   showToast: (type: 'success' | 'error' | 'warning' | 'info', message: string) => void;
   /** Whether any modal is currently open */
   isModalOpen: boolean;
+  /** Whether the current user may mutate the Sprint Backlog (Developers-only). When false,
+   *  the create shortcut and keyboard-driven task moves are disabled. */
+  canMutate: boolean;
 }
 
 /**
@@ -572,6 +605,7 @@ export const useKeyboardNavigation = (
     onToggleBurndown,
     showToast,
     isModalOpen,
+    canMutate,
   } = options;
 
   // Screen reader announcement hook
@@ -585,6 +619,7 @@ export const useKeyboardNavigation = (
     () => ({
       [TaskStatusEnum.TODO]: t('taskStatus.todo'),
       [TaskStatusEnum.IN_PROGRESS]: t('taskStatus.inProgress'),
+      [TaskStatusEnum.REVIEW]: t('taskStatus.review'),
       [TaskStatusEnum.DONE]: t('taskStatus.done'),
     }),
     [t]
@@ -642,6 +677,8 @@ export const useKeyboardNavigation = (
           return wipLimits.todo;
         case TaskStatusEnum.IN_PROGRESS:
           return wipLimits.in_progress;
+        case TaskStatusEnum.REVIEW:
+          return wipLimits.review;
         case TaskStatusEnum.DONE:
           return wipLimits.done;
         default:
@@ -741,6 +778,7 @@ export const useKeyboardNavigation = (
           break;
         case 'n':
         case 'N':
+          if (!canMutate) return;
           e.preventDefault();
           onOpenCreateModal();
           break;
@@ -759,7 +797,7 @@ export const useKeyboardNavigation = (
 
     document.addEventListener('keydown', handleGlobalKeyDown);
     return () => document.removeEventListener('keydown', handleGlobalKeyDown);
-  }, [isModalOpen, onOpenKeyboardHelp, onOpenCreateModal, onToggleBurndown]);
+  }, [isModalOpen, onOpenKeyboardHelp, onOpenCreateModal, onToggleBurndown, canMutate]);
 
   // ============================================
   // Main Keyboard Handler
@@ -768,6 +806,12 @@ export const useKeyboardNavigation = (
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent, task: Task) => {
       const currentIndex = filteredTasks.findIndex((t) => t.id === task.id);
+
+      // Read-only users (PO/SM) may navigate and open details, but must not move tasks:
+      // block grab (space) and status moves (ArrowLeft/ArrowRight) when they cannot mutate.
+      if (!canMutate && (e.key === ' ' || e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+        return;
+      }
 
       // Handle keyboard drag operations when in grab mode
       if (keyboardGrabState === 'grabbed' && keyboardDraggedTaskId === task.id) {
@@ -858,6 +902,8 @@ export const useKeyboardNavigation = (
       // Normal keyboard operations (not in grab mode)
       switch (e.key) {
         case ' ':
+          // Grab/move is Developers-only; read-only users can still open details and navigate.
+          if (!canMutate) return;
           e.preventDefault();
           // Start grab mode
           setKeyboardDraggedTaskId(task.id);
@@ -908,6 +954,20 @@ export const useKeyboardNavigation = (
                 showToast('error', result.error ?? t('board.invalidTransition'));
               }
             } else if (task.status === TaskStatusEnum.IN_PROGRESS) {
+              // IN_PROGRESS now advances to REVIEW (peer review) rather than straight to DONE.
+              const result = validateAndPrepareTransition(task, TaskStatusEnum.REVIEW, {
+                checkWipLimits: true,
+                wipLimits,
+                tasksByStatus,
+              });
+
+              if (result.valid && result.updates) {
+                onMoveTask(task.id, result.updates);
+              } else {
+                showToast('error', result.error ?? t('board.invalidTransition'));
+              }
+            } else if (task.status === TaskStatusEnum.REVIEW) {
+              // A peer approves the REVIEW → DONE transition.
               const result = validateAndPrepareTransition(task, TaskStatusEnum.DONE);
 
               if (result.valid && result.updates) {
@@ -945,6 +1005,16 @@ export const useKeyboardNavigation = (
             // Legacy behavior: Move to previous status
             e.preventDefault();
             if (task.status === TaskStatusEnum.DONE) {
+              // DONE now steps back to REVIEW (the column immediately to its left).
+              const result = validateAndPrepareTransition(task, TaskStatusEnum.REVIEW);
+
+              if (result.valid && result.updates) {
+                onMoveTask(task.id, result.updates);
+              } else {
+                showToast('error', result.error ?? t('board.invalidTransition'));
+              }
+            } else if (task.status === TaskStatusEnum.REVIEW) {
+              // A REVIEW task can be sent back for rework (REVIEW → IN_PROGRESS).
               const result = validateAndPrepareTransition(task, TaskStatusEnum.IN_PROGRESS);
 
               if (result.valid && result.updates) {
@@ -1000,6 +1070,7 @@ export const useKeyboardNavigation = (
       announceCancelled,
       announceGrabbed,
       onOpenDetail,
+      canMutate,
       t,
     ]
   );
@@ -1024,7 +1095,6 @@ export interface UseTaskMutationsOptions {
   onCloseModal: () => void;
   onCloseCompleteSprintModal: () => void;
   onSetCompleteSprintError: (error: string | null) => void;
-  onNavigateToIncrement: (sprintId: string) => void;
   showToast: (type: 'success' | 'error' | 'warning' | 'info', message: string) => void;
 }
 
@@ -1038,6 +1108,7 @@ export interface UseTaskMutationsReturn {
   >;
   deleteTaskMutation: UseMutationResult<unknown, unknown, string, unknown>;
   completeSprintMutation: UseMutationResult<unknown, unknown, void, unknown>;
+  cancelSprintMutation: UseMutationResult<unknown, unknown, { reason: string }, unknown>;
 }
 
 export const useTaskMutations = (options: UseTaskMutationsOptions): UseTaskMutationsReturn => {
@@ -1047,7 +1118,6 @@ export const useTaskMutations = (options: UseTaskMutationsOptions): UseTaskMutat
     onCloseModal,
     onCloseCompleteSprintModal,
     onSetCompleteSprintError,
-    onNavigateToIncrement,
     showToast,
   } = options;
 
@@ -1144,13 +1214,11 @@ export const useTaskMutations = (options: UseTaskMutationsOptions): UseTaskMutat
       void queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
       void queryClient.invalidateQueries({ queryKey: queryKeys.productBacklog.all });
       void queryClient.invalidateQueries({ queryKey: queryKeys.sprintTasks.all });
+      if (teamId) {
+        void queryClient.invalidateQueries({ queryKey: queryKeys.sprint.activeSprint(teamId) });
+      }
       onCloseCompleteSprintModal();
       showToast('success', t('board.sprintCompleted'));
-      setTimeout(() => {
-        if (sprintId) {
-          onNavigateToIncrement(sprintId);
-        }
-      }, 1500);
     },
     onError: (error: unknown) => {
       const message = handleMutationError(error, {
@@ -1163,11 +1231,35 @@ export const useTaskMutations = (options: UseTaskMutationsOptions): UseTaskMutat
     },
   });
 
+  const cancelSprintMutation = useMutation({
+    mutationFn: async ({ reason }: { reason: string }) => {
+      if (!sprintId) throw new Error('No active sprint');
+      return apiService.cancelSprint(sprintId, reason);
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.productBacklog.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.sprintTasks.all });
+      if (teamId) {
+        void queryClient.invalidateQueries({ queryKey: queryKeys.sprint.activeSprint(teamId) });
+      }
+      onCloseModal();
+      showToast('success', t('board.sprintCancelled'));
+    },
+    onError: (error: unknown) => {
+      handleMutationError(error, {
+        operationName: 'cancel sprint',
+        showToast: (msg) => showToast('error', msg),
+      });
+    },
+  });
+
   return {
     createTaskMutation,
     updateTaskMutation,
     deleteTaskMutation,
     completeSprintMutation,
+    cancelSprintMutation,
   };
 };
 
@@ -1312,6 +1404,8 @@ export interface UseTaskFormValidationOptions {
   };
   selectedTask: Task | null;
   onSetFormErrors: (errors: Record<string, string | undefined>) => void;
+  /** Id of the currently signed-in user, used to block self-approval of peer reviews. */
+  currentUserId?: string;
 }
 
 export interface UseTaskFormValidationReturn {
@@ -1343,7 +1437,7 @@ export interface UseTaskFormValidationReturn {
 export const useTaskFormValidation = (
   options: UseTaskFormValidationOptions
 ): UseTaskFormValidationReturn => {
-  const { formData, selectedTask, onSetFormErrors } = options;
+  const { formData, selectedTask, onSetFormErrors, currentUserId } = options;
   const { t } = useTranslation('sprint');
 
   // Build TASK_STATUS_LABELS for i18n
@@ -1351,6 +1445,7 @@ export const useTaskFormValidation = (
     () => ({
       [TaskStatusEnum.TODO]: t('taskStatus.todo'),
       [TaskStatusEnum.IN_PROGRESS]: t('taskStatus.inProgress'),
+      [TaskStatusEnum.REVIEW]: t('taskStatus.review'),
       [TaskStatusEnum.DONE]: t('taskStatus.done'),
     }),
     [t]
@@ -1364,7 +1459,8 @@ export const useTaskFormValidation = (
     (currentStatus: TaskStatus, newStatus: TaskStatus): { valid: boolean; message?: string } => {
       const validTransitions: Record<TaskStatus, TaskStatus[]> = {
         [TaskStatusEnum.TODO]: [TaskStatusEnum.IN_PROGRESS],
-        [TaskStatusEnum.IN_PROGRESS]: [TaskStatusEnum.DONE, TaskStatusEnum.TODO],
+        [TaskStatusEnum.IN_PROGRESS]: [TaskStatusEnum.REVIEW, TaskStatusEnum.TODO],
+        [TaskStatusEnum.REVIEW]: [TaskStatusEnum.DONE, TaskStatusEnum.IN_PROGRESS],
         [TaskStatusEnum.DONE]: [],
       };
 
@@ -1394,7 +1490,8 @@ export const useTaskFormValidation = (
   const getAvailableTransitions = useCallback((currentStatus: TaskStatus): TaskStatus[] => {
     const validTransitions: Record<TaskStatus, TaskStatus[]> = {
       [TaskStatusEnum.TODO]: [TaskStatusEnum.IN_PROGRESS],
-      [TaskStatusEnum.IN_PROGRESS]: [TaskStatusEnum.DONE, TaskStatusEnum.TODO],
+      [TaskStatusEnum.IN_PROGRESS]: [TaskStatusEnum.REVIEW, TaskStatusEnum.TODO],
+      [TaskStatusEnum.REVIEW]: [TaskStatusEnum.DONE, TaskStatusEnum.IN_PROGRESS],
       [TaskStatusEnum.DONE]: [],
     };
     return validTransitions[currentStatus];
@@ -1419,15 +1516,41 @@ export const useTaskFormValidation = (
         };
       }
 
-      // Step 2: Check WIP limits for IN_PROGRESS
-      if (newStatus === TaskStatusEnum.IN_PROGRESS && options?.checkWipLimits) {
-        const wipLimit = options.wipLimits?.in_progress ?? 0;
-        const currentCount = options.tasksByStatus?.in_progress.length ?? 0;
-        if (currentCount >= wipLimit) {
-          return {
-            valid: false,
-            error: t('validation.wipLimitReached', { limit: wipLimit }),
-          };
+      // Step 1b: The task assignee cannot self-approve the peer review (REVIEW → DONE).
+      // Mirror the backend SprintService.updateTask ForbiddenError guard so drag-drop and
+      // keyboard moves do not reach the API for the owner. Unassigned tasks have no one to
+      // exclude and may be approved by any developer.
+      if (
+        task.status === TaskStatusEnum.REVIEW &&
+        newStatus === TaskStatusEnum.DONE &&
+        currentUserId &&
+        task.assigneeId !== undefined &&
+        task.assigneeId === currentUserId
+      ) {
+        return {
+          valid: false,
+          error: t('reviewApprovalRestricted'),
+        };
+      }
+
+      // Step 2: Check WIP limits for IN_PROGRESS and REVIEW columns
+      if (options?.checkWipLimits && options.wipLimits) {
+        const bucket: 'in_progress' | 'review' | null =
+          newStatus === TaskStatusEnum.IN_PROGRESS
+            ? 'in_progress'
+            : newStatus === TaskStatusEnum.REVIEW
+              ? 'review'
+              : null;
+
+        if (bucket) {
+          const wipLimit = options.wipLimits[bucket];
+          const currentCount = options.tasksByStatus?.[bucket].length ?? 0;
+          if (currentCount >= wipLimit) {
+            return {
+              valid: false,
+              error: t('validation.wipLimitReached', { limit: wipLimit }),
+            };
+          }
         }
       }
 
@@ -1436,6 +1559,9 @@ export const useTaskFormValidation = (
         const missingFields: string[] = [];
         if (!task.assigneeId) {
           missingFields.push(t('validation.fieldAssignee'));
+        }
+        if (!task.description?.trim()) {
+          missingFields.push(t('validation.fieldDescription'));
         }
         if (!task.estimatedHours || task.estimatedHours <= 0) {
           missingFields.push(t('validation.fieldEstimatedHours'));
@@ -1457,7 +1583,7 @@ export const useTaskFormValidation = (
 
       return { valid: true, updates };
     },
-    [validateTaskStatusTransition, t]
+    [validateTaskStatusTransition, t, currentUserId]
   );
 
   // ============================================

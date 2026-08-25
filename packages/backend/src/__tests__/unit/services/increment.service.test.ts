@@ -6,13 +6,19 @@ vi.mock('../../../utils/prisma', () => ({
     increment: {
       findMany: vi.fn(),
       findUnique: vi.fn(),
+      findFirst: vi.fn(),
       create: vi.fn(),
       update: vi.fn(),
       count: vi.fn(),
     },
     incrementPBI: {
+      findUnique: vi.fn(),
       createMany: vi.fn(),
       deleteMany: vi.fn(),
+      create: vi.fn(),
+    },
+    sprintBacklogItem: {
+      findFirst: vi.fn(),
     },
     sprint: {
       findUnique: vi.fn(),
@@ -365,13 +371,14 @@ describe('IncrementService', () => {
           deliveredAt: expect.any(Date),
           deliveryMethod: 'SPRINT_REVIEW',
           notes: 'Delivery notes',
+          updatedBy: userId,
         },
       });
 
       mockGetById.mockRestore();
     });
 
-    it('should auto-create sprint review when delivering via sprint_review', async () => {
+    it('should NOT auto-create a sprint review when delivering via sprint_review', async () => {
       const incrementId = 'increment-1';
       const userId = 'user-123';
       const existingIncrement = {
@@ -400,9 +407,10 @@ describe('IncrementService', () => {
 
       await incrementService.deliverIncrement(incrementId, 'sprint_review', undefined, userId);
 
-      expect(prisma.sprintReview.findUnique).toHaveBeenCalledWith({
-        where: { sprintId: 'sprint-1' },
-      });
+      // The Sprint Review is an explicit inspection event: delivering an Increment (even via
+      // `sprint_review`) must never auto-create one.
+      expect(prisma.sprintReview.findUnique).not.toHaveBeenCalled();
+      expect(prisma.sprint.findUnique).not.toHaveBeenCalled();
 
       mockGetById.mockRestore();
     });
@@ -523,6 +531,183 @@ describe('IncrementService', () => {
       });
 
       mockGetById.mockRestore();
+    });
+  });
+
+  describe('composeDonePBI', () => {
+    it('should create the Sprint Increment and include the PBI when the first Done PBI arrives', async () => {
+      const pbiId = 'pbi-1';
+      const userId = 'user-123';
+      const sprintBacklogItem = {
+        id: 'sbi-1',
+        pbiId,
+        sprint: { id: 'sprint-1', teamId: 'team-1', status: 'ACTIVE' },
+      };
+
+      vi.mocked(prisma.sprintBacklogItem.findFirst).mockResolvedValue(sprintBacklogItem as any);
+      vi.mocked(prisma.increment.findFirst).mockResolvedValue(null as any);
+      vi.mocked(prisma.incrementPBI.findUnique).mockResolvedValue(null as any);
+
+      await incrementService.composeDonePBI(pbiId, userId);
+
+      // Only an open Increment (DRAFT/VERIFIED) may be reused.
+      expect(prisma.increment.findFirst).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            sprintId: 'sprint-1',
+            status: { in: ['DRAFT', 'VERIFIED'] },
+          }),
+        })
+      );
+      expect(prisma.increment.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            sprintId: 'sprint-1',
+            teamId: 'team-1',
+            status: 'DRAFT',
+            createdBy: userId,
+          }),
+        })
+      );
+      expect(prisma.incrementPBI.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ incrementId: 'test-uuid', pbiId }),
+        })
+      );
+    });
+
+    it('should add a subsequent Done PBI to the existing open Sprint Increment (no new Increment)', async () => {
+      const pbiId = 'pbi-2';
+      const userId = 'user-123';
+      const sprintBacklogItem = {
+        id: 'sbi-2',
+        pbiId,
+        sprint: { id: 'sprint-1', teamId: 'team-1', status: 'ACTIVE' },
+      };
+
+      vi.mocked(prisma.sprintBacklogItem.findFirst).mockResolvedValue(sprintBacklogItem as any);
+      vi.mocked(prisma.increment.findFirst).mockResolvedValue({ id: 'increment-existing' } as any);
+      vi.mocked(prisma.incrementPBI.findUnique).mockResolvedValue(null as any);
+
+      await incrementService.composeDonePBI(pbiId, userId);
+
+      // The existing open Increment is reused: no new Increment is created.
+      expect(prisma.increment.create).not.toHaveBeenCalled();
+      expect(prisma.incrementPBI.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ incrementId: 'increment-existing', pbiId }),
+        })
+      );
+    });
+
+    it('should create a new Increment when the existing Increment is DELIVERED', async () => {
+      const pbiId = 'pbi-3';
+      const userId = 'user-123';
+      const sprintBacklogItem = {
+        id: 'sbi-3',
+        pbiId,
+        sprint: { id: 'sprint-1', teamId: 'team-1', status: 'ACTIVE' },
+      };
+
+      vi.mocked(prisma.sprintBacklogItem.findFirst).mockResolvedValue(sprintBacklogItem as any);
+      // No open Increment exists — the Sprint's only Increment is DELIVERED, so the
+      // findFirst (filtered to DRAFT/VERIFIED) returns nothing.
+      vi.mocked(prisma.increment.findFirst).mockResolvedValue(null as any);
+      vi.mocked(prisma.incrementPBI.findUnique).mockResolvedValue(null as any);
+
+      await incrementService.composeDonePBI(pbiId, userId);
+
+      // A frozen (DELIVERED) Increment must not receive the new Done PBI, so a new one is
+      // created to hold it.
+      expect(prisma.increment.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            sprintId: 'sprint-1',
+            teamId: 'team-1',
+            status: 'DRAFT',
+            createdBy: userId,
+          }),
+        })
+      );
+      expect(prisma.incrementPBI.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ incrementId: 'test-uuid', pbiId }),
+        })
+      );
+    });
+
+    it('should create a new Increment when the existing Increment is ARCHIVED', async () => {
+      const pbiId = 'pbi-4';
+      const sprintBacklogItem = {
+        id: 'sbi-4',
+        pbiId,
+        sprint: { id: 'sprint-1', teamId: 'team-1', status: 'ACTIVE' },
+      };
+
+      vi.mocked(prisma.sprintBacklogItem.findFirst).mockResolvedValue(sprintBacklogItem as any);
+      // Only an ARCHIVED Increment exists — not open, so no reusable Increment.
+      vi.mocked(prisma.increment.findFirst).mockResolvedValue(null as any);
+      vi.mocked(prisma.incrementPBI.findUnique).mockResolvedValue(null as any);
+
+      await incrementService.composeDonePBI(pbiId, 'user-123');
+
+      expect(prisma.increment.create).toHaveBeenCalled();
+      expect(prisma.incrementPBI.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ pbiId }),
+        })
+      );
+    });
+
+    it('should be idempotent and not re-add a PBI already in the Increment', async () => {
+      const pbiId = 'pbi-1';
+      const sprintBacklogItem = {
+        id: 'sbi-1',
+        pbiId,
+        sprint: { id: 'sprint-1', teamId: 'team-1', status: 'ACTIVE' },
+      };
+
+      vi.mocked(prisma.sprintBacklogItem.findFirst).mockResolvedValue(sprintBacklogItem as any);
+      vi.mocked(prisma.increment.findFirst).mockResolvedValue({ id: 'increment-existing' } as any);
+      vi.mocked(prisma.incrementPBI.findUnique).mockResolvedValue({ id: 'link-1' } as any);
+
+      await incrementService.composeDonePBI(pbiId, 'user-123');
+
+      expect(prisma.incrementPBI.create).not.toHaveBeenCalled();
+    });
+
+    it('should be a no-op when the PBI is not in an active Sprint', async () => {
+      const pbiId = 'pbi-1';
+      vi.mocked(prisma.sprintBacklogItem.findFirst).mockResolvedValue(null as any);
+
+      await incrementService.composeDonePBI(pbiId, 'user-123');
+
+      expect(prisma.increment.findFirst).not.toHaveBeenCalled();
+      expect(prisma.increment.create).not.toHaveBeenCalled();
+      expect(prisma.incrementPBI.create).not.toHaveBeenCalled();
+    });
+
+    it('should be a no-op when the PBI is in a Sprint that is not ACTIVE', async () => {
+      const pbiId = 'pbi-1';
+      const sprintBacklogItem = {
+        id: 'sbi-1',
+        pbiId,
+        sprint: { id: 'sprint-1', teamId: 'team-1', status: 'COMPLETED' },
+      };
+
+      vi.mocked(prisma.sprintBacklogItem.findFirst).mockResolvedValue(sprintBacklogItem as any);
+
+      await incrementService.composeDonePBI(pbiId, 'user-123');
+
+      expect(prisma.increment.findFirst).not.toHaveBeenCalled();
+      expect(prisma.incrementPBI.create).not.toHaveBeenCalled();
+    });
+
+    it('should swallow and log a composition error without throwing', async () => {
+      const pbiId = 'pbi-1';
+      vi.mocked(prisma.sprintBacklogItem.findFirst).mockRejectedValue(new Error('db down'));
+
+      await expect(incrementService.composeDonePBI(pbiId, 'user-123')).resolves.toBeUndefined();
     });
   });
 

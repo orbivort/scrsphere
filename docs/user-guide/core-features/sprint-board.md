@@ -43,26 +43,27 @@ The Sprint Board provides:
 The board displays columns representing workflow stages:
 
 ```
-┌──────────┬──────────────┬──────────┐
-│  TO DO   │ IN PROGRESS  │   DONE   │
-├──────────┼──────────────┼──────────┤
-│          │              │          │
-│  [Item]  │  [Item]      │  [Item]  │
-│          │              │          │
-│  [Task]  │  [Task]      │  [Task]  │
-│          │              │          │
-└──────────┴──────────────┴──────────┘
+┌──────────┬──────────────┬───────────┬──────────┐
+│  TO DO   │ IN PROGRESS  │  REVIEW   │   DONE   │
+├──────────┼──────────────┼───────────┼──────────┤
+│          │              │           │          │
+│  [Item]  │  [Item]      │  [Item]   │  [Item]  │
+│          │              │           │          │
+│  [Task]  │  [Task]      │  [Task]   │  [Task]  │
+│          │              │           │          │
+└──────────┴──────────────┴───────────┴──────────┘
 ```
 
 ### Column Definitions
 
-| Column          | Meaning                | Who Moves Items Here     |
-| --------------- | ---------------------- | ------------------------ |
-| **To Do**       | Ready to start         | Default for new tasks    |
-| **In Progress** | Being worked on        | Developer starts work    |
-| **Done**        | Completed and verified | Developer completes work |
+| Column          | Meaning                | Who Moves Items Here         |
+| --------------- | ---------------------- | ---------------------------- |
+| **To Do**       | Ready to start         | Default for new tasks        |
+| **In Progress** | Being worked on        | Developer starts work        |
+| **Review**      | Awaiting review        | Developer submits for review |
+| **Done**        | Completed and verified | Reviewer confirms complete   |
 
-> **Note**: The Sprint Board uses a simple three-column workflow for tasks. For backlog items, the full ItemStatus workflow is: New → Refined → Ready → In Progress → Done.
+> **Note**: The Sprint Board uses a four-column workflow for tasks: To Do → In Progress → Review → Done. For backlog items, the full ItemStatus workflow is: New → Refined → Ready → In Progress → Done.
 
 ### Swimlanes (Optional)
 
@@ -98,15 +99,6 @@ From the card or detail view:
 | **Add Comment**   | Use comment field in detail modal     |
 | **Change Status** | Drag card or use status dropdown      |
 | **Delete**        | From detail modal (with confirmation) |
-
-### Status Indicators
-
-Cards show visual indicators:
-
-- **🔴 Overdue**: Past due date
-- **🟡 Blocked**: Has impediment
-- **🟢 On Track**: Normal status
-- **✓ DoD Complete**: All checklist items done
 
 ---
 
@@ -155,8 +147,21 @@ For backlog item "User can reset password":
 
 1. Move task to "In Progress" when starting
 2. Do the work
-3. Verify Definition of Done checklist (if configured)
-4. Move to "Done" when work is complete
+3. Move task to "Review" when ready for a reviewer
+4. Reviewer checks the work against the Definition of Done checklist (if configured)
+5. Move to "Done" when the review is complete and accepted
+
+### Marking a PBI as Done
+
+A backlog item (PBI) is considered done only when **all of its child tasks are Done**. Once every task under the PBI is in the Done column, the board flags the PBI as "ready to done" and you can promote it to **Done** from the board:
+
+1. **Open the PBI preview** by clicking the PBI card on the board.
+2. **Review the tasks** — the preview shows a "ready to done" banner once all child tasks are complete.
+3. **Click "Mark as Done"** — the system re-checks that every child task is Done. If any are incomplete, it lists them and blocks the transition.
+4. **Complete the Definition of Done checklist** — the active DoD criteria load inline in the preview. Verify each one.
+5. **Confirm** — this records the DoD verification and updates the PBI status to **Done**. The board refreshes automatically.
+
+> **Note**: Marking a PBI Done is restricted to developers with permission, and the DoD checklist must be fully verified before the transition is allowed.
 
 ---
 

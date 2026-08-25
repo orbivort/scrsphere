@@ -42,11 +42,9 @@ const getSprintTimeCategory = (startDate: string, endDate: string): SprintTimeCa
 };
 
 const formatSprintOptionLabel = (sprint: SprintWithCategory): string => {
-  const categoryIcon =
-    sprint.category === 'current' ? '🔄' : sprint.category === 'future' ? '📅' : '✓';
   const statusDisplay =
     sprint.status.charAt(0).toUpperCase() + sprint.status.slice(1).toLowerCase();
-  return `${categoryIcon} ${sprint.name} (${statusDisplay})`;
+  return `${sprint.name} \u00b7 ${statusDisplay}`;
 };
 
 interface TaskGenerationConfig {
@@ -192,10 +190,10 @@ describe('SprintPlanning Utility Functions', () => {
   });
 
   describe('formatSprintOptionLabel', () => {
-    it('should format current sprint with 🔄 icon', () => {
+    it('should include name and status for current sprint', () => {
       const sprint: SprintWithCategory = {
         id: 'sprint-1',
-        name: 'Sprint 1',
+        name: 'Sprint 1 (2026-01-01 – 2026-01-14)',
         status: 'active',
         startDate: '2026-01-01',
         endDate: '2026-01-14',
@@ -203,10 +201,10 @@ describe('SprintPlanning Utility Functions', () => {
       };
 
       const result = formatSprintOptionLabel(sprint);
-      expect(result).toBe('🔄 Sprint 1 (Active)');
+      expect(result).toBe('Sprint 1 (2026-01-01 – 2026-01-14) · Active');
     });
 
-    it('should format future sprint with 📅 icon', () => {
+    it('should format future sprint with planned status', () => {
       const sprint: SprintWithCategory = {
         id: 'sprint-2',
         name: 'Sprint 2',
@@ -217,10 +215,10 @@ describe('SprintPlanning Utility Functions', () => {
       };
 
       const result = formatSprintOptionLabel(sprint);
-      expect(result).toBe('📅 Sprint 2 (Planned)');
+      expect(result).toBe('Sprint 2 · Planned');
     });
 
-    it('should format past sprint with ✓ icon', () => {
+    it('should format past sprint with completed status', () => {
       const sprint: SprintWithCategory = {
         id: 'sprint-3',
         name: 'Sprint 3',
@@ -231,7 +229,7 @@ describe('SprintPlanning Utility Functions', () => {
       };
 
       const result = formatSprintOptionLabel(sprint);
-      expect(result).toBe('✓ Sprint 3 (Completed)');
+      expect(result).toBe('Sprint 3 · Completed');
     });
 
     it('should handle uppercase status', () => {
@@ -245,7 +243,7 @@ describe('SprintPlanning Utility Functions', () => {
       };
 
       const result = formatSprintOptionLabel(sprint);
-      expect(result).toBe('🔄 Sprint 1 (Active)');
+      expect(result).toBe('Sprint 1 · Active');
     });
 
     it('should handle lowercase status', () => {
@@ -259,10 +257,10 @@ describe('SprintPlanning Utility Functions', () => {
       };
 
       const result = formatSprintOptionLabel(sprint);
-      expect(result).toBe('📅 Sprint 1 (Planned)');
+      expect(result).toBe('Sprint 1 · Planned');
     });
 
-    it('should include sprint number and year when present', () => {
+    it('should include sprint name and year when present', () => {
       const sprint: SprintWithCategory = {
         id: 'sprint-5',
         name: 'Sprint 5 2026',
@@ -275,7 +273,7 @@ describe('SprintPlanning Utility Functions', () => {
       };
 
       const result = formatSprintOptionLabel(sprint);
-      expect(result).toBe('📅 Sprint 5 2026 (Planned)');
+      expect(result).toBe('Sprint 5 2026 · Planned');
     });
 
     it('should handle sprint with goal', () => {
@@ -290,7 +288,22 @@ describe('SprintPlanning Utility Functions', () => {
       };
 
       const result = formatSprintOptionLabel(sprint);
-      expect(result).toBe('🔄 Sprint 1 (Active)');
+      expect(result).toBe('Sprint 1 · Active');
+    });
+
+    it('should not duplicate date range when name already contains it', () => {
+      const sprint: SprintWithCategory = {
+        id: 'sprint-1',
+        name: 'Sprint 1 (2026-01-01 – 2026-01-14)',
+        status: 'active',
+        startDate: '2026-01-01',
+        endDate: '2026-01-14',
+        category: 'current',
+      };
+
+      const result = formatSprintOptionLabel(sprint);
+      expect(result).toBe('Sprint 1 (2026-01-01 – 2026-01-14) · Active');
+      expect(result).not.toContain('Jan 1');
     });
   });
 

@@ -353,8 +353,6 @@
     "generatedSprints": "Sprints générés",
     "loading": "Chargement de la configuration...",
     "notifications": {
-      "configurationSaveFailed": "Échec de l'enregistrement de la configuration : {{message}}",
-      "configurationSaved": "Configuration enregistrée avec succès !",
       "sprintDeleteFailed": "Échec de la suppression du sprint : {{message}}",
       "sprintDeleted": "Sprint supprimé avec succès !",
       "sprintsGenerateFailed": "Échec de la génération des sprints : {{message}}",
@@ -379,8 +377,6 @@
       "warning_other": "Cela générera {{count}} sprints pour {{year}}. Les sprints existants pour cette année peuvent être affectés.",
       "year": "Année :"
     },
-    "saveConfiguration": "Enregistrer la configuration",
-    "saving": "Enregistrement...",
     "sprintCount": "{{count}} sprints",
     "sprintCount_one": "{{count}} sprint",
     "sprintCount_other": "{{count}} sprints",
@@ -420,6 +416,7 @@
       "editTeam": "Modifier {{name}}",
       "loading": "Chargement...",
       "memberCount": "{{count}} membre",
+      "memberCountLimit": "{{count}}/{{max}} membres",
       "memberCount_one": "{{count}} membre",
       "memberCount_other": "{{count}} membre",
       "memberCount_plural": "{{count}} membres"

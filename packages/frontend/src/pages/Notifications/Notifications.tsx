@@ -15,7 +15,6 @@ import {
   UsersIcon,
   FileCheckIcon,
   AlertTriangleIcon,
-  SunIcon,
   UserXIcon,
   MessageSquareIcon,
   EditIcon,
@@ -36,8 +35,6 @@ const getNotificationIcon = (type: NotificationType | string): React.ReactNode =
       return <FileCheckIcon size={20} />;
     case NotificationType.IMPEDIMENT_ASSIGNMENT:
       return <AlertTriangleIcon size={20} />;
-    case NotificationType.DAILY_UPDATE_REMINDER:
-      return <SunIcon size={20} />;
     case NotificationType.TEAM_CREATED:
       return <UsersIcon size={20} />;
     case NotificationType.TEAM_UPDATED:
@@ -57,7 +54,6 @@ const getNotificationRoute = (notification: Notification): string => {
     TEAM_REMOVAL: '/team',
     TASK_ASSIGNMENT: '/sprint',
     IMPEDIMENT_ASSIGNMENT: '/impediments',
-    DAILY_UPDATE_REMINDER: '/daily-scrum',
     TEAM_CREATED: '/settings/team-management',
     TEAM_UPDATED: '/settings/team-management',
     TEAM_DELETED: '/settings/team-management',
@@ -75,7 +71,6 @@ const getFilterOptions = (t: any): { value: FilterType; label: string }[] => [
   { value: NotificationType.TEAM_INVITATION, label: t('filters.teamInvitations') },
   { value: NotificationType.TASK_ASSIGNMENT, label: t('filters.taskAssignments') },
   { value: NotificationType.IMPEDIMENT_ASSIGNMENT, label: t('filters.impediments') },
-  { value: NotificationType.DAILY_UPDATE_REMINDER, label: t('filters.reminders') },
   { value: NotificationType.TEAM_CREATED, label: t('filters.teamCreated') },
   { value: NotificationType.TEAM_UPDATED, label: t('filters.teamUpdated') },
   { value: NotificationType.TEAM_DELETED, label: t('filters.teamDeleted') },

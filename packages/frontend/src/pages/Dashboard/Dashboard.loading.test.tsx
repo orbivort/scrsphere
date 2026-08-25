@@ -31,17 +31,22 @@ vi.mock('../../services', () => ({
   apiService: {
     getActiveSprint: vi.fn(),
     getBurndownData: vi.fn(),
-    getDailyUpdates: vi.fn(),
+    getDailyScrum: vi.fn(),
+    getDailyScrumParticipation: vi.fn(),
     getImpediments: vi.fn(),
     getProductGoals: vi.fn(),
   },
 }));
 
-vi.mock('../../hooks', () => ({
-  useApiError: () => ({
-    handleError: vi.fn((_error, fallback) => fallback || 'An error occurred'),
-  }),
-}));
+vi.mock('../../hooks', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    useApiError: () => ({
+      handleError: vi.fn((_error, fallback) => fallback || 'An error occurred'),
+    }),
+  };
+});
 
 vi.mock('../../hooks/useToast', () => ({
   useToast: () => ({

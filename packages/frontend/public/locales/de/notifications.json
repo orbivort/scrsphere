@@ -1,6 +1,8 @@
 {
   "accountDeletionCancelled": "Kontolöschung abgebrochen",
   "accountDeletionCancelledMessage": "Die geplante Kontolöschung wurde abgebrochen.",
+  "accountDeletionReminderMessage": "Ein Product Owner in Ihrem Team wird sein Konto in {{daysText}} endgültig löschen. Bitte weisen Sie bei Bedarf einen neuen Product Owner zu.",
+  "accountDeletionReminderTitle": "Erinnerung zur Kontolöschung",
   "accountDeletionScheduled": "Teammitglied hat Kontolöschung geplant",
   "accountDeletionScheduledMessage": "Ein Product Owner in Ihrem Team hat die Löschung seines Kontos geplant. Das Konto wird am {{deletionDate}} endgültig gelöscht. Bitte weisen Sie vorher einen neuen Product Owner zu.",
   "ariaLabels": {
@@ -14,12 +16,16 @@
   },
   "backlogAdjustmentRequired": "Neue Backlog-Anpassung erfordert Ihre Aktion",
   "backlogAdjustmentRequiredMessage": "Ihnen wurde als Eigentümer einer Backlog-Anpassung zugewiesen: {{action}} - \"{{description}}\"",
+  "dailyScrumSignalMessage": "Das Daily Scrum für \"{{sprintName}}\" beginnt. Entwickler, trefft euch bitte, um den Fortschritt in Richtung Sprint-Ziel zu prüfen und den Sprint-Backlog anzupassen.",
+  "dailyScrumSignalTitle": "Daily Scrum beginnt",
   "dateGroups": {
     "older": "Älter",
     "thisWeek": "Diese Woche",
     "today": "Heute",
     "yesterday": "Gestern"
   },
+  "directMessageBody": "{{message}}",
+  "directMessageTitle": "Nachricht von {{senderName}}",
   "empty": {
     "message": "Sie sehen hier Benachrichtigungen, wenn Aktivitäten stattfinden",
     "title": "Noch keine Benachrichtigungen"
@@ -35,7 +41,6 @@
     "all": "Alle",
     "directMessages": "Direktnachrichten",
     "impediments": "Impediments",
-    "reminders": "Erinnerungen",
     "taskAssignments": "Aufgaben-Zuweisungen",
     "teamCreated": "Team erstellt",
     "teamDeleted": "Team gelöscht",
@@ -44,19 +49,27 @@
     "unread": "Ungelesen"
   },
   "impedimentAssigned": "Neues Impediment zugewiesen: \"{{impedimentTitle}}\"",
+  "impedimentAssignedMessage": "Gemeldet von {{reporterName}}",
   "loading": {
     "ariaLabel": "Benachrichtigungen laden",
     "title": "Benachrichtigungen werden geladen..."
   },
   "markAllAsRead": "Alle als gelesen markieren",
   "marking": "Markieren...",
+  "newTaskAssignedMessage": "Im Sprint \"{{sprintName}}\"",
+  "newTaskAssignedTitle": "Neue Aufgabe zugewiesen: \"{{taskTitle}}\"",
   "pagination": {
     "next": "Nächste",
     "pageInfo": "Seite {{current}} von {{total}}",
     "previous": "Vorherige"
   },
+  "remindersNone": "Keine Erinnerungen gesendet",
+  "remindersSent": "Erinnerungen an {{count}} Teammitglied gesendet",
+  "remindersSent_plural": "Erinnerungen an {{count}} Teammitglieder gesendet",
   "skipToMainContent": "Zum Hauptinhalt springen",
   "subtitle": "Bleiben Sie über Team-Aktivitäten und wichtige Updates informiert",
+  "taskReassignedMessage": "Im Sprint \"{{sprintName}}\"",
+  "taskReassignedTitle": "Aufgabe wurde Ihnen neu zugewiesen: \"{{taskTitle}}\"",
   "teamCreated": "Team erstellt: \"{{teamName}}\"",
   "teamCreatedMessage": "Sie haben das Team erfolgreich erstellt",
   "teamDeleted": "Team gelöscht: \"{{teamName}}\"",

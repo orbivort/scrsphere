@@ -43,7 +43,7 @@ export const TeamSelectionModal: React.FC<TeamSelectionModalProps> = ({ isOpen, 
         return styles['badge-po'] ?? '';
       case 'SCRUM_MASTER':
         return styles['badge-sm'] ?? '';
-      case 'DEVELOPER':
+      case 'DEVELOPERS':
         return styles['badge-dev'] ?? '';
       default:
         return styles['badge-default'] ?? '';
@@ -56,8 +56,8 @@ export const TeamSelectionModal: React.FC<TeamSelectionModalProps> = ({ isOpen, 
         return t('teamSelection.roles.productOwner');
       case 'SCRUM_MASTER':
         return t('teamSelection.roles.scrumMaster');
-      case 'DEVELOPER':
-        return t('teamSelection.roles.developer');
+      case 'DEVELOPERS':
+        return t('teamSelection.roles.developers');
       default:
         return role;
     }

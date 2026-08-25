@@ -11,7 +11,7 @@
       "creating": "[CCrrééààttíínng...]",
       "delivering": "[Délívérínggggg...]",
       "skipToSprintReview": "[Skíp tó Sprínt Révíéwwwwwwww]",
-      "verifying": "[Vérífýíng íntégrátíónnnnn...]"
+      "verifying": "[Vérífyíng íntégràtíónnnnnnnnn...]"
     },
     "backToIncrements": "[Bàck tó Íncréméntsssssss]",
     "backToSprintReview": "[Bàck tó Sprínt Révíéwwwwwwww]",
@@ -45,7 +45,7 @@
       "creatingIncrement": "[Créàtíng Íncréméntttttttt...]",
       "deliveringIncrement": "[Délívéríng Íncréméntttttttt...]",
       "redirecting": "[Rédíréctíngggggg...]",
-      "verifyingIntegration": "[Vérífýíng Íntégrátíónnnnnnn...]"
+      "verifyingIntegration": "[Vérífyíng Íntégràtíónnnnnnnnn...]"
     },
     "summary": {
       "pbisSelected": "[PBÍs Séléctéddddd]",
@@ -60,10 +60,10 @@
       "createdSuccess": "[Íncrémént créàtéd súccéssfúllyyyyyyyyyyy!]",
       "deliverFailed": "[Fàíléd tó délívér íncrémént. Yóú càn délívér ít mànúàlly fróm thé íncrémént détàíl pàgéééééééééééééééééééééééééééé.]",
       "deliveredSuccess": "[Íncrémént délívéréd! Rédíréctíng tó Sprínt Révíéwwwwwwwwwwwwwwwww...]",
-      "integrationRequired": "[Íntégrátíón vérífícàtíón ís réqúíréd béfóré thís íncrémént càn bé délívéréd. Àdd íntégrátíón tésts àgàínst príór íncréménts, théén vérífý ànd délívérrr.]",
+      "integrationRequired": "[Íntégràtíón vérífícàtíón ís réqúíréd béfóré thís íncrémént càn bé délívéréd. Àdd íntégràtíón tésts àgàínst príór íncréménts, thén vérífy ànd délívérrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr.]",
       "validationFailed": "[Vàlídàtíón fàíléddddddd]",
-      "verificationFailed": "[Fàíléd tó vérífý íntégrátíón. Yóú càn vérífý ànd délívér ít mànúàlly fróm thé íncrémént détàíl pàgéééééééééééééééééééééééééééééééé.]",
-      "verifyingIntegration": "[Íntégrátíón vérífýíng! Délívéríng íncréméntttttttttttttttt...]"
+      "verificationFailed": "[Fàíléd tó vérífy íntégràtíón. Yóú càn vérífy ànd délívér ít mànúàlly fróm thé íncrémént détàíl pàgééééééééééééééééééééééééééééééé.]",
+      "verifyingIntegration": "[Íntégràtíón vérífíéd! Délívéríng íncréménttttttttttttttt...]"
     },
     "validation": {
       "atLeastOnePbi": "[Àt léàst óné PBÍ múst bé séléctéddddddddddd]",
@@ -114,7 +114,7 @@
       "sprintReviewOption": "[Sprínt Révíéwwwww]",
       "title": "[Délívér Íncréménttttttt]"
     },
-    "deliverRequiresIntegration": "[Íntégrátíón múst bé vérífíéd béfóré thís Íncrémént çán bé délívéréd]",
+    "deliverRequiresIntegration": "[Íntégràtíón múst bé vérífíéd béfóré thís Íncrémént càn bé délívérédddddddddddddddddddddd.]",
     "dodVerification": {
       "byCategory": "[Vérífícàtíón by Càtégóryyyyyyyyy]",
       "byPbi": "[Vérífícàtíón by PBÍÍÍÍÍÍÍ]",
@@ -178,7 +178,7 @@
     "firstIncrement": "[Fírst Íncrémént — nó príór Íncrémént tó tést àgàínsttttttttttttttttt]",
     "integrationTests": "[Íntégràtíón Téstsssssss]",
     "integrationVerified": "[Íntégràtíón vérífíéddddddd]",
-    "lockedHint": "[Thís Íncrémént hás béén délívéréd ànd ís lóçkéddddddddddddddd]",
+    "lockedHint": "[Thís Íncrémént hàs béén délívéréd ànd ís lóckéd. Íntégràtíón tésts cànnót bé chàngéddddddddddddddddddddddddddd.]",
     "notVerified": "[Íntégràtíón nót vérífíéddddddddd]",
     "notes": "[Tést nótéssss]",
     "pass": "[Pàsséddd]",

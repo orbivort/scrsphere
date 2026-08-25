@@ -7,9 +7,9 @@ class ImpedimentsService {
     return coreApiService.axiosInstance;
   }
 
-  async getImpediments(teamId: string): Promise<ApiResponse<Impediment[]>> {
+  async getImpediments(teamId: string, sprintId?: string): Promise<ApiResponse<Impediment[]>> {
     const { data } = await this.api.get('/impediments', {
-      params: { teamId },
+      params: { teamId, ...(sprintId ? { sprintId } : {}) },
     });
     return data;
   }

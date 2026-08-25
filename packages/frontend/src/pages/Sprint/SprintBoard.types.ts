@@ -7,9 +7,7 @@ import {
   type TeamMember,
   type User,
   type ProductBacklogItem,
-  type DoDItem,
   type Impediment,
-  type DoDChecklistVerification,
 } from '../../types';
 
 // ============================================================================
@@ -52,6 +50,7 @@ export interface BurndownDataPoint {
 export interface WIPLimits {
   todo: number;
   in_progress: number;
+  review: number;
   done: number;
 }
 
@@ -64,8 +63,8 @@ export interface ModalState {
   showEditModal: boolean;
   showDeleteConfirm: boolean;
   showCompleteSprintModal: boolean;
+  showCancelSprintModal: boolean;
   showBacklogManager: boolean;
-  showDodVerification: boolean;
   showKeyboardHelp: boolean;
   selectedTask: Task | null;
   completeSprintError: string | null;
@@ -78,16 +77,16 @@ export type ModalAction =
   | { type: 'OPEN_EDIT_MODAL'; payload: Task }
   | { type: 'OPEN_DELETE_CONFIRM'; payload: Task }
   | { type: 'OPEN_COMPLETE_SPRINT_MODAL' }
+  | { type: 'OPEN_CANCEL_SPRINT_MODAL' }
   | { type: 'OPEN_BACKLOG_MANAGER' }
-  | { type: 'OPEN_DOD_VERIFICATION' }
   | { type: 'OPEN_KEYBOARD_HELP' }
   | { type: 'CLOSE_CREATE_MODAL' }
   | { type: 'CLOSE_DETAIL_MODAL' }
   | { type: 'CLOSE_EDIT_MODAL' }
   | { type: 'CLOSE_DELETE_CONFIRM' }
   | { type: 'CLOSE_COMPLETE_SPRINT_MODAL' }
+  | { type: 'CLOSE_CANCEL_SPRINT_MODAL' }
   | { type: 'CLOSE_BACKLOG_MANAGER' }
-  | { type: 'CLOSE_DOD_VERIFICATION' }
   | { type: 'CLOSE_KEYBOARD_HELP' }
   | { type: 'SET_COMPLETE_SPRINT_ERROR'; payload: string | null }
   | { type: 'SET_WORKFLOW_ERROR'; payload: string | null }
@@ -120,6 +119,7 @@ export interface SprintStats {
   totalTasks: number;
   todoTasks: number;
   inProgressTasks: number;
+  reviewTasks: number;
   doneTasks: number;
   totalEstimatedHours: number;
   totalRemainingHours: number;
@@ -134,6 +134,7 @@ export interface SprintStats {
 export interface TasksByStatus {
   todo: Task[];
   in_progress: Task[];
+  review: Task[];
   done: Task[];
 }
 
@@ -150,7 +151,7 @@ export interface ValidationResult {
 
 export interface TransitionOptions {
   checkWipLimits?: boolean;
-  wipLimits?: { in_progress: number };
+  wipLimits?: WIPLimits;
   tasksByStatus?: TasksByStatus;
   checkRequiredFields?: boolean;
 }
@@ -162,7 +163,6 @@ export interface TransitionOptions {
 export interface UseSprintBoardDataOptions {
   teamId: string | undefined;
   showBurndown: boolean;
-  showDodVerification: boolean;
   filterAssignee: string;
   filterPbi: string;
   debouncedSearchQuery: string;
@@ -174,9 +174,7 @@ export interface UseSprintBoardDataReturn {
   tasks: Task[];
   teamMembers: (TeamMember & { user?: User })[];
   sprintItems: ProductBacklogItem[];
-  dodItems: DoDItem[];
   impediments: Impediment[];
-  dodVerifications: DoDChecklistVerification[];
   burndownData: unknown;
   isLoading: boolean;
   sprintLoading: boolean;

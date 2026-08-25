@@ -10,6 +10,7 @@ export interface SprintOverviewProps {
   totalTasks: number;
   todoTasks: number;
   inProgressTasks: number;
+  reviewTasks: number;
   doneTasks: number;
   totalEstimatedHours: number;
   totalRemainingHours: number;
@@ -25,6 +26,7 @@ export const SprintOverview: React.FC<SprintOverviewProps> = ({
   totalTasks,
   todoTasks,
   inProgressTasks,
+  reviewTasks,
   doneTasks,
   totalRemainingHours,
   progressPercentage,
@@ -107,7 +109,7 @@ export const SprintOverview: React.FC<SprintOverviewProps> = ({
             <span className={styles['stat-value']}>{totalTasks}</span>
           </div>
           <span className={styles['stat-breakdown']}>
-            {todoTasks} · {inProgressTasks} · {doneTasks}
+            {todoTasks} · {inProgressTasks} · {reviewTasks} · {doneTasks}
           </span>
         </div>
 

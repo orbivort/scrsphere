@@ -56,13 +56,18 @@ const updateTaskSchema = z.object({
   title: z.string().min(1).max(200).optional(),
   description: z.string().max(2000).optional(),
   assigneeId: z.string().uuid().optional().nullable(),
-  status: z.enum(['TODO', 'IN_PROGRESS', 'DONE']).optional(),
+  status: z.enum(['TODO', 'IN_PROGRESS', 'REVIEW', 'DONE']).optional(),
   estimatedHours: z.number().positive().optional(),
   remainingHours: z.number().min(0).optional(),
 });
 
-const startSprintSchema = z.object({
-  backlogItems: z
+// The start transition no longer accepts a backlog/task payload: readiness is validated
+// server-side against the backlog persisted via `saveSprintBacklog`. Any supplied body is
+// intentionally ignored, so the schema stays minimal.
+const startSprintSchema = z.object({}).strict();
+
+const saveSprintBacklogSchema = z.object({
+  items: z
     .array(
       z.object({
         pbiId: z.string().uuid('Invalid PBI ID'),
@@ -82,6 +87,44 @@ const startSprintSchema = z.object({
     )
     .optional(),
 });
+
+// Incremental Sprint Planning draft payload (selected PBIs, decomposed tasks, working
+// Sprint Goal, optional capacity). `strict()` rejects unknown fields so a stale client
+// cannot drift the persisted state.
+const saveSprintPlanningDraftSchema = z
+  .object({
+    items: z
+      .array(
+        z.object({
+          pbiId: z.string().uuid('Invalid PBI ID'),
+        })
+      )
+      .optional(),
+    tasks: z
+      .array(
+        z.object({
+          id: z.string().uuid().optional(),
+          pbiId: z.string().uuid('Invalid PBI ID'),
+          title: z.string().min(1, 'Task title is required').max(200),
+          description: z.string().max(2000).optional(),
+          assigneeId: z.string().uuid().optional().nullable(),
+          estimatedHours: z.number().min(0).optional(),
+          remainingHours: z.number().min(0).optional(),
+        })
+      )
+      .optional(),
+    sprintGoal: z.string().max(500).optional(),
+    capacity: z
+      .array(
+        z.object({
+          memberId: z.string().uuid().optional(),
+          userId: z.string().uuid('Invalid user ID'),
+          availableHours: z.number().min(0),
+        })
+      )
+      .optional(),
+  })
+  .strict();
 
 const addPBIToSprintSchema = z.object({
   pbiId: z.string().uuid('Invalid PBI ID'),
@@ -159,6 +202,41 @@ router.post(
   validateParams(sprintIdSchema),
   validateBody(startSprintSchema),
   sprintController.startSprint
+);
+
+/**
+ * @route   POST /api/v1/sprints/:id/backlog
+ * @desc    Save the Sprint Backlog draft for a PLANNED sprint (Developers-only)
+ * @access  Private
+ */
+router.post(
+  '/:id/backlog',
+  validateParams(sprintIdSchema),
+  validateBody(saveSprintBacklogSchema),
+  sprintController.saveSprintBacklog
+);
+
+/**
+ * @route   PUT /api/v1/sprints/:id/backlog/draft
+ * @desc    Save the Sprint Planning draft incrementally (Developers-only)
+ * @access  Private (Developers)
+ */
+router.put(
+  '/:id/backlog/draft',
+  validateParams(sprintIdSchema),
+  validateBody(saveSprintPlanningDraftSchema),
+  sprintController.saveSprintPlanningDraft
+);
+
+/**
+ * @route   GET /api/v1/sprints/:id/planning-draft
+ * @desc    Load the Sprint Planning draft for resume (read-only)
+ * @access  Private (any authenticated team member)
+ */
+router.get(
+  '/:id/planning-draft',
+  validateParams(sprintIdSchema),
+  sprintController.getSprintPlanningDraft
 );
 
 /**

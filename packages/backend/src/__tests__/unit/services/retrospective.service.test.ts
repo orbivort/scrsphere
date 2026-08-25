@@ -481,7 +481,7 @@ describe('RetrospectiveService', () => {
         retrospectiveId: 'retro-1',
         name: 'John Doe',
         email: 'john@test.com',
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
         attended: true,
       };
 
@@ -491,7 +491,7 @@ describe('RetrospectiveService', () => {
       const result = await retrospectiveService.addAttendee('retro-1', {
         name: 'John Doe',
         email: 'john@test.com',
-        role: 'DEVELOPER',
+        role: 'DEVELOPERS',
         attended: true,
       });
 

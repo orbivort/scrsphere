@@ -16,7 +16,7 @@ export interface ValidationResult {
 
 export interface UseDragAndDropOptions {
   tasks: Task[];
-  wipLimits: { todo: number; in_progress: number; done: number };
+  wipLimits: { todo: number; in_progress: number; review: number; done: number };
   sprintItems: Array<{ id: string; status: string; storyPoints?: number }>;
   onStatusChange: (taskId: string, status: TaskStatus, updates?: Partial<Task>) => void;
   onValidationError?: (error: string) => void;
@@ -67,7 +67,9 @@ export function useDragAndDrop({
       case TaskStatus.TODO:
         return [TaskStatus.IN_PROGRESS];
       case TaskStatus.IN_PROGRESS:
-        return [TaskStatus.TODO, TaskStatus.DONE];
+        return [TaskStatus.REVIEW, TaskStatus.TODO];
+      case TaskStatus.REVIEW:
+        return [TaskStatus.DONE, TaskStatus.IN_PROGRESS];
       case TaskStatus.DONE:
         return [TaskStatus.IN_PROGRESS];
       default:
@@ -89,13 +91,22 @@ export function useDragAndDrop({
         };
       }
 
-      // Check WIP limits for IN_PROGRESS
+      // Check WIP limits for IN_PROGRESS and REVIEW
       if (targetStatus === TaskStatus.IN_PROGRESS) {
         const inProgressCount = tasks.filter((t) => t.status === TaskStatus.IN_PROGRESS).length;
         if (inProgressCount >= wipLimits.in_progress) {
           return {
             valid: false,
             error: `WIP limit reached for In Progress column (max: ${wipLimits.in_progress})`,
+          };
+        }
+      }
+      if (targetStatus === TaskStatus.REVIEW) {
+        const reviewCount = tasks.filter((t) => t.status === TaskStatus.REVIEW).length;
+        if (reviewCount >= wipLimits.review) {
+          return {
+            valid: false,
+            error: `WIP limit reached for Review column (max: ${wipLimits.review})`,
           };
         }
       }
@@ -144,8 +155,12 @@ export function useDragAndDrop({
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/plain', taskId);
 
-    // Create custom drag image if needed
-    const taskElement = e.currentTarget as HTMLElement;
+    // Create a custom drag image if the source element is still in the DOM.
+    // React's synthetic drag event can surface a null `currentTarget` in some
+    // timing scenarios (e.g. the source node being removed mid-drag), which
+    // would otherwise crash the page with a "getBoundingClientRect of null" error.
+    const taskElement = e.currentTarget as HTMLElement | null;
+    if (!taskElement) return;
     const rect = taskElement.getBoundingClientRect();
     e.dataTransfer.setDragImage(taskElement, rect.width / 2, 20);
   }, []);
@@ -234,10 +249,12 @@ export function useDragAndDrop({
         if (e.key === 'ArrowRight') {
           // Move forward in workflow
           if (task.status === TaskStatus.TODO) targetStatus = TaskStatus.IN_PROGRESS;
-          else if (task.status === TaskStatus.IN_PROGRESS) targetStatus = TaskStatus.DONE;
+          else if (task.status === TaskStatus.IN_PROGRESS) targetStatus = TaskStatus.REVIEW;
+          else if (task.status === TaskStatus.REVIEW) targetStatus = TaskStatus.DONE;
         } else {
           // Move backward in workflow
-          if (task.status === TaskStatus.DONE) targetStatus = TaskStatus.IN_PROGRESS;
+          if (task.status === TaskStatus.DONE) targetStatus = TaskStatus.REVIEW;
+          else if (task.status === TaskStatus.REVIEW) targetStatus = TaskStatus.IN_PROGRESS;
           else if (task.status === TaskStatus.IN_PROGRESS) targetStatus = TaskStatus.TODO;
         }
 

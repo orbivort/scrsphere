@@ -45,6 +45,16 @@ const mockTasks: Array<{
     createdAt: '2026-02-01T00:00:00Z',
     updatedAt: '2026-02-01T00:00:00Z',
   },
+  {
+    id: 'task-4',
+    sprintId: 'sprint-1',
+    pbiId: 'pbi-2',
+    title: 'Peer review login',
+    status: TaskStatus.REVIEW,
+    assigneeId: 'user-1',
+    createdAt: '2026-02-01T00:00:00Z',
+    updatedAt: '2026-02-01T00:00:00Z',
+  },
 ];
 
 describe('TaskList Component', () => {
@@ -68,6 +78,7 @@ describe('TaskList Component', () => {
       expect(screen.getByText('Implement login')).toBeInTheDocument();
       expect(screen.getByText('Implement logout')).toBeInTheDocument();
       expect(screen.getByText('Write tests')).toBeInTheDocument();
+      expect(screen.getByText('Peer review login')).toBeInTheDocument();
     });
 
     it('should display task status badges', () => {
@@ -75,8 +86,10 @@ describe('TaskList Component', () => {
 
       const doneBadges = screen.getAllByText(i18nT('dashboard:taskStatus.DONE'));
       const inProgressBadges = screen.getAllByText(i18nT('dashboard:taskStatus.IN_PROGRESS'));
+      const reviewBadges = screen.getAllByText(i18nT('dashboard:taskStatus.REVIEW'));
       expect(doneBadges.length).toBeGreaterThan(0);
       expect(inProgressBadges.length).toBeGreaterThan(0);
+      expect(reviewBadges.length).toBeGreaterThan(0);
     });
 
     it('should render all tasks with correct structure', () => {
@@ -97,7 +110,7 @@ describe('TaskList Component', () => {
     it('should have proper ARIA attributes', () => {
       renderWithProviders(<TaskList {...defaultProps} />);
 
-      const list = screen.getByRole('list', { name: 'Task list' });
+      const list = screen.getByRole('list', { name: i18nT('dashboard:taskList.ariaLabel') });
       expect(list).toBeInTheDocument();
     });
   });
@@ -129,7 +142,7 @@ describe('TaskList Component', () => {
     it('should not have keyboard navigation when onTaskClick is not provided', () => {
       renderWithProviders(<TaskList {...defaultProps} />);
 
-      const list = screen.getByRole('list', { name: 'Task list' });
+      const list = screen.getByRole('list', { name: i18nT('dashboard:taskList.ariaLabel') });
       expect(list).not.toHaveAttribute('aria-activedescendant');
     });
 
@@ -137,7 +150,7 @@ describe('TaskList Component', () => {
       const mockOnTaskClick = vi.fn();
       renderWithProviders(<TaskList {...defaultProps} onTaskClick={mockOnTaskClick} />);
 
-      const list = screen.getByRole('list', { name: 'Task list' });
+      const list = screen.getByRole('list', { name: i18nT('dashboard:taskList.ariaLabel') });
       expect(list).toHaveAttribute('aria-activedescendant');
     });
 
@@ -146,7 +159,7 @@ describe('TaskList Component', () => {
       const mockOnTaskClick = vi.fn();
       renderWithProviders(<TaskList {...defaultProps} onTaskClick={mockOnTaskClick} />);
 
-      const list = screen.getByRole('list', { name: 'Task list' });
+      const list = screen.getByRole('list', { name: i18nT('dashboard:taskList.ariaLabel') });
       const firstItem = screen
         .getByText('Implement login')
         .closest('[role="button"]') as HTMLElement;
@@ -156,6 +169,9 @@ describe('TaskList Component', () => {
       await user.keyboard('{ArrowDown}');
 
       expect(list).toHaveAttribute('aria-activedescendant', 'task-item-2');
+
+      await user.keyboard('{ArrowDown}');
+      expect(list).toHaveAttribute('aria-activedescendant', 'task-item-3');
 
       await user.keyboard('{ArrowDown}');
       expect(list).toHaveAttribute('aria-activedescendant', 'task-item-0');
@@ -171,10 +187,10 @@ describe('TaskList Component', () => {
         .closest('[role="button"]') as HTMLElement;
       firstItem.focus();
 
-      const list = screen.getByRole('list', { name: 'Task list' });
+      const list = screen.getByRole('list', { name: i18nT('dashboard:taskList.ariaLabel') });
 
       await user.keyboard('{ArrowUp}');
-      expect(list).toHaveAttribute('aria-activedescendant', 'task-item-2');
+      expect(list).toHaveAttribute('aria-activedescendant', 'task-item-3');
     });
 
     it('should jump to first item with Home key', async () => {
@@ -182,7 +198,7 @@ describe('TaskList Component', () => {
       const mockOnTaskClick = vi.fn();
       renderWithProviders(<TaskList {...defaultProps} onTaskClick={mockOnTaskClick} />);
 
-      const list = screen.getByRole('list', { name: 'Task list' });
+      const list = screen.getByRole('list', { name: i18nT('dashboard:taskList.ariaLabel') });
 
       await user.keyboard('{End}');
       await user.keyboard('{Home}');
@@ -194,9 +210,9 @@ describe('TaskList Component', () => {
       const mockOnTaskClick = vi.fn();
       renderWithProviders(<TaskList {...defaultProps} onTaskClick={mockOnTaskClick} />);
 
-      const list = screen.getByRole('list', { name: 'Task list' });
+      const list = screen.getByRole('list', { name: i18nT('dashboard:taskList.ariaLabel') });
       await user.keyboard('{End}');
-      expect(list).toHaveAttribute('aria-activedescendant', 'task-item-2');
+      expect(list).toHaveAttribute('aria-activedescendant', 'task-item-3');
     });
 
     it('should trigger click action with Enter key', async () => {
@@ -239,7 +255,9 @@ describe('TaskList Component', () => {
 
       await user.keyboard('{Escape}');
 
-      expect(document.activeElement).not.toBe(screen.getByRole('list', { name: 'Task list' }));
+      expect(document.activeElement).not.toBe(
+        screen.getByRole('list', { name: i18nT('dashboard:taskList.ariaLabel') })
+      );
     });
   });
 
@@ -251,6 +269,35 @@ describe('TaskList Component', () => {
       expect(screen.getByText('Implement login')).toBeInTheDocument();
       expect(screen.getByText('Implement logout')).toBeInTheDocument();
       expect(screen.queryByText('Write tests')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Assignee Display', () => {
+    const tasksWithAssignee = mockTasks.map((task) =>
+      task.assigneeId === 'user-1'
+        ? { ...task, assignee: { firstName: 'John', lastName: 'Doe', id: 'user-1' } }
+        : { ...task, assignee: { firstName: 'Jane', lastName: 'Smith', id: 'user-2' } }
+    );
+
+    it('should render assignee names for tasks', () => {
+      renderWithProviders(<TaskList {...defaultProps} tasks={tasksWithAssignee} />);
+
+      // user-1 owns three tasks, user-2 owns one
+      expect(screen.getByText('Jane Smith')).toBeInTheDocument();
+      expect(screen.getAllByText('John Doe').length).toBe(3);
+    });
+
+    it('should render "You" for the current user\'s own tasks', () => {
+      renderWithProviders(
+        <TaskList {...defaultProps} tasks={tasksWithAssignee} currentUserId="user-1" />
+      );
+
+      // user-1 owns 'Implement login', 'Implement logout' and 'Peer review login'
+      const youLabels = screen.getAllByText(i18nT('dashboard:taskList.you'));
+      expect(youLabels.length).toBe(3);
+
+      // Other users' tasks still show their names
+      expect(screen.getByText('Jane Smith')).toBeInTheDocument();
     });
   });
 });

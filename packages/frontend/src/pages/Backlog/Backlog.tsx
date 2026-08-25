@@ -1,9 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import { useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
 import { apiService, definitionService } from '../../services';
 import { useTeamStore } from '../../store';
+import { useTeamContext } from '../../contexts/TeamContext';
 import { logger } from '../../utils/logger';
 import { queryKeys } from '../../hooks/queryKeys';
 import { useToast } from '../../hooks/useToast';
@@ -61,6 +63,9 @@ const BacklogContent: React.FC = () => {
   const [isLoadingChildTasks, setIsLoadingChildTasks] = useState(false);
   const { toasts, success, error: showError, removeToast } = useToast();
 
+  const [searchParams, setSearchParams] = useSearchParams();
+  const targetPbiId = searchParams.get('pbi');
+
   const {
     formData,
     setFormData,
@@ -75,6 +80,10 @@ const BacklogContent: React.FC = () => {
 
   const { currentTeam } = useTeamStore();
   const teamId = currentTeam?.id;
+
+  // Only Developers are responsible for sizing; PO/SM cannot set story points.
+  const { userRole } = useTeamContext();
+  const isDeveloper = userRole === 'DEVELOPERS';
 
   const {
     backlogData,
@@ -156,7 +165,8 @@ const BacklogContent: React.FC = () => {
       formData,
       { teamId, activeGoalId: activeGoal?.id },
       t as (key: string, options?: Record<string, unknown>) => string,
-      isEditMode
+      isEditMode,
+      isDeveloper
     );
 
     if (result.workflowError) {
@@ -190,11 +200,38 @@ const BacklogContent: React.FC = () => {
     resetForm();
   };
 
-  const handleOpenDetailModal = (item: ProductBacklogItem) => {
-    setSelectedItem(item);
-    setWorkflowError(null);
-    setShowDetailModal(true);
-  };
+  const handleOpenDetailModal = useCallback(
+    (item: ProductBacklogItem) => {
+      setSelectedItem(item);
+      setWorkflowError(null);
+      setShowDetailModal(true);
+    },
+    [setSelectedItem, setWorkflowError, setShowDetailModal]
+  );
+
+  // Deep-link support: when the URL carries a `?pbi=<id>` query param (e.g. navigated from
+  // a task's Parent PBI field on the Sprint board), open that item's detail modal directly.
+  // Once handled, the param is removed so it does not re-open on subsequent renders.
+  useEffect(() => {
+    if (!targetPbiId || isLoading) return;
+
+    const items = backlogData?.data ?? [];
+    const targetItem = items.find((item) => item.id === targetPbiId);
+    if (targetItem) {
+      handleOpenDetailModal(targetItem);
+      // Remove only the `pbi` param, preserving any others.
+      const nextParams = new URLSearchParams(searchParams);
+      nextParams.delete('pbi');
+      setSearchParams(nextParams, { replace: true });
+    }
+  }, [
+    targetPbiId,
+    isLoading,
+    backlogData?.data,
+    searchParams,
+    setSearchParams,
+    handleOpenDetailModal,
+  ]);
 
   const handleCloseDetailModal = () => {
     setShowDetailModal(false);
@@ -235,7 +272,8 @@ const BacklogContent: React.FC = () => {
       updates: {
         title: formData.title.trim(),
         description: formData.description.trim() || undefined,
-        storyPoints: formData.estimate,
+        // Only Developers may size; non-Developers cannot change story points.
+        ...(isDeveloper ? { storyPoints: formData.estimate } : {}),
         priority: formData.moscowPriority,
         businessValue: formData.businessValue,
         labels: labelsArray,
@@ -257,7 +295,8 @@ const BacklogContent: React.FC = () => {
       teamId,
       title: formData.title.trim(),
       description: formData.description.trim() || undefined,
-      storyPoints: formData.estimate,
+      // Only Developers may size; non-Developers create unsized items.
+      ...(isDeveloper ? { storyPoints: formData.estimate } : {}),
       priority: formData.moscowPriority,
       businessValue: formData.businessValue,
       labels: labelsArray,
@@ -361,29 +400,30 @@ const BacklogContent: React.FC = () => {
   const executeStatusChange = (newStatus: ItemStatus) => {
     if (!selectedItem) return;
     setWorkflowError(null);
+
+    const onSuccess = () => {
+      setSelectedItem((prev) => (prev ? { ...prev, status: newStatus } : null));
+      setShowValidationModal(false);
+      setValidationChecks({});
+      setPendingStatus(null);
+    };
+    const onError = (error: unknown) => {
+      const err = error as {
+        response?: { status?: number; data?: { error?: { message?: string } } };
+      };
+      if (err.response?.status === 400 && err.response.data?.error?.message) {
+        setWorkflowError(err.response.data.error.message);
+      } else if (err.response?.status === 403) {
+        setWorkflowError(
+          err.response.data?.error?.message ??
+            (t as (key: string) => string)('common:permission.transitionError')
+        );
+      }
+    };
+
     updateItemMutation.mutate(
       { id: selectedItem.id, updates: { status: newStatus } },
-      {
-        onSuccess: () => {
-          setSelectedItem((prev) => (prev ? { ...prev, status: newStatus } : null));
-          setShowValidationModal(false);
-          setValidationChecks({});
-          setPendingStatus(null);
-        },
-        onError: (error: unknown) => {
-          const err = error as {
-            response?: { status?: number; data?: { error?: { message?: string } } };
-          };
-          if (err.response?.status === 400 && err.response.data?.error?.message) {
-            setWorkflowError(err.response.data.error.message);
-          } else if (err.response?.status === 403) {
-            setWorkflowError(
-              err.response.data?.error?.message ??
-                (t as (key: string) => string)('common:permission.transitionError')
-            );
-          }
-        },
-      }
+      { onSuccess, onError }
     );
   };
 

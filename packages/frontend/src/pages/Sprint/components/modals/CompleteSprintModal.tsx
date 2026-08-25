@@ -13,6 +13,7 @@ import {
   CircleIcon,
   ClipboardIcon,
   RefreshCwIcon,
+  EyeIcon,
   XCircleIcon,
   CheckCircleIcon,
 } from '@/components/common/Icons';
@@ -40,11 +41,15 @@ export interface CompleteSprintModalProps {
   incompletePbisCount: number;
   outstandingImpediments: Impediment[];
   outstandingImpedimentsCount: number;
+  isReviewCompleted: boolean;
+  isRetrospectiveCompleted: boolean;
   completeSprintError: string | null;
   onClose: () => void;
-  onProceedToDodVerification: () => void;
+  onCompleteSprint: () => void;
   onManageBacklog: () => void;
   onViewImpediments: () => void;
+  onViewSprintReview: () => void;
+  onViewRetrospective: () => void;
   isCompleting: boolean;
   modalRef: React.RefObject<HTMLDivElement | null>;
 }
@@ -58,17 +63,28 @@ export const CompleteSprintModal: React.FC<CompleteSprintModalProps> = ({
   incompletePbisCount,
   outstandingImpediments,
   outstandingImpedimentsCount,
+  isReviewCompleted,
+  isRetrospectiveCompleted,
   completeSprintError,
   onClose,
-  onProceedToDodVerification,
+  onCompleteSprint,
   onManageBacklog,
   onViewImpediments,
+  onViewSprintReview,
+  onViewRetrospective,
   isCompleting,
   modalRef,
 }) => {
   const { t } = useTranslation('sprint');
   const hasIncompleteTasks = incompleteTasksCount > 0;
   const hasOutstandingImpediments = outstandingImpedimentsCount > 0;
+  const hasIncompleteReview = !isReviewCompleted;
+  const hasIncompleteRetrospective = !isRetrospectiveCompleted;
+  const hasBlockingPrerequisites =
+    hasIncompleteTasks ||
+    hasOutstandingImpediments ||
+    hasIncompleteReview ||
+    hasIncompleteRetrospective;
 
   return (
     <div
@@ -268,6 +284,11 @@ export const CompleteSprintModal: React.FC<CompleteSprintModalProps> = ({
                             {t('taskStatus.inProgress')}
                           </>
                         )}
+                        {task.status === TaskStatusEnum.REVIEW && (
+                          <>
+                            <EyeIcon size={12} aria-hidden="true" /> {t('taskStatus.review')}
+                          </>
+                        )}
                       </div>
                       <div className={styles['task-details']}>
                         <span className={styles['task-title']}>{task.title}</span>
@@ -284,11 +305,57 @@ export const CompleteSprintModal: React.FC<CompleteSprintModalProps> = ({
                 </button>
               </div>
             </div>
-          ) : !hasOutstandingImpediments ? (
+          ) : !hasOutstandingImpediments && !hasIncompleteReview && !hasIncompleteRetrospective ? (
             <div className={styles['ready-to-complete']}>
               <p className={styles['confirmation-text']}>{t('completeSprint.readyToComplete')}</p>
             </div>
           ) : null}
+
+          {hasIncompleteReview && (
+            <div
+              className={styles['outstanding-impediments-warning']}
+              role="alert"
+              aria-live="polite"
+            >
+              <div className={styles['impediments-warning-header']}>
+                <span className={styles['warning-icon']} aria-hidden="true">
+                  <AlertTriangleIcon size={20} />
+                </span>
+                <strong>{t('completeSprint.incompleteSprintReview')}</strong>
+              </div>
+              <p className={styles['impediments-warning-details']}>
+                {t('completeSprint.incompleteSprintReviewDetails')}
+              </p>
+              <div className={styles['outstanding-impediments-actions']}>
+                <button className={styles['button-view-impediments']} onClick={onViewSprintReview}>
+                  <EyeIcon size={14} aria-hidden="true" /> {t('completeSprint.viewSprintReview')}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {hasIncompleteRetrospective && (
+            <div
+              className={styles['outstanding-impediments-warning']}
+              role="alert"
+              aria-live="polite"
+            >
+              <div className={styles['impediments-warning-header']}>
+                <span className={styles['warning-icon']} aria-hidden="true">
+                  <AlertTriangleIcon size={20} />
+                </span>
+                <strong>{t('completeSprint.incompleteSprintRetrospective')}</strong>
+              </div>
+              <p className={styles['impediments-warning-details']}>
+                {t('completeSprint.incompleteSprintRetrospectiveDetails')}
+              </p>
+              <div className={styles['outstanding-impediments-actions']}>
+                <button className={styles['button-view-impediments']} onClick={onViewRetrospective}>
+                  <EyeIcon size={14} aria-hidden="true" /> {t('completeSprint.viewRetrospective')}
+                </button>
+              </div>
+            </div>
+          )}
         </div>
         <div className={baseStyles['modal-footer']}>
           <button
@@ -300,19 +367,19 @@ export const CompleteSprintModal: React.FC<CompleteSprintModalProps> = ({
           </button>
           <button
             className={styles['button-complete-sprint-confirm']}
-            onClick={
-              hasIncompleteTasks || hasOutstandingImpediments
-                ? undefined
-                : onProceedToDodVerification
-            }
-            disabled={isCompleting || hasIncompleteTasks || hasOutstandingImpediments}
+            onClick={hasBlockingPrerequisites ? undefined : onCompleteSprint}
+            disabled={isCompleting || hasBlockingPrerequisites}
             aria-busy={isCompleting}
             title={
               hasIncompleteTasks
                 ? t('completeSprint.cannotCompleteWithIncomplete')
                 : hasOutstandingImpediments
                   ? t('completeSprint.cannotCompleteWithImpediments')
-                  : t('completeSprint.proceedToDodVerificationTitle')
+                  : hasIncompleteReview
+                    ? t('completeSprint.cannotCompleteWithIncompleteReview')
+                    : hasIncompleteRetrospective
+                      ? t('completeSprint.cannotCompleteWithIncompleteRetrospective')
+                      : t('completeSprint.completeSprintTitle')
             }
           >
             {isCompleting ? (
@@ -320,7 +387,7 @@ export const CompleteSprintModal: React.FC<CompleteSprintModalProps> = ({
                 <span className={baseStyles['button-spinner']} aria-hidden="true" />
                 {t('completeSprint.processing')}
               </>
-            ) : hasIncompleteTasks || hasOutstandingImpediments ? (
+            ) : hasBlockingPrerequisites ? (
               <>
                 <XCircleIcon
                   size={16}
@@ -336,7 +403,7 @@ export const CompleteSprintModal: React.FC<CompleteSprintModalProps> = ({
                   aria-hidden="true"
                   className={styles['button-icon-active']}
                 />
-                {t('completeSprint.proceedToDodVerification')}
+                {t('completeSprint.completeSprintConfirm')}
               </>
             )}
           </button>

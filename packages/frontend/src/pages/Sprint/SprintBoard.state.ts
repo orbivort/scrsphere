@@ -9,8 +9,8 @@ export const initialModalState: ModalState = {
   showEditModal: false,
   showDeleteConfirm: false,
   showCompleteSprintModal: false,
+  showCancelSprintModal: false,
   showBacklogManager: false,
-  showDodVerification: false,
   showKeyboardHelp: false,
   selectedTask: null,
   completeSprintError: null,
@@ -34,10 +34,10 @@ export function modalReducer(state: ModalState, action: ModalAction): ModalState
       };
     case 'OPEN_COMPLETE_SPRINT_MODAL':
       return { ...state, showCompleteSprintModal: true, workflowError: null };
+    case 'OPEN_CANCEL_SPRINT_MODAL':
+      return { ...state, showCancelSprintModal: true, workflowError: null };
     case 'OPEN_BACKLOG_MANAGER':
       return { ...state, showBacklogManager: true, workflowError: null };
-    case 'OPEN_DOD_VERIFICATION':
-      return { ...state, showDodVerification: true, workflowError: null };
     case 'OPEN_KEYBOARD_HELP':
       return { ...state, showKeyboardHelp: true };
     case 'CLOSE_CREATE_MODAL':
@@ -55,10 +55,10 @@ export function modalReducer(state: ModalState, action: ModalAction): ModalState
         completeSprintError: null,
         workflowError: null,
       };
+    case 'CLOSE_CANCEL_SPRINT_MODAL':
+      return { ...state, showCancelSprintModal: false, workflowError: null };
     case 'CLOSE_BACKLOG_MANAGER':
       return { ...state, showBacklogManager: false, workflowError: null };
-    case 'CLOSE_DOD_VERIFICATION':
-      return { ...state, showDodVerification: false, workflowError: null };
     case 'CLOSE_KEYBOARD_HELP':
       return { ...state, showKeyboardHelp: false };
     case 'SET_COMPLETE_SPRINT_ERROR':

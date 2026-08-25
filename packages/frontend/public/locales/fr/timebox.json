@@ -1,0 +1,24 @@
+{
+  "actions": {
+    "pause": "Pause",
+    "reset": "Réinitialiser",
+    "start": "Démarrer"
+  },
+  "aria": {
+    "idle": "Timebox non démarrée",
+    "noTeam": "Minuteur indisponible jusqu'à la sélection d'une équipe",
+    "overtime": "Timebox dépassée",
+    "paused": "Timebox en pause",
+    "running": "Timebox en cours",
+    "smOnly": "Seul le Scrum Master peut contrôler la timebox",
+    "timer": "Temps restant : {{remaining}}",
+    "warning": "Timebox presque écoulée"
+  },
+  "status": {
+    "idle": "Inactif",
+    "noTeam": "Sélectionnez une équipe pour démarrer le minuteur",
+    "overtime": "Temps dépassé",
+    "paused": "En pause",
+    "running": "En cours"
+  }
+}

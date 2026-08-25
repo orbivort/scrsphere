@@ -554,6 +554,12 @@
   --modal-backdrop-z-index: var(--z-modal-backdrop);
   --modal-overscroll-behavior: var(--overscroll-behavior-contain);
 
+  /* EventTimebox (ceremony chronometer) shadow tokens */
+  --timebox-shadow-idle: 0 1px 2px rgb(0 0 0 / 6%);
+  --timebox-shadow-running: 0 4px 14px rgb(59 130 246 / 22%), 0 0 0 3px rgb(59 130 246 / 12%);
+  --timebox-shadow-warning: 0 4px 14px rgb(245 158 11 / 26%), 0 0 0 3px rgb(245 158 11 / 16%);
+  --timebox-shadow-overtime: 0 4px 14px rgb(239 68 68 / 28%), 0 0 0 3px rgb(239 68 68 / 18%);
+
   /* ========================================
      BULK UPLOAD MODAL - Enhanced Design Tokens
      ======================================== */

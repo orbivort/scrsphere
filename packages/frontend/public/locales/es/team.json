@@ -23,7 +23,7 @@
     "title": "Eliminar Miembro del equipo",
     "warning": "Esta acción no puede ser revertida. El usuario perderá acceso a todos los recursos del equipo."
   },
-  "developer": {
+  "developers": {
     "badge": "Miembro del equipo",
     "checkInvitations": "Verificar Invitaciones",
     "description": "Unirse a un equipo Scrum existente...",
@@ -33,7 +33,7 @@
       "invitationsSentBy": "Las invitaciones de equipo son enviadas por: Scrum Masters o Product Owners solamente",
       "title": "Cómo unirse a un equipo"
     },
-    "title": "Developer"
+    "title": "Developers"
   },
   "errorStates": {
     "accessDenied": "Acceso denegado",
@@ -71,6 +71,8 @@
     "invalidEmail": "Por favor ingrese una dirección de correo electrónico válida.",
     "networkError": "Error de red. Por favor verifique su conexión e intente de nuevo.",
     "noPermission": "No tiene permiso para agregar miembros al equipo.",
+    "roleAlreadyTaken": "El rol {{role}} ya está asignado a otro miembro del equipo. Cada equipo puede tener exactamente un Product Owner y un Scrum Master.",
+    "teamSizeLimit": "Este equipo ha alcanzado el tamaño máximo de {{max}} miembros. No se pueden agregar más miembros.",
     "userNotFound": "No se encontró usuario con esta dirección de correo electrónico. El usuario debe registrarse primero antes de poder ser invitado a un equipo."
   },
   "inviteModal": {
@@ -109,7 +111,7 @@
     "memberSince": "Miembro desde",
     "roleNames": {
       "administrator": "Administrador",
-      "developer": "Developer",
+      "developers": "Developers",
       "productOwner": "Product Owner",
       "scrumMaster": "Scrum Master"
     },
@@ -130,7 +132,7 @@
     "filterByRoleAriaLabel": "Filtrar miembros por rol",
     "filterOptions": {
       "allRoles": "Todos los Roles",
-      "developer": "Developer",
+      "developers": "Developers",
       "productOwner": "Product Owner",
       "scrumMaster": "Scrum Master"
     },
@@ -145,6 +147,7 @@
       "byName": "Ordenar por Nombre",
       "byRole": "Ordenar por Rol"
     },
+    "teamFull": "Este equipo está lleno (máximo {{max}} miembros). No se pueden agregar más miembros.",
     "title": "Miembros del equipo",
     "viewModeAriaLabel": "Alternar modo de vista",
     "viewToggles": {
@@ -182,6 +185,7 @@
     "created": "Creado: {{date}}",
     "lastUpdated": "Última actualización: {{date}}",
     "memberCount": "{{count}} miembros",
+    "memberCountLimit": "{{count}}/{{max}} miembros",
     "memberCount_one": "{{count}} miembro",
     "memberCount_other": "{{count}} miembros",
     "teamId": "ID del equipo: {{id}}",
@@ -191,7 +195,7 @@
   "teamStats": {
     "avgVelocity": "Velocidad promedio",
     "completedSprints": "Sprints completados",
-    "sprintSuccessRate": "Tasa de éxito del Sprint",
+    "sprintCompletionRate": "Tasa de finalización del Sprint Backlog",
     "storyPointsCompleted": "Story Points completados"
   },
   "title": "Equipo",

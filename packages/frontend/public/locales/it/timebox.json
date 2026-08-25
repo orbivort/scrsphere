@@ -1,0 +1,24 @@
+{
+  "actions": {
+    "pause": "Pausa",
+    "reset": "Reimposta",
+    "start": "Avvia"
+  },
+  "aria": {
+    "idle": "Timebox non avviata",
+    "noTeam": "Timer non disponibile finché non viene selezionato un team",
+    "overtime": "Timebox superata",
+    "paused": "Timebox in pausa",
+    "running": "Timebox in corso",
+    "smOnly": "Solo lo Scrum Master può controllare la timebox",
+    "timer": "Tempo rimanente: {{remaining}}",
+    "warning": "Timebox quasi terminata"
+  },
+  "status": {
+    "idle": "Inattivo",
+    "noTeam": "Seleziona un team per avviare il timer",
+    "overtime": "Tempo superato",
+    "paused": "In pausa",
+    "running": "In corso"
+  }
+}

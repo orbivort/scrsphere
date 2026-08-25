@@ -12,6 +12,7 @@ export class SprintBoardPage extends BasePage {
   readonly kanbanBoard: Locator;
   readonly todoColumn: Locator;
   readonly inProgressColumn: Locator;
+  readonly reviewColumn: Locator;
   readonly doneColumn: Locator;
   readonly filterBar: Locator;
   readonly assigneeFilter: Locator;
@@ -23,7 +24,6 @@ export class SprintBoardPage extends BasePage {
   readonly taskCreateModal: Locator;
   readonly deleteModal: Locator;
   readonly completeSprintModal: Locator;
-  readonly dodVerificationModal: Locator;
   readonly burndownChart: Locator;
   readonly wipWarning: Locator;
   readonly emptyState: Locator;
@@ -54,6 +54,9 @@ export class SprintBoardPage extends BasePage {
     this.inProgressColumn = page
       .locator('[class*="column"]:has(h3:has-text("IN PROGRESS")), [data-status="in_progress"]')
       .first();
+    this.reviewColumn = page
+      .locator('[class*="column"]:has(h3:has-text("REVIEW")), [data-status="review"]')
+      .first();
     this.doneColumn = page
       .locator('[class*="column"]:has(h3:has-text("DONE")), [data-status="done"]')
       .first();
@@ -71,9 +74,6 @@ export class SprintBoardPage extends BasePage {
       '[class*="delete-modal"], [class*="modal"]:has(h2:has-text("Delete"))'
     );
     this.completeSprintModal = page.locator('[class*="complete-sprint-modal"]');
-    this.dodVerificationModal = page.locator(
-      '[class*="dod-verification"], [class*="modal"]:has(h2:has-text("Definition of Done"))'
-    );
     this.burndownChart = page.locator('[class*="burndown-chart"], [class*="chart"]').first();
     this.wipWarning = page.locator('[class*="wip-warning"], [class*="warning"]');
     this.emptyState = page.locator('[class*="empty-state"]').first();
@@ -108,6 +108,10 @@ export class SprintBoardPage extends BasePage {
     return this.inProgressColumn.locator('[class*="task-card"], [class*="task-item"]').all();
   }
 
+  async getReviewTasks(): Promise<Locator[]> {
+    return this.reviewColumn.locator('[class*="task-card"], [class*="task-item"]').all();
+  }
+
   async getDoneTasks(): Promise<Locator[]> {
     return this.doneColumn.locator('[class*="task-card"], [class*="task-item"]').all();
   }
@@ -125,14 +129,19 @@ export class SprintBoardPage extends BasePage {
     await task.click();
   }
 
-  async dragTask(fromTitle: string, toStatus: 'todo' | 'in_progress' | 'done'): Promise<void> {
+  async dragTask(
+    fromTitle: string,
+    toStatus: 'todo' | 'in_progress' | 'review' | 'done'
+  ): Promise<void> {
     const task = await this.getTaskByTitle(fromTitle);
     const targetColumn =
       toStatus === 'todo'
         ? this.todoColumn
         : toStatus === 'in_progress'
           ? this.inProgressColumn
-          : this.doneColumn;
+          : toStatus === 'review'
+            ? this.reviewColumn
+            : this.doneColumn;
 
     await task.dragTo(targetColumn);
   }
@@ -207,16 +216,19 @@ export class SprintBoardPage extends BasePage {
     total: number;
     todo: number;
     inProgress: number;
+    review: number;
     done: number;
   }> {
     const todo = (await this.getTodoTasks()).length;
     const inProgress = (await this.getInProgressTasks()).length;
+    const review = (await this.getReviewTasks()).length;
     const done = (await this.getDoneTasks()).length;
 
     return {
-      total: todo + inProgress + done,
+      total: todo + inProgress + review + done,
       todo,
       inProgress,
+      review,
       done,
     };
   }

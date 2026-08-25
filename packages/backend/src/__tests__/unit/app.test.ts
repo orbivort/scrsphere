@@ -21,7 +21,11 @@ describe('App', () => {
   let app: Application;
 
   beforeEach(async () => {
-    vi.restoreAllMocks();
+    // NOTE: do NOT use vi.restoreAllMocks() here. It reverts the module
+    // mocks (eventLoopMonitor, prisma) defined at the top of this file back to
+    // their real implementations, breaking the assertions below (and leaving the
+    // real event loop monitor running, which can hang the test).
+    vi.clearAllMocks();
     vi.resetModules();
   });
 

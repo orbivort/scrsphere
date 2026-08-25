@@ -5,12 +5,13 @@ import { useTranslation } from 'react-i18next';
 
 import { apiService } from '../../services';
 import { useTeamStore, useAuthStore } from '../../store';
-import { useApiError } from '../../hooks';
+import { useApiError, queryKeys } from '../../hooks';
 import {
   ImpedimentStatus,
   type Task,
   type Sprint,
-  type DailyUpdate,
+  type DailyScrum,
+  type DailyScrumParticipation,
   type Impediment,
 } from '../../types';
 import { ProgressBar } from '../../components/common/Page/ProgressBar';
@@ -18,14 +19,13 @@ import {
   WarningIcon,
   RefreshIcon,
   CalendarIcon,
-  CheckmarkIcon,
   ChartIcon,
   GoalIcon,
   ArrowRightIcon,
   SunIcon,
   PlusIcon,
   ImpedimentIcon,
-  RunnerIcon,
+  SprintIcon,
   DashboardIcon,
 } from '../../components/common/Icons';
 import { ToastContainer } from '../../components/common/ToastContainer';
@@ -34,7 +34,7 @@ import { EmptyState } from '../../components/EmptyState';
 import { LoadingState } from '../../components/common/Loading';
 
 import { BurndownInsight, type BurndownStatus } from './components/BurndownInsight';
-import { TaskList, DailyUpdateList, ImpedimentList } from './components';
+import { TaskList, DailyScrumSummary, ImpedimentList } from './components';
 import {
   MAX_DISPLAY_ITEMS,
   STALE_TIME_SHORT,
@@ -77,30 +77,6 @@ export const Dashboard: React.FC = () => {
   const { handleError } = useApiError();
   const navigate = useNavigate();
 
-  /**
-   * Format a date as relative time (e.g., "2 minutes ago")
-   */
-  const formatRelativeTime = useCallback(
-    (date: Date): string => {
-      const now = new Date();
-      const diffMs = now.getTime() - date.getTime();
-      const diffSeconds = Math.floor(diffMs / 1000);
-      const diffMinutes = Math.floor(diffSeconds / 60);
-      const diffHours = Math.floor(diffMinutes / 60);
-
-      if (diffSeconds < 60) {
-        return t('justNow');
-      } else if (diffMinutes < 60) {
-        return t('minutesAgo', { count: diffMinutes, plural: diffMinutes === 1 ? '' : 's' });
-      } else if (diffHours < 24) {
-        return t('hoursAgo', { count: diffHours, plural: diffHours === 1 ? '' : 's' });
-      } else {
-        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      }
-    },
-    [t]
-  );
-
   const teamId = currentTeam?.id;
   const currentUserId = user?.id;
 
@@ -116,11 +92,8 @@ export const Dashboard: React.FC = () => {
   // Task 4.3: State for refresh loading indicator
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Task 4.4: State for data freshness timestamp
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-
   // Memoize today's date to prevent unnecessary re-renders (Task 2.6)
-  const today = useMemo(() => new Date().toISOString().split('T')[0], []);
+  const today = useMemo(() => new Date().toISOString().split('T')[0] ?? '', []);
 
   // All useQuery hooks must be called before any early returns
   const {
@@ -129,7 +102,7 @@ export const Dashboard: React.FC = () => {
     error: sprintError,
     refetch: refetchSprint,
   } = useQuery({
-    queryKey: ['activeSprint', teamId],
+    queryKey: queryKeys.sprint.activeSprint(teamId ?? ''),
     queryFn: () => {
       if (!teamId) throw new Error('Team ID is required');
       return apiService.getActiveSprint(teamId);
@@ -147,14 +120,30 @@ export const Dashboard: React.FC = () => {
     retry: 1,
   });
 
+  // The Daily Scrum is now a single team-level Inspect & Adapt record (rather
+  // than per-developer updates). The Dashboard fetches today's record and the
+  // team participation view so the card reflects the shared event.
   const {
-    data: dailyUpdatesData,
-    isLoading: dailyUpdatesLoading,
-    error: dailyUpdatesError,
-    refetch: refetchDailyUpdates,
+    data: dailyScrumData,
+    isLoading: dailyScrumLoading,
+    error: dailyScrumError,
+    refetch: refetchDailyScrum,
   } = useQuery({
-    queryKey: ['dailyUpdates', sprintData?.data?.id, today],
-    queryFn: () => apiService.getDailyUpdates(sprintData?.data?.id ?? '', today),
+    queryKey: ['dailyScrum', sprintData?.data?.id, today],
+    queryFn: () => apiService.getDailyScrum(sprintData?.data?.id ?? '', today),
+    enabled: !!sprintData?.data?.id && isAuthenticated,
+    staleTime: STALE_TIME_SHORT,
+    retry: 1,
+  });
+
+  const {
+    data: dailyScrumParticipationData,
+    isLoading: participationLoading,
+    error: participationError,
+    refetch: refetchParticipation,
+  } = useQuery({
+    queryKey: ['dailyScrumParticipation', sprintData?.data?.id, today],
+    queryFn: () => apiService.getDailyScrumParticipation(sprintData?.data?.id ?? '', today),
     enabled: !!sprintData?.data?.id && isAuthenticated,
     staleTime: STALE_TIME_SHORT,
     retry: 1,
@@ -255,7 +244,11 @@ export const Dashboard: React.FC = () => {
 
   // Task 2.6: Include slice inside useMemo to prevent new references
   // Task 3.3: Sort tasks by status priority: IN_PROGRESS > TODO > DONE
-  const myTasks = useMemo(() => {
+  // Scrum Guide: the Sprint Backlog is a plan by and for the Developers and is
+  // owned by the Developers as a whole. Show the team's Sprint Backlog tasks
+  // (the Developers' tasks) rather than only the current user's own tasks, so
+  // the card reflects shared accountability and stays useful for PO/SM too.
+  const developerTasks = useMemo(() => {
     if (!sprintData?.data?.tasks) return [];
 
     const statusPriority: Record<string, number> = {
@@ -265,20 +258,28 @@ export const Dashboard: React.FC = () => {
     };
 
     return sprintData.data.tasks
-      .filter((t: Task) => t.assigneeId === currentUserId)
+      .slice()
       .sort((a: Task, b: Task) => {
         const priorityA = statusPriority[a.status] ?? 5;
         const priorityB = statusPriority[b.status] ?? 5;
         return priorityA - priorityB;
       })
       .slice(0, MAX_DISPLAY_ITEMS);
-  }, [sprintData, currentUserId]);
+  }, [sprintData]);
 
   // Task 2.6: Include slice inside useMemo to prevent new references
-  const dailyUpdates = useMemo((): DailyUpdate[] => {
-    if (!dailyUpdatesData?.data) return [];
-    return dailyUpdatesData.data.slice(0, MAX_DISPLAY_ITEMS);
-  }, [dailyUpdatesData]);
+  const todayDailyScrum = useMemo((): DailyScrum | null => {
+    return dailyScrumData?.data ?? null;
+  }, [dailyScrumData]);
+
+  const dailyScrumParticipation = useMemo((): DailyScrumParticipation | null => {
+    return dailyScrumParticipationData?.data ?? null;
+  }, [dailyScrumParticipationData]);
+
+  const nonParticipants = useMemo(
+    () => dailyScrumParticipation?.nonParticipants ?? [],
+    [dailyScrumParticipation]
+  );
 
   // Task 2.6: Include slice inside useMemo to prevent new references
   const openImpediments = useMemo((): Impediment[] => {
@@ -290,12 +291,6 @@ export const Dashboard: React.FC = () => {
       )
       .slice(0, MAX_DISPLAY_ITEMS);
   }, [impedimentsData]);
-
-  // Check if current user has submitted daily scrum today
-  const hasSubmittedDailyScrum = useMemo(() => {
-    if (!dailyUpdatesData?.data || !currentUserId) return false;
-    return dailyUpdatesData.data.some((update: DailyUpdate) => update.userId === currentUserId);
-  }, [dailyUpdatesData, currentUserId]);
 
   // Task 3.1: Handle task click - navigate to sprint board with task highlighted
   const handleTaskClick = useCallback(
@@ -321,7 +316,6 @@ export const Dashboard: React.FC = () => {
     setIsRefreshing(true);
     try {
       await refetchSprint();
-      setLastUpdated(new Date());
       // Announce refresh completion after a short delay
       setTimeout(() => {
         setRefreshAnnouncement(t('dataRefreshed'));
@@ -405,12 +399,6 @@ export const Dashboard: React.FC = () => {
             <p className={styles['page-subtitle']}>{t('welcomeBack')}</p>
           </div>
           <div className={styles['header-actions']}>
-            {/* Task 4.4: Display last updated timestamp */}
-            {lastUpdated && (
-              <span className={styles['last-updated']}>
-                {t('lastUpdated')}: {formatRelativeTime(lastUpdated)}
-              </span>
-            )}
             <button
               type="button"
               onClick={handleRefresh}
@@ -436,7 +424,7 @@ export const Dashboard: React.FC = () => {
             <article className={`${styles['sprint-card']} ${styles['animate-fade-in-up']}`}>
               <div className={styles['sprint-card-header']}>
                 <h2 id="sprint-summary-heading">
-                  <RunnerIcon size={20} aria-hidden="true" />
+                  <SprintIcon size={20} aria-hidden="true" />
                   <span>{sprint.name}</span>
                 </h2>
                 <span
@@ -468,18 +456,6 @@ export const Dashboard: React.FC = () => {
                 </div>
                 <div className={styles['sprint-stat']}>
                   <span className={styles['stat-icon']} aria-hidden="true">
-                    <CheckmarkIcon size={32} />
-                  </span>
-                  <div className={styles['stat-content']}>
-                    <div className={styles['stat-value']}>
-                      {sprintStats.progress}%
-                      <span className={styles['visually-hidden']}> {t('completed')}</span>
-                    </div>
-                    <div className={styles['stat-label']}>{t('completedLabel')}</div>
-                  </div>
-                </div>
-                <div className={styles['sprint-stat']}>
-                  <span className={styles['stat-icon']} aria-hidden="true">
                     <ChartIcon size={32} />
                   </span>
                   <div className={styles['stat-content']}>
@@ -490,6 +466,16 @@ export const Dashboard: React.FC = () => {
                     <div className={styles['stat-label']}>{t('tasksDoneLabel')}</div>
                   </div>
                 </div>
+              </div>
+              {/* Sprint Goal — commitment of the Sprint Backlog, kept visible */}
+              <div className={styles['sprint-goal-section']}>
+                <span className={styles['sprint-goal-label']}>
+                  <GoalIcon size={16} aria-hidden="true" />
+                  {t('sprintGoal')}
+                </span>
+                <p className={styles['sprint-goal-text']}>
+                  {sprint.sprintGoal ?? t('noSprintGoal')}
+                </p>
               </div>
               {/* Sprint Progress Bar */}
               <div className={styles['sprint-progress-section']}>
@@ -524,21 +510,6 @@ export const Dashboard: React.FC = () => {
                   {t('viewSprintBoard')}
                   <ArrowRightIcon size={16} aria-hidden="true" />
                 </Link>
-              </div>
-            </article>
-
-            <article
-              className={`${styles['sprint-goal-card']} ${styles['animate-fade-in-up']} ${styles['stagger-1']}`}
-              aria-labelledby="sprint-goal-heading"
-            >
-              <div className={styles['sprint-goal-header']}>
-                <h2 id="sprint-goal-heading">
-                  <GoalIcon size={20} aria-hidden="true" />
-                  {t('sprintGoal')}
-                </h2>
-              </div>
-              <div className={styles['sprint-goal-body']}>
-                <p>{sprint.sprintGoal ?? t('noSprintGoal')}</p>
               </div>
             </article>
           </section>
@@ -610,15 +581,16 @@ export const Dashboard: React.FC = () => {
               <Link
                 to="/sprint"
                 className={styles['view-all-link']}
-                aria-label={t('viewAllMyTasks')}
+                aria-label={t('viewAllDeveloperTasks')}
               >
                 {t('viewAll')}
               </Link>
             </div>
             <div className={styles['card-body']}>
               <TaskList
-                tasks={myTasks}
+                tasks={developerTasks}
                 emptyMessage={t('noTasksYet')}
+                currentUserId={currentUserId}
                 onTaskClick={handleTaskClick}
               />
             </div>
@@ -628,27 +600,7 @@ export const Dashboard: React.FC = () => {
             className={`${styles['dashboard-card']} ${styles['animate-fade-in-up']} ${styles['stagger-3']}`}
           >
             <div className={styles['card-header']}>
-              <div className={styles['card-header-title']}>
-                <h3>{t('teamUpdates')}</h3>
-                {!dailyUpdatesLoading && (
-                  <span
-                    className={`${styles['submission-badge']} ${hasSubmittedDailyScrum ? styles.submitted : styles['not-submitted']}`}
-                    role="status"
-                    aria-live="polite"
-                  >
-                    {hasSubmittedDailyScrum ? (
-                      <>
-                        <span className={styles['badge-icon']} aria-hidden="true">
-                          ✓
-                        </span>
-                        <span className={styles['badge-text']}>{t('submitted')}</span>
-                      </>
-                    ) : (
-                      <span className={styles['badge-text']}>{t('notSubmitted')}</span>
-                    )}
-                  </span>
-                )}
-              </div>
+              <h3>{t('teamUpdates')}</h3>
               <Link
                 to="/daily-scrum"
                 className={styles['view-all-link']}
@@ -658,21 +610,24 @@ export const Dashboard: React.FC = () => {
               </Link>
             </div>
             <div className={styles['card-body']}>
-              {dailyUpdatesLoading ? (
+              {dailyScrumLoading || participationLoading ? (
                 <LoadingState
                   variant="skeleton-list"
                   itemCount={3}
                   label={t('loadingTeamUpdates')}
                 />
-              ) : dailyUpdatesError ? (
+              ) : dailyScrumError || participationError ? (
                 <div className={styles['card-error']} role="alert">
                   <p>
-                    {t('unableToLoadUpdates')} {handleError(dailyUpdatesError)}
+                    {t('unableToLoadUpdates')} {handleError(dailyScrumError ?? participationError)}
                   </p>
                   {/* Task 3.5: Retry button for Team Updates card */}
                   <button
                     type="button"
-                    onClick={() => refetchDailyUpdates()}
+                    onClick={() => {
+                      void refetchDailyScrum();
+                      void refetchParticipation();
+                    }}
                     className={styles['retry-button']}
                     aria-label={t('retryLoadingTeamUpdates')}
                   >
@@ -681,11 +636,7 @@ export const Dashboard: React.FC = () => {
                   </button>
                 </div>
               ) : (
-                <DailyUpdateList
-                  updates={dailyUpdates}
-                  emptyMessage={t('noDailyUpdates')}
-                  showSubmitButton
-                />
+                <DailyScrumSummary dailyScrum={todayDailyScrum} nonParticipants={nonParticipants} />
               )}
             </div>
           </article>
@@ -745,22 +696,13 @@ export const Dashboard: React.FC = () => {
           <nav className={styles['quick-actions-grid']} aria-label={t('quickActions.title')}>
             <Link
               to="/daily-scrum"
-              className={`${styles['quick-action-button']} ${hasSubmittedDailyScrum ? styles.submitted : ''}`}
-              aria-label={
-                hasSubmittedDailyScrum ? t('viewOrUpdateDailyScrum') : t('submitDailyScrumUpdate')
-              }
+              className={styles['quick-action-button']}
+              aria-label={t('updateDailyScrum')}
             >
               <span className={styles['action-icon']} aria-hidden="true">
-                {hasSubmittedDailyScrum ? <CheckmarkIcon size={32} /> : <SunIcon size={32} />}
+                <SunIcon size={32} />
               </span>
-              <span className={styles['action-label']}>
-                {hasSubmittedDailyScrum ? t('updateDailyScrum') : t('submitDailyScrum')}
-              </span>
-              {hasSubmittedDailyScrum && (
-                <span className={styles['submitted-indicator']} aria-hidden="true">
-                  {t('submitted')}
-                </span>
-              )}
+              <span className={styles['action-label']}>{t('updateDailyScrum')}</span>
             </Link>
             <Link
               to="/backlog"

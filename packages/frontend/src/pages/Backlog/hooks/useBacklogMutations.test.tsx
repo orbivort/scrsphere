@@ -285,6 +285,34 @@ describe('useBacklogMutations', () => {
 
       expect(onErrorToast).toHaveBeenCalled();
     });
+
+    it('should not show a status or priority toast when neither is updated', async () => {
+      const mockItem = createMockBacklogItem({ title: 'Updated Title' });
+      vi.mocked(apiService.updateProductBacklogItem).mockResolvedValue({
+        success: true,
+        data: mockItem,
+      });
+
+      const { result } = renderHook(() => useBacklogMutations(getProps()), {
+        wrapper,
+      });
+
+      act(() => {
+        result.current.updateItemMutation.mutate({
+          id: 'pbi-1',
+          updates: { title: 'Updated Title' },
+        });
+      });
+
+      await waitFor(() => {
+        expect(result.current.updateItemMutation.isSuccess).toBe(true);
+      });
+
+      expect(apiService.updateProductBacklogItem).toHaveBeenCalledWith('pbi-1', {
+        title: 'Updated Title',
+      });
+      expect(onSuccessToast).not.toHaveBeenCalled();
+    });
   });
 
   describe('editItemMutation', () => {
@@ -540,6 +568,32 @@ describe('useBacklogMutations', () => {
       });
 
       expect(onCreateSuccess).toHaveBeenCalled();
+    });
+
+    it('should use the default error toast when onErrorToast is not provided', async () => {
+      vi.mocked(apiService.createProductBacklogItem).mockRejectedValue(new Error('Create failed'));
+
+      const propsWithoutErrorToast = {
+        resetForm,
+        setFormErrors,
+        setWorkflowError,
+        setSelectedItem,
+      };
+
+      const { result } = renderHook(() => useBacklogMutations(propsWithoutErrorToast), { wrapper });
+
+      act(() => {
+        result.current.createItemMutation.mutate({
+          title: 'New Item',
+          teamId: 'team-1',
+        });
+      });
+
+      await waitFor(() => {
+        expect(result.current.createItemMutation.isError).toBe(true);
+      });
+
+      expect(setFormErrors).toHaveBeenCalled();
     });
   });
 });

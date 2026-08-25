@@ -156,7 +156,7 @@ export const ERROR_CODES = {
 export const ROLES = {
   PRODUCT_OWNER: 'PRODUCT_OWNER',
   SCRUM_MASTER: 'SCRUM_MASTER',
-  DEVELOPER: 'DEVELOPER',
+  DEVELOPERS: 'DEVELOPERS',
 } as const;
 
 export const SPRINT_STATUSES = {
@@ -184,6 +184,7 @@ export const PBI_PRIORITIES = {
 export const TASK_STATUSES = {
   TODO: 'TODO',
   IN_PROGRESS: 'IN_PROGRESS',
+  REVIEW: 'REVIEW',
   DONE: 'DONE',
 } as const;
 
@@ -207,7 +208,6 @@ export {
   createTestRetrospectiveInDb,
   createTestDoDInDb,
   createTestDoRInDb,
-  createTestDailyUpdateInDb,
   createTestIncrementInDb,
   createTestSprintConfigurationInDb,
   createTestSprintReviewInDb,

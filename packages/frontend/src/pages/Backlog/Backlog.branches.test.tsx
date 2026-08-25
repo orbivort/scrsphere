@@ -13,6 +13,7 @@ import {
 import { ItemStatus, MoSCoWPriority, TaskStatus } from '../../types';
 
 import { ProductBacklog } from './Backlog';
+import * as teamContextModule from '../../contexts/TeamContext';
 
 vi.mock('../../store', () => ({
   useTeamStore: vi.fn(),
@@ -171,6 +172,17 @@ describe('Backlog Branch Coverage Tests', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+
+    vi.spyOn(teamContextModule, 'useTeamContext').mockReturnValue({
+      userRole: 'PRODUCT_OWNER',
+      currentTeam: mockTeam,
+      userTeams: [{ ...mockTeam, userRole: 'PRODUCT_OWNER' }],
+      isLoading: false,
+      error: null,
+      switchTeam: vi.fn(),
+      refreshTeams: vi.fn(),
+      hasMultipleTeams: false,
+    } as never);
 
     mockTeamStore.mockReturnValue({
       currentTeam: mockTeam,

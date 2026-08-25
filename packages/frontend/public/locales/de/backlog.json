@@ -82,6 +82,7 @@
       "remaining": "Verbleibend",
       "title": "Hochladen..."
     },
+    "storyPointsDeveloperOnly": "Nur Entwickler können Story Points festlegen. Die Spalte „Story Points\" ist für Ihre Rolle deaktiviert.",
     "summary": {
       "close": "Schließen",
       "created": "{{count}} Einträge erstellt",
@@ -198,6 +199,7 @@
     "removeLabel": "Label {{label}} entfernen",
     "requiredFields": "Kennzeichnet erforderliche Felder",
     "selectMoscowPriority": "MoSCoW Priorität auswählen",
+    "storyPointsDeveloperOnly": "Nur Entwickler können Story Points festlegen. Die Schätzung liegt in der Verantwortung der Entwickler, die die Arbeit ausführen.",
     "storyPointsHelp": "Schätzen Sie den relativen Aufwand mit Fibonacci-Sequenz. Berücksichtigen Sie Komplexität, Unsicherheit und Risiko. Leer lassen, wenn nicht bereit zu schätzen.",
     "storyPointsLabel": "Schätzung (Story Points)",
     "storyPointsPlaceholder": "Schätzung auswählen...",
@@ -270,6 +272,7 @@
     "saving": "Speichern...",
     "savingChanges": "Änderungen werden gespeichert...",
     "selectMoscowPriority": "MoSCoW Priorität auswählen",
+    "storyPointsDeveloperOnly": "Nur Entwickler können Story Points festlegen. Die Schätzung liegt in der Verantwortung der Entwickler, die die Arbeit ausführen.",
     "storyPointsHelp": "Erforderlich: Schätzen Sie den relativen Aufwand mit Fibonacci-Sequenz. Berücksichtigen Sie Komplexität, Unsicherheit und Risiko.",
     "storyPointsLabel": "Schätzung (Story Points)",
     "storyPointsPlaceholder": "Schätzung auswählen... (erforderlich)",

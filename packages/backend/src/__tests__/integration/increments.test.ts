@@ -72,7 +72,7 @@ describe('Increments Integration Tests', () => {
   const addTeamMember = async (
     teamId: string,
     userId: string,
-    role: 'PRODUCT_OWNER' | 'SCRUM_MASTER' | 'DEVELOPER'
+    role: 'PRODUCT_OWNER' | 'SCRUM_MASTER' | 'DEVELOPERS'
   ) => {
     const membershipId = generateUUIDv7();
     await prisma.teamMember.create({
@@ -160,9 +160,6 @@ describe('Increments Integration Tests', () => {
             where: { sprint: { teamId: team.id } },
           });
           await prisma.impediment.deleteMany({ where: { teamId: team.id } });
-          await prisma.dailyUpdate.deleteMany({
-            where: { sprint: { teamId: team.id } },
-          });
           await prisma.sprintBacklogChange.deleteMany({
             where: { sprint: { teamId: team.id } },
           });
@@ -200,7 +197,7 @@ describe('Increments Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
       await createTestIncrement(sprint.id, team.id, 'Increment 1');
       await createTestIncrement(sprint.id, team.id, 'Increment 2');
@@ -307,7 +304,7 @@ describe('Increments Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
       const increment = await createTestIncrement(sprint.id, team.id, 'Specific Increment');
 
@@ -343,7 +340,7 @@ describe('Increments Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
 
       const cookies = await loginAndGetCookies(email);
@@ -409,7 +406,7 @@ describe('Increments Integration Tests', () => {
       testTeams.push(teamName);
 
       const team = await createTestTeam(teamName);
-      await addTeamMember(team.id, user.id, 'DEVELOPER');
+      await addTeamMember(team.id, user.id, 'DEVELOPERS');
       const sprint = await createTestSprint(team.id, 'Sprint');
       const increment = await createTestIncrement(sprint.id, team.id, 'Original Name');
 
@@ -557,7 +554,7 @@ describe('Increments Integration Tests', () => {
         testTeams.push(teamName);
 
         const team = await createTestTeam(teamName);
-        await addTeamMember(team.id, user.id, 'DEVELOPER');
+        await addTeamMember(team.id, user.id, 'DEVELOPERS');
 
         const cookies = await loginAndGetCookies(email);
 
@@ -620,7 +617,7 @@ describe('Increments Integration Tests', () => {
           testTeams.push(teamName);
 
           const team = await createTestTeam(teamName);
-          await addTeamMember(team.id, user.id, 'DEVELOPER');
+          await addTeamMember(team.id, user.id, 'DEVELOPERS');
 
           const cookies = await loginAndGetCookies(email);
 
@@ -677,7 +674,7 @@ describe('Increments Integration Tests', () => {
         testTeams.push(teamName);
 
         const team = await createTestTeam(teamName);
-        await addTeamMember(team.id, user.id, 'DEVELOPER');
+        await addTeamMember(team.id, user.id, 'DEVELOPERS');
         const sprint = await createTestSprint(team.id, 'Sprint');
 
         const cookies = await loginAndGetCookies(email);
@@ -713,7 +710,7 @@ describe('Increments Integration Tests', () => {
           testTeams.push(teamName);
 
           const team = await createTestTeam(teamName);
-          await addTeamMember(team.id, user.id, 'DEVELOPER');
+          await addTeamMember(team.id, user.id, 'DEVELOPERS');
           const sprint = await createTestSprint(team.id, 'Sprint');
 
           // Create increment with DRAFT status
