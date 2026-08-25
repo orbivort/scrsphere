@@ -221,7 +221,7 @@ export const DailyScrum: React.FC = () => {
   }, [userRoleInCurrentTeam]);
 
   const { data: sprintData, isLoading: isSprintLoading } = useQuery({
-    queryKey: ['activeSprint', teamId],
+    queryKey: queryKeys.sprint.activeSprint(teamId ?? ''),
     queryFn: () => apiService.getActiveSprint(teamId ?? ''),
     enabled: !!teamId,
   });

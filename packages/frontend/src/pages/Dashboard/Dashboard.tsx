@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import { apiService } from '../../services';
 import { useTeamStore, useAuthStore } from '../../store';
-import { useApiError } from '../../hooks';
+import { useApiError, queryKeys } from '../../hooks';
 import {
   ImpedimentStatus,
   type Task,
@@ -102,7 +102,7 @@ export const Dashboard: React.FC = () => {
     error: sprintError,
     refetch: refetchSprint,
   } = useQuery({
-    queryKey: ['activeSprint', teamId],
+    queryKey: queryKeys.sprint.activeSprint(teamId ?? ''),
     queryFn: () => {
       if (!teamId) throw new Error('Team ID is required');
       return apiService.getActiveSprint(teamId);

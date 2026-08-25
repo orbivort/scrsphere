@@ -1214,6 +1214,9 @@ export const useTaskMutations = (options: UseTaskMutationsOptions): UseTaskMutat
       void queryClient.invalidateQueries({ queryKey: queryKeys.sprint.all });
       void queryClient.invalidateQueries({ queryKey: queryKeys.productBacklog.all });
       void queryClient.invalidateQueries({ queryKey: queryKeys.sprintTasks.all });
+      if (teamId) {
+        void queryClient.invalidateQueries({ queryKey: queryKeys.sprint.activeSprint(teamId) });
+      }
       onCloseCompleteSprintModal();
       showToast('success', t('board.sprintCompleted'));
     },

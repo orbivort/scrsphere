@@ -75,7 +75,7 @@ export const Impediments: React.FC = () => {
     error: sprintError,
     refetch: refetchActiveSprint,
   } = useQuery({
-    queryKey: ['activeSprint', teamId],
+    queryKey: queryKeys.sprint.activeSprint(teamId ?? ''),
     queryFn: () => apiService.getActiveSprint(teamId ?? ''),
     enabled: !!teamId,
     staleTime: QUERY_STALE_TIME,

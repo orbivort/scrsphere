@@ -32,6 +32,7 @@ import {
   PackageIcon,
   FileTextIcon,
   SearchIcon,
+  MessageCircleIcon,
   TrendingUpIcon,
   UsersIcon,
   BuildingIcon,
@@ -49,7 +50,7 @@ export const NAV_ITEMS: NavItem[] = [
   { path: '/daily-scrum', icon: SunIcon, labelKey: 'nav.dailyScrum' },
   { path: '/impediments', icon: AlertTriangleIcon, labelKey: 'nav.impediments' },
   { path: '/increments', icon: PackageIcon, labelKey: 'nav.increments' },
-  { path: '/sprint-review', icon: FileTextIcon, labelKey: 'nav.sprintReview' },
+  { path: '/sprint-review', icon: MessageCircleIcon, labelKey: 'nav.sprintReview' },
   { path: '/retrospectives', icon: SearchIcon, labelKey: 'nav.retrospectives' },
   { path: '/reports', icon: TrendingUpIcon, labelKey: 'nav.reports' },
   {

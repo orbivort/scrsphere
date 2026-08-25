@@ -34,6 +34,7 @@ import {
   ClockIcon,
   PackageIcon,
   MessageSquareIcon,
+  MessageCircleIcon,
   UsersIcon,
   PlusIcon,
   RefreshCwIcon,
@@ -766,7 +767,7 @@ export const SprintReview: React.FC = () => {
               <ArrowLeftIcon /> {t('backToReviews')}
             </button>
             <h1 className={styles['page-title']}>
-              <FileTextIcon /> {t('title')}
+              <MessageCircleIcon /> {t('title')}
             </h1>
           </div>
         </div>
@@ -905,7 +906,7 @@ export const SprintReview: React.FC = () => {
               <ArrowLeftIcon /> {t('backToReviews')}
             </button>
             <h1 className={styles['page-title']}>
-              <FileTextIcon /> {t('title')}
+              <MessageCircleIcon /> {t('title')}
             </h1>
             <p className={styles['review-date']}>{sprint?.name ?? `Sprint ${sprintId}`}</p>
           </div>
@@ -978,7 +979,7 @@ export const SprintReview: React.FC = () => {
             <ArrowLeftIcon /> {t('backToReviews')}
           </button>
           <h1 className={styles['page-title']}>
-            <FileTextIcon /> {t('title')}
+            <MessageCircleIcon /> {t('title')}
           </h1>
           <p className={styles['review-date']}>
             {formatLocaleDate(review.reviewDate, locale, 'PPPP')}

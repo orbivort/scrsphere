@@ -21,7 +21,7 @@ import {
   CheckCircleIcon,
   PackageIcon,
   PlayIcon,
-  FileTextIcon,
+  MessageCircleIcon,
   PlusIcon,
   EyeIcon,
 } from '../../components/common/Icons';
@@ -349,7 +349,7 @@ export const SprintReviewList: React.FC = () => {
         <div className={styles['header-content']}>
           <h1 className={styles['page-title']}>
             <span className={styles['page-title-icon']}>
-              <FileTextIcon size={24} />
+              <MessageCircleIcon size={24} />
             </span>
             {t('list.title')}
           </h1>
