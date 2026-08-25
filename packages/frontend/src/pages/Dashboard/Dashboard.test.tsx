@@ -29,11 +29,15 @@ vi.mock('../../services', () => ({
   },
 }));
 
-vi.mock('../../hooks', () => ({
-  useApiError: () => ({
-    handleError: vi.fn((_error, fallback) => fallback || 'An error occurred'),
-  }),
-}));
+vi.mock('../../hooks', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    useApiError: () => ({
+      handleError: vi.fn((_error, fallback) => fallback || 'An error occurred'),
+    }),
+  };
+});
 
 vi.mock('./components/BurndownChart', () => ({
   BurndownChart: ({ data }: { data: unknown }) => (
