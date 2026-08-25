@@ -1692,7 +1692,6 @@ class SprintService {
       if (
         task.status === 'REVIEW' &&
         data.status === 'DONE' &&
-        userId &&
         task.assigneeId !== null &&
         task.assigneeId === userId
       ) {
