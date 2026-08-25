@@ -5,6 +5,62 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0] - 2026-08-25
+
+### Breaking Changes
+
+- **Daily Scrum redesigned to goal-focused inspection**: the Daily Scrum flow now revolves around the Sprint Goal. The legacy "daily update" model is removed, so clients must adopt the new Daily Scrum API and Sprint Backlog linkage model.
+- **Sprint closure gates**: Sprint Review and Retrospective must be completed before a Sprint can be closed. Automation or clients that closed Sprints directly must update their flows to complete these events first.
+- **`REVIEW` task state added**: the task workflow now includes a `REVIEW` state between the previous active states and `DONE`. Consumers of task states should account for the new transition.
+- **Role `DEVELOPER` renamed to `DEVELOPERS`**: the role identifier has changed across API payloads, permissions and UI. Clients must use `DEVELOPERS` instead of `DEVELOPER`.
+- **Data model**: consolidate and simplify the Prisma schema, merging initial migrations
+
+### Added
+
+#### Scrum Guide Compliance Enforcement
+
+- **Maximum Scrum Team size**: enforce a maximum team size (default 10) in line with the Scrum Guide's recommended team size
+- **Single Product Owner / Scrum Master**: enforce a single PO and a single SM per Scrum Team
+- **Developers-only sizing**: enforce that only DEVELOPERS may assign story points to PBIs
+- **Developers-only assignments**: enforce that tasks can only be assigned to DEVELOPERS, and only DEVELOPERS may be assigned as task assignees
+- **Developers self-management**: enforce DEVELOPERS self-management protection for task handling
+- **Task state transitions**: restrict task status changes to DEVELOPERS only
+- **Sprint Goal & DoD verification**: enforce the Sprint Goal check and Definition of Done verification during sprint execution
+- **Role permissions on active Sprint**: enforce role-based permissions for active Sprint operations
+- **Sprint cancellation**: add a Sprint cancellation feature for Product Owner
+
+#### Daily Scrum - Goal-Focused Inspection
+
+- **Sprint Backlog linkage**: add adaptation linkage items to the Sprint Backlog within the Daily Scrum
+
+#### Sprint Review & Retrospective Enhancements
+
+- **Sprint Review enhancements**: improve Sprint Review features, including Active Sprints listing and mulitple Increments inclusion
+- **Retrospective enhancements**: improve Retrospective features, including Active Sprints listing
+
+#### Event Timeboxes
+
+- **Event timeboxing**: add event timeboxes for Sprint Planning, Daily Scrum, Sprint Review and Retrospective, with timebox configuration and tracking
+
+#### Sprint Planning & Execution
+
+- **Save and resume Sprint Planning**: support saving and resuming an in-progress Sprint Planning session
+- **Quick PBI marking**: add quick marking of PBIs as done directly on the Sprint Board, with the DoD Verification gate
+- **Sprint Configuration**: simplify sprint generation feature
+
+#### Dashboard & Reports
+
+- **Dashboard and reports enhancement**: enhance dashboards and reports
+
+#### Notification & i18n
+
+- **i18n for notifications**: add the required i18n support to notifications
+
+### Removed
+
+- **Legacy Daily Scrum updates**: remove the legacy daily update funtionality
+- **Bulk DoD checks**: remove bulk DoD checks from the Sprint completion flow
+
 ## [2.3.1] - 2026-08-18
 
 ### Security
