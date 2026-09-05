@@ -5,6 +5,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.1] - 2026-09-05
+
+### Security
+
+- Remediate **high**- and **moderate**-severity transitive dependency vulnerabilities:
+  - `browserslist` → 4.28.8 — fixes unbounded memory growth (no cache eviction) from
+    distinct query results leading to eventual OOM
+    ([GHSA-c83g-rgw3-j3cx](https://github.com/advisories/GHSA-c83g-rgw3-j3cx)) and an
+    uncaught crash / prototype write via untrusted `browserslist-stats.json` custom stats
+    ([GHSA-73wf-gq98-2v4g](https://github.com/advisories/GHSA-73wf-gq98-2v4g)). It is pulled
+    by `@babel/helper-compilation-targets`, `core-js-compat`, `doiuse`, and
+    `stylelint-no-unsupported-browser-features`
+  - `mysql2` 3.15.3 → 3.24.3 — fixes an auth-plugin downgrade to `mysql_clear_password`
+    that leaks plaintext credentials
+    ([GHSA-3f6p-5ww8-9rcr](https://github.com/advisories/GHSA-3f6p-5ww8-9rcr)) and an
+    unbounded zlib-inflate decompression-bomb DoS in the compressed protocol handler
+    ([GHSA-rgwj-5xj2-c3m3](https://github.com/advisories/GHSA-rgwj-5xj2-c3m3)). It is pulled
+    by the Prisma CLI, which pins the vulnerable version exactly
+  - `fast-uri` 3.1.5 → 3.1.7 — fixes SSRF / host confusion via malformed IPv6,
+    percent-decoding, and IDN normalization
+    ([GHSA-5jgf-p345-68v8](https://github.com/advisories/GHSA-5jgf-p345-68v8),
+    [GHSA-f65p-4m7j-42xc](https://github.com/advisories/GHSA-f65p-4m7j-42xc),
+    [GHSA-fph4-wmhf-6fwf](https://github.com/advisories/GHSA-fph4-wmhf-6fwf),
+    [GHSA-jqff-g426-hqxp](https://github.com/advisories/GHSA-jqff-g426-hqxp)). It is pulled by
+    `ajv` through the commitlint and stylelint toolchains
+  - `qs` 6.15.3 → 6.16.0 — fixes an array-limit bypass via bracket-key comma parsing
+    ([GHSA-x5fp-wj9c-mxmx](https://github.com/advisories/GHSA-x5fp-wj9c-mxmx)) and a DoS via
+    an attacker-controlled `isBuffer`
+    ([GHSA-4mjr-xmp4-gh2g](https://github.com/advisories/GHSA-4mjr-xmp4-gh2g)). It is pulled
+    by Express, body-parser, and superagent
+
 ## [3.0.0] - 2026-08-25
 
 ### Breaking Changes
