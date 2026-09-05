@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
-- Remediate **high**- and **moderate**-severity transitive dependency vulnerabilities:  
+- Remediate **high**- and **moderate**-severity transitive dependency vulnerabilities:
   - `browserslist` → 4.28.8 — fixes unbounded memory growth (no cache eviction) from
     distinct query results leading to eventual OOM
     ([GHSA-c83g-rgw3-j3cx](https://github.com/advisories/GHSA-c83g-rgw3-j3cx)) and an
